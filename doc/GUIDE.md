@@ -3,7 +3,7 @@
 ## Install Dependencies
 ```
 apt-get install redis-server rabbitmq-server python-dateutil python-pip git
-pip install geoip2 dnspython pika==0.9.13 redis
+pip install geoip2 dnspython pika==0.9.13 redis pymongo
 ```
 
 ## Install IntelMQ
@@ -11,7 +11,7 @@ pip install geoip2 dnspython pika==0.9.13 redis
 ```
 useradd -m -d /opt/intelmq -s /bin/bash -U intelmq
 passwd intelmq
-git clone https://bitbucket.org/ahshare/intelmq.git /tmp/intelmq
+git clone https://github.com/certtools/intelmq.git /tmp/intelmq
 cp -R /tmp/intelmq/src/* /opt/intelmq/
 chown -R intelmq.intelmq /opt/intelmq/*
 chmod -R 755 /opt/intelmq/*
