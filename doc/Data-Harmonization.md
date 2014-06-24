@@ -1,4 +1,4 @@
-NOTE: This document was copy from ![AbuseHelper repository](https://bitbucket.org/clarifiednetworks/abusehelper/wiki/Data Harmonization Ontology)
+NOTE: This document was copy from [AbuseHelper repository](https://bitbucket.org/clarifiednetworks/abusehelper/wiki/Data Harmonization Ontology)
 
 = Data Harmonization Ontology 2014-03-31 =
 
