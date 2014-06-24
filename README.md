@@ -28,48 +28,8 @@
 
 ## How to install
 
-Check INSTALLATION.md file.
+Check doc/GUIDE.md file.
 
-
-## How to write a bots
-
-<description>
-
-
-### Template
-
-```
-import sys
-from lib.bot import *
-from lib.utils import *
-from lib.event import *
-from lib.cache import *
-
-class ExampleBot(Bot):
-
-    def process(self):
-	
-        # get message from source queue in pipeline
-		message = self.pipeline.receive()
-
-        # ------
-        # process message
-        # ------
-		
-		# send message to destination queue in pipeline
-		self.pipeline.send(new_message)
-
-		# acknowledge message received to source queue in pipeline
-        self.pipeline.acknowledge()
-
-if __name__ == "__main__":
-    bot = ExampleBot(sys.argv[1])
-    bot.start()
-```
-
-### Example
-
-<description>
 
 # Incident Handling Automation Project
 
