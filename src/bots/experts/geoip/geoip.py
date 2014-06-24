@@ -6,6 +6,7 @@ from lib.utils import *
 from lib.event import *
 
 class GeoIPExpertBot(Bot):
+
     def __init__(self, bot_id):
         super(GeoIPExpertBot, self).__init__(bot_id)
         try:
