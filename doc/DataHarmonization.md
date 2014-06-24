@@ -196,39 +196,41 @@ Having a functional ontology to work with, especially for the abuse types is imp
 
  **taxonomy** We recognize the need for the CSIRT teams to apply a static (incident) taxonomy to abuse data. With this goal in mind the type IOC will serve as a basis for this activity. Each value of the dynamic type mapping translates to a an element in the static taxonomy. The European CSIRT teams for example have decided to apply the eCSIRT.net incident classification. The value of the taxonomy key is thus a derivative of the dynamic type above. For more information about check [ENISA taxonomies](http://www.enisa.europa.eu/activities/cert/support/incident-management/browsable/incident-handling-process/incident-taxonomy/existing-taxonomies).
  
-||Type||Taxonomy||Description||
-||spam||Abusive Content||This IOC refers to resources, which make up a SPAM infrastructure, be it a harvester, dictionary attacker, URL etc.||
-||malware||Malicious Code||A URL is the most common resource with reference to malware binary distribution.||
-||botnet drone||Malicious Code||This is a compromized machine, which has been observed to make a connection to a command and control server.||
-||ransomware||Malicious Code||This IOC refers to a specific type of compromized machine, where the computer has been hijacked for ransom by the criminals.||
-||malware configuration||Malicious Code||This is a resource which updates botnet drones with a new configuration.||
-||c&c||Malicious Code||This is a command and control server in charge of a given number of botnet drones.||
-||scanner||Information Gathering||This IOC refers to port scanning activity specifically.||
-||exploit||Intrusion Attempts||An exploit is often executed through a malicious URL.||
-||brute-force||Intrusion Attempts||This IOC refers to a resource, which has been observed to perform brute-force attacks over a given application protocol. Please see the IOC protocol below.||
-||ids alert||Intrusion Attempts||IOCs based on a sensor network. This is a generic IOC denomination, should it be difficult to reliably denote the exact type of activity involved for example due to an anecdotal nature of the rule that triggered the alert.||
-||defacement||Intrusions||This IOC refers to hacktivism related activity.||
-||backdoor||Intrusions||This refers to hosts, which have been compromized and backdoored with a remote administration software or trojan in the traditional sense.||
-||ddos||Availability||This IOC refers to various parts of the DDOS infrastructure.||
-||dropzone||Information Content Security||This IOC refers to place where the compromized machines store the stolen user data.||
-||phishing||Fraud||This IOC most often refers to a URL, which is phishing for user credentials.||
-||vulnerable service||Vulnerable||This attribute refers to a badly configured or vulnerable network service, which may be abused by a third party. For example, these services relate to open proxies, open dns resolvers, network time servers (ntp) or character generation services (chargen), simple network management services (snmp). In addition, to specify the network service and its potential abuse, one should use the protocol, destination port and description attributes for that purpose respectively.||
-||blacklist||Other||Some sources provide blacklists, which clearly refer to abusive behavior, such as spamming, but fail to denote the exact reason why a given identity has been blacklisted. The reason may be that the justification is anecdotal or missing entirely. This type should only be used if the typing fits the definition of a blacklist, but an event specific denomination is not possible for one reason or another.||
-||test||Test||This is a value for testing purposes.||
+|Type|Taxonomy|Description|
+|----|--------|-----------|
+|spam|Abusive Content|This IOC refers to resources, which make up a SPAM infrastructure, be it a harvester, dictionary attacker, URL etc.|
+|malware|Malicious Code|A URL is the most common resource with reference to malware binary distribution.|
+|botnet drone|Malicious Code|This is a compromized machine, which has been observed to make a connection to a command and control server.|
+|ransomware|Malicious Code|This IOC refers to a specific type of compromized machine, where the computer has been hijacked for ransom by the criminals.|
+|malware configuration|Malicious Code|This is a resource which updates botnet drones with a new configuration.|
+|c&c|Malicious Code|This is a command and control server in charge of a given number of botnet drones.|
+|scanner|Information Gathering|This IOC refers to port scanning activity specifically.|
+|exploit|Intrusion Attempts|An exploit is often executed through a malicious URL.|
+|brute-force|Intrusion Attempts|This IOC refers to a resource, which has been observed to perform brute-force attacks over a given application protocol. Please see the IOC protocol below.|
+|ids alert|Intrusion Attempts|IOCs based on a sensor network. This is a generic IOC denomination, should it be difficult to reliably denote the exact type of activity involved for example due to an anecdotal nature of the rule that triggered the alert.|
+|defacement|Intrusions|This IOC refers to hacktivism related activity.|
+|backdoor|Intrusions|This refers to hosts, which have been compromized and backdoored with a remote administration software or trojan in the traditional sense.|
+|ddos|Availability|This IOC refers to various parts of the DDOS infrastructure.|
+|dropzone|Information Content Security|This IOC refers to place where the compromized machines store the stolen user data.|
+|phishing|Fraud|This IOC most often refers to a URL, which is phishing for user credentials.|
+|vulnerable service|Vulnerable|This attribute refers to a badly configured or vulnerable network service, which may be abused by a third party. For example, these services relate to open proxies, open dns resolvers, network time servers (ntp) or character generation services (chargen), simple network management services (snmp). In addition, to specify the network service and its potential abuse, one should use the protocol, destination port and description attributes for that purpose respectively.|
+|blacklist|Other|Some sources provide blacklists, which clearly refer to abusive behavior, such as spamming, but fail to denote the exact reason why a given identity has been blacklisted. The reason may be that the justification is anecdotal or missing entirely. This type should only be used if the typing fits the definition of a blacklist, but an event specific denomination is not possible for one reason or another.|
+|test|Test|This is a value for testing purposes.|
 
-= Minimum Requirements =
+## Minimum Requirements
 
 Below, we have enumerated the minimum requirements for an actionable abuse event. These keys need to be present for the abuse report to make sense for the end recipient. Please note that if you choose to anonymize your sources, you can substitute **feed** with **feed code** and that only one of the identity keys **ip**, **domain name**, **url**, **email address** must be present. All the rest of the keys enumerated above are **optional**.
 
-||Category||Key||Terminology||
-||Feed||feed||Must||
-||Classification||type||Must||
-||Classification||taxonomy||Must||
-||Time||observation time||Must||
-||Identity||ip||Must||
-||Identity||domain name||Must||
-||Identity||url||Must||
-||Identity||email address||Must||
+|Category|Key|Terminology|
+|--------|---|-----------|
+|Feed|feed|Must|
+|Classification|type|Must|
+|Classification|taxonomy|Must|
+|Time|observation time|Must|
+|Identity|ip|Must|
+|Identity|domain name|Must|
+|Identity|url|Must|
+|Identity|email address|Must|
 
 
 
