@@ -1,4 +1,6 @@
-# System
+# IntelMQ
+
+IntelMQ is a solution for CERTs to process data feeds, pastebins, tweets throught a message queue.
 
 ## Goals
 
@@ -17,7 +19,7 @@
 
 ## Architecture
 
-![Architecture](https://bitbucket.org/ahshare/intelmq/downloads/poc_arch.jpg)
+![Architecture](http://i58.tinypic.com/n395bo.jpg)
 
 ## System Details
 
@@ -33,7 +35,7 @@ Check doc/GUIDE.md file.
 
 # Incident Handling Automation Project
 
-* ** URL:** http://www.enisa.europa.eu/activities/cert/support/incident-handling-automation
-* ** Mailing-list:** ihap@lists.trusted-introducer.org
-* ** Data Harmonization Ontology:** https://bitbucket.org/clarifiednetworks/abusehelper/wiki/Data%20Harmonization%20Ontology
+* **URL:** http://www.enisa.europa.eu/activities/cert/support/incident-handling-automation
+* **Mailing-list:** ihap@lists.trusted-introducer.org
+* **Data Harmonization Ontology:** https://bitbucket.org/clarifiednetworks/abusehelper/wiki/Data%20Harmonization%20Ontology
 
