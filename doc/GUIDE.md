@@ -11,11 +11,10 @@ pip install geoip2 dnspython pika==0.9.13 redis pymongo
 ```
 useradd -m -d /opt/intelmq -s /bin/bash -U intelmq
 passwd intelmq
-git clone https://github.com/certtools/intelmq.git /tmp/intelmq
-cp -R /tmp/intelmq/src/* /opt/intelmq/
+git clone https://github.com/certtools/intelmq.git /opt/intelmq
 chown -R intelmq.intelmq /opt/intelmq/*
 chmod -R 755 /opt/intelmq/*
-echo "export PYTHONPATH=\$PYTHONPATH:/opt/intelmq/" >> /opt/intelmq/.profile
+echo "export PYTHONPATH=\$PYTHONPATH:/opt/intelmq/src/" >> /opt/intelmq/.profile
 ```
 
 # How it Works
@@ -92,7 +91,7 @@ su - intelmq -c "python -m bots.inputs.arbor.feed arbor-feed"
 ## Run Botnet Example
 
 ```
-su - intelmq -c "bash run-botnet-example.sh"
+su - intelmq -c "bash src/run-botnet-example.sh"
 ```
 
 # How to write bots
