@@ -26,13 +26,13 @@
 
 * Video Tutorial
 
-* General Bots Configuration (DONE -> bots access the parameters via self.parameters.parameter_name, name can be easily changed)  [DONE]
+* General Bots Configuration (DONE -> bots access the parameters via self.parameters.parameter_name, name can be easily changed)  **[DONE]**
 * 
-* AbuseHelper Integration  [DONE -> xmpp bot to connect to room]
+* AbuseHelper Integration  **[DONE -> xmpp bot to connect to room]**
 
-* Splunk Output Bot  [DONE]
+* Splunk Output Bot  **[DONE]**
 
-* TeamCymru Expert  [DONE]
+* TeamCymru Expert  **[DONE]**
 
 ## Release 2 - TODO
 
