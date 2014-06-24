@@ -1,113 +1,103 @@
-**NOTE:** This document was copy from [AbuseHelper repository](https://bitbucket.org/clarifiednetworks/abusehelper/wiki/Data Harmonization Ontology)
+# Data Harmonization Ontology
 
-= Data Harmonization Ontology 2014-03-31 =
+The purpose of this document is to harmonize the heterogenous data sets processed by different source bots into a unified ontology. The unified ontology represents the outcome of a pragmatic collaboration between different CSIRT teams such as [CERT-EU](http://cert.europa.eu/), [CERT-EE](http://www.cert.ee/), [CERT-FI](http://www.cert.fi/en/index.html), [CERT.AT](http://www.cert.at/), [CERT.PT](http://www.cert.pt/en/), [CERT.BE](https://www.cert.be/|CERT.BE) and [Codenomicon](http://www.codenomicon.com), a commercial company. We also present a common set of principles to use for IOC attribution not directly available through the data sources. Each organization should define their own policy with reference to IOC elements and their related attribution. This document defines key IOC to be used as basis for communicating abuse events within and between organizations. In other words, the aim of this document is to shift the focus of formats, schemas and transports, to having a uniform ontology to use for passing serialized abuse events through different systems from a number of sources to a number of destinations.
 
-The purpose of this document is to harmonize the heterogenous data sets processed by different source bots into a unified ontology. The unified ontology represents the outcome of a pragmatic collaboration between different CSIRT teams such as [CERT-EU](http://cert.europa.eu/), [CERT-EE](http://www.cert.ee/), [[http://www.cert.fi/en/index.html| CERT-FI]], [[http://www.cert.at/|CERT.AT]], [[http://www.cert.pt/en/|CERT.PT]], [[https://www.cert.be/|CERT.BE]] and [[http://www.codenomicon.com|Codenomicon]], a commercial company. We also present a common set of principles to use for IOC attribution not directly available through the data sources. Each organization should define their own policy with reference to IOC elements and their related attribution. This document defines key IOC to be used as basis for communicating abuse events within and between organizations. In other words, the aim of this document is to shift the focus of formats, schemas and transports, to having a uniform ontology to use for passing serialized abuse events through AbuseHelper from a number of sources to a number of destinations.
-
-= Core Fields =
+## Core Fields
 
 For an abuse report to be actionable and able to reach the right end recipient, various key elements need to be present. Please turn to the section Minimum Requirements below, to find out more about for the minimum requirements for an actionable abuse event. The core fields enumerated below identify a given abuse feed either by name or feed code should you choose to anonymize your sources. In addition, keys related to time or the identity of the abused resource be it an ip, url, an email address or a geolocation are considered core elements of an abuse report.
 
-== Feed ==
+### Feed
 
- **feed** Lower case name for the feeder, e.g. abusech or phishtank.
+* **feed** Lower case name for the feeder, e.g. abusech or phishtank.
 
- **feed code** Code name for the feed, e.g.  DFGS, HSDAG etc.
+* **feed code** Code name for the feed, e.g.  DFGS, HSDAG etc.
 
- **feed url** The URL of a given abuse feed, where applicable.
+* **feed url** The URL of a given abuse feed, where applicable.
 
-== Time ==
+### Time
 
 All the timestamps should be normalized to UTC. If the source reports only a date, please do not invent timestamps.
 
- **source time** Time reported by a source. Some sources only report a date, which '''may''' be used here if there is no better observation.
+* **source time** Time reported by a source. Some sources only report a date, which '''may''' be used here if there is no better observation.
 
- **observation time** The time a source bot saw the event. This timestamp becomes especially important should you perform your own attribution on a host DNS name for example. The mechanism to denote the attributed elements with reference to the source provided is detailed below in Reported Identity IOC.
+* **observation time** The time a source bot saw the event. This timestamp becomes especially important should you perform your own attribution on a host DNS name for example. The mechanism to denote the attributed elements with reference to the source provided is detailed below in Reported Identity IOC.
 
-N.B. a good way to represent timestamps is this [[http://en.wikipedia.org/wiki/ISO_8601#Combined_date_and_time_representations|ISO 8601 combined date-time representation]]: '''YYYY-MM-DD HH:MM:SSZ'''. We have decided to omit the T for readability, since:
 
-{{{
-ISO 8601:2004(E). ISO. 2004-12-01. 4.3.2 NOTE: By mutual agreement of the partners in 
-information interchange, the character [T] may be omitted in applications where there 
-is no risk of confusing a date and time of day representation with others defined in 
-this International Standard.
-}}}
-
-== Identity ==
+### Identity
 
 The abuse type of an event defines the way these IOC needs to be interpreted. For a botnet drone they refer to the compromized machine, whereas for a command and control server they refer the server itself.
 
- **ip** IPv4 or IPv6 address.
+* **ip** IPv4 or IPv6 address.
 
- **domain name** DNS domain name. http://en.wikipedia.org/wiki/Domain_name
+* **domain name** DNS domain name. http://en.wikipedia.org/wiki/Domain_name
 
- **port** The port through which the abuse activity is taking place. For example a command and control server report will most likely contain a port, which is directly related to the reported ip or host.
+* **port** The port through which the abuse activity is taking place. For example a command and control server report will most likely contain a port, which is directly related to the reported ip or host.
 
- **url** A URL denotes on IOC, which refers to a malicious resource, whose interpretation is defined by the abuse type. A URL with the abuse type phishing refers to a phishing resource.
+* **url** A URL denotes on IOC, which refers to a malicious resource, whose interpretation is defined by the abuse type. A URL with the abuse type phishing refers to a phishing resource.
 
- **email address** An email address, whose interpretation is based on the abuse type.
+* **email address** An email address, whose interpretation is based on the abuse type.
 
- **reverse dns** Reverse DNS name acquired through a reverse DNS query on an IP address. N.B. "Record types other than PTR records may also appear in the reverse DNS tree." http://en.wikipedia.org/wiki/Reverse_DNS_lookup
+* **reverse dns** Reverse DNS name acquired through a reverse DNS query on an IP address. N.B. "Record types other than PTR records may also appear in the reverse DNS tree." http://en.wikipedia.org/wiki/Reverse_DNS_lookup
 
- **asn** Autonomous system number.
+* **asn** Autonomous system number.
 
- **as name** Registered name for an autonomous system.
+* **as name** Registered name for an autonomous system.
 
- **bgp prefix** A number of CIDRs for an autonomous system.
+* **bgp prefix** A number of CIDRs for an autonomous system.
 
- **registry** The IP registry a given ip address is allocated by.
+* **registry** The IP registry a given ip address is allocated by.
 
-=== Source Identity ===
+### Source Identity
 
- **source ip** The ip observed to initiate the connection.
+* **source ip** The ip observed to initiate the connection.
 
- **source port** The port from which the connection originated.
+* **source port** The port from which the connection originated.
 
- **source domain name** A DNS name related to the host from which the connection originated.
+* **source domain name** A DNS name related to the host from which the connection originated.
 
- **source email address** An email address, which has been identified to relate to the source of an abuse event.
+* **source email address** An email address, which has been identified to relate to the source of an abuse event.
 
- **source asn** The autonomous system number from which originated the connection.
+* **source asn** The autonomous system number from which originated the connection.
 
- **source as name** The autonomous system name from which the connection originated.
+* **source as name** The autonomous system name from which the connection originated.
  
- **source cc** The country code of the ip from which the connection originated.
+* **source cc** The country code of the ip from which the connection originated.
 
-=== Destination Identity ===
+### Destination Identity
 
 Since many of the sources report IOC related to a compromized machine, such as a botnet drone, they may report relevant information in relation to the command and control infrastructure as well. The meaning of each IOC needs to be interpreted with reference to the abuse type. A destination ip and port in the context of a botnet drone for example usually denote the command and control server.
 
- **destination ip** The end-point of the connection.
+* **destination ip** The end-point of the connection.
 
- **destination port** The destination port of the connection.
+* **destination port** The destination port of the connection.
 
- **destination domain name** The DNS name related to the end-point of a connection.
+* **destination domain name** The DNS name related to the end-point of a connection.
 
- **destination email address** An email address, which has been identified to relate to the destiantion of an abuse event.
+* **destination email address** An email address, which has been identified to relate to the destiantion of an abuse event.
 
- **destination asn** The autonomous system number to which the connection was destined.
+* **destination asn** The autonomous system number to which the connection was destined.
 
- **destination as name** The autonomous system name to which the connection was destined.
+* **destination as name** The autonomous system name to which the connection was destined.
 
- **destination cc** The country code of the ip which was the end-point of the connection.
+* **destination cc** The country code of the ip which was the end-point of the connection.
 
-=== Behing the NAT Identity ===
+### Behing the NAT Identity
 
- **local ip** Some sources report a internal (NATed) IP address related a compromized system.
+* **local ip** Some sources report a internal (NATed) IP address related a compromized system.
 
- **local hostname** Some sources report a internal hostname within a NAT related to the name configured for a compromized system.
+* **local hostname** Some sources report a internal hostname within a NAT related to the name configured for a compromized system.
 
-=== Reported Identity ===
+### Reported Identity
 
 As stated above, each abuse handling organization should define a policy, which IOC to use as the primary elements describing an abuse event. Often the sources have done their attribution, but you may choose to correlate their attributive elements with your own. In practice this means that your sanitation should prefix the elements with the '''reported''' keyword, to denote that you've decided the attribute these yourself. The list below is not comprehensive, rather than a list of common things you may want to attribute yourself. Moreover, if you choose to perform your own attribution, the observation time will become your authoritative point of reference related to these IOC.
 
- **reported ip** Should you perform your own attribution on a DNS name referred to by host, the ip reported by the source is replaced.
+* **reported ip** Should you perform your own attribution on a DNS name referred to by host, the ip reported by the source is replaced.
 
- **reported asn** The autonomous system number related to the resource, which was reported by the source.
+* **reported asn** The autonomous system number related to the resource, which was reported by the source.
 
- **reported as name**  The autonomous system name registered to the reported asn above.
+* **reported as name**  The autonomous system name registered to the reported asn above.
 
- **reported cc** The country codeof the reported IOC above.
+* **reported cc** The country codeof the reported IOC above.
 
 == Geolocation ==
 
@@ -240,3 +230,7 @@ Below, we have enumerated the minimum requirements for an actionable abuse event
 ||Identity||domain name||Must||
 ||Identity||url||Must||
 ||Identity||email address||Must||
+
+
+
+**NOTE:** This document was copy from [AbuseHelper repository](https://bitbucket.org/clarifiednetworks/abusehelper/wiki/Data Harmonization Ontology)
