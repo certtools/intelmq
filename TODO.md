@@ -26,17 +26,13 @@
 
 * Video Tutorial
 
-* General Bots Configuration (DONE -> bots access the parameters via self.parameters.parameter_name, name can be easily changed)
-    * must be on 'conf/' and bot library must create a self.<property> for each key in configuration (example: mail_user_password=xyz  , bot object must have a self.mail_user_password)
-    * Configuration Example: [link](https://bitbucket.org/ahshare/intelmq/downloads/bots.conf)
-    * In configuration the sections must be the BOT ID. [Change in bot code the variable 'name' to 'bot_id']
-    * Have some kind of cooldown period between iterations of the bots (so we don't DoS a feed) and configurable.
+* General Bots Configuration (DONE -> bots access the parameters via self.parameters.parameter_name, name can be easily changed)  [DONE]
+* 
+* AbuseHelper Integration  [DONE -> xmpp bot to connect to room]
 
-* AbuseHelper Integration (DONE -> xmpp bot to connect to room)
+* Splunk Output Bot  [DONE]
 
-* Splunk Output Bot (DONE)
-
-* TeamCymru Expert (DONE)
+* TeamCymru Expert  [DONE]
 
 ## Release 2 - TODO
 
