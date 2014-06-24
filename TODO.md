@@ -2,11 +2,9 @@
 
 (sorted by priority)
 
-* Support multiple destination queues for each bot
-
 * ContactDB Expert (Install ContactDB)
     
-* MailBox
+* **[ALMOST]** MailBox
     * split by specific keys
     * template(subject/message) configurable with variables
     * use 'abuse contact' field to ge the email to send ('abuse contact' was filled by ContactDB)
@@ -16,6 +14,8 @@
     * Events that MailBox will send must be stored in a specific Database to get again all events if mailer crash or wtv
     * In the end MailBox must send a summary of sent reports
     * RTIR Output Bot
+
+* ElasticSearch Output Bot
     
 * Trash Queue when bot do not recognize the message and cant do nothing
 
@@ -24,17 +24,18 @@
 
 * Documentation
 
-* ElasticSearch Output Bot
-
 * Video Tutorial
 
-* General Bots Configuration (DONE -> bots access the parameters via self.parameters.parameter_name, name can be easily changed)  **[DONE]**
-* 
-* AbuseHelper Integration  **[DONE -> xmpp bot to connect to room]**
+* **[DONE]** General Bots Configuration (bots access the parameters via self.parameters.parameter_name, name can be easily changed)
 
-* Splunk Output Bot  **[DONE]**
+* **[DONE]** AbuseHelper Integration (xmpp bot to connect to room)
 
-* TeamCymru Expert  **[DONE]**
+* **[DONE]** Splunk Output Bot
+
+* **[DONE]** TeamCymru Expert
+
+* **[DONE]** Support multiple destination queues for each bot
+
 
 ## Release 2 - TODO
 
