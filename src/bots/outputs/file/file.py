@@ -9,8 +9,8 @@ from lib.cache import *
 
 class FileBot(Bot):
 
-    def __init__(self, name):
-        super(FileBot, self).__init__(name)
+    def __init__(self, bot_id):
+        super(FileBot, self).__init__(bot_id)
         self.file = open(self.parameters.file, 'a')
 
     def process(self):

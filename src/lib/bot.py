@@ -14,8 +14,8 @@ BOTS_CONF_FILE = "conf/bots.conf"
 
 class Bot(object):
 
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, bot_id):
+        self.bot_id = bot_id
         self.logger = self.get_logger()
         self.logger.info('Bot is starting')
 
@@ -42,19 +42,19 @@ class Bot(object):
                 setattr(self.parameters, option, config.get(default_section, option))
                 self.logger.debug("Parameter '%s' loaded with the value '%s'" % (option, config.get(default_section, option)))
         
-        self.logger.debug("Loading configuration in %s section from '%s' file" % (self.name, BOTS_CONF_FILE))
+        self.logger.debug("Loading configuration in %s section from '%s' file" % (self.bot_id, BOTS_CONF_FILE))
         
-        if config.has_section(self.name):
-            for option in config.options(self.name):
-                setattr(self.parameters, option, config.get(self.name, option))
-                self.logger.debug("Parameter '%s' loaded with the value '%s'" % (option, config.get(self.name, option)))
+        if config.has_section(self.bot_id):
+            for option in config.options(self.bot_id):
+                setattr(self.parameters, option, config.get(self.bot_id, option))
+                self.logger.debug("Parameter '%s' loaded with the value '%s'" % (option, config.get(self.bot_id, option)))
 
 
     def get_logger(self):
         config = ConfigParser.ConfigParser()
         config.read(SYSTEM_CONF_FILE)
         loglevel = config.get('Logging','level')
-        return log(self.name, loglevel)
+        return log(self.bot_id, loglevel)
 
 
     def create_cache(self, cache_id, ttl):
@@ -78,8 +78,8 @@ class Bot(object):
         self.logger.debug("Loading pipeline queues from '%s' file" % PIPELINE_CONF_FILE)
         
         for option in config.options("Pipeline"):
-            if option == self.name:
-                queues = config.get("Pipeline", self.name)
+            if option == self.bot_id:
+                queues = config.get("Pipeline", self.bot_id)
                 queues = queues.split('|')
                 
                 if len(queues) == 2:

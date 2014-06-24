@@ -44,7 +44,7 @@ class AbuseHelperBot(Bot):
         xmpp_connection.RegisterHandler(name='message', handler=self.handle_message)
         xmpp_connection.sendInitPresence()
 
-        xmpp_connection.send(xmpp.Presence(to='%s@conference.%s/%s' % (self.parameters.source_room, jid.getDomain(), self.name)))
+        xmpp_connection.send(xmpp.Presence(to='%s@conference.%s/%s' % (self.parameters.source_room, jid.getDomain(), self.bot_id)))
 
         while True:
             print 'Iteration'
