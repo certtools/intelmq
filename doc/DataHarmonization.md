@@ -227,10 +227,10 @@ Below, we have enumerated the minimum requirements for an actionable abuse event
 |Classification|type|Must|
 |Classification|taxonomy|Must|
 |Time|observation time|Must|
-|Identity|ip|Must|
-|Identity|domain name|Must|
-|Identity|url|Must|
-|Identity|email address|Must|
+|Identity|ip|Must*|
+|Identity|domain name|Must*|
+|Identity|url|Must*|
+|Identity|email address|Must*|
 
 
 
