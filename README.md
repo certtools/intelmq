@@ -12,6 +12,7 @@ IntelMQ is a solution for CERTs to process data feeds, pastebins, tweets through
 * use the existing AbuseHelper Event-like syntax: event.add("domain", "example.com")
 * use JSON format for all messages
 * use messages tags: report, abuse-event, pastebin, tweet
+* integration of the existing tools (AbuseHelper, CIF, etc...)
 
 ## Main Components
 * RabbitMQ as message queue for pipeline
