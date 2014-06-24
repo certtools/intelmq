@@ -2,6 +2,8 @@
 
 (sorted by priority)
 
+* Support multiple destination queues for each bot
+
 * ContactDB Expert (Install ContactDB)
     
 * MailBox
