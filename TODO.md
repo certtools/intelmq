@@ -39,19 +39,17 @@
 
 ## Release 2 - TODO
 
-* HPFeeds/Frieds like system to manage who has access to the feeds etc...
+* Create a management interface to give feed access to other people. Good example: HPFrieds/HPFeeds system.
 
-* Use the IFAS Report Interface for MailBox
+* Evaluate: Python 3 vs Python 2.7
 
-* Change to Python3 ?
+* 1-N Queues: support other exchange types (current solution support fanout)
 
-* The pipeline send and receive for events is very ugly. Put it better
+* Pipeline Management with Web Interface
 
-* 1-N queues problem
-    * support multiple queues as destination
-    * current solution just behave like a HUB and should behave like a Router.
-
-* Pipeline Management (Web Interface)
+* Bots Management with Web Interface
+ 
+* Monitoring with Web Interface
 
 * JSON Messages
     * with tag field (report, abuse-event, pastebin, tweet)
@@ -61,8 +59,6 @@
 * PostgreSQL (Reports, Events)
 
 * Bots to create:
-    * Cymru
-    * MaxMind GeoIP
     * MalwareHash
     * RT
     * SSHKeyScan
