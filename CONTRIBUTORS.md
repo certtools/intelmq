@@ -1,8 +1,8 @@
 ### Contributors
 
-* Tomás Lima <tomas.lima@cert.pt>
-* Mauro Silva <mauro.silva@cert.pt>
-
+* Tomás Lima [CERT.PT] <tomas.lima@cert.pt>
+* Mauro Silva [CERT.PT] <mauro.silva@cert.pt>
+* Cosmin Ciobanu [ENISA] <cosmin.ciobanu@enisa.europa.eu>
 
 ### Start contributing
 
