@@ -99,104 +99,103 @@ As stated above, each abuse handling organization should define a policy, which 
 
 * **reported cc** The country codeof the reported IOC above.
 
-== Geolocation ==
+### Geolocation
 
 We recognize that ip geolocation is not an exact science and analysis of the abuse data has shown that different sources attribution sources have different opinions of the geolocation of an ip. This is why we recommend to enrich the data with as many sources as you have available and make the decision which value to use for the cc IOC based on those answers.
 
- **cc** Each abuse handling pipeline, should define a logic how to assign a value for this IOC. You may decide to trust the opinion of a single source or apply logical operations on multiple sources. The country code is expressed as an ISO 3166 two letter country code.
+* **cc** Each abuse handling pipeline, should define a logic how to assign a value for this IOC. You may decide to trust the opinion of a single source or apply logical operations on multiple sources. The country code is expressed as an ISO 3166 two letter country code.
 
- **country** The country name derived from the ISO 3166 country code (assigned to cc above).
+* **country** The country name derived from the ISO 3166 country code (assigned to cc above).
 
- **longitude** Longitude coordinates derived from a geolocation service, such as MaxMind geoip db.
+* **longitude** Longitude coordinates derived from a geolocation service, such as MaxMind geoip db.
 
- **latitude** Latitude coordinates derived from a geolocation service, such as MaxMind geoip db.
+* **latitude** Latitude coordinates derived from a geolocation service, such as MaxMind geoip db.
 
- **region** Some geolocation services refer to region-level geolocation (where applicable).
+* **region** Some geolocation services refer to region-level geolocation (where applicable).
 
- **state** Some geolocation services refer to state-level geolocation (where applicable).
+* **state** Some geolocation services refer to state-level geolocation (where applicable).
 
- **city** Some geolocation services refer to city-level geolocation.
+* **city** Some geolocation services refer to city-level geolocation.
 
-= Additional Fields =
+## Additional Fields
 
- **description** A free-form textual description of an abuse event.
+* **description** A free-form textual description of an abuse event.
 
- **description url** A description URL is a link to a further description of the the abuse event in question.
+* **description url** A description URL is a link to a further description of the the abuse event in question.
 
- **status** Status of the malicious resource (phishing, dropzone, etc), e.g. online, offline.
+* **status** Status of the malicious resource (phishing, dropzone, etc), e.g. online, offline.
 
- **protocol** Used for (brute forcing) bots, e.g. vnc, ssh, sip, irc, http or p2p, as well as to describe the transport protocol of a given commmand and control mechanism. N.B. the interpretation of the protocol field depends largely on the abuse type. For some abuse types, such as brute-force, this refers to the application protocol, which is the target of the brute-forcing and for botnet drones it may refer to the transport protocol of the control mechanism for example. If both protocol and transport protocol are needed, they should be noted separately.
+* **protocol** Used for (brute forcing) bots, e.g. vnc, ssh, sip, irc, http or p2p, as well as to describe the transport protocol of a given commmand and control mechanism. N.B. the interpretation of the protocol field depends largely on the abuse type. For some abuse types, such as brute-force, this refers to the application protocol, which is the target of the brute-forcing and for botnet drones it may refer to the transport protocol of the control mechanism for example. If both protocol and transport protocol are needed, they should be noted separately.
 
- **transport protocol** Some feeds report a protocol, which often denotes the observed transport. This should be noted appropriately if the protocol key should denote the vulnerable service for example.
+* **transport protocol** Some feeds report a protocol, which often denotes the observed transport. This should be noted appropriately if the protocol key should denote the vulnerable service for example.
 
- **target** Some sources denominate the target (organization) of a an attack.
+* **target** Some sources denominate the target (organization) of a an attack.
 
- **os name** Operating system name.
+* **os name** Operating system name.
 
- **os version** Operating system version.
+* **os version** Operating system version.
 
- **user agent** Some feeds report the user agent string used by the host to access a malicious resource, such as a command and control server.
+* **user agent** Some feeds report the user agent string used by the host to access a malicious resource, such as a command and control server.
 
- **additional information** All anecdotal information, which cannot be parsed into the data harmonization elements.
+* **additional information** All anecdotal information, which cannot be parsed into the data harmonization elements.
 
- **missing data** If the sanitation is missing a known piece of data, such as a description url for example, the reference to this fact may be inserted here.
+* **missing data** If the sanitation is missing a known piece of data, such as a description url for example, the reference to this fact may be inserted here.
 
- **comment** Free text commentary about the abuse event inserted by an analyst.
+* **comment** Free text commentary about the abuse event inserted by an analyst.
 
- **screenshot url** Some source may report URLs related to a an image generated of a resource without any metadata.
+* **screenshot url** Some source may report URLs related to a an image generated of a resource without any metadata.
 
- **webshot url** A URL pointing to resource, which has been rendered into a webshot, e.g. a PNG image and the relevant metadata related to its retrieval/generation.
+* **webshot url** A URL pointing to resource, which has been rendered into a webshot, e.g. a PNG image and the relevant metadata related to its retrieval/generation.
 
-== Malware Elements ==
+### Malware Elements
 
- **malware** A malware family name in lower case.
+* **malware** A malware family name in lower case.
 
-== Artifact Elements ==
+### Artifact Elements
 
- **artifact hash** A string depicting a checksum for a file, be it a malware sample for example.
+* **artifact hash** A string depicting a checksum for a file, be it a malware sample for example.
 
- **artifact hash type** The hashing algorithm used for artifact hash type above, be it MD5 or SHA-* etc. At the moment, it seems that the hash type should default to SHA-1.
+* **artifact hash type** The hashing algorithm used for artifact hash type above, be it MD5 or SHA-* etc. At the moment, it seems that the hash type should default to SHA-1.
 
- **artifact version** A version string for an identified artifact generation, e.g. a crime-ware kit.
+* **artifact version** A version string for an identified artifact generation, e.g. a crime-ware kit.
 
-== Extra Elements ==
+### Extra Elements
 
- **abuse contact** An abuse contact email address for an IP network.
+* **abuse contact** An abuse contact email address for an IP network.
 
- **event hash** Computed event hash with specific keys and values that identify a unique event. At present, the hash should default to using the SHA1 function. Please note that for an event hash to be able to match more than one event (deduplication) the receiver of an event should calculate it based on a minimal set of keys and values present in the event. Using for example the observation time in the calculation will most likely render the checksum useless for deduplication purposes.
+* **event hash** Computed event hash with specific keys and values that identify a unique event. At present, the hash should default to using the SHA1 function. Please note that for an event hash to be able to match more than one event (deduplication) the receiver of an event should calculate it based on a minimal set of keys and values present in the event. Using for example the observation time in the calculation will most likely render the checksum useless for deduplication purposes.
 
- **shareable key** Sometimes it is necessary to communicate a set of IOC which can be passed on freely to the end recipient. The most effective way to use this is to make it a multi-value within an event.
+* **shareable key** Sometimes it is necessary to communicate a set of IOC which can be passed on freely to the end recipient. The most effective way to use this is to make it a multi-value within an event.
 
- **uuid** [[https://www.clarifiednetworks.com/AbuseSA| AbuseSA]] and AbuseHelper are using python uuids to identify abuse events. The python UUIDs are generated based on [[http://tools.ietf.org/html/rfc4122| RFC4122]] using the uuid.uuid4() function. In addition, it seems [[https://github.com/MISP/MISP| MISP]] is using uuids to identify abuse events as well.
 
-== Topic or Provider Specific Elements ==
+### Topic or Provider Specific Elements
 
 The elements listed below are additional keys used to describe abusive behavior, which are topic specific. They may refer to the source of information, such as **notified by**, an augmentation source such as **cymru cc** or internal integration source, such as **rtir id**. The reason why they are separated from the the other IOC is that they are not generic, rather than topic or provider specific. Their communicative function is defined as an optional way to understand what other abuse handling pipelines are most likely to call these elements.
 
- **dns version** A string describing the version of a DNS server.
+* **dns version** A string describing the version of a DNS server.
 
- **min amplification** Minimum amplification value related to an open DNS resolver.
+* **min amplification** Minimum amplification value related to an open DNS resolver.
 
- **notified by** The reporter of a given abuse event, e.g. ZONE-H defacer attribution.
+* **notified by** The reporter of a given abuse event, e.g. ZONE-H defacer attribution.
 
- **cymru cc** The country code denoted for the ip by the Team Cymru asn to ip mapping service.
+* **cymru cc** The country code denoted for the ip by the Team Cymru asn to ip mapping service.
 
- **geoip cc** The country code denoted for the ip by the MaxMind geoip database.
+* **geoip cc** The country code denoted for the ip by the MaxMind geoip database.
 
- **rtir id** RTIR incident id.
+* **rtir id** RTIR incident id.
 
- **misp id** MISP id.
+* **misp id** MISP id.
 
- **original logline** In case we received this event as a (CSV) log line, we can store the original line here.
+* **original logline** In case we received this event as a (CSV) log line, we can store the original line here.
 
-= Classification Fields =
+## Classification Fields
 
-Having a functional ontology to work with, especially for the abuse types is important for you to be able to classify, prioritize and report relevant actionable intelligence to the parties who need to be informed. Below, is a list of harmonized values for the abuse types we have observed in our quality assurance efforts and collaborating with our AbuseSA customers and the AbuseHelper community. The driving idea for this ontology has been to use a minimal set of values with maximal usability. 
+Having a functional ontology to work with, especially for the abuse types is important for you to be able to classify, prioritize and report relevant actionable intelligence to the parties who need to be informed. The driving idea for this ontology has been to use a minimal set of values with maximal usability. Below, is a list of harmonized values for the abuse types.
 
  **type** The abuse type IOC is one of the most crucial pieces of information for any given abuse event. The main idea of dynamic typing is to keep our ontology flexible, since we need to evolve with the evolving threatscape of abuse data. In contrast with the static taxonomy below, the dynamic typing is used to perform business decisions in the abuse handling pipeline. Furthermore, the value data set should be kept as minimal as possible to avoid "type explosion", which in turn dilutes the business value of the dynamic typing. In general, we normally have two types of abuse type IOC: ones referring to a compromized resource or ones referring to pieces of the criminal infrastructure, such as a command and control servers for example.
 
- **taxonomy** We recognize the need for the CSIRT teams to apply a static (incident) taxonomy to abuse data. With this goal in mind the type IOC will serve as a basis for this activity. Each value of the dynamic type mapping translates to a an element in the static taxonomy. The European CSIRT teams for example have decided to apply the ENISA incident classification. The value of the taxonomy key is thus a derivative of the dynamic type above. For more information about the ENISA taxonomy, please turn to http://www.enisa.europa.eu/activities/cert/support/incident-management/browsable/incident-handling-process/incident-taxonomy/existing-taxonomies Please note that the taxonomy represented below has been adapted to map an abuse type value to a single taxonomy value.
-
+ **taxonomy** We recognize the need for the CSIRT teams to apply a static (incident) taxonomy to abuse data. With this goal in mind the type IOC will serve as a basis for this activity. Each value of the dynamic type mapping translates to a an element in the static taxonomy. The European CSIRT teams for example have decided to apply the eCSIRT.net incident classification. The value of the taxonomy key is thus a derivative of the dynamic type above. For more information about check (ENISA taxonomies)[http://www.enisa.europa.eu/activities/cert/support/incident-management/browsable/incident-handling-process/incident-taxonomy/existing-taxonomies].
+ 
 ||Type||Taxonomy||Description||
 ||spam||Abusive Content||This IOC refers to resources, which make up a SPAM infrastructure, be it a harvester, dictionary attacker, URL etc.||
 ||malware||Malicious Code||A URL is the most common resource with reference to malware binary distribution.||
