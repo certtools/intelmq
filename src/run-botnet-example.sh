@@ -7,8 +7,8 @@ python -m bots.experts.sanitizer.sanitizer sanitizer &
 python -m bots.experts.taxonomy.taxonomy taxonomy-expert &
 python -m bots.experts.geoip.geoip geoip-expert &
 python -m bots.experts.cymru.cymru cymru-expert &
-#python -m bots.outputs.file.file file-output &
-python -m bots.outputs.mongodb.mongodb mongodb &
+python -m bots.outputs.file.file file-output &
+#python -m bots.outputs.mongodb.mongodb mongodb &
 
 echo -en "\ec"
 echo ""
