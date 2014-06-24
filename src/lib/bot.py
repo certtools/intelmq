@@ -21,8 +21,8 @@ class Bot(object):
 
         self.get_bot_configurations()
 
-        src_queue, dest_queue = self.get_queues()
-        self.pipeline = self.get_pipeline(src_queue, dest_queue)
+        src_queue, dest_queues = self.get_queues()
+        self.pipeline = self.get_pipeline(src_queue, dest_queues)
 
         if self.parameters.cached:
             cache_db_index = 10 #FIXME
@@ -67,9 +67,9 @@ class Bot(object):
         return Cache(host, port, cache_id, ttl)
 
 
-    def get_pipeline(self, src_queue, dest_queue):
+    def get_pipeline(self, src_queue, dest_queues):
         self.logger.debug("Connecting to pipeline queues")
-        return Pipeline(src_queue, dest_queue)
+        return Pipeline(src_queue, dest_queues)
 
 
     def get_queues(self):
@@ -84,17 +84,21 @@ class Bot(object):
                 
                 if len(queues) == 2:
                     src_queue = queues[0].strip()
-                    dest_queue = queues[1].strip()
+                    dest_queues = queues[1].strip()
                     
                     if src_queue == "None":
                         src_queue = None
-                    if dest_queue == "None":
+                    if dest_queues == "None":
                         dest_queue = None
+
+                    dest_queues_list = list()
+                    for queue in dest_queues.split(','):
+                        dest_queues_list.append(queue.strip())
                     
                     self.logger.info("Source queue '%s'" % src_queue)
-                    self.logger.info("Destination queue '%s'" % dest_queue)
+                    self.logger.info("Destination queue(s) '%s'" % dest_queues_list)
                     
-                    return [src_queue, dest_queue]
+                    return [src_queue, dest_queues_list]
         
         self.logger.error("Failed to load queues")
         self.exit()
