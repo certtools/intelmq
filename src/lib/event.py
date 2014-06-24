@@ -198,6 +198,14 @@ class Event(object):
                 attrs[key].append(value)
             yield Event(attrs)
 
+
+    def to_dict(self):
+        attrs = dict()
+        for key, value in self.items():
+            attrs.setdefault(key, list()).append(value)
+        return attrs
+
+
     def __init__(self, *args, **keys):
         """
         Regression test: Keep the the correct internal encoding in the
