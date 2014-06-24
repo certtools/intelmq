@@ -1,3 +1,4 @@
 *.pyc
 *.*~
 *.mmdb
+.profile
