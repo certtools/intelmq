@@ -11,19 +11,15 @@ class ArborHarmonizerBot(Bot):
         event = self.pipeline.receive()
 
         if event:
-            sanitized_event = self.harmonize(event)
-            self.pipeline.send(sanitized_event)
-
+            event.add('feed', 'arbor')
+            event.add('feed url', 'http://atlas-public.ec2.arbor.net/public/ssh_attackers')
+            for value in event.values('ip'):
+                event.add('source ip', value)
+                event.add('reported ip', value)
+            event.add('type', 'brute-force')
+            
+            self.pipeline.send(event)
         self.pipeline.acknowledge()
-
-    def harmonize(self, event):
-        event.add('feed', 'arbor')
-        event.add('feed url', 'http://atlas-public.ec2.arbor.net/public/ssh_attackers')
-        for value in event.values('ip'):
-            event.add('source ip', value)
-            event.add('reported ip', value)
-        event.add('type', 'brute-force')
-        return event
 
 
 if __name__ == "__main__":
