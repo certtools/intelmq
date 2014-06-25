@@ -74,8 +74,8 @@
     * [n6](https://bitbucket.org/slingris/abusehelper/src/d5a32b813593/abusehelper/contrib/n6/?at=default)
     * [OpenBL](https://bitbucket.org/slingris/abusehelper/src/d5a32b813593/abusehelper/contrib/openbl/?at=default)
     * [SQLBot](https://bitbucket.org/slingris/abusehelper/src/d5a32b813593/abusehelper/contrib/sqlbot/?at=default)
-    * [VXVault](https://bitbucket.org/slingris/abusehelper/src/d5a32b813593/abusehelper/contrib/vxvault/?at=default)
     * [XSSed](https://bitbucket.org/slingris/abusehelper/src/d5a32b813593/abusehelper/contrib/xssed/?at=default)
+    * **[DONE]** [VXVault](https://bitbucket.org/slingris/abusehelper/src/d5a32b813593/abusehelper/contrib/vxvault/?at=default)
 
 ## Feedback
 
