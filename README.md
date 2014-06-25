@@ -31,12 +31,11 @@ IntelMQ is a solution for CERTs to process data feeds, pastebins, tweets through
 
 ## How to install
 
-Check doc/GUIDE.md file.
+Check docs/GUIDE.md file.
 
 
 # Incident Handling Automation Project
 
 * **URL:** http://www.enisa.europa.eu/activities/cert/support/incident-handling-automation
 * **Mailing-list:** ihap@lists.trusted-introducer.org
-* **Data Harmonization Ontology:** https://bitbucket.org/clarifiednetworks/abusehelper/wiki/Data%20Harmonization%20Ontology
 
