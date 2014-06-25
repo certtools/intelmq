@@ -7,6 +7,7 @@ import socket
 import binascii
 
 def fetch_url(url, timeout=60.0, chunk_size=16384):
+    # FIXME: change this code
     req = urllib2.urlopen(url, timeout = timeout)
     filename = "/tmp/temp.txt"
     with open(filename, 'wb') as fpw:
