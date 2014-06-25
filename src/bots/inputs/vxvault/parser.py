@@ -1,12 +1,9 @@
-#!/usr/bin/python
-
 import sys
 import urlparse
 from lib.bot import *
 from lib.utils import *
 from lib.event import *
 from lib.cache import *
-import time
 
 class VXVaultParserBot(Bot):
 
@@ -22,6 +19,9 @@ class VXVaultParserBot(Bot):
                     continue
                 
                 url_object = urlparse.urlparse(row)
+
+                if not url_object:
+                    continue
 
                 url      = url_object.geturl() 
                 hostname = url_object.hostname

@@ -1,5 +1,4 @@
 import sys
-import traceback
 import xmpp
 from lib.bot import *
 from lib.utils import *
@@ -7,10 +6,10 @@ from lib.event import *
 from lib.cache import *
 
 # Required parameters:
-# jid
-# password
-# source_room
-# force_tls
+# - jid
+# - password
+# - source_room
+# - force_tls
 
 class AbuseHelperBot(Bot):
 
@@ -54,6 +53,7 @@ class AbuseHelperBot(Bot):
                 xmpp_connection.Process()
 
             time.sleep(self.parameters.processing_interval)
+
 
 if __name__ == "__main__":
     bot = AbuseHelperBot(sys.argv[1])
