@@ -12,6 +12,7 @@ class VXVaultHarmonizerBot(Bot):
 
     def process(self):
         event = self.pipeline.receive()
+        
         if event:
             event.add('feed', 'vxvault')
             event.add('feed url', 'http://vxvault.siri-urz.net/URL_List.php')
@@ -19,7 +20,7 @@ class VXVaultHarmonizerBot(Bot):
                 event.add('source ip', value)
                 event.add('reported ip', value)
             event.add('type', 'malware')
-            print unicode(event)            
+
             self.pipeline.send(event)
         self.pipeline.acknowledge()
 
