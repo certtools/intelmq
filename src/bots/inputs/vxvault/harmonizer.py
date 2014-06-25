@@ -1,12 +1,8 @@
-#!/usr/bin/python
-
 import sys
-import urlparse
 from lib.bot import *
 from lib.utils import *
 from lib.event import *
 from lib.cache import *
-import time
 
 class VXVaultHarmonizerBot(Bot):
 
