@@ -34,8 +34,6 @@ class VXVaultParserBot(Bot):
                     event.add("port", str(port))
 
                 self.pipeline.send(event)
-                print unicode(event)
-
         self.pipeline.acknowledge()
 
 
