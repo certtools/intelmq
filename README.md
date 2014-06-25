@@ -6,7 +6,7 @@ IntelMQ is a solution for CERTs to process data feeds, pastebins, tweets through
 
 * reduce the complexity of system administration
 * reduce the complexity of writing new bots for new data feeds
-* reduce the probability of events lost in all process (even system down time)
+* reduce the probability of events lost in all process (even system crash)
 * provide easy communication with other systems via API
 * use and improve the existing Data Harmonization Ontology
 * use the existing AbuseHelper Event-like syntax: event.add("domain", "example.com")
