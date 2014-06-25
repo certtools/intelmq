@@ -3,7 +3,6 @@ from lib.bot import *
 from lib.utils import *
 from lib.event import *
 from lib.cache import *
-import traceback
 
 class ArborParserBot(Bot):
 
