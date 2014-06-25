@@ -13,7 +13,6 @@ class VXVaultFeedBot(Bot):
         url = "http://vxvault.siri-urz.net/URL_List.php"
         report = fetch_url(url, timeout = 60.0, chunk_size = 16384)
         self.pipeline.send(report)
-        print report
 
 
 if __name__ == "__main__":
