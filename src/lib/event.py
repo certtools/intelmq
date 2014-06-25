@@ -391,7 +391,7 @@ class Event(object):
         """
 
         if not self.contains(key):
-            return None
+            return []
 
         return tuple(self._iter(key, parser, filter))
 

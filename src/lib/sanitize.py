@@ -39,7 +39,7 @@ def sanitize_time(event, key):
         return event
         
     for value in event.values(key):
-        new_value = parser.parse(value).isoformat()
+        new_value = dateparser.parse(value).isoformat()
         event.discard(key, value)
         event.add(key, new_value)
     
