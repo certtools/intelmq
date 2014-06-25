@@ -14,20 +14,49 @@ IntelMQ is a solution for CERTs to process data feeds, pastebins, tweets through
 * use messages tags: report, abuse-event, pastebin, tweet
 * integration of the existing tools (AbuseHelper, CIF, etc...)
 
-## Main Components
+## System
+
+### Main Components
 * RabbitMQ as message queue for pipeline
 * Redis as memcache for bots
 
-## Architecture
+
+### Architecture
 
 ![Architecture](http://i58.tinypic.com/n395bo.jpg)
 
-## System Details
 
-* Configuration - <details>
-* How to dedup using Redis TTL - <details>
-* Experts using Redis as a cache and TTL - <details>
-* RabbitMQ Queues - <details>
+### System Details
+
+* Configuration: ... details ...
+* How to dedup using Redis TTL: ... details ...
+* Experts using Redis as a cache and TTL: ... details ...
+* RabbitMQ Queues: ... details ...
+
+
+## Bots
+
+### Input Bots
+* [MalwareDomainList](https://github.com/certtools/intelmq/tree/master/src/bots/inputs/malwaredomainlist)
+* [Arbor](https://github.com/certtools/intelmq/tree/master/src/bots/inputs/arbor) (Atlas Public)
+* [VXVault](https://github.com/certtools/intelmq/tree/master/src/bots/inputs/vxvault)
+* [AbuseHelper](https://github.com/certtools/intelmq/tree/master/src/bots/inputs/abusehelper)
+* [CERT-EU](https://github.com/certtools/intelmq/tree/master/src/bots/inputs/certeu) (Mail)
+
+### Expert Bots
+* [TeamCymru IPtoASN](https://github.com/certtools/intelmq/tree/master/src/bots/experts/cymru) (DNS Service)
+* [MaxMind GeoIP](https://github.com/certtools/intelmq/tree/master/src/bots/experts/geoip)
+* [ContactDB](https://github.com/certtools/intelmq/tree/master/src/bots/experts/contactdb)
+* [eCSIRT Taxonomy](https://github.com/certtools/intelmq/tree/master/src/bots/experts/taxonomy)
+* [Events Deduplicator](https://github.com/certtools/intelmq/tree/master/src/bots/experts/deduplicator)
+* [Events Sanitizer](https://github.com/certtools/intelmq/tree/master/src/bots/experts/sanitizer)
+
+### Output Bots
+* [Splunk](https://github.com/certtools/intelmq/tree/master/src/bots/outputs/logcollector)
+* [MongoDB](https://github.com/certtools/intelmq/tree/master/src/bots/outputs/mongodb)
+* [PostgreSQL](https://github.com/certtools/intelmq/tree/master/src/bots/outputs/postgresql)
+* [ElasticSearch](https://github.com/certtools/intelmq/tree/master/src/bots/outputs/elasticsearch)
+* [File](https://github.com/certtools/intelmq/tree/master/src/bots/outputs/file)
 
 ## How to install
 
