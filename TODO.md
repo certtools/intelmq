@@ -16,6 +16,8 @@
     * RTIR Output Bot
 
 * ElasticSearch Output Bot
+
+* Create configuration option for logs folder (check bot.py)
     
 * Trash Queue when bot do not recognize the message and cant do nothing
 
