@@ -59,6 +59,7 @@
     * with tag field (report, abuse-event, pastebin, tweet)
     * with syntax abusehelper event-like ( event.add("domain", "example.com") )
     * __hash__ method
+    * evaluate: http://danielmiessler.com/study/url_vs_uri/
 
 * PostgreSQL (Reports, Events)
 
