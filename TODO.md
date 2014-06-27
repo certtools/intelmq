@@ -2,8 +2,10 @@
 
 (sorted by priority)
 
+* Add in each expert a line to test if the augment keys already exists
+
 * ContactDB Expert (Install ContactDB)
-    
+
 * **[ALMOST]** MailBox
     * split by specific keys
     * template(subject/message) configurable with variables
