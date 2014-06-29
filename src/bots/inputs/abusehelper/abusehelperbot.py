@@ -16,7 +16,7 @@ class AbuseHelperBot(Bot):
     def handle_message(self, xmpp_connection, message):
         try:
             event = Event.from_unicode(unicode(message.getBody()))
-            self.pipeline.send(event)
+            self.send_message(event)
             print event
         except:
             pass

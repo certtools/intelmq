@@ -17,7 +17,7 @@ class GeoIPExpertBot(Bot):
             self.exit()
     
     def process(self):
-        event = self.pipeline.receive()
+        event = self.receive_message()
         if event:
             ip = event.value("ip")
             ip_cc = self.database.city(ip)
@@ -27,8 +27,8 @@ class GeoIPExpertBot(Bot):
             if ip_cc.city.name:
                 event.add("geoip city", ip_cc.city.name)
             
-            self.pipeline.send(event)
-        self.pipeline.acknowledge()
+            self.send_message(event)
+        self.acknowledge_message()
 
 if __name__ == "__main__":
     bot = GeoIPExpertBot(sys.argv[1])

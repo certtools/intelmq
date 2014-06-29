@@ -8,7 +8,7 @@ from lib.cache import *
 class VXVaultParserBot(Bot):
 
     def process(self):
-        report = self.pipeline.receive()
+        report = self.receive_message()
 
         if report:
             for row in report.split('\n'):
@@ -33,8 +33,8 @@ class VXVaultParserBot(Bot):
                 if port:
                     event.add("port", str(port))
 
-                self.pipeline.send(event)
-        self.pipeline.acknowledge()
+                self.send_message(event)
+        self.acknowledge_message()
 
 
 if __name__ == "__main__":

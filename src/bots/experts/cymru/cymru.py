@@ -10,7 +10,7 @@ MINIMUM_BGP_PREFIX_IPV6 = 128 # FIXME
 class CymruExpertBot(Bot):
     
     def process(self):
-        event = self.pipeline.receive()
+        event = self.receive_message()
         if event:
             
             for ip in event.values("ip"):
@@ -38,8 +38,8 @@ class CymruExpertBot(Bot):
                     event.add('cymru allocated', allocated)
                     event.add('cymru as name', as_name)
 
-                    self.pipeline.send(event)
-        self.pipeline.acknowledge()
+                    self.send_message(event)
+        self.acknowledge_message()
         
 if __name__ == "__main__":
     bot = CymruExpertBot(sys.argv[1])

@@ -7,7 +7,7 @@ from lib.sanitize import *
 class SanitizerBot(Bot):
 
     def process(self):
-        event = self.pipeline.receive()
+        event = self.receive_message()
 
         if event:
             
@@ -33,8 +33,8 @@ class SanitizerBot(Bot):
                 event = sanitize_time(event, "source time")
                 event = sanitize_time(event, "observation time")
 
-                self.pipeline.send(event)
-        self.pipeline.acknowledge()
+                self.send_message(event)
+        self.acknowledge_message()
 
 
 if __name__ == "__main__":

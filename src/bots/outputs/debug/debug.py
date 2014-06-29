@@ -9,12 +9,12 @@ import json
 class DebugBot(Bot):
 
     def process(self):
-        event = self.pipeline.receive()
+        event = self.receive_message()
         
         if event:
             print unicode(event)
-            self.pipeline.send(event)
-        self.pipeline.acknowledge()
+            self.send_message(event)
+        self.acknowledge_message()
 
 
 if __name__ == "__main__":
