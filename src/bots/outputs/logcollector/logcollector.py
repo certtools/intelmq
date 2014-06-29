@@ -13,7 +13,7 @@ except ImportError:
 class LogCollectorBot(Bot):
 
     def process(self):       
-        event = self.pipeline.receive()
+        event = self.receive_message()
         
         if event:
             data = ''
@@ -23,7 +23,7 @@ class LogCollectorBot(Bot):
 
             self.send_data(data)
             
-        self.pipeline.acknowledge()
+        self.acknowledge_message()
 
 
     def connect(self):

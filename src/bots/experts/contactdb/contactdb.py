@@ -14,7 +14,7 @@ def convert_contactdb_result(result):
 class ContactDBExpertBot(Bot):
 
     def process(self):
-        event = self.pipeline.receive()
+        event = self.receive_message()
         if event:
             ip = event.value("ip")
             
@@ -29,8 +29,8 @@ class ContactDBExpertBot(Bot):
             
             event.add("contactdb entity", result['entity']['name'])
             
-            self.pipeline.send(event)
-        self.pipeline.acknowledge()
+            self.send_message(event)
+        self.acknowledge_message()
 
     def get_cache_result(self, ip):
         import urllib2

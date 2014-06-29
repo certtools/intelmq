@@ -12,15 +12,15 @@ import traceback
 class DeduplicatorBot(Bot):
 
     def process(self):
-        message = self.pipeline.receive()
+        message = self.receive_message()
 
         if message:
             message_hash = hash(message)
 
             if not self.cache.exists(message_hash):
-                self.pipeline.send(message)
+                self.send_message(message)
                 self.cache.set(message_hash, 'hash')
-        self.pipeline.acknowledge()
+        self.acknowledge_message()
 
 
 if __name__ == "__main__":
