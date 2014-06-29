@@ -15,6 +15,9 @@ class Pipeline():
         self.destination_channel.exchange_declare(exchange=self.destination_exchange, type='fanout')
 
         if destination_queues:
+            if type(destination_queues) is not list:
+                destination_queues = destination_queues.split()
+                
             for destination_queue in destination_queues:
                 self.destination_channel.queue_declare(queue=destination_queue, durable=True)
                 self.destination_channel.queue_bind(exchange=self.destination_exchange, queue=destination_queue)

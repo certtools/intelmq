@@ -5,7 +5,12 @@ from lib.pipeline import Pipeline
 from lib.utils import force_decode
 
 file = open(sys.argv[1], 'r')
-pipeline = Pipeline(None, [sys.argv[2]])
+
+queues = list()
+for queue in sys.argv[2].split(','):
+    queues.append(queue.strip())
+
+pipeline = Pipeline(None, queues)
 
 for line in file:
     line = force_decode(line)
