@@ -50,12 +50,13 @@ def sanitize_time(event, key):
 # for each event their can be only one value per 'split_keys'
 # Example: one event can just have one ip address.
 
+# FIXME: BROKEN
 def split_event_by_keys(event, split_keys):
     events = list()
     for split_key in split_keys:
         if event.contains(split_key):
             values = event.values(split_key)
-            if values:
+            if len(values) > 1:
                 for value in values:
                     event.clear(split_key)  # Need Improvement
                     event.add(split_key, value)
