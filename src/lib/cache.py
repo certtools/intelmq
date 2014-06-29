@@ -9,7 +9,7 @@ import redis
 """
 
 class Cache():
-    def __init__(self, host, port, db, ttl):
+    def __init__(self, host="127.0.0.1", port=6379, db, ttl):
         self.redis = redis.Redis(host = host,
                                  port = port,
                                  db = db,
