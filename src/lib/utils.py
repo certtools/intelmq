@@ -5,8 +5,17 @@ import logging
 import hashlib
 import socket
 import binascii
+import StringIO
 
 def fetch_url(url, timeout=60.0, chunk_size=16384):
+    req = urllib2.urlopen(url, timeout = timeout)
+    strio = StringIO.StringIO()
+    shutil.copyfileobj(req, strio, chunk_size)
+    value = strio.getvalue()
+    strio.close()
+    return value
+
+def fetch_url_old(url, timeout=60.0, chunk_size=16384):
     # FIXME: change this code
     req = urllib2.urlopen(url, timeout = timeout)
     filename = "/tmp/temp.txt"

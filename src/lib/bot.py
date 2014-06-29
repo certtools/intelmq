@@ -5,6 +5,7 @@ import ConfigParser
 from lib.pipeline import *
 from lib.utils import *
 from lib.cache import *
+from lib.event import *
 
 
 SYSTEM_CONF_FILE = "conf/system.conf"
@@ -112,6 +113,7 @@ class Bot(object):
 
 
     def send_message(self, message):
+        message = unicode(message)
         self.pipeline.send(message)
 
 
