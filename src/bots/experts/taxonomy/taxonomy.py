@@ -28,15 +28,15 @@ TAXONOMY = {
 class TaxonomyExpertBot(Bot):
     
     def process(self):
-        event = self.pipeline.receive()
+        event = self.receive_message()
         if event:
             
             type = event.value("type")
             taxonomy = TAXONOMY[type]
             event.add("taxonomy",taxonomy)
             
-            self.pipeline.send(event)
-        self.pipeline.acknowledge()
+            self.send_message(event)
+        self.acknowledge_message()
 
 if __name__ == "__main__":
     bot = TaxonomyExpertBot(sys.argv[1])

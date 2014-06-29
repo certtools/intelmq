@@ -7,7 +7,7 @@ from lib.cache import *
 class ArborHarmonizerBot(Bot):
 
     def process(self):
-        event = self.pipeline.receive()
+        event = self.receive_message()
 
         if event:
             event.add('feed', 'arbor')
@@ -17,8 +17,8 @@ class ArborHarmonizerBot(Bot):
                 event.add('reported ip', value)
             event.add('type', 'brute-force')
             
-            self.pipeline.send(event)
-        self.pipeline.acknowledge()
+            self.send_message(event)
+        self.acknowledge_message()
 
 
 if __name__ == "__main__":

@@ -102,6 +102,21 @@ class Bot(object):
         
         self.logger.error("Failed to load queues")
         self.exit()
+
+
+    def send_message(self, message):
+        self.pipeline.send(message)
+
+    def receive_message(self):
+        raw_message = self.pipeline.receive()
+        try:
+            message = Event.from_unicode(raw_message)
+        except:
+            message = raw_message
+        return message
+
+    def acknowledge_message(self):
+        self.pipeline.acknowledge()
             
 
     def start(self):

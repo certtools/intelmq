@@ -15,11 +15,11 @@ class MongoDBBot(Bot):
         
 
     def process(self):
-        event = self.pipeline.receive()
+        event = self.receive_message()
         
         if event:
             self.collection.insert(event.to_dict())
-        self.pipeline.acknowledge()
+        self.acknowledge_message()
 
 
 if __name__ == "__main__":

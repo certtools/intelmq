@@ -9,7 +9,7 @@ class CERTEUParserBot(Bot):
     
     def process(self):
         print 'Waiting for report'
-        report = self.pipeline.receive()
+        report = self.receive_message()
         print 'Got report: %r' % report
 
         if report:
@@ -25,8 +25,8 @@ class CERTEUParserBot(Bot):
                 for key, value in zip(columns, row):
                     event.add(key, value)
 
-                self.pipeline.send(event)
-            self.pipeline.acknowledge()
+                self.send_message(event)
+            self.acknowledge_message()
 
 
 if __name__ == "__main__":
