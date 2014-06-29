@@ -15,7 +15,7 @@ post_url = 'http://localhost:9200/indexname/document_type/'
 class ElasticSearchBot(Bot):
 
     def process(self):
-        event = self.pipeline.receive()
+        event = self.receive_message()
 
         if event:
             to_send = event
@@ -24,11 +24,11 @@ class ElasticSearchBot(Bot):
             finally:
                 response = post_url(post_url, to_send)
                 if response.getcode() >= 200 and response.getcode() < 300:
-                    self.pipeline.acknowledge()
+                    self.acknowledge_message()
                 else:
                     # TODO: print error or something like it
         else:
-            self.pipeline.acknowledge()
+            self.acknowledge_message()
 
 
 if __name__ == "__main__":

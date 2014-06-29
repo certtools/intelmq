@@ -16,20 +16,37 @@ class Bot(object):
 
     def __init__(self, bot_id):
         self.bot_id = bot_id
-        self.logger = self.get_logger()
+        self.logger = self.load_logger()
         self.logger.info('Bot is starting')
 
-        self.get_bot_configurations()
+        self.load_configurations()
 
-        src_queue, dest_queues = self.get_queues()
-        self.pipeline = self.get_pipeline(src_queue, dest_queues)
+        src_queue, dest_queues = self.load_queues()
+        self.pipeline = self.load_pipeline(src_queue, dest_queues)
 
         if self.parameters.cached:
             cache_db_index = 10 #FIXME
             self.cache = self.create_cache(cache_db_index, self.parameters.cache_ttl)
 
 
-    def get_bot_configurations(self):
+    def start(self):
+        self.logger.info('Bot start processing')
+
+        while True:
+            try:
+                self.process()
+                time.sleep(int(self.parameters.processing_interval))
+            except:
+                self.logger.error(traceback.format_exc())
+                self.exit()
+
+    
+    def exit(self): # FIXME: rename the method
+        self.logger.error("Bot found an error. Exiting")
+        exit(-1)
+
+
+    def load_configurations(self):
         self.parameters = Parameters()
         config = ConfigParser.ConfigParser()
         config.read(BOTS_CONF_FILE)
@@ -50,29 +67,19 @@ class Bot(object):
                 self.logger.debug("Parameter '%s' loaded with the value '%s'" % (option, config.get(self.bot_id, option)))
 
 
-    def get_logger(self):
+    def load_logger(self):
         config = ConfigParser.ConfigParser()
         config.read(SYSTEM_CONF_FILE)
         loglevel = config.get('Logging','level')
         return log(self.bot_id, loglevel)
 
 
-    def create_cache(self, cache_id, ttl):
-        config = ConfigParser.ConfigParser()
-        config.read(SYSTEM_CONF_FILE)
-
-        host = config.get('Redis', 'host')
-        port = int(config.get('Redis', 'port'))
-        self.logger.debug("Connecting to Redis cache '%s:%s'" % (host, port))
-        return Cache(host, port, cache_id, ttl)
-
-
-    def get_pipeline(self, src_queue, dest_queues):
+    def load_pipeline(self, src_queue, dest_queues):
         self.logger.debug("Connecting to pipeline queues")
         return Pipeline(src_queue, dest_queues)
 
 
-    def get_queues(self):
+    def load_queues(self):
         config = ConfigParser.ConfigParser()
         config.read(PIPELINE_CONF_FILE)
         self.logger.debug("Loading pipeline queues from '%s' file" % PIPELINE_CONF_FILE)
@@ -102,22 +109,34 @@ class Bot(object):
         
         self.logger.error("Failed to load queues")
         self.exit()
+
+
+    def send_message(self, message):
+        self.pipeline.send(message)
+
+
+    def receive_message(self):
+        raw_message = self.pipeline.receive()
+        try:
+            message = Event.from_unicode(raw_message)
+        except:
+            message = raw_message
+        return message
+
+
+    def acknowledge_message(self):
+        self.pipeline.acknowledge()
             
 
-    def start(self):
-        self.logger.info('Bot start processing')
+    def create_cache(self, cache_id, ttl):
+        config = ConfigParser.ConfigParser()
+        config.read(SYSTEM_CONF_FILE)
 
-        while True:
-            try:
-                self.process()
-                time.sleep(int(self.parameters.processing_interval))
-            except:
-                self.logger.error(traceback.format_exc())
-                self.exit()
-    
-    def exit(self):
-        self.logger.error("Bot found an error. Exiting")
-        exit(-1)
+        host = config.get('Redis', 'host')
+        port = int(config.get('Redis', 'port'))
+        self.logger.debug("Connecting to Redis cache '%s:%s'" % (host, port))
+        return Cache(host, port, cache_id, ttl)
+
 
 
 class Parameters(object):

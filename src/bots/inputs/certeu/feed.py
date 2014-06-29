@@ -36,7 +36,7 @@ class CERTEUFeedBot(Bot):
                         print "Report is: %s with %d" % (report, report.count('\n'))
                         if report:
                             self.logger.info('Push report to queue')
-                            self.pipeline.send(report)
+                            self.send_message(report)
                         else:
                             self.logger.info('Empty report')                        
                         

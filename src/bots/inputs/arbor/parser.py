@@ -7,7 +7,7 @@ from lib.cache import *
 class ArborParserBot(Bot):
 
     def process(self):
-        report = self.pipeline.receive()
+        report = self.receive_message()
 
         if report:
             for row in report.split('\n'):
@@ -23,9 +23,9 @@ class ArborParserBot(Bot):
                 for key, value in zip(columns, row):
                     event.add(key, value)
 
-                self.pipeline.send(event)
+                self.send_message(event)
 
-        self.pipeline.acknowledge()
+        self.acknowledge_message()
 
 
 if __name__ == "__main__":
