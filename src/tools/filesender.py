@@ -6,9 +6,7 @@ from lib.utils import force_decode
 
 file = open(sys.argv[1], 'r')
 
-queues = list()
-for queue in sys.argv[2].split(','):
-    queues.append(queue.strip())
+queues = sys.argv[2].split(','):
 
 pipeline = Pipeline(None, queues)
 
