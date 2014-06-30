@@ -25,9 +25,11 @@ class Bot(object):
         src_queue, dest_queues = self.load_queues()
         self.pipeline = self.load_pipeline(src_queue, dest_queues)
 
-        if self.parameters.cached:
-            cache_db_index = 10 #FIXME
-            self.cache = self.create_cache(cache_db_index, self.parameters.cache_ttl)
+        self.init()
+
+
+    def init(self):
+        pass
 
 
     def start(self):
@@ -39,10 +41,10 @@ class Bot(object):
                 time.sleep(int(self.parameters.processing_interval))
             except:
                 self.logger.error(traceback.format_exc())
-                self.exit()
+                self.stop()
 
     
-    def exit(self): # FIXME: rename the method
+    def stop(self):
         self.logger.error("Bot found an error. Exiting")
         exit(-1)
 
@@ -109,7 +111,7 @@ class Bot(object):
                     return [src_queue, dest_queues_list]
         
         self.logger.error("Failed to load queues")
-        self.exit()
+        self.stop()
 
 
     def send_message(self, message):
@@ -128,17 +130,6 @@ class Bot(object):
 
     def acknowledge_message(self):
         self.pipeline.acknowledge()
-            
-
-    def create_cache(self, cache_id, ttl):
-        config = ConfigParser.ConfigParser()
-        config.read(SYSTEM_CONF_FILE)
-
-        host = config.get('Redis', 'host')
-        port = int(config.get('Redis', 'port'))
-        self.logger.debug("Connecting to Redis cache '%s:%s'" % (host, port))
-        return Cache(host, port, cache_id, ttl)
-
 
 
 class Parameters(object):
