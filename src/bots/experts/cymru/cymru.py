@@ -2,12 +2,22 @@ import sys
 from lib.bot import *
 from lib.utils import *
 from lib.event import *
+from lib.cache import *
 from cymrulib import *
 
 MINIMUM_BGP_PREFIX_IPV4 = 24
 MINIMUM_BGP_PREFIX_IPV6 = 128 # FIXME
 
 class CymruExpertBot(Bot):
+    
+    def init(self):
+        self.cache = Cache(
+                            self.parameters.cache_host,
+                            self.parameters.cache_port,
+                            self.parameters.cache_id,
+                            self.parameters.cache_ttl
+                          )
+
     
     def process(self):
         event = self.receive_message()
