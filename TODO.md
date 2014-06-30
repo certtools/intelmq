@@ -23,11 +23,7 @@
 
 * Add in each expert a line to test if the augment keys already exists
 
-* ElasticSearch Output Bot
-
 * Create configuration option for logs folder (change in bot.py)
-    
-* Trash Queue when bot do not recognize the message and cant do nothing
 
 * Quality Control: perfomance tests, security configurations and queues snapshoting
     * Queue Durability / Persistente Messages (search for 'Queue Durability'): http://www.rabbitmq.com/tutorials/amqp-concepts.html
@@ -35,8 +31,6 @@
 * Write docs/eCSIRT-Taxonomy.md based on document from Don Stikvoort, named "Incident Class mkVint"
 
 * Documentation
-
-* Video Tutorial
 
 * **[DONE]** General Bots Configuration (bots access the parameters via self.parameters.parameter_name, name can be easily changed)
 
@@ -52,9 +46,13 @@
 
 ## Release 2 - TODO
 
+* ElasticSearch Output Bot
+
 * Evaluate how to initiallize bots from command-line: /etc/init.d/arbor-feed start ??? Or just with webinterface?
 
 * ContactDB Expert (Install ContactDB)
+
+* Trash Queue when bot do not recognize the message and cant do nothing
 
 * Create a management interface to give feed access to other people. Good example: HPFrieds/HPFeeds system.
 
@@ -65,6 +63,8 @@
 * Pipeline Management with Web Interface
 
 * Bots Management with Web Interface
+
+* Video Tutorial
  
 * Monitoring with Web Interface
 
