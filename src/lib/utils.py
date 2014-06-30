@@ -15,16 +15,6 @@ def fetch_url(url, timeout=60.0, chunk_size=16384):
     strio.close()
     return value
 
-def fetch_url_old(url, timeout=60.0, chunk_size=16384):
-    # FIXME: change this code
-    req = urllib2.urlopen(url, timeout = timeout)
-    filename = "/tmp/temp.txt"
-    with open(filename, 'wb') as fpw:
-        shutil.copyfileobj(req, fpw, chunk_size)
-    fpw.close()
-    fpr = open(filename, 'r')
-    return fpr.read()
-
 
 def fetch_imap():
     '''__placeholder'''
@@ -52,11 +42,11 @@ def force_decode(string, encodings=["ascii", "utf-8"]):
     return string.decode("latin-1", "replace")
 
 
-def log(name, loglevel="DEBUG"):
+def log(logs_path, name, loglevel="DEBUG"):
     logger = logging.getLogger(name)
     logger.setLevel(loglevel)
     
-    handler = logging.FileHandler("log/%s.log" % name)
+    handler = logging.FileHandler("%s/%s.log" % (logs_path, name))
     handler.setLevel(loglevel)
     
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
