@@ -44,7 +44,7 @@ class Bot(object):
                 self.stop()
 
     
-    def stop(self): # FIXME: rename the method
+    def stop(self):
         self.logger.error("Bot found an error. Exiting")
         exit(-1)
 
