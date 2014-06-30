@@ -25,17 +25,6 @@
 
 * Add in each expert a line to test if the augment keys already exists
 
-* **[ALMOST]** MailBox
-    * split by specific keys
-    * template(subject/message) configurable with variables
-    * use 'abuse contact' field to ge the email to send ('abuse contact' was filled by ContactDB)
-    * STIX Format
-    * IODEF Format
-    * CSV Format
-    * Events that MailBox will send must be stored in a specific Database to get again all events if mailer crash or wtv
-    * In the end MailBox must send a summary of sent reports
-    * RTIR Output Bot
-
 * ElasticSearch Output Bot
 
 * Create configuration option for logs folder (check bot.py)
