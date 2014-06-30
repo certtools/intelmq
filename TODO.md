@@ -6,8 +6,6 @@
 
 * Create bots for all feeds that are not available in AbuseHelper
 
-* Add in each expert a line to test if the augment keys already exists
-
 * Quality Control: perfomance tests, security configurations and queues snapshoting
     * Queue Durability / Persistente Messages (search for 'Queue Durability'): http://www.rabbitmq.com/tutorials/amqp-concepts.html
 
@@ -32,6 +30,8 @@
 * **[DONE]** Remove all self.parameters from bot.py
 
 * **[DONE]** Create configuration option for logs folder (change in bot.py)
+
+* **[DONE]** Add in each expert a line to test if the augment keys already exists
 
 ## Release 2 - TODO
 
