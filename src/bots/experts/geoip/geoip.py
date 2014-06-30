@@ -19,12 +19,22 @@ class GeoIPExpertBot(Bot):
         event = self.receive_message()
         if event:
             ip = event.value("ip")
-            ip_cc = self.database.city(ip)
-            event.add("geoip cc", ip_cc.country.iso_code)
-            event.add("latitude",  str(ip_cc.location.latitude))
-            event.add("longitude", str(ip_cc.location.longitude))
-            if ip_cc.city.name:
-                event.add("city", ip_cc.city.name)
+            if ip:
+                event.clear("geoip cc")
+                event.clear("city")
+                event.clear("longitude")
+                event.clear("latitude")
+
+                info = self.database.city(ip)
+
+                if info.country.iso_code:
+                    event.add("geoip cc", info.country.iso_code)
+                if info.location.latitude:
+                    event.add("latitude",  str(info.location.latitude))
+                if info.location.longitude:
+                    event.add("longitude", str(info.location.longitude))
+                if info.city.name:
+                    event.add("city", info.city.name)
             
             self.send_message(event)
         self.acknowledge_message()
