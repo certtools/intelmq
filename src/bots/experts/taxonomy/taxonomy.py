@@ -30,7 +30,7 @@ class TaxonomyExpertBot(Bot):
     def process(self):
         event = self.receive_message()
         if event:
-            if not event.contains("taxonomy"):
+            if not event.contains("taxonomy") and event.contains("type"):
                 type = event.value("type")
                 taxonomy = TAXONOMY[type]
                 event.add("taxonomy",taxonomy)
