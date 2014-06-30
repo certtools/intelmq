@@ -21,9 +21,14 @@ IntelMQ is a solution for CERTs to process data feeds, pastebins, tweets through
 * Redis as memcache for bots
 
 
-### Architecture
+### System Architecture
 
-![Architecture](http://i58.tinypic.com/n395bo.jpg)
+![System Architecture](http://i58.tinypic.com/n395bo.jpg)
+
+
+### Code Architecture
+
+![Code Architecture](http://s28.postimg.org/uwzthgqrx/intelmq_arch.png)
 
 
 ### System Details
