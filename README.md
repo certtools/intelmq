@@ -39,7 +39,7 @@ IntelMQ is a solution for CERTs to process data feeds, pastebins, tweets through
 * RabbitMQ Queues: ... details ...
 
 
-## Bots
+## Bots Available
 
 ### Input Bots
 * [MalwareDomainList](https://github.com/certtools/intelmq/tree/master/src/bots/inputs/malwaredomainlist)
