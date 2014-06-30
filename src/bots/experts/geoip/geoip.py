@@ -14,7 +14,7 @@ class GeoIPExpertBot(Bot):
         except IOError:
             self.logger.error("GeoIP Database does not exist or could not be accessed in '%s'" % self.parameters.database)
             self.logger.error("Read 'bots/experts/geoip/README' and follow the procedure")
-            self.exit()
+            self.stop()
     
     def process(self):
         event = self.receive_message()

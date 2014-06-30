@@ -11,7 +11,7 @@ import redis
 class Cache():
     def __init__(self, host, port, db, ttl):
         self.redis = redis.Redis(host = host,
-                                 port = port,
+                                 port = int(port),
                                  db = db,
                                  socket_timeout = 5)
         
