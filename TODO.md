@@ -21,13 +21,11 @@
 ..files...
 ```
 
-* Write Bot Architecture (event, cache, utils relations etc...)
-
 * Add in each expert a line to test if the augment keys already exists
 
 * ElasticSearch Output Bot
 
-* Create configuration option for logs folder (check bot.py)
+* Create configuration option for logs folder (change in bot.py)
     
 * Trash Queue when bot do not recognize the message and cant do nothing
 
@@ -50,6 +48,7 @@
 
 * **[DONE]** Support multiple destination queues for each bot
 
+* **[DONE]** Write Bot Architecture (event, cache, utils relations etc...)
 
 ## Release 2 - TODO
 
