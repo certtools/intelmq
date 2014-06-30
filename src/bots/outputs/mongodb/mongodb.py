@@ -7,8 +7,7 @@ from lib.cache import *
 
 class MongoDBBot(Bot):
 
-    def __init__(self, bot_id):
-        super(MongoDBBot, self).__init__(bot_id)
+    def init(self):
         client = pymongo.MongoClient(self.parameters.host, int(self.parameters.port))
         db = client[self.parameters.database]
         self.collection = db[self.parameters.collection]
