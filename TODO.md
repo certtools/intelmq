@@ -4,10 +4,6 @@
 
 * Check encoding/decoding problems (ex: malwaredomainlist bot)
 
-* Remove Cache initiallization from bot.py. Create a 'init' method to all class that ineherit from bot.py.
-
-* Remove all self.parameters from bot.py
-
 * Create bots for all feeds that are not available in AbuseHelper
 
 * Add in each expert a line to test if the augment keys already exists
@@ -32,6 +28,10 @@
 * **[DONE]** Support multiple destination queues for each bot
 
 * **[DONE]** Write Bot Architecture (event, cache, utils relations etc...)
+
+* **[DONE]** Remove Cache initiallization from bot.py. Create a 'init' method to all class that ineherit from bot.py.
+
+* **[DONE]** Remove all self.parameters from bot.py
 
 ## Release 2 - TODO
 
