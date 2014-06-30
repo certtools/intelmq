@@ -5,11 +5,16 @@ from lib.event import *
 from lib.cache import *
 import traceback
 
-''' Deduplicato
-    System check if it already saw a specific message using Redias as memcache
-'''
-
 class DeduplicatorBot(Bot):
+    
+    def init(self):
+        self.cache = Cache(
+                            self.parameters.cache_host,
+                            self.parameters.cache_port,
+                            self.parameters.cache_id,
+                            self.parameters.cache_ttl
+                          )
+
 
     def process(self):
         message = self.receive_message()
