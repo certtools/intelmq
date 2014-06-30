@@ -11,12 +11,13 @@ from lib.event import *
 SYSTEM_CONF_FILE = "conf/system.conf"
 PIPELINE_CONF_FILE = "conf/pipeline.conf"
 BOTS_CONF_FILE = "conf/bots.conf"
-
+LOGS_PATH = "logs/"
 
 class Bot(object):
 
     def __init__(self, bot_id):
         self.bot_id = bot_id
+
         self.logger = self.load_logger()
         self.logger.info('Bot is starting')
 
@@ -74,7 +75,7 @@ class Bot(object):
         config = ConfigParser.ConfigParser()
         config.read(SYSTEM_CONF_FILE)
         loglevel = config.get('Logging','level')
-        return log(self.bot_id, loglevel)
+        return log(LOGS_PATH, self.bot_id, loglevel)
 
 
     def load_pipeline(self, src_queue, dest_queues):
