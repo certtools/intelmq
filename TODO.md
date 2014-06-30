@@ -10,17 +10,6 @@
 
 * Create bots for all feeds that are not available in AbuseHelper
 
-* Restruct repository and may be create python packages:
-```
-/src
-  /intellib  -> /usr/local/lib/python.....
-  /intelmq   -> /opt/
-     /bots
-     /confs
-/docs
-..files...
-```
-
 * Add in each expert a line to test if the augment keys already exists
 
 * Create configuration option for logs folder (change in bot.py)
@@ -45,6 +34,17 @@
 * **[DONE]** Write Bot Architecture (event, cache, utils relations etc...)
 
 ## Release 2 - TODO
+
+* Restruct repository and may be create python packages:
+```
+/src
+  /intellib  -> /usr/local/lib/python.....
+  /intelmq   -> /opt/
+     /bots
+     /confs
+/docs
+..files...
+```
 
 * ElasticSearch Output Bot
 
