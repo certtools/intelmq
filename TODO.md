@@ -8,8 +8,6 @@
 
 * Add in each expert a line to test if the augment keys already exists
 
-* Create configuration option for logs folder (change in bot.py)
-
 * Quality Control: perfomance tests, security configurations and queues snapshoting
     * Queue Durability / Persistente Messages (search for 'Queue Durability'): http://www.rabbitmq.com/tutorials/amqp-concepts.html
 
@@ -32,6 +30,8 @@
 * **[DONE]** Remove Cache initiallization from bot.py. Create a 'init' method to all class that ineherit from bot.py.
 
 * **[DONE]** Remove all self.parameters from bot.py
+
+* **[DONE]** Create configuration option for logs folder (change in bot.py)
 
 ## Release 2 - TODO
 
