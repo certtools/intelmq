@@ -6,7 +6,7 @@ apt-get install redis-server rabbitmq-server python-dateutil python-pip git
 pip install geoip2 dnspython pika==0.9.13 redis pymongo
 ```
 
-## Install IntelMQ
+## Install IntelMQ (need review)
 
 ```
 useradd -m -d /opt/intelmq -s /bin/bash -U intelmq
@@ -35,7 +35,7 @@ Before start running all bots, user should know the system details that will hel
 
 ```
 [Pipeline]
-< bot_id >  =  < source queue > | < destination queue >
+< bot_id >  =  < source queue > | < destination queues >
 ```
 
 **Example:**
@@ -91,13 +91,14 @@ su - intelmq -c "python -m bots.inputs.arbor.feed arbor-feed"
 ## Run Botnet Example
 
 ```
-su - intelmq -c "bash src/run-botnet-example.sh"
+su - intelmq -c "bash src/tools/run-botnet-example.sh"
 ```
 
 # How to write bots
 
-<description>
-
+...description..
+**Notes**
+...Explain self.parameters from bots.conf...
 
 ## Template
 
@@ -113,17 +114,17 @@ class ExampleBot(Bot):
     def process(self):
         
         # get message from source queue in pipeline
-                message = self.pipeline.receive()
+        message = self.receive_message()
 
         # ------
         # process message
         # ------
                 
-                # send message to destination queue in pipeline
-                self.pipeline.send(new_message)
+        # send message to destination queue in pipeline
+        self.send_message(new_message)
 
-                # acknowledge message received to source queue in pipeline
-        self.pipeline.acknowledge()
+        # acknowledge message received to source queue in pipeline
+        self.acknowledge_message()
 
 if __name__ == "__main__":
     bot = ExampleBot(sys.argv[1])
