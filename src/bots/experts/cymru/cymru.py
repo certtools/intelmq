@@ -41,7 +41,7 @@ class CymruExpertBot(Bot):
                         
                     asn, bgp, cc, registry, allocated, as_name = Cymru.parse(query_result)
 
-                    event.clean('cymru asn')
+                    event.clear('cymru asn')
                     event.clear('cymru bgp prefix')
                     event.clear('cymru cc')
                     event.clear('cymru registry')
