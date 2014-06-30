@@ -2,6 +2,27 @@
 
 (sorted by priority)
 
+* Check encoding/decoding problems (ex: malwaredomainlist bot)
+
+* Remove Cache initiallization from bot.py. Create a 'init' method to all class that ineherit from bot.py.
+
+* Remove all self.parameters from bot.py
+
+* Create bots for all feeds that are not available in AbuseHelper
+
+* Restruct repository and may be create python packages:
+```
+/src
+  /intellib  -> /usr/local/lib/python.....
+  /intelmq   -> /opt/
+     /bots
+     /confs
+/docs
+..files...
+```
+
+* Write Bot Architecture (event, cache, utils relations etc...)
+
 * Add in each expert a line to test if the augment keys already exists
 
 * **[ALMOST]** MailBox
@@ -42,6 +63,8 @@
 
 
 ## Release 2 - TODO
+
+* Evaluate how to initiallize bots from command-line: /etc/init.d/arbor-feed start ??? Or just with webinterface?
 
 * ContactDB Expert (Install ContactDB)
 
