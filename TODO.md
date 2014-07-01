@@ -2,7 +2,7 @@
 
 (sorted by priority)
 
-* Create bots for all feeds that are not available in AbuseHelper
+* Create bots for all feeds that are not available in AbuseHelper (n6, INTECO, CERT-EU)
 
 * Quality Control: perfomance tests, security configurations and queues snapshoting
     * Queue Durability / Persistente Messages (search for 'Queue Durability'): http://www.rabbitmq.com/tutorials/amqp-concepts.html
