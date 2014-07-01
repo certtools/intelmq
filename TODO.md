@@ -2,8 +2,6 @@
 
 (sorted by priority)
 
-* Check encoding/decoding problems (ex: malwaredomainlist bot)
-
 * Create bots for all feeds that are not available in AbuseHelper
 
 * Quality Control: perfomance tests, security configurations and queues snapshoting
@@ -34,6 +32,8 @@
 * **[DONE]** Add in each expert a line to test if the augment keys already exists
 
 ## Release 2 - TODO
+
+* Improve encoding/decoding
 
 * Restruct repository and may be create python packages:
 ```
