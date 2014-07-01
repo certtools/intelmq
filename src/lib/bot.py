@@ -116,7 +116,10 @@ class Bot(object):
 
 
     def send_message(self, message):
-        message = unicode(message)
+        try:
+            message = unicode(message)
+        except:
+            message = force_decode(message)
         self.pipeline.send(message)
 
 
