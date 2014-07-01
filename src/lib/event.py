@@ -245,54 +245,18 @@ class Event(object):
                 result[key] = diff
         return type(self)(result)
 
-    def add(self, key, value, *values):
-        """Add value(s) for a key.
 
-        >>> event = Event()
-        >>> event.add("key", "1")
-        >>> event.values("key")
-        (u'1',)
+    def add(self, key, value): # add force option to overwrite the existing value
+        if value:
+            self.update(key, value)
 
-        More than one value can be added with one call.
 
-        >>> event = Event()
-        >>> event.add("key", "1", "2")
-        >>> sorted(event.values("key"))
-        [u'1', u'2']
-
-        Key-value pairs is already contained by the event are ignored.
-
-        >>> event = Event()
-        >>> event.add("key", "1")
-        >>> event.values("key")
-        (u'1',)
-        >>> event.add("key", "1")
-        >>> event.values("key")
-        (u'1',)
-        """
-        if value or values:
-            self.update(key, (value,) + values)
-
-    def update(self, key, values):
-        """Update the values of a key.
-
-        >>> event = Event()
-        >>> event.update("key", ["1", "2"])
-        >>> sorted(event.values("key"))
-        [u'1', u'2']
-
-        The event will not be modified if there are no values to add.
-
-        >>> event = Event()
-        >>> event.update("key", [])
-        >>> event.contains("key")
-        False
-        """
-
+    def update(self, key, value):
         key = _normalize(key)
         if key not in self._attrs:
             self._attrs[key] = set()
-        self._attrs[key].update(_normalize(value) for value in values)
+        self._attrs[key].update([_normalize(value)])
+
 
     def discard(self, key, value, *values):
         """Discard some value(s) of a key.
@@ -363,7 +327,7 @@ class Event(object):
 
         return values
 
-    def values(self, key=_UNDEFINED, parser=None, filter=None):
+    #def values(self, key=_UNDEFINED, parser=None, filter=None):
         """Return a tuple of event values (for a specific key, if
         given).
 
@@ -390,10 +354,10 @@ class Event(object):
         ['1.2.3.4', '10.10.10.10']
         """
 
-        if not self.contains(key):
-            return []
-
-        return tuple(self._iter(key, parser, filter))
+     #   if not self.contains(key):
+     #       return []
+     #
+     #   return tuple(self._iter(key, parser, filter))
 
     def value(self, key=_UNDEFINED, default=_UNDEFINED,
               parser=None, filter=None):
