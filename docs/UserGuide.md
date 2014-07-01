@@ -8,10 +8,9 @@ apt-get install redis-server rabbitmq-server python-dateutil python-pip git
 pip install geoip2 dnspython pika==0.9.13 redis pymongo
 ```
 
-### CentOS 6-based
+### RedHat-based
 ```
-wget http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
-rpm -Uvh epel-release-6-8.noarch.rpm
+# Note: install epel repository
 
 yum install git redis rabbitmq-server python-dateutil python-pip
 pip install geoip2 dnspython pika==0.9.13 redis pymongo
