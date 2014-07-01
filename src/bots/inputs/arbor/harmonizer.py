@@ -12,9 +12,9 @@ class ArborHarmonizerBot(Bot):
         if event:
             event.add('feed', 'arbor')
             event.add('feed url', 'http://atlas-public.ec2.arbor.net/public/ssh_attackers')
-            for value in event.values('ip'):
-                event.add('source ip', value)
-                event.add('reported ip', value)
+            ip_value = event.value('ip')
+            event.add('source ip', ip_value)
+            event.add('reported ip', ip_value)
             event.add('type', 'brute-force')
             
             self.send_message(event)
