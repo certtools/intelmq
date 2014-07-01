@@ -30,18 +30,6 @@ def hashgen(data, func=hashlib.sha1):
     return result.hexdigest()
 
 
-def force_decode(string, encodings=["ascii", "utf-8"]):
-    if isinstance(string, unicode):
-        return string
-
-    for encoding in encodings:
-        try:
-            return string.decode(encoding)
-        except ValueError:
-            pass
-    return string.decode("latin-1", "replace")
-
-
 def log(logs_path, name, loglevel="DEBUG"):
     logger = logging.getLogger(name)
     logger.setLevel(loglevel)
@@ -82,3 +70,17 @@ def reverse_ip(ip):
     if not reverse:
         reverse = result.split('.ip6.arpa.')
     return reverse[0]
+
+
+# FIXME: improve this method
+def force_decode(string, encodings=["ascii", "utf-8"]):
+    if isinstance(string, unicode):
+        return string
+
+    for encoding in encodings:
+        try:
+            return string.decode(encoding)
+        except ValueError:
+            pass
+
+    return string.decode('ascii','ignore') 
