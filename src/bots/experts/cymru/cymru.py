@@ -31,39 +31,41 @@ class CymruExpertBot(Bot):
             self.acknowledge_message()
             return
             
-        for ip in event.values("ip"):
-            
-            ip, ip_version, ip_integer = is_ip(ip)
-            
-            if ip:
-                if ip_version == 4:
-                    cache_key = bin(ip_integer)[2 : MINIMUM_BGP_PREFIX_IPV4 + 2]
-                else:
-                    cache_key = bin(ip_integer)[2 : MINIMUM_BGP_PREFIX_IPV6 + 2]
-                
-                query_result = self.cache.get(cache_key)
-                
-                if not query_result:
-                    query_result = Cymru.query(ip, ip_version)
-                    self.cache.set(cache_key, query_result)
-                    
-                asn, bgp, cc, registry, allocated, as_name = Cymru.parse(query_result)
+        ip, ip_version, ip_integer = is_ip(event.value("ip"))
 
-                event.clear('cymru asn')
-                event.clear('cymru bgp prefix')
-                event.clear('cymru cc')
-                event.clear('cymru registry')
-                event.clear('cymru allocated')
-                event.clear('cymru as name')
-
-                event.add('cymru asn', asn)
-                event.add('cymru bgp prefix', bgp)
-                event.add('cymru cc', cc)
-                event.add('cymru registry', registry)
-                event.add('cymru allocated', allocated)
-                event.add('cymru as name', as_name)
-
+        if not ip:
             self.send_message(event)
+            self.acknowledge_message()
+            return
+        
+        if ip_version == 4:
+            cache_key = bin(ip_integer)[2 : MINIMUM_BGP_PREFIX_IPV4 + 2]
+        else:
+            cache_key = bin(ip_integer)[2 : MINIMUM_BGP_PREFIX_IPV6 + 2]
+        
+        query_result = self.cache.get(cache_key)
+        
+        if not query_result:
+            query_result = Cymru.query(ip, ip_version)
+            self.cache.set(cache_key, query_result)
+            
+        asn, bgp, cc, registry, allocated, as_name = Cymru.parse(query_result)
+
+        event.clear('cymru asn')
+        event.clear('cymru bgp prefix')
+        event.clear('cymru cc')
+        event.clear('cymru registry')
+        event.clear('cymru allocated')
+        event.clear('cymru as name')
+
+        event.add('cymru asn', asn)
+        event.add('cymru bgp prefix', bgp)
+        event.add('cymru cc', cc)
+        event.add('cymru registry', registry)
+        event.add('cymru allocated', allocated)
+        event.add('cymru as name', as_name)
+
+        self.send_message(event)
         self.acknowledge_message()
         
 if __name__ == "__main__":
