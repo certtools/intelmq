@@ -48,7 +48,7 @@ class CymruExpertBot(Bot):
         if not query_result:
             query_result = Cymru.query(ip, ip_version)
             self.cache.set(cache_key, query_result)
-            
+        
         asn, bgp, cc, registry, allocated, as_name = Cymru.parse(query_result)
 
         event.clear('cymru asn')

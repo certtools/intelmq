@@ -52,7 +52,11 @@ class Cymru():
         for item in text.split('|'):
             item = item.replace('"','')
             item = item.strip()
-            result.append(item)
+            
+            if item == "-" or item == "":
+                result.append(None)
+            else:
+                result.append(item)
 
         if type == "ip":
             return result    # [ asn, bgp, cc, registry, allocated ]
