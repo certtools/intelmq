@@ -11,10 +11,10 @@ class VXVaultHarmonizerBot(Bot):
         
         if event:
             event.add('feed', 'vxvault')
-            event.add('feed url', 'http://vxvault.siri-urz.net/URL_List.php')
+            event.add('feed_url', 'http://vxvault.siri-urz.net/URL_List.php')
             ip_value = event.value('ip')
-            event.add('source ip', ip_value)
-            event.add('reported ip', ip_value)
+            event.add('source_ip', ip_value)
+            event.add('reported_ip', ip_value)
             event.add('type', 'malware')
 
             self.send_message(event)
