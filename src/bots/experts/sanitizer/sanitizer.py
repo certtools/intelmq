@@ -18,21 +18,21 @@ class SanitizerBot(Bot):
             #for event in events:
             
             event = sanitize_ip(event,
-                ("ip", "domain name"),
-                ("source ip", "source domain name"),
-                ("destination ip", "destination domain name"),
-                ("local ip", "local hostname")
+                ("ip", "domain_name"),
+                ("source_ip", "source_domain_name"),
+                ("destination_ip", "destination_domain_name"),
+                ("local_ip", "local_hostname")
             )
 
             event = sanitize_domain_name(event,
-                ("domain name", "ip"),
-                ("source domain name", "source ip"),
-                ("destination domain name", "destination ip"),
-                ("local hostname", "local ip")
+                ("domain_name", "ip"),
+                ("source_domain_name", "source_ip"),
+                ("destination_domain_name", "destination_ip"),
+                ("local_hostname", "local_ip")
             )
             
-            event = sanitize_time(event, "source time")
-            event = sanitize_time(event, "observation time")
+            event = sanitize_time(event, "source_time")
+            event = sanitize_time(event, "observation_time")
 
             self.send_message(event)
         self.acknowledge_message()

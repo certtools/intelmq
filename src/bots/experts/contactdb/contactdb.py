@@ -27,7 +27,7 @@ class ContactDBExpertBot(Bot):
                 result = self.get_cache_result(ip)
                 self.cache.set(binstr_ip, result)
             
-            event.add("contactdb entity", result['entity']['name'])
+            event.add("contactdb_entity", result['entity']['name'])
             
             self.send_message(event)
         self.acknowledge_message()

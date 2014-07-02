@@ -18,7 +18,7 @@ class LogCollectorBot(Bot):
         if event:
             data = ''
             for key, value in event.items():
-                data += key.replace(' ','_') + '=' + json.dumps(value) + ' '
+                data += key.replace(' ','_') + '=' + json.dumps(value) + ' ' # FIXME: remove this line. dont need this anymore
             data += "\n"
 
             self.send_data(data)

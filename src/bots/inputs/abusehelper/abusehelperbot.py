@@ -16,8 +16,14 @@ class AbuseHelperBot(Bot):
     def handle_message(self, xmpp_connection, message):
         try:
             event = Event.from_unicode(unicode(message.getBody()))
+            
+            for key in event.keys():
+                value = event.value(key)
+                event.clear(key)
+                key = key.replace(' ','_')
+                event.add(key, value)
+
             self.send_message(event)
-            print event
         except:
             pass
 
