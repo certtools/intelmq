@@ -5,7 +5,7 @@
 ### Debian-based
 ```
 apt-get install redis-server rabbitmq-server python-dateutil python-pip git
-pip install geoip2 dnspython pika==0.9.13 redis pymongo
+pip install geoip2 dnspython pika==0.9.13 redis pymongo xmpppy
 ```
 
 ### RedHat-based
@@ -13,7 +13,7 @@ pip install geoip2 dnspython pika==0.9.13 redis pymongo
 # Note: install epel repository
 
 yum install git redis rabbitmq-server python-dateutil python-pip
-pip install geoip2 dnspython pika==0.9.13 redis pymongo
+pip install geoip2 dnspython pika==0.9.13 redis pymongo xmpppy
 ```
 
 ## Install IntelMQ (need review)
