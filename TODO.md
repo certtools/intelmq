@@ -35,6 +35,8 @@
 
 * Improve encoding/decoding
 
+* Remove old queues depending of load configuration
+
 * Restruct repository and may be create python packages:
 ```
 /src
