@@ -4,6 +4,8 @@
 
 * Create bots for all feeds that are not available in AbuseHelper (n6, INTECO, CERT-EU)
 
+* Remove "observation time" for event in deduplicator bot
+
 * Quality Control: perfomance tests, security configurations and queues snapshoting
     * Queue Durability / Persistente Messages (search for 'Queue Durability'): http://www.rabbitmq.com/tutorials/amqp-concepts.html
 
