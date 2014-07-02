@@ -35,7 +35,7 @@
 
 * Improve encoding/decoding
 
-* Add 'requirements.txt' -> pip install -r requirements.txt
+* Add 'requirements.txt' with fixed version numbers for each package -> pip install -r requirements.txt
 
 * Remove old queues depending of load configuration
 
