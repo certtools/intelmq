@@ -11,10 +11,10 @@ class ArborHarmonizerBot(Bot):
 
         if event:
             event.add('feed', 'arbor')
-            event.add('feed url', 'http://atlas-public.ec2.arbor.net/public/ssh_attackers')
+            event.add('feed_url', 'http://atlas-public.ec2.arbor.net/public/ssh_attackers')
             ip_value = event.value('ip')
-            event.add('source ip', ip_value)
-            event.add('reported ip', ip_value)
+            event.add('source_ip', ip_value)
+            event.add('reported_ip', ip_value)
             event.add('type', 'brute-force')
             
             self.send_message(event)

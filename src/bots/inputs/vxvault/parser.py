@@ -29,7 +29,7 @@ class VXVaultParserBot(Bot):
 
                 event = Event()
                 event.add("url", url)
-                event.add("domain name", hostname)
+                event.add("domain_name", hostname)
                 if port:
                     event.add("port", str(port))
 
