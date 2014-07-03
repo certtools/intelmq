@@ -53,10 +53,7 @@ class Cymru():
             item = item.replace('"','')
             item = item.strip()
             
-            if item == "-" or item == "":
-                result.append(None)
-            else:
-                result.append(item)
+            result.append(item)
 
         if type == "ip":
             return result    # [ asn, bgp, cc, registry, allocated ]
