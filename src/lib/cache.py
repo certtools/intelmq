@@ -28,3 +28,12 @@ class Cache():
         # backward compatibility (Redis v2.2)
         self.redis.setnx(key, value)
         self.redis.expire(key, self.ttl)
+
+    def atomic_flush_and_set(self, dictionary):
+        pipeline = self.redis.pipeline(transaction=True)
+        pipeline.flushdb()
+        for (key,value) in dictionary.items():
+            pipeline.setnx(key, value)
+            pipeline.expire(key, self.ttl)
+
+        return pipeline.execute()
