@@ -15,8 +15,9 @@ pip install -r /opt/intelmq/requirements.txt
 
 ### RedHat-based
 
-**Note:** install epel repository (FIXME: check if really need EPEL)
+**Note:** Install EPEL Repository
 ```
+apt-get install redis rabbitmq-server
 yum install centos-release-SCL
 yum install redis rabbitmq-server python27.x86_64
 scl enable python27 bash
