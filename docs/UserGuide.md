@@ -1,19 +1,27 @@
 # Installation
 
+## Clone Repository
+```
+git clone https://github.com/certtools/intelmq.git /opt/intelmq
+```
+
 ## Install Dependencies
 
 ### Debian-based
 ```
-apt-get install redis-server rabbitmq-server python-dateutil python-pip git
-pip install geoip2 dnspython pika==0.9.13 redis pymongo xmpppy
+apt-get install git redis-server rabbitmq-server
+pip install -r requirements.txt
 ```
 
 ### RedHat-based
-```
-# Note: install epel repository
 
-yum install git redis rabbitmq-server python-dateutil python-pip
-pip install geoip2 dnspython pika==0.9.13 redis pymongo xmpppy
+**Note:** install epel repository (FIXME: check if really need EPEL)
+```
+yum install centos-release-SCL
+yum install git redis rabbitmq-server python27.x86_64
+scl enable python27 bash
+easy_install pip
+pip2.7 install -r intelmq/requirements.txt
 ```
 
 ## Install IntelMQ (need review)
