@@ -9,7 +9,7 @@ git clone https://github.com/certtools/intelmq.git /opt/intelmq
 
 ### Debian-based
 ```
-apt-get install git redis-server rabbitmq-server
+apt-get install redis-server rabbitmq-server
 pip install -r /opt/intelmq/requirements.txt
 ```
 
@@ -18,7 +18,7 @@ pip install -r /opt/intelmq/requirements.txt
 **Note:** install epel repository (FIXME: check if really need EPEL)
 ```
 yum install centos-release-SCL
-yum install git redis rabbitmq-server python27.x86_64
+yum install redis rabbitmq-server python27.x86_64
 scl enable python27 bash
 easy_install pip
 pip2.7 install -r /opt/intelmq/requirements.txt
