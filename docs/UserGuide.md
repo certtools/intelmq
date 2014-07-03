@@ -17,27 +17,12 @@ pip install -r /opt/intelmq/requirements.txt
 
 **Note:** Install EPEL Repository
 ```
-apt-get install redis rabbitmq-server
 yum install centos-release-SCL
-yum install redis rabbitmq-server python27.x86_64
+yum install redis rabbitmq-server python27
 scl enable python27 bash
 easy_install pip
 pip2.7 install -r /opt/intelmq/requirements.txt
-```
-
-## Install IntelMQ (need review)
-
-```
-useradd -m -d /opt/intelmq -s /bin/bash -U intelmq
-passwd intelmq
-git clone https://github.com/certtools/intelmq.git /opt/intelmq
-chown -R intelmq.intelmq /opt/intelmq/*
-chmod -R 755 /opt/intelmq/*
-```
-
-### Additional detail for RedHat-based
-```
-echo "scl enable python27 bash" >> /opt/intelmq/.bash_profile
+echo "scl enable python27 bash" >> /opt/intelmq/.bashrc
 ```
 
 # How it Works
