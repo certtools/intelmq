@@ -10,7 +10,7 @@ git clone https://github.com/certtools/intelmq.git /opt/intelmq
 ### Debian-based
 ```
 apt-get install git redis-server rabbitmq-server
-pip install -r requirements.txt
+pip install -r /opt/intelmq/requirements.txt
 ```
 
 ### RedHat-based
@@ -21,7 +21,7 @@ yum install centos-release-SCL
 yum install git redis rabbitmq-server python27.x86_64
 scl enable python27 bash
 easy_install pip
-pip2.7 install -r intelmq/requirements.txt
+pip2.7 install -r /opt/intelmq/requirements.txt
 ```
 
 ## Install IntelMQ (need review)
