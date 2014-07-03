@@ -33,7 +33,10 @@ passwd intelmq
 git clone https://github.com/certtools/intelmq.git /opt/intelmq
 chown -R intelmq.intelmq /opt/intelmq/*
 chmod -R 755 /opt/intelmq/*
-echo "export PYTHONPATH=\$PYTHONPATH:/opt/intelmq/src/" >> /opt/intelmq/.bash_profile
+```
+
+### Additional detail for RedHat-based
+```
 echo "scl enable python27 bash" >> /opt/intelmq/.bash_profile
 ```
 
