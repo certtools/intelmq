@@ -137,15 +137,15 @@ bash tools/run-botnet-example.sh
 ```
 
 
-# Utils
+## Utils
 
-## Monitoring IntelMQ
+### Monitoring IntelMQ
 
 ```
 watch -n 0.5 rabbitmqctl list_queues
 ```
 
-## Reset Queues
+### Reset Queues
 
 ```
 rabbitmqctl stop_app
@@ -153,7 +153,7 @@ rabbitmqctl reset
 rabbitmqctl start_app
 ```
 
-## Reset Cache
+### Reset Cache
 ```
 redis-cli FLUSHDB
 redis-cli FLUSHALL
@@ -162,14 +162,14 @@ redis-cli FLUSHALL
 
 
 
-# How to write bots
+## How to write bots
 
 ... text ...
 
 **Notes**
 ...Explain self.parameters from bots.conf...
 
-## Template
+### Template
 
 ```
 import sys
@@ -200,6 +200,6 @@ if __name__ == "__main__":
     bot.start()
 ```
 
-## Example
+### Example
 
 <description>
