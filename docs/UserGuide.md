@@ -3,6 +3,9 @@
 ### Clone Repository
 ```
 git clone https://github.com/certtools/intelmq.git /opt/intelmq
+mv /opt/intelmq/src/conf/bots.conf.default /opt/intelmq/src/conf/bots.conf
+mv /opt/intelmq/src/conf/pipeline.conf.default /opt/intelmq/src/conf/pipeline.conf
+mv /opt/intelmq/src/conf/system.conf.default /opt/intelmq/src/conf/system.conf
 ```
 
 ## Install Dependencies
@@ -38,6 +41,9 @@ chkconfig --level 345 redis on
 service redis start/stop/restart
 
 ```
+
+
+### Change Configuration
 
 ## How it Works
 
