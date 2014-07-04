@@ -27,46 +27,48 @@ echo "scl enable python27 bash" >> /opt/intelmq/.bashrc
 
 # How it Works
 
-## System Details
+### System Details
 Before start running all bots, user should know the system details that will help configure and start bots.
 
-* Each bot instance starts completely independent and MUST have a 'bot_id'.
+* Each bot instance starts completely independent and MUST have a 'bot id'.
 
-* The 'bot_id' is used to reference in 'pipeline.conf' and 'bots.conf' the specific configurations for each bot instance.
-
-* Bots should be executed by 'intelmq' user. Use the command 'login intelmq' to login with intelmq user.
+* The 'bot id' is used to reference in 'pipeline.conf' and 'bots.conf' the specific configurations for each bot instance.
 
 
-## Pipeline Configuration
+### Pipeline Configuration
 
 **Syntax:**
-
 ```
 [Pipeline]
-< bot_id >  =  < source queue > | < destination queues >
+< bot id >  =  < source queue > | < destination queues >
 ```
 
 **Example:**
-
 ```
 [Pipeline]
 arbor-feed   =  None               |  arbor-parser-queue
 arbor-parser =  arbor-parser-queue |  output-queue
 ```
 
-**Notes:** if bot doest not need a source queue, (ex.: when bot gets a report from URL) write 'None' and source queue will be ignored. The same is for destination queue.
+**Notes:** if bot doest not need a source queue, (ex.: when bot gets a report from URL) write 'None' and source queue will be ignored. The same is for destination queue. The system also support multiple destination queues in [fanout](https://www.rabbitmq.com/tutorials/amqp-concepts.html) mode. To use this functionality see the following example:
 
-## Bots Configuration
+**Example:**
+```
+[Pipeline]
+arbor-feed   =  None               |  arbor-parser-queue
+arbor-parser =  arbor-parser-queue |  output-queue, file-queue
+```
+
+
+### Bots Configuration
 
 **Syntax:**
-
 ```
-[< bot_id >]
+[< bot id >]
 < option_parameter > = < value >
 ```
 
 **Example:**
-
 ```
 [arbor-feed]
 processing_interval = 3600
@@ -76,35 +78,87 @@ ip = 192.168.1.243
 port = 5000
 ```
 
-**Notes:** The '[default]' section contains all default values for each bot and, if necessary, a 'bot_id' section can override all default options. Each option/value specified in 'bots.conf' is available in the correspondent bot using the, for example, 'self.parameters.ip' or 'self.parameters.processing_interval'.
+**Notes:** The '[default]' section contains all default values for each bot and, if necessary, a 'bot id' section can override all default options. Each option/value specified in 'bots.conf' is available in the correspondent bot using the, for example, 'self.parameters.ip' or 'self.parameters.processing_interval'.
+
+**Example:** search for self.parameters.database in GeoIPExpertBot example to see how it works.
+
+File: src/bots/experts/geoip/geoip.py
+```
+class GeoIPExpertBot(Bot):
+
+    def init(self):
+        try:
+            self.database = geoip2.database.Reader(self.parameters.database)
+        except IOError:
+            self.logger.error("GeoIP Database does not exist or could not be accessed in '%s'" % self.parameters.database)
+            self.logger.error("Read 'bots/experts/geoip/README' and follow the procedure")
+            self.stop()
+```
+
+File: conf/bots.conf
+```
+[geoip-expert]
+database = /opt/intelmq/src/bots/experts/geoip/GeoLite2-City.mmdb
+```
 
 
-## Run Bots
+
+### Run Bots
 
 **Syntax:**
 
 ```
-su - intelmq -c "python -m bots.< inputs | experts | outputs >.< bot folder >.< bot >  < bot_id >"
+cd /< intelmq path >/src/
+nohup python -m bots.< inputs | experts | outputs >.< bot folder >.< bot >  < bot id > &
 ```
 
 **Example:**
 
 ```
-su - intelmq -c "python -m bots.inputs.arbor.feed arbor-feed"
+cd /< intelmq path >/src/
+nohup python -m bots.inputs.arbor.feed arbor-feed &
 ```
 
 **Note:** first argument for each bot is the bot ID. This ID is used to get from pipeline.conf the source and destination queues.
 
 
-## Run Botnet Example
+### Run Botnet Example
 
 ```
-su - intelmq -c "bash src/tools/run-botnet-example.sh"
+cd /< intelmq path >/src/
+bash tools/run-botnet-example.sh
 ```
+
+
+# Utils
+
+## Monitoring IntelMQ
+
+```
+watch -n 0.5 rabbitmqctl list_queues
+```
+
+## Reset Queues
+
+```
+rabbitmqctl stop_app
+rabbitmqctl reset
+rabbitmqctl start_app
+```
+
+## Reset Cache
+```
+redis-cli FLUSHDB
+redis-cli FLUSHALL
+```
+
+
+
 
 # How to write bots
 
-...description..
+... text ...
+
 **Notes**
 ...Explain self.parameters from bots.conf...
 
@@ -142,26 +196,3 @@ if __name__ == "__main__":
 ## Example
 
 <description>
-
-
-# Utils
-
-## Monitoring IntelMQ
-
-```
-watch -n 0.5 rabbitmqctl list_queues
-```
-
-## Reset Queues
-
-```
-rabbitmqctl stop_app
-rabbitmqctl reset
-rabbitmqctl start_app
-```
-
-## Reset Cache
-```
-redis-cli FLUSHDB
-redis-cli FLUSHALL
-```
