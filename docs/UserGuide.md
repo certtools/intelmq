@@ -18,11 +18,25 @@ pip install -r /opt/intelmq/requirements.txt
 **Note:** Install EPEL Repository
 ```
 yum install centos-release-SCL
-yum install redis rabbitmq-server python27
+yum install rabbitmq-server python27
 scl enable python27 bash
 easy_install pip
 pip2.7 install -r /opt/intelmq/requirements.txt
 echo "scl enable python27 bash" >> /opt/intelmq/.bashrc
+
+rpm -Uvh http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
+yum --enablerepo=remi,remi-test install redis
+
+sudo nano /etc/sysctl.conf
+     vm.overcommit_memory=1
+ 
+sysctl -w fs.file-max=100000
+
+chkconfig --add redis
+chkconfig --level 345 redis on
+service redis start/stop/restart
+
 ```
 
 ## How it Works
