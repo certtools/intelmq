@@ -52,7 +52,6 @@ class AbuseHelperBot(Bot):
         xmpp_connection.send(xmpp.Presence(to='%s@conference.%s/%s' % (self.parameters.source_room, jid.getDomain(), self.bot_id)))
 
         while True:
-            print 'Iteration'
             if not xmpp_connection.isConnected():
                 xmpp_connection.reconnectAndReauth()
             else:
