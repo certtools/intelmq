@@ -70,6 +70,13 @@ arbor-parser =  arbor-parser-queue |  output-queue, file-queue
 
 **Example:**
 ```
+[default]
+processing_interval = 0
+cache_host = 127.0.0.1
+cache_port = 6379
+cache_id = 10
+cache_ttl = 86400
+
 [arbor-feed]
 processing_interval = 3600
 
