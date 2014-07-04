@@ -58,7 +58,7 @@ class AbuseHelperBot(Bot):
             else:
                 xmpp_connection.Process()
 
-            time.sleep(self.parameters.processing_interval)
+            time.sleep(int(self.parameters.processing_interval))
 
 
 if __name__ == "__main__":
