@@ -2,6 +2,12 @@
 
 IntelMQ is a solution for CERTs to process data feeds, pastebins, tweets throught a message queue.
 
+
+## How to install
+
+Check docs/UserGuide.md file.
+
+
 ## Goals
 
 * reduce the complexity of system administration
@@ -62,11 +68,6 @@ IntelMQ is a solution for CERTs to process data feeds, pastebins, tweets through
 * [PostgreSQL](https://github.com/certtools/intelmq/tree/master/src/bots/outputs/postgresql)
 * [ElasticSearch](https://github.com/certtools/intelmq/tree/master/src/bots/outputs/elasticsearch)
 * [File](https://github.com/certtools/intelmq/tree/master/src/bots/outputs/file)
-
-## How to install
-
-Check docs/UserGuide.md file.
-
 
 # Incident Handling Automation Project
 
