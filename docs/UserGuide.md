@@ -41,9 +41,7 @@ chkconfig --level 345 redis on
 service redis start/stop/restart
 
 ```
-
-
-### Change Configuration
+Source: https://gist.github.com/nghuuphuoc/7801123
 
 ## How it Works
 
