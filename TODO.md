@@ -11,7 +11,7 @@
 
 * Write docs/eCSIRT-Taxonomy.md based on document from Don Stikvoort, named "Incident Class mkVint"
 
-* Documentation
+* Documentation: Improve architecture images in documentation, etc
 
 * **[DONE]** General Bots Configuration (bots access the parameters via self.parameters.parameter_name, name can be easily changed)
 
