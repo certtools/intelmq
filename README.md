@@ -10,15 +10,15 @@ See [UserGuide](https://github.com/certtools/intelmq/blob/master/docs/UserGuide.
 
 ## Goals
 
-* reduce the complexity of system administration
-* reduce the complexity of writing new bots for new data feeds
-* reduce the probability of events lost in all process (even system crash)
-* provide easy communication with other systems via API
-* use and improve the existing Data Harmonization Ontology
-* use the existing AbuseHelper Event-like syntax: event.add("domain", "example.com")
-* use JSON format for all messages
-* use messages tags: report, abuse-event, pastebin, tweet
-* integration of the existing tools (AbuseHelper, CIF, etc...)
+* Reduce the complexity of system administration
+* Reduce the complexity of writing new bots for new data feeds
+* Reduce the probability of events lost in all process (even system crash)
+* Provide easy communication with other systems via API
+* Use and improve the existing Data Harmonization Ontology
+* Use the existing AbuseHelper Event-like syntax: event.add("domain", "example.com")
+* Use JSON format for all messages
+* Use messages tags: report, abuse-event, pastebin, tweet
+* Integration of the existing tools (AbuseHelper, CIF, etc...)
 
 ## System
 
