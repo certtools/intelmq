@@ -20,7 +20,7 @@ class GeoIPExpertBot(Bot):
         if event:
             ip = event.value("ip")
             if ip:
-                event.clear("geoip_cc")
+                event.clear("cc")
                 event.clear("city")
                 event.clear("longitude")
                 event.clear("latitude")
@@ -28,7 +28,7 @@ class GeoIPExpertBot(Bot):
                 info = self.database.city(ip)
 
                 if info.country.iso_code:
-                    event.add("geoip_cc", info.country.iso_code)
+                    event.add("cc", info.country.iso_code)
                 if info.location.latitude:
                     event.add("latitude",  str(info.location.latitude))
                 if info.location.longitude:
