@@ -4,26 +4,28 @@ from lib.utils import *
 from lib.event import *
 
 TAXONOMY = {
+            "phishing"                  : "Fraud",
+            "ddos"                      : "Availability",
             "spam"                      : "Abusive Content",
+            "scanner"                   : "Information Gathering",
+            "dropzone"                  : "Information Content Security",
             "malware"                   : "Malicious Code",
             "botnet drone"              : "Malicious Code",
             "ransomware"                : "Malicious Code",
             "malware configuration"     : "Malicious Code",
             "c&c"                       : "Malicious Code",
-            "scanner"                   : "Information Gathering",
             "exploit"                   : "Intrusion Attempts",
             "brute-force"               : "Intrusion Attempts",
             "ids alert"                 : "Intrusion Attempts",
             "defacement"                : "Intrusions",
             "backdoor"                  : "Intrusions",
-            "ddos"                      : "Availability",
-            "dropzone"                  : "Information Content Security",
-            "phishing"                  : "Fraud",
             "vulnerable service"        : "Vulnerable",
+            "open resolver"             : "Vulnerable",
+            "open proxy"                : "Vulnerable",
             "blacklist"                 : "Other",
-            "test"                      : "Test"
+            "hijacked network"          : "Other",
+            "test"                      : "Test",
            }
-
 
 class TaxonomyExpertBot(Bot):
     
