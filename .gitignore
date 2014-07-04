@@ -4,3 +4,4 @@
 *.mmdb
 *.profile
 .profile
+src/conf/*.conf
