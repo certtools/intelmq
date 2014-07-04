@@ -1,6 +1,6 @@
 # Installation
 
-## Clone Repository
+### Clone Repository
 ```
 git clone https://github.com/certtools/intelmq.git /opt/intelmq
 ```
@@ -25,7 +25,7 @@ pip2.7 install -r /opt/intelmq/requirements.txt
 echo "scl enable python27 bash" >> /opt/intelmq/.bashrc
 ```
 
-# How it Works
+## How it Works
 
 ### System Details
 Before start running all bots, user should know the system details that will help configure and start bots.
