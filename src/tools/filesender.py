@@ -1,8 +1,9 @@
-import sys, os
+import sys, os, time
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
 from lib.pipeline import Pipeline
 from lib.utils import force_decode
+from lib.event import Event
 
 if len(sys.argv) != 3:
     print
@@ -20,6 +21,19 @@ pipeline = Pipeline(None, queues)
 
 for line in file:
     line = force_decode(line)
-    pipeline.send(line)
+    
+    try:
+        event = Event.from_unicode(line)
+    except:
+        print "ERROR - lines from file needs to follow Event format"
+
+    for key in event.keys():
+        value = event.value(key)
+        event.clear(key)
+        key = key.replace(' ','_')
+        event.add(key, value)
+
+    time.sleep(0.01)
+    pipeline.send(force_decode(event))
 
 file.close()
