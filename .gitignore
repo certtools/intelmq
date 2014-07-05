@@ -4,5 +4,6 @@
 *.mmdb
 *.profile
 .profile
-src/conf/*.conf
+src/conf/bots.conf
+src/conf/pipeline.conf
 src/tools/run-botnet.sh
