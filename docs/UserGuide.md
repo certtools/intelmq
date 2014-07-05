@@ -5,7 +5,6 @@
 git clone https://github.com/certtools/intelmq.git /opt/intelmq
 mv /opt/intelmq/src/conf/bots.conf.default /opt/intelmq/src/conf/bots.conf
 mv /opt/intelmq/src/conf/pipeline.conf.default /opt/intelmq/src/conf/pipeline.conf
-mv /opt/intelmq/src/conf/system.conf.default /opt/intelmq/src/conf/system.conf
 ```
 
 ## Install Dependencies
