@@ -5,11 +5,6 @@ from lib.bot import *
 from lib.utils import *
 from lib.event import *
 
-try:
-    import simplejson as json
-except ImportError:
-    import json
-
 class LogCollectorBot(Bot):
 
     def process(self):       
@@ -18,7 +13,7 @@ class LogCollectorBot(Bot):
         if event:
             data = ''
             for key, value in event.items():
-                data += key.replace(' ','_') + '=' + json.dumps(value) + ' '
+                data += key.replace(' ','_') + '="' + value + '" '
             data += "\n"
 
             self.send_data(data)
