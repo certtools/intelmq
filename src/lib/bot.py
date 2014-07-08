@@ -34,15 +34,22 @@ class Bot(object):
 
 
     def start(self):
-        self.logger.info('Bot start processing')
-
-        while True:
-            try:
+         self.logger.info('Bot start processing')
+ 
+         count = 0
+         while True:
+             try:
                 self.process()
                 time.sleep(int(self.parameters.processing_interval))
-            except:
-                self.logger.error(traceback.format_exc())
-                self.stop()
+                count = 0
+             except:
+                # self.close() # add this method
+                self.connect() 
+                self.logger.error(traceback.format_exc())                
+                count += 1
+                if count > 5:
+                    self.stop()
+                time.sleep(5)          
 
     
     def stop(self):
