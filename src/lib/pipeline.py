@@ -3,22 +3,28 @@ import pika
 class Pipeline():
         
     def __init__(self, source_queue, destination_queues, host=None, port=None):
-        if source_queue is not None:
+        self.source_queue = source_queue
+        self.destination_queues = destination_queues
+        self.connect()
+
+
+    def connect(self):
+        if self.source_queue:
             self.source_connection = pika.BlockingConnection()
             self.source_channel = self.source_connection.channel()
-            self.source_channel.queue_declare(queue=source_queue, durable=True)
-            self.source_generator = self.source_channel.consume(source_queue)
+            self.source_channel.queue_declare(queue=self.source_queue, durable=True)
+            self.source_generator = self.source_channel.consume(self.source_queue)
 
-        self.destination_exchange = '-'.join(destination_queues)
-        self.destination_connection = pika.BlockingConnection()
-        self.destination_channel = self.destination_connection.channel()
-        self.destination_channel.exchange_declare(exchange=self.destination_exchange, type='fanout')
+        if self.destination_queues:
+            self.destination_exchange = '-'.join(self.destination_queues)
+            self.destination_connection = pika.BlockingConnection()
+            self.destination_channel = self.destination_connection.channel()
+            self.destination_channel.exchange_declare(exchange=self.destination_exchange, type='fanout')
 
-        if destination_queues:
-            if type(destination_queues) is not list:
-                destination_queues = destination_queues.split()
+            if type(self.destination_queues) is not list:
+                self.destination_queues = self.destination_queues.split()
                 
-            for destination_queue in destination_queues:
+            for destination_queue in self.destination_queues:
                 self.destination_channel.queue_declare(queue=destination_queue, durable=True)
                 self.destination_channel.queue_bind(exchange=self.destination_exchange, queue=destination_queue)
 
