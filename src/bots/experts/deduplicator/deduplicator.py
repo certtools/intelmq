@@ -21,10 +21,18 @@ class DeduplicatorBot(Bot):
 
         if message:
             message_hash = hash(message)
+            
+            try:
+                event = Event.from_unicode(message)
+                event.clear("observation_time")
+                message_hash = hash(event)                            
+            except:
+                message_hash = hash(message)            
 
             if not self.cache.exists(message_hash):
                 self.send_message(message)
                 self.cache.set(message_hash, 'hash')
+                
         self.acknowledge_message()
 
 
