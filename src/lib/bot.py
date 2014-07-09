@@ -36,21 +36,16 @@ class Bot(object):
     def start(self):
          self.logger.info('Bot start processing')
  
-         count = 0
          while True:
              try:
                 self.process()
                 time.sleep(int(self.parameters.processing_interval))
-                count = 0
              except:
                 # self.close() # add this method
                 self.logger.info('Bot is restarting')
                 self.connect() 
                 self.logger.error(traceback.format_exc())                
-                count += 1
-                if count > 5:
-                    self.stop()
-                time.sleep(5)          
+                time.sleep(5)
 
     
     def stop(self):
@@ -99,28 +94,36 @@ class Bot(object):
         for option in config.options("Pipeline"):
             if option == self.bot_id:
                 queues = config.get("Pipeline", self.bot_id)
-                queues = queues.split('|')
-                
-                if len(queues) == 2:
-                    src_queue = queues[0].strip()
-                    dest_queues = queues[1].strip()
-                    
-                    if src_queue == "None":
-                        src_queue = None
-                    if dest_queues == "None":
-                        dest_queue = None
 
-                    dest_queues_list = list()
-                    for queue in dest_queues.split(','):
-                        dest_queues_list.append(queue.strip())
-                    
+                src_queue, dest_queues = self.parse_queues(queues)
+                if src_queue or dest_queues:
                     self.logger.info("Source queue '%s'" % src_queue)
-                    self.logger.info("Destination queue(s) '%s'" % dest_queues_list)
-                    
-                    return [src_queue, dest_queues_list]
-        
+                    self.logger.info("Destination queue(s) '%s'" % dest_queues)
+                    return [src_queue, dest_queues]
+
         self.logger.error("Failed to load queues")
         self.stop()
+    
+    
+    def parse_queues(self, queues):
+        queues = queues.split('|')
+        
+        if len(queues) == 2:
+            src_queue = queues[0].strip()
+            if len(src_queue) == 0:
+                src_queue = None
+
+            dest_queues = queues[1].strip()
+            if len(dest_queues) == 0:
+                dest_queues_list = None
+            else:
+                dest_queues_list = list()
+                for queue in dest_queues.split(','):
+                    dest_queues_list.append(queue.strip())
+
+            return [src_queue, dest_queues_list]
+        else:
+            return [None, None]
 
 
     def send_message(self, message):
