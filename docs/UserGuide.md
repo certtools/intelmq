@@ -11,7 +11,7 @@ cp /opt/intelmq/src/conf/pipeline.conf.default /opt/intelmq/src/conf/pipeline.co
 
 ### Debian-based
 ```
-apt-get install redis-server rabbitmq-server
+apt-get install redis-server rabbitmq-server python-pip
 pip install -r /opt/intelmq/requirements.txt
 ```
 
