@@ -23,9 +23,10 @@ All the timestamps should be normalized to UTC. If the source reports only a dat
 
 The abuse type of an event defines the way these IOC needs to be interpreted. For a botnet drone they refer to the compromized machine, whereas for a command and control server they refer the server itself.
 
-* **ip** IPv4 or IPv6 address.
-
-* **domain name** DNS domain name. http://en.wikipedia.org/wiki/Domain_name
+|Key|Format|Description|
+|--------|---|-----------|
+|ip|ipv4/ipv6|IPv4 or IPv6 address|
+|domain name|string(200)|DNS domain name. http://en.wikipedia.org/wiki/Domain_name|
 
 * **port** The port through which the abuse activity is taking place. For example a command and control server report will most likely contain a port, which is directly related to the reported ip or host.
 
