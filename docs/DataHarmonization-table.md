@@ -1,27 +1,23 @@
 # Data Harmonization Ontology
 
-The purpose of this document is to harmonize the heterogenous data sets processed by different source bots into a unified ontology. The unified ontology represents the outcome of a pragmatic collaboration between different CSIRT teams such as [CERT-EU](http://cert.europa.eu/), [CERT-EE](http://www.cert.ee/), [CERT-FI](http://www.cert.fi/en/index.html), [CERT.AT](http://www.cert.at/), [CERT.PT](http://www.cert.pt/en/), [CERT.BE](https://www.cert.be/|CERT.BE) and [Codenomicon](http://www.codenomicon.com), a commercial company. We also present a common set of principles to use for IOC attribution not directly available through the data sources. Each organization should define their own policy with reference to IOC elements and their related attribution. This document defines key IOC to be used as basis for communicating abuse events within and between organizations. In other words, the aim of this document is to shift the focus of formats, schemas and transports, to having a uniform ontology to use for passing serialized abuse events through different systems from a number of sources to a number of destinations.
-
 ## Core Fields
-
-For an abuse report to be actionable and able to reach the right end recipient, various key elements need to be present. Please turn to the section Minimum Requirements below, to find out more about for the minimum requirements for an actionable abuse event. The core fields enumerated below identify a given abuse feed either by name or feed code should you choose to anonymize your sources. In addition, keys related to time or the identity of the abused resource be it an ip, url, an email address or a geolocation are considered core elements of an abuse report.
 
 ### Feed
 
-* **feed** Lower case name for the feeder, e.g. abusech or phishtank.
-
-* **feed code** Code name for the feed, e.g.  DFGS, HSDAG etc.
-
-* **feed url** The URL of a given abuse feed, where applicable.
+|Key|Format|Description|
+|--------|---|-----------|
+|feed|string(30)|Lower case name for the feeder, e.g. abusech or phishtank.|
+|feed_code|string(10)|Code name for the feed, e.g.  DFGS, HSDAG etc.|
+|feed_url|string(200)|The URL of a given abuse feed, where applicable|
 
 ### Time
 
 All the timestamps should be normalized to UTC. If the source reports only a date, please do not invent timestamps.
 
-* **source time** Time reported by a source. Some sources only report a date, which '''may''' be used here if there is no better observation.
-
-* **observation time** The time a source bot saw the event. This timestamp becomes especially important should you perform your own attribution on a host DNS name for example. The mechanism to denote the attributed elements with reference to the source provided is detailed below in Reported Identity IOC.
-
+|Key|Format|Description|
+|--------|---|-----------|
+|source_time|datetime(iso8660)|Time reported by a source. Some sources only report a date, which '''may''' be used here if there is no better observation.
+|observation_time|datetime(iso8660)|The time a source bot saw the event. This timestamp becomes especially important should you perform your own attribution on a host DNS name for example. The mechanism to denote the attributed elements with reference to the source provided is detailed below in Reported Identity IOC.|
 
 ### Identity
 
