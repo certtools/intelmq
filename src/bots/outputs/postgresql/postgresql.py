@@ -1,14 +1,10 @@
 import sys
 import psycopg2
-import time
 from lib.bot import *
 from lib.utils import *
 from lib.event import *
-from lib.cache import *
 
 class PostgreSQLBot(Bot):
-
-
 
     def init(self):
         con = None
@@ -16,7 +12,7 @@ class PostgreSQLBot(Bot):
             self.con = psycopg2.connect(
                                    database=self.parameters.database,
                                    user=self.parameters.user,
-                                   #password=self.parameters.password,
+                                   #password=self.parameters.password, # FIXME
                                    host=self.parameters.host,
                                    port=self.parameters.port
                                   )
@@ -28,27 +24,21 @@ class PostgreSQLBot(Bot):
         self.cur = self.con.cursor() 
 
 
-
     def process(self):
         event = self.receive_message()
         
         if event:
-            evdict = event.to_dict2()
+            evdict = event.to_dict2()  # FIXME: rename the method or use to_dict()
             KEYS = ", ".join(evdict.keys())
             VALUES = evdict.values()
             FVALUES = len(VALUES) * "%s, "
             QUERY = "INSERT INTO logentry (" + KEYS + ") VALUES (" + FVALUES[:-2] + ")"
             try:
                 self.cur.execute(QUERY, VALUES)
-
             except psycopg2.DatabaseError, e:
-                print QUERY
-                print VALUES
-                print "\n\n"
-                print e.pgerror
+                # FIXME: try to use the try:except from start method at lib/bot.py
                 self.logger.error("Postgresql Problem. Could not INSERT. Error: %s " % e.pgerror)
-                time.sleep(5)
-            self.con.commit()                                      
+            self.con.commit()
         self.acknowledge_message()
 
 
