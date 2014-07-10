@@ -1,3 +1,4 @@
+import re
 import time
 import traceback
 import ConfigParser
@@ -16,6 +17,8 @@ LOGS_PATH = "logs/"
 class Bot(object):
 
     def __init__(self, bot_id):
+        self.check_bot_id(bot_id)
+
         self.bot_id = bot_id
 
         self.logger = self.load_logger()
@@ -31,6 +34,13 @@ class Bot(object):
 
     def init(self):
         pass
+
+
+    def check_bot_id(self, str):
+        res = re.search('[^0-9a-zA-Z\-]+', str)
+        if res:
+            print "Invalid bot id."
+            self.stop()
 
 
     def start(self):
@@ -49,7 +59,12 @@ class Bot(object):
 
     
     def stop(self):
-        self.logger.error("Bot found an error. Exiting")
+        try:
+            self.logger.error("Bot found an error. Exiting")
+        except:
+            pass
+        finally:
+            print "Bot found an error. Exiting"
         exit(-1)
 
 
