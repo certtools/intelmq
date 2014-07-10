@@ -52,6 +52,10 @@ Before start running all bots, user should know the system details that will hel
 * The 'bot id' is used to reference in 'pipeline.conf' and 'bots.conf' the specific configurations for each bot instance.
 
 
+### System Configuration
+
+* Global configuration for intelmq is at file 'system.conf'. Please note that logger in DEBUG will write in logs the bots password when its provided by parameters in 'bots.conf' file.
+
 ### Pipeline Configuration
 
 **Syntax:**
