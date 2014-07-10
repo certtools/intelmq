@@ -136,14 +136,14 @@ database = /opt/intelmq/src/bots/experts/geoip/GeoLite2-City.mmdb
 **Syntax:**
 
 ```
-cd /< intelmq path >/src/
+cd /opt/intelmq/src/
 nohup python -m bots.< inputs | experts | outputs >.< bot folder >.< bot >  < bot id > &
 ```
 
 **Example:**
 
 ```
-cd /< intelmq path >/src/
+cd /opt/intelmq/src/
 nohup python -m bots.inputs.arbor.feed arbor-feed &
 ```
 
@@ -153,7 +153,7 @@ nohup python -m bots.inputs.arbor.feed arbor-feed &
 ### Run Botnet Example
 
 ```
-cd /< intelmq path >/src/
+cd /opt/intelmq/src/
 bash tools/run-botnet-example.sh
 ```
 
@@ -164,6 +164,10 @@ bash tools/run-botnet-example.sh
 
 ```
 watch -n 0.5 rabbitmqctl list_queues
+```
+
+```
+tail -f /opt/intelmq/src/logs/*
 ```
 
 ### Reset Queues
