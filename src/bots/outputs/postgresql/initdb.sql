@@ -1,5 +1,4 @@
 CREATE table logentry (
--- feed
    "feed" varchar(1000), 		-- Lower case name for the feeder",    e.g. abusech or phishtank.
    "feed_code" varchar(1000), 		-- Code name for the feed, e.g.  DFGS",    HSDAG etc.
    "feed_url" varchar(1000), 		-- The URL of a given abuse feed",    where applicable.
@@ -64,10 +63,6 @@ CREATE table logentry (
    "abuse_contact" varchar(1000),    -- An abuse contact email address for an IP network.
    "event_hash" varchar(1000), -- Computed event hash with specific keys and values that identify a unique event. At present, the hash should default to using the SHA1 function. Please note that for an event hash to be able to match more than one event (deduplication) the receiver of an event should calculate it based on a minimal set of keys and values present in the event. Using for example the observation time in the calculation will most likely render the checksum useless for deduplication purposes.
    "shareable_key" varchar(1000),    -- Sometimes it is necessary to communicate a set of IOC which can be passed on freely to the end recipient. The most effective way to use this is to make it a multi-value within an event.
-   -- 
-   -- 
-   -- The elements listed below are additional keys used to describe abusive behavior, which are topic specific. They may refer to the source of information, such as **notified by**, an augmentation source such as **cymru cc, -- or internal integration source, such as **rtir id**. The reason why they are separated from the the other IOC is that they are not generic, rather than topic or provider specific. Their communicative function is defined as an optional way to understand what other abuse handling pipelines are most likely to call these elements.
-   -- 
    "dns_version" varchar(1000),    -- A string describing the version of a DNS server.
    "min_amplification" varchar(1000),    -- Minimum amplification value related to an open DNS resolver.
    "notified_by" varchar(1000), -- The reporter of a given abuse event",    e.g. ZONE-H defacer attribution.
@@ -77,12 +72,8 @@ CREATE table logentry (
    "misp_id" integer,    -- MISP id.
    "original_logline" varchar(30000), -- In case we received this event as a (CSV) log line,  we can store the original line here.
    --
-   --
    -- Type & taxonomy
    --
    "type" varchar(100), -- The abuse type IOC is one of the most crucial pieces of information for any given abuse event. The main idea of dynamic typing is to keep our ontology flexible, since we need to evolve with the evolving threatscape of abuse data. In contrast with the static taxonomy below, the dynamic typing is used to perform business decisions in the abuse handling pipeline. Furthermore, the value data set should be kept as minimal as possible to avoid "type explosion", which in turn dilutes the business value of the dynamic typing. In general, we normally have two types of abuse type IOC: ones referring to a compromized resource or ones referring to pieces of the criminal infrastructure, such as a command and control servers for example.
-  "taxonomy" varchar(100) -- We recognize the need for the CSIRT teams to apply a static (incident) taxonomy to abuse data. With this goal in mind the type IOC will serve as a basis for this activity. Each value of the dynamic type mapping translates to a an element in the static taxonomy. The European CSIRT teams for example have decided to apply the eCSIRT.net incident classification. The value of the taxonomy key is thus a derivative of the dynamic type above. For more information about check [ENISA taxonomies](http://www.enisa.europa.eu/activities/cert/support/incident-management/browsable/incident-handling-process/incident-taxonomy/existing-taxonomies).
-  -- 
-  -- Below, we have enumerated the minimum requirements for an actionable abuse event. These keys need to be present for the abuse report to make sense for the end recipient. Please note that if you choose to anonymize your sources, you can substitute **feed, -- with **feed code, -- and that only one of the identity keys **ip**, **domain name**, **url**, **email address, -- must be present. All the rest of the keys enumerated above are **optional**.
-   -- "NOTE:",    -- This document was copied from [AbuseHelper repository](https://bitbucket.org/clarifiednetworks/abusehelper/wiki/Data Harmonization Ontology)
+   "taxonomy" varchar(100) -- We recognize the need for the CSIRT teams to apply a static (incident) taxonomy to abuse data. With this goal in mind the type IOC will serve as a basis for this activity. Each value of the dynamic type mapping translates to a an element in the static taxonomy. The European CSIRT teams for example have decided to apply the eCSIRT.net incident classification. The value of the taxonomy key is thus a derivative of the dynamic type above. For more information about check [ENISA taxonomies](http://www.enisa.europa.eu/activities/cert/support/incident-management/browsable/incident-handling-process/incident-taxonomy/existing-taxonomies).
 );
