@@ -53,7 +53,7 @@ class Bot(object):
              except:
                 # self.close() # add this method
                 self.logger.info('Bot is restarting')
-                self.connect() 
+                self.pipeline.connect() 
                 self.logger.error(traceback.format_exc())                
                 time.sleep(5)
 
