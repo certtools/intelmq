@@ -36,13 +36,6 @@ class Bot(object):
         pass
 
 
-    def check_bot_id(self, str):
-        res = re.search('[^0-9a-zA-Z\-]+', str)
-        if res:
-            print "Invalid bot id."
-            self.stop()
-
-
     def start(self):
          self.logger.info('Bot start processing')
  
@@ -66,6 +59,13 @@ class Bot(object):
         finally:
             print "Bot found an error. Exiting"
         exit(-1)
+
+
+    def check_bot_id(self, str):
+        res = re.search('[^0-9a-zA-Z\-]+', str)
+        if res:
+            print "Invalid bot id."
+            self.stop()
 
 
     def load_configurations(self):
