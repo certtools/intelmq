@@ -12,7 +12,7 @@ class PostgreSQLBot(Bot):
             self.con = psycopg2.connect(
                                    database=self.parameters.database,
                                    user=self.parameters.user,
-                                   #password=self.parameters.password, # FIXME
+                                   password=self.parameters.password,
                                    host=self.parameters.host,
                                    port=self.parameters.port
                                   )
