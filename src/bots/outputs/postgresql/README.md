@@ -36,3 +36,5 @@ database = intelmq
 user = intelmq
 password = <password>
 ```
+
+* Update 'conf/pipeline.conf' with 'bot_id'
