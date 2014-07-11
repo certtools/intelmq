@@ -7,7 +7,7 @@ apt-get install postgresql-9.1 postgresql-server-dev-9.1  python-psycopg2
 ```
 sudo su - 
 su - postgres
-createuser intelmq
+createuser intelmq -W
 createdb -O intelmq intelmq
 ```
 
