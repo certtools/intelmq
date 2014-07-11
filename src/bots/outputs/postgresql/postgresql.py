@@ -31,7 +31,7 @@ class PostgreSQLBot(Bot):
             evdict  = event.to_dict()
             keys    = ", ".join(evdict.keys())
             values  = evdict.values()
-            fvalues = len(VALUES) * "%s, "
+            fvalues = len(values) * "%s, "
             query   = "INSERT INTO logentry (" + keys + ") VALUES (" + fvalues[:-2] + ")"
             
             try:
