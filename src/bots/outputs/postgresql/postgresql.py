@@ -20,7 +20,7 @@ class PostgreSQLBot(Bot):
             self.logger.info("Connected to PostgreSQL")
 
         except psycopg2.DatabaseError, e:
-            self.logger.error("Problem found when bot tried to connect to PostgreSQL. Error: %s " % e.pgerror)
+            self.logger.error("Problem found when bot tried to connect to PostgreSQL (%s)." % e)
             self.stop()
 
 
