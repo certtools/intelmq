@@ -30,10 +30,10 @@ psql -U intelmq intelmq < initdb.sql
 * Update the corresponding 'bot_id' section in 'conf/bots.conf':
 
 ```
-    [postgresql]
-    host = <host>
-    port = <port>
-    database = intelmq
-    user = intelmq
-    password = <password>
+[postgresql]
+host = <host>
+port = <port>
+database = intelmq
+user = intelmq
+password = <password>
 ```
