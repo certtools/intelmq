@@ -37,4 +37,4 @@ user = intelmq
 password = <password>
 ```
 
-* Update 'conf/pipeline.conf' with 'bot_id'
+* Update the corresponding 'bot_id' section in 'conf/pipeline.conf'.
