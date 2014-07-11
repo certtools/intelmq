@@ -1,4 +1,4 @@
-clean-redis:
+clean-cache:
 	redis-cli FLUSHDB
 	redis-cli FLUSHALL
 
