@@ -1,4 +1,5 @@
 import sys
+import json
 from lib.bot import *
 from lib.utils import *
 from lib.event import *
@@ -43,14 +44,15 @@ class CymruExpertBot(Bot):
         else:
             cache_key = bin(ip_integer)[2 : MINIMUM_BGP_PREFIX_IPV6 + 2]
         
-        query_result = self.cache.get(cache_key)
-        
-        if not query_result:
-            query_result = Cymru.query(ip, ip_version)
-            self.cache.set(cache_key, query_result)
-        
-        asn, bgp, cc, registry, allocated, as_name = Cymru.parse(query_result)
+        result_json = self.cache.get(cache_key)
 
+        if result_json:
+            result = json.loads(result_json)
+        else:
+            result = Cymru.query(ip, ip_version)
+            result_json = json.dumps(result)
+            self.cache.set(cache_key, result_json)
+        
         event.clear('asn')
         event.clear('bgp_prefix')
         event.clear('registry')
@@ -58,12 +60,23 @@ class CymruExpertBot(Bot):
         event.clear('as_name')
         event.clear('cymru_cc')
 
-        event.add('asn', asn)
-        event.add('bgp_prefix', bgp)
-        event.add('registry', registry)
-        event.add('allocated', allocated)
-        event.add('as_name', as_name)
-        event.add('cymru_cc', cc)
+        if "asn" in result:
+            event.add('asn',        result['asn'])
+            
+        if "bgp_prefix" in result:
+            event.add('bgp_prefix', result['bgp_prefix'])
+            
+        if "registry" in result:
+            event.add('registry',   result['registry'])
+            
+        if "allocated" in result:
+            event.add('allocated',  result['allocated'])
+            
+        if "as_name" in result:
+            event.add('as_name',    result['as_name'])
+            
+        if "cc" in result:
+            event.add('cymru_cc',   result['cc'])
 
         self.send_message(event)
         self.acknowledge_message()
