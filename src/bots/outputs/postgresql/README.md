@@ -1,6 +1,6 @@
 * Install postgresql:
 ```
-apt-get install postgresql-9.1 postgresql-server-dev-9.1  python-psycopg2
+apt-get install postgresql-9.1 python-psycopg2
 ```
 
 * Create a user for and database intelmq in Postgres:
