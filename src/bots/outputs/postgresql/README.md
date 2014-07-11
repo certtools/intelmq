@@ -23,6 +23,7 @@ local   all             all                                     trust
 
 * Run the script which will create the initial database tables:
 ```
+cd /opt/intelmq/src/bots/outputs/postgresql/
 psql -U intelmq intelmq < initdb.sql
 ```
 
