@@ -189,11 +189,6 @@ redis-cli FLUSHALL
 
 ## How to write bots
 
-... text ...
-
-**Notes**
-...Explain self.parameters from bots.conf...
-
 ### Template
 
 ```
@@ -227,4 +222,19 @@ if __name__ == "__main__":
 
 ### Example
 
-<description>
+Check [taxonomy](https://github.com/certtools/intelmq/blob/master/src/bots/experts/taxonomy/taxonomy.py) expert bot
+
+
+## Additional Information
+
+### Perfomance Tests
+
+Somes tests have been made with a virtual machine with the following specifications:
+* CPU: 1 core dedicated from i7 processor
+* Memory: 4GB
+* HDD: 10GB
+
+The entire solution didnt have any problem handling 2.000.000 queued events in memory with bots diggesting the messages.
+
+
+
