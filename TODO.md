@@ -2,9 +2,7 @@
 
 (sorted by priority)
 
-* Create bots for all feeds that are not available in AbuseHelper (n6, INTECO, CERT-EU)
-
-* Remove "observation time" for event in deduplicator bot
+* Create n6 bot.
 
 * Quality Control: perfomance tests, security configurations and queues snapshoting
     * Queue Durability / Persistente Messages (search for 'Queue Durability'): http://www.rabbitmq.com/tutorials/amqp-concepts.html
@@ -33,7 +31,11 @@
 
 * **[DONE]** Add in each expert a line to test if the augment keys already exists
 
+* **[DONE]** Remove "observation time" for event in deduplicator bot
+
 ## Release 2 - TODO
+
+* Create bots for all feeds that are not available in AbuseHelper (INTECO, CERT-EU, etc)
 
 * Improve encoding/decoding
 
