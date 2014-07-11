@@ -202,12 +202,6 @@ class Event(object):
     def to_dict(self):
         attrs = dict()
         for key, value in self.items():
-            attrs.setdefault(key, list()).append(value)
-        return attrs
-
-    def to_dict2(self):
-        attrs = dict()
-        for key, value in self.items():
             attrs.setdefault(key, value)
         return attrs
 
