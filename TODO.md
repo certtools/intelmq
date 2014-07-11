@@ -4,7 +4,7 @@
 
 * Create n6 bot.
 
-* Quality Control: perfomance tests, security configurations and queues snapshoting
+* Quality Control: security configurations and queues snapshoting
     * Queue Durability / Persistente Messages (search for 'Queue Durability'): http://www.rabbitmq.com/tutorials/amqp-concepts.html
 
 * Write docs/eCSIRT-Taxonomy.md based on document from Don Stikvoort, named "Incident Class mkVint"
@@ -32,6 +32,8 @@
 * **[DONE]** Add in each expert a line to test if the augment keys already exists
 
 * **[DONE]** Remove "observation time" for event in deduplicator bot
+
+* **[DONE]** Quality Control: perfomance tests
 
 ## Release 2 - TODO
 
