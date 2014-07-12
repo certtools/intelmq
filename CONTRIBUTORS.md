@@ -9,8 +9,8 @@
 
 ### Start contributing
 
-* Find bugs (use Issues repository section)
+* [Find bugs](https://github.com/certtools/intelmq/issues)
 * Make perfomance and reliability tests 
 * Write bots
-* Send requests (use Issues repository section)
-* Documentation
+* [Send requests](https://github.com/certtools/intelmq/issues)
+* [Write documentation](https://github.com/certtools/intelmq/tree/master/docs)
