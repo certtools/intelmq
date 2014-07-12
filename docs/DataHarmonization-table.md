@@ -1,6 +1,25 @@
 # Data Harmonization Ontology
 
-|Section|Key|Format|Description|
+### Sections Description
+
+* **Feed:** 
+* **Time:** All the timestamps should be normalized to UTC. If the source reports only a date, please do not invent timestamps
+* **Identity:** The abuse type of an event defines the way these IOC needs to be interpreted. For a botnet drone they refer to the compromized machine, whereas for a command and control server they refer the server itself.
+* **Source Identity:**
+* **Destination Identity:** Since many of the sources report IOC related to a compromized machine, such as a botnet drone, they may report relevant information in relation to the command and control infrastructure as well. The meaning of each IOC needs to be interpreted with reference to the abuse type. A destination ip and port in the context of a botnet drone for example usually denote the command and control server.
+* **Behing NAT Identity:**
+* **Reported Identity:** As stated above, each abuse handling organization should define a policy, which IOC to use as the primary elements describing an abuse event. Often the sources have done their attribution, but you may choose to correlate their attributive elements with your own. In practice this means that your sanitation should prefix the elements with the '''reported''' keyword, to denote that you've decided the attribute these yourself. The list below is not comprehensive, rather than a list of common things you may want to attribute yourself. Moreover, if you choose to perform your own attribution, the observation time will become your authoritative point of reference related to these IOC.
+* **Geolocation:** We recognize that ip geolocation is not an exact science and analysis of the abuse data has shown that different sources attribution sources have different opinions of the geolocation of an ip. This is why we recommend to enrich the data with as many sources as you have available and make the decision which value to use for the cc IOC based on those answers.
+* **Additional Fields:**
+* **Malware Elements:**
+* **Artifact Elements:**
+* **Extra Elements:**
+* **Specific Elements:** The elements listed below are additional keys used to describe abusive behavior, which are topic specific. They may refer to the source of information, such as|notified by||, an augmentation source such as|cymru cc|| or internal integration source, such as|rtir id||. The reason why they are separated from the the other IOC is that they are not generic, rather than topic or provider specific. Their communicative function is defined as an optional way to understand what other abuse handling pipelines are most likely to call these elements.
+* **Classification:** Having a functional ontology to work with, especially for the abuse types is important for you to be able to classify, prioritize and report relevant actionable intelligence to the parties who need to be informed. The driving idea for this ontology has been to use a minimal set of values with maximal usability. Below, is a list of harmonized values for the abuse types.
+
+### Fields List
+
+|Section|Fields|Format|Description|
 |:---:|:---:|:---:|:-----------:|
 |**Feed**|feed|string(30)|Lower case name for the feeder, e.g. abusech or phishtank.|
 |**Feed**|feed_code|string(10)|Code name for the feed, e.g.  DFGS, HSDAG etc.|
@@ -78,6 +97,7 @@
 |**Classification**|taxonomy|| We recognize the need for the CSIRT teams to apply a static (incident) taxonomy to abuse data. With this goal in mind the type IOC will serve as a basis for this activity. Each value of the dynamic type mapping translates to a an element in the static taxonomy. The European CSIRT teams for example have decided to apply the eCSIRT.net incident classification. The value of the taxonomy key is thus a derivative of the dynamic type above. For more information about check [ENISA taxonomies](http://www.enisa.europa.eu/activities/cert/support/incident-management/browsable/incident-handling-process/incident-taxonomy/existing-taxonomies).
  
 
+### Type/Taxonomy Mapping
  
 |Type|Taxonomy|Description|
 |----|--------|-----------|
@@ -100,7 +120,7 @@
 |blacklist|Other|Some sources provide blacklists, which clearly refer to abusive behavior, such as spamming, but fail to denote the exact reason why a given identity has been blacklisted. The reason may be that the justification is anecdotal or missing entirely. This type should only be used if the typing fits the definition of a blacklist, but an event specific denomination is not possible for one reason or another.|
 |test|Test|This is a value for testing purposes.|
 
-## Minimum Requirements
+### Minimum Requirements
 
 Below, we have enumerated the minimum requirements for an actionable abuse event. These keys need to be present for the abuse report to make sense for the end recipient. Please note that if you choose to anonymize your sources, you can substitute **feed** with **feed code** and that only one of the identity keys **ip**, **domain name**, **url**, **email address** must be present. All the rest of the keys enumerated above are **optional**.
 
