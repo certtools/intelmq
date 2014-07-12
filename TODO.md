@@ -19,6 +19,8 @@
 
 * https://github.com/gmr/helper
 
+* Check [RabbitMQ based fork of CIF v1](https://github.com/cikl) and [Build STIX document from CIF output](http://tools.netsa.cert.org/script-cif2stix/index.html)
+
 * **[DONE]** General Bots Configuration (bots access the parameters via self.parameters.parameter_name, name can be easily changed)
 
 * **[DONE]** AbuseHelper Integration (xmpp bot to connect to room)
