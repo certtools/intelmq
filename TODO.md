@@ -13,6 +13,8 @@
 
 * Use readthedocs.org for documentation.
 
+* Use also GitHub Pages
+
 * **[DONE]** General Bots Configuration (bots access the parameters via self.parameters.parameter_name, name can be easily changed)
 
 * **[DONE]** AbuseHelper Integration (xmpp bot to connect to room)
