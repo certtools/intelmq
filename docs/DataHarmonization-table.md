@@ -6,6 +6,7 @@
 
 |Key|Format|Description|
 |--------|---|-----------|
+|Feed|
 |feed|string(30)|Lower case name for the feeder, e.g. abusech or phishtank.|
 |feed_code|string(10)|Code name for the feed, e.g.  DFGS, HSDAG etc.|
 |feed_url|string(200)|The URL of a given abuse feed, where applicable|
