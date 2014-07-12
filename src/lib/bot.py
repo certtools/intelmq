@@ -44,7 +44,7 @@ class Bot(object):
                 self.process()
                 time.sleep(int(self.parameters.processing_interval))
              except:
-                # self.close() # add this method
+                # self.pipeline.close() # add this method
                 self.logger.info('Bot is restarting')
                 self.pipeline.connect() 
                 self.logger.error(traceback.format_exc())                
