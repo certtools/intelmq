@@ -49,6 +49,8 @@
 
 * Create bots for all feeds that are not available in AbuseHelper (INTECO, CERT-EU, etc)
 
+* New bots: https://github.com/collectiveintel/cif-v1/tree/686c9ac9c34658ccc83d5b9fea97972eeaad0f29/cif-smrt/rules/etc
+
 * Improve encoding/decoding
 
 * Add 'requirements.txt' with fixed version numbers for each package -> pip install -r requirements.txt
