@@ -7,6 +7,8 @@
 * Quality Control: security configurations and queues snapshoting
     * Queue Durability / Persistente Messages (search for 'Queue Durability'): http://www.rabbitmq.com/tutorials/amqp-concepts.html
 
+* Use methods like sleep istead of time.sleep -> http://pika.readthedocs.org/en/latest/modules/adapters/blocking.html
+
 * Write docs/eCSIRT-Taxonomy.md based on document from Don Stikvoort, named "Incident Class mkVint"
 
 * Documentation: Improve architecture images in documentation, etc
