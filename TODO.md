@@ -4,6 +4,8 @@
 
 * Create n6 bot.
 
+* Use SMTP logging etc -> http://lanyrd.com/2013/pycon/scdzbx/#link-qkct
+
 * Quality Control: security configurations and queues snapshoting
     * Queue Durability / Persistente Messages (search for 'Queue Durability'): http://www.rabbitmq.com/tutorials/amqp-concepts.html
 
