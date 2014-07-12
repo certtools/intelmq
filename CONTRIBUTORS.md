@@ -1,9 +1,11 @@
 ### Contributors
 
-* Tomás Lima [CERT.PT] <tomas.lima@cert.pt>
-* Mauro Silva [CERT.PT] <mauro.silva@cert.pt>
-* Cosmin Ciobanu [ENISA] <cosmin.ciobanu@enisa.europa.eu>
-* Aaron Kaplan [CERT.AT] <kaplan@cert.at>
+|Name|Email|Organization|
+|--------|---|-----------|
+|Tomás Lima|tomas.lima@cert.pt|CERT.PT|
+|Mauro Silva|mauro.silva@cert.pt|CERT.PT|
+|Cosmin Ciobanu|cosmin.ciobanu@enisa.europa.eu|ENISA|
+|Aaron Kaplan|kaplan@cert.at|CERT.AT|
 
 ### Start contributing
 
