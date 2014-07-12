@@ -1,6 +1,5 @@
 import re
 import time
-import traceback
 import ConfigParser
 
 from lib.pipeline import *
