@@ -1,6 +1,5 @@
 import re
 import time
-import traceback
 import ConfigParser
 
 from lib.pipeline import *
@@ -26,9 +25,9 @@ class Bot(object):
 
         self.load_configurations()
 
-        src_queue, dest_queues = self.load_queues()
-        self.pipeline = self.load_pipeline(src_queue, dest_queues)
-
+        self.src_queue, self.dest_queues = self.load_queues()
+        self.interval = float(self.parameters.processing_interval)
+        
         self.init()
 
 
@@ -37,18 +36,31 @@ class Bot(object):
 
 
     def start(self):
-         self.logger.info('Bot start processing')
+        self.logger.info('Bot start processing')
+        self.pipeline = None
  
-         while True:
-             try:
+        while True:
+            try:
+                if not self.pipeline:
+                    self.logger.info("Connecting to pipeline queues")
+                    self.pipeline = Pipeline(self.src_queue, self.dest_queues)
+                    self.logger.info("Connected to pipeline queues. Start processing.")
                 self.process()
-                time.sleep(int(self.parameters.processing_interval))
-             except:
-                # self.pipeline.close() # add this method
-                self.logger.info('Bot is restarting')
-                self.pipeline.connect() 
-                self.logger.error(traceback.format_exc())                
-                time.sleep(5)
+                self.pipeline.sleep(self.interval)
+                
+            except Exception as e:
+                retry_delay = 30
+                self.logger.error('Pipeline connection failed (%s)' % e)
+                self.logger.info('Pipeline will reconnect in %s seconds' % retry_delay)
+                time.sleep(retry_delay)
+                self.pipeline = None
+                
+            except KeyboardInterrupt as e:
+                if self.pipeline:
+                    self.pipeline.disconnect()
+                    self.logger.info("Disconnecting from pipeline")
+                self.logger.info("Bot is shutting down")
+                break
 
     
     def stop(self):
@@ -96,9 +108,8 @@ class Bot(object):
         return log(LOGS_PATH, self.bot_id, loglevel)
 
 
-    def load_pipeline(self, src_queue, dest_queues):
-        self.logger.debug("Connecting to pipeline queues")
-        return Pipeline(src_queue, dest_queues)
+    def load_pipeline(self):
+        return
 
 
     def load_queues(self):
@@ -111,10 +122,11 @@ class Bot(object):
                 queues = config.get("Pipeline", self.bot_id)
 
                 src_queue, dest_queues = self.parse_queues(queues)
-                if src_queue or dest_queues:
+                if src_queue:
                     self.logger.info("Source queue '%s'" % src_queue)
-                    self.logger.info("Destination queue(s) '%s'" % dest_queues)
-                    return [src_queue, dest_queues]
+                if dest_queues:
+                    self.logger.info("Destination queue(s) '%s'" % "', '".join(dest_queues))
+                return [src_queue, dest_queues]
 
         self.logger.error("Failed to load queues")
         self.stop()
