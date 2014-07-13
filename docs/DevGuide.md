@@ -1,8 +1,3 @@
-* How to use send/receive/acknowledge messages methods
-* some code write rules....
-
-
-
 ## How to write bots
 
 ### Template
@@ -39,3 +34,9 @@ if __name__ == "__main__":
 ### Example
 
 Check [taxonomy](https://github.com/certtools/intelmq/blob/master/src/bots/experts/taxonomy/taxonomy.py) expert bot
+
+
+
+### TODO
+* How to use send/receive/acknowledge messages methods
+* some code write rules....
