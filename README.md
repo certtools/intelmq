@@ -3,11 +3,22 @@
 IntelMQ is a solution for CERTs to process data feeds, pastebins, tweets throught a message queue.
 
 
+## Table of contents
+
+1. [How to Install](#how-to-install)
+2. [Goals](#goals)
+3. [System](#system)
+4. [Bots Available](#bots-available)
+5. [Incident Handling Automation Project](#incident-handling-automation-project)
+
+
+<a name="how-to-install"></a>
 ## How to Install
 
 See [UserGuide](https://github.com/certtools/intelmq/blob/master/docs/UserGuide.md).
 
 
+<a name="goals"></a>
 ## Goals
 
 * Reduce the complexity of system administration
@@ -20,7 +31,9 @@ See [UserGuide](https://github.com/certtools/intelmq/blob/master/docs/UserGuide.
 * Use messages tags: report, abuse-event, pastebin, tweet
 * Integration of the existing tools (AbuseHelper, CIF, etc...)
 
+<a name="system"></a>
 ## System
+
 
 ### Main Components
 * RabbitMQ as message queue for pipeline
@@ -45,6 +58,7 @@ See [UserGuide](https://github.com/certtools/intelmq/blob/master/docs/UserGuide.
 * RabbitMQ Queues: ... details ...
 
 
+<a name="bots-available"></a>
 ## Bots Available
 
 ### Input Bots
@@ -69,7 +83,8 @@ See [UserGuide](https://github.com/certtools/intelmq/blob/master/docs/UserGuide.
 * [ElasticSearch](https://github.com/certtools/intelmq/tree/master/src/bots/outputs/elasticsearch)
 * [File](https://github.com/certtools/intelmq/tree/master/src/bots/outputs/file)
 
-# Incident Handling Automation Project
+<a name="incident-handling-automation-project"></a>
+## Incident Handling Automation Project
 
 * **URL:** http://www.enisa.europa.eu/activities/cert/support/incident-handling-automation
 * **Mailing-list:** ihap@lists.trusted-introducer.org
