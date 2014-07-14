@@ -47,6 +47,8 @@
 
 ## Release 2 - TODO
 
+* Create RabbitMQ queue for bot management and state sharing
+
 * Create bots for all feeds that are not available in AbuseHelper (INTECO, CERT-EU, etc)
 
 * New bots: https://github.com/collectiveintel/cif-v1/tree/686c9ac9c34658ccc83d5b9fea97972eeaad0f29/cif-smrt/rules/etc
