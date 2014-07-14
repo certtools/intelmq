@@ -4,6 +4,8 @@
 
 * Create n6 bot.
 
+* Create [Shadowserver Bots](http://www.shadowserver.org/wiki/pmwiki.php/Services/Downloads)
+
 * Use SMTP logging etc -> http://lanyrd.com/2013/pycon/scdzbx/#link-qkct
 
 * Quality Control: security configurations and queues snapshoting
