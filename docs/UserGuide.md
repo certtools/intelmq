@@ -5,6 +5,7 @@
 git clone https://github.com/certtools/intelmq.git /tmp/intelmq
 cd /tmp/intelmq
 python setup.py install
+rm -rf /tmp/intelmq
 ```
 
 ## Install Dependencies
