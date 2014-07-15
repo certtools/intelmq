@@ -10,10 +10,10 @@
 |Title|Field|Format|Values|Level Req.|Example|Description|
 |:---:|:---:|:---:|:---:|:---:|:---:|:-----------:|
 |Source IP|source_ip|[ipv4/ipv6]|-|SHOULD|193.136.2.192|.---|
-|Source Port|source_port|[ipv4/ipv6]|-|SHOULD|193.136.2.192|.---|
+|Source Port|source_port|int|-|SHOULD|193.136.2.192|.---|
 |Destination IP|destination_ip|[ipv4/ipv6]|-|SHOULD|193.136.100.192|.---|
-|Destination Port|destination_port|[ipv4/ipv6]|-|SHOULD|193.136.100.192|.---|
-|Domain|domain|[ipv4/ipv6]|-|SHOULD|193.136.100.192|.---|
+|Destination Port|destination_port|int|-|SHOULD|193.136.100.192|.---|
+|Domain|domain|RFC123|-|SHOULD|193.136.100.192|.---|
 
 ### Dataset: Bot (IP Must)
 
