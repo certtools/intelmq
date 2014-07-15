@@ -1,7 +1,7 @@
 * Download database from http://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz
 * Unzip
-* Create geoip folder '/var/lib/intelmq/geoip/'
-* Copy database to '/var/lib/intelmq/geoip/'
+* Create geoip folder '/var/lib/intelmq/geoip'
+* Copy database to '/var/lib/intelmq/geoip'
 * Update the correspondent 'bot_id' section in '/etc/intelmq/bots.conf':
 
 ```
