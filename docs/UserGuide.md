@@ -2,9 +2,9 @@
 
 ### Clone Repository
 ```
-git clone https://github.com/certtools/intelmq.git /opt/intelmq
-cp /opt/intelmq/src/conf/bots.conf.default /opt/intelmq/src/conf/bots.conf
-cp /opt/intelmq/src/conf/pipeline.conf.default /opt/intelmq/src/conf/pipeline.conf
+git clone https://github.com/certtools/intelmq.git /tmp/intelmq
+cd /tmp/intelmq
+python setup.py install
 ```
 
 ## Install Dependencies
@@ -12,7 +12,6 @@ cp /opt/intelmq/src/conf/pipeline.conf.default /opt/intelmq/src/conf/pipeline.co
 ### Debian-based
 ```
 apt-get install redis-server rabbitmq-server python-pip
-pip install -r /opt/intelmq/requirements.txt
 ```
 
 ### RedHat-based
@@ -23,7 +22,6 @@ yum install centos-release-SCL
 yum install rabbitmq-server python27
 scl enable python27 bash
 easy_install pip
-pip2.7 install -r /opt/intelmq/requirements.txt
 echo "scl enable python27 bash" >> /opt/intelmq/.bashrc
 
 rpm -Uvh http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
