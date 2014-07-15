@@ -36,7 +36,6 @@ sysctl -w fs.file-max=100000
 chkconfig --add redis
 chkconfig --level 345 redis on
 service redis start/stop/restart
-
 ```
 Source: https://gist.github.com/nghuuphuoc/7801123
 
