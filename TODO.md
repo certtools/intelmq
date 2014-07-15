@@ -2,6 +2,8 @@
 
 (sorted by priority)
 
+* Create a python package and use this setup.py [example](https://github.com/pika/pika/blob/master/setup.py)
+
 * Create n6 bot.
 
 * Create [Shadowserver Bots](http://www.shadowserver.org/wiki/pmwiki.php/Services/Downloads)
