@@ -47,14 +47,16 @@ Before start running all bots, user should know the system details that will hel
 
 * Each bot instance starts completely independent and MUST have a 'bot id'.
 
-* The 'bot id' is used to reference in 'pipeline.conf' and 'bots.conf' the specific configurations for each bot instance.
+* The 'bot id' is used to reference in '/etc/intelmq/pipeline.conf' and '/etc/intelmq/bots.conf' the specific configurations for each bot instance.
 
 
 ### System Configuration
 
-* Global configuration for intelmq is at file 'system.conf'. Please note that logger in DEBUG will write in logs the bots password when its provided by parameters in 'bots.conf' file.
+* Global configuration for intelmq is at file '/etc/intelmq/system.conf'. Please note that logger in DEBUG will write in logs the bots password when its provided by parameters in 'bots.conf' file.
 
 ### Pipeline Configuration
+
+**Location:** /etc/intelmq/pipeline.conf
 
 **Syntax:**
 ```
@@ -80,6 +82,8 @@ arbor-parser =  arbor-parser-queue |  output-queue, file-queue
 
 
 ### Bots Configuration
+
+**Location:** /etc/intelmq/bots.conf
 
 **Syntax:**
 ```
@@ -108,7 +112,7 @@ port = 5000
 
 **Example:** search for self.parameters.database in GeoIPExpertBot example to see how it works.
 
-File: src/bots/experts/geoip/geoip.py
+File: /usr/local/lib/python2.7/dist-packages/intelmq-*/intelmq/bots/experts/geoip/geoip.py
 ```
 class GeoIPExpertBot(Bot):
 
@@ -121,10 +125,10 @@ class GeoIPExpertBot(Bot):
             self.stop()
 ```
 
-File: conf/bots.conf
+File: /etc/intelmq/bots.conf
 ```
 [geoip-expert]
-database = /opt/intelmq/src/bots/experts/geoip/GeoLite2-City.mmdb
+database = /var/lib/intelmq/geoip/GeoLite2-City.mmdb
 ```
 
 
