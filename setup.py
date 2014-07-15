@@ -1,7 +1,13 @@
 import os
 from setuptools import setup, find_packages
 
-dirs = ['/etc/intelmq', '/var/log/intelmq']
+dirs = [
+        '/etc/intelmq',
+        '/var/log/intelmq',
+        '/var/lib/intelmq',
+        '/var/lib/intelmq/archive/'
+       ]
+
 for dir in dirs:
     if not os.path.exists(dir):
         os.makedirs(dir)
@@ -12,7 +18,7 @@ setup(
     maintainer='Tomas Lima',
     maintainer_email='tomas.lima@cert.pt',
     packages=find_packages(),
-    scripts=['bin/intelmqctl'],
+    scripts=['bin/intelmqctl', 'bin/run-intelmq-botnet'],
     url='http://pypi.python.org/pypi/intelmq/',
     license='GPLv3',
     description="IntelMQ Tool",
