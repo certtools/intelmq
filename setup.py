@@ -1,4 +1,10 @@
+import os
 from setuptools import setup
+
+dirs = ['/etc/intelmq', '/var/log/intelmq']
+for dir in dirs:
+    if not os.path.exists(dir):
+        os.makedirs(dir)
 
 setup(
     name='intelmq',
@@ -18,7 +24,10 @@ setup(
     license='MPL v2.0',
     description="IntelMQ Tool",
     long_description='IntelMQ is a solution for CERTs to process data feeds, pastebins, tweets throught a message queue.',
-    package_data={'': ['LICENSE', 'README.md', 'CONTRIBUTORS.md']},
+    package_data={
+                  '': ['LICENSE', 'README.md', 'CONTRIBUTORS.md']
+                  '/etc/intelmq/': ['bin/conf/pipeline.conf.default', 'bin/conf/bots.conf.default', 'system.conf']
+    },
     install_requires=[
         "pika==0.9.14",
         "python-dateutil==1.5",
