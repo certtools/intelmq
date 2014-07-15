@@ -1,5 +1,5 @@
 import os
-from setuptools import setup
+from setuptools import setup, find_packages
 
 dirs = ['/etc/intelmq', '/var/log/intelmq']
 for dir in dirs:
@@ -11,14 +11,7 @@ setup(
     version='0.1.0',
     maintainer='Tomas Lima',
     maintainer_email='tomas.lima@cert.pt',
-    packages=[
-                  'intelmq',
-                  'intelmq.lib',
-                  'intelmq.bots',
-                  'intelmq.bots.inputs',
-                  'intelmq.bots.inputs.arbor',
-                  'intelmq.bots.inputs.abusehelper',
-    ],
+    packages=find_packages(),
     scripts=['bin/intelmqctl'],
     url='http://pypi.python.org/pypi/IntelMQ/',
     license='MPL v2.0',
