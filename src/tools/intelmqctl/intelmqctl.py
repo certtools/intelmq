@@ -1,6 +1,9 @@
 import argparse
 import psutil
 import inspect
+import shlex
+
+PATH = "/opt/intelmq/src/"
 
 APPNAME = "intelmqctl"
 VERSION = "0.0.0"
@@ -45,7 +48,7 @@ class IntelMQContoller():
                 return func        
 
     
-    def run(self):       
+    def run(self):
         if self.args.bot:
             method_name = "bot_" + self.args.bot
             call_method = self.auto_method_call(method_name)
@@ -61,9 +64,26 @@ class IntelMQContoller():
             call_method = self.auto_method_call(method_name)
             call_method()
 
+    
+
+
 
     def bot_start(self, id):
-        print "bot_start"
+        # if id already exists:
+            # if wants to load:
+                # load bot info 
+            #else:
+        # else:
+        filepath = raw_input('Bot [<path>/<file>.py]: ')
+        filepath = filepath.strip()
+            # ask for configurations loaded from settings correspondent to bot
+        
+        # need to be generic and probably needs the ENV VARIABLE
+        # we need to filter part of filepath to be like bots.output.postgresql
+        cmd = "python -m %s %s" % (filepath, id)
+        args = shlex.split(cmd)
+        p = psutil.Popen(args)
+        # save PID in file
         
     def bot_stop(self):
         print "bot_start"
@@ -95,3 +115,4 @@ class IntelMQContoller():
     
 x = IntelMQContoller()
 x.run()
+
