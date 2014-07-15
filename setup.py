@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(
-    name='IntelMQ',
+    name='intelmq',
     version='0.1.0',
     maintainer='Tomas Lima',
     maintainer_email='tomas.lima@cert.pt',
