@@ -138,25 +138,22 @@ database = /var/lib/intelmq/geoip/GeoLite2-City.mmdb
 **Syntax:**
 
 ```
-cd /opt/intelmq/src/
-nohup python -m bots.< inputs | experts | outputs >.< bot folder >.< bot >  < bot id > &
+$ nohup python -m intelmq.bots.< inputs | experts | outputs >.< bot folder >.< bot >  < bot id > &
 ```
 
 **Example:**
 
 ```
-cd /opt/intelmq/src/
-nohup python -m bots.inputs.arbor.feed arbor-feed &
+$ nohup python -m intelmq.bots.inputs.arbor.feed arbor-feed &
 ```
 
-**Note:** first argument for each bot is the bot ID. This ID is used to get from pipeline.conf the source and destination queues.
+**Note:** first argument for each bot is the bot ID. This ID is used to get from 'pipeline.conf' the source and destination queues.
 
 
 ### Run Botnet Example
 
 ```
-cd /opt/intelmq/src/
-bash tools/run-botnet-example.sh
+$ run-intelmq-botnet
 ```
 
 
@@ -165,25 +162,25 @@ bash tools/run-botnet-example.sh
 ### Monitoring IntelMQ
 
 ```
-watch -n 0.5 rabbitmqctl list_queues
+$ watch -n 0.5 rabbitmqctl list_queues
 ```
 
 ```
-tail -f /opt/intelmq/src/logs/*
+$ tail -f /var/log/intelmq/*
 ```
 
 ### Reset Queues
 
 ```
-rabbitmqctl stop_app
-rabbitmqctl reset
-rabbitmqctl start_app
+$ rabbitmqctl stop_app
+$ rabbitmqctl reset
+$ rabbitmqctl start_app
 ```
 
 ### Reset Cache
 ```
-redis-cli FLUSHDB
-redis-cli FLUSHALL
+$ redis-cli FLUSHDB
+$ redis-cli FLUSHALL
 ```
 
 
