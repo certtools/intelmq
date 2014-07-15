@@ -76,7 +76,7 @@ class IntelMQContoller():
                 # load bot info 
             #else:
         # else:
-        filepath = raw_input('Bot [<path>/<file>.py]: ')
+        filepath = raw_input('Bot [intelmq.bots.<[inputs|experts|outputs]>.<botname>.<file>]: ')
         filepath = filepath.strip()
             # ask for configurations loaded from settings correspondent to bot
         
