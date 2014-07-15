@@ -1,0 +1,10 @@
+Metadata-Version: 1.0
+Name: intelmq
+Version: 0.1.0
+Summary: IntelMQ Tool
+Home-page: http://pypi.python.org/pypi/intelmq/
+Author: Tomas Lima
+Author-email: tomas.lima@cert.pt
+License: GPLv3
+Description: IntelMQ is a solution for CERTs to process data feeds, pastebins, tweets throught a message queue.
+Platform: UNKNOWN
