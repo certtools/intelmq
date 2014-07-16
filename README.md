@@ -62,26 +62,26 @@ See [UserGuide](https://github.com/certtools/intelmq/blob/master/docs/UserGuide.
 ## Bots Available
 
 ### Input Bots
-* [MalwareDomainList](https://github.com/certtools/intelmq/tree/master/src/bots/inputs/malwaredomainlist)
-* [Arbor](https://github.com/certtools/intelmq/tree/master/src/bots/inputs/arbor) (Atlas Public)
-* [VXVault](https://github.com/certtools/intelmq/tree/master/src/bots/inputs/vxvault)
-* [AbuseHelper](https://github.com/certtools/intelmq/tree/master/src/bots/inputs/abusehelper)
-* [CERT-EU](https://github.com/certtools/intelmq/tree/master/src/bots/inputs/certeu) (Mail)
+* [MalwareDomainList](https://github.com/certtools/intelmq/tree/master/intelmq/bots/inputs/malwaredomainlist)
+* [Arbor](https://github.com/certtools/intelmq/tree/master/intelmq/bots/inputs/arbor) (Atlas Public)
+* [VXVault](https://github.com/certtools/intelmq/tree/master/intelmq/bots/inputs/vxvault)
+* [AbuseHelper](https://github.com/certtools/intelmq/tree/master/intelmq/bots/inputs/abusehelper)
+* [CERT-EU](https://github.com/certtools/intelmq/tree/master/intelmq/bots/inputs/certeu) (Mail)
 
 ### Expert Bots
-* [TeamCymru IPtoASN](https://github.com/certtools/intelmq/tree/master/src/bots/experts/cymru) (DNS Service)
-* [MaxMind GeoIP](https://github.com/certtools/intelmq/tree/master/src/bots/experts/geoip)
-* [ContactDB](https://github.com/certtools/intelmq/tree/master/src/bots/experts/contactdb)
-* [eCSIRT Taxonomy](https://github.com/certtools/intelmq/tree/master/src/bots/experts/taxonomy)
-* [Events Deduplicator](https://github.com/certtools/intelmq/tree/master/src/bots/experts/deduplicator)
-* [Events Sanitizer](https://github.com/certtools/intelmq/tree/master/src/bots/experts/sanitizer)
+* [TeamCymru IPtoASN](https://github.com/certtools/intelmq/tree/master/intelmq/bots/experts/cymru) (DNS Service)
+* [MaxMind GeoIP](https://github.com/certtools/intelmq/tree/master/intelmq/bots/experts/geoip)
+* [ContactDB](https://github.com/certtools/intelmq/tree/master/intelmq/bots/experts/contactdb)
+* [eCSIRT Taxonomy](https://github.com/certtools/intelmq/tree/master/intelmq/bots/experts/taxonomy)
+* [Events Deduplicator](https://github.com/certtools/intelmq/tree/master/intelmq/bots/experts/deduplicator)
+* [Events Sanitizer](https://github.com/certtools/intelmq/tree/master/intelmq/bots/experts/sanitizer)
 
 ### Output Bots
-* [Splunk](https://github.com/certtools/intelmq/tree/master/src/bots/outputs/logcollector)
-* [MongoDB](https://github.com/certtools/intelmq/tree/master/src/bots/outputs/mongodb)
-* [PostgreSQL](https://github.com/certtools/intelmq/tree/master/src/bots/outputs/postgresql)
-* [ElasticSearch](https://github.com/certtools/intelmq/tree/master/src/bots/outputs/elasticsearch)
-* [File](https://github.com/certtools/intelmq/tree/master/src/bots/outputs/file)
+* [Splunk](https://github.com/certtools/intelmq/tree/master/intelmq/bots/outputs/logcollector)
+* [MongoDB](https://github.com/certtools/intelmq/tree/master/intelmq/bots/outputs/mongodb)
+* [PostgreSQL](https://github.com/certtools/intelmq/tree/master/intelmq/bots/outputs/postgresql)
+* [ElasticSearch](https://github.com/certtools/intelmq/tree/master/intelmq/bots/outputs/elasticsearch)
+* [File](https://github.com/certtools/intelmq/tree/master/intelmq/bots/outputs/file)
 
 <a name="incident-handling-automation-project"></a>
 ## Incident Handling Automation Project
