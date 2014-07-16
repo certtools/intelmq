@@ -158,7 +158,7 @@ $ run-intelmq-botnet
 ```
 
 
-## Utils
+## Utilities
 
 ### Monitoring IntelMQ
 
