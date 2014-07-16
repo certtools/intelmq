@@ -44,7 +44,6 @@ rm -rf /tmp/intelmq
 
 ## How it Works
 
-### System Details
 Before start running all bots, user should know the system details that will help configure and start bots.
 
 * Each bot instance starts completely independent and MUST have a 'bot id'.
