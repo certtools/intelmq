@@ -1,13 +1,5 @@
 # Installation
 
-### Clone Repository
-```
-git clone https://github.com/certtools/intelmq.git /tmp/intelmq
-cd /tmp/intelmq
-python setup.py install
-rm -rf /tmp/intelmq
-```
-
 ## Install Dependencies
 
 ### Debian-based
@@ -39,6 +31,15 @@ chkconfig --level 345 redis on
 service redis start/stop/restart
 ```
 Source: https://gist.github.com/nghuuphuoc/7801123
+
+## Install IntelMQ
+```
+git clone https://github.com/certtools/intelmq.git /tmp/intelmq
+cd /tmp/intelmq
+python setup.py install
+rm -rf /tmp/intelmq
+```
+
 
 ## How it Works
 
