@@ -33,6 +33,7 @@ service redis start/stop/restart
 Source: https://gist.github.com/nghuuphuoc/7801123
 
 ## Install IntelMQ
+
 ```
 git clone https://github.com/certtools/intelmq.git /tmp/intelmq
 cd /tmp/intelmq
