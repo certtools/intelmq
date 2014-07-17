@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 
-import argparse
-import psutil
-import inspect
+import re
+import os
 import shlex
+import inspect
+import psutil
+import argparse
+import intelmq.bots
 
-PATH = "/opt/intelmq/src/"
 
 APPNAME = "intelmqctl"
 VERSION = "0.0.0"
@@ -14,6 +16,41 @@ USAGE = '''
   intelmqctl --bot [start|stop|restart|reload] --id=cymru-expert
   intelmqctl --botnet [start|stop|restart|reload]
   intelmqctl --pipeline [list|edit]'''
+
+
+
+def get_bots(rpath):
+    bots = dict()
+
+    paths = list()
+    paths.append(os.path.join(rpath, "inputs"))
+    paths.append(os.path.join(rpath, "experts"))
+    paths.append(os.path.join(rpath, "outputs"))
+    
+    for path in paths:
+        
+        for items in os.walk(path):
+            if items[0].endswith("/lib"):
+                continue
+
+            if path is items[0]:
+                continue
+
+            for file in items[2]:
+                if ".pyc" in file or "__init__" in file:
+                    continue
+
+                match = re.search(r'(\w+).py', file)
+                if match:
+                    botmodule = match.group(len(match.groups()))
+                    botname = items[0].split('/')[-1:][0]
+                    botpath = items[0].split('/')[-4:]
+                    botpath.append(file)
+                    botpath = ".".join(botpath)
+                    bots[botpath] = list()
+                    bots[botpath].append(botname)
+                    bots[botpath].append(botmodule)
+    return bots
 
 
 class IntelMQContoller():
@@ -71,11 +108,24 @@ class IntelMQContoller():
 
 
     def bot_start(self, id):
+        bots = get_bots(intelmq.bots.__path__[0]).items()
+
+
         # if id already exists:
             # if wants to load:
                 # load bot info 
             #else:
         # else:
+        #print bots
+        print bots['intelmq.bots.experts.deduplicator.deduplicator.py']
+        #for items in bots:
+        #    print items
+        #    for item in items:
+        #        print "%s - %s" % (item[0], item[1])
+        #        print item[0]
+        #        print "--"
+            
+        
         filepath = raw_input('Bot [intelmq.bots.<[inputs|experts|outputs]>.<botname>.<file>]: ')
         filepath = filepath.strip()
             # ask for configurations loaded from settings correspondent to bot
