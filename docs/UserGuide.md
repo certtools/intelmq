@@ -72,7 +72,7 @@ arbor-feed   =                     |  arbor-parser-queue
 arbor-parser =  arbor-parser-queue |  output-queue
 ```
 
-**Notes:** if bot doest not need a source queue, (ex.: when bot gets a report from URL) do not write anything and bot will ignore the source queue. The same is for destination queue. The system also support multiple destination queues in [fanout](https://www.rabbitmq.com/tutorials/amqp-concepts.html) mode. To use this functionality see the following example:
+**Notes:** if bot doest not need a source queue, (e.g.: when bot gets a report from URL) do not write anything and bot will ignore the source queue. The same is for destination queue. The system also support multiple destination queues in [fanout](https://www.rabbitmq.com/tutorials/amqp-concepts.html) mode. To use this functionality see the following example:
 
 **Example:**
 ```
