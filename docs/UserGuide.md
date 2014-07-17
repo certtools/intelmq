@@ -109,7 +109,7 @@ ip = 192.168.1.243
 port = 5000
 ```
 
-**Notes:** The '[default]' section contains all default values for each bot and, if necessary, a 'bot id' section can override all default options. Each option/value specified in 'bots.conf' is available in the correspondent bot using the, for example, 'self.parameters.ip' or 'self.parameters.processing_interval'.
+**Notes:** The '[default]' section contains all default values for each bot and, if necessary, a 'bot id' section can override all default options. Each option/value specified in 'bots.conf' is available in the correspondent bot using, for example, 'self.parameters.ip' or 'self.parameters.processing_interval'.
 
 **Example:** search for self.parameters.database in GeoIPExpertBot example to see how it works.
 
