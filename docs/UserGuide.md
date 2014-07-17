@@ -68,7 +68,7 @@ Before start running all bots, user should know the system details that will hel
 **Example:**
 ```
 [Pipeline]
-arbor-feed   =  None               |  arbor-parser-queue
+arbor-feed   =                     |  arbor-parser-queue
 arbor-parser =  arbor-parser-queue |  output-queue
 ```
 
