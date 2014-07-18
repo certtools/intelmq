@@ -10,7 +10,7 @@
         "file": "parser.py",
         "module": "intelmq.bots.inputs.arbor.parser",
         "parameters": { }
-    }
+    },
     "arbor-harmonizer": {
         "file": "harmonizer.py",
         "module": "intelmq.bots.inputs.arbor.harmonizer",
