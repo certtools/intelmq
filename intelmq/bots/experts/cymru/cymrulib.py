@@ -1,8 +1,9 @@
-import dns.resolver
-import binascii
-from intelmq.lib.utils import *
+import binascii, dns.resolver
+from intelmq.lib.utils import reverse_ip
 
-# Reference: http://www.team-cymru.org/Services/ip-to-asn.html#dns
+'''
+Reference: http://www.team-cymru.org/Services/ip-to-asn.html#dns
+'''
 
 IP_QUERY  = "%s.origin%s.asn.cymru.com"
 ASN_QUERY = "AS%s.asn.cymru.com"
@@ -12,8 +13,6 @@ class Cymru():
    
     @staticmethod
     def query(ip, ip_version):
-        asn = bgp = cc = registry = allocated = as_name = ""
-        
         raw_result = Cymru.__ip_query(ip, ip_version)
         result     = Cymru.__ip_query_parse(raw_result)
         
