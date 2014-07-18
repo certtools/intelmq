@@ -1,9 +1,7 @@
-import sys
-import xmpp
-from intelmq.lib.bot import *
-from intelmq.lib.utils import *
-from intelmq.lib.event import *
-from intelmq.lib.cache import *
+import sys, xmpp, time
+from intelmq.lib.bot import Bot
+from intelmq.lib.event import Event
+#from intelmq.lib.utils import *
 
 # Required parameters:
 # - jid

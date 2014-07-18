@@ -1,9 +1,8 @@
 import sys
 import urlparse
-from intelmq.lib.bot import *
-from intelmq.lib.utils import *
-from intelmq.lib.event import *
-from intelmq.lib.cache import *
+from intelmq.lib.bot import Bot
+from intelmq.lib.utils import force_decode
+from intelmq.lib.event import Event
 
 class VXVaultParserBot(Bot):
 
