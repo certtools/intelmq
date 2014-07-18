@@ -1,0 +1,19 @@
+{
+    "arbor-feed": {
+        "file": "feed.py",
+        "module": "intelmq.bots.inputs.arbor.feed",
+        "parameters": {
+            "processing_interval": "3600"
+        }
+    },
+    "arbor-parser": {
+        "file": "parser.py",
+        "module": "intelmq.bots.inputs.arbor.parser",
+        "parameters": { }
+    }
+    "arbor-harmonizer": {
+        "file": "harmonizer.py",
+        "module": "intelmq.bots.inputs.arbor.harmonizer",
+        "parameters": { }
+    }
+}
