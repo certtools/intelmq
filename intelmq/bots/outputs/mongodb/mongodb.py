@@ -1,9 +1,5 @@
-import sys
 import pymongo
-from intelmq.lib.bot import *
-from intelmq.lib.utils import *
-from intelmq.lib.event import *
-from intelmq.lib.cache import *
+from intelmq.lib.bot import Bot, sys
 
 class MongoDBBot(Bot):
 
