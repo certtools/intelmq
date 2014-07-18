@@ -1,17 +1,18 @@
+import sys
 import re
 import time
 import ConfigParser
 
-from intelmq.lib.pipeline import *
-from intelmq.lib.utils import *
-from intelmq.lib.cache import *
-from intelmq.lib.event import *
+from intelmq.lib.event import Event
+from intelmq.lib.pipeline import Pipeline
+from intelmq.lib.utils import force_decode, log
 
 
 SYSTEM_CONF_FILE = "/etc/intelmq/system.conf"
 PIPELINE_CONF_FILE = "/etc/intelmq/pipeline.conf"
 BOTS_CONF_FILE = "/etc/intelmq/bots.conf"
 LOGS_PATH = "/var/log/intelmq/"
+
 
 class Bot(object):
 
