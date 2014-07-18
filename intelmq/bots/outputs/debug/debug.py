@@ -1,10 +1,5 @@
-import sys
-from intelmq.lib.bot import *
-from intelmq.lib.utils import *
-from intelmq.lib.event import *
-from intelmq.lib.cache import *
-import traceback
 import json
+from intelmq.lib.bot import Bot, sys
 
 class DebugBot(Bot):
 

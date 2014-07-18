@@ -1,11 +1,4 @@
-import sys
-import json
-
-from intelmq.lib.bot import *
-from intelmq.lib.utils import *
-from intelmq.lib.event import *
-from intelmq.lib.cache import *
-
+from intelmq.lib.bot import Bot, sys
 
 class FileBot(Bot):
 

@@ -1,9 +1,5 @@
-import sys
-import time
-import socket
-from intelmq.lib.bot import *
-from intelmq.lib.utils import *
-from intelmq.lib.event import *
+import time, socket
+from intelmq.lib.bot import Bot, sys
 
 class LogCollectorBot(Bot):
 

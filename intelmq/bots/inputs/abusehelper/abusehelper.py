@@ -1,7 +1,6 @@
-import sys, xmpp, time
-from intelmq.lib.bot import Bot
+import xmpp, time
+from intelmq.lib.bot import Bot, sys
 from intelmq.lib.event import Event
-#from intelmq.lib.utils import *
 
 # Required parameters:
 # - jid

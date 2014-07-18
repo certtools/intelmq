@@ -1,7 +1,6 @@
-import sys
-from intelmq.lib.bot import *
-from intelmq.lib.utils import *
-from intelmq.lib.event import *
+from intelmq.lib.bot import Bot, sys
+
+# FIXME: this dict should be on a sparated file
 
 TAXONOMY = {
             "phishing"                  : "Fraud",
