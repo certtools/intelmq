@@ -1,9 +1,6 @@
-import sys
-from intelmq.lib.bot import *
-from intelmq.lib.utils import *
-from intelmq.lib.event import *
-from intelmq.lib.cache import *
-import traceback
+from intelmq.lib.bot import Bot, sys
+from intelmq.lib.cache import Cache
+from intelmq.lib.event import Event
 
 class DeduplicatorBot(Bot):
     
@@ -21,15 +18,19 @@ class DeduplicatorBot(Bot):
 
         if message:
             try:
+                # Event deduplication
                 event = Event.from_unicode(message)
                 event.clear("observation_time")
                 message_hash = hash(event)                            
+
             except:
+                # Generic message deduplication
                 message_hash = hash(message)
 
             if not self.cache.exists(message_hash):
                 self.send_message(message)
                 self.cache.set(message_hash, 'hash')
+
         self.acknowledge_message()
 
 

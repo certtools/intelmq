@@ -1,10 +1,5 @@
-import sys
-import datetime
-import pymongo
-from intelmq.lib.bot import *
-from intelmq.lib.utils import *
-from intelmq.lib.event import *
-from intelmq.lib.cache import *
+import datetime, pymongo
+from intelmq.lib.bot import Bot, sys
 
 class IntelMailerBot(Bot):
 
