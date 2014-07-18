@@ -1,7 +1,6 @@
 from intelmq.lib.bot import Bot, sys
 from intelmq.lib.utils import force_decode
 from intelmq.lib.event import Event
-#from intelmq.lib.cache import *
 
 class ArborParserBot(Bot):
 
