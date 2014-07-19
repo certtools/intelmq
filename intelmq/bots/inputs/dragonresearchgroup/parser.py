@@ -17,7 +17,7 @@ class DragonResearchGroupParserBot(Bot):
                 row = force_decode(row).split('|')
                 event = Event()
 
-                columns = ["asn", "as_name", "ip", "source_time"]
+                columns = ["reported_asn", "reported_as_name", "reported_ip", "source_time"]
                 for key, value in zip(columns, row):
                     event.add(key, value.strip())
 
