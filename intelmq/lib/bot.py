@@ -1,17 +1,18 @@
+import sys
 import re
 import time
 import ConfigParser
 
-from intelmq.lib.pipeline import *
-from intelmq.lib.utils import *
-from intelmq.lib.cache import *
-from intelmq.lib.event import *
+from intelmq.lib.event import Event
+from intelmq.lib.pipeline import Pipeline
+from intelmq.lib.utils import force_decode, log
 
 
 SYSTEM_CONF_FILE = "/etc/intelmq/system.conf"
 PIPELINE_CONF_FILE = "/etc/intelmq/pipeline.conf"
 BOTS_CONF_FILE = "/etc/intelmq/bots.conf"
 LOGS_PATH = "/var/log/intelmq/"
+
 
 class Bot(object):
 
@@ -26,7 +27,7 @@ class Bot(object):
         self.load_configurations()
 
         self.src_queue, self.dest_queues = self.load_queues()
-        self.interval = float(self.parameters.processing_interval)
+        self.parameters.processing_interval = float(self.parameters.processing_interval)
         
         self.init()
 
@@ -46,7 +47,7 @@ class Bot(object):
                     self.pipeline = Pipeline(self.src_queue, self.dest_queues)
                     self.logger.info("Connected to pipeline queues. Start processing.")
                 self.process()
-                self.pipeline.sleep(self.interval)
+                self.pipeline.sleep(self.parameters.processing_interval)
                 
             except Exception as e:
                 retry_delay = 30
