@@ -16,21 +16,26 @@ class GeoIPExpertBot(Bot):
         if event:
             ip = event.value("ip")
             if ip:
-                event.clear("cc")
-                event.clear("city")
-                event.clear("longitude")
-                event.clear("latitude")
+                
+                try:
+                    info = self.database.city(ip)
+                   
+                    event.clear("cc")
+                    event.clear("city")
+                    event.clear("longitude")
+                    event.clear("latitude")
+                
+                    if info.country.iso_code:
+                        event.add("cc", info.country.iso_code)
+                    if info.location.latitude:
+                        event.add("latitude",  str(info.location.latitude))
+                    if info.location.longitude:
+                        event.add("longitude", str(info.location.longitude))
+                    if info.city.name:
+                        event.add("city", info.city.name)
 
-                info = self.database.city(ip)
-
-                if info.country.iso_code:
-                    event.add("cc", info.country.iso_code)
-                if info.location.latitude:
-                    event.add("latitude",  str(info.location.latitude))
-                if info.location.longitude:
-                    event.add("longitude", str(info.location.longitude))
-                if info.city.name:
-                    event.add("city", info.city.name)
+                except geoip2.errors.AddressNotFoundError:
+                    pass
             
             self.send_message(event)
         self.acknowledge_message()
