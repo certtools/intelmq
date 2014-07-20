@@ -165,6 +165,7 @@ class Bot(object):
     def receive_message(self):
         raw_message = self.pipeline.receive()
         try:
+            raw_message = force_decode(raw_message)
             message = Event.from_unicode(raw_message)
         except:
             message = raw_message
