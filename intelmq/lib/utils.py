@@ -73,11 +73,8 @@ def reverse_ip(ip):
 
 
 def decode(text, encodings=["ascii", "utf-8"]):
-    if not isinstance(text, basestring):
-        return None
-
     if isinstance(text, unicode):
-        return text
+        return unicode(text)
 
     for encoding in encodings:
         try:
