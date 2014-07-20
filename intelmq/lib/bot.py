@@ -49,9 +49,10 @@ class Bot(object):
                 self.process()
                 self.pipeline.sleep(self.parameters.processing_interval)
                 
-            except Exception as e:
+            except Exception, ex:
                 retry_delay = 30
-                self.logger.error('Pipeline connection failed (%s)' % e)
+                self.logger.exception("Check the following exception:")
+                self.logger.error('Pipeline connection failed (%r)' % ex)
                 self.logger.info('Pipeline will reconnect in %s seconds' % retry_delay)
                 time.sleep(retry_delay)
                 self.pipeline = None
