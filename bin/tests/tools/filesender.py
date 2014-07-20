@@ -2,7 +2,7 @@ import sys, os, time
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
 from lib.pipeline import Pipeline
-from lib.utils import force_decode
+from lib.utils import decode
 from lib.event import Event
 
 if len(sys.argv) != 3:
@@ -20,7 +20,7 @@ queues = sys.argv[2].split(',')
 pipeline = Pipeline(None, queues)
 
 for line in file:
-    line = force_decode(line)
+    line = decode(line)
     
     try:
         event = Event.from_unicode(line)
@@ -34,6 +34,6 @@ for line in file:
         event.add(key, value)
 
     time.sleep(0.01)
-    pipeline.send(force_decode(event))
+    pipeline.send(decode(event))
 
 file.close()

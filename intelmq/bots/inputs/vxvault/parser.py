@@ -1,6 +1,6 @@
 import urlparse
 from intelmq.lib.bot import Bot, sys
-from intelmq.lib.utils import force_decode
+from intelmq.lib.utils import decode
 from intelmq.lib.event import Event
 
 class VXVaultParserBot(Bot):
@@ -11,7 +11,7 @@ class VXVaultParserBot(Bot):
         if report:
             for row in report.split('\n'):
                 row = row.strip()
-                row = force_decode(row)
+                row = decode(row)
 
                 if len(row) == 0 or not row.startswith('http'):
                     continue
