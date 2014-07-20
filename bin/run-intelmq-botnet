@@ -1,13 +1,24 @@
 #/usr/bin/env bash
+python -m intelmq.bots.inputs.dragonresearchgroup.feedssh drg-ssh-feed &
+python -m intelmq.bots.inputs.dragonresearchgroup.harmonizerssh drg-ssh-harmonizer &
+python -m intelmq.bots.inputs.dragonresearchgroup.parser drg-ssh-parser &
+
+python -m intelmq.bots.inputs.dragonresearchgroup.feedvnc drg-vnc-feed &
+python -m intelmq.bots.inputs.dragonresearchgroup.harmonizervnc drg-vnc-harmonizer &
+python -m intelmq.bots.inputs.dragonresearchgroup.parser drg-vnc-parser &
+
 python -m intelmq.bots.inputs.arbor.feed arbor-feed &
 python -m intelmq.bots.inputs.arbor.parser arbor-parser &
 python -m intelmq.bots.inputs.arbor.harmonizer arbor-harmonizer &
+
 python -m intelmq.bots.inputs.vxvault.feed vxvault-feed &
 python -m intelmq.bots.inputs.vxvault.parser vxvault-parser &
 python -m intelmq.bots.inputs.vxvault.harmonizer vxvault-harmonizer &
+
 python -m intelmq.bots.inputs.malwaredomainlist.feed malwaredomainlist-feed &
 python -m intelmq.bots.inputs.malwaredomainlist.parser malwaredomainlist-parser &
 python -m intelmq.bots.inputs.malwaredomainlist.harmonizer malwaredomainlist-harmonizer &
+
 python -m intelmq.bots.experts.deduplicator.deduplicator deduplicator &
 python -m intelmq.bots.experts.sanitizer.sanitizer sanitizer &
 python -m intelmq.bots.experts.taxonomy.taxonomy taxonomy-expert &
