@@ -73,8 +73,10 @@ def reverse_ip(ip):
 
 
 def decode(text, encodings=["ascii", "utf-8"]):
-    if isinstance(text, unicode):
+    try:
         return unicode(text)
+    except ValueError as e:
+        pass
 
     for encoding in encodings:
         try:
