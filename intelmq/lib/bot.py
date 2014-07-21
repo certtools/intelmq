@@ -163,7 +163,7 @@ class Bot(object):
     def receive_message(self):
         raw_message = self.pipeline.receive()
         try:
-            raw_message = decode(raw_message)
+            raw_message = decode(raw_message) # its not necessary...i think...
             message = Event.from_unicode(raw_message)
         except:
             message = raw_message
