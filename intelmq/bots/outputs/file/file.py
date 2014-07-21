@@ -9,7 +9,7 @@ class FileBot(Bot):
         event = self.receive_message()
         
         if event:
-            text = unicode(event).encode('utf-8')
+            text = event.encode('utf-8')
             self.file.write(text)
             self.file.write("\n")
             self.file.flush()

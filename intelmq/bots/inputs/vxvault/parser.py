@@ -11,7 +11,6 @@ class VXVaultParserBot(Bot):
         if report:
             for row in report.split('\n'):
                 row = row.strip()
-                row = decode(row)
 
                 if len(row) == 0 or not row.startswith('http'):
                     continue
