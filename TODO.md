@@ -8,11 +8,6 @@
 
 * Create [Malware Hash Registry - Cymru](http://www.team-cymru.org/Services/MHR/#dns)
 
-* Use SMTP logging etc -> http://lanyrd.com/2013/pycon/scdzbx/#link-qkct
-
-* Quality Control: security configurations and queues snapshoting
-    * Queue Durability / Persistente Messages (search for 'Queue Durability'): http://www.rabbitmq.com/tutorials/amqp-concepts.html
-
 * Write docs/eCSIRT-Taxonomy.md based on document from Don Stikvoort, named "Incident Class mkVint"
 
 * Documentation: Improve architecture images in documentation, etc
