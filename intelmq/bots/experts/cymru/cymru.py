@@ -33,10 +33,12 @@ class CymruExpertBot(Bot):
         ip = event.value("ip")
 
         if is_ipv4(ip):
+            ip_version = 4
             ip_integer = ip_to_int(ip)
             cache_key = bin(ip_integer)[2 : MINIMUM_BGP_PREFIX_IPV4 + 2]
 
         elif is_ipv6(ip):
+            ip_version = 6
             ip_integer = ip_to_int(ip)
             cache_key = bin(ip_integer)[2 : MINIMUM_BGP_PREFIX_IPV6 + 2]
 
