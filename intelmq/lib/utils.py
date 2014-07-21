@@ -7,6 +7,21 @@ import socket
 import binascii
 import StringIO
 
+def decode(text, encodings=["ascii", "utf-8"]):
+    try:
+        return unicode(text)
+    except ValueError as e:
+        pass
+
+    for encoding in encodings:
+        try:
+            return unicode(text, encoding)
+        except ValueError as e:
+            pass
+
+    return None 
+
+
 def fetch_url(url, timeout=60.0, chunk_size=16384):
     req = urllib2.urlopen(url, timeout = timeout)
     strio = StringIO.StringIO()
@@ -50,18 +65,41 @@ def post_url(url, data, timeout=60.0, chunk_size=16384):
     return req.read()
 
 def is_ip(ip):
+    if is_ipv4(ip):
+        return True
+    if is_ipv6(ip):
+        return True
+    return False
+
+
+def is_ipv4(ip):
+    try:
+        socket.inet_pton(socket.AF_INET, ip)
+        return True
+    except socket.error:
+        return False
+
+
+def is_ipv6(ip):
+    try:
+        socket.inet_pton(socket.AF_INET6, ip)
+        return True
+    except socket.error:
+        return False
+    
+
+def ip_to_int(ip):
     try:
         ip_integer = socket.inet_pton(socket.AF_INET, ip)
-        ip_version = 4
     except socket.error:
         try:
             ip_integer = socket.inet_pton(socket.AF_INET6, ip)
-            ip_version = 6
         except socket.error:
             return None
         
     ip_integer = int(binascii.hexlify(ip_integer), 16)
-    return [ ip , ip_version, ip_integer ]
+    return ip_integer    
+
 
 def reverse_ip(ip):
     import dns.reversename
@@ -72,16 +110,23 @@ def reverse_ip(ip):
     return reverse[0]
 
 
-def decode(text, encodings=["ascii", "utf-8"]):
-    try:
-        return unicode(text)
-    except ValueError as e:
-        pass
+def is_url(url, force_http = False):
+    from urlparse import urlparse  
 
-    for encoding in encodings:
-        try:
-            return unicode(text, encoding)
-        except ValueError as e:
-            pass
+    res = urlparse(url)
+    if not res.netloc == "":
+        return True
 
-    return None 
+    if force_http:
+        res = urlparse("http://" + url)
+        if not res.netloc == "":
+            return True
+    
+    return False
+
+
+def is_domain_name(domain_name):
+    return not is_url(domain_name)
+
+
+
