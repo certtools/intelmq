@@ -5,7 +5,7 @@ import ConfigParser
 
 from intelmq.lib.event import Event
 from intelmq.lib.pipeline import Pipeline
-from intelmq.lib.utils import force_decode, log
+from intelmq.lib.utils import decode, log
 
 
 SYSTEM_CONF_FILE = "/etc/intelmq/system.conf"
@@ -156,17 +156,14 @@ class Bot(object):
 
 
     def send_message(self, message):
-        try:
-            message = unicode(message)
-        except:
-            message = force_decode(message)
+        message = decode(message)
         self.pipeline.send(message)
 
 
     def receive_message(self):
         raw_message = self.pipeline.receive()
         try:
-            raw_message = force_decode(raw_message)
+            raw_message = decode(raw_message) # its not necessary...i think...
             message = Event.from_unicode(raw_message)
         except:
             message = raw_message
