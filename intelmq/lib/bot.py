@@ -162,11 +162,13 @@ class Bot(object):
 
     def receive_message(self):
         raw_message = self.pipeline.receive()
+        message = decode(raw_message)
+        
         try:
-            raw_message = decode(raw_message) # its not necessary...i think...
-            message = Event.from_unicode(raw_message)
+            message = Event.from_unicode(message)
         except:
-            message = raw_message
+            pass
+        
         return message
 
 
