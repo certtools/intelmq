@@ -72,15 +72,16 @@ def reverse_ip(ip):
     return reverse[0]
 
 
-# FIXME: improve this method
-def force_decode(string, encodings=["ascii", "utf-8"]):
-    if isinstance(string, unicode):
-        return string
+def decode(text, encodings=["ascii", "utf-8"]):
+    try:
+        return unicode(text)
+    except ValueError as e:
+        pass
 
     for encoding in encodings:
         try:
-            return string.decode(encoding)
-        except ValueError:
+            return unicode(text, encoding)
+        except ValueError as e:
             pass
 
-    return string.decode('ascii','ignore') 
+    return None 

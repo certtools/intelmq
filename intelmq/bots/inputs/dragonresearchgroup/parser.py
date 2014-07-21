@@ -1,5 +1,5 @@
 from intelmq.lib.bot import Bot, sys
-from intelmq.lib.utils import force_decode
+from intelmq.lib.utils import decode
 from intelmq.lib.event import Event
 
 class DragonResearchGroupParserBot(Bot):
@@ -14,7 +14,7 @@ class DragonResearchGroupParserBot(Bot):
                 if len(row) == 0 or row.startswith('#'): # ignore all lines starting with comment mark
                     continue
                 
-                row = force_decode(row).split('|')
+                row = decode(row).split('|')
                 event = Event()
 
                 columns = ["reported_asn", "reported_as_name", "reported_ip", "source_time"]

@@ -1,5 +1,5 @@
 from intelmq.lib.bot import Bot, sys
-from intelmq.lib.utils import force_decode
+from intelmq.lib.utils import decode
 from intelmq.lib.event import Event
 
 class ArborParserBot(Bot):
@@ -14,7 +14,7 @@ class ArborParserBot(Bot):
                 if len(row) == 0 or row.startswith('other'):
                     continue
 
-                row = force_decode(row).split()
+                row = decode(row).split()
                 event = Event()
 
                 columns = ["ip"]
