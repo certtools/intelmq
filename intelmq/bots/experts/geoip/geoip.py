@@ -26,13 +26,13 @@ class GeoIPExpertBot(Bot):
                     event.clear("latitude")
                 
                     if info.country.iso_code:
-                        event.add("cc", info.country.iso_code)
+                        event.add("cc", decode(info.country.iso_code))
                     if info.location.latitude:
-                        event.add("latitude",  str(info.location.latitude))
+                        event.add("latitude",  decode(info.location.latitude))
                     if info.location.longitude:
-                        event.add("longitude", str(info.location.longitude))
+                        event.add("longitude", decode(info.location.longitude))
                     if info.city.name:
-                        event.add("city", info.city.name)
+                        event.add("city", decode(info.city.name))
 
                 except geoip2.errors.AddressNotFoundError:
                     pass

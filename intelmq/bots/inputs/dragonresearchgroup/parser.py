@@ -14,7 +14,7 @@ class DragonResearchGroupParserBot(Bot):
                 if len(row) == 0 or row.startswith('#'): # ignore all lines starting with comment mark
                     continue
                 
-                row = decode(row).split('|')
+                row = row.split('|')
                 event = Event()
 
                 columns = ["reported_asn", "reported_as_name", "reported_ip", "source_time"]

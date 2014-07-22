@@ -14,7 +14,7 @@ class ArborParserBot(Bot):
                 if len(row) == 0 or row.startswith('other'):
                     continue
 
-                row = decode(row).split()
+                row = row.split()
                 event = Event()
 
                 columns = ["ip"]
