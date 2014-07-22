@@ -1,5 +1,5 @@
 import binascii, dns.resolver
-from intelmq.lib.utils import reverse_ip
+from intelmq.lib.utils import reverse_ip, decode
 
 '''
 Reference: http://www.team-cymru.org/Services/ip-to-asn.html#dns
@@ -28,7 +28,7 @@ class Cymru():
     def __query(query):    
         try:
             for query_result in dns.resolver.query(query, rdtype='TXT'):
-                return str(query_result)
+                return decode(query_result)
         except dns.exception.DNSException:
             return None
 
