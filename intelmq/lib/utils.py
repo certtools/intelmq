@@ -125,6 +125,7 @@ def is_url(url, force_http = False):
     return False
 
 
+# FIXME: is not correct.
 def is_domain_name(domain_name):
     return not is_url(domain_name)
 
