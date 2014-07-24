@@ -11,7 +11,7 @@ class ArborHarmonizerBot(Bot):
             ip_value = event.value('ip')
             event.add('source_ip', ip_value)
             event.add('reported_ip', ip_value)
-            event.add('type', 'brute-force')
+            event.adds('type', 'brute-force')
             
             self.send_message(event)
         self.acknowledge_message()
