@@ -17,6 +17,8 @@ LOGS_PATH = "/var/log/intelmq/"
 class Bot(object):
 
     def __init__(self, bot_id):
+        self.current_message = None
+
         self.check_bot_id(bot_id)
 
         self.bot_id = bot_id
@@ -51,10 +53,12 @@ class Bot(object):
                 
             except Exception, ex:
                 retry_delay = 30
+                self.logger.error("Current Message(event): %r" % self.current_message)
                 self.logger.exception("Check the following exception:")
                 self.logger.error('Pipeline connection failed (%r)' % ex)
                 self.logger.info('Pipeline will reconnect in %s seconds' % retry_delay)
                 time.sleep(retry_delay)
+                self.pipeline.disconnect()
                 self.pipeline = None
                 
             except KeyboardInterrupt as e:
@@ -161,8 +165,8 @@ class Bot(object):
 
 
     def receive_message(self):
-        raw_message = self.pipeline.receive()
-        message = decode(raw_message)
+        self.current_message = self.pipeline.receive()
+        message = decode(self.current_message)
         
         try:
             message = Event.from_unicode(message)
