@@ -11,7 +11,7 @@ class OpenBLHarmonizerBot(Bot):
             ip_value = event.value('reported_ip')
             event.add('source_ip', ip_value)
             event.add('ip', ip_value)
-            event.add('type', 'brute-force') # ???
+            event.add('type', 'malware') # ???
             
             self.send_message(event)
         self.acknowledge_message()
