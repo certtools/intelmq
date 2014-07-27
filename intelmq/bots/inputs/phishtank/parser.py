@@ -9,7 +9,7 @@ class PhishTankParserBot(Bot):
         report = report.strip()
 
         if report:
-            columns = ["__IGNORE__", "url", "description_url", "source_time", "__IGNORE__", "__IGNORE__", "__IGNORE__", "target"]
+            columns = ["__IGNORE__", "url", "description_url", "source_time", "__IGNORE__", "__IGNORE__", "__IGNORE__", "target"] # ignore (__IGNORE__) fields specific to the source and other irrelevant fields
             rows = csv.DictReader(StringIO.StringIO(report), fieldnames = columns)
 
             for row in rows:
