@@ -6,6 +6,8 @@
 |Mauro Silva|mauro.silva@cert.pt|CERT.PT|
 |Cosmin Ciobanu|cosmin.ciobanu@enisa.europa.eu|ENISA|
 |Aaron Kaplan|kaplan@cert.at|CERT.AT|
+|Dalila Lima|dcrypt3d@gmail.com|University of Porto|
+|Bruno Braga|bruno.braga@cert.pt|CERT.PT|
 
 ### Start contributing
 
