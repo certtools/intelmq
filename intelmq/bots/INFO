@@ -2,24 +2,79 @@
     "Input Bots": {
         "ArborFeed": {
             "module": "intelmq.bots.inputs.arbor.feed",
-            "description": "Arbot Feed is the bot responsible to get the report from source of information.",
+            "description": "Arbor Feed is the bot responsible to get the report from source of information.",
             "parameters": {
                 "processing_interval": "3600"
             }
         },
         "ArborParser": {
             "module": "intelmq.bots.inputs.arbor.parser",
-            "description": "Arbot Parser is the bot responsible to parse the report.",
+            "description": "Arbor Parser is the bot responsible to parse the report.",
             "parameters": { }
         },
         "ArborHarmonizer": {
             "module": "intelmq.bots.inputs.arbor.harmonizer",
-            "description": "Arbot Harmonizer is the bot responsible to add additional information to the events.",
+            "description": "Arbor Harmonizer is the bot responsible to add additional information to the events.",
             "parameters": { }
+        },
+        "VXVaultFeed": {
+            "module": "intelmq.bots.inputs.vxvault.feed",
+            "description": "VXVault Feed is the bot responsible to get the report from source of information.",
+            "parameters": {
+                "processing_interval": "3600"
+            }
+        },
+        "VXVaultParser": {
+            "module": "intelmq.bots.inputs.vxvault.parser",
+            "description": "VXVault Parser is the bot responsible to parse the report.",
+            "parameters": { }
+        },
+        "VXVaultHarmonizer": {
+            "module": "intelmq.bots.inputs.vxvault.harmonizer",
+            "description": "VXVault Harmonizer is the bot responsible to add additional information to the events.",
+            "parameters": { }
+        },
+        "MalwareDomainListFeed": {
+            "module": "intelmq.bots.inputs.malwaredomainlist.feed",
+            "description": "MalwareDomainList Feed is the bot responsible to get the report from source of information.",
+            "parameters": {
+                "processing_interval": "3600"
+            }
+        },
+        "MalwareDomainListParser": {
+            "module": "intelmq.bots.inputs.malwaredomainlist.parser",
+            "description": "MalwareDomainList Parser is the bot responsible to parse the report.",
+            "parameters": { }
+        },
+        "MalwareDomainListHarmonizer": {
+            "module": "intelmq.bots.inputs.malwaredomainlist.harmonizer",
+            "description": "MalwareDomainList Harmonizer is the bot responsible to add additional information to the events.",
+            "parameters": { }
+        },
+        "AbuseHelper": {
+            "module": "intelmq.bots.inputs.abusehelper.abusehelper",
+            "description": "AbuseHelper is the bot responsible to connect and receive events from abusehelper system to IntelMQ.",
+            "parameters": {
+                "jid": "<user>",
+                "password": "<password>",
+                "source_room": "abuse.feeds",
+                "force_tls": "True"
+            }
         }
     },
     "Experts Bots": {
-
+        "Cymru": {
+            "module": "intelmq.bots.experts.cymru.cymru",
+            "description": "Cymry (IP to ASN) is the bot responsible to add network information to the events (BGP, ASN, AS Name, Country, etc..).",
+            "parameters": { }
+        },
+        "GeoIP": {
+            "module": "intelmq.bots.experts.geoip.geoip",
+            "description": "GeoIP (MaxMind) is the bot responsible to add geolocation information to the events (Country, City, Longitude, Latitude, etc..)",
+            "parameters": {
+                "database": "/var/lib/intelmq/geoip/GeoLite2-City.mmdb"
+            }
+        }
     },
     "Output Bots": {
 
