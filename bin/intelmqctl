@@ -1,63 +1,6 @@
+#!/usr/bin/env python
 
-### NOTE: this json is a sample of the main file with all bots and correspondent options. Use it to build this script
-
-INFO = '''
-{
-    "Input Bots": {
-        "ArborFeed": {
-            "module": "intelmq.bots.inputs.arbor.feed",
-            "description": "Arbor Feed is the bot responsible to get the report from source of information.",
-            "parameters": {
-                "processing_interval": "3600"
-            }
-        },
-        "ArborParser": {
-            "module": "intelmq.bots.inputs.arbor.parser",
-            "description": "Arbor Parser is the bot responsible to parse the report.",
-            "parameters": { }
-        },
-        "ArborHarmonizer": {
-            "module": "intelmq.bots.inputs.arbor.harmonizer",
-            "description": "Arbor Harmonizer is the bot responsible to add additional information to the events.",
-            "parameters": { }
-        },
-        "VXVaultFeed": {
-            "module": "intelmq.bots.inputs.vxvault.feed",
-            "description": "VXVault Feed is the bot responsible to get the report from source of information.",
-            "parameters": {
-                "processing_interval": "3600"
-            }
-        },
-        "VXVaultParser": {
-            "module": "intelmq.bots.inputs.vxvault.parser",
-            "description": "VXVault Parser is the bot responsible to parse the report.",
-            "parameters": { }
-        },
-        "VXVaultHarmonizer": {
-            "module": "intelmq.bots.inputs.vxvault.harmonizer",
-            "description": "VXVault Harmonizer is the bot responsible to add additional information to the events.",
-            "parameters": { }
-        }
-    },
-    "Experts Bots": {
-
-    },
-    "Output Bots": {
-
-    }
-}
-'''
-
-
-
-
-
-
-
-
-
-
-
+import sys
 import re
 import os
 import json
@@ -67,43 +10,37 @@ import psutil
 import argparse
 
 
+def read_option(num_options):
+    option = raw_input("\nChoose option: ")
+    try:
+        option = int(option)
+        if option <= num_options and option > 0:
+            return option-1
 
-def generate_options_list(options, description_text, question_text):
-    while True:
+    except ValueError:
+        print "Error!"
+        sys.exit(1)
+
+
+def save_pidfile(bot_id, piddata):
+    filename = "/var/run/intelmq/%s.pid" % bot_id
+    fp = open(filename, "w")
+    fp.write(json.dumps(piddata))
+    fp.close()
     
-        counter = 1
-        options_list = list()
-        template = "  [%s] %s"
+def load_pidfile(bot_id):
+    filename = "/var/run/intelmq/%s.pid" % bot_id
+    fp = open(filename, "r")
+    piddata = fp.read()
+    fp.close()
+    os.remove(filename)
+    return json.loads(piddata)
         
-        print "\n\n%s" % description_text
-        for option in options:
-            option_text = template % (counter, option)
-            options_list.append(option_text)
-            print option_text
-            counter += 1
-        
-        try:
-            answer = int(raw_input("\n%s" % question_text))
-            if answer <= len(options_list) and answer > 0:
-                return answer-1
-        
-        except ValueError:
-            pass
-        
-        print "\n" * 3
-        print "\nERROR: Invalid option!"
-        
-            
-
-
-
-
-
-
-
-
-
-
+def exists_pidfile(bot_id):
+    filename = "/var/run/intelmq/%s.pid" % bot_id
+    return os.path.isfile(filename)
+    
+    
 
 
 class IntelMQContoller():
@@ -128,7 +65,7 @@ class IntelMQContoller():
         group_list = group.add_mutually_exclusive_group()
         
         parser.add_argument('-v', '--version', action='version', version=VERSION)
-        parser.add_argument("--id", dest='id', default=None, help='bot ID')
+        parser.add_argument("--id", dest='bot_id', default=None, help='bot ID')
         
         group_list.add_argument('--bot',      choices=['start', 'stop', 'restart', 'reload', 'status'], metavar='[start|stop|restart|reload|status]', default=None)
         group_list.add_argument('--botnet',   choices=['start', 'stop', 'restart', 'reload', 'status'], metavar='[start|stop|restart|reload|status]', default=None)
@@ -136,12 +73,14 @@ class IntelMQContoller():
 
         self.args = parser.parse_args()
         
-        if self.args.id and not self.args.bot:
+        if self.args.bot_id and not self.args.bot:
             print "usage: %s" % USAGE
             print "%s: error: argument --id: expected argument --bot [start|stop|restart|reload|status]" % APPNAME
             exit()
 
-
+        fp = open('/etc/intelmq/INFO', 'r')
+        data = fp.read()
+        self.info = json.loads(data)
 
 
 
@@ -159,7 +98,7 @@ class IntelMQContoller():
         if self.args.bot:
             method_name = "bot_" + self.args.bot
             call_method = self.auto_method_call(method_name)
-            call_method(self.args.id)
+            call_method(self.args.bot_id)
             
         elif self.args.botnet:
             method_name = "botnet_" + self.args.botnet
@@ -179,60 +118,84 @@ class IntelMQContoller():
 
 
 
-    def bot_start(self, id):
-        info = json.loads(INFO)
-        
-        # ALGORITH
-        # ---------
-        # if id already exists:
-            # if wants to load:
-                # load bot info 
-            #else:
-        # else:
-        #   print list bots
+    def bot_start(self, bot_id):        
+        if exists_pidfile(bot_id):
+            print "Bot is already running."
+            return
 
+        template = "  [%s] %s"
 
-        # Show bot categories (Inputs, Experts, Outputs)
-        options = info.keys()
-        description_text = "Bots Categories:"
-        question_text = "Choose category: "
-        answer = generate_options_list(options, description_text, question_text)
-        category = options[answer]
-
-        # Show bots correspondent to the category
-        options = info[category].keys()
-        #for key, values in info[category].iteritems():
-        #    text = "%s - %s" % (key, info[category][key]['description'])
-        #    options.append(text)
+        print "\n\nBot Types:"
+        bots_types_list = self.info.keys()
+        for counter, option in enumerate(bots_types_list, 1):
+            print template % (counter, option)
             
-        description_text = "%s Bots:" % category
-        question_text = "Choose bot: "
-        answer = generate_options_list(options, description_text, question_text)
-        bot = options[answer]
+        option = read_option( len(bots_types_list) )
+        bot_type = bots_types_list[int(option)]
 
-        module = info[category][bot]['module']
+        print "\n\nBots List:"
+        bots_list = self.info[bot_type].keys()
+        for counter, option in enumerate(bots_list, 1):
+            print template % (counter, option)
+            
+        option = read_option( len(bots_list) )
+        bot = bots_list[int(option)]
+
+
+        bot_info = self.info[bot_type][bot]
+
+        print 
+        print 
+        print "Bot details"
+        print "==========="
+        print "Bot: %s" % bot
+        print "Description: %s" % bot_info['description']
+        print "Module: %s" % bot_info['module']
         
-        # NOTE: need to be generic and probably needs the ENV VARIABLE. we need to filter part of filepath to be like bots.output.postgresql
-        cmd = "python -m %s %s" % (module, id)
+        self.__bot_start(bot_id, bot_info['module'])
+
+        
+    def __bot_start(self, bot_id, module):
+        cmd = "python -m %s %s" % (module, bot_id)
         args = shlex.split(cmd)
         p = psutil.Popen(args)
-        # save PID in file
+        piddata = { "pid": p.pid,
+                    "bot_id": bot_id,
+                    "module": module
+                  }
+        save_pidfile(bot_id, piddata)
         
         
-    def bot_stop(self):
-        print "bot_stop"
+    def bot_stop(self, bot_id):
+        if not exists_pidfile(bot_id):
+            print "Bot is not running."
+            return
+        self.__bot_stop(bot_id)
         
         
-    def bot_restart(self):
-        print "bot_restart"
+    def __bot_stop(self, bot_id):
+        piddata = load_pidfile(bot_id)
+        p = psutil.Process(piddata['pid'])
+        p.terminate()
+        return piddata
+        
+        
+    def bot_restart(self, bot_id):
+        # FIXME: wrong approach. when user start a new bot all information should be store in a configuration file to be used in all operations. Why? Imagine if you stop a bot, you will loose all confs and when you start again you will need to configure again.
+        piddata = self.bot_stop(bot_id)
+        self.__bot_start(piddata['bot_id'], piddata['module'])
     
     
-    def bot_reload(self):
+    def bot_reload(self, bot_id):
+        # FIXME: reload methods should be removed
         print "bot_reload"
     
     
-    def bot_status(self):
-        print "bot_status"
+    def bot_status(self, bot_id):
+        if exists_pidfile(bot_id):
+            print "Bot is running."
+        else:
+            print "Bot is not running."
 
     
     def botnet_start(self):
