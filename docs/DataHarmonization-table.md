@@ -1,6 +1,6 @@
 # Data Harmonization Ontology
 
-### Sections Description
+## Sections Description
 
 * **Feed:** 
 * **Time:** All the timestamps should be normalized to UTC. If the source reports only a date, please do not invent timestamps
@@ -17,7 +17,7 @@
 * **Specific Elements:** The elements listed below are additional keys used to describe abusive behavior, which are topic specific. They may refer to the source of information, such as|notified by||, an augmentation source such as|cymru cc|| or internal integration source, such as|rtir id||. The reason why they are separated from the the other IOC is that they are not generic, rather than topic or provider specific. Their communicative function is defined as an optional way to understand what other abuse handling pipelines are most likely to call these elements.
 * **Classification:** Having a functional ontology to work with, especially for the abuse types is important for you to be able to classify, prioritize and report relevant actionable intelligence to the parties who need to be informed. The driving idea for this ontology has been to use a minimal set of values with maximal usability. Below, is a list of harmonized values for the abuse types.
 
-### Fields List
+## Fields List
 
 |Section|Fields|Format|Description|
 |:---:|:---:|:---:|:-----------:|
