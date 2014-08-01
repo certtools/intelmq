@@ -19,7 +19,7 @@ def decode(text, encodings=["ascii", "utf-8"]):
         except ValueError as e:
             pass
 
-    return None 
+    raise Exception("Found a problem when decoding.")
 
 
 def fetch_url(url, timeout=60.0, chunk_size=16384):
