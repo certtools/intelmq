@@ -7,19 +7,38 @@ import socket
 import binascii
 import StringIO
 
-def decode(text, encodings=["ascii", "utf-8"]):
-    try:
-        return unicode(text)
-    except ValueError as e:
-        pass
-
+def decode(text, encodings=["utf-8", "ascii"], force=False):
     for encoding in encodings:
         try:
-            return unicode(text, encoding)
+            return text.decode(encoding)
         except ValueError as e:
             pass
+        
+    if force:
+        for encoding in encodings:
+            try:
+                return text.decode(encoding, 'ignore')
+            except ValueError as e:
+                pass
 
     raise Exception("Found a problem when decoding.")
+
+
+def encode(text, encodings=["utf-8", "ascii"], force=False):
+    for encoding in encodings:
+        try:
+            return text.encode(encoding)
+        except ValueError as e:
+            pass
+        
+    if force:
+        for encoding in encodings:
+            try:
+                return text.decode(encoding, 'ignore')
+            except ValueError as e:
+                pass
+
+    raise Exception("Found a problem when encoding.")
 
 
 def fetch_url(url, timeout=60.0, chunk_size=16384):
@@ -28,7 +47,7 @@ def fetch_url(url, timeout=60.0, chunk_size=16384):
     shutil.copyfileobj(req, strio, chunk_size)
     value = strio.getvalue()
     strio.close()
-    return value
+    return decode(value, force=True)
 
 
 def fetch_imap():
