@@ -1,6 +1,5 @@
 import geoip2.database
 from intelmq.lib.bot import Bot, sys
-from intelmq.lib.utils import decode
 
 class GeoIPExpertBot(Bot):
 
@@ -27,13 +26,13 @@ class GeoIPExpertBot(Bot):
                     event.clear("latitude")
                 
                     if info.country.iso_code:
-                        event.add("cc", decode(info.country.iso_code))
+                        event.add("cc", unicode(info.country.iso_code))
                     if info.location.latitude:
-                        event.add("latitude",  decode(info.location.latitude))
+                        event.add("latitude",  unicode(info.location.latitude))
                     if info.location.longitude:
-                        event.add("longitude", decode(info.location.longitude))
+                        event.add("longitude", unicode(info.location.longitude))
                     if info.city.name:
-                        event.add("city", decode(info.city.name))
+                        event.add("city", unicode(info.city.name))
 
                 except geoip2.errors.AddressNotFoundError:
                     pass
