@@ -159,21 +159,21 @@ class Bot(object):
             return [None, None]
 
 
-    def send_message(self, message):
-        message = decode(message)
+    def send_message(self, message):       
+        if isinstance(message, Event):
+            message = unicode(message) # convert Event Object to string (UTF-8)
         self.pipeline.send(message)
 
 
     def receive_message(self):
         self.current_message = self.pipeline.receive()
-        message = decode(self.current_message)
+        message = self.current_message.decode('utf-8')
         
-        try:
-            message = Event.from_unicode(message)
-        except:
-            pass
+        try:    # Event Object
+            return Event.from_unicode(message)
         
-        return message
+        except: # Report Object
+            return message
 
 
     def acknowledge_message(self):
