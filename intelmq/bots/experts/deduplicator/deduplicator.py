@@ -17,14 +17,15 @@ class DeduplicatorBot(Bot):
         message = self.receive_message()
 
         if message:
-            try:
-                # Event deduplication
-                event = Event.from_unicode(message)
+            
+            # Event deduplication
+            if isinstance(message, Event):
+                event = message
                 event.clear("observation_time")
                 message_hash = hash(event)                            
 
-            except:
-                # Generic message deduplication
+            # Generic message deduplication
+            else:
                 message_hash = hash(message)
 
             if not self.cache.exists(message_hash):
