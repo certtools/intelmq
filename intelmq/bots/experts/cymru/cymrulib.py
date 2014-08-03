@@ -1,5 +1,5 @@
 import binascii, dns.resolver, StringIO
-from intelmq.lib.utils import reverse_ip
+from intelmq.lib.utils import reverse_ip, decode
 
 '''
 Reference: http://www.team-cymru.org/Services/ip-to-asn.html#dns
@@ -29,9 +29,9 @@ class Cymru():
             for query_result in dns.resolver.query(query, rdtype='TXT'):    
                 fp = StringIO.StringIO()
                 query_result.to_wire(fp)
-                value = fp.getvalue().decode('utf-8')
+                value = fp.getvalue()[1:] # ignore first character
                 fp.close()
-                return value[1:] # ignore first character
+                return decode(value, force=True)
             
         except dns.exception.DNSException:
             return None
@@ -113,3 +113,4 @@ class Cymru():
             result['as_name'] = items[4]
 
         return result    
+
