@@ -17,7 +17,7 @@ class ArborParserBot(Bot):
                 row = row.split()
                 event = Event()
 
-                columns = ["ip"]
+                columns = ["reported_ip"]
                 for key, value in zip(columns, row):
                     event.add(key, value)
 
