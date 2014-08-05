@@ -1,38 +1,34 @@
 {
     "Input Bots": {
-        "ArborFeed": {
-            "module": "intelmq.bots.inputs.arbor.feed",
-            "description": "Arbor Feed is the bot responsible to get the report from source of information.",
-            "parameters": {
-                "processing_interval": "3600"
+        "Arbor": {
+            "collector": {
+                "module": "intelmq.bots.inputs.collectors.url",
+                "description": "Arbor Collector is the bot responsible to get the report from source of information.",
+                "parameters": {
+                    "url": "http://atlas-public.ec2.arbor.net/public/ssh_attackers",
+                    "processing_interval": "3600"
+                }
+            },
+            "parser": {
+                "module": "intelmq.bots.inputs.parsers.arbor.arbor",
+                "description": "Arbor Parser is the bot responsible to parse the report and sanitize the information.",
+                "parameters": { }
             }
         },
-        "ArborParser": {
-            "module": "intelmq.bots.inputs.arbor.parser",
-            "description": "Arbor Parser is the bot responsible to parse the report.",
-            "parameters": { }
-        },
-        "ArborHarmonizer": {
-            "module": "intelmq.bots.inputs.arbor.harmonizer",
-            "description": "Arbor Harmonizer is the bot responsible to add additional information to the events.",
-            "parameters": { }
-        },
-        "VXVaultFeed": {
-            "module": "intelmq.bots.inputs.vxvault.feed",
-            "description": "VXVault Feed is the bot responsible to get the report from source of information.",
-            "parameters": {
-                "processing_interval": "3600"
+        "VXVault": {
+            "collector": {
+                "module": "intelmq.bots.inputs.collectors.url",
+                "description": "VXVault Collector is the bot responsible to get the report from source of information.",
+                "parameters": {
+                    "url": "http://vxvault.siri-urz.net/URL_List.php",
+                    "processing_interval": "3600"
+                }
+            },
+            "parser": {
+                "module": "intelmq.bots.inputs.parsers.vxvault.vxvault",
+                "description": "VXVault Parser is the bot responsible to parse the report and sanitize the information.",
+                "parameters": { }
             }
-        },
-        "VXVaultParser": {
-            "module": "intelmq.bots.inputs.vxvault.parser",
-            "description": "VXVault Parser is the bot responsible to parse the report.",
-            "parameters": { }
-        },
-        "VXVaultHarmonizer": {
-            "module": "intelmq.bots.inputs.vxvault.harmonizer",
-            "description": "VXVault Harmonizer is the bot responsible to add additional information to the events.",
-            "parameters": { }
         },
         "MalwareDomainListFeed": {
             "module": "intelmq.bots.inputs.malwaredomainlist.feed",
