@@ -6,7 +6,7 @@
             "parameters": {
                 "url": "http://atlas-public.ec2.arbor.net/public/ssh_attackers",
                 "processing_interval": "3600"
-            },
+            }
         },
         "VXVault": {
             "module": "intelmq.bots.collectors.url.collector",
