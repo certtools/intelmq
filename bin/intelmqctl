@@ -1,5 +1,231 @@
-#!/usr/bin/python
-# EASY-INSTALL-SCRIPT: 'intelmq==0.1.0','intelmqctl'
-__requires__ = 'intelmq==0.1.0'
-import pkg_resources
-pkg_resources.run_script('intelmq==0.1.0', 'intelmqctl')
+#!/usr/bin/env python
+
+import sys
+import re
+import os
+import json
+import shlex
+import inspect
+import psutil
+import argparse
+
+
+def read_option(num_options):
+    option = raw_input("\nChoose option: ")
+    try:
+        option = int(option)
+        if option <= num_options and option > 0:
+            return option-1
+
+    except ValueError:
+        print "Error!"
+        sys.exit(1)
+
+
+def save_pidfile(bot_id, piddata):
+    filename = "/var/run/intelmq/%s.pid" % bot_id
+    fp = open(filename, "w")
+    fp.write(json.dumps(piddata))
+    fp.close()
+    
+def load_pidfile(bot_id):
+    filename = "/var/run/intelmq/%s.pid" % bot_id
+    fp = open(filename, "r")
+    piddata = fp.read()
+    fp.close()
+    os.remove(filename)
+    return json.loads(piddata)
+        
+def exists_pidfile(bot_id):
+    filename = "/var/run/intelmq/%s.pid" % bot_id
+    return os.path.isfile(filename)
+    
+    
+
+
+class IntelMQContoller():
+    
+    def __init__(self):
+        
+        APPNAME = "intelmqctl"
+        VERSION = "0.0.0"
+        DESCRIPTION = "description: intelmqctl is the tool to control intelmq system"
+        USAGE = '''
+        intelmqctl --bot [start|stop|restart|reload] --id=cymru-expert
+        intelmqctl --botnet [start|stop|restart|reload]
+        intelmqctl --pipeline [list|edit]'''
+        
+        parser = argparse.ArgumentParser(
+                                        prog=APPNAME,
+                                        usage=USAGE,
+                                        epilog=DESCRIPTION
+                                        )
+
+        group = parser.add_mutually_exclusive_group()
+        group_list = group.add_mutually_exclusive_group()
+        
+        parser.add_argument('-v', '--version', action='version', version=VERSION)
+        parser.add_argument("--id", dest='bot_id', default=None, help='bot ID')
+        
+        group_list.add_argument('--bot',      choices=['start', 'stop', 'restart', 'reload', 'status'], metavar='[start|stop|restart|reload|status]', default=None)
+        group_list.add_argument('--botnet',   choices=['start', 'stop', 'restart', 'reload', 'status'], metavar='[start|stop|restart|reload|status]', default=None)
+        group_list.add_argument('--pipeline', choices=['list', 'edit'],                                 metavar='[list|edit]'                       , default=None)
+
+        self.args = parser.parse_args()
+        
+        if self.args.bot_id and not self.args.bot:
+            print "usage: %s" % USAGE
+            print "%s: error: argument --id: expected argument --bot [start|stop|restart|reload|status]" % APPNAME
+            exit()
+
+        fp = open('/etc/intelmq/INFO', 'r')
+        data = fp.read()
+        self.info = json.loads(data)
+
+
+
+
+
+
+    def auto_method_call(self, method):
+        inspect_members = inspect.getmembers(self)
+        for name, func in inspect_members:
+            if name.startswith(method):
+                return func        
+
+    
+    def run(self):
+        if self.args.bot:
+            method_name = "bot_" + self.args.bot
+            call_method = self.auto_method_call(method_name)
+            call_method(self.args.bot_id)
+            
+        elif self.args.botnet:
+            method_name = "botnet_" + self.args.botnet
+            call_method = self.auto_method_call(method_name)
+            call_method()
+            
+        elif self.args.pipeline:
+            method_name = "pipeline_" + self.args.pipeline
+            call_method = self.auto_method_call(method_name)
+            call_method()
+
+    
+
+
+
+
+
+
+
+    def bot_start(self, bot_id):        
+        if exists_pidfile(bot_id):
+            print "Bot is already running."
+            return
+
+        template = "  [%s] %s"
+
+        print "\n\nBot Types:"
+        bots_types_list = self.info.keys()
+        for counter, option in enumerate(bots_types_list, 1):
+            print template % (counter, option)
+            
+        option = read_option( len(bots_types_list) )
+        bot_type = bots_types_list[int(option)]
+
+        print "\n\nBots List:"
+        bots_list = self.info[bot_type].keys()
+        for counter, option in enumerate(bots_list, 1):
+            print template % (counter, option)
+            
+        option = read_option( len(bots_list) )
+        bot = bots_list[int(option)]
+
+
+        bot_info = self.info[bot_type][bot]
+
+        print 
+        print 
+        print "Bot details"
+        print "==========="
+        print "Bot: %s" % bot
+        print "Description: %s" % bot_info['description']
+        print "Module: %s" % bot_info['module']
+        
+        self.__bot_start(bot_id, bot_info['module'])
+
+        
+    def __bot_start(self, bot_id, module):
+        cmd = "python -m %s %s" % (module, bot_id)
+        args = shlex.split(cmd)
+        p = psutil.Popen(args)
+        piddata = { "pid": p.pid,
+                    "bot_id": bot_id,
+                    "module": module
+                  }
+        save_pidfile(bot_id, piddata)
+        
+        
+    def bot_stop(self, bot_id):
+        if not exists_pidfile(bot_id):
+            print "Bot is not running."
+            return
+        self.__bot_stop(bot_id)
+        
+        
+    def __bot_stop(self, bot_id):
+        piddata = load_pidfile(bot_id)
+        p = psutil.Process(piddata['pid'])
+        p.terminate()
+        return piddata
+        
+        
+    def bot_restart(self, bot_id):
+        # FIXME: wrong approach. when user start a new bot all information should be store in a configuration file to be used in all operations. Why? Imagine if you stop a bot, you will loose all confs and when you start again you will need to configure again.
+        piddata = self.bot_stop(bot_id)
+        self.__bot_start(piddata['bot_id'], piddata['module'])
+    
+    
+    def bot_reload(self, bot_id):
+        # FIXME: reload methods should be removed
+        print "bot_reload"
+    
+    
+    def bot_status(self, bot_id):
+        if exists_pidfile(bot_id):
+            print "Bot is running."
+        else:
+            print "Bot is not running."
+
+    
+    def botnet_start(self):
+        print "botnet_start"
+    
+    
+    def botnet_stop(self):
+        print "botnet_stop"
+    
+    
+    def botnet_restart(self):
+        print "botnet_restart"
+    
+    
+    def botnet_reload(self):
+        print "botnet_reload"
+    
+    
+    def botnet_status(self):
+        print "botnet_status"
+    
+    
+    def pipeline_list(self):
+        print "pipeline_list"
+    
+    
+    def pipeline_edit(self):
+        print "pipeline_edit"
+    
+    
+    
+x = IntelMQContoller()
+x.run()
