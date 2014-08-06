@@ -22,26 +22,20 @@ class ArborParserBot(Bot):
                 for key, value in zip(columns, row):
                     event.add(key, value)
                     
-                event = harmonize(event)
+                event.add('feed', 'arbor')
+                event.add('feed_url', 'http://atlas-public.ec2.arbor.net/public/ssh_attackers')
+                event.add('type', 'brute-force')
+                
+                ip_value = event.value('reported_ip')
+                event.add('source_ip', ip_value)
+                event.add('ip', ip_value)
+                
+                event = sanitize.generate_source_time(event, "source_time")
+                event = sanitize.generate_observation_time(event, "observation_time")
+                
                 self.send_message(event)
 
         self.acknowledge_message()
-        
-
-    def harmonize(event):
-        event.add('feed', 'arbor')
-        event.add('feed_url', 'http://atlas-public.ec2.arbor.net/public/ssh_attackers')
-        event.add('type', 'brute-force')
-        
-        ip_value = event.value('reported_ip')
-        event.add('source_ip', ip_value)
-        event.add('ip', ip_value)
-        
-        event = sanitize.generate_source_time(event, "source_time")
-        event = sanitize.generate_observation_time(event, "observation_time")
-        
-        return event
-
 
 if __name__ == "__main__":
     bot = ArborParserBot(sys.argv[1])
