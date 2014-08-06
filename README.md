@@ -88,7 +88,7 @@ See [UserGuide](https://github.com/certtools/intelmq/blob/master/docs/UserGuide.
 * [Splunk](https://github.com/certtools/intelmq/tree/master/intelmq/bots/outputs/logcollector)
 * [MongoDB](https://github.com/certtools/intelmq/tree/master/intelmq/bots/outputs/mongodb)
 * [PostgreSQL](https://github.com/certtools/intelmq/tree/master/intelmq/bots/outputs/postgresql)
-* [ElasticSearch](https://github.com/certtools/intelmq/tree/master/intelmq/bots/outputs/elasticsearch)
+* [ElasticSearch](https://github.com/certtools/intelmq/tree/master/intelmq/bots/outputs/logcollector)
 * [File](https://github.com/certtools/intelmq/tree/master/intelmq/bots/outputs/file)
 
 <a name="incident-handling-automation-project"></a>
