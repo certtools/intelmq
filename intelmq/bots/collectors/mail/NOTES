@@ -14,3 +14,4 @@
 * sent_to - destination email from message that was sent
 * subject - subject of the message
 * max_emails - max number of emails to fetch
+* unzip - unzip attachment
