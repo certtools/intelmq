@@ -1,5 +1,6 @@
 from intelmq.lib.bot import Bot, sys
 from intelmq.lib.utils import fetch_imap
+import zipfile
 
 class EmailAttachmentCollectorBot(Bot):
 
@@ -30,8 +31,12 @@ class EmailAttachmentCollectorBot(Bot):
             for attach in message.attachments:
                 self.parameters.attach = '"%s"' % self.parameters.attach
                 if self.parameters.attach in attach['filename']:
-                    report = u"".join(attach['content'].read())
-    
+                    #report = u"".join(.read())
+                    zipped = zipfile.ZipFile(attach['content'])
+                    for name in zipped.namelist():
+                        report = zipped.read(name)
+                    
+                    print report
                 self.send_message(report)
 
 
