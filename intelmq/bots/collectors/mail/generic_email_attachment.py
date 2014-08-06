@@ -5,8 +5,6 @@ import zipfile
 class EmailAttachmentCollectorBot(Bot):
 
     def process(self):
-        
-        # TODO: accept multiple attachment names
                 
         additional_parameters = ["folder", "unread", "sent_from", "sent_to", "subject", "max_emails"]
         
@@ -41,6 +39,7 @@ class EmailAttachmentCollectorBot(Bot):
 
 # TODO: subject needs to be regex
 # TODO: attachments needs to be regex
+# TODO: accept multiple attachment names
 
 if __name__ == "__main__":
     bot = EmailAttachmentCollectorBot(sys.argv[1])
