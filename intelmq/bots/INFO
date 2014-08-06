@@ -53,7 +53,7 @@
                 "unread": "True",
                 "sent_from": "autoreports@shadowserver.org",
                 "subject": "Drone Report",
-                "max_emails": 10
+                "max_emails": 10,
                 "unzip": "True"
             }
         }
