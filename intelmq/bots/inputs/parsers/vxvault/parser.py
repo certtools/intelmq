@@ -31,18 +31,15 @@ class VXVaultParserBot(Bot):
                 if port:
                     event.add("port", str(port))
 
-                event = harmonize(event)
+                event.add('feed', 'vxvault')
+                event.add('feed_url', 'http://vxvault.siri-urz.net/URL_List.php')
+                event.add('type', 'malware')
+                event = sanitize.generate_source_time(event, "source_time")
+                event = sanitize.generate_observation_time(event, "observation_time")
+                
                 self.send_message(event)
         self.acknowledge_message()
 
-
-    def harmonize(event):
-        event.add('feed', 'vxvault')
-        event.add('feed_url', 'http://vxvault.siri-urz.net/URL_List.php')
-        event.add('type', 'malware')
-        event = sanitize.generate_source_time(event, "source_time")
-        event = sanitize.generate_observation_time(event, "observation_time")
-        return event
 
 if __name__ == "__main__":
     bot = VXVaultParserBot(sys.argv[1])
