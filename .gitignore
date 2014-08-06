@@ -4,6 +4,6 @@
 *.mmdb
 *.profile
 .profile
-src/conf/bots.conf
-src/conf/pipeline.conf
-src/tools/run-botnet.sh
+intelmq.egg-info
+build
+dist
