@@ -175,6 +175,40 @@ IntelMQ Helper is a simple tool that will help you choose and configure bots.
 
 ```
 $ intelmqhelper
+
+Bot Types:
+  [1] Collector
+  [2] Expert
+  [3] Output
+  [4] Parser
+
+Choose option: 2
+
+Bots List:
+  [1] Cymru
+  [2] Deduplicator
+  [3] GeoIP
+  [4] Sanitizer
+  [5] Taxonomy
+
+Choose option: 3
+
+
+Information
+===========
+
+Bot Name: GeoIP
+Description: GeoIP (MaxMind) is the bot responsible to add geolocation information to the events (Country, City, Longitude, Latitude, etc..)
+
+Module: intelmq.bots.experts.geoip.geoip
+
+Bot Configuration Required ('/etc/intelmq/bots.conf'):
+----------------------------------
+[geoip-expert]
+processing_interval = 0
+database = /var/lib/intelmq/geoip/GeoLite2-City.mmdb
+----------------------------------
+
 ```
 
 ### Monitoring IntelMQ
