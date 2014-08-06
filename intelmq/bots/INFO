@@ -39,6 +39,23 @@
                 "url": "https://dragonresearchgroup.org/insight/vncprobe.txt",
                 "processing_interval": "3600"
             }
+        },
+        "ShadowServer Drone Report": {
+            "module": "intelmq.bots.collectors.mail.email_attachment",
+            "description": "ShadowServer Drone Report is the bot responsible to get the report from source of information.",
+            "parameters": {
+                "host": "<imap server>",
+                "user": "<user>",
+                "password": "<password>",
+                "ssl": true,
+                "attach": "geo.csv.zip",
+                "folder": "Inbox.shadowserver",
+                "unread": true,
+                "sent_from": "autoreports@shadowserver.org",
+                "sent_to": null,
+                "subject": "Drone Report",
+                "max_emails": 10
+            }
         }
     },
     "Parser": {
