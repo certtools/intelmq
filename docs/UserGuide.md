@@ -165,7 +165,7 @@ $ nohup python -m intelmq.bots.outputs.file.file archive &
 $ run-intelmq-botnet
 ```
 
-**Script Location (usually)** /usr/local/bin/
+**Script Location** (usually): /usr/local/bin/
 
 ## Utilities
 
