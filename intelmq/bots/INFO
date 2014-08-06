@@ -1,55 +1,48 @@
 {
-    "Input Bots": {
+    "Collectors": {
         "Arbor": {
-            "collector": {
-                "module": "intelmq.bots.inputs.collectors.url",
-                "description": "Arbor Collector is the bot responsible to get the report from source of information.",
-                "parameters": {
-                    "url": "http://atlas-public.ec2.arbor.net/public/ssh_attackers",
-                    "processing_interval": "3600"
-                }
+            "module": "intelmq.bots.inputs.collectors.url",
+            "description": "Arbor Collector is the bot responsible to get the report from source of information.",
+            "parameters": {
+                "url": "http://atlas-public.ec2.arbor.net/public/ssh_attackers",
+                "processing_interval": "3600"
             },
-            "parser": {
-                "module": "intelmq.bots.inputs.parsers.arbor.arbor",
-                "description": "Arbor Parser is the bot responsible to parse the report and sanitize the information.",
-                "parameters": { }
-            }
         },
         "VXVault": {
-            "collector": {
-                "module": "intelmq.bots.inputs.collectors.url",
-                "description": "VXVault Collector is the bot responsible to get the report from source of information.",
-                "parameters": {
-                    "url": "http://vxvault.siri-urz.net/URL_List.php",
-                    "processing_interval": "3600"
-                }
-            },
-            "parser": {
-                "module": "intelmq.bots.inputs.parsers.vxvault.vxvault",
-                "description": "VXVault Parser is the bot responsible to parse the report and sanitize the information.",
-                "parameters": { }
-            }
-        },
-        "MalwareDomainListFeed": {
-            "module": "intelmq.bots.inputs.malwaredomainlist.feed",
-            "description": "MalwareDomainList Feed is the bot responsible to get the report from source of information.",
+            "module": "intelmq.bots.inputs.collectors.url",
+            "description": "VXVault Collector is the bot responsible to get the report from source of information.",
             "parameters": {
+                "url": "http://vxvault.siri-urz.net/URL_List.php",
                 "processing_interval": "3600"
             }
         },
-        "MalwareDomainListParser": {
-            "module": "intelmq.bots.inputs.malwaredomainlist.parser",
-            "description": "MalwareDomainList Parser is the bot responsible to parse the report.",
-            "parameters": { }
+        "Malware Domain List": {
+            "module": "intelmq.bots.inputs.collectors.url",
+            "description": "Malware Domain List Collector is the bot responsible to get the report from source of information.",
+            "parameters": {
+                "url": "http://www.malwaredomainlist.com/updatescsv.php",
+                "processing_interval": "3600"
+            }
         },
-        "MalwareDomainListHarmonizer": {
-            "module": "intelmq.bots.inputs.malwaredomainlist.harmonizer",
-            "description": "MalwareDomainList Harmonizer is the bot responsible to add additional information to the events.",
-            "parameters": { }
+        "Dragon Research Group SSH": {
+            "module": "intelmq.bots.inputs.collectors.url",
+            "description": "Dragon Research Group SSH Collector is the bot responsible to get the report from source of information.",
+            "parameters": {
+                "url": "http://dragonresearchgroup.org/insight/sshpwauth.txt",
+                "processing_interval": "3600"
+            }
+        },
+        "Dragon Research Group VNC": {
+            "module": "intelmq.bots.inputs.collectors.url",
+            "description": "Dragon Research Group VNC Collector is the bot responsible to get the report from source of information.",
+            "parameters": {
+                "url": "https://dragonresearchgroup.org/insight/vncprobe.txt",
+                "processing_interval": "3600"
+            }
         },
         "AbuseHelper": {
-            "module": "intelmq.bots.inputs.abusehelper.abusehelper",
-            "description": "AbuseHelper is the bot responsible to connect and receive events from abusehelper system to IntelMQ.",
+            "module": "intelmq.bots.inputs.collectors.xmpp",
+            "description": "AbuseHelper Collector is the bot responsible to get the report from source of information.",
             "parameters": {
                 "jid": "<user>",
                 "password": "<password>",
@@ -58,7 +51,29 @@
             }
         }
     },
-    "Experts Bots": {
+    "Parsers": {
+        "Arbor": {
+            "module": "intelmq.bots.inputs.parsers.arbor.arbor",
+            "description": "Arbor Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": { }
+        },
+        "VXVault": {
+            "module": "intelmq.bots.inputs.parsers.vxvault.vxvault",
+            "description": "VXVault Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": { }
+        },
+        "Malware Domain List": {
+            "module": "intelmq.bots.inputs.parsers.malwaredomainlist.malwaredomainlist",
+            "description": "Malware Domain List Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": { }
+        },
+        "AbuseHelper": {
+            "module": "intelmq.bots.inputs.parsers.abusehelper.abusehelper",
+            "description": "AbuseHelper Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": { }
+        }
+    },
+    "Experts": {
         "Cymru": {
             "module": "intelmq.bots.experts.cymru.cymru",
             "description": "Cymry (IP to ASN) is the bot responsible to add network information to the events (BGP, ASN, AS Name, Country, etc..).",
@@ -72,7 +87,7 @@
             }
         }
     },
-    "Output Bots": {
+    "Outputs": {
 
     }
 }
