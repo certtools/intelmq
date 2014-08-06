@@ -18,7 +18,7 @@ setup(
     maintainer='Tomas Lima',
     maintainer_email='tomas.lima@cert.pt',
     packages=find_packages(),
-    scripts=['bin/intelmqctl', 'bin/run-intelmq-botnet'],
+    scripts=['bin/intelmqctl', 'bin/intelmqhelper', 'bin/run-intelmq-botnet'],
     url='http://pypi.python.org/pypi/intelmq/',
     license='GPLv3',
     description="IntelMQ Tool",
@@ -32,9 +32,10 @@ setup(
                  },
     data_files=[
                 ('/etc/intelmq/', [
-                                   'bin/conf/pipeline.conf',
-                                   'bin/conf/bots.conf',
-                                   'bin/conf/system.conf'
+                                   'conf/pipeline.conf',
+                                   'conf/bots.conf',
+                                   'conf/system.conf',
+                                   'intelmq/bots/INFO'
                                   ]
                 )
     ],
