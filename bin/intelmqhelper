@@ -1,0 +1,86 @@
+#!/usr/bin/env python
+
+import json
+import sys
+
+TEMPLATE = "  [%s] %s"
+
+def read_option(num_options):
+    option = raw_input("\nChoose option: ")
+    print
+    
+    try:
+        option = int(option)
+        if option <= num_options and option > 0:
+            return option-1
+        else:
+            raise ValueError
+
+    except ValueError:
+        print "Error!"
+        sys.exit(1)
+
+
+
+filename = './INFO'
+with open(filename, 'r') as fp:
+    data = fp.read()
+
+info = json.loads(data)
+
+
+message = '''
+-- IntelMQ Helper --
+
+intelmqhelper will help you to choose and configure a bot.
+
+
+-- Additional Information --
+
+User Guide: https://github.com/certtools/intelmq/blob/master/docs/UserGuide.md
+
+Warning: pipeline configuration is not included. Consult the section "Pipeline Configuration" in User Guide.
+
+'''
+
+print message
+raw_input('\n[PRESS ENTER to continue]')
+print "\n"*20
+
+
+print "Bot Types:"
+bots_types_list = sorted( info.keys() )
+for counter, option in enumerate(bots_types_list, 1):
+    print TEMPLATE % (counter, option)
+    
+option = read_option( len(bots_types_list) )
+bot_type = bots_types_list[int(option)]
+
+
+print "Bots List:"
+bots_list = sorted(info[bot_type].keys())
+for counter, option in enumerate(bots_list, 1):
+    print TEMPLATE % (counter, option)
+    
+option = read_option( len(bots_list) )
+bot = bots_list[int(option)]
+
+
+bot_info = info[bot_type][bot]
+
+print "\n" * 20
+print "Information"
+print "==========="
+print 
+print "Bot Name: %s" % bot
+print "Description: %s" % bot_info['description']
+print
+print "Module: %s" % bot_info['module']
+print
+print "Bot Configuration Required ('/etc/intelmq/bots.conf'):"
+print '----------------------------------'
+print "[%s-%s]" % (bot.lower(), bot_type.lower())
+for k, v in bot_info['parameters'].iteritems():
+    print "%s = %s" % (k, v)
+print '----------------------------------'
+print

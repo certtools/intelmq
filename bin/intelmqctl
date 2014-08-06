@@ -226,6 +226,6 @@ class IntelMQContoller():
         print "pipeline_edit"
     
     
-    
-x = IntelMQContoller()
-x.run()
+print "Is not working ... under development..."
+#x = IntelMQContoller()
+#x.run()

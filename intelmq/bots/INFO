@@ -1,5 +1,5 @@
 {
-    "Collectors": {
+    "Collector": {
         "Arbor": {
             "module": "intelmq.bots.collectors.url.collector",
             "description": "Arbor Collector is the bot responsible to get the report from source of information.",
@@ -41,7 +41,7 @@
             }
         }
     },
-    "Parsers": {
+    "Parser": {
         "Arbor": {
             "module": "intelmq.bots.inputs.parsers.arbor.arbor",
             "description": "Arbor Parser is the bot responsible to parse the report and sanitize the information.",
@@ -68,7 +68,7 @@
             "parameters": { }
         }
     },
-    "Experts": {
+    "Expert": {
         "Cymru": {
             "module": "intelmq.bots.experts.cymru.cymru",
             "description": "Cymry (IP to ASN) is the bot responsible to add network information to the events (BGP, ASN, AS Name, Country, etc..).",
@@ -82,7 +82,7 @@
             }
         }
     },
-    "Outputs": {
+    "Output": {
 
     }
 }
