@@ -79,7 +79,7 @@ print "Module: %s" % bot_info['module']
 print
 print "Bot Configuration Required ('/etc/intelmq/bots.conf'):"
 print '----------------------------------'
-print "[%s-%s]" % (bot.lower(), bot_type.lower())
+print "[%s-%s]" % (bot.lower().replace(' ','_'), bot_type.lower().replace(' ','_'))
 for k, v in bot_info['parameters'].iteritems():
     print "%s = %s" % (k, v)
 print '----------------------------------'
