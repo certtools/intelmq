@@ -1,7 +1,7 @@
 {
     "Collectors": {
         "Arbor": {
-            "module": "intelmq.bots.inputs.collectors.url",
+            "module": "intelmq.bots.collectors.url",
             "description": "Arbor Collector is the bot responsible to get the report from source of information.",
             "parameters": {
                 "url": "http://atlas-public.ec2.arbor.net/public/ssh_attackers",
@@ -9,7 +9,7 @@
             },
         },
         "VXVault": {
-            "module": "intelmq.bots.inputs.collectors.url",
+            "module": "intelmq.bots.collectors.url",
             "description": "VXVault Collector is the bot responsible to get the report from source of information.",
             "parameters": {
                 "url": "http://vxvault.siri-urz.net/URL_List.php",
@@ -17,7 +17,7 @@
             }
         },
         "Malware Domain List": {
-            "module": "intelmq.bots.inputs.collectors.url",
+            "module": "intelmq.bots.collectors.url",
             "description": "Malware Domain List Collector is the bot responsible to get the report from source of information.",
             "parameters": {
                 "url": "http://www.malwaredomainlist.com/updatescsv.php",
@@ -25,7 +25,7 @@
             }
         },
         "Dragon Research Group SSH": {
-            "module": "intelmq.bots.inputs.collectors.url",
+            "module": "intelmq.bots.collectors.url",
             "description": "Dragon Research Group SSH Collector is the bot responsible to get the report from source of information.",
             "parameters": {
                 "url": "http://dragonresearchgroup.org/insight/sshpwauth.txt",
@@ -33,7 +33,7 @@
             }
         },
         "Dragon Research Group VNC": {
-            "module": "intelmq.bots.inputs.collectors.url",
+            "module": "intelmq.bots.collectors.url",
             "description": "Dragon Research Group VNC Collector is the bot responsible to get the report from source of information.",
             "parameters": {
                 "url": "https://dragonresearchgroup.org/insight/vncprobe.txt",
@@ -41,7 +41,7 @@
             }
         },
         "AbuseHelper": {
-            "module": "intelmq.bots.inputs.collectors.xmpp",
+            "module": "intelmq.bots.collectors.xmpp",
             "description": "AbuseHelper Collector is the bot responsible to get the report from source of information.",
             "parameters": {
                 "jid": "<user>",
