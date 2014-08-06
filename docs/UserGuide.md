@@ -168,6 +168,14 @@ $ run-intelmq-botnet
 
 ## Utilities
 
+### IntelMQHelper
+
+IntelMQ Helper is a simple tool that will help you choose and configure bots.
+
+```
+$ intelmqhelper
+```
+
 ### Monitoring IntelMQ
 
 ```
