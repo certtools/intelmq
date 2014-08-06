@@ -39,8 +39,8 @@ class EmailAttachmentCollectorBot(Bot):
                             report = attach['content'].read()
                             self.send_message(report)
 
-# subject needs to be regex
-# attachments needs to be regex
+# TODO: subject needs to be regex
+# TODO: attachments needs to be regex
 
 if __name__ == "__main__":
     bot = EmailAttachmentCollectorBot(sys.argv[1])

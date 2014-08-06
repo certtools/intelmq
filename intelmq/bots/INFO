@@ -50,11 +50,11 @@
                 "ssl": true,
                 "attach": "geo.csv.zip",
                 "folder": "Inbox.shadowserver",
-                "unread": true,
+                "unread": "True",
                 "sent_from": "autoreports@shadowserver.org",
-                "sent_to": null,
                 "subject": "Drone Report",
                 "max_emails": 10
+                "unzip": "True"
             }
         }
     },

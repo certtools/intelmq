@@ -6,6 +6,7 @@ import hashlib
 import socket
 import binascii
 import StringIO
+import imbox
 
 def decode(text, encodings=["utf-8", "ascii"], force=False):
     for encoding in encodings:
@@ -60,12 +61,13 @@ def fetch_imap(server, username, password, ssl, folder, unread, sent_from, sent_
     if not max_emails:
         max_emails = 1
 
-    mailbox = Imbox(server, username, password, ssl)
+    mailbox = imbox.Imbox(server, username, password, bool(ssl))
+
     messages_folder = mailbox.messages(folder=folder, unread=unread, sent_from=sent_from, sent_to=sent_to)
 
     counter = 0
     for uid, message in messages_folder:
-
+        
         if max_emails <= counter:
             return emails
 
@@ -76,6 +78,8 @@ def fetch_imap(server, username, password, ssl, folder, unread, sent_from, sent_
         
         emails.append(message)
         counter += 1
+        
+        # TODO: add method to mark email as read
         
     return emails
 
