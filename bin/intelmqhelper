@@ -22,7 +22,7 @@ def read_option(num_options):
 
 
 
-filename = './INFO'
+filename = '/etc/intelmq/INFO'
 with open(filename, 'r') as fp:
     data = fp.read()
 
