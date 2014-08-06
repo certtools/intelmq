@@ -65,12 +65,12 @@ See [UserGuide](https://github.com/certtools/intelmq/blob/master/docs/UserGuide.
 
 ### Input Bots
 
-#### Collectors Bots
+**Collectors Bots**
 * [URL](https://github.com/certtools/intelmq/tree/master/intelmq/bots/collectors/url)
 * [Mail](https://github.com/certtools/intelmq/tree/master/intelmq/bots/collectors/mail)
 * [XMPP](https://github.com/certtools/intelmq/tree/master/intelmq/bots/collectors/xmpp)
 
-#### Parsers Bots
+**Parsers Bots**
 * [MalwareDomainList](https://github.com/certtools/intelmq/tree/master/intelmq/bots/parsers/malwaredomainlist)
 * [Arbor](https://github.com/certtools/intelmq/tree/master/intelmq/bots/parsers/arbor) (Atlas Public)
 * [VXVault](https://github.com/certtools/intelmq/tree/master/intelmq/bots/parsers/vxvault)
