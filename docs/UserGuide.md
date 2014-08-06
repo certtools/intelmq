@@ -155,7 +155,7 @@ $ nohup python -m intelmq.bots.experts.geoip.geoip geoip-expert &
 $ nohup python -m intelmq.bots.outputs.file.file archive &
 ```
 
-**Note 1:**' the 'python -m' command means python package. Since intelmq is a python package, it will always accessible by python env path and thats the reason to use 'intelmq.bots.outputs.file.file', that means <python path>/intelmq/bots/outputs/file/file.py.
+**Note 1:** the 'python -m' command means python package. Since intelmq is a python package, it will always accessible by python env path and thats the reason to use 'intelmq.bots.outputs.file.file', that means <python path>/intelmq/bots/outputs/file/file.py.
 
 **Note 2:** first argument for each bot is the bot ID. This ID is used to get from 'pipeline.conf' the source and destination queues. In 'file' bot example, the bot ID is 'archive'.
 
