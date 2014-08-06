@@ -42,11 +42,13 @@ See [UserGuide](https://github.com/certtools/intelmq/blob/master/docs/UserGuide.
 
 ### System Architecture
 
+(need update)
 ![System Architecture](http://i58.tinypic.com/n395bo.jpg)
 
 
 ### Code Architecture
 
+(need update)
 ![Code Architecture](http://s28.postimg.org/uwzthgqrx/intelmq_arch.png)
 
 
@@ -62,11 +64,17 @@ See [UserGuide](https://github.com/certtools/intelmq/blob/master/docs/UserGuide.
 ## Bots Available
 
 ### Input Bots
-* [MalwareDomainList](https://github.com/certtools/intelmq/tree/master/intelmq/bots/inputs/malwaredomainlist)
-* [Arbor](https://github.com/certtools/intelmq/tree/master/intelmq/bots/inputs/arbor) (Atlas Public)
-* [VXVault](https://github.com/certtools/intelmq/tree/master/intelmq/bots/inputs/vxvault)
-* [AbuseHelper](https://github.com/certtools/intelmq/tree/master/intelmq/bots/inputs/abusehelper)
-* [CERT-EU](https://github.com/certtools/intelmq/tree/master/intelmq/bots/inputs/certeu) (Mail)
+
+#### Collectors Bots
+* [URL](https://github.com/certtools/intelmq/tree/master/intelmq/bots/collectors/url)
+* [Mail](https://github.com/certtools/intelmq/tree/master/intelmq/bots/collectors/mail)
+* [XMPP](https://github.com/certtools/intelmq/tree/master/intelmq/bots/collectors/xmpp)
+
+#### Parsers Bots
+* [MalwareDomainList](https://github.com/certtools/intelmq/tree/master/intelmq/bots/parsers/malwaredomainlist)
+* [Arbor](https://github.com/certtools/intelmq/tree/master/intelmq/bots/parsers/arbor) (Atlas Public)
+* [VXVault](https://github.com/certtools/intelmq/tree/master/intelmq/bots/parsers/vxvault)
+* [Dragon Research Group](https://github.com/certtools/intelmq/tree/master/intelmq/bots/parsers/dragonresearchgroup)
 
 ### Expert Bots
 * [TeamCymru IPtoASN](https://github.com/certtools/intelmq/tree/master/intelmq/bots/experts/cymru) (DNS Service)
