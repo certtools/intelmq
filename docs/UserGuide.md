@@ -103,6 +103,7 @@ cache_ttl = 86400
 
 [arbor-collector]
 processing_interval = 3600
+url = http://atlas-public.ec2.arbor.net/public/ssh_attackers
 
 [logcollector]
 ip = 192.168.1.243
