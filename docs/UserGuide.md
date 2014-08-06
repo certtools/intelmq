@@ -68,7 +68,7 @@ Before start running all bots, user should know the system details that will hel
 **Example:**
 ```
 [Pipeline]
-arbor-feed   =                     |  arbor-parser-queue
+arbor-collector =                  |  arbor-parser-queue
 arbor-parser =  arbor-parser-queue |  output-queue
 ```
 
@@ -77,8 +77,8 @@ arbor-parser =  arbor-parser-queue |  output-queue
 **Example:**
 ```
 [Pipeline]
-arbor-feed   =                     |  arbor-parser-queue
-arbor-parser =  arbor-parser-queue |  output-queue, file-queue
+arbor-collector =                  |  arbor-parser-queue
+arbor-parser =  arbor-parser-queue |  database-queue, file-queue
 ```
 
 
@@ -101,8 +101,9 @@ cache_port = 6379
 cache_id = 10
 cache_ttl = 86400
 
-[arbor-feed]
+[arbor-collector]
 processing_interval = 3600
+url = http://atlas-public.ec2.arbor.net/public/ssh_attackers
 
 [logcollector]
 ip = 192.168.1.243
@@ -139,17 +140,24 @@ database = /var/lib/intelmq/geoip/GeoLite2-City.mmdb
 **Syntax:**
 
 ```
-$ nohup python -m intelmq.bots.< inputs | experts | outputs >.< bot folder >.< bot >  < bot id > &
+$ nohup python -m intelmq.bots.< collectors | parsers | experts | outputs >.< bot folder >.< bot >  < bot id > &
 ```
 
-**Example:**
+**Examples:**
 
 ```
-$ nohup python -m intelmq.bots.inputs.arbor.feed arbor-feed &
+$ nohup python -m intelmq.bots.collectors.url.collector arbor-collector &
+
+$ nohup python -m intelmq.bots.parsers.arbor.parser arbor-parser &
+
+$ nohup python -m intelmq.bots.experts.geoip.geoip geoip-expert &
+
+$ nohup python -m intelmq.bots.outputs.file.file archive &
 ```
 
-**Note:** first argument for each bot is the bot ID. This ID is used to get from 'pipeline.conf' the source and destination queues.
+**Note 1:** the 'python -m' command means python package. Since intelmq is a python package, it will always accessible by python env path and thats the reason to use 'intelmq.bots.outputs.file.file', which means <python path>/intelmq/bots/outputs/file/file.py.
 
+**Note 2:** first argument for each bot is the bot ID. This ID is used to get from 'pipeline.conf' the source and destination queues. In 'file' bot example, the bot ID is 'archive'.
 
 ### Run Botnet Example
 
@@ -159,6 +167,14 @@ $ run-intelmq-botnet
 
 
 ## Utilities
+
+### IntelMQHelper
+
+IntelMQ Helper is a simple tool that will help you choose and configure bots.
+
+```
+$ intelmqhelper
+```
 
 ### Monitoring IntelMQ
 
