@@ -41,19 +41,20 @@
             }
         },
         "ShadowServer Drone Report": {
-            "module": "intelmq.bots.collectors.mail.email_attachment",
+            "module": "intelmq.bots.collectors.mail.shadowserver",
             "description": "ShadowServer Drone Report is the bot responsible to get the report from source of information.",
             "parameters": {
-                "host": "<imap server>",
-                "user": "<user>",
-                "password": "<password>",
-                "ssl": true,
-                "attach": "geo.csv.zip",
+                "processing_interval": "3600",
+                "mail_host": "< ... >",
+                "mail_user": "< ... >",
+                "mail_password": "< ... >",
+                "mail_ssl": "True",
+                "sent_from": "autoreports@shadowserver.org",
                 "folder": "Inbox.shadowserver",
                 "unread": "True",
-                "sent_from": "autoreports@shadowserver.org",
-                "subject": "Drone Report",
-                "max_emails": 10
+                "subject_regex": "Drone Report",
+                "body_regex": "None",
+                "attach_regex": "geo.csv.zip",
                 "unzip": "True"
             }
         }
@@ -142,13 +143,15 @@
             "module": "intelmq.bots.outputs.file.file",
             "description": "File is the bot responsible to send events to a file.",
             "parameters": {
-                "file": "< file /var/lib/intelmq/archive/events.txt >"
+                "file": "< file /var/lib/intelmq/archive/events.txt >",
+                "processing_interval": "0"
             }
         },
         "LogCollector": {
             "module": "intelmq.bots.outputs.logcollector.logcollector",
             "description": "LogCollector is the bot responsible to send events to a logcollector (Splunk, ElasticSearch, etc..).",
             "parameters": {
+                "processing_interval": "0",
                 "ip": "< ip >",
                 "port": "< port >"
             }
@@ -157,6 +160,7 @@
             "module": "intelmq.bots.outputs.mongodb.mongodb",
             "description": "MongoDB is the bot responsible to send events to a MongoDB database.",
             "parameters": {
+                "processing_interval": "0",
                 "host": "< ip >",
                 "port": "< port >",
                 "database": "< database >",
@@ -167,6 +171,7 @@
             "module": "intelmq.bots.outputs.logcollector.logcollector",
             "description": "File is the bot responsible to send events to a logcollector (Splunk, ElasticSearch, etc..).",
             "parameters": {
+                "processing_interval": "0",
                 "host": "< ip >",
                 "port": "< port >",
                 "database": "< database >",
