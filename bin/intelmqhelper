@@ -39,8 +39,6 @@ intelmqhelper will help you to choose and configure a bot.
 
 User Guide: https://github.com/certtools/intelmq/blob/master/docs/UserGuide.md
 
-Warning: pipeline configuration is not included. Consult the section "Pipeline Configuration" in User Guide.
-
 '''
 
 print message
@@ -68,6 +66,10 @@ bot = bots_list[int(option)]
 
 bot_info = info[bot_type][bot]
 
+bot = bot.lower().replace(' ','-')
+bot_type = bot_type.lower().replace(' ','-')
+bot_id = "%s-%s" % (bot, bot_type)
+
 print "\n" * 20
 print "Information"
 print "==========="
@@ -77,10 +79,24 @@ print "Description: %s" % bot_info['description']
 print
 print "Module: %s" % bot_info['module']
 print
+print
 print "Bot Configuration Required ('/etc/intelmq/bots.conf'):"
 print '----------------------------------'
-print "[%s-%s]" % (bot.lower().replace(' ','_'), bot_type.lower().replace(' ','_'))
+print "[%s]" % bot_id
 for k, v in bot_info['parameters'].iteritems():
     print "%s = %s" % (k, v)
+print '----------------------------------'
+print
+print
+print "Pipeline Configuration Required ('/etc/intelmq/pipeline.conf'):"
+print '----------------------------------'
+print "%s = <source-queue> | <destination-queue>" % bot_id
+print '----------------------------------'
+print "More information consult the section 'Pipeline Configuration' in User Guide."
+print
+print
+print "Run Bot:"
+print '----------------------------------'
+print "python -m %s %s" % (bot_info['module'],  bot_id)
 print '----------------------------------'
 print
