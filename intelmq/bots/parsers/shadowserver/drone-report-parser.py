@@ -1,37 +1,42 @@
 from intelmq.lib.bot import Bot, sys
 from intelmq.lib.utils import decode
+import StringIO, csv
 from intelmq.lib.event import Event
 from intelmq.lib import sanitize
 
-class DragonResearchGroupSSHParserBot(Bot):
+class ShadowServerDroneReportParserBot(Bot):
 
     def process(self):
         report = self.receive_message()
+        report = report.strip()
 
         if report:
-            for row in report.split('\n'):
-                row = row.strip()              
-
-                if len(row) == 0 or row.startswith('#'): # ignore all lines starting with comment mark
-                    continue
-                
-                row = row.split('|')
+            
+            # "timestamp", "ip", "port", "asn", "geo", "region", "city", "hostname", "type", "infection", "url", "agent", "cc", "cc_port", "cc_asn", "cc_geo", "cc_dns", "count", "proxy", "application", "p0f_genre", "p0f_detail", "machine_name", "id"
+            
+            columns = ["source_time", "reported_ip", "source_port", "reported_asn", "reported_cc", "region", "city", "source_reverse_dns", "__IGNORE__", "malware", "__TDB__", "__TDB__", "destination_ip", "destination_port", "destination_asn", "destination_cc", "destination_reverse_dns", "__TDB__", "__TDB__", "__TDB__", "__TDB__", "__TDB__", "__TDB__", "__TDB__"]
+            
+            print "1"
+            rows = csv.DictReader(StringIO.StringIO(report), fieldnames = columns)
+            print "2"
+            
+            for row in rows:
                 event = Event()
-
-                # malware = LOWER CASE
-                        # "timestamp", "ip", "port", "asn", "geo", "region", "city", "hostname", "type", "infection", "url", "agent", "cc", "cc_port", "cc_asn", "cc_geo", "cc_dns", "count", "proxy", "application", "p0f_genre", "p0f_detail", "machine_name", "id"
-                columns = ["source_time", "reported_ip", "source_port", "reported_asn", "reported_cc", "region", "city", "source_reverse_dns", "__IGNORE__", "malware", "__TDB__", "__TDB__", "destination_ip", "destination_port", "destination_asn", "destination_cc", "destination_reverse_dns", "__TDB__", "__TDB__", "__TDB__", "__TDB__", "__TDB__", "__TDB__", "__TDB__"]
                 
-                for key, value in zip(columns, row):
+                for key, value in row.items():
+
+                    print value
+                    
+                    value = value.strip()
+                    
                     if key is "__IGNORE__" or key is "__TDB__":
                         continue
                     
                     if key is "malware":
-                        event.add(key, value.strip().lower())
-                        continue
+                        value = value.strip().lower()                    
                     
-                    event.add(key, value.strip())
-
+                    event.add(key, value)
+            
                 event.add('feed', 'shadowserver')
                 #event.add('feed_url', 'TBD')
                 event.add('type', 'bot')
@@ -52,5 +57,5 @@ class DragonResearchGroupSSHParserBot(Bot):
    
 
 if __name__ == "__main__":
-    bot = DragonResearchGroupSSHParserBot(sys.argv[1])
+    bot = ShadowServerDroneReportParserBot(sys.argv[1])
     bot.start()
