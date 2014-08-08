@@ -6,7 +6,6 @@ import hashlib
 import socket
 import binascii
 import StringIO
-import imbox
 
 def decode(text, encodings=["utf-8", "ascii"], force=False):
     for encoding in encodings:
