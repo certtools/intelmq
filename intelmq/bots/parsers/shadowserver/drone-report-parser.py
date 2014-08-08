@@ -31,12 +31,11 @@ class DragonResearchGroupSSHParserBot(Bot):
                         continue
                     
                     event.add(key, value.strip())
-                    
-                    
+
                 event.add('feed', 'shadowserver')
-                event.add('feed_url', 'http://dragonresearchgroup.org/insight/sshpwauth.txt')
-                event.add('type', 'brute-force')
-                event.add('protocol', 'ssh')
+                #event.add('feed_url', 'TBD')
+                event.add('type', 'bot')
+                #event.add('protocol', 'TBD')
 
                 ip_value = event.value('reported_ip')
                 event.add('source_ip', ip_value)
@@ -44,9 +43,6 @@ class DragonResearchGroupSSHParserBot(Bot):
                 
                 asn_value = event.value('reported_asn')
                 event.add('asn', asn_value)
-                
-                as_name_value = event.value('reported_as_name')
-                event.add('as_name', as_name_value)
                 
                 event = sanitize.source_time(event, "source_time")  
                 event = sanitize.generate_observation_time(event, "observation_time")
