@@ -48,8 +48,8 @@ class ShadowServerCollectorBot(Bot):
                         zipped = zipfile.ZipFile(attach['content'])
                         report_csv = zipped.read(zipped.namelist()[0])
                         
-                        report_link = "# Feed: http://dl.shadowserver.org/CHANGEME" # URL (dl.shadowserver.org/) regex apllied to message.body['plain'] or message.body['html']
-                        report = report_link + report_csv
+                        #report_link = "# Feed: http://dl.shadowserver.org/CHANGEME" # URL (dl.shadowserver.org/) regex apllied to message.body['plain'] or message.body['html']
+                        report = report_csv # report_link + report_csv
                         
                         self.send_message(report)
                         mailbox.mark_seen(uid)
