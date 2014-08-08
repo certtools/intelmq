@@ -50,5 +50,5 @@ class ShadowServerCollectorBot(Bot):
 
 
 if __name__ == "__main__":
-    bot = EmailAttachmentCollectorBot(sys.argv[1])
+    bot = ShadowServerCollectorBot(sys.argv[1])
     bot.start()
