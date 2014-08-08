@@ -68,7 +68,7 @@ bot_info = info[bot_type][bot]
 
 bot = bot.lower().replace(' ','-')
 bot_type = bot_type.lower().replace(' ','-')
-bot_id = "[%s-%s]" % (bot, bot_type)
+bot_id = "%s-%s" % (bot, bot_type)
 
 print "\n" * 20
 print "Information"
@@ -82,7 +82,7 @@ print
 print
 print "Bot Configuration Required ('/etc/intelmq/bots.conf'):"
 print '----------------------------------'
-print bot_id
+print "[%s]" % bot_id
 for k, v in bot_info['parameters'].iteritems():
     print "%s = %s" % (k, v)
 print '----------------------------------'
