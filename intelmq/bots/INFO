@@ -94,7 +94,7 @@
             "parameters": {
                 "processing_interval": "0"
             }
-        }
+        },
         "ShadowServer Drone Report": {
             "module": "intelmq.bots.inputs.parsers.shadowserver.drone-report-parser",
             "description": "ShadowServer Drone Report Parser is the bot responsible to parse the report and sanitize the information.",
