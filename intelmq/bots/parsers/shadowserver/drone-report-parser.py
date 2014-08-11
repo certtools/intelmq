@@ -12,8 +12,6 @@ class ShadowServerDroneReportParserBot(Bot):
 
         if report:
             
-            # "timestamp", "ip", "port", "asn", "geo", "region", "city", "hostname", "type", "infection", "url", "agent", "cc", "cc_port", "cc_asn", "cc_geo", "cc_dns", "count", "proxy", "application", "p0f_genre", "p0f_detail", "machine_name", "id"
-            
             columns = {
                 "timestamp": "source_time",
                 "ip": "reported_ip",
