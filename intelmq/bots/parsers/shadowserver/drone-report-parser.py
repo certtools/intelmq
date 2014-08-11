@@ -63,7 +63,7 @@ class ShadowServerDroneReportParserBot(Bot):
             
                 event.add('feed', 'shadowserver')
                 #event.add('feed_url', 'TBD')
-                event.add('type', 'bot')
+                event.add('type', 'botnet drone')
                 #event.add('protocol', 'TBD')
 
                 ip_value = event.value('reported_ip')
