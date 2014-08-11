@@ -52,6 +52,8 @@ class ShadowServerDroneReportParserBot(Bot):
 
                     if not value:
                         continue
+
+                    value = value.strip()
                     
                     if key is "__IGNORE__" or key is "__TDB__":
                         continue
