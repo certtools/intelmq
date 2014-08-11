@@ -14,20 +14,44 @@ class ShadowServerDroneReportParserBot(Bot):
             
             # "timestamp", "ip", "port", "asn", "geo", "region", "city", "hostname", "type", "infection", "url", "agent", "cc", "cc_port", "cc_asn", "cc_geo", "cc_dns", "count", "proxy", "application", "p0f_genre", "p0f_detail", "machine_name", "id"
             
-            columns = ["source_time", "reported_ip", "source_port", "reported_asn", "reported_cc", "region", "city", "source_reverse_dns", "__IGNORE__", "malware", "__TDB__", "__TDB__", "destination_ip", "destination_port", "destination_asn", "destination_cc", "destination_reverse_dns", "__TDB__", "__TDB__", "__TDB__", "__TDB__", "__TDB__", "__TDB__", "__TDB__"]
+            columns = {
+                "timestamp": "source_time",
+                "ip": "reported_ip",
+                "port": "source_port",
+                "asn": "reported_asn",
+                "geo": "reported_cc",
+                "region": "region",
+                "city": "city",
+                "hostname": "source_reverse_dns",
+                "type": "__IGNORE__",
+                "infection": "malware",
+                "url": "__TDB__",
+                "agent": "__TDB__",
+                "cc": "destination_ip",
+                "cc_port": "destination_port",
+                "cc_asn": "destination_asn",
+                "cc_geo": "destination_cc",
+                "cc_dns": "destination_reverse_dns",
+                "count": "__TDB__",
+                "proxy": "__TDB__",
+                "application": "__TDB__",
+                "p0f_genre": "__TDB__",
+                "p0f_detail": "__TDB__",
+                "machine_name": "__TDB__",
+                "id": "__TDB__"
+            }
             
-            print "1"
-            rows = csv.DictReader(StringIO.StringIO(report), fieldnames = columns)
-            print "2"
+            rows = csv.DictReader(StringIO.StringIO(report))
             
             for row in rows:
                 event = Event()
                 
                 for key, value in row.items():
 
-                    print value
-                    
-                    value = value.strip()
+                    key = columns[key]
+
+                    if not value:
+                        continue
                     
                     if key is "__IGNORE__" or key is "__TDB__":
                         continue
