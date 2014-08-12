@@ -1,5 +1,6 @@
-import sys
 import re
+import sys
+import json
 import time
 import ConfigParser
 
@@ -28,7 +29,7 @@ class Bot(object):
 
         self.load_configurations()
 
-        self.src_queue, self.dest_queues = self.load_queues()
+        self.src_queue, self.dest_queues = self.load_pipeline()
         self.parameters.processing_interval = float(self.parameters.processing_interval)
         
         self.init()
@@ -88,76 +89,50 @@ class Bot(object):
 
     def load_configurations(self):
         self.parameters = Parameters()
-        config = ConfigParser.ConfigParser()
-        config.read(BOTS_CONF_FILE)
-        
-        default_section = "default"
-        self.logger.debug("Loading configuration in default section from '%s' file" % BOTS_CONF_FILE)
-        
-        if config.has_section(default_section):
-            for option in config.options(default_section):
-                setattr(self.parameters, option, config.get(default_section, option))
-                self.logger.debug("Parameter '%s' loaded with the value '%s'" % (option, config.get(default_section, option)))
+
+        with open(BOTS_CONF_FILE, 'r') as fpconfig:
+            config = json.loads(fpconfig.read())
         
         self.logger.debug("Loading configuration in %s section from '%s' file" % (self.bot_id, BOTS_CONF_FILE))
         
-        if config.has_section(self.bot_id):
-            for option in config.options(self.bot_id):
-                setattr(self.parameters, option, config.get(self.bot_id, option))
-                self.logger.debug("Parameter '%s' loaded with the value '%s'" % (option, config.get(self.bot_id, option)))
+        if self.bot_id in config.keys():
+            for option, value in config[self.bot_id].iteritems():
+                setattr(self.parameters, option, value)
+                self.logger.debug("Parameter '%s' loaded with the value '%s'" % (option, value))
 
 
     def load_logger(self):
-        config = ConfigParser.ConfigParser()
-        config.read(SYSTEM_CONF_FILE)
-        loglevel = config.get('Logging','level')
+        with open(SYSTEM_CONF_FILE, 'r') as fpconfig:
+            config = json.loads(fpconfig.read())
+
+        loglevel = config['logging_level']
         return log(LOGS_PATH, self.bot_id, loglevel)
 
 
     def load_pipeline(self):
-        return
-
-
-    def load_queues(self):
-        config = ConfigParser.ConfigParser()
-        config.read(PIPELINE_CONF_FILE)
+        with open(PIPELINE_CONF_FILE, 'r') as fpconfig:
+            config = json.loads(fpconfig.read())
+            
         self.logger.debug("Loading pipeline queues from '%s' file" % PIPELINE_CONF_FILE)
         
-        for option in config.options("Pipeline"):
-            if option == self.bot_id:
-                queues = config.get("Pipeline", self.bot_id)
+        source_queue = None
+        destination_queues = None
+        
+        if self.bot_id in config.keys():
+        
+            if 'from' in config[self.bot_id].keys():
+                source_queue = config[self.bot_id]['from']
+                self.logger.info("Source queue '%s'" % source_queue)
+            
+            if 'to' in config[self.bot_id].keys():
+                destination_queues = config[self.bot_id]['to']
+                self.logger.info("Destination queues '%s'" % ", ".join(destination_queues))
 
-                src_queue, dest_queues = self.parse_queues(queues)
-                if src_queue:
-                    self.logger.info("Source queue '%s'" % src_queue)
-                if dest_queues:
-                    self.logger.info("Destination queue(s) '%s'" % "', '".join(dest_queues))
-                return [src_queue, dest_queues]
+            return [source_queue, destination_queues]
 
         self.logger.error("Failed to load queues")
         self.stop()
-    
-    
-    def parse_queues(self, queues):
-        queues = queues.split('|')
         
-        if len(queues) == 2:
-            src_queue = queues[0].strip()
-            if len(src_queue) == 0:
-                src_queue = None
-
-            dest_queues = queues[1].strip()
-            if len(dest_queues) == 0:
-                dest_queues_list = None
-            else:
-                dest_queues_list = list()
-                for queue in dest_queues.split(','):
-                    dest_queues_list.append(queue.strip())
-
-            return [src_queue, dest_queues_list]
-        else:
-            return [None, None]
-
 
     def send_message(self, message):       
         if isinstance(message, Event):
