@@ -18,6 +18,7 @@ class Bot(object):
 
     def __init__(self, bot_id):
         self.current_message = None
+        self.last_message = None
 
         self.check_bot_id(bot_id)
 
@@ -53,6 +54,7 @@ class Bot(object):
                 
             except Exception, ex:
                 retry_delay = 30
+                self.logger.error("Last Correct Message(event): %r" % self.last_message)
                 self.logger.error("Current Message(event): %r" % self.current_message)
                 self.logger.exception("Check the following exception:")
                 self.logger.error('Pipeline connection failed (%r)' % ex)
@@ -177,6 +179,7 @@ class Bot(object):
 
 
     def acknowledge_message(self):
+        self.last_message = self.current_message
         self.pipeline.acknowledge()
 
 
