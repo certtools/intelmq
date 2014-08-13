@@ -32,10 +32,11 @@ setup(
                  },
     data_files=[
                 ('/etc/intelmq/', [
-                                   'conf/pipeline.conf',
-                                   'conf/bots.conf',
-                                   'conf/system.conf',
-                                   'intelmq/bots/INFO'
+                                   'intelmq/conf/startup.conf',
+                                   'intelmq/conf/runtime.conf',
+                                   'intelmq/conf/pipeline.conf',
+                                   'intelmq/conf/system.conf',
+                                   'intelmq/bots/BOTS'
                                   ]
                 )
     ],
