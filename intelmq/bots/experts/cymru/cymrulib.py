@@ -1,5 +1,6 @@
 import binascii, dns.resolver, StringIO
-from intelmq.lib.utils import reverse_ip, decode
+from intelmq.lib.utils import decode
+from intelmq.bots.utils import reverse_ip
 
 '''
 Reference: http://www.team-cymru.org/Services/ip-to-asn.html#dns
