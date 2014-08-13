@@ -126,19 +126,3 @@ def is_url(url, force_http = False):
 def is_domain_name(domain_name):
     return not is_url(domain_name)
 # -----------------------------------
-    
-    
-# ------ intelmq/bots/collectors/url/lib.py ---
-def post_url(url, data, timeout=60.0, chunk_size=16384):
-    encoded_data = urllib.urlencode(data)
-    req = urllib2.urlopen(url, encoded_data, timeout)
-    return req.read()
-    
-
-def fetch_url(url, timeout=60.0, chunk_size=16384):
-    req = urllib2.urlopen(url, timeout = timeout)
-    strio = StringIO.StringIO()
-    shutil.copyfileobj(req, strio, chunk_size)
-    value = strio.getvalue()
-    strio.close()
-    return decode(value, force=True)
