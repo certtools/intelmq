@@ -11,7 +11,7 @@ from intelmq.lib.utils import decode, log
 
 SYSTEM_CONF_FILE = "/etc/intelmq/system.conf"
 PIPELINE_CONF_FILE = "/etc/intelmq/pipeline.conf"
-BOTS_CONF_FILE = "/etc/intelmq/bots.conf"
+BOTS_CONF_FILE = "/etc/intelmq/runtime.conf"
 LOGS_PATH = "/var/log/intelmq/"
 
 
