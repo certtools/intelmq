@@ -8,9 +8,9 @@ class ShadowServerDroneReportParserBot(Bot):
 
     def process(self):
         report = self.receive_message()
-        report = report.strip()
 
         if report:
+            report = report.strip()
             
             columns = {
                 "timestamp": "source_time",
