@@ -50,8 +50,6 @@ class Bot(object):
                     self.pipeline = Pipeline(self.src_queue, self.dest_queues)
                     self.logger.info("Connected to pipeline queues. Start processing.")
                 self.process()
-
-                from datetime import datetime
                 self.pipeline.sleep(self.parameters.processing_interval)
                 
             except Exception, ex:
