@@ -1,6 +1,7 @@
 import dns
 import socket
 import urlparse
+import binascii
 
 def is_ip(ip):
     if is_ipv4(ip):
