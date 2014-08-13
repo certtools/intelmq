@@ -6,17 +6,17 @@ python -m intelmq.bots.parsers.arbor.parser arbor-parser &
 python -m intelmq.bots.collectors.url.collector vxvault-collector &
 python -m intelmq.bots.parsers.vxvault.parser vxvault-parser &
 
-python -m intelmq.bots.collectors.url.collector malwaredomainlist-collector &
-python -m intelmq.bots.parsers.malwaredomainlist.parser malwaredomainlist-parser &
+python -m intelmq.bots.collectors.url.collector malware-domain-list-collector &
+python -m intelmq.bots.parsers.malwaredomainlist.parser malware-domain-list-parser &
 
-python -m intelmq.bots.collectors.url.collector drg-ssh-collector &
-python -m intelmq.bots.parsers.dragonresearchgroup.parser-ssh drg-ssh-parser &
+python -m intelmq.bots.collectors.url.collector dragon-research-group-ssh-collector &
+python -m intelmq.bots.parsers.dragonresearchgroup.parser-ssh dragon-research-group-ssh-parser &
 
-python -m intelmq.bots.collectors.url.collector drg-vnc-collector &
-python -m intelmq.bots.parsers.dragonresearchgroup.parser-vnc drg-vnc-parser &
+python -m intelmq.bots.collectors.url.collector dragon-research-group-vnc-collector &
+python -m intelmq.bots.parsers.dragonresearchgroup.parser-vnc dragon-research-group-vnc-parser &
 
-python -m intelmq.bots.experts.deduplicator.deduplicator deduplicator &
-python -m intelmq.bots.experts.sanitizer.sanitizer sanitizer &
+python -m intelmq.bots.experts.deduplicator.deduplicator deduplicator-expert &
+python -m intelmq.bots.experts.sanitizer.sanitizer sanitizer-expert &
 python -m intelmq.bots.experts.taxonomy.taxonomy taxonomy-expert &
 #python -m intelmq.bots.experts.geoip.geoip geoip-expert &
 python -m intelmq.bots.experts.cymru.cymru cymru-expert &

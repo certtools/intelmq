@@ -50,6 +50,8 @@ class Bot(object):
                     self.pipeline = Pipeline(self.src_queue, self.dest_queues)
                     self.logger.info("Connected to pipeline queues. Start processing.")
                 self.process()
+
+                from datetime import datetime
                 self.pipeline.sleep(self.parameters.processing_interval)
                 
             except Exception, ex:
@@ -120,12 +122,12 @@ class Bot(object):
         
         if self.bot_id in config.keys():
         
-            if 'from' in config[self.bot_id].keys():
-                source_queue = config[self.bot_id]['from']
+            if 'source-queue' in config[self.bot_id].keys():
+                source_queue = config[self.bot_id]['source-queue']
                 self.logger.info("Source queue '%s'" % source_queue)
             
-            if 'to' in config[self.bot_id].keys():
-                destination_queues = config[self.bot_id]['to']
+            if 'destination-queues' in config[self.bot_id].keys():
+                destination_queues = config[self.bot_id]['destination-queues']
                 self.logger.info("Destination queues '%s'" % ", ".join(destination_queues))
 
             return [source_queue, destination_queues]
