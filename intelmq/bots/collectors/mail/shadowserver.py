@@ -53,7 +53,6 @@ class ShadowServerCollectorBot(Bot):
                         
                         self.send_message(report)
                         mailbox.mark_seen(uid)
-                        return
 
 
 if __name__ == "__main__":
