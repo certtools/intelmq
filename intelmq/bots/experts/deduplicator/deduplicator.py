@@ -6,10 +6,10 @@ class DeduplicatorBot(Bot):
     
     def init(self):
         self.cache = Cache(
-                            self.parameters.cache_host,
-                            self.parameters.cache_port,
-                            self.parameters.cache_id,
-                            self.parameters.cache_ttl
+                            self.parameters.redis_cache_host,
+                            self.parameters.redis_cache_port,
+                            self.parameters.redis_cache_db,
+                            self.parameters.redis_cache_ttl
                           )
 
 
