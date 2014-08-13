@@ -49,7 +49,7 @@
                 "mail_user": "< ... >",
                 "mail_password": "< ... >",
                 "mail_ssl": "True",
-                "sent_from": "autoreports@shadowserver.org",
+                "sent_from": "example@shadowserver.org",
                 "folder": "Inbox.shadowserver",
                 "unread": "True",
                 "subject_regex": "Drone Report",
@@ -154,7 +154,7 @@
             "module": "intelmq.bots.outputs.file.file",
             "description": "File is the bot responsible to send events to a file.",
             "parameters": {
-                "file": "< file /var/lib/intelmq/archive/events.txt >",
+                "file": "/var/lib/intelmq/archive/events.txt",
                 "processing_interval": "0"
             }
         },
