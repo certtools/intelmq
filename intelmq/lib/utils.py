@@ -1,9 +1,5 @@
-import shutil
 import logging
 import hashlib
-import socket
-import binascii
-import StringIO
 
 def decode(text, encodings=["utf-8", "ascii"], force=False):
     for encoding in encodings:
@@ -57,12 +53,3 @@ def hashgen(data, func=hashlib.sha1):
     result = func()
     result.update(data)
     return result.hexdigest()
-
-
-
-
-
-
-# ------ Bots Utils (intelmq.bots.utils) -----------------------------
-
-# -----------------------------------
