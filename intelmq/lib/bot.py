@@ -142,6 +142,10 @@ class Bot(object):
 
     def receive_message(self):
         self.current_message = self.pipeline.receive()
+        
+        if not self.current_message:
+            return None
+        
         message = self.current_message.decode('utf-8')
         
         try:    # Event Object
