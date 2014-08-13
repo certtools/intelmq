@@ -2,7 +2,7 @@ import sys
 import socket
 import datetime
 import dateutil.parser as dateparser
-from intelmq.lib.utils import is_ip
+from intelmq.bots.utils import is_ip
 
 
 # Find all domain names values in ip fields

@@ -1,7 +1,7 @@
 import json
 from intelmq.lib.bot import Bot, sys
 from intelmq.lib.cache import Cache
-from intelmq.lib.utils import is_ipv4, is_ipv6, ip_to_int
+from intelmq.bots.utils import is_ipv4, is_ipv6, ip_to_int
 from cymrulib import Cymru
 
 MINIMUM_BGP_PREFIX_IPV4 = 24
