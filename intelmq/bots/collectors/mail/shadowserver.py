@@ -1,25 +1,7 @@
-# TODO: subject needs to be regex
-# TODO: attachments needs to be regex
-# TODO: accept multiple attachment names
-# TODO: add method to mark email as read
-
+import imbox
+import zipfile
 from intelmq.lib.bot import Bot, sys
 from intelmq.bots.collectors.mail.lib import Mail
-import zipfile
-import imbox
-
-# Fields Required:
-# ---------------------
-# * mail_host - imap server
-# * mail_user - user of email account
-# * mail_password - password of email account
-# * mail_ssl - use secure connenctions (True/False)
-# * folder - email folder (e.g. Inbox.ShadowServer)
-# * unread - get just unread emails (True/False)
-# * sent_from - source email from message that was sent
-# * subject_regex - subject of the message
-# * attach_regex - name of the attach to fetch
-# * unzip - unzip attach (True/False)
 
 class ShadowServerCollectorBot(Bot):
 
@@ -50,9 +32,9 @@ class ShadowServerCollectorBot(Bot):
                         
                         #report_link = "# Feed: http://dl.shadowserver.org/CHANGEME" # URL (dl.shadowserver.org/) regex apllied to message.body['plain'] or message.body['html']
                         report = report_csv # report_link + report_csv
-                        
                         self.send_message(report)
-                        mailbox.mark_seen(uid)
+                        
+                mailbox.mark_seen(uid)
 
 
 if __name__ == "__main__":
