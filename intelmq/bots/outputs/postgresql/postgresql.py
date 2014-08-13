@@ -6,12 +6,12 @@ class PostgreSQLBot(Bot):
     def init(self):
         self.logger.debug("Connecting to PostgreSQL")
         self.con = psycopg2.connect(
-                                database=self.parameters.database,
-                                user=self.parameters.user,
-                                password=self.parameters.password,
-                                host=self.parameters.host,
-                                port=self.parameters.port
-                                )
+                                    database=self.parameters.database,
+                                    user=self.parameters.user,
+                                    password=self.parameters.password,
+                                    host=self.parameters.host,
+                                    port=self.parameters.port
+                                   )
         self.cur = self.con.cursor()
         self.logger.info("Connected to PostgreSQL")
 
