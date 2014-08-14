@@ -5,7 +5,7 @@ from intelmq.lib.bot import Bot, sys
 from intelmq.bots.collectors.mail.lib import Mail
 from intelmq.bots.collectors.url.lib import fetch_url
 
-class ShadowServerCollectorBot(Bot):
+class ShadowServerURLCollectorBot(Bot):
 
     def process(self):
         additional_parameters = ["folder", "unread", "sent_from", "subject_regex", "url_regex"]
@@ -35,5 +35,5 @@ class ShadowServerCollectorBot(Bot):
 
 
 if __name__ == "__main__":
-    bot = ShadowServerCollectorBot(sys.argv[1])
+    bot = ShadowServerURLCollectorBot(sys.argv[1])
     bot.start()
