@@ -41,7 +41,7 @@
             }
         },
         "ShadowServer Drone Report": {
-            "module": "intelmq.bots.collectors.mail.shadowserver",
+            "module": "intelmq.bots.collectors.mail.shadowserver-attach",
             "description": "ShadowServer Drone Report is the bot responsible to get the report from source of information.",
             "parameters": {
                 "processing_interval": "3600",
@@ -53,8 +53,24 @@
                 "folder": "Inbox.shadowserver",
                 "unread": "True",
                 "subject_regex": "Drone Report",
-                "body_regex": "None",
                 "attach_regex": "geo.csv.zip",
+                "unzip": "True"
+            }
+        },
+        "ShadowServer Chargen Report": {
+            "module": "intelmq.bots.collectors.mail.shadowserver-url",
+            "description": "ShadowServer Chargen Report is the bot responsible to get the report from source of information.",
+            "parameters": {
+                "processing_interval": "3600",
+                "mail_host": "< ... >",
+                "mail_user": "< ... >",
+                "mail_password": "< ... >",
+                "mail_ssl": "True",
+                "sent_from": "example@shadowserver.org",
+                "folder": "Inbox.shadowserver",
+                "unread": "True",
+                "subject_regex": "Chargen Report",
+                "url_regex": "http://dl.shadowserver.org/[^\ ]+",
                 "unzip": "True"
             }
         }
@@ -98,6 +114,13 @@
         "ShadowServer Drone Report": {
             "module": "intelmq.bots.inputs.parsers.shadowserver.drone-report-parser",
             "description": "ShadowServer Drone Report Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+                "processing_interval": "0"
+            }
+        },
+        "ShadowServer Chargen Report": {
+            "module": "intelmq.bots.inputs.parsers.shadowserver.chargen-report-parser",
+            "description": "ShadowServer Chargen Report Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
                 "processing_interval": "0"
             }
