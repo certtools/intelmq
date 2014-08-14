@@ -3,7 +3,7 @@ import zipfile
 from intelmq.lib.bot import Bot, sys
 from intelmq.bots.collectors.mail.lib import Mail
 
-class ShadowServerCollectorBot(Bot):
+class ShadowServerAttachCollectorBot(Bot):
 
     def process(self):
         additional_parameters = ["folder", "unread", "sent_from", "subject_regex", "attach_regex"]
@@ -38,5 +38,5 @@ class ShadowServerCollectorBot(Bot):
 
 
 if __name__ == "__main__":
-    bot = ShadowServerCollectorBot(sys.argv[1])
+    bot = ShadowServerAttachCollectorBot(sys.argv[1])
     bot.start()
