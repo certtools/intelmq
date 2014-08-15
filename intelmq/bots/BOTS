@@ -41,7 +41,7 @@
             }
         },
         "ShadowServer Drone Report": {
-            "module": "intelmq.bots.collectors.mail.shadowserver-attach",
+            "module": "intelmq.bots.collectors.mail.mail-attach",
             "description": "ShadowServer Drone Report is the bot responsible to get the report from source of information.",
             "parameters": {
                 "processing_interval": "3600",
@@ -56,7 +56,7 @@
             }
         },
         "ShadowServer Chargen Report": {
-            "module": "intelmq.bots.collectors.mail.shadowserver-url",
+            "module": "intelmq.bots.collectors.mail.mail-url",
             "description": "ShadowServer Chargen Report is the bot responsible to get the report from source of information.",
             "parameters": {
                 "processing_interval": "3600",
@@ -67,6 +67,21 @@
                 "folder": "Inbox.shadowserver",
                 "subject_regex": "Chargen Report",
                 "url_regex": "http://dl.shadowserver.org/[^ ]+"
+            }
+        },
+        "CERT-EU Malicious URLs": {
+            "module": "intelmq.bots.collectors.mail.mail-attach",
+            "description": "CERT-EU Malicious URLs Report is the bot responsible to get the report from source of information.",
+            "parameters": {
+                "processing_interval": "3600",
+                "mail_host": "< ... >",
+                "mail_user": "< ... >",
+                "mail_password": "< ... >",
+                "mail_ssl": "True",
+                "folder": "Inbox.cert-eu",
+                "subject_regex": "Malicious URLs",
+                "attach_regex": "report.csv",
+                "attach_unzip": "False"
             }
         }
     },
