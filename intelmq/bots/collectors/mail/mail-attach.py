@@ -23,8 +23,8 @@ class MailAttachCollectorBot(Bot):
                         continue
                     
                     if re.search(self.parameters.attach_regex, attach['filename']):
-                        
-                        if self.parameters.attach_unzip:
+
+                        if bool(self.parameters.attach_unzip):
                             zipped = zipfile.ZipFile(attach['content'])
                             report = zipped.read(zipped.namelist()[0])
                         else:
