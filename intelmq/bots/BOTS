@@ -70,7 +70,7 @@
                 "folder": "Inbox.shadowserver",
                 "unread": "True",
                 "subject_regex": "Chargen Report",
-                "url_regex": "http://dl.shadowserver.org/[^\ ]+",
+                "url_regex": "http://dl.shadowserver.org/[^ ]+",
                 "unzip": "True"
             }
         }
