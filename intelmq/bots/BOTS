@@ -49,12 +49,10 @@
                 "mail_user": "< ... >",
                 "mail_password": "< ... >",
                 "mail_ssl": "True",
-                "sent_from": "example@shadowserver.org",
                 "folder": "Inbox.shadowserver",
-                "unread": "True",
-                "subject_regex": "Drone Report",
-                "attach_regex": "geo.csv.zip",
-                "unzip": "True"
+                "subject_regex": "Shadowserver [^ ]+ Sinkhole HTTP Drone Report",
+                "attach_regex": "csv.zip",
+                "attach_unzip": "True"
             }
         },
         "ShadowServer Chargen Report": {
@@ -66,12 +64,9 @@
                 "mail_user": "< ... >",
                 "mail_password": "< ... >",
                 "mail_ssl": "True",
-                "sent_from": "example@shadowserver.org",
                 "folder": "Inbox.shadowserver",
-                "unread": "True",
                 "subject_regex": "Chargen Report",
-                "url_regex": "http://dl.shadowserver.org/[^ ]+",
-                "unzip": "True"
+                "url_regex": "http://dl.shadowserver.org/[^ ]+"
             }
         }
     },
