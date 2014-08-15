@@ -136,9 +136,14 @@ class Bot(object):
         self.stop()
         
 
-    def send_message(self, message):       
+    def send_message(self, message):
+        if not message:
+            self.logger.warning("Empty message found.")
+            return False
+        
         if isinstance(message, Event):
             message = unicode(message) # convert Event Object to string (UTF-8)
+            
         self.pipeline.send(message)
 
 
