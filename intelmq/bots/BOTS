@@ -48,11 +48,11 @@
                 "mail_host": "< ... >",
                 "mail_user": "< ... >",
                 "mail_password": "< ... >",
-                "mail_ssl": "True",
+                "mail_ssl": true,
                 "folder": "Inbox.shadowserver",
                 "subject_regex": "Shadowserver [^ ]+ Sinkhole HTTP Drone Report",
                 "attach_regex": "csv.zip",
-                "attach_unzip": "True"
+                "attach_unzip": true
             }
         },
         "ShadowServer Chargen Report": {
@@ -63,7 +63,7 @@
                 "mail_host": "< ... >",
                 "mail_user": "< ... >",
                 "mail_password": "< ... >",
-                "mail_ssl": "True",
+                "mail_ssl": true,
                 "folder": "Inbox.shadowserver",
                 "subject_regex": "Chargen Report",
                 "url_regex": "http://dl.shadowserver.org/[^ ]+"
@@ -77,11 +77,11 @@
                 "mail_host": "< ... >",
                 "mail_user": "< ... >",
                 "mail_password": "< ... >",
-                "mail_ssl": "True",
+                "mail_ssl": true,
                 "folder": "Inbox.cert-eu",
                 "subject_regex": "Malicious URLs",
                 "attach_regex": "report.csv",
-                "attach_unzip": "False"
+                "attach_unzip": false
             }
         }
     },

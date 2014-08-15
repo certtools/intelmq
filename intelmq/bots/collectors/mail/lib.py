@@ -13,7 +13,7 @@ class Mail():
         self.host = host
         self.user = user
         self.password = password
-        self.ssl = bool(ssl)
+        self.ssl = ssl
         self.connect()
         
     def connect(self):

@@ -7,7 +7,7 @@ from intelmq.bots.collectors.url.lib import fetch_url
 class MailURLCollectorBot(Bot):
 
     def process(self):
-        mailbox = imbox.Imbox(self.parameters.mail_host, self.parameters.mail_user, self.parameters.mail_password, bool(self.parameters.mail_ssl))
+        mailbox = imbox.Imbox(self.parameters.mail_host, self.parameters.mail_user, self.parameters.mail_password, self.parameters.mail_ssl)
         emails = mailbox.messages(folder=self.parameters.folder, unread=True)
 
         if emails:

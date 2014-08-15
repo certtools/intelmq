@@ -7,7 +7,7 @@ from intelmq.bots.collectors.mail.lib import Mail
 class MailAttachCollectorBot(Bot):
 
     def process(self):
-        mailbox = imbox.Imbox(self.parameters.mail_host, self.parameters.mail_user, self.parameters.mail_password, bool(self.parameters.mail_ssl))
+        mailbox = imbox.Imbox(self.parameters.mail_host, self.parameters.mail_user, self.parameters.mail_password, self.parameters.mail_ssl)
         emails = mailbox.messages(folder=self.parameters.folder, unread=True)
 
         if emails:
@@ -24,7 +24,7 @@ class MailAttachCollectorBot(Bot):
                     
                     if re.search(self.parameters.attach_regex, attach['filename']):
 
-                        if bool(self.parameters.attach_unzip):
+                        if self.parameters.attach_unzip:
                             zipped = zipfile.ZipFile(attach['content'])
                             report = zipped.read(zipped.namelist()[0])
                         else:
