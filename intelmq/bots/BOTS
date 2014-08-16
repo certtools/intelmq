@@ -45,9 +45,9 @@
             "description": "ShadowServer Drone Report is the bot responsible to get the report from source of information.",
             "parameters": {
                 "processing_interval": "3600",
-                "mail_host": "< ... >",
-                "mail_user": "< ... >",
-                "mail_password": "< ... >",
+                "mail_host": "<host>",
+                "mail_user": "<user>",
+                "mail_password": "<password>",
                 "mail_ssl": true,
                 "folder": "Inbox.shadowserver",
                 "subject_regex": "Shadowserver [^ ]+ Sinkhole HTTP Drone Report",
@@ -60,9 +60,9 @@
             "description": "ShadowServer Chargen Report is the bot responsible to get the report from source of information.",
             "parameters": {
                 "processing_interval": "3600",
-                "mail_host": "< ... >",
-                "mail_user": "< ... >",
-                "mail_password": "< ... >",
+                "mail_host": "<host>",
+                "mail_user": "<user>",
+                "mail_password": "<password>",
                 "mail_ssl": true,
                 "folder": "Inbox.shadowserver",
                 "subject_regex": "Chargen Report",
@@ -74,9 +74,9 @@
             "description": "CERT-EU Malicious URLs Report is the bot responsible to get the report from source of information.",
             "parameters": {
                 "processing_interval": "3600",
-                "mail_host": "< ... >",
-                "mail_user": "< ... >",
-                "mail_password": "< ... >",
+                "mail_host": "<host>",
+                "mail_user": "<user>",
+                "mail_password": "<password>",
                 "mail_ssl": true,
                 "folder": "Inbox.cert-eu",
                 "subject_regex": "Malicious URLs",
@@ -196,8 +196,8 @@
             "description": "LogCollector is the bot responsible to send events to a logcollector (Splunk, ElasticSearch, etc..).",
             "parameters": {
                 "processing_interval": "0",
-                "ip": "< ip >",
-                "port": "< port >"
+                "ip": "<ip>",
+                "port": "<port>"
             }
         },
         "MongoDB": {
@@ -205,10 +205,10 @@
             "description": "MongoDB is the bot responsible to send events to a MongoDB database.",
             "parameters": {
                 "processing_interval": "0",
-                "host": "< ip >",
-                "port": "< port >",
-                "database": "< database >",
-                "collection": "< collection >"
+                "host": "<ip>",
+                "port": "<port>",
+                "database": "<database>",
+                "collection": "<collection>"
             }
         },
         "PostgreSQL": {
@@ -216,11 +216,11 @@
             "description": "File is the bot responsible to send events to a logcollector (Splunk, ElasticSearch, etc..).",
             "parameters": {
                 "processing_interval": "0",
-                "host": "< ip >",
-                "port": "< port >",
-                "database": "< database >",
-                "user": "< user >",
-                "password": "< password >"
+                "host": "<ip>",
+                "port": "<port>",
+                "database": "<database>",
+                "user": "<user>",
+                "password": "<password>"
             }
         }
     }
