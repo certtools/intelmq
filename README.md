@@ -8,7 +8,7 @@ IntelMQ is a solution for CERTs to process data feeds, pastebins, tweets through
 1. [How to Install](#how-to-install)
 2. [Goals](#goals)
 3. [System](#system)
-4. [Bots Available](#bots-available)
+4. [IntelMQ Control Platform](#control-platform)
 5. [Incident Handling Automation Project](#incident-handling-automation-project)
 
 
