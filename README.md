@@ -60,36 +60,10 @@ See [UserGuide](https://github.com/certtools/intelmq/blob/master/docs/UserGuide.
 * RabbitMQ Queues: ... details ...
 
 
-<a name="bots-available"></a>
-## Bots Available
+<a name="control-platform"></a>
+## Control Platform
 
-### Input Bots
-
-**Collector Bots**
-* [URL](https://github.com/certtools/intelmq/tree/master/intelmq/bots/collectors/url)
-* [Mail](https://github.com/certtools/intelmq/tree/master/intelmq/bots/collectors/mail)
-* [XMPP](https://github.com/certtools/intelmq/tree/master/intelmq/bots/collectors/xmpp)
-
-**Parser Bots**
-* [MalwareDomainList](https://github.com/certtools/intelmq/tree/master/intelmq/bots/parsers/malwaredomainlist)
-* [Arbor](https://github.com/certtools/intelmq/tree/master/intelmq/bots/parsers/arbor) (Atlas Public)
-* [VXVault](https://github.com/certtools/intelmq/tree/master/intelmq/bots/parsers/vxvault)
-* [Dragon Research Group](https://github.com/certtools/intelmq/tree/master/intelmq/bots/parsers/dragonresearchgroup)
-
-### Expert Bots
-* [TeamCymru IPtoASN](https://github.com/certtools/intelmq/tree/master/intelmq/bots/experts/cymru) (DNS Service)
-* [MaxMind GeoIP](https://github.com/certtools/intelmq/tree/master/intelmq/bots/experts/geoip)
-* [ContactDB](https://github.com/certtools/intelmq/tree/master/intelmq/bots/experts/contactdb)
-* [eCSIRT Taxonomy](https://github.com/certtools/intelmq/tree/master/intelmq/bots/experts/taxonomy)
-* [Events Deduplicator](https://github.com/certtools/intelmq/tree/master/intelmq/bots/experts/deduplicator)
-* [Events Sanitizer](https://github.com/certtools/intelmq/tree/master/intelmq/bots/experts/sanitizer)
-
-### Output Bots
-* [Splunk](https://github.com/certtools/intelmq/tree/master/intelmq/bots/outputs/logcollector)
-* [MongoDB](https://github.com/certtools/intelmq/tree/master/intelmq/bots/outputs/mongodb)
-* [PostgreSQL](https://github.com/certtools/intelmq/tree/master/intelmq/bots/outputs/postgresql)
-* [ElasticSearch](https://github.com/certtools/intelmq/tree/master/intelmq/bots/outputs/logcollector)
-* [File](https://github.com/certtools/intelmq/tree/master/intelmq/bots/outputs/file)
+Check the [tool](https://github.com/certtools/intelmq-control-platform) and manage easily your IntelMQ system.
 
 <a name="incident-handling-automation-project"></a>
 ## Incident Handling Automation Project
