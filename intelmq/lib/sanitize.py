@@ -7,7 +7,7 @@ from intelmq.bots.utils import is_ip
 
 # Find all domain names values in ip fields
 # and move them to domain names fields
-
+# [DEPRECATED] [DEPRECATED] [DEPRECATED] [DEPRECATED]
 def ip(event, *items):
     for ip_key, domain_name_key in items:
         value = event.value(ip_key)
@@ -20,7 +20,7 @@ def ip(event, *items):
 
 # Find all ip values in domain names fields
 # and move them to ip fields
-
+# [DEPRECATED] [DEPRECATED] [DEPRECATED] [DEPRECATED]
 def domain_name(event, *items):
     for domain_name_key, ip_key in items:
         value = event.value(domain_name_key)
@@ -30,15 +30,15 @@ def domain_name(event, *items):
                 event.add(ip_key, value)
     return event
 
-
+# [DEPRECATED - MOVED TO BOT.UTILS - REMOVE ASAP]
 def source_time(event, key):
     value = event.value(key)
     new_value = dateparser.parse(value).isoformat()
     event.discard(key, value)
     event.add(key, new_value)
     return event
-        
 
+# [DEPRECATED - MOVED TO BOT.UTILS - REMOVE ASAP]
 def generate_source_time(event, key):        
     value = datetime.datetime.utcnow()
     value = value.replace(hour=0,minute=0,second=0,microsecond=0)
@@ -46,7 +46,7 @@ def generate_source_time(event, key):
     event.add(key, value)
     return event
 
-
+# [DEPRECATED - MOVED TO BOT.UTILS - REMOVE ASAP]
 def generate_observation_time(event, key):        
     value = datetime.datetime.utcnow()
     value = value.replace(microsecond=0)
