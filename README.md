@@ -61,7 +61,7 @@ See [UserGuide](https://github.com/certtools/intelmq/blob/master/docs/UserGuide.
 
 
 <a name="control-platform"></a>
-## Control Platform
+## IntelMQ Control Platform (IntelMQ-CP)
 
 Check the [tool](https://github.com/certtools/intelmq-control-platform) and manage easily your IntelMQ system.
 
