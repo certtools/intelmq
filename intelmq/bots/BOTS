@@ -80,7 +80,7 @@
                 "mail_ssl": true,
                 "folder": "Inbox.cert-eu",
                 "subject_regex": "Malicious URLs",
-                "attach_regex": "report.csv",
+                "attach_regex": "report.csv$",
                 "attach_unzip": false
             }
         }
