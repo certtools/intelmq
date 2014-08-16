@@ -1,9 +1,8 @@
-from urlparse import urlparse
-import dns.reversename
+import re
 import dns
 import socket
-import urlparse
 import binascii
+from urlparse import urlparse
 
 
 def get_domain_from_url():
@@ -31,8 +30,8 @@ def is_url(url):
 
 
 def is_domain_name(domain_name):
-
-    if "/" in domain_name:
+    
+    if "/" in domain_name or not re.search('[a-zA-Z]', domain_name):
         return None
 
     res = urlparse(domain_name)
@@ -90,13 +89,6 @@ def get_reverse_ip(ip):
         reverse = result.split('.ip6.arpa.')
     return reverse[0]
 
-
-
-
-
-# FIXME: is not correct.
-def is_domain_name(domain_name):
-    return not is_url(domain_name)
 
 
 # [FIXME - Review]

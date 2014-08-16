@@ -7,25 +7,27 @@ class SanitizerBot(Bot):
         event = self.receive_message()
 
         if event:
-
-            # Add feature to ignore all values with just 3 characters in keys
-
-            keys_pairs = [
-                            ("source_ip", "source_domain_name", "source_url"),
-                            ("destination_ip", "destination_domain_name", "destination_url")
-                         ]
+            print "\n\n\n\nRAW: %s\n\n" % unicode(event)
             
+            # Add feature to ignore all values with just 3 characters in keys
+            
+            keys_pairs = [
+                                    ("source_ip", "source_domain_name", "source_url")
+                                    #("destination_ip", "destination_domain_name", "destination_url")
+                                  ]
+            text = "" # FIXME
             for keys in keys_pairs:
             
                 ip = domain_name = url = None
                 
                 for key in keys:
                     
-                    if not event.contains(key):
+                    reported_key = "reported_%s" % key
+                    
+                    if not event.contains(reported_key):
                         continue
                 
-                    value = event.value(key)
-                    event.discard(key)
+                    value = event.value(reported_key)
                 
                     result = is_ip(value)
                     if result:
@@ -39,25 +41,35 @@ class SanitizerBot(Bot):
                     if result:
                         url = result
                         
-                if not domain and url:
+                if not domain_name and url:
                     '''domain = get_domain_from_url(url)'''
 
-                if not ip and domain:
+                if not ip and domain_name:
                     '''ip = get_ip_from_domain_name(domain_name)'''
-                    
                     
                 for key in keys:
                     
-                    if "url" in key:
+                    if "url" in key and url:
                         event.add(key, url)
                         
-                    if "domain_name" in key:
+                    if "domain_name" in key and domain_name:
                         event.add(key, domain_name)
                         
-                    if "ip" in key:
+                    if "ip" in key and ip:
                         event.add(key, ip)
 
-
+            # -----------------------------
+            
+                for key in keys:
+                    text += " reported_%s=%s" % (key, event.value("reported_%s" % key))
+                text += "\n"
+                for key in keys:
+                    text += " %s=%s" % (key, event.value(key))
+                
+            print text
+            raw_input("ENTER")
+            # -----------------------------
+                
             self.send_message(event)
         self.acknowledge_message()
 
