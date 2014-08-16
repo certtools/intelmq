@@ -6,6 +6,14 @@ import urlparse
 import binascii
 
 
+def get_domain_from_url():
+    '''TBD'''
+
+
+def get_ip_from_domain_name():
+    '''TBD'''
+
+
 def is_url(url):
    
     if not "/" in url:
