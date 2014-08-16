@@ -22,7 +22,9 @@ class MailAttachCollectorBot(Bot):
                     if not attach:
                         continue
                     
-                    if re.search(self.parameters.attach_regex, attach['filename']):
+                    attach_name = attach['filename'][1:len(attach['filename'])-1] # remove quote marks from filename
+                    
+                    if re.search(self.parameters.attach_regex, attach_name):
 
                         if self.parameters.attach_unzip:
                             zipped = zipfile.ZipFile(attach['content'])
