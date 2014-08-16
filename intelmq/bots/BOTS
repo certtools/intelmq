@@ -42,7 +42,7 @@
         },
         "ShadowServer Drone Report": {
             "module": "intelmq.bots.collectors.mail.mail-attach",
-            "description": "ShadowServer Drone Report is the bot responsible to get the report from source of information.",
+            "description": "ShadowServer Drone Collector is the bot responsible to get the report from source of information.",
             "parameters": {
                 "processing_interval": "3600",
                 "mail_host": "<host>",
@@ -50,14 +50,14 @@
                 "mail_password": "<password>",
                 "mail_ssl": true,
                 "folder": "Inbox.shadowserver",
-                "subject_regex": "Shadowserver [^ ]+ Sinkhole HTTP Drone Report",
+                "subject_regex": "Shadowserver [^ ]+ Drone Report",
                 "attach_regex": "csv.zip",
                 "attach_unzip": true
             }
         },
         "ShadowServer Chargen Report": {
             "module": "intelmq.bots.collectors.mail.mail-url",
-            "description": "ShadowServer Chargen Report is the bot responsible to get the report from source of information.",
+            "description": "ShadowServer Chargen Collector is the bot responsible to get the report from source of information.",
             "parameters": {
                 "processing_interval": "3600",
                 "mail_host": "<host>",
@@ -65,13 +65,13 @@
                 "mail_password": "<password>",
                 "mail_ssl": true,
                 "folder": "Inbox.shadowserver",
-                "subject_regex": "Chargen Report",
+                "subject_regex": "Shadowserver [^ ]+ Chargen Report",
                 "url_regex": "http://dl.shadowserver.org/[^ ]+"
             }
         },
         "CERT-EU Malicious URLs": {
             "module": "intelmq.bots.collectors.mail.mail-attach",
-            "description": "CERT-EU Malicious URLs Report is the bot responsible to get the report from source of information.",
+            "description": "CERT-EU Malicious URLs Collector is the bot responsible to get the report from source of information.",
             "parameters": {
                 "processing_interval": "3600",
                 "mail_host": "<host>",
@@ -121,16 +121,23 @@
                 "processing_interval": "0"
             }
         },
-        "ShadowServer Drone Report": {
-            "module": "intelmq.bots.inputs.parsers.shadowserver.drone-report-parser",
-            "description": "ShadowServer Drone Report Parser is the bot responsible to parse the report and sanitize the information.",
+        "ShadowServer Drone": {
+            "module": "intelmq.bots.inputs.parsers.shadowserver.drone-parser",
+            "description": "ShadowServer Drone Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
                 "processing_interval": "0"
             }
         },
-        "ShadowServer Chargen Report": {
-            "module": "intelmq.bots.inputs.parsers.shadowserver.chargen-report-parser",
-            "description": "ShadowServer Chargen Report Parser is the bot responsible to parse the report and sanitize the information.",
+        "ShadowServer Chargen": {
+            "module": "intelmq.bots.inputs.parsers.shadowserver.chargen-parser",
+            "description": "ShadowServer Chargen Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+                "processing_interval": "0"
+            }
+        },
+        "CERT-EU Malicious URLs": {
+            "module": "intelmq.bots.inputs.parsers.certeu.parser",
+            "description": "CERT-EU Malicious URLs Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
                 "processing_interval": "0"
             }
