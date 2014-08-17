@@ -5,12 +5,25 @@ import binascii
 from urlparse import urlparse
 
 
-def get_domain_from_url():
-    '''TBD'''
+def get_domain_name_from_url(url):
+    res = urlparse(url)
+    if res.netloc != "" and not is_ip(res.netloc):
+        return res.netloc
+    return None
 
 
-def get_ip_from_domain_name():
-    '''TBD'''
+def get_ip_from_url(url):
+    res = urlparse(url)
+    if res.netloc != "":
+        return get_ip_from_domain_name(res.netloc)
+    return None
+
+
+def get_ip_from_domain_name(domain_name):
+    try:
+        return socket.gethostbyname(domain_name)
+    except socket.error:
+        return None
 
 
 def is_url(url):
@@ -31,7 +44,7 @@ def is_url(url):
 
 def is_domain_name(domain_name):
     
-    if "/" in domain_name or not re.search('[a-zA-Z]', domain_name):
+    if "/" in domain_name or is_ip(domain_name):
         return None
 
     res = urlparse(domain_name)
