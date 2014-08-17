@@ -87,56 +87,56 @@
     },
     "Parser": {
         "Arbor": {
-            "module": "intelmq.bots.inputs.parsers.arbor.arbor",
+            "module": "intelmq.bots.parsers.arbor.arbor",
             "description": "Arbor Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
                 "processing_interval": "0"
             }
         },
         "VXVault": {
-            "module": "intelmq.bots.inputs.parsers.vxvault.vxvault",
+            "module": "intelmq.bots.parsers.vxvault.vxvault",
             "description": "VXVault Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
                 "processing_interval": "0"
             }
         },
         "Malware Domain List": {
-            "module": "intelmq.bots.inputs.parsers.malwaredomainlist.malwaredomainlist",
+            "module": "intelmq.bots.parsers.malwaredomainlist.malwaredomainlist",
             "description": "Malware Domain List Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
                 "processing_interval": "0"
             }
         },
         "Dragon Research Group SSH": {
-            "module": "intelmq.bots.inputs.parsers.dragonresearchgroup.parser-ssh",
+            "module": "intelmq.bots.parsers.dragonresearchgroup.parser-ssh",
             "description": "Dragon Research Group SSH Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
                 "processing_interval": "0"
             }
         },
         "Dragon Research Group VNC": {
-            "module": "intelmq.bots.inputs.parsers.dragonresearchgroup.parser-vnc",
+            "module": "intelmq.bots.parsers.dragonresearchgroup.parser-vnc",
             "description": "Dragon Research Group VNC Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
                 "processing_interval": "0"
             }
         },
         "ShadowServer Drone": {
-            "module": "intelmq.bots.inputs.parsers.shadowserver.drone-parser",
+            "module": "intelmq.bots.parsers.shadowserver.drone-parser",
             "description": "ShadowServer Drone Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
                 "processing_interval": "0"
             }
         },
         "ShadowServer Chargen": {
-            "module": "intelmq.bots.inputs.parsers.shadowserver.chargen-parser",
+            "module": "intelmq.bots.parsers.shadowserver.chargen-parser",
             "description": "ShadowServer Chargen Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
                 "processing_interval": "0"
             }
         },
         "CERT-EU Malicious URLs": {
-            "module": "intelmq.bots.inputs.parsers.certeu.malicious-urls-parser",
+            "module": "intelmq.bots.parsers.certeu.malicious-urls-parser",
             "description": "CERT-EU Malicious URLs Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
                 "processing_interval": "0"
