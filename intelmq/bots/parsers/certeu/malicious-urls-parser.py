@@ -18,19 +18,16 @@ class CERTEUMaliciousURLsParserBot(Bot):
                 row = row.split('|')
                 event = Event()
 
-                columns = ["source_url", "source_asn", "source_ip", "source_time", "source_reverse_dns", "source_cc", "type", "additional_information"]
+                columns = ["source_url", "source_asn", "source_ip", "source_time", "source_reverse_dns", "source_cc", "__IGNORE__", "additional_information"]
                 
                 for key, value in zip(columns, row):
                     value = value.strip()
                     
-                    if key == "type":
-                        if value == "Compromised Server":
-                            value = "compromised"
-                    
-                    if value != "N/A":
+                    if value != "N/A" and key != "__IGNORE__":
                         event.add(key, value)
                     
                 event.add('feed', 'cert-eu')
+                event.add('type', 'malware')
 
                 event = utils.parse_source_time(event, "source_time")
                 event = utils.generate_observation_time(event, "observation_time")
