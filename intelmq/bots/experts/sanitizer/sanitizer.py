@@ -5,7 +5,6 @@ class SanitizerBot(Bot):
 
     def process(self):
         event = self.receive_message()
-        print "--- RAW ---\n%s" % unicode(event)
 
         if event:
             
@@ -68,9 +67,7 @@ class SanitizerBot(Bot):
                         
                     if "ip" in key and ip:
                         event.add(key, ip)
-            
-            print "\n\n--- COMPLETED ---\n%s" % unicode(event)
-            raw_input("\n\n[ENTER]")
+
             self.send_message(event)
         self.acknowledge_message()
 
