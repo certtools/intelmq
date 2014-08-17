@@ -1,6 +1,8 @@
+from copy import copy
 from intelmq.lib.bot import Bot, sys
 from intelmq.lib.cache import Cache
 from intelmq.lib.event import Event
+
 
 class DeduplicatorBot(Bot):
     
@@ -20,7 +22,7 @@ class DeduplicatorBot(Bot):
             
             # Event deduplication
             if isinstance(message, Event):
-                event = message
+                event = copy(message)
                 event.clear("observation_time")
                 message_hash = hash(event)                            
 
