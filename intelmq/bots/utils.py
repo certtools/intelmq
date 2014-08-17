@@ -106,6 +106,9 @@ def ip_to_int(ip):
 
 
 def parse_source_time(event, key):
+    if not event.contains(key):
+        return generate_source_time(event, key)
+    
     value = event.value(key)
     new_value = dateparser.parse(value).isoformat()
     event.discard(key, value)
