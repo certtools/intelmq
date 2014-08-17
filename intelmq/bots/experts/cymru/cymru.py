@@ -1,8 +1,8 @@
 import json
 from intelmq.lib.bot import Bot, sys
 from intelmq.lib.cache import Cache
-from intelmq.bots.utils import is_ipv4, is_ipv6, ip_to_int
-from cymrulib import Cymru
+from intelmq.bots import utils
+from intelmq.bots.experts.cymru.lib import Cymru
 
 MINIMUM_BGP_PREFIX_IPV4 = 24
 MINIMUM_BGP_PREFIX_IPV6 = 128 # FIXME
@@ -35,14 +35,14 @@ class CymruExpertBot(Bot):
                 self.acknowledge_message()
                 return
 
-            elif is_ipv4(ip):
+            elif utils.is_ipv4(ip):
                 ip_version = 4
-                ip_integer = ip_to_int(ip)
+                ip_integer = utils.ip_to_int(ip)
                 cache_key = bin(ip_integer)[2 : MINIMUM_BGP_PREFIX_IPV4 + 2]
 
-            elif is_ipv6(ip):
+            elif utils.is_ipv6(ip):
                 ip_version = 6
-                ip_integer = ip_to_int(ip)
+                ip_integer = utils.ip_to_int(ip)
                 cache_key = bin(ip_integer)[2 : MINIMUM_BGP_PREFIX_IPV6 + 2]
 
             else:
