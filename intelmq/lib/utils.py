@@ -1,7 +1,7 @@
 import logging
 import hashlib
 
-def decode(text, encodings=["utf-8", "ascii"], force=False):
+def decode(text, encodings=["utf-8"], force=False):
     for encoding in encodings:
         try:
             return text.decode(encoding)
@@ -18,7 +18,7 @@ def decode(text, encodings=["utf-8", "ascii"], force=False):
     raise Exception("Found a problem when decoding.")
 
 
-def encode(text, encodings=["utf-8", "ascii"], force=False):
+def encode(text, encodings=["utf-8"], force=False):
     for encoding in encodings:
         try:
             return text.encode(encoding)

@@ -11,7 +11,7 @@ class ShadowServerDroneReportParserBot(Bot):
 
         if report:
             report = report.strip()
-            
+
             columns = {
                 "timestamp": "source_time",
                 "ip": "source_ip",

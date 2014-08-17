@@ -45,7 +45,7 @@
             "description": "PhishTank Collector is the bot responsible to get the report from source of information.",
             "parameters": {
                 "url": "http://data.phishtank.com/data/< API KEY >/online-valid.csv",
-                "processing_interval": "3600"
+                "processing_interval": "28800"
             }
         },
         "OpenBL": {
