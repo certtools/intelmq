@@ -1,6 +1,8 @@
-import binascii, dns.resolver, StringIO
+import binascii
+import StringIO
+import dns.resolver
 from intelmq.lib.utils import decode
-from intelmq.bots.utils import get_reverse_ip
+from intelmq.bots import utils
 
 '''
 Reference: http://www.team-cymru.org/Services/ip-to-asn.html#dns
@@ -40,7 +42,7 @@ class Cymru():
 
     @staticmethod
     def __ip_query(ip, ip_version):      
-        reversed_ip = get_reverse_ip(ip)
+        reversed_ip = utils.get_reverse_ip(ip)
         version = ""
         if ip_version == 6:
             version = "6"

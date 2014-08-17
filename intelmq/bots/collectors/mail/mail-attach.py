@@ -30,7 +30,7 @@ class MailAttachCollectorBot(Bot):
                             zipped = zipfile.ZipFile(attach['content'])
                             report = zipped.read(zipped.namelist()[0])
                         else:
-                            report = attach['content']
+                            report = attach['content'].read()
                             
                         self.send_message(report)
                         
