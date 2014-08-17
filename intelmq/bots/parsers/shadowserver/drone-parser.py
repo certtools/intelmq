@@ -1,8 +1,8 @@
+import csv
+import StringIO
 from intelmq.lib.bot import Bot, sys
-from intelmq.lib.utils import decode
-import StringIO, csv
 from intelmq.lib.event import Event
-from intelmq.lib import sanitize
+from intelmq.bots import utils
 
 class ShadowServerDroneReportParserBot(Bot):
 
@@ -14,29 +14,29 @@ class ShadowServerDroneReportParserBot(Bot):
             
             columns = {
                 "timestamp": "source_time",
-                "ip": "reported_ip",
+                "ip": "source_ip",
                 "port": "source_port",
-                "asn": "reported_asn",
-                "geo": "reported_cc",
-                "region": "region",
-                "city": "city",
+                "asn": "source_asn",
+                "geo": "source_cc",
+                "region": "source_region",
+                "city": "source_city",
                 "hostname": "source_reverse_dns",
                 "type": "__IGNORE__",
                 "infection": "malware",
-                "url": "__TDB__",
-                "agent": "__TDB__",
+                "url": "__TBD__",
+                "agent": "__TBD__",
                 "cc": "destination_ip",
                 "cc_port": "destination_port",
                 "cc_asn": "destination_asn",
                 "cc_geo": "destination_cc",
                 "cc_dns": "destination_reverse_dns",
-                "count": "__TDB__",
-                "proxy": "__TDB__",
-                "application": "__TDB__",
-                "p0f_genre": "__TDB__",
-                "p0f_detail": "__TDB__",
-                "machine_name": "__TDB__",
-                "id": "__TDB__"
+                "count": "__TBD__",
+                "proxy": "__TBD__",
+                "application": "__TBD__",
+                "p0f_genre": "__TBD__",
+                "p0f_detail": "__TBD__",
+                "machine_name": "__TBD__",
+                "id": "__TBD__"
             }
             
             rows = csv.DictReader(StringIO.StringIO(report))
@@ -53,7 +53,7 @@ class ShadowServerDroneReportParserBot(Bot):
 
                     value = value.strip()
                     
-                    if key is "__IGNORE__" or key is "__TDB__":
+                    if key is "__IGNORE__" or key is "__TBD__":
                         continue
                     
                     if key is "malware":
@@ -65,16 +65,10 @@ class ShadowServerDroneReportParserBot(Bot):
                 #event.add('feed_url', 'TBD')
                 event.add('type', 'botnet drone')
                 #event.add('protocol', 'TBD')
-
-                ip_value = event.value('reported_ip')
-                event.add('source_ip', ip_value)
-                event.add('ip', ip_value)
                 
-                asn_value = event.value('reported_asn')
-                event.add('asn', asn_value)
-                
-                event = sanitize.source_time(event, "source_time")  
-                event = sanitize.generate_observation_time(event, "observation_time")
+                event = utils.parse_source_time(event, "source_time")  
+                event = utils.generate_observation_time(event, "observation_time")
+                event = utils.generate_reported_fields(event)
                 
                 self.send_message(event)
         self.acknowledge_message()
