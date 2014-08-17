@@ -136,7 +136,7 @@
             }
         },
         "CERT-EU Malicious URLs": {
-            "module": "intelmq.bots.inputs.parsers.certeu.parser",
+            "module": "intelmq.bots.inputs.parsers.certeu.malicious-urls-parser",
             "description": "CERT-EU Malicious URLs Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
                 "processing_interval": "0"

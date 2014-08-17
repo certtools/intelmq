@@ -1,8 +1,7 @@
 import urlparse
 from intelmq.lib.bot import Bot, sys
-from intelmq.lib.utils import decode
 from intelmq.lib.event import Event
-from intelmq.lib import sanitize
+from intelmq.bots import utils
 
 class VXVaultParserBot(Bot):
 
@@ -29,13 +28,15 @@ class VXVaultParserBot(Bot):
                 event.add("source_url", url)
                 event.add("source_domain_name", hostname)
                 if port:
-                    event.add("port", str(port))
+                    event.add("source_port", str(port))
 
                 event.add('feed', 'vxvault')
                 event.add('feed_url', 'http://vxvault.siri-urz.net/URL_List.php')
                 event.add('type', 'malware')
-                event = sanitize.generate_source_time(event, "source_time")
-                event = sanitize.generate_observation_time(event, "observation_time")
+                
+                event = utils.generate_source_time(event, "source_time")
+                event = utils.generate_observation_time(event, "observation_time")
+                event = utils.generate_reported_fields(event)
                 
                 self.send_message(event)
         self.acknowledge_message()
