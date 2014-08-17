@@ -65,8 +65,6 @@ class ShadowServerDroneReportParserBot(Bot):
                 #event.add('feed_url', 'TBD')
                 event.add('type', 'botnet drone')
                 #event.add('protocol', 'TBD')
-
-                event.add('source_ip', ip_value)
                 
                 event = utils.parse_source_time(event, "source_time")  
                 event = utils.generate_observation_time(event, "observation_time")
