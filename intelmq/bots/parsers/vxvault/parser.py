@@ -26,8 +26,8 @@ class VXVaultParserBot(Bot):
                 port     = url_object.port
 
                 event = Event()
-                event.add("reported_source_url", url)
-                event.add("reported_source_domain_name", hostname)
+                event.add("source_url", url)
+                event.add("source_domain_name", hostname)
                 if port:
                     event.add("port", str(port))
 
