@@ -2,6 +2,8 @@ import re
 import dns
 import socket
 import binascii
+import datetime
+import dateutil.parser as dateparser
 from urlparse import urlparse
 
 
@@ -24,6 +26,14 @@ def get_ip_from_domain_name(domain_name):
         return socket.gethostbyname(domain_name)
     except socket.error:
         return None
+
+
+def get_reverse_ip(ip):
+    result = str(dns.reversename.from_address(ip))
+    reverse = result.split('.in-addr.arpa.')
+    if not reverse:
+        reverse = result.split('.ip6.arpa.')
+    return reverse[0]
 
 
 def is_url(url):
@@ -95,24 +105,14 @@ def ip_to_int(ip):
     return ip_integer    
 
 
-def get_reverse_ip(ip):
-    result = str(dns.reversename.from_address(ip))
-    reverse = result.split('.in-addr.arpa.')
-    if not reverse:
-        reverse = result.split('.ip6.arpa.')
-    return reverse[0]
-
-
-
-# [FIXME - Review]
-def source_time(event, key):
+def parse_source_time(event, key):
     value = event.value(key)
     new_value = dateparser.parse(value).isoformat()
     event.discard(key, value)
     event.add(key, new_value)
     return event
 
-# [FIXME - Review]
+
 def generate_source_time(event, key):        
     value = datetime.datetime.utcnow()
     value = value.replace(hour=0,minute=0,second=0,microsecond=0)
@@ -120,10 +120,41 @@ def generate_source_time(event, key):
     event.add(key, value)
     return event
 
-# [FIXME - Review]
+
 def generate_observation_time(event, key):        
     value = datetime.datetime.utcnow()
     value = value.replace(microsecond=0)
     value = value.isoformat()
     event.add(key, value)
+    return event
+
+
+def generate_reported_fields(event):
+    
+    keys_pairs = [
+                    (
+                        "source_ip",
+                        "source_domain_name",
+                        "source_url",
+                        "source_email_address",
+                        "source_asn",
+                        "source_cc"
+                    ),
+                    (
+                        "destination_ip",
+                        "destination_domain_name",
+                        "destination_url",
+                        "destination_email_address",
+                        "destination_asn",
+                        "destination_cc"
+                    )
+                 ]
+
+    for keys in keys_pairs:
+        for key in keys:
+            if event.contains(key):
+                value = event.value(key)
+                reported_key = "reported_%s" % key
+                event.add(reported_key, value)
+                
     return event

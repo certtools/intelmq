@@ -14,22 +14,22 @@ class ShadowServerDroneReportParserBot(Bot):
             
             columns = {
                 "timestamp": "source_time",
-                "ip": "reported_source_ip",
+                "ip": "source_ip",
                 "port": "source_port",
-                "asn": "reported_source_asn",
-                "geo": "reported_source_cc",
-                "region": "reported_source_region",
-                "city": "reported_source_city",
-                "hostname": "reported_source_reverse_dns",
+                "asn": "source_asn",
+                "geo": "source_cc",
+                "region": "source_region",
+                "city": "source_city",
+                "hostname": "source_reverse_dns",
                 "type": "__IGNORE__",
                 "infection": "malware",
                 "url": "__TDB__",
                 "agent": "__TDB__",
-                "cc": "reported_destination_ip",
+                "cc": "destination_ip",
                 "cc_port": "destination_port",
-                "cc_asn": "reported_destination_asn",
-                "cc_geo": "reported_destination_cc",
-                "cc_dns": "reported_destination_reverse_dns",
+                "cc_asn": "destination_asn",
+                "cc_geo": "destination_cc",
+                "cc_dns": "destination_reverse_dns",
                 "count": "__TDB__",
                 "proxy": "__TDB__",
                 "application": "__TDB__",
@@ -66,11 +66,9 @@ class ShadowServerDroneReportParserBot(Bot):
                 event.add('type', 'botnet drone')
                 #event.add('protocol', 'TBD')
 
-                ip_value = event.value('reported_ip')
                 event.add('source_ip', ip_value)
-                event.add('ip', ip_value)
                 
-                asn_value = event.value('reported_asn')
+                asn_value = event.value('asn')
                 event.add('asn', asn_value)
                 
                 event = sanitize.source_time(event, "source_time")  
