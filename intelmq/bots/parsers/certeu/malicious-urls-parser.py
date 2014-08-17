@@ -15,7 +15,7 @@ class CERTEUMaliciousURLsParserBot(Bot):
                 if len(row) == 0:
                     continue
 
-                row = force_decode(row).split('|')
+                row = row.split('|')
                 event = Event()
 
                 columns = ["source_asn", "source_ip", "source_time", "source_reverse_dns", "source_cc", "type", "additional_information"]
