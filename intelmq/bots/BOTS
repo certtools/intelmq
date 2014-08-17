@@ -40,6 +40,22 @@
                 "processing_interval": "3600"
             }
         },
+        "PhishTank": {
+            "module": "intelmq.bots.collectors.url.collector",
+            "description": "PhishTank Collector is the bot responsible to get the report from source of information.",
+            "parameters": {
+                "url": "http://data.phishtank.com/data/< API KEY >/online-valid.csv",
+                "processing_interval": "3600"
+            }
+        },
+        "OpenBL": {
+            "module": "intelmq.bots.collectors.url.collector",
+            "description": "OpenBL Collector is the bot responsible to get the report from source of information.",
+            "parameters": {
+                "url": "http://www.openbl.org/lists/date_all.txt",
+                "processing_interval": "3600"
+            }
+        },
         "ShadowServer Drone Report": {
             "module": "intelmq.bots.collectors.mail.mail-attach",
             "description": "ShadowServer Drone Collector is the bot responsible to get the report from source of information.",
@@ -117,6 +133,20 @@
         "Dragon Research Group VNC": {
             "module": "intelmq.bots.parsers.dragonresearchgroup.parser-vnc",
             "description": "Dragon Research Group VNC Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+                "processing_interval": "0"
+            }
+        },
+        "PhishTank": {
+            "module": "intelmq.bots.parsers.phishtank.parser",
+            "description": "PhishTank Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+                "processing_interval": "0"
+            }
+        },
+        "OpenBL": {
+            "module": "intelmq.bots.parsers.openbl.parser",
+            "description": "OpenBL Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
                 "processing_interval": "0"
             }
