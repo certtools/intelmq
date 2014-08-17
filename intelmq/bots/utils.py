@@ -41,6 +41,12 @@ def is_url(url):
     if not "/" in url:
         return None
     
+    if "hxxp://" in url:
+        url = url.replace('hxxp://','http://')
+    
+    if "hxxps://" in url:
+        url = url.replace('hxxps://','https://')
+    
     res = urlparse(url)
     if res.netloc != "":
         return url
