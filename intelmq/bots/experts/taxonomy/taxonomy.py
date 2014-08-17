@@ -17,6 +17,7 @@ TAXONOMY = {
             "brute-force"               : "Intrusion Attempts",
             "ids alert"                 : "Intrusion Attempts",
             "defacement"                : "Intrusions",
+            "compromised"               : "Intrusions",
             "backdoor"                  : "Intrusions",
             "vulnerable service"        : "Vulnerable",
             "open resolver"             : "Vulnerable",

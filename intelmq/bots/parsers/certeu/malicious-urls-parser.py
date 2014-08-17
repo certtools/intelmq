@@ -23,11 +23,14 @@ class CERTEUMaliciousURLsParserBot(Bot):
                 for key, value in zip(columns, row):
                     value = value.strip()
                     
+                    if key == "type":
+                        if value == "Compromised Server":
+                            value = "compromised"
+                    
                     if value != "N/A":
                         event.add(key, value)
                     
                 event.add('feed', 'cert-eu')
-                event.add('type', 'malware')    # FIXME
 
                 event = utils.parse_source_time(event, "source_time")
                 event = utils.generate_observation_time(event, "observation_time")
