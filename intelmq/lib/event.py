@@ -248,6 +248,7 @@ class Event(object):
 
     def add(self, key, value): # add force option to overwrite the existing value
         if value:
+            self.clear(key)
             self.update(key, value)
 
 
