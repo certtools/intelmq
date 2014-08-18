@@ -1,5 +1,8 @@
 #/usr/bin/env bash
 
+python -m intelmq.bots.collectors.url.collector openbl-collector &
+python -m intelmq.bots.parsers.openbl.parser openbl-parser &
+
 python -m intelmq.bots.collectors.url.collector arbor-collector &
 python -m intelmq.bots.parsers.arbor.parser arbor-parser &
 
