@@ -1,7 +1,7 @@
 import logging
 import hashlib
 
-def decode(text, encodings=["utf-8"], force=False):
+def decode(text, encodings=["utf-8", "ISO-8859-15"], force=False):
     for encoding in encodings:
         try:
             return text.decode(encoding)
