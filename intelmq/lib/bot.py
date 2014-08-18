@@ -61,7 +61,7 @@ class Bot(object):
                 self.logger.error('Pipeline connection failed (%r)' % ex)
                 self.logger.info('Pipeline will reconnect in %s seconds' % retry_delay)
                 time.sleep(retry_delay)
-                self.pipeline.disconnect()
+                #self.pipeline.disconnect() # caused problems
                 self.pipeline = None
                 
             except KeyboardInterrupt as e:
