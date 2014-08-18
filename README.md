@@ -63,6 +63,8 @@ See [UserGuide](https://github.com/certtools/intelmq/blob/master/docs/UserGuide.
 <a name="control-platform"></a>
 ## IntelMQ Control Platform
 
+![intelmq-control-platform](https://raw.githubusercontent.com/certtools/intelmq/master/docs/images/intelmq-control-platform.png?token=4184292__eyJzY29wZSI6IlJhd0Jsb2I6Y2VydHRvb2xzL2ludGVsbXEvbWFzdGVyL2RvY3MvaW1hZ2VzL2ludGVsbXEtY29udHJvbC1wbGF0Zm9ybS5wbmciLCJleHBpcmVzIjoxNDA4OTM5MjUwfQ%3D%3D--ef2c15bd9146d579a68c3a0ba4769a9b15e07e93)
+
 Check the [tool](https://github.com/certtools/intelmq-control-platform) and manage easily your IntelMQ system.
 
 <a name="incident-handling-automation-project"></a>
