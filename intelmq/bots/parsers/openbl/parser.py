@@ -23,7 +23,7 @@ class OpenBLParserBot(Bot):
                 
                 for key, value in zip(columns, row):    
                     if key == "source_time":
-                        value = datetime.fromtimestamp(int(value)).strftime('%Y-%m-%d %H:%M:%S') + " UTC"
+                        value = datetime.utcfromtimestamp(int(value)).strftime('%Y-%m-%d %H:%M:%S') + " UTC"
                     
                     event.add(key, value.strip())
 
