@@ -20,7 +20,12 @@ class DragonResearchGroupSSHParserBot(Bot):
                 columns = ["source_asn", "source_as_name", "source_ip", "source_time"]
                 
                 for key, value in zip(columns, row):
-                    event.add(key, value.strip())
+                    value.strip()
+                    
+                    if key == "source_time"
+                        value += " UTC"
+                    
+                    event.add(key, value)
                                     
                 event.add('feed', 'dragonresearchgroup')
                 event.add('feed_url', 'http://dragonresearchgroup.org/insight/sshpwauth.txt')
