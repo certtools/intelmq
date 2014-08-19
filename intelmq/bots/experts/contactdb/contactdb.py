@@ -6,7 +6,7 @@ DEPRECATED | DEPRECATED | DEPRECATED |
 DEPRECATED | DEPRECATED | DEPRECATED | 
 DEPRECATED | DEPRECATED | DEPRECATED | 
 DEPRECATED | DEPRECATED | DEPRECATED | 
-'''
+
 
 
 import sys
@@ -49,3 +49,4 @@ class ContactDBExpertBot(Bot):
 if __name__ == "__main__":
     bot = ContactDBExpertBot(sys.argv[1])
     bot.start()
+'''
