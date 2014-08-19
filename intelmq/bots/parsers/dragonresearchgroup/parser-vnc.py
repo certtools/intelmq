@@ -20,7 +20,7 @@ class DragonResearchGroupVNCParserBot(Bot):
                 columns = ["source_asn", "source_as_name", "source_ip", "source_time"]
                 
                 for key, value in zip(columns, row):
-                    value.strip()
+                    value = value.strip()
                     
                     if key == "source_time":
                         value += " UTC"
@@ -35,6 +35,7 @@ class DragonResearchGroupVNCParserBot(Bot):
                 event = utils.parse_source_time(event, "source_time")  
                 event = utils.generate_observation_time(event, "observation_time")
                 event = utils.generate_reported_fields(event)
+                print unicode(event)
                 
                 self.send_message(event)
         self.acknowledge_message()

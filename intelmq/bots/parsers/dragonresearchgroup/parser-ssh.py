@@ -20,7 +20,7 @@ class DragonResearchGroupSSHParserBot(Bot):
                 columns = ["source_asn", "source_as_name", "source_ip", "source_time"]
                 
                 for key, value in zip(columns, row):
-                    value.strip()
+                    value = value.strip()
                     
                     if key == "source_time":
                         value += " UTC"
