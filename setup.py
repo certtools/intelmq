@@ -49,6 +49,7 @@ setup(
         "pymongo==2.7.1",
         "xmpppy==0.5.0rc1",
         "imbox==0.5.5",
-        "unicodecsv==0.9.4"
+        "unicodecsv==0.9.4",
+        "pytz==2012d"
     ],
 )
