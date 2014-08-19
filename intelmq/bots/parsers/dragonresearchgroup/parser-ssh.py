@@ -22,7 +22,7 @@ class DragonResearchGroupSSHParserBot(Bot):
                 for key, value in zip(columns, row):
                     value.strip()
                     
-                    if key == "source_time"
+                    if key == "source_time":
                         value += " UTC"
                     
                     event.add(key, value)
