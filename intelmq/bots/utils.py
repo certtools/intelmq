@@ -1,5 +1,6 @@
 import re
 import dns
+import pytz
 import socket
 import binascii
 import datetime
@@ -116,7 +117,8 @@ def parse_source_time(event, key):
         return generate_source_time(event, key)
     
     value = event.value(key)
-    new_value = dateparser.parse(value).isoformat()
+    new_value = dateparser.parse(value).astimezone(pytz.utc)
+    new_value = new_value.isoformat()
     event.discard(key, value)
     event.add(key, new_value)
     return event
