@@ -117,16 +117,17 @@ def parse_source_time(event, key):
         return generate_source_time(event, key)
     
     value = event.value(key)
+    event.discard(key, value)
     new_value = dateparser.parse(value).astimezone(pytz.utc)
     new_value = new_value.isoformat()
-    event.discard(key, value)
     event.add(key, new_value)
     return event
 
 
 def generate_source_time(event, key):        
     value = datetime.datetime.utcnow()
-    value = value.replace(hour=0,minute=0,second=0,microsecond=0)
+    tz = pytz.timezone('UTC')
+    value = value.replace(hour=0,minute=0,second=0,microsecond=0, tzinfo=tz)
     value = value.isoformat()
     event.add(key, value)
     return event
