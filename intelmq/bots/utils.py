@@ -120,8 +120,7 @@ def parse_source_time(event, key):
     value = event.value(key)
     event.discard(key, value)
     
-    timezones = __generate_timezones()
-    new_value = dateutil.parser.parse(value, tzinfos=timezones)
+    new_value = dateutil.parser.parse(value)
     new_value = new_value.astimezone(pytz.utc)
     new_value = new_value.isoformat()
     event.add(key, new_value)
@@ -143,14 +142,6 @@ def generate_observation_time(event, key):
     value = value.isoformat()
     event.add(key, value)
     return event
-    
-    
-def __generate_timezones():
-    timezones = dict()
-    for tz_name in pytz.all_timezones:
-        tz_code = dateutil.tz.gettz(tz_name)
-        timezones[tz_code] = tz_name
-    return timezones
 
 
 def generate_reported_fields(event):
