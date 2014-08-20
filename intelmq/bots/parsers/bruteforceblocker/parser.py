@@ -1,34 +1,44 @@
-import StringIO, csv, re
 from intelmq.lib.bot import Bot, sys
 from intelmq.lib.event import Event
+from intelmq.bots import utils
+import re
 
 class BruteForceBlockerParserBot(Bot):
 
     def process(self):
         report = self.receive_message()
-        report = report.strip()
 
         if report:
-	    columns = ["source_ip", "__IGNORE__", "source time", "__IGNORE__" , "count", "ID"]
-            rows = csv.DictReader(StringIO.StringIO(content), fieldnames = columns, dialect="excel-tab", delimiter='\t')
+            regex_ip = "^[^ \t]+"
+            regex_timestamp = "# ([^ \t]+ [^ \t]+)"
+            
+            for row in report.split('\n'):
 
-            for row in rows:
+                if row.startswith('#'):
+                    continue
 
                 event = Event()
-                for key, value in row.items():
 
-                    if key is "__IGNORE__":
-                        continue
-
-		    if key is "source time":
-			row['source time'].strip('#')
-	
-                    event.add(key, value)
-
-                self.send_message(event)
+                match = re.search(regex_ip, row)
+                if match:
+                    ip = match.group()
+                    
+                match = re.search(regex_timestamp, row)
+                if match:
+                    timestamp = match.group(1) + " UTC"
                 
-        self.acknowledge_message()
+                event.add("source_ip", ip)
+                event.add("source_time", timestamp)
+                event.add('feed', 'bruteforceblocker')
+                event.add('feed_url', 'http://danger.rulez.sk/projects/bruteforceblocker/blist.php')
+                event.add('type', 'brute-force')
 
+                event = utils.parse_source_time(event, "source_time")
+                event = utils.generate_observation_time(event, "observation_time")
+                event = utils.generate_reported_fields(event)
+                
+                self.send_message(event)
+        self.acknowledge_message()
 
 if __name__ == "__main__":
     bot = BruteForceBlockerParserBot(sys.argv[1])
