@@ -56,6 +56,14 @@
                 "processing_interval": "28800"
             }
         },
+        "MalwarePatrol Dans Guardian": {
+            "module": "intelmq.bots.collectors.url.collector",
+            "description": "MalwarePatrol Dans Guardian Collector is the bot responsible to get the report from source of information.",
+            "parameters": {
+                "url": "https://lists.malwarepatrol.net/cgi/getfile?receipt=< API KEY >&product=8&list=dansguardian",
+                "processing_interval": "180000"
+            }
+        },
         "OpenBL": {
             "module": "intelmq.bots.collectors.url.collector",
             "description": "OpenBL Collector is the bot responsible to get the report from source of information.",
@@ -155,6 +163,13 @@
         "PhishTank": {
             "module": "intelmq.bots.parsers.phishtank.parser",
             "description": "PhishTank Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+                "processing_interval": "0"
+            }
+        },
+        "MalwarePatrol Dans Guardian": {
+            "module": "intelmq.bots.parsers.malwarepatrol.parser-dansguardian",
+            "description": "MalwarePatrol Dans Guardian Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
                 "processing_interval": "0"
             }
