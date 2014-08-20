@@ -4,39 +4,36 @@ from intelmq.lib.bot import Bot, sys
 from intelmq.lib.event import Event
 from intelmq.bots import utils
 
-class ShadowServerDroneParserBot(Bot):
+class ShadowServerMicrosoftSinkholeParserBot(Bot):
 
     def process(self):
         report = self.receive_message()
 
         if report:
             report = report.strip()
-
+            
             columns = {
                 "timestamp": "source_time",
                 "ip": "source_ip",
-                "port": "source_port",
                 "asn": "source_asn",
                 "geo": "source_cc",
-                "region": "source_region",
-                "city": "source_city",
-                "hostname": "source_reverse_dns",
-                "type": "__IGNORE__",
-                "infection": "malware",
                 "url": "__TBD__",
-                "agent": "__TBD__",
-                "cc": "destination_ip",
-                "cc_port": "destination_port",
-                "cc_asn": "destination_asn",
-                "cc_geo": "destination_cc",
-                "cc_dns": "destination_reverse_dns",
-                "count": "__TBD__",
-                "proxy": "__TBD__",
-                "application": "__TBD__",
+                "type": "__IGNORE__",
+                "http_agent": "__TBD__",
+                "tor": "__TBD__",
+                "src_port": "source_port",
                 "p0f_genre": "__TBD__",
                 "p0f_detail": "__TBD__",
-                "machine_name": "__TBD__",
-                "id": "__TBD__"
+                "hostname": "source_reverse_dns",
+                "dst_port": "destination_port",
+                "http_host": "__TBD__",
+                "http_referer": "__TBD__",
+                "http_referer_asn": "__TBD__",
+                "http_referer_ip": "__TBD__",
+                "http_referer_geo": "__TBD__",
+                "dst_ip": "destination_ip",
+                "dst_asn": "destination_asn",
+                "dst_geo": "destination_cc"
             }
             
             rows = csv.DictReader(StringIO.StringIO(report))
@@ -54,15 +51,13 @@ class ShadowServerDroneParserBot(Bot):
                     value = value.strip()
                     
                     if key is "__IGNORE__" or key is "__TBD__":
-                        continue
-                    
-                    if key is "malware":
-                        value = value.strip().lower()                    
+                        continue                
                     
                     event.add(key, value)
             
-                event.add('feed', 'shadowserver-drone')
+                event.add('feed', 'shadowserver-microsoft-sinkhole')
                 event.add('type', 'botnet drone')
+                event.add('protocol', 'http')
                 
                 event = utils.parse_source_time(event, "source_time")  
                 event = utils.generate_observation_time(event, "observation_time")
@@ -73,5 +68,5 @@ class ShadowServerDroneParserBot(Bot):
    
 
 if __name__ == "__main__":
-    bot = ShadowServerDroneParserBot(sys.argv[1])
+    bot = ShadowServerMicrosoftSinkholeParserBot(sys.argv[1])
     bot.start()

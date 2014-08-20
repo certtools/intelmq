@@ -4,7 +4,7 @@ from intelmq.lib.bot import Bot, sys
 from intelmq.lib.event import Event
 from intelmq.bots import utils
 
-class ShadowServerChargenParserBot(Bot):
+class ShadowServerQotdParserBot(Bot):
 
     def process(self):
         report = self.receive_message()
@@ -24,13 +24,13 @@ class ShadowServerChargenParserBot(Bot):
                 "geo": "source_cc",
                 "region" : "source_region",
                 "city" : "source_city"
-            }           
-
+            }
+            
             rows = csv.DictReader(StringIO.StringIO(report))
-
+            
             for row in rows:
                 event = Event()
-
+                
                 for key, value in row.items():
 
                     key = columns[key]
@@ -45,9 +45,9 @@ class ShadowServerChargenParserBot(Bot):
                     
                     event.add(key, value)
             
-                event.add('feed', 'shadowserver-chargen')
+                event.add('feed', 'shadowserver-qotd')
                 event.add('type', 'vulnerable service')
-                event.add('protocol', 'chargen')
+                event.add('protocol', 'qotd')
 
                 event = utils.parse_source_time(event, "source_time")  
                 event = utils.generate_observation_time(event, "observation_time")
@@ -58,5 +58,5 @@ class ShadowServerChargenParserBot(Bot):
    
 
 if __name__ == "__main__":
-    bot = ShadowServerChargenParserBot(sys.argv[1])
+    bot = ShadowServerQotdParserBot(sys.argv[1])
     bot.start()
