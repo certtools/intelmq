@@ -8,6 +8,14 @@
                 "processing_interval": "3600"
             }
         },
+        "BruteForceBlocker": {
+            "module": "intelmq.bots.collectors.url.collector",
+            "description": "BruteForceBlocker Collector is the bot responsible to get the report from source of information.",
+            "parameters": {
+                "url": "http://danger.rulez.sk/projects/bruteforceblocker/blist.php",
+                "processing_interval": "3600"
+            }
+        },
         "VXVault": {
             "module": "intelmq.bots.collectors.url.collector",
             "description": "VXVault Collector is the bot responsible to get the report from source of information.",
@@ -105,6 +113,13 @@
         "Arbor": {
             "module": "intelmq.bots.parsers.arbor.arbor",
             "description": "Arbor Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+                "processing_interval": "0"
+            }
+        },
+        "BruteForceBlocker": {
+            "module": "intelmq.bots.parsers.bruteforceblocker.parser",
+            "description": "BruteForceBlocker Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
                 "processing_interval": "0"
             }
