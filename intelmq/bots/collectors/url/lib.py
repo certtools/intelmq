@@ -18,9 +18,8 @@ def fetch_url(url, timeout=60.0, chunk_size=16384):
 
 
 def fetch_url_ssl(url, timeout=60.0, chunk_size=16384, key_file, cert_file, ca_file):
-    
+    regex = '([^:]+)(:([0-9]+))?'    
     url_parsed = urlparse(url)
-    regex = '([^:]+)(:([0-9]+))?'
 
     host_port = re.search(regex, url_parsed.netloc)
     host = host_port.group(1)
