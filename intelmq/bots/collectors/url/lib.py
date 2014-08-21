@@ -14,7 +14,7 @@ def fetch_url(url, timeout=60.0, chunk_size=16384):
     shutil.copyfileobj(req, iostring, chunk_size)
     value = iostring.getvalue()
     iostring.close()
-    return decode(value, force=True)
+    return decode(value)
 
 
 def fetch_url_ssl(url, timeout=60.0, chunk_size=16384, key_file, cert_file, ca_file):
@@ -33,12 +33,12 @@ def fetch_url_ssl(url, timeout=60.0, chunk_size=16384, key_file, cert_file, ca_f
 
     iostring = StringIO.StringIO()
     shutil.copyfileobj(connection.getresponse(), iostring, chunk_size)
-    data = iostring.getvalue()
+    value = iostring.getvalue()
 
     iostring.close()
     connection.close()
 
-    return data
+    return decode(value)
 
 
 
