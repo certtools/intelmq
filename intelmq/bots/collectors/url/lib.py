@@ -28,7 +28,7 @@ def fetch_url_ssl(url, timeout=60.0, chunk_size=16384, key_file, cert_file, ca_f
     if not port:
         port = 443
 
-    connection = HTTPSClientAuthConnection(host, port, key_file=key_file, cert_file=cert_file, ca_file=ca_file)
+    connection = HTTPSClientAuthConnection(host, port, key_file=key_file, cert_file=cert_file, ca_file=ca_file, timeout=60.0)
     connection.request('GET', url_parsed.path)   
 
     iostring = StringIO.StringIO()
