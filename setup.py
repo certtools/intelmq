@@ -4,6 +4,7 @@ from setuptools import setup, find_packages
 dirs = [
         '/etc/intelmq',
         '/var/log/intelmq',
+        '/var/run/intelmq',
         '/var/lib/intelmq',
         '/var/lib/intelmq/archive/'
        ]
@@ -14,11 +15,11 @@ for dir in dirs:
 
 setup(
     name='intelmq',
-    version='0.1.0',
+    version='0.0.9',
     maintainer='Tomas Lima',
     maintainer_email='tomas.lima@cert.pt',
     packages=find_packages(),
-    scripts=['bin/intelmqctl', 'bin/intelmqhelper', 'bin/run-intelmq-botnet'],
+    scripts=['intelmq/bin/intelmqctl'],
     url='http://pypi.python.org/pypi/intelmq/',
     license='GPLv3',
     description="IntelMQ Tool",
@@ -35,8 +36,7 @@ setup(
                                    'intelmq/conf/startup.conf',
                                    'intelmq/conf/runtime.conf',
                                    'intelmq/conf/pipeline.conf',
-                                   'intelmq/conf/system.conf',
-                                   'intelmq/bots/BOTS'
+                                   'intelmq/conf/system.conf'
                                   ]
                 )
     ],
