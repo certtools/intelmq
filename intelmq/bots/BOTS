@@ -279,8 +279,8 @@
             }
         },
         "PostgreSQL": {
-            "module": "intelmq.bots.outputs.logcollector.logcollector",
-            "description": "File is the bot responsible to send events to a logcollector (Splunk, ElasticSearch, etc..).",
+            "module": "intelmq.bots.outputs.postgresql.postgresql",
+            "description": "PostgreSQL is the bot responsible to send events to a PostgreSQL Database.",
             "parameters": {
                 "processing_interval": "0",
                 "host": "<ip>",
