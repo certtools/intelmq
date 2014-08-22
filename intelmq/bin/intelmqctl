@@ -11,8 +11,9 @@ import psutil
 import signal
 import argparse
 
-# FIXME: check some exception cases
+# FIXME: check some exception cases.
 # FIXME: when send SIGTERM, intelmqctl need to be sure that bot died.
+# FIXME: add a interval time between the stop and start in restart scenario.
 
 CONFIGURATION_FILE = "/etc/intelmq/startup.conf"
 
