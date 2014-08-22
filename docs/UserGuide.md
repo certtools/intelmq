@@ -49,7 +49,7 @@ Before start running all bots, user should know the system details that will hel
 
 * Each bot instance starts completely independent and MUST have a 'bot id'.
 
-* The 'bot id' is used to reference in '/etc/intelmq/pipeline.conf' and '/etc/intelmq/bots.conf' the specific configurations for each bot instance.
+* The 'bot id' is used to reference in '/etc/intelmq/pipeline.conf', '/etc/intelmq/startup.conf' and '/etc/intelmq/runtime.conf' the specific configurations for each bot instance.
 
 * Global configuration for intelmq is at file '/etc/intelmq/system.conf'. Please note that logger in DEBUG will write in logs all bots parameteres configured, including passwords.
 
