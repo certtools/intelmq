@@ -84,6 +84,7 @@ description: intelmqctl is the tool to control intelmq system
 **Example:**
 
 ```
+# intelmqctl --list bots
 # intelmqctl --botnet start
 # intelmqctl --botnet status
 ```
