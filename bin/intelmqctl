@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
-import sys
+
 import re
 import os
+import sys
 import json
 import shlex
 import inspect
@@ -10,41 +11,59 @@ import psutil
 import signal
 import argparse
 
+# FIXME: testar quando ha processos mas sem ficheiros em /var/run e o inverso
+# Criar automaticamente a pasta /var/run/intelmq
 
 CONFIGURATION_FILE = "/etc/intelmq/startup.conf"
 
 
-def read_option(num_options):
-    option = raw_input("\nChoose option: ")
-    try:
-        option = int(option)
-        if option <= num_options and option > 0:
-            return option-1
-
-    except ValueError:
-        print "Error!"
-        sys.exit(1)
-
-
-def save_pidfile(bot_id, piddata):
-    filename = "/var/run/intelmq/%s.pid" % bot_id
-    fp = open(filename, "w")
-    fp.write(json.dumps(piddata))
-    fp.close()
+def log_bot(bot_id, message):
+    print " %s bot %s." % (bot_id, message)
     
+def log_botnet(message):
+    print "\n Botnet %s.\n" % (message)
+
+def save_pidfile(bot_id, pid):
+    filename = "/var/run/intelmq/%s.pid" % bot_id
+    with open(filename, 'w') as fp:
+        fp.write(str(pid))
+        
 def load_pidfile(bot_id):
     filename = "/var/run/intelmq/%s.pid" % bot_id
-    fp = open(filename, "r")
-    piddata = fp.read()
-    fp.close()
+    with open(filename, 'r') as fp:
+        pid = fp.read()
     os.remove(filename)
-    return json.loads(piddata)
-        
-def exists_pidfile(bot_id):
+    return pid.strip()
+
+def check_pidfile(bot_id):
     filename = "/var/run/intelmq/%s.pid" % bot_id
-    return os.path.isfile(filename)
+    if os.path.isfile(filename):
+        try:
+            with open(filename, 'r') as fp:
+                pid = fp.read()
+            return int(pid.strip())
+        except ValueError:
+            return None
+    return None
+        
+def start_process(bot_id, cmd):
+    args = shlex.split(cmd)
+    p = psutil.Popen(args)
+    return p.pid
+
+def stop_process(pid):
+    p = psutil.Process(int(pid))
+    p.send_signal(signal.SIGINT)
+    
+def status_process(pid):
+    try:
+        psutil.Process(int(pid))
+        return True
+    except psutil.NoSuchProcess:
+        return False
     
     
+
 
 
 class IntelMQContoller():
@@ -55,8 +74,9 @@ class IntelMQContoller():
         VERSION = "0.0.0"
         DESCRIPTION = "description: intelmqctl is the tool to control intelmq system"
         USAGE = '''
-        intelmqctl --bot [start|stop|restart|reload] --id=cymru-expert
-        intelmqctl --botnet [start|stop|restart|reload]'''
+        intelmqctl --bot [start|stop|restart|status] --id=cymru-expert
+        intelmqctl --botnet [start|stop|restart|status]
+        intelmqctl --list [bots]'''
         
         parser = argparse.ArgumentParser(
                                         prog=APPNAME,
@@ -70,15 +90,15 @@ class IntelMQContoller():
         parser.add_argument('-v', '--version', action='version', version=VERSION)
         parser.add_argument("--id", dest='bot_id', default=None, help='bot ID')
         
-        group_list.add_argument('--bot',      choices=['start', 'stop', 'restart', 'status'], metavar='[start|stop|restart|reload|status]', default=None)
-        group_list.add_argument('--botnet',   choices=['start', 'stop', 'restart', 'status'], metavar='[start|stop|restart|reload|status]', default=None)
-        group_list.add_argument('--list',     choices=['bots'],                                 metavar='[list|edit]'                       , default=None)
+        group_list.add_argument('--bot',      choices=['start', 'stop', 'restart', 'status'], metavar='[start|stop|restart|status]', default=None)
+        group_list.add_argument('--botnet',   choices=['start', 'stop', 'restart', 'status'], metavar='[start|stop|restart|status]', default=None)
+        group_list.add_argument('--list',     choices=['bots'],                               metavar='[bots]'                     , default=None)
 
         self.args = parser.parse_args()
         
         if self.args.bot_id and not self.args.bot:
             print "usage: %s" % USAGE
-            print "%s: error: argument --id: expected argument --bot [start|stop|restart|reload|status]" % APPNAME
+            print "%s: error: argument --id: expected argument --bot [start|stop|restart|status]" % APPNAME
             exit()
 
         fp = open(CONFIGURATION_FILE, 'r')
@@ -103,89 +123,110 @@ class IntelMQContoller():
             method_name = "botnet_" + self.args.botnet
             call_method = self.auto_method_call(method_name)
             call_method()
-            
+            return
         elif self.args.list:
             method_name = "list_" + self.args.list
             call_method = self.auto_method_call(method_name)
             call_method()
 
     
-    def log_bot(self, bot_id, message):
-        print " %s bot %s." % (bot_id, message)
-        
-        
-    def log_botnet(self, message):
-        print " Botnet %s." % (message)
+
 
 
     def bot_start(self, bot_id):        
-        if exists_pidfile(bot_id):
-            self.log_bot(bot_id, "is already running")
+        pid = check_pidfile(bot_id)
+        if pid:
+            if status_process(pid):
+                log_bot(bot_id, "is already running")
+            else:
+                load_pidfile(pid)
             return
+        log_bot(bot_id, "is starting")
         self.__bot_start(bot_id, self.info[bot_id]['module'])
+        log_bot(bot_id, "started")
 
         
     def __bot_start(self, bot_id, module):
         cmd = "python -m %s %s" % (module, bot_id)
-        args = shlex.split(cmd)
-        p = psutil.Popen(args)
-        piddata = { "pid": p.pid,
-                    "bot_id": bot_id,
-                    "module": module
-                  }
-        save_pidfile(bot_id, piddata)
+        pid = start_process(bot_id, cmd)
+        save_pidfile(bot_id, pid)
         
         
     def bot_stop(self, bot_id):
-        if not exists_pidfile(bot_id):
-            self.log_bot(bot_id, "is not running")
+        pid = check_pidfile(bot_id)
+        if not pid:
+            log_bot(bot_id, "is NOT running")
             return
-        return self.__bot_stop(bot_id)
+        log_bot(bot_id, "is stopping")
+        res = self.__bot_stop(bot_id)
+        log_bot(bot_id, "stopped")
         
         
     def __bot_stop(self, bot_id):
-        piddata = load_pidfile(bot_id)
-        p = psutil.Process(piddata['pid'])
-        p.send_signal(signal.SIGINT)
-        return piddata
-        
-        
+        pid = check_pidfile(bot_id)
+        if status_process(pid):
+            stop_process(pid)
+        load_pidfile(bot_id)    
+
+
     def bot_restart(self, bot_id):
-        piddata = self.bot_stop(bot_id)
-        self.__bot_start(piddata['bot_id'], piddata['module'])
+        self.bot_stop(bot_id)
+        self.bot_start(bot_id)
     
     
     def bot_status(self, bot_id):
-        if exists_pidfile(bot_id):
-            self.log_bot(bot_id, "is running")
+        pid = check_pidfile(bot_id)
+        if pid:
+            log_bot(bot_id, "is running")
         else:
-            self.log_bot(bot_id, "is not running")
+            log_bot(bot_id, "is NOT running")
+
+
+    def __bot_status(bot_id, pid):
+        pid = check_pidfile(bot_id)
+        if pid:
+            if status_process(pid):
+                return True
+            else:
+                load_pidfile(bot_id)
+                return False
+        else:
+            return False
 
     
     def botnet_start(self):
-        self.log_botnet("is starting")
+        log_botnet("is starting")
         for bot_id in self.info.keys():
             self.bot_start(bot_id)
-        self.log_botnet("started")    
+        log_botnet("started")    
+    
     
     def botnet_stop(self):
-        self.log_botnet("is stopping")
+        log_botnet("is stopping")
         for bot_id in self.info.keys():
             self.bot_stop(bot_id)
-        self.log_botnet("stopped")
+        log_botnet("stopped")
+    
     
     def botnet_restart(self):
-        self.log_botnet("is restarting")
+        log_botnet("is restarting")
         for bot_id in self.info.keys():
-            self.bot_restart(bot_id)
-        self.log_botnet("restarted")
+            self.bot_stop(bot_id)
+        print "\n\n"
+        for bot_id in self.info.keys():
+            self.bot_start(bot_id)            
+        log_botnet("restarted")
+    
     
     def botnet_status(self):
-        print "botnet_status"
-        
+        for bot_id in self.info.keys():
+            self.bot_status(bot_id)
+    
+    
     def botnet_force_shutdown(self):
         ''' TBD '''
-        
+    
+    
     def list_bots(self):
         title = "\n\nList of Bots:\n"
         title += "-" * (len(title)-1)
@@ -193,7 +234,8 @@ class IntelMQContoller():
         print title
         for bot_id in self.info.keys():
             print "Bot ID: %s\nDescription: %s\n" % (bot_id, self.info[bot_id]['description'])
+            
     
-    
-x = IntelMQContoller()
-x.run()
+if __name__ == "__main__":
+    x = IntelMQContoller()
+    x.run()
