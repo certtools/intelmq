@@ -50,6 +50,7 @@ setup(
         "xmpppy==0.5.0rc1",
         "imbox==0.5.5",
         "unicodecsv==0.9.4",
-        "pytz==2012d"
+        "pytz==2012d",
+        "psutil==2.1.1"
     ],
 )
