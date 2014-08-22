@@ -7,7 +7,11 @@ import json
 import shlex
 import inspect
 import psutil
+import signal
 import argparse
+
+
+CONFIGURATION_FILE = "/etc/intelmq/startup.conf"
 
 
 def read_option(num_options):
@@ -52,8 +56,7 @@ class IntelMQContoller():
         DESCRIPTION = "description: intelmqctl is the tool to control intelmq system"
         USAGE = '''
         intelmqctl --bot [start|stop|restart|reload] --id=cymru-expert
-        intelmqctl --botnet [start|stop|restart|reload]
-        intelmqctl --pipeline [list|edit]'''
+        intelmqctl --botnet [start|stop|restart|reload]'''
         
         parser = argparse.ArgumentParser(
                                         prog=APPNAME,
@@ -67,9 +70,9 @@ class IntelMQContoller():
         parser.add_argument('-v', '--version', action='version', version=VERSION)
         parser.add_argument("--id", dest='bot_id', default=None, help='bot ID')
         
-        group_list.add_argument('--bot',      choices=['start', 'stop', 'restart', 'reload', 'status'], metavar='[start|stop|restart|reload|status]', default=None)
-        group_list.add_argument('--botnet',   choices=['start', 'stop', 'restart', 'reload', 'status'], metavar='[start|stop|restart|reload|status]', default=None)
-        group_list.add_argument('--pipeline', choices=['list', 'edit'],                                 metavar='[list|edit]'                       , default=None)
+        group_list.add_argument('--bot',      choices=['start', 'stop', 'restart', 'status'], metavar='[start|stop|restart|reload|status]', default=None)
+        group_list.add_argument('--botnet',   choices=['start', 'stop', 'restart', 'status'], metavar='[start|stop|restart|reload|status]', default=None)
+        group_list.add_argument('--list',     choices=['bots'],                                 metavar='[list|edit]'                       , default=None)
 
         self.args = parser.parse_args()
         
@@ -78,13 +81,9 @@ class IntelMQContoller():
             print "%s: error: argument --id: expected argument --bot [start|stop|restart|reload|status]" % APPNAME
             exit()
 
-        fp = open('/etc/intelmq/INFO', 'r')
+        fp = open(CONFIGURATION_FILE, 'r')
         data = fp.read()
         self.info = json.loads(data)
-
-
-
-
 
 
     def auto_method_call(self, method):
@@ -105,54 +104,25 @@ class IntelMQContoller():
             call_method = self.auto_method_call(method_name)
             call_method()
             
-        elif self.args.pipeline:
-            method_name = "pipeline_" + self.args.pipeline
+        elif self.args.list:
+            method_name = "list_" + self.args.list
             call_method = self.auto_method_call(method_name)
             call_method()
 
     
-
-
-
-
-
+    def log_bot(self, bot_id, message):
+        print " %s bot %s." % (bot_id, message)
+        
+        
+    def log_botnet(self, message):
+        print " Botnet %s." % (message)
 
 
     def bot_start(self, bot_id):        
         if exists_pidfile(bot_id):
-            print "Bot is already running."
+            self.log_bot(bot_id, "is already running")
             return
-
-        template = "  [%s] %s"
-
-        print "\n\nBot Types:"
-        bots_types_list = self.info.keys()
-        for counter, option in enumerate(bots_types_list, 1):
-            print template % (counter, option)
-            
-        option = read_option( len(bots_types_list) )
-        bot_type = bots_types_list[int(option)]
-
-        print "\n\nBots List:"
-        bots_list = self.info[bot_type].keys()
-        for counter, option in enumerate(bots_list, 1):
-            print template % (counter, option)
-            
-        option = read_option( len(bots_list) )
-        bot = bots_list[int(option)]
-
-
-        bot_info = self.info[bot_type][bot]
-
-        print 
-        print 
-        print "Bot details"
-        print "==========="
-        print "Bot: %s" % bot
-        print "Description: %s" % bot_info['description']
-        print "Module: %s" % bot_info['module']
-        
-        self.__bot_start(bot_id, bot_info['module'])
+        self.__bot_start(bot_id, self.info[bot_id]['module'])
 
         
     def __bot_start(self, bot_id, module):
@@ -168,64 +138,62 @@ class IntelMQContoller():
         
     def bot_stop(self, bot_id):
         if not exists_pidfile(bot_id):
-            print "Bot is not running."
+            self.log_bot(bot_id, "is not running")
             return
-        self.__bot_stop(bot_id)
+        return self.__bot_stop(bot_id)
         
         
     def __bot_stop(self, bot_id):
         piddata = load_pidfile(bot_id)
         p = psutil.Process(piddata['pid'])
-        p.terminate()
+        p.send_signal(signal.SIGINT)
         return piddata
         
         
     def bot_restart(self, bot_id):
-        # FIXME: wrong approach. when user start a new bot all information should be store in a configuration file to be used in all operations. Why? Imagine if you stop a bot, you will loose all confs and when you start again you will need to configure again.
         piddata = self.bot_stop(bot_id)
         self.__bot_start(piddata['bot_id'], piddata['module'])
     
     
-    def bot_reload(self, bot_id):
-        # FIXME: reload methods should be removed
-        print "bot_reload"
-    
-    
     def bot_status(self, bot_id):
         if exists_pidfile(bot_id):
-            print "Bot is running."
+            self.log_bot(bot_id, "is running")
         else:
-            print "Bot is not running."
+            self.log_bot(bot_id, "is not running")
 
     
     def botnet_start(self):
-        print "botnet_start"
-    
+        self.log_botnet("is starting")
+        for bot_id in self.info.keys():
+            self.bot_start(bot_id)
+        self.log_botnet("started")    
     
     def botnet_stop(self):
-        print "botnet_stop"
-    
+        self.log_botnet("is stopping")
+        for bot_id in self.info.keys():
+            self.bot_stop(bot_id)
+        self.log_botnet("stopped")
     
     def botnet_restart(self):
-        print "botnet_restart"
-    
-    
-    def botnet_reload(self):
-        print "botnet_reload"
-    
+        self.log_botnet("is restarting")
+        for bot_id in self.info.keys():
+            self.bot_restart(bot_id)
+        self.log_botnet("restarted")
     
     def botnet_status(self):
         print "botnet_status"
+        
+    def botnet_force_shutdown(self):
+        ''' TBD '''
+        
+    def list_bots(self):
+        title = "\n\nList of Bots:\n"
+        title += "-" * (len(title)-1)
+        title += "\n"
+        print title
+        for bot_id in self.info.keys():
+            print "Bot ID: %s\nDescription: %s\n" % (bot_id, self.info[bot_id]['description'])
     
     
-    def pipeline_list(self):
-        print "pipeline_list"
-    
-    
-    def pipeline_edit(self):
-        print "pipeline_edit"
-    
-    
-print "Is not working ... under development..."
-#x = IntelMQContoller()
-#x.run()
+x = IntelMQContoller()
+x.run()
