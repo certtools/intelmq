@@ -4,13 +4,17 @@
 
 ### Debian-based
 ```
-apt-get install redis-server rabbitmq-server python-pip
+apt-get install python-pip git
+apt-get install build-essential python-dev
+apt-get install redis-server rabbitmq-server
 ```
 
 ### RedHat-based
 
 **Note:** Install EPEL Repository
 ```
+yum install git
+yum install gcc python-devel
 yum install centos-release-SCL
 yum install rabbitmq-server python27
 scl enable python27 bash
@@ -35,10 +39,7 @@ Source: https://gist.github.com/nghuuphuoc/7801123
 ## Install IntelMQ
 
 ```
-git clone https://github.com/certtools/intelmq.git /tmp/intelmq
-cd /tmp/intelmq
-python setup.py install
-rm -rf /tmp/intelmq
+pip install git+https://<your_user_account>@github.com/certtools/intelmq.git
 ```
 
 
