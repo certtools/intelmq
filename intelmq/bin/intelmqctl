@@ -11,8 +11,8 @@ import psutil
 import signal
 import argparse
 
-# FIXME: testar quando ha processos mas sem ficheiros em /var/run e o inverso
-# Criar automaticamente a pasta /var/run/intelmq
+# FIXME: check some exception cases
+# FIXME: when send SIGTERM, intelmqctl need to be sure that bot died.
 
 CONFIGURATION_FILE = "/etc/intelmq/startup.conf"
 
