@@ -92,18 +92,19 @@ description: intelmqctl is the tool to control intelmq system
 
 ## Utilities
 
-
-### Monitoring IntelMQ
-
-```
-$ watch -n 0.5 rabbitmqctl list_queues
-```
+### Monitoring Logs
 
 ```
 $ tail -f /var/log/intelmq/*
 ```
 
-### Reset Queues
+### Monitoring Pipeline
+
+```
+$ watch -n 0.5 rabbitmqctl list_queues
+```
+
+### Reset Pipeline Queues
 
 ```
 $ rabbitmqctl stop_app
