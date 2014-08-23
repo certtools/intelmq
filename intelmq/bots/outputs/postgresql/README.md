@@ -9,7 +9,6 @@ sudo su -
 su - postgres
 createuser intelmq -W
 createdb -O intelmq --encoding='utf-8' intelmq-events;
-
 ```
 
 * Allow Local User Connect to the Database:
