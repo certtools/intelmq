@@ -4,7 +4,9 @@ from intelmq.lib.utils import encode
 class FileBot(Bot):
 
     def init(self):
+        self.logger.debug("Opening %s file" % self.parameters.file)
         self.file = open(self.parameters.file, 'a')
+        self.logger.info("File %s is open." % self.parameters.file)
 
     def process(self):
         event = self.receive_message()
