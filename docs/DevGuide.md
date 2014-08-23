@@ -3,11 +3,9 @@
 ### Template
 
 ```
-import sys
-from lib.bot import *
-from lib.utils import *
-from lib.event import *
-from lib.cache import *
+from intelmq.lib.bot import Bot, sys
+from intelmq.lib.event import Event
+from intelmq.bots import utils
 
 class ExampleBot(Bot):
 
