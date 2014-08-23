@@ -84,7 +84,6 @@ Having a functional ontology to work with, especially for the abuse types is imp
 |Source Identity|source_reverse dns|varchar(200)|Reverse DNS name acquired through a reverse DNS query on an IP address. N.B. "Record types other than PTR records may also appear in the reverse DNS tree."|
 |Source Identity|source_asn|integer|The autonomous system number from which originated the connection|
 |Source Identity|source_as_name|varchar(200)|The autonomous system name from which the connection originated|
-|Source Identity|source_cc|varchar(2)|The country code of the ip from which the connection originated|
 |Source Identity|source_bgp_prefix|inet|CIDR for an autonomous system|
 |Source Identity|source_registry|varchar(20)|The IP registry a given ip address is allocated by|
 |Source Identity|source_allocated|timestamp|Allocation date corresponding to bgp prefix|
@@ -107,7 +106,6 @@ Having a functional ontology to work with, especially for the abuse types is imp
 |Destination Identity|destination_reverse dns|varchar(200)|Reverse DNS name acquired through a reverse DNS query on an IP address. N.B. "Record types other than PTR records may also appear in the reverse DNS tree."|
 |Destination Identity|destination_asn|integer|The autonomous system number from which originated the connection|
 |Destination Identity|destination_as_name|varchar(200)|The autonomous system name from which the connection originated|
-|Destination Identity|destination_cc|varchar(2)|The country code of the ip from which the connection originated|
 |Destination Identity|destination_bgp_prefix|inet|CIDR for an autonomous system|
 |Destination Identity|destination_registry|varchar(20)|The IP registry a given ip address is allocated by|
 |Destination Identity|destination_allocated|timestamp|Allocation date corresponding to bgp prefix|
