@@ -81,7 +81,7 @@ Having a functional ontology to work with, especially for the abuse types is imp
 |Source Identity|source_domain_name|varchar(255)|A DNS name related to the host from which the connection originated|
 |Source Identity|source_url|varchar(2000)|A URL denotes on IOC, which refers to a malicious resource, whose interpretation is defined by the abuse type. A URL with the abuse type phishing refers to a phishing resource.|
 |Source Identity|source_email_address|varchar(200)|An email address, which has been identified to relate to the source of an abuse event|
-|Source Identity|source_reverse dns|varchar(200)|Reverse DNS name acquired through a reverse DNS query on an IP address. N.B. "Record types other than PTR records may also appear in the reverse DNS tree."|
+|Source Identity|source_reverse_dns|varchar(200)|Reverse DNS name acquired through a reverse DNS query on an IP address. N.B. "Record types other than PTR records may also appear in the reverse DNS tree."|
 |Source Identity|source_asn|integer|The autonomous system number from which originated the connection|
 |Source Identity|source_as_name|varchar(200)|The autonomous system name from which the connection originated|
 |Source Identity|source_bgp_prefix|inet|CIDR for an autonomous system|
@@ -103,7 +103,7 @@ Having a functional ontology to work with, especially for the abuse types is imp
 |Destination Identity|destination_domain_name|varchar(255)|A DNS name related to the host from which the connection originated|
 |Destination Identity|destination_url|varchar(2000)|A URL denotes on IOC, which refers to a malicious resource, whose interpretation is defined by the abuse type. A URL with the abuse type phishing refers to a phishing resource.|
 |Destination Identity|destination_email_address|varchar(200)|An email address, which has been identified to relate to the source of an abuse event|
-|Destination Identity|destination_reverse dns|varchar(200)|Reverse DNS name acquired through a reverse DNS query on an IP address. N.B. "Record types other than PTR records may also appear in the reverse DNS tree."|
+|Destination Identity|destination_reverse_dns|varchar(200)|Reverse DNS name acquired through a reverse DNS query on an IP address. N.B. "Record types other than PTR records may also appear in the reverse DNS tree."|
 |Destination Identity|destination_asn|integer|The autonomous system number from which originated the connection|
 |Destination Identity|destination_as_name|varchar(200)|The autonomous system name from which the connection originated|
 |Destination Identity|destination_bgp_prefix|inet|CIDR for an autonomous system|
@@ -125,7 +125,7 @@ Having a functional ontology to work with, especially for the abuse types is imp
 |Reported Source Identity|reported_source_domain_name|varchar(255)|A DNS name related to the host from which the connection originated|
 |Reported Source Identity|reported_source_url|varchar(2000)|A URL denotes on IOC, which refers to a malicious resource, whose interpretation is defined by the abuse type. A URL with the abuse type phishing refers to a phishing resource.|
 |Reported Source Identity|reported_source_email_address|varchar(200)|An email address, which has been identified to relate to the source of an abuse event|
-|Reported Source Identity|reported_source_reverse dns|varchar(200)|Reverse DNS name acquired through a reverse DNS query on an IP address. N.B. "Record types other than PTR records may also appear in the reverse DNS tree."|
+|Reported Source Identity|reported_source_reverse_dns|varchar(200)|Reverse DNS name acquired through a reverse DNS query on an IP address. N.B. "Record types other than PTR records may also appear in the reverse DNS tree."|
 |Reported Source Identity|reported_source_asn|integer|The autonomous system number from which originated the connection|
 |Reported Source Identity|reported_source_as_name|varchar(200)|The autonomous system name from which the connection originated|
 |Reported Source Identity|reported_source_cc|varchar(2)|The country code of the ip from which the connection originated|
@@ -137,7 +137,7 @@ Having a functional ontology to work with, especially for the abuse types is imp
 |Reported Destination Identity|reported_destination_domain_name|varchar(255)|A DNS name related to the host from which the connection originated|
 |Reported Destination Identity|reported_destination_url|varchar(2000)|A URL denotes on IOC, which refers to a malicious resource, whose interpretation is defined by the abuse type. A URL with the abuse type phishing refers to a phishing resource.|
 |Reported Destination Identity|reported_destination_email_address|varchar(200)|An email address, which has been identified to relate to the source of an abuse event|
-|Reported Destination Identity|reported_destination_reverse dns|varchar(200)|Reverse DNS name acquired through a reverse DNS query on an IP address. N.B. "Record types other than PTR records may also appear in the reverse DNS tree."|
+|Reported Destination Identity|reported_destination_reverse_dns|varchar(200)|Reverse DNS name acquired through a reverse DNS query on an IP address. N.B. "Record types other than PTR records may also appear in the reverse DNS tree."|
 |Reported Destination Identity|reported_destination_asn|integer|The autonomous system number from which originated the connection|
 |Reported Destination Identity|reported_destination_as_name|varchar(200)|The autonomous system name from which the connection originated|
 |Reported Destination Identity|reported_destination_cc|varchar(2)|The country code of the ip from which the connection originated|
@@ -160,7 +160,7 @@ Having a functional ontology to work with, especially for the abuse types is imp
 |Additional Fields|webshot_url|varchar(1000)|A URL pointing to resource, which has been rendered into a webshot, e.g. a PNG image and the relevant metadata related to its retrieval/generation.|
 |Malware Elements|malware|varchar(1000)|A malware family name in lower case.|
 |Artifact Elements|artifact_hash|varchar(1000)|A string depicting a checksum for a file, be it a malware sample for example.|
-|Artifact Elements|artifact_hash type|varchar(1000)|The hashing algorithm used for artifact hash type above, be it MD5 or SHA-* etc. At the moment, it seems that the hash type should default to SHA-1.|
+|Artifact Elements|artifact_hash_type|varchar(1000)|The hashing algorithm used for artifact hash type above, be it MD5 or SHA-* etc. At the moment, it seems that the hash type should default to SHA-1.|
 |Artifact Elements|artifact_version|varchar(1000)|A version string for an identified artifact generation, e.g. a crime-ware kit.|
 |Extra Elements|abuse_contact|varchar(1000)|An abuse contact email address for an IP network.|
 |Extra Elements|event_hash|varchar(1000)|Computed event hash with specific keys and values that identify a unique event. At present, the hash should default to using the SHA1 function. Please note that for an event hash to be able to match more than one event (deduplication) the receiver of an event should calculate it based on a minimal set of keys and values present in the event. Using for example the observation time in the calculation will most likely render the checksum useless for deduplication purposes.|
