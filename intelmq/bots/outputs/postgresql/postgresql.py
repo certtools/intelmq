@@ -23,7 +23,7 @@ class PostgreSQLBot(Bot):
             keys    = ", ".join(evdict.keys())
             values  = evdict.values()
             fvalues = len(values) * "%s, "
-            query   = "INSERT INTO logentry (" + keys + ") VALUES (" + fvalues[:-2] + ")"
+            query   = "INSERT INTO events (" + keys + ") VALUES (" + fvalues[:-2] + ")"
             
             self.cur.execute(query, values)
             self.con.commit()
