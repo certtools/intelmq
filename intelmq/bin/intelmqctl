@@ -5,6 +5,7 @@ import re
 import os
 import sys
 import json
+import time
 import shlex
 import inspect
 import psutil
@@ -16,28 +17,35 @@ import argparse
 # FIXME: add a interval time between the stop and start in restart scenario.
 
 CONFIGURATION_FILE = "/etc/intelmq/startup.conf"
+PIDFILE = "/var/run/intelmq/%s.pid"
 
 
-def log_bot(bot_id, message):
+def print_bot_log(bot_id, message):
     print " %s bot %s." % (bot_id, message)
     
-def log_botnet(message):
+def print_bot_lognet(message):
     print "\n Botnet %s.\n" % (message)
-
-def save_pidfile(bot_id, pid):
-    filename = "/var/run/intelmq/%s.pid" % bot_id
+    
+       
+def write_pidfile(bot_id, pid):
+    filename = PIDFILE % bot_id
     with open(filename, 'w') as fp:
         fp.write(str(pid))
-        
-def load_pidfile(bot_id):
-    filename = "/var/run/intelmq/%s.pid" % bot_id
-    with open(filename, 'r') as fp:
-        pid = fp.read()
+
+def remove_pidfile(bot_id):
+    filename = PIDFILE % bot_id
     os.remove(filename)
-    return pid.strip()
+
+def read_pidfile(bot_id):
+    filename = PIDFILE % bot_id
+    if check_pidfile(bot_id):
+        with open(filename, 'r') as fp:
+            pid = fp.read()
+        return pid.strip()
+    return None
 
 def check_pidfile(bot_id):
-    filename = "/var/run/intelmq/%s.pid" % bot_id
+    filename = PIDFILE % bot_id
     if os.path.isfile(filename):
         try:
             with open(filename, 'r') as fp:
@@ -97,6 +105,9 @@ class IntelMQContoller():
 
         self.args = parser.parse_args()
         
+        if len(sys.argv) == 1:
+            parser.print_help()
+        
         if self.args.bot_id and not self.args.bot:
             print "usage: %s" % USAGE
             print "%s: error: argument --id: expected argument --bot [start|stop|restart|status]" % APPNAME
@@ -130,44 +141,41 @@ class IntelMQContoller():
             call_method = self.auto_method_call(method_name)
             call_method()
 
-    
-
-
 
     def bot_start(self, bot_id):        
-        pid = check_pidfile(bot_id)
+        pid = read_pidfile(bot_id)
         if pid:
             if status_process(pid):
-                log_bot(bot_id, "is already running")
+                print_bot_log(bot_id, "is already running")
+                return
             else:
-                load_pidfile(pid)
-            return
-        log_bot(bot_id, "is starting")
+                remove_pidfile(bot_id)
+        print_bot_log(bot_id, "is starting")
         self.__bot_start(bot_id, self.info[bot_id]['module'])
-        log_bot(bot_id, "started")
 
         
     def __bot_start(self, bot_id, module):
         cmd = "python -m %s %s" % (module, bot_id)
         pid = start_process(bot_id, cmd)
-        save_pidfile(bot_id, pid)
+        write_pidfile(bot_id, pid)
         
         
     def bot_stop(self, bot_id):
-        pid = check_pidfile(bot_id)
+        pid = read_pidfile(bot_id)
         if not pid:
-            log_bot(bot_id, "is NOT running")
+            print_bot_log(bot_id, "is NOT running")
             return
-        log_bot(bot_id, "is stopping")
-        res = self.__bot_stop(bot_id)
-        log_bot(bot_id, "stopped")
+        if not status_process(pid):
+            remove_pidfile(bot_id)
+            print_bot_log(bot_id, "is NOT running")
+            return
+        print_bot_log(bot_id, "is stopping")
+        res = self.__bot_stop(bot_id, pid)
         
         
-    def __bot_stop(self, bot_id):
-        pid = check_pidfile(bot_id)
-        if status_process(pid):
-            stop_process(pid)
-        load_pidfile(bot_id)    
+    def __bot_stop(self, bot_id, pid):
+        stop_process(pid)
+        remove_pidfile(bot_id)    
 
 
     def bot_restart(self, bot_id):
@@ -176,64 +184,49 @@ class IntelMQContoller():
     
     
     def bot_status(self, bot_id):
-        pid = check_pidfile(bot_id)
-        if pid:
-            log_bot(bot_id, "is running")
-        else:
-            log_bot(bot_id, "is NOT running")
-
-
-    def __bot_status(bot_id, pid):
-        pid = check_pidfile(bot_id)
-        if pid:
-            if status_process(pid):
-                return True
-            else:
-                load_pidfile(bot_id)
-                return False
-        else:
-            return False
+        pid = read_pidfile(bot_id)
+        if pid and status_process(pid):
+            print_bot_log(bot_id, "is running")
+            return
+        print_bot_log(bot_id, "is NOT running")
 
     
     def botnet_start(self):
-        log_botnet("is starting")
-        for bot_id in self.info.keys():
+        print_bot_lognet("is starting")
+        for bot_id in sorted(self.info.keys()):
             self.bot_start(bot_id)
-        log_botnet("started")    
+        print_bot_lognet("started")    
     
     
     def botnet_stop(self):
-        log_botnet("is stopping")
-        for bot_id in self.info.keys():
+        print_bot_lognet("is stopping")
+        for bot_id in sorted(self.info.keys()):
             self.bot_stop(bot_id)
-        log_botnet("stopped")
+        print_bot_lognet("stopped")
     
     
     def botnet_restart(self):
-        log_botnet("is restarting")
-        for bot_id in self.info.keys():
+        print_bot_lognet("is restarting")
+        for bot_id in sorted(self.info.keys()):
             self.bot_stop(bot_id)
         print "\n\n"
-        for bot_id in self.info.keys():
+        time.sleep(3)
+        for bot_id in sorted(self.info.keys()):
             self.bot_start(bot_id)            
-        log_botnet("restarted")
+        print_bot_lognet("restarted")
     
     
     def botnet_status(self):
-        for bot_id in self.info.keys():
+        for bot_id in sorted(self.info.keys()):
             self.bot_status(bot_id)
-    
-    
-    def botnet_force_shutdown(self):
-        ''' TBD '''
-    
+
     
     def list_bots(self):
         title = "\n\nList of Bots:\n"
         title += "-" * (len(title)-1)
         title += "\n"
         print title
-        for bot_id in self.info.keys():
+        for bot_id in sorted(self.info.keys()):
             print "Bot ID: %s\nDescription: %s\n" % (bot_id, self.info[bot_id]['description'])
             
     
