@@ -174,6 +174,7 @@ Having a functional ontology to work with, especially for the abuse types is imp
 |Classification|taxonomy|varchar(1000)|We recognize the need for the CSIRT teams to apply a static (incident) taxonomy to abuse data. With this goal in mind the type IOC will serve as a basis for this activity. Each value of the dynamic type mapping translates to a an element in the static taxonomy. The European CSIRT teams for example have decided to apply the eCSIRT.net incident classification. The value of the taxonomy key is thus a derivative of the dynamic type above. For more information about check [ENISA taxonomies](http://www.enisa.europa.eu/activities/cert/support/incident-management/browsable/incident-handling-process/incident-taxonomy/existing-taxonomies).
  
 
+
 ### Type/Taxonomy Mapping
  
 |Type|Taxonomy|Description|
@@ -189,6 +190,7 @@ Having a functional ontology to work with, especially for the abuse types is imp
 |brute-force|Intrusion Attempts|This IOC refers to a resource, which has been observed to perform brute-force attacks over a given application protocol. Please see the IOC protocol below.|
 |ids alert|Intrusion Attempts|IOCs based on a sensor network. This is a generic IOC denomination, should it be difficult to reliably denote the exact type of activity involved for example due to an anecdotal nature of the rule that triggered the alert.|
 |defacement|Intrusions|This IOC refers to hacktivism related activity.|
+|compromised|Intrusions|This IOC refers to compromised system.|
 |backdoor|Intrusions|This refers to hosts, which have been compromized and backdoored with a remote administration software or trojan in the traditional sense.|
 |ddos|Availability|This IOC refers to various parts of the DDOS infrastructure.|
 |dropzone|Information Content Security|This IOC refers to place where the compromized machines store the stolen user data.|
