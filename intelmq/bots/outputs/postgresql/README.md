@@ -5,7 +5,6 @@ apt-get install postgresql-9.1 python-psycopg2
 
 * Create a User and Database
 ```
-sudo su - 
 su - postgres
 createuser intelmq -W
   Shall the new role be a superuser? (y/n) n
