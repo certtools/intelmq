@@ -47,7 +47,7 @@ class ShadowServerQotdParserBot(Bot):
             
                 event.add('feed', 'shadowserver-qotd')
                 event.add('type', 'vulnerable service')
-                event.add('protocol', 'qotd')
+                event.add('application_protocol', 'qotd')
 
                 event = utils.parse_source_time(event, "source_time")  
                 event = utils.generate_observation_time(event, "observation_time")
