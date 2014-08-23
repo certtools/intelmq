@@ -1,4 +1,4 @@
-CREATE table logentry (
+CREATE table events (
    "feed" varchar(1000), 		-- Lower case name for the feeder",    e.g. abusech or phishtank.
    "feed_code" varchar(1000), 		-- Code name for the feed, e.g.  DFGS",    HSDAG etc.
    "feed_url" varchar(1000), 		-- The URL of a given abuse feed",    where applicable.
