@@ -4,27 +4,66 @@
 
 #### Feed
 
-asdasd
+... text ...
 
 #### Time
 
 All the timestamps should be normalized to UTC. If the source reports only a date, please do not invent timestamps
 
-####Source Identity
+#### Source Identity
 
 The abuse type of an event defines the way these IOC needs to be interpreted. For a botnet drone they refer to the compromized machine, whereas for a command and control server they refer the server itself.
 
-* **Destination Identity:** Since many of the sources report IOC related to a compromized machine, such as a botnet drone, they may report relevant information in relation to the command and control infrastructure as well. The meaning of each IOC needs to be interpreted with reference to the abuse type. A destination ip and port in the context of a botnet drone for example usually denote the command and control server.
-* **Local Identity:**
-* **Reported Identity:** As stated above, each abuse handling organization should define a policy, which IOC to use as the primary elements describing an abuse event. Often the sources have done their attribution, but you may choose to correlate their attributive elements with your own. In practice this means that your sanitation should prefix the elements with the '''reported''' keyword, to denote that you've decided the attribute these yourself. The list below is not comprehensive, rather than a list of common things you may want to attribute yourself. Moreover, if you choose to perform your own attribution, the observation time will become your authoritative point of reference related to these IOC.
-* **Source Geolocation:** We recognize that ip geolocation is not an exact science and analysis of the abuse data has shown that different sources attribution sources have different opinions of the geolocation of an ip. This is why we recommend to enrich the data with as many sources as you have available and make the decision which value to use for the cc IOC based on those answers.
-* **Destination Geolocation:** We recognize that ip geolocation is not an exact science and analysis of the abuse data has shown that different sources attribution sources have different opinions of the geolocation of an ip. This is why we recommend to enrich the data with as many sources as you have available and make the decision which value to use for the cc IOC based on those answers.
-* **Additional Fields:**
-* **Malware Elements:**
-* **Artifact Elements:**
-* **Extra Elements:**
-* **Specific Elements:** The elements listed below are additional keys used to describe abusive behavior, which are topic specific. They may refer to the source of information, such as|notified by||, an augmentation source such as|cymru cc|| or internal integration source, such as|rtir id||. The reason why they are separated from the the other IOC is that they are not generic, rather than topic or provider specific. Their communicative function is defined as an optional way to understand what other abuse handling pipelines are most likely to call these elements.
-* **Classification:** Having a functional ontology to work with, especially for the abuse types is important for you to be able to classify, prioritize and report relevant actionable intelligence to the parties who need to be informed. The driving idea for this ontology has been to use a minimal set of values with maximal usability. Below, is a list of harmonized values for the abuse types.
+#### Source Geolocation Identity
+
+We recognize that ip geolocation is not an exact science and analysis of the abuse data has shown that different sources attribution sources have different opinions of the geolocation of an ip. This is why we recommend to enrich the data with as many sources as you have available and make the decision which value to use for the cc IOC based on those answers.
+
+#### Source Local Identity
+
+Some sources report a internal (NATed)
+
+#### Destination Identity
+
+The abuse type of an event defines the way these IOC needs to be interpreted. For a botnet drone they refer to the compromized machine, whereas for a command and control server they refer the server itself.
+
+#### Destination Geolocation Identity
+
+We recognize that ip geolocation is not an exact science and analysis of the abuse data has shown that different sources attribution sources have different opinions of the geolocation of an ip. This is why we recommend to enrich the data with as many sources as you have available and make the decision which value to use for the cc IOC based on those answers.
+
+#### Destination Local Identity
+
+Some sources report a internal (NATed)
+
+
+#### Reported Source Identity
+
+As stated above, each abuse handling organization should define a policy, which IOC to use as the primary elements describing an abuse event. Often the sources have done their attribution, but you may choose to correlate their attributive elements with your own. In practice this means that your sanitation should prefix the elements with the '''reported''' keyword, to denote that you've decided the attribute these yourself. The list below is not comprehensive, rather than a list of common things you may want to attribute yourself. Moreover, if you choose to perform your own attribution, the observation time will become your authoritative point of reference related to these IOC.
+
+#### Reported Destination Identity
+
+As stated above, each abuse handling organization should define a policy, which IOC to use as the primary elements describing an abuse event. Often the sources have done their attribution, but you may choose to correlate their attributive elements with your own. In practice this means that your sanitation should prefix the elements with the '''reported''' keyword, to denote that you've decided the attribute these yourself. The list below is not comprehensive, rather than a list of common things you may want to attribute yourself. Moreover, if you choose to perform your own attribution, the observation time will become your authoritative point of reference related to these IOC.
+
+
+#### Additional Fields
+
+... text ...
+
+#### Malware Elements
+
+... text ...
+
+#### Artifact Elements
+
+... text ...
+
+#### Extra Elements
+
+... text ...
+
+#### Specific Elements The elements listed below are additional keys used to describe abusive behavior, which are topic specific. They may refer to the source of information, such as|notified by||, an augmentation source such as|cymru cc|| or internal integration source, such as|rtir id||. The reason why they are separated from the the other IOC is that they are not generic, rather than topic or provider specific. Their communicative function is defined as an optional way to understand what other abuse handling pipelines are most likely to call these elements.
+
+#### Classification Having a functional ontology to work with, especially for the abuse types is important for you to be able to classify, prioritize and report relevant actionable intelligence to the parties who need to be informed. The driving idea for this ontology has been to use a minimal set of values with maximal usability. Below, is a list of harmonized values for the abuse types.
+
 
 ## Fields List
 
@@ -49,18 +88,15 @@ The abuse type of an event defines the way these IOC needs to be interpreted. Fo
 |**Source Identity**|source_allocated|varchar(20)|Allocation date corresponding to bgp prefix|
 |**Source Local Identity**|source_local_ip|inet|Some sources report a internal (NATed) IP address related a compromized system|
 |**Source Local Identity**|source_local_hostname|varchar(200)|Some sources report a internal hostname within a NAT related to the name configured for a compromized system|
-|**Reported Source Identity**|reported_source_ip|inet|The ip observed to initiate the connection|
-|**Reported Source Identity**|reported_source_port|int|The port from which the connection originated|
-|**Reported Source Identity**|reported_source_domain_name|varchar(255)|A DNS name related to the host from which the connection originated|
-|**Reported Source Identity**|reported_source_url|varchar(2000)|A URL denotes on IOC, which refers to a malicious resource, whose interpretation is defined by the abuse type. A URL with the abuse type phishing refers to a phishing resource.|
-|**Reported Source Identity**|reported_source_email_address|varchar(200)|An email address, which has been identified to relate to the source of an abuse event|
-|**Reported Source Identity**|reported_source_reverse dns|varchar(200)|Reverse DNS name acquired through a reverse DNS query on an IP address. N.B. "Record types other than PTR records may also appear in the reverse DNS tree."
-|**Reported Source Identity**|reported_source_asn|int|The autonomous system number from which originated the connection|
-|**Reported Source Identity**|reported_source_as_name|varchar(200)|The autonomous system name from which the connection originated|
-|**Reported Source Identity**|reported_source_cc|varchar(2)|The country code of the ip from which the connection originated|
-|**Reported Source_Identity**|reported_source_bgp_prefix|inet|CIDR for an autonomous system|
-|**Reported Source Identity**|reported_source_registry|varchar(20)|The IP registry a given ip address is allocated by|
-|**Reported Source Identity**|reported_source_allocated|varchar(20)|Allocation date corresponding to bgp prefix|
+|**Source Geolocation**|source_cc|varchar(2)|MaxMind Country Code (ISO3166)|
+|**Source Geolocation**|source_country|varchar(100)|The country name derived from the ISO3166 country code (assigned to cc field)|
+|**Source Geolocation**|source_longitude|int|Longitude coordinates derived from a geolocation service, such as MaxMind geoip db|
+|**Source Geolocation**|source_latitude|int|Latitude coordinates derived from a geolocation service, such as MaxMind geoip db|
+|**Source Geolocation**|source_region|varchar(100)|Some geolocation services refer to region-level geolocation (where applicable)|
+|**Source Geolocation**|source_state|varchar(100)|Some geolocation services refer to state-level geolocation (where applicable)|
+|**Source Geolocation**|source_city|varchar(100)|Some geolocation services refer to city-level geolocation|
+|**Source Geolocation**|source_cymru_cc|varchar(2)|The country code denoted for the ip by the Team Cymru asn to ip mapping service.
+|**Source Geolocation**|source_geoip_cc|varchar(2)|The country code denoted for the ip by the MaxMind geoip database.
 |**Destination Identity**|destination_ip|inet|The ip observed to initiate the connection|
 |**Destination Identity**|destination_port|int|The port from which the connection originated|
 |**Destination Identity**|destination_domain_name|varchar(255)|A DNS name related to the host from which the connection originated|
@@ -75,6 +111,27 @@ The abuse type of an event defines the way these IOC needs to be interpreted. Fo
 |**Destination Identity**|destination_allocated|varchar(20)|Allocation date corresponding to bgp prefix|
 |**Destination Local Identity**|destination_local_ip|inet|Some sources report a internal (NATed) IP address related a compromized system|
 |**Destination Local Identity**|destination_local_hostname|varchar(200)|Some sources report a internal hostname within a NAT related to the name configured for a compromized system|
+|**Destination Geolocation**|destination_cc|varchar(2)|MaxMind Country Code (ISO3166)|
+|**Destination Geolocation**|destination_country|varchar(100)|The country name derived from the ISO3166 country code (assigned to cc field)|
+|**Destination Geolocation**|destination_longitude|int|Longitude coordinates derived from a geolocation service, such as MaxMind geoip db|
+|**Destination Geolocation**|destination_latitude|int|Latitude coordinates derived from a geolocation service, such as MaxMind geoip db|
+|**Destination Geolocation**|destination_region|varchar(100)|Some geolocation services refer to region-level geolocation (where applicable)|
+|**Destination Geolocation**|destination_state|varchar(100)|Some geolocation services refer to state-level geolocation (where applicable)|
+|**Destination Geolocation**|destination_city|varchar(100)|Some geolocation services refer to city-level geolocation|
+|**Destination Geolocation**|destination_cymru_cc|varchar(2)|The country code denoted for the ip by the Team Cymru asn to ip mapping service.
+|**Destination Geolocation**|destination_geoip_cc|varchar(2)|The country code denoted for the ip by the MaxMind geoip database.
+|**Reported Source Identity**|reported_source_ip|inet|The ip observed to initiate the connection|
+|**Reported Source Identity**|reported_source_port|int|The port from which the connection originated|
+|**Reported Source Identity**|reported_source_domain_name|varchar(255)|A DNS name related to the host from which the connection originated|
+|**Reported Source Identity**|reported_source_url|varchar(2000)|A URL denotes on IOC, which refers to a malicious resource, whose interpretation is defined by the abuse type. A URL with the abuse type phishing refers to a phishing resource.|
+|**Reported Source Identity**|reported_source_email_address|varchar(200)|An email address, which has been identified to relate to the source of an abuse event|
+|**Reported Source Identity**|reported_source_reverse dns|varchar(200)|Reverse DNS name acquired through a reverse DNS query on an IP address. N.B. "Record types other than PTR records may also appear in the reverse DNS tree."
+|**Reported Source Identity**|reported_source_asn|int|The autonomous system number from which originated the connection|
+|**Reported Source Identity**|reported_source_as_name|varchar(200)|The autonomous system name from which the connection originated|
+|**Reported Source Identity**|reported_source_cc|varchar(2)|The country code of the ip from which the connection originated|
+|**Reported Source_Identity**|reported_source_bgp_prefix|inet|CIDR for an autonomous system|
+|**Reported Source Identity**|reported_source_registry|varchar(20)|The IP registry a given ip address is allocated by|
+|**Reported Source Identity**|reported_source_allocated|varchar(20)|Allocation date corresponding to bgp prefix|
 |**Reported Destination Identity**|reported_destination_ip|inet|The ip observed to initiate the connection|
 |**Reported Destination Identity**|reported_destination_port|int|The port from which the connection originated|
 |**Reported Destination Identity**|reported_destination_domain_name|varchar(255)|A DNS name related to the host from which the connection originated|
@@ -87,24 +144,6 @@ The abuse type of an event defines the way these IOC needs to be interpreted. Fo
 |**Reported Destination_Identity**|reported_destination_bgp_prefix|inet|CIDR for an autonomous system|
 |**Reported Destination Identity**|reported_destination_registry|varchar(20)|The IP registry a given ip address is allocated by|
 |**Reported Destination Identity**|reported_destination_allocated|varchar(20)|Allocation date corresponding to bgp prefix|
-|**Source Geolocation**|source_cc|varchar(2)|MaxMind Country Code (ISO3166)|
-|**Source Geolocation**|source_country|varchar(100)|The country name derived from the ISO3166 country code (assigned to cc field)|
-|**Source Geolocation**|source_longitude|int|Longitude coordinates derived from a geolocation service, such as MaxMind geoip db|
-|**Source Geolocation**|source_latitude|int|Latitude coordinates derived from a geolocation service, such as MaxMind geoip db|
-|**Source Geolocation**|source_region|varchar(100)|Some geolocation services refer to region-level geolocation (where applicable)|
-|**Source Geolocation**|source_state|varchar(100)|Some geolocation services refer to state-level geolocation (where applicable)|
-|**Source Geolocation**|source_city|varchar(100)|Some geolocation services refer to city-level geolocation|
-|**Source Geolocation**|source_cymru_cc|varchar(2)|The country code denoted for the ip by the Team Cymru asn to ip mapping service.
-|**Source Geolocation**|source_geoip_cc|varchar(2)|The country code denoted for the ip by the MaxMind geoip database.
-|**Destination Geolocation**|destination_cc|varchar(2)|MaxMind Country Code (ISO3166)|
-|**Destination Geolocation**|destination_country|varchar(100)|The country name derived from the ISO3166 country code (assigned to cc field)|
-|**Destination Geolocation**|destination_longitude|int|Longitude coordinates derived from a geolocation service, such as MaxMind geoip db|
-|**Destination Geolocation**|destination_latitude|int|Latitude coordinates derived from a geolocation service, such as MaxMind geoip db|
-|**Destination Geolocation**|destination_region|varchar(100)|Some geolocation services refer to region-level geolocation (where applicable)|
-|**Destination Geolocation**|destination_state|varchar(100)|Some geolocation services refer to state-level geolocation (where applicable)|
-|**Destination Geolocation**|destination_city|varchar(100)|Some geolocation services refer to city-level geolocation|
-|**Destination Geolocation**|destination_cymru_cc|varchar(2)|The country code denoted for the ip by the Team Cymru asn to ip mapping service.
-|**Destination Geolocation**|destination_geoip_cc|varchar(2)|The country code denoted for the ip by the MaxMind geoip database.
 |**Additional Fields**|description|| A free-form textual description of an abuse event.
 |**Additional Fields**|description_url|| A description URL is a link to a further description of the the abuse event in question.
 |**Additional Fields**|status|| Status of the malicious resource (phishing, dropzone, etc), e.g. online, offline.
