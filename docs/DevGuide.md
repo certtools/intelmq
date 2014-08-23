@@ -33,7 +33,8 @@ if __name__ == "__main__":
 
 ### Example
 
-Check [taxonomy](https://github.com/certtools/intelmq/blob/master/src/bots/experts/taxonomy/taxonomy.py) expert bot
+Check [taxonomy](https://github.com/certtools/intelmq/blob/master/intelmq/bots/experts/taxonomy/taxonomy.py) expert bot
+Check [arbor](https://github.com/certtools/intelmq/blob/master/intelmq/bots/parsers/arbor/parser.py) parser bot
 
 
 
