@@ -20,12 +20,10 @@ TAXONOMY = {
             "compromised"               : "Intrusions",
             "backdoor"                  : "Intrusions",
             "vulnerable service"        : "Vulnerable",
-            "open resolver"             : "Vulnerable",
-            "open proxy"                : "Vulnerable",
             "blacklist"                 : "Other",
-            "hijacked network"          : "Other",
             "test"                      : "Test",
            }
+           
 
 class TaxonomyExpertBot(Bot):
     
