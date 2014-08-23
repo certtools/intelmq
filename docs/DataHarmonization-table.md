@@ -208,11 +208,12 @@ Below, we have enumerated the minimum requirements for an actionable abuse event
 |Feed|feed|Must|
 |Classification|type|Must|
 |Classification|taxonomy|Must|
+|Time|source time|Must|
 |Time|observation time|Must|
-|Identity|ip|Must*|
-|Identity|domain_name|Must*|
-|Identity|url|Must*|
-|Identity|email_address|Must*|
+|Identity|source_ip|Must*|
+|Identity|source_domain_name|Must*|
+|Identity|source_url|Must*|
+|Identity|source_email_address|Must*|
 
 
 
