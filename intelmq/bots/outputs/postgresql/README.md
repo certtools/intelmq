@@ -8,6 +8,11 @@ apt-get install postgresql-9.1 python-psycopg2
 sudo su - 
 su - postgres
 createuser intelmq -W
+  Shall the new role be a superuser? (y/n) n
+  Shall the new role be allowed to create databases? (y/n) y
+  Shall the new role be allowed to create more new roles? (y/n) n
+  Password: 
+
 createdb -O intelmq --encoding='utf-8' intelmq-events;
 ```
 
