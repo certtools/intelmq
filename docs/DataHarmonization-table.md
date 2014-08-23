@@ -60,7 +60,7 @@ As stated above, each abuse handling organization should define a policy, which 
 
 #### Specific Elements
 
-The elements listed below are additional keys used to describe abusive behavior, which are topic specific. They may refer to the source of information, such as|notified by||, an augmentation source such as|cymru cc|| or internal integration source, such as|rtir id||. The reason why they are separated from the the other IOC is that they are not generic, rather than topic or provider specific. Their communicative function is defined as an optional way to understand what other abuse handling pipelines are most likely to call these elements.
+The elements listed below are additional keys used to describe abusive behavior, which are topic specific. They may refer to the source of information, such as notified by, an augmentation source such a cymru cc or internal integration source, such as|rtir id||. The reason why they are separated from the the other IOC is that they are not generic, rather than topic or provider specific. Their communicative function is defined as an optional way to understand what other abuse handling pipelines are most likely to call these elements.
 
 #### Classification
 
@@ -146,32 +146,32 @@ Having a functional ontology to work with, especially for the abuse types is imp
 |**Reported Destination_Identity**|reported_destination_bgp_prefix|inet|CIDR for an autonomous system|
 |**Reported Destination Identity**|reported_destination_registry|varchar(20)|The IP registry a given ip address is allocated by|
 |**Reported Destination Identity**|reported_destination_allocated|timestamp|Allocation date corresponding to bgp prefix|
-|**Additional Fields**|description|| A free-form textual description of an abuse event.
-|**Additional Fields**|description_url|| A description URL is a link to a further description of the the abuse event in question.
-|**Additional Fields**|status|| Status of the malicious resource (phishing, dropzone, etc), e.g. online, offline.
-|**Additional Fields**|application_protocol|| e.g. vnc, ssh, sip, irc, http or p2p.
-|**Additional Fields**|transport_protocol|| e.g. tcp, udp, icmp
-|**Additional Fields**|target|| Some sources denominate the target (organization) of a an attack.
-|**Additional Fields**|os_name|| Operating system name.
-|**Additional Fields**|os_version|| Operating system version.
-|**Additional Fields**|user_agent|| Some feeds report the user agent string used by the host to access a malicious resource, such as a command and control server.
-|**Additional Fields**|additional_information|| All anecdotal information, which cannot be parsed into the data harmonization elements.
-|**Additional Fields**|missing_data|| If the sanitation is missing a known piece of data, such as a description url for example, the reference to this fact may be inserted here.
-|**Additional Fields**|comment|| Free text commentary about the abuse event inserted by an analyst.
-|**Additional Fields**|screenshot_url|| Some source may report URLs related to a an image generated of a resource without any metadata.
-|**Additional Fields**|webshot_url|| A URL pointing to resource, which has been rendered into a webshot, e.g. a PNG image and the relevant metadata related to its retrieval/generation.
-|**Malware Elements**|malware|| A malware family name in lower case.
-|**Artifact Elements**|artifact_hash|| A string depicting a checksum for a file, be it a malware sample for example.
-|**Artifact Elements**|artifact_hash type|| The hashing algorithm used for artifact hash type above, be it MD5 or SHA-* etc. At the moment, it seems that the hash type should default to SHA-1.
-|**Artifact Elements**|artifact_version|| A version string for an identified artifact generation, e.g. a crime-ware kit.
-|**Extra Elements**|abuse_contact|| An abuse contact email address for an IP network.
-|**Extra Elements**|event_hash|| Computed event hash with specific keys and values that identify a unique event. At present, the hash should default to using the SHA1 function. Please note that for an event hash to be able to match more than one event (deduplication) the receiver of an event should calculate it based on a minimal set of keys and values present in the event. Using for example the observation time in the calculation will most likely render the checksum useless for deduplication purposes.
-|**Extra Elements**|shareable_key|| Sometimes it is necessary to communicate a set of IOC which can be passed on freely to the end recipient. The most effective way to use this is to make it a multi-value within an event.
-|**Specific Elements**|rtir_id|| RTIR incident id.
-|**Specific Elements**|misp_id|| MISP id.
-|**Specific Elements**|original_logline|| In case we received this event as a (CSV) log line, we can store the original line here.
-|**Classification**|type|| The abuse type IOC is one of the most crucial pieces of information for any given abuse event. The main idea of dynamic typing is to keep our ontology flexible, since we need to evolve with the evolving threatscape of abuse data. In contrast with the static taxonomy below, the dynamic typing is used to perform business decisions in the abuse handling pipeline. Furthermore, the value data set should be kept as minimal as possible to avoid "type explosion", which in turn dilutes the business value of the dynamic typing. In general, we normally have two types of abuse type IOC: ones referring to a compromized resource or ones referring to pieces of the criminal infrastructure, such as a command and control servers for example.
-|**Classification**|taxonomy|| We recognize the need for the CSIRT teams to apply a static (incident) taxonomy to abuse data. With this goal in mind the type IOC will serve as a basis for this activity. Each value of the dynamic type mapping translates to a an element in the static taxonomy. The European CSIRT teams for example have decided to apply the eCSIRT.net incident classification. The value of the taxonomy key is thus a derivative of the dynamic type above. For more information about check [ENISA taxonomies](http://www.enisa.europa.eu/activities/cert/support/incident-management/browsable/incident-handling-process/incident-taxonomy/existing-taxonomies).
+|**Additional Fields**|description|varchar(10000)| A free-form textual description of an abuse event.
+|**Additional Fields**|description_url|varchar(1000)| A description URL is a link to a further description of the the abuse event in question.
+|**Additional Fields**|status|varchar(1000)| Status of the malicious resource (phishing, dropzone, etc), e.g. online, offline.
+|**Additional Fields**|application_protocol|varchar(1000)|e.g. vnc, ssh, sip, irc, http or p2p.
+|**Additional Fields**|transport_protocol|varchar(1000)|e.g. tcp, udp, icmp
+|**Additional Fields**|target|varchar(1000)|Some sources denominate the target (organization) of a an attack.
+|**Additional Fields**|os_name|varchar(1000)|Operating system name.
+|**Additional Fields**|os_version|varchar(1000)|Operating system version.
+|**Additional Fields**|user_agent|varchar(1000)|Some feeds report the user agent string used by the host to access a malicious resource, such as a command and control server.
+|**Additional Fields**|additional_information|varchar(1000)|All anecdotal information, which cannot be parsed into the data harmonization elements.
+|**Additional Fields**|missing_data|varchar(1000)|If the sanitation is missing a known piece of data, such as a description url for example, the reference to this fact may be inserted here.
+|**Additional Fields**|comment|varchar(1000)|Free text commentary about the abuse event inserted by an analyst.
+|**Additional Fields**|screenshot_url|varchar(1000)|Some source may report URLs related to a an image generated of a resource without any metadata.
+|**Additional Fields**|webshot_url|varchar(1000)|A URL pointing to resource, which has been rendered into a webshot, e.g. a PNG image and the relevant metadata related to its retrieval/generation.
+|**Malware Elements**|malware|varchar(1000)|A malware family name in lower case.
+|**Artifact Elements**|artifact_hash|varchar(1000)|A string depicting a checksum for a file, be it a malware sample for example.
+|**Artifact Elements**|artifact_hash type|varchar(1000)|The hashing algorithm used for artifact hash type above, be it MD5 or SHA-* etc. At the moment, it seems that the hash type should default to SHA-1.
+|**Artifact Elements**|artifact_version|varchar(1000)|A version string for an identified artifact generation, e.g. a crime-ware kit.
+|**Extra Elements**|abuse_contact|varchar(1000)|An abuse contact email address for an IP network.
+|**Extra Elements**|event_hash|varchar(1000)|Computed event hash with specific keys and values that identify a unique event. At present, the hash should default to using the SHA1 function. Please note that for an event hash to be able to match more than one event (deduplication) the receiver of an event should calculate it based on a minimal set of keys and values present in the event. Using for example the observation time in the calculation will most likely render the checksum useless for deduplication purposes.
+|**Extra Elements**|shareable_key|varchar(1000)|Sometimes it is necessary to communicate a set of IOC which can be passed on freely to the end recipient. The most effective way to use this is to make it a multi-value within an event.
+|**Specific Elements**|rtir_id|integer|RTIR incident id.
+|**Specific Elements**|misp_id|integer|MISP id.
+|**Specific Elements**|original_logline|varchar(1000)|In case we received this event as a (CSV) log line, we can store the original line here.
+|**Classification**|type|varchar(1000)|The abuse type IOC is one of the most crucial pieces of information for any given abuse event. The main idea of dynamic typing is to keep our ontology flexible, since we need to evolve with the evolving threatscape of abuse data. In contrast with the static taxonomy below, the dynamic typing is used to perform business decisions in the abuse handling pipeline. Furthermore, the value data set should be kept as minimal as possible to avoid "type explosion", which in turn dilutes the business value of the dynamic typing. In general, we normally have two types of abuse type IOC: ones referring to a compromized resource or ones referring to pieces of the criminal infrastructure, such as a command and control servers for example.
+|**Classification**|taxonomy|varchar(1000)|We recognize the need for the CSIRT teams to apply a static (incident) taxonomy to abuse data. With this goal in mind the type IOC will serve as a basis for this activity. Each value of the dynamic type mapping translates to a an element in the static taxonomy. The European CSIRT teams for example have decided to apply the eCSIRT.net incident classification. The value of the taxonomy key is thus a derivative of the dynamic type above. For more information about check [ENISA taxonomies](http://www.enisa.europa.eu/activities/cert/support/incident-management/browsable/incident-handling-process/incident-taxonomy/existing-taxonomies).
  
 
 ### Type/Taxonomy Mapping
