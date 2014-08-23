@@ -30,7 +30,7 @@ class DragonResearchGroupVNCParserBot(Bot):
                 event.add('feed', 'dragonresearchgroup')
                 event.add('feed_url', 'http://dragonresearchgroup.org/insight/vncprobe.txt')
                 event.add('type', 'brute-force')
-                event.add('protocol', 'vnc')
+                event.add('application_protocol', 'vnc')
 
                 event = utils.parse_source_time(event, "source_time")  
                 event = utils.generate_observation_time(event, "observation_time")
