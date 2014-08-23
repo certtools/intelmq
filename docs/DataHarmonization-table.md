@@ -108,7 +108,7 @@ Having a functional ontology to work with, especially for the abuse types is imp
 |Destination Identity|destination_asn|integer|The autonomous system number from which originated the connection|
 |Destination Identity|destination_as_name|varchar(200)|The autonomous system name from which the connection originated|
 |Destination Identity|destination_cc|varchar(2)|The country code of the ip from which the connection originated|
-|**Destination_Identity**|destination_bgp_prefix|inet|CIDR for an autonomous system|
+|Destination Identity|destination_bgp_prefix|inet|CIDR for an autonomous system|
 |Destination Identity|destination_registry|varchar(20)|The IP registry a given ip address is allocated by|
 |Destination Identity|destination_allocated|timestamp|Allocation date corresponding to bgp prefix|
 |Destination Local Identity|destination_local_ip|inet|Some sources report a internal (NATed) IP address related a compromized system|
@@ -131,7 +131,7 @@ Having a functional ontology to work with, especially for the abuse types is imp
 |Reported Source Identity|reported_source_asn|integer|The autonomous system number from which originated the connection|
 |Reported Source Identity|reported_source_as_name|varchar(200)|The autonomous system name from which the connection originated|
 |Reported Source Identity|reported_source_cc|varchar(2)|The country code of the ip from which the connection originated|
-|**Reported Source_Identity**|reported_source_bgp_prefix|inet|CIDR for an autonomous system|
+|Reported Source Identity|reported_source_bgp_prefix|inet|CIDR for an autonomous system|
 |Reported Source Identity|reported_source_registry|varchar(20)|The IP registry a given ip address is allocated by|
 |Reported Source Identity|reported_source_allocated|timestamp|Allocation date corresponding to bgp prefix|
 |Reported Destination Identity|reported_destination_ip|inet|The ip observed to initiate the connection|
@@ -160,7 +160,7 @@ Having a functional ontology to work with, especially for the abuse types is imp
 |Additional Fields|comment|varchar(1000)|Free text commentary about the abuse event inserted by an analyst.
 |Additional Fields|screenshot_url|varchar(1000)|Some source may report URLs related to a an image generated of a resource without any metadata.
 |Additional Fields|webshot_url|varchar(1000)|A URL pointing to resource, which has been rendered into a webshot, e.g. a PNG image and the relevant metadata related to its retrieval/generation.
-|**Malware Elements**|malware|varchar(1000)|A malware family name in lower case.
+|Malware Elements|malware|varchar(1000)|A malware family name in lower case.
 |Artifact Elements|artifact_hash|varchar(1000)|A string depicting a checksum for a file, be it a malware sample for example.
 |Artifact Elements|artifact_hash type|varchar(1000)|The hashing algorithm used for artifact hash type above, be it MD5 or SHA-* etc. At the moment, it seems that the hash type should default to SHA-1.
 |Artifact Elements|artifact_version|varchar(1000)|A version string for an identified artifact generation, e.g. a crime-ware kit.
