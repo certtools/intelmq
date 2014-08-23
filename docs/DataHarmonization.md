@@ -1,3 +1,74 @@
+## Sections Description
+
+#### Feed
+
+Details about the source feed where information came from.
+
+#### Time
+
+All the timestamps should be normalized to UTC. If the source reports only a date, please do not invent timestamps
+
+#### Source Identity
+
+The abuse type of an event defines the way these IOC needs to be interpreted. For a botnet drone they refer to the compromized machine, whereas for a command and control server they refer the server itself.
+
+#### Source Geolocation Identity
+
+We recognize that ip geolocation is not an exact science and analysis of the abuse data has shown that different sources attribution sources have different opinions of the geolocation of an ip. This is why we recommend to enrich the data with as many sources as you have available and make the decision which value to use for the cc IOC based on those answers.
+
+#### Source Local Identity
+
+Some sources report a internal (NATed)
+
+#### Destination Identity
+
+The abuse type of an event defines the way these IOC needs to be interpreted. For a botnet drone they refer to the compromized machine, whereas for a command and control server they refer the server itself.
+
+#### Destination Geolocation Identity
+
+We recognize that ip geolocation is not an exact science and analysis of the abuse data has shown that different sources attribution sources have different opinions of the geolocation of an ip. This is why we recommend to enrich the data with as many sources as you have available and make the decision which value to use for the cc IOC based on those answers.
+
+#### Destination Local Identity
+
+Some sources report a internal (NATed)
+
+
+#### Reported Source Identity
+
+As stated above, each abuse handling organization should define a policy, which IOC to use as the primary elements describing an abuse event. Often the sources have done their attribution, but you may choose to correlate their attributive elements with your own. In practice this means that your sanitation should prefix the elements with the '''reported''' keyword, to denote that you've decided the attribute these yourself. The list below is not comprehensive, rather than a list of common things you may want to attribute yourself. Moreover, if you choose to perform your own attribution, the observation time will become your authoritative point of reference related to these IOC.
+
+#### Reported Destination Identity
+
+As stated above, each abuse handling organization should define a policy, which IOC to use as the primary elements describing an abuse event. Often the sources have done their attribution, but you may choose to correlate their attributive elements with your own. In practice this means that your sanitation should prefix the elements with the '''reported''' keyword, to denote that you've decided the attribute these yourself. The list below is not comprehensive, rather than a list of common things you may want to attribute yourself. Moreover, if you choose to perform your own attribution, the observation time will become your authoritative point of reference related to these IOC.
+
+
+#### Additional Fields
+
+... text ...
+
+#### Malware Elements
+
+... text ...
+
+#### Artifact Elements
+
+... text ...
+
+#### Extra Elements
+
+... text ...
+
+#### Specific Elements
+
+The elements listed below are additional keys used to describe abusive behavior, which are topic specific. They may refer to the source of information, such as notified by, an augmentation source such a cymru cc or internal integration source, such as|rtir id||. The reason why they are separated from the the other IOC is that they are not generic, rather than topic or provider specific. Their communicative function is defined as an optional way to understand what other abuse handling pipelines are most likely to call these elements.
+
+#### Classification
+
+Having a functional ontology to work with, especially for the abuse types is important for you to be able to classify, prioritize and report relevant actionable intelligence to the parties who need to be informed. The driving idea for this ontology has been to use a minimal set of values with maximal usability. Below, is a list of harmonized values for the abuse types.
+
+
+## Fields List
+
 |Section|Fields|Format|Description|
 |:---:|:---:|:---:|:-----------:|
 |Feed|feed|varchar(30)|Lower case name for the feeder, e.g. abusech or phishtank.|
@@ -56,7 +127,7 @@
 |Reported Source Identity|reported_source_domain_name|varchar(255)|A DNS name related to the host from which the connection originated|
 |Reported Source Identity|reported_source_url|varchar(2000)|A URL denotes on IOC, which refers to a malicious resource, whose interpretation is defined by the abuse type. A URL with the abuse type phishing refers to a phishing resource.|
 |Reported Source Identity|reported_source_email_address|varchar(200)|An email address, which has been identified to relate to the source of an abuse event|
-|Reported Source Identity|reported_source_reverse dns|varchar(200)|Reverse DNS name acquired through a reverse DNS query on an IP address. N.B. "Record types other than PTR records may also appear in the reverse DNS tree."|
+|Reported Source Identity|reported_source_reverse dns|varchar(200)|Reverse DNS name acquired through a reverse DNS query on an IP address. N.B. "Record types other than PTR records may also appear in the reverse DNS tree."
 |Reported Source Identity|reported_source_asn|integer|The autonomous system number from which originated the connection|
 |Reported Source Identity|reported_source_as_name|varchar(200)|The autonomous system name from which the connection originated|
 |Reported Source Identity|reported_source_cc|varchar(2)|The country code of the ip from which the connection originated|
@@ -101,3 +172,49 @@
 |Specific Elements|original_logline|varchar(1000)|In case we received this event as a (CSV) log line, we can store the original line here.|
 |Classification|type|varchar(1000)|The abuse type IOC is one of the most crucial pieces of information for any given abuse event. The main idea of dynamic typing is to keep our ontology flexible, since we need to evolve with the evolving threatscape of abuse data. In contrast with the static taxonomy below, the dynamic typing is used to perform business decisions in the abuse handling pipeline. Furthermore, the value data set should be kept as minimal as possible to avoid "type explosion", which in turn dilutes the business value of the dynamic typing. In general, we normally have two types of abuse type IOC: ones referring to a compromized resource or ones referring to pieces of the criminal infrastructure, such as a command and control servers for example.|
 C|lassification|taxonomy|varchar(1000)|We recognize the need for the CSIRT teams to apply a static (incident) taxonomy to abuse data. With this goal in mind the type IOC will serve as a basis for this activity. Each value of the dynamic type mapping translates to a an element in the static taxonomy. The European CSIRT teams for example have decided to apply the eCSIRT.net incident classification. The value of the taxonomy key is thus a derivative of the dynamic type above. For more information about check [ENISA taxonomies](http://www.enisa.europa.eu/activities/cert/support/incident-management/browsable/incident-handling-process/incident-taxonomy/existing-taxonomies).|
+ 
+
+
+### Type/Taxonomy Mapping
+ 
+|Type|Taxonomy|Description|
+|----|--------|-----------|
+|spam|Abusive Content|This IOC refers to resources, which make up a SPAM infrastructure, be it a harvester, dictionary attacker, URL etc.|
+|malware|Malicious Code|A URL is the most common resource with reference to malware binary distribution.|
+|botnet drone|Malicious Code|This is a compromized machine, which has been observed to make a connection to a command and control server.|
+|ransomware|Malicious Code|This IOC refers to a specific type of compromized machine, where the computer has been hijacked for ransom by the criminals.|
+|malware configuration|Malicious Code|This is a resource which updates botnet drones with a new configuration.|
+|c&c|Malicious Code|This is a command and control server in charge of a given number of botnet drones.|
+|scanner|Information Gathering|This IOC refers to port scanning activity specifically.|
+|exploit|Intrusion Attempts|An exploit is often executed through a malicious URL.|
+|brute-force|Intrusion Attempts|This IOC refers to a resource, which has been observed to perform brute-force attacks over a given application protocol. Please see the IOC protocol below.|
+|ids alert|Intrusion Attempts|IOCs based on a sensor network. This is a generic IOC denomination, should it be difficult to reliably denote the exact type of activity involved for example due to an anecdotal nature of the rule that triggered the alert.|
+|defacement|Intrusions|This IOC refers to hacktivism related activity.|
+|compromised|Intrusions|This IOC refers to compromised system.|
+|backdoor|Intrusions|This refers to hosts, which have been compromized and backdoored with a remote administration software or trojan in the traditional sense.|
+|ddos|Availability|This IOC refers to various parts of the DDOS infrastructure.|
+|dropzone|Information Content Security|This IOC refers to place where the compromized machines store the stolen user data.|
+|phishing|Fraud|This IOC most often refers to a URL, which is phishing for user credentials.|
+|vulnerable service|Vulnerable|This attribute refers to a badly configured or vulnerable network service, which may be abused by a third party. For example, these services relate to open proxies, open dns resolvers, network time servers (ntp) or character generation services (chargen), simple network management services (snmp). In addition, to specify the network service and its potential abuse, one should use the protocol, destination port and description attributes for that purpose respectively.|
+|blacklist|Other|Some sources provide blacklists, which clearly refer to abusive behavior, such as spamming, but fail to denote the exact reason why a given identity has been blacklisted. The reason may be that the justification is anecdotal or missing entirely. This type should only be used if the typing fits the definition of a blacklist, but an event specific denomination is not possible for one reason or another.|
+|test|Test|This is a value for testing purposes.|
+
+### Minimum Requirements
+
+Below, we have enumerated the minimum requirements for an actionable abuse event. These keys need to be present for the abuse report to make sense for the end recipient. Please note that if you choose to anonymize your sources, you can substitute **feed** with **feed code** and that only one of the identity keys **ip**, **domain name**, **url**, **email address** must be present. All the rest of the keys enumerated above are **optional**.
+
+|Category|Key|Terminology|
+|--------|---|-----------|
+|Feed|feed|Must|
+|Classification|type|Must|
+|Classification|taxonomy|Must|
+|Time|source time|Must|
+|Time|observation time|Must|
+|Identity|source_ip|Must*|
+|Identity|source_domain_name|Must*|
+|Identity|source_url|Must*|
+|Identity|source_email_address|Must*|
+
+
+
+**NOTE:** This document was copied from [AbuseHelper repository](https://bitbucket.org/clarifiednetworks/abusehelper/wiki/Data Harmonization Ontology)
