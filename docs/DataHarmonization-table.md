@@ -77,12 +77,12 @@ Having a functional ontology to work with, especially for the abuse types is imp
 |**Time**|source_time|timestamp with time zone|Time reported by a source. Some sources only report a date, which '''may''' be used here if there is no better observation (ISO8660)
 |**Time**|observation_time|timestamp with time zone|The time a source bot saw the event. This timestamp becomes especially important should you perform your own attribution on a host DNS name for example. The mechanism to denote the attributed elements with reference to the source provided is detailed below in Reported Identity IOC.(ISO8660)|
 |**Source Identity**|source_ip|inet|The ip observed to initiate the connection|
-|**Source Identity**|source_port|int|The port from which the connection originated|
+|**Source Identity**|source_port|integer|The port from which the connection originated|
 |**Source Identity**|source_domain_name|varchar(255)|A DNS name related to the host from which the connection originated|
 |**Source Identity**|source_url|varchar(2000)|A URL denotes on IOC, which refers to a malicious resource, whose interpretation is defined by the abuse type. A URL with the abuse type phishing refers to a phishing resource.|
 |**Source Identity**|source_email_address|varchar(200)|An email address, which has been identified to relate to the source of an abuse event|
 |**Source Identity**|source_reverse dns|varchar(200)|Reverse DNS name acquired through a reverse DNS query on an IP address. N.B. "Record types other than PTR records may also appear in the reverse DNS tree."
-|**Source Identity**|source_asn|int|The autonomous system number from which originated the connection|
+|**Source Identity**|source_asn|integer|The autonomous system number from which originated the connection|
 |**Source Identity**|source_as_name|varchar(200)|The autonomous system name from which the connection originated|
 |**Source Identity**|source_cc|varchar(2)|The country code of the ip from which the connection originated|
 |**Source_Identity**|source_bgp_prefix|inet|CIDR for an autonomous system|
@@ -92,20 +92,20 @@ Having a functional ontology to work with, especially for the abuse types is imp
 |**Source Local Identity**|source_local_hostname|varchar(200)|Some sources report a internal hostname within a NAT related to the name configured for a compromized system|
 |**Source Geolocation**|source_cc|varchar(2)|MaxMind Country Code (ISO3166)|
 |**Source Geolocation**|source_country|varchar(100)|The country name derived from the ISO3166 country code (assigned to cc field)|
-|**Source Geolocation**|source_longitude|int|Longitude coordinates derived from a geolocation service, such as MaxMind geoip db|
-|**Source Geolocation**|source_latitude|int|Latitude coordinates derived from a geolocation service, such as MaxMind geoip db|
+|**Source Geolocation**|source_longitude|integer|Longitude coordinates derived from a geolocation service, such as MaxMind geoip db|
+|**Source Geolocation**|source_latitude|integer|Latitude coordinates derived from a geolocation service, such as MaxMind geoip db|
 |**Source Geolocation**|source_region|varchar(100)|Some geolocation services refer to region-level geolocation (where applicable)|
 |**Source Geolocation**|source_state|varchar(100)|Some geolocation services refer to state-level geolocation (where applicable)|
 |**Source Geolocation**|source_city|varchar(100)|Some geolocation services refer to city-level geolocation|
 |**Source Geolocation**|source_cymru_cc|varchar(2)|The country code denoted for the ip by the Team Cymru asn to ip mapping service.
 |**Source Geolocation**|source_geoip_cc|varchar(2)|The country code denoted for the ip by the MaxMind geoip database.
 |**Destination Identity**|destination_ip|inet|The ip observed to initiate the connection|
-|**Destination Identity**|destination_port|int|The port from which the connection originated|
+|**Destination Identity**|destination_port|integer|The port from which the connection originated|
 |**Destination Identity**|destination_domain_name|varchar(255)|A DNS name related to the host from which the connection originated|
 |**Destination Identity**|destination_url|varchar(2000)|A URL denotes on IOC, which refers to a malicious resource, whose interpretation is defined by the abuse type. A URL with the abuse type phishing refers to a phishing resource.|
 |**Destination Identity**|destination_email_address|varchar(200)|An email address, which has been identified to relate to the source of an abuse event|
 |**Destination Identity**|destination_reverse dns|varchar(200)|Reverse DNS name acquired through a reverse DNS query on an IP address. N.B. "Record types other than PTR records may also appear in the reverse DNS tree."
-|**Destination Identity**|destination_asn|int|The autonomous system number from which originated the connection|
+|**Destination Identity**|destination_asn|integer|The autonomous system number from which originated the connection|
 |**Destination Identity**|destination_as_name|varchar(200)|The autonomous system name from which the connection originated|
 |**Destination Identity**|destination_cc|varchar(2)|The country code of the ip from which the connection originated|
 |**Destination_Identity**|destination_bgp_prefix|inet|CIDR for an autonomous system|
@@ -115,32 +115,32 @@ Having a functional ontology to work with, especially for the abuse types is imp
 |**Destination Local Identity**|destination_local_hostname|varchar(200)|Some sources report a internal hostname within a NAT related to the name configured for a compromized system|
 |**Destination Geolocation**|destination_cc|varchar(2)|MaxMind Country Code (ISO3166)|
 |**Destination Geolocation**|destination_country|varchar(100)|The country name derived from the ISO3166 country code (assigned to cc field)|
-|**Destination Geolocation**|destination_longitude|int|Longitude coordinates derived from a geolocation service, such as MaxMind geoip db|
-|**Destination Geolocation**|destination_latitude|int|Latitude coordinates derived from a geolocation service, such as MaxMind geoip db|
+|**Destination Geolocation**|destination_longitude|integer|Longitude coordinates derived from a geolocation service, such as MaxMind geoip db|
+|**Destination Geolocation**|destination_latitude|integer|Latitude coordinates derived from a geolocation service, such as MaxMind geoip db|
 |**Destination Geolocation**|destination_region|varchar(100)|Some geolocation services refer to region-level geolocation (where applicable)|
 |**Destination Geolocation**|destination_state|varchar(100)|Some geolocation services refer to state-level geolocation (where applicable)|
 |**Destination Geolocation**|destination_city|varchar(100)|Some geolocation services refer to city-level geolocation|
 |**Destination Geolocation**|destination_cymru_cc|varchar(2)|The country code denoted for the ip by the Team Cymru asn to ip mapping service.
 |**Destination Geolocation**|destination_geoip_cc|varchar(2)|The country code denoted for the ip by the MaxMind geoip database.
 |**Reported Source Identity**|reported_source_ip|inet|The ip observed to initiate the connection|
-|**Reported Source Identity**|reported_source_port|int|The port from which the connection originated|
+|**Reported Source Identity**|reported_source_port|integer|The port from which the connection originated|
 |**Reported Source Identity**|reported_source_domain_name|varchar(255)|A DNS name related to the host from which the connection originated|
 |**Reported Source Identity**|reported_source_url|varchar(2000)|A URL denotes on IOC, which refers to a malicious resource, whose interpretation is defined by the abuse type. A URL with the abuse type phishing refers to a phishing resource.|
 |**Reported Source Identity**|reported_source_email_address|varchar(200)|An email address, which has been identified to relate to the source of an abuse event|
 |**Reported Source Identity**|reported_source_reverse dns|varchar(200)|Reverse DNS name acquired through a reverse DNS query on an IP address. N.B. "Record types other than PTR records may also appear in the reverse DNS tree."
-|**Reported Source Identity**|reported_source_asn|int|The autonomous system number from which originated the connection|
+|**Reported Source Identity**|reported_source_asn|integer|The autonomous system number from which originated the connection|
 |**Reported Source Identity**|reported_source_as_name|varchar(200)|The autonomous system name from which the connection originated|
 |**Reported Source Identity**|reported_source_cc|varchar(2)|The country code of the ip from which the connection originated|
 |**Reported Source_Identity**|reported_source_bgp_prefix|inet|CIDR for an autonomous system|
 |**Reported Source Identity**|reported_source_registry|varchar(20)|The IP registry a given ip address is allocated by|
 |**Reported Source Identity**|reported_source_allocated|timestamp|Allocation date corresponding to bgp prefix|
 |**Reported Destination Identity**|reported_destination_ip|inet|The ip observed to initiate the connection|
-|**Reported Destination Identity**|reported_destination_port|int|The port from which the connection originated|
+|**Reported Destination Identity**|reported_destination_port|integer|The port from which the connection originated|
 |**Reported Destination Identity**|reported_destination_domain_name|varchar(255)|A DNS name related to the host from which the connection originated|
 |**Reported Destination Identity**|reported_destination_url|varchar(2000)|A URL denotes on IOC, which refers to a malicious resource, whose interpretation is defined by the abuse type. A URL with the abuse type phishing refers to a phishing resource.|
 |**Reported Destination Identity**|reported_destination_email_address|varchar(200)|An email address, which has been identified to relate to the source of an abuse event|
 |**Reported Destination Identity**|reported_destination_reverse dns|varchar(200)|Reverse DNS name acquired through a reverse DNS query on an IP address. N.B. "Record types other than PTR records may also appear in the reverse DNS tree."
-|**Reported Destination Identity**|reported_destination_asn|int|The autonomous system number from which originated the connection|
+|**Reported Destination Identity**|reported_destination_asn|integer|The autonomous system number from which originated the connection|
 |**Reported Destination Identity**|reported_destination_as_name|varchar(200)|The autonomous system name from which the connection originated|
 |**Reported Destination Identity**|reported_destination_cc|varchar(2)|The country code of the ip from which the connection originated|
 |**Reported Destination_Identity**|reported_destination_bgp_prefix|inet|CIDR for an autonomous system|
