@@ -99,7 +99,7 @@
 |**Additional Fields**|description|| A free-form textual description of an abuse event.
 |**Additional Fields**|description_url|| A description URL is a link to a further description of the the abuse event in question.
 |**Additional Fields**|status|| Status of the malicious resource (phishing, dropzone, etc), e.g. online, offline.
-|**Additional Fields**|apllication_protocol|| e.g. vnc, ssh, sip, irc, http or p2p.
+|**Additional Fields**|application_protocol|| e.g. vnc, ssh, sip, irc, http or p2p.
 |**Additional Fields**|transport_protocol|| e.g. tcp, udp, icmp
 |**Additional Fields**|target|| Some sources denominate the target (organization) of a an attack.
 |**Additional Fields**|os_name|| Operating system name.
