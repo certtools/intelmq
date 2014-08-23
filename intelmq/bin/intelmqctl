@@ -167,6 +167,7 @@ class IntelMQContoller():
             return
         print_bot_log(bot_id, "is stopping")
         res = self.__bot_stop(bot_id, pid)
+        time.sleep(1)
         if status_process(pid):
             print_bot_log(bot_id, "did NOT DIE")
         
