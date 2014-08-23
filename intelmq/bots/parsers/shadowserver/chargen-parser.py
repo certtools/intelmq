@@ -47,7 +47,7 @@ class ShadowServerChargenParserBot(Bot):
             
                 event.add('feed', 'shadowserver-chargen')
                 event.add('type', 'vulnerable service')
-                event.add('protocol', 'chargen')
+                event.add('application_protocol', 'chargen')
 
                 event = utils.parse_source_time(event, "source_time")  
                 event = utils.generate_observation_time(event, "observation_time")
