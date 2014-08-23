@@ -12,7 +12,7 @@ createuser intelmq -W
   Shall the new role be allowed to create more new roles? (y/n) n
   Password: 
 
-createdb -O intelmq --encoding='utf-8' intelmq-events;
+createdb -O intelmq --encoding='utf-8' intelmq-events
 ```
 
 * Allow Local User Connect to the Database
