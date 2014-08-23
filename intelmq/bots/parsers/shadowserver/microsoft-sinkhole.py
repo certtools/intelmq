@@ -57,7 +57,7 @@ class ShadowServerMicrosoftSinkholeParserBot(Bot):
             
                 event.add('feed', 'shadowserver-microsoft-sinkhole')
                 event.add('type', 'botnet drone')
-                event.add('protocol', 'http')
+                event.add('application_protocol', 'http')
                 
                 event = utils.parse_source_time(event, "source_time")  
                 event = utils.generate_observation_time(event, "observation_time")
