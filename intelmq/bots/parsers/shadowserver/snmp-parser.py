@@ -48,7 +48,7 @@ class ShadowServerSNMPParserBot(Bot):
             
                 event.add('feed', 'shadowserver-snmp')
                 event.add('type', 'vulnerable service')
-                event.add('protocol', 'snmp')
+                event.add('application_protocol', 'snmp')
 
                 event = utils.parse_source_time(event, "source_time")  
                 event = utils.generate_observation_time(event, "observation_time")
