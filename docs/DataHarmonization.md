@@ -56,7 +56,7 @@
 |Reported Source Identity|reported_source_domain_name|varchar(255)|A DNS name related to the host from which the connection originated|
 |Reported Source Identity|reported_source_url|varchar(2000)|A URL denotes on IOC, which refers to a malicious resource, whose interpretation is defined by the abuse type. A URL with the abuse type phishing refers to a phishing resource.|
 |Reported Source Identity|reported_source_email_address|varchar(200)|An email address, which has been identified to relate to the source of an abuse event|
-|Reported Source Identity|reported_source_reverse dns|varchar(200)|Reverse DNS name acquired through a reverse DNS query on an IP address. N.B. "Record types other than PTR records may also appear in the reverse DNS tree."
+|Reported Source Identity|reported_source_reverse dns|varchar(200)|Reverse DNS name acquired through a reverse DNS query on an IP address. N.B. "Record types other than PTR records may also appear in the reverse DNS tree."|
 |Reported Source Identity|reported_source_asn|integer|The autonomous system number from which originated the connection|
 |Reported Source Identity|reported_source_as_name|varchar(200)|The autonomous system name from which the connection originated|
 |Reported Source Identity|reported_source_cc|varchar(2)|The country code of the ip from which the connection originated|
