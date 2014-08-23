@@ -29,7 +29,7 @@ if __name__ == "__main__":
     bot.start()
 ```
 
-### Example
+### Examples
 
 * Check [taxonomy](https://github.com/certtools/intelmq/blob/master/intelmq/bots/experts/taxonomy/taxonomy.py) expert bot
 * Check [arbor](https://github.com/certtools/intelmq/blob/master/intelmq/bots/parsers/arbor/parser.py) parser bot
