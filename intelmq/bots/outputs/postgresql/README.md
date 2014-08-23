@@ -9,6 +9,8 @@ sudo su -
 su - postgres
 createuser intelmq -W
 createdb -O intelmq intelmq
+createdb -O intelmq --encoding='utf-8' intelmq-events;
+
 ```
 
 * Make sure that the local user intelmq can connect to the DB:
