@@ -6,7 +6,8 @@ dirs = [
         '/var/log/intelmq',
         '/var/run/intelmq',
         '/var/lib/intelmq',
-        '/var/lib/intelmq/archive/'
+        '/var/lib/intelmq/archive/',
+        '/usr/share/doc/intelmq'
        ]
 
 for dir in dirs:
@@ -37,6 +38,12 @@ setup(
                                    'intelmq/conf/runtime.conf',
                                    'intelmq/conf/pipeline.conf',
                                    'intelmq/conf/system.conf'
+                                  ]
+                ),
+                ('/usr/share/doc/intelmq/', [
+                                   'docs/UserGuide.md',
+                                   'docs/DevGuide.md',
+                                   'docs/DataHarmonization.md'
                                   ]
                 )
     ],
