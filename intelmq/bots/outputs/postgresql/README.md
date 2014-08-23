@@ -21,7 +21,7 @@ local   all             all                                     trust
 
 * Restart PostgreSQL
 
-* Generate initdb.sql - use [psql-initdb-generator.py](https://github.com/certtools/intelmq/blob/master/intelmq/bots/outputs/postgresql/psql-initdb-generator.py) tool to get the initdb.sql file.
+* Generate initdb.sql (use [psql-initdb-generator.py](https://github.com/certtools/intelmq/blob/master/intelmq/bots/outputs/postgresql/psql-initdb-generator.py) tool)
 
 * Creata the Table
 ```
