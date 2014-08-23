@@ -120,30 +120,30 @@ Having a functional ontology to work with, especially for the abuse types is imp
 |Destination Geolocation|destination_city|varchar(100)|Some geolocation services refer to city-level geolocation|
 |Destination Geolocation|destination_cymru_cc|varchar(2)|The country code denoted for the ip by the Team Cymru asn to ip mapping service.|
 |Destination Geolocation|destination_geoip_cc|varchar(2)|The country code denoted for the ip by the MaxMind geoip database.|
-|Reported Source Identity|reported_source_ip|inet|The ip observed to initiate the connection|
-|Reported Source Identity|reported_source_port|integer|The port from which the connection originated|
+|Reported Source Identity|reported_source_ip|varchar(1000)|The ip observed to initiate the connection|
+|Reported Source Identity|reported_source_port|varchar(1000)|The port from which the connection originated|
 |Reported Source Identity|reported_source_domain_name|varchar(255)|A DNS name related to the host from which the connection originated|
 |Reported Source Identity|reported_source_url|varchar(2000)|A URL denotes on IOC, which refers to a malicious resource, whose interpretation is defined by the abuse type. A URL with the abuse type phishing refers to a phishing resource.|
-|Reported Source Identity|reported_source_email_address|varchar(200)|An email address, which has been identified to relate to the source of an abuse event|
+|Reported Source Identity|reported_source_email_address|varchar(1000)|An email address, which has been identified to relate to the source of an abuse event|
 |Reported Source Identity|reported_source_reverse_dns|varchar(200)|Reverse DNS name acquired through a reverse DNS query on an IP address. N.B. "Record types other than PTR records may also appear in the reverse DNS tree."|
-|Reported Source Identity|reported_source_asn|integer|The autonomous system number from which originated the connection|
+|Reported Source Identity|reported_source_asn|varchar(1000)|The autonomous system number from which originated the connection|
 |Reported Source Identity|reported_source_as_name|varchar(200)|The autonomous system name from which the connection originated|
 |Reported Source Identity|reported_source_cc|varchar(2)|The country code of the ip from which the connection originated|
-|Reported Source Identity|reported_source_bgp_prefix|inet|CIDR for an autonomous system|
+|Reported Source Identity|reported_source_bgp_prefix|varchar(1000)|CIDR for an autonomous system|
 |Reported Source Identity|reported_source_registry|varchar(20)|The IP registry a given ip address is allocated by|
-|Reported Source Identity|reported_source_allocated|timestamp|Allocation date corresponding to bgp prefix|
-|Reported Destination Identity|reported_destination_ip|inet|The ip observed to initiate the connection|
-|Reported Destination Identity|reported_destination_port|integer|The port from which the connection originated|
+|Reported Source Identity|reported_source_allocated|varchar(1000)|Allocation date corresponding to bgp prefix|
+|Reported Destination Identity|reported_destination_ip|varchar(1000)|The ip observed to initiate the connection|
+|Reported Destination Identity|reported_destination_port|varchar(1000)|The port from which the connection originated|
 |Reported Destination Identity|reported_destination_domain_name|varchar(255)|A DNS name related to the host from which the connection originated|
 |Reported Destination Identity|reported_destination_url|varchar(2000)|A URL denotes on IOC, which refers to a malicious resource, whose interpretation is defined by the abuse type. A URL with the abuse type phishing refers to a phishing resource.|
 |Reported Destination Identity|reported_destination_email_address|varchar(200)|An email address, which has been identified to relate to the source of an abuse event|
 |Reported Destination Identity|reported_destination_reverse_dns|varchar(200)|Reverse DNS name acquired through a reverse DNS query on an IP address. N.B. "Record types other than PTR records may also appear in the reverse DNS tree."|
-|Reported Destination Identity|reported_destination_asn|integer|The autonomous system number from which originated the connection|
+|Reported Destination Identity|reported_destination_asn|varchar(1000)|The autonomous system number from which originated the connection|
 |Reported Destination Identity|reported_destination_as_name|varchar(200)|The autonomous system name from which the connection originated|
 |Reported Destination Identity|reported_destination_cc|varchar(2)|The country code of the ip from which the connection originated|
-|Reported Destination Identity|reported_destination_bgp_prefix|inet|CIDR for an autonomous system|
+|Reported Destination Identity|reported_destination_bgp_prefix|varchar(1000)|CIDR for an autonomous system|
 |Reported Destination Identity|reported_destination_registry|varchar(20)|The IP registry a given ip address is allocated by|
-|Reported Destination Identity|reported_destination_allocated|timestamp|Allocation date corresponding to bgp prefix|
+|Reported Destination Identity|reported_destination_allocated|varchar(1000)|Allocation date corresponding to bgp prefix|
 |Additional Fields|description|varchar(10000)| A free-form textual description of an abuse event.|
 |Additional Fields|description_url|varchar(1000)| A description URL is a link to a further description of the the abuse event in question.|
 |Additional Fields|status|varchar(1000)| Status of the malicious resource (phishing, dropzone, etc), e.g. online, offline.|
