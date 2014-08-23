@@ -87,7 +87,7 @@ Having a functional ontology to work with, especially for the abuse types is imp
 |**Source Identity**|source_cc|varchar(2)|The country code of the ip from which the connection originated|
 |**Source_Identity**|source_bgp_prefix|inet|CIDR for an autonomous system|
 |**Source Identity**|source_registry|varchar(20)|The IP registry a given ip address is allocated by|
-|**Source Identity**|source_allocated|varchar(20)|Allocation date corresponding to bgp prefix|
+|**Source Identity**|source_allocated|timestamp|Allocation date corresponding to bgp prefix|
 |**Source Local Identity**|source_local_ip|inet|Some sources report a internal (NATed) IP address related a compromized system|
 |**Source Local Identity**|source_local_hostname|varchar(200)|Some sources report a internal hostname within a NAT related to the name configured for a compromized system|
 |**Source Geolocation**|source_cc|varchar(2)|MaxMind Country Code (ISO3166)|
@@ -110,7 +110,7 @@ Having a functional ontology to work with, especially for the abuse types is imp
 |**Destination Identity**|destination_cc|varchar(2)|The country code of the ip from which the connection originated|
 |**Destination_Identity**|destination_bgp_prefix|inet|CIDR for an autonomous system|
 |**Destination Identity**|destination_registry|varchar(20)|The IP registry a given ip address is allocated by|
-|**Destination Identity**|destination_allocated|varchar(20)|Allocation date corresponding to bgp prefix|
+|**Destination Identity**|destination_allocated|timestamp|Allocation date corresponding to bgp prefix|
 |**Destination Local Identity**|destination_local_ip|inet|Some sources report a internal (NATed) IP address related a compromized system|
 |**Destination Local Identity**|destination_local_hostname|varchar(200)|Some sources report a internal hostname within a NAT related to the name configured for a compromized system|
 |**Destination Geolocation**|destination_cc|varchar(2)|MaxMind Country Code (ISO3166)|
@@ -133,7 +133,7 @@ Having a functional ontology to work with, especially for the abuse types is imp
 |**Reported Source Identity**|reported_source_cc|varchar(2)|The country code of the ip from which the connection originated|
 |**Reported Source_Identity**|reported_source_bgp_prefix|inet|CIDR for an autonomous system|
 |**Reported Source Identity**|reported_source_registry|varchar(20)|The IP registry a given ip address is allocated by|
-|**Reported Source Identity**|reported_source_allocated|varchar(20)|Allocation date corresponding to bgp prefix|
+|**Reported Source Identity**|reported_source_allocated|timestamp|Allocation date corresponding to bgp prefix|
 |**Reported Destination Identity**|reported_destination_ip|inet|The ip observed to initiate the connection|
 |**Reported Destination Identity**|reported_destination_port|int|The port from which the connection originated|
 |**Reported Destination Identity**|reported_destination_domain_name|varchar(255)|A DNS name related to the host from which the connection originated|
@@ -145,7 +145,7 @@ Having a functional ontology to work with, especially for the abuse types is imp
 |**Reported Destination Identity**|reported_destination_cc|varchar(2)|The country code of the ip from which the connection originated|
 |**Reported Destination_Identity**|reported_destination_bgp_prefix|inet|CIDR for an autonomous system|
 |**Reported Destination Identity**|reported_destination_registry|varchar(20)|The IP registry a given ip address is allocated by|
-|**Reported Destination Identity**|reported_destination_allocated|varchar(20)|Allocation date corresponding to bgp prefix|
+|**Reported Destination Identity**|reported_destination_allocated|timestamp|Allocation date corresponding to bgp prefix|
 |**Additional Fields**|description|| A free-form textual description of an abuse event.
 |**Additional Fields**|description_url|| A description URL is a link to a further description of the the abuse event in question.
 |**Additional Fields**|status|| Status of the malicious resource (phishing, dropzone, etc), e.g. online, offline.
