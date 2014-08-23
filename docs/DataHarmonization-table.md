@@ -74,8 +74,8 @@ Having a functional ontology to work with, especially for the abuse types is imp
 |**Feed**|feed|varchar(30)|Lower case name for the feeder, e.g. abusech or phishtank.|
 |**Feed**|feed_code|varchar(10)|Code name for the feed, e.g.  DFGS, HSDAG etc.|
 |**Feed**|feed_url|varchar(200)|The URL of a given abuse feed, where applicable|
-|**Time**|source_time|datetime|Time reported by a source. Some sources only report a date, which '''may''' be used here if there is no better observation (ISO8660)
-|**Time**|observation_time|datetime|The time a source bot saw the event. This timestamp becomes especially important should you perform your own attribution on a host DNS name for example. The mechanism to denote the attributed elements with reference to the source provided is detailed below in Reported Identity IOC.(ISO8660)|
+|**Time**|source_time|timestamp with time zone|Time reported by a source. Some sources only report a date, which '''may''' be used here if there is no better observation (ISO8660)
+|**Time**|observation_time|timestamp with time zone|The time a source bot saw the event. This timestamp becomes especially important should you perform your own attribution on a host DNS name for example. The mechanism to denote the attributed elements with reference to the source provided is detailed below in Reported Identity IOC.(ISO8660)|
 |**Source Identity**|source_ip|inet|The ip observed to initiate the connection|
 |**Source Identity**|source_port|int|The port from which the connection originated|
 |**Source Identity**|source_domain_name|varchar(255)|A DNS name related to the host from which the connection originated|
