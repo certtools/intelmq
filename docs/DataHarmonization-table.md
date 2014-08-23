@@ -1,6 +1,4 @@
-# Data Harmonization Ontology
-
-### Sections Description
+## Sections Description
 
 #### Feed
 
