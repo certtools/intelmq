@@ -17,7 +17,7 @@ class ExampleBot(Bot):
         message = self.receive_message()
 
         # ------
-        # process message
+        # write the code here to process the message
         # ------
                 
         # send message to destination queue in pipeline
