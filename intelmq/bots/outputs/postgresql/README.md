@@ -1,4 +1,4 @@
-* Install postgresql:
+* Install PostgreSQL:
 ```
 apt-get install postgresql-9.1 python-psycopg2
 ```
