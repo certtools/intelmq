@@ -285,8 +285,8 @@
                 "processing_interval": "0",
                 "host": "<ip>",
                 "port": "<port>",
-                "database": "<database>",
-                "user": "<user>",
+                "database": "intelmq-events",
+                "user": "intelmq",
                 "password": "<password>"
             }
         }
