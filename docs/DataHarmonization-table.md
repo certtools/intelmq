@@ -1,10 +1,19 @@
 # Data Harmonization Ontology
 
-## Sections Description
+### Sections Description
 
-* **Feed:** 
-* **Time:** All the timestamps should be normalized to UTC. If the source reports only a date, please do not invent timestamps
-* **Source Identity:** The abuse type of an event defines the way these IOC needs to be interpreted. For a botnet drone they refer to the compromized machine, whereas for a command and control server they refer the server itself.
+#### Feed
+
+asdasd
+
+#### Time
+
+All the timestamps should be normalized to UTC. If the source reports only a date, please do not invent timestamps
+
+####Source Identity
+
+The abuse type of an event defines the way these IOC needs to be interpreted. For a botnet drone they refer to the compromized machine, whereas for a command and control server they refer the server itself.
+
 * **Destination Identity:** Since many of the sources report IOC related to a compromized machine, such as a botnet drone, they may report relevant information in relation to the command and control infrastructure as well. The meaning of each IOC needs to be interpreted with reference to the abuse type. A destination ip and port in the context of a botnet drone for example usually denote the command and control server.
 * **Local Identity:**
 * **Reported Identity:** As stated above, each abuse handling organization should define a policy, which IOC to use as the primary elements describing an abuse event. Often the sources have done their attribution, but you may choose to correlate their attributive elements with your own. In practice this means that your sanitation should prefix the elements with the '''reported''' keyword, to denote that you've decided the attribute these yourself. The list below is not comprehensive, rather than a list of common things you may want to attribute yourself. Moreover, if you choose to perform your own attribution, the observation time will become your authoritative point of reference related to these IOC.
