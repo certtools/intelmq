@@ -54,13 +54,14 @@ cp /etc/intelmq/runtime.py /etc/intelmq/runtime.py.bk
 cp /etc/intelmq/pipeline.py /etc/intelmq/pipeline.py.bk
 ```
 
-*Upgrade IntelMQ
+* Upgrade IntelMQ
 
 ```
 pip install --upgrade git+https://<your_user_account>@github.com/certtools/intelmq.git
 ```
 
-Apply your configurations backup.
+* Apply your configurations backup.
+
 ```
 mv /etc/intelmq/system.py.bk /etc/intelmq/system.py
 mv /etc/intelmq/startup.py.bk /etc/intelmq/startup.py
