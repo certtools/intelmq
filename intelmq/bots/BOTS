@@ -69,7 +69,7 @@
             "description": "OpenBL Collector is the bot responsible to get the report from source of information.",
             "parameters": {
                 "url": "http://www.openbl.org/lists/date_all.txt",
-                "processing_interval": "3600"
+                "processing_interval": "43200"
             }
         },
         "ShadowServer Drone Report": {
