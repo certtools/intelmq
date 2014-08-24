@@ -12,12 +12,14 @@ class SanitizerBot(Bot):
                             (
                                 "source_ip",
                                 "source_domain_name",
-                                "source_url"
+                                "source_url",
+                                "source_asn"
                             ),
                             (
                                 "destination_ip",
                                 "destination_domain_name",
-                                "destination_url"
+                                "destination_url",
+                                "destination_asn"
                             )
                         ]
 
@@ -26,6 +28,9 @@ class SanitizerBot(Bot):
                 ip = domain_name = url = None
                 
                 for key in keys:
+                    
+                    if "asn" in key:
+                        continue
                     
                     if not event.contains(key):
                         continue
@@ -57,16 +62,24 @@ class SanitizerBot(Bot):
                     ip = utils.get_ip_from_url(url)
                     
                 for key in keys:
-                    event.clear(key)
                     
                     if "url" in key and url:
+                        event.clear(key)
                         event.add(key, url)
                         
                     if "domain_name" in key and domain_name:
+                        event.clear(key)
                         event.add(key, domain_name)
                         
                     if "ip" in key and ip:
+                        event.clear(key)
                         event.add(key, ip)
+
+                    if "asn" in key:
+                        try:
+                            int(event.value(key))
+                        except ValueError:
+                            event.clear(key)
 
             self.send_message(event)
         self.acknowledge_message()
