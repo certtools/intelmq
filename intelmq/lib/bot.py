@@ -20,6 +20,7 @@ class Bot(object):
     def __init__(self, bot_id):
         self.current_message = None
         self.last_message = None
+        self.message_counter = 0
 
         self.check_bot_id(bot_id)
 
@@ -144,6 +145,10 @@ class Bot(object):
         if isinstance(message, Event):
             message = unicode(message) # convert Event Object to string (UTF-8)
             
+        self.message_counter += 1
+        if self.message_counter % self.logging_threshold == 0:
+            self.logger.info("Processed %s messages." % self.message_counter)
+            
         self.pipeline.send(message)
 
 
@@ -169,4 +174,3 @@ class Bot(object):
 
 class Parameters(object):
     pass
-
