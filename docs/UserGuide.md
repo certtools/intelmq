@@ -44,14 +44,24 @@ pip install git+https://<your_user_account>@github.com/certtools/intelmq.git
 
 ## Update IntelMQ
 
-Make sure that your IntelMQ system is completely stopped.
+* Make sure that your IntelMQ system is completely stopped.
+* Create a backup of your configurations.
 
 ```
 cp /etc/intelmq/system.py /etc/intelmq/system.py.bk
 cp /etc/intelmq/startup.py /etc/intelmq/startup.py.bk
 cp /etc/intelmq/runtime.py /etc/intelmq/runtime.py.bk
 cp /etc/intelmq/pipeline.py /etc/intelmq/pipeline.py.bk
+```
+
+*Upgrade IntelMQ
+
+```
 pip install --upgrade git+https://<your_user_account>@github.com/certtools/intelmq.git
+```
+
+Apply your configurations backup.
+```
 mv /etc/intelmq/system.py.bk /etc/intelmq/system.py
 mv /etc/intelmq/startup.py.bk /etc/intelmq/startup.py
 mv /etc/intelmq/runtime.py.bk /etc/intelmq/runtime.py
