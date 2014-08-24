@@ -63,6 +63,8 @@ class Cymru():
         for item in text.split('|'):
             item = item.replace('"','')
             item = item.strip()
+            if item == "NA" or item == "":
+                item = None
             items.append(item)
         return items
     
@@ -80,20 +82,24 @@ class Cymru():
         
         items = Cymru.__query_parse(text)
 
-        if items[0].split(' ')[0] != "":
-            result['asn'] = items[0].split(' ')[0]
-            # In case of multiple ASNs received, get the first one.
+        if items[0]:
+            asn = items[0].split(' ')[0]  # In case of multiple ASNs received, get the first one.
+            try:
+                int(asn)
+                result['asn'] = asn
+            except:
+                pass
             
-        if items[1] != "":    
+        if items[1]:    
             result['bgp_prefix'] = items[1]
         
-        if items[2] != "":    
+        if items[2]:    
             result['cc'] = items[2]
 
-        if items[3] != "":    
+        if items[3]:    
             result['registry'] = items[3]
 
-        if items[4] != "":    
+        if items[4]:    
             result['allocated'] = items[4]
 
         return result
@@ -112,7 +118,7 @@ class Cymru():
         
         items = Cymru.__query_parse(text)
         
-        if items[4] != "":    
+        if items[4]:    
             result['as_name'] = items[4]
 
         return result    
