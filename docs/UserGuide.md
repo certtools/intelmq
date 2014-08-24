@@ -42,6 +42,22 @@ Source: https://gist.github.com/nghuuphuoc/7801123
 pip install git+https://<your_user_account>@github.com/certtools/intelmq.git
 ```
 
+## Update IntelMQ
+
+Make sure that your IntelMQ system is completely stopped.
+
+```
+cp /etc/intelmq/system.py /etc/intelmq/system.py.bk
+cp /etc/intelmq/startup.py /etc/intelmq/startup.py.bk
+cp /etc/intelmq/runtime.py /etc/intelmq/runtime.py.bk
+cp /etc/intelmq/pipeline.py /etc/intelmq/pipeline.py.bk
+pip install --upgrade git+https://<your_user_account>@github.com/certtools/intelmq.git
+mv /etc/intelmq/system.py.bk /etc/intelmq/system.py
+mv /etc/intelmq/startup.py.bk /etc/intelmq/startup.py
+mv /etc/intelmq/runtime.py.bk /etc/intelmq/runtime.py
+mv /etc/intelmq/pipeline.py.bk /etc/intelmq/pipeline.py
+```
+
 
 ## How it Works
 
