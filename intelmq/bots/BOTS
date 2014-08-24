@@ -211,7 +211,7 @@
                 "processing_interval": "0",
                 "redis_cache_host": "127.0.0.1",
                 "redis_cache_port": "6379",
-                "redis_cache_db": "10",
+                "redis_cache_db": "5",
                 "redis_cache_ttl": "86400"
             }
         },
@@ -230,7 +230,7 @@
                 "processing_interval": "0",
                 "redis_cache_host": "127.0.0.1",
                 "redis_cache_port": "6379",
-                "redis_cache_db": "10",
+                "redis_cache_db": "6",
                 "redis_cache_ttl": "86400"
             }
         },
