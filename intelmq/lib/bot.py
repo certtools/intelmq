@@ -146,7 +146,7 @@ class Bot(object):
             message = unicode(message) # convert Event Object to string (UTF-8)
             
         self.message_counter += 1
-        if self.message_counter % self.parameters.logging_threshold == 0:
+        if self.message_counter % int(self.parameters.logging_threshold) == 0:
             self.logger.info("Processed %s messages." % self.message_counter)
             
         self.pipeline.send(message)
