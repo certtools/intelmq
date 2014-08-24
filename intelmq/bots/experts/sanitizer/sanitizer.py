@@ -78,7 +78,7 @@ class SanitizerBot(Bot):
                     if "asn" in key:
                         try:
                             int(event.value(key))
-                        except ValueError:
+                        except:
                             event.clear(key)
 
             self.send_message(event)
