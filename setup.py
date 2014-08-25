@@ -52,7 +52,7 @@ setup(
         "python-dateutil==1.5",
         "geoip2==0.5.1",
         "dnspython==1.11.1",
-        "redis==2.4.9",
+        "redis==2.10.3",
         "pymongo==2.7.1",
         "xmpppy==0.5.0rc1",
         "imbox==0.5.5",
