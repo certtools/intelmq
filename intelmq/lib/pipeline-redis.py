@@ -4,6 +4,9 @@ import time
 class Pipeline():
     def __init__(self, source_queue, destination_queues, host="127.0.0.1", port="6379", db=2):
         
+        if type(destination_queues) is not list:
+            destination_queues = destination_queues.split()
+        
         self.source_queue = source_queue
         self.destination_queues = destination_queues
         
@@ -24,7 +27,7 @@ class Pipeline():
 
     def send(self, message):
         for destination_queue in self.destination_queues:
-            self.redis.lpush(destination_queue, message)
+            self.redis.rpush(destination_queue, message)
 
     def receive(self):
         return self.redis.lindex(self.source_queue, 0)
