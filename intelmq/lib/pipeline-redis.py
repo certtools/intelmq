@@ -4,7 +4,7 @@ import time
 class Pipeline():
     def __init__(self, source_queue, destination_queues, host="127.0.0.1", port="6379", db=2):
         
-        if type(destination_queues) is not list:
+        if destination_queues and type(destination_queues) is not list:
             destination_queues = destination_queues.split()
         
         self.source_queue = source_queue
