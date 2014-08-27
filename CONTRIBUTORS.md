@@ -7,7 +7,7 @@
 |Cosmin Ciobanu|cosmin.ciobanu@enisa.europa.eu|ENISA|
 |Aaron Kaplan|kaplan@cert.at|CERT.AT|
 |Kris Boulez|kris.boulez@cert.be|CERT.BE|
-|Dalila Lima|dcrypt3d@gmail.com|University of Porto|
+|Dalila Lima|dcrypt3d@gmail.com|-|
 |Bruno Braga|bruno.braga@cert.pt|CERT.PT|
  
 ### Start contributing
