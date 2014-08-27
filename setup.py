@@ -34,6 +34,7 @@ setup(
                  },
     data_files=[
                 ('/etc/intelmq/', [
+                                   'intelmq/bots/BOTS',
                                    'intelmq/conf/startup.conf',
                                    'intelmq/conf/runtime.conf',
                                    'intelmq/conf/pipeline.conf',
