@@ -59,6 +59,10 @@ class Event(object):
             return None
 
 
+    def to_dict(self):
+        return dict(self.event)
+
+
     def to_unicode(self):
         return unicode(json.dumps(self.event))
     
