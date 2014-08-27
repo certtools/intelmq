@@ -162,7 +162,6 @@ class Bot(object):
         
         try:    # Event Object
             return Event.from_unicode(message)
-        
         except: # Report Object
             return message
 
