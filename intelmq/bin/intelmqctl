@@ -13,6 +13,7 @@ import argparse
 
 
 CONFIGURATION_FILE = "/etc/intelmq/startup.conf"
+PIDDIR = "/var/run/intelmq/"
 PIDFILE = "/var/run/intelmq/%s.pid"
 
 
@@ -112,6 +113,9 @@ class IntelMQContoller():
         fp = open(CONFIGURATION_FILE, 'r')
         data = fp.read()
         self.info = json.loads(data)
+
+        if not os.path.exists(PIDDIR):
+            os.makedirs(PIDDIR)
 
 
     def auto_method_call(self, method):
