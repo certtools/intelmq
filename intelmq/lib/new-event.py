@@ -1,12 +1,11 @@
 import json
-import hashlib
 
 class Event(object):
 
     def __init__(self, event=None):
         if event:
             self.event = event
-        else:
+        else.
             self.event = dict()
 
 
@@ -25,10 +24,6 @@ class Event(object):
         self.event[key] = value
         return True
 
-
-    def discard(self, key, value):
-        self.clear(key)
-        
 
     def clear(self, key):
         if key in self.event:
@@ -59,34 +54,26 @@ class Event(object):
             return None
 
 
-    def to_unicode(self):
-        return unicode(json.dumps(self.event))
+    @staticmethod
+    def to_unicode():
+        return json.dumps(self.event)
     
 
     @staticmethod
     def from_unicode(event_string):
-        return Event(json.loads(event_string))
+        return json.loads(event_string)
     
 
     def __hash__(self):
-        evhash = hashlib.sha1()
-
-        for key, value in sorted(self.items()):
-            evhash.update(key.encode("utf-8"))
-            evhash.update("\xc0")
-            evhash.update(value.encode("utf-8"))
-            evhash.update("\xc0")
-
-        return int(evhash.hexdigest(), 16) # FIXME: the int stuff should be done by cache
-        #return hash(self.event)
-
+        return hash(self.event)
+    
 
     def __eq__(self, event2):
         return self.event == event2
 
 
     def __unicode__(self):
-        return self.to_unicode()
+        return unicode(self.event)
 
 
     def __repr__(self):
