@@ -23,13 +23,15 @@ See [UserGuide](https://github.com/certtools/intelmq/blob/master/docs/UserGuide.
 
 * Reduce the complexity of system administration
 * Reduce the complexity of writing new bots for new data feeds
-* Reduce the probability of events lost in all process (even system crash)
-* Provide easy communication with other systems via API
+* Reduce the probability of events lost in all process with persistence functionality (even system crash)
+* Provide easy communication with other systems via HTTP RESTFUL API
 * Use and improve the existing Data Harmonization Ontology
-* Use the existing AbuseHelper Event-like syntax: event.add("domain", "example.com")
 * Use JSON format for all messages
 * Use messages tags: report, abuse-event, pastebin, tweet
 * Integration of the existing tools (AbuseHelper, CIF, etc...)
+* Provide easy way to store data into Log Collectors like ElasticSearch, Splunk, etc...
+* Provide easy way to create your own black-lists
+
 
 <a name="system"></a>
 ## System
