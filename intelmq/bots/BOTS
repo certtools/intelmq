@@ -119,7 +119,7 @@
     },
     "Parser": {
         "Arbor": {
-            "module": "intelmq.bots.parsers.arbor.arbor",
+            "module": "intelmq.bots.parsers.arbor.parser",
             "description": "Arbor Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
                 "processing_interval": "0"
