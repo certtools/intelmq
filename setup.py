@@ -49,7 +49,7 @@ setup(
                 )
     ],
     install_requires=[
-        "pika==0.9.14",
+        "pika==0.9.9",
         "python-dateutil==1.5",
         "geoip2==0.5.1",
         "dnspython==1.11.1",
