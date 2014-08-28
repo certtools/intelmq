@@ -8,12 +8,15 @@ class Pipeline():
             destination_queues = destination_queues.split()
         
         self.source_queue = source_queue
+        if source_queue:
+            self.internal_queue = source_queue + "-internal"
+            
         self.destination_queues = destination_queues
         
         self.redis = redis.Redis( host = host,
                                   port = int(port),
                                   db = db,
-                                  socket_timeout = 5
+                                  socket_timeout = 50000
                                 )
 
     def connect(self):
@@ -30,7 +33,18 @@ class Pipeline():
             self.redis.rpush(destination_queue, message)
 
     def receive(self):
-        return self.redis.lindex(self.source_queue, 0)
+        #return self.redis.brpoplpush(self.source_queue, self.internal_queue, 0)
+        return self.redis.lpop(self.source_queue)
         
     def acknowledge(self):
-        return self.redis.lpop(self.source_queue)
+        pass
+        #return self.redis.rpop(self.internal_queue)
+
+# Receive
+# B RPOP LPUSH  source_queue  ->  source_queue_internal
+
+# Send
+# LPUSH          object        ->  destination_queue
+
+# Acknowledge
+# RPOP           remove from 'source_queue_internal'
