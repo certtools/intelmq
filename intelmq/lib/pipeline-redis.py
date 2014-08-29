@@ -33,18 +33,18 @@ class Pipeline():
             self.redis.rpush(destination_queue, message)
 
     def receive(self):
-        #return self.redis.brpoplpush(self.source_queue, self.internal_queue, 0)
-        return self.redis.lpop(self.source_queue)
+        return self.redis.brpoplpush(self.source_queue, self.internal_queue, 0)
         
     def acknowledge(self):
-        pass
-        #return self.redis.rpop(self.internal_queue)
+        return self.redis.rpop(self.internal_queue)
 
+# -----------------------
 # Receive
 # B RPOP LPUSH  source_queue  ->  source_queue_internal
-
+# -----------------------
 # Send
 # LPUSH          object        ->  destination_queue
-
+# -----------------------
 # Acknowledge
-# RPOP           remove from 'source_queue_internal'
+# RPOP           object        <-  source_queue_internal
+# -----------------------
