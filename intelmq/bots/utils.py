@@ -25,8 +25,9 @@ def get_ip_from_url(url):
 
 def get_ip_from_domain_name(domain_name):
     try:
+        socket.setdefaulttimeout(0.5)
         return socket.gethostbyname(domain_name)
-    except socket.error:
+    except:
         return None
 
 
