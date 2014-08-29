@@ -3,6 +3,9 @@ import time
 
 class Pipeline():
     def __init__(self, source_queue, destination_queues, host="127.0.0.1", port="6379", db=2):
+        self.host = host
+        self.port = port
+        self.db = db
         
         if destination_queues and type(destination_queues) is not list:
             destination_queues = destination_queues.split()
@@ -13,14 +16,15 @@ class Pipeline():
             
         self.destination_queues = destination_queues
         
-        self.redis = redis.Redis( host = host,
-                                  port = int(port),
-                                  db = db,
-                                  socket_timeout = 50000
-                                )
+        self.connect()
 
     def connect(self):
-        pass
+        self.redis = redis.Redis(
+                          host = self.host,
+                          port = int(self.port),
+                          db = self.db,
+                          socket_timeout = 50000
+                        )
     
     def disconnect(self):
         pass
@@ -33,8 +37,12 @@ class Pipeline():
             self.redis.rpush(destination_queue, message)
 
     def receive(self):
-        # test if something after crash was stuck in internal queue
-        return self.redis.brpoplpush(self.source_queue, self.internal_queue, 0)
+        try:
+            # test if something after crash was stuck in internal queue
+            return self.redis.brpoplpush(self.source_queue, self.internal_queue, 0)
+        except TimeoutError:
+            self.connect()
+            return self.redis.brpoplpush(self.source_queue, self.internal_queue, 0)
         
     def acknowledge(self):
         return self.redis.rpop(self.internal_queue)
