@@ -33,6 +33,7 @@ class Pipeline():
             self.redis.rpush(destination_queue, message)
 
     def receive(self):
+        # test if something after crash was stuck in internal queue
         return self.redis.brpoplpush(self.source_queue, self.internal_queue, 0)
         
     def acknowledge(self):
