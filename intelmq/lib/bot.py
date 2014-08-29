@@ -56,8 +56,8 @@ class Bot(object):
                 
             except Exception, ex:
                 retry_delay = 30
-                self.logger.error("Last Correct Message(event): %r" % self.last_message)
-                self.logger.error("Current Message(event): %r" % self.current_message)
+                self.logger.info("Last Correct Message(event): %r" % self.last_message)
+                self.logger.info("Current Message(event): %r" % self.current_message)
                 self.logger.exception("Check the following exception:")
                 self.logger.error('Pipeline connection failed (%r)' % ex)
                 self.logger.info('Pipeline will reconnect in %s seconds' % retry_delay)
