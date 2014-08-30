@@ -37,12 +37,11 @@ class Pipeline():
             self.redis.rpush(destination_queue, message)
 
     def receive(self):
-        try:
-            # test if something after crash was stuck in internal queue
-            return self.redis.brpoplpush(self.source_queue, self.internal_queue, 0)
-        except redis.TimeoutError:
-            self.connect()
-            return self.redis.brpoplpush(self.source_queue, self.internal_queue, 0)
+        while  True:
+            try:
+                return self.redis.brpoplpush(self.source_queue, self.internal_queue, 0)
+            except redis.TimeoutError:
+                self.connect()
         
     def acknowledge(self):
         return self.redis.rpop(self.internal_queue)
