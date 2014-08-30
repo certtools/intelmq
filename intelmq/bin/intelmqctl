@@ -55,10 +55,6 @@ def log_botnet_error(status):
 def log_botnet_message(status):
     if RETURN_TYPE == 'text':
         print MESSAGES[status] % 'Botnet'
-    
-def finish(final_states):
-    if RETURN_TYPE == 'json':
-        print json.dumps(final_states)
        
 def write_pidfile(bot_id, pid):
     filename = PIDFILE % bot_id
@@ -168,16 +164,20 @@ class IntelMQContoller():
         if self.args.bot:
             method_name = "bot_" + self.args.bot
             call_method = self.auto_method_call(method_name)
-            return call_method(self.args.bot_id)
+            results = call_method(self.args.bot_id)
             
         elif self.args.botnet:
             method_name = "botnet_" + self.args.botnet
             call_method = self.auto_method_call(method_name)
-            return call_method()
+            results = call_method()
+            
         elif self.args.list:
             method_name = "list_" + self.args.list
             call_method = self.auto_method_call(method_name)
-            return call_method()
+            results = call_method()
+        
+        if self.args.type == 'json':
+            print json.dumps(final_states)
 
 
     def bot_start(self, bot_id):        
@@ -287,5 +287,4 @@ class IntelMQContoller():
     
 if __name__ == "__main__":
     x = IntelMQContoller()
-    final_states = x.run()
-    finish(final_states)
+    x.run()
