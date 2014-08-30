@@ -177,7 +177,7 @@ class IntelMQContoller():
             results = call_method()
         
         if self.args.type == 'json':
-            print json.dumps(final_states)
+            print json.dumps(results)
 
 
     def bot_start(self, bot_id):        
