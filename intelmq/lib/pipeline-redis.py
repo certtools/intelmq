@@ -40,7 +40,7 @@ class Pipeline():
         try:
             # test if something after crash was stuck in internal queue
             return self.redis.brpoplpush(self.source_queue, self.internal_queue, 0)
-        except TimeoutError:
+        except redis.TimeoutError:
             self.connect()
             return self.redis.brpoplpush(self.source_queue, self.internal_queue, 0)
         
