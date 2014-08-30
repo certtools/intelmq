@@ -16,13 +16,49 @@ CONFIGURATION_FILE = "/etc/intelmq/startup.conf"
 PIDDIR = "/var/run/intelmq/"
 PIDFILE = "/var/run/intelmq/%s.pid"
 
+STATUSES = {
+    'starting': 0,
+    'running': 1,
+    'stopping': 2,
+    'stopped': 3
+}
 
-def print_bot_log(bot_id, message):
-    print " %s bot %s." % (bot_id, message)
+MESSAGES = {
+    'starting': 'Starting %s...',
+    'running': '%s is already running.',
+    'stopped': '%s is stopped.',
+    'stopping': 'Stopping %s...'
+}
+
+ERROR_MESSAGES = {
+    'starting': '%s failed to START.',
+    'running': '%s is still running.',
+    'stopped': '%s was NOT RUNNING.',
+    'stopping': '%s failed to STOP.'
+}
+
+RETURN_TYPES = ['text', 'json']
+RETURN_TYPE = None
+
+def log_bot_error(bot_id, status):
+    if RETURN_TYPE == 'text':
+        print ERROR_MESSAGES[status] % bot_id
     
-def print_bot_lognet(message):
-    print "\n Botnet %s.\n" % (message)
+def log_bot_message(bot_id, status):
+    if RETURN_TYPE == 'text':
+        print MESSAGES[status] % bot_id
+
+def log_botnet_error(status):
+    if RETURN_TYPE == 'text':
+        print ERROR_MESSAGES[status] % 'Botnet'
     
+def log_botnet_message(status):
+    if RETURN_TYPE == 'text':
+        print MESSAGES[status] % 'Botnet'
+    
+def finish(final_states):
+    if RETURN_TYPE == 'json':
+        print json.dumps(final_states)
        
 def write_pidfile(bot_id, pid):
     filename = PIDFILE % bot_id
@@ -73,8 +109,8 @@ def status_process(pid):
 
 
 class IntelMQContoller():
-    
     def __init__(self):
+        global RETURN_TYPE
         
         APPNAME = "intelmqctl"
         VERSION = "0.0.0"
@@ -89,17 +125,18 @@ class IntelMQContoller():
                                         usage=USAGE,
                                         epilog=DESCRIPTION
                                         )
-
+        
         group = parser.add_mutually_exclusive_group()
         group_list = group.add_mutually_exclusive_group()
         
         parser.add_argument('-v', '--version', action='version', version=VERSION)
         parser.add_argument("--id", dest='bot_id', default=None, help='bot ID')
+        parser.add_argument('--type', choices=RETURN_TYPES, default=RETURN_TYPES[0], help='choose if it should return regular text or other forms of output')
         
         group_list.add_argument('--bot',      choices=['start', 'stop', 'restart', 'status'], metavar='[start|stop|restart|status]', default=None)
         group_list.add_argument('--botnet',   choices=['start', 'stop', 'restart', 'status'], metavar='[start|stop|restart|status]', default=None)
         group_list.add_argument('--list',     choices=['bots'],                               metavar='[bots]'                     , default=None)
-
+        
         self.args = parser.parse_args()
         
         if len(sys.argv) == 1:
@@ -109,49 +146,52 @@ class IntelMQContoller():
             print "usage: %s" % USAGE
             print "%s: error: argument --id: expected argument --bot [start|stop|restart|status]" % APPNAME
             exit()
-
+            
+        RETURN_TYPE = self.args.type
+        
         fp = open(CONFIGURATION_FILE, 'r')
         data = fp.read()
         self.info = json.loads(data)
-
+        
         if not os.path.exists(PIDDIR):
             os.makedirs(PIDDIR)
-
-
+        
+    
     def auto_method_call(self, method):
         inspect_members = inspect.getmembers(self)
         for name, func in inspect_members:
             if name.startswith(method):
-                return func        
+                return func
 
     
     def run(self):
         if self.args.bot:
             method_name = "bot_" + self.args.bot
             call_method = self.auto_method_call(method_name)
-            call_method(self.args.bot_id)
+            return call_method(self.args.bot_id)
             
         elif self.args.botnet:
             method_name = "botnet_" + self.args.botnet
             call_method = self.auto_method_call(method_name)
-            call_method()
-            return
+            return call_method()
         elif self.args.list:
             method_name = "list_" + self.args.list
             call_method = self.auto_method_call(method_name)
-            call_method()
+            return call_method()
 
 
     def bot_start(self, bot_id):        
         pid = read_pidfile(bot_id)
         if pid:
             if status_process(pid):
-                print_bot_log(bot_id, "is already running")
-                return
+                log_bot_message(bot_id, 'running')
+                return 'running'
             else:
                 remove_pidfile(bot_id)
-        print_bot_log(bot_id, "is starting")
+        log_bot_message(bot_id, 'starting')
         self.__bot_start(bot_id, self.info[bot_id]['module'])
+        #time.sleep(0.25)
+        return 'starting'
 
         
     def __bot_start(self, bot_id, module):
@@ -163,17 +203,20 @@ class IntelMQContoller():
     def bot_stop(self, bot_id):
         pid = read_pidfile(bot_id)
         if not pid:
-            print_bot_log(bot_id, "is NOT running")
-            return
+            log_bot_error(bot_id, 'stopped')
+            return 'stopped'
         if not status_process(pid):
             remove_pidfile(bot_id)
-            print_bot_log(bot_id, "is NOT running")
-            return
-        print_bot_log(bot_id, "is stopping")
+            log_bot_error(bot_id, 'stopped')
+            return 'stopped'
+        log_bot_message(bot_id, 'stopping')
         res = self.__bot_stop(bot_id, pid)
         time.sleep(0.25)
         if status_process(pid):
-            print_bot_log(bot_id, "did NOT DIE")
+            log_bot_error(bot_id, 'running')
+            return 'running'
+        
+        return 'stopped'
         
     def __bot_stop(self, bot_id, pid):
         stop_process(pid)
@@ -181,46 +224,56 @@ class IntelMQContoller():
 
 
     def bot_restart(self, bot_id):
-        self.bot_stop(bot_id)
-        self.bot_start(bot_id)
+        status_stop = self.bot_stop(bot_id)
+        status_start = self.bot_start(bot_id)
+        return (status_stop, status_start)
     
     
     def bot_status(self, bot_id):
         pid = read_pidfile(bot_id)
         if pid and status_process(pid):
-            print_bot_log(bot_id, "is running")
-            return
-        print_bot_log(bot_id, "is NOT running")
+            log_bot_message(bot_id, 'running')
+            return 'running'
+        log_bot_message(bot_id, 'stopped')
+        return 'stopped'
 
     
     def botnet_start(self):
-        print_bot_lognet("is starting")
+        botnet_status = {}
+        log_botnet_message('starting')
         for bot_id in sorted(self.info.keys()):
-            self.bot_start(bot_id)
-        print_bot_lognet("started")    
+            botnet_status[bot_id] = self.bot_start(bot_id)
+        log_botnet_message('running')
+        return botnet_status
     
     
     def botnet_stop(self):
-        print_bot_lognet("is stopping")
+        botnet_status = {}
+        log_botnet_message('stopping')
         for bot_id in sorted(self.info.keys()):
-            self.bot_stop(bot_id)
-        print_bot_lognet("stopped")
-    
+            botnet_status[bot_id] = self.bot_stop(bot_id)
+        log_botnet_message('stopped')
+        return botnet_status
     
     def botnet_restart(self):
-        print_bot_lognet("is restarting")
+        botnet_status = {}
+        log_botnet_message('stopping')
         for bot_id in sorted(self.info.keys()):
-            self.bot_stop(bot_id)
-        print "\n\n"
+            botnet_status[bot_id] = tuple(self.bot_stop(bot_id))
         time.sleep(3)
+        log_botnet_message('stopped')
+        log_botnet_message('starting')
         for bot_id in sorted(self.info.keys()):
-            self.bot_start(bot_id)            
-        print_bot_lognet("restarted")
+            botnet_status[bot_id] += tuple(self.bot_start(bot_id))
+        log_botnet_message('started')
+        return botnet_status
     
     
     def botnet_status(self):
+        botnet_status = {}
         for bot_id in sorted(self.info.keys()):
-            self.bot_status(bot_id)
+            botnet_status[bot_id] = self.bot_status(bot_id)
+        return botnet_status
 
     
     def list_bots(self):
@@ -234,4 +287,5 @@ class IntelMQContoller():
     
 if __name__ == "__main__":
     x = IntelMQContoller()
-    x.run()
+    final_states = x.run()
+    finish(final_states)
