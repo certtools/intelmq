@@ -2,6 +2,8 @@
 
 (sorted by priority)
 
+* https://github.com/nicolasff/phpredis
+
 * Create n6 bot.
 
 * Create [Shadowserver Bots](http://www.shadowserver.org/wiki/pmwiki.php/Services/Downloads)
