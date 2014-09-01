@@ -85,8 +85,9 @@ def check_pidfile(bot_id):
     return None
         
 def start_process(bot_id, cmd):
+    devnull = open('/dev/null', 'w')
     args = shlex.split(cmd)
-    p = psutil.Popen(args)
+    p = psutil.Popen(args, stdout=devnull, stderr=devnull)
     return p.pid
 
 def stop_process(pid):
@@ -190,8 +191,8 @@ class IntelMQContoller():
                 remove_pidfile(bot_id)
         log_bot_message(bot_id, 'starting')
         self.__bot_start(bot_id, self.info[bot_id]['module'])
-        #time.sleep(0.25)
-        return 'starting'
+        time.sleep(0.25)
+        return self.bot_status(bot_id)
 
         
     def __bot_start(self, bot_id, module):
