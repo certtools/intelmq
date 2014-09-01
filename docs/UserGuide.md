@@ -6,7 +6,7 @@
 ```
 apt-get install python-pip git
 apt-get install build-essential python-dev
-apt-get install redis-server rabbitmq-server
+apt-get install redis-server
 ```
 
 ### RedHat-based
@@ -16,7 +16,7 @@ apt-get install redis-server rabbitmq-server
 yum install git
 yum install gcc python-devel
 yum install centos-release-SCL
-yum install rabbitmq-server python27
+yum install python27
 scl enable python27 bash
 easy_install pip
 echo "scl enable python27 bash" >> /opt/intelmq/.bashrc
