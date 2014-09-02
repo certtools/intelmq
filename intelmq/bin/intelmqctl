@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/python
 
 import re
 import os
@@ -10,9 +10,10 @@ import inspect
 import psutil
 import signal
 import argparse
-
+from intelmq.lib.pipeline import Pipeline
 
 CONFIGURATION_FILE = "/etc/intelmq/startup.conf"
+PIPELINE_FILE = "/etc/intelmq/pipeline.conf"
 PIDDIR = "/var/run/intelmq/"
 PIDFILE = "/var/run/intelmq/%s.pid"
 
@@ -39,6 +40,11 @@ ERROR_MESSAGES = {
 
 RETURN_TYPES = ['text', 'json']
 RETURN_TYPE = None
+
+def log_list_queus(queues):
+    if RETURN_TYPE == 'text':
+        for queue, counter in sorted(queues.iteritems()):
+            print "%s - %s" % (queue,  counter)
 
 def log_bot_error(bot_id, status):
     if RETURN_TYPE == 'text':
@@ -115,7 +121,7 @@ class IntelMQContoller():
         USAGE = '''
         intelmqctl --bot [start|stop|restart|status] --id=cymru-expert
         intelmqctl --botnet [start|stop|restart|status]
-        intelmqctl --list [bots]'''
+        intelmqctl --list [bots|queues]'''
         
         parser = argparse.ArgumentParser(
                                         prog=APPNAME,
@@ -132,7 +138,7 @@ class IntelMQContoller():
         
         group_list.add_argument('--bot',      choices=['start', 'stop', 'restart', 'status'], metavar='[start|stop|restart|status]', default=None)
         group_list.add_argument('--botnet',   choices=['start', 'stop', 'restart', 'status'], metavar='[start|stop|restart|status]', default=None)
-        group_list.add_argument('--list',     choices=['bots'],                               metavar='[bots]'                     , default=None)
+        group_list.add_argument('--list',     choices=['bots','queues'],                      metavar='[bots|queues]'              , default=None)
         
         self.args = parser.parse_args()
         
@@ -216,8 +222,8 @@ class IntelMQContoller():
         if status_process(pid):
             log_bot_error(bot_id, 'running')
             return 'running'
-        
         return 'stopped'
+        
         
     def __bot_stop(self, bot_id, pid):
         stop_process(pid)
@@ -256,6 +262,7 @@ class IntelMQContoller():
         log_botnet_message('stopped')
         return botnet_status
     
+    
     def botnet_restart(self):
         botnet_status = {}
         log_botnet_message('stopping')
@@ -284,6 +291,24 @@ class IntelMQContoller():
         print title
         for bot_id in sorted(self.info.keys()):
             print "Bot ID: %s\nDescription: %s\n" % (bot_id, self.info[bot_id]['description'])
+
+            
+    def list_queues(self):
+        fp = open(PIPELINE_FILE, 'r')
+        conf = json.load(fp)
+
+        queues = set()
+        for key, value in conf.iteritems():
+            if 'source-queue' in value:
+                queues.add(value['source-queue'])
+            if 'destination-queues' in value:
+                queues.update(value['destination-queues'])
+
+        pipeline = Pipeline()
+        counters = pipeline.count_queued_messages(queues)
+        log_list_queus(counters)
+        return counters
+
             
     
 if __name__ == "__main__":
