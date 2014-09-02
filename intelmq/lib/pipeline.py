@@ -45,7 +45,10 @@ class Pipeline():
         return self.redis.rpop(self.internal_queue)
 
     def count_queued_messages(self, queues):
-        pass
+        qdict = dict()
+        for queue in queues:
+            qdict[queue] = self.redis.llen(queue)
+        return qdict
 
 # -----------------------
 # Receive
