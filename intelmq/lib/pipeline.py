@@ -2,11 +2,19 @@ import redis
 import time
 
 class Pipeline():
-    def __init__(self, source_queue, destination_queues, host="127.0.0.1", port="6379", db=2):
+    def __init__(self, host="127.0.0.1", port="6379", db=2):
         self.host = host
         self.port = port
         self.db = db
         
+        self.redis = redis.Redis(
+                          host = self.host,
+                          port = int(self.port),
+                          db = self.db,
+                          socket_timeout = 50000
+                        )
+
+    def queues(self, source_queue, destination_queues):
         if destination_queues and type(destination_queues) is not list:
             destination_queues = destination_queues.split()
         
@@ -15,16 +23,6 @@ class Pipeline():
             self.internal_queue = source_queue + "-internal"
             
         self.destination_queues = destination_queues
-        
-        self.connect()
-
-    def connect(self):
-        self.redis = redis.Redis(
-                          host = self.host,
-                          port = int(self.port),
-                          db = self.db,
-                          socket_timeout = 50000
-                        )
     
     def disconnect(self):
         pass
@@ -45,6 +43,9 @@ class Pipeline():
         
     def acknowledge(self):
         return self.redis.rpop(self.internal_queue)
+
+    def count_queued_messages(self, queues):
+        pass
 
 # -----------------------
 # Receive

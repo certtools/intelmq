@@ -51,7 +51,8 @@ class Bot(object):
                 if not self.pipeline:
                     time.sleep(retry_delay)
                     self.logger.info("Connecting to pipeline queues")
-                    self.pipeline = Pipeline(self.src_queue, self.dest_queues)
+                    self.pipeline = Pipeline()
+                    self.pipeline.queues(self.src_queue, self.dest_queues)
                     self.logger.info("Connected to pipeline queues. Start processing")
                 self.process()
                 self.pipeline.sleep(self.parameters.processing_interval)
