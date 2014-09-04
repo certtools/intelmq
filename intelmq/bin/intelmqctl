@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/opt/rh/python27/root/usr/bin/python2
 
 import re
 import os
@@ -12,8 +12,11 @@ import signal
 import argparse
 from intelmq.lib.pipeline import Pipeline
 
-CONFIGURATION_FILE = "/etc/intelmq/startup.conf"
-PIPELINE_FILE = "/etc/intelmq/pipeline.conf"
+SYSTEM_CONFIGURATION_FILE = "/etc/intelmq/system.conf"
+STARTUP_CONFIGURATION_FILE = "/etc/intelmq/startup.conf"
+PIPELINE_CONFIGURATION_FILE = "/etc/intelmq/pipeline.conf"
+
+
 PIDDIR = "/var/run/intelmq/"
 PIDFILE = "/var/run/intelmq/%s.pid"
 
@@ -36,6 +39,14 @@ ERROR_MESSAGES = {
     'running': '%s is still running.',
     'stopped': '%s was NOT RUNNING.',
     'stopping': '%s failed to STOP.'
+}
+
+LOG_LEVEL = {
+    'default': -1,
+    'DEBUG': 0,
+    'INFO': 1,
+    'ERROR': 2,
+    'CRITICAL': 3
 }
 
 RETURN_TYPES = ['text', 'json']
@@ -136,6 +147,7 @@ class IntelMQContoller():
         parser.add_argument("--id", dest='bot_id', default=None, help='bot ID')
         parser.add_argument('--type', choices=RETURN_TYPES, default=RETURN_TYPES[0], help='choose if it should return regular text or other forms of output')
         
+        group_list.add_argument('--log',                                                      metavar='[log-level]:[number-of-lines]', default=None)
         group_list.add_argument('--bot',      choices=['start', 'stop', 'restart', 'status'], metavar='[start|stop|restart|status]', default=None)
         group_list.add_argument('--botnet',   choices=['start', 'stop', 'restart', 'status'], metavar='[start|stop|restart|status]', default=None)
         group_list.add_argument('--list',     choices=['bots','queues'],                      metavar='[bots|queues]'              , default=None)
@@ -144,17 +156,14 @@ class IntelMQContoller():
         
         if len(sys.argv) == 1:
             parser.print_help()
-        
-        if self.args.bot_id and not self.args.bot:
-            print "usage: %s" % USAGE
-            print "%s: error: argument --id: expected argument --bot [start|stop|restart|status]" % APPNAME
-            exit()
             
         RETURN_TYPE = self.args.type
         
-        fp = open(CONFIGURATION_FILE, 'r')
-        data = fp.read()
-        self.info = json.loads(data)
+        fp = open(STARTUP_CONFIGURATION_FILE, 'r')
+        self.startup = json.load(fp)
+        
+        fp = open(SYSTEM_CONFIGURATION_FILE, 'r')
+        self.system = json.load(fp)
         
         if not os.path.exists(PIDDIR):
             os.makedirs(PIDDIR)
@@ -168,6 +177,7 @@ class IntelMQContoller():
 
     
     def run(self):
+        results = None
         if self.args.bot:
             method_name = "bot_" + self.args.bot
             call_method = self.auto_method_call(method_name)
@@ -182,6 +192,9 @@ class IntelMQContoller():
             method_name = "list_" + self.args.list
             call_method = self.auto_method_call(method_name)
             results = call_method()
+            
+        elif self.args.log:
+            results = self.read_log(self.args.log, self.args.bot_id)
         
         if self.args.type == 'json':
             print json.dumps(results)
@@ -196,7 +209,7 @@ class IntelMQContoller():
             else:
                 remove_pidfile(bot_id)
         log_bot_message(bot_id, 'starting')
-        self.__bot_start(bot_id, self.info[bot_id]['module'])
+        self.__bot_start(bot_id, self.startup[bot_id]['module'])
         time.sleep(0.25)
         return self.bot_status(bot_id)
 
@@ -248,7 +261,7 @@ class IntelMQContoller():
     def botnet_start(self):
         botnet_status = {}
         log_botnet_message('starting')
-        for bot_id in sorted(self.info.keys()):
+        for bot_id in sorted(self.startup.keys()):
             botnet_status[bot_id] = self.bot_start(bot_id)
         log_botnet_message('running')
         return botnet_status
@@ -257,7 +270,7 @@ class IntelMQContoller():
     def botnet_stop(self):
         botnet_status = {}
         log_botnet_message('stopping')
-        for bot_id in sorted(self.info.keys()):
+        for bot_id in sorted(self.startup.keys()):
             botnet_status[bot_id] = self.bot_stop(bot_id)
         log_botnet_message('stopped')
         return botnet_status
@@ -266,12 +279,12 @@ class IntelMQContoller():
     def botnet_restart(self):
         botnet_status = {}
         log_botnet_message('stopping')
-        for bot_id in sorted(self.info.keys()):
+        for bot_id in sorted(self.startup.keys()):
             botnet_status[bot_id] = tuple(self.bot_stop(bot_id))
         time.sleep(3)
         log_botnet_message('stopped')
         log_botnet_message('starting')
-        for bot_id in sorted(self.info.keys()):
+        for bot_id in sorted(self.startup.keys()):
             botnet_status[bot_id] += tuple(self.bot_start(bot_id))
         log_botnet_message('started')
         return botnet_status
@@ -279,7 +292,7 @@ class IntelMQContoller():
     
     def botnet_status(self):
         botnet_status = {}
-        for bot_id in sorted(self.info.keys()):
+        for bot_id in sorted(self.startup.keys()):
             botnet_status[bot_id] = self.bot_status(bot_id)
         return botnet_status
 
@@ -289,12 +302,12 @@ class IntelMQContoller():
         title += "-" * (len(title)-1)
         title += "\n"
         print title
-        for bot_id in sorted(self.info.keys()):
-            print "Bot ID: %s\nDescription: %s\n" % (bot_id, self.info[bot_id]['description'])
+        for bot_id in sorted(self.startup.keys()):
+            print "Bot ID: %s\nDescription: %s\n" % (bot_id, self.startup[bot_id]['description'])
 
             
     def list_queues(self):
-        fp = open(PIPELINE_FILE, 'r')
+        fp = open(PIPELINE_CONFIGURATION_FILE, 'r')
         conf = json.load(fp)
 
         queues = set()
@@ -308,6 +321,70 @@ class IntelMQContoller():
         counters = pipeline.count_queued_messages(queues)
         log_list_queus(counters)
         return counters
+        
+        
+    def read_log(self, log_level, bot_id):
+        # TODO: Parse number of lines
+        split_log_level = log_level.split(':')
+        
+        if len(split_log_level) != 2:
+            return
+        
+        number_of_lines = int(split_log_level[1])
+        log_level = LOG_LEVEL[split_log_level[0]]
+
+        if bot_id is None:
+            return self.read_system_log(log_level, number_of_lines)
+        else:
+            return self.read_bot_log(bot_id, log_level, number_of_lines)
+        
+    def read_system_log(self, log_level, number_of_lines):
+        pass
+        
+    def read_bot_log(self, bot_id, log_level, number_of_lines):
+        basepath = self.system['log_path']
+        if not self.system['log_path'].endswith('/'):
+            basepath += '/'
+            
+        bot_log_path = basepath + bot_id + '.log'
+        bot_log_file = open(bot_log_path, 'r')
+        
+        messages = list()
+
+        extended_message = ''
+        last_message = {}
+        added_messages = 0
+        
+        for line in bot_log_file:
+            splitted_line = line.split(' - ')
+            
+            if len(splitted_line) >= 4:
+                if splitted_line[1] == bot_id:
+                    log_message = {
+                        'date': splitted_line[0],
+                        'bot_id': splitted_line[1],
+                        'log_level': splitted_line[2],
+                        'message': ' - '.join(splitted_line[3:])
+                    }
+                    
+                    if extended_message != '':
+                        last_message['extended_message'] = extended_message
+                        extended_message = ''
+                        
+                    last_message = log_message
+                    
+                    if (log_message['log_level'] not in LOG_LEVEL) or (LOG_LEVEL[log_message['log_level']] >= log_level):
+                        added_messages += 1
+                        messages.append(log_message)
+                        
+                        if added_messages > number_of_lines:
+                            del messages[0]
+                else:
+                    extended_message += line
+            else:
+                extended_message += line
+                    
+        return messages
 
             
     
