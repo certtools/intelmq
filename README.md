@@ -75,3 +75,6 @@ Check the [tool](https://github.com/certtools/intelmq-manager) and manage easily
 * **URL:** http://www.enisa.europa.eu/activities/cert/support/incident-handling-automation
 * **Mailing-list:** ihap@lists.trusted-introducer.org
 
+## Licence
+
+This software is licensed under GNU Affero General Public License version 3
