@@ -10,6 +10,7 @@ IntelMQ is a solution for CERTs to process data feeds, pastebins, tweets through
 3. [System](#system)
 4. [IntelMQ Manager](#control-platform)
 5. [Incident Handling Automation Project](#incident-handling-automation-project)
+6. [Licence](#licence)
 
 
 <a name="how-to-install"></a>
@@ -75,6 +76,7 @@ Check the [tool](https://github.com/certtools/intelmq-manager) and manage easily
 * **URL:** http://www.enisa.europa.eu/activities/cert/support/incident-handling-automation
 * **Mailing-list:** ihap@lists.trusted-introducer.org
 
+<a name="licence"></a>
 ## Licence
 
 This software is licensed under GNU Affero General Public License version 3
