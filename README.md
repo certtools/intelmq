@@ -49,12 +49,6 @@ Redis is used as:
 * memcache for bots
 
 
-### System Architecture
-
-(need update)
-![System Architecture](http://i58.tinypic.com/n395bo.jpg)
-
-
 ### Code Architecture
 
 (need update)
