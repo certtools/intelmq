@@ -1,4 +1,13 @@
-## Sections Description
+## Table of Contents
+
+1. [Sections](#sections)
+2. [Fields List](#fields)
+3. [Type/Taxonomy Mapping](#classification)
+4. [Minimum Requirements](#requirements)
+
+
+<a name="sections"></a>
+## Sections
 
 #### Feed
 
@@ -66,7 +75,7 @@ The elements listed below are additional keys used to describe abusive behavior,
 
 Having a functional ontology to work with, especially for the abuse types is important for you to be able to classify, prioritize and report relevant actionable intelligence to the parties who need to be informed. The driving idea for this ontology has been to use a minimal set of values with maximal usability. Below, is a list of harmonized values for the abuse types.
 
-
+<a name="fields"></a>
 ## Fields List
 
 |Section|Fields|Format|Description|
@@ -172,8 +181,8 @@ Having a functional ontology to work with, especially for the abuse types is imp
 |Classification|taxonomy|varchar(2000)|We recognize the need for the CSIRT teams to apply a static (incident) taxonomy to abuse data. With this goal in mind the type IOC will serve as a basis for this activity. Each value of the dynamic type mapping translates to a an element in the static taxonomy. The European CSIRT teams for example have decided to apply the eCSIRT.net incident classification. The value of the taxonomy key is thus a derivative of the dynamic type above. For more information about check [ENISA taxonomies](http://www.enisa.europa.eu/activities/cert/support/incident-management/browsable/incident-handling-process/incident-taxonomy/existing-taxonomies).|
  
 
-
-### Type/Taxonomy Mapping
+<a name="classification"></a>
+## Type/Taxonomy Mapping
  
 |Type|Taxonomy|Description|
 |----|--------|-----------|
@@ -197,7 +206,8 @@ Having a functional ontology to work with, especially for the abuse types is imp
 |blacklist|Other|Some sources provide blacklists, which clearly refer to abusive behavior, such as spamming, but fail to denote the exact reason why a given identity has been blacklisted. The reason may be that the justification is anecdotal or missing entirely. This type should only be used if the typing fits the definition of a blacklist, but an event specific denomination is not possible for one reason or another.|
 |test|Test|This is a value for testing purposes.|
 
-### Minimum Requirements
+<a name="requirements"></a>
+## Minimum Requirements
 
 Below, we have enumerated the minimum requirements for an actionable abuse event. These keys need to be present for the abuse report to make sense for the end recipient. Please note that if you choose to anonymize your sources, you can substitute **feed** with **feed code** and that only one of the identity keys **ip**, **domain name**, **url**, **email address** must be present. All the rest of the keys enumerated above are **optional**.
 
@@ -215,4 +225,4 @@ Below, we have enumerated the minimum requirements for an actionable abuse event
 
 
 
-**NOTE:** This document was copied from [AbuseHelper repository](https://bitbucket.org/clarifiednetworks/abusehelper/wiki/Data Harmonization Ontology)
+**NOTE:** This document was copied from [AbuseHelper repository](https://bitbucket.org/clarifiednetworks/abusehelper/wiki/Data Harmonization Ontology) and improved.
