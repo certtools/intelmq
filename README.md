@@ -20,18 +20,21 @@ See [UserGuide](https://github.com/certtools/intelmq/blob/master/docs/UserGuide.
 
 
 <a name="goals"></a>
-## Goals
+## Goals (Version 1)
 
 * Reduce the complexity of system administration
 * Reduce the complexity of writing new bots for new data feeds
 * Reduce the probability of events lost in all process with persistence functionality (even system crash)
-* Provide easy communication with other systems via HTTP RESTFUL API
 * Use and improve the existing Data Harmonization Ontology
 * Use JSON format for all messages
-* Use messages tags: report, abuse-event, pastebin, tweet
 * Integration of the existing tools (AbuseHelper, CIF, etc...)
 * Provide easy way to store data into Log Collectors like ElasticSearch, Splunk, etc...
 * Provide easy way to create your own black-lists
+
+## Goals (Version 2)
+
+* Provide easy communication with other systems via HTTP RESTFUL API
+* Use messages tags: report, abuse-event, pastebin, tweet
 
 
 <a name="system"></a>
@@ -39,8 +42,9 @@ See [UserGuide](https://github.com/certtools/intelmq/blob/master/docs/UserGuide.
 
 
 ### Main Components
-* Redis as message queue for pipeline
-* Redis as memcache for bots
+Redis is used as:
+* message queue for pipeline
+* memcache for bots
 
 
 ### System Architecture
