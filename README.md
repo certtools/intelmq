@@ -20,7 +20,9 @@ See [UserGuide](https://github.com/certtools/intelmq/blob/master/docs/UserGuide.
 
 
 <a name="goals"></a>
-## Goals (Version 1)
+## Goals
+
+####  Version 1
 
 * Reduce the complexity of system administration
 * Reduce the complexity of writing new bots for new data feeds
@@ -31,7 +33,7 @@ See [UserGuide](https://github.com/certtools/intelmq/blob/master/docs/UserGuide.
 * Provide easy way to store data into Log Collectors like ElasticSearch, Splunk, etc...
 * Provide easy way to create your own black-lists
 
-## Goals (Version 2)
+####  Version 2
 
 * Provide easy communication with other systems via HTTP RESTFUL API
 * Use messages tags: report, abuse-event, pastebin, tweet
