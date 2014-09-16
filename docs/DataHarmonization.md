@@ -2,7 +2,7 @@
 
 1. [Sections](#sections)
 2. [Fields List](#fields)
-3. [Type/Taxonomy Mapping](#classification)
+3. [Type/Taxonomy Mapping](#mapping)
 4. [Minimum Requirements](#requirements)
 
 
@@ -181,7 +181,7 @@ Having a functional ontology to work with, especially for the abuse types is imp
 |Classification|taxonomy|varchar(2000)|We recognize the need for the CSIRT teams to apply a static (incident) taxonomy to abuse data. With this goal in mind the type IOC will serve as a basis for this activity. Each value of the dynamic type mapping translates to a an element in the static taxonomy. The European CSIRT teams for example have decided to apply the eCSIRT.net incident classification. The value of the taxonomy key is thus a derivative of the dynamic type above. For more information about check [ENISA taxonomies](http://www.enisa.europa.eu/activities/cert/support/incident-management/browsable/incident-handling-process/incident-taxonomy/existing-taxonomies).|
  
 
-<a name="classification"></a>
+<a name="mapping"></a>
 ## Type/Taxonomy Mapping
  
 |Type|Taxonomy|Description|
