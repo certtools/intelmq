@@ -80,11 +80,13 @@ Before start running all bots, user should know the system details that will hel
 
 * Global configuration for intelmq is at file '/etc/intelmq/system.conf'. Please note that logger in DEBUG will write in logs all bots parameteres configured, including passwords.
 
-### Configuration
+### Management
+
+#### Web interface
 
 IntelMQ has a tool called IntelMQ Manager that gives to user a easy way to configure all pipeline with bots that your CERT needs. Click [here](https://github.com/certtools/intelmq-manager).
 
-### Run Bots
+#### Command-line interface
 
 **Syntax:**
 
