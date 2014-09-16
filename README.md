@@ -39,7 +39,7 @@ See [UserGuide](https://github.com/certtools/intelmq/blob/master/docs/UserGuide.
 
 
 ### Main Components
-* RabbitMQ as message queue for pipeline
+* Redis as message queue for pipeline
 * Redis as memcache for bots
 
 
@@ -53,14 +53,6 @@ See [UserGuide](https://github.com/certtools/intelmq/blob/master/docs/UserGuide.
 
 (need update)
 ![Code Architecture](http://s28.postimg.org/uwzthgqrx/intelmq_arch.png)
-
-
-### System Details
-
-* Configuration: ... details ...
-* How to dedup using Redis TTL: ... details ...
-* Experts using Redis as a cache and TTL: ... details ...
-* RabbitMQ Queues: ... details ...
 
 
 <a name="control-platform"></a>
