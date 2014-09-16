@@ -51,7 +51,6 @@ Redis is used as:
 
 ### Code Architecture
 
-(need update)
 ![Code Architecture](http://s4.postimg.org/578q3ehl9/intelmq_arch_schema.png)
 
 
