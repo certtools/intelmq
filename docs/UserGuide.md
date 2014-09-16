@@ -84,9 +84,6 @@ Before start running all bots, user should know the system details that will hel
 
 IntelMQ has a tool called IntelMQ Manager that gives to user a easy way to configure all pipeline with bots that your CERT needs. Click [here](https://github.com/certtools/intelmq-manager).
 
-![intelmq-control-platform](https://raw.githubusercontent.com/certtools/intelmq/master/docs/images/intelmq-control-platform.png?token=4184292__eyJzY29wZSI6IlJhd0Jsb2I6Y2VydHRvb2xzL2ludGVsbXEvbWFzdGVyL2RvY3MvaW1hZ2VzL2ludGVsbXEtY29udHJvbC1wbGF0Zm9ybS5wbmciLCJleHBpcmVzIjoxNDA5MzU2NzA1fQ%3D%3D--cb13c5f86c73243fbf1c632e1d172fd29c0aac5e)
-
-
 ### Run Bots
 
 **Syntax:**
