@@ -183,6 +183,8 @@ Having a functional ontology to work with, especially for the abuse types is imp
 
 <a name="mapping"></a>
 ## Type/Taxonomy Mapping
+
+The following mapping is based on eCSIRT Taxonomy.
  
 |Type|Taxonomy|Description|
 |----|--------|-----------|
