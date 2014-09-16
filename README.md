@@ -22,7 +22,7 @@ See [UserGuide](https://github.com/certtools/intelmq/blob/master/docs/UserGuide.
 <a name="goals"></a>
 ## Goals
 
-####  Version 1
+####  Version 1 (current)
 
 * Reduce the complexity of system administration
 * Reduce the complexity of writing new bots for new data feeds
