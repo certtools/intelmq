@@ -80,7 +80,7 @@ Before start running all bots, user should know the system details that will hel
 
 * Global configuration for intelmq is at file '/etc/intelmq/system.conf'. Please note that logger in DEBUG will write in logs all bots parameteres configured, including passwords.
 
-### Management
+## Management
 
 #### Web interface
 
