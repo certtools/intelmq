@@ -10,7 +10,7 @@ IntelMQ is a solution for CERTs to process data feeds, pastebins, tweets through
 3. [System](#system)
 4. [IntelMQ Manager](#control-platform)
 5. [Incident Handling Automation Project](#incident-handling-automation-project)
-6. [Data Harmoniaztion](#data-harmonization)
+6. [Data Harmonization](#data-harmonization)
 7. [Licence](#licence)
 
 
