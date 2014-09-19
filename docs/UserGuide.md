@@ -95,26 +95,20 @@ IntelMQ has a tool called IntelMQ Manager that gives to user a easy way to confi
 usage: 
         intelmqctl --bot [start|stop|restart|status] --id=cymru-expert
         intelmqctl --botnet [start|stop|restart|status]
-        intelmqctl --list [bots]
+        intelmqctl --list [bots|queues]
 
 optional arguments:
   -h, --help            show this help message and exit
   -v, --version         show program's version number and exit
   --id BOT_ID           bot ID
+  --type {text,json}    choose if it should return regular text or other forms
+                        of output
+  --log [log-level]:[number-of-lines]
   --bot [start|stop|restart|status]
   --botnet [start|stop|restart|status]
-  --list [bots]
+  --list [bots|queues]
 
 description: intelmqctl is the tool to control intelmq system
-
-```
-
-**Example:**
-
-```
-# intelmqctl --list bots
-# intelmqctl --botnet start
-# intelmqctl --botnet status
 ```
 
 
@@ -126,21 +120,7 @@ description: intelmqctl is the tool to control intelmq system
 $ tail -f /var/log/intelmq/*
 ```
 
-### Monitoring Pipeline
-
-```
-$ watch -n 0.5 rabbitmqctl list_queues
-```
-
-### Reset Pipeline Queues
-
-```
-$ rabbitmqctl stop_app
-$ rabbitmqctl reset
-$ rabbitmqctl start_app
-```
-
-### Reset Cache
+### Reset Pipeline and Cache
 ```
 $ redis-cli FLUSHDB
 $ redis-cli FLUSHALL
