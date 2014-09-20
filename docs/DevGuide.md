@@ -1,3 +1,17 @@
+## System
+
+
+### Main Components
+Redis is used as:
+* message queue for pipeline
+* memcache for bots
+
+
+### Code Architecture
+
+![Code Architecture](http://s28.postimg.org/5wmak1upp/intelmq_arch_schema.png)
+
+
 ## How to write bots
 
 ### Template
