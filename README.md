@@ -1,4 +1,4 @@
-![IntelMQ](http://s9.postimg.org/mcdo1zrkv/Logo_Intel_MQ_01.png)
+![IntelMQ](http://s29.postimg.org/uqzlat7bb/Logo_Intel_MQ.png)
 
 IntelMQ is a solution for CERTs to process data feeds, pastebins, tweets throught a message queue.
 
