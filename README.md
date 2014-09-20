@@ -1,4 +1,4 @@
-![IntelMQ](http://s9.postimg.org/g2mzsqhjz/Logo_Intel_MQ.png)
+![IntelMQ](http://s28.postimg.org/r2av18a3x/Logo_Intel_MQ.png)
 
 IntelMQ is a solution for CERTs to process data feeds, pastebins, tweets throught a message queue.
 
@@ -7,11 +7,10 @@ IntelMQ is a solution for CERTs to process data feeds, pastebins, tweets through
 
 1. [How to Install](#how-to-install)
 2. [Goals](#goals)
-3. [System](#system)
-4. [IntelMQ Manager](#control-platform)
-5. [Incident Handling Automation Project](#incident-handling-automation-project)
-6. [Data Harmonization](#data-harmonization)
-7. [Licence](#licence)
+3. [IntelMQ Manager](#control-platform)
+4. [Incident Handling Automation Project](#incident-handling-automation-project)
+5. [Data Harmonization](#data-harmonization)
+6. [Licence](#licence)
 
 
 <a name="how-to-install"></a>
@@ -38,21 +37,6 @@ See [UserGuide](https://github.com/certtools/intelmq/blob/master/docs/UserGuide.
 
 * Provide easy communication with other systems via HTTP RESTFUL API
 * Use messages tags: report, abuse-event, pastebin, tweet
-
-
-<a name="system"></a>
-## System
-
-
-### Main Components
-Redis is used as:
-* message queue for pipeline
-* memcache for bots
-
-
-### Code Architecture
-
-![Code Architecture](http://s28.postimg.org/5wmak1upp/intelmq_arch_schema.png)
 
 
 <a name="control-platform"></a>
