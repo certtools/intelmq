@@ -104,7 +104,9 @@ IntelMQ has a tool called IntelMQ Manager that gives to user a easy way to confi
 **Syntax:**
 
 ```
-# intelmqctl --h
+# su -s /bin/bash - intelmq
+
+$ intelmqctl --h
 usage: 
         intelmqctl --bot [start|stop|restart|status] --id=cymru-expert
         intelmqctl --botnet [start|stop|restart|status]
@@ -133,7 +135,7 @@ description: intelmqctl is the tool to control intelmq system
 $ tail -f /var/log/intelmq/*
 ```
 
-### Reset Pipeline and Cache
+### Reset Pipeline and Cache (be careful)
 ```
 $ redis-cli FLUSHDB
 $ redis-cli FLUSHALL
