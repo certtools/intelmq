@@ -3,7 +3,7 @@
 IntelMQ is a solution for CERTs to process data feeds, pastebins, tweets throught a message queue.
 
 
-**Table of Contents**
+## Table of Contents
 
 1. [How to Install](#how-to-install)
 2. [Goals](#goals)
