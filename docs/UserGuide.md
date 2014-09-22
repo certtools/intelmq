@@ -1,3 +1,8 @@
+# Requirements
+
+The following instructions assume:
+* Debian or Ubuntu Operatin System
+
 # Installation
 
 ## Install Dependencies
