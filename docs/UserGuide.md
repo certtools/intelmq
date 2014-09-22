@@ -4,8 +4,6 @@
 2. [Installation](#installation)
 3. [Upgrade](#upgrade)
 4. [Management](#management)
-5. [Data Harmonization](#data-harmonization)
-6. [Licence](#licence)
 
 
 <a name="requirements"></a>
