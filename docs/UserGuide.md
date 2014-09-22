@@ -1,9 +1,21 @@
+**Table of Contents**
+
+1. [Requirements](#requirements)
+2. [Installation](#installation)
+3. [Upgrade](#upgrade)
+4. [Management](#management)
+5. [Data Harmonization](#data-harmonization)
+6. [Licence](#licence)
+
+
+<a name="requirements"></a>
 # Requirements
 
 The following instructions assume:
 * Debian or Ubuntu Operatin System
 
 
+<a name="installation"></a>
 # Installation
 
 ### Install Dependencies
@@ -35,6 +47,7 @@ chown -R intelmq.intelmq /var/log/intelmq
 
 ```
 
+<a name="upgrade"></a>
 # Upgrade
 
 ### Stop IntelMQ and Backup
@@ -66,8 +79,10 @@ mv /etc/intelmq/runtime.conf.bk /etc/intelmq/runtime.conf
 mv /etc/intelmq/pipeline.conf.bk /etc/intelmq/pipeline.conf
 ```
 
+<a name="management"></a>
+# Management
 
-# How it Works
+### How it Works
 
 Before start running all bots, user should know the system details that will help configure and start bots.
 
@@ -77,13 +92,12 @@ Before start running all bots, user should know the system details that will hel
 
 * Global configuration for intelmq is at file '/etc/intelmq/system.conf'. Please note that logger in DEBUG will write in logs all bots parameteres configured, including passwords.
 
-## Management
 
-#### Web interface
+### Web interface
 
 IntelMQ has a tool called IntelMQ Manager that gives to user a easy way to configure all pipeline with bots that your CERT needs. Click [here](https://github.com/certtools/intelmq-manager).
 
-#### Command-line interface
+### Command-line interface
 
 **Syntax:**
 
@@ -111,24 +125,24 @@ description: intelmqctl is the tool to control intelmq system
 ```
 
 
-## Utilities
+### Utilities
 
-### Monitoring Logs
+#### Monitoring Logs
 
 ```
 $ tail -f /var/log/intelmq/*
 ```
 
-### Reset Pipeline and Cache (be careful)
+#### Reset Pipeline and Cache (be careful)
 ```
 $ redis-cli FLUSHDB
 $ redis-cli FLUSHALL
 ```
 
 
-# Additional Information
+### Additional Information
 
-### Perfomance Tests
+#### Perfomance Tests
 
 Somes tests have been made with a virtual machine with the following specifications:
 * CPU: 1 core dedicated from i7 processor
