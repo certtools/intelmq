@@ -39,6 +39,7 @@ Source: https://gist.github.com/nghuuphuoc/7801123
 ## Install IntelMQ
 
 ```
+useradd -M -U -s /bin/bash intelmq
 pip install git+https://<your_user_account>@github.com/certtools/intelmq.git
 
 chmod -R 770 /etc/intelmq/
