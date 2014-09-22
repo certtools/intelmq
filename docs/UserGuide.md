@@ -3,45 +3,19 @@
 The following instructions assume:
 * Debian or Ubuntu Operatin System
 
+
 # Installation
 
-## Install Dependencies
+### Install Dependencies
 
-### Debian-based
 ```
 apt-get install python-pip git
 apt-get install build-essential python-dev
 apt-get install redis-server
 ```
 
-### RedHat-based
 
-**Note:** Install EPEL Repository
-```
-yum install git
-yum install gcc python-devel
-yum install centos-release-SCL
-yum install python27
-scl enable python27 bash
-easy_install pip
-echo "scl enable python27 bash" >> /opt/intelmq/.bashrc
-
-rpm -Uvh http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
-rpm -Uvh http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
-yum --enablerepo=remi,remi-test install redis
-
-sudo nano /etc/sysctl.conf
-     vm.overcommit_memory=1
- 
-sysctl -w fs.file-max=100000
-
-chkconfig --add redis
-chkconfig --level 345 redis on
-service redis start/stop/restart
-```
-Source: https://gist.github.com/nghuuphuoc/7801123
-
-## Install IntelMQ
+### Install IntelMQ
 
 ```
 useradd -M -U -s /bin/bash intelmq
@@ -61,7 +35,9 @@ chown -R intelmq.intelmq /var/log/intelmq
 
 ```
 
-## Update IntelMQ
+# Upgrade
+
+### Stop IntelMQ and Backup
 
 * Make sure that your IntelMQ system is completely stopped.
 * Create a backup of your configurations.
@@ -73,11 +49,13 @@ cp /etc/intelmq/runtime.conf /etc/intelmq/runtime.conf.bk
 cp /etc/intelmq/pipeline.conf /etc/intelmq/pipeline.conf.bk
 ```
 
-* Upgrade IntelMQ
+### Upgrade
 
 ```
 pip install --upgrade git+https://<your_user_account>@github.com/certtools/intelmq.git
 ```
+
+### Restore Configurations
 
 * Apply your configurations backup.
 
@@ -89,7 +67,7 @@ mv /etc/intelmq/pipeline.conf.bk /etc/intelmq/pipeline.conf
 ```
 
 
-## How it Works
+# How it Works
 
 Before start running all bots, user should know the system details that will help configure and start bots.
 
@@ -148,7 +126,7 @@ $ redis-cli FLUSHALL
 ```
 
 
-## Additional Information
+# Additional Information
 
 ### Perfomance Tests
 
