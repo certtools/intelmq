@@ -105,7 +105,7 @@ IntelMQ has a tool called IntelMQ Manager that gives to user a easy way to confi
 **Syntax:**
 
 ```
-# su -s /bin/bash - intelmq
+# su - intelmq
 
 $ intelmqctl --h
 usage: 
