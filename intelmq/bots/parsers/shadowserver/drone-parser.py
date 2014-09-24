@@ -57,7 +57,10 @@ class ShadowServerDroneParserBot(Bot):
                         continue
                     
                     if key is "malware":
-                        value = value.strip().lower()                    
+                        value = value.strip().lower()
+                        
+                    if key == "source_time":
+                        value += " UTC"
                     
                     event.add(key, value)
             
