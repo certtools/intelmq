@@ -19,7 +19,7 @@ Redis is used as:
 
 
 <a name="create"></a>
-## Create New Bot
+## Create Bot
 
 #### Template
 
@@ -50,7 +50,7 @@ if __name__ == "__main__":
     bot.start()
 ```
 
-** Examples **
+**Examples**
 
 * Check [taxonomy](https://github.com/certtools/intelmq/blob/master/intelmq/bots/experts/taxonomy/taxonomy.py) expert bot
 * Check [arbor](https://github.com/certtools/intelmq/blob/master/intelmq/bots/parsers/arbor/parser.py) parser bot
