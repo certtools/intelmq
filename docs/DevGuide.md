@@ -1,20 +1,27 @@
+**Table of Contents**
+
+1. [System](#system)
+2. [Create Bot](#create)
+
+<a name="system"></a>
 ## System
 
 
-### Main Components
+#### Main Components
 Redis is used as:
 * message queue for pipeline
 * memcache for bots
 
 
-### Code Architecture
+#### Code Architecture
 
 ![Code Architecture](http://s28.postimg.org/5wmak1upp/intelmq_arch_schema.png)
 
 
-## How to write bots
+<a name="create"></a>
+## Create New Bot
 
-### Template
+#### Template
 
 ```
 from intelmq.lib.bot import Bot, sys
@@ -43,15 +50,11 @@ if __name__ == "__main__":
     bot.start()
 ```
 
-### Examples
+** Examples **
 
 * Check [taxonomy](https://github.com/certtools/intelmq/blob/master/intelmq/bots/experts/taxonomy/taxonomy.py) expert bot
 * Check [arbor](https://github.com/certtools/intelmq/blob/master/intelmq/bots/parsers/arbor/parser.py) parser bot
 
-### Configure IntelMQ
+#### Configure IntelMQ
 
 In the end, the new information about the new bot should be added to BOTS file located at intelmq/intelmq/bots on repository.
-
-### TODO
-* How to use send/receive/acknowledge messages methods
-* some code write rules....
