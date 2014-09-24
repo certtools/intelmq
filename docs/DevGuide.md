@@ -48,7 +48,9 @@ if __name__ == "__main__":
 * Check [taxonomy](https://github.com/certtools/intelmq/blob/master/intelmq/bots/experts/taxonomy/taxonomy.py) expert bot
 * Check [arbor](https://github.com/certtools/intelmq/blob/master/intelmq/bots/parsers/arbor/parser.py) parser bot
 
+### Configure IntelMQ
 
+In the end, the new information about the new bot should be added to BOTS file located at intelmq/intelmq/bots on repository.
 
 ### TODO
 * How to use send/receive/acknowledge messages methods
