@@ -8,11 +8,11 @@ class Pipeline():
         self.db = db
         
         self.redis = redis.Redis(
-                          host = self.host,
-                          port = int(self.port),
-                          db = self.db,
-                          socket_timeout = 50000
-                        )
+                                 host = self.host,
+                                 port = int(self.port),
+                                 db = self.db,
+                                 socket_timeout = 50000
+                                )
 
     def queues(self, source_queue, destination_queues):
         if destination_queues and type(destination_queues) is not list:
