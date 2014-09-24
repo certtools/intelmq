@@ -41,7 +41,10 @@ class ShadowServerChargenParserBot(Bot):
                     value = value.strip()
                     
                     if key is "__IGNORE__" or key is "__TDB__":
-                        continue                  
+                        continue
+                    
+                    if key == "source_time":
+                        value += " UTC"
                     
                     event.add(key, value)
             
