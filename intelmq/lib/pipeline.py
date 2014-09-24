@@ -35,11 +35,9 @@ class Pipeline():
             self.redis.rpush(destination_queue, message)
 
     def receive(self):
-        while  True:
-            try:
-                return self.redis.brpoplpush(self.source_queue, self.internal_queue, 0)
-            except redis.TimeoutError:
-                self.connect()
+        if self.redis.llen(self.internal_queue) > 0:
+            return self.redis.lindex(self.internal_queue, -1)
+        return self.redis.brpoplpush(self.source_queue, self.internal_queue, 0)
         
     def acknowledge(self):
         return self.redis.rpop(self.internal_queue)
@@ -50,13 +48,9 @@ class Pipeline():
             qdict[queue] = self.redis.llen(queue)
         return qdict
 
-# -----------------------
-# Receive
-# B RPOP LPUSH  source_queue  ->  source_queue_internal
-# -----------------------
-# Send
-# LPUSH          object        ->  destination_queue
-# -----------------------
-# Acknowledge
-# RPOP           object        <-  source_queue_internal
-# -----------------------
+
+# Algorithm
+# ---------
+# [Receive]     B RPOP LPUSH   source_queue ->  internal_queue
+# [Send]        LPUSH          message      ->  destination_queue
+# [Acknowledge] RPOP           message      <-  internal_queue
