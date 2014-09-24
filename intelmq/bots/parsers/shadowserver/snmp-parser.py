@@ -44,6 +44,9 @@ class ShadowServerSNMPParserBot(Bot):
                     if key is "__IGNORE__" or key is "__TDB__":
                         continue
                     
+                    if key == "source_time":
+                        value += " UTC"
+                    
                     event.add(key, value)
             
                 event.add('feed', 'shadowserver-snmp')
