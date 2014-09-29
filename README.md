@@ -1,29 +1,8 @@
 ![IntelMQ](http://s28.postimg.org/r2av18a3x/Logo_Intel_MQ.png)
 
-IntelMQ is a solution for CERTs to process data feeds, pastebins, tweets throught a message queue.
+IntelMQ is a solution for CERTs for collecting and processing security feeds, pastebins, tweets using a message queue protocol. It’s a community driven initiative which was conceptually designed by European CERTs during several InfoSec events. Its main goal is to give to incident responders an easy way to collect & process threat intelligence thus improving the incident handling processes of CERTs.
 
-
-## Table of Contents
-
-1. [How to Install](#how-to-install)
-2. [Goals](#goals)
-3. [IntelMQ Manager](#control-platform)
-4. [Incident Handling Automation Project](#incident-handling-automation-project)
-5. [Data Harmonization](#data-harmonization)
-6. [Licence](#licence)
-
-
-<a name="how-to-install"></a>
-## How to Install
-
-See [UserGuide](https://github.com/certtools/intelmq/blob/master/docs/UserGuide.md).
-
-
-<a name="goals"></a>
-## Goals
-
-####  Version 1 (current)
-
+IntelMQ's design was influenced by (AbuseHelper)[https://bitbucket.org/clarifiednetworks/abusehelper], however it was re-written from scratch and aims at:
 * Reduce the complexity of system administration
 * Reduce the complexity of writing new bots for new data feeds
 * Reduce the probability of events lost in all process with persistence functionality (even system crash)
@@ -32,11 +11,22 @@ See [UserGuide](https://github.com/certtools/intelmq/blob/master/docs/UserGuide.
 * Integration of the existing tools (AbuseHelper, CIF, etc...)
 * Provide easy way to store data into Log Collectors like ElasticSearch, Splunk, etc...
 * Provide easy way to create your own black-lists
-
-####  Version 2
-
 * Provide easy communication with other systems via HTTP RESTFUL API
-* Use messages tags: report, abuse-event, pastebin, tweet
+
+
+## Table of Contents
+
+1. [How to Install](#how-to-install)
+2. [IntelMQ Manager](#control-platform)
+3. [Incident Handling Automation Project](#incident-handling-automation-project)
+4. [Data Harmonization](#data-harmonization)
+5. [Licence](#licence)
+
+
+<a name="how-to-install"></a>
+## How to Install
+
+See [UserGuide](https://github.com/certtools/intelmq/blob/master/docs/UserGuide.md).
 
 
 <a name="control-platform"></a>
