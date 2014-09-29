@@ -4,7 +4,7 @@
 2. [Installation](#installation)
 3. [Upgrade](#upgrade)
 4. [Management](#management)
-5. [FAQ](#faq)
+5. [Frequently Asked Questions](#faq)
 
 
 <a name="requirements"></a>
