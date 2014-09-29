@@ -23,12 +23,12 @@ class CERTEUMaliciousURLsParserBot(Bot):
                 for key, value in zip(columns, row):
                     value = value.strip()
                     
-                    if value != "N/A" and key != "__IGNORE__":
-                        event.add(key, value)
-                        
                     if key == "source_time":
                         value += " UTC"
                     
+                    if value != "N/A" and key != "__IGNORE__":
+                        event.add(key, value)
+                        
                 event.add('feed', 'cert-eu')
                 event.add('type', 'malware')
 
