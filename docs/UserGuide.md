@@ -153,6 +153,6 @@ The entire solution didnt have any problem handling 2.000.000 queued events in m
 
 
 <a name="faq"></a>
-# FAQ
+# Frequently Asked Questions
 
 Consult the [FAQ](https://github.com/certtools/intelmq/blob/master/docs/FAQ.md) if you encountered any problem.
