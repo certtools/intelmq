@@ -1,4 +1,4 @@
-### Imbox Module Error
+## Imbox Module Error
 
 **Error:**
 ```
@@ -22,7 +22,7 @@ Replace the following line in the file '/usr/local/lib/python2.7/dist-packages/i
 self.connection.uid('STORE', uid, '+FLAGS', '\\Seen')
 ```
 
-to:
+To:
 
 ```
 self.connection.uid('STORE', uid, '+FLAGS', '(\\Seen)')
