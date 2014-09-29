@@ -367,13 +367,16 @@ class IntelMQContoller():
         extended_message = ''
         last_message = {}
         added_messages = 0
+        line_number = 0
         
         for line in bot_log_file:
+            line_number += 1
             splitted_line = line.split(' - ')
             
             if len(splitted_line) >= 4:
                 if splitted_line[1] == bot_id:
                     log_message = {
+                        'line_number': line_number,
                         'date': splitted_line[0],
                         'bot_id': splitted_line[1],
                         'log_level': splitted_line[2],
