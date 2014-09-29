@@ -8,8 +8,8 @@ IntelMQ's design was influenced by [AbuseHelper](https://bitbucket.org/clarified
 * Reduce the probability of events lost in all process with persistence functionality (even system crash)
 * Use and improve the existing Data Harmonization Ontology
 * Use JSON format for all messages
-* Integration of the existing tools (AbuseHelper, CIF, etc...)
-* Provide easy way to store data into Log Collectors like ElasticSearch, Splunk, etc...
+* Integration of the existing tools (AbuseHelper, CIF)
+* Provide easy way to store data into Log Collectors like ElasticSearch, Splunk
 * Provide easy way to create your own black-lists
 * Provide easy communication with other systems via HTTP RESTFUL API
 
