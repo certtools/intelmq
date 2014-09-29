@@ -1,6 +1,6 @@
 ![IntelMQ](http://s28.postimg.org/r2av18a3x/Logo_Intel_MQ.png)
 
-IntelMQ is a solution for CERTs for collecting and processing security feeds, pastebins, tweets using a message queue protocol. It’s a community driven initiative which was conceptually designed by European CERTs during several InfoSec events. Its main goal is to give to incident responders an easy way to collect & process threat intelligence thus improving the incident handling processes of CERTs.
+**IntelMQ** is a solution for CERTs for collecting and processing security feeds, pastebins, tweets using a message queue protocol. It’s a community driven initiative which was conceptually designed by European CERTs during several InfoSec events. Its main goal is to give to incident responders an easy way to collect & process threat intelligence thus improving the incident handling processes of CERTs.
 
 IntelMQ's design was influenced by [AbuseHelper](https://bitbucket.org/clarifiednetworks/abusehelper), however it was re-written from scratch and aims at:
 * Reduce the complexity of system administration
