@@ -25,6 +25,9 @@ class CERTEUMaliciousURLsParserBot(Bot):
                     
                     if value != "N/A" and key != "__IGNORE__":
                         event.add(key, value)
+                        
+                    if key == "source_time":
+                        value += " UTC"
                     
                 event.add('feed', 'cert-eu')
                 event.add('type', 'malware')
