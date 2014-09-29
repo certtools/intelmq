@@ -27,3 +27,27 @@ To:
 ```
 self.connection.uid('STORE', uid, '+FLAGS', '(\\Seen)')
 ```
+
+
+## Imbox Module Error
+
+**Error:**
+```
+Pipeline connection failed (ValueError('astimezone() cannot be applied to a naive datetime',))
+```
+
+**Solution:**
+
+Every timestamp ('source_time' or 'observation_time') must have a timezone.
+
+Bad Example:
+```
+2014-06-25 00:00:00
+```
+
+Good Example:
+```
+2014-06-25 00:00:00 UTC
+```
+
+Consult this example how ShadowServer SNMP Bot solve the problem. [(link)](https://github.com/certtools/intelmq/blob/master/intelmq/bots/parsers/shadowserver/snmp-parser.py#L47)
