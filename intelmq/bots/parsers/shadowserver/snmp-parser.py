@@ -44,6 +44,7 @@ class ShadowServerSNMPParserBot(Bot):
                     if key is "__IGNORE__" or key is "__TDB__":
                         continue
                     
+                    # set timezone explicitly to UTC as it is absent in the input
                     if key == "source_time":
                         value += " UTC"
                     
