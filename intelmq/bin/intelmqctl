@@ -360,7 +360,11 @@ class IntelMQContoller():
             basepath += '/'
             
         bot_log_path = basepath + bot_id + '.log'
-        bot_log_file = open(bot_log_path, 'r')
+        
+        if os.path.isfile(bot_log_path):
+            bot_log_file = open(bot_log_path, 'r')
+        else:
+            return []
         
         messages = list()
 
