@@ -59,6 +59,7 @@ class ShadowServerDroneParserBot(Bot):
                     if key is "malware":
                         value = value.strip().lower()
                         
+                    # set timezone explicitly to UTC as it is absent in the input
                     if key == "source_time":
                         value += " UTC"
                     
