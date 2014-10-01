@@ -72,7 +72,7 @@ class Message(object):
     def from_unicode(message_string):
         message = json.loads(message_string)
         
-        import lib.message
+        import intelmq.lib.message
         message_class = getattr(lib.message, message['_type'])
         
         return message_class(message)
