@@ -8,10 +8,9 @@ from intelmq.lib.event import Event
 from intelmq.lib.pipeline import Pipeline
 from intelmq.lib.utils import decode, log
 
-
 SYSTEM_CONF_FILE = "/etc/intelmq/system.conf"
 PIPELINE_CONF_FILE = "/etc/intelmq/pipeline.conf"
-BOTS_CONF_FILE = "/etc/intelmq/runtime.conf"
+RUNTIME_CONF_FILE = "/etc/intelmq/runtime.conf"
 DEFAULT_LOGGING_PATH = "/var/log/intelmq/"
 DEFAULT_LOGGING_LEVEL = "INFO"
 
@@ -96,10 +95,10 @@ class Bot(object):
     def load_configurations(self):
         self.parameters = Parameters()
 
-        with open(BOTS_CONF_FILE, 'r') as fpconfig:
+        with open(RUNTIME_CONF_FILE, 'r') as fpconfig:
             config = json.loads(fpconfig.read())
         
-        self.logger.debug("Loading configuration in %s section from '%s' file" % (self.bot_id, BOTS_CONF_FILE))
+        self.logger.debug("Loading configuration in %s section from '%s' file" % (self.bot_id, RUNTIME_CONF_FILE))
         
         if self.bot_id in config.keys():
             for option, value in config[self.bot_id].iteritems():
