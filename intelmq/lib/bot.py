@@ -170,6 +170,7 @@ class Bot(object):
         message = self.current_message.decode('utf-8')
         
         #try:    # Event Object
+        self.logger.info(message)
         return Event.from_unicode(message)
         #except: # Report Object
         #    return message

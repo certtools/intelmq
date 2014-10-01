@@ -73,7 +73,7 @@ class Message(object):
         message = json.loads(message_string)
         
         import intelmq.lib.message
-        message_class = getattr(lib.message, message['_type'])
+        message_class = getattr(intelmq.lib.message, message['_type'])
         
         return message_class(message)
     
