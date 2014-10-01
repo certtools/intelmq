@@ -12,7 +12,8 @@ from intelmq.lib.utils import decode, log
 SYSTEM_CONF_FILE = "/etc/intelmq/system.conf"
 PIPELINE_CONF_FILE = "/etc/intelmq/pipeline.conf"
 BOTS_CONF_FILE = "/etc/intelmq/runtime.conf"
-LOGS_PATH = "/var/log/intelmq/"
+DEFAULT_LOGGING_PATH = "/var/log/intelmq/"
+DEFAULT_LOGGING_LEVEL = "INFO"
 
 
 class Bot(object):
@@ -110,8 +111,15 @@ class Bot(object):
         with open(SYSTEM_CONF_FILE, 'r') as fpconfig:
             config = json.loads(fpconfig.read())
 
-        loglevel = config['logging_level']
-        return log(LOGS_PATH, self.bot_id, loglevel)
+        loglevel = DEFAULT_LOGGING_LEVEL
+        if 'logging_level' in config:
+            loglevel = config['logging_level']
+        
+        logpath = DEFAULT_LOGGING_PATH
+        if 'logging_path' in config:
+            logpath = config['logging_path']
+
+        return log(logpath, self.bot_id, loglevel)
 
 
     def load_pipeline(self):
