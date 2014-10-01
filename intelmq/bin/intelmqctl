@@ -355,8 +355,8 @@ class IntelMQContoller():
         pass
         
     def read_bot_log(self, bot_id, log_level, number_of_lines):
-        basepath = self.system['log_path']
-        if not self.system['log_path'].endswith('/'):
+        basepath = self.system['logging_path']
+        if not self.system['logging_path'].endswith('/'):
             basepath += '/'
             
         bot_log_path = basepath + bot_id + '.log'
