@@ -11,7 +11,7 @@ apt-get install redis-server
 
 echo "Installing IntelMQ"
 useradd -M -U -s /bin/bash intelmq
-pip install git+https://$1@github.com/mauroasilva/intelmq.git
+pip install git+https://$1@github.com/certtools/intelmq.git
 
 echo "Fixing folder permissions"
 chmod -R 770 /etc/intelmq/
