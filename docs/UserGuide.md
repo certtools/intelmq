@@ -3,7 +3,7 @@
 1. [Requirements](#requirements)
 2. [Installation](#installation)
 3. [Upgrade](#upgrade)
-4. [Upgrade](#uninstall)
+4. [Uninstall](#uninstall)
 5. [Management](#management)
 6. [Frequently Asked Questions](#faq)
 
