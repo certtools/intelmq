@@ -4,7 +4,7 @@ import json
 import time
 import ConfigParser
 
-from intelmq.lib.message import Event
+from intelmq.lib.message import Message
 from intelmq.lib.pipeline import Pipeline
 from intelmq.lib.utils import decode, log
 
@@ -171,7 +171,7 @@ class Bot(object):
         
         #try:    # Event Object
         self.logger.info(message)
-        return Event.from_unicode(message)
+        return Message.from_unicode(message)
         #except: # Report Object
         #    return message
 

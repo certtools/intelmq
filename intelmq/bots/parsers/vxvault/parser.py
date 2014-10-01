@@ -1,12 +1,13 @@
 import urlparse
 from intelmq.lib.bot import Bot, sys
-from intelmq.lib.message import Event
+from intelmq.lib.message import Event, Report
 from intelmq.bots import utils
 
 class VXVaultParserBot(Bot):
 
     def process(self):
-        report = self.receive_message()
+        report_message = self.receive_message()
+        report = report_message.value('content')
 
         if report:
             for row in report.split('\n'):

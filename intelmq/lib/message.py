@@ -105,5 +105,14 @@ class Message(object):
     def __str__(self):
         return str(self.message)
     
+    
 class Event(Message):
     message_type = 'Event'
+    
+    
+class Report(Message):
+    message_type = 'Report'
+    
+    #TODO: Modificar todos os parsers e collectors
+
+

@@ -5,7 +5,8 @@ from intelmq.bots import utils
 class DragonResearchGroupVNCParserBot(Bot):
 
     def process(self):
-        report = self.receive_message()
+        report_message = self.receive_message()
+        report = report_message.value('content')
 
         if report:
             for row in report.split('\n'):

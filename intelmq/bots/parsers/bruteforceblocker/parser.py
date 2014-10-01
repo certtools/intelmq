@@ -6,7 +6,8 @@ import re
 class BruteForceBlockerParserBot(Bot):
 
     def process(self):
-        report = self.receive_message()
+        report_message = self.receive_message()
+        report = report_message.value('content')
 
         if report:
             regex_ip = "^[^ \t]+"
