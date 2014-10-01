@@ -3,7 +3,7 @@ if [ "$#" -ne 1 ]; then
     exit
 fi
 
-pip install --upgrade git+https://$1@github.com/mauroasilva/intelmq.git
+pip install --upgrade git+https://$1@github.com/certtools/intelmq.git
 
 echo "Fixing folder permissions"
 chmod -R 770 /etc/intelmq/
