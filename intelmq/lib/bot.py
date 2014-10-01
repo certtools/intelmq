@@ -151,8 +151,7 @@ class Bot(object):
             self.logger.warning("Empty message found.")
             return False
         
-        if isinstance(message, Event):
-            message = unicode(message) # convert Event Object to string (UTF-8)
+        message = unicode(message) # convert Event Object to string (UTF-8)
             
         self.message_counter += 1
         if self.message_counter % 500 == 0:
