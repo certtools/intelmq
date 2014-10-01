@@ -1,6 +1,6 @@
 from datetime import datetime
 from intelmq.lib.bot import Bot, sys
-from intelmq.lib.event import Event
+from intelmq.lib.message import Event
 from intelmq.bots import utils
 
 class OpenBLParserBot(Bot):

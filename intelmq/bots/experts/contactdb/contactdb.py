@@ -13,7 +13,7 @@ import sys
 
 from intelmq.lib.bot import *
 from intelmq.lib.utils import *
-from intelmq.lib.event import *
+from intelmq.lib.message import *
 
 CONTACTDB_LOCATION = 'http://contactdb.cert.pt:8000/'
 MINIMUM_BGP_PREFIX_IPV4 = 24
