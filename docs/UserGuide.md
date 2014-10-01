@@ -67,12 +67,6 @@ cp /etc/intelmq/pipeline.conf /etc/intelmq/pipeline.conf.bk
 pip install --upgrade git+https://<your_user_account>@github.com/certtools/intelmq.git
 ```
 
-### Uninstall
-
-```
-pip uninstall intelmq
-```
-
 ### Restore Configurations
 
 * Apply your configurations backup.
@@ -83,6 +77,15 @@ mv /etc/intelmq/startup.conf.bk /etc/intelmq/startup.conf
 mv /etc/intelmq/runtime.conf.bk /etc/intelmq/runtime.conf
 mv /etc/intelmq/pipeline.conf.bk /etc/intelmq/pipeline.conf
 ```
+
+
+# Uninstall
+
+<a name="uninstall"></a>
+```
+pip uninstall intelmq
+```
+
 
 <a name="management"></a>
 # Management
