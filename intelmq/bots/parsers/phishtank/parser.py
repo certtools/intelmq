@@ -1,7 +1,7 @@
 import unicodecsv
 from cStringIO import StringIO
 from intelmq.lib.bot import Bot, sys
-from intelmq.lib.event import Event
+from intelmq.lib.message import Event
 from intelmq.lib.utils import encode
 from intelmq.bots import utils
 
