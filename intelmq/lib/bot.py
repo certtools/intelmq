@@ -4,7 +4,7 @@ import json
 import time
 import ConfigParser
 
-from intelmq.lib.event import Event
+from intelmq.lib.message import Event
 from intelmq.lib.pipeline import Pipeline
 from intelmq.lib.utils import decode, log
 
