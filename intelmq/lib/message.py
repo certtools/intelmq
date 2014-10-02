@@ -2,8 +2,7 @@ import json
 import hashlib
 
 class Message(object):
-    message_type = 'Message'
-    
+
     def __init__(self, message=None):
         if message:
             self.message = message

@@ -168,7 +168,6 @@ class Bot(object):
         
         message = self.current_message.decode('utf-8')
         
-        self.logger.info(message)
         return Message.from_unicode(message)
 
 
