@@ -68,7 +68,7 @@ class Message(object):
     @staticmethod
     def from_dict(message_dict):
         import intelmq.lib.message
-        message_class = getattr(intelmq.lib.message, message.value('_type'))
+        message_class = getattr(intelmq.lib.message, message_dict['_type'])
         
         return message_class(message_dict)
     
