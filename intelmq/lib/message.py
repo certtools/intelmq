@@ -2,13 +2,14 @@ import json
 import hashlib
 
 class Message(object):
+    message_type = 'Message'
+    
     def __init__(self, message=None):
         if message:
             self.message = message
         else:
             self.message = dict()
-            
-        self.message['_type'] = self.message_type
+            self.add('_type', self.message_type)
     
     
     def add(self, key, value):
@@ -64,18 +65,24 @@ class Message(object):
         return dict(self.message)
     
     
+    @staticmethod
+    def from_dict(message_dict):
+        import intelmq.lib.message
+        message_class = getattr(intelmq.lib.message, message.value('_type'))
+        
+        return message_class(message_dict)
+    
+    
     def to_unicode(self):
         return unicode(json.dumps(self.message))
     
     
     @staticmethod
     def from_unicode(message_string):
-        message = json.loads(message_string)
+        message_dict = json.loads(message_string)
         
-        import intelmq.lib.message
-        message_class = getattr(intelmq.lib.message, message['_type'])
-        
-        return message_class(message)
+        return Message.from_dict(message_dict)
+    
     
     def __hash__(self):
         evhash = hashlib.sha1()
