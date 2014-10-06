@@ -7,9 +7,10 @@ class OpenBLParserBot(Bot):
 
     def process(self):
         report = self.receive_message()
+        report_content = report.value('content')
 
-        if report:
-            for row in report.split('\n'):
+        if report_content:
+            for row in report_content.split('\n'):
                 
                 row = row.strip()              
 

@@ -1,20 +1,21 @@
 import json
 import hashlib
 
-class Event(object):
+class Message(object):
 
-    def __init__(self, event=None):
-        if event:
-            self.event = event
+    def __init__(self, message=None):
+        if message:
+            self.message = message
         else:
-            self.event = dict()
-
-
+            self.message = dict()
+            self.add('_type', self.message_type)
+    
+    
     def add(self, key, value):
-        if not value or key in self.event:
+        if not value or key in self.message:
             return False
         
-        self.event[key] = value
+        self.message[key] = value
         return True
     
     
@@ -22,80 +23,99 @@ class Event(object):
         if not value:
             return False
         
-        self.event[key] = value
+        self.message[key] = value
         return True
-
-
+    
+    
     def discard(self, key, value):
         self.clear(key)
         
-
+    
     def clear(self, key):
-        if key in self.event:
-            return self.event.pop(key)
+        if key in self.message:
+            return self.message.pop(key)
         else:
             return None
         
         
     def value(self, key):
-        if key in self.event:
-            return self.event[key]
+        if key in self.message:
+            return self.message[key]
         else:
             return None
         
         
     def keys(self):
-        return self.event.keys()
-
-
+        return self.message.keys()
+    
+    
     def items(self):
-        return self.event.items()
-
-
+        return self.message.items()
+    
+    
     def contains(self, key):
-        if key in self.event:
-            return self.event[key]
+        if key in self.message:
+            return self.message[key]
         else:
             return None
-
-
+    
+    
     def to_dict(self):
-        return dict(self.event)
-
-
-    def to_unicode(self):
-        return unicode(json.dumps(self.event))
+        return dict(self.message)
     
-
+    
     @staticmethod
-    def from_unicode(event_string):
-        return Event(json.loads(event_string))
+    def from_dict(message_dict):
+        import intelmq.lib.message
+        message_class = getattr(intelmq.lib.message, message_dict['_type'])
+        
+        return message_class(message_dict)
     
-
+    
+    def to_unicode(self):
+        return unicode(json.dumps(self.message))
+    
+    
+    @staticmethod
+    def from_unicode(message_string):
+        message_dict = json.loads(message_string)
+        
+        return Message.from_dict(message_dict)
+    
+    
     def __hash__(self):
         evhash = hashlib.sha1()
-
+    
         for key, value in sorted(self.items()):
             evhash.update(key.encode("utf-8"))
             evhash.update("\xc0")
             evhash.update(value.encode("utf-8"))
             evhash.update("\xc0")
-
-        return int(evhash.hexdigest(), 16) # FIXME: the int stuff should be done by cache
-        #return hash(self.event)
-
-
-    def __eq__(self, event2):
-        return self.event == event2
-
-
+        return int(evhash.hexdigest(), 16)
+    
+        # FIXME: the int stuff should be done by cache
+        #return hash(self.message)
+    
+    
+    def __eq__(self, message2):
+        return self.message == message2.message
+    
+    
     def __unicode__(self):
         return self.to_unicode()
-
-
+    
+    
     def __repr__(self):
-        return repr(self.event)
-
-
+        return repr(self.message)
+    
+    
     def __str__(self):
-        return str(self.event)
+        return str(self.message)
+    
+    
+class Event(Message):
+    message_type = 'Event'
+    
+    
+class Report(Message):
+    message_type = 'Report'

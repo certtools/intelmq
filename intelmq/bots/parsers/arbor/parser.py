@@ -6,30 +6,33 @@ class ArborParserBot(Bot):
 
     def process(self):
         report = self.receive_message()
+        report_content = report.value('content')
 
-        if report:
-            for row in report.split('\n'):
-                row = row.strip()
+        if not report_content:
+            self.acknowledge_message()
+            
+        for row in report_content.split('\n'):
+            row = row.strip()
 
-                if len(row) == 0 or row.startswith('other'):
-                    continue
+            if len(row) == 0 or row.startswith('other'):
+                continue
 
-                row = row.split()
-                event = Event()
+            row = row.split()
+            event = Event()
 
-                columns = ["source_ip"]
-                for key, value in zip(columns, row):
-                    event.add(key, value)
-                    
-                event.add('feed', 'arbor')
-                event.add('feed_url', 'http://atlas-public.ec2.arbor.net/public/ssh_attackers')
-                event.add('type', 'brute-force')
-
-                event = utils.generate_source_time(event, "source_time")
-                event = utils.generate_observation_time(event, "observation_time")
-                event = utils.generate_reported_fields(event)
+            columns = ["source_ip"]
+            for key, value in zip(columns, row):
+                event.add(key, value)
                 
-                self.send_message(event)
+            event.add('feed', 'arbor')
+            event.add('feed_url', 'http://atlas-public.ec2.arbor.net/public/ssh_attackers')
+            event.add('type', 'brute-force')
+
+            event = utils.generate_source_time(event, "source_time")
+            event = utils.generate_observation_time(event, "observation_time")
+            event = utils.generate_reported_fields(event)
+            
+            self.send_message(event)
         self.acknowledge_message()
 
 if __name__ == "__main__":

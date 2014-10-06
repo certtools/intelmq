@@ -8,9 +8,10 @@ class ShadowServerDroneParserBot(Bot):
 
     def process(self):
         report = self.receive_message()
+        report_content = report.value('content')
 
-        if report:
-            report = report.strip()
+        if report_content:
+            report_content = report_content.strip()
 
             columns = {
                 "timestamp": "source_time",
@@ -39,7 +40,7 @@ class ShadowServerDroneParserBot(Bot):
                 "id": "__TBD__"
             }
             
-            rows = csv.DictReader(StringIO.StringIO(report))
+            rows = csv.DictReader(StringIO.StringIO(report_content))
             
             for row in rows:
                 event = Event()

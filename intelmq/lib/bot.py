@@ -4,7 +4,7 @@ import json
 import time
 import ConfigParser
 
-from intelmq.lib.message import Event
+from intelmq.lib.message import Message
 from intelmq.lib.pipeline import Pipeline
 from intelmq.lib.utils import decode, log
 
@@ -151,8 +151,7 @@ class Bot(object):
             self.logger.warning("Empty message found.")
             return False
         
-        if isinstance(message, Event):
-            message = unicode(message) # convert Event Object to string (UTF-8)
+        message = unicode(message) # convert Event Object to string (UTF-8)
             
         self.message_counter += 1
         if self.message_counter % 500 == 0:
@@ -169,10 +168,7 @@ class Bot(object):
         
         message = self.current_message.decode('utf-8')
         
-        try:    # Event Object
-            return Event.from_unicode(message)
-        except: # Report Object
-            return message
+        return Message.from_unicode(message)
 
 
     def acknowledge_message(self):
