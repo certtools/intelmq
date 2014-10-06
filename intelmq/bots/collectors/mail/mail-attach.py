@@ -29,12 +29,12 @@ class MailAttachCollectorBot(Bot):
 
                         if self.parameters.attach_unzip:
                             zipped = zipfile.ZipFile(attach['content'])
-                            report_text = zipped.read(zipped.namelist()[0])
+                            report_content = zipped.read(zipped.namelist()[0])
                         else:
-                            report_text = attach['content'].read()
+                            report_content = attach['content'].read()
                             
                         report = Report()
-                        report.add('content', report_text)
+                        report.add('content', report_content)
                             
                         self.send_message(report)
                         

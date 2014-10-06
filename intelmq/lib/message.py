@@ -91,8 +91,9 @@ class Message(object):
             evhash.update("\xc0")
             evhash.update(value.encode("utf-8"))
             evhash.update("\xc0")
+        return int(evhash.hexdigest(), 16)
     
-        return int(evhash.hexdigest(), 16) # FIXME: the int stuff should be done by cache
+        # FIXME: the int stuff should be done by cache
         #return hash(self.message)
     
     
@@ -118,7 +119,3 @@ class Event(Message):
     
 class Report(Message):
     message_type = 'Report'
-    
-    #TODO: Modificar todos os parsers e collectors
-
-

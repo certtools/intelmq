@@ -8,16 +8,16 @@ from intelmq.bots import utils
 class PhishTankParserBot(Bot):
 
     def process(self):
-        report_message = self.receive_message()
-        report = report_message.value('content')
+        report = self.receive_message()
+        report_content = report.value('content')
         
-        if report:
+        if report_content:
             event = Event()
-            report = encode(report)
+            report_content = encode(report_content)
 
             columns = ["__IGNORE__", "source_url", "description_url", "source_time", "__IGNORE__", "__IGNORE__", "__IGNORE__", "target"]
             
-            for row in unicodecsv.reader(StringIO(report), encoding='utf-8'):
+            for row in unicodecsv.reader(StringIO(report_content), encoding='utf-8'):
 
                 if "phish_id" in row:
                     continue

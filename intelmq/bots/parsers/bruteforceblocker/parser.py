@@ -6,14 +6,14 @@ import re
 class BruteForceBlockerParserBot(Bot):
 
     def process(self):
-        report_message = self.receive_message()
-        report = report_message.value('content')
+        report = self.receive_message()
+        report_content = report.value('content')
 
-        if report:
+        if report_content:
             regex_ip = "^[^ \t]+"
             regex_timestamp = "# ([^ \t]+ [^ \t]+)"
             
-            for row in report.split('\n'):
+            for row in report_content.split('\n'):
 
                 if row.startswith('#'):
                     continue

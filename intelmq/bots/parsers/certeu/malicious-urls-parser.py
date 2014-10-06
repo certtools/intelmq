@@ -5,11 +5,11 @@ from intelmq.bots import utils
 class CERTEUMaliciousURLsParserBot(Bot):
     
     def process(self):
-        report_message = self.receive_message()
-        report = report_message.value('content')
+        report = self.receive_message()
+        report_content = report.value('content')
 
-        if report:
-            for row in report.split('\n'):
+        if report_content:
+            for row in report_content.split('\n'):
                 
                 row = row.strip()
                 
