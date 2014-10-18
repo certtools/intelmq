@@ -132,8 +132,7 @@ class IntelMQContoller():
         USAGE = '''
         intelmqctl --bot [start|stop|restart|status] --id=cymru-expert
         intelmqctl --botnet [start|stop|restart|status]
-        intelmqctl --list [bots|queues]
-	intelmqctl --redis flush'''
+        intelmqctl --list [bots|queues]'''
         
         parser = argparse.ArgumentParser(
                                         prog=APPNAME,
@@ -149,7 +148,6 @@ class IntelMQContoller():
         parser.add_argument('--type', choices=RETURN_TYPES, default=RETURN_TYPES[0], help='choose if it should return regular text or other forms of output')
         
         group_list.add_argument('--log',                                                      metavar='[log-level]:[number-of-lines]', default=None)
-        group_list.add_argument('--redis',    choices=['flush'] ,                                                                    default=None)
         group_list.add_argument('--bot',      choices=['start', 'stop', 'restart', 'status'], metavar='[start|stop|restart|status]', default=None)
         group_list.add_argument('--botnet',   choices=['start', 'stop', 'restart', 'status'], metavar='[start|stop|restart|status]', default=None)
         group_list.add_argument('--list',     choices=['bots','queues'],                      metavar='[bots|queues]'              , default=None)
@@ -198,9 +196,6 @@ class IntelMQContoller():
         elif self.args.log:
             results = self.read_log(self.args.log, self.args.bot_id)
         
-        elif self.args.redis:
-	    results = os.system("redis-cli FLUSHALL")
-
         if self.args.type == 'json':
             print json.dumps(results)
 
