@@ -1,5 +1,13 @@
 {
     "Collector": {
+           "NetflowHTML": {
+            "module": "intelmq.bots.collectors.url.collector",
+            "description": "NetFlow HTML grabber",
+            "parameters": {
+                "url": "https://tc.edu.tw/net/netflow/lkout/recent/30",
+                "processing_interval": "3600"
+            }
+        },
         "Arbor": {
             "module": "intelmq.bots.collectors.url.collector",
             "description": "Arbor Collector is the bot responsible to get the report from source of information.",
@@ -118,6 +126,13 @@
         }
     },
     "Parser": {
+        "NetflowHTML": {
+            "module": "intelmq.bots.parsers.netflowhtml.parser",
+            "description": "NetFlowHTML Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+                "processing_interval": "0"
+            }
+        },
         "Arbor": {
             "module": "intelmq.bots.parsers.arbor.parser",
             "description": "Arbor Parser is the bot responsible to parse the report and sanitize the information.",
