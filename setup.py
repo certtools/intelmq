@@ -18,7 +18,7 @@ setup(
     name='intelmq',
     version='0.0.9',
     maintainer='Tomas Lima',
-    maintainer_email='tomas.lima@cert.pt',
+    maintainer_email='synchroack@gmail.com',
     packages=find_packages(),
     scripts=['intelmq/bin/intelmqctl'],
     url='http://pypi.python.org/pypi/intelmq/',

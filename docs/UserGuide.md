@@ -2,9 +2,9 @@
 
 1. [Requirements](#requirements)
 2. [Installation](#installation)
-3. [Upgrade](#upgrade)
-4. [Uninstall](#uninstall)
-5. [Management](#management)
+3. [Management](#management)
+4. [Upgrade](#upgrade)
+5. [Uninstall](#uninstall)
 6. [Frequently Asked Questions](#faq)
 
 
@@ -47,47 +47,6 @@ chown -R intelmq.intelmq /var/log/intelmq
 
 ```
 
-<a name="upgrade"></a>
-# Upgrade
-
-### Stop IntelMQ and Backup
-
-* Make sure that your IntelMQ system is completely stopped.
-* Create a backup of your configurations.
-
-```
-cp /etc/intelmq/system.conf /etc/intelmq/system.conf.bk
-cp /etc/intelmq/startup.conf /etc/intelmq/startup.conf.bk
-cp /etc/intelmq/runtime.conf /etc/intelmq/runtime.conf.bk
-cp /etc/intelmq/pipeline.conf /etc/intelmq/pipeline.conf.bk
-```
-
-### Upgrade
-
-```
-pip install --upgrade git+https://<your_user_account>@github.com/certtools/intelmq.git
-```
-
-### Restore Configurations
-
-* Apply your configurations backup.
-
-```
-mv /etc/intelmq/system.conf.bk /etc/intelmq/system.conf
-mv /etc/intelmq/startup.conf.bk /etc/intelmq/startup.conf
-mv /etc/intelmq/runtime.conf.bk /etc/intelmq/runtime.conf
-mv /etc/intelmq/pipeline.conf.bk /etc/intelmq/pipeline.conf
-```
-
-
-# Uninstall
-
-<a name="uninstall"></a>
-```
-pip uninstall intelmq
-```
-
-
 <a name="management"></a>
 # Management
 
@@ -99,7 +58,7 @@ Before start running all bots, user should know the system details that will hel
 
 * The 'bot id' is used to reference in '/etc/intelmq/pipeline.conf', '/etc/intelmq/startup.conf' and '/etc/intelmq/runtime.conf' the specific configurations for each bot instance.
 
-* Global configuration for intelmq is at file '/etc/intelmq/system.conf'. Please note that logger in DEBUG will write in logs all bots parameteres configured, including passwords.
+* Global configuration for intelmq is at file '/etc/intelmq/system.conf'. Please note that logger in DEBUG mode will write in logs all bots parameteres configured, including passwords.
 
 
 ### Web interface
@@ -161,6 +120,45 @@ Somes tests have been made with a virtual machine with the following specificati
 The entire solution didnt have any problem handling 2.000.000 queued events in memory with bots diggesting the messages.
 
 
+<a name="upgrade"></a>
+# Upgrade
+
+### Stop IntelMQ and Backup
+
+* Make sure that your IntelMQ system is completely stopped.
+* Create a backup of your configurations.
+
+```
+cp /etc/intelmq/system.conf /etc/intelmq/system.conf.bk
+cp /etc/intelmq/startup.conf /etc/intelmq/startup.conf.bk
+cp /etc/intelmq/runtime.conf /etc/intelmq/runtime.conf.bk
+cp /etc/intelmq/pipeline.conf /etc/intelmq/pipeline.conf.bk
+```
+
+### Upgrade
+
+```
+pip install --upgrade git+https://<your_user_account>@github.com/certtools/intelmq.git
+```
+
+### Restore Configurations
+
+* Apply your configurations backup.
+
+```
+mv /etc/intelmq/system.conf.bk /etc/intelmq/system.conf
+mv /etc/intelmq/startup.conf.bk /etc/intelmq/startup.conf
+mv /etc/intelmq/runtime.conf.bk /etc/intelmq/runtime.conf
+mv /etc/intelmq/pipeline.conf.bk /etc/intelmq/pipeline.conf
+```
+
+
+# Uninstall
+
+<a name="uninstall"></a>
+```
+pip uninstall intelmq
+```
 
 <a name="faq"></a>
 # Frequently Asked Questions
