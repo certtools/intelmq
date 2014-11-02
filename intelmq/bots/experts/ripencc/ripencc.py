@@ -4,8 +4,10 @@ from intelmq.bots.experts.ripencc.lib import RIPENCC
 '''
 Reference: https://stat.ripe.net/data/abuse-contact-finder/data.json?resource=1.1.1.1
 
-FIXME: Create a cache.
-
+TODO:
+Load RIPE networks prefixes into memory.
+Compare each IP with networks prefixes loadad.
+If ip matchs, query RIPE
 '''
 
 class RIPENCCExpertBot(Bot):
