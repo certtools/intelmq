@@ -5,13 +5,13 @@ import re
 
 class DshieldParserBot(Bot):
 
-    def process(self):
-        report = self.receive_message()
-
-// Function to clean leading 0's maybe we need to add it to the sanitizer
+    # Function to clean leading 0's maybe we need to add it to the sanitizer
     def cleanip(ip):
         ip = ".".join([octet.lstrip('0') for octet in ip.split('.')])
         return ip
+
+    def process(self):
+        report = self.receive_message()
 
         if report:
             regex_ip = "^(\d+\.\d+\.\d+\.\d+)"
@@ -28,7 +28,6 @@ class DshieldParserBot(Bot):
                 if match:
                     ip = cleanip(match.group())
 		
-    
                 match = re.search(regex_timestamp, row)
                 if match:
                     timestamp = match.group(1) + " UTC"
