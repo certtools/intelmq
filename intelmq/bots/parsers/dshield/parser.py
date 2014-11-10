@@ -1,14 +1,9 @@
 from intelmq.lib.bot import Bot, sys
-from intelmq.lib.event import Event
+from intelmq.lib.message import Event
 from intelmq.bots import utils
 import re
 
 class DshieldParserBot(Bot):
-
-    # Function to clean leading 0's maybe we need to add it to the sanitizer
-    def cleanip(ip):
-        ip = ".".join([octet.lstrip('0') for octet in ip.split('.')])
-        return ip
 
     def process(self):
         report = self.receive_message()
@@ -26,7 +21,7 @@ class DshieldParserBot(Bot):
 
                 match = re.search(regex_ip, row)
                 if match:
-                    ip = cleanip(match.group())
+                    ip = ".".join([octet.lstrip('0') for octet in match.group().split('.')])
 		
                 match = re.search(regex_timestamp, row)
                 if match:
@@ -34,7 +29,7 @@ class DshieldParserBot(Bot):
                 
                 event.add("source_ip", ip)
                 event.add("source_time", timestamp)
-                event.add('feed', 'Dshield')
+                event.add('feed', 'dshield')
                 event.add('feed_url', 'http://dshield.org/asdetailsascii.html')
                 event.add('type', 'brute-force')
 
