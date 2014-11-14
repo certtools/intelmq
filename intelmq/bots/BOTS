@@ -259,6 +259,14 @@
                 "database": "/var/lib/intelmq/geoip/GeoLite2-City.mmdb"
             }
         },
+        "AsnLookup": {
+            "module": "intelmq.bots.experts.asnlookup.asnlookup",
+            "description": "ASN lookup via local file (faster that cymru)",
+            "parameters": {
+                   "processing_interval": "0",
+                    "database": "/var/lib/intelmq/asnlookup/ipasn.dat"
+             }
+        },
         "Deduplicator": {
             "module": "intelmq.bots.experts.deduplicator.deduplicator",
             "description": "Deduplicator is the bot responsible to detect and remove deduplicated events.",
