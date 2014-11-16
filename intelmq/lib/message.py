@@ -78,10 +78,7 @@ class Event(object):
         for key, value in sorted(self.items()):
             evhash.update(key.encode("utf-8"))
             evhash.update("\xc0")
-            if type(value) != float and type(value) != int:
-                evhash.update(value.encode("utf-8"))
-            else:
-                evhash.update("%s"%value)
+            evhash.update(value.encode("utf-8"))
             evhash.update("\xc0")
 
         return int(evhash.hexdigest(), 16) # FIXME: the int stuff should be done by cache
