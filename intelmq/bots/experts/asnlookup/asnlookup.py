@@ -1,7 +1,7 @@
 import pyasn
 from intelmq.lib.bot import Bot, sys
 
-class AsnLookupExpertBot(Bot):
+class ASNLookupExpertBot(Bot):
 
     def init(self):
         try:
@@ -13,32 +13,26 @@ class AsnLookupExpertBot(Bot):
     
     def process(self):
         event = self.receive_message()
-        if event:
             
-            keys = ["source_%s", "destination_%s"]
+        keys = ["source_%s", "destination_%s"]
             
-            for key in keys:
-                ip = event.value(key % "ip")
+        for key in keys:
+            ip = event.value(key % "ip")
+            
+            if not ip:
+                continue
                 
-                if not ip:
-                    continue
-                    
-                try:
-                    info = self.database.lookup(ip)
-                
-                    if info:
-                        event.clear(key % "asn")
-                        event.add(key % "asn", unicode(info[0]))
-                        event.clear(key % "bgp_prefix")
-                        event.add(key % "bgp_prefix", unicode(info[1]))
-                        
-
-                except Exception, e:
-                    pass
+            info = self.database.lookup(ip)
+        
+            if info:
+                if info[0]:
+                    event.update(key % "asn", unicode(info[0]))
+                if info[1]:
+                    event.update(key % "bgp_prefix", unicode(info[1]))
             
             self.send_message(event)
         self.acknowledge_message()
 
 if __name__ == "__main__":
-    bot = AsnLookupExpertBot(sys.argv[1])
+    bot = ASNLookupExpertBot(sys.argv[1])
     bot.start()

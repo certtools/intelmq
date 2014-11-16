@@ -1,13 +1,20 @@
-* This module uses pyasn DB (pip install pyasn or  https://github.com/hadiasghari/pyasn)
-
-
-* use pyasn_util_download.py --latest to download
-* use pyasn_util_convert.py --single <downloadedfilename>.bz2 ipasn.dat
-* Create data folder '/var/lib/intelmq/asnlookup'
-* Copy database to '/var/lib/intelmq/asnlookup'
-* Update the correspondent section in '/etc/intelmq/BOTS':
-
+* Install python module:
 ```
-    "database": "/var/lib/intelmq/asnlookup/ipasn.dat"
+# pip install pyasn --pre
+```
 
+* Download database and convert:
+```
+# cd /tmp/
+# pyasn_util_download.py --latest
+# pyasn_util_convert.py --single <downloaded_filename>.bz2 ipasn.dat
+```
 
+* Copy database to IntelMQ:
+```
+# mkdir /var/lib/intelmq/asnlookup
+# mv /tmp/ipasn.dat /var/lib/intelmq/asnlookup/
+# chown -R intelmq.intelmq /var/lib/intelmq/asnlookup
+```
+
+* Make sure that ASNLookup bot at runtime.conf has the value '/var/lib/intelmq/asnlookup/ipasn.dat' in 'database' field.
