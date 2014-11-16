@@ -32,12 +32,8 @@ class TaxonomyExpertBot(Bot):
         if event:
             if not event.contains("taxonomy") and event.contains("type"):
                 type = event.value("type")
-                taxonomy = "unknown"
-                try:
-                    taxonomy = TAXONOMY[type]
-                except:
-                    taxonomy = TAXONOMY["ids alert"]
-                event.add("taxonomy",taxonomy)
+                taxonomy = TAXONOMY[type]
+                event.add("taxonomy", taxonomy)
             
             self.send_message(event)
         self.acknowledge_message()
