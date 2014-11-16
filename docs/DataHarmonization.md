@@ -206,6 +206,7 @@ The following mapping is based on eCSIRT Taxonomy.
 |phishing|Fraud|This IOC most often refers to a URL, which is phishing for user credentials.|
 |vulnerable service|Vulnerable|This attribute refers to a badly configured or vulnerable network service, which may be abused by a third party. For example, these services relate to open proxies, open dns resolvers, network time servers (ntp) or character generation services (chargen), simple network management services (snmp). In addition, to specify the network service and its potential abuse, one should use the protocol, destination port and description attributes for that purpose respectively.|
 |blacklist|Other|Some sources provide blacklists, which clearly refer to abusive behavior, such as spamming, but fail to denote the exact reason why a given identity has been blacklisted. The reason may be that the justification is anecdotal or missing entirely. This type should only be used if the typing fits the definition of a blacklist, but an event specific denomination is not possible for one reason or another.|
+|unknown|Other|unknown events|
 |test|Test|This is a value for testing purposes.|
 
 <a name="requirements"></a>
