@@ -21,6 +21,7 @@ TAXONOMY = {
             "backdoor"                  : "Intrusions",
             "vulnerable service"        : "Vulnerable",
             "blacklist"                 : "Other",
+            "unknown"                   : "Other",
             "test"                      : "Test",
            }
            
