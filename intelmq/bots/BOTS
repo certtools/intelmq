@@ -1,25 +1,24 @@
 {
     "Collector": {
-           "NetflowHTML": {
+        "Taichung City Netflow": {
             "module": "intelmq.bots.collectors.url.collector",
-            "description": "NetFlow HTML grabber",
+            "description": "Taichung City Netflow Collector is the bot responsible to get the report from source of information.",
             "parameters": {
                 "url": "https://tc.edu.tw/net/netflow/lkout/recent/30",
                 "processing_interval": "3600"
             }
         },
-           "HPFeeds": {
+        "HPFeeds": {
             "module": "intelmq.bots.collectors.hpfeeds.collector",
-            "description": "HPFeeds integrator",
+            "description": "HPFeeds Collector is the bot responsible to integrate HPFeeds solution with IntelMQ.",
             "parameters": {
                 "broker_port": "20000",
                 "broker_host": "127.0.0.1",
                 "ident": "hpfeeds",
-                "secret": "hpfeeds2test",
+                "secret": "hpfeeds-secret",
                 "processing_interval": "0"
             }
         },
-
         "Arbor": {
             "module": "intelmq.bots.collectors.url.collector",
             "description": "Arbor Collector is the bot responsible to get the report from source of information.",
@@ -33,14 +32,6 @@
             "description": "BruteForceBlocker Collector is the bot responsible to get the report from source of information.",
             "parameters": {
                 "url": "http://danger.rulez.sk/projects/bruteforceblocker/blist.php",
-                "processing_interval": "3600"
-            }
-        },
-	"Dshield": {
-            "module": "intelmq.bots.collectors.url.collector",
-            "description": "Dshield Collector is the bot responsible to get the report from source of information.",
-            "parameters": {
-                "url": "http://dshield.org/asdetailsascii.html?as=<INSERT ASNUM>",
                 "processing_interval": "3600"
             }
         },
@@ -146,22 +137,20 @@
         }
     },
     "Parser": {
-        "NetflowHTML": {
-            "module": "intelmq.bots.parsers.netflowhtml.parser",
-            "description": "NetFlowHTML Parser is the bot responsible to parse the report and sanitize the information.",
+        "Taichung City Netflow": {
+            "module": "intelmq.bots.parsers.taichungcitynetflow.parser",
+            "description": "Taichung City Netflow Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
                 "processing_interval": "0"
             }
         },
         "HPFeeds": {
             "module": "intelmq.bots.parsers.hpfeeds.parser",
-            "description": "Hpfeed parser",
+            "description": "HPFeeds Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
                 "processing_interval": "0"
             }
         },
-
-
         "Arbor": {
             "module": "intelmq.bots.parsers.arbor.parser",
             "description": "Arbor Parser is the bot responsible to parse the report and sanitize the information.",
@@ -172,13 +161,6 @@
         "BruteForceBlocker": {
             "module": "intelmq.bots.parsers.bruteforceblocker.parser",
             "description": "BruteForceBlocker Parser is the bot responsible to parse the report and sanitize the information.",
-            "parameters": {
-                "processing_interval": "0"
-            }
-        },
-	"Dshield": {
-            "module": "intelmq.bots.parsers.dshield.parser",
-            "description": "Dshield Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
                 "processing_interval": "0"
             }
@@ -266,17 +248,6 @@
                 "redis_cache_ttl": "86400"
             }
         },
-        "RIPENCC": {
-            "module": "intelmq.bots.experts.ripencc.ripencc",
-            "description": "RIPENCC is the bot resposible to get the correspondent abuse contact from source IP and destination IP of the events",
-            "parameters": {
-                "processing_interval": "0",
-                "redis_cache_host": "127.0.0.1",
-                "redis_cache_port": "6379",
-                "redis_cache_db": "5",
-                "redis_cache_ttl": "86400"
-            }
-        },
         "GeoIP": {
             "module": "intelmq.bots.experts.geoip.geoip",
             "description": "GeoIP (MaxMind) is the bot responsible to add geolocation information to the events (Country, City, Longitude, Latitude, etc..)",
@@ -285,12 +256,12 @@
                 "database": "/var/lib/intelmq/geoip/GeoLite2-City.mmdb"
             }
         },
-        "AsnLookup": {
+        "ASN Lookup": {
             "module": "intelmq.bots.experts.asnlookup.asnlookup",
-            "description": "ASN lookup via local file (faster that cymru)",
+            "description": "ASN Lookup is the bot responsible to add ASN and BGP information from Route Views Project to the events.",
             "parameters": {
-                   "processing_interval": "0",
-                    "database": "/var/lib/intelmq/asnlookup/ipasn.dat"
+                "processing_interval": "0",
+                "database": "/var/lib/intelmq/asnlookup/ipasn.dat"
              }
         },
         "Deduplicator": {
