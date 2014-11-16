@@ -35,6 +35,14 @@
                 "processing_interval": "3600"
             }
         },
+        "Dshield": {
+            "module": "intelmq.bots.collectors.url.collector",
+            "description": "Dshield Collector is the bot responsible to get the report from source of information.",
+            "parameters": {
+                "url": "http://dshield.org/asdetailsascii.html?as=<INSERT ASNUM>",
+                "processing_interval": "3600"
+            }
+        },
         "VXVault": {
             "module": "intelmq.bots.collectors.url.collector",
             "description": "VXVault Collector is the bot responsible to get the report from source of information.",
@@ -165,6 +173,13 @@
                 "processing_interval": "0"
             }
         },
+        "Dshield": {
+            "module": "intelmq.bots.parsers.dshield.parser",
+            "description": "Dshield Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+                "processing_interval": "0"
+            }
+        },
         "VXVault": {
             "module": "intelmq.bots.parsers.vxvault.vxvault",
             "description": "VXVault Parser is the bot responsible to parse the report and sanitize the information.",
@@ -240,6 +255,17 @@
         "Cymru": {
             "module": "intelmq.bots.experts.cymru.cymru",
             "description": "Cymry (IP to ASN) is the bot responsible to add network information to the events (BGP, ASN, AS Name, Country, etc..).",
+            "parameters": {
+                "processing_interval": "0",
+                "redis_cache_host": "127.0.0.1",
+                "redis_cache_port": "6379",
+                "redis_cache_db": "5",
+                "redis_cache_ttl": "86400"
+            }
+        },
+        "RIPENCC": {
+            "module": "intelmq.bots.experts.ripencc.ripencc",
+            "description": "RIPENCC is the bot resposible to get the correspondent abuse contact from source IP and destination IP of the events",
             "parameters": {
                 "processing_interval": "0",
                 "redis_cache_host": "127.0.0.1",
