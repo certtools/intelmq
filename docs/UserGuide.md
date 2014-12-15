@@ -12,7 +12,7 @@
 # Requirements
 
 The following instructions assume:
-* Debian or Ubuntu Operatin System
+* Debian or Ubuntu Operating System
 
 
 <a name="installation"></a>
