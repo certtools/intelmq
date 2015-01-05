@@ -26,8 +26,10 @@ class Bot(object):
 
         self.bot_id = bot_id
 
-        self.logger = self.load_logger()
+        #self.logger = self.load_logger()
+        self.logger = self.load_system_configurations()
         self.logger.info('Bot is starting')
+
 
         self.load_configurations()
 
@@ -105,6 +107,21 @@ class Bot(object):
                 setattr(self.parameters, option, value)
                 self.logger.debug("Parameter '%s' loaded with the value '%s'" % (option, value))
 
+
+    def load_system_configurations(self):
+        with open(SYSTEM_CONF_FILE, 'r') as fpconfig:
+            config = json.loads(fpconfig.read())
+ 
+        self.parameters.logging_path = DEFAULT_LOGGING_PATH
+        self.parameters.logging_level = DEFAULT_LOGGING_LEVEL
+ 
+        for option, value in config.iteritems():
+            setattr(self.parameters, option, value)
+	    # NOTE: this function must be called **after** load_logger in order to have a self.logger.debug(...)
+            #self.logger.debug("Parameter '%s' loaded with the value '%s'" % (option, value))
+ 
+        return log(self.parameters.logging_path, self.bot_id, self.parameters.logging_level)
+ 
 
     def load_logger(self):
         with open(SYSTEM_CONF_FILE, 'r') as fpconfig:
