@@ -112,8 +112,8 @@ class Bot(object):
         with open(SYSTEM_CONF_FILE, 'r') as fpconfig:
             config = json.loads(fpconfig.read())
  
-        self.parameters.logging_path = DEFAULT_LOGGING_PATH
-        self.parameters.logging_level = DEFAULT_LOGGING_LEVEL
+        setattr(self.parameters, logging_path , DEFAULT_LOGGING_PATH)
+        setattr(self.parameters, logging_level , DEFAULT_LOGGING_LEVEL)
  
         for option, value in config.iteritems():
             setattr(self.parameters, option, value)
