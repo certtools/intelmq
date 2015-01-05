@@ -5,7 +5,7 @@ class URLCollectorBot(Bot):
 
     def process(self):
         self.logger.info("Downloading report from %s" % self.parameters.url)
-        report = fetch_url(self.parameters.url, timeout = 60.0, chunk_size = 16384)
+        report = fetch_url(self.parameters.url, timeout = 60.0, chunk_size = 16384, self.parameters.http_proxy, self.parameters.https_proxy)
         self.logger.info("Report downloaded.")
         self.send_message(report)
 
