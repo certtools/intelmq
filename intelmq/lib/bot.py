@@ -18,6 +18,7 @@ DEFAULT_LOGGING_LEVEL = "INFO"
 class Bot(object):
 
     def __init__(self, bot_id):
+        self.parameters = Parameters()
         self.current_message = None
         self.last_message = None
         self.message_counter = 0
@@ -95,7 +96,7 @@ class Bot(object):
 
 
     def load_configurations(self):
-        self.parameters = Parameters()
+        #self.parameters = Parameters()
 
         with open(RUNTIME_CONF_FILE, 'r') as fpconfig:
             config = json.loads(fpconfig.read())
@@ -112,8 +113,8 @@ class Bot(object):
         with open(SYSTEM_CONF_FILE, 'r') as fpconfig:
             config = json.loads(fpconfig.read())
  
-        setattr(self.parameters, logging_path , DEFAULT_LOGGING_PATH)
-        setattr(self.parameters, logging_level , DEFAULT_LOGGING_LEVEL)
+        setattr(self.parameters, 'logging_path' , DEFAULT_LOGGING_PATH)
+        setattr(self.parameters, 'logging_level' , DEFAULT_LOGGING_LEVEL)
  
         for option, value in config.iteritems():
             setattr(self.parameters, option, value)
