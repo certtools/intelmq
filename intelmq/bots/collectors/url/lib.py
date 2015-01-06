@@ -23,7 +23,12 @@ def fetch_url(url, timeout=60.0, chunk_size=16384, http_proxy = None, https_prox
     return decode(value)
 
 
-'''def fetch_url_ssl(url, key_file, cert_file, ca_file, timeout=60.0, chunk_size=16384):
+
+'''
+
+# https://gist.github.com/zed/1347055
+
+def fetch_url_ssl(url, key_file, cert_file, ca_file, timeout=60.0, chunk_size=16384):
     regex = '([^:]+)(:([0-9]+))?'    
     url_parsed = urlparse(url)
 
