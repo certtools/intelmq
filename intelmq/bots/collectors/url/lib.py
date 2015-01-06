@@ -11,7 +11,6 @@ from intelmq.lib.utils import decode
 def fetch_url(url, timeout=60.0, chunk_size=16384, http_proxy = None, https_proxy = None):
     
     if http_proxy and https_proxy:
-	# it makes sense to ask if both vars are set, not just one
         proxy = urllib2.ProxyHandler({'http': http_proxy, 'https': https_proxy })
         opener = urllib2.build_opener(proxy)
         urllib2.install_opener(opener)
@@ -23,6 +22,11 @@ def fetch_url(url, timeout=60.0, chunk_size=16384, http_proxy = None, https_prox
     iostring.close()
     return decode(value)
 
+
+
+'''
+
+# https://gist.github.com/zed/1347055
 
 def fetch_url_ssl(url, key_file, cert_file, ca_file, timeout=60.0, chunk_size=16384):
     regex = '([^:]+)(:([0-9]+))?'    
@@ -65,3 +69,4 @@ class HTTPSClientAuthConnection(httplib.HTTPSConnection):
             self.cert_reqs=ssl.CERT_NONE
 
         self.sock = ssl.wrap_socket(sock, self.key_file, self.cert_file, ca_certs=self.ca_file, cert_reqs=self.cert_reqs)
+'''
