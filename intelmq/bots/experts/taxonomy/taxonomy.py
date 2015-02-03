@@ -21,6 +21,7 @@ TAXONOMY = {
             "backdoor"                  : "Intrusions",
             "vulnerable service"        : "Vulnerable",
             "blacklist"                 : "Other",
+            "unknown"                   : "Other",
             "test"                      : "Test",
            }
            
@@ -33,7 +34,7 @@ class TaxonomyExpertBot(Bot):
             if not event.contains("taxonomy") and event.contains("type"):
                 type = event.value("type")
                 taxonomy = TAXONOMY[type]
-                event.add("taxonomy",taxonomy)
+                event.add("taxonomy", taxonomy)
             
             self.send_message(event)
         self.acknowledge_message()

@@ -18,18 +18,21 @@ DEFAULT_LOGGING_LEVEL = "INFO"
 class Bot(object):
 
     def __init__(self, bot_id):
+        self.parameters = Parameters()
+        
         self.current_message = None
         self.last_message = None
         self.message_counter = 0
 
         self.check_bot_id(bot_id)
-
         self.bot_id = bot_id
 
-        self.logger = self.load_logger()
+        self.load_system_configurations()
+        
+        self.logger = log(self.parameters.logging_path, self.bot_id, self.parameters.logging_level)
         self.logger.info('Bot is starting')
 
-        self.load_configurations()
+        self.load_runtime_configurations()
 
         self.src_queue, self.dest_queues = self.load_pipeline()
         self.parameters.processing_interval = float(self.parameters.processing_interval)
@@ -92,8 +95,7 @@ class Bot(object):
             self.stop()
 
 
-    def load_configurations(self):
-        self.parameters = Parameters()
+    def load_runtime_configurations(self):
 
         with open(RUNTIME_CONF_FILE, 'r') as fpconfig:
             config = json.loads(fpconfig.read())
@@ -106,20 +108,17 @@ class Bot(object):
                 self.logger.debug("Parameter '%s' loaded with the value '%s'" % (option, value))
 
 
-    def load_logger(self):
+    def load_system_configurations(self):
+        
         with open(SYSTEM_CONF_FILE, 'r') as fpconfig:
             config = json.loads(fpconfig.read())
-
-        loglevel = DEFAULT_LOGGING_LEVEL
-        if 'logging_level' in config:
-            loglevel = config['logging_level']
-        
-        logpath = DEFAULT_LOGGING_PATH
-        if 'logging_path' in config:
-            logpath = config['logging_path']
-
-        return log(logpath, self.bot_id, loglevel)
-
+ 
+        setattr(self.parameters, 'logging_path' , DEFAULT_LOGGING_PATH)
+        setattr(self.parameters, 'logging_level' , DEFAULT_LOGGING_LEVEL)
+ 
+        for option, value in config.iteritems():
+            setattr(self.parameters, option, value)
+ 
 
     def load_pipeline(self):
         with open(PIPELINE_CONF_FILE, 'r') as fpconfig:
