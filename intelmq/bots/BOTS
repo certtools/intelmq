@@ -1,5 +1,24 @@
 {
     "Collector": {
+        "Taichung City Netflow": {
+            "module": "intelmq.bots.collectors.url.collector",
+            "description": "Taichung City Netflow Collector is the bot responsible to get the report from source of information.",
+            "parameters": {
+                "url": "https://tc.edu.tw/net/netflow/lkout/recent/30",
+                "processing_interval": "3600"
+            }
+        },
+        "HPFeeds": {
+            "module": "intelmq.bots.collectors.hpfeeds.collector",
+            "description": "HPFeeds Collector is the bot responsible to integrate HPFeeds solution with IntelMQ.",
+            "parameters": {
+                "broker_port": "20000",
+                "broker_host": "127.0.0.1",
+                "ident": "hpfeeds",
+                "secret": "hpfeeds-secret",
+                "processing_interval": "0"
+            }
+        },
         "Arbor": {
             "module": "intelmq.bots.collectors.url.collector",
             "description": "Arbor Collector is the bot responsible to get the report from source of information.",
@@ -16,7 +35,7 @@
                 "processing_interval": "3600"
             }
         },
-	"Dshield": {
+        "Dshield": {
             "module": "intelmq.bots.collectors.url.collector",
             "description": "Dshield Collector is the bot responsible to get the report from source of information.",
             "parameters": {
@@ -126,6 +145,20 @@
         }
     },
     "Parser": {
+        "Taichung City Netflow": {
+            "module": "intelmq.bots.parsers.taichungcitynetflow.parser",
+            "description": "Taichung City Netflow Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+                "processing_interval": "0"
+            }
+        },
+        "HPFeeds": {
+            "module": "intelmq.bots.parsers.hpfeeds.parser",
+            "description": "HPFeeds Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+                "processing_interval": "0"
+            }
+        },
         "Arbor": {
             "module": "intelmq.bots.parsers.arbor.parser",
             "description": "Arbor Parser is the bot responsible to parse the report and sanitize the information.",
@@ -140,7 +173,7 @@
                 "processing_interval": "0"
             }
         },
-	"Dshield": {
+        "Dshield": {
             "module": "intelmq.bots.parsers.dshield.parser",
             "description": "Dshield Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
@@ -249,6 +282,14 @@
                 "database": "/var/lib/intelmq/geoip/GeoLite2-City.mmdb"
             }
         },
+        "ASN Lookup": {
+            "module": "intelmq.bots.experts.asnlookup.asnlookup",
+            "description": "ASN Lookup is the bot responsible to add ASN and BGP information from Route Views Project to the events.",
+            "parameters": {
+                "processing_interval": "0",
+                "database": "/var/lib/intelmq/asnlookup/ipasn.dat"
+             }
+        },
         "Deduplicator": {
             "module": "intelmq.bots.experts.deduplicator.deduplicator",
             "description": "Deduplicator is the bot responsible to detect and remove deduplicated events.",
@@ -272,6 +313,14 @@
             "description": "Taxonomy is the bot responsible to apply the eCSIRT Taxonomy to all events.",
             "parameters": {
                 "processing_interval": "0"
+            }
+        },
+        "CountryCodeFilter": {
+            "module": "intelmq.bots.experts.countrycodefilter.countrycodefilter",
+            "description": "Filters out events which do not match a specific country code. Needs: the cymru expert.",
+            "parameters": {
+                  "countrycode": "<country code>",
+                  "processing_interval": "0"
             }
         }
     },
