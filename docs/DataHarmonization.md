@@ -78,6 +78,13 @@ Having a functional ontology to work with, especially for the abuse types is imp
 <a name="fields"></a>
 ## Fields List
 
+### Rules
+
+All keys MUST be represent in lowercase.
+
+
+### List
+
 |Section|Fields|Format|Description|
 |:---:|:---:|:---:|:-----------:|
 |Feed|feed|varchar(2000)|Lower case name for the feeder, e.g. abusech or phishtank.|
