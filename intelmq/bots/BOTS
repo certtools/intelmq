@@ -110,12 +110,12 @@
                 "mail_ssl": true,
                 "folder": "Inbox.shadowserver",
                 "subject_regex": "Shadowserver [^ ]+ Drone Report",
-                "attach_regex": "csv.zip",
+                "attach_regex": "drone-portugal-geo.csv$",
                 "attach_unzip": true
             }
         },
         "ShadowServer Chargen Report": {
-            "module": "intelmq.bots.collectors.mail.mail-url",
+            "module": "intelmq.bots.collectors.mail.mail-attach",
             "description": "ShadowServer Chargen Collector is the bot responsible to get the report from source of information.",
             "parameters": {
                 "processing_interval": "3600",
@@ -124,8 +124,129 @@
                 "mail_password": "<password>",
                 "mail_ssl": true,
                 "folder": "Inbox.shadowserver",
-                "subject_regex": "Shadowserver [^ ]+ Chargen Report",
-                "url_regex": "http://dl.shadowserver.org/[^ ]+"
+		"subject_regex": "Shadowserver Portugal Chargen Report",
+                "attach_regex": "chargen-portugal-geo.csv$",
+                "attach_unzip": true
+            }
+        },
+       "ShadowServer NTP Report": {
+            "module": "intelmq.bots.collectors.mail.mail-attach",
+            "description": "ShadowServer NTP Collector is the bot responsible to get the report from source of information.",
+            "parameters": {
+                "processing_interval": "3600",
+                "mail_host": "<host>",
+                "mail_user": "<user>",
+                "mail_password": "<password>",
+                "mail_ssl": true,
+                "folder": "Inbox.shadowserver",
+		"subject_regex": "Shadowserver Portugal NTP Monitor Report",
+                "attach_regex": "ntpmonitor-portugal-geo.csv$",
+                "attach_unzip": true
+            }
+        },
+       "ShadowServer SNMP Report": {
+            "module": "intelmq.bots.collectors.mail.mail-attach",
+            "description": "ShadowServer SNMP Collector is the bot responsible to get the report from source of information.",
+            "parameters": {
+                "processing_interval": "3600",
+                "mail_host": "<host>",
+                "mail_user": "<user>",
+                "mail_password": "<password>",
+                "mail_ssl": true,
+                "folder": "Inbox.shadowserver",
+		"subject_regex": "Shadowserver Portugal SNMP Report",
+                "attach_regex": "snmp-portugal-geo.csv$",
+                "attach_unzip": true
+            }
+        },
+       "ShadowServer DNS Open Resolver Report": {
+            "module": "intelmq.bots.collectors.mail.mail-attach",
+            "description": "ShadowServer DNS Open Resolver Collector is the bot responsible to get the report from source of information.",
+            "parameters": {
+                "processing_interval": "3600",
+                "mail_host": "<host>",
+                "mail_user": "<user>",
+                "mail_password": "<password>",
+                "mail_ssl": true,
+                "folder": "Inbox.shadowserver",
+		"subject_regex": "Shadowserver Portugal DNS Open Resolvers Report",
+                "attach_regex": "openresolver-portugal-geo.csv$",
+                "attach_unzip": true
+            }
+        },
+       "ShadowServer SSDP Report": {
+            "module": "intelmq.bots.collectors.mail.mail-attach",
+            "description": "ShadowServer SSDP Collector is the bot responsible to get the report from source of information.",
+            "parameters": {
+                "processing_interval": "3600",
+                "mail_host": "<host>",
+                "mail_user": "<user>",
+                "mail_password": "<password>",
+                "mail_ssl": true,
+                "folder": "Inbox.shadowserver",
+		"subject_regex": "Shadowserver Portugal SSDP Report",
+                "attach_regex": "ssdp-portugal-geo.csv$",
+                "attach_unzip": true
+            }
+        },
+       "ShadowServer QOTD Report": {
+            "module": "intelmq.bots.collectors.mail.mail-attach",
+            "description": "ShadowServer QOTD Collector is the bot responsible to get the report from source of information.",
+            "parameters": {
+                "processing_interval": "3600",
+                "mail_host": "<host>",
+                "mail_user": "<user>",
+                "mail_password": "<password>",
+                "mail_ssl": true,
+                "folder": "Inbox.shadowserver",
+		"subject_regex": "Shadowserver Portugal QOTD Report",
+                "attach_regex": "qotd-portugal-geo.csv$",
+                "attach_unzip": true
+            }
+        },
+       "ShadowServer SanBoxURL Report": {
+            "module": "intelmq.bots.collectors.mail.mail-attach",
+            "description": "ShadowServer SanBoxURL Collector is the bot responsible to get the report from source of information.",
+            "parameters": {
+                "processing_interval": "3600",
+                "mail_host": "<host>",
+                "mail_user": "<user>",
+                "mail_password": "<password>",
+                "mail_ssl": true,
+                "folder": "Inbox.shadowserver",
+		"subject_regex": "Shadowserver Portugal Sandbox URL Report",
+                "attach_regex": "cwsandbox_url-portugal-geo.csv$",
+                "attach_unzip": true
+            }
+        },
+       "ShadowServer Microsoft Sinkhole Report": {
+            "module": "intelmq.bots.collectors.mail.mail-attach",
+            "description": "ShadowServer Microsoft Sinkhole Collector is the bot responsible to get the report from source of information.",
+            "parameters": {
+                "processing_interval": "3600",
+                "mail_host": "<host>",
+                "mail_user": "<user>",
+                "mail_password": "<password>",
+                "mail_ssl": true,
+                "folder": "Inbox.shadowserver",
+		"subject_regex": "Shadowserver Portugal Microsoft Sinkhole Report",
+                "attach_regex": "microsoft_sinkhole-portugal-geo.csv$",
+                "attach_unzip": true
+            }
+        },
+       "ShadowServer Netbios Report": {
+            "module": "intelmq.bots.collectors.mail.mail-attach",
+            "description": "ShadowServer Netbios Collector is the bot responsible to get the report from source of information.",
+            "parameters": {
+                "processing_interval": "3600",
+                "mail_host": "<host>",
+                "mail_user": "<user>",
+                "mail_password": "<password>",
+                "mail_ssl": true,
+                "folder": "Inbox.shadowserver",
+		"subject_regex": "Shadowserver Portugal Netbios Report",
+                "attach_regex": "netbios-portugal-geo.csv$",
+                "attach_unzip": true
             }
         },
         "CERT-EU Malicious URLs": {
@@ -243,6 +364,62 @@
                 "processing_interval": "0"
             }
         },
+        "ShadowServer NTP": {
+            "module": "intelmq.bots.parsers.shadowserver.ntp-parser",
+            "description": "ShadowServer NTP Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+                "processing_interval": "0"
+            }
+	},
+        "ShadowServer SNMP": {
+            "module": "intelmq.bots.parsers.shadowserver.snmp-parser",
+            "description": "ShadowServer SNMP Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+                "processing_interval": "0"
+            }
+	},
+        "ShadowServer OpenResolver": {
+            "module": "intelmq.bots.parsers.shadowserver.dns-openresolver-parser",
+            "description": "ShadowServer OpenResolver Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+                "processing_interval": "0"
+            }
+	},
+        "ShadowServer Netbios": {
+            "module": "intelmq.bots.parsers.shadowserver.netbios-parser",
+            "description": "ShadowServer Netbios Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+                "processing_interval": "0"
+            }
+	},
+        "ShadowServer QOTD": {
+            "module": "intelmq.bots.parsers.shadowserver.qotd-parser",
+            "description": "ShadowServer QOTD Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+                "processing_interval": "0"
+            }
+	},
+        "ShadowServer Microsoft-Sinkhole": {
+            "module": "intelmq.bots.parsers.shadowserver.microsoft-sinkhole",
+            "description": "ShadowServer Microsoft Sinkhole Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+                "processing_interval": "0"
+            }
+	},
+        "ShadowServer SSDP": {
+            "module": "intelmq.bots.parsers.shadowserver.ssdp-parser",
+            "description": "ShadowServer SSDP Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+                "processing_interval": "0"
+            }
+	},
+        "ShadowServer Sandbox URL": {
+            "module": "intelmq.bots.parsers.shadowserver.sandboxurl-parser",
+            "description": "ShadowServer SSDP Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+                "processing_interval": "0"
+            }
+	},
         "CERT-EU Malicious URLs": {
             "module": "intelmq.bots.parsers.certeu.malicious-urls-parser",
             "description": "CERT-EU Malicious URLs Parser is the bot responsible to parse the report and sanitize the information.",
@@ -355,6 +532,18 @@
         },
         "PostgreSQL": {
             "module": "intelmq.bots.outputs.postgresql.postgresql",
+            "description": "PostgreSQL is the bot responsible to send events to a PostgreSQL Database.",
+            "parameters": {
+                "processing_interval": "0",
+                "host": "<ip>",
+                "port": "<port>",
+                "database": "intelmq-events",
+                "user": "intelmq",
+                "password": "<password>"
+            }
+        },
+	"PostgreSQL_fccn": {
+            "module": "intelmq.bots.outputs.postgresql.postgresqlfccn",
             "description": "PostgreSQL is the bot responsible to send events to a PostgreSQL Database.",
             "parameters": {
                 "processing_interval": "0",
