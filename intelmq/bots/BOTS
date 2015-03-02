@@ -110,7 +110,7 @@
                 "mail_ssl": true,
                 "folder": "Inbox.shadowserver",
                 "subject_regex": "Shadowserver [^ ]+ Drone Report",
-                "attach_regex": "drone-portugal-geo.csv$",
+                "attach_regex": "csv.zip",
                 "attach_unzip": true
             }
         },
@@ -124,8 +124,8 @@
                 "mail_password": "<password>",
                 "mail_ssl": true,
                 "folder": "Inbox.shadowserver",
-		"subject_regex": "Shadowserver Portugal Chargen Report",
-                "attach_regex": "chargen-portugal-geo.csv$",
+		"subject_regex": "Shadowserver [^ ]+ Chargen Report",
+                "attach_regex": "csv.zip",
                 "attach_unzip": true
             }
         },
@@ -139,8 +139,8 @@
                 "mail_password": "<password>",
                 "mail_ssl": true,
                 "folder": "Inbox.shadowserver",
-		"subject_regex": "Shadowserver Portugal NTP Monitor Report",
-                "attach_regex": "ntpmonitor-portugal-geo.csv$",
+		"subject_regex": "Shadowserver [^ ]+ NTP Monitor Report",
+                "attach_regex": "csv.zip",
                 "attach_unzip": true
             }
         },
@@ -154,8 +154,8 @@
                 "mail_password": "<password>",
                 "mail_ssl": true,
                 "folder": "Inbox.shadowserver",
-		"subject_regex": "Shadowserver Portugal SNMP Report",
-                "attach_regex": "snmp-portugal-geo.csv$",
+		"subject_regex": "Shadowserver [^ ]+ SNMP Report",
+                "attach_regex": "csv.zip",
                 "attach_unzip": true
             }
         },
@@ -169,8 +169,8 @@
                 "mail_password": "<password>",
                 "mail_ssl": true,
                 "folder": "Inbox.shadowserver",
-		"subject_regex": "Shadowserver Portugal DNS Open Resolvers Report",
-                "attach_regex": "openresolver-portugal-geo.csv$",
+		"subject_regex": "Shadowserver [^ ]+ DNS Open Resolvers Report",
+                "attach_regex": "csv.zip",
                 "attach_unzip": true
             }
         },
@@ -184,8 +184,8 @@
                 "mail_password": "<password>",
                 "mail_ssl": true,
                 "folder": "Inbox.shadowserver",
-		"subject_regex": "Shadowserver Portugal SSDP Report",
-                "attach_regex": "ssdp-portugal-geo.csv$",
+		"subject_regex": "Shadowserver [^ ]+ SSDP Report",
+                "attach_regex": "csv.zip",
                 "attach_unzip": true
             }
         },
@@ -199,8 +199,8 @@
                 "mail_password": "<password>",
                 "mail_ssl": true,
                 "folder": "Inbox.shadowserver",
-		"subject_regex": "Shadowserver Portugal QOTD Report",
-                "attach_regex": "qotd-portugal-geo.csv$",
+		"subject_regex": "Shadowserver [^ ]+ QOTD Report",
+                "attach_regex": "csv.zip",
                 "attach_unzip": true
             }
         },
@@ -214,8 +214,8 @@
                 "mail_password": "<password>",
                 "mail_ssl": true,
                 "folder": "Inbox.shadowserver",
-		"subject_regex": "Shadowserver Portugal Sandbox URL Report",
-                "attach_regex": "cwsandbox_url-portugal-geo.csv$",
+		"subject_regex": "Shadowserver [^ ]+ Sandbox URL Report",
+                "attach_regex": "csv.zip",
                 "attach_unzip": true
             }
         },
@@ -229,8 +229,8 @@
                 "mail_password": "<password>",
                 "mail_ssl": true,
                 "folder": "Inbox.shadowserver",
-		"subject_regex": "Shadowserver Portugal Microsoft Sinkhole Report",
-                "attach_regex": "microsoft_sinkhole-portugal-geo.csv$",
+		"subject_regex": "Shadowserver [^ ]+ Microsoft Sinkhole Report",
+                "attach_regex": "csv.zip",
                 "attach_unzip": true
             }
         },
@@ -244,8 +244,8 @@
                 "mail_password": "<password>",
                 "mail_ssl": true,
                 "folder": "Inbox.shadowserver",
-		"subject_regex": "Shadowserver Portugal Netbios Report",
-                "attach_regex": "netbios-portugal-geo.csv$",
+		"subject_regex": "Shadowserver [^ ]+ Netbios Report",
+                "attach_regex": "csv.zip",
                 "attach_unzip": true
             }
         },
@@ -541,18 +541,7 @@
                 "user": "intelmq",
                 "password": "<password>"
             }
-        },
-	"PostgreSQL_fccn": {
-            "module": "intelmq.bots.outputs.postgresql.postgresqlfccn",
-            "description": "PostgreSQL is the bot responsible to send events to a PostgreSQL Database.",
-            "parameters": {
-                "processing_interval": "0",
-                "host": "<ip>",
-                "port": "<port>",
-                "database": "intelmq-events",
-                "user": "intelmq",
-                "password": "<password>"
-            }
         }
+
     }
 }
