@@ -85,14 +85,14 @@ All keys MUST be represent in lowercase.
 
 ### List
 
-|Section|Fields|Format|Description|
-|:---:|:---:|:---:|:-----------:|
-|Feed|feed|varchar(2000)|Lower case name for the feeder, e.g. abusech or phishtank.|
-|Feed|feed_code|varchar(2000)|Code name for the feed, e.g.  DFGS, HSDAG etc.|
-|Feed|feed_url|varchar(2000)|The URL of a given abuse feed, where applicable|
-|Time|source_time|timestamp with time zone|Time reported by a source. Some sources only report a date, which '''may''' be used here if there is no better observation (ISO8660)|
-|Time|observation_time|timestamp with time zone|The time a source bot saw the event. This timestamp becomes especially important should you perform your own attribution on a host DNS name for example. The mechanism to denote the attributed elements with reference to the source provided is detailed below in Reported Identity IOC.(ISO8660)|
-|Source Identity|source_ip|inet|The ip observed to initiate the connection|
+|Section|Fields|Format|Syntax|Description|
+|:---:|:---:|:---:|:----------:|:-----------:|
+|Feed|feed|varchar(2000)|printable ASCII string|Lower case name for the feeder, e.g. abusech or phishtank.|
+|Feed|feed_code|varchar(2000)|printable ASCII string|Code name for the feed, e.g.  DFGS, HSDAG etc.|
+|Feed|feed_url|varchar(2000)|a valid URL (see RFC3987 or similar). It is recommended to use libaries such as [faup](https://github.com/stricaud/faup) for validation|The URL of a given abuse feed, where applicable|
+|Time|source_time|timestamp with time zone|according to [wikipedia](https://en.wikipedia.org/wiki/ISO_8601)| Time reported by a source. Some sources only report a date, which '''may''' be used here if there is no better observation (ISO8660)|
+|Time|observation_time|timestamp with time zone|see source_time|The time a source bot saw the event. This timestamp becomes especially important should you perform your own attribution on a host DNS name for example. The mechanism to denote the attributed elements with reference to the source provided is detailed below in Reported Identity IOC.(ISO8660)|
+|Source Identity|source_ip|inet|valid IPv4 or IPv6 address: ```[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}``` or better validate it via python: [stackoverflow](https://stackoverflow.com/questions/319279/how-to-validate-ip-address-in-python)|The ip observed to initiate the connection|
 |Source Identity|source_port|integer|The port from which the connection originated|
 |Source Identity|source_domain_name|varchar(2000)|A DNS name related to the host from which the connection originated|
 |Source Identity|source_url|varchar(2000)|A URL denotes on IOC, which refers to a malicious resource, whose interpretation is defined by the abuse type. A URL with the abuse type phishing refers to a phishing resource.|
