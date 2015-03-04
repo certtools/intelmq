@@ -12,6 +12,7 @@
 <node COLOR="#990000" CREATED="1421843371655" ID="ID_1888032244" MODIFIED="1421843437857" TEXT="generic RTIR fetcher">
 <font NAME="SansSerif" SIZE="14"/>
 <icon BUILTIN="yes"/>
+<node COLOR="#111111" CREATED="1423578234843" ID="ID_966259536" MODIFIED="1423578248067" TEXT="add a field for RTIR ticket id and pass it through the network"/>
 </node>
 <node COLOR="#990000" CREATED="1421843383614" ID="ID_443723107" MODIFIED="1421843394217" TEXT="generic IMAP folder fetcher">
 <font NAME="SansSerif" SIZE="14"/>
@@ -218,14 +219,14 @@
 <node COLOR="#111111" CREATED="1421844622263" ID="ID_3426867" MODIFIED="1421844775939" TEXT="Variant 1: mail to RTIR">
 <font NAME="SansSerif" SIZE="12"/>
 </node>
-<node COLOR="#111111" CREATED="1421844631767" ID="ID_20285815" MODIFIED="1421848533934">
+<node COLOR="#111111" CREATED="1421844631767" ID="ID_20285815" MODIFIED="1423577726738">
 <richcontent TYPE="NODE"><html>
   <head>
     
   </head>
   <body>
     <p>
-      Variant 2: scripts for eyeballing go to DB
+      Variant 2: scripts for eyeballing go to eventDB
     </p>
     <p>
       and fetch the daily data. RTIR stays &quot;mailer&quot;.
@@ -237,7 +238,8 @@
       see document &quot;handler user interface&quot;
     </p>
   </body>
-</html></richcontent>
+</html>
+</richcontent>
 <arrowlink DESTINATION="ID_1522158750" ENDARROW="Default" ENDINCLINATION="307;0;" ID="Arrow_ID_1730775176" STARTARROW="None" STARTINCLINATION="307;0;"/>
 <font NAME="SansSerif" SIZE="12"/>
 <icon BUILTIN="yes"/>
