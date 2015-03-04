@@ -9,6 +9,7 @@
 <a name="sections"></a>
 ## Sections
 
+
 #### Feed
 
 Details about the source feed where information came from.
@@ -27,11 +28,11 @@ We recognize that ip geolocation is not an exact science and analysis of the abu
 
 #### Source Local Identity
 
-Some sources report a internal (NATed)
+Some sources report an internal (NATed) IP address.
 
 #### Destination Identity
 
-The abuse type of an event defines the way these IOC needs to be interpreted. For a botnet drone they refer to the compromized machine, whereas for a command and control server they refer the server itself.
+The abuse type of an event defines the way these IOCs needs to be interpreted. For a botnet drone they refer to the compromized machine, whereas for a command and control server they refer the server itself.
 
 #### Destination Geolocation Identity
 
@@ -39,12 +40,12 @@ We recognize that ip geolocation is not an exact science and analysis of the abu
 
 #### Destination Local Identity
 
-Some sources report a internal (NATed)
+Some sources report an internal (NATed) IP address.
 
 
 #### Reported Source Identity
 
-As stated above, each abuse handling organization should define a policy, which IOC to use as the primary elements describing an abuse event. Often the sources have done their attribution, but you may choose to correlate their attributive elements with your own. In practice this means that your sanitation should prefix the elements with the '''reported''' keyword, to denote that you've decided the attribute these yourself. The list below is not comprehensive, rather than a list of common things you may want to attribute yourself. Moreover, if you choose to perform your own attribution, the observation time will become your authoritative point of reference related to these IOC.
+As stated above, each abuse handling organization should define a policy, which IOC to use as the primary element describing an abuse event. Often the sources have done their attribution, but you may choose to correlate their attributive elements with your own. In practice this means that your sanitation should prefix the elements with the '''reported''' keyword, to denote that you've decided the attribute these yourself. The list below is not comprehensive, rather than a list of common things you may want to attribute yourself. Moreover, if you choose to perform your own attribution, the observation time will become your authoritative point of reference related to these IOC.
 
 #### Reported Destination Identity
 
@@ -69,7 +70,7 @@ As stated above, each abuse handling organization should define a policy, which 
 
 #### Specific Elements
 
-The elements listed below are additional keys used to describe abusive behavior, which are topic specific. They may refer to the source of information, such as notified by, an augmentation source such a cymru cc or internal integration source, such as|rtir id||. The reason why they are separated from the the other IOC is that they are not generic, rather than topic or provider specific. Their communicative function is defined as an optional way to understand what other abuse handling pipelines are most likely to call these elements.
+The elements listed below are additional keys used to describe abusive behavior, which are topic specific. They may refer to the source of information, such as notified by, an augmentation source such a cymru cc or internal integration source, such as|rtir id||. The reason why they are separated from the the other IOCs is that they are not generic, rather than topic or provider specific. Their communicative function is defined as an optional way to understand what other abuse handling pipelines are most likely to call these elements.
 
 #### Classification
 
@@ -80,7 +81,7 @@ Having a functional ontology to work with, especially for the abuse types is imp
 
 ### Rules
 
-All keys MUST be represent in lowercase.
+All keys MUST be written in lowercase.
 
 
 ### List
@@ -93,8 +94,8 @@ All keys MUST be represent in lowercase.
 |Time|source_time|timestamp with time zone|according to [wikipedia](https://en.wikipedia.org/wiki/ISO_8601)| Time reported by a source. Some sources only report a date, which '''may''' be used here if there is no better observation (ISO8660)|
 |Time|observation_time|timestamp with time zone|see source_time|The time a source bot saw the event. This timestamp becomes especially important should you perform your own attribution on a host DNS name for example. The mechanism to denote the attributed elements with reference to the source provided is detailed below in Reported Identity IOC.(ISO8660)|
 |Source Identity|source_ip|inet|valid IPv4 or IPv6 address: ```[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}``` or better validate it via python: [stackoverflow](https://stackoverflow.com/questions/319279/how-to-validate-ip-address-in-python)|The ip observed to initiate the connection|
-|Source Identity|source_port|integer|The port from which the connection originated|
-|Source Identity|source_domain_name|varchar(2000)|A DNS name related to the host from which the connection originated|
+|Source Identity|source_port|integer|```[0-9]{1,5}```|The port from which the connection originated|
+|Source Identity|source_domain_name|varchar(255)|see [RFC1123](http://tools.ietf.org/html/rfc1123): ```"^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$"```|A DNS name related to the host from which the connection originated|
 |Source Identity|source_url|varchar(2000)|A URL denotes on IOC, which refers to a malicious resource, whose interpretation is defined by the abuse type. A URL with the abuse type phishing refers to a phishing resource.|
 |Source Identity|source_email_address|varchar(2000)|An email address, which has been identified to relate to the source of an abuse event|
 |Source Identity|source_reverse_dns|varchar(2000)|Reverse DNS name acquired through a reverse DNS query on an IP address. N.B. "Record types other than PTR records may also appear in the reverse DNS tree."|
