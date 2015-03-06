@@ -9,7 +9,7 @@ class DshieldParserBot(Bot):
         report = self.receive_message()
 
         if report:
-            regex_ip = "^(\d+\.\d+\.\d+\.\d+)"
+            regex_ip = "^(\d+\.\d+\.\d+\.\d+)"      # bug: this ignores IPv6 right now
             regex_timestamp = "(\d+\-\d+\-\d+\s\d+\:\d+\:\d+)"
             
             for row in report.split('\n'):
@@ -22,10 +22,14 @@ class DshieldParserBot(Bot):
                 match = re.search(regex_ip, row)
                 if match:
                     ip = ".".join([octet.lstrip('0') for octet in match.group().split('.')])
+                else:
+                    continue    # skip lines without IP address
 		
                 match = re.search(regex_timestamp, row)
                 if match:
                     timestamp = match.group(1) + " UTC"
+                else:
+                    continue    # no timestamp -> no event, skip it
                 
                 event.add("source_ip", ip)
                 event.add("source_time", timestamp)
