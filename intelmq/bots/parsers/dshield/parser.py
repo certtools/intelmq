@@ -29,7 +29,7 @@ class DshieldParserBot(Bot):
                 if match:
                     timestamp = match.group(1) + " UTC"
                 else:
-                    continue    # no timestamp -> no event, skip it
+                    continue    # no timestamp -> no event, skip this line
                 
                 event.add("source_ip", ip)
                 event.add("source_time", timestamp)
