@@ -30,6 +30,8 @@ apt-get install redis-server
 ### Install IntelMQ
 
 ```
+sudo su -
+
 useradd -M -U -s /bin/bash intelmq
 pip install git+https://<your_user_account>@github.com/certtools/intelmq.git
 
@@ -129,6 +131,8 @@ The entire solution didnt have any problem handling 2.000.000 queued events in m
 * Create a backup of your configurations.
 
 ```
+sudo su -
+
 cp /etc/intelmq/system.conf /etc/intelmq/system.conf.bk
 cp /etc/intelmq/startup.conf /etc/intelmq/startup.conf.bk
 cp /etc/intelmq/runtime.conf /etc/intelmq/runtime.conf.bk
