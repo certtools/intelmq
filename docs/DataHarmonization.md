@@ -1,26 +1,33 @@
 ## Table of Contents
 
-1. [Sections](#sections)
-2. [Fields List](#fields)
-3. [Type/Taxonomy Mapping](#mapping)
-4. [Minimum Requirements](#requirements)
+1. [Overview](#sections)
+2. [Data types](#basicdatatypes)
+3. [List of known fields](#fields)
+4. [Type/Taxonomy Mapping](#mapping)
+5. [Minimum required fields](#requirements)
 
 
 <a name="sections"></a>
-## Sections
+## Overview
+
+The purpose of this document is to list and clearly define known **fields** in Abushelper as well as Intelmq or similar systems. A field is a ```key=value``` pair. For a clear and unique definition of a field, we must define the key (ield-name) as well as the possible values. A field belongs to an **event**. An event is basically a log structured log record in the form ```key=value, key=value, key=value, …```. Each field is grouped by a ***section**. We describe these sections briefly below. 
+
+
 
 
 #### Feed
 
-Details about the source feed where information came from.
+Fields under this section list details about the source feed where information came from.
 
 #### Time
 
-All the timestamps should be normalized to UTC. If the source reports only a date, please do not invent timestamps
+The time section groups all fields related to time information.
+This document requires that all the timestamps MUST be normalized to UTC. If the source reports only a date, do not attempt to invent timestamps.
 
 #### Source Identity
 
-The abuse type of an event defines the way these IOC needs to be interpreted. For a botnet drone they refer to the compromized machine, whereas for a command and control server they refer the server itself.
+This section lists all fields related to identification of the source. **XXX FIXME: not clear!! XXX**
+The abuse type of an event defines the way these events needs to be interpreted. For example, for a botnet drone they refer to the compromised machine, whereas for a command and control server they refer the server itself.
 
 #### Source Geolocation Identity
 
@@ -76,6 +83,20 @@ The elements listed below are additional keys used to describe abusive behavior,
 
 Having a functional ontology to work with, especially for the abuse types is important for you to be able to classify, prioritize and report relevant actionable intelligence to the parties who need to be informed. The driving idea for this ontology has been to use a minimal set of values with maximal usability. Below, is a list of harmonized values for the abuse types.
 
+<a name="datatypes"></a>
+## Data types
+
+This section lists common data / field type definitions. The section [Fields List](#fields) references this table.
+Hence, this section also gives an overview of which basic data types need to be parseable and implemented by any system using this data harmonisation format.
+Note that this section does not yet define error handling and failure mechanisms should a field not be parseable.
+
+
+|Name                                | SQL Data type     | Regexp and Syntax       | Cybox Equivalent |  Comment                           |
+|:----------------------------------:|:-----------------:|:-----------------------:|:----------------:|:----------------------------------:|
+|<a name="#datatype-feed"></a>feed   |varchar(2000)      |  ```[a-zA-Z0-9_.-]+```  |                  | no characters allowed which could be interpreted as CSV separators |
+|<a name="#datatype-url"></a>url     |varchar(2000)      | a valid URL (see [RFC3987](http://tools.ietf.org/html/rfc3987) or similar). | [URI](http://cybox.mitre.org/language/version2.1/xsddocs/objects/URI_Object.html)  | It is recommended to use libaries such as [faup](https://github.com/stricaud/faup) for validation since  |
+
+
 <a name="fields"></a>
 ## Fields List
 
@@ -84,13 +105,14 @@ Having a functional ontology to work with, especially for the abuse types is imp
 All keys MUST be written in lowercase.
 
 
+
 ### List
 
 |Section|Fields|Format|Syntax|Description|
 |:---:|:---:|:---:|:----------:|:-----------:|
-|Feed|feed|varchar(2000)|printable ASCII string|Lower case name for the feeder, e.g. abusech or phishtank.|
-|Feed|feed_code|varchar(2000)|printable ASCII string|Code name for the feed, e.g.  DFGS, HSDAG etc.|
-|Feed|feed_url|varchar(2000)|a valid URL (see RFC3987 or similar). It is recommended to use libaries such as [faup](https://github.com/stricaud/faup) for validation|The URL of a given abuse feed, where applicable|
+|Feed|feed|| see [feed](#datatype-feed)|Lower case name for the feeder, e.g. abusech or phishtank.|
+|Feed|feed_code||see [feed](#datatype-feed)|Code name for the feed, e.g.  DFGS, HSDAG etc.|
+|Feed|feed_url||see [url](#datatype-url)|The URL of a given abuse feed, where applicable|
 |Time|source_time|timestamp with time zone|according to [wikipedia](https://en.wikipedia.org/wiki/ISO_8601)| Time reported by a source. Some sources only report a date, which '''may''' be used here if there is no better observation (ISO8660)|
 |Time|observation_time|timestamp with time zone|see source_time|The time a source bot saw the event. This timestamp becomes especially important should you perform your own attribution on a host DNS name for example. The mechanism to denote the attributed elements with reference to the source provided is detailed below in Reported Identity IOC.(ISO8660)|
 |Source Identity|source_ip|inet|valid IPv4 or IPv6 address: ```[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}``` or better validate it via python: [stackoverflow](https://stackoverflow.com/questions/319279/how-to-validate-ip-address-in-python)|The ip observed to initiate the connection|
