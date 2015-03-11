@@ -1,27 +1,80 @@
 ## Table of Contents
 
-1. [Overview](#sections)
+1. [Overview](#overview)
+2. [Sections](#sections)
 2. [Data types](#basicdatatypes)
 3. [List of known fields](#fields)
 4. [Type/Taxonomy Mapping](#mapping)
 5. [Minimum required fields](#requirements)
 
 
-<a name="sections"></a>
+<a name="overview"></a>
+
 ## Overview
 
-The purpose of this document is to list and clearly define known **fields** in Abushelper as well as Intelmq or similar systems. A field is a ```key=value``` pair. For a clear and unique definition of a field, we must define the key (ield-name) as well as the possible values. A field belongs to an **event**. An event is basically a log structured log record in the form ```key=value, key=value, key=value, …```. Each field is grouped by a **section**. We describe these sections briefly below. 
+The purpose of this document is to list and clearly define known **fields** in Abushelper as well as Intelmq or similar systems. A field is a ```key=value``` pair. For a clear and unique definition of a field, we must define the **key** (field-name) as well as the possible **values**. A field belongs to an **event**. An event is basically a log structured log record in the form ```key=value, key=value, key=value, …```. Each field is grouped by a **section**. We describe these sections briefly below. 
+Every event **MUST** contain a timestamp field.
+
+## EBNF
+To grasp the concept of fields, events, keys, values, etc. the following [EBNF](https://en.wikipedia.org/wiki/Extended_Backus%E2%80%93Naur_Form) description might help. _Do not take this as a literal instruction for implementations_. The formatting of events and fields (and how fields are separated from each other) might vary depending on the encapsulating format (JSON, CSV , etc.) . This EBNF description is here to illustrate how these concepts work together (and are not complete):
+
+
+```
+Events   ::= Event
+           | Events '\n' Event
+           
+Event    ::= Field
+           | Event ', ' Field
+
+          
+Field    ::= Key '=' Value
+
+Value    ::= '"' StringLiteral '"'
+           | Number
+           
+Key      ::= [a-z0-9_-]+
+Number   ::= [0-9]+
+StringLiteral
+         ::= '"' [^"]* '"'
+           | "'" [^']* "'"
+        
+```
+
+### Events
+![Events EBNF](images/Events.png)
+
+### Event
+![Event EBNF](images/Event.png)
+
+### Field
+![Field EBNF](images/Field.png)
+
+### Key
+![Key EBNF](images/Key.png)
+
+### Value
+![Value EBNF](images/Value.png)
+
+### String Literal
+![String Literal EBNF](images/StringLiteral.png)
+
+### Number
+![Number EBNF](images/Number.png)
 
 
 
+<a name="sections"></a>
+## Sections
+
+As stated above, every field is organised under some section. The following is a description of the sections and what they imply.
 
 #### Feed
 
-Fields under this section list details about the source feed where information came from.
+Fields listed under this grouping list details about the source feed where information came from.
 
 #### Time
 
-The time section groups all fields related to time information.
+The time section lists all fields related to time information.
 This document requires that all the timestamps MUST be normalized to UTC. If the source reports only a date, do not attempt to invent timestamps.
 
 #### Source Identity
@@ -92,7 +145,7 @@ Note that this section does not yet define error handling and failure mechanisms
 
 
 |Name                                | SQL Data type     | Regexp and Syntax       | Cybox Equivalent |  Comment                           |
-|:----------------------------------:|:-----------------:|:-----------------------:|:----------------:|:----------------------------------:|
+|:-----------------------------------|:------------------|:------------------------|:-----------------|:-----------------------------------|
 |<a name="#datatype-feed"></a>feed   |varchar(2000)      |  ```[a-zA-Z0-9_.-]+```  |                  | no characters allowed which could be interpreted as CSV separators |
 |<a name="#datatype-url"></a>url     |varchar(2000)      | a valid URL (see [RFC3987](http://tools.ietf.org/html/rfc3987) or similar). | [URI](http://cybox.mitre.org/language/version2.1/xsddocs/objects/URI_Object.html)  | It is recommended to use libaries such as [faup](https://github.com/stricaud/faup) for validation since  |
 
