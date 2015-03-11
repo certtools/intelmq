@@ -12,7 +12,7 @@
 
 ## Overview
 
-The purpose of this document is to list and clearly define known **fields** in Abushelper as well as Intelmq or similar systems. A field is a ```key=value``` pair. For a clear and unique definition of a field, we must define the **key** (field-name) as well as the possible **values**. A field belongs to an **event**. An event is basically a log structured log record in the form ```key=value, key=value, key=value, …```. Each field is grouped by a **section**. We describe these sections briefly below. 
+The purpose of this document is to list and clearly define known **fields** in Abushelper as well as Intelmq or similar systems. A field is a ```key=value``` pair. For a clear and unique definition of a field, we must define the **key** (field-name) as well as the possible **values**. A field belongs to an **event**. An event is basically a  structured log record in the form ```key=value, key=value, key=value, …```. In the [List of known fields](#fields), each field is grouped by a **section**. We describe these sections briefly below. 
 Every event **MUST** contain a timestamp field.
 
 ## EBNF
