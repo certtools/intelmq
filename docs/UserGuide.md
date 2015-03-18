@@ -21,9 +21,7 @@ The following instructions assume:
 ### Install Dependencies
 
 ```
-apt-get install python-pip git
-apt-get install build-essential python-dev
-apt-get install redis-server
+apt-get install python-pip git build-essential python-dev redis-server
 ```
 
 
