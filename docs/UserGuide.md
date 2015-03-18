@@ -32,21 +32,8 @@ apt-get install redis-server
 ```
 sudo su -
 
-useradd -M -U -s /bin/bash intelmq
+useradd -d /opt/intelmq -U -s /bin/bash intelmq
 pip install git+https://<your_user_account>@github.com/certtools/intelmq.git
-
-chmod -R 770 /etc/intelmq/
-chmod -R 700 /var/run/intelmq
-chmod -R 700 /var/lib/intelmq
-chmod -R 700 /usr/local/bin/intelmqctl
-chmod -R 700 /var/log/intelmq
-
-chown -R intelmq.intelmq /etc/intelmq/
-chown -R intelmq.intelmq /var/run/intelmq
-chown -R intelmq.intelmq /var/lib/intelmq
-chown -R intelmq.intelmq /usr/local/bin/intelmqctl
-chown -R intelmq.intelmq /var/log/intelmq
-
 ```
 
 <a name="management"></a>
@@ -58,9 +45,9 @@ Before start running all bots, user should know the system details that will hel
 
 * Each bot instance starts completely independent and MUST have a 'bot id'.
 
-* The 'bot id' is used to reference in '/etc/intelmq/pipeline.conf', '/etc/intelmq/startup.conf' and '/etc/intelmq/runtime.conf' the specific configurations for each bot instance.
+* The 'bot id' is used to reference in '/opt/intelmq/etc/pipeline.conf', '/opt/intelmq/etc/startup.conf' and '/opt/intelmq/etc/runtime.conf' the specific configurations for each bot instance.
 
-* Global configuration for intelmq is at file '/etc/intelmq/system.conf'. Please note that logger in DEBUG mode will write in logs all bots parameteres configured, including passwords.
+* Global configuration for intelmq is at file '/opt/intelmq/etc/system.conf'. Please note that logger in DEBUG mode will write in logs all bots parameteres configured, including passwords.
 
 
 ### Web interface
@@ -100,7 +87,7 @@ description: intelmqctl is the tool to control intelmq system
 #### Monitoring Logs
 
 ```
-$ tail -f /var/log/intelmq/*
+$ tail -f /opt/intelmq/var/log/*
 ```
 
 #### Reset Pipeline and Cache (be careful)
@@ -133,10 +120,10 @@ The entire solution didnt have any problem handling 2.000.000 queued events in m
 ```
 sudo su -
 
-cp /etc/intelmq/system.conf /etc/intelmq/system.conf.bk
-cp /etc/intelmq/startup.conf /etc/intelmq/startup.conf.bk
-cp /etc/intelmq/runtime.conf /etc/intelmq/runtime.conf.bk
-cp /etc/intelmq/pipeline.conf /etc/intelmq/pipeline.conf.bk
+cp /opt/intelmq/etc/system.conf /opt/intelmq/etc/system.conf.bk
+cp /opt/intelmq/etc/startup.conf /opt/intelmq/etc/startup.conf.bk
+cp /opt/intelmq/etc/runtime.conf /opt/intelmq/etc/runtime.conf.bk
+cp /opt/intelmq/etc/pipeline.conf /opt/intelmq/etc/pipeline.conf.bk
 ```
 
 ### Upgrade
@@ -150,10 +137,10 @@ pip install --upgrade git+https://<your_user_account>@github.com/certtools/intel
 * Apply your configurations backup.
 
 ```
-mv /etc/intelmq/system.conf.bk /etc/intelmq/system.conf
-mv /etc/intelmq/startup.conf.bk /etc/intelmq/startup.conf
-mv /etc/intelmq/runtime.conf.bk /etc/intelmq/runtime.conf
-mv /etc/intelmq/pipeline.conf.bk /etc/intelmq/pipeline.conf
+mv /opt/intelmq/etc/system.conf.bk /opt/intelmq/etc/system.conf
+mv /opt/intelmq/etc/startup.conf.bk /opt/intelmq/etc/startup.conf
+mv /opt/intelmq/etc/runtime.conf.bk /opt/intelmq/etc/runtime.conf
+mv /opt/intelmq/etc/pipeline.conf.bk /opt/intelmq/etc/pipeline.conf
 ```
 
 
