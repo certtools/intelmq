@@ -8,10 +8,10 @@ from intelmq.lib.message import Event
 from intelmq.lib.pipeline import Pipeline
 from intelmq.lib.utils import decode, log
 
-SYSTEM_CONF_FILE = "/etc/intelmq/system.conf"
-PIPELINE_CONF_FILE = "/etc/intelmq/pipeline.conf"
-RUNTIME_CONF_FILE = "/etc/intelmq/runtime.conf"
-DEFAULT_LOGGING_PATH = "/var/log/intelmq/"
+SYSTEM_CONF_FILE = "/opt/intelmq/etc/system.conf"
+PIPELINE_CONF_FILE = "/opt/intelmq/etc/pipeline.conf"
+RUNTIME_CONF_FILE = "/opt/intelmq/etc/runtime.conf"
+DEFAULT_LOGGING_PATH = "/opt/intelmq/var/log/"
 DEFAULT_LOGGING_LEVEL = "INFO"
 
 

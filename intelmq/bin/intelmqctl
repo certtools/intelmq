@@ -12,13 +12,13 @@ import signal
 import argparse
 from intelmq.lib.pipeline import Pipeline
 
-SYSTEM_CONFIGURATION_FILE = "/etc/intelmq/system.conf"
-STARTUP_CONFIGURATION_FILE = "/etc/intelmq/startup.conf"
-PIPELINE_CONFIGURATION_FILE = "/etc/intelmq/pipeline.conf"
+SYSTEM_CONFIGURATION_FILE = "/opt/intelmq/etc/system.conf"
+STARTUP_CONFIGURATION_FILE = "/opt/intelmq/etc/startup.conf"
+PIPELINE_CONFIGURATION_FILE = "/opt/intelmq/etc/pipeline.conf"
 
 
-PIDDIR = "/var/run/intelmq/"
-PIDFILE = "/var/run/intelmq/%s.pid"
+PIDDIR = "/opt/intelmq/var/run/"
+PIDFILE = "/opt/intelmq/var/run/%s.pid"
 
 STATUSES = {
     'starting': 0,
