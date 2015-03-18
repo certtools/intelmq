@@ -3,6 +3,7 @@ import pwd
 import grp
 import sys
 import stat
+import time
 from setuptools import setup, find_packages
 
 
@@ -60,10 +61,10 @@ setup(
     data_files=[
                 ('/opt/intelmq/etc/', [
                                    'intelmq/bots/BOTS',
-                                   'intelmq/bots/startup.conf',
-                                   'intelmq/bots/runtime.conf',
-                                   'intelmq/bots/pipeline.conf',
-                                   'intelmq/bots/system.conf'
+                                   'intelmq/conf/startup.conf',
+                                   'intelmq/conf/runtime.conf',
+                                   'intelmq/conf/pipeline.conf',
+                                   'intelmq/conf/system.conf'
                                   ]
                 ),
                 ('/opt/intelmq/bin/', [
@@ -91,7 +92,8 @@ setup(
     ],
 )
 
-
+print "Changing the files permissions inside /opt/intelmq directory."
+time.sleep(2)
 for file in files:
     os.chmod(file, 0770)
     os.chown(file, uid, gid)
