@@ -59,11 +59,11 @@ setup(
                  },
     data_files=[
                 ('/opt/intelmq/etc/', [
-                                   'intelmq/conf/BOTS',
-                                   'intelmq/conf/startup.conf',
-                                   'intelmq/conf/runtime.conf',
-                                   'intelmq/conf/pipeline.conf',
-                                   'intelmq/conf/system.conf'
+                                   'intelmq/bots/BOTS',
+                                   'intelmq/bots/startup.conf',
+                                   'intelmq/bots/runtime.conf',
+                                   'intelmq/bots/pipeline.conf',
+                                   'intelmq/bots/system.conf'
                                   ]
                 ),
                 ('/opt/intelmq/bin/', [
