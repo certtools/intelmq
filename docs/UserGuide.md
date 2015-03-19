@@ -32,6 +32,8 @@ sudo su -
 
 useradd -d /opt/intelmq -U -s /bin/bash intelmq
 pip install git+https://<your_user_account>@github.com/certtools/intelmq.git
+chmod -R 0770 /opt/intelmq
+chown -R intelmq.intelmq /opt/intelmq
 ```
 
 <a name="management"></a>

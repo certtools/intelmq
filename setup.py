@@ -1,19 +1,7 @@
 import os
-import pwd
-import grp
 import sys
-import stat
 import time
 from setuptools import setup, find_packages
-
-
-try:
-    uid = pwd.getpwnam("intelmq").pw_uid
-    gid = grp.getgrnam("intelmq").gr_gid
-except:
-    print "\nPlease, read intelmq documentation and create 'intelmq' user.\n"
-    sys.exit()
-
 
 dirs = [
         '/opt/intelmq',
@@ -26,19 +14,9 @@ dirs = [
         '/opt/intelmq/docs'
        ]
 
-files = [
-        '/opt/intelmq/etc/BOTS',
-        '/opt/intelmq/etc/system.conf',
-        '/opt/intelmq/etc/startup.conf',
-        '/opt/intelmq/etc/runtime.conf',
-        '/opt/intelmq/etc/pipeline.conf',
-       ]
-
 for dir in dirs:
     if not os.path.exists(dir):
         os.makedirs(dir)
-        os.chown(dir, uid, gid)
-        os.chmod(dir, 0770)
         
 
 setup(
@@ -92,8 +70,3 @@ setup(
     ],
 )
 
-print "Changing the files permissions inside /opt/intelmq directory."
-time.sleep(2)
-for file in files:
-    os.chmod(file, 0770)
-    os.chown(file, uid, gid)
