@@ -12,9 +12,9 @@
 
 * Copy database to IntelMQ:
 ```
-# mkdir /opt/intelmq/etc/bots/asnlookup
-# mv /tmp/ipasn.dat /opt/intelmq/etc/bots/asnlookup/
-# chown -R intelmq.intelmq /opt/intelmq/etc/bots/asnlookup
+# mkdir /opt/intelmq/var/lib/bots/asnlookup
+# mv /tmp/ipasn.dat /opt/intelmq/var/lib/bots/asnlookup/
+# chown -R intelmq.intelmq /opt/intelmq/var/lib/bots/asnlookup
 ```
 
-* Make sure that ASNLookup bot at runtime.conf has the value '/opt/intelmq/etc/bots/asnlookup/ipasn.dat' in 'database' field.
+* Make sure that ASNLookup bot at runtime.conf has the value '/opt/intelmq/var/lib/bots/asnlookup/ipasn.dat' in 'database' field.
