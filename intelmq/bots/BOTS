@@ -279,7 +279,7 @@
             "description": "GeoIP (MaxMind) is the bot responsible to add geolocation information to the events (Country, City, Longitude, Latitude, etc..)",
             "parameters": {
                 "processing_interval": "0",
-                "database": "/opt/intelmq/etc/bots/geoip/GeoLite2-City.mmdb"
+                "database": "/opt/intelmq/var/lib/bots/geoip/GeoLite2-City.mmdb"
             }
         },
         "ASN Lookup": {
@@ -287,7 +287,7 @@
             "description": "ASN Lookup is the bot responsible to add ASN and BGP information from Route Views Project to the events.",
             "parameters": {
                 "processing_interval": "0",
-                "database": "/opt/intelmq/etc/bots/asnlookup/ipasn.dat"
+                "database": "/opt/intelmq/var/lib/bots/asnlookup/ipasn.dat"
              }
         },
         "Deduplicator": {
@@ -329,7 +329,7 @@
             "module": "intelmq.bots.outputs.file.file",
             "description": "File is the bot responsible to send events to a file.",
             "parameters": {
-                "file": "/opt/intelmq/etc/bots/file/events.txt",
+                "file": "/opt/intelmq/var/lib/bots/file/events.txt",
                 "processing_interval": "0"
             }
         },

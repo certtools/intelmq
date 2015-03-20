@@ -5,11 +5,13 @@ from setuptools import setup, find_packages
 
 dirs = [
         '/opt/intelmq',
-        '/opt/intelmq/etc/',
-        '/opt/intelmq/etc/bots/',
-        '/opt/intelmq/var/',
-        '/opt/intelmq/var/log/',
+        '/opt/intelmq/etc',
+        '/opt/intelmq/var',
+        '/opt/intelmq/var/log',
         '/opt/intelmq/var/run',
+        '/opt/intelmq/var/lib',
+        '/opt/intelmq/var/lib/bots',
+        '/opt/intelmq/var/lib/bots/file-output',
         '/opt/intelmq/bin',
         '/opt/intelmq/docs'
        ]
