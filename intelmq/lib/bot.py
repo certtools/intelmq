@@ -35,7 +35,7 @@ class Bot(object):
         self.load_runtime_configurations()
 
         self.src_queue, self.dest_queues = self.load_pipeline()
-        self.parameters.processing_interval = float(self.parameters.processing_interval)
+        self.parameters.rate_limit = float(self.parameters.rate_limit)
         
         self.init()
 
@@ -58,7 +58,7 @@ class Bot(object):
                     self.pipeline.queues(self.src_queue, self.dest_queues)
                     self.logger.info("Connected to pipeline queues. Start processing")
                 self.process()
-                self.pipeline.sleep(self.parameters.processing_interval)
+                self.pipeline.sleep(self.parameters.rate_limit)
                 
             except Exception, ex:
                 retry_delay = 30
