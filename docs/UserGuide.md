@@ -31,7 +31,8 @@ apt-get install python-pip git build-essential python-dev redis-server
 sudo su -
 
 git clone https://github.com/certtools/intelmq.git
-python intelmq/setup.py install
+cd intelmq/
+python setup.py install
 useradd -d /opt/intelmq -U -s /bin/bash intelmq
 chmod -R 0770 /opt/intelmq
 chown -R intelmq.intelmq /opt/intelmq
