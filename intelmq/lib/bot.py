@@ -36,6 +36,7 @@ class Bot(object):
 
         self.src_queue, self.dest_queues = self.load_pipeline()
         self.parameters.rate_limit = float(self.parameters.rate_limit)
+        self.parameters.retry_delay = int(self.parameters.retry_delay)
         
         self.init()
 
@@ -47,12 +48,12 @@ class Bot(object):
     def start(self):
         self.logger.info('Bot start processing')
         self.pipeline = None
-        retry_delay = 0
+        local_retry_delay = 0
  
         while True:
             try:
                 if not self.pipeline:
-                    time.sleep(retry_delay)
+                    time.sleep(local_retry_delay)
                     self.logger.info("Connecting to pipeline queues")
                     self.pipeline = Pipeline()
                     self.pipeline.queues(self.src_queue, self.dest_queues)
@@ -61,12 +62,12 @@ class Bot(object):
                 self.pipeline.sleep(self.parameters.rate_limit)
                 
             except Exception, ex:
-                retry_delay = 30
+                local_retry_delay = self.parameters.retry_delay
                 self.logger.info("Last Correct Message(event): %r" % self.last_message)
                 self.logger.info("Current Message(event): %r" % self.current_message)
                 self.logger.exception("Check the following exception:")
                 self.logger.error('Pipeline connection failed (%r)' % ex)
-                self.logger.info('Pipeline will reconnect in %s seconds' % retry_delay)
+                self.logger.info('Pipeline will reconnect in %s seconds' % local_retry_delay)
                 #self.pipeline.disconnect() # caused problems
                 self.pipeline = None
                 
