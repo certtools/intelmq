@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 
 if os.path.isdir("/opt/intelmq"):
     print
-    print "IntelMQ seems to be already installed. This operation will overwrite any configuration."
+    print "IntelMQ seems to be already installed due the existence of /opt/intelmq directory. If you continue the directory will be overwritten."
     answer = raw_input("Do you want to proceed? [y/N] ")
     if answer != "Y" and answer != "y":
         sys.exit(-1)
