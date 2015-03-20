@@ -30,7 +30,9 @@ apt-get install python-pip git build-essential python-dev redis-server
 ```
 sudo su -
 
-pip install git+https://<your_user_account>@github.com/certtools/intelmq.git
+git clone https://github.com/certtools/intelmq.git
+cd intelmq/
+python setup.py install
 useradd -d /opt/intelmq -U -s /bin/bash intelmq
 chmod -R 0770 /opt/intelmq
 chown -R intelmq.intelmq /opt/intelmq
@@ -129,7 +131,9 @@ cp /opt/intelmq/etc/pipeline.conf /opt/intelmq/etc/pipeline.conf.bk
 ### Upgrade
 
 ```
-pip install --upgrade git+https://<your_user_account>@github.com/certtools/intelmq.git
+cd intelmq/
+git pull
+python setup.py install
 ```
 
 ### Restore Configurations
