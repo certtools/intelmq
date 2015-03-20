@@ -32,7 +32,7 @@ class Pipeline():
 
     def send(self, message):
         for destination_queue in self.destination_queues:
-            self.redis.rpush(destination_queue, message)
+            self.redis.lpush(destination_queue, message)
 
     def receive(self):
         if self.redis.llen(self.internal_queue) > 0:
