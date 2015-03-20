@@ -130,7 +130,9 @@ cp /opt/intelmq/etc/pipeline.conf /opt/intelmq/etc/pipeline.conf.bk
 ### Upgrade
 
 ```
-pip install --upgrade git+https://<your_user_account>@github.com/certtools/intelmq.git
+cd intelmq/
+git pull
+python setup.py install
 ```
 
 ### Restore Configurations
