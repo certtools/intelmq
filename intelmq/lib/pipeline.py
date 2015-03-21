@@ -14,15 +14,16 @@ class Pipeline():
                                  socket_timeout = 50000
                                 )
 
-    def queues(self, source_queue, destination_queues):
-        if destination_queues and type(destination_queues) is not list:
-            destination_queues = destination_queues.split()
-        
+    def source_queues(self, source_queue):
         self.source_queue = source_queue
         if source_queue:
             self.internal_queue = source_queue + "-internal"
             
+    def destination_queues(self, destination_queues):
+        if destination_queues and type(destination_queues) is not list:
+            destination_queues = destination_queues.split()     
         self.destination_queues = destination_queues
+
     
     def disconnect(self):
         pass
