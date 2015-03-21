@@ -47,19 +47,29 @@ class Bot(object):
 
     def start(self):
         self.logger.info('Bot start processing')
-        self.pipeline = None
+        self.source_pipeline = None
+        self.destination_pipeline = None
         local_retry_delay = 0
  
         while True:
             try:
-                if not self.pipeline:
+                if not self.source_pipeline:
                     time.sleep(local_retry_delay)
-                    self.logger.info("Connecting to pipeline queues")
-                    self.pipeline = Pipeline()
-                    self.pipeline.queues(self.src_queue, self.dest_queues)
-                    self.logger.info("Connected to pipeline queues. Start processing")
+                    self.logger.info("Connecting to source pipeline")
+                    self.source_pipeline = Pipeline()
+                    self.source_pipeline.source_queues(self.src_queue)
+                    self.logger.info("Connected to source pipeline")
+
+                if not self.destination_pipeline:
+                    time.sleep(local_retry_delay)
+                    self.logger.info("Connecting to destination pipeline")
+                    self.destination_pipeline = Pipeline()
+                    self.destination_pipeline.destination_queues(self.dest_queues)
+                    self.logger.info("Connected to destination pipeline")
+
+                self.logger.info("Start processing")
                 self.process()
-                self.pipeline.sleep(self.parameters.rate_limit)
+                self.source_pipeline.sleep(self.parameters.rate_limit)
                 
             except Exception, ex:
                 local_retry_delay = self.parameters.retry_delay
@@ -68,13 +78,17 @@ class Bot(object):
                 self.logger.exception("Check the following exception:")
                 self.logger.error('Pipeline connection failed (%r)' % ex)
                 self.logger.info('Pipeline will reconnect in %s seconds' % local_retry_delay)
-                #self.pipeline.disconnect() # caused problems
-                self.pipeline = None
+                self.source_pipeline = None
+                self.destination_pipeline = None
                 
             except KeyboardInterrupt as e:
-                if self.pipeline:
-                    self.pipeline.disconnect()
-                    self.logger.info("Disconnecting from pipeline")
+                if self.source_pipeline:
+                    self.source_pipeline.disconnect()
+                    self.logger.info("Disconnecting from source pipeline")
+                if self.destination_pipeline:
+                    self.destination_pipeline.disconnect()
+                    self.logger.info("Disconnecting from destination pipeline")
+
                 self.logger.info("Bot is shutting down")
                 break
 
@@ -158,11 +172,11 @@ class Bot(object):
         if self.message_counter % 500 == 0:
             self.logger.info("Processed %s messages" % self.message_counter)
             
-        self.pipeline.send(message)
+        self.destination_pipeline.send(message)
 
 
     def receive_message(self):
-        self.current_message = self.pipeline.receive()
+        self.current_message = self.source_pipeline.receive()
         
         if not self.current_message:
             return None
@@ -177,7 +191,7 @@ class Bot(object):
 
     def acknowledge_message(self):
         self.last_message = self.current_message
-        self.pipeline.acknowledge()
+        self.source_pipeline.acknowledge()
 
 
 class Parameters(object):
