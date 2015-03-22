@@ -33,11 +33,8 @@ class Bot(object):
         self.logger.info('Bot is starting')
 
         self.load_runtime_configurations()
+        self.load_pipeline_configurations()
 
-        self.src_queue, self.dest_queues = self.load_pipeline()
-        self.parameters.rate_limit = float(self.parameters.rate_limit)
-        self.parameters.retry_delay = int(self.parameters.retry_delay)
-        
         self.init()
 
 
@@ -46,25 +43,26 @@ class Bot(object):
 
 
     def start(self):
-        self.logger.info('Bot start processing')
         self.source_pipeline = None
         self.destination_pipeline = None
         local_retry_delay = 0
  
+        self.logger.info('Bot start processing')
+
         while True:
             try:
                 if not self.source_pipeline:
                     time.sleep(local_retry_delay)
                     self.logger.info("Connecting to source pipeline")
                     self.source_pipeline = Pipeline()
-                    self.source_pipeline.source_queues(self.src_queue)
+                    self.source_pipeline.source_queues(self.source_queues)
                     self.logger.info("Connected to source pipeline")
 
                 if not self.destination_pipeline:
                     time.sleep(local_retry_delay)
                     self.logger.info("Connecting to destination pipeline")
                     self.destination_pipeline = Pipeline()
-                    self.destination_pipeline.destination_queues(self.dest_queues)
+                    self.destination_pipeline.destination_queues(self.destination_queues)
                     self.logger.info("Connected to destination pipeline")
 
                 self.logger.info("Start processing")
@@ -110,19 +108,6 @@ class Bot(object):
             self.stop()
 
 
-    def load_runtime_configurations(self):
-
-        with open(RUNTIME_CONF_FILE, 'r') as fpconfig:
-            config = json.loads(fpconfig.read())
-        
-        self.logger.debug("Loading configuration in %s section from '%s' file" % (self.bot_id, RUNTIME_CONF_FILE))
-        
-        if self.bot_id in config.keys():
-            for option, value in config[self.bot_id].iteritems():
-                setattr(self.parameters, option, value)
-                self.logger.debug("Parameter '%s' loaded with the value '%s'" % (option, value))
-
-
     def load_system_configurations(self):
         
         with open(SYSTEM_CONF_FILE, 'r') as fpconfig:
@@ -133,31 +118,52 @@ class Bot(object):
  
         for option, value in config.iteritems():
             setattr(self.parameters, option, value)
- 
 
-    def load_pipeline(self):
+
+    def load_runtime_configurations(self):
+
+        with open(RUNTIME_CONF_FILE, 'r') as fpconfig:
+            config = json.loads(fpconfig.read())
+
+        # Load __default__ runtime configuration section
+
+        self.logger.debug("Runtime configuration: loading '%s' section from '%s' file" % ("__default__", RUNTIME_CONF_FILE))
+        if "__default__" in config.keys():
+            for option, value in config["__default__"].iteritems():
+                setattr(self.parameters, option, value)
+                self.logger.debug("Runtime configuration: parameter '%s' loaded with the value '%s'" % (option, value)) 
+        
+        # Load bot runtime configuration section
+        
+        self.logger.debug("Runtime configuration: loading '%s' section from '%s' file" % (self.bot_id, RUNTIME_CONF_FILE))
+        if self.bot_id in config.keys():
+            for option, value in config[self.bot_id].iteritems():
+                setattr(self.parameters, option, value)
+                self.logger.debug("Runtime configuration: parameter '%s' loaded with the value '%s'" % (option, value)) 
+
+
+    def load_pipeline_configurations(self):
         with open(PIPELINE_CONF_FILE, 'r') as fpconfig:
             config = json.loads(fpconfig.read())
             
-        self.logger.debug("Loading pipeline queues from '%s' file" % PIPELINE_CONF_FILE)
-        
-        source_queue = None
-        destination_queues = None
+        self.logger.debug("Pipeline configuration: loading '%s' section from '%s' file" % (self.bot_id, PIPELINE_CONF_FILE))
+
+        self.source_queues = None
+        self.destination_queues = None
         
         if self.bot_id in config.keys():
         
             if 'source-queue' in config[self.bot_id].keys():
-                source_queue = config[self.bot_id]['source-queue']
-                self.logger.info("Source queue '%s'" % source_queue)
+                self.source_queues = config[self.bot_id]['source-queue']
+                self.logger.debug("Pipeline configuration: parameter 'source-queue' loaded with the value '%s'" % self.source_queues) 
             
             if 'destination-queues' in config[self.bot_id].keys():
-                destination_queues = config[self.bot_id]['destination-queues']
-                self.logger.info("Destination queues '%s'" % ", ".join(destination_queues))
+                self.destination_queues = config[self.bot_id]['destination-queues']
+                self.logger.debug("Pipeline configuration: parameter 'destination-queues' loaded with the value '%s'" % ", ".join(self.destination_queues)) 
 
-            return [source_queue, destination_queues]
-
-        self.logger.error("Failed to load queues")
-        self.stop()
+        else:
+            self.logger.error("Pipeline configuration: failed to load configuration")
+            self.stop()
         
 
     def send_message(self, message):
