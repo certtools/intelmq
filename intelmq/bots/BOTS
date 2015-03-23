@@ -329,7 +329,7 @@
             "module": "intelmq.bots.outputs.file.file",
             "description": "File is the bot responsible to send events to a file.",
             "parameters": {
-                "file": "/opt/intelmq/var/lib/bots/file/events.txt",
+                "file": "/opt/intelmq/var/lib/bots/file-output/events.txt",
                 "rate_limit": "0"
             }
         },
