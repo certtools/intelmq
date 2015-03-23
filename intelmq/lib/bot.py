@@ -46,6 +46,7 @@ class Bot(object):
         self.source_pipeline = None
         self.destination_pipeline = None
         local_retry_delay = 0
+        self.parameters.retry_delay = 30 # Temporary fix. Need to add to BOTS conf
  
         self.logger.info('Bot start processing')
 
