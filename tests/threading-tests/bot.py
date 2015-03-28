@@ -41,7 +41,7 @@ class Bot(object):
         self.load_pipeline_configurations()
         
         # == NEW CODE
-        #self.parameters.threads_number = 1
+        self.parameters.threads_number = 1
         # == NEW CODE
         
         self.init()
