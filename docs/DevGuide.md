@@ -195,7 +195,7 @@ class Bot(object):
 #### Licence and Author files
 
 License and Authors files can be found at the root of repository.
-* License file **MUST NOT** be modified except by the explicit written permission by CERT.pt or CERT.at
+* License file **MUST NOT** be modified except by the explicit written permission by CERT.PT or CERT.at
 * Credit to the authors file must be always retained. When a new contributor (person and/or organization) improves in some way the repository content (code or documentation), he or she might add his name to the list of contributors.
 
 Note: license and authors MUST be only listed in an external file but not inside the code files.
