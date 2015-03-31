@@ -192,7 +192,7 @@ class Bot(object):
 		self.check_bot_id(bot_id)
 ```
 
-#### LICENSE Rules
+#### Licence and Author files
 
 License and Authors files can be found at the root of repository.
 * License file **MUST NOT** be modified except by the explicit written permission by CERT.pt or CERT.at
