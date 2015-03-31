@@ -77,14 +77,14 @@ local_event = event.deep_copy()
 
 **Reference:** [Style Guide for Python Code](https://www.python.org/dev/peps/pep-0008/)
 
-### Event Harmonization
+#### Event Harmonization
 
 Any component of IntelMQ MUST respect the "Data Harmonization Ontology".
 
 **Reference:** IntelMQ Data Harmonization - https://github.com/certtools/intelmq/blob/master/docs/DataHarmonization.md
 
 
-### Directory layout in the repository
+#### Directory layout in the repository
 ```
 intelmq\
   bin\
@@ -125,7 +125,7 @@ Example:
 ```
 
 
-### Directories Hierarchy on Default Installation
+#### Directories Hierarchy on Default Installation
 
 Configuration Files Path:
 ```
@@ -147,7 +147,7 @@ Additional Bot Files Path:
 /var/lib/intelmq/
 ````
 
-### Directories and Files Harmonization
+#### Directories and Files Harmonization
 
 Any directory and file of IntelMQ **MUST** respect the "Directories and Files Harmonization". Any file name or folder name **MUST**:
 * be represented with uppercase and in case of the name has multiple words, the spaces between them must be replaced by underscores;
@@ -168,7 +168,7 @@ intelmq/bots/parser/taichung_city_netflow
 ```
 
 
-### Directories and  hard-coded file paths
+#### Directories and  hard-coded file paths
 
 Any directory or  hard-coded file path **MUST** correspond to the IntelMQ default directories or files, following the "Directories Hierarchy on Default Installation".
 
@@ -192,7 +192,7 @@ class Bot(object):
 		self.check_bot_id(bot_id)
 ```
 
-### LICENSE Rules
+#### LICENSE Rules
 
 License and Authors files can be found at the root of repository.
 * License file **MUST NOT** be modified except by the explicit written permission by CERT.pt or CERT.at
@@ -200,11 +200,11 @@ License and Authors files can be found at the root of repository.
 
 Note: license and authors MUST be only listed in an external file but not inside the code files.
 
-### Useless Code
+#### Useless Code
 
 Code that is not being use (code that are as comment) or deprecated, **MUST** be removed from the main repository in order to keep the number of lines of code (LoCs) small.
 
-### Log Messages Format
+#### Log Messages Format
 
 Log messages **MUST** be clear and well formatted. The format is the following:
 
@@ -217,16 +217,16 @@ Rules:
 * the Log message MUST follow the common rules of a sentence, beginning with uppercase and ending with period.
 * the sentence MUST describe the problem or has useful information to give to an unexperienced user a context. Pure stack traces without any further explanation are not helpful.
 
-### What to log?
+#### What to log?
 * Try to keep a balance between obscuring the source code file with hundreds of log messages and having too little log messages. 
 * In general, a bot MUST report error conditions.
 
-### Unicode
+#### Unicode
 
 * Each internal object in IntelMQ (Event, Report, etc) that has strings, their strings MUST be in UTF-8 unicode format.
 * Any data received from external sources MUST be transformed into UTF-8 unicode format before add it to IntelMQ objects.
 
-### Class Names
+#### Class Names
 
 Class name of the bot (ex: PhishTank Parser) must correspond to the type of the bot (ex: Parser). Example:
 
@@ -239,26 +239,17 @@ Class name of the bot (ex: PhishTank Parser) must correspond to the type of the 
         bot.start()
 ```    
 
-### Coding style
+#### Coding style
 
 Any component of IntelMQ must follow the [Style Guide for Python Code](https://www.python.org/dev/peps/pep-0008/).
 
-### Back-end independence
+#### Back-end independence
 
 Any component of the IntelMQ MUST be independent of the message queue technology (Redis, RabbitMQ, etc...), except 'lib/pipeline.py'. Intelmq bots MAY only assume to use the class specified in 'lib/pipeline.py' for inter-process or inter-bot communications.
 
-### Compatibility
+#### Compatibility
 
 IntelMQ core (including intelmqctl) MUST be compatible with IntelMQ Manager, IntelMQ UI and IntelMQ Mailer.
-
-
-
-
-
-
-
-
-
 
 
 
