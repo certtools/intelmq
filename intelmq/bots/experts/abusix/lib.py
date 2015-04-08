@@ -15,7 +15,7 @@ class Abusix():
         try:
             response = dns.resolver.query(query, 'TXT')
             if len(response) >= 1 and re.match(r"[^@]+@[^@]+\.[^@]+", str(response[0])):
-                return str(response[0])                
+                return str(response[0]).replace("\"", "")              
             else:
                 return None
         except:
