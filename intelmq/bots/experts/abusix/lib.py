@@ -1,6 +1,5 @@
 import re
-#sudo pip install dnspython
-import dnspython 
+import dns.resolver 
 
 class Abusix():
 
@@ -17,7 +16,7 @@ class Abusix():
             response = dns.resolver.query(query, 'TXT')
             if len(response) >= 1 and re.match(r"[^@]+@[^@]+\.[^@]+", str(response[0])):
                 return str(response[0])                
-            else
+            else:
                 return None
         except:
             return None
