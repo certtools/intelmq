@@ -274,6 +274,17 @@
                 "redis_cache_ttl": "86400"
             }
         },
+        "Abusix": {
+            "module": "intelmq.bots.experts.abusix.abusix",
+            "description": "Abusix is the bot resposible to get the correspondent abuse contact from source IP and destination IP of the events",
+            "parameters": {
+                "rate_limit": "0",
+                "redis_cache_host": "127.0.0.1",
+                "redis_cache_port": "6379",
+                "redis_cache_db": "5",
+                "redis_cache_ttl": "86400"
+            }
+        },
         "GeoIP": {
             "module": "intelmq.bots.experts.geoip.geoip",
             "description": "GeoIP (MaxMind) is the bot responsible to add geolocation information to the events (Country, City, Longitude, Latitude, etc..)",
