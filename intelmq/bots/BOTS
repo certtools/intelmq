@@ -9,6 +9,15 @@
 		"port": "8000"
             }
 	},
+	"IntelMQ": {
+            "module": "intelmq.bots.collectors.intelmqlistner.collector",
+            "description": "IntelMQ Listner",
+            "parameters": {
+                "processing_interval": "3600",
+                "host": "0.0.0.0",
+		"port": "8001"
+            }
+	},	
 	"XMPPbot": {
             "module": "intelmq.bots.collectors.xmpp.collector",
             "description": "ACDC project",
