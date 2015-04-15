@@ -40,6 +40,11 @@ Similarly, if code does not get accepted upstream by the main developers, it is 
 In general, we follow the [Style Guide for Python Code](https://www.python.org/dev/peps/pep-0008/).
 We recommend reading it before commiting code.
 
+```
+# pip install pep8
+# pep8 --show-source <filename>.py
+```
+
 #### Identation
 
 Identation of the code must done using 4 spaces for each level of identation.
