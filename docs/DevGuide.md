@@ -59,12 +59,10 @@ Identation of the code must done using 4 spaces for each level of identation.
 Unclear variable name:
 ```
 def process_line(self, evt):
-    line = evt["raw"]["line"]
 ```
 Clear variable name:
 ```
 def process_line(self, event):
-    line = event["raw"]["line"]
 ```
 
 Here, event is a short name, it is clear what it means (--> see Data Harmonisation Ontology) and better than ```evt```. 
