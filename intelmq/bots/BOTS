@@ -392,6 +392,15 @@
                 "collection": "<collection>"
             }
         },
+	"IntelMQAgent": {
+            "module": "intelmq.bots.outputs.IntelMQAgent.intelmqagent",
+            "description": "IntelMQAgent is the bot responsible to send events to IntelMQ collectors.",
+            "parameters": {
+                "processing_interval": "0",
+                "ip": "<ip>",
+                "port": "<port>"
+            }
+        },
         "PostgreSQL": {
             "module": "intelmq.bots.outputs.postgresql.postgresql",
             "description": "PostgreSQL is the bot responsible to send events to a PostgreSQL Database.",
