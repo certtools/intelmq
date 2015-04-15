@@ -23,7 +23,9 @@ class ShadowServerQotdParserBot(Bot):
                 "asn": "source_asn",
                 "geo": "source_cc",
                 "region" : "source_region",
-                "city" : "source_city"
+                "city" : "source_city",
+		"naics": "__IGNORE__",
+		"sic": "__IGNORE__"
             }
             
             rows = csv.DictReader(StringIO.StringIO(report))

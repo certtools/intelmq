@@ -4,7 +4,7 @@ from intelmq.lib.bot import Bot, sys
 from intelmq.lib.message import Event
 from intelmq.bots import utils
 
-class ShadowServerChargenParserBot(Bot):
+class ShadowServerNTPParserBot(Bot):
 
     def process(self):
         report = self.receive_message()
@@ -18,7 +18,7 @@ class ShadowServerChargenParserBot(Bot):
                 "protocol" : "transport_protocol",
                 "port" : "source_port",
                 "hostname": "source_reverse_dns",
-                "tag" : "__IGNORE__",
+                "packets" : "__IGNORE__",
                 "size" : "__IGNORE__",
                 "asn": "source_asn",
                 "geo": "source_cc",
@@ -51,9 +51,9 @@ class ShadowServerChargenParserBot(Bot):
                     
                     event.add(key, value)
             
-                event.add('feed', 'shadowserver-chargen')
+                event.add('feed', 'shadowserver-ntp')
                 event.add('type', 'vulnerable service')
-                event.add('application_protocol', 'chargen')
+                event.add('application_protocol', 'ntp')
 
                 event = utils.parse_source_time(event, "source_time")  
                 event = utils.generate_observation_time(event, "observation_time")
@@ -64,5 +64,5 @@ class ShadowServerChargenParserBot(Bot):
    
 
 if __name__ == "__main__":
-    bot = ShadowServerChargenParserBot(sys.argv[1])
+    bot = ShadowServerNTPParserBot(sys.argv[1])
     bot.start()
