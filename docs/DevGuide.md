@@ -40,11 +40,6 @@ Similarly, if code does not get accepted upstream by the main developers, it is 
 In general, we follow the [Style Guide for Python Code](https://www.python.org/dev/peps/pep-0008/).
 We recommend reading it before commiting code.
 
-```
-# pip install pep8
-# pep8 --show-source <filename>.py
-```
-
 #### Identation
 
 Identation of the code must done using 4 spaces for each level of identation.
@@ -132,22 +127,22 @@ Example:
 
 Configuration Files Path:
 ```
-/etc/intelmq/
+/opt/intelmq/etc/
 ```
 
 PID Files Path:
 ```
-/var/run/intelmq/
+/opt/intelmq/var/run/
 ```
 
 Logs Files Path:
 ```
-/var/log/intelmq/
+/opt/intelmq/var/log/
 ````
 
 Additional Bot Files Path:
 ```
-/var/lib/intelmq/
+/opt/intelmq/var/lib/bots/
 ````
 
 #### Directories and Files Harmonization
@@ -183,10 +178,10 @@ import json
 import time
 import ConfigParser
 
-SYSTEM_CONF_FILE = "/etc/intelmq/system.conf"
-PIPELINE_CONF_FILE = "/etc/intelmq/pipeline.conf"
-RUNTIME_CONF_FILE = "/etc/intelmq/runtime.conf"
-DEFAULT_LOGGING_PATH = "/var/log/intelmq/"
+SYSTEM_CONF_FILE = "/opt/intelmq/etc/system.conf"
+PIPELINE_CONF_FILE = "/opt/intelmq/etc/pipeline.conf"
+RUNTIME_CONF_FILE = "/opt/intelmq/etc/runtime.conf"
+DEFAULT_LOGGING_PATH = "/opt/intelmq/var/log/"
 
 class Bot(object):
 
@@ -198,7 +193,7 @@ class Bot(object):
 #### Licence and Author files
 
 License and Authors files can be found at the root of repository.
-* License file **MUST NOT** be modified except by the explicit written permission by CERT.PT or CERT.at
+* License file **MUST NOT** be modified except by the explicit written permission by CNCS/CERT.PT or CERT.at
 * Credit to the authors file must be always retained. When a new contributor (person and/or organization) improves in some way the repository content (code or documentation), he or she might add his name to the list of contributors.
 
 Note: license and authors MUST be only listed in an external file but not inside the code files.
@@ -245,6 +240,11 @@ Class name of the bot (ex: PhishTank Parser) must correspond to the type of the 
 #### Coding style
 
 Any component of IntelMQ must follow the [Style Guide for Python Code](https://www.python.org/dev/peps/pep-0008/).
+
+```
+# pip install pep8
+# pep8 --show-source <filename>.py
+```
 
 #### Back-end independence
 
