@@ -1,0 +1,63 @@
+{
+    "name": "Vyjimka pro UPC",
+    "date": "2015-02-03",
+    "type": "exclude",
+    "filter": {
+        "Taxonomy": [
+            "Malicious Code",
+            "Intrusion Attempts"
+        ],
+        "Type": [
+            "botnet drone",
+            "c&c"
+        ],
+        "ASN": [
+            "25761",
+            "54600"
+        ],
+        "CIDR": [
+            "192.168.100.0/24",
+            "10.10.25.38/32"
+        ],
+        "Recipient": [
+            "karel@seznam.cz",
+            "*@isp.cz"
+        ],
+        "CC": [
+            "DE"
+        ]
+    }
+}
+
+{
+    "name": "Test",
+    "date": "2015-01-08",
+    "type": "exclude",
+    "filter": {
+        "Recipient": [
+            "robert.sefr@nic.cz"
+        ]
+    }
+}
+
+{
+    "name": "Exclude seznam.cz",
+    "type": "exclude",
+    "date": "2012-01-08",
+    "filter": {
+        "ASN": [
+            "12345"
+        ]
+    }
+}
+
+{
+    "name": "include IPs for CZ",
+    "type": "include",
+    "date": "2012-01-08",
+    "filter": {
+        "CC": [
+            "CZ"
+        ]
+    }
+}
