@@ -1,0 +1,42 @@
+"""
+Tor Exit Node parser . 
+
+Maintainer: Krystian Kochanowski <krystian.kochanowski@gmail.com>
+"""
+
+from intelmq.lib.bot import Bot, sys
+from intelmq.lib.message import Event
+from intelmq.bots import utils
+
+class TorexitnodeParserBot(Bot):
+
+    def process(self):
+        report = self.receive_message()
+
+        if report:
+            for row in report.split('\n'):
+                row = row.strip()
+
+                if len(row) == 0:
+                    continue
+
+                row = row.split()
+                event = Event()
+
+                columns = ["source_ip"]
+                for key, value in zip(columns, row):
+                    event.add(key, value)
+
+                event.add('feed', 'torexitnode')
+                event.add('feed_url', 'https://torstatus.blutmagie.de/ip_list_exit.php/Tor_ip_list_EXIT.csv')
+
+                event = utils.parse_source_time(event, "source_time")
+                event = utils.generate_observation_time(event, "observation_time")
+                event = utils.generate_reported_fields(event)
+
+                self.send_message(event)
+        self.acknowledge_message()
+
+if __name__ == "__main__":
+    bot = TorexitnodeParserBot(sys.argv[1])
+    bot.start()
