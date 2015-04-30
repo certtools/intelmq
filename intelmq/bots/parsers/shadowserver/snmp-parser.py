@@ -24,7 +24,9 @@ class ShadowServerSNMPParserBot(Bot):
                 "geo": "source_cc",
                 "region" : "source_region",
                 "city" : "source_city",
-                "version" : "__IGNORE__"
+                "version" : "__IGNORE__",
+		"naics": "__IGNORE__",
+		"sic": "__IGNORE__"
             }
             
             rows = csv.DictReader(StringIO.StringIO(report))

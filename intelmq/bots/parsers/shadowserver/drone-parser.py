@@ -36,14 +36,20 @@ class ShadowServerDroneParserBot(Bot):
                 "p0f_genre": "__TBD__",
                 "p0f_detail": "__TBD__",
                 "machine_name": "__TBD__",
-                "id": "__TBD__"
+                "id": "__TBD__",
+		"naics": "__IGNORE__",
+		"sic": "__IGNORE__",
+		"cc_naics": "__IGNORE__",
+		"cc_sic": "__IGNORE__"
+		
+				
             }
             
             rows = csv.DictReader(StringIO.StringIO(report))
             
             for row in rows:
-                event = Event()
-                
+		event = Event()
+
                 for key, value in row.items():
 
                     key = columns[key]

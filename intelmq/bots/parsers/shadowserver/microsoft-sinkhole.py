@@ -33,7 +33,9 @@ class ShadowServerMicrosoftSinkholeParserBot(Bot):
                 "http_referer_geo": "__TBD__",
                 "dst_ip": "destination_ip",
                 "dst_asn": "destination_asn",
-                "dst_geo": "destination_cc"
+                "dst_geo": "destination_cc",
+		"naics": "__IGNORE__",
+		"sic": "__IGNORE__"
             }
             
             rows = csv.DictReader(StringIO.StringIO(report))
