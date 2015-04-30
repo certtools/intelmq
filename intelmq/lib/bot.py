@@ -66,7 +66,6 @@ class Bot(object):
                     self.destination_pipeline.destination_queues(self.destination_queues)
                     self.logger.info("Connected to destination pipeline")
 
-                self.logger.info("Start processing")
                 self.process()
                 self.source_pipeline.sleep(self.parameters.rate_limit)
                 
