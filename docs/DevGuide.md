@@ -306,8 +306,8 @@ if __name__ == "__main__":
 
 **Examples**
 
-* Check [taxonomy](bots/experts/taxonomy/taxonomy.py) expert bot
-* Check [arbor](bots/parsers/arbor/parser.py) parser bot
+* Check [taxonomy](../intelmq/bots/experts/taxonomy/taxonomy.py) expert bot
+* Check [arbor](../intelmq/bots/parsers/arbor/parser.py) parser bot
 
 ### Configure IntelMQ
 
