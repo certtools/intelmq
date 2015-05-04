@@ -35,7 +35,7 @@ however it was re-written from scratch and aims at:
 <a name="how-to-install"></a>
 ## How to Install
 
-See [UserGuide](https://github.com/certtools/intelmq/blob/master/docs/UserGuide.md).
+See [UserGuide](docs/UserGuide.md).
 
 
 <a name="control-platform"></a>
@@ -55,7 +55,7 @@ Check the [tool](https://github.com/certtools/intelmq-manager) and manage easily
 ## Data Harmonization
 
 IntelMQ use the Data Harmonization. Check the following 
-[document](https://github.com/certtools/intelmq/blob/master/docs/DataHarmonization.md).
+[document](docs/DataHarmonization.md).
 
 <a name="licence"></a>
 ## Licence

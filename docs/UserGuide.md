@@ -169,5 +169,5 @@ pip uninstall intelmq
 <a name="faq"></a>
 # Frequently Asked Questions
 
-Consult the [FAQ](https://github.com/certtools/intelmq/blob/master/docs/FAQ.md)
+Consult the [FAQ](FAQ.md)
 if you encountered any problem.
