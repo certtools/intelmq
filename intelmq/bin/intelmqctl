@@ -55,23 +55,23 @@ RETURN_TYPE = None
 def log_list_queus(queues):
     if RETURN_TYPE == 'text':
         for queue, counter in sorted(queues.iteritems()):
-            print "%s - %s" % (queue,  counter)
+            print("%s - %s" % (queue,  counter))
 
 def log_bot_error(bot_id, status):
     if RETURN_TYPE == 'text':
-        print ERROR_MESSAGES[status] % bot_id
+        print(ERROR_MESSAGES[status] % bot_id)
     
 def log_bot_message(bot_id, status):
     if RETURN_TYPE == 'text':
-        print MESSAGES[status] % bot_id
+        print(MESSAGES[status] % bot_id)
 
 def log_botnet_error(status):
     if RETURN_TYPE == 'text':
-        print ERROR_MESSAGES[status] % 'Botnet'
+        print(ERROR_MESSAGES[status] % 'Botnet')
     
 def log_botnet_message(status):
     if RETURN_TYPE == 'text':
-        print MESSAGES[status] % 'Botnet'
+        print(MESSAGES[status] % 'Botnet')
        
 def write_pidfile(bot_id, pid):
     filename = PIDFILE % bot_id

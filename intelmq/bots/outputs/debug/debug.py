@@ -7,7 +7,7 @@ class DebugBot(Bot):
         event = self.receive_message()
         
         if event:
-            print unicode(event)
+            print(unicode(event))
             self.send_message(event)
         self.acknowledge_message()
 

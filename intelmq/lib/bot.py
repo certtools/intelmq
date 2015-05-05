@@ -69,7 +69,7 @@ class Bot(object):
                 self.process()
                 self.source_pipeline.sleep(self.parameters.rate_limit)
                 
-            except Exception, ex:
+            except Exception as ex:
                 local_retry_delay = self.parameters.retry_delay
                 self.logger.info("Last Correct Message(event): %r" % self.last_message)
                 self.logger.info("Current Message(event): %r" % self.current_message)
@@ -97,14 +97,14 @@ class Bot(object):
         except:
             pass
         finally:
-            print "Bot found an error. Exiting"
+            print("Bot found an error. Exiting")
         exit(-1)
 
 
     def check_bot_id(self, str):
         res = re.search('[^0-9a-zA-Z\-]+', str)
         if res:
-            print "Invalid bot id."
+            print("Invalid bot id.")
             self.stop()
 
 
