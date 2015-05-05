@@ -10,9 +10,9 @@ FIELDS = dict()
 try:
     with open(FILE, 'r') as fp:
         data = fp.read()
-    print("[INFO] Reading %s file" % FILE)
+    print(("[INFO] Reading %s file" % FILE))
 except IOError:
-    print("[ERROR] Could not find %s" % FILE)
+    print(("[ERROR] Could not find %s" % FILE))
     print("[ERROR] Make sure that you have intelmq installed.")
     sys.exit(-1)
 
@@ -24,14 +24,14 @@ for line in data.split('\n'):
             continue
 
         match = re.search(REGEX_FIELDS, line)
-        if match.group(1) in FIELDS.keys():
-            print(match.group(1))
+        if match.group(1) in list(FIELDS.keys()):
+            print((match.group(1)))
 
         FIELDS[match.group(1)] = match.group(2)
 
 
 initdb = "CREATE table events ("
-for field, field_type in sorted(FIELDS.iteritems()):
+for field, field_type in sorted(FIELDS.items()):
     initdb += '\n\t"%s" %s,' % (field, field_type)
 
 initdb = initdb[:-1]
@@ -39,5 +39,5 @@ initdb += "\n);"
 
 
 with open(OUTPUTFILE, 'w') as fp:
-    print("[INFO] Writing %s file" % OUTPUTFILE)
+    print(("[INFO] Writing %s file" % OUTPUTFILE))
     fp.write(initdb)

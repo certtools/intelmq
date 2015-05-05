@@ -2,7 +2,7 @@ import re
 import sys
 import json
 import time
-import ConfigParser
+import configparser
 
 from intelmq.lib.message import Event
 from intelmq.lib.pipeline import Pipeline
@@ -116,7 +116,7 @@ class Bot(object):
         setattr(self.parameters, 'logging_path' , DEFAULT_LOGGING_PATH)
         setattr(self.parameters, 'logging_level' , DEFAULT_LOGGING_LEVEL)
  
-        for option, value in config.iteritems():
+        for option, value in config.items():
             setattr(self.parameters, option, value)
 
 
@@ -128,16 +128,16 @@ class Bot(object):
         # Load __default__ runtime configuration section
 
         self.logger.debug("Runtime configuration: loading '%s' section from '%s' file" % ("__default__", RUNTIME_CONF_FILE))
-        if "__default__" in config.keys():
-            for option, value in config["__default__"].iteritems():
+        if "__default__" in list(config.keys()):
+            for option, value in config["__default__"].items():
                 setattr(self.parameters, option, value)
                 self.logger.debug("Runtime configuration: parameter '%s' loaded with the value '%s'" % (option, value)) 
         
         # Load bot runtime configuration section
         
         self.logger.debug("Runtime configuration: loading '%s' section from '%s' file" % (self.bot_id, RUNTIME_CONF_FILE))
-        if self.bot_id in config.keys():
-            for option, value in config[self.bot_id].iteritems():
+        if self.bot_id in list(config.keys()):
+            for option, value in config[self.bot_id].items():
                 setattr(self.parameters, option, value)
                 self.logger.debug("Runtime configuration: parameter '%s' loaded with the value '%s'" % (option, value)) 
 
@@ -151,13 +151,13 @@ class Bot(object):
         self.source_queues = None
         self.destination_queues = None
         
-        if self.bot_id in config.keys():
+        if self.bot_id in list(config.keys()):
         
-            if 'source-queue' in config[self.bot_id].keys():
+            if 'source-queue' in list(config[self.bot_id].keys()):
                 self.source_queues = config[self.bot_id]['source-queue']
                 self.logger.debug("Pipeline configuration: parameter 'source-queue' loaded with the value '%s'" % self.source_queues) 
             
-            if 'destination-queues' in config[self.bot_id].keys():
+            if 'destination-queues' in list(config[self.bot_id].keys()):
                 self.destination_queues = config[self.bot_id]['destination-queues']
                 self.logger.debug("Pipeline configuration: parameter 'destination-queues' loaded with the value '%s'" % ", ".join(self.destination_queues)) 
 
@@ -172,7 +172,7 @@ class Bot(object):
             return False
         
         if isinstance(message, Event):
-            message = unicode(message) # convert Event Object to string (UTF-8)
+            message = str(message) # convert Event Object to string (UTF-8)
             
         self.message_counter += 1
         if self.message_counter % 500 == 0:
@@ -190,8 +190,10 @@ class Bot(object):
         message = self.current_message.decode('utf-8')
         
         try:    # Event Object
-            return Event.from_unicode(message)
+            event = Event.from_unicode(message)
+            return event
         except: # Report Object
+            self.logger.debug("Generated report object because: %s, %s" % sys.exc_info())
             return message
 
 

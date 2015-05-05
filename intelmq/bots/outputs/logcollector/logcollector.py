@@ -8,7 +8,7 @@ class LogCollectorBot(Bot):
         
         if event:
             data = ''
-            for key, value in event.items():
+            for key, value in list(event.items()):
                 data += key.replace(' ','_') + '="' + value + '" '
             data += "\n"
 
@@ -35,7 +35,7 @@ class LogCollectorBot(Bot):
     def send_data(self, data):
         while True:
             try:
-                self.con.send(unicode(data).encode("utf-8"))
+                self.con.send(str(data).encode("utf-8"))
                 self.con.sendall("")
                 break
             except socket.error as e:

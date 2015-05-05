@@ -7,7 +7,7 @@ KEYWORDS = {
         "brute-force": ["brute-force", "brute force", "mysql"],
         "c&c": ["c&c server"],
         "botnet drone": ["irc-botnet"],
-        "malware": ["malware provider", "malware website", u'\u60e1\u610f', "worm"],
+        "malware": ["malware provider", "malware website", '\u60e1\u610f', "worm"],
         "scanner": ["scan"],
         "exploit": ["bash", "php-cgi", "phpmyadmin"],
     }
@@ -16,9 +16,9 @@ class TaichungCityNetflowParserBot(Bot):
     
     def get_type(self, value):
         value = value.lower()
-        for event_type, keywords in KEYWORDS.iteritems():
+        for event_type, keywords in KEYWORDS.items():
             for keyword in keywords:
-                if unicode(keyword) in value:
+                if str(keyword) in value:
                     return event_type
         return "unknown"
 

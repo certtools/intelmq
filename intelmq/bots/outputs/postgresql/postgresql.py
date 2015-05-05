@@ -20,8 +20,8 @@ class PostgreSQLBot(Bot):
         if event:
             
             evdict  = event.to_dict()
-            keys    = ", ".join(evdict.keys())
-            values  = evdict.values()
+            keys    = ", ".join(list(evdict.keys()))
+            values  = list(evdict.values())
             fvalues = len(values) * "%s, "
             query   = "INSERT INTO events (" + keys + ") VALUES (" + fvalues[:-2] + ")"
             

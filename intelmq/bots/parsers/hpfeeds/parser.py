@@ -15,7 +15,7 @@ class HPFeedsBot(Bot):
                 m = report
            
                 event = Event()
-                for k in m.keys():
+                for k in list(m.keys()):
                     event.add(k, m.value(k))
                     
                 event.add('feed', 'hpfeed')

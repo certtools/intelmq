@@ -1,5 +1,5 @@
 import binascii
-import StringIO
+import io
 import dns.resolver
 from intelmq.lib.utils import decode
 from intelmq.bots import utils
@@ -30,7 +30,7 @@ class Cymru():
     def __query(query):    
         try:
             for query_result in dns.resolver.query(query, rdtype='TXT'):    
-                fp = StringIO.StringIO()
+                fp = io.StringIO()
                 query_result.to_wire(fp)
                 value = fp.getvalue()[1:] # ignore first character
                 fp.close()

@@ -12,7 +12,7 @@ class FileBot(Bot):
         event = self.receive_message()
         
         if event:
-            event_data = unicode(event)
+            event_data = str(event)
             event_data = encode(event_data)
             self.file.write(event_data)
             self.file.write("\n")

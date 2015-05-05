@@ -46,11 +46,11 @@ class Event(object):
 
     def keys(self):
         """Return contained keys of event"""
-        return self.event.keys()
+        return list(self.event.keys())
 
     def items(self):
         """Return contained items of event"""
-        return self.event.items()
+        return list(self.event.items())
 
     def contains(self, key):
         """Returns key in event"""
@@ -65,7 +65,7 @@ class Event(object):
 
     def to_unicode(self):
 
-        return unicode(json.dumps(self.event))
+        return str(json.dumps(self.event))
 
     @staticmethod
     def from_unicode(event_string):
