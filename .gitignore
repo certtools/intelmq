@@ -7,3 +7,5 @@
 intelmq.egg-info
 build
 dist
+*.bak
+*.swp
