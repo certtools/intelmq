@@ -25,7 +25,7 @@ class LogCollectorBot(Bot):
             try:
                 self.con.connect(address)
                 break
-            except socket.error, e:
+            except socket.error as e:
                 self.logger.error(e.args[1] + ". Retrying in 10 seconds.")
                 time.sleep(10)
 
@@ -38,7 +38,7 @@ class LogCollectorBot(Bot):
                 self.con.send(unicode(data).encode("utf-8"))
                 self.con.sendall("")
                 break
-            except socket.error, e:
+            except socket.error as e:
                 self.logger.error(e.args[1] + ". Reconnecting..")
                 self.con.close()
                 self.connect()
