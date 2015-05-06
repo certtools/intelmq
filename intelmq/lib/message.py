@@ -64,7 +64,7 @@ class Event(object):
         return dict(self.event)
 
     def to_unicode(self):
-
+        """Converts the event to unicode string (json) representation"""
         return str(json.dumps(self.event))
 
     @staticmethod
@@ -77,9 +77,9 @@ class Event(object):
 
         for key, value in sorted(self.items()):
             evhash.update(key.encode("utf-8"))
-            evhash.update("\xc0")
+            evhash.update(b"\xc0")
             evhash.update(value.encode("utf-8"))
-            evhash.update("\xc0")
+            evhash.update(b"\xc0")
 
         # FIXME: the int stuff should be done by cache
         return int(evhash.hexdigest(), 16)
@@ -88,12 +88,10 @@ class Event(object):
         """Return self == other_event"""
         return self.event == other_event
 
-    def __unicode__(self):
-        return self.to_unicode()
-
     def __repr__(self):
+        """Returns the event as a repl printable representation"""
         return repr(self.event)
 
     def __str__(self):
         """Returns self (the event itself) as a string"""
-        return str(self.event)
+        return self.to_unicode()

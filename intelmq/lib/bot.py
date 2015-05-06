@@ -193,7 +193,7 @@ class Bot(object):
             event = Event.from_unicode(message)
             return event
         except: # Report Object
-            self.logger.debug("Generated report object because: %s, %s" % sys.exc_info())
+            self.logger.debug("Generated report object because: %s, %s" % (sys.exc_info()[0:2]))
             return message
 
 
