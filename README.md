@@ -1,8 +1,17 @@
 ![IntelMQ](http://s28.postimg.org/r2av18a3x/Logo_Intel_MQ.png)
 
-**IntelMQ** is a solution for CERTs for collecting and processing security feeds, pastebins, tweets using a message queue protocol. It’s a community driven initiative called **IHAP** (Incident Handling Automation Project) which was conceptually designed by European CERTs during several InfoSec events. Its main goal is to give to incident responders an easy way to collect & process threat intelligence thus improving the incident handling processes of CERTs.
+**IntelMQ** is a solution for CERTs for collecting and processing security 
+feeds, pastebins, tweets using a message queue protocol. 
+It's a community driven initiative called **IHAP** (Incident Handling 
+Automation Project) which was conceptually designed 
+by European CERTs during several InfoSec events. Its main goal is to 
+give to incident responders an easy way to collect & process threat 
+intelligence thus improving the incident handling processes of CERTs.
 
-IntelMQ's design was influenced by [AbuseHelper](https://bitbucket.org/clarifiednetworks/abusehelper), however it was re-written from scratch and aims at:
+IntelMQ's design was influenced by 
+[AbuseHelper](https://bitbucket.org/clarifiednetworks/abusehelper), 
+however it was re-written from scratch and aims at:
+
 * Reduce the complexity of system administration
 * Reduce the complexity of writing new bots for new data feeds
 * Reduce the probability of events lost in all process with persistence functionality (even system crash)
@@ -26,7 +35,7 @@ IntelMQ's design was influenced by [AbuseHelper](https://bitbucket.org/clarified
 <a name="how-to-install"></a>
 ## How to Install
 
-See [UserGuide](https://github.com/certtools/intelmq/blob/master/docs/UserGuide.md).
+See [UserGuide](docs/UserGuide.md).
 
 
 <a name="control-platform"></a>
@@ -45,7 +54,8 @@ Check the [tool](https://github.com/certtools/intelmq-manager) and manage easily
 <a name="data-harmonization"></a>
 ## Data Harmonization
 
-IntelMQ use the Data Harmonization. Check the following [document](https://github.com/certtools/intelmq/blob/master/docs/DataHarmonization.md).
+IntelMQ use the Data Harmonization. Check the following 
+[document](docs/DataHarmonization.md).
 
 <a name="licence"></a>
 ## Licence
