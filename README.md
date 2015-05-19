@@ -22,6 +22,16 @@ however it was re-written from scratch and aims at:
 * Provide easy way to create your own black-lists
 * Provide easy communication with other systems via HTTP RESTFUL API
 
+It follows the following basic meta-guidelines:
+
+* Don't break simplicity - KISS
+* Keep it open source - forever
+* Strive for perfection while keeping a deadline
+ * Reduce complexity/avoid feature bloat
+ * Embrace unit testing
+ * Code readability: test with unexperienced programmers
+* Communicate clearly
+
 
 ## Table of Contents
 
