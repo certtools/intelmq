@@ -12,11 +12,10 @@ class GenericBot(Bot):
 
     def process(self):
         report = self.receive_message()
-
+        self.logger.debug("Will apply regex %s" % self.parameters.regex)
         if report:
             rowcount = 0
             for row in report.split('\n'):  # For each line
-                self.logger.debug(row)
                 self.logger.debug(self.parameters.regex)
                 event = Event()
                 match = re.search(self.parameters.regex, row)
@@ -27,10 +26,13 @@ class GenericBot(Bot):
                     continue  # skip lines without matching regex
                 rowcount += 1
                 # Get detail from parser parameters, will be nice to have it by
-                # source parameters..
-                event.add('feed', self.parameters.feed)
-                event.add('feed_url', self.parameters.feed_url)
-                event.add('type', self.parameters.type)
+                # source parameters.. Avoid adding if parsed
+                if not 'feed' in match.groupdict():
+                  event.add('feed', self.parameters.feed)
+                if not 'feed_url' in match.groupdict():
+                  event.add('feed_url', self.parameters.feed_url)
+                if not 'type' in match.groupdict():
+                  event.add('type', self.parameters.type)
                 event = utils.parse_source_time(event, "source_time")
                 event = utils.generate_observation_time(event,
                   "observation_time")
