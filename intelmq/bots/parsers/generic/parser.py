@@ -11,14 +11,9 @@ class GenericBot(Bot):
 # You will have an item 'ip' in your event.
 
     def process(self):
-
-        self.logger.debug('starting process')
         report = self.receive_message()
 
         if report:
-            # Bug ignore IPv6
-            # Parse also with potential white char at the beginning
-            regex_ip = '^\s*(?P<IP>(?:(?:\d){1,3}\.){3}\d{1,3})'
             rowcount = 0
             for row in report.split('\n'):  # For each line
                 self.logger.debug(row)
@@ -26,8 +21,7 @@ class GenericBot(Bot):
                 event = Event()
                 match = re.search(self.parameters.regex, row)
                 if match:
-                    matchtuple = match.groupdict()
-                    for key in matchtuple:
+                    for key in match.groupdict():
                         event.add(key, matchtuple[key])
                 else:
                     continue  # skip lines without matching regex
