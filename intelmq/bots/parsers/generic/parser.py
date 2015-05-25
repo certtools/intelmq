@@ -37,7 +37,7 @@ class GenericBot(Bot):
                   "observation_time")
                 event = utils.generate_reported_fields(event)
                 self.send_message(event)
-        self.logger.info("Processed %d event" % rowcount)
+            self.logger.info("Processed %d event" % rowcount)
         self.acknowledge_message()
 
 if __name__ == "__main__":
