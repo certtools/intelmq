@@ -20,7 +20,7 @@ class GenericBot(Bot):
                 match = re.search(self.parameters.regex, row)
                 if match:
                     for key in match.groupdict():
-                        event.add(key, matchtuple[key])
+                        event.add(key, match.groupdict()[key])
                 else:
                     continue  # skip lines without matching regex
                 rowcount += 1
