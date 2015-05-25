@@ -16,7 +16,6 @@ class GenericBot(Bot):
         if report:
             rowcount = 0
             for row in report.split('\n'):  # For each line
-                self.logger.debug(self.parameters.regex)
                 event = Event()
                 match = re.search(self.parameters.regex, row)
                 if match:
