@@ -75,7 +75,8 @@ setup(
         "imbox==0.5.5",
         "unicodecsv==0.9.4",
         "pytz==2012d",
-        "psutil==2.1.1"
+        "psutil==2.1.1",
+        "parsedatetime==1.4"
     ],
 )
 
