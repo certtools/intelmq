@@ -11,10 +11,12 @@ import StringIO
 
 
 class DCUCollectorBot(Bot):
-    # This IntelMQ collector is for getting a blob
-    # from an azure account (Microsoft dcu).
-    # It opens the account and
-    # reads all containers, which aren't ignored.
+    """ 
+      This IntelMQ collector is for getting a blob
+      from an azure account (Microsoft dcu).
+      It opens the account and
+      reads all containers, which aren't ignored.
+    """
 
     def process(self):
         account_name = getattr(self.parameters, "azure_account_name")
