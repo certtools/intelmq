@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 
 import re
 import os
@@ -215,7 +215,7 @@ class IntelMQContoller():
 
         
     def __bot_start(self, bot_id, module):
-        cmd = "python -m %s %s" % (module, bot_id)
+        cmd = "python2 -m %s %s" % (module, bot_id)
         pid = start_process(bot_id, cmd)
         write_pidfile(bot_id, pid)
         
