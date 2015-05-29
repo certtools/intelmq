@@ -36,10 +36,11 @@ It follows the following basic meta-guidelines:
 ## Table of Contents
 
 1. [How to Install](#how-to-install)
-2. [IntelMQ Manager](#control-platform)
-3. [Incident Handling Automation Project](#incident-handling-automation-project)
-4. [Data Harmonization](#data-harmonization)
-5. [Licence](#licence)
+2. [Developers Guide](#dev-guide)
+3. [IntelMQ Manager](#control-platform)
+4. [Incident Handling Automation Project](#incident-handling-automation-project)
+5. [Data Harmonization](#data-harmonization)
+6. [Licence](#licence)
 
 
 <a name="how-to-install"></a>
@@ -47,6 +48,11 @@ It follows the following basic meta-guidelines:
 
 See [UserGuide](docs/UserGuide.md).
 
+
+<a name="dev-guide"></a>
+## Developers Guide
+
+See [Developers Guide](docs/DevGuide.md).
 
 <a name="control-platform"></a>
 ## IntelMQ Manager
