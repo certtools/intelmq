@@ -22,10 +22,17 @@ The following instructions assume:
 
 ### Install Dependencies
 
+#### Debian
+
 ```
 apt-get install python-pip git build-essential python-dev redis-server
 ```
 
+### Archlinux
+
+```
+sudo pacman -Sy python2 python2-pip python2-redis redis git
+```
 
 ### Install IntelMQ
 
@@ -34,7 +41,7 @@ sudo su -
 
 git clone https://github.com/certtools/intelmq.git
 cd intelmq/
-python setup.py install
+python2 setup.py install
 useradd -d /opt/intelmq -U -s /bin/bash intelmq
 chmod -R 0770 /opt/intelmq
 chown -R intelmq.intelmq /opt/intelmq
@@ -144,7 +151,7 @@ cp /opt/intelmq/etc/pipeline.conf /opt/intelmq/etc/pipeline.conf.bk
 ```
 cd intelmq/
 git pull
-python setup.py install
+python2 setup.py install
 ```
 
 ### Restore Configurations
