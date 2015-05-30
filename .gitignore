@@ -1,3 +1,5 @@
+*.bak
+*.swp
 *.pyc
 *.log
 *.*~
