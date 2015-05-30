@@ -6,6 +6,7 @@ import binascii
 import datetime
 import dateutil.parser
 import dateutil.tz
+import ipaddress
 from urlparse import urlparse
 
 
@@ -98,6 +99,13 @@ def is_ipv6(ip):
         return ip
     except socket.error:
         return None
+
+
+def is_in_net(ip, iprange):  # Test if the IPv4, IPv6 is in the CIDR range.
+    if ipaddress.ip_address(ip) in ipaddress.ip_network(iprange):
+        return True
+    else:
+        return False
 
 
 def ip_to_int(ip):
