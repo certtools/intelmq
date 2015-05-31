@@ -1,7 +1,6 @@
 import binascii
 import StringIO
 import dns.resolver
-from intelmq.lib.utils import decode
 from intelmq.bots import utils
 
 '''
@@ -34,7 +33,7 @@ class Cymru():
                 query_result.to_wire(fp)
                 value = fp.getvalue()[1:] # ignore first character
                 fp.close()
-                return decode(value, force=True)
+                return value
             
         except dns.exception.DNSException:
             return None

@@ -2,7 +2,6 @@ import unicodecsv
 from cStringIO import StringIO
 from intelmq.lib.bot import Bot, sys
 from intelmq.lib.message import Event
-from intelmq.lib.utils import encode
 from intelmq.bots import utils
 
 class PhishTankParserBot(Bot):
@@ -12,18 +11,13 @@ class PhishTankParserBot(Bot):
         
         if report:
             event = Event()
-            report = encode(report)
 
-            # colums according to https://www.phishtank.com/developer_info.php as of 2015/04/30:
-            #   phish_id,url,phish_detail_url,submission_time,verified,verification_time,online,target
-            # example:
-            # 123456,http://www.example.com/,http://www.phishtank.com/phish_detail.php?phish_id=123456,2009-06-19T15:15:47+00:00,yes,2009-06-19T15:37:31+00:00,yes,1st National Example Bank
             columns = ["__IGNORE__", "source_url", "description_url", "source_time", "__IGNORE__", "__IGNORE__", "__IGNORE__", "target"]
             
             for row in unicodecsv.reader(StringIO(report), encoding='utf-8'):
 
                 if "phish_id" in row:
-                    continue		# skip header
+                    continue
                 
                 for key, value in zip(columns, row):
 

@@ -3,6 +3,7 @@ import imbox
 from intelmq.lib.bot import Bot, sys
 from intelmq.bots.collectors.mail.lib import Mail
 from intelmq.bots.collectors.url.lib import fetch_url
+from intelmq.lib.message import Report
 
 class MailURLCollectorBot(Bot):
 
@@ -24,9 +25,11 @@ class MailURLCollectorBot(Bot):
                         url = match.group()
                         
                         self.logger.info("Downloading report from %s" % url)
-                        report = fetch_url(url, timeout = 60.0, chunk_size = 16384)
+                        raw_report = fetch_url(url, timeout = 60.0, chunk_size = 16384)
                         self.logger.info("Report downloaded.")
-                        
+
+                        report = Report()
+                        report.add("raw", raw_report, sanitize=True)                        
                         self.send_message(report)
                         
                 mailbox.mark_seen(uid)

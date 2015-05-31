@@ -25,10 +25,15 @@ class CymruExpertBot(Bot):
             self.acknowledge_message()
             return
 
-        keys = ["source_%s", "destination_%s"]
+        keys = ["source.%s", "destination.%s"]
         
         for key in keys:
-            ip = event.value(key % "ip")
+            ip_key = key % "ip"
+
+            if not ip_key in event:
+                continue
+
+            ip = event.value(ip_key)
             
             if not ip:
                 self.send_message(event)
@@ -50,7 +55,6 @@ class CymruExpertBot(Bot):
                 self.acknowledge_message()
                 return
 
-
             result_json = self.cache.get(cache_key)
 
             if result_json:
@@ -62,8 +66,8 @@ class CymruExpertBot(Bot):
             
             if "asn" in result:
                 event.clear(key % 'asn')
-                event.add(key % 'asn',        result['asn'])
-                
+                event.add(key % 'asn', result['asn'], sanitize=True)
+            '''    
             if "bgp_prefix" in result:
                 event.clear(key % 'bgp_prefix')
                 event.add(key % 'bgp_prefix', result['bgp_prefix'])
@@ -83,7 +87,7 @@ class CymruExpertBot(Bot):
             if "cc" in result:
                 event.clear(key % 'cymru_cc')
                 event.add(key % 'cymru_cc',   result['cc'])
-
+            '''
         self.send_message(event)
         self.acknowledge_message()
         

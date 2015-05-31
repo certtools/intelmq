@@ -22,7 +22,7 @@ always try to:
 * reduce the complexity of writing new bots for new data feeds
 * make your code easily and pleasantly readable
 * reduce the probability of events lost in all process with persistence functionality (even system crash)
-* strictly adher to the existing [Data Harmonization Ontology](DataHarmonization.md) for key-values in events
+* strictly adher to the existing [Data Harmonization Ontology](https://github.com/certtools/intelmq/blob/master/docs/DataHarmonization.md) for key-values in events
 * always use JSON format for all messages internally
 * help and support the interconnection between IntelMQ and existing tools like AbuseHelper, CIF, etc. or new tools (in other words: we will not accept data-silos!)
 * provide an easy way to store data into Log Collectors like ElasticSearch, Splunk
@@ -79,7 +79,7 @@ local_event = event.deep_copy()
 
 Any component of IntelMQ MUST respect the "Data Harmonization Ontology".
 
-**Reference:** IntelMQ Data Harmonization - [Data Harmonization](DataHarmonization.md)
+**Reference:** IntelMQ Data Harmonization - https://github.com/certtools/intelmq/blob/master/docs/DataHarmonization.md
 
 
 #### Directory layout in the repository
@@ -306,8 +306,8 @@ if __name__ == "__main__":
 
 **Examples**
 
-* Check [taxonomy](../intelmq/bots/experts/taxonomy/taxonomy.py) expert bot
-* Check [arbor](../intelmq/bots/parsers/arbor/parser.py) parser bot
+* Check [taxonomy](https://github.com/certtools/intelmq/blob/master/intelmq/bots/experts/taxonomy/taxonomy.py) expert bot
+* Check [arbor](https://github.com/certtools/intelmq/blob/master/intelmq/bots/parsers/arbor/parser.py) parser bot
 
 ### Configure IntelMQ
 

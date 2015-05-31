@@ -12,9 +12,7 @@
 # Requirements
 
 The following instructions assume:
-
 * Debian or Ubuntu Operating System
-* Python version 2 used
 
 
 <a name="installation"></a>
@@ -34,6 +32,7 @@ sudo su -
 
 git clone https://github.com/certtools/intelmq.git
 cd intelmq/
+pip install -r REQUIREMENTS
 python setup.py install
 useradd -d /opt/intelmq -U -s /bin/bash intelmq
 chmod -R 0770 /opt/intelmq
@@ -45,23 +44,18 @@ chown -R intelmq.intelmq /opt/intelmq
 
 ### How it Works
 
-Before start running all bots, user should know the system details that
-will help configure and start bots.
+Before start running all bots, user should know the system details that will help configure and start bots.
 
 * Each bot instance starts completely independent and MUST have a 'bot id'.
-* The 'bot id' is used to reference in '/opt/intelmq/etc/pipeline.conf',
-  '/opt/intelmq/etc/startup.conf' and '/opt/intelmq/etc/runtime.conf'
-  the specific configurations for each bot instance.
-* Global configuration for intelmq is at file '/opt/intelmq/etc/system.conf'.
-  Please note that logger in DEBUG mode will write in logs all bots
-  parameteres configured, including passwords.
+
+* The 'bot id' is used to reference in '/opt/intelmq/etc/pipeline.conf', '/opt/intelmq/etc/startup.conf' and '/opt/intelmq/etc/runtime.conf' the specific configurations for each bot instance.
+
+* Global configuration for intelmq is at file '/opt/intelmq/etc/system.conf'. Please note that logger in DEBUG mode will write in logs all bots parameteres configured, including passwords.
 
 
 ### Web interface
 
-IntelMQ has a tool called IntelMQ Manager that gives to user a easy way to 
-configure all pipeline with bots that your CERT needs. 
-Click [here](https://github.com/certtools/intelmq-manager).
+IntelMQ has a tool called IntelMQ Manager that gives to user a easy way to configure all pipeline with bots that your CERT needs. Click [here](https://github.com/certtools/intelmq-manager).
 
 ### Command-line interface
 
@@ -100,7 +94,6 @@ $ tail -f /opt/intelmq/var/log/*
 ```
 
 #### Reset Pipeline and Cache (be careful)
-
 ```
 $ redis-cli FLUSHDB
 $ redis-cli FLUSHALL
@@ -111,15 +104,12 @@ $ redis-cli FLUSHALL
 
 #### Perfomance Tests
 
-Somes tests have been made with a virtual machine with 
-the following specifications:
-
+Somes tests have been made with a virtual machine with the following specifications:
 * CPU: 1 core dedicated from i7 processor
 * Memory: 4GB
 * HDD: 10GB
 
-The entire solution didnt have any problem handling 2.000.000 
-queued events in memory with bots diggesting the messages.
+The entire solution didnt have any problem handling 2.000.000 queued events in memory with bots diggesting the messages.
 
 
 <a name="upgrade"></a>
@@ -169,5 +159,4 @@ pip uninstall intelmq
 <a name="faq"></a>
 # Frequently Asked Questions
 
-Consult the [FAQ](FAQ.md)
-if you encountered any problem.
+Consult the [FAQ](https://github.com/certtools/intelmq/blob/master/docs/FAQ.md) if you encountered any problem.

@@ -1,9 +1,10 @@
 from intelmq.lib.bot import Bot, sys
 from intelmq.lib.message import Event
+from intelmq.lib.harmonization import DateTime
 from intelmq.bots import utils
 import re
 
-KEYWORDS = {
+CLASSIFICATION = {
         "brute-force": ["brute-force", "brute force", "mysql"],
         "c&c": ["c&c server"],
         "botnet drone": ["irc-botnet"],
@@ -16,7 +17,7 @@ class TaichungCityNetflowParserBot(Bot):
     
     def get_type(self, value):
         value = value.lower()
-        for event_type, keywords in KEYWORDS.iteritems():
+        for event_type, keywords in CLASSIFICATION.iteritems():
             for keyword in keywords:
                 if unicode(keyword) in value:
                     return event_type
@@ -25,7 +26,13 @@ class TaichungCityNetflowParserBot(Bot):
     def process(self):
         report = self.receive_message()
 
-        for row in report.split('<tr>'):
+        if not report.contains("raw"):
+            self.acknowledge_message()
+
+        if len(report.value("raw").strip()) == 0:
+            self.acknowledge_message()
+
+        for row in report.value("raw").split('<tr>'):
 
             # Get IP and Type
             info1 = re.search(">[\ ]*(\d+\.\d+\.\d+\.\d+)[\ ]*<.*</td><td>([^<]+)</td>", row)
@@ -36,18 +43,19 @@ class TaichungCityNetflowParserBot(Bot):
             if info1:
                 event = Event()
 
-                event.add("source_ip", info1.group(1))
                 description = info1.group(2)
                 event_type = self.get_type(description)
-                event.add('type', event_type)
-                event.add('description', description)
-                event.add("source_time", info2.group(1) + " UTC-8")
-                event.add('feed', 'taichungcitynetflow')
-                event.add('feed_url', 'https://tc.edu.tw/net/netflow/lkout/recent/30')
+                time_observation = DateTime().generate_datetime_now()
+                time_source = info2.group(1) + " UTC-8"
 
-                event = utils.parse_source_time(event, "source_time")
-                event = utils.generate_observation_time(event, "observation_time")
-                event = utils.generate_reported_fields(event)
+                event.add("time.source", time_source, sanitize=True)
+                event.add('time.observation', time_observation, sanitize=True)
+                event.add("source.ip", info1.group(1), sanitize=True)
+                event.add('classification.type', event_type, sanitize=True)
+                event.add('description', description, sanitize=True)
+                event.add('feed.name', u'taichungcitynetflow')
+                event.add('feed.url', u'https://tc.edu.tw/net/netflow/lkout/recent/30')
+                event.add("raw", row, sanitize=True)
             
                 self.send_message(event)
         self.acknowledge_message()

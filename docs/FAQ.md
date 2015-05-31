@@ -50,4 +50,4 @@ Good Example:
 2014-06-25 00:00:00 UTC
 ```
 
-Consult this example how ShadowServer SNMP Bot solve the problem. [(link)](../intelmq/bots/parsers/shadowserver/snmp-parser.py#L47)
+Consult this example how ShadowServer SNMP Bot solve the problem. [(link)](https://github.com/certtools/intelmq/blob/master/intelmq/bots/parsers/shadowserver/snmp-parser.py#L47)
