@@ -33,10 +33,11 @@ class GenericType():
             return None
 
         if type(value) is unicode:
-            return value
+            return value.strip()
 
         if type(value) is str:
-            return value.decode('utf-8')
+            value = value.decode('utf-8')
+            return value.strip()
 
         return None
 

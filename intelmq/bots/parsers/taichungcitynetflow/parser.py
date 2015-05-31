@@ -1,8 +1,9 @@
+import re
+from intelmq.lib import utils
 from intelmq.lib.bot import Bot, sys
 from intelmq.lib.message import Event
 from intelmq.lib.harmonization import DateTime
-from intelmq.bots import utils
-import re
+
 
 CLASSIFICATION = {
         "brute-force": ["brute-force", "brute force", "mysql"],
@@ -12,6 +13,7 @@ CLASSIFICATION = {
         "scanner": ["scan"],
         "exploit": ["bash", "php-cgi", "phpmyadmin"],
     }
+
 
 class TaichungCityNetflowParserBot(Bot):
     
