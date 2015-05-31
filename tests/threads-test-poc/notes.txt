@@ -1,0 +1,13 @@
+01:05 - 50,000 eventos - 20 threads por expert
+01:05 - 50,000 eventos - 50 threads por expert
+01:05 - 50,000 eventos - 1 thread por expert
+
+
+Conclusões:
+==================================
+Das duas uma:
+ * o IntelMQ é já muito rápido usando apenas uma thread e portanto o Redis é que está a limitar
+ * a implementação de threads no IntelMQ está mal feita e portanto é como se apenas estivesse a ser usada uma thread
+
+Nota:
+* por outro lado, os testsbots vem provar que pelo menos as threads trabalham em simultaneo, havendo a possibilidade de o bottlenetck ser a propria conexão TCP devido ao blocking mode.

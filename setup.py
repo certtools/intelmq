@@ -50,8 +50,10 @@ setup(
                                    'intelmq/bots/BOTS',
                                    'intelmq/conf/startup.conf',
                                    'intelmq/conf/runtime.conf',
+                                   'intelmq/conf/defaults.conf',
                                    'intelmq/conf/pipeline.conf',
-                                   'intelmq/conf/system.conf'
+                                   'intelmq/conf/system.conf',
+                                   'intelmq/conf/harmonization.conf'
                                   ]
                 ),
                 ('/opt/intelmq/bin/', [
@@ -64,18 +66,6 @@ setup(
                                    'docs/DataHarmonization.md'
                                   ]
                 )
-    ],
-    install_requires=[
-        "python-dateutil==1.5",
-        "geoip2==0.5.1",
-        "dnspython==1.11.1",
-        "redis==2.10.3",
-        "pymongo==2.7.1",
-        "xmpppy==0.5.0rc1",
-        "imbox==0.5.5",
-        "unicodecsv==0.9.4",
-        "pytz==2012d",
-        "psutil==2.1.1"
-    ],
+    ]
 )
 

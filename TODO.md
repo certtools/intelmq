@@ -1,128 +1,77 @@
-## Release 1 - TODO
+Core Priorities:
+===============================
 
-(sorted by priority)
+1) Add support on IntelMQ-Manager for default section parameters  
 
-* https://github.com/nicolasff/phpredis
+2) Harmonization (force flag)- feature which gives possibility to select the keys that will force the fail of the parse and which keys the parse will
+ignore and continue the process in case of fail in parse. Example:
+		++ If source.ip has some problem, the event should follow the normal procedure of error handling
+		++ If source.asn has some problem, since its not an important key, the event can ignore the value and continue the process
 
-* Create n6 bot.
+3) Any exception in init() method should be fatal. It means that init need to catch every exception and log a messsage like "im stopping" and raise something....
 
-* Create [Shadowserver Bots](http://www.shadowserver.org/wiki/pmwiki.php/Services/Downloads)
+4) check_bot_id should raise an exception like mentioned before
 
-* Create [Malware Hash Registry - Cymru](http://www.team-cymru.org/Services/MHR/#dns)
+5) Translate current bots
 
-* Write docs/eCSIRT-Taxonomy.md based on document from Don Stikvoort, named "Incident Class mkVint"
+6) Move new bots and translate them
 
-* Check [RabbitMQ based fork of CIF v1](https://github.com/cikl), [Warden](https://csirt.cesnet.cz/Warden/Intro) and [Build STIX document from CIF output](http://tools.netsa.cert.org/script-cif2stix/index.html)
+7) Video Tutorial
 
-* **[DONE]** General Bots Configuration (bots access the parameters via self.parameters.parameter_name, name can be easily changed)
 
-* **[DONE]** AbuseHelper Integration (xmpp bot to connect to room)
 
-* **[DONE]** Splunk Output Bot
+Other Tasks:
+===============================
 
-* **[DONE]** TeamCymru Expert
+1) intelmqctl improvements
+	- load parameters from all configurations
+	- bot.py must has statis methods to load configurations and then intelmqctl will be able to use them
 
-* **[DONE]** Support multiple destination queues for each bot
 
-* **[DONE]** Write Bot Architecture (event, cache, utils relations etc...)
+4) some keys like 'source.ip', 'source.domain_name', 'source.url' are really crucial for the event context.
+When parse fail becasue the ip collumn from the source has an URL, its hard to have good code to handle this and 
+put back the URL from IP collumn to source.url key in event. For this reason, we should create a util that try to guess
+what type is the value, but must follow an order:
+	- IPAddress check
+	- URL check
+	- DomainName check
 
-* **[DONE]** Remove Cache initiallization from bot.py. Create a 'init' method to all class that ineherit from bot.py.
+5) Clean up DataHarmonization document - include a default intelmq Event message in JSON format
 
-* **[DONE]** Remove all self.parameters from bot.py
+6)  Update documentation:
+	- explain the configuration parameters from bots
+	- explain how harmonization.conf file works and how keys are converted in the end to JSON
 
-* **[DONE]** Create configuration option for logs folder (change in bot.py)
+7) Harmonization:
+	- add 'confidence_level' key to Event object (Harmonization)
+	- add 'TLP' key to Event object (Harmonization)
+	- rename source.email_address to source.account (where you can specify email address and unix/windows accounts, etc...)
+	- rename source.url to source.uri (https://danielmiessler.com/study/url_vs_uri/)
 
-* **[DONE]** Add in each expert a line to test if the augment keys already exists
+12) O feed.url ja devia vir do collector url. O collector automaticamente devia adicionar o url onde vai buscar a informaçao como key, assim como devia adicionar um timestamp de quando foi buscar. Estas a repetir sempre o mesmo em todos os parsers o que nao faz sentido. ALem disso o feed.name tambem devia ser definido no collector, porque é ai que estás a definir onde vais buscar a informação.
 
-* **[DONE]** Remove "observation time" for event in deduplicator bot
+13) Add regex (harmonization.conf parameters) check in harmonization.py
 
-* **[DONE]** Quality Control: perfomance tests
+14) Redis Configurations should be configured by configurations and not hardcoded
 
-* **[DONE]** Create a python package and use this setup.py [example](https://github.com/pika/pika/blob/master/setup.py)
+15) Bots
+	- CollectorBot - TCPServerSocket
+	- PGP support
+    - Write docs/eCSIRT-Taxonomy.md based on document from Don Stikvoort, named "Incident Class mkVint"
+    - Check [RabbitMQ based fork of CIF v1](https://github.com/cikl), [Warden](https://csirt.cesnet.cz/Warden/Intro) and [Build STIX document from CIF output](http://tools.netsa.cert.org/script-cif2stix/index.html)
+    - New bots: https://github.com/collectiveintel/cif-v1/tree/686c9ac9c34658ccc83d5b9fea97972eeaad0f29/cif-smrt/rules/etc
+    - ContactDB Expert
+    - PostgreSQL (Reports, Events)
+    - RT
+    - SSHKeyScan
+    - isOutCustomer
+    - CrowdStrike
+    - Shodan
+    - PassiveDNS
+    - [XSSed](https://bitbucket.org/slingris/abusehelper/src/d5a32b813593/abusehelper/contrib/xssed/?at=default)
 
-## Release 2 - TODO
+16) Python Requirements
+    - add 'requirements.txt' with fixed version numbers for each package -> pip install -r requirements.txt
 
-* Create RabbitMQ queue for bot management and state sharing
-
-* Create bots for all feeds that are not available in AbuseHelper (INTECO, CERT-EU, etc)
-
-* New bots: https://github.com/collectiveintel/cif-v1/tree/686c9ac9c34658ccc83d5b9fea97972eeaad0f29/cif-smrt/rules/etc
-
-* Improve encoding/decoding
-
-* Add 'requirements.txt' with fixed version numbers for each package -> pip install -r requirements.txt
-
-* Remove old queues depending of load configuration
-
-* Restruct repository and may be create python packages:
-```
-/src
-  /intellib  -> /usr/local/lib/python.....
-  /intelmq   -> /opt/
-     /bots
-     /confs
-/docs
-..files...
-```
-
-* ElasticSearch Output Bot
-
-* Evaluate how to initiallize bots from command-line: /etc/init.d/arbor-feed start ??? Or just with webinterface?
-
-* ContactDB Expert (Install ContactDB)
-
-* Trash Queue when bot do not recognize the message and cant do nothing
-
-* Create a management interface to give feed access to other people. Good example: HPFrieds/HPFeeds system.
-
-* Evaluate: Python 3 vs Python 2.7
-
-* 1-N Queues: support other exchange types (current solution support fanout)
-
-* Pipeline Management with Web Interface
-
-* Bots Management with Web Interface
-
-* Video Tutorial
- 
-* Monitoring with Web Interface
-
-* JSON Messages
-    * with tag field (report, abuse-event, pastebin, tweet)
-    * with syntax abusehelper event-like ( event.add("domain", "example.com") )
-    * __hash__ method
-    * evaluate: http://danielmiessler.com/study/url_vs_uri/
-
-* PostgreSQL (Reports, Events)
-
-* Bots to create:
-    * MalwareHash
-    * RT
-    * SSHKeyScan
-    * URL2Domain
-    * isOutCustomer
-    * CrowdStrike
-    * DomainTools
-    * VirusTotal
-    * Shodan
-    * PassiveDNS
-    * [HostFiles](https://bitbucket.org/slingris/abusehelper/src/d5a32b813593/abusehelper/contrib/hostfiles/?at=default)
-    * [MalwarePatrol](https://bitbucket.org/slingris/abusehelper/src/d5a32b813593/abusehelper/contrib/malwarepatrol/?at=default)
-    * [n6](https://bitbucket.org/slingris/abusehelper/src/d5a32b813593/abusehelper/contrib/n6/?at=default)
-    * [OpenBL](https://bitbucket.org/slingris/abusehelper/src/d5a32b813593/abusehelper/contrib/openbl/?at=default)
-    * [SQLBot](https://bitbucket.org/slingris/abusehelper/src/d5a32b813593/abusehelper/contrib/sqlbot/?at=default)
-    * [XSSed](https://bitbucket.org/slingris/abusehelper/src/d5a32b813593/abusehelper/contrib/xssed/?at=default)
-    * **[DONE]** [VXVault](https://bitbucket.org/slingris/abusehelper/src/d5a32b813593/abusehelper/contrib/vxvault/?at=default)
-
-## Feedback
-
-### Chris Horsley Feedback
-
-| Requirement | Reason | Possible Solutions |
-|---|-----------------------------------------|------------------------------------------------------------|---|---|
-| Can use lightweight threads | Minimal overhead for memory | http://gevent.org/ , https://pypi.python.org/pypi/greenlet |
-| Can run distributed over network | Redundancy of system, may want to process event data on separate machine do data storage one day | http://python-rq.org/ , http://www.celeryproject.org/ , https://github.com/pika/pika |
-| Can support a sequential processing pipeline | Need an API to schedule and execute remote data processing functions in order | http://www.celeryproject.org/ , Custom API |
-| Can process events in parallel | Avoids slow, serial processing of a long series of events, parallel processing gives large speed benefits where there are network / database calls | http://python-rq.org/ http://www.celeryproject.org/ |
-| Don't reinvent message serialization / scheduling | Remote function execution is a hard problem to solve (e.g. locking, scheduling), use a library that's well tested and supported | http://python-rq.org/ http://www.celeryproject.org/ |
-
+17) Remove old queues procedure
+    - remove old queues depending of load configuration

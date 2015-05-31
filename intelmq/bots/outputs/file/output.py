@@ -1,5 +1,4 @@
 from intelmq.lib.bot import Bot, sys
-from intelmq.lib.utils import encode
 
 class FileBot(Bot):
 
@@ -12,8 +11,7 @@ class FileBot(Bot):
         event = self.receive_message()
         
         if event:
-            event_data = unicode(event)
-            event_data = encode(event_data)
+            event_data = event.to_json()
             self.file.write(event_data)
             self.file.write("\n")
             self.file.flush()

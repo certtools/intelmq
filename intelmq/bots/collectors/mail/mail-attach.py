@@ -2,6 +2,7 @@ import re
 import imbox
 import zipfile
 from intelmq.lib.bot import Bot, sys
+from intelmq.lib.message import Report
 from intelmq.bots.collectors.mail.lib import Mail
 
 class MailAttachCollectorBot(Bot):
@@ -28,10 +29,13 @@ class MailAttachCollectorBot(Bot):
 
                         if self.parameters.attach_unzip:
                             zipped = zipfile.ZipFile(attach['content'])
-                            report = zipped.read(zipped.namelist()[0])
+                            raw_report = zipped.read(zipped.namelist()[0])
                         else:
-                            report = attach['content'].read()
+                            raw_report = attach['content'].read()
                             
+                        report = Report()
+                        report.add("raw", raw_report, sanitize=True)
+
                         self.send_message(report)
                         
                 mailbox.mark_seen(uid)

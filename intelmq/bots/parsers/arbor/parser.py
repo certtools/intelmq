@@ -1,36 +1,42 @@
+from intelmq.lib import utils
 from intelmq.lib.bot import Bot, sys
 from intelmq.lib.message import Event
-from intelmq.bots import utils
+from intelmq.lib.harmonization import DateTime
+
 
 class ArborParserBot(Bot):
 
     def process(self):
         report = self.receive_message()
 
-        if report:
-            for row in report.split('\n'):
-                row = row.strip()
+        if not report.contains("raw"):
+            self.acknowledge_message()
 
-                if len(row) == 0 or row.startswith('other'):
-                    continue
+        raw_report = utils.base64_decode(report.value("raw"))
+        for row in raw_report.split('\n'):
+            row = row.strip()
 
-                row = row.split()
-                event = Event()
+            if len(row) == 0 or row.startswith('other'):
+                continue
 
-                columns = ["source_ip"]
-                for key, value in zip(columns, row):
-                    event.add(key, value)
-                    
-                event.add('feed', 'arbor')
-                event.add('feed_url', 'http://atlas-public.ec2.arbor.net/public/ssh_attackers')
-                event.add('type', 'brute-force')
-
-                event = utils.generate_source_time(event, "source_time")
-                event = utils.generate_observation_time(event, "observation_time")
-                event = utils.generate_reported_fields(event)
+            event = Event()
                 
-                self.send_message(event)
+            time_observation = DateTime().generate_datetime_now()
+            event.add('time.observation', time_observation, sanitize=True)
+            event.add('feed.name', u'arbor')
+            event.add('feed.url', u'http://atlas-public.ec2.arbor.net/public/ssh_attackers')
+            event.add('classification.type', u'brute-force')
+            event.add("raw", row, sanitize=True)
+
+            columns = ["source.ip"]
+            row = row.split()
+
+            for key, value in zip(columns, row):
+                event.add(key, value, sanitize=True)
+
+            self.send_message(event)
         self.acknowledge_message()
+
 
 if __name__ == "__main__":
     bot = ArborParserBot(sys.argv[1])
