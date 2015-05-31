@@ -28,7 +28,7 @@ class CymruExpertBot(Bot):
         for key in keys:
             ip_key = key % "ip"
 
-            if not ip_key in event:
+            if not event.contains(ip_key):
                 continue
 
             ip = event.value(ip_key)

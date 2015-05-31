@@ -16,12 +16,13 @@ class RIPENCCExpertBot(Bot):
 
         event = self.receive_message()
 
-        for key in ['source_','destination_']:
-            if event.contains(key + "ip"):
-                ip = event.value(key + "ip")
+        for key in ['source.','destination.']:
+            ip_key = key + "ip"
+            if event.contains(ip_key):
+                ip = event.value(ip_key)
                 email = RIPENCC.query(ip)
                 if email:
-                    event.add(key + "abuse_contact", email)
+                    event.add(key + "abuse_contact", email, sanitize=True)
 
         self.send_message(event)
         self.acknowledge_message()
