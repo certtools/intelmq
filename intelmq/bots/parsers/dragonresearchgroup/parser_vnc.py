@@ -18,12 +18,12 @@ class DragonResearchGroupSSHParserBot(Bot):
             if len(row) == 0 or row.startswith('#'):
                 continue
             
-            row = row.split('|')
+            splitted_row = row.split('|')
             event = Event()
 
             columns = ["source.asn", "source.as_name", "source.ip", "time.source"]
             
-            for key, value in zip(columns, row):
+            for key, value in zip(columns, splitted_row):
                 value = value.strip()
                 
                 if key == "time.source":
@@ -37,6 +37,7 @@ class DragonResearchGroupSSHParserBot(Bot):
             event.add('feed.url', u'http://dragonresearchgroup.org/insight/vncprobe.txt')
             event.add('classification.type', u'brute-force')
             event.add('protocol.application', u'vnc')
+            event.add("raw", row, sanitize=True)
 
             self.send_message(event)
         self.acknowledge_message()
