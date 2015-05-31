@@ -1,4 +1,5 @@
 import sys
+import dns
 import DNS
 import pytz
 import time
@@ -156,6 +157,14 @@ class IPAddress(GenericType):
             
         ip_integer = int(binascii.hexlify(ip_integer), 16)
         return ip_integer
+
+    @staticmethod
+    def version(value):
+        return unicode(ipaddr.IPAddress(value).version)
+
+    @staticmethod
+    def to_reverse(ip):
+        return unicode(dns.reversename.from_address(ip))
 
 
 class DomainName(GenericType):

@@ -1,7 +1,7 @@
 import binascii
 import StringIO
 import dns.resolver
-from intelmq.bots import utils
+from intelmq.lib.harmonization import IPAddress
 
 '''
 Reference: http://www.team-cymru.org/Services/ip-to-asn.html#dns
@@ -10,13 +10,15 @@ Reference: http://www.team-cymru.org/Services/ip-to-asn.html#dns
 IP_QUERY  = "%s.origin%s.asn.cymru.com"
 ASN_QUERY = "AS%s.asn.cymru.com"
 
+
 class Cymru():
 
    
     @staticmethod
-    def query(ip, ip_version):
-        raw_result = Cymru.__ip_query(ip, ip_version)
+    def query(ip):
+        raw_result = Cymru.__ip_query(ip)
         result     = Cymru.__ip_query_parse(raw_result)
+
         if "asn" in result:
             raw_result  = Cymru.__asn_query(result['asn'])
             extra_info  = Cymru.__asn_query_parse(raw_result)
@@ -40,13 +42,15 @@ class Cymru():
 
 
     @staticmethod
-    def __ip_query(ip, ip_version):      
-        reversed_ip = utils.get_reverse_ip(ip)
-        version = ""
-        if ip_version == 6:
-            version = "6"
+    def __ip_query(ip):
+        ip_version = IPAddress.version(ip)
+        reverse_ip = IPAddress.to_reverse(ip)
+
+        reverse = reverse_ip.split('.in-addr.arpa.')
+        if not reverse:
+            reverse = reverse_ip.split('.ip6.arpa.')
             
-        query = IP_QUERY % (reversed_ip, version)
+        query = IP_QUERY % (reverse_ip, ip_version)
         return Cymru.__query(query)
 
         
