@@ -130,6 +130,17 @@ class IPAddress(GenericType):
             
     @staticmethod
     def sanitize(value):
+        
+        try:
+            network = ipaddr.IPNetwork(value)
+        except:
+            return None
+        
+        if network.numhosts == 1:
+            value = str(network.network)
+        else:
+            return None
+        
         return GenericType().sanitize(value)
 
     @staticmethod
