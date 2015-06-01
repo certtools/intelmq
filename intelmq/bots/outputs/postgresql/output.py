@@ -17,16 +17,14 @@ class PostgreSQLBot(Bot):
 
     def process(self):
         event = self.receive_message()
-        if event:
             
-            evdict  = event.to_dict()
-            keys    = ", ".join(evdict.keys())
-            values  = evdict.values()
-            fvalues = len(values) * "%s, "
-            query   = "INSERT INTO events (" + keys + ") VALUES (" + fvalues[:-2] + ")"
-            
-            self.cur.execute(query, values)
-            self.con.commit()
+        keys    = ", ".join(event.keys())
+        values  = event.values()
+        fvalues = len(values) * "%s, "
+        query   = "INSERT INTO events (" + keys + ") VALUES (" + fvalues[:-2] + ")"
+        
+        self.cur.execute(query, values)
+        self.con.commit()
 
         self.acknowledge_message()
 

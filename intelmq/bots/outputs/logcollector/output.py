@@ -1,19 +1,13 @@
-import time, socket
+import time
+import socket
 from intelmq.lib.bot import Bot, sys
 
 class LogCollectorBot(Bot):
 
     def process(self):       
         event = self.receive_message()
-        
-        if event:
-            data = ''
-            for key, value in event.items():
-                data += key.replace(' ','_') + '="' + value + '" '
-            data += "\n"
-
-            self.send_data(data)
-            
+        data = event.to_json()
+        self.send_data(data)
         self.acknowledge_message()
 
 

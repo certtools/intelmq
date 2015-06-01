@@ -8,12 +8,9 @@ class MongoDBBot(Bot):
         db = client[self.parameters.database]
         self.collection = db[self.parameters.collection]
         
-
     def process(self):
         event = self.receive_message()
-        
-        if event:
-            self.collection.insert(event.to_dict())
+        self.collection.insert(event.to_json())
         self.acknowledge_message()
 
 
