@@ -142,14 +142,14 @@ class Zeromq(Pipeline):
         
         
     def source_queues(self, source_queue):
-        # traducao de queues para porta
+        # translate queues to port for tcp connecion
         # queues_translation = dict()
 
         self.source_sock = self.context.socket(zmq.PULL)
         self.source_sock.bind("%s://%s%s.socket" % (self.communication, VAR_RUN_PATH, source_queue) )
         
     def destination_queues(self, destination_queues, load_balance):
-        # traducao de queues para porta
+        # translate queues to port for tcp connecion
         # queues_translation = dict()
         if not destination_queues:
             return
