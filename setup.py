@@ -30,7 +30,7 @@ for dir in dirs:
 
 setup(
     name='intelmq',
-    version='0.0.9',
+    version='1.0.0',
     maintainer='Tomas Lima',
     maintainer_email='synchroack@gmail.com',
     packages=find_packages(),
@@ -38,13 +38,6 @@ setup(
     license='GPLv3',
     description="IntelMQ Tool",
     long_description='IntelMQ is a solution for CERTs to process data feeds, pastebins, tweets throught a message queue.',
-    package_data={
-                  '/opt/intelmq/docs': [
-                            'LICENSE',
-                            'README.md',
-                            'CONTRIBUTORS.md'
-                        ]
-                 },
     data_files=[
                 ('/opt/intelmq/etc/', [
                                    'intelmq/bots/BOTS',
@@ -58,12 +51,6 @@ setup(
                 ),
                 ('/opt/intelmq/bin/', [
                                    'intelmq/bin/intelmqctl'
-                                  ]
-                ),
-                ('/opt/intelmq/docs/', [
-                                   'docs/UserGuide.md',
-                                   'docs/DevGuide.md',
-                                   'docs/DataHarmonization.md'
                                   ]
                 )
     ]
