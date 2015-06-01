@@ -1,55 +1,49 @@
 from intelmq.lib.bot import Bot, sys
 import socket,base64
 
-class IntelMQCollectorBot(Bot): 
+class TCPCollector(Bot): 
 
-    tcpserver=None
+    
+
+    def init(self):
+        self.logger.info("Starting up on %s port %s" % (self.parameters.host, self.parameters.port))
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.sock.bind((self.parameters.host, self.parameters.port))
+        self.started=False
+        
+    
     
     def process(self):  
   
-        if self.tcpserver==None:
-	   self.tcpserver=TCPSock(self.parameters.host,self.parameters.port,self.send_message,self.logger)	   
-	   self.tcpserver.start()		
+        if not self.started:  #not sure if this "if" is needed since sock.accept() has blocking behaviour, but this ensures that the method process runs the code only once
+	   self.logger.info("Server Started")
+	   self.sock.listen(10)
+	   self.started=True
+	   while True:
+	   	connection, client_address = self.sock.accept()		
+	   	try:
+	       	    self.logger.info("Connection from %s" % client_address[0])
+	       	    total_data=''
+	            while True:
+          	         data = connection.recv(1024)
+                         if not data:break        
+			 total_data+=data	
+		    event=unicode(base64.b64decode(total_data))
+		    if event:                
+		       self.send_message(event)
+		       self.logger.info("Event Received")
+                finally:
+       		    connection.close()  
+   
+
 
     def killbot(self):
-	self.tcpserver.stop()	
+	self.sock.close()	
 	self.logger.info("Disconnected") 	
 	
-	
 
-class TCPSock():
-            	    
-    def __init__(self,host,port,object_send_msg,object_logger):
-	self.collectors=object_send_msg	
-	self.collectorl=object_logger
-	self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-	server_address = (host,port)
-	self.collectorl.info("starting up on %s port %s" % (host,port))
-	self.sock.bind(server_address)
-   	
-    def start(self):
-	self.sock.listen(10)
-	self.collectorl.info("Server Started")
-	while True:
-	    connection, client_address = self.sock.accept()
-	    try:
-                self.collectorl.info("connection from %s" % client_address[0])   
-		total_data=''
-                while True:
-            	    data = connection.recv(1024)
-                    if not data:break
-                    total_data+=data	
-		event=unicode(base64.b64decode(total_data))                
-		self.collectors(event)
-		self.collectorl.info("Event Received")
-            finally:
-       		# Clean up the connection
-                connection.close()         
-            
-    def stop(self):
-	self.sock.close()
 
 
 if __name__ == "__main__":
-    bot = IntelMQCollectorBot(sys.argv[1])
+    bot =  TCPCollector(sys.argv[1])
     bot.start()
