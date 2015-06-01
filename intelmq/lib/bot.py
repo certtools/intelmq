@@ -40,7 +40,9 @@ class Bot(object):
 
     def init(self):
         pass
-
+	
+    def killbot(self):
+	pass
 
     def start(self):
         self.source_pipeline = None
