@@ -23,7 +23,7 @@
             "module": "intelmq.bots.collectors.intelmqlistner.collector",
             "description": "IntelMQ UDP collector is Client/Server bot, this bot was built to receive events from remote clients.",
             "parameters": {
-                "processing_interval": "3600",
+                "rate_limit": "3600",
                 "host": "0.0.0.0",
 		"port": "8001"
             }
