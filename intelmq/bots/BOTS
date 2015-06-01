@@ -116,7 +116,7 @@
             }
         },
         "ShadowServer Drone Report": {
-            "module": "intelmq.bots.collectors.mail.mail-attach",
+            "module": "intelmq.bots.collectors.mail.collector_mail_attach",
             "description": "ShadowServer Drone Collector is the bot responsible to get the report from source of information.",
             "parameters": {
                 "rate_limit": "3600",
@@ -131,7 +131,7 @@
             }
         },
         "ShadowServer Chargen Report": {
-            "module": "intelmq.bots.collectors.mail.mail-url",
+            "module": "intelmq.bots.collectors.mail.collector_mail_url",
             "description": "ShadowServer Chargen Collector is the bot responsible to get the report from source of information.",
             "parameters": {
                 "rate_limit": "3600",
@@ -145,7 +145,7 @@
             }
         },
         "CERT-EU Malicious URLs": {
-            "module": "intelmq.bots.collectors.mail.mail-attach",
+            "module": "intelmq.bots.collectors.mail.collector_mail_attach",
             "description": "CERT-EU Malicious URLs Collector is the bot responsible to get the report from source of information.",
             "parameters": {
                 "rate_limit": "3600",
@@ -237,7 +237,7 @@
             }
         },
         "MalwarePatrol Dans Guardian": {
-            "module": "intelmq.bots.parsers.malwarepatrol.parser-dansguardian",
+            "module": "intelmq.bots.parsers.malwarepatrol.parser_dansguardian",
             "description": "MalwarePatrol Dans Guardian Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
             }
@@ -249,19 +249,19 @@
             }
         },
         "ShadowServer Drone": {
-            "module": "intelmq.bots.parsers.shadowserver.drone-parser",
+            "module": "intelmq.bots.parsers.shadowserver.parser_drone",
             "description": "ShadowServer Drone Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
             }
         },
         "ShadowServer Chargen": {
-            "module": "intelmq.bots.parsers.shadowserver.chargen-parser",
+            "module": "intelmq.bots.parsers.shadowserver.parser_chargen",
             "description": "ShadowServer Chargen Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
             }
         },
         "CERT-EU Malicious URLs": {
-            "module": "intelmq.bots.parsers.certeu.malicious-urls-parser",
+            "module": "intelmq.bots.parsers.certeu.parser_malicious_urls",
             "description": "CERT-EU Malicious URLs Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
             }
@@ -269,7 +269,7 @@
     },
     "Expert": {
         "Cymru": {
-            "module": "intelmq.bots.experts.cymru.cymru",
+            "module": "intelmq.bots.experts.cymru.expert",
             "description": "Cymry (IP to ASN) is the bot responsible to add network information to the events (BGP, ASN, AS Name, Country, etc..).",
             "parameters": {
                 "redis_cache_host": "127.0.0.1",
@@ -279,7 +279,7 @@
             }
         },
         "RIPENCC": {
-            "module": "intelmq.bots.experts.ripencc.ripencc",
+            "module": "intelmq.bots.experts.ripencc.expert",
             "description": "RIPENCC is the bot resposible to get the correspondent abuse contact from source IP and destination IP of the events",
             "parameters": {
                 "redis_cache_host": "127.0.0.1",
@@ -299,14 +299,14 @@
             }
         },
         "GeoIP": {
-            "module": "intelmq.bots.experts.geoip.geoip",
+            "module": "intelmq.bots.experts.geoip.expert",
             "description": "GeoIP (MaxMind) is the bot responsible to add geolocation information to the events (Country, City, Longitude, Latitude, etc..)",
             "parameters": {
                 "database": "/opt/intelmq/var/lib/bots/geoip/GeoLite2-City.mmdb"
             }
         },
         "ASN Lookup": {
-            "module": "intelmq.bots.experts.asnlookup.asnlookup",
+            "module": "intelmq.bots.experts.asn_lookup.expert",
             "description": "ASN Lookup is the bot responsible to add ASN and BGP information from Route Views Project to the events.",
             "parameters": {
                 "database": "/opt/intelmq/var/lib/bots/asnlookup/ipasn.dat"
@@ -329,13 +329,13 @@
             }
         },
         "Taxonomy": {
-            "module": "intelmq.bots.experts.taxonomy.taxonomy",
+            "module": "intelmq.bots.experts.taxonomy.expert",
             "description": "Taxonomy is the bot responsible to apply the eCSIRT Taxonomy to all events.",
             "parameters": {
             }
         },
         "CountryCodeFilter": {
-            "module": "intelmq.bots.experts.countrycodefilter.countrycodefilter",
+            "module": "intelmq.bots.experts.country_code_filter.expert",
             "description": "Filters out events which do not match a specific country code. Needs: the cymru expert.",
             "parameters": {
                   "countrycode": "<country code>"
