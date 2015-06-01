@@ -19,6 +19,15 @@
                 "rate_limit": "0"
             }
         },
+	"IntelMQ UDP collector": {
+            "module": "intelmq.bots.collectors.intelmqlistner.collector",
+            "description": "IntelMQ UDP collector is Client/Server bot, this bot was built to receive events from remote clients.",
+            "parameters": {
+                "processing_interval": "3600",
+                "host": "0.0.0.0",
+		"port": "8001"
+            }
+	},	
         "Arbor": {
             "module": "intelmq.bots.collectors.url.collector",
             "description": "Arbor Collector is the bot responsible to get the report from source of information.",
