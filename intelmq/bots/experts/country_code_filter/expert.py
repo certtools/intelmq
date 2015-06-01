@@ -8,24 +8,21 @@ class CountryCodeFilterBot(Bot):
     
     def init(self):
         if not self.parameters.countrycode:
-            self.cc = self.parameters.countrycode
             self.logger.warn("no country code found. countrycode_filter = %s" % self.parameters.countrycode)
             self.stop()
-	else:
+        else:
             self.logger.info("country code found. countrycode_filter = %s" % self.parameters.countrycode)
 
     def process(self):
-        message = self.receive_message()
+        event = self.receive_message()
 
-        if message:
-            
-            # Event deduplication
-            if isinstance(message, Event):
-		cc = message.contains("source_cymru_cc")
-                if ( cc == self.cc ):
-                    self.logger.debug("country code found! country = %s" % (cc))
+        for key in ["source.geolocation.cc", "destination.geolocation.cc"]:
+            if event.contains(key):
+                if self.parameters.countrycode == event.value(key):
                     self.send_message(message)
-	self.acknowledge_message()
+                    break
+
+        self.acknowledge_message()
 
 
 if __name__ == "__main__":
