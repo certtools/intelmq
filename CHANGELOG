@@ -1,4 +1,7 @@
 CHANGELOG
+==========
+
+# When did this happen?
 
 * improvements in pipeline
   FILE: lib/pipeline.py
