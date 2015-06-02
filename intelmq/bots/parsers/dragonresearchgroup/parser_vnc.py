@@ -1,5 +1,6 @@
 from intelmq.lib.bot import Bot, sys
 from intelmq.lib.message import Event
+from intelmq.lib.harmonization import DateTime
 from intelmq.lib import utils
 
 class DragonResearchGroupSSHParserBot(Bot):

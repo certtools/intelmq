@@ -1,5 +1,6 @@
 from intelmq.lib.bot import Bot, sys
 from intelmq.lib.message import Event
+from intelmq.lib.harmonization import DateTime
 from intelmq.lib import utils
 
 class DragonResearchGroupSSHParserBot(Bot):
@@ -14,6 +15,8 @@ class DragonResearchGroupSSHParserBot(Bot):
         for row in raw_report.split('\n'):
 
             row = row.strip()
+
+            self.logger.error("Raw row %s" % row)
 
             if len(row) == 0 or row.startswith('#'):
                 continue

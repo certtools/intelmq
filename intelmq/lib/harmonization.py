@@ -37,7 +37,10 @@ class GenericType():
             return value.strip()
 
         if type(value) is str:
-            value = value.decode('utf-8')
+            try:
+                value = value.decode('utf-8')
+            except UnicodeDecodeError:
+                value = value.decode('utf-8', 'ignore')
             return value.strip()
 
         return None
