@@ -201,7 +201,7 @@
             }
         },
         "Dshield": {
-            "module": "intelmq.bots.parsers.dshield.parser",
+            "module": "intelmq.bots.parsers.dshield.parser_asn",
             "description": "Dshield Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
             }
