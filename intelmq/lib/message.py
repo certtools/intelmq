@@ -44,6 +44,10 @@ class Message(dict):
 
         if value == None or value == "":
             return
+
+        for invalid_value in ["-", "N/A"]:
+            if value == invalid_value:
+                return
     
         if not self.__is_valid_key(key):
             raise exceptions.InvalidKey(key)
