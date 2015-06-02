@@ -27,6 +27,22 @@
                 "rate_limit": "3600"
             }
         },
+        "HpHosts": {
+            "module": "intelmq.bots.collectors.url.collector",
+            "description": "HPHost Collector is the bot responsible to get the report from source of information.",
+            "parameters": {
+                "url": "http://hosts-file.net/download/hosts.txt",
+                "rate_limit": "3600"
+            }
+        },
+        "AlientVault": {
+            "module": "intelmq.bots.collectors.url.collector",
+            "description": "AlientVault Collector is the bot responsible to get the report from source of information.",
+            "parameters": {
+                "url": "https://reputation.alienvault.com/reputation.data",
+                "rate_limit": "3600"
+            }
+        },
         "BruteForceBlocker": {
             "module": "intelmq.bots.collectors.url.collector",
             "description": "BruteForceBlocker Collector is the bot responsible to get the report from source of information.",
@@ -100,7 +116,7 @@
             }
         },
         "ShadowServer Drone Report": {
-            "module": "intelmq.bots.collectors.mail.mail-attach",
+            "module": "intelmq.bots.collectors.mail.collector_mail_attach",
             "description": "ShadowServer Drone Collector is the bot responsible to get the report from source of information.",
             "parameters": {
                 "rate_limit": "3600",
@@ -115,7 +131,7 @@
             }
         },
         "ShadowServer Chargen Report": {
-            "module": "intelmq.bots.collectors.mail.mail-url",
+            "module": "intelmq.bots.collectors.mail.collector_mail_url",
             "description": "ShadowServer Chargen Collector is the bot responsible to get the report from source of information.",
             "parameters": {
                 "rate_limit": "3600",
@@ -129,7 +145,7 @@
             }
         },
         "CERT-EU Malicious URLs": {
-            "module": "intelmq.bots.collectors.mail.mail-attach",
+            "module": "intelmq.bots.collectors.mail.collector_mail_attach",
             "description": "CERT-EU Malicious URLs Collector is the bot responsible to get the report from source of information.",
             "parameters": {
                 "rate_limit": "3600",
@@ -149,114 +165,113 @@
             "module": "intelmq.bots.parsers.taichungcitynetflow.parser",
             "description": "Taichung City Netflow Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
-                "rate_limit": "0"
+                "error_log_message": false
             }
         },
         "HPFeeds": {
             "module": "intelmq.bots.parsers.hpfeeds.parser",
             "description": "HPFeeds Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
-                "rate_limit": "0"
             }
         },
         "Arbor": {
             "module": "intelmq.bots.parsers.arbor.parser",
             "description": "Arbor Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
-                "rate_limit": "0"
+            }
+        },
+        "HpHosts": {
+            "module": "intelmq.bots.parsers.hphosts.parser",
+            "description": "HpHosts Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+                "error_log_message": false
+            }
+        },
+        "AlienVault": {
+            "module": "intelmq.bots.parsers.alienvault.parser",
+            "description": "AlienVault Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+                "error_log_message": false
             }
         },
         "BruteForceBlocker": {
             "module": "intelmq.bots.parsers.bruteforceblocker.parser",
             "description": "BruteForceBlocker Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
-                "rate_limit": "0"
             }
         },
         "Dshield": {
             "module": "intelmq.bots.parsers.dshield.parser",
             "description": "Dshield Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
-                "rate_limit": "0"
             }
         },
         "VXVault": {
             "module": "intelmq.bots.parsers.vxvault.parser",
             "description": "VXVault Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
-                "rate_limit": "0"
             }
         },
         "Malware Domain List": {
             "module": "intelmq.bots.parsers.malwaredomainlist.parser",
             "description": "Malware Domain List Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
-                "rate_limit": "0"
             }
         },
         "Dragon Research Group SSH": {
-            "module": "intelmq.bots.parsers.dragonresearchgroup.parser-ssh",
+            "module": "intelmq.bots.parsers.dragonresearchgroup.parser_ssh",
             "description": "Dragon Research Group SSH Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
-                "rate_limit": "0"
             }
         },
         "Dragon Research Group VNC": {
-            "module": "intelmq.bots.parsers.dragonresearchgroup.parser-vnc",
+            "module": "intelmq.bots.parsers.dragonresearchgroup.parser_vnc",
             "description": "Dragon Research Group VNC Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
-                "rate_limit": "0"
             }
         },
         "PhishTank": {
             "module": "intelmq.bots.parsers.phishtank.parser",
             "description": "PhishTank Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
-                "rate_limit": "0"
             }
         },
         "MalwarePatrol Dans Guardian": {
-            "module": "intelmq.bots.parsers.malwarepatrol.parser-dansguardian",
+            "module": "intelmq.bots.parsers.malwarepatrol.parser_dansguardian",
             "description": "MalwarePatrol Dans Guardian Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
-                "rate_limit": "0"
             }
         },
         "OpenBL": {
             "module": "intelmq.bots.parsers.openbl.parser",
             "description": "OpenBL Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
-                "rate_limit": "0"
             }
         },
         "ShadowServer Drone": {
-            "module": "intelmq.bots.parsers.shadowserver.drone-parser",
+            "module": "intelmq.bots.parsers.shadowserver.parser_drone",
             "description": "ShadowServer Drone Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
-                "rate_limit": "0"
             }
         },
         "ShadowServer Chargen": {
-            "module": "intelmq.bots.parsers.shadowserver.chargen-parser",
+            "module": "intelmq.bots.parsers.shadowserver.parser_chargen",
             "description": "ShadowServer Chargen Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
-                "rate_limit": "0"
             }
         },
         "CERT-EU Malicious URLs": {
-            "module": "intelmq.bots.parsers.certeu.malicious-urls-parser",
+            "module": "intelmq.bots.parsers.certeu.parser_malicious_urls",
             "description": "CERT-EU Malicious URLs Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
-                "rate_limit": "0"
             }
         }
     },
     "Expert": {
         "Cymru": {
-            "module": "intelmq.bots.experts.cymru.cymru",
+            "module": "intelmq.bots.experts.cymru.expert",
             "description": "Cymry (IP to ASN) is the bot responsible to add network information to the events (BGP, ASN, AS Name, Country, etc..).",
             "parameters": {
-                "rate_limit": "0",
                 "redis_cache_host": "127.0.0.1",
                 "redis_cache_port": "6379",
                 "redis_cache_db": "5",
@@ -264,10 +279,9 @@
             }
         },
         "RIPENCC": {
-            "module": "intelmq.bots.experts.ripencc.ripencc",
+            "module": "intelmq.bots.experts.ripencc.expert",
             "description": "RIPENCC is the bot resposible to get the correspondent abuse contact from source IP and destination IP of the events",
             "parameters": {
-                "rate_limit": "0",
                 "redis_cache_host": "127.0.0.1",
                 "redis_cache_port": "6379",
                 "redis_cache_db": "5",
@@ -278,7 +292,6 @@
             "module": "intelmq.bots.experts.abusix.abusix",
             "description": "Abusix is the bot resposible to get the correspondent abuse contact from source IP and destination IP of the events",
             "parameters": {
-                "rate_limit": "0",
                 "redis_cache_host": "127.0.0.1",
                 "redis_cache_port": "6379",
                 "redis_cache_db": "5",
@@ -286,26 +299,23 @@
             }
         },
         "GeoIP": {
-            "module": "intelmq.bots.experts.geoip.geoip",
+            "module": "intelmq.bots.experts.geoip.expert",
             "description": "GeoIP (MaxMind) is the bot responsible to add geolocation information to the events (Country, City, Longitude, Latitude, etc..)",
             "parameters": {
-                "rate_limit": "0",
                 "database": "/opt/intelmq/var/lib/bots/geoip/GeoLite2-City.mmdb"
             }
         },
         "ASN Lookup": {
-            "module": "intelmq.bots.experts.asnlookup.asnlookup",
+            "module": "intelmq.bots.experts.asn_lookup.expert",
             "description": "ASN Lookup is the bot responsible to add ASN and BGP information from Route Views Project to the events.",
             "parameters": {
-                "rate_limit": "0",
                 "database": "/opt/intelmq/var/lib/bots/asnlookup/ipasn.dat"
              }
         },
         "Deduplicator": {
-            "module": "intelmq.bots.experts.deduplicator.deduplicator",
+            "module": "intelmq.bots.experts.deduplicator.expert",
             "description": "Deduplicator is the bot responsible to detect and remove deduplicated events.",
             "parameters": {
-                "rate_limit": "0",
                 "redis_cache_host": "127.0.0.1",
                 "redis_cache_port": "6379",
                 "redis_cache_db": "6",
@@ -316,48 +326,42 @@
             "module": "intelmq.bots.experts.sanitizer.sanitizer",
             "description": "Sanitizer is the bot responsible to sanitize all events.",
             "parameters": {
-                "rate_limit": "0"
             }
         },
         "Taxonomy": {
-            "module": "intelmq.bots.experts.taxonomy.taxonomy",
+            "module": "intelmq.bots.experts.taxonomy.expert",
             "description": "Taxonomy is the bot responsible to apply the eCSIRT Taxonomy to all events.",
             "parameters": {
-                "rate_limit": "0"
             }
         },
         "CountryCodeFilter": {
-            "module": "intelmq.bots.experts.countrycodefilter.countrycodefilter",
+            "module": "intelmq.bots.experts.country_code_filter.expert",
             "description": "Filters out events which do not match a specific country code. Needs: the cymru expert.",
             "parameters": {
-                  "countrycode": "<country code>",
-                  "rate_limit": "0"
+                  "countrycode": "<country code>"
             }
         }
     },
     "Output": {
         "File": {
-            "module": "intelmq.bots.outputs.file.file",
+            "module": "intelmq.bots.outputs.file.output",
             "description": "File is the bot responsible to send events to a file.",
             "parameters": {
-                "file": "/opt/intelmq/var/lib/bots/file-output/events.txt",
-                "rate_limit": "0"
+                "file": "/opt/intelmq/var/lib/bots/file-output/events.txt"
             }
         },
         "LogCollector": {
-            "module": "intelmq.bots.outputs.logcollector.logcollector",
+            "module": "intelmq.bots.outputs.logcollector.output",
             "description": "LogCollector is the bot responsible to send events to a logcollector (Splunk, ElasticSearch, etc..).",
             "parameters": {
-                "rate_limit": "0",
                 "ip": "<ip>",
                 "port": "<port>"
             }
         },
         "MongoDB": {
-            "module": "intelmq.bots.outputs.mongodb.mongodb",
+            "module": "intelmq.bots.outputs.mongodb.output",
             "description": "MongoDB is the bot responsible to send events to a MongoDB database.",
             "parameters": {
-                "rate_limit": "0",
                 "host": "<ip>",
                 "port": "<port>",
                 "database": "<database>",
@@ -365,10 +369,9 @@
             }
         },
         "PostgreSQL": {
-            "module": "intelmq.bots.outputs.postgresql.postgresql",
+            "module": "intelmq.bots.outputs.postgresql.output",
             "description": "PostgreSQL is the bot responsible to send events to a PostgreSQL Database.",
             "parameters": {
-                "rate_limit": "0",
                 "host": "<ip>",
                 "port": "<port>",
                 "database": "intelmq-events",

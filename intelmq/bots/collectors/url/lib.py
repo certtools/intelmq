@@ -6,7 +6,6 @@ import httplib
 import urllib2
 import StringIO
 from urlparse import urlparse
-from intelmq.lib.utils import decode
 
 def fetch_url(url, timeout=60.0, chunk_size=16384, http_proxy = None, https_proxy = None):
     
@@ -20,7 +19,7 @@ def fetch_url(url, timeout=60.0, chunk_size=16384, http_proxy = None, https_prox
     shutil.copyfileobj(req, iostring, chunk_size)
     value = iostring.getvalue()
     iostring.close()
-    return decode(value)
+    return value
 
 
 
@@ -48,7 +47,7 @@ def fetch_url_ssl(url, key_file, cert_file, ca_file, timeout=60.0, chunk_size=16
     iostring.close()
     connection.close()
 
-    return decode(value)
+    return value
 
 
 

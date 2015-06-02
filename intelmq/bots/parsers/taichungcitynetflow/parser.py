@@ -1,9 +1,11 @@
+import re
+from intelmq.lib import utils
 from intelmq.lib.bot import Bot, sys
 from intelmq.lib.message import Event
-from intelmq.bots import utils
-import re
+from intelmq.lib.harmonization import DateTime
 
-KEYWORDS = {
+
+CLASSIFICATION = {
         "brute-force": ["brute-force", "brute force", "mysql"],
         "c&c": ["c&c server"],
         "botnet drone": ["irc-botnet"],
@@ -12,44 +14,54 @@ KEYWORDS = {
         "exploit": ["bash", "php-cgi", "phpmyadmin"],
     }
 
+
 class TaichungCityNetflowParserBot(Bot):
+    
     
     def get_type(self, value):
         value = value.lower()
-        for event_type, keywords in KEYWORDS.iteritems():
+        for event_type, keywords in CLASSIFICATION.iteritems():
             for keyword in keywords:
                 if unicode(keyword) in value:
                     return event_type
         return "unknown"
+    
 
     def process(self):
         report = self.receive_message()
 
-        for row in report.split('<tr>'):
+        if not report.contains("raw"):
+            self.acknowledge_message()
+
+        raw_report = utils.base64_decode(report.value("raw"))
+        for row in raw_report.split('<tr>'):
 
             # Get IP and Type
             info1 = re.search(">[\ ]*(\d+\.\d+\.\d+\.\d+)[\ ]*<.*</td><td>([^<]+)</td>", row)
             
+            if not info1:
+                continue
+
             # Get Timestamp
             info2 = re.search("<td>[\ ]*(\d{4}-\d{2}-\d{2}\ \d{2}:\d{2}:\d{2})[\ ]*</td>", row)
 
-            if info1:
-                event = Event()
+            event = Event()
 
-                event.add("source_ip", info1.group(1))
-                description = info1.group(2)
-                event_type = self.get_type(description)
-                event.add('type', event_type)
-                event.add('description', description)
-                event.add("source_time", info2.group(1) + " UTC-8")
-                event.add('feed', 'taichungcitynetflow')
-                event.add('feed_url', 'https://tc.edu.tw/net/netflow/lkout/recent/30')
+            description = info1.group(2)
+            event_type = self.get_type(description)
+            time_observation = DateTime().generate_datetime_now()
+            time_source = info2.group(1) + " UTC-8"
 
-                event = utils.parse_source_time(event, "source_time")
-                event = utils.generate_observation_time(event, "observation_time")
-                event = utils.generate_reported_fields(event)
-            
-                self.send_message(event)
+            event.add("time.source", time_source, sanitize=True)
+            event.add('time.observation', time_observation, sanitize=True)
+            event.add("source.ip", info1.group(1), sanitize=True)
+            event.add('classification.type', event_type, sanitize=True)
+            event.add('description', description, sanitize=True)
+            event.add('feed.name', u'taichungcitynetflow')
+            event.add('feed.url', u'https://tc.edu.tw/net/netflow/lkout/recent/30')
+            event.add("raw", row, sanitize=True)
+        
+            self.send_message(event)
         self.acknowledge_message()
 
 if __name__ == "__main__":
