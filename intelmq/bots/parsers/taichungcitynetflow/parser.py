@@ -22,7 +22,6 @@ class TaichungCityNetflowParserBot(Bot):
         value = value.lower()
         for event_type, keywords in CLASSIFICATION.iteritems():
             for keyword in keywords:
-                self.logger.error("Type keyword: %s | Type: %s" % (type(keyword), type(value)))
                 if keyword in value:
                     return event_type
         return "unknown"
