@@ -90,6 +90,7 @@ class Bot(object):
                     self.logger.info("Disconnecting from destination pipeline")
 
                 self.logger.info("Bot is shutting down")
+		self.killbot()
                 break
 
     
