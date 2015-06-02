@@ -21,9 +21,8 @@ class DCUParserBot(Bot):
                                   fieldnames=lib.dcu_headers())
 
             for row in rows:
-                event = Event()
+                event = Event(lib.convert_dcu_fields(row))
                 event.add("feed", "microsoft-dcu")
-                add_dcu_fields(event, row)
 
                 event = utils.generate_observation_time(event, "observation_time")
                 event = utils.generate_reported_fields(event)
