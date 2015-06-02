@@ -4,28 +4,11 @@ from intelmq.bots import utils
 
 import csv
 import StringIO
-from intelmq.bots.parsers.dcu.lib import *
+import lib
 
 
 class DCUParserBot(Bot):
-    # This bot parses the data which was produced by the
-    # dcu collector. It is for the Microsoft digital crime unit feed
-
-    HEADERS = ["SourcedFrom", "FileTimeUtc",
-               "Botnet", "SourceIp", 
-               "SourcePort", "SourceIpAsnNr", 
-               "TargetIp", "TargetPort", 
-               "Payload", "SourceIpCountryCode", 
-               "SourceIpRegion", "SourceIpCity", 
-               "SourceIpPostalCode", "SourceIpLatitude", 
-               "SourceIpLongitude", "SourceIpMetroCode", 
-               "SourceIpAreaCode", "HttpRequest", 
-               "HttpReferrer", "HttpUserAgent", 
-               "HttpMethod", "HttpVersion", 
-               "HttpHost", "Custom Field 1", 
-               "Custom Field 2", "Custom Field 3", 
-               "Custom Field 4", "Custom Field 5"]
-
+    """ Parses DCU-Collector output. """
 
     def process(self):
         report = self.receive_message()
@@ -33,19 +16,21 @@ class DCUParserBot(Bot):
         if report:
             report = report.strip()
             buffered = StringIO.StringIO(report)
-            rows = csv.DictReader(buffered, delimiter="\t", fieldnames=self.HEADERS)
+            rows = csv.DictReader(buffered,
+                                  delimiter="\t",
+                                  fieldnames=lib.dcu_headers())
 
             for row in rows:
                 event = Event()
-                event.add("feed", "microsoft_dcu")
-                for key, value in row.items():
-                    parts = convert_dcu_field(key, value)
-                    if parts:
-                        event.add(parts[0], parts[1])
-                    
+                event.add("feed", "microsoft-dcu")
+                add_dcu_fields(event, row)
+
+                event = utils.generate_observation_time(event, "observation_time")
+                event = utils.generate_reported_fields(event)
+
                 self.send_message(event)
         self.acknowledge_message()
-        
+
 
 if __name__ == "__main__":
     bot = DCUParserBot(sys.argv[1])
