@@ -311,6 +311,7 @@ def convert_threatcode_to_type(threat_code):
     """Converts threat code to IntelMQ type"""
     return __THREAT_CODES.get(threat_code, "unknown")
 
+
 def convert_dcu_fields(fields):
     """Converts the given dict of microsoft dcu fields to new fields"""
     converted_fields = []
