@@ -319,24 +319,25 @@ def convert_dcu_fields(fields):
         converted_key = __INTELMQ_TX.get(key)
         converted_value = value
 
-        if key == "Botnet":
-            converted_value = convert_threatcode_to_type(value)
-            converted_key = "type"
-
-        if key == "SourceIpAsnNr":
-            converted_value = re.match("([Aa][Ss])?([0-9]+)", value).group(2)
-
-        if key == "FileTimeUtc":
-            converted_value = str(convert_windows_timestamp(value))
-
-        if converted_key and converted_value:
-            converted_fields.append((converted_key, converted_value))
-
+        if key and value:
             if key == "Botnet":
-                # FIXME: what do we do with the dcu threat code? At the moment just 
-                # writing it into malware field, so maybe an expert can do something with that
-                # Another mapping table? Also it isn't conforming to the ontology...
-                converted_fields.append(("malware", value)) 
+                converted_value = convert_threatcode_to_type(value)
+                converted_key = "type"
+
+            if key == "SourceIpAsnNr":
+                converted_value = re.match("([Aa][Ss])?([0-9]+)", value).group(2)
+
+            if key == "FileTimeUtc":
+                converted_value = str(convert_windows_timestamp(value))
+
+            if converted_key and converted_value:
+                converted_fields.append((converted_key, converted_value))
+
+                if key == "Botnet":
+                    # FIXME: what do we do with the dcu threat code? At the moment just 
+                    # writing it into malware field, so maybe an expert can do something with that
+                    # Another mapping table? Also it isn't conforming to the ontology...
+                    converted_fields.append(("malware", value)) 
                                                             
 
     return dict(converted_fields)
