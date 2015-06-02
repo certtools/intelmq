@@ -26,6 +26,9 @@ class GenericType():
         if len(value) == 0:
             return False
 
+        if GenericType().has_invalid_values(value):
+            return False
+
         return True
         
     @staticmethod
@@ -41,6 +44,13 @@ class GenericType():
             return value.strip()
 
         return None
+
+    @staticmethod
+    def __has_invalid_values(value):
+        for invalid_value in ["-", "N/A"]:
+            if value == invalid_value:
+                return True
+        return False
 
 
 class String(GenericType):
