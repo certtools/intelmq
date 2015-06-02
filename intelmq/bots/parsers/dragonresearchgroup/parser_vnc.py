@@ -3,7 +3,7 @@ from intelmq.lib.message import Event
 from intelmq.lib.harmonization import DateTime
 from intelmq.lib import utils
 
-class DragonResearchGroupSSHParserBot(Bot):
+class DragonResearchGroupVNCParserBot(Bot):
 
     def process(self):
         report = self.receive_message()
