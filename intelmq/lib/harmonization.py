@@ -26,7 +26,7 @@ class GenericType():
         if len(value) == 0:
             return False
 
-        if GenericType().has_invalid_values(value):
+        if GenericType().__has_invalid_values(value):
             return False
 
         return True
