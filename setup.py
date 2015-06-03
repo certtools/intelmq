@@ -59,9 +59,9 @@ setup(
                                   ]
                 ),
                 ('/opt/intelmq/docs/', [
-                                   'docs/UserGuide.md',
-                                   'docs/DevGuide.md',
-                                   'docs/DataHarmonization.md'
+                                   'docs/User-Guide.md',
+                                   'docs/Developers-Guide.md',
+                                   'docs/Data-Harmonization.md'
                                   ]
                 )
     ],
