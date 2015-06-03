@@ -34,6 +34,7 @@ sudo su -
 
 git clone https://github.com/certtools/intelmq.git
 cd intelmq/
+pip install -r REQUIREMENTS
 python setup.py install
 useradd -d /opt/intelmq -U -s /bin/bash intelmq
 chmod -R 0770 /opt/intelmq
