@@ -43,6 +43,14 @@
                 "rate_limit": "3600"
             }
         },
+        "DCU": {
+            "module": "intelmq.bots.collectors.dcu.collector",
+            "description": "Microsoft DCU collector fetches report from an azure account",
+            "parameters": {
+                "azure_account_name": "<account_name>",
+                "azure_account_key": "<account_key>"
+            }
+        },
         "VXVault": {
             "module": "intelmq.bots.collectors.url.collector",
             "description": "VXVault Collector is the bot responsible to get the report from source of information.",
