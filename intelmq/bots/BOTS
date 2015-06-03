@@ -188,6 +188,12 @@
                 "rate_limit": "0"
             }
         },
+        "DCU": {
+            "module": "intelmq.bots.parsers.dcu.parser",
+            "description": "Parses dcu output created by dcu collector into IntelMQ format",
+            "parameters": {
+            }
+        },
         "VXVault": {
             "module": "intelmq.bots.parsers.vxvault.parser",
             "description": "VXVault Parser is the bot responsible to parse the report and sanitize the information.",
