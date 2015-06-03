@@ -43,7 +43,7 @@
                 "rate_limit": "3600"
             }
         },
-        "DCU": {
+        "Microsoft DCU": {
             "module": "intelmq.bots.collectors.dcu.collector",
             "description": "Microsoft DCU collector fetches report from an azure account",
             "parameters": {
@@ -188,9 +188,9 @@
                 "rate_limit": "0"
             }
         },
-        "DCU": {
+        "Microsoft DCU": {
             "module": "intelmq.bots.parsers.dcu.parser",
-            "description": "Parses dcu output created by dcu collector into IntelMQ format",
+            "description": "Parses output created by Microsoft DCU collector into IntelMQ format",
             "parameters": {
             }
         },
