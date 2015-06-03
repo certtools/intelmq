@@ -1,7 +1,7 @@
 CHANGELOG
 ==========
 
-# 2015/06/03 (aaron)
+## 2015/06/03 (aaron)
 
   * fixed the license to AGPL in setup.py
   * moved back the docs/* files from the wiki repo to docs/. See #205.
@@ -10,7 +10,7 @@ CHANGELOG
 
 
 
-# When did this happen? (XXX FIXME)
+## When did this happen? (XXX FIXME)
 
 * improvements in pipeline
   FILE: lib/pipeline.py
