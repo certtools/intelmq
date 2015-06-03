@@ -46,13 +46,13 @@ It follows the following basic meta-guidelines:
 <a name="how-to-install"></a>
 ## How to Install
 
-See [UserGuide](User-Guide).
+See [UserGuide](docs/User-Guide.md).
 
 
 <a name="dev-guide"></a>
 ## Developers Guide
 
-See [Developers Guide](Developers-Guide).
+See [Developers Guide](docs/Developers-Guide.md).
 
 <a name="control-platform"></a>
 ## IntelMQ Manager
@@ -71,7 +71,7 @@ Check the [tool](https://github.com/certtools/intelmq-manager) and manage easily
 ## Data Harmonization
 
 IntelMQ use the Data Harmonization. Check the following 
-[document](Data-Harmonization).
+[document](docs/Data-Harmonization.md).
 
 <a name="licence"></a>
 ## Licence
