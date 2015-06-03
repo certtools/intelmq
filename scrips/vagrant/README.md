@@ -4,7 +4,7 @@
 ## Information
 On this directory exists a Vagrantfile to create a ubuntu/trusty64 virtualbox Virtual Machine (VM) and using *bootstrap.sh* script will install IntelMQ (v1.0-beta branch) and IntelMQ-Manager.
 
-The VM can be acessed from the host machine on the IP: 192.168.30.10 .
+The VM can be acessed from the host machine on the IP: 192.168.33.10 .
 
 ## Dependencies
 This project requires that [VirtualBox][vb] and [Vagrant][vg] is installed on the host machine.
@@ -29,9 +29,15 @@ vagrant up
 vagrant ssh
 
 * Test acess to the IntelMQ-Manager
-    - Point the browser on the host machine to http://192.168.30.10
+    - Point the browser on the host machine to http://192.168.33.10
 
+* To halt machine van use the command:
 
+  vagrant halt
+
+* To delete the machine:
+
+  vagrant destroy
 
 ## Credits
 
