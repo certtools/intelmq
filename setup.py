@@ -60,7 +60,7 @@ setup(
                 ),
                 ('/opt/intelmq/docs/', [
                                    'docs/User-Guide.md',
-                                   'docs/Dev-Guide.md',
+                                   'docs/Developers-Guide.md',
                                    'docs/Data-Harmonization.md'
                                   ]
                 )
