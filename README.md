@@ -32,4 +32,48 @@ It follows the following basic meta-guidelines:
  * Code readability: test with unexperienced programmers
 * Communicate clearly
 
-Visit [Wiki page](https://github.com/certtools/intelmq/wiki/).
+
+## Table of Contents
+
+1. [How to Install](#how-to-install)
+2. [Developers Guide](#dev-guide)
+3. [IntelMQ Manager](#control-platform)
+4. [Incident Handling Automation Project](#incident-handling-automation-project)
+5. [Data Harmonization](#data-harmonization)
+6. [Licence](#licence)
+
+
+<a name="how-to-install"></a>
+## How to Install
+
+See [UserGuide](User-Guide).
+
+
+<a name="dev-guide"></a>
+## Developers Guide
+
+See [Developers Guide](Developers-Guide).
+
+<a name="control-platform"></a>
+## IntelMQ Manager
+
+Check the [tool](https://github.com/certtools/intelmq-manager) and manage easily IntelMQ system.
+
+
+<a name="incident-handling-automation-project"></a>
+## Incident Handling Automation Project
+
+* **URL:** http://www.enisa.europa.eu/activities/cert/support/incident-handling-automation
+* **Mailing-list:** ihap@lists.trusted-introducer.org
+
+
+<a name="data-harmonization"></a>
+## Data Harmonization
+
+IntelMQ use the Data Harmonization. Check the following 
+[document](Data-Harmonization).
+
+<a name="licence"></a>
+## Licence
+
+This software is licensed under GNU Affero General Public License version 3
