@@ -35,7 +35,7 @@ setup(
     maintainer_email='synchroack@gmail.com',
     packages=find_packages(),
     url='http://pypi.python.org/pypi/intelmq/',
-    license='GPLv3',
+    license='AGPLv3',
     description="IntelMQ Tool",
     long_description='IntelMQ is a solution for CERTs to process data feeds, pastebins, tweets throught a message queue.',
     data_files=[
