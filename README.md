@@ -69,5 +69,53 @@ It follows the following basic meta-guidelines:
  * Code readability: test with unexperienced programmers
 * Communicate clearly
 
+<<<<<<< HEAD
 Visit [Wiki page](https://github.com/certtools/intelmq/wiki/).
 >>>>>>> 310f73059be8b060d556b4da833e19a0e2c4fc67
+=======
+
+## Table of Contents
+
+1. [How to Install](#how-to-install)
+2. [Developers Guide](#dev-guide)
+3. [IntelMQ Manager](#control-platform)
+4. [Incident Handling Automation Project](#incident-handling-automation-project)
+5. [Data Harmonization](#data-harmonization)
+6. [Licence](#licence)
+
+
+<a name="how-to-install"></a>
+## How to Install
+
+See [UserGuide](docs/User-Guide.md).
+
+
+<a name="dev-guide"></a>
+## Developers Guide
+
+See [Developers Guide](docs/Developers-Guide.md).
+
+<a name="control-platform"></a>
+## IntelMQ Manager
+
+Check the [tool](https://github.com/certtools/intelmq-manager) and manage easily IntelMQ system.
+
+
+<a name="incident-handling-automation-project"></a>
+## Incident Handling Automation Project
+
+* **URL:** http://www.enisa.europa.eu/activities/cert/support/incident-handling-automation
+* **Mailing-list:** ihap@lists.trusted-introducer.org
+
+
+<a name="data-harmonization"></a>
+## Data Harmonization
+
+IntelMQ use the Data Harmonization. Check the following 
+[document](docs/Data-Harmonization.md).
+
+<a name="licence"></a>
+## Licence
+
+This software is licensed under GNU Affero General Public License version 3
+>>>>>>> upstream/v1.0-beta

@@ -39,7 +39,7 @@ class GenericType():
         if type(value) is str:
             try:
                 value = value.decode('utf-8')
-            except UnicodeDecodeError:
+            except:
                 value = value.decode('utf-8', 'ignore')
             return value.strip()
 
@@ -223,18 +223,19 @@ class Base64(GenericType):
 
     @staticmethod
     def is_valid(key, value):
+        if not GenericType().is_valid(key, value):
+            return False
+
         try:
             base64.b64decode(value)
         except:
-            return False
-
-        if not GenericType().is_valid(key, value):
             return False
 
         return True
         
     @staticmethod
     def sanitize(value):
+        value = GenericType().sanitize(value)
         value = base64.b64encode(value)
         return GenericType().sanitize(value)
 

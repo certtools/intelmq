@@ -3,6 +3,43 @@ import json
 import base64
 
 
+def decode(text, encodings=["utf-8"], force=False):
+    if type(text) is unicode:
+        return text
+
+    for encoding in encodings:
+        try:
+            return text.decode(encoding)
+        except ValueError as e:
+            pass
+        
+    if force:
+        for encoding in encodings:
+            try:
+                return text.decode(encoding, 'ignore')
+            except ValueError as e:
+                pass
+
+    raise Exception("Found a problem when decoding.")
+
+
+def encode(text, encodings=["utf-8"], force=False):
+    for encoding in encodings:
+        try:
+            return text.encode(encoding)
+        except ValueError as e:
+            pass
+        
+    if force:
+        for encoding in encodings:
+            try:
+                return text.decode(encoding, 'ignore')
+            except ValueError as e:
+                pass
+
+    raise Exception("Found a problem when encoding.")
+
+
 def base64_decode(value):
     return base64.b64decode(value)
 

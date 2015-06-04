@@ -24,9 +24,15 @@ class DshieldParserBot(Bot):
             if row.startswith('#'):
                 continue
 
+            octets = list()
             match = re.search(REGEX_IP, row)
             if match:
-                ip = ".".join([octet.lstrip('0') for octet in match.group().split('.')])
+                for octet in match.group().split('.'):
+                    result = octet.lstrip('0')
+                    if result == "":
+                        result = "0"
+                    octets.append(result)
+                ip = ".".join(octets)
             else:
                 continue
     

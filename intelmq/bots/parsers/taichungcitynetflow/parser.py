@@ -6,12 +6,12 @@ from intelmq.lib.harmonization import DateTime
 
 
 CLASSIFICATION = {
-        "brute-force": ["brute-force", "brute force", "mysql"],
-        "c&c": ["c&c server"],
-        "botnet drone": ["irc-botnet"],
-        "malware": ["malware provider", "malware website", u'\u60e1\u610f', "worm"],
-        "scanner": ["scan"],
-        "exploit": ["bash", "php-cgi", "phpmyadmin"],
+        "brute-force": [u"brute-force", u"brute force", u"mysql"],
+        "c&c": [u"c&c server"],
+        "botnet drone": [u"irc-botnet"],
+        "malware": [u"malware provider", u"malware website", u'\u60e1\u610f', u"worm"],
+        "scanner": [u"scan"],
+        "exploit": [u"bash", u"php-cgi", u"phpmyadmin"],
     }
 
 
@@ -22,7 +22,7 @@ class TaichungCityNetflowParserBot(Bot):
         value = value.lower()
         for event_type, keywords in CLASSIFICATION.iteritems():
             for keyword in keywords:
-                if unicode(keyword) in value:
+                if keyword in value:
                     return event_type
         return "unknown"
     
@@ -48,6 +48,7 @@ class TaichungCityNetflowParserBot(Bot):
             event = Event()
 
             description = info1.group(2)
+            description = utils.decode(description)
             event_type = self.get_type(description)
             time_observation = DateTime().generate_datetime_now()
             time_source = info2.group(1) + " UTC-8"
