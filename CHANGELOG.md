@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 CHANGELOG
 ==========
 
@@ -61,14 +60,3 @@ CHANGELOG
 
 
 * New bots/feeds
-=======
-
-
-# 2015/06/02 (aaron)
-Please simply add to the top of this file and do not forget to add a date
-
-
-# 2015/06/02 (aaron)
-We need a changelog file. This makes things really easier for others to read
-what happened.
->>>>>>> upstream/master

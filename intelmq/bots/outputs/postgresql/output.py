@@ -21,7 +21,7 @@ class PostgreSQLBot(Bot):
         keys    = ", ".join(event.keys())
         values  = event.values()
         fvalues = len(values) * "%s, "
-        query   = ("INSERT INTO events (%s) VALUES (%s)", keys, fvalues[:-2])
+        query   = "INSERT INTO events (" + keys + ") VALUES (" + fvalues[:-2] + ")"
         
         self.cur.execute(query, values)
         self.con.commit()
