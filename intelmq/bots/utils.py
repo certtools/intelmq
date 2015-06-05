@@ -6,7 +6,7 @@ import binascii
 import datetime
 import dateutil.parser
 import dateutil.tz
-from urlparse import urlparse
+from urllib.parse import urlparse
 
 
 def get_domain_name_from_url(url):

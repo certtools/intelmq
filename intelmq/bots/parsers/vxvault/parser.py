@@ -1,4 +1,4 @@
-import urlparse
+import urllib.parse
 from intelmq.lib.bot import Bot, sys
 from intelmq.lib.message import Event
 from intelmq.bots import utils
@@ -15,7 +15,7 @@ class VXVaultParserBot(Bot):
                 if len(row) == 0 or not row.startswith('http'):
                     continue
                 
-                url_object = urlparse.urlparse(row)
+                url_object = urllib.parse.urlparse(row)
 
                 if not url_object:
                     continue

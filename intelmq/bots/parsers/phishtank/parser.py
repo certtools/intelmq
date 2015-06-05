@@ -1,5 +1,5 @@
 import unicodecsv
-from cStringIO import StringIO
+from io import StringIO
 from intelmq.lib.bot import Bot, sys
 from intelmq.lib.message import Event
 from intelmq.lib.utils import encode

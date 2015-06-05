@@ -26,9 +26,9 @@ class ASNLookupExpertBot(Bot):
         
             if info:
                 if info[0]:
-                    event.update(key % "asn", unicode(info[0]))
+                    event.update(key % "asn", str(info[0]))
                 if info[1]:
-                    event.update(key % "bgp_prefix", unicode(info[1]))
+                    event.update(key % "bgp_prefix", str(info[1]))
             
             self.send_message(event)
         self.acknowledge_message()

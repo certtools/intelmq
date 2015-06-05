@@ -2,7 +2,7 @@ import re
 import sys
 import json
 import time
-import ConfigParser
+import configparser
 
 from intelmq.lib.message import Event
 from intelmq.lib.pipeline import Pipeline

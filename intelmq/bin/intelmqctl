@@ -54,24 +54,24 @@ RETURN_TYPE = None
 
 def log_list_queus(queues):
     if RETURN_TYPE == 'text':
-        for queue, counter in sorted(queues.iteritems()):
-            print "%s - %s" % (queue,  counter)
+        for queue, counter in sorted(queues.items()):
+            print(("%s - %s" % (queue,  counter)))
 
 def log_bot_error(bot_id, status):
     if RETURN_TYPE == 'text':
-        print ERROR_MESSAGES[status] % bot_id
+        print((ERROR_MESSAGES[status] % bot_id))
     
 def log_bot_message(bot_id, status):
     if RETURN_TYPE == 'text':
-        print MESSAGES[status] % bot_id
+        print((MESSAGES[status] % bot_id))
 
 def log_botnet_error(status):
     if RETURN_TYPE == 'text':
-        print ERROR_MESSAGES[status] % 'Botnet'
+        print((ERROR_MESSAGES[status] % 'Botnet'))
     
 def log_botnet_message(status):
     if RETURN_TYPE == 'text':
-        print MESSAGES[status] % 'Botnet'
+        print((MESSAGES[status] % 'Botnet'))
        
 def write_pidfile(bot_id, pid):
     filename = PIDFILE % bot_id
@@ -197,7 +197,7 @@ class IntelMQContoller():
             results = self.read_log(self.args.log, self.args.bot_id)
         
         if self.args.type == 'json':
-            print json.dumps(results)
+            print(json.dumps(results))
 
 
     def bot_start(self, bot_id):        
@@ -301,9 +301,9 @@ class IntelMQContoller():
         title = "\n\nList of Bots:\n"
         title += "-" * (len(title)-1)
         title += "\n"
-        print title
+        print(title)
         for bot_id in sorted(self.startup.keys()):
-            print "Bot ID: %s\nDescription: %s\n" % (bot_id, self.startup[bot_id]['description'])
+            print("Bot ID: %s\nDescription: %s\n" % (bot_id, self.startup[bot_id]['description']))
 
             
     def list_queues(self):
@@ -311,7 +311,7 @@ class IntelMQContoller():
         conf = json.load(fp)
 
         queues = set()
-        for key, value in conf.iteritems():
+        for key, value in conf.items():
             if 'source-queue' in value:
                 queues.add(value['source-queue'])
             if 'destination-queues' in value:
@@ -322,7 +322,7 @@ class IntelMQContoller():
         log_list_queus(counters)
         
         return_dict = dict()
-        for bot_id, info in conf.iteritems():
+        for bot_id, info in conf.items():
             return_dict[bot_id] = dict()
             
             if 'source-queue' in info:

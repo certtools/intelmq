@@ -1,5 +1,5 @@
 import csv
-import StringIO
+import io
 from intelmq.lib.bot import Bot, sys
 from intelmq.lib.message import Event
 from intelmq.bots import utils
@@ -26,12 +26,12 @@ class ShadowServerChargenParserBot(Bot):
                 "city" : "source_city"
             }           
 
-            rows = csv.DictReader(StringIO.StringIO(report))
+            rows = csv.DictReader(io.StringIO(report))
 
             for row in rows:
                 event = Event()
 
-                for key, value in row.items():
+                for key, value in list(row.items()):
 
                     key = columns[key]
 

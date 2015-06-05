@@ -23,9 +23,9 @@ class AbuseHelperBot(Bot):
 
     def handle_message(self, xmpp_connection, message):
         try:
-            event = Event.from_unicode(unicode(message.getBody()))
+            event = Event.from_unicode(str(message.getBody()))
             
-            for key in event.keys():
+            for key in list(event.keys()):
                 value = event.value(key)
                 event.clear(key)
                 key = key.replace(' ','_')
