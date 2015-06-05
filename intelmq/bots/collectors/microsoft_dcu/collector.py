@@ -21,10 +21,16 @@ class DCUCollectorBot(Bot):
         account_key = self.parameters.azure_account_key
 
         blob_service = BlobService(account_name, account_key, protocol="https")
+        proxy_url = self.parameters.https_proxy or ""
+        proxy_url = "https://" + proxy_url if proxy_url.find("https://") == -1 else proxy_url
+        
         proxy_options = urlparse(self.parameters.https_proxy or "")
 
         if proxy_options.hostname:
+            self.logger.info("Using https proxy(host=%s, port=%s)" % (proxy_options.hostname, proxy_options.port))
             blob_service.set_proxy(host=proxy_options.hostname, port=proxy_options.port)
+        else:
+            self.logger.info("Using NO proxy")
 
         for container in blob_service.list_containers():
             container_name = container.name
