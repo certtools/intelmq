@@ -44,7 +44,7 @@
             }
         },
         "Microsoft DCU": {
-            "module": "intelmq.bots.collectors.dcu.collector",
+            "module": "intelmq.bots.collectors.microsoft_dcu.collector",
             "description": "Microsoft DCU collector fetches report from an azure account",
             "parameters": {
                 "azure_account_name": "<account_name>",
@@ -189,7 +189,7 @@
             }
         },
         "Microsoft DCU": {
-            "module": "intelmq.bots.parsers.dcu.parser",
+            "module": "intelmq.bots.parsers.microsoft_dcu.parser",
             "description": "Parses output created by Microsoft DCU collector into IntelMQ format",
             "parameters": {
             }
