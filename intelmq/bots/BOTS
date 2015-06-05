@@ -353,6 +353,15 @@
                 "port": "<port>"
             }
         },
+	"TCPOutput": {
+            "module": "intelmq.bots.outputs.tcpoutput.tcpoutput",
+            "description": "TCPOutput is the bot responsible to send events throught tcp connection.",
+            "parameters": {
+                "processing_interval": "0",
+                "ip": "<ip>",
+                "port": "<port>"
+            }
+        },
         "MongoDB": {
             "module": "intelmq.bots.outputs.mongodb.mongodb",
             "description": "MongoDB is the bot responsible to send events to a MongoDB database.",
