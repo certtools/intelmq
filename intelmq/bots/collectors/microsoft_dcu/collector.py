@@ -23,8 +23,8 @@ class DCUCollectorBot(Bot):
         blob_service = BlobService(account_name, account_key, protocol="https")
         proxy_options = urlparse(self.parameters.https_proxy or "")
 
-        if proxy_options.port and proxy_options.hostname:
-            blob_service.set_proxy(host=proxy_options.hostname, port=proxy_options.hostname)
+        if proxy_options.hostname:
+            blob_service.set_proxy(host=proxy_options.hostname, port=proxy_options.port)
 
         for container in blob_service.list_containers():
             container_name = container.name
