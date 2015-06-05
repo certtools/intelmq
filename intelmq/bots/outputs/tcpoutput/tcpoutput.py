@@ -34,9 +34,9 @@ class tcpoutput(Bot):
 		self.logger.info("Data sent sucessfully")
 		self.con.close()
             except socket.error, e:
-                self.logger.error(e.args[1] + ". Reconnecting..")
+                self.logger.error(e.args[1])
                 self.con.close()
-                self.connect()
+                
 
 
 if __name__ == "__main__":
