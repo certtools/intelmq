@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta
 from dateutil.tz import tzutc
-import types
-import re
 
+import re
+import sys
 
 __HEADERS = ["SourcedFrom", "FileTimeUtc",
              "Botnet", "SourceIp",
@@ -295,6 +295,10 @@ __THREAT_CODES = dict(map(lambda x: x.split("\t"), (
     "B75-S2\tbotnet drone"
 ).split("\n")))
 
+
+class ParsingError(Exception):
+    pass
+
 def convert_windows_timestamp(windows_ts):
     """Convert a windows file utc timestamp to a datetime object"""
     us = int(windows_ts)/10
@@ -320,24 +324,26 @@ def convert_dcu_fields(fields):
         converted_value = value
 
         if key and value:
-            if key == "Botnet":
-                converted_value = convert_threatcode_to_type(value)
-                converted_key = "type"
-
-            if key == "SourceIpAsnNr":
-                converted_value = re.match("([Aa][Ss])?([0-9]+)", value).group(2)
-
-            if key == "FileTimeUtc":
-                converted_value = str(convert_windows_timestamp(value))
-
-            if converted_key and converted_value:
-                converted_fields.append((converted_key, converted_value))
-
+            try:
                 if key == "Botnet":
-                    # FIXME: what do we do with the dcu threat code? At the moment just 
-                    # writing it into malware field, so maybe an expert can do something with that
-                    # Another mapping table? Also it isn't conforming to the ontology...
-                    converted_fields.append(("malware", value)) 
-                                                            
+                    converted_value = convert_threatcode_to_type(value)
+                    converted_key = "type"
+
+                if key == "SourceIpAsnNr":
+                    converted_value = re.match("([Aa][Ss])?([0-9]+)", value).group(2)
+
+                if key == "FileTimeUtc":
+                    converted_value = str(convert_windows_timestamp(value))
+
+                if converted_key and converted_value:
+                    converted_fields.append((converted_key, converted_value))
+
+                    if key == "Botnet":
+                        # FIXME: what do we do with the dcu threat code? At the moment just 
+                        # writing it into malware field, so maybe an expert can do something with that
+                        # Another mapping table? Also it isn't conforming to the ontology...
+                        converted_fields.append(("malware", value)) 
+            except:
+                raise ParsingError("key '%s' and value '%s' made a problem" % (key, value)), None, sys.exc_info()[2]
 
     return dict(converted_fields)
