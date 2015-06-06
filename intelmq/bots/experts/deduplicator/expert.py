@@ -2,7 +2,7 @@ from intelmq.lib.bot import Bot, sys
 from intelmq.lib.cache import Cache
 from intelmq.lib.message import Event
 from intelmq.lib.harmonization import DateTime
-from intelmq.bots import utils
+from intelmq.lib import utils
 
 
 class DeduplicatorBot(Bot):

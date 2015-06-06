@@ -1,6 +1,6 @@
 from intelmq.lib.bot import Bot, sys
 from intelmq.lib.message import Event
-from intelmq.bots import utils
+from intelmq.lib import utils
 import redis
 import json
 
