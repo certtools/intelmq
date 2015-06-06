@@ -1,5 +1,5 @@
 from intelmq.lib.bot import Bot, sys
-from intelmq.bots import utils
+from intelmq.lib import utils
 
 class SanitizerBot(Bot):
 
