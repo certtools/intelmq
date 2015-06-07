@@ -41,6 +41,8 @@ class Bot(object):
     def init(self):
         pass
 
+    def killbot(self):
+	pass
 
     def start(self):
         self.source_pipeline = None
@@ -88,6 +90,7 @@ class Bot(object):
                     self.logger.info("Disconnecting from destination pipeline")
 
                 self.logger.info("Bot is shutting down")
+		self.killbot()
                 break
 
     
