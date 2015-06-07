@@ -25,7 +25,7 @@ class Bot(object):
 
     def __init__(self, bot_id):
         self.parameters = Parameters()
-        
+
         self.current_message = None
         self.last_message = None
         self.message_counter = 0
@@ -35,7 +35,7 @@ class Bot(object):
         self.bot_id = bot_id
 
         self.load_system_configuration()
-        
+
         self.logger = utils.log(
                                 self.parameters.logging_path,
                                 self.bot_id,
@@ -50,15 +50,13 @@ class Bot(object):
 
         self.init()
 
-
     def init(self):
         pass
-
 
     def start(self):
         self.source_pipeline = None
         self.destination_pipeline = None
- 
+
         starting = True
         error_on_pipeline = True
         error_on_message = False
@@ -78,7 +76,7 @@ class Bot(object):
 
                 if error_on_pipeline:
                     self.logger.info("Loading source pipeline")
-                    
+
                     self.source_pipeline = PipelineFactory.create(self.parameters)
                     self.logger.info("Loading source queue")
                     self.source_pipeline.set_queues(self.source_queues, "source")
@@ -135,7 +133,7 @@ class Bot(object):
                     # when bot acknowledge the message, dont need to wait again
                     error_on_message = True
 
-                else: # error_procedure == "pass"
+                else:  # error_procedure == "pass"
                     if self.parameters.error_dump_message:
                         self.dump_message(ex)
                     self.acknowledge_message()
@@ -144,8 +142,8 @@ class Bot(object):
                     self.logger.exception("Check the following exception: \n%s" % ex)
 
                 if self.parameters.error_log_message:
-                    self.logger.info("Last Correct Message(event): %r" % self.last_message) # FIXME: evaluate if its ok
-                    self.logger.info("Current Message(event): %r" % self.current_message)   # FIXME: evaluate if its ok
+                    self.logger.info("Last Correct Message(event): %r" % self.last_message)  # FIXME: evaluate if its ok
+                    self.logger.info("Current Message(event): %r" % self.current_message)    # FIXME: evaluate if its ok
 
             except KeyboardInterrupt as e:
                 if self.source_pipeline:
@@ -158,7 +156,6 @@ class Bot(object):
                 self.logger.info("Bot is shutting down")
                 break
 
-
     def stop(self):
         try:
             self.logger.error("Bot found an error. Exiting")
@@ -168,19 +165,17 @@ class Bot(object):
             print "Bot found an error. Exiting"
         exit(-1)
 
-
     def check_bot_id(self, str):
         res = re.search('[^0-9a-zA-Z\-]+', str)
         if res:
             print "Invalid bot id."
             self.stop()
-        
 
     def send_message(self, message):
         if not message:
             self.logger.warning("Empty message found.")
             return False
-            
+
         self.message_counter += 1
         if self.message_counter % 500 == 0:
             self.logger.info("Processed %s messages" % self.message_counter)
@@ -188,21 +183,18 @@ class Bot(object):
         raw_message = MessageFactory.serialize(message)
         self.destination_pipeline.send(raw_message)
 
-
     def receive_message(self):
         message = self.source_pipeline.receive()
-            
+
         if not message:
             return None
-        
+
         self.current_message = MessageFactory.unserialize(message)
         return self.current_message
-
 
     def acknowledge_message(self):
         self.last_message = self.current_message
         self.source_pipeline.acknowledge()
-
 
     # FIXME: create load_message to re-insert events into pipeline
     def dump_message(self, ex):
@@ -228,19 +220,17 @@ class Bot(object):
         with open(dump_file, 'w') as fp:
             json.dump(dump_data, fp, indent=4, sort_keys=True)
 
-
     '''
         Load Configurations
     '''
 
     def load_system_configuration(self):
-        setattr(self.parameters, 'logging_path' , DEFAULT_LOGGING_PATH)
-        setattr(self.parameters, 'logging_level' , DEFAULT_LOGGING_LEVEL)
+        setattr(self.parameters, 'logging_path', DEFAULT_LOGGING_PATH)
+        setattr(self.parameters, 'logging_level', DEFAULT_LOGGING_LEVEL)
 
-        config = utils.load_configuration(SYSTEM_CONF_FILE) 
+        config = utils.load_configuration(SYSTEM_CONF_FILE)
         for option, value in config.iteritems():
             setattr(self.parameters, option, value)
-
 
     def load_defaults_configuration(self):
 
@@ -248,64 +238,61 @@ class Bot(object):
 
         config = utils.load_configuration(DEFAULTS_CONF_FILE)
 
-        self.logger.debug("Defaults configuration" \
+        self.logger.debug("Defaults configuration"
                           " from '%s' file" % DEFAULTS_CONF_FILE)
 
         for option, value in config.iteritems():
             setattr(self.parameters, option, value)
-            self.logger.debug("Defaults configuration: parameter '%s' " \
+            self.logger.debug("Defaults configuration: parameter '%s' "
                               "loaded with value '%s'" % (option, value))
-
 
     def load_runtime_configuration(self):
 
         # Load bot runtime configuration section
 
         config = utils.load_configuration(RUNTIME_CONF_FILE)
-        
-        self.logger.debug("Runtime configuration: loading '%s' section from" \
+
+        self.logger.debug("Runtime configuration: loading '%s' section from"
                           " '%s' file" % (self.bot_id, RUNTIME_CONF_FILE))
 
         if self.bot_id in config.keys():
             for option, value in config[self.bot_id].iteritems():
                 setattr(self.parameters, option, value)
-                self.logger.debug("Runtime configuration: parameter '%s' " \
-                                  "loaded with value '%s'" % (option, value)) 
-
+                self.logger.debug("Runtime configuration: parameter '%s' "
+                                  "loaded with value '%s'" % (option, value))
 
     def load_pipeline_configuration(self):
         config = utils.load_configuration(PIPELINE_CONF_FILE)
-            
 
-        self.logger.debug("Pipeline configuration: loading '%s' section" \
+        self.logger.debug("Pipeline configuration: loading '%s' section"
                           " from '%s' file" % (self.bot_id, PIPELINE_CONF_FILE))
 
         self.source_queues = None
         self.destination_queues = None
-        
+
         if self.bot_id in config.keys():
-        
+
             if 'source-queue' in config[self.bot_id].keys():
                 self.source_queues = config[self.bot_id]['source-queue']
-                self.logger.debug("Pipeline configuration: parameter " \
-                      "'source-queue' loaded with the value '%s'" % self.source_queues)
-            
+                self.logger.debug("Pipeline configuration: parameter "
+                                  "'source-queue' loaded with the value '%s'"
+                                  % self.source_queues)
+
             if 'destination-queues' in config[self.bot_id].keys():
 
                 self.destination_queues = config[self.bot_id]['destination-queues']
-                self.logger.debug("Pipeline configuration: parameter" \
-                                  "'destination-queues' loaded with the value" \
-                                  " '%s'" % ", ".join(self.destination_queues)) 
+                self.logger.debug("Pipeline configuration: parameter"
+                                  "'destination-queues' loaded with the value"
+                                  " '%s'" % ", ".join(self.destination_queues))
 
         else:
             self.logger.error("Pipeline configuration: failed to load configuration")
             self.stop()
 
-
     def load_harmonization_configuration(self):
         harmonization_config = utils.load_configuration(HARMONIZATION_CONF_FILE)
         self.logger.debug("Harmonization configuration: loading all '%s' file" %
-                          HARMONIZATION_CONF_FILE )
+                          HARMONIZATION_CONF_FILE)
 
         for message_types in harmonization_config.keys():
             for key in harmonization_config[message_types].keys():
@@ -317,4 +304,3 @@ class Bot(object):
 
 class Parameters(object):
     pass
-
