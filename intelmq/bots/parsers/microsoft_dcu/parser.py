@@ -2,8 +2,6 @@ from intelmq.lib.bot import Bot, sys
 from intelmq.lib.message import Event
 from intelmq.bots import utils
 
-import csv
-import StringIO
 import lib
 
 
@@ -15,19 +13,26 @@ class DCUParserBot(Bot):
 
         if report:
             report = report.strip()
-            buffered = StringIO.StringIO(report)
-            rows = csv.DictReader(buffered,
-                                  delimiter="\t",
-                                  fieldnames=lib.dcu_headers())
+            headers = lib.dcu_headers()    
+       
+            rows = report.split("\n")
 
             for row in rows:
-                event = Event(lib.convert_dcu_fields(row))
-                event.add("feed", "microsoft-dcu")
+                try: 
+                    columns = row.strip().split("\t")
+                    fields = dict(zip(headers, columns))
 
-                event = utils.generate_observation_time(event, "observation_time")
-                event = utils.generate_reported_fields(event)
+                    event = Event(lib.convert_dcu_fields(fields))
+                    event.add("feed", "microsoft-dcu")
 
-                self.send_message(event)
+                    event = utils.generate_observation_time(event, "observation_time")
+                    event = utils.generate_reported_fields(event)
+
+                    self.send_message(event)
+                except lib.ParsingError as exc:
+                    msg = "Got a parsing problem: %s affected row '%s' IGNORING AND CONTINUING" % (exc.message, row.strip())
+                    self.logger.warning(msg, exc_info=True)
+                    continue
         self.acknowledge_message()
 
 
