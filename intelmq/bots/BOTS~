@@ -334,7 +334,7 @@
             "parameters": {
             }
         },
-        "Country Code Filter": {
+        "CountryCodeFilter": {
             "module": "intelmq.bots.experts.country_code_filter.expert",
             "description": "Filters out events which do not match a specific country code. Needs: the cymru expert.",
             "parameters": {
