@@ -2,16 +2,23 @@ from intelmq.lib.bot import Bot, sys
 from intelmq.bots.collectors.url.lib import fetch_url
 from intelmq.lib.message import Report
 
+
 class URLCollectorBot(Bot):
 
     def process(self):
         self.logger.info("Downloading report from %s" % self.parameters.url)
+        try:
+            lheader = self.parameters.header
+        except:
+            lheader = None
+
         raw_report = fetch_url(
                                 self.parameters.url,
-                                timeout = 60.0,
-                                chunk_size = 16384,
+                                timeout=60.0,
+                                chunk_size=16384,
                                 http_proxy=self.parameters.http_proxy,
-                                https_proxy=self.parameters.https_proxy
+                                https_proxy=self.parameters.https_proxy,
+                                header=lheader
                             )
         self.logger.info("Report downloaded.")
 
