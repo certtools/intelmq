@@ -11,7 +11,7 @@ import urlparse
 import binascii
 import datetime
 import dateutil.parser
-
+import socket
 
 class GenericType():
 
@@ -151,10 +151,10 @@ class IPAddress(GenericType):
     @staticmethod
     def to_int(value):
         try:
-            ip_integer = socket.inet_pton(socket.AF_INET, ip)
+            ip_integer = socket.inet_pton(socket.AF_INET, value)
         except socket.error:
             try:
-                ip_integer = socket.inet_pton(socket.AF_INET6, ip)
+                ip_integer = socket.inet_pton(socket.AF_INET6, value)
             except socket.error:
                 return None
             

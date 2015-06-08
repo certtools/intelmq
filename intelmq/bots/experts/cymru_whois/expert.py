@@ -32,7 +32,7 @@ class CymruExpertBot(Bot):
                 continue
 
             ip = event.value(ip_key)
-            ip_version = IPAddress.version(ip)
+            ip_version = int(IPAddress.version(ip))
             ip_integer = IPAddress.to_int(ip)
 
             if ip_version == 4:
