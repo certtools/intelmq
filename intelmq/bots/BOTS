@@ -48,7 +48,8 @@
             "description": "Microsoft DCU collector fetches report from an azure account",
             "parameters": {
                 "azure_account_name": "<account_name>",
-                "azure_account_key": "<account_key>"
+                "azure_account_key": "<account_key>",
+                "date": "yesterday or YYYY-MM-DD date or empty",
             }
         },
         "VXVault": {
