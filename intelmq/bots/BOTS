@@ -50,6 +50,7 @@
                 "azure_account_name": "<account_name>",
                 "azure_account_key": "<account_key>",
                 "date": "yesterday or YYYY-MM-DD date or empty",
+                "rate_limit": "86400"
             }
         },
         "VXVault": {
