@@ -6,6 +6,8 @@ from azure.storage import BlobService
 
 import gzip
 import StringIO
+import datetime
+
 from urlparse import urlparse
 
 
@@ -22,10 +24,23 @@ class DCUCollectorBot(Bot):
 
         blob_service = BlobService(account_name, account_key, protocol="https")
         proxy_setting = self.parameters.https_proxy or ""
+        date_setting = self.parameters.date or ""
+        date = None
+    
+        if date_setting:
+            if date_setting != "yesterday":
+                date = datetime.datetime.strptime(date_setting, "%Y-%m-%d").date()  # for debbuging (probably)
+            elif date_setting == "yesterday":
+                date = datetime.date.today() - datetime.timedelta(days=1)  # for normal usage
+
         proxy_url = "https://" + proxy_setting if proxy_setting.find("https://") == -1 else proxy_setting
-        
         proxy_options = urlparse(proxy_url)
 
+        if date:
+            self.logger.info("Fetching for date: %s (%s)" %  (date, date_setting))
+        else:
+            self.logger.info("No 'date' was specified, fetching ALL")
+        
         if proxy_options.hostname:
             self.logger.info("Using https proxy(host=%s, port=%s)" % (proxy_options.hostname, proxy_options.port))
             blob_service.set_proxy(host=proxy_options.hostname, port=proxy_options.port)
@@ -38,6 +53,10 @@ class DCUCollectorBot(Bot):
         for container in blob_service.list_containers():
             container_name = container.name
             if container_name == "heartbeat":
+                continue
+
+            if date and (not container_name == "processed-" + str(date)):
+                self.logger.info("IGNORING container '%s' didn't match date selection" % container_name)
                 continue
 
             for blob in blob_service.list_blobs(container_name):
