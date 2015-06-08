@@ -67,6 +67,7 @@ class Bot(object):
                     self.logger.info("Connected to destination pipeline")
 
                 self.process()
+                self.logger.info("Bot stops processing. Sleeps for 'rate_limit' = %ds" % self.parameters.rate_limit)
                 self.source_pipeline.sleep(self.parameters.rate_limit)
                 
             except Exception, ex:
