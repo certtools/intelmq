@@ -12,12 +12,18 @@ class URLCollectorBot(Bot):
 
     def process(self):
         self.logger.info("Downloading report from %s" % self.parameters.url)
+        try:
+            http_header = self.parameters.header
+        except:
+            http_header = None
+
         raw_report = fetch_url(self.parameters.url,
                                timeout=60.0,
                                chunk_size=16384,
                                http_proxy=self.parameters.http_proxy,
                                https_proxy=self.parameters.https_proxy,
                                user_agent=self.parameters.http_user_agent,
+                               header=http_header,
                                )
         self.logger.info("Report downloaded.")
 
