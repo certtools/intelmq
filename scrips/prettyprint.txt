@@ -1,0 +1,1 @@
+sh scrips/prettyprint.txt /opt/intelmq/var/lib/bots/file-output/events.txt

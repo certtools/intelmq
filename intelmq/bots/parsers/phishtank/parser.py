@@ -46,7 +46,7 @@ class PhishTankParserBot(Bot):
             event.add('feed.name', u'phishtank')
             event.add('feed.url', u'http://data.phishtank.com/data/< API KEY >/online-valid.csv')
             event.add('classification.type', u'phishing')
-            event.add("raw", row, sanitize=True)
+            event.add("raw", ",".join(row), sanitize=True)
             
             self.send_message(event)            
         self.acknowledge_message()
