@@ -48,7 +48,7 @@ class DshieldParserBot(Bot):
             event.add('time.observation', time_observation, sanitize=True)
             event.add("time.source", timestamp, sanitize=True)
             event.add('feed.name', u'dshield')
-            event.add('feed.url', u'http://dshield.org/asdetailsascii.html')
+            event.add('feed.url', report.value("feed.url"))
             event.add('classification.type', u'brute-force')
             event.add("source.ip", ip, sanitize=True)
             event.add("raw", row, sanitize=True)

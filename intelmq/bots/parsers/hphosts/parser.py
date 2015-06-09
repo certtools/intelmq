@@ -40,7 +40,7 @@ class HpHostsParser(Bot):
             event.add('classification.type', u'blacklist')
             event.add('time.observation', time_observation, sanitize=True)
             event.add('feed.name', u'hphosts')
-            event.add('feed.url', u'http://hosts-file.net/download/hosts.txt')
+            event.add('feed.url', report.value("feed.url"))
             event.add("raw", row, sanitize=True)
     
             event.add('source.fqdn', values[1], sanitize=True)

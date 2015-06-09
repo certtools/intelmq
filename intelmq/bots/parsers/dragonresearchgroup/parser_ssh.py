@@ -37,7 +37,7 @@ class DragonResearchGroupSSHParserBot(Bot):
             time_observation = DateTime().generate_datetime_now()
             event.add('time.observation', time_observation, sanitize=True)
             event.add('feed.name', u'dragonresearchgroup')
-            event.add('feed.url', u'http://dragonresearchgroup.org/insight/sshpwauth.txt')
+            event.add('feed.url', report.value("feed.url"))
             event.add('classification.type', u'brute-force')
             event.add('protocol.application', u'ssh')
             event.add("raw", row, sanitize=True)

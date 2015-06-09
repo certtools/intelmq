@@ -57,9 +57,9 @@ class TaichungCityNetflowParserBot(Bot):
             event.add('time.observation', time_observation, sanitize=True)
             event.add("source.ip", info1.group(1), sanitize=True)
             event.add('classification.type', event_type, sanitize=True)
-            event.add('description', description, sanitize=True)
+            event.add('description.text', description, sanitize=True)
             event.add('feed.name', u'taichungcitynetflow')
-            event.add('feed.url', u'https://tc.edu.tw/net/netflow/lkout/recent/30')
+            event.add('feed.url', report.value("feed.url"))
             event.add("raw", row, sanitize=True)
         
             self.send_message(event)

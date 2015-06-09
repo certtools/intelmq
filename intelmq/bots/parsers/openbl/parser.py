@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot, sys
 from intelmq.lib.message import Event
@@ -35,7 +35,7 @@ class OpenBLParserBot(Bot):
             time_observation = DateTime().generate_datetime_now()
             event.add('time.observation', time_observation, sanitize=True)
             event.add('feed.name', u'openbl')
-            event.add('feed.url', u'http://www.openbl.org/lists/date_all.txt')
+            event.add('feed.url', report.value("feed.url"))
             event.add('classification.type', u'blacklist')
             event.add("raw", row, sanitize=True)
 

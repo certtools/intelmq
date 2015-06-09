@@ -67,8 +67,9 @@ class AlienVaultParserBot(Bot):
                 time_observation = DateTime().generate_datetime_now()
                 event.add('time.observation', time_observation, sanitize=True)
                 event.add('feed.name', u'alienvault')
-                event.add('feed.url', u'https://reputation.alienvault.com/reputation.data')
+                event.add('feed.url', report.value("feed.url"))
                 event.add("raw", row, sanitize=True)
+                
 
                 self.send_message(event)
         self.acknowledge_message()

@@ -44,7 +44,7 @@ class PhishTankParserBot(Bot):
             time_observation = DateTime().generate_datetime_now()
             event.add('time.observation', time_observation, sanitize=True)
             event.add('feed.name', u'phishtank')
-            event.add('feed.url', u'http://data.phishtank.com/data/< API KEY >/online-valid.csv')
+            event.add('feed.url', report.value("feed.url"))
             event.add('classification.type', u'phishing')
             event.add("raw", ",".join(row), sanitize=True)
             

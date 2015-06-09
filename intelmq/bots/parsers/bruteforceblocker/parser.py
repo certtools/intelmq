@@ -37,7 +37,7 @@ class BruteForceBlockerParserBot(Bot):
             event.add('time.source', timestamp, sanitize=True)
             event.add('source.ip', ip, sanitize=True)
             event.add('feed.name', u'bruteforceblocker')
-            event.add('feed.url', u'http://danger.rulez.sk/projects/bruteforceblocker/blist.php')
+            event.add('feed.url', report.value("feed.url"))
             event.add('classification.type', u'brute-force')
             
             self.send_message(event)
