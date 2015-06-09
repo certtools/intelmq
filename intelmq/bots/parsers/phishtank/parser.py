@@ -15,7 +15,7 @@ class PhishTankParserBot(Bot):
 
         raw_report = utils.base64_decode(report.value("raw"))
 
-        columns = ["__IGNORE__", "source.url", "description.url", "source.time", "__IGNORE__", "__IGNORE__", "__IGNORE__", "target"]
+        columns = ["__IGNORE__", "source.url", "description.url", "source.time", "__IGNORE__", "__IGNORE__", "__IGNORE__", "description.target"]
         
         for row in unicodecsv.reader(StringIO(raw_report), encoding='utf-8'):
 
