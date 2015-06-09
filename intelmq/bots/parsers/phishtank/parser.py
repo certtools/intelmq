@@ -19,7 +19,7 @@ class PhishTankParserBot(Bot):
                    "__IGNORE__",
                    "source.url",
                    "description.url",
-                   "source.time",
+                   "time.source",
                    "__IGNORE__",
                    "__IGNORE__",
                    "__IGNORE__",
