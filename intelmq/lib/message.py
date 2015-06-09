@@ -38,8 +38,8 @@ class Message(dict):
     def __setitem__(self, key, value):
         self.add(key, value)
 
-    def add(self, key, value, sanitize=False, ignore=[]):
-        if key in self:
+    def add(self, key, value, sanitize=False, force=False, ignore=[]):
+        if not force and key in self:
             raise exceptions.KeyExists(key)
 
         if value == None or value == "":
