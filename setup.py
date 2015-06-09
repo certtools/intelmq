@@ -59,9 +59,9 @@ setup(
                                   ]
                 ),
                 ('/opt/intelmq/docs/', [
-                                   'docs/UserGuide.md',
-                                   'docs/DevGuide.md',
-                                   'docs/DataHarmonization.md'
+                                   'docs/User-Guide.md',
+                                   'docs/Developers-Guide.md',
+                                   'docs/Data-Harmonization.md'
                                   ]
                 )
     ],
@@ -75,7 +75,7 @@ setup(
         "imbox==0.5.5",
         "unicodecsv==0.9.4",
         "pytz==2012d",
-        "psutil==2.1.1"
+        "psutil==2.1.1",
+	"azure==0.11.0"
     ],
 )
-
