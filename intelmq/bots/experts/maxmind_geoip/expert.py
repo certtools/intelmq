@@ -18,29 +18,25 @@ class GeoIPExpertBot(Bot):
         for key in ["source.%s", "destination.%s"]:
             geo_key = key % "geolocation.%s"
 
-            ip = event.value(key % "ip")
-            
-            if not ip:
+            if not event.contains(key % "ip"):
                 continue
+                
+            ip = event.value(key % "ip")
                 
             try:
                 info = self.database.city(ip)
             
                 if info.country.iso_code:
-                    event.clear(geo_key % "cc")
-                    event.add(geo_key % "cc", unicode(info.country.iso_code))
+                    event.add(geo_key % "cc", info.country.iso_code, sanitize=True, force=True)
                     
                 if info.location.latitude:
-                    event.clear(geo_key % "latitude")
-                    event.add(geo_key % "latitude",  unicode(info.location.latitude))
+                    event.add(geo_key % "latitude", unicode(info.location.latitude), sanitize=True, force=True)
                     
                 if info.location.longitude:
-                    event.clear(geo_key % "longitude")
-                    event.add(geo_key % "longitude", unicode(info.location.longitude))
+                    event.add(geo_key % "longitude", unicode(info.location.longitude), sanitize=True, force=True)
                     
                 if info.city.name:
-                    event.clear(geo_key % "city")
-                    event.add(geo_key % "city", unicode(info.city.name))
+                    event.add(geo_key % "city", info.city.name, sanitize=True, force=True)
 
             except geoip2.errors.AddressNotFoundError:
                 pass

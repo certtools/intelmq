@@ -1,4 +1,5 @@
 from intelmq.lib.bot import Bot, sys
+from intelmq.lib import utils
 
 class FileBot(Bot):
 

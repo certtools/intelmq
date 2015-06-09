@@ -21,18 +21,18 @@ class ASNLookupExpertBot(Bot):
             asn_key = key + "asn"
             bgp_key = key + "bgp_prefix"
 
-            ip = event.value(ip_key)
-
-            if not ip:
+            if not event.contains(ip_key):
                 continue
+
+            ip = event.value(ip_key)
 
             info = self.database.lookup(ip)
 
             if info:
                 if info[0]:
-                    event.update(asn_key, unicode(info[0]))
+                    event.add(asn_key, unicode(info[0]), sanitize=True, force=True)
                 if info[1]:
-                    event.update(bgp_key, unicode(info[1]))
+                    event.add(bgp_key, unicode(info[1]), sanitize=True, force=True)
 
             self.send_message(event)
         self.acknowledge_message()

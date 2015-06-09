@@ -309,7 +309,7 @@
             "module": "intelmq.bots.experts.asn_lookup.expert",
             "description": "ASN Lookup is the bot responsible to add ASN and BGP information from Route Views Project to the events.",
             "parameters": {
-                "database": "/opt/intelmq/var/lib/bots/asnlookup/ipasn.dat"
+                "database": "/opt/intelmq/var/lib/bots/asn_lookup/ipasn.dat"
              }
         },
         "Deduplicator": {
