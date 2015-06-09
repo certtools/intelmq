@@ -32,13 +32,19 @@ class CymruExpertBot(Bot):
                 continue
 
             ip = event.value(ip_key)
-            ip_version = int(IPAddress.version(ip))
+            ip_version = IPAddress.version(ip)
             ip_integer = IPAddress.to_int(ip)
 
             if ip_version == 4:
                 minimum = MINIMUM_BGP_PREFIX_IPV4
+                
             elif ip_version == 6:
                 minimum = MINIMUM_BGP_PREFIX_IPV6
+                
+            else:
+                self.logger.error("Invalid IP version")
+                self.send_message(event)
+                self.acknowledge_message()
 
             cache_key = bin(ip_integer)[2 : minimum + 2]
             result_json = self.cache.get(cache_key)

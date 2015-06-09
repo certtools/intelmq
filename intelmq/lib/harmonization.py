@@ -163,7 +163,7 @@ class IPAddress(GenericType):
 
     @staticmethod
     def version(value):
-        return unicode(ipaddr.IPAddress(value).version)
+        return int(ipaddr.IPAddress(value).version)
 
     @staticmethod
     def to_reverse(ip):

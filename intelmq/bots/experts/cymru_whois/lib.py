@@ -46,11 +46,14 @@ class Cymru():
         ip_version = IPAddress.version(ip)
         reverse_ip = IPAddress.to_reverse(ip)
 
-        reverse = reverse_ip.split('.in-addr.arpa.')
-        if not reverse:
-            reverse = reverse_ip.split('.ip6.arpa.')
+        if ip_version == 4:
+            reverse = reverse_ip.split('.in-addr.arpa.')[0]
+            version = ""
+        else:
+            reverse = reverse_ip.split('.ip6.arpa.')[0]
+            version = "6"
             
-        query = IP_QUERY % (reverse_ip, ip_version)
+        query = IP_QUERY % (reverse, version)
         return Cymru.__query(query)
 
         
