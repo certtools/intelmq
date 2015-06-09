@@ -57,22 +57,22 @@ class CymruExpertBot(Bot):
                 self.cache.set(cache_key, result_json)
 
             if "asn" in result:
-                event.add(key % 'asn', result['asn'], sanitize=True)
+                event.add(key % 'asn', result['asn'], sanitize=True, force=True)
 
             if "bgp_prefix" in result:
-                event.add(key % 'bgp_prefix', result['bgp_prefix'], sanitize=True)
+                event.add(key % 'bgp_prefix', result['bgp_prefix'], sanitize=True, force=True)
                 
             if "registry" in result:
-                event.add(key % 'registry', result['registry'], sanitize=True)
+                event.add(key % 'registry', result['registry'], sanitize=True, force=True)
                 
             if "allocated" in result:
-                event.add(key % 'allocated', result['allocated'], sanitize=True)
+                event.add(key % 'allocated', result['allocated'], sanitize=True, force=True)
                 
             if "as_name" in result:
-                event.add(key % 'as_name', result['as_name'], sanitize=True)
+                event.add(key % 'as_name', result['as_name'], sanitize=True, force=True)
                 
             if "cc" in result:
-                event.add(key % 'geolocation.cc', result['cc'], sanitize=True)
+                event.add(key % 'geolocation.cc', result['cc'], sanitize=True, force=True)
 
         self.send_message(event)
         self.acknowledge_message()
