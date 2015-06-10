@@ -111,34 +111,32 @@ class Bot(object):
             print "Invalid bot id."
             self.stop()
 
+    def load_config_file(self, path):
+        """Loads the given json config file and returns it parsed"""
+        with open(path, 'r') as fpconfig:
+            config = json.loads(fpconfig.read())
+        
+        return config
+
     def load_system_configurations(self, path=SYSTEM_CONF_FILE):
         """Instructs a bot to load the system configuration (json)"""
 
-        with open(path, 'r') as fpconfig:
-            config = json.loads(fpconfig.read())
-
-        self.process_system_configuration(config)
+        self.process_system_configuration(self.load_config_file(path))
 
     def load_runtime_configurations(self, path=RUNTIME_CONF_FILE):
         """Load runtime json configuration for a bot from given path or from default location if empty"""
 
-        with open(path, 'r') as fpconfig:
-            config = json.loads(fpconfig.read())
-
-        self.process_runtime_configuration(config, path)
+        self.process_runtime_configuration(self.load_config_file(path), path)
 
     def load_pipeline_configurations(self, path=PIPELINE_CONF_FILE):
         """Load pipeline json configuration file"""
-
-        with open(path, 'r') as fpconfig:
-            config = json.loads(fpconfig.read())
 
         self.logger.debug("Pipeline configuration: loading '%s' section from '%s' file" % (self.bot_id, path))
 
         self.source_queues = None
         self.destination_queues = None
 
-        self.process_pipeline_configuration(config)
+        self.process_pipeline_configuration(self.load_config_file(path))
 
     def process_system_configuration(self, config):
         """Processes the loaded system configuration in config 
