@@ -317,6 +317,13 @@
                 "database": "/opt/intelmq/var/lib/bots/asnlookup/ipasn.dat"
              }
         },
+        "Filter":{
+            "module": "intelmq.bots.experts.filter.filter",
+            "description": "Filter is the bot responsible for filtering out the events. E.g. recipient does not wish to receive info about spam but he still wants to be notified about malware threats...)",
+            "parameters": {
+                "rate_limit": "0",
+            }
+        },
         "Deduplicator": {
             "module": "intelmq.bots.experts.deduplicator.deduplicator",
             "description": "Deduplicator is the bot responsible to detect and remove deduplicated events.",
