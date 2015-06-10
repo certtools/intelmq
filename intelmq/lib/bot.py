@@ -17,8 +17,8 @@ DEFAULT_LOGGING_LEVEL = "INFO"
 
 class Bot(object):
 
-    def __init__(self, bot_id):
-        self.parameters = Parameters()
+    def __init__(self, bot_id, parameters=None):
+        self.parameters = parameters or Parameters()
 
         self.current_message = None
         self.last_message = None
@@ -70,7 +70,7 @@ class Bot(object):
                 self.logger.info("Bot stops processing. Sleeps for 'rate_limit' = %ds" % self.parameters.rate_limit)
                 self.source_pipeline.sleep(self.parameters.rate_limit)
 
-            except Exception, ex:
+            except Exception as ex:
                 local_retry_delay = self.parameters.retry_delay
                 self.logger.info("Last Correct Message(event): %r" % self.last_message)
                 self.logger.info("Current Message(event): %r" % self.current_message)
