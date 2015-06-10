@@ -19,7 +19,7 @@ class Bot(object):
 
     def __init__(self, bot_id):
         self.parameters = Parameters()
-        
+
         self.current_message = None
         self.last_message = None
         self.message_counter = 0
@@ -28,7 +28,7 @@ class Bot(object):
         self.bot_id = bot_id
 
         self.load_system_configurations()
-        
+
         self.logger = log(self.parameters.logging_path, self.bot_id, self.parameters.logging_level)
         self.logger.info('Bot is starting')
 
@@ -37,17 +37,17 @@ class Bot(object):
 
         self.init()
 
-
     def init(self):
+        """Initializes a bot"""
         pass
 
-
     def start(self):
+        """Starts a bot"""
         self.source_pipeline = None
         self.destination_pipeline = None
         local_retry_delay = 0
         self.parameters.retry_delay = 30 # Temporary fix. Need to add to BOTS conf
- 
+
         self.logger.info('Bot start processing')
 
         while True:
@@ -69,7 +69,7 @@ class Bot(object):
                 self.process()
                 self.logger.info("Bot stops processing. Sleeps for 'rate_limit' = %ds" % self.parameters.rate_limit)
                 self.source_pipeline.sleep(self.parameters.rate_limit)
-                
+
             except Exception, ex:
                 local_retry_delay = self.parameters.retry_delay
                 self.logger.info("Last Correct Message(event): %r" % self.last_message)
@@ -79,7 +79,7 @@ class Bot(object):
                 self.logger.info('Pipeline will reconnect in %s seconds' % local_retry_delay)
                 self.source_pipeline = None
                 self.destination_pipeline = None
-                
+
             except KeyboardInterrupt as e:
                 if self.source_pipeline:
                     self.source_pipeline.disconnect()
@@ -91,8 +91,8 @@ class Bot(object):
                 self.logger.info("Bot is shutting down")
                 break
 
-    
     def stop(self):
+        """Stops a bot"""
         try:
             self.logger.error("Bot found an error. Exiting")
         except:
@@ -101,27 +101,27 @@ class Bot(object):
             print "Bot found an error. Exiting"
         exit(-1)
 
-
     def check_bot_id(self, str):
+        """Returns True if the given str is a valid bot id"""
         res = re.search('[^0-9a-zA-Z\-]+', str)
         if res:
             print "Invalid bot id."
             self.stop()
 
-
     def load_system_configurations(self):
-        
+        """Instructs a bot to load the system configuration (json)"""
+
         with open(SYSTEM_CONF_FILE, 'r') as fpconfig:
             config = json.loads(fpconfig.read())
- 
-        setattr(self.parameters, 'logging_path' , DEFAULT_LOGGING_PATH)
-        setattr(self.parameters, 'logging_level' , DEFAULT_LOGGING_LEVEL)
- 
+
+        setattr(self.parameters, 'logging_path', DEFAULT_LOGGING_PATH)
+        setattr(self.parameters, 'logging_level', DEFAULT_LOGGING_LEVEL)
+
         for option, value in config.iteritems():
             setattr(self.parameters, option, value)
 
-
     def load_runtime_configurations(self):
+        """Load runtime json configuration for a bot"""
 
         with open(RUNTIME_CONF_FILE, 'r') as fpconfig:
             config = json.loads(fpconfig.read())
@@ -132,71 +132,73 @@ class Bot(object):
         if "__default__" in config.keys():
             for option, value in config["__default__"].iteritems():
                 setattr(self.parameters, option, value)
-                self.logger.debug("Runtime configuration: parameter '%s' loaded with the value '%s'" % (option, value)) 
-        
+                self.logger.debug("Runtime configuration: parameter '%s' loaded with the value '%s'" % (option, value))
+
         # Load bot runtime configuration section
-        
+
         self.logger.debug("Runtime configuration: loading '%s' section from '%s' file" % (self.bot_id, RUNTIME_CONF_FILE))
         if self.bot_id in config.keys():
             for option, value in config[self.bot_id].iteritems():
                 setattr(self.parameters, option, value)
-                self.logger.debug("Runtime configuration: parameter '%s' loaded with the value '%s'" % (option, value)) 
-
+                self.logger.debug("Runtime configuration: parameter '%s' loaded with the value '%s'" % (option, value))
 
     def load_pipeline_configurations(self):
+        """Load pipeline json configuration file"""
+
         with open(PIPELINE_CONF_FILE, 'r') as fpconfig:
             config = json.loads(fpconfig.read())
-            
+
         self.logger.debug("Pipeline configuration: loading '%s' section from '%s' file" % (self.bot_id, PIPELINE_CONF_FILE))
 
         self.source_queues = None
         self.destination_queues = None
-        
+
         if self.bot_id in config.keys():
-        
+
             if 'source-queue' in config[self.bot_id].keys():
                 self.source_queues = config[self.bot_id]['source-queue']
-                self.logger.debug("Pipeline configuration: parameter 'source-queue' loaded with the value '%s'" % self.source_queues) 
-            
+                self.logger.debug("Pipeline configuration: parameter 'source-queue' loaded with the value '%s'" % self.source_queues)
+
             if 'destination-queues' in config[self.bot_id].keys():
                 self.destination_queues = config[self.bot_id]['destination-queues']
-                self.logger.debug("Pipeline configuration: parameter 'destination-queues' loaded with the value '%s'" % ", ".join(self.destination_queues)) 
+                self.logger.debug("Pipeline configuration: parameter 'destination-queues' loaded with the value '%s'" % ", ".join(self.destination_queues))
 
         else:
             self.logger.error("Pipeline configuration: failed to load configuration")
             self.stop()
-        
 
     def send_message(self, message):
+        """Sends a given message with configured destination pipeline"""
+
         if not message:
             self.logger.warning("Empty message found.")
             return False
-        
+
         if isinstance(message, Event):
-            message = unicode(message) # convert Event Object to string (UTF-8)
-            
+            message = unicode(message)  # convert Event Object to string (UTF-8)
+
         self.message_counter += 1
         if self.message_counter % 500 == 0:
             self.logger.info("Processed %s messages" % self.message_counter)
-            
+
         self.destination_pipeline.send(message)
 
-
     def receive_message(self):
+        """Receive a message from the configured source queue"""
         self.current_message = self.source_pipeline.receive()
-        
+
         if not self.current_message:
             return None
-        
+
         message = self.current_message.decode('utf-8')
-        
-        try:    # Event Object
+
+        try:     # Event Object
             return Event.from_unicode(message)
-        except: # Report Object
+        except:  # Report Object
             return message
 
-
     def acknowledge_message(self):
+        """Acknowledge a message and remove it from the queue system permanently"""
         self.last_message = self.current_message
         self.source_pipeline.acknowledge()
 
