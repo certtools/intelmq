@@ -29,7 +29,10 @@ class Bot(object):
 
         self.load_system_configurations()
 
-        self.logger = log(self.parameters.logging_path, self.bot_id, self.parameters.logging_level)
+        self.logger = log(self.parameters.logging_path,
+                          self.bot_id,
+                          self.parameters.logging_level)
+
         self.logger.info('Bot is starting')
 
         self.load_runtime_configurations()
