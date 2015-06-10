@@ -114,17 +114,42 @@ class Bot(object):
         with open(path, 'r') as fpconfig:
             config = json.loads(fpconfig.read())
 
-        setattr(self.parameters, 'logging_path', DEFAULT_LOGGING_PATH)
-        setattr(self.parameters, 'logging_level', DEFAULT_LOGGING_LEVEL)
-
-        for option, value in config.iteritems():
-            setattr(self.parameters, option, value)
+        self.process_system_configuration(config)
 
     def load_runtime_configurations(self, path=RUNTIME_CONF_FILE):
         """Load runtime json configuration for a bot from given path or from default location if empty"""
 
         with open(path, 'r') as fpconfig:
             config = json.loads(fpconfig.read())
+
+        self.process_runtime_configuration(config, path)
+
+    def load_pipeline_configurations(self, path=PIPELINE_CONF_FILE):
+        """Load pipeline json configuration file"""
+
+        with open(path, 'r') as fpconfig:
+            config = json.loads(fpconfig.read())
+
+        self.logger.debug("Pipeline configuration: loading '%s' section from '%s' file" % (self.bot_id, path))
+
+        self.source_queues = None
+        self.destination_queues = None
+
+        self.process_pipeline_configuration(config)
+
+    def process_system_configuration(self, config):
+        """Processes the loaded system configuration in config 
+           and sets bot attributes accordingly"""
+
+        setattr(self.parameters, 'logging_path', DEFAULT_LOGGING_PATH)
+        setattr(self.parameters, 'logging_level', DEFAULT_LOGGING_LEVEL)
+
+        for option, value in config.iteritems():
+            setattr(self.parameters, option, value)
+
+    def process_runtime_configuration(self, config, path):
+        """Processes the loaded configuration keys in config and 
+            sets bot attributes accordingly"""
 
         # Load __default__ runtime configuration section
 
@@ -142,16 +167,9 @@ class Bot(object):
                 setattr(self.parameters, option, value)
                 self.logger.debug("Runtime configuration: parameter '%s' loaded with the value '%s'" % (option, value))
 
-    def load_pipeline_configurations(self, path=PIPELINE_CONF_FILE):
-        """Load pipeline json configuration file"""
-
-        with open(path, 'r') as fpconfig:
-            config = json.loads(fpconfig.read())
-
-        self.logger.debug("Pipeline configuration: loading '%s' section from '%s' file" % (self.bot_id, path))
-
-        self.source_queues = None
-        self.destination_queues = None
+    def process_pipeline_configuration(self, config):
+        """Processes the loaded pipeline configuration keys in config and
+            sets bot attributes accordingly"""
 
         if self.bot_id in config.keys():
 
