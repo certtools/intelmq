@@ -59,14 +59,14 @@ class Bot(object):
                     time.sleep(local_retry_delay)
                     self.logger.info("Connecting to source pipeline")
                     self.source_pipeline = Pipeline()
-                    self.source_pipeline.source_queues(self.source_queues)
+                    self.source_pipeline.set_source_queues(self.source_queues)
                     self.logger.info("Connected to source pipeline")
 
                 if not self.destination_pipeline:
                     time.sleep(local_retry_delay)
                     self.logger.info("Connecting to destination pipeline")
                     self.destination_pipeline = Pipeline()
-                    self.destination_pipeline.destination_queues(self.destination_queues)
+                    self.destination_pipeline.set_destination_queues(self.destination_queues)
                     self.logger.info("Connected to destination pipeline")
 
                 self.process()
