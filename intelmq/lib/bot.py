@@ -38,8 +38,8 @@ class Bot(object):
         self.load_runtime_configurations(config.get("runtime") or RUNTIME_CONF_FILE)
         self.load_pipeline_configurations(config.get("pipeline") or PIPELINE_CONF_FILE)
 
-        self.source_pipeline = Pipeline()
-        self.destination_pipeline = Pipeline()
+        self.source_pipeline = config.get("source_pipeline") or Pipeline()
+        self.destination_pipeline = config.get("destination_pipeline") or Pipeline()
 
         self.init()
 
