@@ -133,10 +133,6 @@ class Bot(object):
         """Load pipeline json configuration file"""
 
         self.logger.debug("Pipeline configuration: loading '%s' section from '%s' file" % (self.bot_id, path))
-
-        self.source_queues = None
-        self.destination_queues = None
-
         self.process_pipeline_configuration(self.load_config_file(path))
 
     def process_system_configuration(self, config):
@@ -172,6 +168,9 @@ class Bot(object):
     def process_pipeline_configuration(self, config):
         """Processes the loaded pipeline configuration keys in config and
             sets bot attributes accordingly"""
+
+        self.source_queues = None
+        self.destination_queues = None
 
         if self.bot_id in config.keys():
 
