@@ -41,7 +41,7 @@ class Bot(object):
         self.source_pipeline = config.get("source_pipeline") or Pipeline()
         self.destination_pipeline = config.get("destination_pipeline") or Pipeline()
 
-        self.run = True
+        self.run_once = False
 
         self.init()
 
@@ -56,7 +56,7 @@ class Bot(object):
 
         self.logger.info('Bot start processing')
 
-        while self.run:
+        while True:
             try:
                 time.sleep(local_retry_delay)
                 self.logger.info("Connecting to source pipeline")
@@ -81,9 +81,12 @@ class Bot(object):
                 self.logger.exception("Check the following exception:")
                 self.logger.error('Pipeline connection failed (%r)' % ex)
                 self.logger.info('Pipeline will reconnect in %s seconds' % local_retry_delay)
-
             except KeyboardInterrupt as e:
                 break
+
+            finally:
+                if self.run_once:
+                    break
 
         self.logger.info("Disconnecting from source pipeline")
         self.source_pipeline.disconnect()
@@ -120,7 +123,7 @@ class Bot(object):
             with open(thing, 'r') as fpconfig:
                 config = json.loads(fpconfig.read())
         elif isinstance(thing, dict):
-            config = thing.copy()
+            config = thing
 
         return config
 
