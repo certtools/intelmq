@@ -112,14 +112,17 @@ class Bot(object):
             self.stop()
 
     def load_config(self, thing):
-        """Returns a configuration parsed from a thing, can be path string"""
+        """Returns a configuration parsed from a thing,
+           can be a path string or a dict with config"""
 
         config = None
 
         if isinstance(thing, str):
             with open(thing, 'r') as fpconfig:
                 config = json.loads(fpconfig.read())
-        
+        elif isinstance(thing, dict):
+            config = thing.copy()
+
         return config
 
     def load_system_configurations(self, path=SYSTEM_CONF_FILE):
@@ -140,7 +143,7 @@ class Bot(object):
         self.process_pipeline_configuration(self.load_config(path))
 
     def process_system_configuration(self, config):
-        """Processes the loaded system configuration in config 
+        """Processes the loaded system configuration in config
            and sets bot attributes accordingly"""
 
         setattr(self.parameters, 'logging_path', DEFAULT_LOGGING_PATH)
@@ -150,7 +153,7 @@ class Bot(object):
             setattr(self.parameters, option, value)
 
     def process_runtime_configuration(self, config):
-        """Processes the loaded configuration keys in config and 
+        """Processes the loaded configuration keys in config and
             sets bot attributes accordingly"""
 
         # Load __default__ runtime configuration section
