@@ -35,9 +35,9 @@
                 "rate_limit": "3600"
             }
         },
-        "AlientVault": {
+        "AlienVault": {
             "module": "intelmq.bots.collectors.url.collector",
-            "description": "AlientVault Collector is the bot responsible to get the report from source of information.",
+            "description": "AlienVault Collector is the bot responsible to get the report from source of information.",
             "parameters": {
                 "url": "https://reputation.alienvault.com/reputation.data",
                 "rate_limit": "3600"
@@ -309,7 +309,7 @@
             "module": "intelmq.bots.experts.asn_lookup.expert",
             "description": "ASN Lookup is the bot responsible to add ASN and BGP information from Route Views Project to the events.",
             "parameters": {
-                "database": "/opt/intelmq/var/lib/bots/asnlookup/ipasn.dat"
+                "database": "/opt/intelmq/var/lib/bots/asn_lookup/ipasn.dat"
              }
         },
         "Deduplicator": {
@@ -334,11 +334,13 @@
             "parameters": {
             }
         },
-        "CountryCodeFilter": {
-            "module": "intelmq.bots.experts.country_code_filter.expert",
-            "description": "Filters out events which do not match a specific country code. Needs: the cymru expert.",
+        "Filter": {
+            "module": "intelmq.bots.experts.filter.expert",
+            "description": "Filters out events depending on bot parameters specification (filter_key, filter_value, filter_action)",
             "parameters": {
-                  "countrycode": "<country code>"
+                  "filter_key": "<source.geolocation.cc>",
+                  "filter_value": "<PT>",
+                  "filter_action": "<keep/drop>"
             }
         }
     },
@@ -350,9 +352,9 @@
                 "file": "/opt/intelmq/var/lib/bots/file-output/events.txt"
             }
         },
-        "LogCollector": {
+        "TCP": {
             "module": "intelmq.bots.outputs.logcollector.output",
-            "description": "LogCollector is the bot responsible to send events to a logcollector (Splunk, ElasticSearch, etc..).",
+            "description": "TCP is the bot responsible to send events to a tcp port (Splunk, ElasticSearch, etc..).",
             "parameters": {
                 "ip": "<ip>",
                 "port": "<port>"

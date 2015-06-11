@@ -2,7 +2,7 @@ import time
 import socket
 from intelmq.lib.bot import Bot, sys
 
-class LogCollectorBot(Bot):
+class TCPBot(Bot):
 
     def process(self):       
         event = self.receive_message()
@@ -41,5 +41,5 @@ class LogCollectorBot(Bot):
 
 
 if __name__ == "__main__":
-    bot = LogCollectorBot(sys.argv[1])
+    bot = TCPBot(sys.argv[1])
     bot.start()

@@ -352,9 +352,9 @@
                 "file": "/opt/intelmq/var/lib/bots/file-output/events.txt"
             }
         },
-        "LogCollector": {
-            "module": "intelmq.bots.outputs.logcollector.output",
-            "description": "LogCollector is the bot responsible to send events to a logcollector (Splunk, ElasticSearch, etc..).",
+        "TCP": {
+            "module": "intelmq.bots.outputs.tcp.output",
+            "description": "TCP is the bot responsible to send events to a tcp port (Splunk, ElasticSearch, etc..).",
             "parameters": {
                 "ip": "<ip>",
                 "port": "<port>"
