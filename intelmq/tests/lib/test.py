@@ -11,7 +11,7 @@ class TestTestPipeline(unittest.TestCase):
         state = {"my-queue": ["A", "B", "C"]}
         src = TestPipeline(state)
 
-        src.source_queues("my-queue")
+        src.set_source_queues("my-queue")
 
         self.assertEqual(src.receive(), "A")
         self.assertEqual(src.state, state)
@@ -27,9 +27,9 @@ class TestTestPipeline(unittest.TestCase):
     def test_destination_pipeline_behaviour(self):
         """Tests if the basic 1:N sending capability of a normal pipeline
             works also for a TestPipeline"""
-        dst = TestPipeline()
+        dst = TestPipeline({})
         
-        dst.destination_queues(["tiger", "cat", "cow"])
+        dst.set_destination_queues(["tiger", "cat", "cow"])
         dst.send("sandwhich")
         dst.send("gras")
         dst.send("meat")
