@@ -152,7 +152,7 @@ class Event(Message):
 
         return int(event_hash.hexdigest(), 16)
 
-    def to_json(self):
+    def to_dict(self):
         json_dict = dict()
 
         for key, value in self.items():
@@ -168,7 +168,10 @@ class Event(Message):
                     json_dict_fp[subkey] = dict()
 
                 json_dict_fp = json_dict_fp[subkey]
+        return json_dict
 
+    def to_json(self):
+        json_dict = self.to_dict()
         return json.dumps(json_dict, ensure_ascii=False).encode("utf-8")
 
 

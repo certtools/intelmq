@@ -10,7 +10,7 @@ class MongoDBBot(Bot):
         
     def process(self):
         event = self.receive_message()
-        self.collection.insert(event.to_json())
+        self.collection.insert(event.to_dict())
         self.acknowledge_message()
 
 
