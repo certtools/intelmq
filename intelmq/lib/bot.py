@@ -17,8 +17,8 @@ DEFAULT_LOGGING_LEVEL = "INFO"
 
 class Bot(object):
 
-    def __init__(self, bot_id, parameters=None):
-        self.parameters = parameters or Parameters()
+    def __init__(self, bot_id, config={}):
+        self.parameters = Parameters()
 
         self.current_message = None
         self.last_message = None
@@ -27,16 +27,19 @@ class Bot(object):
         self.check_bot_id(bot_id)
         self.bot_id = bot_id
 
-        self.load_system_configurations(SYSTEM_CONF_FILE)
+        self.load_system_configurations(config.get("system") or SYSTEM_CONF_FILE)
 
-        self.logger = log(self.parameters.logging_path,
-                          self.bot_id,
-                          self.parameters.logging_level)
+        self.logger = config.get("logger") or log(self.parameters.logging_path,
+                                                  self.bot_id,
+                                                  self.parameters.logging_level)
 
         self.logger.info('Bot is starting')
 
-        self.load_runtime_configurations(RUNTIME_CONF_FILE)
-        self.load_pipeline_configurations(PIPELINE_CONF_FILE)
+        self.load_runtime_configurations(config.get("runtime") or RUNTIME_CONF_FILE)
+        self.load_pipeline_configurations(config.get("pipeline") or PIPELINE_CONF_FILE)
+
+        self.source_pipeline = Pipeline()
+        self.destination_pipeline = Pipeline()
 
         self.init()
 
@@ -46,8 +49,6 @@ class Bot(object):
 
     def start(self):
         """Starts a bot"""
-        self.source_pipeline = None
-        self.destination_pipeline = None
         local_retry_delay = 0
         self.parameters.retry_delay = 30 # Temporary fix. Need to add to BOTS conf
 
@@ -55,19 +56,17 @@ class Bot(object):
 
         while True:
             try:
-                if not self.source_pipeline:
-                    time.sleep(local_retry_delay)
-                    self.logger.info("Connecting to source pipeline")
-                    self.source_pipeline = Pipeline()
-                    self.source_pipeline.set_source_queues(self.source_queues)
-                    self.logger.info("Connected to source pipeline")
+                time.sleep(local_retry_delay)
+                self.logger.info("Connecting to source pipeline")
+                self.source_pipeline.connect()
+                self.source_pipeline.set_source_queues(self.source_queues)
+                self.logger.info("Connected to source pipeline")
 
-                if not self.destination_pipeline:
-                    time.sleep(local_retry_delay)
-                    self.logger.info("Connecting to destination pipeline")
-                    self.destination_pipeline = Pipeline()
-                    self.destination_pipeline.set_destination_queues(self.destination_queues)
-                    self.logger.info("Connected to destination pipeline")
+                time.sleep(local_retry_delay)
+                self.logger.info("Connecting to destination pipeline")
+                self.destination_pipeline.connect()
+                self.destination_pipeline.set_destination_queues(self.destination_queues)
+                self.logger.info("Connected to destination pipeline")
 
                 self.process()
                 self.logger.info("Bot stops processing. Sleeps for 'rate_limit' = %ds" % self.parameters.rate_limit)
@@ -80,16 +79,13 @@ class Bot(object):
                 self.logger.exception("Check the following exception:")
                 self.logger.error('Pipeline connection failed (%r)' % ex)
                 self.logger.info('Pipeline will reconnect in %s seconds' % local_retry_delay)
-                self.source_pipeline = None
-                self.destination_pipeline = None
 
             except KeyboardInterrupt as e:
-                if self.source_pipeline:
-                    self.source_pipeline.disconnect()
-                    self.logger.info("Disconnecting from source pipeline")
-                if self.destination_pipeline:
-                    self.destination_pipeline.disconnect()
-                    self.logger.info("Disconnecting from destination pipeline")
+                self.logger.info("Disconnecting from source pipeline")
+                self.source_pipeline.disconnect()
+
+                self.logger.info("Disconnecting from destination pipeline")
+                self.destination_pipeline.disconnect()
 
                 self.logger.info("Bot is shutting down")
                 break

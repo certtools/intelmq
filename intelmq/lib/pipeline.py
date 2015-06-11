@@ -5,13 +5,11 @@ import time
 class Pipeline():
     def __init__(self, host="127.0.0.1", port="6379", db=2):
         self.host = host
-        self.port = port
+        self.port = int(port)
         self.db = db
+        self.socket_timeout = 50000
+        self.redis = None
 
-        self.redis = redis.Redis(host=self.host,
-                                 port=int(self.port),
-                                 db=self.db,
-                                 socket_timeout=50000)
 
     def set_source_queues(self, source_queue):
         """Sets the source queue of this pipeline"""
@@ -25,8 +23,16 @@ class Pipeline():
             destination_queues = destination_queues.split()
         self.destination_queues = destination_queues
 
+    def connect(self):
+        """Connect or re-connects to a pipeline provider(e.g redis)"""
+        self.redis = redis.Redis(host=self.host,
+                                 port=self.port,
+                                 db=self.db,
+                                 socket_timeout=self.socket_timeout)
+        pass
+
     def disconnect(self):
-        """Disconnects from pipeline provider"""
+        """Disconnects from pipeline provider(e.g redis)"""
         pass
 
     def sleep(self, interval):
