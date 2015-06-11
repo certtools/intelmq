@@ -1,4 +1,5 @@
 from intelmq.lib.pipeline import Pipeline
+from intelmq.lib.utils import create_stream_logger
 
 
 class TestPipeline(Pipeline):
@@ -6,8 +7,14 @@ class TestPipeline(Pipeline):
        it behaves in most ways like a normal pipeline would do,
        with the exception that it doesn't need a message broker"""
 
-    def __init__(self, state_dict=None):
-        self.state = state_dict or dict()
+    def __init__(self, state_dict):
+        self.state = state_dict
+
+    def connect(self):
+        pass
+
+    def disconnect(self):
+        pass
 
     def sleep(self, intveral):
         # Passes through as we want a test to be deterministic
@@ -59,3 +66,30 @@ class TestPipeline(Pipeline):
         for queue in queues:
             qdict[queue] = len(self.state.get(queue, []))
         return qdict
+
+# other nice test related utility functions
+def create_bot_test_configuration(bot_id, log_stream, state, params={}):
+    """Creates a configuration which can be feed into a bot for
+       testing it in an unit test"""
+
+    config = {}
+
+    config["system"] = {"logging_level": "DEBUG",
+                        "logging_path": "/opt/intelmq/var/log/",  # not used
+                        "http_proxy":  None,
+                        "https_proxy": None}
+
+    config["runtime"] = {bot_id: params, 
+                         "__default__": {"rate_limit": 0,
+                                         "retry_delay": 0}}
+    config["pipeline"] = {bot_id:{"source-queue": ("%s-input" % bot_id),
+                                  "destination-queues": ["%s-output" % bot_id]}}
+
+    config["logger"] = create_stream_logger(log_stream, bot_id)
+
+    config["source_pipeline"] = TestPipeline(state)
+    config["destination_pipeline"] = TestPipeline(state)
+
+    assert(config["source_pipeline"].state is config["destination_pipeline"].state)
+
+    return config
