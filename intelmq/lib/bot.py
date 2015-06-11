@@ -27,7 +27,7 @@ class Bot(object):
         self.check_bot_id(bot_id)
         self.bot_id = bot_id
 
-        self.load_system_configurations()
+        self.load_system_configurations(SYSTEM_CONF_FILE)
 
         self.logger = log(self.parameters.logging_path,
                           self.bot_id,
@@ -35,8 +35,8 @@ class Bot(object):
 
         self.logger.info('Bot is starting')
 
-        self.load_runtime_configurations()
-        self.load_pipeline_configurations()
+        self.load_runtime_configurations(RUNTIME_CONF_FILE)
+        self.load_pipeline_configurations(PIPELINE_CONF_FILE)
 
         self.init()
 
@@ -125,22 +125,22 @@ class Bot(object):
 
         return config
 
-    def load_system_configurations(self, path=SYSTEM_CONF_FILE):
+    def load_system_configurations(self, thing):
         """Instructs a bot to load the system configuration (json)"""
 
-        self.process_system_configuration(self.load_config(path))
+        self.process_system_configuration(self.load_config(thing))
 
-    def load_runtime_configurations(self, path=RUNTIME_CONF_FILE):
+    def load_runtime_configurations(self, thing):
         """Load runtime json configuration for a bot from given path or from default location if empty"""
 
-        self.logger.debug("Runtime configuration: loading sections from '%s' file" % path)
-        self.process_runtime_configuration(self.load_config(path))
+        self.logger.debug("Runtime configuration: loading sections from '%s'" % thing)
+        self.process_runtime_configuration(self.load_config(thing))
 
-    def load_pipeline_configurations(self, path=PIPELINE_CONF_FILE):
+    def load_pipeline_configurations(self, thing):
         """Load pipeline json configuration file"""
 
-        self.logger.debug("Pipeline configuration: loading '%s' section from '%s' file" % (self.bot_id, path))
-        self.process_pipeline_configuration(self.load_config(path))
+        self.logger.debug("Pipeline configuration: loading '%s' section from '%s'" % (self.bot_id, thing))
+        self.process_pipeline_configuration(self.load_config(thing))
 
     def process_system_configuration(self, config):
         """Processes the loaded system configuration in config
