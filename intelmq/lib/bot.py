@@ -41,6 +41,8 @@ class Bot(object):
         self.source_pipeline = config.get("source_pipeline") or Pipeline()
         self.destination_pipeline = config.get("destination_pipeline") or Pipeline()
 
+        self.run = True
+
         self.init()
 
     def init(self):
@@ -54,7 +56,7 @@ class Bot(object):
 
         self.logger.info('Bot start processing')
 
-        while True:
+        while self.run:
             try:
                 time.sleep(local_retry_delay)
                 self.logger.info("Connecting to source pipeline")
@@ -81,14 +83,15 @@ class Bot(object):
                 self.logger.info('Pipeline will reconnect in %s seconds' % local_retry_delay)
 
             except KeyboardInterrupt as e:
-                self.logger.info("Disconnecting from source pipeline")
-                self.source_pipeline.disconnect()
-
-                self.logger.info("Disconnecting from destination pipeline")
-                self.destination_pipeline.disconnect()
-
-                self.logger.info("Bot is shutting down")
                 break
+
+        self.logger.info("Disconnecting from source pipeline")
+        self.source_pipeline.disconnect()
+
+        self.logger.info("Disconnecting from destination pipeline")
+        self.destination_pipeline.disconnect()
+
+        self.logger.info("Bot is shutting down")
 
     def stop(self):
         """Stops a bot"""
