@@ -334,11 +334,13 @@
             "parameters": {
             }
         },
-        "Country Code Filter": {
-            "module": "intelmq.bots.experts.country_code_filter.expert",
-            "description": "Filters out events which do not match a specific country code. Needs: the cymru expert.",
+        "Filter": {
+            "module": "intelmq.bots.experts.filter.expert",
+            "description": "Filters out events depending on bot parameters specification (filter_key, filter_value, filter_action)",
             "parameters": {
-                  "countrycode": "<country code>"
+                  "filter_key": "<source.geolocation.cc>",
+                  "filter_value": "<PT>",
+                  "filter_action": "<keep/drop>"
             }
         }
     },
