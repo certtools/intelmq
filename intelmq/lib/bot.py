@@ -126,7 +126,8 @@ class Bot(object):
     def load_runtime_configurations(self, path=RUNTIME_CONF_FILE):
         """Load runtime json configuration for a bot from given path or from default location if empty"""
 
-        self.process_runtime_configuration(self.load_config_file(path), path)
+        self.logger.debug("Runtime configuration: loading sections from '%s' file" % path)
+        self.process_runtime_configuration(self.load_config_file(path))
 
     def load_pipeline_configurations(self, path=PIPELINE_CONF_FILE):
         """Load pipeline json configuration file"""
@@ -148,13 +149,13 @@ class Bot(object):
         for option, value in config.iteritems():
             setattr(self.parameters, option, value)
 
-    def process_runtime_configuration(self, config, path):
+    def process_runtime_configuration(self, config):
         """Processes the loaded configuration keys in config and 
             sets bot attributes accordingly"""
 
         # Load __default__ runtime configuration section
 
-        self.logger.debug("Runtime configuration: loading '%s' section from '%s' file" % ("__default__", path))
+        self.logger.debug("Runtime configuration: loading '%s' section" % "__default__")
         if "__default__" in config.keys():
             for option, value in config["__default__"].iteritems():
                 setattr(self.parameters, option, value)
@@ -162,7 +163,7 @@ class Bot(object):
 
         # Load bot runtime configuration section
 
-        self.logger.debug("Runtime configuration: loading '%s' section from '%s' file" % (self.bot_id, path))
+        self.logger.debug("Runtime configuration: loading '%s' section" % self.bot_id)
         if self.bot_id in config.keys():
             for option, value in config[self.bot_id].iteritems():
                 setattr(self.parameters, option, value)
