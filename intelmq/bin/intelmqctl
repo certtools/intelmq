@@ -318,6 +318,8 @@ class IntelMQContoller():
                 queues.update(value['destination-queues'])
 
         pipeline = Pipeline()
+        pipeline.connect()
+
         counters = pipeline.count_queued_messages(queues)
         log_list_queus(counters)
         
