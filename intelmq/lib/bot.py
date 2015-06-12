@@ -173,7 +173,7 @@ class Bot(object):
 
     def send_message(self, message):
         if not message:
-            self.logger.warning("Empty message found.")
+            self.logger.debug("Empty message found.")
             return False
 
         self.message_counter += 1
