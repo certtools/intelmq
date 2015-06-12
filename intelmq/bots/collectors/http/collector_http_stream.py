@@ -16,6 +16,7 @@ class HTTPStreamCollectorBot(Bot):
         for line in data.split('\n'):
             report = Report()
             report.add("raw", str(line), sanitize=True)
+            report.add("feed.name", self.parameters.feed, sanitize=True)
             self.send_message(report)
 
 

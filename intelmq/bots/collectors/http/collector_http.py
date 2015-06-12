@@ -17,6 +17,7 @@ class URLCollectorBot(Bot):
 
         report = Report()
         report.add("raw", raw_report, sanitize=True)
+        report.add("feed.name", self.parameters.feed, sanitize=True)
         report.add("feed.url", self.parameters.url, sanitize=True)
         self.send_message(report)
 

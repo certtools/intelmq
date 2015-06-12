@@ -34,7 +34,7 @@ class VXVaultParserBot(Bot):
             
             time_observation = DateTime().generate_datetime_now()
             event.add('time.observation', time_observation, sanitize=True)
-            event.add('feed.name', u'vxvault')
+            event.add('feed.name', report.value("feed.name"))
             event.add('feed.url', report.value("feed.url"))
             event.add('classification.type', u'malware')
             event.add("source.url", url, sanitize=True)

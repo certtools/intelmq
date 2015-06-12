@@ -5,6 +5,7 @@
             "description": "Taichung City Netflow Collector is the bot responsible to get the report from source of information.",
             "parameters": {
                 "url": "https://tc.edu.tw/net/netflow/lkout/recent/30",
+                "feed": "Taichung",
                 "rate_limit": "3600"
             }
         },
@@ -13,17 +14,7 @@
             "description": "AnubisNetworks CyberFeed Collector is the bot responsible to get the report from source of information.",
             "parameters": {
                 "url": "http://proc.cyberfeed.net:8080/stream?key=< key >",
-                "rate_limit": "0"
-            }
-        },
-        "HPFeeds": {
-            "module": "intelmq.bots.collectors.hpfeeds.collector",
-            "description": "HPFeeds Collector is the bot responsible to integrate HPFeeds solution with IntelMQ.",
-            "parameters": {
-                "broker_port": "20000",
-                "broker_host": "127.0.0.1",
-                "ident": "hpfeeds",
-                "secret": "hpfeeds-secret",
+                "feed": "AnubisNetworks",
                 "rate_limit": "0"
             }
         },
@@ -32,6 +23,7 @@
             "description": "Arbor Collector is the bot responsible to get the report from source of information.",
             "parameters": {
                 "url": "http://atlas-public.ec2.arbor.net/public/ssh_attackers",
+                "feed": "Arbor",
                 "rate_limit": "3600"
             }
         },
@@ -40,6 +32,7 @@
             "description": "HPHost Collector is the bot responsible to get the report from source of information.",
             "parameters": {
                 "url": "http://hosts-file.net/download/hosts.txt",
+                "feed": "HpHosts",
                 "rate_limit": "3600"
             }
         },
@@ -48,14 +41,16 @@
             "description": "AlienVault Collector is the bot responsible to get the report from source of information.",
             "parameters": {
                 "url": "https://reputation.alienvault.com/reputation.data",
+                "feed": "AlienVault",
                 "rate_limit": "3600"
             }
         },
-        "BruteForceBlocker": {
+        "Danger Rulez": {
             "module": "intelmq.bots.collectors.http.collector_http",
-            "description": "BruteForceBlocker Collector is the bot responsible to get the report from source of information.",
+            "description": "Danger Rulez Collector is the bot responsible to get the report from source of information.",
             "parameters": {
                 "url": "http://danger.rulez.sk/projects/bruteforceblocker/blist.php",
+                "feed": "Danger Rulez",
                 "rate_limit": "3600"
             }
         },
@@ -64,6 +59,7 @@
             "description": "Dshield Collector is the bot responsible to get the report from source of information.",
             "parameters": {
                 "url": "http://dshield.org/asdetailsascii.html?as=<INSERT ASNUM>",
+                "feed": "DShield",
                 "rate_limit": "3600"
             }
         },
@@ -72,6 +68,7 @@
             "description": "VXVault Collector is the bot responsible to get the report from source of information.",
             "parameters": {
                 "url": "http://vxvault.siri-urz.net/URL_List.php",
+                "feed": "VxVault",
                 "rate_limit": "3600"
             }
         },
@@ -80,6 +77,7 @@
             "description": "Malware Domain List Collector is the bot responsible to get the report from source of information.",
             "parameters": {
                 "url": "http://www.malwaredomainlist.com/updatescsv.php",
+                "feed": "Malware Domain List",
                 "rate_limit": "3600"
             }
         },
@@ -88,6 +86,7 @@
             "description": "Dragon Research Group SSH Collector is the bot responsible to get the report from source of information.",
             "parameters": {
                 "url": "http://dragonresearchgroup.org/insight/sshpwauth.txt",
+                "feed": "Dragon Research Group",
                 "rate_limit": "3600"
             }
         },
@@ -96,6 +95,7 @@
             "description": "Dragon Research Group VNC Collector is the bot responsible to get the report from source of information.",
             "parameters": {
                 "url": "https://dragonresearchgroup.org/insight/vncprobe.txt",
+                "feed": "Dragon Research Group",
                 "rate_limit": "3600"
             }
         },
@@ -104,6 +104,7 @@
             "description": "PhishTank Collector is the bot responsible to get the report from source of information.",
             "parameters": {
                 "url": "http://data.phishtank.com/data/< API KEY >/online-valid.csv",
+                "feed": "Phishtank",
                 "rate_limit": "28800"
             }
         },
@@ -112,6 +113,7 @@
             "description": "MalwarePatrol Dans Guardian Collector is the bot responsible to get the report from source of information.",
             "parameters": {
                 "url": "https://lists.malwarepatrol.net/cgi/getfile?receipt=< API KEY >&product=8&list=dansguardian",
+                "feed": "MalwarePatrol",
                 "rate_limit": "180000"
             }
         },
@@ -120,6 +122,7 @@
             "description": "OpenBL Collector is the bot responsible to get the report from source of information.",
             "parameters": {
                 "url": "http://www.openbl.org/lists/date_all.txt",
+                "feed": "OpenBL",
                 "rate_limit": "43200"
             }
         },

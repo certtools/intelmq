@@ -34,7 +34,7 @@ class OpenBLParserBot(Bot):
 
             time_observation = DateTime().generate_datetime_now()
             event.add('time.observation', time_observation, sanitize=True)
-            event.add('feed.name', u'openbl')
+            event.add('feed.name', report.value("feed.name"))
             event.add('feed.url', report.value("feed.url"))
             event.add('classification.type', u'blacklist')
             event.add("raw", row, sanitize=True)

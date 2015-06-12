@@ -29,7 +29,8 @@ class MailURLCollectorBot(Bot):
                         self.logger.info("Report downloaded.")
 
                         report = Report()
-                        report.add("raw", raw_report, sanitize=True)                        
+                        report.add("raw", raw_report, sanitize=True)
+                        report.add("feed.name", self.parameters.feed, sanitize=True)
                         self.send_message(report)
                         
                 mailbox.mark_seen(uid)
