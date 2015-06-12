@@ -13,8 +13,23 @@
             "module": "intelmq.bots.collectors.http.collector_http_stream",
             "description": "AnubisNetworks CyberFeed Collector is the bot responsible to get the report from source of information.",
             "parameters": {
+<<<<<<< HEAD
                 "url": "http://proc.cyberfeed.net:8080/stream?key=< key >",
                 "feed": "AnubisNetworks",
+=======
+                "url": "http://prod.cyberfeed.net:8080/stream?key=< key >",
+                "rate_limit": "0"
+            }
+        },
+        "HPFeeds": {
+            "module": "intelmq.bots.collectors.hpfeeds.collector",
+            "description": "HPFeeds Collector is the bot responsible to integrate HPFeeds solution with IntelMQ.",
+            "parameters": {
+                "broker_port": "20000",
+                "broker_host": "127.0.0.1",
+                "ident": "hpfeeds",
+                "secret": "hpfeeds-secret",
+>>>>>>> 1fe56617de7e50d7b9d92ef375537038f702b0a4
                 "rate_limit": "0"
             }
         },
