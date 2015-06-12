@@ -124,50 +124,6 @@
                 "feed": "OpenBL",
                 "rate_limit": "43200"
             }
-        },
-        "ShadowServer Drone Report": {
-            "module": "intelmq.bots.collectors.mail.collector_mail_attach",
-            "description": "ShadowServer Drone Collector is the bot responsible to get the report from source of information.",
-            "parameters": {
-                "rate_limit": "3600",
-                "mail_host": "<host>",
-                "mail_user": "<user>",
-                "mail_password": "<password>",
-                "mail_ssl": true,
-                "folder": "Inbox.shadowserver",
-                "subject_regex": "Shadowserver [^ ]+ Drone Report",
-                "attach_regex": "csv.zip",
-                "attach_unzip": true
-            }
-        },
-        "ShadowServer Chargen Report": {
-            "module": "intelmq.bots.collectors.mail.collector_mail_url",
-            "description": "ShadowServer Chargen Collector is the bot responsible to get the report from source of information.",
-            "parameters": {
-                "rate_limit": "3600",
-                "mail_host": "<host>",
-                "mail_user": "<user>",
-                "mail_password": "<password>",
-                "mail_ssl": true,
-                "folder": "Inbox.shadowserver",
-                "subject_regex": "Shadowserver [^ ]+ Chargen Report",
-                "url_regex": "http://dl.shadowserver.org/[^ ]+"
-            }
-        },
-        "CERT-EU Malicious URLs": {
-            "module": "intelmq.bots.collectors.mail.collector_mail_attach",
-            "description": "CERT-EU Malicious URLs Collector is the bot responsible to get the report from source of information.",
-            "parameters": {
-                "rate_limit": "3600",
-                "mail_host": "<host>",
-                "mail_user": "<user>",
-                "mail_password": "<password>",
-                "mail_ssl": true,
-                "folder": "Inbox.cert-eu",
-                "subject_regex": "Malicious URLs",
-                "attach_regex": "report.csv$",
-                "attach_unzip": false
-            }
         }
     },
     "Parser": {
