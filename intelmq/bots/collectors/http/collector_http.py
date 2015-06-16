@@ -1,5 +1,5 @@
 from intelmq.lib.bot import Bot, sys
-from intelmq.bots.collectors.url.lib import fetch_url
+from intelmq.bots.collectors.http.lib import fetch_url
 from intelmq.lib.message import Report
 
 class URLCollectorBot(Bot):
