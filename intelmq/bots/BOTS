@@ -267,6 +267,33 @@
             "parameters": {
             }
         },
+        "Malware Group Domains": {
+            "description": "Malware Group Domains Collector is the bot responsible to get the report from source of information.", 
+            "module": "intelmq.bots.collectors.http.collector_http",
+            "parameters": {
+                "feed": "MalwareGroup", 
+                "url": "http://www.malwaregroup.com/domains", 
+                "rate_limit": "129600"
+            }
+        }, 
+        "Malware Group IPs": {
+            "description": "Malware Group IPs Collector is the bot responsible to get the report from source of information.", 
+            "module": "intelmq.bots.collectors.http.collector_http", 
+            "parameters": {
+                "feed": "MalwareGroup", 
+                "url": "http://www.malwaregroup.com/ipaddresses", 
+                "rate_limit": "129600"
+            }
+        }, 
+        "Malware Group Proxies": {
+            "description": "Malware Group Proxies Collector is the bot responsible to get the report from source of information.", 
+            "module": "intelmq.bots.collectors.http.collector_http",
+            "parameters": {
+                "feed": "MalwareGroup", 
+                "url": "http://www.malwaregroup.com/proxies", 
+                "rate_limit": "129600"
+            }
+        }, 
         "Dragon Research Group VNC": {
             "module": "intelmq.bots.collectors.http.collector_http",
             "description": "Dragon Research Group VNC Collector is the bot responsible to get the report from source of information.",
@@ -467,6 +494,24 @@
         "Malware Domain List": {
             "module": "intelmq.bots.parsers.malwaredomainlist.parser",
             "description": "Malware Domain List Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+            }
+        },
+        "Malware Group Domains": {
+            "description": "Malware Group Domains Parser is the bot responsible to parse the report and sanitize the information.", 
+            "module": "intelmq.bots.parser.malwaregroup.parser_domains", 
+            "parameters": {
+            }
+        }, 
+        "Malware Group IPs": {
+            "description": "Malware Group IPs Parser is the bot responsible to parse the report and sanitize the information.", 
+            "module": "intelmq.bots.parser.malwaregroup.parser_ips", 
+            "parameters": {
+            }
+        }, 
+        "Malware Group Proxies": {
+            "description": "Malware Group Proxies Parser is the bot responsible to parse the report and sanitize the information.", 
+            "module": "intelmq.bots.parser.malwaregroup.parser_proxies", 
             "parameters": {
             }
         },
