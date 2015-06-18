@@ -59,6 +59,18 @@ class TestBaseUtils(unittest.TestCase):
 
         self.check_log_lines(log_lines)
 
+    def test_parse_logline(self):
+        """Tests if the parse_logline() function works as expected"""
+        line = "2015-05-29 21:00:24,379 - malware-domain-list-collector - ERROR - Something went wrong"
+
+        fields = utils.parse_logline(line)
+
+        self.assertIsInstance(fields, dict)
+        self.assertEqual("Something went wrong", fields["message"])
+        self.assertEqual("ERROR", fields["levelname"])
+        self.assertEqual("malware-domain-list-collector", fields["name"])
+        self.assertEqual("2015-05-29 21:00:24,379", fields["asctime"])
+
 
 if __name__ == "__main__":
     unittest.main()

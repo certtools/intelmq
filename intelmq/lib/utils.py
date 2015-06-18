@@ -1,5 +1,6 @@
 import logging
 import hashlib
+import re
 
 
 def decode(text, encodings=["utf-8", "ISO-8859-15"], force=False):
@@ -43,6 +44,11 @@ def encode(text, encodings=["utf-8"], force=False):
 # Used loglines format
 log_format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 
+# Regex for parsing the above log_format
+log_regex  = ('^(?P<asctime>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d+) -'
+              ' (?P<name>[-\w]+) - '
+              '(?P<levelname>[A-Z]+) - '
+              '(?P<message>.+)$')
 
 def create_file_logger(logs_path, name, loglevel="DEBUG"):
     """Creates a logger specific for files with IntelMQ logging format"""
@@ -83,6 +89,19 @@ def create_stream_logger(stream, name, loglevel="DEBUG"):
 
     logger.addHandler(handler)
     return logger
+
+
+def parse_logline(logline):
+    """Parses the given logline string into its components"""
+
+    match = re.match(log_regex, logline)
+    result = {}
+    fields = ("asctime", "name", "levelname", "message")
+
+    if match:
+        result = dict(zip(fields, match.group(*fields)))
+
+    return result
 
 
 def hashgen(data, func=hashlib.sha1):
