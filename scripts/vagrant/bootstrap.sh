@@ -20,7 +20,7 @@ function install_intelmq {
 	git clone -b $INTELMQ_BRANCH $INTELMQ_REPO
 	cd intelmq/
 	# If branch v1.0-beta install deps using REQUIREMENTS file
-	if [[ $INTELMQ_BRANCH == "v1.0-beta" ]]
+	if [[ $INTELMQ_BRANCH == "v1.0-final" ]]
 	then
 	    pip install -r REQUIREMENTS;
 	fi
