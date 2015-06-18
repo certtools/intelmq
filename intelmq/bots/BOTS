@@ -198,6 +198,24 @@
                 "rate_limit": "3600"
             }
         },
+        "Malc0de Domain Blacklist": {
+            "description": "Malc0de Domain Blacklist Collector is the bot responsible to get the report from source of information.", 
+            "module": "intelmq.bots.collectors.http.collector_http", 
+            "parameters": {
+                "feed": "Malc0de", 
+                "url": "http://malc0de.com/bl/BOOT", 
+                "rate_limit": "10800"
+            }
+        }, 
+        "Malc0de IP Blacklist": {
+            "description": "Malc0de IP Blacklist Collector is the bot responsible to get the report from source of information.", 
+            "module": "intelmq.bots.collectors.http.collector_http", 
+            "parameters": {
+                "feed": "Malc0de", 
+                "url": "http://malc0de.com/bl/IP_Blacklist.txt", 
+                "rate_limit": "10800"
+            }
+        }, 
         "VXVault": {
             "module": "intelmq.bots.collectors.http.collector_http",
             "description": "VXVault Collector is the bot responsible to get the report from source of information.",
@@ -401,6 +419,18 @@
         "Dyn": {
             "description": "Dyn Parser is the bot responsible to parse the report and sanitize the information.", 
             "module": "intelmq.bots.parser.dyn.parser", 
+            "parameters": {
+            }
+        }, 
+        "Malc0de Domain Blacklist": {
+            "description": "Malc0de Domain Blacklist Parser is the bot responsible to parse the report and sanitize the information.", 
+            "module": "intelmq.bots.parser.malc0de.parser_domain_blacklist", 
+            "parameters": {
+            }
+        }, 
+        "Malc0de IP Blacklist": {
+            "description": "Malc0de IP Blacklist Parser is the bot responsible to parse the report and sanitize the information.", 
+            "module": "intelmq.bots.parser.malc0de.parser_ip_blacklist", 
             "parameters": {
             }
         }, 
