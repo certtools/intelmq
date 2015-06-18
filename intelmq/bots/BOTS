@@ -27,6 +27,15 @@
                 "rate_limit": "3600"
             }
         },
+        "Autoshun": {
+            "module": "intelmq.bots.collectors.http.collector_http",
+            "description": "Autoshun Collector is the bot responsible to get the report from source of information.",
+            "parameters": {
+                "url": "http://www.autoshun.org/files/shunlist.html",
+                "feed": "Autoshun",
+                "rate_limit": "3600"
+            }
+        },
         "HpHosts": {
             "module": "intelmq.bots.collectors.http.collector_http",
             "description": "HPHost Collector is the bot responsible to get the report from source of information.",
@@ -144,6 +153,12 @@
         "Arbor": {
             "module": "intelmq.bots.parsers.arbor.parser",
             "description": "Arbor Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+            }
+        },
+        "Autoshun": {
+            "module": "intelmq.bots.parsers.autoshun.parser",
+            "description": "Autoshun Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
             }
         },
