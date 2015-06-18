@@ -161,7 +161,16 @@
                 "url": "http://support.clean-mx.de/clean-mx/xmlviruses?response=alive&format=csv&domain=", 
                 "rate_limit": "129600"
             }
-        }, 
+        },
+        "Dyn": {
+            "description": "Dyn Collector is the bot responsible to get the report from source of information.", 
+            "module": "intelmq.bots.collectors.http.collector_http", 
+            "parameters": {
+                "feed": "Dyn", 
+                "url": "http://security-research.dyndns.org/pub/botnet/ponmocup/ponmocup-finder/ponmocup-infected-domains-latest.txt", 
+                "rate_limit": "10800"
+            }
+        },
         "AlienVault": {
             "module": "intelmq.bots.collectors.http.collector_http",
             "description": "AlienVault Collector is the bot responsible to get the report from source of information.",
@@ -389,6 +398,12 @@
             "parameters": {
             }
         },
+        "Dyn": {
+            "description": "Dyn Parser is the bot responsible to parse the report and sanitize the information.", 
+            "module": "intelmq.bots.parser.dyn.parser", 
+            "parameters": {
+            }
+        }, 
         "Malware Domain List": {
             "module": "intelmq.bots.parsers.malwaredomainlist.parser",
             "description": "Malware Domain List Parser is the bot responsible to parse the report and sanitize the information.",
