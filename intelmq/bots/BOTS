@@ -144,6 +144,24 @@
                 "rate_limit": "3600"
             }
         },
+        "CleanMX Phishing": {
+            "description": "CleanMX Phishing Collector is the bot responsible to get the report from source of information.", 
+            "module": "intelmq.bots.collectors.http.collector_http", 
+            "parameters": {
+                "feed": "CleanMX", 
+                "url": "http://support.clean-mx.de/clean-mx/xmlphishing?response=alive&format=csv&domain=", 
+                "rate_limit": "129600"
+            }
+        }, 
+        "CleanMX Virus": {
+            "description": "CleanMX Virus Collector is the bot responsible to get the report from source of information.", 
+            "module": "intelmq.bots.collectors.http.collector_http", 
+            "parameters": {
+                "feed": "CleanMX", 
+                "url": "http://support.clean-mx.de/clean-mx/xmlviruses?response=alive&format=csv&domain=", 
+                "rate_limit": "129600"
+            }
+        }, 
         "AlienVault": {
             "module": "intelmq.bots.collectors.http.collector_http",
             "description": "AlienVault Collector is the bot responsible to get the report from source of information.",
@@ -356,6 +374,18 @@
         "CI Army": {
             "module": "intelmq.bots.parsers.ci_army.parser",
             "description": "CI Army Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+            }
+        },
+        "CleanMX Phishing": {
+            "description": "CleanMX Phishing Parser is the bot responsible to parse the report and sanitize the information.", 
+            "module": "intelmq.bots.parser.cleanmx.parser_phishing", 
+            "parameters": {
+            }
+        }, 
+        "CleanMX Virus": {
+            "description": "CleanMX Virus Parser is the bot responsible to parse the report and sanitize the information.", 
+            "module": "intelmq.bots.parser.cleanmx.parser_virus", 
             "parameters": {
             }
         },
