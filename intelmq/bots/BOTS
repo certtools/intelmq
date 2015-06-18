@@ -198,6 +198,15 @@
                 "rate_limit": "3600"
             }
         },
+        "OpenPhish": {
+            "description": "OpenPhish Collector is the bot responsible to get the report from source of information.", 
+            "module": "intelmq.bots.collectors.http.collector_http", 
+            "parameters": {
+                "id": "OpenPhish", 
+                "url": "http://www.openphish.com/feed.txt", 
+                "rate_limit": "86400"
+            }
+        }, 
         "Malc0de Domain Blacklist": {
             "description": "Malc0de Domain Blacklist Collector is the bot responsible to get the report from source of information.", 
             "module": "intelmq.bots.collectors.http.collector_http", 
@@ -392,6 +401,12 @@
             "parameters": {
             }
         },
+        "OpenPhish": {
+            "description": "OpenPhish Parser is the bot responsible to parse the report and sanitize the information.", 
+            "module": "intelmq.bots.parser.openphish.parser", 
+            "parameters": {
+            }
+        }, 
         "VXVault": {
             "module": "intelmq.bots.parsers.vxvault.parser",
             "description": "VXVault Parser is the bot responsible to parse the report and sanitize the information.",
