@@ -10,4 +10,4 @@ intelmq.egg-info
 build
 dist
 *.old
-*.swp
+.vagrant/
