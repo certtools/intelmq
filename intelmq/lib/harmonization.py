@@ -119,6 +119,35 @@ class DateTime(GenericType):
         return value.decode("utf-8")
 
 
+class IPNetwork(GenericType):
+
+    @staticmethod
+    def is_valid(key, value):
+        if not GenericType().is_valid(key, value):
+            return False
+
+        try:
+            ipaddr.IPNetwork(value)
+        except:
+            return False
+
+        return True
+            
+    @staticmethod
+    def sanitize(value):
+        
+        try:
+            ipaddr.IPNetwork(value)
+        except:
+            return None
+                
+        return GenericType().sanitize(value)
+
+    @staticmethod
+    def version(value):
+        return int(ipaddr.IPNetwork(value).version)
+
+
 class IPAddress(GenericType):
 
     @staticmethod
