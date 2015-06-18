@@ -135,6 +135,15 @@
                 "rate_limit": "3600"
             }
         },
+        "Malware Domains": {
+            "description": "Malware Domains Collector is the bot responsible to get the report from source of information.", 
+            "module": "intelmq.bots.collectors.http.collector_http", 
+            "parameters": {
+                "feed": "Malware Domains", 
+                "url": "http://mirror2.malwaredomains.com/files/domains.txt", 
+                "rate_limit": "172800"
+            }
+        }, 
         "CI Army": {
             "module": "intelmq.bots.collectors.http.collector_http",
             "description": "CI Army Collector is the bot responsible to get the report from source of information.",
@@ -250,6 +259,12 @@
                 "url": "http://dragonresearchgroup.org/insight/sshpwauth.txt",
                 "feed": "Dragon Research Group",
                 "rate_limit": "3600"
+            }
+        },
+        "Malware Domains": {
+            "description": "Malware Domains Parser is the bot responsible to parse the report and sanitize the information.", 
+            "module": "intelmq.bots.parser.malwaredomains.parser", 
+            "parameters": {
             }
         },
         "Dragon Research Group VNC": {
