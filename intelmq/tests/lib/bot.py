@@ -3,6 +3,7 @@ from intelmq.lib.test import create_bot_test_configuration
 
 from intelmq.bots import utils
 from intelmq.lib.message import Event
+from intelmq.lib.test import BotTestCase
 
 import unittest
 import StringIO
@@ -13,7 +14,7 @@ import json
 
 class TestBot(Bot):
     """This is a TestBot for testing if a bot can be modified and
-        tested. IT HAS ABSOLUTELY NO OTHER USE! You MUST NOT use 
+        tested. IT HAS ABSOLUTELY NO OTHER USE! You MUST NOT use
         it for anything else as this TestCase"""
 
     def process(self):
@@ -22,12 +23,12 @@ class TestBot(Bot):
 
         self.logger.info("This is an awesome testbot!")
         self.logger.warning("It is soo awesome, we put also a warning there")
-        
+
         if report:
             report = report.strip().split("\t")
 
             event = Event()
-            
+
             event.add('feed', 'test')
             event.add('feed_url', 'hxx://127.0.0.1')
             event.add('type', 'brute-force')
@@ -67,30 +68,34 @@ class TestBotInterface(unittest.TestCase):
 
         # run it only once, no loop please
         # no blocking, no hassle testing it
-        self.bot.run_once = True 
+        self.bot.run_once = True
 
     def test_bot_start(self):
-        """Tests if we can start a bot and feed data into 
+        """Tests if we can start a bot and feed data into
             it and have a reasonable output"""
 
         self.queue_state["test-bot-input"] = ["1.1.2.3\t2.2.4.5\t2015-06-11 16:49:42.262784"]
 
-
         self.bot.start()
         loglines_buffer = self.log_stream.getvalue()
         loglines = loglines_buffer.splitlines()
-        
+
         # if something new for bots are added then this test should break
-        self.assertEquals(20, len(loglines), "Bot-Log was too long(%d lines):\n %s" % (len(loglines), loglines_buffer))
-        
+        self.assertEquals(20,
+                          len(loglines),
+                          "Bot-Log was too long(%d lines):\n %s" % (len(loglines), loglines_buffer))
+
         # errors and warnings are IMHO prohibited when doing such a basic test
         self.assertNotRegexpMatches(loglines_buffer, "ERROR")
 
-        self.assertRegexpMatches(loglines_buffer, "WARNING - It is soo awesome, we put also a warning there")
+        self.assertRegexpMatches(loglines_buffer,
+                                 "WARNING - It is soo awesome, we put also a warning there")
 
         # testing the internal behaviour of a pipeline, this is how the system at the moment behaves
         # and so we test that here. To have an almost real behaviour.
-        self.assertListEqual(["test-bot-input", "test-bot-input-internal", "test-bot-output"], self.queue_state.keys())
+        self.assertListEqual(["test-bot-input",
+                              "test-bot-input-internal",
+                              "test-bot-output"], self.queue_state.keys())
 
         msg = json.loads(self.queue_state["test-bot-output"][0])
 
@@ -102,6 +107,34 @@ class TestBotInterface(unittest.TestCase):
                           u"source_time": u"2015-06-11 16:49:42.262784"}
 
         self.assertDictContainsSubset(expected_event, msg)
+
+
+class TestBotTestCase(BotTestCase):
+    """This TestCase tests if our custom TestCase class for bots
+       actually works as expected"""
+
+    def setUp(self):
+        self.bot_type = TestBot
+        self.reset_bot()
+
+    def test_bot_run(self):
+        """Tests if a bot can be run with our new BotTestCase abstraction"""
+
+        self.input_queue = ["1.1.2.3\t2.2.4.5\t2015-06-11 16:49:42.262784"]
+        expected_event = {"feed": "test",
+                          "feed_url": "hxx://127.0.0.1",
+                          "type": "brute-force",
+                          "reported_source_ip": "1.1.2.3",
+                          "reported_destination_ip": "2.2.4.5",
+                          "source_time": "2015-06-11 16:49:42.262784"}
+
+        self.run_bot()
+        self.assertLogLengthEqual(20)
+
+        self.assertLoglineEqual(0, "Bot is starting", "INFO")
+        self.assertNotRegexpMatchesLog("ERROR")
+        self.assertRegexpMatchesLog("WARNING - It is soo awesome, we put also a warning there")
+        self.assertEventAlmostEqual(0, expected_event)
 
 
 if __name__ == '__main__':
