@@ -36,6 +36,96 @@
                 "rate_limit": "3600"
             }
         },
+        "BlockList.DE SSH": {
+            "description": "BlockList.DE SSH Collector is the bot responsible to get the report from source of information.", 
+            "module": "intelmq.bots.collectors.http.collector_http", 
+            "parameters": {
+                "feed": "BlockList.de", 
+                "url": "http://lists.blocklist.de/lists/ssh.txt", 
+                "rate_limit": "86400"
+            }
+        }, 
+        "BlockList.DE Mail": {
+            "description": "BlockList.DE Mail Collector is the bot responsible to get the report from source of information.", 
+            "module": "intelmq.bots.collectors.http.collector_http", 
+            "parameters": {
+                "feed": "BlockList.de", 
+                "url": "http://lists.blocklist.de/lists/mail.txt", 
+                "rate_limit": "86400"
+            }
+        },
+        "BlockList.DE Apache": {
+            "description": "BlockList.DE Apache Collector is the bot responsible to get the report from source of information.", 
+            "module": "intelmq.bots.collectors.http.collector_http", 
+            "parameters": {
+                "feed": "BlockList.de", 
+                "url": "http://lists.blocklist.de/lists/apache.txt", 
+                "rate_limit": "86400"
+            }
+        },
+        "BlockList.DE IMAP": {
+            "description": "BlockList.DE IMAP Collector is the bot responsible to get the report from source of information.", 
+            "module": "intelmq.bots.collectors.http.collector_http", 
+            "parameters": {
+                "feed": "BlockList.de", 
+                "url": "http://lists.blocklist.de/lists/imap.txt", 
+                "rate_limit": "86400"
+            }
+        },
+        "BlockList.DE FTP": {
+            "description": "BlockList.DE FTP Collector is the bot responsible to get the report from source of information.", 
+            "module": "intelmq.bots.collectors.http.collector_http", 
+            "parameters": {
+                "feed": "BlockList.de", 
+                "url": "http://lists.blocklist.de/lists/ftp.txt", 
+                "rate_limit": "86400" 
+            }
+        },
+        "BlockList.DE SIP": {
+            "description": "BlockList.DE SIP Collector is the bot responsible to get the report from source of information.", 
+            "module": "intelmq.bots.collectors.http.collector_http", 
+            "parameters": {
+                "feed": "BlockList.de", 
+                "url": "http://lists.blocklist.de/lists/sip.txt", 
+                "rate_limit": "86400"
+            }
+        },
+        "BlockList.DE Bots": {
+            "description": "BlockList.DE Bots Collector is the bot responsible to get the report from source of information.", 
+            "module": "intelmq.bots.collectors.http.collector_http", 
+            "parameters": {
+                "feed": "BlockList.de", 
+                "url": "http://lists.blocklist.de/lists/bots.txt", 
+                "rate_limit": "86400" 
+            }
+        },
+        "BlockList.DE Strong IPs": {
+            "description": "BlockList.DE Strong IPs Collector is the bot responsible to get the report from source of information.", 
+            "module": "intelmq.bots.collectors.http.collector_http", 
+            "parameters": {
+                "feed": "BlockList.de", 
+                "url": "http://lists.blocklist.de/lists/strongips.txt", 
+                "rate_limit": "86400" 
+            }
+        },
+        "BlockList.DE IRC Bot": {
+            "description": "BlockList.DE IRC Bot Collector is the bot responsible to get the report from source of information.", 
+            "module": "intelmq.bots.collectors.http.collector_http", 
+            "parameters": {
+                "feed": "BlockList.de", 
+                "url": "http://lists.blocklist.de/lists/ircbot.txt", 
+                "rate_limit": "86400" 
+            }
+        },
+        "BlockList.DE Brute-force Login": {
+            "description": "BlockList.DE Brute-force Login Collector is the bot responsible to get the report from source of information.", 
+            "module": "intelmq.bots.collectors.http.collector_http", 
+            "parameters": {
+                "feed": "BlockList.de", 
+                "url": "http://lists.blocklist.de/lists/bruteforcelogin.txt", 
+                "rate_limit": "86400"
+            }
+        },
         "HpHosts": {
             "module": "intelmq.bots.collectors.http.collector_http",
             "description": "HPHost Collector is the bot responsible to get the report from source of information.",
@@ -162,6 +252,66 @@
             "parameters": {
             }
         },
+        "BlockList.DE SSH": {
+            "description": "BlockList.DE Parser is the bot responsible to parse the report and sanitize the information.", 
+            "module": "intelmq.bots.parser.blocklistde.parser", 
+            "parameters": {
+            }
+        },
+        "BlockList.DE Mail": {
+            "description": "BlockList.DE Parser is the bot responsible to parse the report and sanitize the information.", 
+            "module": "intelmq.bots.parser.blocklistde.parser", 
+            "parameters": {
+            }
+        },
+        "BlockList.DE Apache": {
+            "description": "BlockList.DE Parser is the bot responsible to parse the report and sanitize the information.", 
+            "module": "intelmq.bots.parser.blocklistde.parser", 
+            "parameters": {
+            }
+        },
+        "BlockList.DE IMAP": {
+            "description": "BlockList.DE Parser is the bot responsible to parse the report and sanitize the information.", 
+            "module": "intelmq.bots.parser.blocklistde.parser", 
+            "parameters": {
+            }
+        },
+        "BlockList.DE FTP": {
+            "description": "BlockList.DE Parser is the bot responsible to parse the report and sanitize the information.", 
+            "module": "intelmq.bots.parser.blocklistde.parser", 
+            "parameters": {
+            }
+        },
+        "BlockList.DE SIP": {
+            "description": "BlockList.DE Parser is the bot responsible to parse the report and sanitize the information.", 
+            "module": "intelmq.bots.parser.blocklistde.parser", 
+            "parameters": {
+            }
+        },
+        "BlockList.DE Bots": {
+            "description": "BlockList.DE Parser is the bot responsible to parse the report and sanitize the information.", 
+            "module": "intelmq.bots.parser.blocklistde.parser", 
+            "parameters": {
+            }
+        },
+        "BlockList.DE Strong IPs": {
+            "description": "BlockList.DE Parser is the bot responsible to parse the report and sanitize the information.", 
+            "module": "intelmq.bots.parser.blocklistde.parser", 
+            "parameters": {
+            }
+        },
+        "BlockList.DE IRC Bot": {
+            "description": "BlockList.DE Parser is the bot responsible to parse the report and sanitize the information.", 
+            "module": "intelmq.bots.parser.blocklistde.parser", 
+            "parameters": {
+            }
+        }, 
+        "BlockList.DE Brute-force Login": {
+            "description": "BlockList.DE Parser is the bot responsible to parse the report and sanitize the information.", 
+            "module": "intelmq.bots.parser.blocklistde.parser", 
+            "parameters": {
+            }
+        }, 
         "HpHosts": {
             "module": "intelmq.bots.parsers.hphosts.parser",
             "description": "HpHosts Parser is the bot responsible to parse the report and sanitize the information.",
