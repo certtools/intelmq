@@ -8,12 +8,14 @@ INTELMQ_BRANCH="v1.0-final"
 #IntelMQ-Manager
 INTELMQ_MANAGER_REPO="https://github.com/certtools/intelmq-manager.git"
 
-function install_intelmq {
+function intelmq_install {
 	#Install Dependencies
 	apt-get update
 	apt-get -y install python-pip git build-essential python-dev redis-server
 	#Requires for installing pyzmq with accelaration
 	apt-get -y install libzmq3-dev
+    #Dependencies of some pyhton REQUIREMENTS
+    apt-get -y install libcurl4-gnutls-dev
 
 	#Install IntelMQ
 	#sudo su -
@@ -31,7 +33,7 @@ function install_intelmq {
 	chown -R intelmq.intelmq /opt/intelmq
 }
 
-function install_intelmq_manager {
+function intelmq_manager_install {
 	#Install Dependencies
 	apt-get -y install git apache2 php5 libapache2-mod-php5
 	#Install Manager
@@ -45,5 +47,5 @@ function install_intelmq_manager {
 	/etc/init.d/apache2 restart
 
 }
-install_intelmq
-install_intelmq_manager
+intelmq_install
+intelmq_manager_install
