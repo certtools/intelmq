@@ -135,6 +135,15 @@
                 "rate_limit": "3600"
             }
         },
+        "CI Army": {
+            "module": "intelmq.bots.collectors.http.collector_http",
+            "description": "CI Army Collector is the bot responsible to get the report from source of information.",
+            "parameters": {
+                "url": "http://cinsscore.com/list/ci-badguys.txt",
+                "feed": "CI Army",
+                "rate_limit": "3600"
+            }
+        },
         "AlienVault": {
             "module": "intelmq.bots.collectors.http.collector_http",
             "description": "AlienVault Collector is the bot responsible to get the report from source of information.",
@@ -341,6 +350,12 @@
         "VXVault": {
             "module": "intelmq.bots.parsers.vxvault.parser",
             "description": "VXVault Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+            }
+        },
+        "CI Army": {
+            "module": "intelmq.bots.parsers.ci_army.parser",
+            "description": "CI Army Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
             }
         },
