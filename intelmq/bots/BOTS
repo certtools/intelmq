@@ -449,9 +449,9 @@
                 "error_log_message": false
             }
         },
-        "BruteForceBlocker": {
-            "module": "intelmq.bots.parsers.bruteforceblocker.parser",
-            "description": "BruteForceBlocker Parser is the bot responsible to parse the report and sanitize the information.",
+        "Danger Rulez": {
+            "module": "intelmq.bots.parsers.danger_rulez.parser",
+            "description": "Danger Rulez Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
             }
         },
