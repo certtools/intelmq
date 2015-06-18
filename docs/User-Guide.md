@@ -23,7 +23,7 @@ The following instructions assume:
 ### Install Dependencies
 
 ```
-apt-get install python-pip git build-essential python-dev redis-server
+apt-get install python-pip git build-essential python-dev redis-server  python-zmq
 ```
 
 
@@ -34,6 +34,7 @@ sudo su -
 
 git clone https://github.com/certtools/intelmq.git
 cd intelmq/
+pip install -r REQUIREMENTS
 python setup.py install
 useradd -d /opt/intelmq -U -s /bin/bash intelmq
 chmod -R 0770 /opt/intelmq

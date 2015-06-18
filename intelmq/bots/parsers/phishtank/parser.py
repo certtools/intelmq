@@ -1,46 +1,54 @@
 import unicodecsv
 from cStringIO import StringIO
+from intelmq.lib import utils
 from intelmq.lib.bot import Bot, sys
 from intelmq.lib.message import Event
-from intelmq.lib.utils import encode
-from intelmq.bots import utils
+from intelmq.lib.harmonization import DateTime
 
 class PhishTankParserBot(Bot):
 
     def process(self):
         report = self.receive_message()
+
+        if not report.contains("raw"):
+            self.acknowledge_message()
+
+        raw_report = utils.base64_decode(report.value("raw"))
+
+        columns = [
+                   "__IGNORE__",
+                   "source.url",
+                   "description.url",
+                   "time.source",
+                   "__IGNORE__",
+                   "__IGNORE__",
+                   "__IGNORE__",
+                   "description.target"
+                  ]
         
-        if report:
-            event = Event()
-            report = encode(report)
+        for row in unicodecsv.reader(StringIO(raw_report), encoding='utf-8'):
 
-            # colums according to https://www.phishtank.com/developer_info.php as of 2015/04/30:
-            #   phish_id,url,phish_detail_url,submission_time,verified,verification_time,online,target
-            # example:
-            # 123456,http://www.example.com/,http://www.phishtank.com/phish_detail.php?phish_id=123456,2009-06-19T15:15:47+00:00,yes,2009-06-19T15:37:31+00:00,yes,1st National Example Bank
-            columns = ["__IGNORE__", "source_url", "description_url", "source_time", "__IGNORE__", "__IGNORE__", "__IGNORE__", "target"]
+            # ignore headers
+            if "phish_id" in row:
+                continue
             
-            for row in unicodecsv.reader(StringIO(report), encoding='utf-8'):
+            event = Event()
+            
+            for key, value in zip(columns, row):
 
-                if "phish_id" in row:
-                    continue		# skip header
+                if key == "__IGNORE__":
+                    continue
                 
-                for key, value in zip(columns, row):
-
-                    if key == "__IGNORE__":
-                        continue
-                    
-                    event.add(key, value.strip())
-                
-                event.add('feed', 'phishtank')
-                event.add('type', 'phishing')
-
-                event = utils.parse_source_time(event, "source_time")
-                event = utils.generate_observation_time(event, "observation_time")
-                event = utils.generate_reported_fields(event)
-                    
-                self.send_message(event)
-             
+                event.add(key, value, sanitize=True)
+                            
+            time_observation = DateTime().generate_datetime_now()
+            event.add('time.observation', time_observation, sanitize=True)
+            event.add('feed.name', report.value("feed.name"))
+            event.add('feed.url', report.value("feed.url"))
+            event.add('classification.type', u'phishing')
+            event.add("raw", ",".join(row), sanitize=True)
+            
+            self.send_message(event)            
         self.acknowledge_message()
 
 
