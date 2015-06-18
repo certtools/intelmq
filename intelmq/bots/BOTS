@@ -1,14 +1,32 @@
 {
     "Collector": {
-        "Taichung City Netflow": {
+        "Taichung": {
             "module": "intelmq.bots.collectors.http.collector_http",
-            "description": "Taichung City Netflow Collector is the bot responsible to get the report from source of information.",
+            "description": "Taichung Collector is the bot responsible to get the report from source of information.",
             "parameters": {
                 "url": "https://tc.edu.tw/net/netflow/lkout/recent/30",
                 "feed": "Taichung",
                 "rate_limit": "3600"
             }
         },
+        "URLVir Hosts": {
+            "description": "URLVir Hosts Collector is the bot responsible to get the report from source of information.", 
+            "module": "intelmq.bots.collectors.http.collector_http", 
+            "parameters": {
+                "feed": "URLVir", 
+                "url": "http://www.urlvir.com/export-hosts/", 
+                "rate_limit": "129600"
+            }
+        }, 
+        "URLVir IPs": {
+            "description": "URLVir IPs Collector is the bot responsible to get the report from source of information.", 
+            "module": "intelmq.bots.collectors.http.collector_http",
+            "parameters": {
+                "feed": "URLVir", 
+                "url": "http://www.urlvir.com/export-ip-addresses/", 
+                "rate_limit": "129600"
+            }
+        }, 
         "AnubisNetworks CyberFeed": {
             "module": "intelmq.bots.collectors.http.collector_http_stream",
             "description": "AnubisNetworks CyberFeed Collector is the bot responsible to get the report from source of information.",
@@ -332,9 +350,9 @@
         }
     },
     "Parser": {
-        "Taichung City Netflow": {
-            "module": "intelmq.bots.parsers.taichung_city_netflow.parser",
-            "description": "Taichung City Netflow Parser is the bot responsible to parse the report and sanitize the information.",
+        "Taichung": {
+            "module": "intelmq.bots.parsers.taichung.parser",
+            "description": "Taichung Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
                 "error_log_message": false
             }
