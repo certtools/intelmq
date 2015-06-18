@@ -330,6 +330,15 @@
                 "rate_limit": "28800"
             }
         },
+        "Cymru Full Bogons": {
+            "description": "Cymru Full Bogons Collector is the bot responsible to get the report from source of information.", 
+            "module": "intelmq.bots.collectors.http.collector_http", 
+            "parameters": {
+                "feed": "Cymru", 
+                "url": "http://www.team-cymru.org/Services/Bogons/fullbogons-ipv4.txt", 
+                "rate_limit": "129600"
+            }
+        }, 
         "MalwarePatrol Dans Guardian": {
             "module": "intelmq.bots.collectors.http.collector_http",
             "description": "MalwarePatrol Dans Guardian Collector is the bot responsible to get the report from source of information.",
@@ -551,6 +560,12 @@
             "parameters": {
             }
         },
+        "Cymru Full Bogons": {
+            "description": "Cymru Full Bogons Parser is the bot responsible to parse the report and sanitize the information.", 
+            "module": "intelmq.bots.parser.cymru_full_bogons.parser", 
+            "parameters": {
+            }
+        }, 
         "MalwarePatrol Dans Guardian": {
             "module": "intelmq.bots.parsers.malwarepatrol.parser_dansguardian",
             "description": "MalwarePatrol Dans Guardian Parser is the bot responsible to parse the report and sanitize the information.",
