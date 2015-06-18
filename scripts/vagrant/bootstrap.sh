@@ -14,11 +14,10 @@ function intelmq_install {
 	apt-get -y install python-pip git build-essential python-dev redis-server
 	#Requires for installing pyzmq with accelaration
 	apt-get -y install libzmq3-dev
-    #Dependencies of some pyhton REQUIREMENTS
+    #Dependencies for pyhton REQUIREMENTS
     apt-get -y install libcurl4-gnutls-dev
 
 	#Install IntelMQ
-	#sudo su -
 	git clone -b $INTELMQ_BRANCH $INTELMQ_REPO
 	cd intelmq/
 	# If branch v1.0-beta install deps using REQUIREMENTS file
