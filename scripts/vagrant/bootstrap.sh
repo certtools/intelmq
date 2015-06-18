@@ -4,7 +4,7 @@
 #IntelMQ
 INTELMQ_REPO="https://github.com/certtools/intelmq.git"
 #BRANCH="master"
-INTELMQ_BRANCH="v1.0-beta"
+INTELMQ_BRANCH="v1.0-final"
 #IntelMQ-Manager
 INTELMQ_MANAGER_REPO="https://github.com/certtools/intelmq-manager.git"
 
