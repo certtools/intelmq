@@ -1,43 +1,46 @@
 from intelmq.lib.bot import Bot, sys
 from intelmq.lib.message import Event
-from intelmq.bots import utils
+from intelmq.lib.harmonization import DateTime
+from intelmq.lib import utils
 import re
+
+REGEX_IP = "^[^ \t]+"
+REGEX_TIMESTAMP = "# ([^ \t]+ [^ \t]+)"
+
 
 class BruteForceBlockerParserBot(Bot):
 
     def process(self):
         report = self.receive_message()
 
-        if report:
-            regex_ip = "^[^ \t]+"
-            regex_timestamp = "# ([^ \t]+ [^ \t]+)"
+        if not report.contains("raw"):
+            self.acknowledge_message()
+
+        raw_report = utils.base64_decode(report.value("raw"))
+        for row in raw_report.split('\n'):
+
+            if row.startswith('#'):
+                continue
+
+            event = Event()
+
+            match = re.search(REGEX_IP, row)
+            if match:
+                ip = match.group()
+                
+            match = re.search(REGEX_TIMESTAMP, row)
+            if match:
+                timestamp = match.group(1) + " UTC"
             
-            for row in report.split('\n'):
-
-                if row.startswith('#'):
-                    continue
-
-                event = Event()
-
-                match = re.search(regex_ip, row)
-                if match:
-                    ip = match.group()
-                    
-                match = re.search(regex_timestamp, row)
-                if match:
-                    timestamp = match.group(1) + " UTC"
-                
-                event.add("source_ip", ip)
-                event.add("source_time", timestamp)
-                event.add('feed', 'bruteforceblocker')
-                event.add('feed_url', 'http://danger.rulez.sk/projects/bruteforceblocker/blist.php')
-                event.add('type', 'brute-force')
-
-                event = utils.parse_source_time(event, "source_time")
-                event = utils.generate_observation_time(event, "observation_time")
-                event = utils.generate_reported_fields(event)
-                
-                self.send_message(event)
+            time_observation = DateTime().generate_datetime_now()
+            event.add('time.observation', time_observation, sanitize=True)
+            event.add('time.source', timestamp, sanitize=True)
+            event.add('source.ip', ip, sanitize=True)
+            event.add('feed.name', report.value("feed.name"))
+            event.add('feed.url', report.value("feed.url"))
+            event.add('classification.type', u'brute-force')
+            
+            self.send_message(event)
         self.acknowledge_message()
 
 if __name__ == "__main__":
