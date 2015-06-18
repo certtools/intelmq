@@ -8,7 +8,6 @@ class CountryCodeFilterBot(Bot):
     
     def init(self):
         if not self.parameters.countrycode:
-            self.cc = self.parameters.countrycode
             self.logger.warn("no country code found. countrycode_filter = %s" % self.parameters.countrycode)
             self.stop()
 	else:
@@ -22,7 +21,7 @@ class CountryCodeFilterBot(Bot):
             # Event deduplication
             if isinstance(message, Event):
 		cc = message.contains("source_cymru_cc")
-                if ( cc == self.cc ):
+                if ( cc == self.parameters.countrycode ):
                     self.logger.debug("country code found! country = %s" % (cc))
                     self.send_message(message)
 	self.acknowledge_message()
