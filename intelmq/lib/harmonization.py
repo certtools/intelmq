@@ -224,7 +224,7 @@ class DomainName(GenericType):
     @staticmethod
     def to_ip(value):
         try:
-            value = DNS.dnslookup('www.google.com', 'A')
+            value = DNS.dnslookup(value, 'A')
         except:
             value = None
         return value
