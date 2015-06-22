@@ -28,7 +28,7 @@ class SpamHausParserBot(Bot):
                 continue
 
             row_splitted = row.split(';')
-			network = row_splitted[0].strip()
+            network = row_splitted[0].strip()
 
             event = Event()
             
