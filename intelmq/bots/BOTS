@@ -609,7 +609,7 @@
             }
         },
         "RIPENCC": {
-            "module": "intelmq.bots.experts.ripencc.expert",
+            "module": "intelmq.bots.experts.ripencc_abuse_contact.expert",
             "description": "RIPENCC is the bot resposible to get the correspondent abuse contact from source IP and destination IP of the events",
             "parameters": {
                 "redis_cache_host": "127.0.0.1",
