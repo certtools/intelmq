@@ -5,12 +5,7 @@ from intelmq.lib.message import Event
 from intelmq.lib.harmonization import DateTime
 
 
-REGEX_IP = "^(\d+\.\d+\.\d+\.\d+)"      # bug: this ignores IPv6 right now
-REGEX_TIMESTAMP = "(\d+\-\d+\-\d+\s\d+\:\d+\:\d+)"
-
-
-class DshieldParserBot(Bot):
-
+class DShieldASNParserBot(Bot):
 
     def process(self):
         report = self.receive_message()
@@ -24,38 +19,41 @@ class DshieldParserBot(Bot):
             if row.startswith('#'):
                 continue
 
-            octets = list()
-            match = re.search(REGEX_IP, row)
-            if match:
-                for octet in match.group().split('.'):
-                    result = octet.lstrip('0')
-                    if result == "":
-                        result = "0"
-                    octets.append(result)
-                ip = ".".join(octets)
-            else:
-                continue
-    
-            match = re.search(REGEX_TIMESTAMP, row)
-            if match:
-                timestamp = match.group(1) + " UTC"
-            else:
-                continue
-            
+            values = row.split("\t")
+
+            if len(values) < 6:
+                continue    # raise an error
+
+            source_ip = values[0]
+            reports = values[1]
+            targets = values[2]
+            first_seen = values[3]
+            last_seen = values[4]
+            updated = values[5]
+
+            parts = source_ip.split(".")
+            part_index = 0
+            for part in parts:
+                parts[part_index] = str(int(part))
+                part_index += 1
+
+            source_ip = ".".join(parts)
+
             event = Event()
-            
+
+            event.add('source.ip', source_ip, sanitize=True)
+            event.add('classification.type', u'brute-force')
             time_observation = DateTime().generate_datetime_now()
             event.add('time.observation', time_observation, sanitize=True)
-            event.add("time.source", timestamp, sanitize=True)
+            event.add("time.source", last_seen, sanitize=True)
             event.add('feed.name', report.value("feed.name"))
             event.add('feed.url', report.value("feed.url"))
-            event.add('classification.type', u'brute-force')
-            event.add("source.ip", ip, sanitize=True)
             event.add("raw", row, sanitize=True)
 
             self.send_message(event)
         self.acknowledge_message()
 
+
 if __name__ == "__main__":
-    bot = DshieldParserBot(sys.argv[1])
+    bot = DshieldASNParserBot(sys.argv[1])
     bot.start()
