@@ -308,7 +308,7 @@
         },
         "Malware Domains": {
             "description": "Malware Domains Parser is the bot responsible to parse the report and sanitize the information.", 
-            "module": "intelmq.bots.parser.malwaredomains.parser", 
+            "module": "intelmq.bots.parsers.malwaredomains.parser", 
             "parameters": {
             }
         },
@@ -413,79 +413,79 @@
         },
         "DShield AS": {
             "description": "DShield AS Parser is the bot responsible to parse the report and sanitize the information.", 
-            "module": "intelmq.bots.parser.dshield.parser_asn", 
+            "module": "intelmq.bots.parsers.dshield.parser_asn", 
             "parameters": {
             }
         }, 
         "DShield Block": {
             "description": "DShield Block Parser is the bot responsible to parse the report and sanitize the information.", 
-            "module": "intelmq.bots.parser.dshield.parser_block", 
+            "module": "intelmq.bots.parsers.dshield.parser_block", 
             "parameters": {
             }
         }, 
         "DShield Suspicious Domains": {
             "description": "DShield Suspicious Domains Parser is the bot responsible to parse the report and sanitize the information.", 
-            "module": "intelmq.bots.parser.dshield.parser_domain", 
+            "module": "intelmq.bots.parsers.dshield.parser_domain", 
             "parameters": {
             }
         }, 
         "BlockList.DE SSH": {
             "description": "BlockList.DE Parser is the bot responsible to parse the report and sanitize the information.", 
-            "module": "intelmq.bots.parser.blocklistde.parser", 
+            "module": "intelmq.bots.parsers.blocklistde.parser", 
             "parameters": {
             }
         },
         "BlockList.DE Mail": {
             "description": "BlockList.DE Parser is the bot responsible to parse the report and sanitize the information.", 
-            "module": "intelmq.bots.parser.blocklistde.parser", 
+            "module": "intelmq.bots.parsers.blocklistde.parser", 
             "parameters": {
             }
         },
         "BlockList.DE Apache": {
             "description": "BlockList.DE Parser is the bot responsible to parse the report and sanitize the information.", 
-            "module": "intelmq.bots.parser.blocklistde.parser", 
+            "module": "intelmq.bots.parsers.blocklistde.parser", 
             "parameters": {
             }
         },
         "BlockList.DE IMAP": {
             "description": "BlockList.DE Parser is the bot responsible to parse the report and sanitize the information.", 
-            "module": "intelmq.bots.parser.blocklistde.parser", 
+            "module": "intelmq.bots.parsers.blocklistde.parser", 
             "parameters": {
             }
         },
         "BlockList.DE FTP": {
             "description": "BlockList.DE Parser is the bot responsible to parse the report and sanitize the information.", 
-            "module": "intelmq.bots.parser.blocklistde.parser", 
+            "module": "intelmq.bots.parsers.blocklistde.parser", 
             "parameters": {
             }
         },
         "BlockList.DE SIP": {
             "description": "BlockList.DE Parser is the bot responsible to parse the report and sanitize the information.", 
-            "module": "intelmq.bots.parser.blocklistde.parser", 
+            "module": "intelmq.bots.parsers.blocklistde.parser", 
             "parameters": {
             }
         },
         "BlockList.DE Bots": {
             "description": "BlockList.DE Parser is the bot responsible to parse the report and sanitize the information.", 
-            "module": "intelmq.bots.parser.blocklistde.parser", 
+            "module": "intelmq.bots.parsers.blocklistde.parser", 
             "parameters": {
             }
         },
         "BlockList.DE Strong IPs": {
             "description": "BlockList.DE Parser is the bot responsible to parse the report and sanitize the information.", 
-            "module": "intelmq.bots.parser.blocklistde.parser", 
+            "module": "intelmq.bots.parsers.blocklistde.parser", 
             "parameters": {
             }
         },
         "BlockList.DE IRC Bot": {
             "description": "BlockList.DE Parser is the bot responsible to parse the report and sanitize the information.", 
-            "module": "intelmq.bots.parser.blocklistde.parser", 
+            "module": "intelmq.bots.parsers.blocklistde.parser", 
             "parameters": {
             }
         }, 
         "BlockList.DE Brute-force Login": {
             "description": "BlockList.DE Parser is the bot responsible to parse the report and sanitize the information.", 
-            "module": "intelmq.bots.parser.blocklistde.parser", 
+            "module": "intelmq.bots.parsers.blocklistde.parser", 
             "parameters": {
             }
         }, 
@@ -517,7 +517,7 @@
         },
         "OpenPhish": {
             "description": "OpenPhish Parser is the bot responsible to parse the report and sanitize the information.", 
-            "module": "intelmq.bots.parser.openphish.parser", 
+            "module": "intelmq.bots.parsers.openphish.parser", 
             "parameters": {
             }
         }, 
@@ -535,31 +535,31 @@
         },
         "CleanMX Phishing": {
             "description": "CleanMX Phishing Parser is the bot responsible to parse the report and sanitize the information.", 
-            "module": "intelmq.bots.parser.cleanmx.parser_phishing", 
+            "module": "intelmq.bots.parsers.cleanmx.parser_phishing", 
             "parameters": {
             }
         }, 
         "CleanMX Virus": {
             "description": "CleanMX Virus Parser is the bot responsible to parse the report and sanitize the information.", 
-            "module": "intelmq.bots.parser.cleanmx.parser_virus", 
+            "module": "intelmq.bots.parsers.cleanmx.parser_virus", 
             "parameters": {
             }
         },
         "Dyn": {
             "description": "Dyn Parser is the bot responsible to parse the report and sanitize the information.", 
-            "module": "intelmq.bots.parser.dyn.parser", 
+            "module": "intelmq.bots.parsers.dyn.parser", 
             "parameters": {
             }
         }, 
         "Malc0de Domain Blacklist": {
             "description": "Malc0de Domain Blacklist Parser is the bot responsible to parse the report and sanitize the information.", 
-            "module": "intelmq.bots.parser.malc0de.parser_domain_blacklist", 
+            "module": "intelmq.bots.parsers.malc0de.parser_domain_blacklist", 
             "parameters": {
             }
         }, 
         "Malc0de IP Blacklist": {
             "description": "Malc0de IP Blacklist Parser is the bot responsible to parse the report and sanitize the information.", 
-            "module": "intelmq.bots.parser.malc0de.parser_ip_blacklist", 
+            "module": "intelmq.bots.parsers.malc0de.parser_ip_blacklist", 
             "parameters": {
             }
         }, 
@@ -571,19 +571,19 @@
         },
         "Malware Group Domains": {
             "description": "Malware Group Domains Parser is the bot responsible to parse the report and sanitize the information.", 
-            "module": "intelmq.bots.parser.malwaregroup.parser_domains", 
+            "module": "intelmq.bots.parsers.malwaregroup.parser_domains", 
             "parameters": {
             }
         }, 
         "Malware Group IPs": {
             "description": "Malware Group IPs Parser is the bot responsible to parse the report and sanitize the information.", 
-            "module": "intelmq.bots.parser.malwaregroup.parser_ips", 
+            "module": "intelmq.bots.parsers.malwaregroup.parser_ips", 
             "parameters": {
             }
         }, 
         "Malware Group Proxies": {
             "description": "Malware Group Proxies Parser is the bot responsible to parse the report and sanitize the information.", 
-            "module": "intelmq.bots.parser.malwaregroup.parser_proxies", 
+            "module": "intelmq.bots.parsers.malwaregroup.parser_proxies", 
             "parameters": {
             }
         },
@@ -607,7 +607,7 @@
         },
         "Cymru Full Bogons": {
             "description": "Cymru Full Bogons Parser is the bot responsible to parse the report and sanitize the information.", 
-            "module": "intelmq.bots.parser.cymru_full_bogons.parser", 
+            "module": "intelmq.bots.parsers.cymru_full_bogons.parser", 
             "parameters": {
             }
         }, 
