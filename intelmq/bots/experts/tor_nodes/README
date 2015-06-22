@@ -1,0 +1,15 @@
+Install: 
+
+# sudo pip install netaddr
+
+
+Download database:
+
+# wget http://rules.emergingthreats.net/blockrules/emerging-tor.rules
+# mv emerging-tor.rules /var/lib/intelmq/tor.dat
+# chown intelmq.intelmq -R /var/lib/intelmq/*
+
+
+Configure 'runtime.conf' with the following parameter:
+ 
+ "database": "/var/lib/intelmq/tor.dat"
