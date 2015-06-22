@@ -6,29 +6,29 @@ from intelmq.lib.harmonization import DateTime
 
 class TorExpertBot(Bot):
 
-	database = list()
+    database = list()
 
     def init(self):
-		self.logger.info("Loading TOR exit node IPs")
+        self.logger.info("Loading TOR exit node IPs")
 
-		try:
-			with open(self.parameters.database) as fp:
-				for line in fp:
+        try:
+            with open(self.parameters.database) as fp:
+                for line in fp:
                     line = line.strip()
 
-					if line[0] == "#" or len(line) == 0:
-						continue
+                    if line[0] == "#" or len(line) == 0:
+                        continue
 
-					ip_list = line.split("[")[1]
-					ip_list = ip_list.split("]")[0]
-					ip_list = ip_list.split(",")
+                    ip_list = line.split("[")[1]
+                    ip_list = ip_list.split("]")[0]
+                    ip_list = ip_list.split(",")
 
-					for ip in ip_list:
-						TorExpertBot.database.append(ip.strip())
+                    for ip in ip_list:
+                        TorExpertBot.database.append(ip.strip())
 
-		except IOError:
-			self.logger.critical("TOR rule not defined or failed on open.")
-			self.stop()
+        except IOError:
+            self.logger.critical("TOR rule not defined or failed on open.")
+            self.stop()
 
 
     def process(self):
@@ -36,12 +36,12 @@ class TorExpertBot(Bot):
 
         keys = ['source.%s', 'destination.%s']
 
-		for key in keys:
+        for key in keys:
             if event.contains(key % 'ip'):
-    			if event.value(key % 'ip') in TorExpertBot.database:
+                if event.value(key % 'ip') in TorExpertBot.database:
                     event.add(key % 'tor_node', u'true')
 
-		self.send_message(event)
+        self.send_message(event)
         self.acknowledge_message()
 
 
