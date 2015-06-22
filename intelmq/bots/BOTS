@@ -1,5 +1,32 @@
 {
     "Collector": {
+        "DShield AS": {
+            "description": "DShield AS Collector is the bot responsible to get the report from source of information.", 
+            "module": "intelmq.bots.collector.url.collector", 
+            "parameters": {
+                "feed": "DShield", 
+                "url": "http://dshield.org/asdetailsascii.html?as=<AS Number>", 
+                "rate_limit": "129600"
+            }
+        }, 
+        "DShield Block": {
+            "description": "DShield Block Collector is the bot responsible to get the report from source of information.", 
+            "module": "intelmq.bots.collector.url.collector", 
+            "parameters": {
+                "feed": "DShield", 
+                "url": "https://www.dshield.org/block.txt", 
+                "rate_limit": "129600"
+            }
+        }, 
+        "DShield Suspicious Domains": {
+            "description": "DShield Suspicious Domains Collector is the bot responsible to get the report from source of information.", 
+            "module": "intelmq.bots.collector.url.collector", 
+            "parameters": {
+                "feed": "DShield", 
+                "url": "https://www.dshield.org/feeds/suspiciousdomains_High.txt", 
+                "rate_limit": "129600"
+            }
+        }, 
         "Taichung": {
             "module": "intelmq.bots.collectors.http.collector_http",
             "description": "Taichung Collector is the bot responsible to get the report from source of information.",
@@ -384,6 +411,24 @@
             "parameters": {
             }
         },
+        "DShield AS": {
+            "description": "DShield AS Parser is the bot responsible to parse the report and sanitize the information.", 
+            "module": "intelmq.bots.parser.dshield.parser_asn", 
+            "parameters": {
+            }
+        }, 
+        "DShield Block": {
+            "description": "DShield Block Parser is the bot responsible to parse the report and sanitize the information.", 
+            "module": "intelmq.bots.parser.dshield.parser_block", 
+            "parameters": {
+            }
+        }, 
+        "DShield Suspicious Domains": {
+            "description": "DShield Suspicious Domains Parser is the bot responsible to parse the report and sanitize the information.", 
+            "module": "intelmq.bots.parser.dshield.parser_domain", 
+            "parameters": {
+            }
+        }, 
         "BlockList.DE SSH": {
             "description": "BlockList.DE Parser is the bot responsible to parse the report and sanitize the information.", 
             "module": "intelmq.bots.parser.blocklistde.parser", 
