@@ -17,7 +17,7 @@ DEFAULT_LOGGING_LEVEL = "INFO"
 
 class Bot(object):
 
-    def __init__(self, bot_id):
+    def __init__(self, bot_id, config={}):
         self.parameters = Parameters()
 
         self.current_message = None
@@ -27,13 +27,21 @@ class Bot(object):
         self.check_bot_id(bot_id)
         self.bot_id = bot_id
 
-        self.load_system_configurations()
+        self.load_system_configurations(config.get("system") or SYSTEM_CONF_FILE)
 
-        self.logger = log(self.parameters.logging_path, self.bot_id, self.parameters.logging_level)
+        self.logger = config.get("logger") or log(self.parameters.logging_path,
+                                                  self.bot_id,
+                                                  self.parameters.logging_level)
+
         self.logger.info('Bot is starting')
 
-        self.load_runtime_configurations()
-        self.load_pipeline_configurations()
+        self.load_runtime_configurations(config.get("runtime") or RUNTIME_CONF_FILE)
+        self.load_pipeline_configurations(config.get("pipeline") or PIPELINE_CONF_FILE)
+
+        self.source_pipeline = config.get("source_pipeline") or Pipeline()
+        self.destination_pipeline = config.get("destination_pipeline") or Pipeline()
+
+        self.run_once = False
 
         self.init()
 
@@ -43,8 +51,6 @@ class Bot(object):
 
     def start(self):
         """Starts a bot"""
-        self.source_pipeline = None
-        self.destination_pipeline = None
         local_retry_delay = 0
         self.parameters.retry_delay = 30 # Temporary fix. Need to add to BOTS conf
 
@@ -52,44 +58,43 @@ class Bot(object):
 
         while True:
             try:
-                if not self.source_pipeline:
-                    time.sleep(local_retry_delay)
-                    self.logger.info("Connecting to source pipeline")
-                    self.source_pipeline = Pipeline()
-                    self.source_pipeline.source_queues(self.source_queues)
-                    self.logger.info("Connected to source pipeline")
+                time.sleep(local_retry_delay)
+                self.logger.info("Connecting to source pipeline")
+                self.source_pipeline.connect()
+                self.source_pipeline.set_source_queues(self.source_queues)
+                self.logger.info("Connected to source pipeline")
 
-                if not self.destination_pipeline:
-                    time.sleep(local_retry_delay)
-                    self.logger.info("Connecting to destination pipeline")
-                    self.destination_pipeline = Pipeline()
-                    self.destination_pipeline.destination_queues(self.destination_queues)
-                    self.logger.info("Connected to destination pipeline")
+                time.sleep(local_retry_delay)
+                self.logger.info("Connecting to destination pipeline")
+                self.destination_pipeline.connect()
+                self.destination_pipeline.set_destination_queues(self.destination_queues)
+                self.logger.info("Connected to destination pipeline")
 
                 self.process()
                 self.logger.info("Bot stops processing. Sleeps for 'rate_limit' = %ds" % self.parameters.rate_limit)
                 self.source_pipeline.sleep(self.parameters.rate_limit)
 
-            except Exception, ex:
+            except Exception as ex:
                 local_retry_delay = self.parameters.retry_delay
                 self.logger.info("Last Correct Message(event): %r" % self.last_message)
                 self.logger.info("Current Message(event): %r" % self.current_message)
                 self.logger.exception("Check the following exception:")
                 self.logger.error('Pipeline connection failed (%r)' % ex)
                 self.logger.info('Pipeline will reconnect in %s seconds' % local_retry_delay)
-                self.source_pipeline = None
-                self.destination_pipeline = None
-
             except KeyboardInterrupt as e:
-                if self.source_pipeline:
-                    self.source_pipeline.disconnect()
-                    self.logger.info("Disconnecting from source pipeline")
-                if self.destination_pipeline:
-                    self.destination_pipeline.disconnect()
-                    self.logger.info("Disconnecting from destination pipeline")
-
-                self.logger.info("Bot is shutting down")
                 break
+
+            finally:
+                if self.run_once:
+                    break
+
+        self.logger.info("Disconnecting from source pipeline")
+        self.source_pipeline.disconnect()
+
+        self.logger.info("Disconnecting from destination pipeline")
+        self.destination_pipeline.disconnect()
+
+        self.logger.info("Bot is shutting down")
 
     def stop(self):
         """Stops a bot"""
@@ -108,11 +113,40 @@ class Bot(object):
             print "Invalid bot id."
             self.stop()
 
-    def load_system_configurations(self):
+    def load_config(self, thing):
+        """Returns a configuration parsed from a thing,
+           can be a path string or a dict with config"""
+
+        config = None
+
+        if isinstance(thing, str):
+            with open(thing, 'r') as fpconfig:
+                config = json.loads(fpconfig.read())
+        elif isinstance(thing, dict):
+            config = thing
+
+        return config
+
+    def load_system_configurations(self, thing):
         """Instructs a bot to load the system configuration (json)"""
 
-        with open(SYSTEM_CONF_FILE, 'r') as fpconfig:
-            config = json.loads(fpconfig.read())
+        self.process_system_configuration(self.load_config(thing))
+
+    def load_runtime_configurations(self, thing):
+        """Load runtime json configuration for a bot from given path or from default location if empty"""
+
+        self.logger.debug("Runtime configuration: loading sections from '%s'" % thing)
+        self.process_runtime_configuration(self.load_config(thing))
+
+    def load_pipeline_configurations(self, thing):
+        """Load pipeline json configuration file"""
+
+        self.logger.debug("Pipeline configuration: loading '%s' section from '%s'" % (self.bot_id, thing))
+        self.process_pipeline_configuration(self.load_config(thing))
+
+    def process_system_configuration(self, config):
+        """Processes the loaded system configuration in config
+           and sets bot attributes accordingly"""
 
         setattr(self.parameters, 'logging_path', DEFAULT_LOGGING_PATH)
         setattr(self.parameters, 'logging_level', DEFAULT_LOGGING_LEVEL)
@@ -120,15 +154,13 @@ class Bot(object):
         for option, value in config.iteritems():
             setattr(self.parameters, option, value)
 
-    def load_runtime_configurations(self):
-        """Load runtime json configuration for a bot"""
-
-        with open(RUNTIME_CONF_FILE, 'r') as fpconfig:
-            config = json.loads(fpconfig.read())
+    def process_runtime_configuration(self, config):
+        """Processes the loaded configuration keys in config and
+            sets bot attributes accordingly"""
 
         # Load __default__ runtime configuration section
 
-        self.logger.debug("Runtime configuration: loading '%s' section from '%s' file" % ("__default__", RUNTIME_CONF_FILE))
+        self.logger.debug("Runtime configuration: loading '%s' section" % "__default__")
         if "__default__" in config.keys():
             for option, value in config["__default__"].iteritems():
                 setattr(self.parameters, option, value)
@@ -136,19 +168,15 @@ class Bot(object):
 
         # Load bot runtime configuration section
 
-        self.logger.debug("Runtime configuration: loading '%s' section from '%s' file" % (self.bot_id, RUNTIME_CONF_FILE))
+        self.logger.debug("Runtime configuration: loading '%s' section" % self.bot_id)
         if self.bot_id in config.keys():
             for option, value in config[self.bot_id].iteritems():
                 setattr(self.parameters, option, value)
                 self.logger.debug("Runtime configuration: parameter '%s' loaded with the value '%s'" % (option, value))
 
-    def load_pipeline_configurations(self):
-        """Load pipeline json configuration file"""
-
-        with open(PIPELINE_CONF_FILE, 'r') as fpconfig:
-            config = json.loads(fpconfig.read())
-
-        self.logger.debug("Pipeline configuration: loading '%s' section from '%s' file" % (self.bot_id, PIPELINE_CONF_FILE))
+    def process_pipeline_configuration(self, config):
+        """Processes the loaded pipeline configuration keys in config and
+            sets bot attributes accordingly"""
 
         self.source_queues = None
         self.destination_queues = None

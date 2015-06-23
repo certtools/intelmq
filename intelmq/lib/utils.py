@@ -40,15 +40,45 @@ def encode(text, encodings=["utf-8"], force=False):
     raise Exception("Found a problem when encoding.")
 
 
-def log(logs_path, name, loglevel="DEBUG"):
-    """Creates a new logger with given logs_path/name"""
+# Used loglines format
+log_format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+
+
+def create_file_logger(logs_path, name, loglevel="DEBUG"):
+    """Creates a logger specific for files with IntelMQ logging format"""
+
+    # create_file_logger is the same as create_stream_logger,
+    # the only difference is that one creates a logger for a
+    # stream and the other creates a logger for a file
     logger = logging.getLogger(name)
     logger.setLevel(loglevel)
 
     handler = logging.FileHandler("%s/%s.log" % (logs_path, name))
     handler.setLevel(loglevel)
 
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter(log_format)
+    handler.setFormatter(formatter)
+
+    logger.addHandler(handler)
+    return logger
+
+log = create_file_logger  # alias for create_file_logger, remove if desired
+
+
+def create_stream_logger(stream, name, loglevel="DEBUG"):
+    """Creates a logger object for stream logging.
+        Everything else behaves like create_file_logger"""
+
+    # create_file_logger is the same as create_stream_logger,
+    # the only difference is that one creates a logger for a
+    # stream and the other creates a logger for a file
+    logger = logging.getLogger(name)
+    logger.setLevel(loglevel)
+
+    handler = logging.StreamHandler(stream)
+    handler.setLevel(loglevel)
+
+    formatter = logging.Formatter(log_format)
     handler.setFormatter(formatter)
 
     logger.addHandler(handler)
