@@ -14,6 +14,11 @@ class HTTPStreamCollectorBot(Bot):
 
     def on_receive(self, data):
         for line in data.split('\n'):
+
+            line = line.strip()
+            if line == "":
+                continue
+
             report = Report()
             report.add("raw", str(line), sanitize=True)
             report.add("feed.name", self.parameters.feed, sanitize=True)
