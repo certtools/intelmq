@@ -73,14 +73,10 @@ class FeedName(GenericType):
         if not GenericType().is_valid(key, value):
             return False
 
-        if value != value.lower():
-            return False
-
         return True
         
     @staticmethod
     def sanitize(value):
-        value = value.lower()
         return GenericType().sanitize(value)
 
 
