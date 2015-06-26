@@ -1,14 +1,59 @@
 {
     "Collector": {
-        "Taichung City Netflow": {
+        "DShield AS": {
+            "description": "DShield AS Collector is the bot responsible to get the report from source of information.", 
+            "module": "intelmq.bots.collector.url.collector", 
+            "parameters": {
+                "feed": "DShield", 
+                "url": "http://dshield.org/asdetailsascii.html?as=<AS Number>", 
+                "rate_limit": "129600"
+            }
+        }, 
+        "DShield Block": {
+            "description": "DShield Block Collector is the bot responsible to get the report from source of information.", 
+            "module": "intelmq.bots.collector.url.collector", 
+            "parameters": {
+                "feed": "DShield", 
+                "url": "https://www.dshield.org/block.txt", 
+                "rate_limit": "129600"
+            }
+        }, 
+        "DShield Suspicious Domains": {
+            "description": "DShield Suspicious Domains Collector is the bot responsible to get the report from source of information.", 
+            "module": "intelmq.bots.collector.url.collector", 
+            "parameters": {
+                "feed": "DShield", 
+                "url": "https://www.dshield.org/feeds/suspiciousdomains_High.txt", 
+                "rate_limit": "129600"
+            }
+        }, 
+        "Taichung": {
             "module": "intelmq.bots.collectors.http.collector_http",
-            "description": "Taichung City Netflow Collector is the bot responsible to get the report from source of information.",
+            "description": "Taichung Collector is the bot responsible to get the report from source of information.",
             "parameters": {
                 "url": "https://tc.edu.tw/net/netflow/lkout/recent/30",
                 "feed": "Taichung",
                 "rate_limit": "3600"
             }
         },
+        "URLVir Hosts": {
+            "description": "URLVir Hosts Collector is the bot responsible to get the report from source of information.", 
+            "module": "intelmq.bots.collectors.http.collector_http", 
+            "parameters": {
+                "feed": "URLVir", 
+                "url": "http://www.urlvir.com/export-hosts/", 
+                "rate_limit": "129600"
+            }
+        }, 
+        "URLVir IPs": {
+            "description": "URLVir IPs Collector is the bot responsible to get the report from source of information.", 
+            "module": "intelmq.bots.collectors.http.collector_http",
+            "parameters": {
+                "feed": "URLVir", 
+                "url": "http://www.urlvir.com/export-ip-addresses/", 
+                "rate_limit": "129600"
+            }
+        }, 
         "AnubisNetworks CyberFeed": {
             "module": "intelmq.bots.collectors.http.collector_http_stream",
             "description": "AnubisNetworks CyberFeed Collector is the bot responsible to get the report from source of information.",
@@ -135,6 +180,15 @@
                 "rate_limit": "3600"
             }
         },
+        "Malware Domains": {
+            "description": "Malware Domains Collector is the bot responsible to get the report from source of information.", 
+            "module": "intelmq.bots.collectors.http.collector_http", 
+            "parameters": {
+                "feed": "Malware Domains", 
+                "url": "http://mirror2.malwaredomains.com/files/domains.txt", 
+                "rate_limit": "172800"
+            }
+        }, 
         "CI Army": {
             "module": "intelmq.bots.collectors.http.collector_http",
             "description": "CI Army Collector is the bot responsible to get the report from source of information.",
@@ -142,6 +196,33 @@
                 "url": "http://cinsscore.com/list/ci-badguys.txt",
                 "feed": "CI Army",
                 "rate_limit": "3600"
+            }
+        },
+        "CleanMX Phishing": {
+            "description": "CleanMX Phishing Collector is the bot responsible to get the report from source of information.", 
+            "module": "intelmq.bots.collectors.http.collector_http", 
+            "parameters": {
+                "feed": "CleanMX", 
+                "url": "http://support.clean-mx.de/clean-mx/xmlphishing?response=alive&format=csv&domain=", 
+                "rate_limit": "129600"
+            }
+        }, 
+        "CleanMX Virus": {
+            "description": "CleanMX Virus Collector is the bot responsible to get the report from source of information.", 
+            "module": "intelmq.bots.collectors.http.collector_http", 
+            "parameters": {
+                "feed": "CleanMX", 
+                "url": "http://support.clean-mx.de/clean-mx/xmlviruses?response=alive&format=csv&domain=", 
+                "rate_limit": "129600"
+            }
+        },
+        "Dyn": {
+            "description": "Dyn Collector is the bot responsible to get the report from source of information.", 
+            "module": "intelmq.bots.collectors.http.collector_http", 
+            "parameters": {
+                "feed": "Dyn", 
+                "url": "http://security-research.dyndns.org/pub/botnet/ponmocup/ponmocup-finder/ponmocup-infected-domains-latest.txt", 
+                "rate_limit": "10800"
             }
         },
         "AlienVault": {
@@ -171,6 +252,33 @@
                 "rate_limit": "3600"
             }
         },
+        "OpenPhish": {
+            "description": "OpenPhish Collector is the bot responsible to get the report from source of information.", 
+            "module": "intelmq.bots.collectors.http.collector_http", 
+            "parameters": {
+                "id": "OpenPhish", 
+                "url": "http://www.openphish.com/feed.txt", 
+                "rate_limit": "86400"
+            }
+        }, 
+        "Malc0de Domain Blacklist": {
+            "description": "Malc0de Domain Blacklist Collector is the bot responsible to get the report from source of information.", 
+            "module": "intelmq.bots.collectors.http.collector_http", 
+            "parameters": {
+                "feed": "Malc0de", 
+                "url": "http://malc0de.com/bl/BOOT", 
+                "rate_limit": "10800"
+            }
+        }, 
+        "Malc0de IP Blacklist": {
+            "description": "Malc0de IP Blacklist Collector is the bot responsible to get the report from source of information.", 
+            "module": "intelmq.bots.collectors.http.collector_http", 
+            "parameters": {
+                "feed": "Malc0de", 
+                "url": "http://malc0de.com/bl/IP_Blacklist.txt", 
+                "rate_limit": "10800"
+            }
+        }, 
         "VXVault": {
             "module": "intelmq.bots.collectors.http.collector_http",
             "description": "VXVault Collector is the bot responsible to get the report from source of information.",
@@ -198,6 +306,39 @@
                 "rate_limit": "3600"
             }
         },
+        "Malware Domains": {
+            "description": "Malware Domains Parser is the bot responsible to parse the report and sanitize the information.", 
+            "module": "intelmq.bots.parsers.malwaredomains.parser", 
+            "parameters": {
+            }
+        },
+        "Malware Group Domains": {
+            "description": "Malware Group Domains Collector is the bot responsible to get the report from source of information.", 
+            "module": "intelmq.bots.collectors.http.collector_http",
+            "parameters": {
+                "feed": "MalwareGroup", 
+                "url": "http://www.malwaregroup.com/domains", 
+                "rate_limit": "129600"
+            }
+        }, 
+        "Malware Group IPs": {
+            "description": "Malware Group IPs Collector is the bot responsible to get the report from source of information.", 
+            "module": "intelmq.bots.collectors.http.collector_http", 
+            "parameters": {
+                "feed": "MalwareGroup", 
+                "url": "http://www.malwaregroup.com/ipaddresses", 
+                "rate_limit": "129600"
+            }
+        }, 
+        "Malware Group Proxies": {
+            "description": "Malware Group Proxies Collector is the bot responsible to get the report from source of information.", 
+            "module": "intelmq.bots.collectors.http.collector_http",
+            "parameters": {
+                "feed": "MalwareGroup", 
+                "url": "http://www.malwaregroup.com/proxies", 
+                "rate_limit": "129600"
+            }
+        }, 
         "Dragon Research Group VNC": {
             "module": "intelmq.bots.collectors.http.collector_http",
             "description": "Dragon Research Group VNC Collector is the bot responsible to get the report from source of information.",
@@ -216,6 +357,15 @@
                 "rate_limit": "28800"
             }
         },
+        "Cymru Full Bogons": {
+            "description": "Cymru Full Bogons Collector is the bot responsible to get the report from source of information.", 
+            "module": "intelmq.bots.collectors.http.collector_http", 
+            "parameters": {
+                "feed": "Cymru", 
+                "url": "http://www.team-cymru.org/Services/Bogons/fullbogons-ipv4.txt", 
+                "rate_limit": "129600"
+            }
+        }, 
         "MalwarePatrol Dans Guardian": {
             "module": "intelmq.bots.collectors.http.collector_http",
             "description": "MalwarePatrol Dans Guardian Collector is the bot responsible to get the report from source of information.",
@@ -236,9 +386,9 @@
         }
     },
     "Parser": {
-        "Taichung City Netflow": {
-            "module": "intelmq.bots.parsers.taichung_city_netflow.parser",
-            "description": "Taichung City Netflow Parser is the bot responsible to parse the report and sanitize the information.",
+        "Taichung": {
+            "module": "intelmq.bots.parsers.taichung.parser",
+            "description": "Taichung Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
                 "error_log_message": false
             }
@@ -261,63 +411,81 @@
             "parameters": {
             }
         },
+        "DShield AS": {
+            "description": "DShield AS Parser is the bot responsible to parse the report and sanitize the information.", 
+            "module": "intelmq.bots.parsers.dshield.parser_asn", 
+            "parameters": {
+            }
+        }, 
+        "DShield Block": {
+            "description": "DShield Block Parser is the bot responsible to parse the report and sanitize the information.", 
+            "module": "intelmq.bots.parsers.dshield.parser_block", 
+            "parameters": {
+            }
+        }, 
+        "DShield Suspicious Domains": {
+            "description": "DShield Suspicious Domains Parser is the bot responsible to parse the report and sanitize the information.", 
+            "module": "intelmq.bots.parsers.dshield.parser_domain", 
+            "parameters": {
+            }
+        }, 
         "BlockList.DE SSH": {
             "description": "BlockList.DE Parser is the bot responsible to parse the report and sanitize the information.", 
-            "module": "intelmq.bots.parser.blocklistde.parser", 
+            "module": "intelmq.bots.parsers.blocklistde.parser", 
             "parameters": {
             }
         },
         "BlockList.DE Mail": {
             "description": "BlockList.DE Parser is the bot responsible to parse the report and sanitize the information.", 
-            "module": "intelmq.bots.parser.blocklistde.parser", 
+            "module": "intelmq.bots.parsers.blocklistde.parser", 
             "parameters": {
             }
         },
         "BlockList.DE Apache": {
             "description": "BlockList.DE Parser is the bot responsible to parse the report and sanitize the information.", 
-            "module": "intelmq.bots.parser.blocklistde.parser", 
+            "module": "intelmq.bots.parsers.blocklistde.parser", 
             "parameters": {
             }
         },
         "BlockList.DE IMAP": {
             "description": "BlockList.DE Parser is the bot responsible to parse the report and sanitize the information.", 
-            "module": "intelmq.bots.parser.blocklistde.parser", 
+            "module": "intelmq.bots.parsers.blocklistde.parser", 
             "parameters": {
             }
         },
         "BlockList.DE FTP": {
             "description": "BlockList.DE Parser is the bot responsible to parse the report and sanitize the information.", 
-            "module": "intelmq.bots.parser.blocklistde.parser", 
+            "module": "intelmq.bots.parsers.blocklistde.parser", 
             "parameters": {
             }
         },
         "BlockList.DE SIP": {
             "description": "BlockList.DE Parser is the bot responsible to parse the report and sanitize the information.", 
-            "module": "intelmq.bots.parser.blocklistde.parser", 
+            "module": "intelmq.bots.parsers.blocklistde.parser", 
             "parameters": {
             }
         },
         "BlockList.DE Bots": {
             "description": "BlockList.DE Parser is the bot responsible to parse the report and sanitize the information.", 
-            "module": "intelmq.bots.parser.blocklistde.parser", 
+            "module": "intelmq.bots.parsers.blocklistde.parser", 
             "parameters": {
             }
         },
         "BlockList.DE Strong IPs": {
             "description": "BlockList.DE Parser is the bot responsible to parse the report and sanitize the information.", 
-            "module": "intelmq.bots.parser.blocklistde.parser", 
+            "module": "intelmq.bots.parsers.blocklistde.parser", 
             "parameters": {
             }
         },
         "BlockList.DE IRC Bot": {
             "description": "BlockList.DE Parser is the bot responsible to parse the report and sanitize the information.", 
-            "module": "intelmq.bots.parser.blocklistde.parser", 
+            "module": "intelmq.bots.parsers.blocklistde.parser", 
             "parameters": {
             }
         }, 
         "BlockList.DE Brute-force Login": {
             "description": "BlockList.DE Parser is the bot responsible to parse the report and sanitize the information.", 
-            "module": "intelmq.bots.parser.blocklistde.parser", 
+            "module": "intelmq.bots.parsers.blocklistde.parser", 
             "parameters": {
             }
         }, 
@@ -335,9 +503,9 @@
                 "error_log_message": false
             }
         },
-        "BruteForceBlocker": {
-            "module": "intelmq.bots.parsers.bruteforceblocker.parser",
-            "description": "BruteForceBlocker Parser is the bot responsible to parse the report and sanitize the information.",
+        "Danger Rulez": {
+            "module": "intelmq.bots.parsers.danger_rulez.parser",
+            "description": "Danger Rulez Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
             }
         },
@@ -347,6 +515,12 @@
             "parameters": {
             }
         },
+        "OpenPhish": {
+            "description": "OpenPhish Parser is the bot responsible to parse the report and sanitize the information.", 
+            "module": "intelmq.bots.parsers.openphish.parser", 
+            "parameters": {
+            }
+        }, 
         "VXVault": {
             "module": "intelmq.bots.parsers.vxvault.parser",
             "description": "VXVault Parser is the bot responsible to parse the report and sanitize the information.",
@@ -359,9 +533,57 @@
             "parameters": {
             }
         },
+        "CleanMX Phishing": {
+            "description": "CleanMX Phishing Parser is the bot responsible to parse the report and sanitize the information.", 
+            "module": "intelmq.bots.parsers.cleanmx.parser_phishing", 
+            "parameters": {
+            }
+        }, 
+        "CleanMX Virus": {
+            "description": "CleanMX Virus Parser is the bot responsible to parse the report and sanitize the information.", 
+            "module": "intelmq.bots.parsers.cleanmx.parser_virus", 
+            "parameters": {
+            }
+        },
+        "Dyn": {
+            "description": "Dyn Parser is the bot responsible to parse the report and sanitize the information.", 
+            "module": "intelmq.bots.parsers.dyn.parser", 
+            "parameters": {
+            }
+        }, 
+        "Malc0de Domain Blacklist": {
+            "description": "Malc0de Domain Blacklist Parser is the bot responsible to parse the report and sanitize the information.", 
+            "module": "intelmq.bots.parsers.malc0de.parser_domain_blacklist", 
+            "parameters": {
+            }
+        }, 
+        "Malc0de IP Blacklist": {
+            "description": "Malc0de IP Blacklist Parser is the bot responsible to parse the report and sanitize the information.", 
+            "module": "intelmq.bots.parsers.malc0de.parser_ip_blacklist", 
+            "parameters": {
+            }
+        }, 
         "Malware Domain List": {
             "module": "intelmq.bots.parsers.malwaredomainlist.parser",
             "description": "Malware Domain List Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+            }
+        },
+        "Malware Group Domains": {
+            "description": "Malware Group Domains Parser is the bot responsible to parse the report and sanitize the information.", 
+            "module": "intelmq.bots.parsers.malwaregroup.parser_domains", 
+            "parameters": {
+            }
+        }, 
+        "Malware Group IPs": {
+            "description": "Malware Group IPs Parser is the bot responsible to parse the report and sanitize the information.", 
+            "module": "intelmq.bots.parsers.malwaregroup.parser_ips", 
+            "parameters": {
+            }
+        }, 
+        "Malware Group Proxies": {
+            "description": "Malware Group Proxies Parser is the bot responsible to parse the report and sanitize the information.", 
+            "module": "intelmq.bots.parsers.malwaregroup.parser_proxies", 
             "parameters": {
             }
         },
@@ -383,6 +605,12 @@
             "parameters": {
             }
         },
+        "Cymru Full Bogons": {
+            "description": "Cymru Full Bogons Parser is the bot responsible to parse the report and sanitize the information.", 
+            "module": "intelmq.bots.parsers.cymru_full_bogons.parser", 
+            "parameters": {
+            }
+        }, 
         "MalwarePatrol Dans Guardian": {
             "module": "intelmq.bots.parsers.malwarepatrol.parser_dansguardian",
             "description": "MalwarePatrol Dans Guardian Parser is the bot responsible to parse the report and sanitize the information.",
@@ -426,7 +654,7 @@
             }
         },
         "RIPENCC": {
-            "module": "intelmq.bots.experts.ripencc.expert",
+            "module": "intelmq.bots.experts.ripencc_abuse_contact.expert",
             "description": "RIPENCC is the bot resposible to get the correspondent abuse contact from source IP and destination IP of the events",
             "parameters": {
                 "redis_cache_host": "127.0.0.1",
@@ -457,6 +685,13 @@
             "description": "ASN Lookup is the bot responsible to add ASN and BGP information from Route Views Project to the events.",
             "parameters": {
                 "database": "/opt/intelmq/var/lib/bots/asn_lookup/ipasn.dat"
+             }
+        },
+        "Tor Nodes": {
+            "module": "intelmq.bots.experts.tor_nodes.expert",
+            "description": "Tor Nodes is the bot responsible to check if an IP is an Tor Exit Node.",
+            "parameters": {
+                "database": "/opt/intelmq/var/lib/bots/tor_nodes/tor_nodes.dat"
              }
         },
         "Deduplicator": {
