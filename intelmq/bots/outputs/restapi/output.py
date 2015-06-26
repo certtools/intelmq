@@ -1,4 +1,4 @@
-import requests, json
+import requests
 from intelmq.lib.bot import Bot, sys
 
 class RestApi(Bot):
@@ -10,8 +10,8 @@ class RestApi(Bot):
         event = self.receive_message()
         try:
             r = requests.post(self.parameters.host, event.to_json())
-        except e:
-            self.logger.error("Failed to send request: " + e.args[1])
+        except requests.exceptions.RequestException as e:
+            self.logger.error("Failed to send request: " + str(e))
         self.acknowledge_message()
 
 
