@@ -18,7 +18,7 @@ function intelmq_install {
     apt-get -y install libcurl4-gnutls-dev
 
 	#Install IntelMQ
-	git clone -b $INTELMQ_BRANCH $INTELMQ_REPO
+	git clone -b $INTELMQ_BRANCH $INTELMQ_REPO intelmq
 	cd intelmq/
 	# If branch v1.0-beta install deps using REQUIREMENTS file
 	if [[ $INTELMQ_BRANCH == "v1.0-final" ]]
@@ -30,6 +30,8 @@ function intelmq_install {
 	useradd -d /opt/intelmq -U -s /bin/bash intelmq
 	chmod -R 0770 /opt/intelmq
 	chown -R intelmq.intelmq /opt/intelmq
+    #Change owner of git clone files
+    chown -R vagrant.vagrant /home/vagrant/intelmq
 }
 
 function intelmq_manager_install {
