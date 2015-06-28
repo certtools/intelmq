@@ -4,23 +4,24 @@
 #IntelMQ
 INTELMQ_REPO="https://github.com/certtools/intelmq.git"
 #BRANCH="master"
-INTELMQ_BRANCH="v1.0-beta"
+INTELMQ_BRANCH="v1.0-final"
 #IntelMQ-Manager
 INTELMQ_MANAGER_REPO="https://github.com/certtools/intelmq-manager.git"
 
-function install_intelmq {
+function intelmq_install {
 	#Install Dependencies
 	apt-get update
-	apt-get -y install python-pip git build-essential python-dev redis-server
+	apt-get -y install python-pip git build-essential python-dev redis-server python-zmq python-pycurl
 	#Requires for installing pyzmq with accelaration
 	apt-get -y install libzmq3-dev
+    #Dependencies for pyhton REQUIREMENTS
+    apt-get -y install libcurl4-gnutls-dev
 
 	#Install IntelMQ
-	#sudo su -
-	git clone -b $INTELMQ_BRANCH $INTELMQ_REPO
+	git clone -b $INTELMQ_BRANCH $INTELMQ_REPO intelmq
 	cd intelmq/
 	# If branch v1.0-beta install deps using REQUIREMENTS file
-	if [[ $INTELMQ_BRANCH == "v1.0-beta" ]]
+	if [[ $INTELMQ_BRANCH == "v1.0-final" ]]
 	then
 	    pip install -r REQUIREMENTS;
 	fi
@@ -29,9 +30,11 @@ function install_intelmq {
 	useradd -d /opt/intelmq -U -s /bin/bash intelmq
 	chmod -R 0770 /opt/intelmq
 	chown -R intelmq.intelmq /opt/intelmq
+    #Change owner of git clone files
+    chown -R vagrant.vagrant /home/vagrant/intelmq
 }
 
-function install_intelmq_manager {
+function intelmq_manager_install {
 	#Install Dependencies
 	apt-get -y install git apache2 php5 libapache2-mod-php5
 	#Install Manager
@@ -45,5 +48,5 @@ function install_intelmq_manager {
 	/etc/init.d/apache2 restart
 
 }
-install_intelmq
-install_intelmq_manager
+intelmq_install
+intelmq_manager_install
