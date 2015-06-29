@@ -6,7 +6,6 @@ class RestApi(Bot):
 
     def init(self):
         self.session = requests.Session()
-#        self.session.headers.update({'X-sinkit-token': '3c5e933f0dcfb53e69fed19a88ff61a3921e0142'})
         if self.parameters.auth_token_name and self.parameters.auth_token:
             self.session.headers.update({self.parameters.auth_token_name : self.parameters.auth_token})
         
