@@ -352,7 +352,9 @@
             "module": "intelmq.bots.outputs.restapi.output",
             "description": "REST API is the bot responsible to send events to a REST API listener through POST.",
             "parameters": {
-                "host": "host"
+                "host": "<host>",
+                "auth_token_name" : "<token name>",
+		"auth_token" : "<token>"
             }
         }
     }
