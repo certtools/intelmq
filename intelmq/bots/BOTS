@@ -640,6 +640,18 @@
             "description": "CERT-EU Malicious URLs Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
             }
+        },
+        "URLVir Hosts": {
+            "description": "URLVir Hosts Parser is the bot responsible to parse the report and sanitize the information.", 
+            "module": "intelmq.bots.parsers.certeu.urlvir.parser_hosts", 
+            "parameters": {
+            }
+        }, 
+        "URLVir IPs": {
+            "description": "URLVir IPs Parser is the bot responsible to parse the report and sanitize the information.", 
+            "module": "intelmq.bots.parsers.certeu.urlvir.parser_ips",
+            "parameters": {
+            }
         }
     },
     "Expert": {
