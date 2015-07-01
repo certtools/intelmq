@@ -2,7 +2,7 @@
     "Collector": {
         "DShield AS": {
             "description": "DShield AS Collector is the bot responsible to get the report from source of information.", 
-            "module": "intelmq.bots.collector.url.collector", 
+            "module": "intelmq.bots.collectors.http.collector_http", 
             "parameters": {
                 "feed": "DShield", 
                 "url": "http://dshield.org/asdetailsascii.html?as=<AS Number>", 
@@ -11,7 +11,7 @@
         }, 
         "DShield Block": {
             "description": "DShield Block Collector is the bot responsible to get the report from source of information.", 
-            "module": "intelmq.bots.collector.url.collector", 
+            "module": "intelmq.bots.collectors.http.collector_http", 
             "parameters": {
                 "feed": "DShield", 
                 "url": "https://www.dshield.org/block.txt", 
@@ -20,7 +20,7 @@
         }, 
         "DShield Suspicious Domains": {
             "description": "DShield Suspicious Domains Collector is the bot responsible to get the report from source of information.", 
-            "module": "intelmq.bots.collector.url.collector", 
+            "module": "intelmq.bots.collectors.http.collector_http", 
             "parameters": {
                 "feed": "DShield", 
                 "url": "https://www.dshield.org/feeds/suspiciousdomains_High.txt", 
