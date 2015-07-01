@@ -34,7 +34,7 @@ class ASNLookupExpertBot(Bot):
                 if info[1]:
                     event.add(bgp_key, unicode(info[1]), sanitize=True, force=True)
 
-            self.send_message(event)
+        self.send_message(event)
         self.acknowledge_message()
 
 
