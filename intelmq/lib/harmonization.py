@@ -195,7 +195,7 @@ class IPAddress(GenericType):
         return unicode(dns.reversename.from_address(ip))
 
 
-class DomainName(GenericType):
+class FQDN(GenericType):
 
     @staticmethod
     def is_valid(key, value):
@@ -302,7 +302,7 @@ class URL(GenericType):
     def to_ip(url):
         value = urlparse.urlparse(url)
         if value.netloc != "":
-            return DomainName().to_ip(value.netloc)
+            return FQDN().to_ip(value.netloc)
         return None
 
     @staticmethod
