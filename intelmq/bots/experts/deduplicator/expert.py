@@ -1,8 +1,7 @@
+import copy
+import json
 from intelmq.lib.bot import Bot, sys
 from intelmq.lib.cache import Cache
-from intelmq.lib.message import Event
-from intelmq.lib.harmonization import DateTime
-from intelmq.lib import utils
 
 
 class DeduplicatorBot(Bot):
@@ -17,7 +16,15 @@ class DeduplicatorBot(Bot):
 
     def process(self):
         message = self.receive_message()
-        message_hash = hash(message)
+        auxiliar_message = copy.copy(message)
+
+        ignore_keys = self.parameters.ignore_keys.split(',')
+
+        for ignore_key in ignore_keys:
+            ignore_key = ignore_key.strip()
+            auxiliar_message.clear(ignore_key)        
+
+        message_hash = hash(auxiliar_message)
 
         if not self.cache.exists(message_hash):
             self.cache.set(message_hash, 'hash')

@@ -708,8 +708,9 @@
         },
         "Deduplicator": {
             "module": "intelmq.bots.experts.deduplicator.expert",
-            "description": "Deduplicator is the bot responsible to detect and remove deduplicated events.",
+            "description": "Deduplicator is the bot responsible to detect and remove deduplicated messages.",
             "parameters": {
+                "ignore_keys": "raw,time.observation",
                 "redis_cache_host": "127.0.0.1",
                 "redis_cache_port": "6379",
                 "redis_cache_db": "6",
