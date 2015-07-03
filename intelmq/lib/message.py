@@ -124,7 +124,7 @@ class Message(dict):
     def __is_valid_value(self, key, value):   
         class_name = self.__get_class_name_from_key_type(key)
         class_reference = getattr(intelmq.lib.harmonization, class_name)
-        return class_reference().is_valid(key, value)
+        return class_reference().is_valid(value)
 
     def __sanitize_value(self, key, value):   
         class_name = self.__get_class_name_from_key_type(key)
