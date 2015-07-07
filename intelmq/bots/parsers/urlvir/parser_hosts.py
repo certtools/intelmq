@@ -22,7 +22,7 @@ class URLVirHostsParserBot(Bot):
 
             event = Event()
 
-            if IPAddress.is_valid('source.ip', row):
+            if IPAddress.is_valid(row):
                 event.add('source.ip', row, sanitize=True)
             else:
                 event.add('source.fqdn', row, sanitize=True)

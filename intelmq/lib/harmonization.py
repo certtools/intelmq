@@ -16,7 +16,7 @@ import socket
 class GenericType():
 
     @staticmethod
-    def is_valid(key, value):
+    def is_valid(value):
         if not value:
             return False
 
@@ -49,8 +49,8 @@ class GenericType():
 class String(GenericType):
 
     @staticmethod
-    def is_valid(key, value):
-        if not GenericType().is_valid(key, value):
+    def is_valid(value):
+        if not GenericType().is_valid(value):
             return False
 
         if type(value) is not unicode:
@@ -69,26 +69,22 @@ class String(GenericType):
 class FeedName(GenericType):
 
     @staticmethod
-    def is_valid(key, value):
-        if not GenericType().is_valid(key, value):
-            return False
-
-        if value != value.lower():
+    def is_valid(value):
+        if not GenericType().is_valid(value):
             return False
 
         return True
         
     @staticmethod
     def sanitize(value):
-        value = value.lower()
         return GenericType().sanitize(value)
 
 
 class DateTime(GenericType):
 
     @staticmethod
-    def is_valid(key, value):
-        if not GenericType().is_valid(key, value):
+    def is_valid(value):
+        if not GenericType().is_valid(value):
             return False
 
         if value != DateTime.__parse(value):
@@ -122,8 +118,8 @@ class DateTime(GenericType):
 class IPNetwork(GenericType):
 
     @staticmethod
-    def is_valid(key, value):
-        if not GenericType().is_valid(key, value):
+    def is_valid(value):
+        if not GenericType().is_valid(value):
             return False
 
         try:
@@ -151,8 +147,8 @@ class IPNetwork(GenericType):
 class IPAddress(GenericType):
 
     @staticmethod
-    def is_valid(key, value):
-        if not GenericType().is_valid(key, value):
+    def is_valid(value):
+        if not GenericType().is_valid(value):
             return False
 
         try:
@@ -199,17 +195,17 @@ class IPAddress(GenericType):
         return unicode(dns.reversename.from_address(ip))
 
 
-class DomainName(GenericType):
+class FQDN(GenericType):
 
     @staticmethod
-    def is_valid(key, value):
-        if not GenericType().is_valid(key, value):
+    def is_valid(value):
+        if not GenericType().is_valid(value):
             return False
 
-        if IPAddress().is_valid(key, value):
+        if IPAddress().is_valid(value):
             return False
             
-        if URL().is_valid(key, value):
+        if URL().is_valid(value):
             return False
         
         if not len(value.split('.')) > 1:
@@ -233,8 +229,8 @@ class DomainName(GenericType):
 class MalwareName(GenericType):
 
     @staticmethod
-    def is_valid(key, value):
-        if not GenericType().is_valid(key, value):
+    def is_valid(value):
+        if not GenericType().is_valid(value):
             return False
 
         if value != value.lower():
@@ -251,13 +247,13 @@ class MalwareName(GenericType):
 class Base64(GenericType):
 
     @staticmethod
-    def is_valid(key, value):
+    def is_valid(value):
         try:
             base64.b64decode(value)
         except:
             return False
 
-        if not GenericType().is_valid(key, value):
+        if not GenericType().is_valid(value):
             return False
 
         return True
@@ -271,8 +267,8 @@ class Base64(GenericType):
 class URL(GenericType):
 
     @staticmethod
-    def is_valid(key, value):
-        if not GenericType().is_valid(key, value):
+    def is_valid(value):
+        if not GenericType().is_valid(value):
             return False
 
         result = urlparse.urlparse(value)
@@ -306,7 +302,7 @@ class URL(GenericType):
     def to_ip(url):
         value = urlparse.urlparse(url)
         if value.netloc != "":
-            return DomainName().to_ip(value.netloc)
+            return FQDN().to_ip(value.netloc)
         return None
 
     @staticmethod
@@ -341,8 +337,8 @@ class ClassificationType(GenericType):
                        ]
 
     @staticmethod
-    def is_valid(key, value):
-        if not GenericType().is_valid(key, value):
+    def is_valid(value):
+        if not GenericType().is_valid(value):
             return False
 
         if type(value) is not unicode:
