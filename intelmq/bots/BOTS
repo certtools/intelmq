@@ -643,13 +643,13 @@
         },
         "URLVir Hosts": {
             "description": "URLVir Hosts Parser is the bot responsible to parse the report and sanitize the information.", 
-            "module": "intelmq.bots.parsers.certeu.urlvir.parser_hosts", 
+            "module": "intelmq.bots.parsers.urlvir.parser_hosts", 
             "parameters": {
             }
         }, 
         "URLVir IPs": {
             "description": "URLVir IPs Parser is the bot responsible to parse the report and sanitize the information.", 
-            "module": "intelmq.bots.parsers.certeu.urlvir.parser_ips",
+            "module": "intelmq.bots.parsers.urlvir.parser_ips",
             "parameters": {
             }
         }
@@ -708,8 +708,9 @@
         },
         "Deduplicator": {
             "module": "intelmq.bots.experts.deduplicator.expert",
-            "description": "Deduplicator is the bot responsible to detect and remove deduplicated events.",
+            "description": "Deduplicator is the bot responsible to detect and remove deduplicated messages.",
             "parameters": {
+                "ignore_keys": "raw,time.observation",
                 "redis_cache_host": "127.0.0.1",
                 "redis_cache_port": "6379",
                 "redis_cache_db": "6",
