@@ -23,7 +23,7 @@ The following instructions assume:
 ### Install Dependencies
 
 ```
-apt-get install python-pip git build-essential python-dev redis-server python-zmq python-pycurl
+apt-get install python-pip git build-essential python-dev redis-server python-zmq python-pycurl libcurl4-gnutls-dev
 ```
 
 
