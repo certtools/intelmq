@@ -10,10 +10,11 @@ import json
 import time
 import shlex
 import inspect
-import psutil
 import signal
 import argparse
 
+'''
+import psutil
 from intelmq.lib.pipeline import PipelineFactory
 from intelmq.lib.pipeline import Redis
 
@@ -24,7 +25,7 @@ from intelmq import STARTUP_CONF_FILE
 from intelmq import PIPELINE_CONF_FILE
 from intelmq import SYSTEM_CONF_FILE
 from intelmq import RUNTIME_CONF_FILE
-
+'''
 
 class Parameters(object):
     pass
@@ -149,6 +150,11 @@ def load_configuration_to_parameters(configuration_file):
         setattr(parameters, option, value)
     return parameters
 
+def get_method_instance(method_name):
+    inspect_members = inspect.getmembers(IntelMQContoller())
+    for name, method_instance in inspect_members:
+        if name.startswith(method_name):
+            return method_instance
 
 
 class IntelMQContoller():
@@ -157,18 +163,17 @@ class IntelMQContoller():
 
 
         ''' Load configurations '''
-    
-        self.parameters = Parameters()
+        '''
+        self.startup = load_configuration_to_dict(STARTUP_CONF_FILE)
+        self.system = load_configuration_to_dict(SYSTEM_CONF_FILE)
     
         system_params = load_configuration_to_parameters(SYSTEM_CONF_FILE)
         defaults_params = load_configuration_to_parameters(DEFAULTS_CONF_FILE)
+
+        self.parameters = Parameters()
         self.parameters.update(system_params)
         self.parameters.update(defaults_params)
-        
-        self.startup = load_configuration_to_dict(STARTUP_CONF_FILE)
-        self.system = load_configuration_to_dict(SYSTEM_CONF_FILE)
-
-
+        '''
 
         ''' Supported output formats '''
 
@@ -209,6 +214,7 @@ class IntelMQContoller():
         
         if len(sys.argv) == 1:
             parser.print_help()
+            sys.exit(-1)
 
 
 
@@ -220,49 +226,44 @@ class IntelMQContoller():
 
 
         ''' PID Directory '''
-               
+        '''               
         if not os.path.exists(PIDDIR):
             os.makedirs(PIDDIR)
-
+        '''
 
 
 
 
     
-    def get_method_instance(self, method_name):
-        inspect_members = inspect.getmembers(self)
-        for name, func in inspect_members:
-            if name.startswith(method_name):
-                return method_instance
 
     
-    def run(self):
-    
-        results = None
-        
+    def run(self):   
+
         if self.args.bot:
             method_name = "bot_" + self.args.bot
-            method_instance = self.get_method_instance(method_name)
-            results = method_instance(self.args.bot_id)
-            
+
         elif self.args.botnet:
             method_name = "botnet_" + self.args.botnet
-            method_instance = self.get_method_instance(method_name)
-            results = method_instance()
             
         elif self.args.list:
             method_name = "list_" + self.args.list
-            method_instance = self.get_method_instance(method_name)
-            results = method_instance()
             
         elif self.args.log:
-            results = self.read_log(self.args.log, self.args.bot_id)
-        
+            method_name = "log_read"
+
+        results = None
+        method_instance = get_method_instance(method_name)
+        results = method_instance()
+
         if self.args.type == 'json':
             print json.dumps(results)
+        else:
+            print results
 
 
-    def bot_start(self, bot_id):        
+    def bot_start(self):
+        bot_id = self.args.bot_id
+
         pid = read_pidfile(bot_id)
         if pid:
             if status_process(pid):
@@ -274,7 +275,6 @@ class IntelMQContoller():
         self.__bot_start(bot_id, self.startup[bot_id]['module'])
         time.sleep(0.25)
         return self.bot_status(bot_id)
-
         
     def __bot_start(self, bot_id, module):
         cmd = "python -m %s %s" % (module, bot_id)
@@ -282,7 +282,9 @@ class IntelMQContoller():
         write_pidfile(bot_id, pid)
         
         
-    def bot_stop(self, bot_id):
+    def bot_stop(self):
+        bot_id = self.args.bot_id
+
         pid = read_pidfile(bot_id)
         if not pid:
             log_bot_error(bot_id, 'stopped')
@@ -305,13 +307,17 @@ class IntelMQContoller():
         remove_pidfile(bot_id)    
 
 
-    def bot_restart(self, bot_id):
+    def bot_restart(self):
+        bot_id = self.args.bot_id
+
         status_stop = self.bot_stop(bot_id)
         status_start = self.bot_start(bot_id)
         return (status_stop, status_start)
     
     
-    def bot_status(self, bot_id):
+    def bot_status(self):
+        bot_id = self.args.bot_id
+
         pid = read_pidfile(bot_id)
         if pid and status_process(pid):
             log_bot_message(bot_id, 'running')
@@ -412,9 +418,12 @@ class IntelMQContoller():
         return return_dict
         
         
-    def read_log(self, log_level, bot_id):
+    def log_read(self, log_level, bot_id):
+
+        self.args.log, self.args.bot_id
+
         # TODO: Parse number of lines
-        split_log_level = log_level.split(':')
+        split_log_level = self.args.log.split(':')
         
         if len(split_log_level) != 2:
             return
@@ -422,14 +431,20 @@ class IntelMQContoller():
         number_of_lines = int(split_log_level[1])
         log_level = LOG_LEVEL[split_log_level[0]]
 
-        if bot_id is None:
-            return self.read_system_log(log_level, number_of_lines)
+        if self.args.bot_id:
+            return self.read_bot_log(self.args.bot_id, log_level, number_of_lines)
         else:
-            return self.read_bot_log(bot_id, log_level, number_of_lines)
-        
+            return self.read_system_log(log_level, number_of_lines)
+
+
+    # FIXME: rewrite        
+    #
     def read_system_log(self, log_level, number_of_lines):
         pass
+
         
+    # FIXME: rewrite
+    #
     def read_bot_log(self, bot_id, log_level, number_of_lines):
         basepath = self.system['logging_path']
         if not self.system['logging_path'].endswith('/'):
@@ -485,5 +500,5 @@ class IntelMQContoller():
             
     
 if __name__ == "__main__":
-    x = IntelMQContoller()
-    x.run()
+    intelmqctl = IntelMQContoller()
+    intelmqctl.run()
