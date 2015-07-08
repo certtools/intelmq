@@ -354,7 +354,7 @@
             "parameters": {
                 "host": "<host>",
                 "auth_token_name" : "<token name>",
-		"auth_token" : "<token>"
+	        "auth_token" : "<token>"
             }
         }
     }
