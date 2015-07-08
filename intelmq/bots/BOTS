@@ -383,6 +383,15 @@
                 "feed": "OpenBL",
                 "rate_limit": "43200"
             }
+        },
+        "Turris Greylist": {
+            "module": "intelmq.bots.collectors.http.collector_http",
+            "description": "Turris Greylist Collector is the bot responsible to get the report from source of information.",
+            "parameters": {
+                "url": "https://www.turris.cz/greylist-data/greylist-latest.csv",
+                "feed": "Turris Greylist",
+                "rate_limit": "43200"
+            }
         }
     },
     "Parser": {
@@ -650,6 +659,12 @@
         "URLVir IPs": {
             "description": "URLVir IPs Parser is the bot responsible to parse the report and sanitize the information.", 
             "module": "intelmq.bots.parsers.urlvir.parser_ips",
+            "parameters": {
+            }
+        },
+        "Turris Greylist": {
+            "description": "Turris Greylist Parser is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.turris.parser",
             "parameters": {
             }
         }
