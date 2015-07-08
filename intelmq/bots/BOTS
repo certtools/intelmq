@@ -386,10 +386,10 @@
         },
         "Turris Greylist": {
             "module": "intelmq.bots.collectors.http.collector_http",
-            "description": "Turris Collector is the bot responsible to get the report from source of information.",
+            "description": "Turris Greylist Collector is the bot responsible to get the report from source of information.",
             "parameters": {
                 "url": "https://www.turris.cz/greylist-data/greylist-latest.csv",
-                "feed": "TurrisGreylist",
+                "feed": "Turris Greylist",
                 "rate_limit": "43200"
             }
         }
