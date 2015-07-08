@@ -1,7 +1,7 @@
 import requests
 from intelmq.lib.bot import Bot, sys
 
-class RestApi(Bot):
+class RestAPI(Bot):
 
 
     def init(self):
@@ -20,6 +20,6 @@ class RestApi(Bot):
 
 
 if __name__ == "__main__":
-    bot = RestApi(sys.argv[1])
+    bot = RestAPI(sys.argv[1])
     bot.start()
 
