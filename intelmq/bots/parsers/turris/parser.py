@@ -25,13 +25,12 @@ class TurrisGreylistParserBot(Bot):
         for row in unicodecsv.reader(StringIO(raw_report), encoding='utf-8'):
 
             # ignore headers
-            if "Address" in row:
+            if "Address,Country,Tags,ASN" in row:
                 continue
             
             event = Event()
             
             for key, value in zip(columns, row):
-
                 if key == "__IGNORE__":
                     continue
                 
