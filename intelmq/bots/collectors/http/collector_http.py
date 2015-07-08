@@ -11,7 +11,8 @@ class URLCollectorBot(Bot):
                                 timeout = 60.0,
                                 chunk_size = 16384,
                                 http_proxy=self.parameters.http_proxy,
-                                https_proxy=self.parameters.https_proxy
+                                https_proxy=self.parameters.https_proxy,
+                                user_agent=self.parameters.user_agent
                             )
         self.logger.info("Report downloaded.")
 
