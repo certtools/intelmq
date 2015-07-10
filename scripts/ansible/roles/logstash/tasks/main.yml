@@ -1,0 +1,24 @@
+---
+- name: Logstash apt repo
+  apt_repository:
+    repo="deb http://packages.elasticsearch.org/logstash/{{ logstash.version }}/{{ ansible_os_family|lower }} stable main"
+    update_cache=yes
+  sudo: yes
+
+- name: Install logstash apt packages
+  apt: pkg={{ item }} update_cache=yes state=present
+  with_items:
+   - logstash
+   - logstash-contrib
+  sudo: yes
+  notify: Restart logstash
+
+- name: Logstash conf file
+  template:
+    src={{ item.src }}
+    dest=/etc/logstash/conf.d/{{ item.dest }}
+    owner=root group=root mode=644
+  with_items: logstash.configs
+  sudo: yes
+  notify: Restart logstash
+
