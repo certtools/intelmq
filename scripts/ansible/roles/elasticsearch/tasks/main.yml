@@ -1,0 +1,32 @@
+---
+- name: Add elasticsearch repo key.
+  apt_key: id=D88E42B4 url=https://packages.elasticsearch.org/GPG-KEY-elasticsearch state=present validate_certs=no
+
+- name: Add elasticsearch repo.
+  apt_repository:
+    repo="deb http://packages.elasticsearch.org/elasticsearch/{{ elasticsearch.version }}/{{ ansible_os_family|lower }} stable main"
+    update_cache=yes
+  sudo: yes
+
+- name: Install elasticsearch from repo.
+  apt: pkg=elasticsearch update_cache=yes state=latest
+  sudo: yes
+  notify: Restart elasticsearch
+
+- name: Curator PIP package
+  pip: name=elasticsearch-curator state=latest
+  sudo: yes
+
+- name: Configure elasticsearch.
+  template:
+    src=elasticsearch.yml.j2
+    dest=/etc/elasticsearch/elasticsearch.yml
+    owner=root group=root mode=644
+  sudo: yes
+  notify: Restart elasticsearch
+
+- name: Replace init.d script until the PID_DIR gets merged.
+  copy: src=elasticsearch dest=/etc/init.d/elasticsearch owner=root group=root mode=0755
+
+- name: Make sure we start elasticsearch on boot
+  service: name=elasticsearch enabled=yes

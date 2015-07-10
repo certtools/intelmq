@@ -1,0 +1,8 @@
+---
+java:
+  flavor: oracle
+  oracle:
+    - oracle-java7-installer
+    - oracle-java7-set-default
+  openjdk:
+    - openjdk-7-jre-headless

@@ -1,0 +1,12 @@
+######################### ElasticSearch Configuration  ########################
+# This file is managed by Ansible, do not be surpised when your changes are overwritten!
+#
+# Please see the source file for context and more information:
+# https://github.com/elasticsearch/elasticsearch/blob/master/config/elasticsearch.yml
+#
+
+############################## Network And HTTP ###############################
+
+{% if elasticsearch.http.port is defined %}
+http.port: {{ elasticsearch.http.port }}
+{% endif %}

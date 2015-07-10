@@ -1,0 +1,15 @@
+---
+- name: Install Intelmq with ELK stack on vagrant.
+  hosts: all
+  user: vagrant
+
+  roles:
+    - common
+    - nginx
+    - php5-fpm
+    - java 
+    - elasticsearch
+    - logstash
+    - kibana
+    - intelmq
+    - intelmq-manager

@@ -1,0 +1,9 @@
+---
+intelmq:
+  manager:
+    repo: https://github.com/certtools/intelmq-manager.git
+    path: /opt/intelmq/manager/intelmq-manager
+    password: intelmq
+    user: intelmq
+    allowed_addresses:
+     - 127.0.0.1

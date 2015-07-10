@@ -1,0 +1,35 @@
+server {
+  listen 80;
+  server_name kibana;
+  client_max_body_size 50M;
+
+  access_log /var/log/nginx/kibana_access.log;
+  error_log  /var/log/nginx/kibana_errors.log;
+
+  location / {
+
+    # Pass requests to Kibana
+    proxy_pass http://127.0.0.1:{{ kibana.port}}/;
+    proxy_redirect off;
+    proxy_buffering off;
+
+    proxy_set_header  X-Real-IP  $remote_addr;
+    proxy_set_header  X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header  Host $http_host;
+
+    # For CORS Ajax
+    proxy_pass_header Access-Control-Allow-Origin;
+    proxy_pass_header Access-Control-Allow-Methods;
+    proxy_hide_header Access-Control-Allow-Headers;
+    add_header Access-Control-Allow-Headers 'X-Requested-With, Content-Type';
+    add_header Access-Control-Allow-Credentials true;
+
+    satisfy any;
+{% for item in kibana.allowed_addresses %}
+    allow {{ item }};
+{% endfor %}
+    deny all;
+    auth_basic "Authentication Required";
+    auth_basic_user_file conf.d/.kibana.htpasswd;
+  }
+}

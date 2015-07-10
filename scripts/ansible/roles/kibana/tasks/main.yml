@@ -1,0 +1,64 @@
+---
+- name: Download kibana archive
+  get_url:
+    dest=/opt
+    url=https://download.elasticsearch.org/kibana/kibana/kibana-{{ kibana.version }}.tar.gz
+    owner={{ nginx.user }} group={{ nginx.user }}
+    validate_certs=no
+  sudo: yes
+  register: new_archive_downloaded
+
+- name: Uncompress kibana archive
+  unarchive:
+    src=/opt/kibana-{{ kibana.version }}.tar.gz
+    dest=/opt copy=no
+    owner={{ nginx.user }} group={{ nginx.user }}
+  sudo: yes
+  when: new_archive_downloaded|changed
+
+- name: Uncompressed Kibana linked to path
+  file:
+    src=/opt/kibana-{{ kibana.version }}
+    path={{ kibana.path }} state=link
+    owner={{ nginx.user }} group={{ nginx.user }}
+  sudo: yes
+
+- name: Kibana files ownership
+  file:
+    path=/opt/kibana-{{ kibana.version }}
+    state=directory
+    owner={{ nginx.user }} group={{ nginx.user }} recurse=yes
+  changed_when: False
+  sudo: yes
+
+- name: Supervisor config file
+  template:
+    src=kibana-supervisor.j2
+    dest=/etc/supervisor/conf.d/kibana.conf
+    owner=root group=root mode=644
+  sudo: yes
+  notify: Restart supervisor
+
+- name: Generate kibana htpassword
+  shell:
+    echo "{{ kibana.user }}:$(openssl passwd -crypt {{ kibana.password }}):kibana" |tee .kibana.htpasswd
+  args:
+    chdir: /etc/nginx/conf.d
+    creates: /etc/nginx/conf.d/.kibana.htpasswd
+  sudo: yes
+  register: http_pass_gen
+
+- name: Kibana htpassword file permissions
+  file:
+    path=/etc/nginx/conf.d/.kibana.htpasswd
+    owner={{ nginx.user }} group=root mode=400
+  sudo: yes
+  when: http_pass_gen|changed
+
+- name: Nginx config file
+  template:
+    src=kibana-default.j2
+    dest=/etc/nginx/conf.d/kibana.conf
+    owner=root group=root mode=644
+  sudo: yes
+  notify: Restart nginx
