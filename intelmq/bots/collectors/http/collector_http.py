@@ -12,7 +12,7 @@ class URLCollectorBot(Bot):
                                 chunk_size = 16384,
                                 http_proxy=self.parameters.http_proxy,
                                 https_proxy=self.parameters.https_proxy,
-                                user_agent=self.parameters.user_agent
+                                user_agent=self.parameters.http_user_agent
                             )
         self.logger.info("Report downloaded.")
 
