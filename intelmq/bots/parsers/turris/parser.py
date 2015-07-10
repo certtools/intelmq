@@ -21,11 +21,13 @@ class TurrisGreylistParserBot(Bot):
                    "description.text",
                    "__IGNORE__"
                   ]
-        
+
+        headers = True        
         for row in unicodecsv.reader(StringIO(raw_report), encoding='utf-8'):
 
             # ignore headers
-            if "Address,Country,Tags,ASN" in row:
+            if headers:
+                headers = False
                 continue
             
             event = Event()

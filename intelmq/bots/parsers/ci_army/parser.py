@@ -4,7 +4,7 @@ from intelmq.lib.message import Event
 from intelmq.lib.harmonization import DateTime
 
 
-class CIArmyParserBot(ParserBot):
+class CIArmyParserBot(Bot):
 
     def process(self):
 
