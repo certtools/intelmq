@@ -1,0 +1,46 @@
+---
+- name: Download Intelmq-Manager
+  git: repo=https://github.com/certtools/intelmq-manager.git
+       dest=/opt/intelmq/manager
+  sudo: yes
+
+- name: Intelmq-Manager files ownership
+  file:
+    path={{ intelmq.manager.path }}
+    state=directory
+    owner={{ nginx.user }} group={{ nginx.user }} recurse=yes
+  changed_when: False
+  sudo: yes
+
+- name: Generate Intelmq-Manager htpassword
+  shell:
+    echo "{{ intelmq.manager.user }}:$(openssl passwd -crypt {{ intelmq.manager.password }}):intelmq" |tee .intelmq.htpasswd
+  args:
+    chdir: /etc/nginx/conf.d
+    creates: /etc/nginx/conf.d/.intelmq.htpasswd
+  sudo: yes
+  register: http_pass_gen
+
+- name: Intelmq-Manager htpassword file permissions
+  file:
+    path=/etc/nginx/conf.d/.intelmq.htpasswd
+    owner={{ nginx.user }} group=root mode=400
+  sudo: yes
+  when: http_pass_gen|changed
+
+- name: Add nginx user to intelmq group
+  user: 
+   name=nginx 
+   groups=intelmq
+   append=yes
+
+- name: Give permissions to nginx user
+  lineinfile: "dest=/etc/sudoers state=present regexp='^%nginx' line='nginx ALL=(intelmq) NOPASSWD: /opt/intelmq/bin/intelmqctl'"
+
+- name: Nginx config file
+  template:
+    src=intelmq-manager.j2
+    dest=/etc/nginx/conf.d/intelmq-manager.conf
+    owner=root group=root mode=644
+  sudo: yes
+  notify: Restart nginx

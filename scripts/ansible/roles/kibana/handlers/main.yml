@@ -1,0 +1,12 @@
+---
+- name: Restart kibana
+  supervisorctl:
+    name=kibana
+    state=restarted
+  sudo: yes
+
+- name: Restart supervisor
+  service:
+    name=supervisor
+    enabled=yes state=restarted
+  sudo: yes
