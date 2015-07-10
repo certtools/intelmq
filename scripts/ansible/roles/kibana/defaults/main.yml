@@ -1,0 +1,9 @@
+---
+kibana:
+  version: 4.0.1-linux-x64
+  path: /opt/kibana
+  port: 5601
+  user: kibana
+  password: kibana
+  allowed_addresses:
+    - 127.0.0.1
