@@ -12,7 +12,7 @@ class URLCollectorBot(Bot):
                                 chunk_size = 16384,
                                 http_proxy=self.parameters.http_proxy,
                                 https_proxy=self.parameters.https_proxy,
-                                user_agent=self.parameters.user_agent
+                                user_agent = self.parameters.user_agent if hasattr(self.parameters, 'user_agent') else None
                             )
         self.logger.info("Report downloaded.")
 
