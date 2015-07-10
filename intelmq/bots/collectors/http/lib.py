@@ -15,14 +15,18 @@ def fetch_url(url, timeout=60.0, chunk_size=16384, http_proxy = None, https_prox
         urllib2.install_opener(opener)
 
     req = urllib2.Request(url)
-    if user_agent == None:
+    
+    if not user_agent:
         user_agent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36"
+        
     req.add_header('User-agent', user_agent)
     resp = urllib2.urlopen(req, timeout = timeout)
+    
     iostring = StringIO.StringIO()
     shutil.copyfileobj(resp, iostring, chunk_size)
     value = iostring.getvalue()
     iostring.close()
+    
     return value
 
 

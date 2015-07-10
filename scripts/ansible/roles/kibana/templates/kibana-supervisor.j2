@@ -1,0 +1,7 @@
+[program:kibana]
+command={{ kibana.path }}/bin/kibana
+autostart=true
+autorestart=true
+user={{ nginx.user }}
+stdout_logfile=/var/log/supervisor/kibana.log
+stderr_logfile=/var/log/supervisor/error.log

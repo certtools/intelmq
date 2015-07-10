@@ -1,0 +1,17 @@
+---
+- name: Install php5-fpm
+  apt: pkg=php5-fpm state=latest
+  sudo: yes
+
+- name: Set nginx user as owner for /var/run/php5-fpm.sock
+  lineinfile: dest=/etc/php5/fpm/pool.d/www.conf regexp='listen.owner' line='listen.owner = {{nginx.user}}' state=present
+
+- name: Set nginx group as group for /var/run/php5-fpm.sock
+  lineinfile: dest=/etc/php5/fpm/pool.d/www.conf regexp='listen.group' line='listen.group = {{nginx.user}}' state=present
+
+- name: Set php5fpm default user as "{{nginx.user}}"
+  lineinfile: dest=/etc/php5/fpm/pool.d/www.conf regexp='^user =' line='user = {{nginx.user}}' state=present
+
+- name: Set php5fpm default group as "{{nginx.group}}"
+  lineinfile: dest=/etc/php5/fpm/pool.d/www.conf regexp='^group =' line='group = {{nginx.group}}' state=present
+  notify: Restart php5-fpm

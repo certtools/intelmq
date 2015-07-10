@@ -1,0 +1,19 @@
+---
+- name: Clone intelmq repo
+  git: repo="{{ intelmq.repo }}" dest=/tmp/intelmq version="{{ intelmq.branch }}"
+  sudo: yes
+
+- name: pip install intelmq
+  shell: 'yes | pip install /tmp/intelmq'
+
+- name: Add intelmq group
+  group: name=intelmq state=present
+  sudo: yes
+
+- name: Add intelmq user
+  user: name=intelmq group=intelmq
+  sudo: yes
+
+- name: Set proper permissions
+  file: path=/opt/intelmq owner=intelmq group=intelmq mode=0770 state=directory recurse=yes
+  sudo: yes

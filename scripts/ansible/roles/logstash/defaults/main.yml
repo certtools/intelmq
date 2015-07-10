@@ -1,0 +1,6 @@
+---
+logstash:
+  version: 1.4
+  pid_file: /var/run/logstash.pid
+  configs:
+    - { src: logstash-intelmq.conf.j2, dest: intelmq.conf }

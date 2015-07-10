@@ -1,0 +1,6 @@
+---
+- name: Restart logstash
+  service:
+    name=logstash
+    enabled=yes state=restarted
+  sudo: yes
