@@ -1,0 +1,19 @@
+---
+- name: Install Intelmq with ELK stack.
+  hosts: localhost
+  user: root
+  # remote_user: user
+  # sudo: yes
+
+  roles:
+    - common
+    - nginx
+    - php5-fpm
+    - java 
+    - elasticsearch
+    - logstash
+    - kibana
+    - intelmq
+    - intelmq-manager
+
+

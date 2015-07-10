@@ -1,0 +1,63 @@
+---
+common:
+  system_packages:
+    - python-apt
+    - python-pycurl
+    - python-pip
+    - python-setuptools
+    - supervisor
+    - git-core
+    - jq
+    - python-pip 
+    - git 
+    - build-essential 
+    - python-dev 
+    - redis-server
+
+  python_packages:
+    - virtualenv
+
+nginx:
+  user: nginx
+  group: nginx
+
+java:
+  flavor: oracle
+  oracle:
+    - oracle-java7-installer
+    - oracle-java7-set-default
+  openjdk:
+    - openjdk-7-jre-headless
+
+elasticsearch:
+  version: 1.6
+  pid_file: /var/run/elasticsearch.pid
+  http:
+    port: 9200
+
+logstash:
+  version: 1.4
+  pid_file: /var/run/logstash.pid
+  configs:
+    - { src: logstash-intelmq.conf.j2, dest: intelmq.conf }
+
+kibana:
+  version: 4.0.1-linux-x64
+  path: /opt/kibana
+  port: 5601
+  user: kibana
+  password: kibana
+  allowed_addresses:
+    - 127.0.0.1
+
+intelmq:
+  repo: https://github.com/certtools/intelmq.git
+  branch: master
+  manager:
+    repo: https://github.com/certtools/intelmq-manager.git
+    path: /opt/intelmq/manager/intelmq-manager
+    password: intelmq
+    user: intelmq
+    allowed_addresses:
+     - 127.0.0.1
+
