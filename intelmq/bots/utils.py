@@ -6,6 +6,7 @@ import binascii
 import datetime
 import dateutil.parser
 import dateutil.tz
+import ipaddress
 from urlparse import urlparse
 
 
@@ -40,16 +41,15 @@ def get_reverse_ip(ip):
 
 
 def is_url(url):
-   
     if not "/" in url:
         return None
-    
+
     if "hxxp://" in url:
-        url = url.replace('hxxp://','http://')
-    
+        url = url.replace('hxxp://', 'http://')
+
     if "hxxps://" in url:
-        url = url.replace('hxxps://','https://')
-    
+        url = url.replace('hxxps://', 'https://')
+
     res = urlparse(url)
     if res.netloc != "":
         return url
@@ -57,12 +57,12 @@ def is_url(url):
     res = urlparse("http://" + url)
     if res.netloc != "":
         return "http://" + url
-        
+
     return None
 
 
 def is_domain_name(domain_name):
-    
+
     if "/" in domain_name or is_ip(domain_name):
         return None
 
@@ -101,6 +101,13 @@ def is_ipv6(ip):
         return None
 
 
+def is_in_net(ip, iprange):  # Test if the IPv4, IPv6 is in the CIDR range.
+    if ipaddress.ip_address(ip) in ipaddress.ip_network(iprange):
+        return True
+    else:
+        return False
+
+
 def ip_to_int(ip):
     try:
         ip_integer = socket.inet_pton(socket.AF_INET, ip)
@@ -109,18 +116,18 @@ def ip_to_int(ip):
             ip_integer = socket.inet_pton(socket.AF_INET6, ip)
         except socket.error:
             return None
-        
+
     ip_integer = int(binascii.hexlify(ip_integer), 16)
-    return ip_integer    
+    return ip_integer
 
 
 def parse_source_time(event, key):
     if not event.contains(key):
         return generate_source_time(event, key)
-    
+
     value = event.value(key)
     event.discard(key, value)
-    
+
     new_value = dateutil.parser.parse(value)
     new_value = new_value.astimezone(pytz.utc)
     new_value = new_value.isoformat()
@@ -128,16 +135,16 @@ def parse_source_time(event, key):
     return event
 
 
-def generate_source_time(event, key):        
+def generate_source_time(event, key):
     value = datetime.datetime.utcnow()
     tz = pytz.timezone('UTC')
-    value = value.replace(hour=0,minute=0,second=0,microsecond=0, tzinfo=tz)
+    value = value.replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=tz)
     value = value.isoformat()
     event.add(key, value)
     return event
 
 
-def generate_observation_time(event, key):        
+def generate_observation_time(event, key):
     value = datetime.datetime.utcnow()
     value = value.replace(microsecond=0)
     value = value.isoformat()
@@ -146,7 +153,6 @@ def generate_observation_time(event, key):
 
 
 def generate_reported_fields(event):
-    
     keys_pairs = [
                     (
                         "source_ip",
@@ -172,5 +178,5 @@ def generate_reported_fields(event):
                 value = event.value(key)
                 reported_key = "reported_%s" % key
                 event.add(reported_key, value)
-                
+
     return event
