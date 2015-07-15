@@ -1,0 +1,4 @@
+---
+intelmq:
+  repo: https://github.com/certtools/intelmq.git
+  branch: master

@@ -1,3 +1,5 @@
+*.bak
+*.swp
 *.pyc
 *.log
 *.*~
@@ -7,3 +9,6 @@
 intelmq.egg-info
 build
 dist
+*.old
+.vagrant/
+*~

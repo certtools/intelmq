@@ -1,44 +1,48 @@
 import urlparse
+from intelmq.lib import utils
 from intelmq.lib.bot import Bot, sys
 from intelmq.lib.message import Event
-from intelmq.bots import utils
+from intelmq.lib.harmonization import DateTime
+
 
 class VXVaultParserBot(Bot):
 
     def process(self):
         report = self.receive_message()
 
-        if report:
-            for row in report.split('\n'):
-                row = row.strip()
+        if not report.contains("raw"):
+            self.acknowledge_message()
 
-                if len(row) == 0 or not row.startswith('http'):
-                    continue
-                
-                url_object = urlparse.urlparse(row)
+        raw_report = utils.base64_decode(report.value("raw"))
+        for row in raw_report.split('\n'):
 
-                if not url_object:
-                    continue
+            row = row.strip()
 
-                url      = url_object.geturl() 
-                hostname = url_object.hostname
-                port     = url_object.port
+            if len(row) == 0 or not row.startswith('http'):
+                continue
+            
+            url_object = urlparse.urlparse(row)
 
-                event = Event()
-                event.add("source_url", url)
-                event.add("source_domain_name", hostname)
-                if port:
-                    event.add("source_port", str(port))
+            if not url_object:
+                continue
 
-                event.add('feed', 'vxvault')
-                event.add('feed_url', 'http://vxvault.siri-urz.net/URL_List.php')
-                event.add('type', 'malware')
-                
-                event = utils.generate_source_time(event, "source_time")
-                event = utils.generate_observation_time(event, "observation_time")
-                event = utils.generate_reported_fields(event)
-                
-                self.send_message(event)
+            url      = url_object.geturl() 
+            hostname = url_object.hostname
+            port     = url_object.port
+
+            event = Event()
+            
+            time_observation = DateTime().generate_datetime_now()
+            event.add('time.observation', time_observation, sanitize=True)
+            event.add('feed.name', report.value("feed.name"))
+            event.add('feed.url', report.value("feed.url"))
+            event.add('classification.type', u'malware')
+            event.add("source.url", url, sanitize=True)
+            event.add("source.domain_name", hostname, sanitize=True)
+            event.add("source.port", str(port), sanitize=True)
+            event.add("raw", row, sanitize=True)
+            
+            self.send_message(event)
         self.acknowledge_message()
 
 

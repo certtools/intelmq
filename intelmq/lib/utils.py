@@ -1,7 +1,12 @@
 import logging
-import hashlib
+import json
+import base64
 
-def decode(text, encodings=["utf-8", "ISO-8859-15"], force=False):
+
+def decode(text, encodings=["utf-8"], force=False):
+    if type(text) is unicode:
+        return text
+
     for encoding in encodings:
         try:
             return text.decode(encoding)
@@ -16,7 +21,6 @@ def decode(text, encodings=["utf-8", "ISO-8859-15"], force=False):
                 pass
 
     raise Exception("Found a problem when decoding.")
-
 
 def encode(text, encodings=["utf-8"], force=False):
     for encoding in encodings:
@@ -34,6 +38,18 @@ def encode(text, encodings=["utf-8"], force=False):
 
     raise Exception("Found a problem when encoding.")
 
+def base64_decode(value):
+    data =  base64.b64decode(value)
+    _data = data.decode('utf-8', 'ignore')
+    return _data.encode('utf-8')
+
+def base64_encode(value):
+    return base64.b64encode(value)
+
+def load_configuration(configuration_filepath):
+    with open(configuration_filepath, 'r') as fpconfig:
+        config = json.loads(fpconfig.read())
+    return config
 
 def log(logs_path, name, loglevel="DEBUG"):
     logger = logging.getLogger(name)
@@ -46,10 +62,4 @@ def log(logs_path, name, loglevel="DEBUG"):
     handler.setFormatter(formatter)
     
     logger.addHandler(handler)    
-    return logger  
-
-
-def hashgen(data, func=hashlib.sha1):
-    result = func()
-    result.update(data)
-    return result.hexdigest()
+    return logger

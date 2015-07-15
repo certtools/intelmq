@@ -30,52 +30,29 @@ for dir in dirs:
 
 setup(
     name='intelmq',
-    version='0.0.9',
+    version='1.0.0',
     maintainer='Tomas Lima',
     maintainer_email='synchroack@gmail.com',
     packages=find_packages(),
     url='http://pypi.python.org/pypi/intelmq/',
-    license='GPLv3',
+    license='AGPLv3',
     description="IntelMQ Tool",
     long_description='IntelMQ is a solution for CERTs to process data feeds, pastebins, tweets throught a message queue.',
-    package_data={
-                  '/opt/intelmq/docs': [
-                            'LICENSE',
-                            'README.md',
-                            'CONTRIBUTORS.md'
-                        ]
-                 },
     data_files=[
                 ('/opt/intelmq/etc/', [
                                    'intelmq/bots/BOTS',
                                    'intelmq/conf/startup.conf',
                                    'intelmq/conf/runtime.conf',
+                                   'intelmq/conf/defaults.conf',
                                    'intelmq/conf/pipeline.conf',
-                                   'intelmq/conf/system.conf'
+                                   'intelmq/conf/system.conf',
+                                   'intelmq/conf/harmonization.conf'
                                   ]
                 ),
                 ('/opt/intelmq/bin/', [
                                    'intelmq/bin/intelmqctl'
                                   ]
-                ),
-                ('/opt/intelmq/docs/', [
-                                   'docs/UserGuide.md',
-                                   'docs/DevGuide.md',
-                                   'docs/DataHarmonization.md'
-                                  ]
                 )
-    ],
-    install_requires=[
-        "python-dateutil==1.5",
-        "geoip2==0.5.1",
-        "dnspython==1.11.1",
-        "redis==2.10.3",
-        "pymongo==2.7.1",
-        "xmpppy==0.5.0rc1",
-        "imbox==0.5.5",
-        "unicodecsv==0.9.4",
-        "pytz==2012d",
-        "psutil==2.1.1"
-    ],
+    ]
 )
 
