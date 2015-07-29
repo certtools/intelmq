@@ -18,7 +18,7 @@ class DshieldBlockParserBot(Bot):
 
             row = row.strip()
 
-            if row.startswith("#") or len(row) == 0 or row.starstwith('Start'):
+            if row.startswith("#") or len(row) == 0 or row.startswith('Start'):
                 continue
 
             values = row.split("\t")

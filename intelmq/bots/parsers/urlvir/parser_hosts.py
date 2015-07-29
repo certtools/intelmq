@@ -17,7 +17,7 @@ class URLVirHostsParserBot(Bot):
         for row in raw_report.split('\n'):
 
             row = row.strip()
-            if row == "" or row == "#":
+            if row == "" or row.startswith("#"):
                 continue
 
             event = Event()
