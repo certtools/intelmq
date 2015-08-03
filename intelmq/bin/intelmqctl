@@ -21,7 +21,7 @@ class Parameters(object):
     pass
 
 PIDDIR = "/opt/intelmq/var/run/"
-PIDFILE = "/opt/intelmq/var/run/%s.pid"
+PIDFILE = "/opt/intelmq/var/run/{}.pid"
 
 STATUSES = {
     'starting': 0,
@@ -31,17 +31,17 @@ STATUSES = {
 }
 
 MESSAGES = {
-    'starting': 'Starting %s...',
-    'running': '%s is already running.',
-    'stopped': '%s is stopped.',
-    'stopping': 'Stopping %s...'
+    'starting': 'Starting {}...',
+    'running': '{} is already running.',
+    'stopped': '{} is stopped.',
+    'stopping': 'Stopping {}...'
 }
 
 ERROR_MESSAGES = {
-    'starting': '%s failed to START.',
-    'running': '%s is still running.',
-    'stopped': '%s was NOT RUNNING.',
-    'stopping': '%s failed to STOP.'
+    'starting': '{} failed to START.',
+    'running': '{} is still running.',
+    'stopped': '{} was NOT RUNNING.',
+    'stopping': '{} failed to STOP.'
 }
 
 LOG_LEVEL = {
@@ -59,42 +59,42 @@ RETURN_TYPE = None
 def log_list_queus(queues):
     if RETURN_TYPE == 'text':
         for queue, counter in sorted(queues.iteritems()):
-            print "%s - %s" % (queue,  counter)
+            print "{} - {}".format(queue, counter)
 
 
 def log_bot_error(bot_id, status):
     if RETURN_TYPE == 'text':
-        print ERROR_MESSAGES[status] % bot_id
+        print ERROR_MESSAGES[status].format(bot_id)
 
 
 def log_bot_message(bot_id, status):
     if RETURN_TYPE == 'text':
-        print MESSAGES[status] % bot_id
+        print MESSAGES[status].format(bot_id)
 
 
 def log_botnet_error(status):
     if RETURN_TYPE == 'text':
-        print ERROR_MESSAGES[status] % 'Botnet'
+        print ERROR_MESSAGES[status].format('Botnet')
 
 
 def log_botnet_message(status):
     if RETURN_TYPE == 'text':
-        print MESSAGES[status] % 'Botnet'
+        print MESSAGES[status].format('Botnet')
 
 
 def write_pidfile(bot_id, pid):
-    filename = PIDFILE % bot_id
+    filename = PIDFILE.format(bot_id)
     with open(filename, 'w') as fp:
         fp.write(str(pid))
 
 
 def remove_pidfile(bot_id):
-    filename = PIDFILE % bot_id
+    filename = PIDFILE.format(bot_id)
     os.remove(filename)
 
 
 def read_pidfile(bot_id):
-    filename = PIDFILE % bot_id
+    filename = PIDFILE.format(bot_id)
     if check_pidfile(bot_id):
         with open(filename, 'r') as fp:
             pid = fp.read()
@@ -103,7 +103,7 @@ def read_pidfile(bot_id):
 
 
 def check_pidfile(bot_id):
-    filename = PIDFILE % bot_id
+    filename = PIDFILE.format(bot_id)
     if os.path.isfile(filename):
         try:
             with open(filename, 'r') as fp:
@@ -260,7 +260,7 @@ class IntelMQContoller():
         return self.bot_status(bot_id)
 
     def __bot_start(self, bot_id, module):
-        cmd = "python -m %s %s" % (module, bot_id)
+        cmd = "python -m {} {}".format(module, bot_id)
         pid = start_process(bot_id, cmd)
         write_pidfile(bot_id, pid)
 
@@ -339,7 +339,8 @@ class IntelMQContoller():
         title += "\n"
         print title
         for bot_id in sorted(self.startup.keys()):
-            print "Bot ID: %s\nDescription: %s\n" % (bot_id, self.startup[bot_id]['description'])
+            print "Bot ID: {}\nDescription: {}\n".format(bot_id,
+                                        self.startup[bot_id]['description'])
 
     def list_queues(self):
         fp = open(DEFAULTS_CONF_FILE, 'r')
