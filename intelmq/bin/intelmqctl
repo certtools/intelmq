@@ -27,21 +27,23 @@ STATUSES = {
     'starting': 0,
     'running': 1,
     'stopping': 2,
-    'stopped': 3
+    'stopped': 3,
 }
 
 MESSAGES = {
     'starting': 'Starting {}...',
     'running': '{} is already running.',
     'stopped': '{} is stopped.',
-    'stopping': 'Stopping {}...'
+    'stopping': 'Stopping {}...',
 }
 
 ERROR_MESSAGES = {
     'starting': '{} failed to START.',
     'running': '{} is still running.',
     'stopped': '{} was NOT RUNNING.',
-    'stopping': '{} failed to STOP.'
+    'stopping': '{} failed to STOP.',
+    'noid': 'No bot ID was given, use --bot-id',
+    'notfound': '{} not found.'
 }
 
 LOG_LEVEL = {
@@ -49,7 +51,7 @@ LOG_LEVEL = {
     'DEBUG': 0,
     'INFO': 1,
     'ERROR': 2,
-    'CRITICAL': 3
+    'CRITICAL': 3,
 }
 
 RETURN_TYPES = ['text', 'json']
@@ -62,14 +64,14 @@ def log_list_queus(queues):
             print "{} - {}".format(queue, counter)
 
 
-def log_bot_error(bot_id, status):
+def log_bot_error(status, *args):
     if RETURN_TYPE == 'text':
-        print ERROR_MESSAGES[status].format(bot_id)
+        print ERROR_MESSAGES[status].format(*args)
 
 
-def log_bot_message(bot_id, status):
+def log_bot_message(status, *args):
     if RETURN_TYPE == 'text':
-        print MESSAGES[status].format(bot_id)
+        print MESSAGES[status].format(*args)
 
 
 def log_botnet_error(status):
@@ -247,15 +249,22 @@ class IntelMQContoller():
             print json.dumps(results)
 
     def bot_start(self, bot_id):
+        if bot_id is None:
+            log_bot_error('noid')
+            return 'error'
         pid = read_pidfile(bot_id)
         if pid:
             if status_process(pid):
-                log_bot_message(bot_id, 'running')
+                log_bot_message('running', bot_id)
                 return 'running'
             else:
                 remove_pidfile(bot_id)
-        log_bot_message(bot_id, 'starting')
-        self.__bot_start(bot_id, self.startup[bot_id]['module'])
+        log_bot_message('starting', bot_id)
+        try:
+            self.__bot_start(bot_id, self.startup[bot_id]['module'])
+        except KeyError:
+            log_bot_error('notfound', bot_id)
+            return 'error'
         time.sleep(0.25)
         return self.bot_status(bot_id)
 
@@ -267,17 +276,17 @@ class IntelMQContoller():
     def bot_stop(self, bot_id):
         pid = read_pidfile(bot_id)
         if not pid:
-            log_bot_error(bot_id, 'stopped')
+            log_bot_error('stopped', bot_id)
             return 'stopped'
         if not status_process(pid):
             remove_pidfile(bot_id)
-            log_bot_error(bot_id, 'stopped')
+            log_bot_error('stopped', bot_id)
             return 'stopped'
-        log_bot_message(bot_id, 'stopping')
-        res = self.__bot_stop(bot_id, pid)
+        log_bot_message('stopping', bot_id)
+        self.__bot_stop(bot_id, pid)
         time.sleep(0.25)
         if status_process(pid):
-            log_bot_error(bot_id, 'running')
+            log_bot_error('running', bot_id)
             return 'running'
         return 'stopped'
 
@@ -293,9 +302,9 @@ class IntelMQContoller():
     def bot_status(self, bot_id):
         pid = read_pidfile(bot_id)
         if pid and status_process(pid):
-            log_bot_message(bot_id, 'running')
+            log_bot_message('running', bot_id)
             return 'running'
-        log_bot_message(bot_id, 'stopped')
+        log_bot_message('stopped', bot_id)
         return 'stopped'
 
     def botnet_start(self):
