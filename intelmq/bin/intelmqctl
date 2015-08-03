@@ -115,10 +115,10 @@ def check_pidfile(bot_id):
 
 
 def start_process(bot_id, cmd):
-    devnull = open('/dev/null', 'w')
-    args = shlex.split(cmd)
-    p = psutil.Popen(args, stdout=devnull, stderr=devnull)
-    return p.pid
+    with open('/dev/null', 'w') as devnull:
+        args = shlex.split(cmd)
+        p = psutil.Popen(args, stdout=devnull, stderr=devnull)
+        return p.pid
 
 
 def stop_process(pid):
@@ -187,11 +187,11 @@ class IntelMQContoller():
 
         RETURN_TYPE = self.args.type
 
-        fp = open(STARTUP_CONF_FILE, 'r')
-        self.startup = json.load(fp)
+        with open(STARTUP_CONF_FILE, 'r') as fp:
+            self.startup = json.load(fp)
 
-        fp = open(SYSTEM_CONF_FILE, 'r')
-        self.system = json.load(fp)
+        with open(SYSTEM_CONF_FILE, 'r') as fp:
+            self.system = json.load(fp)
 
         if not os.path.exists(PIDDIR):
             os.makedirs(PIDDIR)
@@ -343,16 +343,16 @@ class IntelMQContoller():
                                         self.startup[bot_id]['description'])
 
     def list_queues(self):
-        fp = open(DEFAULTS_CONF_FILE, 'r')
-        conf = json.load(fp)
-        #pipeline_host = conf[""]
-        # pipeline_port =
-        # pipeline_db =
-        fp.close()
+        with open(DEFAULTS_CONF_FILE, 'r') as fp:
+            conf = json.load(fp)
+            #pipeline_host = conf[""]
+            # pipeline_port =
+            # pipeline_db =
+            fp.close()
 
-        fp = open(PIPELINE_CONF_FILE, 'r')
-        conf = json.load(fp)
-        fp.close()
+        with open(PIPELINE_CONF_FILE, 'r') as fp:
+            conf = json.load(fp)
+            fp.close()
 
         source_queues = set()
         destination_queues = set()
@@ -412,48 +412,47 @@ class IntelMQContoller():
 
         bot_log_path = basepath + bot_id + '.log'
 
-        if os.path.isfile(bot_log_path):
-            bot_log_file = open(bot_log_path, 'r')
-        else:
+        if not os.path.isfile(bot_log_path):
             return []
 
-        messages = list()
+        with open(bot_log_path, 'r') as bot_log_file:
+            messages = list()
 
-        extended_message = ''
-        last_message = {}
-        added_messages = 0
-        line_number = 0
+            extended_message = ''
+            last_message = {}
+            added_messages = 0
+            line_number = 0
 
-        for line in bot_log_file:
-            line_number += 1
-            splitted_line = line.split(' - ')
+            for line in bot_log_file:
+                line_number += 1
+                splitted_line = line.split(' - ')
 
-            if len(splitted_line) >= 4:
-                if splitted_line[1] == bot_id:
-                    log_message = {
-                        'line_number': line_number,
-                        'date': splitted_line[0],
-                        'bot_id': splitted_line[1],
-                        'log_level': splitted_line[2],
-                        'message': ' - '.join(splitted_line[3:])
-                    }
+                if len(splitted_line) >= 4:
+                    if splitted_line[1] == bot_id:
+                        log_message = {
+                            'line_number': line_number,
+                            'date': splitted_line[0],
+                            'bot_id': splitted_line[1],
+                            'log_level': splitted_line[2],
+                            'message': ' - '.join(splitted_line[3:])
+                        }
 
-                    if extended_message != '':
-                        last_message['extended_message'] = extended_message
-                        extended_message = ''
+                        if extended_message != '':
+                            last_message['extended_message'] = extended_message
+                            extended_message = ''
 
-                    last_message = log_message
+                        last_message = log_message
 
-                    if (log_message['log_level'] not in LOG_LEVEL) or (LOG_LEVEL[log_message['log_level']] >= log_level):
-                        added_messages += 1
-                        messages.append(log_message)
+                        if (log_message['log_level'] not in LOG_LEVEL) or (LOG_LEVEL[log_message['log_level']] >= log_level):
+                            added_messages += 1
+                            messages.append(log_message)
 
-                        if added_messages > number_of_lines:
-                            del messages[0]
+                            if added_messages > number_of_lines:
+                                del messages[0]
+                    else:
+                        extended_message += line
                 else:
                     extended_message += line
-            else:
-                extended_message += line
 
         return messages
 
