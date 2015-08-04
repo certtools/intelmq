@@ -413,7 +413,7 @@ class IntelMQContoller():
             return self.read_bot_log(bot_id, log_level, number_of_lines)
 
     def read_system_log(self, log_level, number_of_lines):
-        pass
+        raise NotImplementedError
 
     def read_bot_log(self, bot_id, log_level, number_of_lines):
         basepath = self.system['logging_path']
