@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 import os
 import sys
 import json
@@ -61,27 +62,27 @@ RETURN_TYPE = None
 def log_list_queus(queues):
     if RETURN_TYPE == 'text':
         for queue, counter in sorted(queues.iteritems()):
-            print "{} - {}".format(queue, counter)
+            print("{} - {}".format(queue, counter))
 
 
 def log_bot_error(status, *args):
     if RETURN_TYPE == 'text':
-        print ERROR_MESSAGES[status].format(*args)
+        print(ERROR_MESSAGES[status].format(*args))
 
 
 def log_bot_message(status, *args):
     if RETURN_TYPE == 'text':
-        print MESSAGES[status].format(*args)
+        print(MESSAGES[status].format(*args))
 
 
 def log_botnet_error(status):
     if RETURN_TYPE == 'text':
-        print ERROR_MESSAGES[status].format('Botnet')
+        print(ERROR_MESSAGES[status].format('Botnet'))
 
 
 def log_botnet_message(status):
     if RETURN_TYPE == 'text':
-        print MESSAGES[status].format('Botnet')
+        print(MESSAGES[status].format('Botnet'))
 
 
 def write_pidfile(bot_id, pid):
@@ -246,7 +247,7 @@ class IntelMQContoller():
             results = self.read_log(self.args.log, self.args.bot_id)
 
         if self.args.type == 'json':
-            print json.dumps(results)
+            print(json.dumps(results))
 
     def bot_start(self, bot_id):
         if bot_id is None:
@@ -346,10 +347,10 @@ class IntelMQContoller():
         title = "\n\nList of Bots:\n"
         title += "-" * (len(title) - 1)
         title += "\n"
-        print title
+        print(title)
         for bot_id in sorted(self.startup.keys()):
-            print "Bot ID: {}\nDescription: {}\n".format(bot_id,
-                                        self.startup[bot_id]['description'])
+            print("Bot ID: {}\nDescription: {}\n".format(bot_id,
+                                         self.startup[bot_id]['description']))
 
     def list_queues(self):
         with open(DEFAULTS_CONF_FILE, 'r') as fp:
