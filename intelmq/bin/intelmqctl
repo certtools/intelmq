@@ -161,24 +161,25 @@ class IntelMQContoller():
 
         parser.add_argument('-v', '--version',
                             action='version', version=VERSION)
-        parser.add_argument("--id", dest='bot_id', default=None, help='bot ID')
+        parser.add_argument('--id', '-i',
+                            dest='bot_id', default=None, help='bot ID')
         parser.add_argument('--type', choices=RETURN_TYPES,
                             default=RETURN_TYPES[0],
                             help='choose if it should return regular text or '
                                  'other forms of output')
 
-        group_list.add_argument('--log',
+        group_list.add_argument('--log', '-l',
                                 metavar='[log-level]:[number-of-lines]',
                                 default=None)
-        group_list.add_argument('--bot',
+        group_list.add_argument('--bot', '-b',
                                 choices=['start', 'stop', 'restart', 'status'],
                                 metavar='[start|stop|restart|status]',
                                 default=None)
-        group_list.add_argument('--botnet',
+        group_list.add_argument('--botnet', '-n',
                                 choices=['start', 'stop', 'restart', 'status'],
                                 metavar='[start|stop|restart|status]',
                                 default=None)
-        group_list.add_argument('--list',
+        group_list.add_argument('--list', '-s',
                                 choices=['bots', 'queues'],
                                 metavar='[bots|queues]',
                                 default=None)
