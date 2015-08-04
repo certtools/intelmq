@@ -48,7 +48,6 @@ ERROR_MESSAGES = {
 }
 
 LOG_LEVEL = {
-    'default': -1,
     'DEBUG': 0,
     'INFO': 1,
     'ERROR': 2,
@@ -83,6 +82,17 @@ def log_botnet_error(status):
 def log_botnet_message(status):
     if RETURN_TYPE == 'text':
         print(MESSAGES[status].format('Botnet'))
+
+
+def log_log_messages(messages):
+    if RETURN_TYPE == 'text':
+        for message in messages:
+            print(' - '.join([message['date'], message['bot_id'],
+                              message['log_level'], message['message']]))
+            try:
+                print(message['extended_message'])
+            except KeyError:
+                pass
 
 
 def write_pidfile(bot_id, pid):
@@ -170,7 +180,15 @@ class IntelMQContoller():
 
         group_list.add_argument('--log', '-l',
                                 metavar='[log-level]:[number-of-lines]',
-                                default=None)
+                                default=None,
+                                help='''Reads the last lines from bot log, or
+                                from system log if no bot ID was given.
+                                Log level should be one of DEBUG, INFO, ERROR
+                                or CRTICAL. Default is INFO
+                                Number of lines defaults to 10.
+
+                                Reading from system log is not implemented yet.
+                                ''')
         group_list.add_argument('--bot', '-b',
                                 choices=['start', 'stop', 'restart', 'status'],
                                 metavar='[start|stop|restart|status]',
@@ -403,10 +421,23 @@ class IntelMQContoller():
         split_log_level = log_level.split(':')
 
         if len(split_log_level) != 2:
-            return
-
-        number_of_lines = int(split_log_level[1])
-        log_level = LOG_LEVEL[split_log_level[0]]
+            print("Invalid parameter for log, defaulting to 'INFO:10'")
+            number_of_lines = 10
+            log_level = LOG_LEVEL['INFO']
+        else:
+            try:
+                number_of_lines = int(split_log_level[1])
+            except ValueError:
+                number_of_lines = 10
+            if not len(split_log_level[0]):
+                log_level = LOG_LEVEL['INFO']
+            else:
+                try:
+                    log_level = LOG_LEVEL[split_log_level[0].upper()]
+                except KeyError:
+                    print("Invalid log_level. Must be one of {}"
+                          "".format(', '.join(LOG_LEVEL.iterkeys())))
+                    return[]
 
         if bot_id is None:
             return self.read_system_log(log_level, number_of_lines)
@@ -417,55 +448,46 @@ class IntelMQContoller():
         raise NotImplementedError
 
     def read_bot_log(self, bot_id, log_level, number_of_lines):
-        basepath = self.system['logging_path']
-        if not self.system['logging_path'].endswith('/'):
-            basepath += '/'
-
-        bot_log_path = basepath + bot_id + '.log'
-
+        bot_log_path = os.path.join(self.system['logging_path'],
+                                    bot_id + '.log')
         if not os.path.isfile(bot_log_path):
+            print("Log path not found: {}".format(bot_log_path))
             return []
 
-        with open(bot_log_path, 'r') as bot_log_file:
-            messages = list()
+        messages = list()
 
-            extended_message = ''
-            last_message = {}
-            added_messages = 0
-            line_number = 0
+        message_overflow = ''
+        message_count = 0
 
-            for line in bot_log_file:
-                line_number += 1
-                splitted_line = line.split(' - ')
+        for line in utils.reverse_readline(bot_log_path):
+            splitted_line = line.split(' - ', 3)
 
-                if len(splitted_line) >= 4:
-                    if splitted_line[1] == bot_id:
-                        log_message = {
-                            'line_number': line_number,
-                            'date': splitted_line[0],
-                            'bot_id': splitted_line[1],
-                            'log_level': splitted_line[2],
-                            'message': ' - '.join(splitted_line[3:])
-                        }
+            if (len(splitted_line) < 4 or splitted_line[1] != bot_id or
+               splitted_line[2] not in LOG_LEVEL):
+                message_overflow = '\n'.join([line, message_overflow])
+                continue
+            if LOG_LEVEL[splitted_line[2]] < log_level:
+                continue
 
-                        if extended_message != '':
-                            last_message['extended_message'] = extended_message
-                            extended_message = ''
+            log_message = {
+                'date': splitted_line[0],
+                'bot_id': splitted_line[1],
+                'log_level': splitted_line[2],
+                'message': ' - '.join(splitted_line[3:])
+            }
 
-                        last_message = log_message
+            if message_overflow:
+                log_message['extended_message'] = message_overflow
+                message_overflow = ''
 
-                        if (log_message['log_level'] not in LOG_LEVEL) or (LOG_LEVEL[log_message['log_level']] >= log_level):
-                            added_messages += 1
-                            messages.append(log_message)
+            message_count += 1
+            messages.append(log_message)
 
-                            if added_messages > number_of_lines:
-                                del messages[0]
-                    else:
-                        extended_message += line
-                else:
-                    extended_message += line
+            if message_count >= number_of_lines:
+                break
 
-        return messages
+        log_log_messages(messages[::-1])
+        return messages[::-1]
 
 
 if __name__ == "__main__":
