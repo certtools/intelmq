@@ -180,7 +180,7 @@ class IntelMQContoller():
                             action='version', version=VERSION)
         parser.add_argument('--id', '-i',
                             dest='bot_id', default=None, help='bot ID')
-        parser.add_argument('--type', choices=RETURN_TYPES,
+        parser.add_argument('--type', '-t', choices=RETURN_TYPES,
                             default=RETURN_TYPES[0],
                             help='choose if it should return regular text or '
                                  'other forms of output')
