@@ -15,6 +15,7 @@ from intelmq import STARTUP_CONF_FILE
 from intelmq import PIPELINE_CONF_FILE
 from intelmq import SYSTEM_CONF_FILE
 from intelmq import RUNTIME_CONF_FILE
+from intelmq import DEFAULT_LOGGING_PATH
 from intelmq.lib import utils
 
 
@@ -33,7 +34,7 @@ STATUSES = {
 
 MESSAGES = {
     'starting': 'Starting {}...',
-    'running': '{} is already running.',
+    'running': '{} is running.',
     'stopped': '{} is stopped.',
     'stopping': 'Stopping {}...',
 }
@@ -58,39 +59,39 @@ RETURN_TYPES = ['text', 'json']
 RETURN_TYPE = None
 
 
-def log_list_queus(queues):
+def log_list_queues(queues):
     if RETURN_TYPE == 'text':
         for queue, counter in sorted(queues.iteritems()):
-            print("{} - {}".format(queue, counter))
+            logger.info("{} - {}".format(queue, counter))
 
 
 def log_bot_error(status, *args):
     if RETURN_TYPE == 'text':
-        print(ERROR_MESSAGES[status].format(*args))
+        logger.error(ERROR_MESSAGES[status].format(*args))
 
 
 def log_bot_message(status, *args):
     if RETURN_TYPE == 'text':
-        print(MESSAGES[status].format(*args))
+        logger.info(MESSAGES[status].format(*args))
 
 
 def log_botnet_error(status):
     if RETURN_TYPE == 'text':
-        print(ERROR_MESSAGES[status].format('Botnet'))
+        logger.error(ERROR_MESSAGES[status].format('Botnet'))
 
 
 def log_botnet_message(status):
     if RETURN_TYPE == 'text':
-        print(MESSAGES[status].format('Botnet'))
+        logger.info(MESSAGES[status].format('Botnet'))
 
 
 def log_log_messages(messages):
     if RETURN_TYPE == 'text':
         for message in messages:
-            print(' - '.join([message['date'], message['bot_id'],
-                              message['log_level'], message['message']]))
+            logger.info(' - '.join([message['date'], message['bot_id'],
+                                    message['log_level'], message['message']]))
             try:
-                print(message['extended_message'])
+                logger.info(message['extended_message'])
             except KeyError:
                 pass
 
@@ -151,10 +152,16 @@ class IntelMQContoller():
 
     def __init__(self):
         global RETURN_TYPE
+        global logger
+        logger = utils.log(DEFAULT_LOGGING_PATH, 'intelmqctl', 'DEBUG')
+        self.logger = logger
 
         APPNAME = "intelmqctl"
         VERSION = "0.0.0"
-        DESCRIPTION = "description: intelmqctl is the tool to control intelmq system"
+        DESCRIPTION = """
+        description: intelmqctl is the tool to control intelmq system.
+
+        Outputs are logged to /opt/intelmq/var/log/intelmqctl"""
         USAGE = '''
         intelmqctl --bot [start|stop|restart|status] --id=cymru-expert
         intelmqctl --botnet [start|stop|restart|status]
@@ -308,6 +315,7 @@ class IntelMQContoller():
         if status_process(pid):
             log_bot_error('running', bot_id)
             return 'running'
+        log_bot_message('stopped', bot_id)
         return 'stopped'
 
     def __bot_stop(self, bot_id, pid):
@@ -353,7 +361,7 @@ class IntelMQContoller():
         log_botnet_message('starting')
         for bot_id in sorted(self.startup.keys()):
             botnet_status[bot_id] += tuple(self.bot_start(bot_id))
-        log_botnet_message('started')
+        log_botnet_message('running')
         return botnet_status
 
     def botnet_status(self):
@@ -363,22 +371,15 @@ class IntelMQContoller():
         return botnet_status
 
     def list_bots(self):
-        title = "\n\nList of Bots:\n"
-        title += "-" * (len(title) - 1)
-        title += "\n"
-        print(title)
+        print("List of Bots:\n-------------")
         for bot_id in sorted(self.startup.keys()):
-            print("Bot ID: {}\nDescription: {}\n".format(bot_id,
-                                         self.startup[bot_id]['description']))
+            print("\nBot ID: {}\nDescription: {}"
+                  "".format(bot_id, self.startup[bot_id]['description']))
+        return [{'id': bot_id,
+                 'description': self.startup[bot_id]['description']}
+                for bot_id in sorted(self.startup.keys())]
 
     def list_queues(self):
-        with open(DEFAULTS_CONF_FILE, 'r') as fp:
-            conf = json.load(fp)
-            #pipeline_host = conf[""]
-            # pipeline_port =
-            # pipeline_db =
-            fp.close()
-
         with open(PIPELINE_CONF_FILE, 'r') as fp:
             conf = json.load(fp)
             fp.close()
@@ -398,7 +399,7 @@ class IntelMQContoller():
 
         queues = source_queues.union(destination_queues)
         counters = pipeline.count_queued_messages(queues)
-        log_list_queus(counters)
+        log_list_queues(counters)
 
         return_dict = dict()
         for bot_id, info in conf.iteritems():
@@ -421,7 +422,7 @@ class IntelMQContoller():
         split_log_level = log_level.split(':')
 
         if len(split_log_level) != 2:
-            print("Invalid parameter for log, defaulting to 'INFO:10'")
+            logger.error("Invalid parameter for log, defaulting to 'INFO:10'")
             number_of_lines = 10
             log_level = LOG_LEVEL['INFO']
         else:
@@ -435,8 +436,8 @@ class IntelMQContoller():
                 try:
                     log_level = LOG_LEVEL[split_log_level[0].upper()]
                 except KeyError:
-                    print("Invalid log_level. Must be one of {}"
-                          "".format(', '.join(LOG_LEVEL.iterkeys())))
+                    logger.error("Invalid log_level. Must be one of {}"
+                                 "".format(', '.join(LOG_LEVEL.iterkeys())))
                     return[]
 
         if bot_id is None:
@@ -451,7 +452,7 @@ class IntelMQContoller():
         bot_log_path = os.path.join(self.system['logging_path'],
                                     bot_id + '.log')
         if not os.path.isfile(bot_log_path):
-            print("Log path not found: {}".format(bot_log_path))
+            logger.error("Log path not found: {}".format(bot_log_path))
             return []
 
         messages = list()

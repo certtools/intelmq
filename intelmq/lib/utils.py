@@ -2,6 +2,7 @@ import logging
 import json
 import base64
 import os
+import sys
 
 
 def decode(text, encodings=["utf-8"], force=False):
@@ -52,6 +53,7 @@ def load_configuration(configuration_filepath):
         config = json.loads(fpconfig.read())
     return config
 
+
 def log(logs_path, name, loglevel="DEBUG"):
     logger = logging.getLogger(name)
     logger.setLevel(loglevel)
@@ -59,8 +61,15 @@ def log(logs_path, name, loglevel="DEBUG"):
     handler = logging.FileHandler("%s/%s.log" % (logs_path, name))
     handler.setLevel(loglevel)
 
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - '
+                                  '%(message)s')
     handler.setFormatter(formatter)
+
+    console_formatter = logging.Formatter("%(name)s: %(message)s")
+    console_handler = logging.StreamHandler()
+    console_handler.setFormatter(console_formatter)
+    logger.addHandler(console_handler)
+    console_handler.setLevel(loglevel)
 
     logger.addHandler(handler)
     return logger
