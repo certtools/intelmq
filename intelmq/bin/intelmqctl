@@ -8,6 +8,7 @@ import shlex
 import inspect
 import psutil
 import signal
+import traceback
 import argparse
 from intelmq.lib.pipeline import PipelineFactory
 from intelmq import DEFAULTS_CONF_FILE
@@ -208,6 +209,8 @@ class IntelMQContoller():
                                 choices=['bots', 'queues'],
                                 metavar='[bots|queues]',
                                 default=None)
+        group_list.add_argument('--clear', '-c', metavar='queue', default=None,
+                                help='''Clears the given queue in broker''')
 
         self.args = parser.parse_args()
 
@@ -228,8 +231,8 @@ class IntelMQContoller():
         # stolen functions from the bot file
         # this will not work with various instances of REDIS
         self.parameters = Parameters()
-        self.load_system_configuration()
         self.load_defaults_configuration()
+        self.load_system_configuration()
         self.pipepline_configuration = utils.load_configuration(PIPELINE_CONF_FILE)
         self.runtime_configuration = utils.load_configuration(RUNTIME_CONF_FILE)
         self.startup_configuration = utils.load_configuration(STARTUP_CONF_FILE)
@@ -270,6 +273,9 @@ class IntelMQContoller():
 
         elif self.args.log:
             results = self.read_log(self.args.log, self.args.bot_id)
+
+        elif self.args.clear:
+            results = self.clear_queue(self.args.clear,)
 
         if self.args.type == 'json':
             print(json.dumps(results))
@@ -411,6 +417,39 @@ class IntelMQContoller():
                         (dest_queue, counters[dest_queue]))
 
         return return_dict
+
+    def clear_queue(self, queue):
+        """
+        Clears an exiting queue.
+
+        First checks if the queue does exist in the pipeline configuration.
+        """
+        logger.info("Clearing queue {}".format(queue))
+        source_queues = set()
+        destination_queues = set()
+        for key, value in self.pipepline_configuration.iteritems():
+            if 'source-queue' in value:
+                source_queues.add(value['source-queue'])
+            if 'destination-queues' in value:
+                destination_queues.update(value['destination-queues'])
+
+        pipeline = PipelineFactory.create(self.parameters)
+        pipeline.set_queues(source_queues, "source")
+        pipeline.connect()
+
+        queues = source_queues.union(destination_queues)
+        if queue not in queues:
+            logger.error("Queue {} does not exist!".format(queue))
+            return 'not-found'
+
+        try:
+            pipeline.clear_queue(queue)
+            logger.info("Successfully cleared queue {}".format(queue))
+            return 'success'
+        except Exception:
+            logger.error("Error while clearing queue {}:\n{}"
+                         "".format(queue, traceback.format_exc()))
+            return 'error'
 
     def read_log(self, log_level, bot_id):
         # TODO: Parse number of lines
