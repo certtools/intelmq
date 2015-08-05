@@ -9,12 +9,12 @@ import inspect
 import psutil
 import signal
 import argparse
-from intelmq.lib.pipeline import PipelineFactory, Redis
+from intelmq.lib.pipeline import PipelineFactory
 from intelmq import DEFAULTS_CONF_FILE
-from intelmq import STARTUP_CONF_FILE
 from intelmq import PIPELINE_CONF_FILE
-from intelmq import SYSTEM_CONF_FILE
 from intelmq import RUNTIME_CONF_FILE
+from intelmq import STARTUP_CONF_FILE
+from intelmq import SYSTEM_CONF_FILE
 from intelmq import DEFAULT_LOGGING_PATH
 from intelmq.lib import utils
 
@@ -230,19 +230,18 @@ class IntelMQContoller():
         self.parameters = Parameters()
         self.load_system_configuration()
         self.load_defaults_configuration()
+        self.pipepline_configuration = utils.load_configuration(PIPELINE_CONF_FILE)
+        self.runtime_configuration = utils.load_configuration(RUNTIME_CONF_FILE)
+        self.startup_configuration = utils.load_configuration(STARTUP_CONF_FILE)
 
     def load_system_configuration(self):
-
         config = utils.load_configuration(SYSTEM_CONF_FILE)
         for option, value in config.iteritems():
             setattr(self.parameters, option, value)
 
     def load_defaults_configuration(self):
-
         # Load defaults configuration section
-
         config = utils.load_configuration(DEFAULTS_CONF_FILE)
-
         for option, value in config.iteritems():
             setattr(self.parameters, option, value)
 
@@ -380,14 +379,10 @@ class IntelMQContoller():
                 for bot_id in sorted(self.startup.keys())]
 
     def list_queues(self):
-        with open(PIPELINE_CONF_FILE, 'r') as fp:
-            conf = json.load(fp)
-            fp.close()
-
         source_queues = set()
         destination_queues = set()
 
-        for key, value in conf.iteritems():
+        for key, value in self.pipepline_configuration.iteritems():
             if 'source-queue' in value:
                 source_queues.add(value['source-queue'])
             if 'destination-queues' in value:
@@ -402,7 +397,7 @@ class IntelMQContoller():
         log_list_queues(counters)
 
         return_dict = dict()
-        for bot_id, info in conf.iteritems():
+        for bot_id, info in self.pipepline_configuration.iteritems():
             return_dict[bot_id] = dict()
 
             if 'source-queue' in info:
