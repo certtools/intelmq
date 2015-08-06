@@ -12,39 +12,39 @@ MAPPING = {
     "ssh.txt": {
         "classification.type": "ids alert",
         "protocol.application": "ssh",
-        "details.description": "IP reported as having run attacks on the service SSH"
+        "description.text": "IP reported as having run attacks on the service SSH"
     },
     "mail.txt": {
         "classification.type": "ids alert",
         "protocol.application": "smtp",
-        "details.description": "IP reported as having run attacks on the service Mail, Postfix"
+        "description.text": "IP reported as having run attacks on the service Mail, Postfix"
     },
     "apache.txt": {
         "classification.type": "ids alert",
         "protocol.application": "http",
-        "details.description": "IP reported as having run attacks on the service Apache, Apache-DDoS, RFI-Attacks"
+        "description.text": "IP reported as having run attacks on the service Apache, Apache-DDoS, RFI-Attacks"
     },
     "imap.txt": {
         "classification.type": "ids alert",
         "protocol.application": "imap",
-        "details.description": "IP reported as having run attacks on the service IMAP, SASL, POP3"
+        "description.text": "IP reported as having run attacks on the service IMAP, SASL, POP3"
     },
     "ftp.txt": {
         "classification.type": "ids alert",
         "protocol.application": "ftp",
-        "details.description": "IP reported as having run attacks on the service FTP"
+        "description.text": "IP reported as having run attacks on the service FTP"
     },
     "sip.txt": {
         "classification.type": "ids alert",
         "protocol.application": "sip",
-        "details.description": "IP reported as having run attacks on the service SIP, VOIP, Asterisk"
+        "description.text": "IP reported as having run attacks on the service SIP, VOIP, Asterisk"
     },
     "bots.txt": {
         "classification.type": "botnet drone"
     },
     "strongips.txt": {
         "classification.type": "blacklist",
-        "details.description": "IP reported as having run attacks in last 2 months"
+        "description.text": "IP reported as having run attacks in last 2 months"
     },
     "ircbot.txt": {
         "classification.type": "botnet drone",
@@ -52,7 +52,7 @@ MAPPING = {
     },
     "bruteforcelogin.txt": {
         "classification.type": "brute-force",
-        "details.description": "IP reported as having run attacks on Joomlas, Wordpress and other Web-Logins with Brute-Force Logins",
+        "description.text": "IP reported as having run attacks on Joomlas, Wordpress and other Web-Logins with Brute-Force Logins",
     }
 }
 
