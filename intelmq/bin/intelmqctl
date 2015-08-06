@@ -192,8 +192,8 @@ class IntelMQContoller():
                                 help='''Reads the last lines from bot log, or
                                 from system log if no bot ID was given.
                                 Log level should be one of DEBUG, INFO, ERROR
-                                or CRTICAL. Default is INFO
-                                Number of lines defaults to 10.
+                                or CRTICAL. Default is INFO.
+                                Number of lines defaults to 10, -1 gives all.
 
                                 Reading from system log is not implemented yet.
                                 ''')
@@ -480,7 +480,7 @@ class IntelMQContoller():
             return self.read_bot_log(bot_id, log_level, number_of_lines)
 
     def read_system_log(self, log_level, number_of_lines):
-        raise NotImplementedError
+        logger.error("Reading from system log is not implemented yet")
 
     def read_bot_log(self, bot_id, log_level, number_of_lines):
         bot_log_path = os.path.join(self.system['logging_path'],
@@ -518,7 +518,7 @@ class IntelMQContoller():
             message_count += 1
             messages.append(log_message)
 
-            if message_count >= number_of_lines:
+            if message_count >= number_of_lines and number_of_lines != -1:
                 break
 
         log_log_messages(messages[::-1])
