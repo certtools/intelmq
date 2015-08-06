@@ -256,7 +256,7 @@
             "description": "OpenPhish Collector is the bot responsible to get the report from source of information.", 
             "module": "intelmq.bots.collectors.http.collector_http", 
             "parameters": {
-                "id": "OpenPhish", 
+                "feed": "OpenPhish", 
                 "url": "http://www.openphish.com/feed.txt", 
                 "rate_limit": "86400"
             }
