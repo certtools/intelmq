@@ -29,6 +29,11 @@ class VXVaultParserBot(Bot):
             url      = url_object.geturl() 
             hostname = url_object.hostname
             port     = url_object.port
+            
+            if IPAddress.is_valid(hostname):
+                event.add("source.ip", hostname, sanitize=True)
+            else:
+                event.add("source.fqdn", hostname, sanitize=True)
 
             event = Event()
             
@@ -38,7 +43,6 @@ class VXVaultParserBot(Bot):
             event.add('feed.url', report.value("feed.url"))
             event.add('classification.type', u'malware')
             event.add("source.url", url, sanitize=True)
-            event.add("source.fqdn", hostname, sanitize=True)
             event.add("source.port", str(port), sanitize=True)
             event.add("raw", row, sanitize=True)
             
