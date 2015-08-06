@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 import os
 import sys
 import json
@@ -7,13 +8,15 @@ import shlex
 import inspect
 import psutil
 import signal
+import traceback
 import argparse
-from intelmq.lib.pipeline import PipelineFactory, Redis
+from intelmq.lib.pipeline import PipelineFactory
 from intelmq import DEFAULTS_CONF_FILE
-from intelmq import STARTUP_CONF_FILE
 from intelmq import PIPELINE_CONF_FILE
-from intelmq import SYSTEM_CONF_FILE
 from intelmq import RUNTIME_CONF_FILE
+from intelmq import STARTUP_CONF_FILE
+from intelmq import SYSTEM_CONF_FILE
+from intelmq import DEFAULT_LOGGING_PATH
 from intelmq.lib import utils
 
 
@@ -32,7 +35,7 @@ STATUSES = {
 
 MESSAGES = {
     'starting': 'Starting {}...',
-    'running': '{} is already running.',
+    'running': '{} is running.',
     'stopped': '{} is stopped.',
     'stopping': 'Stopping {}...',
 }
@@ -47,7 +50,6 @@ ERROR_MESSAGES = {
 }
 
 LOG_LEVEL = {
-    'default': -1,
     'DEBUG': 0,
     'INFO': 1,
     'ERROR': 2,
@@ -58,30 +60,41 @@ RETURN_TYPES = ['text', 'json']
 RETURN_TYPE = None
 
 
-def log_list_queus(queues):
+def log_list_queues(queues):
     if RETURN_TYPE == 'text':
         for queue, counter in sorted(queues.iteritems()):
-            print "{} - {}".format(queue, counter)
+            logger.info("{} - {}".format(queue, counter))
 
 
 def log_bot_error(status, *args):
     if RETURN_TYPE == 'text':
-        print ERROR_MESSAGES[status].format(*args)
+        logger.error(ERROR_MESSAGES[status].format(*args))
 
 
 def log_bot_message(status, *args):
     if RETURN_TYPE == 'text':
-        print MESSAGES[status].format(*args)
+        logger.info(MESSAGES[status].format(*args))
 
 
 def log_botnet_error(status):
     if RETURN_TYPE == 'text':
-        print ERROR_MESSAGES[status].format('Botnet')
+        logger.error(ERROR_MESSAGES[status].format('Botnet'))
 
 
 def log_botnet_message(status):
     if RETURN_TYPE == 'text':
-        print MESSAGES[status].format('Botnet')
+        logger.info(MESSAGES[status].format('Botnet'))
+
+
+def log_log_messages(messages):
+    if RETURN_TYPE == 'text':
+        for message in messages:
+            logger.info(' - '.join([message['date'], message['bot_id'],
+                                    message['log_level'], message['message']]))
+            try:
+                logger.info(message['extended_message'])
+            except KeyError:
+                pass
 
 
 def write_pidfile(bot_id, pid):
@@ -140,10 +153,16 @@ class IntelMQContoller():
 
     def __init__(self):
         global RETURN_TYPE
+        global logger
+        logger = utils.log(DEFAULT_LOGGING_PATH, 'intelmqctl', 'DEBUG')
+        self.logger = logger
 
         APPNAME = "intelmqctl"
         VERSION = "0.0.0"
-        DESCRIPTION = "description: intelmqctl is the tool to control intelmq system"
+        DESCRIPTION = """
+        description: intelmqctl is the tool to control intelmq system.
+
+        Outputs are logged to /opt/intelmq/var/log/intelmqctl"""
         USAGE = '''
         intelmqctl --bot [start|stop|restart|status] --id=cymru-expert
         intelmqctl --botnet [start|stop|restart|status]
@@ -160,27 +179,38 @@ class IntelMQContoller():
 
         parser.add_argument('-v', '--version',
                             action='version', version=VERSION)
-        parser.add_argument("--id", dest='bot_id', default=None, help='bot ID')
-        parser.add_argument('--type', choices=RETURN_TYPES,
+        parser.add_argument('--id', '-i',
+                            dest='bot_id', default=None, help='bot ID')
+        parser.add_argument('--type', '-t', choices=RETURN_TYPES,
                             default=RETURN_TYPES[0],
                             help='choose if it should return regular text or '
                                  'other forms of output')
 
-        group_list.add_argument('--log',
+        group_list.add_argument('--log', '-l',
                                 metavar='[log-level]:[number-of-lines]',
-                                default=None)
-        group_list.add_argument('--bot',
+                                default=None,
+                                help='''Reads the last lines from bot log, or
+                                from system log if no bot ID was given.
+                                Log level should be one of DEBUG, INFO, ERROR
+                                or CRTICAL. Default is INFO.
+                                Number of lines defaults to 10, -1 gives all.
+
+                                Reading from system log is not implemented yet.
+                                ''')
+        group_list.add_argument('--bot', '-b',
                                 choices=['start', 'stop', 'restart', 'status'],
                                 metavar='[start|stop|restart|status]',
                                 default=None)
-        group_list.add_argument('--botnet',
+        group_list.add_argument('--botnet', '-n',
                                 choices=['start', 'stop', 'restart', 'status'],
                                 metavar='[start|stop|restart|status]',
                                 default=None)
-        group_list.add_argument('--list',
+        group_list.add_argument('--list', '-s',
                                 choices=['bots', 'queues'],
                                 metavar='[bots|queues]',
                                 default=None)
+        group_list.add_argument('--clear', '-c', metavar='queue', default=None,
+                                help='''Clears the given queue in broker''')
 
         self.args = parser.parse_args()
 
@@ -201,21 +231,20 @@ class IntelMQContoller():
         # stolen functions from the bot file
         # this will not work with various instances of REDIS
         self.parameters = Parameters()
-        self.load_system_configuration()
         self.load_defaults_configuration()
+        self.load_system_configuration()
+        self.pipepline_configuration = utils.load_configuration(PIPELINE_CONF_FILE)
+        self.runtime_configuration = utils.load_configuration(RUNTIME_CONF_FILE)
+        self.startup_configuration = utils.load_configuration(STARTUP_CONF_FILE)
 
     def load_system_configuration(self):
-
         config = utils.load_configuration(SYSTEM_CONF_FILE)
         for option, value in config.iteritems():
             setattr(self.parameters, option, value)
 
     def load_defaults_configuration(self):
-
         # Load defaults configuration section
-
         config = utils.load_configuration(DEFAULTS_CONF_FILE)
-
         for option, value in config.iteritems():
             setattr(self.parameters, option, value)
 
@@ -245,8 +274,11 @@ class IntelMQContoller():
         elif self.args.log:
             results = self.read_log(self.args.log, self.args.bot_id)
 
+        elif self.args.clear:
+            results = self.clear_queue(self.args.clear,)
+
         if self.args.type == 'json':
-            print json.dumps(results)
+            print(json.dumps(results))
 
     def bot_start(self, bot_id):
         if bot_id is None:
@@ -288,6 +320,7 @@ class IntelMQContoller():
         if status_process(pid):
             log_bot_error('running', bot_id)
             return 'running'
+        log_bot_message('stopped', bot_id)
         return 'stopped'
 
     def __bot_stop(self, bot_id, pid):
@@ -333,7 +366,7 @@ class IntelMQContoller():
         log_botnet_message('starting')
         for bot_id in sorted(self.startup.keys()):
             botnet_status[bot_id] += tuple(self.bot_start(bot_id))
-        log_botnet_message('started')
+        log_botnet_message('running')
         return botnet_status
 
     def botnet_status(self):
@@ -343,30 +376,19 @@ class IntelMQContoller():
         return botnet_status
 
     def list_bots(self):
-        title = "\n\nList of Bots:\n"
-        title += "-" * (len(title) - 1)
-        title += "\n"
-        print title
+        print("List of Bots:\n-------------")
         for bot_id in sorted(self.startup.keys()):
-            print "Bot ID: {}\nDescription: {}\n".format(bot_id,
-                                        self.startup[bot_id]['description'])
+            print("\nBot ID: {}\nDescription: {}"
+                  "".format(bot_id, self.startup[bot_id]['description']))
+        return [{'id': bot_id,
+                 'description': self.startup[bot_id]['description']}
+                for bot_id in sorted(self.startup.keys())]
 
     def list_queues(self):
-        with open(DEFAULTS_CONF_FILE, 'r') as fp:
-            conf = json.load(fp)
-            #pipeline_host = conf[""]
-            # pipeline_port =
-            # pipeline_db =
-            fp.close()
-
-        with open(PIPELINE_CONF_FILE, 'r') as fp:
-            conf = json.load(fp)
-            fp.close()
-
         source_queues = set()
         destination_queues = set()
 
-        for key, value in conf.iteritems():
+        for key, value in self.pipepline_configuration.iteritems():
             if 'source-queue' in value:
                 source_queues.add(value['source-queue'])
             if 'destination-queues' in value:
@@ -378,10 +400,10 @@ class IntelMQContoller():
 
         queues = source_queues.union(destination_queues)
         counters = pipeline.count_queued_messages(queues)
-        log_list_queus(counters)
+        log_list_queues(counters)
 
         return_dict = dict()
-        for bot_id, info in conf.iteritems():
+        for bot_id, info in self.pipepline_configuration.iteritems():
             return_dict[bot_id] = dict()
 
             if 'source-queue' in info:
@@ -396,15 +418,61 @@ class IntelMQContoller():
 
         return return_dict
 
+    def clear_queue(self, queue):
+        """
+        Clears an exiting queue.
+
+        First checks if the queue does exist in the pipeline configuration.
+        """
+        logger.info("Clearing queue {}".format(queue))
+        source_queues = set()
+        destination_queues = set()
+        for key, value in self.pipepline_configuration.iteritems():
+            if 'source-queue' in value:
+                source_queues.add(value['source-queue'])
+            if 'destination-queues' in value:
+                destination_queues.update(value['destination-queues'])
+
+        pipeline = PipelineFactory.create(self.parameters)
+        pipeline.set_queues(source_queues, "source")
+        pipeline.connect()
+
+        queues = source_queues.union(destination_queues)
+        if queue not in queues:
+            logger.error("Queue {} does not exist!".format(queue))
+            return 'not-found'
+
+        try:
+            pipeline.clear_queue(queue)
+            logger.info("Successfully cleared queue {}".format(queue))
+            return 'success'
+        except Exception:
+            logger.error("Error while clearing queue {}:\n{}"
+                         "".format(queue, traceback.format_exc()))
+            return 'error'
+
     def read_log(self, log_level, bot_id):
         # TODO: Parse number of lines
         split_log_level = log_level.split(':')
 
         if len(split_log_level) != 2:
-            return
-
-        number_of_lines = int(split_log_level[1])
-        log_level = LOG_LEVEL[split_log_level[0]]
+            logger.error("Invalid parameter for log, defaulting to 'INFO:10'")
+            number_of_lines = 10
+            log_level = LOG_LEVEL['INFO']
+        else:
+            try:
+                number_of_lines = int(split_log_level[1])
+            except ValueError:
+                number_of_lines = 10
+            if not len(split_log_level[0]):
+                log_level = LOG_LEVEL['INFO']
+            else:
+                try:
+                    log_level = LOG_LEVEL[split_log_level[0].upper()]
+                except KeyError:
+                    logger.error("Invalid log_level. Must be one of {}"
+                                 "".format(', '.join(LOG_LEVEL.iterkeys())))
+                    return[]
 
         if bot_id is None:
             return self.read_system_log(log_level, number_of_lines)
@@ -412,58 +480,49 @@ class IntelMQContoller():
             return self.read_bot_log(bot_id, log_level, number_of_lines)
 
     def read_system_log(self, log_level, number_of_lines):
-        pass
+        logger.error("Reading from system log is not implemented yet")
 
     def read_bot_log(self, bot_id, log_level, number_of_lines):
-        basepath = self.system['logging_path']
-        if not self.system['logging_path'].endswith('/'):
-            basepath += '/'
-
-        bot_log_path = basepath + bot_id + '.log'
-
+        bot_log_path = os.path.join(self.system['logging_path'],
+                                    bot_id + '.log')
         if not os.path.isfile(bot_log_path):
+            logger.error("Log path not found: {}".format(bot_log_path))
             return []
 
-        with open(bot_log_path, 'r') as bot_log_file:
-            messages = list()
+        messages = list()
 
-            extended_message = ''
-            last_message = {}
-            added_messages = 0
-            line_number = 0
+        message_overflow = ''
+        message_count = 0
 
-            for line in bot_log_file:
-                line_number += 1
-                splitted_line = line.split(' - ')
+        for line in utils.reverse_readline(bot_log_path):
+            splitted_line = line.split(' - ', 3)
 
-                if len(splitted_line) >= 4:
-                    if splitted_line[1] == bot_id:
-                        log_message = {
-                            'line_number': line_number,
-                            'date': splitted_line[0],
-                            'bot_id': splitted_line[1],
-                            'log_level': splitted_line[2],
-                            'message': ' - '.join(splitted_line[3:])
-                        }
+            if (len(splitted_line) < 4 or splitted_line[1] != bot_id or
+               splitted_line[2] not in LOG_LEVEL):
+                message_overflow = '\n'.join([line, message_overflow])
+                continue
+            if LOG_LEVEL[splitted_line[2]] < log_level:
+                continue
 
-                        if extended_message != '':
-                            last_message['extended_message'] = extended_message
-                            extended_message = ''
+            log_message = {
+                'date': splitted_line[0],
+                'bot_id': splitted_line[1],
+                'log_level': splitted_line[2],
+                'message': ' - '.join(splitted_line[3:])
+            }
 
-                        last_message = log_message
+            if message_overflow:
+                log_message['extended_message'] = message_overflow
+                message_overflow = ''
 
-                        if (log_message['log_level'] not in LOG_LEVEL) or (LOG_LEVEL[log_message['log_level']] >= log_level):
-                            added_messages += 1
-                            messages.append(log_message)
+            message_count += 1
+            messages.append(log_message)
 
-                            if added_messages > number_of_lines:
-                                del messages[0]
-                    else:
-                        extended_message += line
-                else:
-                    extended_message += line
+            if message_count >= number_of_lines and number_of_lines != -1:
+                break
 
-        return messages
+        log_log_messages(messages[::-1])
+        return messages[::-1]
 
 
 if __name__ == "__main__":

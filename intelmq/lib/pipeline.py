@@ -5,17 +5,19 @@ import intelmq.lib.pipeline
 import intelmq.lib.exceptions as exceptions
 from intelmq import VAR_RUN_PATH
 
+
 class PipelineFactory(object):
-    
+
     @staticmethod
     def create(parameters):
         try:
             if hasattr(parameters, 'broker'):
-                class_reference = getattr(intelmq.lib.pipeline, parameters.broker.title())
+                class_reference = getattr(intelmq.lib.pipeline,
+                                          parameters.broker.title())
             else:
                 class_reference = getattr(intelmq.lib.pipeline, "Redis")
             return class_reference(parameters)
-        except TypeError:
+        except TypeError:  # TODO: Hides TypeErrors raised in broker class
             raise  exceptions.PipelineFactoryError("No broker specified for the pipeline") # FIXME: change raise message
 
 
@@ -32,7 +34,7 @@ class Pipeline():
 
     def sleep(self, interval):
         time.sleep(interval)
-        
+
 
 class Redis(Pipeline):
 
@@ -57,10 +59,8 @@ class Redis(Pipeline):
                                  socket_timeout = self.socket_timeout
                                )
 
-
     def disconnect(self):
         pass
-
 
     def set_queues(self, queues, queues_type):
         self.load_configurations(queues_type)
@@ -71,11 +71,10 @@ class Redis(Pipeline):
 
         elif queues_type == "destination":
             if queues and type(queues) is not list:
-                queues = queues.split()     
+                queues = queues.split()
             self.destination_queues = queues
         else:
             pass # FIXME: raise
-    
 
     def send(self, message):
         if self.load_balance:
@@ -97,7 +96,6 @@ class Redis(Pipeline):
                 except Exception, e:
                     raise exceptions.PipelineError(e)
 
-
     def receive(self):
         try:
             if self.pipe.llen(self.internal_queue) > 0:
@@ -105,14 +103,12 @@ class Redis(Pipeline):
             return self.pipe.brpoplpush(self.source_queue, self.internal_queue, 0)
         except Exception, e:
             raise exceptions.PipelineError(e)
-        
 
     def acknowledge(self):
         try:
             return self.pipe.rpop(self.internal_queue)
         except Exception, e:
             raise exceptions.PipelineError(e)
-
 
     def count_queued_messages(self, queues):
         queue_dict = dict()
@@ -123,6 +119,14 @@ class Redis(Pipeline):
                 raise exceptions.PipelineError(e)
         return queue_dict
 
+    def clear_queue(self, queue):
+        """Clears a queue by removing (deleting) the key,
+        which is the same as an empty list in Redis"""
+        try:
+            return self.pipe.delete(queue)
+        except Exception, e:
+            raise exceptions.PipelineError(e)
+
 # Algorithm
 # ---------
 # [Receive]     B RPOP LPUSH   source_queue ->  internal_queue
@@ -130,30 +134,28 @@ class Redis(Pipeline):
 # [Acknowledge] RPOP           message      <-  internal_queue
 
 
-
 class Zeromq(Pipeline):
-    
+
     def __init__(self, host="127.0.0.1", communication="ipc"):
-        
+
         # ZeroMQ Context
         self.context = zmq.Context()
         self.host = host
         self.communication = communication
-        
-        
+
     def source_queues(self, source_queue):
         # translate queues to port for tcp connecion
         # queues_translation = dict()
 
         self.source_sock = self.context.socket(zmq.PULL)
         self.source_sock.bind("%s://%s%s.socket" % (self.communication, VAR_RUN_PATH, source_queue) )
-        
+
     def destination_queues(self, destination_queues, load_balance):
         # translate queues to port for tcp connecion
         # queues_translation = dict()
         if not destination_queues:
             return
-        
+
         if destination_queues and type(destination_queues) is not list:
             destination_queues = destination_queues.split()
 
@@ -162,10 +164,10 @@ class Zeromq(Pipeline):
             sock = self.context.socket(zmq.PUSH)
             sock.connect("%s://%s%s.socket" % (self.communication, VAR_RUN_PATH, destination_queue))
             self.dest_sock.append(sock)
-        
+
     def disconnect(self):
         pass
-    
+
     def sleep(self, interval):
         time.sleep(interval)
 
@@ -182,6 +184,6 @@ class Zeromq(Pipeline):
     def count_queued_messages(self, queues):
         return 0
         #pass
-        
-    
 
+    def clear_queue(self, queue):
+        raise NotImplementedError
