@@ -1,7 +1,7 @@
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot, sys
 from intelmq.lib.message import Event
-from intelmq.lib.harmonization import DateTime
+from intelmq.lib.harmonization import DateTime, IPAddress
 
 
 class CymruFullBogonsParserBot(Bot):
