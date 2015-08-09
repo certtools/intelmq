@@ -55,5 +55,5 @@ class DShieldASNParserBot(Bot):
 
 
 if __name__ == "__main__":
-    bot = DshieldASNParserBot(sys.argv[1])
+    bot = DShieldASNParserBot(sys.argv[1])
     bot.start()
