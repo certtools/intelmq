@@ -23,7 +23,8 @@ from intelmq.lib.pipeline import PipelineFactory
 
 class Bot(object):
 
-    def __init__(self, bot_id):
+    def __init__(self, bot_id, config={}):
+        # TODO: Log start
         self.parameters = Parameters()
 
         self.current_message = None
@@ -34,19 +35,16 @@ class Bot(object):
         self.check_bot_id(bot_id)
         self.bot_id = bot_id
 
-        self.load_system_configuration()
-
-        self.logger = utils.log(
-                                self.parameters.logging_path,
-                                self.bot_id,
-                                self.parameters.logging_level
-                               )
+        self.load_defaults_configuration()
+        self.load_system_configuration(config.get("system"))
+        self.logger = (config.get("logger") or
+                       utils.log(self.parameters.logging_path, self.bot_id,
+                                 self.parameters.logging_level))
         self.logger.info('Bot is starting')
 
-        self.load_defaults_configuration()
-        self.load_runtime_configuration()
-        self.load_pipeline_configuration()
-        self.load_harmonization_configuration()
+        self.load_runtime_configuration(config.get("runtime"))
+        self.load_pipeline_configuration(config.get("pipeline"))
+        self.load_harmonization_configuration(config.get("harmonization"))
 
         self.init()
 
@@ -108,9 +106,10 @@ class Bot(object):
                 self.source_pipeline = None
                 self.destination_pipeline = None
 
-            except Exception, ex:
+            except Exception as ex:
                 self.logger.error("Bot has found a problem")
-                self.logger.exception(ex)
+                if self.parameters.error_log_exception:
+                    self.logger.exception(ex)
 
                 if self.parameters.error_procedure == "retry":
                     if self.parameters.error_max_retries <= 0:
@@ -123,7 +122,7 @@ class Bot(object):
                     elif self.error_retries_counter >= self.parameters.error_max_retries:
                         if self.parameters.error_dump_message:
                             self.dump_message(ex)
-                            self.acknowledge_message()
+                            self.acknowledge_message()  # TODO: Makes sense here?
                         else:
                             self.acknowledge_message()
 
@@ -138,14 +137,11 @@ class Bot(object):
                         self.dump_message(ex)
                     self.acknowledge_message()
 
-                if self.parameters.error_log_exception:
-                    self.logger.exception("Check the following exception: \n%s" % ex)
-
                 if self.parameters.error_log_message:
                     self.logger.info("Last Correct Message(event): %r" % self.last_message)  # FIXME: evaluate if its ok
                     self.logger.info("Current Message(event): %r" % self.current_message)    # FIXME: evaluate if its ok
 
-            except KeyboardInterrupt as e:
+            except KeyboardInterrupt as e:  # TODO: Log interrupt
                 if self.source_pipeline:
                     self.source_pipeline.disconnect()
                     self.logger.info("Disconnecting from source pipeline")
@@ -155,8 +151,14 @@ class Bot(object):
 
                 self.logger.info("Bot is shutting down")
                 break
+            finally:
+                if (self.error_retries_counter >=
+                   self.parameters.error_max_retries):
+                    break
 
-    def stop(self):
+            # TODO: Disconnect Pipelines, set to None
+
+    def stop(self):  # TODO: stop -> terminate, new stop
         try:
             self.logger.error("Bot found an error. Exiting")
         except:
@@ -224,33 +226,29 @@ class Bot(object):
         Load Configurations
     '''
 
-    def load_system_configuration(self):
+    def load_system_configuration(self, config=None):
+        # TODO: Defaults?
         setattr(self.parameters, 'logging_path', DEFAULT_LOGGING_PATH)
         setattr(self.parameters, 'logging_level', DEFAULT_LOGGING_LEVEL)
 
-        config = utils.load_configuration(SYSTEM_CONF_FILE)
+        config = config or utils.load_configuration(SYSTEM_CONF_FILE)
         for option, value in config.iteritems():
             setattr(self.parameters, option, value)
 
-    def load_defaults_configuration(self):
-
+    def load_defaults_configuration(self, config=None):
         # Load defaults configuration section
 
-        config = utils.load_configuration(DEFAULTS_CONF_FILE)
-
-        self.logger.debug("Defaults configuration"
-                          " from '%s' file" % DEFAULTS_CONF_FILE)
+        config = config or utils.load_configuration(DEFAULTS_CONF_FILE)
 
         for option, value in config.iteritems():
             setattr(self.parameters, option, value)
-            self.logger.debug("Defaults configuration: parameter '%s' "
-                              "loaded with value '%s'" % (option, value))
+            # TODO: Log that really?
 
-    def load_runtime_configuration(self):
+    def load_runtime_configuration(self, config=None):
 
         # Load bot runtime configuration section
 
-        config = utils.load_configuration(RUNTIME_CONF_FILE)
+        config = config or utils.load_configuration(RUNTIME_CONF_FILE)
 
         self.logger.debug("Runtime configuration: loading '%s' section from"
                           " '%s' file" % (self.bot_id, RUNTIME_CONF_FILE))
@@ -261,11 +259,8 @@ class Bot(object):
                 self.logger.debug("Runtime configuration: parameter '%s' "
                                   "loaded with value '%s'" % (option, value))
 
-    def load_pipeline_configuration(self):
-        config = utils.load_configuration(PIPELINE_CONF_FILE)
-
-        self.logger.debug("Pipeline configuration: loading '%s' section"
-                          " from '%s' file" % (self.bot_id, PIPELINE_CONF_FILE))
+    def load_pipeline_configuration(self, config=None):
+        config = config or utils.load_configuration(PIPELINE_CONF_FILE)
 
         self.source_queues = None
         self.destination_queues = None
@@ -289,8 +284,8 @@ class Bot(object):
             self.logger.error("Pipeline configuration: failed to load configuration")
             self.stop()
 
-    def load_harmonization_configuration(self):
-        harmonization_config = utils.load_configuration(HARMONIZATION_CONF_FILE)
+    def load_harmonization_configuration(self, config=None):
+        harmonization_config = config or utils.load_configuration(HARMONIZATION_CONF_FILE)
         self.logger.debug("Harmonization configuration: loading all '%s' file" %
                           HARMONIZATION_CONF_FILE)
 

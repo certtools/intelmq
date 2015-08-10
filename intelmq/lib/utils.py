@@ -2,7 +2,19 @@ import logging
 import json
 import base64
 import os
+import re
 import sys
+
+
+# Used loglines format
+LOG_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+LOG_FORMAT_STREAM = '%(name)s: %(message)s'
+
+# Regex for parsing the above LOG_FORMAT
+LOG_REGEX = (r'^(?P<asctime>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d+) -'
+             r' (?P<name>[-\w]+) - '
+             r'(?P<levelname>[A-Z]+) - '
+             r'(?P<message>.+)$')
 
 
 def decode(text, encodings=["utf-8"], force=False):
@@ -54,19 +66,44 @@ def load_configuration(configuration_filepath):
     return config
 
 
-def log(logs_path, name, loglevel="DEBUG"):
+def log(logs_path, name, loglevel="DEBUG", stream=None):
+    """
+    Returns a logger instance logging to file and sys.stderr or other stream.
+
+    Parameters:
+    -----------
+        logs_path : string
+            Path to log directory
+        name : string
+            filename for logfile or string preceding lines in stream
+        loglevel : string
+            default is "DEBUG"
+        stream : object
+            By default (None), stderr will be used, stream objects can be given
+
+    Returns
+    -------
+        logger : object
+            A `logging` instance.
+
+    See also
+    --------
+        LOG_FORMAT : string
+            Default log format for file handler
+        LOG_FORMAT_STREAM : string
+            Default log format for stream handler
+    """
     logger = logging.getLogger(name)
     logger.setLevel(loglevel)
 
     handler = logging.FileHandler("%s/%s.log" % (logs_path, name))
     handler.setLevel(loglevel)
 
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - '
-                                  '%(message)s')
+    formatter = logging.Formatter(LOG_FORMAT)
     handler.setFormatter(formatter)
 
-    console_formatter = logging.Formatter("%(name)s: %(message)s")
-    console_handler = logging.StreamHandler()
+    console_formatter = logging.Formatter(LOG_FORMAT_STREAM)
+    console_handler = logging.StreamHandler(stream)
     console_handler.setFormatter(console_formatter)
     logger.addHandler(console_handler)
     console_handler.setLevel(loglevel)
@@ -86,9 +123,9 @@ def reverse_readline(filename, buf_size=8192):
         while remaining_size > 0:
             offset = min(total_size, offset + buf_size)
             fh.seek(-offset, os.SEEK_END)
-            buffer = fh.read(min(remaining_size, buf_size))
+            buf = fh.read(min(remaining_size, buf_size))
             remaining_size -= buf_size
-            lines = buffer.split('\n')
+            lines = buf.split('\n')
             # the first line of the buffer is probably not a complete line so
             # we'll save it and append it to the last line of the next buffer
             # we read
@@ -96,7 +133,7 @@ def reverse_readline(filename, buf_size=8192):
                 # if the previous chunk starts right from the beginning of line
                 # do not concact the segment to the last line of new chunk
                 # instead, yield the segment first
-                if buffer[-1] is not '\n':
+                if buf[-1] is not '\n':
                     lines[-1] += segment
                 else:
                     yield segment
@@ -105,3 +142,16 @@ def reverse_readline(filename, buf_size=8192):
                 if len(lines[index]):
                     yield lines[index]
         yield segment
+
+
+def parse_logline(logline):
+    """Parses the given logline string into its components"""
+
+    match = re.match(LOG_REGEX, logline)
+    result = {}
+    fields = ("asctime", "name", "levelname", "message")
+
+    if match:
+        result = dict(zip(fields, match.group(*fields)))
+
+    return result
