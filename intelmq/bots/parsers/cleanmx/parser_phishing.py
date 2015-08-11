@@ -60,6 +60,9 @@ class CleanMXPhishingParserBot(Bot):
                 if key == "source.fqdn" and IPAddress.is_valid(value):
                     continue
 
+                if key == "time.source":
+                    value = value + " UTC"
+
                 event.add(key, value, sanitize=True)
 
             time_observation = DateTime().generate_datetime_now()
@@ -67,7 +70,7 @@ class CleanMXPhishingParserBot(Bot):
             event.add('feed.name', report.value("feed.name"))
             event.add('feed.url', report.value("feed.url"))
             event.add('classification.type', u'phishing')
-            event.add("raw", row, sanitize=True)
+            event.add("raw", ",".join(row), sanitize=True)
 
             self.send_message(event)
         self.acknowledge_message()
