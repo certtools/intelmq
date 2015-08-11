@@ -32,7 +32,7 @@ apt-get install python-pip git build-essential python-dev redis-server python-zm
 ```
 sudo su -
 
-git clone -b v1.0-final https://github.com/certtools/intelmq.git
+git clone https://github.com/certtools/intelmq.git
 cd intelmq/
 
 pip install -r REQUIREMENTS
