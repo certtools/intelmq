@@ -7,17 +7,20 @@ import intelmq.lib.bot as bot
 from intelmq.lib.message import Event
 
 
-EXAMPLE_EVENT = {"source.ip": "104.238.102.226",
-                 "time.source": "2015-06-04T05:56:00+00:00",
-                 "feed.url": "http://www.malwaredomainlist.com/updatescsv.php",
-                 "source.reverse_domain_name": "ip-104-238-102-226.ip.secureserver.net.",
-                 "source.url": "http://windows-crash-report.info",
+EXAMPLE_EVENT = {"source.ip": "192.0.2.3",
+                 "time.source": "2015-06-04T13:37:00+00:00",
+                 "feed.url": "http://www.example.com/",
+                 "source.reverse_domain_name": "reverse.example.net",
+                 "source.url": "http://example.org",
                  "time.observation": "2015-08-11T13:03:40+00:00",
-                 "raw": "MjAxNS8wNi8wNF8wNTo1Nix3aW5kb3dzLWNyYXNoLXJlcG9ydC5pbmZvLDEwNC4yMzguMTAyLjIyNixpcC0xMDQtMjM4LTEwMi0yMjYuaXAuc2VjdXJlc2VydmVyLm5ldC4sQnJvd2xvY2ssIEZha2UuVGVjaFN1cHBvcnQsV0lORE9XUy1DUkFTSC1SRVBPUlQuSU5GT0Bkb21haW5zYnlwcm94eS5jb20sMjY0OTY=",
-                 "__type": "Event", "classification.type": "malware",
-                 "description.text": "Browlock, Fake.TechSupport",
-                 "source.asn": "26496",
-                 "feed.name": "Malware Domain List"}
+                 "raw": "MjAxNS8wNi8wNF8xMzozNyxleGFtcGxlLm9yZywxOTIuMC4yLjMsc"
+                        "mV2ZXJzZS5leGFtcGxlLm5ldCxleGFtcGxlIGRlc2NyaXB0aW9uLH"
+                        "JlcG9ydEBleGFtcGxlLm9yZywwMDAwMAo=",
+                 "__type": "Event",
+                 "classification.type": "malware",
+                 "description.text": "example description",
+                 "source.asn": "00000",
+                 "feed.name": "Example"}
 EXAMPLE_MESSAGE = json.dumps(EXAMPLE_EVENT)
 
 
@@ -37,7 +40,6 @@ class DummyBot(bot.Bot):
         self.send_message(event)
         self.acknowledge_message()
         self.error_retries_counter = 1
-        raise KeyboardInterrupt  # TODO: Should not be necessary
 
 
 class TestDummyBot(test.BotTestCase, unittest.TestCase):

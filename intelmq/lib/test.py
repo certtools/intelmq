@@ -22,6 +22,7 @@ class BotTestCase(object):
         self.bot = None
         self.bot_reference = None
         self.config = {}
+        self.input_message = ''
         self.loglines = []
         self.loglines_buffer = ''
         self.log_stream = None
@@ -43,6 +44,7 @@ class BotTestCase(object):
                                   "__default__": {"rate_limit": 0,
                                                   "retry_delay": 0,
                                                   "error_retry_delay": 0,
+                                                  "error_max_retries": 0,
                                                   }}
         self.config["pipeline"] = {self.bot_id: {"source-queue": (src_name),
                                                  "destination-queues": [dst_name]}}

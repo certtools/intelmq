@@ -55,7 +55,7 @@ class TestUtils(unittest.TestCase):
         with tempfile.NamedTemporaryFile() as handle:
             filename = handle.name
             name = os.path.split(filename)[-1]
-            logger = utils.log(tempfile.tempdir, name)
+            logger = utils.log(tempfile.tempdir, name, stream=io.BytesIO())
 
             logger.info(LINES['spare'][0])
             logger.error(LINES['spare'][1])

@@ -56,7 +56,6 @@ class Bot(object):
               destination_pipeline=None):
         self.source_pipeline = source_pipeline
         self.destination_pipeline = destination_pipeline
-        self.logger.debug(repr(self.parameters.error_retry_delay))
         self.logger.info('Bot start processing')
 
         while True:
