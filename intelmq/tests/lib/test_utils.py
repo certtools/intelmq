@@ -18,8 +18,8 @@ LINES = {'spare': ['Lorem', 'ipsum', 'dolor'],
          'short': ['{}: Lorem', '{}: ipsum',
                    '{}: dolor'],
          'long': [r'\A[-0-9]{{10}} [0-9:]{{8}},\d{{3}} - {} - INFO - Lorem\Z',
-                  r'\A[-0-9]{{10}} [0-9:]{{8}},\d{{3}} - {} - WARNING - ipsum\Z',
-                  r'\A[-0-9]{{10}} [0-9:]{{8}},\d{{3}} - {} - ERROR - dolor\Z'],
+                  r'\A[-0-9]{{10}} [0-9:]{{8}},\d{{3}} - {} - ERROR - ipsum\Z',
+                  r'\A[-0-9]{{10}} [0-9:]{{8}},\d{{3}} - {} - CRITICAL - dolor\Z'],
          }
 SAMPLES = {'normal': [b'Lorem ipsum dolor sit amet',
                       u'Lorem ipsum dolor sit amet'],
@@ -58,8 +58,8 @@ class TestUtils(unittest.TestCase):
             logger = utils.log(tempfile.tempdir, name)
 
             logger.info(LINES['spare'][0])
-            logger.warning(LINES['spare'][1])
-            logger.error(LINES['spare'][2])
+            logger.error(LINES['spare'][1])
+            logger.critical(LINES['spare'][2])
 
             handle.seek(0)
             file_lines = handle.readlines()
@@ -78,8 +78,8 @@ class TestUtils(unittest.TestCase):
             logger = utils.log(tempfile.tempdir, name, stream=stream)
 
             logger.info(LINES['spare'][0])
-            logger.warning(LINES['spare'][1])
-            logger.error(LINES['spare'][2])
+            logger.error(LINES['spare'][1])
+            logger.critical(LINES['spare'][2])
 
             stream_lines = stream.getvalue().splitlines()
 

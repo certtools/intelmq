@@ -1,6 +1,5 @@
-import json 
+import json
 import hashlib
-import base64
 from intelmq import HARMONIZATION_CONF_FILE
 from intelmq.lib import utils
 import intelmq.lib.harmonization
@@ -48,7 +47,7 @@ class Message(dict):
         for invalid_value in ["-", "N/A"]:
             if value == invalid_value:
                 return
-    
+
         if not self.__is_valid_key(key):
             raise exceptions.InvalidKey(key)
 
@@ -60,7 +59,7 @@ class Message(dict):
 
         if sanitize:
             old_value = value
-            value = self.__sanitize_value(key, value)            
+            value = self.__sanitize_value(key, value)
             if not value:
                 raise exceptions.InvalidValue(key, old_value)
 
@@ -71,25 +70,25 @@ class Message(dict):
 
     def __getitem__(self, key):
         return self.value(key)
-        
+
     def value(self, key):
         return super(Message, self).__getitem__(key)
-        
+
     def update(self, key, value, sanitize=False):
         if key not in self:
             raise exceptions.KeyNotExists(key)
         self.add(key, value, sanitize)
-        
+
     def clear(self, key):
         self.__delitem__(key)
-        
+
     def __delitem__(self, key):
         if key in self:
             super(Message, self).__delitem__(key)
 
     def contains(self, key):
         return key in self
-        
+
     def items(self):
         return super(Message, self).items()
 
@@ -100,17 +99,17 @@ class Message(dict):
 
     def copy(self):
         return Message(super(Message, self).copy())
-        
+
     def deep_copy(self):
         return Message(self.serialize())
-        
+
     def __unicode__(self):
         return self.serialize()
 
     def serialize(self):
         return json.dumps(self) # FIXME: dont know if json take care of encoding issues
         # FIXME: raw need to be decoded from base64 (may be not here)
-            
+
     @staticmethod
     def unserialize(message_string):
         return json.loads(message_string) # FIXME: dont know if json take care of encoding issues
@@ -121,12 +120,12 @@ class Message(dict):
             return True
         return False
 
-    def __is_valid_value(self, key, value):   
+    def __is_valid_value(self, key, value):
         class_name = self.__get_class_name_from_key_type(key)
         class_reference = getattr(intelmq.lib.harmonization, class_name)
         return class_reference().is_valid(value)
 
-    def __sanitize_value(self, key, value):   
+    def __sanitize_value(self, key, value):
         class_name = self.__get_class_name_from_key_type(key)
         class_reference = getattr(intelmq.lib.harmonization, class_name)
         return class_reference().sanitize(value)

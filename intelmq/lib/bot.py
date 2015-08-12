@@ -51,14 +51,12 @@ class Bot(object):
     def init(self):
         pass
 
-    def start(self):
-        self.source_pipeline = None
-        self.destination_pipeline = None
-
-        starting = True
-        error_on_pipeline = True
-        error_on_message = False
-
+    def start(self, starting=True, error_on_pipeline=True,
+              error_on_message=False, source_pipeline=None,
+              destination_pipeline=None):
+        self.source_pipeline = source_pipeline
+        self.destination_pipeline = destination_pipeline
+        self.logger.debug(repr(self.parameters.error_retry_delay))
         self.logger.info('Bot start processing')
 
         while True:
@@ -78,14 +76,14 @@ class Bot(object):
                     self.source_pipeline = PipelineFactory.create(self.parameters)
                     self.logger.info("Loading source queue")
                     self.source_pipeline.set_queues(self.source_queues, "source")
-                    self.logger.info("Source queue loaded")
+                    self.logger.info("Source queue loaded {}".format(self.source_queues))
                     self.source_pipeline.connect()
                     self.logger.info("Connected to source queue")
 
                     self.destination_pipeline = PipelineFactory.create(self.parameters)
                     self.logger.info("Loading destination queues")
                     self.destination_pipeline.set_queues(self.destination_queues, "destination")
-                    self.logger.info("Destination queues loaded")
+                    self.logger.info("Destination queues loaded {}".format(self.destination_queues))
                     self.destination_pipeline.connect()
                     self.logger.info("Connected to destination queues")
 
@@ -252,12 +250,18 @@ class Bot(object):
 
         self.logger.debug("Runtime configuration: loading '%s' section from"
                           " '%s' file" % (self.bot_id, RUNTIME_CONF_FILE))
-
+        self.logger.debug("{}".format(repr(config.keys())))
+        if '__default__' in config.keys():
+            for option, value in config['__default__'].iteritems():
+                setattr(self.parameters, option, value)
+                self.logger.debug("Runtime configuration: parameter '{}' "
+                                  "loaded with default value '{}'."
+                                  "".format(option, value))
         if self.bot_id in config.keys():
             for option, value in config[self.bot_id].iteritems():
                 setattr(self.parameters, option, value)
                 self.logger.debug("Runtime configuration: parameter '%s' "
-                                  "loaded with value '%s'" % (option, value))
+                                  "loaded with value '%s'." % (option, value))
 
     def load_pipeline_configuration(self, config=None):
         config = config or utils.load_configuration(PIPELINE_CONF_FILE)
