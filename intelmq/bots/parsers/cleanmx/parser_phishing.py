@@ -57,7 +57,7 @@ class CleanMXPhishingParserBot(Bot):
                 if key is "__IGNORE__" or key is "__TDB__":
                     continue
 
-                if key == "source.fqdn" and IPAddress.is_valid(value):
+                if key == "source.fqdn" and IPAddress.is_valid(value, sanitize=True):
                     continue
 
                 if key == "time.source":

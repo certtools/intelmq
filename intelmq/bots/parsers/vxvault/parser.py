@@ -30,12 +30,12 @@ class VXVaultParserBot(Bot):
             hostname = url_object.hostname
             port     = url_object.port
             
-            if IPAddress.is_valid(hostname):
+            event = Event()
+
+            if IPAddress.is_valid(hostname, sanitize=True):
                 event.add("source.ip", hostname, sanitize=True)
             else:
                 event.add("source.fqdn", hostname, sanitize=True)
-
-            event = Event()
             
             time_observation = DateTime().generate_datetime_now()
             event.add('time.observation', time_observation, sanitize=True)

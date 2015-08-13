@@ -24,7 +24,7 @@ class CymruFullBogonsParserBot(Bot):
 
             value = row.split(" ")[1]
 
-            if IPAddress.is_valid(value):
+            if IPAddress.is_valid(value, sanitize=True):
                 event.add('source.ip', value, sanitize=True)
             else:
                 event.add('source.network', value, sanitize=True)

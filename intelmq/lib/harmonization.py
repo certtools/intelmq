@@ -16,7 +16,10 @@ import socket
 class GenericType():
 
     @staticmethod
-    def is_valid(value):
+    def is_valid(value, sanitize=False):
+        if sanitize:
+            value = GenericType().sanitize(value)
+
         if not value:
             return False
 
@@ -49,7 +52,11 @@ class GenericType():
 class String(GenericType):
 
     @staticmethod
-    def is_valid(value):
+    def is_valid(value, sanitize=False):
+        if sanitize:
+            value = GenericType().sanitize(value)
+            value = String().sanitize(value)
+
         if not GenericType().is_valid(value):
             return False
 
@@ -69,7 +76,11 @@ class String(GenericType):
 class FeedName(GenericType):
 
     @staticmethod
-    def is_valid(value):
+    def is_valid(value, sanitize=False):
+        if sanitize:
+            value = GenericType().sanitize(value)
+            value = FeedName().sanitize(value)
+
         if not GenericType().is_valid(value):
             return False
 
@@ -83,7 +94,11 @@ class FeedName(GenericType):
 class DateTime(GenericType):
 
     @staticmethod
-    def is_valid(value):
+    def is_valid(value, sanitize=False):
+        if sanitize:
+            value = GenericType().sanitize(value)
+            value = DateTime().sanitize(value)
+
         if not GenericType().is_valid(value):
             return False
 
@@ -118,7 +133,11 @@ class DateTime(GenericType):
 class IPNetwork(GenericType):
 
     @staticmethod
-    def is_valid(value):
+    def is_valid(value, sanitize=False):
+        if sanitize:
+            value = GenericType().sanitize(value)
+            value = IPNetwork().sanitize(value)
+
         if not GenericType().is_valid(value):
             return False
 
@@ -147,7 +166,11 @@ class IPNetwork(GenericType):
 class IPAddress(GenericType):
 
     @staticmethod
-    def is_valid(value):
+    def is_valid(value, sanitize=False):
+        if sanitize:
+            value = GenericType().sanitize(value)
+            value = IPAddress().sanitize(value)
+
         if not GenericType().is_valid(value):
             return False
 
@@ -198,7 +221,11 @@ class IPAddress(GenericType):
 class FQDN(GenericType):
 
     @staticmethod
-    def is_valid(value):
+    def is_valid(value, sanitize=False):
+        if sanitize:
+            value = GenericType().sanitize(value)
+            value = FQDN().sanitize(value)
+
         if not GenericType().is_valid(value):
             return False
 
@@ -229,7 +256,11 @@ class FQDN(GenericType):
 class MalwareName(GenericType):
 
     @staticmethod
-    def is_valid(value):
+    def is_valid(value, sanitize=False):
+        if sanitize:
+            value = GenericType().sanitize(value)
+            value = MalwareName().sanitize(value)
+
         if not GenericType().is_valid(value):
             return False
 
@@ -247,7 +278,11 @@ class MalwareName(GenericType):
 class Base64(GenericType):
 
     @staticmethod
-    def is_valid(value):
+    def is_valid(value, sanitize=False):
+        if sanitize:
+            value = GenericType().sanitize(value)
+            value = Base64().sanitize(value)
+
         try:
             base64.b64decode(value)
         except:
@@ -267,7 +302,11 @@ class Base64(GenericType):
 class URL(GenericType):
 
     @staticmethod
-    def is_valid(value):
+    def is_valid(value, sanitize=False):
+        if sanitize:
+            value = GenericType().sanitize(value)
+            value = URL().sanitize(value)
+
         if not GenericType().is_valid(value):
             return False
 
@@ -337,7 +376,11 @@ class ClassificationType(GenericType):
                        ]
 
     @staticmethod
-    def is_valid(value):
+    def is_valid(value, sanitize=False):
+        if sanitize:
+            value = GenericType().sanitize(value)
+            value = ClassificationType().sanitize(value)
+
         if not GenericType().is_valid(value):
             return False
 
@@ -351,4 +394,4 @@ class ClassificationType(GenericType):
 
     @staticmethod
     def sanitize(value):
-        return GenericType().sanitize(value)        
+        return GenericType().sanitize(value)

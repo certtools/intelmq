@@ -36,7 +36,7 @@ class HpHostsParser(Bot):
     
             event = Event()
 
-            if IPAddress.is_valid(values[1]):
+            if IPAddress.is_valid(values[1], sanitize=True):
                 event.add("source.ip", values[1], sanitize=True)
             else:
                 event.add("source.fqdn", values[1], sanitize=True)
