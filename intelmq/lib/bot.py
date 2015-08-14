@@ -1,3 +1,4 @@
+from __future__ import print_function, unicode_literals
 import re
 import sys
 import json
@@ -96,17 +97,20 @@ class Bot(object):
                 self.process()
                 self.source_pipeline.sleep(self.parameters.rate_limit)
 
-            except exceptions.PipelineError, ex:
+            except exceptions.PipelineError as ex:
                 error_on_pipeline = True
-                self.logger.error('Pipeline failed')
-                self.logger.exception("Check the following exception: \n%s" % ex)
+                if self.parameters.error_log_exception:
+                    self.logger.exception('Pipeline failed')
+                else:
+                    self.logger.error('Pipeline failed')
                 self.source_pipeline = None
                 self.destination_pipeline = None
 
             except Exception as ex:
-                self.logger.error("Bot has found a problem")
                 if self.parameters.error_log_exception:
-                    self.logger.exception(ex)
+                    self.logger.exception("Bot has found a problem")
+                else:
+                    self.logger.error("Bot has found a problem")
 
                 if self.parameters.error_procedure == "retry":
                     if self.parameters.error_max_retries <= 0:
@@ -161,13 +165,13 @@ class Bot(object):
         except:
             pass
         finally:
-            print "Bot found an error. Exiting"
+            print("Bot found an error. Exiting")
         exit(-1)
 
     def check_bot_id(self, str):
         res = re.search('[^0-9a-zA-Z\-]+', str)
         if res:
-            print "Invalid bot id."
+            print("Invalid bot id.")
             self.stop()
 
     def send_message(self, message):

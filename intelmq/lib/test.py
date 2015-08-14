@@ -2,6 +2,7 @@
 """
 
 """
+from __future__ import unicode_literals
 import io
 import json
 import logging
@@ -31,7 +32,7 @@ class BotTestCase(object):
     def reset_bot(self):
         """Reconfigures the bot with the changed attributes"""
 
-        self.log_stream = io.BytesIO()
+        self.log_stream = io.StringIO()
 
         src_name = "{}-input".format(self.bot_id)
         dst_name = "{}-output".format(self.bot_id)
@@ -170,7 +171,7 @@ class BotTestCase(object):
         for key, value in expected_event.items():
             unicode_event[unicode(key)] = unicode(value)
 
-        self.assertIsInstance(event, str)
+        self.assertIsInstance(event, unicode)
         event_dict = json.loads(event)
 
         self.assertDictContainsSubset(unicode_event, event_dict)

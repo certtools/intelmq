@@ -1,19 +1,22 @@
-import sys
+# -*- coding: utf-8 -*-
+"""
+
+TODO: staticmethods and inheritance?
+TODO: delete is_valid and sanitize where only super() is used
+"""
 import dns
 import DNS
 import pytz
-import time
-import json
 import ipaddr
 import base64
-import inspect
 import urlparse
 import binascii
 import datetime
 import dateutil.parser
 import socket
 
-class GenericType():
+
+class GenericType(object):
 
     @staticmethod
     def is_valid(value, sanitize=False):
@@ -30,7 +33,7 @@ class GenericType():
             return False
 
         return True
-        
+
     @staticmethod
     def sanitize(value):
         if not value:
@@ -67,7 +70,7 @@ class String(GenericType):
             return False
 
         return True
-        
+
     @staticmethod
     def sanitize(value):
         return GenericType().sanitize(value)
@@ -85,7 +88,7 @@ class FeedName(GenericType):
             return False
 
         return True
-        
+
     @staticmethod
     def sanitize(value):
         return GenericType().sanitize(value)
@@ -106,7 +109,7 @@ class DateTime(GenericType):
             return False
 
         return True
-        
+
     @staticmethod
     def sanitize(value):
         value = DateTime.__parse(value)
@@ -118,7 +121,7 @@ class DateTime(GenericType):
             value = dateutil.parser.parse(value)
             value = value.astimezone(pytz.utc)
             value = value.isoformat()
-        except:
+        except ValueError:
             return None
         return value.decode("utf-8")
 
@@ -143,19 +146,19 @@ class IPNetwork(GenericType):
 
         try:
             ipaddr.IPNetwork(value)
-        except:
+        except ValueError:
             return False
 
         return True
-            
+
     @staticmethod
     def sanitize(value):
-        
+
         try:
             ipaddr.IPNetwork(value)
-        except:
+        except ValueError:
             return None
-                
+
         return GenericType().sanitize(value)
 
     @staticmethod
@@ -176,24 +179,24 @@ class IPAddress(GenericType):
 
         try:
             ipaddr.IPAddress(value)
-        except:
+        except ValueError:
             return False
 
         return True
-            
+
     @staticmethod
     def sanitize(value):
-        
+
         try:
             network = ipaddr.IPNetwork(value)
-        except:
+        except ValueError:
             return None
-        
+
         if network.numhosts == 1:
             value = str(network.network)
         else:
             return None
-        
+
         return GenericType().sanitize(value)
 
     @staticmethod
@@ -205,7 +208,7 @@ class IPAddress(GenericType):
                 ip_integer = socket.inet_pton(socket.AF_INET6, value)
             except socket.error:
                 return None
-            
+
         ip_integer = int(binascii.hexlify(ip_integer), 16)
         return ip_integer
 
@@ -214,8 +217,8 @@ class IPAddress(GenericType):
         return int(ipaddr.IPAddress(value).version)
 
     @staticmethod
-    def to_reverse(ip):
-        return unicode(dns.reversename.from_address(ip))
+    def to_reverse(ip_addr):
+        return unicode(dns.reversename.from_address(ip_addr))
 
 
 class FQDN(GenericType):
@@ -231,24 +234,24 @@ class FQDN(GenericType):
 
         if IPAddress().is_valid(value):
             return False
-            
+
         if URL().is_valid(value):
             return False
-        
+
         if not len(value.split('.')) > 1:
             return False
 
         return True
-        
+
     @staticmethod
     def sanitize(value):
         return GenericType().sanitize(value)
-    
+
     @staticmethod
     def to_ip(value):
         try:
             value = DNS.dnslookup(value, 'A')
-        except:
+        except Exception:  # TODO: More specific Exception
             value = None
         return value
 
@@ -268,7 +271,7 @@ class MalwareName(GenericType):
             return False
 
         return True
-        
+
     @staticmethod
     def sanitize(value):
         value = value.lower()
@@ -285,14 +288,14 @@ class Base64(GenericType):
 
         try:
             base64.b64decode(value)
-        except:
+        except TypeError:
             return False
 
         if not GenericType().is_valid(value):
             return False
 
         return True
-        
+
     @staticmethod
     def sanitize(value):
         value = base64.b64encode(value)
@@ -317,10 +320,10 @@ class URL(GenericType):
         return True
 
     @staticmethod
-    def sanitize(value):       
+    def sanitize(value):
         if "hxxp://" in value:
             value = value.replace('hxxp://', 'http://')
-        
+
         if "hxxps://" in value:
             value = value.replace('hxxps://', 'https://')
 
@@ -329,14 +332,14 @@ class URL(GenericType):
                     "http://" + value,
                     "http://" + value + "/"
                 ]
-        
+
         for value in tests:
             result = urlparse.urlparse(value)
             if result.netloc != "":
                 return GenericType().sanitize(value)
 
         return None
-    
+
     @staticmethod
     def to_ip(url):
         value = urlparse.urlparse(url)
@@ -346,34 +349,34 @@ class URL(GenericType):
 
     @staticmethod
     def to_domain_name(url):
-        value = urlparse(url)
+        value = urlparse.urlparse(url)
         if value.netloc != "" and not IPAddress.is_valid(value.netloc):
             return value.netloc
         return None
-    
-        
+
+
 class ClassificationType(GenericType):
 
-    __allowed_values = ['spam',
-                        'malware',
-                        'botnet drone',
-                        'ransomware',
-                        'malware configuration',
-                        'c&c',
-                        'scanner',
-                        'exploit',
-                        'brute-force',
-                        'ids alert',
-                        'defacement',
-                        'compromised',
-                        'backdoor',
-                        'ddos',
-                        'dropzone',
-                        'phishing',
-                        'vulnerable service',
-                        'blacklist',
-                        'unknown'
-                       ]
+    allowed_values = ['spam',
+                      'malware',
+                      'botnet drone',
+                      'ransomware',
+                      'malware configuration',
+                      'c&c',
+                      'scanner',
+                      'exploit',
+                      'brute-force',
+                      'ids alert',
+                      'defacement',
+                      'compromised',
+                      'backdoor',
+                      'ddos',
+                      'dropzone',
+                      'phishing',
+                      'vulnerable service',
+                      'blacklist',
+                      'unknown'
+                      ]
 
     @staticmethod
     def is_valid(value, sanitize=False):
@@ -386,8 +389,8 @@ class ClassificationType(GenericType):
 
         if type(value) is not unicode:
             return False
-            
-        if not value in ClassificationType().__allowed_values:
+
+        if value not in ClassificationType().allowed_values:
             return False
 
         return True

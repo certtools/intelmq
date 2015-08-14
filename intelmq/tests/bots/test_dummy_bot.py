@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 import json
 import unittest
 
@@ -48,7 +49,7 @@ class TestDummyBot(test.BotTestCase, unittest.TestCase):
     """
 
     def reset_bot(self):
-        self.bot_id = 'test-bot'
+        self.bot_id = bytes('test-bot')
         self.bot_reference = DummyBot
         self.input_message = EXAMPLE_MESSAGE
         super(TestDummyBot, self).reset_bot()
