@@ -6,6 +6,7 @@ Decoding and Encoding, Logging functionality (file and stream), and log
 parsing.
 base64 de-/encoding is not tested yet, as we fully rely on the module.
 """
+from __future__ import unicode_literals
 import io
 import os
 import tempfile
@@ -49,13 +50,25 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(SAMPLES['unicode'][0],
                          utils.encode(SAMPLES['unicode'][1]))
 
+    def test_decode_ascii(self):
+        """ Test ASCII decoding enforcement. """
+        self.assertEqual('fobar',
+                         utils.decode(b'fo\xe4bar', encodings=('ascii', ),
+                                      force=True))
+
+    def test_encode_ascii(self):
+        """ Test ASCII encoding enforcement. """
+        self.assertEqual('fobar',
+                         utils.encode(b'fo\xe4bar', encodings=('ascii', ),
+                                      force=True))
+
     def test_file_logger(self):
         """Tests if a logger for a file can be generated with log()."""
 
         with tempfile.NamedTemporaryFile() as handle:
             filename = handle.name
             name = os.path.split(filename)[-1]
-            logger = utils.log(tempfile.tempdir, name, stream=io.BytesIO())
+            logger = utils.log(tempfile.tempdir, name, stream=io.StringIO())
 
             logger.info(LINES['spare'][0])
             logger.error(LINES['spare'][1])
@@ -71,7 +84,7 @@ class TestUtils(unittest.TestCase):
     def test_stream_logger(self):
         """Tests if a logger for a stream can be generated with log()."""
 
-        stream = io.BytesIO()
+        stream = io.StringIO()
         with tempfile.NamedTemporaryFile() as handle:
             filename = handle.name
             name = os.path.split(filename)[-1]

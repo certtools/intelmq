@@ -1,6 +1,20 @@
-import logging
-import json
+# -*- coding: utf-8 -*-
+"""
+Common utility functions for intelmq.
+
+decode
+encode
+base64_decode
+base64_encode
+load_configuration
+log
+reverse_readline
+parse_logline
+"""
+from __future__ import unicode_literals
 import base64
+import json
+import logging
 import os
 import re
 
@@ -16,50 +30,89 @@ LOG_REGEX = (r'^(?P<asctime>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d+) -'
              r'(?P<message>.+)$')
 
 
-def decode(text, encodings=["utf-8"], force=False):
+def decode(text, encodings=("utf-8", ), force=False):
+    """
+    Decode given string to unicode (default).
+
+    Parameters:
+    -----------
+    text : string
+    encodings : iterable of strings
+        list/tuple of encodings to use, default ('utf8')
+    force : boolean
+        Ignore invalid characters, default: False
+    """
     if type(text) is unicode:
         return text
 
     for encoding in encodings:
         try:
             return text.decode(encoding)
-        except ValueError as e:
+        except ValueError:
             pass
 
     if force:
         for encoding in encodings:
             try:
                 return text.decode(encoding, 'ignore')
-            except ValueError as e:
+            except ValueError:
                 pass
 
     raise Exception("Found a problem when decoding.")
 
-def encode(text, encodings=["utf-8"], force=False):
+
+def encode(text, encodings=("utf-8", ), force=False):
+    """
+    Decode given string from unicode (default).
+
+    Parameters:
+    -----------
+    text : string
+    encodings : iterable of strings
+        list/tuple of encodings to use, default ('utf8')
+    force : boolean
+        Ignore invalid characters, default: False
+    """
     for encoding in encodings:
         try:
             return text.encode(encoding)
-        except ValueError as e:
+        except ValueError:
             pass
 
     if force:
         for encoding in encodings:
             try:
                 return text.decode(encoding, 'ignore')
-            except ValueError as e:
+            except ValueError:
                 pass
 
     raise Exception("Found a problem when encoding.")
 
+
 def base64_decode(value):
-    data =  base64.b64decode(value)
+    data = base64.b64decode(value)
     _data = data.decode('utf-8', 'ignore')
     return _data.encode('utf-8')
+
 
 def base64_encode(value):
     return base64.b64encode(value)
 
+
 def load_configuration(configuration_filepath):
+    """
+    Load JSON configuration file.
+
+    Parameters:
+    -----------
+    configuration_filepath : string
+        Path to JSON file to load
+
+    Returns:
+    --------
+    config : dict
+        Parsed configuration
+    """
     with open(configuration_filepath, 'r') as fpconfig:
         config = json.loads(fpconfig.read())
     return config
@@ -114,15 +167,15 @@ def log(logs_path, name, loglevel="DEBUG", stream=None):
 def reverse_readline(filename, buf_size=8192):
     """a generator that returns the lines of a file in reverse order
     http://stackoverflow.com/a/23646049/2851664"""
-    with open(filename) as fh:
+    with open(filename) as handle:
         segment = None
         offset = 0
-        fh.seek(0, os.SEEK_END)
-        total_size = remaining_size = fh.tell()
+        handle.seek(0, os.SEEK_END)
+        total_size = remaining_size = handle.tell()
         while remaining_size > 0:
             offset = min(total_size, offset + buf_size)
-            fh.seek(-offset, os.SEEK_END)
-            buf = fh.read(min(remaining_size, buf_size))
+            handle.seek(-offset, os.SEEK_END)
+            buf = handle.read(min(remaining_size, buf_size))
             remaining_size -= buf_size
             lines = buf.split('\n')
             # the first line of the buffer is probably not a complete line so
@@ -144,7 +197,18 @@ def reverse_readline(filename, buf_size=8192):
 
 
 def parse_logline(logline):
-    """Parses the given logline string into its components"""
+    """
+    Parses the given logline string into its components.
+
+    Parameters:
+    -----------
+    logline : string
+
+    Returns:
+    --------
+    result : dict
+        dictionary with keys: ['message', 'name', 'levelname', 'asctime']
+    """
 
     match = re.match(LOG_REGEX, logline)
     result = {}
