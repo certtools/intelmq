@@ -1,23 +1,22 @@
+# -*- coding: utf-8 -*-
 from __future__ import print_function, unicode_literals
-import re
-import sys
-import json
-import time
 import datetime
+import json
+import re
+import sys  # TODO: Replace imports in bots
+import time
 import traceback
-import ConfigParser
 
-from intelmq import SYSTEM_CONF_FILE
-from intelmq import STARTUP_CONF_FILE
-from intelmq import RUNTIME_CONF_FILE
-from intelmq import DEFAULTS_CONF_FILE
-from intelmq import PIPELINE_CONF_FILE
-from intelmq import HARMONIZATION_CONF_FILE
-from intelmq import DEFAULT_LOGGING_PATH
 from intelmq import DEFAULT_LOGGING_LEVEL
+from intelmq import DEFAULT_LOGGING_PATH
+from intelmq import DEFAULTS_CONF_FILE
+from intelmq import HARMONIZATION_CONF_FILE
+from intelmq import PIPELINE_CONF_FILE
+from intelmq import RUNTIME_CONF_FILE
+from intelmq import SYSTEM_CONF_FILE
 
-from intelmq.lib import utils
 from intelmq.lib import exceptions
+from intelmq.lib import utils
 from intelmq.lib.message import MessageFactory
 from intelmq.lib.pipeline import PipelineFactory
 
@@ -72,7 +71,6 @@ class Bot(object):
 
                 if error_on_pipeline:
                     self.logger.info("Loading source pipeline")
-
                     self.source_pipeline = PipelineFactory.create(self.parameters)
                     self.logger.info("Loading source queue")
                     self.source_pipeline.set_queues(self.source_queues, "source")
@@ -80,6 +78,7 @@ class Bot(object):
                     self.source_pipeline.connect()
                     self.logger.info("Connected to source queue")
 
+                    self.logger.info("Loading destination pipeline")
                     self.destination_pipeline = PipelineFactory.create(self.parameters)
                     self.logger.info("Loading destination queues")
                     self.destination_pipeline.set_queues(self.destination_queues, "destination")
@@ -97,7 +96,7 @@ class Bot(object):
                 self.process()
                 self.source_pipeline.sleep(self.parameters.rate_limit)
 
-            except exceptions.PipelineError as ex:
+            except exceptions.PipelineError:
                 error_on_pipeline = True
                 if self.parameters.error_log_exception:
                     self.logger.exception('Pipeline failed')
@@ -112,60 +111,57 @@ class Bot(object):
                 else:
                     self.logger.error("Bot has found a problem")
 
+                if self.parameters.error_dump_message:
+                    self.dump_message(ex)
+
+                self.acknowledge_message()
+
+                if self.parameters.error_log_message:
+                    self.logger.info("Last Correct Message(event): %r" % self.last_message)
+                    self.logger.info("Current Message(event): %r" % self.current_message)
+
+                self.error_retries_counter += 1
                 if self.parameters.error_procedure == "retry":
-                    if self.parameters.error_max_retries <= 0:
-                        pass
-
-                    # FIXME: number of retries is wrong + 1 please!
-                    elif self.error_retries_counter < self.parameters.error_max_retries:
-                        self.error_retries_counter += 1
-
-                    elif self.error_retries_counter >= self.parameters.error_max_retries:
-                        if self.parameters.error_dump_message:
-                            self.dump_message(ex)
-                            self.acknowledge_message()  # TODO: Makes sense here?
-                        else:
-                            self.acknowledge_message()
-
-                    else:
-                        pass
+                    if self.error_retries_counter >= self.parameters.error_max_retries:
+                        self.stop()
 
                     # when bot acknowledge the message, dont need to wait again
                     error_on_message = True
 
-                else:  # error_procedure == "pass"
-                    if self.parameters.error_dump_message:
-                        self.dump_message(ex)
-                    self.acknowledge_message()
-
-                if self.parameters.error_log_message:
-                    self.logger.info("Last Correct Message(event): %r" % self.last_message)  # FIXME: evaluate if its ok
-                    self.logger.info("Current Message(event): %r" % self.current_message)    # FIXME: evaluate if its ok
-
-            except KeyboardInterrupt as e:  # TODO: Log interrupt
-                if self.source_pipeline:
-                    self.source_pipeline.disconnect()
-                    self.logger.info("Disconnecting from source pipeline")
-                if self.destination_pipeline:
-                    self.destination_pipeline.disconnect()
-                    self.logger.info("Disconnecting from destination pipeline")
-
-                self.logger.info("Bot is shutting down")
+            except KeyboardInterrupt:
+                self.logger.error("Received KeyboardInterrupt.")
+                self.stop()
                 break
             finally:
+
                 if (self.error_retries_counter >=
-                   self.parameters.error_max_retries):
+                   self.parameters.error_max_retries and
+                   self.parameters.error_max_retries >= 0):
+                    self.stop()
                     break
 
-            # TODO: Disconnect Pipelines, set to None
+    def stop(self):
+        """ Stop Bot by diconnecting pipelines. """
+        if self.source_pipeline:
+            self.source_pipeline.disconnect()
+            self.source_pipeline = None
+            self.logger.info("Disconnecting from source pipeline.")
+        if self.destination_pipeline:
+            self.destination_pipeline.disconnect()
+            self.destination_pipeline = None
+            self.logger.info("Disconnecting from destination pipeline.")
 
-    def stop(self):  # TODO: stop -> terminate, new stop
+        self.logger.info("Bot stopped.")
+        if self.parameters.exit_on_error:
+            self.terminate()
+
+    def terminate(self):
         try:
-            self.logger.error("Bot found an error. Exiting")
+            self.logger.error("Exiting.")
         except:
             pass
         finally:
-            print("Bot found an error. Exiting")
+            print("Exiting")
         exit(-1)
 
     def check_bot_id(self, str):
@@ -174,7 +170,7 @@ class Bot(object):
             print("Invalid bot id.")
             self.stop()
 
-    def send_message(self, message):
+    def send_message(self, message):  # TODO: logging
         if not message:
             self.logger.debug("Empty message found.")
             return False
@@ -186,7 +182,7 @@ class Bot(object):
         raw_message = MessageFactory.serialize(message)
         self.destination_pipeline.send(raw_message)
 
-    def receive_message(self):
+    def receive_message(self):  # TODO: logging
         message = self.source_pipeline.receive()
 
         if not message:
