@@ -41,9 +41,9 @@ class ConfigurationError(IntelMQException):
         message = "%s configuration failed - %s" % (config, repr(argument))
         super(PipelineError, self).__init__(message)
 
+
 class PipelineFactoryError(IntelMQException):
     pass
-
 
 
 '''
@@ -65,7 +65,8 @@ class IntelMQHarmonizationException(IntelMQException):
 class InvalidValue(IntelMQHarmonizationException):
 
     def __init__(self, key, value):
-        message = "invalid value %s (%s) for key %s" % (repr(value), type(value), repr(key))
+        message = "invalid value %s (%s) for key %s" % (repr(value),
+                                                        type(value), repr(key))
         super(InvalidValue, self).__init__(message)
 
 

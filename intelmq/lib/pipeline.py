@@ -1,8 +1,10 @@
+from __future__ import unicode_literals, print_function
 import redis
-import zmq
 import time
-import intelmq.lib.pipeline
+import zmq
+
 import intelmq.lib.exceptions as exceptions
+import intelmq.lib.pipeline
 from intelmq import VAR_RUN_PATH
 
 
@@ -26,10 +28,10 @@ class Pipeline(object):
         self.source_queue = None
 
     def connect(self):
-        pass # FIXME: raise
+        raise NotImplementedError
 
     def disconnect(self):
-        pass # FIXME: raise
+        raise NotImplementedError
 
     def sleep(self, interval):
         time.sleep(interval)
@@ -44,27 +46,33 @@ class Pipeline(object):
                 queues = queues.split()
             self.destination_queues = queues
         else:
-            pass # FIXME: raise
+            raise exceptions.InvalidArgument('queues_type', got=queues_type,
+                                             expected=['source',
+                                                       'destination'])
 
 
 class Redis(Pipeline):
 
     def load_configurations(self, queues_type):
-        self.host = getattr(self.parameters, "%s_pipeline_host" % (queues_type), "127.0.0.1")
-        self.port = getattr(self.parameters, "%s_pipeline_port" % (queues_type), "6379")
-        self.db = getattr(self.parameters, "%s_pipeline_db" % (queues_type), 2)
-        self.socket_timeout = getattr(self.parameters, "%s_pipeline_socket_timeout" % (queues_type), 50000)
+        self.host = getattr(self.parameters,
+                            "{}_pipeline_host".format(queues_type),
+                            "127.0.0.1")
+        self.port = getattr(self.parameters,
+                            "{}_pipeline_port".format(queues_type), "6379")
+        self.db = getattr(self.parameters,
+                          "{}_pipeline_db".format(queues_type), 2)
+        self.socket_timeout = getattr(self.parameters,
+                                      "{}_pipeline_socket_timeout".format(queues_type),
+                                      50000)
         self.load_balance = getattr(self.parameters, "load_balance", False)
         self.load_balance_iterator = 0
 
-
     def connect(self):
-        self.pipe = redis.Redis(
-                                 host = self.host,
-                                 port = int(self.port),
-                                 db = self.db,
-                                 socket_timeout = self.socket_timeout
-                               )
+        self.pipe = redis.Redis(host=self.host,
+                                port=int(self.port),
+                                db=self.db,
+                                socket_timeout=self.socket_timeout
+                                )
 
     def disconnect(self):
         pass
@@ -79,8 +87,8 @@ class Redis(Pipeline):
 
             try:
                 self.pipe.lpush(destination_queue, message)
-            except Exception as e:
-                raise exceptions.PipelineError(e)
+            except Exception as exc:
+                raise exceptions.PipelineError(exc)
 
             self.load_balance_iterator += 1
             if self.load_balance_iterator == len(self.destination_queues):
@@ -90,8 +98,8 @@ class Redis(Pipeline):
             for destination_queue in self.destination_queues:
                 try:
                     self.pipe.lpush(destination_queue, message)
-                except Exception as e:
-                    raise exceptions.PipelineError(e)
+                except Exception as exc:
+                    raise exceptions.PipelineError(exc)
 
     def receive(self):
         try:
@@ -113,8 +121,8 @@ class Redis(Pipeline):
         for queue in queues:
             try:
                 queue_dict[queue] = self.pipe.llen(queue)
-            except Exception as e:
-                raise exceptions.PipelineError(e)
+            except Exception as exc:
+                raise exceptions.PipelineError(exc)
         return queue_dict
 
     def clear_queue(self, queue):
@@ -122,8 +130,8 @@ class Redis(Pipeline):
         which is the same as an empty list in Redis"""
         try:
             return self.pipe.delete(queue)
-        except Exception as e:
-            raise exceptions.PipelineError(e)
+        except Exception as exc:
+            raise exceptions.PipelineError(exc)
 
 # Algorithm
 # ---------
@@ -138,13 +146,14 @@ class Pythonlist(Pipeline):
 
     It behaves in most ways like a normal pipeline would do,
     but works entirely without external modules and programs.
-    Strings are internally saved as bytes, just as with Redis and Zeromq.
+    Data is saved as it comes (no conversion) and it is not blocking.
     """
 
     state = {}
 
     def connect(self):
-        pass
+        if self.parameters.raise_on_connect:
+            raise exceptions.PipelineError('Connect failed as requested')
 
     def disconnect(self):
         pass
@@ -168,19 +177,13 @@ class Pythonlist(Pipeline):
                 self.state[destination_queue] = [message]
 
     def receive(self):
-        """Receives the last not yet acknowledged message"""
+        """
+        Receives the last not yet acknowledged message.
+
+        Does not block unlike the other pipelines.
+        """
         if len(self.state.get(self.internal_queue, [])) > 0:
             return self.state[self.internal_queue].pop(0)
-
-        # non blocking, we assume that the source queue ISN'T EMPTY
-        # the current solution in the normal pipeline code
-        # uses blocking as this is provided by the time of writing
-        # by redis brpoplpush(,,0) the zero means that this code
-        # will block forever.
-        #
-        # In a test scenario this is not what
-        # we want, so I hope that people don't expect it to behave
-        # as if it mimics every aspect of a normal pipeline.
 
         first_msg = self.state[self.source_queue].pop(0)
 
@@ -206,6 +209,10 @@ class Pythonlist(Pipeline):
             qdict[queue] = len(self.state.get(queue, []))
         return qdict
 
+    def clear_queue(self, queue):
+        """ Empties given queue. """
+        self.state[queue] = []
+
 
 class Zeromq(Pipeline):
 
@@ -221,9 +228,12 @@ class Zeromq(Pipeline):
         # queues_translation = dict()
 
         self.source_sock = self.context.socket(zmq.PULL)
-        self.source_sock.bind("%s://%s%s.socket" % (self.communication, VAR_RUN_PATH, source_queue) )
+        self.source_sock.bind("%s://%s%s.socket" % (self.communication,
+                                                    VAR_RUN_PATH,
+                                                    source_queue))
 
     def destination_queues(self, destination_queues, load_balance=False):
+        # TODO: rename function
         # translate queues to port for tcp connecion
         # queues_translation = dict()
         if not destination_queues:
@@ -235,28 +245,29 @@ class Zeromq(Pipeline):
         self.dest_sock = []
         for destination_queue in destination_queues:
             sock = self.context.socket(zmq.PUSH)
-            sock.connect("%s://%s%s.socket" % (self.communication, VAR_RUN_PATH, destination_queue))
+            sock.connect("%s://%s%s.socket" % (self.communication,
+                                               VAR_RUN_PATH,
+                                               destination_queue))
             self.dest_sock.append(sock)
 
     def disconnect(self):
-        pass
+        raise NotImplementedError
 
     def sleep(self, interval):
         time.sleep(interval)
 
     def send(self, message):
         for sock in self.dest_sock:
-            sock.send(message)  # send_string for unicode
+            sock.send(message)  # TODO: send_string for unicode
 
     def receive(self):
         return self.source_sock.recv()
 
     def acknowledge(self):
-        pass
+        raise NotImplementedError
 
     def count_queued_messages(self, queues):
-        return 0
-        #pass
+        raise NotImplementedError
 
     def clear_queue(self, queue):
         raise NotImplementedError
