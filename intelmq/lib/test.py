@@ -129,7 +129,7 @@ class BotTestCase(object):
         self.run_bot()
         pipenames = ["{}-input", "{}-input-internal", "{}-output"]
         self.assertListEqual([x.format(self.bot_id) for x in pipenames],
-                             self.pipe.state.keys())
+                             list(self.pipe.state.keys()))
 
     def assertLoglineEqual(self, line_no, message, levelname="ERROR"):
         """Asserts if a logline matches a specific requirement.

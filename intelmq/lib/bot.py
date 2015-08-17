@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import print_function, unicode_literals
+
 import datetime
 import json
 import re
@@ -229,7 +230,7 @@ class Bot(object):
         setattr(self.parameters, 'logging_level', DEFAULT_LOGGING_LEVEL)
 
         config = config or utils.load_configuration(SYSTEM_CONF_FILE)
-        for option, value in config.iteritems():
+        for option, value in config.items():
             setattr(self.parameters, option, value)
 
     def load_defaults_configuration(self, config=None):
@@ -237,7 +238,7 @@ class Bot(object):
 
         config = config or utils.load_configuration(DEFAULTS_CONF_FILE)
 
-        for option, value in config.iteritems():
+        for option, value in config.items():
             setattr(self.parameters, option, value)
             # TODO: Log that really?
 
@@ -249,15 +250,15 @@ class Bot(object):
 
         self.logger.debug("Runtime configuration: loading '%s' section from"
                           " '%s' file" % (self.bot_id, RUNTIME_CONF_FILE))
-        self.logger.debug("{}".format(repr(config.keys())))
-        if '__default__' in config.keys():
-            for option, value in config['__default__'].iteritems():
+        self.logger.debug("{}".format(list(config.keys())))
+        if '__default__' in list(config.keys()):
+            for option, value in config['__default__'].items():
                 setattr(self.parameters, option, value)
                 self.logger.debug("Runtime configuration: parameter '{}' "
                                   "loaded with default value '{}'."
                                   "".format(option, value))
-        if self.bot_id in config.keys():
-            for option, value in config[self.bot_id].iteritems():
+        if self.bot_id in list(config.keys()):
+            for option, value in config[self.bot_id].items():
                 setattr(self.parameters, option, value)
                 self.logger.debug("Runtime configuration: parameter '%s' "
                                   "loaded with value '%s'." % (option, value))
@@ -268,7 +269,7 @@ class Bot(object):
         self.source_queues = None
         self.destination_queues = None
 
-        if self.bot_id in config.keys():
+        if self.bot_id in list(config.keys()):
 
             if 'source-queue' in config[self.bot_id].keys():
                 self.source_queues = config[self.bot_id]['source-queue']
@@ -292,9 +293,9 @@ class Bot(object):
         self.logger.debug("Harmonization configuration: loading all '%s' file" %
                           HARMONIZATION_CONF_FILE)
 
-        for message_types in harmonization_config.keys():
-            for key in harmonization_config[message_types].keys():
-                for _key in harmonization_config.keys():
+        for message_types in list(harmonization_config.keys()):
+            for key in list(harmonization_config[message_types].keys()):
+                for _key in list(harmonization_config.keys()):
                     if _key.startswith("%s." % key):    # FIXME: write in devguide the rules for the keys names
                         raise exceptions.ConfigurationError(
                             HARMONIZATION_CONF_FILE, "key %s is not valid" % _key)

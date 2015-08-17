@@ -198,7 +198,7 @@ class TestMessageFactory(unittest.TestCase):
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         for key, value in FEED.items():
             report.add(key, value)
-        self.assertListEqual(FEED.items(), report.items())
+        self.assertListEqual(list(FEED.items()), list(report.items()))
 
     def test_report_add_byte(self):
         """ Test if report rejects a byte string. """
@@ -265,13 +265,15 @@ class TestMessageFactory(unittest.TestCase):
         """ Test if depp_copy does not return the same object. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         report = self.add_report_examples(report)
-        self.assertListEqual(report.deep_copy().items(), report.items())
+        self.assertListEqual(list(report.deep_copy().items()),
+                             list(report.items()))
 
     def test_deep_copy_items(self):  # TODO: Sort by key
         """ Test if depp_copy does not return the same object. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         report = self.add_report_examples(report)
-        self.assertNotEqual(map(id, report.deep_copy()), map(id, report))
+        self.assertNotEqual(list(map(id, report.deep_copy())),
+                            list(map(id, report)))
 
     def test_deep_copy_object(self):
         """ Test if depp_copy does not return the same object. """
@@ -283,13 +285,15 @@ class TestMessageFactory(unittest.TestCase):
         """ Test if depp_copy does not return the same object. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         report = self.add_report_examples(report)
-        self.assertListEqual(report.copy().items(), report.items())
+        self.assertListEqual(list(report.copy().items()),
+                             list(report.items()))
 
     def test_copy_items(self):  # TODO: Sort by key
         """ Test if depp_copy does not return the same object. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         report = self.add_report_examples(report)
-        self.assertListEqual(map(id, report.copy()), map(id, report))
+        self.assertListEqual(list(map(id, report.copy())),
+                             list(map(id, report)))
 
     def test_copy_object(self):
         """ Test if depp_copy does not return the same object. """

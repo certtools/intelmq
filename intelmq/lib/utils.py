@@ -12,6 +12,7 @@ reverse_readline
 parse_logline
 """
 from __future__ import unicode_literals
+
 import base64
 import json
 import logging
@@ -215,6 +216,6 @@ def parse_logline(logline):
     fields = ("asctime", "name", "levelname", "message")
 
     if match:
-        result = dict(zip(fields, match.group(*fields)))
+        result = dict(list(zip(fields, match.group(*fields))))
 
     return result

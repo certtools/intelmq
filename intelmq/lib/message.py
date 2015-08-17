@@ -25,7 +25,7 @@ class MessageFactory(object):
         except AttributeError:
             raise exceptions.InvalidArgument('__type',
                                              got=message["__type"],
-                                             expected=harm_config.keys(),
+                                             expected=list(harm_config.keys()),
                                              docs=HARMONIZATION_CONF_FILE)
         del message["__type"]
         return class_reference(message)
@@ -51,7 +51,7 @@ class Message(dict):
         except KeyError:
             raise exceptions.InvalidArgument('__type',
                                              got=classname,
-                                             expected=harm_config.keys(),
+                                             expected=list(harm_config.keys()),
                                              docs=HARMONIZATION_CONF_FILE)
 
     def __setitem__(self, key, value):
@@ -115,7 +115,7 @@ class Message(dict):
 #        return super(Message, self).items()
 
     def finditems(self, keyword):
-        for key, value in super(Message, self).iteritems():
+        for key, value in super(Message, self).items():
             if key.startswith(keyword):
                 yield key, value
 
