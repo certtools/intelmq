@@ -32,10 +32,7 @@ class MessageFactory(object):
 
     @staticmethod
     def serialize(message):
-        super(Message, message).__setitem__("__type",
-                                            message.__class__.__name__)
         raw_message = Message.serialize(message)
-        del message["__type"]
         return raw_message
 
 
@@ -137,11 +134,15 @@ class Message(dict):
     def __unicode__(self):
         return self.serialize()
 
+    def __str__(self):
+        return self.serialize().encode('utf8')
+
     def serialize(self):
         # FIXME: dont know if json take care of encoding issues
         # FIXME: raw need to be decoded from base64 (may be not here)
-        self.__type = self.__class__.__name__
+        self['__type'] = self.__class__.__name__
         json_dump = json.dumps(self)
+        del self['__type']
         try:
             return unicode(json_dump)
         except NameError:  # pragma: no cover

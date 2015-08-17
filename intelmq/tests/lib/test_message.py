@@ -323,5 +323,23 @@ class TestMessageFactory(unittest.TestCase):
                          '{"observation": "2015-01-01T13:37:00+00:00"}}',
                          event.to_json())
 
+    def test_event_serialize(self):
+        """ Test Event serialize. """
+        event = message.MessageFactory.unserialize('{"__type": "Event"}')
+        self.assertEqual('{"__type": "Event"}',
+                         event.serialize())
+
+    def test_event_string(self):
+        """ Test Event serialize. """
+        event = message.MessageFactory.unserialize('{"__type": "Event"}')
+        self.assertEqual(b'{"__type": "Event"}',
+                         event.serialize())
+
+    def test_event_unicode(self):
+        """ Test Event serialize. """
+        event = message.MessageFactory.unserialize('{"__type": "Event"}')
+        self.assertEqual('{"__type": "Event"}',
+                         event.serialize())
+
 if __name__ == '__main__':
     unittest.main()
