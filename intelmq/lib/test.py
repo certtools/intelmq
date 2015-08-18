@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 """
+Utilities for testing intelmq.
 
+TheBotTestCase can be used as base class for unittests on bots. It includes
+some basic generic tests (logged errors, correct pipeline setup).
 """
 from __future__ import unicode_literals
 import io

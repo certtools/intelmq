@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Messages are as information packages in pipelines.
+Messages are the information packages in pipelines.
 
 Use MessageFactory to get a Message object (types Report and Event).
 """
@@ -16,9 +16,18 @@ harm_config = utils.load_configuration(HARMONIZATION_CONF_FILE)
 
 
 class MessageFactory(object):
+    """
+    unserialize: JSON encoded message to object
+    serialize: object to JSON encoded object
+    """
 
     @staticmethod
     def unserialize(raw_message):
+        """
+        Takes JSON-encoded Message object, returns instance of correct class.
+
+        The class is determined by __type attribute.
+        """
         message = Message.unserialize(raw_message)
         try:
             class_reference = getattr(intelmq.lib.message, message["__type"])
@@ -32,6 +41,11 @@ class MessageFactory(object):
 
     @staticmethod
     def serialize(message):
+        """
+        Takes instance of message-derived class and makes JSON-encoded Message.
+
+        The class is saved in __type attribute.
+        """
         raw_message = Message.serialize(message)
         return raw_message
 
