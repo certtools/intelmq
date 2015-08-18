@@ -1,7 +1,7 @@
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot, sys
 from intelmq.lib.message import Event
-from intelmq.lib.harmonization import DateTime, IPAddress
+from intelmq.lib.harmonization import DateTime
 
 
 class URLVirIPsParserBot(Bot):

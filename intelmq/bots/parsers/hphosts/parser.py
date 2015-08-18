@@ -4,7 +4,7 @@ from intelmq.lib.harmonization import DateTime, IPAddress
 from intelmq.lib import utils
 
 
-class HpHostsParser(Bot):
+class HpHostsParserBot(Bot):
 
     def process(self):    
         report = self.receive_message()

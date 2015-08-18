@@ -9,7 +9,6 @@ import unittest
 
 import intelmq.lib.pipeline as pipeline
 import intelmq.lib.utils as utils
-import intelmq.lib.exceptions as exceptions
 from intelmq.tests.bots.test_dummy_bot import DummyBot
 
 
