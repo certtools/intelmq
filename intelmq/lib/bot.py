@@ -74,16 +74,20 @@ class Bot(object):
                     self.logger.info("Loading source pipeline")
                     self.source_pipeline = PipelineFactory.create(self.parameters)
                     self.logger.info("Loading source queue")
-                    self.source_pipeline.set_queues(self.source_queues, "source")
-                    self.logger.info("Source queue loaded {}".format(self.source_queues))
+                    self.source_pipeline.set_queues(self.source_queues,
+                    "source")
+                    self.logger.info("Source queue loaded {}"
+                                     "".format(self.source_queues))
                     self.source_pipeline.connect()
                     self.logger.info("Connected to source queue")
 
                     self.logger.info("Loading destination pipeline")
                     self.destination_pipeline = PipelineFactory.create(self.parameters)
                     self.logger.info("Loading destination queues")
-                    self.destination_pipeline.set_queues(self.destination_queues, "destination")
-                    self.logger.info("Destination queues loaded {}".format(self.destination_queues))
+                    self.destination_pipeline.set_queues(self.destination_queues,
+                                                         "destination")
+                    self.logger.info("Destination queues loaded {}
+                                     "".format(self.destination_queues))
                     self.destination_pipeline.connect()
                     self.logger.info("Connected to destination queues")
 
@@ -112,22 +116,27 @@ class Bot(object):
                 else:
                     self.logger.error("Bot has found a problem")
 
-                if self.parameters.error_dump_message:
-                    self.dump_message(ex)
-
-                self.acknowledge_message()
-
                 if self.parameters.error_log_message:
-                    self.logger.info("Last Correct Message(event): %r" % self.last_message)
-                    self.logger.info("Current Message(event): %r" % self.current_message)
+                    self.logger.info("Last Correct Message(event): {!r}"
+                                     "".format(self.last_message))
+                    self.logger.info("Current Message(event): {!r}"
+                                     "".format(self.current_message))
 
                 self.error_retries_counter += 1
                 if self.parameters.error_procedure == "retry":
-                    if self.error_retries_counter >= self.parameters.error_max_retries:
+                    if (self.error_retries_counter >=
+                       self.parameters.error_max_retries):
+                        if self.parameters.error_dump_message:
+                            self.dump_message(ex)
+                        self.acknowledge_message()
                         self.stop()
 
                     # when bot acknowledge the message, dont need to wait again
                     error_on_message = True
+                else:
+                    if self.parameters.error_dump_message:
+                        self.dump_message(ex)
+                    self.acknowledge_message()
 
             except KeyboardInterrupt:
                 self.logger.error("Received KeyboardInterrupt.")
@@ -225,7 +234,7 @@ class Bot(object):
     '''
 
     def load_system_configuration(self, config=None):
-        # TODO: Defaults?
+        # TODO: Move to defaults?
         setattr(self.parameters, 'logging_path', DEFAULT_LOGGING_PATH)
         setattr(self.parameters, 'logging_level', DEFAULT_LOGGING_LEVEL)
 
@@ -285,20 +294,23 @@ class Bot(object):
                                   " '%s'" % ", ".join(self.destination_queues))
 
         else:
-            self.logger.error("Pipeline configuration: failed to load configuration")
+            self.logger.error("Pipeline configuration: failed to load "
+                              "configuration")
             self.stop()
 
     def load_harmonization_configuration(self, config=None):
         harmonization_config = config or utils.load_configuration(HARMONIZATION_CONF_FILE)
-        self.logger.debug("Harmonization configuration: loading all '%s' file" %
-                          HARMONIZATION_CONF_FILE)
+        self.logger.debug("Harmonization configuration: loading all '{}' file"
+                          "".format(HARMONIZATION_CONF_FILE))
 
         for message_types in list(harmonization_config.keys()):
             for key in list(harmonization_config[message_types].keys()):
                 for _key in list(harmonization_config.keys()):
-                    if _key.startswith("%s." % key):    # FIXME: write in devguide the rules for the keys names
+                    if _key.startswith("%s." % key):
+                        # FIXME: write in devguide the rules for the keys names
                         raise exceptions.ConfigurationError(
-                            HARMONIZATION_CONF_FILE, "key %s is not valid" % _key)
+                            HARMONIZATION_CONF_FILE,
+                            "key %s is not valid" % _key)
 
 
 class Parameters(object):
