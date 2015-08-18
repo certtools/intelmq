@@ -162,7 +162,7 @@ class Bot(object):
             self.logger.info("Disconnecting from destination pipeline.")
 
         self.logger.info("Bot stopped.")
-        if self.parameters.exit_on_error:
+        if self.parameters.exit_on_stop:
             self.terminate()
 
     def terminate(self):

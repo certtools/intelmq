@@ -46,7 +46,7 @@ class BotTestCase(object):
                                                   "retry_delay": 0,
                                                   "error_retry_delay": 0,
                                                   "error_max_retries": 0,
-                                                  'exit_on_error': False,
+                                                  'exit_on_stop': False,
                                                   }}
         self.config["pipeline"] = {self.bot_id: {"source-queue": (src_name),
                                                  "destination-queues": [dst_name]}}
