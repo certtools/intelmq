@@ -32,7 +32,7 @@ class VXVaultParserBot(Bot):
 
             event = Event()
 
-            if IPAddress.is_valid(hostname):
+            if IPAddress.is_valid(hostname, sanitize=True):
                 event.add("source.ip", hostname, sanitize=True)
             else:
                 event.add("source.fqdn", hostname, sanitize=True)
