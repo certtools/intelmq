@@ -32,6 +32,8 @@ class Bot(object):
         self.last_message = None
         self.message_counter = 0
         self.error_retries_counter = 0
+        self.source_pipeline = None
+        self.destination_pipeline = None
 
         self.check_bot_id(bot_id)
         self.bot_id = bot_id
@@ -86,7 +88,7 @@ class Bot(object):
                     self.logger.info("Loading destination queues")
                     self.destination_pipeline.set_queues(self.destination_queues,
                                                          "destination")
-                    self.logger.info("Destination queues loaded {}
+                    self.logger.info("Destination queues loaded {}"
                                      "".format(self.destination_queues))
                     self.destination_pipeline.connect()
                     self.logger.info("Connected to destination queues")
@@ -303,9 +305,9 @@ class Bot(object):
         self.logger.debug("Harmonization configuration: loading all '{}' file"
                           "".format(HARMONIZATION_CONF_FILE))
 
-        for message_types in list(harmonization_config.keys()):
-            for key in list(harmonization_config[message_types].keys()):
-                for _key in list(harmonization_config.keys()):
+        for message_types in harmonization_config.keys():
+            for key in harmonization_config[message_types].keys():
+                for _key in harmonization_config.keys():
                     if _key.startswith("%s." % key):
                         # FIXME: write in devguide the rules for the keys names
                         raise exceptions.ConfigurationError(
