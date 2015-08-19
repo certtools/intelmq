@@ -30,11 +30,10 @@ class TestVXVaultParserBot(test.BotTestCase, unittest.TestCase):
     A TestCase for VXVaultParserBot.
     """
 
-    def prepare_bot(self):
+    def set_bot(self):
         self.bot_id = 'test-bot'
         self.bot_reference = VXVaultParserBot
         self.default_input_message = json.dumps(EXAMPLE_REPORT)
-        super(TestVXVaultParserBot, self).prepare_bot()
 
     def test_event(self):
         """ Test if correct Event has been produced. """

@@ -32,6 +32,7 @@ class BotTestCase(object):
         self.loglines_buffer = ''
         self.log_stream = None
         self.pipe = None
+        self.set_bot()
 
     def prepare_bot(self):
         """Reconfigures the bot with the changed attributes"""

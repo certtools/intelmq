@@ -55,11 +55,10 @@ class TestDummyBot(test.BotTestCase, unittest.TestCase):
     A TestCase for a DummyBot.
     """
 
-    def prepare_bot(self):
+    def set_bot(self):
         self.bot_id = 'test-bot'
         self.bot_reference = DummyBot
         self.default_input_message = json.dumps(EXAMPLE_EVENT)
-        super(TestDummyBot, self).prepare_bot()
 
     def test_log_test_line(self):
         """ Test if bot does log example message. """
