@@ -15,7 +15,7 @@ from intelmq.tests.bots.test_dummy_bot import DummyBot
 class TestBot(unittest.TestCase):
     """ Testing generic funtionalties of Bot base class. """
 
-    def reset_bot(self, raise_on_connect=False):
+    def prepare_bot(self, raise_on_connect=False):
         self.log_stream = io.StringIO()
 
         src_name = "{}-input".format(self.bot_id)
@@ -63,14 +63,14 @@ class TestBot(unittest.TestCase):
     def test_pipeline_raising(self):
         self.bot_id = 'test-bot'
         self.bot_reference = DummyBot
-        self.reset_bot(raise_on_connect=True)
+        self.prepare_bot(raise_on_connect=True)
         self.bot.start()
         self.assertIn('ERROR - Pipeline failed', self.log_stream.getvalue())
 
     def test_pipeline_empty(self):
         self.bot_id = 'test-bot'
         self.bot_reference = DummyBot
-        self.reset_bot()
+        self.prepare_bot()
         self.bot.start()
         self.assertIn('ERROR - Bot has found a problem',
                       self.log_stream.getvalue())

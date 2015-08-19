@@ -35,6 +35,10 @@ class DummyBot(bot.Bot):
         """ Passing through all information from Report to Event. """
         report = self.receive_message()
 
+        if not report:
+            self.acknowledge_message()
+            return
+
         event = Event()
         self.logger.info('Lorem ipsum dolor sit amet')
 
@@ -51,22 +55,22 @@ class TestDummyBot(test.BotTestCase, unittest.TestCase):
     A TestCase for a DummyBot.
     """
 
-    def reset_bot(self):
+    def prepare_bot(self):
         self.bot_id = 'test-bot'
         self.bot_reference = DummyBot
-        self.input_message = json.dumps(EXAMPLE_EVENT)
-        super(TestDummyBot, self).reset_bot()
+        self.default_input_message = json.dumps(EXAMPLE_EVENT)
+        super(TestDummyBot, self).prepare_bot()
 
     def test_log_test_line(self):
         """ Test if bot does log example message. """
-        self.reset_bot()
+        self.prepare_bot()
         self.run_bot()
         self.assertRegexpMatches(self.loglines_buffer,
                                  "INFO - Lorem ipsum dolor sit amet")
 
     def test_event(self):
         """ Test if correct Event has been produced. """
-        self.reset_bot()
+        self.prepare_bot()
         self.run_bot()
         self.assertEventAlmostEqual(0, EXAMPLE_REPORT)
 

@@ -26,13 +26,14 @@ class BotTestCase(object):
         self.bot = None
         self.bot_reference = None
         self.config = {}
-        self.input_message = ''
+        self.input_message = None
+        self.default_input_message = ''
         self.loglines = []
         self.loglines_buffer = ''
         self.log_stream = None
         self.pipe = None
 
-    def reset_bot(self):
+    def prepare_bot(self):
         """Reconfigures the bot with the changed attributes"""
 
         self.log_stream = io.StringIO()
@@ -74,11 +75,16 @@ class BotTestCase(object):
 
         self.bot = self.bot_reference(self.bot_id, config=self.config)
         self.pipe = self.config["source_pipeline"]
-        self.input_queue = [self.input_message]
+        if self.input_message is not None:
+            self.input_queue = [self.input_message]
+            self.input_message = None
+        else:
+            self.input_queue = [self.default_input_message]
 
     def run_bot(self):
-        """Call this method for actually doing a test
-           run for the specified bot"""
+        """
+        Call this method for actually doing a test run for the specified bot.
+        """
 
         self.bot.start(error_on_pipeline=False,
                        source_pipeline=self.pipe,
@@ -105,38 +111,47 @@ class BotTestCase(object):
     def test_bot_start(self):
         """Tests if we can start a bot and feed data into
             it and have a reasonable output"""
-        self.reset_bot()
+        self.prepare_bot()
         self.run_bot()
 
     def test_log_starting(self):
         """ Test if bot logs starting message. """
-        self.reset_bot()
+        self.prepare_bot()
         self.run_bot()
         self.assertLoglineEqual(0, "Bot is starting", "INFO")
 
     def test_log_not_error(self):
         """ Test if bot does not log errors. """
-        self.reset_bot()
+        self.prepare_bot()
         self.run_bot()
         self.assertNotRegexpMatches(self.loglines_buffer, "ERROR")
 
     def test_log_not_critical(self):
         """ Test if bot does not log critical errors. """
-        self.reset_bot()
+        self.prepare_bot()
         self.run_bot()
         self.assertNotRegexpMatches(self.loglines_buffer, "CRITICAL")
 
     def test_pipe_names(self):
         """ Test if all pipes are created with correct names. """
-        self.reset_bot()
+        self.prepare_bot()
         self.run_bot()
         pipenames = ["{}-input", "{}-input-internal", "{}-output"]
         self.assertListEqual([x.format(self.bot_id) for x in pipenames],
                              list(self.pipe.state.keys()))
 
     def test_empty_message(self):
-        """ Test if bot fails when receiving an empty message. """
+        """
+        Test if bot fails when receiving an empty message.
 
+        Bot.receive_message() returns None if the message evaluates to False
+        e.g. if empty. Bots have to handle this situation.
+        """
+        self.input_message = ''
+        self.prepare_bot()
+        self.run_bot()
+        self.assertRegexpMatchesLog("WARNING - Empty message received.")
+        self.assertNotRegexpMatches(self.loglines_buffer, "ERROR")
 
     def assertLoglineEqual(self, line_no, message, levelname="ERROR"):
         """Asserts if a logline matches a specific requirement.

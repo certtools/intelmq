@@ -198,6 +198,7 @@ class Bot(object):
             if self.logger:
                 getattr(self.logger, level)(message)
             print(level.upper(), '-', message)
+        self.log_buffer = []
 
     def check_bot_id(self, str):
         res = re.search('[^0-9a-zA-Z\-]+', str)
@@ -224,6 +225,7 @@ class Bot(object):
         self.logger.debug('Receiving Message.')
         message = self.source_pipeline.receive()
 
+        self.logger.debug('Receive message {!r}'.format(message))
         if not message:
             self.logger.warning('Empty message received.')
             return None

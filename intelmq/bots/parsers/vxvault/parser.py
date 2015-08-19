@@ -10,6 +10,9 @@ class VXVaultParserBot(Bot):
     def process(self):
         report = self.receive_message()
 
+        if not report:
+            self.acknowledge_message()
+            return
         if not report.contains("raw"):
             self.acknowledge_message()
 
