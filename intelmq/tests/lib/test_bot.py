@@ -25,17 +25,16 @@ class TestBot(unittest.TestCase):
         self.config["system"] = {"logging_level": "DEBUG",
                                  "http_proxy":  None,
                                  "https_proxy": None,
-                                 'broker': 'pythonlist',
-                                 'raise_on_connect': raise_on_connect,
+                                 "broker": "pythonlist",
+                                 "raise_on_connect": raise_on_connect,
+                                 "rate_limit": 0,
+                                 "retry_delay": 0,
+                                 "error_retry_delay": 0,
+                                 "error_max_retries": 0,
+                                 "exit_on_stop": False,
                                  }
 
-        self.config["runtime"] = {self.bot_id: {},
-                                  "__default__": {"rate_limit": 0,
-                                                  "retry_delay": 0,
-                                                  "error_retry_delay": 0,
-                                                  "error_max_retries": 0,
-                                                  'exit_on_stop': False,
-                                                  }}
+        self.config["runtime"] = {self.bot_id: {}}
         self.config["pipeline"] = {self.bot_id: {"source-queue": (src_name),
                                                  "destination-queues": [dst_name]},
                                    }
@@ -44,7 +43,6 @@ class TestBot(unittest.TestCase):
         logger.setLevel("DEBUG")
         console_formatter = logging.Formatter(utils.LOG_FORMAT)
         console_handler = logging.StreamHandler(self.log_stream)
-#        console_handler = logging.StreamHandler()  # TODO: remove
         console_handler.setFormatter(console_formatter)
         logger.addHandler(console_handler)
         self.config["logger"] = logger
@@ -61,7 +59,6 @@ class TestBot(unittest.TestCase):
 
         self.bot = self.bot_reference(self.bot_id, config=self.config)
         self.pipe = self.config["source_pipeline"]
-#        self.input_queue = [self.input_message]
 
     def test_pipeline_raising(self):
         self.bot_id = 'test-bot'

@@ -42,15 +42,15 @@ class BotTestCase(object):
 
         self.config["system"] = {"logging_level": "DEBUG",
                                  "http_proxy":  None,
-                                 "https_proxy": None}
+                                 "https_proxy": None,
+                                 "rate_limit": 0,
+                                 "retry_delay": 0,
+                                 "error_retry_delay": 0,
+                                 "error_max_retries": 0,
+                                 "exit_on_stop": False,
+                                 }
 
-        self.config["runtime"] = {self.bot_id: {},
-                                  "__default__": {"rate_limit": 0,
-                                                  "retry_delay": 0,
-                                                  "error_retry_delay": 0,
-                                                  "error_max_retries": 0,
-                                                  'exit_on_stop': False,
-                                                  }}
+        self.config["runtime"] = {self.bot_id: {}}
         self.config["pipeline"] = {self.bot_id: {"source-queue": (src_name),
                                                  "destination-queues": [dst_name]}}
 
@@ -133,6 +133,10 @@ class BotTestCase(object):
         pipenames = ["{}-input", "{}-input-internal", "{}-output"]
         self.assertListEqual([x.format(self.bot_id) for x in pipenames],
                              list(self.pipe.state.keys()))
+
+    def test_empty_message(self):
+        """ Test if bot fails when receiving an empty message. """
+
 
     def assertLoglineEqual(self, line_no, message, levelname="ERROR"):
         """Asserts if a logline matches a specific requirement.

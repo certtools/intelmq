@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+
+"""
 from __future__ import print_function, unicode_literals
 
 import datetime
@@ -25,7 +28,7 @@ from intelmq.lib.pipeline import PipelineFactory
 class Bot(object):
 
     def __init__(self, bot_id, config={}):
-        # TODO: Log start
+        self.log_buffer = []
         self.parameters = Parameters()
 
         self.current_message = None
@@ -34,17 +37,28 @@ class Bot(object):
         self.error_retries_counter = 0
         self.source_pipeline = None
         self.destination_pipeline = None
+        self.logger = None
 
-        self.check_bot_id(bot_id)
-        self.bot_id = bot_id
+        try:
+            self.log_buffer.append(('debug',
+                                    '{} initialized with id {} and '
+                                    'configuration {!r}'
+                                    ''.format(self.__class__.__name__,
+                                             bot_id,
+                                             config)))
+            self.check_bot_id(bot_id)
+            self.bot_id = bot_id
 
-        self.load_defaults_configuration()
-        self.load_system_configuration(config.get("system"))
-        self.logger = (config.get("logger") or
-                       utils.log(self.parameters.logging_path, self.bot_id,
-                                 self.parameters.logging_level))
+            self.load_defaults_configuration()
+            self.load_system_configuration(config.get("system"))
+            self.logger = (config.get("logger") or
+                           utils.log(self.parameters.logging_path, self.bot_id,
+                                     self.parameters.logging_level))
+        except:
+            self.print_log_buffer()
+            raise
+
         self.logger.info('Bot is starting')
-
         self.load_runtime_configuration(config.get("runtime"))
         self.load_pipeline_configuration(config.get("pipeline"))
         self.load_harmonization_configuration(config.get("harmonization"))
@@ -77,7 +91,7 @@ class Bot(object):
                     self.source_pipeline = PipelineFactory.create(self.parameters)
                     self.logger.info("Loading source queue")
                     self.source_pipeline.set_queues(self.source_queues,
-                    "source")
+                                                    "source")
                     self.logger.info("Source queue loaded {}"
                                      "".format(self.source_queues))
                     self.source_pipeline.connect()
@@ -163,7 +177,10 @@ class Bot(object):
             self.destination_pipeline = None
             self.logger.info("Disconnecting from destination pipeline.")
 
-        self.logger.info("Bot stopped.")
+        if self.logger:
+            self.logger.info("Bot stopped.")
+        if self.log_buffer:
+            self.print_log_buffer()
         if self.parameters.exit_on_stop:
             self.terminate()
 
@@ -176,17 +193,26 @@ class Bot(object):
             print("Exiting")
         exit(-1)
 
+    def print_log_buffer(self):
+        for level, message in self.log_buffer:
+            if self.logger:
+                getattr(self.logger, level)(message)
+            print(level.upper(), '-', message)
+
     def check_bot_id(self, str):
         res = re.search('[^0-9a-zA-Z\-]+', str)
         if res:
-            print("Invalid bot id.")
+            self.log_buffer.append(('error',
+                                    "Invalid bot id, must match "
+                                    "[^0-9a-zA-Z\-]+"))
             self.stop()
 
-    def send_message(self, message):  # TODO: logging
+    def send_message(self, message):
         if not message:
-            self.logger.debug("Empty message found.")
+            self.logger.warning("Sending Message: Empty message found.")
             return False
 
+        self.logger.debug("Sending message.")
         self.message_counter += 1
         if self.message_counter % 500 == 0:
             self.logger.info("Processed %s messages" % self.message_counter)
@@ -194,10 +220,12 @@ class Bot(object):
         raw_message = MessageFactory.serialize(message)
         self.destination_pipeline.send(raw_message)
 
-    def receive_message(self):  # TODO: logging
+    def receive_message(self):
+        self.logger.debug('Receiving Message.')
         message = self.source_pipeline.receive()
 
         if not message:
+            self.logger.warning('Empty message received.')
             return None
 
         self.current_message = MessageFactory.unserialize(message)
@@ -231,43 +259,55 @@ class Bot(object):
         with open(dump_file, 'w') as fp:
             json.dump(dump_data, fp, indent=4, sort_keys=True)
 
-    '''
-        Load Configurations
-    '''
+    def load_defaults_configuration(self, config=None):
+        if config:
+            self.log_buffer.append(('debug',
+                                    "Defaults configuration: loading from "
+                                    "given config dictionary."))
+        else:
+            config = utils.load_configuration(DEFAULTS_CONF_FILE)
+            self.log_buffer.append(('debug',
+                                    "Defaults configuration: loading from"
+                                    " '{}' file".format(DEFAULTS_CONF_FILE)))
 
-    def load_system_configuration(self, config=None):
-        # TODO: Move to defaults?
         setattr(self.parameters, 'logging_path', DEFAULT_LOGGING_PATH)
         setattr(self.parameters, 'logging_level', DEFAULT_LOGGING_LEVEL)
 
-        config = config or utils.load_configuration(SYSTEM_CONF_FILE)
         for option, value in config.items():
             setattr(self.parameters, option, value)
+            self.log_buffer.append(('debug',
+                                    "Defaults configuration: parameter '{}' "
+                                    "loaded  with value '{}'".format(option,
+                                                                     value)))
 
-    def load_defaults_configuration(self, config=None):
-        # Load defaults configuration section
-
-        config = config or utils.load_configuration(DEFAULTS_CONF_FILE)
+    def load_system_configuration(self, config=None):
+        if config:
+            self.log_buffer.append(('debug',
+                                    "System configuration: loading from given "
+                                    "config dictionary."))
+        else:
+            config = utils.load_configuration(SYSTEM_CONF_FILE)
+            self.log_buffer.append(('debug',
+                                    "System configuration: loading from"
+                                    " '{}' file".format(SYSTEM_CONF_FILE)))
 
         for option, value in config.items():
             setattr(self.parameters, option, value)
-            # TODO: Log that really?
+            self.log_buffer.append(('debug',
+                                    "System configuration: parameter '{}' "
+                                    "loaded  with value '{}'".format(option,
+                                                                     value)))
 
     def load_runtime_configuration(self, config=None):
+        if config:
+            self.logger.debug("Runtime configuration: loading from given "
+                              "config dictionary.")
+        else:
+            config = utils.load_configuration(RUNTIME_CONF_FILE)
+            self.logger.debug("Runtime configuration: loading from"
+                              " '{}' file".format(RUNTIME_CONF_FILE))
 
-        # Load bot runtime configuration section
-
-        config = config or utils.load_configuration(RUNTIME_CONF_FILE)
-
-        self.logger.debug("Runtime configuration: loading '%s' section from"
-                          " '%s' file" % (self.bot_id, RUNTIME_CONF_FILE))
         self.logger.debug("{}".format(list(config.keys())))
-        if '__default__' in list(config.keys()):
-            for option, value in config['__default__'].items():
-                setattr(self.parameters, option, value)
-                self.logger.debug("Runtime configuration: parameter '{}' "
-                                  "loaded with default value '{}'."
-                                  "".format(option, value))
         if self.bot_id in list(config.keys()):
             for option, value in config[self.bot_id].items():
                 setattr(self.parameters, option, value)
@@ -275,7 +315,13 @@ class Bot(object):
                                   "loaded with value '%s'." % (option, value))
 
     def load_pipeline_configuration(self, config=None):
-        config = config or utils.load_configuration(PIPELINE_CONF_FILE)
+        if config:
+            self.logger.debug("Pipeline configuration: loading from given "
+                              "config dictionary.")
+        else:
+            config = utils.load_configuration(PIPELINE_CONF_FILE)
+            self.logger.debug("Pipeline configuration: loading from"
+                              " '{}' file".format(PIPELINE_CONF_FILE))
 
         self.source_queues = None
         self.destination_queues = None
@@ -296,22 +342,26 @@ class Bot(object):
                                   " '%s'" % ", ".join(self.destination_queues))
 
         else:
-            self.logger.error("Pipeline configuration: failed to load "
-                              "configuration")
+            self.logger.error("Pipeline configuration: no key "
+                              "'{}'".format(self.bot_id))
             self.stop()
 
     def load_harmonization_configuration(self, config=None):
-        harmonization_config = config or utils.load_configuration(HARMONIZATION_CONF_FILE)
-        self.logger.debug("Harmonization configuration: loading all '{}' file"
-                          "".format(HARMONIZATION_CONF_FILE))
+        if config:
+            self.logger.debug("Harmonization configuration: loading from given"
+                              " config dictionary.")
+        else:
+            config = utils.load_configuration(HARMONIZATION_CONF_FILE)
+            self.logger.debug("Harmonization configuration: loading from"
+                              " '{}' file".format(HARMONIZATION_CONF_FILE))
 
-        for message_types in harmonization_config.keys():
-            for key in harmonization_config[message_types].keys():
-                for _key in harmonization_config.keys():
+        for message_types in config.keys():
+            for key in config[message_types].keys():
+                for _key in config.keys():
                     if _key.startswith("%s." % key):
                         # FIXME: write in devguide the rules for the keys names
                         raise exceptions.ConfigurationError(
-                            HARMONIZATION_CONF_FILE,
+                            'harmonization',
                             "key %s is not valid" % _key)
 
 
