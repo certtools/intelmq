@@ -42,7 +42,8 @@ for line in data:
         FIELDS[match.group(1).replace('_', '.', count=1)] = match.group(2)
 
 
-initdb = "CREATE table events ("
+initdb = """CREATE table events (
+    "id" BIGSERIAL UNIQUE PRIMARY KEY,"""
 for field, field_type in sorted(FIELDS.items()):
     initdb += '\n\t"{name}" {type},'.format(name=field, type=field_type)
 
