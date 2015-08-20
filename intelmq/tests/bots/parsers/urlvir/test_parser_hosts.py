@@ -32,10 +32,10 @@ class TestURLVirHostsParserBot(test.BotTestCase, unittest.TestCase):
     A TestCase for a URLVirHostsParserBot.
     """
 
-    def set_bot(self):
-        self.bot_id = 'test-bot'
-        self.bot_reference = URLVirHostsParserBot
-        self.default_input_message = json.dumps(EXAMPLE_REPORT)
+    @classmethod
+    def set_bot(cls):
+        cls.bot_reference = URLVirHostsParserBot
+        cls.default_input_message = json.dumps(EXAMPLE_REPORT)
 
     def test_event(self):
         """ Test if correct Event has been produced. """

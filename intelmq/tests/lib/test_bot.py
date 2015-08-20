@@ -9,7 +9,7 @@ import unittest
 
 import intelmq.lib.pipeline as pipeline
 import intelmq.lib.utils as utils
-from intelmq.tests.bots.test_dummy_bot import DummyBot
+from intelmq.tests.bots.test_dummy_bot import DummyParserBot
 
 
 class TestBot(unittest.TestCase):
@@ -17,6 +17,7 @@ class TestBot(unittest.TestCase):
 
     def prepare_bot(self, raise_on_connect=False):
         self.log_stream = io.StringIO()
+        self.bot_id = 'test-bot'
 
         src_name = "{}-input".format(self.bot_id)
         dst_name = "{}-output".format(self.bot_id)
@@ -61,15 +62,13 @@ class TestBot(unittest.TestCase):
         self.pipe = self.config["source_pipeline"]
 
     def test_pipeline_raising(self):
-        self.bot_id = 'test-bot'
-        self.bot_reference = DummyBot
+        self.bot_reference = DummyParserBot
         self.prepare_bot(raise_on_connect=True)
         self.bot.start()
         self.assertIn('ERROR - Pipeline failed', self.log_stream.getvalue())
 
     def test_pipeline_empty(self):
-        self.bot_id = 'test-bot'
-        self.bot_reference = DummyBot
+        self.bot_reference = DummyParserBot
         self.prepare_bot()
         self.bot.start()
         self.assertIn('ERROR - Bot has found a problem',

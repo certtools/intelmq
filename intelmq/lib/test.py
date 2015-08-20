@@ -9,9 +9,11 @@ from __future__ import unicode_literals
 import io
 import json
 import logging
+import unittest
 
 import intelmq.lib.pipeline as pipeline
 import intelmq.lib.utils as utils
+import intelmq.lib.message as message
 
 
 class BotTestCase(object):
@@ -19,20 +21,37 @@ class BotTestCase(object):
     Provides common tests and assert methods for bot testing.
     """
 
-    def setUp(self):
+    bot_types = {'collector': 'CollectorBot',
+                 'parser': 'ParserBot',
+                 'expert': 'ExpertBot',
+                 'output': 'OutputBot',
+                 }
+
+    @classmethod
+    def setUpClass(cls):
         """ Set default values. """
-        self.maxDiff = None  # For unittest module, prints long diffs
-        self.bot_id = None
-        self.bot = None
-        self.bot_reference = None
-        self.config = {}
-        self.input_message = None
-        self.default_input_message = ''
-        self.loglines = []
-        self.loglines_buffer = ''
-        self.log_stream = None
-        self.pipe = None
-        self.set_bot()
+        cls.bot_id = 'test-bot'
+        cls.bot_name = None
+        cls.bot = None
+        cls.bot_reference = None
+        cls.bot_type = None
+        cls.config = {}
+        cls.default_input_message = ''
+        cls.input_message = None
+        cls.loglines = []
+        cls.loglines_buffer = ''
+        cls.log_stream = None
+        cls.maxDiff = None  # For unittest module, prints long diffs
+        cls.pipe = None
+
+        cls.set_bot()
+
+        cls.bot_name = cls.bot_reference.__name__
+        if cls.bot_type is None:
+            for type_name, type_match in cls.bot_types.items():
+                if cls.bot_name.endswith(type_match):
+                    cls.bot_type = type_name
+                    break
 
     def prepare_bot(self):
         """Reconfigures the bot with the changed attributes"""
@@ -148,11 +167,59 @@ class BotTestCase(object):
         Bot.receive_message() returns None if the message evaluates to False
         e.g. if empty. Bots have to handle this situation.
         """
+        if self.bot_type == 'collector':
+            raise unittest.SkipTest('Given Bot is Collector.')
+
         self.input_message = ''
         self.prepare_bot()
         self.run_bot()
         self.assertRegexpMatchesLog("WARNING - Empty message received.")
         self.assertNotRegexpMatches(self.loglines_buffer, "ERROR")
+
+    def test_bot_name(self):
+        """
+        Test if Bot has a valid name.
+        Must be CamelCase and end with CollectorBot etc.
+        """
+        counter = 0
+        for type_name, type_match in self.bot_types.items():
+            try:
+                self.assertRegexpMatches(self.bot_name,
+                                         r'\A[a-zA-Z]+{}\Z'.format(type_match))
+            except AssertionError:
+                counter += 1
+        if counter != len(self.bot_types) - 1:
+            self.fail("Bot name {!r} does not match one of {!r}"
+                      "".format(self.bot_name, list(self.bot_types.values())))
+
+    def test_report(self):
+        """ Test if report has required fields. """
+        if self.bot_type != 'collector':
+            raise unittest.SkipTest('Given Bot is not a Collector.')
+
+        self.prepare_bot()
+        self.run_bot()
+        for report_json in self.get_output_queue():
+            report = message.MessageFactory.unserialize(report_json)
+            self.assertIsInstance(report, message.Report)
+            self.assertIn('feed.name', report)
+            self.assertIn('feed.url', report)
+            self.assertIn('raw', report)
+
+    def test_event(self):
+        """ Test if event has required fields. """
+        if self.bot_type not in ['parser', 'expert']:
+            raise unittest.SkipTest('Given Bot is not a Parser or Expert.')
+
+        self.prepare_bot()
+        self.run_bot()
+        for event_json in self.get_output_queue():
+            event = message.MessageFactory.unserialize(event_json)
+            self.assertIsInstance(event, message.Event)
+            self.assertIn('classification.type', event)
+            self.assertIn('feed.url', event)
+            self.assertIn('raw', event)
+            self.assertIn('time.observation', event)
 
     def assertLoglineEqual(self, line_no, message, levelname="ERROR"):
         """Asserts if a logline matches a specific requirement.

@@ -34,10 +34,10 @@ class TestURLVirIPsParserBot(test.BotTestCase, unittest.TestCase):
     A TestCase for URLVirIPsParserBot.
     """
 
-    def set_bot(self):
-        self.bot_id = 'test-bot'
-        self.bot_reference = URLVirIPsParserBot
-        self.default_input_message = json.dumps(EXAMPLE_REPORT)
+    @classmethod
+    def set_bot(cls):
+        cls.bot_reference = URLVirIPsParserBot
+        cls.default_input_message = json.dumps(EXAMPLE_REPORT)
 
     def test_event(self):
         """ Test if correct Event has been produced. """

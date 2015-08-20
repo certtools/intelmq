@@ -26,7 +26,7 @@ EXAMPLE_EVENT = EXAMPLE_REPORT
 EXAMPLE_EVENT['__type'] = 'Event'
 
 
-class DummyBot(bot.Bot):
+class DummyParserBot(bot.Bot):
     """
     A dummy bot only for testing purpose.
     """
@@ -55,10 +55,10 @@ class TestDummyBot(test.BotTestCase, unittest.TestCase):
     A TestCase for a DummyBot.
     """
 
-    def set_bot(self):
-        self.bot_id = 'test-bot'
-        self.bot_reference = DummyBot
-        self.default_input_message = json.dumps(EXAMPLE_EVENT)
+    @classmethod
+    def set_bot(cls):
+        cls.bot_reference = DummyParserBot
+        cls.default_input_message = json.dumps(EXAMPLE_EVENT)
 
     def test_log_test_line(self):
         """ Test if bot does log example message. """
