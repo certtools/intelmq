@@ -165,9 +165,9 @@ All keys MUST be written in lowercase.
 
 |Section|Fields|Format|Syntax|Description|
 |:---:|:---:|:---:|:----------:|:-----------:|
-|Feed|feed|| see [feed](#datatype-feed)|Lower case name for the feeder, e.g. abusech or phishtank.|
-|Feed|feed_code||see [feed](#datatype-feed)|Code name for the feed, e.g.  DFGS, HSDAG etc.|
-|Feed|feed_url||see [url](#datatype-url)|The URL of a given abuse feed, where applicable|
+|Feed|feed|varchar(2000)| see [feed](#datatype-feed)|Lower case name for the feeder, e.g. abusech or phishtank.|
+|Feed|feed_code|varchar(2000)|see [feed](#datatype-feed)|Code name for the feed, e.g.  DFGS, HSDAG etc.|
+|Feed|feed_url|varchar(2000)|see [url](#datatype-url)|The URL of a given abuse feed, where applicable|
 |Time|source_time|timestamp with time zone|according to [wikipedia](https://en.wikipedia.org/wiki/ISO_8601)| Time reported by a source. Some sources only report a date, which '''may''' be used here if there is no better observation (ISO8660)|
 |Time|observation_time|timestamp with time zone|see source_time|The time a source bot saw the event. This timestamp becomes especially important should you perform your own attribution on a host DNS name for example. The mechanism to denote the attributed elements with reference to the source provided is detailed below in Reported Identity IOC.(ISO8660)|
 |Source Identity|source_ip|inet|valid IPv4 or IPv6 address: ```[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}``` or better validate it via python: [stackoverflow](https://stackoverflow.com/questions/319279/how-to-validate-ip-address-in-python)|The ip observed to initiate the connection|
@@ -184,7 +184,7 @@ All keys MUST be written in lowercase.
 |Source Local Identity|source_local_ip|inet|see source_ip|Some sources report a internal (NATed) IP address related a compromized system|
 |Source Local Identity|source_local_hostname|varchar(2000)|printable ASCII string|Some sources report a internal hostname within a NAT related to the name configured for a compromized system. N.B.: this can be any Windows machine name. So we do not restrict ourselves here to DNS names / DNS regular expressions|
 |Source Geolocation|source_cc|varchar(2)|```[a-zA-Z0-9]{2}```|MaxMind Country Code (ISO3166)|
-|Source Geolocation|source_country|printable ASCII string| varchar(2000)|The country name derived from the ISO3166 country code (assigned to cc field)|
+|Source Geolocation|source_country|varchar(2000)|printable ASCII string|The country name derived from the ISO3166 country code (assigned to cc field)|
 |Source Geolocation|source_longitude|float|```[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?```|Longitude coordinates derived from a geolocation service, such as MaxMind geoip db|
 |Source Geolocation|source_latitude|float|```[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?```|Latitude coordinates derived from a geolocation service, such as MaxMind geoip db|
 |Source Geolocation|source_region|varchar(2000)|printable ASCII string|Some geolocation services refer to region-level geolocation (where applicable)|
