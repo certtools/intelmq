@@ -1,5 +1,59 @@
 {
     "Collector": {
+        "ZeuS Tracker Domains": {
+            "description": "ZeuS Tracker Domains is the bot responsible to get the report from source of information.",
+            "module": "intelmq.bots.collectors.http.collector_http",
+            "parameters": {
+                "feed": "ZeuS Tracker Domains",
+                "url": "https://zeustracker.abuse.ch/blocklist.php?download=baddomains",
+                "rate_limit": "129600"
+            }
+        },
+        "ZeuS Tracker IPs": {
+            "description": "ZeuS Tracker IPs is the bot responsible to get the report from source of information.",
+            "module": "intelmq.bots.collectors.http.collector_http",
+            "parameters": {
+                "feed": "ZeuS Tracker IPs",
+                "url": "https://zeustracker.abuse.ch/blocklist.php?download=badips",
+                "rate_limit": "129600"
+            }
+        },
+        "Feodo Tracker Domains": {
+            "description": "Feodo Tracker Domains is the bot responsible to get the report from source of information.",
+            "module": "intelmq.bots.collectors.http.collector_http",
+            "parameters": {
+                "feed": "Feodo Tracker Domains",
+                "url": "https://feodotracker.abuse.ch/blocklist/?download=domainblocklist",
+                "rate_limit": "129600"
+            }
+        },
+        "Feodo Tracker IPs": {
+            "description": "Feodo Tracker IPs is the bot responsible to get the report from source of information.",
+            "module": "intelmq.bots.collectors.http.collector_http",
+            "parameters": {
+                "feed": "Feodo Tracker IPs",
+                "url": "https://feodotracker.abuse.ch/blocklist/?download=ipblocklist",
+                "rate_limit": "129600"
+            }
+        },
+        "Palevo Tracker Domains": {
+            "description": "Palevo Tracker Domains is the bot responsible to get the report from source of information.",
+            "module": "intelmq.bots.collectors.http.collector_http",
+            "parameters": {
+                "feed": "Palevo Tracker Domains",
+                "url": "https://palevotracker.abuse.ch/blocklists.php?download=domainblocklist",
+                "rate_limit": "129600"
+            }
+        },
+        "Palevo Tracker IPs": {
+            "description": "Palevo Tracker IPs is the bot responsible to get the report from source of information.",
+            "module": "intelmq.bots.collectors.http.collector_http",
+            "parameters": {
+                "feed": "Palevo Tracker IPs",
+                "url": "https://palevotracker.abuse.ch/blocklists.php?download=ipblocklist",
+                "rate_limit": "129600"
+            }
+        },
         "DShield AS": {
             "description": "DShield AS Collector is the bot responsible to get the report from source of information.", 
             "module": "intelmq.bots.collectors.http.collector_http", 
@@ -395,6 +449,42 @@
         }
     },
     "Parser": {
+        "ZeuS Tracker Domains": {
+            "module": "intelmq.bots.parsers.abusech.parser_domain",
+            "description": "ZeuS Tracker Domains Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+            }
+        },
+        "ZeuS Tracker IPs": {
+            "module": "intelmq.bots.parsers.abusech.parser_ip",
+            "description": "ZeuS Tracker IPs Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+            }
+        },
+        "Palevo Tracker Domains": {
+            "module": "intelmq.bots.parsers.abusech.parser_domain",
+            "description": "Palevo Tracker Domains Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+            }
+        },
+        "Palevo Tracker IPs": {
+            "module": "intelmq.bots.parsers.abusech.parser_ip",
+            "description": "Palevo Tracker IPs Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+            }
+        },
+        "Feodo Tracker Domains": {
+            "module": "intelmq.bots.parsers.abusech.parser_domain",
+            "description": "Feodo Tracker Domains Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+            }
+        },
+        "Feodo Tracker IPs": {
+            "module": "intelmq.bots.parsers.abusech.parser_ip",
+            "description": "Feodo Tracker IPs Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+            }
+        },
         "Taichung": {
             "module": "intelmq.bots.parsers.taichung.parser",
             "description": "Taichung Parser is the bot responsible to parse the report and sanitize the information.",
@@ -701,9 +791,9 @@
             }
         },
         "Reverse DNS": {
-            "module": "intelmq.bots.experts.reverse_dns.expert",
-            "description": "Reverse DNS is the bot resposible to get the correspondent domain name source IP and destination IP of the events",
-            "parameters": {
+             "module": "intelmq.bots.experts.reverse_dns.expert",
+             "description": "Reverse DNS is the bot resposible to get the correspondent domain name source IP and destination IP of the events",
+             "parameters": {
                 "redis_cache_host": "127.0.0.1",
                 "redis_cache_port": "6379",
                 "redis_cache_db": "5",
