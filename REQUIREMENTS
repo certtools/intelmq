@@ -11,3 +11,4 @@ psutil==2.1.1
 pyzmq==14.6.0
 pydns==2.3.6
 pycurl==7.19.0
+mock

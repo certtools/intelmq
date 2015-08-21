@@ -41,7 +41,6 @@ class TestURLVirIPsParserBot(test.BotTestCase, unittest.TestCase):
 
     def test_event(self):
         """ Test if correct Event has been produced. """
-        self.prepare_bot()
         self.run_bot()
         self.assertEventAlmostEqual(0, EXAMPLE_EVENT)
 

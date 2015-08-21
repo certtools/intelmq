@@ -6,6 +6,7 @@ from __future__ import unicode_literals
 import io
 import json
 import logging
+import mock
 import unittest
 
 import intelmq.lib.pipeline as pipeline
@@ -18,7 +19,7 @@ from intelmq import SYSTEM_CONF_FILE
 
 def mocked_config(bot_id, src_name, dst_names, raise_on_connect):
 
-    def mock(conf_file):
+    def load_conf(conf_file):
         if conf_file == PIPELINE_CONF_FILE:
             return {bot_id: {"source-queue": src_name,
                              "destination-queues": dst_names},
@@ -41,7 +42,7 @@ def mocked_config(bot_id, src_name, dst_names, raise_on_connect):
             with open(conf_file, 'r') as fpconfig:
                 config = json.loads(fpconfig.read())
             return config
-    return mock
+    return load_conf
 
 
 def mocked_logger(logger):
@@ -60,17 +61,17 @@ class TestBot(unittest.TestCase):
         src_name = "{}-input".format(self.bot_id)
         dst_name = "{}-output".format(self.bot_id)
 
-        utils.load_configuration = mocked_config(self.bot_id,
-                                                 src_name,
-                                                 [dst_name],
-                                                 raise_on_connect)
+        self.mocked_config = mocked_config(self.bot_id,
+                                           src_name,
+                                           [dst_name],
+                                           raise_on_connect)
         logger = logging.getLogger(self.bot_id)
         logger.setLevel("DEBUG")
         console_formatter = logging.Formatter(utils.LOG_FORMAT)
         console_handler = logging.StreamHandler(self.log_stream)
         console_handler.setFormatter(console_formatter)
         logger.addHandler(console_handler)
-        utils.log = mocked_logger(logger)
+        self.mocked_log = mocked_logger(logger)
 
         class Parameters(object):
             source_queue = src_name
@@ -80,19 +81,27 @@ class TestBot(unittest.TestCase):
         pipe.set_queues(parameters.source_queue, "source")
         pipe.set_queues(parameters.destination_queues, "destination")
 
-        self.bot = self.bot_reference(self.bot_id)
+        with mock.patch('intelmq.lib.utils.load_configuration',
+                        new=self.mocked_config):
+            with mock.patch('intelmq.lib.utils.log', self.mocked_log):
+                self.bot = self.bot_reference(self.bot_id)
         self.pipe = pipe
+
+    def run_bot(self, raise_on_connect=False):
+        self.prepare_bot(raise_on_connect=raise_on_connect)
+        with mock.patch('intelmq.lib.utils.load_configuration',
+                        new=self.mocked_config):
+            with mock.patch('intelmq.lib.utils.log', self.mocked_log):
+                self.bot.start()
 
     def test_pipeline_raising(self):
         self.bot_reference = test_dummy_bot.DummyParserBot
-        self.prepare_bot(raise_on_connect=True)
-        self.bot.start()
+        self.run_bot(raise_on_connect=True)
         self.assertIn('ERROR - Pipeline failed', self.log_stream.getvalue())
 
     def test_pipeline_empty(self):
         self.bot_reference = test_dummy_bot.DummyParserBot
-        self.prepare_bot()
-        self.bot.start()
+        self.run_bot()
         self.assertIn('ERROR - Bot has found a problem',
                       self.log_stream.getvalue())
 

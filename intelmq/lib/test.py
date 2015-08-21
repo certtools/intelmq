@@ -9,6 +9,7 @@ from __future__ import unicode_literals
 import io
 import json
 import logging
+import mock
 import unittest
 
 import intelmq.lib.pipeline as pipeline
@@ -66,14 +67,7 @@ class BotTestCase(object):
     def setUpClass(cls):
         """
         Set default values and save original functions.
-
-        Without using tuples for the original functions, they will become
-        methods (expecting class instance as first argument).
-        Not a solution, but short workaround.
         """
-        cls.orig_load_configuration = (utils.load_configuration, )
-        cls.orig_log = (utils.log, )
-
         cls.bot_id = 'test-bot'
         cls.bot_name = None
         cls.bot = None
@@ -105,9 +99,9 @@ class BotTestCase(object):
         src_name = "{}-input".format(self.bot_id)
         dst_name = "{}-output".format(self.bot_id)
 
-        utils.load_configuration = mocked_config(self.bot_id,
-                                                 src_name,
-                                                 [dst_name])
+        self.mocked_config = mocked_config(self.bot_id,
+                                           src_name,
+                                           [dst_name])
 
         logger = logging.getLogger(self.bot_id)
         logger.setLevel("DEBUG")
@@ -115,7 +109,7 @@ class BotTestCase(object):
         console_handler = logging.StreamHandler(self.log_stream)
         console_handler.setFormatter(console_formatter)
         logger.addHandler(console_handler)
-        utils.log = mocked_logger(logger)
+        self.mocked_log = mocked_logger(logger)
 
         class Parameters(object):
             source_queue = src_name
@@ -125,7 +119,10 @@ class BotTestCase(object):
         self.pipe.set_queues(parameters.source_queue, "source")
         self.pipe.set_queues(parameters.destination_queues, "destination")
 
-        self.bot = self.bot_reference(self.bot_id)
+        with mock.patch('intelmq.lib.utils.load_configuration',
+                        new=self.mocked_config):
+            with mock.patch('intelmq.lib.utils.log', self.mocked_log):
+                self.bot = self.bot_reference(self.bot_id)
         if self.input_message is not None:
             self.input_queue = [self.input_message]
             self.input_message = None
@@ -136,10 +133,13 @@ class BotTestCase(object):
         """
         Call this method for actually doing a test run for the specified bot.
         """
-
-        self.bot.start(error_on_pipeline=False,
-                       source_pipeline=self.pipe,
-                       destination_pipeline=self.pipe)
+        self.prepare_bot()
+        with mock.patch('intelmq.lib.utils.load_configuration',
+                        new=self.mocked_config):
+            with mock.patch('intelmq.lib.utils.log', self.mocked_log):
+                self.bot.start(error_on_pipeline=False,
+                               source_pipeline=self.pipe,
+                               destination_pipeline=self.pipe)
         self.loglines_buffer = self.log_stream.getvalue()
         self.loglines = self.loglines_buffer.splitlines()
 
@@ -162,30 +162,25 @@ class BotTestCase(object):
     def test_bot_start(self):
         """Tests if we can start a bot and feed data into
             it and have a reasonable output"""
-        self.prepare_bot()
         self.run_bot()
 
     def test_log_starting(self):
         """ Test if bot logs starting message. """
-        self.prepare_bot()
         self.run_bot()
         self.assertLoglineEqual(0, "Bot is starting", "INFO")
 
     def test_log_not_error(self):
         """ Test if bot does not log errors. """
-        self.prepare_bot()
         self.run_bot()
         self.assertNotRegexpMatches(self.loglines_buffer, "ERROR")
 
     def test_log_not_critical(self):
         """ Test if bot does not log critical errors. """
-        self.prepare_bot()
         self.run_bot()
         self.assertNotRegexpMatches(self.loglines_buffer, "CRITICAL")
 
     def test_pipe_names(self):
         """ Test if all pipes are created with correct names. """
-        self.prepare_bot()
         self.run_bot()
         pipenames = ["{}-input", "{}-input-internal", "{}-output"]
         self.assertListEqual([x.format(self.bot_id) for x in pipenames],
@@ -202,7 +197,6 @@ class BotTestCase(object):
             raise unittest.SkipTest('Given Bot is Collector.')
 
         self.input_message = ''
-        self.prepare_bot()
         self.run_bot()
         self.assertRegexpMatchesLog("WARNING - Empty message received.")
         self.assertNotRegexpMatches(self.loglines_buffer, "ERROR")
@@ -228,7 +222,6 @@ class BotTestCase(object):
         if self.bot_type != 'collector':
             raise unittest.SkipTest('Given Bot is not a Collector.')
 
-        self.prepare_bot()
         self.run_bot()
         for report_json in self.get_output_queue():
             report = message.MessageFactory.unserialize(report_json)
@@ -242,7 +235,6 @@ class BotTestCase(object):
         if self.bot_type not in ['parser', 'expert']:
             raise unittest.SkipTest('Given Bot is not a Parser or Expert.')
 
-        self.prepare_bot()
         self.run_bot()
         for event_json in self.get_output_queue():
             event = message.MessageFactory.unserialize(event_json)
@@ -297,8 +289,3 @@ class BotTestCase(object):
         event_dict = json.loads(event)
 
         self.assertDictContainsSubset(unicode_event, event_dict)
-
-    @classmethod
-    def tearDownClass(cls):
-        utils.load_configuration = cls.orig_load_configuration[0]
-        utils.log = cls.orig_log[0]

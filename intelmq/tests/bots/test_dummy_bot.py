@@ -62,14 +62,12 @@ class TestDummyBot(test.BotTestCase, unittest.TestCase):
 
     def test_log_test_line(self):
         """ Test if bot does log example message. """
-        self.prepare_bot()
         self.run_bot()
         self.assertRegexpMatches(self.loglines_buffer,
                                  "INFO - Lorem ipsum dolor sit amet")
 
     def test_event(self):
         """ Test if correct Event has been produced. """
-        self.prepare_bot()
         self.run_bot()
         self.assertEventAlmostEqual(0, EXAMPLE_REPORT)
 
