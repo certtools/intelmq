@@ -62,8 +62,9 @@ class BlockListDEParserBot(Bot):
     def process(self):
         report = self.receive_message()
 
-        if not report.contains("raw"):
+        if report is None or not report.contains("raw"):
             self.acknowledge_message()
+            return
 
         raw_report = utils.base64_decode(report.value("raw"))
         raw_report = raw_report.strip()

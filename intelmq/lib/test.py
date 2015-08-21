@@ -210,7 +210,8 @@ class BotTestCase(object):
         for type_name, type_match in self.bot_types.items():
             try:
                 self.assertRegexpMatches(self.bot_name,
-                                         r'\A[a-zA-Z]+{}\Z'.format(type_match))
+                                         r'\A[a-zA-Z0-9]+{}\Z'
+                                         r''.format(type_match))
             except AssertionError:
                 counter += 1
         if counter != len(self.bot_types) - 1:

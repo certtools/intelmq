@@ -1,4 +1,3 @@
-import re
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot, sys
 from intelmq.lib.message import Event
@@ -10,8 +9,9 @@ class DShieldASNParserBot(Bot):
     def process(self):
         report = self.receive_message()
 
-        if not report.contains("raw"):
+        if report is None or not report.contains("raw"):
             self.acknowledge_message()
+            return
 
         raw_report = utils.base64_decode(report.value("raw"))
         for row in raw_report.split('\n'):

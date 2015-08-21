@@ -9,11 +9,10 @@ class HpHostsParserBot(Bot):
     def process(self):
         report = self.receive_message()
 
-        if not report.contains("raw"):
+        if (report is None or not report.contains("raw") or
+           len(report.value("raw").strip()) == 0):
             self.acknowledge_message()
-
-        if len(report.value("raw").strip()) == 0:
-            self.acknowledge_message()
+            return
 
         raw_report = utils.base64_decode(report.value("raw"))
 

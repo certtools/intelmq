@@ -16,8 +16,8 @@ CLASSIFICATION = {
 
 
 class TaichungCityNetflowParserBot(Bot):
-    
-    
+
+
     def get_type(self, value):
         value = value.lower()
         for event_type, keywords in CLASSIFICATION.iteritems():
@@ -25,20 +25,21 @@ class TaichungCityNetflowParserBot(Bot):
                 if keyword in value:
                     return event_type
         return "unknown"
-    
+
 
     def process(self):
         report = self.receive_message()
 
-        if not report.contains("raw"):
+        if report is None or not report.contains("raw"):
             self.acknowledge_message()
+            return
 
         raw_report = utils.base64_decode(report.value("raw"))
         for row in raw_report.split('<tr>'):
 
             # Get IP and Type
             info1 = re.search(">[\ ]*(\d+\.\d+\.\d+\.\d+)[\ ]*<.*</td><td>([^<]+)</td>", row)
-            
+
             if not info1:
                 continue
 
@@ -61,7 +62,7 @@ class TaichungCityNetflowParserBot(Bot):
             event.add('feed.name', report.value("feed.name"))
             event.add('feed.url', report.value("feed.url"))
             event.add("raw", row, sanitize=True)
-        
+
             self.send_message(event)
         self.acknowledge_message()
 
