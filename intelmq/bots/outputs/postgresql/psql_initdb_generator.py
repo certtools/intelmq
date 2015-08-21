@@ -7,45 +7,46 @@ Reads the Data-Harmonization.md document from
 The SQL file is saved in `/tmp/initdb.sql`.
 """
 from __future__ import print_function, unicode_literals
-import re
+import json
 import sys
 
-FILE = "/opt/intelmq/docs/Data-Harmonization.md"
+from intelmq import HARMONIZATION_CONF_FILE
+
 OUTPUTFILE = "/tmp/initdb.sql"
-REGEX_TABLE = r"^\|[^|]+\|[^|]+\|[^|]+\|[^|]+\|[^|]+\|$"
-REGEX_FIELDS = r"\|[^|]+\|([^|]+)\|([^|]+)\|"
 FIELDS = dict()
 
 try:
-    with open(FILE, 'r') as fp:
-        data = fp.readlines()
-    print("INFO - Reading %s file" % FILE)
+    print("INFO - Reading %s file" % HARMONIZATION_CONF_FILE)
+    with open(HARMONIZATION_CONF_FILE, 'r') as fp:
+        DATA = json.load(fp)['event']
 except IOError:
-    print("ERROR - Could not find %s" % FILE)
+    print("ERROR - Could not find %s" % HARMONIZATION_CONF_FILE)
     print("ERROR - Make sure that you have intelmq installed.")
     sys.exit(-1)
 
-for line in data:
-    match = re.search(REGEX_TABLE, line)
-    if match:
-        if (match.group(0).startswith('|Section') or
-           match.group(0).startswith('|:---') or
-           match.group(0).startswith('|Name') or
-           match.group(0).startswith('|<a name=')):
-            continue
+for field in DATA.keys():
+    value = DATA[field]
 
-        match = re.search(REGEX_FIELDS, line)
-        if match.group(1) in FIELDS.keys():
-            print('duplicate entry found for {}'.format(match.group(1)))
+    if value['type'] in ('String', 'Base64', 'URL', 'FQDN', 'FeedName'):
+        dbtype = 'varchar({})'.format(value.get('length', 2000))
+    elif value['type'] in ('IPAddress', 'IPNetwork'):
+        dbtype = 'inet'
+    elif value['type'] == 'DateTime':
+        dbtype = 'timestamp with timezone'
+    else:
+        print('Unknow type {!r}, assuming varchar(2000) by default'
+              ''.format(value['type']))
+        dbtype = 'varchar(2000)'
 
-        # FIXME: repalce workaround, fix in docs
-        FIELDS[match.group(1).replace('_', '.', count=1)] = match.group(2)
+    FIELDS[field] = dbtype
 
+    # TODO: ClassificationType
+    # TODO: MalwareName
 
 initdb = """CREATE table events (
     "id" BIGSERIAL UNIQUE PRIMARY KEY,"""
 for field, field_type in sorted(FIELDS.items()):
-    initdb += '\n\t"{name}" {type},'.format(name=field, type=field_type)
+    initdb += '\n    "{name}" {type},'.format(name=field, type=field_type)
 
 print(initdb[-1])
 initdb = initdb[:-1]
