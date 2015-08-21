@@ -14,6 +14,41 @@ import unittest
 import intelmq.lib.pipeline as pipeline
 import intelmq.lib.utils as utils
 import intelmq.lib.message as message
+from intelmq import PIPELINE_CONF_FILE
+from intelmq import RUNTIME_CONF_FILE
+from intelmq import SYSTEM_CONF_FILE
+
+
+def mocked_config(bot_id, src_name, dst_names):
+    def mock(conf_file):
+        if conf_file == PIPELINE_CONF_FILE:
+            return {bot_id: {"source-queue": src_name,
+                             "destination-queues": dst_names},
+                    }
+        elif conf_file == RUNTIME_CONF_FILE:
+            return {bot_id: {}}
+        elif conf_file == SYSTEM_CONF_FILE:
+            return {"logging_level": "DEBUG",
+                    "http_proxy":  None,
+                    "https_proxy": None,
+                    "broker": "pythonlist",
+                    "rate_limit": 0,
+                    "retry_delay": 0,
+                    "error_retry_delay": 0,
+                    "error_max_retries": 0,
+                    "exit_on_stop": False,
+                    }
+        else:
+            with open(conf_file, 'r') as fpconfig:
+                config = json.loads(fpconfig.read())
+            return config
+    return mock
+
+
+def mocked_logger(logger):
+    def log(path, name, level):
+        return logger
+    return log
 
 
 class BotTestCase(object):
@@ -29,7 +64,16 @@ class BotTestCase(object):
 
     @classmethod
     def setUpClass(cls):
-        """ Set default values. """
+        """
+        Set default values and save original functions.
+
+        Without using tuples for the original functions, they will become
+        methods (expecting class instance as first argument).
+        Not a solution, but short workaround.
+        """
+        cls.orig_load_configuration = (utils.load_configuration, )
+        cls.orig_log = (utils.log, )
+
         cls.bot_id = 'test-bot'
         cls.bot_name = None
         cls.bot = None
@@ -61,19 +105,9 @@ class BotTestCase(object):
         src_name = "{}-input".format(self.bot_id)
         dst_name = "{}-output".format(self.bot_id)
 
-        self.config["system"] = {"logging_level": "DEBUG",
-                                 "http_proxy":  None,
-                                 "https_proxy": None,
-                                 "rate_limit": 0,
-                                 "retry_delay": 0,
-                                 "error_retry_delay": 0,
-                                 "error_max_retries": 0,
-                                 "exit_on_stop": False,
-                                 }
-
-        self.config["runtime"] = {self.bot_id: {}}
-        self.config["pipeline"] = {self.bot_id: {"source-queue": (src_name),
-                                                 "destination-queues": [dst_name]}}
+        utils.load_configuration = mocked_config(self.bot_id,
+                                                 src_name,
+                                                 [dst_name])
 
         logger = logging.getLogger(self.bot_id)
         logger.setLevel("DEBUG")
@@ -81,20 +115,17 @@ class BotTestCase(object):
         console_handler = logging.StreamHandler(self.log_stream)
         console_handler.setFormatter(console_formatter)
         logger.addHandler(console_handler)
-        self.config["logger"] = logger
+        utils.log = mocked_logger(logger)
 
         class Parameters(object):
             source_queue = src_name
             destination_queues = [dst_name]
         parameters = Parameters()
-        pipe = pipeline.Pythonlist(parameters)
-        pipe.set_queues(parameters.source_queue, "source")
-        pipe.set_queues(parameters.destination_queues, "destination")
-        self.config["source_pipeline"] = pipe
-        self.config["destination_pipeline"] = pipe
+        self.pipe = pipeline.Pythonlist(parameters)
+        self.pipe.set_queues(parameters.source_queue, "source")
+        self.pipe.set_queues(parameters.destination_queues, "destination")
 
-        self.bot = self.bot_reference(self.bot_id, config=self.config)
-        self.pipe = self.config["source_pipeline"]
+        self.bot = self.bot_reference(self.bot_id)
         if self.input_message is not None:
             self.input_queue = [self.input_message]
             self.input_message = None
@@ -266,3 +297,8 @@ class BotTestCase(object):
         event_dict = json.loads(event)
 
         self.assertDictContainsSubset(unicode_event, event_dict)
+
+    @classmethod
+    def tearDownClass(cls):
+        utils.load_configuration = cls.orig_load_configuration[0]
+        utils.log = cls.orig_log[0]

@@ -27,7 +27,7 @@ from intelmq.lib.pipeline import PipelineFactory
 
 class Bot(object):
 
-    def __init__(self, bot_id, config={}):
+    def __init__(self, bot_id):
         self.log_buffer = []
         self.parameters = Parameters()
 
@@ -41,27 +41,24 @@ class Bot(object):
 
         try:
             self.log_buffer.append(('debug',
-                                    '{} initialized with id {} and '
-                                    'configuration {!r}'
+                                    '{} initialized with id {}'
                                     ''.format(self.__class__.__name__,
-                                             bot_id,
-                                             config)))
+                                              bot_id)))
             self.check_bot_id(bot_id)
             self.bot_id = bot_id
 
             self.load_defaults_configuration()
-            self.load_system_configuration(config.get("system"))
-            self.logger = (config.get("logger") or
-                           utils.log(self.parameters.logging_path, self.bot_id,
-                                     self.parameters.logging_level))
+            self.load_system_configuration()
+            self.logger = utils.log(self.parameters.logging_path, self.bot_id,
+                                    self.parameters.logging_level)
         except:
             self.print_log_buffer()
             raise
 
         self.logger.info('Bot is starting')
-        self.load_runtime_configuration(config.get("runtime"))
-        self.load_pipeline_configuration(config.get("pipeline"))
-        self.load_harmonization_configuration(config.get("harmonization"))
+        self.load_runtime_configuration()
+        self.load_pipeline_configuration()
+        self.load_harmonization_configuration()
 
         self.init()
 
@@ -261,16 +258,9 @@ class Bot(object):
         with open(dump_file, 'w') as fp:
             json.dump(dump_data, fp, indent=4, sort_keys=True)
 
-    def load_defaults_configuration(self, config=None):
-        if config:
-            self.log_buffer.append(('debug',
-                                    "Defaults configuration: loading from "
-                                    "given config dictionary."))
-        else:
-            config = utils.load_configuration(DEFAULTS_CONF_FILE)
-            self.log_buffer.append(('debug',
-                                    "Defaults configuration: loading from"
-                                    " '{}' file".format(DEFAULTS_CONF_FILE)))
+    def load_defaults_configuration(self):
+        self.log_buffer.append(('debug', "Loading defaults configuration"))
+        config = utils.load_configuration(DEFAULTS_CONF_FILE)
 
         setattr(self.parameters, 'logging_path', DEFAULT_LOGGING_PATH)
         setattr(self.parameters, 'logging_level', DEFAULT_LOGGING_LEVEL)
@@ -282,16 +272,9 @@ class Bot(object):
                                     "loaded  with value '{}'".format(option,
                                                                      value)))
 
-    def load_system_configuration(self, config=None):
-        if config:
-            self.log_buffer.append(('debug',
-                                    "System configuration: loading from given "
-                                    "config dictionary."))
-        else:
-            config = utils.load_configuration(SYSTEM_CONF_FILE)
-            self.log_buffer.append(('debug',
-                                    "System configuration: loading from"
-                                    " '{}' file".format(SYSTEM_CONF_FILE)))
+    def load_system_configuration(self):
+        self.log_buffer.append(('debug', "Loading system configuration"))
+        config = utils.load_configuration(SYSTEM_CONF_FILE)
 
         for option, value in config.items():
             setattr(self.parameters, option, value)
@@ -300,14 +283,9 @@ class Bot(object):
                                     "loaded  with value '{}'".format(option,
                                                                      value)))
 
-    def load_runtime_configuration(self, config=None):
-        if config:
-            self.logger.debug("Runtime configuration: loading from given "
-                              "config dictionary.")
-        else:
-            config = utils.load_configuration(RUNTIME_CONF_FILE)
-            self.logger.debug("Runtime configuration: loading from"
-                              " '{}' file".format(RUNTIME_CONF_FILE))
+    def load_runtime_configuration(self):
+        self.logger.debug("Loading runtime configuration")
+        config = utils.load_configuration(RUNTIME_CONF_FILE)
 
         self.logger.debug("{}".format(list(config.keys())))
         if self.bot_id in list(config.keys()):
@@ -316,14 +294,9 @@ class Bot(object):
                 self.logger.debug("Runtime configuration: parameter '%s' "
                                   "loaded with value '%s'." % (option, value))
 
-    def load_pipeline_configuration(self, config=None):
-        if config:
-            self.logger.debug("Pipeline configuration: loading from given "
-                              "config dictionary.")
-        else:
-            config = utils.load_configuration(PIPELINE_CONF_FILE)
-            self.logger.debug("Pipeline configuration: loading from"
-                              " '{}' file".format(PIPELINE_CONF_FILE))
+    def load_pipeline_configuration(self):
+        self.logger.debug("Loading pipeline configuration")
+        config = utils.load_configuration(PIPELINE_CONF_FILE)
 
         self.source_queues = None
         self.destination_queues = None
@@ -348,14 +321,9 @@ class Bot(object):
                               "'{}'".format(self.bot_id))
             self.stop()
 
-    def load_harmonization_configuration(self, config=None):
-        if config:
-            self.logger.debug("Harmonization configuration: loading from given"
-                              " config dictionary.")
-        else:
-            config = utils.load_configuration(HARMONIZATION_CONF_FILE)
-            self.logger.debug("Harmonization configuration: loading from"
-                              " '{}' file".format(HARMONIZATION_CONF_FILE))
+    def load_harmonization_configuration(self):
+        self.logger.debug("Loading Harmonization configuration")
+        config = utils.load_configuration(HARMONIZATION_CONF_FILE)
 
         for message_types in config.keys():
             for key in config[message_types].keys():
