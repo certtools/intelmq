@@ -304,8 +304,8 @@ if __name__ == "__main__":
 
 **Examples**
 
-* Check [Expert Bots](../intelmq/bots/experts/) expert bot
-* Check [Parser Bots](../intelmq/bots/parsers/) parser bot
+* Check [Expert Bots](../intelmq/bots/experts/)
+* Check [Parser Bots](../intelmq/bots/parsers/)
 
 ### Configure IntelMQ
 
