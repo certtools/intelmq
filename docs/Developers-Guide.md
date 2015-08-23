@@ -227,11 +227,11 @@ Rules:
 Class name of the bot (ex: PhishTank Parser) must correspond to the type of the bot (ex: Parser). Example:
 
 ```
-    class Expert(Bot):
+    class ExampleBot(Bot):
         ....
         
     if __name__ == "__main__":
-        bot = Expert(sys.argv[1])
+        bot = ExampleBot(sys.argv[1])
         bot.start()
 ```    
 
