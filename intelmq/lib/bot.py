@@ -54,12 +54,16 @@ class Bot(object):
         except:
             self.stop()
 
-        self.logger.info('Bot is starting')
-        self.load_runtime_configuration()
-        self.load_pipeline_configuration()
-        self.load_harmonization_configuration()
+        try:
+            self.logger.info('Bot is starting')
+            self.load_runtime_configuration()
+            self.load_pipeline_configuration()
+            self.load_harmonization_configuration()
 
-        self.init()
+            self.init()
+        except:
+            self.logger.exception('Bot initialization failed.')
+            raise
 
     def init(self):
         pass
