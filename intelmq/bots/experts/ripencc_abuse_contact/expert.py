@@ -1,5 +1,8 @@
-from intelmq.lib.bot import Bot, sys
+import sys
+
 from intelmq.bots.experts.ripencc.lib import RIPENCC
+from intelmq.lib.bot import Bot
+
 
 '''
 Reference: https://stat.ripe.net/data/abuse-contact-finder/data.json?resource=1.1.1.1

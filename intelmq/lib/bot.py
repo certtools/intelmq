@@ -11,16 +11,10 @@ import sys  # TODO: Replace imports in bots
 import time
 import traceback
 
-from intelmq import DEFAULT_LOGGING_LEVEL
-from intelmq import DEFAULT_LOGGING_PATH
-from intelmq import DEFAULTS_CONF_FILE
-from intelmq import HARMONIZATION_CONF_FILE
-from intelmq import PIPELINE_CONF_FILE
-from intelmq import RUNTIME_CONF_FILE
-from intelmq import SYSTEM_CONF_FILE
-
-from intelmq.lib import exceptions
-from intelmq.lib import utils
+from intelmq import (DEFAULT_LOGGING_LEVEL, DEFAULT_LOGGING_PATH,
+                     DEFAULTS_CONF_FILE, HARMONIZATION_CONF_FILE,
+                     PIPELINE_CONF_FILE, RUNTIME_CONF_FILE, SYSTEM_CONF_FILE)
+from intelmq.lib import exceptions, utils
 from intelmq.lib.message import MessageFactory
 from intelmq.lib.pipeline import PipelineFactory
 

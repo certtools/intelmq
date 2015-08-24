@@ -1,4 +1,5 @@
 import re
+
 import dns.resolver
 
 QUERY_TEMPLATE = "%s.%s.%s.%s.abuse-contacts.abusix.org"

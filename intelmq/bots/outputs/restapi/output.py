@@ -1,5 +1,8 @@
+import sys
+
 import requests
-from intelmq.lib.bot import Bot, sys
+
+from intelmq.lib.bot import Bot
 
 
 class RestAPI(Bot):

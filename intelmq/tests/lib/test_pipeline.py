@@ -11,7 +11,6 @@ import unittest
 
 import intelmq.lib.pipeline as pipeline
 
-
 SAMPLES = {'normal': [b'Lorem ipsum dolor sit amet',
                       u'Lorem ipsum dolor sit amet'],
            'unicode': [b'\xc2\xa9\xc2\xab\xc2\xbb \xc2\xa4\xc2\xbc',

@@ -1,5 +1,8 @@
-from intelmq.lib.bot import Bot, sys
+import sys
+
 from intelmq.bots.experts.abusix.lib import Abusix
+from intelmq.lib.bot import Bot
+
 
 '''
 Reference: https://abusix.com/contactdb.html

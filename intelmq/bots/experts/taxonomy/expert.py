@@ -1,4 +1,6 @@
-from intelmq.lib.bot import Bot, sys
+import sys
+
+from intelmq.lib.bot import Bot
 
 # FIXME: this dict should be on a sparated file
 

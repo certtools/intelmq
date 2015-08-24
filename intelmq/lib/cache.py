@@ -1,5 +1,6 @@
 import redis
 
+
 """ Cache is a set with information already seen by the system.
     This provides a way, for example, to remove duplicated events
     and reports in system or cache some results from experts like

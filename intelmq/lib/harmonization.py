@@ -18,15 +18,17 @@ The following types are implemented with sanitize() and is_valid() functions:
 import base64
 import binascii
 import datetime
+import socket
+
 import dateutil.parser
 import dns.resolver
+import pytz
+import six
+
 try:
     import ipaddress
 except ImportError:
     import ipaddr as ipaddress
-import pytz
-import six
-import socket
 try:
     from urlparse import urlparse
 except ImportError:

@@ -1,6 +1,8 @@
-import time
 import socket
-from intelmq.lib.bot import Bot, sys
+import sys
+import time
+
+from intelmq.lib.bot import Bot
 
 
 class TCPBot(Bot):

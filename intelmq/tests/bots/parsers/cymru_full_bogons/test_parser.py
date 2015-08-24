@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 import json
 import unittest
 
 import intelmq.lib.test as test
-from intelmq.bots.parsers.cymru_full_bogons.parser import CymruFullBogonsParserBot
+from intelmq.bots.parsers.cymru_full_bogons.parser import \
+    CymruFullBogonsParserBot
 
 
 class TestCymruFullBogonsParserBot(test.BotTestCase, unittest.TestCase):

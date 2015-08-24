@@ -1,5 +1,7 @@
+import sys
+
 import psycopg2
-from intelmq.lib.bot import Bot, sys
+from intelmq.lib.bot import Bot
 
 
 class PostgreSQLBot(Bot):

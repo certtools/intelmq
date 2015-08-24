@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 import json
 import unittest
 
 import intelmq.lib.test as test
-from intelmq.bots.parsers.dragonresearchgroup.parser_vnc import DragonResearchGroupVNCParserBot
+from intelmq.bots.parsers.dragonresearchgroup.parser_vnc import \
+    DragonResearchGroupVNCParserBot
 
 
 class TestDragonResearchGroupVNCParserBot(test.BotTestCase, unittest.TestCase):

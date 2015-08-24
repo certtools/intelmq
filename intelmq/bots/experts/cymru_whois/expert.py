@@ -1,9 +1,10 @@
 import json
-from intelmq.lib.bot import Bot, sys
+import sys
+
+from intelmq.bots.experts.cymru_whois.lib import Cymru
+from intelmq.lib.bot import Bot
 from intelmq.lib.cache import Cache
 from intelmq.lib.harmonization import IPAddress
-from intelmq.bots.experts.cymru_whois.lib import Cymru
-
 
 MINIMUM_BGP_PREFIX_IPV4 = 24
 MINIMUM_BGP_PREFIX_IPV6 = 128  # FIXME

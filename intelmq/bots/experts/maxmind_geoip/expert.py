@@ -1,5 +1,7 @@
+import sys
+
 import geoip2.database
-from intelmq.lib.bot import Bot, sys
+from intelmq.lib.bot import Bot
 
 
 class GeoIPExpertBot(Bot):

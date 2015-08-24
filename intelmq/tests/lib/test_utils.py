@@ -7,13 +7,13 @@ parsing.
 base64 de-/encoding is not tested yet, as we fully rely on the module.
 """
 from __future__ import unicode_literals
+
 import io
 import os
 import tempfile
 import unittest
 
 import intelmq.lib.utils as utils
-
 
 LINES = {'spare': ['Lorem', 'ipsum', 'dolor'],
          'short': ['{}: Lorem', '{}: ipsum',

@@ -1,22 +1,27 @@
 import re
-import imbox
+import sys
 import zipfile
-from intelmq.lib.bot import Bot, sys
+
+import imbox
+from intelmq.lib.bot import Bot
 from intelmq.lib.message import Report
-from intelmq.bots.collectors.mail.lib import Mail
 
 
 class MailAttachCollectorBot(Bot):
 
     def process(self):
-        mailbox = imbox.Imbox(self.parameters.mail_host, self.parameters.mail_user,
-                              self.parameters.mail_password, self.parameters.mail_ssl)
+        mailbox = imbox.Imbox(self.parameters.mail_host,
+                              self.parameters.mail_user,
+                              self.parameters.mail_password,
+                              self.parameters.mail_ssl)
         emails = mailbox.messages(folder=self.parameters.folder, unread=True)
 
         if emails:
             for uid, message in emails:
 
-                if self.parameters.subject_regex and not re.search(self.parameters.subject_regex, message.subject):
+                if (self.parameters.subject_regex and
+                        not re.search(self.parameters.subject_regex,
+                                      message.subject)):
                     continue
 
                 self.logger.info("Reading email report")

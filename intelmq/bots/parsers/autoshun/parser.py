@@ -1,8 +1,10 @@
+import sys
+
 import HTMLParser
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot, sys
-from intelmq.lib.message import Event
+from intelmq.lib.bot import Bot
 from intelmq.lib.harmonization import DateTime
+from intelmq.lib.message import Event
 
 TAXONOMY = {
     "brute force": "brute-force",

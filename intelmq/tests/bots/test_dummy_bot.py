@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 import json
 import unittest
 
-import intelmq.lib.test as test
 import intelmq.lib.bot as bot
+import intelmq.lib.test as test
 from intelmq.lib.message import Event
-
 
 EXAMPLE_REPORT = {"source.ip": "192.0.2.3",
                   "time.source": "2015-06-04T13:37:00+00:00",

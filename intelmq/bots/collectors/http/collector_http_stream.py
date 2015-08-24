@@ -1,5 +1,7 @@
+import sys
+
 import pycurl
-from intelmq.lib.bot import Bot, sys
+from intelmq.lib.bot import Bot
 from intelmq.lib.message import Report
 
 

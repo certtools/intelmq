@@ -1,7 +1,6 @@
-from intelmq.lib import utils
-from intelmq.lib.bot import Bot, sys
-from intelmq.lib.message import Event
-from intelmq.lib.harmonization import DateTime
+import sys
+
+from intelmq.lib.bot import Bot
 
 
 class TorExpertBot(Bot):

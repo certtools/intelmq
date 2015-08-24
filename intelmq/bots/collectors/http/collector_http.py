@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
-from intelmq.lib.bot import Bot, sys
+import sys
+
 from intelmq.bots.collectors.http.lib import fetch_url
+from intelmq.lib.bot import Bot
 from intelmq.lib.message import Report
 
 

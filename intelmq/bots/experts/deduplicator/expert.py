@@ -1,6 +1,7 @@
 import copy
-import json
-from intelmq.lib.bot import Bot, sys
+import sys
+
+from intelmq.lib.bot import Bot
 from intelmq.lib.cache import Cache
 
 

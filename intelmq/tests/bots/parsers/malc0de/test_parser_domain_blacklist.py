@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 import json
 import unittest
 
 import intelmq.lib.test as test
-from intelmq.bots.parsers.malc0de.parser_domain_blacklist import Malc0deDomainBlacklistParserBot
+from intelmq.bots.parsers.malc0de.parser_domain_blacklist import \
+    Malc0deDomainBlacklistParserBot
 
 
 class TestMalc0deDomainBlacklistParserBot(test.BotTestCase, unittest.TestCase):

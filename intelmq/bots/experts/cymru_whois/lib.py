@@ -2,7 +2,9 @@
 Reference: http://www.team-cymru.org/Services/ip-to-asn.html#dns
 """
 import StringIO
+
 import dns.resolver
+
 from intelmq.lib.harmonization import IPAddress
 
 IP_QUERY = "%s.origin%s.asn.cymru.com"

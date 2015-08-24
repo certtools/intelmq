@@ -1,5 +1,6 @@
-from intelmq.lib.bot import Bot, sys
-from intelmq.lib import utils
+import sys
+
+from intelmq.lib.bot import Bot
 
 
 class FileBot(Bot):

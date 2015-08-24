@@ -1,6 +1,9 @@
-from dns import reversename, resolver
+import sys
+
 import dns
-from intelmq.lib.bot import Bot, sys
+from dns import resolver, reversename
+
+from intelmq.lib.bot import Bot
 from intelmq.lib.cache import Cache
 from intelmq.lib.harmonization import IPAddress
 

@@ -1,9 +1,11 @@
 import csv
 import StringIO
+import sys
+
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot, sys
-from intelmq.lib.message import Event
+from intelmq.lib.bot import Bot
 from intelmq.lib.harmonization import DateTime, IPAddress
+from intelmq.lib.message import Event
 
 COLUMNS = {
     "line": "__IGNORE__",
