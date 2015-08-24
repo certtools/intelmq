@@ -23,7 +23,7 @@ def fetch_url(url, timeout=60.0, chunk_size=16384, http_proxy=None,
     req.add_header('User-agent', user_agent)
     resp = urllib2.urlopen(req, timeout=timeout)
 
-    iostring = io.StringIO()
+    iostring = io.BytesIO()
     shutil.copyfileobj(resp, iostring, chunk_size)
     value = iostring.getvalue()
     iostring.close()

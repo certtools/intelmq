@@ -27,8 +27,8 @@ class TCPBot(Bot):
                 self.logger.error(e.args[1] + ". Retrying in 10 seconds.")
                 time.sleep(10)
 
-        self.logger.info("Connected successfully to {!s}:{}".format(address[0],
-                                                                    address[1])
+        self.logger.info("Connected successfully to {!s}: {}"
+                         "".format(address[0], address[1]))
 
     def send_data(self, data):
         while True:

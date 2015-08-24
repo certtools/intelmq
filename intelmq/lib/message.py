@@ -201,9 +201,9 @@ class Event(Message):
                 continue
 
             event_hash.update(key.encode("utf-8"))
-            event_hash.update("\xc0")
+            event_hash.update(b"\xc0")
             event_hash.update(value.encode("utf-8"))
-            event_hash.update("\xc0")
+            event_hash.update(b"\xc0")
 
         return int(event_hash.hexdigest(), 16)
 
