@@ -1,9 +1,13 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 import csv
-import StringIO
+import io
+import sys
+
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot, sys
-from intelmq.lib.message import Event
+from intelmq.lib.bot import Bot
 from intelmq.lib.harmonization import DateTime, IPAddress
+from intelmq.lib.message import Event
 
 COLUMNS = {
     "line": "__IGNORE__",
@@ -45,7 +49,7 @@ class CleanMXVirusParserBot(Bot):
 
         raw_report = utils.base64_decode(report.value("raw"))
 
-        fp = StringIO.StringIO(raw_report)
+        fp = io.StringIO(raw_report)
         rows = csv.DictReader(fp)
 
         for row in rows:
@@ -60,7 +64,8 @@ class CleanMXVirusParserBot(Bot):
                 if key is "__IGNORE__" or key is "__TDB__":
                     continue
 
-                if key == "source.fqdn" and IPAddress.is_valid(value, sanitize=True):
+                if key == "source.fqdn" and IPAddress.is_valid(value,
+                                                               sanitize=True):
                     continue
 
                 if key == "time.source":

@@ -7,11 +7,11 @@ Most tests are performed on Report, as it is formally the same as Message,
 but has a valid Harmonization configuration.
 """
 from __future__ import unicode_literals
+
 import unittest
 
-import intelmq.lib.message as message
 import intelmq.lib.exceptions as exceptions
-
+import intelmq.lib.message as message
 
 LOREM_BASE64 = 'bG9yZW0gaXBzdW0='
 DOLOR_BASE64 = 'ZG9sb3Igc2l0IGFtZXQ='

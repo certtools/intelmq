@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 import json
 import unittest
 
 import intelmq.lib.test as test
-from intelmq.bots.parsers.cleanmx.parser_phishing import CleanMXPhishingParserBot
+from intelmq.bots.parsers.cleanmx.parser_phishing import \
+    CleanMXPhishingParserBot
 
 
 class TestCleanMXPhishingParserBot(test.BotTestCase, unittest.TestCase):

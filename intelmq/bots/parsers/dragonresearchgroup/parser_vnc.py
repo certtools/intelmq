@@ -1,7 +1,12 @@
-from intelmq.lib.bot import Bot, sys
-from intelmq.lib.message import Event
-from intelmq.lib.harmonization import DateTime
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+import sys
+
 from intelmq.lib import utils
+from intelmq.lib.bot import Bot
+from intelmq.lib.harmonization import DateTime
+from intelmq.lib.message import Event
+
 
 class DragonResearchGroupVNCParserBot(Bot):
 
@@ -23,7 +28,8 @@ class DragonResearchGroupVNCParserBot(Bot):
             splitted_row = row.split('|')
             event = Event()
 
-            columns = ["source.asn", "source.as_name", "source.ip", "time.source"]
+            columns = ["source.asn", "source.as_name",
+                       "source.ip", "time.source"]
 
             for key, value in zip(columns, splitted_row):
                 value = value.strip()

@@ -1,9 +1,15 @@
-import unicodecsv
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+import sys
 from cStringIO import StringIO
+
+import unicodecsv
+
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot, sys
-from intelmq.lib.message import Event
+from intelmq.lib.bot import Bot
 from intelmq.lib.harmonization import DateTime
+from intelmq.lib.message import Event
+
 
 class TurrisGreylistParserBot(Bot):
 
@@ -17,11 +23,11 @@ class TurrisGreylistParserBot(Bot):
         raw_report = utils.base64_decode(report.value("raw"))
 
         columns = [
-                   "source.ip",
-                   "__IGNORE__",
-                   "description.text",
-                   "__IGNORE__"
-                  ]
+            "source.ip",
+            "__IGNORE__",
+            "description.text",
+            "__IGNORE__"
+        ]
 
         headers = True
         for row in unicodecsv.reader(StringIO(raw_report), encoding='utf-8'):

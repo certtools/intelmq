@@ -1,8 +1,12 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+import sys
+
 import HTMLParser
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot, sys
-from intelmq.lib.message import Event
+from intelmq.lib.bot import Bot
 from intelmq.lib.harmonization import DateTime
+from intelmq.lib.message import Event
 
 TAXONOMY = {
     "brute force": "brute-force",
@@ -47,7 +51,8 @@ class AutoshunParserBot(Bot):
 
             for key in Parser.taxonomy.keys():
                 if description.lower().find(key.lower()) > -1:
-                    event.add("classification.type", TAXONOMY[key], sanitize=True)
+                    event.add("classification.type",
+                              TAXONOMY[key], sanitize=True)
                     break
 
             if not event.contains("classification.type"):

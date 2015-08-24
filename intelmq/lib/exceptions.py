@@ -1,6 +1,9 @@
+# -*- coding: utf-8 -*-
 '''
     IntelMQ Exception Class
 '''
+from __future__ import unicode_literals
+
 
 class IntelMQException(Exception):
 

@@ -1,8 +1,12 @@
-from intelmq.lib.bot import Bot, sys
-from intelmq.lib.message import Event
-from intelmq.lib.harmonization import DateTime
-from intelmq.lib import utils
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 import re
+import sys
+
+from intelmq.lib import utils
+from intelmq.lib.bot import Bot
+from intelmq.lib.harmonization import DateTime
+from intelmq.lib.message import Event
 
 REGEX_IP = "^[^ \t]+"
 REGEX_TIMESTAMP = "# ([^ \t]+ [^ \t]+)"

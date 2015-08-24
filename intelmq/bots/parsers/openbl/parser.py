@@ -1,8 +1,12 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+import sys
 from datetime import datetime
+
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot, sys
-from intelmq.lib.message import Event
+from intelmq.lib.bot import Bot
 from intelmq.lib.harmonization import DateTime
+from intelmq.lib.message import Event
 
 
 class OpenBLParserBot(Bot):
@@ -29,7 +33,8 @@ class OpenBLParserBot(Bot):
 
             for key, value in zip(columns, splitted_row):
                 if key == "time.source":
-                    value = datetime.utcfromtimestamp(int(value)).strftime('%Y-%m-%d %H:%M:%S') + " UTC"
+                    value = datetime.utcfromtimestamp(
+                        int(value)).strftime('%Y-%m-%d %H:%M:%S') + " UTC"
 
                 event.add(key, value.strip(), sanitize=True)
 
@@ -47,4 +52,3 @@ class OpenBLParserBot(Bot):
 if __name__ == "__main__":
     bot = OpenBLParserBot(sys.argv[1])
     bot.start()
-

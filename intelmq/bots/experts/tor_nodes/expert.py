@@ -1,7 +1,8 @@
-from intelmq.lib import utils
-from intelmq.lib.bot import Bot, sys
-from intelmq.lib.message import Event
-from intelmq.lib.harmonization import DateTime
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+import sys
+
+from intelmq.lib.bot import Bot
 
 
 class TorExpertBot(Bot):
@@ -29,7 +30,6 @@ class TorExpertBot(Bot):
         except IOError:
             self.logger.critical("TOR rule not defined or failed on open.")
             self.stop()
-
 
     def process(self):
         event = self.receive_message()

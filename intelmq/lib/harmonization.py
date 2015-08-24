@@ -15,18 +15,21 @@ The following types are implemented with sanitize() and is_valid() functions:
  - String
  - URL
 """
+from __future__ import unicode_literals
 import base64
 import binascii
 import datetime
+import socket
+
 import dateutil.parser
 import dns.resolver
+import pytz
+import six
+
 try:
     import ipaddress
 except ImportError:
     import ipaddr as ipaddress
-import pytz
-import six
-import socket
 try:
     from urlparse import urlparse
 except ImportError:
@@ -347,10 +350,10 @@ class URL(GenericType):
             value = value.replace('hxxps://', 'https://')
 
         tests = [
-                    value,
-                    "http://" + value,
-                    "http://" + value + "/"
-                ]
+            value,
+            "http://" + value,
+            "http://" + value + "/"
+        ]
 
         for value in tests:
             result = urlparse(value)

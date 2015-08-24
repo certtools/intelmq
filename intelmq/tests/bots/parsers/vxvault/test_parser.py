@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 import json
 import unittest
 
 import intelmq.lib.test as test
 from intelmq.bots.parsers.vxvault.parser import VXVaultParserBot
-
 
 EXAMPLE_REPORT = {"feed.name": "VxVault",
                   "feed.url": "http://vxvault.siri-urz.net/URL_List.php",

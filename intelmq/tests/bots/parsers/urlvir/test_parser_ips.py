@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 import json
 import unittest
 
 import intelmq.lib.test as test
 from intelmq.bots.parsers.urlvir.parser_ips import URLVirIPsParserBot
-
 
 EXAMPLE_REPORT = {"feed.name": "URLVir",
                   "feed.url": "http://www.urlvir.com/export-ip-addresses/",

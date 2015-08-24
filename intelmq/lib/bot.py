@@ -11,16 +11,10 @@ import sys  # TODO: Replace imports in bots
 import time
 import traceback
 
-from intelmq import DEFAULT_LOGGING_LEVEL
-from intelmq import DEFAULT_LOGGING_PATH
-from intelmq import DEFAULTS_CONF_FILE
-from intelmq import HARMONIZATION_CONF_FILE
-from intelmq import PIPELINE_CONF_FILE
-from intelmq import RUNTIME_CONF_FILE
-from intelmq import SYSTEM_CONF_FILE
-
-from intelmq.lib import exceptions
-from intelmq.lib import utils
+from intelmq import (DEFAULT_LOGGING_LEVEL, DEFAULT_LOGGING_PATH,
+                     DEFAULTS_CONF_FILE, HARMONIZATION_CONF_FILE,
+                     PIPELINE_CONF_FILE, RUNTIME_CONF_FILE, SYSTEM_CONF_FILE)
+from intelmq.lib import exceptions, utils
 from intelmq.lib.message import MessageFactory
 from intelmq.lib.pipeline import PipelineFactory
 
@@ -78,7 +72,8 @@ class Bot(object):
         while True:
             try:
                 if not starting and (error_on_pipeline or error_on_message):
-                    self.logger.info('Bot will restart in %s seconds' % self.parameters.error_retry_delay)
+                    self.logger.info('Bot will restart in %s seconds' %
+                                     self.parameters.error_retry_delay)
                     time.sleep(self.parameters.error_retry_delay)
                     self.logger.info('Bot woke up')
                     self.logger.info('Trying to start processing again')
@@ -88,7 +83,8 @@ class Bot(object):
 
                 if error_on_pipeline:
                     self.logger.info("Loading source pipeline")
-                    self.source_pipeline = PipelineFactory.create(self.parameters)
+                    self.source_pipeline = PipelineFactory.create(
+                        self.parameters)
                     self.logger.info("Loading source queue")
                     self.source_pipeline.set_queues(self.source_queues,
                                                     "source")
@@ -98,7 +94,8 @@ class Bot(object):
                     self.logger.info("Connected to source queue")
 
                     self.logger.info("Loading destination pipeline")
-                    self.destination_pipeline = PipelineFactory.create(self.parameters)
+                    self.destination_pipeline = PipelineFactory.create(
+                        self.parameters)
                     self.logger.info("Loading destination queues")
                     self.destination_pipeline.set_queues(self.destination_queues,
                                                          "destination")
@@ -141,7 +138,7 @@ class Bot(object):
                 self.error_retries_counter += 1
                 if self.parameters.error_procedure == "retry":
                     if (self.error_retries_counter >=
-                       self.parameters.error_max_retries):
+                            self.parameters.error_max_retries):
                         if self.parameters.error_dump_message:
                             self.dump_message(ex)
                         self.acknowledge_message()
@@ -161,8 +158,8 @@ class Bot(object):
             finally:
 
                 if (self.error_retries_counter >=
-                   self.parameters.error_max_retries and
-                   self.parameters.error_max_retries >= 0):
+                        self.parameters.error_max_retries and
+                        self.parameters.error_max_retries >= 0):
                     self.stop()
                     break
 
@@ -315,7 +312,8 @@ class Bot(object):
 
             if 'destination-queues' in config[self.bot_id].keys():
 
-                self.destination_queues = config[self.bot_id]['destination-queues']
+                self.destination_queues = config[
+                    self.bot_id]['destination-queues']
                 self.logger.debug("Pipeline configuration: parameter"
                                   "'destination-queues' loaded with the value"
                                   " '%s'" % ", ".join(self.destination_queues))

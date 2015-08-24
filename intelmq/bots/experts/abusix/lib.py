@@ -1,4 +1,7 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 import re
+
 import dns.resolver
 
 QUERY_TEMPLATE = "%s.%s.%s.%s.abuse-contacts.abusix.org"

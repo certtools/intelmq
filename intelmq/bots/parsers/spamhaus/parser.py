@@ -1,8 +1,12 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+import sys
 from datetime import datetime
+
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot, sys
-from intelmq.lib.message import Event
+from intelmq.lib.bot import Bot
 from intelmq.lib.harmonization import DateTime
+from intelmq.lib.message import Event
 
 
 class SpamHausParserBot(Bot):
@@ -23,7 +27,8 @@ class SpamHausParserBot(Bot):
 
             if row.startswith('; Last-Modified:'):
                 self.event_date = row.split('; Last-Modified: ')[1].strip()
-                self.event_date = datetime.strptime(self.event_date, "%a, %d %b %Y %H:%M:%S %Z")
+                self.event_date = datetime.strptime(self.event_date,
+                                                    "%a, %d %b %Y %H:%M:%S %Z")
 
             if row == "" or row.startswith(';'):
                 continue

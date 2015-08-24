@@ -4,13 +4,14 @@ Messages are the information packages in pipelines.
 
 Use MessageFactory to get a Message object (types Report and Event).
 """
-import json
+from __future__ import unicode_literals
 import hashlib
+import json
+
+import intelmq.lib.exceptions as exceptions
+import intelmq.lib.harmonization
 from intelmq import HARMONIZATION_CONF_FILE
 from intelmq.lib import utils
-import intelmq.lib.harmonization
-import intelmq.lib.exceptions as exceptions
-
 
 harm_config = utils.load_configuration(HARMONIZATION_CONF_FILE)
 
@@ -200,9 +201,9 @@ class Event(Message):
                 continue
 
             event_hash.update(key.encode("utf-8"))
-            event_hash.update("\xc0")
+            event_hash.update(b"\xc0")
             event_hash.update(value.encode("utf-8"))
-            event_hash.update("\xc0")
+            event_hash.update(b"\xc0")
 
         return int(event_hash.hexdigest(), 16)
 

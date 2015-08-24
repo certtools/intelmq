@@ -1,9 +1,15 @@
-import unicodecsv
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+import sys
 from cStringIO import StringIO
+
+import unicodecsv
+
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot, sys
-from intelmq.lib.message import Event
+from intelmq.lib.bot import Bot
 from intelmq.lib.harmonization import DateTime
+from intelmq.lib.message import Event
+
 
 class PhishTankParserBot(Bot):
 
@@ -16,16 +22,15 @@ class PhishTankParserBot(Bot):
 
         raw_report = utils.base64_decode(report.value("raw"))
 
-        columns = [
-                   "__IGNORE__",
+        columns = ["__IGNORE__",
                    "source.url",
                    "description.url",
                    "time.source",
                    "__IGNORE__",
                    "__IGNORE__",
                    "__IGNORE__",
-                   "description.target"
-                  ]
+                   "description.target",
+                   ]
 
         for row in unicodecsv.reader(StringIO(raw_report), encoding='utf-8'):
 

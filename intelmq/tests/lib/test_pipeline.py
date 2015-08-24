@@ -11,7 +11,6 @@ import unittest
 
 import intelmq.lib.pipeline as pipeline
 
-
 SAMPLES = {'normal': [b'Lorem ipsum dolor sit amet',
                       u'Lorem ipsum dolor sit amet'],
            'unicode': [b'\xc2\xa9\xc2\xab\xc2\xbb \xc2\xa4\xc2\xbc',
@@ -23,6 +22,7 @@ class Parameters(object):
 
 
 class TestPythonlist(unittest.TestCase):
+
     def setUp(self):
         params = Parameters()
         params.broker = 'Pythonlist'
@@ -50,6 +50,7 @@ class TestPythonlist(unittest.TestCase):
 
 
 class TestRedis(unittest.TestCase):
+
     def setUp(self):
         params = Parameters()
         params.broker = 'Redis'

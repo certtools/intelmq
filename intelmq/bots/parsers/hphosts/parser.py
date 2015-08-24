@@ -1,7 +1,11 @@
-from intelmq.lib.bot import Bot, sys
-from intelmq.lib.message import Event
-from intelmq.lib.harmonization import DateTime, IPAddress
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+import sys
+
 from intelmq.lib import utils
+from intelmq.lib.bot import Bot
+from intelmq.lib.harmonization import DateTime, IPAddress
+from intelmq.lib.message import Event
 
 
 class HpHostsParserBot(Bot):
@@ -10,7 +14,7 @@ class HpHostsParserBot(Bot):
         report = self.receive_message()
 
         if (report is None or not report.contains("raw") or
-           len(report.value("raw").strip()) == 0):
+                len(report.value("raw").strip()) == 0):
             self.acknowledge_message()
             return
 
@@ -22,7 +26,7 @@ class HpHostsParserBot(Bot):
             if len(row) == 0 or row.startswith('#'):
                 continue
 
-            row = row.replace('\r','')
+            row = row.replace('\r', '')
             values = row.split('\t')
 
             # if special char is in string should not be allowed
