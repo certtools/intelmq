@@ -15,8 +15,16 @@ class IntelMQException(Exception):
 
 class InvalidArgument(IntelMQException):
 
-    def __init__(self, argument):
-        message = "argument %s is invalid" % repr(argument)
+    def __init__(self, argument, got=None, expected=None, docs=None):
+        message = "Argument {} is invalid.".format(repr(argument))
+        if expected is list:
+            message += " Should be one of: {}.".format(list)
+        elif expected:  # not None
+            message += " Should be of type: {}.".format(expected)
+        if got:
+            message += " Got {}.".format(repr(got))
+        if docs:
+            message += " For more information see {}".format(docs)
         super(InvalidArgument, self).__init__(message)
 
 
@@ -32,10 +40,10 @@ class ConfigurationError(IntelMQException):
     def __init__(self, config, argument):
         message = "%s configuration failed - %s" % (config, repr(argument))
         super(PipelineError, self).__init__(message)
-        
+
+
 class PipelineFactoryError(IntelMQException):
     pass
-
 
 
 '''
@@ -57,7 +65,8 @@ class IntelMQHarmonizationException(IntelMQException):
 class InvalidValue(IntelMQHarmonizationException):
 
     def __init__(self, key, value):
-        message = "invalid value %s (%s) for key %s" % (repr(value), type(value), repr(key))
+        message = "invalid value %s (%s) for key %s" % (repr(value),
+                                                        type(value), repr(key))
         super(InvalidValue, self).__init__(message)
 
 

@@ -483,6 +483,7 @@ class IntelMQContoller():
         logger.error("Reading from system log is not implemented yet")
 
     def read_bot_log(self, bot_id, log_level, number_of_lines):
+        # TODO: Use utils.parse_logline
         bot_log_path = os.path.join(self.system['logging_path'],
                                     bot_id + '.log')
         if not os.path.isfile(bot_log_path):

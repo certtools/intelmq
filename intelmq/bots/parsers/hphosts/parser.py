@@ -4,25 +4,24 @@ from intelmq.lib.harmonization import DateTime, IPAddress
 from intelmq.lib import utils
 
 
-class HpHostsParser(Bot):
+class HpHostsParserBot(Bot):
 
-    def process(self):    
+    def process(self):
         report = self.receive_message()
-        
-        if not report.contains("raw"):
-            self.acknowledge_message()
 
-        if len(report.value("raw").strip()) == 0:
+        if (report is None or not report.contains("raw") or
+           len(report.value("raw").strip()) == 0):
             self.acknowledge_message()
+            return
 
         raw_report = utils.base64_decode(report.value("raw"))
 
         for row in raw_report.split('\n'):
             row = row.strip()
-            
+
             if len(row) == 0 or row.startswith('#'):
                 continue
-                
+
             row = row.replace('\r','')
             values = row.split('\t')
 
@@ -33,7 +32,7 @@ class HpHostsParser(Bot):
             # if domain name is localhost we are not interested
             if values[1].lower().strip() == "localhost":
                 continue
-    
+
             event = Event()
 
             if IPAddress.is_valid(values[1], sanitize=True):
@@ -47,10 +46,10 @@ class HpHostsParser(Bot):
             event.add('feed.name', report.value("feed.name"))
             event.add('feed.url', report.value("feed.url"))
             event.add("raw", row, sanitize=True)
-        
+
             self.send_message(event)
         self.acknowledge_message()
 
 if __name__ == "__main__":
-    bot = HpHostsParser(sys.argv[1])
+    bot = HpHostsParserBot(sys.argv[1])
     bot.start()

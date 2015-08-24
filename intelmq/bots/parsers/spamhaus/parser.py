@@ -11,19 +11,20 @@ class SpamHausParserBot(Bot):
         report = self.receive_message()
         self.event_date = None
 
-        if not report.contains("raw"):
+        if report is None or not report.contains("raw"):
             self.acknowledge_message()
+            return
 
         raw_report = utils.base64_decode(report.value("raw"))
 
         for row in raw_report.split('\n'):
 
             row = row.strip()
-                          
+
             if row.startswith('; Last-Modified:'):
                 self.event_date = row.split('; Last-Modified: ')[1].strip()
                 self.event_date = datetime.strptime(self.event_date, "%a, %d %b %Y %H:%M:%S %Z")
-            
+
             if row == "" or row.startswith(';'):
                 continue
 
@@ -31,7 +32,7 @@ class SpamHausParserBot(Bot):
             network = row_splitted[0].strip()
 
             event = Event()
-            
+
             event.add('source.network', network, sanitize=True)
             if self.event_date:
                 event.add('time.source', self.event_date, sanitize=True)

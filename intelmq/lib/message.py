@@ -1,66 +1,101 @@
-import json 
+# -*- coding: utf-8 -*-
+"""
+Messages are the information packages in pipelines.
+
+Use MessageFactory to get a Message object (types Report and Event).
+"""
+import json
 import hashlib
-import base64
 from intelmq import HARMONIZATION_CONF_FILE
 from intelmq.lib import utils
 import intelmq.lib.harmonization
 import intelmq.lib.exceptions as exceptions
 
 
+harm_config = utils.load_configuration(HARMONIZATION_CONF_FILE)
+
+
 class MessageFactory(object):
+    """
+    unserialize: JSON encoded message to object
+    serialize: object to JSON encoded object
+    """
 
     @staticmethod
     def unserialize(raw_message):
+        """
+        Takes JSON-encoded Message object, returns instance of correct class.
+
+        The class is determined by __type attribute.
+        """
         message = Message.unserialize(raw_message)
-        class_reference = getattr(intelmq.lib.message, message["__type"])
+        try:
+            class_reference = getattr(intelmq.lib.message, message["__type"])
+        except AttributeError:
+            raise exceptions.InvalidArgument('__type',
+                                             got=message["__type"],
+                                             expected=list(harm_config.keys()),
+                                             docs=HARMONIZATION_CONF_FILE)
         del message["__type"]
         return class_reference(message)
 
     @staticmethod
     def serialize(message):
-        super(Message, message).__setitem__("__type", message.__class__.__name__)
+        """
+        Takes instance of message-derived class and makes JSON-encoded Message.
+
+        The class is saved in __type attribute.
+        """
         raw_message = Message.serialize(message)
         return raw_message
 
 
 class Message(dict):
 
-    harmonization_config = utils.load_configuration(HARMONIZATION_CONF_FILE)
+    def __init__(self, message=()):
+        super(Message, self).__init__(message)
+        try:
+            classname = message['__type'].lower()
+            del message['__type']
+        except (KeyError, TypeError):
+            classname = self.__class__.__name__.lower()
 
-    def __init__(self, message=None):
-        if message:
-            super(Message, self).__init__(message)
-        else:
-            super(Message, self).__init__()
-
-        self.harmonization_config = self.harmonization_config[self.__class__.__name__.lower()]
+        try:
+            self.harmonization_config = harm_config[classname]
+        except KeyError:
+            raise exceptions.InvalidArgument('__type',
+                                             got=classname,
+                                             expected=list(harm_config.keys()),
+                                             docs=HARMONIZATION_CONF_FILE)
 
     def __setitem__(self, key, value):
         self.add(key, value)
 
-    def add(self, key, value, sanitize=False, force=False, ignore=[]):
+    def add(self, key, value, sanitize=False, force=False, ignore=()):
         if not force and key in self:
             raise exceptions.KeyExists(key)
 
-        if value == None or value == "":
+        if value is None or value == "":
             return
 
         for invalid_value in ["-", "N/A"]:
             if value == invalid_value:
                 return
-    
+
         if not self.__is_valid_key(key):
             raise exceptions.InvalidKey(key)
 
-        if type(ignore) == list:
+        try:
             if value in ignore:
                 return
-        else:
-            raise exceptions.InvalidArgument(ignore)
+        except TypeError:
+            raise exceptions.InvalidArgument('ignore',
+                                             got=type(ignore),
+                                             expected='list or tuple')
 
         if sanitize:
             old_value = value
-            value = self.__sanitize_value(key, value)            
+            value = self.__sanitize_value(key, value)
             if not value:
                 raise exceptions.InvalidValue(key, old_value)
 
@@ -69,64 +104,83 @@ class Message(dict):
 
         super(Message, self).__setitem__(key, value)
 
-    def __getitem__(self, key):
-        return self.value(key)
-        
-    def value(self, key):
+#    def __getitem__(self, key):  # TODO: Remove, no implications
+#        return self.value(key)
+
+    def value(self, key):  # TODO: Remove? Use get instead
         return super(Message, self).__getitem__(key)
-        
+
     def update(self, key, value, sanitize=False):
         if key not in self:
             raise exceptions.KeyNotExists(key)
-        self.add(key, value, sanitize)
-        
-    def clear(self, key):
+        self.add(key, value, force=True, sanitize=sanitize)
+
+    def clear(self, key):  # TODO: Remove?
         self.__delitem__(key)
-        
-    def __delitem__(self, key):
-        if key in self:
-            super(Message, self).__delitem__(key)
+
+#    def __delitem__(self, key):  # TODO: Remove, no implications
+#        if key in self:
+#            super(Message, self).__delitem__(key)
 
     def contains(self, key):
         return key in self
-        
-    def items(self):
-        return super(Message, self).items()
+
+#    def items(self):  # TODO: Remove, no implications
+#        return super(Message, self).items()
 
     def finditems(self, keyword):
-        for key, value in super(Message, self).iteritems():
+        for key, value in super(Message, self).items():
             if key.startswith(keyword):
                 yield key, value
 
     def copy(self):
-        return Message(super(Message, self).copy())
-        
+        class_ref = self.__class__.__name__
+        self['__type'] = class_ref
+        retval = getattr(intelmq.lib.message,
+                         class_ref)(super(Message, self).copy())
+        del self['__type']
+        del retval['__type']
+        return retval
+
     def deep_copy(self):
-        return Message(self.serialize())
-        
+        return MessageFactory.unserialize(MessageFactory.serialize(self))
+
     def __unicode__(self):
         return self.serialize()
 
+    def __str__(self):
+        return self.serialize().encode('utf8')
+
     def serialize(self):
-        return json.dumps(self) # FIXME: dont know if json take care of encoding issues
+        # FIXME: dont know if json take care of encoding issues
         # FIXME: raw need to be decoded from base64 (may be not here)
-            
+        self['__type'] = self.__class__.__name__
+        json_dump = json.dumps(self)
+        del self['__type']
+        try:
+            return unicode(json_dump)
+        except NameError:  # pragma: no cover
+            return json_dump
+
     @staticmethod
     def unserialize(message_string):
-        return json.loads(message_string) # FIXME: dont know if json take care of encoding issues
+        return json.loads(message_string)
+        # FIXME: dont know if json take care of encoding issues
         # FIXME: raw need to be decoded from base64 (may be not here)
 
     def __is_valid_key(self, key):
-        if key in self.harmonization_config:
+        if key in self.harmonization_config or key == '__type':
             return True
         return False
 
-    def __is_valid_value(self, key, value):   
+    def __is_valid_value(self, key, value):
+        if key == '__type':
+            return True
         class_name = self.__get_class_name_from_key_type(key)
         class_reference = getattr(intelmq.lib.harmonization, class_name)
         return class_reference().is_valid(value)
 
-    def __sanitize_value(self, key, value):   
+    def __sanitize_value(self, key, value):
         class_name = self.__get_class_name_from_key_type(key)
         class_reference = getattr(intelmq.lib.harmonization, class_name)
         return class_reference().sanitize(value)
@@ -164,7 +218,7 @@ class Event(Message):
                     json_dict_fp[subkey] = value
                     break
 
-                if not subkey in json_dict_fp:
+                if subkey not in json_dict_fp:
                     json_dict_fp[subkey] = dict()
 
                 json_dict_fp = json_dict_fp[subkey]

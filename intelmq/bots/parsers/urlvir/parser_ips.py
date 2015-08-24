@@ -1,7 +1,7 @@
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot, sys
 from intelmq.lib.message import Event
-from intelmq.lib.harmonization import DateTime, IPAddress
+from intelmq.lib.harmonization import DateTime
 
 
 class URLVirIPsParserBot(Bot):
@@ -9,6 +9,9 @@ class URLVirIPsParserBot(Bot):
     def process(self):
         report = self.receive_message()
 
+        if not report:
+            self.acknowledge_message()
+            return
         if not report.contains("raw"):
             self.acknowledge_message()
 
