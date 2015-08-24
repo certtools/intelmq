@@ -1,13 +1,14 @@
-import redis
-
-
-""" Cache is a set with information already seen by the system.
-    This provides a way, for example, to remove duplicated events
-    and reports in system or cache some results from experts like
-    Cymru Whois. It's possible to define a TTL value in each information
-    inserted in cache. This TTL means how much time the system will keep an 
-    information in the cache.
+# -*- coding: utf-8 -*-
 """
+Cache is a set with information already seen by the system.
+This provides a way, for example, to remove duplicated events
+and reports in system or cache some results from experts like
+Cymru Whois. It's possible to define a TTL value in each information
+inserted in cache. This TTL means how much time the system will keep an
+information in the cache.
+"""
+from __future__ import unicode_literals
+import redis
 
 
 class Cache():

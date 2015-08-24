@@ -4,6 +4,7 @@ Messages are the information packages in pipelines.
 
 Use MessageFactory to get a Message object (types Report and Event).
 """
+from __future__ import unicode_literals
 import hashlib
 import json
 

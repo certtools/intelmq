@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+import io
 import shutil
-import StringIO
 import urllib2
 
 
@@ -22,7 +23,7 @@ def fetch_url(url, timeout=60.0, chunk_size=16384, http_proxy=None,
     req.add_header('User-agent', user_agent)
     resp = urllib2.urlopen(req, timeout=timeout)
 
-    iostring = StringIO.StringIO()
+    iostring = io.StringIO()
     shutil.copyfileobj(resp, iostring, chunk_size)
     value = iostring.getvalue()
     iostring.close()

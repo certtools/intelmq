@@ -1,7 +1,9 @@
+# -*- coding: utf-8 -*-
 """
 Reference: http://www.team-cymru.org/Services/ip-to-asn.html#dns
 """
-import StringIO
+from __future__ import unicode_literals
+import io
 
 import dns.resolver
 
@@ -29,7 +31,7 @@ class Cymru():
     def __query(query):
         try:
             for query_result in dns.resolver.query(query, rdtype='TXT'):
-                fp = StringIO.StringIO()
+                fp = io.StringIO()
                 query_result.to_wire(fp)
                 value = fp.getvalue()[1:]  # ignore first character
                 fp.close()

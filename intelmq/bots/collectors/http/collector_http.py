@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 import sys
 
 from intelmq.bots.collectors.http.lib import fetch_url

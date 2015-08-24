@@ -15,6 +15,7 @@ The following types are implemented with sanitize() and is_valid() functions:
  - String
  - URL
 """
+from __future__ import unicode_literals
 import base64
 import binascii
 import datetime

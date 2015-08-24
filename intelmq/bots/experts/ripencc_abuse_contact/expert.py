@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 import sys
 
 from intelmq.bots.experts.ripencc.lib import RIPENCC
