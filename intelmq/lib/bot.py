@@ -52,8 +52,7 @@ class Bot(object):
             self.logger = utils.log(self.parameters.logging_path, self.bot_id,
                                     self.parameters.logging_level)
         except:
-            self.print_log_buffer()
-            raise
+            self.stop()
 
         self.logger.info('Bot is starting')
         self.load_runtime_configuration()
@@ -177,6 +176,7 @@ class Bot(object):
         if self.logger:
             self.logger.info("Bot stopped.")
         if self.log_buffer:
+            self.log_buffer.append(('info', 'Bot stopped.'))
             self.print_log_buffer()
         if self.parameters.exit_on_stop:
             self.terminate()
