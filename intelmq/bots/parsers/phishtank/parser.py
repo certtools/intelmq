@@ -28,8 +28,8 @@ class PhishTankParserBot(Bot):
                    "__IGNORE__",
                    "__IGNORE__",
                    "__IGNORE__",
-                   "description.target",
-                   ]
+                   "event_description.target"
+                  ]
 
         for row in unicodecsv.reader(StringIO(raw_report), encoding='utf-8'):
 

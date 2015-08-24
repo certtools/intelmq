@@ -21,6 +21,8 @@ import binascii
 import datetime
 import ipaddress
 import socket
+import six
+
 
 import dateutil.parser
 import dns.resolver
@@ -69,6 +71,31 @@ class GenericType(object):
         return None
 
 
+class Boolean(GenericType):
+
+    @staticmethod
+    def is_valid(value, sanitize=False):
+        if sanitize:
+            value = String().sanitize(value)
+            if value is not None:
+                return True
+
+        if isinstance(value, bool):
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def sanitize(value):
+        if isinstance(value, (bytes, str, unicode)):
+            value = value.strip().lower()
+            if value == 'true':
+                return True
+            elif value == 'false':
+                return False
+            return None
+
+
 class String(GenericType):
 
     @staticmethod
@@ -80,24 +107,10 @@ class String(GenericType):
         if not GenericType().is_valid(value):
             return False
 
-        if not isinstance(value, six.text_type):
+        if type(value) is not unicode:
             return False
 
         if len(value) == 0:
-            return False
-
-        return True
-
-
-class FeedName(GenericType):
-
-    @staticmethod
-    def is_valid(value, sanitize=False):
-        if sanitize:
-            value = GenericType().sanitize(value)
-            value = FeedName().sanitize(value)
-
-        if not GenericType().is_valid(value):
             return False
 
         return True

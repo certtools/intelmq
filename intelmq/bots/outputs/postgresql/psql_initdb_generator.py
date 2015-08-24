@@ -1,3 +1,4 @@
+#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 """
 Generates a SQL command file with commands to create the events table.
@@ -27,7 +28,7 @@ except IOError:
 for field in DATA.keys():
     value = DATA[field]
 
-    if value['type'] in ('String', 'Base64', 'URL', 'FQDN', 'FeedName'):
+    if value['type'] in ('String', 'Base64', 'URL', 'FQDN'):
         dbtype = 'varchar({})'.format(value.get('length', 2000))
     elif value['type'] in ('IPAddress', 'IPNetwork'):
         dbtype = 'inet'

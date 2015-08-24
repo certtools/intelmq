@@ -168,6 +168,7 @@ All keys MUST be written in lowercase.
 
 |Section|Fields|Format|Syntax|Description|
 |:------|:-----|:-----|:-----|:----------|
+|Feed|feed.code|varchar(2000)|see [feed](#datatype-feed)|Code name for the feed, e.g.  DFGS, HSDAG etc.|
 |Feed|feed.name|varchar(2000)|see [feed](#datatype-feed)|Name for the feed, usually found in collector bot configuration.|
 |Feed|feed.url|varchar(2000)|see [url](#datatype-url)|The URL of a given abuse feed, where applicable|
 |Time|time.source|timestamp with time zone|[ISO 8601](https://en.wikipedia.org/wiki/ISO_8601), e.g. 2015-08-18T06:36:40+00:00| Time reported by a source. Some sources only report a date, which *may* be used here if there is no better observation.|
