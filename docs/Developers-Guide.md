@@ -146,7 +146,7 @@ Additional Bot Files Path:
 #### Directories and Files Harmonization
 
 Any directory and file of IntelMQ **MUST** respect the "Directories and Files Harmonization". Any file name or folder name **MUST**:
-* be represented with uppercase and in case of the name has multiple words, the spaces between them must be replaced by underscores;
+* be represented with lowercase and in case of the name has multiple words, the spaces between them must be replaced by underscores;
 * be self explained of the folder or file content;
 
 In the bot directories name, the name **MUST** correspond to the feed name. If necessary, some words can be added to give context by joining together using underscores.
