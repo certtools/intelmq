@@ -23,7 +23,8 @@ class SpamHausParserBot(Bot):
 
             if row.startswith('; Last-Modified:'):
                 self.event_date = row.split('; Last-Modified: ')[1].strip()
-                self.event_date = datetime.strptime(self.event_date, "%a, %d %b %Y %H:%M:%S %Z")
+                self.event_date = datetime.strptime(self.event_date,
+                                                    "%a, %d %b %Y %H:%M:%S %Z")
 
             if row == "" or row.startswith(';'):
                 continue

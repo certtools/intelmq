@@ -2,6 +2,7 @@
     IntelMQ Exception Class
 '''
 
+
 class IntelMQException(Exception):
 
     def __init__(self, message):

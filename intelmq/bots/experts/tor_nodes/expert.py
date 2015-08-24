@@ -30,7 +30,6 @@ class TorExpertBot(Bot):
             self.logger.critical("TOR rule not defined or failed on open.")
             self.stop()
 
-
     def process(self):
         event = self.receive_message()
 

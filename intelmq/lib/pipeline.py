@@ -64,7 +64,8 @@ class Redis(Pipeline):
         self.db = getattr(self.parameters,
                           "{}_pipeline_db".format(queues_type), 2)
         self.socket_timeout = getattr(self.parameters,
-                                      "{}_pipeline_socket_timeout".format(queues_type),
+                                      "{}_pipeline_socket_timeout".format(
+                                          queues_type),
                                       50000)
         self.load_balance = getattr(self.parameters, "load_balance", False)
         self.load_balance_iterator = 0
@@ -85,7 +86,8 @@ class Redis(Pipeline):
 
     def send(self, message):
         if self.load_balance:
-            destination_queue = self.destination_queues[self.load_balance_iterator]
+            destination_queue = self.destination_queues[
+                self.load_balance_iterator]
 
             try:
                 self.pipe.lpush(destination_queue, message)

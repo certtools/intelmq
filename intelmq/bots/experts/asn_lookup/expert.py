@@ -8,8 +8,10 @@ class ASNLookupExpertBot(Bot):
         try:
             self.database = pyasn.pyasn(self.parameters.database)
         except IOError:
-            self.logger.error("pyasn data file does not exist or could not be accessed in '%s'" % self.parameters.database)
-            self.logger.error("Read 'bots/experts/asnlookup/README' and follow the procedure")
+            self.logger.error("pyasn data file does not exist or could not be "
+                              "accessed in '%s'" % self.parameters.database)
+            self.logger.error("Read 'bots/experts/asnlookup/README' and "
+                              "follow the procedure")
             self.stop()
 
     def process(self):
@@ -30,9 +32,11 @@ class ASNLookupExpertBot(Bot):
 
             if info:
                 if info[0]:
-                    event.add(asn_key, unicode(info[0]), sanitize=True, force=True)
+                    event.add(asn_key, unicode(info[0]), sanitize=True,
+                              force=True)
                 if info[1]:
-                    event.add(bgp_key, unicode(info[1]), sanitize=True, force=True)
+                    event.add(bgp_key, unicode(info[1]), sanitize=True,
+                              force=True)
 
         self.send_message(event)
         self.acknowledge_message()

@@ -29,9 +29,9 @@ class VXVaultParserBot(Bot):
             if not url_object:
                 continue
 
-            url      = url_object.geturl()
+            url = url_object.geturl()
             hostname = url_object.hostname
-            port     = url_object.port
+            port = url_object.port
 
             event = Event()
 

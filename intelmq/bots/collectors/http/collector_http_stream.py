@@ -2,6 +2,7 @@ import pycurl
 from intelmq.lib.bot import Bot, sys
 from intelmq.lib.message import Report
 
+
 class HTTPStreamCollectorBot(Bot):
 
     def init(self):

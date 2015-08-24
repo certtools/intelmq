@@ -1,13 +1,15 @@
 import pymongo
 from intelmq.lib.bot import Bot, sys
 
+
 class MongoDBBot(Bot):
 
     def init(self):
-        client = pymongo.MongoClient(self.parameters.host, int(self.parameters.port))
+        client = pymongo.MongoClient(self.parameters.host,
+                                     int(self.parameters.port))
         db = client[self.parameters.database]
         self.collection = db[self.parameters.collection]
-        
+
     def process(self):
         event = self.receive_message()
         self.collection.insert(event.to_dict())

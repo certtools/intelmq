@@ -29,7 +29,8 @@ class OpenBLParserBot(Bot):
 
             for key, value in zip(columns, splitted_row):
                 if key == "time.source":
-                    value = datetime.utcfromtimestamp(int(value)).strftime('%Y-%m-%d %H:%M:%S') + " UTC"
+                    value = datetime.utcfromtimestamp(
+                        int(value)).strftime('%Y-%m-%d %H:%M:%S') + " UTC"
 
                 event.add(key, value.strip(), sanitize=True)
 
@@ -47,4 +48,3 @@ class OpenBLParserBot(Bot):
 if __name__ == "__main__":
     bot = OpenBLParserBot(sys.argv[1])
     bot.start()
-

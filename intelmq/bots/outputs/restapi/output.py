@@ -1,14 +1,15 @@
 import requests
 from intelmq.lib.bot import Bot, sys
 
-class RestAPI(Bot):
 
+class RestAPI(Bot):
 
     def init(self):
         self.session = requests.Session()
         if self.parameters.auth_token_name and self.parameters.auth_token:
-            self.session.headers.update({self.parameters.auth_token_name : self.parameters.auth_token})
-        
+            self.session.headers.update(
+                {self.parameters.auth_token_name: self.parameters.auth_token})
+
     def process(self):
         event = self.receive_message()
         try:
@@ -22,4 +23,3 @@ class RestAPI(Bot):
 if __name__ == "__main__":
     bot = RestAPI(sys.argv[1])
     bot.start()
-

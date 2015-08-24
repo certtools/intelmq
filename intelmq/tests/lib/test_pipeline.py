@@ -23,6 +23,7 @@ class Parameters(object):
 
 
 class TestPythonlist(unittest.TestCase):
+
     def setUp(self):
         params = Parameters()
         params.broker = 'Pythonlist'
@@ -50,6 +51,7 @@ class TestPythonlist(unittest.TestCase):
 
 
 class TestRedis(unittest.TestCase):
+
     def setUp(self):
         params = Parameters()
         params.broker = 'Redis'

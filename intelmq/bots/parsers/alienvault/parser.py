@@ -20,7 +20,7 @@ class AlienVaultParserBot(Bot):
     def process(self):
         report = self.receive_message()
         if (report is None or not report.contains("raw") or
-           len(report.value("raw").strip()) == 0):
+                len(report.value("raw").strip()) == 0):
             self.acknowledge_message()
             return
 
@@ -46,7 +46,8 @@ class AlienVaultParserBot(Bot):
                 event = Event()
 
                 if ctype.lower() in CLASSIFICATION:
-                    event.add('classification.type', CLASSIFICATION[ctype.lower()], sanitize=True)
+                    event.add('classification.type',
+                              CLASSIFICATION[ctype.lower()], sanitize=True)
                 else:
                     event.add('classification.type', u"unknown")
 
@@ -57,17 +58,20 @@ class AlienVaultParserBot(Bot):
                         geo_longitude = geo_coordinates[1]
 
                 event.add('source.ip', values[0].strip(), sanitize=True)
-                event.add('source.geolocation.cc', values[4].strip(), sanitize=True)
-                event.add('source.geolocation.city', values[5].strip(), sanitize=True)
-                event.add('source.geolocation.latitude', geo_latitude.strip(), sanitize=True)
-                event.add('source.geolocation.longitude', geo_longitude.strip(), sanitize=True)
+                event.add('source.geolocation.cc',
+                          values[4].strip(), sanitize=True)
+                event.add('source.geolocation.city',
+                          values[5].strip(), sanitize=True)
+                event.add('source.geolocation.latitude',
+                          geo_latitude.strip(), sanitize=True)
+                event.add('source.geolocation.longitude',
+                          geo_longitude.strip(), sanitize=True)
 
                 time_observation = DateTime().generate_datetime_now()
                 event.add('time.observation', time_observation, sanitize=True)
                 event.add('feed.name', report.value("feed.name"))
                 event.add('feed.url', report.value("feed.url"))
                 event.add("raw", row, sanitize=True)
-
 
                 self.send_message(event)
         self.acknowledge_message()

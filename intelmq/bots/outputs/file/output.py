@@ -1,6 +1,7 @@
 from intelmq.lib.bot import Bot, sys
 from intelmq.lib import utils
 
+
 class FileBot(Bot):
 
     def init(self):
@@ -10,7 +11,7 @@ class FileBot(Bot):
 
     def process(self):
         event = self.receive_message()
-        
+
         if event:
             event_data = event.to_json()
             self.file.write(event_data)

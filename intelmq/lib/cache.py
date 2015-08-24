@@ -8,15 +8,16 @@ import redis
     information in the cache.
 """
 
-class Cache():
-    def __init__(self, host, port, db, ttl):
-        self.redis = redis.Redis(host = host,
-                                 port = int(port),
-                                 db = db,
-                                 socket_timeout = 5)
-        
-        self.ttl = ttl
 
+class Cache():
+
+    def __init__(self, host, port, db, ttl):
+        self.redis = redis.Redis(host=host,
+                                 port=int(port),
+                                 db=db,
+                                 socket_timeout=5)
+
+        self.ttl = ttl
 
     def exists(self, key):
         return self.redis.exists(key)

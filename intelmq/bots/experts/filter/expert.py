@@ -4,7 +4,7 @@ from intelmq.lib.message import Event
 
 
 class FilterBot(Bot):
-    
+
     def init(self):
         if not self.parameters.filter_key:
             self.logger.warn("No filter_key parameter found.")
@@ -22,7 +22,7 @@ class FilterBot(Bot):
         if self.parameters.filter_action == "drop":
             if event.contains(self.parameters.filter_key) and event.value(self.parameters.filter_key) == self.parameters.filter_value:
                 self.acknowledge_message()
-            else:                    
+            else:
                 self.send_message(message)
                 self.acknowledge_message()
 
@@ -30,7 +30,7 @@ class FilterBot(Bot):
             if event.contains(self.parameters.filter_key) and event.value(self.parameters.filter_key) == self.parameters.filter_value:
                 self.send_message(message)
                 self.acknowledge_message()
-            else:                    
+            else:
                 self.acknowledge_message()
 
         self.acknowledge_message()

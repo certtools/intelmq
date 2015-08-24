@@ -26,7 +26,8 @@ class DragonResearchGroupSSHParserBot(Bot):
             splitted_row = row.split('|')
             event = Event()
 
-            columns = ["source.asn", "source.as_name", "source.ip", "time.source"]
+            columns = ["source.asn", "source.as_name",
+                       "source.ip", "time.source"]
 
             for key, value in zip(columns, splitted_row):
                 value = value.strip()

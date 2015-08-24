@@ -47,7 +47,8 @@ class AutoshunParserBot(Bot):
 
             for key in Parser.taxonomy.keys():
                 if description.lower().find(key.lower()) > -1:
-                    event.add("classification.type", TAXONOMY[key], sanitize=True)
+                    event.add("classification.type",
+                              TAXONOMY[key], sanitize=True)
                     break
 
             if not event.contains("classification.type"):

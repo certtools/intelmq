@@ -10,13 +10,14 @@ Compare each IP with networks prefixes loadad.
 If ip matchs, query RIPE
 '''
 
+
 class RIPENCCExpertBot(Bot):
 
     def process(self):
 
         event = self.receive_message()
 
-        for key in ['source.','destination.']:
+        for key in ['source.', 'destination.']:
             ip_key = key + "ip"
             if event.contains(ip_key):
                 ip = event.value(ip_key)

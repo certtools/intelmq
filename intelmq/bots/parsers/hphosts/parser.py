@@ -10,7 +10,7 @@ class HpHostsParserBot(Bot):
         report = self.receive_message()
 
         if (report is None or not report.contains("raw") or
-           len(report.value("raw").strip()) == 0):
+                len(report.value("raw").strip()) == 0):
             self.acknowledge_message()
             return
 
@@ -22,7 +22,7 @@ class HpHostsParserBot(Bot):
             if len(row) == 0 or row.startswith('#'):
                 continue
 
-            row = row.replace('\r','')
+            row = row.replace('\r', '')
             values = row.split('\t')
 
             # if special char is in string should not be allowed

@@ -347,10 +347,10 @@ class URL(GenericType):
             value = value.replace('hxxps://', 'https://')
 
         tests = [
-                    value,
-                    "http://" + value,
-                    "http://" + value + "/"
-                ]
+            value,
+            "http://" + value,
+            "http://" + value + "/"
+        ]
 
         for value in tests:
             result = urlparse(value)
