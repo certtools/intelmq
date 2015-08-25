@@ -288,6 +288,15 @@
                 "rate_limit": "3600"
             }
         },
+        "AlienVault OTX": {
+            "module": "intelmq.bots.collectors.alienvault-otx.collector",
+            "description": "AlienVault OTX Collector is the bot responsible to get the report through the API. Report could vary according to subscriptions.",
+            "parameters": {
+                "api_key": "<insert your api key>",
+                "feed": "AlienVault OTX",
+                "rate_limit": "3600"
+            }
+        },
         "Danger Rulez": {
             "module": "intelmq.bots.collectors.http.collector_http",
             "description": "Danger Rulez Collector is the bot responsible to get the report from source of information.",
@@ -597,6 +606,13 @@
         },
         "AlienVault": {
             "module": "intelmq.bots.parsers.alienvault.parser",
+            "description": "AlienVault Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+                "error_log_message": false
+            }
+        },
+        "AlienVault OTX": {
+            "module": "intelmq.bots.parsers.alienvault.parser-otx",
             "description": "AlienVault Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {
                 "error_log_message": false
