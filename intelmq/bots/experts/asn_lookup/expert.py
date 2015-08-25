@@ -33,7 +33,7 @@ class ASNLookupExpertBot(Bot):
 
             ip_key = key + "ip"
             asn_key = key + "asn"
-            bgp_key = key + "bgp_prefix"
+            bgp_key = key + "network"
 
             if not event.contains(ip_key):
                 continue
