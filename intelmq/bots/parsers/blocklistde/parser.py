@@ -1,9 +1,13 @@
-import urlparse
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 import posixpath
+import sys
+import urlparse
+
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot, sys
-from intelmq.lib.message import Event
+from intelmq.lib.bot import Bot
 from intelmq.lib.harmonization import DateTime
+from intelmq.lib.message import Event
 
 MAPPING = {
     "all.txt": {
@@ -62,8 +66,9 @@ class BlockListDEParserBot(Bot):
     def process(self):
         report = self.receive_message()
 
-        if not report.contains("raw"):
+        if report is None or not report.contains("raw"):
             self.acknowledge_message()
+            return
 
         raw_report = utils.base64_decode(report.value("raw"))
         raw_report = raw_report.strip()

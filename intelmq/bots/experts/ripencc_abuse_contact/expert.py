@@ -1,5 +1,10 @@
-from intelmq.lib.bot import Bot, sys
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+import sys
+
 from intelmq.bots.experts.ripencc.lib import RIPENCC
+from intelmq.lib.bot import Bot
+
 
 '''
 Reference: https://stat.ripe.net/data/abuse-contact-finder/data.json?resource=1.1.1.1
@@ -10,13 +15,14 @@ Compare each IP with networks prefixes loadad.
 If ip matchs, query RIPE
 '''
 
+
 class RIPENCCExpertBot(Bot):
 
     def process(self):
 
         event = self.receive_message()
 
-        for key in ['source.','destination.']:
+        for key in ['source.', 'destination.']:
             ip_key = key + "ip"
             if event.contains(ip_key):
                 ip = event.value(ip_key)

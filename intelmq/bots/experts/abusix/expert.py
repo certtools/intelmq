@@ -1,5 +1,10 @@
-from intelmq.lib.bot import Bot, sys
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+import sys
+
 from intelmq.bots.experts.abusix.lib import Abusix
+from intelmq.lib.bot import Bot
+
 
 '''
 Reference: https://abusix.com/contactdb.html

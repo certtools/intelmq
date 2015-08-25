@@ -1,15 +1,19 @@
-import time
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 import socket
-from intelmq.lib.bot import Bot, sys
+import sys
+import time
+
+from intelmq.lib.bot import Bot
+
 
 class TCPBot(Bot):
 
-    def process(self):       
+    def process(self):
         event = self.receive_message()
         data = event.to_json()
         self.send_data(data)
         self.acknowledge_message()
-
 
     def connect(self):
         address = (self.parameters.ip, int(self.parameters.port))
@@ -23,9 +27,9 @@ class TCPBot(Bot):
                 self.logger.error(e.args[1] + ". Retrying in 10 seconds.")
                 time.sleep(10)
 
-        self.logger.info("Connected successfully to %s:%i", address[0], address[1])
+        self.logger.info("Connected successfully to {!s}: {}"
+                         "".format(address[0], address[1]))
 
-        
     def send_data(self, data):
         while True:
             try:

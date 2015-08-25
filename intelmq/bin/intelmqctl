@@ -233,9 +233,12 @@ class IntelMQContoller():
         self.parameters = Parameters()
         self.load_defaults_configuration()
         self.load_system_configuration()
-        self.pipepline_configuration = utils.load_configuration(PIPELINE_CONF_FILE)
-        self.runtime_configuration = utils.load_configuration(RUNTIME_CONF_FILE)
-        self.startup_configuration = utils.load_configuration(STARTUP_CONF_FILE)
+        self.pipepline_configuration = utils.load_configuration(
+            PIPELINE_CONF_FILE)
+        self.runtime_configuration = utils.load_configuration(
+            RUNTIME_CONF_FILE)
+        self.startup_configuration = utils.load_configuration(
+            STARTUP_CONF_FILE)
 
     def load_system_configuration(self):
         config = utils.load_configuration(SYSTEM_CONF_FILE)
@@ -483,6 +486,7 @@ class IntelMQContoller():
         logger.error("Reading from system log is not implemented yet")
 
     def read_bot_log(self, bot_id, log_level, number_of_lines):
+        # TODO: Use utils.parse_logline
         bot_log_path = os.path.join(self.system['logging_path'],
                                     bot_id + '.log')
         if not os.path.isfile(bot_log_path):
@@ -498,7 +502,7 @@ class IntelMQContoller():
             splitted_line = line.split(' - ', 3)
 
             if (len(splitted_line) < 4 or splitted_line[1] != bot_id or
-               splitted_line[2] not in LOG_LEVEL):
+                    splitted_line[2] not in LOG_LEVEL):
                 message_overflow = '\n'.join([line, message_overflow])
                 continue
             if LOG_LEVEL[splitted_line[2]] < log_level:

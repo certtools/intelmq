@@ -1,23 +1,26 @@
-import re
-from intelmq.lib import utils
-from intelmq.lib.bot import Bot, sys
-from intelmq.lib.message import Event
-from intelmq.lib.harmonization import DateTime
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 
+import re
+import sys
+
+from intelmq.lib import utils
+from intelmq.lib.bot import Bot
+from intelmq.lib.harmonization import DateTime
+from intelmq.lib.message import Event
 
 CLASSIFICATION = {
-        "brute-force": [u"brute-force", u"brute force", u"mysql"],
-        "c&c": [u"c&c server"],
-        "botnet drone": [u"irc-botnet"],
-        "malware": [u"malware provider", u"malware website", u'\u60e1\u610f', u"worm"],
-        "scanner": [u"scan"],
-        "exploit": [u"bash", u"php-cgi", u"phpmyadmin"],
-    }
+    "brute-force": ["brute-force", "brute force", "mysql"],
+    "c&c": ["c&c server"],
+    "botnet drone": ["irc-botnet"],
+    "malware": ["malware provider", "malware website", '\u60e1\u610f', "worm"],
+    "scanner": ["scan"],
+    "exploit": ["bash", "php-cgi", "phpmyadmin"],
+}
 
 
 class TaichungCityNetflowParserBot(Bot):
-    
-    
+
     def get_type(self, value):
         value = value.lower()
         for event_type, keywords in CLASSIFICATION.iteritems():
@@ -25,25 +28,28 @@ class TaichungCityNetflowParserBot(Bot):
                 if keyword in value:
                     return event_type
         return "unknown"
-    
 
     def process(self):
         report = self.receive_message()
 
-        if not report.contains("raw"):
+        if report is None or not report.contains("raw"):
             self.acknowledge_message()
+            return
 
         raw_report = utils.base64_decode(report.value("raw"))
         for row in raw_report.split('<tr>'):
 
             # Get IP and Type
-            info1 = re.search(">[\ ]*(\d+\.\d+\.\d+\.\d+)[\ ]*<.*</td><td>([^<]+)</td>", row)
-            
+            info1 = re.search(
+                ">[\ ]*(\d+\.\d+\.\d+\.\d+)[\ ]*<.*</td><td>([^<]+)</td>", row)
+
             if not info1:
                 continue
 
             # Get Timestamp
-            info2 = re.search("<td>[\ ]*(\d{4}-\d{2}-\d{2}\ \d{2}:\d{2}:\d{2})[\ ]*</td>", row)
+            info2 = re.search(
+                "<td>[\ ]*(\d{4}-\d{2}-\d{2}\ \d{2}:\d{2}:\d{2})[\ ]*</td>",
+                row)
 
             event = Event()
 
@@ -61,7 +67,7 @@ class TaichungCityNetflowParserBot(Bot):
             event.add('feed.name', report.value("feed.name"))
             event.add('feed.url', report.value("feed.url"))
             event.add("raw", row, sanitize=True)
-        
+
             self.send_message(event)
         self.acknowledge_message()
 

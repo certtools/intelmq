@@ -1,8 +1,11 @@
-from intelmq.lib.bot import Bot, sys
-from intelmq.lib.message import Event
-from intelmq.lib.harmonization import DateTime
-from intelmq.lib import utils
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+import sys
 
+from intelmq.lib import utils
+from intelmq.lib.bot import Bot
+from intelmq.lib.harmonization import DateTime
+from intelmq.lib.message import Event
 
 CLASSIFICATION = {
     "c&c": "c&c",
@@ -19,12 +22,10 @@ class AlienVaultParserBot(Bot):
 
     def process(self):
         report = self.receive_message()
-
-        if not report.contains("raw"):
+        if (report is None or not report.contains("raw") or
+                len(report.value("raw").strip()) == 0):
             self.acknowledge_message()
-
-        if len(report.value("raw").strip()) == 0:
-            self.acknowledge_message()
+            return
 
         raw_report = utils.base64_decode(report.value("raw"))
 
@@ -48,7 +49,8 @@ class AlienVaultParserBot(Bot):
                 event = Event()
 
                 if ctype.lower() in CLASSIFICATION:
-                    event.add('classification.type', CLASSIFICATION[ctype.lower()], sanitize=True)
+                    event.add('classification.type',
+                              CLASSIFICATION[ctype.lower()], sanitize=True)
                 else:
                     event.add('classification.type', u"unknown")
 
@@ -59,17 +61,20 @@ class AlienVaultParserBot(Bot):
                         geo_longitude = geo_coordinates[1]
 
                 event.add('source.ip', values[0].strip(), sanitize=True)
-                event.add('source.geolocation.cc', values[4].strip(), sanitize=True)
-                event.add('source.geolocation.city', values[5].strip(), sanitize=True)
-                event.add('source.geolocation.latitude', geo_latitude.strip(), sanitize=True)
-                event.add('source.geolocation.longitude', geo_longitude.strip(), sanitize=True)
+                event.add('source.geolocation.cc',
+                          values[4].strip(), sanitize=True)
+                event.add('source.geolocation.city',
+                          values[5].strip(), sanitize=True)
+                event.add('source.geolocation.latitude',
+                          geo_latitude.strip(), sanitize=True)
+                event.add('source.geolocation.longitude',
+                          geo_longitude.strip(), sanitize=True)
 
                 time_observation = DateTime().generate_datetime_now()
                 event.add('time.observation', time_observation, sanitize=True)
                 event.add('feed.name', report.value("feed.name"))
                 event.add('feed.url', report.value("feed.url"))
                 event.add("raw", row, sanitize=True)
-                
 
                 self.send_message(event)
         self.acknowledge_message()

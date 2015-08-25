@@ -20,7 +20,7 @@ always try to:
 * reduce the complexity of writing new bots for new data feeds
 * make your code easily and pleasantly readable
 * reduce the probability of events lost in all process with persistence functionality (even system crash)
-* strictly adher to the existing [Data Harmonization Ontology](DataHarmonization.md) for key-values in events
+* strictly adher to the existing [Data Harmonization Ontology](Data-Harmonization.md) for key-values in events
 * always use JSON format for all messages internally
 * help and support the interconnection between IntelMQ and existing tools like AbuseHelper, CIF, etc. or new tools (in other words: we will not accept data-silos!)
 * provide an easy way to store data into Log Collectors like ElasticSearch, Splunk
@@ -32,6 +32,15 @@ How do you test if things are easy? Let them new programers test-drive your feat
 
 Similarly, if code does not get accepted upstream by the main developers, it is usually only because of the ease-of-use argument. Do not give up , go back to the drawing board, and re-submit again.
 
+### Testing
+
+All changes have to be tested and new contributions like must must be accompanied by according tests. You can run the tests by changing to the directory with intelmq repository and running either `unittest` or `nosetests`:
+
+    cd intelmq
+    python -m unittest discover
+    nosetests
+
+It may be necessary to switch the user to `intelmq` if the run-path (`/opt/intelmq/var/run/`) is not writeable by the current user.
 
 ### Coding-Rules
 
@@ -58,7 +67,7 @@ Clear variable name:
 def process_line(self, event):
 ```
 
-Here, event is a short name, it is clear what it means (--> see Data Harmonisation Ontology) and better than ```evt```. 
+Here, event is a short name, it is clear what it means ([Data Harmonization Ontology](Data-Harmonization.md) and better than ```evt```. 
 
 ###### Example 2
 
@@ -77,7 +86,7 @@ local_event = event.deep_copy()
 
 Any component of IntelMQ MUST respect the "Data Harmonization Ontology".
 
-**Reference:** IntelMQ Data Harmonization - [Data Harmonization](DataHarmonization.md)
+**Reference:** IntelMQ Data Harmonization - [Data Harmonization Ontology](Data-Harmonization.md)
 
 
 #### Directory layout in the repository
@@ -146,7 +155,7 @@ Additional Bot Files Path:
 #### Directories and Files Harmonization
 
 Any directory and file of IntelMQ **MUST** respect the "Directories and Files Harmonization". Any file name or folder name **MUST**:
-* be represented with uppercase and in case of the name has multiple words, the spaces between them must be replaced by underscores;
+* be represented with lowercase and in case of the name has multiple words, the spaces between them must be replaced by underscores;
 * be self explained of the folder or file content;
 
 In the bot directories name, the name **MUST** correspond to the feed name. If necessary, some words can be added to give context by joining together using underscores.
@@ -227,11 +236,11 @@ Rules:
 Class name of the bot (ex: PhishTank Parser) must correspond to the type of the bot (ex: Parser). Example:
 
 ```
-    class Expert(Bot):
+    class ExampleParserBot(Bot):
         ....
         
     if __name__ == "__main__":
-        bot = Expert(sys.argv[1])
+        bot = ExampleParserBot(sys.argv[1])
         bot.start()
 ```    
 
@@ -304,8 +313,8 @@ if __name__ == "__main__":
 
 **Examples**
 
-* Check [taxonomy](../intelmq/bots/experts/taxonomy/taxonomy.py) expert bot
-* Check [arbor](../intelmq/bots/parsers/arbor/parser.py) parser bot
+* Check [Expert Bots](../intelmq/bots/experts/)
+* Check [Parser Bots](../intelmq/bots/parsers/)
 
 ### Configure IntelMQ
 

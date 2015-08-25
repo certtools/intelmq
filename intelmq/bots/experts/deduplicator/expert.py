@@ -1,18 +1,20 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 import copy
-import json
-from intelmq.lib.bot import Bot, sys
+import sys
+
+from intelmq.lib.bot import Bot
 from intelmq.lib.cache import Cache
 
 
 class DeduplicatorBot(Bot):
-    
+
     def init(self):
-        self.cache = Cache(
-                            self.parameters.redis_cache_host,
-                            self.parameters.redis_cache_port,
-                            self.parameters.redis_cache_db,
-                            self.parameters.redis_cache_ttl
-                          )
+        self.cache = Cache(self.parameters.redis_cache_host,
+                           self.parameters.redis_cache_port,
+                           self.parameters.redis_cache_db,
+                           self.parameters.redis_cache_ttl,
+                           )
 
     def process(self):
         message = self.receive_message()
@@ -22,7 +24,7 @@ class DeduplicatorBot(Bot):
 
         for ignore_key in ignore_keys:
             ignore_key = ignore_key.strip()
-            auxiliar_message.clear(ignore_key)        
+            auxiliar_message.clear(ignore_key)
 
         message_hash = hash(auxiliar_message)
 

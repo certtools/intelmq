@@ -1,19 +1,56 @@
-import sys
-import dns
-import DNS
-import pytz
-import time
-import json
-import ipaddr
+# -*- coding: utf-8 -*-
+"""
+The following types are implemented with sanitize() and is_valid() functions:
+
+ - Base64
+ - ClassificationType
+ - DNS
+ - DateTime
+ - FQDN
+ - FeedName
+ - GenericType
+ - ipaddressess
+ - IPNetwork
+ - MalwareName
+ - String
+ - URL
+"""
+from __future__ import unicode_literals
 import base64
-import inspect
-import urlparse
 import binascii
 import datetime
-import dateutil.parser
 import socket
 
-class GenericType():
+import dateutil.parser
+import dns.resolver
+import pytz
+import six
+
+try:
+    import ipaddress
+except ImportError:
+    import ipaddr as ipaddress
+try:
+    from urlparse import urlparse
+except ImportError:
+    from urllib import parse as urlparse
+
+
+def ip_address(value):
+    try:
+        return ipaddress.ip_address(value)
+    except AttributeError:
+        return ipaddress.IPAddress(value)
+
+
+def ip_network(value):
+    try:
+        return ipaddress.ip_network(value)
+    except AttributeError:
+        return ipaddress.IPNetwork(value)
+
+
+class GenericType(object):
 
     @staticmethod
     def is_valid(value, sanitize=False):
@@ -23,23 +60,23 @@ class GenericType():
         if not value:
             return False
 
-        if type(value) is not unicode:
+        if not isinstance(value, six.text_type):
             return False
 
         if len(value) == 0:
             return False
 
         return True
-        
+
     @staticmethod
     def sanitize(value):
         if not value:
             return None
 
-        if type(value) is unicode:
+        if isinstance(value, six.text_type):
             return value.strip()
 
-        if type(value) is str:
+        if isinstance(value, six.binary_type):
             try:
                 value = value.decode('utf-8')
             except UnicodeDecodeError:
@@ -60,17 +97,13 @@ class String(GenericType):
         if not GenericType().is_valid(value):
             return False
 
-        if type(value) is not unicode:
+        if not isinstance(value, six.text_type):
             return False
 
         if len(value) == 0:
             return False
 
         return True
-        
-    @staticmethod
-    def sanitize(value):
-        return GenericType().sanitize(value)
 
 
 class FeedName(GenericType):
@@ -85,10 +118,6 @@ class FeedName(GenericType):
             return False
 
         return True
-        
-    @staticmethod
-    def sanitize(value):
-        return GenericType().sanitize(value)
 
 
 class DateTime(GenericType):
@@ -106,7 +135,7 @@ class DateTime(GenericType):
             return False
 
         return True
-        
+
     @staticmethod
     def sanitize(value):
         value = DateTime.__parse(value)
@@ -118,7 +147,7 @@ class DateTime(GenericType):
             value = dateutil.parser.parse(value)
             value = value.astimezone(pytz.utc)
             value = value.isoformat()
-        except:
+        except ValueError:
             return None
         return value.decode("utf-8")
 
@@ -142,25 +171,25 @@ class IPNetwork(GenericType):
             return False
 
         try:
-            ipaddr.IPNetwork(value)
-        except:
+            ip_network(value)
+        except ValueError:
             return False
 
         return True
-            
+
     @staticmethod
     def sanitize(value):
-        
+
         try:
-            ipaddr.IPNetwork(value)
-        except:
+            ip_network(value)
+        except ValueError:
             return None
-                
+
         return GenericType().sanitize(value)
 
     @staticmethod
     def version(value):
-        return int(ipaddr.IPNetwork(value).version)
+        return int(ip_network(value).version)
 
 
 class IPAddress(GenericType):
@@ -175,25 +204,25 @@ class IPAddress(GenericType):
             return False
 
         try:
-            ipaddr.IPAddress(value)
-        except:
+            ip_address(value)
+        except ValueError:
             return False
 
         return True
-            
+
     @staticmethod
     def sanitize(value):
-        
+
         try:
-            network = ipaddr.IPNetwork(value)
-        except:
+            network = ip_network(value)
+        except ValueError:
             return None
-        
+
         if network.numhosts == 1:
-            value = str(network.network)
+            value = bytes(network.network)
         else:
             return None
-        
+
         return GenericType().sanitize(value)
 
     @staticmethod
@@ -205,17 +234,17 @@ class IPAddress(GenericType):
                 ip_integer = socket.inet_pton(socket.AF_INET6, value)
             except socket.error:
                 return None
-            
+
         ip_integer = int(binascii.hexlify(ip_integer), 16)
         return ip_integer
 
     @staticmethod
     def version(value):
-        return int(ipaddr.IPAddress(value).version)
+        return int(ip_address(value).version)
 
     @staticmethod
-    def to_reverse(ip):
-        return unicode(dns.reversename.from_address(ip))
+    def to_reverse(ip_addr):
+        return six.text_type(dns.reversename.from_address(ip_addr))
 
 
 class FQDN(GenericType):
@@ -231,24 +260,20 @@ class FQDN(GenericType):
 
         if IPAddress().is_valid(value):
             return False
-            
+
         if URL().is_valid(value):
             return False
-        
+
         if not len(value.split('.')) > 1:
             return False
 
         return True
-        
-    @staticmethod
-    def sanitize(value):
-        return GenericType().sanitize(value)
-    
+
     @staticmethod
     def to_ip(value):
         try:
-            value = DNS.dnslookup(value, 'A')
-        except:
+            value = str(dns.resolver.query(value, 'A')[0])
+        except Exception:  # TODO: More specific Exception
             value = None
         return value
 
@@ -268,7 +293,7 @@ class MalwareName(GenericType):
             return False
 
         return True
-        
+
     @staticmethod
     def sanitize(value):
         value = value.lower()
@@ -285,14 +310,14 @@ class Base64(GenericType):
 
         try:
             base64.b64decode(value)
-        except:
+        except TypeError:
             return False
 
         if not GenericType().is_valid(value):
             return False
 
         return True
-        
+
     @staticmethod
     def sanitize(value):
         value = base64.b64encode(value)
@@ -310,36 +335,36 @@ class URL(GenericType):
         if not GenericType().is_valid(value):
             return False
 
-        result = urlparse.urlparse(value)
+        result = urlparse(value)
         if result.netloc == "":
             return False
 
         return True
 
     @staticmethod
-    def sanitize(value):       
+    def sanitize(value):
         if "hxxp://" in value:
             value = value.replace('hxxp://', 'http://')
-        
+
         if "hxxps://" in value:
             value = value.replace('hxxps://', 'https://')
 
         tests = [
-                    value,
-                    "http://" + value,
-                    "http://" + value + "/"
-                ]
-        
+            value,
+            "http://" + value,
+            "http://" + value + "/"
+        ]
+
         for value in tests:
-            result = urlparse.urlparse(value)
+            result = urlparse(value)
             if result.netloc != "":
                 return GenericType().sanitize(value)
 
         return None
-    
+
     @staticmethod
     def to_ip(url):
-        value = urlparse.urlparse(url)
+        value = urlparse(url)
         if value.netloc != "":
             return FQDN().to_ip(value.netloc)
         return None
@@ -350,30 +375,30 @@ class URL(GenericType):
         if value.netloc != "" and not IPAddress.is_valid(value.netloc):
             return value.netloc
         return None
-    
-        
+
+
 class ClassificationType(GenericType):
 
-    __allowed_values = ['spam',
-                        'malware',
-                        'botnet drone',
-                        'ransomware',
-                        'malware configuration',
-                        'c&c',
-                        'scanner',
-                        'exploit',
-                        'brute-force',
-                        'ids alert',
-                        'defacement',
-                        'compromised',
-                        'backdoor',
-                        'ddos',
-                        'dropzone',
-                        'phishing',
-                        'vulnerable service',
-                        'blacklist',
-                        'unknown'
-                       ]
+    allowed_values = ['spam',
+                      'malware',
+                      'botnet drone',
+                      'ransomware',
+                      'malware configuration',
+                      'c&c',
+                      'scanner',
+                      'exploit',
+                      'brute-force',
+                      'ids alert',
+                      'defacement',
+                      'compromised',
+                      'backdoor',
+                      'ddos',
+                      'dropzone',
+                      'phishing',
+                      'vulnerable service',
+                      'blacklist',
+                      'unknown'
+                      ]
 
     @staticmethod
     def is_valid(value, sanitize=False):
@@ -384,14 +409,10 @@ class ClassificationType(GenericType):
         if not GenericType().is_valid(value):
             return False
 
-        if type(value) is not unicode:
+        if not isinstance(value, six.text_type):
             return False
-            
-        if not value in ClassificationType().__allowed_values:
+
+        if value not in ClassificationType().allowed_values:
             return False
 
         return True
-
-    @staticmethod
-    def sanitize(value):
-        return GenericType().sanitize(value)

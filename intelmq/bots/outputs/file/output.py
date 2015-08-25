@@ -1,5 +1,9 @@
-from intelmq.lib.bot import Bot, sys
-from intelmq.lib import utils
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+import sys
+
+from intelmq.lib.bot import Bot
+
 
 class FileBot(Bot):
 
@@ -10,7 +14,7 @@ class FileBot(Bot):
 
     def process(self):
         event = self.receive_message()
-        
+
         if event:
             event_data = event.to_json()
             self.file.write(event_data)

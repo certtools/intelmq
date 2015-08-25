@@ -1,19 +1,23 @@
-from intelmq.lib.bot import Bot, sys
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+import sys
+
 from intelmq.bots.collectors.http.lib import fetch_url
+from intelmq.lib.bot import Bot
 from intelmq.lib.message import Report
+
 
 class URLCollectorBot(Bot):
 
     def process(self):
         self.logger.info("Downloading report from %s" % self.parameters.url)
-        raw_report = fetch_url(
-                                self.parameters.url,
-                                timeout = 60.0,
-                                chunk_size = 16384,
-                                http_proxy = self.parameters.http_proxy,
-                                https_proxy = self.parameters.https_proxy,
-                                user_agent = self.parameters.http_user_agent
-                            )
+        raw_report = fetch_url(self.parameters.url,
+                               timeout=60.0,
+                               chunk_size=16384,
+                               http_proxy=self.parameters.http_proxy,
+                               https_proxy=self.parameters.https_proxy,
+                               user_agent=self.parameters.http_user_agent,
+                               )
         self.logger.info("Report downloaded.")
 
         report = Report()
