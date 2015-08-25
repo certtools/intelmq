@@ -25,7 +25,7 @@ Harmonization field names
 with open(HARMONIZATION_CONF_FILE) as fhandle:
     HARM = json.load(fhandle)['event']
 
-for key, value in HARM.items():
+for key, value in sorted(HARM.items()):
     section = ' '.join([sec.title() for sec in key.split('.')[:-1]])
     print ('|{}|{}|{}|{}|'.format(section, key, value['type'],
                                   value['description']))
@@ -37,7 +37,7 @@ Harmonization types
 
 """)
 
-for value in dir(intelmq.lib.harmonization):
+for value in sorted(dir(intelmq.lib.harmonization)):
     if value == 'GenericType' or value.startswith('__'):
         continue
     obj = getattr(intelmq.lib.harmonization, value)
