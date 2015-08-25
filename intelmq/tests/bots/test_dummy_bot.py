@@ -11,7 +11,7 @@ from intelmq.lib.message import Event
 EXAMPLE_REPORT = {"source.ip": "192.0.2.3",
                   "time.source": "2015-06-04T13:37:00+00:00",
                   "feed.url": "http://www.example.com/",
-                  "source.reverse_domain_name": "reverse.example.net",
+                  "source.reverse_dns": "reverse.example.net",
                   "source.url": "http://example.org",
                   "time.observation": "2015-08-11T13:03:40+00:00",
                   "raw": "MjAxNS8wNi8wNF8xMzozNyxleGFtcGxlLm9yZywxOTIuMC4yLjMs"
@@ -19,7 +19,7 @@ EXAMPLE_REPORT = {"source.ip": "192.0.2.3",
                          "LHJlcG9ydEBleGFtcGxlLm9yZywwMDAwMAo=",
                   "__type": "Report",
                   "classification.type": "malware",
-                  "description.text": "example description",
+                  "event_description.text": "example description",
                   "source.asn": "00000",
                   "feed.name": "Example"}
 EXAMPLE_EVENT = EXAMPLE_REPORT

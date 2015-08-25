@@ -70,7 +70,7 @@ class ReverseDnsExpertBot(Bot):
                 self.cache.set(cache_key, result)
 
             if result:
-                event.add(key % 'reverse_domain_name',
+                event.add(key % 'reverse_dns',
                           result, sanitize=True, force=True)
 
         self.send_message(event)

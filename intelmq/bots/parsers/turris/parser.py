@@ -24,7 +24,7 @@ class TurrisGreylistParserBot(Bot):
         columns = [
             "source.ip",
             "__IGNORE__",
-            "description.text",
+            "event_description.text",
             "__IGNORE__"
         ]
 

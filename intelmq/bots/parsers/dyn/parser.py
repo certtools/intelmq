@@ -43,7 +43,7 @@ class DynParserBot(Bot):
             event_infected.add('source.fqdn', infected_fqdn, sanitize=True)
             event_infected.add('destination.url',
                                compromised_url, sanitize=True)
-            event_infected.add('description.text',
+            event_infected.add('event_description.text',
                                'has malicious code redirecting to malicious '
                                'host')
             event_infected.add('raw', row, sanitize=True)
@@ -58,7 +58,7 @@ class DynParserBot(Bot):
             event_compromised.add('feed.name', report.value("feed.name"))
             event_compromised.add('feed.url', report.value("feed.url"))
             event_compromised.add('source.url', compromised_url, sanitize=True)
-            event_compromised.add('description.text',
+            event_compromised.add('event_description.text',
                                   'host has been compromised and has '
                                   'malicious code infecting users')
             event_compromised.add('raw', row, sanitize=True)

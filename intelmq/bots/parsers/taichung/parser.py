@@ -62,7 +62,7 @@ class TaichungCityNetflowParserBot(Bot):
                 'time.observation'), sanitize=True)
             event.add("source.ip", info1.group(1), sanitize=True)
             event.add('classification.type', event_type, sanitize=True)
-            event.add('description.text', description, sanitize=True)
+            event.add('event_description.text', description, sanitize=True)
             event.add('feed.name', report.value("feed.name"))
             event.add('feed.url', report.value("feed.url"))
             event.add("raw", row, sanitize=True)

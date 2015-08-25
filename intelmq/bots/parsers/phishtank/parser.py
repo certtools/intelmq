@@ -23,7 +23,7 @@ class PhishTankParserBot(Bot):
 
         columns = ["__IGNORE__",
                    "source.url",
-                   "description.url",
+                   "event_description.url",
                    "time.source",
                    "__IGNORE__",
                    "__IGNORE__",
