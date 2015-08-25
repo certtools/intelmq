@@ -16,13 +16,12 @@ The following types are implemented with sanitize() and is_valid() functions:
  - URL
 """
 from __future__ import unicode_literals
+
 import base64
 import binascii
 import datetime
 import ipaddress
 import socket
-import six
-
 
 import dateutil.parser
 import dns.resolver
@@ -72,27 +71,98 @@ class GenericType(object):
 
 
 class Boolean(GenericType):
+    """
+    Boolean type. Without sanitation only python bool is accepted.
+
+    Sanitation accepts string 'true' and 'false' and integers 0 and 1.
+    """
 
     @staticmethod
     def is_valid(value, sanitize=False):
-        if sanitize:
-            value = String().sanitize(value)
-            if value is not None:
-                return True
-
         if isinstance(value, bool):
             return True
         else:
+            if sanitize:
+                value = Boolean().sanitize(value)
+                if value is not None:
+                    return True
             return False
 
     @staticmethod
     def sanitize(value):
-        if isinstance(value, (bytes, str, unicode)):
+        if isinstance(value, (six.text_type, six.binary_type)):
             value = value.strip().lower()
             if value == 'true':
                 return True
             elif value == 'false':
                 return False
+        elif isinstance(value, int):
+            if value == 0:
+                return False
+            elif value == 1:
+                return True
+        return None
+
+
+class Float(GenericType):
+    """
+    Float type. Without sanitation only python float/integer/long is
+    accepted. Boolean is excplicitly denied.
+
+    Sanitation accepts strings and everything float() accepts.
+    """
+
+    @staticmethod
+    def is_valid(value, sanitize=False):
+        if sanitize:
+            value = Float().sanitize(value)
+            if value is not None:
+                return True
+
+        # Bool is subclass of int
+        if isinstance(value, bool):
+            return False
+        if isinstance(value, (int, float)):
+            return True
+
+        return False
+
+    @staticmethod
+    def sanitize(value):
+        try:
+            return float(value)
+        except (ValueError, TypeError):
+            return None
+
+
+class Integer(GenericType):
+    """
+    Integer type. Without sanitation only python integer/long is accepted.
+    Bool is excplicitly denied.
+
+    Sanitation accepts strings and everything int() accepts.
+    """
+
+    @staticmethod
+    def is_valid(value, sanitize=False):
+        if sanitize:
+            value = Integer().sanitize(value)
+            if value is not None:
+                return True
+
+        # Bool is subclass of int
+        if isinstance(value, bool):
+            return False
+        if isinstance(value, int):
+            return True
+
+        return False
+
+    @staticmethod
+    def sanitize(value):
+        try:
+            return int(value)
+        except (ValueError, TypeError):
             return None
 
 
