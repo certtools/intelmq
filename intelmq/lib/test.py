@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*-
 """
 Utilities for testing intelmq.
@@ -19,7 +20,7 @@ import mock
 from intelmq import PIPELINE_CONF_FILE, RUNTIME_CONF_FILE, SYSTEM_CONF_FILE
 
 
-def mocked_config(bot_id, src_name, dst_names):
+def mocked_config(bot_id, src_name, dst_names, sysconfig):
     def mock(conf_file):
         if conf_file == PIPELINE_CONF_FILE:
             return {bot_id: {"source-queue": src_name,
@@ -28,7 +29,7 @@ def mocked_config(bot_id, src_name, dst_names):
         elif conf_file == RUNTIME_CONF_FILE:
             return {bot_id: {}}
         elif conf_file == SYSTEM_CONF_FILE:
-            return {"logging_level": "DEBUG",
+            conf = {"logging_level": "DEBUG",
                     "http_proxy":  None,
                     "https_proxy": None,
                     "broker": "pythonlist",
@@ -37,7 +38,13 @@ def mocked_config(bot_id, src_name, dst_names):
                     "error_retry_delay": 0,
                     "error_max_retries": 0,
                     "exit_on_stop": False,
+                    "redis_cache_host": "localhost",
+                    "redis_cache_port": 6379,
+                    "redis_cache_db": "10",
+                    "redis_cache_ttl": 10,
                     }
+            conf.update(sysconfig)
+            return conf
         else:
             with open(conf_file, 'r') as fpconfig:
                 config = json.loads(fpconfig.read())
@@ -80,6 +87,7 @@ class BotTestCase(object):
         cls.log_stream = None
         cls.maxDiff = None  # For unittest module, prints long diffs
         cls.pipe = None
+        cls.sysconfig = {}
 
         cls.set_bot()
 
@@ -100,7 +108,9 @@ class BotTestCase(object):
 
         self.mocked_config = mocked_config(self.bot_id,
                                            src_name,
-                                           [dst_name])
+                                           [dst_name],
+                                           sysconfig=self.sysconfig,
+                                           )
 
         logger = logging.getLogger(self.bot_id)
         logger.setLevel("DEBUG")
@@ -204,6 +214,7 @@ class BotTestCase(object):
         """
         Test if Bot has a valid name.
         Must be CamelCase and end with CollectorBot etc.
+        Test class name must be Test{botclassname}
         """
         counter = 0
         for type_name, type_match in self.bot_types.items():
@@ -216,6 +227,9 @@ class BotTestCase(object):
         if counter != len(self.bot_types) - 1:
             self.fail("Bot name {!r} does not match one of {!r}"
                       "".format(self.bot_name, list(self.bot_types.values())))
+
+        self.assertEqual('Test{}'.format(self.bot_name),
+                         self.__class__.__name__)
 
     def test_report(self):
         """ Test if report has required fields. """

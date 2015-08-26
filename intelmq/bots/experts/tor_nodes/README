@@ -9,4 +9,4 @@ Download database:
 
 Configure 'runtime.conf' with the following parameter:
  
- "database": "/opt/intelmq/var/lib/bots/tor_nodes/tor_nodes.dat"
+"database": "/opt/intelmq/var/lib/bots/tor_nodes/tor_nodes.dat"

@@ -50,7 +50,7 @@ class DummyParserBot(bot.Bot):
         self.error_retries_counter = 1
 
 
-class TestDummyBot(test.BotTestCase, unittest.TestCase):
+class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for a DummyBot.
     """

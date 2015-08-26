@@ -19,6 +19,7 @@ from __future__ import unicode_literals
 import base64
 import binascii
 import datetime
+import ipaddress
 import socket
 
 import dateutil.parser
@@ -27,28 +28,9 @@ import pytz
 import six
 
 try:
-    import ipaddress
-except ImportError:
-    import ipaddr as ipaddress
-try:
     from urlparse import urlparse
 except ImportError:
     from urllib import parse as urlparse
-
-
-def ip_address(value):
-    try:
-        return ipaddress.ip_address(value)
-    except AttributeError:
-        return ipaddress.IPAddress(value)
-
-
-def ip_network(value):
-    try:
-        return ipaddress.ip_network(value)
-    except AttributeError:
-        return ipaddress.IPNetwork(value)
-
 
 class GenericType(object):
 
@@ -171,7 +153,7 @@ class IPNetwork(GenericType):
             return False
 
         try:
-            ip_network(value)
+            ipaddress.ip_network(value)
         except ValueError:
             return False
 
@@ -181,7 +163,7 @@ class IPNetwork(GenericType):
     def sanitize(value):
 
         try:
-            ip_network(value)
+            ipaddress.ip_network(value)
         except ValueError:
             return None
 
@@ -189,7 +171,7 @@ class IPNetwork(GenericType):
 
     @staticmethod
     def version(value):
-        return int(ip_network(value).version)
+        return ipaddress.ip_network(value).version
 
 
 class IPAddress(GenericType):
@@ -204,7 +186,7 @@ class IPAddress(GenericType):
             return False
 
         try:
-            ip_address(value)
+            ipaddress.ip_address(value)
         except ValueError:
             return False
 
@@ -214,12 +196,12 @@ class IPAddress(GenericType):
     def sanitize(value):
 
         try:
-            network = ip_network(value)
+            network = ipaddress.ip_network(value)
         except ValueError:
             return None
 
-        if network.numhosts == 1:
-            value = bytes(network.network)
+        if network.num_addresses == 1:
+            value = six.text_type(network.network_address)
         else:
             return None
 
@@ -240,7 +222,7 @@ class IPAddress(GenericType):
 
     @staticmethod
     def version(value):
-        return int(ip_address(value).version)
+        return ipaddress.ip_address(value).version
 
     @staticmethod
     def to_reverse(ip_addr):

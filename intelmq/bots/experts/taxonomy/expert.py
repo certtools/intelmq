@@ -35,10 +35,14 @@ class TaxonomyExpertBot(Bot):
     def process(self):
         event = self.receive_message()
 
+        if event is None:
+            self.acknowledge_message()
+            return
+
         if (not event.contains("classification.taxonomy") and
                 event.contains("classification.type")):
-            type = event.value("classification.type")
-            taxonomy = TAXONOMY[type]
+            event_type = event.value("classification.type")
+            taxonomy = TAXONOMY[event_type]
             event.add("classification.taxonomy", taxonomy, sanitize=True)
 
         self.send_message(event)
