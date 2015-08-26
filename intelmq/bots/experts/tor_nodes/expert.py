@@ -48,7 +48,7 @@ class TorExpertBot(Bot):
         for key in keys:
             if event.contains(key % 'ip'):
                 if event.value(key % 'ip') in TorExpertBot.database:
-                    event.add(key % 'tor_node', u'true')
+                    event.add(key % 'tor_node', True)
 
         self.send_message(event)
         self.acknowledge_message()

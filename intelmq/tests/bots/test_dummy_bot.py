@@ -20,7 +20,7 @@ EXAMPLE_REPORT = {"source.ip": "192.0.2.3",
                   "__type": "Report",
                   "classification.type": "malware",
                   "event_description.text": "example description",
-                  "source.asn": "00000",
+                  "source.asn": 00000,
                   "feed.name": "Example"}
 EXAMPLE_EVENT = EXAMPLE_REPORT
 EXAMPLE_EVENT['__type'] = 'Event'

@@ -15,11 +15,11 @@ EXAMPLE_INPUT = {"__type": "Event",
                  }
 EXAMPLE_OUTPUT = {"__type": "Event",
                   "source.ip": "192.0.43.7",
-                  "source.reverse_domain_name": "icann.org.",
+                  "source.reverse_dns": "icann.org.",
                   "destination.ip": "192.0.43.8",
-                  "destination.reverse_domain_name": "icann.org.",
+                  "destination.reverse_dns": "icann.org.",
                   # manual verfication shows another result:
-                  # "destination.reverse_domain_name": "43-8.any.icann.org.",
+                  # "destination.reverse_dns": "43-8.any.icann.org.",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   }
 EXAMPLE_INPUT6 = {"__type": "Event",
@@ -28,8 +28,9 @@ EXAMPLE_INPUT6 = {"__type": "Event",
                   }
 EXAMPLE_OUTPUT6 = {"__type": "Event",
                    "source.ip": "2001:500:88:200::7",
-                   "source.reverse_domain_name": "",
+                   "source.reverse_dns": "",
                    "time.observation": "2015-01-01T00:00:00+00:00",
+                   "source.reverse_dns": "",
                    }
 
 

@@ -33,7 +33,13 @@ for field in DATA.keys():
     elif value['type'] in ('IPAddress', 'IPNetwork'):
         dbtype = 'inet'
     elif value['type'] == 'DateTime':
-        dbtype = 'timestamp with timezone'
+        dbtype = 'timestamp with time zone'
+    elif value['type'] == 'Boolean':
+        dbtype = 'boolean'
+    elif value['type'] == 'Integer':
+        dbtype = 'integer'
+    elif value['type'] == 'Float':
+        dbtype = 'real'
     else:
         print('Unknow type {!r}, assuming varchar(2000) by default'
               ''.format(value['type']))

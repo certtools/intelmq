@@ -3,11 +3,11 @@ Harmonization field names
 
 |Section|Name|Type|Description|
 |:------|:---|:---|:----------|
-||abuse_contact|String|Abuse contact which is relevant for this event. TODO: list?|
-||additional_information|String|All anecdotal information, which cannot be parsed into the data harmonization elements.|
+||additional_information|String|All anecdotal information, which cannot be parsed into the data harmonization elements. TODO: Must be JSON encoded for machine readability.|
 |Classification|classification.taxonomy|String|We recognize the need for the CSIRT teams to apply a static (incident) taxonomy to abuse data. With this goal in mind the type IOC will serve as a basis for this activity. Each value of the dynamic type mapping translates to a an element in the static taxonomy. The European CSIRT teams for example have decided to apply the eCSIRT.net incident classification. The value of the taxonomy key is thus a derivative of the dynamic type above. For more information about check [ENISA taxonomies](http://www.enisa.europa.eu/activities/cert/support/incident-management/browsable/incident-handling-process/incident-taxonomy/existing-taxonomies).|
 |Classification|classification.type|ClassificationType|The abuse type IOC is one of the most crucial pieces of information for any given abuse event. The main idea of dynamic typing is to keep our ontology flexible, since we need to evolve with the evolving threatscape of abuse data. In contrast with the static taxonomy below, the dynamic typing is used to perform business decisions in the abuse handling pipeline. Furthermore, the value data set should be kept as minimal as possible to avoid “type explosion”, which in turn dilutes the business value of the dynamic typing. In general, we normally have two types of abuse type IOC: ones referring to a compromized resource or ones referring to pieces of the criminal infrastructure, such as a command and control servers for example.|
 ||comment|String|Free text commentary about the abuse event inserted by an analyst.|
+|Destination|destination.abuse_contact|String|Abuse contact for destination address. TODO: list?|
 |Destination|destination.account|String|TODO: Description|
 |Destination|destination.allocated|DateTime|Allocation date corresponding to bgp prefix.|
 |Destination|destination.as_name|String|The autonomous system name to which the connection headed.|
@@ -23,10 +23,10 @@ Harmonization field names
 |Destination|destination.ip|IPAddress|The ip observed to initiate the connection.|
 |Destination|destination.local_hostname|String|Some sources report a internal hostname within a NAT related to the name configured for a compromized system|
 |Destination|destination.local_ip|IPAddress|Some sources report a internal (NATed) IP address related a compromized system. N.B. RFC1918 IPs are OK here.|
-|Destination|destination.network|IPNetwork|CIDR for an autonomous system.|
+|Destination|destination.network|IPNetwork|CIDR for an autonomous system. Also known as BGP prefix.|
 |Destination|destination.port|Integer|The port to which the connection headed.|
 |Destination|destination.registry|String|The IP registry a given ip address is allocated by.|
-|Destination|destination.reverse_dns|FQDN|TODO: Description|
+|Destination|destination.reverse_dns|FQDN|Reverse DNS name acquired through a reverse DNS query on an IP address. N.B. Record types other than PTR records may also appear in the reverse DNS tree. Furthermore, unfortunately, there is no rule prohibiting people from writing anything in a PTR record. Even Javascript will work.|
 |Destination|destination.tor_node|Boolean|If the destination IP was a known tor node.|
 |Destination|destination.url|URL|A URL denotes on IOC, which refers to a malicious resource, whose interpretation is defined by the abuse type. A URL with the abuse type phishing refers to a phishing resource.|
 |Event_Description|event_description.target|String|Some sources denominate the target (organization) of a an attack.|
@@ -45,6 +45,7 @@ Harmonization field names
 ||raw|Base64|The original line of the event from encoded in base64.|
 ||rtir_id|Integer|FRTIR incident id.|
 ||screenshot_url|URL|Some source may report URLs related to a an image generated of a resource without any metadata. Or an URL pointing to resource, which has been rendered into a webshot, e.g. a PNG image and the relevant metadata related to its retrieval/generation.|
+|Source|source.abuse_contact|String|Abuse contact for source address. TODO: list?|
 |Source|source.account|String|TODO: Description|
 |Source|source.allocated|DateTime|Allocation date corresponding to bgp prefix.|
 |Source|source.as_name|String|The autonomous system name from which the connection originated.|
@@ -63,7 +64,7 @@ Harmonization field names
 |Source|source.ip|IPAddress|The ip observed to initiate the connection|
 |Source|source.local_hostname|String|Some sources report a internal hostname within a NAT related to the name configured for a compromized system|
 |Source|source.local_ip|IPAddress|Some sources report a internal (NATed) IP address related a compromized system. N.B. RFC1918 IPs are OK here.|
-|Source|source.network|IPNetwork|CIDR for an autonomous system.|
+|Source|source.network|IPNetwork|CIDR for an autonomous system. Also known as BGP prefix.|
 |Source|source.port|Integer|The port from which the connection originated.|
 |Source|source.registry|String|The IP registry a given ip address is allocated by.|
 |Source|source.reverse_dns|FQDN|Reverse DNS name acquired through a reverse DNS query on an IP address. N.B. Record types other than PTR records may also appear in the reverse DNS tree. Furthermore, unfortunately, there is no rule prohibiting people from writing anything in a PTR record. Even Javascript will work.|

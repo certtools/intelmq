@@ -34,6 +34,12 @@ except ImportError:
     from urllib import parse as urlparse
 
 
+__all__ = ['Base64', 'Boolean', 'ClassificationType', 'DateTime', 'FQDN',
+           'Float', 'GenericType', 'IPAddress', 'IPNetwork', 'Integer',
+           'MalwareName', 'String', 'URL',
+           ]
+
+
 class GenericType(object):
 
     @staticmethod
@@ -70,6 +76,30 @@ class GenericType(object):
         return None
 
 
+class Base64(GenericType):
+
+    @staticmethod
+    def is_valid(value, sanitize=False):
+        if sanitize:
+            value = GenericType().sanitize(value)
+            value = Base64().sanitize(value)
+
+        try:
+            base64.b64decode(value)
+        except TypeError:
+            return False
+
+        if not GenericType().is_valid(value):
+            return False
+
+        return True
+
+    @staticmethod
+    def sanitize(value):
+        value = base64.b64encode(value)
+        return GenericType().sanitize(value)
+
+
 class Boolean(GenericType):
     """
     Boolean type. Without sanitation only python bool is accepted.
@@ -104,83 +134,42 @@ class Boolean(GenericType):
         return None
 
 
-class Float(GenericType):
-    """
-    Float type. Without sanitation only python float/integer/long is
-    accepted. Boolean is excplicitly denied.
+class ClassificationType(GenericType):
 
-    Sanitation accepts strings and everything float() accepts.
-    """
-
-    @staticmethod
-    def is_valid(value, sanitize=False):
-        if sanitize:
-            value = Float().sanitize(value)
-            if value is not None:
-                return True
-
-        # Bool is subclass of int
-        if isinstance(value, bool):
-            return False
-        if isinstance(value, (int, float)):
-            return True
-
-        return False
-
-    @staticmethod
-    def sanitize(value):
-        try:
-            return float(value)
-        except (ValueError, TypeError):
-            return None
-
-
-class Integer(GenericType):
-    """
-    Integer type. Without sanitation only python integer/long is accepted.
-    Bool is excplicitly denied.
-
-    Sanitation accepts strings and everything int() accepts.
-    """
-
-    @staticmethod
-    def is_valid(value, sanitize=False):
-        if sanitize:
-            value = Integer().sanitize(value)
-            if value is not None:
-                return True
-
-        # Bool is subclass of int
-        if isinstance(value, bool):
-            return False
-        if isinstance(value, int):
-            return True
-
-        return False
-
-    @staticmethod
-    def sanitize(value):
-        try:
-            return int(value)
-        except (ValueError, TypeError):
-            return None
-
-
-class String(GenericType):
+    allowed_values = ['spam',
+                      'malware',
+                      'botnet drone',
+                      'ransomware',
+                      'malware configuration',
+                      'c&c',
+                      'scanner',
+                      'exploit',
+                      'brute-force',
+                      'ids alert',
+                      'defacement',
+                      'compromised',
+                      'backdoor',
+                      'ddos',
+                      'dropzone',
+                      'phishing',
+                      'vulnerable service',
+                      'blacklist',
+                      'unknown'
+                      ]
 
     @staticmethod
     def is_valid(value, sanitize=False):
         if sanitize:
             value = GenericType().sanitize(value)
-            value = String().sanitize(value)
+            value = ClassificationType().sanitize(value)
 
         if not GenericType().is_valid(value):
             return False
 
-        if type(value) is not unicode:
+        if not isinstance(value, six.text_type):
             return False
 
-        if len(value) == 0:
+        if value not in ClassificationType().allowed_values:
             return False
 
         return True
@@ -225,37 +214,97 @@ class DateTime(GenericType):
         return value.decode("utf-8")
 
 
-class IPNetwork(GenericType):
+class Float(GenericType):
+    """
+    Float type. Without sanitation only python float/integer/long is
+    accepted. Boolean is excplicitly denied.
+
+    Sanitation accepts strings and everything float() accepts.
+    """
+
+    @staticmethod
+    def is_valid(value, sanitize=False):
+        if sanitize:
+            value = Float().sanitize(value)
+            if value is not None:
+                return True
+
+        # Bool is subclass of int
+        if isinstance(value, bool):
+            return False
+        if isinstance(value, (int, float)):
+            return True
+
+        return False
+
+    @staticmethod
+    def sanitize(value):
+        try:
+            return float(value)
+        except (ValueError, TypeError):
+            return None
+
+
+class FQDN(GenericType):
 
     @staticmethod
     def is_valid(value, sanitize=False):
         if sanitize:
             value = GenericType().sanitize(value)
-            value = IPNetwork().sanitize(value)
+            value = FQDN().sanitize(value)
 
         if not GenericType().is_valid(value):
             return False
 
-        try:
-            ipaddress.ip_network(value)
-        except ValueError:
+        if IPAddress().is_valid(value):
+            return False
+
+        if URL().is_valid(value):
+            return False
+
+        if not len(value.split('.')) > 1:
             return False
 
         return True
 
     @staticmethod
-    def sanitize(value):
-
+    def to_ip(value):
         try:
-            ipaddress.ip_network(value)
-        except ValueError:
-            return None
+            value = str(dns.resolver.query(value, 'A')[0])
+        except Exception:  # TODO: More specific Exception
+            value = None
+        return value
 
-        return GenericType().sanitize(value)
+
+class Integer(GenericType):
+    """
+    Integer type. Without sanitation only python integer/long is accepted.
+    Bool is excplicitly denied.
+
+    Sanitation accepts strings and everything int() accepts.
+    """
 
     @staticmethod
-    def version(value):
-        return ipaddress.ip_network(value).version
+    def is_valid(value, sanitize=False):
+        if sanitize:
+            value = Integer().sanitize(value)
+            if value is not None:
+                return True
+
+        # Bool is subclass of int
+        if isinstance(value, bool):
+            return False
+        if isinstance(value, int):
+            return True
+
+        return False
+
+    @staticmethod
+    def sanitize(value):
+        try:
+            return int(value)
+        except (ValueError, TypeError):
+            return None
 
 
 class IPAddress(GenericType):
@@ -313,35 +362,37 @@ class IPAddress(GenericType):
         return six.text_type(dns.reversename.from_address(ip_addr))
 
 
-class FQDN(GenericType):
+class IPNetwork(GenericType):
 
     @staticmethod
     def is_valid(value, sanitize=False):
         if sanitize:
             value = GenericType().sanitize(value)
-            value = FQDN().sanitize(value)
+            value = IPNetwork().sanitize(value)
 
         if not GenericType().is_valid(value):
             return False
 
-        if IPAddress().is_valid(value):
-            return False
-
-        if URL().is_valid(value):
-            return False
-
-        if not len(value.split('.')) > 1:
+        try:
+            ipaddress.ip_network(value)
+        except ValueError:
             return False
 
         return True
 
     @staticmethod
-    def to_ip(value):
+    def sanitize(value):
+
         try:
-            value = str(dns.resolver.query(value, 'A')[0])
-        except Exception:  # TODO: More specific Exception
-            value = None
-        return value
+            ipaddress.ip_network(value)
+        except ValueError:
+            return None
+
+        return GenericType().sanitize(value)
+
+    @staticmethod
+    def version(value):
+        return ipaddress.ip_network(value).version
 
 
 class MalwareName(GenericType):
@@ -366,28 +417,24 @@ class MalwareName(GenericType):
         return GenericType().sanitize(value)
 
 
-class Base64(GenericType):
+class String(GenericType):
 
     @staticmethod
     def is_valid(value, sanitize=False):
         if sanitize:
             value = GenericType().sanitize(value)
-            value = Base64().sanitize(value)
-
-        try:
-            base64.b64decode(value)
-        except TypeError:
-            return False
+            value = String().sanitize(value)
 
         if not GenericType().is_valid(value):
             return False
 
-        return True
+        if type(value) is not unicode:
+            return False
 
-    @staticmethod
-    def sanitize(value):
-        value = base64.b64encode(value)
-        return GenericType().sanitize(value)
+        if len(value) == 0:
+            return False
+
+        return True
 
 
 class URL(GenericType):
@@ -441,44 +488,3 @@ class URL(GenericType):
         if value.netloc != "" and not IPAddress.is_valid(value.netloc):
             return value.netloc
         return None
-
-
-class ClassificationType(GenericType):
-
-    allowed_values = ['spam',
-                      'malware',
-                      'botnet drone',
-                      'ransomware',
-                      'malware configuration',
-                      'c&c',
-                      'scanner',
-                      'exploit',
-                      'brute-force',
-                      'ids alert',
-                      'defacement',
-                      'compromised',
-                      'backdoor',
-                      'ddos',
-                      'dropzone',
-                      'phishing',
-                      'vulnerable service',
-                      'blacklist',
-                      'unknown'
-                      ]
-
-    @staticmethod
-    def is_valid(value, sanitize=False):
-        if sanitize:
-            value = GenericType().sanitize(value)
-            value = ClassificationType().sanitize(value)
-
-        if not GenericType().is_valid(value):
-            return False
-
-        if not isinstance(value, six.text_type):
-            return False
-
-        if value not in ClassificationType().allowed_values:
-            return False
-
-        return True

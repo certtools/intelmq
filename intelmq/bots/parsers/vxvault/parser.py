@@ -50,7 +50,8 @@ class VXVaultParserBot(Bot):
             event.add('feed.url', report.value("feed.url"))
             event.add('classification.type', u'malware')
             event.add("source.url", url, sanitize=True)
-            event.add("source.port", str(port), sanitize=True)
+            if port:
+                event.add("source.port", port, sanitize=True)
             event.add("raw", row, sanitize=True)
 
             self.send_message(event)

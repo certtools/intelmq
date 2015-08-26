@@ -104,7 +104,7 @@ class Cymru():
             result['registry'] = items[3]
 
         if items[4]:
-            result['allocated'] = items[4]
+            result['allocated'] = items[4] + 'T00:00:00+00:00'
 
         return result
 

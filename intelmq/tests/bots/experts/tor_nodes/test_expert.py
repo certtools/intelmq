@@ -20,7 +20,7 @@ EXAMPLE_INPUT = {"__type": "Event",
                  }
 EXAMPLE_OUTPUT = {"__type": "Event",
                   "source.ip": "37.130.227.133",
-                  "source.tor_node": "true",
+                  "source.tor_node": True,
                   "destination.ip": "192.0.43.8",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   }
