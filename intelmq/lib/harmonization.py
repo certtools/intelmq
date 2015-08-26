@@ -218,8 +218,8 @@ class IPAddress(GenericType):
         except ValueError:
             return None
 
-        if network.numhosts == 1:
-            value = bytes(network.network)
+        if network.num_addresses == 1:
+            value = six.text_type(network.network_address)
         else:
             return None
 

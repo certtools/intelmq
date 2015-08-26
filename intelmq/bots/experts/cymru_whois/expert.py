@@ -24,6 +24,10 @@ class CymruExpertBot(Bot):
     def process(self):
         event = self.receive_message()
 
+        if event is None:
+            self.acknowledge_message()
+            return
+
         keys = ["source.%s", "destination.%s"]
 
         for key in keys:
@@ -42,7 +46,7 @@ class CymruExpertBot(Bot):
             elif ip_version == 6:
                 minimum = MINIMUM_BGP_PREFIX_IPV6
 
-            else:
+            else:  # Should never happen as IP is already validated
                 self.logger.error("Invalid IP version")
                 self.send_message(event)
                 self.acknowledge_message()
@@ -57,28 +61,8 @@ class CymruExpertBot(Bot):
                 result_json = json.dumps(result)
                 self.cache.set(cache_key, result_json)
 
-            if "asn" in result:
-                event.add(key % 'asn', result['asn'], sanitize=True,
-                          force=True)
-
-            if "bgp_prefix" in result:
-                event.add(key % 'bgp_prefix', result['bgp_prefix'],
-                          sanitize=True, force=True)
-
-            if "registry" in result:
-                event.add(key % 'registry', result['registry'], sanitize=True,
-                          force=True)
-
-            if "allocated" in result:
-                event.add(key % 'allocated', result['allocated'],
-                          sanitize=True, force=True)
-
-            if "as_name" in result:
-                event.add(key % 'as_name', result['as_name'], sanitize=True,
-                          force=True)
-
-            if "cc" in result:
-                event.add(key % 'geolocation.cc', result['cc'], sanitize=True,
+            for result_key, result_value in result.items():
+                event.add(key % result_key, result_value, sanitize=True,
                           force=True)
 
         self.send_message(event)

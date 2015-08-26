@@ -46,6 +46,7 @@ class Bot(object):
             self.logger = utils.log(self.parameters.logging_path, self.bot_id,
                                     self.parameters.logging_level)
         except:
+            self.log_buffer.append(('critical', traceback.format_exc()))
             self.stop()
 
         try:
@@ -176,7 +177,7 @@ class Bot(object):
 
         if self.logger:
             self.logger.info("Bot stopped.")
-        if self.log_buffer:
+        else:
             self.log_buffer.append(('info', 'Bot stopped.'))
             self.print_log_buffer()
         if self.parameters.exit_on_stop:
