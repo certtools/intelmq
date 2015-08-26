@@ -75,6 +75,7 @@ class TestHarmonization(unittest.TestCase):
         self.assertTrue(harmonization.Float.is_valid(-4532))
         self.assertTrue(harmonization.Float.is_valid(1337))
         self.assertTrue(harmonization.Float.is_valid(1337.2354))
+        self.assertTrue(harmonization.Float.is_valid(13.234e-4))
 
     def test_float_valid_other(self):
         """ Test Float.is_valid with invalid values. """
@@ -82,8 +83,8 @@ class TestHarmonization(unittest.TestCase):
         self.assertFalse(harmonization.Float.is_valid('1337.234'))
         self.assertFalse(harmonization.Float.is_valid(True))
 
-    def test_float_sanitize_float(self):
-        """ Test Float.sanitize with integer values. """
+    def test_float_sanitize_number(self):
+        """ Test Float.sanitize with integer and float values. """
         self.assertTrue(harmonization.Float.is_valid(-4532.234, sanitize=True))
         self.assertTrue(harmonization.Float.is_valid(13.234e-4, sanitize=True))
 
@@ -100,6 +101,61 @@ class TestHarmonization(unittest.TestCase):
         """ Test Float.sanitize with invalid values. """
         self.assertFalse(harmonization.Float.is_valid(None, sanitize=True))
         self.assertFalse(harmonization.Float.is_valid('b13.23', sanitize=True))
+
+    def test_ipaddress_valid(self):
+        """ Test IPAddress.is_valid with valid arguments. """
+        self.assertTrue(harmonization.IPAddress.is_valid('192.0.2.1'))
+        self.assertTrue(harmonization.IPAddress.is_valid('::1'))
+        self.assertTrue(harmonization.IPAddress.is_valid('2001:500:88:200::8'))
+
+    def test_ipaddress_valid_invalid(self):
+        """ Test IPAddress.is_valid with invalid arguments. """
+        self.assertFalse(harmonization.IPAddress.is_valid('192.0.2.1/24'))
+        self.assertFalse(harmonization.IPAddress.is_valid('2001:DB8::/32'))
+        self.assertFalse(harmonization.IPAddress.is_valid('localhost'))
+
+    def test_ipaddress_sanitize(self):
+        """ Test IPAddress.is_valid and sanitize with valid arguments. """
+        self.assertTrue(harmonization.IPAddress.is_valid(' 192.0.2.1\r\n',
+                                                         sanitize=True))
+        self.assertTrue(harmonization.IPAddress.is_valid(b'2001:DB8::1',
+                                                         sanitize=True))
+
+    def test_ipaddress_sanitize_invalid(self):
+        """ Test IPAddress.is_valid ans sanitize with invalid arguments. """
+        self.assertFalse(harmonization.IPAddress.is_valid(' 192.0.2.0/24\r\n',
+                                                          sanitize=True))
+        self.assertFalse(harmonization.IPAddress.is_valid(b'2001:DB8::1/32',
+                                                          sanitize=True))
+
+    def test_ipnetwork_valid(self):
+        """ Test IPNetwork.is_valid with valid arguments. """
+        self.assertTrue(harmonization.IPNetwork.is_valid('192.0.2.1'))
+        self.assertTrue(harmonization.IPNetwork.is_valid('::1'))
+        self.assertTrue(harmonization.IPNetwork.is_valid('192.0.2.0/24'))
+        self.assertTrue(harmonization.IPNetwork.is_valid('2001:DB8::/32'))
+        self.assertTrue(harmonization.IPNetwork.is_valid('2001:500:88:200::8'))
+
+    def test_ipnetwork_valid_invalid(self):
+        """ Test IPNetwork.is_valid with invalid arguments. """
+        self.assertFalse(harmonization.IPNetwork.is_valid('localhost'))
+        self.assertFalse(harmonization.IPNetwork.is_valid('192.0.2.1/37'))
+        self.assertFalse(harmonization.IPNetwork.is_valid('192.0.2.1/0'))
+        self.assertFalse(harmonization.IPNetwork.is_valid('2001:DB8::/130'))
+
+    def test_ipnetwork_sanitize(self):
+        """ Test IPNetwork.is_valid and sanitize with valid arguments. """
+        self.assertTrue(harmonization.IPNetwork.is_valid(' 192.0.2.0/24\r\n',
+                                                         sanitize=True))
+        self.assertTrue(harmonization.IPNetwork.is_valid(b'2001:DB8::/32',
+                                                         sanitize=True))
+
+    def test_ipnetwork_sanitize_invalid(self):
+        """ Test IPNetwork.is_valid and sanitize with invalid arguments. """
+        self.assertFalse(harmonization.IPNetwork.is_valid(' 192.0.2.0/-4\r\n',
+                                                          sanitize=True))
+        self.assertFalse(harmonization.IPNetwork.is_valid(b'2001:DB8Z::1/7',
+                                                          sanitize=True))
 
 if __name__ == "__main__":
     unittest.main()
