@@ -5,7 +5,6 @@ import sys
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.harmonization import DateTime
 from intelmq.lib.message import Event
 
 
@@ -36,9 +35,8 @@ class DynParserBot(Bot):
             compromised_url = splitted_row[1].split("seems to be INFECTED:")[1]
 
             event_infected = Event()
-            time_observation = DateTime().generate_datetime_now()
             event_infected.add('time.observation',
-                               time_observation, sanitize=True)
+                               report.value('time.observation'), sanitize=True)
             event_infected.add('classification.type', 'malware')
             event_infected.add('feed.name', report.value("feed.name"))
             event_infected.add('feed.url', report.value("feed.url"))
@@ -53,9 +51,9 @@ class DynParserBot(Bot):
             self.send_message(event_infected)
 
             event_compromised = Event()
-            time_observation = DateTime().generate_datetime_now()
             event_compromised.add('time.observation',
-                                  time_observation, sanitize=True)
+                                  report.value('time.observation'),
+                                  sanitize=True)
             event_compromised.add('classification.type', 'compromised')
             event_compromised.add('feed.name', report.value("feed.name"))
             event_compromised.add('feed.url', report.value("feed.url"))
