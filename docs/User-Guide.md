@@ -58,7 +58,8 @@ information or abuse contacts.
 * *OutputBots* write events to files or databases.
 
 Each bot has one source queue (except collectors) and can have multiple
-destination queues (except outputs).
+destination queues (except outputs). But multiple bots can write to the same
+pipeline, resulting in multiple inputs for the next bot.
 
 Every bot runs in a separate process, they are uniquely identifiable by a *bot id*.
 
