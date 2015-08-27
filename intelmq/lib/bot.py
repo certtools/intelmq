@@ -42,8 +42,8 @@ class Bot(object):
 
             self.load_defaults_configuration()
             self.load_system_configuration()
-            self.logger = utils.log(self.parameters.logging_path, self.bot_id,
-                                    self.parameters.logging_level)
+            self.logger = utils.log(self.bot_id,
+                                    log_level=self.parameters.logging_level)
         except:
             self.log_buffer.append(('critical', traceback.format_exc()))
             self.stop()

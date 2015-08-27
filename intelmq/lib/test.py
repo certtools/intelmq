@@ -53,7 +53,7 @@ def mocked_config(bot_id, src_name, dst_names, sysconfig):
 
 
 def mocked_logger(logger):
-    def log(path, name, level):
+    def log(name, log_path=None, log_level=None):
         return logger
     return log
 

@@ -19,6 +19,8 @@ import logging
 import os
 import re
 
+from intelmq import DEFAULT_LOGGING_PATH
+
 # Used loglines format
 LOG_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 LOG_FORMAT_STREAM = '%(name)s: %(message)s'
@@ -118,17 +120,17 @@ def load_configuration(configuration_filepath):
     return config
 
 
-def log(logs_path, name, loglevel="DEBUG", stream=None):
+def log(name, log_path=DEFAULT_LOGGING_PATH, log_level="DEBUG", stream=None):
     """
     Returns a logger instance logging to file and sys.stderr or other stream.
 
     Parameters:
     -----------
-        logs_path : string
-            Path to log directory
         name : string
             filename for logfile or string preceding lines in stream
-        loglevel : string
+        log_path : string
+            Path to log directory, defaults to DEFAULT_LOGGING_PATH
+        log_level : string
             default is "DEBUG"
         stream : object
             By default (None), stderr will be used, stream objects can be given
@@ -146,10 +148,10 @@ def log(logs_path, name, loglevel="DEBUG", stream=None):
             Default log format for stream handler
     """
     logger = logging.getLogger(name)
-    logger.setLevel(loglevel)
+    logger.setLevel(log_level)
 
-    handler = logging.FileHandler("%s/%s.log" % (logs_path, name))
-    handler.setLevel(loglevel)
+    handler = logging.FileHandler("%s/%s.log" % (log_path, name))
+    handler.setLevel(log_level)
 
     formatter = logging.Formatter(LOG_FORMAT)
     handler.setFormatter(formatter)
@@ -158,7 +160,7 @@ def log(logs_path, name, loglevel="DEBUG", stream=None):
     console_handler = logging.StreamHandler(stream)
     console_handler.setFormatter(console_formatter)
     logger.addHandler(console_handler)
-    console_handler.setLevel(loglevel)
+    console_handler.setLevel(log_level)
 
     logger.addHandler(handler)
     return logger
