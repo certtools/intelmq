@@ -200,8 +200,7 @@ self.logger.info('Bot start processing')
 self.logger.error('Pipeline failed')
 self.logger.exception('Pipeline failed')
 ```
-The `exception` method automatically appends an exception traceback. The logger instance writes to the file `/opt/intelmq/var/log/[bot-id].log` and to stderr.
-
+The `exception` method automatically appends an exception traceback. The logger instance writes by default to the file `/opt/intelmq/var/log/[bot-id].log` and to stderr.
 
 
 <a name="system-overview"></a>
@@ -230,12 +229,12 @@ In the `intelmq/lib/` directory you can find some libraries:
 
 There's a dummy bot including tests at `intelmq/tests/bots/test_dummy_bot.py`.
 
-You can always start any parser directly from command line by either invoking the script or the python module. Don't forget to give an bot id as first argument.
+You can always start any parser directly from command line by either invoking the script or the python module. Don't forget to give an bot id as first argument. Also, running bots with other users than `intelmq` will raise permission errors.
 ```bash
+sudo -i intelmq
 python -m intelmq.bots.outputs.file.output file-output
 python intelmq/bots/outputs/file/output.py file-output
 ```
-
 
 ### Template
 Please adjust the doc strings accordingly and remove the in-line comments (`#`).

@@ -55,7 +55,7 @@ are *reports* consisting of many individual data sets.
 giving them a defined structure, see also [Data-Harmonization](Data-Harmonization.md).
 * *ExpertBots* enrich the existing events by e.g. reverse records, geographic location
 information or abuse contacts.
-* *OutputBots* write events to files or databases.
+* *OutputBots* write events to files, databases, (REST)-APIs, etc.
 
 Each bot has one source queue (except collectors) and can have multiple
 destination queues (except outputs). But multiple bots can write to the same
@@ -68,7 +68,7 @@ being discussed, see this issue:
 [Multiprocessing per queue is not supported #186](https://github.com/certtools/intelmq/issues/186).
 
 
-## Web interface
+## Web interface: intelmq-manager
 
 IntelMQ has a tool called IntelMQ Manager that gives to user a easy way to 
 configure all pipeline with bots that your CERT needs. It is recommended to
@@ -161,6 +161,7 @@ and `runtime.conf`. Also read by the intelmq-manager.
 To configure a new BOT, you need to define it first in `startup.conf`.
 Then do the configuration in `runtime.conf` using the bot if.
 Configure source and destination queues in `pipeline.conf`.
+Use the intelmq-manager mentioned above to generate the configuration files if unsure.
 
 ## Additional Information
 
