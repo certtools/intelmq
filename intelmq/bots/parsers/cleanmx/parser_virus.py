@@ -49,7 +49,7 @@ class CleanMXVirusParserBot(Bot):
 
         raw_report = utils.base64_decode(report.value("raw"))
 
-        fp = io.StringIO(raw_report)
+        fp = io.BytesIO(raw_report)
         rows = csv.DictReader(fp)
 
         for row in rows:

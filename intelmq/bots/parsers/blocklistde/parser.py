@@ -10,10 +10,10 @@ from intelmq.lib.message import Event
 
 MAPPING = {
     "all.txt": {
-        "event_classification.type": "blacklist",
+        "classification.type": "blacklist",
     },
     "ssh.txt": {
-        "event_classification.type": "ids alert",
+        "classification.type": "ids alert",
         "protocol.application": "ssh",
         "description.text": "IP reported as having run attacks on the "
                             "service SSH",

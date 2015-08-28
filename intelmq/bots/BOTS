@@ -550,6 +550,7 @@
                 "password": "<password>",
                 "sslmode": "require"
             }
+        },
         "REST API": {
             "description": "REST API is the bot responsible to send events to a REST API listener through POST.",
             "module": "intelmq.bots.outputs.restapi.output",

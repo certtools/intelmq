@@ -31,7 +31,7 @@ class DShieldASNParserBot(Bot):
             reports = values[1]
             targets = values[2]
             first_seen = values[3]
-            last_seen = values[4]
+            last_seen = values[4] + 'T00:00:00+00:00'
             updated = values[5]
 
             parts = source_ip.split(".")

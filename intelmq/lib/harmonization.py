@@ -9,7 +9,7 @@ The following types are implemented with sanitize() and is_valid() functions:
  - FQDN
  - FeedName
  - GenericType
- - ipaddressess
+ - IPAddress
  - IPNetwork
  - MalwareName
  - String
@@ -329,7 +329,7 @@ class IPAddress(GenericType):
     def sanitize(value):
 
         try:
-            network = ipaddress.ip_network(value)
+            network = ipaddress.ip_network(six.text_type(value))
         except ValueError:
             return None
 
@@ -384,7 +384,7 @@ class IPNetwork(GenericType):
     def sanitize(value):
 
         try:
-            ipaddress.ip_network(value)
+            ipaddress.ip_network(six.text_type(value))
         except ValueError:
             return None
 
@@ -392,7 +392,7 @@ class IPNetwork(GenericType):
 
     @staticmethod
     def version(value):
-        return ipaddress.ip_network(value).version
+        return ipaddress.ip_network(six.text_type(value)).version
 
 
 class MalwareName(GenericType):

@@ -58,6 +58,7 @@ class ReverseDnsExpertBot(Bot):
             cache_key = bin(ip_integer)[2: minimum + 2]
             cachevalue = self.cache.get(cache_key)
 
+            result = None
             if cachevalue:
                 result = cachevalue
             else:
@@ -67,9 +68,10 @@ class ReverseDnsExpertBot(Bot):
                 except dns.exception.DNSException as e:
                     if isinstance(e, dns.resolver.NXDOMAIN):
                         continue
-                self.cache.set(cache_key, result)
+                else:
+                    self.cache.set(cache_key, result)
 
-            if result:
+            if result is not None:
                 event.add(key % 'reverse_dns',
                           result, sanitize=True, force=True)
 
