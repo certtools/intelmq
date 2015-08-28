@@ -312,7 +312,7 @@
             "parameters": {
                 "feed": "MalwareDomains",
                 "rate_limit": "86400",
-                "url": "http://malware-domains.com/files/domains.zip"
+                "url": "http://mirror2.malwaredomains.com/files/domains.txt"
             }
         },
         "Malware Group Domains": {
