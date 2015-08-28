@@ -95,7 +95,7 @@ class Cymru():
                 pass
 
         if items[1]:
-            result['bgp_prefix'] = items[1]
+            result['network'] = items[1]
 
         if items[2]:
             result['geolocation.cc'] = items[2]
@@ -104,7 +104,7 @@ class Cymru():
             result['registry'] = items[3]
 
         if items[4]:
-            result['allocated'] = items[4]
+            result['allocated'] = items[4] + 'T00:00:00+00:00'
 
         return result
 

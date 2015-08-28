@@ -23,13 +23,13 @@ class PhishTankParserBot(Bot):
 
         columns = ["__IGNORE__",
                    "source.url",
-                   "description.url",
+                   "event_description.url",
                    "time.source",
                    "__IGNORE__",
                    "__IGNORE__",
                    "__IGNORE__",
-                   "description.target",
-                   ]
+                   "event_description.target"
+                  ]
 
         for row in unicodecsv.reader(StringIO(raw_report), encoding='utf-8'):
 

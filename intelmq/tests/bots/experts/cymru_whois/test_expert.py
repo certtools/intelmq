@@ -15,9 +15,9 @@ EXAMPLE_OUTPUT = {"__type": "Event",
                   "source.ip": "93.184.216.34",
                   "source.geolocation.cc": "EU",
                   "source.registry": "ripencc",
-                  "source.bgp_prefix": "93.184.216.0/24",
-                  "source.allocated": "2008-06-02",
-                  "source.asn": "15133",
+                  "source.network": "93.184.216.0/24",
+                  "source.allocated": "2008-06-02T00:00:00+00:00",
+                  "source.asn": 15133,
                   "source.as_name": "EDGECAST - EdgeCast Networks, Inc.,US",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   }
@@ -28,12 +28,12 @@ EXAMPLE_INPUT6 = {"__type": "Event",
 EXAMPLE_OUTPUT6 = {"__type": "Event",
                    "destination.ip": "2001:500:88:200::8",  # iana.org
                    "destination.registry": "arin",
-                   "destination.allocated": "2010-02-18",
+                   "destination.allocated": "2010-02-18T00:00:00+00:00",
                    "destination.as_name": "ICANN-DC - ICANN,US",
                    "destination.geolocation.cc": "US",
-                   "destination.asn": "16876",
-                   "destination.bgp_prefix": "2001:500:88::/48",
                    "time.observation": "2015-01-01T00:00:00+00:00",
+                   "destination.asn": 16876,
+                   "destination.network": "2001:500:88::/48",
                    }
 
 

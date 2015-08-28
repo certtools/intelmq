@@ -17,7 +17,7 @@ class DragonResearchGroupVNCParserBot(Bot):
             return
 
         raw_report = utils.base64_decode(report.value("raw"))
-        for row in raw_report.split('\n'):
+        for row in raw_report.splitlines():
 
             row = row.strip()
 
@@ -34,7 +34,7 @@ class DragonResearchGroupVNCParserBot(Bot):
                 value = value.strip()
 
                 if key == "time.source":
-                    value += " UTC"
+                    value += "T00:00:00+00:00"
 
                 event.add(key, value, sanitize=True)
 

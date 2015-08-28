@@ -540,14 +540,15 @@
             }
         },
         "PostgreSQL": {
-            "description": "PostgreSQL is the bot responsible to send events to a PostgreSQL Database.",
             "module": "intelmq.bots.outputs.postgresql.output",
+            "description": "PostgreSQL is the bot responsible to send events to a PostgreSQL Database.",
             "parameters": {
+                "host": "localhost",
+                "port": "5432",
                 "database": "intelmq-events",
-                "host": "<ip>",
+                "user": "intelmq",
                 "password": "<password>",
-                "port": "<port>",
-                "user": "intelmq"
+                "sslmode": "require"
             }
         },
         "REST API": {

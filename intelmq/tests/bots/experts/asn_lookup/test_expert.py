@@ -21,12 +21,12 @@ EXAMPLE_INPUT = {"__type": "Event",
                  }
 EXAMPLE_OUTPUT = {"__type": "Event",
                   "source.ip": "93.184.216.34",
-                  "source.asn": "15133",
-                  "source.bgp_prefix": "93.184.216.0/24",
+                  "source.asn": 15133,
+                  "source.network": "93.184.216.0/24",
                   "destination.ip": "192.0.43.8",
-                  "destination.asn": "16876",
-                  "destination.bgp_prefix": "192.0.43.0/24",
                   "time.observation": "2015-01-01T00:00:00+00:00",
+                  "destination.asn": 16876,
+                  "destination.network": "192.0.43.0/24",
                   }
 EXAMPLE_INPUT6 = {"__type": "Event",
                   "source.ip": "2001:500:88:200::7",  # iana.org
@@ -34,9 +34,9 @@ EXAMPLE_INPUT6 = {"__type": "Event",
                   }
 EXAMPLE_OUTPUT6 = {"__type": "Event",
                    "source.ip": "2001:500:88:200::7",
-                   "source.asn": "16876",
-                   "source.bgp_prefix": "2001:500:88::/48",
                    "time.observation": "2015-01-01T00:00:00+00:00",
+                   "source.asn": 16876,
+                   "source.network": "2001:500:88::/48",
                    }
 
 

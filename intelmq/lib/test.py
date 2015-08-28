@@ -17,6 +17,7 @@ import intelmq.lib.message as message
 import intelmq.lib.pipeline as pipeline
 import intelmq.lib.utils as utils
 import mock
+import six
 from intelmq import PIPELINE_CONF_FILE, RUNTIME_CONF_FILE, SYSTEM_CONF_FILE
 
 
@@ -317,13 +318,11 @@ class BotTestCase(object):
         """
 
         event = self.get_output_queue()[queue_pos]
-        self.assertIsInstance(event, unicode)
+
+        self.assertIsInstance(event, six.text_type)
         event_dict = json.loads(event)
+
         del event_dict['time.observation']
-
-        unicode_event = {}
         del expected_message['time.observation']
-        for key, value in expected_message.items():
-            unicode_event[unicode(key)] = unicode(value)
 
-        self.assertDictEqual(unicode_event, event_dict)
+        self.assertDictEqual(expected_message, event_dict)
