@@ -4,6 +4,7 @@ import sys
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
+from intelmq.lib.harmonization import IPAddress
 from intelmq.lib.message import Event
 
 

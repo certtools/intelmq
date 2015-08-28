@@ -4,6 +4,7 @@ import sys
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
+from intelmq.lib.harmonization import IPAddress
 from intelmq.lib.message import Event
 
 
@@ -33,8 +34,8 @@ class CymruFullBogonsParserBot(Bot):
             else:
                 event.add('source.network', value, sanitize=True)
 
-            event.add('time.observation', report.value(
-                'time.observation'), sanitize=True)
+            event.add('time.observation',
+                      report.value('time.observation'), sanitize=True)
             event.add('classification.type', u'blacklist')
             event.add('feed.name', report.value("feed.name"))
             event.add('feed.url', report.value("feed.url"))
