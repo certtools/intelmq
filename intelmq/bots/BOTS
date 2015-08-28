@@ -715,6 +715,11 @@
             "module": "intelmq.bots.parsers.dragonresearchgroup.parser_vnc",
             "parameters": {}
         },
+        "Dyn": {
+            "description": "Dyn Parser is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.dyn.parser",
+            "parameters": {}
+        },
         "HpHosts": {
             "description": "HpHosts Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.hphosts.parser",
