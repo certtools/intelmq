@@ -311,7 +311,7 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "MalwareDomains",
-                "rate_limit": "86400",
+                "rate_limit": "172800",
                 "url": "http://mirror2.malwaredomains.com/files/domains.txt"
             }
         },
