@@ -11,6 +11,7 @@ from intelmq.bots.experts.reverse_dns.expert import ReverseDnsExpertBot
 EXAMPLE_INPUT = {"__type": "Event",
                  "source.ip": "192.0.43.7",  # icann.org
                  "destination.ip": "192.0.43.8",  # iana.org
+                 "time.observation": "2015-01-01T00:00:00+00:00",
                  }
 EXAMPLE_OUTPUT = {"__type": "Event",
                   "source.ip": "192.0.43.7",
@@ -19,13 +20,16 @@ EXAMPLE_OUTPUT = {"__type": "Event",
                   "destination.reverse_domain_name": "icann.org.",
                   # manual verfication shows another result:
                   # "destination.reverse_domain_name": "43-8.any.icann.org.",
+                  "time.observation": "2015-01-01T00:00:00+00:00",
                   }
 EXAMPLE_INPUT6 = {"__type": "Event",
                   "source.ip": "2001:500:88:200::7",  # iana.org
+                  "time.observation": "2015-01-01T00:00:00+00:00",
                   }
 EXAMPLE_OUTPUT6 = {"__type": "Event",
                    "source.ip": "2001:500:88:200::7",
                    "source.reverse_domain_name": "",
+                   "time.observation": "2015-01-01T00:00:00+00:00",
                    }
 
 
@@ -42,13 +46,13 @@ class TestReverseDnsExpertBot(test.BotTestCase, unittest.TestCase):
     def test_ipv4_lookup(self):
         self.input_message = json.dumps(EXAMPLE_INPUT)
         self.run_bot()
-        self.assertEventAlmostEqual(0, EXAMPLE_OUTPUT)
+        self.assertMessageEqual(0, EXAMPLE_OUTPUT)
 
     @unittest.expectedFailure
     def test_ipv6_lookup(self):
         self.input_message = json.dumps(EXAMPLE_INPUT6)
         self.run_bot()
-        self.assertEventAlmostEqual(0, EXAMPLE_OUTPUT6)
+        self.assertMessageEqual(0, EXAMPLE_OUTPUT6)
 
 
 if __name__ == '__main__':

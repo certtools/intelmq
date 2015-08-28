@@ -4,7 +4,6 @@ import sys
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.harmonization import DateTime
 from intelmq.lib.message import Event
 
 
@@ -47,8 +46,8 @@ class DShieldASNParserBot(Bot):
 
             event.add('source.ip', source_ip, sanitize=True)
             event.add('classification.type', u'brute-force')
-            time_observation = DateTime().generate_datetime_now()
-            event.add('time.observation', time_observation, sanitize=True)
+            event.add('time.observation', report.value(
+                'time.observation'), sanitize=True)
             event.add("time.source", last_seen, sanitize=True)
             event.add('feed.name', report.value("feed.name"))
             event.add('feed.url', report.value("feed.url"))

@@ -53,7 +53,7 @@ def mocked_config(bot_id, src_name, dst_names, sysconfig):
 
 
 def mocked_logger(logger):
-    def log(path, name, level):
+    def log(name, log_path=None, log_level=None):
         return logger
     return log
 
@@ -173,10 +173,30 @@ class BotTestCase(object):
             it and have a reasonable output"""
         self.run_bot()
 
+    def test_log_init(self):
+        """ Test if bot logs initialized message. """
+        self.run_bot()
+        self.assertLoglineEqual(0, "{} initialized with id {}."
+                                   "".format(self.bot_name,
+                                             self.bot_id), "DEBUG")
+
     def test_log_starting(self):
         """ Test if bot logs starting message. """
         self.run_bot()
-        self.assertLoglineEqual(0, "Bot is starting", "INFO")
+        self.assertRegexpMatchesLog("INFO - Bot is starting.")
+
+    def test_log_stopped(self):
+        """ Test if bot logs stopped message. """
+        self.run_bot()
+        self.assertLoglineEqual(-1, "Bot stopped.", "INFO")
+
+    def test_log_end_dot(self):
+        """ Test if every log lines ends with a dot. """
+        for logline in self.loglines:
+            fields = utils.parse_logline(logline)
+            self.assertTrue(fields['message'].endswith('.'),
+                            msg='Logline {} does not end with dot.'
+                                ''.format(fields['message']))
 
     def test_log_not_error(self):
         """ Test if bot does not log errors. """
@@ -203,7 +223,7 @@ class BotTestCase(object):
         e.g. if empty. Bots have to handle this situation.
         """
         if self.bot_type == 'collector':
-            raise unittest.SkipTest('Given Bot is Collector.')
+            return
 
         self.input_message = ''
         self.run_bot()
@@ -234,7 +254,7 @@ class BotTestCase(object):
     def test_report(self):
         """ Test if report has required fields. """
         if self.bot_type != 'collector':
-            raise unittest.SkipTest('Given Bot is not a Collector.')
+            return
 
         self.run_bot()
         for report_json in self.get_output_queue():
@@ -243,11 +263,12 @@ class BotTestCase(object):
             self.assertIn('feed.name', report)
             self.assertIn('feed.url', report)
             self.assertIn('raw', report)
+            self.assertIn('time.observation', report)
 
     def test_event(self):
         """ Test if event has required fields. """
         if self.bot_type not in ['parser', 'expert']:
-            raise unittest.SkipTest('Given Bot is not a Parser or Expert.')
+            return
 
         self.run_bot()
         for event_json in self.get_output_queue():
@@ -283,23 +304,26 @@ class BotTestCase(object):
         self.assertRegexpMatches(self.loglines_buffer, pattern)
 
     def assertNotRegexpMatchesLog(self, pattern):
-        """Asserts that pattern doesn't match against log"""
+        """Asserts that pattern doesn't match against log."""
 
         self.assertIsNotNone(self.loglines_buffer)
         self.assertNotRegexpMatches(self.loglines_buffer, pattern)
 
-    def assertEventAlmostEqual(self, queue_pos, expected_event):
-        """Asserts that the given expected_event is
-           contained in the generated event with
-           given queue position"""
+    def assertMessageEqual(self, queue_pos, expected_message):
+        """
+        Asserts that the given expected_message is
+        contained in the generated event with
+        given queue position.
+        """
 
         event = self.get_output_queue()[queue_pos]
-        unicode_event = {}
-
-        for key, value in expected_event.items():
-            unicode_event[unicode(key)] = unicode(value)
-
         self.assertIsInstance(event, unicode)
         event_dict = json.loads(event)
+        del event_dict['time.observation']
 
-        self.assertDictContainsSubset(unicode_event, event_dict)
+        unicode_event = {}
+        del expected_message['time.observation']
+        for key, value in expected_message.items():
+            unicode_event[unicode(key)] = unicode(value)
+
+        self.assertDictEqual(unicode_event, event_dict)

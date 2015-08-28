@@ -12,8 +12,12 @@
 
 ## Overview
 
-The purpose of this document is to list and clearly define known **fields** in Abushelper as well as Intelmq or similar systems. A field is a ```key=value``` pair. For a clear and unique definition of a field, we must define the **key** (field-name) as well as the possible **values**. A field belongs to an **event**. An event is basically a  structured log record in the form ```key=value, key=value, key=value, …```. In the [List of known fields](#fields), each field is grouped by a **section**. We describe these sections briefly below. 
+The purpose of this document is to list and clearly define known **fields** in Abusehelper as well as Intelmq or similar systems. A field is a ```key=value``` pair. For a clear and unique definition of a field, we must define the **key** (field-name) as well as the possible **values**. A field belongs to an **event**. An event is basically a  structured log record in the form ```key=value, key=value, key=value, …```. In the [List of known fields](#fields), each field is grouped by a **section**. We describe these sections briefly below.
 Every event **MUST** contain a timestamp field.
+
+## Rules for keys
+
+The keys can be grouped together in sub-fields, e.g. `source.ip` or `source.geolocation.latitude`. Thus, keys must match `[a-z_.]`.
 
 ## EBNF
 To grasp the concept of fields, events, keys, values, etc. the following [EBNF](https://en.wikipedia.org/wiki/Extended_Backus%E2%80%93Naur_Form) description might help. _Do not take this as a literal instruction for implementations_. The formatting of events and fields (and how fields are separated from each other) might vary depending on the encapsulating format (JSON, CSV , etc.) . This EBNF description is here to illustrate how these concepts work together (and are not complete):
@@ -68,16 +72,16 @@ StringLiteral
 
 As stated above, every field is organised under some section. The following is a description of the sections and what they imply.
 
-#### Feed
+### Feed
 
 Fields listed under this grouping list details about the source feed where information came from.
 
-#### Time
+### Time
 
 The time section lists all fields related to time information.
 This document requires that all the timestamps MUST be normalized to UTC. If the source reports only a date, do not attempt to invent timestamps.
 
-#### Source Identity
+### Source Identity
 
 This section lists all fields related to identification of the source. **XXX FIXME: not clear!! XXX**
 The abuse type of an event defines the way these events needs to be interpreted. For example, for a botnet drone they refer to the compromised machine, whereas for a command and control server they refer the server itself.
@@ -90,9 +94,9 @@ We recognize that ip geolocation is not an exact science and analysis of the abu
 
 Some sources report an internal (NATed) IP address.
 
-#### Destination Identity
+### Destination Identity
 
-The abuse type of an event defines the way these IOCs needs to be interpreted. For a botnet drone they refer to the compromized machine, whereas for a command and control server they refer the server itself.
+The abuse type of an event defines the way these IOCs needs to be interpreted. For a botnet drone they refer to the compromised machine, whereas for a command and control server they refer the server itself.
 
 #### Destination Geolocation Identity
 
@@ -102,6 +106,7 @@ We recognize that ip geolocation is not an exact science and analysis of the abu
 
 Some sources report an internal (NATed) IP address.
 
+### Reported Identity
 
 #### Reported Source Identity
 
@@ -114,19 +119,16 @@ As stated above, each abuse handling organization should define a policy, which 
 
 #### Additional Fields
 
-... text ...
+TODO: description
 
 #### Malware Elements
 
-... text ...
+TODO: description
 
 #### Artifact Elements
 
-... text ...
+TODO: description
 
-#### Extra Elements
-
-... text ...
 
 #### Specific Elements
 
@@ -147,7 +149,7 @@ Note that this section does not yet define error handling and failure mechanisms
 |Name                                | SQL Data type     | Regexp and Syntax       | Cybox Equivalent |  Comment                           |
 |:-----------------------------------|:------------------|:------------------------|:-----------------|:-----------------------------------|
 |<a name="#datatype-feed"></a>feed   |varchar(2000)      |  ```[a-zA-Z0-9_.-]+```  |                  | no characters allowed which could be interpreted as CSV separators |
-|<a name="#datatype-url"></a>url     |varchar(2000)      | a valid URL (see [RFC3987](http://tools.ietf.org/html/rfc3987) or similar). | [URI](http://cybox.mitre.org/language/version2.1/xsddocs/objects/URI_Object.html)  | It is recommended to use libaries such as [faup](https://github.com/stricaud/faup) for validation since  |
+|<a name="#datatype-url"></a>url     |varchar(2000)      | a valid URL (see [RFC3987](http://tools.ietf.org/html/rfc3987) or similar). | [URI](http://cybox.mitre.org/language/version2.1/xsddocs/objects/URI_Object.html)  | TODO: It is recommended to use libaries such as [faup](https://github.com/stricaud/faup) for validation. |
 
 
 <a name="fields"></a>

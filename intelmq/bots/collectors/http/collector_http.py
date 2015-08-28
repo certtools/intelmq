@@ -4,6 +4,7 @@ import sys
 
 from intelmq.bots.collectors.http.lib import fetch_url
 from intelmq.lib.bot import Bot
+from intelmq.lib.harmonization import DateTime
 from intelmq.lib.message import Report
 
 
@@ -24,6 +25,8 @@ class URLCollectorBot(Bot):
         report.add("raw", raw_report, sanitize=True)
         report.add("feed.name", self.parameters.feed, sanitize=True)
         report.add("feed.url", self.parameters.url, sanitize=True)
+        time_observation = DateTime().generate_datetime_now()
+        report.add('time.observation', time_observation, sanitize=True)
         self.send_message(report)
 
 

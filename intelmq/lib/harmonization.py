@@ -32,6 +32,7 @@ try:
 except ImportError:
     from urllib import parse as urlparse
 
+
 class GenericType(object):
 
     @staticmethod

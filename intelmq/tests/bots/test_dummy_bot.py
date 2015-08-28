@@ -32,7 +32,11 @@ class DummyParserBot(bot.Bot):
     """
 
     def process(self):
-        """ Passing through all information from Report to Event. """
+        """
+        Passing through all information from Report to Event.
+
+        Also logs a sample line, which will be tested afterwards.
+        """
         report = self.receive_message()
 
         if not report:
@@ -47,7 +51,6 @@ class DummyParserBot(bot.Bot):
 
         self.send_message(event)
         self.acknowledge_message()
-        self.error_retries_counter = 1
 
 
 class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
@@ -58,18 +61,17 @@ class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
     @classmethod
     def set_bot(cls):
         cls.bot_reference = DummyParserBot
-        cls.default_input_message = json.dumps(EXAMPLE_EVENT)
+        cls.default_input_message = json.dumps(EXAMPLE_REPORT)
 
     def test_log_test_line(self):
         """ Test if bot does log example message. """
         self.run_bot()
-        self.assertRegexpMatches(self.loglines_buffer,
-                                 "INFO - Lorem ipsum dolor sit amet")
+        self.assertRegexpMatchesLog("INFO - Lorem ipsum dolor sit amet")
 
     def test_event(self):
         """ Test if correct Event has been produced. """
         self.run_bot()
-        self.assertEventAlmostEqual(0, EXAMPLE_REPORT)
+        self.assertMessageEqual(0, EXAMPLE_EVENT)
 
 
 if __name__ == '__main__':
