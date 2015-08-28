@@ -1,19 +1,21 @@
+
 Harmonization field names
 =========================
 
 |Section|Name|Type|Description|
 |:------|:---|:---|:----------|
-||additional_information|String|All anecdotal information, which cannot be parsed into the data harmonization elements. TODO: Must be JSON encoded for machine readability.|
+||additional|String|All anecdotal information, which cannot be parsed into the data harmonization elements. TODO: Must be JSON encoded for machine readability.|
 |Classification|classification.taxonomy|String|We recognize the need for the CSIRT teams to apply a static (incident) taxonomy to abuse data. With this goal in mind the type IOC will serve as a basis for this activity. Each value of the dynamic type mapping translates to a an element in the static taxonomy. The European CSIRT teams for example have decided to apply the eCSIRT.net incident classification. The value of the taxonomy key is thus a derivative of the dynamic type above. For more information about check [ENISA taxonomies](http://www.enisa.europa.eu/activities/cert/support/incident-management/browsable/incident-handling-process/incident-taxonomy/existing-taxonomies).|
 |Classification|classification.type|ClassificationType|The abuse type IOC is one of the most crucial pieces of information for any given abuse event. The main idea of dynamic typing is to keep our ontology flexible, since we need to evolve with the evolving threatscape of abuse data. In contrast with the static taxonomy below, the dynamic typing is used to perform business decisions in the abuse handling pipeline. Furthermore, the value data set should be kept as minimal as possible to avoid “type explosion”, which in turn dilutes the business value of the dynamic typing. In general, we normally have two types of abuse type IOC: ones referring to a compromized resource or ones referring to pieces of the criminal infrastructure, such as a command and control servers for example.|
 ||comment|String|Free text commentary about the abuse event inserted by an analyst.|
-|Destination|destination.abuse_contact|String|Abuse contact for destination address. TODO: list?|
+|Destination|destination.abuse_contact|String|Abuse contact for destination address. TODO: list|
 |Destination|destination.account|String|TODO: Description|
 |Destination|destination.allocated|DateTime|Allocation date corresponding to bgp prefix.|
 |Destination|destination.as_name|String|The autonomous system name to which the connection headed.|
 |Destination|destination.asn|Integer|The autonomous system number from which originated the connection.|
 |Destination|destination.email_address|String|An email address, which has been identified to relate to the destination of an abuse event.|
 |Destination|destination.fqdn|FQDN|A DNS name related to the host to which the connection headed.|
+|Destination Geolocation|destination.geolocation.cc|String|Country-Code accoriding to ISO3166 for the destination IP.|
 |Destination Geolocation|destination.geolocation.city|String|Some geolocation services refer to city-level geolocation.|
 |Destination Geolocation|destination.geolocation.country|String|The country name derived from the ISO3166 country code (assigned to cc field).|
 |Destination Geolocation|destination.geolocation.latitude|Float|Latitude coordinates derived from a geolocation service, such as MaxMind geoip db.|
@@ -39,11 +41,13 @@ Harmonization field names
 |Malware|malware.hash|String|A string depicting a checksum for a file, be it a malware sample for example.|
 |Malware|malware.name|MalwareName|A malware family name in lower case.|
 |Malware|malware.version|String|A version string for an identified artifact generation, e.g. a crime-ware kit.|
-||misp_ip|Integer|MISP id.|
+||misp_ip|Integer|MISP - Malware Information Sharing Platform & Threat Sharing id.|
+|Os|os.name|String|Operating system name.|
+|Os|os.version|String|Operating system version.|
 |Protocol|protocol.application|String|e.g. vnc, ssh, sip, irc, http or p2p.|
 |Protocol|protocol.transport|String|e.g. tcp, udp, icmp.|
 ||raw|Base64|The original line of the event from encoded in base64.|
-||rtir_id|Integer|FRTIR incident id.|
+||rtir_id|Integer|Request Tracker Incident Response incident id.|
 ||screenshot_url|URL|Some source may report URLs related to a an image generated of a resource without any metadata. Or an URL pointing to resource, which has been rendered into a webshot, e.g. a PNG image and the relevant metadata related to its retrieval/generation.|
 |Source|source.abuse_contact|String|Abuse contact for source address. TODO: list?|
 |Source|source.account|String|TODO: Description|
@@ -52,7 +56,7 @@ Harmonization field names
 |Source|source.asn|Integer|The autonomous system number from which originated the connection.|
 |Source|source.email_address|String|An email address, which has been identified to relate to the source of an abuse event.|
 |Source|source.fqdn|FQDN|A DNS name related to the host from which the connection originated.|
-|Source Geolocation|source.geolocation.cc|String|Country Code (ISO3166) as found in source.|
+|Source Geolocation|source.geolocation.cc|String|Country-Code accoriding to ISO3166 for the source IP.|
 |Source Geolocation|source.geolocation.city|String|Some geolocation services refer to city-level geolocation.|
 |Source Geolocation|source.geolocation.country|String|The country name derived from the ISO3166 country code (assigned to cc field).|
 |Source Geolocation|source.geolocation.cymru_cc|String|The country code denoted for the ip by the Team Cymru asn to ip mapping service.|
@@ -73,9 +77,7 @@ Harmonization field names
 ||status|String|Status of the malicious resource (phishing, dropzone, etc), e.g. online, offline.|
 |Time|time.observation|DateTime|The time a source bot saw the event. This timestamp becomes especially important should you perform your own attribution on a host DNS name for example. The mechanism to denote the attributed elements with reference to the source provided is detailed below in Reported Identity IOC.(ISO8660).|
 |Time|time.source|DateTime|Time reported by a source. Some sources only report a date, which may be used here if there is no better observation.|
-|Victim Os|victim.os.name|String|Operating system name.|
-|Victim Os|victim.os.version|String|Operating system version.|
-|Victim|victim.user_agent|String|Some feeds report the user agent string used by the host to access a malicious resource, such as a command and control server.|
+||user_agent|String|Some feeds report the user agent string used by the host to access a malicious resource, such as a command and control server.|
 
 
 Harmonization types
@@ -141,6 +143,7 @@ Sanitation accepts strings and everything int() accepts.
 
 
 ### URL
+
 
 
 
