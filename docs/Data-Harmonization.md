@@ -207,7 +207,7 @@ Below, we have enumerated the minimum requirements for an actionable abuse event
 |Identity|source.ip|Must*|
 |Identity|source.fqdn|Must*|
 |Identity|source.url|Must*|
-|Identity|source.email_address|Must*|
+|Identity|source.account|Must*|
 
 
 
