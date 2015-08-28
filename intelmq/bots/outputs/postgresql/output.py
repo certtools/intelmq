@@ -52,8 +52,14 @@ class PostgreSQLBot(Bot):
             self.cur.execute(query, values)
         except (psycopg2.InterfaceError, psycopg2.InternalError,
                 AttributeError):
-            self.logger.exception('Cursor has been closed, connecting again.')
-            self.init()
+            try:
+                self.con.rollback()
+                self.logger.exception('Executed rollback command '
+                                      'after failed query execution.')
+            except Exception:
+                self.logger.exception('Cursor has been closed, connecting '
+                                      'again.')
+                self.init()
         else:
             self.con.commit()
             self.acknowledge_message()
