@@ -24,7 +24,8 @@ class DeduplicatorBot(Bot):
 
         for ignore_key in ignore_keys:
             ignore_key = ignore_key.strip()
-            auxiliar_message.clear(ignore_key)
+            if ignore_key in auxiliar_message:
+                auxiliar_message.clear(ignore_key)
 
         message_hash = hash(auxiliar_message)
 

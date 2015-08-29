@@ -43,6 +43,7 @@ class BruteForceBlockerParserBot(Bot):
             event.add('feed.name', report.value("feed.name"))
             event.add('feed.url', report.value("feed.url"))
             event.add('classification.type', u'brute-force')
+            event.add("raw", row, sanitize=True)
 
             self.send_message(event)
         self.acknowledge_message()
