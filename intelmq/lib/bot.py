@@ -7,7 +7,6 @@ from __future__ import print_function, unicode_literals
 import datetime
 import json
 import re
-import sys  # TODO: Replace imports in bots
 import time
 import traceback
 
@@ -35,7 +34,7 @@ class Bot(object):
 
         try:
             self.log_buffer.append(('debug',
-                                    '{} initialized with id {}'
+                                    '{} initialized with id {}.'
                                     ''.format(self.__class__.__name__,
                                               bot_id)))
             self.check_bot_id(bot_id)
@@ -43,13 +42,17 @@ class Bot(object):
 
             self.load_defaults_configuration()
             self.load_system_configuration()
-            self.logger = utils.log(self.parameters.logging_path, self.bot_id,
-                                    self.parameters.logging_level)
+            self.logger = utils.log(self.bot_id,
+                                    log_level=self.parameters.logging_level)
         except:
+            self.log_buffer.append(('critical', traceback.format_exc()))
             self.stop()
+        else:
+            for line in self.log_buffer:
+                getattr(self.logger, line[0])(line[1])
 
         try:
-            self.logger.info('Bot is starting')
+            self.logger.info('Bot is starting.')
             self.load_runtime_configuration()
             self.load_pipeline_configuration()
             self.load_harmonization_configuration()
@@ -67,48 +70,48 @@ class Bot(object):
               destination_pipeline=None):
         self.source_pipeline = source_pipeline
         self.destination_pipeline = destination_pipeline
-        self.logger.info('Bot start processing')
+        self.logger.info('Bot starts processings.')
 
         while True:
             try:
                 if not starting and (error_on_pipeline or error_on_message):
-                    self.logger.info('Bot will restart in %s seconds' %
+                    self.logger.info('Bot will restart in %s seconds.' %
                                      self.parameters.error_retry_delay)
                     time.sleep(self.parameters.error_retry_delay)
                     self.logger.info('Bot woke up')
-                    self.logger.info('Trying to start processing again')
+                    self.logger.info('Trying to start processing again.')
 
                 if error_on_message:
                     error_on_message = False
 
                 if error_on_pipeline:
-                    self.logger.info("Loading source pipeline")
+                    self.logger.info("Loading source pipeline.")
                     self.source_pipeline = PipelineFactory.create(
                         self.parameters)
-                    self.logger.info("Loading source queue")
+                    self.logger.info("Loading source queue.")
                     self.source_pipeline.set_queues(self.source_queues,
                                                     "source")
-                    self.logger.info("Source queue loaded {}"
+                    self.logger.info("Source queue loaded {}."
                                      "".format(self.source_queues))
                     self.source_pipeline.connect()
-                    self.logger.info("Connected to source queue")
+                    self.logger.info("Connected to source queue.")
 
-                    self.logger.info("Loading destination pipeline")
+                    self.logger.info("Loading destination pipeline.")
                     self.destination_pipeline = PipelineFactory.create(
                         self.parameters)
-                    self.logger.info("Loading destination queues")
+                    self.logger.info("Loading destination queues.")
                     self.destination_pipeline.set_queues(self.destination_queues,
                                                          "destination")
-                    self.logger.info("Destination queues loaded {}"
+                    self.logger.info("Destination queues loaded {}."
                                      "".format(self.destination_queues))
                     self.destination_pipeline.connect()
-                    self.logger.info("Connected to destination queues")
+                    self.logger.info("Connected to destination queues.")
 
-                    self.logger.info("Pipeline ready")
+                    self.logger.info("Pipeline ready.")
                     error_on_pipeline = False
 
                 if starting:
-                    self.logger.info("Start processing")
+                    self.logger.info("Start processing.")
                     starting = False
 
                 self.process()
@@ -117,22 +120,22 @@ class Bot(object):
             except exceptions.PipelineError:
                 error_on_pipeline = True
                 if self.parameters.error_log_exception:
-                    self.logger.exception('Pipeline failed')
+                    self.logger.exception('Pipeline failed.')
                 else:
-                    self.logger.error('Pipeline failed')
+                    self.logger.error('Pipeline failed.')
                 self.source_pipeline = None
                 self.destination_pipeline = None
 
             except Exception as ex:
                 if self.parameters.error_log_exception:
-                    self.logger.exception("Bot has found a problem")
+                    self.logger.exception("Bot has found a problem.")
                 else:
-                    self.logger.error("Bot has found a problem")
+                    self.logger.error("Bot has found a problem.")
 
                 if self.parameters.error_log_message:
-                    self.logger.info("Last Correct Message(event): {!r}"
+                    self.logger.info("Last Correct Message(event): {!r}."
                                      "".format(self.last_message))
-                    self.logger.info("Current Message(event): {!r}"
+                    self.logger.info("Current Message(event): {!r}."
                                      "".format(self.current_message))
 
                 self.error_retries_counter += 1
@@ -176,7 +179,7 @@ class Bot(object):
 
         if self.logger:
             self.logger.info("Bot stopped.")
-        if self.log_buffer:
+        else:
             self.log_buffer.append(('info', 'Bot stopped.'))
             self.print_log_buffer()
         if self.parameters.exit_on_stop:
@@ -202,8 +205,8 @@ class Bot(object):
         res = re.search('[^0-9a-zA-Z\-]+', str)
         if res:
             self.log_buffer.append(('error',
-                                    "Invalid bot id, must match "
-                                    "[^0-9a-zA-Z\-]+"))
+                                    "Invalid bot id, must match '"
+                                    "[^0-9a-zA-Z\-]+'."))
             self.stop()
 
     def send_message(self, message):
@@ -214,7 +217,7 @@ class Bot(object):
         self.logger.debug("Sending message.")
         self.message_counter += 1
         if self.message_counter % 500 == 0:
-            self.logger.info("Processed %s messages" % self.message_counter)
+            self.logger.info("Processed %s messages." % self.message_counter)
 
         raw_message = MessageFactory.serialize(message)
         self.destination_pipeline.send(raw_message)
@@ -223,7 +226,7 @@ class Bot(object):
         self.logger.debug('Receiving Message.')
         message = self.source_pipeline.receive()
 
-        self.logger.debug('Receive message {!r}'.format(message))
+        self.logger.debug('Receive message {!r}.'.format(message))
         if not message:
             self.logger.warning('Empty message received.')
             return None
@@ -260,7 +263,7 @@ class Bot(object):
             json.dump(dump_data, fp, indent=4, sort_keys=True)
 
     def load_defaults_configuration(self):
-        self.log_buffer.append(('debug', "Loading defaults configuration"))
+        self.log_buffer.append(('debug', "Loading defaults configuration."))
         config = utils.load_configuration(DEFAULTS_CONF_FILE)
 
         setattr(self.parameters, 'logging_path', DEFAULT_LOGGING_PATH)
@@ -270,8 +273,8 @@ class Bot(object):
             setattr(self.parameters, option, value)
             self.log_buffer.append(('debug',
                                     "Defaults configuration: parameter '{}' "
-                                    "loaded  with value '{}'".format(option,
-                                                                     value)))
+                                    "loaded  with value '{}'.".format(option,
+                                                                      value)))
 
     def load_system_configuration(self):
         self.log_buffer.append(('debug', "Loading system configuration"))
@@ -281,8 +284,8 @@ class Bot(object):
             setattr(self.parameters, option, value)
             self.log_buffer.append(('debug',
                                     "System configuration: parameter '{}' "
-                                    "loaded  with value '{}'".format(option,
-                                                                     value)))
+                                    "loaded  with value '{}'.".format(option,
+                                                                      value)))
 
     def load_runtime_configuration(self):
         self.logger.debug("Loading runtime configuration")
@@ -307,7 +310,7 @@ class Bot(object):
             if 'source-queue' in config[self.bot_id].keys():
                 self.source_queues = config[self.bot_id]['source-queue']
                 self.logger.debug("Pipeline configuration: parameter "
-                                  "'source-queue' loaded with the value '%s'"
+                                  "'source-queue' loaded with the value '%s'."
                                   % self.source_queues)
 
             if 'destination-queues' in config[self.bot_id].keys():
@@ -315,16 +318,16 @@ class Bot(object):
                 self.destination_queues = config[
                     self.bot_id]['destination-queues']
                 self.logger.debug("Pipeline configuration: parameter"
-                                  "'destination-queues' loaded with the value"
-                                  " '%s'" % ", ".join(self.destination_queues))
+                                  "'destination-queues' loaded with the value "
+                                  "'%s'." % ", ".join(self.destination_queues))
 
         else:
             self.logger.error("Pipeline configuration: no key "
-                              "'{}'".format(self.bot_id))
+                              "'{}'.".format(self.bot_id))
             self.stop()
 
     def load_harmonization_configuration(self):
-        self.logger.debug("Loading Harmonization configuration")
+        self.logger.debug("Loading Harmonization configuration.")
         config = utils.load_configuration(HARMONIZATION_CONF_FILE)
 
         for message_types in config.keys():
@@ -334,7 +337,7 @@ class Bot(object):
                         # FIXME: write in devguide the rules for the keys names
                         raise exceptions.ConfigurationError(
                             'harmonization',
-                            "key %s is not valid" % _key)
+                            "Key %s is not valid." % _key)
 
 
 class Parameters(object):

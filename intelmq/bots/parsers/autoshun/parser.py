@@ -5,7 +5,7 @@ import sys
 import HTMLParser
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.harmonization import DateTime
+from intelmq.lib.harmonization import ClassificationType
 from intelmq.lib.message import Event
 
 TAXONOMY = {
@@ -14,8 +14,6 @@ TAXONOMY = {
     "scan": "scanner",
     "cve": "exploit",
     "sql inject": "exploit",
-    "c&c": "c&c",
-    "spam": "spam"
 }
 
 
@@ -46,25 +44,31 @@ class AutoshunParserBot(Bot):
                 continue
 
             ip = info[1].split('</td>')[0].strip()
-            last_seen = info[2].split('</td>')[0].strip()
+            last_seen = info[2].split('</td>')[0].strip() + '-05:00'
             description = parser.unescape(info[3].split('</td>')[0].strip())
 
-            for key in Parser.taxonomy.keys():
+            for key in ClassificationType.allowed_values:
                 if description.lower().find(key.lower()) > -1:
                     event.add("classification.type",
-                              TAXONOMY[key], sanitize=True)
+                              key, sanitize=True)
                     break
+            else:
+                for key, value in TAXONOMY.items():
+                    if description.lower().find(key.lower()) > -1:
+                        event.add("classification.type",
+                                  value, sanitize=True)
+                        break
 
             if not event.contains("classification.type"):
                 event.add("classification.type", u'unknown')
 
-            time_observation = DateTime().generate_datetime_now()
-            event.add('time.observation', time_observation, sanitize=True)
+            event.add('time.observation',
+                      report.value('time.observation'), sanitize=True)
             event.add("time.source", last_seen, sanitize=True)
             event.add('feed.name', report.value("feed.name"))
             event.add('feed.url', report.value("feed.url"))
             event.add("source.ip", ip, sanitize=True)
-            event.add("description.text", description, sanitize=True)
+            event.add("event_description.text", description, sanitize=True)
             event.add("raw", row, sanitize=True)
 
             self.send_message(event)

@@ -17,13 +17,16 @@ EXAMPLE_REPORT = {"feed.url": "http://www.urlvir.com/export-hosts/",
                          "IyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIwpleGFt"
                          "cGxlLm5ldA==",
                   "__type": "Report",
-                  "feed.name": "URLVir"}
+                  "feed.name": "URLVir",
+                  "time.observation": "2015-01-01T00:00:00+00:00",
+                  }
 EXAMPLE_EVENT = {"feed.url": "http://www.urlvir.com/export-hosts/",
                  "feed.name": "URLVir",
                  "__type": "Event",
                  "source.fqdn": "example.net",
                  "classification.type": "malware",
                  "raw": "ZXhhbXBsZS5uZXQ=",
+                 "time.observation": "2015-01-01T00:00:00+00:00",
                  }
 
 
@@ -40,7 +43,7 @@ class TestURLVirHostsParserBot(test.BotTestCase, unittest.TestCase):
     def test_event(self):
         """ Test if correct Event has been produced. """
         self.run_bot()
-        self.assertEventAlmostEqual(0, EXAMPLE_EVENT)
+        self.assertMessageEqual(0, EXAMPLE_EVENT)
 
 
 if __name__ == '__main__':

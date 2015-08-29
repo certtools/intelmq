@@ -4,7 +4,6 @@ import sys
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.harmonization import DateTime
 from intelmq.lib.message import Event
 
 CLASSIFICATION = {
@@ -70,8 +69,8 @@ class AlienVaultParserBot(Bot):
                 event.add('source.geolocation.longitude',
                           geo_longitude.strip(), sanitize=True)
 
-                time_observation = DateTime().generate_datetime_now()
-                event.add('time.observation', time_observation, sanitize=True)
+                event.add('time.observation', report.value(
+                    'time.observation'), sanitize=True)
                 event.add('feed.name', report.value("feed.name"))
                 event.add('feed.url', report.value("feed.url"))
                 event.add("raw", row, sanitize=True)

@@ -4,7 +4,6 @@ import sys
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.harmonization import DateTime
 from intelmq.lib.message import Event
 
 
@@ -18,11 +17,9 @@ class DragonResearchGroupSSHParserBot(Bot):
             return
 
         raw_report = utils.base64_decode(report.value("raw"))
-        for row in raw_report.split('\n'):
+        for row in raw_report.splitlines():
 
             row = row.strip()
-
-            self.logger.error("Raw row %s" % row)
 
             if len(row) == 0 or row.startswith('#'):
                 continue
@@ -37,12 +34,12 @@ class DragonResearchGroupSSHParserBot(Bot):
                 value = value.strip()
 
                 if key == "time.source":
-                    value += " UTC"
+                    value += "T00:00:00+00:00"
 
                 event.add(key, value, sanitize=True)
 
-            time_observation = DateTime().generate_datetime_now()
-            event.add('time.observation', time_observation, sanitize=True)
+            event.add('time.observation', report.value(
+                'time.observation'), sanitize=True)
             event.add('feed.name', report.value("feed.name"))
             event.add('feed.url', report.value("feed.url"))
             event.add('classification.type', u'brute-force')
