@@ -1,4 +1,11 @@
 # -*- coding: utf-8 -*-
+'''
+Reference: https://abusix.com/contactdb.html
+RIPE abuse contacts resolving through DNS TXT queries
+
+TODO: Use Python module querycontacts from abusix:
+https://pypi.python.org/pypi/querycontacts/
+'''
 from __future__ import unicode_literals
 import sys
 
@@ -6,16 +13,14 @@ from intelmq.bots.experts.abusix.lib import Abusix
 from intelmq.lib.bot import Bot
 
 
-'''
-Reference: https://abusix.com/contactdb.html
-RIPE abuse contacts resolving through DNS TXT queries
-'''
-
-
 class AbusixExpertBot(Bot):
 
     def process(self):
         event = self.receive_message()
+
+        if event is None:
+            self.acknowledge_message()
+            return
 
         for key in ['source.', 'destination.']:
             ip_key = key + "ip"

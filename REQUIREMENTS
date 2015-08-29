@@ -5,6 +5,7 @@ redis==2.10.3
 pymongo==2.7.1
 xmpppy==0.5.0rc1
 imbox==0.5.5
+ipaddress
 unicodecsv==0.9.4
 pytz==2012d
 psutil==2.1.1

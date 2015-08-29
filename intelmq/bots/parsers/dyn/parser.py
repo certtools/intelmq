@@ -5,7 +5,6 @@ import sys
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.harmonization import DateTime
 from intelmq.lib.message import Event
 
 
@@ -36,16 +35,15 @@ class DynParserBot(Bot):
             compromised_url = splitted_row[1].split("seems to be INFECTED:")[1]
 
             event_infected = Event()
-            time_observation = DateTime().generate_datetime_now()
             event_infected.add('time.observation',
-                               time_observation, sanitize=True)
+                               report.value('time.observation'), sanitize=True)
             event_infected.add('classification.type', 'malware')
             event_infected.add('feed.name', report.value("feed.name"))
             event_infected.add('feed.url', report.value("feed.url"))
             event_infected.add('source.fqdn', infected_fqdn, sanitize=True)
             event_infected.add('destination.url',
                                compromised_url, sanitize=True)
-            event_infected.add('description.text',
+            event_infected.add('event_description.text',
                                'has malicious code redirecting to malicious '
                                'host')
             event_infected.add('raw', row, sanitize=True)
@@ -53,14 +51,14 @@ class DynParserBot(Bot):
             self.send_message(event_infected)
 
             event_compromised = Event()
-            time_observation = DateTime().generate_datetime_now()
             event_compromised.add('time.observation',
-                                  time_observation, sanitize=True)
+                                  report.value('time.observation'),
+                                  sanitize=True)
             event_compromised.add('classification.type', 'compromised')
             event_compromised.add('feed.name', report.value("feed.name"))
             event_compromised.add('feed.url', report.value("feed.url"))
             event_compromised.add('source.url', compromised_url, sanitize=True)
-            event_compromised.add('description.text',
+            event_compromised.add('event_description.text',
                                   'host has been compromised and has '
                                   'malicious code infecting users')
             event_compromised.add('raw', row, sanitize=True)

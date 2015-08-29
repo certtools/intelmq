@@ -97,7 +97,7 @@ class Message(dict):
         if sanitize:
             old_value = value
             value = self.__sanitize_value(key, value)
-            if not value:
+            if value is None:
                 raise exceptions.InvalidValue(key, old_value)
 
         if not self.__is_valid_value(key, value):
