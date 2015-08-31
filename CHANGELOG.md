@@ -1,6 +1,12 @@
 CHANGELOG
 ==========
 
+v1.0 (in developement)
+- renamed bots.parsers.spamhaus.parser to bots.parsers.spamhaus.parser_drop
+- added bots.parsers.spamhaus.parser_cert
+- added bots.parsers.fraunhofer.parser_dga
+- added bots.experts.certat_contact.expert
+
 ## 2015/06/03 (aaron)
 
   * fixed the license to AGPL in setup.py
