@@ -9,6 +9,7 @@ import sys
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
+from intelmq.lib.exceptions import InvalidValue
 from intelmq.lib.message import Event
 
 
@@ -32,7 +33,10 @@ class FraunhoferDGAParserBot(Bot):
             event = Event()
 
             event.add('classification.type', u'c&c')
-            event.add('destination.fqdn', row, sanitize=True)
+            try:
+                event.add('destination.ip', row, sanitize=True)
+            except InvalidValue:
+                event.add('destination.fqdn', row, sanitize=True)
             event.add('time.observation',
                       report.value('time.observation'), sanitize=True)
             event.add('feed.name', report.value("feed.name"))

@@ -13,9 +13,8 @@ EXAMPLE_REPORT = {"feed.url": "https://dgarchive.caad.fkie.fraunhofer.de/today",
                          "YzAzIjogWwogICAgImFuZGVyc2Vuc2luYWl4LmNvbSIsCiAgICAi"
                          "eGpzcnJzZW5zaW5haXguY29tIiwKICAgICJobHJmcnNlbnNpbmFp"
                          "eC5jb20iLAogICAgImZub3Nyc2Vuc2luYWl4LmNvbSIsCiAgICAi"
-                         "cWN3Y3JzZW5zaW5haXguY29tIiwKICAgICJsYnpvcnNlbnNpbmFp"
-                         "eC5jb20iLAogICAgInNnanByc2Vuc2luYWl4LmNvbSIKICBdCn0"
-                         "=",
+                         "MTI4LjIzOC4xOTcuMzMiLAogICAgImxiem9yc2Vuc2luYWl4LmNv"
+                         "bSIsCiAgICAic2dqcHJzZW5zaW5haXguY29tIgogIF0KfQ==",
                   "__type": "Report",
                   "feed.name": "Fraunhofer DGA",
                   "time.observation": "2015-01-01T00:00:00+00:00",
@@ -34,8 +33,8 @@ EXAMPLE_EVENTS_PARTS = [{'raw': 'YW5kZXJzZW5zaW5haXguY29t',
                          'destination.fqdn': 'hlrfrsensinaix.com'},
                         {'raw': 'Zm5vc3JzZW5zaW5haXguY29t',
                          'destination.fqdn': 'fnosrsensinaix.com'},
-                        {'raw': 'cWN3Y3JzZW5zaW5haXguY29t',
-                         'destination.fqdn': 'qcwcrsensinaix.com'},
+                        {'raw': 'MTI4LjIzOC4xOTcuMzM=',
+                         'destination.ip': '128.238.197.33'},
                         {'raw': 'bGJ6b3JzZW5zaW5haXguY29t',
                          'destination.fqdn': 'lbzorsensinaix.com'},
                         {'raw': 'c2dqcHJzZW5zaW5haXguY29t',
