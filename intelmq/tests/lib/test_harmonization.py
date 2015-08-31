@@ -157,5 +157,19 @@ class TestHarmonization(unittest.TestCase):
         self.assertFalse(harmonization.IPNetwork.is_valid(b'2001:DB8Z::1/7',
                                                           sanitize=True))
 
+    def test_datetime_from_timestamp(self):
+        """ Test DateTime.from_timestamp method. """
+        self.assertEqual(harmonization.DateTime.from_timestamp(1441008970),
+                         '2015-08-31T10:16:10+00:00')
+        self.assertEqual(harmonization.DateTime.from_timestamp(1441008970,
+                                                               'Europe/'
+                                                               'Vienna'),
+                         '2015-08-31T10:16:10+02:00')
+
+    def test_datetime_from_timestamp_invalid(self):
+        """ Test DateTime.from_timestamp method with invalid inputs. """
+        with self.assertRaises(TypeError):
+            harmonization.DateTime.from_timestamp('1441008970')
+
 if __name__ == "__main__":
     unittest.main()

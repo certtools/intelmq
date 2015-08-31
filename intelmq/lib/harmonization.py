@@ -208,6 +208,16 @@ class DateTime(GenericType):
         return value.decode("utf-8")
 
     @staticmethod
+    def from_timestamp(tstamp, tzone='UTC'):
+        """
+        Returns ISO formated datetime from given timestamp.
+        You can give timezone for given timestamp, UTC by default.
+        """
+        dtime = datetime.datetime.fromtimestamp(tstamp)
+        localized = pytz.timezone(tzone).localize(dtime)
+        return six.text_type(localized.isoformat())
+
+    @staticmethod
     def generate_datetime_now():
         value = datetime.datetime.now(pytz.timezone('UTC'))
         value = value.replace(microsecond=0)
