@@ -1,4 +1,17 @@
 # -*- coding: utf-8 -*-
+"""
+HTTP collector bot
+
+Parameters:
+url: string
+http_header: dictionary
+    default: {}
+verify_cert: boolean
+    default: True
+username, password: string
+http_proxy, https_proxy: string
+
+"""
 from __future__ import unicode_literals
 import sys
 
@@ -12,18 +25,24 @@ class URLCollectorBot(Bot):
 
     def process(self):
         self.logger.info("Downloading report from %s" % self.parameters.url)
-        try:
-            http_header = self.parameters.header
-        except:
-            http_header = None
+
+        http_header = getattr(self.parameters, 'http_header', {})
+        verify_cert = getattr(self.parameters, 'verify_cert', True)
+
+        if hasattr(self.parameters, 'username') and hasattr(self.parameters,
+                                                            'password'):
+            auth = (self.parameters.username, self.parameters.password)
+        else:
+            auth = None
 
         raw_report = fetch_url(self.parameters.url,
                                timeout=60.0,
-                               chunk_size=16384,
                                http_proxy=self.parameters.http_proxy,
                                https_proxy=self.parameters.https_proxy,
                                user_agent=self.parameters.http_user_agent,
                                header=http_header,
+                               verify_cert=verify_cert,
+                               auth=auth,
                                )
         self.logger.info("Report downloaded.")
 
