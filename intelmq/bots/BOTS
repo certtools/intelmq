@@ -270,6 +270,17 @@
                 "url": "http://security-research.dyndns.org/pub/botnet/ponmocup/ponmocup-finder/ponmocup-infected-domains-latest.txt"
             }
         },
+        "Fraunhofer DGA": {
+            "description": "Fraunhofer DGA collector fetches data from Fraunhofers domain generation archive.",
+            "module": "intelmq.bots.collectors.http.collector_http",
+            "parameters": {
+                "feed": "Fraunhofer DGA",
+                "password": "<PASSWORD>",
+                "rate_limit": "10800",
+                "url": "https://dgarchive.caad.fkie.fraunhofer.de/today",
+                "username": "<USER>"
+            }
+        },
         "HpHosts": {
             "description": "HPHost Collector is the bot responsible to get the report from source of information.",
             "module": "intelmq.bots.collectors.http.collector_http",
@@ -459,6 +470,7 @@
                 "overwrite_cc": false,
                 "verify_cert": true
             }
+        },
         "Cymru Whois": {
             "description": "Cymry Whois (IP to ASN) is the bot responsible to add network information to the events (BGP, ASN, AS Name, Country, etc..).",
             "module": "intelmq.bots.experts.cymru_whois.expert",
@@ -726,6 +738,11 @@
         "Dyn": {
             "description": "Dyn Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.dyn.parser",
+            "parameters": {}
+        },
+        "Fraunhofer DGA": {
+            "description": "Fraunhofer DGA Parser is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.fraunhofer.parser_dga",
             "parameters": {}
         },
         "HpHosts": {
