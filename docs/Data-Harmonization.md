@@ -192,6 +192,30 @@ The following mapping is based on eCSIRT Taxonomy.
 |unknown|Other|unknown events|
 |test|Test|This is a value for testing purposes.|
 
+Meaning of source, destination and local values for each classification type:
+
+|Type|Source|Destination|Local|
+|----|------|-----------|-----|
+|spam|*infected device*|targeted server|internal at source|
+|malware||||
+|botnet drone||||
+|ransomware||||
+|malware configuration||||
+|c&c|*connecting device*|sinkholed server||
+|scanner|*scanning device*|scanned device||
+|exploit||||
+|brute-force|*attacker*|target||
+|ids alert||||
+|defacement||||
+|compromised||||
+|backdoor||||
+|ddos|*attacker*|target||
+|dropzone||||
+|phishing||||
+|vulnerable service||||
+|blacklist||||
+|unknown||||
+
 <a name="requirements"></a>
 ## Minimum requirements for events
 
