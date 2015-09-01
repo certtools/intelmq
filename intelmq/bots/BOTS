@@ -425,11 +425,11 @@
                 "url": "http://www.urlvir.com/export-ip-addresses/"
             }
         },
-        "Spamhaus Cert": {
-            "description": "Spamhaus Cert Collector is the bot responsible to get the report from source of information.",
+        "Spamhaus CERT": {
+            "description": "Spamhaus CERT Collector is the bot responsible to get the report from source of information.",
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
-                "feed": "Spamhaus Cert",
+                "feed": "Spamhaus CERT",
                 "rate_limit": "3600",
                 "url": "https://portal.spamhaus.org/cert/api.php?cert=<CERTNAME>&key=<APIKEY>"
             }
@@ -838,8 +838,8 @@
             "module": "intelmq.bots.parsers.urlvir.parser_ips",
             "parameters": {}
         },
-        "Spamhaus Cert": {
-            "description": "Spamhaus Cert Parser is the bot responsible to parse the report and sanitize the information.",
+        "Spamhaus CERT": {
+            "description": "Spamhaus CERT Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.spamhaus.parser_cert",
             "parameters": {}
         },
