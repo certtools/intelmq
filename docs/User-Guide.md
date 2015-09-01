@@ -184,15 +184,15 @@ queued events in memory with bots digesting the messages.
 ## Stop IntelMQ and Backup
 
 * Make sure that your IntelMQ system is completely stopped.
-* Create a backup of your configurations.
+* Create a backup of IntelMQ Home directory, which includes all configurations.
 
 ```
 sudo su -
 
-cp /opt/intelmq/etc/system.conf /opt/intelmq/etc/system.conf.bk
-cp /opt/intelmq/etc/startup.conf /opt/intelmq/etc/startup.conf.bk
-cp /opt/intelmq/etc/runtime.conf /opt/intelmq/etc/runtime.conf.bk
-cp /opt/intelmq/etc/pipeline.conf /opt/intelmq/etc/pipeline.conf.bk
+cp -R /opt/intelmq/etc/system.conf /opt/intelmq-backup/etc/system.conf
+cp -R /opt/intelmq/etc/startup.conf /opt/intelmq-backup/etc/startup.conf
+cp -R /opt/intelmq/etc/runtime.conf /opt/intelmq-backup/etc/runtime.conf
+cp -R /opt/intelmq/etc/pipeline.conf /opt/intelmq-backup/etc/pipeline.conf
 ```
 
 ## Upgrade
@@ -208,10 +208,8 @@ python setup.py install
 * Apply your configurations backup.
 
 ```
-mv /opt/intelmq/etc/system.conf.bk /opt/intelmq/etc/system.conf
-mv /opt/intelmq/etc/startup.conf.bk /opt/intelmq/etc/startup.conf
-mv /opt/intelmq/etc/runtime.conf.bk /opt/intelmq/etc/runtime.conf
-mv /opt/intelmq/etc/pipeline.conf.bk /opt/intelmq/etc/pipeline.conf
+rm -rf /opt/intelmq/*
+cp -R /opt/intelmq-backup/* /opt/intelmq/
 ```
 
 
