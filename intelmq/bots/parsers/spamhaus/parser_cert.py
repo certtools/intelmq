@@ -35,7 +35,7 @@ import json
 __all__ = ['SpamHausCertParserBot']
 
 
-class SpamHausCertParserBot(Bot):
+class SpamhausCERTParserBot(Bot):
 
     def process(self):
         report = self.receive_message()
@@ -87,5 +87,5 @@ class SpamHausCertParserBot(Bot):
         self.acknowledge_message()
 
 if __name__ == "__main__":
-    bot = SpamHausCertParserBot(sys.argv[1])
+    bot = SpamhausCERTParserBot(sys.argv[1])
     bot.start()
