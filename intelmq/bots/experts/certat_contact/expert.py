@@ -24,7 +24,7 @@ from intelmq.lib.bot import Bot
 URL = 'https://contacts.cert.at/cgi-bin/abuse-nationalcert.pl'
 
 
-class CertAtContactExpertBot(Bot):
+class CERTatContactExpertBot(Bot):
 
     def process(self):
         event = self.receive_message()
@@ -64,5 +64,5 @@ class CertAtContactExpertBot(Bot):
 
 
 if __name__ == "__main__":
-    bot = CertAtContactExpertBot(sys.argv[1])
+    bot = CERTatContactExpertBot(sys.argv[1])
     bot.start()

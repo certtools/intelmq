@@ -306,7 +306,7 @@ class TestMessageFactory(unittest.TestCase):
         """ Test Event __hash_,_ 'time.observation should be ignored. """
         event = message.MessageFactory.unserialize('{"__type": "Event"}')
         event = self.add_event_examples(event)
-        self.assertEqual(-6908124890214948902, hash(event))
+        self.assertEqual(-2488641590542048631, hash(event))
 
     def test_event_dict(self):
         """ Test Event to_dict. """

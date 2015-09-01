@@ -19,6 +19,7 @@ import sys
 from intelmq.lib.bot import Bot
 from intelmq.lib.harmonization import DateTime
 from intelmq.lib.message import Report
+from intelmq.lib.exceptions import ConfigurationError
 
 
 class HTTPCollectorBot(Bot):
@@ -48,6 +49,10 @@ class HTTPCollectorBot(Bot):
         resp = requests.get(url=self.parameters.url, auth=self.auth,
                             proxies=self.proxy, headers=self.http_header,
                             verify=self.verify_cert)
+
+        if resp.status_code // 100 != 2:
+            raise ConfigurationError('HTTP response status code was {}.'
+                                     ''.format(resp.status_code))
 
         self.logger.info("Report downloaded.")
 

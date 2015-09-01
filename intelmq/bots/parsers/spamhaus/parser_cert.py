@@ -44,7 +44,7 @@ class SpamHausCertParserBot(Bot):
             self.acknowledge_message()
             return
 
-        raw_report = utils.base64_decode(report.value("raw"))
+        raw_report = utils.base64_decode(report["raw"])
 
         for row in raw_report.splitlines():
             row = row.strip()
@@ -77,10 +77,10 @@ class SpamHausCertParserBot(Bot):
             event.add('protocol.transport', row_splitted[9], sanitize=True)
 
             event.add('time.observation',
-                      report.value('time.observation'), sanitize=True)
+                      report['time.observation'], sanitize=True)
             event.add('classification.type', u'c&c')
-            event.add('feed.name', report.value("feed.name"))
-            event.add('feed.url', report.value("feed.url"))
+            event.add('feed.name', report["feed.name"])
+            event.add('feed.url', report["feed.url"])
             event.add('raw', row, sanitize=True)
 
             self.send_message(event)

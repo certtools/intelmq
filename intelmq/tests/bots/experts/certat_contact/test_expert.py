@@ -8,7 +8,7 @@ import json
 import unittest
 
 import intelmq.lib.test as test
-from intelmq.bots.experts.certat_contact.expert import CertAtContactExpertBot
+from intelmq.bots.experts.certat_contact.expert import CERTatContactExpertBot
 
 
 EXAMPLE_INPUT = {"__type": "Event",
@@ -37,14 +37,14 @@ EXAMPLE_OUTPUT6 = {"__type": "Event",
                    }
 
 
-class TestCertAtContactExpertBot(test.BotTestCase, unittest.TestCase):
+class TestCERTatContactExpertBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for AbusixExpertBot.
     """
 
     @classmethod
     def set_bot(self):
-        self.bot_reference = CertAtContactExpertBot
+        self.bot_reference = CERTatContactExpertBot
         self.sysconfig = {'filter': False,
                           'overwrite_cc': False,
                           'verify_cert': False,
