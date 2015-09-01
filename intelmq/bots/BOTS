@@ -270,6 +270,17 @@
                 "url": "http://security-research.dyndns.org/pub/botnet/ponmocup/ponmocup-finder/ponmocup-infected-domains-latest.txt"
             }
         },
+        "Fraunhofer DGA": {
+            "description": "Fraunhofer DGA collector fetches data from Fraunhofers domain generation archive.",
+            "module": "intelmq.bots.collectors.http.collector_http",
+            "parameters": {
+                "feed": "Fraunhofer DGA",
+                "password": "<PASSWORD>",
+                "rate_limit": "10800",
+                "url": "https://dgarchive.caad.fkie.fraunhofer.de/today",
+                "username": "<USER>"
+            }
+        },
         "HpHosts": {
             "description": "HPHost Collector is the bot responsible to get the report from source of information.",
             "module": "intelmq.bots.collectors.http.collector_http",
@@ -384,7 +395,7 @@
             "parameters": {
                 "feed": "Taichung",
                 "rate_limit": "3600",
-                "url": "https://tc.edu.tw/net/netflow/lkout/recent/30"
+                "url": "https://www.tc.edu.tw/net/netflow/lkout/recent/30"
             }
         },
         "Turris Greylist": {
@@ -414,11 +425,20 @@
                 "url": "http://www.urlvir.com/export-ip-addresses/"
             }
         },
-        "Spamhaus": {
-            "description": "Spamhaus Collector is the bot responsible to get the report from source of information.",
+        "Spamhaus Cert": {
+            "description": "Spamhaus Cert Collector is the bot responsible to get the report from source of information.",
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
-                "feed": "Spamhaus",
+                "feed": "Spamhaus Cert",
+                "rate_limit": "3600",
+                "url": "https://portal.spamhaus.org/cert/api.php?cert=<CERTNAME>&key=<APIKEY>"
+            }
+        },
+        "Spamhaus Drop": {
+            "description": "Spamhaus Drop Collector is the bot responsible to get the report from source of information.",
+            "module": "intelmq.bots.collectors.http.collector_http",
+            "parameters": {
+                "feed": "Spamhaus Drop",
                 "rate_limit": "3600",
                 "url": "http://www.spamhaus.org/drop/drop.lasso"
             }
@@ -449,6 +469,15 @@
                 "redis_cache_host": "127.0.0.1",
                 "redis_cache_port": "6379",
                 "redis_cache_ttl": "86400"
+            }
+        },
+        "CERT.at Contact Database": {
+            "description": "Cert.at Contact Database is the bot responsible to get CERT. Set filter to true if you want to filter out events for cert.at. Set add_cc to true if you want to overwrite an existing CC value.",
+            "module": "intelmq.bots.experts.certat_contact.expert",
+            "parameters": {
+                "filter": false,
+                "overwrite_cc": false,
+                "verify_cert": true
             }
         },
         "Cymru Whois": {
@@ -720,6 +749,11 @@
             "module": "intelmq.bots.parsers.dyn.parser",
             "parameters": {}
         },
+        "Fraunhofer DGA": {
+            "description": "Fraunhofer DGA Parser is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.fraunhofer.parser_dga",
+            "parameters": {}
+        },
         "HpHosts": {
             "description": "HpHosts Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.hphosts.parser",
@@ -804,9 +838,14 @@
             "module": "intelmq.bots.parsers.urlvir.parser_ips",
             "parameters": {}
         },
-        "Spamhaus": {
-            "description": "Spamhaus Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.spamhaus.parser",
+        "Spamhaus Cert": {
+            "description": "Spamhaus Cert Parser is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.spamhaus.parser_cert",
+            "parameters": {}
+        },
+        "Spamhaus Drop": {
+            "description": "Spamhaus Drop Parser is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.spamhaus.parser_drop",
             "parameters": {}
         },
         "VXVault": {

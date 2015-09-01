@@ -5,6 +5,7 @@ import sys
 import time
 
 from intelmq.lib.bot import Bot
+import intelmq.lib.utils as utils
 
 
 class TCPBot(Bot):
@@ -33,7 +34,7 @@ class TCPBot(Bot):
     def send_data(self, data):
         while True:
             try:
-                self.con.send(unicode(data).encode("utf-8"))
+                self.con.send(utils.encode(data))
                 self.con.sendall("")
                 break
             except socket.error, e:

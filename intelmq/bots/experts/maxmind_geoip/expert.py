@@ -37,14 +37,12 @@ class GeoIPExpertBot(Bot):
                               sanitize=True, force=True)
 
                 if info.location.latitude:
-                    event.add(geo_key % "latitude",
-                              unicode(info.location.latitude), sanitize=True,
-                              force=True)
+                    event.add(geo_key % "latitude", info.location.latitude,
+                              sanitize=True, force=True)
 
                 if info.location.longitude:
-                    event.add(geo_key % "longitude",
-                              unicode(info.location.longitude), sanitize=True,
-                              force=True)
+                    event.add(geo_key % "longitude", info.location.longitude,
+                              sanitize=True, force=True)
 
                 if info.city.name:
                     event.add(geo_key % "city", info.city.name,

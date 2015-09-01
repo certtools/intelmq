@@ -46,7 +46,7 @@ class CymruExpertBot(Bot):
             elif ip_version == 6:
                 minimum = MINIMUM_BGP_PREFIX_IPV6
 
-            else:  # Should never happen as IP is already validated
+            else:  # TODO: Should never happen as IP is validated, raise?
                 self.logger.error("Invalid IP version")
                 self.send_message(event)
                 self.acknowledge_message()

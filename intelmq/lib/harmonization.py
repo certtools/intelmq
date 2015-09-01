@@ -1,3 +1,4 @@
+
 # -*- coding: utf-8 -*-
 """
 The following types are implemented with sanitize() and is_valid() functions:
@@ -28,10 +29,12 @@ import dns.resolver
 import pytz
 import six
 
+import intelmq.lib.utils as utils
+
 try:
     from urlparse import urlparse
 except ImportError:
-    from urllib import parse as urlparse
+    from urllib.parse import urlparse
 
 
 __all__ = ['Base64', 'Boolean', 'ClassificationType', 'DateTime', 'FQDN',
@@ -96,7 +99,7 @@ class Base64(GenericType):
 
     @staticmethod
     def sanitize(value):
-        value = base64.b64encode(value)
+        value = utils.base64_encode(value)
         return GenericType().sanitize(value)
 
 
@@ -205,6 +208,16 @@ class DateTime(GenericType):
         except ValueError:
             return None
         return value.decode("utf-8")
+
+    @staticmethod
+    def from_timestamp(tstamp, tzone='UTC'):
+        """
+        Returns ISO formated datetime from given timestamp.
+        You can give timezone for given timestamp, UTC by default.
+        """
+        dtime = datetime.datetime.fromtimestamp(tstamp)
+        localized = pytz.timezone(tzone).localize(dtime)
+        return six.text_type(localized.isoformat())
 
     @staticmethod
     def generate_datetime_now():

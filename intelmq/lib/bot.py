@@ -134,9 +134,9 @@ class Bot(object):
 
                 if self.parameters.error_log_message:
                     self.logger.info("Last Correct Message(event): {!r}."
-                                     "".format(self.last_message))
+                                     "".format(self.last_message)[:500])
                     self.logger.info("Current Message(event): {!r}."
-                                     "".format(self.current_message))
+                                     "".format(self.current_message)[:500])
 
                 self.error_retries_counter += 1
                 if self.parameters.error_procedure == "retry":
@@ -226,7 +226,7 @@ class Bot(object):
         self.logger.debug('Receiving Message.')
         message = self.source_pipeline.receive()
 
-        self.logger.debug('Receive message {!r}.'.format(message))
+        self.logger.debug('Receive message {!r}...'.format(message[:500]))
         if not message:
             self.logger.warning('Empty message received.')
             return None
@@ -291,7 +291,6 @@ class Bot(object):
         self.logger.debug("Loading runtime configuration")
         config = utils.load_configuration(RUNTIME_CONF_FILE)
 
-        self.logger.debug("{}".format(list(config.keys())))
         if self.bot_id in list(config.keys()):
             for option, value in config[self.bot_id].items():
                 setattr(self.parameters, option, value)

@@ -3,6 +3,7 @@
     IntelMQ Exception Class
 '''
 from __future__ import unicode_literals
+import traceback
 
 
 class IntelMQException(Exception):
@@ -34,7 +35,7 @@ class InvalidArgument(IntelMQException):
 class PipelineError(IntelMQException):
 
     def __init__(self, argument):
-        message = "pipeline failed - %s" % repr(argument)
+        message = "pipeline failed - %s" % traceback.format_exc(argument)
         super(PipelineError, self).__init__(message)
 
 

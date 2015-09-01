@@ -8,7 +8,10 @@ from intelmq.lib.bot import Bot
 from intelmq.lib.message import Event
 
 
-class SpamHausParserBot(Bot):
+__all__ = ['SpamHausDropParserBot']
+
+
+class SpamHausDropParserBot(Bot):
 
     def process(self):
         report = self.receive_message()

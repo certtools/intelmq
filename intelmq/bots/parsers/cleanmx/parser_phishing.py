@@ -47,7 +47,7 @@ class CleanMXPhishingParserBot(Bot):
 
         raw_report = utils.base64_decode(report.value("raw"))
 
-        fp = io.BytesIO(raw_report)
+        fp = io.StringIO(raw_report)
         rows = csv.DictReader(fp)
 
         for row in rows:
@@ -59,7 +59,7 @@ class CleanMXPhishingParserBot(Bot):
 
                 key = COLUMNS[key]
 
-                if key is "__IGNORE__" or key is "__TDB__":
+                if key == "__IGNORE__" or key == "__TDB__":
                     continue
 
                 if key == "source.fqdn" and IPAddress.is_valid(value,
