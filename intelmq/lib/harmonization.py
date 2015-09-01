@@ -29,6 +29,8 @@ import dns.resolver
 import pytz
 import six
 
+import intelmq.lib.utils as utils
+
 try:
     from urlparse import urlparse
 except ImportError:
@@ -97,7 +99,7 @@ class Base64(GenericType):
 
     @staticmethod
     def sanitize(value):
-        value = base64.b64encode(value)
+        value = utils.base64_encode(value)
         return GenericType().sanitize(value)
 
 

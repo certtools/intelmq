@@ -8,6 +8,7 @@ import zmq
 
 import intelmq.lib.exceptions as exceptions
 import intelmq.lib.pipeline
+import intelmq.lib.utils as utils
 from intelmq import VAR_RUN_PATH
 
 
@@ -86,6 +87,7 @@ class Redis(Pipeline):
         super(Redis, self).set_queues(queues, queues_type)
 
     def send(self, message):
+        message = utils.encode(message)
         if self.load_balance:
             destination_queue = self.destination_queues[
                 self.load_balance_iterator]
@@ -109,11 +111,11 @@ class Redis(Pipeline):
     def receive(self):
         try:
             if self.pipe.llen(self.internal_queue) > 0:
-                return self.pipe.lindex(self.internal_queue, -1)
-            return self.pipe.brpoplpush(self.source_queue,
-                                        self.internal_queue, 0)
-        except Exception as e:
-            raise exceptions.PipelineError(e)
+                return utils.decode(self.pipe.lindex(self.internal_queue, -1))
+            return utils.decode(self.pipe.brpoplpush(self.source_queue,
+                                                     self.internal_queue, 0))
+        except Exception as exc:
+            raise exceptions.PipelineError(exc)
 
     def acknowledge(self):
         try:
@@ -177,9 +179,9 @@ class Pythonlist(Pipeline):
         """Sends a message to the destination queues"""
         for destination_queue in self.destination_queues:
             if destination_queue in self.state:
-                self.state[destination_queue].append(message)
+                self.state[destination_queue].append(utils.encode(message))
             else:
-                self.state[destination_queue] = [message]
+                self.state[destination_queue] = [utils.encode(message)]
 
     def receive(self):
         """
@@ -188,7 +190,7 @@ class Pythonlist(Pipeline):
         Does not block unlike the other pipelines.
         """
         if len(self.state.get(self.internal_queue, [])) > 0:
-            return self.state[self.internal_queue].pop(0)
+            return utils.decode(self.state[self.internal_queue].pop(0))
 
         first_msg = self.state[self.source_queue].pop(0)
 
@@ -197,7 +199,7 @@ class Pythonlist(Pipeline):
         else:
             self.state[self.internal_queue] = [first_msg]
 
-        return first_msg
+        return utils.decode(first_msg)
 
     def acknowledge(self):
         """Removes a message from the internal queue and returns it"""

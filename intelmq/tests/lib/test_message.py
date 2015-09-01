@@ -8,6 +8,7 @@ but has a valid Harmonization configuration.
 """
 from __future__ import unicode_literals
 
+import six
 import unittest
 
 import intelmq.lib.exceptions as exceptions
@@ -259,7 +260,7 @@ class TestMessageFactory(unittest.TestCase):
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         report = self.add_report_examples(report)
         self.assertEqual(report.serialize(),
-                         unicode(report))
+                         six.text_type(report))
 
     def test_deep_copy_content(self):
         """ Test if depp_copy does not return the same object. """

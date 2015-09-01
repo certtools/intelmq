@@ -11,7 +11,6 @@ from __future__ import unicode_literals
 import io
 import json
 import logging
-import unittest
 
 import intelmq.lib.message as message
 import intelmq.lib.pipeline as pipeline
@@ -98,6 +97,9 @@ class BotTestCase(object):
                 if cls.bot_name.endswith(type_match):
                     cls.bot_type = type_name
                     break
+        if type(cls.default_input_message) is dict:
+            cls.default_input_message = \
+                utils.decode(json.dumps(cls.default_input_message))
 
     def prepare_bot(self):
         """Reconfigures the bot with the changed attributes"""
@@ -134,6 +136,9 @@ class BotTestCase(object):
             with mock.patch('intelmq.lib.utils.log', self.mocked_log):
                 self.bot = self.bot_reference(self.bot_id)
         if self.input_message is not None:
+            if type(self.input_message) is dict:
+                self.input_message = \
+                    utils.decode(json.dumps(self.input_message))
             self.input_queue = [self.input_message]
             self.input_message = None
         else:
@@ -161,13 +166,15 @@ class BotTestCase(object):
 
     def set_input_queue(self, seq):
         """Setter for the input queue of this bot"""
-        self.pipe.state["%s-input" % self.bot_id] = seq
+        self.pipe.state["%s-input" % self.bot_id] = [utils.encode(text) for
+                                                     text in seq]
 
     input_queue = property(get_input_queue, set_input_queue)
 
     def get_output_queue(self):
         """Getter for the input queue of this bot. Use in TestCase scenarios"""
-        return self.pipe.state["%s-output" % self.bot_id]
+        return [utils.decode(text) for text
+                in self.pipe.state["%s-output" % self.bot_id]]
 
     def test_bot_start(self):
         """Tests if we can start a bot and feed data into
