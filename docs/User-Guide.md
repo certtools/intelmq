@@ -189,10 +189,7 @@ queued events in memory with bots digesting the messages.
 ```
 sudo su -
 
-cp -R /opt/intelmq/etc/system.conf /opt/intelmq-backup/etc/system.conf
-cp -R /opt/intelmq/etc/startup.conf /opt/intelmq-backup/etc/startup.conf
-cp -R /opt/intelmq/etc/runtime.conf /opt/intelmq-backup/etc/runtime.conf
-cp -R /opt/intelmq/etc/pipeline.conf /opt/intelmq-backup/etc/pipeline.conf
+cp -R /opt/intelmq /opt/intelmq-backup
 ```
 
 ## Upgrade
