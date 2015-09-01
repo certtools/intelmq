@@ -11,7 +11,7 @@ from intelmq.lib.message import Event
 __all__ = ['SpamHausDropParserBot']
 
 
-class SpamHausDropParserBot(Bot):
+class SpamhausDropParserBot(Bot):
 
     def process(self):
         report = self.receive_message()
@@ -55,5 +55,5 @@ class SpamHausDropParserBot(Bot):
         self.acknowledge_message()
 
 if __name__ == "__main__":
-    bot = SpamHausParserBot(sys.argv[1])
+    bot = SpamhausParserBot(sys.argv[1])
     bot.start()
