@@ -32,7 +32,7 @@ from intelmq.lib.message import Event
 import json
 
 
-__all__ = ['SpamHausCertParserBot']
+__all__ = ['SpamhausCERTParserBot']
 
 
 class SpamhausCERTParserBot(Bot):
