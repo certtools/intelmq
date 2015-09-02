@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import sys
-from cStringIO import StringIO
+from io import StringIO
 
 import unicodecsv
 
@@ -29,7 +29,7 @@ class PhishTankParserBot(Bot):
                    "__IGNORE__",
                    "__IGNORE__",
                    "event_description.target"
-                  ]
+                   ]
 
         for row in unicodecsv.reader(StringIO(raw_report), encoding='utf-8'):
 

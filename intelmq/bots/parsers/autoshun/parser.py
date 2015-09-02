@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import sys
+try:
+    from HTMLParser import HTMLParser
+except ImportError:
+    from html.parser import HTMLParser
 
-import HTMLParser
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
 from intelmq.lib.harmonization import ClassificationType
@@ -29,7 +32,7 @@ class AutoshunParserBot(Bot):
         raw_report = utils.base64_decode(report.value("raw"))
         raw_report_splitted = raw_report.split("</tr>")[2:]
 
-        parser = HTMLParser.HTMLParser()
+        parser = HTMLParser()
 
         for row in raw_report_splitted:
             event = Event()

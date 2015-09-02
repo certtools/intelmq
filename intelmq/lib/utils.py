@@ -18,6 +18,7 @@ import json
 import logging
 import os
 import re
+import six
 
 from intelmq import DEFAULT_LOGGING_PATH
 
@@ -48,20 +49,26 @@ def decode(text, encodings=("utf-8", ), force=False):
         list/tuple of encodings to use, default ('utf-8')
     force : boolean
         Ignore invalid characters, default: False
+
+    Returns
+    -------
+    text : unicode string
+        unicode string is always returned, even when encoding is ascii
+        (Python 3 compat)
     """
-    if type(text) is unicode:
+    if type(text) is six.text_type:
         return text
 
     for encoding in encodings:
         try:
-            return text.decode(encoding)
+            return six.text_type(text.decode(encoding))
         except ValueError:
             pass
 
     if force:
         for encoding in encodings:
             try:
-                return text.decode(encoding, 'ignore')
+                return six.text_type(text.decode(encoding, 'ignore'))
             except ValueError:
                 pass
 

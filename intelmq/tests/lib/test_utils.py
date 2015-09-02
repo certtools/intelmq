@@ -52,21 +52,21 @@ class TestUtils(unittest.TestCase):
 
     def test_decode_ascii(self):
         """ Test ASCII decoding enforcement. """
-        self.assertEqual(b'fobar',
+        self.assertEqual('fobar',
                          utils.decode(b'fo\xe4bar', encodings=('ascii', ),
                                       force=True))
 
     def test_decode_unicode(self):
         """ Test decoding with unicode string. """
-        self.assertEqual(u'foobar', utils.decode(u'foobar'))
+        self.assertEqual('foobar', utils.decode(u'foobar'))
 
     def test_encode_bytes(self):
         """ Test encoding with bytes string. """
-        self.assertEqual(b'foobar', utils.decode(b'foobar'))
+        self.assertEqual('foobar', utils.decode(b'foobar'))
 
     def test_encode_force(self):
         """ Test ASCII encoding enforcement. """
-        self.assertEqual('fobar',
+        self.assertEqual(b'fobar',
                          utils.encode(u'fo\xe4bar', encodings=('ascii', ),
                                       force=True))
 
