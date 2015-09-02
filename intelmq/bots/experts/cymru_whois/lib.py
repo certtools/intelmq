@@ -21,7 +21,7 @@ class Cymru():
         result = Cymru.__ip_query_parse(raw_result)
 
         if "asn" in result:
-            raw_result = Cymru.__asn_query(result['asn'])
+            raw_result = Cymru.__asn_query(result['asn']).decode('utf-8')
             extra_info = Cymru.__asn_query_parse(raw_result)
             result.update(extra_info)
 
