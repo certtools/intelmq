@@ -19,6 +19,7 @@ EXAMPLE_REPORT = {"feed.name": "URLVir",
                          "IyMjIyMjIyMjIyMjIyMjIyMjCjE5Mi4wLjIuMQoxOTIuMC4yLjIK"
                          "MTkyLjAuMi4zCjE5Mi4wLjIuNA==",
                   "__type": "Report",
+                  "time.observation": "2015-01-01T00:00:00+00:00",
                   }
 EXAMPLE_EVENT = {"feed.name": "URLVir",
                  "feed.url": "http://www.urlvir.com/export-ip-addresses/",
@@ -26,6 +27,7 @@ EXAMPLE_EVENT = {"feed.name": "URLVir",
                  "classification.type": "malware",
                  "__type": "Event",
                  "raw": "MTkyLjAuMi4x",
+                 "time.observation": "2015-01-01T00:00:00+00:00",
                  }
 
 
@@ -42,7 +44,7 @@ class TestURLVirIPsParserBot(test.BotTestCase, unittest.TestCase):
     def test_event(self):
         """ Test if correct Event has been produced. """
         self.run_bot()
-        self.assertEventAlmostEqual(0, EXAMPLE_EVENT)
+        self.assertMessageEqual(0, EXAMPLE_EVENT)
 
 
 if __name__ == '__main__':

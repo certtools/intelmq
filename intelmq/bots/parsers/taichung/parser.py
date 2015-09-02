@@ -6,7 +6,6 @@ import sys
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.harmonization import DateTime
 from intelmq.lib.message import Event
 
 CLASSIFICATION = {
@@ -56,14 +55,14 @@ class TaichungCityNetflowParserBot(Bot):
             description = info1.group(2)
             description = utils.decode(description)
             event_type = self.get_type(description)
-            time_observation = DateTime().generate_datetime_now()
             time_source = info2.group(1) + " UTC-8"
 
             event.add("time.source", time_source, sanitize=True)
-            event.add('time.observation', time_observation, sanitize=True)
+            event.add('time.observation', report.value(
+                'time.observation'), sanitize=True)
             event.add("source.ip", info1.group(1), sanitize=True)
             event.add('classification.type', event_type, sanitize=True)
-            event.add('description.text', description, sanitize=True)
+            event.add('event_description.text', description, sanitize=True)
             event.add('feed.name', report.value("feed.name"))
             event.add('feed.url', report.value("feed.url"))
             event.add("raw", row, sanitize=True)

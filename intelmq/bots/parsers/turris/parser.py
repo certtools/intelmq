@@ -7,7 +7,6 @@ import unicodecsv
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.harmonization import DateTime
 from intelmq.lib.message import Event
 
 
@@ -25,7 +24,7 @@ class TurrisGreylistParserBot(Bot):
         columns = [
             "source.ip",
             "__IGNORE__",
-            "description.text",
+            "event_description.text",
             "__IGNORE__"
         ]
 
@@ -45,8 +44,8 @@ class TurrisGreylistParserBot(Bot):
 
                 event.add(key, value, sanitize=True)
 
-            time_observation = DateTime().generate_datetime_now()
-            event.add('time.observation', time_observation, sanitize=True)
+            event.add('time.observation', report.value(
+                'time.observation'), sanitize=True)
             event.add('feed.name', report.value("feed.name"))
             event.add('feed.url', report.value("feed.url"))
             event.add('classification.type', u'scanner')

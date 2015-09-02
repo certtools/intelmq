@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+"""
+See README for database download.
+
+TOOD: IPv6
+"""
 from __future__ import unicode_literals
 import sys
 
@@ -10,14 +15,14 @@ class TorExpertBot(Bot):
     database = list()
 
     def init(self):
-        self.logger.info("Loading TOR exit node IPs")
+        self.logger.info("Loading TOR exit node IPs.")
 
         try:
             with open(self.parameters.database) as fp:
                 for line in fp:
                     line = line.strip()
 
-                    if line[0] == "#" or len(line) == 0:
+                    if len(line) == 0 or line[0] == "#":
                         continue
 
                     ip_list = line.split("[")[1]
@@ -34,12 +39,16 @@ class TorExpertBot(Bot):
     def process(self):
         event = self.receive_message()
 
+        if event is None:
+            self.acknowledge_message()
+            return
+
         keys = ['source.%s', 'destination.%s']
 
         for key in keys:
             if event.contains(key % 'ip'):
                 if event.value(key % 'ip') in TorExpertBot.database:
-                    event.add(key % 'tor_node', u'true')
+                    event.add(key % 'tor_node', True)
 
         self.send_message(event)
         self.acknowledge_message()

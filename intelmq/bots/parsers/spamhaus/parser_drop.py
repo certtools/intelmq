@@ -5,11 +5,13 @@ from datetime import datetime
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.harmonization import DateTime
 from intelmq.lib.message import Event
 
 
-class SpamHausParserBot(Bot):
+__all__ = ['SpamhausDropParserBot']
+
+
+class SpamhausDropParserBot(Bot):
 
     def process(self):
         report = self.receive_message()
@@ -42,8 +44,8 @@ class SpamHausParserBot(Bot):
             if self.event_date:
                 event.add('time.source', self.event_date, sanitize=True)
 
-            time_observation = DateTime().generate_datetime_now()
-            event.add('time.observation', time_observation, sanitize=True)
+            event.add('time.observation', report.value(
+                'time.observation'), sanitize=True)
             event.add('classification.type', u'spam')
             event.add('feed.name', report.value("feed.name"))
             event.add('feed.url', report.value("feed.url"))
@@ -53,5 +55,5 @@ class SpamHausParserBot(Bot):
         self.acknowledge_message()
 
 if __name__ == "__main__":
-    bot = SpamHausParserBot(sys.argv[1])
+    bot = SpamhausParserBot(sys.argv[1])
     bot.start()

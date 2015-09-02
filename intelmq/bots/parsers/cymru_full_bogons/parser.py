@@ -4,7 +4,7 @@ import sys
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.harmonization import DateTime, IPAddress
+from intelmq.lib.harmonization import IPAddress
 from intelmq.lib.message import Event
 
 
@@ -21,21 +21,19 @@ class CymruFullBogonsParserBot(Bot):
 
         for row in raw_report.split('\n'):
 
-            row = row.strip()
-            if row == "" or row[:2] == "//":
+            val = row.strip()
+            if not len(val) or val.startswith('#') or val.startswith('//'):
                 continue
 
             event = Event()
 
-            value = row.split(" ")[1]
-
-            if IPAddress.is_valid(value, sanitize=True):
-                event.add('source.ip', value, sanitize=True)
+            if IPAddress.is_valid(val, sanitize=True):
+                event.add('source.ip', val, sanitize=True)
             else:
-                event.add('source.network', value, sanitize=True)
+                event.add('source.network', val, sanitize=True)
 
-            time_observation = DateTime().generate_datetime_now()
-            event.add('time.observation', time_observation, sanitize=True)
+            event.add('time.observation',
+                      report.value('time.observation'), sanitize=True)
             event.add('classification.type', u'blacklist')
             event.add('feed.name', report.value("feed.name"))
             event.add('feed.url', report.value("feed.url"))

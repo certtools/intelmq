@@ -97,7 +97,7 @@ class Message(dict):
         if sanitize:
             old_value = value
             value = self.__sanitize_value(key, value)
-            if not value:
+            if value is None:
                 raise exceptions.InvalidValue(key, old_value)
 
         if not self.__is_valid_value(key, value):
@@ -105,29 +105,19 @@ class Message(dict):
 
         super(Message, self).__setitem__(key, value)
 
-#    def __getitem__(self, key):  # TODO: Remove, no implications
-#        return self.value(key)
-
     def value(self, key):  # TODO: Remove? Use get instead
-        return super(Message, self).__getitem__(key)
+        return self.__getitem__(key)
 
     def update(self, key, value, sanitize=False):
         if key not in self:
             raise exceptions.KeyNotExists(key)
         self.add(key, value, force=True, sanitize=sanitize)
 
-    def clear(self, key):  # TODO: Remove?
+    def clear(self, key):  # TODO: Remove? Use del instead
         self.__delitem__(key)
-
-#    def __delitem__(self, key):  # TODO: Remove, no implications
-#        if key in self:
-#            super(Message, self).__delitem__(key)
 
     def contains(self, key):
         return key in self
-
-#    def items(self):  # TODO: Remove, no implications
-#        return super(Message, self).items()
 
     def finditems(self, keyword):
         for key, value in super(Message, self).items():
@@ -150,24 +140,18 @@ class Message(dict):
         return self.serialize()
 
     def __str__(self):
-        return self.serialize().encode('utf8')
+        return self.serialize()
 
     def serialize(self):
-        # FIXME: dont know if json take care of encoding issues
-        # FIXME: raw need to be decoded from base64 (may be not here)
         self['__type'] = self.__class__.__name__
-        json_dump = json.dumps(self)
+        json_dump = utils.decode(json.dumps(self))
         del self['__type']
-        try:
-            return unicode(json_dump)
-        except NameError:  # pragma: no cover
-            return json_dump
+        return json_dump
 
     @staticmethod
     def unserialize(message_string):
-        return json.loads(message_string)
-        # FIXME: dont know if json take care of encoding issues
-        # FIXME: raw need to be decoded from base64 (may be not here)
+        message = json.loads(message_string)
+        return message
 
     def __is_valid_key(self, key):
         if key in self.harmonization_config or key == '__type':
@@ -200,9 +184,9 @@ class Event(Message):
             if "time.observation" == key:
                 continue
 
-            event_hash.update(key.encode("utf-8"))
+            event_hash.update(utils.encode(key))
             event_hash.update(b"\xc0")
-            event_hash.update(value.encode("utf-8"))
+            event_hash.update(utils.encode(repr(value)))
             event_hash.update(b"\xc0")
 
         return int(event_hash.hexdigest(), 16)
@@ -227,7 +211,7 @@ class Event(Message):
 
     def to_json(self):
         json_dict = self.to_dict()
-        return json.dumps(json_dict, ensure_ascii=False).encode("utf-8")
+        return utils.encode(json.dumps(json_dict, ensure_ascii=False))
 
 
 class Report(Message):

@@ -6,7 +6,7 @@ import sys
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.harmonization import DateTime, IPAddress
+from intelmq.lib.harmonization import IPAddress
 from intelmq.lib.message import Event
 
 COLUMNS = {
@@ -59,7 +59,7 @@ class CleanMXPhishingParserBot(Bot):
 
                 key = COLUMNS[key]
 
-                if key is "__IGNORE__" or key is "__TDB__":
+                if key == "__IGNORE__" or key == "__TDB__":
                     continue
 
                 if key == "source.fqdn" and IPAddress.is_valid(value,
@@ -71,8 +71,8 @@ class CleanMXPhishingParserBot(Bot):
 
                 event.add(key, value, sanitize=True)
 
-            time_observation = DateTime().generate_datetime_now()
-            event.add('time.observation', time_observation, sanitize=True)
+            event.add('time.observation', report.value(
+                'time.observation'), sanitize=True)
             event.add('feed.name', report.value("feed.name"))
             event.add('feed.url', report.value("feed.url"))
             event.add('classification.type', u'phishing')

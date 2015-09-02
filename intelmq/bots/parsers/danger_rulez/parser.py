@@ -5,7 +5,6 @@ import sys
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.harmonization import DateTime
 from intelmq.lib.message import Event
 
 REGEX_IP = "^[^ \t]+"
@@ -37,13 +36,14 @@ class BruteForceBlockerParserBot(Bot):
             if match:
                 timestamp = match.group(1) + " UTC"
 
-            time_observation = DateTime().generate_datetime_now()
-            event.add('time.observation', time_observation, sanitize=True)
+            event.add('time.observation', report.value(
+                'time.observation'), sanitize=True)
             event.add('time.source', timestamp, sanitize=True)
             event.add('source.ip', ip, sanitize=True)
             event.add('feed.name', report.value("feed.name"))
             event.add('feed.url', report.value("feed.url"))
             event.add('classification.type', u'brute-force')
+            event.add("raw", row, sanitize=True)
 
             self.send_message(event)
         self.acknowledge_message()

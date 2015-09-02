@@ -19,6 +19,12 @@ import logging
 import os
 import re
 
+from intelmq import DEFAULT_LOGGING_PATH
+
+
+__all__ = ['decode', 'encode', 'base64_encode', 'base64_decode',
+           'load_configuration', 'log', 'reverse_readline', 'parse_logline']
+
 # Used loglines format
 LOG_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 LOG_FORMAT_STREAM = '%(name)s: %(message)s'
@@ -32,13 +38,14 @@ LOG_REGEX = (r'^(?P<asctime>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d+) -'
 
 def decode(text, encodings=("utf-8", ), force=False):
     """
-    Decode given string to unicode (default).
+    Decode given string to UTF-8 (default).
 
     Parameters:
     -----------
-    text : string
+    text : bytes string
+        if unicode string is given, same object is returned
     encodings : iterable of strings
-        list/tuple of encodings to use, default ('utf8')
+        list/tuple of encodings to use, default ('utf-8')
     force : boolean
         Ignore invalid characters, default: False
     """
@@ -58,21 +65,25 @@ def decode(text, encodings=("utf-8", ), force=False):
             except ValueError:
                 pass
 
-    raise Exception("Found a problem when decoding.")
+    raise Exception("Could not decode string with given encodings.")
 
 
 def encode(text, encodings=("utf-8", ), force=False):
     """
-    Decode given string from unicode (default).
+    Decode given string from UTF-8 (default).
 
     Parameters:
     -----------
-    text : string
+    text : unicode string
+        if bytes string is given, same object is returned
     encodings : iterable of strings
-        list/tuple of encodings to use, default ('utf8')
+        list/tuple of encodings to use, default ('utf-8')
     force : boolean
         Ignore invalid characters, default: False
     """
+    if type(text) is bytes:
+        return text
+
     for encoding in encodings:
         try:
             return text.encode(encoding)
@@ -82,21 +93,19 @@ def encode(text, encodings=("utf-8", ), force=False):
     if force:
         for encoding in encodings:
             try:
-                return text.decode(encoding, 'ignore')
+                return text.encode(encoding, 'ignore')
             except ValueError:
                 pass
 
-    raise Exception("Found a problem when encoding.")
+    raise Exception("Could not encode string with given encodings.")
 
 
 def base64_decode(value):
-    data = base64.b64decode(value)
-    _data = data.decode('utf-8', 'ignore')
-    return _data.encode('utf-8')
+    return decode(base64.b64decode(encode(value)))
 
 
 def base64_encode(value):
-    return base64.b64encode(value)
+    return decode(base64.b64encode(encode(value)))
 
 
 def load_configuration(configuration_filepath):
@@ -118,17 +127,17 @@ def load_configuration(configuration_filepath):
     return config
 
 
-def log(logs_path, name, loglevel="DEBUG", stream=None):
+def log(name, log_path=DEFAULT_LOGGING_PATH, log_level="DEBUG", stream=None):
     """
     Returns a logger instance logging to file and sys.stderr or other stream.
 
     Parameters:
     -----------
-        logs_path : string
-            Path to log directory
         name : string
             filename for logfile or string preceding lines in stream
-        loglevel : string
+        log_path : string
+            Path to log directory, defaults to DEFAULT_LOGGING_PATH
+        log_level : string
             default is "DEBUG"
         stream : object
             By default (None), stderr will be used, stream objects can be given
@@ -146,10 +155,10 @@ def log(logs_path, name, loglevel="DEBUG", stream=None):
             Default log format for stream handler
     """
     logger = logging.getLogger(name)
-    logger.setLevel(loglevel)
+    logger.setLevel(log_level)
 
-    handler = logging.FileHandler("%s/%s.log" % (logs_path, name))
-    handler.setLevel(loglevel)
+    handler = logging.FileHandler("%s/%s.log" % (log_path, name))
+    handler.setLevel(log_level)
 
     formatter = logging.Formatter(LOG_FORMAT)
     handler.setFormatter(formatter)
@@ -158,7 +167,7 @@ def log(logs_path, name, loglevel="DEBUG", stream=None):
     console_handler = logging.StreamHandler(stream)
     console_handler.setFormatter(console_formatter)
     logger.addHandler(console_handler)
-    console_handler.setLevel(loglevel)
+    console_handler.setLevel(log_level)
 
     logger.addHandler(handler)
     return logger

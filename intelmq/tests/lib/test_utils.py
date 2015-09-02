@@ -23,9 +23,9 @@ LINES = {'spare': ['Lorem', 'ipsum', 'dolor'],
                   r'\A[-0-9]{{10}} [0-9:]{{8}},\d{{3}} - {} - CRITICAL - dolor\Z'],
          }
 SAMPLES = {'normal': [b'Lorem ipsum dolor sit amet',
-                      u'Lorem ipsum dolor sit amet'],
+                      'Lorem ipsum dolor sit amet'],
            'unicode': [b'\xc2\xa9\xc2\xab\xc2\xbb \xc2\xa4\xc2\xbc',
-                       u'©«» ¤¼']}
+                       '©«» ¤¼']}
 
 
 class TestUtils(unittest.TestCase):
@@ -35,7 +35,7 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(SAMPLES['normal'][1],
                          utils.decode(SAMPLES['normal'][0]))
 
-    def test_decode_unicode(self):
+    def test_decode_bytes_unicode(self):
         """Tests if the decode can handle bytes."""
         self.assertEqual(SAMPLES['unicode'][1],
                          utils.decode(SAMPLES['unicode'][0]))
@@ -52,14 +52,22 @@ class TestUtils(unittest.TestCase):
 
     def test_decode_ascii(self):
         """ Test ASCII decoding enforcement. """
-        self.assertEqual('fobar',
+        self.assertEqual(b'fobar',
                          utils.decode(b'fo\xe4bar', encodings=('ascii', ),
                                       force=True))
 
-    def test_encode_ascii(self):
+    def test_decode_unicode(self):
+        """ Test decoding with unicode string. """
+        self.assertEqual(u'foobar', utils.decode(u'foobar'))
+
+    def test_encode_bytes(self):
+        """ Test encoding with bytes string. """
+        self.assertEqual(b'foobar', utils.decode(b'foobar'))
+
+    def test_encode_force(self):
         """ Test ASCII encoding enforcement. """
         self.assertEqual('fobar',
-                         utils.encode(b'fo\xe4bar', encodings=('ascii', ),
+                         utils.encode(u'fo\xe4bar', encodings=('ascii', ),
                                       force=True))
 
     def test_file_logger(self):
@@ -68,7 +76,8 @@ class TestUtils(unittest.TestCase):
         with tempfile.NamedTemporaryFile() as handle:
             filename = handle.name
             name = os.path.split(filename)[-1]
-            logger = utils.log(tempfile.tempdir, name, stream=io.StringIO())
+            logger = utils.log(name, log_path=tempfile.tempdir,
+                               stream=io.StringIO())
 
             logger.info(LINES['spare'][0])
             logger.error(LINES['spare'][1])
@@ -88,7 +97,7 @@ class TestUtils(unittest.TestCase):
         with tempfile.NamedTemporaryFile() as handle:
             filename = handle.name
             name = os.path.split(filename)[-1]
-            logger = utils.log(tempfile.tempdir, name, stream=stream)
+            logger = utils.log(name, log_path=tempfile.tempdir, stream=stream)
 
             logger.info(LINES['spare'][0])
             logger.error(LINES['spare'][1])

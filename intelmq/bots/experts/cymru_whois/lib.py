@@ -31,7 +31,7 @@ class Cymru():
     def __query(query):
         try:
             for query_result in dns.resolver.query(query, rdtype='TXT'):
-                fp = io.StringIO()
+                fp = io.BytesIO()
                 query_result.to_wire(fp)
                 value = fp.getvalue()[1:]  # ignore first character
                 fp.close()
@@ -95,16 +95,16 @@ class Cymru():
                 pass
 
         if items[1]:
-            result['bgp_prefix'] = items[1]
+            result['network'] = items[1]
 
         if items[2]:
-            result['cc'] = items[2]
+            result['geolocation.cc'] = items[2]
 
         if items[3]:
             result['registry'] = items[3]
 
         if items[4]:
-            result['allocated'] = items[4]
+            result['allocated'] = items[4] + 'T00:00:00+00:00'
 
         return result
 

@@ -19,8 +19,7 @@ class AlienVaultOTXParserBot(Bot):
 
     def process(self):
         report = self.receive_message()
-        if (report is None or not report.contains("raw") or
-                len(report.value("raw").strip()) == 0):
+        if (report is None or not report.contains("raw"):
             self.acknowledge_message()
             return
 
@@ -28,10 +27,15 @@ class AlienVaultOTXParserBot(Bot):
         raw_report = utils.base64_decode(report.value("raw"))
 
         for pulse in json.loads(raw_report):
-            comment = "author: " + pulse['author_name'] + "; name: " + \
-                pulse['name'] + "; description: " + pulse['description']
+            additional_information = json.dumps(
+                {'author':pulse['author_name'],
+                'pulse':pulse['name']})
             for indicator in pulse["indicators"]:
                 event = Event()
+                #hashes
+                if indicator["type"] in ['FileHash-SHA256', 'FileHash-SHA1', 'FileHash-MD5']:
+                    event.add('malware.hash', indicator["indicator"], sanitize = True)
+                #    event.add('malware.hash_type', HASHES[indicator["type"]], sanitize = True)
                 # fqdn
                 if indicator["type"] in ['hostname', 'domain']:
                     event.add(
@@ -56,13 +60,22 @@ class AlienVaultOTXParserBot(Bot):
                         'source.url',
                         indicator["indicator"],
                         sanitize=True)
-                #CIDR, FilePath, Mutex, CVE, hashes
+                #CIDR
+                elif indicator["type"] in ['CIDR']:
+                    event.add(
+                        'source.network',
+                        indicator["indicator"],
+                        sanitize=True)
+                elif indicator["type"]
+                #FilePath, Mutex, CVE, hashes - TODO: process these IoCs as well
                 else:
                     continue
 
-                event.add('comment', comment)
+                event.add('comment', pulse['description'])
+                event.add('additional_information', additional_information)
                 event.add('classification.type', 'blacklist', sanitize=True)
                 event.add('time.observation', time_observation, sanitize=True)
+                event.add('time.source', indicator["created"], sanitize=True)
                 event.add('feed.name', report.value("feed.name"))
                 event.add("raw", json.dumps(indicator), sanitize=True)
                 self.send_message(event)
