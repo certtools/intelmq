@@ -5,17 +5,17 @@ import json
 import unittest
 
 import intelmq.lib.test as test
-from intelmq.bots.parsers.spamhaus.parser_drop import SpamHausDropParserBot
+from intelmq.bots.parsers.spamhaus.parser_drop import SpamhausDropParserBot
 
 
-class TestSpamHausDropParserBot(test.BotTestCase, unittest.TestCase):
+class TestSpamhausDropParserBot(test.BotTestCase, unittest.TestCase):
     """
-    A TestCase for SpamHausDropParserBot.
+    A TestCase for SpamhausDropParserBot.
     """
 
     @classmethod
     def set_bot(self):
-        self.bot_reference = SpamHausDropParserBot
+        self.bot_reference = SpamhausDropParserBot
         self.default_input_message = json.dumps({'__type': 'Report'})
 
 if __name__ == '__main__':

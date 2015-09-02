@@ -5,7 +5,7 @@ import json
 import unittest
 
 import intelmq.lib.test as test
-from intelmq.bots.parsers.spamhaus.parser_cert import SpamHausCertParserBot
+from intelmq.bots.parsers.spamhaus.parser_cert import SpamhausCERTParserBot
 
 
 EXAMPLE_REPORT = {"feed.url": "https://portal.spamhaus.org/cert/api.php?cert="
@@ -65,14 +65,14 @@ EXAMPLE_EVENTS_PARTS = [{'raw': 'MTA5LjEyNi42NC4yLEFTMTI2MzUsQVQsMTQ0MTAwODk3M'
                          }]
 
 
-class TestSpamHausCertParserBot(test.BotTestCase, unittest.TestCase):
+class TestSpamhausCERTParserBot(test.BotTestCase, unittest.TestCase):
     """
-    A TestCase for SpamHausCertParserBot.
+    A TestCase for SpamhausCERTParserBot.
     """
 
     @classmethod
     def set_bot(cls):
-        cls.bot_reference = SpamHausCertParserBot
+        cls.bot_reference = SpamhausCERTParserBot
         cls.default_input_message = json.dumps(EXAMPLE_REPORT)
 
     def test_events(self):
