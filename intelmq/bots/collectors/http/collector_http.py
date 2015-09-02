@@ -19,7 +19,6 @@ import sys
 from intelmq.lib.bot import Bot
 from intelmq.lib.harmonization import DateTime
 from intelmq.lib.message import Report
-from intelmq.lib.exceptions import ConfigurationError
 
 
 class HTTPCollectorBot(Bot):
@@ -51,8 +50,8 @@ class HTTPCollectorBot(Bot):
                             verify=self.verify_cert)
 
         if resp.status_code // 100 != 2:
-            raise ConfigurationError('HTTP response status code was {}.'
-                                     ''.format(resp.status_code))
+            raise ValueError('HTTP response status code was {}.'
+                             ''.format(resp.status_code))
 
         self.logger.info("Report downloaded.")
 
