@@ -17,6 +17,11 @@ class RestAPI(Bot):
 
     def process(self):
         event = self.receive_message()
+
+        if event is None:
+            self.acknowledge_message()
+            return
+
         try:
             r = self.session.post(self.parameters.host, event.to_json())
             r.raise_for_status()

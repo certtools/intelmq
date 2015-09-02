@@ -22,6 +22,10 @@ class FilterBot(Bot):
     def process(self):
         event = self.receive_message()
 
+        if event is None:
+            self.acknowledge_message()
+            return
+
         if self.parameters.filter_action == "drop":
             if (event.contains(self.parameters.filter_key) and
                     event.value(self.parameters.filter_key) ==
