@@ -23,9 +23,6 @@ class AlienVaultOTXParserBot(Bot):
             self.acknowledge_message()
             return
 
-        time_observation = DateTime().generate_datetime_now()
-        raw_report = utils.base64_decode(report.value("raw"))
-
         for pulse in json.loads(raw_report):
             additional_information = json.dumps(
                 {'author':pulse['author_name'],
@@ -74,7 +71,8 @@ class AlienVaultOTXParserBot(Bot):
                 event.add('comment', pulse['description'])
                 event.add('additional_information', additional_information)
                 event.add('classification.type', 'blacklist', sanitize=True)
-                event.add('time.observation', time_observation, sanitize=True)
+                event.add('time.observation', report.value(
+                    'time.observation'), sanitize=True)
                 event.add('time.source', indicator["created"], sanitize=True)
                 event.add('feed.name', report.value("feed.name"))
                 event.add("raw", json.dumps(indicator), sanitize=True)
