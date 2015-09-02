@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+"""
+; Events are gathered based on user subscriptions in AlienVault OTX
+; The data structure is described in detail here:
+; https://github.com/AlienVault-Labs/OTX-Python-SDK/blob/master/howto_use_python_otx_api.ipynb
+"""
 from __future__ import unicode_literals
 import sys
 import json
@@ -23,15 +28,23 @@ class AlienVaultOTXParserBot(Bot):
             self.acknowledge_message()
             return
 
+        raw_report = utils.base64_decode(report.value("raw"))
+
         for pulse in json.loads(raw_report):
-            additional_information = json.dumps(
-                {'author':pulse['author_name'],
-                'pulse':pulse['name']})
+            additional = json.dumps(
+                {'author': pulse['author_name'],
+                 'pulse': pulse['name']})
             for indicator in pulse["indicators"]:
                 event = Event()
-                #hashes
-                if indicator["type"] in ['FileHash-SHA256', 'FileHash-SHA1', 'FileHash-MD5']:
-                    event.add('malware.hash', indicator["indicator"], sanitize = True)
+                # hashes
+                if indicator["type"] in [
+                        'FileHash-SHA256',
+                        'FileHash-SHA1',
+                        'FileHash-MD5']:
+                    event.add(
+                        'malware.hash',
+                        indicator["indicator"],
+                        sanitize=True)
                 #    event.add('malware.hash_type', HASHES[indicator["type"]], sanitize = True)
                 # fqdn
                 if indicator["type"] in ['hostname', 'domain']:
@@ -48,7 +61,7 @@ class AlienVaultOTXParserBot(Bot):
                 # emails
                 elif indicator["type"] == 'email':
                     event.add(
-                        'source.email_address',
+                        'source.account',
                         indicator["indicator"],
                         sanitize=True)
                 # URLs
@@ -57,22 +70,27 @@ class AlienVaultOTXParserBot(Bot):
                         'source.url',
                         indicator["indicator"],
                         sanitize=True)
-                #CIDR
+                # CIDR
                 elif indicator["type"] in ['CIDR']:
                     event.add(
                         'source.network',
                         indicator["indicator"],
                         sanitize=True)
-                #FilePath, Mutex, CVE, hashes - TODO: process these IoCs as well
+                # FilePath, Mutex, CVE, hashes - TODO: process these IoCs as
+                # well
                 else:
                     continue
 
                 event.add('comment', pulse['description'])
-                event.add('additional_information', additional_information)
+                #event.add('additional', additional)
                 event.add('classification.type', 'blacklist', sanitize=True)
                 event.add('time.observation', report.value(
                     'time.observation'), sanitize=True)
-                event.add('time.source', indicator["created"], sanitize=True)
+                event.add(
+                    'time.source',
+                    indicator["created"][
+                        :-4] + "+00:00",
+                    sanitize=True)
                 event.add('feed.name', report.value("feed.name"))
                 event.add("raw", json.dumps(indicator), sanitize=True)
                 self.send_message(event)
