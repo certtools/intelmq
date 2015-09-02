@@ -19,7 +19,7 @@ class AlienVaultOTXParserBot(Bot):
 
     def process(self):
         report = self.receive_message()
-        if (report is None or not report.contains("raw"):
+        if (report is None or not report.contains("raw")):
             self.acknowledge_message()
             return
 
@@ -63,7 +63,6 @@ class AlienVaultOTXParserBot(Bot):
                         'source.network',
                         indicator["indicator"],
                         sanitize=True)
-                elif indicator["type"]
                 #FilePath, Mutex, CVE, hashes - TODO: process these IoCs as well
                 else:
                     continue
