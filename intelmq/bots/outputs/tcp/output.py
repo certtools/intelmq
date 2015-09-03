@@ -12,6 +12,11 @@ class TCPBot(Bot):
 
     def process(self):
         event = self.receive_message()
+
+        if event is None:
+            self.acknowledge_message()
+            return
+
         data = event.to_json()
         self.send_data(data)
         self.acknowledge_message()
@@ -24,8 +29,8 @@ class TCPBot(Bot):
             try:
                 self.con.connect(address)
                 break
-            except socket.error, e:
-                self.logger.error(e.args[1] + ". Retrying in 10 seconds.")
+            except socket.error as exc:
+                self.logger.error(exc.args[1] + ". Retrying in 10 seconds.")
                 time.sleep(10)
 
         self.logger.info("Connected successfully to {!s}: {}"
@@ -37,8 +42,8 @@ class TCPBot(Bot):
                 self.con.send(utils.encode(data))
                 self.con.sendall("")
                 break
-            except socket.error, e:
-                self.logger.error(e.args[1] + ". Reconnecting..")
+            except socket.error as exc:
+                self.logger.error(exc.args[1] + ". Reconnecting..")
                 self.con.close()
                 self.connect()
             except AttributeError:

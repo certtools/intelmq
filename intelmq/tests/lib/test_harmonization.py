@@ -49,7 +49,6 @@ class TestHarmonization(unittest.TestCase):
 
     def test_integer_valid_other(self):
         """ Test Integer.is_valid with invalid values. """
-        self.assertFalse(harmonization.Integer.is_valid(-4532L))
         self.assertFalse(harmonization.Integer.is_valid('1337'))
         self.assertFalse(harmonization.Integer.is_valid(True))
 
@@ -79,7 +78,6 @@ class TestHarmonization(unittest.TestCase):
 
     def test_float_valid_other(self):
         """ Test Float.is_valid with invalid values. """
-        self.assertFalse(harmonization.Float.is_valid(-4532L))
         self.assertFalse(harmonization.Float.is_valid('1337.234'))
         self.assertFalse(harmonization.Float.is_valid(True))
 

@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import sys
-import urlparse
+try:
+    from urlparse import urlparse
+except ImportError:
+    from urllib.parse import urlparse
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
@@ -28,7 +31,7 @@ class VXVaultParserBot(Bot):
             if len(row) == 0 or not row.startswith('http'):
                 continue
 
-            url_object = urlparse.urlparse(row)
+            url_object = urlparse(row)
 
             if not url_object:
                 continue

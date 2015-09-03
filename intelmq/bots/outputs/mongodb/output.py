@@ -16,6 +16,11 @@ class MongoDBBot(Bot):
 
     def process(self):
         event = self.receive_message()
+
+        if event is None:
+            self.acknowledge_message()
+            return
+
         self.collection.insert(event.to_dict())
         self.acknowledge_message()
 

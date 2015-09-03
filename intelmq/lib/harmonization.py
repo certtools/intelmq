@@ -80,6 +80,11 @@ class GenericType(object):
 
 
 class Base64(GenericType):
+    """
+    Base64 type. Always gives unicode strings.
+
+    Sanitation encodes to base64 and accepts binary and unicode strings.
+    """
 
     @staticmethod
     def is_valid(value, sanitize=False):
@@ -88,7 +93,7 @@ class Base64(GenericType):
             value = Base64().sanitize(value)
 
         try:
-            base64.b64decode(value)
+            utils.base64_decode(value)
         except TypeError:
             return False
 
@@ -100,7 +105,7 @@ class Base64(GenericType):
     @staticmethod
     def sanitize(value):
         value = utils.base64_encode(value)
-        return GenericType().sanitize(value)
+        return value
 
 
 class Boolean(GenericType):
@@ -207,7 +212,7 @@ class DateTime(GenericType):
             value = value.isoformat()
         except ValueError:
             return None
-        return value.decode("utf-8")
+        return utils.decode(value)
 
     @staticmethod
     def from_timestamp(tstamp, tzone='UTC'):
@@ -224,7 +229,8 @@ class DateTime(GenericType):
         value = datetime.datetime.now(pytz.timezone('UTC'))
         value = value.replace(microsecond=0)
         value = value.isoformat()
-        return value.decode("utf-8")
+        # Is byte string in 2 and unicode string in 3, make unicode string
+        return utils.decode(value)
 
 
 class Float(GenericType):
@@ -441,7 +447,7 @@ class String(GenericType):
         if not GenericType().is_valid(value):
             return False
 
-        if type(value) is not unicode:
+        if type(value) is not six.text_type:
             return False
 
         if len(value) == 0:

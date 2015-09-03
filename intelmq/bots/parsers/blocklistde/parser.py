@@ -2,7 +2,10 @@
 from __future__ import unicode_literals
 import posixpath
 import sys
-import urlparse
+try:
+    from urlparse import urlparse
+except ImportError:
+    from urllib.parse import urlparse
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
@@ -82,7 +85,7 @@ class BlockListDEParserBot(Bot):
         raw_report = raw_report.strip()
 
         url = report.value('feed.url')
-        path = urlparse.urlparse(url).path
+        path = urlparse(url).path
         filename = posixpath.basename(path)
 
         classification_type = 'blacklist'

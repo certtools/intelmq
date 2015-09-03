@@ -211,7 +211,7 @@ class Event(Message):
 
     def to_json(self):
         json_dict = self.to_dict()
-        return utils.encode(json.dumps(json_dict, ensure_ascii=False))
+        return utils.decode(json.dumps(json_dict, ensure_ascii=False))
 
 
 class Report(Message):

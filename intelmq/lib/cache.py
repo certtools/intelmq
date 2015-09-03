@@ -11,6 +11,9 @@ from __future__ import unicode_literals
 import redis
 
 
+import intelmq.lib.utils as utils
+
+
 class Cache():
 
     def __init__(self, host, port, db, ttl):
@@ -25,9 +28,12 @@ class Cache():
         return self.redis.exists(key)
 
     def get(self, key):
-        return self.redis.get(key)
+        retval = self.redis.get(key)
+        if isinstance(retval, basestring):
+            return utils.decode(retval)
+        return retval
 
     def set(self, key, value):
         # backward compatibility (Redis v2.2)
-        self.redis.setnx(key, value)
+        self.redis.setnx(key, utils.encode(value))
         self.redis.expire(key, self.ttl)

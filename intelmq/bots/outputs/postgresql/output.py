@@ -37,6 +37,7 @@ class PostgreSQLBot(Bot):
 
     def process(self):
         event = self.receive_message()
+
         if not event:
             self.acknowledge_message()
             return

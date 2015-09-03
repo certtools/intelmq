@@ -46,10 +46,9 @@ class CymruExpertBot(Bot):
             elif ip_version == 6:
                 minimum = MINIMUM_BGP_PREFIX_IPV6
 
-            else:  # TODO: Should never happen as IP is validated, raise?
-                self.logger.error("Invalid IP version")
-                self.send_message(event)
-                self.acknowledge_message()
+            else:
+                raise ValueError('Unexpected IP version '
+                                 '{!r}.'.format(ip_version))
 
             cache_key = bin(ip_integer)[2: minimum + 2]
             result_json = self.cache.get(cache_key)

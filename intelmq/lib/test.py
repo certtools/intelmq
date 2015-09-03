@@ -209,19 +209,19 @@ class BotTestCase(object):
     def test_log_not_error(self):
         """ Test if bot does not log errors. """
         self.run_bot()
-        self.assertNotRegexpMatches(self.loglines_buffer, "ERROR")
+        self.assertNotRegexpMatchesLog("ERROR")
 
     def test_log_not_critical(self):
         """ Test if bot does not log critical errors. """
         self.run_bot()
-        self.assertNotRegexpMatches(self.loglines_buffer, "CRITICAL")
+        self.assertNotRegexpMatchesLog("CRITICAL")
 
     def test_pipe_names(self):
         """ Test if all pipes are created with correct names. """
         self.run_bot()
         pipenames = ["{}-input", "{}-input-internal", "{}-output"]
-        self.assertListEqual([x.format(self.bot_id) for x in pipenames],
-                             list(self.pipe.state.keys()))
+        self.assertSetEqual({x.format(self.bot_id) for x in pipenames},
+                            set(self.pipe.state.keys()))
 
     def test_empty_message(self):
         """
@@ -236,7 +236,7 @@ class BotTestCase(object):
         self.input_message = ''
         self.run_bot()
         self.assertRegexpMatchesLog("WARNING - Empty message received.")
-        self.assertNotRegexpMatches(self.loglines_buffer, "ERROR")
+        self.assertNotRegexpMatchesLog("ERROR")
 
     def test_bot_name(self):
         """
@@ -309,13 +309,19 @@ class BotTestCase(object):
         """Asserts that pattern matches against log. """
 
         self.assertIsNotNone(self.loglines_buffer)
-        self.assertRegexpMatches(self.loglines_buffer, pattern)
+        try:
+            self.assertRegexpMatches(self.loglines_buffer, pattern)
+        except AttributeError:
+            self.assertRegex(self.loglines_buffer, pattern)
 
     def assertNotRegexpMatchesLog(self, pattern):
         """Asserts that pattern doesn't match against log."""
 
         self.assertIsNotNone(self.loglines_buffer)
-        self.assertNotRegexpMatches(self.loglines_buffer, pattern)
+        try:
+            self.assertNotRegexpMatches(self.loglines_buffer, pattern)
+        except AttributeError:
+            self.assertNotRegex(self.loglines_buffer, pattern)
 
     def assertMessageEqual(self, queue_pos, expected_message):
         """
