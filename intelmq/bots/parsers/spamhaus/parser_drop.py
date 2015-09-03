@@ -55,5 +55,5 @@ class SpamhausDropParserBot(Bot):
         self.acknowledge_message()
 
 if __name__ == "__main__":
-    bot = SpamhausParserBot(sys.argv[1])
+    bot = SpamhausDropParserBot(sys.argv[1])
     bot.start()
