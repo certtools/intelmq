@@ -14,7 +14,7 @@ if os.path.isdir("/opt/intelmq"):
           "/opt/intelmq directory. If you continue the directory will be"
           " overwritten.")
     answer = input("Do you want to proceed? [y/N] ")
-    if answer != "Y" and answer != "y":
+    if answer.lower().strip() != "y":
         sys.exit(-1)
 
 dirs = ['/opt/intelmq',

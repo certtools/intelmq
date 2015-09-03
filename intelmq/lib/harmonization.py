@@ -80,6 +80,11 @@ class GenericType(object):
 
 
 class Base64(GenericType):
+    """
+    Base64 type. Always gives unicode strings.
+
+    Sanitation encodes to base64 and accepts binary and unicode strings.
+    """
 
     @staticmethod
     def is_valid(value, sanitize=False):
@@ -88,7 +93,7 @@ class Base64(GenericType):
             value = Base64().sanitize(value)
 
         try:
-            base64.b64decode(value)
+            utils.base64_decode(value)
         except TypeError:
             return False
 
@@ -100,7 +105,7 @@ class Base64(GenericType):
     @staticmethod
     def sanitize(value):
         value = utils.base64_encode(value)
-        return GenericType().sanitize(value)
+        return value
 
 
 class Boolean(GenericType):

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 TODO: IPv6
+TODO: Known bug: https://github.com/hadiasghari/pyasn/issues/14
 """
 from __future__ import unicode_literals
 import sys

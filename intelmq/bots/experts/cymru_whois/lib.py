@@ -8,6 +8,7 @@ import io
 import dns.resolver
 
 from intelmq.lib.harmonization import IPAddress
+import intelmq.lib.utils as utils
 
 IP_QUERY = "%s.origin%s.asn.cymru.com"
 ASN_QUERY = "AS%s.asn.cymru.com"
@@ -21,7 +22,7 @@ class Cymru():
         result = Cymru.__ip_query_parse(raw_result)
 
         if "asn" in result:
-            raw_result = Cymru.__asn_query(result['asn']).decode('utf-8')
+            raw_result = Cymru.__asn_query(result['asn'])
             extra_info = Cymru.__asn_query_parse(raw_result)
             result.update(extra_info)
 
@@ -35,7 +36,7 @@ class Cymru():
                 query_result.to_wire(fp)
                 value = fp.getvalue()[1:]  # ignore first character
                 fp.close()
-                return value
+                return utils.decode(value)
 
         except dns.exception.DNSException:
             return None

@@ -36,6 +36,9 @@ class DragonResearchGroupSSHParserBot(Bot):
                 if key == "time.source":
                     value += "T00:00:00+00:00"
 
+                if value == 'NA':
+                    continue
+
                 event.add(key, value, sanitize=True)
 
             event.add('time.observation', report.value(

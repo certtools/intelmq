@@ -306,10 +306,13 @@ class TestMessageFactory(unittest.TestCase):
         self.assertIsNot(report.copy(), report)
 
     def test_event_hash(self):
-        """ Test Event __hash_,_ 'time.observation should be ignored. """
+        """ Test Event __hash__ 'time.observation should be ignored. """
         event = message.MessageFactory.unserialize('{"__type": "Event"}')
-        event = self.add_event_examples(event)
-        self.assertEqual(-2488641590542048631, hash(event))
+        event1 = self.add_event_examples(event)
+        event2 = event1.deep_copy()
+        event2.add('time.observation', u'2015-12-12T13:37:50+01:00',
+                   force=True, sanitize=True)
+        self.assertEqual(hash(event1), hash(event2))
 
     def test_event_dict(self):
         """ Test Event to_dict. """

@@ -42,7 +42,8 @@ class SpamhausDropParserBot(Bot):
 
             event.add('source.network', network, sanitize=True)
             if self.event_date:
-                event.add('time.source', self.event_date, sanitize=True)
+                event.add('time.source', self.event_date.isoformat(),
+                          sanitize=True)
 
             event.add('time.observation', report.value(
                 'time.observation'), sanitize=True)
