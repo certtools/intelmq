@@ -19,13 +19,13 @@ EXAMPLE_OUTPUT = {"__type": "Event",
                   "destination.ip": "192.0.43.8",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   }
-EXAMPLE_INPUT6 = {"__type": "Event",  # example.com
-                  "source.ip": "2606:2800:220:1:248:1893:25c8:1946",
+EXAMPLE_INPUT6 = {"__type": "Event",
+                  "source.ip": "2001:62a:4:100:80::8",  # nic.at
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   }
 EXAMPLE_OUTPUT6 = {"__type": "Event",
-                   "source.ip": "2001:500:88:200::7",
-                   "source.abuse_contact": "abuse@edgecast.com",
+                   "source.ip": "2001:62a:4:100:80::8",
+                   "source.abuse_contact": "security.zid@univie.ac.at",
                    "time.observation": "2015-01-01T00:00:00+00:00",
                    }
 
@@ -45,7 +45,6 @@ class TestRIPENCCExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_OUTPUT)
 
-    @unittest.expectedFailure
     def test_ipv6_lookup(self):
         self.input_message = json.dumps(EXAMPLE_INPUT6)
         self.run_bot()

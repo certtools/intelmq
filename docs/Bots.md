@@ -14,6 +14,6 @@ Experts
 | filter | y | - | y | - | drops event | not tested |
 | maxmind-geoip | ? | local db | n | - | ip to geolocation ? | not stable |
 | reverse-dns | n | dns | y | 8 | ip to domain | ipv6 implementation missing |
-| ripencc | n | ? | y | 9 | ip to abuse contact |
+| ripencc-abuse-contact | y | ? | y | 9 | ip to abuse contact |
 | taxonomy | - | - | y | - | classification type to taxonomy |
 | tor-nodes | n | local db | y | - | if ip is tor node |

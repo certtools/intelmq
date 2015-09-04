@@ -7,7 +7,6 @@ TODO:
 Load RIPE networks prefixes into memory.
 Compare each IP with networks prefixes loaded.
 If ip matchs, query RIPE
-IPv6
 '''
 from __future__ import unicode_literals
 import sys
