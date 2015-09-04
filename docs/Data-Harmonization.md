@@ -12,6 +12,8 @@
 
 ## Overview
 
+All messages (reports and events) are Python/JSON dictionaries. The key names and according types are defined by the so called *harmonization*.
+
 The purpose of this document is to list and clearly define known **fields** in Abusehelper as well as Intelmq or similar systems. A field is a ```key=value``` pair. For a clear and unique definition of a field, we must define the **key** (field-name) as well as the possible **values**. A field belongs to an **event**. An event is basically a  structured log record in the form ```key=value, key=value, key=value, …```. In the [List of known fields](#fields), each field is grouped by a **section**. We describe these sections briefly below.
 Every event **MUST** contain a timestamp field.
 
@@ -21,53 +23,6 @@ Every event **MUST** contain a timestamp field.
 ## Rules for keys
 
 The keys can be grouped together in sub-fields, e.g. `source.ip` or `source.geolocation.latitude`. Thus, keys must match `[a-z_.]`.
-
-## EBNF
-To grasp the concept of fields, events, keys, values, etc. the following [EBNF](https://en.wikipedia.org/wiki/Extended_Backus%E2%80%93Naur_Form) description might help. _Do not take this as a literal instruction for implementations_. The formatting of events and fields (and how fields are separated from each other) might vary depending on the encapsulating format (JSON, CSV , etc.) . This EBNF description is here to illustrate how these concepts work together (and are not complete):
-
-
-```
-Events   ::= Event
-           | Events '\n' Event
-           
-Event    ::= Field
-           | Event ', ' Field
-
-          
-Field    ::= Key '=' Value
-
-Value    ::= StringLiteral
-           | Number
-           
-Key      ::= [a-z0-9_-]+
-Number   ::= [0-9]+
-StringLiteral
-         ::= '"' [^"]* '"'
-           | "'" [^']* "'"
-        
-```
-
-### Events
-![Events EBNF](https://raw.githubusercontent.com/certtools/intelmq/master/docs/images/Events.png)
-
-### Event
-![Event EBNF](https://raw.githubusercontent.com/certtools/intelmq/master/docs/images/Event.png)
-
-### Field
-![Field EBNF](https://raw.githubusercontent.com/certtools/intelmq/master/docs/images/Field.png)
-
-### Key
-![Key EBNF](https://raw.githubusercontent.com/certtools/intelmq/master/docs/images/Key.png)
-
-### Value
-![Value EBNF](https://raw.githubusercontent.com/certtools/intelmq/master/docs/images/Value.png)
-
-### String Literal
-![String Literal EBNF](https://raw.githubusercontent.com/certtools/intelmq/master/docs/images/StringLiteral.png)
-
-### Number
-![Number EBNF](https://raw.githubusercontent.com/certtools/intelmq/master/docs/images/Number.png)
-
 
 
 <a name="sections"></a>
@@ -194,27 +149,29 @@ The following mapping is based on eCSIRT Taxonomy.
 
 Meaning of source, destination and local values for each classification type:
 
-|Type|Source|Destination|Local|
+|Type|Source|Destination|Local|Possible subtypes|
 |----|------|-----------|-----|
 |spam|*infected device*|targeted server|internal at source|
-|malware||||
-|botnet drone||||
-|ransomware||||
-|malware configuration||||
+|malware|*infected device*|||
+|botnet drone|*infected device*|||
+|ransomware|*infected device*|||
+|malware configuration|*infected device*|||
 |c&c|*connecting device*|sinkholed server||
 |scanner|*scanning device*|scanned device||
-|exploit||||
+|exploit|*hosting server*|||
 |brute-force|*attacker*|target||
-|ids alert||||
-|defacement||||
-|compromised||||
-|backdoor||||
+|ids alert|*triggering device*|||
+|defacement|*defaced website*|||
+|compromised|*server*|||
+|backdoor|*backdoored device*|||
 |ddos|*attacker*|target||
-|dropzone||||
-|phishing||||
-|vulnerable service||||
-|blacklist||||
+|dropzone|*server hosting stolen data*|||
+|phishing|*phishing website*|||
+|vulnerable service|*vulnerable device*|||
+|blacklist|*blacklisted device*|||
 |unknown||||
+
+Field in italics is the interesting one for CERTs
 
 <a name="requirements"></a>
 ## Minimum requirements for events
