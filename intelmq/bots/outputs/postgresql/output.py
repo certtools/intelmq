@@ -30,6 +30,7 @@ class PostgreSQLBot(Bot):
                                         connect_timeout=connect_timeout,
                                         )
             self.cur = self.con.cursor()
+            self.autocommit = getattr(self.parameters, 'autocommit', True)
         except:
             self.logger.exception('Failed to connect to database')
             self.stop()
