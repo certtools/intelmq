@@ -1,4 +1,11 @@
 # -*- coding: utf-8 -*-
+"""
+Parsers simple newline separated list of IPs.
+
+Docs:
+ - https://feodotracker.abuse.ch/blocklist/
+ - https://palevotracker.abuse.ch/blocklists.php
+"""
 from __future__ import unicode_literals
 import sys
 

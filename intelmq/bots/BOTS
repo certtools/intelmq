@@ -1,7 +1,7 @@
 {
     "Collector": {
         "Abuse.ch Feodo Tracker Domains": {
-            "description": "Abuse.ch Feodo Tracker Domains is the bot responsible to get the report from source of information.",
+            "description": "The Feodo Tracker Feodo Domain Blocklist contains domain names (FQDN) used as C&C communication channel by the Feodo Trojan. These domains names are usually registered and operated by cybercriminals for the exclusive purpose of hosting a Feodo botnet controller. Hence you should expect no legit traffic to those domains. I highly recommend you to block/drop any traffic towards any Feodo C&C domain by using the Feodo Domain Blocklist. Please consider that domain names are usually only used by version B of the Feodo Trojan. C&C communication channels used by version A, version C and version D are not covered by this blocklist.",
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Abuse.ch",
@@ -10,7 +10,7 @@
             }
         },
         "Abuse.ch Feodo Tracker IPs": {
-            "description": "Abuse.ch Feodo Tracker IPs is the bot responsible to get the report from source of information.",
+            "description": "The Feodo Tracker Feodo IP Blocklist contains IP addresses (IPv4) used as C&C communication channel by the Feodo Trojan. This lists contains two types of IP address: Feodo C&C servers used by version A, version C and version D of the Feodo Trojan (these IP addresses are usually compromised servers running an nginx daemon on port 8080 TCP or 7779 TCP that is acting as proxy, forwarding all traffic to a tier 2 proxy node) and Feodo C&C servers used by version B which are usually used for the exclusive purpose of hosting a Feodo C&C server. Attention: Since Feodo C&C servers associated with version A, version C and version D are usually hosted on compromised servers, its likely that you also block/drop legit traffic e.g. towards websites hosted on a certain IP address acting as Feodo C&C for version A, version C and version D. If you only want to block/drop traffic to Feodo C&C servers hosted on bad IPs (version B), please use the blocklist BadIPs documented below.",
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Abuse.ch",
@@ -19,7 +19,7 @@
             }
         },
         "Abuse.ch Palevo Tracker Domains": {
-            "description": "Abuse.ch Palevo Tracker Domains is the bot responsible to get the report from source of information.",
+            "description": "Palevo C&C Domain Blocklists includes domain names which are being used as botnet C&C for the Palevo crimeware.",
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Abuse.ch",
@@ -28,7 +28,7 @@
             }
         },
         "Abuse.ch Palevo Tracker IPs": {
-            "description": "Abuse.ch Palevo Tracker IPs is the bot responsible to get the report from source of information.",
+            "description": "Palevo C&C IP Blocklist includes IP addresses which are being used as botnet C&C for the Palevo crimeware.",
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Abuse.ch",
@@ -37,7 +37,7 @@
             }
         },
         "Abuse.ch ZeuS Tracker Domains": {
-            "description": "Abuse.ch ZeuS Tracker Domains is the bot responsible to get the report from source of information.",
+            "description": "The ZeuS domain blocklist (BadDomains) is the recommended blocklist if you want to block only ZeuS domain names. It has domain names that ZeuS Tracker believes to be hijacked (level 2). Hence the false positive rate should be much lower compared to the standard ZeuS domain blocklist.",
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Abuse.ch",
@@ -46,7 +46,7 @@
             }
         },
         "Abuse.ch ZeuS Tracker IPs": {
-            "description": "Abuse.ch ZeuS Tracker IPs is the bot responsible to get the report from source of information.",
+            "description": "This list only includes IPv4 addresses that are used by the ZeuS trojan. It is the recommened list if you want to block only ZeuS IPs. It excludes IP addresses that ZeuS Tracker believes to be hijacked (level 2) or belong to a free web hosting provider (level 3). Hence the false postive rate should be much lower compared to the standard ZeuS IP blocklist.",
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Abuse.ch",
@@ -518,9 +518,12 @@
             }
         },
         "RIPENCC": {
-            "description": "RIPENCC is the bot resposible to get the correspondent abuse contact from source IP and destination IP of the events",
+            "description": "RIPENCC is the bot resposible to get the correspondent abuse contact from source IP and destination IP of the events. RIPEstat documentation: https://stat.ripe.net/docs/data_api ",
             "module": "intelmq.bots.experts.ripencc_abuse_contact.expert",
             "parameters": {
+                "query_ripe_db_asn": true,
+                "query_ripe_db_ip": true,
+                "query_ripe_stat": true,
                 "redis_cache_db": "5",
                 "redis_cache_host": "127.0.0.1",
                 "redis_cache_port": "6379",

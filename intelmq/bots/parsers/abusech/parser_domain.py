@@ -1,4 +1,12 @@
 # -*- coding: utf-8 -*-
+"""
+Parsers simple newline separated list of domains.
+
+Docs:
+ - https://feodotracker.abuse.ch/blocklist/
+ - https://palevotracker.abuse.ch/blocklists.php
+ - https://zeustracker.abuse.ch/blocklist.php
+"""
 from __future__ import unicode_literals
 import sys
 
