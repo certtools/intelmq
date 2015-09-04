@@ -9,7 +9,7 @@ import sys
 import pyasn
 import six
 from intelmq.lib.bot import Bot
-
+from intelmq.lib.harmonization import IPAddress
 
 class ASNLookupExpertBot(Bot):
 
@@ -40,6 +40,10 @@ class ASNLookupExpertBot(Bot):
                 continue
 
             ip = event.value(ip_key)
+
+            if IPAddress.version(ip) == 6:
+                # Currently not supported by pyasn, fix will come soon
+                continue
 
             info = self.database.lookup(ip)
 
