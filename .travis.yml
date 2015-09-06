@@ -8,8 +8,5 @@ python:
 install: 
   - "pip install -r REQUIREMENTS"
   - "python setup.py install"
-  - "useradd -d /opt/intelmq -U -s /bin/bash intelmq"
-  - "chmod -R 0770 /opt/intelmq"
-  - "chown -R intelmq.intelmq /opt/intelmq"
 # command to run tests
 script: nosetests
