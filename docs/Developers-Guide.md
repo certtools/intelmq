@@ -39,6 +39,8 @@ All changes have to be tested and new contributions must must be accompanied by 
 
 It may be necessary to switch the user to `intelmq` if the run-path (`/opt/intelmq/var/run/`) is not writeable by the current user. Some bots need local databases to succeed. If you don't mind about those and only want to test one explicit test file, you can give the filepath as argument.
 
+There is a [Travis-CI](https://travis-ci.org/certtools/intelmq/builds) setup for automatic testing. (-> thx sebix!)
+
 ## Coding-Rules
 
 In general, we follow the [Style Guide for Python Code (PEP8)](https://www.python.org/dev/peps/pep-0008/).
