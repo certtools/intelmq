@@ -220,7 +220,7 @@ class DateTime(GenericType):
         You can give timezone for given timestamp, UTC by default.
         """
         dtime = datetime.datetime.utcfromtimestamp(tstamp)
-        localized = pytz.timezone(tzone).localize(dtime)
+        localized = dtime.replace(tzinfo=pytz.timezone(tzone))
         return six.text_type(localized.isoformat())
 
     @staticmethod
