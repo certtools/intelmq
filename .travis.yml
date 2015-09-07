@@ -1,12 +1,12 @@
 language: python
 python:
   - "2.7"
-  - "3.3"
   - "3.4"
 # command to install dependencies
 install:
   - if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then pip install -r REQUIREMENTS; fi
   - if [[ ${TRAVIS_PYTHON_VERSION%.?} == 3 ]]; then pip install -r REQUIREMENTS3; fi
+  - sudo apt-get install redis-server
   - "python setup_travis.py install"
 # command to run tests
 script: nosetests
