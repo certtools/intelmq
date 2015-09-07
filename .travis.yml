@@ -5,7 +5,8 @@ python:
   - "3.4"
 # command to install dependencies
 install:
-  - "pip install -r REQUIREMENTS"
+  - if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then pip install -r REQUIREMENTS; fi
+  - if [[ ${TRAVIS_PYTHON_VERSION%.?} == 3 ]]; then pip install -r REQUIREMENTS3; fi
   - "python setup_travis.py install"
 # command to run tests
 script: nosetests
