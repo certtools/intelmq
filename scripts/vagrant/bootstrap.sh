@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#Declare Variables 
+#Declare Variables
 #IntelMQ
 INTELMQ_REPO="https://github.com/certtools/intelmq.git"
 #BRANCH="master"
@@ -26,7 +26,7 @@ function intelmq_install {
 	    pip install -r REQUIREMENTS;
 	fi
 	#Install
-	python setup.py install
+	python setup_auto.py install
 	useradd -d /opt/intelmq -U -s /bin/bash intelmq
 	chmod -R 0770 /opt/intelmq
 	chown -R intelmq.intelmq /opt/intelmq

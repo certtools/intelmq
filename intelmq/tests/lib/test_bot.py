@@ -7,16 +7,19 @@ from __future__ import unicode_literals
 import io
 import json
 import logging
+import os
+import pkg_resources
 import unittest
 
 import intelmq.lib.pipeline as pipeline
 import intelmq.lib.utils as utils
 import mock
 from intelmq import PIPELINE_CONF_FILE, RUNTIME_CONF_FILE, SYSTEM_CONF_FILE
-from intelmq.tests.bots import test_dummy_bot
+from intelmq.lib.test import mocked_logger
 
 
-def mocked_config(bot_id, src_name, dst_names, raise_on_connect):
+def mocked_config(bot_id='', src_name='', dst_names=(),
+                  raise_on_connect=False):
 
     def load_conf(conf_file):
         if conf_file == PIPELINE_CONF_FILE:
@@ -37,17 +40,19 @@ def mocked_config(bot_id, src_name, dst_names, raise_on_connect):
                     "error_max_retries": 0,
                     "exit_on_stop": False,
                     }
+        elif conf_file.startswith('/opt/intelmq/etc/'):
+            confname = os.path.join('conf/', os.path.split(conf_file)[-1])
+            fname = pkg_resources.resource_filename('intelmq',
+                                                    confname)
+            with open(fname, 'rt') as fpconfig:
+                return json.load(fpconfig)
         else:
             with open(conf_file, 'r') as fpconfig:
-                config = json.loads(fpconfig.read())
-            return config
+                return json.load(fpconfig)
     return load_conf
 
-
-def mocked_logger(logger):
-    def log(name, log_path=None, log_level=None):
-        return logger
-    return log
+with mock.patch('intelmq.lib.utils.load_configuration', new=mocked_config()):
+    from intelmq.tests.bots import test_dummy_bot
 
 
 class TestBot(unittest.TestCase):

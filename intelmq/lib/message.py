@@ -13,6 +13,7 @@ import intelmq.lib.harmonization
 from intelmq import HARMONIZATION_CONF_FILE
 from intelmq.lib import utils
 
+
 harm_config = utils.load_configuration(HARMONIZATION_CONF_FILE)
 
 

@@ -1,12 +1,11 @@
 language: python
 python:
   - "2.7"
-  - "3.2"
   - "3.3"
   - "3.4"
 # command to install dependencies
-install: 
+install:
   - "pip install -r REQUIREMENTS"
-  - "python setup.py install"
+  - "python setup_travis.py install"
 # command to run tests
 script: nosetests

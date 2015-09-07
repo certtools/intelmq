@@ -1,4 +1,4 @@
-from __future__ import print_function, unicode_literals
+from __future__ import print_function
 import os
 import sys
 
@@ -40,6 +40,7 @@ setup(
     maintainer='Tomas Lima',
     maintainer_email='synchroack@gmail.com',
     packages=find_packages(),
+    package_data={'intelmq': ['conf/*.conf']},
     url='http://pypi.python.org/pypi/intelmq/',
     license='AGPLv3',
     description="IntelMQ Tool",
