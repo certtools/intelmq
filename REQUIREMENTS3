@@ -1,4 +1,4 @@
-dnspython>=1.11.1
+dnspython3>=1.12.0
 geoip2>=0.5.1
 imbox>=0.5.5
 ipaddress
