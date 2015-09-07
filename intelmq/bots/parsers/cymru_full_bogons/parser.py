@@ -25,18 +25,14 @@ class CymruFullBogonsParserBot(Bot):
             if not len(val) or val.startswith('#') or val.startswith('//'):
                 continue
 
-            event = Event()
+            event = Event(report)
 
             if IPAddress.is_valid(val, sanitize=True):
                 event.add('source.ip', val, sanitize=True)
             else:
                 event.add('source.network', val, sanitize=True)
 
-            event.add('time.observation',
-                      report.value('time.observation'), sanitize=True)
             event.add('classification.type', u'blacklist')
-            event.add('feed.name', report.value("feed.name"))
-            event.add('feed.url', report.value("feed.url"))
             event.add('raw', row, sanitize=True)
 
             self.send_message(event)

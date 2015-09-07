@@ -53,7 +53,7 @@ class CleanMXVirusParserBot(Bot):
         rows = csv.DictReader(fp)
 
         for row in rows:
-            event = Event()
+            event = Event(report)
 
             for key, value in row.items():
                 if not value:
@@ -82,10 +82,6 @@ class CleanMXVirusParserBot(Bot):
 
                 event.add(key, value, sanitize=True)
 
-            event.add('time.observation', report.value(
-                'time.observation'), sanitize=True)
-            event.add('feed.name', report.value("feed.name"))
-            event.add('feed.url', report.value("feed.url"))
             event.add('classification.type', u'malware')
             event.add("raw", ",".join(row), sanitize=True)
 

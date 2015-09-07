@@ -53,7 +53,7 @@ class SpamhausCERTParserBot(Bot):
                 continue
 
             row_splitted = [field.strip() for field in row.split(',')]
-            event = Event()
+            event = Event(report)
 
             event.add('source.ip', row_splitted[0], sanitize=True)
             event.add('source.asn', row_splitted[1].replace('AS', ''),
@@ -75,12 +75,7 @@ class SpamhausCERTParserBot(Bot):
                                       int(row_splitted[8])}),
                           sanitize=True)
             event.add('protocol.transport', row_splitted[9], sanitize=True)
-
-            event.add('time.observation',
-                      report['time.observation'], sanitize=True)
             event.add('classification.type', u'c&c')
-            event.add('feed.name', report["feed.name"])
-            event.add('feed.url', report["feed.url"])
             event.add('raw', row, sanitize=True)
 
             self.send_message(event)

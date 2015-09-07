@@ -279,7 +279,6 @@ class BotTestCase(object):
             report = message.MessageFactory.unserialize(report_json)
             self.assertIsInstance(report, message.Report)
             self.assertIn('feed.name', report)
-            self.assertIn('feed.url', report)
             self.assertIn('raw', report)
             self.assertIn('time.observation', report)
 

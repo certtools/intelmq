@@ -261,7 +261,7 @@ class ExampleParserBot(Bot):
             self.acknowledge_message()
             return
 
-        event = Event()
+        event = Event(report)  # copies feed.name, time.observation
         ... # implement the logic here
         event.add('additional_information', 'Nothing here')
 

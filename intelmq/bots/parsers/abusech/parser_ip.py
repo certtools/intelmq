@@ -31,14 +31,10 @@ class AbusechIPParserBot(Bot):
             if row.startswith("#") or len(row) == 0:
                 continue
 
-            event = Event()
+            event = Event(report)
 
             event.add('source.ip', row, sanitize=True)
             event.add('classification.type', u'c&c')
-            event.add('time.observation', report.value(
-                'time.observation'), sanitize=True)
-            event.add('feed.name', report.value("feed.name"))
-            event.add('feed.url', report.value("feed.url"))
             event.add("raw", row, sanitize=True)
 
             self.send_message(event)

@@ -27,18 +27,14 @@ class URLVirHostsParserBot(Bot):
             if row == "" or row.startswith("#"):
                 continue
 
-            event = Event()
+            event = Event(report)
 
             if IPAddress.is_valid(row, sanitize=True):
                 event.add('source.ip', row, sanitize=True)
             else:
                 event.add('source.fqdn', row, sanitize=True)
 
-            event.add('time.observation', report.value(
-                'time.observation'), sanitize=True)
             event.add('classification.type', u'malware')
-            event.add('feed.name', report.value("feed.name"))
-            event.add('feed.url', report.value("feed.url"))
             event.add('raw', row, sanitize=True)
 
             self.send_message(event)

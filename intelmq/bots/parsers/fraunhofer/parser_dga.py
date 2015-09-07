@@ -30,17 +30,13 @@ class FraunhoferDGAParserBot(Bot):
         # add all lists together, only one loop needed
         for row in sum(dict_report.values(), []):
 
-            event = Event()
+            event = Event(report)
 
             event.add('classification.type', u'c&c')
             try:
                 event.add('destination.ip', row, sanitize=True)
             except InvalidValue:
                 event.add('destination.fqdn', row, sanitize=True)
-            event.add('time.observation',
-                      report.value('time.observation'), sanitize=True)
-            event.add('feed.name', report.value("feed.name"))
-            event.add('feed.url', report.value("feed.url"))
             event.add("raw", row, sanitize=True)
 
             self.send_message(event)
