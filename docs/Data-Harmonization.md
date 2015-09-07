@@ -66,6 +66,8 @@ Some sources report an internal (NATed) IP address.
 
 ### Reported Identity
 
+Not used currently.
+
 #### Reported Source Identity
 
 As stated above, each abuse handling organization should define a policy, which IOC to use as the primary element describing an abuse event. Often the sources have done their attribution, but you may choose to correlate their attributive elements with your own. In practice this means that your sanitation should prefix the elements with the '''reported''' keyword, to denote that you've decided the attribute these yourself. The list below is not comprehensive, rather than a list of common things you may want to attribute yourself. Moreover, if you choose to perform your own attribution, the observation time will become your authoritative point of reference related to these IOC.
@@ -94,7 +96,7 @@ The elements listed below are additional keys used to describe abusive behavior,
 
 #### Classification
 
-Having a functional ontology to work with, especially for the abuse types is important for you to be able to classify, prioritize and report relevant actionable intelligence to the parties who need to be informed. The driving idea for this ontology has been to use a minimal set of values with maximal usability. Below, is a list of harmonized values for the abuse types.
+Having a functional ontology to work with, especially for the abuse types is important for you to be able to classify, prioritize and report relevant actionable intelligence to the parties who need to be informed. The driving idea for this ontology has been to use a minimal set of values with maximal usability. See the classification section below for explanations and examples.
 
 <a name="datatypes"></a>
 ## Data types
@@ -115,15 +117,14 @@ Note that this section does not yet define error handling and failure mechanisms
 
 A list of allowed fields can be found in [Harmonization-fields.md](Harmonization-fields.md)
 
-### Rules
-
-All keys MUST be written in lowercase. 
-
 <a name="mapping"></a>
-## Type/Taxonomy Mapping
+## Classification
 
-The following mapping is based on eCSIRT Taxonomy.
- 
+Intelmq classifies events using three labels: taxonomy, type and identifier. This tuple of three values can be used for deduplication of events and describes what happened.
+TODO: examples from chat
+
+The taxonomy can be automatically added by the taxonomy expert bot based on the given type. The following taxonomy-type mapping is based on eCSIRT Taxonomy:
+
 |Type|Taxonomy|Description|
 |----|--------|-----------|
 |spam|Abusive Content|This IOC refers to resources, which make up a SPAM infrastructure, be it a harvester, dictionary attacker, URL etc.|
@@ -147,16 +148,16 @@ The following mapping is based on eCSIRT Taxonomy.
 |unknown|Other|unknown events|
 |test|Test|This is a value for testing purposes.|
 
-Meaning of source, destination and local values for each classification type:
+Meaning of source, destination and local values for each classification type and possible identifiers. The identifier is often a normalized malware name, grouping many variants.
 
-|Type|Source|Destination|Local|Possible subtypes|
+|Type|Source|Destination|Local|Possible identifiers|
 |----|------|-----------|-----|
 |spam|*infected device*|targeted server|internal at source|
-|malware|*infected device*|||
+|malware|*infected device*||internal at source|zeus, palevo, feodo|
 |botnet drone|*infected device*|||
 |ransomware|*infected device*|||
 |malware configuration|*infected device*|||
-|c&c|*connecting device*|sinkholed server||
+|c&c|*(sinkholed) c&c server*|||zeus, palevo, feodo|
 |scanner|*scanning device*|scanned device||
 |exploit|*hosting server*|||
 |brute-force|*attacker*|target||
@@ -167,11 +168,15 @@ Meaning of source, destination and local values for each classification type:
 |ddos|*attacker*|target||
 |dropzone|*server hosting stolen data*|||
 |phishing|*phishing website*|||
-|vulnerable service|*vulnerable device*|||
+|vulnerable service|*vulnerable device*||| heartbleed, openresolver, snmp |
 |blacklist|*blacklisted device*|||
 |unknown||||
 
-Field in italics is the interesting one for CERTs
+Field in italics is the interesting one for CERTs.
+
+Example:
+
+If you know of an IP address that connects to a zeus c&c server, it's about the infected device, thus type malware and identifier zeus. If you want to complain about the c&c server, it's type c&c and identifier zeus. The `malware.name` can have the full name, eg. 'zeus_p2p'.
 
 <a name="requirements"></a>
 ## Minimum requirements for events
