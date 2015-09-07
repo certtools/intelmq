@@ -18,7 +18,6 @@ The following types are implemented with sanitize() and is_valid() functions:
 """
 from __future__ import unicode_literals
 
-import base64
 import binascii
 import datetime
 import ipaddress
@@ -220,7 +219,7 @@ class DateTime(GenericType):
         Returns ISO formated datetime from given timestamp.
         You can give timezone for given timestamp, UTC by default.
         """
-        dtime = datetime.datetime.fromtimestamp(tstamp)
+        dtime = datetime.datetime.utcfromtimestamp(tstamp)
         localized = pytz.timezone(tzone).localize(dtime)
         return six.text_type(localized.isoformat())
 
