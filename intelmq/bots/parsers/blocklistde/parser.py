@@ -94,15 +94,11 @@ class BlockListDEParserBot(Bot):
                 classification_type = value
 
         for row in raw_report.split('\n'):
-            event = Event()
+            event = Event(report)
 
             event.add('source.ip', row.strip(), sanitize=True)
             event.add(key, classification_type, sanitize=True)
 
-            event.add('time.observation', report.value(
-                'time.observation'), sanitize=True)
-            event.add('feed.name', report.value("feed.name"))
-            event.add('feed.url', report.value("feed.url"))
             event.add("raw", row, sanitize=True)
 
             self.send_message(event)

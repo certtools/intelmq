@@ -34,12 +34,8 @@ class DynParserBot(Bot):
             infected_fqdn = splitted_row[0].split("checking domain:")[1]
             compromised_url = splitted_row[1].split("seems to be INFECTED:")[1]
 
-            event_infected = Event()
-            event_infected.add('time.observation',
-                               report.value('time.observation'), sanitize=True)
+            event_infected = Event(report)
             event_infected.add('classification.type', 'malware')
-            event_infected.add('feed.name', report.value("feed.name"))
-            event_infected.add('feed.url', report.value("feed.url"))
             event_infected.add('source.fqdn', infected_fqdn, sanitize=True)
             event_infected.add('destination.url',
                                compromised_url, sanitize=True)
@@ -50,13 +46,8 @@ class DynParserBot(Bot):
 
             self.send_message(event_infected)
 
-            event_compromised = Event()
-            event_compromised.add('time.observation',
-                                  report.value('time.observation'),
-                                  sanitize=True)
+            event_compromised = Event(report)
             event_compromised.add('classification.type', 'compromised')
-            event_compromised.add('feed.name', report.value("feed.name"))
-            event_compromised.add('feed.url', report.value("feed.url"))
             event_compromised.add('source.url', compromised_url, sanitize=True)
             event_compromised.add('event_description.text',
                                   'host has been compromised and has '

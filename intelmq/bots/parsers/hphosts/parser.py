@@ -37,7 +37,7 @@ class HpHostsParserBot(Bot):
             if values[1].lower().strip() == "localhost":
                 continue
 
-            event = Event()
+            event = Event(report)
 
             if IPAddress.is_valid(values[1], sanitize=True):
                 event.add("source.ip", values[1], sanitize=True)
@@ -45,10 +45,6 @@ class HpHostsParserBot(Bot):
                 event.add("source.fqdn", values[1], sanitize=True)
 
             event.add('classification.type', u'blacklist')
-            event.add('time.observation', report.value(
-                'time.observation'), sanitize=True)
-            event.add('feed.name', report.value("feed.name"))
-            event.add('feed.url', report.value("feed.url"))
             event.add("raw", row, sanitize=True)
 
             self.send_message(event)

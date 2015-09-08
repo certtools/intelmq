@@ -23,12 +23,8 @@ class CIArmyParserBot(Bot):
             if row.startswith('#') or row == "":
                 continue
 
-            event = Event()
+            event = Event(report)
 
-            event.add('time.observation', report.value(
-                'time.observation'), sanitize=True)
-            event.add('feed.name', report.value("feed.name"))
-            event.add('feed.url', report.value("feed.url"))
             event.add('source.ip', row, sanitize=True)
             event.add('classification.type', u'blacklist')
             event.add("raw", row, sanitize=True)

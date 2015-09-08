@@ -35,7 +35,7 @@ class AutoshunParserBot(Bot):
         parser = HTMLParser()
 
         for row in raw_report_splitted:
-            event = Event()
+            event = Event(reports)
 
             row = row.strip()
 
@@ -65,11 +65,7 @@ class AutoshunParserBot(Bot):
             if not event.contains("classification.type"):
                 event.add("classification.type", u'unknown')
 
-            event.add('time.observation',
-                      report.value('time.observation'), sanitize=True)
             event.add("time.source", last_seen, sanitize=True)
-            event.add('feed.name', report.value("feed.name"))
-            event.add('feed.url', report.value("feed.url"))
             event.add("source.ip", ip, sanitize=True)
             event.add("event_description.text", description, sanitize=True)
             event.add("raw", row, sanitize=True)

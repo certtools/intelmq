@@ -9,10 +9,15 @@ but has a valid Harmonization configuration.
 from __future__ import unicode_literals
 
 import json
+import pkg_resources
 import six
 import unittest
 
 import intelmq.lib.exceptions as exceptions
+import intelmq.lib.utils as utils
+conf_filename = pkg_resources.resource_filename('intelmq',
+                                                'conf/harmonization.conf')
+harm_config = utils.load_configuration(conf_filename)
 import intelmq.lib.message as message
 
 LOREM_BASE64 = 'bG9yZW0gaXBzdW0='

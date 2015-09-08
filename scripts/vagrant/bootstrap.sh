@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#Declare Variables 
+#Declare Variables
 #IntelMQ
 INTELMQ_REPO="https://github.com/certtools/intelmq.git"
 #BRANCH="master"

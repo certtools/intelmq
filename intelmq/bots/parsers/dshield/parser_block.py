@@ -34,14 +34,10 @@ class DshieldBlockParserBot(Bot):
             network_mask = values[2]
             network = '%s/%s' % (network_ip, network_mask)
 
-            event = Event()
+            event = Event(report)
 
             event.add('source.network', network, sanitize=True)
             event.add('classification.type', u'blacklist')
-            event.add('time.observation', report.value(
-                'time.observation'), sanitize=True)
-            event.add('feed.name', report.value("feed.name"))
-            event.add('feed.url', report.value("feed.url"))
             event.add("raw", row, sanitize=True)
 
             self.send_message(event)

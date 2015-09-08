@@ -24,13 +24,9 @@ class OpenPhishParserBot(Bot):
             if row == "":
                 continue
 
-            event = Event()
+            event = Event(report)
 
-            event.add('time.observation', report.value(
-                'time.observation'), sanitize=True)
             event.add('classification.type', u'phishing')
-            event.add('feed.name', report.value("feed.name"))
-            event.add('feed.url', report.value("feed.url"))
             event.add('source.url', row, sanitize=True)
             event.add('raw', row, sanitize=True)
 

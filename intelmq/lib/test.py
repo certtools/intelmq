@@ -11,8 +11,9 @@ from __future__ import unicode_literals
 import io
 import json
 import logging
+import os
+import pkg_resources
 
-import intelmq.lib.message as message
 import intelmq.lib.pipeline as pipeline
 import intelmq.lib.utils as utils
 import mock
@@ -20,7 +21,7 @@ import six
 from intelmq import PIPELINE_CONF_FILE, RUNTIME_CONF_FILE, SYSTEM_CONF_FILE
 
 
-def mocked_config(bot_id, src_name, dst_names, sysconfig):
+def mocked_config(bot_id='test-bot', src_name='', dst_names=(), sysconfig={}):
     def mock(conf_file):
         if conf_file == PIPELINE_CONF_FILE:
             return {bot_id: {"source-queue": src_name,
@@ -45,11 +46,20 @@ def mocked_config(bot_id, src_name, dst_names, sysconfig):
                     }
             conf.update(sysconfig)
             return conf
+        elif conf_file.startswith('/opt/intelmq/etc/'):
+            confname = os.path.join('conf/', os.path.split(conf_file)[-1])
+            fname = pkg_resources.resource_filename('intelmq',
+                                                    confname)
+            with open(fname, 'rt') as fpconfig:
+                return json.load(fpconfig)
         else:
             with open(conf_file, 'r') as fpconfig:
-                config = json.loads(fpconfig.read())
-            return config
+                return json.load(fpconfig)
     return mock
+
+
+with mock.patch('intelmq.lib.utils.load_configuration', new=mocked_config()):
+    import intelmq.lib.message as message
 
 
 def mocked_logger(logger):
@@ -269,7 +279,6 @@ class BotTestCase(object):
             report = message.MessageFactory.unserialize(report_json)
             self.assertIsInstance(report, message.Report)
             self.assertIn('feed.name', report)
-            self.assertIn('feed.url', report)
             self.assertIn('raw', report)
             self.assertIn('time.observation', report)
 

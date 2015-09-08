@@ -13,6 +13,7 @@ import intelmq.lib.harmonization
 from intelmq import HARMONIZATION_CONF_FILE
 from intelmq.lib import utils
 
+
 harm_config = utils.load_configuration(HARMONIZATION_CONF_FILE)
 
 
@@ -176,6 +177,26 @@ class Message(dict):
 
 
 class Event(Message):
+
+    def __init__(self, message=()):
+        """
+        Parameters
+        ----------
+        message : dict
+            Give a report and feed.name, feed.url and
+            time.observation will be used to construct the Event if given.
+        """
+        if isinstance(message, Report):
+            template = {}
+            if 'feed.name' in message:
+                template['feed.name'] = message['feed.name']
+            if 'feed.url' in message:
+                template['feed.url'] = message['feed.url']
+            if 'time.observation' in message:
+                template['time.observation'] = message['time.observation']
+        else:
+            template = message
+        super(Event, self).__init__(template)
 
     def __hash__(self):
         event_hash = hashlib.sha256()

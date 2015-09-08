@@ -25,14 +25,10 @@ class DshieldDomainParserBot(Bot):
             if row.startswith("#") or len(row) == 0 or row == "Site":
                 continue
 
-            event = Event()
+            event = Event(report)
 
             event.add('classification.type', u'malware')
             event.add('source.fqdn', row, sanitize=True)
-            event.add('time.observation', report.value(
-                'time.observation'), sanitize=True)
-            event.add('feed.name', report.value("feed.name"))
-            event.add('feed.url', report.value("feed.url"))
             event.add("raw", row, sanitize=True)
 
             self.send_message(event)
