@@ -219,8 +219,9 @@ class DateTime(GenericType):
         Returns ISO formated datetime from given timestamp.
         You can give timezone for given timestamp, UTC by default.
         """
-        dtime = datetime.datetime.utcfromtimestamp(tstamp)
-        localized = dtime.replace(tzinfo=pytz.timezone(tzone))
+        dtime = (datetime.datetime(1970, 1, 1, tzinfo=pytz.utc) +
+                 datetime.timedelta(seconds=tstamp))
+        localized = pytz.timezone(tzone).normalize(dtime)
         return six.text_type(localized.isoformat())
 
     @staticmethod
