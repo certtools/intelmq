@@ -26,7 +26,7 @@ function intelmq_install {
 	    pip install -r REQUIREMENTS;
 	fi
 	#Install
-	python setup_auto.py install
+	python setup.py install
 	useradd -d /opt/intelmq -U -s /bin/bash intelmq
 	chmod -R 0770 /opt/intelmq
 	chown -R intelmq.intelmq /opt/intelmq

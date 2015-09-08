@@ -75,7 +75,7 @@ class SpamhausCERTParserBot(Bot):
                                       int(row_splitted[8])}),
                           sanitize=True)
             event.add('protocol.transport', row_splitted[9], sanitize=True)
-            event.add('classification.type', u'c&c')
+            event.add('classification.type', u'botnet drone')
             event.add('raw', row, sanitize=True)
 
             self.send_message(event)

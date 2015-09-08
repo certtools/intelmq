@@ -27,7 +27,7 @@ EVENT_TEMPL = {"feed.url": "https://portal.spamhaus.org/cert/api.php?cert="
                            "<CERTNAME>&key=<APIKEY>",
                "feed.name": "Spamhaus Cert",
                "__type": "Event",
-               "classification.type": "c&c",
+               "classification.type": "botnet drone",
                "time.observation": "2015-01-01T00:00:00+00:00",
                "protocol.transport": "tcp",
                "source.geolocation.cc": "AT",
