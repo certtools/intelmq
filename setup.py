@@ -18,15 +18,15 @@ if os.path.isdir("/opt/intelmq"):
         sys.exit(-1)
 
 dirs = ['/opt/intelmq',
+        '/opt/intelmq/bin',
+        '/opt/intelmq/docs',
         '/opt/intelmq/etc',
         '/opt/intelmq/var',
-        '/opt/intelmq/var/log',
-        '/opt/intelmq/var/run',
         '/opt/intelmq/var/lib',
         '/opt/intelmq/var/lib/bots',
         '/opt/intelmq/var/lib/bots/file-output',
-        '/opt/intelmq/bin',
-        '/opt/intelmq/docs',
+        '/opt/intelmq/var/log',
+        '/opt/intelmq/var/run',
         ]
 
 for dir in dirs:
@@ -49,12 +49,13 @@ setup(
     data_files=[
                 ('/opt/intelmq/etc/', [
                                    'intelmq/bots/BOTS',
-                                   'intelmq/conf/startup.conf',
-                                   'intelmq/conf/runtime.conf',
                                    'intelmq/conf/defaults.conf',
+                                   'intelmq/conf/harmonization.conf',
+                                   'intelmq/conf/modify.conf',
                                    'intelmq/conf/pipeline.conf',
+                                   'intelmq/conf/runtime.conf',
+                                   'intelmq/conf/startup.conf',
                                    'intelmq/conf/system.conf',
-                                   'intelmq/conf/harmonization.conf'
                                   ],
                  ),
                 ('/opt/intelmq/bin/', [
