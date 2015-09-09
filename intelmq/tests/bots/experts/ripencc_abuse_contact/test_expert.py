@@ -41,19 +41,19 @@ class TestRIPENCCExpertBot(test.BotTestCase, unittest.TestCase):
     @classmethod
     def set_bot(self):
         self.bot_reference = RIPENCCExpertBot
-        self.default_input_message = json.dumps({'__type': 'Report'})
+        self.default_input_message = {'__type': 'Report'}
         self.sysconfig = {'query_ripe_db_asn': True,
                           'query_ripe_db_ip': True,
                           'query_ripe_stat': True,
                           }
 
     def test_ipv4_lookup(self):
-        self.input_message = json.dumps(EXAMPLE_INPUT)
+        self.input_message = EXAMPLE_INPUT
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_OUTPUT)
 
     def test_ipv6_lookup(self):
-        self.input_message = json.dumps(EXAMPLE_INPUT6)
+        self.input_message = EXAMPLE_INPUT6
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_OUTPUT6)
 

@@ -39,10 +39,10 @@ class TestTorExpertBot(test.BotTestCase, unittest.TestCase):
     def set_bot(self):
         self.bot_reference = TorExpertBot
         self.sysconfig = {'database': TOR_DB}
-        self.default_input_message = json.dumps({'__type': 'Report'})
+        self.default_input_message = {'__type': 'Report'}
 
     def test_ipv4_lookup(self):
-        self.input_message = json.dumps(EXAMPLE_INPUT)
+        self.input_message = EXAMPLE_INPUT
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_OUTPUT)
 

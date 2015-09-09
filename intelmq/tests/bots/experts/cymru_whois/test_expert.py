@@ -60,20 +60,20 @@ class TestCymruExpertBot(test.BotTestCase, unittest.TestCase):
     @classmethod
     def set_bot(self):
         self.bot_reference = CymruExpertBot
-        self.default_input_message = json.dumps({'__type': 'Report'})
+        self.default_input_message = {'__type': 'Report'}
 
     def test_ipv4_lookup(self):
-        self.input_message = json.dumps(EXAMPLE_INPUT)
+        self.input_message = EXAMPLE_INPUT
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_OUTPUT)
 
     def test_ipv6_lookup(self):
-        self.input_message = json.dumps(EXAMPLE_INPUT6)
+        self.input_message = EXAMPLE_INPUT6
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_OUTPUT6)
 
     def test_unicode_as_name(self):
-        self.input_message = json.dumps(UNICODE_INPUT)
+        self.input_message = UNICODE_INPUT
         self.run_bot()
         self.assertMessageEqual(0, UNICODE_OUTPUT)
 

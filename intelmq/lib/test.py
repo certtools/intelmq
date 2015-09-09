@@ -53,8 +53,7 @@ def mocked_config(bot_id='test-bot', src_name='', dst_names=(), sysconfig={}):
             with open(fname, 'rt') as fpconfig:
                 return json.load(fpconfig)
         else:
-            with open(conf_file, 'r') as fpconfig:
-                return json.load(fpconfig)
+            return utils.load_configuration(conf_file)
     return mock
 
 
@@ -146,25 +145,35 @@ class BotTestCase(object):
             with mock.patch('intelmq.lib.utils.log', self.mocked_log):
                 self.bot = self.bot_reference(self.bot_id)
         if self.input_message is not None:
-            if type(self.input_message) is dict:
-                self.input_message = \
-                    utils.decode(json.dumps(self.input_message))
-            self.input_queue = [self.input_message]
+            if type(self.input_message) is not list:
+                self.input_message = [self.input_message]
+            self.input_queue = []
+            for msg in self.input_message:
+                if type(msg) is dict:
+                    self.input_queue.append(json.dumps(msg))
+                else:
+                    self.input_queue.append(msg)
             self.input_message = None
         else:
             self.input_queue = [self.default_input_message]
 
-    def run_bot(self):
+    def run_bot(self, iterations=1):
         """
         Call this method for actually doing a test run for the specified bot.
+
+        Parameters
+        ----------
+        iterations : integer
+            Bot instance will be run the given times, defaults to 1.
         """
         self.prepare_bot()
         with mock.patch('intelmq.lib.utils.load_configuration',
                         new=self.mocked_config):
             with mock.patch('intelmq.lib.utils.log', self.mocked_log):
-                self.bot.start(error_on_pipeline=False,
-                               source_pipeline=self.pipe,
-                               destination_pipeline=self.pipe)
+                for run in range(iterations):
+                    self.bot.start(error_on_pipeline=False,
+                                   source_pipeline=self.pipe,
+                                   destination_pipeline=self.pipe)
         self.loglines_buffer = self.log_stream.getvalue()
         self.loglines = self.loglines_buffer.splitlines()
 
@@ -243,7 +252,7 @@ class BotTestCase(object):
         if self.bot_type == 'collector':
             return
 
-        self.input_message = ''
+        self.input_message = ['']
         self.run_bot()
         self.assertRegexpMatchesLog("WARNING - Empty message received.")
         self.assertNotRegexpMatchesLog("ERROR")
@@ -338,7 +347,6 @@ class BotTestCase(object):
         contained in the generated event with
         given queue position.
         """
-
         event = self.get_output_queue()[queue_pos]
 
         self.assertIsInstance(event, six.text_type)

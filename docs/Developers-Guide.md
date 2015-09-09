@@ -338,7 +338,7 @@ class TestExampleParserBot(test.BotTestCase, unittest.TestCase):  # adjust test 
     @classmethod
     def set_bot(cls):
         cls.bot_reference = ExampleParserBot  # adjust bot class name
-        cls.default_input_message = json.dumps(EXAMPLE_EVENT)  # adjust source of the example event
+        cls.default_input_message = EXAMPLE_EVENT  # adjust source of the example event (dict)
 
 	# This is an example how to test the log output
     def test_log_test_line(self):
