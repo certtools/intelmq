@@ -32,8 +32,7 @@ class AlienVaultOTXParserBot(Bot):
 
         for pulse in json.loads(raw_report):
             additional = json.dumps(
-                {'author': pulse['author_name'],
-                 'pulse': pulse['name']})
+                {"author": pulse['author_name'], "pulse": pulse['name']})
             for indicator in pulse["indicators"]:
                 event = Event()
                 # hashes
@@ -82,7 +81,7 @@ class AlienVaultOTXParserBot(Bot):
                     continue
 
                 event.add('comment', pulse['description'])
-                #event.add('additional', additional)
+                event.add('additional', additional, sanitize=True)
                 event.add('classification.type', 'blacklist', sanitize=True)
                 event.add('time.observation', report.value(
                     'time.observation'), sanitize=True)

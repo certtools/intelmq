@@ -19,17 +19,16 @@ EXAMPLE_REPORT = {"feed.name": "AlienVault OTX",
                   "time.observation": "2015-09-02T14:17:58+00:00"
                   }
 EXAMPLE_EVENT = {
+    "__type": "Event",
+    "additional": '{"pulse": "The Spy Kittens Are Back: Rocket Kitten 2", "author": "AlienVault"}',
     "comment": "Our findings show that Rocket Kitten is still active, retains a growing level of persistence, and acts ever more aggressively in terms of attack method. We also found that recent publications on the group’s activity have done nothing to change their behavior or reduce their activity. They don’t seem to bother to have to “disappear.” With this paper, we feel fairly certain that Rocket Kitten’s prime targets are not companies and political organizations as entire bodies but individuals that operate in strategically interesting fields such as diplomacy, foreign policy research, and defense-related businesses. We believe the espionage factor and political context make their attacks unique and very different from traditional targeted attacks.",
-    "feed": {
-        "name": "AlienVault OTX"},
-    "classification": {
-        "type": "blacklist"},
-    "source": {
-        "url": "http://107.6.172.54/woolen/"},
+    "feed.name": "AlienVault OTX",
+    "classification.type": "blacklist",
+    "source.url": "http://107.6.172.54/woolen/",
     "raw": "eyJpbmRpY2F0b3IiOiAiaHR0cDovLzEwNy42LjE3Mi41NC93b29sZW4vIiwgIl9pZCI6ICI1NWU2YmZiMTQ2MzdmMjJjYjYwNTc0NjYiLCAidHlwZSI6ICJVUkwiLCAiZGVzY3JpcHRpb24iOiAiIiwgImNyZWF0ZWQiOiAiMjAxNS0wOS0wMlQwOToyMTo1My4wOTMifQ==",
-    "time": {
-        "source": "2015-09-02T09:21:53+00:00",
-        "observation": "2015-09-02T14:17:58+00:00"}}
+    "time.source": "2015-09-02T09:21:53+00:00",
+    "time.observation": "2015-09-02T14:17:58+00:00"
+}
 
 
 class TestAlienVaultOTXParserBot(test.BotTestCase, unittest.TestCase):
