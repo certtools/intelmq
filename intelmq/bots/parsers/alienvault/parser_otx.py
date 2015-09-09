@@ -44,7 +44,9 @@ class AlienVaultOTXParserBot(Bot):
                         'malware.hash',
                         indicator["indicator"],
                         sanitize=True)
-                #    event.add('malware.hash_type', HASHES[indicator["type"]], sanitize = True)
+                    event.add(
+                        'malware.hash_type', HASHES[
+                            indicator["type"]], sanitize=True)
                 # fqdn
                 if indicator["type"] in ['hostname', 'domain']:
                     event.add(
