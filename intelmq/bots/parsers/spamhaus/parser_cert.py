@@ -70,7 +70,7 @@ class SpamhausCERTParserBot(Bot):
             event.add('destination.ip', row_splitted[6], sanitize=True)
             event.add('destination.port', row_splitted[7], sanitize=True)
             if row_splitted[8] and row_splitted[8] != '-':
-                event.add('additional',
+                event.add('extra',
                           json.dumps({'destination.local_port':
                                       int(row_splitted[8])}),
                           sanitize=True)

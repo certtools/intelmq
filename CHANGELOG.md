@@ -25,7 +25,7 @@ v1.0 (in development, master branch)
 ### Harmonization
 - ENH: Additional data types: integer, float and Boolean
 - ENH: Added descriptions and matching types to all fields
-- DOC: harmonization documentation has same fields as configuration
+- DOC: harmonization documentation has same fields as configuration, docs are generated from configuration
 
 #### Most important changes:
 - `(source|destination).bgp_prefix` is now `(source|destination).network`
@@ -34,6 +34,8 @@ v1.0 (in development, master branch)
 - `misp_id` changed to `misp_uuid`
 - `protocol.transport` added
 - `webshot_url` removed
+- `additional_information` renamed to `extra`, must be JSON
+- `os.name`, `os.version`, `user_agent` removed in favor of `extra`
 
 -----
 

@@ -263,7 +263,8 @@ class ExampleParserBot(Bot):
 
         event = Event(report)  # copies feed.name, time.observation
         ... # implement the logic here
-        event.add('additional_information', 'Nothing here')
+		event.add('source.ip', '127.0.0.1')
+        event.add('extra', '{"os.name": "Linux"')
 
         self.send_message(event)
         self.acknowledge_message()

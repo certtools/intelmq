@@ -50,7 +50,7 @@ EXAMPLE_EVENTS_PARTS = [{'raw': 'MTA5LjEyNi42NC4yLEFTMTI2MzUsQVQsMTQ0MTAwODk3M'
                          'destination.port': 80,
                          'destination.fqdn': 'dxxt.sinkhole.dk',
                          'destination.ip': '212.227.20.19',
-                         'additional': '{"destination.local_port": 1036}',
+                         'extra': '{"destination.local_port": 1036}',
                          },
                         {'raw': 'MTA5LjkxLjAuMjI3LEFTNjgzMCxBVCwxNDQxMDExNjU3L'
                                 'GNvbmZpY2tlciwyMTYuNjYuMTUuMTA5LDIxNi42Ni4xNS'
@@ -61,7 +61,7 @@ EXAMPLE_EVENTS_PARTS = [{'raw': 'MTA5LjEyNi42NC4yLEFTMTI2MzUsQVQsMTQ0MTAwODk3M'
                          'malware.name': 'conficker',
                          'destination.port': 80,
                          'destination.ip': '216.66.15.109',
-                         'additional': '{"destination.local_port": 1430}',
+                         'extra': '{"destination.local_port": 1430}',
                          }]
 
 
