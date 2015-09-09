@@ -14,11 +14,10 @@ from intelmq.lib.harmonization import DateTime
 from intelmq.lib.message import Event
 
 HASHES = {
-    'FileHash-SHA256': 'SHA-256',
-    'FileHash-SHA1': 'SHA-1',
-    'FileHash-MD5': 'MD5'
+    'FileHash-SHA256': '$5$',
+    'FileHash-SHA1': '$sha1$',
+    'FileHash-MD5': '$1$'
 }
-
 
 class AlienVaultOTXParserBot(Bot):
 
@@ -36,49 +35,30 @@ class AlienVaultOTXParserBot(Bot):
             for indicator in pulse["indicators"]:
                 event = Event()
                 # hashes
-                if indicator["type"] in [
-                        'FileHash-SHA256',
-                        'FileHash-SHA1',
-                        'FileHash-MD5']:
-                    event.add(
-                        'malware.hash',
-                        indicator["indicator"],
-                        sanitize=True)
-                    event.add(
-                        'malware.hash_type', HASHES[
-                            indicator["type"]], sanitize=True)
+                if indicator["type"] in HASHES.keys():
+                    event.add('malware.hash',
+                              HASHES[indicator["type"]] + indicator["indicator"])
                 # fqdn
                 if indicator["type"] in ['hostname', 'domain']:
-                    event.add(
-                        'source.fqdn',
-                        indicator["indicator"],
-                        sanitize=True)
+                    event.add('source.fqdn',
+                              indicator["indicator"], sanitize=True)
                 # IP addresses
                 elif indicator["type"] in ['IPv4', 'IPv6']:
-                    event.add(
-                        'source.ip',
-                        indicator["indicator"],
-                        sanitize=True)
+                    event.add('source.ip',
+                              indicator["indicator"], sanitize=True)
                 # emails
                 elif indicator["type"] == 'email':
-                    event.add(
-                        'source.account',
-                        indicator["indicator"],
-                        sanitize=True)
+                    event.add('source.account',
+                              indicator["indicator"], sanitize=True)
                 # URLs
                 elif indicator["type"] in ['URL', 'URI']:
-                    event.add(
-                        'source.url',
-                        indicator["indicator"],
-                        sanitize=True)
+                    event.add('source.url',
+                              indicator["indicator"], sanitize=True)
                 # CIDR
                 elif indicator["type"] in ['CIDR']:
-                    event.add(
-                        'source.network',
-                        indicator["indicator"],
-                        sanitize=True)
-                # FilePath, Mutex, CVE, hashes - TODO: process these IoCs as
-                # well
+                    event.add('source.network',
+                              indicator["indicator"], sanitize=True)
+                # FilePath, Mutex, CVE - TODO: process these IoCs as well
                 else:
                     continue
 
@@ -89,8 +69,7 @@ class AlienVaultOTXParserBot(Bot):
                     'time.observation'), sanitize=True)
                 event.add(
                     'time.source',
-                    indicator["created"][
-                        :-4] + "+00:00",
+                    indicator["created"][:-4] + "+00:00",
                     sanitize=True)
                 event.add('feed.name', report.value("feed.name"))
                 event.add("raw", json.dumps(indicator), sanitize=True)

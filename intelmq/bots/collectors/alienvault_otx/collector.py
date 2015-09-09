@@ -4,7 +4,6 @@ import sys
 from OTXv2 import OTXv2
 import json
 
-from intelmq.bots.collectors.http.lib import fetch_url
 from intelmq.lib.bot import Bot
 from intelmq.lib.message import Report
 from intelmq.lib.harmonization import DateTime
