@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 import json
 import unittest
 
 import intelmq.lib.test as test
 from intelmq.bots.experts.cymru_whois.expert import CymruExpertBot
-
 
 EXAMPLE_INPUT = {"__type": "Event",
                  "source.ip": "93.184.216.34",  # example.com
@@ -60,20 +60,20 @@ class TestCymruExpertBot(test.BotTestCase, unittest.TestCase):
     @classmethod
     def set_bot(self):
         self.bot_reference = CymruExpertBot
-        self.default_input_message = json.dumps({'__type': 'Report'})
+        self.default_input_message = {'__type': 'Report'}
 
     def test_ipv4_lookup(self):
-        self.input_message = json.dumps(EXAMPLE_INPUT)
+        self.input_message = EXAMPLE_INPUT
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_OUTPUT)
 
     def test_ipv6_lookup(self):
-        self.input_message = json.dumps(EXAMPLE_INPUT6)
+        self.input_message = EXAMPLE_INPUT6
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_OUTPUT6)
 
     def test_unicode_as_name(self):
-        self.input_message = json.dumps(UNICODE_INPUT)
+        self.input_message = UNICODE_INPUT
         self.run_bot()
         self.assertMessageEqual(0, UNICODE_OUTPUT)
 

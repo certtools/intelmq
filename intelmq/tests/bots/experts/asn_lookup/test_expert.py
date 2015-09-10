@@ -7,13 +7,11 @@ It is expected at /opt/intelmq/var/lib/bots/asn_lookup/ipasn.dat by default
 """
 from __future__ import unicode_literals
 
-import json
 import os
 import unittest
 
 import intelmq.lib.test as test
 from intelmq.bots.experts.asn_lookup.expert import ASNLookupExpertBot
-
 
 ASN_DB = '/opt/intelmq/var/lib/bots/asn_lookup/ipasn.dat'
 EXAMPLE_INPUT = {"__type": "Event",
@@ -53,16 +51,16 @@ class TestASNLookupExpertBot(test.BotTestCase, unittest.TestCase):
     def set_bot(self):
         self.bot_reference = ASNLookupExpertBot
         self.sysconfig = {'database': ASN_DB}
-        self.default_input_message = json.dumps({'__type': 'Report'})
+        self.default_input_message = {'__type': 'Report'}
 
     def test_ipv4_lookup(self):
-        self.input_message = json.dumps(EXAMPLE_INPUT)
+        self.input_message = EXAMPLE_INPUT
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_OUTPUT)
 
     @unittest.expectedFailure
     def test_ipv6_lookup(self):
-        self.input_message = json.dumps(EXAMPLE_INPUT6)
+        self.input_message = EXAMPLE_INPUT6
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_OUTPUT6)
 

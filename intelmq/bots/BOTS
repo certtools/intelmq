@@ -581,7 +581,8 @@
                 "database": "intelmq-events",
                 "user": "intelmq",
                 "password": "<password>",
-                "sslmode": "require"
+                "sslmode": "require",
+                "table": "events"
             }
         },
         "REST API": {

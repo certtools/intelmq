@@ -7,7 +7,6 @@ import unittest
 import intelmq.lib.test as test
 from intelmq.bots.parsers.fraunhofer.parser_dga import FraunhoferDGAParserBot
 
-
 EXAMPLE_REPORT = {"feed.url": "https://dgarchive.caad.fkie.fraunhofer.de/today",
                   "raw": "ewogICJiYW5qb3JpX2RnYV9hbmRlcnNlbnNpbmFpeC5jb21fMHgz"
                          "YzAzIjogWwogICAgImFuZGVyc2Vuc2luYWl4LmNvbSIsCiAgICAi"

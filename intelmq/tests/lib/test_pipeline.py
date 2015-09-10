@@ -12,6 +12,7 @@ TODO: acknowledge
 TODO: check internal representation of data in redis (like with Pythonlist)
 """
 from __future__ import unicode_literals
+
 import unittest
 
 import intelmq.lib.pipeline as pipeline
