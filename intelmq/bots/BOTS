@@ -564,6 +564,19 @@
                 "redis_cache_ttl": "86400"
             }
         },
+        "Squelcher": {
+            "module": "intelmq.bots.experts.squelcher.expert",
+            "description": "Squelcher is the bot responsible to find matching events in the event database and add a flag if the affected or responsible contact should be notified based on the TTL from the configuration for AS, IP network and IP address.",
+            "parameters": {
+                "host": "localhost",
+                "port": 5432,
+                "database": "intelmq-events",
+                "user": "intelmq",
+                "password": "<password>",
+                "sslmode": "require",
+                "table": "events"
+            }
+        },
         "Taxonomy": {
             "description": "Taxonomy is the bot responsible to apply the eCSIRT Taxonomy to all events.",
             "module": "intelmq.bots.experts.taxonomy.expert",
