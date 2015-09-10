@@ -341,6 +341,12 @@ class BotTestCase(object):
         except AttributeError:
             self.assertNotRegex(self.loglines_buffer, pattern)
 
+    def assertOutputQueueLen(self, queue_len=0):
+        """
+        Asserts that the output queue has the expected length.
+        """
+        self.assertEqual(len(self.get_output_queue()), queue_len)
+
     def assertMessageEqual(self, queue_pos, expected_message):
         """
         Asserts that the given expected_message is
