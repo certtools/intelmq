@@ -7,13 +7,11 @@ It is expected at /opt/intelmq/var/lib/bots/asn_lookup/ipasn.dat by default
 """
 from __future__ import unicode_literals
 
-import json
 import os
 import unittest
 
 import intelmq.lib.test as test
 from intelmq.bots.experts.asn_lookup.expert import ASNLookupExpertBot
-
 
 ASN_DB = '/opt/intelmq/var/lib/bots/asn_lookup/ipasn.dat'
 EXAMPLE_INPUT = {"__type": "Event",

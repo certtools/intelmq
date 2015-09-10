@@ -4,12 +4,10 @@ Testing certat_contact
 """
 from __future__ import unicode_literals
 
-import json
 import unittest
 
 import intelmq.lib.test as test
 from intelmq.bots.experts.certat_contact.expert import CERTatContactExpertBot
-
 
 EXAMPLE_INPUT = {"__type": "Event",
                  "source.ip": "93.184.216.34",  # example.com

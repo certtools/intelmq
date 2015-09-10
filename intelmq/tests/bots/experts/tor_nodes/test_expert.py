@@ -13,7 +13,6 @@ import unittest
 import intelmq.lib.test as test
 from intelmq.bots.experts.tor_nodes.expert import TorExpertBot
 
-
 TOR_DB = '/opt/intelmq/var/lib/bots/tor_nodes/tor_nodes.dat'
 EXAMPLE_INPUT = {"__type": "Event",
                  "source.ip": "37.130.227.133",

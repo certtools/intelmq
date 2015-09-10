@@ -7,7 +7,6 @@ import unittest
 import intelmq.lib.test as test
 from intelmq.bots.experts.taxonomy.expert import TaxonomyExpertBot
 
-
 EXAMPLE_INPUT = {"__type": "Event",
                  "classification.type": "defacement",
                  "time.observation": "2015-01-01T00:00:00+00:00",

@@ -7,7 +7,6 @@ import unittest
 import intelmq.lib.test as test
 from intelmq.bots.parsers.spamhaus.parser_cert import SpamhausCERTParserBot
 
-
 EXAMPLE_REPORT = {"feed.url": "https://portal.spamhaus.org/cert/api.php?cert="
                               "<CERTNAME>&key=<APIKEY>",
                   "raw": "OyBpcCwgYXNuLCBjb3VudHJ5LCBsYXN0c2VlbiwgYm90bmFtZSwg"

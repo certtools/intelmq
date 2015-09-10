@@ -7,7 +7,6 @@ import unittest
 import intelmq.lib.test as test
 from intelmq.bots.experts.ripencc_abuse_contact.expert import RIPENCCExpertBot
 
-
 EXAMPLE_INPUT = {"__type": "Event",
                  "source.ip": "93.184.216.34",  # example.com
                  "destination.ip": "193.238.157.5",  # funkfeuer.at
