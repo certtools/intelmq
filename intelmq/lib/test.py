@@ -301,7 +301,7 @@ class BotTestCase(object):
             event = message.MessageFactory.unserialize(event_json)
             self.assertIsInstance(event, message.Event)
             self.assertIn('classification.type', event)
-            self.assertIn('feed.url', event)
+            self.assertIn('feed.name', event)
             self.assertIn('raw', event)
             self.assertIn('time.observation', event)
 
@@ -352,7 +352,8 @@ class BotTestCase(object):
         self.assertIsInstance(event, six.text_type)
         event_dict = json.loads(event)
 
+        expected = expected_message.copy()
         del event_dict['time.observation']
-        del expected_message['time.observation']
+        del expected['time.observation']
 
-        self.assertDictEqual(expected_message, event_dict)
+        self.assertDictEqual(expected, event_dict)
