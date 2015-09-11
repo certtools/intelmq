@@ -568,6 +568,7 @@
             "module": "intelmq.bots.experts.squelcher.expert",
             "description": "Squelcher is the bot responsible to find matching events in the event database and add a flag if the affected or responsible contact should be notified based on the TTL from the configuration for AS, IP network and IP address.",
             "parameters": {
+                "configuration_path": "/opt/intelmq/etc/squelcher.conf",
                 "host": "localhost",
                 "port": 5432,
                 "database": "intelmq-events",

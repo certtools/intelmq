@@ -6,9 +6,8 @@ from __future__ import unicode_literals
 from ipaddress import ip_address, ip_network
 import psycopg2
 
-from intelmq import SQUELCHER_CONF_FILE
 from intelmq.lib.bot import Bot
-import intelmq.lib.utils
+from intelmq.lib.utils import load_configuration
 
 
 SELECT_QUERY = '''
@@ -25,7 +24,7 @@ notify IS TRUE
 class SquelcherExpertBot(Bot):
 
     def init(self):
-        self.config = intelmq.lib.utils.load_configuration(SQUELCHER_CONF_FILE)
+        self.config = load_configuration(self.parameters.configuration_path)
 
         self.logger.debug("Connecting to PostgreSQL.")
         try:
@@ -57,58 +56,30 @@ class SquelcherExpertBot(Bot):
             self.acknowledge_message()
             return
 
-        self.logger.debug(event.keys())
-        ev_type = event['classification.type']
-        ev_ident = event['classification.identifier']
-        ev_asn = event['source.asn']
-        ev_address = event['source.ip']
+        ttl = None
+        for ruleset in self.config:
+            condition = ruleset[0].copy()
+            in_net = True
+            if 'source.network' in condition:
+                in_net = (ip_address(event['source.ip']) in
+                          ip_network(condition['source.network']))
+                del condition['source.network']
+            if set(condition.items()).issubset(event.items()) and in_net:
+                ttl = ruleset[1]['ttl']
+                break
 
-        # get AS section -> net_section
-        # json keys can't be integer, so use strings
-        if str(ev_asn) in self.config:
-            net_section = self.config[str(ev_asn)]
-        elif '*' in self.config:
-            net_section = self.config['*']
-        else:
-            self.logger.debug('No TTL found for ({}).'.format(ev_asn))
-            self.modify_end(event)
-            return
+        self.logger.debug('Found TTL {} for ({}, {}).'
+                          ''.format(ttl, event['source.asn'],
+                                    event['source.ip']))
 
-        # get network section -> ip_section
-        ip_section = None
-        for net_key, net_value in net_section.items():
-            if net_key == '*':
-                continue
-            if ip_address(ev_address) in ip_network(net_key):
-                ip_section = net_section[net_key]
-        if ip_section is None and '*' in net_section:
-            ip_section = net_section['*']
-        elif ip_section is None:
-            self.logger.debug('No TTL found for ({}, {}).'.format(ev_asn,
-                                                                  ev_address))
-            self.modify_end(event)
-            return
-
-        # get ip address -> ttl
-        if ev_address in ip_section:
-            ttl = ip_section[ev_address]
-        elif '*' in ip_section:
-            ttl = ip_section['*']
-        else:
-            self.logger.debug('No TTL found for ({}, {}).'.format(ev_asn,
-                                                                  ev_address))
-            self.modify_end(event)
-            return
-        print('Found TTL {} for ({}, {}).'
-                          ''.format(ttl, ev_asn, ev_address))
-
-        self.cur.execute(SELECT_QUERY, (ttl, ev_type, ev_ident, ev_address))
+        self.cur.execute(SELECT_QUERY, (ttl, event['classification.type'],
+                                        event['classification.identifier'],
+                                        event['source.ip']))
         result = self.cur.fetchone()[0]
         if result == 0:
             notify = True
         else:
             notify = False
-        print('Result {}.'.format(result))
 
         event.add('notify', notify, force=True)
         self.modify_end(event)
