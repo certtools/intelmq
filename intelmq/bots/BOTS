@@ -216,6 +216,15 @@
                 "url": "https://dshield.org/asdetailsascii.html?as=<AS Number>"
             }
         },
+        "AlienVault OTX": {
+            "module": "intelmq.bots.collectors.alienvault_otx.collector",
+            "description": "AlienVault OTX Collector is the bot responsible to get the report through the API. Report could vary according to subscriptions.",
+            "parameters": {
+                "api_key": "<insert your api key>",
+                "feed": "AlienVault OTX",
+                "rate_limit": "3600"
+            }
+        },
         "DShield Block": {
             "description": "DShield Block Collector is the bot responsible to get the report from source of information.",
             "module": "intelmq.bots.collectors.http.collector_http",
@@ -652,6 +661,11 @@
         "AlienVault": {
             "description": "AlienVault Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.alienvault.parser",
+            "parameters": {}
+        },
+        "AlienVault OTX": {
+            "description": "AlienVault Parser is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.alienvault.parser_otx",
             "parameters": {}
         },
         "Arbor": {
