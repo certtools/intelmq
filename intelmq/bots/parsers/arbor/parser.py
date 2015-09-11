@@ -23,12 +23,8 @@ class ArborParserBot(Bot):
             if len(row) == 0 or row.startswith('other'):
                 continue
 
-            event = Event()
+            event = Event(report)
 
-            event.add('time.observation', report.value(
-                'time.observation'), sanitize=True)
-            event.add('feed.name', report.value("feed.name"))
-            event.add('feed.url', report.value("feed.url"))
             event.add('classification.type', u'brute-force')
             event.add("raw", row, sanitize=True)
 

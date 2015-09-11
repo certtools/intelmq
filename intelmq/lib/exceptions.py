@@ -35,7 +35,10 @@ class InvalidArgument(IntelMQException):
 class PipelineError(IntelMQException):
 
     def __init__(self, argument):
-        message = "pipeline failed - %s" % traceback.format_exc(argument)
+        if type(argument) is type and issubclass(argument, Exception):
+            message = "pipeline failed - %s" % traceback.format_exc(argument)
+        else:
+            message = "pipeline failed - %s" % repr(argument)
         super(PipelineError, self).__init__(message)
 
 

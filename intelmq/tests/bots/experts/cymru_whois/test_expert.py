@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 import json
 import unittest
 
 import intelmq.lib.test as test
 from intelmq.bots.experts.cymru_whois.expert import CymruExpertBot
-
 
 EXAMPLE_INPUT = {"__type": "Event",
                  "source.ip": "93.184.216.34",  # example.com
@@ -35,6 +35,21 @@ EXAMPLE_OUTPUT6 = {"__type": "Event",
                    "destination.asn": 16876,
                    "destination.network": "2001:500:88::/48",
                    }
+UNICODE_INPUT = {"__type": "Event",
+                 "destination.ip": "177.81.215.80",  # some brazil IP
+                 "time.observation": "2015-01-01T00:00:00+00:00",
+                 }
+UNICODE_OUTPUT = {"__type": "Event",
+                  "destination.ip": "177.81.215.80",  # some brazil IP
+                  "time.observation": "2015-01-01T00:00:00+00:00",
+                  "destination.registry": "lacnic",
+                  "destination.allocated": "2011-08-30T00:00:00+00:00",
+                  "destination.as_name": "NET Servi\xe7os de Comunica\xe7\xe3o"
+                                         " S.A.,BR",
+                  "destination.geolocation.cc": "BR",
+                  "destination.asn": 28573,
+                  "destination.network": "177.81.0.0/16",
+                  }
 
 
 class TestCymruExpertBot(test.BotTestCase, unittest.TestCase):
@@ -45,17 +60,22 @@ class TestCymruExpertBot(test.BotTestCase, unittest.TestCase):
     @classmethod
     def set_bot(self):
         self.bot_reference = CymruExpertBot
-        self.default_input_message = json.dumps({'__type': 'Report'})
+        self.default_input_message = {'__type': 'Report'}
 
     def test_ipv4_lookup(self):
-        self.input_message = json.dumps(EXAMPLE_INPUT)
+        self.input_message = EXAMPLE_INPUT
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_OUTPUT)
 
     def test_ipv6_lookup(self):
-        self.input_message = json.dumps(EXAMPLE_INPUT6)
+        self.input_message = EXAMPLE_INPUT6
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_OUTPUT6)
+
+    def test_unicode_as_name(self):
+        self.input_message = UNICODE_INPUT
+        self.run_bot()
+        self.assertMessageEqual(0, UNICODE_OUTPUT)
 
 
 if __name__ == '__main__':

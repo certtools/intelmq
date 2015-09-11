@@ -17,11 +17,18 @@ class RestAPI(Bot):
 
     def process(self):
         event = self.receive_message()
+
+        if event is None:
+            self.acknowledge_message()
+            return
+
         try:
-            r = self.session.post(self.parameters.host, event.to_json())
+            r = self.session.post(self.parameters.host, event.to_json().encode('utf-8'))
             r.raise_for_status()
         except requests.exceptions.RequestException as e:
-            self.logger.error("Request exception: " + str(e))
+            self.logger.error(
+                'Event: {0}\nResponse code: {1}\nHeaders: {2}\nResponse body: {3}'.format(
+                event.to_json(), r, r.headers, r.text))
         self.acknowledge_message()
 
 

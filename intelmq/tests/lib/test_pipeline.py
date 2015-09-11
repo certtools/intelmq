@@ -12,6 +12,7 @@ TODO: acknowledge
 TODO: check internal representation of data in redis (like with Pythonlist)
 """
 from __future__ import unicode_literals
+
 import unittest
 
 import intelmq.lib.pipeline as pipeline
@@ -69,9 +70,10 @@ class TestRedis(unittest.TestCase):
         self.pipe.clear_queue(self.pipe.source_queue)
 
     def test_send_receive(self):
+        """ Sending bytest and receiving unicode. """
         self.clear()
         self.pipe.send(SAMPLES['normal'][0])
-        self.assertEqual(SAMPLES['normal'][0], self.pipe.receive())
+        self.assertEqual(SAMPLES['normal'][1], self.pipe.receive())
 
     def test_send_receive_unicode(self):
         self.clear()

@@ -11,8 +11,9 @@ from __future__ import unicode_literals
 import io
 import json
 import logging
+import os
+import pkg_resources
 
-import intelmq.lib.message as message
 import intelmq.lib.pipeline as pipeline
 import intelmq.lib.utils as utils
 import mock
@@ -20,7 +21,7 @@ import six
 from intelmq import PIPELINE_CONF_FILE, RUNTIME_CONF_FILE, SYSTEM_CONF_FILE
 
 
-def mocked_config(bot_id, src_name, dst_names, sysconfig):
+def mocked_config(bot_id='test-bot', src_name='', dst_names=(), sysconfig={}):
     def mock(conf_file):
         if conf_file == PIPELINE_CONF_FILE:
             return {bot_id: {"source-queue": src_name,
@@ -45,11 +46,19 @@ def mocked_config(bot_id, src_name, dst_names, sysconfig):
                     }
             conf.update(sysconfig)
             return conf
+        elif conf_file.startswith('/opt/intelmq/etc/'):
+            confname = os.path.join('conf/', os.path.split(conf_file)[-1])
+            fname = pkg_resources.resource_filename('intelmq',
+                                                    confname)
+            with open(fname, 'rt') as fpconfig:
+                return json.load(fpconfig)
         else:
-            with open(conf_file, 'r') as fpconfig:
-                config = json.loads(fpconfig.read())
-            return config
+            return utils.load_configuration(conf_file)
     return mock
+
+
+with mock.patch('intelmq.lib.utils.load_configuration', new=mocked_config()):
+    import intelmq.lib.message as message
 
 
 def mocked_logger(logger):
@@ -136,25 +145,35 @@ class BotTestCase(object):
             with mock.patch('intelmq.lib.utils.log', self.mocked_log):
                 self.bot = self.bot_reference(self.bot_id)
         if self.input_message is not None:
-            if type(self.input_message) is dict:
-                self.input_message = \
-                    utils.decode(json.dumps(self.input_message))
-            self.input_queue = [self.input_message]
+            if type(self.input_message) is not list:
+                self.input_message = [self.input_message]
+            self.input_queue = []
+            for msg in self.input_message:
+                if type(msg) is dict:
+                    self.input_queue.append(json.dumps(msg))
+                else:
+                    self.input_queue.append(msg)
             self.input_message = None
         else:
             self.input_queue = [self.default_input_message]
 
-    def run_bot(self):
+    def run_bot(self, iterations=1):
         """
         Call this method for actually doing a test run for the specified bot.
+
+        Parameters
+        ----------
+        iterations : integer
+            Bot instance will be run the given times, defaults to 1.
         """
         self.prepare_bot()
         with mock.patch('intelmq.lib.utils.load_configuration',
                         new=self.mocked_config):
             with mock.patch('intelmq.lib.utils.log', self.mocked_log):
-                self.bot.start(error_on_pipeline=False,
-                               source_pipeline=self.pipe,
-                               destination_pipeline=self.pipe)
+                for run in range(iterations):
+                    self.bot.start(error_on_pipeline=False,
+                                   source_pipeline=self.pipe,
+                                   destination_pipeline=self.pipe)
         self.loglines_buffer = self.log_stream.getvalue()
         self.loglines = self.loglines_buffer.splitlines()
 
@@ -209,19 +228,19 @@ class BotTestCase(object):
     def test_log_not_error(self):
         """ Test if bot does not log errors. """
         self.run_bot()
-        self.assertNotRegexpMatches(self.loglines_buffer, "ERROR")
+        self.assertNotRegexpMatchesLog("ERROR")
 
     def test_log_not_critical(self):
         """ Test if bot does not log critical errors. """
         self.run_bot()
-        self.assertNotRegexpMatches(self.loglines_buffer, "CRITICAL")
+        self.assertNotRegexpMatchesLog("CRITICAL")
 
     def test_pipe_names(self):
         """ Test if all pipes are created with correct names. """
         self.run_bot()
         pipenames = ["{}-input", "{}-input-internal", "{}-output"]
-        self.assertListEqual([x.format(self.bot_id) for x in pipenames],
-                             list(self.pipe.state.keys()))
+        self.assertSetEqual({x.format(self.bot_id) for x in pipenames},
+                            set(self.pipe.state.keys()))
 
     def test_empty_message(self):
         """
@@ -233,10 +252,10 @@ class BotTestCase(object):
         if self.bot_type == 'collector':
             return
 
-        self.input_message = ''
+        self.input_message = ['']
         self.run_bot()
         self.assertRegexpMatchesLog("WARNING - Empty message received.")
-        self.assertNotRegexpMatches(self.loglines_buffer, "ERROR")
+        self.assertNotRegexpMatchesLog("ERROR")
 
     def test_bot_name(self):
         """
@@ -269,7 +288,6 @@ class BotTestCase(object):
             report = message.MessageFactory.unserialize(report_json)
             self.assertIsInstance(report, message.Report)
             self.assertIn('feed.name', report)
-            self.assertIn('feed.url', report)
             self.assertIn('raw', report)
             self.assertIn('time.observation', report)
 
@@ -283,7 +301,7 @@ class BotTestCase(object):
             event = message.MessageFactory.unserialize(event_json)
             self.assertIsInstance(event, message.Event)
             self.assertIn('classification.type', event)
-            self.assertIn('feed.url', event)
+            self.assertIn('feed.name', event)
             self.assertIn('raw', event)
             self.assertIn('time.observation', event)
 
@@ -309,13 +327,25 @@ class BotTestCase(object):
         """Asserts that pattern matches against log. """
 
         self.assertIsNotNone(self.loglines_buffer)
-        self.assertRegexpMatches(self.loglines_buffer, pattern)
+        try:
+            self.assertRegexpMatches(self.loglines_buffer, pattern)
+        except AttributeError:
+            self.assertRegex(self.loglines_buffer, pattern)
 
     def assertNotRegexpMatchesLog(self, pattern):
         """Asserts that pattern doesn't match against log."""
 
         self.assertIsNotNone(self.loglines_buffer)
-        self.assertNotRegexpMatches(self.loglines_buffer, pattern)
+        try:
+            self.assertNotRegexpMatches(self.loglines_buffer, pattern)
+        except AttributeError:
+            self.assertNotRegex(self.loglines_buffer, pattern)
+
+    def assertOutputQueueLen(self, queue_len=0):
+        """
+        Asserts that the output queue has the expected length.
+        """
+        self.assertEqual(len(self.get_output_queue()), queue_len)
 
     def assertMessageEqual(self, queue_pos, expected_message):
         """
@@ -323,13 +353,13 @@ class BotTestCase(object):
         contained in the generated event with
         given queue position.
         """
-
         event = self.get_output_queue()[queue_pos]
 
         self.assertIsInstance(event, six.text_type)
         event_dict = json.loads(event)
 
+        expected = expected_message.copy()
         del event_dict['time.observation']
-        del expected_message['time.observation']
+        del expected['time.observation']
 
-        self.assertDictEqual(expected_message, event_dict)
+        self.assertDictEqual(expected, event_dict)

@@ -18,7 +18,6 @@ The following types are implemented with sanitize() and is_valid() functions:
 """
 from __future__ import unicode_literals
 
-import base64
 import binascii
 import datetime
 import ipaddress
@@ -80,6 +79,11 @@ class GenericType(object):
 
 
 class Base64(GenericType):
+    """
+    Base64 type. Always gives unicode strings.
+
+    Sanitation encodes to base64 and accepts binary and unicode strings.
+    """
 
     @staticmethod
     def is_valid(value, sanitize=False):
@@ -88,7 +92,7 @@ class Base64(GenericType):
             value = Base64().sanitize(value)
 
         try:
-            base64.b64decode(value)
+            utils.base64_decode(value)
         except TypeError:
             return False
 
@@ -100,7 +104,7 @@ class Base64(GenericType):
     @staticmethod
     def sanitize(value):
         value = utils.base64_encode(value)
-        return GenericType().sanitize(value)
+        return value
 
 
 class Boolean(GenericType):
@@ -207,7 +211,7 @@ class DateTime(GenericType):
             value = value.isoformat()
         except ValueError:
             return None
-        return value.decode("utf-8")
+        return utils.decode(value)
 
     @staticmethod
     def from_timestamp(tstamp, tzone='UTC'):
@@ -215,8 +219,9 @@ class DateTime(GenericType):
         Returns ISO formated datetime from given timestamp.
         You can give timezone for given timestamp, UTC by default.
         """
-        dtime = datetime.datetime.fromtimestamp(tstamp)
-        localized = pytz.timezone(tzone).localize(dtime)
+        dtime = (datetime.datetime(1970, 1, 1, tzinfo=pytz.utc) +
+                 datetime.timedelta(seconds=tstamp))
+        localized = pytz.timezone(tzone).normalize(dtime)
         return six.text_type(localized.isoformat())
 
     @staticmethod
@@ -224,7 +229,8 @@ class DateTime(GenericType):
         value = datetime.datetime.now(pytz.timezone('UTC'))
         value = value.replace(microsecond=0)
         value = value.isoformat()
-        return value.decode("utf-8")
+        # Is byte string in 2 and unicode string in 3, make unicode string
+        return utils.decode(value)
 
 
 class Float(GenericType):
@@ -441,7 +447,7 @@ class String(GenericType):
         if not GenericType().is_valid(value):
             return False
 
-        if type(value) is not unicode:
+        if type(value) is not six.text_type:
             return False
 
         if len(value) == 0:

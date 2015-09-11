@@ -52,8 +52,8 @@ class SpamhausCERTParserBot(Bot):
             if not len(row) or row.startswith(';'):
                 continue
 
-            row_splitted = row.split(',')
-            event = Event()
+            row_splitted = [field.strip() for field in row.split(',')]
+            event = Event(report)
 
             event.add('source.ip', row_splitted[0], sanitize=True)
             event.add('source.asn', row_splitted[1].replace('AS', ''),
@@ -69,18 +69,13 @@ class SpamhausCERTParserBot(Bot):
                 pass  # otherwise the same ip, ignore
             event.add('destination.ip', row_splitted[6], sanitize=True)
             event.add('destination.port', row_splitted[7], sanitize=True)
-            if row_splitted[8]:
-                event.add('additional',
+            if row_splitted[8] and row_splitted[8] != '-':
+                event.add('extra',
                           json.dumps({'destination.local_port':
                                       int(row_splitted[8])}),
                           sanitize=True)
             event.add('protocol.transport', row_splitted[9], sanitize=True)
-
-            event.add('time.observation',
-                      report['time.observation'], sanitize=True)
-            event.add('classification.type', u'c&c')
-            event.add('feed.name', report["feed.name"])
-            event.add('feed.url', report["feed.url"])
+            event.add('classification.type', u'botnet drone')
             event.add('raw', row, sanitize=True)
 
             self.send_message(event)

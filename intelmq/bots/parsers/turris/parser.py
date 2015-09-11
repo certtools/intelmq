@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import sys
-from cStringIO import StringIO
+from io import StringIO
 
 import unicodecsv
 
@@ -36,7 +36,7 @@ class TurrisGreylistParserBot(Bot):
                 headers = False
                 continue
 
-            event = Event()
+            event = Event(report)
 
             for key, value in zip(columns, row):
                 if key == "__IGNORE__":
@@ -44,10 +44,6 @@ class TurrisGreylistParserBot(Bot):
 
                 event.add(key, value, sanitize=True)
 
-            event.add('time.observation', report.value(
-                'time.observation'), sanitize=True)
-            event.add('feed.name', report.value("feed.name"))
-            event.add('feed.url', report.value("feed.url"))
             event.add('classification.type', u'scanner')
             event.add("raw", ",".join(row), sanitize=True)
 

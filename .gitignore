@@ -12,3 +12,6 @@ dist
 *.old
 .vagrant/
 *~
+.coverage
+.idea/
+htmlcov/

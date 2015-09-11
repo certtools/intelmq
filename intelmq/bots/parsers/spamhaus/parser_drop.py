@@ -38,22 +38,19 @@ class SpamhausDropParserBot(Bot):
             row_splitted = row.split(';')
             network = row_splitted[0].strip()
 
-            event = Event()
+            event = Event(report)
 
             event.add('source.network', network, sanitize=True)
             if self.event_date:
-                event.add('time.source', self.event_date, sanitize=True)
+                event.add('time.source', self.event_date.isoformat(),
+                          sanitize=True)
 
-            event.add('time.observation', report.value(
-                'time.observation'), sanitize=True)
             event.add('classification.type', u'spam')
-            event.add('feed.name', report.value("feed.name"))
-            event.add('feed.url', report.value("feed.url"))
             event.add('raw', row, sanitize=True)
 
             self.send_message(event)
         self.acknowledge_message()
 
 if __name__ == "__main__":
-    bot = SpamhausParserBot(sys.argv[1])
+    bot = SpamhausDropParserBot(sys.argv[1])
     bot.start()

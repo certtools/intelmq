@@ -39,6 +39,8 @@ All changes have to be tested and new contributions must must be accompanied by 
 
 It may be necessary to switch the user to `intelmq` if the run-path (`/opt/intelmq/var/run/`) is not writeable by the current user. Some bots need local databases to succeed. If you don't mind about those and only want to test one explicit test file, you can give the filepath as argument.
 
+There is a [Travis-CI](https://travis-ci.org/certtools/intelmq/builds) setup for automatic testing. (-> thx sebix!)
+
 ## Coding-Rules
 
 In general, we follow the [Style Guide for Python Code (PEP8)](https://www.python.org/dev/peps/pep-0008/).
@@ -259,9 +261,10 @@ class ExampleParserBot(Bot):
             self.acknowledge_message()
             return
 
-        event = Event()
+        event = Event(report)  # copies feed.name, time.observation
         ... # implement the logic here
-        event.add('additional_information', 'Nothing here')
+		event.add('source.ip', '127.0.0.1')
+        event.add('extra', '{"os.name": "Linux"')
 
         self.send_message(event)
         self.acknowledge_message()
@@ -336,7 +339,7 @@ class TestExampleParserBot(test.BotTestCase, unittest.TestCase):  # adjust test 
     @classmethod
     def set_bot(cls):
         cls.bot_reference = ExampleParserBot  # adjust bot class name
-        cls.default_input_message = json.dumps(EXAMPLE_EVENT)  # adjust source of the example event
+        cls.default_input_message = EXAMPLE_EVENT  # adjust source of the example event (dict)
 
 	# This is an example how to test the log output
     def test_log_test_line(self):

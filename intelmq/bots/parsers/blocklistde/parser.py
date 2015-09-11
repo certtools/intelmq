@@ -2,7 +2,10 @@
 from __future__ import unicode_literals
 import posixpath
 import sys
-import urlparse
+try:
+    from urlparse import urlparse
+except ImportError:
+    from urllib.parse import urlparse
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
@@ -82,7 +85,7 @@ class BlockListDEParserBot(Bot):
         raw_report = raw_report.strip()
 
         url = report.value('feed.url')
-        path = urlparse.urlparse(url).path
+        path = urlparse(url).path
         filename = posixpath.basename(path)
 
         classification_type = 'blacklist'
@@ -91,15 +94,11 @@ class BlockListDEParserBot(Bot):
                 classification_type = value
 
         for row in raw_report.split('\n'):
-            event = Event()
+            event = Event(report)
 
             event.add('source.ip', row.strip(), sanitize=True)
             event.add(key, classification_type, sanitize=True)
 
-            event.add('time.observation', report.value(
-                'time.observation'), sanitize=True)
-            event.add('feed.name', report.value("feed.name"))
-            event.add('feed.url', report.value("feed.url"))
             event.add("raw", row, sanitize=True)
 
             self.send_message(event)

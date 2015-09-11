@@ -1,17 +1,51 @@
 CHANGELOG
 ==========
 
-v1.0 (in developement)
-- renamed bots.parsers.spamhaus.parser to bots.parsers.spamhaus.parser_drop
-- added bots.parsers.spamhaus.parser_cert
-- added bots.parsers.fraunhofer.parser_dga
-- added bots.experts.certat_contact.expert
+v1.0 (in development, master branch)
+----
+
+### Bot changes
+- ENH: added bots.parsers.spamhaus.parser_cert
+- ENH: added bots.parsers.fraunhofer.parser_dga
+- ENH: added bots.experts.certat_contact.expert
+- MAINT: renamed bots.parsers.spamhaus.parser to bots.parsers.spamhaus.parser_drop
+
+### Bug fixes
+- FIX: all bots handle message which are None
+- FIX: various encoding issues resolved in core and bots
+- FIX: time.observation is generated in collectors, not in parsers
+
+### Other enhancements and changes
+- TST: testing framework for core and tests. Newly introduced components should always come with proper unit tests.
+- ENH: intelmqctl has shortcut parameters and can clear queues
+- STY: code obeys PEP8, new code should always be properly formatted
+- ENH: More code is Python 3 compatible
+- DOC: Updated user and dev guide
+
+### Harmonization
+- ENH: Additional data types: integer, float and Boolean
+- ENH: Added descriptions and matching types to all fields
+- DOC: harmonization documentation has same fields as configuration, docs are generated from configuration
+
+#### Most important changes:
+- `(source|destination).bgp_prefix` is now `(source|destination).network`
+- `(source|destination).cc` is now `(source|destination).geolocation.cc`
+- `(source|destination).reverse_domain_name` is `(source|destination).reverse_dns`
+- `misp_id` changed to `misp_uuid`
+- `protocol.transport` added
+- `webshot_url` removed
+- `additional_information` renamed to `extra`, must be JSON
+- `os.name`, `os.version`, `user_agent` removed in favor of `extra`
+
+-----
+
+
 
 ## 2015/06/03 (aaron)
 
   * fixed the license to AGPL in setup.py
   * moved back the docs/* files from the wiki repo to docs/. See #205.
-  * added python-zmq as a setup requirment in UserGuide . See #206
+  * added python-zmq as a setup requirement in UserGuide . See #206
 
 
 
@@ -38,7 +72,7 @@ v1.0 (in developement)
   FILE: conf/harmonization.conf
 
   - in harmonization.conf is possible to define the fields of a specific message in json format.
-  - the harmonization.py has datatypes witch contains sanitize and validation methods that will make sure that the values are correct to be part of an event.
+  - the harmonization.py has data types witch contains sanitize and validation methods that will make sure that the values are correct to be part of an event.
 
 
 
@@ -60,8 +94,8 @@ v1.0 (in developement)
 
 
 
-* Defaults configrations
-  - new configuration file to specify the default parameters which will be apllied to all bots. Bots can overwrite the configurations.
+* Defaults configurations
+  - new configuration file to specify the default parameters which will be applied to all bots. Bots can overwrite the configurations.
 
 
 

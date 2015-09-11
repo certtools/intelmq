@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import sys
-import urlparse
+try:
+    from urlparse import urlparse
+except ImportError:
+    from urllib.parse import urlparse
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
@@ -28,7 +31,7 @@ class VXVaultParserBot(Bot):
             if len(row) == 0 or not row.startswith('http'):
                 continue
 
-            url_object = urlparse.urlparse(row)
+            url_object = urlparse(row)
 
             if not url_object:
                 continue
@@ -37,17 +40,13 @@ class VXVaultParserBot(Bot):
             hostname = url_object.hostname
             port = url_object.port
 
-            event = Event()
+            event = Event(report)
 
             if IPAddress.is_valid(hostname, sanitize=True):
                 event.add("source.ip", hostname, sanitize=True)
             else:
                 event.add("source.fqdn", hostname, sanitize=True)
 
-            event.add('time.observation', report.value(
-                'time.observation'), sanitize=True)
-            event.add('feed.name', report.value("feed.name"))
-            event.add('feed.url', report.value("feed.url"))
             event.add('classification.type', u'malware')
             event.add("source.url", url, sanitize=True)
             if port:

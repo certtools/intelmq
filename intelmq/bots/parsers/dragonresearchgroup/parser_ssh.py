@@ -25,7 +25,7 @@ class DragonResearchGroupSSHParserBot(Bot):
                 continue
 
             splitted_row = row.split('|')
-            event = Event()
+            event = Event(report)
 
             columns = ["source.asn", "source.as_name",
                        "source.ip", "time.source"]
@@ -36,12 +36,11 @@ class DragonResearchGroupSSHParserBot(Bot):
                 if key == "time.source":
                     value += "T00:00:00+00:00"
 
+                if value == 'NA':
+                    continue
+
                 event.add(key, value, sanitize=True)
 
-            event.add('time.observation', report.value(
-                'time.observation'), sanitize=True)
-            event.add('feed.name', report.value("feed.name"))
-            event.add('feed.url', report.value("feed.url"))
             event.add('classification.type', u'brute-force')
             event.add('protocol.application', u'ssh')
             event.add("raw", row, sanitize=True)

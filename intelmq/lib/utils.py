@@ -18,6 +18,7 @@ import json
 import logging
 import os
 import re
+import six
 
 from intelmq import DEFAULT_LOGGING_PATH
 
@@ -48,24 +49,31 @@ def decode(text, encodings=("utf-8", ), force=False):
         list/tuple of encodings to use, default ('utf-8')
     force : boolean
         Ignore invalid characters, default: False
+
+    Returns
+    -------
+    text : unicode string
+        unicode string is always returned, even when encoding is ascii
+        (Python 3 compat)
     """
-    if type(text) is unicode:
+    if isinstance(text, six.text_type):
         return text
 
     for encoding in encodings:
         try:
-            return text.decode(encoding)
+            return six.text_type(text.decode(encoding))
         except ValueError:
             pass
 
     if force:
         for encoding in encodings:
             try:
-                return text.decode(encoding, 'ignore')
+                return six.text_type(text.decode(encoding, 'ignore'))
             except ValueError:
                 pass
 
-    raise Exception("Could not decode string with given encodings.")
+    raise ValueError("Could not decode string with given encodings{!r}"
+                     ".".format(encodings))
 
 
 def encode(text, encodings=("utf-8", ), force=False):
@@ -81,7 +89,7 @@ def encode(text, encodings=("utf-8", ), force=False):
     force : boolean
         Ignore invalid characters, default: False
     """
-    if type(text) is bytes:
+    if isinstance(text, six.binary_type):
         return text
 
     for encoding in encodings:
@@ -97,14 +105,35 @@ def encode(text, encodings=("utf-8", ), force=False):
             except ValueError:
                 pass
 
-    raise Exception("Could not encode string with given encodings.")
+    raise ValueError("Could not encode string with given encodings{!r}"
+                     ".".format(encodings))
 
 
 def base64_decode(value):
+    """
+    Parameters
+    ----------
+    value : string
+        base 64, will be encoded to bytes if not already.
+
+    Returns
+    -------
+    retval : unicode string
+    """
     return decode(base64.b64decode(encode(value)))
 
 
 def base64_encode(value):
+    """
+    Parameters
+    ----------
+    value : string
+        Will be encoded to bytes if not already of type bytes.
+
+    Returns
+    -------
+    retval : unicode string
+    """
     return decode(base64.b64encode(encode(value)))
 
 

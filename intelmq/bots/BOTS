@@ -1,56 +1,56 @@
 {
     "Collector": {
         "Abuse.ch Feodo Tracker Domains": {
-            "description": "Abuse.ch Feodo Tracker Domains is the bot responsible to get the report from source of information.",
+            "description": "The Feodo Tracker Feodo Domain Blocklist contains domain names (FQDN) used as C&C communication channel by the Feodo Trojan. These domains names are usually registered and operated by cybercriminals for the exclusive purpose of hosting a Feodo botnet controller. Hence you should expect no legit traffic to those domains. I highly recommend you to block/drop any traffic towards any Feodo C&C domain by using the Feodo Domain Blocklist. Please consider that domain names are usually only used by version B of the Feodo Trojan. C&C communication channels used by version A, version C and version D are not covered by this blocklist.",
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Abuse.ch",
-                "rate_limit": "129600",
+                "rate_limit": 129600,
                 "url": "https://feodotracker.abuse.ch/blocklist/?download=domainblocklist"
             }
         },
         "Abuse.ch Feodo Tracker IPs": {
-            "description": "Abuse.ch Feodo Tracker IPs is the bot responsible to get the report from source of information.",
+            "description": "The Feodo Tracker Feodo IP Blocklist contains IP addresses (IPv4) used as C&C communication channel by the Feodo Trojan. This lists contains two types of IP address: Feodo C&C servers used by version A, version C and version D of the Feodo Trojan (these IP addresses are usually compromised servers running an nginx daemon on port 8080 TCP or 7779 TCP that is acting as proxy, forwarding all traffic to a tier 2 proxy node) and Feodo C&C servers used by version B which are usually used for the exclusive purpose of hosting a Feodo C&C server. Attention: Since Feodo C&C servers associated with version A, version C and version D are usually hosted on compromised servers, its likely that you also block/drop legit traffic e.g. towards websites hosted on a certain IP address acting as Feodo C&C for version A, version C and version D. If you only want to block/drop traffic to Feodo C&C servers hosted on bad IPs (version B), please use the blocklist BadIPs documented below.",
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Abuse.ch",
-                "rate_limit": "129600",
+                "rate_limit": 129600,
                 "url": "https://feodotracker.abuse.ch/blocklist/?download=ipblocklist"
             }
         },
         "Abuse.ch Palevo Tracker Domains": {
-            "description": "Abuse.ch Palevo Tracker Domains is the bot responsible to get the report from source of information.",
+            "description": "Palevo C&C Domain Blocklists includes domain names which are being used as botnet C&C for the Palevo crimeware.",
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Abuse.ch",
-                "rate_limit": "129600",
+                "rate_limit": 129600,
                 "url": "https://palevotracker.abuse.ch/blocklists.php?download=domainblocklist"
             }
         },
         "Abuse.ch Palevo Tracker IPs": {
-            "description": "Abuse.ch Palevo Tracker IPs is the bot responsible to get the report from source of information.",
+            "description": "Palevo C&C IP Blocklist includes IP addresses which are being used as botnet C&C for the Palevo crimeware.",
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Abuse.ch",
-                "rate_limit": "129600",
+                "rate_limit": 129600,
                 "url": "https://palevotracker.abuse.ch/blocklists.php?download=ipblocklist"
             }
         },
         "Abuse.ch ZeuS Tracker Domains": {
-            "description": "Abuse.ch ZeuS Tracker Domains is the bot responsible to get the report from source of information.",
+            "description": "The ZeuS domain blocklist (BadDomains) is the recommended blocklist if you want to block only ZeuS domain names. It has domain names that ZeuS Tracker believes to be hijacked (level 2). Hence the false positive rate should be much lower compared to the standard ZeuS domain blocklist.",
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Abuse.ch",
-                "rate_limit": "129600",
+                "rate_limit": 129600,
                 "url": "https://zeustracker.abuse.ch/blocklist.php?download=baddomains"
             }
         },
         "Abuse.ch ZeuS Tracker IPs": {
-            "description": "Abuse.ch ZeuS Tracker IPs is the bot responsible to get the report from source of information.",
+            "description": "This list only includes IPv4 addresses that are used by the ZeuS trojan. It is the recommened list if you want to block only ZeuS IPs. It excludes IP addresses that ZeuS Tracker believes to be hijacked (level 2) or belong to a free web hosting provider (level 3). Hence the false postive rate should be much lower compared to the standard ZeuS IP blocklist.",
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Abuse.ch",
-                "rate_limit": "129600",
+                "rate_limit": 129600,
                 "url": "https://zeustracker.abuse.ch/blocklist.php?download=badips"
             }
         },
@@ -59,7 +59,7 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "AlienVault",
-                "rate_limit": "3600",
+                "rate_limit": 3600,
                 "url": "https://reputation.alienvault.com/reputation.data"
             }
         },
@@ -68,7 +68,7 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Arbor",
-                "rate_limit": "3600",
+                "rate_limit": 3600,
                 "url": "http://atlas-public.ec2.arbor.net/public/ssh_attackers"
             }
         },
@@ -77,8 +77,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Autoshun",
-                "rate_limit": "3600",
-                "url": "http://www.autoshun.org/files/shunlist.html"
+                "rate_limit": 3600,
+                "url": "https://www.autoshun.org/files/shunlist.html"
             }
         },
         "BlockList.DE Apache": {
@@ -86,8 +86,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "BlockList.de",
-                "rate_limit": "86400",
-                "url": "http://lists.blocklist.de/lists/apache.txt"
+                "rate_limit": 86400,
+                "url": "https://lists.blocklist.de/lists/apache.txt"
             }
         },
         "BlockList.DE Bots": {
@@ -95,8 +95,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "BlockList.de",
-                "rate_limit": "86400",
-                "url": "http://lists.blocklist.de/lists/bots.txt"
+                "rate_limit": 86400,
+                "url": "https://lists.blocklist.de/lists/bots.txt"
             }
         },
         "BlockList.DE Brute-force Login": {
@@ -104,8 +104,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "BlockList.de",
-                "rate_limit": "86400",
-                "url": "http://lists.blocklist.de/lists/bruteforcelogin.txt"
+                "rate_limit": 86400,
+                "url": "https://lists.blocklist.de/lists/bruteforcelogin.txt"
             }
         },
         "BlockList.DE FTP": {
@@ -113,8 +113,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "BlockList.de",
-                "rate_limit": "86400",
-                "url": "http://lists.blocklist.de/lists/ftp.txt"
+                "rate_limit": 86400,
+                "url": "https://lists.blocklist.de/lists/ftp.txt"
             }
         },
         "BlockList.DE IMAP": {
@@ -122,8 +122,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "BlockList.de",
-                "rate_limit": "86400",
-                "url": "http://lists.blocklist.de/lists/imap.txt"
+                "rate_limit": 86400,
+                "url": "https://lists.blocklist.de/lists/imap.txt"
             }
         },
         "BlockList.DE IRC Bot": {
@@ -131,8 +131,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "BlockList.de",
-                "rate_limit": "86400",
-                "url": "http://lists.blocklist.de/lists/ircbot.txt"
+                "rate_limit": 86400,
+                "url": "https://lists.blocklist.de/lists/ircbot.txt"
             }
         },
         "BlockList.DE Mail": {
@@ -140,8 +140,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "BlockList.de",
-                "rate_limit": "86400",
-                "url": "http://lists.blocklist.de/lists/mail.txt"
+                "rate_limit": 86400,
+                "url": "https://lists.blocklist.de/lists/mail.txt"
             }
         },
         "BlockList.DE SIP": {
@@ -149,8 +149,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "BlockList.de",
-                "rate_limit": "86400",
-                "url": "http://lists.blocklist.de/lists/sip.txt"
+                "rate_limit": 86400,
+                "url": "https://lists.blocklist.de/lists/sip.txt"
             }
         },
         "BlockList.DE SSH": {
@@ -158,8 +158,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "BlockList.de",
-                "rate_limit": "86400",
-                "url": "http://lists.blocklist.de/lists/ssh.txt"
+                "rate_limit": 86400,
+                "url": "https://lists.blocklist.de/lists/ssh.txt"
             }
         },
         "BlockList.DE Strong IPs": {
@@ -167,8 +167,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "BlockList.de",
-                "rate_limit": "86400",
-                "url": "http://lists.blocklist.de/lists/strongips.txt"
+                "rate_limit": 86400,
+                "url": "https://lists.blocklist.de/lists/strongips.txt"
             }
         },
         "CI Army": {
@@ -176,7 +176,7 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "CI Army",
-                "rate_limit": "3600",
+                "rate_limit": 3600,
                 "url": "http://cinsscore.com/list/ci-badguys.txt"
             }
         },
@@ -185,7 +185,7 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "CleanMX",
-                "rate_limit": "129600",
+                "rate_limit": 129600,
                 "url": "http://support.clean-mx.de/clean-mx/xmlphishing?response=alive&format=csv&domain="
             }
         },
@@ -194,7 +194,7 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "CleanMX",
-                "rate_limit": "129600",
+                "rate_limit": 129600,
                 "url": "http://support.clean-mx.de/clean-mx/xmlviruses?response=alive&format=csv&domain="
             }
         },
@@ -203,8 +203,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Cymru",
-                "rate_limit": "129600",
-                "url": "http://www.team-cymru.org/Services/Bogons/fullbogons-ipv4.txt"
+                "rate_limit": 129600,
+                "url": "https://www.team-cymru.org/Services/Bogons/fullbogons-ipv4.txt"
             }
         },
         "DShield AS": {
@@ -212,8 +212,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "DShield",
-                "rate_limit": "129600",
-                "url": "http://dshield.org/asdetailsascii.html?as=<AS Number>"
+                "rate_limit": 129600,
+                "url": "https://dshield.org/asdetailsascii.html?as=<AS Number>"
             }
         },
         "AlienVault OTX": {
@@ -230,7 +230,7 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "DShield",
-                "rate_limit": "129600",
+                "rate_limit": 129600,
                 "url": "https://www.dshield.org/block.txt"
             }
         },
@@ -239,7 +239,7 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "DShield",
-                "rate_limit": "129600",
+                "rate_limit": 129600,
                 "url": "https://www.dshield.org/feeds/suspiciousdomains_High.txt"
             }
         },
@@ -248,7 +248,7 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Danger Rulez",
-                "rate_limit": "3600",
+                "rate_limit": 3600,
                 "url": "http://danger.rulez.sk/projects/bruteforceblocker/blist.php"
             }
         },
@@ -257,8 +257,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Dragon Research Group",
-                "rate_limit": "3600",
-                "url": "http://dragonresearchgroup.org/insight/sshpwauth.txt"
+                "rate_limit": 3600,
+                "url": "https://dragonresearchgroup.org/insight/sshpwauth.txt"
             }
         },
         "Dragon Research Group VNC": {
@@ -266,7 +266,7 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Dragon Research Group",
-                "rate_limit": "3600",
+                "rate_limit": 3600,
                 "url": "https://dragonresearchgroup.org/insight/vncprobe.txt"
             }
         },
@@ -275,7 +275,7 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Dyn",
-                "rate_limit": "10800",
+                "rate_limit": 10800,
                 "url": "http://security-research.dyndns.org/pub/botnet/ponmocup/ponmocup-finder/ponmocup-infected-domains-latest.txt"
             }
         },
@@ -285,7 +285,7 @@
             "parameters": {
                 "feed": "Fraunhofer DGA",
                 "password": "<PASSWORD>",
-                "rate_limit": "10800",
+                "rate_limit": 10800,
                 "url": "https://dgarchive.caad.fkie.fraunhofer.de/today",
                 "username": "<USER>"
             }
@@ -295,7 +295,7 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "HpHosts",
-                "rate_limit": "3600",
+                "rate_limit": 3600,
                 "url": "http://hosts-file.net/download/hosts.txt"
             }
         },
@@ -304,8 +304,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Malc0de",
-                "rate_limit": "10800",
-                "url": "http://malc0de.com/bl/BOOT"
+                "rate_limit": 10800,
+                "url": "https://malc0de.com/bl/BOOT"
             }
         },
         "Malc0de IP Blacklist": {
@@ -313,8 +313,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Malc0de",
-                "rate_limit": "10800",
-                "url": "http://malc0de.com/bl/IP_Blacklist.txt"
+                "rate_limit": 10800,
+                "url": "https://malc0de.com/bl/IP_Blacklist.txt"
             }
         },
         "Malware Domain List": {
@@ -322,7 +322,7 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Malware Domain List",
-                "rate_limit": "3600",
+                "rate_limit": 3600,
                 "url": "http://www.malwaredomainlist.com/updatescsv.php"
             }
         },
@@ -331,7 +331,7 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "MalwareDomains",
-                "rate_limit": "172800",
+                "rate_limit": 172800,
                 "url": "http://mirror2.malwaredomains.com/files/domains.txt"
             }
         },
@@ -340,7 +340,7 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "MalwareGroup",
-                "rate_limit": "129600",
+                "rate_limit": 129600,
                 "url": "http://www.malwaregroup.com/domains"
             }
         },
@@ -349,7 +349,7 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "MalwareGroup",
-                "rate_limit": "129600",
+                "rate_limit": 129600,
                 "url": "http://www.malwaregroup.com/ipaddresses"
             }
         },
@@ -358,7 +358,7 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "MalwareGroup",
-                "rate_limit": "129600",
+                "rate_limit": 129600,
                 "url": "http://www.malwaregroup.com/proxies"
             }
         },
@@ -367,7 +367,7 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "MalwarePatrol",
-                "rate_limit": "180000",
+                "rate_limit": 180000,
                 "url": "https://lists.malwarepatrol.net/cgi/getfile?receipt=< API KEY >&product=8&list=dansguardian"
             }
         },
@@ -376,8 +376,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "OpenBL",
-                "rate_limit": "43200",
-                "url": "http://www.openbl.org/lists/date_all.txt"
+                "rate_limit": 43200,
+                "url": "https://www.openbl.org/lists/date_all.txt"
             }
         },
         "OpenPhish": {
@@ -385,8 +385,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "OpenPhish",
-                "rate_limit": "86400",
-                "url": "http://www.openphish.com/feed.txt"
+                "rate_limit": 86400,
+                "url": "https://www.openphish.com/feed.txt"
             }
         },
         "PhishTank": {
@@ -394,8 +394,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Phishtank",
-                "rate_limit": "28800",
-                "url": "http://data.phishtank.com/data/< API KEY >/online-valid.csv"
+                "rate_limit": 28800,
+                "url": "https://data.phishtank.com/data/< API KEY >/online-valid.csv"
             }
         },
         "Taichung": {
@@ -403,7 +403,7 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Taichung",
-                "rate_limit": "3600",
+                "rate_limit": 3600,
                 "url": "https://www.tc.edu.tw/net/netflow/lkout/recent/30"
             }
         },
@@ -412,7 +412,7 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Turris Greylist",
-                "rate_limit": "43200",
+                "rate_limit": 43200,
                 "url": "https://www.turris.cz/greylist-data/greylist-latest.csv"
             }
         },
@@ -421,7 +421,7 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "URLVir",
-                "rate_limit": "129600",
+                "rate_limit": 129600,
                 "url": "http://www.urlvir.com/export-hosts/"
             }
         },
@@ -430,7 +430,7 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "URLVir",
-                "rate_limit": "129600",
+                "rate_limit": 129600,
                 "url": "http://www.urlvir.com/export-ip-addresses/"
             }
         },
@@ -439,7 +439,7 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Spamhaus CERT",
-                "rate_limit": "3600",
+                "rate_limit": 3600,
                 "url": "https://portal.spamhaus.org/cert/api.php?cert=<CERTNAME>&key=<APIKEY>"
             }
         },
@@ -448,8 +448,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Spamhaus Drop",
-                "rate_limit": "3600",
-                "url": "http://www.spamhaus.org/drop/drop.lasso"
+                "rate_limit": 3600,
+                "url": "https://www.spamhaus.org/drop/drop.lasso"
             }
         },
         "VXVault": {
@@ -457,7 +457,7 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "VxVault",
-                "rate_limit": "3600",
+                "rate_limit": 3600,
                 "url": "http://vxvault.siri-urz.net/URL_List.php"
             }
         }
@@ -526,10 +526,28 @@
                 "database": "/opt/intelmq/var/lib/bots/maxmind_geoip/GeoLite2-City.mmdb"
             }
         },
+        "Modify": {
+            "description": "Modify bot can make nearly arbitrary changes to event's fields based on regex-rules on different values. See docs/Bots.md for some examples.",
+            "module": "intelmq.bots.experts.modify.expert",
+            "parameters": {
+                "configuration_path": "/opt/intelmq/var/lib/bots/modify/modify.conf"
+            }
+        },
+        "RFC 1918": {
+            "description": "RFC 1918 removes fields or discards events if an ip is invalid (local, reserved, documentation).",
+            "module": "intelmq.bots.experts.rfc1918.expert",
+            "parameters": {
+                "fields": "destination.ip,source.ip",
+                "policy": "del,drop"
+            }
+        },
         "RIPENCC": {
-            "description": "RIPENCC is the bot resposible to get the correspondent abuse contact from source IP and destination IP of the events",
+            "description": "RIPENCC is the bot resposible to get the correspondent abuse contact from source IP and destination IP of the events. RIPEstat documentation: https://stat.ripe.net/docs/data_api ",
             "module": "intelmq.bots.experts.ripencc_abuse_contact.expert",
             "parameters": {
+                "query_ripe_db_asn": true,
+                "query_ripe_db_ip": true,
+                "query_ripe_stat": true,
                 "redis_cache_db": "5",
                 "redis_cache_host": "127.0.0.1",
                 "redis_cache_port": "6379",
@@ -579,14 +597,16 @@
         },
         "PostgreSQL": {
             "module": "intelmq.bots.outputs.postgresql.output",
-            "description": "PostgreSQL is the bot responsible to send events to a PostgreSQL Database.",
+            "description": "PostgreSQL is the bot responsible to send events to a PostgreSQL Database. When activating autocommit, transactions are not used: http://initd.org/psycopg/docs/connection.html#connection.autocommit",
             "parameters": {
+                "autocommit": true,
                 "host": "localhost",
                 "port": "5432",
                 "database": "intelmq-events",
                 "user": "intelmq",
                 "password": "<password>",
-                "sslmode": "require"
+                "sslmode": "require",
+                "table": "events"
             }
         },
         "REST API": {

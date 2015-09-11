@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import sys
+try:
+    from HTMLParser import HTMLParser
+except ImportError:
+    from html.parser import HTMLParser
 
-import HTMLParser
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
 from intelmq.lib.harmonization import ClassificationType
@@ -29,10 +32,10 @@ class AutoshunParserBot(Bot):
         raw_report = utils.base64_decode(report.value("raw"))
         raw_report_splitted = raw_report.split("</tr>")[2:]
 
-        parser = HTMLParser.HTMLParser()
+        parser = HTMLParser()
 
         for row in raw_report_splitted:
-            event = Event()
+            event = Event(reports)
 
             row = row.strip()
 
@@ -62,11 +65,7 @@ class AutoshunParserBot(Bot):
             if not event.contains("classification.type"):
                 event.add("classification.type", u'unknown')
 
-            event.add('time.observation',
-                      report.value('time.observation'), sanitize=True)
             event.add("time.source", last_seen, sanitize=True)
-            event.add('feed.name', report.value("feed.name"))
-            event.add('feed.url', report.value("feed.url"))
             event.add("source.ip", ip, sanitize=True)
             event.add("event_description.text", description, sanitize=True)
             event.add("raw", row, sanitize=True)

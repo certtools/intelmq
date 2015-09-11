@@ -45,7 +45,7 @@ class AlienVaultParserBot(Bot):
 
             for ctype in classification_types:
 
-                event = Event()
+                event = Event(report)
 
                 if ctype.lower() in CLASSIFICATION:
                     event.add('classification.type',
@@ -69,10 +69,6 @@ class AlienVaultParserBot(Bot):
                 event.add('source.geolocation.longitude',
                           geo_longitude.strip(), sanitize=True)
 
-                event.add('time.observation', report.value(
-                    'time.observation'), sanitize=True)
-                event.add('feed.name', report.value("feed.name"))
-                event.add('feed.url', report.value("feed.url"))
                 event.add("raw", row, sanitize=True)
 
                 self.send_message(event)

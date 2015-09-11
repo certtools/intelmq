@@ -49,7 +49,6 @@ class TestHarmonization(unittest.TestCase):
 
     def test_integer_valid_other(self):
         """ Test Integer.is_valid with invalid values. """
-        self.assertFalse(harmonization.Integer.is_valid(-4532L))
         self.assertFalse(harmonization.Integer.is_valid('1337'))
         self.assertFalse(harmonization.Integer.is_valid(True))
 
@@ -79,7 +78,6 @@ class TestHarmonization(unittest.TestCase):
 
     def test_float_valid_other(self):
         """ Test Float.is_valid with invalid values. """
-        self.assertFalse(harmonization.Float.is_valid(-4532L))
         self.assertFalse(harmonization.Float.is_valid('1337.234'))
         self.assertFalse(harmonization.Float.is_valid(True))
 
@@ -159,12 +157,15 @@ class TestHarmonization(unittest.TestCase):
 
     def test_datetime_from_timestamp(self):
         """ Test DateTime.from_timestamp method. """
-        self.assertEqual(harmonization.DateTime.from_timestamp(1441008970),
-                         '2015-08-31T10:16:10+00:00')
-        self.assertEqual(harmonization.DateTime.from_timestamp(1441008970,
-                                                               'Europe/'
-                                                               'Vienna'),
-                         '2015-08-31T10:16:10+02:00')
+        self.assertEqual('2015-08-31T08:16:10+00:00',
+                         harmonization.DateTime.from_timestamp(1441008970))
+        self.assertEqual('2015-08-31T07:16:10-01:00',
+                         harmonization.DateTime.from_timestamp(1441008970,
+                                                               'Etc/GMT+1'))
+        self.assertEqual('2015-08-31T04:16:10-04:00',
+                         harmonization.DateTime.from_timestamp(1441008970,
+                                                               'America/'
+                                                               'Guyana'))
 
     def test_datetime_from_timestamp_invalid(self):
         """ Test DateTime.from_timestamp method with invalid inputs. """

@@ -50,7 +50,7 @@ class TaichungCityNetflowParserBot(Bot):
                 "<td>[\ ]*(\d{4}-\d{2}-\d{2}\ \d{2}:\d{2}:\d{2})[\ ]*</td>",
                 row)
 
-            event = Event()
+            event = Event(report)
 
             description = info1.group(2)
             description = utils.decode(description)
@@ -58,13 +58,9 @@ class TaichungCityNetflowParserBot(Bot):
             time_source = info2.group(1) + " UTC-8"
 
             event.add("time.source", time_source, sanitize=True)
-            event.add('time.observation', report.value(
-                'time.observation'), sanitize=True)
             event.add("source.ip", info1.group(1), sanitize=True)
             event.add('classification.type', event_type, sanitize=True)
             event.add('event_description.text', description, sanitize=True)
-            event.add('feed.name', report.value("feed.name"))
-            event.add('feed.url', report.value("feed.url"))
             event.add("raw", row, sanitize=True)
 
             self.send_message(event)

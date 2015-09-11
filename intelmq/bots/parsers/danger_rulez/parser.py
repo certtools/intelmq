@@ -26,7 +26,7 @@ class BruteForceBlockerParserBot(Bot):
             if row.startswith('#'):
                 continue
 
-            event = Event()
+            event = Event(report)
 
             match = re.search(REGEX_IP, row)
             if match:
@@ -36,12 +36,8 @@ class BruteForceBlockerParserBot(Bot):
             if match:
                 timestamp = match.group(1) + " UTC"
 
-            event.add('time.observation', report.value(
-                'time.observation'), sanitize=True)
             event.add('time.source', timestamp, sanitize=True)
             event.add('source.ip', ip, sanitize=True)
-            event.add('feed.name', report.value("feed.name"))
-            event.add('feed.url', report.value("feed.url"))
             event.add('classification.type', u'brute-force')
             event.add("raw", row, sanitize=True)
 

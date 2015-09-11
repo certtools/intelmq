@@ -8,10 +8,17 @@ but has a valid Harmonization configuration.
 """
 from __future__ import unicode_literals
 
-import six
+import json
 import unittest
 
 import intelmq.lib.exceptions as exceptions
+import intelmq.lib.utils as utils
+import pkg_resources
+import six
+
+conf_filename = pkg_resources.resource_filename('intelmq',
+                                                'conf/harmonization.conf')
+harm_config = utils.load_configuration(conf_filename)
 import intelmq.lib.message as message
 
 LOREM_BASE64 = 'bG9yZW0gaXBzdW0='
@@ -204,7 +211,8 @@ class TestMessageFactory(unittest.TestCase):
     def test_report_add_byte(self):
         """ Test if report rejects a byte string. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
-        with self.assertRaises(exceptions.InvalidValue):
+        with self.assertRaises((exceptions.InvalidValue,
+                                TypeError)):
             report.add('raw', bytes(LOREM_BASE64))
 
     def test_report_sanitize_url(self):
@@ -250,12 +258,13 @@ class TestMessageFactory(unittest.TestCase):
         report.add('feed.name', 'Example')
         report.add('feed.url', URL_SANE)
         report.add('raw', LOREM_BASE64)
-        self.assertEqual('{"raw": "bG9yZW0gaXBzdW0=", "__type": "Report",'
-                         ' "feed.url": "https://example.com/", "feed.name":'
-                         ' "Example"}',
-                         message.MessageFactory.serialize(report))
+        actual = message.MessageFactory.serialize(report)
+        expected = ('{"raw": "bG9yZW0gaXBzdW0=", "__type": "Report", "feed.url'
+                    '": "https://example.com/", "feed.name": "Example"}')
+        self.assertDictEqual(json.loads(expected),
+                             json.loads(actual))
 
-    def test_report_unicode(self):  # TODO: Python 3
+    def test_report_unicode(self):
         """ Test Message __unicode__ function, pointing to serialize. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         report = self.add_report_examples(report)
@@ -263,18 +272,18 @@ class TestMessageFactory(unittest.TestCase):
                          six.text_type(report))
 
     def test_deep_copy_content(self):
-        """ Test if depp_copy does not return the same object. """
+        """ Test if deep_copy does not return the same object. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         report = self.add_report_examples(report)
-        self.assertListEqual(list(report.deep_copy().items()),
-                             list(report.items()))
+        self.assertSetEqual(set(report.deep_copy().items()),
+                            set(report.items()))
 
     def test_deep_copy_items(self):  # TODO: Sort by key
-        """ Test if depp_copy does not return the same object. """
+        """ Test if deep_copy does not return the same object. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         report = self.add_report_examples(report)
-        self.assertNotEqual(list(map(id, report.deep_copy())),
-                            list(map(id, report)))
+        self.assertNotEqual(set(map(id, report.deep_copy())),
+                            set(map(id, report)))
 
     def test_deep_copy_object(self):
         """ Test if depp_copy does not return the same object. """
@@ -283,30 +292,33 @@ class TestMessageFactory(unittest.TestCase):
         self.assertIsNot(report.deep_copy(), report)
 
     def test_copy_content(self):
-        """ Test if depp_copy does not return the same object. """
+        """ Test if deep_copy does not return the same object. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         report = self.add_report_examples(report)
-        self.assertListEqual(list(report.copy().items()),
-                             list(report.items()))
+        self.assertSetEqual(set(report.copy().items()),
+                            set(report.items()))
 
-    def test_copy_items(self):  # TODO: Sort by key
-        """ Test if depp_copy does not return the same object. """
+    def test_copy_items(self):
+        """ Test if deep_copy does not return the same object. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         report = self.add_report_examples(report)
-        self.assertListEqual(list(map(id, report.copy())),
-                             list(map(id, report)))
+        self.assertEqual(set(map(id, report.copy())),
+                         set(map(id, report)))
 
     def test_copy_object(self):
-        """ Test if depp_copy does not return the same object. """
+        """ Test if deep_copy does not return the same object. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         report = self.add_report_examples(report)
         self.assertIsNot(report.copy(), report)
 
     def test_event_hash(self):
-        """ Test Event __hash_,_ 'time.observation should be ignored. """
+        """ Test Event __hash__ 'time.observation should be ignored. """
         event = message.MessageFactory.unserialize('{"__type": "Event"}')
-        event = self.add_event_examples(event)
-        self.assertEqual(-2488641590542048631, hash(event))
+        event1 = self.add_event_examples(event)
+        event2 = event1.deep_copy()
+        event2.add('time.observation', u'2015-12-12T13:37:50+01:00',
+                   force=True, sanitize=True)
+        self.assertEqual(hash(event1), hash(event2))
 
     def test_event_dict(self):
         """ Test Event to_dict. """
@@ -323,10 +335,12 @@ class TestMessageFactory(unittest.TestCase):
         """ Test Event to_json. """
         event = message.MessageFactory.unserialize('{"__type": "Event"}')
         event = self.add_event_examples(event)
-        self.assertEqual('{"feed": {"url": "https://example.com/", "name": '
-                         '"Example"}, "raw": "bG9yZW0gaXBzdW0=", "time": '
-                         '{"observation": "2015-01-01T13:37:00+00:00"}}',
-                         event.to_json())
+        actual = event.to_json()
+        self.assertIsInstance(actual, six.text_type)
+        expected = ('{"feed": {"url": "https://example.com/", "name": '
+                    '"Example"}, "raw": "bG9yZW0gaXBzdW0=", "time": '
+                    '{"observation": "2015-01-01T13:37:00+00:00"}}')
+        self.assertDictEqual(json.loads(expected), json.loads(actual))
 
     def test_event_serialize(self):
         """ Test Event serialize. """
@@ -337,7 +351,7 @@ class TestMessageFactory(unittest.TestCase):
     def test_event_string(self):
         """ Test Event serialize. """
         event = message.MessageFactory.unserialize('{"__type": "Event"}')
-        self.assertEqual(b'{"__type": "Event"}',
+        self.assertEqual('{"__type": "Event"}',
                          event.serialize())
 
     def test_event_unicode(self):

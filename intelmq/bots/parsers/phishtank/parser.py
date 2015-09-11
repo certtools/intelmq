@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import sys
-from cStringIO import StringIO
+from io import StringIO
 
 import unicodecsv
 
@@ -29,7 +29,7 @@ class PhishTankParserBot(Bot):
                    "__IGNORE__",
                    "__IGNORE__",
                    "event_description.target"
-                  ]
+                   ]
 
         for row in unicodecsv.reader(StringIO(raw_report), encoding='utf-8'):
 
@@ -37,7 +37,7 @@ class PhishTankParserBot(Bot):
             if "phish_id" in row:
                 continue
 
-            event = Event()
+            event = Event(report)
 
             for key, value in zip(columns, row):
 
@@ -46,10 +46,6 @@ class PhishTankParserBot(Bot):
 
                 event.add(key, value, sanitize=True)
 
-            event.add('time.observation', report.value(
-                'time.observation'), sanitize=True)
-            event.add('feed.name', report.value("feed.name"))
-            event.add('feed.url', report.value("feed.url"))
             event.add('classification.type', u'phishing')
             event.add("raw", ",".join(row), sanitize=True)
 

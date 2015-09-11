@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-import json
+
 import unittest
 
 import intelmq.lib.test as test
 from intelmq.bots.experts.abusix.expert import AbusixExpertBot
-
 
 EXAMPLE_INPUT = {"__type": "Event",
                  "source.ip": "93.184.216.34",  # example.com
@@ -38,16 +37,16 @@ class TestAbusixExpertBot(test.BotTestCase, unittest.TestCase):
     @classmethod
     def set_bot(self):
         self.bot_reference = AbusixExpertBot
-        self.default_input_message = json.dumps({'__type': 'Report'})
+        self.default_input_message = {'__type': 'Report'}
 
     def test_ipv4_lookup(self):
-        self.input_message = json.dumps(EXAMPLE_INPUT)
+        self.input_message = EXAMPLE_INPUT
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_OUTPUT)
 
     @unittest.expectedFailure
     def test_ipv6_lookup(self):
-        self.input_message = json.dumps(EXAMPLE_INPUT6)
+        self.input_message = EXAMPLE_INPUT6
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_OUTPUT6)
 

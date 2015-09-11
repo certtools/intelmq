@@ -220,5 +220,5 @@ pip uninstall intelmq
 <a name="faq"></a>
 # Frequently Asked Questions
 
-Consult the [FAQ](FAQ)
+Consult the [FAQ.md](FAQ)
 if you encountered any problem.

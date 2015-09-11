@@ -51,3 +51,7 @@ Good Example:
 ```
 
 Consult this example how ShadowServer SNMP Bot solve the problem.
+
+## Git information
+
+https://docs.scipy.org/doc/numpy/dev/gitwash/development_workflow.html

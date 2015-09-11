@@ -30,6 +30,9 @@ class PostgreSQLBot(Bot):
                                         connect_timeout=connect_timeout,
                                         )
             self.cur = self.con.cursor()
+            self.con.autocommit = getattr(self.parameters, 'autocommit', True)
+
+            self.table = self.parameters.table
         except:
             self.logger.exception('Failed to connect to database')
             self.stop()
@@ -37,6 +40,7 @@ class PostgreSQLBot(Bot):
 
     def process(self):
         event = self.receive_message()
+
         if not event:
             self.acknowledge_message()
             return
@@ -44,8 +48,8 @@ class PostgreSQLBot(Bot):
         keys = '", "'.join(event.keys())
         values = event.values()
         fvalues = len(values) * '%s, '
-        query = ('INSERT INTO events ("{keys}") VALUES ({values})'
-                 ''.format(keys=keys, values=fvalues[:-2]))
+        query = ('INSERT INTO {table} ("{keys}") VALUES ({values})'
+                 ''.format(table=self.table, keys=keys, values=fvalues[:-2]))
 
         self.logger.debug('Query: {!r} with values {!r}'.format(query, values))
         try:
