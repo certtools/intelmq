@@ -517,6 +517,14 @@
                 "database": "/opt/intelmq/var/lib/bots/maxmind_geoip/GeoLite2-City.mmdb"
             }
         },
+        "RFC 1918": {
+            "description": "RFC 1918 removes fields or discards events if an ip is invalid (local, reserved, documentation).",
+            "module": "intelmq.bots.experts.rfc1918.expert",
+            "parameters": {
+                "fields": "destination.ip,source.ip",
+                "policy": "del,drop"
+            }
+        },
         "RIPENCC": {
             "description": "RIPENCC is the bot resposible to get the correspondent abuse contact from source IP and destination IP of the events. RIPEstat documentation: https://stat.ripe.net/docs/data_api ",
             "module": "intelmq.bots.experts.ripencc_abuse_contact.expert",
