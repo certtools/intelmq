@@ -35,7 +35,7 @@ class AutoshunParserBot(Bot):
         parser = HTMLParser()
 
         for row in raw_report_splitted:
-            event = Event(reports)
+            event = Event(report)
 
             row = row.strip()
 
