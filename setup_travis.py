@@ -9,7 +9,7 @@ setup(
     maintainer='Tomas Lima',
     maintainer_email='synchroack@gmail.com',
     packages=find_packages(),
-    package_data={'intelmq': ['conf/*.conf']},
+    package_data={'intelmq': ['conf/*.conf', 'bots/experts/modify/*.conf']},
     url='http://pypi.python.org/pypi/intelmq/',
     license='AGPLv3',
     description="IntelMQ Tool",

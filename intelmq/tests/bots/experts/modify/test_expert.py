@@ -5,6 +5,7 @@ Testing modify expert bot.
 from __future__ import unicode_literals
 
 import unittest
+from pkg_resources import resource_filename
 
 import intelmq.lib.test as test
 from intelmq.bots.experts.modify.expert import ModifyExpertBot
@@ -39,9 +40,9 @@ class TestModifyExpertBot(test.BotTestCase, unittest.TestCase):
     @classmethod
     def set_bot(self):
         self.bot_reference = ModifyExpertBot
-        self.sysconfig = {'filter': False,
-                          'overwrite_cc': False,
-                          'verify_cert': False,
+        config_path = resource_filename('intelmq',
+                                        'bots/experts/modify/modify.conf')
+        self.sysconfig = {'configuration_path': config_path
                           }
 
     def test_events(self):

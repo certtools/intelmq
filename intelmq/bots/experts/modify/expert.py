@@ -7,9 +7,8 @@ Modify Expert bot let's you manipulate all fields with a config file.
 from __future__ import unicode_literals
 import re
 
-from intelmq import MODIFY_CONF_FILE
 from intelmq.lib.bot import Bot
-import intelmq.lib.utils
+from intelmq.lib.utils import load_configuration
 
 
 def matches(event, *rules):
@@ -34,7 +33,7 @@ def apply_action(event, action):
 class ModifyExpertBot(Bot):
 
     def init(self):
-        self.config = intelmq.lib.utils.load_configuration(MODIFY_CONF_FILE)
+        self.config = load_configuration(self.parameters.configuration_path)
 
     def process(self):
         event = self.receive_message()

@@ -517,6 +517,13 @@
                 "database": "/opt/intelmq/var/lib/bots/maxmind_geoip/GeoLite2-City.mmdb"
             }
         },
+        "Modify": {
+            "description": "Modify bot can make nearly arbitrary changes to event's fields based on regex-rules on different values. See docs/Bots.md for some examples.",
+            "module": "intelmq.bots.experts.modify.expert",
+            "parameters": {
+                "configuration_path": "/opt/intelmq/var/lib/bots/modify/modify.conf"
+            }
+        },
         "RFC 1918": {
             "description": "RFC 1918 removes fields or discards events if an ip is invalid (local, reserved, documentation).",
             "module": "intelmq.bots.experts.rfc1918.expert",
