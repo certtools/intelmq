@@ -24,17 +24,44 @@ CON = psycopg2.connect(database=DBPARAMS['database'],
                        sslmode=DBPARAMS['sslmode'],
                        )
 CUR = CON.cursor()
-QUERY = """
+QUERY_COUNT = """
 SELECT COUNT(*)
 FROM {}
 WHERE
     notify = TRUE;
 """.format(DBTABLE)
+QUERY_COUNT_ASN = """
+SELECT COUNT(*) as count, "source.asn" as asn
+FROM {}
+WHERE
+    notify = TRUE AND
+    "source.geolocation.cc" = 'AT'
+GROUP BY
+    "source.asn";
+""".format(DBTABLE)
+QUERY_ASN = """
+SELECT
+    contacts, cc_contacts
+FROM as_contacts
+WHERE
+    asnum = %s;
+"""
+
+
+def get_contact(asn):
+    CUR.execute(QUERY_ASN, (asn, ))
+    return CUR.fetchone()
 
 
 def count_all():
-    CUR.execute(QUERY)
+    CUR.execute(QUERY_COUNT)
     print(CUR.fetchall())
 
+
+def count_by_asn():
+    CUR.execute(QUERY_COUNT_ASN)
+    for row in CUR.fetchall():
+        print("{} {} {}".format(row[0], row[1], get_contact(row[1])))
+
 if __name__ == '__main__':
-    count_all()
+    count_by_asn()
