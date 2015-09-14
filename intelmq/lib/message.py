@@ -103,8 +103,9 @@ class Message(dict):
             if value is None:
                 raise exceptions.InvalidValue(key, old_value)
 
-        if not self.__is_valid_value(key, value):
-            raise exceptions.InvalidValue(key, value)
+        valid_value = self.__is_valid_value(key, value)
+        if not valid_value[0]:
+            raise exceptions.InvalidValue(key, value, reason=valid_value[1])
 
         super(Message, self).__setitem__(key, value)
 
@@ -163,21 +164,23 @@ class Message(dict):
 
     def __is_valid_value(self, key, value):
         if key == '__type':
-            return True
+            return (True, )
         config = self.__get_type_config(key)
         class_reference = getattr(intelmq.lib.harmonization, config['type'])
         if not class_reference().is_valid(value):
-            return False
+            return (False, 'is_valid returned False.')
         if 'ascii' in config:
             if not re.search('^[ -~]+$', six.text_type(value)):
-                return False
+                return (False, 'did not match printable ASCII characters.')
         if 'length' in config:
-            if not len(six.text_type(value)) <= config['length']:
-                return False
+            length = len(six.text_type(value))
+            if not length <= config['length']:
+                return (False, 'too long: {} > {}.'.format(length,
+                                                           config['length']))
         if 'regex' in config:
             if not re.search(config['regex'], six.text_type(value)):
-                return False
-        return True
+                return (False, 'regex did not match.')
+        return (True, )
 
     def __sanitize_value(self, key, value):
         class_name = self.__get_type_config(key)['type']
