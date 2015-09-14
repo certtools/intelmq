@@ -32,7 +32,7 @@ class FraunhoferDGAParserBot(Bot):
 
             event = Event(report)
 
-            event.add('source.type', u'c&c')
+            event.add('classification.type', u'c&c')
             try:
                 event.add('source.ip', row, sanitize=True)
             except InvalidValue:
