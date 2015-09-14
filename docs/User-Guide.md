@@ -15,7 +15,7 @@
 The following instructions assume:
 
 * Debian or Ubuntu Operating System
-* Python version 2 used
+* Python version 2 or 3
 
 
 <a name="installation"></a>
@@ -27,6 +27,12 @@ The following instructions assume:
 apt-get install python-pip git build-essential python-dev redis-server python-zmq python-pycurl libcurl4-gnutls-dev
 ```
 
+To enable SNI (Server Name Indication) support in Python 2, you also need `libffi-dev` (for `ffi.h`) and `ndg-https-client`:
+
+```bash
+apt-get install libffi-dev python-openssl python-pyasn1
+pip install ndg-httpsclient
+```
 
 ### Install IntelMQ
 
