@@ -32,11 +32,11 @@ class FraunhoferDGAParserBot(Bot):
 
             event = Event(report)
 
-            event.add('classification.type', u'c&c')
+            event.add('source.type', u'c&c')
             try:
-                event.add('destination.ip', row, sanitize=True)
+                event.add('source.ip', row, sanitize=True)
             except InvalidValue:
-                event.add('destination.fqdn', row, sanitize=True)
+                event.add('source.fqdn', row, sanitize=True)
             event.add("raw", row, sanitize=True)
 
             self.send_message(event)
