@@ -507,3 +507,7 @@ class URL(GenericType):
         if value.netloc != "" and not IPAddress.is_valid(value.netloc):
             return value.netloc
         return None
+
+
+class UUID(String):
+    pass
