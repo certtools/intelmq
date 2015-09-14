@@ -88,16 +88,15 @@ class BlockListDEParserBot(Bot):
         path = urlparse(url).path
         filename = posixpath.basename(path)
 
-        classification_type = 'blacklist'
-        if filename in MAPPING:
-            for key, value in MAPPING[filename].items():
-                classification_type = value
-
         for row in raw_report.split('\n'):
             event = Event(report)
 
             event.add('source.ip', row.strip(), sanitize=True)
-            event.add(key, classification_type, sanitize=True)
+            if filename in MAPPING:
+                for key, value in MAPPING[filename].items():
+                    event.add(key, value, sanitize=True)
+            else:
+                event.add('classification.type', 'blacklist', sanitize=True)
 
             event.add("raw", row, sanitize=True)
 
