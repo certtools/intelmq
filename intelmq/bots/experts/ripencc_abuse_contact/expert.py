@@ -36,7 +36,8 @@ class RIPENCCExpertBot(Bot):
             asn_key = key + "asn"
 
             ip = event.get(ip_key, None)
-            abuse = event.get(abuse_key.split(',')) if abuse_key in event else []
+            abuse = (event.get(abuse_key.split(',')) if abuse_key in event
+                     else [])
             asn = event.get(asn_key, None)
             if self.query_db_asn and asn:
                 abuse.extend(lib.query_asn(asn))

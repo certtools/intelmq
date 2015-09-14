@@ -43,7 +43,7 @@ class CERTatContactExpertBot(Bot):
                     'bFilter': 'on' if self.parameters.filter else 'off',
                     'bShowNationalCERT': 'on',
                     'sep': 'semicolon',
-                    }
+                }
                 req = requests.get(URL, params=parameters,
                                    verify=self.parameters.verify_cert,
                                    )
@@ -55,7 +55,7 @@ class CERTatContactExpertBot(Bot):
 
                 if abuse in event:
                     old_abuse = event[abuse]
-                    event.update(abuse, old_abuse+','+response[3])
+                    event.update(abuse, old_abuse + ',' + response[3])
                 else:
                     event.add(abuse, response[3])
 
