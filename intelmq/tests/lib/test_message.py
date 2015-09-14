@@ -360,5 +360,29 @@ class TestMessageFactory(unittest.TestCase):
         self.assertEqual('{"__type": "Event"}',
                          event.serialize())
 
+    def test_event_hash_regex(self):
+        """ Test if the regex for event_hash is tested correctly. """
+        event = message.MessageFactory.unserialize('{"__type": "Event"}')
+        with self.assertRaises(exceptions.InvalidValue):
+            event.add('event_hash', u'dasf78')
+
+    def test_port_regex(self):
+        """ Test if the regex for port (integer) is tested correctly. """
+        event = message.MessageFactory.unserialize('{"__type": "Event"}')
+        with self.assertRaises(exceptions.InvalidValue):
+            event.add('source.port', 123456)
+
+    def test_asname_ascii(self):
+        """ Test if ascii for as_name is tested correctly. """
+        event = message.MessageFactory.unserialize('{"__type": "Event"}')
+        with self.assertRaises(exceptions.InvalidValue):
+            event.add('source.as_name', 'asdas€8390"')
+
+    def test_protocol_length(self):
+        """ Test if the length for protocol is tested correctly. """
+        event = message.MessageFactory.unserialize('{"__type": "Event"}')
+        with self.assertRaises(exceptions.InvalidValue):
+            event.add('protocol.transport', 'unknown')
+
 if __name__ == '__main__':
     unittest.main()

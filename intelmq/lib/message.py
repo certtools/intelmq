@@ -7,6 +7,8 @@ Use MessageFactory to get a Message object (types Report and Event).
 from __future__ import unicode_literals
 import hashlib
 import json
+import re
+import six
 
 import intelmq.lib.exceptions as exceptions
 import intelmq.lib.harmonization
@@ -162,17 +164,28 @@ class Message(dict):
     def __is_valid_value(self, key, value):
         if key == '__type':
             return True
-        class_name = self.__get_class_name_from_key_type(key)
-        class_reference = getattr(intelmq.lib.harmonization, class_name)
-        return class_reference().is_valid(value)
+        config = self.__get_type_config(key)
+        class_reference = getattr(intelmq.lib.harmonization, config['type'])
+        if not class_reference().is_valid(value):
+            return False
+        if 'ascii' in config:
+            if not re.search('^[ -~]+$', six.text_type(value)):
+                return False
+        if 'length' in config:
+            if not len(six.text_type(value)) <= config['length']:
+                return False
+        if 'regex' in config:
+            if not re.search(config['regex'], six.text_type(value)):
+                return False
+        return True
 
     def __sanitize_value(self, key, value):
-        class_name = self.__get_class_name_from_key_type(key)
+        class_name = self.__get_type_config(key)['type']
         class_reference = getattr(intelmq.lib.harmonization, class_name)
         return class_reference().sanitize(value)
 
-    def __get_class_name_from_key_type(self, key):
-        class_name = self.harmonization_config[key]["type"]
+    def __get_type_config(self, key):
+        class_name = self.harmonization_config[key]
         return class_name
 
 

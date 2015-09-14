@@ -15,6 +15,7 @@ The following types are implemented with sanitize() and is_valid() functions:
  - MalwareName
  - String
  - URL
+ - UUID
 """
 from __future__ import unicode_literals
 
@@ -38,7 +39,7 @@ except ImportError:
 
 __all__ = ['Base64', 'Boolean', 'ClassificationType', 'DateTime', 'FQDN',
            'Float', 'GenericType', 'IPAddress', 'IPNetwork', 'Integer',
-           'MalwareName', 'String', 'URL',
+           'MalwareName', 'String', 'URL', 'UUID',
            ]
 
 
