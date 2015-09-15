@@ -49,6 +49,11 @@ chmod -R 0770 /opt/intelmq
 chown -R intelmq.intelmq /opt/intelmq
 ```
 
+For Python 3 install some slightly different requirements:
+```bash
+pip install -r REQUIREMENTS3
+```
+
 <a name="management"></a>
 # Management
 
@@ -133,15 +138,15 @@ bots are running, use `intelmqctl -n status`.
 All bots and `intelmqctl` log to `/opt/intelmq/var/log/`. In case of failures,
 messages are dumped to the same directory with file ending `.dump`.
 
-```
-$ tail -f /opt/intelmq/var/log/*.log
+```bash
+tail -f /opt/intelmq/var/log/*.log
 ```
 
 ### Reset Pipeline and Cache (be careful)
 
-```
-$ redis-cli FLUSHDB
-$ redis-cli FLUSHALL
+```bash
+redis-cli FLUSHDB
+redis-cli FLUSHALL
 ```
 
 <a name="configuration"></a>
@@ -192,7 +197,7 @@ queued events in memory with bots digesting the messages.
 * Make sure that your IntelMQ system is completely stopped.
 * Create a backup of IntelMQ Home directory, which includes all configurations.
 
-```
+```bash
 sudo su -
 
 cp -R /opt/intelmq /opt/intelmq-backup
@@ -200,7 +205,7 @@ cp -R /opt/intelmq /opt/intelmq-backup
 
 ## Upgrade
 
-```
+```bash
 cd intelmq/
 git pull
 python setup.py install
@@ -210,7 +215,7 @@ python setup.py install
 
 * Apply your configurations backup.
 
-```
+```bash
 rm -rf /opt/intelmq/*
 cp -R /opt/intelmq-backup/* /opt/intelmq/
 ```
@@ -219,12 +224,11 @@ cp -R /opt/intelmq-backup/* /opt/intelmq/
 # Uninstall
 
 <a name="uninstall"></a>
-```
+```bash
 pip uninstall intelmq
 ```
 
 <a name="faq"></a>
 # Frequently Asked Questions
 
-Consult the [FAQ.md](FAQ)
-if you encountered any problem.
+Consult the [FAQ.md](FAQ) if you encountered any problem.
