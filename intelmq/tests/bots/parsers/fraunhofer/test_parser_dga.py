@@ -25,19 +25,19 @@ EVENT_TEMPL = {"feed.url": "https://dgarchive.caad.fkie.fraunhofer.de/today",
                "time.observation": "2015-01-01T00:00:00+00:00",
                }
 EXAMPLE_EVENTS_PARTS = [{'raw': 'YW5kZXJzZW5zaW5haXguY29t',
-                         'destination.fqdn': 'andersensinaix.com'},
+                         'source.fqdn': 'andersensinaix.com'},
                         {'raw': 'eGpzcnJzZW5zaW5haXguY29t',
-                         'destination.fqdn': 'xjsrrsensinaix.com'},
+                         'source.fqdn': 'xjsrrsensinaix.com'},
                         {'raw': 'aGxyZnJzZW5zaW5haXguY29t',
-                         'destination.fqdn': 'hlrfrsensinaix.com'},
+                         'source.fqdn': 'hlrfrsensinaix.com'},
                         {'raw': 'Zm5vc3JzZW5zaW5haXguY29t',
-                         'destination.fqdn': 'fnosrsensinaix.com'},
+                         'source.fqdn': 'fnosrsensinaix.com'},
                         {'raw': 'MTI4LjIzOC4xOTcuMzM=',
-                         'destination.ip': '128.238.197.33'},
+                         'source.ip': '128.238.197.33'},
                         {'raw': 'bGJ6b3JzZW5zaW5haXguY29t',
-                         'destination.fqdn': 'lbzorsensinaix.com'},
+                         'source.fqdn': 'lbzorsensinaix.com'},
                         {'raw': 'c2dqcHJzZW5zaW5haXguY29t',
-                         'destination.fqdn': 'sgjprsensinaix.com'}]
+                         'source.fqdn': 'sgjprsensinaix.com'}]
 
 
 class TestFraunhoferDGAParserBot(test.BotTestCase, unittest.TestCase):
