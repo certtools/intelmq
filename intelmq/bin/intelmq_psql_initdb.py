@@ -40,6 +40,8 @@ for field in DATA.keys():
         dbtype = 'integer'
     elif value['type'] == 'Float':
         dbtype = 'real'
+    elif value['type'] == 'UUID':
+        dbtype = 'UUID'
     else:
         print('Unknow type {!r}, assuming varchar(2000) by default'
               ''.format(value['type']))

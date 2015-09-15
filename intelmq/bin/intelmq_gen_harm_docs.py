@@ -27,8 +27,8 @@ with open(HARMONIZATION_CONF_FILE) as fhandle:
 
 for key, value in sorted(HARM.items()):
     section = ' '.join([sec.title() for sec in key.split('.')[:-1]])
-    print ('|{}|{}|{}|{}|'.format(section, key, value['type'],
-                                  value['description']))
+    print('|{}|{}|{}|{}|'.format(section, key, value['type'],
+                                 value['description']))
 
 print("""
 

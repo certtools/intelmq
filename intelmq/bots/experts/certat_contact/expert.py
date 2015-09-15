@@ -20,6 +20,14 @@ import sys
 
 from intelmq.lib.bot import Bot
 
+# SNI Workaround for Python 2:
+# https://github.com/kennethreitz/requests/blob/master/requests/packages/urllib3/contrib/pyopenssl.py#L16
+try:
+    import urllib3.contrib.pyopenssl
+    urllib3.contrib.pyopenssl.inject_into_urllib3()
+except ImportError:
+    pass
+
 
 URL = 'https://contacts.cert.at/cgi-bin/abuse-nationalcert.pl'
 
@@ -43,7 +51,7 @@ class CERTatContactExpertBot(Bot):
                     'bFilter': 'on' if self.parameters.filter else 'off',
                     'bShowNationalCERT': 'on',
                     'sep': 'semicolon',
-                    }
+                }
                 req = requests.get(URL, params=parameters,
                                    verify=self.parameters.verify_cert,
                                    )
@@ -55,7 +63,7 @@ class CERTatContactExpertBot(Bot):
 
                 if abuse in event:
                     old_abuse = event[abuse]
-                    event.update(abuse, old_abuse+','+response[3])
+                    event.update(abuse, old_abuse + ',' + response[3])
                 else:
                     event.add(abuse, response[3])
 

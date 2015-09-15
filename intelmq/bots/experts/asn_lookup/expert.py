@@ -11,6 +11,7 @@ import six
 from intelmq.lib.bot import Bot
 from intelmq.lib.harmonization import IPAddress
 
+
 class ASNLookupExpertBot(Bot):
 
     def init(self):

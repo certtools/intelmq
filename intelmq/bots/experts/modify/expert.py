@@ -6,6 +6,7 @@ Modify Expert bot let's you manipulate all fields with a config file.
 """
 from __future__ import unicode_literals
 import re
+import sys
 
 from intelmq.lib.bot import Bot
 from intelmq.lib.utils import load_configuration
@@ -66,3 +67,8 @@ class ModifyExpertBot(Bot):
 
         self.send_message(event)
         self.acknowledge_message()
+
+
+if __name__ == "__main__":
+    bot = ModifyExpertBot(sys.argv[1])
+    bot.start()

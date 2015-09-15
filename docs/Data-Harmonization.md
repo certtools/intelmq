@@ -151,26 +151,26 @@ The taxonomy can be automatically added by the taxonomy expert bot based on the 
 Meaning of source, destination and local values for each classification type and possible identifiers. The identifier is often a normalized malware name, grouping many variants.
 
 |Type|Source|Destination|Local|Possible identifiers|
-|----|------|-----------|-----|
-|spam|*infected device*|targeted server|internal at source|
+|----|------|-----------|-----|--------------------|
+|spam|*infected device*|targeted server|internal at source||
 |malware|*infected device*||internal at source|zeus, palevo, feodo|
-|botnet drone|*infected device*|||
-|ransomware|*infected device*|||
-|malware configuration|*infected device*|||
+|botnet drone|*infected device*||||
+|ransomware|*infected device*||||
+|malware configuration|*infected device*||||
 |c&c|*(sinkholed) c&c server*|||zeus, palevo, feodo|
-|scanner|*scanning device*|scanned device||
-|exploit|*hosting server*|||
-|brute-force|*attacker*|target||
-|ids alert|*triggering device*|||
-|defacement|*defaced website*|||
-|compromised|*server*|||
-|backdoor|*backdoored device*|||
-|ddos|*attacker*|target||
-|dropzone|*server hosting stolen data*|||
-|phishing|*phishing website*|||
+|scanner|*scanning device*|scanned device|||
+|exploit|*hosting server*||||
+|brute-force|*attacker*|target|||
+|ids alert|*triggering device*||||
+|defacement|*defaced website*||||
+|compromised|*server*||||
+|backdoor|*backdoored device*||||
+|ddos|*attacker*|target|||
+|dropzone|*server hosting stolen data*||||
+|phishing|*phishing website*||||
 |vulnerable service|*vulnerable device*||| heartbleed, openresolver, snmp |
-|blacklist|*blacklisted device*|||
-|unknown||||
+|blacklist|*blacklisted device*||||
+|unknown||||||
 
 Field in italics is the interesting one for CERTs.
 

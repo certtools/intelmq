@@ -20,6 +20,14 @@ from intelmq.lib.bot import Bot
 from intelmq.lib.harmonization import DateTime
 from intelmq.lib.message import Report
 
+# SNI Workaround for Python 2:
+# https://github.com/kennethreitz/requests/blob/master/requests/packages/urllib3/contrib/pyopenssl.py#L16
+try:
+    import urllib3.contrib.pyopenssl
+    urllib3.contrib.pyopenssl.inject_into_urllib3()
+except ImportError:
+    pass
+
 
 class HTTPCollectorBot(Bot):
 
