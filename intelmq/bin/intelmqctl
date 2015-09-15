@@ -62,7 +62,7 @@ RETURN_TYPE = None
 
 def log_list_queues(queues):
     if RETURN_TYPE == 'text':
-        for queue, counter in sorted(queues.iteritems()):
+        for queue, counter in sorted(queues.items()):
             logger.info("{} - {}".format(queue, counter))
 
 
@@ -242,13 +242,13 @@ class IntelMQContoller():
 
     def load_system_configuration(self):
         config = utils.load_configuration(SYSTEM_CONF_FILE)
-        for option, value in config.iteritems():
+        for option, value in config.items():
             setattr(self.parameters, option, value)
 
     def load_defaults_configuration(self):
         # Load defaults configuration section
         config = utils.load_configuration(DEFAULTS_CONF_FILE)
-        for option, value in config.iteritems():
+        for option, value in config.items():
             setattr(self.parameters, option, value)
 
     def auto_method_call(self, method):
@@ -391,7 +391,7 @@ class IntelMQContoller():
         source_queues = set()
         destination_queues = set()
 
-        for key, value in self.pipepline_configuration.iteritems():
+        for key, value in self.pipepline_configuration.items():
             if 'source-queue' in value:
                 source_queues.add(value['source-queue'])
             if 'destination-queues' in value:
@@ -406,7 +406,7 @@ class IntelMQContoller():
         log_list_queues(counters)
 
         return_dict = dict()
-        for bot_id, info in self.pipepline_configuration.iteritems():
+        for bot_id, info in self.pipepline_configuration.items():
             return_dict[bot_id] = dict()
 
             if 'source-queue' in info:
@@ -430,7 +430,7 @@ class IntelMQContoller():
         logger.info("Clearing queue {}".format(queue))
         source_queues = set()
         destination_queues = set()
-        for key, value in self.pipepline_configuration.iteritems():
+        for key, value in self.pipepline_configuration.items():
             if 'source-queue' in value:
                 source_queues.add(value['source-queue'])
             if 'destination-queues' in value:
