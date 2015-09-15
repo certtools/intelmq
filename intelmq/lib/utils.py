@@ -78,7 +78,7 @@ def decode(text, encodings=("utf-8", ), force=False):
 
 def encode(text, encodings=("utf-8", ), force=False):
     """
-    Decode given string from UTF-8 (default).
+    Encode given string from UTF-8 (default).
 
     Parameters:
     -----------
