@@ -40,6 +40,15 @@ setup(
     version='1.0.0',
     maintainer='Tomas Lima',
     maintainer_email='synchroack@gmail.com',
+    install_requires=[
+       'ipaddress>=1.0.14',
+       'psutil>=2.1.1',
+       'python-dateutil>=1.5',
+       'pytz>=2012d',
+       'redis>=2.10.3'
+       'requests>=2.4.2',
+       'six>=1.7',
+    ],
     packages=find_packages(),
     package_data={'intelmq': ['conf/*.conf', 'bots/experts/modify/*.conf']},
     url='http://pypi.python.org/pypi/intelmq/',
