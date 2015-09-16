@@ -5,63 +5,145 @@ Created on Fri Sep 11 14:13:21 2015
 
 @author: sebastian
 """
-from __future__ import unicode_literals, print_function
+from __future__ import print_function, unicode_literals
 
-import psycopg2
+import datetime
+import io
+import json
+import sys
 
-
-from intelmq import RUNTIME_CONF_FILE
 import intelmq.lib.utils as utils
+import psycopg2
+import psycopg2.extras
+from intelmq import INTELMQCLI_CONF_FILE
+
+import rt
 
 
-DBPARAMS = utils.load_configuration(RUNTIME_CONF_FILE)['postgresql-output']
-DBTABLE = DBPARAMS['table']
-CON = psycopg2.connect(database=DBPARAMS['database'],
-                       user=DBPARAMS['user'],
-                       password=DBPARAMS['password'],
-                       host=DBPARAMS['host'],
-                       port=DBPARAMS['port'],
-                       sslmode=DBPARAMS['sslmode'],
+if sys.version[0] == '2':
+    input = raw_input
+
+CONFIG = utils.load_configuration(INTELMQCLI_CONF_FILE)
+DBTABLE = CONFIG['database']['events_table']
+CON = psycopg2.connect(database=CONFIG['database']['database'],
+                       user=CONFIG['database']['user'],
+                       password=CONFIG['database']['password'],
+                       host=CONFIG['database']['host'],
+                       port=CONFIG['database']['port'],
+                       sslmode=CONFIG['database']['sslmode'],
                        )
-CUR = CON.cursor()
-QUERY_COUNT = """
-SELECT COUNT(*)
-FROM {}
-WHERE
-    notify = TRUE;
-""".format(DBTABLE)
+CUR = CON.cursor(cursor_factory=psycopg2.extras.DictCursor)
+
+RT = rt.Rt(CONFIG['rt']['uri'], CONFIG['rt']['user'], CONFIG['rt']['password'])
+
+logger = utils.log('intelmqcli', log_level=CONFIG['log_level'])
+
 QUERY_COUNT_ASN = """
-SELECT COUNT(*) as count, "source.asn" as asn
-FROM {}
+SELECT
+    COUNT(*) as count,
+    {conttab}.contacts,
+    string_agg(DISTINCT cast({evtab}."source.asn" as varchar), ', ') as asn,
+    string_agg(DISTINCT {evtab}."classification.type", ', ') as classification
+FROM {evtab}
+LEFT OUTER JOIN as_contacts ON {evtab}."source.asn" = {conttab}.asnum
 WHERE
     notify = TRUE AND
-    "source.geolocation.cc" = 'AT'
-GROUP BY
-    "source.asn";
-""".format(DBTABLE)
-QUERY_ASN = """
+    {evtab}.rtir_id IS NULL AND
+    (
+        {evtab}."source.geolocation.cc" LIKE '{cc}' OR
+        {evtab}."source.fqdn" LIKE '{fqdn}'
+    )
+GROUP BY {conttab}.contacts;
+""".format(evtab=DBTABLE, cc=CONFIG['filter']['cc'],
+           fqdn=CONFIG['filter']['fqdn'],
+           conttab=CONFIG['database']['contacts_table'])
+QUERY_BY_ASCONTACT = """
 SELECT
-    contacts, cc_contacts
-FROM as_contacts
+    {evtab}.id,
+    {evtab}."time.source",
+    {evtab}."source.ip",
+    {evtab}."source.reverse_dns",
+    {evtab}."source.fqdn",
+    {evtab}."source.asn",
+    {evtab}."source.url",
+    {evtab}."feed.name",
+    {evtab}."classification.type"
+FROM events
+LEFT OUTER JOIN {conttab} ON {evtab}."source.asn" = {conttab}.asnum
 WHERE
-    asnum = %s;
+    notify = TRUE AND
+    {evtab}.rtir_id IS NULL AND
+    {conttab}.contacts = '{{}}';
+""".format(evtab=DBTABLE,
+           conttab=CONFIG['database']['contacts_table'])
+QUERY_SET_RTIRID = """
+UPDATE events SET
+    rtir_id = {rtirid}
+WHERE
+    id = ANY('{{{ids}}}'::int[]);
 """
 
 
-def get_contact(asn):
-    CUR.execute(QUERY_ASN, (asn, ))
-    return CUR.fetchone()
+def query_by_ascontact(ascontact):
+    CUR.execute(QUERY_BY_ASCONTACT.format(ascontact))
+    query = CUR.fetchall()
 
+    subject = ('{date}: {count} incidents for your AS'
+               ''.format(count=len(query),
+                         date=datetime.datetime.now().strftime('%Y-%m-%d')))
+    text = 'TODO: text'
+    header = json.dumps(asn_count[0].keys())
+    lines = [json.dumps(row.values()) for row in query]
+    attached_text = '\n'.join([header] + lines)
+    attachment = io.StringIO(attached_text)
 
-def count_all():
-    CUR.execute(QUERY_COUNT)
-    print(CUR.fetchall())
+    print('='*100)
+    print('To: {to}'.format(to=ascontact))
+    print('Subject: {subj}'.format(subj=subject))
+    print()
+    print(text)
+    print()
+    print(attached_text)
+    print('-'*100)
+    answer = input('(s)end or s(k)ip? ')
+    if answer != 's':
+        return
+
+    ticket_id = RT.create_ticket(Queue='Incident Reports', Subject=subject)
+    if ticket_id == -1:
+        logger.exception('Could not create ticket.')
+        return
+    response = RT.comment(ticket_id, files=[('source', attachment)])
+    if not response:
+        logger.exception('Could not attach file.')
+        return
+    ids = (str(row['id']) for row in query)
+    CUR.execute(QUERY_SET_RTIRID.format(ids=','.join(ids), rtirid=ticket_id))
 
 
 def count_by_asn():
     CUR.execute(QUERY_COUNT_ASN)
-    for row in CUR.fetchall():
-        print("{} {} {}".format(row[0], row[1], get_contact(row[1])))
+    asn_count = CUR.fetchall()
+#    print(' n°   contact and ASNs')
+    max_asn_length = max([len(row[2]) for row in asn_count])
+    max_contact_length = max([len(row[1]) for row in asn_count])
+    for row in asn_count:
+        print("{count:3} {asn!s: <{asnlen}} {contacts!s: <{conlen}} {type!s}"
+              "".format(count=row['count'], asn=row['asn'],
+                        asnlen=max_asn_length,
+                        contacts=row['contacts'], conlen=max_contact_length,
+                        type=row['classification']))
+    print('{} incidents for {} contacts.'.format(sum((row[0] for row in asn_count)), len(asn_count)))
+    return asn_count
 
 if __name__ == '__main__':
-    count_by_asn()
+    if not RT.login():
+        logger.error('Could not login to RT.')
+    try:
+        asn_count = count_by_asn()
+        for count, contacts, asn, classtype in asn_count:
+            query_by_ascontact(contacts)
+    except:
+        logger.exception('')
+    finally:
+        RT.logout()
