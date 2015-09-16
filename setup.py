@@ -45,7 +45,7 @@ setup(
        'psutil>=2.1.1',
        'python-dateutil>=1.5',
        'pytz>=2012d',
-       'redis>=2.10.3'
+       'redis>=2.10.3',
        'requests>=2.4.2',
        'six>=1.7',
     ],

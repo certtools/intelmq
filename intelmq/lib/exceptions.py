@@ -74,9 +74,9 @@ class InvalidValue(IntelMQHarmonizationException):
     def __init__(self, key, value, reason=''):
         if not reason:
             reason = ': ' + reason
-        message = ("invalid value {value!r} ({type}) for key {key!r}{reson}"
+        message = ("invalid value {value!r} ({type}) for key {key!r} {reason}"
                    "".format(value=value, type=type(value), key=key,
-                             reson=reason))
+                             reason=reason))
         super(InvalidValue, self).__init__(message)
 
 

@@ -18,8 +18,8 @@ MAPPING = {
     "ssh.txt": {
         "classification.type": "ids alert",
         "protocol.application": "ssh",
-        "description.text": "IP reported as having run attacks on the "
-                            "service SSH",
+        "event_description.text": "IP reported as having run attacks on the "
+                                  "service SSH",
     },
     "mail.txt": {
         "classification.type": "ids alert",
