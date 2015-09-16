@@ -595,6 +595,16 @@
                 "port": "<port>"
             }
         },
+        "IntelMQ Mailer": {
+            "description": "IntelMQ Mailer is the bot responsible to send events to a MongoDB database.",
+            "module": "intelmq.bots.outputs.intelmqmailer.output",
+            "parameters": {
+                "collection": "<collection>",
+                "database": "<database>",
+                "host": "<ip>",
+                "port": "<port>"
+            }
+        },
         "PostgreSQL": {
             "module": "intelmq.bots.outputs.postgresql.output",
             "description": "PostgreSQL is the bot responsible to send events to a PostgreSQL Database. When activating autocommit, transactions are not used: http://initd.org/psycopg/docs/connection.html#connection.autocommit",
