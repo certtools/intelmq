@@ -1,0 +1,93 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+import argparse
+import glob
+import io
+import json
+import sys
+import os.path
+
+from intelmq import DEFAULT_LOGGING_PATH
+
+
+if sys.version_info[0] == 2:
+    input = raw_input
+
+APPNAME = "intelmqdump"
+DESCRIPTION = """
+description: intelmqctl is the tool to control intelmq system."""
+USAGE = '''intelmqdump [botid]'''
+
+
+def dump_info(fname):
+    info = 'defect'
+    try:
+        handle = io.open(fname, 'rt')
+    except OSError as exc:
+        info = 'unable to open file: {!s}'.format(exc)
+    else:
+        try:
+            content = json.load(handle)
+        except ValueError as exc:
+            info = 'unable to load JSON: {!s}'.format(exc)
+        else:
+            try:
+                info = "{!s} dumps".format(len(content.keys()))
+            except AttributeError as exc:
+                info = "unable to count dumps: {!s}".format(exc)
+    finally:
+        try:
+            handle.close()
+        except NameError:
+            pass
+    return info
+
+
+def load_meta(dump):
+    retval = []
+    for key, value in dump.items():
+        retval.append((key, value['traceback'].splitlines()[-1][:500]))
+        # TOOO: show end of traceback
+    return retval
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(
+        prog=APPNAME,
+        usage=USAGE,
+        epilog=DESCRIPTION
+    )
+
+    parser.add_argument('botid', metavar='botid', nargs='?',
+                        default=None, help='botid to inspect dumps of')
+    args = parser.parse_args()
+
+    if args.botid is None:
+        filenames = glob.glob(os.path.join(DEFAULT_LOGGING_PATH, '*.dump'))
+        filenames = [(fname, fname[len(DEFAULT_LOGGING_PATH):-5])
+                     for fname in filenames]
+
+        for count, (fname, shortname) in enumerate(filenames):
+            info = dump_info(fname)
+            print("{:3}: {} {}".format(count, shortname, info))
+        botid = input('Which dump file to process (number or name)? ')
+        try:
+            fname, botid = filenames[int(botid)]
+        except ValueError:
+            fname = os.path.join(DEFAULT_LOGGING_PATH, botid) + '.dump'
+    else:
+        botid = args.botid
+        fname = os.path.join(DEFAULT_LOGGING_PATH, botid) + '.dump'
+        info = dump_info(fname)
+
+    while True:
+        print ('Processing {}: {}'.format(botid, info))
+        with io.open(fname, 'rt') as handle:
+            content = json.load(handle)
+        for count, line in enumerate(load_meta(content)):
+            print('{:3}: {} {}'.format(count, *line))
+        answer = input('(r)ecover by ids, recover (a)ll, delete (e)ntries, (d)elete file, (s)how by ids? ')
+        if any([answer.startswith(char) for char in ('r', 'd', 's')]):
+            ids = [int(id) for id in answer[1:].split(',')]
+            print(ids)
+
