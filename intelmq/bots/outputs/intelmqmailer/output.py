@@ -24,8 +24,8 @@ class IntelMQMailerOutputBot(Bot):
 
         event_dict = event.to_dict()
 
-        time_observation = event_dict['time']['observation']
-        event_dict['time']['observation'] = dateutil.parser.parse(time_observation)
+        time = event_dict['time']['observation']
+        event_dict['time']['observation'] = dateutil.parser.parse(time)
 
         self.collection.insert(event_dict)
         self.acknowledge_message()
