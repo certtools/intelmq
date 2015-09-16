@@ -1,15 +1,13 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Fri Sep 11 14:13:21 2015
-
-@author: sebastian
+The pprint argument `compact` is only available on Python 3.
 """
 from __future__ import print_function, unicode_literals
 
 import datetime
 import io
-import json
+import pprint
 import sys
 
 import intelmq.lib.utils as utils
@@ -35,6 +33,7 @@ CON = psycopg2.connect(database=CONFIG['database']['database'],
 CUR = CON.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
 RT = rt.Rt(CONFIG['rt']['uri'], CONFIG['rt']['user'], CONFIG['rt']['password'])
+PP = pprint.PrettyPrinter(compact=True, width=CONFIG['attachement_width'])
 
 logger = utils.log('intelmqcli', log_level=CONFIG['log_level'])
 
@@ -92,8 +91,8 @@ def query_by_ascontact(ascontact):
                ''.format(count=len(query),
                          date=datetime.datetime.now().strftime('%Y-%m-%d')))
     text = 'TODO: text'
-    header = json.dumps(asn_count[0].keys())
-    lines = [json.dumps(row.values()) for row in query]
+    header = PP.pformat(list(asn_count[0].keys()))
+    lines = [PP.pformat(list(row.values())) for row in query]
     attached_text = '\n'.join([header] + lines)
     attachment = io.StringIO(attached_text)
 
@@ -105,7 +104,9 @@ def query_by_ascontact(ascontact):
     print()
     print(attached_text)
     print('-'*100)
-    answer = input('(s)end or s(k)ip? ')
+    answer = input('(s)end, s(k)ip or (q)uit? ').strip()
+    if answer == 'q':
+        exit(0)
     if answer != 's':
         return
 
@@ -143,7 +144,8 @@ if __name__ == '__main__':
         asn_count = count_by_asn()
         for count, contacts, asn, classtype in asn_count:
             query_by_ascontact(contacts)
-    except:
-        logger.exception('')
+    except Exception as exc:
+        if not isinstance(exc, SystemExit):
+            logger.exception('')
     finally:
         RT.logout()
