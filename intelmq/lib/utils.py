@@ -24,7 +24,8 @@ from intelmq import DEFAULT_LOGGING_PATH
 
 
 __all__ = ['decode', 'encode', 'base64_encode', 'base64_decode',
-           'load_configuration', 'log', 'reverse_readline', 'parse_logline']
+           'load_configuration', 'load_parameters', 'log', 'reverse_readline',
+           'parse_logline']
 
 # Used loglines format
 LOG_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
@@ -35,6 +36,10 @@ LOG_REGEX = (r'^(?P<asctime>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d+) -'
              r' (?P<name>[-\w]+) - '
              r'(?P<levelname>[A-Z]+) - '
              r'(?P<message>.+)$')
+
+
+class Parameters(object):
+    pass
 
 
 def decode(text, encodings=("utf-8", ), force=False):
@@ -154,6 +159,27 @@ def load_configuration(configuration_filepath):
     with open(configuration_filepath, 'r') as fpconfig:
         config = json.loads(fpconfig.read())
     return config
+
+
+def load_parameters(*configs):
+    """
+    Load dictionaries into new Parameters() instance.
+
+    Parameters:
+    -----------
+    *configs : dict
+        Arbitrary number of dictionaries to load.
+
+    Returns:
+    --------
+    parameters : Parameters
+        class instance with items of configs as attributes
+    """
+    parameters = Parameters()
+    for config in configs:
+        for option, value in config.items():
+            setattr(parameters, option, value)
+    return parameters
 
 
 def log(name, log_path=DEFAULT_LOGGING_PATH, log_level="DEBUG", stream=None):

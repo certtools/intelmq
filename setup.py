@@ -60,6 +60,7 @@ setup(
                  ),
                 ('/opt/intelmq/bin/', [
                                    'intelmq/bin/intelmqctl',
+                                   'intelmq/bin/intelmqdump',
                                    'intelmq/bin/intelmq_gen_harm_docs.py',
                                    'intelmq/bin/intelmq_psql_initdb.py',
                                   ],
