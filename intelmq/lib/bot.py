@@ -238,7 +238,6 @@ class Bot(object):
         self.last_message = self.current_message
         self.source_pipeline.acknowledge()
 
-    # FIXME: create load_message to re-insert events into pipeline
     def dump_message(self, ex):
         timestamp = datetime.datetime.utcnow()
         timestamp = timestamp.isoformat()
@@ -250,7 +249,11 @@ class Bot(object):
         new_dump_data[timestamp]["bot_id"] = self.bot_id
         new_dump_data[timestamp]["source_queue"] = self.source_queues
         new_dump_data[timestamp]["traceback"] = traceback.format_exc(ex)
-        new_dump_data[timestamp]["message"] = self.current_message
+        if self.current_message is not None:
+            message = self.current_message.serialize()
+        else:
+            message = None
+        new_dump_data[timestamp]["message"] = message
 
         try:
             with open(dump_file, 'r') as fp:
