@@ -45,7 +45,7 @@ setup(
     install_requires=[
        'ipaddress==1.0.14',
        'psutil==2.1.1',
-       'python-dateutil==1.5',
+       'python-dateutil==2.4.2',
        'pytz==2015.4',
        'redis==2.10.3',
        'requests==2.7.0',
