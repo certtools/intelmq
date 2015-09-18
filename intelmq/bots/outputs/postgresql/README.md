@@ -1,7 +1,7 @@
 * Install PostgreSQL, at least version 9.4 is recommended.
 
 ```bash
-> apt-get install postgresql-9.4 python-psycopg2
+> apt-get install postgresql-9.4 python-psycopg2 postgresql-server-dev-9.4
 ```
 
 * Create a User and Database:
