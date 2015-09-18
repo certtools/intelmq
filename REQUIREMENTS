@@ -1,12 +1,11 @@
 dnspython3>=1.12.0
 geoip2>=0.5.1
-httplib
 imbox>=0.5.5
 ipaddress>=1.0.14
 mock>=1.1.1
 psutil>=2.1.1
 pyasn>=1.5.0b4
-psycopg>=2.5.5
+psycopg2>=2.5.5
 pycurl>=7.19.0
 pymongo>=2.7.1
 python-dateutil>=1.5
