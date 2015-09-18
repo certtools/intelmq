@@ -21,7 +21,7 @@
 
 * Restart PostgreSQL.
 
-* Generate `initdb.sql` by using the [psql_initdb_generator.py](../intelmq/bin/intelmq_psql_initdb.py) tool which extracts all field names and data types from `Data-Harmonization.md`.
+* Generate `initdb.sql` by using the [psql_initdb_generator.py](https://github.com/certtools/intelmq/blob/master/intelmq/bin/intelmq_psql_initdb.py) tool which extracts all field names and data types from `Data-Harmonization.md`.
 
 * Create the `events` table:
 
