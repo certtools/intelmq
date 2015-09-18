@@ -92,13 +92,23 @@ WHERE
 """
 
 
+def shrink_dict(d):
+    keys = d[0].keys()
+    empty = dict(zip(keys, [True]*len(keys)))
+    for line in d:
+        for key, value in line.items():
+            if value is not None:
+                empty[key] = False
+    return [{k: v for k, v in dicti.items() if not empty[k]} for dicti in d]
+
+
 def query_by_ascontact(ascontact, show_table=False, requestor=None):
     # TODO: show_table
     if requestor is None:
         requestor = ascontact
 
     CUR.execute(QUERY_BY_ASCONTACT.format(ascontact))
-    query = CUR.fetchall()
+    query = shrink_dict(CUR.fetchall())
     ids = list(str(row['id']) for row in query)
 
     subject = ('{date}: {count} incidents for your AS'
