@@ -372,11 +372,11 @@ class TestMessageFactory(unittest.TestCase):
         with self.assertRaises(exceptions.InvalidValue):
             event.add('source.port', 123456)
 
-    def test_asname_ascii(self):
-        """ Test if ascii for country is tested correctly. """
+    def test_protocol_ascii(self):
+        """ Test if ascii for protocol is tested correctly. """
         event = message.MessageFactory.unserialize('{"__type": "Event"}')
         with self.assertRaises(exceptions.InvalidValue):
-            event.add('source.geolocation.country', 'asdas€8390"')
+            event.add('protocol.application', 'a€80"')
 
     def test_protocol_length(self):
         """ Test if the length for protocol is tested correctly. """

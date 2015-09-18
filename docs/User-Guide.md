@@ -15,7 +15,7 @@
 The following instructions assume:
 
 * Debian or Ubuntu Operating System
-* Python version 2 or 3
+* Python version 2 or 3 (Version 3.4 is recommended)
 
 
 <a name="installation"></a>
@@ -49,9 +49,9 @@ chmod -R 0770 /opt/intelmq
 chown -R intelmq.intelmq /opt/intelmq
 ```
 
-For Python 3 install some slightly different requirements:
+For Python 2 install some slightly different requirements:
 ```bash
-pip install -r REQUIREMENTS3
+pip install -r REQUIREMENTS2
 ```
 
 <a name="management"></a>

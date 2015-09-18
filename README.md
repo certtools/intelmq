@@ -1,7 +1,7 @@
 ![IntelMQ](http://s28.postimg.org/r2av18a3x/Logo_Intel_MQ.png)
 
 **IntelMQ** is a solution for CERTs for collecting and processing security 
-feeds, pastebins, tweets using a message queue protocol. 
+feeds, pastebins, tweets and log files using a message queuing protocol. 
 It's a community driven initiative called **IHAP** (Incident Handling 
 Automation Project) which was conceptually designed 
 by European CERTs during several InfoSec events. Its main goal is to 

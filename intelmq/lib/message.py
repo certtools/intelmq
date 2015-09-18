@@ -169,9 +169,6 @@ class Message(dict):
         class_reference = getattr(intelmq.lib.harmonization, config['type'])
         if not class_reference().is_valid(value):
             return (False, 'is_valid returned False.')
-        if 'ascii' in config:
-            if not re.search('^[ -~]+$', six.text_type(value)):
-                return (False, 'did not match printable ASCII characters.')
         if 'length' in config:
             length = len(six.text_type(value))
             if not length <= config['length']:

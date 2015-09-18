@@ -1,12 +1,12 @@
-dnspython>=1.11.1
+dnspython3>=1.12.0
 geoip2>=0.5.1
 imbox>=0.5.5
 ipaddress>=1.0.14
 mock>=1.1.1
 psutil>=2.1.1
 pyasn>=1.5.0b4
+psycopg2>=2.5.5
 pycurl>=7.19.0
-pydns>=2.3.6
 pymongo>=2.7.1
 python-dateutil>=1.5
 pytz>=2012d

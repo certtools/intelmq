@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+import io  # has encoding support in Python 2
 import sys
 
 from intelmq.lib.bot import Bot
-import intelmq.lib.utils as utils
 
 
 class FileBot(Bot):
 
     def init(self):
         self.logger.debug("Opening %s file" % self.parameters.file)
-        self.file = open(self.parameters.file, 'at')
+        self.file = io.open(self.parameters.file, mode='at', encoding="utf-8")
         self.logger.info("File %s is open." % self.parameters.file)
 
     def process(self):
@@ -22,7 +22,7 @@ class FileBot(Bot):
 
         if event:
             event_data = event.to_json()
-            self.file.write(utils.encode(event_data))
+            self.file.write(event_data)
             self.file.write("\n")
             self.file.flush()
         self.acknowledge_message()
