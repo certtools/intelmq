@@ -22,7 +22,7 @@ class TaichungCityNetflowParserBot(Bot):
 
     def get_type(self, value):
         value = value.lower()
-        for event_type, keywords in CLASSIFICATION.iteritems():
+        for event_type, keywords in CLASSIFICATION.items():
             for keyword in keywords:
                 if keyword in value:
                     return event_type
