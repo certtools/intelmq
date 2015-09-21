@@ -49,13 +49,13 @@ yum install redis
 ```
 
 Install the last pip version:
-```
+```bash
 curl "https://bootstrap.pypa.io/get-pip.py" -o "/tmp/get-pip.py"
 python3.4 /tmp/get-pip.py
 ```
 
 Enable redis on startup:
-```
+```bash
 systemctl enable redis
 systemctl start redis
 ```
@@ -89,14 +89,16 @@ systemctl start redis
 <a name="install"></a>
 ## Install
 
+The `REQUIREMENTS` files define a list python packages and versions, which are necessary to run *all components* of intelmq. The defined versions are recommendations.
+
 <a name="install-python34"></a>
 #### Python 3.4 (recommended)
 
 ```bash
-sudo su -
-
 git clone https://github.com/certtools/intelmq.git /tmp/intelmq
 cd /tmp/intelmq
+
+sudo -s
 
 pip3 install -r REQUIREMENTS
 python3.4 setup.py install
@@ -162,7 +164,7 @@ See [github.com/certtools/intelmq-manager](https://github.com/certtools/intelmq-
 
 **Syntax:**
 
-```
+```bash
 # su - intelmq
 
 $ intelmqctl --h
