@@ -2,6 +2,12 @@
 
 1. [Requirements](#requirements)
 2. [Installation](#installation)
+    1. [Install Dependencies](#install-dependencies)
+        1. [Python 3.4 (recommended)](#dependencies-python34)
+        2. [Python 2.7](#dependencies-python27)
+    2. [Install](#install)
+        1. [Python 3.4 (recommended)](#install-python34)
+        2. [Python 2.7](#install-python27)
 3. [Management](#management)
 4. [Configuration](#configuration)
 5. [Upgrade](#upgrade)
@@ -12,46 +18,109 @@
 <a name="requirements"></a>
 # Requirements
 
-The following instructions assume:
+The following instructions assume the following requirements:
 
-* Debian or Ubuntu Operating System
-* Python version 2 or 3 (Version 3.4 is recommended)
-
+* **Operating System:** Ubuntu 14.04 LTS or Debian 8 or CentOS 7
 
 <a name="installation"></a>
 # Installation
 
-### Install Dependencies
+<a name="install-dependencies"></a>
+## Install Dependencies
+
+<a name="dependencies-python34"></a>
+#### Python 3.4 (recommended)
+
+##### Ubuntu 14.04 / Debian 8
 
 ```bash
-apt-get install python-pip git build-essential python-dev redis-server python-zmq python-pycurl libcurl4-gnutls-dev
+apt-get install python3 python3-pip
+apt-get install git build-essential libcurl4-gnutls-dev libffi-dev
+apt-get install redis-server
 ```
 
-To enable SNI (Server Name Indication) support in Python 2, you also need `libffi-dev` (for `ffi.h`) and `ndg-https-client`:
+##### CentOS 7
 
 ```bash
-apt-get install libffi-dev python-openssl python-pyasn1
-pip install ndg-httpsclient
+yum install epel-release
+yum install python34 python34-devel
+yum install git libcurl-devel gcc gcc-c++
+yum install redis
 ```
 
-### Install IntelMQ
+Install the last pip version:
+```
+curl "https://bootstrap.pypa.io/get-pip.py" -o "/tmp/get-pip.py"
+python3.4 /tmp/get-pip.py
+```
+
+Enable redis on startup:
+```
+systemctl enable redis
+systemctl start redis
+```
+
+<a name="dependencies-python27"></a>
+#### Python 2.7
+
+##### Ubuntu 14.04 / Debian 8
+
+```bash
+apt-get install python
+apt-get install git build-essential libcurl4-gnutls-dev libffi-dev
+apt-get install python-dev python-pip python-zmq python-pycurl python-openssl python-pyasn1
+apt-get install redis-server
+```
+
+##### CentOS 7
+
+```bash
+yum install git libcurl-devel gcc gcc-c++
+yum install python python-devel 
+yum install redis
+```
+
+Enable redis on startup:
+```bash
+systemctl enable redis
+systemctl start redis
+```
+
+<a name="install"></a>
+## Install
+
+<a name="install-python34"></a>
+#### Python 3.4 (recommended)
 
 ```bash
 sudo su -
 
-git clone https://github.com/certtools/intelmq.git
-cd intelmq/
+git clone https://github.com/certtools/intelmq.git /tmp/intelmq
+cd /tmp/intelmq
 
-pip install -r REQUIREMENTS
-python setup.py install
+pip3 install -r REQUIREMENTS
+python3.4 setup.py install
+
 useradd -d /opt/intelmq -U -s /bin/bash intelmq
 chmod -R 0770 /opt/intelmq
 chown -R intelmq.intelmq /opt/intelmq
 ```
 
-For Python 2 install some slightly different requirements:
+<a name="install-python27"></a>
+#### Python 2.7
+
 ```bash
-pip install -r REQUIREMENTS2
+sudo su -
+
+git clone https://github.com/certtools/intelmq.git /tmp/intelmq
+cd /tmp/intelmq
+
+pip2 install -r REQUIREMENTS2
+python2.7 setup.py install
+
+useradd -d /opt/intelmq -U -s /bin/bash intelmq
+chmod -R 0770 /opt/intelmq
+chown -R intelmq.intelmq /opt/intelmq
 ```
 
 <a name="management"></a>
