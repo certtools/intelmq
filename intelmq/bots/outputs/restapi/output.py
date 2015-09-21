@@ -14,6 +14,7 @@ class RestAPI(Bot):
         if self.parameters.auth_token_name and self.parameters.auth_token:
             self.session.headers.update(
                 {self.parameters.auth_token_name: self.parameters.auth_token})
+        self.session.headers.update({"content-type" : "application/json; charset=utf-8"})
 
     def process(self):
         event = self.receive_message()
