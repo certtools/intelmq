@@ -9,8 +9,9 @@ import csv
 import datetime
 import io
 import prettytable
-import pprint
+import subprocess
 import sys
+import tempfile
 import zipfile
 
 import intelmq.lib.utils as utils
@@ -102,6 +103,10 @@ def shrink_dict(d):
     return [{k: v for k, v in dicti.items() if not empty[k]} for dicti in d]
 
 
+def getTerminalHeight():
+    return int(subprocess.check_output(['stty', 'size']).strip().split()[0])
+
+
 def query_by_ascontact(ascontact, show_table=False, requestor=None):
     # TODO: show_table
     if requestor is None:
@@ -122,17 +127,32 @@ def query_by_ascontact(ascontact, show_table=False, requestor=None):
     writer.writerows(query)
     attachment_text = csvfile.getvalue()
 
-    print('='*100)
-    print(bold('To: {to}'.format(to=requestor)))
-    print('Subject: {subj}'.format(subj=subject))
-    print()
-    print(text)
-    print()
+    showed_text = ['='*100,
+                   'To: {to}'.format(to=requestor),
+                   'Subject: {subj}'.format(subj=subject),
+                   '',
+                   text,
+                   '',
+                   ]
+    height = getTerminalHeight()-5
     if show_table:
         csvfile.seek(0)
-        print(prettytable.from_csv(csvfile))
+        if len(query) > height:
+            with tempfile.NamedTemporaryFile(mode='w+') as handle:
+                handle.write('\n'.join(showed_text))
+                handle.write('\n')
+                handle.write(str(prettytable.from_csv(csvfile)))
+                handle.seek(0)
+                subprocess.call(['less', handle.name])
+        else:
+            print('\n'.join(showed_text), prettytable.from_csv(csvfile))
     else:
-        print(attachment_text)
+        if len(query) > height:
+            print('\n'.join(showed_text))
+            print('\n'.join(attachment_text.splitlines()[:height]))
+            print('...')
+        else:
+            print('\n'.join(showed_text), attachment_text)
     print('-'*100)
     answer = input(inverted('(b)ack, (s)end, show (t)able, change (r)equestor '
                             'or (q)uit? ')).strip()
