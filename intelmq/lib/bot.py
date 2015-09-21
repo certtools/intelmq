@@ -126,7 +126,7 @@ class Bot(object):
                 self.source_pipeline = None
                 self.destination_pipeline = None
 
-            except Exception as ex:
+            except Exception:
                 if self.parameters.error_log_exception:
                     self.logger.exception("Bot has found a problem.")
                 else:
@@ -143,7 +143,7 @@ class Bot(object):
                     if (self.error_retries_counter >=
                             self.parameters.error_max_retries):
                         if self.parameters.error_dump_message:
-                            self.dump_message(ex)
+                            self.dump_message()
                         self.acknowledge_message()
                         self.stop()
 
@@ -151,7 +151,7 @@ class Bot(object):
                     error_on_message = True
                 else:
                     if self.parameters.error_dump_message:
-                        self.dump_message(ex)
+                        self.dump_message()
                     self.acknowledge_message()
 
             except KeyboardInterrupt:
@@ -238,17 +238,17 @@ class Bot(object):
         self.last_message = self.current_message
         self.source_pipeline.acknowledge()
 
-    def dump_message(self, ex):
+    def dump_message(self):
         timestamp = datetime.datetime.utcnow()
         timestamp = timestamp.isoformat()
 
-        dump_file = "%s/%s.dump" % (self.parameters.logging_path, self.bot_id)
+        dump_file = "%s%s.dump" % (self.parameters.logging_path, self.bot_id)
 
         new_dump_data = dict()
         new_dump_data[timestamp] = dict()
         new_dump_data[timestamp]["bot_id"] = self.bot_id
         new_dump_data[timestamp]["source_queue"] = self.source_queues
-        new_dump_data[timestamp]["traceback"] = traceback.format_exc(ex)
+        new_dump_data[timestamp]["traceback"] = traceback.format_exc()
         if self.current_message is not None:
             message = self.current_message.serialize()
         else:
