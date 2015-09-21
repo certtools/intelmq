@@ -204,6 +204,45 @@ bots are running, use `intelmqctl -n status`.
 
 ## Utilities
 
+### Inspecting dumped messages
+
+When bots are failing due to bad input data or programming errors, they can dump the problematic message to a file along with a traceback, if configured accordingly. These dumps are saved at `/opt/intelmq/var/log/[botid].dump` as JSON files. There is an inspection and reinjection tool included in intelmq, called `intelmqdump`. It is an interactive tool able to show all dumped files, the number of dumps per file. Choose a file by bot-id or listed numeric id. You can then choose to delete single entries from the file with `e 1,3,4`, show a message in more readable format with `s 1` (prints the raw-message, can be long!), recover some messages and put them back in the pipeline for the bot by `a` or `r 0,4,5`. Or delete the file with all dumped messages using `d`.
+
+```bash
+ $ intelmqdump -h
+usage:
+    intelmqdump [botid]
+    intelmqdump [-h|--help]
+
+positional arguments:
+  botid       botid to inspect dumps of
+
+optional arguments:
+  -h, --help  show this help message and exit
+
+intelmqdump can inspect dumped messages, show, delete or reinject them into
+the pipeline. It's an interactive tool, directly start it to get a list of
+available dumps or call it with a knwon bot id as parameter.
+
+$ intelmqdump
+ id: name (bot id)                    content
+  0: alienvault-otx-parser            1 dumps
+  1: cymru-whois-expert               8 dumps
+  2: deduplicator-expert              2 dumps
+  3: dragon-research-group-ssh-parser 2 dumps
+  4: file-output2                     1 dumps
+  5: fraunhofer-dga-parser            1 dumps
+  6: spamhaus-cert-parser             4 dumps
+  7: test-bot                         2 dumps
+Which dump file to process (id or name)? 3
+Processing dragon-research-group-ssh-parser: 2 dumps
+  0: 2015-09-03T13:13:22.159014 InvalidValue: invalid value u'NA' (<type 'unicode'>) for key u'source.asn'
+  1: 2015-09-01T14:40:20.973743 InvalidValue: invalid value u'NA' (<type 'unicode'>) for key u'source.asn'
+recover (a)ll, delete (e)ntries, (d)elete file, (q)uit, (s)how by ids, (r)ecover by ids? d
+Deleted file /opt/intelmq/var/log/dragon-research-group-ssh-parser.dump
+```
+
+
 ### Monitoring Logs
 
 All bots and `intelmqctl` log to `/opt/intelmq/var/log/`. In case of failures,
