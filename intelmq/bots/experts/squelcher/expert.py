@@ -5,6 +5,7 @@ Squelcher Expert marks events as new or old depending on a TTL(ASN, Net, IP).
 from __future__ import unicode_literals
 from ipaddress import ip_address, ip_network
 import psycopg2
+import sys
 
 from intelmq.lib.bot import Bot
 from intelmq.lib.utils import load_configuration
@@ -98,3 +99,8 @@ class SquelcherExpertBot(Bot):
     def modify_end(self, event):
         self.send_message(event)
         self.acknowledge_message()
+
+
+if __name__ == "__main__":
+    bot = SquelcherExpertBot(sys.argv[1])
+    bot.start()
