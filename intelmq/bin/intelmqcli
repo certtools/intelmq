@@ -113,7 +113,8 @@ WHERE
            conttab=CONFIG['database']['contacts_table'])
 QUERY_SET_RTIRID = """
 UPDATE {evtab} SET
-    rtir_{{type}}_id = {{rtirid}}
+    rtir_{{type}}_id = {{rtirid}},
+    sent_at = LOCALTIMESTAMP
 WHERE
     id = ANY('{{{{{{ids}}}}}}'::int[]);
 """.format(evtab=CONFIG['database']['events_table'])
