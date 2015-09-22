@@ -8,26 +8,25 @@ from __future__ import print_function, unicode_literals
 import csv
 import datetime
 import io
+import json
 import os
-import prettytable
 import subprocess
 import sys
 import tempfile
 import zipfile
 
-import intelmq.lib.utils as utils
+import prettytable
 import psycopg2
 import psycopg2.extras
-from intelmq import INTELMQCLI_CONF_FILE
-from termstyle import bold, inverted, green, red
+from termstyle import bold, green, inverted, red
 
 import rt
-
 
 if sys.version[0] == '2':
     input = raw_input
 
-CONFIG = utils.load_configuration(INTELMQCLI_CONF_FILE)
+with open('/etc/intelmqcli.conf') as conf_handle:
+    CONFIG = json.load(conf_handle)
 CON = psycopg2.connect(database=CONFIG['database']['database'],
                        user=CONFIG['database']['user'],
                        password=CONFIG['database']['password'],
@@ -39,8 +38,6 @@ CUR = CON.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 CON.autocommit = True
 
 RT = rt.Rt(CONFIG['rt']['uri'], CONFIG['rt']['user'], CONFIG['rt']['password'])
-
-logger = utils.log('intelmqcli', log_level=CONFIG['log_level'])
 
 QUERY_COUNT_ASN = """
 SELECT
@@ -148,9 +145,6 @@ def getTerminalHeight():
 
 
 def query_by_as(contact, show_table=False, requestor=None, automatic=False):
-    logger.info('query_by_as: c={!r}, r={!r}, a={!r}'.format(contact,
-                                                             requestor,
-                                                             automatic))
     if type(contact) is int:
         CUR.execute(QUERY_BY_ASNUM.format(contact))
         if requestor is None:
@@ -236,9 +230,9 @@ def query_by_as(contact, show_table=False, requestor=None, automatic=False):
     report_id = RT.create_ticket(Queue='Incident Reports', Subject=subject,
                                  Requestors=requestor)
     if report_id == -1:
-        logger.error(red('Could not create Incident Report.'))
+        print(red('Could not create Incident Report.'))
         return
-    logger.info(green('Created Incident Report {}.'.format(report_id)))
+    print(green('Created Incident Report {}.'.format(report_id)))
     CUR.execute(QUERY_SET_RTIRID.format(ids=','.join(ids), rtirid=report_id,
                                         type='report'))
     if True:  # TODO: implement zip config
@@ -254,33 +248,33 @@ def query_by_as(contact, show_table=False, requestor=None, automatic=False):
         filename = 'events.zip'
     response = RT.comment(report_id, files=[(filename, attachment)])
     if not response:
-        logger.exception(red('Could not attach file.'))
+        print(red('Could not attach file.'))
         return
 
     incident_id = RT.create_ticket(Queue='Incidents', Subject=subject)
     if incident_id == -1:
-        logger.error(red('Could not create Incident.'))
+        print(red('Could not create Incident.'))
         return
-    logger.info(green('Created Incident {}.'.format(incident_id)))
+    print(green('Created Incident {}.'.format(incident_id)))
     if not RT.edit_link(report_id, 'MemberOf', incident_id):
-        logger.error(red('Could not link Incident to Incident Report.'))
+        print(red('Could not link Incident to Incident Report.'))
         return
     CUR.execute(QUERY_SET_RTIRID.format(ids=','.join(ids), rtirid=incident_id,
                                         type='incident'))
     investigation_id = RT.create_ticket(Queue='Investigations',
                                         Subject=subject)
     if investigation_id == -1:
-        logger.error(red('Could not create Investigation.'))
+        print(red('Could not create Investigation.'))
         return
-    logger.info(green('Created Investigation {}.'.format(investigation_id)))
+    print(green('Created Investigation {}.'.format(investigation_id)))
     if not RT.edit_link(incident_id, 'HasMember', investigation_id):
-        logger.error(red('Could not link Investigation to Incident.'))
+        print(red('Could not link Investigation to Incident.'))
         return
     CUR.execute(QUERY_SET_RTIRID.format(ids=','.join(ids),
                                         rtirid=investigation_id,
                                         type='investigation'))
     if not RT.edit_ticket(incident_id, Status='resolved'):
-        logger.error('Could not close incident {}.'.format(incident_id))
+        print('Could not close incident {}.'.format(incident_id))
 
     if requestor != contact:
         asns = [str(row['source.asn']) for row in query]
@@ -326,7 +320,7 @@ def count_by_asn():
 
 if __name__ == '__main__':
     if not RT.login():
-        logger.error(red('Could not login to RT.'))
+        print(red('Could not login to RT.'))
     try:
         while True:
             asn_count = count_by_asn()
@@ -352,6 +346,6 @@ if __name__ == '__main__':
 
     except Exception as exc:
         if not isinstance(exc, SystemExit):
-            logger.exception('')
+            raise
     finally:
         RT.logout()
