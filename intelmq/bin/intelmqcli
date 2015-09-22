@@ -8,6 +8,7 @@ from __future__ import print_function, unicode_literals
 import csv
 import datetime
 import io
+import os
 import prettytable
 import subprocess
 import sys
@@ -27,7 +28,6 @@ if sys.version[0] == '2':
     input = raw_input
 
 CONFIG = utils.load_configuration(INTELMQCLI_CONF_FILE)
-DBTABLE = CONFIG['database']['events_table']
 CON = psycopg2.connect(database=CONFIG['database']['database'],
                        user=CONFIG['database']['user'],
                        password=CONFIG['database']['password'],
@@ -45,9 +45,11 @@ logger = utils.log('intelmqcli', log_level=CONFIG['log_level'])
 QUERY_COUNT_ASN = """
 SELECT
     COUNT(*) as count,
-    {conttab}.contacts,
+    COALESCE({conttab}.contacts, '') as contacts,
     string_agg(DISTINCT cast({evtab}."source.asn" as varchar), ', ') as asn,
-    string_agg(DISTINCT {evtab}."classification.type", ', ') as classification
+    string_agg(DISTINCT {evtab}."classification.type", ', ') as classification,
+    COALESCE({conttab}.contacts, cast({evtab}."source.asn" as varchar))
+        as grouping
 FROM {evtab}
 LEFT OUTER JOIN as_contacts ON {evtab}."source.asn" = {conttab}.asnum
 WHERE
@@ -59,8 +61,8 @@ WHERE
         {evtab}."source.geolocation.cc" LIKE '{cc}' OR
         {evtab}."source.fqdn" LIKE '{fqdn}'
     )
-GROUP BY {conttab}.contacts;
-""".format(evtab=DBTABLE, cc=CONFIG['filter']['cc'],
+GROUP BY {conttab}.contacts, grouping;
+""".format(evtab=CONFIG['database']['events_table'], cc=CONFIG['filter']['cc'],
            fqdn=CONFIG['filter']['fqdn'],
            conttab=CONFIG['database']['contacts_table'])
 QUERY_BY_ASCONTACT = """
@@ -83,14 +85,49 @@ WHERE
     {evtab}.rtir_incident_id IS NULL AND
     {evtab}.rtir_investigation_id IS NULL AND
     {conttab}.contacts = '{{}}';
-""".format(evtab=DBTABLE,
+""".format(evtab=CONFIG['database']['events_table'],
+           conttab=CONFIG['database']['contacts_table'])
+QUERY_BY_ASNUM = """
+SELECT
+    {evtab}.id,
+    to_char({evtab}."time.source" at time zone 'UTC',
+            'YYYY-MM-DD"T"HH24:MI:SSOF') as "time.source",
+    {evtab}."source.ip",
+    {evtab}."source.reverse_dns",
+    {evtab}."source.fqdn",
+    {evtab}."source.asn",
+    {evtab}."source.url",
+    {evtab}."feed.name",
+    {evtab}."classification.type"
+FROM events
+LEFT OUTER JOIN {conttab} ON {evtab}."source.asn" = {conttab}.asnum
+WHERE
+    notify = TRUE AND
+    {evtab}.rtir_report_id IS NULL AND
+    {evtab}.rtir_incident_id IS NULL AND
+    {evtab}.rtir_investigation_id IS NULL AND
+    {evtab}."source.asn" = {{}};
+""".format(evtab=CONFIG['database']['events_table'],
            conttab=CONFIG['database']['contacts_table'])
 QUERY_SET_RTIRID = """
-UPDATE events SET
-    rtir_{type}_id = {rtirid}
+UPDATE {evtab} SET
+    rtir_{{type}}_id = {{rtirid}}
 WHERE
-    id = ANY('{{{ids}}}'::int[]);
-"""
+    id = ANY('{{{{{{ids}}}}}}'::int[]);
+""".format(evtab=CONFIG['database']['events_table'])
+QUERY_UPDATE_CONTACT = """
+UPDATE {conttab} SET
+    contacts = '{{contacts}}'
+WHERE
+    asnum = ANY('{{{{{{asns}}}}}}'::int[]);
+""".format(conttab=CONFIG['database']['contacts_table'])
+QUERY_INSERT_CONTACT = """
+INSERT INTO {conttab} (
+    asnum, contacts, comment, unreliable
+) VALUES (
+    %s, %s, %s, FALSE
+)
+""".format(conttab=CONFIG['database']['contacts_table'])
 
 
 def shrink_dict(d):
@@ -107,12 +144,15 @@ def getTerminalHeight():
     return int(subprocess.check_output(['stty', 'size']).strip().split()[0])
 
 
-def query_by_ascontact(ascontact, show_table=False, requestor=None):
-    # TODO: show_table
-    if requestor is None:
-        requestor = ascontact
-
-    CUR.execute(QUERY_BY_ASCONTACT.format(ascontact))
+def query_by_as(contact, show_table=False, requestor=None):
+    if type(contact) is int:
+        CUR.execute(QUERY_BY_ASNUM.format(contact))
+        if requestor is None:
+            requestor = ''
+    else:
+        CUR.execute(QUERY_BY_ASCONTACT.format(contact))
+        if requestor is None:
+            requestor = contact
     query = shrink_dict(CUR.fetchall())
     ids = list(str(row['id']) for row in query)
 
@@ -161,22 +201,25 @@ def query_by_ascontact(ascontact, show_table=False, requestor=None):
     elif answer == 'b':
         return
     elif answer == 't':
-        query_by_ascontact(ascontact, show_table=True, requestor=requestor)
+        query_by_as(contact, show_table=True, requestor=requestor)
         return
     elif answer.startswith('r'):
         if len(answer) == 1:
-            requestor = ascontact
+            if type(contact) is int:
+                requestor = ''
+            else:
+                requestor = contact
         elif answer[1:].strip().startswith('+'):
             requestor = requestor+','+answer[1:].strip()[1:]
         elif answer[1:].strip().startswith('-'):
             requestor = requestor.replace(answer[1:].strip()[1:], '')
         else:
             requestor = answer[1:].strip()
-        query_by_ascontact(ascontact, requestor=requestor.strip(','))
+        query_by_as(contact, requestor=requestor.strip(','))
         return
     elif answer != 's':
         print(red('Unknow command {!r}.'.format(answer)))
-        query_by_ascontact(ascontact, requestor=requestor)
+        query_by_as(contact, requestor=requestor)
         return
 
     report_id = RT.create_ticket(Queue='Incident Reports', Subject=subject,
@@ -216,8 +259,27 @@ def query_by_ascontact(ascontact, show_table=False, requestor=None):
     if not RT.edit_link(incident_id, 'HasMember', investigation_id):
         logger.error(red('Could not link Investigation to Incident.'))
         return
+    CUR.execute(QUERY_SET_RTIRID.format(ids=','.join(ids),
+                                        rtirid=investigation_id,
+                                        type='investigation'))
     if not RT.edit_ticket(incident_id, Status='resolved'):
         logger.error('Could not close incident {}.'.format(incident_id))
+
+    if requestor != contact:
+        asns = [str(row['source.asn']) for row in query]
+        answer = input(inverted('Save recipient {!r} for ASNs {!s}? [Y/n]'
+                                ''.format(requestor, ', '.join(asns)))).strip()
+        if answer.lower() in ('', 'y', 'j'):
+            CUR.execute(QUERY_UPDATE_CONTACT.format(asns=','.join(asns),
+                                                    contacts=requestor))
+            if CUR.rowcount != 1:
+                for asn in asns:
+                    user = os.environ['USER']
+                    time = datetime.datetime.now().strftime('%c')
+                    comment = 'Added by {user} @ {time}'.format(user=user,
+                                                                time=time)
+                    CUR.execute(QUERY_INSERT_CONTACT, (int(asn), requestor,
+                                                       comment))
 
 
 def count_by_asn():
@@ -259,9 +321,12 @@ if __name__ == '__main__':
             elif answer == 'a':
                 raise NotImplementedError
                 for count, contacts, asn, classtype in asn_count:
-                    query_by_ascontact(contacts)
+                    query_by_as(contacts)
             elif type(answer) is int:
-                query_by_ascontact(asn_count[answer]['contacts'])
+                if asn_count[answer]['contacts']:
+                    query_by_as(asn_count[answer]['contacts'])
+                else:
+                    query_by_as(int(asn_count[answer]['asn']))
 
     except Exception as exc:
         if not isinstance(exc, SystemExit):
