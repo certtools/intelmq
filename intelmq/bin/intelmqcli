@@ -76,6 +76,7 @@ SELECT
     {evtab}."source.asn",
     {evtab}."source.url",
     {evtab}."feed.name",
+    {evtab}."classification.identifier",
     {evtab}."classification.type"
 FROM events
 LEFT OUTER JOIN {conttab} ON {evtab}."source.asn" = {conttab}.asnum
@@ -98,6 +99,7 @@ SELECT
     {evtab}."source.asn",
     {evtab}."source.url",
     {evtab}."feed.name",
+    {evtab}."classification.identifier",
     {evtab}."classification.type"
 FROM events
 LEFT OUTER JOIN {conttab} ON {evtab}."source.asn" = {conttab}.asnum
@@ -144,7 +146,10 @@ def getTerminalHeight():
     return int(subprocess.check_output(['stty', 'size']).strip().split()[0])
 
 
-def query_by_as(contact, show_table=False, requestor=None):
+def query_by_as(contact, show_table=False, requestor=None, automatic=False):
+    logger.info('query_by_as: c={!r}, r={!r}, a={!r}'.format(contact,
+                                                             requestor,
+                                                             automatic))
     if type(contact) is int:
         CUR.execute(QUERY_BY_ASNUM.format(contact))
         if requestor is None:
@@ -194,8 +199,13 @@ def query_by_as(contact, show_table=False, requestor=None):
         else:
             print('\n'.join(showed_text), attachment_text)
     print('-'*100)
-    answer = input(inverted('(b)ack, (s)end, show (t)able, change (r)equestor '
-                            'or (q)uit? ')).strip()
+    if automatic and requestor:
+        answer = 's'
+    else:
+        if automatic:
+            print(red('You need to set a valid requestor!'))
+        answer = input(inverted('(b)ack, (s)end, show (t)able, change '
+                                '(r)equestor or (q)uit? ')).strip()
     if answer == 'q':
         exit(0)
     elif answer == 'b':
@@ -230,12 +240,18 @@ def query_by_as(contact, show_table=False, requestor=None):
     logger.info(green('Created Incident Report {}.'.format(report_id)))
     CUR.execute(QUERY_SET_RTIRID.format(ids=','.join(ids), rtirid=report_id,
                                         type='report'))
-    attachment = io.BytesIO()
-    ziphandle = zipfile.ZipFile(attachment, mode='w')
-    ziphandle.writestr('events.csv', attachment_text)
-    ziphandle.close()
-    attachment.seek(0)
-    response = RT.comment(report_id, files=[('events.zip', attachment)])
+    if True:  # TODO: implement zip config
+        attachment = csvfile
+        attachment.seek(0)
+        filename = 'events.csv'
+    else:
+        attachment = io.BytesIO()
+        ziphandle = zipfile.ZipFile(attachment, mode='w')
+        ziphandle.writestr('events.csv', attachment_text)
+        ziphandle.close()
+        attachment.seek(0)
+        filename = 'events.zip'
+    response = RT.comment(report_id, files=[(filename, attachment)])
     if not response:
         logger.exception(red('Could not attach file.'))
         return
@@ -286,6 +302,9 @@ def count_by_asn():
     # TODO: Existing RT ids!
     CUR.execute(QUERY_COUNT_ASN)
     asn_count = CUR.fetchall()
+    if not asn_count:
+        print('No incidents!')
+        exit(0)
     max_asn_length = max([len(row['asn']) for row in asn_count])
     max_contact_length = max([len(row['contacts']) for row in asn_count])
     print('='*100)
@@ -319,9 +338,11 @@ if __name__ == '__main__':
             if answer == 'q':
                 break
             elif answer == 'a':
-                raise NotImplementedError
-                for count, contacts, asn, classtype in asn_count:
-                    query_by_as(contacts)
+                for item in asn_count:
+                    if item['contacts']:
+                        query_by_as(item['contacts'], automatic=True)
+                    else:
+                        query_by_as(int(item['asn']), automatic=True)
             elif type(answer) is int:
                 if asn_count[answer]['contacts']:
                     query_by_as(asn_count[answer]['contacts'])
