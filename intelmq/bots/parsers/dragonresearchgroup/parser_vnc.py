@@ -38,8 +38,9 @@ class DragonResearchGroupVNCParserBot(Bot):
 
                 event.add(key, value, sanitize=True)
 
-            event.add('classification.type', u'brute-force')
-            event.add('protocol.application', u'vnc')
+            event.add("classification.type", "brute-force")
+            event.add("protocol.application", "vnc")
+            event.add("protocol.transport", "tcp")
             event.add("raw", row, sanitize=True)
 
             self.send_message(event)

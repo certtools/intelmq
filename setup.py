@@ -50,7 +50,6 @@ setup(
        'redis>=2.10.3',
        'requests>=2.7.0',
        'six>=1.9.0',
-       'pyzmq>=14.7.0',
     ],
     packages=find_packages(),
     package_data={'intelmq': ['conf/*.conf', 'bots/experts/modify/*.conf']},
