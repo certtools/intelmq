@@ -46,7 +46,7 @@ class Bot(object):
                                     log_level=self.parameters.logging_level)
         except:
             self.log_buffer.append(('critical', traceback.format_exc()))
-            self.stop()
+            self.stop(forced=True)
         else:
             for line in self.log_buffer:
                 getattr(self.logger, line[0])(line[1])
@@ -68,6 +68,7 @@ class Bot(object):
     def start(self, starting=True, error_on_pipeline=True,
               error_on_message=False, source_pipeline=None,
               destination_pipeline=None):
+
         self.source_pipeline = source_pipeline
         self.destination_pipeline = destination_pipeline
         self.logger.info('Bot starts processings.')
@@ -115,6 +116,8 @@ class Bot(object):
                     starting = False
 
                 self.process()
+
+                self.error_retries_counter = 0  # reset counter
                 self.source_pipeline.sleep(self.parameters.rate_limit)
 
             except exceptions.PipelineError:
@@ -138,35 +141,46 @@ class Bot(object):
                     self.logger.info("Current Message(event): {!r}."
                                      "".format(self.current_message)[:500])
 
-                self.error_retries_counter += 1
+            except KeyboardInterrupt:
+                self.logger.error("Received KeyboardInterrupt.")
+                self.stop(forced=True)
+                break
+
+            finally:
+                # error procedure: retry
                 if self.parameters.error_procedure == "retry":
-                    if (self.error_retries_counter >=
+
+                    self.error_retries_counter += 1
+
+                    # not reached the maximum number of times
+                    if (self.error_retries_counter <
                             self.parameters.error_max_retries):
+                        error_on_message = True
+
+                    # reached the maximum number of times
+                    else:
                         if self.parameters.error_dump_message:
                             self.dump_message()
+
+                        # remove message from pipeline
                         self.acknowledge_message()
+
+                        # FIXME: depend of config
                         self.stop()
 
-                    # when bot acknowledge the message, dont need to wait again
-                    error_on_message = True
+                        # when bot acknowledge the message, dont need to wait again
+                        error_on_message = False
+
+                # error procedure: pass
                 else:
                     if self.parameters.error_dump_message:
                         self.dump_message()
+
+                    # remove message from pipeline
                     self.acknowledge_message()
 
-            except KeyboardInterrupt:
-                self.logger.error("Received KeyboardInterrupt.")
-                self.stop()
-                break
-            finally:
 
-                if (self.error_retries_counter >=
-                        self.parameters.error_max_retries and
-                        self.parameters.error_max_retries >= 0):
-                    self.stop()
-                    break
-
-    def stop(self):
+    def stop(self, forced=False):
         """ Stop Bot by diconnecting pipelines. """
         if self.source_pipeline:
             self.source_pipeline.disconnect()
@@ -182,7 +196,11 @@ class Bot(object):
         else:
             self.log_buffer.append(('info', 'Bot stopped.'))
             self.print_log_buffer()
+
         if self.parameters.exit_on_stop:
+            self.terminate()
+
+        if forced:
             self.terminate()
 
     def terminate(self):
@@ -207,7 +225,7 @@ class Bot(object):
             self.log_buffer.append(('error',
                                     "Invalid bot id, must match '"
                                     "[^0-9a-zA-Z\-]+'."))
-            self.stop()
+            self.stop(forced=True)
 
     def send_message(self, message):
         if not message:
@@ -326,7 +344,7 @@ class Bot(object):
         else:
             self.logger.error("Pipeline configuration: no key "
                               "'{}'.".format(self.bot_id))
-            self.stop()
+            self.stop(forced=True)
 
     def load_harmonization_configuration(self):
         self.logger.debug("Loading Harmonization configuration.")
