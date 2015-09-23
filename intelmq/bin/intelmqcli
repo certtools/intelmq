@@ -139,6 +139,30 @@ INSERT INTO {conttab} (
     %s, %s, %s, FALSE
 )
 """.format(conttab=CONFIG['database']['contacts_table'])
+QUERY_GET_TEXT = """
+SELECT
+    body
+FROM {texttab}
+WHERE
+    key = %s
+""".format(texttab=CONFIG['database']['text_table'])
+
+
+def get_text(query):
+    types = [row['classification.identifier'] for row in query
+             if 'classification.identifier' in row]
+    text = None
+    if len(types) == 1:
+        CUR.execute(QUERY_GET_TEXT, (types[0], ))
+        if CUR.rowcount:
+            text = CUR.fetchall()[0]['body']
+
+    if text is None:
+        CUR.execute(QUERY_GET_TEXT, (CONFIG['database']['default_key'], ))
+        if CUR.rowcount:
+            text = CUR.fetchall()[0]['body']
+
+    return text
 
 
 def table_from_query(query):
@@ -178,7 +202,7 @@ def query_by_as(contact, show_table=False, requestor=None, automatic=False):
     subject = ('{date}: {count} incidents for your AS'
                ''.format(count=len(query),
                          date=datetime.datetime.now().strftime('%Y-%m-%d')))
-    text = 'TODO: text'
+    text = get_text(query)
     if sys.version_info[0] == 2:
         csvfile = io.BytesIO()
     else:
