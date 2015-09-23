@@ -94,10 +94,10 @@ Change the requestor, the recipient of the report, by pressing `r`:
 
 
 ```bash
-(b)ack, (s)end, show (t)able, change (r)equestor or (q)uit? r null@localhost
+(b)ack, (s)end, show (t)able, change (r)equestor or (q)uit? r
+New requestor address: null@localhost.invalid
 ====================================================================================================
-To: null@localhost
-Subject: 2015-09-21: 16 incidents for your AS
+To: null@localhost.invalid
 ```
 
 Now we are ready to create the tickets and send the mail out:

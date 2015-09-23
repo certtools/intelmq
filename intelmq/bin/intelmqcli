@@ -1,7 +1,7 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-The pprint argument `compact` is only available on Python 3.
+
 """
 from __future__ import print_function, unicode_literals
 
@@ -25,8 +25,15 @@ import rt
 if sys.version[0] == '2':
     input = raw_input
 
-with open('/etc/intelmqcli.conf') as conf_handle:
+with open('/etc/intelmq/intelmqcli.conf') as conf_handle:
     CONFIG = json.load(conf_handle)
+with open(os.path.expanduser('~/.intelmq/intelmqcli.conf')) as conf_handle:
+    user_config = json.load(conf_handle)
+for key, value in user_config.items():
+    if key in CONFIG:
+        CONFIG[key].update(value)
+    else:
+        CONFIG[key] = value
 CON = psycopg2.connect(database=CONFIG['database']['database'],
                        user=CONFIG['database']['user'],
                        password=CONFIG['database']['password'],
@@ -208,19 +215,16 @@ def query_by_as(contact, show_table=False, requestor=None, automatic=False):
     elif answer == 't':
         query_by_as(contact, show_table=True, requestor=requestor)
         return
-    elif answer.startswith('r'):
-        if len(answer) == 1:
+    elif answer == ('r'):
+        answer = input(inverted('New requestor address: ')).strip()
+        if len(answer) == 0:
             if type(contact) is int:
                 requestor = ''
             else:
                 requestor = contact
-        elif answer[1:].strip().startswith('+'):
-            requestor = requestor+','+answer[1:].strip()[1:]
-        elif answer[1:].strip().startswith('-'):
-            requestor = requestor.replace(answer[1:].strip()[1:], '')
         else:
-            requestor = answer[1:].strip()
-        query_by_as(contact, requestor=requestor.strip(','))
+            requestor = answer
+        query_by_as(contact, requestor=requestor)
         return
     elif answer != 's':
         print(red('Unknow command {!r}.'.format(answer)))
