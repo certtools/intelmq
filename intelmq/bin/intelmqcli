@@ -301,7 +301,7 @@ Subject: {subj}
         print('Could not close incident {}.'.format(incident_id))
 
     if requestor != contact:
-        asns = [str(row['source.asn']) for row in query]
+        asns = set(str(row['source.asn']) for row in query)
         answer = input(inverted('Save recipient {!r} for ASNs {!s}? [Y/n]'
                                 ''.format(requestor, ', '.join(asns)))).strip()
         if answer.lower() in ('', 'y', 'j'):
