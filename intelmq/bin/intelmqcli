@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-
+Implemented workarounds for Python 2.6, postgres 9.1 and old debian packages:
+    own table_from_query() instead of prettytable.from_csv()
+    postgres to_char(time.source, 'TZ') instead of 'OF' (from 9.4 up)
+        This gives the timezone instead of the offset (empty if UTC)
+    BytesIO instead of StringIO on Python 2 for csv module
 """
 from __future__ import print_function, unicode_literals
 
@@ -73,7 +77,7 @@ QUERY_BY_ASCONTACT = """
 SELECT
     {evtab}.id,
     to_char({evtab}."time.source" at time zone 'UTC',
-            'YYYY-MM-DD"T"HH24:MI:SSOF') as "time.source",
+            'YYYY-MM-DD"T"HH24:MI:SSTZ') as "time.source",
     {evtab}."source.ip",
     {evtab}."source.reverse_dns",
     {evtab}."source.fqdn",
@@ -96,7 +100,7 @@ QUERY_BY_ASNUM = """
 SELECT
     {evtab}.id,
     to_char({evtab}."time.source" at time zone 'UTC',
-            'YYYY-MM-DD"T"HH24:MI:SSOF') as "time.source",
+            'YYYY-MM-DD"T"HH24:MI:SSTZ') as "time.source",
     {evtab}."source.ip",
     {evtab}."source.reverse_dns",
     {evtab}."source.fqdn",
@@ -137,6 +141,14 @@ INSERT INTO {conttab} (
 """.format(conttab=CONFIG['database']['contacts_table'])
 
 
+def table_from_query(query):
+    header = sorted(query[0].keys())
+    table = prettytable.PrettyTable(header)
+    for row in query:
+        table.add_row([row[key] for key in header])
+    return table
+
+
 def shrink_dict(d):
     keys = d[0].keys()
     empty = dict(zip(keys, [True]*len(keys)))
@@ -167,39 +179,47 @@ def query_by_as(contact, show_table=False, requestor=None, automatic=False):
                ''.format(count=len(query),
                          date=datetime.datetime.now().strftime('%Y-%m-%d')))
     text = 'TODO: text'
-    csvfile = io.StringIO()
+    if sys.version_info[0] == 2:
+        csvfile = io.BytesIO()
+    else:
+        csvfile = io.StringIO()
     writer = csv.DictWriter(csvfile, fieldnames=sorted(query[0].keys()),
                             lineterminator='\n')
     writer.writeheader()
     writer.writerows(query)
     attachment_text = csvfile.getvalue()
 
-    showed_text = ['='*100,
-                   'To: {to}'.format(to=requestor),
-                   'Subject: {subj}'.format(subj=subject),
-                   '',
-                   text,
-                   '',
-                   ]
-    height = getTerminalHeight()-5
+    showed_text = '='*100 + '''
+To: {to}
+Subject: {subj}
+
+{text}
+'''.format(to=requestor, subj=subject, text=text)
+
+    height = getTerminalHeight()-2-showed_text.count('\n')
     if show_table:
         csvfile.seek(0)
         if len(query) > height:
             with tempfile.NamedTemporaryFile(mode='w+') as handle:
-                handle.write('\n'.join(showed_text))
-                handle.write('\n')
-                handle.write(str(prettytable.from_csv(csvfile)))
+                handle.write(showed_text + '\n')
+                try:
+                    handle.write(str(prettytable.from_csv(csvfile)))
+                except AttributeError:
+                    handle.write(str(table_from_query(query)))
                 handle.seek(0)
                 subprocess.call(['less', handle.name])
         else:
-            print('\n'.join(showed_text), prettytable.from_csv(csvfile))
+            try:
+                print(showed_text, prettytable.from_csv(csvfile), sep='\n')
+            except AttributeError:
+                print(showed_text, table_from_query(query), sep='\n')
     else:
         if len(query) > height:
-            print('\n'.join(showed_text))
+            print(showed_text)
             print('\n'.join(attachment_text.splitlines()[:height]))
             print('...')
         else:
-            print('\n'.join(showed_text), attachment_text)
+            print(showed_text, attachment_text, sep='\n')
     print('-'*100)
     if automatic and requestor:
         answer = 's'
