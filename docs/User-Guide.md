@@ -104,6 +104,7 @@ pip3 install -r REQUIREMENTS
 python3.4 setup.py install
 
 useradd -d /opt/intelmq -U -s /bin/bash intelmq
+echo 'PATH="$PATH:$HOME/bin"' > /opt/intelmq/.profile
 chmod -R 0770 /opt/intelmq
 chown -R intelmq.intelmq /opt/intelmq
 ```
@@ -121,6 +122,7 @@ pip2 install -r REQUIREMENTS2
 python2.7 setup.py install
 
 useradd -d /opt/intelmq -U -s /bin/bash intelmq
+echo 'PATH="$PATH:$HOME/bin"' > /opt/intelmq/.profile
 chmod -R 0770 /opt/intelmq
 chown -R intelmq.intelmq /opt/intelmq
 ```
