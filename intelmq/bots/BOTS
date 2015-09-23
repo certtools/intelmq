@@ -6,7 +6,7 @@
             "parameters": {
                 "feed": "Abuse.ch",
                 "rate_limit": 129600,
-                "url": "https://feodotracker.abuse.ch/blocklist/?download=domainblocklist"
+                "http_url": "https://feodotracker.abuse.ch/blocklist/?download=domainblocklist"
             }
         },
         "Abuse.ch Feodo Tracker IPs": {
@@ -15,7 +15,7 @@
             "parameters": {
                 "feed": "Abuse.ch",
                 "rate_limit": 129600,
-                "url": "https://feodotracker.abuse.ch/blocklist/?download=ipblocklist"
+                "http_url": "https://feodotracker.abuse.ch/blocklist/?download=ipblocklist"
             }
         },
         "Abuse.ch Palevo Tracker Domains": {
@@ -24,7 +24,7 @@
             "parameters": {
                 "feed": "Abuse.ch",
                 "rate_limit": 129600,
-                "url": "https://palevotracker.abuse.ch/blocklists.php?download=domainblocklist"
+                "http_url": "https://palevotracker.abuse.ch/blocklists.php?download=domainblocklist"
             }
         },
         "Abuse.ch Palevo Tracker IPs": {
@@ -33,7 +33,7 @@
             "parameters": {
                 "feed": "Abuse.ch",
                 "rate_limit": 129600,
-                "url": "https://palevotracker.abuse.ch/blocklists.php?download=ipblocklist"
+                "http_url": "https://palevotracker.abuse.ch/blocklists.php?download=ipblocklist"
             }
         },
         "Abuse.ch ZeuS Tracker Domains": {
@@ -42,7 +42,7 @@
             "parameters": {
                 "feed": "Abuse.ch",
                 "rate_limit": 129600,
-                "url": "https://zeustracker.abuse.ch/blocklist.php?download=baddomains"
+                "http_url": "https://zeustracker.abuse.ch/blocklist.php?download=baddomains"
             }
         },
         "Abuse.ch ZeuS Tracker IPs": {
@@ -51,7 +51,7 @@
             "parameters": {
                 "feed": "Abuse.ch",
                 "rate_limit": 129600,
-                "url": "https://zeustracker.abuse.ch/blocklist.php?download=badips"
+                "http_url": "https://zeustracker.abuse.ch/blocklist.php?download=badips"
             }
         },
         "AlienVault": {
@@ -60,7 +60,7 @@
             "parameters": {
                 "feed": "AlienVault",
                 "rate_limit": 3600,
-                "url": "https://reputation.alienvault.com/reputation.data"
+                "http_url": "https://reputation.alienvault.com/reputation.data"
             }
         },
         "Arbor": {
@@ -69,7 +69,7 @@
             "parameters": {
                 "feed": "Arbor",
                 "rate_limit": 3600,
-                "url": "http://atlas-public.ec2.arbor.net/public/ssh_attackers"
+                "http_url": "http://atlas-public.ec2.arbor.net/public/ssh_attackers"
             }
         },
         "Autoshun": {
@@ -78,7 +78,7 @@
             "parameters": {
                 "feed": "Autoshun",
                 "rate_limit": 3600,
-                "url": "https://www.autoshun.org/files/shunlist.html"
+                "http_url": "https://www.autoshun.org/files/shunlist.html"
             }
         },
         "BlockList.DE Apache": {
@@ -87,7 +87,7 @@
             "parameters": {
                 "feed": "BlockList.de",
                 "rate_limit": 86400,
-                "url": "https://lists.blocklist.de/lists/apache.txt"
+                "http_url": "https://lists.blocklist.de/lists/apache.txt"
             }
         },
         "BlockList.DE Bots": {
@@ -96,7 +96,7 @@
             "parameters": {
                 "feed": "BlockList.de",
                 "rate_limit": 86400,
-                "url": "https://lists.blocklist.de/lists/bots.txt"
+                "http_url": "https://lists.blocklist.de/lists/bots.txt"
             }
         },
         "BlockList.DE Brute-force Login": {
@@ -105,7 +105,7 @@
             "parameters": {
                 "feed": "BlockList.de",
                 "rate_limit": 86400,
-                "url": "https://lists.blocklist.de/lists/bruteforcelogin.txt"
+                "http_url": "https://lists.blocklist.de/lists/bruteforcelogin.txt"
             }
         },
         "BlockList.DE FTP": {
@@ -114,7 +114,7 @@
             "parameters": {
                 "feed": "BlockList.de",
                 "rate_limit": 86400,
-                "url": "https://lists.blocklist.de/lists/ftp.txt"
+                "http_url": "https://lists.blocklist.de/lists/ftp.txt"
             }
         },
         "BlockList.DE IMAP": {
@@ -123,7 +123,7 @@
             "parameters": {
                 "feed": "BlockList.de",
                 "rate_limit": 86400,
-                "url": "https://lists.blocklist.de/lists/imap.txt"
+                "http_url": "https://lists.blocklist.de/lists/imap.txt"
             }
         },
         "BlockList.DE IRC Bot": {
@@ -132,7 +132,7 @@
             "parameters": {
                 "feed": "BlockList.de",
                 "rate_limit": 86400,
-                "url": "https://lists.blocklist.de/lists/ircbot.txt"
+                "http_url": "https://lists.blocklist.de/lists/ircbot.txt"
             }
         },
         "BlockList.DE Mail": {
@@ -141,7 +141,7 @@
             "parameters": {
                 "feed": "BlockList.de",
                 "rate_limit": 86400,
-                "url": "https://lists.blocklist.de/lists/mail.txt"
+                "http_url": "https://lists.blocklist.de/lists/mail.txt"
             }
         },
         "BlockList.DE SIP": {
@@ -150,7 +150,7 @@
             "parameters": {
                 "feed": "BlockList.de",
                 "rate_limit": 86400,
-                "url": "https://lists.blocklist.de/lists/sip.txt"
+                "http_url": "https://lists.blocklist.de/lists/sip.txt"
             }
         },
         "BlockList.DE SSH": {
@@ -159,7 +159,7 @@
             "parameters": {
                 "feed": "BlockList.de",
                 "rate_limit": 86400,
-                "url": "https://lists.blocklist.de/lists/ssh.txt"
+                "http_url": "https://lists.blocklist.de/lists/ssh.txt"
             }
         },
         "BlockList.DE Strong IPs": {
@@ -168,7 +168,7 @@
             "parameters": {
                 "feed": "BlockList.de",
                 "rate_limit": 86400,
-                "url": "https://lists.blocklist.de/lists/strongips.txt"
+                "http_url": "https://lists.blocklist.de/lists/strongips.txt"
             }
         },
         "CI Army": {
@@ -177,7 +177,7 @@
             "parameters": {
                 "feed": "CI Army",
                 "rate_limit": 3600,
-                "url": "http://cinsscore.com/list/ci-badguys.txt"
+                "http_url": "http://cinsscore.com/list/ci-badguys.txt"
             }
         },
         "CleanMX Phishing": {
@@ -186,7 +186,7 @@
             "parameters": {
                 "feed": "CleanMX",
                 "rate_limit": 129600,
-                "url": "http://support.clean-mx.de/clean-mx/xmlphishing?response=alive&format=csv&domain="
+                "http_url": "http://support.clean-mx.de/clean-mx/xmlphishing?response=alive&format=csv&domain="
             }
         },
         "CleanMX Virus": {
@@ -195,7 +195,7 @@
             "parameters": {
                 "feed": "CleanMX",
                 "rate_limit": 129600,
-                "url": "http://support.clean-mx.de/clean-mx/xmlviruses?response=alive&format=csv&domain="
+                "http_url": "http://support.clean-mx.de/clean-mx/xmlviruses?response=alive&format=csv&domain="
             }
         },
         "Cymru Full Bogons": {
@@ -204,7 +204,7 @@
             "parameters": {
                 "feed": "Cymru",
                 "rate_limit": 129600,
-                "url": "https://www.team-cymru.org/Services/Bogons/fullbogons-ipv4.txt"
+                "http_url": "https://www.team-cymru.org/Services/Bogons/fullbogons-ipv4.txt"
             }
         },
         "DShield AS": {
@@ -213,7 +213,7 @@
             "parameters": {
                 "feed": "DShield",
                 "rate_limit": 129600,
-                "url": "https://dshield.org/asdetailsascii.html?as=<AS Number>"
+                "http_url": "https://dshield.org/asdetailsascii.html?as=<AS Number>"
             }
         },
         "AlienVault OTX": {
@@ -231,7 +231,7 @@
             "parameters": {
                 "feed": "DShield",
                 "rate_limit": 129600,
-                "url": "https://www.dshield.org/block.txt"
+                "http_url": "https://www.dshield.org/block.txt"
             }
         },
         "DShield Suspicious Domains": {
@@ -240,7 +240,7 @@
             "parameters": {
                 "feed": "DShield",
                 "rate_limit": 129600,
-                "url": "https://www.dshield.org/feeds/suspiciousdomains_High.txt"
+                "http_url": "https://www.dshield.org/feeds/suspiciousdomains_High.txt"
             }
         },
         "Danger Rulez": {
@@ -249,7 +249,7 @@
             "parameters": {
                 "feed": "Danger Rulez",
                 "rate_limit": 3600,
-                "url": "http://danger.rulez.sk/projects/bruteforceblocker/blist.php"
+                "http_url": "http://danger.rulez.sk/projects/bruteforceblocker/blist.php"
             }
         },
         "Dragon Research Group SSH": {
@@ -258,7 +258,7 @@
             "parameters": {
                 "feed": "Dragon Research Group",
                 "rate_limit": 3600,
-                "url": "https://dragonresearchgroup.org/insight/sshpwauth.txt"
+                "http_url": "https://dragonresearchgroup.org/insight/sshpwauth.txt"
             }
         },
         "Dragon Research Group VNC": {
@@ -267,7 +267,7 @@
             "parameters": {
                 "feed": "Dragon Research Group",
                 "rate_limit": 3600,
-                "url": "https://dragonresearchgroup.org/insight/vncprobe.txt"
+                "http_url": "https://dragonresearchgroup.org/insight/vncprobe.txt"
             }
         },
         "Dyn": {
@@ -276,7 +276,7 @@
             "parameters": {
                 "feed": "Dyn",
                 "rate_limit": 10800,
-                "url": "http://security-research.dyndns.org/pub/botnet/ponmocup/ponmocup-finder/ponmocup-infected-domains-latest.txt"
+                "http_url": "http://security-research.dyndns.org/pub/botnet/ponmocup/ponmocup-finder/ponmocup-infected-domains-latest.txt"
             }
         },
         "Fraunhofer DGA": {
@@ -286,7 +286,7 @@
                 "feed": "Fraunhofer DGA",
                 "password": "<PASSWORD>",
                 "rate_limit": 10800,
-                "url": "https://dgarchive.caad.fkie.fraunhofer.de/today",
+                "http_url": "https://dgarchive.caad.fkie.fraunhofer.de/today",
                 "username": "<USER>"
             }
         },
@@ -296,7 +296,7 @@
             "parameters": {
                 "feed": "HpHosts",
                 "rate_limit": 3600,
-                "url": "http://hosts-file.net/download/hosts.txt"
+                "http_url": "http://hosts-file.net/download/hosts.txt"
             }
         },
         "Malc0de Domain Blacklist": {
@@ -305,7 +305,7 @@
             "parameters": {
                 "feed": "Malc0de",
                 "rate_limit": 10800,
-                "url": "https://malc0de.com/bl/BOOT"
+                "http_url": "https://malc0de.com/bl/BOOT"
             }
         },
         "Malc0de IP Blacklist": {
@@ -314,7 +314,7 @@
             "parameters": {
                 "feed": "Malc0de",
                 "rate_limit": 10800,
-                "url": "https://malc0de.com/bl/IP_Blacklist.txt"
+                "http_url": "https://malc0de.com/bl/IP_Blacklist.txt"
             }
         },
         "Malware Domain List": {
@@ -323,7 +323,7 @@
             "parameters": {
                 "feed": "Malware Domain List",
                 "rate_limit": 3600,
-                "url": "http://www.malwaredomainlist.com/updatescsv.php"
+                "http_url": "http://www.malwaredomainlist.com/updatescsv.php"
             }
         },
         "Malware Domains": {
@@ -332,7 +332,7 @@
             "parameters": {
                 "feed": "MalwareDomains",
                 "rate_limit": 172800,
-                "url": "http://mirror2.malwaredomains.com/files/domains.txt"
+                "http_url": "http://mirror2.malwaredomains.com/files/domains.txt"
             }
         },
         "Malware Group Domains": {
@@ -341,7 +341,7 @@
             "parameters": {
                 "feed": "MalwareGroup",
                 "rate_limit": 129600,
-                "url": "http://www.malwaregroup.com/domains"
+                "http_url": "http://www.malwaregroup.com/domains"
             }
         },
         "Malware Group IPs": {
@@ -350,7 +350,7 @@
             "parameters": {
                 "feed": "MalwareGroup",
                 "rate_limit": 129600,
-                "url": "http://www.malwaregroup.com/ipaddresses"
+                "http_url": "http://www.malwaregroup.com/ipaddresses"
             }
         },
         "Malware Group Proxies": {
@@ -359,7 +359,7 @@
             "parameters": {
                 "feed": "MalwareGroup",
                 "rate_limit": 129600,
-                "url": "http://www.malwaregroup.com/proxies"
+                "http_url": "http://www.malwaregroup.com/proxies"
             }
         },
         "MalwarePatrol Dans Guardian": {
@@ -368,7 +368,7 @@
             "parameters": {
                 "feed": "MalwarePatrol",
                 "rate_limit": 180000,
-                "url": "https://lists.malwarepatrol.net/cgi/getfile?receipt=< API KEY >&product=8&list=dansguardian"
+                "http_url": "https://lists.malwarepatrol.net/cgi/getfile?receipt=< API KEY >&product=8&list=dansguardian"
             }
         },
         "OpenBL": {
@@ -377,7 +377,7 @@
             "parameters": {
                 "feed": "OpenBL",
                 "rate_limit": 43200,
-                "url": "https://www.openbl.org/lists/date_all.txt"
+                "http_url": "https://www.openbl.org/lists/date_all.txt"
             }
         },
         "OpenPhish": {
@@ -386,7 +386,7 @@
             "parameters": {
                 "feed": "OpenPhish",
                 "rate_limit": 86400,
-                "url": "https://www.openphish.com/feed.txt"
+                "http_url": "https://www.openphish.com/feed.txt"
             }
         },
         "PhishTank": {
@@ -395,7 +395,7 @@
             "parameters": {
                 "feed": "Phishtank",
                 "rate_limit": 28800,
-                "url": "https://data.phishtank.com/data/< API KEY >/online-valid.csv"
+                "http_url": "https://data.phishtank.com/data/< API KEY >/online-valid.csv"
             }
         },
         "Taichung": {
@@ -404,7 +404,7 @@
             "parameters": {
                 "feed": "Taichung",
                 "rate_limit": 3600,
-                "url": "https://www.tc.edu.tw/net/netflow/lkout/recent/30"
+                "http_url": "https://www.tc.edu.tw/net/netflow/lkout/recent/30"
             }
         },
         "Turris Greylist": {
@@ -413,7 +413,7 @@
             "parameters": {
                 "feed": "Turris Greylist",
                 "rate_limit": 43200,
-                "url": "https://www.turris.cz/greylist-data/greylist-latest.csv"
+                "http_url": "https://www.turris.cz/greylist-data/greylist-latest.csv"
             }
         },
         "URLVir Hosts": {
@@ -422,7 +422,7 @@
             "parameters": {
                 "feed": "URLVir",
                 "rate_limit": 129600,
-                "url": "http://www.urlvir.com/export-hosts/"
+                "http_url": "http://www.urlvir.com/export-hosts/"
             }
         },
         "URLVir IPs": {
@@ -431,7 +431,7 @@
             "parameters": {
                 "feed": "URLVir",
                 "rate_limit": 129600,
-                "url": "http://www.urlvir.com/export-ip-addresses/"
+                "http_url": "http://www.urlvir.com/export-ip-addresses/"
             }
         },
         "Spamhaus CERT": {
@@ -440,7 +440,7 @@
             "parameters": {
                 "feed": "Spamhaus CERT",
                 "rate_limit": 3600,
-                "url": "https://portal.spamhaus.org/cert/api.php?cert=<CERTNAME>&key=<APIKEY>"
+                "http_url": "https://portal.spamhaus.org/cert/api.php?cert=<CERTNAME>&key=<APIKEY>"
             }
         },
         "Spamhaus Drop": {
@@ -449,7 +449,7 @@
             "parameters": {
                 "feed": "Spamhaus Drop",
                 "rate_limit": 3600,
-                "url": "https://www.spamhaus.org/drop/drop.lasso"
+                "http_url": "https://www.spamhaus.org/drop/drop.lasso"
             }
         },
         "VXVault": {
@@ -458,7 +458,7 @@
             "parameters": {
                 "feed": "VxVault",
                 "rate_limit": 3600,
-                "url": "http://vxvault.siri-urz.net/URL_List.php"
+                "http_url": "http://vxvault.siri-urz.net/URL_List.php"
             }
         }
     },
@@ -486,7 +486,7 @@
             "parameters": {
                 "filter": false,
                 "overwrite_cc": false,
-                "verify_cert": true
+                "http_verify_cert": true
             }
         },
         "Cymru Whois": {
