@@ -46,7 +46,7 @@ class Bot(object):
                                     log_level=self.parameters.logging_level)
         except:
             self.log_buffer.append(('critical', traceback.format_exc()))
-            self.stop(forced=True)
+            self.stop()
         else:
             for line in self.log_buffer:
                 getattr(self.logger, line[0])(line[1])
@@ -86,29 +86,7 @@ class Bot(object):
                     error_on_message = False
 
                 if error_on_pipeline:
-                    self.logger.info("Loading source pipeline.")
-                    self.source_pipeline = PipelineFactory.create(
-                        self.parameters)
-                    self.logger.info("Loading source queue.")
-                    self.source_pipeline.set_queues(self.source_queues,
-                                                    "source")
-                    self.logger.info("Source queue loaded {}."
-                                     "".format(self.source_queues))
-                    self.source_pipeline.connect()
-                    self.logger.info("Connected to source queue.")
-
-                    self.logger.info("Loading destination pipeline.")
-                    self.destination_pipeline = PipelineFactory.create(
-                        self.parameters)
-                    self.logger.info("Loading destination queues.")
-                    self.destination_pipeline.set_queues(self.destination_queues,
-                                                         "destination")
-                    self.logger.info("Destination queues loaded {}."
-                                     "".format(self.destination_queues))
-                    self.destination_pipeline.connect()
-                    self.logger.info("Connected to destination queues.")
-
-                    self.logger.info("Pipeline ready.")
+                    self.connect_pipelines()
                     error_on_pipeline = False
 
                 if starting:
@@ -126,8 +104,8 @@ class Bot(object):
                     self.logger.exception('Pipeline failed.')
                 else:
                     self.logger.error('Pipeline failed.')
-                self.source_pipeline = None
-                self.destination_pipeline = None
+
+                self.disconnect_pipelines()
 
             except Exception:
                 if self.parameters.error_log_exception:
@@ -143,35 +121,17 @@ class Bot(object):
 
             except KeyboardInterrupt:
                 self.logger.error("Received KeyboardInterrupt.")
-                self.stop(forced=True)
-                break
+                self.stop()
 
             finally:
-                # error procedure: retry
-                if self.parameters.error_procedure == "retry":
+                self.error_retries_counter += 1
+        
+                # not reached the maximum number of times
+                if (self.error_retries_counter <=
+                        self.parameters.error_max_retries):
+                    error_on_message = True
 
-                    self.error_retries_counter += 1
-
-                    # not reached the maximum number of times
-                    if (self.error_retries_counter <
-                            self.parameters.error_max_retries):
-                        error_on_message = True
-
-                    # reached the maximum number of times
-                    else:
-                        if self.parameters.error_dump_message:
-                            self.dump_message()
-
-                        # remove message from pipeline
-                        self.acknowledge_message()
-
-                        # FIXME: depend of config
-                        self.stop()
-
-                        # when bot acknowledge the message, dont need to wait again
-                        error_on_message = False
-
-                # error procedure: pass
+                # reached the maximum number of times
                 else:
                     if self.parameters.error_dump_message:
                         self.dump_message()
@@ -179,9 +139,47 @@ class Bot(object):
                     # remove message from pipeline
                     self.acknowledge_message()
 
+                    # error procedure: stop
+                    if self.parameters.error_procedure == "stop":
+                        self.stop()
+                    # error procedure: pass
+                    else:
+                        pass
 
-    def stop(self, forced=False):
-        """ Stop Bot by diconnecting pipelines. """
+                    # when bot acknowledge the message, dont need to wait again
+                    error_on_message = False
+
+
+
+
+    def connect_pipelines(self):
+        self.logger.info("Loading source pipeline.")
+        self.source_pipeline = PipelineFactory.create(
+            self.parameters)
+        self.logger.info("Loading source queue.")
+        self.source_pipeline.set_queues(self.source_queues,
+                                        "source")
+        self.logger.info("Source queue loaded {}."
+                         "".format(self.source_queues))
+        self.source_pipeline.connect()
+        self.logger.info("Connected to source queue.")
+
+        self.logger.info("Loading destination pipeline.")
+        self.destination_pipeline = PipelineFactory.create(
+            self.parameters)
+        self.logger.info("Loading destination queues.")
+        self.destination_pipeline.set_queues(self.destination_queues,
+                                             "destination")
+        self.logger.info("Destination queues loaded {}."
+                         "".format(self.destination_queues))
+        self.destination_pipeline.connect()
+        self.logger.info("Connected to destination queues.")
+
+        self.logger.info("Pipeline ready.")
+        
+
+    def disconnect_pipelines(self):
+        """ Disconnecting pipelines. """
         if self.source_pipeline:
             self.source_pipeline.disconnect()
             self.source_pipeline = None
@@ -191,26 +189,16 @@ class Bot(object):
             self.destination_pipeline = None
             self.logger.info("Disconnecting from destination pipeline.")
 
+
+    def stop(self):
+        self.reset_pipelines()
         if self.logger:
             self.logger.info("Bot stopped.")
         else:
             self.log_buffer.append(('info', 'Bot stopped.'))
             self.print_log_buffer()
-
-        if self.parameters.exit_on_stop:
-            self.terminate()
-
-        if forced:
-            self.terminate()
-
-    def terminate(self):
-        try:
-            self.logger.error("Exiting.")
-        except:
-            pass
-        finally:
-            print("Exiting")
         exit(-1)
+        
 
     def print_log_buffer(self):
         for level, message in self.log_buffer:
@@ -219,13 +207,14 @@ class Bot(object):
             print(level.upper(), '-', message)
         self.log_buffer = []
 
+
     def check_bot_id(self, str):
         res = re.search('[^0-9a-zA-Z\-]+', str)
         if res:
             self.log_buffer.append(('error',
                                     "Invalid bot id, must match '"
                                     "[^0-9a-zA-Z\-]+'."))
-            self.stop(forced=True)
+            self.stop()
 
     def send_message(self, message):
         if not message:
@@ -344,7 +333,7 @@ class Bot(object):
         else:
             self.logger.error("Pipeline configuration: no key "
                               "'{}'.".format(self.bot_id))
-            self.stop(forced=True)
+            self.stop()
 
     def load_harmonization_configuration(self):
         self.logger.debug("Loading Harmonization configuration.")
