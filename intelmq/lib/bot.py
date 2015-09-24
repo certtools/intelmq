@@ -191,7 +191,7 @@ class Bot(object):
 
 
     def stop(self):
-        self.reset_pipelines()
+        self.disconnect_pipelines()
         if self.logger:
             self.logger.info("Bot stopped.")
         else:
