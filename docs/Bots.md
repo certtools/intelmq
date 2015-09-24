@@ -131,11 +131,12 @@
 
 #### Information:
 * `name:` abusix
-* `lookup:` ?
+* `lookup:` dns
 * `public:` yes
 * `cache (redis db):` 5
 * `ipv6 support:` no (implementation missing)
 * `description:` FIXME
+* `notes`: https://abusix.com/contactdb.html
 
 #### Configuration Parameters:
 
