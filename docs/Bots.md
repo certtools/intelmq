@@ -1,4 +1,4 @@
-## Bots Documentation
+# Bots Documentation
 
 1. [Collectors](#collectors)
 2. [Parsers](#parsers)
@@ -9,9 +9,9 @@
 <a name="collectors"></a>
 ## Collectors
 
-#### HTTP
+### HTTP
 
-**Information:**
+#### Information:
 * `name:` http
 * `lookup:` yes
 * `public:` yes
@@ -19,7 +19,7 @@
 * `ipv6 support:` -
 * `description:` collect report messages from remote hosts using http protocol
 
-**Configuration Parameters:**
+#### Configuration Parameters:
 * `feed`: Name for the feed, usually found in collector bot configuration.
 * `rate_limit`: time interval (in seconds) between messages processing
 * `http_url`: location of information resource (e.g. https://feodotracker.abuse.ch/blocklist/?download=domainblocklist)
@@ -33,9 +33,9 @@
 
 * * *
 
-#### Mail (URL)
+### Mail (URL)
 
-**Information:**
+#### Information:
 * `name:` collector_mail_url
 * `lookup:` yes
 * `public:` yes
@@ -43,7 +43,7 @@
 * `ipv6 support:` -
 * `description:` collect messages from mailboxes, extract urls from that messages and download the report messages from the urls.
 
-**Configuration Parameters**
+#### Configuration Parameters:
 
 * `feed`: Name for the feed, usually found in collector bot configuration.
 * `rate_limit`: time interval (in seconds) between messages processing
@@ -57,9 +57,9 @@
 
 * * *
 
-#### Mail (Attach)
+### Mail (Attach)
 
-**Information:**
+#### Information:
 * `name:` collector_mail_attach
 * `lookup:` yes
 * `public:` yes
@@ -67,7 +67,7 @@
 * `ipv6 support:` -
 * `description:` collect messages from mailboxes, download the report messages from the attachments.
 
-**Configuration Parameters**
+#### Configuration Parameters:
 
 * `feed`: Name for the feed, usually found in collector bot configuration.
 * `rate_limit`: time interval (in seconds) between messages processing
@@ -85,9 +85,9 @@
 * * *
 
 
-#### Alien Vault OTX
+### Alien Vault OTX
 
-**Information:**
+#### Information:
 * `name:` http
 * `lookup:` yes
 * `public:` yes
@@ -95,7 +95,7 @@
 * `ipv6 support:` -
 * `description:` collect report messages from Alien Vault OTX API
 
-**Configuration Parameters**
+#### Configuration Parameters:
 
 * `feed`: Name for the feed, usually found in collector bot configuration.
 * `rate_limit`: time interval (in seconds) between messages processing
@@ -107,9 +107,9 @@
 <a name="parsers"></a>
 ## Parsers
 
-#### \<ParserBot\>
+### \<ParserBot\>
 
-**Information:**
+#### Information:
 * `name:` 
 * `lookup:` 
 * `public:` 
@@ -117,7 +117,7 @@
 * `ipv6 support:` 
 * `description:` 
 
-**Configuration Parameters**
+#### Configuration Parameters:
 
 * `<parameter>`: \<text\>
 
@@ -127,9 +127,9 @@
 <a name="experts"></a>
 ## Experts
 
-#### Abusix
+### Abusix
 
-**Information:**
+#### Information:
 * `name:` abusix
 * `lookup:` ?
 * `public:` yes
@@ -137,15 +137,15 @@
 * `ipv6 support:` no (implementation missing)
 * `description:` FIXME
 
-**Configuration Parameters**
+#### Configuration Parameters:
 
 FIXME
 
 * * *
 
-#### ASN Lookup
+### ASN Lookup
 
-**Information:**
+#### Information:
 * `name:` asn-lookup
 * `lookup:` local database
 * `public:` yes
@@ -154,15 +154,15 @@ FIXME
 * `description:` ip to asn 
 * `notes`: [IPv6 bugreport](https://github.com/hadiasghari/pyasn/issues/14)
 
-**Configuration Parameters**
+#### Configuration Parameters:
 
 FIXME
 
 * * *
 
-#### CERT.AT Contact
+### CERT.AT Contact
 
-**Information:**
+#### Information:
 * `name:` certat-contact
 * `lookup:` https
 * `public:` yes
@@ -170,15 +170,15 @@ FIXME
 * `ipv6 support:` no
 * `description:` asn to cert abuse contact, cc
 
-**Configuration Parameters**
+#### Configuration Parameters:
 
 FIXME
 
 * * *
 
-#### Cymru Whois
+### Cymru Whois
 
-**Information:**
+#### Information:
 * `name:` cymru-whois
 * `lookup:` cymru dns
 * `public:` yes
@@ -186,15 +186,15 @@ FIXME
 * `ipv6 support:` yes 
 * `description:` ip to geolocation, asn, bgp prefix
 
-**Configuration Parameters**
+#### Configuration Parameters:
 
 FIXME
 
 * * *
 
-#### Deduplicator
+### Deduplicator
 
-**Information:**
+#### Information:
 * `name:` deduplicator
 * `lookup:` redis cache
 * `public:` yes
@@ -202,15 +202,15 @@ FIXME
 * `ipv6 support:` yes
 * `description:` message deduplicator
 
-**Configuration Parameters**
+#### Configuration Parameters:
 
 FIXME
 
 * * *
 
-#### Filter
+### Filter
 
-**Information:**
+#### Information:
 * `name:` filter
 * `lookup:` none
 * `public:` yes
@@ -218,15 +218,15 @@ FIXME
 * `ipv6 support:` yes
 * `description:` filter messages (drop or pass messages) FIXME
 
-**Configuration Parameters**
+#### Configuration Parameters:
 
 FIXME
 
 * * *
 
-#### MaxMind GeoIP
+### MaxMind GeoIP
 
-**Information:**
+#### Information:
 * `name:` maxmind-geoip
 * `lookup:` local database
 * `public:` yes
@@ -234,15 +234,15 @@ FIXME
 * `ipv6 support:` yes
 * `description:` ip to geolocation
 
-**Configuration Parameters**
+#### Configuration Parameters:
 
 FIXME
 
 * * *
 
-#### Reverse DNS
+### Reverse DNS
 
-**Information:**
+#### Information:
 * `name:` reverse-dns
 * `lookup:` dns
 * `public:` yes
@@ -250,15 +250,15 @@ FIXME
 * `ipv6 support:` no
 * `description:` ip to domain
 
-**Configuration Parameters**
+#### Configuration Parameters:
 
 FIXME
 
 * * *
 
-#### RipeNCC Abuse Contact
+### RipeNCC Abuse Contact
 
-**Information:**
+#### Information:
 * `name:` ripencc-abuse-contact
 * `lookup:` https api
 * `public:` yes
@@ -266,15 +266,15 @@ FIXME
 * `ipv6 support:` yes
 * `description:` ip to abuse contact
 
-**Configuration Parameters**
+#### Configuration Parameters:
 
 FIXME
 
 * * *
 
-#### Taxonomy
+### Taxonomy
 
-**Information:**
+#### Information:
 * `name:` taxonomy
 * `lookup:` local config
 * `public:` yes
@@ -282,15 +282,15 @@ FIXME
 * `ipv6 support:` -
 * `description:` use eCSIRT taxonomy to classify events (classification type to classification taxonomy)
 
-**Configuration Parameters**
+#### Configuration Parameters:
 
 FIXME
 
 * * *
 
-#### Tor Nodes
+### Tor Nodes
 
-**Information:**
+#### Information:
 * `name:` tor-nodes
 * `lookup:` local database
 * `public:` yes
@@ -298,15 +298,15 @@ FIXME
 * `ipv6 support:` yes
 * `description:` check if ip is tor node
 
-**Configuration Parameters**
+#### Configuration Parameters:
 
 FIXME
 
 * * *
 
-#### Modify
+### Modify
 
-**Information:**
+#### Information:
 * `name:` modify
 * `lookup:` local config
 * `public:` yes
@@ -314,7 +314,7 @@ FIXME
 * `ipv6 support:` -
 * `description:` modify expert bot allows you to change arbitrary field values of events just using a configuration file
 
-**Specific Configuration Parameters**
+#### Configuration Parameters:
 
 The modify expert bot allows you to change arbitrary field values of events just using a configuration file. Thus it is possible to adapt certain values or adding new ones only by changing JSON-files without touching the code of many other bots.
 
@@ -344,7 +344,7 @@ The configuration is called `modify.conf` and looks like this:
 
 The dictionary in the first level holds sections, here called `Spamhaus Cert` to group the rulessets and for easier navigation. It holds another dictionary of rules, consisting of *conditions* and *actions*. The first matching rule is used. Conditions and actions are again dictionaries holding the field names of harmonization and have regex-expressions to existing values (condition) or new values (action). The rule conditions are merged with the default condition and the default action is applied if no rule matches.
 
-**Examples**
+#### Examples
 
 We have an event with `feed.name = Spamhaus Cert` and `malware.name = confickerab`. The expert loops over all sections in the file and enters section `Spamhaus Cert`. First, the default condition is checked, it matches! Ok, going on. Otherwise the expert would have continued to the next section. Now, iteration through the rules, the first is rule `conficker`. We combine the conditions of this rule with the default conditions, and both rules match! So we can apply the action, here `classification.identifier` is set to `conficker`, the trivial name.
 
@@ -356,9 +356,9 @@ Assume we have an event with `feed.name = Spamhaus Cert` and `malware.name = feo
 <a name="outputs"></a>
 ## Outputs
 
-#### File
+### File
 
-**Information:**
+#### Information:
 * `name:` file
 * `lookup:` no
 * `public:` yes
@@ -366,7 +366,7 @@ Assume we have an event with `feed.name = Spamhaus Cert` and `malware.name = feo
 * `ipv6 support:` yes
 * `description:` output messages (reports or events) to file
 
-**Configuration Parameters**
+#### Configuration Parameters:
 
 * `file`: filepath of output file
 
@@ -374,9 +374,9 @@ Assume we have an event with `feed.name = Spamhaus Cert` and `malware.name = feo
 * * *
 
 
-#### MongoDB
+### MongoDB
 
-**Information:**
+#### Information:
 * `name:` mongodb
 * `lookup:` no
 * `public:` yes
@@ -384,14 +384,14 @@ Assume we have an event with `feed.name = Spamhaus Cert` and `malware.name = feo
 * `ipv6 support:` yes
 * `description:` MongoDB is the bot responsible to send events to a MongoDB database
 
-**Configuration Parameters**
+#### Configuration Parameters:
 
 * `collection`: MongoDB collection
 * `database`: MongoDB database
 * `host`: MongoDB host (fqdn or IP)
 * `port`: MongoDB port
 
-**Installation Requirements**
+#### Installation Requirements
 
 Using Python 3.4 (recommended):
 ```
@@ -407,9 +407,9 @@ pip2 install pymongo>=2.7.1
 * * *
 
 
-#### IntelMQ Mailer
+### IntelMQ Mailer
 
-**Information:**
+#### Information:
 * `name:` intelmqmailer
 * `lookup:` no
 * `public:` yes
@@ -417,14 +417,14 @@ pip2 install pymongo>=2.7.1
 * `ipv6 support:` yes
 * `description:` IntelMQ Mailer is the bot responsible to send events to a MongoDB database that supports IntelMQ Mailer platform
 
-**Configuration Parameters**
+#### Configuration Parameters:
 
 * `collection`: MongoDB collection
 * `database`: MongoDB database
 * `host`: MongoDB host (FQDN or IP)
 * `port`: MongoDB port
 
-**Installation Requirements**
+#### Installation Requirements
 
 Using Python 3.4 (recommended):
 ```
@@ -440,9 +440,9 @@ pip2 install pymongo>=2.7.1
 * * *
 
 
-#### PostgreSQL
+### PostgreSQL
 
-**Information:**
+#### Information:
 * `name:` postgresql
 * `lookup:` no 
 * `public:` yes
@@ -451,7 +451,7 @@ pip2 install pymongo>=2.7.1
 * `description:` PostgreSQL is the bot responsible to send events to a PostgreSQL Database
 * `notes`: When activating autocommit, transactions are not used: http://initd.org/psycopg/docs/connection.html#connection.autocommit
 
-**Configuration Parameters**
+#### Configuration Parameters:
 
 * `autocommit`: FIXME
 * `database`: PostgreSQL database
@@ -463,7 +463,7 @@ pip2 install pymongo>=2.7.1
 * `autocommit`: FIXME
 * `table`: FIXME
 
-**Installation Requirements**
+#### Installation Requirements
 
 Using Python 3.4 (recommended):
 ```
@@ -475,7 +475,7 @@ Using Python 2.7:
 pip2 install psycopg2>=2.5.5
 ```
 
-**PostgreSQL Installation**
+#### PostgreSQL Installation
 
 * Install PostgreSQL, at least version 9.4 is recommended.
 
@@ -513,9 +513,9 @@ pip2 install psycopg2>=2.5.5
 * * *
 
 
-#### REST API
+### REST API
 
-**Information:**
+#### Information:
 * `name:` restapi
 * `lookup:` no
 * `public:` yes
@@ -523,7 +523,7 @@ pip2 install psycopg2>=2.5.5
 * `ipv6 support:` yes
 * `description:` REST API is the bot responsible to send events to a REST API listener through POST
 
-**Configuration Parameters**
+#### Configuration Parameters:
 
 * `auth_token`: FIXME
 * `auth_token_name`: FIXME
@@ -533,9 +533,9 @@ pip2 install psycopg2>=2.5.5
 * * *
 
 
-#### TCP
+### TCP
 
-**Information:**
+#### Information:
 * `name:` tcp
 * `lookup:` no
 * `public:` yes
@@ -543,8 +543,7 @@ pip2 install psycopg2>=2.5.5
 * `ipv6 support:` yes
 * `description:` TCP is the bot responsible to send events to a tcp port (Splunk, ElasticSearch, etc..)
 
-**Configuration Parameters**
+#### Configuration Parameters:
 
 * `ip`: FIXME
 * `port`: FIXME
-
