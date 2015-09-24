@@ -333,9 +333,9 @@ All bots inherits this configuration parameters and they can overwrite them usin
 
 * **`error_procedure`** - in case of an error, this option defines the procedure that bot will adopt. Use the following values:
 
-    * **`retry`** - retry X times, defined in `error_max_retries` option with a delay between retries defined at `error_retry_delay` option. If bot reach `error_max_retries` value, bot will remove the message from pipeline and stop. If the option `error_dump_message` is enable, the bot will dump the removed message to the dump log.
+    * **`stop`** - stop bot after retry X times, defined in `error_max_retries` option with a delay between retries defined at `error_retry_delay` option. If bot reach `error_max_retries` value, bot will remove the message from pipeline and stop. If the option `error_dump_message` is enable, the bot will dump the removed message to the dump log.
     
-    * **`pass`** - will pass to the next message, removing from pipeline the current message. If the option `error_dump_message` is enable, the bot will dump the removed message to the dump log.
+    * **`pass`** - will pass to the next message after retry X times, removing from pipeline the current message. If the option `error_dump_message` is enable, the bot will dump the removed message to the dump log.
 
 * **`error_max_retries`** - in case of an error and the value of the `error_procedure` option is `retry`, bot will try to start processing the current message X times defined at `error_max_retries` option. The value must be an `integer value`.
 
@@ -343,10 +343,6 @@ All bots inherits this configuration parameters and they can overwrite them usin
 
 * **`error_dump_message`** - in case of an error, this option will allows bot to write the message (report or event) in the dump file (use intelmqdump to re-insert the message).
     * **`true/false`** - write or not write message in dump file
-
-* **`exit_on_stop`** - FIXME. Use the following values:
-    * **`true`** - FIXME
-    * **`false`** - FIXME
 
 <a name="conf-defaults-miscellaneous"></a>
 #### Miscellaneous
