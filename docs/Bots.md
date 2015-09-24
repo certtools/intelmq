@@ -20,7 +20,7 @@
 * `description:` collect report messages from remote hosts using http protocol
 
 **Configuration Parameters:**
-* `feed`: feed name (human readable)
+* `feed`: Name for the feed, usually found in collector bot configuration.
 * `rate_limit`: time interval (in seconds) between messages processing
 * `http_url`: location of information resource (e.g. https://feodotracker.abuse.ch/blocklist/?download=domainblocklist)
 * `http_header`: FIXME
@@ -45,7 +45,7 @@
 
 **Configuration Parameters**
 
-* `feed`: feed name (human readable)
+* `feed`: Name for the feed, usually found in collector bot configuration.
 * `rate_limit`: time interval (in seconds) between messages processing
 * `mail_host`: fqdn or ip of mail server
 * `mail_user`: user account of the email account
@@ -69,7 +69,7 @@
 
 **Configuration Parameters**
 
-* `feed`: feed name (human readable)
+* `feed`: Name for the feed, usually found in collector bot configuration.
 * `rate_limit`: time interval (in seconds) between messages processing
 * `mail_host`: FIXME
 * `mail_user`: FIXME
@@ -97,7 +97,7 @@
 
 **Configuration Parameters**
 
-* `feed`: feed name (human readable)
+* `feed`: Name for the feed, usually found in collector bot configuration.
 * `rate_limit`: time interval (in seconds) between messages processing
 * `api_key`: location of information resource (e.g. FIXME)
 
