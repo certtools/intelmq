@@ -355,7 +355,7 @@ All bots inherits this configuration parameters and they can overwrite them usin
     * **`redis`** - Redis allows some persistence but is not so fast as ZeroMQ.
     * **`zeromq`** - (under development) ZeroMQ is fast but doest allow persistence.
 
-* **`rate_limit`** - FIXME. The value must be an `integer value`.
+* **`rate_limit`** - time interval (in seconds) between messages processing. The value must be an `integer value`.
 
 * **`source_pipeline_host`** - FIXME
 
