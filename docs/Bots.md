@@ -152,7 +152,7 @@ FIXME
 * `cache (redis db):` none
 * `ipv6 support:` no
 * `description:` ip to asn 
-* notes: [IPv6 bugreport](https://github.com/hadiasghari/pyasn/issues/14)
+* `notes`: [IPv6 bugreport](https://github.com/hadiasghari/pyasn/issues/14)
 
 **Configuration Parameters**
 
@@ -356,18 +356,195 @@ Assume we have an event with `feed.name = Spamhaus Cert` and `malware.name = feo
 <a name="outputs"></a>
 ## Outputs
 
-#### \<OutputBot\>
+#### File
 
 **Information:**
-* `name:` 
-* `lookup:` 
-* `public:` 
-* `cache (redis db):` 
-* `ipv6 support:` 
-* `description:` 
+* `name:` file
+* `lookup:` no
+* `public:` yes
+* `cache (redis db):` none
+* `ipv6 support:` yes
+* `description:` output messages (reports or events) to file
 
 **Configuration Parameters**
 
-* `<parameter>`: \<text\>
+* `file`: filepath of output file
 
+
+* * *
+
+
+#### MongoDB
+
+**Information:**
+* `name:` mongodb
+* `lookup:` no
+* `public:` yes
+* `cache (redis db):` none
+* `ipv6 support:` yes
+* `description:` MongoDB is the bot responsible to send events to a MongoDB database
+
+**Configuration Parameters**
+
+* `collection`: MongoDB collection
+* `database`: MongoDB database
+* `host`: MongoDB host (fqdn or IP)
+* `port`: MongoDB port
+
+**Installation Requirements**
+
+Using Python 3.4 (recommended):
+```
+pip3 install pymongo>=2.7.1
+```
+
+Using Python 2.7:
+```
+pip2 install pymongo>=2.7.1
+```
+
+
+* * *
+
+
+#### IntelMQ Mailer
+
+**Information:**
+* `name:` intelmqmailer
+* `lookup:` no
+* `public:` yes
+* `cache (redis db):` none
+* `ipv6 support:` yes
+* `description:` IntelMQ Mailer is the bot responsible to send events to a MongoDB database that supports IntelMQ Mailer platform
+
+**Configuration Parameters**
+
+* `collection`: MongoDB collection
+* `database`: MongoDB database
+* `host`: MongoDB host (FQDN or IP)
+* `port`: MongoDB port
+
+**Installation Requirements**
+
+Using Python 3.4 (recommended):
+```
+pip3 install pymongo>=2.7.1
+```
+
+Using Python 2.7:
+```
+pip2 install pymongo>=2.7.1
+```
+
+
+* * *
+
+
+#### PostgreSQL
+
+**Information:**
+* `name:` postgresql
+* `lookup:` no 
+* `public:` yes
+* `cache (redis db):` none
+* `ipv6 support:` yes
+* `description:` PostgreSQL is the bot responsible to send events to a PostgreSQL Database
+* `notes`: When activating autocommit, transactions are not used: http://initd.org/psycopg/docs/connection.html#connection.autocommit
+
+**Configuration Parameters**
+
+* `autocommit`: FIXME
+* `database`: PostgreSQL database
+* `host`: PostgreSQL host
+* `port`: PostgreSQL port
+* `user`: PostgreSQL user
+* `password`: PostgreSQL password
+* `sslmode`: FIXME
+* `autocommit`: FIXME
+* `table`: FIXME
+
+**Installation Requirements**
+
+Using Python 3.4 (recommended):
+```
+pip3 install psycopg2>=2.5.5
+```
+
+Using Python 2.7:
+```
+pip2 install psycopg2>=2.5.5
+```
+
+**PostgreSQL Installation**
+
+* Install PostgreSQL, at least version 9.4 is recommended.
+
+```bash
+> apt-get install postgresql-9.4 python-psycopg2 postgresql-server-dev-9.4
+```
+
+* Create a User and Database:
+
+```shell
+> su - postgres
+> createuser intelmq -W
+  Shall the new role be a superuser? (y/n) n
+  Shall the new role be allowed to create databases? (y/n) y
+  Shall the new role be allowed to create more new roles? (y/n) n
+  Password: 
+
+> createdb -O intelmq --encoding='utf-8' intelmq-events
+```
+
+* Depending on your setup adjust `/etc/postgresql/9.4/main/pg_hba.conf` to allow network connections for the intelmq user.
+
+* Restart PostgreSQL.
+
+* Generate `initdb.sql` by using the [psql_initdb_generator.py](https://github.com/certtools/intelmq/blob/master/intelmq/bin/intelmq_psql_initdb.py) tool which extracts all field names and data types from `Data-Harmonization.md`.
+
+* Create the `events` table:
+
+```bash
+> psql < /tmp/initdb.sql # as intelmq user
+> psql -U intelmq intelmq-events -W < /tmp/initdb.sql # as other user
+```
+
+
+* * *
+
+
+#### REST API
+
+**Information:**
+* `name:` restapi
+* `lookup:` no
+* `public:` yes
+* `cache (redis db):` none
+* `ipv6 support:` yes
+* `description:` REST API is the bot responsible to send events to a REST API listener through POST
+
+**Configuration Parameters**
+
+* `auth_token`: FIXME
+* `auth_token_name`: FIXME
+* `host`: FIXME
+
+
+* * *
+
+
+#### TCP
+
+**Information:**
+* `name:` tcp
+* `lookup:` no
+* `public:` yes
+* `cache (redis db):` none
+* `ipv6 support:` yes
+* `description:` TCP is the bot responsible to send events to a tcp port (Splunk, ElasticSearch, etc..)
+
+**Configuration Parameters**
+
+* `ip`: FIXME
+* `port`: FIXME
 
