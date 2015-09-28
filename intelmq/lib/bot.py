@@ -133,7 +133,7 @@ class Bot(object):
                 if error_on_message or error_on_pipeline:
 
                     self.error_retries_counter += 1
-                    
+
                     # reached the maximum number of retries
                     if (self.error_retries_counter >
                             self.parameters.error_max_retries):
@@ -155,7 +155,6 @@ class Bot(object):
                         # when bot acknowledge the message,
                         # dont need to wait again
                         error_on_message = False
-
 
     def connect_pipelines(self):
         self.logger.info("Loading source pipeline.")
@@ -181,7 +180,6 @@ class Bot(object):
         self.logger.info("Connected to destination queues.")
 
         self.logger.info("Pipeline ready.")
-        
 
     def disconnect_pipelines(self):
         """ Disconnecting pipelines. """
@@ -194,7 +192,6 @@ class Bot(object):
             self.destination_pipeline = None
             self.logger.info("Disconnecting from destination pipeline.")
 
-
     def stop(self):
         self.disconnect_pipelines()
         if self.logger:
@@ -203,7 +200,6 @@ class Bot(object):
             self.log_buffer.append(('info', 'Bot stopped.'))
             self.print_log_buffer()
         exit(-1)
-        
 
     def print_log_buffer(self):
         for level, message in self.log_buffer:
@@ -211,7 +207,6 @@ class Bot(object):
                 getattr(self.logger, level)(message)
             print(level.upper(), '-', message)
         self.log_buffer = []
-
 
     def check_bot_id(self, str):
         res = re.search('[^0-9a-zA-Z\-]+', str)
