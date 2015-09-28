@@ -100,6 +100,8 @@ class Bot(object):
 
             except exceptions.PipelineError:
                 error_on_pipeline = True
+                error_traceback = traceback.format_exc()
+
                 if self.parameters.error_log_exception:
                     self.logger.exception('Pipeline failed.')
                 else:
@@ -108,6 +110,9 @@ class Bot(object):
                 self.disconnect_pipelines()
 
             except Exception:
+                error_on_message = True
+                error_traceback = traceback.format_exc()
+
                 if self.parameters.error_log_exception:
                     self.logger.exception("Bot has found a problem.")
                 else:
@@ -124,32 +129,32 @@ class Bot(object):
                 self.stop()
 
             finally:
-                self.error_retries_counter += 1
-        
-                # not reached the maximum number of times
-                if (self.error_retries_counter <=
-                        self.parameters.error_max_retries):
-                    error_on_message = True
 
-                # reached the maximum number of times
-                else:
-                    if self.parameters.error_dump_message:
-                        self.dump_message()
+                if error_on_message or error_on_pipeline:
 
-                    # remove message from pipeline
-                    self.acknowledge_message()
+                    self.error_retries_counter += 1
+                    
+                    # reached the maximum number of retries
+                    if (self.error_retries_counter >
+                            self.parameters.error_max_retries):
 
-                    # error procedure: stop
-                    if self.parameters.error_procedure == "stop":
-                        self.stop()
-                    # error procedure: pass
-                    else:
-                        pass
+                        if self.parameters.error_dump_message:
+                            self.dump_message(error_traceback)
 
-                    # when bot acknowledge the message, dont need to wait again
-                    error_on_message = False
+                        if error_on_message:
+                            # remove message from pipeline
+                            self.acknowledge_message()
 
+                        # error_procedure: stop
+                        if self.parameters.error_procedure == "stop":
+                            self.stop()
+                        # error_procedure: pass
+                        else:
+                            pass
 
+                        # when bot acknowledge the message,
+                        # dont need to wait again
+                        error_on_message = False
 
 
     def connect_pipelines(self):
@@ -245,7 +250,7 @@ class Bot(object):
         self.last_message = self.current_message
         self.source_pipeline.acknowledge()
 
-    def dump_message(self):
+    def dump_message(self, error_traceback):
         timestamp = datetime.datetime.utcnow()
         timestamp = timestamp.isoformat()
 
@@ -255,7 +260,8 @@ class Bot(object):
         new_dump_data[timestamp] = dict()
         new_dump_data[timestamp]["bot_id"] = self.bot_id
         new_dump_data[timestamp]["source_queue"] = self.source_queues
-        new_dump_data[timestamp]["traceback"] = traceback.format_exc()
+        new_dump_data[timestamp]["traceback"] = error_traceback
+
         if self.current_message is not None:
             message = self.current_message.serialize()
         else:
