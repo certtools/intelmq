@@ -53,7 +53,7 @@ class CERTatContactExpertBot(Bot):
                     'sep': 'semicolon',
                 }
                 req = requests.get(URL, params=parameters,
-                                   verify=self.parameters.verify_cert,
+                                   verify=self.parameters.http_verify_cert,
                                    )
                 response = req.text.strip().split(';')
 

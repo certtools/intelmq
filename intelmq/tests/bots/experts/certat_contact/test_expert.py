@@ -45,7 +45,7 @@ class TestCERTatContactExpertBot(test.BotTestCase, unittest.TestCase):
         self.bot_reference = CERTatContactExpertBot
         self.sysconfig = {'filter': False,
                           'overwrite_cc': False,
-                          'verify_cert': False,
+                          'http_verify_cert': False,
                           }
         self.default_input_message = {'__type': 'Report'}
 
