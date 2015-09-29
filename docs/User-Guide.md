@@ -10,6 +10,14 @@
         2. [Python 2.7](#install-python27)
 3. [Management](#management)
 4. [Configuration](#configuration)
+    1. [system.conf](#conf-system)
+    2. [startup.conf](#conf-startup)
+    3. [pipeline.conf](#conf-pipeline)
+    4. [default.conf](#conf-defaults)
+        1. [Error Handling](#conf-defaults-error)
+        2. [Miscellaneous](#conf-defaults-miscellaneous)
+    5. [runtime.conf](#conf-runtime)
+    6. [harmonization.conf](#conf-harmonization)
 5. [Upgrade](#upgrade)
 6. [Uninstall](#uninstall)
 7. [Frequently Asked Questions](#faq)
@@ -285,6 +293,101 @@ To configure a new BOT, you need to define it first in `startup.conf`.
 Then do the configuration in `runtime.conf` using the bot if.
 Configure source and destination queues in `pipeline.conf`.
 Use the intelmq-manager mentioned above to generate the configuration files if unsure.
+
+    1. [system.conf](#conf-system)
+    2. [startup.conf](#conf-startup)
+    3. [pipeline.conf](#conf-pipeline)
+    4. [defaults.conf](#conf-defaults)
+        1. [Error Handling](#conf-defaults-error)
+        2. [Miscellaneous](#conf-defaults-miscellaneous)
+    5. [runtime.conf](#conf-runtime)
+    6. [harmonization.conf](#conf-harmonization)
+
+
+<a name="conf-system"></a>
+## system.conf
+
+FIXME
+
+<a name="conf-startup"></a>
+## startup.conf
+
+FIXME
+
+<a name="conf-pipeline"></a>
+## pipeline.conf
+
+FIXME
+
+<a name="conf-defaults"></a>
+## defaults.conf
+
+All bots inherits this configuration parameters and they can overwrite them using the same parameters in configuration.
+
+<a name="conf-defaults-error"></a>
+#### Error Handling
+
+* **`error_log_message`** - in case of an error, this option will allows bot to write the message (report or event) in log file. Use the following values:
+    * **`true/false`** - write or not write message in log file
+
+* **`error_log_exception`** - in case of an error, this option will allows bot to write the error exception in log file. Use the following values:
+    * **`true/false`** - write or not write exception in log file
+
+* **`error_procedure`** - in case of an error, this option defines the procedure that bot will adopt. Use the following values:
+
+    * **`stop`** - stop bot after retry X times, defined in `error_max_retries` option with a delay between retries defined at `error_retry_delay` option. If bot reach `error_max_retries` value, bot will remove the message from pipeline and stop. If the option `error_dump_message` is enable, the bot will dump the removed message to the dump log.
+    
+    * **`pass`** - will pass to the next message after retry X times, removing from pipeline the current message. If the option `error_dump_message` is enable, the bot will dump the removed message to the dump log.
+
+* **`error_max_retries`** - in case of an error and the value of the `error_procedure` option is `retry`, bot will try to start processing the current message X times defined at `error_max_retries` option. The value must be an `integer value`.
+
+* **`error_retry_delay`** - in case of an error, this option will allows you to define the number of seconds which bot will wait until next retry. The value must be an `integer value`.
+
+* **`error_dump_message`** - in case of an error, this option will allows bot to write the message (report or event) in the dump file (use intelmqdump to re-insert the message).
+    * **`true/false`** - write or not write message in dump file
+
+<a name="conf-defaults-miscellaneous"></a>
+#### Miscellaneous
+
+* **`load_balance`** - this option allows to choose the behavior of the queue. Use the following values:
+    * **`true`** - splits the messages into several queues wihtout duplication
+    * **`false`** - duplicates the messages into each queue
+
+* **`broker`** - select which broker intelmq can use. Use the following values:
+    * **`redis`** - Redis allows some persistence but is not so fast as ZeroMQ.
+    * **`zeromq`** - (under development) ZeroMQ is fast but doest allow persistence.
+
+* **`rate_limit`** - time interval (in seconds) between messages processing. The value must be an `integer value`.
+
+* **`source_pipeline_host`** - FIXME
+
+* **`source_pipeline_port`** - FIXME
+
+* **`source_pipeline_db`** - FIXME
+
+* **`destination_pipeline_host`** - FIXME
+
+* **`destination_pipeline_port`** - FIXME
+
+* **`destination_pipeline_db`** - FIXME
+
+* **`http_proxy`** - FIXME
+
+* **`https_proxy`** - FIXME
+
+* **`http_user_agent`** - FIXME
+
+* **`http_verify_cert`** - FIXME
+    * **`true/false`** - FIXME
+
+<a name="conf-runtime"></a>
+## runtime.conf
+
+<a name="conf-harmonization"></a>
+## harmonization.conf
+
+
+
 
 ## Additional Information
 

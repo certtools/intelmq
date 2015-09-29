@@ -12,7 +12,7 @@ class HTTPStreamCollectorBot(Bot):
 
     def init(self):
         self.conn = pycurl.Curl()
-        self.conn.setopt(pycurl.URL, str(self.parameters.url))
+        self.conn.setopt(pycurl.URL, str(self.parameters.http_url))
         self.conn.setopt(pycurl.WRITEFUNCTION, self.on_receive)
 
     def process(self):

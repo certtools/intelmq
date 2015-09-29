@@ -17,20 +17,20 @@ class MailURLCollectorBot(Bot):
                               self.parameters.mail_user,
                               self.parameters.mail_password,
                               self.parameters.mail_ssl)
-        emails = mailbox.messages(folder=self.parameters.folder, unread=True)
+        emails = mailbox.messages(folder=self.parameters.mail_folder, unread=True)
 
         if emails:
             for uid, message in emails:
 
-                if (self.parameters.subject_regex and
-                        not re.search(self.parameters.subject_regex,
+                if (self.parameters.mail_subject_regex and
+                        not re.search(self.parameters.mail_subject_regex,
                                       message.subject)):
                     continue
 
                 self.logger.info("Reading email report")
 
                 for body in message.body['plain']:
-                    match = re.search(self.parameters.url_regex, body)
+                    match = re.search(self.parameters.mail_url_regex, body)
                     if match:
                         url = match.group()
 
