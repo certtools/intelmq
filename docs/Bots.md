@@ -16,7 +16,7 @@
 * `lookup:` yes
 * `public:` yes
 * `cache (redis db):` none
-* `ipv6 support:` -
+* `ipv6 support:` yes
 * `description:` collect report messages from remote hosts using http protocol
 
 #### Configuration Parameters:
@@ -40,7 +40,7 @@
 * `lookup:` yes
 * `public:` yes
 * `cache (redis db):` none
-* `ipv6 support:` -
+* `ipv6 support:` yes
 * `description:` collect messages from mailboxes, extract urls from that messages and download the report messages from the urls.
 
 #### Configuration Parameters:
