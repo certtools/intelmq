@@ -21,14 +21,13 @@ EXAMPLE_OUTPUT = {"__type": "Event",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   }
 EXAMPLE_INPUT6 = {"__type": "Event",
-                  "source.ip": "2001:500:88:200::7",  # iana.org
+                  "source.ip": "2001:500:88:200::8",  # iana.org
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   }
 EXAMPLE_OUTPUT6 = {"__type": "Event",
-                   "source.ip": "2001:500:88:200::7",
-                   "source.reverse_dns": "",
+                   "source.ip": "2001:500:88:200::8",
+                   "source.reverse_dns": "iana.org.",
                    "time.observation": "2015-01-01T00:00:00+00:00",
-                   "source.reverse_dns": "",
                    }
 
 
@@ -47,7 +46,6 @@ class TestReverseDnsExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_OUTPUT)
 
-    @unittest.expectedFailure
     def test_ipv6_lookup(self):
         self.input_message = EXAMPLE_INPUT6
         self.run_bot()
