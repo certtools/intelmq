@@ -90,6 +90,7 @@ class TestSquelcherExpertBot(test.BotTestCase, unittest.TestCase):
                                    )
         cls.con.autocommit = True
         cls.cur = cls.con.cursor()
+        cls.cur.execute("TRUNCATE TABLE {}".format(cls.sysconfig['table']))
         global INSERT_QUERY
         INSERT_QUERY = INSERT_QUERY.format(table=cls.sysconfig['table'])
 
