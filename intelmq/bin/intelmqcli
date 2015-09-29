@@ -22,10 +22,11 @@ import zipfile
 import prettytable
 import psycopg2
 import psycopg2.extras
-from termstyle import bold, green, inverted, red
+from termstyle import bold, green, inverted, red, reset
 
 import rt
 
+myinverted = str(reset) + str(inverted)
 if sys.version[0] == '2':
     input = raw_input
 
@@ -198,10 +199,12 @@ def query_by_as(contact, show_table=False, requestor=None, automatic=False):
             requestor = contact
     query = shrink_dict(CUR.fetchall())
     ids = list(str(row['id']) for row in query)
+    asns = list(str(row['source.asn']) for row in query)
 
-    subject = ('{date}: {count} incidents for your AS'
+    subject = ('{date}: {count} incidents for your AS {asns}'
                ''.format(count=len(query),
-                         date=datetime.datetime.now().strftime('%Y-%m-%d')))
+                         date=datetime.datetime.now().strftime('%Y-%m-%d'),
+                         asns=', '.join(asns)))
     text = get_text(query)
     if sys.version_info[0] == 2:
         csvfile = io.BytesIO()
@@ -219,9 +222,10 @@ Subject: {subj}
 
 {text}
 '''.format(to=requestor, subj=subject, text=text)
+    showed_text_len = showed_text.count('\n')
 
-    height = getTerminalHeight()-2-showed_text.count('\n')
     if show_table:
+        height = getTerminalHeight()-3-showed_text_len
         csvfile.seek(0)
         if len(query) > height:
             with tempfile.NamedTemporaryFile(mode='w+') as handle:
@@ -238,10 +242,16 @@ Subject: {subj}
             except AttributeError:
                 print(showed_text, table_from_query(query), sep='\n')
     else:
-        if len(query) > height:
-            print(showed_text)
-            print('\n'.join(attachment_text.splitlines()[:height]))
+        height = getTerminalHeight()-4
+        if 5 + len(query) > height:  # cut query too, 5 is length of text
+            print('\n'.join(showed_text.splitlines()[:5]))
             print('...')
+            print('\n'.join(attachment_text.splitlines()[:height - 5]))
+            print('...')
+        elif showed_text_len + len(query) > height > 5 + len(query):
+            print('\n'.join(showed_text.splitlines()[:height-len(query)]))
+            print('...')
+            print(attachment_text)
         else:
             print(showed_text, attachment_text, sep='\n')
     print('-'*100)
@@ -250,8 +260,9 @@ Subject: {subj}
     else:
         if automatic:
             print(red('You need to set a valid requestor!'))
-        answer = input(inverted('(b)ack, (s)end, show (t)able, change '
-                                '(r)equestor or (q)uit? ')).strip()
+        answer = input('{i}{b}b{i}ack, {b}s{i}end, show {b}t{i}able, change '
+                       '{b}r{i}equestor or {b}q{i}uit?{r} '
+                       ''.format(b=bold, i=myinverted, r=reset)).strip()
     if answer == 'q':
         exit(0)
     elif answer == 'b':
@@ -372,8 +383,9 @@ if __name__ == '__main__':
     try:
         while True:
             asn_count = count_by_asn()
-            answer = input(inverted('detailed view by id, (a)utomatic '
-                                    'sending, (q)uit? ')).strip()
+            answer = input('{i}detailed view by id, {b}a{i}utomatic '
+                           'sending, {b}q{i}uit?{r} '
+                           ''.format(b=bold, i=myinverted, r=reset)).strip()
             try:
                 answer = int(answer)
             except ValueError:
@@ -391,9 +403,13 @@ if __name__ == '__main__':
                     query_by_as(asn_count[answer]['contacts'])
                 else:
                     query_by_as(int(asn_count[answer]['asn']))
+            else:
+                print(red('Unknown answer {!r}.'.format(answer)))
 
-    except Exception as exc:
-        if not isinstance(exc, SystemExit):
+    except BaseException as exc:
+        if isinstance(exc, (SystemExit, KeyboardInterrupt)):
+            print()
+        else:
             raise
     finally:
         RT.logout()
