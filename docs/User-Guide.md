@@ -294,14 +294,14 @@ Then do the configuration in `runtime.conf` using the bot if.
 Configure source and destination queues in `pipeline.conf`.
 Use the intelmq-manager mentioned above to generate the configuration files if unsure.
 
-    1. [system.conf](#conf-system)
-    2. [startup.conf](#conf-startup)
-    3. [pipeline.conf](#conf-pipeline)
-    4. [defaults.conf](#conf-defaults)
-        1. [Error Handling](#conf-defaults-error)
-        2. [Miscellaneous](#conf-defaults-miscellaneous)
-    5. [runtime.conf](#conf-runtime)
-    6. [harmonization.conf](#conf-harmonization)
+1. [system.conf](#conf-system)
+2. [startup.conf](#conf-startup)
+3. [pipeline.conf](#conf-pipeline)
+4. [defaults.conf](#conf-defaults)
+    1. [Error Handling](#conf-defaults-error)
+    2. [Miscellaneous](#conf-defaults-miscellaneous)
+5. [runtime.conf](#conf-runtime)
+6. [harmonization.conf](#conf-harmonization)
 
 
 <a name="conf-system"></a>
