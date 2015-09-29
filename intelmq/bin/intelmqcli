@@ -166,6 +166,17 @@ def get_text(query):
     return text
 
 
+def target_from_row(row):
+    """
+    Returns the first value in give row that exists from this list of keys:
+    'source.ip', 'source.fqdn', 'source.url', 'source.account'
+    """
+    keys = ['source.ip', 'source.fqdn', 'source.url', 'source.account']
+    for key in keys:
+        if key in row:
+            return row[key]
+
+
 def table_from_query(query):
     header = sorted(query[0].keys())
     table = prettytable.PrettyTable(header)
@@ -199,7 +210,7 @@ def query_by_as(contact, show_table=False, requestor=None, automatic=False):
             requestor = contact
     query = shrink_dict(CUR.fetchall())
     ids = list(str(row['id']) for row in query)
-    asns = list(str(row['source.asn']) for row in query)
+    asns = set(str(row['source.asn']) for row in query)
 
     subject = ('{date}: {count} incidents for your AS {asns}'
                ''.format(count=len(query),
@@ -215,6 +226,7 @@ def query_by_as(contact, show_table=False, requestor=None, automatic=False):
     writer.writeheader()
     writer.writerows(query)
     attachment_text = csvfile.getvalue()
+    attachment_lines = attachment_text.splitlines()
 
     showed_text = '='*100 + '''
 To: {to}
@@ -246,7 +258,7 @@ Subject: {subj}
         if 5 + len(query) > height:  # cut query too, 5 is length of text
             print('\n'.join(showed_text.splitlines()[:5]))
             print('...')
-            print('\n'.join(attachment_text.splitlines()[:height - 5]))
+            print('\n'.join(attachment_lines[:height - 5]))
             print('...')
         elif showed_text_len + len(query) > height > 5 + len(query):
             print('\n'.join(showed_text.splitlines()[:height-len(query)]))
@@ -286,6 +298,45 @@ Subject: {subj}
         query_by_as(contact, requestor=requestor)
         return
 
+    # TODO: Config option for single events (best in ascontacts db)
+    if True:
+        save_to_rt(ids=ids, subject=subject, requestor=requestor,
+                   csvfile=csvfile)
+    else:
+        header = attachment_lines[0]
+        for id_, attach_line, row in zip(ids, attachment_lines[1:], query):
+            if sys.version_info[0] == 2:
+                csvfile = io.BytesIO()
+            else:
+                csvfile = io.StringIO()
+            csvfile.write(header + str('\n'))
+            csvfile.write(attach_line)
+            subj_date = datetime.datetime.now().strftime('%Y-%m-%d')
+            subject = ('{date}: Incident {type} for {target}'
+                       ''.format(count=len(query),
+                                 date=subj_date,
+                                 type=row['classification.type'],
+                                 target=target_from_row(row)))
+            save_to_rt(ids=(id_, ), subject=subject, requestor=requestor,
+                       csvfile=csvfile)
+
+    if requestor != contact:
+        answer = input(inverted('Save recipient {!r} for ASNs {!s}? [Y/n]'
+                                ''.format(requestor, ', '.join(asns)))).strip()
+        if answer.lower() in ('', 'y', 'j'):
+            CUR.execute(QUERY_UPDATE_CONTACT.format(asns=','.join(asns),
+                                                    contacts=requestor))
+            if CUR.rowcount != 1:
+                for asn in asns:
+                    user = os.environ['USER']
+                    time = datetime.datetime.now().strftime('%c')
+                    comment = 'Added by {user} @ {time}'.format(user=user,
+                                                                time=time)
+                    CUR.execute(QUERY_INSERT_CONTACT, (int(asn), requestor,
+                                                       comment))
+
+
+def save_to_rt(ids, subject, requestor, csvfile):
     report_id = RT.create_ticket(Queue='Incident Reports', Subject=subject,
                                  Requestors=requestor)
     if report_id == -1:
@@ -301,7 +352,7 @@ Subject: {subj}
     else:
         attachment = io.BytesIO()
         ziphandle = zipfile.ZipFile(attachment, mode='w')
-        ziphandle.writestr('events.csv', attachment_text)
+        ziphandle.writestr('events.csv', csvfile.getvalue())
         ziphandle.close()
         attachment.seek(0)
         filename = 'events.zip'
@@ -334,22 +385,6 @@ Subject: {subj}
                                         type='investigation'))
     if not RT.edit_ticket(incident_id, Status='resolved'):
         print('Could not close incident {}.'.format(incident_id))
-
-    if requestor != contact:
-        asns = set(str(row['source.asn']) for row in query)
-        answer = input(inverted('Save recipient {!r} for ASNs {!s}? [Y/n]'
-                                ''.format(requestor, ', '.join(asns)))).strip()
-        if answer.lower() in ('', 'y', 'j'):
-            CUR.execute(QUERY_UPDATE_CONTACT.format(asns=','.join(asns),
-                                                    contacts=requestor))
-            if CUR.rowcount != 1:
-                for asn in asns:
-                    user = os.environ['USER']
-                    time = datetime.datetime.now().strftime('%c')
-                    comment = 'Added by {user} @ {time}'.format(user=user,
-                                                                time=time)
-                    CUR.execute(QUERY_INSERT_CONTACT, (int(asn), requestor,
-                                                       comment))
 
 
 def count_by_asn():
