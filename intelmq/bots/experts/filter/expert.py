@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-import sys
 
+import re
+import sys
+from datetime import datetime, timedelta
+
+from dateutil import parser
 from intelmq.lib.bot import Bot
 from intelmq.lib.harmonization import DateTime
-from datetime import datetime, timedelta
-from dateutil import parser
-import re
+
 
 class FilterExpertBot(Bot):
 
@@ -21,7 +23,7 @@ class FilterExpertBot(Bot):
         except Exception as e:
             raise AttributeError("Could not apply regex to attribute \"%s\" with exception %s",
                                  repr(relative_time), repr(e.args))
-        if len(result) == 1 and len(result[0]) == 2 and FilterExpertBot.timespans.has_key(result[0][1]):
+        if len(result) == 1 and len(result[0]) == 2 and result[0][1] in FilterExpertBot.timespans:
             return int(result[0][0]) * FilterExpertBot.timespans[result[0][1]]
         else:
             raise AttributeError("Could not process result of regex for attribute " + repr(relative_time))
