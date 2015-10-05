@@ -14,9 +14,9 @@ Note: the '<' '>' characters only are syntactic markings, no shell rediction is 
 
 * Copy database to IntelMQ:
 ```
-# mkdir /opt/intelmq/var/lib/bots/asnlookup
-# mv /tmp/ipasn.dat /opt/intelmq/var/lib/bots/asnlookup/
-# chown -R intelmq.intelmq /opt/intelmq/var/lib/bots/asnlookup
+# mkdir /opt/intelmq/var/lib/bots/asn_lookup
+# mv /tmp/ipasn.dat /opt/intelmq/var/lib/bots/asn_lookup/
+# chown -R intelmq.intelmq /opt/intelmq/var/lib/bots/asn_lookup
 ```
 
-* Make sure that ASNLookup bot at runtime.conf has the value '/opt/intelmq/var/lib/bots/asnlookup/ipasn.dat' in 'database' field.
+* Make sure that ASNLookup bot at runtime.conf has the value '/opt/intelmq/var/lib/bots/asn_lookup/ipasn.dat' in 'database' field.
