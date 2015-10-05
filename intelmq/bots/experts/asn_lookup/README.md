@@ -1,14 +1,16 @@
 * Install python module:
 ```
-# pip install pyasn --pre
+# pip install pyasn 
 ```
 
 * Download database and convert:
 ```
 # cd /tmp/
 # pyasn_util_download.py --latest
-# pyasn_util_convert.py --single <downloaded_filename>.bz2 ipasn.dat
+# pyasn_util_convert.py --single <downloaded_filename.bz2>  ipasn.dat
 ```
+
+Note: the '<' '>' characters only are syntactic markings, no shell rediction is necessary.
 
 * Copy database to IntelMQ:
 ```
