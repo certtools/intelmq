@@ -497,6 +497,8 @@ pip2 install psycopg2>=2.5.5
 > createdb -O intelmq --encoding='utf-8' intelmq-events
 ```
 
+* Please note the --encoding='utf-8' in the line above! Without it, the output but will not be able to insert utf-8 data into the table.
+
 * Depending on your setup adjust `/etc/postgresql/9.4/main/pg_hba.conf` to allow network connections for the intelmq user.
 
 * Restart PostgreSQL.
