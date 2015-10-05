@@ -168,12 +168,13 @@ FIXME
 * `lookup:` https
 * `public:` yes
 * `cache (redis db):` none
-* `ipv6 support:` no
-* `description:` asn to cert abuse contact, cc
+* `ipv6 support:` yes
+* `description:` https://contacts.cert.at offers an IP address to national CERT contact (and cc) mapping. See https://contacts.cert.at for more info.
 
 #### Configuration Parameters:
 
-FIXME
+* `filter`: (true/false) act as a a filter for AT.
+* `overwrite_cc`: set to true if you want to overwrite any potentially existing cc fields in the event.
 
 * * *
 
