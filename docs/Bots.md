@@ -168,12 +168,13 @@ FIXME
 * `lookup:` https
 * `public:` yes
 * `cache (redis db):` none
-* `ipv6 support:` no
-* `description:` asn to cert abuse contact, cc
+* `ipv6 support:` yes
+* `description:` https://contacts.cert.at offers an IP address to national CERT contact (and cc) mapping. See https://contacts.cert.at for more info.
 
 #### Configuration Parameters:
 
-FIXME
+* `filter`: (true/false) act as a a filter for AT.
+* `overwrite_cc`: set to true if you want to overwrite any potentially existing cc fields in the event.
 
 * * *
 
@@ -496,6 +497,8 @@ pip2 install psycopg2>=2.5.5
 
 > createdb -O intelmq --encoding='utf-8' intelmq-events
 ```
+
+* Please note the --encoding='utf-8' in the line above! Without it, the output but will not be able to insert utf-8 data into the table.
 
 * Depending on your setup adjust `/etc/postgresql/9.4/main/pg_hba.conf` to allow network connections for the intelmq user.
 

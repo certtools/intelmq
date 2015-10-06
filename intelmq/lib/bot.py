@@ -85,29 +85,7 @@ class Bot(object):
                     error_on_message = False
 
                 if error_on_pipeline:
-                    self.logger.info("Loading source pipeline.")
-                    self.source_pipeline = PipelineFactory.create(
-                        self.parameters)
-                    self.logger.info("Loading source queue.")
-                    self.source_pipeline.set_queues(self.source_queues,
-                                                    "source")
-                    self.logger.info("Source queue loaded {}."
-                                     "".format(self.source_queues))
-                    self.source_pipeline.connect()
-                    self.logger.info("Connected to source queue.")
-
-                    self.logger.info("Loading destination pipeline.")
-                    self.destination_pipeline = PipelineFactory.create(
-                        self.parameters)
-                    self.logger.info("Loading destination queues.")
-                    self.destination_pipeline.set_queues(self.destination_queues,
-                                                         "destination")
-                    self.logger.info("Destination queues loaded {}."
-                                     "".format(self.destination_queues))
-                    self.destination_pipeline.connect()
-                    self.logger.info("Connected to destination queues.")
-
-                    self.logger.info("Pipeline ready.")
+                    self.connect_pipelines()
                     error_on_pipeline = False
 
                 if starting:
@@ -123,8 +101,7 @@ class Bot(object):
                     self.logger.exception('Pipeline failed.')
                 else:
                     self.logger.error('Pipeline failed.')
-                self.source_pipeline = None
-                self.destination_pipeline = None
+                self.disconnect_pipelines()
 
             except Exception:
                 if self.parameters.error_log_exception:
@@ -158,8 +135,8 @@ class Bot(object):
                 self.logger.error("Received KeyboardInterrupt.")
                 self.stop()
                 break
-            finally:
 
+            finally:
                 if (self.error_retries_counter >=
                         self.parameters.error_max_retries and
                         self.parameters.error_max_retries >= 0):
@@ -167,15 +144,7 @@ class Bot(object):
                     break
 
     def stop(self):
-        """ Stop Bot by diconnecting pipelines. """
-        if self.source_pipeline:
-            self.source_pipeline.disconnect()
-            self.source_pipeline = None
-            self.logger.info("Disconnecting from source pipeline.")
-        if self.destination_pipeline:
-            self.destination_pipeline.disconnect()
-            self.destination_pipeline = None
-            self.logger.info("Disconnecting from destination pipeline.")
+        self.disconnect_pipelines()
 
         if self.logger:
             self.logger.info("Bot stopped.")
@@ -208,6 +177,42 @@ class Bot(object):
                                     "Invalid bot id, must match '"
                                     "[^0-9a-zA-Z\-]+'."))
             self.stop()
+
+    def connect_pipelines(self):
+        self.logger.info("Loading source pipeline.")
+        self.source_pipeline = PipelineFactory.create(
+            self.parameters)
+        self.logger.info("Loading source queue.")
+        self.source_pipeline.set_queues(self.source_queues,
+                                        "source")
+        self.logger.info("Source queue loaded {}."
+                         "".format(self.source_queues))
+        self.source_pipeline.connect()
+        self.logger.info("Connected to source queue.")
+
+        self.logger.info("Loading destination pipeline.")
+        self.destination_pipeline = PipelineFactory.create(
+            self.parameters)
+        self.logger.info("Loading destination queues.")
+        self.destination_pipeline.set_queues(self.destination_queues,
+                                             "destination")
+        self.logger.info("Destination queues loaded {}."
+                         "".format(self.destination_queues))
+        self.destination_pipeline.connect()
+        self.logger.info("Connected to destination queues.")
+
+        self.logger.info("Pipeline ready.")
+
+    def disconnect_pipelines(self):
+        """ Disconnecting pipelines. """
+        if self.source_pipeline:
+            self.source_pipeline.disconnect()
+            self.source_pipeline = None
+            self.logger.info("Disconnecting from source pipeline.")
+        if self.destination_pipeline:
+            self.destination_pipeline.disconnect()
+            self.destination_pipeline = None
+            self.logger.info("Disconnecting from destination pipeline.")
 
     def send_message(self, message):
         if not message:
