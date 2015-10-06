@@ -100,3 +100,4 @@ v1.0 (in development, master branch)
 
 
 * New bots/feeds
+  - added AMQP topic output bot
