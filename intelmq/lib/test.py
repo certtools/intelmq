@@ -21,6 +21,23 @@ import six
 from intelmq import PIPELINE_CONF_FILE, RUNTIME_CONF_FILE, SYSTEM_CONF_FILE
 
 
+BOT_CONFIG = {
+    "logging_level": "DEBUG",
+    "http_proxy":  None,
+    "https_proxy": None,
+    "broker": "pythonlist",
+    "rate_limit": 0,
+    "retry_delay": 0,
+    "error_retry_delay": 0,
+    "error_max_retries": 0,
+    "exit_on_stop": False,
+    "redis_cache_host": "localhost",
+    "redis_cache_port": 6379,
+    "redis_cache_db": 10,
+    "redis_cache_ttl": 10,
+}
+
+
 def mocked_config(bot_id='test-bot', src_name='', dst_names=(), sysconfig={}):
     def mock(conf_file):
         if conf_file == PIPELINE_CONF_FILE:
@@ -30,20 +47,7 @@ def mocked_config(bot_id='test-bot', src_name='', dst_names=(), sysconfig={}):
         elif conf_file == RUNTIME_CONF_FILE:
             return {bot_id: {}}
         elif conf_file == SYSTEM_CONF_FILE:
-            conf = {"logging_level": "DEBUG",
-                    "http_proxy":  None,
-                    "https_proxy": None,
-                    "broker": "pythonlist",
-                    "rate_limit": 0,
-                    "retry_delay": 0,
-                    "error_retry_delay": 0,
-                    "error_max_retries": 0,
-                    "exit_on_stop": False,
-                    "redis_cache_host": "localhost",
-                    "redis_cache_port": 6379,
-                    "redis_cache_db": "10",
-                    "redis_cache_ttl": 10,
-                    }
+            conf = BOT_CONFIG
             conf.update(sysconfig)
             return conf
         elif conf_file.startswith('/opt/intelmq/etc/'):

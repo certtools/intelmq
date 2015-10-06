@@ -21,15 +21,23 @@ EVENT_TEMPL = {"__type": "Event",
 INPUT = [{'malware.name': 'confickerab'},
          {'malware.name': 'gozi2'},
          {'malware.name': 'feodo'},
+         {'malware.name': 'zeus_gameover_us'},
+         {'malware.name': 'foobar', 'feed.name': 'Other Feed'},
          ]
 OUTPUT = [{'classification.identifier': 'conficker'},
           {'classification.identifier': 'gozi'},
           {'classification.identifier': 'feodo'},
+          {'classification.identifier': 'zeus'},
+          {'feed.name': 'Other Feed'}
           ]
-for event_in, event_out in zip(INPUT, OUTPUT):
-    event_in.update(EVENT_TEMPL)
-    event_out.update(event_in)
-    event_out.update(EVENT_TEMPL)
+for index in range(len(INPUT)):
+    copy1 = EVENT_TEMPL.copy()
+    copy2 = EVENT_TEMPL.copy()
+    copy1.update(INPUT[index])
+    copy2.update(INPUT[index])
+    copy2.update(OUTPUT[index])
+    INPUT[index] = copy1
+    OUTPUT[index] = copy2
 
 
 class TestModifyExpertBot(test.BotTestCase, unittest.TestCase):

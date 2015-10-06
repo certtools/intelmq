@@ -224,15 +224,43 @@ usage:
     intelmqdump [botid]
     intelmqdump [-h|--help]
 
+intelmqdump can inspect dumped messages, show, delete or reinject them into
+the pipeline. It's an interactive tool, directly start it to get a list of
+available dumps or call it with a known bot id as parameter.
+
 positional arguments:
   botid       botid to inspect dumps of
 
 optional arguments:
   -h, --help  show this help message and exit
 
-intelmqdump can inspect dumped messages, show, delete or reinject them into
-the pipeline. It's an interactive tool, directly start it to get a list of
-available dumps or call it with a knwon bot id as parameter.
+Interactive actions after a file has been selected:
+- r, Recover by IDs
+  > r id{,id} [queue name]
+  > r 3,4,6
+  > r 3,7,90 modify-expert-queue
+  The messages identified by a consecutive numbering will be stored in the
+  original queue or the given one and removed from the file.
+- a, Recover all
+  > a [queue name]
+  > a
+  > a modify-expert-queue
+  All messages in the opened file will be recovered to the stored or given
+  queue and removed from the file.
+- e, Delete entries by IDs
+  > e id{,id}
+  > e 3,5
+  The entries will be deleted from the dump file.
+- d, Delete file
+  > d
+  Delete the opened file as a whole.
+- s, Show by IDs
+  > s id{,id}
+  > s 0,4,5
+  Show the selected IP in a readable format. It's still a raw format from
+  repr, but with newlines for message and traceback.
+- q, Quit
+  > q
 
 $ intelmqdump
  id: name (bot id)                    content

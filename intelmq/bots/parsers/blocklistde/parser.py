@@ -52,7 +52,9 @@ MAPPING = {
                                   "service SIP, VOIP, Asterisk",
     },
     "bots.txt": {
-        "classification.type": "botnet drone"  # TODO: description
+        "classification.type": "spam",
+        "event_description.text": "IP reported as having spammed on IRC, open "
+                                  "forums, wikis or registration forms.",
     },
     "strongips.txt": {
         "classification.type": "blacklist",
