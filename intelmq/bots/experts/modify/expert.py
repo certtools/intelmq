@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Modify Expert bot let's you manipulate all fields with a config file.
-
-
 """
 from __future__ import unicode_literals
 import re
@@ -18,6 +16,12 @@ def matches(event, *rules):
         condition.update(rule)
 
     for name, rule in condition.items():
+        # empty string means non-existant field
+        if rule == '':
+            if name in event:
+                return False
+            else:
+                continue
         if name not in event:
             return False
         if not re.search(rule, event[name]):
@@ -44,8 +48,8 @@ class ModifyExpertBot(Bot):
             return
 
         for section_id, section in self.config.items():
-            default_cond = section['__default'][0]
-            default_action = section['__default'][1]
+            default_cond = section.get('__default', [{}, {}])[0]
+            default_action = section.get('__default', [{}, {}])[1]
             if not matches(event, default_cond):
                 continue
 
