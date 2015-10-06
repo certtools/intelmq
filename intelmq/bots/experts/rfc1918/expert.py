@@ -12,6 +12,7 @@ It could sanitize the whole records with the "drop" parameter set to "yes"
 
 Sources:
 https://tools.ietf.org/html/rfc1918
+https://tools.ietf.org/html/rfc2606
 https://tools.ietf.org/html/rfc3849
 https://tools.ietf.org/html/rfc4291
 https://tools.ietf.org/html/rfc5737
@@ -26,11 +27,18 @@ import sys
 
 from intelmq.lib.bot import Bot
 
+try:
+    from urlparse import urlparse
+except ImportError:
+    from urllib.parse import urlparse
+
 NETWORKS = ("10.0.0.0/8", "100.64.0.0/10", "127.0.0.0/8",
             "169.254.0.0/16", "172.16.0.0/12", "192.0.0.0/24", "192.0.2.0/24",
             "192.88.99.0/24", "192.168.0.0/16", "198.18.0.0/15",
             "198.51.100.0/24", "203.0.113.0/24", "224.0.0.0/4", "240.0.0.0/4",
             "255.255.255.255/32", "fe80::/64", "2001:0db8::/32")
+DOMAINS = ('.test', '.example', '.invalid', '.localhost', 'example.com',
+           'example.net', 'example.org')
 
 
 def is_in_net(ip, iprange):
@@ -57,15 +65,21 @@ class RFC1918ExpertBot(Bot):
             if field not in event:
                 continue
             value = event.value(field)
-            for iprange in NETWORKS:
-                if is_in_net(value, iprange):
-                    if policy == 'del':
-                        self.logger.debug("Value removed from %s." % (field))
-                        del event[field]
-                    elif policy == 'drop':
-                        self.acknowledge_message()
-                        return
-                    break
+            if field.endswith('.ip'):
+                check = any(is_in_net(value, iprange) for iprange in NETWORKS)
+            elif field.endswith('.fqdn'):
+                check = any(value.endswith(domain) for domain in DOMAINS)
+            elif field.endswith('.url'):
+                check = any(urlparse(value).netloc.endswith(domain)
+                            for domain in DOMAINS)
+            if check:
+                if policy == 'del':
+                    self.logger.debug("Value removed from %s." % (field))
+                    del event[field]
+                elif policy == 'drop':
+                    self.acknowledge_message()
+                    return
+                break
         self.send_message(event)
         self.acknowledge_message()
 

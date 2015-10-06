@@ -534,11 +534,11 @@
             }
         },
         "RFC 1918": {
-            "description": "RFC 1918 removes fields or discards events if an ip is invalid (local, reserved, documentation).",
+            "description": "RFC 1918 removes fields or discards events if an ip or domain is invalid (invalid, local, reserved, documentation). IP, FQDN and URL field names are supported.",
             "module": "intelmq.bots.experts.rfc1918.expert",
             "parameters": {
-                "fields": "destination.ip,source.ip",
-                "policy": "del,drop"
+                "fields": "destination.ip,source.ip,source.url",
+                "policy": "del,drop,drop"
             }
         },
         "RIPENCC": {
