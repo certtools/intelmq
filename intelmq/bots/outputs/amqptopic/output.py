@@ -34,7 +34,7 @@ class AMQPTopicBot(Bot):
                 break
             except pika.exceptions.AMQPConnectionError:
                 self.logger.info(
-                    'Could not connect to server. Retrying... (%d/%d)' % (i + 1, self._retries + 1))
+                    'Could not connect to server. Retrying... (%d/%d)' % (i + 1, self._retries))
                 time.sleep(self._delay)
             except Exception, e:
                 self.logger.exception('Unknown exception: %s', e)
