@@ -12,6 +12,7 @@ import six
 import sys
 import traceback
 
+import intelmq.lib.exceptions as exceptions
 import intelmq.lib.message as message
 import intelmq.lib.pipeline as pipeline
 import intelmq.lib.utils as utils
@@ -163,21 +164,24 @@ if __name__ == '__main__':
             available_opts = [item[0] for item in ACTIONS.values()]
             for count, line in enumerate(meta):
                 print('{:3}: {} {}'.format(count, *line))
-        answer = input(inverted(', '.join(available_opts) + '? ')).strip()
-        if any([answer.startswith(char) for char in AVAILABLE_IDS]):
-            ids = [int(item) for item in answer[1:].split(',')]
-        if answer == 'a':
+        answer = input(inverted(', '.join(available_opts) + '? ')).split()
+        if any([answer[0] == char for char in AVAILABLE_IDS]):
+            ids = [int(item) for item in answer[1].split(',')]
+        queue_name = None
+        if answer[0] == 'a':
             # recover all -> recover all by ids
-            answer = 'r'
+            answer[0] = 'r'
             ids = range(len(meta))
-        if answer == 'q':
+            if len(answer) > 1:
+                queue_name = answer[1]
+        if answer[0] == 'q':
             break
-        elif answer.startswith('e'):
+        elif answer[0] == 'e':
             # Delete entries
             for entry in ids:
                 del content[meta[entry][0]]
             save_file(fname, content)
-        elif answer.startswith('r'):
+        elif answer[0] == 'r':
             # recover entries
             for key, entry in [item for (count, item)
                                in enumerate(content.items()) if count in ids]:
@@ -207,24 +211,39 @@ if __name__ == '__main__':
                 runtime = utils.load_configuration(RUNTIME_CONF_FILE)
                 params = utils.load_parameters(default, runtime)
                 pipe = pipeline.PipelineFactory.create(params)
-                pipe.set_queues(entry['source_queue'], 'destination')
-                pipe.connect()
-                pipe.send(msg)
-                del content[key]
-                save_file(fname, content)
-        elif answer.startswith('d'):
+                if queue_name is None:
+                    if len(answer) == 2:
+                        queue_name = answer[2]
+                    else:
+                        queue_name = entry['source_queue']
+                try:
+                    pipe.set_queues(queue_name, 'destination')
+                    pipe.connect()
+                    pipe.send(msg)
+                except exceptions.PipelineError:
+                    print(red('Could not reinject into queue {}: {}'
+                              ''.format(queue_name, traceback.format_exc())))
+                else:
+                    del content[key]
+                    save_file(fname, content)
+        elif answer[0] == 'd':
             # delete dumpfile
             os.remove(fname)
             print('Deleted file {}'.format(fname))
             break
-        elif answer.startswith('s'):
+        elif answer[0] == 's':
             # Show entries by id
             for count, (key, value) in enumerate(content.items()):
-                if count in ids:
-                    print('='*100, '\nShowing id {} {}\n'.format(count, key),
-                          '-'*50)
-                    if isinstance(value['message'], (six.binary_type,
-                                                     six.text_type)):
-                        value['message'] = json.loads(value['message'])
-                    value['traceback'] = value['traceback'].splitlines()
-                    pprint.pprint(value)
+                if count not in ids:
+                    continue
+                print('=' * 100, '\nShowing id {} {}\n'.format(count, key),
+                      '-' * 50)
+                if isinstance(value['message'], (six.binary_type,
+                                                 six.text_type)):
+                    value['message'] = json.loads(value['message'])
+                    if ('raw' in value['message'] and
+                            len(value['message']['raw']) > 1000):
+                        value['message']['raw'] = value['message'][
+                            'raw'][:1000] + '...[truncated]'
+                value['traceback'] = value['traceback'].splitlines()
+                pprint.pprint(value)
