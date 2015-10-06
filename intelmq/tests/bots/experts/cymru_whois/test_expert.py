@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import json
 import unittest
 
 import intelmq.lib.test as test
+from intelmq.lib.cache import Cache
 from intelmq.bots.experts.cymru_whois.expert import CymruExpertBot
 
 EXAMPLE_INPUT = {"__type": "Event",
@@ -76,6 +76,15 @@ class TestCymruExpertBot(test.BotTestCase, unittest.TestCase):
         self.input_message = UNICODE_INPUT
         self.run_bot()
         self.assertMessageEqual(0, UNICODE_OUTPUT)
+
+    @classmethod
+    def tearDownClass(cls):
+        cache = Cache(test.BOT_CONFIG['redis_cache_host'],
+                      test.BOT_CONFIG['redis_cache_port'],
+                      test.BOT_CONFIG['redis_cache_db'],
+                      test.BOT_CONFIG['redis_cache_ttl'],
+                      )
+        cache.flush()
 
 
 if __name__ == '__main__':

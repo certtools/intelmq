@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 import unittest
 
 import intelmq.lib.test as test
+from intelmq.lib.cache import Cache
 from intelmq.bots.experts.reverse_dns.expert import ReverseDnsExpertBot
 
 EXAMPLE_INPUT = {"__type": "Event",
@@ -51,6 +52,14 @@ class TestReverseDnsExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_OUTPUT6)
 
+    @classmethod
+    def tearDownClass(cls):
+        cache = Cache(test.BOT_CONFIG['redis_cache_host'],
+                      test.BOT_CONFIG['redis_cache_port'],
+                      test.BOT_CONFIG['redis_cache_db'],
+                      test.BOT_CONFIG['redis_cache_ttl'],
+                      )
+        cache.flush()
 
 if __name__ == '__main__':
     unittest.main()
