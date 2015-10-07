@@ -65,11 +65,13 @@ setup(
                                    'intelmq/conf/harmonization.conf',
                                    'intelmq/conf/pipeline.conf',
                                    'intelmq/conf/runtime.conf',
+                                   'intelmq/conf/squelcher.conf',
                                    'intelmq/conf/startup.conf',
                                    'intelmq/conf/system.conf',
                                   ],
                  ),
                 ('/opt/intelmq/bin/', [
+                                   'intelmq/bin/intelmqcli',
                                    'intelmq/bin/intelmqctl',
                                    'intelmq/bin/intelmqdump',
                                    'intelmq/bin/intelmq_gen_harm_docs.py',
