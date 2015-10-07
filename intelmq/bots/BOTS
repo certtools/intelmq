@@ -284,10 +284,10 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Fraunhofer DGA",
-                "password": "<PASSWORD>",
+                "http_password": "<PASSWORD>",
                 "rate_limit": 10800,
                 "http_url": "https://dgarchive.caad.fkie.fraunhofer.de/today",
-                "username": "<USER>"
+                "http_username": "<USER>"
             }
         },
         "HpHosts": {
