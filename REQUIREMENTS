@@ -3,6 +3,7 @@ geoip2>=0.5.1
 imbox>=0.5.5
 ipaddress>=1.0.14
 mock>=1.1.1
+pika>=0.10.0
 psutil>=2.1.1
 pyasn>=1.5.0b4
 pycurl>=7.19.0
@@ -14,8 +15,4 @@ redis>=2.10.3
 requests>=2.4.2
 six>=1.7
 unicodecsv>=0.9.4
-<<<<<<< HEAD
-=======
 xmpppy>=0.5.0rc1
-pika>=0.10.0
->>>>>>> added amqp topic support
