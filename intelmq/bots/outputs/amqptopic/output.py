@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 import pika
 import sys
 import time
+import traceback
 
 from intelmq.lib.bot import Bot
 
@@ -36,8 +37,8 @@ class AMQPTopicBot(Bot):
                 self.logger.info(
                     'Could not connect to server. Retrying... (%d/%d)' % (i + 1, self._retries))
                 time.sleep(self._delay)
-            except Exception, e:
-                self.logger.exception('Unknown exception: %s', e)
+            except Exception:
+                traceback.print_exc()
 
         # connection error
         if self._connection is None:
@@ -65,11 +66,16 @@ class AMQPTopicBot(Bot):
             content_type=self.CONTENT_TYPE, delivery_mode=self.DELIVERY_MODE)
 
         try:
-            if not self._channel.basic_publish(exchange=self._exchange, routing_key=self._routing_key, body=event.to_json(), properties=properties, mandatory=True):
+            if not self._channel.basic_publish(exchange=self._exchange,
+                                               routing_key=self._routing_key,
+                                               body=event.to_json(),
+                                               properties=properties,
+                                               mandatory=True):
                 self.logger.error("Message sent but not confirmed")
             self._errors = 0
-        except Exception, e:
-            self.logger.error("Error publishing the message: %s", e)
+        except Exception:
+            self.logger.error("Error publishing the message")
+            traceback.print_exc()
             if self._maxerrors > 0:
                 self._errors += 1
                 if self._errors == self._maxerrors:
