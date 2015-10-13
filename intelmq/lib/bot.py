@@ -7,6 +7,7 @@ from __future__ import print_function, unicode_literals
 import datetime
 import json
 import re
+import sys
 import time
 import traceback
 
@@ -34,9 +35,10 @@ class Bot(object):
 
         try:
             self.log_buffer.append(('debug',
-                                    '{} initialized with id {}.'
+                                    '{} initialized with id {} and version {}.'
                                     ''.format(self.__class__.__name__,
-                                              bot_id)))
+                                              bot_id,
+                                              sys.version.partition('\n')[0])))
             self.check_bot_id(bot_id)
             self.bot_id = bot_id
 

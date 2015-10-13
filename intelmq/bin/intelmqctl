@@ -305,7 +305,14 @@ class IntelMQContoller():
         return self.bot_status(bot_id)
 
     def __bot_start(self, bot_id, module):
-        cmd = "python -m {} {}".format(module, bot_id)
+        """
+        Start a bot by calling it as module.
+
+        The python version/path can be specified by the INTELMQ_PYTHON
+        environment variable. By default it's the default python binary.
+        """
+        cmd = "{} -m {} {}".format(os.getenv('INTELMQ_PYTHON', 'python'),
+                                   module, bot_id)
         pid = start_process(bot_id, cmd)
         write_pidfile(bot_id, pid)
 
