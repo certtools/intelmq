@@ -64,6 +64,7 @@ SELECT
     COALESCE({conttab}.contacts, '') as contacts,
     string_agg(DISTINCT cast({evtab}."source.asn" as varchar), ', ') as asn,
     string_agg(DISTINCT {evtab}."classification.type", ', ') as classification,
+    string_agg(DISTINCT {evtab}."feed.name", ', ') as feeds,
     COALESCE({conttab}.contacts, cast({evtab}."source.asn" as varchar))
         as grouping
 FROM {evtab}
@@ -410,18 +411,23 @@ def count_by_asn():
         exit(0)
     max_asn_length = max([len(row['asn']) for row in asn_count])
     max_contact_length = max([len(row['contacts']) for row in asn_count])
+    max_class_length = max([len(row['classification']) for row in asn_count])
     print('='*100)
     print(bold("{id:>3} {count:3} {asn!s: <{asnlen}} {contacts!s: <{conlen}} "
-               "{type!s}".format(id='id', count='n°', asn='ASNs', type='types',
-                                 conlen=max_contact_length,
-                                 asnlen=max_asn_length, contacts='contacts')))
+               "{type!s: <{typelen}} feeds"
+               "".format(id='id', count='n°', asn='ASNs', type='types',
+                         conlen=max_contact_length,
+                         asnlen=max_asn_length, contacts='contacts',
+                         typelen=max_class_length)))
     for number, row in enumerate(asn_count):
         print("{id:>3} {count:3} {asn!s: <{asnlen}} {contacts!s: <{conlen}} "
-              "{type!s}".format(count=row['count'], asn=row['asn'],
-                                asnlen=max_asn_length, id=number,
-                                contacts=row['contacts'],
-                                conlen=max_contact_length,
-                                type=row['classification']))
+              "{type!s: <{typelen}} {feeds}"
+              "".format(count=row['count'], asn=row['asn'],
+                        asnlen=max_asn_length, id=number,
+                        contacts=row['contacts'],
+                        conlen=max_contact_length,
+                        type=row['classification'], typelen=max_class_length,
+                        feeds=row['feeds']))
     print('{} incidents for {} contacts.'
           ''.format(sum((row['count'] for row in asn_count)), len(asn_count)))
     return asn_count
