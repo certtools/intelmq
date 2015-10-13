@@ -15,7 +15,7 @@ INSERT_QUERY = '''
 INSERT INTO {table}(
     "classification.identifier", "classification.type", notify, "source.asn",
     "source.ip", "time.source"
-) VALUES (%s, %s, %s, %s, %s, LOCALTIMESTAMP + INTERVAL %s);
+) VALUES (%s, %s, %s, %s, %s, LOCALTIMESTAMP + INTERVAL %s second);
 '''
 TEMPLATE = {"feed.name": "Example Feed",
             "raw": ""
