@@ -35,10 +35,11 @@ with open('/etc/intelmq/intelmqcli.conf') as conf_handle:
 with open(os.path.expanduser('~/.intelmq/intelmqcli.conf')) as conf_handle:
     user_config = json.load(conf_handle)
 for key, value in user_config.items():
-    if key in CONFIG:
+    if key in CONFIG and type(CONFIG[key]) is dict:
         CONFIG[key].update(value)
     else:
         CONFIG[key] = value
+
 CON = psycopg2.connect(database=CONFIG['database']['database'],
                        user=CONFIG['database']['user'],
                        password=CONFIG['database']['password'],
