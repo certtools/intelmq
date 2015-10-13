@@ -302,7 +302,7 @@ Subject: {subj}
     # TODO: Config option for single events (best in ascontacts db)
     if True:
         save_to_rt(ids=ids, subject=subject, requestor=requestor,
-                   csvfile=csvfile)
+                   csvfile=csvfile, body=text)
     else:
         header = attachment_lines[0]
         for id_, attach_line, row in zip(ids, attachment_lines[1:], query):
@@ -319,7 +319,7 @@ Subject: {subj}
                                  type=row['classification.type'],
                                  target=target_from_row(row)))
             save_to_rt(ids=(id_, ), subject=subject, requestor=requestor,
-                       csvfile=csvfile)
+                       csvfile=csvfile, body=text)
 
     if requestor != contact:
         answer = input(inverted('Save recipient {!r} for ASNs {!s}? [Y/n]'
@@ -337,9 +337,9 @@ Subject: {subj}
                                                        comment))
 
 
-def save_to_rt(ids, subject, requestor, csvfile):
+def save_to_rt(ids, subject, requestor, csvfile, body):
     report_id = RT.create_ticket(Queue='Incident Reports', Subject=subject,
-                                 Requestors=requestor)
+                                 Owner=CONFIG['rt']['user'])
     if report_id == -1:
         print(red('Could not create Incident Report.'))
         return
@@ -357,12 +357,9 @@ def save_to_rt(ids, subject, requestor, csvfile):
         ziphandle.close()
         attachment.seek(0)
         filename = 'events.zip'
-    response = RT.comment(report_id, files=[(filename, attachment)])
-    if not response:
-        print(red('Could not attach file.'))
-        return
 
-    incident_id = RT.create_ticket(Queue='Incidents', Subject=subject)
+    incident_id = RT.create_ticket(Queue='Incidents', Subject=subject,
+                                   Owner=CONFIG['rt']['user'])
     if incident_id == -1:
         print(red('Could not create Incident.'))
         return
@@ -373,7 +370,9 @@ def save_to_rt(ids, subject, requestor, csvfile):
     CUR.execute(QUERY_SET_RTIRID.format(ids=','.join(ids), rtirid=incident_id,
                                         type='incident'))
     investigation_id = RT.create_ticket(Queue='Investigations',
-                                        Subject=subject)
+                                        Subject=subject,
+                                        Owner=CONFIG['rt']['user'],
+                                        Requestor=requestor)
     if investigation_id == -1:
         print(red('Could not create Investigation.'))
         return
@@ -381,11 +380,19 @@ def save_to_rt(ids, subject, requestor, csvfile):
     if not RT.edit_link(incident_id, 'HasMember', investigation_id):
         print(red('Could not link Investigation to Incident.'))
         return
+
+    # TODO: CC
+    correspond = RT.comment(investigation_id, text=body,
+                            files=[(filename, attachment)])
+    if not correspond:
+        print(red('Could not correspond with text and file.'))
+        return
+
     CUR.execute(QUERY_SET_RTIRID.format(ids=','.join(ids),
                                         rtirid=investigation_id,
                                         type='investigation'))
     if not RT.edit_ticket(incident_id, Status='resolved'):
-        print('Could not close incident {}.'.format(incident_id))
+        print(red('Could not close incident {}.'.format(incident_id)))
 
 
 def count_by_asn():
