@@ -13,6 +13,7 @@ import csv
 import datetime
 import io
 import json
+import locale
 import os
 import subprocess
 import sys
@@ -25,6 +26,11 @@ import psycopg2.extras
 from termstyle import bold, green, inverted, red, reset
 
 import rt
+
+if locale.getpreferredencoding() != 'UTF-8':
+    print(red('The preferred encoding of your locale setting is not UTF-8 but'
+              '{}. Exiting.'.format(locale.getpreferredencoding())))
+    exit(1)
 
 myinverted = str(reset) + str(inverted)
 if sys.version[0] == '2':
