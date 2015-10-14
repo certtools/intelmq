@@ -131,9 +131,9 @@ def check_pidfile(bot_id):
 
 
 def start_process(bot_id, cmd):
-    with open('/dev/null', 'w') as devnull:
+    with open(DEFAULT_LOGGING_PATH+"intelmqctl_startup.log", 'w') as f:
         args = shlex.split(cmd)
-        p = psutil.Popen(args, stdout=devnull, stderr=devnull)
+        p = psutil.Popen(args, stdout=f, stderr=f)
         return p.pid
 
 
