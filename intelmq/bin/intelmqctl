@@ -135,11 +135,11 @@ def start_process(bot_id, cmd):
     with open('/dev/null', 'w') as devnull:
         args = shlex.split(cmd)
         p = psutil.Popen(args, stdout=PIPE, stderr=PIPE)
-        info, warn = p.communicate()        
+        info, error = p.communicate()        
         if info:
             logger.info(info[:-1])
-        if warn:
-            logger.warn(warn[:-1])
+        if error:
+            logger.error(error[:-1])
         return p.pid
 
 
