@@ -19,7 +19,6 @@ from intelmq import STARTUP_CONF_FILE
 from intelmq import SYSTEM_CONF_FILE
 from intelmq import DEFAULT_LOGGING_PATH
 from intelmq.lib import utils
-from subprocess import PIPE
 
 
 class Parameters(object):
@@ -132,14 +131,9 @@ def check_pidfile(bot_id):
 
 
 def start_process(bot_id, cmd):
-    with open('/dev/null', 'w') as devnull:
+    with open(DEFAULT_LOGGING_PATH+"intelmqctl_startup.log", 'w') as f:
         args = shlex.split(cmd)
-        p = psutil.Popen(args, stdout=PIPE, stderr=PIPE)
-        info, error = p.communicate()        
-        if info:
-            logger.info(info[:-1])
-        if error:
-            logger.error(error[:-1])
+        p = psutil.Popen(args, stdout=f, stderr=f)
         return p.pid
 
 
