@@ -13,9 +13,9 @@ Harmonization field names
 |Destination|destination.as_name|String|The autonomous system name to which the connection headed.|
 |Destination|destination.asn|Integer|The autonomous system number from which originated the connection.|
 |Destination|destination.fqdn|FQDN|A DNS name related to the host to which the connection headed.|
-|Destination Geolocation|destination.geolocation.cc|String|Country-Code accoriding to ISO3166 for the destination IP.|
+|Destination Geolocation|destination.geolocation.cc|String|Country-Code accoriding to ISO3166-1 alpha-2 for the destination IP.|
 |Destination Geolocation|destination.geolocation.city|String|Some geolocation services refer to city-level geolocation.|
-|Destination Geolocation|destination.geolocation.country|String|The country name derived from the ISO3166 country code (assigned to cc field).|
+|Destination Geolocation|destination.geolocation.country|String|The country name derived from the ISO3166 country code (assigned to cc field). TODO: Specify exact standard and format of entry (regex).|
 |Destination Geolocation|destination.geolocation.latitude|Float|Latitude coordinates derived from a geolocation service, such as MaxMind geoip db.|
 |Destination Geolocation|destination.geolocation.longitude|Float|Longitude coordinates derived from a geolocation service, such as MaxMind geoip db.|
 |Destination Geolocation|destination.geolocation.region|String|Some geolocation services refer to region-level geolocation.|
@@ -34,13 +34,13 @@ Harmonization field names
 |Event_Description|event_description.url|URL|A description URL is a link to a further description of the the abuse event in question.|
 ||event_hash|String|Computed event hash with specific keys and values that identify a unique event. At present, the hash should default to using the SHA1 function. Please note that for an event hash to be able to match more than one event (deduplication) the receiver of an event should calculate it based on a minimal set of keys and values present in the event. Using for example the observation time in the calculation will most likely render the checksum useless for deduplication purposes.|
 ||extra|String|All anecdotal information, which cannot be parsed into the data harmonization elements. E.g. os.name, os.version, user_agent. TODOs: Must be JSON encoded for machine readability.|
-|Feed|feed.code|String|Code name for the feed, e.g.  DFGS, HSDAG etc.|
+|Feed|feed.code|String|Code name for the feed, e.g. DFGS, HSDAG etc.|
 |Feed|feed.name|String|Name for the feed, usually found in collector bot configuration.|
 |Feed|feed.url|URL|The URL of a given abuse feed, where applicable|
-|Malware|malware.hash|String|A string depicting a checksum for a file, be it a malware sample for example.|
+|Malware|malware.hash|String|A string depicting a checksum for a file, be it a malware sample for example. Includes hash type according to https://en.wikipedia.org/wiki/Crypt_%28C%29|
 |Malware|malware.name|MalwareName|A malware family name in lower case.|
 |Malware|malware.version|String|A version string for an identified artifact generation, e.g. a crime-ware kit.|
-||misp_uuid|Integer|MISP - Malware Information Sharing Platform & Threat Sharing UUID.|
+||misp_uuid|UUID|MISP - Malware Information Sharing Platform & Threat Sharing UUID.|
 |Protocol|protocol.application|String|e.g. vnc, ssh, sip, irc, http or p2p.|
 |Protocol|protocol.transport|String|e.g. tcp, udp, icmp.|
 ||raw|Base64|The original line of the event from encoded in base64.|
@@ -52,11 +52,11 @@ Harmonization field names
 |Source|source.as_name|String|The autonomous system name from which the connection originated.|
 |Source|source.asn|Integer|The autonomous system number from which originated the connection.|
 |Source|source.fqdn|FQDN|A DNS name related to the host from which the connection originated.|
-|Source Geolocation|source.geolocation.cc|String|Country-Code accoriding to ISO3166 for the source IP.|
+|Source Geolocation|source.geolocation.cc|String|Country-Code accoriding to ISO3166-1 alpha-2 for the source IP.|
 |Source Geolocation|source.geolocation.city|String|Some geolocation services refer to city-level geolocation.|
-|Source Geolocation|source.geolocation.country|String|The country name derived from the ISO3166 country code (assigned to cc field).|
+|Source Geolocation|source.geolocation.country|String|The country name derived from the ISO3166 country code (assigned to cc field). TODO: Specify exact standard and format of entry (regex).|
 |Source Geolocation|source.geolocation.cymru_cc|String|The country code denoted for the ip by the Team Cymru asn to ip mapping service.|
-|Source Geolocation|source.geolocation.geoip_cc|String|MaxMind Country Code (ISO3166).|
+|Source Geolocation|source.geolocation.geoip_cc|String|MaxMind Country Code (ISO3166-1 alpha-2).|
 |Source Geolocation|source.geolocation.latitude|Float|Latitude coordinates derived from a geolocation service, such as MaxMind geoip db.|
 |Source Geolocation|source.geolocation.longitude|Float|Longitude coordinates derived from a geolocation service, such as MaxMind geoip db.|
 |Source Geolocation|source.geolocation.region|String|Some geolocation services refer to region-level geolocation.|
@@ -105,6 +105,11 @@ Sanitation accepts string 'true' and 'false' and integers 0 and 1.
 
 ### FQDN
 
+Fully qualified domain name type.
+
+All valid domains are accepted, no IP addresses or URLs. Trailing dot is
+not allowed.
+
 
 
 ### Float
@@ -142,3 +147,7 @@ Sanitation accepts strings and everything int() accepts.
 
 
 ### URL
+
+
+
+### UUID
