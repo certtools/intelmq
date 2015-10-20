@@ -115,6 +115,7 @@ useradd -d /opt/intelmq -U -s /bin/bash intelmq
 echo 'export PATH="$PATH:$HOME/bin"' > /opt/intelmq/.profile
 chmod -R 0770 /opt/intelmq
 chown -R intelmq.intelmq /opt/intelmq
+export INTELMQ_PYTHON=/usr/bin/python3.4
 ```
 
 <a name="install-python27"></a>
