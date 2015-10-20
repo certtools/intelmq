@@ -155,6 +155,8 @@ class BotTestCase(object):
             for msg in self.input_message:
                 if type(msg) is dict:
                     self.input_queue.append(json.dumps(msg))
+                elif issubclass(type(msg), message.Message):
+                    self.input_queue.append(msg.serialize())
                 else:
                     self.input_queue.append(msg)
             self.input_message = None
@@ -207,9 +209,10 @@ class BotTestCase(object):
     def test_log_init(self):
         """ Test if bot logs initialized message. """
         self.run_bot()
-        self.assertLoglineEqual(0, "{} initialized with id {}."
-                                   "".format(self.bot_name,
-                                             self.bot_id), "DEBUG")
+        self.assertLoglineMatches(0, "{} initialized with id {} and version"
+                                     " [0-9.]{{5}} \([a-zA-Z, 0-9:]+\)."
+                                     "".format(self.bot_name,
+                                               self.bot_id), "INFO")
 
     def test_log_starting(self):
         """ Test if bot logs starting message. """
@@ -327,6 +330,24 @@ class BotTestCase(object):
         self.assertEqual(levelname, fields["levelname"])
         self.assertEqual(message, fields["message"])
 
+    def assertLoglineMatches(self, line_no, pattern, levelname="ERROR"):
+        """Asserts if a logline matches a specific requirement.
+           Args:
+                line_no: Number of the logline which is asserted
+                pattern: Message text which is compared
+                type: Type of logline which is asserted"""
+
+        self.assertIsNotNone(self.loglines)
+        logline = self.loglines[line_no]
+        fields = utils.parse_logline(logline)
+
+        self.assertEqual(self.bot_id, fields["name"],
+                         "bot_id %s didn't match %s"
+                         "".format(self.bot_id, fields["name"]))
+
+        self.assertEqual(levelname, fields["levelname"])
+        self.assertRegexpMatches(fields["message"], pattern)
+
     def assertRegexpMatchesLog(self, pattern):
         """Asserts that pattern matches against log. """
 
@@ -351,7 +372,7 @@ class BotTestCase(object):
         """
         self.assertEqual(len(self.get_output_queue()), queue_len)
 
-    def assertMessageEqual(self, queue_pos, expected_message):
+    def assertMessageEqual(self, queue_pos, expected_msg):
         """
         Asserts that the given expected_message is
         contained in the generated event with
@@ -360,9 +381,13 @@ class BotTestCase(object):
         event = self.get_output_queue()[queue_pos]
 
         self.assertIsInstance(event, six.text_type)
-        event_dict = json.loads(event)
+        event_dict = message.MessageFactory.from_dict(json.loads(event))
 
-        expected = expected_message.copy()
+        if type(expected_msg) is dict:
+            expected = message.MessageFactory.from_dict(expected_msg.copy())
+        else:
+            expected = expected_msg.copy()
+            del event_dict['__type']
         del event_dict['time.observation']
         del expected['time.observation']
 

@@ -17,7 +17,7 @@ import intelmq.lib.message as message
 import intelmq.lib.pipeline as pipeline
 import intelmq.lib.utils as utils
 from intelmq import DEFAULT_LOGGING_PATH, DEFAULTS_CONF_FILE, RUNTIME_CONF_FILE
-from termstyle import bold, inverted, red
+from termstyle import bold, green, inverted, red
 
 if sys.version_info[0] == 2:
     input = raw_input
@@ -72,25 +72,28 @@ AVAILABLE_IDS = [key for key, value in ACTIONS.items() if value[1]]
 
 def dump_info(fname):
     info = red('unknwon error')
-    try:
-        handle = io.open(fname, 'rt')
-    except OSError as exc:
-        info = red('unable to open file: {!s}'.format(exc))
+    if not os.path.getsize(fname):
+        info = 'empty file'
     else:
         try:
-            content = json.load(handle)
-        except ValueError as exc:
-            info = red('unable to load JSON: {!s}'.format(exc))
+            handle = io.open(fname, 'rt')
+        except OSError as exc:
+            info = red('unable to open file: {!s}'.format(exc))
         else:
             try:
-                info = "{!s} dumps".format(len(content.keys()))
-            except AttributeError as exc:
-                info = red("unable to count dumps: {!s}".format(exc))
-    finally:
-        try:
-            handle.close()
-        except NameError:
-            pass
+                content = json.load(handle)
+            except ValueError as exc:
+                info = red('unable to load JSON: {!s}'.format(exc))
+            else:
+                try:
+                    info = "{!s} dumps".format(len(content.keys()))
+                except AttributeError as exc:
+                    info = red("unable to count dumps: {!s}".format(exc))
+        finally:
+            try:
+                handle.close()
+            except NameError:
+                pass
     return info
 
 
@@ -124,6 +127,9 @@ if __name__ == '__main__':
 
     if args.botid is None:
         filenames = glob.glob(os.path.join(DEFAULT_LOGGING_PATH, '*.dump'))
+        if not len(filenames):
+            print(green('Nothing to recover from, no dump files found!'))
+            exit(0)
         filenames = [(fname, fname[len(DEFAULT_LOGGING_PATH):-5])
                      for fname in sorted(filenames)]
 
