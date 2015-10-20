@@ -58,6 +58,7 @@ CON.autocommit = True
 
 RT = rt.Rt(CONFIG['rt']['uri'], CONFIG['rt']['user'], CONFIG['rt']['password'])
 
+
 QUERY_COUNT_ASN = """
 SELECT
     COUNT(*) as count,
@@ -291,7 +292,7 @@ Subject: {subj}
         query_by_as(contact, show_table=True, requestor=requestor)
         return
     elif answer == ('r'):
-        answer = input(inverted('New requestor address: ')).strip()
+        answer = input(inverted('New requestor address:')+' ').strip()
         if len(answer) == 0:
             if type(contact) is int:
                 requestor = ''
@@ -389,11 +390,12 @@ def save_to_rt(ids, subject, requestor, csvfile, body):
         return
 
     # TODO: CC
-    correspond = RT.comment(investigation_id, text=body,
-                            files=[(filename, attachment)])
+    correspond = RT.reply(investigation_id, text=body,
+                          files=[(filename, attachment)])
     if not correspond:
         print(red('Could not correspond with text and file.'))
         return
+    print(green('Correspondence added to Investigation.'))
 
     CUR.execute(QUERY_SET_RTIRID.format(ids=','.join(ids),
                                         rtirid=investigation_id,
@@ -434,7 +436,11 @@ def count_by_asn():
 
 if __name__ == '__main__':
     if not RT.login():
-        print(red('Could not login to RT.'))
+        print(red('Could not login as {} on {}.'.format(CONFIG['rt']['user'],
+                                                        CONFIG['rt']['uri'])))
+    else:
+        print('Logged in as {} on {}.'.format(CONFIG['rt']['user'],
+                                              CONFIG['rt']['uri']))
     try:
         while True:
             asn_count = count_by_asn()
