@@ -216,7 +216,7 @@ bots are running, use `intelmqctl -n status`.
 
 The python version/path can be specified by the `INTELMQ_PYTHON` environment variable. By default it's the default python binary. This can be used to start the bots with current Python (version 3), while the default Python version for the operating system is still Legacy Python (version 2).
 
-    $ export INTELMQ_PYTON=/usr/bin/python3.4
+    $ export INTELMQ_PYTHON=/usr/bin/python3.4
 	$ intelmqctl -n start
 
 ## Utilities

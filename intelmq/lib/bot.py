@@ -34,11 +34,11 @@ class Bot(object):
         self.logger = None
 
         try:
-            self.log_buffer.append(('debug',
+            version_info = sys.version.splitlines()[0].strip()
+            self.log_buffer.append(('info',
                                     '{} initialized with id {} and version {}.'
                                     ''.format(self.__class__.__name__,
-                                              bot_id,
-                                              sys.version.partition('\n')[0])))
+                                              bot_id, version_info)))
             self.check_bot_id(bot_id)
             self.bot_id = bot_id
 
