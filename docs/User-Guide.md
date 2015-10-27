@@ -388,7 +388,7 @@ More examples can be found at `intelmq/conf/startup.conf` directory in IntelMQ r
 <a name="conf-pipeline"></a>
 ## pipeline.conf
 
-This configuration is used by each bot to load the source pipeline and destination pipelines associated to each of them.
+This configuration is used by each bot to load the source pipeline and destination pipelines associated to each of them. IntelMQ Manager generate this configuration.
 
 **Template:**
 ```
@@ -485,6 +485,37 @@ All bots inherits this configuration parameters and they can overwrite them usin
 
 <a name="conf-runtime"></a>
 ## runtime.conf
+
+This configuration is used by each bot to load the specific parameters associated to each of them. Usually, BOTS file is used to generate runtime.conf. IntelMQ Manager generate this configuration.
+
+**Template:**
+```
+{
+	...
+    "<bot ID>": {
+        "<parameter 1>": "<value 1>",
+        "<parameter 2>": "<value 2>",
+        "<parameter 3>": "<value 3>"
+    },
+	...
+}
+```
+
+**Example:**
+```
+{
+	...
+    "malware-domain-list-collector": {
+        "http_url": "http://www.malwaredomainlist.com/updatescsv.php",
+        "feed": "Malware Domain List",
+        "rate_limit": 3600
+    },
+	...
+}
+```
+
+More examples can be found at `intelmq/conf/runtime.conf` directory in IntelMQ repository.
+
 
 <a name="conf-harmonization"></a>
 ## harmonization.conf
