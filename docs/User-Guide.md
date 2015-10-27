@@ -560,7 +560,7 @@ This configuration is used to specify the fields for all message types. The harm
 }
 ```
 
-More examples can be found at `intelmq/conf/runtime.conf` directory in IntelMQ repository.
+More examples can be found at `intelmq/conf/harmonization.conf` directory in IntelMQ repository.
 
 
 ## Additional Information
