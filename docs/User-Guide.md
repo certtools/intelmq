@@ -520,7 +520,47 @@ More examples can be found at `intelmq/conf/runtime.conf` directory in IntelMQ r
 <a name="conf-harmonization"></a>
 ## harmonization.conf
 
+This configuration is used to specify the fields for all message types. The harmonization library will load this configuration to check, during the messages processing, the values are compliant to harmonization. Usually, this configuration doesn't need any change.
 
+**Template:**
+```
+{
+	...
+    "<message type>": {
+        "<field 1>": {
+            "description": "<field 1 description>",
+            "type": "<field value type>"
+        },
+        "<field 2>": {
+            "description": "<field 2 description>",
+            "type": "<field value type>"
+        }
+    },
+	...
+}
+```
+
+**Example:**
+```
+{
+	...
+    "event": {
+        "destination.asn": {
+            "description": "The autonomous system number from which originated the connection.",
+            "type": "Integer"
+        },
+        "destination.geolocation.cc": {
+            "description": "Country-Code accoriding to ISO3166-1 alpha-2 for the destination IP.",
+            "regex": "^[a-zA-Z0-9]{2}$",
+            "type": "String"
+        },
+    	...
+    },
+	...
+}
+```
+
+More examples can be found at `intelmq/conf/runtime.conf` directory in IntelMQ repository.
 
 
 ## Additional Information
