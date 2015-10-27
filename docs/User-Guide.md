@@ -395,26 +395,26 @@ All bots inherits this configuration parameters and they can overwrite them usin
 
 * **`rate_limit`** - time interval (in seconds) between messages processing. The value must be an `integer value`.
 
-* **`source_pipeline_host`** - FIXME
+* **`source_pipeline_host`** - broker IP or FQDN that bot will use to connect and receive messages.
 
-* **`source_pipeline_port`** - FIXME
+* **`source_pipeline_port`** - broker port that bot will use to connect and receive messages.
 
-* **`source_pipeline_db`** - FIXME
+* **`source_pipeline_db`** - broker database that bot will use to connect and receive messages (requirement from redis broker).
 
-* **`destination_pipeline_host`** - FIXME
+* **`destination_pipeline_host`** - broker IP or FQDN that bot will use to connect and send messages.
 
-* **`destination_pipeline_port`** - FIXME
+* **`destination_pipeline_port`** - broker port that bot will use to connect and send messages.
 
-* **`destination_pipeline_db`** - FIXME
+* **`destination_pipeline_db`** - broker database that bot will use to connect and send messages (requirement from redis broker).
 
-* **`http_proxy`** - FIXME
+* **`http_proxy`** - proxy HTTP that bot will use when perform HTTP requests (e.g. bots/collectors/collector_http.py). The value must follow RFC1738.
 
-* **`https_proxy`** - FIXME
+* **`https_proxy`** - proxy HTTPS that bot will use when perform secure HTTPS requests (e.g. bots/collectors/collector_http.py).
 
-* **`http_user_agent`** - FIXME
+* **`http_user_agent`** - user-agent that bot will use when perform HTTP/HTTPS requests (e.g. bots/collectors/collector_http.py).
 
-* **`http_verify_cert`** - FIXME
-    * **`true/false`** - FIXME
+* **`http_verify_cert`** - defines if bot will verify SSL certificates when perform HTTPS requests (e.g. bots/collectors/collector_http.py).
+    * **`true/false`** - verify or not verify SSL certificates
 
 <a name="conf-runtime"></a>
 ## runtime.conf
