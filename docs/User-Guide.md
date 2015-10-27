@@ -343,7 +343,9 @@ Use the intelmq-manager mentioned above to generate the configuration files if u
 <a name="conf-system"></a>
 ## system.conf
 
-FIXME
+* **`logging_level`** - defines for all system the level of logging that will be use by all bots and intelmqctl tool. Possible values are: `CRITICAL`, `ERROR`, `WARNING`, `INFO` and `DEBUG`.
+
+* **`logging_path`** - defines for all system the logs folder that will be use by all bots and intelmqctl tool. Default value is: `/opt/intelmq/var/log/`
 
 <a name="conf-startup"></a>
 ## startup.conf
