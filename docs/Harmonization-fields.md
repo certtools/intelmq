@@ -108,6 +108,11 @@ Sanitation accepts string 'true' and 'false' and integers 0 and 1.
 
 ### FQDN
 
+Fully qualified domain name type.
+
+All valid domains are accepted, no IP addresses or URLs. Trailing dot is
+not allowed.
+
 
 
 ### Float

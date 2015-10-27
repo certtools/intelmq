@@ -324,7 +324,6 @@ Most existing bots are only tested with one message. For newly written test it i
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import json
 import unittest
 
 import intelmq.lib.test as test

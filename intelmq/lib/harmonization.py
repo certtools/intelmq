@@ -266,6 +266,12 @@ class Float(GenericType):
 
 
 class FQDN(GenericType):
+    """
+    Fully qualified domain name type.
+
+    All valid domains are accepted, no IP addresses or URLs. Trailing dot is
+    not allowed.
+    """
 
     @staticmethod
     def is_valid(value, sanitize=False):
@@ -285,7 +291,14 @@ class FQDN(GenericType):
         if not len(value.split('.')) > 1:
             return False
 
+        if value[-1] == '.':
+            return False
+
         return True
+
+    @staticmethod
+    def sanitize(value):
+        return value.rstrip('.')
 
     @staticmethod
     def to_ip(value):

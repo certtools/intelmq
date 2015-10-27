@@ -115,6 +115,7 @@ useradd -d /opt/intelmq -U -s /bin/bash intelmq
 echo 'export PATH="$PATH:$HOME/bin"' > /opt/intelmq/.profile
 chmod -R 0770 /opt/intelmq
 chown -R intelmq.intelmq /opt/intelmq
+echo 'export INTELMQ_PYTHON=/usr/bin/python3.4' >> /opt/intelmq/.profile
 ```
 
 <a name="install-python27"></a>
@@ -211,6 +212,13 @@ logged to /opt/intelmq/var/log/intelmqctl
 
 The botnet represents all currently configured bots. To get an overview which
 bots are running, use `intelmqctl -n status`.
+
+### Start bots with non-default Python
+
+The python version/path can be specified by the `INTELMQ_PYTHON` environment variable. By default it's the default python binary. This can be used to start the bots with current Python (version 3), while the default Python version for the operating system is still Legacy Python (version 2).
+
+    $ export INTELMQ_PYTHON=/usr/bin/python3.4
+	$ intelmqctl -n start
 
 ## Utilities
 

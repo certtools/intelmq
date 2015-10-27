@@ -26,6 +26,23 @@ class MessageFactory(object):
     """
 
     @staticmethod
+    def from_dict(message):
+        """
+        Takes dictionary Message object, returns instance of correct class.
+
+        The class is determined by __type attribute.
+        """
+        try:
+            class_reference = getattr(intelmq.lib.message, message["__type"])
+        except AttributeError:
+            raise exceptions.InvalidArgument('__type',
+                                             got=message["__type"],
+                                             expected=list(harm_config.keys()),
+                                             docs=HARMONIZATION_CONF_FILE)
+        del message["__type"]
+        return class_reference(message)
+
+    @staticmethod
     def unserialize(raw_message):
         """
         Takes JSON-encoded Message object, returns instance of correct class.

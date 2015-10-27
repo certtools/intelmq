@@ -1,11 +1,12 @@
 ## Table of Contents
 
 1. [Overview](#overview)
-2. [Sections](#sections)
-2. [Data types](#basicdatatypes)
-3. [List of known fields](#fields)
-4. [Type/Taxonomy Mapping](#mapping)
-5. [Minimum required fields](#requirements)
+2. [Rules for keys](#rules)
+3. [Sections](#sections)
+4. [Data types](#basicdatatypes)
+5. [List of known fields](#fields)
+6. [Type/Taxonomy Mapping](#mapping)
+7. [Minimum required fields](#requirements)
 
 
 <a name="overview"></a>
@@ -19,6 +20,7 @@ Every event **MUST** contain a timestamp field.
 
 [IOC](https://en.wikipedia.org/wiki/Indicator_of_compromise) (Indicator of compromise) is a single observation like a log line.
 
+<a name="rules"></a>
 
 ## Rules for keys
 

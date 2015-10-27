@@ -384,5 +384,12 @@ class TestMessageFactory(unittest.TestCase):
         with self.assertRaises(exceptions.InvalidValue):
             event.add('protocol.transport', 'unknown')
 
+    def test_message_from_dict_return_type(self):
+        """ Test if from_dict() returns the correct class. """
+        event = {'__type': 'Event'}
+        event_type = type(message.MessageFactory.from_dict(event))
+        self.assertTrue(event_type is message.Event,
+                        msg='Type is {} instead of Event.'.format(event_type))
+
 if __name__ == '__main__':
     unittest.main()
