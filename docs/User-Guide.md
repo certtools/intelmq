@@ -372,25 +372,55 @@ This configuration is used by intelmqctl tool to launch bots. Usually, the Intel
 ```
 {
 	...
-
     "malware-domain-list-collector": {
         "group": "Collector",
         "name": "Malware Domain List",
         "module": "intelmq.bots.collectors.http.collector_http",
         "description": "Malware Domain List Collector is the bot responsible to get the report from source of information."
     },
-
 	...
 }
 ```
 
-More examples can be found at `intelmq/conf/startup.conf` directory in this repository.
+More examples can be found at `intelmq/conf/startup.conf` directory in IntelMQ repository.
 
 
 <a name="conf-pipeline"></a>
 ## pipeline.conf
 
-FIXME
+This configuration is used by each bot to load the source pipeline and destination pipelines associated to each of them.
+
+**Template:**
+```
+{
+	...
+    "<bot ID>": {
+        "source-queue": "<source pipeline name>",
+        "destination-queues": [
+            "<first destination pipeline name>",
+            "<second destination pipeline name>",
+            ...
+        ]
+    },
+	...
+}
+```
+
+**Example:**
+```
+{
+	...
+    "malware-domain-list-parser": {
+        "source-queue": "malware-domain-list-parser-queue",
+        "destination-queues": [
+            "file-output-queue"
+        ]
+    },
+	...
+}
+```
+
+More examples can be found at `intelmq/conf/pipeline.conf` directory in IntelMQ repository.
 
 <a name="conf-defaults"></a>
 ## defaults.conf
