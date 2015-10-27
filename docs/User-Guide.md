@@ -350,7 +350,42 @@ Use the intelmq-manager mentioned above to generate the configuration files if u
 <a name="conf-startup"></a>
 ## startup.conf
 
-FIXME
+This configuration is used by intelmqctl tool to launch bots. Usually, the IntelMQ sysadmin don't need to touch in this file because IntelMQ Manager generate this configuration.
+
+**Template:**
+```
+{
+	...
+
+    "<bot ID>": {
+        "group": "<bot type (Collector, Parser, Expert, Output)>",
+        "name": "<human-readable bot name>",
+        "module": "<bot code (python module)>",
+        "description": "<generic description of the bot>"
+    },
+
+	...
+}
+```
+
+**Example:**
+```
+{
+	...
+
+    "malware-domain-list-collector": {
+        "group": "Collector",
+        "name": "Malware Domain List",
+        "module": "intelmq.bots.collectors.http.collector_http",
+        "description": "Malware Domain List Collector is the bot responsible to get the report from source of information."
+    },
+
+	...
+}
+```
+
+More examples can be found at `intelmq/conf/startup.conf` directory in this repository.
+
 
 <a name="conf-pipeline"></a>
 ## pipeline.conf
