@@ -323,7 +323,7 @@ error handling, log options and pipeline configuration. Will be removed in
 * `pipeline.conf`: Defines source and destination queues per bot.
 * `BOTS`: Includes configuration hints for all bots. E.g. feed URLs or
 database connection parameters. Use this as a template for `startup.conf`
-and `runtime.conf`. Also read by the intelmq-manager.
+and `runtime.conf`. Also read by the IntelMQ Manager.
 
 To configure a new BOT, you need to define it first in `startup.conf`.
 Then do the configuration in `runtime.conf` using the bot if.
@@ -364,16 +364,16 @@ All bots inherits this configuration parameters and they can overwrite them usin
 #### Error Handling
 
 * **`error_log_message`** - in case of an error, this option will allows bot to write the message (report or event) in log file. Use the following values:
-    * **`true/false`** - write or not write message in log file
+    * **`true/false`** - write or not write current and last message in log file
 
 * **`error_log_exception`** - in case of an error, this option will allows bot to write the error exception in log file. Use the following values:
     * **`true/false`** - write or not write exception in log file
 
 * **`error_procedure`** - in case of an error, this option defines the procedure that bot will adopt. Use the following values:
 
-    * **`stop`** - stop bot after retry X times, defined in `error_max_retries` option with a delay between retries defined at `error_retry_delay` option. If bot reach `error_max_retries` value, bot will remove the message from pipeline and stop. If the option `error_dump_message` is enable, the bot will dump the removed message to the dump log.
+    * **`stop`** - stop bot after retry X times, defined in `error_max_retries` option with a delay between retries defined at `error_retry_delay` option. If bot reach `error_max_retries` value, bot will stop. If the option `error_dump_message` is enable and the error is not a pipeline error, the bot will remove message from pipeline and dump it to the dump log.
     
-    * **`pass`** - will pass to the next message after retry X times, removing from pipeline the current message. If the option `error_dump_message` is enable, the bot will dump the removed message to the dump log.
+    * **`pass`** - will pass to the next message after retry X times. If the error is not a pipeline error, the bot will remove the current message from pipeline and will process the next message. If the option `error_dump_message` is enable and the error is not a pipeline error, the bot will dump the removed message to the dump log. If the error is a pipeline error, bot will keep trying connect infinitely to pipeline.
 
 * **`error_max_retries`** - in case of an error and the value of the `error_procedure` option is `retry`, bot will try to start processing the current message X times defined at `error_max_retries` option. The value must be an `integer value`.
 
