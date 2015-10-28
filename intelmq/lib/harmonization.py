@@ -289,7 +289,7 @@ class Accuracy(GenericType):
     def sanitize(value):
         try:
             if isinstance(value, bool):
-                return int(value) * 100
+                return float(value) * 100
 
             value = float(value)
             if value >= 0 or value <= 100:
