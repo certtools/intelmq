@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 import re
 import sys
+import pytz
 from datetime import datetime, timedelta
 
 from dateutil import parser
@@ -19,7 +20,7 @@ class FilterExpertBot(Bot):
     @staticmethod
     def parse_relative(relative_time):
         try:
-            result = re.findall(r'(\d+)\s+(\w+)?s', relative_time, re.UNICODE)
+            result = re.findall(r'(\d+)\s+(\w+[^s])s?', relative_time, re.UNICODE)
         except Exception as e:
             raise AttributeError("Could not apply regex to attribute \"%s\" with exception %s",
                                  repr(relative_time), repr(e.args))
@@ -36,9 +37,7 @@ class FilterExpertBot(Bot):
             try:
                 relative = timedelta(minutes=self.parse_relative(time_attr))
             except Exception as e:
-                self.logger.error("Could not parse \"%s\" as neither absolute or relative time, "
-                                  "exception raised: %s", time_attr, repr(e.args))
-                self.stop()
+                raise e
             else:
                 self.logger.info("Filtering out events to (relative time) " + repr(relative))
                 return relative
@@ -72,7 +71,7 @@ class FilterExpertBot(Bot):
             self.logger.info("Filter_action parameter definition unknown.")
             self.filter = False
 
-        if not (self.filter or type(self.not_after) is not None or type(self.time_relative) is not None):
+        if not (self.filter or self.not_after is not None or self.not_before is not None):
             self.logger.error("No relevant filter configuration found, stopping...")
             self.stop()
 
@@ -86,9 +85,9 @@ class FilterExpertBot(Bot):
         # time based filtering
         if event.contains('time.source'):
             try:
-                event_time = parser.parse(event.value('time.source')).replace(tzinfo=pytz.timezone('UTC'))
+                event_time = parser.parse(str(event.value('time.source'))).replace(tzinfo=pytz.timezone('UTC'))
             except:
-                self.logger.info("Could not parse time.source " + event.value('time.source'))
+                self.logger.error("Could not parse time.source " + str(event.value('time.source')))
             else:
                 if type(self.not_after) is datetime and event_time > self.not_after:
                     self.acknowledge_message()
@@ -99,11 +98,12 @@ class FilterExpertBot(Bot):
                     self.logger.debug("Filtered out event with time.source " + repr(event.value('time.source')))
                     return
 
-                if type(self.not_after) is timedelta and event_time > (datetime.utcnow() - self.not_after):
+                now = datetime.now(tz=pytz.timezone('UTC'))
+                if type(self.not_after) is timedelta and event_time > (now - self.not_after):
                     self.acknowledge_message()
                     self.logger.debug("Filtered out event with time.source " + repr(event.value('time.source')))
                     return
-                if type(self.not_before) is timedelta and event_time < (datetime.utcnow() - self.not_before):
+                if type(self.not_before) is timedelta and event_time < (now - self.not_before):
                     self.acknowledge_message()
                     self.logger.debug("Filtered out event with time.source " + repr(event.value('time.source')))
                     return
