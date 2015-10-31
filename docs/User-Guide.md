@@ -149,11 +149,11 @@ chown -R intelmq.intelmq /opt/intelmq
 
 # Configuration
 
-By default, one collector, one parser and one output are started. The default collector an parser handle data from malware domain list, the file output bot writes all data to `/opt/intelmq/var/lib/bots/file-output/events.txt`.
+By default, one collector, one parser and one output are started. The default collector and the parser handle data from malware domain list, the file output bot writes all data to `/opt/intelmq/var/lib/bots/file-output/events.txt`.
 
 The configuration directory is `/opt/intelmq/etc/`, all files are JSON.
 
-* `defaults.conf`: Some default values for bots and their behavior, e.g.
+* `defaults.conf`: default values for bots and their behavior, e.g.
 error handling, log options and pipeline configuration. Will be removed in [future](https://github.com/certtools/intelmq/issues/267).
 * `system.conf`: System configuration for e.g. the logger and the pipeline.
 * `startup.conf`: Maps the bot ids to python modules.
@@ -176,7 +176,7 @@ Use the IntelMQ Manager mentioned above to generate the configuration files if u
 
 ## Startup Configuration
 
-This configuration is used by intelmqctl tool to launch bots. Usually, the IntelMQ sysadmin don't need to touch in this file because IntelMQ Manager generate this configuration.
+This configuration is used by intelmqctl tool to launch bots. Usually, the IntelMQ sysadmin don't need to touch in this file because IntelMQ Manager generates it.
 
 **Template:**
 ```
@@ -253,15 +253,15 @@ All bots inherits this configuration parameters and they can overwrite them usin
 
 #### Error Handling
 
-* **`error_log_message`** - in case of an error, this option will allows bot to write the message (report or event) in log file. Use the following values:
+* **`error_log_message`** - in case of an error, this option will allows the bot to write the message (report or event) in the log file. Use the following values:
     * **`true/false`** - write or not write message in log file
 
-* **`error_log_exception`** - in case of an error, this option will allows bot to write the error exception in log file. Use the following values:
+* **`error_log_exception`** - in case of an error, this option will allows the bot to write the error exception in the log file. Use the following values:
     * **`true/false`** - write or not write exception in log file
 
-* **`error_procedure`** - in case of an error, this option defines the procedure that bot will adopt. Use the following values:
+* **`error_procedure`** - in case of an error, this option defines the procedure that the bot will adopt. Use the following values:
 
-    * **`stop`** - stop bot after retry X times, defined in `error_max_retries` option with a delay between retries defined at `error_retry_delay` option. If bot reach `error_max_retries` value, bot will remove the message from pipeline and stop. If the option `error_dump_message` is enable, the bot will dump the removed message to the dump log.
+    * **`stop`** - stop bot after retry X times, defined in `error_max_retries` option with a delay between retries defined at `error_retry_delay` option. If bot reach `error_max_retries` value, it will remove the message from pipeline and stop. If the option `error_dump_message` is enable, the bot will dump the removed message to the dump log.
     
     * **`pass`** - will pass to the next message after retry X times, removing from pipeline the current message. If the option `error_dump_message` is enable, the bot will dump the removed message to the dump log.
 
@@ -269,12 +269,12 @@ All bots inherits this configuration parameters and they can overwrite them usin
 
 * **`error_retry_delay`** - in case of an error, this option will allows you to define the number of seconds which bot will wait until next retry. The value must be an `integer value`.
 
-* **`error_dump_message`** - in case of an error, this option will allows bot to write the message (report or event) in the dump file (use intelmqdump to re-insert the message).
+* **`error_dump_message`** - in case of an error, this option will allows the bot to write the message (report or event) in the dump file (use intelmqdump to re-insert the message).
     * **`true/false`** - write or not write message in dump file
 
 #### Miscellaneous
 
-* **`load_balance`** - this option allows to choose the behavior of the queue. Use the following values:
+* **`load_balance`** - this option allows you to choose the behavior of the queue. Use the following values:
     * **`true`** - splits the messages into several queues wihtout duplication
     * **`false`** - duplicates the messages into each queue
 
@@ -284,25 +284,25 @@ All bots inherits this configuration parameters and they can overwrite them usin
 
 * **`rate_limit`** - time interval (in seconds) between messages processing. The value must be an `integer value`.
 
-* **`source_pipeline_host`** - broker IP or FQDN that bot will use to connect and receive messages.
+* **`source_pipeline_host`** - broker IP or FQDN that the bot will use to connect and receive messages.
 
-* **`source_pipeline_port`** - broker port that bot will use to connect and receive messages.
+* **`source_pipeline_port`** - broker port that the bot will use to connect and receive messages.
 
-* **`source_pipeline_db`** - broker database that bot will use to connect and receive messages (requirement from redis broker).
+* **`source_pipeline_db`** - broker database that the bot will use to connect and receive messages (requirement from redis broker).
 
-* **`destination_pipeline_host`** - broker IP or FQDN that bot will use to connect and send messages.
+* **`destination_pipeline_host`** - broker IP or FQDN that the bot will use to connect and send messages.
 
-* **`destination_pipeline_port`** - broker port that bot will use to connect and send messages.
+* **`destination_pipeline_port`** - broker port that the bot will use to connect and send messages.
 
-* **`destination_pipeline_db`** - broker database that bot will use to connect and send messages (requirement from redis broker).
+* **`destination_pipeline_db`** - broker database that the bot will use to connect and send messages (requirement from redis broker).
 
-* **`http_proxy`** - proxy HTTP that bot will use when perform HTTP requests (e.g. bots/collectors/collector_http.py). The value must follow RFC1738.
+* **`http_proxy`** - proxy HTTP the that bot will use when performing HTTP requests (e.g. bots/collectors/collector_http.py). The value must follow RFC1738.
 
-* **`https_proxy`** - proxy HTTPS that bot will use when perform secure HTTPS requests (e.g. bots/collectors/collector_http.py).
+* **`https_proxy`** - proxy HTTPS that the bot will use when performing secure HTTPS requests (e.g. bots/collectors/collector_http.py).
 
-* **`http_user_agent`** - user-agent that bot will use when perform HTTP/HTTPS requests (e.g. bots/collectors/collector_http.py).
+* **`http_user_agent`** - user-agent that the bot will use when performing HTTP/HTTPS requests (e.g. bots/collectors/collector_http.py).
 
-* **`http_verify_cert`** - defines if bot will verify SSL certificates when perform HTTPS requests (e.g. bots/collectors/collector_http.py).
+* **`http_verify_cert`** - defines if the bot will verify SSL certificates when performing HTTPS requests (e.g. bots/collectors/collector_http.py).
     * **`true/false`** - verify or not verify SSL certificates
 
 ## Runtime Configuration
@@ -340,7 +340,7 @@ More examples can be found at `intelmq/conf/runtime.conf` directory in IntelMQ r
 
 ## Harmonization Configuration
 
-This configuration is used to specify the fields for all message types. The harmonization library will load this configuration to check, during the messages processing, the values are compliant to harmonization. Usually, this configuration doesn't need any change.
+This configuration is used to specify the fields for all message types. The harmonization library will load this configuration to check, during the message processing, the values are compliant to harmonization. Usually, this configuration doesn't need any change.
 
 **Template:**
 ```
@@ -388,7 +388,7 @@ More examples can be found at `intelmq/conf/harmonization.conf` directory in Int
 
 ## Management
 
-IntelMQ has a modular structure consisting of bots. There are four types of bots:
+IntelMQ has a modular structure consisting on bots. There are four types of bots:
 
 * *CollectorBots* retrieve data from internal or external sources, the output
 are *reports* consisting of many individual data sets.
