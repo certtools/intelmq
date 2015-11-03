@@ -9,6 +9,7 @@ Implemented workarounds for Python 2.6, postgres 9.1 and old debian packages:
 """
 from __future__ import print_function, unicode_literals
 
+import argparse
 import csv
 import datetime
 import io
@@ -45,6 +46,16 @@ for key, value in user_config.items():
         CONFIG[key].update(value)
     else:
         CONFIG[key] = value
+
+APPNAME = "intelmqcli"
+DESCRIPTION = """
+"""
+EPILOG = """
+Interactive actions after a file has been selected:
+
+"""
+USAGE = '''
+    intelmqcli --list-feeds'''
 
 CON = psycopg2.connect(database=CONFIG['database']['database'],
                        user=CONFIG['database']['user'],
@@ -156,6 +167,7 @@ FROM {texttab}
 WHERE
     key = %s
 """.format(texttab=CONFIG['database']['text_table'])
+QUERY_FEED_NAMES = "SELECT DISTINCT \"feed.name\" from events"
 
 
 def get_text(query):
@@ -435,6 +447,17 @@ def count_by_asn():
     return asn_count
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(
+        prog=APPNAME,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        usage=USAGE,
+        description=DESCRIPTION,
+        epilog=EPILOG,
+    )
+    parser.add_argument('botid', metavar='botid', nargs='?',
+                        default=None, help='botid to inspect dumps of')
+    args = parser.parse_args()
+
     if not RT.login():
         print(red('Could not login as {} on {}.'.format(CONFIG['rt']['user'],
                                                         CONFIG['rt']['uri'])))
