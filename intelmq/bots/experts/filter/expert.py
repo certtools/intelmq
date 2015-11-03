@@ -43,6 +43,7 @@ class FilterExpertBot(Bot):
         return None
 
     def init(self):
+        self.logger.info(repr(datetime.now(tz=pytz.timezone('UTC'))))
         self.not_after = None
         self.not_before = None
 
@@ -95,6 +96,13 @@ class FilterExpertBot(Bot):
                     return
 
                 now = datetime.now(tz=pytz.timezone('UTC'))
+                self.logger.info(repr(now))
+                self.logger.debug(repr(type(self.not_after) is timedelta))
+                self.logger.debug(repr(event_time))
+                self.logger.debug(repr(now))
+                self.logger.debug(repr(self.not_after))
+                self.logger.debug(repr(now - self.not_after))
+                self.logger.debug(repr(event_time > (now - self.not_after)))
                 if type(self.not_after) is timedelta and event_time > (now - self.not_after):
                     self.acknowledge_message()
                     self.logger.debug("Filtered out event with time.source " + repr(event.value('time.source')))
