@@ -1,202 +1,163 @@
-## Table of Contents
 
-1. [Overview](#overview)
-2. [Rules for keys](#rules)
-3. [Sections](#sections)
-4. [Data types](#basicdatatypes)
-5. [List of known fields](#fields)
-6. [Type/Taxonomy Mapping](#mapping)
-7. [Minimum required fields](#requirements)
+Harmonization field names
+=========================
+
+|Section|Name|Type|Description|
+|:------|:---|:---|:----------|
+|Classification|classification.identifier|String|The lowercase identifier defines the actual software or service (e.g. 'heartbleed' or 'ntp_version') or standardized malware name (e.g. 'zeus').|
+|Classification|classification.taxonomy|String|We recognize the need for the CSIRT teams to apply a static (incident) taxonomy to abuse data. With this goal in mind the type IOC will serve as a basis for this activity. Each value of the dynamic type mapping translates to a an element in the static taxonomy. The European CSIRT teams for example have decided to apply the eCSIRT.net incident classification. The value of the taxonomy key is thus a derivative of the dynamic type above. For more information about check [ENISA taxonomies](http://www.enisa.europa.eu/activities/cert/support/incident-management/browsable/incident-handling-process/incident-taxonomy/existing-taxonomies).|
+|Classification|classification.type|ClassificationType|The abuse type IOC is one of the most crucial pieces of information for any given abuse event. The main idea of dynamic typing is to keep our ontology flexible, since we need to evolve with the evolving threatscape of abuse data. In contrast with the static taxonomy below, the dynamic typing is used to perform business decisions in the abuse handling pipeline. Furthermore, the value data set should be kept as minimal as possible to avoid “type explosion”, which in turn dilutes the business value of the dynamic typing. In general, we normally have two types of abuse type IOC: ones referring to a compromized resource or ones referring to pieces of the criminal infrastructure, such as a command and control servers for example.|
+||comment|String|Free text commentary about the abuse event inserted by an analyst.|
+|Destination|destination.abuse_contact|String|Abuse contact for destination address. TODO: list|
+|Destination|destination.account|String|An account name or email address, which has been identified to relate to the destination of an abuse event.|
+|Destination|destination.allocated|DateTime|Allocation date corresponding to bgp prefix.|
+|Destination|destination.as_name|String|The autonomous system name to which the connection headed.|
+|Destination|destination.asn|Integer|The autonomous system number from which originated the connection.|
+|Destination|destination.fqdn|FQDN|A DNS name related to the host to which the connection headed.|
+|Destination Geolocation|destination.geolocation.cc|String|Country-Code accoriding to ISO3166-1 alpha-2 for the destination IP.|
+|Destination Geolocation|destination.geolocation.city|String|Some geolocation services refer to city-level geolocation.|
+|Destination Geolocation|destination.geolocation.country|String|The country name derived from the ISO3166 country code (assigned to cc field). TODO: Specify exact standard and format of entry (regex).|
+|Destination Geolocation|destination.geolocation.latitude|Float|Latitude coordinates derived from a geolocation service, such as MaxMind geoip db.|
+|Destination Geolocation|destination.geolocation.longitude|Float|Longitude coordinates derived from a geolocation service, such as MaxMind geoip db.|
+|Destination Geolocation|destination.geolocation.region|String|Some geolocation services refer to region-level geolocation.|
+|Destination Geolocation|destination.geolocation.state|String|Some geolocation services refer to state-level geolocation.|
+|Destination|destination.ip|IPAddress|The ip observed to initiate the connection.|
+|Destination|destination.local_hostname|String|Some sources report a internal hostname within a NAT related to the name configured for a compromized system|
+|Destination|destination.local_ip|IPAddress|Some sources report a internal (NATed) IP address related a compromized system. N.B. RFC1918 IPs are OK here.|
+|Destination|destination.network|IPNetwork|CIDR for an autonomous system. Also known as BGP prefix.|
+|Destination|destination.port|Integer|The port to which the connection headed.|
+|Destination|destination.registry|String|The IP registry a given ip address is allocated by.|
+|Destination|destination.reverse_dns|FQDN|Reverse DNS name acquired through a reverse DNS query on an IP address. N.B. Record types other than PTR records may also appear in the reverse DNS tree. Furthermore, unfortunately, there is no rule prohibiting people from writing anything in a PTR record. Even Javascript will work.|
+|Destination|destination.tor_node|Boolean|If the destination IP was a known tor node.|
+|Destination|destination.url|URL|A URL denotes on IOC, which refers to a malicious resource, whose interpretation is defined by the abuse type. A URL with the abuse type phishing refers to a phishing resource.|
+|Event_Description|event_description.target|String|Some sources denominate the target (organization) of a an attack.|
+|Event_Description|event_description.text|String|A free-form textual description of an abuse event.|
+|Event_Description|event_description.url|URL|A description URL is a link to a further description of the the abuse event in question.|
+||event_hash|String|Computed event hash with specific keys and values that identify a unique event. At present, the hash should default to using the SHA1 function. Please note that for an event hash to be able to match more than one event (deduplication) the receiver of an event should calculate it based on a minimal set of keys and values present in the event. Using for example the observation time in the calculation will most likely render the checksum useless for deduplication purposes.|
+||extra|String|All anecdotal information, which cannot be parsed into the data harmonization elements. E.g. os.name, os.version, user_agent. TODOs: Must be JSON encoded for machine readability.|
+|Feed|feed.code|String|Code name for the feed, e.g. DFGS, HSDAG etc.|
+|Feed|feed.name|String|Name for the feed, usually found in collector bot configuration.|
+|Feed|feed.url|URL|The URL of a given abuse feed, where applicable|
+|Malware|malware.hash|String|A string depicting a checksum for a file, be it a malware sample for example. Includes hash type according to https://en.wikipedia.org/wiki/Crypt_%28C%29|
+|Malware|malware.name|MalwareName|A malware family name in lower case.|
+|Malware|malware.version|String|A version string for an identified artifact generation, e.g. a crime-ware kit.|
+||misp_uuid|UUID|MISP - Malware Information Sharing Platform & Threat Sharing UUID.|
+|Protocol|protocol.application|String|e.g. vnc, ssh, sip, irc, http or p2p.|
+|Protocol|protocol.transport|String|e.g. tcp, udp, icmp.|
+||raw|Base64|The original line of the event from encoded in base64.|
+||rtir_id|Integer|Request Tracker Incident Response incident id.|
+||screenshot_url|URL|Some source may report URLs related to a an image generated of a resource without any metadata. Or an URL pointing to resource, which has been rendered into a webshot, e.g. a PNG image and the relevant metadata related to its retrieval/generation.|
+|Source|source.abuse_contact|String|Abuse contact for source address. TODO: list?|
+|Source|source.account|String|An account name or email address, which has been identified to relate to the source of an abuse event.|
+|Source|source.allocated|DateTime|Allocation date corresponding to bgp prefix.|
+|Source|source.as_name|String|The autonomous system name from which the connection originated.|
+|Source|source.asn|Integer|The autonomous system number from which originated the connection.|
+|Source|source.fqdn|FQDN|A DNS name related to the host from which the connection originated.|
+|Source Geolocation|source.geolocation.cc|String|Country-Code accoriding to ISO3166-1 alpha-2 for the source IP.|
+|Source Geolocation|source.geolocation.city|String|Some geolocation services refer to city-level geolocation.|
+|Source Geolocation|source.geolocation.country|String|The country name derived from the ISO3166 country code (assigned to cc field). TODO: Specify exact standard and format of entry (regex).|
+|Source Geolocation|source.geolocation.cymru_cc|String|The country code denoted for the ip by the Team Cymru asn to ip mapping service.|
+|Source Geolocation|source.geolocation.geoip_cc|String|MaxMind Country Code (ISO3166-1 alpha-2).|
+|Source Geolocation|source.geolocation.latitude|Float|Latitude coordinates derived from a geolocation service, such as MaxMind geoip db.|
+|Source Geolocation|source.geolocation.longitude|Float|Longitude coordinates derived from a geolocation service, such as MaxMind geoip db.|
+|Source Geolocation|source.geolocation.region|String|Some geolocation services refer to region-level geolocation.|
+|Source Geolocation|source.geolocation.state|String|Some geolocation services refer to state-level geolocation.|
+|Source|source.ip|IPAddress|The ip observed to initiate the connection|
+|Source|source.local_hostname|String|Some sources report a internal hostname within a NAT related to the name configured for a compromized system|
+|Source|source.local_ip|IPAddress|Some sources report a internal (NATed) IP address related a compromized system. N.B. RFC1918 IPs are OK here.|
+|Source|source.network|IPNetwork|CIDR for an autonomous system. Also known as BGP prefix.|
+|Source|source.port|Integer|The port from which the connection originated.|
+|Source|source.registry|String|The IP registry a given ip address is allocated by.|
+|Source|source.reverse_dns|FQDN|Reverse DNS name acquired through a reverse DNS query on an IP address. N.B. Record types other than PTR records may also appear in the reverse DNS tree. Furthermore, unfortunately, there is no rule prohibiting people from writing anything in a PTR record. Even Javascript will work.|
+|Source|source.tor_node|Boolean|If the source IP was a known tor node.|
+|Source|source.url|URL|A URL denotes an IOC, which refers to a malicious resource, whose interpretation is defined by the abuse type. A URL with the abuse type phishing refers to a phishing resource.|
+||status|String|Status of the malicious resource (phishing, dropzone, etc), e.g. online, offline.|
+|Time|time.observation|DateTime|The time a source bot saw the event. This timestamp becomes especially important should you perform your own attribution on a host DNS name for example. The mechanism to denote the attributed elements with reference to the source provided is detailed below in Reported Identity IOC.(ISO8660).|
+|Time|time.source|DateTime|Time reported by a source. Some sources only report a date, which may be used here if there is no better observation.|
 
 
-<a name="overview"></a>
+Harmonization types
+-------------------
 
-## Overview
 
-All messages (reports and events) are Python/JSON dictionaries. The key names and according types are defined by the so called *harmonization*.
+### Accuracy
 
-The purpose of this document is to list and clearly define known **fields** in Abusehelper as well as Intelmq or similar systems. A field is a ```key=value``` pair. For a clear and unique definition of a field, we must define the **key** (field-name) as well as the possible **values**. A field belongs to an **event**. An event is basically a  structured log record in the form ```key=value, key=value, key=value, …```. In the [List of known fields](#fields), each field is grouped by a **section**. We describe these sections briefly below.
-Every event **MUST** contain a timestamp field.
+Accuracy type. A Float between 0 and 100.
 
-[IOC](https://en.wikipedia.org/wiki/Indicator_of_compromise) (Indicator of compromise) is a single observation like a log line.
 
-<a name="rules"></a>
 
-## Rules for keys
+### Base64
 
-The keys can be grouped together in sub-fields, e.g. `source.ip` or `source.geolocation.latitude`. Thus, keys must match `[a-z_.]`.
+Base64 type. Always gives unicode strings.
 
+Sanitation encodes to base64 and accepts binary and unicode strings.
 
-<a name="sections"></a>
-## Sections
 
-As stated above, every field is organised under some section. The following is a description of the sections and what they imply.
 
-### Feed
+### Boolean
 
-Fields listed under this grouping list details about the source feed where information came from.
+Boolean type. Without sanitation only python bool is accepted.
 
-### Time
+Sanitation accepts string 'true' and 'false' and integers 0 and 1.
 
-The time section lists all fields related to time information.
-This document requires that all the timestamps MUST be normalized to UTC. If the source reports only a date, do not attempt to invent timestamps.
 
-### Source Identity
 
-This section lists all fields related to identification of the source. **XXX FIXME: not clear!! XXX**
-The abuse type of an event defines the way these events needs to be interpreted. For example, for a botnet drone they refer to the compromised machine, whereas for a command and control server they refer the server itself.
+### ClassificationType
 
-#### Source Geolocation Identity
 
-We recognize that ip geolocation is not an exact science and analysis of the abuse data has shown that different sources attribution sources have different opinions of the geolocation of an ip. This is why we recommend to enrich the data with as many sources as you have available and make the decision which value to use for the cc IOC based on those answers.
 
-#### Source Local Identity
+### DateTime
 
-Some sources report an internal (NATed) IP address.
 
-### Destination Identity
 
-The abuse type of an event defines the way these IOCs needs to be interpreted. For a botnet drone they refer to the compromised machine, whereas for a command and control server they refer the server itself.
+### FQDN
 
-#### Destination Geolocation Identity
+Fully qualified domain name type.
 
-We recognize that ip geolocation is not an exact science and analysis of the abuse data has shown that different sources attribution sources have different opinions of the geolocation of an ip. This is why we recommend to enrich the data with as many sources as you have available and make the decision which value to use for the cc IOC based on those answers.
+All valid domains are accepted, no IP addresses or URLs. Trailing dot is
+not allowed.
 
-#### Destination Local Identity
 
-Some sources report an internal (NATed) IP address.
 
-### Reported Identity
+### Float
 
-Not used currently.
+Float type. Without sanitation only python float/integer/long is
+accepted. Boolean is excplicitly denied.
 
-#### Reported Source Identity
+Sanitation accepts strings and everything float() accepts.
 
-As stated above, each abuse handling organization should define a policy, which IOC to use as the primary element describing an abuse event. Often the sources have done their attribution, but you may choose to correlate their attributive elements with your own. In practice this means that your sanitation should prefix the elements with the '''reported''' keyword, to denote that you've decided the attribute these yourself. The list below is not comprehensive, rather than a list of common things you may want to attribute yourself. Moreover, if you choose to perform your own attribution, the observation time will become your authoritative point of reference related to these IOC.
 
-#### Reported Destination Identity
 
-As stated above, each abuse handling organization should define a policy, which IOC to use as the primary elements describing an abuse event. Often the sources have done their attribution, but you may choose to correlate their attributive elements with your own. In practice this means that your sanitation should prefix the elements with the '''reported''' keyword, to denote that you've decided the attribute these yourself. The list below is not comprehensive, rather than a list of common things you may want to attribute yourself. Moreover, if you choose to perform your own attribution, the observation time will become your authoritative point of reference related to these IOC.
+### IPAddress
 
 
-#### Additional Fields
 
-TODO: description
+### IPNetwork
 
-#### Malware Elements
 
-TODO: description
 
-#### Artifact Elements
+### Integer
 
-TODO: description
+Integer type. Without sanitation only python integer/long is accepted.
+Bool is excplicitly denied.
 
+Sanitation accepts strings and everything int() accepts.
 
-#### Specific Elements
 
-The elements listed below are additional keys used to describe abusive behavior, which are topic specific. They may refer to the source of information, such as notified by, an augmentation source such a cymru cc or internal integration source, such as|rtir id||. The reason why they are separated from the the other IOCs is that they are not generic, rather than topic or provider specific. Their communicative function is defined as an optional way to understand what other abuse handling pipelines are most likely to call these elements.
 
-#### Classification
+### MalwareName
 
-Having a functional ontology to work with, especially for the abuse types is important for you to be able to classify, prioritize and report relevant actionable intelligence to the parties who need to be informed. The driving idea for this ontology has been to use a minimal set of values with maximal usability. See the classification section below for explanations and examples.
-
-<a name="datatypes"></a>
-## Data types
-
-This section lists common data / field type definitions. The section [Fields List](#fields) references this table.
-Hence, this section also gives an overview of which basic data types need to be parseable and implemented by any system using this data harmonisation format.
-Note that this section does not yet define error handling and failure mechanisms should a field not be parseable.
-
-
-|Name                                | SQL Data type     | Regexp and Syntax       | Cybox Equivalent |  Comment                           |
-|:-----------------------------------|:------------------|:------------------------|:-----------------|:-----------------------------------|
-|<a name="#datatype-feed"></a>feed   |varchar(2000)      |  ```[a-zA-Z0-9_.-]+```  |                  | no characters allowed which could be interpreted as CSV separators |
-|<a name="#datatype-url"></a>url     |varchar(2000)      | a valid URL (see [RFC3987](http://tools.ietf.org/html/rfc3987) or similar). | [URI](http://cybox.mitre.org/language/version2.1/xsddocs/objects/URI_Object.html)  | TODO: It is recommended to use libaries such as [faup](https://github.com/stricaud/faup) for validation. |
-
-
-<a name="fields"></a>
-## Fields List
-
-A list of allowed fields can be found in [Harmonization-fields.md](Harmonization-fields.md)
-
-<a name="mapping"></a>
-## Classification
-
-Intelmq classifies events using three labels: taxonomy, type and identifier. This tuple of three values can be used for deduplication of events and describes what happened.
-TODO: examples from chat
-
-The taxonomy can be automatically added by the taxonomy expert bot based on the given type. The following taxonomy-type mapping is based on eCSIRT Taxonomy:
-
-|Type|Taxonomy|Description|
-|----|--------|-----------|
-|spam|Abusive Content|This IOC refers to resources, which make up a SPAM infrastructure, be it a harvester, dictionary attacker, URL etc.|
-|malware|Malicious Code|A URL is the most common resource with reference to malware binary distribution.|
-|botnet drone|Malicious Code|This is a compromized machine, which has been observed to make a connection to a command and control server.|
-|ransomware|Malicious Code|This IOC refers to a specific type of compromized machine, where the computer has been hijacked for ransom by the criminals.|
-|malware configuration|Malicious Code|This is a resource which updates botnet drones with a new configuration.|
-|c&c|Malicious Code|This is a command and control server in charge of a given number of botnet drones.|
-|scanner|Information Gathering|This IOC refers to port scanning activity specifically.|
-|exploit|Intrusion Attempts|An exploit is often executed through a malicious URL.|
-|brute-force|Intrusion Attempts|This IOC refers to a resource, which has been observed to perform brute-force attacks over a given application protocol. Please see the IOC protocol below.|
-|ids alert|Intrusion Attempts|IOCs based on a sensor network. This is a generic IOC denomination, should it be difficult to reliably denote the exact type of activity involved for example due to an anecdotal nature of the rule that triggered the alert.|
-|defacement|Intrusions|This IOC refers to hacktivism related activity.|
-|compromised|Intrusions|This IOC refers to compromised system.|
-|backdoor|Intrusions|This refers to hosts, which have been compromized and backdoored with a remote administration software or trojan in the traditional sense.|
-|ddos|Availability|This IOC refers to various parts of the DDOS infrastructure.|
-|dropzone|Information Content Security|This IOC refers to place where the compromized machines store the stolen user data.|
-|phishing|Fraud|This IOC most often refers to a URL, which is phishing for user credentials.|
-|vulnerable service|Vulnerable|This attribute refers to a badly configured or vulnerable network service, which may be abused by a third party. For example, these services relate to open proxies, open dns resolvers, network time servers (ntp) or character generation services (chargen), simple network management services (snmp). In addition, to specify the network service and its potential abuse, one should use the protocol, destination port and description attributes for that purpose respectively.|
-|blacklist|Other|Some sources provide blacklists, which clearly refer to abusive behavior, such as spamming, but fail to denote the exact reason why a given identity has been blacklisted. The reason may be that the justification is anecdotal or missing entirely. This type should only be used if the typing fits the definition of a blacklist, but an event specific denomination is not possible for one reason or another.|
-|unknown|Other|unknown events|
-|test|Test|This is a value for testing purposes.|
-
-Meaning of source, destination and local values for each classification type and possible identifiers. The identifier is often a normalized malware name, grouping many variants.
-
-|Type|Source|Destination|Local|Possible identifiers|
-|----|------|-----------|-----|--------------------|
-|spam|*infected device*|targeted server|internal at source||
-|malware|*infected device*||internal at source|zeus, palevo, feodo|
-|botnet drone|*infected device*||||
-|ransomware|*infected device*||||
-|malware configuration|*infected device*||||
-|c&c|*(sinkholed) c&c server*|||zeus, palevo, feodo|
-|scanner|*scanning device*|scanned device|||
-|exploit|*hosting server*||||
-|brute-force|*attacker*|target|||
-|ids alert|*triggering device*||||
-|defacement|*defaced website*||||
-|compromised|*server*||||
-|backdoor|*backdoored device*||||
-|ddos|*attacker*|target|||
-|dropzone|*server hosting stolen data*||||
-|phishing|*phishing website*||||
-|vulnerable service|*vulnerable device*||| heartbleed, openresolver, snmp |
-|blacklist|*blacklisted device*||||
-|unknown||||||
-
-Field in italics is the interesting one for CERTs.
-
-Example:
-
-If you know of an IP address that connects to a zeus c&c server, it's about the infected device, thus type malware and identifier zeus. If you want to complain about the c&c server, it's type c&c and identifier zeus. The `malware.name` can have the full name, eg. 'zeus_p2p'.
-
-<a name="requirements"></a>
-## Minimum requirements for events
-
-Below, we have enumerated the minimum requirements for an actionable abuse event. These keys need to be present for the abuse report to make sense for the end recipient. Please note that if you choose to anonymize your sources, you can substitute **feed** with **feed code** and that only one of the identity keys **ip**, **domain name**, **url**, **email address** must be present. All the rest of the keys enumerated above are **optional**.
-
-|Category|Key|Terminology|
-|--------|---|-----------|
-|Feed|feed|Must|
-|Classification|type|Must|
-|Classification|taxonomy|Must|
-|Time|source time|Must|
-|Time|observation time|Must|
-|Identity|source.ip|Must*|
-|Identity|source.fqdn|Must*|
-|Identity|source.url|Must*|
-|Identity|source.account|Must*|
-
-
-
-**NOTE:** This document was copied from [AbuseHelper repository](https://bitbucket.org/clarifiednetworks/abusehelper/wiki/Data Harmonization Ontology) and improved.
+
+
+### String
+
+
+
+### URL
+
+
+
+### UUID
+
+
+
