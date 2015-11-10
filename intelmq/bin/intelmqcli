@@ -183,6 +183,8 @@ def get_text(query):
         CUR.execute(QUERY_GET_TEXT, (CONFIG['database']['default_key'], ))
         if CUR.rowcount:
             text = CUR.fetchall()[0]['body']
+        else:
+            return red('Default text not found!')
 
     return text
 
@@ -320,6 +322,9 @@ Subject: {subj}
         return
 
     # TODO: Config option for single events (best in ascontacts db)
+    if text.startswith(str(red)):
+        print(red('I won\'t send with a missing text!'))
+        return
     if True:
         save_to_rt(ids=ids, subject=subject, requestor=requestor,
                    csvfile=csvfile, body=text)
