@@ -34,7 +34,7 @@ class DragonResearchGroupSSHParserBot(Bot):
                 value = value.strip()
 
                 if key == "time.source":
-                    value += "T00:00:00+00:00"
+                    value += "+00:00"
 
                 if value == "NA":
                     continue
