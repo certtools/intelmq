@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import json
 import unittest
 
 import intelmq.lib.bot as bot
@@ -61,7 +60,7 @@ class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
     @classmethod
     def set_bot(cls):
         cls.bot_reference = DummyParserBot
-        cls.default_input_message = json.dumps(EXAMPLE_REPORT)
+        cls.default_input_message = EXAMPLE_REPORT
 
     def test_log_test_line(self):
         """ Test if bot does log example message. """
