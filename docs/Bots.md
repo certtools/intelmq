@@ -511,7 +511,7 @@ pip2 install psycopg2>=2.5.5
 * Create the `events` table:
 
 ```bash
-> psql < /tmp/initdb.sql # as intelmq user
+> psql intelmq-events < /tmp/initdb.sql # as intelmq user
 > psql -U intelmq intelmq-events -W < /tmp/initdb.sql # as other user
 ```
 

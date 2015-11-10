@@ -14,12 +14,19 @@ from intelmq.lib import utils
 from intelmq.lib.bot import Bot
 from intelmq.lib.message import Event
 
+SOURCE_FEEDS = {'https://feodotracker.abuse.ch/blocklist/?download=domainblocklist': 'Cridex',
+                'https://palevotracker.abuse.ch/blocklists.php?download=domainblocklist': 'Palevo',
+                'https://zeustracker.abuse.ch/blocklist.php?download=baddomains': 'Zeus'}
+
 
 class AbusechDomainParserBot(Bot):
 
     def process(self):
         report = self.receive_message()
 
+        if not report:
+            self.acknowledge_message()
+            return
         if not report.contains("raw"):
             self.acknowledge_message()
 
@@ -37,6 +44,7 @@ class AbusechDomainParserBot(Bot):
             event.add('classification.type', u'c&c')
             event.add('source.fqdn', row, sanitize=True)
             event.add("raw", row, sanitize=True)
+            event.add("malware.name", SOURCE_FEEDS[report.value("feed.url")], sanitize=True)
 
             self.send_message(event)
         self.acknowledge_message()

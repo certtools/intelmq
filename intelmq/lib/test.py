@@ -30,7 +30,7 @@ BOT_CONFIG = {
     "retry_delay": 0,
     "error_retry_delay": 0,
     "error_max_retries": 0,
-    "exit_on_stop": False,
+    "testing": True,
     "redis_cache_host": "localhost",
     "redis_cache_port": 6379,
     "redis_cache_db": 10,
