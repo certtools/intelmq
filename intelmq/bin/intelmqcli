@@ -82,10 +82,12 @@ SELECT
 FROM {evtab}
 LEFT OUTER JOIN as_contacts ON {evtab}."source.asn" = {conttab}.asnum
 WHERE
-    notify = TRUE AND
-    {evtab}.rtir_report_id IS NULL AND
-    {evtab}.rtir_incident_id IS NULL AND
-    {evtab}.rtir_investigation_id IS NULL AND
+    notify = TRUE AND (
+        {evtab}.rtir_report_id IS NULL OR
+        {evtab}.rtir_incident_id IS NULL OR
+        {evtab}.rtir_investigation_id IS NULL
+    )
+    AND
     (
         {evtab}."source.geolocation.cc" LIKE '{cc}' OR
         {evtab}."source.fqdn" LIKE '{fqdn}'
@@ -110,10 +112,11 @@ SELECT
 FROM events
 LEFT OUTER JOIN {conttab} ON {evtab}."source.asn" = {conttab}.asnum
 WHERE
-    notify = TRUE AND
-    {evtab}.rtir_report_id IS NULL AND
-    {evtab}.rtir_incident_id IS NULL AND
-    {evtab}.rtir_investigation_id IS NULL AND
+    notify = TRUE AND (
+        {evtab}.rtir_report_id IS NULL OR
+        {evtab}.rtir_incident_id IS NULL OR
+        {evtab}.rtir_investigation_id IS NULL
+    ) AND
     {conttab}.contacts = '{{}}';
 """.format(evtab=CONFIG['database']['events_table'],
            conttab=CONFIG['database']['contacts_table'])
@@ -133,10 +136,11 @@ SELECT
 FROM events
 LEFT OUTER JOIN {conttab} ON {evtab}."source.asn" = {conttab}.asnum
 WHERE
-    notify = TRUE AND
-    {evtab}.rtir_report_id IS NULL AND
-    {evtab}.rtir_incident_id IS NULL AND
-    {evtab}.rtir_investigation_id IS NULL AND
+    notify = TRUE AND (
+        {evtab}.rtir_report_id IS NULL OR
+        {evtab}.rtir_incident_id IS NULL OR
+        {evtab}.rtir_investigation_id IS NULL
+    ) AND
     {evtab}."source.asn" = {{}};
 """.format(evtab=CONFIG['database']['events_table'],
            conttab=CONFIG['database']['contacts_table'])
