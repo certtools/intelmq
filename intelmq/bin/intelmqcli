@@ -76,7 +76,7 @@ SELECT
     COALESCE({conttab}.contacts, '') as contacts,
     string_agg(DISTINCT cast({evtab}."source.asn" as varchar), ', ') as asn,
     string_agg(DISTINCT {evtab}."classification.type", ', ') as classification,
-    string_agg(DISTINCT {evtab}."feed.name", ', ') as feeds,
+    string_agg(DISTINCT {evtab}."feed.code", ', ') as feeds,
     COALESCE({conttab}.contacts, cast({evtab}."source.asn" as varchar))
         as grouping
 FROM {evtab}
@@ -106,7 +106,7 @@ SELECT
     {evtab}."source.fqdn",
     {evtab}."source.asn",
     {evtab}."source.url",
-    {evtab}."feed.name",
+    {evtab}."feed.code" as feed,
     {evtab}."classification.identifier",
     {evtab}."classification.type"
 FROM events
@@ -130,7 +130,7 @@ SELECT
     {evtab}."source.fqdn",
     {evtab}."source.asn",
     {evtab}."source.url",
-    {evtab}."feed.name",
+    {evtab}."feed.code" as feed,
     {evtab}."classification.identifier",
     {evtab}."classification.type"
 FROM events
