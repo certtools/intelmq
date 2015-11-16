@@ -18,9 +18,7 @@ class StompListener(stomp.listener.PrintingListener):
         self.n6stomper = n6stompcollector
 
     def on_heartbeat_timeout(self):
-        # XXX FIXME: use logger instead of print
-        # XXX FIXME: need to reconnect after timeout
-        print "lost connection!"
+        self.n6stomper.logger.warn("lost connection!")
 
     def on_error(self, headers, message):
         # XXX FIXME: use logger instead of print
