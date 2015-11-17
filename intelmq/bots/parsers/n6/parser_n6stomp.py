@@ -78,9 +78,9 @@ class N6StompParserBot(Bot):
             return
 
         peek = utils.base64_decode(report.value("raw"))
-        self.logger.debug("Peeking at event '%s'" % peek)
+        self.logger.debug("Peeking at event '%s'." % peek)
         if "TEST MESSAGE" in peek:
-            self.logger.debug("Ignoring test message/event")
+            self.logger.debug("Ignoring test message/event.")
             self.acknowledge_message()
             return
 
