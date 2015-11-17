@@ -108,12 +108,12 @@ class N6StompParserBot(Bot):
             # XXX FIXME: we need some discussion here if this should be a list,
             # JSON dict etc.? Maybe use append() ?
             event.add("extra", event.value("extra") + ', { "feed_id": "' + dict_report["id"] + '" }',
-                      sanitize=True)
+                      sanitize=True, force=True)
         if ("adip" in dict_report):
             event.add("extra", event.value("extra") + ', { "adip": ' + dict_report["adip"] +'" }',
-                      sanitize=True)
+                      sanitize=True, force=True)
         if ("proto" in dict_report):
-            event.add("source.transport", dict_report["transport"],
+            event.add("source.transport", dict_report["proto"],
                       sanitize=True)
         if ("source" in dict_report):
             event.add("feed.name", 'n6.' + dict_report["source"],
