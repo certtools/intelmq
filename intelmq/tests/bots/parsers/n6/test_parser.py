@@ -45,8 +45,6 @@ class TestN6StompParserBot(test.BotTestCase, unittest.TestCase):
     def test_event(self):
         """ Test if correct Event has been produced. """
         self.run_bot()
-        print self.get_output_queue()
-        print self.get_output_queue()[0]
         self.assertMessageEqual(0, EXAMPLE_EVENT)
 
 
