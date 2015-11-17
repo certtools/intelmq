@@ -41,15 +41,14 @@ class TestDeduplicatorExpertBot(test.BotTestCase, unittest.TestCase):
         msg_hash = hash(msg)
         self.redis.set(msg_hash, 'hash')
         self.redis.expire(msg_hash, 3600)
-        self.input_message = msg
+        self.input_message = INPUT1
         self.run_bot()
         self.assertOutputQueueLen()
 
     def test_pass(self):
-        msg = message.MessageFactory.from_dict(INPUT2)
-        self.input_message = msg
+        self.input_message = INPUT2
         self.run_bot()
-        self.assertMessageEqual(0, msg)
+        self.assertMessageEqual(0, INPUT2)
 
     @classmethod
     def tearDownClass(cls):

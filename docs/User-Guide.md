@@ -88,7 +88,7 @@ systemctl start redis
 
 ```bash
 apt-get install python
-apt-get install git build-essential libcurl4-gnutls-dev libffi-dev
+apt-get install git build-essential libcurl4-gnutls-dev libffi-dev libgnutls28-dev
 apt-get install python-dev python-pip python-zmq python-pycurl python-openssl python-pyasn1
 apt-get install redis-server
 ```
