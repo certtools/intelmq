@@ -328,8 +328,8 @@ Subject: {subj}
     else:
         if automatic:
             print(red('You need to set a valid requestor!'))
-        answer = input('{i}{b}b{i}ack, {b}s{i}end, show {b}t{i}able, change '
-                       '{b}r{i}equestor or {b}q{i}uit?{r} '
+        answer = input('{i}{b}[b]{i}ack, {b}[s]{i}end, show {b}[t]{i}able, '
+                       'change {b}[r]{i}equestor or {b}[q]{i}uit?{r} '
                        ''.format(b=bold, i=myinverted, r=reset)).strip()
     if answer == 'q':
         exit(0)
@@ -513,8 +513,8 @@ if __name__ == '__main__':
     try:
         while True:
             asn_count = count_by_asn(feed=args.feed)
-            answer = input('{i}detailed view by id, {b}a{i}utomatic '
-                           'sending, {b}q{i}uit?{r} '
+            answer = input('{i}detailed view by id, {b}[a]{i}utomatic '
+                           'sending, {b}[q]{i}uit?{r} '
                            ''.format(b=bold, i=myinverted, r=reset)).strip()
             try:
                 answer = int(answer)
