@@ -90,10 +90,10 @@ def log_botnet_message(status):
 def log_log_messages(messages):
     if RETURN_TYPE == 'text':
         for message in messages:
-            logger.info(' - '.join([message['date'], message['bot_id'],
-                                    message['log_level'], message['message']]))
+            print(' - '.join([message['date'], message['bot_id'],
+                              message['log_level'], message['message']]))
             try:
-                logger.info(message['extended_message'])
+                print(message['extended_message'])
             except KeyError:
                 pass
 

@@ -1,3 +1,4 @@
+
 Harmonization field names
 =========================
 
@@ -83,6 +84,12 @@ Harmonization types
 -------------------
 
 
+### Accuracy
+
+Accuracy type. A Float between 0 and 100.
+
+
+
 ### Base64
 
 Base64 type. Always gives unicode strings.
@@ -154,3 +161,6 @@ Sanitation accepts strings and everything int() accepts.
 
 
 ### UUID
+
+
+

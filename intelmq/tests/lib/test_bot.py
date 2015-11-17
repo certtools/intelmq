@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-
+Tests the Bot class itself.
 """
 from __future__ import unicode_literals
 

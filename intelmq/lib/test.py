@@ -1,7 +1,6 @@
-
 # -*- coding: utf-8 -*-
 """
-Utilities for testing intelmq.
+Utilities for testing intelmq bots.
 
 TheBotTestCase can be used as base class for unittests on bots. It includes
 some basic generic tests (logged errors, correct pipeline setup).

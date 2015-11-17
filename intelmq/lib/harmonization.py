@@ -38,8 +38,8 @@ except ImportError:
 
 
 __all__ = ['Base64', 'Boolean', 'ClassificationType', 'DateTime', 'FQDN',
-           'Float', 'GenericType', 'IPAddress', 'IPNetwork', 'Integer',
-           'MalwareName', 'String', 'URL', 'UUID',
+           'Float', 'Accuracy', 'GenericType', 'IPAddress', 'IPNetwork', 
+           'Integer', 'MalwareName', 'String', 'URL', 'UUID',
            ]
 
 
@@ -261,6 +261,39 @@ class Float(GenericType):
     def sanitize(value):
         try:
             return float(value)
+        except (ValueError, TypeError):
+            return None
+
+
+class Accuracy(GenericType):
+    """
+    Accuracy type. A Float between 0 and 100.
+    """
+
+    @staticmethod
+    def is_valid(value, sanitize=False):
+        if sanitize:
+            value = Accuracy.sanitize(value)
+            if value is not None and value >= 0 and value <= 100:
+                return True
+
+        # Bool is subclass of int
+        if isinstance(value, bool):
+            return True
+        if isinstance(value, (int, float)) and value >= 0 and value <= 100:
+            return True
+
+        return False
+
+    @staticmethod
+    def sanitize(value):
+        try:
+            if isinstance(value, bool):
+                return float(value) * 100
+
+            value = float(value)
+            if value >= 0 or value <= 100:
+                return value
         except (ValueError, TypeError):
             return None
 

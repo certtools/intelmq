@@ -222,6 +222,8 @@ class Event(Message):
                 template['feed.name'] = message['feed.name']
             if 'feed.url' in message:
                 template['feed.url'] = message['feed.url']
+            if 'feed.accuracy' in message:
+                template['feed.accuracy'] = message['feed.accuracy']
             if 'time.observation' in message:
                 template['time.observation'] = message['time.observation']
         else:
