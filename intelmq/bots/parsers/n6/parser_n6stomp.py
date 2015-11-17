@@ -115,9 +115,6 @@ class N6StompParserBot(Bot):
         if ("proto" in dict_report):
             event.add("protocol.transport", dict_report["proto"],
                       sanitize=True)
-        if ("source" in dict_report):
-            event.add("feed.name", 'n6.' + dict_report["source"],
-                      sanitize=True)
         if ("sport" in dict_report):
             event.add("source.port", dict_report["sport"], sanitize=True)
         if ("url" in dict_report):
