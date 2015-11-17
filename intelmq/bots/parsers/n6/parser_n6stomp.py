@@ -113,7 +113,7 @@ class N6StompParserBot(Bot):
             event.add("extra", event.value("extra") + ', { "adip": ' + dict_report["adip"] +'" }',
                       sanitize=True, force=True)
         if ("proto" in dict_report):
-            event.add("source.transport", dict_report["proto"],
+            event.add("protocol.transport", dict_report["proto"],
                       sanitize=True)
         if ("source" in dict_report):
             event.add("feed.name", 'n6.' + dict_report["source"],
