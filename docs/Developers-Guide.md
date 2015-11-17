@@ -46,6 +46,10 @@ There is a [Travis-CI](https://travis-ci.org/certtools/intelmq/builds) setup for
 In general, we follow the [Style Guide for Python Code (PEP8)](https://www.python.org/dev/peps/pep-0008/).
 We recommend reading it before committing code.
 
+There are some exceptions: sometimes it does not make sense to check for every PEP8 error (such as whitespace indentation when you want to make a dict=() assignment
+look pretty. Therefore, we do not check for the error messages given in the .pep8 file.
+
+
 ### Unicode
 
 * Each internal object in IntelMQ (Event, Report, etc) that has strings, their strings MUST be in UTF-8 Unicode format.
