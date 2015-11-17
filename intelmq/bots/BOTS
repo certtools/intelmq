@@ -371,6 +371,20 @@
                 "http_url": "https://lists.malwarepatrol.net/cgi/getfile?receipt=< API KEY >&product=8&list=dansguardian"
             }
         },
+        "N6stomp": {
+            "description": "N6 Collector - CERT.pl's N6 Collector - N6 feed via STOMP interface",
+            "module": "intelmq.bots.collectors.n6.collector_stomp",
+            "parameters": {
+                "feed": "n6stomp",
+                "server": "n6stream.cert.pl",
+                "port": 61614,
+                "exchange": "<INSERT your exchange point as given by CERT.pl>",
+                "rate_limit": 10800,
+                "ssl_ca_certificate": "<insert path to CA file for CERT.pl's n6>",
+                "ssl_client_certificate": "<insert path to client cert file for CERT.pl's n6>",
+                "ssl_client_certificate_key": "<insert path to client cert key file for CERT.pl's n6>"
+            }
+        },
         "OpenBL": {
             "description": "OpenBL Collector is the bot responsible to get the report from source of information.",
             "module": "intelmq.bots.collectors.http.collector_http",
@@ -843,6 +857,11 @@
         "MalwarePatrol Dans Guardian": {
             "description": "MalwarePatrol Dans Guardian Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.malwarepatrol.parser_dansguardian",
+            "parameters": {}
+        },
+        "N6Stomp": {
+            "description": "N6 Collector - CERT.pl's N6 Parser - N6 feed via STOMP interface",
+            "module": "intelmq.bots.parsers.n6.parser_n6stomp",
             "parameters": {}
         },
         "OpenBL": {
