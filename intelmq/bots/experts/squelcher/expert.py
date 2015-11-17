@@ -57,6 +57,11 @@ class SquelcherExpertBot(Bot):
             self.acknowledge_message()
             return
 
+        if 'source.ip' not in event and 'source.fqdn' in event:
+            event.add('notify', True, force=True)
+            self.modify_end(event)
+            return
+
         ttl = None
         for ruleset in self.config:
             condition = ruleset[0].copy()

@@ -6,9 +6,12 @@ Implemented workarounds for Python 2.6, postgres 9.1 and old debian packages:
     postgres to_char(time.source, 'TZ') instead of 'OF' (from 9.4 up)
         This gives the timezone instead of the offset (empty if UTC)
     BytesIO instead of StringIO on Python 2 for csv module
+
+TODO: "feed.name" ILIKE '%' is slow
 """
 from __future__ import print_function, unicode_literals
 
+import argparse
 import csv
 import datetime
 import io
@@ -46,6 +49,40 @@ for key, value in user_config.items():
     else:
         CONFIG[key] = value
 
+APPNAME = "intelmqcli"
+DESCRIPTION = """
+"""
+EPILOG = """
+Searches for all unprocessed incidents. Incidents will be filtered by country
+code and the TLD of a domain according to configuration.
+The search can be restricted to one source feed.
+
+After the start, intelmqcli will immediately connect to RT with the given
+credentials. The incidents will be shown grouped by the contact address if
+known or the ASN otherwise.
+You have 3 options here:
+* Select one group by giving the id (number in first column) and show the email
+and all events in detail
+* Automatic sending of all incidents with 'a'
+* Quit with 'q'
+
+For the detailed view, the recipient, the subject and the mail text will be
+shown, and below the technical data as csv. If the terminal is not big enough,
+the data will not be shown in full. In this case, you can press 't' for the
+table mode. less will be opened with the full text and data, whereas the data
+will be formated as table, which is much easier to read and interpret.
+The requestor (recipient of the mail) can be changed manually by pressing 'r'
+and in the following prompt the address is asked. After sending, you can
+optionally save the (new) address to the database linked to the ASNs.
+If you are ready to submit the incidents to RT and send the mails out, press
+'s'.
+'b' for back jumps to the incident overview and 'q' quits.
+"""
+USAGE = '''
+    intelmqcli
+    intelmqcli --list-feeds
+    intelmqcli --feed='feedname' '''
+
 CON = psycopg2.connect(database=CONFIG['database']['database'],
                        user=CONFIG['database']['user'],
                        password=CONFIG['database']['password'],
@@ -65,23 +102,25 @@ SELECT
     COALESCE({conttab}.contacts, '') as contacts,
     string_agg(DISTINCT cast({evtab}."source.asn" as varchar), ', ') as asn,
     string_agg(DISTINCT {evtab}."classification.type", ', ') as classification,
-    string_agg(DISTINCT {evtab}."feed.name", ', ') as feeds,
+    string_agg(DISTINCT {evtab}."feed.code", ', ') as feeds,
     COALESCE({conttab}.contacts, cast({evtab}."source.asn" as varchar))
         as grouping
 FROM {evtab}
 LEFT OUTER JOIN as_contacts ON {evtab}."source.asn" = {conttab}.asnum
 WHERE
-    notify = TRUE AND
-    {evtab}.rtir_report_id IS NULL AND
-    {evtab}.rtir_incident_id IS NULL AND
-    {evtab}.rtir_investigation_id IS NULL AND
+    notify = TRUE AND (
+        {evtab}.rtir_report_id IS NULL OR
+        {evtab}.rtir_incident_id IS NULL OR
+        {evtab}.rtir_investigation_id IS NULL
+    )
+    AND
     (
         {evtab}."source.geolocation.cc" LIKE '{cc}' OR
-        {evtab}."source.fqdn" LIKE '{fqdn}'
+        {evtab}."source.fqdn" LIKE %s
     )
+    AND "feed.name" ILIKE %s
 GROUP BY {conttab}.contacts, grouping;
 """.format(evtab=CONFIG['database']['events_table'], cc=CONFIG['filter']['cc'],
-           fqdn=CONFIG['filter']['fqdn'],
            conttab=CONFIG['database']['contacts_table'])
 QUERY_BY_ASCONTACT = """
 SELECT
@@ -93,17 +132,19 @@ SELECT
     {evtab}."source.fqdn",
     {evtab}."source.asn",
     {evtab}."source.url",
-    {evtab}."feed.name",
+    {evtab}."feed.code" as feed,
     {evtab}."classification.identifier",
     {evtab}."classification.type"
 FROM events
 LEFT OUTER JOIN {conttab} ON {evtab}."source.asn" = {conttab}.asnum
 WHERE
-    notify = TRUE AND
-    {evtab}.rtir_report_id IS NULL AND
-    {evtab}.rtir_incident_id IS NULL AND
-    {evtab}.rtir_investigation_id IS NULL AND
-    {conttab}.contacts = '{{}}';
+    notify = TRUE AND (
+        {evtab}.rtir_report_id IS NULL OR
+        {evtab}.rtir_incident_id IS NULL OR
+        {evtab}.rtir_investigation_id IS NULL
+    ) AND
+    {conttab}.contacts = %s AND
+    "feed.name" ILIKE %s;
 """.format(evtab=CONFIG['database']['events_table'],
            conttab=CONFIG['database']['contacts_table'])
 QUERY_BY_ASNUM = """
@@ -116,17 +157,19 @@ SELECT
     {evtab}."source.fqdn",
     {evtab}."source.asn",
     {evtab}."source.url",
-    {evtab}."feed.name",
+    {evtab}."feed.code" as feed,
     {evtab}."classification.identifier",
     {evtab}."classification.type"
 FROM events
 LEFT OUTER JOIN {conttab} ON {evtab}."source.asn" = {conttab}.asnum
 WHERE
-    notify = TRUE AND
-    {evtab}.rtir_report_id IS NULL AND
-    {evtab}.rtir_incident_id IS NULL AND
-    {evtab}.rtir_investigation_id IS NULL AND
-    {evtab}."source.asn" = {{}};
+    notify = TRUE AND (
+        {evtab}.rtir_report_id IS NULL OR
+        {evtab}.rtir_incident_id IS NULL OR
+        {evtab}.rtir_investigation_id IS NULL
+    ) AND
+    {evtab}."source.asn" = %s AND
+    "feed.name" ILIKE %s;
 """.format(evtab=CONFIG['database']['events_table'],
            conttab=CONFIG['database']['contacts_table'])
 QUERY_SET_RTIRID = """
@@ -156,6 +199,7 @@ FROM {texttab}
 WHERE
     key = %s
 """.format(texttab=CONFIG['database']['text_table'])
+QUERY_FEED_NAMES = "SELECT DISTINCT \"feed.name\" from events"
 
 
 def get_text(query):
@@ -171,6 +215,8 @@ def get_text(query):
         CUR.execute(QUERY_GET_TEXT, (CONFIG['database']['default_key'], ))
         if CUR.rowcount:
             text = CUR.fetchall()[0]['body']
+        else:
+            return red('Default text not found!')
 
     return text
 
@@ -208,13 +254,14 @@ def getTerminalHeight():
     return int(subprocess.check_output(['stty', 'size']).strip().split()[0])
 
 
-def query_by_as(contact, show_table=False, requestor=None, automatic=False):
+def query_by_as(contact, show_table=False, requestor=None, automatic=False,
+                feed='%'):
     if type(contact) is int:
-        CUR.execute(QUERY_BY_ASNUM.format(contact))
+        CUR.execute(QUERY_BY_ASNUM, (contact, feed))
         if requestor is None:
             requestor = ''
     else:
-        CUR.execute(QUERY_BY_ASCONTACT.format(contact))
+        CUR.execute(QUERY_BY_ASCONTACT, (contact, feed))
         if requestor is None:
             requestor = contact
     query = shrink_dict(CUR.fetchall())
@@ -289,7 +336,7 @@ Subject: {subj}
     elif answer == 'b':
         return
     elif answer == 't':
-        query_by_as(contact, show_table=True, requestor=requestor)
+        query_by_as(contact, show_table=True, requestor=requestor, feed=feed)
         return
     elif answer == ('r'):
         answer = input(inverted('New requestor address:')+' ').strip()
@@ -300,14 +347,17 @@ Subject: {subj}
                 requestor = contact
         else:
             requestor = answer
-        query_by_as(contact, requestor=requestor)
+        query_by_as(contact, requestor=requestor, feed=feed)
         return
     elif answer != 's':
         print(red('Unknow command {!r}.'.format(answer)))
-        query_by_as(contact, requestor=requestor)
+        query_by_as(contact, requestor=requestor, feed=feed)
         return
 
     # TODO: Config option for single events (best in ascontacts db)
+    if text.startswith(str(red)):
+        print(red('I won\'t send with a missing text!'))
+        return
     if True:
         save_to_rt(ids=ids, subject=subject, requestor=requestor,
                    csvfile=csvfile, body=text)
@@ -404,9 +454,9 @@ def save_to_rt(ids, subject, requestor, csvfile, body):
         print(red('Could not close incident {}.'.format(incident_id)))
 
 
-def count_by_asn():
+def count_by_asn(feed='%'):
     # TODO: Existing RT ids!
-    CUR.execute(QUERY_COUNT_ASN)
+    CUR.execute(QUERY_COUNT_ASN, (CONFIG['filter']['fqdn'], feed))
     asn_count = CUR.fetchall()
     if not asn_count:
         print('No incidents!')
@@ -435,6 +485,25 @@ def count_by_asn():
     return asn_count
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(
+        prog=APPNAME,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        usage=USAGE,
+        description=DESCRIPTION,
+        epilog=EPILOG,
+    )
+    parser.add_argument('-l', '--list-feeds', action='store_true',
+                        help='List all feeds')
+    parser.add_argument('-f', '--feed', nargs='?', default='%', const='%',
+                        help='Show only incidents reported by given feed.')
+    args = parser.parse_args()
+    if args.list_feeds:
+        CUR.execute(QUERY_FEED_NAMES)
+        for row in CUR.fetchall():
+            if row['feed.name']:
+                print(row['feed.name'])
+        exit(0)
+
     if not RT.login():
         print(red('Could not login as {} on {}.'.format(CONFIG['rt']['user'],
                                                         CONFIG['rt']['uri'])))
@@ -443,7 +512,7 @@ if __name__ == '__main__':
                                               CONFIG['rt']['uri']))
     try:
         while True:
-            asn_count = count_by_asn()
+            asn_count = count_by_asn(feed=args.feed)
             answer = input('{i}detailed view by id, {b}a{i}utomatic '
                            'sending, {b}q{i}uit?{r} '
                            ''.format(b=bold, i=myinverted, r=reset)).strip()
@@ -456,14 +525,16 @@ if __name__ == '__main__':
             elif answer == 'a':
                 for item in asn_count:
                     if item['contacts']:
-                        query_by_as(item['contacts'], automatic=True)
+                        query_by_as(item['contacts'], automatic=True,
+                                    feed=args.feed)
                     else:
-                        query_by_as(int(item['asn']), automatic=True)
+                        query_by_as(int(item['asn']), automatic=True,
+                                    feed=args.feed)
             elif type(answer) is int:
                 if asn_count[answer]['contacts']:
-                    query_by_as(asn_count[answer]['contacts'])
+                    query_by_as(asn_count[answer]['contacts'], feed=args.feed)
                 else:
-                    query_by_as(int(asn_count[answer]['asn']))
+                    query_by_as(int(asn_count[answer]['asn']), feed=args.feed)
             else:
                 print(red('Unknown answer {!r}.'.format(answer)))
 

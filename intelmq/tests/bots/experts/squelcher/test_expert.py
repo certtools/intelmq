@@ -17,9 +17,6 @@ INSERT INTO {table}(
     "source.ip", "time.source"
 ) VALUES (%s, %s, %s, %s, %s, LOCALTIMESTAMP + INTERVAL %s second);
 '''
-TEMPLATE = {"feed.name": "Example Feed",
-            "raw": ""
-            }
 INPUT1 = {"__type": "Event",
           "classification.identifier": "zeus",
           "classification.type": "botnet drone",
@@ -27,8 +24,9 @@ INPUT1 = {"__type": "Event",
           "source.asn": 0,
           "source.ip": "192.0.2.1",
           "time.observation": harmonization.DateTime.generate_datetime_now(),
+          "feed.name": "Example Feed",
+          "raw": "",
           }
-INPUT1.update(TEMPLATE)
 
 INPUT2 = INPUT1.copy()
 INPUT2["classification.identifier"] = "https"
@@ -56,6 +54,12 @@ INPUT6 = INPUT4.copy()
 INPUT6["source.ip"] = "198.51.100.45"
 OUTPUT6 = INPUT6.copy()
 OUTPUT6["notify"] = False
+
+INPUT7 = INPUT1.copy()
+INPUT7['notify'] = True
+INPUT7['source.fqdn'] = 'example.com'
+del INPUT7['source.ip']
+OUTPUT7 = INPUT7.copy()
 
 
 class TestSquelcherExpertBot(test.BotTestCase, unittest.TestCase):
@@ -169,6 +173,11 @@ class TestSquelcherExpertBot(test.BotTestCase, unittest.TestCase):
         self.input_message = INPUT4
         self.run_bot()
         self.assertMessageEqual(0, INPUT4)
+
+    def test_domain(self):
+        self.input_message = INPUT7
+        self.run_bot()
+        self.assertMessageEqual(0, OUTPUT7)
 
     @classmethod
     def tearDownClass(cls):
