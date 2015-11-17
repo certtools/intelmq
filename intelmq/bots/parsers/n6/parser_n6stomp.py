@@ -136,7 +136,7 @@ class N6StompParserBot(Bot):
                       mapping[dict_report["category"]]["identifier"],
                       sanitize=True)
 
-        event.add("extra", event.value("extra") + "}", force=True)
+        event.add("extra", event.value("extra") + " }", force=True)
 
         # address is an array of JSON objects -> split the event
         for addr in dict_report['address']:
