@@ -53,11 +53,35 @@ APPNAME = "intelmqcli"
 DESCRIPTION = """
 """
 EPILOG = """
-Interactive actions after a file has been selected:
+Searches for all unprocessed incidents. Incidents will be filtered by country
+code and the TLD of a domain according to configuration.
+The search can be restricted to one source feed.
 
+After the start, intelmqcli will immediately connect to RT with the given
+credentials. The incidents will be shown grouped by the contact address if
+known or the ASN otherwise.
+You have 3 options here:
+* Select one group by giving the id (number in first column) and show the email
+and all events in detail
+* Automatic sending of all incidents with 'a'
+* Quit with 'q'
+
+For the detailed view, the recipient, the subject and the mail text will be
+shown, and below the technical data as csv. If the terminal is not big enough,
+the data will not be shown in full. In this case, you can press 't' for the
+table mode. less will be opened with the full text and data, whereas the data
+will be formated as table, which is much easier to read and interpret.
+The requestor (recipient of the mail) can be changed manually by pressing 'r'
+and in the following prompt the address is asked. After sending, you can
+optionally save the (new) address to the database linked to the ASNs.
+If you are ready to submit the incidents to RT and send the mails out, press
+'s'.
+'b' for back jumps to the incident overview and 'q' quits.
 """
 USAGE = '''
-    intelmqcli --list-feeds'''
+    intelmqcli
+    intelmqcli --list-feeds
+    intelmqcli --feed='feedname' '''
 
 CON = psycopg2.connect(database=CONFIG['database']['database'],
                        user=CONFIG['database']['user'],
@@ -472,8 +496,7 @@ if __name__ == '__main__':
                         help='List all feeds')
     parser.add_argument('-f', '--feed', nargs='?', default='%', const='%',
                         help='Show only incidents reported by given feed.')
-    args = parser.parse_args()  # TODO: Remove
-    print(repr(args))
+    args = parser.parse_args()
     if args.list_feeds:
         CUR.execute(QUERY_FEED_NAMES)
         for row in CUR.fetchall():
