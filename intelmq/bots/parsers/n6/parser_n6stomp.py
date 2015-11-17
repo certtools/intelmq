@@ -89,35 +89,31 @@ class N6StompParserBot(Bot):
         dict_report = json.loads(peek)
 
         event.add("raw", report.value("raw"))
-        event.add("extra", "{ \"_comment\": \"JSON dict for extra info\"")
-        if ("time" in dict_report):
+        extra = {}
+        if "time" in dict_report:
             event.add("time.source", dict_report["time"], sanitize=True)
-        if ("dip" in dict_report):
+        if "dip" in dict_report:
             event.add("destination.ip", dict_report["dip"], sanitize=True)
-        if ("dport" in dict_report):
+        if "dport" in dict_report:
             event.add("destination.port", dict_report["dport"],
                       sanitize=True)
-        if ("md5" in dict_report):
+        if "md5" in dict_report:
             event.add("malware.hash", dict_report["md5"], sanitize=True)
-        if ("sha1" in dict_report):
+        if "sha1" in dict_report:
             event.add("malware.hash.sha1", dict_report["sha1"],
                       sanitize=True)
-        if ("fqdn" in dict_report):
+        if "fqdn" in dict_report:
             event.add("source.fqdn", dict_report["fqdn"], sanitize=True)
-        if ("id" in dict_report):
-            # XXX FIXME: we need some discussion here if this should be a list,
-            # JSON dict etc.? Maybe use append() ?
-            event.add("extra", event.value("extra") + ', "feed_id": "' + dict_report["id"] + '"',
-                      sanitize=True, force=True)
-        if ("adip" in dict_report):
-            event.add("extra", event.value("extra") + ', "adip": "' + dict_report["adip"] +'"',
-                      sanitize=True, force=True)
-        if ("proto" in dict_report):
+        if "id" in dict_report:
+            extra['feed_id'] = dict_report["id"]
+        if "adip" in dict_report:
+            extra["adip"] = dict_report["adip"]
+        if "proto" in dict_report:
             event.add("protocol.transport", dict_report["proto"],
                       sanitize=True)
-        if ("sport" in dict_report):
+        if "sport" in dict_report:
             event.add("source.port", dict_report["sport"], sanitize=True)
-        if ("url" in dict_report):
+        if "url" in dict_report:
             event.add("source.url", dict_report["url"], sanitize=True)
         if ("category" in dict_report and "name" in dict_report and
                 dict_report["category"] == 'bots'):
@@ -136,7 +132,9 @@ class N6StompParserBot(Bot):
                       mapping[dict_report["category"]]["identifier"],
                       sanitize=True)
 
-        event.add("extra", event.value("extra") + " }", force=True)
+        if extra:
+            event.add("extra", json.dumps(extra, sort_keys=True),
+                      sanitize=True)
 
         # address is an array of JSON objects -> split the event
         for addr in dict_report['address']:

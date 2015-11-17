@@ -372,14 +372,13 @@
             }
         },
         "N6stomp": {
-            "description": "N6 Collector - CERT.pl's N6 Collector - N6 feed via STOMP interface",
+            "description": "N6 Collector - CERT.pl's N6 Collector - N6 feed via STOMP interface. Note that rate_limit does not apply for this bot as it is waiting for messages on a stream.",
             "module": "intelmq.bots.collectors.n6.collector_stomp",
             "parameters": {
                 "feed": "n6stomp",
                 "server": "n6stream.cert.pl",
                 "port": 61614,
                 "exchange": "<INSERT your exchange point as given by CERT.pl>",
-                "rate_limit": 10800,
                 "ssl_ca_certificate": "<insert path to CA file for CERT.pl's n6>",
                 "ssl_client_certificate": "<insert path to client cert file for CERT.pl's n6>",
                 "ssl_client_certificate_key": "<insert path to client cert key file for CERT.pl's n6>"

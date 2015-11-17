@@ -28,7 +28,8 @@ class StompListener(stomp.listener.PrintingListener):
         self.n6stomper.logger.warn('Received an error :"%s".' % repr(message))
 
     def on_message(self, headers, message):
-        self.n6stomper.logger.info("Got message %s." % repr(message))
+        self.n6stomper.logger.debug('Receive message '
+                                    '{!r}...'.format(message[:500]))
         report = Report()
         report.add("raw", message.rstrip(), sanitize=True)
         report.add("feed.name", self.n6stomper.parameters.feed,
@@ -39,6 +40,7 @@ class StompListener(stomp.listener.PrintingListener):
         time_observation = DateTime().generate_datetime_now()
         report.add('time.observation', time_observation, sanitize=True)
         self.n6stomper.send_message(report)
+        self.logger.debug('Receiving Message.')
 
 
 class n6stompCollectorBot(Bot):
@@ -61,7 +63,7 @@ class n6stompCollectorBot(Bot):
 
         # check if certificates exist
         for f in [self.ssl_ca_cert, self.ssl_cl_cert, self.ssl_cl_cert_key]:
-            if (not os.path.isfile(f)):
+            if not os.path.isfile(f):
                 raise ValueError("Could not open file '%s'." % f)
 
         _host = [(self.server, self.port)]
