@@ -140,11 +140,14 @@ class N6StompParserBot(Bot):
         for addr in dict_report['address']:
             ev = Event(event)
             ev.add("source.ip", addr["ip"], sanitize=True)
-            ev.add("source.asn", addr["asn"], sanitize=True)
-            ev.add("source.reverse_dns", addr["rdns"], sanitize=True)
+            if ("asn" in addr):
+                ev.add("source.asn", addr["asn"], sanitize=True)
+            if ("rdns" in addr):
+                ev.add("source.reverse_dns", addr["rdns"], sanitize=True)
             # XXX ignore for now, only relevant for flows
             # ev.add("source.dir", addr["dir"], sanitize=True)
-            ev.add("source.geolocation.cc", addr["cc"], sanitize=True)
+            if ("cc" in addr):
+                ev.add("source.geolocation.cc", addr["cc"], sanitize=True)
             self.send_message(ev)
 
         self.acknowledge_message()
