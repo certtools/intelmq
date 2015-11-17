@@ -89,10 +89,9 @@ class N6StompParserBot(Bot):
         dict_report = json.loads(peek)
 
         event.add("raw", dict_report, sanitize=True)
+        event.add("extra", "{ \"_comment\": \"JSON dict for extra info\"")
         if ("time" in dict_report):
             event.add("time.source", dict_report["time"], sanitize=True)
-        if ("adip" in dict_report):
-            event.add("extra", dict_report["adip"], sanitize=True)
         if ("dip" in dict_report):
             event.add("destination.ip", dict_report["dip"], sanitize=True)
         if ("dport" in dict_report):
@@ -108,7 +107,10 @@ class N6StompParserBot(Bot):
         if ("id" in dict_report):
             # XXX FIXME: we need some discussion here if this should be a list,
             # JSON dict etc.? Maybe use append() ?
-            event.add("extra", '{ "feed_id": "' + dict_report["id"] + '" },',
+            event.add("extra", event.value("extra") + ', { "feed_id": "' + dict_report["id"] + '" }',
+                      sanitize=True)
+        if ("adip" in dict_report):
+            event.add("extra", event.value("extra") + ', { "adip": ' + dict_report["adip"] +'" }',
                       sanitize=True)
         if ("proto" in dict_report):
             event.add("source.transport", dict_report["transport"],
