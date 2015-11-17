@@ -107,10 +107,10 @@ class N6StompParserBot(Bot):
         if ("id" in dict_report):
             # XXX FIXME: we need some discussion here if this should be a list,
             # JSON dict etc.? Maybe use append() ?
-            event.add("extra", event.value("extra") + ', { "feed_id": "' + dict_report["id"] + '" }',
+            event.add("extra", event.value("extra") + ', "feed_id": "' + dict_report["id"] + '"',
                       sanitize=True, force=True)
         if ("adip" in dict_report):
-            event.add("extra", event.value("extra") + ', { "adip": ' + dict_report["adip"] +'" }',
+            event.add("extra", event.value("extra") + ', "adip": ' + dict_report["adip"] +'"',
                       sanitize=True, force=True)
         if ("proto" in dict_report):
             event.add("protocol.transport", dict_report["proto"],
@@ -135,6 +135,8 @@ class N6StompParserBot(Bot):
             event.add("classification.identifier",
                       mapping[dict_report["category"]]["identifier"],
                       sanitize=True)
+
+        event.add("extra", "}", force=True)
 
         # address is an array of JSON objects -> split the event
         for addr in dict_report['address']:
