@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
-import sys
+
 import os.path
-import stomp
+import sys
 
 from intelmq.lib.bot import Bot
 from intelmq.lib.harmonization import DateTime
 from intelmq.lib.message import Report
+
+import stomp
 
 
 class StompListener(stomp.listener.PrintingListener):
