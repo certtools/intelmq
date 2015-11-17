@@ -20,15 +20,15 @@ class StompListener(stomp.listener.PrintingListener):
         self.n6stomper = n6stompcollector
 
     def on_heartbeat_timeout(self):
-        self.n6stomper.logger.warn("Lost connection! Re-establishing")
+        self.n6stomper.logger.warn("Lost connection! Re-establishing.")
         self.n6stomper.conn.disconnect()
         self.n6stomper.conn.connect(wait=False)
 
     def on_error(self, headers, message):
-        self.n6stomper.logger.warn('Received an error "%s"' % repr(message))
+        self.n6stomper.logger.warn('Received an error "%s".' % repr(message))
 
     def on_message(self, headers, message):
-        self.n6stomper.logger.info("Got message %s" % repr(message))
+        self.n6stomper.logger.info("Got message %s." % repr(message))
         report = Report()
         report.add("raw", message.rstrip(), sanitize=True)
         report.add("feed.name", self.n6stomper.parameters.feed,

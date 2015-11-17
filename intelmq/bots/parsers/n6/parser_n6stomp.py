@@ -6,7 +6,6 @@ identifiers and the values are lists of domains.
 from __future__ import unicode_literals
 
 import json
-import re
 import sys
 
 from intelmq.lib import utils
@@ -17,21 +16,23 @@ __all__ = ['N6StompParserBot']
 # FIXME: setting the identifier could be done in the modify.conf file.
 # However, it was easier here. TBD.
 mapping = dict()
-mapping['amplifier']   = {"taxonomy": "Vulnerable",
-                          "type": "vulnerable service",
-                          "identifier": "amplifier"}
-mapping['bots']        = {"taxonomy": "Malicious Code", "type": "botnet drone"}
-mapping['backdoor']    = {"taxonomy": "Intrusions",
-                          "type": "backdoor", "identifier": "hacked server"}
-mapping['cnc']         = {"taxonomy": "Malicious Code",
-                          "type": "c&c", "identifier": "c&c server"}
-mapping['dns-query']   = {"taxonomy": "Other",
-                          "type": "other", "identifier": "ignore me"}
-mapping['dos-attacker']= {"taxonomy": "Availability",
+mapping['amplifier']    = {"taxonomy": "Vulnerable",
+                           "type": "vulnerable service",
+                           "identifier": "amplifier"}
+mapping['bots']         = {"taxonomy": "Malicious Code",
+                           "type": "botnet drone"}
+mapping['backdoor']     = {"taxonomy": "Intrusions",
+                           "type": "backdoor", "identifier": "hacked server"}
+mapping['cnc']          = {"taxonomy": "Malicious Code",
+                           "type": "c&c", "identifier": "c&c server"}
+mapping['dns-query']    = {"taxonomy": "Other",
+                           "type": "other", "identifier": "ignore me"}
+mapping['dos-attacker'] = {"taxonomy": "Availability",
                            "type": "ddos", "identifier": "dos-attacker"}
 mapping['dos-victim']   = {"taxonomy": "Availability",
                            "type": "ddos", "identifier": "dos-victim"}
-mapping['flow']         = {"taxonomy": "Other", "type": "other", "identifier": "flow"}
+mapping['flow']         = {"taxonomy": "Other", "type": "other",
+                           "identifier": "flow"}
 mapping['flow-anomaly'] = {"taxonomy": "Other",
                            "type": "other", "identifier": "flow-anomaly"}
 mapping['fraud']        = {"taxonomy": "Fraud",
@@ -69,9 +70,6 @@ mapping['other']        = {"taxonomy": "Vulnerable",
 
 class N6StompParserBot(Bot):
 
-    def init(self):
-        pass
-
     def process(self):
         report = self.receive_message()
 
@@ -80,22 +78,17 @@ class N6StompParserBot(Bot):
             return
 
         peek = utils.base64_decode(report.value("raw"))
-        self.logger.debug("peeking at event '%s'" % peek)
-        m = re.search("TEST MESSAGE", peek)
-        if (m is not None and m.group(0)):
-            self.logger.debug("ignoring test message/event")
+        self.logger.debug("Peeking at event '%s'" % peek)
+        if "TEST MESSAGE" in peek:
+            self.logger.debug("Ignoring test message/event")
             self.acknowledge_message()
             return
-        else:
-            self.logger.debug("okay, processing this event")
-
-        # n6 bot: split events if multple addresses
 
         # try to parse a JSON object
         event = Event(report)
         dict_report = json.loads(peek)
 
-        # event.add("raw", dict_report, sanitize=True)
+        event.add("raw", dict_report, sanitize=True)
         if ("time" in dict_report):
             event.add("time.source", dict_report["time"], sanitize=True)
         if ("adip" in dict_report):
@@ -107,14 +100,15 @@ class N6StompParserBot(Bot):
                       sanitize=True)
         if ("md5" in dict_report):
             event.add("malware.hash", dict_report["md5"], sanitize=True)
-            # XXX FIXME: need to actually convert all to "malware.hash.md5"
         if ("sha1" in dict_report):
             event.add("malware.hash.sha1", dict_report["sha1"],
                       sanitize=True)
         if ("fqdn" in dict_report):
             event.add("source.fqdn", dict_report["fqdn"], sanitize=True)
         if ("id" in dict_report):
-            event.add("comment", 'feed_id: ' + dict_report["id"],
+            # XXX FIXME: we need some discussion here if this should be a list,
+            # JSON dict etc.? Maybe use append() ?
+            event.add("extra", '{ "feed_id": "' + dict_report["id"] + '" },',
                       sanitize=True)
         if ("proto" in dict_report):
             event.add("source.transport", dict_report["transport"],
@@ -126,7 +120,6 @@ class N6StompParserBot(Bot):
             event.add("source.port", dict_report["sport"], sanitize=True)
         if ("url" in dict_report):
             event.add("source.url", dict_report["url"], sanitize=True)
-
         if ("category" in dict_report and "name" in dict_report and
                 dict_report["category"] == 'bots'):
             event.add("malware.name", dict_report["name"], sanitize=True)
@@ -146,14 +139,14 @@ class N6StompParserBot(Bot):
 
         # address is an array of JSON objects -> split the event
         for addr in dict_report['address']:
-            event = Event(event)
-            event.add("source.ip", addr["ip"], sanitize=True)
-            event.add("source.asn", addr["asn"], sanitize=True)
-            event.add("source.reverse_dns", addr["rdns"], sanitize=True)
-            # event.add("source.dir", addr["dir"], sanitize=True)
+            ev = Event(event)
+            ev.add("source.ip", addr["ip"], sanitize=True)
+            ev.add("source.asn", addr["asn"], sanitize=True)
+            ev.add("source.reverse_dns", addr["rdns"], sanitize=True)
             # XXX ignore for now, only relevant for flows
-            event.add("source.geolocation.cc", addr["cc"], sanitize=True)
-            self.send_message(event)
+            # ev.add("source.dir", addr["dir"], sanitize=True)
+            ev.add("source.geolocation.cc", addr["cc"], sanitize=True)
+            self.send_message(ev)
 
         self.acknowledge_message()
 
