@@ -88,7 +88,7 @@ class N6StompParserBot(Bot):
         event = Event(report)
         dict_report = json.loads(peek)
 
-        event.add("raw", dict_report, sanitize=True)
+        event.add("raw", report.value("raw"))
         event.add("extra", "{ \"_comment\": \"JSON dict for extra info\"")
         if ("time" in dict_report):
             event.add("time.source", dict_report["time"], sanitize=True)
