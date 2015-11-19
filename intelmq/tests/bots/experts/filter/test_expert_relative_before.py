@@ -29,7 +29,7 @@ class TestFilterExpertBot(test.BotTestCase, unittest.TestCase):
 
     def test_Relative_Before(self):
         self.run_bot()
-        self.assertOutputQueueLen(1)
+        self.assertMessageEqual(0, EXAMPLE_INPUT)
 
 if __name__ == '__main__':
     unittest.main()
