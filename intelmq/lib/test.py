@@ -296,10 +296,10 @@ class BotTestCase(object):
             self.assertIn('time.observation', report)
 
     def test_event(self):
-        """ Test if event has required fields. """
+        """ Test if event has required fields. """        
         if self.bot_type not in ['parser', 'expert']:
             return
-
+        
         self.run_bot()
         for event_json in self.get_output_queue():
             event = message.MessageFactory.unserialize(event_json)
@@ -356,7 +356,7 @@ class BotTestCase(object):
         Asserts that the given expected_message is
         contained in the generated event with
         given queue position.
-        """
+        """        
         event = self.get_output_queue()[queue_pos]
 
         self.assertIsInstance(event, six.text_type)

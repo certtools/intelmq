@@ -67,7 +67,7 @@ class Bot(object):
 
     def start(self, starting=True, error_on_pipeline=True,
               error_on_message=False, source_pipeline=None,
-              destination_pipeline=None):
+              destination_pipeline=None):                
         self.source_pipeline = source_pipeline
         self.destination_pipeline = destination_pipeline
         self.logger.info('Bot starts processings.')
@@ -311,6 +311,9 @@ class Bot(object):
 
         self.source_queues = None
         self.destination_queues = None
+
+        self.logger.debug("EDVARD")
+        self.logger.debug(config.keys())
 
         if self.bot_id in list(config.keys()):
 

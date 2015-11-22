@@ -7,7 +7,7 @@ from intelmq.lib.bot import Bot
 from intelmq.lib.message import Event
 
 
-class ArborParserBot(Bot):
+class ArborParserBot(Bot):    
 
     def process(self):
         report = self.receive_message()
@@ -38,6 +38,6 @@ class ArborParserBot(Bot):
         self.acknowledge_message()
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":    
     bot = ArborParserBot(sys.argv[1])
     bot.start()

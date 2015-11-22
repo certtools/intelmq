@@ -7,7 +7,7 @@ from intelmq.lib.bot import Bot
 
 
 class GeoIPExpertBot(Bot):
-
+   
     def init(self):
         try:
             self.database = geoip2.database.Reader(self.parameters.database)

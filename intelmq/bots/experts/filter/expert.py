@@ -4,7 +4,6 @@ import sys
 
 from intelmq.lib.bot import Bot
 
-
 class FilterBot(Bot):
 
     def init(self):

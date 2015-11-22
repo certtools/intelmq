@@ -13,6 +13,8 @@ class FileBot(Bot):
         self.file = io.open(self.parameters.file, mode='at', encoding="utf-8")
         self.logger.info("File %s is open." % self.parameters.file)
 
+        self.logger.info("EDVARD ZDE")
+
     def process(self):
         event = self.receive_message()
 

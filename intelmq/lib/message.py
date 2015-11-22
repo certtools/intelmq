@@ -23,7 +23,7 @@ class MessageFactory(object):
     """
     unserialize: JSON encoded message to object
     serialize: object to JSON encoded object
-    """
+    """    
 
     @staticmethod
     def unserialize(raw_message):
@@ -34,8 +34,20 @@ class MessageFactory(object):
         """
         message = Message.unserialize(raw_message)
         try:
+            #logger = utils.log("message log nee",log_level='DEBUG')
+            #logger.info(message)
+            #if "__type" in message:
+                #logger.info("OK EDVARD INFO")
             class_reference = getattr(intelmq.lib.message, message["__type"])
+            #elif type in message:
+#                logger.info("NOT OK EDVARD INFO")
+#                class_reference = getattr(intelmq.lib.message, message["type"])
+#            else:
+#                logger.info("KLURVAAAAAAAAAA TADY BUDE CHYBA PITOMY INTELMQ")
+#                raise "Edvarde, sem to nesmi dospet"
         except AttributeError:
+            logger.info("TOHLE JE TA SPATNA MESSAGE")
+            logger.info(message)
             raise exceptions.InvalidArgument('__type',
                                              got=message["__type"],
                                              expected=list(harm_config.keys()),
@@ -130,6 +142,8 @@ class Message(dict):
 
     def copy(self):
         class_ref = self.__class__.__name__
+        #logger = utils.log("message log",log_level='DEBUG')
+        #logger.info("set type copy" + str(class_ref))
         self['__type'] = class_ref
         retval = getattr(intelmq.lib.message,
                          class_ref)(super(Message, self).copy())
@@ -147,6 +161,8 @@ class Message(dict):
         return self.serialize()
 
     def serialize(self):
+        #logger = utils.log("message log",log_level='DEBUG')
+        #logger.info("set type serialize" + str(self.__class__.__name__))
         self['__type'] = self.__class__.__name__
         json_dump = utils.decode(json.dumps(self))
         del self['__type']
@@ -168,6 +184,12 @@ class Message(dict):
         config = self.__get_type_config(key)
         class_reference = getattr(intelmq.lib.harmonization, config['type'])
         if not class_reference().is_valid(value):
+            logger = utils.log("edvard",log_level='DEBUG')
+            logger.info(config['type'])
+            logger.info(intelmq.lib.harmonization)
+            logger.info(config)
+            logger.info(class_reference())
+            logger.info(value)
             return (False, 'is_valid returned False.')
         if 'length' in config:
             length = len(six.text_type(value))

@@ -51,6 +51,7 @@ class HTTPCollectorBot(Bot):
         self.http_header['User-agent'] = self.parameters.http_user_agent
 
     def process(self):
+        self.logger.info(self.parameters.__dict__)
         self.logger.info("Downloading report from %s" % self.parameters.http_url)
 
         resp = requests.get(url=self.parameters.http_url, auth=self.auth,

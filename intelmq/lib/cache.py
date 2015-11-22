@@ -33,7 +33,7 @@ class Cache():
             return utils.decode(retval)
         return retval
 
-    def set(self, key, value):
+    def set(self, key, value):        
         if isinstance(value, six.text_type):
             value = utils.encode(value)
         # backward compatibility (Redis v2.2)
