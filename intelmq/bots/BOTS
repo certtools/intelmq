@@ -489,6 +489,13 @@
                 "http_verify_cert": true
             }
         },
+        "Custom Filter": {
+            "description": "Highly customizable filter mainly for purposes of definition exception for specific subjects, to filter them out of the pipeline",
+            "module": "intelmq.bots.experts.custom_filter.expert",
+            "parameters": {
+                "rules_dir": "/opt/intelmq/etc/custom_filter/"
+            }
+        },
         "Cymru Whois": {
             "description": "Cymry Whois (IP to ASN) is the bot responsible to add network information to the events (BGP, ASN, AS Name, Country, etc..).",
             "module": "intelmq.bots.experts.cymru_whois.expert",
