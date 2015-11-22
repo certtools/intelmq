@@ -60,11 +60,15 @@ class MailSendOutputBot(Bot):
         self.logger.warning("DONE!")
 
 
-    def _send_mail(self, emailfrom, emailto, subject, text, fileContents=None, server="127.0.0.1"):
+    def _send_mail(self, emailfrom, emailto, subject, text, fileContents=None):
+        server=self.parameters.smtp_server
+        if self.parameters.testing_to:
+            subject = subject + " (intended for " + emailto + ")"
+            emailto = self.parameters.testing_to
         msg = MIMEMultipart()
         msg["From"] = emailfrom
-        msg["Subject"] = subject + " " + emailto #XXX dat pryc emailto
-        msg["To"] = "edvard.rejthar+test_output@nic.cz" # XXX emailto
+        msg["Subject"] = subject
+        msg["To"] = emailto
         
         msg.attach(MIMEText(text, "plain", "utf-8"))
 
@@ -76,7 +80,7 @@ class MailSendOutputBot(Bot):
         msg.attach(attachment)
 
         smtp = smtplib.SMTP(server)
-        smtp.sendmail(emailfrom, "edvard.rejthar+test_output@nic.cz", msg.as_string().encode('ascii')) # XXXX emailto
+        smtp.sendmail(emailfrom, emailto, msg.as_string().encode('ascii')) # XXXX emailto
         smtp.close()
 
 

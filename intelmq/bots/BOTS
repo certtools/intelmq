@@ -617,7 +617,9 @@
                 "redis_cache_host": "127.0.0.1",
                 "redis_cache_port": "6379",
                 "redis_cache_db": "7",
-                "redis_cache_ttl": "86400"
+                "redis_cache_ttl": "86400",
+                "smtp_server" : "127.0.0.1",
+                "testing_to": "edvard.rejthar+test_output@nic.cz"
             }
         },
         "MailSend": {
