@@ -86,30 +86,36 @@ class FilterExpertBot(Bot):
             except:
                 self.logger.error("Could not parse time.source " + str(event.value('time.source')))
             else:
+                now = datetime.now(tz=pytz.timezone('UTC'))
+#                self.logger.debug(sys.version)
+#                self.logger.debug(type(self.not_after) is datetime)
+#                self.logger.debug(type(self.not_after) is timedelta)
+#                self.logger.debug(repr(event_time))
+#                self.logger.debug(repr(now))
+#                self.logger.debug(repr(self.not_after))
+#                self.logger.debug(repr(now - self.not_after))
+#                self.logger.debug(repr(event_time > (now - self.not_after)))
+#                self.logger.debug(repr(self.not_before))
                 if type(self.not_after) is datetime and event_time > self.not_after:
                     self.acknowledge_message()
                     self.logger.debug("Filtered out event with time.source " + repr(event.value('time.source')))
+                    self.logger.debug('1')
                     return
                 if type(self.not_before) is datetime and event_time < self.not_before:
                     self.acknowledge_message()
                     self.logger.debug("Filtered out event with time.source " + repr(event.value('time.source')))
+                    self.logger.debug('2')
                     return
 
-                now = datetime.now(tz=pytz.timezone('UTC'))
-                self.logger.info(repr(now))
-                self.logger.debug(repr(type(self.not_after) is timedelta))
-                self.logger.debug(repr(event_time))
-                self.logger.debug(repr(now))
-                self.logger.debug(repr(self.not_after))
-                self.logger.debug(repr(now - self.not_after))
-                self.logger.debug(repr(event_time > (now - self.not_after)))
                 if type(self.not_after) is timedelta and event_time > (now - self.not_after):
                     self.acknowledge_message()
                     self.logger.debug("Filtered out event with time.source " + repr(event.value('time.source')))
+                    self.logger.debug('3')
                     return
                 if type(self.not_before) is timedelta and event_time < (now - self.not_before):
                     self.acknowledge_message()
                     self.logger.debug("Filtered out event with time.source " + repr(event.value('time.source')))
+                    self.logger.debug('4')
                     return
 
         # key/value based filtering
