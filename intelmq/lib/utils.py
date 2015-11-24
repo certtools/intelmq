@@ -189,15 +189,15 @@ def log(name, log_path=DEFAULT_LOGGING_PATH, log_level="DEBUG", stream=None):
 
     Parameters:
     -----------
-        name : string
-            filename for logfile or string preceding lines in stream
-        log_path : string
-            Path to log directory, defaults to DEFAULT_LOGGING_PATH
-        log_level : string
-            default is "DEBUG"
-        stream : object
-            By default (None), stderr will be used, stream objects can be
-            given. If False, stream output is not used.
+    name : string
+        filename for logfile or string preceding lines in stream
+    log_path : string
+        Path to log directory, defaults to DEFAULT_LOGGING_PATH
+    log_level : string
+        default is "DEBUG"
+    stream : object
+        By default (None), stderr will be used, stream objects can be
+        given. If False, stream output is not used.
 
     Returns
     -------
