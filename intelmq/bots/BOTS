@@ -447,6 +447,35 @@
                 "http_url": "http://www.urlvir.com/export-ip-addresses/"
             }
         },
+        "ShadowServer Drone Report": {
+            "module": "intelmq.bots.collectors.mail.mail-attach",
+            "description": "ShadowServer Drone Collector is the bot responsible to get the report from source of information.",
+            "parameters": {
+                "rate_limit": "3600",
+                "mail_host": "<host>",
+                "mail_user": "<user>",
+                "mail_password": "<password>",
+                "mail_ssl": true,
+                "folder": "Inbox.shadowserver",
+                "subject_regex": "Shadowserver [^ ]+ Drone Report",
+                "attach_regex": "csv.zip",
+                "attach_unzip": true
+            }
+        },
+        "ShadowServer Chargen Report": {
+            "module": "intelmq.bots.collectors.mail.mail-url",
+            "description": "ShadowServer Chargen Collector is the bot responsible to get the report from source of information.",
+            "parameters": {
+                "rate_limit": "3600",
+                "mail_host": "<host>",
+                "mail_user": "<user>",
+                "mail_password": "<password>",
+                "mail_ssl": true,
+                "folder": "Inbox.shadowserver",
+                "subject_regex": "Shadowserver [^ ]+ Chargen Report",
+                "url_regex": "http://dl.shadowserver.org/[^ ]+"
+            }
+        },
         "Spamhaus CERT": {
             "description": "Spamhaus CERT Collector is the bot responsible to get the report from source of information.",
             "module": "intelmq.bots.collectors.http.collector_http",
@@ -899,6 +928,20 @@
             "description": "URLVir IPs Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.urlvir.parser_ips",
             "parameters": {}
+        },
+        "ShadowServer Drone": {
+            "module": "intelmq.bots.parsers.shadowserver.drone-parser",
+            "description": "ShadowServer Drone Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+                "rate_limit": "0"
+            }
+        },
+        "ShadowServer Chargen": {
+            "module": "intelmq.bots.parsers.shadowserver.chargen-parser",
+            "description": "ShadowServer Chargen Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {
+                "rate_limit": "0"
+            }
         },
         "Spamhaus CERT": {
             "description": "Spamhaus CERT Parser is the bot responsible to parse the report and sanitize the information.",
