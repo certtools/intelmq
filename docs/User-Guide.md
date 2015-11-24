@@ -170,9 +170,11 @@ Use the IntelMQ Manager mentioned above to generate the configuration files if u
 
 ## System Configuration
 
-* **`logging_level`** - defines for all system the level of logging that will be use by all bots and intelmqctl tool. Possible values are: `CRITICAL`, `ERROR`, `WARNING`, `INFO` and `DEBUG`.
+* `logging_handler`: Can be one of `"file"` or `"syslog"`.
+* `logging_level`: Defines for all system the level of logging that will be use by all bots and intelmqctl tool. Possible values are: `"CRITICAL"`, `"ERROR"`, `"WARNING"`, `"INFO"` and `"DEBUG"`.
+* `logging_path`: If `logging_handler` is `file`. Defines for all system the logs folder that will be use by all bots and intelmqctl tool. Default value is: `/opt/intelmq/var/log/`
+* `logging_syslog`: If `logging_handler` is `syslog`. Either a list with hostname and UDP port of syslog service, e.g. `["localhost", 514]` or a device name, e.g. the default `"/var/log"`.
 
-* **`logging_path`** - defines for all system the logs folder that will be use by all bots and intelmqctl tool. Default value is: `/opt/intelmq/var/log/`
 
 ## Startup Configuration
 
