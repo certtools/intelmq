@@ -322,6 +322,7 @@ Subject: {subj}
 '''.format(to=requestor, subj=subject, text=text)
     showed_text_len = showed_text.count('\n')
 
+    global TABLE_MODE
     if TABLE_MODE:
         height = getTerminalHeight()-3-showed_text_len
         csvfile.seek(0)
@@ -366,8 +367,7 @@ Subject: {subj}
     elif answer == 'b':
         return
     elif answer == 't':
-        global TABLE_MODE
-        TABLE_MODE = True
+        TABLE_MODE = bool((TABLE_MODE+1) % 2)
         query_by_as(contact, requestor=requestor, feed=feed)
         return
     elif answer == ('r'):
