@@ -1,0 +1,7 @@
+"timestamp","ip","protocol","port","hostname","tag","size","asn","geo","region","city","naics","sic","sector"
+"2014-03-16 04:15:19","88.149.23.230","udp",19,,"chargen",116,12969,"IS","HOFUOBORGARSVAOIO","REYKJAVIK",123456,654321,
+"2014-03-16 04:15:19","112.197.240.1","udp",19,,"chargen",116,45543,"VN","HO CHI MINH","THANH PHO HO CHI MINH",0,0,
+"2014-03-16 04:15:19","85.36.146.26","udp",19,"host26-146-static.36-85-b.business.telecomitalia.it","chargen",116,3269,"IT","LAZIO","ROMA",0,0,
+"2014-03-16 04:15:19","184.69.168.237","udp",19,,"chargen",116,6327,"CA","BRITISH COLUMBIA","VICTORIA",0,0,
+"2014-03-16 04:15:19","128.171.32.12","udp",19,"dhcp-128-171-32-12.bilger.hawaii.edu","chargen",116,6360,"US","HAWAII","HONOLULU",0,0,
+
