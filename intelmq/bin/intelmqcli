@@ -94,7 +94,7 @@ CUR = CON.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 CON.autocommit = True
 
 RT = rt.Rt(CONFIG['rt']['uri'], CONFIG['rt']['user'], CONFIG['rt']['password'])
-
+TABLE_MODE = False  # for sticky table mode
 
 QUERY_COUNT_ASN = """
 SELECT
@@ -285,8 +285,7 @@ def getTerminalHeight():
     return int(subprocess.check_output(['stty', 'size']).strip().split()[0])
 
 
-def query_by_as(contact, show_table=False, requestor=None, automatic=False,
-                feed='%'):
+def query_by_as(contact, requestor=None, automatic=False, feed='%'):
     if type(contact) is int:
         CUR.execute(QUERY_BY_ASNUM, (contact, feed))
         if requestor is None:
@@ -323,7 +322,7 @@ Subject: {subj}
 '''.format(to=requestor, subj=subject, text=text)
     showed_text_len = showed_text.count('\n')
 
-    if show_table:
+    if TABLE_MODE:
         height = getTerminalHeight()-3-showed_text_len
         csvfile.seek(0)
         if len(query) > height:
@@ -367,7 +366,9 @@ Subject: {subj}
     elif answer == 'b':
         return
     elif answer == 't':
-        query_by_as(contact, show_table=True, requestor=requestor, feed=feed)
+        global TABLE_MODE
+        TABLE_MODE = True
+        query_by_as(contact, requestor=requestor, feed=feed)
         return
     elif answer == ('r'):
         answer = input(inverted('New requestor address:')+' ').strip()
