@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import csv
 from email import encoders
 from email.message import Message
@@ -24,13 +25,18 @@ class MailSendOutputBot(Bot):
     def process(self):
         pass
 
-    def init(self):
+    debug = True # by default, nothing is sent
+
+    def set_cache(self):
         self.cache = Cache(
                            self.parameters.redis_cache_host,
                            self.parameters.redis_cache_port,
                            self.parameters.redis_cache_db,
                            self.parameters.redis_cache_ttl
                            )
+
+    def init(self):
+        self.set_cache()
         self.send_mails()
 
     # Posle vsechny maily
@@ -45,7 +51,7 @@ class MailSendOutputBot(Bot):
             lines = []
             self.logger.debug(mail_record)
             for message in self.cache.redis.lrange(mail_record, 0, -1):
-                lines.append(json.loads(unicode(message))) # lines.append(unicode(message))
+                lines.append(json.loads(unicode(message)))
 
             fieldnames = set()
             for row in lines:
@@ -61,7 +67,7 @@ class MailSendOutputBot(Bot):
 
 
     def _send_mail(self, emailfrom, emailto, subject, text, fileContents=None):
-        server=self.parameters.smtp_server
+        server = self.parameters.smtp_server
         if self.parameters.testing_to:
             subject = subject + " (intended for " + emailto + ")"
             emailto = self.parameters.testing_to
@@ -69,22 +75,34 @@ class MailSendOutputBot(Bot):
         msg["From"] = emailfrom
         msg["Subject"] = subject
         msg["To"] = emailto
-        
-        msg.attach(MIMEText(text, "plain", "utf-8"))
 
+        if MailSendOutputBot.debug:
+            print("DEBUG MODE – does not send anything")
+            print(msg)
+        else:
+            msg.attach(MIMEText(text, "plain", "utf-8"))
 
-        maintype, subtype = "text/json".split("/", 1) # XXX ma to posilat CSV, ne JSON. Ale nemaji jednotlive messages ruzne sloupecky (kazdy jiny pocet sloupecku z taxonomie)?
-        if maintype == "text":
-            attachment = MIMEText(fileContents, _subtype=subtype)
-        attachment.add_header("Content-Disposition", "attachment", filename='list_{}.csv'.format(time.strftime("%Y%m%d")))
-        msg.attach(attachment)
+            maintype, subtype = "text/csv".split("/", 1)
+            if maintype == "text":
+                attachment = MIMEText(fileContents, _subtype=subtype)
+            attachment.add_header("Content-Disposition", "attachment", filename='list_{}.csv'.format(time.strftime("%Y%m%d")))
+            msg.attach(attachment)
 
-        smtp = smtplib.SMTP(server)
-        smtp.sendmail(emailfrom, emailto, msg.as_string().encode('ascii')) # XXXX emailto
-        smtp.close()
-
+            smtp = smtplib.SMTP(server)
+            smtp.sendmail(emailfrom, emailto, msg.as_string().encode('ascii'))
+            smtp.close()
 
 
 if __name__ == "__main__":
-    bot = MailSendOutputBot(sys.argv[1])
+    if "debug" in sys.argv:
+        MailSendOutputBot.debug = True        
+    else:
+        MailSendOutputBot.debug = False
+    bot = MailSendOutputBot(sys.argv[1])    
     bot.start()
+
+# Do not send mails:
+# sudo ./output_send.py mail-output-send debug
+#
+# Do send mails:
+# sudo ./output_send.py mail-output-send
