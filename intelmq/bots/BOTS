@@ -862,7 +862,7 @@
             "description": "N6 Collector - CERT.pl's N6 Parser - N6 feed via STOMP interface",
             "module": "intelmq.bots.parsers.n6.parser_n6stomp",
             "parameters": {}
-        }
+        },
         "OpenBL": {
             "description": "OpenBL Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.openbl.parser",
