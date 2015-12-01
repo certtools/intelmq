@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 import csv
 from email import encoders
 from email.message import Message
@@ -42,6 +44,9 @@ class MailSendOutputBot(Bot):
     # Posle vsechny maily
     def send_mails(self):
         self.logger.warning("Going to send mails...")
+        allowed_fieldnames = set(['time.source', 'feed.url', 'feed.name', 'event_description.text', 'raw', 'source.ip',
+                                  'classification.taxonomy', 'classification.type', 'time.observation',
+                                  'source.geolocation.cc', 'source.asn'])
         with open(self.parameters.mail_template) as f:
             mailContents = f.read()
 
@@ -54,12 +59,16 @@ class MailSendOutputBot(Bot):
                 lines.append(json.loads(unicode(message)))
 
             fieldnames = set()
+            rows_output = []
             for row in lines:
                 fieldnames = fieldnames | set(row.keys())
+                keys = set(allowed_fieldnames).intersection(row)
+                rows_output.append({k:row[k] for k in keys})
+            fieldnames = fieldnames & allowed_fieldnames
             output = StringIO()
             dict_writer = csv.DictWriter(output, fieldnames=fieldnames)
             dict_writer.writerow(dict(zip(fieldnames, fieldnames)))
-            dict_writer.writerows(lines)
+            dict_writer.writerows(rows_output)
 
             self._send_mail(self.parameters.emailFrom, mail_record[len("mail:"):], "Threat list", mailContents, output.getvalue()) #"\n".join(lines)
             self.cache.redis.delete(mail_record)
