@@ -91,8 +91,11 @@ class MailSendOutputBot(Bot):
         msg["To"] = emailto
 
         if MailSendOutputBot.debug:
-            print("DEBUG MODE – does not send anything".encode("utf-8"))
-            print(msg)
+            print 'To: ' + emailto + '; Subject: ' + subject
+            print 'Events: ' + (fileContents.count('\n') - 1)
+            print '-------------------------------------------------'
+            #print("DEBUG MODE – does not send anything".encode("utf-8"))
+            #print(msg)
         else:
             msg.attach(MIMEText(text, "plain", "utf-8"))
 
