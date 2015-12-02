@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 import csv
 from email import encoders
 from email.message import Message
@@ -26,6 +28,7 @@ class MailSendOutputBot(Bot):
         pass
 
     debug = True # by default, nothing is sent
+    process = False # if True, it exits after mails are sent
 
     def set_cache(self):
         self.cache = Cache(
@@ -35,38 +38,49 @@ class MailSendOutputBot(Bot):
                            self.parameters.redis_cache_ttl
                            )
 
-    def init(self):
+    def init(self):        
         self.set_cache()
         self.send_mails()
+        if MailSendOutputBot.debug or MailSendOutputBot.process:            
+            print("MailSendOutputBot done.")
+            quit()
 
     # Posle vsechny maily
-    def send_mails(self):
+    def send_mails(self):        
         self.logger.warning("Going to send mails...")
+        allowed_fieldnames = set(['time.source', 'feed.url', 'feed.name', 'event_description.text', 'raw', 'source.ip',
+                                  'classification.taxonomy', 'classification.type', 'time.observation',
+                                  'source.geolocation.cc', 'source.asn'])
         with open(self.parameters.mail_template) as f:
             mailContents = f.read()
-
+        
         for mail_record in self.cache.redis.keys("mail:*"):
-            self.logger.warning("Next:")
-            self.logger.warning("Mail", mail_record)
+            self.logger.warning("Next:")            
+            self.logger.warning("Mail:" + mail_record)
             lines = []
             self.logger.debug(mail_record)
             for message in self.cache.redis.lrange(mail_record, 0, -1):
                 lines.append(json.loads(unicode(message)))
-
+            
             fieldnames = set()
+            rows_output = []
             for row in lines:
                 fieldnames = fieldnames | set(row.keys())
+                keys = set(allowed_fieldnames).intersection(row)
+                rows_output.append({k:row[k] for k in keys})
+            fieldnames = fieldnames & allowed_fieldnames
             output = StringIO()
             dict_writer = csv.DictWriter(output, fieldnames=fieldnames)
             dict_writer.writerow(dict(zip(fieldnames, fieldnames)))
-            dict_writer.writerows(lines)
+            dict_writer.writerows(rows_output)
 
             self._send_mail(self.parameters.emailFrom, mail_record[len("mail:"):], "Threat list", mailContents, output.getvalue()) #"\n".join(lines)
-            self.cache.redis.delete(mail_record)
+            if not MailSendOutputBot.debug:
+                self.cache.redis.delete(mail_record)
         self.logger.warning("DONE!")
 
 
-    def _send_mail(self, emailfrom, emailto, subject, text, fileContents=None):
+    def _send_mail(self, emailfrom, emailto, subject, text, fileContents=None):        
         server = self.parameters.smtp_server
         if self.parameters.testing_to:
             subject = subject + " (intended for " + emailto + ")"
@@ -77,7 +91,7 @@ class MailSendOutputBot(Bot):
         msg["To"] = emailto
 
         if MailSendOutputBot.debug:
-            print("DEBUG MODE – does not send anything")
+            print("DEBUG MODE – does not send anything".encode("utf-8"))
             print(msg)
         else:
             msg.attach(MIMEText(text, "plain", "utf-8"))
@@ -93,16 +107,22 @@ class MailSendOutputBot(Bot):
             smtp.close()
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":    
     if "debug" in sys.argv:
-        MailSendOutputBot.debug = True        
+        MailSendOutputBot.debug = True
+        print("****** Debug session started. ******")
     else:
         MailSendOutputBot.debug = False
-    bot = MailSendOutputBot(sys.argv[1])    
+    if "process" in sys.argv:
+        MailSendOutputBot.process = True
+
+    bot = MailSendOutputBot(sys.argv[1])
     bot.start()
 
 # Do not send mails:
 # sudo ./output_send.py mail-output-send debug
 #
 # Do send mails:
-# sudo ./output_send.py mail-output-send
+# sudo ./output_send.py mail-output-send process
+#
+# If launched without parameter, it never ends (as normal intelmq bot).
