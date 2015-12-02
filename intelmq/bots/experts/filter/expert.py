@@ -21,8 +21,8 @@ class FilterExpertBot(Bot):
     def parse_relative(relative_time):
         try:
             result = re.findall(r'^(\d+)\s+(\w+[^s])s?$', relative_time, re.UNICODE)
-        except Exception as e:
-            raise AttributeError("Could not apply regex to attribute \"%s\" with exception %s",
+        except ValueError as e:
+            raise ValueError("Could not apply regex to attribute \"%s\" with exception %s",
                                  repr(relative_time), repr(e.args))
         if len(result) == 1 and len(result[0]) == 2 and result[0][1] in FilterExpertBot.timespans:
             return int(result[0][0]) * FilterExpertBot.timespans[result[0][1]]
@@ -33,7 +33,7 @@ class FilterExpertBot(Bot):
     def parse_timeattr(self, time_attr):
         try:
             absolute = parser.parse(time_attr)
-        except:
+        except ValueError:
             relative = timedelta(minutes=self.parse_relative(time_attr))
             self.logger.info("Filtering out events to (relative time) " + repr(relative))
             return relative
@@ -82,7 +82,7 @@ class FilterExpertBot(Bot):
         if event.contains('time.source'):
             try:
                 event_time = parser.parse(str(event.value('time.source'))).replace(tzinfo=pytz.timezone('UTC'))
-            except:
+            except ValueError:
                 self.logger.error("Could not parse time.source " + str(event.value('time.source')))
             else:
                 if type(self.not_after) is datetime and event_time > self.not_after:
