@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import json
 import unittest
 
 import intelmq.lib.test as test
@@ -48,7 +47,7 @@ class TestFraunhoferDGAParserBot(test.BotTestCase, unittest.TestCase):
     @classmethod
     def set_bot(cls):
         cls.bot_reference = FraunhoferDGAParserBot
-        cls.default_input_message = json.dumps(EXAMPLE_REPORT)
+        cls.default_input_message = EXAMPLE_REPORT
 
     def test_events(self):
         """ Test if correct Events have been produced. """

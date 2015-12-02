@@ -12,7 +12,7 @@ from intelmq.lib.bot import Bot
 
 class TorExpertBot(Bot):
 
-    database = list()
+    database = set()
 
     def init(self):
         self.logger.info("Loading TOR exit node IPs.")
@@ -25,12 +25,10 @@ class TorExpertBot(Bot):
                     if len(line) == 0 or line[0] == "#":
                         continue
 
-                    ip_list = line.split("[")[1]
-                    ip_list = ip_list.split("]")[0]
-                    ip_list = ip_list.split(",")
+                    ip_list = line[line.find("[")+1:line.find("]")].split(",")
 
                     for ip in ip_list:
-                        TorExpertBot.database.append(ip.strip())
+                        self.database.add(ip.strip())
 
         except IOError:
             self.logger.critical("TOR rule not defined or failed on open.")
@@ -43,12 +41,10 @@ class TorExpertBot(Bot):
             self.acknowledge_message()
             return
 
-        keys = ['source.%s', 'destination.%s']
-
-        for key in keys:
-            if event.contains(key % 'ip'):
-                if event.value(key % 'ip') in TorExpertBot.database:
-                    event.add(key % 'tor_node', True)
+        for key in ["source.", "destination."]:
+            if event.contains(key + 'ip'):
+                if event.value(key + 'ip') in self.database:
+                    event.add(key + 'tor_node', True)
 
         self.send_message(event)
         self.acknowledge_message()

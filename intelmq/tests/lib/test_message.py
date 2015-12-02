@@ -27,7 +27,9 @@ FEED = {'feed.url': u'https://example.com/', 'feed.name': u'Lorem ipsum'}
 URL_UNSANE = 'https://example.com/ \r\n'
 URL_SANE = 'https://example.com/'
 URL_INVALID = '/exampl\n'
-
+ACCURACY_UNSANE = '100'
+ACCURACY_SANE = 100
+ACCURACY_INVALID = -1
 
 class TestMessageFactory(unittest.TestCase):
     """
@@ -227,6 +229,24 @@ class TestMessageFactory(unittest.TestCase):
         with self.assertRaises(exceptions.InvalidValue):
             report.add('feed.url', URL_INVALID)
 
+    def test_report_add_sane_accuracy(self):
+        """ Test if report accepts a sane accuracy. """
+        report = message.MessageFactory.unserialize('{"__type": "Report"}')
+        report.add('feed.accuracy', ACCURACY_SANE, sanitize=False)
+        self.assertEqual(ACCURACY_SANE, report['feed.accuracy'])
+
+    def test_report_sanitize_accuracy(self):
+        """ Test if report sanitizes the accuracy parameter. """
+        report = message.MessageFactory.unserialize('{"__type": "Report"}')
+        report.add('feed.accuracy', ACCURACY_UNSANE, sanitize=True)
+        self.assertEqual(ACCURACY_SANE, report['feed.accuracy'])
+
+    def test_report_invalid_accuracy(self):
+        """ Test if report sanitizes an invalid accuracy. """
+        report = message.MessageFactory.unserialize('{"__type": "Report"}')
+        with self.assertRaises(exceptions.InvalidValue):
+            report.add('feed.accuracy', ACCURACY_INVALID)
+
     def test_report_invalid_string(self):
         """ Test if report raises error when invalid after sanitize. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
@@ -383,6 +403,13 @@ class TestMessageFactory(unittest.TestCase):
         event = message.MessageFactory.unserialize('{"__type": "Event"}')
         with self.assertRaises(exceptions.InvalidValue):
             event.add('protocol.transport', 'unknown')
+
+    def test_message_from_dict_return_type(self):
+        """ Test if from_dict() returns the correct class. """
+        event = {'__type': 'Event'}
+        event_type = type(message.MessageFactory.from_dict(event))
+        self.assertTrue(event_type is message.Event,
+                        msg='Type is {} instead of Event.'.format(event_type))
 
 if __name__ == '__main__':
     unittest.main()

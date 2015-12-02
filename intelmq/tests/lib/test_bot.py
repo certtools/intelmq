@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-
+Tests the Bot class itself.
 """
 from __future__ import unicode_literals
 
@@ -38,7 +38,7 @@ def mocked_config(bot_id='', src_name='', dst_names=(),
                     "retry_delay": 0,
                     "error_retry_delay": 0,
                     "error_max_retries": 0,
-                    "exit_on_stop": False,
+                    "testing": True,
                     }
         elif conf_file.startswith('/opt/intelmq/etc/'):
             confname = os.path.join('conf/', os.path.split(conf_file)[-1])

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import json
 import os
 import unittest
 
@@ -55,7 +54,7 @@ class TestAlienVaultOTXParserBot(test.BotTestCase, unittest.TestCase):
     @classmethod
     def set_bot(self):
         self.bot_reference = AlienVaultOTXParserBot
-        self.default_input_message = json.dumps(EXAMPLE_REPORT)
+        self.default_input_message = EXAMPLE_REPORT
 
     def test_event(self):
         """ Test if correct Event has been produced. """
