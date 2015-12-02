@@ -92,7 +92,7 @@ class MailSendOutputBot(Bot):
 
         if MailSendOutputBot.debug:
             print 'To: ' + emailto + '; Subject: ' + subject
-            print 'Events: ' + (fileContents.count('\n') - 1)
+            print 'Events: ' + str((fileContents.count('\n') - 1))
             print '-------------------------------------------------'
             #print("DEBUG MODE – does not send anything".encode("utf-8"))
             #print(msg)
