@@ -19,6 +19,7 @@ import logging
 import os
 import re
 import six
+import sys
 
 from intelmq import DEFAULT_LOGGING_PATH
 
@@ -195,7 +196,8 @@ def log(name, log_path=DEFAULT_LOGGING_PATH, log_level="DEBUG", stream=None):
         log_level : string
             default is "DEBUG"
         stream : object
-            By default (None), stderr will be used, stream objects can be given
+            By default (None), stderr will be used, stream objects can be
+            given. If False, stream output is not used.
 
     Returns
     -------
@@ -217,14 +219,18 @@ def log(name, log_path=DEFAULT_LOGGING_PATH, log_level="DEBUG", stream=None):
 
     formatter = logging.Formatter(LOG_FORMAT)
     handler.setFormatter(formatter)
-
-    console_formatter = logging.Formatter(LOG_FORMAT_STREAM)
-    console_handler = logging.StreamHandler(stream)
-    console_handler.setFormatter(console_formatter)
-    logger.addHandler(console_handler)
-    console_handler.setLevel(log_level)
-
     logger.addHandler(handler)
+
+    if stream or stream is None:
+        console_formatter = logging.Formatter(LOG_FORMAT_STREAM)
+        if stream is None:
+            console_handler = logging.StreamHandler(sys.stderr)
+        else:
+            console_handler = logging.StreamHandler(stream)
+        console_handler.setFormatter(console_formatter)
+        logger.addHandler(console_handler)
+        console_handler.setLevel(log_level)
+
     return logger
 
 

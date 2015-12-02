@@ -7,7 +7,7 @@ from intelmq.lib.bot import Bot
 from intelmq.lib.cache import Cache
 
 
-class DeduplicatorBot(Bot):
+class DeduplicatorExpertBot(Bot):
 
     def init(self):
         self.cache = Cache(self.parameters.redis_cache_host,
@@ -42,5 +42,5 @@ class DeduplicatorBot(Bot):
 
 
 if __name__ == "__main__":
-    bot = DeduplicatorBot(sys.argv[1])
+    bot = DeduplicatorExpertBot(sys.argv[1])
     bot.start()

@@ -4,7 +4,10 @@ from __future__ import print_function, unicode_literals
 import time
 
 import redis
-import zmq
+try:
+    import zmq
+except ImportError:
+    zmq = None
 
 import intelmq.lib.exceptions as exceptions
 import intelmq.lib.pipeline
@@ -226,6 +229,8 @@ class Zeromq(Pipeline):
     def __init__(self, host="127.0.0.1", communication="ipc"):
 
         # ZeroMQ Context
+        if zmq is None:
+            raise exceptions.IntelMQException('Import of package zmq failed.')
         self.context = zmq.Context()
         self.host = host
         self.communication = communication

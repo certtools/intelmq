@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import json
 import unittest
 
 import intelmq.lib.test as test
+from intelmq.lib.cache import Cache
 from intelmq.bots.experts.cymru_whois.expert import CymruExpertBot
 
 EXAMPLE_INPUT = {"__type": "Event",
@@ -36,19 +36,19 @@ EXAMPLE_OUTPUT6 = {"__type": "Event",
                    "destination.network": "2001:500:88::/48",
                    }
 UNICODE_INPUT = {"__type": "Event",
-                 "destination.ip": "177.81.215.80",  # some brazil IP
+                 "destination.ip": "186.226.224.9",  # some brazil IP
                  "time.observation": "2015-01-01T00:00:00+00:00",
                  }
 UNICODE_OUTPUT = {"__type": "Event",
-                  "destination.ip": "177.81.215.80",  # some brazil IP
+                  "destination.ip": "186.226.224.9",  # some brazil IP
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   "destination.registry": "lacnic",
-                  "destination.allocated": "2011-08-30T00:00:00+00:00",
-                  "destination.as_name": "NET Servi\xe7os de Comunica\xe7\xe3o"
-                                         " S.A.,BR",
+                  "destination.allocated": "2010-08-13T00:00:00+00:00",
+                  "destination.as_name": "Local Datacenter Solu\xe7\xf5es em"
+                                         " Comunica\xe7\xe3o Ltda.,BR",
                   "destination.geolocation.cc": "BR",
-                  "destination.asn": 28573,
-                  "destination.network": "177.81.0.0/16",
+                  "destination.asn": 28333,
+                  "destination.network": "186.226.224.0/20",
                   }
 
 
@@ -76,6 +76,15 @@ class TestCymruExpertBot(test.BotTestCase, unittest.TestCase):
         self.input_message = UNICODE_INPUT
         self.run_bot()
         self.assertMessageEqual(0, UNICODE_OUTPUT)
+
+    @classmethod
+    def tearDownClass(cls):
+        cache = Cache(test.BOT_CONFIG['redis_cache_host'],
+                      test.BOT_CONFIG['redis_cache_port'],
+                      test.BOT_CONFIG['redis_cache_db'],
+                      test.BOT_CONFIG['redis_cache_ttl'],
+                      )
+        cache.flush()
 
 
 if __name__ == '__main__':

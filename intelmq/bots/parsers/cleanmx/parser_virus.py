@@ -59,6 +59,11 @@ class CleanMXVirusParserBot(Bot):
                 if not value:
                     continue
 
+                if key is None:
+                    self.logger.warning('Value without key found, skipping the'
+                                        ' value: {!r}'.format(value))
+                    continue
+
                 key = COLUMNS[key]
 
                 if key == "__IGNORE__" or key == "__TDB__":

@@ -1,3 +1,3 @@
 ### Deduplicator
 
-System check if it already saw a specific message using Redias as memcache
+System check if it already saw a specific message using Redis as memcache

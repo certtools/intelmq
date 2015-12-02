@@ -39,3 +39,9 @@ class Cache():
         # backward compatibility (Redis v2.2)
         self.redis.setnx(key, value)
         self.redis.expire(key, self.ttl)
+
+    def flush(self):
+        """
+        Flushes the currently opened database by calling FLUSHDB.
+        """
+        self.redis.flushdb()

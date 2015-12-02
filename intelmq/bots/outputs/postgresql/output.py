@@ -53,6 +53,7 @@ class PostgreSQLBot(Bot):
 
         self.logger.debug('Query: {!r} with values {!r}'.format(query, values))
         try:
+            # note: this assumes, the DB was created with UTF-8 support!
             self.cur.execute(query, values)
         except (psycopg2.InterfaceError, psycopg2.InternalError,
                 AttributeError):

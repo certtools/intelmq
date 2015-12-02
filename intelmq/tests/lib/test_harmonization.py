@@ -172,5 +172,23 @@ class TestHarmonization(unittest.TestCase):
         with self.assertRaises(TypeError):
             harmonization.DateTime.from_timestamp('1441008970')
 
+    def test_fqdn_valid(self):
+        """ Test FQDN.is_valid with valid arguments. """
+        self.assertTrue(harmonization.FQDN.is_valid('ex-am.ple.example'))
+        self.assertTrue(harmonization.FQDN.is_valid('intelmq.org'))
+        self.assertTrue(harmonization.FQDN.is_valid('sub.sub2.example.net'))
+
+    def test_fqdn_invalid(self):
+        """ Test FQDN.is_valid with invalid arguments. """
+        self.assertFalse(harmonization.FQDN.is_valid('ex-am.ple.example.'))
+        self.assertFalse(harmonization.FQDN.is_valid('sub_sub2.example.net.'))
+
+    def test_fqdn_sanitize(self):
+        """ Test FQDN.sanitize with valid arguments. """
+        self.assertTrue(harmonization.FQDN.is_valid('example.example.',
+                                                    sanitize=True))
+        self.assertTrue(harmonization.FQDN.is_valid('example.net',
+                                                    sanitize=True))
+
 if __name__ == "__main__":
     unittest.main()

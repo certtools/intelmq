@@ -34,12 +34,16 @@ class DragonResearchGroupVNCParserBot(Bot):
                 value = value.strip()
 
                 if key == "time.source":
-                    value += "T00:00:00+00:00"
+                    value += "+00:00"
+
+                if value == "NA":
+                    continue
 
                 event.add(key, value, sanitize=True)
 
-            event.add('classification.type', u'brute-force')
-            event.add('protocol.application', u'vnc')
+            event.add("classification.type", "brute-force")
+            event.add("protocol.application", "vnc")
+            event.add("protocol.transport", "tcp")
             event.add("raw", row, sanitize=True)
 
             self.send_message(event)

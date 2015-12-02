@@ -34,15 +34,17 @@ class DragonResearchGroupSSHParserBot(Bot):
                 value = value.strip()
 
                 if key == "time.source":
-                    value += "T00:00:00+00:00"
+                    value += "+00:00"
 
-                if value == 'NA':
+                if value == "NA":
                     continue
 
                 event.add(key, value, sanitize=True)
 
-            event.add('classification.type', u'brute-force')
-            event.add('protocol.application', u'ssh')
+            event.add("classification.type", "brute-force")
+            event.add("protocol.application", "ssh")
+            event.add("protocol.transport", "tcp")
+            event.add("destination.port", 22)
             event.add("raw", row, sanitize=True)
 
             self.send_message(event)
