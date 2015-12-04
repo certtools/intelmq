@@ -21,6 +21,7 @@ v1.0 (in development, master branch)
 - STY: code obeys PEP8, new code should always be properly formatted
 - ENH: More code is Python 3 compatible
 - DOC: Updated user and dev guide
+- ENH: New parameter and field named accuracy to represent the accuracy of each feed
 
 ### Harmonization
 - ENH: Additional data types: integer, float and Boolean

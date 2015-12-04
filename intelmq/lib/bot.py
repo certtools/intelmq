@@ -7,6 +7,7 @@ from __future__ import print_function, unicode_literals
 import datetime
 import json
 import re
+import sys
 import time
 import traceback
 
@@ -33,10 +34,11 @@ class Bot(object):
         self.logger = None
 
         try:
-            self.log_buffer.append(('debug',
-                                    '{} initialized with id {}.'
+            version_info = sys.version.splitlines()[0].strip()
+            self.log_buffer.append(('info',
+                                    '{} initialized with id {} and version {}.'
                                     ''.format(self.__class__.__name__,
-                                              bot_id)))
+                                              bot_id, version_info)))
             self.check_bot_id(bot_id)
             self.bot_id = bot_id
 
@@ -93,10 +95,14 @@ class Bot(object):
                     starting = False
 
                 self.process()
+                self.error_retries_counter = 0  # reset counter
+
                 self.source_pipeline.sleep(self.parameters.rate_limit)
 
             except exceptions.PipelineError:
                 error_on_pipeline = True
+                error_traceback = traceback.format_exc()
+
                 if self.parameters.error_log_exception:
                     self.logger.exception('Pipeline failed.')
                 else:
@@ -104,6 +110,9 @@ class Bot(object):
                 self.disconnect_pipelines()
 
             except Exception:
+                error_on_message = True
+                error_traceback = traceback.format_exc()
+
                 if self.parameters.error_log_exception:
                     self.logger.exception("Bot has found a problem.")
                 else:
@@ -115,33 +124,45 @@ class Bot(object):
                     self.logger.info("Current Message(event): {!r}."
                                      "".format(self.current_message)[:500])
 
-                self.error_retries_counter += 1
-                if self.parameters.error_procedure == "retry":
-                    if (self.error_retries_counter >=
-                            self.parameters.error_max_retries):
-                        if self.parameters.error_dump_message:
-                            self.dump_message()
-                        self.acknowledge_message()
-                        self.stop()
-
-                    # when bot acknowledge the message, dont need to wait again
-                    error_on_message = True
-                else:
-                    if self.parameters.error_dump_message:
-                        self.dump_message()
-                    self.acknowledge_message()
-
             except KeyboardInterrupt:
                 self.logger.error("Received KeyboardInterrupt.")
                 self.stop()
                 break
 
             finally:
-                if (self.error_retries_counter >=
-                        self.parameters.error_max_retries and
-                        self.parameters.error_max_retries >= 0):
+                if self.parameters.testing:
                     self.stop()
                     break
+
+                if error_on_message or error_on_pipeline:
+                    self.error_retries_counter += 1
+
+                    # reached the maximum number of retries
+                    if (self.error_retries_counter >
+                            self.parameters.error_max_retries):
+
+                        if error_on_message:
+
+                            if self.parameters.error_dump_message:
+                                self.dump_message(error_traceback)
+
+                            # FIXME: if broker fails in this instant
+                            #        it will crash the bot
+                            #
+                            # remove message from pipeline
+                            self.acknowledge_message()
+
+                            # when bot acknowledge the message,
+                            # dont need to wait again
+                            error_on_message = False
+
+                        # error_procedure: stop
+                        if self.parameters.error_procedure == "stop":
+                            self.stop()
+
+                        # error_procedure: pass
+                        else:
+                            self.error_retries_counter = 0  # reset counter
 
     def stop(self):
         self.disconnect_pipelines()
@@ -151,7 +172,8 @@ class Bot(object):
         else:
             self.log_buffer.append(('info', 'Bot stopped.'))
             self.print_log_buffer()
-        if self.parameters.exit_on_stop:
+
+        if not self.parameters.testing:
             self.terminate()
 
     def terminate(self):
@@ -243,7 +265,11 @@ class Bot(object):
         self.last_message = self.current_message
         self.source_pipeline.acknowledge()
 
-    def dump_message(self):
+    def dump_message(self, error_traceback):
+        if self.current_message is None:
+            return
+
+        self.logger.info('Dumping message from pipeline to dump file.')
         timestamp = datetime.datetime.utcnow()
         timestamp = timestamp.isoformat()
 
@@ -253,12 +279,9 @@ class Bot(object):
         new_dump_data[timestamp] = dict()
         new_dump_data[timestamp]["bot_id"] = self.bot_id
         new_dump_data[timestamp]["source_queue"] = self.source_queues
-        new_dump_data[timestamp]["traceback"] = traceback.format_exc()
-        if self.current_message is not None:
-            message = self.current_message.serialize()
-        else:
-            message = None
-        new_dump_data[timestamp]["message"] = message
+        new_dump_data[timestamp]["traceback"] = error_traceback
+
+        new_dump_data[timestamp]["message"] = self.current_message.serialize()
 
         try:
             with open(dump_file, 'r') as fp:
@@ -270,10 +293,15 @@ class Bot(object):
         with open(dump_file, 'w') as fp:
             json.dump(dump_data, fp, indent=4, sort_keys=True)
 
+        self.logger.info('Message dumped.')
+        self.current_message = None
+
+
     def load_defaults_configuration(self):
         self.log_buffer.append(('debug', "Loading defaults configuration."))
         config = utils.load_configuration(DEFAULTS_CONF_FILE)
 
+        setattr(self.parameters, 'testing', False)
         setattr(self.parameters, 'logging_path', DEFAULT_LOGGING_PATH)
         setattr(self.parameters, 'logging_level', DEFAULT_LOGGING_LEVEL)
 
