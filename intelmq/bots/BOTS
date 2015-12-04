@@ -617,9 +617,7 @@
                 "redis_cache_host": "127.0.0.1",
                 "redis_cache_port": "6379",
                 "redis_cache_db": "7",
-                "redis_cache_ttl": "86400",
-                "smtp_server" : "127.0.0.1",
-                "testing_to": "edvard.rejthar+test_output@nic.cz"
+                "redis_cache_ttl": "86400"                
             }
         },
         "MailSend": {
@@ -632,7 +630,9 @@
                 "redis_cache_db": "7",
                 "redis_cache_ttl": "86400",
                 "mail_template": "/opt/intelmq/etc/mail/template.txt",
-                "emailFrom": "edvard.rejthar+test_intelmq@nic.cz"
+                "emailFrom": "edvard.rejthar+test_intelmq@nic.cz",
+                "smtp_server" : "127.0.0.1",
+                "testing_to": "edvard.rejthar+test_output@nic.cz"
             }
         },
         "File": {

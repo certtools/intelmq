@@ -13,6 +13,7 @@ from intelmq.lib.harmonization import IPAddress
 class ForwardDnsExpertBot(Bot):
 
     def init(self):
+        print("joooo")
         self.cache = Cache(self.parameters.redis_cache_host,
                            self.parameters.redis_cache_port,
                            self.parameters.redis_cache_db,
@@ -24,9 +25,9 @@ class ForwardDnsExpertBot(Bot):
         if event is None:
             self.acknowledge_message()
             return
-        keys = ["source.%s", "destination.%s"]
 
-        for key in keys:
+        messageSent = False
+        for key in ["source.%s", "destination.%s"]:
             ip_key = key % "ip"
             fqdn_key = key % "fqdn"
 
@@ -43,17 +44,22 @@ class ForwardDnsExpertBot(Bot):
             else:
                 soc = socket.getaddrinfo(fqdn, 0)
                 try:
-                    result = [address[4][0] for address in soc]                    
+                    result = set([address[4][0] for address in soc])
                 except socket.error as msg:
                     print(msg)
                     continue
                 else:
                     self.cache.set(cache_key, result)
 
-            if result is not None:
-                event.add(key % 'forward_dns',
-                          "".join(result), sanitize=True, force=True)
-        self.send_message(event)
+            print("VEEOF",result)
+            for ip in result:
+                print("ZDEE!!",ip,ip_key,fqdn_key)
+                event.add(ip_key, ip, sanitize=True, force=True)
+                self.send_message(event)
+                messageSent = True
+
+        if not messageSent:
+            self.send_message(event)
         self.acknowledge_message()
 
 
