@@ -17,7 +17,6 @@ from intelmq import PIPELINE_CONF_FILE
 from intelmq import RUNTIME_CONF_FILE
 from intelmq import STARTUP_CONF_FILE
 from intelmq import SYSTEM_CONF_FILE
-from intelmq import DEFAULT_LOGGING_PATH
 from intelmq.lib import utils
 
 

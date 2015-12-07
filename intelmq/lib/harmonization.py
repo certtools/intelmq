@@ -38,7 +38,7 @@ except ImportError:
 
 
 __all__ = ['Base64', 'Boolean', 'ClassificationType', 'DateTime', 'FQDN',
-           'Float', 'Accuracy', 'GenericType', 'IPAddress', 'IPNetwork', 
+           'Float', 'Accuracy', 'GenericType', 'IPAddress', 'IPNetwork',
            'Integer', 'MalwareName', 'String', 'URL', 'UUID',
            ]
 
