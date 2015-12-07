@@ -20,9 +20,11 @@ class StompListener(stomp.listener.PrintingListener):
         self.n6stomper = n6stompcollector
 
     def on_heartbeat_timeout(self):
-        self.n6stomper.logger.warn("Lost connection! Re-establishing.")
-        self.n6stomper.conn.disconnect()
-        self.n6stomper.conn.connect(wait=False)
+        self.n6stomper.logger.warn("Heartbeat timeout.")
+        # currently we don't do anything XXX need to test timeouts and fix it
+        # self.n6stomper.conn.disconnect()
+        # status = self.n6stomper.conn.connect(wait=False)
+        # self.n6stomper.logger.warn("Re-connected: %s" % status)
 
     def on_error(self, headers, message):
         self.n6stomper.logger.warn('Received an error :"%s".' % repr(message))
@@ -34,13 +36,15 @@ class StompListener(stomp.listener.PrintingListener):
         report.add("raw", message.rstrip(), sanitize=True)
         report.add("feed.name", self.n6stomper.parameters.feed,
                    sanitize=True)
-        report.add("feed.url", "stomp://" + self.n6stomper.parameters.server +
-                   ":" + self.n6stomper.parameters.port +
-                   "/" + self.n6stomper.parameters.exchange, sanitize=True)
+        report.add("feed.url", "stomp://" +
+                   self.n6stomper.parameters.server +
+                   ":" + str(self.n6stomper.parameters.port) +
+                   "/" + self.n6stomper.parameters.exchange,
+                   sanitize=True)
         time_observation = DateTime().generate_datetime_now()
         report.add('time.observation', time_observation, sanitize=True)
         self.n6stomper.send_message(report)
-        self.logger.debug('Receiving Message.')
+        self.n6stomper.logger.debug('Receiving Message.')
 
 
 class n6stompCollectorBot(Bot):
