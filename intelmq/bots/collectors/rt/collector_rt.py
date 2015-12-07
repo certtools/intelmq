@@ -2,16 +2,16 @@
 """
 TODO: Arbitrary order of decrypt and unzip
 """
-
 import io
 import re
 import sys
 import zipfile
 
-import rt
 from intelmq.lib.bot import Bot
 from intelmq.lib.harmonization import DateTime
 from intelmq.lib.message import Report
+
+import rt
 
 try:
     import gnupg
