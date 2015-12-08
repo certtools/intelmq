@@ -18,6 +18,7 @@ import os
 import smtplib
 import sys
 import time
+import collections
 try:
     from StringIO import StringIO
 except ImportError:
@@ -48,9 +49,9 @@ class MailSendOutputBot(Bot):
     # Posle vsechny maily
     def send_mails(self):        
         self.logger.warning("Going to send mails...")
-        allowed_fieldnames = set(['time.source', 'feed.url', 'feed.name', 'event_description.text', 'raw', 'source.ip',
-                                  'classification.taxonomy', 'classification.type', 'time.observation',
-                                  'source.geolocation.cc', 'source.asn'])
+        allowed_fieldnames = ['time.source', 'source.ip', 'classification.taxonomy', 'classification.type',
+                                  'time.observation', 'source.geolocation.cc', 'source.asn', 'event_description.text',
+                                  'feed.name', 'feed.url', 'raw']
         with open(self.parameters.mail_template) as f:
             mailContents = f.read()
         
@@ -67,11 +68,21 @@ class MailSendOutputBot(Bot):
             for row in lines:
                 fieldnames = fieldnames | set(row.keys())
                 keys = set(allowed_fieldnames).intersection(row)
-                rows_output.append({k:row[k] for k in keys})
-            fieldnames = fieldnames & allowed_fieldnames
+                ordered_keys = []
+                for field in allowed_fieldnames:
+                    if field in keys:
+                        ordered_keys.append(field)
+                rows_output.append(collections.OrderedDict({k:row[k] for k in ordered_keys}))
+
+            fieldnames = fieldnames & set(allowed_fieldnames)
+            ordered_fieldnames = []
+            for field in allowed_fieldnames:
+                    if field in fieldnames:
+                        ordered_fieldnames.append(field)
+
             output = StringIO()
-            dict_writer = csv.DictWriter(output, fieldnames=fieldnames)
-            dict_writer.writerow(dict(zip(fieldnames, fieldnames)))
+            dict_writer = csv.DictWriter(output, fieldnames=ordered_fieldnames)
+            dict_writer.writerow(dict(zip(ordered_fieldnames, ordered_fieldnames)))
             dict_writer.writerows(rows_output)
 
             self._send_mail(self.parameters.emailFrom, mail_record[len("mail:"):], "Threat list", mailContents, output.getvalue()) #"\n".join(lines)
