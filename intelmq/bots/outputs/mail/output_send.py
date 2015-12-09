@@ -82,7 +82,6 @@ class MailSendOutputBot(Bot):
                 rows_output.append(collections.OrderedDict({fieldnames_translation[k]:row[k] for k in ordered_keys}))
 
             # prepare headers for csv attachment
-            #fieldnames = fieldnames & set(allowed_fieldnames)
             ordered_fieldnames = []
             for field in allowed_fieldnames:
                 ordered_fieldnames.append(fieldnames_translation[field])
@@ -95,7 +94,7 @@ class MailSendOutputBot(Bot):
 
             # send the whole message
             self._send_mail(self.parameters.emailFrom, mail_record[len("mail:"):],
-                            "PROKI incident notification", mailContents, output.getvalue())
+                            'PROKI - upozornění na nalezené incidenty', mailContents, output.getvalue())
             if not MailSendOutputBot.debug:
                 self.cache.redis.delete(mail_record)
         self.logger.warning("DONE!")
