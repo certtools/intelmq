@@ -24,6 +24,7 @@ try:
 except ImportError:
     from io import StringIO
 
+
 class MailSendOutputBot(Bot):
     def process(self):
         pass
@@ -46,12 +47,17 @@ class MailSendOutputBot(Bot):
             print("MailSendOutputBot done.")
             quit()
 
-    # Posle vsechny maily
+    # Sends out all emails
     def send_mails(self):        
         self.logger.warning("Going to send mails...")
         allowed_fieldnames = ['time.source', 'source.ip', 'classification.taxonomy', 'classification.type',
-                                  'time.observation', 'source.geolocation.cc', 'source.asn', 'event_description.text',
-                                  'feed.name', 'feed.url', 'raw']
+                              'time.observation', 'source.geolocation.cc', 'source.asn', 'event_description.text',
+                              'feed.name', 'feed.url', 'raw']
+        fieldnames_translation = {'time.source': 'time_detected', 'source.ip': 'ip', 'classification.taxonomy': 'class',
+                                  'classification.type': 'type', 'time.observation': 'time_delivered',
+                                  'source.geolocation.cc': 'country_code', 'source.asn': 'asn',
+                                  'event_description.text': 'description', 'feed.name': 'feed_name',
+                                  'feed.url': 'feed_url', 'raw': 'original_base64'}
         with open(self.parameters.mail_template) as f:
             mailContents = f.read()
         
@@ -62,7 +68,8 @@ class MailSendOutputBot(Bot):
             self.logger.debug(mail_record)
             for message in self.cache.redis.lrange(mail_record, 0, -1):
                 lines.append(json.loads(unicode(message)))
-            
+
+            # prepare rows for csv attachment
             fieldnames = set()
             rows_output = []
             for row in lines:
@@ -72,25 +79,28 @@ class MailSendOutputBot(Bot):
                 for field in allowed_fieldnames:
                     if field in keys:
                         ordered_keys.append(field)
-                rows_output.append(collections.OrderedDict({k:row[k] for k in ordered_keys}))
+                rows_output.append(collections.OrderedDict({fieldnames_translation[k]:row[k] for k in ordered_keys}))
 
-            fieldnames = fieldnames & set(allowed_fieldnames)
+            # prepare headers for csv attachment
+            #fieldnames = fieldnames & set(allowed_fieldnames)
             ordered_fieldnames = []
             for field in allowed_fieldnames:
-                    if field in fieldnames:
-                        ordered_fieldnames.append(field)
+                ordered_fieldnames.append(fieldnames_translation[field])
 
+            # write data to csv
             output = StringIO()
             dict_writer = csv.DictWriter(output, fieldnames=ordered_fieldnames)
             dict_writer.writerow(dict(zip(ordered_fieldnames, ordered_fieldnames)))
             dict_writer.writerows(rows_output)
 
-            self._send_mail(self.parameters.emailFrom, mail_record[len("mail:"):], "Threat list", mailContents, output.getvalue()) #"\n".join(lines)
+            # send the whole message
+            self._send_mail(self.parameters.emailFrom, mail_record[len("mail:"):],
+                            "PROKI incident notification", mailContents, output.getvalue())
             if not MailSendOutputBot.debug:
                 self.cache.redis.delete(mail_record)
         self.logger.warning("DONE!")
 
-
+    # actual funtion to send email through smtp
     def _send_mail(self, emailfrom, emailto, subject, text, fileContents=None):        
         server = self.parameters.smtp_server
         if self.parameters.testing_to:
@@ -105,15 +115,14 @@ class MailSendOutputBot(Bot):
             print 'To: ' + emailto + '; Subject: ' + subject
             print 'Events: ' + str((fileContents.count('\n') - 1))
             print '-------------------------------------------------'
-            #print("DEBUG MODE – does not send anything".encode("utf-8"))
-            #print(msg)
         else:
             msg.attach(MIMEText(text, "plain", "utf-8"))
 
             maintype, subtype = "text/csv".split("/", 1)
             if maintype == "text":
                 attachment = MIMEText(fileContents, _subtype=subtype)
-            attachment.add_header("Content-Disposition", "attachment", filename='list_{}.csv'.format(time.strftime("%Y%m%d")))
+            attachment.add_header("Content-Disposition", "attachment",
+                                  filename='proki_{}.csv'.format(time.strftime("%Y%m%d")))
             msg.attach(attachment)
 
             smtp = smtplib.SMTP(server)
