@@ -94,7 +94,7 @@ class MailSendOutputBot(Bot):
 
             # send the whole message
             self._send_mail(self.parameters.emailFrom, mail_record[len("mail:"):],
-                            'PROKI - upozornění na nalezené incidenty', mailContents, output.getvalue())
+                            'PROKI - upozorneni na nalezene incidenty', mailContents, output.getvalue())
             if not MailSendOutputBot.debug:
                 self.cache.redis.delete(mail_record)
         self.logger.warning("DONE!")
