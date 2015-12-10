@@ -109,6 +109,8 @@ class MailSendOutputBot(Bot):
         msg["From"] = emailfrom
         msg["Subject"] = subject
         msg["To"] = emailto
+        if self.parameters.bcc:
+            msg["Bcc"] = self.parameters.bcc
 
         if MailSendOutputBot.debug:
             print 'To: ' + emailto + '; Subject: ' + subject
