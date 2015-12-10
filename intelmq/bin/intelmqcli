@@ -454,6 +454,9 @@ def save_to_rt(ids, subject, requestor, csvfile, body):
         print('Not writing to RT, dry-run selected.')
         return
 
+    b = unicode(body, encoding='utf8', errors='ignore')
+    body = b
+
     report_id = RT.create_ticket(Queue='Incident Reports', Subject=subject,
                                  Owner=CONFIG['rt']['user'])
     if report_id == -1:
