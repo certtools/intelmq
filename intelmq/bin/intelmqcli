@@ -31,9 +31,9 @@ from termstyle import bold, green, inverted, red, reset
 
 import rt
 
-dryrun=False
-verbose=False
-compress_csv=False
+dryrun = False
+verbose = False
+compress_csv = False
 
 if locale.getpreferredencoding() != 'UTF-8':
     print(red('The preferred encoding of your locale setting is not UTF-8 but'
@@ -44,7 +44,7 @@ myinverted = str(reset) + str(inverted)
 if sys.version[0] == '2':
     input = raw_input
 
-CONFIG=dict()
+CONFIG = dict()
 home = os.path.expanduser("~")
 with open(os.path.expanduser(home + '/.intelmq/intelmqcli.conf')) as conf_handle:
     user_config = json.load(conf_handle)
@@ -140,31 +140,56 @@ GROUP BY {conttab}.contacts, grouping;
 
 QUERY_BY_ASCONTACT = """
 SELECT
-    {evtab}.id,
     to_char({evtab}."time.source" at time zone 'UTC',
             'YYYY-MM-DD"T"HH24:MI:SSTZ') as "time.source",
+    {evtab}.id,
     {evtab}."feed.code" as feed,
-    {evtab}."classification.identifier", {evtab}."classification.taxonomy",
-    {evtab}."classification.type", {evtab}."comment",
-    {evtab}."destination.account",  {evtab}."destination.asn",
-    {evtab}."destination.fqdn", {evtab}."destination.geolocation.cc",
-    {evtab}."destination.ip", {evtab}."destination.local_hostname",
-    {evtab}."destination.local_ip", {evtab}."destination.network",
-    {evtab}."destination.port", {evtab}."destination.reverse_dns",
-    {evtab}."destination.tor_node", {evtab}."destination.url",
-    {evtab}."event_description.target", {evtab}."event_description.text",
-    {evtab}."event_description.url", {evtab}."event_hash", {evtab}."extra",
-    {evtab}."feed.accuracy", {evtab}."malware.hash",
-    {evtab}."malware.hash.md5", {evtab}."malware.hash.sha1",
-    {evtab}."malware.name", {evtab}."malware.version", {evtab}."misp_uuid",
-    {evtab}."notify", {evtab}."protocol.application",
-    {evtab}."protocol.transport", {evtab}."screenshot_url",
-    {evtab}."source.account", {evtab}."source.asn", {evtab}."source.fqdn",
-    {evtab}."source.geolocation.cc",  {evtab}."source.ip",
-    {evtab}."source.local_hostname", {evtab}."source.local_ip",
-    {evtab}."source.network", {evtab}."source.port",
-    {evtab}."source.reverse_dns", {evtab}."source.tor_node",
-    {evtab}."source.url", {evtab}."status", {evtab}."time.observation"
+    {evtab}."source.ip",
+    {evtab}."source.port",
+    {evtab}."source.asn",
+    {evtab}."source.network",
+    {evtab}."source.geolocation.cc",
+    {evtab}."source.account",
+    {evtab}."source.fqdn",
+    {evtab}."source.local_hostname",
+    {evtab}."source.local_ip",
+    {evtab}."source.reverse_dns",
+    {evtab}."source.tor_node",
+    {evtab}."source.url",
+    {evtab}."classification.identifier",
+    {evtab}."classification.taxonomy",
+    {evtab}."classification.type",
+    {evtab}."comment",
+    {evtab}."destination.ip",
+    {evtab}."destination.port",
+    {evtab}."destination.asn",
+    {evtab}."destination.network",
+    {evtab}."destination.geolocation.cc",
+    {evtab}."destination.account",
+    {evtab}."destination.fqdn",
+    {evtab}."destination.local_hostname",
+    {evtab}."destination.local_ip",
+    {evtab}."destination.reverse_dns",
+    {evtab}."destination.tor_node",
+    {evtab}."destination.url",
+    {evtab}."event_description.target",
+    {evtab}."event_description.text",
+    {evtab}."event_description.url",
+    {evtab}."event_hash",
+    {evtab}."extra",
+    {evtab}."feed.accuracy",
+    {evtab}."malware.hash",
+    {evtab}."malware.hash.md5",
+    {evtab}."malware.hash.sha1",
+    {evtab}."malware.name",
+    {evtab}."malware.version",
+    {evtab}."misp_uuid",
+    {evtab}."notify",
+    {evtab}."protocol.application",
+    {evtab}."protocol.transport",
+    {evtab}."screenshot_url",
+    {evtab}."status",
+    {evtab}."time.observation"
 FROM events
 LEFT OUTER JOIN {conttab} ON {evtab}."source.asn" = {conttab}.asnum
 WHERE
@@ -181,31 +206,56 @@ WHERE
 
 QUERY_BY_ASNUM = """
 SELECT
-    {evtab}.id,
     to_char({evtab}."time.source" at time zone 'UTC',
             'YYYY-MM-DD"T"HH24:MI:SSTZ') as "time.source",
+    {evtab}.id,
     {evtab}."feed.code" as feed,
-    {evtab}."classification.identifier", {evtab}."classification.taxonomy",
-    {evtab}."classification.type", {evtab}."comment",
-    {evtab}."destination.account",  {evtab}."destination.asn",
-    {evtab}."destination.fqdn", {evtab}."destination.geolocation.cc",
-    {evtab}."destination.ip", {evtab}."destination.local_hostname",
-    {evtab}."destination.local_ip", {evtab}."destination.network",
-    {evtab}."destination.port", {evtab}."destination.reverse_dns",
-    {evtab}."destination.tor_node", {evtab}."destination.url",
-    {evtab}."event_description.target", {evtab}."event_description.text",
-    {evtab}."event_description.url", {evtab}."event_hash", {evtab}."extra",
-    {evtab}."feed.accuracy", {evtab}."malware.hash",
-    {evtab}."malware.hash.md5", {evtab}."malware.hash.sha1",
-    {evtab}."malware.name", {evtab}."malware.version", {evtab}."misp_uuid",
-    {evtab}."notify", {evtab}."protocol.application",
-    {evtab}."protocol.transport", {evtab}."screenshot_url",
-    {evtab}."source.account", {evtab}."source.asn", {evtab}."source.fqdn",
-    {evtab}."source.geolocation.cc",  {evtab}."source.ip",
-    {evtab}."source.local_hostname", {evtab}."source.local_ip",
-    {evtab}."source.network", {evtab}."source.port",
-    {evtab}."source.reverse_dns", {evtab}."source.tor_node",
-    {evtab}."source.url", {evtab}."status", {evtab}."time.observation"
+    {evtab}."source.ip",
+    {evtab}."source.port",
+    {evtab}."source.asn",
+    {evtab}."source.network",
+    {evtab}."source.geolocation.cc",
+    {evtab}."source.account",
+    {evtab}."source.fqdn",
+    {evtab}."source.local_hostname",
+    {evtab}."source.local_ip",
+    {evtab}."source.reverse_dns",
+    {evtab}."source.tor_node",
+    {evtab}."source.url",
+    {evtab}."classification.identifier",
+    {evtab}."classification.taxonomy",
+    {evtab}."classification.type",
+    {evtab}."comment",
+    {evtab}."destination.ip",
+    {evtab}."destination.port",
+    {evtab}."destination.asn",
+    {evtab}."destination.network",
+    {evtab}."destination.geolocation.cc",
+    {evtab}."destination.account",
+    {evtab}."destination.fqdn",
+    {evtab}."destination.local_hostname",
+    {evtab}."destination.local_ip",
+    {evtab}."destination.reverse_dns",
+    {evtab}."destination.tor_node",
+    {evtab}."destination.url",
+    {evtab}."event_description.target",
+    {evtab}."event_description.text",
+    {evtab}."event_description.url",
+    {evtab}."event_hash",
+    {evtab}."extra",
+    {evtab}."feed.accuracy",
+    {evtab}."malware.hash",
+    {evtab}."malware.hash.md5",
+    {evtab}."malware.hash.sha1",
+    {evtab}."malware.name",
+    {evtab}."malware.version",
+    {evtab}."misp_uuid",
+    {evtab}."notify",
+    {evtab}."protocol.application",
+    {evtab}."protocol.transport",
+    {evtab}."screenshot_url",
+    {evtab}."status",
+    {evtab}."time.observation"
 FROM events
 LEFT OUTER JOIN {conttab} ON {evtab}."source.asn" = {conttab}.asnum
 WHERE
@@ -297,7 +347,7 @@ def shrink_dict(d):
     if not compress_csv:
         return d
     keys = d[0].keys()
-    empty = dict(zip(keys, [True]*len(keys)))
+    empty = dict(zip(keys, [True] * len(keys)))
     for line in d:
         for key, value in line.items():
             if value is not None:
@@ -331,7 +381,9 @@ def query_by_as(contact, requestor=None, automatic=False, feed='%'):
         csvfile = io.BytesIO()
     else:
         csvfile = io.StringIO()
-    writer = csv.DictWriter(csvfile, fieldnames=sorted(query[0].keys()), # XXX FIXME : we want a specific fields order here
+    # XXX FIXME : right now, the order is determined by the SQL SELECT ()
+    #  in the future, the order should be given by a config file
+    writer = csv.DictWriter(csvfile, fieldnames=(query[0].keys()),
                             lineterminator='\n')
     writer.writeheader()
     writer.writerows(query)
@@ -341,17 +393,17 @@ def query_by_as(contact, requestor=None, automatic=False, feed='%'):
     if verbose:
         pprint.pprint(text)
 
-    showed_text = u'='*100 + u'''
+    showed_text = u'=' * 100 + u'''
 To: {to}
 Subject: {subj}
 
 {text}
-'''.format(to=requestor, subj=subject, text=unicode(text,encoding='utf8',errors='ignore'))
+'''.format(to=requestor, subj=subject, text=unicode(text, encoding='utf8', errors='ignore'))
     showed_text_len = showed_text.count('\n')
 
     global TABLE_MODE
     if TABLE_MODE:
-        height = getTerminalHeight()-3-showed_text_len
+        height = getTerminalHeight() - 3 - showed_text_len
         csvfile.seek(0)
         if len(query) > height:
             with tempfile.NamedTemporaryFile(mode='w+') as handle:
@@ -368,19 +420,19 @@ Subject: {subj}
             except AttributeError:
                 print(showed_text, table_from_query(query), sep='\n')
     else:
-        height = getTerminalHeight()-4
+        height = getTerminalHeight() - 4
         if 5 + len(query) > height:  # cut query too, 5 is length of text
             print('\n'.join(showed_text.splitlines()[:5]))
             print('...')
             print('\n'.join(attachment_lines[:height - 5]))
             print('...')
         elif showed_text_len + len(query) > height > 5 + len(query):
-            print('\n'.join(showed_text.splitlines()[:height-len(query)]))
+            print('\n'.join(showed_text.splitlines()[:height - len(query)]))
             print('...')
             print(attachment_text)
         else:
             print(showed_text, attachment_text, sep='\n')
-    print('-'*100)
+    print('-' * 100)
     if automatic and requestor:
         answer = 's'
     else:
@@ -394,11 +446,11 @@ Subject: {subj}
     elif answer == 'b':
         return
     elif answer == 't':
-        TABLE_MODE = bool((TABLE_MODE+1) % 2)
+        TABLE_MODE = bool((TABLE_MODE + 1) % 2)
         query_by_as(contact, requestor=requestor, feed=feed)
         return
     elif answer == ('r'):
-        answer = input(inverted('New requestor address:')+' ').strip()
+        answer = input(inverted('New requestor address:') + ' ').strip()
         if len(answer) == 0:
             if type(contact) is int:
                 requestor = ''
@@ -532,7 +584,7 @@ def count_by_asn(feed='%'):
                               row['contacts']])
     max_class_length = max([len(row['classification']) for row in asn_count if
                             row['classification']])
-    print('='*100)
+    print('=' * 100)
     print(bold("{id:>3} {count:3} {asn!s: <{asnlen}} {contacts!s: <{conlen}} "
                "{type!s: <{typelen}} feeds"
                "".format(id='id', count='n°', asn='ASNs', type='types',
@@ -573,11 +625,11 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.verbose:
-        verbose=True
+        verbose = True
     if args.dry_run:
-        dryrun=True
+        dryrun = True
     if args.compress_csv:
-        compress_csv=True
+        compress_csv = True
 
     if args.list_feeds:
         CUR.execute(QUERY_FEED_NAMES)
