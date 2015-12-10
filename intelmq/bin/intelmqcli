@@ -33,6 +33,7 @@ import rt
 
 dryrun=False
 verbose=False
+compress_csv=False
 
 if locale.getpreferredencoding() != 'UTF-8':
     print(red('The preferred encoding of your locale setting is not UTF-8 but'
@@ -91,6 +92,8 @@ If you are ready to submit the incidents to RT and send the mails out, press
 USAGE = '''
     intelmqcli
     intelmqcli --dry-run
+    intelmqcli --verbose
+    intelmqcli --compress-csv
     intelmqcli --list-feeds
     intelmqcli --feed='feedname' '''
 
@@ -291,6 +294,8 @@ def table_from_query(query):
 
 
 def shrink_dict(d):
+    if not compress_csv:
+        return d
     keys = d[0].keys()
     empty = dict(zip(keys, [True]*len(keys)))
     for line in d:
@@ -561,13 +566,19 @@ if __name__ == '__main__':
                         help='Show only incidents reported by given feed.')
     parser.add_argument('-v', '--verbose', action='store_true',
                         help='Print verbose messages.')
+    parser.add_argument('-c', '--compress-csv', action='store_true',
+                        help='Automatically compress/shrink the attached CSV report if fields are empty (default = False).')
     parser.add_argument('-n', '--dry-run', action='store_true',
                         help='Do not store anything or change anything. Just simulate.')
     args = parser.parse_args()
+
     if args.verbose:
         verbose=True
     if args.dry_run:
         dryrun=True
+    if args.compress_csv:
+        compress_csv=True
+
     if args.list_feeds:
         CUR.execute(QUERY_FEED_NAMES)
         for row in CUR.fetchall():
