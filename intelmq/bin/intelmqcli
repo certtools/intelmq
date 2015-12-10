@@ -336,12 +336,12 @@ def query_by_as(contact, requestor=None, automatic=False, feed='%'):
     if verbose:
         pprint.pprint(text)
 
-    showed_text = '='*100 + '''
+    showed_text = u'='*100 + u'''
 To: {to}
 Subject: {subj}
 
 {text}
-'''.format(to=requestor, subj=subject, text=text)
+'''.format(to=requestor, subj=subject, text=unicode(text,encoding='utf8',errors='ignore'))
     showed_text_len = showed_text.count('\n')
 
     global TABLE_MODE
@@ -350,7 +350,7 @@ Subject: {subj}
         csvfile.seek(0)
         if len(query) > height:
             with tempfile.NamedTemporaryFile(mode='w+') as handle:
-                handle.write(showed_text + '\n')
+                handle.write(showed_text + u'\n')
                 try:
                     handle.write(str(prettytable.from_csv(csvfile)))
                 except AttributeError:
