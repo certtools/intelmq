@@ -18,6 +18,7 @@ import io
 import json
 import locale
 import os
+import pprint
 import subprocess
 import sys
 import tempfile
@@ -42,10 +43,16 @@ myinverted = str(reset) + str(inverted)
 if sys.version[0] == '2':
     input = raw_input
 
-with open('/etc/intelmq/intelmqcli.conf') as conf_handle:
-    CONFIG = json.load(conf_handle)
-with open(os.path.expanduser('~/.intelmq/intelmqcli.conf')) as conf_handle:
+CONFIG=dict()
+home = os.path.expanduser("~")
+with open(os.path.expanduser(home + '/.intelmq/intelmqcli.conf')) as conf_handle:
     user_config = json.load(conf_handle)
+try:
+    with open('/etc/intelmq/intelmqcli.conf') as conf_handle:
+        CONFIG = json.load(conf_handle)
+except:
+    pass
+
 for key, value in user_config.items():
     if key in CONFIG and type(CONFIG[key]) is dict:
         CONFIG[key].update(value)
@@ -326,6 +333,9 @@ def query_by_as(contact, requestor=None, automatic=False, feed='%'):
     attachment_text = csvfile.getvalue()
     attachment_lines = attachment_text.splitlines()
 
+    if verbose:
+        pprint.pprint(text)
+
     showed_text = '='*100 + '''
 To: {to}
 Subject: {subj}
@@ -553,7 +563,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     if args.verbose:
         verbose=True
-    if args.dryrun:
+    if args.dry_run:
         dryrun=True
     if args.list_feeds:
         CUR.execute(QUERY_FEED_NAMES)
