@@ -30,6 +30,9 @@ from termstyle import bold, green, inverted, red, reset
 
 import rt
 
+dryrun=False
+verbose=False
+
 if locale.getpreferredencoding() != 'UTF-8':
     print(red('The preferred encoding of your locale setting is not UTF-8 but'
               '{}. Exiting.'.format(locale.getpreferredencoding())))
@@ -80,6 +83,7 @@ If you are ready to submit the incidents to RT and send the mails out, press
 """
 USAGE = '''
     intelmqcli
+    intelmqcli --dry-run
     intelmqcli --list-feeds
     intelmqcli --feed='feedname' '''
 
@@ -123,6 +127,7 @@ WHERE
 GROUP BY {conttab}.contacts, grouping;
 """.format(evtab=CONFIG['database']['events_table'], cc=CONFIG['filter']['cc'],
            conttab=CONFIG['database']['contacts_table'])
+
 QUERY_BY_ASCONTACT = """
 SELECT
     {evtab}.id,
@@ -163,6 +168,7 @@ WHERE
     "time.source" IS NOT NULL;
 """.format(evtab=CONFIG['database']['events_table'],
            conttab=CONFIG['database']['contacts_table'])
+
 QUERY_BY_ASNUM = """
 SELECT
     {evtab}.id,
@@ -203,6 +209,8 @@ WHERE
     "time.source" IS NOT NULL;
 """.format(evtab=CONFIG['database']['events_table'],
            conttab=CONFIG['database']['contacts_table'])
+
+
 QUERY_SET_RTIRID = """
 UPDATE {evtab} SET
     rtir_{{type}}_id = {{rtirid}},
@@ -210,12 +218,14 @@ UPDATE {evtab} SET
 WHERE
     id = ANY('{{{{{{ids}}}}}}'::int[]);
 """.format(evtab=CONFIG['database']['events_table'])
+
 QUERY_UPDATE_CONTACT = """
 UPDATE {conttab} SET
     contacts = '{{contacts}}'
 WHERE
     asnum = ANY('{{{{{{asns}}}}}}'::int[]);
 """.format(conttab=CONFIG['database']['contacts_table'])
+
 QUERY_INSERT_CONTACT = """
 INSERT INTO {conttab} (
     asnum, contacts, comment, unreliable
@@ -223,6 +233,7 @@ INSERT INTO {conttab} (
     %s, %s, %s, FALSE
 )
 """.format(conttab=CONFIG['database']['contacts_table'])
+
 QUERY_GET_TEXT = """
 SELECT
     body
@@ -230,6 +241,7 @@ FROM {texttab}
 WHERE
     key = %s
 """.format(texttab=CONFIG['database']['text_table'])
+
 QUERY_FEED_NAMES = "SELECT DISTINCT \"feed.name\" from events"
 
 
@@ -307,7 +319,7 @@ def query_by_as(contact, requestor=None, automatic=False, feed='%'):
         csvfile = io.BytesIO()
     else:
         csvfile = io.StringIO()
-    writer = csv.DictWriter(csvfile, fieldnames=sorted(query[0].keys()),
+    writer = csv.DictWriter(csvfile, fieldnames=sorted(query[0].keys()), # XXX FIXME : we want a specific fields order here
                             lineterminator='\n')
     writer.writeheader()
     writer.writerows(query)
@@ -411,7 +423,7 @@ Subject: {subj}
             save_to_rt(ids=(id_, ), subject=subject, requestor=requestor,
                        csvfile=csvfile, body=text)
 
-    if requestor != contact:
+    if requestor != contact and not dryrun:
         answer = input(inverted('Save recipient {!r} for ASNs {!s}? [Y/n]'
                                 ''.format(requestor, ', '.join(asns)))).strip()
         if answer.lower() in ('', 'y', 'j'):
@@ -428,6 +440,10 @@ Subject: {subj}
 
 
 def save_to_rt(ids, subject, requestor, csvfile, body):
+    if dryrun:
+        print('Not writing to RT, dry-run selected.')
+        return
+
     report_id = RT.create_ticket(Queue='Incident Reports', Subject=subject,
                                  Owner=CONFIG['rt']['user'])
     if report_id == -1:
@@ -528,7 +544,15 @@ if __name__ == '__main__':
                         help='List all feeds')
     parser.add_argument('-f', '--feed', nargs='?', default='%', const='%',
                         help='Show only incidents reported by given feed.')
+    parser.add_argument('-v', '--verbose', action='store_true',
+                        help='Print verbose messages.')
+    parser.add_argument('-n', '--dry-run', action='store_true',
+                        help='Do not store anything or change anything. Just simulate.')
     args = parser.parse_args()
+    if args.verbose:
+        verbose=True
+    if args.dryrun:
+        dryrun=True
     if args.list_feeds:
         CUR.execute(QUERY_FEED_NAMES)
         for row in CUR.fetchall():
@@ -545,6 +569,8 @@ if __name__ == '__main__':
     try:
         while True:
             asn_count = count_by_asn(feed=args.feed)
+            if verbose:
+                print(sys.stderr, 'asn_count = {}.'.format(asn_count))
             answer = input('{i}detailed view by id, {b}[a]{i}utomatic '
                            'sending, {b}[q]{i}uit?{r} '
                            ''.format(b=bold, i=myinverted, r=reset)).strip()
