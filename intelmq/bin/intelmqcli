@@ -509,9 +509,11 @@ def count_by_asn(feed='%'):
     if not asn_count:
         print('No incidents!')
         exit(0)
-    max_asn_length = max([len(row['asn']) for row in asn_count])
-    max_contact_length = max([len(row['contacts']) for row in asn_count])
-    max_class_length = max([len(row['classification']) for row in asn_count])
+    max_asn_length = max([len(row['asn']) for row in asn_count if row['asn']])
+    max_contact_length = max([len(row['contacts']) for row in asn_count if
+                              row['contacts']])
+    max_class_length = max([len(row['classification']) for row in asn_count if
+                            row['classification']])
     print('='*100)
     print(bold("{id:>3} {count:3} {asn!s: <{asnlen}} {contacts!s: <{conlen}} "
                "{type!s: <{typelen}} feeds"
