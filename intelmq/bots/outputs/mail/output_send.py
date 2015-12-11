@@ -95,21 +95,21 @@ class MailSendOutputBot(Bot):
             # send the whole message
             self._send_mail(self.parameters.emailFrom, mail_record[len("mail:"):],
                             'PROKI - upozorneni na nalezene incidenty', mailContents, output.getvalue())
-            if not MailSendOutputBot.debug:
+            if not (MailSendOutputBot.debug or hasattr(self.parameters, 'testing_to')):
                 self.cache.redis.delete(mail_record)
         self.logger.warning("DONE!")
 
     # actual funtion to send email through smtp
     def _send_mail(self, emailfrom, emailto, subject, text, fileContents=None):        
         server = self.parameters.smtp_server
-        if self.parameters.testing_to:
+        if hasattr(self.parameters, 'testing_to'):
             subject = subject + " (intended for " + emailto + ")"
             emailto = self.parameters.testing_to
         msg = MIMEMultipart()
         msg["From"] = emailfrom
         msg["Subject"] = subject
         msg["To"] = emailto
-        if self.parameters.bcc:
+        if hasattr(self.parameters, 'bcc') and not hasattr(self.parameters, 'testing_to'):
             msg["Bcc"] = self.parameters.bcc
 
         if MailSendOutputBot.debug:
