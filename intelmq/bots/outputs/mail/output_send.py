@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #
@@ -57,7 +56,7 @@ class MailSendOutputBot(Bot):
         if MailSendOutputBot.debug or MailSendOutputBot.process:
             self.send_mails()
             print("MailSendOutputBot done.")
-            quit(1)
+            sys.exit(0)
 
     # Sends out all emails
     def send_mails(self):        
