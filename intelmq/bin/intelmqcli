@@ -309,7 +309,7 @@ QUERY_TEXT_NAMES = "SELECT DISTINCT \"key\" from boilerplates"
 
 
 def get_text(query):
-    # XXX FIXME: here we should be able to override which text ("boilerplate text") 
+    # XXX FIXME: here we should be able to override which text ("boilerplate text")
     # gets selected, should the user specify it as a cmd line parameter
     types = [row['classification.identifier'] for row in query
              if 'classification.identifier' in row]
@@ -398,7 +398,7 @@ def query_by_as(contact, requestor=None, automatic=False, feed='%'):
     if verbose:
         pprint.pprint(text)
 
-    showed_text = '=' * 100 + u'''
+    showed_text = '=' * 100 + '''
 To: {to}
 Subject: {subj}
 
