@@ -39,7 +39,7 @@ class MailSendOutputBot(Bot):
     def process(self):
         pass
 
-    debug = False # by default, nothing is sent
+    debug = False # if True, nothing is sent
     process = False # if True, it exits after mails are sent
 
     def set_cache(self):
