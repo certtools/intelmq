@@ -52,12 +52,12 @@ class MailSendOutputBot(Bot):
         self.logger.warning("Going to send mails...")
         allowed_fieldnames = ['time.source', 'source.ip', 'classification.taxonomy', 'classification.type',
                               'time.observation', 'source.geolocation.cc', 'source.asn', 'event_description.text',
-                              'feed.name', 'feed.url', 'raw']
+                              'malware.name', 'feed.name', 'feed.url', 'raw']
         fieldnames_translation = {'time.source': 'time_detected', 'source.ip': 'ip', 'classification.taxonomy': 'class',
                                   'classification.type': 'type', 'time.observation': 'time_delivered',
                                   'source.geolocation.cc': 'country_code', 'source.asn': 'asn',
-                                  'event_description.text': 'description', 'feed.name': 'feed_name',
-                                  'feed.url': 'feed_url', 'raw': 'original_base64'}
+                                  'event_description.text': 'description', 'malware.name': 'malware',
+                                  'feed.name': 'feed_name', 'feed.url': 'feed_url', 'raw': 'original_base64'}
         with open(self.parameters.mail_template) as f:
             mailContents = f.read()
         
