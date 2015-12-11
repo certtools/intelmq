@@ -1,5 +1,17 @@
+
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+#
+#
+#
+# Do not send mails:
+# sudo ./output_send.py mail-output-send debug
+#
+# Do send mails:
+# sudo ./output_send.py mail-output-send process
+#
+# If launched without parameter, it never ends (as normal intelmq bot).
+#
 from __future__ import unicode_literals
 import csv
 from email import encoders
@@ -27,7 +39,7 @@ class MailSendOutputBot(Bot):
     def process(self):
         pass
 
-    debug = True # by default, nothing is sent
+    debug = False # by default, nothing is sent
     process = False # if True, it exits after mails are sent
 
     def set_cache(self):
@@ -38,30 +50,30 @@ class MailSendOutputBot(Bot):
                            self.parameters.redis_cache_ttl
                            )
 
-    def init(self):        
+    def init(self):
         self.set_cache()
-        self.send_mails()
-        if MailSendOutputBot.debug or MailSendOutputBot.process:            
+        if MailSendOutputBot.debug or MailSendOutputBot.process:
+            self.send_mails()
             print("MailSendOutputBot done.")
-            quit()
+            quit(1)
 
     # Posle vsechny maily
-    def send_mails(self):        
+    def send_mails(self):
         self.logger.warning("Going to send mails...")
         allowed_fieldnames = set(['time.source', 'feed.url', 'feed.name', 'event_description.text', 'raw', 'source.ip',
                                   'classification.taxonomy', 'classification.type', 'time.observation',
                                   'source.geolocation.cc', 'source.asn'])
         with open(self.parameters.mail_template) as f:
             mailContents = f.read()
-        
+
         for mail_record in self.cache.redis.keys("mail:*"):
-            self.logger.warning("Next:")            
+            self.logger.warning("Next:")
             self.logger.warning("Mail:" + mail_record)
             lines = []
             self.logger.debug(mail_record)
             for message in self.cache.redis.lrange(mail_record, 0, -1):
                 lines.append(json.loads(unicode(message)))
-            
+
             fieldnames = set()
             rows_output = []
             for row in lines:
@@ -80,7 +92,7 @@ class MailSendOutputBot(Bot):
         self.logger.warning("DONE!")
 
 
-    def _send_mail(self, emailfrom, emailto, subject, text, fileContents=None):        
+    def _send_mail(self, emailfrom, emailto, subject, text, fileContents=None):
         server = self.parameters.smtp_server
         if self.parameters.testing_to:
             subject = subject + " (intended for " + emailto + ")"
@@ -110,7 +122,7 @@ class MailSendOutputBot(Bot):
             smtp.close()
 
 
-if __name__ == "__main__":    
+if __name__ == "__main__":
     if "debug" in sys.argv:
         MailSendOutputBot.debug = True
         print("****** Debug session started. ******")
@@ -121,11 +133,3 @@ if __name__ == "__main__":
 
     bot = MailSendOutputBot(sys.argv[1])
     bot.start()
-
-# Do not send mails:
-# sudo ./output_send.py mail-output-send debug
-#
-# Do send mails:
-# sudo ./output_send.py mail-output-send process
-#
-# If launched without parameter, it never ends (as normal intelmq bot).
