@@ -1,9 +1,12 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from intelmq.lib.bot import Bot
 import sys
 from intelmq.lib.cache import Cache
 from intelmq.lib.message import Event
 import logging
 import os
+import ast
 
 
 class MailGatherOutputBot(Bot):
@@ -20,6 +23,8 @@ class MailGatherOutputBot(Bot):
 
     def process(self):
         message = self.receive_message()
+        mail_rewrite = ast.literal_eval(self.parameters.mail_rewrite)
+
         self.logger.warning("ZPRAVA..")
         self.logger.debug(message)
         
@@ -33,6 +38,13 @@ class MailGatherOutputBot(Bot):
                 mails = field if type(field) == 'list' else [field]
             for mail in mails:
                 self.logger.warning("edvard mails")
+
+                # rewrite destination address
+                if message["source.abuse_contact"] in mail_rewrite:
+                    message.update("source.abuse_contact",
+                                   unicode(mail_rewrite[message["source.abuse_contact"]], "utf-8"))
+                    mail = mail_rewrite[mail]
+
                 self.cache.redis.rpush("mail:"+mail, message)
             self.logger.warning("done")
 

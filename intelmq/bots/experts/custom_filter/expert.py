@@ -50,6 +50,8 @@ class CustomFilterExpertBot(Bot):
         message = self.receive_message()
         if message and self.meet_condition(message):
             self.send_message(message)
+        else:
+            self.logger.debug("Dropping message: " + repr(message))
         self.acknowledge_message()
 
 if __name__ == "__main__":

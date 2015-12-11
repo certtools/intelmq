@@ -41,9 +41,9 @@ mapping['leak']         = {"taxonomy": "Information Content Security",
                            "type": "leak", "identifier": "leak"}
 mapping['malurl']       = {"taxonomy": "Malicious Code",
                            "type": "exploit", "identifier": "malurl"}
-mapping['malware-action']={"taxonomy": "Malicious Code",
-                           "type": "malware configuration",
-                           "identifier": "malware configuration"}
+mapping['malware-action'] = {"taxonomy": "Malicious Code",
+                             "type": "malware configuration",
+                             "identifier": "malware configuration"}
 mapping['phish']        = {"taxonomy": "Fraud",
                            "type": "phishing", "identifier": "phishing"}
 mapping['proxy']        = {"taxonomy": "Vulnerable",
@@ -52,8 +52,8 @@ mapping['sandbox-url']  = {"taxonomy": "ignore",
                            "type": "ignore", "identifier": "ignore me"}
 mapping['scanning']     = {"taxonomy": "Information Gathering",
                            "type": "scanner", "identifier": "scanning"}
-mapping['server-exploit']={"taxonomy": "Malicious Code",
-                           "type": "exploit", "identifier": "server-exploit"}
+mapping['server-exploit'] = {"taxonomy": "Malicious Code",
+                             "type": "exploit", "identifier": "server-exploit"}
 mapping['spam']         = {"taxonomy": "Abusive Content",
                            "type": "spam", "identifier": "spam"}
 mapping['spam-url']     = {"taxonomy": "Abusive Content",
@@ -65,7 +65,7 @@ mapping['webinject']    = {"taxonomy": "Malicious Code",
 mapping['vulnerable']   = {"taxonomy": "Vulnerable",
                            "type": "other", "identifier": "vulnerable"}
 mapping['other']        = {"taxonomy": "Vulnerable",
-                           "type": "other", "identifier": "unknown"}
+                           "type": "unknown", "identifier": "unknown"}
 
 
 class N6StompParserBot(Bot):
@@ -119,7 +119,10 @@ class N6StompParserBot(Bot):
                 dict_report["category"] == 'bots'):
             event.add("malware.name", dict_report["name"], sanitize=True)
 
-        mapping['bots']['identifier'] = dict_report["name"]
+        if ("name" in dict_report):
+            mapping['bots']['identifier'] = dict_report["name"]
+        else:
+            mapping['bots']['identifier'] = "generic-n6"
 
         if dict_report["category"] is not None:
             event.add("classification.taxonomy",
@@ -137,18 +140,28 @@ class N6StompParserBot(Bot):
                       sanitize=True)
 
         # address is an array of JSON objects -> split the event
-        for addr in dict_report['address']:
+        if (not ("address" in dict_report or "fqdn" in dict_report)):
+            # neither of them present -> currently we can't handle those
+            self.logger.warn("ignoring event that we can't handle: "
+                             "neither an address nor an fqdn given")
+        elif ("fqdn" in dict_report):
+            # need to handle domain based data later (for example via gethostbyname bot)
             ev = Event(event)
-            ev.add("source.ip", addr["ip"], sanitize=True)
-            if ("asn" in addr):
-                ev.add("source.asn", addr["asn"], sanitize=True)
-            if ("rdns" in addr):
-                ev.add("source.reverse_dns", addr["rdns"], sanitize=True)
-            # XXX ignore for now, only relevant for flows
-            # ev.add("source.dir", addr["dir"], sanitize=True)
-            if ("cc" in addr):
-                ev.add("source.geolocation.cc", addr["cc"], sanitize=True)
             self.send_message(ev)
+        else:
+            # split up the event into multiple ones, one for each address
+            for addr in dict_report['address']:
+                ev = Event(event)
+                ev.add("source.ip", addr["ip"], sanitize=True)
+                if ("asn" in addr):
+                    ev.add("source.asn", addr["asn"], sanitize=True)
+                if ("rdns" in addr):
+                    ev.add("source.reverse_dns", addr["rdns"], sanitize=True)
+                # XXX ignore for now, only relevant for flows
+                # ev.add("source.dir", addr["dir"], sanitize=True)
+                if ("cc" in addr):
+                    ev.add("source.geolocation.cc", addr["cc"], sanitize=True)
+                self.send_message(ev)
 
         self.acknowledge_message()
 
