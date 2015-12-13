@@ -173,7 +173,7 @@
         },
         "Blueliv Crimeserver": {
             "module": "intelmq.bots.collectors.blueliv.collector_crimeserver",
-            "description": "Blueliv Crimeserver Collector is the bot responsible to get the report through the API. Report could vary acco$
+            "description": "Blueliv Crimeserver Collector is the bot responsible to get the report through the API.",
             "parameters": {
                 "api_key": "<insert your api key>",
                 "feed": "Blueliv Crimeserver",
