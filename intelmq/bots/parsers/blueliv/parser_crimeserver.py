@@ -12,7 +12,9 @@ from intelmq.lib.message import Event
 
 TYPES = {
     'PHISHING': 'phishing',
-    'MALWARE': 'malware'
+    'MALWARE': 'malware',
+    'EXPLOIT_KIT': 'exploit',
+    'BACKDOOR': 'backdoor'
 }
 
 
