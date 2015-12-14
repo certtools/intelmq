@@ -702,7 +702,10 @@ if __name__ == '__main__':
                 if asn_count[answer]['contacts']:
                     query_by_as(asn_count[answer]['contacts'], feed=args.feed)
                 else:
-                    query_by_as(int(asn_count[answer]['asn']), feed=args.feed)
+                    if ans_count[answer] and asn_count[answer]['asn']:
+                        query_by_as(int(asn_count[answer]['asn']), feed=args.feed)
+                    else:
+                        print(red('no ASNs known. Ignoring.'))
             else:
                 print(red('Unknown answer {!r}.'.format(answer)))
 
