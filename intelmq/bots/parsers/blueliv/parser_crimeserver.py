@@ -29,11 +29,12 @@ class BluelivCrimeserverParserBot(Bot):
         raw_report = utils.base64_decode(report.value('raw'))
 
         for item in json.loads(raw_report):
+            event = Event(report)
             event.add('source.url', item['url'], sanitize=True)
             event.add('source.ip', item['ip'], sanitize=True)
             event.add('source.geolocation.cc', item['country'], sanitize=True)
             event.add('classification.type', TYPES[item['type']], sanitize=True)
-            event.add('time.source', item['firstSeenAt'][:-4] + '+00:00',
+            event.add('time.source', item['firstSeenAt'][:-4] + '00:00',
                       sanitize=True)
             event.add("raw", json.dumps(item, sort_keys=True),
                       sanitize=True)
