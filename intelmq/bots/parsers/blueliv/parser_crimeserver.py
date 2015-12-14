@@ -14,7 +14,8 @@ TYPES = {
     'PHISHING': 'phishing',
     'MALWARE': 'malware',
     'EXPLOIT_KIT': 'exploit',
-    'BACKDOOR': 'backdoor'
+    'BACKDOOR': 'backdoor',
+    'C_AND_C': 'c&c'
 }
 
 
