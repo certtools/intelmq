@@ -55,7 +55,7 @@ class PostgreSQLBot(Bot):
         try:
             # note: this assumes, the DB was created with UTF-8 support!
             self.cur.execute(query, values)
-        except (psycopg2.InterfaceError, psycopg2.InternalError,
+        except (psycopg2.InterfaceError, psycopg2.InternalError, psycopg2.DatabaseError,
                 AttributeError):
             try:
                 self.con.rollback()
