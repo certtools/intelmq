@@ -597,7 +597,7 @@ def count_by_asn(feed='%'):
     if (contact_len):
         max_contact_length = max(contact_len)
     else:
-        max_contact_lenght = 0
+        max_contact_length = 0
     class_len = [len(row['classification']) for row in asn_count if
                     row['classification']]
     if (class_len):
