@@ -696,8 +696,11 @@ if __name__ == '__main__':
                         query_by_as(item['contacts'], automatic=True,
                                     feed=args.feed)
                     else:
-                        query_by_as(int(item['asn']), automatic=True,
-                                    feed=args.feed)
+                        if item['asn']:
+                            query_by_as(int(item['asn']), automatic=True,
+                                        feed=args.feed)
+                        else:
+                            print(red('Can not query the data of an unknown ASN. Ignoring.'))
             elif type(answer) is int:
                 if asn_count[answer]['contacts']:
                     query_by_as(asn_count[answer]['contacts'], feed=args.feed)
