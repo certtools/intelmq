@@ -23,6 +23,7 @@ import subprocess
 import sys
 import tempfile
 import zipfile
+import six
 
 import prettytable
 import psycopg2
@@ -436,7 +437,7 @@ To: {to}
 Subject: {subj}
 
 {text}
-'''.format(to=requestor, subj=subject, text=unicode(text, encoding='utf8', errors='ignore'))
+'''.format(to=requestor, subj=subject, text=six.text_type(text, encoding='utf8', errors='ignore'))
     showed_text_len = showed_text.count('\n')
 
     global TABLE_MODE
@@ -549,7 +550,7 @@ def save_to_rt(ids, subject, requestor, csvfile, body):
         print('Not writing to RT, dry-run selected.')
         return
 
-    b = unicode(body, encoding='utf8', errors='ignore')
+    b = six.text_type(body, encoding='utf8', errors='ignore')
     body = b
 
     report_id = RT.create_ticket(Queue='Incident Reports', Subject=subject,
