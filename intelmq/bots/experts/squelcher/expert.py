@@ -78,17 +78,23 @@ class SquelcherExpertBot(Bot):
                           ''.format(ttl, event['source.asn'],
                                     event['source.ip']))
 
-        self.cur.execute(SELECT_QUERY, (ttl, event['classification.type'],
-                                        event['classification.identifier'],
-                                        event['source.ip']))
-        result = self.cur.fetchone()[0]
-        if result == 0:
-            notify = True
+        try:
+            self.cur.execute(SELECT_QUERY, (ttl, event['classification.type'],
+                                            event['classification.identifier'],
+                                            event['source.ip']))
+        except (psycopg2.InterfaceError, psycopg2.InternalError,
+                psycopg2.OperationError, AttributeError):
+            self.logger.exception('Cursor has been closed, connecting again.')
+            self.init()
         else:
-            notify = False
+            result = self.cur.fetchone()[0]
+            if result == 0:
+                notify = True
+            else:
+                notify = False
 
-        event.add('notify', notify, force=True)
-        self.modify_end(event)
+            event.add('notify', notify, force=True)
+            self.modify_end(event)
 
     def stop(self):
         try:
