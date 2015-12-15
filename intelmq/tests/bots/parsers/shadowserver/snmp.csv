@@ -1,0 +1,11 @@
+"timestamp","ip","protocol","port","hostname","sysdesc","sysname","asn","geo","region","city","version","naics","sic","sector"
+"2014-03-16 03:45:50","129.113.21.93","udp",161,"doesnotexist.utpa.edu","Hardware: x86 Family 6 Model 8 Stepping 6 AT/AT COMPATIBLE - Software: Windows 2000 Version 5.0 (Build 2195 Uniprocessor Free)","ORSONKA",22864,"US","TEXAS","EDINBURG",2,0,0,
+"2014-03-16 03:45:51","79.2.242.16","udp",17080,"host16-242-dynamic.2-79-r.retail.telecomitalia.it","ADSL Modem","tc",3269,"IT","EMILIA-ROMAGNA","RAVENNA",2,0,0,
+"2014-03-16 03:45:51","95.109.21.127","udp",161,"ip6-127.skekraft.riksnet.se",,,34610,"SE","VASTERBOTTENS LAN","UMEA",2,0,0,
+"2014-03-16 03:45:51","201.8.4.57","udp",161,"201-8-4-57.user.veloxzone.com.br","Linux ADSL2PlusRouter 2.6.19 #7 Tue Apr 9 17:06:16 CST 2013 mips","TD5130",7738,"BR","RIO DE JANEIRO","RIO DE JANEIRO",2,0,0,
+"2014-03-16 03:45:51","76.186.106.223","udp",161,"cpe-76-186-106-223.tx.res.rr.com","Linux R6100 2.6.31 #1 Tue Jun 4 06:50:58 EDT 2013 mips MIB=01a01","Unknow",11427,"US","TEXAS","DALLAS",2,0,0,
+"2014-03-16 03:45:51","182.68.111.119","udp",10214,"abts-north-dynamic-119.111.68.182.airtelbroadband.in","110TC1","Beetel",24560,"IN","HARYANA","GURGAON",2,0,0,
+"2014-03-16 03:45:51","125.214.158.32","udp",161,"jway-125-214-158-032.jway.ne.jp","BCW710J <<HW_REV: 1.01; VENDOR: Bnmux; BOOTR: 2.4.0alpha14; SW_REV: 5.30.5; MODEL: BCW710J>>","CableHome",24249,"JP","TOKYO","TOKYO",2,0,0,
+"2014-03-16 03:45:51","74.138.148.8","udp",161,"74-138-148-8.dhcp.insightbb.com","Linux WNR1000v2 2.6.15 #199 Thu Jan 28 09:49:57 CST 2010 mips MIB=01a01","Unknow",10796,"US","KENTUCKY","LOUISVILLE",2,0,0,
+"2014-03-16 03:45:51","222.233.225.196","udp",161,,,,9318,"KR","SEOUL-T'UKPYOLSI","SEOUL",2,0,0,
+"2014-03-16 03:45:51","84.3.91.88","udp",161,"54035b58.catv.pool.telekom.hu","D-Link Wireless Voice Gateway <<HW_REV: B4; VENDOR: D-Link; BOOTR: 2.4.0beta1; SW_REV: 1.1.0.4; MODEL: DCM-704>>","CableHome",5483,"HU","BUDAPEST","BUDAPEST",2,0,0,

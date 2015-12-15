@@ -44,8 +44,17 @@ class Bot(object):
 
             self.load_defaults_configuration()
             self.load_system_configuration()
+            import os
+            self.log_buffer.append(('info', os.path.abspath(utils.__file__)))
+            self.log_buffer.append(('info', utils.log.__doc__))
+            self.log_buffer.append(('info', repr(sys.modules['intelmq'])))
+            if self.parameters.logging_handler == 'syslog':
+                syslog = self.parameters.logging_syslog
+            else:
+                syslog = False
             self.logger = utils.log(self.bot_id,
                                     log_level=self.parameters.logging_level)
+#                                    syslog=syslog)
         except:
             self.log_buffer.append(('critical', traceback.format_exc()))
             self.stop()

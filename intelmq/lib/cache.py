@@ -33,12 +33,14 @@ class Cache():
             return utils.decode(retval)
         return retval
 
-    def set(self, key, value):
+    def set(self, key, value, ttl=None):
+        if ttl is None:
+            ttl = self.ttl
         if isinstance(value, six.text_type):
             value = utils.encode(value)
         # backward compatibility (Redis v2.2)
         self.redis.setnx(key, value)
-        self.redis.expire(key, self.ttl)
+        self.redis.expire(key, ttl)
 
     def flush(self):
         """
