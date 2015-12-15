@@ -144,7 +144,7 @@ GROUP BY {conttab}.contacts, grouping;
            conttab=CONFIG['database']['contacts_table'])
 
 """ This is the list of fields (and their respective order) which we intend to
-send out.  This is based on the order and fields of shadowserver. 
+send out.  This is based on the order and fields of shadowserver.
 
 Shadowserver format:
     timestamp,"ip","protocol","port","hostname","packets","size","asn","geo","region","city","naics","sic","sector"
@@ -423,7 +423,7 @@ def query_by_as(contact, requestor=None, automatic=False, feed='%'):
         fieldnames=CSV_FIELDS
     else:
         fieldnames=(query[0].keys())    # send all
-    writer = csv.DictWriter(csvfile, fieldnames=fieldnames, 
+    writer = csv.DictWriter(csvfile, fieldnames=fieldnames,
                             extrasaction='ignore', lineterminator='\n')
     writer.writeheader()
     writer.writerows(query)
@@ -619,29 +619,15 @@ def count_by_asn(feed='%'):
     if not asn_count:
         print('No incidents!')
         exit(0)
-    asn_len = [len(row['asn']) for row in asn_count if row['asn']]
-    max_asn_length = max(asn_len) if asn_len else 10
-    contact_len = [len(row['contacts']) for row in asn_count if row['contacts']]
-    max_contact_length = max(contact_len) if contact_len else 10
-    class_len = [len(row['classification']) for row in asn_count if
-                    row['classification']]
-    max_class_length = max(class_len) if class_len else 10
     print('=' * 100)
-    print(bold("{id:>3} {count:3} {asn!s: <{asnlen}} {contacts!s: <{conlen}} "
-               "{type!s: <{typelen}} feeds"
-               "".format(id='id', count='n°', asn='ASNs', type='types',
-                         conlen=max_contact_length,
-                         asnlen=max_asn_length, contacts='contacts',
-                         typelen=max_class_length)))
+    table = prettytable.PrettyTable(map(bold, ['id', 'n°', 'ASNs', 'contacts',
+                                               'types', 'feeds']))
+    table.align = 'l'
     for number, row in enumerate(asn_count):
-        print("{id:>3} {count:3} {asn!s: <{asnlen}} {contacts!s: <{conlen}} "
-              "{type!s: <{typelen}} {feeds}"
-              "".format(count=row['count'], asn=row['asn'],
-                        asnlen=max_asn_length, id=number,
-                        contacts=row['contacts'],
-                        conlen=max_contact_length,
-                        type=row['classification'], typelen=max_class_length,
-                        feeds=row['feeds']))
+        table.add_row([number, row['count'], row['asn'], row['contacts'],
+                       row['classification'], row['feeds']])
+    print(table.get_string(border=False, padding_width=1))
+
     print('{} incidents for {} contacts.'
           ''.format(sum((row['count'] for row in asn_count)), len(asn_count)))
     return asn_count
