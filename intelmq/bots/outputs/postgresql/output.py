@@ -3,6 +3,10 @@
 PostgreSQL output bot.
 
 See Readme.md for installation and configuration.
+
+In case of errors, the bot tries to reconnect if the error is of operational
+and thus temporary. We don't want to catch too much, like programming errors
+(missing fields etc).
 """
 from __future__ import unicode_literals
 import sys
@@ -55,8 +59,8 @@ class PostgreSQLBot(Bot):
         try:
             # note: this assumes, the DB was created with UTF-8 support!
             self.cur.execute(query, values)
-        except (psycopg2.InterfaceError, psycopg2.InternalError, psycopg2.DatabaseError,
-                AttributeError):
+        except (psycopg2.InterfaceError, psycopg2.InternalError,
+                psycopg2.OperationalError, AttributeError):
             try:
                 self.con.rollback()
                 self.logger.exception('Executed rollback command '
