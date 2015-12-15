@@ -49,14 +49,11 @@ if sys.version[0] == '2':
     input = raw_input
 
 CONFIG = dict()
-home = os.path.expanduser("~")
+home = os.path.expanduser("~")      # needed for OSX
 with open(os.path.expanduser(home + '/.intelmq/intelmqcli.conf')) as conf_handle:
     user_config = json.load(conf_handle)
-try:
-    with open('/etc/intelmq/intelmqcli.conf') as conf_handle:
-        CONFIG = json.load(conf_handle)
-except:
-    pass
+with open('/etc/intelmq/intelmqcli.conf') as conf_handle:
+    CONFIG = json.load(conf_handle)
 
 for key, value in user_config.items():
     if key in CONFIG and type(CONFIG[key]) is dict:
@@ -145,6 +142,20 @@ GROUP BY {conttab}.contacts, grouping;
 """.format(evtab=CONFIG['database']['events_table'], cc=CONFIG['filter']['cc'],
            conttab=CONFIG['database']['contacts_table'])
 
+""" This is the list of fields (and their respective order) which we intend to
+send out.  This is based on the order and fields of shadowserver. 
+
+Shadowserver format:
+    timestamp,"ip","protocol","port","hostname","packets","size","asn","geo","region","city","naics","sic","sector"
+"""
+
+CSV_FIELDS=["source.time", "source.ip", "protocol.transport", "source.port",
+            "source.fqdn", "source.local_hostname", "source.local_ip", "source.url",
+            "source.asn", "source.geolocation.cc",
+            "source.geolocation.region","source.geolocation.city","comment",
+            "classification.identifier", "classification.taxonomy", "classification.type"
+           ]
+
 QUERY_BY_ASCONTACT = """
 SELECT
     to_char({evtab}."time.source" at time zone 'UTC',
@@ -156,6 +167,8 @@ SELECT
     {evtab}."source.asn",
     {evtab}."source.network",
     {evtab}."source.geolocation.cc",
+    {evtab}."source.geolocation.region",
+    {evtab}."source.geolocation.city",
     {evtab}."source.account",
     {evtab}."source.fqdn",
     {evtab}."source.local_hostname",
@@ -172,6 +185,8 @@ SELECT
     {evtab}."destination.asn",
     {evtab}."destination.network",
     {evtab}."destination.geolocation.cc",
+    {evtab}."destination.geolocation.region",
+    {evtab}."destination.geolocation.city",
     {evtab}."destination.account",
     {evtab}."destination.fqdn",
     {evtab}."destination.local_hostname",
@@ -222,6 +237,8 @@ SELECT
     {evtab}."source.asn",
     {evtab}."source.network",
     {evtab}."source.geolocation.cc",
+    {evtab}."source.geolocation.region",
+    {evtab}."source.geolocation.city",
     {evtab}."source.account",
     {evtab}."source.fqdn",
     {evtab}."source.local_hostname",
@@ -238,6 +255,8 @@ SELECT
     {evtab}."destination.asn",
     {evtab}."destination.network",
     {evtab}."destination.geolocation.cc",
+    {evtab}."destination.geolocation.region",
+    {evtab}."destination.geolocation.city",
     {evtab}."destination.account",
     {evtab}."destination.fqdn",
     {evtab}."destination.local_hostname",
@@ -397,10 +416,12 @@ def query_by_as(contact, requestor=None, automatic=False, feed='%'):
         csvfile = io.BytesIO()
     else:
         csvfile = io.StringIO()
-    # XXX FIXME : right now, the order is determined by the SQL SELECT ()
-    #  in the future, the order should be given by a config file
-    writer = csv.DictWriter(csvfile, fieldnames=(query[0].keys()),
-                            lineterminator='\n')
+    if CSV_FIELDS:
+        fieldnames=CSV_FIELDS
+    else:
+        fieldnames=(query[0].keys())    # send all
+    writer = csv.DictWriter(csvfile, fieldnames=fieldnames, 
+                            extrasaction='ignore', lineterminator='\n')
     writer.writeheader()
     writer.writerows(query)
     attachment_text = csvfile.getvalue()
