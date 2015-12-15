@@ -149,7 +149,7 @@ Shadowserver format:
     timestamp,"ip","protocol","port","hostname","packets","size","asn","geo","region","city","naics","sic","sector"
 """
 
-CSV_FIELDS=["source.time", "source.ip", "protocol.transport", "source.port",
+CSV_FIELDS=["time.source", "source.ip", "protocol.transport", "source.port",
             "source.fqdn", "source.local_hostname", "source.local_ip", "source.url",
             "source.asn", "source.geolocation.cc",
             "source.geolocation.region","source.geolocation.city","comment",
