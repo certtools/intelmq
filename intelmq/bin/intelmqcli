@@ -35,7 +35,7 @@ import rt
 dryrun = False
 verbose = False
 compress_csv = False
-boilerplate='default'
+boilerplate=None
 
 
 
@@ -75,6 +75,7 @@ The search can be restricted to one source feed.
 After the start, intelmqcli will immediately connect to RT with the given
 credentials. The incidents will be shown grouped by the contact address if
 known or the ASN otherwise.
+
 You have 3 options here:
 * Select one group by giving the id (number in first column) and show the email
 and all events in detail
@@ -100,6 +101,7 @@ USAGE = '''
     intelmqcli --compress-csv
     intelmqcli --list-feeds
     intelmqcli --list-texts
+    intelmqcli --text='boilerplate name'
     intelmqcli --feed='feedname' '''
 
 CON = psycopg2.connect(database=CONFIG['database']['database'],
@@ -313,15 +315,20 @@ QUERY_TEXT_NAMES = "SELECT DISTINCT \"key\" from boilerplates"
 
 
 def get_text(query):
-    # XXX FIXME: here we should be able to override which text ("boilerplate text")
-    # gets selected, should the user specify it as a cmd line parameter
     types = [row['classification.identifier'] for row in query
              if 'classification.identifier' in row]
     text = None
+    if boilerplate:
+        text_id = boilerplate
+    else:
+        text_id = types[0]
     if len(types) == 1:
-        CUR.execute(QUERY_GET_TEXT, (types[0], ))
+        CUR.execute(QUERY_GET_TEXT, (text_id, ))
         if CUR.rowcount:
             text = CUR.fetchall()[0]['body']
+
+    if text is None and boilerplate:
+        return red('--text param given, but boilerplate text %s not found!' %text_id)
 
     if text is None:
         CUR.execute(QUERY_GET_TEXT, (CONFIG['database']['default_key'], ))
