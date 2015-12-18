@@ -153,7 +153,7 @@ Shadowserver format:
 CSV_FIELDS=["time.source", "source.ip", "protocol.transport", "source.port",
             "source.fqdn", "source.local_hostname", "source.local_ip", "source.url",
             "source.asn", "source.geolocation.cc",
-            "source.geolocation.region","source.geolocation.city","comment",
+            "source.geolocation.city","comment",
             "classification.identifier", "classification.taxonomy", "classification.type",
             "feed", "event_description.text","event_description.url","malware.name"
            ]
