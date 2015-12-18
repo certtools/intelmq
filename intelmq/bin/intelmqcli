@@ -150,12 +150,13 @@ Shadowserver format:
     timestamp,"ip","protocol","port","hostname","packets","size","asn","geo","region","city","naics","sic","sector"
 """
 
-CSV_FIELDS=["time.source", "source.ip", "protocol.transport", "source.port",
+CSV_FIELDS=["time.source", "source.ip", "protocol.transport", "source.port", "protocol.application",
             "source.fqdn", "source.local_hostname", "source.local_ip", "source.url",
             "source.asn", "source.geolocation.cc",
-            "source.geolocation.city","comment",
-            "classification.identifier", "classification.taxonomy", "classification.type",
-            "feed", "event_description.text","event_description.url","malware.name"
+            "source.geolocation.city",
+            "classification.taxonomy", "classification.type", "classification.identifier",
+            "destination.ip","destination.port","destination.fqdn","destination.url",
+            "feed", "event_description.text","event_description.url","malware.name","comment", "additional_field_freetext","version: 1.0"
            ]
 
 QUERY_BY_ASCONTACT = """
