@@ -103,7 +103,10 @@ class N6StompParserBot(Bot):
             event.add("malware.hash.sha1", dict_report["sha1"],
                       sanitize=True)
         if "fqdn" in dict_report:
-            event.add("source.fqdn", dict_report["fqdn"], sanitize=True)
+            if dict_report["fqdn"] == 'unknown':
+                del dict_report["fqdn"]
+            else:
+                event.add("source.fqdn", dict_report["fqdn"], sanitize=True)
         if "id" in dict_report:
             extra['feed_id'] = dict_report["id"]
         if "adip" in dict_report:
