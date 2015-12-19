@@ -321,8 +321,11 @@ class FQDN(GenericType):
         if URL().is_valid(value):
             return False
 
-        if not len(value.split('.')) > 1:
+        """
+        # "localhost" is a valid hostname
+        if len(value.split('.')) <= 1:
             return False
+        """
 
         if value[-1] == '.':
             return False
