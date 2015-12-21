@@ -1,5 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+#
+#
+#
+# Do not send mails:
+# sudo ./output_send.py mail-output-send debug
+#
+# Do send mails:
+# sudo ./output_send.py mail-output-send process
+#
+# If launched without parameter, it never ends (as normal intelmq bot).
+#
 from __future__ import unicode_literals
 import csv
 from email import encoders
@@ -29,7 +40,7 @@ class MailSendOutputBot(Bot):
     def process(self):
         pass
 
-    debug = True # by default, nothing is sent
+    debug = False # if True, nothing is sent
     process = False # if True, it exits after mails are sent
 
     def set_cache(self):
@@ -40,12 +51,12 @@ class MailSendOutputBot(Bot):
                            self.parameters.redis_cache_ttl
                            )
 
-    def init(self):        
+    def init(self):
         self.set_cache()
-        self.send_mails()
-        if MailSendOutputBot.debug or MailSendOutputBot.process:            
+        if MailSendOutputBot.debug or MailSendOutputBot.process:
+            self.send_mails()
             print("MailSendOutputBot done.")
-            quit()
+            sys.exit(0)
 
     # Sends out all emails
     def send_mails(self):        
@@ -60,9 +71,9 @@ class MailSendOutputBot(Bot):
                                   'feed.name': 'feed_name', 'feed.url': 'feed_url', 'raw': 'original_base64'}
         with open(self.parameters.mail_template) as f:
             mailContents = f.read()
-        
+
         for mail_record in self.cache.redis.keys("mail:*"):
-            self.logger.warning("Next:")            
+            self.logger.warning("Next:")
             self.logger.warning("Mail:" + mail_record)
             lines = []
             self.logger.debug(mail_record)
@@ -135,7 +146,7 @@ class MailSendOutputBot(Bot):
             smtp.close()
 
 
-if __name__ == "__main__":    
+if __name__ == "__main__":
     if "debug" in sys.argv:
         MailSendOutputBot.debug = True
         print("****** Debug session started. ******")
@@ -146,11 +157,3 @@ if __name__ == "__main__":
 
     bot = MailSendOutputBot(sys.argv[1])
     bot.start()
-
-# Do not send mails:
-# sudo ./output_send.py mail-output-send debug
-#
-# Do send mails:
-# sudo ./output_send.py mail-output-send process
-#
-# If launched without parameter, it never ends (as normal intelmq bot).
