@@ -29,7 +29,7 @@ class AbusixExpertBot(Bot):
                 email = Abusix.query(ip)
                 if email:
                     abuse_contact_key = key + "abuse_contact"
-                    event.add(abuse_contact_key, email)
+                    event.add(abuse_contact_key, email, force=True)
 
         self.send_message(event)
         self.acknowledge_message()
