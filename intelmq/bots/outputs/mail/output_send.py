@@ -122,10 +122,10 @@ class MailSendOutputBot(Bot):
         msg["To"] = emailto
         #if hasattr(self.parameters, 'bcc') and not hasattr(self.parameters, 'testing_to'):
         #    msg["Bcc"] = self.parameters.bcc
-        rcpts = emailto
+        rcpts = [emailto]
         if hasattr(self.parameters, 'bcc'):
-            msg["Bcc"] = self.parameters.bcc
-            rcpts += ', ' + self.parameters.bcc
+            #msg["Bcc"] = self.parameters.bcc
+            rcpts.append(self.parameters.bcc)
 
         if MailSendOutputBot.debug:
             print 'To: ' + emailto + '; Subject: ' + subject
