@@ -109,8 +109,12 @@ class MailSendOutputBot(Bot):
         msg["From"] = emailfrom
         msg["Subject"] = subject
         msg["To"] = emailto
-        if hasattr(self.parameters, 'bcc') and not hasattr(self.parameters, 'testing_to'):
+        #if hasattr(self.parameters, 'bcc') and not hasattr(self.parameters, 'testing_to'):
+        #    msg["Bcc"] = self.parameters.bcc
+        rcpts = emailto
+        if hasattr(self.parameters, 'bcc'):
             msg["Bcc"] = self.parameters.bcc
+            rcpts += ', ' + self.parameters.bcc
 
         if MailSendOutputBot.debug:
             print 'To: ' + emailto + '; Subject: ' + subject
@@ -127,7 +131,7 @@ class MailSendOutputBot(Bot):
             msg.attach(attachment)
 
             smtp = smtplib.SMTP(server)
-            smtp.sendmail(emailfrom, emailto, msg.as_string().encode('ascii'))
+            smtp.sendmail(emailfrom, rcpts, msg.as_string().encode('ascii'))
             smtp.close()
 
 
