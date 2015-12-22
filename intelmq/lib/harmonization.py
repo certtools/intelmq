@@ -494,7 +494,7 @@ class JSON(GenericType):
     def sanitize(value):
         if not value:
             return None
-        if isinstance(value, basestring):
+        if isinstance(value, (six.binary_type, six.text_type)):
             sanitized = GenericType.sanitize(value)
             if JSON.is_valid(sanitized):
                 return sanitized
