@@ -13,7 +13,6 @@
 # source IP <tab> Reports <tab> Targets <tab> First Seen <tab> Last Seen <tab> Updated <CR>
 """
 from __future__ import unicode_literals
-import json
 import sys
 
 from intelmq.lib import utils
@@ -58,11 +57,8 @@ class DShieldASNParserBot(Bot):
             event.add('classification.type', 'brute-force')
             event.add("time.source", updated+'+0', sanitize=True)
             event.add("raw", row, sanitize=True)
-            event.add("extra", json.dumps({'reports': reports,
-                                           'targets': targets,
-                                           'last_seen': last_seen},
-                                          sort_keys=True),
-                      sanitize=True)
+            event.add("extra", {'reports': reports, 'targets': targets,
+                                'last_seen': last_seen}, sanitize=True)
 
             self.send_message(event)
         self.acknowledge_message()

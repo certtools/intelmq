@@ -20,7 +20,6 @@
 """
 from __future__ import unicode_literals
 
-import json
 import sys
 
 import dateutil
@@ -72,7 +71,7 @@ class DshieldBlockParserBot(Bot):
                 event['source.abuse_contact'] = values[6]
 
             if extra:
-                event.add('extra', json.dumps(extra, sort_keys=True), sanitize=True)
+                event.add('extra', extra, sanitize=True)
 
             event.add('time.source', time, sanitize=True)
             event.add('source.network', network, sanitize=True)
