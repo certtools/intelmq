@@ -599,7 +599,7 @@ def save_to_rt(ids, subject, requestor, csvfile, body):
 
     # TODO: CC
     correspond = RT.reply(investigation_id, text=body,
-                          files=[(filename, attachment)])
+                          files=[(filename, attachment, 'text/csv')])
     if not correspond:
         print(red('Could not correspond with text and file.'))
         return
