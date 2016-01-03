@@ -27,6 +27,7 @@ class UniversalCsvParserBot(Bot):
         columns = self.parameters.columns
 
         raw_report = utils.base64_decode(report.value("raw"))
+        raw_report = re.sub(r'(?m)^#.*\n?', '', raw_report)
         for row in csv.reader(StringIO(raw_report),
                               delimiter=str(self.parameters.delimiter)):
             event = Event(report)

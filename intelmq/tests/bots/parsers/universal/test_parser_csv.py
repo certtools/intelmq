@@ -9,12 +9,13 @@ from intelmq.bots.parsers.universal.parser_csv import \
 
 EXAMPLE_REPORT = {"feed.name": "Sample CSV Feed",
                   "feed.url": "http://www.samplecsvthreatfeed.com/list",
-                  "raw": "MjAxNS0xMi0xNCAwNDoxOTowMAlUZXN0aW5nCVJlYWxseSBiYWQgY"
-                         "WN0b3Igc2l0ZSBjb21tZW50CU5vdGhpbmcJVW5pbXBvcnRhbnQJd3"
-                         "d3LmNlbm5vd29ybGQuY29tL1BheW1lbnRfQ29uZmlybWF0aW9uL1B"
-                         "heW1lbnRfQ29uZmlybWF0aW9uLnppcAkxOTguMTA1LjIyMS41Ojgw"
-                         "CW1haWw1LmJ1bGxzLnVuaXNvbnBsYXRmb3JtLmNvbQlqdXN0IGFub"
-                         "3RoZXIgY29tbWVudA==",
+                  "raw": "IyBuZXNteXNsIGphayBub2hhCjIwMTUtMTItMTQgMDQ6MTk6MDAJV"
+                         "GVzdGluZwlSZWFsbHkgYmFkIGFjdG9yIHNpdGUgY29tbWVudAlOb3"
+                         "RoaW5nCVVuaW1wb3J0YW50CXd3dy5jZW5ub3dvcmxkLmNvbS9QYXl"
+                         "tZW50X0NvbmZpcm1hdGlvbi9QYXltZW50X0NvbmZpcm1hdGlvbi56"
+                         "aXAJMTk4LjEwNS4yMjEuNTo4MAltYWlsNS5idWxscy51bmlzb25wb"
+                         "GF0Zm9ybS5jb20JanVzdCBhbm90aGVyIGNvbW1lbnQKI2RhbHNpIG"
+                         "5lc215c2w=",
                   "__type": "Report",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   }
