@@ -61,7 +61,7 @@ class FTPSCollectorBot(Bot):
                          self.parameters.ftps_host + ':' +
                          str(self.parameters.ftps_port))
 
-        ftps = tyFTP()
+        ftps = FTPS()
         ftps.connect(host=self.parameters.ftps_host,
                      port=self.parameters.ftps_port)
         if hasattr(self.parameters, 'ftps_username') \
