@@ -59,7 +59,7 @@ class FTPSCollectorBot(Bot):
     def process(self):
         self.logger.info("Downloading report from %s" %
                          self.parameters.ftps_host + ':' +
-                         self.parameters.ftps_port)
+                         str(self.parameters.ftps_port))
 
         ftps = tyFTP()
         ftps.connect(host=self.parameters.ftps_host,
@@ -92,7 +92,7 @@ class FTPSCollectorBot(Bot):
             report.add("raw", raw_report, sanitize=True)
             report.add("feed.name", self.parameters.feed, sanitize=True)
             report.add("feed.url", self.parameters.ftps_host + ':' +
-                       self.parameters.ftps_port, sanitize=True)
+                       str(self.parameters.ftps_port), sanitize=True)
             report.add("feed.accuracy", self.parameters.accuracy, sanitize=True)
             time_observation = DateTime().generate_datetime_now()
             report.add('time.observation', time_observation, sanitize=True)
