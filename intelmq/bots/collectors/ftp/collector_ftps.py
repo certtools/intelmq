@@ -17,6 +17,7 @@ import sys
 from ftplib import FTP_TLS
 import socket
 import ssl
+import zipfile
 try:
     from cStringIO import StringIO
 except:
