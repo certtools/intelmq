@@ -58,7 +58,8 @@ class FTPS(FTP_TLS):
 class FTPSCollectorBot(Bot):
     def process(self):
         self.logger.info("Downloading report from %s" %
-                         self.parameters.ftps_url)
+                         self.parameters.ftps_host + ':' +
+                         self.parameters.ftps_port)
 
         ftps = tyFTP()
         ftps.connect(host=self.parameters.ftps_host,
@@ -81,6 +82,8 @@ class FTPSCollectorBot(Bot):
         except zipfile.BadZipfile:
             raw_reports.append(mem.getvalue())
         else:
+            self.logger.info('Downloaded zip file, extracting following files: '
+                             + ', '.join(zfp.namelist()))
             for filename in zfp.namelist():
                 raw_reports.append(zfp.read(filename))
 
