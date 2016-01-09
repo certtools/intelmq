@@ -2,12 +2,12 @@
 
 from __future__ import unicode_literals
 import sys
-import re
 try:
     from urllib.parse import urlparse
 except ImportError:
     from urlparse import urlparse
 from intelmq.lib.bot import Bot
+import intelmq.lib.harmonization
 
 
 class Url2fqdnExpertBot(Bot):
@@ -27,9 +27,8 @@ class Url2fqdnExpertBot(Bot):
                 continue
 
             hostname = urlparse(event.value(key_url)).hostname
-            if not re.compile("^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$").match(hostname):
-                event.add(key_fqdn, hostname, sanitize=True,
-                          force=True)
+            if intelmq.lib.harmonization.FQDN.is_valid(hostname, sanitize=True):
+                event.add(key_fqdn, hostname, sanitize=True, force=True)
 
         self.send_message(event)
         self.acknowledge_message()
