@@ -28,6 +28,7 @@ class UniversalCsvParserBot(Bot):
 
         raw_report = utils.base64_decode(report.value("raw"))
         raw_report = re.sub(r'(?m)^#.*\n?', '', raw_report)
+        raw_report = re.sub(r'(?m)\0', '', raw_report)
         for row in csv.reader(StringIO(raw_report),
                               delimiter=str(self.parameters.delimiter)):
             event = Event(report)
@@ -43,6 +44,7 @@ class UniversalCsvParserBot(Bot):
                     if key in ["source.ip", "destination.ip"]:
                         value = re.findall(
                             r"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b", value)[0]
+
                 except:
                     continue
                 event.add(key, value, sanitize=True)
