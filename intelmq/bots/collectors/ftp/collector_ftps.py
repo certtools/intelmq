@@ -18,10 +18,7 @@ from ftplib import FTP_TLS
 import socket
 import ssl
 import zipfile
-try:
-    from cStringIO import StringIO
-except:
-    from StringIO import StringIO
+import io
 
 from intelmq.lib.bot import Bot
 from intelmq.lib.harmonization import DateTime
@@ -72,7 +69,7 @@ class FTPSCollectorBot(Bot):
         ftps.prot_p()
         if hasattr(self.parameters, 'ftps_directory'):
             ftps.cwd(self.parameters.ftps_directory)
-        mem = StringIO()
+        mem = io.BytesIO()
         ftps.retrbinary("RETR " + self.parameters.ftps_file, mem.write)
 
         self.logger.info("Report downloaded.")
