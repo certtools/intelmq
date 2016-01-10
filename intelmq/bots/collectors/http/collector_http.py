@@ -15,6 +15,8 @@ http_proxy, http_ssl_proxy: string
 from __future__ import unicode_literals
 import requests
 import sys
+import io
+import zipfile
 
 from intelmq.lib.bot import Bot
 from intelmq.lib.harmonization import DateTime
@@ -27,12 +29,6 @@ try:
     urllib3.contrib.pyopenssl.inject_into_urllib3()
 except ImportError:
     pass
-
-try:
-    from cStringIO import StringIO
-except:
-    from StringIO import StringIO
-import zipfile
 
 
 class HTTPCollectorBot(Bot):
@@ -74,7 +70,7 @@ class HTTPCollectorBot(Bot):
 
         raw_reports = []
         try:
-            zfp = zipfile.ZipFile(StringIO(resp.text), "r")
+            zfp = zipfile.ZipFile(io.BytesIO(resp.content), "r")
         except zipfile.BadZipfile:
             raw_reports.append(resp.text)
         else:
