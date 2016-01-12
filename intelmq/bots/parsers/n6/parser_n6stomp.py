@@ -20,7 +20,7 @@ mapping['amplifier']    = {"taxonomy": "Vulnerable",
                            "type": "vulnerable service",
                            "identifier": "amplifier"}
 mapping['bots']         = {"taxonomy": "Malicious Code",
-                           "type": "botnet drone"}
+                           "type": "botnet drone", "identifier": "generic-n6-drone"}
 mapping['backdoor']     = {"taxonomy": "Intrusions",
                            "type": "backdoor", "identifier": "hacked server"}
 mapping['cnc']          = {"taxonomy": "Malicious Code",
@@ -125,18 +125,18 @@ class N6StompParserBot(Bot):
         if ("name" in dict_report):
             mapping['bots']['identifier'] = dict_report["name"]
         else:
-            mapping['bots']['identifier'] = "generic-n6"
+            mapping['bots']['identifier'] = "generic-n6-drone"
 
         if dict_report["category"] is not None:
             event.add("classification.taxonomy",
                       mapping[dict_report["category"]]["taxonomy"],
-                      sanitize=True)
+                      sanitize=True, force=True)
             event.add("classification.type",
                       mapping[dict_report["category"]]["type"],
-                      sanitize=True)
+                      sanitize=True, force=True)
             event.add("classification.identifier",
                       mapping[dict_report["category"]]["identifier"],
-                      sanitize=True)
+                      sanitize=True, force=True)
 
         if extra:
             event.add("extra", json.dumps(extra, sort_keys=True),
