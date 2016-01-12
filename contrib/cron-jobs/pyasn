@@ -1,0 +1,35 @@
+#!/bin/sh
+
+
+# How often should this run? 
+#  Once a day max
+
+# crontab entry for this (proposal):
+# # m h  dom mon dow   command
+# 02  01 *   *   *     ( cd /tmp; /my/path/to/this/script )
+# 
+
+path=/usr/local/bin
+export PATH=$PATH:$path
+
+if [ ! -x $path/pyasn_util_download.py ]; 
+  echo "need to have pyasn installed. Exiting"
+  exit 255
+fi
+
+cd /tmp
+mkdir -p pyasn
+cd pyasn
+
+pyasn_util_download.py --latest
+
+latest=$(ls -tr | tail -n 1)
+
+pyasn_util_convert.py --single $latest ipasn.dat
+rm -f $latest
+
+cp ipasn.dat  /opt/intelmq/var/lib/bots/asn_lookup/
+chown intelmq:intelmq /opt/intelmq/var/lib/bots/asn_lookup/ipasn.dat
+
+rm -f /tmp/pyasn
+
