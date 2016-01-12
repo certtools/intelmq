@@ -427,7 +427,8 @@ def query_by_as(contact, requestor=None, automatic=False, feed='%'):
                             extrasaction='ignore', lineterminator='\n')
     writer.writeheader()
     writer.writerows(query)
-    attachment_text = csvfile.getvalue()
+    # note this might contain UTF-8 chars! let's ignore utf-8 errors. sorry. 
+    attachment_text = six.text_type(csvfile.getvalue(), encoding='utf8', errors='ignore')
     attachment_lines = attachment_text.splitlines()
 
     if verbose:

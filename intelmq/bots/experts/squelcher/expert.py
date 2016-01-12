@@ -66,7 +66,7 @@ class SquelcherExpertBot(Bot):
         for ruleset in self.config:
             condition = ruleset[0].copy()
             in_net = True
-            if 'source.network' in condition:
+            if 'source.network' in condition and 'source.ip' in event:
                 in_net = (ip_address(event['source.ip']) in
                           ip_network(condition['source.network']))
                 del condition['source.network']
