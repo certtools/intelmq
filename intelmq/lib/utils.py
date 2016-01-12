@@ -19,11 +19,10 @@ import logging
 import logging.handlers
 import os
 import re
-import six
 import sys
 
+import six
 from intelmq import DEFAULT_LOGGING_PATH
-
 
 __all__ = ['decode', 'encode', 'base64_encode', 'base64_decode',
            'load_configuration', 'load_parameters', 'log', 'reverse_readline',
@@ -247,36 +246,32 @@ def log(name, log_path=DEFAULT_LOGGING_PATH, log_level="DEBUG", stream=None,
     return logger
 
 
-def reverse_readline(filename, buf_size=8192):
-    """a generator that returns the lines of a file in reverse order
-    http://stackoverflow.com/a/23646049/2851664"""
-    with open(filename) as handle:
-        segment = None
-        offset = 0
-        handle.seek(0, os.SEEK_END)
-        total_size = remaining_size = handle.tell()
-        while remaining_size > 0:
-            offset = min(total_size, offset + buf_size)
-            handle.seek(-offset, os.SEEK_END)
-            buf = handle.read(min(remaining_size, buf_size))
-            remaining_size -= buf_size
-            lines = buf.split('\n')
-            # the first line of the buffer is probably not a complete line so
-            # we'll save it and append it to the last line of the next buffer
-            # we read
-            if segment is not None:
-                # if the previous chunk starts right from the beginning of line
-                # do not concact the segment to the last line of new chunk
-                # instead, yield the segment first
-                if buf[-1] is not '\n':
-                    lines[-1] += segment
-                else:
-                    yield segment
-            segment = lines[0]
-            for index in range(len(lines) - 1, 0, -1):
-                if len(lines[index]):
-                    yield lines[index]
-        yield segment
+def reverse_readline(filename, buf_size=100000):
+    """
+    https://github.com/certtools/intelmq/issues/393#issuecomment-154041996
+
+    """
+    with open(filename) as qfile:
+        qfile.seek(0, os.SEEK_END)
+        position = totalsize = qfile.tell()
+        line = ''
+        number = 0
+        if buf_size < position:
+            qfile.seek(totalsize-buf_size-1)
+            char = qfile.read(1)
+            while char != '\n':
+                char = qfile.read(1)
+            number = totalsize-buf_size
+        while position >= number:
+            qfile.seek(position)
+            next_char = qfile.read(1)
+            if next_char == "\n":
+                yield line[::-1]
+                line = ''
+            else:
+                line += next_char
+            position -= 1
+        yield line[::-1]
 
 
 def parse_logline(logline):
