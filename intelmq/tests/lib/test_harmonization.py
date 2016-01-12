@@ -190,5 +190,23 @@ class TestHarmonization(unittest.TestCase):
         self.assertTrue(harmonization.FQDN.is_valid('example.net',
                                                     sanitize=True))
 
+    def test_json_valid(self):
+        """ Test JSON.is_valid with valid arguments. """
+        self.assertTrue(harmonization.JSON.is_valid('{"foo": "bar"}'))
+
+    def test_json_invalid(self):
+        """ Test JSON.is_valid with invalid arguments. """
+        self.assertFalse(harmonization.JSON.is_valid('{}'))
+        self.assertFalse(harmonization.JSON.is_valid('"example"'))
+        self.assertFalse(harmonization.JSON.is_valid(b'{"foo": 1}'))
+
+    def test_json_sanitize(self):
+        """ Test JSON.sanitize with valid arguments. """
+        self.assertTrue(harmonization.JSON.is_valid({"foo": "bar"},
+                                                    sanitize=True))
+        self.assertTrue(harmonization.JSON.is_valid('{"foo": "bar"}',
+                                                    sanitize=True))
+
+
 if __name__ == "__main__":
     unittest.main()

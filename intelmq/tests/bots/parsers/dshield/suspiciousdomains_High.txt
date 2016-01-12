@@ -1,0 +1,29 @@
+
+#
+#   DShield.org Suspicious Domain List
+#    (c) 2015 DShield.org
+#   some rights reserved. Details http://creativecommons.org/licenses/by-nc-sa/2.5/
+#   use on your own risk. No warranties implied.
+#   primary URL: http://www.dshield.org/feeds/suspiciousdomains_High.txt
+#
+#   comments: info@dshield.org
+#    updated: Tue Dec 22 04:10:10 2015 UTC
+#   
+#    This list consists of High Level Sensitivity website URLs
+#     Columns (tab delimited):
+#
+#      (1) site
+#
+Site
+example.com	
+example.org	
+#
+# STATISTICS
+#
+# Total In Database: 4
+# Total In Report:   2
+# Percent of Total:  50.00 %
+#
+# END
+#
+#  finished list generation: Tue Dec 22 04:10:10 2015 UTC
