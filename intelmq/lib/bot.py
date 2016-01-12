@@ -7,6 +7,7 @@ from __future__ import print_function, unicode_literals
 import datetime
 import json
 import re
+import requests
 import sys
 import time
 import traceback
@@ -32,6 +33,7 @@ class Bot(object):
         self.source_pipeline = None
         self.destination_pipeline = None
         self.logger = None
+        self.last_heartbeat = None
 
         try:
             version_info = sys.version.splitlines()[0].strip()
@@ -63,6 +65,8 @@ class Bot(object):
             self.load_runtime_configuration()
             self.load_pipeline_configuration()
             self.load_harmonization_configuration()
+
+            self.heartbeat_time = datetime.timedelta(seconds=self.parameters.bot_heartbeat_min_wait)
 
             self.init()
         except:
@@ -133,6 +137,12 @@ class Bot(object):
                 self.logger.error("Received KeyboardInterrupt.")
                 self.stop()
                 break
+
+            else:
+                if (not self.last_heartbeat or
+                        (datetime.datetime.now() - self.last_heartbeat) > self.heartbeat_time):
+                    requests.get(self.parameters.bot_heartbeat_url.format(bot_id=self.bot_id))
+                    self.last_heartbeat = datetime.datetime.now()
 
             finally:
                 if self.parameters.testing:
