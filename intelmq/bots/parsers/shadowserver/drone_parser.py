@@ -38,8 +38,6 @@ else:
     import csv
 import io
 
-import json
-
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
 from intelmq.lib.message import Event
@@ -101,7 +99,7 @@ class ShadowServerDroneParserBot(Bot):
             if int(row['sic']):
                 extra['sic'] = int(row['sic'])
 
-            event.add('extra', json.dumps(extra), sanitize=True)
+            event.add('extra', extra, sanitize=True)
             event.add('classification.type', 'botnet drone')
             event.add('raw', '"'+','.join(map(str, row.items()))+'"',
                       sanitize=True)

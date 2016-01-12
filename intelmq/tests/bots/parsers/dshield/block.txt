@@ -1,0 +1,39 @@
+
+
+#      
+#   DShield.org Recommended Block List 
+#    (c) 2007 DShield.org
+#   some rights reserved. Details http://creativecommons.org/licenses/by-nc-sa/2.5/
+#   use on your own risk. No warranties implied.
+#   primary URL: http://feeds.dshield.org/block.txt
+#     PGP Sign.: http://feeds.dshield.org/block.txt.asc
+#
+#   comments: info@dshield.org
+#    updated: Tue Dec 15 15:33:38 2015 UTC
+#   
+#    This list summarizes the top 20 attacking class C (/24) subnets
+#   over the last three days. The number of 'attacks' indicates the 
+#   number of targets reporting scans from this subnet.
+#
+#
+#    Columns (tab delimited):
+#
+#    (1) start of netblock  
+#    (2) end of netblock
+#    (3) subnet (/24 for class C)
+#    (4) number of targets scanned
+#    (5) name of Network 
+#    (6) Country
+#    (7) contact email address
+#
+#    If a range is assigned to multiple users, the first one is listed. 
+#     
+Start	End	Netblock	Attacks	Name	Country	email
+43.229.53.0	43.229.53.255	24	788	Japan Inet	JP	admin@v6nic.net
+194.63.140.0	194.63.140.255	24	585			
+#
+#
+# END
+#
+#  finished list generation: Tue Dec 15 15:33:39 2015 UTC
+

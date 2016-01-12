@@ -171,6 +171,15 @@
                 "http_url": "https://lists.blocklist.de/lists/strongips.txt"
             }
         },
+        "Blueliv Crimeserver": {
+            "module": "intelmq.bots.collectors.blueliv.collector_crimeserver",
+            "description": "Blueliv Crimeserver Collector is the bot responsible to get the report through the API.",
+            "parameters": {
+                "api_key": "<insert your api key>",
+                "feed": "Blueliv Crimeserver",
+                "rate_limit": "3600"
+            }
+        },
         "CI Army": {
             "description": "CI Army Collector is the bot responsible to get the report from source of information.",
             "module": "intelmq.bots.collectors.http.collector_http",
@@ -837,6 +846,11 @@
         "BlockList.DE Strong IPs": {
             "description": "BlockList.DE Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.blocklistde.parser",
+            "parameters": {}
+        },
+        "Blueliv Crimeserver": {
+            "description": "Blueliv Crimeserver Parser is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.blueliv.parser_crimeserver",
             "parameters": {}
         },
         "CI Army": {
