@@ -31,4 +31,5 @@ rm -f $latest
 cp ipasn.dat  /opt/intelmq/var/lib/bots/asn_lookup/
 chown intelmq:intelmq /opt/intelmq/var/lib/bots/asn_lookup/ipasn.dat
 
+rm -f /tmp/pyasn
 
