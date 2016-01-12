@@ -481,7 +481,7 @@ pip2 install psycopg2>=2.5.5
 
 #### PostgreSQL Installation
 
-* Install PostgreSQL, at least version 9.4 is recommended.
+* Install PostgreSQL, at least version 9.4 is required.
 
 ```bash
 > apt-get install postgresql-9.4 python-psycopg2 postgresql-server-dev-9.4
