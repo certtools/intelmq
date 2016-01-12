@@ -27,8 +27,6 @@ else:
     import csv
 import io
 
-import json
-
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
 from intelmq.lib.message import Event
@@ -69,7 +67,7 @@ class ShadowServerQotdParserBot(Bot):
             if row['sector']:
                 extra['sector'] = row['sector']
 
-            event.add('extra', json.dumps(extra), sanitize=True)
+            event.add('extra', extra, sanitize=True)
             event.add('classification.type', 'vulnerable service')
             event.add('classification.identifier', 'qotd')
             event.add('raw', '"'+','.join(map(str, row.items()))+'"',

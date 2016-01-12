@@ -22,6 +22,7 @@ from __future__ import unicode_literals
 import binascii
 import datetime
 import ipaddress
+import json
 import socket
 
 import dateutil.parser
@@ -39,7 +40,7 @@ except ImportError:
 
 __all__ = ['Base64', 'Boolean', 'ClassificationType', 'DateTime', 'FQDN',
            'Float', 'Accuracy', 'GenericType', 'IPAddress', 'IPNetwork',
-           'Integer', 'MalwareName', 'String', 'URL', 'UUID',
+           'Integer', 'JSON', 'MalwareName', 'String', 'URL', 'UUID',
            ]
 
 
@@ -462,6 +463,45 @@ class IPNetwork(GenericType):
     @staticmethod
     def version(value):
         return ipaddress.ip_network(six.text_type(value)).version
+
+
+class JSON(GenericType):
+    """
+    JSON type.
+
+    Sanitation accepts pythons dictionaries and JSON strings.
+    """
+
+    @staticmethod
+    def is_valid(value, sanitize=False):
+        if sanitize:
+            value = JSON().sanitize(value)
+
+        if not isinstance(value, six.text_type):
+            return False
+
+        try:
+            unpacked = json.loads(value)
+        except ValueError:
+            return False
+        else:
+            if isinstance(unpacked, dict) and unpacked != {}:
+                return True
+
+        return False
+
+    @staticmethod
+    def sanitize(value):
+        if not value:
+            return None
+        if isinstance(value, (six.binary_type, six.text_type)):
+            sanitized = GenericType.sanitize(value)
+            if JSON.is_valid(sanitized):
+                return sanitized
+        try:
+            return GenericType().sanitize(json.dumps(value, sort_keys=True))
+        except TypeError:
+            return None
 
 
 class MalwareName(GenericType):
