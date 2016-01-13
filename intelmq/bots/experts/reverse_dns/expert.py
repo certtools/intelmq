@@ -3,7 +3,9 @@
 TODO: IPv6
 """
 from __future__ import unicode_literals
+
 import sys
+from datetime import datetime
 
 import dns
 from dns import resolver, reversename
@@ -64,16 +66,20 @@ class ReverseDnsExpertBot(Bot):
             else:
                 rev_name = reversename.from_address(ip)
                 try:
-                    result = str(resolver.query(rev_name, "PTR")[0])
+                    result = resolver.query(rev_name, "PTR")
+                    expiration = result.expiration
+                    result = result[0]
                 except dns.exception.DNSException as e:
                     if isinstance(e, dns.resolver.NXDOMAIN):
                         continue
                 else:
-                    self.cache.set(cache_key, result)
+                    ttl = datetime.fromtimestamp(expiration) - datetime.now()
+                    self.cache.set(cache_key, str(result),
+                                   ttl=int(ttl.total_seconds()))
 
             if result is not None:
                 event.add(key % 'reverse_dns',
-                          result, sanitize=True, force=True)
+                          str(result), sanitize=True, force=True)
 
         self.send_message(event)
         self.acknowledge_message()

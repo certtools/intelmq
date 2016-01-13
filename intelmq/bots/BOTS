@@ -171,6 +171,15 @@
                 "http_url": "https://lists.blocklist.de/lists/strongips.txt"
             }
         },
+        "Blueliv Crimeserver": {
+            "module": "intelmq.bots.collectors.blueliv.collector_crimeserver",
+            "description": "Blueliv Crimeserver Collector is the bot responsible to get the report through the API.",
+            "parameters": {
+                "api_key": "<insert your api key>",
+                "feed": "Blueliv Crimeserver",
+                "rate_limit": "3600"
+            }
+        },
         "CI Army": {
             "description": "CI Army Collector is the bot responsible to get the report from source of information.",
             "module": "intelmq.bots.collectors.http.collector_http",
@@ -445,6 +454,80 @@
                 "feed": "URLVir",
                 "rate_limit": 129600,
                 "http_url": "http://www.urlvir.com/export-ip-addresses/"
+            }
+        },
+        "ShadowServer Chargen": {
+            "module": "intelmq.bots.collectors.mail.mail-url",
+            "description": "ShadowServer Chargen Collector is the bot responsible to get the report from source of information. https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-Chargen",
+            "parameters": {
+                "rate_limit": "3600",
+                "mail_host": "<host>",
+                "mail_user": "<user>",
+                "mail_password": "<password>",
+                "mail_ssl": true,
+                "folder": "Inbox.shadowserver",
+                "subject_regex": "Shadowserver [^ ]+ Chargen Report",
+                "url_regex": "https://dl.shadowserver.org/[^ ]+"
+            }
+        },
+        "ShadowServer Drone": {
+            "module": "intelmq.bots.collectors.mail.mail-attach",
+            "description": "ShadowServer Drone Collector is the bot responsible to get the report from source of information. https://www.shadowserver.org/wiki/pmwiki.php/Services/Botnet-Drone-Hadoop",
+            "parameters": {
+                "rate_limit": "3600",
+                "mail_host": "<host>",
+                "mail_user": "<user>",
+                "mail_password": "<password>",
+                "mail_ssl": true,
+                "folder": "Inbox.shadowserver",
+                "subject_regex": "Shadowserver [^ ]+ Drone Report",
+                "attach_regex": "csv.zip",
+                "attach_unzip": true
+            }
+        },
+        "ShadowServer Microsoft Sinkhole": {
+            "module": "intelmq.bots.collectors.mail.mail-attach",
+            "description": "ShadowServer Microsoft Sinkhole Collector is the bot responsible to get the report from source of information. https://www.shadowserver.org/wiki/pmwiki.php/Services/Microsoft-Sinkhole",
+            "parameters": {
+                "rate_limit": "3600",
+                "mail_host": "<host>",
+                "mail_user": "<user>",
+                "mail_password": "<password>",
+                "mail_ssl": true,
+                "folder": "Inbox.shadowserver",
+                "subject_regex": "Shadowserver [^ ]+ Microsoft Sinkhole Report",
+                "attach_regex": "csv.zip",
+                "attach_unzip": true
+            }
+        },
+        "ShadowServer SNMP": {
+            "module": "intelmq.bots.collectors.mail.mail-attach",
+            "description": "ShadowServer Microsoft Sinkhole Collector is the bot responsible to get the report from source of information. https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-SNMP",
+            "parameters": {
+                "rate_limit": "3600",
+                "mail_host": "<host>",
+                "mail_user": "<user>",
+                "mail_password": "<password>",
+                "mail_ssl": true,
+                "folder": "Inbox.shadowserver",
+                "subject_regex": "Shadowserver [^ ]+ SNMP Report",
+                "attach_regex": "csv.zip",
+                "attach_unzip": true
+            }
+        },
+        "ShadowServer QOTD": {
+            "module": "intelmq.bots.collectors.mail.mail-url",
+            "description": "ShadowServer QOTD Collector is the bot responsible to get the report from source of information. https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-QOTD",
+            "parameters": {
+                "rate_limit": "3600",
+                "mail_host": "<host>",
+                "mail_user": "<user>",
+                "mail_password": "<password>",
+                "mail_ssl": true,
+                "folder": "Inbox.shadowserver",
+                "subject_regex": "Shadowserver [^ ]+ QOTD Report",
+                "attach_regex": "csv.zip",
+                "attach_unzip": true
             }
         },
         "Spamhaus CERT": {
@@ -809,6 +892,11 @@
             "module": "intelmq.bots.parsers.blocklistde.parser",
             "parameters": {}
         },
+        "Blueliv Crimeserver": {
+            "description": "Blueliv Crimeserver Parser is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.blueliv.parser_crimeserver",
+            "parameters": {}
+        },
         "CI Army": {
             "description": "CI Army Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.ci_army.parser",
@@ -956,6 +1044,31 @@
         "URLVir IPs": {
             "description": "URLVir IPs Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.urlvir.parser_ips",
+            "parameters": {}
+        },
+        "ShadowServer Chargen": {
+            "module": "intelmq.bots.parsers.shadowserver.chargen_parser",
+            "description": "ShadowServer Chargen Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {}
+        },
+        "ShadowServer Drone": {
+            "module": "intelmq.bots.parsers.shadowserver.drone_parser",
+            "description": "ShadowServer Drone Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {}
+        },
+        "ShadowServer Microsoft Sinkhole": {
+            "module": "intelmq.bots.parsers.shadowserver.microsoft_sinkhole_parser",
+            "description": "ShadowServer Microsoft Sinkhole Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {}
+        },
+        "ShadowServer QOTD": {
+            "module": "intelmq.bots.parsers.shadowserver.qotd_parser",
+            "description": "ShadowServer QOTD Parser is the bot responsible to parse the report and sanitize the information.",
+            "parameters": {}
+        },
+        "ShadowServer SNMP": {
+            "module": "intelmq.bots.parsers.shadowserver.snmp_parser",
+            "description": "ShadowServer SNMP Parser is the bot responsible to parse the report and sanitize the information.",
             "parameters": {}
         },
         "Spamhaus CERT": {

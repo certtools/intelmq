@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+
 import sys
 
+import dateutil
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
 from intelmq.lib.harmonization import IPAddress
@@ -17,10 +19,13 @@ class CymruFullBogonsParserBot(Bot):
             self.acknowledge_message()
             return
 
-        raw_report = utils.base64_decode(report.value("raw"))
+        raw_report = utils.base64_decode(report.value("raw")).strip()
+
+        row = raw_report.splitlines()[0]
+        time_str = row[row.find('(')+1:row.find(')')]
+        time = dateutil.parser.parse(time_str).isoformat()
 
         for row in raw_report.split('\n'):
-
             val = row.strip()
             if not len(val) or val.startswith('#') or val.startswith('//'):
                 continue
@@ -32,6 +37,7 @@ class CymruFullBogonsParserBot(Bot):
             else:
                 event.add('source.network', val, sanitize=True)
 
+            event.add('time.source', time, sanitize=True)
             event.add('classification.type', u'blacklist')
             event.add('raw', row, sanitize=True)
 

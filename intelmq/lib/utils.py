@@ -16,6 +16,7 @@ from __future__ import unicode_literals
 import base64
 import json
 import logging
+import logging.handlers
 import os
 import re
 import six
@@ -183,39 +184,51 @@ def load_parameters(*configs):
     return parameters
 
 
-def log(name, log_path=DEFAULT_LOGGING_PATH, log_level="DEBUG", stream=None):
+def log(name, log_path=DEFAULT_LOGGING_PATH, log_level="DEBUG", stream=None,
+        syslog=False):
     """
     Returns a logger instance logging to file and sys.stderr or other stream.
 
     Parameters:
     -----------
-        name : string
-            filename for logfile or string preceding lines in stream
-        log_path : string
-            Path to log directory, defaults to DEFAULT_LOGGING_PATH
-        log_level : string
-            default is "DEBUG"
-        stream : object
-            By default (None), stderr will be used, stream objects can be
-            given. If False, stream output is not used.
+    name : string
+        filename for logfile or string preceding lines in stream
+    log_path : string
+        Path to log directory, defaults to DEFAULT_LOGGING_PATH
+    log_level : string
+        default is "DEBUG"
+    stream : object
+        By default (None), stderr will be used, stream objects can be
+        given. If False, stream output is not used.
+    syslog: boolean, list/tuple, string
+        If False (default), FileHandler will be used. Otherwise either a list/
+        tuple with address and UDP port are expected, e.g. `["localhost", 514]`
+        or a string with device name, e.g. `"/dev/log"`.
 
     Returns
     -------
-        logger : object
-            A `logging` instance.
+    logger : object
+        A `logging` instance.
 
     See also
     --------
-        LOG_FORMAT : string
-            Default log format for file handler
-        LOG_FORMAT_STREAM : string
-            Default log format for stream handler
+    LOG_FORMAT : string
+        Default log format for file handler
+    LOG_FORMAT_STREAM : string
+        Default log format for stream handler
     """
     logger = logging.getLogger(name)
     logger.setLevel(log_level)
 
-    handler = logging.FileHandler("%s/%s.log" % (log_path, name))
-    handler.setLevel(log_level)
+    if not syslog:
+        handler = logging.FileHandler("%s/%s.log" % (log_path, name))
+        handler.setLevel(log_level)
+    else:
+        if type(syslog) is tuple or type(syslog) is list:
+            handler = logging.handlers.SysLogHandler(address=tuple(syslog))
+        else:
+            handler = logging.handlers.SysLogHandler(address=syslog)
+        handler.setLevel(log_level)
 
     formatter = logging.Formatter(LOG_FORMAT)
     handler.setFormatter(formatter)

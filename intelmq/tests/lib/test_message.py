@@ -31,6 +31,7 @@ ACCURACY_UNSANE = '100'
 ACCURACY_SANE = 100
 ACCURACY_INVALID = -1
 
+
 class TestMessageFactory(unittest.TestCase):
     """
     Testing basic functionality of MessageFactory.
@@ -391,6 +392,14 @@ class TestMessageFactory(unittest.TestCase):
         event = message.MessageFactory.unserialize('{"__type": "Event"}')
         with self.assertRaises(exceptions.InvalidValue):
             event.add('source.port', 123456)
+
+    def test_malwarename_regex(self):
+        """ Test if the regex for malware.name is tested correctly. """
+        event = message.MessageFactory.unserialize('{"__type": "Event"}')
+        event.add('malware.name', 'multiple-malware citadel:report')
+        del event['malware.name']
+        with self.assertRaises(exceptions.InvalidValue):
+            event.add('malware.name', 'tu234t2t$#%$')
 
     def test_protocol_ascii(self):
         """ Test if ascii for protocol is tested correctly. """
