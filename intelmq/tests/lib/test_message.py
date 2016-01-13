@@ -9,6 +9,7 @@ but has a valid Harmonization configuration.
 from __future__ import unicode_literals
 
 import json
+import sys
 import unittest
 
 import intelmq.lib.exceptions as exceptions
@@ -36,6 +37,15 @@ class TestMessageFactory(unittest.TestCase):
     """
     Testing basic functionality of MessageFactory.
     """
+
+    def assertListUnorderdEqual(self, expected, actual):
+        """
+        Checks sequences for same content, regardless of order.
+        """
+        if sys.version_info[0] == 2:
+            self.assertItemsEqual(expected, actual)
+        else:
+            self.assertCountEqual(expected, actual)
 
     def add_report_examples(self, report):
         report.add('feed.name', 'Example')
@@ -209,7 +219,7 @@ class TestMessageFactory(unittest.TestCase):
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         for key, value in FEED.items():
             report.add(key, value)
-        self.assertListEqual(list(FEED.items()), list(report.items()))
+        self.assertListUnorderdEqual(list(FEED.items()), list(report.items()))
 
     def test_report_add_byte(self):
         """ Test if report rejects a byte string. """
