@@ -1,4 +1,3 @@
-
 # -*- coding: utf-8 -*-
 """
 The following types are implemented with sanitize() and is_valid() functions:

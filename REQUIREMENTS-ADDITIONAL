@@ -1,0 +1,4 @@
+git+git://github.com/Blueliv/api-python-sdk
+psycopg2>=2.5.5
+pymongo>=2.7.1
+stomp.py
