@@ -32,6 +32,9 @@ from termstyle import bold, green, inverted, red, reset
 
 import rt
 
+from intelmq.lib import utils
+
+
 """ options """
 dryrun = False
 verbose = False
@@ -428,7 +431,7 @@ def query_by_as(contact, requestor=None, automatic=False, feed='%'):
     writer.writeheader()
     writer.writerows(query)
     # note this might contain UTF-8 chars! let's ignore utf-8 errors. sorry. 
-    attachment_text = six.text_type(csvfile.getvalue(), encoding='utf8', errors='ignore')
+    attachment_text = utils.decode(csvfile.getvalue(), force=True)
     attachment_lines = attachment_text.splitlines()
 
     if verbose:
