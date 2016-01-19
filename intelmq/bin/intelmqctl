@@ -481,7 +481,7 @@ class IntelMQContoller():
                     log_level = LOG_LEVEL[split_log_level[0].upper()]
                 except KeyError:
                     logger.error("Invalid log_level. Must be one of {}"
-                                 "".format(', '.join(LOG_LEVEL.iterkeys())))
+                                 "".format(', '.join(LOG_LEVEL.keys())))
                     return[]
 
         if bot_id is None:

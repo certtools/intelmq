@@ -1,6 +1,6 @@
-![IntelMQ](http://s28.postimg.org/r2av18a3x/Logo_Intel_MQ.png)
+![IntelMQ](https://raw.githubusercontent.com/certtools/intelmq/master/docs/images/Logo_Intel_MQ.png)
 
-![Travis-CI Check](https://travis-ci.org/certtools/intelmq.svg)
+[![Travis-CI Check](https://travis-ci.org/certtools/intelmq.svg)](https://travis-ci.org/certtools/)
 
 **IntelMQ** is a solution for CERTs for collecting and processing security 
 feeds, pastebins, tweets and log files using a message queuing protocol. 
