@@ -14,6 +14,8 @@ parse_logline
 from __future__ import unicode_literals
 
 import base64
+import csv
+import io
 import json
 import logging
 import logging.handlers
@@ -304,3 +306,17 @@ def parse_logline(logline):
         result = dict(list(zip(fields, match.group(*fields))))
 
     return result
+
+
+def csv_reader(csv_data, dialect=csv.excel, **kwargs):
+    """
+    Reads data from given string and parses as utf8.
+    Only needed for Legcay Python, version 2.
+    """
+    if sys.version_info[0] == 2:
+        import unicodecsv
+        for row in unicodecsv.reader(io.BytesIO(encode(csv_data))):
+            yield row
+    else:
+        for row in csv.reader(io.StringIO(csv_data)):
+            yield row
