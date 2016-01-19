@@ -162,6 +162,7 @@ class ClassificationType(GenericType):
                       'phishing',
                       'vulnerable service',
                       'blacklist',
+                      'other',
                       'unknown'
                       ]
 
