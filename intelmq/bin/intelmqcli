@@ -32,6 +32,8 @@ from termstyle import bold, green, inverted, red, reset
 
 import rt
 
+import utils
+
 """ options """
 dryrun = False
 verbose = False
