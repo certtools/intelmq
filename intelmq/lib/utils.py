@@ -125,8 +125,12 @@ def base64_decode(value):
     Returns
     -------
     retval : unicode string
+
+    Notes
+    -----
+    Possible bytes - unicode conversions problems are ignored.
     """
-    return decode(base64.b64decode(encode(value)))
+    return decode(base64.b64decode(encode(value, force=True)), force=True)
 
 
 def base64_encode(value):
@@ -139,8 +143,12 @@ def base64_encode(value):
     Returns
     -------
     retval : unicode string
+
+    Notes
+    -----
+    Possible bytes - unicode conversions problems are ignored.
     """
-    return decode(base64.b64encode(encode(value)))
+    return decode(base64.b64encode(encode(value, force=True)), force=True)
 
 
 def load_configuration(configuration_filepath):
