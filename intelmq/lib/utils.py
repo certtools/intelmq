@@ -126,7 +126,7 @@ def base64_decode(value):
     -------
     retval : unicode string
     """
-    return decode(base64.b64decode(encode(value)))
+    return decode(base64.b64decode(encode(value)), force=True)
 
 
 def base64_encode(value):
@@ -257,11 +257,11 @@ def reverse_readline(filename, buf_size=100000):
         line = ''
         number = 0
         if buf_size < position:
-            qfile.seek(totalsize-buf_size-1)
+            qfile.seek(totalsize - buf_size - 1)
             char = qfile.read(1)
             while char != '\n':
                 char = qfile.read(1)
-            number = totalsize-buf_size
+            number = totalsize - buf_size
         while position >= number:
             qfile.seek(position)
             next_char = qfile.read(1)
