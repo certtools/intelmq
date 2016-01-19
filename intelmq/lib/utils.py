@@ -14,6 +14,8 @@ parse_logline
 from __future__ import unicode_literals
 
 import base64
+import csv
+import io
 import json
 import logging
 import logging.handlers
@@ -125,8 +127,12 @@ def base64_decode(value):
     Returns
     -------
     retval : unicode string
+
+    Notes
+    -----
+    Possible bytes - unicode conversions problems are ignored.
     """
-    return decode(base64.b64decode(encode(value)), force=True)
+    return decode(base64.b64decode(encode(value, force=True)), force=True)
 
 
 def base64_encode(value):
@@ -139,8 +145,12 @@ def base64_encode(value):
     Returns
     -------
     retval : unicode string
+
+    Notes
+    -----
+    Possible bytes - unicode conversions problems are ignored.
     """
-    return decode(base64.b64encode(encode(value)))
+    return decode(base64.b64encode(encode(value, force=True)), force=True)
 
 
 def load_configuration(configuration_filepath):
@@ -296,3 +306,17 @@ def parse_logline(logline):
         result = dict(list(zip(fields, match.group(*fields))))
 
     return result
+
+
+def csv_reader(csv_data, dialect=csv.excel, **kwargs):
+    """
+    Reads data from given string and parses as utf8.
+    Only needed for Legcay Python, version 2.
+    """
+    if sys.version_info[0] == 2:
+        import unicodecsv
+        for row in unicodecsv.reader(io.BytesIO(encode(csv_data))):
+            yield row
+    else:
+        for row in csv.reader(io.StringIO(csv_data)):
+            yield row
