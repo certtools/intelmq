@@ -1,6 +1,9 @@
 ![IntelMQ](https://raw.githubusercontent.com/certtools/intelmq/master/docs/images/Logo_Intel_MQ.png)
 
-[![Travis-CI Check](https://travis-ci.org/certtools/intelmq.svg)](https://travis-ci.org/certtools/)
+[![Build Status](https://travis-ci.org/certtools/intelmq.svg?branch=master)](https://travis-ci.org/certtools/intelmq)
+[![Coverage Status](https://coveralls.io/repos/github/certtools/intelmq/badge.svg?branch=master)](https://coveralls.io/github/certtools/intelmq?branch=master)
+[![codecov.io](https://codecov.io/github/certtools/intelmq/coverage.svg?branch=master)](https://codecov.io/github/certtools/intelmq?branch=master)
+
 
 **IntelMQ** is a solution for CERTs for collecting and processing security 
 feeds, pastebins, tweets and log files using a message queuing protocol. 
