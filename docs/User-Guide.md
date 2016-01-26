@@ -575,8 +575,8 @@ python setup.py install
 * Apply your configurations backup.
 
 ```bash
-rm -rf /opt/intelmq/*
-cp -R /opt/intelmq-backup/* /opt/intelmq/
+rm -rf /opt/intelmq/etc/*
+cp -R /opt/intelmq-backup/etc/* /opt/intelmq/etc/
 ```
 
 ## Redefine permissions
