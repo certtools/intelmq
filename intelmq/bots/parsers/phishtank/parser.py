@@ -1,12 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import sys
-from io import StringIO
-
-if sys.version_info[0] == 2:
-    import unicodecsv as csv
-else:
-    import csv
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
@@ -33,7 +27,7 @@ class PhishTankParserBot(Bot):
                    ]
 
         raw_report = utils.base64_decode(report.value("raw"))
-        for row in csv.reader(StringIO(raw_report)):
+        for row in utils.csv_reader(raw_report):
 
             # ignore headers
             if "phish_id" in row:

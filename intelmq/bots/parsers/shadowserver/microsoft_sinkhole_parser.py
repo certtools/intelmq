@@ -29,11 +29,6 @@ sic [UNDOCUMENTED]
 from __future__ import unicode_literals
 
 import sys
-if sys.version_info[0] == 2:
-    import unicodecsv as csv
-else:
-    import csv
-import io
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
@@ -50,9 +45,7 @@ class ShadowServerMicrosoftSinkholeParserBot(Bot):
             return
 
         raw_report = utils.base64_decode(report["raw"])
-        rows = csv.DictReader(io.StringIO(raw_report))
-
-        for row in rows:
+        for row in utils.csv_reader(raw_report, dictreader=True):
             event = Event(report)
             extra = {}
             self.logger.debug(repr(row))
