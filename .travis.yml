@@ -8,7 +8,13 @@ install:
   - if [[ ${TRAVIS_PYTHON_VERSION%.?} == 3 ]]; then pip install -r REQUIREMENTS; fi
   - pip install -r REQUIREMENTS-ADDITIONAL
   - "python setup_travis.py install"
+  - pip install coveralls
+  - pip install codecov
 # command to run tests
-script: nosetests
+script: nosetests --with-coverage --cover-package=intelmq
 services:
   - redis-server
+
+after_success:
+  - codecov
+  - coveralls
