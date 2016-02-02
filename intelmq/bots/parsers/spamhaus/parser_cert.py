@@ -29,7 +29,6 @@ from intelmq.lib.bot import Bot
 from intelmq.lib.exceptions import InvalidValue
 from intelmq.lib.harmonization import DateTime
 from intelmq.lib.message import Event
-import json
 
 
 __all__ = ['SpamhausCERTParserBot']
@@ -68,9 +67,8 @@ class SpamhausCERTParserBot(Bot):
             event.add('destination.ip', row_splitted[6])
             event.add('destination.port', row_splitted[7])
             if row_splitted[8] and row_splitted[8] != '-':
-                event.add('extra',
-                          json.dumps({'destination.local_port':
-                                      int(row_splitted[8])}))
+                event.add('extra', {'destination.local_port':
+                                    int(row_splitted[8])})
             event.add('protocol.transport', row_splitted[9])
             event.add('classification.type', u'botnet drone')
             event.add('raw', row)

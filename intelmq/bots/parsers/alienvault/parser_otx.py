@@ -32,9 +32,7 @@ class AlienVaultOTXParserBot(Bot):
         raw_report = utils.base64_decode(report.value("raw"))
 
         for pulse in json.loads(raw_report):
-            additional = json.dumps({"author": pulse['author_name'],
-                                     "pulse": pulse['name']},
-                                    sort_keys=True)
+            additional = {"author": pulse['author_name'], "pulse": pulse['name']}
             for indicator in pulse["indicators"]:
                 event = Event(report)
                 # hashes

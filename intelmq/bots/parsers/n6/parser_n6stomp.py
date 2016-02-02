@@ -136,7 +136,7 @@ class N6StompParserBot(Bot):
                       force=True)
 
         if extra:
-            event.add("extra", json.dumps(extra, sort_keys=True))
+            event.add("extra", extra)
 
         # address is an array of JSON objects -> split the event
         if (not ("address" in dict_report or "fqdn" in dict_report)):
