@@ -34,10 +34,10 @@ class TestTorExpertBot(test.BotTestCase, unittest.TestCase):
     """
 
     @classmethod
-    def set_bot(self):
-        self.bot_reference = TorExpertBot
-        self.sysconfig = {'database': TOR_DB}
-        self.default_input_message = {'__type': 'Report'}
+    def set_bot(cls):
+        cls.bot_reference = TorExpertBot
+        cls.sysconfig = {'database': TOR_DB}
+        cls.default_input_message = {'__type': 'Report'}
 
     def test_ipv4_lookup(self):
         self.input_message = EXAMPLE_INPUT

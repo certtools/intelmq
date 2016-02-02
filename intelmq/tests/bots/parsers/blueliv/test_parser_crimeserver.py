@@ -38,9 +38,9 @@ class TestBluelivCrimeserverParserBot(test.BotTestCase, unittest.TestCase):
     """
 
     @classmethod
-    def set_bot(self):
-        self.bot_reference = BluelivCrimeserverParserBot
-        self.default_input_message = EXAMPLE_REPORT
+    def set_bot(cls):
+        cls.bot_reference = BluelivCrimeserverParserBot
+        cls.default_input_message = EXAMPLE_REPORT
 
     def test_event(self):
         """ Test if correct Event has been produced. """
