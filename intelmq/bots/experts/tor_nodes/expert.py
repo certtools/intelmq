@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 See README for database download.
-
-TOOD: IPv6
 """
 from __future__ import unicode_literals
 import sys
@@ -25,10 +23,7 @@ class TorExpertBot(Bot):
                     if len(line) == 0 or line[0] == "#":
                         continue
 
-                    ip_list = line[line.find("[")+1:line.find("]")].split(",")
-
-                    for ip in ip_list:
-                        self.database.add(ip.strip())
+                    self.database.add(line)
 
         except IOError:
             self.logger.critical("TOR rule not defined or failed on open.")
