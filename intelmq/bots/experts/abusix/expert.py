@@ -2,18 +2,27 @@
 '''
 Reference: https://abusix.com/contactdb.html
 RIPE abuse contacts resolving through DNS TXT queries
-
-TODO: Use Python module querycontacts from abusix:
-https://pypi.python.org/pypi/querycontacts/
 '''
-from __future__ import unicode_literals
+from __future__ import unicode_literals, absolute_import
 import sys
 
 from intelmq.bots.experts.abusix.lib import Abusix
 from intelmq.lib.bot import Bot
 
+try:
+    import querycontacts
+except ImportError:
+    querycontacts = None
+
 
 class AbusixExpertBot(Bot):
+
+    def init(self):
+        if querycontacts:
+            qf = querycontacts.ContactFinder()
+            self.lookup = lambda t: ', '.join(qf.find(t))
+        else:
+            self.lookup = Abusix.query
 
     def process(self):
         event = self.receive_message()
@@ -26,7 +35,7 @@ class AbusixExpertBot(Bot):
             ip_key = key + "ip"
             if event.contains(ip_key):
                 ip = event.value(ip_key)
-                email = Abusix.query(ip)
+                email = self.lookup(ip)
                 if email:
                     abuse_contact_key = key + "abuse_contact"
                     event.add(abuse_contact_key, email, force=True)

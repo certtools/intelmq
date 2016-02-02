@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
-"""
-TODO: IPv6 See https://abusix.com/contactdb.html
-"""
 from __future__ import unicode_literals
+import ipaddress
 import re
 
 import dns.resolver
 import intelmq.lib.harmonization as harmonization
 
-QUERY_TEMPLATE = "%s.%s.%s.%s.abuse-contacts.abusix.org"
+QUERY_HOST = ".abuse-contacts.abusix.org"
 REGEX = r"[^@]+@[^@]+\.[^@]+"
 
 
@@ -18,13 +16,12 @@ class Abusix():
     def query(ip):
 
         if harmonization.IPAddress.version(ip) == 6:
-            return None
+            addr = ipaddress.ip_address(u'2001:500:88:200::7').exploded
+            rev = '.'.join(reversed(addr.replace(':', '')))
+        else:
+            rev = '.'.join(reversed(ip.split('.')))
 
-        octets = ip.split('.')
-        if len(octets) != 4:
-            return None
-
-        query = QUERY_TEMPLATE % (octets[3], octets[2], octets[1], octets[0])
+        query = rev + QUERY_HOST
 
         try:
             response = dns.resolver.query(query, 'TXT')
