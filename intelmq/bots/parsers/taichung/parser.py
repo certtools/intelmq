@@ -57,11 +57,11 @@ class TaichungCityNetflowParserBot(Bot):
             event_type = self.get_type(description)
             time_source = info2.group(1) + " UTC-8"
 
-            event.add("time.source", time_source, sanitize=True)
-            event.add("source.ip", info1.group(1), sanitize=True)
-            event.add('classification.type', event_type, sanitize=True)
-            event.add('event_description.text', description, sanitize=True)
-            event.add("raw", row, sanitize=True)
+            event.add("time.source", time_source)
+            event.add("source.ip", info1.group(1))
+            event.add('classification.type', event_type)
+            event.add('event_description.text', description)
+            event.add("raw", row)
 
             self.send_message(event)
         self.acknowledge_message()

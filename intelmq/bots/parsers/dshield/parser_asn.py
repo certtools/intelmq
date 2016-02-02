@@ -52,13 +52,13 @@ class DShieldASNParserBot(Bot):
 
             event = Event(report)
 
-            event.add('source.ip', source_ip, sanitize=True)
-            event.add('source.asn', asn, sanitize=True)
+            event.add('source.ip', source_ip)
+            event.add('source.asn', asn)
             event.add('classification.type', 'brute-force')
-            event.add("time.source", updated+'+0', sanitize=True)
-            event.add("raw", row, sanitize=True)
+            event.add("time.source", updated+'+0')
+            event.add("raw", row)
             event.add("extra", {'reports': reports, 'targets': targets,
-                                'last_seen': last_seen}, sanitize=True)
+                                'last_seen': last_seen})
 
             self.send_message(event)
         self.acknowledge_message()

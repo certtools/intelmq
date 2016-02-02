@@ -49,7 +49,7 @@ class AlienVaultParserBot(Bot):
 
                 if ctype.lower() in CLASSIFICATION:
                     event.add('classification.type',
-                              CLASSIFICATION[ctype.lower()], sanitize=True)
+                              CLASSIFICATION[ctype.lower()])
                 else:
                     event.add('classification.type', u"unknown")
 
@@ -59,17 +59,17 @@ class AlienVaultParserBot(Bot):
                         geo_latitude = geo_coordinates[0]
                         geo_longitude = geo_coordinates[1]
 
-                event.add('source.ip', values[0].strip(), sanitize=True)
+                event.add('source.ip', values[0].strip())
                 event.add('source.geolocation.cc',
-                          values[4].strip(), sanitize=True)
+                          values[4].strip())
                 event.add('source.geolocation.city',
-                          values[5].strip(), sanitize=True)
+                          values[5].strip())
                 event.add('source.geolocation.latitude',
-                          geo_latitude.strip(), sanitize=True)
+                          geo_latitude.strip())
                 event.add('source.geolocation.longitude',
-                          geo_longitude.strip(), sanitize=True)
+                          geo_longitude.strip())
 
-                event.add("raw", row, sanitize=True)
+                event.add("raw", row)
 
                 self.send_message(event)
         self.acknowledge_message()

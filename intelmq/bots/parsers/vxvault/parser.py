@@ -42,16 +42,16 @@ class VXVaultParserBot(Bot):
 
             event = Event(report)
 
-            if IPAddress.is_valid(hostname, sanitize=True):
-                event.add("source.ip", hostname, sanitize=True)
+            if IPAddress.is_valid(hostname):
+                event.add("source.ip", hostname)
             else:
-                event.add("source.fqdn", hostname, sanitize=True)
+                event.add("source.fqdn", hostname)
 
             event.add('classification.type', u'malware')
-            event.add("source.url", url, sanitize=True)
+            event.add("source.url", url)
             if port:
-                event.add("source.port", port, sanitize=True)
-            event.add("raw", row, sanitize=True)
+                event.add("source.port", port)
+            event.add("raw", row)
 
             self.send_message(event)
         self.acknowledge_message()

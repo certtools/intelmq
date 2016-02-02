@@ -38,19 +38,18 @@ class GeoIPExpertBot(Bot):
 
                 if info.country.iso_code:
                     event.add(geo_key % "cc", info.country.iso_code,
-                              sanitize=True, force=True)
+                              force=True)
 
                 if info.location.latitude:
                     event.add(geo_key % "latitude", info.location.latitude,
-                              sanitize=True, force=True)
+                              force=True)
 
                 if info.location.longitude:
                     event.add(geo_key % "longitude", info.location.longitude,
-                              sanitize=True, force=True)
+                              force=True)
 
                 if info.city.name:
-                    event.add(geo_key % "city", info.city.name,
-                              sanitize=True, force=True)
+                    event.add(geo_key % "city", info.city.name, force=True)
 
             except geoip2.errors.AddressNotFoundError:
                 pass

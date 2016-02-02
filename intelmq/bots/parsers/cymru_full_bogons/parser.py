@@ -32,14 +32,14 @@ class CymruFullBogonsParserBot(Bot):
 
             event = Event(report)
 
-            if IPAddress.is_valid(val, sanitize=True):
-                event.add('source.ip', val, sanitize=True)
+            if IPAddress.is_valid(val):
+                event.add('source.ip', val)
             else:
-                event.add('source.network', val, sanitize=True)
+                event.add('source.network', val)
 
-            event.add('time.source', time, sanitize=True)
+            event.add('time.source', time)
             event.add('classification.type', u'blacklist')
-            event.add('raw', row, sanitize=True)
+            event.add('raw', row)
 
             self.send_message(event)
         self.acknowledge_message()

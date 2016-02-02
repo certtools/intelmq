@@ -50,13 +50,13 @@ class TestMessageFactory(unittest.TestCase):
     def add_report_examples(self, report):
         report.add('feed.name', 'Example')
         report.add('feed.url', URL_SANE)
-        report.add('raw', LOREM_BASE64)
+        report.add('raw', LOREM_BASE64, sanitize=False)
         return report
 
     def add_event_examples(self, event):
         event.add('feed.name', 'Example')
         event.add('feed.url', URL_SANE)
-        event.add('raw', LOREM_BASE64)
+        event.add('raw', LOREM_BASE64, sanitize=False)
         event.add('time.observation', u'2015-01-01T13:37:00+00:00')
         return event
 
@@ -101,20 +101,20 @@ class TestMessageFactory(unittest.TestCase):
     def test_report_add_raw(self):
         """ Test if report can add raw value. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
-        report.add('raw', LOREM_BASE64)
+        report.add('raw', 'lorem ipsum')
         self.assertDictContainsSubset({'raw': LOREM_BASE64},
                                       report)
 
     def test_report_value(self):
         """ Test if report return value in value(). """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
-        report.add('raw', LOREM_BASE64)
+        report.add('raw', LOREM_BASE64, sanitize=False)
         self.assertEqual(LOREM_BASE64, report.value('raw'))
 
     def test_report_get(self):
         """ Test if report return value in get(). """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
-        report.add('raw', LOREM_BASE64)
+        report.add('raw', LOREM_BASE64, sanitize=False)
         self.assertEqual(LOREM_BASE64, report.get('raw'))
 
     def test_report_add_invalid(self):
@@ -126,13 +126,13 @@ class TestMessageFactory(unittest.TestCase):
     def test_report_getitem(self):
         """ Test if report return value in __getitem__(). """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
-        report.add('raw', LOREM_BASE64)
+        report.add('raw', LOREM_BASE64, sanitize=False)
         self.assertEqual(LOREM_BASE64, report['raw'])
 
     def test_report_setitem(self):
         """ Test if report sets value in __setitem__(). """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
-        report['raw'] = LOREM_BASE64
+        report['raw'] = 'lorem ipsum'
         self.assertEqual(LOREM_BASE64, report['raw'])
 
     def test_report_ignore_none(self):
@@ -181,8 +181,8 @@ class TestMessageFactory(unittest.TestCase):
     def test_report_add_duplicate_force(self):
         """ Test if report can add raw value. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
-        report.add('raw', LOREM_BASE64)
-        report.add('raw', DOLOR_BASE64, force=True)
+        report.add('raw', LOREM_BASE64, sanitize=False)
+        report.add('raw', DOLOR_BASE64, force=True, sanitize=False)
         self.assertDictContainsSubset({'raw': DOLOR_BASE64},
                                       report)
 
@@ -226,7 +226,7 @@ class TestMessageFactory(unittest.TestCase):
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         with self.assertRaises((exceptions.InvalidValue,
                                 TypeError)):
-            report.add('raw', bytes(LOREM_BASE64))
+            report.add('raw', bytes(LOREM_BASE64), sanitize=False)
 
     def test_report_sanitize_url(self):
         """ Test if report sanitizes an URL. """
@@ -288,7 +288,7 @@ class TestMessageFactory(unittest.TestCase):
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         report.add('feed.name', 'Example')
         report.add('feed.url', URL_SANE)
-        report.add('raw', LOREM_BASE64)
+        report.add('raw', LOREM_BASE64, sanitize=False)
         actual = message.MessageFactory.serialize(report)
         expected = ('{"raw": "bG9yZW0gaXBzdW0=", "__type": "Report", "feed.url'
                     '": "https://example.com/", "feed.name": "Example"}')

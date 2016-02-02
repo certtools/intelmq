@@ -92,7 +92,7 @@ class Message(dict):
     def __setitem__(self, key, value):
         self.add(key, value)
 
-    def add(self, key, value, sanitize=False, force=False, ignore=()):
+    def add(self, key, value, sanitize=True, force=False, ignore=()):
         if not force and key in self:
             raise exceptions.KeyExists(key)
 
@@ -114,7 +114,7 @@ class Message(dict):
                                              got=type(ignore),
                                              expected='list or tuple')
 
-        if sanitize:
+        if sanitize and not key == '__type':
             old_value = value
             value = self.__sanitize_value(key, value)
             if value is None:
@@ -129,7 +129,7 @@ class Message(dict):
     def value(self, key):  # TODO: Remove? Use get instead
         return self.__getitem__(key)
 
-    def update(self, key, value, sanitize=False):
+    def update(self, key, value, sanitize=True):
         if key not in self:
             raise exceptions.KeyNotExists(key)
         self.add(key, value, force=True, sanitize=sanitize)

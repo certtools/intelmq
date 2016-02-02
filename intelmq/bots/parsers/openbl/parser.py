@@ -35,10 +35,10 @@ class OpenBLParserBot(Bot):
                     value = datetime.utcfromtimestamp(
                         int(value)).strftime('%Y-%m-%d %H:%M:%S') + " UTC"
 
-                event.add(key, value.strip(), sanitize=True)
+                event.add(key, value.strip())
 
             event.add('classification.type', u'blacklist')
-            event.add("raw", row, sanitize=True)
+            event.add("raw", row)
 
             self.send_message(event)
         self.acknowledge_message()

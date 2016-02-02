@@ -32,18 +32,16 @@ class BluelivCrimeserverParserBot(Bot):
         for item in json.loads(raw_report):
             event = Event(report)
             if 'url' in item:
-                event.add('source.url', item['url'], sanitize=True)
+                event.add('source.url', item['url'])
             if 'ip' in item:
-                event.add('source.ip', item['ip'], sanitize=True)
+                event.add('source.ip', item['ip'])
             if 'country' in item:
-                event.add('source.geolocation.cc', item['country'], sanitize=True)
+                event.add('source.geolocation.cc', item['country'])
             if 'type' in item:
-                event.add('classification.type', TYPES[item['type']], sanitize=True)
+                event.add('classification.type', TYPES[item['type']])
             if 'firstSeenAt' in item:
-                event.add('time.source', item['firstSeenAt'][:-4] + '00:00',
-                          sanitize=True)
-            event.add("raw", json.dumps(item, sort_keys=True),
-                      sanitize=True)
+                event.add('time.source', item['firstSeenAt'][:-4] + '00:00')
+            event.add("raw", json.dumps(item, sort_keys=True))
             self.send_message(event)
         self.acknowledge_message()
 

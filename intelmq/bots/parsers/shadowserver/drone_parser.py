@@ -52,39 +52,36 @@ class ShadowServerDroneParserBot(Bot):
             event = Event(report)
             extra = {}
 
-            event.add('time.source', row['timestamp']+' UTC', sanitize=True)
-            event.add('source.ip', row['ip'], sanitize=True)
-            event.add('source.port', row['port'], sanitize=True)
-            event.add('source.asn', row['asn'], sanitize=True)
-            event.add('source.geolocation.cc', row['geo'], sanitize=True)
-            event.add('source.geolocation.region', row['region'],
-                      sanitize=True)
-            event.add('source.geolocation.city', row['city'], sanitize=True)
+            event.add('time.source', row['timestamp']+' UTC')
+            event.add('source.ip', row['ip'])
+            event.add('source.port', row['port'])
+            event.add('source.asn', row['asn'])
+            event.add('source.geolocation.cc', row['geo'])
+            event.add('source.geolocation.region', row['region'])
+            event.add('source.geolocation.city', row['city'])
             if row['hostname']:
-                event.add('source.reverse_dns', row['hostname'], sanitize=True)
-            event.add('protocol.transport', row['type'], sanitize=True)
-            event.add('malware.name', row['infection'], sanitize=True)
+                event.add('source.reverse_dns', row['hostname'])
+            event.add('protocol.transport', row['type'])
+            event.add('malware.name', row['infection'])
             if row['url']:
-                event.add('destination.url', row['url'], sanitize=True)
+                event.add('destination.url', row['url'])
             if row['agent']:
                 extra['user_agent'] = row['agent']
-            event.add('destination.ip', row['cc'], sanitize=True)
-            event.add('destination.port', row['cc_port'], sanitize=True)
-            event.add('destination.asn', row['cc_asn'], sanitize=True)
-            event.add('destination.geolocation.cc', row['cc_geo'],
-                      sanitize=True)
+            event.add('destination.ip', row['cc'])
+            event.add('destination.port', row['cc_port'])
+            event.add('destination.asn', row['cc_asn'])
+            event.add('destination.geolocation.cc', row['cc_geo'])
             if row['cc_dns']:
-                event.add('destination.reverse_dns', row['cc_dns'],
-                          sanitize=True)
+                event.add('destination.reverse_dns', row['cc_dns'])
             extra['connection_count'] = int(row['count'])
             if row['proxy']:
                 extra['proxy'] = row['proxy']
             if row['application']:
-                event.add('protocol.application', row['type'], sanitize=True)
+                event.add('protocol.application', row['type'])
             extra['os.name'] = row['p0f_genre']
             extra['os.version'] = row['p0f_detail']
             if 'machine_name' in row and row['machine_name']:
-                event.add('source.local_hostname', row['type'], sanitize=True)
+                event.add('source.local_hostname', row['type'])
             if 'id' in row and row['id']:
                 extra['bot_id'] = row['id']
             if int(row['naics']):
@@ -92,10 +89,9 @@ class ShadowServerDroneParserBot(Bot):
             if int(row['sic']):
                 extra['sic'] = int(row['sic'])
 
-            event.add('extra', extra, sanitize=True)
+            event.add('extra', extra)
             event.add('classification.type', 'botnet drone')
-            event.add('raw', '"'+','.join(map(str, row.items()))+'"',
-                      sanitize=True)
+            event.add('raw', '"'+','.join(map(str, row.items()))+'"')
 
             self.send_message(event)
         self.acknowledge_message()

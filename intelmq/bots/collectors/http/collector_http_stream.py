@@ -26,11 +26,11 @@ class HTTPStreamCollectorBot(Bot):
                 continue
 
             report = Report()
-            report.add("raw", str(line), sanitize=True)
-            report.add("feed.name", self.parameters.feed, sanitize=True)
-            report.add("feed.accuracy", self.parameters.accuracy, sanitize=True)
+            report.add("raw", str(line))
+            report.add("feed.name", self.parameters.feed)
+            report.add("feed.accuracy", self.parameters.accuracy)
             time_observation = DateTime().generate_datetime_now()
-            report.add('time.observation', time_observation, sanitize=True)
+            report.add('time.observation', time_observation)
             self.send_message(report)
 
 

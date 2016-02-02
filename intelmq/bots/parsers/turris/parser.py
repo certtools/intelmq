@@ -37,10 +37,10 @@ class TurrisGreylistParserBot(Bot):
                 if key == "__IGNORE__":
                     continue
 
-                event.add(key, value, sanitize=True)
+                event.add(key, value)
 
             event.add('classification.type', u'scanner')
-            event.add("raw", ",".join(row), sanitize=True)
+            event.add("raw", ",".join(row))
 
             self.send_message(event)
         self.acknowledge_message()

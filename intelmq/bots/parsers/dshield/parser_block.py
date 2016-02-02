@@ -71,12 +71,12 @@ class DshieldBlockParserBot(Bot):
                 event['source.abuse_contact'] = values[6]
 
             if extra:
-                event.add('extra', extra, sanitize=True)
+                event.add('extra', extra)
 
-            event.add('time.source', time, sanitize=True)
-            event.add('source.network', network, sanitize=True)
+            event.add('time.source', time)
+            event.add('source.network', network)
             event.add('classification.type', 'blacklist')
-            event.add("raw", row, sanitize=True)
+            event.add("raw", row)
 
             self.send_message(event)
         self.acknowledge_message()

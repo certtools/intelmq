@@ -39,13 +39,13 @@ class DragonResearchGroupSSHParserBot(Bot):
                 if value == "NA":
                     continue
 
-                event.add(key, value, sanitize=True)
+                event.add(key, value)
 
             event.add("classification.type", "brute-force")
             event.add("protocol.application", "ssh")
             event.add("protocol.transport", "tcp")
             event.add("destination.port", 22)
-            event.add("raw", row, sanitize=True)
+            event.add("raw", row)
 
             self.send_message(event)
         self.acknowledge_message()

@@ -33,16 +33,14 @@ class StompListener(stomp.listener.PrintingListener):
         self.n6stomper.logger.debug('Receive message '
                                     '{!r}...'.format(message[:500]))
         report = Report()
-        report.add("raw", message.rstrip(), sanitize=True)
-        report.add("feed.name", self.n6stomper.parameters.feed,
-                   sanitize=True)
+        report.add("raw", message.rstrip())
+        report.add("feed.name", self.n6stomper.parameters.feed)
         report.add("feed.url", "stomp://" +
                    self.n6stomper.parameters.server +
                    ":" + str(self.n6stomper.parameters.port) +
-                   "/" + self.n6stomper.parameters.exchange,
-                   sanitize=True)
+                   "/" + self.n6stomper.parameters.exchange)
         time_observation = DateTime().generate_datetime_now()
-        report.add('time.observation', time_observation, sanitize=True)
+        report.add('time.observation', time_observation)
         self.n6stomper.send_message(report)
         self.n6stomper.logger.debug('Receiving Message.')
 

@@ -42,18 +42,17 @@ class ShadowServerSNMPParserBot(Bot):
             event = Event(report)
             extra = {}
 
-            event.add('time.source', row['timestamp']+' UTC', sanitize=True)
-            event.add('source.ip', row['ip'], sanitize=True)
-            event.add('protocol.transport', row['protocol'], sanitize=True)
-            event.add('source.port', row['port'], sanitize=True)
-            event.add('source.reverse_dns', row['hostname'], sanitize=True)
+            event.add('time.source', row['timestamp']+' UTC')
+            event.add('source.ip', row['ip'])
+            event.add('protocol.transport', row['protocol'])
+            event.add('source.port', row['port'])
+            event.add('source.reverse_dns', row['hostname'])
             extra['sysdesc'] = row['sysdesc']
             extra['sysname'] = row['sysname']
-            event.add('source.asn', row['asn'], sanitize=True)
-            event.add('source.geolocation.cc', row['geo'], sanitize=True)
-            event.add('source.geolocation.region', row['region'],
-                      sanitize=True)
-            event.add('source.geolocation.city', row['city'], sanitize=True)
+            event.add('source.asn', row['asn'])
+            event.add('source.geolocation.cc', row['geo'])
+            event.add('source.geolocation.region', row['region'])
+            event.add('source.geolocation.city', row['city'])
             if int(row['naics']):
                 extra['naics'] = int(row['naics'])
             if int(row['sic']):
@@ -61,12 +60,11 @@ class ShadowServerSNMPParserBot(Bot):
             if row['sector']:
                 extra['sector'] = row['sector']
 
-            event.add('extra', extra, sanitize=True)
-            event.add('protocol.application', 'snmp', sanitize=True)
+            event.add('extra', extra)
+            event.add('protocol.application', 'snmp')
             event.add('classification.type', 'vulnerable service')
             event.add('classification.identifier', 'snmp')
-            event.add('raw', '"'+','.join(map(str, row.items()))+'"',
-                      sanitize=True)
+            event.add('raw', '"'+','.join(map(str, row.items()))+'"')
 
             self.send_message(event)
         self.acknowledge_message()

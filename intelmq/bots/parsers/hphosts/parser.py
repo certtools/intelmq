@@ -39,13 +39,13 @@ class HpHostsParserBot(Bot):
 
             event = Event(report)
 
-            if IPAddress.is_valid(values[1], sanitize=True):
-                event.add("source.ip", values[1], sanitize=True)
+            if IPAddress.is_valid(values[1]):
+                event.add("source.ip", values[1])
             else:
-                event.add("source.fqdn", values[1], sanitize=True)
+                event.add("source.fqdn", values[1])
 
             event.add('classification.type', u'blacklist')
-            event.add("raw", row, sanitize=True)
+            event.add("raw", row)
 
             self.send_message(event)
         self.acknowledge_message()

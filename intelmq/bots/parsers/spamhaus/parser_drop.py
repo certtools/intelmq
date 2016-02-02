@@ -41,14 +41,13 @@ class SpamhausDropParserBot(Bot):
 
             event = Event(report)
 
-            event.add('source.network', network, sanitize=True)
-            event.add('extra', extra, sanitize=True)
+            event.add('source.network', network)
+            event.add('extra', extra)
             if self.event_date:
-                event.add('time.source', self.event_date.isoformat(),
-                          sanitize=True)
+                event.add('time.source', self.event_date.isoformat())
 
             event.add('classification.type', u'spam')
-            event.add('raw', row, sanitize=True)
+            event.add('raw', row)
 
             self.send_message(event)
         self.acknowledge_message()

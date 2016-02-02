@@ -27,8 +27,8 @@ class Malc0deIPBlacklistParserBot(Bot):
             event = Event(report)
 
             event.add('classification.type', u'malware')
-            event.add('source.ip', row, sanitize=True)
-            event.add('raw', row, sanitize=True)
+            event.add('source.ip', row)
+            event.add('raw', row)
 
             self.send_message(event)
         self.acknowledge_message()
