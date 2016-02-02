@@ -218,6 +218,28 @@ class TestHarmonization(unittest.TestCase):
         self.assertTrue(harmonization.JSON.is_valid('{"foo": "bar"}',
                                                     sanitize=True))
 
+    def test_url_valid(self):
+        """ Test URL.is_valid with valid arguments. """
+        self.assertTrue(harmonization.URL.is_valid('http://example.com'))
+        self.assertTrue(harmonization.URL.is_valid('http://example.com/foo'))
+
+    def test_url_invalid(self):
+        """ Test URL.is_valid with invalid arguments. """
+        self.assertFalse(harmonization.URL.is_valid('example.com'))
+
+    def test_url_sanitize(self):
+        """ Test URL.sanitize with valid arguments. """
+        self.assertTrue(harmonization.URL.is_valid(b'http://example.com',
+                                                   sanitize=True))
+        self.assertTrue(harmonization.URL.is_valid('hxxps://example.com/foo',
+                                                   sanitize=True))
+
+    def test_url_sanitize_invalid(self):
+        """ Test URL.is_valid with valid arguments. """
+        self.assertFalse(harmonization.URL.is_valid('example.com',
+                                                    sanitize=True))
+        self.assertFalse(harmonization.URL.is_valid('http://',
+                                                    sanitize=True))
 
 if __name__ == "__main__":
     unittest.main()
