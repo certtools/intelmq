@@ -72,6 +72,16 @@ class TestMessageFactory(unittest.TestCase):
         self.assertEqual(type(event),
                          message.Event)
 
+    def test_report_init_auto(self):
+        """ Test if serialize does pass auto=True """
+        report = message.Report()
+        self.assertIn('time.observation', report)
+
+    def test_report_serialize_auto(self):
+        """ Test if serialize does pass auto=True """
+        report = message.MessageFactory.unserialize('{"__type": "Report"}')
+        self.assertNotIn('time.observation', report)
+
     def test_report_subclass(self):
         """ Test if MessageFactory returns a Report subclassed from dict. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
@@ -303,14 +313,14 @@ class TestMessageFactory(unittest.TestCase):
                          six.text_type(report))
 
     def test_deep_copy_content(self):
-        """ Test if deep_copy does not return the same object. """
+        """ Test if deep_copy does return the same items. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         report = self.add_report_examples(report)
         self.assertSetEqual(set(report.deep_copy().items()),
                             set(report.items()))
 
     def test_deep_copy_items(self):  # TODO: Sort by key
-        """ Test if deep_copy does not return the same object. """
+        """ Test if deep_copy does not return the same objects. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         report = self.add_report_examples(report)
         self.assertNotEqual(set(map(id, report.deep_copy())),
@@ -323,21 +333,21 @@ class TestMessageFactory(unittest.TestCase):
         self.assertIsNot(report.deep_copy(), report)
 
     def test_copy_content(self):
-        """ Test if deep_copy does not return the same object. """
+        """ Test if copy does return the same items. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         report = self.add_report_examples(report)
         self.assertSetEqual(set(report.copy().items()),
                             set(report.items()))
 
     def test_copy_items(self):
-        """ Test if deep_copy does not return the same object. """
+        """ Test if copy does return the same objects. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         report = self.add_report_examples(report)
         self.assertEqual(set(map(id, report.copy())),
                          set(map(id, report)))
 
     def test_copy_object(self):
-        """ Test if deep_copy does not return the same object. """
+        """ Test if copy does not return the same object. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         report = self.add_report_examples(report)
         self.assertIsNot(report.copy(), report)

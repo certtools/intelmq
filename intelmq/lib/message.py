@@ -40,7 +40,7 @@ class MessageFactory(object):
                                              expected=list(harm_config.keys()),
                                              docs=HARMONIZATION_CONF_FILE)
         del message["__type"]
-        return class_reference(message)
+        return class_reference(message, auto=True)
 
     @staticmethod
     def unserialize(raw_message):
@@ -58,7 +58,7 @@ class MessageFactory(object):
                                              expected=list(harm_config.keys()),
                                              docs=HARMONIZATION_CONF_FILE)
         del message["__type"]
-        return class_reference(message)
+        return class_reference(message, auto=True)
 
     @staticmethod
     def serialize(message):
@@ -73,7 +73,7 @@ class MessageFactory(object):
 
 class Message(dict):
 
-    def __init__(self, message=()):
+    def __init__(self, message=(), auto=False):
         super(Message, self).__init__(message)
         try:
             classname = message['__type'].lower()
@@ -208,13 +208,14 @@ class Message(dict):
 
 class Event(Message):
 
-    def __init__(self, message=()):
+    def __init__(self, message=(), auto=False):
         """
         Parameters
         ----------
         message : dict
             Give a report and feed.name, feed.url and
             time.observation will be used to construct the Event if given.
+            If it's another type, the value is given to dict's init
         """
         if isinstance(message, Report):
             template = {}
@@ -269,7 +270,22 @@ class Event(Message):
 
 class Report(Message):
 
-    def __init__(self):
-        super(Report, self).__init__()
-        time_observation = intelmq.lib.harmonization.DateTime().generate_datetime_now()
-        self.add('time.observation', time_observation, sanitize=False)
+    def __init__(self, message=(), auto=False):
+        """
+        Parameters
+        ----------
+        message : dict
+            Passed along to Message's and dict's init
+        auto : boolean
+            if false (default), time.observation is automatically added.
+        """
+        super(Report, self).__init__(message)
+        if not auto and 'time.observation' not in self:
+            time_observation = intelmq.lib.harmonization.DateTime().generate_datetime_now()
+            self.add('time.observation', time_observation, sanitize=False)
+
+    def copy(self):
+        retval = super(Report, self).copy()
+        if 'time.observation' in retval and 'time.observation' not in self:
+            del retval['time.observation']
+        return retval
