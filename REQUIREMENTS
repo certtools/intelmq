@@ -4,7 +4,6 @@ imbox>=0.5.5
 ipaddress>=1.0.16
 mock>=1.1.1
 psutil>=2.1.1
-pyasn>=1.5.0b6
 pycurl>=7.19.0
 python-dateutil>=2.4.2
 python-termstyle>=0.1.10
