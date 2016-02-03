@@ -1,1 +1,1 @@
-stomp.py
+stomp.py==4.1.8

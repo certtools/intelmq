@@ -1,1 +1,1 @@
--e git+git://github.com/Blueliv/api-python-sdk
+git+git://github.com/Blueliv/api-python-sdk
