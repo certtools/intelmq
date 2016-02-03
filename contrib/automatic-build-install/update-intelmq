@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# ONLY USE THIS IN DEVELOPMENT ENVIRONMENTS!!!
+
+if [[ $1 -ne 2 ]] && [[ $1 -ne 3 ]]; then
+    exit
+fi
+
+cd ~/dev/intelmq/
+rm -r build/
+echo "y" | python$1 setup.py install
+find /opt/intelmq -type d -exec chmod 777 {} +
+find /opt/intelmq -type f -exec chmod 666 {} +
+chown -R intelmq:intelmq /opt/intelmq
+chmod 777 /opt/intelmq/bin/*
+
