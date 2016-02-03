@@ -53,7 +53,8 @@ class TestGenericCsvParserBot(test.BotTestCase, unittest.TestCase):
                                      "__IGNORE__", "source.url", "source.ip",
                                      "source.fqdn", "__IGNORE__"],
                          "delimiter": "\t",
-                         "type": "malware"}
+                         "type": "malware",
+                         "default_url_protocol": "http://"}
 
     def test_event(self):
         """ Test if correct Event has been produced. """

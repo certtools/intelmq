@@ -322,15 +322,16 @@ def csv_reader(csv_data, dialect=csv.excel, dictreader=False, **kwargs):
         if unicodecsv is None:
             raise ValueError('Module unicodecsv is not available.')
         if dictreader:
-            for row in unicodecsv.DictReader(io.BytesIO(csv_data)):
+            for row in unicodecsv.DictReader(io.BytesIO(csv_data), **kwargs):
                 yield row
         else:
-            for row in unicodecsv.reader(io.BytesIO(encode(csv_data))):
+            for row in unicodecsv.reader(io.BytesIO(encode(csv_data)),
+                                         **kwargs):
                 yield row
     else:
         if dictreader:
-            for row in csv.DictReader(io.StringIO(csv_data)):
+            for row in csv.DictReader(io.StringIO(csv_data), **kwargs):
                 yield row
         else:
-            for row in csv.reader(io.StringIO(csv_data)):
+            for row in csv.reader(io.StringIO(csv_data), **kwargs):
                 yield row

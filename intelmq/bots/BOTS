@@ -900,7 +900,7 @@
             "parameters": {}
         },
         "Generic CSV": {
-            "description": "Generic CSV Parser is a generic bot configurable to parse different csv collected files. Ignoring lines starting with character #",
+            "description": "Generic CSV Parser is a generic bot configurable to parse different csv collected files. Ignoring lines starting with character #. URLs without protocal can be prefixed with a default value.",
             "module": "intelmq.bots.parsers.generic.parser_csv",
             "parameters": {
                 "columns": [
@@ -908,7 +908,8 @@
                     "source.fqdn"
                 ],
                 "delimiter": ",",
-                "type": "c&c"
+                "type": "c&c",
+                "default_url_protocol" : "http://"
             }
         },
         "HpHosts": {
