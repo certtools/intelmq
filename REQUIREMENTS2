@@ -10,11 +10,13 @@ pyasn==1.5.0b6
 pycurl==7.19.0
 pydns==2.3.6
 pyOpenSSL==0.15
-python-dateutil==1.5
+python-dateutil==2.4.2
 python-termstyle==0.1.10
 pytz==2015.4
 pyzmq==14.6.0
 redis==2.10.3
 requests==2.7.0
+setuptools>=0.9
 six==1.10.0
 unicodecsv==0.14.1
+wheel>=0.21
