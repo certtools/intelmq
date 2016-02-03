@@ -89,7 +89,7 @@ systemctl start redis
 ```bash
 apt-get install python
 apt-get install git build-essential libcurl4-gnutls-dev libffi-dev libgnutls28-dev
-apt-get install python-dev python-pip python-zmq python-pycurl python-openssl python-pyasn1
+apt-get install python-dev python-pip python-pycurl python-openssl python-pyasn1
 apt-get install redis-server
 ```
 
@@ -281,8 +281,7 @@ All bots inherits this configuration parameters and they can overwrite them usin
     * **`false`** - duplicates the messages into each queue
 
 * **`broker`** - select which broker intelmq can use. Use the following values:
-    * **`redis`** - Redis allows some persistence but is not so fast as ZeroMQ.
-    * **`zeromq`** - (under development) ZeroMQ is fast but doest allow persistence.
+    * **`redis`** - Redis allows some persistence but is not so fast as ZeroMQ (in development).
 
 * **`rate_limit`** - time interval (in seconds) between messages processing. The value must be an `integer value`.
 
