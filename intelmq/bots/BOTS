@@ -907,9 +907,9 @@
                     "",
                     "source.fqdn"
                 ],
+                "default_url_protocol": "http://",
                 "delimiter": ",",
-                "type": "c&c",
-                "default_url_protocol" : "http://"
+                "type": "c&c"
             }
         },
         "HpHosts": {
