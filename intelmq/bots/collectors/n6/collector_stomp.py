@@ -6,7 +6,6 @@ import os.path
 import sys
 
 from intelmq.lib.bot import Bot
-from intelmq.lib.harmonization import DateTime
 from intelmq.lib.message import Report
 
 import stomp
@@ -39,8 +38,6 @@ class StompListener(stomp.listener.PrintingListener):
                    self.n6stomper.parameters.server +
                    ":" + str(self.n6stomper.parameters.port) +
                    "/" + self.n6stomper.parameters.exchange)
-        time_observation = DateTime().generate_datetime_now()
-        report.add('time.observation', time_observation)
         self.n6stomper.send_message(report)
         self.n6stomper.logger.debug('Receiving Message.')
 

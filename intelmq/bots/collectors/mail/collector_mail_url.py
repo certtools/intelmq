@@ -7,7 +7,6 @@ import sys
 import imbox
 import requests
 from intelmq.lib.bot import Bot
-from intelmq.lib.harmonization import DateTime
 from intelmq.lib.message import Report
 
 
@@ -49,8 +48,6 @@ class MailURLCollectorBot(Bot):
                         report.add("feed.name",
                                    self.parameters.feed)
                         report.add("feed.accuracy", self.parameters.accuracy)
-                        time_observation = DateTime().generate_datetime_now()
-                        report.add('time.observation', time_observation)
                         self.send_message(report)
 
                 mailbox.mark_seen(uid)

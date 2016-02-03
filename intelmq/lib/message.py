@@ -268,4 +268,8 @@ class Event(Message):
 
 
 class Report(Message):
-    pass
+
+    def __init__(self):
+        super(Report, self).__init__()
+        time_observation = intelmq.lib.harmonization.DateTime().generate_datetime_now()
+        self.add('time.observation', time_observation, sanitize=False)
