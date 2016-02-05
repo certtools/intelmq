@@ -660,6 +660,20 @@
                 "redis_cache_ttl": "86400"
             }
         },
+        "Squelcher": {
+            "module": "intelmq.bots.experts.squelcher.expert",
+            "description": "Squelcher is the bot responsible to find matching events in the event database and add a flag if the affected or responsible contact should be notified based on the TTL from the configuration for AS, IP network and IP address.",
+            "parameters": {
+                "configuration_path": "/opt/intelmq/etc/squelcher.conf",
+                "host": "localhost",
+                "port": 5432,
+                "database": "intelmq-events",
+                "user": "intelmq",
+                "password": "<password>",
+                "sslmode": "require",
+                "table": "events"
+            }
+        },
         "Taxonomy": {
             "description": "Taxonomy is the bot responsible to apply the eCSIRT Taxonomy to all events.",
             "module": "intelmq.bots.experts.taxonomy.expert",
@@ -674,6 +688,18 @@
         }
     },
     "Output": {
+        "AMQP Topic": {
+            "description": "AMQP Topic is the bot responsible to send events to a AMQP topic exchange.",
+            "module": "intelmq.bots.outputs.amqptopic.output",
+            "parameters": {
+                "routingkey": "feeds.intelmq.all",
+                "exchange": "feeds",
+                "retries": "5",
+                "delay": "3",
+                "maxerrors": "-1",
+                "url": "amqp://localhost:5672/%2F?connection_attempts=3&heartbeat_interval=3600"
+            }
+        },
         "File": {
             "description": "File is the bot responsible to send events to a file.",
             "module": "intelmq.bots.outputs.file.output",

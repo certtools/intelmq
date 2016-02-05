@@ -4,6 +4,7 @@ imbox==0.6
 ipaddress==1.0.14
 mock==1.3.0
 ndg-httpsclient==0.4.0
+pika>=0.10.0
 psutil==2.1.1
 pyasn1==0.1.7
 pyasn==1.5.0b6
@@ -18,3 +19,4 @@ redis==2.10.3
 requests==2.7.0
 six==1.9.0
 unicodecsv==0.13.0
+xmpppy==0.5.0rc1
