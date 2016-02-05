@@ -45,7 +45,7 @@ ERROR_MESSAGES = {
     'running': '{} is still running.',
     'stopped': '{} was NOT RUNNING.',
     'stopping': '{} failed to STOP.',
-    'noid': 'No or unconfigured ID was given, use --bot-id',
+    'noid': 'No or unconfigured ID was given, use --id',
     'notfound': '{} not found.'
 }
 
