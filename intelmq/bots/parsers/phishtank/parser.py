@@ -1,12 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import sys
-from io import StringIO
-
-if sys.version_info[0] == 2:
-    import unicodecsv as csv
-else:
-    import csv
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
@@ -33,7 +27,7 @@ class PhishTankParserBot(Bot):
                    ]
 
         raw_report = utils.base64_decode(report.value("raw"))
-        for row in csv.reader(StringIO(raw_report)):
+        for row in utils.csv_reader(raw_report):
 
             # ignore headers
             if "phish_id" in row:
@@ -46,10 +40,10 @@ class PhishTankParserBot(Bot):
                 if key == "__IGNORE__":
                     continue
 
-                event.add(key, value, sanitize=True)
+                event.add(key, value)
 
             event.add('classification.type', u'phishing')
-            event.add("raw", ",".join(row), sanitize=True)
+            event.add("raw", ",".join(row))
 
             self.send_message(event)
         self.acknowledge_message()

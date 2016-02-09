@@ -42,9 +42,9 @@ class AbusechDomainParserBot(Bot):
             event = Event(report)
 
             event.add('classification.type', u'c&c')
-            event.add('source.fqdn', row, sanitize=True)
-            event.add("raw", row, sanitize=True)
-            event.add("malware.name", SOURCE_FEEDS[report.value("feed.url")], sanitize=True)
+            event.add('source.fqdn', row)
+            event.add("raw", row)
+            event.add("malware.name", SOURCE_FEEDS[report.value("feed.url")])
 
             self.send_message(event)
         self.acknowledge_message()

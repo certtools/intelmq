@@ -6,7 +6,6 @@ import json
 
 from intelmq.lib.bot import Bot
 from intelmq.lib.message import Report
-from intelmq.lib.harmonization import DateTime
 
 
 class AlienVaultOTXCollectorBot(Bot):
@@ -18,11 +17,9 @@ class AlienVaultOTXCollectorBot(Bot):
         self.logger.info("Report downloaded.")
 
         report = Report()
-        report.add("raw", json.dumps(pulses), sanitize=True)
-        report.add("feed.name", self.parameters.feed, sanitize=True)
-        report.add("feed.accuracy", self.parameters.accuracy, sanitize=True)
-        time_observation = DateTime().generate_datetime_now()
-        report.add('time.observation', time_observation, sanitize=True)
+        report.add("raw", json.dumps(pulses))
+        report.add("feed.name", self.parameters.feed)
+        report.add("feed.accuracy", self.parameters.accuracy)
         self.send_message(report)
 
 

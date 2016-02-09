@@ -29,13 +29,13 @@ class URLVirHostsParserBot(Bot):
 
             event = Event(report)
 
-            if IPAddress.is_valid(row, sanitize=True):
-                event.add('source.ip', row, sanitize=True)
+            if IPAddress.is_valid(row):
+                event.add('source.ip', row)
             else:
-                event.add('source.fqdn', row, sanitize=True)
+                event.add('source.fqdn', row)
 
             event.add('classification.type', u'malware')
-            event.add('raw', row, sanitize=True)
+            event.add('raw', row)
 
             self.send_message(event)
         self.acknowledge_message()

@@ -41,13 +41,13 @@ class TestCERTatContactExpertBot(test.BotTestCase, unittest.TestCase):
     """
 
     @classmethod
-    def set_bot(self):
-        self.bot_reference = CERTatContactExpertBot
-        self.sysconfig = {'filter': False,
-                          'overwrite_cc': False,
-                          'http_verify_cert': False,
-                          }
-        self.default_input_message = {'__type': 'Report'}
+    def set_bot(cls):
+        cls.bot_reference = CERTatContactExpertBot
+        cls.sysconfig = {'filter': False,
+                         'overwrite_cc': False,
+                         'http_verify_cert': False,
+                         }
+        cls.default_input_message = {'__type': 'Report'}
 
     def test_ipv4_lookup(self):
         self.input_message = EXAMPLE_INPUT

@@ -46,7 +46,7 @@ class DummyParserBot(bot.Bot):
         self.logger.info('Lorem ipsum dolor sit amet')
 
         for key in report.keys():
-            event.add(key, report[key])
+            event.add(key, report[key], sanitize=False)
 
         self.send_message(event)
         self.acknowledge_message()

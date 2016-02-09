@@ -6,7 +6,7 @@ python:
 install:
   - if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then pip install -r REQUIREMENTS2; fi
   - if [[ ${TRAVIS_PYTHON_VERSION%.?} == 3 ]]; then pip install -r REQUIREMENTS; fi
-  - pip install -r REQUIREMENTS-ADDITIONAL
+  - for file in intelmq/bots/*/*/REQUIREMENTS.txt; do pip install -r $file; done
   - "python setup_travis.py install"
   - pip install coveralls
   - pip install codecov

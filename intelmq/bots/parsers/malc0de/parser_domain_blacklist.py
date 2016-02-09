@@ -27,8 +27,8 @@ class Malc0deDomainBlacklistParserBot(Bot):
             event = Event(report)
 
             event.add('classification.type', u'malware')
-            event.add('source.fqdn', row.split(" ")[1], sanitize=True)
-            event.add('raw', row, sanitize=True)
+            event.add('source.fqdn', row.split(" ")[1])
+            event.add('raw', row)
 
             self.send_message(event)
         self.acknowledge_message()

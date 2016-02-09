@@ -26,13 +26,13 @@ class ArborParserBot(Bot):
             event = Event(report)
 
             event.add('classification.type', u'brute-force')
-            event.add("raw", row, sanitize=True)
+            event.add("raw", row)
 
             columns = ["source.ip"]
             row = row.split()
 
             for key, value in zip(columns, row):
-                event.add(key, value, sanitize=True)
+                event.add(key, value)
 
             self.send_message(event)
         self.acknowledge_message()

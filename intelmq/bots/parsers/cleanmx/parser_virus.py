@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-import csv
 import io
 import sys
 
@@ -49,10 +48,7 @@ class CleanMXVirusParserBot(Bot):
 
         raw_report = utils.base64_decode(report.value("raw"))
 
-        fp = io.StringIO(raw_report)
-        rows = csv.DictReader(fp)
-
-        for row in rows:
+        for row in utils.csv_reader(raw_report, dictreader=True):
             event = Event(report)
 
             for key, value in row.items():
@@ -85,10 +81,10 @@ class CleanMXVirusParserBot(Bot):
                             value = asn.split("AS")[1]
                             break
 
-                event.add(key, value, sanitize=True)
+                event.add(key, value)
 
             event.add('classification.type', u'malware')
-            event.add("raw", ",".join(row), sanitize=True)
+            event.add("raw", ",".join(row))
 
             self.send_message(event)
         self.acknowledge_message()

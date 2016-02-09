@@ -50,11 +50,9 @@ class ASNLookupExpertBot(Bot):
 
             if info:
                 if info[0]:
-                    event.add(asn_key, six.text_type(info[0]), sanitize=True,
-                              force=True)
+                    event.add(asn_key, six.text_type(info[0]), force=True)
                 if info[1]:
-                    event.add(bgp_key, six.text_type(info[1]), sanitize=True,
-                              force=True)
+                    event.add(bgp_key, six.text_type(info[1]), force=True)
 
         self.send_message(event)
         self.acknowledge_message()

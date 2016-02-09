@@ -18,7 +18,7 @@ class TestHarmonization(unittest.TestCase):
 
     def test_boolean_valid_other(self):
         """ Test Boolean.is_valid with otehr invalid values. """
-        self.assertFalse(harmonization.Boolean.is_valid(None))
+        self.assertFalse(harmonization.Boolean.is_valid(None,))
         self.assertFalse(harmonization.Boolean.is_valid('True'))
         self.assertFalse(harmonization.Boolean.is_valid(0))
         self.assertFalse(harmonization.Boolean.is_valid(1))
@@ -71,15 +71,18 @@ class TestHarmonization(unittest.TestCase):
 
     def test_float_valid_flaot(self):
         """ Test Float.is_valid with flaot and integer values. """
-        self.assertTrue(harmonization.Float.is_valid(-4532))
-        self.assertTrue(harmonization.Float.is_valid(1337))
-        self.assertTrue(harmonization.Float.is_valid(1337.2354))
-        self.assertTrue(harmonization.Float.is_valid(13.234e-4))
+        self.assertTrue(harmonization.Float.is_valid(-4532, sanitize=False))
+        self.assertTrue(harmonization.Float.is_valid(1337, sanitize=False))
+        self.assertTrue(harmonization.Float.is_valid(1337.2354,
+                                                     sanitize=False))
+        self.assertTrue(harmonization.Float.is_valid(13.234e-4,
+                                                     sanitize=False))
 
     def test_float_valid_other(self):
         """ Test Float.is_valid with invalid values. """
-        self.assertFalse(harmonization.Float.is_valid('1337.234'))
-        self.assertFalse(harmonization.Float.is_valid(True))
+        self.assertFalse(harmonization.Float.is_valid('1337.234',
+                                                      sanitize=False))
+        self.assertFalse(harmonization.Float.is_valid(True, sanitize=False))
 
     def test_float_sanitize_number(self):
         """ Test Float.sanitize with integer and float values. """
@@ -102,15 +105,21 @@ class TestHarmonization(unittest.TestCase):
 
     def test_ipaddress_valid(self):
         """ Test IPAddress.is_valid with valid arguments. """
-        self.assertTrue(harmonization.IPAddress.is_valid('192.0.2.1'))
-        self.assertTrue(harmonization.IPAddress.is_valid('::1'))
-        self.assertTrue(harmonization.IPAddress.is_valid('2001:500:88:200::8'))
+        self.assertTrue(harmonization.IPAddress.is_valid('192.0.2.1',
+                                                         sanitize=False))
+        self.assertTrue(harmonization.IPAddress.is_valid('::1',
+                                                         sanitize=False))
+        self.assertTrue(harmonization.IPAddress.is_valid('2001:500:88:200::8',
+                                                         sanitize=False))
 
     def test_ipaddress_valid_invalid(self):
         """ Test IPAddress.is_valid with invalid arguments. """
-        self.assertFalse(harmonization.IPAddress.is_valid('192.0.2.1/24'))
-        self.assertFalse(harmonization.IPAddress.is_valid('2001:DB8::/32'))
-        self.assertFalse(harmonization.IPAddress.is_valid('localhost'))
+        self.assertFalse(harmonization.IPAddress.is_valid('192.0.2.1/24',
+                                                          sanitize=False))
+        self.assertFalse(harmonization.IPAddress.is_valid('2001:DB8::/32',
+                                                          sanitize=False))
+        self.assertFalse(harmonization.IPAddress.is_valid('localhost',
+                                                          sanitize=False))
 
     def test_ipaddress_sanitize(self):
         """ Test IPAddress.is_valid and sanitize with valid arguments. """
@@ -180,8 +189,10 @@ class TestHarmonization(unittest.TestCase):
 
     def test_fqdn_invalid(self):
         """ Test FQDN.is_valid with invalid arguments. """
-        self.assertFalse(harmonization.FQDN.is_valid('ex-am.ple.example.'))
-        self.assertFalse(harmonization.FQDN.is_valid('sub_sub2.example.net.'))
+        self.assertFalse(harmonization.FQDN.is_valid('ex-am.ple.example.',
+                                                     sanitize=False))
+        self.assertFalse(harmonization.FQDN.is_valid('sub_sub2.example.net.',
+                                                     sanitize=False))
 
     def test_fqdn_sanitize(self):
         """ Test FQDN.sanitize with valid arguments. """
@@ -207,6 +218,28 @@ class TestHarmonization(unittest.TestCase):
         self.assertTrue(harmonization.JSON.is_valid('{"foo": "bar"}',
                                                     sanitize=True))
 
+    def test_url_valid(self):
+        """ Test URL.is_valid with valid arguments. """
+        self.assertTrue(harmonization.URL.is_valid('http://example.com'))
+        self.assertTrue(harmonization.URL.is_valid('http://example.com/foo'))
+
+    def test_url_invalid(self):
+        """ Test URL.is_valid with invalid arguments. """
+        self.assertFalse(harmonization.URL.is_valid('example.com'))
+
+    def test_url_sanitize(self):
+        """ Test URL.sanitize with valid arguments. """
+        self.assertTrue(harmonization.URL.is_valid(b'http://example.com',
+                                                   sanitize=True))
+        self.assertTrue(harmonization.URL.is_valid('hxxps://example.com/foo',
+                                                   sanitize=True))
+
+    def test_url_sanitize_invalid(self):
+        """ Test URL.is_valid with valid arguments. """
+        self.assertFalse(harmonization.URL.is_valid('example.com',
+                                                    sanitize=True))
+        self.assertFalse(harmonization.URL.is_valid('http://',
+                                                    sanitize=True))
 
 if __name__ == "__main__":
     unittest.main()

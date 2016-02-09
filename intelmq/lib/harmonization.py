@@ -565,24 +565,11 @@ class URL(GenericType):
 
     @staticmethod
     def sanitize(value):
-        if "hxxp://" in value:
-            value = value.replace('hxxp://', 'http://')
+        value = value.replace('hxxp://', 'http://')
+        value = value.replace('hxxps://', 'https://')
 
-        if "hxxps://" in value:
-            value = value.replace('hxxps://', 'https://')
-
-        tests = [
-            value,
-            "http://" + value,
-            "http://" + value + "/"
-        ]
-
-        for value in tests:
-            result = urlparse(value)
-            if result.netloc != "":
-                return GenericType().sanitize(value)
-
-        return None
+        if urlparse(value).netloc != "":
+            return GenericType().sanitize(value)
 
     @staticmethod
     def to_ip(url):

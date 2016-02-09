@@ -41,9 +41,9 @@ class DshieldDomainParserBot(Bot):
             event = Event(report)
 
             event.add('classification.type', u'malware')
-            event.add('source.fqdn', row.strip(), sanitize=True)
-            event.add('time.source', time, sanitize=True)
-            event.add("raw", row, sanitize=True)
+            event.add('source.fqdn', row.strip())
+            event.add('time.source', time)
+            event.add("raw", row)
 
             self.send_message(event)
         self.acknowledge_message()

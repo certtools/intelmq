@@ -32,9 +32,7 @@ class AlienVaultOTXParserBot(Bot):
         raw_report = utils.base64_decode(report.value("raw"))
 
         for pulse in json.loads(raw_report):
-            additional = json.dumps({"author": pulse['author_name'],
-                                     "pulse": pulse['name']},
-                                    sort_keys=True)
+            additional = {"author": pulse['author_name'], "pulse": pulse['name']}
             for indicator in pulse["indicators"]:
                 event = Event(report)
                 # hashes
@@ -44,34 +42,32 @@ class AlienVaultOTXParserBot(Bot):
                 # fqdn
                 if indicator["type"] in ['hostname', 'domain']:
                     event.add('source.fqdn',
-                              indicator["indicator"], sanitize=True)
+                              indicator["indicator"])
                 # IP addresses
                 elif indicator["type"] in ['IPv4', 'IPv6']:
                     event.add('source.ip',
-                              indicator["indicator"], sanitize=True)
+                              indicator["indicator"])
                 # emails
                 elif indicator["type"] == 'email':
                     event.add('source.account',
-                              indicator["indicator"], sanitize=True)
+                              indicator["indicator"])
                 # URLs
                 elif indicator["type"] in ['URL', 'URI']:
                     event.add('source.url',
-                              indicator["indicator"], sanitize=True)
+                              indicator["indicator"])
                 # CIDR
                 elif indicator["type"] in ['CIDR']:
                     event.add('source.network',
-                              indicator["indicator"], sanitize=True)
+                              indicator["indicator"])
                 # FilePath, Mutex, CVE - TODO: process these IoCs as well
                 else:
                     continue
 
                 event.add('comment', pulse['description'])
-                event.add('extra', additional, sanitize=True)
-                event.add('classification.type', 'blacklist', sanitize=True)
-                event.add('time.source', indicator["created"][:-4] + "+00:00",
-                          sanitize=True)
-                event.add("raw", json.dumps(indicator, sort_keys=True),
-                          sanitize=True)
+                event.add('extra', additional)
+                event.add('classification.type', 'blacklist')
+                event.add('time.source', indicator["created"][:-4] + "+00:00")
+                event.add("raw", json.dumps(indicator, sort_keys=True))
                 self.send_message(event)
         self.acknowledge_message()
 

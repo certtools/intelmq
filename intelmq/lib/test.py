@@ -378,15 +378,10 @@ class BotTestCase(object):
         given queue position.
         """
         event = self.get_output_queue()[queue_pos]
-
         self.assertIsInstance(event, six.text_type)
-        event_dict = message.MessageFactory.from_dict(json.loads(event))
 
-        if type(expected_msg) is dict:
-            expected = message.MessageFactory.from_dict(expected_msg.copy())
-        else:
-            expected = expected_msg.copy()
-            del event_dict['__type']
+        event_dict = json.loads(event)
+        expected = expected_msg.copy()
         del event_dict['time.observation']
         del expected['time.observation']
 

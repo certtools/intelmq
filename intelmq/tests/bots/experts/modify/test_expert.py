@@ -46,12 +46,12 @@ class TestModifyExpertBot(test.BotTestCase, unittest.TestCase):
     """
 
     @classmethod
-    def set_bot(self):
-        self.bot_reference = ModifyExpertBot
+    def set_bot(cls):
+        cls.bot_reference = ModifyExpertBot
         config_path = resource_filename('intelmq',
                                         'bots/experts/modify/modify.conf')
-        self.sysconfig = {'configuration_path': config_path
-                          }
+        cls.sysconfig = {'configuration_path': config_path
+                         }
 
     def test_events(self):
         """ Test if correct Events have been produced. """

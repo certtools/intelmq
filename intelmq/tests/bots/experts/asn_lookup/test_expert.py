@@ -25,7 +25,7 @@ EXAMPLE_OUTPUT = {"__type": "Event",
                   "source.network": "93.184.216.0/24",
                   "destination.ip": "192.0.43.8",
                   "time.observation": "2015-01-01T00:00:00+00:00",
-                  "destination.asn": 16876,
+                  "destination.asn": 40528,
                   "destination.network": "192.0.43.0/24",
                   }
 EXAMPLE_INPUT6 = {"__type": "Event",
@@ -48,10 +48,10 @@ class TestASNLookupExpertBot(test.BotTestCase, unittest.TestCase):
     """
 
     @classmethod
-    def set_bot(self):
-        self.bot_reference = ASNLookupExpertBot
-        self.sysconfig = {'database': ASN_DB}
-        self.default_input_message = {'__type': 'Report'}
+    def set_bot(cls):
+        cls.bot_reference = ASNLookupExpertBot
+        cls.sysconfig = {'database': ASN_DB}
+        cls.default_input_message = {'__type': 'Report'}
 
     def test_ipv4_lookup(self):
         self.input_message = EXAMPLE_INPUT

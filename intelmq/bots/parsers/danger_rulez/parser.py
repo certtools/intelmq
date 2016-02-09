@@ -36,10 +36,10 @@ class BruteForceBlockerParserBot(Bot):
             if match:
                 timestamp = match.group(1) + " UTC"
 
-            event.add('time.source', timestamp, sanitize=True)
-            event.add('source.ip', ip, sanitize=True)
+            event.add('time.source', timestamp)
+            event.add('source.ip', ip)
             event.add('classification.type', u'brute-force')
-            event.add("raw", row, sanitize=True)
+            event.add("raw", row)
 
             self.send_message(event)
         self.acknowledge_message()

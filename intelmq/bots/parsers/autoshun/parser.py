@@ -52,23 +52,21 @@ class AutoshunParserBot(Bot):
 
             for key in ClassificationType.allowed_values:
                 if description.lower().find(key.lower()) > -1:
-                    event.add("classification.type",
-                              key, sanitize=True)
+                    event.add("classification.type", key)
                     break
             else:
                 for key, value in TAXONOMY.items():
                     if description.lower().find(key.lower()) > -1:
-                        event.add("classification.type",
-                                  value, sanitize=True)
+                        event.add("classification.type", value)
                         break
 
             if not event.contains("classification.type"):
                 event.add("classification.type", u'unknown')
 
-            event.add("time.source", last_seen, sanitize=True)
-            event.add("source.ip", ip, sanitize=True)
-            event.add("event_description.text", description, sanitize=True)
-            event.add("raw", row, sanitize=True)
+            event.add("time.source", last_seen)
+            event.add("source.ip", ip)
+            event.add("event_description.text", description)
+            event.add("raw", row)
 
             self.send_message(event)
         self.acknowledge_message()

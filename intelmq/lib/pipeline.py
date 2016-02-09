@@ -4,15 +4,10 @@ from __future__ import print_function, unicode_literals
 import time
 
 import redis
-try:
-    import zmq
-except ImportError:
-    zmq = None
 
 import intelmq.lib.exceptions as exceptions
 import intelmq.lib.pipeline
 import intelmq.lib.utils as utils
-from intelmq import VAR_RUN_PATH
 
 
 class PipelineFactory(object):
@@ -222,64 +217,3 @@ class Pythonlist(Pipeline):
     def clear_queue(self, queue):
         """ Empties given queue. """
         self.state[queue] = []
-
-
-class Zeromq(Pipeline):
-
-    def __init__(self, host="127.0.0.1", communication="ipc"):
-
-        # ZeroMQ Context
-        if zmq is None:
-            raise exceptions.IntelMQException('Import of package zmq failed.')
-        self.context = zmq.Context()
-        self.host = host
-        self.communication = communication
-
-    def source_queues(self, source_queue):
-        # translate queues to port for tcp connecion
-        # queues_translation = dict()
-
-        self.source_sock = self.context.socket(zmq.PULL)
-        self.source_sock.bind("%s://%s%s.socket" % (self.communication,
-                                                    VAR_RUN_PATH,
-                                                    source_queue))
-
-    def destination_queues(self, destination_queues, load_balance=False):
-        # TODO: rename function
-        # translate queues to port for tcp connecion
-        # queues_translation = dict()
-        if not destination_queues:
-            return
-
-        if destination_queues and type(destination_queues) is not list:
-            destination_queues = destination_queues.split()
-
-        self.dest_sock = []
-        for destination_queue in destination_queues:
-            sock = self.context.socket(zmq.PUSH)
-            sock.connect("%s://%s%s.socket" % (self.communication,
-                                               VAR_RUN_PATH,
-                                               destination_queue))
-            self.dest_sock.append(sock)
-
-    def disconnect(self):
-        raise NotImplementedError
-
-    def sleep(self, interval):
-        time.sleep(interval)
-
-    def send(self, message):
-        for sock in self.dest_sock:
-            sock.send(message)  # TODO: send_string for unicode
-
-    def receive(self):
-        return self.source_sock.recv()
-
-    def acknowledge(self):
-        raise NotImplementedError
-
-    def count_queued_messages(self, queues):
-        raise NotImplementedError
-
-    def clear_queue(self, queue):
-        raise NotImplementedError

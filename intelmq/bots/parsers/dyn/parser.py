@@ -36,23 +36,22 @@ class DynParserBot(Bot):
 
             event_infected = Event(report)
             event_infected.add('classification.type', 'malware')
-            event_infected.add('source.fqdn', infected_fqdn, sanitize=True)
-            event_infected.add('destination.url',
-                               compromised_url, sanitize=True)
+            event_infected.add('source.fqdn', infected_fqdn)
+            event_infected.add('destination.url', compromised_url)
             event_infected.add('event_description.text',
                                'has malicious code redirecting to malicious '
                                'host')
-            event_infected.add('raw', row, sanitize=True)
+            event_infected.add('raw', row)
 
             self.send_message(event_infected)
 
             event_compromised = Event(report)
             event_compromised.add('classification.type', 'compromised')
-            event_compromised.add('source.url', compromised_url, sanitize=True)
+            event_compromised.add('source.url', compromised_url)
             event_compromised.add('event_description.text',
                                   'host has been compromised and has '
                                   'malicious code infecting users')
-            event_compromised.add('raw', row, sanitize=True)
+            event_compromised.add('raw', row)
 
             self.send_message(event_compromised)
 

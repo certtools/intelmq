@@ -2,13 +2,7 @@
 from __future__ import unicode_literals
 import sys
 from dateutil.parser import parse
-from io import StringIO
 import re
-
-if sys.version_info[0] == 2:
-    import unicodecsv as csv
-else:
-    import csv
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
@@ -31,8 +25,8 @@ class GenericCsvParserBot(Bot):
         raw_report = re.sub(r'(?m)^#.*\n?', '', raw_report)
         # ignore null bytes
         raw_report = re.sub(r'(?m)\0', '', raw_report)
-        for row in csv.reader(StringIO(raw_report),
-                              delimiter=str(self.parameters.delimiter)):
+        for row in utils.csv_reader(raw_report,
+                                    delimiter=str(self.parameters.delimiter)):
             event = Event(report)
 
             for key, value in zip(columns, row):
@@ -45,7 +39,7 @@ class GenericCsvParserBot(Bot):
                         value += " UTC"
                     # regex from http://stackoverflow.com/a/23483979
                     # matching ipv4/ipv6 IP within string
-                    if key in ["source.ip", "destination.ip"]:
+                    elif key in ["source.ip", "destination.ip"]:
                         value = re.compile(
                             '(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])'
                             '\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0'
@@ -73,13 +67,16 @@ class GenericCsvParserBot(Bot):
                             '{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2'
                             '[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|'
                             '[1-9]?\d)){3}))|:)))(%.+)?').match(value).group()
-
+                    elif key.endswith('.url') and '://' not in value:
+                        value = self.parameters.default_url_protocol + value
                 except:
+                    self.logger.exception('Encountered error while parsing'
+                                          'line in csv file, ignoring.')
                     continue
-                event.add(key, value, sanitize=True)
+                event.add(key, value)
 
             event.add('classification.type', self.parameters.type)
-            event.add("raw", ",".join(row), sanitize=True)
+            event.add("raw", ",".join(row))
 
             self.send_message(event)
         self.acknowledge_message()

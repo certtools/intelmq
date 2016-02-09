@@ -64,16 +64,16 @@ class TestSpamhausDropParserBot(test.BotTestCase, unittest.TestCase):
     """
 
     @classmethod
-    def set_bot(self):
-        self.bot_reference = SpamhausDropParserBot
-        self.default_input_message = {'__type': 'Report'}
+    def set_bot(cls):
+        cls.bot_reference = SpamhausDropParserBot
+        cls.default_input_message = {'__type': 'Report'}
 
-    def test_from_file(self):
-        self.input_message = REPORT
-        self.run_bot()
+    def test_from_file(cls):
+        cls.input_message = REPORT
+        cls.run_bot()
         for count, event in enumerate(EVENTS):
             event.update(TEMPLATE)
-            self.assertMessageEqual(count, event)
+            cls.assertMessageEqual(count, event)
 
 
 if __name__ == '__main__':

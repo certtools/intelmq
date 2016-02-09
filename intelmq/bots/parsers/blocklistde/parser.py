@@ -93,14 +93,14 @@ class BlockListDEParserBot(Bot):
         for row in raw_report.split('\n'):
             event = Event(report)
 
-            event.add('source.ip', row.strip(), sanitize=True)
+            event.add('source.ip', row.strip())
             if filename in MAPPING:
                 for key, value in MAPPING[filename].items():
-                    event.add(key, value, sanitize=True)
+                    event.add(key, value)
             else:
-                event.add('classification.type', 'blacklist', sanitize=True)
+                event.add('classification.type', 'blacklist')
 
-            event.add("raw", row, sanitize=True)
+            event.add("raw", row)
 
             self.send_message(event)
         self.acknowledge_message()

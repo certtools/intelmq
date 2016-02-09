@@ -43,7 +43,7 @@ class TaxonomyExpertBot(Bot):
                 event.contains("classification.type")):
             event_type = event.value("classification.type")
             taxonomy = TAXONOMY[event_type]
-            event.add("classification.taxonomy", taxonomy, sanitize=True)
+            event.add("classification.taxonomy", taxonomy)
 
         self.send_message(event)
         self.acknowledge_message()

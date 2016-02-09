@@ -55,7 +55,7 @@ look pretty. Therefore, we do not check for the error messages given in the .pep
 * Each internal object in IntelMQ (Event, Report, etc) that has strings, their strings MUST be in UTF-8 Unicode format.
 * Any data received from external sources MUST be transformed into UTF-8 unicode format before add it to IntelMQ objects.
 
-Inside the pipeline it may be necessary to convert to bytes (ASCII). Conversion back to UTF-8 is automatically done when data is brought back to Python. This is the case for Redis and ZeroMQ pipeline implementations.
+Inside the pipeline it may be necessary to convert to bytes (ASCII). Conversion back to UTF-8 is automatically done when data is brought back to Python. This is the case for Redis pipeline implementation.
 
 ### Back-end independence
 

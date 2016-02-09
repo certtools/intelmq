@@ -26,6 +26,11 @@ import sys
 import six
 from intelmq import DEFAULT_LOGGING_PATH
 
+try:
+    import unicodecsv
+except ImportError:
+    unicodecsv = None
+
 __all__ = ['decode', 'encode', 'base64_encode', 'base64_decode',
            'load_configuration', 'load_parameters', 'log', 'reverse_readline',
            'parse_logline']
@@ -308,15 +313,25 @@ def parse_logline(logline):
     return result
 
 
-def csv_reader(csv_data, dialect=csv.excel, **kwargs):
+def csv_reader(csv_data, dialect=csv.excel, dictreader=False, **kwargs):
     """
     Reads data from given string and parses as utf8.
     Only needed for Legcay Python, version 2.
     """
     if sys.version_info[0] == 2:
-        import unicodecsv
-        for row in unicodecsv.reader(io.BytesIO(encode(csv_data))):
-            yield row
+        if unicodecsv is None:
+            raise ValueError('Module unicodecsv is not available.')
+        if dictreader:
+            for row in unicodecsv.DictReader(io.BytesIO(csv_data), **kwargs):
+                yield row
+        else:
+            for row in unicodecsv.reader(io.BytesIO(encode(csv_data)),
+                                         **kwargs):
+                yield row
     else:
-        for row in csv.reader(io.StringIO(csv_data)):
-            yield row
+        if dictreader:
+            for row in csv.DictReader(io.StringIO(csv_data), **kwargs):
+                yield row
+        else:
+            for row in csv.reader(io.StringIO(csv_data), **kwargs):
+                yield row

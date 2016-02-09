@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-TODO: IPv6
-"""
 from __future__ import unicode_literals
 
 import sys
@@ -53,7 +50,7 @@ class ReverseDnsExpertBot(Bot):
                 minimum = MINIMUM_BGP_PREFIX_IPV6
 
             else:
-                self.logger.error("Invalid IP version {!r}".format(ip_version))
+                self.logger.warning("Invalid IP version {}".format(ip_version))
                 self.send_message(event)
                 self.acknowledge_message()
 
@@ -78,8 +75,7 @@ class ReverseDnsExpertBot(Bot):
                                    ttl=int(ttl.total_seconds()))
 
             if result is not None:
-                event.add(key % 'reverse_dns',
-                          str(result), sanitize=True, force=True)
+                event.add(key % 'reverse_dns', str(result), force=True)
 
         self.send_message(event)
         self.acknowledge_message()
