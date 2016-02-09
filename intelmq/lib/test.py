@@ -355,9 +355,9 @@ class BotTestCase(object):
 
         self.assertIsNotNone(self.loglines_buffer)
         try:
-            self.assertRegexpMatches(self.loglines_buffer, pattern)
-        except AttributeError:
             self.assertRegex(self.loglines_buffer, pattern)
+        except AttributeError:  # Py2
+            self.assertRegexpMatches(self.loglines_buffer, pattern)
 
     def assertNotRegexpMatchesLog(self, pattern):
         """Asserts that pattern doesn't match against log."""
