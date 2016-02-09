@@ -51,7 +51,6 @@ class Bot(object):
                 syslog = self.parameters.logging_syslog
             else:
                 syslog = False
-            print(utils.__file__)
             self.logger = utils.log(self.bot_id, syslog=syslog,
                                     log_level=self.parameters.logging_level)
         except:
