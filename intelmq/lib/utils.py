@@ -216,7 +216,7 @@ def log(name, log_path=DEFAULT_LOGGING_PATH, log_level="DEBUG", stream=None,
     stream : object
         By default (None), stderr will be used, stream objects can be
         given. If False, stream output is not used.
-    syslog: boolean, list/tuple, string
+    syslog: boolean, list/tuple, string Foo
         If False (default), FileHandler will be used. Otherwise either a list/
         tuple with address and UDP port are expected, e.g. `["localhost", 514]`
         or a string with device name, e.g. `"/dev/log"`.
