@@ -120,7 +120,7 @@ cd /tmp/intelmq
 sudo -s
 
 pip3 install -r REQUIREMENTS
-python3 setup.py install
+pip3 install .
 
 useradd -d /opt/intelmq -U -s /bin/bash intelmq
 echo 'export PATH="$PATH:$HOME/bin"' > /opt/intelmq/.profile
@@ -138,7 +138,7 @@ git clone https://github.com/certtools/intelmq.git /tmp/intelmq
 cd /tmp/intelmq
 
 pip2 install -r REQUIREMENTS2
-python2.7 setup.py install
+pip2 install .
 
 useradd -d /opt/intelmq -U -s /bin/bash intelmq
 echo 'export PATH="$PATH:$HOME/bin"' > /opt/intelmq/.profile

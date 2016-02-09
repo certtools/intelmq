@@ -7,14 +7,13 @@ install:
   - if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then pip install -r REQUIREMENTS2; fi
   - if [[ ${TRAVIS_PYTHON_VERSION%.?} == 3 ]]; then pip install -r REQUIREMENTS; fi
   - for file in intelmq/bots/*/*/REQUIREMENTS.txt; do pip install -r $file; done
-  - "python setup_travis.py install"
+  - pip install -r REQUIREMENTS-ADDITIONAL
   - pip install coveralls
   - pip install codecov
-# command to run tests
+  - pip install .
 script: nosetests --with-coverage --cover-package=intelmq
 services:
   - redis-server
-
 after_success:
   - codecov
   - coveralls

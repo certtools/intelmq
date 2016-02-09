@@ -201,7 +201,7 @@ def load_parameters(*configs):
 
 
 def log(name, log_path=DEFAULT_LOGGING_PATH, log_level="DEBUG", stream=None,
-        syslog=False):
+        syslog=None):
     """
     Returns a logger instance logging to file and sys.stderr or other stream.
 
@@ -216,7 +216,7 @@ def log(name, log_path=DEFAULT_LOGGING_PATH, log_level="DEBUG", stream=None,
     stream : object
         By default (None), stderr will be used, stream objects can be
         given. If False, stream output is not used.
-    syslog: boolean, list/tuple, string Foo
+    syslog: boolean, list/tuple, string
         If False (default), FileHandler will be used. Otherwise either a list/
         tuple with address and UDP port are expected, e.g. `["localhost", 514]`
         or a string with device name, e.g. `"/dev/log"`.

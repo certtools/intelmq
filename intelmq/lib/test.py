@@ -68,7 +68,7 @@ with mock.patch('intelmq.lib.utils.load_configuration', new=mocked_config()):
 
 
 def mocked_logger(logger):
-    def log(name, log_path=None, log_level=None):
+    def log(name, log_path=None, log_level=None, stream=None, syslog=None):
         return logger
     return log
 
