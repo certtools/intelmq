@@ -246,6 +246,10 @@ class Bot(object):
             self.logger.warning("Sending Message: Empty message found.")
             return False
 
+        if message.exception:
+            self.logger.warning(message.exception)
+            return False
+
         self.logger.debug("Sending message.")
         self.message_counter += 1
         if self.message_counter % 500 == 0:

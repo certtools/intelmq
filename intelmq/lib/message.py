@@ -74,6 +74,7 @@ class MessageFactory(object):
 class Message(dict):
 
     def __init__(self, message=()):
+        self.exception = None
         super(Message, self).__init__(message)
         try:
             classname = message['__type'].lower()
@@ -118,11 +119,11 @@ class Message(dict):
             old_value = value
             value = self.__sanitize_value(key, value)
             if value is None:
-                raise exceptions.InvalidValue(key, old_value)
+                self.exception = exceptions.InvalidValue(key, old_value)
 
         valid_value = self.__is_valid_value(key, value)
         if not valid_value[0]:
-            raise exceptions.InvalidValue(key, value, reason=valid_value[1])
+            self.exception = exceptions.InvalidValue(key, value, reason=valid_value[1])
 
         super(Message, self).__setitem__(key, value)
 
