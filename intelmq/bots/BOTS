@@ -418,6 +418,8 @@
                 "feed": "Phishtank",
                 "http_url": "https://data.phishtank.com/data/< API KEY >/online-valid.csv",
                 "rate_limit": 28800
+            }
+        },
         "Request Tracker": {
             "description": "Request Tracker Collector fetches attachments from an RTIR instance and optionally decrypts them with gnupg.",
             "module": "intelmq.bots.collectors.rt.collector_rt",
@@ -434,10 +436,10 @@
                 "search_queue": "Incident Reports",
                 "search_status": "new",
                 "search_subject_like": "Report",
-                "take_ticket": true
+                "take_ticket": true,
                 "unzip_attachment": true,
                 "uri": "http://localhost/rt/REST/1.0",
-                "user": "root",
+                "user": "root"
             }
         },
         "ShadowServer Chargen": {
