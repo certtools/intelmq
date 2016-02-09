@@ -31,9 +31,11 @@ try:
 except ImportError:
     unicodecsv = None
 
-__all__ = ['decode', 'encode', 'base64_encode', 'base64_decode',
-           'load_configuration', 'load_parameters', 'log', 'reverse_readline',
-           'parse_logline']
+
+__all__ = ['base64_decode', 'base64_encode', 'decode', 'encode',
+           'load_configuration', 'load_parameters', 'log', 'parse_logline',
+           'reverse_readline',
+           ]
 
 # Used loglines format
 LOG_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'

@@ -10,6 +10,9 @@ import intelmq.lib.pipeline
 import intelmq.lib.utils as utils
 
 
+__all__ = ['Pipeline', 'PipelineFactory', 'Redis', 'Pythonlist']
+
+
 class PipelineFactory(object):
 
     @staticmethod

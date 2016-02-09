@@ -20,6 +20,9 @@ import six
 from intelmq import PIPELINE_CONF_FILE, RUNTIME_CONF_FILE, SYSTEM_CONF_FILE
 
 
+__all__ = ['BotTestCase']
+
+
 BOT_CONFIG = {
     "logging_level": "DEBUG",
     "http_proxy":  None,

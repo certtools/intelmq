@@ -16,6 +16,9 @@ from intelmq import HARMONIZATION_CONF_FILE
 from intelmq.lib import utils
 
 
+__all__ = ['Event', 'Message', 'MessageFactory', 'Report']
+
+
 harm_config = utils.load_configuration(HARMONIZATION_CONF_FILE)
 
 
