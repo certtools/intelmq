@@ -15,3 +15,5 @@ dist
 .coverage
 .idea/
 htmlcov/
+*.pem
+*.key
