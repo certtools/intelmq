@@ -515,11 +515,11 @@
             }
         },
         "Spamhaus CERT": {
-            "description": "Spamhaus CERT Collector is the bot responsible to get the report from source of information.",
+            "description": "Spamhaus CERT Insight Portal. Access limited to CERTs and CSIRTs with national or regional responsibility. https://www.spamhaus.org/news/article/705/spamhaus-launches-cert-insight-portal",
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Spamhaus CERT",
-                "http_url": "https://portal.spamhaus.org/cert/api.php?cert=<CERTNAME>&key=<APIKEY>",
+                "http_url": "<your CERT portal URL>",
                 "rate_limit": 3600
             }
         },
@@ -528,7 +528,7 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Spamhaus Drop",
-                "http_url": "https://www.spamhaus.org/drop/drop.lasso",
+                "http_url": "https://www.spamhaus.org/drop/drop.txt",
                 "rate_limit": 3600
             }
         },
