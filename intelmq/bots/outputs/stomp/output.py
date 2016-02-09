@@ -6,11 +6,9 @@ import os.path
 import sys
 
 from intelmq.lib.bot import Bot
-from intelmq.lib.harmonization import DateTime
-from intelmq.lib.message import Report, MessageFactory
+from intelmq.lib.message import MessageFactory
 
 import stomp
-
 
 
 class stompOutputBot(Bot):
@@ -45,7 +43,7 @@ class stompOutputBot(Bot):
                                      heartbeats=(self.heartbeat,
                                                  self.heartbeat))
 
-	# based on the documentation at:
+        # based on the documentation at:
         # https://github.com/jasonrbriggs/stomp.py/wiki/Simple-Example
         self.conn.start()
         self.conn.connect(wait=False)
@@ -62,10 +60,10 @@ class stompOutputBot(Bot):
 
         if message:
             message = MessageFactory.serialize(message)
-	    self.logger.info(message)
+            self.logger.info(message)
 
-	self.conn.send(body=message, destination=self.exchange)
-	
+        self.conn.send(body=message, destination=self.exchange)
+
 
 if __name__ == "__main__":
     bot = stompOutputBot(sys.argv[1])
