@@ -325,11 +325,11 @@ class BotTestCase(object):
         logline = self.loglines[line_no]
         fields = utils.parse_logline(logline)
 
-        self.assertEqual(self.bot_id, fields["name"],
+        self.assertEqual(self.bot_id, fields["bot_id"],
                          "bot_id %s didn't match %s"
-                         "".format(self.bot_id, fields["name"]))
+                         "".format(self.bot_id, fields["bot_id"]))
 
-        self.assertEqual(levelname, fields["levelname"])
+        self.assertEqual(levelname, fields["log_level"])
         self.assertEqual(message, fields["message"])
 
     def assertLoglineMatches(self, line_no, pattern, levelname="ERROR"):
@@ -343,11 +343,11 @@ class BotTestCase(object):
         logline = self.loglines[line_no]
         fields = utils.parse_logline(logline)
 
-        self.assertEqual(self.bot_id, fields["name"],
+        self.assertEqual(self.bot_id, fields["bot_id"],
                          "bot_id %s didn't match %s"
-                         "".format(self.bot_id, fields["name"]))
+                         "".format(self.bot_id, fields["bot_id"]))
 
-        self.assertEqual(levelname, fields["levelname"])
+        self.assertEqual(levelname, fields["log_level"])
         self.assertRegexpMatches(fields["message"], pattern)
 
     def assertRegexpMatchesLog(self, pattern):

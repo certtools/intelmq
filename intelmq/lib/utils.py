@@ -42,9 +42,9 @@ LOG_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 LOG_FORMAT_STREAM = '%(name)s: %(message)s'
 
 # Regex for parsing the above LOG_FORMAT
-LOG_REGEX = (r'^(?P<asctime>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d+) -'
-             r' (?P<name>[-\w]+) - '
-             r'(?P<levelname>[A-Z]+) - '
+LOG_REGEX = (r'^(?P<date>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d+) -'
+             r' (?P<bot_id>[-\w]+) - '
+             r'(?P<log_level>[A-Z]+) - '
              r'(?P<message>.+)$')
 
 
@@ -302,17 +302,16 @@ def parse_logline(logline):
     Returns:
     --------
     result : dict
-        dictionary with keys: ['message', 'name', 'levelname', 'asctime']
+        dictionary with keys: ['date', 'bot_id', 'log_level', 'message']
     """
 
     match = re.match(LOG_REGEX, logline)
-    result = {}
-    fields = ("asctime", "name", "levelname", "message")
+    fields = ("date", "bot_id", "log_level", "message")
 
-    if match:
-        result = dict(list(zip(fields, match.group(*fields))))
-
-    return result
+    try:
+        return dict(list(zip(fields, match.group(*fields))))
+    except AttributeError:
+        return logline
 
 
 def csv_reader(csv_data, dialect=csv.excel, dictreader=False, **kwargs):
