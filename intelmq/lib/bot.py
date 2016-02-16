@@ -153,9 +153,6 @@ class Bot(object):
                             if self.parameters.error_dump_message:
                                 self.dump_message(error_traceback)
 
-                            # FIXME: if broker fails in this instant
-                            #        it will crash the bot
-                            #
                             # remove message from pipeline
                             self.acknowledge_message()
 
@@ -375,7 +372,6 @@ class Bot(object):
             for key in config[message_types].keys():
                 for _key in config.keys():
                     if _key.startswith("%s." % key):
-                        # FIXME: write in devguide the rules for the keys names
                         raise exceptions.ConfigurationError(
                             'harmonization',
                             "Key %s is not valid." % _key)
