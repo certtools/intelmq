@@ -34,7 +34,7 @@ class DshieldDomainParserBot(Bot):
 
             if row.startswith("#") or len(row) == 0 or row == "Site":
                 if 'updated' in row:
-                    time_str = row[row.find(': ')+2:]
+                    time_str = row[row.find(': ') + 2:]
                     time = dateutil.parser.parse(time_str).isoformat()
                 continue
 

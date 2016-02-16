@@ -20,9 +20,9 @@ class BluelivCrimeserverCollectorBot(Bot):
             proxy = {'http': http_proxy,
                      'https': https_proxy}
         api = BluelivAPI(base_url='https://freeapi.blueliv.com',
-                     token=self.parameters.api_key,
-                     log_level=logging.INFO,
-                     proxy=proxy)
+                         token=self.parameters.api_key,
+                         log_level=logging.INFO,
+                         proxy=proxy)
 
         response = api.crime_servers.online()
         self.logger.info("Report downloaded.")

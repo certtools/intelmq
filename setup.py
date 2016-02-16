@@ -65,7 +65,7 @@ setup(
         'Intended Audience :: Information Technology',
         'Intended Audience :: System Administrators',
         'Intended Audience :: Telecommunications Industry',
-        'License :: OSI Approved :: License :: OSI Approved :: GNU Affero General Public License v3',
+        'License :: OSI Approved :: GNU Affero General Public License v3',
         'Operating System :: Unix',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',

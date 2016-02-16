@@ -48,14 +48,14 @@ class DShieldASNParserBot(Bot):
             updated = values[5]
 
             url = report['feed.url']
-            asn = int(url[url.rfind('?as=')+4:])
+            asn = int(url[url.rfind('?as=') + 4:])
 
             event = Event(report)
 
             event.add('source.ip', source_ip)
             event.add('source.asn', asn)
             event.add('classification.type', 'brute-force')
-            event.add("time.source", updated+'+0')
+            event.add("time.source", updated + '+0')
             event.add("raw", row)
             event.add("extra", {'reports': reports, 'targets': targets,
                                 'last_seen': last_seen})

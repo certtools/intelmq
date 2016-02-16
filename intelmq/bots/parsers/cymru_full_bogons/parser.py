@@ -22,7 +22,7 @@ class CymruFullBogonsParserBot(Bot):
         raw_report = utils.base64_decode(report.value("raw")).strip()
 
         row = raw_report.splitlines()[0]
-        time_str = row[row.find('(')+1:row.find(')')]
+        time_str = row[row.find('(') + 1:row.find(')')]
         time = dateutil.parser.parse(time_str).isoformat()
 
         for row in raw_report.split('\n'):

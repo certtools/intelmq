@@ -25,7 +25,7 @@ __all__ = ['BotTestCase']
 
 BOT_CONFIG = {
     "logging_level": "DEBUG",
-    "http_proxy":  None,
+    "http_proxy": None,
     "https_proxy": None,
     "broker": "pythonlist",
     "rate_limit": 0,

@@ -20,7 +20,7 @@ import six
 conf_filename = pkg_resources.resource_filename('intelmq',
                                                 'conf/harmonization.conf')
 harm_config = utils.load_configuration(conf_filename)
-import intelmq.lib.message as message
+import intelmq.lib.message as message  # nopep8
 
 LOREM_BASE64 = 'bG9yZW0gaXBzdW0='
 DOLOR_BASE64 = 'ZG9sb3Igc2l0IGFtZXQ='

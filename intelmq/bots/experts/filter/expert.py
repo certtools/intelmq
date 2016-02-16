@@ -13,8 +13,8 @@ from intelmq.lib.bot import Bot
 class FilterExpertBot(Bot):
 
     # number of minutes in time units
-    timespans = {'hour': 60, 'day': 24*60, 'week': 7*24*60,
-                 'month': 30*24*60, 'year': 365*24*60}
+    timespans = {'hour': 60, 'day': 24 * 60, 'week': 7 * 24 * 60,
+                 'month': 30 * 24 * 60, 'year': 365 * 24 * 60}
 
     # parse relative time attributes
     @staticmethod
@@ -23,7 +23,7 @@ class FilterExpertBot(Bot):
             result = re.findall(r'^(\d+)\s+(\w+[^s])s?$', relative_time, re.UNICODE)
         except ValueError as e:
             raise ValueError("Could not apply regex to attribute \"%s\" with exception %s",
-                                 repr(relative_time), repr(e.args))
+                             repr(relative_time), repr(e.args))
         if len(result) == 1 and len(result[0]) == 2 and result[0][1] in FilterExpertBot.timespans:
             return int(result[0][0]) * FilterExpertBot.timespans[result[0][1]]
         else:
@@ -63,7 +63,7 @@ class FilterExpertBot(Bot):
             self.filter = False
         elif hasattr(self.parameters, 'filter_action') and not \
             (self.parameters.filter_action == "drop" or
-            self.parameters.filter_action == "keep"):
+             self.parameters.filter_action == "keep"):
             self.logger.info("Filter_action parameter definition unknown.")
             self.filter = False
 

@@ -30,7 +30,7 @@ def mocked_config(bot_id='', src_name='', dst_names=(),
             return {bot_id: {}}
         elif conf_file == SYSTEM_CONF_FILE:
             return {"logging_level": "DEBUG",
-                    "http_proxy":  None,
+                    "http_proxy": None,
                     "https_proxy": None,
                     "broker": "pythonlist",
                     "raise_on_connect": raise_on_connect,

@@ -45,7 +45,7 @@ class DshieldBlockParserBot(Bot):
 
             if row.startswith("#") or len(row) == 0 or row.startswith('Start'):
                 if 'updated' in row:
-                    time_str = row[row.find(': ')+2:]
+                    time_str = row[row.find(': ') + 2:]
                     time = dateutil.parser.parse(time_str).isoformat()
                 continue
 
