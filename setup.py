@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import sys
-from os.path import dirname, join
 
 from setuptools import find_packages, setup
 
@@ -40,9 +39,16 @@ DATA = [
      ),
 ]
 
+try:
+    import pypandoc
+    DESCRIPTION = pypandoc.convert('README.md', 'rst')
+except(IOError, ImportError):
+    DESCRIPTION = open('README.md').read()
+
+
 setup(
     name='intelmq',
-    version='1.0.0.dev2',
+    version='1.0.0.dev3',
     maintainer='Sebastian Wagner',
     maintainer_email='wagner@cert.at',
     install_requires=REQUIRES,
@@ -58,7 +64,7 @@ setup(
     license='AGPLv3',
     description='IntelMQ is a solution for CERTs to process data feeds, '
                 'pastebins, tweets throught a message queue.',
-    long_description=open(join(dirname(__file__), 'README.md')).read(),
+    long_description=DESCRIPTION,
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Console',
