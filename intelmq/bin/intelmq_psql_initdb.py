@@ -30,7 +30,8 @@ def main():
     for field in DATA.keys():
         value = DATA[field]
 
-        if value['type'] in ('String', 'Base64', 'URL', 'FQDN'):
+        if value['type'] in ('String', 'Base64', 'URL', 'FQDN', 'JSON',
+                             'MalwareName', 'ClassificationType'):
             dbtype = 'varchar({})'.format(value.get('length', 2000))
         elif value['type'] in ('IPAddress', 'IPNetwork'):
             dbtype = 'inet'
@@ -40,7 +41,7 @@ def main():
             dbtype = 'boolean'
         elif value['type'] == 'Integer':
             dbtype = 'integer'
-        elif value['type'] == 'Float':
+        elif value['type'] in ('Float', 'Accuracy'):
             dbtype = 'real'
         elif value['type'] == 'UUID':
             dbtype = 'UUID'
@@ -51,16 +52,12 @@ def main():
 
         FIELDS[field] = dbtype
 
-        # TODO: ClassificationType
-        # TODO: MalwareName
-
     initdb = """CREATE table events (
         "id" BIGSERIAL UNIQUE PRIMARY KEY,"""
     for field, field_type in sorted(FIELDS.items()):
         initdb += '\n    "{name}" {type},'.format(name=field, type=field_type)
 
-    print(initdb[-1])
-    initdb = initdb[:-1]
+    initdb = initdb[:-1]  # remove last ','
     initdb += "\n);"
 
     with open(OUTPUTFILE, 'w') as fp:
