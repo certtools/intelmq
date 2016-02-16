@@ -19,21 +19,20 @@ import json
 import locale
 import os
 import pprint
+import readline  # hooks into input()
 import subprocess
 import sys
 import tempfile
 import zipfile
-import six
 
 import prettytable
 import psycopg2
 import psycopg2.extras
+import six
 from termstyle import bold, green, inverted, red, reset
 
 import rt
-
 from intelmq.lib import utils
-
 
 """ options """
 dryrun = False
