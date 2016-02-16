@@ -88,7 +88,10 @@ class TestUtils(unittest.TestCase):
 
             line_format = [line.format(name) for line in LINES['long']]
             for ind, line in enumerate(file_lines):
-                self.assertRegexpMatches(line, line_format[ind])
+                try:
+                    self.assertRegex(line, line_format[ind])
+                except AttributeError:  # Py2
+                    self.assertRegexpMatches(line, line_format[ind])
 
     def test_stream_logger(self):
         """Tests if a logger for a stream can be generated with log()."""

@@ -19,6 +19,9 @@ from intelmq.lib.message import MessageFactory
 from intelmq.lib.pipeline import PipelineFactory
 
 
+__all__ = ['Bot']
+
+
 class Bot(object):
 
     def __init__(self, bot_id):
@@ -48,9 +51,8 @@ class Bot(object):
                 syslog = self.parameters.logging_syslog
             else:
                 syslog = False
-            self.logger = utils.log(self.bot_id,
+            self.logger = utils.log(self.bot_id, syslog=syslog,
                                     log_level=self.parameters.logging_level)
-#                                    syslog=syslog)
         except:
             self.log_buffer.append(('critical', traceback.format_exc()))
             self.stop()
@@ -300,7 +302,6 @@ class Bot(object):
 
         self.logger.info('Message dumped.')
         self.current_message = None
-
 
     def load_defaults_configuration(self):
         self.log_buffer.append(('debug', "Loading defaults configuration."))

@@ -29,6 +29,12 @@ How do you test if things are easy? Let them new programmers test-drive your fea
 
 Similarly, if code does not get accepted upstream by the main developers, it is usually only because of the ease-of-use argument. Do not give up , go back to the drawing board, and re-submit again.
 
+## Installation
+
+Install intelmq with `pip -e`, which gives you a so called *editable* installation. All changed files in the local copy are directly changed in the local installation too!
+
+    pip install -e .
+
 ## Testing
 
 All changes have to be tested and new contributions must must be accompanied by according tests. You can run the tests by changing to the directory with intelmq repository and running either `unittest` or `nosetests`:

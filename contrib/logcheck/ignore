@@ -1,0 +1,8 @@
+^[0-9-]{10} [0-9:,]{12} - [a-zA-Z0-9_-]* - (INFO|DEBUG) - 
+^ 
+^Traceback
+^[a-zA-Z]*Error
+^InvalidValue
+^During handling of the above exception, another exception occurred:$
+^intelmq\.
+^redis\.

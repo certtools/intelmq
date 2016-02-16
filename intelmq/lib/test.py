@@ -20,6 +20,9 @@ import six
 from intelmq import PIPELINE_CONF_FILE, RUNTIME_CONF_FILE, SYSTEM_CONF_FILE
 
 
+__all__ = ['BotTestCase']
+
+
 BOT_CONFIG = {
     "logging_level": "DEBUG",
     "http_proxy":  None,
@@ -65,7 +68,7 @@ with mock.patch('intelmq.lib.utils.load_configuration', new=mocked_config()):
 
 
 def mocked_logger(logger):
-    def log(name, log_path=None, log_level=None):
+    def log(name, log_path=None, log_level=None, stream=None, syslog=None):
         return logger
     return log
 
@@ -352,9 +355,9 @@ class BotTestCase(object):
 
         self.assertIsNotNone(self.loglines_buffer)
         try:
-            self.assertRegexpMatches(self.loglines_buffer, pattern)
-        except AttributeError:
             self.assertRegex(self.loglines_buffer, pattern)
+        except AttributeError:  # Py2
+            self.assertRegexpMatches(self.loglines_buffer, pattern)
 
     def assertNotRegexpMatchesLog(self, pattern):
         """Asserts that pattern doesn't match against log."""

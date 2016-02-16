@@ -14,6 +14,9 @@ import six
 import intelmq.lib.utils as utils
 
 
+__all__ = ['Cache']
+
+
 class Cache():
 
     def __init__(self, host, port, db, ttl):
