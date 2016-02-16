@@ -38,7 +38,7 @@ class ASNLookupExpertBot(Bot):
             if not event.contains(ip_key):
                 continue
 
-            ip = event.value(ip_key)
+            ip = event.get(ip_key)
 
             if IPAddress.version(ip) == 6:
                 # Currently not supported by pyasn, fix will come soon

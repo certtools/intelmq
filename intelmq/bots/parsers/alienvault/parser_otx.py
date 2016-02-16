@@ -29,7 +29,7 @@ class AlienVaultOTXParserBot(Bot):
             self.acknowledge_message()
             return
 
-        raw_report = utils.base64_decode(report.value("raw"))
+        raw_report = utils.base64_decode(report.get("raw"))
 
         for pulse in json.loads(raw_report):
             additional = {"author": pulse['author_name'], "pulse": pulse['name']}

@@ -25,7 +25,7 @@ class FraunhoferDGAParserBot(Bot):
             self.acknowledge_message()
             return
 
-        dict_report = json.loads(utils.base64_decode(report.value("raw")))
+        dict_report = json.loads(utils.base64_decode(report.get("raw")))
 
         # add all lists together, only one loop needed
         for row in sum(dict_report.values(), []):

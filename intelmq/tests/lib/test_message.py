@@ -115,12 +115,6 @@ class TestMessageFactory(unittest.TestCase):
         self.assertDictContainsSubset({'raw': LOREM_BASE64},
                                       report)
 
-    def test_report_value(self):
-        """ Test if report return value in value(). """
-        report = message.MessageFactory.unserialize('{"__type": "Report"}')
-        report.add('raw', LOREM_BASE64, sanitize=False)
-        self.assertEqual(LOREM_BASE64, report.value('raw'))
-
     def test_report_get(self):
         """ Test if report return value in get(). """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
@@ -201,13 +195,6 @@ class TestMessageFactory(unittest.TestCase):
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         report.add('raw', LOREM_BASE64)
         del report['raw']
-        self.assertNotIn('raw', report)
-
-    def test_report_clear(self):
-        """ Test if report can clear a value. """
-        report = message.MessageFactory.unserialize('{"__type": "Report"}')
-        report.add('raw', LOREM_BASE64)
-        report.clear('raw')
         self.assertNotIn('raw', report)
 
     def test_report_asdict(self):

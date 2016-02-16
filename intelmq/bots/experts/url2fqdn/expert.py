@@ -26,7 +26,7 @@ class Url2fqdnExpertBot(Bot):
             if not event.contains(key_url):
                 continue
 
-            hostname = urlparse(event.value(key_url)).hostname
+            hostname = urlparse(event.get(key_url)).hostname
             if intelmq.lib.harmonization.FQDN.is_valid(hostname, sanitize=True):
                 event.add(key_fqdn, hostname, sanitize=True, force=True)
 

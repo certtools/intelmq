@@ -34,7 +34,7 @@ class AbusixExpertBot(Bot):
         for key in ['source.', 'destination.']:
             ip_key = key + "ip"
             if event.contains(ip_key):
-                ip = event.value(ip_key)
+                ip = event.get(ip_key)
                 email = self.lookup(ip)
                 if email:
                     abuse_contact_key = key + "abuse_contact"

@@ -30,7 +30,7 @@ class AbusechDomainParserBot(Bot):
         if not report.contains("raw"):
             self.acknowledge_message()
 
-        raw_report = utils.base64_decode(report.value("raw"))
+        raw_report = utils.base64_decode(report.get("raw"))
 
         for row in raw_report.split('\n'):
 
@@ -44,7 +44,7 @@ class AbusechDomainParserBot(Bot):
             event.add('classification.type', u'c&c')
             event.add('source.fqdn', row)
             event.add("raw", row)
-            event.add("malware.name", SOURCE_FEEDS[report.value("feed.url")])
+            event.add("malware.name", SOURCE_FEEDS[report.get("feed.url")])
 
             self.send_message(event)
         self.acknowledge_message()

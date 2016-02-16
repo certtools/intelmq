@@ -22,11 +22,11 @@ class AlienVaultParserBot(Bot):
     def process(self):
         report = self.receive_message()
         if (report is None or not report.contains("raw") or
-                len(report.value("raw").strip()) == 0):
+                len(report.get("raw").strip()) == 0):
             self.acknowledge_message()
             return
 
-        raw_report = utils.base64_decode(report.value("raw"))
+        raw_report = utils.base64_decode(report.get("raw"))
 
         for row in raw_report.split('\n'):
 
