@@ -8,6 +8,7 @@ import io
 import json
 import os.path
 import pprint
+import readline  # hooks into input()
 import six
 import sys
 import traceback
@@ -162,7 +163,7 @@ def main():
             with io.open(fname, 'rt') as handle:
                 content = json.load(handle)
             meta = load_meta(content)
-        except ValueError as exc:
+        except ValueError:
             available_opts = [item[0] for item in ACTIONS.values() if item[2]]
             print(bold('Could not load file:') + '\n{}\nRestricted actions.'
                   ''.format(traceback.format_exc()))
