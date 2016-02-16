@@ -9,10 +9,12 @@ install:
   - for file in intelmq/bots/*/*/REQUIREMENTS.txt; do pip install -r $file; done
   - pip install coveralls
   - pip install codecov
-  - pip install .
+  - pip install pep8
+  - sudo pip install .
 script: nosetests --with-coverage --cover-package=intelmq
 services:
   - redis-server
 after_success:
   - codecov
   - coveralls
+  - pep8 --config=.pep8 intelmq/

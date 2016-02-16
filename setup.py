@@ -1,73 +1,64 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import os
+import sys
+from os.path import dirname, join
 
 from setuptools import find_packages, setup
 
+REQUIRES = [
+    'ipaddress>=1.0.14',
+    'psutil>=2.1.1',
+    'python-dateutil>=2.4.2',
+    'python-termstyle>=0.1.10',
+    'pytz>=2015.4',
+    'redis>=2.10.3',
+    'requests>=2.7.0',
+    'six>=1.9.0',
+]
+if sys.version_info[0] == 2:
+    REQUIRES += ['dnspython>=1.12.0']
+elif sys.version_info[0] == 3:
+    REQUIRES += ['dnspython3>=1.12.0']
 
-DIRS = ['/opt/intelmq/bin',
-        '/opt/intelmq/docs',
-        '/opt/intelmq/etc/examples',
-        '/opt/intelmq/var/lib/bots',
-        '/opt/intelmq/var/lib/bots/file-output',
-        '/opt/intelmq/var/lib/bots/modify/example/',
-        '/opt/intelmq/var/log',
-        '/opt/intelmq/var/run',
-        ]
-DATA = [('/opt/intelmq/etc/', [
-                           'intelmq/bots/BOTS',
-                           ],
-         ),
-        ('/opt/intelmq/etc/examples', [
-                           'intelmq/conf/defaults.conf',
-                           'intelmq/conf/harmonization.conf',
-                           'intelmq/conf/pipeline.conf',
-                           'intelmq/conf/runtime.conf',
-                           'intelmq/conf/startup.conf',
-                           'intelmq/conf/system.conf',
-                          ],
-         ),
-        ('/opt/intelmq/bin/', [
-                           'intelmq/bin/intelmqctl',
-                           'intelmq/bin/intelmqdump',
-                           'intelmq/bin/intelmq_gen_harm_docs.py',
-                           'intelmq/bin/intelmq_psql_initdb.py',
-                          ],
-         ),
-        ('/opt/intelmq/var/lib/bots/modify/example', [
-                           'intelmq/bots/experts/modify/modify.conf',
-                          ],
-         ),
-        ]
-if 'TRAVIS' in os.environ:
-    DATA = []
-else:
-    for dir in DIRS:
-        if not os.path.exists(dir):
-            os.makedirs(dir)
-
+DATA = [
+    ('/opt/intelmq/etc/',
+     ['intelmq/bots/BOTS',
+      ],
+     ),
+    ('/opt/intelmq/etc/examples',
+     ['intelmq/conf/defaults.conf',
+      'intelmq/conf/harmonization.conf',
+      'intelmq/conf/pipeline.conf',
+      'intelmq/conf/runtime.conf',
+      'intelmq/conf/startup.conf',
+      'intelmq/conf/system.conf',
+      ],
+     ),
+    ('/opt/intelmq/var/lib/bots/modify/example',
+     ['intelmq/bots/experts/modify/modify.conf',
+      ],
+     ),
+]
 
 setup(
     name='intelmq',
-    version='1.0.0.dev1',
-    maintainer='Tomas Lima',
-    maintainer_email='synchroack@gmail.com',
-    install_requires=[
-       'ipaddress>=1.0.14',
-       'psutil>=2.1.1',
-       'python-dateutil>=2.4.2',
-       'pytz>=2015.4',
-       'redis>=2.10.3',
-       'requests>=2.7.0',
-       'six>=1.9.0',
-    ],
+    version='1.0.0.dev2',
+    maintainer='Sebastian Wagner',
+    maintainer_email='wagner@cert.at',
+    install_requires=REQUIRES,
     packages=find_packages(),
-    package_data={'intelmq': ['conf/*.conf', 'bots/experts/modify/*.conf']},
+    package_data={'intelmq': [
+        'conf/*.conf',
+        'bots/BOTS',
+        'bots/experts/modify/*.conf',
+    ]
+    },
+    include_package_data=True,
     url='https://github.com/certtools/intelmq/',
     license='AGPLv3',
-    description="IntelMQ Tool",
-    long_description='IntelMQ is a solution for CERTs to process data feeds, '
-                     'pastebins, tweets throught a message queue.',
+    description='IntelMQ is a solution for CERTs to process data feeds, '
+                'pastebins, tweets throught a message queue.',
+    long_description=open(join(dirname(__file__), 'README.md')).read(),
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Console',
@@ -85,4 +76,11 @@ setup(
     ],
     keywords='incident handling cert csirt',
     data_files=DATA,
+    entry_points={
+        'console_scripts': [
+            'intelmqctl = intelmq.bin.intelmqctl:main',
+            'intelmqdump = intelmq.bin.intelmqdump:main',
+            'intelmq_psql_initdb = intelmq.bin.intelmq_psql_initdb:main',
+        ],
+    },
 )

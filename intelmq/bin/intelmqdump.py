@@ -112,7 +112,7 @@ def load_meta(dump):
     return retval
 
 
-if __name__ == '__main__':
+def main():
     parser = argparse.ArgumentParser(
         prog=APPNAME,
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -255,3 +255,6 @@ if __name__ == '__main__':
                             'raw'][:1000] + '...[truncated]'
                 value['traceback'] = value['traceback'].splitlines()
                 pprint.pprint(value)
+
+if __name__ == '__main__':
+    main()

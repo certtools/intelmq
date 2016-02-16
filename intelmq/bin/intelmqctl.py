@@ -536,6 +536,9 @@ class IntelMQContoller():
         return messages[::-1]
 
 
-if __name__ == "__main__":
+def main():
     x = IntelMQContoller()
     x.run()
+
+if __name__ == "__main__":
+    main()
