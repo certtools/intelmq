@@ -8,6 +8,7 @@ import io
 import json
 import os.path
 import pprint
+import readline  # hooks into input()
 import six
 import sys
 import traceback
@@ -112,7 +113,7 @@ def load_meta(dump):
     return retval
 
 
-if __name__ == '__main__':
+def main():
     parser = argparse.ArgumentParser(
         prog=APPNAME,
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -162,7 +163,7 @@ if __name__ == '__main__':
             with io.open(fname, 'rt') as handle:
                 content = json.load(handle)
             meta = load_meta(content)
-        except ValueError as exc:
+        except ValueError:
             available_opts = [item[0] for item in ACTIONS.values() if item[2]]
             print(bold('Could not load file:') + '\n{}\nRestricted actions.'
                   ''.format(traceback.format_exc()))
@@ -255,3 +256,6 @@ if __name__ == '__main__':
                             'raw'][:1000] + '...[truncated]'
                 value['traceback'] = value['traceback'].splitlines()
                 pprint.pprint(value)
+
+if __name__ == '__main__':
+    main()

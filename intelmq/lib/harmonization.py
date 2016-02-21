@@ -470,6 +470,8 @@ class JSON(GenericType):
     JSON type.
 
     Sanitation accepts pythons dictionaries and JSON strings.
+
+    Valid values are only unicode strings with JSON dictionaries.
     """
 
     @staticmethod

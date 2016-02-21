@@ -20,7 +20,7 @@ class GenericCsvParserBot(Bot):
 
         columns = self.parameters.columns
 
-        raw_report = utils.base64_decode(report.value("raw"))
+        raw_report = utils.base64_decode(report.get("raw"))
         # ignore lines starting with #
         raw_report = re.sub(r'(?m)^#.*\n?', '', raw_report)
         # ignore null bytes

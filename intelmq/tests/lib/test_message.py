@@ -20,7 +20,7 @@ import six
 conf_filename = pkg_resources.resource_filename('intelmq',
                                                 'conf/harmonization.conf')
 harm_config = utils.load_configuration(conf_filename)
-import intelmq.lib.message as message
+import intelmq.lib.message as message  # nopep8
 
 LOREM_BASE64 = 'bG9yZW0gaXBzdW0='
 DOLOR_BASE64 = 'ZG9sb3Igc2l0IGFtZXQ='
@@ -115,12 +115,6 @@ class TestMessageFactory(unittest.TestCase):
         self.assertDictContainsSubset({'raw': LOREM_BASE64},
                                       report)
 
-    def test_report_value(self):
-        """ Test if report return value in value(). """
-        report = message.MessageFactory.unserialize('{"__type": "Report"}')
-        report.add('raw', LOREM_BASE64, sanitize=False)
-        self.assertEqual(LOREM_BASE64, report.value('raw'))
-
     def test_report_get(self):
         """ Test if report return value in get(). """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
@@ -201,13 +195,6 @@ class TestMessageFactory(unittest.TestCase):
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         report.add('raw', LOREM_BASE64)
         del report['raw']
-        self.assertNotIn('raw', report)
-
-    def test_report_clear(self):
-        """ Test if report can clear a value. """
-        report = message.MessageFactory.unserialize('{"__type": "Report"}')
-        report.add('raw', LOREM_BASE64)
-        report.clear('raw')
         self.assertNotIn('raw', report)
 
     def test_report_asdict(self):

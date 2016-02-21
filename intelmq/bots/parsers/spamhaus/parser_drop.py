@@ -21,7 +21,7 @@ class SpamhausDropParserBot(Bot):
             self.acknowledge_message()
             return
 
-        raw_report = utils.base64_decode(report.value("raw"))
+        raw_report = utils.base64_decode(report.get("raw"))
 
         for row in raw_report.split('\n'):
 

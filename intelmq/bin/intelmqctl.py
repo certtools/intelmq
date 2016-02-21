@@ -493,7 +493,6 @@ class IntelMQContoller():
         logger.error("Reading from system log is not implemented yet")
 
     def read_bot_log(self, bot_id, log_level, number_of_lines):
-        # TODO: Use utils.parse_logline
         bot_log_path = os.path.join(self.system['logging_path'],
                                     bot_id + '.log')
         if not os.path.isfile(bot_log_path):
@@ -506,21 +505,13 @@ class IntelMQContoller():
         message_count = 0
 
         for line in utils.reverse_readline(bot_log_path):
-            splitted_line = line.split(' - ', 3)
+            log_message = utils.parse_logline(line)
 
-            if (len(splitted_line) < 4 or splitted_line[1] != bot_id or
-                    splitted_line[2] not in LOG_LEVEL):
+            if type(log_message) is not dict:
                 message_overflow = '\n'.join([line, message_overflow])
                 continue
-            if LOG_LEVEL[splitted_line[2]] < log_level:
+            if LOG_LEVEL[log_message['log_level']] < log_level:
                 continue
-
-            log_message = {
-                'date': splitted_line[0],
-                'bot_id': splitted_line[1],
-                'log_level': splitted_line[2],
-                'message': ' - '.join(splitted_line[3:])
-            }
 
             if message_overflow:
                 log_message['extended_message'] = message_overflow
@@ -536,6 +527,9 @@ class IntelMQContoller():
         return messages[::-1]
 
 
-if __name__ == "__main__":
+def main():
     x = IntelMQContoller()
     x.run()
+
+if __name__ == "__main__":
+    main()

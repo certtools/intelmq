@@ -23,7 +23,7 @@ EXAMPLE_EVENT = {
     "__type": "Event",
     "feed.name": "Blueliv Crimeserver",
     "classification.type": "malware",
-    "raw": "eyJjb3VudHJ5IjogIlVTIiwgImZpcnN0U2VlbkF0IjogIjIwMTUtMTAtMjBUMDY6MTQ6MDArMDAwMCIsICJpcCI6ICIxOTkuMzQuMjI4LjU0IiwgImxhc3RTZWVuQXQiOiAiMjAxNS0xMi0wOVQwNDo0MzoyOSswMDAwIiwgImxhdGl0dWRlIjogMzcuNzk4OSwgImxvbmdpdHVkZSI6IC0xMjIuMzk4NCwgInN0YXR1cyI6ICJPTkxJTkUiLCAidHlwZSI6ICJNQUxXQVJFIiwgInVwZGF0ZWRBdCI6ICIyMDE1LTEyLTA5VDA0OjQ1OjUzKzAwMDAiLCAidXJsIjogImh0dHA6Ly9hbWlyb3N0ZXJ3ZWlsLndlZWJseS5jb20vdXBsb2Fkcy8yLzMvMi81LzIzMjU4NTc2L2NvcnBvcmF0ZV9lbGVhcm5pbmcucGRmIn0=",
+    "raw": "eyJjb3VudHJ5IjogIlVTIiwgImZpcnN0U2VlbkF0IjogIjIwMTUtMTAtMjBUMDY6MTQ6MDArMDAwMCIsICJpcCI6ICIxOTkuMzQuMjI4LjU0IiwgImxhc3RTZWVuQXQiOiAiMjAxNS0xMi0wOVQwNDo0MzoyOSswMDAwIiwgImxhdGl0dWRlIjogMzcuNzk4OSwgImxvbmdpdHVkZSI6IC0xMjIuMzk4NCwgInN0YXR1cyI6ICJPTkxJTkUiLCAidHlwZSI6ICJNQUxXQVJFIiwgInVwZGF0ZWRBdCI6ICIyMDE1LTEyLTA5VDA0OjQ1OjUzKzAwMDAiLCAidXJsIjogImh0dHA6Ly9hbWlyb3N0ZXJ3ZWlsLndlZWJseS5jb20vdXBsb2Fkcy8yLzMvMi81LzIzMjU4NTc2L2NvcnBvcmF0ZV9lbGVhcm5pbmcucGRmIn0=",  # nopep8
     "source.url": "http://amirosterweil.weebly.com/uploads/2/3/2/5/23258576/corporate_elearning.pdf",
     "time.source": "2015-10-20T06:14:00+00:00",
     "time.observation": "2015-09-02T14:17:58+00:00",

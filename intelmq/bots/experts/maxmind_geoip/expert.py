@@ -31,7 +31,7 @@ class GeoIPExpertBot(Bot):
             if not event.contains(key % "ip"):
                 continue
 
-            ip = event.value(key % "ip")
+            ip = event.get(key % "ip")
 
             try:
                 info = self.database.city(ip)

@@ -27,7 +27,7 @@ class BluelivCrimeserverParserBot(Bot):
             self.acknowledge_message()
             return
 
-        raw_report = utils.base64_decode(report.value('raw'))
+        raw_report = utils.base64_decode(report.get('raw'))
 
         for item in json.loads(raw_report):
             event = Event(report)

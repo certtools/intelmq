@@ -83,10 +83,10 @@ class BlockListDEParserBot(Bot):
             self.acknowledge_message()
             return
 
-        raw_report = utils.base64_decode(report.value("raw"))
+        raw_report = utils.base64_decode(report.get("raw"))
         raw_report = raw_report.strip()
 
-        url = report.value('feed.url')
+        url = report.get('feed.url')
         path = urlparse(url).path
         filename = posixpath.basename(path)
 

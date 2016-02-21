@@ -77,7 +77,7 @@ class N6StompParserBot(Bot):
             self.acknowledge_message()
             return
 
-        peek = utils.base64_decode(report.value("raw"))
+        peek = utils.base64_decode(report.get("raw"))
         self.logger.debug("Peeking at event '%s'." % peek)
         if "TEST MESSAGE" in peek:
             self.logger.debug("Ignoring test message/event.")
@@ -88,7 +88,7 @@ class N6StompParserBot(Bot):
         event = Event(report)
         dict_report = json.loads(peek)
 
-        event.add("raw", report.value("raw"), sanitize=False)
+        event.add("raw", report.get("raw"), sanitize=False)
         extra = {}
         if "time" in dict_report:
             event.add("time.source", dict_report["time"])

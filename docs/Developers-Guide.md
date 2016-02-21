@@ -35,6 +35,8 @@ Install intelmq with `pip -e`, which gives you a so called *editable* installati
 
     pip install -e .
 
+If you do any changes on setup.py, data files (e.g. example configurations), you need to run `pip install -eU .` of course.
+
 ## Testing
 
 All changes have to be tested and new contributions must must be accompanied by according tests. You can run the tests by changing to the directory with intelmq repository and running either `unittest` or `nosetests`:
@@ -93,16 +95,16 @@ intelmq\
   bots\
     collector\
       <bot name>\
-		    collector.py
+            collector.py
     parser\
       <bot name>\
-		    parser.py
+            parser.py
     expert\
       <bot name>\
-		    expert.py
+            expert.py
     output\
       <bot name>\
-		    output.py
+            output.py
     BOTS
   \conf
     pipeline.conf
@@ -258,7 +260,7 @@ ExampleParserBot parses data from example.com.
 Document possible necessary configurations.
 """
 from __future__ import unicode_literals
-import sys  # imports of system libraries
+import sys
 
 # imports for additional libraries and intelmq
 from intelmq.lib.bot import Bot
@@ -273,8 +275,8 @@ class ExampleParserBot(Bot):
 
         event = Event(report)  # copies feed.name, time.observation
         ... # implement the logic here
-		event.add('source.ip', '127.0.0.1')
-        event.add('extra', '{"os.name": "Linux"')
+        event.add('source.ip', '127.0.0.1')
+        event.add('extra', {"os.name": "Linux"})
 
         self.send_message(event)
         self.acknowledge_message()
@@ -309,7 +311,7 @@ class ExampleParserBot(Bot):
         except IOError:
             self.logger.error("pyasn data file does not exist or could not be "
                               "accessed in '%s'." % self.parameters.database)
-            self.logger.error("Read 'bots/experts/asn_lookup/README' and "
+            self.logger.error("Read 'bots/experts/asn_lookup/README.md' and "
                               "follow the procedure.")
             self.stop()
 ```

@@ -29,7 +29,7 @@ class AutoshunParserBot(Bot):
             self.acknowledge_message()
             return
 
-        raw_report = utils.base64_decode(report.value("raw"))
+        raw_report = utils.base64_decode(report.get("raw"))
         raw_report_splitted = raw_report.split("</tr>")[2:]
 
         parser = HTMLParser()

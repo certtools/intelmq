@@ -203,19 +203,25 @@ class TestHarmonization(unittest.TestCase):
 
     def test_json_valid(self):
         """ Test JSON.is_valid with valid arguments. """
-        self.assertTrue(harmonization.JSON.is_valid('{"foo": "bar"}'))
+        self.assertTrue(harmonization.JSON.is_valid('{"foo": "bar"}',
+                                                    sanitize=False))
 
     def test_json_invalid(self):
         """ Test JSON.is_valid with invalid arguments. """
         self.assertFalse(harmonization.JSON.is_valid('{}'))
         self.assertFalse(harmonization.JSON.is_valid('"example"'))
-        self.assertFalse(harmonization.JSON.is_valid(b'{"foo": 1}'))
+        self.assertFalse(harmonization.JSON.is_valid(b'{"foo": 1}',
+                                                     sanitize=False))
+        self.assertFalse(harmonization.JSON.is_valid({"foo": "bar"},
+                                                     sanitize=False))
 
     def test_json_sanitize(self):
         """ Test JSON.sanitize with valid arguments. """
         self.assertTrue(harmonization.JSON.is_valid({"foo": "bar"},
                                                     sanitize=True))
         self.assertTrue(harmonization.JSON.is_valid('{"foo": "bar"}',
+                                                    sanitize=True))
+        self.assertTrue(harmonization.JSON.is_valid(b'{"foo": "bar"}',
                                                     sanitize=True))
 
     def test_url_valid(self):

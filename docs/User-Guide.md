@@ -47,6 +47,8 @@ The following instructions assume the following requirements:
 
 * **Operating System:** Ubuntu 14.04 LTS or Debian 8 or CentOS 7
 
+Please report any errors you encounter at https://github.com/certtools/intelmq/issues
+
 # Install
 
 ## Install Dependencies
@@ -57,7 +59,8 @@ The following instructions assume the following requirements:
 
 ```bash
 apt-get install python3 python3-pip
-apt-get install git build-essential libcurl4-gnutls-dev libffi-dev python-dev
+apt-get install git build-essential libcurl4-gnutls-dev libffi-dev
+apt-get install python-dev
 apt-get install redis-server
 ```
 
@@ -87,9 +90,9 @@ systemctl start redis
 ##### Ubuntu 14.04 / Debian 8
 
 ```bash
-apt-get install python
+apt-get install python python-pip
 apt-get install git build-essential libcurl4-gnutls-dev libffi-dev libgnutls28-dev
-apt-get install python-dev python-pip python-pycurl python-openssl python-pyasn1
+apt-get install python-dev python-pycurl python-openssl python-pyasn1
 apt-get install redis-server
 ```
 
@@ -111,6 +114,8 @@ systemctl start redis
 
 The `REQUIREMENTS` files define a list python packages and versions, which are necessary to run *all components* of IntelMQ. The defined versions are recommendations.
 
+If you do not do any modifications on the code, use `pip install intelmq` instead of `pip install .`!
+
 #### Python 3 (recommended)
 
 ```bash
@@ -123,7 +128,7 @@ pip3 install -r REQUIREMENTS
 pip3 install .
 
 useradd -d /opt/intelmq -U -s /bin/bash intelmq
-echo 'export PATH="$PATH:$HOME/bin"' > /opt/intelmq/.profile
+echo 'export PATH="$PATH:$HOME/bin"' >> /opt/intelmq/.profile
 chmod -R 0770 /opt/intelmq
 chown -R intelmq.intelmq /opt/intelmq
 echo 'export INTELMQ_PYTHON=/usr/bin/python3' >> /opt/intelmq/.profile
@@ -141,7 +146,7 @@ pip2 install -r REQUIREMENTS2
 pip2 install .
 
 useradd -d /opt/intelmq -U -s /bin/bash intelmq
-echo 'export PATH="$PATH:$HOME/bin"' > /opt/intelmq/.profile
+echo 'export PATH="$PATH:$HOME/bin"' >> /opt/intelmq/.profile
 chmod -R 0770 /opt/intelmq
 chown -R intelmq.intelmq /opt/intelmq
 ```
@@ -553,7 +558,7 @@ tail -f /opt/intelmq/var/log/*.log
 ## Stop IntelMQ and Backup
 
 * Make sure that your IntelMQ system is completely stopped.
-* Create a backup of IntelMQ Home directory, which includes all configurations.
+* Create a backup of IntelMQ Home directory, which includes all configurations. They are not overwritten, but backups are always nice to have!
 
 ```bash
 sudo su -
@@ -566,7 +571,7 @@ cp -R /opt/intelmq /opt/intelmq-backup
 ```bash
 cd intelmq/
 git pull
-python setup.py install
+pip install -U intelmq  # or pip install -U . if you have a local repository
 ```
 
 ## Restore Configurations

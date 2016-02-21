@@ -26,7 +26,7 @@ class PhishTankParserBot(Bot):
                    "event_description.target"
                    ]
 
-        raw_report = utils.base64_decode(report.value("raw"))
+        raw_report = utils.base64_decode(report.get("raw"))
         for row in utils.csv_reader(raw_report):
 
             # ignore headers

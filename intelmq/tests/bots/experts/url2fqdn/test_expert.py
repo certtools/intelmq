@@ -4,22 +4,21 @@ Testing url2fqdn.
 """
 from __future__ import unicode_literals
 
-import os
 import unittest
 
 import intelmq.lib.test as test
 from intelmq.bots.experts.url2fqdn.expert import Url2fqdnExpertBot
 
 EXAMPLE_INPUT = {"__type": "Event",
-                 "source.url": "http://sample.url.com/something/index.php",  
-                 "destination.url": "http://other.domain.eu/download?file.exe",  
+                 "source.url": "http://example.com/something/index.php",
+                 "destination.url": "http://example.org/download?file.exe",
                  "time.observation": "2015-01-01T00:00:00+00:00"
                  }
 EXAMPLE_OUTPUT = {"__type": "Event",
-                  "source.url": "http://sample.url.com/something/index.php",   
-                  "destination.url": "http://other.domain.eu/download?file.exe",
-                  "source.fqdn": "sample.url.com",
-                  "destination.fqdn": "other.domain.eu",
+                  "source.url": "http://example.com/something/index.php",
+                  "destination.url": "http://example.org/download?file.exe",
+                  "source.fqdn": "example.com",
+                  "destination.fqdn": "example.org",
                   "time.observation": "2015-01-01T00:00:00+00:00"
                   }
 

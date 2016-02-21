@@ -73,8 +73,8 @@ class HTTPCollectorBot(Bot):
         except zipfile.BadZipfile:
             raw_reports.append(resp.text)
         else:
-            self.logger.info('Downloaded zip file, extracting following files: '
-                             + ', '.join(zfp.namelist()))
+            self.logger.info('Downloaded zip file, extracting following files:'
+                             ' ' + ', '.join(zfp.namelist()))
             for filename in zfp.namelist():
                 raw_reports.append(zfp.read(filename))
 
