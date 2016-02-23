@@ -1,16 +1,21 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import os
 import unittest
 
 import intelmq.lib.test as test
+import intelmq.lib.utils as utils
 from intelmq.bots.parsers.abusech.parser_domain import AbusechDomainParserBot
+
+with open(os.path.join(os.path.dirname(__file__), 'feododomains.txt')) as handle:
+    EXAMPLE_FILE = handle.read()
+
 
 EXAMPLE_REPORT = {"feed.url": "https://palevotracker.abuse.ch/blocklists.php?download=domainblocklist",
                   "feed.name": "AbuseCH Palevotracker",
                   "__type": "Report",
-                  "source.fqdn": "arta.romail3arnest.info",
-                  "raw": "YXJ0YS5yb21haWwzYXJuZXN0LmluZm8=",
+                  "raw": utils.base64_encode(EXAMPLE_FILE),
                   "time.observation": "2015-11-02T13:11:43+00:00"
                   }
 
@@ -19,6 +24,7 @@ EXAMPLE_EVENT = {"feed.url": "https://palevotracker.abuse.ch/blocklists.php?down
                  "source.fqdn": "arta.romail3arnest.info",
                  "raw": "YXJ0YS5yb21haWwzYXJuZXN0LmluZm8=",
                  "time.observation": "2015-11-02T13:11:44+00:00",
+                 "time.source": "2016-02-23T14:55:49+00:00",
                  "classification.type": "c&c",
                  "malware.name": "palevo",
                  "__type": "Event"
