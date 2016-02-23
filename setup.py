@@ -48,10 +48,15 @@ except(IOError, ImportError):
 
 setup(
     name='intelmq',
-    version='1.0.0.dev3',
+    version='1.0.0.dev4',
     maintainer='Sebastian Wagner',
     maintainer_email='wagner@cert.at',
     install_requires=REQUIRES,
+    test_requires=REQUIRES+[
+        'mock>=1.1.1',
+        'nose',
+        ],
+    test_suite='nose.collector',
     packages=find_packages(),
     package_data={'intelmq': [
         'conf/*.conf',

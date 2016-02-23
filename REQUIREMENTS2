@@ -1,6 +1,5 @@
 dnspython==1.12.0
 ipaddress==1.0.16
-mock==1.3.0
 ndg-httpsclient==0.4.0
 psutil==2.1.1
 pyasn1==0.1.9
