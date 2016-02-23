@@ -9,7 +9,6 @@ but has a valid Harmonization configuration.
 from __future__ import unicode_literals
 
 import json
-import sys
 import unittest
 
 import mock
@@ -17,15 +16,13 @@ import pkg_resources
 import six
 
 import intelmq.lib.exceptions as exceptions
-import intelmq.lib.utils as utils
+from intelmq.lib.utils import load_configuration
 
-# utils.load_configuration
-CONF = pkg_resources.resource_filename('intelmq',
-                                       'conf/harmonization.conf')
+CONF = pkg_resources.resource_filename('intelmq', 'etc/harmonization.conf')
 
 
 def mocked_config(configuration_filepath):
-    return utils.load_configuration(CONF)
+    return load_configuration(CONF)
 with mock.patch('intelmq.lib.utils.load_configuration', new=mocked_config):
     import intelmq.lib.message as message  # nopep8
 
@@ -49,10 +46,21 @@ class TestMessageFactory(unittest.TestCase):
         """
         Checks sequences for same content, regardless of order.
         """
-        if sys.version_info[0] == 2:
+        if six.PY2:
             self.assertItemsEqual(expected, actual)
         else:
             self.assertCountEqual(expected, actual)
+
+    def assertDictContainsSubset(self, actual, expected):
+        """
+        Checks whether expected is a subset of actual.
+
+        https://docs.python.org/3/whatsnew/3.2.html?highlight=assertdictcontainssubset
+
+        http://stackoverflow.com/a/21058312/2851664
+        cc by-sa 3.0 John1024
+        """
+        self.assertTrue(set(expected.items()).issubset(set(actual.items())))
 
     def add_report_examples(self, report):
         report.add('feed.name', 'Example')

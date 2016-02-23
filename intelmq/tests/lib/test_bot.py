@@ -41,7 +41,7 @@ def mocked_config(bot_id='', src_name='', dst_names=(),
                     "testing": True,
                     }
         elif conf_file.startswith('/opt/intelmq/etc/'):
-            confname = os.path.join('conf/', os.path.split(conf_file)[-1])
+            confname = os.path.join('etc/', os.path.split(conf_file)[-1])
             fname = pkg_resources.resource_filename('intelmq',
                                                     confname)
             with open(fname, 'rt') as fpconfig:
