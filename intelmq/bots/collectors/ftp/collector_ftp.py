@@ -33,7 +33,7 @@ class FTPCollectorBot(Bot):
                      port=self.parameters.ftp_port)
         if hasattr(self.parameters, 'ftp_username') \
                 and hasattr(self.parameters, 'ftp_password'):
-            ftps.login(user=self.parameters.ftp_username,
+            ftp.login(user=self.parameters.ftp_username,
                        passwd=self.parameters.ftp_password)
         cwd = '/'
         if hasattr(self.parameters, 'ftp_directory'):
@@ -44,8 +44,9 @@ class FTPCollectorBot(Bot):
             ftp.retrbinary("RETR " + self.parameters.ftp_file, mem.write)
         else:
             files = ftp.nlst(cwd)
-            if files.count() > 0:
+            if files:
                 #retrieve the last file in the directory
+                self.logger.info('Retrieving file: ' + files[-1])
                 ftp.retrbinary("RETR " + files[-1], mem.write)
             else:
                 self.logger.error("No file found, terminating download")
