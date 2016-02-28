@@ -24,7 +24,10 @@ from intelmq.lib.harmonization import DateTime
 from intelmq.lib.message import Report
 
 
-# https://stackoverflow.com/questions/12164470/python-ftp-implicit-tls-connection-issue
+# BEGIN content from Stack Overflow
+# Original question: https://stackoverflow.com/questions/12164470/python-ftp-implicit-tls-connection-issue
+# Question author (Martin Prikryl): https://stackoverflow.com/users/850848/martin-prikryl
+# Answer author (Grzegorz Wierzowiecki): https://stackoverflow.com/users/544721/grzegorz-wierzowiecki
 class FTPS(FTP_TLS):
     def __init__(self, host='', user='', passwd='', acct='', keyfile=None,
                  certfile=None, timeout=60):
@@ -39,18 +42,16 @@ class FTPS(FTP_TLS):
         if timeout != -999:
             self.timeout = timeout
 
-        try:
-            self.sock = socket.create_connection((self.host, self.port),
-                                                 self.timeout)
-            self.af = self.sock.family
-            self.sock = ssl.wrap_socket(self.sock, self.keyfile, self.certfile,
-                                        ssl_version=ssl.PROTOCOL_TLSv1)
-            self.file = self.sock.makefile('rb')
-            self.welcome = self.getresp()
-        except Exception as e:
-            print e
-        return self.welcome
+        self.sock = socket.create_connection((self.host, self.port),
+                                             self.timeout)
+        self.af = self.sock.family
+        self.sock = ssl.wrap_socket(self.sock, self.keyfile, self.certfile,
+                                    ssl_version=ssl.PROTOCOL_TLSv1)
+        self.file = self.sock.makefile('rb')
+        self.welcome = self.getresp()
 
+        return self.welcome
+# END content from Stack Overflow
 
 class FTPSCollectorBot(Bot):
     def process(self):
@@ -88,11 +89,9 @@ class FTPSCollectorBot(Bot):
             report = Report()
             report.add("raw", raw_report, sanitize=True)
             report.add("feed.name", self.parameters.feed, sanitize=True)
-            report.add("feed.url", self.parameters.ftps_host + ':' +
+            report.add("feed.url", 'ftps://' + self.parameters.ftps_host + ':' +
                        str(self.parameters.ftps_port), sanitize=True)
             report.add("feed.accuracy", self.parameters.accuracy, sanitize=True)
-            time_observation = DateTime().generate_datetime_now()
-            report.add('time.observation', time_observation, sanitize=True)
             self.send_message(report)
 
 if __name__ == "__main__":
