@@ -90,8 +90,8 @@ class GenericCsvParserBot(Bot):
                         value = type_translation[value]
 
                 except:
-                    self.logger.exception('Encountered error while parsing'
-                                          'line in csv file, ignoring.')
+                    self.logger.debug('Encountered error while parsing line in'
+                                      ' csv file, ignoring this row: ' + row)
                     continue
                 event.add(key, value)
 
