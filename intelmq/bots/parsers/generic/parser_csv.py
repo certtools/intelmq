@@ -85,13 +85,15 @@ class GenericCsvParserBot(Bot):
                     elif key.endswith('.url') and '://' not in value:
                         value = self.parameters.default_url_protocol + value
                     elif key in ["classification.type"] and type_translation:
-                        # values without translation will raise an exception
-                        # and will be dropped
-                        value = type_translation[value]
+                        if value in type_translation:
+                            value = type_translation[value]
+                        elif not hasattr(self.parameters, 'type'):
+                            continue
 
                 except:
-                    self.logger.debug('Encountered error while parsing line in'
-                                      ' csv file, ignoring this row: ' + row)
+                    self.logger.warning('Encountered error while parsing line'
+                                        ' in csv file, ignoring this row: ' +
+                                        repr(row))
                     continue
                 event.add(key, value)
 
