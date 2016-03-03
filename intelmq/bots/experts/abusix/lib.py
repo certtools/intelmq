@@ -16,7 +16,7 @@ class Abusix():
     def query(ip):
 
         if harmonization.IPAddress.version(ip) == 6:
-            addr = ipaddress.ip_address(u'2001:500:88:200::7').exploded
+            addr = ipaddress.ip_address(ip).exploded
             rev = '.'.join(reversed(addr.replace(':', '')))
         else:
             rev = '.'.join(reversed(ip.split('.')))
