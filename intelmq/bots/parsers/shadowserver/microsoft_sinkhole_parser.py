@@ -29,11 +29,6 @@ sic [UNDOCUMENTED]
 from __future__ import unicode_literals
 
 import sys
-if sys.version_info[0] == 2:
-    import unicodecsv as csv
-else:
-    import csv
-import io
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
@@ -50,35 +45,32 @@ class ShadowServerMicrosoftSinkholeParserBot(Bot):
             return
 
         raw_report = utils.base64_decode(report["raw"])
-        rows = csv.DictReader(io.StringIO(raw_report))
-
-        for row in rows:
+        for row in utils.csv_reader(raw_report, dictreader=True):
             event = Event(report)
             extra = {}
             self.logger.debug(repr(row))
 
-            event.add('time.source', row['timestamp']+' UTC', sanitize=True)
-            event.add('source.ip', row['ip'], sanitize=True)
-            event.add('source.asn', row['asn'], sanitize=True)
-            event.add('source.geolocation.cc', row['geo'], sanitize=True)
+            event.add('time.source', row['timestamp']+' UTC')
+            event.add('source.ip', row['ip'])
+            event.add('source.asn', row['asn'])
+            event.add('source.geolocation.cc', row['geo'])
             if row['http_host'] and row['url']:
-                event.add('destination.url', row['http_host']+row['url'],
-                          sanitize=True)
+                event.add('destination.url', row['http_host']+row['url'])
             elif row['url']:
                 extra['url'] = row['url']  # incomplete URL
-            event.add('malware.name', row['type'], sanitize=True)
+            event.add('malware.name', row['type'])
             if row['http_agent']:
                 extra['http_agent'] = row['http_agent']
             if row['tor']:
-                event.add('source.tor_node', row['tor'], sanitize=True)
-            event.add('source.port', row['src_port'], sanitize=True)
+                event.add('source.tor_node', row['tor'])
+            event.add('source.port', row['src_port'])
             if row['p0f_genre']:
                 extra['os.name'] = row['p0f_genre']
             if row['p0f_detail']:
                 extra['os.version'] = row['p0f_detail']
             if row['hostname']:
-                event.add('source.reverse_dns', row['hostname'], sanitize=True)
-            event.add('destination.port', row['dst_port'], sanitize=True)
+                event.add('source.reverse_dns', row['hostname'])
+            event.add('destination.port', row['dst_port'])
             if row['http_host']:
                 extra['http_host'] = row['http_host']
             if row['http_referer'] not in ['', 'null']:
@@ -88,21 +80,19 @@ class ShadowServerMicrosoftSinkholeParserBot(Bot):
             if row['http_referer_geo']:
                 extra['http_referer_geo'] = row['http_referer_geo']
             if row['dst_ip']:
-                event.add('destination.ip', row['dst_ip'], sanitize=True)
+                event.add('destination.ip', row['dst_ip'])
             if row['dst_asn']:
-                event.add('destination.asn', row['dst_asn'], sanitize=True)
+                event.add('destination.asn', row['dst_asn'])
             if row['dst_geo']:
-                event.add('destination.geolocation.cc', row['dst_geo'],
-                          sanitize=True)
+                event.add('destination.geolocation.cc', row['dst_geo'])
             if int(row['naics']):
                 extra['naics'] = int(row['naics'])
             if int(row['sic']):
                 extra['sic'] = int(row['sic'])
 
-            event.add('raw', '"'+','.join(map(str, row.items()))+'"',
-                      sanitize=True)
+            event.add('raw', '"'+','.join(map(str, row.items()))+'"')
             if extra:
-                event.add('extra', extra, sanitize=True)
+                event.add('extra', extra)
             event.add('classification.type', 'botnet drone')
             event.add('protocol.application', 'http')
 

@@ -37,7 +37,7 @@ class DshieldBlockParserBot(Bot):
             self.acknowledge_message()
             return
 
-        raw_report = utils.base64_decode(report.value("raw"))
+        raw_report = utils.base64_decode(report.get("raw"))
 
         for row in raw_report.split('\n'):
 
@@ -45,7 +45,7 @@ class DshieldBlockParserBot(Bot):
 
             if row.startswith("#") or len(row) == 0 or row.startswith('Start'):
                 if 'updated' in row:
-                    time_str = row[row.find(': ')+2:]
+                    time_str = row[row.find(': ') + 2:]
                     time = dateutil.parser.parse(time_str).isoformat()
                 continue
 
@@ -71,12 +71,12 @@ class DshieldBlockParserBot(Bot):
                 event['source.abuse_contact'] = values[6]
 
             if extra:
-                event.add('extra', extra, sanitize=True)
+                event.add('extra', extra)
 
-            event.add('time.source', time, sanitize=True)
-            event.add('source.network', network, sanitize=True)
+            event.add('time.source', time)
+            event.add('source.network', network)
             event.add('classification.type', 'blacklist')
-            event.add("raw", row, sanitize=True)
+            event.add("raw", row)
 
             self.send_message(event)
         self.acknowledge_message()

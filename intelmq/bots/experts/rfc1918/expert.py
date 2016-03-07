@@ -64,7 +64,7 @@ class RFC1918ExpertBot(Bot):
         for field, policy in zip(self.fields, self.policy):
             if field not in event:
                 continue
-            value = event.value(field)
+            value = event.get(field)
             if field.endswith('.ip'):
                 check = any(is_in_net(value, iprange) for iprange in NETWORKS)
             elif field.endswith('.fqdn'):

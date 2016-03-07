@@ -11,9 +11,7 @@ INTELMQ_MANAGER_REPO="https://github.com/certtools/intelmq-manager.git"
 function intelmq_install {
 	#Install Dependencies
 	apt-get update
-	apt-get -y install python-pip git build-essential python-dev redis-server python-zmq python-pycurl
-	#Requires for installing pyzmq with accelaration
-	apt-get -y install libzmq3-dev
+	apt-get -y install python-pip git build-essential python-dev redis-server python-pycurl
     #Dependencies for pyhton REQUIREMENTS
     apt-get -y install libcurl4-gnutls-dev
 

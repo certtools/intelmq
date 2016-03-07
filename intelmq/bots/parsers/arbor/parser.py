@@ -16,7 +16,7 @@ class ArborParserBot(Bot):
             self.acknowledge_message()
             return
 
-        raw_report = utils.base64_decode(report.value("raw"))
+        raw_report = utils.base64_decode(report.get("raw"))
         for row in raw_report.split('\n'):
             row = row.strip()
 
@@ -26,13 +26,13 @@ class ArborParserBot(Bot):
             event = Event(report)
 
             event.add('classification.type', u'brute-force')
-            event.add("raw", row, sanitize=True)
+            event.add("raw", row)
 
             columns = ["source.ip"]
             row = row.split()
 
             for key, value in zip(columns, row):
-                event.add(key, value, sanitize=True)
+                event.add(key, value)
 
             self.send_message(event)
         self.acknowledge_message()

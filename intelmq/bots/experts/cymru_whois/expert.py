@@ -36,7 +36,7 @@ class CymruExpertBot(Bot):
             if not event.contains(ip_key):
                 continue
 
-            ip = event.value(ip_key)
+            ip = event.get(ip_key)
             ip_version = IPAddress.version(ip)
             ip_integer = IPAddress.to_int(ip)
 
@@ -61,8 +61,7 @@ class CymruExpertBot(Bot):
                 self.cache.set(cache_key, result_json)
 
             for result_key, result_value in result.items():
-                event.add(key % result_key, result_value, sanitize=True,
-                          force=True)
+                event.add(key % result_key, result_value, force=True)
 
         self.send_message(event)
         self.acknowledge_message()

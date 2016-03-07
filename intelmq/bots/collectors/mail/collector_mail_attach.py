@@ -6,7 +6,6 @@ import zipfile
 
 import imbox
 from intelmq.lib.bot import Bot
-from intelmq.lib.harmonization import DateTime
 from intelmq.lib.message import Report
 
 
@@ -46,13 +45,9 @@ class MailAttachCollectorBot(Bot):
                             raw_report = attach['content'].read()
 
                         report = Report()
-                        report.add("raw", raw_report, sanitize=True)
-                        report.add("feed.name", self.parameters.feed,
-                                   sanitize=True)
-                        report.add("feed.accuracy", self.parameters.accuracy, sanitize=True)
-                        time_observation = DateTime().generate_datetime_now()
-                        report.add('time.observation', time_observation,
-                                   sanitize=True)
+                        report.add("raw", raw_report)
+                        report.add("feed.name", self.parameters.feed)
+                        report.add("feed.accuracy", self.parameters.accuracy)
 
                         self.send_message(report)
 

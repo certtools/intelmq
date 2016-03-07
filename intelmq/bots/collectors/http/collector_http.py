@@ -19,7 +19,6 @@ import io
 import zipfile
 
 from intelmq.lib.bot import Bot
-from intelmq.lib.harmonization import DateTime
 from intelmq.lib.message import Report
 
 # SNI Workaround for Python 2:
@@ -74,19 +73,17 @@ class HTTPCollectorBot(Bot):
         except zipfile.BadZipfile:
             raw_reports.append(resp.text)
         else:
-            self.logger.info('Downloaded zip file, extracting following files: '
-                             + ', '.join(zfp.namelist()))
+            self.logger.info('Downloaded zip file, extracting following files:'
+                             ' ' + ', '.join(zfp.namelist()))
             for filename in zfp.namelist():
                 raw_reports.append(zfp.read(filename))
 
         for raw_report in raw_reports:
             report = Report()
-            report.add("raw", raw_report, sanitize=True)
-            report.add("feed.name", self.parameters.feed, sanitize=True)
-            report.add("feed.url", self.parameters.http_url, sanitize=True)
-            report.add("feed.accuracy", self.parameters.accuracy, sanitize=True)
-            time_observation = DateTime().generate_datetime_now()
-            report.add('time.observation', time_observation, sanitize=True)
+            report.add("raw", raw_report)
+            report.add("feed.name", self.parameters.feed)
+            report.add("feed.url", self.parameters.http_url)
+            report.add("feed.accuracy", self.parameters.accuracy)
             self.send_message(report)
 
 

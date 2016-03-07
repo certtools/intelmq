@@ -14,11 +14,11 @@ class HpHostsParserBot(Bot):
         report = self.receive_message()
 
         if (report is None or not report.contains("raw") or
-                len(report.value("raw").strip()) == 0):
+                len(report.get("raw").strip()) == 0):
             self.acknowledge_message()
             return
 
-        raw_report = utils.base64_decode(report.value("raw"))
+        raw_report = utils.base64_decode(report.get("raw"))
 
         for row in raw_report.split('\n'):
             row = row.strip()
@@ -39,13 +39,13 @@ class HpHostsParserBot(Bot):
 
             event = Event(report)
 
-            if IPAddress.is_valid(values[1], sanitize=True):
-                event.add("source.ip", values[1], sanitize=True)
+            if IPAddress.is_valid(values[1]):
+                event.add("source.ip", values[1])
             else:
-                event.add("source.fqdn", values[1], sanitize=True)
+                event.add("source.fqdn", values[1])
 
             event.add('classification.type', u'blacklist')
-            event.add("raw", row, sanitize=True)
+            event.add("raw", row)
 
             self.send_message(event)
         self.acknowledge_message()

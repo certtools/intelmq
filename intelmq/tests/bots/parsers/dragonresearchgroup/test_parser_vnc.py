@@ -51,9 +51,9 @@ class TestDragonResearchGroupVNCParserBot(test.BotTestCase, unittest.TestCase):
     """
 
     @classmethod
-    def set_bot(self):
-        self.bot_reference = DragonResearchGroupVNCParserBot
-        self.default_input_message = {'__type': 'Report'}
+    def set_bot(cls):
+        cls.bot_reference = DragonResearchGroupVNCParserBot
+        cls.default_input_message = {'__type': 'Report'}
 
     def test_events(self):
         """ Test if correct Events have been produced. """

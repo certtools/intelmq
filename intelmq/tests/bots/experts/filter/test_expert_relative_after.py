@@ -21,10 +21,10 @@ class TestFilterExpertBot(test.BotTestCase, unittest.TestCase):
     """
 
     @classmethod
-    def set_bot(self):
-        self.bot_reference = FilterExpertBot
-        self.input_message = EXAMPLE_INPUT
-        self.sysconfig = {'not_after': '1 month'}
+    def set_bot(cls):
+        cls.bot_reference = FilterExpertBot
+        cls.input_message = EXAMPLE_INPUT
+        cls.sysconfig = {'not_after': '1 month'}
 
     def test_Relative_After(self):
         self.run_bot()

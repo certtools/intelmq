@@ -6,6 +6,12 @@ from __future__ import unicode_literals
 import traceback
 
 
+__all__ = ['InvalidArgument', 'ConfigurationError', 'IntelMQException',
+           'IntelMQHarmonizationException', 'InvalidKey', 'InvalidValue',
+           'KeyExists', 'KeyNotExists', 'PipelineError',
+           ]
+
+
 class IntelMQException(Exception):
 
     def __init__(self, message):
