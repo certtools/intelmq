@@ -67,30 +67,6 @@ setup(
     include_package_data=True,
     url='https://github.com/certtools/intelmq/',
     license='AGPLv3',
-    data_files=[
-                ('/opt/intelmq/etc/', [
-                                   'intelmq/bots/BOTS',
-                                   'intelmq/conf/defaults.conf',
-                                   'intelmq/conf/harmonization.conf',
-                                   'intelmq/conf/pipeline.conf',
-                                   'intelmq/conf/runtime.conf',
-                                   'intelmq/conf/squelcher.conf',
-                                   'intelmq/conf/startup.conf',
-                                   'intelmq/conf/system.conf',
-                                  ],
-                 ),
-                ('/opt/intelmq/bin/', [
-                                   'intelmq/bin/intelmqcli',
-                                   'intelmq/bin/intelmqctl',
-                                   'intelmq/bin/intelmqdump',
-                                   'intelmq/bin/intelmq_gen_harm_docs.py',
-                                   'intelmq/bin/intelmq_psql_initdb.py',
-                                  ],
-                 ),
-                ('/opt/intelmq/var/lib/bots/modify/', [
-                                   'intelmq/bots/experts/modify/modify.conf',
-                                  ],
-                 ),
     description='IntelMQ is a solution for CERTs to process data feeds, '
                 'pastebins, tweets throught a message queue.',
     long_description=DESCRIPTION,
