@@ -226,10 +226,14 @@ WHERE
         {evtab}.rtir_incident_id IS NULL OR
         {evtab}.rtir_investigation_id IS NULL
     ) AND
+    (
+        {evtab}."source.geolocation.cc" LIKE '{cc}' OR
+        {evtab}."source.fqdn" LIKE %s
+    ) AND
     {conttab}.contacts = %s AND
     "feed.name" ILIKE %s AND
     "time.source" IS NOT NULL;
-""".format(evtab=CONFIG['database']['events_table'],
+""".format(evtab=CONFIG['database']['events_table'], cc=CONFIG['filter']['cc'],
            conttab=CONFIG['database']['contacts_table'])
 
 QUERY_BY_ASNUM = """
@@ -296,10 +300,14 @@ WHERE
         {evtab}.rtir_incident_id IS NULL OR
         {evtab}.rtir_investigation_id IS NULL
     ) AND
+    (
+        {evtab}."source.geolocation.cc" LIKE '{cc}' OR
+        {evtab}."source.fqdn" LIKE %s
+    ) AND
     {evtab}."source.asn" = %s AND
     "feed.name" ILIKE %s AND
     "time.source" IS NOT NULL;
-""".format(evtab=CONFIG['database']['events_table'],
+""".format(evtab=CONFIG['database']['events_table'], cc=CONFIG['filter']['cc'],
            conttab=CONFIG['database']['contacts_table'])
 
 
