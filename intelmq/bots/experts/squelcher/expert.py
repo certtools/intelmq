@@ -83,7 +83,7 @@ class SquelcherExpertBot(Bot):
                                             event['classification.identifier'],
                                             event['source.ip']))
         except (psycopg2.InterfaceError, psycopg2.InternalError,
-                psycopg2.OperationError, AttributeError):
+                psycopg2.OperationalError, AttributeError):
             self.logger.exception('Cursor has been closed, connecting again.')
             self.init()
         else:
