@@ -410,11 +410,11 @@ def getTerminalHeight():
 
 def query_by_as(contact, requestor=None, automatic=False, feed='%'):
     if type(contact) is int:
-        CUR.execute(QUERY_BY_ASNUM, (contact, CONFIG['filter']['fqdn'], feed))
+        CUR.execute(QUERY_BY_ASNUM, (CONFIG['filter']['fqdn'], contact, feed))
         if requestor is None:
             requestor = ''
     else:
-        CUR.execute(QUERY_BY_ASCONTACT, (contact, CONFIG['filter']['fqdn'], feed))
+        CUR.execute(QUERY_BY_ASCONTACT, (CONFIG['filter']['fqdn'], contact, feed))
         if requestor is None:
             requestor = contact
     query = shrink_dict(CUR.fetchall())
