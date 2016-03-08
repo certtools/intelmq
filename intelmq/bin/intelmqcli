@@ -233,7 +233,7 @@ WHERE
     {conttab}.contacts = %s AND
     "feed.name" ILIKE %s AND
     "time.source" IS NOT NULL;
-""".format(evtab=CONFIG['database']['events_table'],
+""".format(evtab=CONFIG['database']['events_table'], cc=CONFIG['filter']['cc'],
            conttab=CONFIG['database']['contacts_table'])
 
 QUERY_BY_ASNUM = """
@@ -307,7 +307,7 @@ WHERE
     {evtab}."source.asn" = %s AND
     "feed.name" ILIKE %s AND
     "time.source" IS NOT NULL;
-""".format(evtab=CONFIG['database']['events_table'],
+""".format(evtab=CONFIG['database']['events_table'], cc=CONFIG['filter']['cc'],
            conttab=CONFIG['database']['contacts_table'])
 
 
