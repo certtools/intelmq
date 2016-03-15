@@ -1,8 +1,20 @@
 # -*- coding: utf-8 -*-
+"""
+Generic CSV parser
+
+Parameters:
+columns: string
+delimiter: string
+default_url_protocol: string
+type: string
+type_translation: string
+
+"""
 from __future__ import unicode_literals
 import sys
 from dateutil.parser import parse
 import re
+import json
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
@@ -19,6 +31,9 @@ class GenericCsvParserBot(Bot):
             return
 
         columns = self.parameters.columns
+        type_translation = None
+        if hasattr(self.parameters, 'type_translation'):
+            type_translation = json.loads(self.parameters.type_translation)
 
         raw_report = utils.base64_decode(report.get("raw"))
         # ignore lines starting with #
@@ -69,13 +84,22 @@ class GenericCsvParserBot(Bot):
                             '[1-9]?\d)){3}))|:)))(%.+)?').match(value).group()
                     elif key.endswith('.url') and '://' not in value:
                         value = self.parameters.default_url_protocol + value
+                    elif key in ["classification.type"] and type_translation:
+                        if value in type_translation:
+                            value = type_translation[value]
+                        elif not hasattr(self.parameters, 'type'):
+                            continue
+
                 except:
-                    self.logger.exception('Encountered error while parsing'
-                                          'line in csv file, ignoring.')
+                    self.logger.warning('Encountered error while parsing line'
+                                        ' in csv file, ignoring this row: ' +
+                                        repr(row))
                     continue
                 event.add(key, value)
 
-            event.add('classification.type', self.parameters.type)
+            if hasattr(self.parameters, 'type')\
+                    and not event.contains("classification.type"):
+                event.add('classification.type', self.parameters.type)
             event.add("raw", ",".join(row))
 
             self.send_message(event)
