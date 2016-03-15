@@ -330,7 +330,7 @@ def csv_reader(csv_data, dialect=csv.excel, dictreader=False, **kwargs):
     Reads data from given string and parses as utf8.
     Only needed for Legcay Python, version 2.
     """
-    if six.PY2 == 2:
+    if six.PY2:
         if unicodecsv is None:
             raise ValueError('Module unicodecsv is not available.')
         if dictreader:
