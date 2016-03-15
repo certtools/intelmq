@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 
+import sys
 import json
+from __future__ import unicode_literals
+
 from sleekxmpp import ClientXMPP
 from sleekxmpp.exceptions import IqError, IqTimeout
-from intelmq.lib.bot import Bot, sys
+from intelmq.lib.bot import Bot
 
 
 class XMPPCollectorBot(Bot):
@@ -25,7 +28,7 @@ class XMPPCollectorBot(Bot):
         self.logger.info("Disconnected")
 
 
-class XMPPBot(ClientXMPP):
+class XMPPOutputBot(ClientXMPP):
 
     def __init__(self, jid, password, send_message, logger):
         ClientXMPP.__init__(self, jid, password)

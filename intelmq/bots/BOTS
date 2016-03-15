@@ -72,16 +72,6 @@
                 "rate_limit": "3600"
             }
         },
-        "XMPP collector": {
-            "module": "intelmq.bots.collectors.xmpp.collector",
-            "description": "XMPP collector is the bot responsible to get events from xmpp server",
-            "parameters": {
-                "rate_limit": "3600",
-                "xmpp_user": "xmpp username",
-                "xmpp_server": "xmpp server",
-                "xmpp_password": "xmpp password"
-            }
-        },
         "Arbor": {
             "description": "Arbor Collector is the bot responsible to get the report from source of information.",
             "module": "intelmq.bots.collectors.http.collector_http",
@@ -588,6 +578,16 @@
                 "http_url": "http://vxvault.siri-urz.net/URL_List.php",
                 "rate_limit": 3600
             }
+        },
+        "XMPP collector": {
+            "description": "XMPP collector is the bot responsible to get events from xmpp server",
+            "module": "intelmq.bots.collectors.xmpp.collector",
+            "parameters": {
+                "rate_limit": "3600",
+                "xmpp_password": "xmpp password",
+                "xmpp_server": "xmpp server",
+                "xmpp_user": "xmpp username"
+            }
         }
     },
     "Expert": {
@@ -773,11 +773,11 @@
             "description": "XMPP is the bot responsible to send events to an XMPP server.",
             "module": "intelmq.bots.outputs.xmpp.output",
             "parameters": {
-                "xmpp_user": "xmpp username",
-                "xmpp_server": "xmpp server",
                 "xmpp_password": "xmpp password",
+                "xmpp_server": "xmpp server",
+                "xmpp_to_server": "destination server",
                 "xmpp_to_user": "destination username",
-                "xmpp_to_server": "destination server"
+                "xmpp_user": "xmpp username"
             }
         }
     },
