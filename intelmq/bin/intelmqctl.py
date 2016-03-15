@@ -159,7 +159,7 @@ class IntelMQContoller():
         self.logger = logger
 
         APPNAME = "intelmqctl"
-        VERSION = pkg_resources.get_distribution("acrylamid").version
+        VERSION = pkg_resources.get_distribution("intelmq").version
         DESCRIPTION = """
         description: intelmqctl is the tool to control intelmq system.
 
