@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
+"""
+format:
+ponmocup-malware-IP ponmocup-malware-domain ponmocup-malware-URI-path ponmocup-htaccess-infected-domain
+"""
 from __future__ import unicode_literals
 
 import sys
+import dateutil.parser
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
@@ -9,6 +14,10 @@ from intelmq.lib.message import Event
 
 
 class DynParserBot(Bot):
+
+    def init(self):
+        self.TZOFFSETS = {'PST': -8*60*60,
+                          'PDT': -7*60*60}
 
     def process(self):
         report = self.receive_message()
@@ -18,26 +27,27 @@ class DynParserBot(Bot):
             return
 
         raw_report = utils.base64_decode(report.get("raw"))
+        source_time = None
 
-        for row in raw_report.split('\n'):
+        for row in raw_report.splitlines():
+            if row.startswith("# last updated:"):
+                source_time = dateutil.parser.parse(row[row.find(':')+1:],
+                                                    tzinfos=self.TZOFFSETS)
+                source_time = source_time.isoformat()
+                continue
             if row.startswith('#'):
                 continue
 
-            if (row.startswith("date started:") or
-                    row.startswith("date finished:")):
-                continue
-
-            splitted_row = row.split("-->")
-            if splitted_row[0] == '':
-                continue
-
-            infected_fqdn = splitted_row[0].split("checking domain:")[1]
-            compromised_url = splitted_row[1].split("seems to be INFECTED:")[1]
+            row_split = row.split()
 
             event_infected = Event(report)
+            event_infected.add('time.source', source_time)
             event_infected.add('classification.type', 'malware')
-            event_infected.add('source.fqdn', infected_fqdn)
-            event_infected.add('destination.url', compromised_url)
+            if row_split[0] != '/':
+                event_infected.add('source.ip', row_split[0])
+            event_infected.add('source.fqdn', row_split[1])
+            event_infected.add('source.url', row_split[2])
+            event_infected.add('destination.fqdn', row_split[3])
             event_infected.add('event_description.text',
                                'has malicious code redirecting to malicious '
                                'host')
@@ -46,8 +56,13 @@ class DynParserBot(Bot):
             self.send_message(event_infected)
 
             event_compromised = Event(report)
+            event_compromised.add('time.source', source_time)
             event_compromised.add('classification.type', 'compromised')
-            event_compromised.add('source.url', compromised_url)
+            if row_split[0] != '/':
+                event_compromised.add('destination.ip', row_split[0])
+            event_compromised.add('destination.fqdn', row_split[1])
+            event_compromised.add('destination.url', row_split[2])
+            event_compromised.add('source.fqdn', row_split[3])
             event_compromised.add('event_description.text',
                                   'host has been compromised and has '
                                   'malicious code infecting users')
