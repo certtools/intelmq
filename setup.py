@@ -37,6 +37,9 @@ DATA = [
      ['intelmq/bots/experts/modify/modify.conf',
       ],
      ),
+    ('/opt/intelmq/var/log/',
+     [],
+     ),
 ]
 
 try:
