@@ -42,12 +42,20 @@ class FTPCollectorBot(Bot):
                              self.parameters.ftp_directory)
             cwd = self.parameters.ftp_directory
         ftp.cwd(cwd)
+
+        filemask = '*'
+        if hasattr(self.parameters, 'ftp_file'):
+            self.logger.info('Setting filemask to to: ' +
+                             self.parameters.ftp_file)
+            filemask = self.parameters.ftp_file
+
         mem = io.BytesIO()
-        files = fnmatch.filter(ftp.nlst(), self.parameters.ftp_file)
+        files = fnmatch.filter(ftp.nlst(), filemask)
         self.logger.info('Found following files in the directory: ' +
                          repr(files))
         self.logger.info('Looking for latest file matching following pattern: '
-                         + self.parameters.ftp_file)
+                         + filemask)
+
         if files:
             self.logger.info('Retrieving file: ' + files[-1])
             ftp.retrbinary("RETR " + files[-1], mem.write)

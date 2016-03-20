@@ -18,6 +18,7 @@ import socket
 import ssl
 import zipfile
 import io
+import fnmatch
 
 from intelmq.lib.bot import Bot
 from intelmq.lib.harmonization import DateTime
@@ -75,12 +76,20 @@ class FTPSCollectorBot(Bot):
                              self.parameters.ftps_directory)
             cwd = self.parameters.ftps_directory
         ftps.cwd(cwd)
+
+        filemask = '*'
+        if hasattr(self.parameters, 'ftps_file'):
+            self.logger.info('Setting filemask to to: ' +
+                             self.parameters.ftps_file)
+            filemask = self.parameters.ftps_file
+
         mem = io.BytesIO()
-        files = fnmatch.filter(ftps.nlst(), self.parameters.ftps_file)
+        files = fnmatch.filter(ftps.nlst(), filemask)
         self.logger.info('Found following files in the directory: ' +
                          repr(files))
         self.logger.info('Looking for latest file matching following pattern: '
-                         + self.parameters.ftps_file)
+                         + filemask)
+
         if files:
             self.logger.info('Retrieving file: ' + files[-1])
             ftps.retrbinary("RETR " + files[-1], mem.write)
