@@ -16,6 +16,7 @@ from ftplib import FTP
 import socket
 import zipfile
 import io
+import fnmatch
 
 from intelmq.lib.bot import Bot
 from intelmq.lib.harmonization import DateTime
@@ -37,20 +38,22 @@ class FTPCollectorBot(Bot):
                        passwd=self.parameters.ftp_password)
         cwd = '/'
         if hasattr(self.parameters, 'ftp_directory'):
+            self.logger.info('Changing working directory to: ' +
+                             self.parameters.ftp_directory)
             cwd = self.parameters.ftp_directory
         ftp.cwd(cwd)
         mem = io.BytesIO()
-        if hasattr(self.parameters, 'ftp_file'):
-            ftp.retrbinary("RETR " + self.parameters.ftp_file, mem.write)
+        files = fnmatch.filter(ftp.nlst(), self.parameters.ftp_file)
+        self.logger.info('Found following files in the directory: ' +
+                         repr(files))
+        self.logger.info('Looking for latest file matching following pattern: '
+                         + self.parameters.ftp_file)
+        if files:
+            self.logger.info('Retrieving file: ' + files[-1])
+            ftp.retrbinary("RETR " + files[-1], mem.write)
         else:
-            files = ftp.nlst(cwd)
-            if files:
-                #retrieve the last file in the directory
-                self.logger.info('Retrieving file: ' + files[-1])
-                ftp.retrbinary("RETR " + files[-1], mem.write)
-            else:
-                self.logger.error("No file found, terminating download")
-                return
+            self.logger.error("No file found, terminating download")
+            return
 
         self.logger.info("Report downloaded.")
 

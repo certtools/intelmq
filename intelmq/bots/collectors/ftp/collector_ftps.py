@@ -25,6 +25,7 @@ from intelmq.lib.message import Report
 
 
 # BEGIN content from Stack Overflow
+# cc by-sa 3.0
 # Original question: https://stackoverflow.com/questions/12164470/python-ftp-implicit-tls-connection-issue
 # Question author (Martin Prikryl): https://stackoverflow.com/users/850848/martin-prikryl
 # Answer author (Grzegorz Wierzowiecki): https://stackoverflow.com/users/544721/grzegorz-wierzowiecki
@@ -67,10 +68,25 @@ class FTPSCollectorBot(Bot):
             ftps.login(user=self.parameters.ftps_username,
                        passwd=self.parameters.ftps_password)
         ftps.prot_p()
+
+        cwd = '/'
         if hasattr(self.parameters, 'ftps_directory'):
-            ftps.cwd(self.parameters.ftps_directory)
+            self.logger.info('Changing working directory to: ' +
+                             self.parameters.ftps_directory)
+            cwd = self.parameters.ftps_directory
+        ftps.cwd(cwd)
         mem = io.BytesIO()
-        ftps.retrbinary("RETR " + self.parameters.ftps_file, mem.write)
+        files = fnmatch.filter(ftps.nlst(), self.parameters.ftps_file)
+        self.logger.info('Found following files in the directory: ' +
+                         repr(files))
+        self.logger.info('Looking for latest file matching following pattern: '
+                         + self.parameters.ftps_file)
+        if files:
+            self.logger.info('Retrieving file: ' + files[-1])
+            ftps.retrbinary("RETR " + files[-1], mem.write)
+        else:
+            self.logger.error("No file found, terminating download")
+            return
 
         self.logger.info("Report downloaded.")
 
