@@ -1,55 +1,82 @@
 BEGIN;
 
-
--- Email-Addresses
-CREATE TABLE email (
-    email_id SERIAL PRIMARY KEY,
-    email VARCHAR(80)
+CREATE TABLE organisation (
+    id INTEGER PRIMARY KEY,
+    name VARCHAR(80),
+    comment TEXT
 );
 
-CREATE TABLE asn_contact (
-    asn INTEGER PRIMARY KEY,
-    asn_contact_name VARCHAR(45)
+CREATE TABLE format (
+    id INTEGER PRIMARY KEY,
+    name VARCHAR(80)
 );
 
+CREATE TABLE contact (
+    id INTEGER PRIMARY KEY,
+    email VARCHAR(100),
+    format_id INTEGER,
+    is_manual BOOLEAN,
+    comment TEXT,
 
-CREATE TABLE nm_email_asn (
-    email_id INTEGER,
-    asn INTEGER,
-    PRIMARY KEY (email_id, asn),
-
-    FOREIGN KEY (email_id) REFERENCES email (email_id),
-    FOREIGN KEY (asn) REFERENCES asn_contact (asn)
+    FOREIGN KEY (format_id) REFERENCES format (id)
 );
 
-
-
-CREATE TABLE cidr_contact (
-    cidr_contact_id SERIAL PRIMARY KEY,
-    cidr_contact_name VARCHAR(45)
-);
-
-CREATE TABLE nm_email_cidr (
-    email_id INTEGER,
-    cidr_contact_id INTEGER,
-    PRIMARY KEY (email_id, cidr_contact_id),
-
-    FOREIGN KEY (email_id) REFERENCES email (email_id),
-    FOREIGN KEY (cidr_contact_id) REFERENCES cidr_contact (cidr_contact_id)
+CREATE TABLE autonomous_system (
+    id INTEGER PRIMARY KEY,
+    name VARCHAR(80),
+    comment TEXT
 );
 
 
-CREATE TABLE cidr (
-    cidr_id SERIAL PRIMARY KEY,
-    cidr cidr,
-    asn INTEGER,
-    cidr_contact_id INTEGER,
-
-    FOREIGN KEY (asn) REFERENCES asn_contact (asn),
-    FOREIGN KEY (cidr_contact_id) REFERENCES cidr_contact (cidr_contact_id)
+CREATE TABLE etype (
+    id INTEGER PRIMARY KEY,
+    name VARCHAR(80)
 );
 
-CREATE INDEX cidr_cidr_idx ON cidr (cidr);
+CREATE TABLE net (
+    id INTEGER PRIMARY KEY,
+    ip_start cidr,
+    ip_end cidr,
+    is_manual BOOLEAN
+);
+CREATE INDEX net_ip_start_idx ON net (ip_start);
+CREATE INDEX net_ip_end_idx ON net (ip_end);
+
+CREATE TABLE template (
+    id INTEGER PRIMARY KEY,
+    path VARCHAR(200),
+    etype_id INTEGER,
+    
+    FOREIGN KEY (etype_id) REFERENCES etype (id)
+);
+
+CREATE TABLE contact_to_asn (
+    id INTEGER PRIMARY KEY,
+    contact_id INTEGER,
+    asn_id INTEGER,
+
+    FOREIGN KEY (asn_id) REFERENCES autonomous_system (id),
+    FOREIGN KEY (contact_id) REFERENCES contact (id)
+);
+
+CREATE TABLE contact_to_net (
+    id INTEGER PRIMARY KEY,
+    contact_id INTEGER,
+    net_id INTEGER,
+
+    FOREIGN KEY (contact_id) REFERENCES contact (id),
+    FOREIGN KEY (net_id) REFERENCES net (id)
+);
+
+CREATE TABLE organisation_to_template (
+    id INTEGER PRIMARY KEY,
+    organisation_id INTEGER,
+    template_id INTEGER,
+
+    FOREIGN KEY (organisation_id) REFERENCES organisation (id),
+    FOREIGN KEY (template_id) REFERENCES template (id)
+);
+
 
 
 COMMIT;
