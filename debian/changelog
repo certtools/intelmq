@@ -1,5 +1,12 @@
+intelmq (1.0.0~dev4~alpha2) UNRELEASED; urgency=low
+
+  * Create user and put everything in place.
+
+ -- Sascha Wilde <wilde@intevation.de>  Thu, 24 Mar 2016 19:03:22 +0100
+
 intelmq (1.0.0~dev4~alpha1) UNRELEASED; urgency=low
 
-  * source package automatically created by stdeb 0.8.5
+  * source package automatically created by stdeb 0.8.5,
+    with a bunch of manual tweeking.
 
  -- Sascha Wilde <wilde@intevation.de>  Wed, 23 Mar 2016 18:44:26 +0000
