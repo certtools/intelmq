@@ -11,7 +11,6 @@ override_dh_auto_build:
 
 override_dh_auto_install:
 	python3 setup.py install --root=debian/intelmq --prefix=/usr
-	dh_install
 	mv debian/intelmq/opt/intelmq/etc/examples/* debian/intelmq/opt/intelmq/etc/
 	rmdir debian/intelmq/opt/intelmq/etc/examples
 	mkdir -p debian/intelmq/opt/intelmq/var/log
