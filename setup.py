@@ -40,6 +40,9 @@ DATA = [
     ('/opt/intelmq/var/log/',
      [],
      ),
+    ('/opt/intelmq/var/lib/bots/file-output/',
+     [],
+     ),
 ]
 
 try:
