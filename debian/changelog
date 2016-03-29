@@ -1,3 +1,9 @@
+intelmq (1.0.0~dev4~alpha3) experimental; urgency=low
+
+  * Added dependencies.
+
+ -- Sascha Wilde <wilde@intevation.de>  Tue, 29 Mar 2016 10:52:00 +0200
+
 intelmq (1.0.0~dev4~alpha2) UNRELEASED; urgency=low
 
   * Create user and put everything in place.
