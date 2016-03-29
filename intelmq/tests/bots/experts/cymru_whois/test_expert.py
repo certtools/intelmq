@@ -48,7 +48,7 @@ UNICODE_OUTPUT = {"__type": "Event",
                                          " Comunica\xe7\xe3o Ltda.,BR",
                   "destination.geolocation.cc": "BR",
                   "destination.asn": 28333,
-                  "destination.network": "186.226.224.0/20",
+                  "destination.network": "186.226.224.0/21",
                   }
 
 
