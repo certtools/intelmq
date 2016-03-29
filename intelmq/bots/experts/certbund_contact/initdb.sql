@@ -47,10 +47,8 @@ CREATE TABLE contact (
 
 -- An autonomous system
 CREATE TABLE autonomous_system (
-    id INTEGER PRIMARY KEY,
-
     -- The atonomous system number
-    number INTEGER,
+    number INTEGER PRIMARY KEY,
 
     -- Whether this autonomous system tuple is maintained manually.
     is_manual BOOLEAN,
@@ -121,7 +119,7 @@ CREATE TABLE contact_to_asn (
     asn_id INTEGER,
     ttl INTEGER,
 
-    FOREIGN KEY (asn_id) REFERENCES autonomous_system (id),
+    FOREIGN KEY (asn_id) REFERENCES autonomous_system (number),
     FOREIGN KEY (contact_id) REFERENCES contact (id)
 );
 
