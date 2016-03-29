@@ -147,6 +147,17 @@ CREATE TABLE contact_to_fqdn (
     FOREIGN KEY (fqdn_id) REFERENCES fqdn (id)
 );
 
+
+CREATE TABLE contact_to_organisation (
+    contact_id INTEGER,
+    organisation_id INTEGER,
+
+    PRIMARY KEY (contact_id, organisation_id),
+
+    FOREIGN KEY (contact_id) REFERENCES contact (id),
+    FOREIGN KEY (organisation_id) REFERENCES organisation (id)
+);
+
 CREATE TABLE organisation_to_template (
     id INTEGER PRIMARY KEY,
     organisation_id INTEGER,
