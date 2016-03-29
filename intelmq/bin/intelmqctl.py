@@ -157,6 +157,8 @@ class IntelMQContoller():
         global logger
         logger = utils.log('intelmqctl', log_level='DEBUG')
         self.logger = logger
+        if os.geteuid() == 0:
+            logger.warning('Running intelmq as root is highly discouraged!')
 
         APPNAME = "intelmqctl"
         VERSION = pkg_resources.get_distribution("intelmq").version
