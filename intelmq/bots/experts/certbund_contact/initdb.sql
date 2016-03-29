@@ -114,30 +114,33 @@ CREATE TABLE template (
  Some of them (contact_to_X) carry an additional column TTL
 */
 CREATE TABLE contact_to_asn (
-    id INTEGER PRIMARY KEY,
     contact_id INTEGER,
     asn_id INTEGER,
     ttl INTEGER,
+
+    PRIMARY KEY (contact_id, asn_id),
 
     FOREIGN KEY (asn_id) REFERENCES autonomous_system (number),
     FOREIGN KEY (contact_id) REFERENCES contact (id)
 );
 
 CREATE TABLE contact_to_network (
-    id INTEGER PRIMARY KEY,
     contact_id INTEGER,
     net_id INTEGER,
     ttl INTEGER,
+
+    PRIMARY KEY (contact_id, net_id),
 
     FOREIGN KEY (contact_id) REFERENCES contact (id),
     FOREIGN KEY (net_id) REFERENCES network (id)
 );
 
 CREATE TABLE contact_to_fqdn (
-    id INTEGER PRIMARY KEY,
     contact_id INTEGER,
     fqdn_id INTEGER,
     ttl INTEGER,
+
+    PRIMARY KEY (contact_id, fqdn_id),
 
     FOREIGN KEY (contact_id) REFERENCES contact (id),
     FOREIGN KEY (fqdn_id) REFERENCES fqdn (id)
