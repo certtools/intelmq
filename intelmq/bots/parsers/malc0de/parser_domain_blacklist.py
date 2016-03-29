@@ -16,7 +16,7 @@ class Malc0deDomainBlacklistParserBot(Bot):
             self.acknowledge_message()
             return
 
-        raw_report = utils.base64_decode(report.value("raw"))
+        raw_report = utils.base64_decode(report.get("raw"))
 
         for row in raw_report.split('\n'):
 
@@ -27,8 +27,8 @@ class Malc0deDomainBlacklistParserBot(Bot):
             event = Event(report)
 
             event.add('classification.type', u'malware')
-            event.add('source.fqdn', row.split(" ")[1], sanitize=True)
-            event.add('raw', row, sanitize=True)
+            event.add('source.fqdn', row.split(" ")[1])
+            event.add('raw', row)
 
             self.send_message(event)
         self.acknowledge_message()

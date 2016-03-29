@@ -41,9 +41,9 @@ class TaxonomyExpertBot(Bot):
 
         if (not event.contains("classification.taxonomy") and
                 event.contains("classification.type")):
-            event_type = event.value("classification.type")
+            event_type = event.get("classification.type")
             taxonomy = TAXONOMY[event_type]
-            event.add("classification.taxonomy", taxonomy, sanitize=True)
+            event.add("classification.taxonomy", taxonomy)
 
         self.send_message(event)
         self.acknowledge_message()

@@ -14,29 +14,37 @@ parse_logline
 from __future__ import unicode_literals
 
 import base64
+import csv
+import io
 import json
 import logging
 import logging.handlers
 import os
 import re
-import six
 import sys
 
+import six
 from intelmq import DEFAULT_LOGGING_PATH
 
+try:
+    import unicodecsv
+except ImportError:
+    unicodecsv = None
 
-__all__ = ['decode', 'encode', 'base64_encode', 'base64_decode',
-           'load_configuration', 'load_parameters', 'log', 'reverse_readline',
-           'parse_logline']
+
+__all__ = ['base64_decode', 'base64_encode', 'decode', 'encode',
+           'load_configuration', 'load_parameters', 'log', 'parse_logline',
+           'reverse_readline',
+           ]
 
 # Used loglines format
 LOG_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 LOG_FORMAT_STREAM = '%(name)s: %(message)s'
 
 # Regex for parsing the above LOG_FORMAT
-LOG_REGEX = (r'^(?P<asctime>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d+) -'
-             r' (?P<name>[-\w]+) - '
-             r'(?P<levelname>[A-Z]+) - '
+LOG_REGEX = (r'^(?P<date>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d+) -'
+             r' (?P<bot_id>[-\w]+) - '
+             r'(?P<log_level>[A-Z]+) - '
              r'(?P<message>.+)$')
 
 
@@ -126,8 +134,12 @@ def base64_decode(value):
     Returns
     -------
     retval : unicode string
+
+    Notes
+    -----
+    Possible bytes - unicode conversions problems are ignored.
     """
-    return decode(base64.b64decode(encode(value)))
+    return decode(base64.b64decode(encode(value, force=True)), force=True)
 
 
 def base64_encode(value):
@@ -140,8 +152,12 @@ def base64_encode(value):
     Returns
     -------
     retval : unicode string
+
+    Notes
+    -----
+    Possible bytes - unicode conversions problems are ignored.
     """
-    return decode(base64.b64encode(encode(value)))
+    return decode(base64.b64encode(encode(value, force=True)), force=True)
 
 
 def load_configuration(configuration_filepath):
@@ -185,7 +201,7 @@ def load_parameters(*configs):
 
 
 def log(name, log_path=DEFAULT_LOGGING_PATH, log_level="DEBUG", stream=None,
-        syslog=False):
+        syslog=None):
     """
     Returns a logger instance logging to file and sys.stderr or other stream.
 
@@ -247,36 +263,32 @@ def log(name, log_path=DEFAULT_LOGGING_PATH, log_level="DEBUG", stream=None,
     return logger
 
 
-def reverse_readline(filename, buf_size=8192):
-    """a generator that returns the lines of a file in reverse order
-    http://stackoverflow.com/a/23646049/2851664"""
-    with open(filename) as handle:
-        segment = None
-        offset = 0
-        handle.seek(0, os.SEEK_END)
-        total_size = remaining_size = handle.tell()
-        while remaining_size > 0:
-            offset = min(total_size, offset + buf_size)
-            handle.seek(-offset, os.SEEK_END)
-            buf = handle.read(min(remaining_size, buf_size))
-            remaining_size -= buf_size
-            lines = buf.split('\n')
-            # the first line of the buffer is probably not a complete line so
-            # we'll save it and append it to the last line of the next buffer
-            # we read
-            if segment is not None:
-                # if the previous chunk starts right from the beginning of line
-                # do not concact the segment to the last line of new chunk
-                # instead, yield the segment first
-                if buf[-1] is not '\n':
-                    lines[-1] += segment
-                else:
-                    yield segment
-            segment = lines[0]
-            for index in range(len(lines) - 1, 0, -1):
-                if len(lines[index]):
-                    yield lines[index]
-        yield segment
+def reverse_readline(filename, buf_size=100000):
+    """
+    https://github.com/certtools/intelmq/issues/393#issuecomment-154041996
+
+    """
+    with open(filename) as qfile:
+        qfile.seek(0, os.SEEK_END)
+        position = totalsize = qfile.tell()
+        line = ''
+        number = 0
+        if buf_size < position:
+            qfile.seek(totalsize - buf_size - 1)
+            char = qfile.read(1)
+            while char != '\n':
+                char = qfile.read(1)
+            number = totalsize - buf_size
+        while position >= number:
+            qfile.seek(position)
+            next_char = qfile.read(1)
+            if next_char == "\n":
+                yield line[::-1]
+                line = ''
+            else:
+                line += next_char
+            position -= 1
+        yield line[::-1]
 
 
 def parse_logline(logline):
@@ -290,14 +302,37 @@ def parse_logline(logline):
     Returns:
     --------
     result : dict
-        dictionary with keys: ['message', 'name', 'levelname', 'asctime']
+        dictionary with keys: ['date', 'bot_id', 'log_level', 'message']
     """
 
     match = re.match(LOG_REGEX, logline)
-    result = {}
-    fields = ("asctime", "name", "levelname", "message")
+    fields = ("date", "bot_id", "log_level", "message")
 
-    if match:
-        result = dict(list(zip(fields, match.group(*fields))))
+    try:
+        return dict(list(zip(fields, match.group(*fields))))
+    except AttributeError:
+        return logline
 
-    return result
+
+def csv_reader(csv_data, dialect=csv.excel, dictreader=False, **kwargs):
+    """
+    Reads data from given string and parses as utf8.
+    Only needed for Legcay Python, version 2.
+    """
+    if sys.version_info[0] == 2:
+        if unicodecsv is None:
+            raise ValueError('Module unicodecsv is not available.')
+        if dictreader:
+            for row in unicodecsv.DictReader(io.BytesIO(csv_data), **kwargs):
+                yield row
+        else:
+            for row in unicodecsv.reader(io.BytesIO(encode(csv_data)),
+                                         **kwargs):
+                yield row
+    else:
+        if dictreader:
+            for row in csv.DictReader(io.StringIO(csv_data), **kwargs):
+                yield row
+        else:
+            for row in csv.reader(io.StringIO(csv_data), **kwargs):
+                yield row

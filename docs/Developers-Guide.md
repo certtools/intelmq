@@ -29,6 +29,14 @@ How do you test if things are easy? Let them new programmers test-drive your fea
 
 Similarly, if code does not get accepted upstream by the main developers, it is usually only because of the ease-of-use argument. Do not give up , go back to the drawing board, and re-submit again.
 
+## Installation
+
+Install intelmq with `pip -e`, which gives you a so called *editable* installation. All changed files in the local copy are directly changed in the local installation too!
+
+    pip install -e .
+
+If you do any changes on setup.py, data files (e.g. example configurations), you need to run `pip install -eU .` of course.
+
 ## Testing
 
 All changes have to be tested and new contributions must must be accompanied by according tests. You can run the tests by changing to the directory with intelmq repository and running either `unittest` or `nosetests`:
@@ -55,7 +63,7 @@ look pretty. Therefore, we do not check for the error messages given in the .pep
 * Each internal object in IntelMQ (Event, Report, etc) that has strings, their strings MUST be in UTF-8 Unicode format.
 * Any data received from external sources MUST be transformed into UTF-8 unicode format before add it to IntelMQ objects.
 
-Inside the pipeline it may be necessary to convert to bytes (ASCII). Conversion back to UTF-8 is automatically done when data is brought back to Python. This is the case for Redis and ZeroMQ pipeline implementations.
+Inside the pipeline it may be necessary to convert to bytes (ASCII). Conversion back to UTF-8 is automatically done when data is brought back to Python. This is the case for Redis pipeline implementation.
 
 ### Back-end independence
 
@@ -87,16 +95,16 @@ intelmq\
   bots\
     collector\
       <bot name>\
-		    collector.py
+            collector.py
     parser\
       <bot name>\
-		    parser.py
+            parser.py
     expert\
       <bot name>\
-		    expert.py
+            expert.py
     output\
       <bot name>\
-		    output.py
+            output.py
     BOTS
   \conf
     pipeline.conf
@@ -252,7 +260,7 @@ ExampleParserBot parses data from example.com.
 Document possible necessary configurations.
 """
 from __future__ import unicode_literals
-import sys  # imports of system libraries
+import sys
 
 # imports for additional libraries and intelmq
 from intelmq.lib.bot import Bot
@@ -267,8 +275,8 @@ class ExampleParserBot(Bot):
 
         event = Event(report)  # copies feed.name, time.observation
         ... # implement the logic here
-		event.add('source.ip', '127.0.0.1')
-        event.add('extra', '{"os.name": "Linux"')
+        event.add('source.ip', '127.0.0.1')
+        event.add('extra', {"os.name": "Linux"})
 
         self.send_message(event)
         self.acknowledge_message()
@@ -303,7 +311,7 @@ class ExampleParserBot(Bot):
         except IOError:
             self.logger.error("pyasn data file does not exist or could not be "
                               "accessed in '%s'." % self.parameters.database)
-            self.logger.error("Read 'bots/experts/asn_lookup/README' and "
+            self.logger.error("Read 'bots/experts/asn_lookup/README.md' and "
                               "follow the procedure.")
             self.stop()
 ```

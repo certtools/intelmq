@@ -21,10 +21,10 @@ class TestFilterExpertBot(test.BotTestCase, unittest.TestCase):
     """
 
     @classmethod
-    def set_bot(self):
-        self.bot_reference = FilterExpertBot
-        self.input_message = EXAMPLE_INPUT
-        self.sysconfig = {'not_before': '2014-01-01T00:00:00+00:00'}
+    def set_bot(cls):
+        cls.bot_reference = FilterExpertBot
+        cls.input_message = EXAMPLE_INPUT
+        cls.sysconfig = {'not_before': '2014-01-01T00:00:00+00:00'}
 
     def test_Absolute_Before(self):
         self.run_bot()

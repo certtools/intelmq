@@ -88,7 +88,10 @@ class TestUtils(unittest.TestCase):
 
             line_format = [line.format(name) for line in LINES['long']]
             for ind, line in enumerate(file_lines):
-                self.assertRegexpMatches(line, line_format[ind])
+                try:
+                    self.assertRegex(line, line_format[ind])
+                except AttributeError:  # Py2
+                    self.assertRegexpMatches(line, line_format[ind])
 
     def test_stream_logger(self):
         """Tests if a logger for a stream can be generated with log()."""
@@ -114,11 +117,21 @@ class TestUtils(unittest.TestCase):
                 "ERROR - Something went wrong")
 
         fields = utils.parse_logline(line)
-        self.assertDictEqual({'asctime': '2015-05-29 21:00:24,379',
-                              'name': 'malware-domain-list-collector',
-                              'levelname': 'ERROR',
+        self.assertDictEqual({'date': '2015-05-29 21:00:24,379',
+                              'bot_id': 'malware-domain-list-collector',
+                              'log_level': 'ERROR',
                               'message': 'Something went wrong'},
                              fields)
+
+    def test_parse_logline_invalid(self):
+        """Tests if the parse_logline() function returns the line. """
+        line = ("    report = self.receive_message()\n  File"
+                " \"/usr/local/lib/python3.4/dist-packages/intelmq-1.0.0"
+                "-py3.4.egg/intelmq/lib/bot.py\", line 259, in"
+                " receive_message")
+
+        actual = utils.parse_logline(line)
+        self.assertEqual(line, actual)
 
 
 if __name__ == "__main__":

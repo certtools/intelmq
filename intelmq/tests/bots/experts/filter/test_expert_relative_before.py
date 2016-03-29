@@ -21,11 +21,11 @@ class TestFilterExpertBot(test.BotTestCase, unittest.TestCase):
     """
 
     @classmethod
-    def set_bot(self):
-        self.bot_reference = FilterExpertBot
-        self.input_message = EXAMPLE_INPUT
+    def set_bot(cls):
+        cls.bot_reference = FilterExpertBot
+        cls.input_message = EXAMPLE_INPUT
         ''' this test will fail in 20 years from now :( '''
-        self.sysconfig = {'not_before': '30 years'}
+        cls.sysconfig = {'not_before': '30 years'}
 
     def test_Relative_Before(self):
         self.run_bot()

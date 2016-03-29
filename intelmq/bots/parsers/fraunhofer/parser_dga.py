@@ -25,7 +25,7 @@ class FraunhoferDGAParserBot(Bot):
             self.acknowledge_message()
             return
 
-        dict_report = json.loads(utils.base64_decode(report.value("raw")))
+        dict_report = json.loads(utils.base64_decode(report.get("raw")))
 
         # add all lists together, only one loop needed
         for row in sum(dict_report.values(), []):
@@ -34,10 +34,10 @@ class FraunhoferDGAParserBot(Bot):
 
             event.add('classification.type', u'c&c')
             try:
-                event.add('source.ip', row, sanitize=True)
+                event.add('source.ip', row)
             except InvalidValue:
-                event.add('source.fqdn', row, sanitize=True)
-            event.add("raw", row, sanitize=True)
+                event.add('source.fqdn', row)
+            event.add("raw", row)
 
             self.send_message(event)
         self.acknowledge_message()

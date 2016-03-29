@@ -13,8 +13,8 @@ from intelmq.lib.bot import Bot
 class FilterExpertBot(Bot):
 
     # number of minutes in time units
-    timespans = {'hour': 60, 'day': 24*60, 'week': 7*24*60,
-                 'month': 30*24*60, 'year': 365*24*60}
+    timespans = {'hour': 60, 'day': 24 * 60, 'week': 7 * 24 * 60,
+                 'month': 30 * 24 * 60, 'year': 365 * 24 * 60}
 
     # parse relative time attributes
     @staticmethod
@@ -23,7 +23,7 @@ class FilterExpertBot(Bot):
             result = re.findall(r'^(\d+)\s+(\w+[^s])s?$', relative_time, re.UNICODE)
         except ValueError as e:
             raise ValueError("Could not apply regex to attribute \"%s\" with exception %s",
-                                 repr(relative_time), repr(e.args))
+                             repr(relative_time), repr(e.args))
         if len(result) == 1 and len(result[0]) == 2 and result[0][1] in FilterExpertBot.timespans:
             return int(result[0][0]) * FilterExpertBot.timespans[result[0][1]]
         else:
@@ -63,7 +63,7 @@ class FilterExpertBot(Bot):
             self.filter = False
         elif hasattr(self.parameters, 'filter_action') and not \
             (self.parameters.filter_action == "drop" or
-            self.parameters.filter_action == "keep"):
+             self.parameters.filter_action == "keep"):
             self.logger.info("Filter_action parameter definition unknown.")
             self.filter = False
 
@@ -81,33 +81,33 @@ class FilterExpertBot(Bot):
         # time based filtering
         if event.contains('time.source'):
             try:
-                event_time = parser.parse(str(event.value('time.source'))).replace(tzinfo=pytz.timezone('UTC'))
+                event_time = parser.parse(str(event.get('time.source'))).replace(tzinfo=pytz.timezone('UTC'))
             except ValueError:
-                self.logger.error("Could not parse time.source " + str(event.value('time.source')))
+                self.logger.error("Could not parse time.source " + str(event.get('time.source')))
             else:
                 if type(self.not_after) is datetime and event_time > self.not_after:
                     self.acknowledge_message()
-                    self.logger.debug("Filtered out event with time.source " + repr(event.value('time.source')))
+                    self.logger.debug("Filtered out event with time.source " + repr(event.get('time.source')))
                     return
                 if type(self.not_before) is datetime and event_time < self.not_before:
                     self.acknowledge_message()
-                    self.logger.debug("Filtered out event with time.source " + repr(event.value('time.source')))
+                    self.logger.debug("Filtered out event with time.source " + repr(event.get('time.source')))
                     return
 
                 now = datetime.now(tz=pytz.timezone('UTC'))
                 if type(self.not_after) is timedelta and event_time > (now - self.not_after):
                     self.acknowledge_message()
-                    self.logger.debug("Filtered out event with time.source " + repr(event.value('time.source')))
+                    self.logger.debug("Filtered out event with time.source " + repr(event.get('time.source')))
                     return
                 if type(self.not_before) is timedelta and event_time < (now - self.not_before):
                     self.acknowledge_message()
-                    self.logger.debug("Filtered out event with time.source " + repr(event.value('time.source')))
+                    self.logger.debug("Filtered out event with time.source " + repr(event.get('time.source')))
                     return
 
         # key/value based filtering
         if self.filter and self.parameters.filter_action == "drop":
             if (event.contains(self.parameters.filter_key) and
-                    event.value(self.parameters.filter_key) ==
+                    event.get(self.parameters.filter_key) ==
                     self.parameters.filter_value):
                 self.acknowledge_message()
                 return
@@ -118,7 +118,7 @@ class FilterExpertBot(Bot):
 
         if self.filter and self.parameters.filter_action == "keep":
             if (event.contains(self.parameters.filter_key) and
-                    event.value(self.parameters.filter_key) ==
+                    event.get(self.parameters.filter_key) ==
                     self.parameters.filter_value):
                 self.send_message(event)
                 self.acknowledge_message()

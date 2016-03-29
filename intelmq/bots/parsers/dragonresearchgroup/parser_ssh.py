@@ -16,7 +16,7 @@ class DragonResearchGroupSSHParserBot(Bot):
             self.acknowledge_message()
             return
 
-        raw_report = utils.base64_decode(report.value("raw"))
+        raw_report = utils.base64_decode(report.get("raw"))
         for row in raw_report.splitlines():
 
             row = row.strip()
@@ -39,13 +39,13 @@ class DragonResearchGroupSSHParserBot(Bot):
                 if value == "NA":
                     continue
 
-                event.add(key, value, sanitize=True)
+                event.add(key, value)
 
             event.add("classification.type", "brute-force")
             event.add("protocol.application", "ssh")
             event.add("protocol.transport", "tcp")
             event.add("destination.port", 22)
-            event.add("raw", row, sanitize=True)
+            event.add("raw", row)
 
             self.send_message(event)
         self.acknowledge_message()

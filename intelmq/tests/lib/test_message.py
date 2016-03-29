@@ -9,6 +9,7 @@ but has a valid Harmonization configuration.
 from __future__ import unicode_literals
 
 import json
+import sys
 import unittest
 
 import intelmq.lib.exceptions as exceptions
@@ -19,7 +20,7 @@ import six
 conf_filename = pkg_resources.resource_filename('intelmq',
                                                 'conf/harmonization.conf')
 harm_config = utils.load_configuration(conf_filename)
-import intelmq.lib.message as message
+import intelmq.lib.message as message  # nopep8
 
 LOREM_BASE64 = 'bG9yZW0gaXBzdW0='
 DOLOR_BASE64 = 'ZG9sb3Igc2l0IGFtZXQ='
@@ -37,16 +38,25 @@ class TestMessageFactory(unittest.TestCase):
     Testing basic functionality of MessageFactory.
     """
 
+    def assertListUnorderdEqual(self, expected, actual):
+        """
+        Checks sequences for same content, regardless of order.
+        """
+        if sys.version_info[0] == 2:
+            self.assertItemsEqual(expected, actual)
+        else:
+            self.assertCountEqual(expected, actual)
+
     def add_report_examples(self, report):
         report.add('feed.name', 'Example')
         report.add('feed.url', URL_SANE)
-        report.add('raw', LOREM_BASE64)
+        report.add('raw', LOREM_BASE64, sanitize=False)
         return report
 
     def add_event_examples(self, event):
         event.add('feed.name', 'Example')
         event.add('feed.url', URL_SANE)
-        event.add('raw', LOREM_BASE64)
+        event.add('raw', LOREM_BASE64, sanitize=False)
         event.add('time.observation', u'2015-01-01T13:37:00+00:00')
         return event
 
@@ -61,6 +71,16 @@ class TestMessageFactory(unittest.TestCase):
         event = message.MessageFactory.unserialize('{"__type": "Event"}')
         self.assertEqual(type(event),
                          message.Event)
+
+    def test_report_init_auto(self):
+        """ Test if serialize does pass auto=True """
+        report = message.Report()
+        self.assertIn('time.observation', report)
+
+    def test_report_serialize_auto(self):
+        """ Test if serialize does pass auto=True """
+        report = message.MessageFactory.unserialize('{"__type": "Report"}')
+        self.assertNotIn('time.observation', report)
 
     def test_report_subclass(self):
         """ Test if MessageFactory returns a Report subclassed from dict. """
@@ -91,20 +111,14 @@ class TestMessageFactory(unittest.TestCase):
     def test_report_add_raw(self):
         """ Test if report can add raw value. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
-        report.add('raw', LOREM_BASE64)
+        report.add('raw', 'lorem ipsum')
         self.assertDictContainsSubset({'raw': LOREM_BASE64},
                                       report)
-
-    def test_report_value(self):
-        """ Test if report return value in value(). """
-        report = message.MessageFactory.unserialize('{"__type": "Report"}')
-        report.add('raw', LOREM_BASE64)
-        self.assertEqual(LOREM_BASE64, report.value('raw'))
 
     def test_report_get(self):
         """ Test if report return value in get(). """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
-        report.add('raw', LOREM_BASE64)
+        report.add('raw', LOREM_BASE64, sanitize=False)
         self.assertEqual(LOREM_BASE64, report.get('raw'))
 
     def test_report_add_invalid(self):
@@ -116,13 +130,13 @@ class TestMessageFactory(unittest.TestCase):
     def test_report_getitem(self):
         """ Test if report return value in __getitem__(). """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
-        report.add('raw', LOREM_BASE64)
+        report.add('raw', LOREM_BASE64, sanitize=False)
         self.assertEqual(LOREM_BASE64, report['raw'])
 
     def test_report_setitem(self):
         """ Test if report sets value in __setitem__(). """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
-        report['raw'] = LOREM_BASE64
+        report['raw'] = 'lorem ipsum'
         self.assertEqual(LOREM_BASE64, report['raw'])
 
     def test_report_ignore_none(self):
@@ -171,8 +185,8 @@ class TestMessageFactory(unittest.TestCase):
     def test_report_add_duplicate_force(self):
         """ Test if report can add raw value. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
-        report.add('raw', LOREM_BASE64)
-        report.add('raw', DOLOR_BASE64, force=True)
+        report.add('raw', LOREM_BASE64, sanitize=False)
+        report.add('raw', DOLOR_BASE64, force=True, sanitize=False)
         self.assertDictContainsSubset({'raw': DOLOR_BASE64},
                                       report)
 
@@ -181,13 +195,6 @@ class TestMessageFactory(unittest.TestCase):
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         report.add('raw', LOREM_BASE64)
         del report['raw']
-        self.assertNotIn('raw', report)
-
-    def test_report_clear(self):
-        """ Test if report can clear a value. """
-        report = message.MessageFactory.unserialize('{"__type": "Report"}')
-        report.add('raw', LOREM_BASE64)
-        report.clear('raw')
         self.assertNotIn('raw', report)
 
     def test_report_asdict(self):
@@ -209,14 +216,14 @@ class TestMessageFactory(unittest.TestCase):
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         for key, value in FEED.items():
             report.add(key, value)
-        self.assertListEqual(list(FEED.items()), list(report.items()))
+        self.assertListUnorderdEqual(list(FEED.items()), list(report.items()))
 
     def test_report_add_byte(self):
         """ Test if report rejects a byte string. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         with self.assertRaises((exceptions.InvalidValue,
                                 TypeError)):
-            report.add('raw', bytes(LOREM_BASE64))
+            report.add('raw', bytes(LOREM_BASE64), sanitize=False)
 
     def test_report_sanitize_url(self):
         """ Test if report sanitizes an URL. """
@@ -278,7 +285,7 @@ class TestMessageFactory(unittest.TestCase):
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         report.add('feed.name', 'Example')
         report.add('feed.url', URL_SANE)
-        report.add('raw', LOREM_BASE64)
+        report.add('raw', LOREM_BASE64, sanitize=False)
         actual = message.MessageFactory.serialize(report)
         expected = ('{"raw": "bG9yZW0gaXBzdW0=", "__type": "Report", "feed.url'
                     '": "https://example.com/", "feed.name": "Example"}')
@@ -293,14 +300,14 @@ class TestMessageFactory(unittest.TestCase):
                          six.text_type(report))
 
     def test_deep_copy_content(self):
-        """ Test if deep_copy does not return the same object. """
+        """ Test if deep_copy does return the same items. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         report = self.add_report_examples(report)
         self.assertSetEqual(set(report.deep_copy().items()),
                             set(report.items()))
 
     def test_deep_copy_items(self):  # TODO: Sort by key
-        """ Test if deep_copy does not return the same object. """
+        """ Test if deep_copy does not return the same objects. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         report = self.add_report_examples(report)
         self.assertNotEqual(set(map(id, report.deep_copy())),
@@ -313,21 +320,21 @@ class TestMessageFactory(unittest.TestCase):
         self.assertIsNot(report.deep_copy(), report)
 
     def test_copy_content(self):
-        """ Test if deep_copy does not return the same object. """
+        """ Test if copy does return the same items. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         report = self.add_report_examples(report)
         self.assertSetEqual(set(report.copy().items()),
                             set(report.items()))
 
     def test_copy_items(self):
-        """ Test if deep_copy does not return the same object. """
+        """ Test if copy does return the same objects. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         report = self.add_report_examples(report)
         self.assertEqual(set(map(id, report.copy())),
                          set(map(id, report)))
 
     def test_copy_object(self):
-        """ Test if deep_copy does not return the same object. """
+        """ Test if copy does not return the same object. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         report = self.add_report_examples(report)
         self.assertIsNot(report.copy(), report)

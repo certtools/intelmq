@@ -14,7 +14,7 @@ class RestAPI(Bot):
         if self.parameters.auth_token_name and self.parameters.auth_token:
             self.session.headers.update(
                 {self.parameters.auth_token_name: self.parameters.auth_token})
-        self.session.headers.update({"content-type" : 
+        self.session.headers.update({"content-type":
                                      "application/json; charset=utf-8"})
 
     def process(self):
@@ -30,9 +30,10 @@ class RestAPI(Bot):
             r.raise_for_status()
         except requests.exceptions.RequestException as e:
             if r:
-                self.logger.error('Event: {0}\nResponse code: {1}\nHeaders: {2}'
-                              '\nResponse body: {3}'
-                              ''.format(event.to_json(), r, r.headers, r.text))
+                self.logger.error('Event: {0}\nResponse code: {1}\nHeaders: '
+                                  '{2}\nResponse body: {3}'
+                                  ''.format(event.to_json(), r, r.headers,
+                                            r.text))
             else:
                 self.logger.error(repr(e))
         self.acknowledge_message()

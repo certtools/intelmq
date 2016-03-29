@@ -49,9 +49,9 @@ class TestDshieldBlockParserBot(test.BotTestCase, unittest.TestCase):
     """
 
     @classmethod
-    def set_bot(self):
-        self.bot_reference = DshieldBlockParserBot
-        self.default_input_message = EXAMPLE_REPORT
+    def set_bot(cls):
+        cls.bot_reference = DshieldBlockParserBot
+        cls.default_input_message = EXAMPLE_REPORT
 
     def test_event(self):
         """ Test if correct Event has been produced. """

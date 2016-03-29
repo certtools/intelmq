@@ -22,11 +22,11 @@ class AlienVaultParserBot(Bot):
     def process(self):
         report = self.receive_message()
         if (report is None or not report.contains("raw") or
-                len(report.value("raw").strip()) == 0):
+                len(report.get("raw").strip()) == 0):
             self.acknowledge_message()
             return
 
-        raw_report = utils.base64_decode(report.value("raw"))
+        raw_report = utils.base64_decode(report.get("raw"))
 
         for row in raw_report.split('\n'):
 
@@ -49,7 +49,7 @@ class AlienVaultParserBot(Bot):
 
                 if ctype.lower() in CLASSIFICATION:
                     event.add('classification.type',
-                              CLASSIFICATION[ctype.lower()], sanitize=True)
+                              CLASSIFICATION[ctype.lower()])
                 else:
                     event.add('classification.type', u"unknown")
 
@@ -59,17 +59,17 @@ class AlienVaultParserBot(Bot):
                         geo_latitude = geo_coordinates[0]
                         geo_longitude = geo_coordinates[1]
 
-                event.add('source.ip', values[0].strip(), sanitize=True)
+                event.add('source.ip', values[0].strip())
                 event.add('source.geolocation.cc',
-                          values[4].strip(), sanitize=True)
+                          values[4].strip())
                 event.add('source.geolocation.city',
-                          values[5].strip(), sanitize=True)
+                          values[5].strip())
                 event.add('source.geolocation.latitude',
-                          geo_latitude.strip(), sanitize=True)
+                          geo_latitude.strip())
                 event.add('source.geolocation.longitude',
-                          geo_longitude.strip(), sanitize=True)
+                          geo_longitude.strip())
 
-                event.add("raw", row, sanitize=True)
+                event.add("raw", row)
 
                 self.send_message(event)
         self.acknowledge_message()
