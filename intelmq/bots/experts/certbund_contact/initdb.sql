@@ -90,16 +90,6 @@ CREATE TABLE fqdn (
 /*
   Classifications of Events/Incidents
 */
-CREATE TABLE classification_taxonomy (
-    id INTEGER PRIMARY KEY,
-    name VARCHAR(100)
-);
-
-CREATE TABLE classification_type (
-    id INTEGER PRIMARY KEY,
-    name VARCHAR(100)
-);
-
 CREATE TABLE classification_identifier (
     id INTEGER PRIMARY KEY,
     name VARCHAR(100)
@@ -164,22 +154,5 @@ CREATE TABLE organisation_to_template (
     FOREIGN KEY (template_id) REFERENCES template (id)
 );
 
-CREATE TABLE classification_type_to_taxonomy (
-    id INTEGER PRIMARY KEY,
-    type_id INTEGER,
-    taxonomy_id INTEGER,
-
-    FOREIGN KEY (taxonomy_id) REFERENCES classification_taxonomy (id),
-    FOREIGN KEY (type_id) REFERENCES classification_type (id)
-);
-
-CREATE TABLE classification_identifier_to_type (
-    id INTEGER PRIMARY KEY,
-    identifier_id INTEGER,
-    type_id INTEGER,
-
-    FOREIGN KEY (identifier_id) REFERENCES classification_identifier (id),
-    FOREIGN KEY (type_id) REFERENCES classification_type (id)
-);
 
 COMMIT;
