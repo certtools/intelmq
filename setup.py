@@ -13,6 +13,7 @@ REQUIRES = [
     'redis>=2.10.3',
     'requests>=2.7.0',
     'six>=1.9.0',
+    'tabulate>=0.7.5',
 ]
 if sys.version_info[0] == 2:
     REQUIRES += ['dnspython>=1.12.0']

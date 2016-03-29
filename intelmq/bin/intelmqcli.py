@@ -1,10 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Implemented workarounds for Python 2.6, postgres 9.1 and old debian packages:
-    own table_from_query() instead of prettytable.from_csv()
-    postgres to_char(time.source, 'TZ') instead of 'OF' (from 9.4 up)
-        This gives the timezone instead of the offset (empty if UTC)
+Implemented workarounds for old packages:
     BytesIO instead of StringIO on Python 2 for csv module
 
 TODO: "feed.name" ILIKE '%' is slow
@@ -19,27 +16,31 @@ import json
 import locale
 import os
 import pprint
-import readline  # hooks into input()
+import readline  # nopep8, hooks into input()
 import subprocess
 import sys
 import tempfile
 import zipfile
 
-import prettytable
 import psycopg2
 import psycopg2.extras
+import psycopg2.extensions
 import six
+import tabulate
 from termstyle import bold, green, inverted, red, reset
 
 import rt
 from intelmq.lib import utils
 
+
+# Use unicode for all input and output
+psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
+psycopg2.extensions.register_type(psycopg2.extensions.UNICODEARRAY)
 """ options """
 dryrun = False
 verbose = False
 compress_csv = False
-boilerplate=None
-
+boilerplate = None
 
 
 if locale.getpreferredencoding() != 'UTF-8':
@@ -347,22 +348,20 @@ QUERY_TEXT_NAMES = "SELECT DISTINCT \"key\" from boilerplates"
 
 
 def get_text(query):
-    types = [row['classification.identifier'] for row in query
-             if 'classification.identifier' in row]
     text = None
-    if boilerplate:
+    text_id = None
+    if boilerplate:  # get id from parameter
         text_id = boilerplate
-    else:
-        text_id = types[0]
-    if len(types) == 1:
+    else:  # get id from type (if only one type present)
+        types = [row['classification.identifier'] for row in query
+                 if 'classification.identifier' in row]
+        if len(types) == 1:
+            text_id = types[0]
+    if text_id:  # get text from db if possible
         CUR.execute(QUERY_GET_TEXT, (text_id, ))
         if CUR.rowcount:
             text = CUR.fetchall()[0]['body']
-
-    if text is None and boilerplate:
-        return red('--text param given, but boilerplate text %s not found!' %text_id)
-
-    if text is None:
+    if not text:  # if all failed, get the default
         CUR.execute(QUERY_GET_TEXT, (CONFIG['database']['default_key'], ))
         if CUR.rowcount:
             text = CUR.fetchall()[0]['body']
@@ -381,14 +380,6 @@ def target_from_row(row):
     for key in keys:
         if key in row:
             return row[key]
-
-
-def table_from_query(query):
-    header = sorted(query[0].keys())
-    table = prettytable.PrettyTable(header)
-    for row in query:
-        table.add_row([row[key] for key in header])
-    return table
 
 
 def shrink_dict(d):
@@ -425,7 +416,7 @@ def query_by_as(contact, requestor=None, automatic=False, feed='%'):
                          date=datetime.datetime.now().strftime('%Y-%m-%d'),
                          asns=', '.join(asns)))
     text = get_text(query)
-    if sys.version_info[0] == 2:
+    if six.PY2:
         csvfile = io.BytesIO()
     else:
         csvfile = io.StringIO()
@@ -436,8 +427,11 @@ def query_by_as(contact, requestor=None, automatic=False, feed='%'):
     writer = csv.DictWriter(csvfile, fieldnames=fieldnames,
                             extrasaction='ignore', lineterminator='\n')
     writer.writeheader()
+    query_unicode = query
+    if six.PY2:
+        query = [{key: utils.encode(val) if type(val) is six.text_type else val for key, val in row.items()} for row in query]
     writer.writerows(query)
-    # note this might contain UTF-8 chars! let's ignore utf-8 errors. sorry. 
+    # note this might contain UTF-8 chars! let's ignore utf-8 errors. sorry.
     attachment_text = utils.decode(csvfile.getvalue(), force=True)
     attachment_lines = attachment_text.splitlines()
 
@@ -449,7 +443,7 @@ To: {to}
 Subject: {subj}
 
 {text}
-'''.format(to=requestor, subj=subject, text=six.text_type(text, encoding='utf8', errors='ignore'))
+'''.format(to=requestor, subj=subject, text=text)
     showed_text_len = showed_text.count('\n')
 
     global TABLE_MODE
@@ -459,17 +453,14 @@ Subject: {subj}
         if len(query) > height:
             with tempfile.NamedTemporaryFile(mode='w+') as handle:
                 handle.write(showed_text + '\n')
-                try:
-                    handle.write(str(prettytable.from_csv(csvfile)))
-                except AttributeError:
-                    handle.write(str(table_from_query(query)))
+                handle.write(tabulate.tabulate(query_unicode, headers='keys',
+                                               tablefmt='psql'))
                 handle.seek(0)
                 subprocess.call(['less', handle.name])
         else:
-            try:
-                print(showed_text, prettytable.from_csv(csvfile), sep='\n')
-            except AttributeError:
-                print(showed_text, table_from_query(query), sep='\n')
+            print(showed_text,
+                  tabulate.tabulate(query_unicode, headers='keys',
+                                    tablefmt='psql'), sep='\n')
     else:
         height = getTerminalHeight() - 4
         if 5 + len(query) > height:  # cut query too, 5 is length of text
@@ -526,7 +517,7 @@ Subject: {subj}
     else:
         header = attachment_lines[0]
         for id_, attach_line, row in zip(ids, attachment_lines[1:], query):
-            if sys.version_info[0] == 2:
+            if six.PY2:
                 csvfile = io.BytesIO()
             else:
                 csvfile = io.StringIO()
@@ -561,9 +552,6 @@ def save_to_rt(ids, subject, requestor, csvfile, body):
     if dryrun:
         print('Not writing to RT, dry-run selected.')
         return
-
-    b = six.text_type(body, encoding='utf8', errors='ignore')
-    body = b
 
     report_id = RT.create_ticket(Queue='Incident Reports', Subject=subject,
                                  Owner=CONFIG['rt']['user'])
@@ -630,20 +618,19 @@ def count_by_asn(feed='%'):
     if not asn_count:
         print('No incidents!')
         exit(0)
-    print('=' * 100)
-    table = prettytable.PrettyTable(map(bold, ['id', 'n°', 'ASNs', 'contacts',
-                                               'types', 'feeds']))
-    table.align = 'l'
+    headers = map(bold, ['id', 'n°', 'ASNs', 'contacts', 'types', 'feeds'])
+    tabledata = []
     for number, row in enumerate(asn_count):
-        table.add_row([number, row['count'], row['asn'], row['contacts'],
-                       row['classification'], row['feeds']])
-    print(table.get_string(border=False, padding_width=1))
+        tabledata.append([number, row['count'], row['asn'], row['contacts'],
+                          row['classification'], row['feeds']])
+    print(tabulate.tabulate(tabledata, headers=headers, tablefmt='psql'))
 
     print('{} incidents for {} contacts.'
           ''.format(sum((row['count'] for row in asn_count)), len(asn_count)))
     return asn_count
 
-if __name__ == '__main__':
+
+def main():
     parser = argparse.ArgumentParser(
         prog=APPNAME,
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -666,6 +653,7 @@ if __name__ == '__main__':
                         help='Do not store anything or change anything. Just simulate.')
     args = parser.parse_args()
 
+    global verbose, dryrun, compress_csv, boilerplate
     if args.verbose:
         verbose = True
     if args.dry_run:
@@ -738,3 +726,6 @@ if __name__ == '__main__':
             raise
     finally:
         RT.logout()
+
+if __name__ == '__main__':
+    main()

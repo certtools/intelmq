@@ -9,5 +9,6 @@ redis>=2.10.3
 requests>=2.7.0
 setuptools>=0.9
 six>=1.9
+tabulate==0.7.5
 unicodecsv>=0.14.1
 wheel>=0.21
