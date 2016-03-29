@@ -168,4 +168,38 @@ CREATE TABLE organisation_to_template (
 );
 
 
+
+-- Type for a single notification
+CREATE TYPE notification AS (
+    email VARCHAR(100),
+    organisation VARCHAR(80),
+    template_path VARCHAR(200),
+    format_name VARCHAR(80),
+    ttl INTEGER
+);
+
+-- Lookup all notifications for a given IP address and event
+-- classification identifier
+CREATE OR REPLACE FUNCTION
+notifications_for_ip(ip INET, event_classification VARCHAR(100))
+RETURNS SETOF notification
+AS $$
+BEGIN
+    RETURN QUERY
+    SELECT c.email, o.name, t.path, f.name, cn.ttl
+      FROM organisation o
+      JOIN contact_to_organisation co ON o.id = co.organisation_id
+      JOIN contact c ON c.id = co.contact_id
+      JOIN contact_to_network cn ON cn.contact_id = c.id
+      JOIN network n ON cn.net_id = n.id
+      JOIN organisation_to_template ot ON ot.organisation_id = o.id
+      JOIN template t ON ot.template_id = t.id
+      JOIN classification_identifier ci ON ci.id = t.id
+      JOIN format f ON c.format_id = f.id
+     WHERE n.address >> ip
+       AND ci.name = event_classification;
+END;
+$$ LANGUAGE plpgsql VOLATILE;
+
+
 COMMIT;
