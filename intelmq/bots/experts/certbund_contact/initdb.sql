@@ -60,14 +60,15 @@ CREATE TABLE autonomous_system (
 -- A network
 CREATE TABLE network (
     id INTEGER PRIMARY KEY,
-    ip_start cidr, -- Why CIDR ?
-    ip_end cidr, -- Why CIDR ?
+
+    -- Network address as CIDR.
+    address cidr,
+
+    -- Whether this network tuple is maintained manually.
     is_manual BOOLEAN,
+
     comment TEXT
 );
--- Indices on IPs
-CREATE INDEX net_ip_start_idx ON network (ip_start);
-CREATE INDEX net_ip_end_idx ON network (ip_end);
 
 
 -- A fully qualified domain name
