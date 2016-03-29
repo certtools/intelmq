@@ -53,8 +53,6 @@ class CERTBundKontaktExpertBot(Bot):
         self.logger.debug("Calling receive_message")
         event = self.receive_message()
 
-        self.logger.debug("Calling received message: %r", event)
-
         if event is None:
             self.acknowledge_message()
             return
