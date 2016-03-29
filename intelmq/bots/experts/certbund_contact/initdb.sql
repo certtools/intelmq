@@ -1,28 +1,40 @@
 BEGIN;
 
 /*
- Format
- csv, iodef, etc..
+ Supported data formats like csv, iodef, etc.
 */
 CREATE TABLE format (
     id INTEGER PRIMARY KEY,
-    name VARCHAR(80) -- Most likely a WKT or MIME-Type
+
+    -- Most likely a WKT or MIME-Type
+    name VARCHAR(80)
 );
+
 
 /*
   Organisation and Contact
 */
 CREATE TABLE organisation (
     id INTEGER PRIMARY KEY,
+
+    -- The name of the organisation.
     name VARCHAR(80),
     comment TEXT
 );
 
+
 CREATE TABLE contact (
     id INTEGER PRIMARY KEY,
+
+    -- the email-address of the contact
     email VARCHAR(100),
-    format_id INTEGER, -- Which format has to be used for this contact?
-    is_manual BOOLEAN, -- Was the contact added manually? This should be true, then.
+
+    -- The data format to be used in emails sent to this contact.
+    format_id INTEGER,
+
+    -- Whether this contact tuple is maintained manually.
+    is_manual BOOLEAN,
+
     comment TEXT,
 
     FOREIGN KEY (format_id) REFERENCES format (id)
@@ -32,14 +44,22 @@ CREATE TABLE contact (
   Network related tables, such as:
   AS, IP-Ranges, FQDN
 */
+
+-- An autonomous system
 CREATE TABLE autonomous_system (
     id INTEGER PRIMARY KEY,
-    number INTEGER, -- Whe skip the 'AS' here.
+
+    -- The atonomous system number
+    number INTEGER,
+
+    -- Whether this autonomous system tuple is maintained manually.
     is_manual BOOLEAN,
+
     comment TEXT
 );
 
 
+-- A network
 CREATE TABLE network (
     id INTEGER PRIMARY KEY,
     ip_start cidr, -- Why CIDR ?
@@ -52,10 +72,16 @@ CREATE INDEX net_ip_start_idx ON network (ip_start);
 CREATE INDEX net_ip_end_idx ON network (ip_end);
 
 
+-- A fully qualified domain name
 CREATE TABLE fqdn (
     id INTEGER PRIMARY KEY,
-    fqdn TEXT, -- TODO Should an index exist?
+
+    -- The fully qualified domain name
+    fqdn TEXT,
+
+    -- Whether this FQDN-tuple is maintained manually.
     is_manual BOOLEAN,
+
     comment TEXT
 );
 
@@ -84,10 +110,15 @@ CREATE TABLE classification_identifier (
 */
 CREATE TABLE template (
     id INTEGER PRIMARY KEY,
-    path VARCHAR(200),
-    classification_identifier_id INTEGER, -- For which Incident should this template be used?
 
-    FOREIGN KEY (classification_identifier_id) REFERENCES classification_identifier (id)
+    -- File-name of the template
+    path VARCHAR(200),
+
+    -- The classification identifier for which this template can be used.
+    classification_identifier_id INTEGER,
+
+    FOREIGN KEY (classification_identifier_id)
+     REFERENCES classification_identifier (id)
 );
 
 /*
