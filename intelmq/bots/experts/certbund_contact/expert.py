@@ -61,6 +61,10 @@ class CERTBundKontaktExpertBot(Bot):
             ip = event.get(section + ".ip")
             self.logger.debug("Calling key %r: %r", section + ".ip", ip)
             contact = self.lookup_ip(ip)
+            if contact is None:
+                # stop processing the message because an error occurred
+                # during the database query
+                return
             if contact:
                 contact = ",".join(contact)
                 key = section + ".abuse_contact"
@@ -75,12 +79,19 @@ class CERTBundKontaktExpertBot(Bot):
 
     def lookup_ip(self, ip):
         self.logger.debug("Looking up ip: %r", ip)
-        cur = self.con.cursor()
         try:
-            cur.execute(SELECT_EMAIL_FROM_IP, {"ip": ip})
-            return [item[0] for item in cur.fetchall()]
-        finally:
-            cur.close()
+            cur = self.con.cursor()
+            try:
+                cur.execute(SELECT_EMAIL_FROM_IP, {"ip": ip})
+                return [item[0] for item in cur.fetchall()]
+            finally:
+                cur.close()
+        except psycopg2.OperationalError:
+            # probably a connection problem. Reconnect and try again, once.
+            self.logger.exception("OperationalError. Trying to reconnect.")
+            self.init()
+            return None
+
 
 
 if __name__ == "__main__":
