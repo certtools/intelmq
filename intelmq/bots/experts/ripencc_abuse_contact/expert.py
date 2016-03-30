@@ -36,7 +36,7 @@ class RIPENCCExpertBot(Bot):
             asn_key = key + "asn"
 
             ip = event.get(ip_key, None)
-            abuse = (event.get(abuse_key.split(',')) if abuse_key in event
+            abuse = (event.get(abuse_key).split(',') if abuse_key in event
                      else [])
             asn = event.get(asn_key, None)
             if self.query_db_asn and asn:
@@ -48,7 +48,7 @@ class RIPENCCExpertBot(Bot):
             if self.query_stat_ip and ip:
                 abuse.extend(lib.query_ripestat(ip))
 
-            event.add(abuse_key, ','.join(set(abuse)), force=True)
+            event.add(abuse_key, ','.join(filter(None, set(abuse))), force=True)
 
         self.send_message(event)
         self.acknowledge_message()
