@@ -1,30 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import sys
+import json
 
 import psycopg2
 
 from intelmq.lib.bot import Bot
-
-
-SELECT_EMAIL_FROM_IP = """\
-WITH
-  cidrs (cidr_contact_id, asn)
-    AS (SELECT c.cidr_contact_id, c.asn
-          FROM cidr c
-         WHERE c.cidr >> %(ip)s),
-  emails_cidr (email)
-    AS (SELECT e.email
-          FROM cidrs c
-          JOIN nm_email_cidr ec ON ec.cidr_contact_id = c.cidr_contact_id
-          JOIN email e ON e.email_id = ec.email_id),
-  emails_asn (email)
-    AS (SELECT e.email
-          FROM cidrs c
-          JOIN nm_email_asn ea ON ea.asn = c.asn
-          JOIN email e ON e.email_id = ea.email_id)
-SELECT email FROM emails_cidr UNION SELECT email from emails_asn;
-"""
 
 
 class CERTBundKontaktExpertBot(Bot):
@@ -59,31 +40,38 @@ class CERTBundKontaktExpertBot(Bot):
 
         for section in ["source", "destination"]:
             ip = event.get(section + ".ip")
-            self.logger.debug("Calling key %r: %r", section + ".ip", ip)
-            contact = self.lookup_ip(ip)
-            if contact is None:
+            classification = event.get("event.classification.identifier")
+            notifications = self.lookup_ip(ip, classification)
+            if notifications is None:
                 # stop processing the message because an error occurred
                 # during the database query
                 return
-            if contact:
-                contact = ",".join(contact)
-                key = section + ".abuse_contact"
-                if key in event:
-                    old_value = event[key]
-                    event.update(key, old_value + ',' + contact)
-                else:
-                    event.add(key, contact)
+            if notifications:
+                self.set_certbund_field(event, "notify_" + section,
+                                        notifications)
+
 
         self.send_message(event)
         self.acknowledge_message()
 
-    def lookup_ip(self, ip):
-        self.logger.debug("Looking up ip: %r", ip)
+    def set_certbund_field(self, event, key, value):
+        if "extra" in event:
+            extra = json.loads(event["extra"])
+        else:
+            extra = {}
+        certbund = extra.setdefault("certbund", {})
+        certbund[key] = value
+        event.add("extra", extra, force=True)
+
+    def lookup_ip(self, ip, classification):
+        self.logger.debug("Looking up ip: %r, classification: %r",
+                          ip, classification)
         try:
             cur = self.con.cursor()
             try:
-                cur.execute(SELECT_EMAIL_FROM_IP, {"ip": ip})
-                return [item[0] for item in cur.fetchall()]
+                cur.execute("SELECT * FROM notifications_for_ip(%s, %s);",
+                            (ip, classification))
+                raw_result = cur.fetchall()
             finally:
                 cur.close()
         except psycopg2.OperationalError:
@@ -91,6 +79,11 @@ class CERTBundKontaktExpertBot(Bot):
             self.logger.exception("OperationalError. Trying to reconnect.")
             self.init()
             return None
+
+        return [dict(email=email, organisation=organisation,
+                     template_path=template_path, format=format, ttl=ttl)
+                for (email, organisation, template_path, format, ttl)
+                in raw_result]
 
 
 

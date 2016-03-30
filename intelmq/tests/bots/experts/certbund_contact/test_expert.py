@@ -20,10 +20,20 @@ EXAMPLE_INPUT = {"__type": "Event",
 
 EXAMPLE_OUTPUT = {"__type": "Event",
                   "source.ip": "192.168.42.23",
-                  "source.abuse_contact": "foo@example.com",
                   "destination.ip": "192.168.42.47",
-                  "destination.abuse_contact": "foo@example.com",
-                  "time.observation": "2016-02-26T10:11:12+00:00"
+                  "time.observation": "2016-02-26T10:11:12+00:00",
+                  'extra': ('{"certbund": {'
+                            '"notify_destination": ['
+                            '{"email": "foo@example.com",'
+                            ' "format": "CSV", "organisation": "Acme",'
+                            ' "template_path": "/usr/local/templates/default",'
+                            ' "ttl": 3600}], '
+                            '"notify_source": ['
+                            '{"email": "foo@example.com",'
+                            ' "format": "CSV", "organisation": "Acme",'
+                            ' "template_path": "/usr/local/templates/default",'
+                            ' "ttl": 3600}]'
+                            '}}'),
                   }
 
 class CERTBundKontaktMockDBExpertBot(CERTBundKontaktExpertBot):
@@ -33,10 +43,14 @@ class CERTBundKontaktMockDBExpertBot(CERTBundKontaktExpertBot):
     def connect_to_database(self):
         pass
 
-    def lookup_ip(self, ip):
+    def lookup_ip(self, ip, classification):
         if ip.startswith("192.168.42."):
-            return ["foo@example.com"]
-        return None
+            return [dict(email="foo@example.com",
+                         organisation="Acme",
+                         template_path="/usr/local/templates/default",
+                         format="CSV",
+                         ttl=3600)]
+        return []
 
 
 class TestCERTBundKontaktMockDBExpertBot(test.BotTestCase, unittest.TestCase):
