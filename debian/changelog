@@ -1,3 +1,10 @@
+intelmq (1.0.0~dev4~beta1) experimental; urgency=low
+
+  * Add more dependencies, to make more bots work.
+  * As automatic tests are looking good, lets call it a beta...
+
+ -- Sascha Wilde <wilde@intevation.de>  Thu, 31 Mar 2016 11:24:11 +0200
+
 intelmq (1.0.0~dev4~alpha3) experimental; urgency=low
 
   * Added dependencies.
