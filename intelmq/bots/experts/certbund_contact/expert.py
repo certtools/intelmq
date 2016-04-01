@@ -12,6 +12,7 @@ class CERTBundKontaktExpertBot(Bot):
 
     def init(self):
         try:
+            self.logger.debug("Trying to connect to database")
             self.connect_to_database()
         except:
             self.logger.exception("Failed to connect to database")
@@ -27,6 +28,7 @@ class CERTBundKontaktExpertBot(Bot):
                                     user=self.parameters.user,
                                     host=self.parameters.host,
                                     port=self.parameters.port,
+                                    password=self.parameters.password,
                                     sslmode=self.parameters.sslmode)
         self.logger.debug("Connected to PostgreSQL")
 

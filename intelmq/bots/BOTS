@@ -600,7 +600,7 @@
         },
         "CERT-bund Contact Database": {
             "description": "Retrieve CIDR contact information from a PostgreSQL database.",
-            "module": "intelmq.bots.expert.certbund_contact.expert",
+            "module": "intelmq.bots.experts.certbund_contact.expert",
             "parameters": {
                 "database": "contactdb",
                 "host": "localhost",

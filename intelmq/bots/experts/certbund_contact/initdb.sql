@@ -48,7 +48,7 @@ CREATE TABLE contact (
 -- An autonomous system
 CREATE TABLE autonomous_system (
     -- The atonomous system number
-    number INTEGER PRIMARY KEY,
+    number BIGINT PRIMARY KEY,
 
     -- Whether this autonomous system tuple is maintained manually.
     is_manual BOOLEAN,
@@ -116,7 +116,7 @@ CREATE TABLE template (
 */
 CREATE TABLE contact_to_asn (
     contact_id INTEGER,
-    asn_id INTEGER,
+    asn_id BIGINT,
     ttl INTEGER,
 
     PRIMARY KEY (contact_id, asn_id),
