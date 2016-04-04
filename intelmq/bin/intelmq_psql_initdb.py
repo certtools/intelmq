@@ -30,7 +30,7 @@ def main():
     for field in DATA.keys():
         value = DATA[field]
 
-        if value['type'] in ('String', 'Base64', 'URL', 'FQDN', 'JSON',
+        if value['type'] in ('String', 'Base64', 'URL', 'FQDN',
                              'MalwareName', 'ClassificationType'):
             dbtype = 'varchar({})'.format(value.get('length', 2000))
         elif value['type'] in ('IPAddress', 'IPNetwork'):
@@ -45,6 +45,8 @@ def main():
             dbtype = 'real'
         elif value['type'] == 'UUID':
             dbtype = 'UUID'
+        elif value['type'] == 'JSON':
+            dbtype = 'json'
         else:
             print('Unknow type {!r}, assuming varchar(2000) by default'
                   ''.format(value['type']))
