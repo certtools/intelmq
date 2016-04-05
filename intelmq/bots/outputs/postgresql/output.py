@@ -50,7 +50,7 @@ class PostgreSQLBot(Bot):
             return
 
         keys = '", "'.join(event.keys())
-        values = event.values()
+        values = list(event.values())
         fvalues = len(values) * '%s, '
         query = ('INSERT INTO {table} ("{keys}") VALUES ({values})'
                  ''.format(table=self.table, keys=keys, values=fvalues[:-2]))

@@ -8,6 +8,7 @@ import time
 import shlex
 import inspect
 import psutil
+import pkg_resources
 import signal
 import traceback
 import argparse
@@ -156,9 +157,11 @@ class IntelMQContoller():
         global logger
         logger = utils.log('intelmqctl', log_level='DEBUG')
         self.logger = logger
+        if os.geteuid() == 0:
+            logger.warning('Running intelmq as root is highly discouraged!')
 
         APPNAME = "intelmqctl"
-        VERSION = "0.0.0"
+        VERSION = pkg_resources.get_distribution("intelmq").version
         DESCRIPTION = """
         description: intelmqctl is the tool to control intelmq system.
 

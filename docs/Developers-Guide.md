@@ -31,23 +31,23 @@ Similarly, if code does not get accepted upstream by the main developers, it is 
 
 ## Installation
 
-Install intelmq with `pip -e`, which gives you a so called *editable* installation. All changed files in the local copy are directly changed in the local installation too!
+Install intelmq with `pip -e`, which gives you a so called *editable* installation. No code is copied in the libraries directories, there's just a link to your code.
 
     pip install -e .
 
-If you do any changes on setup.py, data files (e.g. example configurations), you need to run `pip install -eU .` of course.
+If you do any changes on setup.py, data files (e.g. example configurations), you need to run the installation again of course.
 
 ## Testing
 
-All changes have to be tested and new contributions must must be accompanied by according tests. You can run the tests by changing to the directory with intelmq repository and running either `unittest` or `nosetests`:
+All changes have to be tested and new contributions must be accompanied by according tests if possible. You can run the tests by changing to the directory with intelmq repository and running either `unittest` or `nosetests`:
 
     cd intelmq
-    python -m unittest [discover|filename]  # or
+    python -m unittest {discover|filename}  # or
     nosetests [filename]
 
-It may be necessary to switch the user to `intelmq` if the run-path (`/opt/intelmq/var/run/`) is not writeable by the current user. Some bots need local databases to succeed. If you don't mind about those and only want to test one explicit test file, you can give the filepath as argument.
+It may be necessary to switch the user to `intelmq` if the run-path (`/opt/intelmq/var/run/`) is not writeable by the current user. Some bots need local databases to succeed. If you don't mind about those and only want to test one explicit test file, give the filepath as argument.
 
-There is a [Travis-CI](https://travis-ci.org/certtools/intelmq/builds) setup for automatic testing. (-> thx sebix!)
+There is a [Travis-CI](https://travis-ci.org/certtools/intelmq/builds) setup for automatic testing, which triggers on pull requests. You can also easily activate it for your forks.
 
 ## Coding-Rules
 
@@ -55,7 +55,7 @@ In general, we follow the [Style Guide for Python Code (PEP8)](https://www.pytho
 We recommend reading it before committing code.
 
 There are some exceptions: sometimes it does not make sense to check for every PEP8 error (such as whitespace indentation when you want to make a dict=() assignment
-look pretty. Therefore, we do not check for the error messages given in the .pep8 file.
+look pretty. Therefore, we do have some exceptions defined in the `setup.cfg` file.
 
 
 ### Unicode
@@ -63,15 +63,13 @@ look pretty. Therefore, we do not check for the error messages given in the .pep
 * Each internal object in IntelMQ (Event, Report, etc) that has strings, their strings MUST be in UTF-8 Unicode format.
 * Any data received from external sources MUST be transformed into UTF-8 unicode format before add it to IntelMQ objects.
 
-Inside the pipeline it may be necessary to convert to bytes (ASCII). Conversion back to UTF-8 is automatically done when data is brought back to Python. This is the case for Redis pipeline implementation.
-
 ### Back-end independence
 
-Any component of the IntelMQ MUST be independent of the message queue technology (Redis, RabbitMQ, etc...), except `lib/pipeline.py`. Intelmq bots MAY only assume to use the class specified in `lib/pipeline.py` for inter-process or inter-bot communications.
+Any component of the IntelMQ MUST be independent of the message queue technology (Redis, RabbitMQ, etc...), except `lib/pipeline.py`. Intelmq bots MAY only assume to use the class specified in `lib/pipeline.py` and `lib/cache.py` for inter-process or inter-bot communications.
 
 ### Compatibility
 
-IntelMQ core (including intelmqctl) MUST be compatible with IntelMQ Manager, IntelMQ UI and IntelMQ Mailer.
+IntelMQ core (including intelmqctl) MUST be compatible with IntelMQ Manager.
 
 
 ## Event Harmonization
@@ -125,30 +123,15 @@ Example:
 
 ### Directories Hierarchy on Default Installation
 
-Configuration Files Path:
-```
-/opt/intelmq/etc/
-```
-
-PID Files Path:
-```
-/opt/intelmq/var/run/
-```
-
-Logs Files and dumps Path:
-```
-/opt/intelmq/var/log/
-```
-
-Additional Bot Files Path, e.g. templates or databases:
-```
-/opt/intelmq/var/lib/bots/[bot-name]/
-```
+* Configuration Files Path: `/opt/intelmq/etc/`
+* PID Files Path: `/opt/intelmq/var/run/`
+* Logs Files and dumps Path: `/opt/intelmq/var/log/`
+* Additional Bot Files Path, e.g. templates or databases: `/opt/intelmq/var/lib/bots/[bot-name]/`
 
 ### Directories and Files naming
 
 Any directory and file of IntelMQ has to follow the Directories and Files naming. Any file name or folder name has to
-* be represented with lowercase and in case of the name has multiple words, the spaces between them must be replaced by underscores;
+* be represented with lowercase and in case of the name has multiple words, the spaces between them must be removed or replaced by underscores;
 * be self-explaining what the content contains.
 
 In the bot directories name, the name must correspond to the feed name. If necessary, some words can be added to give context by joining together using underscores.
@@ -249,6 +232,7 @@ sudo -i intelmq
 python -m intelmq.bots.outputs.file.output file-output
 python intelmq/bots/outputs/file/output.py file-output
 ```
+You will get all logging outputs directly on stderr as well as in the log file.
 
 ### Template
 Please adjust the doc strings accordingly and remove the in-line comments (`#`).
@@ -373,4 +357,5 @@ When calling the file directly, only the tests in this file for the bot will be 
 
 ### Configure IntelMQ
 
-In the end, the new information about the new bot should be added to BOTS file located at `intelmq/bots`.
+In the end, the new information about the new bot should be added to BOTS file
+located at `intelmq/bots`. Note that the file is sorted!

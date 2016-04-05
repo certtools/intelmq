@@ -279,12 +279,12 @@
                 "rate_limit": 3600
             }
         },
-        "Dyn": {
-            "description": "Dyn Collector is the bot responsible to get the report from source of information.",
+        "DynDNS ponmocup Domains": {
+            "description": "DynDNS ponmocup. List of ponmocup malware redirection domains and infected web-servers. See also http://security-research.dyndns.org/pub/botnet-links.html",
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
-                "feed": "Dyn",
-                "http_url": "http://security-research.dyndns.org/pub/botnet/ponmocup/ponmocup-finder/ponmocup-infected-domains-latest.txt",
+                "feed": "DynDNS ponmocup Domains",
+                "http_url": "http://security-research.dyndns.org/pub/malware-feeds/ponmocup-infected-domains-CIF-latest.txt",
                 "rate_limit": 10800
             }
         },
@@ -578,6 +578,16 @@
                 "http_url": "http://vxvault.siri-urz.net/URL_List.php",
                 "rate_limit": 3600
             }
+        },
+        "XMPP collector": {
+            "description": "XMPP collector is the bot responsible to get events from xmpp server",
+            "module": "intelmq.bots.collectors.xmpp.collector",
+            "parameters": {
+                "rate_limit": "3600",
+                "xmpp_password": "xmpp password",
+                "xmpp_server": "xmpp server",
+                "xmpp_user": "xmpp username"
+            }
         }
     },
     "Expert": {
@@ -772,6 +782,17 @@
                 "ip": "<ip>",
                 "port": "<port>"
             }
+        },
+        "XMPP": {
+            "description": "XMPP is the bot responsible to send events to an XMPP server.",
+            "module": "intelmq.bots.outputs.xmpp.output",
+            "parameters": {
+                "xmpp_password": "xmpp password",
+                "xmpp_server": "xmpp server",
+                "xmpp_to_server": "destination server",
+                "xmpp_to_user": "destination username",
+                "xmpp_user": "xmpp username"
+            }
         }
     },
     "Parser": {
@@ -930,7 +951,7 @@
             "module": "intelmq.bots.parsers.dragonresearchgroup.parser_vnc",
             "parameters": {}
         },
-        "Dyn": {
+        "DynDNS ponmocup Domains": {
             "description": "Dyn Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.dyn.parser",
             "parameters": {}
