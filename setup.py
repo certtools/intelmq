@@ -5,19 +5,19 @@ import sys
 from setuptools import find_packages, setup
 
 REQUIRES = [
-    'ipaddress>=1.0.14',
-    'psutil>=2.1.1',
-    'python-dateutil>=2.4.2',
+    'psutil>=1.2.1',
+    'python-dateutil>=2.0',
     'python-termstyle>=0.1.10',
-    'pytz>=2015.4',
+    'pytz>=2014.1',
     'redis>=2.10.3',
-    'requests>=2.7.0',
-    'six>=1.9.0',
+    'requests>=2.2.0',
+    'six>=1.5.0',
 ]
 if sys.version_info[0] == 2:
-    REQUIRES += ['dnspython>=1.12.0']
+    REQUIRES += ['dnspython>=1.11.1',
+                 'ipaddress>=1.0.14']
 elif sys.version_info[0] == 3:
-    REQUIRES += ['dnspython3>=1.12.0']
+    REQUIRES += ['dnspython3>=1.11.1']
 
 DATA = [
     ('/opt/intelmq/etc/',
