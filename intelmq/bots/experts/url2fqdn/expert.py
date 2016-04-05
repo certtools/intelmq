@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys
-from urlparse import urlparse
+from urllib.parse import urlparse
 
 import intelmq.lib.harmonization
 from intelmq.lib.bot import Bot
