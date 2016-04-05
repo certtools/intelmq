@@ -36,6 +36,7 @@ class FileCollectorBot(Bot):
 
         except:
             self.logger.error("The path is not accessible")
+            raise exceptions.InvalidArgument('path', got=self.parameters.path)
 
     def process(self):
         self.logger.debug("Started looking for Files")
@@ -55,7 +56,7 @@ class FileCollectorBot(Bot):
                     report = Report()
                     report.add("raw", f.read())
                     report.add("feed.name", self.parameters.feed)
-                    report.add("feed.url", "file://%s" %filename)
+                    report.add("feed.url", "file:/%s" %filename)
                     report.add("feed.accuracy", self.parameters.accuracy)
                     self.send_message(report)
 
@@ -64,9 +65,11 @@ class FileCollectorBot(Bot):
                     if self.parameters.delete_file:
                         try:
                             os.remove(filename)
+                            self.logger.debug("Deleting file: %s" %filename)
                         except:
-                            self.logger.error("Could not Delete file %s" %filename)
-
+                            self.logger.error("Could not delete file %s" \
+                                %filename)
+                            raise
 
 if __name__ == "__main__":
     bot = FileCollectorBot(sys.argv[1])
