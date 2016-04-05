@@ -8,7 +8,6 @@ import textwrap
 import intelmq.lib.harmonization
 from intelmq import HARMONIZATION_CONF_FILE
 
-
 print("""
 Harmonization field names
 =========================

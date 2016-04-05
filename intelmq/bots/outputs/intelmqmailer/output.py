@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import sys
-import pymongo
+
 import dateutil.parser
+import pymongo
 
 from intelmq.lib.bot import Bot
 

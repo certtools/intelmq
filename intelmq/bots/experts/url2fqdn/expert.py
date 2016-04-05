@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 import sys
 from urlparse import urlparse
-from intelmq.lib.bot import Bot
+
 import intelmq.lib.harmonization
+from intelmq.lib.bot import Bot
 
 
 class Url2fqdnExpertBot(Bot):

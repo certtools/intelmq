@@ -4,7 +4,6 @@
 '''
 import traceback
 
-
 __all__ = ['InvalidArgument', 'ConfigurationError', 'IntelMQException',
            'IntelMQHarmonizationException', 'InvalidKey', 'InvalidValue',
            'KeyExists', 'KeyNotExists', 'PipelineError',

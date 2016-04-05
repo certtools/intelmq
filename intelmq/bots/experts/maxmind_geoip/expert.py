@@ -2,6 +2,7 @@
 import sys
 
 import geoip2.database
+
 from intelmq.lib.bot import Bot
 
 

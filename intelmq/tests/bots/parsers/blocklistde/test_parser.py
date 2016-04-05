@@ -7,7 +7,6 @@ import intelmq.lib.test as test
 import intelmq.lib.utils as utils
 from intelmq.bots.parsers.blocklistde.parser import BlockListDEParserBot
 
-
 with open(os.path.join(os.path.dirname(__file__),
                        'imap.txt')) as handle:
     EXAMPLE_FILE = handle.read()

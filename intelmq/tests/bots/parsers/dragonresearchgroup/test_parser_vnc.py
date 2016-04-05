@@ -6,7 +6,6 @@ import intelmq.lib.test as test
 from intelmq.bots.parsers.dragonresearchgroup.parser_vnc import \
     DragonResearchGroupVNCParserBot
 
-
 REPORT = {'__type': 'Report',
           'feed.url': 'https://dragonresearchgroup.org/insight/vncprobe.txt',
           'raw': 'TkEgICAgICAgICAgIHwgIE5BICAgICAgICAgICAgICAgICAgICAgICAgICAg'

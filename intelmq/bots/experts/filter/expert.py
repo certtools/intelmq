@@ -2,10 +2,11 @@
 
 import re
 import sys
-import pytz
 from datetime import datetime, timedelta
 
+import pytz
 from dateutil import parser
+
 from intelmq.lib.bot import Bot
 
 

@@ -3,8 +3,8 @@
 import unittest
 
 import intelmq.lib.test as test
-from intelmq.lib.cache import Cache
 from intelmq.bots.experts.reverse_dns.expert import ReverseDnsExpertBot
+from intelmq.lib.cache import Cache
 
 EXAMPLE_INPUT = {"__type": "Event",
                  "source.ip": "192.0.43.7",  # icann.org

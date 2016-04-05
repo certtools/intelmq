@@ -21,14 +21,13 @@ import datetime
 import ipaddress
 import json
 import socket
+from urllib.parse import urlparse
 
 import dateutil.parser
 import dns.resolver
 import pytz
 
 import intelmq.lib.utils as utils
-from urllib.parse import urlparse
-
 
 __all__ = ['Base64', 'Boolean', 'ClassificationType', 'DateTime', 'FQDN',
            'Float', 'Accuracy', 'GenericType', 'IPAddress', 'IPNetwork',

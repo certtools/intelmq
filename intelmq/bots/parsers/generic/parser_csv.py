@@ -12,10 +12,11 @@ type_translation: string
 """
 import csv
 import io
-import sys
-from dateutil.parser import parse
-import re
 import json
+import re
+import sys
+
+from dateutil.parser import parse
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot

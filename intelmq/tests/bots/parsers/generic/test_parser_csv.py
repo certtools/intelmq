@@ -3,8 +3,7 @@
 import unittest
 
 import intelmq.lib.test as test
-from intelmq.bots.parsers.generic.parser_csv import \
-    GenericCsvParserBot
+from intelmq.bots.parsers.generic.parser_csv import GenericCsvParserBot
 
 EXAMPLE_REPORT = {"feed.name": "Sample CSV Feed",
                   "feed.url": "http://www.samplecsvthreatfeed.com/list",

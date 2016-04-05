@@ -13,7 +13,6 @@ import intelmq.lib.harmonization
 from intelmq import HARMONIZATION_CONF_FILE
 from intelmq.lib import utils
 
-
 __all__ = ['Event', 'Message', 'MessageFactory', 'Report']
 
 

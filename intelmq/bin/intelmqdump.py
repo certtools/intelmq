@@ -9,11 +9,12 @@ import pprint
 import readline  # hooks into input()
 import traceback
 
+from termstyle import bold, green, inverted, red
+
 import intelmq.lib.exceptions as exceptions
 import intelmq.lib.pipeline as pipeline
 import intelmq.lib.utils as utils
 from intelmq import DEFAULT_LOGGING_PATH, DEFAULTS_CONF_FILE, RUNTIME_CONF_FILE
-from termstyle import bold, green, inverted, red
 
 APPNAME = "intelmqdump"
 DESCRIPTION = """

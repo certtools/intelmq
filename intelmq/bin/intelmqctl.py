@@ -1,23 +1,22 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-import os
-import sys
-import json
-import time
-import shlex
-import inspect
-import psutil
-import pkg_resources
-import signal
-import traceback
 import argparse
-from intelmq.lib.pipeline import PipelineFactory
-from intelmq import DEFAULTS_CONF_FILE
-from intelmq import PIPELINE_CONF_FILE
-from intelmq import RUNTIME_CONF_FILE
-from intelmq import STARTUP_CONF_FILE
-from intelmq import SYSTEM_CONF_FILE
+import inspect
+import json
+import os
+import shlex
+import signal
+import sys
+import time
+import traceback
+
+import pkg_resources
+import psutil
+
+from intelmq import (DEFAULTS_CONF_FILE, PIPELINE_CONF_FILE, RUNTIME_CONF_FILE,
+                     STARTUP_CONF_FILE, SYSTEM_CONF_FILE)
 from intelmq.lib import utils
+from intelmq.lib.pipeline import PipelineFactory
 
 
 class Parameters(object):

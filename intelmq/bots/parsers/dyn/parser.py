@@ -5,6 +5,7 @@ ponmocup-malware-IP ponmocup-malware-domain ponmocup-malware-URI-path ponmocup-h
 """
 
 import sys
+
 import dateutil.parser
 
 from intelmq.lib import utils

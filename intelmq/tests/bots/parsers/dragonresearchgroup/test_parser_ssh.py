@@ -6,7 +6,6 @@ import intelmq.lib.test as test
 from intelmq.bots.parsers.dragonresearchgroup.parser_ssh import \
     DragonResearchGroupSSHParserBot
 
-
 REPORT = {'__type': 'Report',
           'feed.url': 'https://dragonresearchgroup.org/insight/sshpwauth.txt',
           'raw': 'TkEgICAgICAgICAgIHwgIE5BICAgICAgICAgICAgICAgICAgICAgICAgICAg'

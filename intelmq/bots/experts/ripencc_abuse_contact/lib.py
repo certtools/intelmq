@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import requests
 
-
 URL_STAT = ('https://stat.ripe.net/data/abuse-contact-finder/'
             'data.json?resource={}')
 URL_DB_IP = 'http://rest.db.ripe.net/abuse-contact/{}.json'

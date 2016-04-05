@@ -11,6 +11,7 @@ and thus temporary. We don't want to catch too much, like programming errors
 import sys
 
 import psycopg2
+
 from intelmq.lib.bot import Bot
 
 

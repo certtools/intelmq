@@ -6,8 +6,8 @@ import io
 
 import dns.resolver
 
-from intelmq.lib.harmonization import IPAddress
 import intelmq.lib.utils as utils
+from intelmq.lib.harmonization import IPAddress
 
 IP_QUERY = "%s.origin%s.asn.cymru.com"
 ASN_QUERY = "AS%s.asn.cymru.com"

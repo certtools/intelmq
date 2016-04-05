@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
-import redis
 import unittest
+
+import redis
 
 import intelmq.lib.harmonization as harmonization
 import intelmq.lib.message as message
 import intelmq.lib.test as test
 from intelmq.bots.experts.deduplicator.expert import DeduplicatorExpertBot
-
 
 INPUT1 = {"__type": "Event",
           "classification.identifier": "zeus",

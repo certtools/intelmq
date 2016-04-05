@@ -16,12 +16,12 @@ import json
 import logging
 import logging.handlers
 import os
-import pkg_resources
 import re
 import sys
 
-import intelmq
+import pkg_resources
 
+import intelmq
 
 __all__ = ['base64_decode', 'base64_encode', 'decode', 'encode',
            'load_configuration', 'load_parameters', 'log', 'parse_logline',

@@ -29,7 +29,6 @@ from intelmq.lib.exceptions import InvalidValue
 from intelmq.lib.harmonization import DateTime
 from intelmq.lib.message import Event
 
-
 __all__ = ['SpamhausCERTParserBot']
 
 

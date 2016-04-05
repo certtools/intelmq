@@ -14,8 +14,9 @@ Options:
 &bKeepLoglines=off	Keep original log lines (separated by "#")
 &sep={TAB, comma, semicolon, pipe}  	Separator for the (output) CSV format
 """
-import requests
 import sys
+
+import requests
 
 from intelmq.lib.bot import Bot
 

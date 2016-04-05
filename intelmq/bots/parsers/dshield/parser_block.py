@@ -22,6 +22,7 @@
 import sys
 
 import dateutil
+
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
 from intelmq.lib.message import Event

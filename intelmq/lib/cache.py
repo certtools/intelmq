@@ -11,7 +11,6 @@ import redis
 
 import intelmq.lib.utils as utils
 
-
 __all__ = ['Cache']
 
 

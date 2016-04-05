@@ -4,6 +4,7 @@ Testing modify expert bot.
 """
 
 import unittest
+
 from pkg_resources import resource_filename
 
 import intelmq.lib.test as test

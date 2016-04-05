@@ -8,7 +8,6 @@ import intelmq.lib.utils as utils
 from intelmq.bots.parsers.blueliv.parser_crimeserver import \
     BluelivCrimeserverParserBot
 
-
 with open(os.path.join(os.path.dirname(__file__),
                        'test_parser_crimeserver.data')) as handle:
     EXAMPLE_FILE = handle.read()

@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 import sys
 
-from sleekxmpp import ClientXMPP
-
 from intelmq.lib.bot import Bot
+from sleekxmpp import ClientXMPP
 
 
 class XMPP(Bot):

@@ -11,7 +11,6 @@ from intelmq.lib.bot import Bot
 from intelmq.lib.exceptions import InvalidValue
 from intelmq.lib.message import Event
 
-
 __all__ = ['FraunhoferDGAParserBot']
 
 

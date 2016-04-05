@@ -12,10 +12,11 @@ http_username, http_password: string
 http_proxy, http_ssl_proxy: string
 
 """
-import requests
-import sys
 import io
+import sys
 import zipfile
+
+import requests
 
 from intelmq.lib.bot import Bot
 from intelmq.lib.message import Report

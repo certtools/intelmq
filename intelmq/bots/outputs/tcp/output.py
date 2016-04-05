@@ -3,8 +3,8 @@ import socket
 import sys
 import time
 
-from intelmq.lib.bot import Bot
 import intelmq.lib.utils as utils
+from intelmq.lib.bot import Bot
 
 
 class TCPBot(Bot):

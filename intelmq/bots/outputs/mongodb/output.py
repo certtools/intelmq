@@ -2,6 +2,7 @@
 import sys
 
 import pymongo
+
 from intelmq.lib.bot import Bot
 
 
