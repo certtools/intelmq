@@ -16,6 +16,7 @@ import json
 import locale
 import os
 import pprint
+import pkg_resources
 import readline  # nopep8, hooks into input()
 import subprocess
 import sys
@@ -72,6 +73,9 @@ class IntelMQCLIContoller():
             description=DESCRIPTION,
             epilog=EPILOG,
         )
+        VERSION = pkg_resources.get_distribution("intelmq").version
+        parser.add_argument('--version',
+                            action='version', version=VERSION)
         parser.add_argument('-l', '--list-feeds', action='store_true',
                             help='List all feeds')
         parser.add_argument('-L', '--list-texts', action='store_true',
