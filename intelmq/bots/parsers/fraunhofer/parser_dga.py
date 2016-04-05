@@ -3,7 +3,6 @@
 The source provides a JSOn file with a dictionary. The keys of this dict are
 identifiers and the values are lists of domains.
 """
-from __future__ import unicode_literals
 import json
 import sys
 

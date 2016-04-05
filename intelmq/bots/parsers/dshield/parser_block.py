@@ -18,7 +18,6 @@
 #    (6) Country
 #    (7) contact email address
 """
-from __future__ import unicode_literals
 
 import sys
 

@@ -1,6 +1,5 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from __future__ import print_function
 import os
 import sys
 import json
@@ -309,12 +308,8 @@ class IntelMQContoller():
     def __bot_start(self, bot_id, module):
         """
         Start a bot by calling it as module.
-
-        The python version/path can be specified by the INTELMQ_PYTHON
-        environment variable. By default it's the default python binary.
         """
-        cmd = "{} -m {} {}".format(os.getenv('INTELMQ_PYTHON', 'python'),
-                                   module, bot_id)
+        cmd = "python3 -m {} {}".format(module, bot_id)
         pid = start_process(bot_id, cmd)
         write_pidfile(bot_id, pid)
 

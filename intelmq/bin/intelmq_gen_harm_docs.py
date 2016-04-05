@@ -1,12 +1,7 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Tue Aug 25 10:11:06 2015
-
-@author: sebastian
 """
-from __future__ import print_function, unicode_literals
-
 import json
 import textwrap
 

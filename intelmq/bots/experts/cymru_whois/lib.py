@@ -2,7 +2,6 @@
 """
 Reference: http://www.team-cymru.org/Services/ip-to-asn.html#dns
 """
-from __future__ import unicode_literals
 import io
 
 import dns.resolver

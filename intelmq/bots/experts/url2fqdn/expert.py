@@ -1,11 +1,6 @@
 # -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
 import sys
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse
+from urlparse import urlparse
 from intelmq.lib.bot import Bot
 import intelmq.lib.harmonization
 

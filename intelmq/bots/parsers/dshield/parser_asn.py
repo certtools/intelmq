@@ -12,7 +12,6 @@
 #
 # source IP <tab> Reports <tab> Targets <tab> First Seen <tab> Last Seen <tab> Updated <CR>
 """
-from __future__ import unicode_literals
 import sys
 
 from intelmq.lib import utils

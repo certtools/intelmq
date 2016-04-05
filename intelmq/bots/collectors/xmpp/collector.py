@@ -2,7 +2,6 @@
 
 import sys
 import json
-from __future__ import unicode_literals
 
 from sleekxmpp import ClientXMPP
 from sleekxmpp.exceptions import IqError, IqTimeout

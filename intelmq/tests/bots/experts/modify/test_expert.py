@@ -2,7 +2,6 @@
 """
 Testing modify expert bot.
 """
-from __future__ import unicode_literals
 
 import unittest
 from pkg_resources import resource_filename

@@ -21,7 +21,6 @@
 ; ip, asn, country, lastseen, botname, domain, remote_ip, remote_port,
 local_port, protocol
 """
-from __future__ import unicode_literals
 import sys
 
 from intelmq.lib import utils

@@ -3,7 +3,6 @@
 format:
 ponmocup-malware-IP ponmocup-malware-domain ponmocup-malware-URI-path ponmocup-htaccess-infected-domain
 """
-from __future__ import unicode_literals
 
 import sys
 import dateutil.parser

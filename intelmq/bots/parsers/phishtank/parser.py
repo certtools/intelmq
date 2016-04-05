@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+import csv
+import io
 import sys
 
 from intelmq.lib import utils
@@ -27,7 +28,7 @@ class PhishTankParserBot(Bot):
                    ]
 
         raw_report = utils.base64_decode(report.get("raw"))
-        for row in utils.csv_reader(raw_report):
+        for row in csv.parser(io.StringIO(raw_report)):
 
             # ignore headers
             if "phish_id" in row:

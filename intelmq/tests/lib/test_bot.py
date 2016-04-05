@@ -2,7 +2,6 @@
 """
 Tests the Bot class itself.
 """
-from __future__ import unicode_literals
 
 import io
 import json

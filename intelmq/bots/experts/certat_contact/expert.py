@@ -14,20 +14,10 @@ Options:
 &bKeepLoglines=off	Keep original log lines (separated by "#")
 &sep={TAB, comma, semicolon, pipe}  	Separator for the (output) CSV format
 """
-from __future__ import unicode_literals
 import requests
 import sys
 
 from intelmq.lib.bot import Bot
-
-# SNI Workaround for Python 2:
-# https://github.com/kennethreitz/requests/blob/master/requests/packages/urllib3/contrib/pyopenssl.py#L16
-try:
-    import urllib3.contrib.pyopenssl
-    urllib3.contrib.pyopenssl.inject_into_urllib3()
-except ImportError:
-    pass
-
 
 URL = 'https://contacts.cert.at/cgi-bin/abuse-nationalcert.pl'
 

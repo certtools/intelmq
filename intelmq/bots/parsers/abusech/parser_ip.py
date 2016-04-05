@@ -7,7 +7,6 @@ Docs:
  - https://palevotracker.abuse.ch/blocklists.php
  - https://zeustracker.abuse.ch/blocklist.php
 """
-from __future__ import unicode_literals
 
 import sys
 

@@ -2,7 +2,6 @@
 """
 TODO: Arbitrary order of decrypt and unzip
 """
-from __future__ import unicode_literals
 
 import io
 import re

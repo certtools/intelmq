@@ -8,7 +8,6 @@ In case of errors, the bot tries to reconnect if the error is of operational
 and thus temporary. We don't want to catch too much, like programming errors
 (missing fields etc).
 """
-from __future__ import unicode_literals
 import sys
 
 import psycopg2

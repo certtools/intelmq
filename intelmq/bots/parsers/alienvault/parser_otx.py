@@ -5,7 +5,6 @@ The data structure is described in detail here:
 https://github.com/AlienVault-Labs/OTX-Python-SDK/blob/master/
 howto_use_python_otx_api.ipynb
 """
-from __future__ import unicode_literals
 
 import json
 import sys

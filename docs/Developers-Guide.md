@@ -31,9 +31,9 @@ Similarly, if code does not get accepted upstream by the main developers, it is 
 
 ## Installation
 
-Install intelmq with `pip -e`, which gives you a so called *editable* installation. No code is copied in the libraries directories, there's just a link to your code.
+Install intelmq with `pip3 -e`, which gives you a so called *editable* installation. No code is copied in the libraries directories, there's just a link to your code.
 
-    pip install -e .
+    pip3 install -e .
 
 If you do any changes on setup.py, data files (e.g. example configurations), you need to run the installation again of course.
 
@@ -42,8 +42,8 @@ If you do any changes on setup.py, data files (e.g. example configurations), you
 All changes have to be tested and new contributions must be accompanied by according tests if possible. You can run the tests by changing to the directory with intelmq repository and running either `unittest` or `nosetests`:
 
     cd intelmq
-    python -m unittest {discover|filename}  # or
-    nosetests [filename]
+    python3 -m unittest {discover|filename}  # or
+    nosetests3 [filename]
 
 It may be necessary to switch the user to `intelmq` if the run-path (`/opt/intelmq/var/run/`) is not writeable by the current user. Some bots need local databases to succeed. If you don't mind about those and only want to test one explicit test file, give the filepath as argument.
 
@@ -57,6 +57,7 @@ We recommend reading it before committing code.
 There are some exceptions: sometimes it does not make sense to check for every PEP8 error (such as whitespace indentation when you want to make a dict=() assignment
 look pretty. Therefore, we do have some exceptions defined in the `setup.cfg` file.
 
+We support Python 3 only.
 
 ### Unicode
 
@@ -229,8 +230,8 @@ There's a dummy bot including tests at `intelmq/tests/bots/test_dummy_bot.py`.
 You can always start any parser directly from command line by either invoking the script or the python module. Don't forget to give an bot id as first argument. Also, running bots with other users than `intelmq` will raise permission errors.
 ```bash
 sudo -i intelmq
-python -m intelmq.bots.outputs.file.output file-output
-python intelmq/bots/outputs/file/output.py file-output
+python3 -m intelmq.bots.outputs.file.output file-output
+python3 intelmq/bots/outputs/file/output.py file-output
 ```
 You will get all logging outputs directly on stderr as well as in the log file.
 

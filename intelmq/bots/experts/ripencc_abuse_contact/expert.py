@@ -8,7 +8,6 @@ TODO: Load RIPE networks prefixes into memory.
 TODO: Compare each IP with networks prefixes loaded.
 TODO: If ip matches, query RIPE
 '''
-from __future__ import unicode_literals
 import sys
 
 from intelmq.bots.experts.ripencc_abuse_contact import lib

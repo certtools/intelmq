@@ -10,7 +10,8 @@ type: string
 type_translation: string
 
 """
-from __future__ import unicode_literals
+import csv
+import io
 import sys
 from dateutil.parser import parse
 import re
@@ -40,8 +41,8 @@ class GenericCsvParserBot(Bot):
         raw_report = re.sub(r'(?m)^#.*\n?', '', raw_report)
         # ignore null bytes
         raw_report = re.sub(r'(?m)\0', '', raw_report)
-        for row in utils.csv_reader(raw_report,
-                                    delimiter=str(self.parameters.delimiter)):
+        for row in csv.reader(io.StringIO(raw_report),
+                              delimiter=str(self.parameters.delimiter)):
             event = Event(report)
 
             for key, value in zip(columns, row):

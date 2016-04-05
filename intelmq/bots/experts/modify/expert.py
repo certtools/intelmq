@@ -2,7 +2,6 @@
 """
 Modify Expert bot let's you manipulate all fields with a config file.
 """
-from __future__ import unicode_literals
 import re
 import sys
 
