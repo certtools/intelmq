@@ -5,9 +5,13 @@ Parsers simple newline separated list of IPs.
 Docs:
  - https://feodotracker.abuse.ch/blocklist/
  - https://palevotracker.abuse.ch/blocklists.php
+ - https://zeustracker.abuse.ch/blocklist.php
 """
 from __future__ import unicode_literals
+
 import sys
+
+import dateutil
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
@@ -29,21 +33,27 @@ class AbusechIPParserBot(Bot):
         if not report.contains("raw"):
             self.acknowledge_message()
 
-        raw_report = utils.base64_decode(report.value("raw"))
+        raw_report = utils.base64_decode(report.get("raw"))
+        lastgenerated = None
 
         for row in raw_report.split('\n'):
-
-            row = row.strip()
-
-            if row.startswith("#") or len(row) == 0:
-                continue
-
             event = Event(report)
 
-            event.add('source.ip', row, sanitize=True)
+            row = row.strip()
+            if len(row) == 0:
+                continue
+            elif row.startswith("#"):
+                if 'Generated on' in row:
+                    row = row.strip('# ')[13:]
+                    lastgenerated = dateutil.parser.parse(row).isoformat()
+                continue
+
+            event.add('time.source', lastgenerated)
+
+            event.add('source.ip', row)
             event.add('classification.type', u'c&c')
-            event.add("raw", row, sanitize=True)
-            event.add("malware.name", SOURCE_FEEDS[report.value("feed.url")], sanitize=True)
+            event.add("raw", row)
+            event.add("malware.name", SOURCE_FEEDS[report.get("feed.url")])
 
             self.send_message(event)
         self.acknowledge_message()

@@ -2,8 +2,8 @@
 """
 Testing the pipeline functions of intelmq.
 
-We are testing sending and receiving on the same queue for Redis, Zeromq
-and Pythonlist.
+We are testing sending and receiving on the same queue for Redis and
+Pythonlist.
 Unicode compatibility is not tested, as it needs discussion.
 TODO: #281
 TODO: clear_queues
@@ -83,28 +83,6 @@ class TestRedis(unittest.TestCase):
     def tearDown(self):
         self.pipe.disconnect()
 
-""" NotImplementedError
-class TestZeromq(unittest.TestCase):
-    def setUp(self):
-        params = Parameters()
-        params.broker = 'Zeromq'
-        self.pipe = pipeline.PipelineFactory.create(params)
-        self.pipe.source_queues('test')
-        self.pipe.destination_queues(['test'])
-        self.pipe.connect()
-
-    def test_send_receive(self):
-        self.pipe.send(SAMPLES['normal'][0])
-        self.assertEqual(SAMPLES['normal'][0], self.pipe.receive())
-
-    def test_send_receive_unicode(self):
-        self.pipe.send(SAMPLES['unicode'][1])
-        self.assertEqual(SAMPLES['unicode'][1], self.pipe.receive())
-
-    def tearDown(self):
-        self.pipe.disconnect()
-        pass
-"""
 
 if __name__ == '__main__':
     unittest.main()

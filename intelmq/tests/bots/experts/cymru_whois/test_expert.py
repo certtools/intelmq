@@ -48,7 +48,7 @@ UNICODE_OUTPUT = {"__type": "Event",
                                          " Comunica\xe7\xe3o Ltda.,BR",
                   "destination.geolocation.cc": "BR",
                   "destination.asn": 28333,
-                  "destination.network": "186.226.224.0/20",
+                  "destination.network": "186.226.224.0/21",
                   }
 
 
@@ -58,9 +58,9 @@ class TestCymruExpertBot(test.BotTestCase, unittest.TestCase):
     """
 
     @classmethod
-    def set_bot(self):
-        self.bot_reference = CymruExpertBot
-        self.default_input_message = {'__type': 'Report'}
+    def set_bot(cls):
+        cls.bot_reference = CymruExpertBot
+        cls.default_input_message = {'__type': 'Report'}
 
     def test_ipv4_lookup(self):
         self.input_message = EXAMPLE_INPUT

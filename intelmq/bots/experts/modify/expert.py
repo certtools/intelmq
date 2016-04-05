@@ -32,7 +32,7 @@ def matches(event, *rules):
 
 def apply_action(event, action):
     for name, value in action.items():
-        event.add(name, value.format(msg=event), sanitize=True, force=True)
+        event.add(name, value.format(msg=event), force=True)
 
 
 class ModifyExpertBot(Bot):

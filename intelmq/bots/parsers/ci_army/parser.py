@@ -17,7 +17,7 @@ class CIArmyParserBot(Bot):
             self.acknowledge_message()
             return
 
-        raw_report = utils.base64_decode(report.value("raw"))
+        raw_report = utils.base64_decode(report.get("raw"))
         for row in raw_report.split('\n'):
 
             if row.startswith('#') or row == "":
@@ -25,9 +25,9 @@ class CIArmyParserBot(Bot):
 
             event = Event(report)
 
-            event.add('source.ip', row, sanitize=True)
+            event.add('source.ip', row)
             event.add('classification.type', u'blacklist')
-            event.add("raw", row, sanitize=True)
+            event.add("raw", row)
 
             self.send_message(event)
         self.acknowledge_message()

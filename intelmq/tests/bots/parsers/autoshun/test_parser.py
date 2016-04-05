@@ -13,9 +13,9 @@ class TestAutoshunParserBot(test.BotTestCase, unittest.TestCase):
     """
 
     @classmethod
-    def set_bot(self):
-        self.bot_reference = AutoshunParserBot
-        self.default_input_message = {'__type': 'Report'}
+    def set_bot(cls):
+        cls.bot_reference = AutoshunParserBot
+        cls.default_input_message = {'__type': 'Report'}
 
 if __name__ == '__main__':
     unittest.main()

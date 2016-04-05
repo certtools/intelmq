@@ -151,9 +151,8 @@ FIXME
 * `lookup:` local database
 * `public:` yes
 * `cache (redis db):` none
-* `ipv6 support:` no
-* `description:` ip to asn 
-* `notes`: [IPv6 bugreport](https://github.com/hadiasghari/pyasn/issues/14)
+* `ipv6 support:` yes
+* `description:` ip to asn
 
 #### Configuration Parameters:
 

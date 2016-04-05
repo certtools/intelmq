@@ -47,6 +47,8 @@ The following instructions assume the following requirements:
 
 * **Operating System:** Ubuntu 14.04 LTS or Debian 8 or CentOS 7
 
+Please report any errors you encounter at https://github.com/certtools/intelmq/issues
+
 # Install
 
 ## Install Dependencies
@@ -58,6 +60,7 @@ The following instructions assume the following requirements:
 ```bash
 apt-get install python3 python3-pip
 apt-get install git build-essential libcurl4-gnutls-dev libffi-dev
+apt-get install python-dev
 apt-get install redis-server
 ```
 
@@ -87,9 +90,9 @@ systemctl start redis
 ##### Ubuntu 14.04 / Debian 8
 
 ```bash
-apt-get install python
+apt-get install python python-pip
 apt-get install git build-essential libcurl4-gnutls-dev libffi-dev libgnutls28-dev
-apt-get install python-dev python-pip python-zmq python-pycurl python-openssl python-pyasn1
+apt-get install python-dev python-pycurl python-openssl python-pyasn1
 apt-get install redis-server
 ```
 
@@ -111,7 +114,9 @@ systemctl start redis
 
 The `REQUIREMENTS` files define a list python packages and versions, which are necessary to run *all components* of IntelMQ. The defined versions are recommendations.
 
-#### Python 3.4 (recommended)
+If you do not do any modifications on the code, use `pip install intelmq` instead of `pip install .`!
+
+#### Python 3 (recommended)
 
 ```bash
 git clone https://github.com/certtools/intelmq.git /tmp/intelmq
@@ -120,28 +125,28 @@ cd /tmp/intelmq
 sudo -s
 
 pip3 install -r REQUIREMENTS
-python3.4 setup.py install
+pip3 install .
 
 useradd -d /opt/intelmq -U -s /bin/bash intelmq
-echo 'export PATH="$PATH:$HOME/bin"' > /opt/intelmq/.profile
+echo 'export PATH="$PATH:$HOME/bin"' >> /opt/intelmq/.profile
 chmod -R 0770 /opt/intelmq
 chown -R intelmq.intelmq /opt/intelmq
-echo 'export INTELMQ_PYTHON=/usr/bin/python3.4' >> /opt/intelmq/.profile
+echo 'export INTELMQ_PYTHON=/usr/bin/python3' >> /opt/intelmq/.profile
 ```
 
 #### Python 2.7
 
 ```bash
-sudo su -
+sudo -s
 
 git clone https://github.com/certtools/intelmq.git /tmp/intelmq
 cd /tmp/intelmq
 
 pip2 install -r REQUIREMENTS2
-python2.7 setup.py install
+pip2 install .
 
 useradd -d /opt/intelmq -U -s /bin/bash intelmq
-echo 'export PATH="$PATH:$HOME/bin"' > /opt/intelmq/.profile
+echo 'export PATH="$PATH:$HOME/bin"' >> /opt/intelmq/.profile
 chmod -R 0770 /opt/intelmq
 chown -R intelmq.intelmq /opt/intelmq
 ```
@@ -210,7 +215,7 @@ This configuration is used by intelmqctl tool to launch bots. Usually, the Intel
 }
 ```
 
-More examples can be found at `intelmq/conf/startup.conf` directory in IntelMQ repository.
+More examples can be found at `intelmq/etc/startup.conf` directory in IntelMQ repository.
 
 
 ## Pipeline Configuration
@@ -247,7 +252,7 @@ This configuration is used by each bot to load the source pipeline and destinati
 }
 ```
 
-More examples can be found at `intelmq/conf/pipeline.conf` directory in IntelMQ repository.
+More examples can be found at `intelmq/etc/pipeline.conf` directory in IntelMQ repository.
 
 ## Defaults Configuration
 
@@ -281,8 +286,7 @@ All bots inherits this configuration parameters and they can overwrite them usin
     * **`false`** - duplicates the messages into each queue
 
 * **`broker`** - select which broker intelmq can use. Use the following values:
-    * **`redis`** - Redis allows some persistence but is not so fast as ZeroMQ.
-    * **`zeromq`** - (under development) ZeroMQ is fast but doest allow persistence.
+    * **`redis`** - Redis allows some persistence but is not so fast as ZeroMQ (in development).
 
 * **`rate_limit`** - time interval (in seconds) between messages processing. The value must be an `integer value`.
 
@@ -337,7 +341,7 @@ This configuration is used by each bot to load the specific parameters associate
 }
 ```
 
-More examples can be found at `intelmq/conf/runtime.conf` directory in IntelMQ repository.
+More examples can be found at `intelmq/etc/runtime.conf` directory in IntelMQ repository.
 
 
 ## Harmonization Configuration
@@ -382,7 +386,7 @@ This configuration is used to specify the fields for all message types. The harm
 }
 ```
 
-More examples can be found at `intelmq/conf/harmonization.conf` directory in IntelMQ repository.
+More examples can be found at `intelmq/etc/harmonization.conf` directory in IntelMQ repository.
 
 
 
@@ -554,7 +558,7 @@ tail -f /opt/intelmq/var/log/*.log
 ## Stop IntelMQ and Backup
 
 * Make sure that your IntelMQ system is completely stopped.
-* Create a backup of IntelMQ Home directory, which includes all configurations.
+* Create a backup of IntelMQ Home directory, which includes all configurations. They are not overwritten, but backups are always nice to have!
 
 ```bash
 sudo su -
@@ -567,7 +571,7 @@ cp -R /opt/intelmq /opt/intelmq-backup
 ```bash
 cd intelmq/
 git pull
-python setup.py install
+pip install -U intelmq  # or pip install -U . if you have a local repository
 ```
 
 ## Restore Configurations
@@ -575,8 +579,8 @@ python setup.py install
 * Apply your configurations backup.
 
 ```bash
-rm -rf /opt/intelmq/*
-cp -R /opt/intelmq-backup/* /opt/intelmq/
+rm -rf /opt/intelmq/etc/*
+cp -R /opt/intelmq-backup/etc/* /opt/intelmq/etc/
 ```
 
 ## Redefine permissions

@@ -30,7 +30,7 @@ class DeduplicatorExpertBot(Bot):
         for ignore_key in ignore_keys:
             ignore_key = ignore_key.strip()
             if ignore_key in auxiliar_message:
-                auxiliar_message.clear(ignore_key)
+                del auxiliar_message[ignore_key]
 
         message_hash = hash(auxiliar_message)
 

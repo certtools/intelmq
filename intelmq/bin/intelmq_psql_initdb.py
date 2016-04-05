@@ -13,54 +13,56 @@ import sys
 
 from intelmq import HARMONIZATION_CONF_FILE
 
-OUTPUTFILE = "/tmp/initdb.sql"
-FIELDS = dict()
 
-try:
-    print("INFO - Reading %s file" % HARMONIZATION_CONF_FILE)
-    with open(HARMONIZATION_CONF_FILE, 'r') as fp:
-        DATA = json.load(fp)['event']
-except IOError:
-    print("ERROR - Could not find %s" % HARMONIZATION_CONF_FILE)
-    print("ERROR - Make sure that you have intelmq installed.")
-    sys.exit(-1)
+def main():
+    OUTPUTFILE = "/tmp/initdb.sql"
+    FIELDS = dict()
 
-for field in DATA.keys():
-    value = DATA[field]
+    try:
+        print("INFO - Reading %s file" % HARMONIZATION_CONF_FILE)
+        with open(HARMONIZATION_CONF_FILE, 'r') as fp:
+            DATA = json.load(fp)['event']
+    except IOError:
+        print("ERROR - Could not find %s" % HARMONIZATION_CONF_FILE)
+        print("ERROR - Make sure that you have intelmq installed.")
+        sys.exit(-1)
 
-    if value['type'] in ('String', 'Base64', 'URL', 'FQDN'):
-        dbtype = 'varchar({})'.format(value.get('length', 2000))
-    elif value['type'] in ('IPAddress', 'IPNetwork'):
-        dbtype = 'inet'
-    elif value['type'] == 'DateTime':
-        dbtype = 'timestamp with time zone'
-    elif value['type'] == 'Boolean':
-        dbtype = 'boolean'
-    elif value['type'] == 'Integer':
-        dbtype = 'integer'
-    elif value['type'] == 'Float':
-        dbtype = 'real'
-    elif value['type'] == 'UUID':
-        dbtype = 'UUID'
-    else:
-        print('Unknow type {!r}, assuming varchar(2000) by default'
-              ''.format(value['type']))
-        dbtype = 'varchar(2000)'
+    for field in DATA.keys():
+        value = DATA[field]
 
-    FIELDS[field] = dbtype
+        if value['type'] in ('String', 'Base64', 'URL', 'FQDN', 'JSON',
+                             'MalwareName', 'ClassificationType'):
+            dbtype = 'varchar({})'.format(value.get('length', 2000))
+        elif value['type'] in ('IPAddress', 'IPNetwork'):
+            dbtype = 'inet'
+        elif value['type'] == 'DateTime':
+            dbtype = 'timestamp with time zone'
+        elif value['type'] == 'Boolean':
+            dbtype = 'boolean'
+        elif value['type'] == 'Integer':
+            dbtype = 'integer'
+        elif value['type'] in ('Float', 'Accuracy'):
+            dbtype = 'real'
+        elif value['type'] == 'UUID':
+            dbtype = 'UUID'
+        else:
+            print('Unknow type {!r}, assuming varchar(2000) by default'
+                  ''.format(value['type']))
+            dbtype = 'varchar(2000)'
 
-    # TODO: ClassificationType
-    # TODO: MalwareName
+        FIELDS[field] = dbtype
 
-initdb = """CREATE table events (
-    "id" BIGSERIAL UNIQUE PRIMARY KEY,"""
-for field, field_type in sorted(FIELDS.items()):
-    initdb += '\n    "{name}" {type},'.format(name=field, type=field_type)
+    initdb = """CREATE table events (
+        "id" BIGSERIAL UNIQUE PRIMARY KEY,"""
+    for field, field_type in sorted(FIELDS.items()):
+        initdb += '\n    "{name}" {type},'.format(name=field, type=field_type)
 
-print(initdb[-1])
-initdb = initdb[:-1]
-initdb += "\n);"
+    initdb = initdb[:-1]  # remove last ','
+    initdb += "\n);"
 
-with open(OUTPUTFILE, 'w') as fp:
-    print("INFO - Writing %s file" % OUTPUTFILE)
-    fp.write(initdb)
+    with open(OUTPUTFILE, 'w') as fp:
+        print("INFO - Writing %s file" % OUTPUTFILE)
+        fp.write(initdb)
+
+if __name__ == '__main__':
+    main()

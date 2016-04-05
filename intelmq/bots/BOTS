@@ -5,8 +5,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Abuse.ch",
-                "rate_limit": 129600,
-                "http_url": "https://feodotracker.abuse.ch/blocklist/?download=domainblocklist"
+                "http_url": "https://feodotracker.abuse.ch/blocklist/?download=domainblocklist",
+                "rate_limit": 129600
             }
         },
         "Abuse.ch Feodo Tracker IPs": {
@@ -14,8 +14,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Abuse.ch",
-                "rate_limit": 129600,
-                "http_url": "https://feodotracker.abuse.ch/blocklist/?download=ipblocklist"
+                "http_url": "https://feodotracker.abuse.ch/blocklist/?download=ipblocklist",
+                "rate_limit": 129600
             }
         },
         "Abuse.ch Palevo Tracker Domains": {
@@ -23,8 +23,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Abuse.ch",
-                "rate_limit": 129600,
-                "http_url": "https://palevotracker.abuse.ch/blocklists.php?download=domainblocklist"
+                "http_url": "https://palevotracker.abuse.ch/blocklists.php?download=domainblocklist",
+                "rate_limit": 129600
             }
         },
         "Abuse.ch Palevo Tracker IPs": {
@@ -32,8 +32,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Abuse.ch",
-                "rate_limit": 129600,
-                "http_url": "https://palevotracker.abuse.ch/blocklists.php?download=ipblocklist"
+                "http_url": "https://palevotracker.abuse.ch/blocklists.php?download=ipblocklist",
+                "rate_limit": 129600
             }
         },
         "Abuse.ch ZeuS Tracker Domains": {
@@ -41,8 +41,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Abuse.ch",
-                "rate_limit": 129600,
-                "http_url": "https://zeustracker.abuse.ch/blocklist.php?download=baddomains"
+                "http_url": "https://zeustracker.abuse.ch/blocklist.php?download=baddomains",
+                "rate_limit": 129600
             }
         },
         "Abuse.ch ZeuS Tracker IPs": {
@@ -50,8 +50,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Abuse.ch",
-                "rate_limit": 129600,
-                "http_url": "https://zeustracker.abuse.ch/blocklist.php?download=badips"
+                "http_url": "https://zeustracker.abuse.ch/blocklist.php?download=badips",
+                "rate_limit": 129600
             }
         },
         "AlienVault": {
@@ -59,8 +59,17 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "AlienVault",
-                "rate_limit": 3600,
-                "http_url": "https://reputation.alienvault.com/reputation.data"
+                "http_url": "https://reputation.alienvault.com/reputation.data",
+                "rate_limit": 3600
+            }
+        },
+        "AlienVault OTX": {
+            "description": "AlienVault OTX Collector is the bot responsible to get the report through the API. Report could vary according to subscriptions.",
+            "module": "intelmq.bots.collectors.alienvault_otx.collector",
+            "parameters": {
+                "api_key": "<insert your api key>",
+                "feed": "AlienVault OTX",
+                "rate_limit": "3600"
             }
         },
         "Arbor": {
@@ -68,8 +77,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Arbor",
-                "rate_limit": 3600,
-                "http_url": "http://atlas-public.ec2.arbor.net/public/ssh_attackers"
+                "http_url": "http://atlas-public.ec2.arbor.net/public/ssh_attackers",
+                "rate_limit": 3600
             }
         },
         "Autoshun": {
@@ -77,8 +86,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Autoshun",
-                "rate_limit": 3600,
-                "http_url": "https://www.autoshun.org/files/shunlist.html"
+                "http_url": "https://www.autoshun.org/files/shunlist.html",
+                "rate_limit": 3600
             }
         },
         "BlockList.DE Apache": {
@@ -86,8 +95,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "BlockList.de",
-                "rate_limit": 86400,
-                "http_url": "https://lists.blocklist.de/lists/apache.txt"
+                "http_url": "https://lists.blocklist.de/lists/apache.txt",
+                "rate_limit": 86400
             }
         },
         "BlockList.DE Bots": {
@@ -95,8 +104,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "BlockList.de",
-                "rate_limit": 86400,
-                "http_url": "https://lists.blocklist.de/lists/bots.txt"
+                "http_url": "https://lists.blocklist.de/lists/bots.txt",
+                "rate_limit": 86400
             }
         },
         "BlockList.DE Brute-force Login": {
@@ -104,8 +113,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "BlockList.de",
-                "rate_limit": 86400,
-                "http_url": "https://lists.blocklist.de/lists/bruteforcelogin.txt"
+                "http_url": "https://lists.blocklist.de/lists/bruteforcelogin.txt",
+                "rate_limit": 86400
             }
         },
         "BlockList.DE FTP": {
@@ -113,8 +122,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "BlockList.de",
-                "rate_limit": 86400,
-                "http_url": "https://lists.blocklist.de/lists/ftp.txt"
+                "http_url": "https://lists.blocklist.de/lists/ftp.txt",
+                "rate_limit": 86400
             }
         },
         "BlockList.DE IMAP": {
@@ -122,8 +131,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "BlockList.de",
-                "rate_limit": 86400,
-                "http_url": "https://lists.blocklist.de/lists/imap.txt"
+                "http_url": "https://lists.blocklist.de/lists/imap.txt",
+                "rate_limit": 86400
             }
         },
         "BlockList.DE IRC Bot": {
@@ -131,8 +140,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "BlockList.de",
-                "rate_limit": 86400,
-                "http_url": "https://lists.blocklist.de/lists/ircbot.txt"
+                "http_url": "https://lists.blocklist.de/lists/ircbot.txt",
+                "rate_limit": 86400
             }
         },
         "BlockList.DE Mail": {
@@ -140,8 +149,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "BlockList.de",
-                "rate_limit": 86400,
-                "http_url": "https://lists.blocklist.de/lists/mail.txt"
+                "http_url": "https://lists.blocklist.de/lists/mail.txt",
+                "rate_limit": 86400
             }
         },
         "BlockList.DE SIP": {
@@ -149,8 +158,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "BlockList.de",
-                "rate_limit": 86400,
-                "http_url": "https://lists.blocklist.de/lists/sip.txt"
+                "http_url": "https://lists.blocklist.de/lists/sip.txt",
+                "rate_limit": 86400
             }
         },
         "BlockList.DE SSH": {
@@ -158,8 +167,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "BlockList.de",
-                "rate_limit": 86400,
-                "http_url": "https://lists.blocklist.de/lists/ssh.txt"
+                "http_url": "https://lists.blocklist.de/lists/ssh.txt",
+                "rate_limit": 86400
             }
         },
         "BlockList.DE Strong IPs": {
@@ -167,13 +176,13 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "BlockList.de",
-                "rate_limit": 86400,
-                "http_url": "https://lists.blocklist.de/lists/strongips.txt"
+                "http_url": "https://lists.blocklist.de/lists/strongips.txt",
+                "rate_limit": 86400
             }
         },
         "Blueliv Crimeserver": {
-            "module": "intelmq.bots.collectors.blueliv.collector_crimeserver",
             "description": "Blueliv Crimeserver Collector is the bot responsible to get the report through the API.",
+            "module": "intelmq.bots.collectors.blueliv.collector_crimeserver",
             "parameters": {
                 "api_key": "<insert your api key>",
                 "feed": "Blueliv Crimeserver",
@@ -185,8 +194,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "CI Army",
-                "rate_limit": 3600,
-                "http_url": "http://cinsscore.com/list/ci-badguys.txt"
+                "http_url": "http://cinsscore.com/list/ci-badguys.txt",
+                "rate_limit": 3600
             }
         },
         "CleanMX Phishing": {
@@ -194,8 +203,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "CleanMX",
-                "rate_limit": 129600,
-                "http_url": "http://support.clean-mx.de/clean-mx/xmlphishing?response=alive&format=csv&domain="
+                "http_url": "http://support.clean-mx.de/clean-mx/xmlphishing?response=alive&format=csv&domain=",
+                "rate_limit": 129600
             }
         },
         "CleanMX Virus": {
@@ -203,8 +212,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "CleanMX",
-                "rate_limit": 129600,
-                "http_url": "http://support.clean-mx.de/clean-mx/xmlviruses?response=alive&format=csv&domain="
+                "http_url": "http://support.clean-mx.de/clean-mx/xmlviruses?response=alive&format=csv&domain=",
+                "rate_limit": 129600
             }
         },
         "Cymru Full Bogons": {
@@ -212,8 +221,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Cymru",
-                "rate_limit": 129600,
-                "http_url": "https://www.team-cymru.org/Services/Bogons/fullbogons-ipv4.txt"
+                "http_url": "https://www.team-cymru.org/Services/Bogons/fullbogons-ipv4.txt",
+                "rate_limit": 129600
             }
         },
         "DShield AS": {
@@ -221,17 +230,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "DShield",
-                "rate_limit": 129600,
-                "http_url": "https://dshield.org/asdetailsascii.html?as=<AS Number>"
-            }
-        },
-        "AlienVault OTX": {
-            "module": "intelmq.bots.collectors.alienvault_otx.collector",
-            "description": "AlienVault OTX Collector is the bot responsible to get the report through the API. Report could vary according to subscriptions.",
-            "parameters": {
-                "api_key": "<insert your api key>",
-                "feed": "AlienVault OTX",
-                "rate_limit": "3600"
+                "http_url": "https://dshield.org/asdetailsascii.html?as=<AS Number>",
+                "rate_limit": 129600
             }
         },
         "DShield Block": {
@@ -239,8 +239,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "DShield",
-                "rate_limit": 129600,
-                "http_url": "https://www.dshield.org/block.txt"
+                "http_url": "https://www.dshield.org/block.txt",
+                "rate_limit": 129600
             }
         },
         "DShield Suspicious Domains": {
@@ -248,8 +248,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "DShield",
-                "rate_limit": 129600,
-                "http_url": "https://www.dshield.org/feeds/suspiciousdomains_High.txt"
+                "http_url": "https://www.dshield.org/feeds/suspiciousdomains_High.txt",
+                "rate_limit": 129600
             }
         },
         "Danger Rulez": {
@@ -257,8 +257,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Danger Rulez",
-                "rate_limit": 3600,
-                "http_url": "http://danger.rulez.sk/projects/bruteforceblocker/blist.php"
+                "http_url": "http://danger.rulez.sk/projects/bruteforceblocker/blist.php",
+                "rate_limit": 3600
             }
         },
         "Dragon Research Group SSH": {
@@ -266,8 +266,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Dragon Research Group",
-                "rate_limit": 3600,
-                "http_url": "https://dragonresearchgroup.org/insight/sshpwauth.txt"
+                "http_url": "https://dragonresearchgroup.org/insight/sshpwauth.txt",
+                "rate_limit": 3600
             }
         },
         "Dragon Research Group VNC": {
@@ -275,17 +275,17 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Dragon Research Group",
-                "rate_limit": 3600,
-                "http_url": "https://dragonresearchgroup.org/insight/vncprobe.txt"
+                "http_url": "https://dragonresearchgroup.org/insight/vncprobe.txt",
+                "rate_limit": 3600
             }
         },
-        "Dyn": {
-            "description": "Dyn Collector is the bot responsible to get the report from source of information.",
+        "DynDNS ponmocup Domains": {
+            "description": "DynDNS ponmocup. List of ponmocup malware redirection domains and infected web-servers. See also http://security-research.dyndns.org/pub/botnet-links.html",
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
-                "feed": "Dyn",
-                "rate_limit": 10800,
-                "http_url": "http://security-research.dyndns.org/pub/botnet/ponmocup/ponmocup-finder/ponmocup-infected-domains-latest.txt"
+                "feed": "DynDNS ponmocup Domains",
+                "http_url": "http://security-research.dyndns.org/pub/malware-feeds/ponmocup-infected-domains-CIF-latest.txt",
+                "rate_limit": 10800
             }
         },
         "Fraunhofer DGA": {
@@ -294,9 +294,9 @@
             "parameters": {
                 "feed": "Fraunhofer DGA",
                 "http_password": "<PASSWORD>",
-                "rate_limit": 10800,
                 "http_url": "https://dgarchive.caad.fkie.fraunhofer.de/today",
-                "http_username": "<USER>"
+                "http_username": "<USER>",
+                "rate_limit": 10800
             }
         },
         "HpHosts": {
@@ -304,8 +304,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "HpHosts",
-                "rate_limit": 3600,
-                "http_url": "http://hosts-file.net/download/hosts.txt"
+                "http_url": "http://hosts-file.net/download/hosts.txt",
+                "rate_limit": 3600
             }
         },
         "Malc0de Domain Blacklist": {
@@ -313,8 +313,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Malc0de",
-                "rate_limit": 10800,
-                "http_url": "https://malc0de.com/bl/BOOT"
+                "http_url": "https://malc0de.com/bl/BOOT",
+                "rate_limit": 10800
             }
         },
         "Malc0de IP Blacklist": {
@@ -322,8 +322,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Malc0de",
-                "rate_limit": 10800,
-                "http_url": "https://malc0de.com/bl/IP_Blacklist.txt"
+                "http_url": "https://malc0de.com/bl/IP_Blacklist.txt",
+                "rate_limit": 10800
             }
         },
         "Malware Domain List": {
@@ -331,8 +331,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Malware Domain List",
-                "rate_limit": 3600,
-                "http_url": "http://www.malwaredomainlist.com/updatescsv.php"
+                "http_url": "http://www.malwaredomainlist.com/updatescsv.php",
+                "rate_limit": 3600
             }
         },
         "Malware Domains": {
@@ -340,8 +340,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "MalwareDomains",
-                "rate_limit": 172800,
-                "http_url": "http://mirror2.malwaredomains.com/files/domains.txt"
+                "http_url": "http://mirror2.malwaredomains.com/files/domains.txt",
+                "rate_limit": 172800
             }
         },
         "Malware Group Domains": {
@@ -349,8 +349,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "MalwareGroup",
-                "rate_limit": 129600,
-                "http_url": "http://www.malwaregroup.com/domains"
+                "http_url": "http://www.malwaregroup.com/domains",
+                "rate_limit": 129600
             }
         },
         "Malware Group IPs": {
@@ -358,8 +358,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "MalwareGroup",
-                "rate_limit": 129600,
-                "http_url": "http://www.malwaregroup.com/ipaddresses"
+                "http_url": "http://www.malwaregroup.com/ipaddresses",
+                "rate_limit": 129600
             }
         },
         "Malware Group Proxies": {
@@ -367,8 +367,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "MalwareGroup",
-                "rate_limit": 129600,
-                "http_url": "http://www.malwaregroup.com/proxies"
+                "http_url": "http://www.malwaregroup.com/proxies",
+                "rate_limit": 129600
             }
         },
         "MalwarePatrol Dans Guardian": {
@@ -376,18 +376,18 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "MalwarePatrol",
-                "rate_limit": 180000,
-                "http_url": "https://lists.malwarepatrol.net/cgi/getfile?receipt=< API KEY >&product=8&list=dansguardian"
+                "http_url": "https://lists.malwarepatrol.net/cgi/getfile?receipt=< API KEY >&product=8&list=dansguardian",
+                "rate_limit": 180000
             }
         },
         "N6stomp": {
             "description": "N6 Collector - CERT.pl's N6 Collector - N6 feed via STOMP interface. Note that rate_limit does not apply for this bot as it is waiting for messages on a stream.",
             "module": "intelmq.bots.collectors.n6.collector_stomp",
             "parameters": {
-                "feed": "n6stomp",
-                "server": "n6stream.cert.pl",
-                "port": 61614,
                 "exchange": "<INSERT your exchange point as given by CERT.pl>",
+                "feed": "n6stomp",
+                "port": 61614,
+                "server": "n6stream.cert.pl",
                 "ssl_ca_certificate": "<insert path to CA file for CERT.pl's n6>",
                 "ssl_client_certificate": "<insert path to client cert file for CERT.pl's n6>",
                 "ssl_client_certificate_key": "<insert path to client cert key file for CERT.pl's n6>"
@@ -398,8 +398,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "OpenBL",
-                "rate_limit": 43200,
-                "http_url": "https://www.openbl.org/lists/date_all.txt"
+                "http_url": "https://www.openbl.org/lists/date_all.txt",
+                "rate_limit": 43200
             }
         },
         "OpenPhish": {
@@ -407,8 +407,8 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "OpenPhish",
-                "rate_limit": 86400,
-                "http_url": "https://www.openphish.com/feed.txt"
+                "http_url": "https://www.openphish.com/feed.txt",
+                "rate_limit": 86400
             }
         },
         "PhishTank": {
@@ -416,127 +416,113 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Phishtank",
-                "rate_limit": 28800,
-                "http_url": "https://data.phishtank.com/data/< API KEY >/online-valid.csv"
+                "http_url": "https://data.phishtank.com/data/< API KEY >/online-valid.csv",
+                "rate_limit": 28800
             }
         },
-        "Taichung": {
-            "description": "Taichung Collector is the bot responsible to get the report from source of information.",
-            "module": "intelmq.bots.collectors.http.collector_http",
+        "Request Tracker": {
+            "description": "Request Tracker Collector fetches attachments from an RTIR instance and optionally decrypts them with gnupg.",
+            "module": "intelmq.bots.collectors.rt.collector_rt",
             "parameters": {
-                "feed": "Taichung",
+                "attachment_regex": "\\.csv\\.zip$",
+                "feed": "Request Tracker",
+                "gnupg_decrypt": false,
+                "gnupg_homedir": "/opt/intelmq/",
+                "gnupg_passphrase": null,
+                "gnupg_trust": true,
+                "password": "password",
                 "rate_limit": 3600,
-                "http_url": "https://www.tc.edu.tw/net/netflow/lkout/recent/30"
-            }
-        },
-        "Turris Greylist": {
-            "description": "Turris Greylist Collector is the bot responsible to get the report from source of information.",
-            "module": "intelmq.bots.collectors.http.collector_http",
-            "parameters": {
-                "feed": "Turris Greylist",
-                "rate_limit": 43200,
-                "http_url": "https://www.turris.cz/greylist-data/greylist-latest.csv"
-            }
-        },
-        "URLVir Hosts": {
-            "description": "URLVir Hosts Collector is the bot responsible to get the report from source of information.",
-            "module": "intelmq.bots.collectors.http.collector_http",
-            "parameters": {
-                "feed": "URLVir",
-                "rate_limit": 129600,
-                "http_url": "http://www.urlvir.com/export-hosts/"
-            }
-        },
-        "URLVir IPs": {
-            "description": "URLVir IPs Collector is the bot responsible to get the report from source of information.",
-            "module": "intelmq.bots.collectors.http.collector_http",
-            "parameters": {
-                "feed": "URLVir",
-                "rate_limit": 129600,
-                "http_url": "http://www.urlvir.com/export-ip-addresses/"
+                "search_owner": "nobody",
+                "search_queue": "Incident Reports",
+                "search_status": "new",
+                "search_subject_like": "Report",
+                "take_ticket": true,
+                "unzip_attachment": true,
+                "uri": "http://localhost/rt/REST/1.0",
+                "user": "root"
             }
         },
         "ShadowServer Chargen": {
-            "module": "intelmq.bots.collectors.mail.mail-url",
             "description": "ShadowServer Chargen Collector is the bot responsible to get the report from source of information. https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-Chargen",
+            "module": "intelmq.bots.collectors.mail.mail-url",
             "parameters": {
-                "rate_limit": "3600",
+                "folder": "Inbox.shadowserver",
                 "mail_host": "<host>",
-                "mail_user": "<user>",
                 "mail_password": "<password>",
                 "mail_ssl": true,
-                "folder": "Inbox.shadowserver",
+                "mail_user": "<user>",
+                "rate_limit": "3600",
                 "subject_regex": "Shadowserver [^ ]+ Chargen Report",
                 "url_regex": "https://dl.shadowserver.org/[^ ]+"
             }
         },
         "ShadowServer Drone": {
-            "module": "intelmq.bots.collectors.mail.mail-attach",
             "description": "ShadowServer Drone Collector is the bot responsible to get the report from source of information. https://www.shadowserver.org/wiki/pmwiki.php/Services/Botnet-Drone-Hadoop",
+            "module": "intelmq.bots.collectors.mail.mail-attach",
             "parameters": {
-                "rate_limit": "3600",
+                "attach_regex": "csv.zip",
+                "attach_unzip": true,
+                "folder": "Inbox.shadowserver",
                 "mail_host": "<host>",
-                "mail_user": "<user>",
                 "mail_password": "<password>",
                 "mail_ssl": true,
-                "folder": "Inbox.shadowserver",
-                "subject_regex": "Shadowserver [^ ]+ Drone Report",
-                "attach_regex": "csv.zip",
-                "attach_unzip": true
+                "mail_user": "<user>",
+                "rate_limit": "3600",
+                "subject_regex": "Shadowserver [^ ]+ Drone Report"
             }
         },
         "ShadowServer Microsoft Sinkhole": {
-            "module": "intelmq.bots.collectors.mail.mail-attach",
             "description": "ShadowServer Microsoft Sinkhole Collector is the bot responsible to get the report from source of information. https://www.shadowserver.org/wiki/pmwiki.php/Services/Microsoft-Sinkhole",
-            "parameters": {
-                "rate_limit": "3600",
-                "mail_host": "<host>",
-                "mail_user": "<user>",
-                "mail_password": "<password>",
-                "mail_ssl": true,
-                "folder": "Inbox.shadowserver",
-                "subject_regex": "Shadowserver [^ ]+ Microsoft Sinkhole Report",
-                "attach_regex": "csv.zip",
-                "attach_unzip": true
-            }
-        },
-        "ShadowServer SNMP": {
             "module": "intelmq.bots.collectors.mail.mail-attach",
-            "description": "ShadowServer Microsoft Sinkhole Collector is the bot responsible to get the report from source of information. https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-SNMP",
             "parameters": {
-                "rate_limit": "3600",
+                "attach_regex": "csv.zip",
+                "attach_unzip": true,
+                "folder": "Inbox.shadowserver",
                 "mail_host": "<host>",
-                "mail_user": "<user>",
                 "mail_password": "<password>",
                 "mail_ssl": true,
-                "folder": "Inbox.shadowserver",
-                "subject_regex": "Shadowserver [^ ]+ SNMP Report",
-                "attach_regex": "csv.zip",
-                "attach_unzip": true
+                "mail_user": "<user>",
+                "rate_limit": "3600",
+                "subject_regex": "Shadowserver [^ ]+ Microsoft Sinkhole Report"
             }
         },
         "ShadowServer QOTD": {
-            "module": "intelmq.bots.collectors.mail.mail-url",
             "description": "ShadowServer QOTD Collector is the bot responsible to get the report from source of information. https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-QOTD",
+            "module": "intelmq.bots.collectors.mail.mail-url",
             "parameters": {
-                "rate_limit": "3600",
+                "attach_regex": "csv.zip",
+                "attach_unzip": true,
+                "folder": "Inbox.shadowserver",
                 "mail_host": "<host>",
-                "mail_user": "<user>",
                 "mail_password": "<password>",
                 "mail_ssl": true,
-                "folder": "Inbox.shadowserver",
-                "subject_regex": "Shadowserver [^ ]+ QOTD Report",
+                "mail_user": "<user>",
+                "rate_limit": "3600",
+                "subject_regex": "Shadowserver [^ ]+ QOTD Report"
+            }
+        },
+        "ShadowServer SNMP": {
+            "description": "ShadowServer Microsoft Sinkhole Collector is the bot responsible to get the report from source of information. https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-SNMP",
+            "module": "intelmq.bots.collectors.mail.mail-attach",
+            "parameters": {
                 "attach_regex": "csv.zip",
-                "attach_unzip": true
+                "attach_unzip": true,
+                "folder": "Inbox.shadowserver",
+                "mail_host": "<host>",
+                "mail_password": "<password>",
+                "mail_ssl": true,
+                "mail_user": "<user>",
+                "rate_limit": "3600",
+                "subject_regex": "Shadowserver [^ ]+ SNMP Report"
             }
         },
         "Spamhaus CERT": {
-            "description": "Spamhaus CERT Collector is the bot responsible to get the report from source of information.",
+            "description": "Spamhaus CERT Insight Portal. Access limited to CERTs and CSIRTs with national or regional responsibility. https://www.spamhaus.org/news/article/705/spamhaus-launches-cert-insight-portal",
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Spamhaus CERT",
-                "rate_limit": 3600,
-                "http_url": "https://portal.spamhaus.org/cert/api.php?cert=<CERTNAME>&key=<APIKEY>"
+                "http_url": "<your CERT portal URL>",
+                "rate_limit": 3600
             }
         },
         "Spamhaus Drop": {
@@ -544,8 +530,44 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "Spamhaus Drop",
-                "rate_limit": 3600,
-                "http_url": "https://www.spamhaus.org/drop/drop.lasso"
+                "http_url": "https://www.spamhaus.org/drop/drop.txt",
+                "rate_limit": 3600
+            }
+        },
+        "Taichung": {
+            "description": "Taichung Collector is the bot responsible to get the report from source of information.",
+            "module": "intelmq.bots.collectors.http.collector_http",
+            "parameters": {
+                "feed": "Taichung",
+                "http_url": "https://www.tc.edu.tw/net/netflow/lkout/recent/30",
+                "rate_limit": 3600
+            }
+        },
+        "Turris Greylist": {
+            "description": "Turris Greylist Collector is the bot responsible to get the report from source of information.",
+            "module": "intelmq.bots.collectors.http.collector_http",
+            "parameters": {
+                "feed": "Turris Greylist",
+                "http_url": "https://www.turris.cz/greylist-data/greylist-latest.csv",
+                "rate_limit": 43200
+            }
+        },
+        "URLVir Hosts": {
+            "description": "URLVir Hosts Collector is the bot responsible to get the report from source of information.",
+            "module": "intelmq.bots.collectors.http.collector_http",
+            "parameters": {
+                "feed": "URLVir",
+                "http_url": "http://www.urlvir.com/export-hosts/",
+                "rate_limit": 129600
+            }
+        },
+        "URLVir IPs": {
+            "description": "URLVir IPs Collector is the bot responsible to get the report from source of information.",
+            "module": "intelmq.bots.collectors.http.collector_http",
+            "parameters": {
+                "feed": "URLVir",
+                "http_url": "http://www.urlvir.com/export-ip-addresses/",
+                "rate_limit": 129600
             }
         },
         "VXVault": {
@@ -553,8 +575,18 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "VxVault",
-                "rate_limit": 3600,
-                "http_url": "http://vxvault.siri-urz.net/URL_List.php"
+                "http_url": "http://vxvault.siri-urz.net/URL_List.php",
+                "rate_limit": 3600
+            }
+        },
+        "XMPP collector": {
+            "description": "XMPP collector is the bot responsible to get events from xmpp server",
+            "module": "intelmq.bots.collectors.xmpp.collector",
+            "parameters": {
+                "rate_limit": "3600",
+                "xmpp_password": "xmpp password",
+                "xmpp_server": "xmpp server",
+                "xmpp_user": "xmpp username"
             }
         }
     },
@@ -581,8 +613,8 @@
             "module": "intelmq.bots.experts.certat_contact.expert",
             "parameters": {
                 "filter": false,
-                "overwrite_cc": false,
-                "http_verify_cert": true
+                "http_verify_cert": true,
+                "overwrite_cc": false
             }
         },
         "Cymru Whois": {
@@ -685,6 +717,11 @@
             "parameters": {
                 "database": "/opt/intelmq/var/lib/bots/tor_nodes/tor_nodes.dat"
             }
+        },
+        "url2fqdn": {
+            "description": "url2fqdn is the bot responsible to parsing the fqdn from the url.",
+            "module": "intelmq.bots.experts.url2fqdn.expert",
+            "parameters": {}
         }
     },
     "Output": {
@@ -693,16 +730,6 @@
             "module": "intelmq.bots.outputs.file.output",
             "parameters": {
                 "file": "/opt/intelmq/var/lib/bots/file-output/events.txt"
-            }
-        },
-        "MongoDB": {
-            "description": "MongoDB is the bot responsible to send events to a MongoDB database.",
-            "module": "intelmq.bots.outputs.mongodb.output",
-            "parameters": {
-                "collection": "<collection>",
-                "database": "<database>",
-                "host": "<ip>",
-                "port": "<port>"
             }
         },
         "IntelMQ Mailer": {
@@ -715,18 +742,28 @@
                 "port": "<port>"
             }
         },
+        "MongoDB": {
+            "description": "MongoDB is the bot responsible to send events to a MongoDB database.",
+            "module": "intelmq.bots.outputs.mongodb.output",
+            "parameters": {
+                "collection": "<collection>",
+                "database": "<database>",
+                "host": "<ip>",
+                "port": "<port>"
+            }
+        },
         "PostgreSQL": {
-            "module": "intelmq.bots.outputs.postgresql.output",
             "description": "PostgreSQL is the bot responsible to send events to a PostgreSQL Database. When activating autocommit, transactions are not used: http://initd.org/psycopg/docs/connection.html#connection.autocommit",
+            "module": "intelmq.bots.outputs.postgresql.output",
             "parameters": {
                 "autocommit": true,
-                "host": "localhost",
-                "port": "5432",
                 "database": "intelmq-events",
-                "user": "intelmq",
+                "host": "localhost",
                 "password": "<password>",
+                "port": "5432",
                 "sslmode": "require",
-                "table": "events"
+                "table": "events",
+                "user": "intelmq"
             }
         },
         "REST API": {
@@ -744,6 +781,17 @@
             "parameters": {
                 "ip": "<ip>",
                 "port": "<port>"
+            }
+        },
+        "XMPP": {
+            "description": "XMPP is the bot responsible to send events to an XMPP server.",
+            "module": "intelmq.bots.outputs.xmpp.output",
+            "parameters": {
+                "xmpp_password": "xmpp password",
+                "xmpp_server": "xmpp server",
+                "xmpp_to_server": "destination server",
+                "xmpp_to_user": "destination username",
+                "xmpp_user": "xmpp username"
             }
         }
     },
@@ -903,7 +951,7 @@
             "module": "intelmq.bots.parsers.dragonresearchgroup.parser_vnc",
             "parameters": {}
         },
-        "Dyn": {
+        "DynDNS ponmocup Domains": {
             "description": "Dyn Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.dyn.parser",
             "parameters": {}
@@ -912,6 +960,19 @@
             "description": "Fraunhofer DGA Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.fraunhofer.parser_dga",
             "parameters": {}
+        },
+        "Generic CSV": {
+            "description": "Generic CSV Parser is a generic bot configurable to parse different csv collected files. Ignoring lines starting with character #. URLs without protocal can be prefixed with a default value.",
+            "module": "intelmq.bots.parsers.generic.parser_csv",
+            "parameters": {
+                "columns": [
+                    "",
+                    "source.fqdn"
+                ],
+                "default_url_protocol": "http://",
+                "delimiter": ",",
+                "type": "c&c"
+            }
         },
         "HpHosts": {
             "description": "HpHosts Parser is the bot responsible to parse the report and sanitize the information.",
@@ -980,6 +1041,41 @@
             "module": "intelmq.bots.parsers.phishtank.parser",
             "parameters": {}
         },
+        "ShadowServer Chargen": {
+            "description": "ShadowServer Chargen Parser is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.shadowserver.chargen_parser",
+            "parameters": {}
+        },
+        "ShadowServer Drone": {
+            "description": "ShadowServer Drone Parser is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.shadowserver.drone_parser",
+            "parameters": {}
+        },
+        "ShadowServer Microsoft Sinkhole": {
+            "description": "ShadowServer Microsoft Sinkhole Parser is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.shadowserver.microsoft_sinkhole_parser",
+            "parameters": {}
+        },
+        "ShadowServer QOTD": {
+            "description": "ShadowServer QOTD Parser is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.shadowserver.qotd_parser",
+            "parameters": {}
+        },
+        "ShadowServer SNMP": {
+            "description": "ShadowServer SNMP Parser is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.shadowserver.snmp_parser",
+            "parameters": {}
+        },
+        "Spamhaus CERT": {
+            "description": "Spamhaus CERT Parser is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.spamhaus.parser_cert",
+            "parameters": {}
+        },
+        "Spamhaus Drop": {
+            "description": "Spamhaus Drop Parser is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.spamhaus.parser_drop",
+            "parameters": {}
+        },
         "Taichung": {
             "description": "Taichung Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.taichung.parser",
@@ -1000,41 +1096,6 @@
         "URLVir IPs": {
             "description": "URLVir IPs Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.urlvir.parser_ips",
-            "parameters": {}
-        },
-        "ShadowServer Chargen": {
-            "module": "intelmq.bots.parsers.shadowserver.chargen_parser",
-            "description": "ShadowServer Chargen Parser is the bot responsible to parse the report and sanitize the information.",
-            "parameters": {}
-        },
-        "ShadowServer Drone": {
-            "module": "intelmq.bots.parsers.shadowserver.drone_parser",
-            "description": "ShadowServer Drone Parser is the bot responsible to parse the report and sanitize the information.",
-            "parameters": {}
-        },
-        "ShadowServer Microsoft Sinkhole": {
-            "module": "intelmq.bots.parsers.shadowserver.microsoft_sinkhole_parser",
-            "description": "ShadowServer Microsoft Sinkhole Parser is the bot responsible to parse the report and sanitize the information.",
-            "parameters": {}
-        },
-        "ShadowServer QOTD": {
-            "module": "intelmq.bots.parsers.shadowserver.qotd_parser",
-            "description": "ShadowServer QOTD Parser is the bot responsible to parse the report and sanitize the information.",
-            "parameters": {}
-        },
-        "ShadowServer SNMP": {
-            "module": "intelmq.bots.parsers.shadowserver.snmp_parser",
-            "description": "ShadowServer SNMP Parser is the bot responsible to parse the report and sanitize the information.",
-            "parameters": {}
-        },
-        "Spamhaus CERT": {
-            "description": "Spamhaus CERT Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.spamhaus.parser_cert",
-            "parameters": {}
-        },
-        "Spamhaus Drop": {
-            "description": "Spamhaus Drop Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.spamhaus.parser_drop",
             "parameters": {}
         },
         "VXVault": {

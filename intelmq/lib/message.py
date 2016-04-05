@@ -16,6 +16,9 @@ from intelmq import HARMONIZATION_CONF_FILE
 from intelmq.lib import utils
 
 
+__all__ = ['Event', 'Message', 'MessageFactory', 'Report']
+
+
 harm_config = utils.load_configuration(HARMONIZATION_CONF_FILE)
 
 
@@ -40,7 +43,7 @@ class MessageFactory(object):
                                              expected=list(harm_config.keys()),
                                              docs=HARMONIZATION_CONF_FILE)
         del message["__type"]
-        return class_reference(message)
+        return class_reference(message, auto=True)
 
     @staticmethod
     def unserialize(raw_message):
@@ -58,7 +61,7 @@ class MessageFactory(object):
                                              expected=list(harm_config.keys()),
                                              docs=HARMONIZATION_CONF_FILE)
         del message["__type"]
-        return class_reference(message)
+        return class_reference(message, auto=True)
 
     @staticmethod
     def serialize(message):
@@ -73,7 +76,7 @@ class MessageFactory(object):
 
 class Message(dict):
 
-    def __init__(self, message=()):
+    def __init__(self, message=(), auto=False):
         super(Message, self).__init__(message)
         try:
             classname = message['__type'].lower()
@@ -92,7 +95,7 @@ class Message(dict):
     def __setitem__(self, key, value):
         self.add(key, value)
 
-    def add(self, key, value, sanitize=False, force=False, ignore=()):
+    def add(self, key, value, sanitize=True, force=False, ignore=()):
         if not force and key in self:
             raise exceptions.KeyExists(key)
 
@@ -114,7 +117,7 @@ class Message(dict):
                                              got=type(ignore),
                                              expected='list or tuple')
 
-        if sanitize:
+        if sanitize and not key == '__type':
             old_value = value
             value = self.__sanitize_value(key, value)
             if value is None:
@@ -126,16 +129,10 @@ class Message(dict):
 
         super(Message, self).__setitem__(key, value)
 
-    def value(self, key):  # TODO: Remove? Use get instead
-        return self.__getitem__(key)
-
-    def update(self, key, value, sanitize=False):
+    def update(self, key, value, sanitize=True):
         if key not in self:
             raise exceptions.KeyNotExists(key)
         self.add(key, value, force=True, sanitize=sanitize)
-
-    def clear(self, key):  # TODO: Remove? Use del instead
-        self.__delitem__(key)
 
     def contains(self, key):
         return key in self
@@ -208,13 +205,14 @@ class Message(dict):
 
 class Event(Message):
 
-    def __init__(self, message=()):
+    def __init__(self, message=(), auto=False):
         """
         Parameters
         ----------
         message : dict
             Give a report and feed.name, feed.url and
             time.observation will be used to construct the Event if given.
+            If it's another type, the value is given to dict's init
         """
         if isinstance(message, Report):
             template = {}
@@ -268,4 +266,23 @@ class Event(Message):
 
 
 class Report(Message):
-    pass
+
+    def __init__(self, message=(), auto=False):
+        """
+        Parameters
+        ----------
+        message : dict
+            Passed along to Message's and dict's init
+        auto : boolean
+            if false (default), time.observation is automatically added.
+        """
+        super(Report, self).__init__(message)
+        if not auto and 'time.observation' not in self:
+            time_observation = intelmq.lib.harmonization.DateTime().generate_datetime_now()
+            self.add('time.observation', time_observation, sanitize=False)
+
+    def copy(self):
+        retval = super(Report, self).copy()
+        if 'time.observation' in retval and 'time.observation' not in self:
+            del retval['time.observation']
+        return retval

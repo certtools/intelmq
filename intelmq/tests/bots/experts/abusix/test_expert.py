@@ -7,14 +7,14 @@ import intelmq.lib.test as test
 from intelmq.bots.experts.abusix.expert import AbusixExpertBot
 
 EXAMPLE_INPUT = {"__type": "Event",
-                 "source.ip": "93.184.216.34",  # example.com
+                 "source.ip": "192.0.43.7",  # icann.org
                  "destination.ip": "192.0.43.8",  # iana.org
                  "time.observation": "2015-01-01T00:00:00+00:00",
                  }
 EXAMPLE_OUTPUT = {"__type": "Event",
-                  "source.ip": "93.184.216.34",
+                  "source.ip": "192.0.43.7",
                   "destination.ip": "192.0.43.8",
-                  "source.abuse_contact": "abuse@edgecast.com",
+                  "source.abuse_contact": "ops@icann.org",
                   "destination.abuse_contact": "ops@icann.org",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   }
@@ -35,16 +35,15 @@ class TestAbusixExpertBot(test.BotTestCase, unittest.TestCase):
     """
 
     @classmethod
-    def set_bot(self):
-        self.bot_reference = AbusixExpertBot
-        self.default_input_message = {'__type': 'Report'}
+    def set_bot(cls):
+        cls.bot_reference = AbusixExpertBot
+        cls.default_input_message = {'__type': 'Report'}
 
     def test_ipv4_lookup(self):
         self.input_message = EXAMPLE_INPUT
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_OUTPUT)
 
-    @unittest.expectedFailure
     def test_ipv6_lookup(self):
         self.input_message = EXAMPLE_INPUT6
         self.run_bot()

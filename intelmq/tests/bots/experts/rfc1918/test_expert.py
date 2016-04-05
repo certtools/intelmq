@@ -45,13 +45,13 @@ class TestRFC1918ExpertBot(test.BotTestCase, unittest.TestCase):
     """
 
     @classmethod
-    def set_bot(self):
-        self.bot_reference = RFC1918ExpertBot
-        self.sysconfig = {'fields': 'destination.ip,source.ip,source.fqdn,'
-                                    'destination.fqdn,source.url',
-                          'policy': 'del,drop,drop,del,drop',
-                          }
-        self.default_input_message = {'__type': 'Event'}
+    def set_bot(cls):
+        cls.bot_reference = RFC1918ExpertBot
+        cls.sysconfig = {'fields': 'destination.ip,source.ip,source.fqdn,'
+                                   'destination.fqdn,source.url',
+                         'policy': 'del,drop,drop,del,drop',
+                         }
+        cls.default_input_message = {'__type': 'Event'}
 
     def test_del(self):
         self.input_message = INPUT1
