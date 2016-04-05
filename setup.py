@@ -4,7 +4,7 @@
 from setuptools import find_packages, setup
 
 REQUIRES = [
-    'dnspython3>=1.11.1'
+    'dnspython3>=1.11.1',
     'ipaddress>=1.0.14',
     'psutil>=1.2.1',
     'python-dateutil>=2.0',
