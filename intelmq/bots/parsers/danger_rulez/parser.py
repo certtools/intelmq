@@ -20,7 +20,7 @@ class BruteForceBlockerParserBot(Bot):
             self.acknowledge_message()
             return
 
-        raw_report = utils.base64_decode(report.value("raw"))
+        raw_report = utils.base64_decode(report.get("raw"))
         for row in raw_report.split('\n'):
 
             if row.startswith('#'):
@@ -36,10 +36,10 @@ class BruteForceBlockerParserBot(Bot):
             if match:
                 timestamp = match.group(1) + " UTC"
 
-            event.add('time.source', timestamp, sanitize=True)
-            event.add('source.ip', ip, sanitize=True)
+            event.add('time.source', timestamp)
+            event.add('source.ip', ip)
             event.add('classification.type', u'brute-force')
-            event.add("raw", row, sanitize=True)
+            event.add("raw", row)
 
             self.send_message(event)
         self.acknowledge_message()

@@ -23,7 +23,7 @@ class VXVaultParserBot(Bot):
         if not report.contains("raw"):
             self.acknowledge_message()
 
-        raw_report = utils.base64_decode(report.value("raw"))
+        raw_report = utils.base64_decode(report.get("raw"))
         for row in raw_report.split('\n'):
 
             row = row.strip()
@@ -42,16 +42,16 @@ class VXVaultParserBot(Bot):
 
             event = Event(report)
 
-            if IPAddress.is_valid(hostname, sanitize=True):
-                event.add("source.ip", hostname, sanitize=True)
+            if IPAddress.is_valid(hostname):
+                event.add("source.ip", hostname)
             else:
-                event.add("source.fqdn", hostname, sanitize=True)
+                event.add("source.fqdn", hostname)
 
             event.add('classification.type', u'malware')
-            event.add("source.url", url, sanitize=True)
+            event.add("source.url", url)
             if port:
-                event.add("source.port", port, sanitize=True)
-            event.add("raw", row, sanitize=True)
+                event.add("source.port", port)
+            event.add("raw", row)
 
             self.send_message(event)
         self.acknowledge_message()

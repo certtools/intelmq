@@ -41,10 +41,10 @@ class CERTatContactExpertBot(Bot):
             self.acknowledge_message()
             return
 
-        for section, key, abuse in [
-                ('source', 'source.ip', 'source.abuse_contact'),
-                ('destination', 'destination.ip', 'destination.abuse_contact')
-                ]:
+        for section, key, abuse in \
+            [('source', 'source.ip', 'source.abuse_contact'),
+             ('destination', 'destination.ip', 'destination.abuse_contact'),
+             ]:
             if key in event:
                 parameters = {
                     'ip': event[key],

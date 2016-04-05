@@ -1,20 +1,21 @@
 #!/usr/bin/env python
 
-import httplib
-import urlparse
-import urllib
-import urllib2
-import simplejson as json
-import time
-import re
+import json
 import logging
-import datetime
+
+try:
+    # For Python2
+    from urllib2 import URLError, build_opener
+except ImportError:
+    # For Python3
+    from urllib.error import URLError
+    from urllib.request import build_opener
+
 
 logger = logging.getLogger("OTXv2")
 
 
 class InvalidAPIKey(Exception):
-
     def __init__(self, value):
         self.value = value
 
@@ -23,7 +24,6 @@ class InvalidAPIKey(Exception):
 
 
 class BadRequest(Exception):
-
     def __init__(self, value):
         self.value = value
 
@@ -32,29 +32,32 @@ class BadRequest(Exception):
 
 
 class OTXv2(object):
-
+    """
+    Main class to interact with the AlienVault OTX API.
+    """
     def __init__(self, key, server="http://otx.alienvault.com"):
         self.key = key
         self.server = server
 
     def get(self, url):
-        request = urllib2.build_opener()
+        request = build_opener()
         request.addheaders = [('X-OTX-API-KEY', self.key)]
         response = None
         try:
             response = request.open(url)
-        except urllib2.URLError as e:
+        except URLError as e:
             if e.code == 403:
                 raise InvalidAPIKey("Invalid API Key")
             elif e.code == 400:
                 raise BadRequest("Bad Request")
-        data = response.read()
+        data = response.read().decode('utf-8')
         json_data = json.loads(data)
         return json_data
 
     def getall(self, limit=20):
         pulses = []
-        next = "%s/api/v1/pulses/subscribed?limit=%d" % (self.server, limit)
+        uri = "{}/api/v1/pulses/subscribed?limit={}"
+        next = uri.format(self.server, limit)
         while next:
             json_data = self.get(next)
             for r in json_data["results"]:
@@ -64,7 +67,8 @@ class OTXv2(object):
 
     def getall_iter(self, limit=20):
         pulses = []
-        next = "%s/api/v1/pulses/subscribed?limit=%d" % (self.server, limit)
+        uri = "{}/api/v1/pulses/subscribed?limit={}"
+        next = uri.format(self.server, limit)
         while next:
             json_data = self.get(next)
             for r in json_data["results"]:
@@ -73,8 +77,8 @@ class OTXv2(object):
 
     def getsince(self, mytimestamp, limit=20):
         pulses = []
-        next = "%s/api/v1/pulses/subscribed?limit=%d&modified_since=%s" % (
-            self.server, limit, mytimestamp)
+        uri = "{}/api/v1/pulses/subscribed?limit={}&modified_since={}"
+        next = uri.format(self.server, limit, mytimestamp)
         while next:
             json_data = self.get(next)
             for r in json_data["results"]:
@@ -84,8 +88,8 @@ class OTXv2(object):
 
     def getsince_iter(self, mytimestamp, limit=20):
         pulses = []
-        next = "%s/api/v1/pulses/subscribed?limit=%d&modified_since=%s" % (
-            self.server, limit, mytimestamp)
+        uri = "{}/api/v1/pulses/subscribed?limit={}&modified_since={}"
+        next = uri.format(self.server, limit, mytimestamp)
         while next:
             json_data = self.get(next)
             for r in json_data["results"]:
@@ -94,8 +98,8 @@ class OTXv2(object):
 
     def getevents_since(self, mytimestamp, limit=20):
         events = []
-        next = "%s/api/v1/pulses/events?limit=%d&since=%s" % (
-            self.server, limit, mytimestamp)
+        uri = "{}/api/v1/pulses/events?limit={}&since={}"
+        next = uri.format(self.server, limit, mytimestamp)
         while next:
             json_data = self.get(next)
             for r in json_data["results"]:

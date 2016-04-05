@@ -13,9 +13,9 @@ class TestPhishTankParserBot(test.BotTestCase, unittest.TestCase):
     """
 
     @classmethod
-    def set_bot(self):
-        self.bot_reference = PhishTankParserBot
-        self.default_input_message = {'__type': 'Report'}
+    def set_bot(cls):
+        cls.bot_reference = PhishTankParserBot
+        cls.default_input_message = {'__type': 'Report'}
 
 if __name__ == '__main__':
     unittest.main()

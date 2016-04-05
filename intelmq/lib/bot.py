@@ -20,6 +20,9 @@ from intelmq.lib.message import MessageFactory
 from intelmq.lib.pipeline import PipelineFactory
 
 
+__all__ = ['Bot']
+
+
 class Bot(object):
 
     def __init__(self, bot_id):
@@ -50,9 +53,8 @@ class Bot(object):
                 syslog = self.parameters.logging_syslog
             else:
                 syslog = False
-            self.logger = utils.log(self.bot_id,
+            self.logger = utils.log(self.bot_id, syslog=syslog,
                                     log_level=self.parameters.logging_level)
-#                                    syslog=syslog)
         except:
             self.log_buffer.append(('critical', traceback.format_exc()))
             self.stop()
@@ -161,9 +163,6 @@ class Bot(object):
                             if self.parameters.error_dump_message:
                                 self.dump_message(error_traceback)
 
-                            # FIXME: if broker fails in this instant
-                            #        it will crash the bot
-                            #
                             # remove message from pipeline
                             self.acknowledge_message()
 
@@ -311,7 +310,6 @@ class Bot(object):
         self.logger.info('Message dumped.')
         self.current_message = None
 
-
     def load_defaults_configuration(self):
         self.log_buffer.append(('debug', "Loading defaults configuration."))
         config = utils.load_configuration(DEFAULTS_CONF_FILE)
@@ -384,7 +382,6 @@ class Bot(object):
             for key in config[message_types].keys():
                 for _key in config.keys():
                     if _key.startswith("%s." % key):
-                        # FIXME: write in devguide the rules for the keys names
                         raise exceptions.ConfigurationError(
                             'harmonization',
                             "Key %s is not valid." % _key)

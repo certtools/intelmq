@@ -52,9 +52,9 @@ class TestAlienVaultOTXParserBot(test.BotTestCase, unittest.TestCase):
     """
 
     @classmethod
-    def set_bot(self):
-        self.bot_reference = AlienVaultOTXParserBot
-        self.default_input_message = EXAMPLE_REPORT
+    def set_bot(cls):
+        cls.bot_reference = AlienVaultOTXParserBot
+        cls.default_input_message = EXAMPLE_REPORT
 
     def test_event(self):
         """ Test if correct Event has been produced. """

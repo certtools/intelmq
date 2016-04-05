@@ -1,0 +1,1 @@
+-e git://git.nic.cz/python-rt.git@52e74e590b27605f33923c54b552ec00ece85a6c#egg=rt

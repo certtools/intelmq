@@ -1,4 +1,3 @@
-
 # -*- coding: utf-8 -*-
 """
 The following types are implemented with sanitize() and is_valid() functions:
@@ -163,6 +162,7 @@ class ClassificationType(GenericType):
                       'phishing',
                       'vulnerable service',
                       'blacklist',
+                      'other',
                       'unknown'
                       ]
 
@@ -470,6 +470,8 @@ class JSON(GenericType):
     JSON type.
 
     Sanitation accepts pythons dictionaries and JSON strings.
+
+    Valid values are only unicode strings with JSON dictionaries.
     """
 
     @staticmethod
@@ -565,24 +567,11 @@ class URL(GenericType):
 
     @staticmethod
     def sanitize(value):
-        if "hxxp://" in value:
-            value = value.replace('hxxp://', 'http://')
+        value = value.replace('hxxp://', 'http://')
+        value = value.replace('hxxps://', 'https://')
 
-        if "hxxps://" in value:
-            value = value.replace('hxxps://', 'https://')
-
-        tests = [
-            value,
-            "http://" + value,
-            "http://" + value + "/"
-        ]
-
-        for value in tests:
-            result = urlparse(value)
-            if result.netloc != "":
-                return GenericType().sanitize(value)
-
-        return None
+        if urlparse(value).netloc != "":
+            return GenericType().sanitize(value)
 
     @staticmethod
     def to_ip(url):
