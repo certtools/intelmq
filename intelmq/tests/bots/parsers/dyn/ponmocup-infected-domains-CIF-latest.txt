@@ -1,0 +1,16 @@
+#
+# this list of ponmocup malware redirection domains and infected web-servers is maintained by
+# email:   toms.security.stuff -at- gmail.com
+# twitter: @c_APT_ure
+# blog:    http://c-apt-ure.blogspot.com/
+#
+# full log file:
+# http://security-research.dyndns.org/pub/botnet/ponmocup/ponmocup-finder/ponmocup-infected-domains-latest.txt
+#
+# format:
+# ponmocup-malware-IP ponmocup-malware-domain ponmocup-malware-URI-path ponmocup-htaccess-infected-domain
+#
+# last updated: Tue Mar 15 00:47:49 PDT 2016
+#
+/ 25308.example.com http://25308.example.com/url malicious.example.net
+/ 36015.example.com http://36015.example.com/url malicious2.example.net

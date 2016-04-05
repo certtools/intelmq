@@ -279,12 +279,12 @@
                 "rate_limit": 3600
             }
         },
-        "Dyn": {
-            "description": "Dyn Collector is the bot responsible to get the report from source of information.",
+        "DynDNS ponmocup Domains": {
+            "description": "DynDNS ponmocup. List of ponmocup malware redirection domains and infected web-servers. See also http://security-research.dyndns.org/pub/botnet-links.html",
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
-                "feed": "Dyn",
-                "http_url": "http://security-research.dyndns.org/pub/botnet/ponmocup/ponmocup-finder/ponmocup-infected-domains-latest.txt",
+                "feed": "DynDNS ponmocup Domains",
+                "http_url": "http://security-research.dyndns.org/pub/malware-feeds/ponmocup-infected-domains-CIF-latest.txt",
                 "rate_limit": 10800
             }
         },
@@ -937,7 +937,7 @@
             "module": "intelmq.bots.parsers.dragonresearchgroup.parser_vnc",
             "parameters": {}
         },
-        "Dyn": {
+        "DynDNS ponmocup Domains": {
             "description": "Dyn Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.dyn.parser",
             "parameters": {}

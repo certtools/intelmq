@@ -53,7 +53,7 @@ def mocked_config(bot_id='test-bot', src_name='', dst_names=(), sysconfig={}):
             conf.update(sysconfig)
             return conf
         elif conf_file.startswith('/opt/intelmq/etc/'):
-            confname = os.path.join('conf/', os.path.split(conf_file)[-1])
+            confname = os.path.join('etc/', os.path.split(conf_file)[-1])
             fname = pkg_resources.resource_filename('intelmq',
                                                     confname)
             with open(fname, 'rt') as fpconfig:
@@ -275,9 +275,8 @@ class BotTestCase(object):
         counter = 0
         for type_name, type_match in self.bot_types.items():
             try:
-                self.assertRegexpMatches(self.bot_name,
-                                         r'\A[a-zA-Z0-9]+{}\Z'
-                                         r''.format(type_match))
+                self.assertRegex(self.bot_name,
+                                 r'\A[a-zA-Z0-9]+{}\Z'.format(type_match))
             except AssertionError:
                 counter += 1
         if counter != len(self.bot_types) - 1:
@@ -348,7 +347,7 @@ class BotTestCase(object):
                          "".format(self.bot_id, fields["bot_id"]))
 
         self.assertEqual(levelname, fields["log_level"])
-        self.assertRegexpMatches(fields["message"], pattern)
+        self.assertRegex(fields["message"], pattern)
 
     def assertRegexpMatchesLog(self, pattern):
         """Asserts that pattern matches against log. """
@@ -389,3 +388,8 @@ class BotTestCase(object):
         del expected['time.observation']
 
         self.assertDictEqual(expected, event_dict)
+
+if six.PY2:
+    # https://docs.python.org/3/whatsnew/3.2.html?highlight=assertregexpmatches
+    import unittest
+    BotTestCase.assertRegex = unittest.TestCase.assertRegexpMatches

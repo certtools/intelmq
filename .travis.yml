@@ -1,11 +1,12 @@
 language: python
 python:
   - "2.7"
+  - "3.3"
   - "3.4"
   - "3.5"
 install:
   - if [[ $TRAVIS_PYTHON_VERSION == '2.7' ]]; then pip install -r REQUIREMENTS2; fi
-  - if [[ ${TRAVIS_PYTHON_VERSION%.?} == 3 ]]; then pip install -r REQUIREMENTS; fi
+  - if [[ ${TRAVIS_PYTHON_VERSION%.*} == '3' ]]; then pip install -r REQUIREMENTS; fi
   - for file in intelmq/bots/*/*/REQUIREMENTS.txt; do pip install -r $file; done
   - pip install coveralls
   - pip install codecov

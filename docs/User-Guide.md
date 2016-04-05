@@ -215,7 +215,7 @@ This configuration is used by intelmqctl tool to launch bots. Usually, the Intel
 }
 ```
 
-More examples can be found at `intelmq/conf/startup.conf` directory in IntelMQ repository.
+More examples can be found at `intelmq/etc/startup.conf` directory in IntelMQ repository.
 
 
 ## Pipeline Configuration
@@ -252,7 +252,7 @@ This configuration is used by each bot to load the source pipeline and destinati
 }
 ```
 
-More examples can be found at `intelmq/conf/pipeline.conf` directory in IntelMQ repository.
+More examples can be found at `intelmq/etc/pipeline.conf` directory in IntelMQ repository.
 
 ## Defaults Configuration
 
@@ -341,7 +341,7 @@ This configuration is used by each bot to load the specific parameters associate
 }
 ```
 
-More examples can be found at `intelmq/conf/runtime.conf` directory in IntelMQ repository.
+More examples can be found at `intelmq/etc/runtime.conf` directory in IntelMQ repository.
 
 
 ## Harmonization Configuration
@@ -386,7 +386,7 @@ This configuration is used to specify the fields for all message types. The harm
 }
 ```
 
-More examples can be found at `intelmq/conf/harmonization.conf` directory in IntelMQ repository.
+More examples can be found at `intelmq/etc/harmonization.conf` directory in IntelMQ repository.
 
 
 

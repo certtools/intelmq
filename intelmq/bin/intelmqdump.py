@@ -192,34 +192,20 @@ def main():
             save_file(fname, content)
         elif answer[0] == 'r':
             # recover entries
+            default = utils.load_configuration(DEFAULTS_CONF_FILE)
+            runtime = utils.load_configuration(RUNTIME_CONF_FILE)
+            params = utils.load_parameters(default, runtime)
+            pipe = pipeline.PipelineFactory.create(params)
             for key, entry in [item for (count, item)
                                in enumerate(content.items()) if count in ids]:
-                if type(entry['message']) is dict:
-                    if '__type' in entry['message']:
-                        msg = json.dumps(entry['message'])
-                    # backwards compat: dumps had no type info
-                    elif '-parser' in entry['bot_id']:
-                        msg = message.Report(entry['message']).serialize()
-                    else:
-                        msg = message.Event(entry['message']).serialize()
-                elif issubclass(type(entry['message']), (six.binary_type,
-                                                         six.text_type)):
+                if entry['message']:
                     msg = entry['message']
-                elif entry['message'] is None:
-                    print(bold('No message here, deleting directly.'))
+                else:
+                    print('No message here, deleting directly.')
                     del content[key]
                     save_file(fname, content)
                     continue
-                else:
-                    print(bold('Unhandable type of message: {!r}'
-                               ''.format(type(entry['message']))))
-                    continue
-                print(entry['source_queue'])
 
-                default = utils.load_configuration(DEFAULTS_CONF_FILE)
-                runtime = utils.load_configuration(RUNTIME_CONF_FILE)
-                params = utils.load_parameters(default, runtime)
-                pipe = pipeline.PipelineFactory.create(params)
                 if queue_name is None:
                     if len(answer) == 2:
                         queue_name = answer[2]
@@ -235,6 +221,7 @@ def main():
                 else:
                     del content[key]
                     save_file(fname, content)
+                    print(green('Recovered dump {}.'.format(count)))
         elif answer[0] == 'd':
             # delete dumpfile
             os.remove(fname)
