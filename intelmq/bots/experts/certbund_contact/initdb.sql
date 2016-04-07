@@ -194,7 +194,8 @@ BEGIN
       JOIN network n ON cn.net_id = n.id
       JOIN organisation_to_template ot ON ot.organisation_id = o.id
       JOIN template t ON ot.template_id = t.id
-      JOIN classification_identifier ci ON ci.id = t.id
+      JOIN classification_identifier ci
+        ON ci.id = t.classification_identifier_id
       JOIN format f ON c.format_id = f.id
      WHERE n.address >> ip
        AND ci.name = event_classification;
