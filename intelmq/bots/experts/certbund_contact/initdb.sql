@@ -10,6 +10,12 @@ CREATE TABLE format (
     name VARCHAR(80)
 );
 
+/* Sector
+*/
+CREATE TABLE sector (
+  id INTEGER PRIMARY KEY,
+  name VARCHAR(100)
+);
 
 /*
   Organisation and Contact
@@ -18,14 +24,24 @@ CREATE TABLE organisation (
     id INTEGER PRIMARY KEY,
 
     -- The name of the organisation.
-    name VARCHAR(80),
-    comment TEXT
+    name VARCHAR(500),
+    -- sector
+    sector_id INTEGER,
+    comment TEXT,
+    
+    FOREIGN KEY (sector_id) REFERENCES sector(id)
 );
 
 
 CREATE TABLE contact (
     id INTEGER PRIMARY KEY,
-
+    
+    firstname VARCHAR (500),
+    lastname  VARCHAR (500),
+    tel       VARCHAR (500),
+    
+    pgp_key_id VARCHAR(128),
+    
     -- the email-address of the contact
     email VARCHAR(100),
 
@@ -153,6 +169,8 @@ CREATE TABLE contact_to_organisation (
     organisation_id INTEGER,
 
     PRIMARY KEY (contact_id, organisation_id),
+    
+     is_primary_contact BOOLEAN default false,
 
     FOREIGN KEY (contact_id) REFERENCES contact (id),
     FOREIGN KEY (organisation_id) REFERENCES organisation (id)
