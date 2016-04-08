@@ -10,6 +10,12 @@ CREATE TABLE format (
     name VARCHAR(80) UNIQUE NOT NULL
 );
 
+/* Sector to classify organisations.
+*/
+CREATE TABLE sector (
+  id INTEGER PRIMARY KEY,
+  name VARCHAR(100) NOT NULL
+);
 
 /*
   Organisation and Contact
@@ -18,14 +24,25 @@ CREATE TABLE organisation (
     id INTEGER PRIMARY KEY,
 
     -- The name of the organisation.
-    name VARCHAR(80) UNIQUE NOT NULL,
+    name VARCHAR(500) UNIQUE NOT NULL,
 
-    comment TEXT NOT NULL DEFAULT ''
+    -- The sector the organisation belongs to.
+    sector_id INTEGER,
+
+    comment TEXT NOT NULL DEFAULT '',
+
+    FOREIGN KEY (sector_id) REFERENCES sector(id)
 );
 
 
 CREATE TABLE contact (
     id INTEGER PRIMARY KEY,
+
+    firstname VARCHAR (500) NOT NULL DEFAULT '',
+    lastname  VARCHAR (500) NOT NULL DEFAULT '',
+    tel       VARCHAR (500) NOT NULL DEFAULT '',
+
+    pgp_key_id VARCHAR(128) NOT NULL DEFAULT '',
 
     -- the email-address of the contact
     email VARCHAR(100) NOT NULL,
@@ -185,6 +202,8 @@ CREATE TABLE contact_to_organisation (
 
     PRIMARY KEY (contact_id, organisation_id),
 
+    is_primary_contact BOOLEAN NOT NULL DEFAULT FALSE,
+
     FOREIGN KEY (contact_id) REFERENCES contact (id),
     FOREIGN KEY (organisation_id) REFERENCES organisation (id)
 );
@@ -207,7 +226,7 @@ CREATE INDEX organisation_to_template_template_idx
 -- Type for a single notification
 CREATE TYPE notification AS (
     email VARCHAR(100),
-    organisation VARCHAR(80),
+    organisation VARCHAR(500),
     template_path VARCHAR(200),
     format_name VARCHAR(80),
     ttl INTEGER
