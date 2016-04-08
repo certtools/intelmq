@@ -57,6 +57,8 @@ CREATE TABLE autonomous_system (
     comment TEXT NOT NULL DEFAULT ''
 );
 
+CREATE INDEX autonomous_system_number_idx ON autonomous_system (number);
+
 
 -- A network
 CREATE TABLE network (
@@ -106,6 +108,7 @@ CREATE TABLE fqdn (
     comment TEXT NOT NULL DEFAULT ''
 );
 
+CREATE INDEX fqdn_fqdn_idx ON fqdn (fqdn);
 
 
 /*
@@ -244,6 +247,52 @@ BEGIN
               JOIN network n ON n.id = cn.net_id
              WHERE host(network(n.address)) <= host(event_ip)
                AND host(event_ip) <= host(broadcast(n.address)))
+    SELECT mc.email, cos.organisation_name, cos.template_path, f.name, mc.ttl
+      FROM matched_contacts mc
+      JOIN contact_organisation_settings cos ON mc.contact_id = cos.contact_id
+      JOIN format f ON mc.format_id = f.id
+     WHERE cos.classification_identifier = event_classification;
+END;
+$$ LANGUAGE plpgsql VOLATILE;
+
+
+-- Lookup all notifications for a given ASN and event classification
+-- identifier
+CREATE OR REPLACE FUNCTION
+notifications_for_asn(event_asn BIGINT, event_classification VARCHAR(100))
+RETURNS SETOF notification
+AS $$
+BEGIN
+    RETURN QUERY
+      WITH matched_contacts (contact_id, email, format_id, ttl)
+        AS (SELECT c.id, c.email, c.format_id, ca.ttl
+              FROM contact c
+              JOIN contact_to_asn ca ON ca.contact_id = c.id
+              JOIN autonomous_system a ON a.number = ca.asn_id
+             WHERE a.number = event_asn)
+    SELECT mc.email, cos.organisation_name, cos.template_path, f.name, mc.ttl
+      FROM matched_contacts mc
+      JOIN contact_organisation_settings cos ON mc.contact_id = cos.contact_id
+      JOIN format f ON mc.format_id = f.id
+     WHERE cos.classification_identifier = event_classification;
+END;
+$$ LANGUAGE plpgsql VOLATILE;
+
+
+-- Lookup all notifications for a given FQDN and event classification
+-- identifier
+CREATE OR REPLACE FUNCTION
+notifications_for_fqdn(event_fqdn TEXT, event_classification VARCHAR(100))
+RETURNS SETOF notification
+AS $$
+BEGIN
+    RETURN QUERY
+      WITH matched_contacts (contact_id, email, format_id, ttl)
+        AS (SELECT c.id, c.email, c.format_id, cd.ttl
+              FROM contact c
+              JOIN contact_to_fqdn cd ON cd.contact_id = c.id
+              JOIN fqdn f ON f.id = cd.fqdn_id
+             WHERE f.fqdn = event_fqdn)
     SELECT mc.email, cos.organisation_name, cos.template_path, f.name, mc.ttl
       FROM matched_contacts mc
       JOIN contact_organisation_settings cos ON mc.contact_id = cos.contact_id
