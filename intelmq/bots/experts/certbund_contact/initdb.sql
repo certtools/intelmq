@@ -210,28 +210,45 @@ CREATE TYPE notification AS (
     ttl INTEGER
 );
 
+
+-- View combining the information about organisations and their
+-- associated templates for easy combination with the contact_to_*
+-- tables.
+CREATE OR REPLACE VIEW contact_organisation_settings (
+    contact_id,
+    organisation_name,
+    template_path,
+    classification_identifier
+) AS
+SELECT co.contact_id, o.name, t.path, ci.name
+  FROM contact_to_organisation co
+  JOIN organisation o ON o.id = co.organisation_id
+  JOIN organisation_to_template ot ON ot.organisation_id = o.id
+  JOIN template t ON ot.template_id = t.id
+  JOIN classification_identifier ci
+    ON ci.id = t.classification_identifier_id;
+
+
 -- Lookup all notifications for a given IP address and event
 -- classification identifier
 CREATE OR REPLACE FUNCTION
-notifications_for_ip(ip INET, event_classification VARCHAR(100))
+notifications_for_ip(event_ip INET, event_classification VARCHAR(100))
 RETURNS SETOF notification
 AS $$
 BEGIN
     RETURN QUERY
-    SELECT c.email, o.name, t.path, f.name, cn.ttl
-      FROM organisation o
-      JOIN contact_to_organisation co ON o.id = co.organisation_id
-      JOIN contact c ON c.id = co.contact_id
-      JOIN contact_to_network cn ON cn.contact_id = c.id
-      JOIN network n ON cn.net_id = n.id
-      JOIN organisation_to_template ot ON ot.organisation_id = o.id
-      JOIN template t ON ot.template_id = t.id
-      JOIN classification_identifier ci
-        ON ci.id = t.classification_identifier_id
-      JOIN format f ON c.format_id = f.id
-     WHERE host(network(n.address)) <= host(ip)
-       AND host(ip) <= host(broadcast(n.address))
-       AND ci.name = event_classification;
+      WITH matched_contacts (contact_id, email, format_id, ttl)
+        AS (SELECT c.id, c.email, c.format_id, cn.ttl
+              FROM contact c
+              JOIN contact_to_network cn ON cn.contact_id = c.id
+              JOIN network n ON n.id = cn.net_id
+             WHERE host(network(n.address)) <= host(event_ip)
+               AND host(event_ip) <= host(broadcast(n.address)))
+    SELECT mc.email, cos.organisation_name, cos.template_path, f.name, mc.ttl
+      FROM matched_contacts mc
+      JOIN contact_organisation_settings cos ON mc.contact_id = cos.contact_id
+      JOIN format f ON mc.format_id = f.id
+     WHERE cos.classification_identifier = event_classification;
 END;
 $$ LANGUAGE plpgsql VOLATILE;
 
