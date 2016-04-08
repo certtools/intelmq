@@ -71,6 +71,27 @@ CREATE TABLE network (
     comment TEXT NOT NULL DEFAULT ''
 );
 
+-- Indexes on the cidr column to improve queries that look up a network
+-- based on an IP-address. The default btree index of PostgreSQL is not
+-- used for those queries, so we need to do it in some other way. A
+-- simple way is to have indexes for the lower and upper bounds of the
+-- address range represented by the cidr value, so that's what we do
+-- here. The main downside is that the queries will have to use the same
+-- expressions as the ones used in the indexes. E.g. a query matching
+-- network that contain the IP-address ip and using n as the local alias
+-- for the table should use a where clause condition of the form
+--
+--   host(network(n.address)) <= ip AND ip <= host(broadcast(n.address))
+--
+-- FIXME: In PostgreSQL 9.4 there's GiST indexes for the intet and cidr
+-- types (see http://www.postgresql.org/docs/9.4/static/release-9-4.html).
+-- We cannot use that at the moment, because we still need to support
+-- PostgreSQL 9.3 which is the version available in Ubuntu 14.04LTS.
+CREATE INDEX network_cidr_lower_idx
+          ON network ((host(network(address))));
+CREATE INDEX network_cidr_upper_idx
+          ON network ((host(broadcast(address))));
+
 
 -- A fully qualified domain name
 CREATE TABLE fqdn (
@@ -95,6 +116,9 @@ CREATE TABLE classification_identifier (
     name VARCHAR(100) UNIQUE NOT NULL
 );
 
+CREATE INDEX classification_identifier_name_idx
+          ON classification_identifier (name);
+
 /*
  Template
 */
@@ -110,6 +134,9 @@ CREATE TABLE template (
     FOREIGN KEY (classification_identifier_id)
      REFERENCES classification_identifier (id)
 );
+
+CREATE INDEX template_classification_idx
+          ON template (classification_identifier_id);
 
 /*
  Relations A_to_B
@@ -168,6 +195,10 @@ CREATE TABLE organisation_to_template (
     FOREIGN KEY (template_id) REFERENCES template (id)
 );
 
+CREATE INDEX organisation_to_template_organisation_idx
+          ON organisation_to_template (organisation_id);
+CREATE INDEX organisation_to_template_template_idx
+          ON organisation_to_template (template_id);
 
 
 -- Type for a single notification
@@ -198,7 +229,8 @@ BEGIN
       JOIN classification_identifier ci
         ON ci.id = t.classification_identifier_id
       JOIN format f ON c.format_id = f.id
-     WHERE n.address >> ip
+     WHERE host(network(n.address)) <= host(ip)
+       AND host(ip) <= host(broadcast(n.address))
        AND ci.name = event_classification;
 END;
 $$ LANGUAGE plpgsql VOLATILE;
