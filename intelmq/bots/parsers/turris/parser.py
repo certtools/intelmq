@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+import csv
+import io
 import sys
 
 from intelmq.lib import utils
@@ -25,7 +26,7 @@ class TurrisGreylistParserBot(Bot):
 
         headers = True
         raw_report = utils.base64_decode(report.get("raw"))
-        for row in utils.csv_reader(raw_report):
+        for row in csv.reader(io.StringIO(raw_report)):
             # ignore headers
             if headers:
                 headers = False

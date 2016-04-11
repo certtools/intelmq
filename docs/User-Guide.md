@@ -3,15 +3,10 @@
   * [Requirements](#requirements)
   * [Install](#install)
     * [Install Dependencies](#install-dependencies)
-        * [Python 3.4 (recommended)](#python-34-recommended)
-          * [Ubuntu 14.04 / Debian 8](#ubuntu-1404--debian-8)
-          * [CentOS 7](#centos-7)
-        * [Python 2.7](#python-27)
-          * [Ubuntu 14.04 / Debian 8](#ubuntu-1404--debian-8-1)
-          * [CentOS 7](#centos-7-1)
+        * [Ubuntu 14.04 / Debian 8](#ubuntu-1404--debian-8)
+        * [CentOS 7](#centos-7)
     * [Install](#install-1)
-        * [Python 3.4 (recommended)](#python-34-recommended-1)
-        * [Python 2.7](#python-27-1)
+      * [Python 3.4 (recommended)](#python-34-recommended-1)
   * [Configuration](#configuration)
     * [System Configuration](#system-configuration)
     * [Startup Configuration](#startup-configuration)
@@ -26,7 +21,6 @@
       * [Web interface: IntelMQ Manager](#web-interface-intelmq-manager)
       * [Command-line interface: intelmqctl](#command-line-interface-intelmqctl)
         * [Botnet Concept](#botnet-concept)
-        * [Start bots with non-default Python](#start-bots-with-non-default-python)
         * [Forcing reset pipeline and cache (be careful)](#forcing-reset-pipeline-and-cache-be-careful)
     * [Error Handling](#error-handling-1)
       * [Tool: intelmqdump](#tool-intelmqdump)
@@ -53,9 +47,7 @@ Please report any errors you encounter at https://github.com/certtools/intelmq/i
 
 ## Install Dependencies
 
-#### Python 3.4 (recommended)
-
-##### Ubuntu 14.04 / Debian 8
+#### Ubuntu 14.04 / Debian 8
 
 ```bash
 apt-get install python3 python3-pip
@@ -85,38 +77,11 @@ systemctl enable redis
 systemctl start redis
 ```
 
-#### Python 2.7
-
-##### Ubuntu 14.04 / Debian 8
-
-```bash
-apt-get install python python-pip
-apt-get install git build-essential libcurl4-gnutls-dev libffi-dev libgnutls28-dev
-apt-get install python-dev python-pycurl python-openssl python-pyasn1
-apt-get install redis-server
-```
-
-##### CentOS 7
-
-```bash
-yum install git libcurl-devel gcc gcc-c++
-yum install python python-devel 
-yum install redis
-```
-
-Enable redis (default broker) on startup:
-```bash
-systemctl enable redis
-systemctl start redis
-```
-
 ## Install
 
 The `REQUIREMENTS` files define a list python packages and versions, which are necessary to run *all components* of IntelMQ. The defined versions are recommendations.
 
 If you do not do any modifications on the code, use `pip install intelmq` instead of `pip install .`!
-
-#### Python 3 (recommended)
 
 ```bash
 git clone https://github.com/certtools/intelmq.git /tmp/intelmq
@@ -128,29 +93,9 @@ pip3 install -r REQUIREMENTS
 pip3 install .
 
 useradd -d /opt/intelmq -U -s /bin/bash intelmq
-echo 'export PATH="$PATH:$HOME/bin"' >> /opt/intelmq/.profile
-chmod -R 0770 /opt/intelmq
-chown -R intelmq.intelmq /opt/intelmq
-echo 'export INTELMQ_PYTHON=/usr/bin/python3' >> /opt/intelmq/.profile
-```
-
-#### Python 2.7
-
-```bash
-sudo -s
-
-git clone https://github.com/certtools/intelmq.git /tmp/intelmq
-cd /tmp/intelmq
-
-pip2 install -r REQUIREMENTS2
-pip2 install .
-
-useradd -d /opt/intelmq -U -s /bin/bash intelmq
-echo 'export PATH="$PATH:$HOME/bin"' >> /opt/intelmq/.profile
 chmod -R 0770 /opt/intelmq
 chown -R intelmq.intelmq /opt/intelmq
 ```
-
 
 # Configuration
 
@@ -459,15 +404,6 @@ logged to /opt/intelmq/var/log/intelmqctl
 #### Botnet Concept
 
 The botnet represents all currently configured bots. To get an overview which bots are running, use `intelmqctl -n status`or use IntelMQ Manager.
-
-#### Start bots with non-default Python
-
-The python version/path can be specified by the `INTELMQ_PYTHON` environment variable. By default it's the default python binary. This can be used to start the bots with current Python (version 3), while the default Python version for the operating system is still Legacy Python (version 2).
-
-```
-$ export INTELMQ_PYTHON=/usr/bin/python3.4
-$ intelmqctl -n start
-```
 
 #### Forcing reset pipeline and cache (be careful)
 

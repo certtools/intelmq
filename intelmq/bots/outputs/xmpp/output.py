@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 import sys
 
-from sleekxmpp import ClientXMPP
-
 from intelmq.lib.bot import Bot
+from sleekxmpp import ClientXMPP
 
 
 class XMPP(Bot):

@@ -2,7 +2,6 @@
 """
 Tests the Bot class itself.
 """
-from __future__ import unicode_literals
 
 import io
 import json
@@ -10,10 +9,11 @@ import logging
 import os
 import unittest
 
-import intelmq.lib.pipeline as pipeline
-import intelmq.lib.utils as utils
 import mock
 import pkg_resources
+
+import intelmq.lib.pipeline as pipeline
+import intelmq.lib.utils as utils
 from intelmq import PIPELINE_CONF_FILE, RUNTIME_CONF_FILE, SYSTEM_CONF_FILE
 from intelmq.lib.test import mocked_logger
 

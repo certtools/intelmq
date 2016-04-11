@@ -5,7 +5,6 @@ Testing asn_lookup.
 see asn_lookup README for how to download database
 It is expected at /opt/intelmq/var/lib/bots/asn_lookup/ipasn.dat by default
 """
-from __future__ import unicode_literals
 
 import os
 import unittest

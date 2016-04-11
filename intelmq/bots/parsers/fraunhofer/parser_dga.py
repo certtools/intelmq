@@ -3,7 +3,6 @@
 The source provides a JSOn file with a dictionary. The keys of this dict are
 identifiers and the values are lists of domains.
 """
-from __future__ import unicode_literals
 import json
 import sys
 
@@ -11,7 +10,6 @@ from intelmq.lib import utils
 from intelmq.lib.bot import Bot
 from intelmq.lib.exceptions import InvalidValue
 from intelmq.lib.message import Event
-
 
 __all__ = ['FraunhoferDGAParserBot']
 

@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import unicode_literals
 
 import os.path
 import sys
 
+import stomp
+
 from intelmq.lib.bot import Bot
 from intelmq.lib.message import MessageFactory
-
-import stomp
 
 
 class stompOutputBot(Bot):

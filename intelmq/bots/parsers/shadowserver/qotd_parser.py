@@ -18,8 +18,8 @@ naics   [UNDOCUMENTED]
 sic [UNDOCUMENTED]
 sector  [UNDOCUMENTED]
 """
-from __future__ import unicode_literals
-
+import csv
+import io
 import sys
 
 from intelmq.lib import utils
@@ -37,7 +37,7 @@ class ShadowServerQotdParserBot(Bot):
             return
 
         raw_report = utils.base64_decode(report["raw"])
-        for row in utils.csv_reader(raw_report, dictreader=True):
+        for row in csv.DictReader(io.StringIO(raw_report), dictreader=True):
             event = Event(report)
             extra = {}
 

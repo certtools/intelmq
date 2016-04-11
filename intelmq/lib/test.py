@@ -5,20 +5,17 @@ Utilities for testing intelmq bots.
 TheBotTestCase can be used as base class for unittests on bots. It includes
 some basic generic tests (logged errors, correct pipeline setup).
 """
-from __future__ import unicode_literals
-
 import io
 import json
 import logging
 import os
+
+import mock
 import pkg_resources
 
 import intelmq.lib.pipeline as pipeline
 import intelmq.lib.utils as utils
-import mock
-import six
 from intelmq import PIPELINE_CONF_FILE, RUNTIME_CONF_FILE, SYSTEM_CONF_FILE
-
 
 __all__ = ['BotTestCase']
 
@@ -353,10 +350,7 @@ class BotTestCase(object):
         """Asserts that pattern matches against log. """
 
         self.assertIsNotNone(self.loglines_buffer)
-        try:
-            self.assertRegex(self.loglines_buffer, pattern)
-        except AttributeError:  # Py2
-            self.assertRegexpMatches(self.loglines_buffer, pattern)
+        self.assertRegex(self.loglines_buffer, pattern)
 
     def assertNotRegexpMatchesLog(self, pattern):
         """Asserts that pattern doesn't match against log."""
@@ -380,7 +374,7 @@ class BotTestCase(object):
         given queue position.
         """
         event = self.get_output_queue()[queue_pos]
-        self.assertIsInstance(event, six.text_type)
+        self.assertIsInstance(event, str)
 
         event_dict = json.loads(event)
         expected = expected_msg.copy()
@@ -388,8 +382,3 @@ class BotTestCase(object):
         del expected['time.observation']
 
         self.assertDictEqual(expected, event_dict)
-
-if six.PY2:
-    # https://docs.python.org/3/whatsnew/3.2.html?highlight=assertregexpmatches
-    import unittest
-    BotTestCase.assertRegex = unittest.TestCase.assertRegexpMatches

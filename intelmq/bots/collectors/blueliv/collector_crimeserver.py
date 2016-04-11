@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-import sys
 import json
 import logging
-from sdk.blueliv_api import BluelivAPI
+import sys
 
 from intelmq.lib.bot import Bot
 from intelmq.lib.message import Report
+from sdk.blueliv_api import BluelivAPI
 
 
 class BluelivCrimeserverCollectorBot(Bot):

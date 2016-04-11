@@ -1,13 +1,9 @@
 # -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
 import sys
-try:
-    from urllib.parse import urlparse
-except ImportError:
-    from urlparse import urlparse
-from intelmq.lib.bot import Bot
+from urllib.parse import urlparse
+
 import intelmq.lib.harmonization
+from intelmq.lib.bot import Bot
 
 
 class Url2fqdnExpertBot(Bot):

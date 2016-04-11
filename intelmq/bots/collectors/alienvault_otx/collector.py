@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import, unicode_literals
-import sys
-from .OTXv2 import OTXv2
 import json
+import sys
 
 from intelmq.lib.bot import Bot
 from intelmq.lib.message import Report
+
+from .OTXv2 import OTXv2
 
 
 class AlienVaultOTXCollectorBot(Bot):

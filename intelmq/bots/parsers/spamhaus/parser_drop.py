@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 
 import sys
 
 from dateutil.parser import parse as dateparser
+
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
 from intelmq.lib.message import Event

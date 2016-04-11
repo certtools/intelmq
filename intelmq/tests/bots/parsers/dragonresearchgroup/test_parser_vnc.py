@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 
 import unittest
 
 import intelmq.lib.test as test
 from intelmq.bots.parsers.dragonresearchgroup.parser_vnc import \
     DragonResearchGroupVNCParserBot
-
 
 REPORT = {'__type': 'Report',
           'feed.url': 'https://dragonresearchgroup.org/insight/vncprobe.txt',

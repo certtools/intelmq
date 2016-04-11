@@ -11,27 +11,17 @@ log
 reverse_readline
 parse_logline
 """
-from __future__ import unicode_literals
-
 import base64
-import csv
-import io
 import json
 import logging
 import logging.handlers
 import os
-import pkg_resources
 import re
 import sys
 
+import pkg_resources
+
 import intelmq
-import six
-
-try:
-    import unicodecsv
-except ImportError:
-    unicodecsv = None
-
 
 __all__ = ['base64_decode', 'base64_encode', 'decode', 'encode',
            'load_configuration', 'load_parameters', 'log', 'parse_logline',
@@ -72,19 +62,19 @@ def decode(text, encodings=("utf-8", ), force=False):
         unicode string is always returned, even when encoding is ascii
         (Python 3 compat)
     """
-    if isinstance(text, six.text_type):
+    if isinstance(text, str):
         return text
 
     for encoding in encodings:
         try:
-            return six.text_type(text.decode(encoding))
+            return str(text.decode(encoding))
         except ValueError:
             pass
 
     if force:
         for encoding in encodings:
             try:
-                return six.text_type(text.decode(encoding, 'ignore'))
+                return str(text.decode(encoding, 'ignore'))
             except ValueError:
                 pass
 
@@ -105,7 +95,7 @@ def encode(text, encodings=("utf-8", ), force=False):
     force : boolean
         Ignore invalid characters, default: False
     """
-    if isinstance(text, six.binary_type):
+    if isinstance(text, bytes):
         return text
 
     for encoding in encodings:
@@ -323,27 +313,3 @@ def parse_logline(logline):
         return dict(list(zip(fields, match.group(*fields))))
     except AttributeError:
         return logline
-
-
-def csv_reader(csv_data, dialect=csv.excel, dictreader=False, **kwargs):
-    """
-    Reads data from given string and parses as utf8.
-    Only needed for Legcay Python, version 2.
-    """
-    if six.PY2:
-        if unicodecsv is None:
-            raise ValueError('Module unicodecsv is not available.')
-        if dictreader:
-            for row in unicodecsv.DictReader(io.BytesIO(csv_data), **kwargs):
-                yield row
-        else:
-            for row in unicodecsv.reader(io.BytesIO(encode(csv_data)),
-                                         **kwargs):
-                yield row
-    else:
-        if dictreader:
-            for row in csv.DictReader(io.StringIO(csv_data), **kwargs):
-                yield row
-        else:
-            for row in csv.reader(io.StringIO(csv_data), **kwargs):
-                yield row

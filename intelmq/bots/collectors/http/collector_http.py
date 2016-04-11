@@ -12,22 +12,14 @@ http_username, http_password: string
 http_proxy, http_ssl_proxy: string
 
 """
-from __future__ import unicode_literals
-import requests
-import sys
 import io
+import sys
 import zipfile
+
+import requests
 
 from intelmq.lib.bot import Bot
 from intelmq.lib.message import Report
-
-# SNI Workaround for Python 2:
-# https://github.com/kennethreitz/requests/blob/master/requests/packages/urllib3/contrib/pyopenssl.py#L16
-try:
-    import urllib3.contrib.pyopenssl
-    urllib3.contrib.pyopenssl.inject_into_urllib3()
-except ImportError:
-    pass
 
 
 class HTTPCollectorBot(Bot):

@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 
 import unittest
 
 import intelmq.lib.test as test
-from intelmq.lib.cache import Cache
 from intelmq.bots.experts.cymru_whois.expert import CymruExpertBot
+from intelmq.lib.cache import Cache
 
 EXAMPLE_INPUT = {"__type": "Event",
                  "source.ip": "93.184.216.34",  # example.com

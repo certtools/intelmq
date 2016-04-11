@@ -2,7 +2,6 @@
 """
 Testing url2fqdn.
 """
-from __future__ import unicode_literals
 
 import unittest
 

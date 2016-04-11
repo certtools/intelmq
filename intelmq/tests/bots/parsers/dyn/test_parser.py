@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 
-import unittest
 import os
+import unittest
 
 import intelmq.lib.test as test
 from intelmq.bots.parsers.dyn.parser import DynParserBot
 from intelmq.lib import utils
-
 
 with open(os.path.join(os.path.dirname(__file__), 'ponmocup-infected-domains-CIF-latest.txt')) as handle:
     EXAMPLE_FILE = handle.read()

@@ -2,7 +2,6 @@
 """
 
 """
-from __future__ import print_function, unicode_literals
 
 import datetime
 import json
@@ -17,7 +16,6 @@ from intelmq import (DEFAULT_LOGGING_LEVEL, DEFAULT_LOGGING_PATH,
 from intelmq.lib import exceptions, utils
 from intelmq.lib.message import MessageFactory
 from intelmq.lib.pipeline import PipelineFactory
-
 
 __all__ = ['Bot']
 

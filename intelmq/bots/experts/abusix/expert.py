@@ -3,7 +3,6 @@
 Reference: https://abusix.com/contactdb.html
 RIPE abuse contacts resolving through DNS TXT queries
 '''
-from __future__ import unicode_literals, absolute_import
 import sys
 
 from intelmq.bots.experts.abusix.lib import Abusix

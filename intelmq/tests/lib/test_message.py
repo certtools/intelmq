@@ -6,14 +6,11 @@ Unicode is used for all tests.
 Most tests are performed on Report, as it is formally the same as Message,
 but has a valid Harmonization configuration.
 """
-from __future__ import unicode_literals
-
 import json
 import unittest
 
 import mock
 import pkg_resources
-import six
 
 import intelmq.lib.exceptions as exceptions
 from intelmq.lib.utils import load_configuration
@@ -46,10 +43,7 @@ class TestMessageFactory(unittest.TestCase):
         """
         Checks sequences for same content, regardless of order.
         """
-        if six.PY2:
-            self.assertItemsEqual(expected, actual)
-        else:
-            self.assertCountEqual(expected, actual)
+        self.assertCountEqual(expected, actual)
 
     def assertDictContainsSubset(self, actual, expected):
         """
@@ -312,7 +306,7 @@ class TestMessageFactory(unittest.TestCase):
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         report = self.add_report_examples(report)
         self.assertEqual(report.serialize(),
-                         six.text_type(report))
+                         str(report))
 
     def test_deep_copy_content(self):
         """ Test if deep_copy does return the same items. """
@@ -379,7 +373,7 @@ class TestMessageFactory(unittest.TestCase):
         event = message.MessageFactory.unserialize('{"__type": "Event"}')
         event = self.add_event_examples(event)
         actual = event.to_json()
-        self.assertIsInstance(actual, six.text_type)
+        self.assertIsInstance(actual, str)
         expected = ('{"feed": {"url": "https://example.com/", "name": '
                     '"Example"}, "raw": "bG9yZW0gaXBzdW0=", "time": '
                     '{"observation": "2015-01-01T13:37:00+00:00"}}')

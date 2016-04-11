@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Generates a SQL command file with commands to create the events table.
@@ -7,7 +7,6 @@ Reads the Data-Harmonization.md document from
 `/opt/intelmq/docs/Data-Harmonization.md` and generates an SQL command from it.
 The SQL file is saved in `/tmp/initdb.sql`.
 """
-from __future__ import print_function, unicode_literals
 import json
 import sys
 

@@ -21,7 +21,6 @@
 ; ip, asn, country, lastseen, botname, domain, remote_ip, remote_port,
 local_port, protocol
 """
-from __future__ import unicode_literals
 import sys
 
 from intelmq.lib import utils
@@ -29,7 +28,6 @@ from intelmq.lib.bot import Bot
 from intelmq.lib.exceptions import InvalidValue
 from intelmq.lib.harmonization import DateTime
 from intelmq.lib.message import Event
-
 
 __all__ = ['SpamhausCERTParserBot']
 

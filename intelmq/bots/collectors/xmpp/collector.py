@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 
-import sys
 import json
-from __future__ import unicode_literals
+import sys
 
+from intelmq.lib.bot import Bot
 from sleekxmpp import ClientXMPP
 from sleekxmpp.exceptions import IqError, IqTimeout
-from intelmq.lib.bot import Bot
 
 
 class XMPPCollectorBot(Bot):
