@@ -200,6 +200,12 @@ class TestHarmonization(unittest.TestCase):
         self.assertTrue(harmonization.FQDN.is_valid('example.net',
                                                     sanitize=True))
 
+    def test_fqdn_to_ip(self):
+        """ Test FQDN.to_ip """
+        self.assertEqual(None, harmonization.FQDN.to_ip('localhost'))
+        self.assertEqual('93.184.216.34',
+                         harmonization.FQDN.to_ip('example.org'))
+
     def test_json_valid(self):
         """ Test JSON.is_valid with valid arguments. """
         self.assertTrue(harmonization.JSON.is_valid('{"foo": "bar"}',
