@@ -27,7 +27,7 @@ class XMPPCollectorBot(Bot):
         self.logger.info("Disconnected")
 
 
-class XMPPOutputBot(ClientXMPP):
+class XMPPBot(ClientXMPP):
 
     def __init__(self, jid, password, send_message, logger):
         ClientXMPP.__init__(self, jid, password)

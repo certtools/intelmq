@@ -583,7 +583,7 @@
             "description": "XMPP collector is the bot responsible to get events from xmpp server",
             "module": "intelmq.bots.collectors.xmpp.collector",
             "parameters": {
-                "rate_limit": "3600",
+                "rate_limit": 3600,
                 "xmpp_password": "xmpp password",
                 "xmpp_server": "xmpp server",
                 "xmpp_user": "xmpp username"
