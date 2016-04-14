@@ -28,7 +28,7 @@ class PhishTankParserBot(Bot):
                    ]
 
         raw_report = utils.base64_decode(report.get("raw"))
-        for row in csv.parser(io.StringIO(raw_report)):
+        for row in csv.reader(io.StringIO(raw_report)):
 
             # ignore headers
             if "phish_id" in row:
