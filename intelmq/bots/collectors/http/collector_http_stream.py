@@ -17,7 +17,7 @@ class HTTPStreamCollectorBot(Bot):
         self.conn.perform()
 
     def on_receive(self, data):
-        for line in data.split('\n'):
+        for line in data.decode().splitlines():
 
             line = line.strip()
             if line == "":
