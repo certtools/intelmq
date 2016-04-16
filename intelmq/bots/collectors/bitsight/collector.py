@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 import sys
 
 import pycurl
@@ -6,11 +7,16 @@ from intelmq.lib.bot import Bot
 from intelmq.lib.message import Report
 
 
-class HTTPStreamCollectorBot(Bot):
+class BitsightCollectorBot(Bot):
 
     def init(self):
+        self.logger.info("Connecting to BitSightTech stream server") 
+        http_proxy = getattr(self.parameters, http_proxy, None) 
+        api_key = getattr(self.parameters, api_key)
+        http_url = getattr(self.parameters, http_url) 
         self.conn = pycurl.Curl()
-        self.conn.setopt(pycurl.URL, str(self.parameters.http_url))
+        self.conn.setopt(pycurl.PROXY, http_proxy)
+        self.conn.setopt(pycurl.URL, str(http_url+api_key))
         self.conn.setopt(pycurl.WRITEFUNCTION, self.on_receive)
 
     def process(self):
@@ -30,5 +36,5 @@ class HTTPStreamCollectorBot(Bot):
 
 
 if __name__ == "__main__":
-    bot = HTTPStreamCollectorBot(sys.argv[1])
+    bot = BitsightCollectorBot(sys.argv[1])
     bot.start()

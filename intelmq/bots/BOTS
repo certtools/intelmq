@@ -1,5 +1,15 @@
 {
     "Collector": {
+
+        "bitsight":{
+        "module.intelmq.bots.collectors.bitsight.collector",
+        "parameters":{
+             "feed":"Bitsight",
+             "http_url": "http://alerts.bitsighttech.com:8080/stream?key=",
+             "api_key": "<insert your api key>",
+             "rate_limit": "3600"
+         }, 
+
         "Abuse.ch Feodo Tracker Domains": {
             "description": "The Feodo Tracker Feodo Domain Blocklist contains domain names (FQDN) used as C&C communication channel by the Feodo Trojan. These domains names are usually registered and operated by cybercriminals for the exclusive purpose of hosting a Feodo botnet controller. Hence you should expect no legit traffic to those domains. I highly recommend you to block/drop any traffic towards any Feodo C&C domain by using the Feodo Domain Blocklist. Please consider that domain names are usually only used by version B of the Feodo Trojan. C&C communication channels used by version A, version C and version D are not covered by this blocklist.",
             "module": "intelmq.bots.collectors.http.collector_http",
@@ -782,6 +792,8 @@
         }
     },
     "Parser": {
+
+
         "Abuse.ch Feodo Tracker Domains": {
             "description": "Abuse.ch Feodo Tracker Domains Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.abusech.parser_domain",
@@ -887,6 +899,12 @@
             "module": "intelmq.bots.parsers.blueliv.parser_crimeserver",
             "parameters": {}
         },
+        "Bitsight": {
+            "description": "Bitsight",
+            "module": "intelmq.bots.parsers.bitsight.parser_bitsight",
+            "parameters": {}
+        },
+
         "CI Army": {
             "description": "CI Army Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.ci_army.parser",
