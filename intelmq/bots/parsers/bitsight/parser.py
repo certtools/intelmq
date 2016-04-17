@@ -1,17 +1,16 @@
 # -*- coding: utf-8 -*-
 """
-Bitsight parser
+Bitsight Alert Stream parser
 
-_ts					Timestamp in Unix Time  		=> time.source
-env.remote_addr				IP that accessed the sinkhole		=> source.ip
-env.remote_port				Port that accessed the sinkhole		=> source.port
-env.server_addr				Sinkhole IP				=> destination.ip
-env.server_port				Sinkhole port				=> destination.port
-env.server_name				Domain accessed by IP			=> destination.fqdn
-env.request_method			Method used by IP			=> extra.method
-trojanfamily				Malware name				=> malware.name
-_geo_env_remote_addr.country_name 	Country location of the IP		=> source.geolocation.country
-
+_ts                                     Timestamp in Unix Time                  => time.source
+env.remote_addr                         IP that accessed the sinkhole           => source.ip
+env.remote_port                         Port that accessed the sinkhole         => source.port
+env.server_addr                         Sinkhole IP                             => destination.ip
+env.server_port                         Sinkhole port                           => destination.port
+env.server_name                         Domain accessed by IP                   => destination.fqdn
+env.request_method                      Method used by IP                       => extra.method
+trojanfamily                            Malware name                            => malware.name
+_geo_env_remote_addr.country_name       Country location of the IP              => source.geolocation.country
 """
 
 import json
