@@ -91,12 +91,11 @@
             }
         },
         "BitSight Ciberfeed Stream": {
-            "description": "Bitsight Collector is the bot reponsible to get Bitsight Ciberfeed Stream",
+            "description": "Bitsight Collector is the bot reponsible to get Bitsight Ciberfeed Alert Stream",
             "module": "intelmq.bots.collectors.bitsight.collector",
             "parameters":{
                 "feed":"BitSight",
-                "http_url":"http://alerts.bitsighttech.com:8080/stream?key=<api>",
-                "api_key":"<api>"
+                "http_url":"http://alerts.bitsighttech.com:8080/stream?key=<api>"
             }
         },
         "BlockList.DE Apache": {

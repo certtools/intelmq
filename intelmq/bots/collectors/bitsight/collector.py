@@ -18,7 +18,7 @@ class BitsightCollectorBot(Bot):
           self.conn.setopt(pycurl.PROXY, str(http_proxy))
         if https_proxy:
           self.conn.setopt(pycurl.PROXY, str(https_proxy))
-        self.conn.setopt(pycurl.URL, str(self.parameters.http_url)+str(self.parameters.api_key))
+        self.conn.setopt(pycurl.URL, str(self.parameters.http_url))
         self.conn.setopt(pycurl.WRITEFUNCTION, self.on_receive)
 
     def process(self):
