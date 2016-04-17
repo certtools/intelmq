@@ -2,7 +2,7 @@
 """
 Bitsight parser
 
-_ts					Timestamp in ????			=> time.source
+_ts					Timestamp in Unix Time  		=> time.source
 env.remote_addr				IP that accessed the sinkhole		=> source.ip
 env.remote_port				Port that accessed the sinkhole		=> source.port
 env.server_addr				Sinkhole IP				=> destination.ip
@@ -20,6 +20,8 @@ import sys
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
 from intelmq.lib.message import Event
+from intelmq.lib.harmonization import DateTime
+from intelmq.lib.exceptions import InvalidValue
 
 
 class BitsightParserBot(Bot):
@@ -29,20 +31,19 @@ class BitsightParserBot(Bot):
         if report is None or not report.contains('raw'):
             self.acknowledge_message()
             return
-        raw_report = {}
         raw_report = json.loads(utils.base64_decode(report.get('raw')))
-        for key in raw_report:
-            extra = {}
-            event = Event(report)
-            value = raw_report[key]
+        extra = {}
+        event = Event(report)
+        event.add("raw", report.get('raw'))
+        event.add('classification.type','malware')
+        event.add('event_description.text','Sinkhole attempted connection')
+        
+        for key, value in raw_report.items():
             if key == "_ts":
-               print('ts = ' + str(value))
-               #event.add('time.source', value)
+               event.add('time.source', DateTime.from_timestamp(int(value)))
             if key == "trojanfamily":
-               #print('trojanfamily = ' + value)
                event.add('malware.name', value)
             if key == "env":
-               #print('source.ip = ' + value["remote_addr"])
                if "remote_addr" in value:
                    event.add('source.ip', value["remote_addr"])
                if "remote_port" in value:
@@ -54,21 +55,17 @@ class BitsightParserBot(Bot):
                if "server_name" in value:
                    try:
                        event.add('destination.fqdn', value["server_name"])
-                   except:
-                       event.add('destination.fqdn', "")
-               if "request_method" in value:
-                  extra['request_method'] = value["request_method"]
-               if extra:
-                  event.add('extra', extra)
-            if key == "_geo_env_remote_addr.country_name":
-               event.add('source.geolocation.country', value)
-            event.add("raw", json.dumps(raw_report, sort_keys=True))
-            self.send_message(event)
+                   except InvalidValue:
+                       event.add('destination.fqdn', "no.fqdn-provided.null")
+               if  "request_method" in value:
+                   extra["request_method"] = value["request_method"]
+               if  extra:
+                   event.add("extra", extra)
+               if  key == "_geo_env_remote_addr.country_name":
+                   event.add('source.geolocation.country', value)
+        self.send_message(event)
         self.acknowledge_message()
 
 if __name__ == "__main__":
     bot = BitsightParserBot(sys.argv[1])
     bot.start()
-
-
-
