@@ -90,6 +90,15 @@
                 "rate_limit": 3600
             }
         },
+        "BitSight Ciberfeed Stream": {
+            "description": "Bitsight Collector is the bot reponsible to get Bitsight Ciberfeed Stream",
+            "module": "intelmq.bots.collectors.bitsight.collector",
+            "parameters":{
+                "feed":"BitSight",
+                "http_url":"http://alerts.bitsighttech.com:8080/stream?key=<api>",
+                "api_key":"<api>"
+            }
+        },
         "BlockList.DE Apache": {
             "description": "BlockList.DE Apache Collector is the bot responsible to get the report from source of information. All IP addresses which have been reported within the last 48 hours as having run attacks on the service Apache, Apache-DDOS, RFI-Attacks. ",
             "module": "intelmq.bots.collectors.http.collector_http",
@@ -832,6 +841,11 @@
             "module": "intelmq.bots.parsers.autoshun.parser",
             "parameters": {}
         },
+        "Bitsight Ciberfeed Stream":{
+            "description":"Bitsight Ciberfeed parser is the bot reponsible to parse and sanitize the information",
+            "module":"intelmq.bots.parsers.bitsight.parser",
+            "parameters":{}
+        },
         "BlockList.DE Apache": {
             "description": "BlockList.DE Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.blocklistde.parser",
@@ -1091,3 +1105,4 @@
         }
     }
 }
+
