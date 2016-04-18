@@ -4,7 +4,7 @@ BEGIN;
  Supported data formats like csv, iodef, etc.
 */
 CREATE TABLE format (
-    id INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
 
     -- Most likely a WKT or MIME-Type
     name VARCHAR(80) UNIQUE NOT NULL
@@ -13,7 +13,7 @@ CREATE TABLE format (
 /* Sector to classify organisations.
 */
 CREATE TABLE sector (
-  id INTEGER PRIMARY KEY,
+  id SERIAL PRIMARY KEY,
   name VARCHAR(100) NOT NULL
 );
 
@@ -21,7 +21,7 @@ CREATE TABLE sector (
   Organisation and Contact
 */
 CREATE TABLE organisation (
-    id INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
 
     -- The name of the organisation.
     name VARCHAR(500) UNIQUE NOT NULL,
@@ -36,7 +36,7 @@ CREATE TABLE organisation (
 
 
 CREATE TABLE contact (
-    id INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
 
     firstname VARCHAR (500) NOT NULL DEFAULT '',
     lastname  VARCHAR (500) NOT NULL DEFAULT '',
@@ -79,7 +79,7 @@ CREATE INDEX autonomous_system_number_idx ON autonomous_system (number);
 
 -- A network
 CREATE TABLE network (
-    id INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
 
     -- Network address as CIDR.
     address cidr UNIQUE NOT NULL,
@@ -114,7 +114,7 @@ CREATE INDEX network_cidr_upper_idx
 
 -- A fully qualified domain name
 CREATE TABLE fqdn (
-    id INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
 
     -- The fully qualified domain name
     fqdn TEXT UNIQUE NOT NULL,
@@ -132,7 +132,7 @@ CREATE INDEX fqdn_fqdn_idx ON fqdn (fqdn);
   Classifications of Events/Incidents
 */
 CREATE TABLE classification_identifier (
-    id INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     name VARCHAR(100) UNIQUE NOT NULL
 );
 
@@ -143,7 +143,7 @@ CREATE INDEX classification_identifier_name_idx
  Template
 */
 CREATE TABLE template (
-    id INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
 
     -- File-name of the template
     path VARCHAR(200) NOT NULL,
@@ -209,7 +209,7 @@ CREATE TABLE contact_to_organisation (
 );
 
 CREATE TABLE organisation_to_template (
-    id INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     organisation_id INTEGER NOT NULL,
     template_id INTEGER NOT NULL,
 
