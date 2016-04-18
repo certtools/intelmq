@@ -34,7 +34,7 @@ class BitsightCollectorBot(Bot):
             report.add("raw", str(line))
             report.add("feed.name", self.parameters.feed)
             report.add("feed.accuracy", self.parameters.accuracy)
-            url=re.sub(r'[kK][eE][yY]=.*','',str(self.parameters.http_url))
+            url=re.sub(r'[kK][eE][yY]=.*','',str(self.parameters.http_url)) """ removing api_key """
             report.add("feed.url",url)
             
             self.send_message(report)
