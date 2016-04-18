@@ -50,7 +50,9 @@ if args.network_file:
             network = summarize_address_range(first_ip, last_ip)
             DB_RECORDS.append((str(network[0]), "false", comment_string))
         elif record[2] == "ipv6":
-            continue # TODO
+            first_ip = IPv6Address(record[3])
+            ip_prefix = record[4]
+            DB_RECORDS.append((str(first_ip) + '/' + ip_prefix, "false", ""))
 
 con = None
 try:
