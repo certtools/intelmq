@@ -93,9 +93,9 @@
         "BitSight Ciberfeed Stream": {
             "description": "Bitsight Collector is the bot reponsible to get Bitsight Ciberfeed Alert Stream",
             "module": "intelmq.bots.collectors.bitsight.collector",
-            "parameters":{
-                "feed":"BitSight",
-                "http_url":"http://alerts.bitsighttech.com:8080/stream?key=<api>"
+            "parameters": {
+                "feed": "BitSight",
+                "http_url": "http://alerts.bitsighttech.com:8080/stream?key=<api>"
             }
         },
         "BlockList.DE Apache": {
@@ -840,10 +840,10 @@
             "module": "intelmq.bots.parsers.autoshun.parser",
             "parameters": {}
         },
-        "Bitsight Ciberfeed Stream":{
-            "description":"Bitsight Ciberfeed parser is the bot reponsible to parse and sanitize the information",
-            "module":"intelmq.bots.parsers.bitsight.parser",
-            "parameters":{}
+        "BitSight Ciberfeed Stream": {
+            "description": "Bitsight Ciberfeed parser is the bot reponsible to parse and sanitize the information.",
+            "module": "intelmq.bots.parsers.bitsight.parser",
+            "parameters": {}
         },
         "BlockList.DE Apache": {
             "description": "BlockList.DE Parser is the bot responsible to parse the report and sanitize the information.",
@@ -1104,4 +1104,3 @@
         }
     }
 }
-

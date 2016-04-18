@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import re
 import sys
-
 import pycurl
 from intelmq.lib.bot import Bot
 from intelmq.lib.message import Report
@@ -34,7 +34,8 @@ class BitsightCollectorBot(Bot):
             report.add("raw", str(line))
             report.add("feed.name", self.parameters.feed)
             report.add("feed.accuracy", self.parameters.accuracy)
-            report.add("feed.url", self.parameters.http_url)
+            url=re.sub(r'[kK][eE][yY]=.*','',str(self.parameters.http_url))
+            report.add("feed.url",url)
             
             self.send_message(report)
 
