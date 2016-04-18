@@ -60,6 +60,9 @@ try:
     if args.network_file:
         if args.verbose:
             print("Processing networks...")
+        cur.execute("""
+            DELETE FROM network WHERE is_manual = false;
+            """)
         for record in DB_RECORDS:
             cur.execute("""
                 SELECT count(id) from network
