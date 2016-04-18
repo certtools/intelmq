@@ -728,6 +728,16 @@
                 "port": "<port>"
             }
         },
+        "Redis": {
+            "description": "Redis is the bot responsible to send events to a Redis server.",
+            "module": "intelmq.bots.outputs.redis.output",
+            "parameters": {
+                "redis_server_ip": "127.0.0.1",
+                "redis_server_port": "6379",
+                "redis_db": "2",
+                "redis_queue": "external-redis-queue"
+            }
+        },
         "MongoDB": {
             "description": "MongoDB is the bot responsible to send events to a MongoDB database.",
             "module": "intelmq.bots.outputs.mongodb.output",
