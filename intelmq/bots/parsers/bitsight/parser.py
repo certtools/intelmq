@@ -15,7 +15,6 @@ _geo_env_remote_addr.country_name       Country location of the IP              
 
 import json
 import sys
-
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
 from intelmq.lib.message import Event
@@ -34,8 +33,8 @@ class BitsightParserBot(Bot):
         extra = {}
         event = Event(report)
         event.add("raw", report.get('raw'))
-        event.add('classification.type','malware')
-        event.add('event_description.text','Sinkhole attempted connection')
+        event.add('classification.type', 'malware')
+        event.add('event_description.text', 'Sinkhole attempted connection')
         
         for key, value in raw_report.items():
             if key == "_ts":

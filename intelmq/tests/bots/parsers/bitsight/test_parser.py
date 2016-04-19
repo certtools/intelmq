@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import unittest
-
 import intelmq.lib.test as test
 from intelmq.bots.parsers.bitsight.parser import BitsightParserBot
-
-
 
 
 EXAMPLE_REPORT = {"feed.name": "BitSight", 
@@ -43,7 +40,6 @@ EXAMPLE_EVENT = {"extra": "{\"request_method\": \"GET\"}",
                 }
 
 
-
 class TestBitsightParserBot(test.BotTestCase, unittest.TestCase):
     @classmethod
     def set_bot(cls):
@@ -54,9 +50,7 @@ class TestBitsightParserBot(test.BotTestCase, unittest.TestCase):
         """ Test if correct Event has been produced. """
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_EVENT)
-#
-#
-#
+
 
 if __name__ == '__main__':
     unittest.main()

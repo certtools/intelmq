@@ -9,7 +9,7 @@ from intelmq.bots.parsers.bitsight.parser import BitsightParserBot
 
 class TestBitsightParserBot(test.BotTestCase, unittest.TestCase):
     """
-    A TestCase for MalwareDomainsParserBot.
+    A TestCase for BitsightParserBot.
     """
 
     @classmethod
