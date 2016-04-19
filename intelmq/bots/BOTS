@@ -55,7 +55,7 @@
             }
         },
         "AlienVault": {
-            "description": "AlienVault Collector is the bot responsible to get the report from source of information.",
+            "description": "AlienVault Collector retrieves reports via the SDK https://github.com/AlienVault-Labs/OTX-Python-SDK/ from https://otx.alienvault.com/ http_ssl_proxy does apply.",
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "AlienVault",
