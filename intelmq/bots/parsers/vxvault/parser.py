@@ -12,15 +12,8 @@ class VXVaultParserBot(Bot):
 
     def process(self):
         report = self.receive_message()
-
-        if not report:
-            self.acknowledge_message()
-            return
-        if not report.contains("raw"):
-            self.acknowledge_message()
-
         raw_report = utils.base64_decode(report.get("raw"))
-        for row in raw_report.split('\n'):
+        for row in raw_report.splitlines():
 
             row = row.strip()
 
@@ -43,7 +36,7 @@ class VXVaultParserBot(Bot):
             else:
                 event.add("source.fqdn", hostname)
 
-            event.add('classification.type', u'malware')
+            event.add('classification.type', 'malware')
             event.add("source.url", url)
             if port:
                 event.add("source.port", port)

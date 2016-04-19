@@ -39,11 +39,6 @@ class CleanMXPhishingParserBot(Bot):
 
     def process(self):
         report = self.receive_message()
-
-        if report is None or not report.contains("raw"):
-            self.acknowledge_message()
-            return
-
         raw_report = utils.base64_decode(report.get("raw"))
 
         for row in csv.DictReader(io.StringIO(raw_report)):
@@ -72,7 +67,7 @@ class CleanMXPhishingParserBot(Bot):
 
                 event.add(key, value)
 
-            event.add('classification.type', u'phishing')
+            event.add('classification.type', 'phishing')
             event.add("raw", ",".join(row))
 
             self.send_message(event)

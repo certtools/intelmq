@@ -58,10 +58,6 @@ class stompOutputBot(Bot):
     def process(self):
         message = self.receive_message()
 
-        if message is None:
-            self.acknowledge_message()
-            return
-
         if message:
             message = MessageFactory.serialize(message)
             self.logger.info(message)

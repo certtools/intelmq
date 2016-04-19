@@ -52,10 +52,6 @@ class RFC1918ExpertBot(Bot):
     def process(self):
         event = self.receive_message()
 
-        if event is None:
-            self.acknowledge_message()
-            return
-
         for field, policy in zip(self.fields, self.policy):
             if field not in event:
                 continue

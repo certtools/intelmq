@@ -11,10 +11,6 @@ class DragonResearchGroupSSHParserBot(Bot):
     def process(self):
         report = self.receive_message()
 
-        if report is None or not report.contains("raw"):
-            self.acknowledge_message()
-            return
-
         raw_report = utils.base64_decode(report.get("raw"))
         for row in raw_report.splitlines():
 

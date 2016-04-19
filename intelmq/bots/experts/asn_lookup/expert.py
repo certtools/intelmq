@@ -30,10 +30,6 @@ class ASNLookupExpertBot(Bot):
     def process(self):
         event = self.receive_message()
 
-        if event is None:
-            self.acknowledge_message()
-            return
-
         for key in ["source.", "destination."]:
 
             ip_key = key + "ip"

@@ -25,7 +25,7 @@ with mock.patch('intelmq.lib.utils.load_configuration', new=mocked_config):
 
 LOREM_BASE64 = 'bG9yZW0gaXBzdW0='
 DOLOR_BASE64 = 'ZG9sb3Igc2l0IGFtZXQ='
-FEED = {'feed.url': u'https://example.com/', 'feed.name': u'Lorem ipsum'}
+FEED = {'feed.url': 'https://example.com/', 'feed.name': 'Lorem ipsum'}
 URL_UNSANE = 'https://example.com/ \r\n'
 URL_SANE = 'https://example.com/'
 URL_INVALID = '/exampl\n'
@@ -66,7 +66,7 @@ class TestMessageFactory(unittest.TestCase):
         event.add('feed.name', 'Example')
         event.add('feed.url', URL_SANE)
         event.add('raw', LOREM_BASE64, sanitize=False)
-        event.add('time.observation', u'2015-01-01T13:37:00+00:00')
+        event.add('time.observation', '2015-01-01T13:37:00+00:00')
         return event
 
     def test_report_type(self):
@@ -268,7 +268,7 @@ class TestMessageFactory(unittest.TestCase):
         """ Test if report raises error when invalid after sanitize. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         with self.assertRaises(exceptions.InvalidValue):
-            report.add('feed.name', u'\r\n', sanitize=True)
+            report.add('feed.name', '\r\n', sanitize=True)
 
     def test_report_update(self):
         """ Test report value update function. """
@@ -353,7 +353,7 @@ class TestMessageFactory(unittest.TestCase):
         event = message.MessageFactory.unserialize('{"__type": "Event"}')
         event1 = self.add_event_examples(event)
         event2 = event1.deep_copy()
-        event2.add('time.observation', u'2015-12-12T13:37:50+01:00',
+        event2.add('time.observation', '2015-12-12T13:37:50+01:00',
                    force=True, sanitize=True)
         self.assertEqual(hash(event1), hash(event2))
 
@@ -401,7 +401,7 @@ class TestMessageFactory(unittest.TestCase):
         """ Test if the regex for event_hash is tested correctly. """
         event = message.MessageFactory.unserialize('{"__type": "Event"}')
         with self.assertRaises(exceptions.InvalidValue):
-            event.add('event_hash', u'dasf78')
+            event.add('event_hash', 'dasf78')
 
     def test_port_regex(self):
         """ Test if the regex for port (integer) is tested correctly. """

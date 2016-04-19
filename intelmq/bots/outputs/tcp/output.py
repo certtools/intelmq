@@ -12,10 +12,6 @@ class TCPBot(Bot):
     def process(self):
         event = self.receive_message()
 
-        if event is None:
-            self.acknowledge_message()
-            return
-
         data = event.to_json()
         self.send_data(data)
         self.acknowledge_message()

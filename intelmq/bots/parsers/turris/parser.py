@@ -13,10 +13,6 @@ class TurrisGreylistParserBot(Bot):
     def process(self):
         report = self.receive_message()
 
-        if report is None or not report.contains("raw"):
-            self.acknowledge_message()
-            return
-
         columns = [
             "source.ip",
             "__IGNORE__",
@@ -40,7 +36,7 @@ class TurrisGreylistParserBot(Bot):
 
                 event.add(key, value)
 
-            event.add('classification.type', u'scanner')
+            event.add('classification.type', 'scanner')
             event.add("raw", ",".join(row))
 
             self.send_message(event)

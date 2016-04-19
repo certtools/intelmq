@@ -52,10 +52,6 @@ class PostgreSQLBot(Bot):
     def process(self):
         event = self.receive_message()
 
-        if not event:
-            self.acknowledge_message()
-            return
-
         keys = '", "'.join(event.keys())
         values = list(event.values())
         fvalues = len(values) * '%s, '

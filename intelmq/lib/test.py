@@ -109,6 +109,11 @@ class BotTestCase(object):
                 if cls.bot_name.endswith(type_match):
                     cls.bot_type = type_name
                     break
+        if cls.bot_type == 'parser' and cls.default_input_message == '':
+            cls.default_input_message = {'__type': 'Report',
+                                         'raw': 'Cg==',
+                                         'feed.name': 'Test Feed',
+                                         'time.observation': '2016-01-01T00:00'}
         if type(cls.default_input_message) is dict:
             cls.default_input_message = \
                 utils.decode(json.dumps(cls.default_input_message))
@@ -247,21 +252,6 @@ class BotTestCase(object):
         pipenames = ["{}-input", "{}-input-internal", "{}-output"]
         self.assertSetEqual({x.format(self.bot_id) for x in pipenames},
                             set(self.pipe.state.keys()))
-
-    def test_empty_message(self):
-        """
-        Test if bot fails when receiving an empty message.
-
-        Bot.receive_message() returns None if the message evaluates to False
-        e.g. if empty. Bots have to handle this situation.
-        """
-        if self.bot_type == 'collector':
-            return
-
-        self.input_message = ['']
-        self.run_bot()
-        self.assertRegexpMatchesLog("WARNING - Empty message received.")
-        self.assertNotRegexpMatchesLog("ERROR")
 
     def test_bot_name(self):
         """

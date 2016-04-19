@@ -42,10 +42,6 @@ class ModifyExpertBot(Bot):
     def process(self):
         event = self.receive_message()
 
-        if event is None:
-            self.acknowledge_message()
-            return
-
         for section_id, section in self.config.items():
             default_cond = section.get('__default', [{}, {}])[0]
             default_action = section.get('__default', [{}, {}])[1]

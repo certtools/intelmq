@@ -26,10 +26,6 @@ class IntelMQMailerOutputBot(Bot):
     def process(self):
         event = self.receive_message()
 
-        if event is None:
-            self.acknowledge_message()
-            return
-
         event_dict = event.to_dict()
 
         time = event_dict['time']['observation']

@@ -74,10 +74,6 @@ class FilterExpertBot(Bot):
     def process(self):
         event = self.receive_message()
 
-        if event is None:
-            self.acknowledge_message()
-            return
-
         # time based filtering
         if event.contains('time.source'):
             try:

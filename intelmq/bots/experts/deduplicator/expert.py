@@ -18,10 +18,6 @@ class DeduplicatorExpertBot(Bot):
     def process(self):
         message = self.receive_message()
 
-        if message is None:
-            self.acknowledge_message()
-            return
-
         auxiliar_message = copy.copy(message)
 
         ignore_keys = self.parameters.ignore_keys.split(',')
