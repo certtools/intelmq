@@ -62,6 +62,7 @@ class IntelMQCLIContoller():
                CONFIG['rt']['password'])
     dryrun = False
     verbose = False
+    batch = False
     compress_csv = False
     boilerplate = None
 
@@ -87,6 +88,8 @@ class IntelMQCLIContoller():
                             help='Print verbose messages.')
         parser.add_argument('-c', '--compress-csv', action='store_true',
                             help='Automatically compress/shrink the attached CSV report if fields are empty (default = False).')
+        parser.add_argument('-b', '--batch', action='store_true',
+                            help='Run in batch mode (defaults to "yes" to all).')
         parser.add_argument('-n', '--dry-run', action='store_true',
                             help='Do not store anything or change anything. Just simulate.')
         args = parser.parse_args()
@@ -95,6 +98,8 @@ class IntelMQCLIContoller():
             self.verbose = True
         if args.dry_run:
             self.dryrun = True
+        if args.batch:
+            self.batch = True
         if args.compress_csv:
             self.compress_csv = True
         if args.text:
@@ -116,7 +121,6 @@ class IntelMQCLIContoller():
                     print(row['key'])
             exit(0)
 
-
         if locale.getpreferredencoding() != 'UTF-8':
             print(red('The preferred encoding of your locale setting is not UTF-8 '
                       'but {}. Exiting.'.format(locale.getpreferredencoding())))
@@ -129,11 +133,15 @@ class IntelMQCLIContoller():
             print('Logged in as {} on {}.'.format(CONFIG['rt']['user'],
                                                   CONFIG['rt']['uri']))
         try:
-            while True:
+            answer = 'init'
+            while answer != 'q':
                 asn_count = self.count_by_asn(feed=args.feed)
                 if self.verbose:
                     print(sys.stderr, 'asn_count = {}.'.format(asn_count))
-                answer = input('{i}detailed view by id, {b}[a]{i}utomatic '
+                if self.batch and answer != 'q':
+                    answer = 'a'
+                else:
+                    answer = input('{i}detailed view by id, {b}[a]{i}utomatic '
                                'sending, {b}[q]{i}uit?{r} '
                                ''.format(b=bold, i=myinverted, r=reset)).strip()
                 try:
@@ -153,7 +161,8 @@ class IntelMQCLIContoller():
                                                  feed=args.feed)
                             else:
                                 print(red('Can not query the data of an unknown ASN. Ignoring.'))
-                elif type(answer) is int:
+                    answer = 'q'
+                elif not self.batch and type(answer) is int:
                     if asn_count[answer]['contacts']:
                         self.query_by_as(asn_count[answer]['contacts'],
                                          feed=args.feed)
@@ -300,11 +309,13 @@ Subject: {subj}
         if automatic and requestor:
             answer = 's'
         else:
+            answer = 'q'
             if automatic:
                 print(red('You need to set a valid requestor!'))
-            answer = input('{i}{b}[b]{i}ack, {b}[s]{i}end, show {b}[t]{i}able,'
-                           ' change {b}[r]{i}equestor or {b}[q]{i}uit?{r} '
-                           ''.format(b=bold, i=myinverted, r=reset)).strip()
+            if not self.batch:
+                answer = input('{i}{b}[b]{i}ack, {b}[s]{i}end, show {b}[t]{i}able,'
+                               ' change {b}[r]{i}equestor or {b}[q]{i}uit?{r} '
+                               ''.format(b=bold, i=myinverted, r=reset)).strip()
         if answer == 'q':
             exit(0)
         elif answer == 'b':
