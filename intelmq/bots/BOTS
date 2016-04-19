@@ -761,6 +761,18 @@
                 "host": "<host>"
             }
         },
+        "Redis": {
+            "description": "Redis is the bot responsible to send events to a Redis server.",
+            "module": "intelmq.bots.outputs.redis.output",
+            "parameters": {
+                "redis_db": 2,
+                "redis_password": "<password>",
+                "redis_queue": "external-redis-queue",
+                "redis_server_ip": "127.0.0.1",
+                "redis_server_port": 6379,
+                "redis_timeout": 50000
+            }
+        },
         "TCP": {
             "description": "TCP is the bot responsible to send events to a tcp port (Splunk, ElasticSearch, etc..).",
             "module": "intelmq.bots.outputs.tcp.output",
