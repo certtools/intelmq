@@ -9,8 +9,8 @@ import subprocess
 __all__ = ['QUERY_INSERT_CONTACT', 'QUERY_GET_TEXT', 'CSV_FIELDS', 'QUERY_BY_ASCONTACT',
            'getTerminalHeight', 'EPILOG', 'QUERY_BY_ASNUM', 'APPNAME', 'QUERY_COUNT_ASN',
            'QUERY_SET_RTIRID', 'USAGE', 'QUERY_UPDATE_CONTACT', 'DESCRIPTION',
-           'QUERY_FEED_NAMES', 'QUERY_IDENTIFIER_NAMES', 'QUERY_TEXT_NAMES', 'target_from_row']
-
+           'QUERY_FEED_NAMES', 'QUERY_IDENTIFIER_NAMES', 'QUERY_TAXONOMY_NAMES',
+           'QUERY_TYPE_NAMES', 'QUERY_TEXT_NAMES', 'target_from_row']
 APPNAME = "intelmqcli"
 DESCRIPTION = """
 """
@@ -50,6 +50,8 @@ USAGE = '''
     intelmqcli --compress-csv
     intelmqcli --list-feeds
     intelmqcli --list-identifiers
+    intelmqcli --list-taxonomies
+    intelmqcli --list-types
     intelmqcli --list-texts
     intelmqcli --text='boilerplate name'
     intelmqcli --feed='feedname' '''
@@ -83,6 +85,10 @@ QUERY_COUNT_ASN = """
 QUERY_FEED_NAMES = "SELECT DISTINCT \"feed.name\" from events"
 
 QUERY_IDENTIFIER_NAMES = "SELECT DISTINCT \"classification.identifier\" from events"
+
+QUERY_TAXONOMY_NAMES = "SELECT DISTINCT \"classification.taxonomy\" from events"
+
+QUERY_TYPE_NAMES = "SELECT DISTINCT \"classification.type\" from events"
 
 QUERY_TEXT_NAMES = "SELECT DISTINCT \"key\" from boilerplates"
 

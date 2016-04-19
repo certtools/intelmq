@@ -103,6 +103,13 @@ class IntelMQCLIContoller():
                             help='List all existing texts.')
         parser.add_argument('-t', '--text', nargs=1, help='Specify the text to be used.')
 
+        parser.add_argument('-T', '--list-taxonomies', action='store_true',
+                            help='List all taxonomies')
+
+        parser.add_argument('-y', '--list-types', action='store_true',
+                            help='List all types')
+
+
         parser.add_argument('-a', '--asn', type=int, nargs='+',
                             help='Specify one or more AS numbers (integers) to process.')
 
@@ -156,6 +163,20 @@ class IntelMQCLIContoller():
             for row in self.cur.fetchall():
                 if row['classification.identifier']:
                     quietprint(row['classification.identifier'])
+            exit(0)
+
+        if args.list_taxonomies:
+            self.cur.execute(QUERY_TAXONOMY_NAMES)
+            for row in self.cur.fetchall():
+                if row['classification.taxonomy']:
+                    quietprint(row['classification.taxonomy'])
+            exit(0)
+
+        if args.list_types:
+            self.cur.execute(QUERY_TYPE_NAMES)
+            for row in self.cur.fetchall():
+                if row['classification.type']:
+                    quietprint(row['classification.type'])
             exit(0)
 
         if locale.getpreferredencoding() != 'UTF-8':
