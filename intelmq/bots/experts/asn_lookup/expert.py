@@ -2,15 +2,22 @@
 """
 """
 import sys
-
-import pyasn
 from intelmq.lib.bot import Bot
 from intelmq.lib.harmonization import IPAddress
+
+try:
+    import pyasn
+except ImportError:
+    pyasn = None
 
 
 class ASNLookupExpertBot(Bot):
 
     def init(self):
+        if pyasn is None:
+            self.logger.error('Could not import pyasn. Please install it.')
+            self.stop()
+
         try:
             self.database = pyasn.pyasn(self.parameters.database)
         except IOError:

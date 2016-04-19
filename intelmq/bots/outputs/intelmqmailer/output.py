@@ -2,14 +2,22 @@
 import sys
 
 import dateutil.parser
-import pymongo
 
 from intelmq.lib.bot import Bot
+
+try:
+    import pymongo
+except ImportError:
+    pymongo = None
 
 
 class IntelMQMailerOutputBot(Bot):
 
     def init(self):
+        if pymongo is None:
+            self.logger.error('Could not import pymongo. Please install it.')
+            self.stop()
+
         client = pymongo.MongoClient(self.parameters.host,
                                      int(self.parameters.port))
         db = client[self.parameters.database]

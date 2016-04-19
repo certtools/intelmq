@@ -1,19 +1,24 @@
 # -*- coding: utf-8 -*-
-
-
 import os.path
 import sys
 
-import stomp
-
 from intelmq.lib.bot import Bot
 from intelmq.lib.message import MessageFactory
+
+try:
+    import stomp
+except ImportError:
+    stomp = None
 
 
 class stompOutputBot(Bot):
     """ main class for the STOMP protocol output bot """
 
     def init(self):
+        if stomp is None:
+            self.logger.error('Could not import stomp. Please install it.')
+            self.stop()
+
         self.server = getattr(self.parameters, 'server', '127.0.0.1')
         self.port = getattr(self.parameters, 'port', 61614)
         self.exchange = getattr(self.parameters, 'exchange', '/exchange/_push')

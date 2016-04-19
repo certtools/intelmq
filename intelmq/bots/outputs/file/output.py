@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import io  # has encoding support in Python 2
+import io
 import sys
 
 from intelmq.lib.bot import Bot
