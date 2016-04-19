@@ -96,6 +96,9 @@ class IntelMQCLIContoller():
         parser.add_argument('-f', '--feed', nargs='?', default='%', const='%',
                             help='Show only incidents reported by given feed.')
 
+        parser.add_argument('-i', '--list-identifiers', action='store_true',
+                            help='List all identifiers')
+
         parser.add_argument('-L', '--list-texts', action='store_true',
                             help='List all existing texts.')
         parser.add_argument('-t', '--text', nargs=1, help='Specify the text to be used.')
@@ -146,6 +149,13 @@ class IntelMQCLIContoller():
             for row in self.cur.fetchall():
                 if row['key']:
                     quietprint(row['key'])
+            exit(0)
+
+        if args.list_identifiers:
+            self.cur.execute(QUERY_IDENTIFIER_NAMES)
+            for row in self.cur.fetchall():
+                if row['classification.identifier']:
+                    quietprint(row['classification.identifier'])
             exit(0)
 
         if locale.getpreferredencoding() != 'UTF-8':
