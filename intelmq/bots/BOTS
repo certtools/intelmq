@@ -736,7 +736,7 @@
                 "redis_server_port": "6379",
                 "redis_db": "2",
                 "redis_queue": "external-redis-queue",
-                "redis_timout": "50000",
+                "redis_timeout": "50000",
                 "redis_password": ""
             }
         },
