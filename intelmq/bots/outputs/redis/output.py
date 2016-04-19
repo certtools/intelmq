@@ -2,18 +2,21 @@
 import sys
 import time
 import redis
-import intelmq.lib.utils as utils
+#import intelmq.lib.utils as utils
 from intelmq.lib.bot import Bot
 
 
 class RedisOutputBot(Bot):
 
     def init(self)
-        self.destination_queue = self.parameters.redis_queue
-        self.conn = redis.ConnectionPool(host=self.parameters.redis_server_ip, 
-                                         port=int(self.parameters.redis_server_port), 
-                                         int(self.parameters.redis_db)
-                                        )
+        self.host = str(self.parameters.redis_server_ip)
+        self.port = int(self.parameters.redis_server_port)
+        self.db = int(self.parameters.redis_db)
+        self.queue = str(self.parameters.redis_queue)
+        self.password = str(self.parameters.redis_password)
+        self.timeout = int(self.parameters.redis_timout)
+
+        self.conn = redis.ConnectionPool(host = self.host, port = self.port, db = self.db)
 
     def process(self):
         event = self.receive_message()
@@ -24,11 +27,11 @@ class RedisOutputBot(Bot):
 
         while True:
             try:
-                output = redis.Redis(connection_pool=self.conn)
+                output = redis.StrictRedis(connection_pool=self.conn, socket_timout=self.timeout, password=self.password)
                 self.output.lpush(event.to_json)
                 break
             except redis.ConnectionError:
-                self.logger.error("Redis connection failled, retrying in 10 seconds")
+                self.logger.error("Redis connection to {}:{} failed!! Retrying in 10 seconds".format(self.host,self.port))
                 time.sleep(10)
 
         self.acknowledge_message()

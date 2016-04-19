@@ -735,7 +735,9 @@
                 "redis_server_ip": "127.0.0.1",
                 "redis_server_port": "6379",
                 "redis_db": "2",
-                "redis_queue": "external-redis-queue"
+                "redis_queue": "external-redis-queue",
+                "redis_timout": "50000",
+                "redis_password": ""
             }
         },
         "MongoDB": {
