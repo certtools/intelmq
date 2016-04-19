@@ -88,7 +88,8 @@ IntelMQ use the Data Harmonization. Check the following
   * Subscribe to the Intelmq-dev Mailing list: https://lists.cert.at/cgi-bin/mailman/listinfo/intelmq-dev (for developers)
   * Watch out for our regular developers conf call
   * IRC: server: irc.freenode.net, channel: #intelmq
-  * Via github issues
+  * Via github issues 
+  * Via Pull requests (please do read help.github.com first)
   
 
 <a name="licence"></a>
