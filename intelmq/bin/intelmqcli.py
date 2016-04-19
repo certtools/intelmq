@@ -76,6 +76,7 @@ class IntelMQCLIContoller():
     batch = False
     compress_csv = False
     boilerplate = None
+    filter_asns = []
 
     def __init__(self):
         global quiet
@@ -89,17 +90,25 @@ class IntelMQCLIContoller():
         VERSION = pkg_resources.get_distribution("intelmq").version
         parser.add_argument('--version',
                             action='version', version=VERSION)
+
         parser.add_argument('-l', '--list-feeds', action='store_true',
                             help='List all feeds')
+        parser.add_argument('-f', '--feed', nargs='?', default='%', const='%',
+                            help='Show only incidents reported by given feed.')
+
         parser.add_argument('-L', '--list-texts', action='store_true',
                             help='List all existing texts.')
         parser.add_argument('-t', '--text', nargs=1, help='Specify the text to be used.')
-        parser.add_argument('-f', '--feed', nargs='?', default='%', const='%',
-                            help='Show only incidents reported by given feed.')
+
+        parser.add_argument('-a', '--asn', type=int, nargs='+',
+                            help='Specify one or more AS numbers (integers) to process.')
+
         parser.add_argument('-v', '--verbose', action='store_true',
                             help='Print verbose messages.')
+
         parser.add_argument('-c', '--compress-csv', action='store_true',
                             help='Automatically compress/shrink the attached CSV report if fields are empty (default = False).')
+
         parser.add_argument('-b', '--batch', action='store_true',
                             help='Run in batch mode (defaults to "yes" to all).')
         parser.add_argument('-q', '--quiet', action='store_true',
@@ -118,6 +127,8 @@ class IntelMQCLIContoller():
             self.batch = True
         if args.compress_csv:
             self.compress_csv = True
+        if args.asn:
+            self.filter_asns = args.asn
         if args.text:
             self.boilerplate = args.text
 
