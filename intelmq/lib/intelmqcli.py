@@ -45,6 +45,8 @@ USAGE = '''
     intelmqcli
     intelmqcli --dry-run
     intelmqcli --verbose
+    intelmqcli --batch
+    intelmqcli --quiet
     intelmqcli --compress-csv
     intelmqcli --list-feeds
     intelmqcli --list-texts
@@ -92,9 +94,9 @@ CSV_FIELDS=["time.source", "source.ip", "protocol.transport", "source.port", "pr
             "source.asn", "source.geolocation.cc",
             "source.geolocation.city",
             "classification.taxonomy", "classification.type", "classification.identifier",
-            "destination.ip","destination.port","destination.fqdn","destination.url",
-            "feed", "event_description.text","event_description.url","malware.name","comment", "additional_field_freetext","version: 1.0"
-           ]
+            "destination.ip", "destination.port", "destination.fqdn", "destination.url",
+            "feed", "event_description.text", "event_description.url", "malware.name", "comment", "additional_field_freetext", "version: 1.0"
+            ]
 
 QUERY_BY_ASCONTACT = """
 SELECT
