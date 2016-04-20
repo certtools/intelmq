@@ -109,7 +109,6 @@ class IntelMQCLIContoller():
         parser.add_argument('-y', '--list-types', action='store_true',
                             help='List all types')
 
-
         parser.add_argument('-a', '--asn', type=int, nargs='+',
                             help='Specify one or more AS numbers (integers) to process.')
 
@@ -405,7 +404,7 @@ Subject: {subj}
             return
         if True:
             self.save_to_rt(ids=ids, subject=subject, requestor=requestor,
-                            csvfile=csvfile, body=text)
+                            csvfile=csvfile, body=text, feed=feed)
         else:
             header = attachment_lines[0]
             for id_, attach_line, row in zip(ids, attachment_lines[1:], query):
@@ -422,7 +421,7 @@ Subject: {subj}
                                      type=row['classification.type'],
                                      target=target_from_row(row)))
                 self.save_to_rt(ids=(id_, ), subject=subject,
-                                requestor=requestor, csvfile=csvfile,
+                                requestor=requestor, feed=feed, csvfile=csvfile,
                                 body=text)
 
         if requestor != contact and not self.dryrun:
@@ -441,14 +440,14 @@ Subject: {subj}
                                                   contact=requestor,
                                                   comment=comment)
 
-    def save_to_rt(self, ids, subject, requestor, csvfile, body):
+    def save_to_rt(self, ids, subject, requestor, feed, csvfile, body):
         if self.dryrun:
             quietprint('Not writing to RT, dry-run selected.')
             return
 
         report_id = self.rt.create_ticket(Queue='Incident Reports',
                                           Subject=subject,
-                                          Owner=CONFIG['rt']['user'])
+                                          Owner=CONFIG['rt']['user']) 
         if report_id == -1:
             error(red('Could not create Incident Report.'))
             return
@@ -467,11 +466,17 @@ Subject: {subj}
             attachment.seek(0)
             filename = 'events.zip'
 
+        if self.verbose:
+            print("save_to_rt: feed = {}".format(feed))
         incident_id = self.rt.create_ticket(Queue='Incidents', Subject=subject,
-                                            Owner=CONFIG['rt']['user'])
+                                            Owner=CONFIG['rt']['user']) 
         if incident_id == -1:
             error(red('Could not create Incident ({}).'.format(incident_id)))
             return
+        # XXX TODO: distinguish between national and other constituencies
+        self.rt.edit_ticket(incident_id, CF__RTIR_Classification=feed, 
+                            CF__RTIR_Constituency='national', 
+                            CF__RTIR_Function='IncidentCoord')
         quietprint(green('Created Incident {}.'.format(incident_id)))
         if not self.rt.edit_link(report_id, 'MemberOf', incident_id):
             error(red('Could not link Incident to Incident Report: ({} -> {}).'.format(incident_id, report_id)))
@@ -482,6 +487,7 @@ Subject: {subj}
                                                  Subject=subject,
                                                  Owner=CONFIG['rt']['user'],
                                                  Requestor=requestor)
+                                                 
         if investigation_id == -1:
             error(red('Could not create Investigation.'))
             return
