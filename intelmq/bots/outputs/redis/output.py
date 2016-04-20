@@ -26,28 +26,26 @@ class RedisOutputBot(Bot):
            self.acknowledge_message()
            return
 
-        while True:
-              try:
-                  self.output.lpush(self.queue, utils.encode(event.to_json()))
-                  break
-              except redis.RedisError as e:
-                  self.logger.error('Redis: failled to sent message!')
-                  self.logger.error(e)
-                  self.connect()
-
-        self.acknowledge_message()
+        try:
+            self.output.lpush(self.queue, utils.encode(event.to_json()))
+            break
+        except:
+            self.logger.exception('Redis: failled to sent message!')
+            self.connect()
+        else:
+            self.acknowledge_message()
     
     def connect(self):
         while True:
-              try:
-                  self.output = redis.StrictRedis(connection_pool=self.conn, socket_timeout=self.timeout, password=self.password)
-                  info = self.output.info()
-                  break
-              except redis.ConnectionError as e:
-                  self.logger.error("Redis connection to {}:{} failed!! Retrying in 10 seconds".format(self.host,self.port))
-                  self.logger.error(e)
-                  time.sleep(10)
-        self.logger.info("Connected successfully to Redis {} at {}:{}!".format(info['redis_version'], self.host,self.port))
+        try:
+            self.output = redis.StrictRedis(connection_pool=self.conn, socket_timeout=self.timeout, password=self.password)
+            info = self.output.info()
+            break
+        except redis.ConnectionError as e:
+            self.logger.exception("Redis connection to {}:{} failed!!".format(self.host,self.port))
+            self.logger.error(e)
+        else:
+            self.logger.info("Connected successfully to Redis {} at {}:{}!".format(info['redis_version'], self.host,self.port))
 
 
 if __name__ == "__main__":
