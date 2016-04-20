@@ -579,14 +579,17 @@
                 "rate_limit": 3600
             }
         },
-        "XMPP collector": {
-            "description": "XMPP collector is the bot responsible to get events from xmpp server",
+        "XMPP": {
+            "description": "This bot can connect to an XMPP Server and one room, in order to receive reports from it.",
             "module": "intelmq.bots.collectors.xmpp.collector",
             "parameters": {
                 "rate_limit": 3600,
                 "xmpp_password": "xmpp password",
                 "xmpp_server": "xmpp server",
-                "xmpp_user": "xmpp username"
+                "xmpp_user": "xmpp username",
+                "xmpp_room": "xmpp room",
+                "xmpp_room_nick": "xmpp room nick",
+                "xmpp_room_password": "xmpp room password"
             }
         }
     },
