@@ -32,7 +32,7 @@ class BitsightParserBot(Bot):
         raw_report = json.loads(utils.base64_decode(report.get('raw')))
         extra = {}
         event = Event(report)
-        event.add("raw", report.get('raw'))
+        event.add("raw", report.get('raw'), sanitize=False)
         event.add('classification.type', 'malware')
         event.add('event_description.text', 'Sinkhole attempted connection')
         
@@ -54,13 +54,13 @@ class BitsightParserBot(Bot):
                    try:
                        event.add('destination.fqdn', value["server_name"])
                    except InvalidValue:
-                       event.add('destination.fqdn', "no.fqdn-provided.null")
+                       event.add('destination.fqdn', "")
                if  "request_method" in value:
-                   extra["request_method"] = value["request_method"]
+                   extra['request_method'] = value["request_method"]
                if  extra:
-                   event.add("extra", extra)
-               if  key == "_geo_env_remote_addr.country_name":
-                   event.add('source.geolocation.country', value)
+                   event.add('extra', extra)
+            if key == "_geo_env_remote_addr":
+               event.add('source.geolocation.country', value["country_name"])
         self.send_message(event)
         self.acknowledge_message()
 

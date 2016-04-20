@@ -31,11 +31,10 @@ class BitsightCollectorBot(Bot):
                   continue
 
               report = Report()
-              report.add("raw", str(line))
+              report.add("raw", line)
               report.add("feed.name", self.parameters.feed)
               report.add("feed.accuracy", self.parameters.accuracy)
-              url = re.sub(r'[kK][eE][yY]=.*', '', str(self.parameters.http_url)) # removing api_key
-              report.add("feed.url", url)
+              report.add("feed.url", self.parameters.http_url)
             
               self.send_message(report)
 
