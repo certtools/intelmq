@@ -15,11 +15,12 @@ _geo_env_remote_addr.country_name       Country location of the IP              
 
 import json
 import sys
+
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.message import Event
-from intelmq.lib.harmonization import DateTime
 from intelmq.lib.exceptions import InvalidValue
+from intelmq.lib.harmonization import DateTime
+from intelmq.lib.message import Event
 
 
 class BitsightParserBot(Bot):
@@ -35,32 +36,32 @@ class BitsightParserBot(Bot):
         event.add("raw", report.get('raw'), sanitize=False)
         event.add('classification.type', 'malware')
         event.add('event_description.text', 'Sinkhole attempted connection')
-        
+
         for key, value in raw_report.items():
             if key == "_ts":
-               event.add('time.source', DateTime.from_timestamp(int(value)))
+                event.add('time.source', DateTime.from_timestamp(int(value)))
             if key == "trojanfamily":
-               event.add('malware.name', value)
+                event.add('malware.name', value)
             if key == "env":
-               if "remote_addr" in value:
-                   event.add('source.ip', value["remote_addr"])
-               if "remote_port" in value:
-                   event.add('source.port', value["remote_port"])
-               if "server_addr" in value:
-                   event.add('destination.ip', value["server_addr"])
-               if "server_port" in value:
-                   event.add('destination.port', value["server_port"])
-               if "server_name" in value:
-                   try:
-                       event.add('destination.fqdn', value["server_name"])
-                   except InvalidValue:
-                       event.add('destination.fqdn', "")
-               if  "request_method" in value:
-                   extra['request_method'] = value["request_method"]
-               if  extra:
-                   event.add('extra', extra)
+                if "remote_addr" in value:
+                    event.add('source.ip', value["remote_addr"])
+                if "remote_port" in value:
+                    event.add('source.port', value["remote_port"])
+                if "server_addr" in value:
+                    event.add('destination.ip', value["server_addr"])
+                if "server_port" in value:
+                    event.add('destination.port', value["server_port"])
+                if "server_name" in value:
+                    try:
+                        event.add('destination.fqdn', value["server_name"])
+                    except InvalidValue:
+                        event.add('destination.fqdn', "")
+                if "request_method" in value:
+                    extra['request_method'] = value["request_method"]
+                if extra:
+                    event.add('extra', extra)
             if key == "_geo_env_remote_addr":
-               event.add('source.geolocation.country', value["country_name"])
+                event.add('source.geolocation.country', value["country_name"])
         self.send_message(event)
         self.acknowledge_message()
 
