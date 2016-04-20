@@ -1,3 +1,10 @@
+intelmq (1.0.0~dev4~beta4) experimental; urgency=low
+
+  * Merged current master.
+  * Added python3-sleekxmpp to recommendations.
+
+ -- Sascha Wilde <wilde@intevation.de>  Wed, 20 Apr 2016 17:27:49 +0200
+
 intelmq (1.0.0~dev4~beta3) experimental; urgency=low
 
   * Dropped support for Python 2, removing superfluous dependencies
