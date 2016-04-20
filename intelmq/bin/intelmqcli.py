@@ -194,8 +194,8 @@ class IntelMQCLIContoller():
             answer = 'init'
             while answer != 'q':
                 asn_count = self.count_by_asn(feed=args.feed)
-                if self.verbose:
-                    quietprint(sys.stderr, 'asn_count = {}.'.format(asn_count))
+                #if self.verbose:
+                print('asn_count = {}.'.format(asn_count), file=sys.stderr)
                 if self.batch and answer != 'q':
                     answer = 'a'
                 else:
@@ -336,7 +336,10 @@ Subject: {subj}
         showed_text_len = showed_text.count('\n')
 
         if self.table_mode:
-            height = getTerminalHeight() - 3 - showed_text_len
+            if quiet:
+                height = 80     # assume anything for quiet mode
+            else:
+                height = getTerminalHeight() - 3 - showed_text_len
             csvfile.seek(0)
             if len(query) > height:
                 with tempfile.NamedTemporaryFile(mode='w+') as handle:
@@ -351,7 +354,10 @@ Subject: {subj}
                       tabulate.tabulate(query_unicode, headers='keys',
                                         tablefmt='psql'), sep='\n')
         else:
-            height = getTerminalHeight() - 4
+            if quiet:
+                height = 80
+            else:
+                height = getTerminalHeight() - 4
             if 5 + len(query) > height:  # cut query too, 5 is length of text
                 quietprint('\n'.join(showed_text.splitlines()[:5]))
                 quietprint('...')
