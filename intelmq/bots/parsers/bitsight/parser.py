@@ -55,7 +55,7 @@ class BitsightParserBot(Bot):
                     try:
                         event.add('destination.fqdn', value["server_name"])
                     except InvalidValue:
-                        event.add('destination.fqdn', "")
+                        pass
                 if "request_method" in value:
                     extra['request_method'] = value["request_method"]
                 if extra:
