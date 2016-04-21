@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 import sys
 import time
-import redis
+
 import intelmq.lib.utils as utils
+import redis
 from intelmq.lib.bot import Bot
 
 
@@ -21,31 +22,27 @@ class RedisOutputBot(Bot):
 
     def process(self):
         event = self.receive_message()
-        
+
         if event is None:
-           self.acknowledge_message()
-           return
+            self.acknowledge_message()
+            return
 
         try:
             self.output.lpush(self.queue, utils.encode(event.to_json()))
-            break
         except:
             self.logger.exception('Redis: failled to sent message!')
             self.connect()
         else:
             self.acknowledge_message()
-    
+
     def connect(self):
-        while True:
         try:
             self.output = redis.StrictRedis(connection_pool=self.conn, socket_timeout=self.timeout, password=self.password)
             info = self.output.info()
-            break
-        except redis.ConnectionError as e:
-            self.logger.exception("Redis connection to {}:{} failed!!".format(self.host,self.port))
-            self.logger.error(e)
+        except redis.ConnectionError:
+            self.logger.exception("Redis connection to {}:{} failed!!".format(self.host, self.port))
         else:
-            self.logger.info("Connected successfully to Redis {} at {}:{}!".format(info['redis_version'], self.host,self.port))
+            self.logger.info("Connected successfully to Redis {} at {}:{}!".format(info['redis_version'], self.host, self.port))
 
 
 if __name__ == "__main__":
