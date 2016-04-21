@@ -39,7 +39,7 @@ class BitsightParserBot(Bot):
 
         for key, value in raw_report.items():
             if key == "_ts":
-                event.add('time.source', DateTime.from_timestamp(int(value)))
+                event.add('time.source', DateTime.from_timestamp(int(value)))     # Source is UTC
             if key == "trojanfamily":
                 event.add('malware.name', value)
             if key == "env":
