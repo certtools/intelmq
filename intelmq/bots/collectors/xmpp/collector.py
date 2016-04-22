@@ -1,8 +1,11 @@
 """
 XMPP Collector Bot
+Connects to a XMPP Server and a Room and reads data from the room.
+If no room is provided it collects events which were sent to the xmpp user
+directly.
 
 Requires Python >= 3.4
-Connects to a XMPP Server and a Room
+Requires sleekxmpp >= 1.0.0-beta5
 
 Copyright (C) 2016 by Bundesamt für Sicherheit in der Informationstechnik
 Software engineering by Intevation GmbH
@@ -22,7 +25,7 @@ import sys
 from intelmq.lib.bot import Bot
 from intelmq.lib.message import Report
 from sleekxmpp import ClientXMPP
-from sleekxmpp.exceptions import *
+from sleekxmpp.exceptions import XMPPError
 
 
 class XMPPCollectorBot(Bot):
@@ -30,40 +33,74 @@ class XMPPCollectorBot(Bot):
     xmpp = None
 
     def process(self):
-
         if self.xmpp is None:
-            self.xmpp = XMPPBot(self.parameters.xmpp_user + '@' + self.parameters.xmpp_server,
+            self.xmpp = XMPPClientBot(self.parameters.xmpp_user + '@'
+                                + self.parameters.xmpp_server,
                                 self.parameters.xmpp_password,
                                 self.parameters.xmpp_room,
                                 self.parameters.xmpp_room_nick,
                                 self.parameters.xmpp_room_password,
-                                self.send_message,
                                 self.logger)
-            self.xmpp.register_plugin('xep_0030') # Service Discovery
-            self.xmpp.register_plugin('xep_0045') # Multi-User Chat
             self.xmpp.connect(reattempt=True)
             self.xmpp.process()
+
+            # Add Handlers and register Plugins
+            self.xmpp.register_plugin('xep_0030')  # Service Discovery
+            self.xmpp.register_plugin('xep_0045')  # Multi-User Chat
+            self.xmpp.add_event_handler("message", self.log_message)
+            self.xmpp.add_event_handler("groupchat_message", self.log_message)
 
     def killbot(self):
         self.xmpp.disconnect(wait=True)
         self.logger.info("Disconnected")
 
+    def log_message(self, msg):
+        self.logger.debug("XMPP Received Event: %r , from %r", msg['body'],
+                        msg['from'])
+        self.logger.info("XMPP Event received")
 
-class XMPPBot(ClientXMPP):
+        event = None
+        raw_msg = None
 
-    def __init__(self,jid,password,room,room_nick,room_password,
-                send_message,logger):
+        # Try to decode the message as json, it might be an event.
+        # if this is not possible treat it as raw.
+        # TODO: There might be additional work to decode the message
+        # as base64
+        try:
+            event = json.loads(msg['body'])
+        except:
+            self.logger.info("XMPP Could not interpret the message as json. "
+                            "Treating as Raw")
+            self.logger.debug("XMPP I'm not able to tell if it is"
+                            "base64 or not!")
+            raw_msg = msg['body']
 
+        if event:
+            self.send_message(event)
+        elif raw_msg:
+            report = Report()
+            report.add("raw", raw_msg)
+            self.send_message(report)
+
+
+class XMPPClientBot(ClientXMPP):
+
+    def __init__(self,
+                jid,
+                password,
+                room,
+                room_nick,
+                room_password,
+                logger):
         ClientXMPP.__init__(self, jid, password)
-        self.add_event_handler("session_start", self.session_start)
-        self.add_event_handler("message", self.message_logging)
-        self.add_event_handler("groupchat_message", self.message_logging)
+
         self.logger = logger
         self.logger.info("XMPP connected")
-        self.send_message = send_message
         self.xmpp_room = room
         self.xmpp_room_nick = room_nick
         self.xmpp_room_password = room_password
+
+        self.add_event_handler("session_start", self.session_start)
 
     def session_start(self, event):
         self.send_presence()
@@ -71,36 +108,19 @@ class XMPPBot(ClientXMPP):
 
         try:
             self.get_roster()
-        except IqError as err:
+        except XMPPError as err:
             self.logger.error('There was an error getting the roster')
             self.logger.error(err.iq['error']['condition'])
-            self.disconnect()
-        except IqTimeout:
-            self.logger.error('Server is taking too long to respond')
             self.disconnect()
 
         if self.xmpp_room:
             self.logger.debug("XMPP Joining room: %s", self.xmpp_room)
-            if self.xmpp_room_password:
-                self.plugin['xep_0045'].joinMUC(self.xmpp_room,
-                                self.xmpp_room_nick,
-                                password=self.xmpp_room_password,
-                                wait=True)
-            else:
-                self.plugin['xep_0045'].joinMUC(self.xmpp_room,
-                                self.xmpp_room_nick,
-                                wait=True)
+            pwd = self.xmpp_room_password if self.xmpp_room_password else ""
+            self.plugin['xep_0045'].joinMUC(self.xmpp_room,
+                                            self.xmpp_room_nick,
+                                            password=pwd,
+                                            wait=True)
 
-
-    def message_logging(self, msg):
-
-        self.logger.debug("XMPP Received Message: %s , from %s", msg['body'],
-                        msg['from'])
-        self.logger.info("XMPP Event received")
-        raw_msg = msg['body']
-        report = Report()
-        report.add("raw", raw_msg)
-        self.send_message(report)
 
 if __name__ == "__main__":
     bot = XMPPCollectorBot(sys.argv[1])
