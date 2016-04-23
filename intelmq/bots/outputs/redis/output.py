@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 import sys
-import time
 
-import intelmq.lib.utils as utils
-import redis
 from intelmq.lib.bot import Bot
+
+import redis
 
 
 class RedisOutputBot(Bot):
@@ -28,7 +27,7 @@ class RedisOutputBot(Bot):
             return
 
         try:
-            self.output.lpush(self.queue, utils.encode(event.to_json()))
+            self.output.lpush(self.queue, event)
         except:
             self.logger.exception('Redis: failled to sent message!')
             self.connect()
