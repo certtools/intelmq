@@ -4,7 +4,6 @@ import argparse
 import importlib
 import json
 import os
-import shlex
 import signal
 import time
 import traceback
@@ -95,12 +94,6 @@ def log_log_messages(messages):
                 pass
 
 
-def write_pidfile(bot_id, pid):
-    filename = PIDFILE.format(bot_id)
-    with open(filename, 'w') as fp:
-        fp.write(str(pid))
-
-
 def remove_pidfile(bot_id):
     filename = PIDFILE.format(bot_id)
     os.remove(filename)
@@ -125,18 +118,6 @@ def check_pidfile(bot_id):
         except ValueError:
             return None
     return None
-
-
-def start_process(bot_id, cmd):
-    with open('/dev/null', 'w') as devnull:
-        args = shlex.split(cmd)
-        p = psutil.Popen(args, stdout=devnull, stderr=devnull)
-        return p.pid
-
-
-def stop_process(pid):
-    p = psutil.Process(int(pid))
-    p.send_signal(signal.SIGINT)
 
 
 def status_process(pid):
@@ -324,20 +305,20 @@ Get logs of a bot:
                 remove_pidfile(bot_id)
         log_bot_message('starting', bot_id)
         try:
-            self.__bot_start(bot_id, self.startup[bot_id]['module'])
+            module = self.startup[bot_id]['module']
         except KeyError:
             log_bot_error('notfound', bot_id)
             return 'error'
+        else:
+            cmdargs = ["python3", "-m", module, bot_id]
+            with open('/dev/null', 'w') as devnull:
+                proc = psutil.Popen(cmdargs, stdout=devnull, stderr=devnull)
+                filename = PIDFILE.format(bot_id)
+                with open(filename, 'w') as fp:
+                    fp.write(str(proc.pid))
+
         time.sleep(0.25)
         return self.bot_status(bot_id)
-
-    def __bot_start(self, bot_id, module):
-        """
-        Start a bot by calling it as module.
-        """
-        cmd = "python3 -m {} {}".format(module, bot_id)
-        pid = start_process(bot_id, cmd)
-        write_pidfile(bot_id, pid)
 
     def bot_stop(self, bot_id):
         pid = read_pidfile(bot_id)
@@ -349,17 +330,15 @@ Get logs of a bot:
             log_bot_error('stopped', bot_id)
             return 'stopped'
         log_bot_message('stopping', bot_id)
-        self.__bot_stop(bot_id, pid)
+        proc = psutil.Process(int(pid))
+        proc.send_signal(signal.SIGINT)
+        remove_pidfile(bot_id)
         time.sleep(0.25)
         if status_process(pid):
             log_bot_error('running', bot_id)
             return 'running'
         log_bot_message('stopped', bot_id)
         return 'stopped'
-
-    def __bot_stop(self, bot_id, pid):
-        stop_process(pid)
-        remove_pidfile(bot_id)
 
     def bot_restart(self, bot_id):
         status_stop = self.bot_stop(bot_id)
