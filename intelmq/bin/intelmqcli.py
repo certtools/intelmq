@@ -89,6 +89,8 @@ class IntelMQCLIContoller():
 
         parser.add_argument('-T', '--list-taxonomies', action='store_true',
                             help='List all taxonomies')
+        parser.add_argument('--taxonomy', nargs='?', default='%', const='%',
+                            help='Select only events with given taxonomy.')
 
         parser.add_argument('-y', '--list-types', action='store_true',
                             help='List all types')
@@ -178,9 +180,10 @@ class IntelMQCLIContoller():
         try:
             answer = 'init'
             while answer != 'q':
-                asn_count = self.count_by_asn(feed=args.feed)
-                #if self.verbose:
-                print('asn_count = {}.'.format(asn_count), file=sys.stderr)
+                asn_count = self.count_by_asn(feed=args.feed,
+                                              taxonomy=args.taxonomy)
+                if self.verbose:
+                    error('asn_count = {}.'.format(asn_count))
                 if self.batch and answer != 'q':
                     answer = 'a'
                 else:
@@ -198,22 +201,26 @@ class IntelMQCLIContoller():
                     for item in asn_count:
                         if item['contacts']:
                             self.query_by_as(item['contacts'], automatic=True,
-                                             feed=args.feed)
+                                             feed=args.feed,
+                                             taxonomy=args.taxonomy)
                         else:
                             if item['asn']:
                                 self.query_by_as(int(item['asn']), automatic=True,
-                                                 feed=args.feed)
+                                                 feed=args.feed,
+                                                 taxonomy=args.taxonomy)
                             else:
                                 error(red('Can not query the data of an unknown ASN. Ignoring.'))
                     answer = 'q'
                 elif not self.batch and isinstance(answer, int):
                     if asn_count[answer]['contacts']:
                         self.query_by_as(asn_count[answer]['contacts'],
-                                         feed=args.feed)
+                                         feed=args.feed,
+                                         taxonomy=args.taxonomy)
                     else:
                         if asn_count[answer] and asn_count[answer]['asn']:
                             self.query_by_as(int(asn_count[answer]['asn']),
-                                             feed=args.feed)
+                                             feed=args.feed,
+                                             taxonomy=args.taxonomy)
                         else:
                             error(red('no ASNs known. Ignoring.'))
                 else:
@@ -221,7 +228,7 @@ class IntelMQCLIContoller():
 
         except BaseException as exc:
             if isinstance(exc, (SystemExit, KeyboardInterrupt)):
-                quietprint()
+                pass
             else:
                 raise
         finally:
@@ -288,13 +295,14 @@ class IntelMQCLIContoller():
                     empty[key] = False
         return [{k: v for k, v in dicti.items() if not empty[k]} for dicti in d]
 
-    def query_by_as(self, contact, requestor=None, automatic=False, feed='%'):
+    def query_by_as(self, contact, requestor=None, automatic=False, feed='%',
+                    taxonomy='%'):
         if isinstance(contact, int):
-            query = self.query_by_asnum(contact, feed)
+            query = self.query_by_asnum(contact, feed, taxonomy)
             if requestor is None:
                 requestor = ''
         else:
-            query = self.query_by_ascontact(contact, feed)
+            query = self.query_by_ascontact(contact, feed, taxonomy)
             if requestor is None:
                 requestor = contact
         query = self.shrink_dict(query)
@@ -388,7 +396,8 @@ Subject: {subj}
             return
         elif answer == 't':
             self.table_mode = bool((self.table_mode + 1) % 2)
-            self.query_by_as(contact, requestor=requestor, feed=feed)
+            self.query_by_as(contact, requestor=requestor, feed=feed,
+                             taxonomy=taxonomy)
             return
         elif answer == ('r'):
             answer = input(inverted('New requestor address:') + ' ').strip()
@@ -399,11 +408,13 @@ Subject: {subj}
                     requestor = contact
             else:
                 requestor = answer
-            self.query_by_as(contact, requestor=requestor, feed=feed)
+            self.query_by_as(contact, requestor=requestor, feed=feed,
+                             taxonomy=taxonomy)
             return
         elif answer != 's':
             error(red('Unknow command {!r}.'.format(answer)))
-            self.query_by_as(contact, requestor=requestor, feed=feed)
+            self.query_by_as(contact, requestor=requestor, feed=feed,
+                             taxonomy=taxonomy)
             return
 
         if text.startswith(str(red)):
@@ -473,7 +484,7 @@ Subject: {subj}
             filename = 'events.zip'
 
         if self.verbose:
-            print("save_to_rt: feed = {}".format(feed))
+            error("save_to_rt: feed = {}".format(feed))
         incident_id = self.rt.create_ticket(Queue='Incidents', Subject=subject,
                                             Owner=self.config['rt']['user'])
         if incident_id == -1:
@@ -515,9 +526,9 @@ Subject: {subj}
         if not self.rt.edit_ticket(incident_id, Status='resolved'):
             error(red('Could not close incident {}.'.format(incident_id)))
 
-    def count_by_asn(self, feed='%'):
+    def count_by_asn(self, feed='%', taxonomy='%'):
         # TODO: Existing RT ids!
-        asn_count = self.query_count_asn(feed)
+        asn_count = self.query_count_asn(feed, taxonomy)
         if not asn_count:
             quietprint('No incidents!')
             exit(0)
@@ -534,25 +545,28 @@ Subject: {subj}
                              len(asn_count)))
         return asn_count
 
-    def query_by_ascontact(self, contact, feed):
+    def query_by_ascontact(self, contact, feed='%', taxonomy='%'):
         query = lib.QUERY_BY_ASCONTACT.format(evtab=self.config['database']['events_table'],
                                               cc=self.config['filter']['cc'],
                                               conttab=self.config['database']['contacts_table'])
-        self.cur.execute(query, (self.config['filter']['fqdn'], contact, feed))
+        self.cur.execute(query, (self.config['filter']['fqdn'], contact, feed,
+                                 taxonomy))
         return self.cur.fetchall()
 
-    def query_by_asnum(self, asn, feed):
+    def query_by_asnum(self, asn, feed, taxonomy='%'):
         query = lib.QUERY_BY_ASNUM.format(evtab=self.config['database']['events_table'],
                                           cc=self.config['filter']['cc'],
                                           conttab=self.config['database']['contacts_table'])
-        self.cur.execute(query, (self.config['filter']['fqdn'], asn, feed))
+        self.cur.execute(query, (self.config['filter']['fqdn'], asn, feed,
+                                 taxonomy))
         return self.cur.fetchall()
 
-    def query_count_asn(self, feed):
+    def query_count_asn(self, feed, taxonomy='%'):
         query = lib.QUERY_COUNT_ASN.format(evtab=self.config['database']['events_table'],
                                            cc=self.config['filter']['cc'],
                                            conttab=self.config['database']['contacts_table'])
-        self.cur.execute(query, (self.config['filter']['fqdn'], feed))
+        self.cur.execute(query, (self.config['filter']['fqdn'], feed,
+                                 taxonomy))
         return self.cur.fetchall()
 
     def query_set_rtirid(self, events_ids, rtir_id, rtir_type):
