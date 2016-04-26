@@ -9,8 +9,8 @@ import subprocess
 __all__ = ['QUERY_INSERT_CONTACT', 'QUERY_GET_TEXT', 'CSV_FIELDS', 'QUERY_BY_ASCONTACT',
            'getTerminalHeight', 'EPILOG', 'QUERY_BY_ASNUM', 'APPNAME', 'QUERY_COUNT_ASN',
            'QUERY_SET_RTIRID', 'USAGE', 'QUERY_UPDATE_CONTACT', 'DESCRIPTION',
-           'QUERY_FEED_NAMES', 'QUERY_TEXT_NAMES', 'target_from_row']
-
+           'QUERY_FEED_NAMES', 'QUERY_IDENTIFIER_NAMES', 'QUERY_TAXONOMY_NAMES',
+           'QUERY_TYPE_NAMES', 'QUERY_TEXT_NAMES', 'target_from_row']
 APPNAME = "intelmqcli"
 DESCRIPTION = """
 """
@@ -45,8 +45,13 @@ USAGE = '''
     intelmqcli
     intelmqcli --dry-run
     intelmqcli --verbose
+    intelmqcli --batch
+    intelmqcli --quiet
     intelmqcli --compress-csv
     intelmqcli --list-feeds
+    intelmqcli --list-identifiers
+    intelmqcli --list-taxonomies
+    intelmqcli --list-types
     intelmqcli --list-texts
     intelmqcli --text='boilerplate name'
     intelmqcli --feed='feedname' '''
@@ -79,6 +84,12 @@ QUERY_COUNT_ASN = """
 
 QUERY_FEED_NAMES = "SELECT DISTINCT \"feed.name\" from events"
 
+QUERY_IDENTIFIER_NAMES = "SELECT DISTINCT \"classification.identifier\" from events"
+
+QUERY_TAXONOMY_NAMES = "SELECT DISTINCT \"classification.taxonomy\" from events"
+
+QUERY_TYPE_NAMES = "SELECT DISTINCT \"classification.type\" from events"
+
 QUERY_TEXT_NAMES = "SELECT DISTINCT \"key\" from boilerplates"
 
 """ This is the list of fields (and their respective order) which we intend to
@@ -92,9 +103,9 @@ CSV_FIELDS=["time.source", "source.ip", "protocol.transport", "source.port", "pr
             "source.asn", "source.geolocation.cc",
             "source.geolocation.city",
             "classification.taxonomy", "classification.type", "classification.identifier",
-            "destination.ip","destination.port","destination.fqdn","destination.url",
-            "feed", "event_description.text","event_description.url","malware.name","comment", "additional_field_freetext","version: 1.0"
-           ]
+            "destination.ip", "destination.port", "destination.fqdn", "destination.url",
+            "feed", "event_description.text", "event_description.url", "malware.name", "comment", "additional_field_freetext", "version: 1.0"
+            ]
 
 QUERY_BY_ASCONTACT = """
 SELECT
