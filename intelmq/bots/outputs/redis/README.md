@@ -1,6 +1,6 @@
-### Redis Bot
+# Redis Bot
 
-# Output Bot that sends events to a remote Redis server/queue.
+### Output Bot that sends events to a remote Redis server/queue.
 
 Bot parameters: 
 * redis_db          : remote server database, defaults 2
@@ -11,7 +11,7 @@ Bot parameters:
 * redis_timeout     : Connection timout, defaults 50000
 
 
-# Examples of usage:
+### Examples of usage:
 
 * Can be used to send events to be processed in another system. E.g.: send events to Logstash.
 
