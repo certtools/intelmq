@@ -376,7 +376,7 @@ See [IntelMQ Manager repository](https://github.com/certtools/intelmq-manager).
 
 $ intelmqctl -h
 usage: 
-        intelmqctl [start|stop|restart|status] bot-id
+        intelmqctl [start|stop|restart|status|run] bot-id
         intelmqctl [start|stop|restart|status]
         intelmqctl list [bots|queues]
         intelmqctl log bot-id [number-of-lines [log-level]]
@@ -390,6 +390,9 @@ Restarting a bot:
     intelmqctl restart bot-id
 Get status of a bot:
     intelmqctl status bot-id
+
+Run a bot directly (blocking) for debugging purpose:
+    intelmqctl run bot-id
 
 Starting the botnet (all bots):
     intelmqctl start
@@ -412,7 +415,7 @@ Get logs of a bot:
     can be longer due to our logging format!
 
 positional arguments:
-  [start|stop|restart|status|list|clear|log]
+  [start|stop|restart|status|run|list|clear|log]
   parameter
 
 optional arguments:

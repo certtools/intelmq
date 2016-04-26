@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import argparse
-import inspect
+import importlib
 import json
 import os
 import shlex
 import signal
-import sys
 import time
 import traceback
 
@@ -165,7 +164,7 @@ class IntelMQContoller():
 
         Outputs are logged to /opt/intelmq/var/log/intelmqctl"""
         USAGE = '''
-        intelmqctl [start|stop|restart|status] bot-id
+        intelmqctl [start|stop|restart|status|run] bot-id
         intelmqctl [start|stop|restart|status]
         intelmqctl list [bots|queues]
         intelmqctl log bot-id [number-of-lines [log-level]]
@@ -179,6 +178,9 @@ Restarting a bot:
     intelmqctl restart bot-id
 Get status of a bot:
     intelmqctl status bot-id
+
+Run a bot directly (blocking) for debugging purpose:
+    intelmqctl run bot-id
 
 Starting the botnet (all bots):
     intelmqctl start
@@ -215,9 +217,9 @@ Get logs of a bot:
 
         parser.add_argument('action',
                             choices=['start', 'stop', 'restart', 'status',
-                                     'list', 'clear', 'help', 'log'],
-                            metavar='[start|stop|restart|status|list|clear|'
-                                    'log]')
+                                     'run', 'list', 'clear', 'help', 'log'],
+                            metavar='[start|stop|restart|status|run|list|clear'
+                                    '|log]')
         parser.add_argument('parameter', nargs='*')
         self.args = parser.parse_args()
         if self.args.action == 'help':
@@ -269,6 +271,12 @@ Get logs of a bot:
                 method_name = "botnet_" + self.args.action
                 call_method = getattr(self, method_name)
                 results = call_method()
+        elif self.args.action == 'run':
+            if self.args.parameter and len(self.args.parameter) == 1:
+                self.bot_run(self.args.parameter[0])
+            else:
+                print("Exactly one bot-id must be given for run.")
+                exit(2)
         elif self.args.action == 'list':
             if self.args.parameter not in ['bots', 'queues']:
                 print("Second argument must be 'bots' or 'queues'.")
@@ -289,6 +297,19 @@ Get logs of a bot:
 
         if self.args.type == 'json':
             print(json.dumps(results))
+
+    def bot_run(self, bot_id):
+        try:
+            bot_module = self.startup[bot_id]['module']
+        except KeyError:
+            log_bot_error('notfound', bot_id)
+            return 'error'
+        else:
+            module = importlib.import_module(bot_module)
+            botname = [name for name in dir(module) if hasattr(getattr(module, name), 'process')][0]
+            bot = getattr(module, botname)
+            instance = bot(bot_id)
+            instance.start()
 
     def bot_start(self, bot_id):
         if bot_id is None:
