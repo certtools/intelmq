@@ -7,8 +7,6 @@ Implemented workarounds for old packages:
 TODO: "feed.name" ILIKE '%' is slow
 """
 from __future__ import print_function, unicode_literals
-from functools import partial
-
 
 import argparse
 import csv
@@ -17,24 +15,24 @@ import io
 import json
 import locale
 import os
-import pkg_resources
 import readline  # nopep8, hooks into input()
 import subprocess
 import sys
 import tempfile
 import zipfile
+from functools import partial
 
+import pkg_resources
 import psycopg2
-import psycopg2.extras
 import psycopg2.extensions
+import psycopg2.extras
 import six
 import tabulate
-from intelmq.lib.intelmqcli import *
 from termstyle import bold, green, inverted, red, reset
 
+import intelmq.lib.intelmqcli as lib
 import rt
 from intelmq.lib import utils
-
 
 error = partial(print, file=sys.stderr)
 quiet = False
@@ -46,7 +44,7 @@ def quietprint(*args, **kwargs):
         print(*args, **kwargs)
 
 
-# Use unicode for all input and output
+# Use unicode for all input and output, needed for Py2
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODEARRAY)
 
@@ -54,23 +52,9 @@ myinverted = str(reset) + str(inverted)
 if six.PY2:
     input = raw_input
 
-with open('/etc/intelmq/intelmqcli.conf') as conf_handle:
-    CONFIG = json.load(conf_handle)
-home = os.path.expanduser("~")      # needed for OSX
-with open(os.path.expanduser(home + '/.intelmq/intelmqcli.conf')) as conf_handle:
-    user_config = json.load(conf_handle)
-
-for key, value in user_config.items():
-    if key in CONFIG and type(CONFIG[key]) is dict:
-        CONFIG[key].update(value)
-    else:
-        CONFIG[key] = value
-
 
 class IntelMQCLIContoller():
     table_mode = False  # for sticky table mode
-    rt = rt.Rt(CONFIG['rt']['uri'], CONFIG['rt']['user'],
-               CONFIG['rt']['password'])
     dryrun = False
     verbose = False
     batch = False
@@ -81,11 +65,11 @@ class IntelMQCLIContoller():
     def __init__(self):
         global quiet
         parser = argparse.ArgumentParser(
-            prog=APPNAME,
+            prog=lib.APPNAME,
             formatter_class=argparse.RawDescriptionHelpFormatter,
-            usage=USAGE,
-            description=DESCRIPTION,
-            epilog=EPILOG,
+            usage=lib.USAGE,
+            description=lib.DESCRIPTION,
+            epilog=lib.EPILOG,
         )
         VERSION = pkg_resources.get_distribution("intelmq").version
         parser.add_argument('--version',
@@ -141,38 +125,39 @@ class IntelMQCLIContoller():
         if args.text:
             self.boilerplate = args.text
 
+        self.read_config()
         self.connect_database()
 
         if args.list_feeds:
-            self.cur.execute(QUERY_FEED_NAMES)
+            self.cur.execute(lib.QUERY_FEED_NAMES)
             for row in self.cur.fetchall():
                 if row['feed.name']:
                     quietprint(row['feed.name'])
             exit(0)
 
         if args.list_texts:
-            self.cur.execute(QUERY_TEXT_NAMES)
+            self.cur.execute(lib.QUERY_TEXT_NAMES)
             for row in self.cur.fetchall():
                 if row['key']:
                     quietprint(row['key'])
             exit(0)
 
         if args.list_identifiers:
-            self.cur.execute(QUERY_IDENTIFIER_NAMES)
+            self.cur.execute(lib.QUERY_IDENTIFIER_NAMES)
             for row in self.cur.fetchall():
                 if row['classification.identifier']:
                     quietprint(row['classification.identifier'])
             exit(0)
 
         if args.list_taxonomies:
-            self.cur.execute(QUERY_TAXONOMY_NAMES)
+            self.cur.execute(lib.QUERY_TAXONOMY_NAMES)
             for row in self.cur.fetchall():
                 if row['classification.taxonomy']:
                     quietprint(row['classification.taxonomy'])
             exit(0)
 
         if args.list_types:
-            self.cur.execute(QUERY_TYPE_NAMES)
+            self.cur.execute(lib.QUERY_TYPE_NAMES)
             for row in self.cur.fetchall():
                 if row['classification.type']:
                     quietprint(row['classification.type'])
@@ -184,12 +169,12 @@ class IntelMQCLIContoller():
             exit(1)
 
         if not self.rt.login():
-            error(red('Could not login as {} on {}.'.format(CONFIG['rt']['user'],
-                                                            CONFIG['rt']['uri'])))
+            error(red('Could not login as {} on {}.'.format(self.config['rt']['user'],
+                                                            self.config['rt']['uri'])))
             exit(2)
         else:
-            quietprint('Logged in as {} on {}.'.format(CONFIG['rt']['user'],
-                                                  CONFIG['rt']['uri']))
+            quietprint('Logged in as {} on {}.'.format(self.config['rt']['user'],
+                                                       self.config['rt']['uri']))
         try:
             answer = 'init'
             while answer != 'q':
@@ -200,8 +185,9 @@ class IntelMQCLIContoller():
                     answer = 'a'
                 else:
                     answer = input('{i}detailed view by id, {b}[a]{i}utomatic '
-                               'sending, {b}[q]{i}uit?{r} '
-                               ''.format(b=bold, i=myinverted, r=reset)).strip()
+                                   'sending, {b}[q]{i}uit?{r} '
+                                   ''.format(b=bold, i=myinverted,
+                                             r=reset)).strip()
                 try:
                     answer = int(answer)
                 except ValueError:
@@ -220,14 +206,14 @@ class IntelMQCLIContoller():
                             else:
                                 error(red('Can not query the data of an unknown ASN. Ignoring.'))
                     answer = 'q'
-                elif not self.batch and type(answer) is int:
+                elif not self.batch and isinstance(answer, int):
                     if asn_count[answer]['contacts']:
                         self.query_by_as(asn_count[answer]['contacts'],
                                          feed=args.feed)
                     else:
                         if asn_count[answer] and asn_count[answer]['asn']:
                             self.query_by_as(int(asn_count[answer]['asn']),
-                                                 feed=args.feed)
+                                             feed=args.feed)
                         else:
                             error(red('no ASNs known. Ignoring.'))
                 else:
@@ -241,13 +227,29 @@ class IntelMQCLIContoller():
         finally:
             self.rt.logout()
 
+    def read_config(self):
+        with open('/etc/intelmq/intelmqcli.conf') as conf_handle:
+            self.config = json.load(conf_handle)
+        home = os.path.expanduser("~")      # needed for OSX
+        with open(os.path.expanduser(home + '/.intelmq/intelmqcli.conf')) as conf_handle:
+            user_config = json.load(conf_handle)
+
+        for key, value in user_config.items():
+            if key in self.config and isinstance(value, dict):
+                self.config[key].update(value)
+            else:
+                self.config[key] = value
+
+        self.rt = rt.Rt(self.config['rt']['uri'], self.config['rt']['user'],
+                        self.config['rt']['password'])
+
     def connect_database(self):
-        self.con = psycopg2.connect(database=CONFIG['database']['database'],
-                                    user=CONFIG['database']['user'],
-                                    password=CONFIG['database']['password'],
-                                    host=CONFIG['database']['host'],
-                                    port=CONFIG['database']['port'],
-                                    sslmode=CONFIG['database']['sslmode'],
+        self.con = psycopg2.connect(database=self.config['database']['database'],
+                                    user=self.config['database']['user'],
+                                    password=self.config['database']['password'],
+                                    host=self.config['database']['host'],
+                                    port=self.config['database']['port'],
+                                    sslmode=self.config['database']['sslmode'],
                                     )
         self.cur = self.con.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         self.con.autocommit = True
@@ -267,7 +269,7 @@ class IntelMQCLIContoller():
             if self.cur.rowcount:
                 text = self.cur.fetchall()[0]['body']
         if not text:  # if all failed, get the default
-            self.query_get_text(CONFIG['database']['default_key'])
+            self.query_get_text(self.config['database']['default_key'])
             if self.cur.rowcount:
                 text = self.cur.fetchall()[0]['body']
             else:
@@ -287,7 +289,7 @@ class IntelMQCLIContoller():
         return [{k: v for k, v in dicti.items() if not empty[k]} for dicti in d]
 
     def query_by_as(self, contact, requestor=None, automatic=False, feed='%'):
-        if type(contact) is int:
+        if isinstance(contact, int):
             query = self.query_by_asnum(contact, feed)
             if requestor is None:
                 requestor = ''
@@ -308,9 +310,9 @@ class IntelMQCLIContoller():
             csvfile = io.BytesIO()
         else:
             csvfile = io.StringIO()
-        quietprint(repr(CSV_FIELDS))
-        if CSV_FIELDS:
-            fieldnames = CSV_FIELDS
+        quietprint(repr(lib.CSV_FIELDS))
+        if lib.CSV_FIELDS:
+            fieldnames = lib.CSV_FIELDS
         else:
             fieldnames = query[0].keys()    # send all
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames,
@@ -318,7 +320,7 @@ class IntelMQCLIContoller():
         writer.writeheader()
         query_unicode = query
         if six.PY2:
-            query = [{key: utils.encode(val) if type(val) is six.text_type else val for key, val in row.items()} for row in query]
+            query = [{key: utils.encode(val) if isinstance(val, six.text_type) else val for key, val in row.items()} for row in query]
         writer.writerows(query)
         # note this might contain UTF-8 chars! let's ignore utf-8 errors. sorry.
         attachment_text = utils.decode(csvfile.getvalue(), force=True)
@@ -339,7 +341,7 @@ Subject: {subj}
             if quiet:
                 height = 80     # assume anything for quiet mode
             else:
-                height = getTerminalHeight() - 3 - showed_text_len
+                height = lib.getTerminalHeight() - 3 - showed_text_len
             csvfile.seek(0)
             if len(query) > height:
                 with tempfile.NamedTemporaryFile(mode='w+') as handle:
@@ -351,13 +353,13 @@ Subject: {subj}
                     subprocess.call(['less', handle.name])
             else:
                 quietprint(showed_text,
-                      tabulate.tabulate(query_unicode, headers='keys',
-                                        tablefmt='psql'), sep='\n')
+                           tabulate.tabulate(query_unicode, headers='keys',
+                                             tablefmt='psql'), sep='\n')
         else:
             if quiet:
                 height = 80
             else:
-                height = getTerminalHeight() - 4
+                height = lib.getTerminalHeight() - 4
             if 5 + len(query) > height:  # cut query too, 5 is length of text
                 quietprint('\n'.join(showed_text.splitlines()[:5]))
                 quietprint('...')
@@ -391,7 +393,7 @@ Subject: {subj}
         elif answer == ('r'):
             answer = input(inverted('New requestor address:') + ' ').strip()
             if len(answer) == 0:
-                if type(contact) is int:
+                if isinstance(contact, int):
                     requestor = ''
                 else:
                     requestor = contact
@@ -404,14 +406,13 @@ Subject: {subj}
             self.query_by_as(contact, requestor=requestor, feed=feed)
             return
 
-        # TODO: Config option for single events (best in ascontacts db)
         if text.startswith(str(red)):
             error(red('I won\'t send with a missing text!'))
             return
         if True:
             self.save_to_rt(ids=ids, subject=subject, requestor=requestor,
                             csvfile=csvfile, body=text, feed=feed)
-        else:
+        else:  # TODO: Config option for single events (best in ascontacts db)
             header = attachment_lines[0]
             for id_, attach_line, row in zip(ids, attachment_lines[1:], query):
                 if six.PY2:
@@ -422,10 +423,9 @@ Subject: {subj}
                 csvfile.write(attach_line)
                 subj_date = datetime.datetime.now().strftime('%Y-%m-%d')
                 subject = ('{date}: Incident {type} for {target}'
-                           ''.format(count=len(query),
-                                     date=subj_date,
+                           ''.format(date=subj_date,
                                      type=row['classification.type'],
-                                     target=target_from_row(row)))
+                                     target=lib.target_from_row(row)))
                 self.save_to_rt(ids=(id_, ), subject=subject,
                                 requestor=requestor, feed=feed, csvfile=csvfile,
                                 body=text)
@@ -453,7 +453,7 @@ Subject: {subj}
 
         report_id = self.rt.create_ticket(Queue='Incident Reports',
                                           Subject=subject,
-                                          Owner=CONFIG['rt']['user']) 
+                                          Owner=self.config['rt']['user'])
         if report_id == -1:
             error(red('Could not create Incident Report.'))
             return
@@ -475,13 +475,13 @@ Subject: {subj}
         if self.verbose:
             print("save_to_rt: feed = {}".format(feed))
         incident_id = self.rt.create_ticket(Queue='Incidents', Subject=subject,
-                                            Owner=CONFIG['rt']['user']) 
+                                            Owner=self.config['rt']['user'])
         if incident_id == -1:
             error(red('Could not create Incident ({}).'.format(incident_id)))
             return
         # XXX TODO: distinguish between national and other constituencies
-        self.rt.edit_ticket(incident_id, CF__RTIR_Classification=feed, 
-                            CF__RTIR_Constituency='national', 
+        self.rt.edit_ticket(incident_id, CF__RTIR_Classification=feed,
+                            CF__RTIR_Constituency='national',
                             CF__RTIR_Function='IncidentCoord')
         quietprint(green('Created Incident {}.'.format(incident_id)))
         if not self.rt.edit_link(report_id, 'MemberOf', incident_id):
@@ -491,9 +491,9 @@ Subject: {subj}
                               rtir_type='incident')
         investigation_id = self.rt.create_ticket(Queue='Investigations',
                                                  Subject=subject,
-                                                 Owner=CONFIG['rt']['user'],
+                                                 Owner=self.config['rt']['user'],
                                                  Requestor=requestor)
-                                                 
+
         if investigation_id == -1:
             error(red('Could not create Investigation.'))
             return
@@ -530,48 +530,48 @@ Subject: {subj}
         quietprint(tabulate.tabulate(tabledata, headers=headers, tablefmt='psql'))
 
         quietprint('{} incidents for {} contacts.'
-              ''.format(sum((row['count'] for row in asn_count)),
+                   ''.format(sum((row['count'] for row in asn_count)),
                              len(asn_count)))
         return asn_count
 
     def query_by_ascontact(self, contact, feed):
-        query = QUERY_BY_ASCONTACT.format(evtab=CONFIG['database']['events_table'],
-                                    cc=CONFIG['filter']['cc'],
-                                    conttab=CONFIG['database']['contacts_table'])
-        self.cur.execute(query, (CONFIG['filter']['fqdn'], contact, feed))
+        query = lib.QUERY_BY_ASCONTACT.format(evtab=self.config['database']['events_table'],
+                                              cc=self.config['filter']['cc'],
+                                              conttab=self.config['database']['contacts_table'])
+        self.cur.execute(query, (self.config['filter']['fqdn'], contact, feed))
         return self.cur.fetchall()
 
     def query_by_asnum(self, asn, feed):
-        query = QUERY_BY_ASNUM.format(evtab=CONFIG['database']['events_table'],
-                                          cc=CONFIG['filter']['cc'],
-                                          conttab=CONFIG['database']['contacts_table'])
-        self.cur.execute(query, (CONFIG['filter']['fqdn'], asn, feed))
+        query = lib.QUERY_BY_ASNUM.format(evtab=self.config['database']['events_table'],
+                                          cc=self.config['filter']['cc'],
+                                          conttab=self.config['database']['contacts_table'])
+        self.cur.execute(query, (self.config['filter']['fqdn'], asn, feed))
         return self.cur.fetchall()
 
     def query_count_asn(self, feed):
-        query = QUERY_COUNT_ASN.format(evtab=CONFIG['database']['events_table'],
-                                       cc=CONFIG['filter']['cc'],
-                                       conttab=CONFIG['database']['contacts_table'])
-        self.cur.execute(query, (CONFIG['filter']['fqdn'], feed))
+        query = lib.QUERY_COUNT_ASN.format(evtab=self.config['database']['events_table'],
+                                           cc=self.config['filter']['cc'],
+                                           conttab=self.config['database']['contacts_table'])
+        self.cur.execute(query, (self.config['filter']['fqdn'], feed))
         return self.cur.fetchall()
 
     def query_set_rtirid(self, events_ids, rtir_id, rtir_type):
-        query = QUERY_SET_RTIRID.format(evtab=CONFIG['database']['events_table'],
-                                        rtirid=rtir_id, type=rtir_type,
-                                        ids=','.join(events_ids))
+        query = lib.QUERY_SET_RTIRID.format(evtab=self.config['database']['events_table'],
+                                            rtirid=rtir_id, type=rtir_type,
+                                            ids=','.join(events_ids))
         self.cur.execute(query)
 
     def query_update_contact(self, contact, asns):
-        query = QUERY_UPDATE_CONTACT.format(conttab=CONFIG['database']['contacts_table'],
-                                            ids=','.join(asns))
+        query = lib.QUERY_UPDATE_CONTACT.format(conttab=self.config['database']['contacts_table'],
+                                                ids=','.join(asns))
         self.cur.execute(query, (contact, ))
 
     def query_insert_contact(self, contact, asn, comment):
-        query = QUERY_INSERT_CONTACT.format(conttab=CONFIG['database']['contacts_table'])
+        query = lib.QUERY_INSERT_CONTACT.format(conttab=self.config['database']['contacts_table'])
         self.cur.execute(query, (asn, contact, comment))
 
     def query_get_text(self, text_id):
-        self.cur.execute(QUERY_GET_TEXT.format(texttab=CONFIG['database']['text_table']),
+        self.cur.execute(lib.QUERY_GET_TEXT.format(texttab=self.config['database']['text_table']),
                          (text_id, ))
 
 
