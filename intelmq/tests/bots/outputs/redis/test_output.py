@@ -32,28 +32,6 @@ EXAMPLE_EVENT = {"classification.type": "malware",
                  "W50cnlfbmFtZSI6IkRvbWluaWNhbiBSZXB1YmxpYyJ9fQ=="
                  }
 
-EXAMPLE_OUTPUT = {"classification.type": "malware",
-                  "__type": "Event",
-                  "feed.url": "http://alerts.bitsighttech.com:8080/stream?",
-                  "feed.name": "BitSight",
-                  "feed.accuracy": 100.0,
-                  "source.port": 65118,
-                  "source.ip": "152.166.119.2",
-                  "source.geolocation.country": "Dominican Republic",
-                  "malware.name": "salityp2p",
-                  "raw": "eyJ0cm9qYW5mYW1pbHkiOiJTYWxpdHlwMnAiLCJlbnYiOnsicmVtb3"
-                  "RlX2FkZHIiOiIxNTIuMTY2LjExOS4yIiwicmVtb3RlX3BvcnQiOiI2NTExOCI"
-                  "sInNlcnZlcl9hZGRyIjoiNTIuMTguMTk2LjE2OSIsInNlcnZlcl9wb3J0Ijoi"
-                  "OTc5NiJ9LCJfdHMiOjE0NjExMDc3NjgsIl9nZW9fZW52X3JlbW90ZV9hZGRyI"
-                  "jp7ImNvdW50cnlfbmFtZSI6IkRvbWluaWNhbiBSZXB1YmxpYyJ9fQ==",
-                  "destination.port": 9796,
-                  "extra.non_ascii": "ççãããã\x80\ua000 \164 \x80\x80 abcd \165\166",
-                  "destination.ip": "52.18.196.169",
-                  "event_description.text": "Sinkhole attempted connection",
-                  "time.source": "2016-04-19T23:16:08+00:00",
-                  "time.observation": "2016-04-19T23:16:08+00:00"
-                  }
-
 
 class TestRedisOutputBot(test.BotTestCase, unittest.TestCase):
 
@@ -81,7 +59,7 @@ class TestRedisOutputBot(test.BotTestCase, unittest.TestCase):
         """ "assertMessageEqual" """
         self.assertIsInstance(event, str)
         event_dict = json.loads(event)
-        self.assertDictEqual(EXAMPLE_OUTPUT, event_dict)
+        self.assertDictEqual(EXAMPLE_EVENT, event_dict)
 
 
 if __name__ == '__main__':
