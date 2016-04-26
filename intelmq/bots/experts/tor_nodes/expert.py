@@ -31,10 +31,6 @@ class TorExpertBot(Bot):
     def process(self):
         event = self.receive_message()
 
-        if event is None:
-            self.acknowledge_message()
-            return
-
         for key in ["source.", "destination."]:
             if event.contains(key + 'ip'):
                 if event.get(key + 'ip') in self.database:

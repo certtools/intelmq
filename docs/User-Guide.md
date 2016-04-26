@@ -101,7 +101,10 @@ chown -R intelmq.intelmq /opt/intelmq
 
 By default, one collector, one parser and one output are started. The default collector and the parser handle data from malware domain list, the file output bot writes all data to `/opt/intelmq/var/lib/bots/file-output/events.txt`.
 
-The configuration directory is `/opt/intelmq/etc/`, all files are JSON.
+The configuration directory is `/opt/intelmq/etc/`, all files are JSON. By
+default, the installation method puts it's distributed configuration files into
+`etc/examples`, so it does not override your local configuration. Prior to the
+first run, copy them to `etc`.
 
 * `defaults.conf`: default values for bots and their behavior, e.g.
 error handling, log options and pipeline configuration. Will be removed in [future](https://github.com/certtools/intelmq/issues/267).

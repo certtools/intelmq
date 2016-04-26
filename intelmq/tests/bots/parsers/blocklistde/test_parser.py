@@ -49,7 +49,6 @@ class TestBlockListDEParserBot(test.BotTestCase, unittest.TestCase):
     @classmethod
     def set_bot(cls):
         cls.bot_reference = BlockListDEParserBot
-        cls.default_input_message = {'__type': 'Report'}
 
     def test_imap(self):
         self.input_message = REPORT

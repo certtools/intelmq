@@ -34,10 +34,6 @@ class TaxonomyExpertBot(Bot):
     def process(self):
         event = self.receive_message()
 
-        if event is None:
-            self.acknowledge_message()
-            return
-
         if (not event.contains("classification.taxonomy") and
                 event.contains("classification.type")):
             event_type = event.get("classification.type")

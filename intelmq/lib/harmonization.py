@@ -333,7 +333,7 @@ class FQDN(GenericType):
     def to_ip(value):
         try:
             value = str(dns.resolver.query(value, 'A')[0])
-        except Exception:  # TODO: More specific Exception
+        except dns.resolver.NXDOMAIN:  # domain not found
             value = None
         return value
 
