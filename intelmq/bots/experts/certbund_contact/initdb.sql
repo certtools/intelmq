@@ -34,7 +34,7 @@ CREATE TABLE organisation (
     -- The org: nic handle in the RIPE DB, if available
     ripe_org_hdl VARCHAR(100),  
 
-    -- The Trusted Introducer (TI) handle or URL: for example https://tiw.trusted-introducer.org/directory/teams/certat.html
+    -- The Trusted Introducer (TI) handle or URL: for example https://www.trusted-introducer.org/directory/teams/certat.html
     ti_handle    VARCHAR(500),
 
     -- The FIRST.org handle or URL: for example https://api.first.org/data/v1/teams?q=aconet-cert
@@ -210,7 +210,7 @@ CREATE TABLE organisation_to_asn (
 CREATE TABLE organisation_to_network (
     organisation_id INTEGER,
     net_id INTEGER,
-    ttl INTEGER NOT NULL,
+    notification_interval INTEGER NOT NULL, -- intervall in seconds
 
     PRIMARY KEY (organisation_id, net_id),
 
@@ -218,10 +218,10 @@ CREATE TABLE organisation_to_network (
     FOREIGN KEY (net_id) REFERENCES network (id)
 );
 
-CREATE TABLE contact_to_fqdn (
+CREATE TABLE organisation_to_fqdn (
     organisation_id INTEGER,
     fqdn_id INTEGER,
-    ttl INTEGER NOT NULL,
+    notification_intervall INTEGER NOT NULL,
 
     PRIMARY KEY (organisation_id, fqdn_id),
 
@@ -263,7 +263,7 @@ CREATE TYPE notification AS (
     organisation VARCHAR(500),
     template_path VARCHAR(200),
     format_name VARCHAR(80),
-    ttl INTEGER
+    notification_interval INTEGER
 );
 
 
@@ -293,14 +293,14 @@ RETURNS SETOF notification
 AS $$
 BEGIN
     RETURN QUERY
-      WITH matched_contacts (contact_id, email, format_id, ttl)
-        AS (SELECT c.id, c.email, c.format_id, cn.ttl
+      WITH matched_contacts (contact_id, email, format_id, notification_interval)
+        AS (SELECT c.id, c.email, c.format_id, cn.notification_interval
               FROM contact c
               JOIN contact_to_network cn ON cn.contact_id = c.id
               JOIN network n ON n.id = cn.net_id
              WHERE host(network(n.address)) <= host(event_ip)
                AND host(event_ip) <= host(broadcast(n.address)))
-    SELECT mc.email, cos.organisation_name, cos.template_path, f.name, mc.ttl
+    SELECT mc.email, cos.organisation_name, cos.template_path, f.name, mc.notification_interval
       FROM matched_contacts mc
       JOIN contact_organisation_settings cos ON mc.contact_id = cos.contact_id
       JOIN format f ON mc.format_id = f.id
@@ -317,13 +317,13 @@ RETURNS SETOF notification
 AS $$
 BEGIN
     RETURN QUERY
-      WITH matched_contacts (contact_id, email, format_id, ttl)
-        AS (SELECT c.id, c.email, c.format_id, ca.ttl
+      WITH matched_contacts (contact_id, email, format_id, notification_interval)
+        AS (SELECT c.id, c.email, c.format_id, ca.notification_interval
               FROM contact c
               JOIN contact_to_asn ca ON ca.contact_id = c.id
               JOIN autonomous_system a ON a.number = ca.asn_id
              WHERE a.number = event_asn)
-    SELECT mc.email, cos.organisation_name, cos.template_path, f.name, mc.ttl
+    SELECT mc.email, cos.organisation_name, cos.template_path, f.name, mc.notification_interval
       FROM matched_contacts mc
       JOIN contact_organisation_settings cos ON mc.contact_id = cos.contact_id
       JOIN format f ON mc.format_id = f.id
@@ -340,13 +340,13 @@ RETURNS SETOF notification
 AS $$
 BEGIN
     RETURN QUERY
-      WITH matched_contacts (contact_id, email, format_id, ttl)
-        AS (SELECT c.id, c.email, c.format_id, cd.ttl
+      WITH matched_contacts (contact_id, email, format_id, notification_interval)
+        AS (SELECT c.id, c.email, c.format_id, cd.notification_interval
               FROM contact c
               JOIN contact_to_fqdn cd ON cd.contact_id = c.id
               JOIN fqdn f ON f.id = cd.fqdn_id
              WHERE f.fqdn = event_fqdn)
-    SELECT mc.email, cos.organisation_name, cos.template_path, f.name, mc.ttl
+    SELECT mc.email, cos.organisation_name, cos.template_path, f.name, mc.notification_interval
       FROM matched_contacts mc
       JOIN contact_organisation_settings cos ON mc.contact_id = cos.contact_id
       JOIN format f ON mc.format_id = f.id
