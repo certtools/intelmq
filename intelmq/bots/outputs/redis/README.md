@@ -15,6 +15,6 @@ Bot parameters:
 
 * Can be used to send events to be processed in another system. E.g.: send events to Logstash.
 
-* In a multitennent instalation can be used to send events to external/remote IntelMQ instance. Any expert bot queue can receive the events.
+* In a multi tenant installation can be used to send events to external/remote IntelMQ instance. Any expert bot queue can receive the events.
 
 * In a complex configuration can be used to create logical sets in IntelMQ-Manager. 
