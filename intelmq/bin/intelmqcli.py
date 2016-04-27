@@ -7,6 +7,8 @@ Implemented workarounds for old packages:
 TODO: "feed.name" ILIKE '%' is slow
 """
 from __future__ import print_function, unicode_literals
+from functools import partial
+
 
 import argparse
 import csv
@@ -15,7 +17,6 @@ import io
 import json
 import locale
 import os
-import pprint
 import pkg_resources
 import readline  # nopep8, hooks into input()
 import subprocess
@@ -33,6 +34,16 @@ from termstyle import bold, green, inverted, red, reset
 
 import rt
 from intelmq.lib import utils
+
+
+error = partial(print, file=sys.stderr)
+quiet = False
+
+
+# wrapper around print()
+def quietprint(*args, **kwargs):
+    if not quiet:
+        print(*args, **kwargs)
 
 
 # Use unicode for all input and output
@@ -62,10 +73,13 @@ class IntelMQCLIContoller():
                CONFIG['rt']['password'])
     dryrun = False
     verbose = False
+    batch = False
     compress_csv = False
     boilerplate = None
+    filter_asns = []
 
     def __init__(self):
+        global quiet
         parser = argparse.ArgumentParser(
             prog=APPNAME,
             formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -76,27 +90,54 @@ class IntelMQCLIContoller():
         VERSION = pkg_resources.get_distribution("intelmq").version
         parser.add_argument('--version',
                             action='version', version=VERSION)
+
         parser.add_argument('-l', '--list-feeds', action='store_true',
                             help='List all feeds')
+        parser.add_argument('-f', '--feed', nargs='?', default='%', const='%',
+                            help='Show only incidents reported by given feed.')
+
+        parser.add_argument('-i', '--list-identifiers', action='store_true',
+                            help='List all identifiers')
+
         parser.add_argument('-L', '--list-texts', action='store_true',
                             help='List all existing texts.')
         parser.add_argument('-t', '--text', nargs=1, help='Specify the text to be used.')
-        parser.add_argument('-f', '--feed', nargs='?', default='%', const='%',
-                            help='Show only incidents reported by given feed.')
+
+        parser.add_argument('-T', '--list-taxonomies', action='store_true',
+                            help='List all taxonomies')
+
+        parser.add_argument('-y', '--list-types', action='store_true',
+                            help='List all types')
+
+        parser.add_argument('-a', '--asn', type=int, nargs='+',
+                            help='Specify one or more AS numbers (integers) to process.')
+
         parser.add_argument('-v', '--verbose', action='store_true',
                             help='Print verbose messages.')
+
         parser.add_argument('-c', '--compress-csv', action='store_true',
                             help='Automatically compress/shrink the attached CSV report if fields are empty (default = False).')
+
+        parser.add_argument('-b', '--batch', action='store_true',
+                            help='Run in batch mode (defaults to "yes" to all).')
+        parser.add_argument('-q', '--quiet', action='store_true',
+                            help='Do not output anything, except for error messages. Useful in combination with --batch.')
         parser.add_argument('-n', '--dry-run', action='store_true',
                             help='Do not store anything or change anything. Just simulate.')
         args = parser.parse_args()
 
+        if args.quiet:
+            quiet = True
         if args.verbose:
             self.verbose = True
         if args.dry_run:
             self.dryrun = True
+        if args.batch:
+            self.batch = True
         if args.compress_csv:
             self.compress_csv = True
+        if args.asn:
+            self.filter_asns = args.asn
         if args.text:
             self.boilerplate = args.text
 
@@ -106,34 +147,59 @@ class IntelMQCLIContoller():
             self.cur.execute(QUERY_FEED_NAMES)
             for row in self.cur.fetchall():
                 if row['feed.name']:
-                    print(row['feed.name'])
+                    quietprint(row['feed.name'])
             exit(0)
 
         if args.list_texts:
             self.cur.execute(QUERY_TEXT_NAMES)
             for row in self.cur.fetchall():
                 if row['key']:
-                    print(row['key'])
+                    quietprint(row['key'])
             exit(0)
 
+        if args.list_identifiers:
+            self.cur.execute(QUERY_IDENTIFIER_NAMES)
+            for row in self.cur.fetchall():
+                if row['classification.identifier']:
+                    quietprint(row['classification.identifier'])
+            exit(0)
+
+        if args.list_taxonomies:
+            self.cur.execute(QUERY_TAXONOMY_NAMES)
+            for row in self.cur.fetchall():
+                if row['classification.taxonomy']:
+                    quietprint(row['classification.taxonomy'])
+            exit(0)
+
+        if args.list_types:
+            self.cur.execute(QUERY_TYPE_NAMES)
+            for row in self.cur.fetchall():
+                if row['classification.type']:
+                    quietprint(row['classification.type'])
+            exit(0)
 
         if locale.getpreferredencoding() != 'UTF-8':
-            print(red('The preferred encoding of your locale setting is not UTF-8 '
+            error(red('The preferred encoding of your locale setting is not UTF-8 '
                       'but {}. Exiting.'.format(locale.getpreferredencoding())))
             exit(1)
 
         if not self.rt.login():
-            print(red('Could not login as {} on {}.'.format(CONFIG['rt']['user'],
+            error(red('Could not login as {} on {}.'.format(CONFIG['rt']['user'],
                                                             CONFIG['rt']['uri'])))
+            exit(2)
         else:
-            print('Logged in as {} on {}.'.format(CONFIG['rt']['user'],
+            quietprint('Logged in as {} on {}.'.format(CONFIG['rt']['user'],
                                                   CONFIG['rt']['uri']))
         try:
-            while True:
+            answer = 'init'
+            while answer != 'q':
                 asn_count = self.count_by_asn(feed=args.feed)
-                if self.verbose:
-                    print(sys.stderr, 'asn_count = {}.'.format(asn_count))
-                answer = input('{i}detailed view by id, {b}[a]{i}utomatic '
+                #if self.verbose:
+                print('asn_count = {}.'.format(asn_count), file=sys.stderr)
+                if self.batch and answer != 'q':
+                    answer = 'a'
+                else:
+                    answer = input('{i}detailed view by id, {b}[a]{i}utomatic '
                                'sending, {b}[q]{i}uit?{r} '
                                ''.format(b=bold, i=myinverted, r=reset)).strip()
                 try:
@@ -152,8 +218,9 @@ class IntelMQCLIContoller():
                                 self.query_by_as(int(item['asn']), automatic=True,
                                                  feed=args.feed)
                             else:
-                                print(red('Can not query the data of an unknown ASN. Ignoring.'))
-                elif type(answer) is int:
+                                error(red('Can not query the data of an unknown ASN. Ignoring.'))
+                    answer = 'q'
+                elif not self.batch and type(answer) is int:
                     if asn_count[answer]['contacts']:
                         self.query_by_as(asn_count[answer]['contacts'],
                                          feed=args.feed)
@@ -162,13 +229,13 @@ class IntelMQCLIContoller():
                             self.query_by_as(int(asn_count[answer]['asn']),
                                                  feed=args.feed)
                         else:
-                            print(red('no ASNs known. Ignoring.'))
+                            error(red('no ASNs known. Ignoring.'))
                 else:
-                    print(red('Unknown answer {!r}.'.format(answer)))
+                    error(red('Unknown answer {!r}.'.format(answer)))
 
         except BaseException as exc:
             if isinstance(exc, (SystemExit, KeyboardInterrupt)):
-                print()
+                quietprint()
             else:
                 raise
         finally:
@@ -241,7 +308,7 @@ class IntelMQCLIContoller():
             csvfile = io.BytesIO()
         else:
             csvfile = io.StringIO()
-        print(repr(CSV_FIELDS))
+        quietprint(repr(CSV_FIELDS))
         if CSV_FIELDS:
             fieldnames = CSV_FIELDS
         else:
@@ -258,7 +325,7 @@ class IntelMQCLIContoller():
         attachment_lines = attachment_text.splitlines()
 
         if self.verbose:
-            pprint.pprint(text)
+            quietprint(text)
 
         showed_text = '=' * 100 + '''
 To: {to}
@@ -269,7 +336,10 @@ Subject: {subj}
         showed_text_len = showed_text.count('\n')
 
         if self.table_mode:
-            height = getTerminalHeight() - 3 - showed_text_len
+            if quiet:
+                height = 80     # assume anything for quiet mode
+            else:
+                height = getTerminalHeight() - 3 - showed_text_len
             csvfile.seek(0)
             if len(query) > height:
                 with tempfile.NamedTemporaryFile(mode='w+') as handle:
@@ -280,31 +350,36 @@ Subject: {subj}
                     handle.seek(0)
                     subprocess.call(['less', handle.name])
             else:
-                print(showed_text,
+                quietprint(showed_text,
                       tabulate.tabulate(query_unicode, headers='keys',
                                         tablefmt='psql'), sep='\n')
         else:
-            height = getTerminalHeight() - 4
-            if 5 + len(query) > height:  # cut query too, 5 is length of text
-                print('\n'.join(showed_text.splitlines()[:5]))
-                print('...')
-                print('\n'.join(attachment_lines[:height - 5]))
-                print('...')
-            elif showed_text_len + len(query) > height > 5 + len(query):
-                print('\n'.join(showed_text.splitlines()[:height - len(query)]))
-                print('...')
-                print(attachment_text)
+            if quiet:
+                height = 80
             else:
-                print(showed_text, attachment_text, sep='\n')
-        print('-' * 100)
+                height = getTerminalHeight() - 4
+            if 5 + len(query) > height:  # cut query too, 5 is length of text
+                quietprint('\n'.join(showed_text.splitlines()[:5]))
+                quietprint('...')
+                quietprint('\n'.join(attachment_lines[:height - 5]))
+                quietprint('...')
+            elif showed_text_len + len(query) > height > 5 + len(query):
+                quietprint('\n'.join(showed_text.splitlines()[:height - len(query)]))
+                quietprint('...')
+                quietprint(attachment_text)
+            else:
+                quietprint(showed_text, attachment_text, sep='\n')
+        quietprint('-' * 100)
         if automatic and requestor:
             answer = 's'
         else:
+            answer = 'q'
             if automatic:
-                print(red('You need to set a valid requestor!'))
-            answer = input('{i}{b}[b]{i}ack, {b}[s]{i}end, show {b}[t]{i}able,'
-                           ' change {b}[r]{i}equestor or {b}[q]{i}uit?{r} '
-                           ''.format(b=bold, i=myinverted, r=reset)).strip()
+                error(red('You need to set a valid requestor!'))
+            if not self.batch:
+                answer = input('{i}{b}[b]{i}ack, {b}[s]{i}end, show {b}[t]{i}able,'
+                               ' change {b}[r]{i}equestor or {b}[q]{i}uit?{r} '
+                               ''.format(b=bold, i=myinverted, r=reset)).strip()
         if answer == 'q':
             exit(0)
         elif answer == 'b':
@@ -325,17 +400,17 @@ Subject: {subj}
             self.query_by_as(contact, requestor=requestor, feed=feed)
             return
         elif answer != 's':
-            print(red('Unknow command {!r}.'.format(answer)))
+            error(red('Unknow command {!r}.'.format(answer)))
             self.query_by_as(contact, requestor=requestor, feed=feed)
             return
 
         # TODO: Config option for single events (best in ascontacts db)
         if text.startswith(str(red)):
-            print(red('I won\'t send with a missing text!'))
+            error(red('I won\'t send with a missing text!'))
             return
         if True:
             self.save_to_rt(ids=ids, subject=subject, requestor=requestor,
-                            csvfile=csvfile, body=text)
+                            csvfile=csvfile, body=text, feed=feed)
         else:
             header = attachment_lines[0]
             for id_, attach_line, row in zip(ids, attachment_lines[1:], query):
@@ -352,7 +427,7 @@ Subject: {subj}
                                      type=row['classification.type'],
                                      target=target_from_row(row)))
                 self.save_to_rt(ids=(id_, ), subject=subject,
-                                requestor=requestor, csvfile=csvfile,
+                                requestor=requestor, feed=feed, csvfile=csvfile,
                                 body=text)
 
         if requestor != contact and not self.dryrun:
@@ -371,18 +446,18 @@ Subject: {subj}
                                                   contact=requestor,
                                                   comment=comment)
 
-    def save_to_rt(self, ids, subject, requestor, csvfile, body):
+    def save_to_rt(self, ids, subject, requestor, feed, csvfile, body):
         if self.dryrun:
-            print('Not writing to RT, dry-run selected.')
+            quietprint('Not writing to RT, dry-run selected.')
             return
 
         report_id = self.rt.create_ticket(Queue='Incident Reports',
                                           Subject=subject,
-                                          Owner=CONFIG['rt']['user'])
+                                          Owner=CONFIG['rt']['user']) 
         if report_id == -1:
-            print(red('Could not create Incident Report.'))
+            error(red('Could not create Incident Report.'))
             return
-        print(green('Created Incident Report {}.'.format(report_id)))
+        quietprint(green('Created Incident Report {}.'.format(report_id)))
         self.query_set_rtirid(events_ids=ids, rtir_id=report_id,
                               rtir_type='report')
         if True:  # TODO: implement zip config
@@ -397,14 +472,20 @@ Subject: {subj}
             attachment.seek(0)
             filename = 'events.zip'
 
+        if self.verbose:
+            print("save_to_rt: feed = {}".format(feed))
         incident_id = self.rt.create_ticket(Queue='Incidents', Subject=subject,
-                                            Owner=CONFIG['rt']['user'])
+                                            Owner=CONFIG['rt']['user']) 
         if incident_id == -1:
-            print(red('Could not create Incident.'))
+            error(red('Could not create Incident ({}).'.format(incident_id)))
             return
-        print(green('Created Incident {}.'.format(incident_id)))
+        # XXX TODO: distinguish between national and other constituencies
+        self.rt.edit_ticket(incident_id, CF__RTIR_Classification=feed, 
+                            CF__RTIR_Constituency='national', 
+                            CF__RTIR_Function='IncidentCoord')
+        quietprint(green('Created Incident {}.'.format(incident_id)))
         if not self.rt.edit_link(report_id, 'MemberOf', incident_id):
-            print(red('Could not link Incident to Incident Report.'))
+            error(red('Could not link Incident to Incident Report: ({} -> {}).'.format(incident_id, report_id)))
             return
         self.query_set_rtirid(events_ids=ids, rtir_id=incident_id,
                               rtir_type='incident')
@@ -412,32 +493,33 @@ Subject: {subj}
                                                  Subject=subject,
                                                  Owner=CONFIG['rt']['user'],
                                                  Requestor=requestor)
+                                                 
         if investigation_id == -1:
-            print(red('Could not create Investigation.'))
+            error(red('Could not create Investigation.'))
             return
-        print(green('Created Investigation {}.'.format(investigation_id)))
+        quietprint(green('Created Investigation {}.'.format(investigation_id)))
         if not self.rt.edit_link(incident_id, 'HasMember', investigation_id):
-            print(red('Could not link Investigation to Incident.'))
+            error(red('Could not link Investigation to Incident.'))
             return
 
         # TODO: CC
         correspond = self.rt.reply(investigation_id, text=body,
                                    files=[(filename, attachment, 'text/csv')])
         if not correspond:
-            print(red('Could not correspond with text and file.'))
+            error(red('Could not correspond with text and file.'))
             return
-        print(green('Correspondence added to Investigation.'))
+        quietprint(green('Correspondence added to Investigation.'))
 
         self.query_set_rtirid(events_ids=ids, rtir_id=investigation_id,
                               rtir_type='investigation')
         if not self.rt.edit_ticket(incident_id, Status='resolved'):
-            print(red('Could not close incident {}.'.format(incident_id)))
+            error(red('Could not close incident {}.'.format(incident_id)))
 
     def count_by_asn(self, feed='%'):
         # TODO: Existing RT ids!
         asn_count = self.query_count_asn(feed)
         if not asn_count:
-            print('No incidents!')
+            quietprint('No incidents!')
             exit(0)
         headers = map(bold, ['id', 'n°', 'ASNs', 'contacts', 'types', 'feeds'])
         tabledata = []
@@ -445,9 +527,9 @@ Subject: {subj}
             tabledata.append([number, row['count'], row['asn'],
                               row['contacts'], row['classification'],
                               row['feeds']])
-        print(tabulate.tabulate(tabledata, headers=headers, tablefmt='psql'))
+        quietprint(tabulate.tabulate(tabledata, headers=headers, tablefmt='psql'))
 
-        print('{} incidents for {} contacts.'
+        quietprint('{} incidents for {} contacts.'
               ''.format(sum((row['count'] for row in asn_count)),
                              len(asn_count)))
         return asn_count
