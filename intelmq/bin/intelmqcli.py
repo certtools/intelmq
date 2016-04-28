@@ -195,7 +195,7 @@ class IntelMQCLIContoller():
             while answer != 'q':
                 asn_count = self.count_by_asn(feed=args.feed)
                 #if self.verbose:
-                print('asn_count = {}.'.format(asn_count), file=sys.stderr)
+                quietprint('asn_count = {}.'.format(asn_count), file=sys.stderr)
                 if self.batch and answer != 'q':
                     answer = 'a'
                 else:
