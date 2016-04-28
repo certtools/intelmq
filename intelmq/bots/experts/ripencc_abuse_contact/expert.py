@@ -25,10 +25,6 @@ class RIPENCCExpertBot(Bot):
     def process(self):
         event = self.receive_message()
 
-        if event is None:
-            self.acknowledge_message()
-            return
-
         for key in ['source.', 'destination.']:
             ip_key = key + "ip"
             abuse_key = key + "abuse_contact"

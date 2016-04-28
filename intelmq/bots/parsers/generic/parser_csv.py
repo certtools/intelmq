@@ -28,10 +28,6 @@ class GenericCsvParserBot(Bot):
     def process(self):
         report = self.receive_message()
 
-        if not report or not report.contains("raw"):
-            self.acknowledge_message()
-            return
-
         columns = self.parameters.columns
         type_translation = None
         if hasattr(self.parameters, 'type_translation'):

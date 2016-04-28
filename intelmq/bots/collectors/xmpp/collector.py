@@ -24,13 +24,20 @@ import sys
 
 from intelmq.lib.bot import Bot
 from intelmq.lib.message import Report
-from sleekxmpp import ClientXMPP
-from sleekxmpp.exceptions import XMPPError
+try:
+    import sleekxmpp
+except ImportError:
+    sleekxmpp = None
 
 
 class XMPPCollectorBot(Bot):
 
     xmpp = None
+
+    def init(self):
+        if sleekxmpp is None:
+            self.logger.error('Could not import sleekxmpp. Please install it.')
+            self.stop()
 
     def process(self):
         if self.xmpp is None:
@@ -83,7 +90,7 @@ class XMPPCollectorBot(Bot):
             self.send_message(report)
 
 
-class XMPPClientBot(ClientXMPP):
+class XMPPClientBot(sleekxmpp.ClientXMPP):
 
     def __init__(self,
                 jid,
@@ -92,7 +99,7 @@ class XMPPClientBot(ClientXMPP):
                 room_nick,
                 room_password,
                 logger):
-        ClientXMPP.__init__(self, jid, password)
+        sleekxmpp.ClientXMPP.__init__(self, jid, password)
 
         self.logger = logger
         self.logger.info("XMPP connected")
@@ -108,9 +115,12 @@ class XMPPClientBot(ClientXMPP):
 
         try:
             self.get_roster()
-        except XMPPError as err:
+        except sleekxmpp.exception.IqError as err:
             self.logger.error('There was an error getting the roster')
             self.logger.error(err.iq['error']['condition'])
+            self.disconnect()
+        except sleekxmpp.exceptions.IqTimeout:
+            self.logger.error('Server is taking too long to respond')
             self.disconnect()
 
         if self.xmpp_room:

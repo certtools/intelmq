@@ -37,10 +37,6 @@ class SpamhausCERTParserBot(Bot):
     def process(self):
         report = self.receive_message()
 
-        if report is None or not report.contains("raw"):
-            self.acknowledge_message()
-            return
-
         raw_report = utils.base64_decode(report["raw"])
 
         for row in raw_report.splitlines():
@@ -68,7 +64,7 @@ class SpamhausCERTParserBot(Bot):
                 event.add('extra', {'destination.local_port':
                                     int(row_splitted[8])})
             event.add('protocol.transport', row_splitted[9])
-            event.add('classification.type', u'botnet drone')
+            event.add('classification.type', 'botnet drone')
             event.add('raw', row)
 
             self.send_message(event)

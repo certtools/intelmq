@@ -56,7 +56,7 @@ class TestUtils(unittest.TestCase):
 
     def test_decode_unicode(self):
         """ Test decoding with unicode string. """
-        self.assertEqual('foobar', utils.decode(u'foobar'))
+        self.assertEqual('foobar', utils.decode('foobar'))
 
     def test_encode_bytes(self):
         """ Test encoding with bytes string. """
@@ -65,7 +65,7 @@ class TestUtils(unittest.TestCase):
     def test_encode_force(self):
         """ Test ASCII encoding enforcement. """
         self.assertEqual(b'fobar',
-                         utils.encode(u'fo\xe4bar', encodings=('ascii', ),
+                         utils.encode('fo\xe4bar', encodings=('ascii', ),
                                       force=True))
 
     def test_file_logger(self):

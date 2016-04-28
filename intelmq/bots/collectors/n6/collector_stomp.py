@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
-
-
 import os.path
 import sys
 
-import stomp
-
 from intelmq.lib.bot import Bot
 from intelmq.lib.message import Report
+
+try:
+    import stomp
+except ImportError:
+    stomp = None
 
 
 class StompListener(stomp.listener.PrintingListener):
@@ -45,6 +46,10 @@ class n6stompCollectorBot(Bot):
     """ main class for the n6 STOMP protocol collector """
 
     def init(self):
+        if stomp is None:
+            self.logger.error('Could not import stomp. Please install it.')
+            self.stop()
+
         self.server = getattr(self.parameters, 'server', 'n6stream.cert.pl')
         self.port = getattr(self.parameters, 'port', 61614)
         self.exchange = getattr(self.parameters, 'exchange', '')

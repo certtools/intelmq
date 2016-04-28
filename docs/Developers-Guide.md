@@ -254,9 +254,6 @@ from intelmq.lib.bot import Bot
 class ExampleParserBot(Bot):
     def process(self):
         report = self.receive_message()
-        if report is None:  # Can be a None object in case the received message is empty
-            self.acknowledge_message()
-            return
 
         event = Event(report)  # copies feed.name, time.observation
         ... # implement the logic here
@@ -337,7 +334,7 @@ class TestExampleParserBot(test.BotTestCase, unittest.TestCase):  # adjust test 
         cls.bot_reference = ExampleParserBot  # adjust bot class name
         cls.default_input_message = EXAMPLE_EVENT  # adjust source of the example event (dict)
 
-	# This is an example how to test the log output
+    # This is an example how to test the log output
     def test_log_test_line(self):
         """ Test if bot does log example message. """
         self.run_bot()

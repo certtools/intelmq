@@ -14,7 +14,7 @@ class TestAlienVaultParserBot(test.BotTestCase, unittest.TestCase):
     @classmethod
     def set_bot(cls):
         cls.bot_reference = AlienVaultParserBot
-        cls.default_input_message = {'__type': 'Report'}
+        cls.default_input_message = {'__type': 'Report', 'raw': 'Cg=='}
 
 if __name__ == '__main__':
     unittest.main()

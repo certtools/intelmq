@@ -11,10 +11,6 @@ class Url2fqdnExpertBot(Bot):
     def process(self):
         event = self.receive_message()
 
-        if event is None:
-            self.acknowledge_message()
-            return
-
         for key in ["source.", "destination."]:
 
             key_url = key + "url"

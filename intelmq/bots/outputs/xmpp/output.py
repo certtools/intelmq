@@ -18,17 +18,24 @@ xmpp_password: boolean
 # TODO xmpp_room_password: string
 # TODO xmpp_room_nick: string
 """
-import sys
+
 import json
+import sys
 
 from intelmq.lib.bot import Bot
-from sleekxmpp import ClientXMPP
-from sleekxmpp.exceptions import XMPPError
+try:
+    import sleekxmpp
+except ImportError:
+    sleekxmpp = None
 
 
 class XMPPOutputBot(Bot):
 
     def init(self):
+        if sleekxmpp is None:
+            self.logger.error('Could not import sleekxmpp. Please install it.')
+            self.stop()
+
         self.xmpp = XMPPClientBot(self.parameters.xmpp_user + '@'
                             + self.parameters.xmpp_server,
                             self.parameters.xmpp_password,
@@ -61,13 +68,13 @@ class XMPPOutputBot(Bot):
         self.acknowledge_message()
 
 
-class XMPPClientBot(ClientXMPP):
+class XMPPClientBot(sleekxmpp.ClientXMPP):
 
     def __init__(self,
                 jid,
                 password,
                 logger):
-        ClientXMPP.__init__(self, jid, password)
+        sleekxmpp.ClientXMPP.__init__(self, jid, password)
 
         self.logger = logger
         self.logger.info("XMPP connected")
@@ -80,10 +87,14 @@ class XMPPClientBot(ClientXMPP):
 
         try:
             self.get_roster()
-        except XMPPError as err:
+        except sleekxmpp.exceptions.IqError as err:
             self.logger.error('There was an error getting the roster')
             self.logger.error(err.iq['error']['condition'])
             self.disconnect()
+        except sleekxmpp.exceptions.IqTimeout:
+            self.logger.error('Server is taking too long to respond')
+            self.disconnect()
+
 
 if __name__ == "__main__":
     bot = XMPPOutputBot(sys.argv[1])

@@ -27,7 +27,7 @@ class AlienVaultParserBot(Bot):
 
         raw_report = utils.base64_decode(report.get("raw"))
 
-        for row in raw_report.split('\n'):
+        for row in raw_report.splitlines():
 
             row = row.strip()
             if len(row) == 0:
@@ -50,7 +50,7 @@ class AlienVaultParserBot(Bot):
                     event.add('classification.type',
                               CLASSIFICATION[ctype.lower()])
                 else:
-                    event.add('classification.type', u"unknown")
+                    event.add('classification.type', "unknown")
 
                 if len(values[6].strip()) > 0:
                     geo_coordinates = values[6].strip().split(",")
