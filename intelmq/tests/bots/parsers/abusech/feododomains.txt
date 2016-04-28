@@ -1,0 +1,9 @@
+##########################################################################
+# Feodo Domain Blocklist                                                 #
+# Generated on 2016-02-23 14:55:49 UTC                                   #
+#                                                                        #
+# For questions please refer to https://feodotracker.abuse.ch/blocklist/ #
+##########################################################################
+# START
+arta.romail3arnest.info
+# END (1 entries)

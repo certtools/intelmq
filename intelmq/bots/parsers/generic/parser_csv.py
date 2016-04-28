@@ -1,8 +1,22 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-import sys
-from dateutil.parser import parse
+"""
+Generic CSV parser
+
+Parameters:
+columns: string
+delimiter: string
+default_url_protocol: string
+type: string
+type_translation: string
+
+"""
+import csv
+import io
+import json
 import re
+import sys
+
+from dateutil.parser import parse
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
@@ -14,19 +28,18 @@ class GenericCsvParserBot(Bot):
     def process(self):
         report = self.receive_message()
 
-        if not report or not report.contains("raw"):
-            self.acknowledge_message()
-            return
-
         columns = self.parameters.columns
+        type_translation = None
+        if hasattr(self.parameters, 'type_translation'):
+            type_translation = json.loads(self.parameters.type_translation)
 
         raw_report = utils.base64_decode(report.get("raw"))
         # ignore lines starting with #
         raw_report = re.sub(r'(?m)^#.*\n?', '', raw_report)
         # ignore null bytes
         raw_report = re.sub(r'(?m)\0', '', raw_report)
-        for row in utils.csv_reader(raw_report,
-                                    delimiter=str(self.parameters.delimiter)):
+        for row in csv.reader(io.StringIO(raw_report),
+                              delimiter=str(self.parameters.delimiter)):
             event = Event(report)
 
             for key, value in zip(columns, row):
@@ -69,13 +82,22 @@ class GenericCsvParserBot(Bot):
                             '[1-9]?\d)){3}))|:)))(%.+)?').match(value).group()
                     elif key.endswith('.url') and '://' not in value:
                         value = self.parameters.default_url_protocol + value
+                    elif key in ["classification.type"] and type_translation:
+                        if value in type_translation:
+                            value = type_translation[value]
+                        elif not hasattr(self.parameters, 'type'):
+                            continue
+
                 except:
-                    self.logger.exception('Encountered error while parsing'
-                                          'line in csv file, ignoring.')
+                    self.logger.warning('Encountered error while parsing line'
+                                        ' in csv file, ignoring this row: ' +
+                                        repr(row))
                     continue
                 event.add(key, value)
 
-            event.add('classification.type', self.parameters.type)
+            if hasattr(self.parameters, 'type')\
+                    and not event.contains("classification.type"):
+                event.add('classification.type', self.parameters.type)
             event.add("raw", ",".join(row))
 
             self.send_message(event)

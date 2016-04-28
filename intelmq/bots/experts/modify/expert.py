@@ -2,7 +2,6 @@
 """
 Modify Expert bot let's you manipulate all fields with a config file.
 """
-from __future__ import unicode_literals
 import re
 import sys
 
@@ -42,10 +41,6 @@ class ModifyExpertBot(Bot):
 
     def process(self):
         event = self.receive_message()
-
-        if event is None:
-            self.acknowledge_message()
-            return
 
         for section_id, section in self.config.items():
             default_cond = section.get('__default', [{}, {}])[0]

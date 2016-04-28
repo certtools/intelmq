@@ -1,29 +1,33 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 import sys
 
-import geoip2.database
 from intelmq.lib.bot import Bot
+
+try:
+    import geoip2.database
+except ImportError:
+    geoip2.database = None
 
 
 class GeoIPExpertBot(Bot):
 
     def init(self):
+        if geoip2.database is None:
+            self.logger.error('Could not import geoip2. Please install it.')
+            self.stop()
+
         try:
             self.database = geoip2.database.Reader(self.parameters.database)
         except IOError:
-            self.logger.error("GeoIP Database does not exist or could not be "
-                              "accessed in '%s'" % self.parameters.database)
+            self.logger.exception("GeoIP Database does not exist or could not "
+                                  "be accessed in {}"
+                                  "".format(self.parameters.database))
             self.logger.error("Read 'bots/experts/geoip/README' and follow the"
                               " procedure")
             self.stop()
 
     def process(self):
         event = self.receive_message()
-
-        if event is None:
-            self.acknowledge_message()
-            return
 
         for key in ["source.%s", "destination.%s"]:
             geo_key = key % "geolocation.%s"

@@ -1,18 +1,19 @@
 # -*- coding: utf-8 -*-
-from __future__ import absolute_import, unicode_literals
-import sys
-from .OTXv2 import OTXv2
 import json
+import sys
 
 from intelmq.lib.bot import Bot
 from intelmq.lib.message import Report
+
+from .OTXv2 import OTXv2
 
 
 class AlienVaultOTXCollectorBot(Bot):
 
     def process(self):
         self.logger.info("Downloading report through API")
-        otx = OTXv2(self.parameters.api_key)
+        https_proxy = getattr(self.parameters, 'http_ssl_proxy', None)
+        otx = OTXv2(self.parameters.api_key, proxy=https_proxy)
         pulses = otx.getall()
         self.logger.info("Report downloaded.")
 

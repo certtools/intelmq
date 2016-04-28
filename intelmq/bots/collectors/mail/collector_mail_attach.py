@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 import re
 import sys
 import zipfile
 
 import imbox
+
 from intelmq.lib.bot import Bot
 from intelmq.lib.message import Report
 

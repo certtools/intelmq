@@ -20,17 +20,12 @@ https://en.wikipedia.org/wiki/IPv4
 
 TODO: Extend for example domains
 """
-from __future__ import unicode_literals
 
 import ipaddress
 import sys
+from urllib.parse import urlparse
 
 from intelmq.lib.bot import Bot
-
-try:
-    from urlparse import urlparse
-except ImportError:
-    from urllib.parse import urlparse
 
 NETWORKS = ("10.0.0.0/8", "100.64.0.0/10", "127.0.0.0/8",
             "169.254.0.0/16", "172.16.0.0/12", "192.0.0.0/24", "192.0.2.0/24",
@@ -56,10 +51,6 @@ class RFC1918ExpertBot(Bot):
 
     def process(self):
         event = self.receive_message()
-
-        if event is None:
-            self.acknowledge_message()
-            return
 
         for field, policy in zip(self.fields, self.policy):
             if field not in event:

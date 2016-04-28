@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-import io  # has encoding support in Python 2
+import io
 import sys
 
 from intelmq.lib.bot import Bot
@@ -15,10 +14,6 @@ class FileBot(Bot):
 
     def process(self):
         event = self.receive_message()
-
-        if event is None:
-            self.acknowledge_message()
-            return
 
         if event:
             event_data = event.to_json()

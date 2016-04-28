@@ -1,0 +1,29 @@
+Source: intelmq
+Maintainer: Sascha Wilde <wilde@intevation.de>
+Section: python
+Priority: optional
+Build-Depends: dh-python, python-setuptools (>= 0.6b3), python3-setuptools, python3-all, debhelper (>= 9)
+X-Python3-Version: >= 3.3.0
+Standards-Version: 3.9.6
+Homepage: https://github.com/certtools/intelmq/
+
+Package: intelmq
+Architecture: all
+Depends: ${misc:Depends}, ${python3:Depends}, libcurl4-gnutls-dev,
+ libffi-dev, python3-dateutil (>= 2.0), python3-dnspython (>= 1.11.1),
+ python3-pymongo, python3-openssl, python3-psutil (>= 1.2.1),
+ python3-psycopg2, python3-pycurl (>= 7.19.0), python3-redis (>= 2.10.3),
+ python3-requests (>= 2.2.1), python3-termstyle (>= 0.1.10), python3-tz,
+ redis-server
+Recommends: python3-imbox (>= 0.6), python3-pyasn (>= 1.5.0),
+ python3-stomp.py (>= 4.1.9)
+Description: Solution for CERTs to process data feeds, paste
+ IntelMQ is a solution for CERTs for collecting and processing security 
+ feeds, pastebins, tweets and log files using a message queuing protocol. 
+ It's a community driven initiative called IHAP (Incident Handling 
+ Automation Project) which was conceptually designed 
+ by European CERTs during several InfoSec events. Its main goal is to 
+ give to incident responders an easy way to collect & process threat 
+ intelligence thus improving the incident handling processes of CERTs.
+ .
+ IntelMQ's design was influenced by AbuseHelper

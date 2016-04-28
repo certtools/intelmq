@@ -1,23 +1,17 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-import sys
 
 from setuptools import find_packages, setup
 
 REQUIRES = [
-    'ipaddress>=1.0.14',
-    'psutil>=2.1.1',
-    'python-dateutil>=2.4.2',
+    'dnspython3>=1.11.1',
+    'psutil>=1.2.1',
+    'python-dateutil>=2.0',
     'python-termstyle>=0.1.10',
-    'pytz>=2015.4',
+    'pytz>=2014.1',
     'redis>=2.10.3',
-    'requests>=2.7.0',
-    'six>=1.9.0',
+    'requests>=2.2.0',
 ]
-if sys.version_info[0] == 2:
-    REQUIRES += ['dnspython>=1.12.0']
-elif sys.version_info[0] == 3:
-    REQUIRES += ['dnspython3>=1.12.0']
 
 DATA = [
     ('/opt/intelmq/etc/',
@@ -25,17 +19,23 @@ DATA = [
       ],
      ),
     ('/opt/intelmq/etc/examples',
-     ['intelmq/conf/defaults.conf',
-      'intelmq/conf/harmonization.conf',
-      'intelmq/conf/pipeline.conf',
-      'intelmq/conf/runtime.conf',
-      'intelmq/conf/startup.conf',
-      'intelmq/conf/system.conf',
+     ['intelmq/etc/defaults.conf',
+      'intelmq/etc/harmonization.conf',
+      'intelmq/etc/pipeline.conf',
+      'intelmq/etc/runtime.conf',
+      'intelmq/etc/startup.conf',
+      'intelmq/etc/system.conf',
       ],
      ),
     ('/opt/intelmq/var/lib/bots/modify/example',
      ['intelmq/bots/experts/modify/modify.conf',
       ],
+     ),
+    ('/opt/intelmq/var/log/',
+     [],
+     ),
+    ('/opt/intelmq/var/lib/bots/file-output/',
+     [],
      ),
 ]
 
@@ -59,7 +59,7 @@ setup(
     test_suite='nose.collector',
     packages=find_packages(),
     package_data={'intelmq': [
-        'conf/*.conf',
+        'etc/*.conf',
         'bots/BOTS',
         'bots/experts/modify/*.conf',
     ]
@@ -78,9 +78,8 @@ setup(
         'Intended Audience :: Telecommunications Industry',
         'License :: OSI Approved :: GNU Affero General Public License v3',
         'Operating System :: Unix',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Topic :: Security',

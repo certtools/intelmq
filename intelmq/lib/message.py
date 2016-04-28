@@ -4,17 +4,14 @@ Messages are the information packages in pipelines.
 
 Use MessageFactory to get a Message object (types Report and Event).
 """
-from __future__ import unicode_literals
 import hashlib
 import json
 import re
-import six
 
 import intelmq.lib.exceptions as exceptions
 import intelmq.lib.harmonization
 from intelmq import HARMONIZATION_CONF_FILE
 from intelmq.lib import utils
-
 
 __all__ = ['Event', 'Message', 'MessageFactory', 'Report']
 
@@ -184,12 +181,12 @@ class Message(dict):
         if not class_reference().is_valid(value):
             return (False, 'is_valid returned False.')
         if 'length' in config:
-            length = len(six.text_type(value))
+            length = len(str(value))
             if not length <= config['length']:
                 return (False, 'too long: {} > {}.'.format(length,
                                                            config['length']))
         if 'regex' in config:
-            if not re.search(config['regex'], six.text_type(value)):
+            if not re.search(config['regex'], str(value)):
                 return (False, 'regex did not match.')
         return (True, )
 

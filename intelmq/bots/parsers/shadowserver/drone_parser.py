@@ -29,8 +29,8 @@ id 	Bot ID
 naics   [UNDOCUMENTED]
 sic [UNDOCUMENTED]
 """
-from __future__ import unicode_literals
-
+import csv
+import io
 import sys
 
 from intelmq.lib import utils
@@ -43,12 +43,8 @@ class ShadowServerDroneParserBot(Bot):
     def process(self):
         report = self.receive_message()
 
-        if report is None or not report.contains("raw"):
-            self.acknowledge_message()
-            return
-
         raw_report = utils.base64_decode(report["raw"])
-        for row in utils.csv_reader(raw_report, dictreader=True):
+        for row in csv.DictReader(io.StringIO(raw_report), dictreader=True):
             event = Event(report)
             extra = {}
 

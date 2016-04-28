@@ -18,7 +18,7 @@ See also http://n6.cert.pl/
 % sudo -Eu intelmq python -m intelmq.bots.collectors.n6.collector_stomp n6stomp-collector
 on_connecting n6stream.cert.pl 61614
 on_send STOMP {'accept-version': '1.1', 'heart-beat': '60000,60000'}
-on_send SUBSCRIBE {'ack': u'auto', 'destination': u'/exchange/XXXXX/#', 'id': 1}
+on_send SUBSCRIBE {'ack': 'auto', 'destination': '/exchange/XXXXX/#', 'id': 1}
 on_connected {'session': 'session-$randomstring', 'version': '1.1', 'server': 'RabbitMQ/3.5.4', 'heart-beat': '60000,60000'}
 ```
 

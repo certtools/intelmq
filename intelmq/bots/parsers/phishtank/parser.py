@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+import csv
+import io
 import sys
 
 from intelmq.lib import utils
@@ -12,10 +13,6 @@ class PhishTankParserBot(Bot):
     def process(self):
         report = self.receive_message()
 
-        if report is None or not report.contains("raw"):
-            self.acknowledge_message()
-            return
-
         columns = ["__IGNORE__",
                    "source.url",
                    "event_description.url",
@@ -27,7 +24,11 @@ class PhishTankParserBot(Bot):
                    ]
 
         raw_report = utils.base64_decode(report.get("raw"))
-        for row in utils.csv_reader(raw_report):
+        for row in csv.reader(io.StringIO(raw_report)):
+
+            if not len(row):  # csv module can give empty lists
+                self.acknowledge_message()
+                return
 
             # ignore headers
             if "phish_id" in row:
@@ -42,7 +43,7 @@ class PhishTankParserBot(Bot):
 
                 event.add(key, value)
 
-            event.add('classification.type', u'phishing')
+            event.add('classification.type', 'phishing')
             event.add("raw", ",".join(row))
 
             self.send_message(event)

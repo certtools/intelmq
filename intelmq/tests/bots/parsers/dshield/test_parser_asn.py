@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 
 import os
 import unittest
@@ -7,7 +6,6 @@ import unittest
 import intelmq.lib.test as test
 import intelmq.lib.utils as utils
 from intelmq.bots.parsers.dshield.parser_asn import DShieldASNParserBot
-
 
 with open(os.path.join(os.path.dirname(__file__), 'asdetailsascii.html')) as handle:
     EXAMPLE_FILE = handle.read()

@@ -2,9 +2,9 @@
 """
 Testing modify expert bot.
 """
-from __future__ import unicode_literals
 
 import unittest
+
 from pkg_resources import resource_filename
 
 import intelmq.lib.test as test
@@ -52,6 +52,7 @@ class TestModifyExpertBot(test.BotTestCase, unittest.TestCase):
                                         'bots/experts/modify/modify.conf')
         cls.sysconfig = {'configuration_path': config_path
                          }
+        cls.default_input_message = {'__type': 'Event'}
 
     def test_events(self):
         """ Test if correct Events have been produced. """

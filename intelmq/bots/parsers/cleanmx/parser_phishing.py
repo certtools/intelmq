@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+import csv
+import io
 import sys
 
 from intelmq.lib import utils
@@ -38,14 +39,9 @@ class CleanMXPhishingParserBot(Bot):
 
     def process(self):
         report = self.receive_message()
-
-        if report is None or not report.contains("raw"):
-            self.acknowledge_message()
-            return
-
         raw_report = utils.base64_decode(report.get("raw"))
 
-        for row in utils.csv_reader(raw_report, dictreader=True):
+        for row in csv.DictReader(io.StringIO(raw_report)):
             event = Event(report)
 
             for key, value in row.items():
@@ -71,7 +67,7 @@ class CleanMXPhishingParserBot(Bot):
 
                 event.add(key, value)
 
-            event.add('classification.type', u'phishing')
+            event.add('classification.type', 'phishing')
             event.add("raw", ",".join(row))
 
             self.send_message(event)

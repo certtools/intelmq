@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import print_function, unicode_literals
 
 import time
 
@@ -8,7 +7,6 @@ import redis
 import intelmq.lib.exceptions as exceptions
 import intelmq.lib.pipeline
 import intelmq.lib.utils as utils
-
 
 __all__ = ['Pipeline', 'PipelineFactory', 'Redis', 'Pythonlist']
 

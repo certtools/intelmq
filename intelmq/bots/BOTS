@@ -55,7 +55,7 @@
             }
         },
         "AlienVault": {
-            "description": "AlienVault Collector is the bot responsible to get the report from source of information.",
+            "description": "AlienVault Collector retrieves reports via the SDK https://github.com/AlienVault-Labs/OTX-Python-SDK/ from https://otx.alienvault.com/ http_ssl_proxy does apply.",
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "AlienVault",
@@ -88,6 +88,14 @@
                 "feed": "Autoshun",
                 "http_url": "https://www.autoshun.org/files/shunlist.html",
                 "rate_limit": 3600
+            }
+        },
+        "BitSight Ciberfeed Stream": {
+            "description": "Bitsight Collector is the bot reponsible to get Bitsight Ciberfeed Alert Stream",
+            "module": "intelmq.bots.collectors.bitsight.collector",
+            "parameters": {
+                "feed": "BitSight",
+                "http_url": "http://alerts.bitsighttech.com:8080/stream?key=<api>"
             }
         },
         "BlockList.DE Apache": {
@@ -279,12 +287,12 @@
                 "rate_limit": 3600
             }
         },
-        "Dyn": {
-            "description": "Dyn Collector is the bot responsible to get the report from source of information.",
+        "DynDNS ponmocup Domains": {
+            "description": "DynDNS ponmocup. List of ponmocup malware redirection domains and infected web-servers. See also http://security-research.dyndns.org/pub/botnet-links.html",
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
-                "feed": "Dyn",
-                "http_url": "http://security-research.dyndns.org/pub/botnet/ponmocup/ponmocup-finder/ponmocup-infected-domains-latest.txt",
+                "feed": "DynDNS ponmocup Domains",
+                "http_url": "http://security-research.dyndns.org/pub/malware-feeds/ponmocup-infected-domains-CIF-latest.txt",
                 "rate_limit": 10800
             }
         },
@@ -578,6 +586,16 @@
                 "http_url": "http://vxvault.siri-urz.net/URL_List.php",
                 "rate_limit": 3600
             }
+        },
+        "XMPP collector": {
+            "description": "XMPP collector is the bot responsible to get events from xmpp server",
+            "module": "intelmq.bots.collectors.xmpp.collector",
+            "parameters": {
+                "rate_limit": "3600",
+                "xmpp_password": "xmpp password",
+                "xmpp_server": "xmpp server",
+                "xmpp_user": "xmpp username"
+            }
         }
     },
     "Expert": {
@@ -763,12 +781,35 @@
                 "host": "<host>"
             }
         },
+        "Redis": {
+            "description": "Redis is the bot responsible to send events to a Redis server.",
+            "module": "intelmq.bots.outputs.redis.output",
+            "parameters": {
+                "redis_db": 2,
+                "redis_password": "<password>",
+                "redis_queue": "external-redis-queue",
+                "redis_server_ip": "127.0.0.1",
+                "redis_server_port": 6379,
+                "redis_timeout": 50000
+            }
+        },
         "TCP": {
             "description": "TCP is the bot responsible to send events to a tcp port (Splunk, ElasticSearch, etc..).",
             "module": "intelmq.bots.outputs.tcp.output",
             "parameters": {
                 "ip": "<ip>",
                 "port": "<port>"
+            }
+        },
+        "XMPP": {
+            "description": "XMPP is the bot responsible to send events to an XMPP server.",
+            "module": "intelmq.bots.outputs.xmpp.output",
+            "parameters": {
+                "xmpp_password": "xmpp password",
+                "xmpp_server": "xmpp server",
+                "xmpp_to_server": "destination server",
+                "xmpp_to_user": "destination username",
+                "xmpp_user": "xmpp username"
             }
         }
     },
@@ -821,6 +862,11 @@
         "Autoshun": {
             "description": "Autoshun Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.autoshun.parser",
+            "parameters": {}
+        },
+        "BitSight Ciberfeed Stream": {
+            "description": "Bitsight Ciberfeed parser is the bot reponsible to parse and sanitize the information.",
+            "module": "intelmq.bots.parsers.bitsight.parser",
             "parameters": {}
         },
         "BlockList.DE Apache": {
@@ -928,7 +974,7 @@
             "module": "intelmq.bots.parsers.dragonresearchgroup.parser_vnc",
             "parameters": {}
         },
-        "Dyn": {
+        "DynDNS ponmocup Domains": {
             "description": "Dyn Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.dyn.parser",
             "parameters": {}

@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 
 import re
 import sys
 
 import imbox
 import requests
+
 from intelmq.lib.bot import Bot
 from intelmq.lib.message import Report
 
