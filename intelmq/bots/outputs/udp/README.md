@@ -3,12 +3,12 @@
 ### Output Bot that sends events to a remote UDP server.
 
 Bot parameters: 
-* field_delimiter   : If the format is 'delimited' this will be added between fields
-* format            : Can be 'Json' or 'delimited'. The Json format outputs the event 'as-is'. Delimited will descontruct the event and print each field separated by the field delimit. See examples bellow.
-* header            : Header text to be sent in the udp datagram 
+* field_delimiter   : If the format is 'delimited' this will be added between fields.
+* format            : Can be 'Json' or 'delimited'. The Json format outputs the event 'as-is'. Delimited will descontruct the event and print each field:value separated by the field delimit. See examples bellow.
+* header            : Header text to be sent in the udp datagram. 
 * ip                : IP address of the UDP server
-* port              : PORT to connect to
-* raw_field         : Can be 'keep' or 'drop'. Drop will not send the raw field in the message
+* port              : PORT to connect to.
+* raw_field         : Can be 'keep' or 'drop'. Drop will not send the raw field in the message.
 
 
 ### Examples of usage:
@@ -20,9 +20,12 @@ Event = {"raw": "MjAxNi8wNC8yNV8xMTozOSxzY2hpenppbm8ub21hcmF0aG9uLmNvbS9na0NDSnV
 #### Parameters 1
 ---
 
-* format      : json
-* Header      : header example
-* raw_field   : keep
+* field_delimiter   : |
+* format            : json
+* Header            : header example
+* raw_field         : keep
+* ip                : 127.0.0.1
+* port              : 514
 
 Output to syslog:
 `
@@ -31,12 +34,14 @@ Apr 29 11:01:29 header example {"raw": "MjAxNi8wNC8yNV8xMTozOSxzY2hpenppbm8ub21h
 #### Parameters 2
 ---
 
-* field_delimiter : :::
-* format      : delimited
-* Header      : header example
-* raw_field   : drop
+* field_delimiter   : |
+* format            : delimited
+* Header            : IntelMQ-event
+* raw_field         : drop
+* ip                : 127.0.0.1
+* port              : 514
 
 Output to syslog:
 `
-Apr 29 11:05:21 header example: ::source.asn:8972:::feed.name:Malware Domain List:::source.ip:85.25.160.114:::time.source:2016-04-25T11:39:00+00:00:::source.reverse_dns:static-ip-85-25-160-114.inaddr.ip-pool.com:::time.observation:2016-04-29T11:05:19+00:00:::classification.type:malware:::source.url:http://schizzino.omarathon.com/gkCCJuTHM/DPeCZEk/WtVNHDKl-mXYeFNHj/:::feed.accuracy:100.0:::event_description.text:Angler EK:::feed.url:http://www.malwaredomainlist.com/updatescsv.php
+Apr 29 11:17:47 localhost IntelMQ-event|source.ip: 85.25.160.114|time.source:2016-04-25T11:39:00+00:00|feed.url:http://www.malwaredomainlist.com/updatescsv.php|time.observation:2016-04-29T11:17:44+00:00|source.reverse_dns:static-ip-85-25-160-114.inaddr.ip-pool.com|feed.name:Malware Domain List|event_description.text:Angler EK|source.url:http://schizzino.omarathon.com/gkCCJuTHM/DPeCZEk/WtVNHDKl-mXYeFNHj/|source.asn:8972|classification.type:malware|feed.accuracy:100.0
 `
