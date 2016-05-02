@@ -62,6 +62,7 @@ QUERY_COUNT_ASN = """
         COALESCE({conttab}.contacts, '') as contacts,
         string_agg(DISTINCT cast({evtab}."source.asn" as varchar), ', ') as asn,
         string_agg(DISTINCT {evtab}."classification.type", ', ') as classification,
+        string_agg(DISTINCT {evtab}."classification.taxonomy", ', ') as taxonomy,
         string_agg(DISTINCT {evtab}."feed.code", ', ') as feeds,
         COALESCE({conttab}.contacts, cast({evtab}."source.asn" as varchar))
             as grouping

@@ -422,7 +422,7 @@ Subject: {subj}
             return
         if True:
             self.save_to_rt(ids=ids, subject=subject, requestor=requestor,
-                            csvfile=csvfile, body=text, feed=feed)
+                            csvfile=csvfile, body=text, feed=feed, taxonomy=taxonomy)
         else:  # TODO: Config option for single events (best in ascontacts db)
             header = attachment_lines[0]
             for id_, attach_line, row in zip(ids, attachment_lines[1:], query):
@@ -438,7 +438,7 @@ Subject: {subj}
                                      type=row['classification.type'],
                                      target=lib.target_from_row(row)))
                 self.save_to_rt(ids=(id_, ), subject=subject,
-                                requestor=requestor, feed=feed, csvfile=csvfile,
+                                requestor=requestor, feed=feed, taxonomy=taxonomy, csvfile=csvfile,
                                 body=text)
 
         if requestor != contact and not self.dryrun:
@@ -457,10 +457,13 @@ Subject: {subj}
                                                   contact=requestor,
                                                   comment=comment)
 
-    def save_to_rt(self, ids, subject, requestor, feed, csvfile, body):
+    def save_to_rt(self, ids, subject, requestor, feed, taxonomy, csvfile, body):
         if self.dryrun:
             quietprint('Not writing to RT, dry-run selected.')
             return
+
+        if taxonomy == '%':
+            taxonomy='Unknown'
 
         report_id = self.rt.create_ticket(Queue='Incident Reports',
                                           Subject=subject,
@@ -485,13 +488,14 @@ Subject: {subj}
 
         if self.verbose:
             error("save_to_rt: feed = {}".format(feed))
+            error("save_to_rt: taxonomy = {}".format(taxonomy))
         incident_id = self.rt.create_ticket(Queue='Incidents', Subject=subject,
                                             Owner=self.config['rt']['user'])
         if incident_id == -1:
             error(red('Could not create Incident ({}).'.format(incident_id)))
             return
         # XXX TODO: distinguish between national and other constituencies
-        self.rt.edit_ticket(incident_id, CF__RTIR_Classification=feed,
+        self.rt.edit_ticket(incident_id, CF__RTIR_Classification=taxonomy,
                             CF__RTIR_Constituency='national',
                             CF__RTIR_Function='IncidentCoord')
         quietprint(green('Created Incident {}.'.format(incident_id)))
@@ -565,8 +569,8 @@ Subject: {subj}
         query = lib.QUERY_COUNT_ASN.format(evtab=self.config['database']['events_table'],
                                            cc=self.config['filter']['cc'],
                                            conttab=self.config['database']['contacts_table'])
-        self.cur.execute(query, (self.config['filter']['fqdn'], feed,
-                                 taxonomy))
+        quietprint("query = '%r'" %query)
+        self.cur.execute(query, (self.config['filter']['fqdn'], feed, taxonomy))
         return self.cur.fetchall()
 
     def query_set_rtirid(self, events_ids, rtir_id, rtir_type):

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 export LANG=en_US.UTF-8
 export LC_CTYPE=en_US.UTF-8
@@ -7,7 +7,7 @@ export LC_CTYPE=en_US.UTF-8
 IFS=""
 
 while read -r t ; do 
-	./intelmqcli --taxonomy="$t" --batch --quiet
+	./intelmqcli --taxonomy="$t" --batch 
 done
 
 
