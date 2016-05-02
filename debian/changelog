@@ -1,3 +1,15 @@
+intelmq (1.0.0~dev4~beta6) experimental; urgency=critical
+
+  * Fix: Marks config files as such...
+
+ -- Sascha Wilde <wilde@intevation.de>  Mon, 02 May 2016 13:09:34 +0200
+
+intelmq (1.0.0~dev4~beta5) experimental; urgency=low
+
+  * Added python3-geoip2 to recommendations.
+
+ -- Sascha Wilde <wilde@intevation.de>  Mon, 02 May 2016 11:36:00 +0200
+
 intelmq (1.0.0~dev4~beta4) experimental; urgency=low
 
   * Merged current master.
