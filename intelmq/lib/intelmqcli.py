@@ -51,6 +51,7 @@ USAGE = '''
     intelmqcli --list-feeds
     intelmqcli --list-identifiers
     intelmqcli --list-taxonomies
+    intelmqcli --taxonomy='taxonomy'
     intelmqcli --list-types
     intelmqcli --list-texts
     intelmqcli --text='boilerplate name'
@@ -77,8 +78,9 @@ QUERY_COUNT_ASN = """
             {evtab}."source.geolocation.cc" LIKE '{cc}' OR
             {evtab}."source.fqdn" LIKE %s
         )
-        AND "feed.name" ILIKE %s AND
-        "time.source" IS NOT NULL
+        AND {evtab}."feed.name" ILIKE %s AND
+        {evtab}."time.source" IS NOT NULL AND
+        {evtab}."classification.taxonomy" ILIKE %s
     GROUP BY {conttab}.contacts, grouping;
     """
 
@@ -163,7 +165,7 @@ SELECT
     {evtab}."screenshot_url",
     {evtab}."status",
     {evtab}."time.observation"
-FROM events
+FROM {evtab}
 LEFT OUTER JOIN {conttab} ON {evtab}."source.asn" = {conttab}.asnum
 WHERE
     notify = TRUE AND (
@@ -176,8 +178,9 @@ WHERE
         {evtab}."source.fqdn" LIKE %s
     ) AND
     {conttab}.contacts = %s AND
-    "feed.name" ILIKE %s AND
-    "time.source" IS NOT NULL;
+    {evtab}."feed.name" ILIKE %s AND
+    {evtab}."time.source" IS NOT NULL AND
+    {evtab}."classification.taxonomy" ILIKE %s;
 """
 
 QUERY_BY_ASNUM = """
@@ -236,7 +239,7 @@ SELECT
     {evtab}."screenshot_url",
     {evtab}."status",
     {evtab}."time.observation"
-FROM events
+FROM {evtab}
 LEFT OUTER JOIN {conttab} ON {evtab}."source.asn" = {conttab}.asnum
 WHERE
     notify = TRUE AND (
@@ -249,8 +252,9 @@ WHERE
         {evtab}."source.fqdn" LIKE %s
     ) AND
     {evtab}."source.asn" = %s AND
-    "feed.name" ILIKE %s AND
-    "time.source" IS NOT NULL;
+    {evtab}."feed.name" ILIKE %s AND
+    {evtab}."time.source" IS NOT NULL AND
+    {evtab}."classification.taxonomy" ILIKE %s;
 """
 
 
