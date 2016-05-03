@@ -259,10 +259,10 @@ Get logs of a bot:
                 print("Exactly one bot-id must be given for run.")
                 exit(2)
         elif self.args.action == 'list':
-            if self.args.parameter not in ['bots', 'queues']:
+            if self.args.parameter[0] not in ['bots', 'queues']:
                 print("Second argument must be 'bots' or 'queues'.")
                 exit(2)
-            method_name = "list_" + self.args.parameter
+            method_name = "list_" + self.args.parameter[0]
             call_method = getattr(self, method_name)
             results = call_method()
         elif self.args.action == 'log':
