@@ -12,7 +12,7 @@ class UDPBot(Bot):
         self.delimiter = self.parameters.field_delimiter
         self.header = self.parameters.header
         self.udp_host = self.parameters.ip
-        self.udp_port = self.parameters.port
+        self.udp_port = int(self.parameters.port)
         self.upd_address = (self.udp_host, self.udp_port)
         self.udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.raw_field = self.parameters.raw_field
@@ -20,10 +20,6 @@ class UDPBot(Bot):
 
     def process(self):
         event = self.receive_message()
-
-        if event is None:
-            self.acknowledge_message()
-            return
 
         if self.raw_field.upper() == 'DROP':
             del event['raw']
