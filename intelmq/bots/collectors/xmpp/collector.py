@@ -1,8 +1,8 @@
 """
 XMPP Collector Bot
 Connects to a XMPP Server and a Room and reads data from the room.
-If no room is provided it collects events which were sent to the xmpp user
-directly.
+If no room is provided, which is equivalent to an empty string,
+it only collects events which were sent to the xmpp user directly.
 
 Requires Python >= 3.4
 Requires sleekxmpp >= 1.0.0-beta5
@@ -24,6 +24,7 @@ import sys
 
 from intelmq.lib.bot import Bot
 from intelmq.lib.message import Report
+
 try:
     import sleekxmpp
 except ImportError:
@@ -31,7 +32,6 @@ except ImportError:
 
 
 class XMPPCollectorBot(Bot):
-
     xmpp = None
 
     def init(self):
@@ -42,12 +42,12 @@ class XMPPCollectorBot(Bot):
     def process(self):
         if self.xmpp is None:
             self.xmpp = XMPPClientBot(self.parameters.xmpp_user + '@'
-                                + self.parameters.xmpp_server,
-                                self.parameters.xmpp_password,
-                                self.parameters.xmpp_room,
-                                self.parameters.xmpp_room_nick,
-                                self.parameters.xmpp_room_password,
-                                self.logger)
+                                      + self.parameters.xmpp_server,
+                                      self.parameters.xmpp_password,
+                                      self.parameters.xmpp_room,
+                                      self.parameters.xmpp_room_nick,
+                                      self.parameters.xmpp_room_password,
+                                      self.logger)
             self.xmpp.connect(reattempt=True)
             self.xmpp.process()
 
@@ -63,7 +63,7 @@ class XMPPCollectorBot(Bot):
 
     def log_message(self, msg):
         self.logger.debug("XMPP Received Event: %r , from %r", msg['body'],
-                        msg['from'])
+                          msg['from'])
         self.logger.info("XMPP Event received")
 
         event = None
@@ -77,9 +77,9 @@ class XMPPCollectorBot(Bot):
             event = json.loads(msg['body'])
         except:
             self.logger.info("XMPP Could not interpret the message as json. "
-                            "Treating as Raw")
+                             "Treating as Raw")
             self.logger.debug("XMPP I'm not able to tell if it is"
-                            "base64 or not!")
+                              "base64 or not!")
             raw_msg = msg['body']
 
         if event:
@@ -91,14 +91,13 @@ class XMPPCollectorBot(Bot):
 
 
 class XMPPClientBot(sleekxmpp.ClientXMPP):
-
     def __init__(self,
-                jid,
-                password,
-                room,
-                room_nick,
-                room_password,
-                logger):
+                 jid,
+                 password,
+                 room,
+                 room_nick,
+                 room_password,
+                 logger):
         sleekxmpp.ClientXMPP.__init__(self, jid, password)
 
         self.logger = logger
