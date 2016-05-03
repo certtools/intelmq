@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import argparse
-import inspect
+import importlib
 import json
 import os
-import shlex
 import signal
-import sys
 import time
 import traceback
 
@@ -96,12 +94,6 @@ def log_log_messages(messages):
                 pass
 
 
-def write_pidfile(bot_id, pid):
-    filename = PIDFILE.format(bot_id)
-    with open(filename, 'w') as fp:
-        fp.write(str(pid))
-
-
 def remove_pidfile(bot_id):
     filename = PIDFILE.format(bot_id)
     os.remove(filename)
@@ -126,18 +118,6 @@ def check_pidfile(bot_id):
         except ValueError:
             return None
     return None
-
-
-def start_process(bot_id, cmd):
-    with open('/dev/null', 'w') as devnull:
-        args = shlex.split(cmd)
-        p = psutil.Popen(args, stdout=devnull, stderr=devnull)
-        return p.pid
-
-
-def stop_process(pid):
-    p = psutil.Process(int(pid))
-    p.send_signal(signal.SIGINT)
 
 
 def status_process(pid):
@@ -165,9 +145,43 @@ class IntelMQContoller():
 
         Outputs are logged to /opt/intelmq/var/log/intelmqctl"""
         USAGE = '''
-        intelmqctl --bot [start|stop|restart|status] --id=cymru-expert
-        intelmqctl --botnet [start|stop|restart|status]
-        intelmqctl --list [bots|queues]'''
+        intelmqctl [start|stop|restart|status|run] bot-id
+        intelmqctl [start|stop|restart|status]
+        intelmqctl list [bots|queues]
+        intelmqctl log bot-id [number-of-lines [log-level]]
+        intelmqctl clear queue-id
+
+Starting a bot:
+    intelmqctl start bot-id
+Stopping a bot:
+    intelmqctl stop bot-id
+Restarting a bot:
+    intelmqctl restart bot-id
+Get status of a bot:
+    intelmqctl status bot-id
+
+Run a bot directly (blocking) for debugging purpose:
+    intelmqctl run bot-id
+
+Starting the botnet (all bots):
+    intelmqctl start
+    etc.
+
+Get a list of all configured bots:
+    intelmqctl list bots
+
+Get a list of all queues:
+    intelmqctl list queues
+
+Clear a queue:
+    intelmqctl clear queue-id
+
+Get logs of a bot:
+    intelmqctl log bot-id [number-of-lines [log-level]]
+    Reads the last lines from bot log, or from system log if no bot ID was
+    given. Log level should be one of DEBUG, INFO, ERROR or CRITICAL.
+    Default is INFO. Number of lines defaults to 10, -1 gives all. Result
+    can be longer due to our logging format!'''
 
         parser = argparse.ArgumentParser(
             prog=APPNAME,
@@ -175,48 +189,23 @@ class IntelMQContoller():
             epilog=DESCRIPTION
         )
 
-        group = parser.add_mutually_exclusive_group()
-        group_list = group.add_mutually_exclusive_group()
-
         parser.add_argument('-v', '--version',
                             action='version', version=VERSION)
-        parser.add_argument('--id', '-i',
-                            dest='bot_id', default=None, help='bot ID')
         parser.add_argument('--type', '-t', choices=RETURN_TYPES,
                             default=RETURN_TYPES[0],
                             help='choose if it should return regular text or '
-                                 'other forms of output')
+                                 'other machine-readable')
 
-        group_list.add_argument('--log', '-l',
-                                metavar='[log-level]:[number-of-lines]',
-                                default=None,
-                                help='''Reads the last lines from bot log, or
-                                from system log if no bot ID was given.
-                                Log level should be one of DEBUG, INFO, ERROR
-                                or CRTICAL. Default is INFO.
-                                Number of lines defaults to 10, -1 gives all.
-
-                                Reading from system log is not implemented yet.
-                                ''')
-        group_list.add_argument('--bot', '-b',
-                                choices=['start', 'stop', 'restart', 'status'],
-                                metavar='[start|stop|restart|status]',
-                                default=None)
-        group_list.add_argument('--botnet', '-n',
-                                choices=['start', 'stop', 'restart', 'status'],
-                                metavar='[start|stop|restart|status]',
-                                default=None)
-        group_list.add_argument('--list', '-s',
-                                choices=['bots', 'queues'],
-                                metavar='[bots|queues]',
-                                default=None)
-        group_list.add_argument('--clear', '-c', metavar='queue', default=None,
-                                help='''Clears the given queue in broker''')
-
+        parser.add_argument('action',
+                            choices=['start', 'stop', 'restart', 'status',
+                                     'run', 'list', 'clear', 'help', 'log'],
+                            metavar='[start|stop|restart|status|run|list|clear'
+                                    '|log]')
+        parser.add_argument('parameter', nargs='*')
         self.args = parser.parse_args()
-
-        if len(sys.argv) == 1:
+        if self.args.action == 'help':
             parser.print_help()
+            exit(0)
 
         RETURN_TYPE = self.args.type
 
@@ -252,37 +241,56 @@ class IntelMQContoller():
         for option, value in config.items():
             setattr(self.parameters, option, value)
 
-    def auto_method_call(self, method):
-        inspect_members = inspect.getmembers(self)
-        for name, func in inspect_members:
-            if name.startswith(method):
-                return func
-
     def run(self):
         results = None
-        if self.args.bot:
-            method_name = "bot_" + self.args.bot
-            call_method = self.auto_method_call(method_name)
-            results = call_method(self.args.bot_id)
-
-        elif self.args.botnet:
-            method_name = "botnet_" + self.args.botnet
-            call_method = self.auto_method_call(method_name)
+        if self.args.action in ['start', 'restart', 'stop', 'status']:
+            if self.args.parameter:
+                method_name = "bot_" + self.args.action
+                call_method = getattr(self, method_name)
+                results = call_method(self.args.parameter)
+            else:
+                method_name = "botnet_" + self.args.action
+                call_method = getattr(self, method_name)
+                results = call_method()
+        elif self.args.action == 'run':
+            if self.args.parameter and len(self.args.parameter) == 1:
+                self.bot_run(self.args.parameter[0])
+            else:
+                print("Exactly one bot-id must be given for run.")
+                exit(2)
+        elif self.args.action == 'list':
+            if self.args.parameter not in ['bots', 'queues']:
+                print("Second argument must be 'bots' or 'queues'.")
+                exit(2)
+            method_name = "list_" + self.args.parameter
+            call_method = getattr(self, method_name)
             results = call_method()
-
-        elif self.args.list:
-            method_name = "list_" + self.args.list
-            call_method = self.auto_method_call(method_name)
-            results = call_method()
-
-        elif self.args.log:
-            results = self.read_log(self.args.log, self.args.bot_id)
-
-        elif self.args.clear:
-            results = self.clear_queue(self.args.clear,)
+        elif self.args.action == 'log':
+            if not self.args.parameter:
+                print("You must give parameters for 'log'.")
+                exit(2)
+            results = self.read_log(*self.args.parameter)
+        elif self.args.action == 'clear':
+            if not self.args.parameter:
+                print("Queue name not given.")
+                exit(2)
+            results = self.clear_queue(self.args.parameter)
 
         if self.args.type == 'json':
             print(json.dumps(results))
+
+    def bot_run(self, bot_id):
+        try:
+            bot_module = self.startup[bot_id]['module']
+        except KeyError:
+            log_bot_error('notfound', bot_id)
+            return 'error'
+        else:
+            module = importlib.import_module(bot_module)
+            botname = [name for name in dir(module) if hasattr(getattr(module, name), 'process')][0]
+            bot = getattr(module, botname)
+            instance = bot(bot_id)
+            instance.start()
 
     def bot_start(self, bot_id):
         if bot_id is None:
@@ -297,20 +305,20 @@ class IntelMQContoller():
                 remove_pidfile(bot_id)
         log_bot_message('starting', bot_id)
         try:
-            self.__bot_start(bot_id, self.startup[bot_id]['module'])
+            module = self.startup[bot_id]['module']
         except KeyError:
             log_bot_error('notfound', bot_id)
             return 'error'
+        else:
+            cmdargs = ["python3", "-m", module, bot_id]
+            with open('/dev/null', 'w') as devnull:
+                proc = psutil.Popen(cmdargs, stdout=devnull, stderr=devnull)
+                filename = PIDFILE.format(bot_id)
+                with open(filename, 'w') as fp:
+                    fp.write(str(proc.pid))
+
         time.sleep(0.25)
         return self.bot_status(bot_id)
-
-    def __bot_start(self, bot_id, module):
-        """
-        Start a bot by calling it as module.
-        """
-        cmd = "python3 -m {} {}".format(module, bot_id)
-        pid = start_process(bot_id, cmd)
-        write_pidfile(bot_id, pid)
 
     def bot_stop(self, bot_id):
         pid = read_pidfile(bot_id)
@@ -322,17 +330,15 @@ class IntelMQContoller():
             log_bot_error('stopped', bot_id)
             return 'stopped'
         log_bot_message('stopping', bot_id)
-        self.__bot_stop(bot_id, pid)
+        proc = psutil.Process(int(pid))
+        proc.send_signal(signal.SIGINT)
+        remove_pidfile(bot_id)
         time.sleep(0.25)
         if status_process(pid):
             log_bot_error('running', bot_id)
             return 'running'
         log_bot_message('stopped', bot_id)
         return 'stopped'
-
-    def __bot_stop(self, bot_id, pid):
-        stop_process(pid)
-        remove_pidfile(bot_id)
 
     def bot_restart(self, bot_id):
         status_stop = self.bot_stop(bot_id)
@@ -458,36 +464,23 @@ class IntelMQContoller():
                          "".format(queue, traceback.format_exc()))
             return 'error'
 
-    def read_log(self, log_level, bot_id):
+    def read_log(self, bot_id, number_of_lines=10, log_level='INFO'):
         # TODO: Parse number of lines
-        split_log_level = log_level.split(':')
-
-        if len(split_log_level) != 2:
-            logger.error("Invalid parameter for log, defaulting to 'INFO:10'")
+        try:
+            number_of_lines = int(number_of_lines)
+        except ValueError:
             number_of_lines = 10
+        if not log_level:
             log_level = LOG_LEVEL['INFO']
         else:
             try:
-                number_of_lines = int(split_log_level[1])
-            except ValueError:
-                number_of_lines = 10
-            if not len(split_log_level[0]):
-                log_level = LOG_LEVEL['INFO']
-            else:
-                try:
-                    log_level = LOG_LEVEL[split_log_level[0].upper()]
-                except KeyError:
-                    logger.error("Invalid log_level. Must be one of {}"
-                                 "".format(', '.join(LOG_LEVEL.keys())))
-                    return[]
+                log_level = LOG_LEVEL[log_level.upper()]
+            except KeyError:
+                logger.error("Invalid log_level. Must be one of {}"
+                             "".format(', '.join(LOG_LEVEL.keys())))
+                return[]
 
-        if bot_id is None:
-            return self.read_system_log(log_level, number_of_lines)
-        else:
-            return self.read_bot_log(bot_id, log_level, number_of_lines)
-
-    def read_system_log(self, log_level, number_of_lines):
-        logger.error("Reading from system log is not implemented yet")
+        return self.read_bot_log(bot_id, log_level, number_of_lines)
 
     def read_bot_log(self, bot_id, log_level, number_of_lines):
         bot_log_path = os.path.join(self.system['logging_path'],
