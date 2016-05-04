@@ -17,20 +17,20 @@ class MailURLCollectorBot(Bot):
                               self.parameters.mail_user,
                               self.parameters.mail_password,
                               self.parameters.mail_ssl)
-        emails = mailbox.messages(folder=self.parameters.mail_folder, unread=True)
+        emails = mailbox.messages(folder=self.parameters.folder, unread=True)
 
         if emails:
             for uid, message in emails:
 
-                if (self.parameters.mail_subject_regex and
-                        not re.search(self.parameters.mail_subject_regex,
+                if (self.parameters.subject_regex and
+                        not re.search(self.parameters.subject_regex,
                                       message.subject)):
                     continue
 
                 self.logger.info("Reading email report")
 
                 for body in message.body['plain']:
-                    match = re.search(self.parameters.mail_url_regex, body)
+                    match = re.search(self.parameters.url_regex, body)
                     if match:
                         url = match.group()
 
@@ -40,9 +40,9 @@ class MailURLCollectorBot(Bot):
                         self.http_verify_cert = getattr(self.parameters,
                                                         'http_verify_cert', True)
 
-                        if hasattr(self.parameters, 'http_username') and hasattr(
+                        if hasattr(self.parameters, 'http_user') and hasattr(
                                 self.parameters, 'http_password'):
-                            self.auth = (self.parameters.http_username,
+                            self.auth = (self.parameters.http_user,
                                          self.parameters.http_password)
                         else:
                             self.auth = None
