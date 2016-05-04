@@ -32,7 +32,8 @@ fetch_and_install()
   # so this is not a secure connection... :-(
   curl -k -s -O http://data.ris.ripe.net/rrc12/latest-bview.gz
   gunzip -c <latest-bview.gz | bzip2 -c >latest-bview.bz2 
-  pyasn_util_convert.py --single --no-progress latest-bview.bz2 ipasn.dat
+  pyasn_util_convert.py --single latest-bview.bz2 ipasn.dat \
+                        --no-progress >/dev/null
   mv ipasn.dat "$DEST_FILE"
 }
 
