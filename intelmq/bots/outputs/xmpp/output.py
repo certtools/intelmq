@@ -68,6 +68,11 @@ class XMPPOutputBot(Bot):
 
             self.acknowledge_message()
 
+    def stop(self):
+        self.xmpp.disconnect()
+        self.logger.info("Disconnected from xmpp")
+
+        super(XMPPOutputBot, self).stop()
 
 class XMPPClientBot(sleekxmpp.ClientXMPP):
     def __init__(self,
