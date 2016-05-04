@@ -29,6 +29,11 @@ class GenericCsvParserBot(Bot):
         report = self.receive_message()
 
         columns = self.parameters.columns
+
+        #convert columns to an array
+        if type(columns) is str:
+            columns = columns.split(",")
+
         type_translation = None
         if hasattr(self.parameters, 'type_translation'):
             type_translation = json.loads(self.parameters.type_translation)
