@@ -37,6 +37,12 @@ DATA = [
     ('/opt/intelmq/var/lib/bots/file-output/',
      [],
      ),
+    ('/usr/bin',
+     ['intelmq/bots/experts/tor_nodes/update_tor_nodes.sh',
+      'intelmq/bots/experts/maxmind_geoip/update_geoip_data.sh',
+      'intelmq/bots/experts/asn_lookup/update_asn_data.sh',
+      ],
+     ),
 ]
 
 try:
