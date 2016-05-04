@@ -11,16 +11,9 @@ class URLVirHostsParserBot(Bot):
 
     def process(self):
         report = self.receive_message()
-
-        if not report:
-            self.acknowledge_message()
-            return
-        if not report.contains("raw"):
-            self.acknowledge_message()
-
         raw_report = utils.base64_decode(report.get("raw"))
 
-        for row in raw_report.split('\n'):
+        for row in raw_report.splitlines():
 
             row = row.strip()
             if row == "" or row.startswith("#"):
@@ -33,7 +26,7 @@ class URLVirHostsParserBot(Bot):
             else:
                 event.add('source.fqdn', row)
 
-            event.add('classification.type', u'malware')
+            event.add('classification.type', 'malware')
             event.add('raw', row)
 
             self.send_message(event)

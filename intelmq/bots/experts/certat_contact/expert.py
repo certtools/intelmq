@@ -28,10 +28,6 @@ class CERTatContactExpertBot(Bot):
     def process(self):
         event = self.receive_message()
 
-        if event is None:
-            self.acknowledge_message()
-            return
-
         for section, key, abuse in \
             [('source', 'source.ip', 'source.abuse_contact'),
              ('destination', 'destination.ip', 'destination.abuse_contact'),

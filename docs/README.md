@@ -48,6 +48,7 @@ It follows the following basic meta-guidelines:
 3. [IntelMQ Manager](#control-platform)
 4. [Incident Handling Automation Project](#incident-handling-automation-project)
 5. [Data Harmonization](#data-harmonization)
+6. [How to Participate](#how-to-participate)
 6. [Licence](#licence)
 
 
@@ -80,6 +81,16 @@ Check the [tool](https://github.com/certtools/intelmq-manager) and manage easily
 
 IntelMQ use the Data Harmonization. Check the following 
 [document](docs/Data-Harmonization.md).
+
+<a name="how-to-participate"></a>
+## How to participate
+
+  * Subscribe to the Intelmq-dev Mailing list: https://lists.cert.at/cgi-bin/mailman/listinfo/intelmq-dev (for developers)
+  * Watch out for our regular developers conf call
+  * IRC: server: irc.freenode.net, channel: #intelmq
+  * Via github issues 
+  * Via Pull requests (please do read help.github.com first)
+  
 
 <a name="licence"></a>
 ## Licence

@@ -37,7 +37,7 @@ class TestCymruFullBogonsParserBot(test.BotTestCase, unittest.TestCase):
     @classmethod
     def set_bot(cls):
         cls.bot_reference = CymruFullBogonsParserBot
-        cls.default_input_message = {'__type': 'Report'}
+        cls.default_input_message = {'__type': 'Report', 'raw': 'Cg=='}
 
     def test_events(self):
         """ Test if correct Events have been produced. """

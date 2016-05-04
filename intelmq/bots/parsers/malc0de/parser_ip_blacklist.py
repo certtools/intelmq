@@ -11,13 +11,9 @@ class Malc0deIPBlacklistParserBot(Bot):
     def process(self):
         report = self.receive_message()
 
-        if report is None or not report.contains("raw"):
-            self.acknowledge_message()
-            return
-
         raw_report = utils.base64_decode(report.get("raw"))
 
-        for row in raw_report.split('\n'):
+        for row in raw_report.splitlines():
 
             row = row.strip()
             if row == "" or row[:2] == "//":
@@ -25,7 +21,7 @@ class Malc0deIPBlacklistParserBot(Bot):
 
             event = Event(report)
 
-            event.add('classification.type', u'malware')
+            event.add('classification.type', 'malware')
             event.add('source.ip', row)
             event.add('raw', row)
 

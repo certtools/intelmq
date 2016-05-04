@@ -253,12 +253,12 @@ class Bot(object):
 
     def receive_message(self):
         self.logger.debug('Receiving Message.')
-        message = self.source_pipeline.receive()
-
-        self.logger.debug('Receive message {!r}...'.format(message[:500]))
-        if not message:
-            self.logger.warning('Empty message received.')
-            return None
+        message = None
+        while not message:
+            message = self.source_pipeline.receive()
+            self.logger.debug('Receive message {!r}...'.format(message[:500]))
+            if not message:
+                self.logger.warning('Empty message received.')
 
         self.current_message = MessageFactory.unserialize(message)
         return self.current_message

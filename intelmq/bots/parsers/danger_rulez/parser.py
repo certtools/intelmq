@@ -15,12 +15,8 @@ class BruteForceBlockerParserBot(Bot):
     def process(self):
         report = self.receive_message()
 
-        if report is None or not report.contains("raw"):
-            self.acknowledge_message()
-            return
-
         raw_report = utils.base64_decode(report.get("raw"))
-        for row in raw_report.split('\n'):
+        for row in raw_report.splitlines():
 
             if row.startswith('#'):
                 continue
@@ -37,7 +33,7 @@ class BruteForceBlockerParserBot(Bot):
 
             event.add('time.source', timestamp)
             event.add('source.ip', ip)
-            event.add('classification.type', u'brute-force')
+            event.add('classification.type', 'brute-force')
             event.add("raw", row)
 
             self.send_message(event)
