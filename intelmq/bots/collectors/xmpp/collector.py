@@ -21,7 +21,6 @@ xmpp_room_nick: string
 
 import sys
 
-import intelmq.lib.utils as utils
 from intelmq.lib.bot import Bot
 from intelmq.lib.message import Report
 
@@ -57,9 +56,11 @@ class XMPPCollectorBot(Bot):
             self.xmpp.add_event_handler("message", self.log_message)
             self.xmpp.add_event_handler("groupchat_message", self.log_message)
 
-    def killbot(self):
-        self.xmpp.disconnect(wait=True)
-        self.logger.info("Disconnected")
+    def stop(self):
+        self.xmpp.disconnect()
+        self.logger.info("Disconnected from xmpp")
+
+        super(XMPPCollectorBot, self).stop()
 
     def log_message(self, msg):
         self.logger.debug("Received Stanza: %r , from %r", msg['body'],
