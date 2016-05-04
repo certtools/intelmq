@@ -10,11 +10,13 @@ type: string
 type_translation: string
 
 """
-from __future__ import unicode_literals
-import sys
-from dateutil.parser import parse
-import re
+import csv
+import io
 import json
+import re
+import sys
+
+from dateutil.parser import parse
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
@@ -26,10 +28,6 @@ class GenericCsvParserBot(Bot):
     def process(self):
         report = self.receive_message()
 
-        if not report or not report.contains("raw"):
-            self.acknowledge_message()
-            return
-
         columns = self.parameters.columns
         type_translation = None
         if hasattr(self.parameters, 'type_translation'):
@@ -40,8 +38,8 @@ class GenericCsvParserBot(Bot):
         raw_report = re.sub(r'(?m)^#.*\n?', '', raw_report)
         # ignore null bytes
         raw_report = re.sub(r'(?m)\0', '', raw_report)
-        for row in utils.csv_reader(raw_report,
-                                    delimiter=str(self.parameters.delimiter)):
+        for row in csv.reader(io.StringIO(raw_report),
+                              delimiter=str(self.parameters.delimiter)):
             event = Event(report)
 
             for key, value in zip(columns, row):

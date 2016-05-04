@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals, print_function
 
 import os
 import unittest
@@ -17,7 +16,7 @@ EXAMPLE_REPORT = {"feed.name": "ShadowServer QOTD",
                   "__type": "Report",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   }
-EVENTS = [{u'__type': 'Event',
+EVENTS = [{'__type': 'Event',
            'classification.identifier': 'snmp',
            'classification.type': 'vulnerable service',
            'extra': '{"sysname": "ORSONKA", "sysdesc": "Hardware: x86 Family 6 Model 8 Stepping 6 AT/AT COMPATIBLE - Software: Windows 2000 Version 5.0 (Build 2195 Uniprocessor Free)"}',
@@ -164,7 +163,7 @@ EVENTS = [{u'__type': 'Event',
            'source.asn': 9318,
            'source.geolocation.cc': 'KR',
            'source.geolocation.city': 'SEOUL',
-           'source.geolocation.region': u"SEOUL-T'UKPYOLSI",
+           'source.geolocation.region': "SEOUL-T'UKPYOLSI",
            'source.ip': '222.233.225.196',
            'source.port': 161,
            'time.observation': '2015-01-01T00:00:00+00:00',

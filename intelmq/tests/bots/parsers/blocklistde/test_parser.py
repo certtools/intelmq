@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 
 import os
 import unittest
@@ -7,7 +6,6 @@ import unittest
 import intelmq.lib.test as test
 import intelmq.lib.utils as utils
 from intelmq.bots.parsers.blocklistde.parser import BlockListDEParserBot
-
 
 with open(os.path.join(os.path.dirname(__file__),
                        'imap.txt')) as handle:
@@ -51,7 +49,6 @@ class TestBlockListDEParserBot(test.BotTestCase, unittest.TestCase):
     @classmethod
     def set_bot(cls):
         cls.bot_reference = BlockListDEParserBot
-        cls.default_input_message = {'__type': 'Report'}
 
     def test_imap(self):
         self.input_message = REPORT

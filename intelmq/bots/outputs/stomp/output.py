@@ -1,20 +1,24 @@
 # -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
-
 import os.path
 import sys
 
 from intelmq.lib.bot import Bot
 from intelmq.lib.message import MessageFactory
 
-import stomp
+try:
+    import stomp
+except ImportError:
+    stomp = None
 
 
 class stompOutputBot(Bot):
     """ main class for the STOMP protocol output bot """
 
     def init(self):
+        if stomp is None:
+            self.logger.error('Could not import stomp. Please install it.')
+            self.stop()
+
         self.server = getattr(self.parameters, 'server', '127.0.0.1')
         self.port = getattr(self.parameters, 'port', 61614)
         self.exchange = getattr(self.parameters, 'exchange', '/exchange/_push')
@@ -53,10 +57,6 @@ class stompOutputBot(Bot):
 
     def process(self):
         message = self.receive_message()
-
-        if message is None:
-            self.acknowledge_message()
-            return
 
         if message:
             message = MessageFactory.serialize(message)

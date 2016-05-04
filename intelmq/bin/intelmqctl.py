@@ -1,24 +1,22 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from __future__ import print_function
-import os
-import sys
-import json
-import time
-import shlex
-import inspect
-import psutil
-import pkg_resources
-import signal
-import traceback
 import argparse
-from intelmq.lib.pipeline import PipelineFactory
-from intelmq import DEFAULTS_CONF_FILE
-from intelmq import PIPELINE_CONF_FILE
-from intelmq import RUNTIME_CONF_FILE
-from intelmq import STARTUP_CONF_FILE
-from intelmq import SYSTEM_CONF_FILE
+import inspect
+import json
+import os
+import shlex
+import signal
+import sys
+import time
+import traceback
+
+import pkg_resources
+import psutil
+
+from intelmq import (DEFAULTS_CONF_FILE, PIPELINE_CONF_FILE, RUNTIME_CONF_FILE,
+                     STARTUP_CONF_FILE, SYSTEM_CONF_FILE)
 from intelmq.lib import utils
+from intelmq.lib.pipeline import PipelineFactory
 
 
 class Parameters(object):
@@ -309,12 +307,8 @@ class IntelMQContoller():
     def __bot_start(self, bot_id, module):
         """
         Start a bot by calling it as module.
-
-        The python version/path can be specified by the INTELMQ_PYTHON
-        environment variable. By default it's the default python binary.
         """
-        cmd = "{} -m {} {}".format(os.getenv('INTELMQ_PYTHON', 'python'),
-                                   module, bot_id)
+        cmd = "python3 -m {} {}".format(module, bot_id)
         pid = start_process(bot_id, cmd)
         write_pidfile(bot_id, pid)
 

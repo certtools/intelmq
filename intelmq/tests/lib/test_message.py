@@ -6,14 +6,11 @@ Unicode is used for all tests.
 Most tests are performed on Report, as it is formally the same as Message,
 but has a valid Harmonization configuration.
 """
-from __future__ import unicode_literals
-
 import json
 import unittest
 
 import mock
 import pkg_resources
-import six
 
 import intelmq.lib.exceptions as exceptions
 from intelmq.lib.utils import load_configuration
@@ -28,7 +25,7 @@ with mock.patch('intelmq.lib.utils.load_configuration', new=mocked_config):
 
 LOREM_BASE64 = 'bG9yZW0gaXBzdW0='
 DOLOR_BASE64 = 'ZG9sb3Igc2l0IGFtZXQ='
-FEED = {'feed.url': u'https://example.com/', 'feed.name': u'Lorem ipsum'}
+FEED = {'feed.url': 'https://example.com/', 'feed.name': 'Lorem ipsum'}
 URL_UNSANE = 'https://example.com/ \r\n'
 URL_SANE = 'https://example.com/'
 URL_INVALID = '/exampl\n'
@@ -46,10 +43,7 @@ class TestMessageFactory(unittest.TestCase):
         """
         Checks sequences for same content, regardless of order.
         """
-        if six.PY2:
-            self.assertItemsEqual(expected, actual)
-        else:
-            self.assertCountEqual(expected, actual)
+        self.assertCountEqual(expected, actual)
 
     def assertDictContainsSubset(self, actual, expected):
         """
@@ -72,7 +66,7 @@ class TestMessageFactory(unittest.TestCase):
         event.add('feed.name', 'Example')
         event.add('feed.url', URL_SANE)
         event.add('raw', LOREM_BASE64, sanitize=False)
-        event.add('time.observation', u'2015-01-01T13:37:00+00:00')
+        event.add('time.observation', '2015-01-01T13:37:00+00:00')
         return event
 
     def test_report_type(self):
@@ -274,7 +268,7 @@ class TestMessageFactory(unittest.TestCase):
         """ Test if report raises error when invalid after sanitize. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         with self.assertRaises(exceptions.InvalidValue):
-            report.add('feed.name', u'\r\n', sanitize=True)
+            report.add('feed.name', '\r\n', sanitize=True)
 
     def test_report_update(self):
         """ Test report value update function. """
@@ -312,7 +306,7 @@ class TestMessageFactory(unittest.TestCase):
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         report = self.add_report_examples(report)
         self.assertEqual(report.serialize(),
-                         six.text_type(report))
+                         str(report))
 
     def test_deep_copy_content(self):
         """ Test if deep_copy does return the same items. """
@@ -359,7 +353,7 @@ class TestMessageFactory(unittest.TestCase):
         event = message.MessageFactory.unserialize('{"__type": "Event"}')
         event1 = self.add_event_examples(event)
         event2 = event1.deep_copy()
-        event2.add('time.observation', u'2015-12-12T13:37:50+01:00',
+        event2.add('time.observation', '2015-12-12T13:37:50+01:00',
                    force=True, sanitize=True)
         self.assertEqual(hash(event1), hash(event2))
 
@@ -379,7 +373,7 @@ class TestMessageFactory(unittest.TestCase):
         event = message.MessageFactory.unserialize('{"__type": "Event"}')
         event = self.add_event_examples(event)
         actual = event.to_json()
-        self.assertIsInstance(actual, six.text_type)
+        self.assertIsInstance(actual, str)
         expected = ('{"feed": {"url": "https://example.com/", "name": '
                     '"Example"}, "raw": "bG9yZW0gaXBzdW0=", "time": '
                     '{"observation": "2015-01-01T13:37:00+00:00"}}')
@@ -407,7 +401,7 @@ class TestMessageFactory(unittest.TestCase):
         """ Test if the regex for event_hash is tested correctly. """
         event = message.MessageFactory.unserialize('{"__type": "Event"}')
         with self.assertRaises(exceptions.InvalidValue):
-            event.add('event_hash', u'dasf78')
+            event.add('event_hash', 'dasf78')
 
     def test_port_regex(self):
         """ Test if the regex for port (integer) is tested correctly. """

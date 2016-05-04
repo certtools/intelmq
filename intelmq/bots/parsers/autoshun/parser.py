@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+import html.parser
 import sys
-try:
-    from HTMLParser import HTMLParser
-except ImportError:
-    from html.parser import HTMLParser
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
@@ -25,14 +21,10 @@ class AutoshunParserBot(Bot):
     def process(self):
         report = self.receive_message()
 
-        if report is None or not report.contains("raw"):
-            self.acknowledge_message()
-            return
-
         raw_report = utils.base64_decode(report.get("raw"))
         raw_report_splitted = raw_report.split("</tr>")[2:]
 
-        parser = HTMLParser()
+        parser = html.parser.HTMLParser()
 
         for row in raw_report_splitted:
             event = Event(report)
@@ -61,7 +53,7 @@ class AutoshunParserBot(Bot):
                         break
 
             if not event.contains("classification.type"):
-                event.add("classification.type", u'unknown')
+                event.add("classification.type", 'unknown')
 
             event.add("time.source", last_seen)
             event.add("source.ip", ip)

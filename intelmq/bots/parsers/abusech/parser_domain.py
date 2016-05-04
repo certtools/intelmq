@@ -7,7 +7,6 @@ Docs:
  - https://palevotracker.abuse.ch/blocklists.php
  - https://zeustracker.abuse.ch/blocklist.php
 """
-from __future__ import unicode_literals
 
 import sys
 
@@ -27,16 +26,10 @@ class AbusechDomainParserBot(Bot):
     def process(self):
         report = self.receive_message()
 
-        if not report:
-            self.acknowledge_message()
-            return
-        if not report.contains("raw"):
-            self.acknowledge_message()
-
         raw_report = utils.base64_decode(report.get("raw"))
         lastgenerated = None
 
-        for row in raw_report.split('\n'):
+        for row in raw_report.splitlines():
             event = Event(report)
 
             row = row.strip()
@@ -49,7 +42,7 @@ class AbusechDomainParserBot(Bot):
                 continue
 
             event.add('time.source', lastgenerated)
-            event.add('classification.type', u'c&c')
+            event.add('classification.type', 'c&c')
             event.add('source.fqdn', row)
             event.add("raw", row)
             event.add("malware.name", SOURCE_FEEDS[report.get("feed.url")])

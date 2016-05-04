@@ -1,5 +1,4 @@
 dnspython3==1.12.0
-ipaddress>=1.0.16
 psutil>=2.1.1
 pycurl>=7.19.0
 python-dateutil>=2.4.2
@@ -8,6 +7,4 @@ pytz>=2015.4
 redis>=2.10.3
 requests>=2.7.0
 setuptools>=0.9
-six>=1.9
-unicodecsv>=0.14.1
 wheel>=0.21

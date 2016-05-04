@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 """
-from __future__ import unicode_literals
 
 import json
 import sys
@@ -23,9 +22,6 @@ class BluelivCrimeserverParserBot(Bot):
 
     def process(self):
         report = self.receive_message()
-        if report is None or not report.contains('raw'):
-            self.acknowledge_message()
-            return
 
         raw_report = utils.base64_decode(report.get('raw'))
 

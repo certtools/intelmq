@@ -8,7 +8,6 @@ TODO: Load RIPE networks prefixes into memory.
 TODO: Compare each IP with networks prefixes loaded.
 TODO: If ip matches, query RIPE
 '''
-from __future__ import unicode_literals
 import sys
 
 from intelmq.bots.experts.ripencc_abuse_contact import lib
@@ -25,10 +24,6 @@ class RIPENCCExpertBot(Bot):
 
     def process(self):
         event = self.receive_message()
-
-        if event is None:
-            self.acknowledge_message()
-            return
 
         for key in ['source.', 'destination.']:
             ip_key = key + "ip"

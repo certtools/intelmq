@@ -6,8 +6,6 @@ Decoding and Encoding, Logging functionality (file and stream), and log
 parsing.
 base64 de-/encoding is not tested yet, as we fully rely on the module.
 """
-from __future__ import unicode_literals
-
 import io
 import os
 import tempfile
@@ -58,7 +56,7 @@ class TestUtils(unittest.TestCase):
 
     def test_decode_unicode(self):
         """ Test decoding with unicode string. """
-        self.assertEqual('foobar', utils.decode(u'foobar'))
+        self.assertEqual('foobar', utils.decode('foobar'))
 
     def test_encode_bytes(self):
         """ Test encoding with bytes string. """
@@ -67,7 +65,7 @@ class TestUtils(unittest.TestCase):
     def test_encode_force(self):
         """ Test ASCII encoding enforcement. """
         self.assertEqual(b'fobar',
-                         utils.encode(u'fo\xe4bar', encodings=('ascii', ),
+                         utils.encode('fo\xe4bar', encodings=('ascii', ),
                                       force=True))
 
     def test_file_logger(self):
@@ -88,10 +86,7 @@ class TestUtils(unittest.TestCase):
 
             line_format = [line.format(name) for line in LINES['long']]
             for ind, line in enumerate(file_lines):
-                try:
-                    self.assertRegex(line, line_format[ind])
-                except AttributeError:  # Py2
-                    self.assertRegexpMatches(line, line_format[ind])
+                self.assertRegex(line, line_format[ind])
 
     def test_stream_logger(self):
         """Tests if a logger for a stream can be generated with log()."""

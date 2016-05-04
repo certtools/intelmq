@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 import requests
-
 
 URL_STAT = ('https://stat.ripe.net/data/abuse-contact-finder/'
             'data.json?resource={}')

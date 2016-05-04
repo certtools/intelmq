@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 
 import re
 import sys
-import pytz
 from datetime import datetime, timedelta
 
+import pytz
 from dateutil import parser
+
 from intelmq.lib.bot import Bot
 
 
@@ -73,10 +73,6 @@ class FilterExpertBot(Bot):
 
     def process(self):
         event = self.receive_message()
-
-        if event is None:
-            self.acknowledge_message()
-            return
 
         # time based filtering
         if event.contains('time.source'):

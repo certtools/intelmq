@@ -5,20 +5,17 @@ Utilities for testing intelmq bots.
 TheBotTestCase can be used as base class for unittests on bots. It includes
 some basic generic tests (logged errors, correct pipeline setup).
 """
-from __future__ import unicode_literals
-
 import io
 import json
 import logging
 import os
+
+import mock
 import pkg_resources
 
 import intelmq.lib.pipeline as pipeline
 import intelmq.lib.utils as utils
-import mock
-import six
 from intelmq import PIPELINE_CONF_FILE, RUNTIME_CONF_FILE, SYSTEM_CONF_FILE
-
 
 __all__ = ['BotTestCase']
 
@@ -37,6 +34,13 @@ BOT_CONFIG = {
     "redis_cache_port": 6379,
     "redis_cache_db": 10,
     "redis_cache_ttl": 10,
+    ## needed for redis-output-bot
+    "redis_server_ip": "127.0.0.1",
+    "redis_server_port": 6379,
+    "redis_db": 10,
+    "redis_queue": "test-redis-output-queue",
+    "redis_password": "none",
+    "redis_timeout": "50000"
 }
 
 
@@ -112,6 +116,11 @@ class BotTestCase(object):
                 if cls.bot_name.endswith(type_match):
                     cls.bot_type = type_name
                     break
+        if cls.bot_type == 'parser' and cls.default_input_message == '':
+            cls.default_input_message = {'__type': 'Report',
+                                         'raw': 'Cg==',
+                                         'feed.name': 'Test Feed',
+                                         'time.observation': '2016-01-01T00:00'}
         if type(cls.default_input_message) is dict:
             cls.default_input_message = \
                 utils.decode(json.dumps(cls.default_input_message))
@@ -251,21 +260,6 @@ class BotTestCase(object):
         self.assertSetEqual({x.format(self.bot_id) for x in pipenames},
                             set(self.pipe.state.keys()))
 
-    def test_empty_message(self):
-        """
-        Test if bot fails when receiving an empty message.
-
-        Bot.receive_message() returns None if the message evaluates to False
-        e.g. if empty. Bots have to handle this situation.
-        """
-        if self.bot_type == 'collector':
-            return
-
-        self.input_message = ['']
-        self.run_bot()
-        self.assertRegexpMatchesLog("WARNING - Empty message received.")
-        self.assertNotRegexpMatchesLog("ERROR")
-
     def test_bot_name(self):
         """
         Test if Bot has a valid name.
@@ -353,10 +347,7 @@ class BotTestCase(object):
         """Asserts that pattern matches against log. """
 
         self.assertIsNotNone(self.loglines_buffer)
-        try:
-            self.assertRegex(self.loglines_buffer, pattern)
-        except AttributeError:  # Py2
-            self.assertRegexpMatches(self.loglines_buffer, pattern)
+        self.assertRegex(self.loglines_buffer, pattern)
 
     def assertNotRegexpMatchesLog(self, pattern):
         """Asserts that pattern doesn't match against log."""
@@ -380,7 +371,7 @@ class BotTestCase(object):
         given queue position.
         """
         event = self.get_output_queue()[queue_pos]
-        self.assertIsInstance(event, six.text_type)
+        self.assertIsInstance(event, str)
 
         event_dict = json.loads(event)
         expected = expected_msg.copy()
@@ -388,8 +379,3 @@ class BotTestCase(object):
         del expected['time.observation']
 
         self.assertDictEqual(expected, event_dict)
-
-if six.PY2:
-    # https://docs.python.org/3/whatsnew/3.2.html?highlight=assertregexpmatches
-    import unittest
-    BotTestCase.assertRegex = unittest.TestCase.assertRegexpMatches

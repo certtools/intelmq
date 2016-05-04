@@ -1,7 +1,5 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from __future__ import print_function, unicode_literals
-
 import argparse
 import glob
 import io
@@ -9,19 +7,14 @@ import json
 import os.path
 import pprint
 import readline  # hooks into input()
-import six
-import sys
 import traceback
 
+from termstyle import bold, green, inverted, red
+
 import intelmq.lib.exceptions as exceptions
-import intelmq.lib.message as message
 import intelmq.lib.pipeline as pipeline
 import intelmq.lib.utils as utils
 from intelmq import DEFAULT_LOGGING_PATH, DEFAULTS_CONF_FILE, RUNTIME_CONF_FILE
-from termstyle import bold, green, inverted, red
-
-if sys.version_info[0] == 2:
-    input = raw_input
 
 APPNAME = "intelmqdump"
 DESCRIPTION = """
@@ -234,8 +227,7 @@ def main():
                     continue
                 print('=' * 100, '\nShowing id {} {}\n'.format(count, key),
                       '-' * 50)
-                if isinstance(value['message'], (six.binary_type,
-                                                 six.text_type)):
+                if isinstance(value['message'], (bytes, str)):
                     value['message'] = json.loads(value['message'])
                     if ('raw' in value['message'] and
                             len(value['message']['raw']) > 1000):
