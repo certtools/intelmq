@@ -1,3 +1,11 @@
+intelmq (1.0.0~dev4~beta7) experimental; urgency=low
+
+  * Added scripts to retrieve data for some expert bots:
+    tor nodes, maxmind geoip, asn lookup.
+  * Added cron fragment to run the update script to /etc/cron.d
+
+ -- Sascha Wilde <wilde@intevation.de>  Wed, 04 May 2016 11:56:51 +0200
+
 intelmq (1.0.0~dev4~beta6) experimental; urgency=critical
 
   * Fix: Marks config files as such...

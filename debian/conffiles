@@ -6,3 +6,4 @@
 /opt/intelmq/etc/startup.conf
 /opt/intelmq/etc/system.conf
 /opt/intelmq/etc/runtime.conf
+/etc/cron.d/intelmq-update-data
