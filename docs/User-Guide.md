@@ -374,31 +374,56 @@ See [IntelMQ Manager repository](https://github.com/certtools/intelmq-manager).
 ```bash
 # su - intelmq
 
-$ intelmqctl --h
+$ intelmqctl -h
 usage: 
-        intelmqctl --bot [start|stop|restart|status] --id=cymru-expert
-        intelmqctl --botnet [start|stop|restart|status]
-        intelmqctl --list [bots|queues]
+        intelmqctl [start|stop|restart|status|run] bot-id
+        intelmqctl [start|stop|restart|status]
+        intelmqctl list [bots|queues]
+        intelmqctl log bot-id [number-of-lines [log-level]]
+        intelmqctl clear queue-id
+
+Starting a bot:
+    intelmqctl start bot-id
+Stopping a bot:
+    intelmqctl stop bot-id
+Restarting a bot:
+    intelmqctl restart bot-id
+Get status of a bot:
+    intelmqctl status bot-id
+
+Run a bot directly (blocking) for debugging purpose:
+    intelmqctl run bot-id
+
+Starting the botnet (all bots):
+    intelmqctl start
+    etc.
+
+Get a list of all configured bots:
+    intelmqctl list bots
+
+Get a list of all queues:
+    intelmqctl list queues
+
+Clear a queue:
+    intelmqctl clear queue-id
+
+Get logs of a bot:
+    intelmqctl log bot-id [number-of-lines [log-level]]
+    Reads the last lines from bot log, or from system log if no bot ID was
+    given. Log level should be one of DEBUG, INFO, ERROR or CRITICAL.
+    Default is INFO. Number of lines defaults to 10, -1 gives all. Result
+    can be longer due to our logging format!
+
+positional arguments:
+  [start|stop|restart|status|run|list|clear|log]
+  parameter
 
 optional arguments:
   -h, --help            show this help message and exit
   -v, --version         show program's version number and exit
-  --id BOT_ID, -i BOT_ID
-                        bot ID
   --type {text,json}, -t {text,json}
-                        choose if it should return regular text or other forms
-                        of output
-  --log [log-level]:[number-of-lines], -l [log-level]:[number-of-lines]
-                        Reads the last lines from bot log, or from system log
-                        if no bot ID was given. Log level should be one of
-                        DEBUG, INFO, ERROR or CRTICAL. Default is INFO. Number
-                        of lines defaults to 10, -1 gives all. Reading from
-                        system log is not implemented yet.
-  --bot [start|stop|restart|status], -b [start|stop|restart|status]
-  --botnet [start|stop|restart|status], -n [start|stop|restart|status]
-  --list [bots|queues], -s [bots|queues]
-  --clear queue, -c queue
-                        Clears the given queue in broker
+                        choose if it should return regular text or other
+                        machine-readable
 
 description: intelmqctl is the tool to control intelmq system. Outputs are
 logged to /opt/intelmq/var/log/intelmqctl
@@ -406,7 +431,7 @@ logged to /opt/intelmq/var/log/intelmqctl
 
 #### Botnet Concept
 
-The botnet represents all currently configured bots. To get an overview which bots are running, use `intelmqctl -n status`or use IntelMQ Manager.
+The botnet represents all currently configured bots. To get an overview which bots are running, use `intelmqctl status`or use IntelMQ Manager.
 
 #### Forcing reset pipeline and cache (be careful)
 

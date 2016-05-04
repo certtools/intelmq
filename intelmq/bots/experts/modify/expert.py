@@ -23,8 +23,11 @@ def matches(event, *rules):
                 continue
         if name not in event:
             return False
-        if not re.search(rule, event[name]):
-            return False
+        if not isinstance(event[name], str):  # int, float, etc
+            return event[name] == rule
+        else:
+            if not re.search(rule, event[name]):
+                return False
 
     return True
 
