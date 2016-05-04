@@ -62,7 +62,7 @@ class FileCollectorBot(Bot):
 
                     f.close()
 
-                    if self.parameters.delete_file:
+                    if self.parameters.delete_file == True:
                         try:
                             os.remove(filename)
                             self.logger.debug("Deleting file: %s" %filename)
