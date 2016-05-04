@@ -14,6 +14,8 @@ Parameters:
 xmpp_user: string
 xmpp_server: string
 xmpp_password: boolean
+xmpp_to_user: string
+xmpp_to_server: string
 # TODO xmpp_room: string
 # TODO xmpp_room_password: string
 # TODO xmpp_room_nick: string
@@ -56,7 +58,7 @@ class XMPPOutputBot(Bot):
             try:
                 # TODO: proper error handling. Right now it cannot be
                 # detected if the message was sent successfully.
-                self.logger.debug("XMPP Trying to send Event: %r , to %r",
+                self.logger.debug("Trying to send Event: %r , to %r",
                                   jevent,
                                   receiver)
                 self.xmpp.send_message(mto=receiver, mbody=jevent)
@@ -75,13 +77,13 @@ class XMPPClientBot(sleekxmpp.ClientXMPP):
         sleekxmpp.ClientXMPP.__init__(self, jid, password)
 
         self.logger = logger
-        self.logger.info("XMPP connected")
+        self.logger.info("Connected to Server")
 
         self.add_event_handler("session_start", self.session_start)
 
     def session_start(self, event):
         self.send_presence()
-        self.logger.debug("XMPP Session started")
+        self.logger.debug("Session started")
 
         try:
             self.get_roster()

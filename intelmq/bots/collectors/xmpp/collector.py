@@ -19,9 +19,9 @@ xmpp_room_password: string
 xmpp_room_nick: string
 """
 
-import json
 import sys
 
+import intelmq.lib.utils as utils
 from intelmq.lib.bot import Bot
 from intelmq.lib.message import Report
 
@@ -62,29 +62,15 @@ class XMPPCollectorBot(Bot):
         self.logger.info("Disconnected")
 
     def log_message(self, msg):
-        self.logger.debug("XMPP Received Event: %r , from %r", msg['body'],
+        self.logger.debug("Received Stanza: %r , from %r", msg['body'],
                           msg['from'])
-        self.logger.info("XMPP Event received")
+        self.logger.info("Stanza received")
 
-        event = None
-        raw_msg = None
+        raw_msg = msg['body']
 
-        # Try to decode the message as json, it might be an event.
-        # if this is not possible treat it as raw.
-        # TODO: There might be additional work to decode the message
-        # as base64
-        try:
-            event = json.loads(msg['body'])
-        except:
-            self.logger.info("XMPP Could not interpret the message as json. "
-                             "Treating as Raw")
-            self.logger.debug("XMPP I'm not able to tell if it is"
-                              "base64 or not!")
-            raw_msg = msg['body']
-
-        if event:
-            self.send_message(event)
-        elif raw_msg:
+        # Read msg-body and add as raw to a new report.
+        # now it's up to a parser to do the interpretation of the message.
+        if raw_msg:
             report = Report()
             report.add("raw", raw_msg)
             self.send_message(report)
@@ -101,7 +87,7 @@ class XMPPClientBot(sleekxmpp.ClientXMPP):
         sleekxmpp.ClientXMPP.__init__(self, jid, password)
 
         self.logger = logger
-        self.logger.info("XMPP connected")
+        self.logger.info("Initiated")
         self.xmpp_room = room
         self.xmpp_room_nick = room_nick
         self.xmpp_room_password = room_password
@@ -110,11 +96,11 @@ class XMPPClientBot(sleekxmpp.ClientXMPP):
 
     def session_start(self, event):
         self.send_presence()
-        self.logger.debug("XMPP Session started")
+        self.logger.debug("Session started")
 
         try:
             self.get_roster()
-        except sleekxmpp.exception.IqError as err:
+        except sleekxmpp.exceptions.IqError as err:
             self.logger.error('There was an error getting the roster')
             self.logger.error(err.iq['error']['condition'])
             self.disconnect()
@@ -123,7 +109,7 @@ class XMPPClientBot(sleekxmpp.ClientXMPP):
             self.disconnect()
 
         if self.xmpp_room:
-            self.logger.debug("XMPP Joining room: %s", self.xmpp_room)
+            self.logger.debug("Joining room: %s", self.xmpp_room)
             pwd = self.xmpp_room_password if self.xmpp_room_password else ""
             self.plugin['xep_0045'].joinMUC(self.xmpp_room,
                                             self.xmpp_room_nick,
