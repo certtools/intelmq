@@ -719,6 +719,18 @@
         }
     },
     "Output": {
+        "AMQP Topic": {
+            "description": "AMQP Topic is the bot responsible to send events to a AMQP topic exchange.",
+            "module": "intelmq.bots.outputs.amqptopic.output",
+            "parameters": {
+                "delay": "3",
+                "exchange": "feeds",
+                "maxerrors": "-1",
+                "retries": "5",
+                "routingkey": "feeds.intelmq.all",
+                "url": "amqp://localhost:5672/%2F?connection_attempts=3&heartbeat_interval=3600"
+            }
+        },
         "File": {
             "description": "File is the bot responsible to send events to a file.",
             "module": "intelmq.bots.outputs.file.output",
