@@ -1,3 +1,11 @@
+intelmq (1.0.0~dev4~beta8) experimental; urgency=medium
+
+  * Merged master.
+  * Require imbox >= 0.8, which fixes
+    https://github.com/martinrusev/imbox/issues/47
+
+ -- Sascha Wilde <wilde@intevation.de>  Mon, 09 May 2016 17:33:22 +0200
+
 intelmq (1.0.0~dev4~beta7) experimental; urgency=low
 
   * Added scripts to retrieve data for some expert bots:
