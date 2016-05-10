@@ -270,13 +270,16 @@ if __name__ == "__main__":
     bot.start()
 ```
 
-There are some names with special meaning:
-* `init`: called at startup, use it to set up the bot (initializing classes, loading files etc)
-* `process`: processes the messages
-* `start`: internal method to run the bot, don't use this name!
-* `stop`: Shuts the bot down. If overloaded, call the parent's method too!
+There are some names with special meaning. These can be used i.e. called:
+* `stop`: Shuts the bot down.
 * `receive_message`, `send_message`, `acknowledge_message`: see next section
 * `parameters`: the bots configuration as object
+* `start`: internal method to run the bot
+
+These can be defined:
+* `init`: called at startup, use it to set up the bot (initializing classes, loading files etc)
+* `process`: processes the messages
+* `shutdown`: To Gracefully stop the bot, e.g. terminate connections
 
 All other names can be used freely.
 

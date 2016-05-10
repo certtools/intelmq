@@ -74,6 +74,9 @@ class Bot(object):
     def init(self):
         pass
 
+    def shutdown(self):
+        pass
+
     def start(self, starting=True, error_on_pipeline=True,
               error_on_message=False, source_pipeline=None,
               destination_pipeline=None):
@@ -168,7 +171,12 @@ class Bot(object):
                         else:
                             self.__error_retries_counter = 0  # reset counter
 
+    def __del__(self):
+        self.stop()
+
     def stop(self):
+        self.shutdown()
+
         self.__disconnect_pipelines()
 
         if self.logger:
@@ -184,8 +192,6 @@ class Bot(object):
         try:
             self.logger.error("Exiting.")
         except:
-            pass
-        finally:
             print("Exiting")
         exit(-1)
 
