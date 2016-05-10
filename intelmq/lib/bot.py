@@ -6,6 +6,8 @@
 import datetime
 import json
 import re
+import os
+import signal
 import sys
 import time
 import traceback
@@ -37,9 +39,11 @@ class Bot(object):
         try:
             version_info = sys.version.splitlines()[0].strip()
             self.__log_buffer.append(('info',
-                                      '{} initialized with id {} and version {}.'
+                                      '{} initialized with id {} and version '
+                                      '{} as process {}.'
                                       ''.format(self.__class__.__name__,
-                                                bot_id, version_info)))
+                                                bot_id, version_info,
+                                                os.getpid())))
 
             self.__load_defaults_configuration()
             self.__load_system_configuration()
@@ -67,9 +71,18 @@ class Bot(object):
             self.__load_harmonization_configuration()
 
             self.init()
+
+            signal.signal(signal.SIGHUP, self.__sighup)
         except:
             self.logger.exception('Bot initialization failed.')
             raise
+
+    def __sighup(self, signum, stack):
+        self.logger.info('Received SIGHUP, initializing again.')
+        self.__disconnect_pipelines()
+        self.logger.handlers = []  # remove all existing handlers
+        self.__init__(self.__bot_id)
+        self.__connect_pipelines()
 
     def init(self):
         pass
@@ -261,9 +274,10 @@ class Bot(object):
         message = None
         while not message:
             message = self.__source_pipeline.receive()
-            self.logger.debug('Receive message {!r}...'.format(message[:500]))
             if not message:
                 self.logger.warning('Empty message received.')
+                continue
+            self.logger.debug('Receive message {!r}...'.format(message[:500]))
 
         self.__current_message = MessageFactory.unserialize(message)
         return self.__current_message
