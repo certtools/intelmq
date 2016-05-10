@@ -42,11 +42,8 @@ class RFC1918ExpertBot(Bot):
         self.fields = self.parameters.fields.lower().strip().split(",")
         self.policy = self.parameters.policy.lower().strip().split(",")
 
-    def is_in_net(ip, iprange):
-        if ipaddress.ip_address(ip) in ipaddress.ip_network(iprange):
-            return True
-        else:
-            return False
+    def is_in_net(self, ip, iprange):
+        return ipaddress.ip_address(ip) in ipaddress.ip_network(iprange)
 
     def process(self):
         event = self.receive_message()
