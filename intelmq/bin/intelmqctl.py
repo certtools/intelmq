@@ -393,10 +393,10 @@ Get logs of a bot:
         return botnet_status
 
     def list_bots(self):
-        print("List of Bots:\n-------------")
-        for bot_id in sorted(self.startup.keys()):
-            print("\nBot ID: {}\nDescription: {}"
-                  "".format(bot_id, self.startup[bot_id]['description']))
+        if self.args.type == 'text':
+            for bot_id in sorted(self.startup.keys()):
+                print("Bot ID: {}\nDescription: {}"
+                      "".format(bot_id, self.startup[bot_id]['description']))
         return [{'id': bot_id,
                  'description': self.startup[bot_id]['description']}
                 for bot_id in sorted(self.startup.keys())]
