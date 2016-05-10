@@ -234,7 +234,7 @@ All bots inherits this configuration parameters and they can overwrite them usin
     * **`false`** - duplicates the messages into each queue
 
 * **`broker`** - select which broker intelmq can use. Use the following values:
-    * **`redis`** - Redis allows some persistence but is not so fast as ZeroMQ (in development).
+    * **`redis`** - Redis allows some persistence but is not so fast as ZeroMQ (in development). But note that persistence has to be manually activated. See http://redis.io/topics/persistence
 
 * **`rate_limit`** - time interval (in seconds) between messages processing. The value must be an `integer value`.
 
