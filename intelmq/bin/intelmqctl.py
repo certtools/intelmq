@@ -202,6 +202,7 @@ Get logs of a bot:
                             metavar='[start|stop|restart|status|run|list|clear'
                                     '|log]')
         parser.add_argument('parameter', nargs='*')
+        self.parser = parser
         self.args = parser.parse_args()
         if self.args.action == 'help':
             parser.print_help()
@@ -245,22 +246,23 @@ Get logs of a bot:
         results = None
         if self.args.action in ['start', 'restart', 'stop', 'status']:
             if self.args.parameter:
-                method_name = "bot_" + self.args.action
-                call_method = getattr(self, method_name)
-                results = call_method(self.args.parameter)
+                call_method = getattr(self, "bot_" + self.args.action)
+                results = call_method(self.args.parameter[0])
             else:
-                method_name = "botnet_" + self.args.action
-                call_method = getattr(self, method_name)
+                call_method = getattr(self, "botnet_" + self.args.action)
                 results = call_method()
         elif self.args.action == 'run':
             if self.args.parameter and len(self.args.parameter) == 1:
                 self.bot_run(self.args.parameter[0])
             else:
                 print("Exactly one bot-id must be given for run.")
+                self.parser.print_help()
                 exit(2)
         elif self.args.action == 'list':
-            if self.args.parameter[0] not in ['bots', 'queues']:
-                print("Second argument must be 'bots' or 'queues'.")
+            if not self.args.parameter or \
+                 self.args.parameter[0] not in ['bots', 'queues']:
+                print("Second argument for list must be 'bots' or 'queues'.")
+                self.parser.print_help()
                 exit(2)
             method_name = "list_" + self.args.parameter[0]
             call_method = getattr(self, method_name)
@@ -268,13 +270,15 @@ Get logs of a bot:
         elif self.args.action == 'log':
             if not self.args.parameter:
                 print("You must give parameters for 'log'.")
+                self.parser.print_help()
                 exit(2)
             results = self.read_log(*self.args.parameter)
         elif self.args.action == 'clear':
             if not self.args.parameter:
                 print("Queue name not given.")
+                self.parser.print_help()
                 exit(2)
-            results = self.clear_queue(self.args.parameter)
+            results = self.clear_queue(self.args.parameter[0])
 
         if self.args.type == 'json':
             print(json.dumps(results))
@@ -389,10 +393,10 @@ Get logs of a bot:
         return botnet_status
 
     def list_bots(self):
-        print("List of Bots:\n-------------")
-        for bot_id in sorted(self.startup.keys()):
-            print("\nBot ID: {}\nDescription: {}"
-                  "".format(bot_id, self.startup[bot_id]['description']))
+        if self.args.type == 'text':
+            for bot_id in sorted(self.startup.keys()):
+                print("Bot ID: {}\nDescription: {}"
+                      "".format(bot_id, self.startup[bot_id]['description']))
         return [{'id': bot_id,
                  'description': self.startup[bot_id]['description']}
                 for bot_id in sorted(self.startup.keys())]
