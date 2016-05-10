@@ -20,7 +20,7 @@ class Fqdn2IpExpertBot(Bot):
                 continue
             ip = socket.gethostbyname(event.get(key_fqdn))
             if intelmq.lib.harmonization.IPAddress.is_valid(ip, sanitize=True):
-                event.add(key_ip, ip, sanitize=True, force=True)
+                event.add(key_ip, ip, sanitize=True)
 
         self.send_message(event)
         self.acknowledge_message()
