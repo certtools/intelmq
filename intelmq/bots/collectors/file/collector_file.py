@@ -2,9 +2,9 @@
 """
 File Collector Bot
 
-Requires Python >= 3.4
-
-Regulary checks a Folder and reads a File from it
+Regularly checks a directory and reads files matching an extension from it
+It can delete the file if a delete switch was set.
+The bot creates on report per file.
 
 Copyright (C) 2016 by Bundesamt für Sicherheit in der Informationstechnik
 Software engineering by Intevation GmbH
@@ -17,7 +17,6 @@ delete_file: boolean
 """
 
 import sys
-import io
 import os
 import fnmatch
 
