@@ -655,7 +655,7 @@
                 "filter_value": "<PT>"
             }
         },
-        "fqdn2ip": {
+        "Fqdn2Ip": {
             "description": "fqdn2ip is the bot responsible to parsing the ip from the fqdn.",
             "module": "intelmq.bots.experts.fqdn2ip.expert",
             "parameters": {}
