@@ -6,7 +6,7 @@ import intelmq.lib.harmonization
 from intelmq.lib.bot import Bot
 
 
-class fqdn2ipExpertBot(Bot):
+class Fqdn2IpExpertBot(Bot):
 
     def process(self):
         event = self.receive_message()
@@ -27,5 +27,6 @@ class fqdn2ipExpertBot(Bot):
 
 
 if __name__ == "__main__":
-    bot = fqdn2ipExpertBot(sys.argv[1])
+    bot = Fqdn2IpExpertBot(sys.argv[1])
     bot.start()
+    
