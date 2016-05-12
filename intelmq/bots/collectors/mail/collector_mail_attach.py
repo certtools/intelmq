@@ -51,7 +51,10 @@ class MailAttachCollectorBot(Bot):
 
                         self.send_message(report)
 
-                mailbox.mark_seen(uid)
+                        # Only mark read if message relevant to this instance,
+                        # so other instances watching this mailbox will still
+                        # check it.
+                        mailbox.mark_seen(uid)
                 self.logger.info("Email report read")
 
 
