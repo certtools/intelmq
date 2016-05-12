@@ -307,6 +307,24 @@
                 "rate_limit": 10800
             }
         },
+        "Generic Mail URL Fetcher": {
+            "description": "Monitor IMAP mailboxes and fetch files from URLs contained in mail bodies",
+            "module": "intelmq.bots.collectors.mail.collector_mail_url",
+            "parameters": {
+                "accuracy": "",
+                "feed": "",
+                "folder": "INBOX",
+                "http_password": "<password>",
+                "http_user": "<user>",
+                "mail_host": "<host>",
+                "mail_password": "<password>",
+                "mail_ssl": true,
+                "mail_user": "<user>",
+                "rate_limit": "60",
+                "subject_regex": "<subject>",
+                "url_regex": "http://"
+            }
+        },
         "HpHosts": {
             "description": "HPHost Collector is the bot responsible to get the report from source of information.",
             "module": "intelmq.bots.collectors.http.collector_http",
