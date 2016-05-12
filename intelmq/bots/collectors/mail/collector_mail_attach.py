@@ -3,13 +3,22 @@ import re
 import sys
 import zipfile
 
-import imbox
+try:
+    import imbox
+except ImportError:
+    imbox = None
+import requests
 
 from intelmq.lib.bot import Bot
 from intelmq.lib.message import Report
 
 
 class MailAttachCollectorBot(Bot):
+
+    def init(self):
+        if imbox is None:
+            self.logger.error('Could not import imbox. Please install it.')
+            self.stop()
 
     def process(self):
         mailbox = imbox.Imbox(self.parameters.mail_host,
