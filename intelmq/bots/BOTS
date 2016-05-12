@@ -593,11 +593,11 @@
             "parameters": {
                 "rate_limit": 3600,
                 "xmpp_password": "xmpp password",
-                "xmpp_server": "xmpp server",
-                "xmpp_user": "xmpp username",
                 "xmpp_room": "xmpp room",
                 "xmpp_room_nick": "xmpp room nick",
-                "xmpp_room_password": "xmpp room password"
+                "xmpp_room_password": "xmpp room password",
+                "xmpp_server": "xmpp server",
+                "xmpp_user": "xmpp username"
             }
         }
     },
