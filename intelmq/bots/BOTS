@@ -300,10 +300,10 @@
             "description": "Fileinput collector fetches data from a file.",
             "module": "intelmq.bots.collectors.file.collector_file",
             "parameters": {
+                "delete_file": "False",
+                "extension": "csv",
                 "feed": "FileCollector",
                 "path": "/tmp/",
-                "extension": "csv",
-                "delete_file": "False",
                 "rate_limit": 10800
             }
         },
