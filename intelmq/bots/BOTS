@@ -307,6 +307,23 @@
                 "rate_limit": 10800
             }
         },
+        "Generic Mail Attachment Fetcher": {
+            "description": "Monitor IMAP mailboxes and retrieve mail attachments",
+            "module": "intelmq.bots.collectors.mail.collector_mail_attach",
+            "parameters": {
+                "accuracy": "",
+                "attach_regex": "csv.zip",
+                "attach_unzip": true,
+                "feed": "",
+                "folder": "INBOX",
+                "mail_host": "<host>",
+                "mail_password": "<password>",
+                "mail_ssl": true,
+                "mail_user": "<user>",
+                "rate_limit": "60",
+                "subject_regex": "<subject>"
+            }
+        },
         "Generic Mail URL Fetcher": {
             "description": "Monitor IMAP mailboxes and fetch files from URLs contained in mail bodies",
             "module": "intelmq.bots.collectors.mail.collector_mail_url",
