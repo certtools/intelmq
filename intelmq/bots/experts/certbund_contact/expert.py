@@ -53,8 +53,6 @@ class CERTBundKontaktExpertBot(Bot):
             if notifications:
                 self.set_certbund_field(event, "notify_" + section,
                                         notifications)
-
-
         self.send_message(event)
         self.acknowledge_message()
 
@@ -112,7 +110,6 @@ class CERTBundKontaktExpertBot(Bot):
                      template_path=template_path, format=format, ttl=ttl)
                 for (email, organisation, template_path, format, ttl)
                 in raw_result]
-
 
 
 if __name__ == "__main__":
