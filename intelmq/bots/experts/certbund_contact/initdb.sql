@@ -67,6 +67,29 @@ CREATE TABLE contact (
     FOREIGN KEY (format_id) REFERENCES format (id)
 );
 
+CREATE TABLE contact_manual (
+    id INTEGER PRIMARY KEY,
+
+    firstname VARCHAR (500) NOT NULL DEFAULT '',
+    lastname  VARCHAR (500) NOT NULL DEFAULT '',
+    tel       VARCHAR (500) NOT NULL DEFAULT '',
+
+    pgp_key_id VARCHAR(128) NOT NULL DEFAULT '',
+
+    -- the email-address of the contact
+    email VARCHAR(100) NOT NULL,
+
+    -- The data format to be used in emails sent to this contact.
+    format_id INTEGER NOT NULL,
+
+    -- Whether this contact tuple is maintained manually.
+    is_manual BOOLEAN NOT NULL,
+
+    comment TEXT NOT NULL DEFAULT '',
+
+    FOREIGN KEY (format_id) REFERENCES format (id)
+);
+
 -- Roles serve as an m-n relationship between organisations and contacts
 CREATE TABLE role (
     id INTEGER PRIMARY KEY,
@@ -80,6 +103,21 @@ CREATE TABLE role (
 
     FOREIGN KEY (organisation_id) REFERENCES organisation(id),
     FOREIGN KEY (contact_id) REFERENCES contact(id)
+);
+
+-- Roles serve as an m-n relationship between organisations and contacts
+CREATE TABLE role_manual (
+    id INTEGER PRIMARY KEY,
+
+    -- free text for right now. We assume the regularl tags from the RIPE DB such as "tech-c" or "abuse-c"
+    role_type    VARCHAR (500) NOT NULL default 'abuse-c', -- possible values: "abuse-c", "billing-c" , "admin-c"
+    is_primary_contact BOOLEAN NOT NULL DEFAULT FALSE,
+
+    organisation_id INTEGER NOT NULL,
+    contact_id INTEGER NOT NULL,
+
+    FOREIGN KEY (organisation_id) REFERENCES organisation(id),
+    FOREIGN KEY (contact_id) REFERENCES contact_manual(id)
 );
 
 
@@ -102,7 +140,6 @@ CREATE TABLE autonomous_system (
 
     comment TEXT NOT NULL DEFAULT ''
 );
-
 CREATE INDEX autonomous_system_number_idx ON autonomous_system (number);
 
 
@@ -146,6 +183,24 @@ CREATE INDEX network_cidr_upper_idx
           ON network ((host(broadcast(address))));
 
 
+CREATE TABLE network_manual (
+    id INTEGER PRIMARY KEY,
+
+    -- Network address as CIDR.
+    address cidr UNIQUE NOT NULL,
+
+    -- Whether this network tuple is maintained manually.
+    is_manual BOOLEAN NOT NULL,
+
+    comment TEXT NOT NULL DEFAULT ''
+);
+CREATE INDEX network_manual_cidr_lower_idx
+          ON network_manual ((host(network(address))));
+CREATE INDEX network_manual_cidr_upper_idx
+          ON network_manual ((host(broadcast(address))));
+
+
+
 -- A fully qualified domain name
 CREATE TABLE fqdn (
     id INTEGER PRIMARY KEY,
@@ -158,8 +213,20 @@ CREATE TABLE fqdn (
 
     comment TEXT NOT NULL DEFAULT ''
 );
-
 CREATE INDEX fqdn_fqdn_idx ON fqdn (fqdn);
+
+CREATE TABLE fqdn_manual (
+    id INTEGER PRIMARY KEY,
+
+    -- The fully qualified domain name
+    fqdn TEXT UNIQUE NOT NULL,
+
+    -- Whether this FQDN-tuple is maintained manually.
+    is_manual BOOLEAN NOT NULL,
+
+    comment TEXT NOT NULL DEFAULT ''
+);
+CREATE INDEX fqdn_manual_fqdn_idx ON fqdn (fqdn);
 
 
 /*
@@ -217,6 +284,16 @@ CREATE TABLE organisation_to_network (
     FOREIGN KEY (organisation_id) REFERENCES organisation (id),
     FOREIGN KEY (net_id) REFERENCES network (id)
 );
+CREATE TABLE organisation_to_manual_network (
+    organisation_id INTEGER,
+    net_id INTEGER,
+    notification_interval INTEGER NOT NULL, -- intervall in seconds
+
+    PRIMARY KEY (organisation_id, net_id),
+
+    FOREIGN KEY (organisation_id) REFERENCES organisation (id),
+    FOREIGN KEY (net_id) REFERENCES network_manual (id)
+);
 
 CREATE TABLE organisation_to_fqdn (
     organisation_id INTEGER,
@@ -227,6 +304,16 @@ CREATE TABLE organisation_to_fqdn (
 
     FOREIGN KEY (organisation_id) REFERENCES organisation (id),
     FOREIGN KEY (fqdn_id) REFERENCES fqdn (id)
+);
+CREATE TABLE organisation_to_manual_fqdn (
+    organisation_id INTEGER,
+    fqdn_id INTEGER,
+    notification_intervall INTEGER NOT NULL,
+
+    PRIMARY KEY (organisation_id, fqdn_id),
+
+    FOREIGN KEY (organisation_id) REFERENCES organisation (id),
+    FOREIGN KEY (fqdn_id) REFERENCES fqdn_manual (id)
 );
 
 
@@ -239,6 +326,17 @@ CREATE TABLE organisation_to_contact (
     is_primary_contact BOOLEAN NOT NULL DEFAULT FALSE,
 
     FOREIGN KEY (contact_id) REFERENCES contact (id),
+    FOREIGN KEY (organisation_id) REFERENCES organisation (id)
+);
+CREATE TABLE organisation_to_manual_contact (
+    contact_id INTEGER,
+    organisation_id INTEGER,
+
+    PRIMARY KEY (contact_id, organisation_id),
+
+    is_primary_contact BOOLEAN NOT NULL DEFAULT FALSE,
+
+    FOREIGN KEY (contact_id) REFERENCES contact_manual (id),
     FOREIGN KEY (organisation_id) REFERENCES organisation (id)
 );
 
