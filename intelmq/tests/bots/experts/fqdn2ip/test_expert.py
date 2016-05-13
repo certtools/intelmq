@@ -16,7 +16,7 @@ EXAMPLE_INPUT = {"__type": "Event",
 EXAMPLE_OUTPUT = {"__type": "Event",
                   "source.fqdn": "example.com",
                   "destination.fqdn": "example.org",
-                  "source.ip": "",
+                  "source.ip": "93.184.216.34",
                   "destination.ip": "93.184.216.34",
                   "time.observation": "2015-01-01T00:00:00+00:00"
                   }
