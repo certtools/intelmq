@@ -31,6 +31,15 @@ CREATE TABLE organisation (
 
     comment TEXT NOT NULL DEFAULT '',
 
+    -- The org: nic handle in the RIPE DB, if available
+    ripe_org_hdl VARCHAR(100),  
+
+    -- The Trusted Introducer (TI) handle or URL: for example https://www.trusted-introducer.org/directory/teams/certat.html
+    ti_handle    VARCHAR(500),
+
+    -- The FIRST.org handle or URL: for example https://api.first.org/data/v1/teams?q=aconet-cert
+    first_handle    VARCHAR(500),
+
     FOREIGN KEY (sector_id) REFERENCES sector(id)
 );
 
@@ -58,6 +67,60 @@ CREATE TABLE contact (
     FOREIGN KEY (format_id) REFERENCES format (id)
 );
 
+CREATE TABLE contact_manual (
+    id INTEGER PRIMARY KEY,
+
+    firstname VARCHAR (500) NOT NULL DEFAULT '',
+    lastname  VARCHAR (500) NOT NULL DEFAULT '',
+    tel       VARCHAR (500) NOT NULL DEFAULT '',
+
+    pgp_key_id VARCHAR(128) NOT NULL DEFAULT '',
+
+    -- the email-address of the contact
+    email VARCHAR(100) NOT NULL,
+
+    -- The data format to be used in emails sent to this contact.
+    format_id INTEGER NOT NULL,
+
+    -- Whether this contact tuple is maintained manually.
+    is_manual BOOLEAN NOT NULL,
+
+    comment TEXT NOT NULL DEFAULT '',
+
+    FOREIGN KEY (format_id) REFERENCES format (id)
+);
+
+-- Roles serve as an m-n relationship between organisations and contacts
+CREATE TABLE role (
+    id INTEGER PRIMARY KEY,
+
+    -- free text for right now. We assume the regularl tags from the RIPE DB such as "tech-c" or "abuse-c"
+    role_type    VARCHAR (500) NOT NULL default 'abuse-c', -- possible values: "abuse-c", "billing-c" , "admin-c"
+    is_primary_contact BOOLEAN NOT NULL DEFAULT FALSE,
+
+    organisation_id INTEGER NOT NULL, 
+    contact_id INTEGER NOT NULL,
+
+    FOREIGN KEY (organisation_id) REFERENCES organisation(id),
+    FOREIGN KEY (contact_id) REFERENCES contact(id)
+);
+
+-- Roles serve as an m-n relationship between organisations and contacts
+CREATE TABLE role_manual (
+    id INTEGER PRIMARY KEY,
+
+    -- free text for right now. We assume the regularl tags from the RIPE DB such as "tech-c" or "abuse-c"
+    role_type    VARCHAR (500) NOT NULL default 'abuse-c', -- possible values: "abuse-c", "billing-c" , "admin-c"
+    is_primary_contact BOOLEAN NOT NULL DEFAULT FALSE,
+
+    organisation_id INTEGER NOT NULL,
+    contact_id INTEGER NOT NULL,
+
+    FOREIGN KEY (organisation_id) REFERENCES organisation(id),
+    FOREIGN KEY (contact_id) REFERENCES contact_manual(id)
+);
+
+
 /*
   Network related tables, such as:
   AS, IP-Ranges, FQDN
@@ -68,16 +131,20 @@ CREATE TABLE autonomous_system (
     -- The atonomous system number
     number BIGINT PRIMARY KEY,
 
+    -- RIPE handle (see https://www.ripe.net/manage-ips-and-asns/db/support/documentation/ripe-database-documentation/ripe-database-structure/3-1-list-of-primary-objects)
+    -- and: https://www.ripe.net/manage-ips-and-asns/db/support/documentation/ripe-database-documentation/rpsl-object-types/4-2-descriptions-of-primary-objects/4-2-1-description-of-the-aut-num-object
+    ripe_aut_num  VARCHAR(100), 
+
     -- Whether this autonomous system tuple is maintained manually.
     is_manual BOOLEAN NOT NULL,
 
     comment TEXT NOT NULL DEFAULT ''
 );
-
 CREATE INDEX autonomous_system_number_idx ON autonomous_system (number);
 
 
 -- A network
+-- See also: https://www.ripe.net/manage-ips-and-asns/db/support/documentation/ripe-database-documentation/rpsl-object-types/4-2-descriptions-of-primary-objects/4-2-4-description-of-the-inetnum-object
 CREATE TABLE network (
     id INTEGER PRIMARY KEY,
 
@@ -106,10 +173,32 @@ CREATE TABLE network (
 -- types (see http://www.postgresql.org/docs/9.4/static/release-9-4.html).
 -- We cannot use that at the moment, because we still need to support
 -- PostgreSQL 9.3 which is the version available in Ubuntu 14.04LTS.
+--
+-- XXX COMMENT Aaron: please let's simply depend on postgresql >= 9.4
+-- IMHO that's okay to demand this XXX
+--
 CREATE INDEX network_cidr_lower_idx
           ON network ((host(network(address))));
 CREATE INDEX network_cidr_upper_idx
           ON network ((host(broadcast(address))));
+
+
+CREATE TABLE network_manual (
+    id INTEGER PRIMARY KEY,
+
+    -- Network address as CIDR.
+    address cidr UNIQUE NOT NULL,
+
+    -- Whether this network tuple is maintained manually.
+    is_manual BOOLEAN NOT NULL,
+
+    comment TEXT NOT NULL DEFAULT ''
+);
+CREATE INDEX network_manual_cidr_lower_idx
+          ON network_manual ((host(network(address))));
+CREATE INDEX network_manual_cidr_upper_idx
+          ON network_manual ((host(broadcast(address))));
+
 
 
 -- A fully qualified domain name
@@ -124,8 +213,20 @@ CREATE TABLE fqdn (
 
     comment TEXT NOT NULL DEFAULT ''
 );
-
 CREATE INDEX fqdn_fqdn_idx ON fqdn (fqdn);
+
+CREATE TABLE fqdn_manual (
+    id INTEGER PRIMARY KEY,
+
+    -- The fully qualified domain name
+    fqdn TEXT UNIQUE NOT NULL,
+
+    -- Whether this FQDN-tuple is maintained manually.
+    is_manual BOOLEAN NOT NULL,
+
+    comment TEXT NOT NULL DEFAULT ''
+);
+CREATE INDEX fqdn_manual_fqdn_idx ON fqdn (fqdn);
 
 
 /*
@@ -161,42 +262,62 @@ CREATE INDEX template_classification_idx
 /*
  Relations A_to_B
  Some of them (contact_to_X) carry an additional column TTL
+ See also https://www.ripe.net/manage-ips-and-asns/db/support/documentation/ripe-database-documentation/ripe-database-structure/3-1-list-of-primary-objects
 */
-CREATE TABLE contact_to_asn (
-    contact_id INTEGER,
+CREATE TABLE organisation_to_asn (
+    organisation_id INTEGER,
     asn_id BIGINT,
-    ttl INTEGER NOT NULL,
 
-    PRIMARY KEY (contact_id, asn_id),
+    PRIMARY KEY (organisation_id, asn_id),
 
     FOREIGN KEY (asn_id) REFERENCES autonomous_system (number),
-    FOREIGN KEY (contact_id) REFERENCES contact (id)
+    FOREIGN KEY (organisation_id) REFERENCES organisation (id)
 );
 
-CREATE TABLE contact_to_network (
-    contact_id INTEGER,
+CREATE TABLE organisation_to_network (
+    organisation_id INTEGER,
     net_id INTEGER,
-    ttl INTEGER NOT NULL,
+    notification_interval INTEGER NOT NULL, -- intervall in seconds
 
-    PRIMARY KEY (contact_id, net_id),
+    PRIMARY KEY (organisation_id, net_id),
 
-    FOREIGN KEY (contact_id) REFERENCES contact (id),
+    FOREIGN KEY (organisation_id) REFERENCES organisation (id),
     FOREIGN KEY (net_id) REFERENCES network (id)
 );
+CREATE TABLE organisation_to_manual_network (
+    organisation_id INTEGER,
+    net_id INTEGER,
+    notification_interval INTEGER NOT NULL, -- intervall in seconds
 
-CREATE TABLE contact_to_fqdn (
-    contact_id INTEGER,
+    PRIMARY KEY (organisation_id, net_id),
+
+    FOREIGN KEY (organisation_id) REFERENCES organisation (id),
+    FOREIGN KEY (net_id) REFERENCES network_manual (id)
+);
+
+CREATE TABLE organisation_to_fqdn (
+    organisation_id INTEGER,
     fqdn_id INTEGER,
-    ttl INTEGER NOT NULL,
+    notification_intervall INTEGER NOT NULL,
 
-    PRIMARY KEY (contact_id, fqdn_id),
+    PRIMARY KEY (organisation_id, fqdn_id),
 
-    FOREIGN KEY (contact_id) REFERENCES contact (id),
+    FOREIGN KEY (organisation_id) REFERENCES organisation (id),
     FOREIGN KEY (fqdn_id) REFERENCES fqdn (id)
+);
+CREATE TABLE organisation_to_manual_fqdn (
+    organisation_id INTEGER,
+    fqdn_id INTEGER,
+    notification_intervall INTEGER NOT NULL,
+
+    PRIMARY KEY (organisation_id, fqdn_id),
+
+    FOREIGN KEY (organisation_id) REFERENCES organisation (id),
+    FOREIGN KEY (fqdn_id) REFERENCES fqdn_manual (id)
 );
 
 
-CREATE TABLE contact_to_organisation (
+CREATE TABLE organisation_to_contact (
     contact_id INTEGER,
     organisation_id INTEGER,
 
@@ -205,6 +326,17 @@ CREATE TABLE contact_to_organisation (
     is_primary_contact BOOLEAN NOT NULL DEFAULT FALSE,
 
     FOREIGN KEY (contact_id) REFERENCES contact (id),
+    FOREIGN KEY (organisation_id) REFERENCES organisation (id)
+);
+CREATE TABLE organisation_to_manual_contact (
+    contact_id INTEGER,
+    organisation_id INTEGER,
+
+    PRIMARY KEY (contact_id, organisation_id),
+
+    is_primary_contact BOOLEAN NOT NULL DEFAULT FALSE,
+
+    FOREIGN KEY (contact_id) REFERENCES contact_manual (id),
     FOREIGN KEY (organisation_id) REFERENCES organisation (id)
 );
 
@@ -229,7 +361,7 @@ CREATE TYPE notification AS (
     organisation VARCHAR(500),
     template_path VARCHAR(200),
     format_name VARCHAR(80),
-    ttl INTEGER
+    notification_interval INTEGER
 );
 
 
@@ -237,17 +369,18 @@ CREATE TYPE notification AS (
 -- associated templates for easy combination with the contact_to_*
 -- tables.
 CREATE OR REPLACE VIEW contact_organisation_settings (
+
     contact_id,
     organisation_name,
     template_path,
     classification_identifier
 ) AS
-SELECT co.contact_id, o.name, t.path, ci.name
-  FROM contact_to_organisation co
-  JOIN organisation o ON o.id = co.organisation_id
-  JOIN organisation_to_template ot ON ot.organisation_id = o.id
-  JOIN template t ON ot.template_id = t.id
-  JOIN classification_identifier ci
+SELECT oc.contact_id, o.name, t.path, ci.name
+  FROM organisation_to_contact AS oc
+  JOIN organisation AS o ON o.id = oc.organisation_id
+  JOIN organisation_to_template AS ot ON ot.organisation_id = o.id
+  JOIN template AS t ON ot.template_id = t.id
+  JOIN classification_identifier AS ci
     ON ci.id = t.classification_identifier_id;
 
 
@@ -259,16 +392,17 @@ RETURNS SETOF notification
 AS $$
 BEGIN
     RETURN QUERY
-      WITH matched_contacts (contact_id, email, format_id, ttl)
-        AS (SELECT c.id, c.email, c.format_id, cn.ttl
+      WITH matched_contacts (contact_id, email, format_id, notification_interval)
+        AS (SELECT c.id, c.email, c.format_id, cn.notification_interval
               FROM contact c
-              JOIN contact_to_network cn ON cn.contact_id = c.id
-              JOIN network n ON n.id = cn.net_id
+              JOIN organisation_to_network AS orgn ON orgn.network_id = n.id
+              JOIN organisation_to_contact AS oc ON nc.contact_id = c.id
+              JOIN network AS n ON n.id = nc.net_id
              WHERE host(network(n.address)) <= host(event_ip)
                AND host(event_ip) <= host(broadcast(n.address)))
-    SELECT mc.email, cos.organisation_name, cos.template_path, f.name, mc.ttl
+    SELECT mc.email, cos.organisation_name, cos.template_path, f.name, mc.notification_interval
       FROM matched_contacts mc
-      JOIN contact_organisation_settings cos ON mc.contact_id = cos.contact_id
+      JOIN contact_organisation_settings AS cos ON mc.contact_id = cos.contact_id
       JOIN format f ON mc.format_id = f.id
      WHERE cos.classification_identifier = event_classification;
 END;
@@ -283,16 +417,16 @@ RETURNS SETOF notification
 AS $$
 BEGIN
     RETURN QUERY
-      WITH matched_contacts (contact_id, email, format_id, ttl)
-        AS (SELECT c.id, c.email, c.format_id, ca.ttl
-              FROM contact c
-              JOIN contact_to_asn ca ON ca.contact_id = c.id
-              JOIN autonomous_system a ON a.number = ca.asn_id
+      WITH matched_contacts (contact_id, email, format_id, notification_interval)
+        AS (SELECT c.id, c.email, c.format_id, ca.notification_interval
+              FROM contact AS c
+              JOIN organisation_to_contact AS oc ON oc.contact_id = c.id
+              JOIN autonomous_system AS a ON a.number = ca.asn_id
              WHERE a.number = event_asn)
-    SELECT mc.email, cos.organisation_name, cos.template_path, f.name, mc.ttl
-      FROM matched_contacts mc
-      JOIN contact_organisation_settings cos ON mc.contact_id = cos.contact_id
-      JOIN format f ON mc.format_id = f.id
+    SELECT mc.email, cos.organisation_name, cos.template_path, f.name, mc.notification_interval
+      FROM matched_contacts AS mc
+      JOIN contact_organisation_settings AS cos ON mc.contact_id = cos.contact_id
+      JOIN format AS f ON mc.format_id = f.id
      WHERE cos.classification_identifier = event_classification;
 END;
 $$ LANGUAGE plpgsql VOLATILE;
@@ -306,16 +440,16 @@ RETURNS SETOF notification
 AS $$
 BEGIN
     RETURN QUERY
-      WITH matched_contacts (contact_id, email, format_id, ttl)
-        AS (SELECT c.id, c.email, c.format_id, cd.ttl
-              FROM contact c
-              JOIN contact_to_fqdn cd ON cd.contact_id = c.id
-              JOIN fqdn f ON f.id = cd.fqdn_id
+      WITH matched_contacts (contact_id, email, format_id, notification_interval)
+        AS (SELECT c.id, c.email, c.format_id, oc.notification_interval
+              FROM contact AS c
+              JOIN organisation_to_contact AS oc ON oc.contact_id = c.id
+              JOIN fqdn AS f ON f.id = oc.fqdn_id
              WHERE f.fqdn = event_fqdn)
-    SELECT mc.email, cos.organisation_name, cos.template_path, f.name, mc.ttl
-      FROM matched_contacts mc
-      JOIN contact_organisation_settings cos ON mc.contact_id = cos.contact_id
-      JOIN format f ON mc.format_id = f.id
+    SELECT mc.email, cos.organisation_name, cos.template_path, f.name, mc.notification_interval
+      FROM matched_contacts AS mc
+      JOIN contact_organisation_settings AS cos ON mc.contact_id = cos.contact_id
+      JOIN format AS f ON mc.format_id = f.id
      WHERE cos.classification_identifier = event_classification;
 END;
 $$ LANGUAGE plpgsql VOLATILE;
