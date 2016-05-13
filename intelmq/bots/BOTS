@@ -296,6 +296,17 @@
                 "rate_limit": 10800
             }
         },
+        "Fileinput": {
+            "description": "Fileinput collector fetches data from a file.",
+            "module": "intelmq.bots.collectors.file.collector_file",
+            "parameters": {
+                "delete_file": "False",
+                "extension": "csv",
+                "feed": "FileCollector",
+                "path": "/tmp/",
+                "rate_limit": 10800
+            }
+        },
         "Fraunhofer DGA": {
             "description": "Fraunhofer DGA collector fetches data from Fraunhofers domain generation archive.",
             "module": "intelmq.bots.collectors.http.collector_http",
