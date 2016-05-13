@@ -42,8 +42,10 @@ class CERTBundKontaktExpertBot(Bot):
 
         for section in ["source", "destination"]:
             ip = event.get(section + ".ip")
+            asn = event.get(section + ".asn")
+            fqdn = event.get(section + ".fqdn")
             classification = event.get("event.classification.identifier")
-            notifications = self.lookup_ip(ip, classification)
+            notifications = self.lookup_contact(classification, ip, fqdn, asn)
             if notifications is None:
                 # stop processing the message because an error occurred
                 # during the database query
@@ -65,14 +67,38 @@ class CERTBundKontaktExpertBot(Bot):
         certbund[key] = value
         event.add("extra", extra, force=True)
 
-    def lookup_ip(self, ip, classification):
+    def lookup_contact(self, classification, ip, fqdn, asn):
         self.logger.debug("Looking up ip: %r, classification: %r",
                           ip, classification)
         try:
             cur = self.con.cursor()
             try:
-                cur.execute("SELECT * FROM notifications_for_ip(%s, %s);",
-                            (ip, classification))
+                #
+                # s1)  Event has FQDN:
+                #
+                if fqdn:
+                    # Yes -> Go to m1
+                    cur.execute("SELECT * FROM notifications_for_fqdn(%s, %s);",
+                                (fqdn, classification))
+
+                #
+                # s2)  Event has IP:
+                #
+                elif ip:
+                    # Yes -> Go to m2
+                    cur.execute("SELECT * FROM notifications_for_ip(%s, %s);",
+                                (ip, classification))
+
+                #
+                # s3) Event has ASN:
+                #
+                elif asn:
+                    # Yes -> Go to m3
+                    cur.execute("SELECT * FROM notifications_for_asn(%s, %s);",
+                                (asn, classification))
+                else:
+                    # No -> No informations available (not implemented)
+                    pass
                 raw_result = cur.fetchall()
             finally:
                 cur.close()
