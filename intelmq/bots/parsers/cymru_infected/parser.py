@@ -1,8 +1,11 @@
 """
 Parser for CYMRU Infected Feed
+Based on Generic CSV Parser
+The Parser makes use of the undocumented type_translation
+feature of the generic csv parser
 
 Format: report|ip|asn|timestamp|comments|asn_name
-classification.taxonomy,source.ip,source.asn,time.source,comment
+classification.type,source.ip,source.asn,time.source,comment
 
 """
 import csv
@@ -26,7 +29,7 @@ class CymruInfectedParserBot(Bot):
         "bots": "botnet drone"
     }
 
-    COLUMNS = ["classification.taxonomy",
+    COLUMNS = ["classification.type",
             "source.ip",
             "source.asn",
             "time.source",
@@ -87,13 +90,11 @@ class CymruInfectedParserBot(Bot):
                             '{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2'
                             '[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|'
                             '[1-9]?\d)){3}))|:)))(%.+)?').match(value).group()
-                    elif key.endswith('.url') and '://' not in value:
-                        value = self.parameters.default_url_protocol + value
                     elif key in ["classification.type"] and type_translation:
                         if value in type_translation:
                             value = type_translation[value]
-                        elif not hasattr(self.parameters, 'type'):
-                            continue
+                        else:
+                            value = 'unknown'
 
                 except:
                     self.logger.warning('Encountered error while parsing line'
@@ -102,10 +103,9 @@ class CymruInfectedParserBot(Bot):
                     continue
                 event.add(key, value)
 
-            if hasattr(self.parameters, 'type')\
-                    and not event.contains("classification.type"):
-                event.add('classification.type', self.parameters.type)
             event.add("raw", ",".join(row))
+
+            self.logger.debug(event)
 
             self.send_message(event)
         self.acknowledge_message()
