@@ -97,7 +97,7 @@ class CERTBundKontaktExpertBot(Bot):
                     cur.execute("SELECT * FROM notifications_for_asn(%s, %s);",
                                 (asn, classification))
                 else:
-                    # No -> No informations available (not implemented)
+                    # No -> No information available (not implemented)
                     pass
                 raw_result = cur.fetchall()
             finally:
