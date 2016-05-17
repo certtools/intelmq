@@ -159,7 +159,7 @@ class Bot(object):
             else:
                 if (not self.last_heartbeat or
                         (datetime.datetime.now() - self.last_heartbeat) > self.heartbeat_time):
-                    requests.get(self.parameters.bot_heartbeat_url.format(bot_id=self.bot_id))
+                    requests.get(self.parameters.bot_heartbeat_url.format(bot_id=self.__bot_id))
                     self.last_heartbeat = datetime.datetime.now()
 
             finally:
