@@ -834,8 +834,8 @@
                 "format": "<json/delimited> read README.md",
                 "header": "<header text>",
                 "ip": "<ip>",
-                "port": "<port>",
-                "raw_field": "<keep/drop>"
+                "keep_raw_field": "<true/false>",
+                "port": "<port>"
             }
         },
         "XMPP": {

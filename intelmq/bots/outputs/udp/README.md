@@ -8,8 +8,7 @@
 * header            : Header text to be sent in the udp datagram. 
 * ip                : IP address of the UDP server
 * port              : PORT to connect to.
-* raw_field         : Can be 'keep' or 'drop'. Drop will not send the raw field in the message.
-
+* keep_raw_field    : Can be 'True' or 'False'. False will not send the raw field in the message.
 
 ### Examples of usage:
 
@@ -21,7 +20,7 @@
 * field_delimiter   : |
 * format            : json
 * Header            : header example
-* raw_field         : keep
+* keep_raw_field    : true
 * ip                : 127.0.0.1
 * port              : 514
 
@@ -36,7 +35,7 @@ Apr 29 11:01:29 header example {"raw": "MjAxNi8wNC8yNV8xMTozOSxzY2hpenppbm8ub21h
 * field_delimiter   : |
 * format            : delimited
 * Header            : IntelMQ-event
-* raw_field         : drop
+* keep_raw_field    : false
 * ip                : 127.0.0.1
 * port              : 514
 

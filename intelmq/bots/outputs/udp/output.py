@@ -16,13 +16,13 @@ class UDPBot(Bot):
         self.udp_port = int(self.parameters.port)
         self.upd_address = (self.udp_host, self.udp_port)
         self.udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.raw_field = self.parameters.raw_field
+        self.keep_raw_field = bool(self.parameters.keep_raw_field)
         self.format = self.parameters.format
 
     def process(self):
         event = self.receive_message()
 
-        if self.raw_field.upper() == 'DROP':
+        if ( not self.keep_raw_field ):
             del event['raw']
 
         if self.format.upper() == 'JSON':
