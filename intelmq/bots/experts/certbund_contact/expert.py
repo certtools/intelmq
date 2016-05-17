@@ -28,6 +28,7 @@ class CERTBundKontaktExpertBot(Bot):
                                     port=self.parameters.port,
                                     password=self.parameters.password,
                                     sslmode=self.parameters.sslmode)
+        self.con.autocommit = True
         self.logger.debug("Connected to PostgreSQL")
 
     def process(self):
