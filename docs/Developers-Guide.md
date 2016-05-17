@@ -227,11 +227,12 @@ In the `intelmq/lib/` directory you can find some libraries:
 
 There's a dummy bot including tests at `intelmq/tests/bots/test_dummy_bot.py`.
 
-You can always start any parser directly from command line by either invoking the script or the python module. Don't forget to give an bot id as first argument. Also, running bots with other users than `intelmq` will raise permission errors.
+You can always start any bot directly from command line by either invoking the script or the python module. Don't forget to give an bot id as first argument. Also, running bots with other users than `intelmq` will raise permission errors.
 ```bash
 sudo -i intelmq
 python3 -m intelmq.bots.outputs.file.output file-output
 python3 intelmq/bots/outputs/file/output.py file-output
+intelmqctl run file-output  # if configured
 ```
 You will get all logging outputs directly on stderr as well as in the log file.
 
@@ -269,6 +270,19 @@ if __name__ == "__main__":
     bot.start()
 ```
 
+There are some names with special meaning. These can be used i.e. called:
+* `stop`: Shuts the bot down.
+* `receive_message`, `send_message`, `acknowledge_message`: see next section
+* `parameters`: the bots configuration as object
+* `start`: internal method to run the bot
+
+These can be defined:
+* `init`: called at startup, use it to set up the bot (initializing classes, loading files etc)
+* `process`: processes the messages
+* `shutdown`: To Gracefully stop the bot, e.g. terminate connections
+
+All other names can be used freely.
+
 ### Pipeline interactions
 
 A can call three methods related to the pipeline:
@@ -283,7 +297,7 @@ The bot class itself has error handling implemented. The bot itself is allowed t
 
 ### Initialization
 
-Maybe it is necessary so setup a Cache instance or load a file into memory. Use the `init` function for this purpose: 
+Maybe it is necessary so setup a Cache instance or load a file into memory. Use the `init` function for this purpose:
 
 ```python
 class ExampleParserBot(Bot):

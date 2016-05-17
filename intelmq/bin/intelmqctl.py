@@ -35,6 +35,8 @@ MESSAGES = {
     'running': '{} is running.',
     'stopped': '{} is stopped.',
     'stopping': 'Stopping {}...',
+    'reloading': 'Reloading {} ...',
+    'reloaded': '{} is reloaded.',
 }
 
 ERROR_MESSAGES = {
@@ -145,8 +147,8 @@ class IntelMQContoller():
 
         Outputs are logged to /opt/intelmq/var/log/intelmqctl"""
         USAGE = '''
-        intelmqctl [start|stop|restart|status|run] bot-id
-        intelmqctl [start|stop|restart|status]
+        intelmqctl [start|stop|restart|status|reload|run] bot-id
+        intelmqctl [start|stop|restart|status|reload]
         intelmqctl list [bots|queues]
         intelmqctl log bot-id [number-of-lines [log-level]]
         intelmqctl clear queue-id
@@ -198,9 +200,10 @@ Get logs of a bot:
 
         parser.add_argument('action',
                             choices=['start', 'stop', 'restart', 'status',
-                                     'run', 'list', 'clear', 'help', 'log'],
-                            metavar='[start|stop|restart|status|run|list|clear'
-                                    '|log]')
+                                     'reload', 'run', 'list', 'clear', 'help',
+                                     'log'],
+                            metavar='[start|stop|restart|status|reload|run|'
+                                    'list|clear|log]')
         parser.add_argument('parameter', nargs='*')
         self.parser = parser
         self.args = parser.parse_args()
@@ -244,7 +247,8 @@ Get logs of a bot:
 
     def run(self):
         results = None
-        if self.args.action in ['start', 'restart', 'stop', 'status']:
+        if self.args.action in ['start', 'restart', 'stop', 'status',
+                                'reload']:
             if self.args.parameter:
                 call_method = getattr(self, "bot_" + self.args.action)
                 results = call_method(self.args.parameter[0])
@@ -344,6 +348,24 @@ Get logs of a bot:
         log_bot_message('stopped', bot_id)
         return 'stopped'
 
+    def bot_reload(self, bot_id):
+        pid = read_pidfile(bot_id)
+        if not pid:
+            log_bot_error('stopped', bot_id)
+            return 'stopped'
+        if not status_process(pid):
+            remove_pidfile(bot_id)
+            log_bot_error('stopped', bot_id)
+            return 'stopped'
+        log_bot_message('reloading', bot_id)
+        proc = psutil.Process(int(pid))
+        proc.send_signal(signal.SIGHUP)
+        if status_process(pid):
+            log_bot_message('running', bot_id)
+            return 'running'
+        log_bot_error('stopped', bot_id)
+        return 'stopped'
+
     def bot_restart(self, bot_id):
         status_stop = self.bot_stop(bot_id)
         status_start = self.bot_start(bot_id)
@@ -371,6 +393,14 @@ Get logs of a bot:
         for bot_id in sorted(self.startup.keys()):
             botnet_status[bot_id] = self.bot_stop(bot_id)
         log_botnet_message('stopped')
+        return botnet_status
+
+    def botnet_reload(self):
+        botnet_status = {}
+        log_botnet_message('reloading')
+        for bot_id in sorted(self.startup.keys()):
+            botnet_status[bot_id] = self.bot_reload(bot_id)
+        log_botnet_message('reloaded')
         return botnet_status
 
     def botnet_restart(self):
