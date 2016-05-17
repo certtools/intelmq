@@ -311,7 +311,6 @@
             "description": "Monitor IMAP mailboxes and retrieve mail attachments",
             "module": "intelmq.bots.collectors.mail.collector_mail_attach",
             "parameters": {
-                "accuracy": "",
                 "attach_regex": "csv.zip",
                 "attach_unzip": true,
                 "feed": "",
@@ -328,7 +327,6 @@
             "description": "Monitor IMAP mailboxes and fetch files from URLs contained in mail bodies",
             "module": "intelmq.bots.collectors.mail.collector_mail_url",
             "parameters": {
-                "accuracy": "",
                 "feed": "",
                 "folder": "INBOX",
                 "http_password": "<password>",
