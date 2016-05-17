@@ -35,6 +35,8 @@ MESSAGES = {
     'running': '{} is running.',
     'stopped': '{} is stopped.',
     'stopping': 'Stopping {}...',
+    'reloading': 'Reloading {} ...',
+    'reloaded': '{} is reloaded.',
 }
 
 ERROR_MESSAGES = {
@@ -145,8 +147,8 @@ class IntelMQContoller():
 
         Outputs are logged to /opt/intelmq/var/log/intelmqctl"""
         USAGE = '''
-        intelmqctl [start|stop|restart|status|run] bot-id
-        intelmqctl [start|stop|restart|status]
+        intelmqctl [start|stop|restart|status|reload|run] bot-id
+        intelmqctl [start|stop|restart|status|reload]
         intelmqctl list [bots|queues]
         intelmqctl log bot-id [number-of-lines [log-level]]
         intelmqctl clear queue-id
@@ -198,10 +200,12 @@ Get logs of a bot:
 
         parser.add_argument('action',
                             choices=['start', 'stop', 'restart', 'status',
-                                     'run', 'list', 'clear', 'help', 'log'],
-                            metavar='[start|stop|restart|status|run|list|clear'
-                                    '|log]')
+                                     'reload', 'run', 'list', 'clear', 'help',
+                                     'log'],
+                            metavar='[start|stop|restart|status|reload|run|'
+                                    'list|clear|log]')
         parser.add_argument('parameter', nargs='*')
+        self.parser = parser
         self.args = parser.parse_args()
         if self.args.action == 'help':
             parser.print_help()
@@ -243,24 +247,26 @@ Get logs of a bot:
 
     def run(self):
         results = None
-        if self.args.action in ['start', 'restart', 'stop', 'status']:
+        if self.args.action in ['start', 'restart', 'stop', 'status',
+                                'reload']:
             if self.args.parameter:
-                method_name = "bot_" + self.args.action
-                call_method = getattr(self, method_name)
-                results = call_method(self.args.parameter)
+                call_method = getattr(self, "bot_" + self.args.action)
+                results = call_method(self.args.parameter[0])
             else:
-                method_name = "botnet_" + self.args.action
-                call_method = getattr(self, method_name)
+                call_method = getattr(self, "botnet_" + self.args.action)
                 results = call_method()
         elif self.args.action == 'run':
             if self.args.parameter and len(self.args.parameter) == 1:
                 self.bot_run(self.args.parameter[0])
             else:
                 print("Exactly one bot-id must be given for run.")
+                self.parser.print_help()
                 exit(2)
         elif self.args.action == 'list':
-            if self.args.parameter[0] not in ['bots', 'queues']:
-                print("Second argument must be 'bots' or 'queues'.")
+            if not self.args.parameter or \
+                 self.args.parameter[0] not in ['bots', 'queues']:
+                print("Second argument for list must be 'bots' or 'queues'.")
+                self.parser.print_help()
                 exit(2)
             method_name = "list_" + self.args.parameter[0]
             call_method = getattr(self, method_name)
@@ -268,13 +274,15 @@ Get logs of a bot:
         elif self.args.action == 'log':
             if not self.args.parameter:
                 print("You must give parameters for 'log'.")
+                self.parser.print_help()
                 exit(2)
             results = self.read_log(*self.args.parameter)
         elif self.args.action == 'clear':
             if not self.args.parameter:
                 print("Queue name not given.")
+                self.parser.print_help()
                 exit(2)
-            results = self.clear_queue(self.args.parameter)
+            results = self.clear_queue(self.args.parameter[0])
 
         if self.args.type == 'json':
             print(json.dumps(results))
@@ -287,7 +295,9 @@ Get logs of a bot:
             return 'error'
         else:
             module = importlib.import_module(bot_module)
-            botname = [name for name in dir(module) if hasattr(getattr(module, name), 'process')][0]
+            botname = [name for name in dir(module)
+                       if hasattr(getattr(module, name), 'process') and
+                       name.endswith('Bot')][0]
             bot = getattr(module, botname)
             instance = bot(bot_id)
             instance.start()
@@ -340,6 +350,24 @@ Get logs of a bot:
         log_bot_message('stopped', bot_id)
         return 'stopped'
 
+    def bot_reload(self, bot_id):
+        pid = read_pidfile(bot_id)
+        if not pid:
+            log_bot_error('stopped', bot_id)
+            return 'stopped'
+        if not status_process(pid):
+            remove_pidfile(bot_id)
+            log_bot_error('stopped', bot_id)
+            return 'stopped'
+        log_bot_message('reloading', bot_id)
+        proc = psutil.Process(int(pid))
+        proc.send_signal(signal.SIGHUP)
+        if status_process(pid):
+            log_bot_message('running', bot_id)
+            return 'running'
+        log_bot_error('stopped', bot_id)
+        return 'stopped'
+
     def bot_restart(self, bot_id):
         status_stop = self.bot_stop(bot_id)
         status_start = self.bot_start(bot_id)
@@ -369,6 +397,14 @@ Get logs of a bot:
         log_botnet_message('stopped')
         return botnet_status
 
+    def botnet_reload(self):
+        botnet_status = {}
+        log_botnet_message('reloading')
+        for bot_id in sorted(self.startup.keys()):
+            botnet_status[bot_id] = self.bot_reload(bot_id)
+        log_botnet_message('reloaded')
+        return botnet_status
+
     def botnet_restart(self):
         botnet_status = {}
         log_botnet_message('stopping')
@@ -389,10 +425,10 @@ Get logs of a bot:
         return botnet_status
 
     def list_bots(self):
-        print("List of Bots:\n-------------")
-        for bot_id in sorted(self.startup.keys()):
-            print("\nBot ID: {}\nDescription: {}"
-                  "".format(bot_id, self.startup[bot_id]['description']))
+        if self.args.type == 'text':
+            for bot_id in sorted(self.startup.keys()):
+                print("Bot ID: {}\nDescription: {}"
+                      "".format(bot_id, self.startup[bot_id]['description']))
         return [{'id': bot_id,
                  'description': self.startup[bot_id]['description']}
                 for bot_id in sorted(self.startup.keys())]
