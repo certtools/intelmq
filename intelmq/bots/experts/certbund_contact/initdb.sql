@@ -393,14 +393,16 @@ AS $$
 BEGIN
     RETURN QUERY
       WITH matched_contacts (contact_id, email, format_id, notification_interval)
-        AS (SELECT c.id, c.email, c.format_id, cn.notification_interval
+        AS (SELECT c.id, c.email, c.format_id, orgn.notification_interval
               FROM contact c
-              JOIN organisation_to_network AS orgn ON orgn.network_id = n.id
-              JOIN organisation_to_contact AS oc ON nc.contact_id = c.id
-              JOIN network AS n ON n.id = nc.net_id
+              JOIN organisation_to_contact AS oc ON oc.contact_id = c.id
+              JOIN organisation_to_network AS orgn
+                ON orgn.organisation_id = oc.organisation_id
+              JOIN network AS n ON n.id = orgn.net_id
              WHERE host(network(n.address)) <= host(event_ip)
                AND host(event_ip) <= host(broadcast(n.address)))
-    SELECT mc.email, cos.organisation_name, cos.template_path, f.name, mc.notification_interval
+    SELECT mc.email, cos.organisation_name, cos.template_path, f.name,
+           mc.notification_interval
       FROM matched_contacts mc
       JOIN contact_organisation_settings AS cos ON mc.contact_id = cos.contact_id
       JOIN format f ON mc.format_id = f.id
