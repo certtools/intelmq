@@ -83,8 +83,6 @@ Any component of IntelMQ MUST respect the "Data Harmonization Ontology".
 ## Directory layout in the repository
 ```bash
 intelmq\
-  bin\
-    intelmqctl
   lib\
     bot.py
     cache.py
