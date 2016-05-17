@@ -38,7 +38,7 @@ class MailURLCollectorBot(Bot):
                 self.logger.info("Reading email report")
 
                 for body in message.body['plain']:
-                    match = re.search(self.parameters.url_regex, body)
+                    match = re.search(self.parameters.url_regex, str(body))
                     if match:
                         url = match.group()
 
