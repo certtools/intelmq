@@ -41,6 +41,9 @@ class MailURLCollectorBot(Bot):
                     match = re.search(self.parameters.url_regex, str(body))
                     if match:
                         url = match.group()
+                        url = url.strip()     # strip leading and trailing spaces
+                        url = url.strip('\n') # strip newlines
+                        url = url.strip('\r') # strip carriage returns
 
                         # Build request
                         self.http_header = getattr(self.parameters,
