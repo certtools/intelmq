@@ -1,3 +1,11 @@
+intelmq (1.0.0~dev4~beta10) experimental; urgency=low
+
+  * Merged master, fixes
+  * Added a bunch of features from other branches, see
+    customer-releases branch
+
+ -- Dustin Demuth <dustin@intevation.de>  Tue, 17 May 2016 12:00:00 +0200
+
 intelmq (1.0.0~dev4~beta9) experimental; urgency=low
 
   * Merged master, fixes
