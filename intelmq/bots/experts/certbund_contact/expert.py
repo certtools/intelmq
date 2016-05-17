@@ -95,7 +95,7 @@ class CERTBundKontaktExpertBot(Bot):
                                 (asn, classification))
                 else:
                     # No -> No information available (not implemented)
-                    pass
+                    return []
                 raw_result = cur.fetchall()
             finally:
                 cur.close()
