@@ -34,13 +34,6 @@ BOT_CONFIG = {
     "redis_cache_port": 6379,
     "redis_cache_db": 10,
     "redis_cache_ttl": 10,
-    ## needed for redis-output-bot
-    "redis_server_ip": "127.0.0.1",
-    "redis_server_port": 6379,
-    "redis_db": 10,
-    "redis_queue": "test-redis-output-queue",
-    "redis_password": "none",
-    "redis_timeout": "50000"
 }
 
 

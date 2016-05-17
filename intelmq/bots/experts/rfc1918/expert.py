@@ -36,18 +36,14 @@ DOMAINS = ('.test', '.example', '.invalid', '.localhost', 'example.com',
            'example.net', 'example.org')
 
 
-def is_in_net(ip, iprange):
-    if ipaddress.ip_address(ip) in ipaddress.ip_network(iprange):
-        return True
-    else:
-        return False
-
-
 class RFC1918ExpertBot(Bot):
 
     def init(self):
         self.fields = self.parameters.fields.lower().strip().split(",")
         self.policy = self.parameters.policy.lower().strip().split(",")
+
+    def is_in_net(self, ip, iprange):
+        return ipaddress.ip_address(ip) in ipaddress.ip_network(iprange)
 
     def process(self):
         event = self.receive_message()
@@ -57,7 +53,7 @@ class RFC1918ExpertBot(Bot):
                 continue
             value = event.get(field)
             if field.endswith('.ip'):
-                check = any(is_in_net(value, iprange) for iprange in NETWORKS)
+                check = any(self.is_in_net(value, iprange) for iprange in NETWORKS)
             elif field.endswith('.fqdn'):
                 check = any(value.endswith(domain) for domain in DOMAINS)
             elif field.endswith('.url'):
