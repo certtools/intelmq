@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 import ipaddress
 import re
 
 import dns.resolver
+
 import intelmq.lib.harmonization as harmonization
 
 QUERY_HOST = ".abuse-contacts.abusix.org"

@@ -10,10 +10,10 @@
 #
 #      (1) site
 """
-from __future__ import unicode_literals
 import sys
 
 import dateutil
+
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
 from intelmq.lib.message import Event
@@ -24,13 +24,9 @@ class DshieldDomainParserBot(Bot):
     def process(self):
         report = self.receive_message()
 
-        if report is None or not report.contains("raw"):
-            self.acknowledge_message()
-            return
-
         raw_report = utils.base64_decode(report.get("raw"))
 
-        for row in raw_report.split('\n'):
+        for row in raw_report.splitlines():
 
             if row.startswith("#") or len(row) == 0 or row == "Site":
                 if 'updated' in row:
@@ -40,7 +36,7 @@ class DshieldDomainParserBot(Bot):
 
             event = Event(report)
 
-            event.add('classification.type', u'malware')
+            event.add('classification.type', 'malware')
             event.add('source.fqdn', row.strip())
             event.add('time.source', time)
             event.add("raw", row)

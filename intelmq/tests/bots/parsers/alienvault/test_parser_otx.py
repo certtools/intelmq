@@ -1,14 +1,11 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 
 import os
 import unittest
 
 import intelmq.lib.test as test
 import intelmq.lib.utils as utils
-from intelmq.bots.parsers.alienvault.parser_otx import \
-    AlienVaultOTXParserBot
-
+from intelmq.bots.parsers.alienvault.parser_otx import AlienVaultOTXParserBot
 
 with open(os.path.join(os.path.dirname(__file__),
                        'test_parser_otx.data')) as handle:

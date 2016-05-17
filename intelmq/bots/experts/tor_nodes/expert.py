@@ -2,7 +2,6 @@
 """
 See README for database download.
 """
-from __future__ import unicode_literals
 import sys
 
 from intelmq.lib.bot import Bot
@@ -31,10 +30,6 @@ class TorExpertBot(Bot):
 
     def process(self):
         event = self.receive_message()
-
-        if event is None:
-            self.acknowledge_message()
-            return
 
         for key in ["source.", "destination."]:
             if event.contains(key + 'ip'):

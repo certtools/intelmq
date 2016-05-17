@@ -55,7 +55,7 @@
             }
         },
         "AlienVault": {
-            "description": "AlienVault Collector is the bot responsible to get the report from source of information.",
+            "description": "AlienVault Collector retrieves reports via the SDK https://github.com/AlienVault-Labs/OTX-Python-SDK/ from https://otx.alienvault.com/ http_ssl_proxy does apply.",
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "AlienVault",
@@ -88,6 +88,14 @@
                 "feed": "Autoshun",
                 "http_url": "https://www.autoshun.org/files/shunlist.html",
                 "rate_limit": 3600
+            }
+        },
+        "BitSight Ciberfeed Stream": {
+            "description": "Bitsight Collector is the bot reponsible to get Bitsight Ciberfeed Alert Stream",
+            "module": "intelmq.bots.collectors.bitsight.collector",
+            "parameters": {
+                "feed": "BitSight",
+                "http_url": "http://alerts.bitsighttech.com:8080/stream?key=<api>"
             }
         },
         "BlockList.DE Apache": {
@@ -775,6 +783,18 @@
                 "host": "<host>"
             }
         },
+        "Redis": {
+            "description": "Redis is the bot responsible to send events to a Redis server.",
+            "module": "intelmq.bots.outputs.redis.output",
+            "parameters": {
+                "redis_db": 2,
+                "redis_password": "<password>",
+                "redis_queue": "external-redis-queue",
+                "redis_server_ip": "127.0.0.1",
+                "redis_server_port": 6379,
+                "redis_timeout": 50000
+            }
+        },
         "TCP": {
             "description": "TCP is the bot responsible to send events to a tcp port (Splunk, ElasticSearch, etc..).",
             "module": "intelmq.bots.outputs.tcp.output",
@@ -844,6 +864,11 @@
         "Autoshun": {
             "description": "Autoshun Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.autoshun.parser",
+            "parameters": {}
+        },
+        "BitSight Ciberfeed Stream": {
+            "description": "Bitsight Ciberfeed parser is the bot reponsible to parse and sanitize the information.",
+            "module": "intelmq.bots.parsers.bitsight.parser",
             "parameters": {}
         },
         "BlockList.DE Apache": {

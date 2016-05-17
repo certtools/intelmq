@@ -2,7 +2,6 @@
 """
 
 """
-from __future__ import print_function, unicode_literals
 
 import datetime
 import json
@@ -18,7 +17,6 @@ from intelmq import (DEFAULT_LOGGING_LEVEL, DEFAULT_LOGGING_PATH,
 from intelmq.lib import exceptions, utils
 from intelmq.lib.message import MessageFactory
 from intelmq.lib.pipeline import PipelineFactory
-
 
 __all__ = ['Bot']
 
@@ -265,12 +263,12 @@ class Bot(object):
 
     def receive_message(self):
         self.logger.debug('Receiving Message.')
-        message = self.source_pipeline.receive()
-
-        self.logger.debug('Receive message {!r}...'.format(message[:500]))
-        if not message:
-            self.logger.warning('Empty message received.')
-            return None
+        message = None
+        while not message:
+            message = self.source_pipeline.receive()
+            self.logger.debug('Receive message {!r}...'.format(message[:500]))
+            if not message:
+                self.logger.warning('Empty message received.')
 
         self.current_message = MessageFactory.unserialize(message)
         return self.current_message

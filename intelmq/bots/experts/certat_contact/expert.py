@@ -14,20 +14,11 @@ Options:
 &bKeepLoglines=off	Keep original log lines (separated by "#")
 &sep={TAB, comma, semicolon, pipe}  	Separator for the (output) CSV format
 """
-from __future__ import unicode_literals
-import requests
 import sys
 
+import requests
+
 from intelmq.lib.bot import Bot
-
-# SNI Workaround for Python 2:
-# https://github.com/kennethreitz/requests/blob/master/requests/packages/urllib3/contrib/pyopenssl.py#L16
-try:
-    import urllib3.contrib.pyopenssl
-    urllib3.contrib.pyopenssl.inject_into_urllib3()
-except ImportError:
-    pass
-
 
 URL = 'https://contacts.cert.at/cgi-bin/abuse-nationalcert.pl'
 
@@ -36,10 +27,6 @@ class CERTatContactExpertBot(Bot):
 
     def process(self):
         event = self.receive_message()
-
-        if event is None:
-            self.acknowledge_message()
-            return
 
         for section, key, abuse in \
             [('source', 'source.ip', 'source.abuse_contact'),

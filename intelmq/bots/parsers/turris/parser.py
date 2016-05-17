@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+import csv
+import io
 import sys
 
 from intelmq.lib import utils
@@ -12,10 +13,6 @@ class TurrisGreylistParserBot(Bot):
     def process(self):
         report = self.receive_message()
 
-        if report is None or not report.contains("raw"):
-            self.acknowledge_message()
-            return
-
         columns = [
             "source.ip",
             "__IGNORE__",
@@ -25,7 +22,7 @@ class TurrisGreylistParserBot(Bot):
 
         headers = True
         raw_report = utils.base64_decode(report.get("raw"))
-        for row in utils.csv_reader(raw_report):
+        for row in csv.reader(io.StringIO(raw_report)):
             # ignore headers
             if headers:
                 headers = False
@@ -39,7 +36,7 @@ class TurrisGreylistParserBot(Bot):
 
                 event.add(key, value)
 
-            event.add('classification.type', u'scanner')
+            event.add('classification.type', 'scanner')
             event.add("raw", ",".join(row))
 
             self.send_message(event)

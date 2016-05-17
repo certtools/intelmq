@@ -396,16 +396,9 @@ Assume we have an event with `feed.name = Spamhaus Cert` and `malware.name = feo
 
 #### Installation Requirements
 
-Using Python 3.4 (recommended):
 ```
 pip3 install pymongo>=2.7.1
 ```
-
-Using Python 2.7:
-```
-pip2 install pymongo>=2.7.1
-```
-
 
 * * *
 
@@ -429,16 +422,9 @@ pip2 install pymongo>=2.7.1
 
 #### Installation Requirements
 
-Using Python 3.4 (recommended):
 ```
 pip3 install pymongo>=2.7.1
 ```
-
-Using Python 2.7:
-```
-pip2 install pymongo>=2.7.1
-```
-
 
 * * *
 
@@ -468,14 +454,8 @@ pip2 install pymongo>=2.7.1
 
 #### Installation Requirements
 
-Using Python 3.4 (recommended):
 ```
 pip3 install psycopg2>=2.5.5
-```
-
-Using Python 2.7:
-```
-pip2 install psycopg2>=2.5.5
 ```
 
 #### PostgreSQL Installation

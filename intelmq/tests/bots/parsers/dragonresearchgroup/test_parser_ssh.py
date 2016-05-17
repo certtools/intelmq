@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 
 import unittest
 
 import intelmq.lib.test as test
 from intelmq.bots.parsers.dragonresearchgroup.parser_ssh import \
     DragonResearchGroupSSHParserBot
-
 
 REPORT = {'__type': 'Report',
           'feed.url': 'https://dragonresearchgroup.org/insight/sshpwauth.txt',
@@ -55,7 +53,7 @@ class TestDragonResearchGroupSSHParserBot(test.BotTestCase, unittest.TestCase):
     @classmethod
     def set_bot(cls):
         cls.bot_reference = DragonResearchGroupSSHParserBot
-        cls.default_input_message = {'__type': 'Report'}
+        cls.default_input_message = {'__type': 'Report', 'raw': 'Cg=='}
 
     def test_events(self):
         """ Test if correct Events have been produced. """

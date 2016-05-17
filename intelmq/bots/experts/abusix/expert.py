@@ -3,7 +3,6 @@
 Reference: https://abusix.com/contactdb.html
 RIPE abuse contacts resolving through DNS TXT queries
 '''
-from __future__ import unicode_literals, absolute_import
 import sys
 
 from intelmq.bots.experts.abusix.lib import Abusix
@@ -26,10 +25,6 @@ class AbusixExpertBot(Bot):
 
     def process(self):
         event = self.receive_message()
-
-        if event is None:
-            self.acknowledge_message()
-            return
 
         for key in ['source.', 'destination.']:
             ip_key = key + "ip"

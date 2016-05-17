@@ -16,26 +16,18 @@ The following types are implemented with sanitize() and is_valid() functions:
  - URL
  - UUID
 """
-from __future__ import unicode_literals
-
 import binascii
 import datetime
 import ipaddress
 import json
 import socket
+from urllib.parse import urlparse
 
 import dateutil.parser
 import dns.resolver
 import pytz
-import six
 
 import intelmq.lib.utils as utils
-
-try:
-    from urlparse import urlparse
-except ImportError:
-    from urllib.parse import urlparse
-
 
 __all__ = ['Base64', 'Boolean', 'ClassificationType', 'DateTime', 'FQDN',
            'Float', 'Accuracy', 'GenericType', 'IPAddress', 'IPNetwork',
@@ -53,7 +45,7 @@ class GenericType(object):
         if not value:
             return False
 
-        if not isinstance(value, six.text_type):
+        if not isinstance(value, str):
             return False
 
         if len(value) == 0:
@@ -66,10 +58,10 @@ class GenericType(object):
         if not value:
             return None
 
-        if isinstance(value, six.text_type):
+        if isinstance(value, str):
             return value.strip()
 
-        if isinstance(value, six.binary_type):
+        if isinstance(value, bytes):
             try:
                 value = value.decode('utf-8')
             except UnicodeDecodeError:
@@ -128,7 +120,7 @@ class Boolean(GenericType):
 
     @staticmethod
     def sanitize(value):
-        if isinstance(value, (six.text_type, six.binary_type)):
+        if isinstance(value, (str, bytes)):
             value = value.strip().lower()
             if value == 'true':
                 return True
@@ -175,7 +167,7 @@ class ClassificationType(GenericType):
         if not GenericType().is_valid(value):
             return False
 
-        if not isinstance(value, six.text_type):
+        if not isinstance(value, str):
             return False
 
         if value not in ClassificationType().allowed_values:
@@ -224,7 +216,7 @@ class DateTime(GenericType):
         dtime = (datetime.datetime(1970, 1, 1, tzinfo=pytz.utc) +
                  datetime.timedelta(seconds=tstamp))
         localized = pytz.timezone(tzone).normalize(dtime)
-        return six.text_type(localized.isoformat())
+        return str(localized.isoformat())
 
     @staticmethod
     def generate_datetime_now():
@@ -341,7 +333,7 @@ class FQDN(GenericType):
     def to_ip(value):
         try:
             value = str(dns.resolver.query(value, 'A')[0])
-        except Exception:  # TODO: More specific Exception
+        except dns.resolver.NXDOMAIN:  # domain not found
             value = None
         return value
 
@@ -399,12 +391,12 @@ class IPAddress(GenericType):
     def sanitize(value):
 
         try:
-            network = ipaddress.ip_network(six.text_type(value))
+            network = ipaddress.ip_network(str(value))
         except ValueError:
             return None
 
         if network.num_addresses == 1:
-            value = six.text_type(network.network_address)
+            value = str(network.network_address)
         else:
             return None
 
@@ -429,7 +421,7 @@ class IPAddress(GenericType):
 
     @staticmethod
     def to_reverse(ip_addr):
-        return six.text_type(dns.reversename.from_address(ip_addr))
+        return str(dns.reversename.from_address(ip_addr))
 
 
 class IPNetwork(GenericType):
@@ -454,7 +446,7 @@ class IPNetwork(GenericType):
     def sanitize(value):
 
         try:
-            ipaddress.ip_network(six.text_type(value))
+            ipaddress.ip_network(str(value))
         except ValueError:
             return None
 
@@ -462,7 +454,7 @@ class IPNetwork(GenericType):
 
     @staticmethod
     def version(value):
-        return ipaddress.ip_network(six.text_type(value)).version
+        return ipaddress.ip_network(str(value)).version
 
 
 class JSON(GenericType):
@@ -479,7 +471,7 @@ class JSON(GenericType):
         if sanitize:
             value = JSON().sanitize(value)
 
-        if not isinstance(value, six.text_type):
+        if not isinstance(value, str):
             return False
 
         try:
@@ -496,7 +488,7 @@ class JSON(GenericType):
     def sanitize(value):
         if not value:
             return None
-        if isinstance(value, (six.binary_type, six.text_type)):
+        if isinstance(value, (str, bytes)):
             sanitized = GenericType.sanitize(value)
             if JSON.is_valid(sanitized):
                 return sanitized
@@ -539,7 +531,7 @@ class String(GenericType):
         if not GenericType().is_valid(value):
             return False
 
-        if type(value) is not six.text_type:
+        if type(value) is not str:
             return False
 
         if len(value) == 0:

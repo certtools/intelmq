@@ -18,11 +18,11 @@
 #    (6) Country
 #    (7) contact email address
 """
-from __future__ import unicode_literals
 
 import sys
 
 import dateutil
+
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
 from intelmq.lib.message import Event
@@ -33,13 +33,9 @@ class DshieldBlockParserBot(Bot):
     def process(self):
         report = self.receive_message()
 
-        if report is None or not report.contains("raw"):
-            self.acknowledge_message()
-            return
-
         raw_report = utils.base64_decode(report.get("raw"))
 
-        for row in raw_report.split('\n'):
+        for row in raw_report.splitlines():
 
             row = row.strip()
 

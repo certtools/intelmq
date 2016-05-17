@@ -3,7 +3,6 @@
 The source provides a JSON file with a dictionary. The keys of this dict are
 identifiers and the values are lists of domains.
 """
-from __future__ import unicode_literals
 
 import json
 import sys
@@ -73,9 +72,6 @@ class N6StompParserBot(Bot):
     def process(self):
         report = self.receive_message()
 
-        if report is None or not report.contains("raw"):
-            self.acknowledge_message()
-            return
 
         peek = utils.base64_decode(report.get("raw"))
         self.logger.debug("Peeking at event '%s'." % peek)

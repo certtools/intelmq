@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 import sys
 
 from intelmq.lib import utils
@@ -13,12 +12,8 @@ class CIArmyParserBot(Bot):
 
         report = self.receive_message()
 
-        if report is None or not report.contains("raw"):
-            self.acknowledge_message()
-            return
-
         raw_report = utils.base64_decode(report.get("raw"))
-        for row in raw_report.split('\n'):
+        for row in raw_report.splitlines():
 
             if row.startswith('#') or row == "":
                 continue
@@ -26,7 +21,7 @@ class CIArmyParserBot(Bot):
             event = Event(report)
 
             event.add('source.ip', row)
-            event.add('classification.type', u'blacklist')
+            event.add('classification.type', 'blacklist')
             event.add("raw", row)
 
             self.send_message(event)
