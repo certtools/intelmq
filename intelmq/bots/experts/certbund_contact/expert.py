@@ -43,7 +43,7 @@ class CERTBundKontaktExpertBot(Bot):
             ip = event.get(section + ".ip")
             asn = event.get(section + ".asn")
             fqdn = event.get(section + ".fqdn")
-            classification = event.get("event.classification.identifier")
+            classification = event.get("classification.identifier")
             notifications = self.lookup_contact(classification, ip, fqdn, asn)
             if notifications is None:
                 # stop processing the message because an error occurred
