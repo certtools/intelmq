@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import socket
 import sys
+import unicodedata
 
 import intelmq.lib.utils as utils
 from intelmq.lib.bot import Bot
@@ -29,6 +30,9 @@ class UDPBot(Bot):
         else:
             self.send(self.delimited(event))
 
+    def remove_control_char(self, s):
+        return "".join(ch for ch in s if unicodedata.category(ch)[0] != "C")
+
     def delimited(self, event):
         log_line = self.header
         for key, value in event.items():
@@ -37,7 +41,7 @@ class UDPBot(Bot):
         return log_line
 
     def send(self, rawdata):
-        data = utils.encode(rawdata)
+        data = utils.encode(self.remove_control_char(rawdata))
         try:
             self.udp.sendto(data, self.upd_address)
         except:
