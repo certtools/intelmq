@@ -64,39 +64,33 @@ class CERTBundKontaktExpertBot(Bot):
         certbund[key] = value
         event.add("extra", extra, force=True)
 
+    def lookup_manual_and_auto(self, cur, criterion, value, classification):
+        assert criterion in ("fqdn", "ip", "asn")
+        if not value:
+            return []
+        cur.execute("SELECT * FROM notifications_for_{}_manual(%s, %s)"
+                    .format(criterion), (value, classification))
+        result = cur.fetchall()
+        if not result:
+            cur.execute("SELECT * FROM notifications_for_{}(%s, %s)"
+                        .format(criterion), (value, classification))
+            return cur.fetchall()
+
     def lookup_contact(self, classification, ip, fqdn, asn):
         self.logger.debug("Looking up ip: %r, classification: %r",
                           ip, classification)
         try:
             cur = self.con.cursor()
             try:
-                #
-                # s1)  Event has FQDN:
-                #
-                if fqdn:
-                    # Yes -> Go to m1
-                    cur.execute("SELECT * FROM notifications_for_fqdn(%s, %s);",
-                                (fqdn, classification))
+                raw_result = self.lookup_manual_and_auto(cur, "fqdn", fqdn,
+                                                         classification)
 
-                #
-                # s2)  Event has IP:
-                #
-                elif ip:
-                    # Yes -> Go to m2
-                    cur.execute("SELECT * FROM notifications_for_ip(%s, %s);",
-                                (ip, classification))
-
-                #
-                # s3) Event has ASN:
-                #
-                elif asn:
-                    # Yes -> Go to m3
-                    cur.execute("SELECT * FROM notifications_for_asn(%s, %s);",
-                                (asn, classification))
-                else:
-                    # No -> No information available (not implemented)
-                    return []
-                raw_result = cur.fetchall()
+                ip_result = self.lookup_manual_and_auto(cur, "ip", ip,
+                                                        classification)
+                raw_result.extend(ip_result)
+                if not ip_result:
+                    raw_result.extend(self.lookup_manual_and_auto(
+                        cur, "asn", asn, classification))
             finally:
                 cur.close()
         except psycopg2.OperationalError:
