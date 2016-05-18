@@ -28,7 +28,7 @@ OUTPUT = [{'classification.identifier': 'conficker'},
           {'classification.identifier': 'gozi'},
           {'classification.identifier': 'feodo'},
           {'classification.identifier': 'zeus'},
-          {'feed.name': 'Other Feed'}
+          {},
           ]
 for index in range(len(INPUT)):
     copy1 = EVENT_TEMPL.copy()

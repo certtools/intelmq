@@ -39,24 +39,32 @@ class TestRedisOutputBot(test.BotTestCase, unittest.TestCase):
     def set_bot(cls):
         cls.bot_reference = RedisOutputBot
         cls.default_input_message = EXAMPLE_EVENT
+        cls.sysconfig = {"redis_server_ip": "127.0.0.1",
+                         "redis_server_port": 6379,
+                         "redis_db": 10,
+                         "redis_queue": "test-redis-output-queue",
+                         "redis_password": "none",
+                         "redis_timeout": "50000"}
 
     def test_event(self):
         """ Setup Redis connection """
-        redis_ip = test.BOT_CONFIG['redis_server_ip']
-        redis_port = test.BOT_CONFIG['redis_server_port']
-        redis_db = test.BOT_CONFIG['redis_db']
-        redis_queue = test.BOT_CONFIG['redis_queue']
-        redis_password = test.BOT_CONFIG['redis_password']
-        redis_timeout = test.BOT_CONFIG['redis_timeout']
-        redis_conn = redis.ConnectionPool(host=redis_ip, port=redis_port, db=redis_db)
-        redis_output = redis.StrictRedis(connection_pool=redis_conn, socket_timeout=redis_timeout, password=redis_password)
+        redis_ip = self.sysconfig['redis_server_ip']
+        redis_port = self.sysconfig['redis_server_port']
+        redis_db = self.sysconfig['redis_db']
+        redis_queue = self.sysconfig['redis_queue']
+        redis_password = self.sysconfig['redis_password']
+        redis_timeout = self.sysconfig['redis_timeout']
+        redis_conn = redis.ConnectionPool(host=redis_ip, port=redis_port,
+                                          db=redis_db)
+        redis_output = redis.StrictRedis(connection_pool=redis_conn,
+                                         socket_timeout=redis_timeout,
+                                         password=redis_password)
 
         self.run_bot()
 
-        """ Get the message from Redis """
+        # Get the message from Redis
         event = utils.decode(redis_output.lpop(redis_queue))
 
-        """ "assertMessageEqual" """
         self.assertIsInstance(event, str)
         event_dict = json.loads(event)
         self.assertDictEqual(EXAMPLE_EVENT, event_dict)

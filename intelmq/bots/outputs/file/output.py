@@ -15,11 +15,10 @@ class FileBot(Bot):
     def process(self):
         event = self.receive_message()
 
-        if event:
-            event_data = event.to_json()
-            self.file.write(event_data)
-            self.file.write("\n")
-            self.file.flush()
+        event_data = event.to_json()
+        self.file.write(event_data)
+        self.file.write("\n")
+        self.file.flush()
         self.acknowledge_message()
 
 
