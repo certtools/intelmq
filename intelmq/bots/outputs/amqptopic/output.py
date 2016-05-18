@@ -34,12 +34,12 @@ class AMQPTopicBot(Bot):
         self.connect_server()
 
     def connect_server(self):
-        self.logger.info('AMQP Connecting to {}:{}{} '.format(self._connection_host, self._connection_port, self._connection_vhost))
+        self.logger.info('AMQP Connecting to {}:{}/{} '.format(self._connection_host, self._connection_port, self._connection_vhost))
         try:
             self._connection = pika.BlockingConnection(self._connection_parameters)
         except:
             self.logger.exception(
-                'AMQP connection to {}:{}{} failled!!'.format(
+                'AMQP connection to {}:{}/{} failled!!'.format(
                     self._connection_host,
                     self._connection_port,
                     self._connection_vhost))
