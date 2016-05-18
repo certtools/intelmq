@@ -1,3 +1,10 @@
+intelmq (1.0.0~dev4~beta11) experimental; urgency=low
+
+  * New Release from customer-releases branch.
+    6fa20f245860ad3b2b66dbf5c8826a708394939b
+
+ -- Sascha Wilde <wilde@intevation.de>  Wed, 18 May 2016 15:58:34 +0200
+
 intelmq (1.0.0~dev4~beta10) experimental; urgency=low
 
   * Merged master, fixes
