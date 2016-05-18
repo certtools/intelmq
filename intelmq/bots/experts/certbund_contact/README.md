@@ -14,7 +14,8 @@ the IntelMQ source tree:
     su - postgres
 
     createdb contactdb
-    psql -f intelmq/bots/experts/certbund_contact/initdb.sql contactdb
+    psql -f intelmq/bots/experts/certbund_contact/initdb.sql   contactdb
+    psql -f intelmq/bots/experts/certbund_contact/defaults.sql contactdb
 
     createuser intelmq
     psql -c "GRANT SELECT ON ALL TABLES IN SCHEMA public TO intelmq;" contactdb
