@@ -299,7 +299,7 @@ CREATE TABLE organisation_to_manual_network (
 CREATE TABLE organisation_to_fqdn (
     organisation_id INTEGER,
     fqdn_id INTEGER,
-    notification_intervall INTEGER NOT NULL,
+    notification_interval INTEGER NOT NULL,
 
     PRIMARY KEY (organisation_id, fqdn_id),
 
@@ -309,7 +309,7 @@ CREATE TABLE organisation_to_fqdn (
 CREATE TABLE organisation_to_manual_fqdn (
     organisation_id INTEGER,
     fqdn_id INTEGER,
-    notification_intervall INTEGER NOT NULL,
+    notification_interval INTEGER NOT NULL,
 
     PRIMARY KEY (organisation_id, fqdn_id),
 
