@@ -267,6 +267,7 @@ CREATE INDEX template_classification_idx
 CREATE TABLE organisation_to_asn (
     organisation_id INTEGER,
     asn_id BIGINT,
+    notification_interval INTEGER NOT NULL, -- intervall in seconds
 
     PRIMARY KEY (organisation_id, asn_id),
 
