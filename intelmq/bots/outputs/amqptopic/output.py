@@ -1,13 +1,9 @@
 # -*- coding: utf-8 -*-
-
-from __future__ import unicode_literals
-
-import pika
 import sys
-import time
-import traceback
 
 from intelmq.lib.bot import Bot
+
+import pika
 
 
 class AMQPTopicBot(Bot):
@@ -18,45 +14,42 @@ class AMQPTopicBot(Bot):
     def init(self):
         self._connection = None
         self._channel = None
-        self._url = self.parameters.url
-        self._retries = self.parameters.retries
-        self._maxerrors = self.parameters.maxerrors
-        self._delay = self.parameters.delay
-        self._exchange = self.parameters.exchange
+        self._exchange = self.parameters.exchange_name
+        self._durable = bool(self.parameters.exchange_durable)
+        self._type = self.parameters.exchange_type
+        self._connection_host = self.parameters.connection_host
+        self._connection_port = int(self.parameters.connection_port)
+        self._connection_vhost = self.parameters.connection_vhost
+        self._connection_attempts = int(self.parameters.connection_attempts)
+        self._connection_heartbeat = int(self.parameters.connection_heartbeat)
+        self._credentials = pika.PlainCredentials(self.parameters.username, self.parameters.password)
+        self._connection_parameters = pika.ConnectionParameters(
+                                          host=self._connection_host, 
+                                          port=self._connection_port,
+                                          virtual_host=self._connection_vhost, 
+                                          connection_attempts=self._connection_attempts,
+                                          heartbeat_interval=self._connection_heartbeat, 
+                                          credentials=self._credentials)
         self._routing_key = self.parameters.routingkey
         self.connect_server()
 
     def connect_server(self):
-        self.logger.info("Connecting to %s", self._url)
-        for i in range(0, self._retries):
-            try:
-                self._connection = pika.BlockingConnection(
-                    pika.URLParameters(self._url))
-                break
-            except pika.exceptions.AMQPConnectionError:
-                self.logger.info(
-                    'Could not connect to server. Retrying... (%d/%d)' % (i + 1, self._retries))
-                time.sleep(self._delay)
-            except Exception:
-                traceback.print_exc()
-
-        # connection error
-        if self._connection is None:
-            self.logger.error('Connection retries exceeded: %d', self._retries)
-            # stop the bot
-            self.stop()
-
-        self._channel = self._connection.channel()
-        self._channel.exchange_declare(
-            exchange=self._exchange, type='topic', durable=True)
-        self._channel.confirm_delivery()
+        self.logger.info('AMQP Connecting to {}:{}{} '.format(self._connection_host, self._connection_port, self._connection_vhost))
+        try:
+            self._connection = pika.BlockingConnection(self._connection_parameters)
+        except:
+            self.logger.exception(
+                'AMQP connection to {}:{}{} failled!!'.format(
+                    self._connection_host,
+                    self._connection_port,
+                    self._connection_vhost))
+        else:
+            self._channel = self._connection.channel()
+            self._channel.exchange_declare(exchange=self._exchange, type=self._type, durable=self._durable)
+            self._channel.confirm_delivery()
 
     def process(self):
         event = self.receive_message()
-
-        if event is None:
-            self.acknowledge_message()
-            return
 
         # verify | set connection
         if None in (self._connection, self._channel):
@@ -72,19 +65,10 @@ class AMQPTopicBot(Bot):
                                                properties=properties,
                                                mandatory=True):
                 self.logger.error("Message sent but not confirmed")
-            self._errors = 0
         except Exception:
             self.logger.error("Error publishing the message")
-            traceback.print_exc()
-            if self._maxerrors > 0:
-                self._errors += 1
-                if self._errors == self._maxerrors:
-                    self.logger.error('Max errors limit reached!')
-                    self.acknowledge_message()
-                    self.stop()
-
-        self.acknowledge_message()
-
+        else:
+            self.acknowledge_message()
 
 if __name__ == "__main__":
     bot = AMQPTopicBot(sys.argv[1])
