@@ -421,12 +421,15 @@ AS $$
 BEGIN
     RETURN QUERY
       WITH matched_contacts (contact_id, email, format_id, notification_interval)
-        AS (SELECT c.id, c.email, c.format_id, ca.notification_interval
+        AS (SELECT c.id, c.email, c.format_id, orga.notification_interval
               FROM contact AS c
               JOIN organisation_to_contact AS oc ON oc.contact_id = c.id
-              JOIN autonomous_system AS a ON a.number = ca.asn_id
+              JOIN organisation_to_asn AS orga
+                ON orga.organisation_id = oc.organisation_id
+              JOIN autonomous_system AS a ON a.number = orga.asn_id
              WHERE a.number = event_asn)
-    SELECT mc.email, cos.organisation_name, cos.template_path, f.name, mc.notification_interval
+    SELECT mc.email, cos.organisation_name, cos.template_path, f.name,
+           mc.notification_interval
       FROM matched_contacts AS mc
       JOIN contact_organisation_settings AS cos ON mc.contact_id = cos.contact_id
       JOIN format AS f ON mc.format_id = f.id
@@ -444,12 +447,15 @@ AS $$
 BEGIN
     RETURN QUERY
       WITH matched_contacts (contact_id, email, format_id, notification_interval)
-        AS (SELECT c.id, c.email, c.format_id, oc.notification_interval
+        AS (SELECT c.id, c.email, c.format_id, orgf.notification_interval
               FROM contact AS c
               JOIN organisation_to_contact AS oc ON oc.contact_id = c.id
-              JOIN fqdn AS f ON f.id = oc.fqdn_id
+              JOIN organisation_to_fqdn AS orgf
+                ON orgf.organisation_id = oc.organisation_id
+              JOIN fqdn AS f ON f.id = orgf.fqdn_id
              WHERE f.fqdn = event_fqdn)
-    SELECT mc.email, cos.organisation_name, cos.template_path, f.name, mc.notification_interval
+    SELECT mc.email, cos.organisation_name, cos.template_path, f.name,
+           mc.notification_interval
       FROM matched_contacts AS mc
       JOIN contact_organisation_settings AS cos ON mc.contact_id = cos.contact_id
       JOIN format AS f ON mc.format_id = f.id
