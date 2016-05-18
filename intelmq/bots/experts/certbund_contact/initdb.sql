@@ -32,13 +32,32 @@ CREATE TABLE organisation (
     comment TEXT NOT NULL DEFAULT '',
 
     -- The org: nic handle in the RIPE DB, if available
-    ripe_org_hdl VARCHAR(100),  
+    ripe_org_hdl VARCHAR(100),
 
-    -- The Trusted Introducer (TI) handle or URL: for example https://www.trusted-introducer.org/directory/teams/certat.html
+    -- The Trusted Introducer (TI) handle or URL: for example
+    -- https://www.trusted-introducer.org/directory/teams/certat.html
     ti_handle    VARCHAR(500),
 
-    -- The FIRST.org handle or URL: for example https://api.first.org/data/v1/teams?q=aconet-cert
+    -- The FIRST.org handle or URL: for example
+    -- https://api.first.org/data/v1/teams?q=aconet-cert
     first_handle    VARCHAR(500),
+
+    FOREIGN KEY (sector_id) REFERENCES sector(id)
+);
+
+
+CREATE TABLE organisation_manual (
+    id SERIAL PRIMARY KEY,
+
+    name VARCHAR(500) UNIQUE NOT NULL,
+
+    sector_id INTEGER,
+
+    comment TEXT NOT NULL DEFAULT '',
+
+    ripe_org_hdl VARCHAR(100),
+    ti_handle    VARCHAR(500),
+    first_handle VARCHAR(500),
 
     FOREIGN KEY (sector_id) REFERENCES sector(id)
 );
@@ -58,9 +77,6 @@ CREATE TABLE contact (
 
     -- The data format to be used in emails sent to this contact.
     format_id INTEGER NOT NULL,
-
-    -- Whether this contact tuple is maintained manually.
-    is_manual BOOLEAN NOT NULL,
 
     comment TEXT NOT NULL DEFAULT '',
 
@@ -82,9 +98,6 @@ CREATE TABLE contact_manual (
     -- The data format to be used in emails sent to this contact.
     format_id INTEGER NOT NULL,
 
-    -- Whether this contact tuple is maintained manually.
-    is_manual BOOLEAN NOT NULL,
-
     comment TEXT NOT NULL DEFAULT '',
 
     FOREIGN KEY (format_id) REFERENCES format (id)
@@ -94,11 +107,13 @@ CREATE TABLE contact_manual (
 CREATE TABLE role (
     id INTEGER PRIMARY KEY,
 
-    -- free text for right now. We assume the regularl tags from the RIPE DB such as "tech-c" or "abuse-c"
-    role_type    VARCHAR (500) NOT NULL default 'abuse-c', -- possible values: "abuse-c", "billing-c" , "admin-c"
+    -- free text for right now. We assume the regular tags from the
+    -- RIPE DB such as "tech-c" or "abuse-c"
+    -- possible values: "abuse-c", "billing-c" , "admin-c"
+    role_type VARCHAR (500) NOT NULL default 'abuse-c',
     is_primary_contact BOOLEAN NOT NULL DEFAULT FALSE,
 
-    organisation_id INTEGER NOT NULL, 
+    organisation_id INTEGER NOT NULL,
     contact_id INTEGER NOT NULL,
 
     FOREIGN KEY (organisation_id) REFERENCES organisation(id),
@@ -109,8 +124,7 @@ CREATE TABLE role (
 CREATE TABLE role_manual (
     id INTEGER PRIMARY KEY,
 
-    -- free text for right now. We assume the regularl tags from the RIPE DB such as "tech-c" or "abuse-c"
-    role_type    VARCHAR (500) NOT NULL default 'abuse-c', -- possible values: "abuse-c", "billing-c" , "admin-c"
+    role_type    VARCHAR (500) NOT NULL default 'abuse-c',
     is_primary_contact BOOLEAN NOT NULL DEFAULT FALSE,
 
     organisation_id INTEGER NOT NULL,
@@ -131,16 +145,27 @@ CREATE TABLE autonomous_system (
     -- The atonomous system number
     number BIGINT PRIMARY KEY,
 
-    -- RIPE handle (see https://www.ripe.net/manage-ips-and-asns/db/support/documentation/ripe-database-documentation/ripe-database-structure/3-1-list-of-primary-objects)
-    -- and: https://www.ripe.net/manage-ips-and-asns/db/support/documentation/ripe-database-documentation/rpsl-object-types/4-2-descriptions-of-primary-objects/4-2-1-description-of-the-aut-num-object
-    ripe_aut_num  VARCHAR(100), 
-
-    -- Whether this autonomous system tuple is maintained manually.
-    is_manual BOOLEAN NOT NULL,
+    -- RIPE handle (see
+    -- https://www.ripe.net/manage-ips-and-asns/db/support/documentation/ripe-database-documentation/ripe-database-structure/3-1-list-of-primary-objects)
+    -- and:
+    -- https://www.ripe.net/manage-ips-and-asns/db/support/documentation/ripe-database-documentation/rpsl-object-types/4-2-descriptions-of-primary-objects/4-2-1-description-of-the-aut-num-object
+    ripe_aut_num  VARCHAR(100),
 
     comment TEXT NOT NULL DEFAULT ''
 );
 CREATE INDEX autonomous_system_number_idx ON autonomous_system (number);
+
+
+CREATE TABLE autonomous_system_manual (
+    -- The atonomous system number
+    number BIGINT PRIMARY KEY,
+
+    ripe_aut_num  VARCHAR(100),
+
+    comment TEXT NOT NULL DEFAULT ''
+);
+CREATE INDEX autonomous_system_number_manual_idx
+    ON autonomous_system_manual (number);
 
 
 -- A network
@@ -150,9 +175,6 @@ CREATE TABLE network (
 
     -- Network address as CIDR.
     address cidr UNIQUE NOT NULL,
-
-    -- Whether this network tuple is maintained manually.
-    is_manual BOOLEAN NOT NULL,
 
     comment TEXT NOT NULL DEFAULT ''
 );
@@ -189,9 +211,6 @@ CREATE TABLE network_manual (
     -- Network address as CIDR.
     address cidr UNIQUE NOT NULL,
 
-    -- Whether this network tuple is maintained manually.
-    is_manual BOOLEAN NOT NULL,
-
     comment TEXT NOT NULL DEFAULT ''
 );
 CREATE INDEX network_manual_cidr_lower_idx
@@ -208,9 +227,6 @@ CREATE TABLE fqdn (
     -- The fully qualified domain name
     fqdn TEXT UNIQUE NOT NULL,
 
-    -- Whether this FQDN-tuple is maintained manually.
-    is_manual BOOLEAN NOT NULL,
-
     comment TEXT NOT NULL DEFAULT ''
 );
 CREATE INDEX fqdn_fqdn_idx ON fqdn (fqdn);
@@ -220,9 +236,6 @@ CREATE TABLE fqdn_manual (
 
     -- The fully qualified domain name
     fqdn TEXT UNIQUE NOT NULL,
-
-    -- Whether this FQDN-tuple is maintained manually.
-    is_manual BOOLEAN NOT NULL,
 
     comment TEXT NOT NULL DEFAULT ''
 );
@@ -267,7 +280,7 @@ CREATE INDEX template_classification_idx
 CREATE TABLE organisation_to_asn (
     organisation_id INTEGER,
     asn_id BIGINT,
-    notification_interval INTEGER NOT NULL, -- intervall in seconds
+    notification_interval INTEGER NOT NULL, -- interval in seconds
 
     PRIMARY KEY (organisation_id, asn_id),
 
@@ -275,26 +288,41 @@ CREATE TABLE organisation_to_asn (
     FOREIGN KEY (organisation_id) REFERENCES organisation (id)
 );
 
+
+CREATE TABLE organisation_to_asn_manual (
+    organisation_id INTEGER,
+    asn_id BIGINT,
+    notification_interval INTEGER NOT NULL, -- interval in seconds
+
+    PRIMARY KEY (organisation_id, asn_id),
+
+    FOREIGN KEY (asn_id) REFERENCES autonomous_system_manual (number),
+    FOREIGN KEY (organisation_id) REFERENCES organisation_manual (id)
+);
+
+
 CREATE TABLE organisation_to_network (
     organisation_id INTEGER,
     net_id INTEGER,
-    notification_interval INTEGER NOT NULL, -- intervall in seconds
+    notification_interval INTEGER NOT NULL, -- interval in seconds
 
     PRIMARY KEY (organisation_id, net_id),
 
     FOREIGN KEY (organisation_id) REFERENCES organisation (id),
     FOREIGN KEY (net_id) REFERENCES network (id)
 );
-CREATE TABLE organisation_to_manual_network (
+
+CREATE TABLE organisation_to_network_manual (
     organisation_id INTEGER,
     net_id INTEGER,
-    notification_interval INTEGER NOT NULL, -- intervall in seconds
+    notification_interval INTEGER NOT NULL, -- interval in seconds
 
     PRIMARY KEY (organisation_id, net_id),
 
-    FOREIGN KEY (organisation_id) REFERENCES organisation (id),
+    FOREIGN KEY (organisation_id) REFERENCES organisation_manual (id),
     FOREIGN KEY (net_id) REFERENCES network_manual (id)
 );
+
 
 CREATE TABLE organisation_to_fqdn (
     organisation_id INTEGER,
@@ -306,14 +334,15 @@ CREATE TABLE organisation_to_fqdn (
     FOREIGN KEY (organisation_id) REFERENCES organisation (id),
     FOREIGN KEY (fqdn_id) REFERENCES fqdn (id)
 );
-CREATE TABLE organisation_to_manual_fqdn (
+
+CREATE TABLE organisation_to_fqdn_manual (
     organisation_id INTEGER,
     fqdn_id INTEGER,
     notification_interval INTEGER NOT NULL,
 
     PRIMARY KEY (organisation_id, fqdn_id),
 
-    FOREIGN KEY (organisation_id) REFERENCES organisation (id),
+    FOREIGN KEY (organisation_id) REFERENCES organisation_manual (id),
     FOREIGN KEY (fqdn_id) REFERENCES fqdn_manual (id)
 );
 
@@ -329,7 +358,8 @@ CREATE TABLE organisation_to_contact (
     FOREIGN KEY (contact_id) REFERENCES contact (id),
     FOREIGN KEY (organisation_id) REFERENCES organisation (id)
 );
-CREATE TABLE organisation_to_manual_contact (
+
+CREATE TABLE organisation_to_contact_manual (
     contact_id INTEGER,
     organisation_id INTEGER,
 
@@ -338,8 +368,9 @@ CREATE TABLE organisation_to_manual_contact (
     is_primary_contact BOOLEAN NOT NULL DEFAULT FALSE,
 
     FOREIGN KEY (contact_id) REFERENCES contact_manual (id),
-    FOREIGN KEY (organisation_id) REFERENCES organisation (id)
+    FOREIGN KEY (organisation_id) REFERENCES organisation_manual (id)
 );
+
 
 CREATE TABLE organisation_to_template (
     id SERIAL PRIMARY KEY,
@@ -356,6 +387,21 @@ CREATE INDEX organisation_to_template_template_idx
           ON organisation_to_template (template_id);
 
 
+CREATE TABLE organisation_to_template_manual (
+    id SERIAL PRIMARY KEY,
+    organisation_id INTEGER NOT NULL,
+    template_id INTEGER NOT NULL,
+
+    FOREIGN KEY (organisation_id) REFERENCES organisation_manual (id),
+    FOREIGN KEY (template_id) REFERENCES template (id)
+);
+
+CREATE INDEX organisation_to_template_manual_organisation_idx
+          ON organisation_to_template_manual (organisation_id);
+CREATE INDEX organisation_to_template_manual_template_idx
+          ON organisation_to_template_manual (template_id);
+
+
 -- Type for a single notification
 CREATE TYPE notification AS (
     email VARCHAR(100),
@@ -370,7 +416,6 @@ CREATE TYPE notification AS (
 -- associated templates for easy combination with the contact_to_*
 -- tables.
 CREATE OR REPLACE VIEW contact_organisation_settings (
-
     contact_id,
     organisation_name,
     template_path,
@@ -385,6 +430,21 @@ SELECT oc.contact_id, o.name, t.path, ci.name
     ON ci.id = t.classification_identifier_id;
 
 
+CREATE OR REPLACE VIEW contact_organisation_settings_manual (
+    contact_id,
+    organisation_name,
+    template_path,
+    classification_identifier
+) AS
+SELECT oc.contact_id, o.name, t.path, ci.name
+  FROM organisation_to_contact_manual AS oc
+  JOIN organisation_manual AS o ON o.id = oc.organisation_id
+  JOIN organisation_to_template_manual AS ot ON ot.organisation_id = o.id
+  JOIN template AS t ON ot.template_id = t.id
+  JOIN classification_identifier AS ci
+    ON ci.id = t.classification_identifier_id;
+
+
 -- Lookup all notifications for a given IP address and event
 -- classification identifier
 CREATE OR REPLACE FUNCTION
@@ -393,7 +453,8 @@ RETURNS SETOF notification
 AS $$
 BEGIN
     RETURN QUERY
-      WITH matched_contacts (contact_id, email, format_id, notification_interval)
+      WITH matched_contacts (contact_id, email, format_id,
+                             notification_interval)
         AS (SELECT c.id, c.email, c.format_id, orgn.notification_interval
               FROM contact c
               JOIN organisation_to_contact AS oc ON oc.contact_id = c.id
@@ -405,7 +466,35 @@ BEGIN
     SELECT mc.email, cos.organisation_name, cos.template_path, f.name,
            mc.notification_interval
       FROM matched_contacts mc
-      JOIN contact_organisation_settings AS cos ON mc.contact_id = cos.contact_id
+      JOIN contact_organisation_settings AS cos
+        ON mc.contact_id = cos.contact_id
+      JOIN format f ON mc.format_id = f.id
+     WHERE cos.classification_identifier = event_classification;
+END;
+$$ LANGUAGE plpgsql VOLATILE;
+
+
+CREATE OR REPLACE FUNCTION
+notifications_for_ip_manual(event_ip INET, event_classification VARCHAR(100))
+RETURNS SETOF notification
+AS $$
+BEGIN
+    RETURN QUERY
+      WITH matched_contacts (contact_id, email, format_id,
+                             notification_interval)
+        AS (SELECT c.id, c.email, c.format_id, orgn.notification_interval
+              FROM contact_manual c
+              JOIN organisation_to_contact_manual AS oc ON oc.contact_id = c.id
+              JOIN organisation_to_network_manual AS orgn
+                ON orgn.organisation_id = oc.organisation_id
+              JOIN network_manual AS n ON n.id = orgn.net_id
+             WHERE host(network(n.address)) <= host(event_ip)
+               AND host(event_ip) <= host(broadcast(n.address)))
+    SELECT mc.email, cos.organisation_name, cos.template_path, f.name,
+           mc.notification_interval
+      FROM matched_contacts mc
+      JOIN contact_organisation_settings_manual AS cos
+        ON mc.contact_id = cos.contact_id
       JOIN format f ON mc.format_id = f.id
      WHERE cos.classification_identifier = event_classification;
 END;
@@ -420,7 +509,8 @@ RETURNS SETOF notification
 AS $$
 BEGIN
     RETURN QUERY
-      WITH matched_contacts (contact_id, email, format_id, notification_interval)
+      WITH matched_contacts (contact_id, email, format_id,
+                             notification_interval)
         AS (SELECT c.id, c.email, c.format_id, orga.notification_interval
               FROM contact AS c
               JOIN organisation_to_contact AS oc ON oc.contact_id = c.id
@@ -431,12 +521,38 @@ BEGIN
     SELECT mc.email, cos.organisation_name, cos.template_path, f.name,
            mc.notification_interval
       FROM matched_contacts AS mc
-      JOIN contact_organisation_settings AS cos ON mc.contact_id = cos.contact_id
+      JOIN contact_organisation_settings AS cos
+        ON mc.contact_id = cos.contact_id
       JOIN format AS f ON mc.format_id = f.id
      WHERE cos.classification_identifier = event_classification;
 END;
 $$ LANGUAGE plpgsql VOLATILE;
 
+CREATE OR REPLACE FUNCTION
+notifications_for_asn_manual(event_asn BIGINT,
+                             event_classification VARCHAR(100))
+RETURNS SETOF notification
+AS $$
+BEGIN
+    RETURN QUERY
+      WITH matched_contacts (contact_id, email, format_id,
+                             notification_interval)
+        AS (SELECT c.id, c.email, c.format_id, orga.notification_interval
+              FROM contact_manual AS c
+              JOIN organisation_to_contact_manual AS oc ON oc.contact_id = c.id
+              JOIN organisation_to_asn_manual AS orga
+                ON orga.organisation_id = oc.organisation_id
+              JOIN autonomous_system_manual AS a ON a.number = orga.asn_id
+             WHERE a.number = event_asn)
+    SELECT mc.email, cos.organisation_name, cos.template_path, f.name,
+           mc.notification_interval
+      FROM matched_contacts AS mc
+      JOIN contact_organisation_settings_manual AS cos
+        ON mc.contact_id = cos.contact_id
+      JOIN format AS f ON mc.format_id = f.id
+     WHERE cos.classification_identifier = event_classification;
+END;
+$$ LANGUAGE plpgsql VOLATILE;
 
 -- Lookup all notifications for a given FQDN and event classification
 -- identifier
@@ -457,7 +573,35 @@ BEGIN
     SELECT mc.email, cos.organisation_name, cos.template_path, f.name,
            mc.notification_interval
       FROM matched_contacts AS mc
-      JOIN contact_organisation_settings AS cos ON mc.contact_id = cos.contact_id
+      JOIN contact_organisation_settings AS cos
+        ON mc.contact_id = cos.contact_id
+      JOIN format AS f ON mc.format_id = f.id
+     WHERE cos.classification_identifier = event_classification;
+END;
+$$ LANGUAGE plpgsql VOLATILE;
+
+CREATE OR REPLACE FUNCTION
+notifications_for_fqdn_manual(event_fqdn TEXT,
+                              event_classification VARCHAR(100))
+RETURNS SETOF notification
+AS $$
+BEGIN
+    RETURN QUERY
+      WITH matched_contacts (contact_id, email, format_id,
+                             notification_interval)
+        AS (SELECT c.id, c.email, c.format_id, orgf.notification_interval
+              FROM contact_manual AS c
+              JOIN organisation_to_contact_manual AS oc
+	        ON oc.contact_id = c.id
+              JOIN organisation_to_fqdn_manual AS orgf
+                ON orgf.organisation_id = oc.organisation_id
+              JOIN fqdn_manual AS f ON f.id = orgf.fqdn_id
+             WHERE f.fqdn = event_fqdn)
+    SELECT mc.email, cos.organisation_name, cos.template_path, f.name,
+           mc.notification_interval
+      FROM matched_contacts AS mc
+      JOIN contact_organisation_settings_manual AS cos
+        ON mc.contact_id = cos.contact_id
       JOIN format AS f ON mc.format_id = f.id
      WHERE cos.classification_identifier = event_classification;
 END;
