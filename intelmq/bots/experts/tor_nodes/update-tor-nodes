@@ -2,6 +2,13 @@
 # Update tor nodes data
 # The target file must be given as only argument on the commandline.
 PATH=/bin:/usr/bin
+
+# set the http proxy here:
+# export http_proxy=http://proxy.example.com:8080/
+# export HTTPS_PROXY=https://proxy.example.com:8080/
+# export FTP_PROXY=ftp://proxy.example.com:8080/
+
+
 set -e
 trap cleanup EXIT
 
@@ -29,8 +36,8 @@ fetch_and_install()
 {
   cd "$TMP_DIR"
   curl -s -O https://internet2.us/static/latest.bz2
-  bunzip2 -c latest.bz2 >tor_nodes.dat
-  mv tor_nodes.dat "$DEST_FILE"
+  bunzip2 -q -c latest.bz2 >tor_nodes.dat
+  mv -f tor_nodes.dat "$DEST_FILE"
 }
 
 setup "$@"
