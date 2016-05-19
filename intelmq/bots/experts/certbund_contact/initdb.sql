@@ -347,31 +347,6 @@ CREATE TABLE organisation_to_fqdn_automatic (
 );
 
 
-CREATE TABLE organisation_to_contact (
-    contact_id INTEGER,
-    organisation_id INTEGER,
-
-    PRIMARY KEY (contact_id, organisation_id),
-
-    is_primary_contact BOOLEAN NOT NULL DEFAULT FALSE,
-
-    FOREIGN KEY (contact_id) REFERENCES contact (id),
-    FOREIGN KEY (organisation_id) REFERENCES organisation (id)
-);
-
-CREATE TABLE organisation_to_contact_automatic (
-    contact_id INTEGER,
-    organisation_id INTEGER,
-
-    PRIMARY KEY (contact_id, organisation_id),
-
-    is_primary_contact BOOLEAN NOT NULL DEFAULT FALSE,
-
-    FOREIGN KEY (contact_id) REFERENCES contact_automatic (id),
-    FOREIGN KEY (organisation_id) REFERENCES organisation_automatic (id)
-);
-
-
 CREATE TABLE organisation_to_template (
     id SERIAL PRIMARY KEY,
     organisation_id INTEGER NOT NULL,
@@ -454,11 +429,11 @@ BEGIN
       WITH matched_contacts (email, format_id, notification_interval,
                              organisation_id)
         AS (SELECT c.email, c.format_id, orgn.notification_interval,
-                   oc.organisation_id
+                   r.organisation_id
               FROM contact c
-              JOIN organisation_to_contact AS oc ON oc.contact_id = c.id
+              JOIN role AS r ON r.contact_id = c.id
               JOIN organisation_to_network AS orgn
-                ON orgn.organisation_id = oc.organisation_id
+                ON orgn.organisation_id = r.organisation_id
               JOIN network AS n ON n.id = orgn.net_id
              WHERE host(network(n.address)) <= host(event_ip)
                AND host(event_ip) <= host(broadcast(n.address)))
@@ -483,12 +458,11 @@ BEGIN
       WITH matched_contacts (email, format_id, notification_interval,
                              organisation_id)
         AS (SELECT c.email, c.format_id, orgn.notification_interval,
-                   oc.organisation_id
+                   r.organisation_id
               FROM contact_automatic c
-              JOIN organisation_to_contact_automatic AS oc
-                ON oc.contact_id = c.id
+              JOIN role_automatic AS r ON r.contact_id = c.id
               JOIN organisation_to_network_automatic AS orgn
-                ON orgn.organisation_id = oc.organisation_id
+                ON orgn.organisation_id = r.organisation_id
               JOIN network_automatic AS n ON n.id = orgn.net_id
              WHERE host(network(n.address)) <= host(event_ip)
                AND host(event_ip) <= host(broadcast(n.address)))
@@ -514,11 +488,11 @@ BEGIN
       WITH matched_contacts (email, format_id, notification_interval,
                              organisation_id)
         AS (SELECT c.email, c.format_id, orga.notification_interval,
-                   oc.organisation_id
+                   r.organisation_id
               FROM contact AS c
-              JOIN organisation_to_contact AS oc ON oc.contact_id = c.id
+              JOIN role AS r ON r.contact_id = c.id
               JOIN organisation_to_asn AS orga
-                ON orga.organisation_id = oc.organisation_id
+                ON orga.organisation_id = r.organisation_id
               JOIN autonomous_system AS a ON a.number = orga.asn_id
              WHERE a.number = event_asn)
     SELECT mc.email, os.organisation_name, os.template_path, f.name,
@@ -541,12 +515,11 @@ BEGIN
       WITH matched_contacts (email, format_id, notification_interval,
                              organisation_id)
         AS (SELECT c.email, c.format_id, orga.notification_interval,
-                   oc.organisation_id
+                   r.organisation_id
               FROM contact_automatic AS c
-              JOIN organisation_to_contact_automatic AS oc
-                ON oc.contact_id = c.id
+              JOIN role_automatic AS r ON r.contact_id = c.id
               JOIN organisation_to_asn_automatic AS orga
-                ON orga.organisation_id = oc.organisation_id
+                ON orga.organisation_id = r.organisation_id
               JOIN autonomous_system_automatic AS a ON a.number = orga.asn_id
              WHERE a.number = event_asn)
     SELECT mc.email, os.organisation_name, os.template_path, f.name,
@@ -570,11 +543,11 @@ BEGIN
       WITH matched_contacts (email, format_id, notification_interval,
                              organisation_id)
         AS (SELECT c.email, c.format_id, orgf.notification_interval,
-                   oc.organisation_id
+                   r.organisation_id
               FROM contact AS c
-              JOIN organisation_to_contact AS oc ON oc.contact_id = c.id
+              JOIN role AS r ON r.contact_id = c.id
               JOIN organisation_to_fqdn AS orgf
-                ON orgf.organisation_id = oc.organisation_id
+                ON orgf.organisation_id = r.organisation_id
               JOIN fqdn AS f ON f.id = orgf.fqdn_id
              WHERE f.fqdn = event_fqdn)
     SELECT mc.email, os.organisation_name, os.template_path, f.name,
@@ -597,12 +570,11 @@ BEGIN
       WITH matched_contacts (email, format_id, notification_interval,
                              organisation_id)
         AS (SELECT c.email, c.format_id, orgf.notification_interval,
-                   oc.organisation_id
+                   r.organisation_id
               FROM contact_automatic AS c
-              JOIN organisation_to_contact_automatic AS oc
-                ON oc.contact_id = c.id
+              JOIN role_automatic AS r ON r.contact_id = c.id
               JOIN organisation_to_fqdn_automatic AS orgf
-                ON orgf.organisation_id = oc.organisation_id
+                ON orgf.organisation_id = r.organisation_id
               JOIN fqdn_automatic AS f ON f.id = orgf.fqdn_id
              WHERE f.fqdn = event_fqdn)
     SELECT mc.email, os.organisation_name, os.template_path, f.name,
