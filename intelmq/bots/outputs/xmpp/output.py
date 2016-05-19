@@ -37,7 +37,7 @@ class XMPPOutputBot(Bot):
             self.logger.error('Could not import sleekxmpp. Please install it.')
             self.stop()
 
-        self.xmpp = XMPPClientBot(self.parameters.xmpp_user + '@'
+        self.xmpp = XMPPClient(self.parameters.xmpp_user + '@'
                                   + self.parameters.xmpp_server,
                                   self.parameters.xmpp_password,
                                   self.logger)
@@ -69,12 +69,15 @@ class XMPPOutputBot(Bot):
             self.acknowledge_message()
 
     def stop(self):
-        self.xmpp.disconnect()
-        self.logger.info("Disconnected from xmpp")
+        if self.xmpp:
+            self.xmpp.disconnect()
+            self.logger.info("Disconnected from XMPP")
 
-        super(XMPPOutputBot, self).stop()
+            super(XMPPOutputBot, self).stop()
+        else:
+            self.logger.info("There was no XMPPClient I could stop")
 
-class XMPPClientBot(sleekxmpp.ClientXMPP):
+class XMPPClient(sleekxmpp.ClientXMPP):
     def __init__(self,
                  jid,
                  password,
