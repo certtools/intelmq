@@ -307,6 +307,39 @@
                 "rate_limit": 10800
             }
         },
+        "Generic Mail Attachment Fetcher": {
+            "description": "Monitor IMAP mailboxes and retrieve mail attachments",
+            "module": "intelmq.bots.collectors.mail.collector_mail_attach",
+            "parameters": {
+                "attach_regex": "csv.zip",
+                "attach_unzip": true,
+                "feed": "",
+                "folder": "INBOX",
+                "mail_host": "<host>",
+                "mail_password": "<password>",
+                "mail_ssl": true,
+                "mail_user": "<user>",
+                "rate_limit": "60",
+                "subject_regex": "<subject>"
+            }
+        },
+        "Generic Mail URL Fetcher": {
+            "description": "Monitor IMAP mailboxes and fetch files from URLs contained in mail bodies",
+            "module": "intelmq.bots.collectors.mail.collector_mail_url",
+            "parameters": {
+                "feed": "",
+                "folder": "INBOX",
+                "http_password": "<password>",
+                "http_user": "<user>",
+                "mail_host": "<host>",
+                "mail_password": "<password>",
+                "mail_ssl": true,
+                "mail_user": "<user>",
+                "rate_limit": "60",
+                "subject_regex": "<subject>",
+                "url_regex": "http://"
+            }
+        },
         "HpHosts": {
             "description": "HPHost Collector is the bot responsible to get the report from source of information.",
             "module": "intelmq.bots.collectors.http.collector_http",
@@ -452,8 +485,10 @@
         },
         "ShadowServer Chargen": {
             "description": "ShadowServer Chargen Collector is the bot responsible to get the report from source of information. https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-Chargen",
-            "module": "intelmq.bots.collectors.mail.mail-url",
+            "module": "intelmq.bots.collectors.mail.collector_mail_url",
             "parameters": {
+                "accuracy": "",
+                "feed": "",
                 "folder": "Inbox.shadowserver",
                 "mail_host": "<host>",
                 "mail_password": "<password>",
@@ -466,7 +501,7 @@
         },
         "ShadowServer Drone": {
             "description": "ShadowServer Drone Collector is the bot responsible to get the report from source of information. https://www.shadowserver.org/wiki/pmwiki.php/Services/Botnet-Drone-Hadoop",
-            "module": "intelmq.bots.collectors.mail.mail-attach",
+            "module": "intelmq.bots.collectors.mail.collector_mail_attach",
             "parameters": {
                 "attach_regex": "csv.zip",
                 "attach_unzip": true,
@@ -481,7 +516,7 @@
         },
         "ShadowServer Microsoft Sinkhole": {
             "description": "ShadowServer Microsoft Sinkhole Collector is the bot responsible to get the report from source of information. https://www.shadowserver.org/wiki/pmwiki.php/Services/Microsoft-Sinkhole",
-            "module": "intelmq.bots.collectors.mail.mail-attach",
+            "module": "intelmq.bots.collectors.mail.collector_mail_attach",
             "parameters": {
                 "attach_regex": "csv.zip",
                 "attach_unzip": true,
@@ -496,10 +531,12 @@
         },
         "ShadowServer QOTD": {
             "description": "ShadowServer QOTD Collector is the bot responsible to get the report from source of information. https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-QOTD",
-            "module": "intelmq.bots.collectors.mail.mail-url",
+            "module": "intelmq.bots.collectors.mail.collector_mail_url",
             "parameters": {
+                "accuracy": "",
                 "attach_regex": "csv.zip",
                 "attach_unzip": true,
+                "feed": "",
                 "folder": "Inbox.shadowserver",
                 "mail_host": "<host>",
                 "mail_password": "<password>",
@@ -511,7 +548,7 @@
         },
         "ShadowServer SNMP": {
             "description": "ShadowServer Microsoft Sinkhole Collector is the bot responsible to get the report from source of information. https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-SNMP",
-            "module": "intelmq.bots.collectors.mail.mail-attach",
+            "module": "intelmq.bots.collectors.mail.collector_mail_attach",
             "parameters": {
                 "attach_regex": "csv.zip",
                 "attach_unzip": true,
