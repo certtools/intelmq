@@ -68,11 +68,11 @@ class CERTBundKontaktExpertBot(Bot):
         assert criterion in ("fqdn", "ip", "asn")
         if not value:
             return []
-        cur.execute("SELECT * FROM notifications_for_{}_manual(%s, %s)"
+        cur.execute("SELECT * FROM notifications_for_{}(%s, %s)"
                     .format(criterion), (value, classification))
         result = cur.fetchall()
         if not result:
-            cur.execute("SELECT * FROM notifications_for_{}(%s, %s)"
+            cur.execute("SELECT * FROM notifications_for_{}_automatic(%s, %s)"
                         .format(criterion), (value, classification))
             return cur.fetchall()
 
