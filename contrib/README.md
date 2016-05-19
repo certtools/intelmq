@@ -9,3 +9,5 @@ This directory contains contributed scripts which are helpful for maintaining an
 * **prettyprint**: prints the json output for file-output bot prettyly
 * **vagrant**: vagrantfile to create virtual machines with IntelMQ. **Out of date**
 * **vagrant-ansible**: Configures IntelMQ plus the whole elasticsearch stack. **Out of date**
+* **config-backup**: simple Makefile for doing a `make backup` inside of /opt/intelmq in order to preserve the latest configs
+* **logrotate**: an example scrpt for Debian's /etc/logrotate.d/ directory.
