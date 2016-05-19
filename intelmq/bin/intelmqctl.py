@@ -295,7 +295,9 @@ Get logs of a bot:
             return 'error'
         else:
             module = importlib.import_module(bot_module)
-            botname = [name for name in dir(module) if hasattr(getattr(module, name), 'process')][0]
+            botname = [name for name in dir(module)
+                       if hasattr(getattr(module, name), 'process') and
+                       name.endswith('Bot')][0]
             bot = getattr(module, botname)
             instance = bot(bot_id)
             instance.start()
