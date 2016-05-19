@@ -130,7 +130,7 @@ CREATE TABLE role_automatic (
     organisation_id INTEGER NOT NULL,
     contact_id INTEGER NOT NULL,
 
-    FOREIGN KEY (organisation_id) REFERENCES organisation(id),
+    FOREIGN KEY (organisation_id) REFERENCES organisation_automatic(id),
     FOREIGN KEY (contact_id) REFERENCES contact_automatic(id)
 );
 
