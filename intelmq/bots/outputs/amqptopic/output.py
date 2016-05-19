@@ -1,72 +1,87 @@
 # -*- coding: utf-8 -*-
 import sys
 
-from intelmq.lib.bot import Bot
-
 import pika
+from intelmq.lib.bot import Bot
 
 
 class AMQPTopicBot(Bot):
 
-    CONTENT_TYPE = 'application/json'
-    DELIVERY_MODE = 1
-
     def init(self):
-        self._connection = None
-        self._channel = None
-        self._exchange = self.parameters.exchange_name
-        self._durable = bool(self.parameters.exchange_durable)
-        self._type = self.parameters.exchange_type
-        self._connection_host = self.parameters.connection_host
-        self._connection_port = int(self.parameters.connection_port)
-        self._connection_vhost = self.parameters.connection_vhost
-        self._connection_attempts = int(self.parameters.connection_attempts)
-        self._connection_heartbeat = int(self.parameters.connection_heartbeat)
-        self._credentials = pika.PlainCredentials(self.parameters.username, self.parameters.password)
-        self._connection_parameters = pika.ConnectionParameters(
-                                          host=self._connection_host, 
-                                          port=self._connection_port,
-                                          virtual_host=self._connection_vhost, 
-                                          connection_attempts=self._connection_attempts,
-                                          heartbeat_interval=self._connection_heartbeat, 
-                                          credentials=self._credentials)
-        self._routing_key = self.parameters.routingkey
+        self.connection = None
+        self.channel = None
+        self.keep_raw_field = bool(self.parameters.keep_raw_field)
+        self.delivery_mode = int(self.parameters.delivery_mode)
+        self.content_type = self.parameters.content_type
+        self.exchange = self.parameters.exchange_name
+        self.require_confirmation = bool(self.parameters.require_confirmation)
+        self.durable = bool(self.parameters.exchange_durable)
+        self.exchange_type = self.parameters.exchange_type
+        self.connection_host = self.parameters.connection_host
+        self.connection_port = int(self.parameters.connection_port)
+        self.connection_vhost = self.parameters.connection_vhost
+        self.connection_attempts = int(self.parameters.connection_attempts)
+        self.connection_heartbeat = int(self.parameters.connection_heartbeat)
+        self.credentials = pika.PlainCredentials(self.parameters.username, self.parameters.password)
+        self.connection_parameters = pika.ConnectionParameters(
+            host=self.connection_host,
+            port=self.connection_port,
+            virtual_host=self.connection_vhost,
+            connection_attempts=self.connection_attempts,
+            heartbeat_interval=self.connection_heartbeat,
+            credentials=self.credentials)
+        self.routing_key = self.parameters.routing_key
+        self.properties = pika.BasicProperties(
+            content_type=self.content_type, delivery_mode=self.delivery_mode)
         self.connect_server()
 
     def connect_server(self):
-        self.logger.info('AMQP Connecting to {}:{}/{} '.format(self._connection_host, self._connection_port, self._connection_vhost))
+        self.logger.info('AMQP Connecting to {}:{}/{} '.format(self.connection_host,
+                                                               self.connection_port, self.connection_vhost))
         try:
-            self._connection = pika.BlockingConnection(self._connection_parameters)
-        except:
+            self.connection = pika.BlockingConnection(self.connection_parameters)
+        except pika.exceptions.AMQPConnectionError:
             self.logger.exception(
                 'AMQP connection to {}:{}/{} failled!!'.format(
-                    self._connection_host,
-                    self._connection_port,
-                    self._connection_vhost))
+                    self.connection_host,
+                    self.connection_port,
+                    self.connection_vhost))
         else:
-            self._channel = self._connection.channel()
-            self._channel.exchange_declare(exchange=self._exchange, type=self._type, durable=self._durable)
-            self._channel.confirm_delivery()
+            self.logger.info('AMQP Connected!! to {}:{}/{} '.format(self.connection_host,
+                                                                    self.connection_port, self.connection_vhost))
+            self.channel = self.connection.channel()
+            self.channel.exchange_declare(exchange=self.exchange, type=self.exchange_type, durable=self.durable)
+            self.channel.confirm_delivery()
 
     def process(self):
-        event = self.receive_message()
-
-        # verify | set connection
-        if None in (self._connection, self._channel):
-            self.connect_server()
-
-        properties = pika.BasicProperties(
-            content_type=self.CONTENT_TYPE, delivery_mode=self.DELIVERY_MODE)
+        ''' Stop the Bot if cannot connect to AMQP Server after the defined connection attempts '''
 
         try:
-            if not self._channel.basic_publish(exchange=self._exchange,
-                                               routing_key=self._routing_key,
-                                               body=event.to_json(),
-                                               properties=properties,
-                                               mandatory=True):
+            if (self.connection.is_closed or self.channel.is_closed):
+                self.connect_server()
+        except AttributeError:
+            self.logger.exception('Bad configuration or server unavailable! Exiting...')
+            self.stop()
+
+        event = self.receive_message()
+
+        if (not self.keep_raw_field):
+            del event['raw']
+
+        ''' If routing key or exchange name are invalid or non existent, the message is accepted by the server but we receive no confirmation '''
+        ''' Allways require confirmation. If parameter require_confirmation is True and no confirmation is received, raise error. '''
+
+        try:
+            if not self.channel.basic_publish(exchange=self.exchange,
+                                              routing_key=self.routing_key,
+                                              body=event.to_json(),
+                                              properties=self.properties,
+                                              mandatory=True):
                 self.logger.error("Message sent but not confirmed")
-        except Exception:
-            self.logger.error("Error publishing the message")
+                if self.require_confirmation:
+                    raise NameError('Message sent but not confirmed')
+        except (pika.exceptions.ChannelError, pika.exceptions.AMQPChannelError, pika.exceptions.NackError):
+            self.logger.exception("Error publishing the message")
         else:
             self.acknowledge_message()
 

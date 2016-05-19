@@ -8,5 +8,4 @@ redis>=2.10.3
 requests>=2.7.0
 setuptools>=0.9
 wheel>=0.21
-pika>=0.10.0
 
