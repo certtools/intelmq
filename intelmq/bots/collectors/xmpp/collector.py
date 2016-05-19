@@ -40,7 +40,7 @@ class XMPPCollectorBot(Bot):
 
     def process(self):
         if self.xmpp is None:
-            self.xmpp = XMPPClientBot(self.parameters.xmpp_user + '@'
+            self.xmpp = XMPPClient(self.parameters.xmpp_user + '@'
                                       + self.parameters.xmpp_server,
                                       self.parameters.xmpp_password,
                                       self.parameters.xmpp_room,
@@ -57,10 +57,13 @@ class XMPPCollectorBot(Bot):
             self.xmpp.add_event_handler("groupchat_message", self.log_message)
 
     def stop(self):
-        self.xmpp.disconnect()
-        self.logger.info("Disconnected from xmpp")
+        if self.xmpp:
+            self.xmpp.disconnect()
+            self.logger.info("Disconnected from XMPP")
 
-        super(XMPPCollectorBot, self).stop()
+            super(XMPPCollectorBot, self).stop()
+        else:
+            self.logger.info("There was no XMPPClient I could stop.")
 
     def log_message(self, msg):
         self.logger.debug("Received Stanza: %r , from %r", msg['body'],
@@ -77,7 +80,7 @@ class XMPPCollectorBot(Bot):
             self.send_message(report)
 
 
-class XMPPClientBot(sleekxmpp.ClientXMPP):
+class XMPPClient(sleekxmpp.ClientXMPP):
     def __init__(self,
                  jid,
                  password,
@@ -109,7 +112,7 @@ class XMPPClientBot(sleekxmpp.ClientXMPP):
             self.logger.error('Server is taking too long to respond')
             self.disconnect()
 
-        if self.xmpp_room:
+        if self.xmpp_room and self.plugin.get('xep_0045'):
             self.logger.debug("Joining room: %s", self.xmpp_room)
             pwd = self.xmpp_room_password if self.xmpp_room_password else ""
             self.plugin['xep_0045'].joinMUC(self.xmpp_room,
