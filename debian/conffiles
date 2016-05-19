@@ -1,0 +1,9 @@
+/opt/intelmq/var/lib/bots/modify/example/modify.conf
+/opt/intelmq/etc/harmonization.conf
+/opt/intelmq/etc/BOTS
+/opt/intelmq/etc/pipeline.conf
+/opt/intelmq/etc/defaults.conf
+/opt/intelmq/etc/startup.conf
+/opt/intelmq/etc/system.conf
+/opt/intelmq/etc/runtime.conf
+/etc/cron.d/intelmq-update-data

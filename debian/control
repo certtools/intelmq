@@ -16,7 +16,8 @@ Depends: ${misc:Depends}, ${python3:Depends}, libcurl4-gnutls-dev,
  python3-requests (>= 2.2.1), python3-termstyle (>= 0.1.10), python3-tz,
  redis-server
 Recommends: python3-imbox (>= 0.8), python3-pyasn (>= 1.5.0),
- python3-stomp.py (>= 4.1.9)
+ python3-stomp.py (>= 4.1.9), python3-sleekxmpp (>= 1.3.1),
+ python3-geoip2 (>= 2.2.0)
 Description: Solution for CERTs to process data feeds, paste
  IntelMQ is a solution for CERTs for collecting and processing security 
  feeds, pastebins, tweets and log files using a message queuing protocol. 
