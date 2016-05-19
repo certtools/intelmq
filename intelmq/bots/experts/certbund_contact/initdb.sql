@@ -413,32 +413,30 @@ CREATE TYPE notification AS (
 
 
 -- View combining the information about organisations and their
--- associated templates for easy combination with the contact_to_*
--- tables.
-CREATE OR REPLACE VIEW contact_organisation_settings (
-    contact_id,
+-- associated templates for easy combination with the organisation_to_*
+-- tables for IP, FQDN and ASN.
+CREATE OR REPLACE VIEW organisation_settings (
+    organisation_id,
     organisation_name,
     template_path,
     classification_identifier
 ) AS
-SELECT oc.contact_id, o.name, t.path, ci.name
-  FROM organisation_to_contact AS oc
-  JOIN organisation AS o ON o.id = oc.organisation_id
+SELECT o.id, o.name, t.path, ci.name
+  FROM organisation AS o
   JOIN organisation_to_template AS ot ON ot.organisation_id = o.id
   JOIN template AS t ON ot.template_id = t.id
   JOIN classification_identifier AS ci
     ON ci.id = t.classification_identifier_id;
 
 
-CREATE OR REPLACE VIEW contact_organisation_settings_automatic (
-    contact_id,
+CREATE OR REPLACE VIEW organisation_settings_automatic (
+    organisation_id,
     organisation_name,
     template_path,
     classification_identifier
 ) AS
-SELECT oc.contact_id, o.name, t.path, ci.name
-  FROM organisation_to_contact_automatic AS oc
-  JOIN organisation_automatic AS o ON o.id = oc.organisation_id
+SELECT o.id, o.name, t.path, ci.name
+  FROM organisation_automatic AS o
   JOIN organisation_to_template_automatic AS ot ON ot.organisation_id = o.id
   JOIN template AS t ON ot.template_id = t.id
   JOIN classification_identifier AS ci
@@ -453,9 +451,10 @@ RETURNS SETOF notification
 AS $$
 BEGIN
     RETURN QUERY
-      WITH matched_contacts (contact_id, email, format_id,
-                             notification_interval)
-        AS (SELECT c.id, c.email, c.format_id, orgn.notification_interval
+      WITH matched_contacts (email, format_id, notification_interval,
+                             organisation_id)
+        AS (SELECT c.email, c.format_id, orgn.notification_interval,
+                   oc.organisation_id
               FROM contact c
               JOIN organisation_to_contact AS oc ON oc.contact_id = c.id
               JOIN organisation_to_network AS orgn
@@ -463,13 +462,13 @@ BEGIN
               JOIN network AS n ON n.id = orgn.net_id
              WHERE host(network(n.address)) <= host(event_ip)
                AND host(event_ip) <= host(broadcast(n.address)))
-    SELECT mc.email, cos.organisation_name, cos.template_path, f.name,
+    SELECT mc.email, os.organisation_name, os.template_path, f.name,
            mc.notification_interval
       FROM matched_contacts mc
-      JOIN contact_organisation_settings AS cos
-        ON mc.contact_id = cos.contact_id
+      JOIN organisation_settings AS os
+        ON mc.organisation_id = os.organisation_id
       JOIN format f ON mc.format_id = f.id
-     WHERE cos.classification_identifier = event_classification;
+     WHERE os.classification_identifier = event_classification;
 END;
 $$ LANGUAGE plpgsql VOLATILE;
 
@@ -481,9 +480,10 @@ RETURNS SETOF notification
 AS $$
 BEGIN
     RETURN QUERY
-      WITH matched_contacts (contact_id, email, format_id,
-                             notification_interval)
-        AS (SELECT c.id, c.email, c.format_id, orgn.notification_interval
+      WITH matched_contacts (email, format_id, notification_interval,
+                             organisation_id)
+        AS (SELECT c.email, c.format_id, orgn.notification_interval,
+                   oc.organisation_id
               FROM contact_automatic c
               JOIN organisation_to_contact_automatic AS oc
                 ON oc.contact_id = c.id
@@ -492,13 +492,13 @@ BEGIN
               JOIN network_automatic AS n ON n.id = orgn.net_id
              WHERE host(network(n.address)) <= host(event_ip)
                AND host(event_ip) <= host(broadcast(n.address)))
-    SELECT mc.email, cos.organisation_name, cos.template_path, f.name,
+    SELECT mc.email, os.organisation_name, os.template_path, f.name,
            mc.notification_interval
       FROM matched_contacts mc
-      JOIN contact_organisation_settings_automatic AS cos
-        ON mc.contact_id = cos.contact_id
+      JOIN organisation_settings_automatic AS os
+        ON mc.organisation_id = os.organisation_id
       JOIN format f ON mc.format_id = f.id
-     WHERE cos.classification_identifier = event_classification;
+     WHERE os.classification_identifier = event_classification;
 END;
 $$ LANGUAGE plpgsql VOLATILE;
 
@@ -511,22 +511,23 @@ RETURNS SETOF notification
 AS $$
 BEGIN
     RETURN QUERY
-      WITH matched_contacts (contact_id, email, format_id,
-                             notification_interval)
-        AS (SELECT c.id, c.email, c.format_id, orga.notification_interval
+      WITH matched_contacts (email, format_id, notification_interval,
+                             organisation_id)
+        AS (SELECT c.email, c.format_id, orga.notification_interval,
+                   oc.organisation_id
               FROM contact AS c
               JOIN organisation_to_contact AS oc ON oc.contact_id = c.id
               JOIN organisation_to_asn AS orga
                 ON orga.organisation_id = oc.organisation_id
               JOIN autonomous_system AS a ON a.number = orga.asn_id
              WHERE a.number = event_asn)
-    SELECT mc.email, cos.organisation_name, cos.template_path, f.name,
+    SELECT mc.email, os.organisation_name, os.template_path, f.name,
            mc.notification_interval
-      FROM matched_contacts AS mc
-      JOIN contact_organisation_settings AS cos
-        ON mc.contact_id = cos.contact_id
-      JOIN format AS f ON mc.format_id = f.id
-     WHERE cos.classification_identifier = event_classification;
+      FROM matched_contacts mc
+      JOIN organisation_settings AS os
+        ON mc.organisation_id = os.organisation_id
+      JOIN format f ON mc.format_id = f.id
+     WHERE os.classification_identifier = event_classification;
 END;
 $$ LANGUAGE plpgsql VOLATILE;
 
@@ -537,9 +538,10 @@ RETURNS SETOF notification
 AS $$
 BEGIN
     RETURN QUERY
-      WITH matched_contacts (contact_id, email, format_id,
-                             notification_interval)
-        AS (SELECT c.id, c.email, c.format_id, orga.notification_interval
+      WITH matched_contacts (email, format_id, notification_interval,
+                             organisation_id)
+        AS (SELECT c.email, c.format_id, orga.notification_interval,
+                   oc.organisation_id
               FROM contact_automatic AS c
               JOIN organisation_to_contact_automatic AS oc
                 ON oc.contact_id = c.id
@@ -547,13 +549,13 @@ BEGIN
                 ON orga.organisation_id = oc.organisation_id
               JOIN autonomous_system_automatic AS a ON a.number = orga.asn_id
              WHERE a.number = event_asn)
-    SELECT mc.email, cos.organisation_name, cos.template_path, f.name,
+    SELECT mc.email, os.organisation_name, os.template_path, f.name,
            mc.notification_interval
       FROM matched_contacts AS mc
-      JOIN contact_organisation_settings_automatic AS cos
-        ON mc.contact_id = cos.contact_id
+      JOIN organisation_settings_automatic AS os
+        ON mc.organisation_id = os.organisation_id
       JOIN format AS f ON mc.format_id = f.id
-     WHERE cos.classification_identifier = event_classification;
+     WHERE os.classification_identifier = event_classification;
 END;
 $$ LANGUAGE plpgsql VOLATILE;
 
@@ -565,21 +567,23 @@ RETURNS SETOF notification
 AS $$
 BEGIN
     RETURN QUERY
-      WITH matched_contacts (contact_id, email, format_id, notification_interval)
-        AS (SELECT c.id, c.email, c.format_id, orgf.notification_interval
+      WITH matched_contacts (email, format_id, notification_interval,
+                             organisation_id)
+        AS (SELECT c.email, c.format_id, orgf.notification_interval,
+                   oc.organisation_id
               FROM contact AS c
               JOIN organisation_to_contact AS oc ON oc.contact_id = c.id
               JOIN organisation_to_fqdn AS orgf
                 ON orgf.organisation_id = oc.organisation_id
               JOIN fqdn AS f ON f.id = orgf.fqdn_id
              WHERE f.fqdn = event_fqdn)
-    SELECT mc.email, cos.organisation_name, cos.template_path, f.name,
+    SELECT mc.email, os.organisation_name, os.template_path, f.name,
            mc.notification_interval
       FROM matched_contacts AS mc
-      JOIN contact_organisation_settings AS cos
-        ON mc.contact_id = cos.contact_id
+      JOIN organisation_settings AS os
+        ON mc.organisation_id = os.organisation_id
       JOIN format AS f ON mc.format_id = f.id
-     WHERE cos.classification_identifier = event_classification;
+     WHERE os.classification_identifier = event_classification;
 END;
 $$ LANGUAGE plpgsql VOLATILE;
 
@@ -590,9 +594,10 @@ RETURNS SETOF notification
 AS $$
 BEGIN
     RETURN QUERY
-      WITH matched_contacts (contact_id, email, format_id,
-                             notification_interval)
-        AS (SELECT c.id, c.email, c.format_id, orgf.notification_interval
+      WITH matched_contacts (email, format_id, notification_interval,
+                             organisation_id)
+        AS (SELECT c.email, c.format_id, orgf.notification_interval,
+                   oc.organisation_id
               FROM contact_automatic AS c
               JOIN organisation_to_contact_automatic AS oc
                 ON oc.contact_id = c.id
@@ -600,13 +605,13 @@ BEGIN
                 ON orgf.organisation_id = oc.organisation_id
               JOIN fqdn_automatic AS f ON f.id = orgf.fqdn_id
              WHERE f.fqdn = event_fqdn)
-    SELECT mc.email, cos.organisation_name, cos.template_path, f.name,
+    SELECT mc.email, os.organisation_name, os.template_path, f.name,
            mc.notification_interval
       FROM matched_contacts AS mc
-      JOIN contact_organisation_settings_automatic AS cos
-        ON mc.contact_id = cos.contact_id
+      JOIN organisation_settings_automatic AS os
+        ON mc.organisation_id = os.organisation_id
       JOIN format AS f ON mc.format_id = f.id
-     WHERE cos.classification_identifier = event_classification;
+     WHERE os.classification_identifier = event_classification;
 END;
 $$ LANGUAGE plpgsql VOLATILE;
 
