@@ -3,12 +3,10 @@
 # The target file must be given as only argument on the commandline.
 PATH=/bin:/usr/bin
 
-
 # set the http proxy here:
 # export http_proxy=http://proxy.example.com:8080/
 # export HTTPS_PROXY=https://proxy.example.com:8080/
 # export FTP_PROXY=ftp://proxy.example.com:8080/
-
 
 set -e
 trap cleanup EXIT
