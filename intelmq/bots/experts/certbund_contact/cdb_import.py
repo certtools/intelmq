@@ -67,20 +67,19 @@ try:
         for record in DB_RECORDS:
            cur.execute("""
                INSERT INTO network (address, comment)
-               VALUES ('{}','{}');
-               """.format(record[0], record[2]))
+               VALUES (%s, %s);
+               """, (record[0], record[2]))
         con.commit()
 
     if args.asn_file:
         if args.verbose:
             print("Processing contacts and ASN numbers...")
         for record in ASN_CONTACTS:
-            #record[1]
             cur.execute("""
                 INSERT INTO contact (email, format_id)
-                VALUES ($${}$$, 1)
+                VALUES (%s, 1)
                 RETURNING id;
-                """.format(record[1]))
+                """, (record[1], ))
             result = cur.fetchone()
             contact_id = result[0]
 
@@ -88,8 +87,8 @@ try:
             asn_id = record[0][2:]
             cur.execute("""
                 INSERT INTO autonomous_system (number)
-                VALUES ({});
-                """.format(asn_id))
+                VALUES (%s);
+                """, (asn_id, ))
 
             # contact_to_asn
             ## cur.execute("""
