@@ -1,3 +1,10 @@
+intelmq (1.0.0~dev4+intevation.1.0~beta1) experimental; urgency=low
+
+  * Merged upstream master
+  * Used debugging_level INFO as default (was DEBUG).
+
+ -- 
+
 intelmq (1.0.0~dev4~beta11) experimental; urgency=low
 
   * New Release from customer-releases branch.

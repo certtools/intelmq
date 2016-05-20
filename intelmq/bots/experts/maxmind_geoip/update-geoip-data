@@ -2,6 +2,12 @@
 # Update geoip data
 # The target file must be given as only argument on the commandline.
 PATH=/bin:/usr/bin
+
+# set the http proxy here:
+# export http_proxy=http://proxy.example.com:8080/
+# export HTTPS_PROXY=https://proxy.example.com:8080/
+# export FTP_PROXY=ftp://proxy.example.com:8080/
+
 set -e
 trap cleanup EXIT
 
@@ -29,8 +35,8 @@ fetch_and_install()
 {
   cd "$TMP_DIR"
   curl -s -O https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz
-  gunzip GeoLite2-City.mmdb
-  mv GeoLite2-City.mmdb "$DEST_FILE"
+  gunzip -q GeoLite2-City.mmdb
+  mv -f GeoLite2-City.mmdb "$DEST_FILE"
 }
 
 setup "$@"
