@@ -1,3 +1,9 @@
+intelmq (1.0.0~dev4~?) experimental; urgency=low
+
+  * Used debugging_level INFO as default (was DEBUG).
+
+ --
+
 intelmq (1.0.0~dev4~beta10) experimental; urgency=low
 
   * Merged master, fixes
