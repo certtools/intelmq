@@ -13,7 +13,7 @@ the IntelMQ source tree:
 
     su - postgres
 
-    createdb contactdb
+    createdb --encoding=UTF8 --template=template0 contactdb
     psql -f intelmq/bots/experts/certbund_contact/initdb.sql   contactdb
     psql -f intelmq/bots/experts/certbund_contact/defaults.sql contactdb
 
