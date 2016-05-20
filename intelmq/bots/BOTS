@@ -1135,6 +1135,11 @@
             "module": "intelmq.bots.parsers.shadowserver.microsoft_sinkhole_parser",
             "parameters": {}
         },
+        "ShadowServer Open-Memcached": {
+            "description": "ShadowServer Open-Memcached Parser is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.shadowserver.open_memcached_parser",
+            "parameters": {}
+        },
         "ShadowServer QOTD": {
             "description": "ShadowServer QOTD Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.shadowserver.qotd_parser",
