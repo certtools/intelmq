@@ -86,6 +86,9 @@ setup(
     ],
     keywords='incident handling cert csirt',
     data_files=DATA,
+    scripts=[
+        'intelmq/bots/experts/certbund_contact/cdb_import.py',
+    ],
     entry_points={
         'console_scripts': [
             'intelmqctl = intelmq.bin.intelmqctl:main',
