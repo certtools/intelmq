@@ -62,74 +62,52 @@ try:
     if args.network_file:
         if args.verbose:
             print("Processing networks...")
-        cur.execute("""
-            DELETE FROM network WHERE is_manual = false;
-            """)
+
+        cur.execute("DELETE FROM network;")
         for record in DB_RECORDS:
-            cur.execute("""
-                SELECT count(id) from network
-                WHERE address = '{}' AND is_manual = false;
-                """.format(record[0]))
-            result = cur.fetchone()
-            if not result[0]:
-                cur.execute("""
-                    INSERT INTO network (address, is_manual, comment)
-                    VALUES ('{}', {}, '{}');
-                    """.format(record[0], record[1], record[2]))
+           cur.execute("""
+               INSERT INTO network (address, comment)
+               VALUES ('{}','{}');
+               """.format(record[0], record[2]))
         con.commit()
 
     if args.asn_file:
         if args.verbose:
             print("Processing contacts and ASN numbers...")
         for record in ASN_CONTACTS:
-            # Email contacts
+            #record[1]
             cur.execute("""
-                SELECT count(id) from contact
-                WHERE email = $${}$$ AND is_manual = false;
+                INSERT INTO contact (email, format_id)
+                VALUES ($${}$$, 1)
+                RETURNING id;
                 """.format(record[1]))
             result = cur.fetchone()
-            if not result[0]:
-                cur.execute("""
-                    INSERT INTO contact (email, is_manual, format_id)
-                    VALUES ($${}$$, false, 1)
-                    RETURNING id;
-                    """.format(record[1]))
-            else:
-                cur.execute("""
-                    SELECT id from contact
-                    WHERE email = $${}$$;
-                    """.format(record[1]))
-            result = cur.fetchone()
             contact_id = result[0]
+
             # ASN
             asn_id = record[0][2:]
             cur.execute("""
-                SELECT count(number) from autonomous_system
-                WHERE number = $${}$$ AND is_manual = false;
+                INSERT INTO autonomous_system (number)
+                VALUES ({});
                 """.format(asn_id))
-            result = cur.fetchone()
-            if not result[0]:
-                cur.execute("""
-                    INSERT INTO autonomous_system (number, is_manual)
-                    VALUES ({}, false);
-                    """.format(asn_id))
+
             # contact_to_asn
-            cur.execute("""
-                SELECT count(asn_id) from contact_to_asn
-                WHERE asn_id = {};
-                """.format(asn_id))
-            result = cur.fetchone()
-            if not result[0]:
-                # TODO: default 60?
-                cur.execute("""
-                    INSERT INTO contact_to_asn (contact_id, asn_id, ttl)
-                    VALUES ({}, {}, 60);
-                    """.format(contact_id, asn_id))
-            else:
-                cur.execute("""
-                    UPDATE contact_to_asn SET contact_id = {}
-                    WHERE asn_id = {};
-                    """.format(contact_id, asn_id))
+            ## cur.execute("""
+            ##     SELECT count(asn_id) from contact_to_asn
+            ##     WHERE asn_id = {};
+            ##     """.format(asn_id))
+            ## result = cur.fetchone()
+            ## if not result[0]:
+            ##     # TODO: default 60?
+            ##     cur.execute("""
+            ##         INSERT INTO contact_to_asn (contact_id, asn_id, ttl)
+            ##         VALUES ({}, {}, 60);
+            ##         """.format(contact_id, asn_id))
+            ## else:
+            ##     cur.execute("""
+            ##         UPDATE contact_to_asn SET contact_id = {}
+            ##         WHERE asn_id = {};
+            ##         """.format(contact_id, asn_id))
 
     con.commit()
 except psycopg2.DatabaseError as e:
