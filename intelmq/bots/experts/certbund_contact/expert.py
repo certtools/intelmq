@@ -71,10 +71,11 @@ class CERTBundKontaktExpertBot(Bot):
         cur.execute("SELECT * FROM notifications_for_{}(%s, %s)"
                     .format(criterion), (value, classification))
         result = cur.fetchall()
-        if not result:
-            cur.execute("SELECT * FROM notifications_for_{}_automatic(%s, %s)"
-                        .format(criterion), (value, classification))
-            return cur.fetchall()
+        if result:
+            return result
+        cur.execute("SELECT * FROM notifications_for_{}_automatic(%s, %s)"
+                    .format(criterion), (value, classification))
+        return cur.fetchall()
 
     def lookup_contact(self, classification, ip, fqdn, asn):
         self.logger.debug("Looking up ip: %r, classification: %r",
