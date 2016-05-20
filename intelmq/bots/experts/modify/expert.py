@@ -9,38 +9,42 @@ from intelmq.lib.bot import Bot
 from intelmq.lib.utils import load_configuration
 
 
-def matches(event, *rules):
-    condition = {}
-    for rule in rules:
-        condition.update(rule)
-
-    for name, rule in condition.items():
-        # empty string means non-existant field
-        if rule == '':
-            if name in event:
-                return False
-            else:
-                continue
-        if name not in event:
-            return False
-        if not isinstance(event[name], str):  # int, float, etc
-            return event[name] == rule
-        else:
-            if not re.search(rule, event[name]):
-                return False
-
-    return True
-
-
-def apply_action(event, action):
-    for name, value in action.items():
-        event.add(name, value.format(msg=event), force=True)
-
-
 class ModifyExpertBot(Bot):
 
     def init(self):
         self.config = load_configuration(self.parameters.configuration_path)
+
+    def matches(self, identifiers, event, *rules):
+        condition = {}
+        for rule in rules:
+            condition.update(rule)
+
+        for name, rule in condition.items():
+            # empty string means non-existant field
+            if rule == '':
+                if name in event:
+                    return False
+                else:
+                    continue
+            if name not in event:
+                return False
+            if not isinstance(rule, type(event[name])):
+                self.logger.warn("Type of rule ({!r}) and data ({!r}) do not "
+                                 "match in {!s}, {}!".format(type(rule),
+                                                             type(event[name]),
+                                                             identifiers,
+                                                             name))
+            if not isinstance(event[name], str):  # int, float, etc
+                return event[name] == rule
+            else:
+                if not re.search(rule, event[name]):
+                    return False
+
+        return True
+
+    def apply_action(self, event, action):
+        for name, value in action.items():
+            event.add(name, value.format(msg=event), force=True)
 
     def process(self):
         event = self.receive_message()
@@ -48,24 +52,26 @@ class ModifyExpertBot(Bot):
         for section_id, section in self.config.items():
             default_cond = section.get('__default', [{}, {}])[0]
             default_action = section.get('__default', [{}, {}])[1]
-            if not matches(event, default_cond):
+            if not self.matches((section_id, '__default'),
+                                event, default_cond):
                 continue
 
             applied = False
             for rule_id, (rule_cond, rule_action) in section.items():
                 if rule_id == '__default':
                     continue
-                if matches(event, default_cond, rule_cond):
+                if self.matches((section_id, rule_id),
+                                event, default_cond, rule_cond):
                     self.logger.debug('Apply rule {}/{}.'.format(section_id,
                                                                  rule_id))
-                    apply_action(event, rule_action)
+                    self.apply_action(event, rule_action)
                     applied = True
                     continue
 
             if not applied:
                 self.logger.debug('Apply default rule {}/__default.'
                                   ''.format(section_id))
-                apply_action(event, default_action)
+                self.apply_action(event, default_action)
 
         self.send_message(event)
         self.acknowledge_message()
