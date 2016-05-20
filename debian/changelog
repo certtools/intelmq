@@ -1,8 +1,9 @@
-intelmq (1.0.0~dev4~?) experimental; urgency=low
+intelmq (1.0.0~dev4+git20160520) experimental; urgency=low
 
+  * Merged upstream master
   * Used debugging_level INFO as default (was DEBUG).
 
- --
+ -- Sascha Wilde <wilde@intevation.de>  Fri, 20 May 2016 12:24:36 +0200
 
 intelmq (1.0.0~dev4~beta10) experimental; urgency=low
 
