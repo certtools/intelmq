@@ -1145,6 +1145,11 @@
             "module": "intelmq.bots.parsers.shadowserver.snmp_parser",
             "parameters": {}
         },
+        "ShadowServer SSL Scan (POODLE)": {
+            "description": "ShadowServer SSL Scan (POODLE) Parser is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.shadowserver.ssl_scan_parser",
+            "parameters": {}
+        },
         "Spamhaus CERT": {
             "description": "Spamhaus CERT Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.spamhaus.parser_cert",
