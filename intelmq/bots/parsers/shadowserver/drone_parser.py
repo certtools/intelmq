@@ -115,7 +115,8 @@ class ShadowServerDroneParserBot(Bot):
                 extra['sic'] = int(row['sic'])
 
             event.add('raw', '"'+','.join(map(str, row.items()))+'"')
-            event.add('extra', extra)
+            if extra:
+                event.add('extra', extra)
 
             self.send_message(event)
         self.acknowledge_message()
