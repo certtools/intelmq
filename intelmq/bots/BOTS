@@ -673,7 +673,7 @@
             }
         },
         "Deduplicator": {
-            "description": "Deduplicator is the bot responsible to detect and remove deduplicated messages.",
+            "description": "Deduplicator is the bot responsible for detection and removal of duplicate messages. Messages get cached for <redis_cache_ttl> seconds. If found in the cache, it is assumed to be a duplicate.",
             "module": "intelmq.bots.experts.deduplicator.expert",
             "parameters": {
                 "ignore_keys": "raw,time.observation",
@@ -693,7 +693,7 @@
             }
         },
         "MaxMind GeoIP": {
-            "description": "MaxMind GeoIP is the bot responsible to add geolocation information to the events (Country, City, Longitude, Latitude, etc..)",
+            "description": "MaxMind GeoIP is the bot responsible for adding geolocation information to events (Country, City, Longitude, Latitude, etc..)",
             "module": "intelmq.bots.experts.maxmind_geoip.expert",
             "parameters": {
                 "database": "/opt/intelmq/var/lib/bots/maxmind_geoip/GeoLite2-City.mmdb"

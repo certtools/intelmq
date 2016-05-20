@@ -1,37 +1,47 @@
 **Table of Contents**
 
-1. [Code and Repository Rules](#code-and-repository-rules)
+1. [Intended Audience](#audience)
+2. [Goals](#goals)
+2. [Code and Repository Rules](#code-and-repository-rules)
 2. [System Overview](#system-overview)
 3. [Bot Developer Guide](#bot-developer-guide)
 
-<a name="code-and-repository-rules"></a>
-# Development Guide
+# Intended Audience
+This guide is for developers of IntelMQ. It explains the code architecture, coding guidelines as well as ways you can contribute code or documentation.
+If you have not done so, please read the [User Guide](User-Guide.md) first.
+Once you feel comfortable running IntelMQ with open source bots and you feel adventurous enough to contribute to the project, this guide is for you.
+It does not matter if you are an experienced Python programmer or just a beginner. There are a lot of samples to help you out.
 
-If you are digging into the code of IntelMQ or want to write new bots, this document should give you an overview of the system, the responsibilities and how to adapt it to your needs. Please read the [User Guide](User-Guide.md) first.
+Hoever, before we go into the details, it is important to observe and internalise some overall project goals.
 
+
+
+<a name="goals"></a>
 ## Goals
 
-It is important, that developers agree and stick to these meta-guidelines. We expect you to always try to:
+It is important, that all developers agree and stick to these meta-guidelines. 
+IntelMQ tries to:
 
-* reduce the complexity of system administration
-* reduce the complexity of writing new bots for new data feeds
-* make your code easily and pleasantly readable
-* reduce the probability of events lost in all process with persistence functionality (even system crash)
-* strictly adhere to the existing [Data Harmonization Ontology](Data-Harmonization.md) for key-values in events
-* always use JSON format for all messages internally
-* help and support the interconnection between IntelMQ and existing tools like AbuseHelper, CIF, etc. or new tools (in other words: we will not accept data-silos!)
-* provide an easy way to store data into Log Collectors like ElasticSearch, Splunk
-* provide an easy way to create your own black-lists
-* provide easy to understand interfaces with other systems via HTTP RESTFUL API
+* Be well tested. For developers this means, we expect you to write unit tests for bots. Every time.
+* Reduce the complexity of system administration
+* Reduce the complexity of writing new bots for new data feeds
+* Make your code easily and pleasantly readable
+* Reduce the probability of events lost in all process with persistence functionality (even system crash)
+* Strictly adhere to the existing [Data Harmonization Ontology](Data-Harmonization.md) for key-values in events
+* Always use JSON format for all messages internally
+* Help and support the interconnection between IntelMQ and existing tools like AbuseHelper, CIF, etc. or new tools (in other words: we will not accept data-silos!)
+* Provide an easy way to store data into Log Collectors like ElasticSearch, Splunk
+* Provide an easy way to create your own black-lists
+* Provide easy to understand interfaces with other systems via HTTP RESTFUL API
 
 The main take away point from the list above is: things **MUST** stay __intuitive__ and __easy__.
-How do you test if things are easy? Let them new programmers test-drive your features and if it is not understandable in 15 minutes, go back to the drawing board.
+How do you ultimately test if things are still easy? Let them new programmers test-drive your features and if it is not understandable in 15 minutes, go back to the drawing board.
 
 Similarly, if code does not get accepted upstream by the main developers, it is usually only because of the ease-of-use argument. Do not give up , go back to the drawing board, and re-submit again.
 
-## Installation
 
-Install intelmq with `pip3 -e`, which gives you a so called *editable* installation. No code is copied in the libraries directories, there's just a link to your code.
+## Installation
+Developers might want to install intelmq with `pip3 -e`, which gives you a so called *editable* installation. No code is copied in the libraries directories, there's just a link to your code.
 
     pip3 install -e .
 
@@ -39,7 +49,7 @@ If you do any changes on setup.py, data files (e.g. example configurations), you
 
 ## Testing
 
-All changes have to be tested and new contributions must be accompanied by according tests if possible. You can run the tests by changing to the directory with intelmq repository and running either `unittest` or `nosetests`:
+All changes have to be tested and new contributions must be accompanied by according unit tests. You can run the tests by changing to the directory with intelmq repository and running either `unittest` or `nosetests`:
 
     cd intelmq
     python3 -m unittest {discover|filename}  # or
@@ -217,7 +227,7 @@ In the `intelmq/lib/` directory you can find some libraries:
 
 ### Code Architecture
 
-![Code Architecture](http://s28.postimg.org/5wmak1upp/intelmq_arch_schema.png)
+![Code Architecture](images/intelmq-arch-schema.png)
 
 
 <a name="bot-developer-guide"></a>
