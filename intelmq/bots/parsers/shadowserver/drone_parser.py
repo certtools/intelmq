@@ -50,13 +50,13 @@ class ShadowServerDroneParserBot(Bot):
         ("destination.reverse_dns"    , "cc_dns"),
         ("destination.url"            , "url"),
         ("malware.name"               , "infection"),
-        ("protocol.application"       , "type"),
+        ("protocol.application"       , "application"),
         ("protocol.transport"         , "type"),
         ("source.asn"                 , "asn"),
         ("source.geolocation.cc"      , "geo"),
         ("source.geolocation.city"    , "city"),
         ("source.geolocation.region"  , "region"),
-        ("source.local_hostname"      , "type"),
+        ("source.local_hostname"      , "machine_name"),
         ("source.reverse_dns"         , "hostname"),
     ]
 
