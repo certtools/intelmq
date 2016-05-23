@@ -1,3 +1,9 @@
+intelmq (1.0.0~dev4+intevation.1.0~rc2) testing; urgency=high
+
+  * Install certbund sql files and READMEs.
+
+ -- Sascha Wilde <wilde@intevation.de>  Mon, 23 May 2016 18:16:16 +0200
+
 intelmq (1.0.0~dev4+intevation.1.0~rc1) testing; urgency=low
 
   * Merged upstream master.
