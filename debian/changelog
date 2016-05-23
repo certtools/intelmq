@@ -1,3 +1,10 @@
+intelmq (1.0.0~dev4+intevation.1.0~rc1) testing; urgency=low
+
+  * Merged upstream master.
+  * Install logrotate script.
+
+ --
+
 intelmq (1.0.0~dev4+intevation.1.0~beta3) experimental; urgency=low
 
   * Depend on python3-ipaddr for certbund-contact bot import script.
