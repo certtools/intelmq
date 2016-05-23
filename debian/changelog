@@ -1,3 +1,16 @@
+intelmq (1.0.0~dev4+intevation.1.0~beta3) experimental; urgency=low
+
+  * Depend on python3-ipaddr for certbund-contact bot import script.
+
+ -- Sascha Wilde <wilde@intevation.de>  Fri, 20 May 2016 16:58:26 +0200
+
+intelmq (1.0.0~dev4+intevation.1.0~beta2) experimental; urgency=low
+
+  * New Release from customer-releases branch.
+  * Merged certbund-contact (install import script)
+
+ -- Sascha Wilde <wilde@intevation.de>  Fri, 20 May 2016 16:33:08 +0200
+
 intelmq (1.0.0~dev4+intevation.1.0~beta1) experimental; urgency=low
 
   * New Release from customer-releases branch.
