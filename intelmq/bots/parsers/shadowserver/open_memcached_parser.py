@@ -90,19 +90,19 @@ class ShadowServerOpenMemcachedParserBot(Bot):
                 extra['naics'] = int(row['naics'])
             if int(row['sic']):
                 extra['sic'] = int(row['sic'])
-            # documented extra fields
+            # (un)documented extra fields
             for field in [
-                    "tag"               ,
-                    "version"           ,
-                    "naics"             ,
-                    "sic"               ,
-                    "pid"               ,
-                    "pointer_size"      ,
-                    "uptime"            ,
-                    "time"              ,
-                    "curr_connections"  ,
-                    "total_connections" ,
-                    "sector"            ,
+                    "tag",
+                    "version",
+                    "naics",
+                    "sic",
+                    "pid",
+                    "pointer_size",
+                    "uptime",
+                    "time",
+                    "curr_connections",
+                    "total_connections",
+                    "sector",
                     ]:
                 if field in row:
                     extra[field] = row[field]

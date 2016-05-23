@@ -54,10 +54,10 @@ class ShadowServerDroneParserBot(Bot):
         ("protocol.transport"         , "type"),
         ("source.asn"                 , "asn"),
         ("source.geolocation.cc"      , "geo"),
-        ("source.geolocation.city"    , "city"),
         ("source.geolocation.region"  , "region"),
-        ("source.local_hostname"      , "machine_name"),
+        ("source.geolocation.city"    , "city"),
         ("source.reverse_dns"         , "hostname"),
+        ("source.local_hostname"      , "machine_name"),
     ]
 
     def process(self):

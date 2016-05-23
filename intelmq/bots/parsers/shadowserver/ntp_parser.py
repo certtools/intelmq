@@ -83,6 +83,10 @@ class ShadowServerNTPParserBot(Bot):
             # Add extras
             if row['sector']:
                 extra['sector'] = row['sector']
+            if row['packets']:
+                extra['packets'] = row['packets']
+            if row['size']:
+                extra['size'] = row['size']
             if int(row['naics']):
                 extra['naics'] = int(row['naics'])
             if int(row['sic']):
