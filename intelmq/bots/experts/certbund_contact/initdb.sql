@@ -84,7 +84,7 @@ CREATE TABLE contact (
 );
 
 CREATE TABLE contact_automatic (
-    id INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
 
     firstname VARCHAR (500) NOT NULL DEFAULT '',
     lastname  VARCHAR (500) NOT NULL DEFAULT '',
@@ -105,7 +105,7 @@ CREATE TABLE contact_automatic (
 
 -- Roles serve as an m-n relationship between organisations and contacts
 CREATE TABLE role (
-    id INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
 
     -- free text for right now. We assume the regular tags from the
     -- RIPE DB such as "tech-c" or "abuse-c"
@@ -122,7 +122,7 @@ CREATE TABLE role (
 
 -- Roles serve as an m-n relationship between organisations and contacts
 CREATE TABLE role_automatic (
-    id INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
 
     role_type    VARCHAR (500) NOT NULL default 'abuse-c',
     is_primary_contact BOOLEAN NOT NULL DEFAULT FALSE,
@@ -206,7 +206,7 @@ CREATE INDEX network_cidr_upper_idx
 
 
 CREATE TABLE network_automatic (
-    id INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
 
     -- Network address as CIDR.
     address cidr UNIQUE NOT NULL,
@@ -232,7 +232,7 @@ CREATE TABLE fqdn (
 CREATE INDEX fqdn_fqdn_idx ON fqdn (fqdn);
 
 CREATE TABLE fqdn_automatic (
-    id INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
 
     -- The fully qualified domain name
     fqdn TEXT UNIQUE NOT NULL,
