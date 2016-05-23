@@ -1,3 +1,10 @@
+intelmq (1.0.0~dev4+git20160523) experimental; urgency=low
+
+  * Merged upstream master.
+  * Install logrotate script.
+
+ -- Sascha Wilde <wilde@intevation.de>  Mon, 23 May 2016 15:24:39 +0200
+
 intelmq (1.0.0~dev4+git20160520) experimental; urgency=low
 
   * Merged upstream master
