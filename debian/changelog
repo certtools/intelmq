@@ -1,9 +1,11 @@
 intelmq (1.0.0~dev4+intevation.1.0~rc1) testing; urgency=low
 
   * Merged upstream master.
+  * Merged certbund_contact.
+  * Merged shadowserver-feeds.
   * Install logrotate script.
 
- --
+ -- Sascha Wilde <wilde@intevation.de>  Mon, 23 May 2016 16:19:41 +0200
 
 intelmq (1.0.0~dev4+intevation.1.0~beta3) experimental; urgency=low
 
