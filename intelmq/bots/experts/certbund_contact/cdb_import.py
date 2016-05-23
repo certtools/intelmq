@@ -63,20 +63,22 @@ try:
         if args.verbose:
             print("Processing networks...")
 
-        cur.execute("DELETE FROM network;")
+        cur.execute("DELETE FROM network_automatic;")
         for record in DB_RECORDS:
            cur.execute("""
-               INSERT INTO network (address, comment)
+               INSERT INTO network_automatic (address, comment)
                VALUES (%s, %s);
                """, (record[0], record[2]))
         con.commit()
 
     if args.asn_file:
+        cur.execute("DELETE FROM contact_automatic;")
+        cur.execute("DELETE FROM autonomous_system_automatic;")
         if args.verbose:
             print("Processing contacts and ASN numbers...")
         for record in ASN_CONTACTS:
             cur.execute("""
-                INSERT INTO contact (email, format_id)
+                INSERT INTO contact_automatic (email, format_id)
                 VALUES (%s, 1)
                 RETURNING id;
                 """, (record[1], ))
@@ -86,7 +88,7 @@ try:
             # ASN
             asn_id = record[0][2:]
             cur.execute("""
-                INSERT INTO autonomous_system (number)
+                INSERT INTO autonomous_system_automatic (number)
                 VALUES (%s);
                 """, (asn_id, ))
 
