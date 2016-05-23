@@ -13,8 +13,8 @@ Example usage:
 ```
    cdb_import.py --database contactdb \
                  --network-file delegated-ripencc-latest \
-		 --asn-file asn_abuse_c.txt \
-		 --verbose
+                 --asn-file asn_abuse_c.txt \
+                 --verbose
 ```
 
 See also the help provided by ``--help``
