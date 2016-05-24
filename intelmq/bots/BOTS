@@ -55,7 +55,7 @@
             }
         },
         "AlienVault": {
-            "description": "AlienVault Collector is the bot responsible to get the report from source of information.",
+            "description": "AlienVault Collector retrieves reports via the SDK https://github.com/AlienVault-Labs/OTX-Python-SDK/ from https://otx.alienvault.com/ http_ssl_proxy does apply.",
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "AlienVault",
@@ -88,6 +88,14 @@
                 "feed": "Autoshun",
                 "http_url": "https://www.autoshun.org/files/shunlist.html",
                 "rate_limit": 3600
+            }
+        },
+        "BitSight Ciberfeed Stream": {
+            "description": "Bitsight Collector is the bot reponsible to get Bitsight Ciberfeed Alert Stream",
+            "module": "intelmq.bots.collectors.bitsight.collector",
+            "parameters": {
+                "feed": "BitSight",
+                "http_url": "http://alerts.bitsighttech.com:8080/stream?key=<api>"
             }
         },
         "BlockList.DE Apache": {
@@ -279,12 +287,12 @@
                 "rate_limit": 3600
             }
         },
-        "Dyn": {
-            "description": "Dyn Collector is the bot responsible to get the report from source of information.",
+        "DynDNS ponmocup Domains": {
+            "description": "DynDNS ponmocup. List of ponmocup malware redirection domains and infected web-servers. See also http://security-research.dyndns.org/pub/botnet-links.html",
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
-                "feed": "Dyn",
-                "http_url": "http://security-research.dyndns.org/pub/botnet/ponmocup/ponmocup-finder/ponmocup-infected-domains-latest.txt",
+                "feed": "DynDNS ponmocup Domains",
+                "http_url": "http://security-research.dyndns.org/pub/malware-feeds/ponmocup-infected-domains-CIF-latest.txt",
                 "rate_limit": 10800
             }
         },
@@ -297,6 +305,39 @@
                 "http_url": "https://dgarchive.caad.fkie.fraunhofer.de/today",
                 "http_username": "<USER>",
                 "rate_limit": 10800
+            }
+        },
+        "Generic Mail Attachment Fetcher": {
+            "description": "Monitor IMAP mailboxes and retrieve mail attachments",
+            "module": "intelmq.bots.collectors.mail.collector_mail_attach",
+            "parameters": {
+                "attach_regex": "csv.zip",
+                "attach_unzip": true,
+                "feed": "",
+                "folder": "INBOX",
+                "mail_host": "<host>",
+                "mail_password": "<password>",
+                "mail_ssl": true,
+                "mail_user": "<user>",
+                "rate_limit": "60",
+                "subject_regex": "<subject>"
+            }
+        },
+        "Generic Mail URL Fetcher": {
+            "description": "Monitor IMAP mailboxes and fetch files from URLs contained in mail bodies",
+            "module": "intelmq.bots.collectors.mail.collector_mail_url",
+            "parameters": {
+                "feed": "",
+                "folder": "INBOX",
+                "http_password": "<password>",
+                "http_user": "<user>",
+                "mail_host": "<host>",
+                "mail_password": "<password>",
+                "mail_ssl": true,
+                "mail_user": "<user>",
+                "rate_limit": "60",
+                "subject_regex": "<subject>",
+                "url_regex": "http://"
             }
         },
         "HpHosts": {
@@ -444,8 +485,10 @@
         },
         "ShadowServer Chargen": {
             "description": "ShadowServer Chargen Collector is the bot responsible to get the report from source of information. https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-Chargen",
-            "module": "intelmq.bots.collectors.mail.mail-url",
+            "module": "intelmq.bots.collectors.mail.collector_mail_url",
             "parameters": {
+                "accuracy": "",
+                "feed": "",
                 "folder": "Inbox.shadowserver",
                 "mail_host": "<host>",
                 "mail_password": "<password>",
@@ -458,7 +501,7 @@
         },
         "ShadowServer Drone": {
             "description": "ShadowServer Drone Collector is the bot responsible to get the report from source of information. https://www.shadowserver.org/wiki/pmwiki.php/Services/Botnet-Drone-Hadoop",
-            "module": "intelmq.bots.collectors.mail.mail-attach",
+            "module": "intelmq.bots.collectors.mail.collector_mail_attach",
             "parameters": {
                 "attach_regex": "csv.zip",
                 "attach_unzip": true,
@@ -473,7 +516,7 @@
         },
         "ShadowServer Microsoft Sinkhole": {
             "description": "ShadowServer Microsoft Sinkhole Collector is the bot responsible to get the report from source of information. https://www.shadowserver.org/wiki/pmwiki.php/Services/Microsoft-Sinkhole",
-            "module": "intelmq.bots.collectors.mail.mail-attach",
+            "module": "intelmq.bots.collectors.mail.collector_mail_attach",
             "parameters": {
                 "attach_regex": "csv.zip",
                 "attach_unzip": true,
@@ -488,10 +531,12 @@
         },
         "ShadowServer QOTD": {
             "description": "ShadowServer QOTD Collector is the bot responsible to get the report from source of information. https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-QOTD",
-            "module": "intelmq.bots.collectors.mail.mail-url",
+            "module": "intelmq.bots.collectors.mail.collector_mail_url",
             "parameters": {
+                "accuracy": "",
                 "attach_regex": "csv.zip",
                 "attach_unzip": true,
+                "feed": "",
                 "folder": "Inbox.shadowserver",
                 "mail_host": "<host>",
                 "mail_password": "<password>",
@@ -503,7 +548,7 @@
         },
         "ShadowServer SNMP": {
             "description": "ShadowServer Microsoft Sinkhole Collector is the bot responsible to get the report from source of information. https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-SNMP",
-            "module": "intelmq.bots.collectors.mail.mail-attach",
+            "module": "intelmq.bots.collectors.mail.collector_mail_attach",
             "parameters": {
                 "attach_regex": "csv.zip",
                 "attach_unzip": true,
@@ -578,6 +623,16 @@
                 "http_url": "http://vxvault.siri-urz.net/URL_List.php",
                 "rate_limit": 3600
             }
+        },
+        "XMPP collector": {
+            "description": "XMPP collector is the bot responsible to get events from xmpp server",
+            "module": "intelmq.bots.collectors.xmpp.collector",
+            "parameters": {
+                "rate_limit": "3600",
+                "xmpp_password": "xmpp password",
+                "xmpp_server": "xmpp server",
+                "xmpp_user": "xmpp username"
+            }
         }
     },
     "Expert": {
@@ -625,7 +680,7 @@
             }
         },
         "Deduplicator": {
-            "description": "Deduplicator is the bot responsible to detect and remove deduplicated messages.",
+            "description": "Deduplicator is the bot responsible for detection and removal of duplicate messages. Messages get cached for <redis_cache_ttl> seconds. If found in the cache, it is assumed to be a duplicate.",
             "module": "intelmq.bots.experts.deduplicator.expert",
             "parameters": {
                 "ignore_keys": "raw,time.observation",
@@ -645,7 +700,7 @@
             }
         },
         "MaxMind GeoIP": {
-            "description": "MaxMind GeoIP is the bot responsible to add geolocation information to the events (Country, City, Longitude, Latitude, etc..)",
+            "description": "MaxMind GeoIP is the bot responsible for adding geolocation information to events (Country, City, Longitude, Latitude, etc..)",
             "module": "intelmq.bots.experts.maxmind_geoip.expert",
             "parameters": {
                 "database": "/opt/intelmq/var/lib/bots/maxmind_geoip/GeoLite2-City.mmdb"
@@ -809,12 +864,35 @@
                 "host": "<host>"
             }
         },
+        "Redis": {
+            "description": "Redis is the bot responsible to send events to a Redis server.",
+            "module": "intelmq.bots.outputs.redis.output",
+            "parameters": {
+                "redis_db": 2,
+                "redis_password": "<password>",
+                "redis_queue": "external-redis-queue",
+                "redis_server_ip": "127.0.0.1",
+                "redis_server_port": 6379,
+                "redis_timeout": 50000
+            }
+        },
         "TCP": {
             "description": "TCP is the bot responsible to send events to a tcp port (Splunk, ElasticSearch, etc..).",
             "module": "intelmq.bots.outputs.tcp.output",
             "parameters": {
                 "ip": "<ip>",
                 "port": "<port>"
+            }
+        },
+        "XMPP": {
+            "description": "XMPP is the bot responsible to send events to an XMPP server.",
+            "module": "intelmq.bots.outputs.xmpp.output",
+            "parameters": {
+                "xmpp_password": "xmpp password",
+                "xmpp_server": "xmpp server",
+                "xmpp_to_server": "destination server",
+                "xmpp_to_user": "destination username",
+                "xmpp_user": "xmpp username"
             }
         }
     },
@@ -867,6 +945,11 @@
         "Autoshun": {
             "description": "Autoshun Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.autoshun.parser",
+            "parameters": {}
+        },
+        "BitSight Ciberfeed Stream": {
+            "description": "Bitsight Ciberfeed parser is the bot reponsible to parse and sanitize the information.",
+            "module": "intelmq.bots.parsers.bitsight.parser",
             "parameters": {}
         },
         "BlockList.DE Apache": {
@@ -974,7 +1057,7 @@
             "module": "intelmq.bots.parsers.dragonresearchgroup.parser_vnc",
             "parameters": {}
         },
-        "Dyn": {
+        "DynDNS ponmocup Domains": {
             "description": "Dyn Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.dyn.parser",
             "parameters": {}

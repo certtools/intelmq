@@ -1,0 +1,9 @@
+##########################################################################
+# Feodo IP Blocklist                                                     #
+# Generated on 2016-02-23 15:11:38 UTC                                   #
+#                                                                        #
+# For questions please refer to https://feodotracker.abuse.ch/blocklist/ #
+##########################################################################
+# START
+103.232.215.133
+# END (1 entries)

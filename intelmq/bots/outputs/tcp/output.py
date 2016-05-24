@@ -1,21 +1,16 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 import socket
 import sys
 import time
 
-from intelmq.lib.bot import Bot
 import intelmq.lib.utils as utils
+from intelmq.lib.bot import Bot
 
 
 class TCPBot(Bot):
 
     def process(self):
         event = self.receive_message()
-
-        if event is None:
-            self.acknowledge_message()
-            return
 
         data = event.to_json()
         self.send_data(data)

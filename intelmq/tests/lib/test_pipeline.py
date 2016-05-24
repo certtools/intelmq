@@ -11,7 +11,6 @@ TODO: count_queued_messages
 TODO: acknowledge
 TODO: check internal representation of data in redis (like with Pythonlist)
 """
-from __future__ import unicode_literals
 
 import unittest
 

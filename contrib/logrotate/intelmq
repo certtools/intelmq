@@ -1,0 +1,26 @@
+compress
+delaycompress
+copytruncate
+create 640 intelmq intelmq
+
+/opt/intelmq/var/log/*.log {
+    daily
+    maxsize 10M
+    rotate 60
+    notifempty
+    sharedscripts
+    postrotate
+        /usr/local/bin/intelmqctl reload
+    endscript
+}
+
+/opt/intelmq/var/lib/bots/file-output/*.txt {
+        daily
+        maxsize 10M
+        rotate 60
+        notifempty
+    sharedscripts
+    postrotate
+        /usr/local/bin/intelmqctl reload
+    endscript
+}

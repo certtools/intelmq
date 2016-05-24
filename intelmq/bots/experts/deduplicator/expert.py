@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 import copy
 import sys
 
@@ -18,10 +17,6 @@ class DeduplicatorExpertBot(Bot):
 
     def process(self):
         message = self.receive_message()
-
-        if message is None:
-            self.acknowledge_message()
-            return
 
         auxiliar_message = copy.copy(message)
 

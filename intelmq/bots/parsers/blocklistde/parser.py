@@ -1,11 +1,7 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 import posixpath
 import sys
-try:
-    from urlparse import urlparse
-except ImportError:
-    from urllib.parse import urlparse
+from urllib.parse import urlparse
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
@@ -79,10 +75,6 @@ class BlockListDEParserBot(Bot):
     def process(self):
         report = self.receive_message()
 
-        if report is None or not report.contains("raw"):
-            self.acknowledge_message()
-            return
-
         raw_report = utils.base64_decode(report.get("raw"))
         raw_report = raw_report.strip()
 
@@ -90,7 +82,7 @@ class BlockListDEParserBot(Bot):
         path = urlparse(url).path
         filename = posixpath.basename(path)
 
-        for row in raw_report.split('\n'):
+        for row in raw_report.splitlines():
             event = Event(report)
 
             event.add('source.ip', row.strip())

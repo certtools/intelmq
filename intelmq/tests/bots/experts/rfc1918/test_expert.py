@@ -2,7 +2,6 @@
 """
 Testing rfc 1918 expert bot.
 """
-from __future__ import unicode_literals
 
 import unittest
 
