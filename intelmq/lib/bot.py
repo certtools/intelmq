@@ -90,6 +90,37 @@ class Bot(object):
     def shutdown(self):
         pass
 
+    def parse(self, report):
+        """
+        Default parser yielding stripped lines.
+        """
+        for line in utils.base64_decode(report.get("raw")).splitlines():
+            yield line.strip()
+
+    def process(self):
+        self.tempdata = []
+        self.__failed = set()
+        report = self.receive_message()
+
+        for line in self.parse(report):
+            if not line:
+                continue
+            try:
+                # filter out None
+                events = list(filter(bool, self.parseline(line, report)))
+            except Exception as exc:
+                self.logger.exception('Failed to parse line.')
+                self.__failed.add((exc, line))
+            else:
+                if events:
+                    self.send_message(*events)
+
+        if self.__failed:
+            for exc, line in self.__failed:
+                self.__dump_message(exc, self.recoverline(line))
+
+        self.acknowledge_message()
+
     def start(self, starting=True, error_on_pipeline=True,
               error_on_message=False, source_pipeline=None,
               destination_pipeline=None):
@@ -256,18 +287,19 @@ class Bot(object):
             self.__destination_pipeline = None
             self.logger.info("Disconnecting from destination pipeline.")
 
-    def send_message(self, message):
-        if not message:
-            self.logger.warning("Sending Message: Empty message found.")
-            return False
+    def send_message(self, *messages):
+        for message in messages:
+            if not message:
+                self.logger.warning("Ignoring empty message at sending.")
+                return False
 
-        self.logger.debug("Sending message.")
-        self.__message_counter += 1
-        if self.__message_counter % 500 == 0:
-            self.logger.info("Processed %s messages." % self.__message_counter)
+            self.logger.debug("Sending message.")
+            self.__message_counter += 1
+            if self.__message_counter % 500 == 0:
+                self.logger.info("Processed %s messages." % self.__message_counter)
 
-        raw_message = MessageFactory.serialize(message)
-        self.__destination_pipeline.send(raw_message)
+            raw_message = MessageFactory.serialize(message)
+            self.__destination_pipeline.send(raw_message)
 
     def receive_message(self):
         self.logger.debug('Receiving Message.')
@@ -286,8 +318,10 @@ class Bot(object):
         self.__last_message = self.__current_message
         self.__source_pipeline.acknowledge()
 
-    def __dump_message(self, error_traceback):
-        if self.__current_message is None:
+    def __dump_message(self, error_traceback, message=None):
+        if message is None:
+            message = self.__current_message
+        if message is None:
             return
 
         self.logger.info('Dumping message from pipeline to dump file.')
