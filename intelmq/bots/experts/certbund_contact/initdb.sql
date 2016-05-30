@@ -246,13 +246,13 @@ CREATE INDEX fqdn_automatic_fqdn_idx ON fqdn (fqdn);
 /*
   Classifications of Events/Incidents
 */
-CREATE TABLE classification_identifier (
+CREATE TABLE classification_type (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) UNIQUE NOT NULL
 );
 
-CREATE INDEX classification_identifier_name_idx
-          ON classification_identifier (name);
+CREATE INDEX classification_type_name_idx
+          ON classification_type (name);
 
 /*
  Template
@@ -263,15 +263,15 @@ CREATE TABLE template (
     -- File-name of the template
     path VARCHAR(200) NOT NULL,
 
-    -- The classification identifier for which this template can be used.
-    classification_identifier_id INTEGER NOT NULL,
+    -- The classification type for which this template can be used.
+    classification_type_id INTEGER NOT NULL,
 
-    FOREIGN KEY (classification_identifier_id)
-     REFERENCES classification_identifier (id)
+    FOREIGN KEY (classification_type_id)
+     REFERENCES classification_type (id)
 );
 
 CREATE INDEX template_classification_idx
-          ON template (classification_identifier_id);
+          ON template (classification_type_id);
 
 /*
  Relations A_to_B
@@ -395,32 +395,32 @@ CREATE OR REPLACE VIEW organisation_settings (
     organisation_id,
     organisation_name,
     template_path,
-    classification_identifier
+    classification_type
 ) AS
 SELECT o.id, o.name, t.path, ci.name
   FROM organisation AS o
   JOIN organisation_to_template AS ot ON ot.organisation_id = o.id
   JOIN template AS t ON ot.template_id = t.id
-  JOIN classification_identifier AS ci
-    ON ci.id = t.classification_identifier_id;
+  JOIN classification_type AS ci
+    ON ci.id = t.classification_type_id;
 
 
 CREATE OR REPLACE VIEW organisation_settings_automatic (
     organisation_id,
     organisation_name,
     template_path,
-    classification_identifier
+    classification_type
 ) AS
-SELECT o.id, o.name, t.path, ci.name
+SELECT o.id, o.name, t.path, ct.name
   FROM organisation_automatic AS o
   JOIN organisation_to_template_automatic AS ot ON ot.organisation_id = o.id
   JOIN template AS t ON ot.template_id = t.id
-  JOIN classification_identifier AS ci
-    ON ci.id = t.classification_identifier_id;
+  JOIN classification_type AS ct
+    ON ct.id = t.classification_type_id;
 
 
 -- Lookup all notifications for a given IP address and event
--- classification identifier
+-- classification type
 CREATE OR REPLACE FUNCTION
 notifications_for_ip(event_ip INET, event_classification VARCHAR(100))
 RETURNS SETOF notification
@@ -444,7 +444,7 @@ BEGIN
       JOIN organisation_settings AS os
         ON mc.organisation_id = os.organisation_id
       JOIN format f ON mc.format_id = f.id
-     WHERE os.classification_identifier = event_classification;
+     WHERE os.classification_type = event_classification;
 END;
 $$ LANGUAGE plpgsql VOLATILE;
 
@@ -473,13 +473,13 @@ BEGIN
       JOIN organisation_settings_automatic AS os
         ON mc.organisation_id = os.organisation_id
       JOIN format f ON mc.format_id = f.id
-     WHERE os.classification_identifier = event_classification;
+     WHERE os.classification_type = event_classification;
 END;
 $$ LANGUAGE plpgsql VOLATILE;
 
 
 -- Lookup all notifications for a given ASN and event classification
--- identifier
+-- type
 CREATE OR REPLACE FUNCTION
 notifications_for_asn(event_asn BIGINT, event_classification VARCHAR(100))
 RETURNS SETOF notification
@@ -502,7 +502,7 @@ BEGIN
       JOIN organisation_settings AS os
         ON mc.organisation_id = os.organisation_id
       JOIN format f ON mc.format_id = f.id
-     WHERE os.classification_identifier = event_classification;
+     WHERE os.classification_type = event_classification;
 END;
 $$ LANGUAGE plpgsql VOLATILE;
 
@@ -529,12 +529,12 @@ BEGIN
       JOIN organisation_settings_automatic AS os
         ON mc.organisation_id = os.organisation_id
       JOIN format AS f ON mc.format_id = f.id
-     WHERE os.classification_identifier = event_classification;
+     WHERE os.classification_type = event_classification;
 END;
 $$ LANGUAGE plpgsql VOLATILE;
 
 -- Lookup all notifications for a given FQDN and event classification
--- identifier
+-- type
 CREATE OR REPLACE FUNCTION
 notifications_for_fqdn(event_fqdn TEXT, event_classification VARCHAR(100))
 RETURNS SETOF notification
@@ -557,7 +557,7 @@ BEGIN
       JOIN organisation_settings AS os
         ON mc.organisation_id = os.organisation_id
       JOIN format AS f ON mc.format_id = f.id
-     WHERE os.classification_identifier = event_classification;
+     WHERE os.classification_type = event_classification;
 END;
 $$ LANGUAGE plpgsql VOLATILE;
 
@@ -584,7 +584,7 @@ BEGIN
       JOIN organisation_settings_automatic AS os
         ON mc.organisation_id = os.organisation_id
       JOIN format AS f ON mc.format_id = f.id
-     WHERE os.classification_identifier = event_classification;
+     WHERE os.classification_type = event_classification;
 END;
 $$ LANGUAGE plpgsql VOLATILE;
 
