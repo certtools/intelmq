@@ -189,7 +189,8 @@ CREATE TABLE network (
 -- network that contain the IP-address ip and using n as the local alias
 -- for the table should use a where clause condition of the form
 --
---   host(network(n.address)) <= ip AND ip <= host(broadcast(n.address))
+--   inet(host(network(n.address))) <= ip
+--   AND ip <= inet(host(broadcast(n.address)))
 --
 -- FIXME: In PostgreSQL 9.4 there's GiST indexes for the intet and cidr
 -- types (see http://www.postgresql.org/docs/9.4/static/release-9-4.html).
@@ -200,9 +201,9 @@ CREATE TABLE network (
 -- IMHO that's okay to demand this XXX
 --
 CREATE INDEX network_cidr_lower_idx
-          ON network ((host(network(address))));
+          ON network ((inet(host(network(address)))));
 CREATE INDEX network_cidr_upper_idx
-          ON network ((host(broadcast(address))));
+          ON network ((inet(host(broadcast(address)))));
 
 
 CREATE TABLE network_automatic (
@@ -214,9 +215,9 @@ CREATE TABLE network_automatic (
     comment TEXT NOT NULL DEFAULT ''
 );
 CREATE INDEX network_automatic_cidr_lower_idx
-          ON network_automatic ((host(network(address))));
+          ON network_automatic ((inet(host(network(address)))));
 CREATE INDEX network_automatic_cidr_upper_idx
-          ON network_automatic ((host(broadcast(address))));
+          ON network_automatic ((inet(host(broadcast(address)))));
 
 
 
@@ -435,8 +436,8 @@ BEGIN
               JOIN organisation_to_network AS orgn
                 ON orgn.organisation_id = r.organisation_id
               JOIN network AS n ON n.id = orgn.net_id
-             WHERE host(network(n.address)) <= host(event_ip)
-               AND host(event_ip) <= host(broadcast(n.address)))
+             WHERE inet(host(network(n.address))) <= event_ip
+               AND event_ip <= inet(host(broadcast(n.address))))
     SELECT mc.email, os.organisation_name, os.template_path, f.name,
            mc.notification_interval
       FROM matched_contacts mc
@@ -464,8 +465,8 @@ BEGIN
               JOIN organisation_to_network_automatic AS orgn
                 ON orgn.organisation_id = r.organisation_id
               JOIN network_automatic AS n ON n.id = orgn.net_id
-             WHERE host(network(n.address)) <= host(event_ip)
-               AND host(event_ip) <= host(broadcast(n.address)))
+             WHERE inet(host(network(n.address))) <= event_ip
+               AND event_ip <= inet(host(broadcast(n.address))))
     SELECT mc.email, os.organisation_name, os.template_path, f.name,
            mc.notification_interval
       FROM matched_contacts mc
