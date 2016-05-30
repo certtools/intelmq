@@ -128,9 +128,9 @@ class MailSendOutputBot(Bot):
             rcpts.append(self.parameters.bcc)
 
         if MailSendOutputBot.debug:
-            print 'To: ' + emailto + '; Subject: ' + subject
-            print 'Events: ' + str((fileContents.count('\n') - 1))
-            print '-------------------------------------------------'
+            print('To: ' + emailto + '; Subject: ' + subject)
+            print('Events: ' + str((fileContents.count('\n') - 1)))
+            print('-------------------------------------------------')
         else:
             msg.attach(MIMEText(text, "plain", "utf-8"))
 
