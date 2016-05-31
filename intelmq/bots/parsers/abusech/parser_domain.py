@@ -12,7 +12,7 @@ import sys
 
 import dateutil.parser
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 from intelmq.lib.message import Event
 
 SOURCE_FEEDS = {'https://feodotracker.abuse.ch/blocklist/?download=domainblocklist': 'Cridex',
@@ -20,7 +20,7 @@ SOURCE_FEEDS = {'https://feodotracker.abuse.ch/blocklist/?download=domainblockli
                 'https://zeustracker.abuse.ch/blocklist.php?download=baddomains': 'Zeus'}
 
 
-class AbusechDomainParserBot(Bot):
+class AbusechDomainParserBot(ParserBot):
     lastgenerated = None
 
     def parseline(self, line, report):

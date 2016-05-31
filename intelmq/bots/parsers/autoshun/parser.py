@@ -3,7 +3,7 @@ import html.parser
 import sys
 
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 from intelmq.lib.harmonization import ClassificationType
 from intelmq.lib.message import Event
 
@@ -16,31 +16,30 @@ TAXONOMY = {
 }
 
 
-class AutoshunParserBot(Bot):
+class AutoshunParserBot(ParserBot):
 
-    def process(self):
-        report = self.receive_message()
+    def parse(self, report):
+        self.parser = html.parser.HTMLParser()
 
         raw_report = utils.base64_decode(report.get("raw"))
-        raw_report_splitted = raw_report.split("</tr>")[2:]
+        splitted = raw_report.split("</tr>")
+        self.tempdata = ['</tr>'.join(splitted[:2])]
+        # TODO: save ending line
+        for line in splitted[2:]:
+            yield line.strip()
 
-        parser = html.parser.HTMLParser()
+    def parseline(self, line, report):
+        event = Event(report)
 
-        for row in raw_report_splitted:
-            event = Event(report)
-
-            row = row.strip()
-
-            if len(row) <= 0:
-                continue
-
-            info = row.split("<td>")
-            if len(info) < 3:
-                continue
-
+        info = line.split("<td>")
+        if len(line) <= 0:
+            yield
+        elif len(info) < 3:
+            yield
+        else:
             ip = info[1].split('</td>')[0].strip()
             last_seen = info[2].split('</td>')[0].strip() + '-05:00'
-            description = parser.unescape(info[3].split('</td>')[0].strip())
+            description = self.parser.unescape(info[3].split('</td>')[0].strip())
 
             for key in ClassificationType.allowed_values:
                 if description.lower().find(key.lower()) > -1:
@@ -58,10 +57,8 @@ class AutoshunParserBot(Bot):
             event.add("time.source", last_seen)
             event.add("source.ip", ip)
             event.add("event_description.text", description)
-            event.add("raw", row)
-
-            self.send_message(event)
-        self.acknowledge_message()
+            event.add("raw", line+"</tr>")
+            yield event
 
 
 if __name__ == "__main__":

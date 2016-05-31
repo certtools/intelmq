@@ -5,28 +5,28 @@ Completely untested. If you have example data, please contact us!
 
 import sys
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 from intelmq.lib.message import Event
 
 
-class ArborParserBot(Bot):
+class ArborParserBot(ParserBot):
 
     def parseline(self, row, report):
         if row.startswith('other'):
             yield
+        else:
+            event = Event(report)
 
-        event = Event(report)
+            event.add('classification.type', 'brute-force')
+            event.add("raw", row)
 
-        event.add('classification.type', 'brute-force')
-        event.add("raw", row)
+            columns = ["source.ip"]
+            row = row.split()
 
-        columns = ["source.ip"]
-        row = row.split()
+            for key, value in zip(columns, row):
+                event.add(key, value)
 
-        for key, value in zip(columns, row):
-            event.add(key, value)
-
-        yield event
+            yield event
 
 
 if __name__ == "__main__":
