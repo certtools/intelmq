@@ -100,6 +100,7 @@ class BotTestCase(object):
         cls.maxDiff = None  # For unittest module, prints long diffs
         cls.pipe = None
         cls.sysconfig = {}
+        cls.allowed_error_count = 0  # allows dumping of some lines
 
         cls.set_bot()
 
@@ -239,7 +240,8 @@ class BotTestCase(object):
     def test_log_not_error(self):
         """ Test if bot does not log errors. """
         self.run_bot()
-        self.assertNotRegexpMatchesLog("ERROR")
+        self.assertNotRegexpMatchesLog("(ERROR.*?){}"
+                                       "".format(self.allowed_error_count))
 
     def test_log_not_critical(self):
         """ Test if bot does not log critical errors. """
