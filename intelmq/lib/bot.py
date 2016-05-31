@@ -3,7 +3,9 @@
 
 """
 
+import csv
 import datetime
+import io
 import json
 import re
 import os
@@ -90,37 +92,6 @@ class Bot(object):
     def shutdown(self):
         pass
 
-    def parse(self, report):
-        """
-        Default parser yielding stripped lines.
-        """
-        for line in utils.base64_decode(report.get("raw")).splitlines():
-            yield line.strip()
-
-    def process(self):
-        self.tempdata = []
-        self.__failed = set()
-        report = self.receive_message()
-
-        for line in self.parse(report):
-            if not line:
-                continue
-            try:
-                # filter out None
-                events = list(filter(bool, self.parseline(line, report)))
-            except Exception as exc:
-                self.logger.exception('Failed to parse line.')
-                self.__failed.add((exc, line))
-            else:
-                if events:
-                    self.send_message(*events)
-
-        if self.__failed:
-            for exc, line in self.__failed:
-                self.__dump_message(exc, self.recoverline(line))
-
-        self.acknowledge_message()
-
     def start(self, starting=True, error_on_pipeline=True,
               error_on_message=False, source_pipeline=None,
               destination_pipeline=None):
@@ -198,7 +169,7 @@ class Bot(object):
                         if error_on_message:
 
                             if self.parameters.error_dump_message:
-                                self.__dump_message(error_traceback)
+                                self._dump_message(error_traceback)
 
                             # remove message from pipeline
                             self.acknowledge_message()
@@ -318,7 +289,7 @@ class Bot(object):
         self.__last_message = self.__current_message
         self.__source_pipeline.acknowledge()
 
-    def __dump_message(self, error_traceback, message=None):
+    def _dump_message(self, error_traceback, message=None):
         if message is None:
             message = self.__current_message
         if message is None:
@@ -426,6 +397,57 @@ class Bot(object):
                         raise exceptions.ConfigurationError(
                             'harmonization',
                             "Key %s is not valid." % _key)
+
+
+class ParserBot(Bot):
+
+    def parse_csv(self, report):
+        """
+        CSV parser.
+        """
+        raw_report = utils.base64_decode(report.get("raw"))
+        for line in csv.reader(io.StringIO(raw_report)):
+            yield line
+
+    def parse(self, report):
+        """
+        Default parser yielding stripped lines.
+        """
+        for line in utils.base64_decode(report.get("raw")).splitlines():
+            yield line.strip()
+
+    def process(self):
+        self.tempdata = []
+        self.__failed = []
+        report = self.receive_message()
+
+        for line in self.parse(report):
+            if not line:
+                continue
+            try:
+                # filter out None
+                events = list(filter(bool, self.parseline(line, report)))
+            except Exception as exc:
+                self.logger.exception('Failed to parse line.')
+                self.__failed.append((exc, line))
+            else:
+                if events:
+                    self.send_message(*events)
+
+        if self.__failed:
+            for exc, line in self.__failed:
+                self._dump_message(exc, self.recoverline(line))
+
+        self.acknowledge_message()
+
+    def recoverline(self, line):
+        return '\n'.join(self.tempdata + [line])
+
+    def recoverline_csv(self, line):
+        out = io.StringIO()
+        writer = csv.writer(out)
+        writer.writerow(line)
+        return out.getvalue()
 
 
 class Parameters(object):
