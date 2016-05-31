@@ -339,7 +339,14 @@ The configuration is called `modify.conf` and looks like this:
         }, {
             "classification.identifier": "urlzone"
         }]
-	}
+    },
+"Standard Protocols": {
+    "http": [{
+            "source.port": "^(80|443)$"
+        }, {
+            "protocol.application": "http"
+        }]
+    }
 }
 ```
 
@@ -353,7 +360,9 @@ We have an event with `feed.name = Spamhaus Cert` and `malware.name = confickera
 
 Assume we have an event with `feed.name = Spamhaus Cert` and `malware.name = feodo`. The default condition matches, but no others. So the default action is applied. The value for `classification.identifier` is `{msg[malware.name]}`, this is [standard Python string format syntax](https://docs.python.org/3/library/string.html#formatspec). Thus you can use any value from the processed event, which is available as `msg`.
 
+#### Types
 
+If the rule is a string, a regex-search is performed, also for numeric values (`str()` is called on them). If the rule is numeric for numeric values, a simple comparison is done. If other types are mixed, a warning will be thrown.
 
 
 <a name="outputs"></a>
