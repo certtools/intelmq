@@ -14,7 +14,7 @@ type 	Packet type of the connection traffic (udp/tcp)
 infection 	Infection name if known
 url 	Connection URL if applicable
 agent 	HTTP connection agent if applicable
-cc 	The Command and Control that is managing this IP
+cc_ip 	The Command and Control that is managing this IP
 cc_port 	Server side port that the IP connected to
 cc_asn 	ASN of the C&C
 cc_geo 	Country of the C&C
@@ -37,47 +37,76 @@ from intelmq.lib import utils
 from intelmq.lib.bot import Bot
 from intelmq.lib.message import Event
 
+from intelmq.lib.exceptions import InvalidValue
+
 
 class ShadowServerDroneParserBot(Bot):
+
+    mapping = [
+        ("destination.asn"            , "cc_asn"),
+        ("destination.geolocation.cc" , "cc_geo"),
+        ("destination.ip"             , "cc_ip"),
+        ("destination.port"           , "cc_port"),
+        ("destination.fqdn"           , "cc_dns"),
+        ("destination.url"            , "url"),
+        ("malware.name"               , "infection"),
+        ("protocol.application"       , "application"),
+        ("protocol.transport"         , "type"),
+        ("source.asn"                 , "asn"),
+        ("source.geolocation.cc"      , "geo"),
+        ("source.geolocation.region"  , "region"),
+        ("source.geolocation.city"    , "city"),
+        ("source.reverse_dns"         , "hostname"),
+        ("source.local_hostname"      , "machine_name"),
+    ]
 
     def process(self):
         report = self.receive_message()
 
         raw_report = utils.base64_decode(report["raw"])
-        for row in csv.DictReader(io.StringIO(raw_report), dictreader=True):
+        for row in csv.DictReader(io.StringIO(raw_report)):
+
             event = Event(report)
             extra = {}
 
+            # Required fields which must not fail
             event.add('time.source', row['timestamp']+' UTC')
             event.add('source.ip', row['ip'])
             event.add('source.port', row['port'])
-            event.add('source.asn', row['asn'])
-            event.add('source.geolocation.cc', row['geo'])
-            event.add('source.geolocation.region', row['region'])
-            event.add('source.geolocation.city', row['city'])
-            if row['hostname']:
-                event.add('source.reverse_dns', row['hostname'])
-            event.add('protocol.transport', row['type'])
-            event.add('malware.name', row['infection'])
-            if row['url']:
-                event.add('destination.url', row['url'])
+            event.add('classification.type', 'botnet drone')
+
+            # Add events
+            for item in self.mapping:
+                intelmq_key, shadow_key = item[:2]
+                if len(item) > 2:
+                    conv = item[2]
+                else:
+                    conv = None
+                value = row.get(shadow_key)
+                raw_value = value
+                if raw_value is not None:
+                    if conv is not None:
+                        value = conv(raw_value)
+                    else:
+                        value = raw_value
+                    try:
+                        event.add(intelmq_key, value)
+                    except InvalidValue:
+                        self.logger.warn(
+                                'Could not add event "{}";'\
+                                ' adding it to extras...'.format(shadow_key)
+                        )
+                        extra[shadow_key] = raw_value
+
+            # Add extras
             if row['agent']:
                 extra['user_agent'] = row['agent']
-            event.add('destination.ip', row['cc'])
-            event.add('destination.port', row['cc_port'])
-            event.add('destination.asn', row['cc_asn'])
-            event.add('destination.geolocation.cc', row['cc_geo'])
-            if row['cc_dns']:
-                event.add('destination.reverse_dns', row['cc_dns'])
-            extra['connection_count'] = int(row['count'])
+            if row['count']:
+                extra['connection_count'] = int(row['count'])
             if row['proxy']:
                 extra['proxy'] = row['proxy']
-            if row['application']:
-                event.add('protocol.application', row['type'])
             extra['os.name'] = row['p0f_genre']
             extra['os.version'] = row['p0f_detail']
-            if 'machine_name' in row and row['machine_name']:
-                event.add('source.local_hostname', row['type'])
             if 'id' in row and row['id']:
                 extra['bot_id'] = row['id']
             if int(row['naics']):
@@ -85,9 +114,9 @@ class ShadowServerDroneParserBot(Bot):
             if int(row['sic']):
                 extra['sic'] = int(row['sic'])
 
-            event.add('extra', extra)
-            event.add('classification.type', 'botnet drone')
             event.add('raw', '"'+','.join(map(str, row.items()))+'"')
+            if extra:
+                event.add('extra', extra)
 
             self.send_message(event)
         self.acknowledge_message()
