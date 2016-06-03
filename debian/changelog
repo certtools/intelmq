@@ -1,3 +1,13 @@
+intelmq (1.0.0~dev4+intevation.1.1~beta1) experimental; urgency=low
+
+  * New Release from customer-releases branch
+  * Merged upstream master
+  * Merged certbund-contact
+    CAUTION: This changes DB the schema which will need a manual upgrade
+  * Merged shadowserver-feeds
+
+ -- Gernot Schulz <gernot@intevation.de>  Fri, 03 Jun 2016 14:45:18 +0200
+
 intelmq (1.0.0~dev4+intevation.1.0~beta1) experimental; urgency=low
 
   * New Release from customer-releases branch.
