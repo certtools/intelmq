@@ -43,7 +43,7 @@ class CERTBundKontaktExpertBot(Bot):
             ip = event.get(section + ".ip")
             asn = event.get(section + ".asn")
             fqdn = event.get(section + ".fqdn")
-            classification = event.get("classification.identifier")
+            classification = event.get("classification.type")
             notifications = self.lookup_contact(classification, ip, fqdn, asn)
             if notifications is None:
                 # stop processing the message because an error occurred
@@ -71,10 +71,11 @@ class CERTBundKontaktExpertBot(Bot):
         cur.execute("SELECT * FROM notifications_for_{}(%s, %s)"
                     .format(criterion), (value, classification))
         result = cur.fetchall()
-        if not result:
-            cur.execute("SELECT * FROM notifications_for_{}_automatic(%s, %s)"
-                        .format(criterion), (value, classification))
-            return cur.fetchall()
+        if result:
+            return result
+        cur.execute("SELECT * FROM notifications_for_{}_automatic(%s, %s)"
+                    .format(criterion), (value, classification))
+        return cur.fetchall()
 
     def lookup_contact(self, classification, ip, fqdn, asn):
         self.logger.debug("Looking up ip: %r, classification: %r",

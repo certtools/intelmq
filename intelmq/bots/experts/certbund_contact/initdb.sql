@@ -84,7 +84,7 @@ CREATE TABLE contact (
 );
 
 CREATE TABLE contact_automatic (
-    id INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
 
     firstname VARCHAR (500) NOT NULL DEFAULT '',
     lastname  VARCHAR (500) NOT NULL DEFAULT '',
@@ -105,7 +105,7 @@ CREATE TABLE contact_automatic (
 
 -- Roles serve as an m-n relationship between organisations and contacts
 CREATE TABLE role (
-    id INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
 
     -- free text for right now. We assume the regular tags from the
     -- RIPE DB such as "tech-c" or "abuse-c"
@@ -122,7 +122,7 @@ CREATE TABLE role (
 
 -- Roles serve as an m-n relationship between organisations and contacts
 CREATE TABLE role_automatic (
-    id INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
 
     role_type    VARCHAR (500) NOT NULL default 'abuse-c',
     is_primary_contact BOOLEAN NOT NULL DEFAULT FALSE,
@@ -189,7 +189,8 @@ CREATE TABLE network (
 -- network that contain the IP-address ip and using n as the local alias
 -- for the table should use a where clause condition of the form
 --
---   host(network(n.address)) <= ip AND ip <= host(broadcast(n.address))
+--   inet(host(network(n.address))) <= ip
+--   AND ip <= inet(host(broadcast(n.address)))
 --
 -- FIXME: In PostgreSQL 9.4 there's GiST indexes for the intet and cidr
 -- types (see http://www.postgresql.org/docs/9.4/static/release-9-4.html).
@@ -200,13 +201,13 @@ CREATE TABLE network (
 -- IMHO that's okay to demand this XXX
 --
 CREATE INDEX network_cidr_lower_idx
-          ON network ((host(network(address))));
+          ON network ((inet(host(network(address)))));
 CREATE INDEX network_cidr_upper_idx
-          ON network ((host(broadcast(address))));
+          ON network ((inet(host(broadcast(address)))));
 
 
 CREATE TABLE network_automatic (
-    id INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
 
     -- Network address as CIDR.
     address cidr UNIQUE NOT NULL,
@@ -214,9 +215,9 @@ CREATE TABLE network_automatic (
     comment TEXT NOT NULL DEFAULT ''
 );
 CREATE INDEX network_automatic_cidr_lower_idx
-          ON network_automatic ((host(network(address))));
+          ON network_automatic ((inet(host(network(address)))));
 CREATE INDEX network_automatic_cidr_upper_idx
-          ON network_automatic ((host(broadcast(address))));
+          ON network_automatic ((inet(host(broadcast(address)))));
 
 
 
@@ -232,7 +233,7 @@ CREATE TABLE fqdn (
 CREATE INDEX fqdn_fqdn_idx ON fqdn (fqdn);
 
 CREATE TABLE fqdn_automatic (
-    id INTEGER PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
 
     -- The fully qualified domain name
     fqdn TEXT UNIQUE NOT NULL,
@@ -245,13 +246,13 @@ CREATE INDEX fqdn_automatic_fqdn_idx ON fqdn (fqdn);
 /*
   Classifications of Events/Incidents
 */
-CREATE TABLE classification_identifier (
+CREATE TABLE classification_type (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) UNIQUE NOT NULL
 );
 
-CREATE INDEX classification_identifier_name_idx
-          ON classification_identifier (name);
+CREATE INDEX classification_type_name_idx
+          ON classification_type (name);
 
 /*
  Template
@@ -262,15 +263,15 @@ CREATE TABLE template (
     -- File-name of the template
     path VARCHAR(200) NOT NULL,
 
-    -- The classification identifier for which this template can be used.
-    classification_identifier_id INTEGER NOT NULL,
+    -- The classification type for which this template can be used.
+    classification_type_id INTEGER NOT NULL,
 
-    FOREIGN KEY (classification_identifier_id)
-     REFERENCES classification_identifier (id)
+    FOREIGN KEY (classification_type_id)
+     REFERENCES classification_type (id)
 );
 
 CREATE INDEX template_classification_idx
-          ON template (classification_identifier_id);
+          ON template (classification_type_id);
 
 /*
  Relations A_to_B
@@ -394,32 +395,32 @@ CREATE OR REPLACE VIEW organisation_settings (
     organisation_id,
     organisation_name,
     template_path,
-    classification_identifier
+    classification_type
 ) AS
 SELECT o.id, o.name, t.path, ci.name
   FROM organisation AS o
   JOIN organisation_to_template AS ot ON ot.organisation_id = o.id
   JOIN template AS t ON ot.template_id = t.id
-  JOIN classification_identifier AS ci
-    ON ci.id = t.classification_identifier_id;
+  JOIN classification_type AS ci
+    ON ci.id = t.classification_type_id;
 
 
 CREATE OR REPLACE VIEW organisation_settings_automatic (
     organisation_id,
     organisation_name,
     template_path,
-    classification_identifier
+    classification_type
 ) AS
-SELECT o.id, o.name, t.path, ci.name
+SELECT o.id, o.name, t.path, ct.name
   FROM organisation_automatic AS o
   JOIN organisation_to_template_automatic AS ot ON ot.organisation_id = o.id
   JOIN template AS t ON ot.template_id = t.id
-  JOIN classification_identifier AS ci
-    ON ci.id = t.classification_identifier_id;
+  JOIN classification_type AS ct
+    ON ct.id = t.classification_type_id;
 
 
 -- Lookup all notifications for a given IP address and event
--- classification identifier
+-- classification type
 CREATE OR REPLACE FUNCTION
 notifications_for_ip(event_ip INET, event_classification VARCHAR(100))
 RETURNS SETOF notification
@@ -435,15 +436,15 @@ BEGIN
               JOIN organisation_to_network AS orgn
                 ON orgn.organisation_id = r.organisation_id
               JOIN network AS n ON n.id = orgn.net_id
-             WHERE host(network(n.address)) <= host(event_ip)
-               AND host(event_ip) <= host(broadcast(n.address)))
+             WHERE inet(host(network(n.address))) <= event_ip
+               AND event_ip <= inet(host(broadcast(n.address))))
     SELECT mc.email, os.organisation_name, os.template_path, f.name,
            mc.notification_interval
       FROM matched_contacts mc
       JOIN organisation_settings AS os
         ON mc.organisation_id = os.organisation_id
       JOIN format f ON mc.format_id = f.id
-     WHERE os.classification_identifier = event_classification;
+     WHERE os.classification_type = event_classification;
 END;
 $$ LANGUAGE plpgsql VOLATILE;
 
@@ -464,21 +465,21 @@ BEGIN
               JOIN organisation_to_network_automatic AS orgn
                 ON orgn.organisation_id = r.organisation_id
               JOIN network_automatic AS n ON n.id = orgn.net_id
-             WHERE host(network(n.address)) <= host(event_ip)
-               AND host(event_ip) <= host(broadcast(n.address)))
+             WHERE inet(host(network(n.address))) <= event_ip
+               AND event_ip <= inet(host(broadcast(n.address))))
     SELECT mc.email, os.organisation_name, os.template_path, f.name,
            mc.notification_interval
       FROM matched_contacts mc
       JOIN organisation_settings_automatic AS os
         ON mc.organisation_id = os.organisation_id
       JOIN format f ON mc.format_id = f.id
-     WHERE os.classification_identifier = event_classification;
+     WHERE os.classification_type = event_classification;
 END;
 $$ LANGUAGE plpgsql VOLATILE;
 
 
 -- Lookup all notifications for a given ASN and event classification
--- identifier
+-- type
 CREATE OR REPLACE FUNCTION
 notifications_for_asn(event_asn BIGINT, event_classification VARCHAR(100))
 RETURNS SETOF notification
@@ -501,7 +502,7 @@ BEGIN
       JOIN organisation_settings AS os
         ON mc.organisation_id = os.organisation_id
       JOIN format f ON mc.format_id = f.id
-     WHERE os.classification_identifier = event_classification;
+     WHERE os.classification_type = event_classification;
 END;
 $$ LANGUAGE plpgsql VOLATILE;
 
@@ -528,12 +529,12 @@ BEGIN
       JOIN organisation_settings_automatic AS os
         ON mc.organisation_id = os.organisation_id
       JOIN format AS f ON mc.format_id = f.id
-     WHERE os.classification_identifier = event_classification;
+     WHERE os.classification_type = event_classification;
 END;
 $$ LANGUAGE plpgsql VOLATILE;
 
 -- Lookup all notifications for a given FQDN and event classification
--- identifier
+-- type
 CREATE OR REPLACE FUNCTION
 notifications_for_fqdn(event_fqdn TEXT, event_classification VARCHAR(100))
 RETURNS SETOF notification
@@ -556,7 +557,7 @@ BEGIN
       JOIN organisation_settings AS os
         ON mc.organisation_id = os.organisation_id
       JOIN format AS f ON mc.format_id = f.id
-     WHERE os.classification_identifier = event_classification;
+     WHERE os.classification_type = event_classification;
 END;
 $$ LANGUAGE plpgsql VOLATILE;
 
@@ -583,7 +584,7 @@ BEGIN
       JOIN organisation_settings_automatic AS os
         ON mc.organisation_id = os.organisation_id
       JOIN format AS f ON mc.format_id = f.id
-     WHERE os.classification_identifier = event_classification;
+     WHERE os.classification_type = event_classification;
 END;
 $$ LANGUAGE plpgsql VOLATILE;
 
