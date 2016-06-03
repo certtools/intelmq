@@ -990,14 +990,14 @@
             "module": "intelmq.bots.parsers.cleanmx.parser_virus",
             "parameters": {}
         },
-        "Cymru Infected": {
-            "description": "Cymru infected Parser",
-            "module": "intelmq.bots.parsers.cymru_infected.parser",
-            "parameters": {}
-        },
         "Cymru Full Bogons": {
             "description": "Cymru Full Bogons Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.cymru_full_bogons.parser",
+            "parameters": {}
+        },
+        "Cymru Infected": {
+            "description": "Cymru infected Parser",
+            "module": "intelmq.bots.parsers.cymru_infected.parser",
             "parameters": {}
         },
         "DShield AS": {
@@ -1135,14 +1135,14 @@
             "module": "intelmq.bots.parsers.shadowserver.drone_parser",
             "parameters": {}
         },
-        "ShadowServer NTP-Monitor": {
-            "description": "ShadowServer NTP-Monitor Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.shadowserver.ntp_parser",
-            "parameters": {}
-        },
         "ShadowServer Microsoft Sinkhole": {
             "description": "ShadowServer Microsoft Sinkhole Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.shadowserver.microsoft_sinkhole_parser",
+            "parameters": {}
+        },
+        "ShadowServer NTP-Monitor": {
+            "description": "ShadowServer NTP-Monitor Parser is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.shadowserver.ntp_parser",
             "parameters": {}
         },
         "ShadowServer Open-Memcached": {
