@@ -23,12 +23,14 @@ INPUT = [{'malware.name': 'confickerab'},
          {'malware.name': 'feodo'},
          {'malware.name': 'zeus_gameover_us'},
          {'malware.name': 'foobar', 'feed.name': 'Other Feed'},
+         {'feed.name': '', 'source.port': 80},
          ]
 OUTPUT = [{'classification.identifier': 'conficker'},
           {'classification.identifier': 'gozi'},
           {'classification.identifier': 'feodo'},
           {'classification.identifier': 'zeus'},
           {},
+          {'protocol.application': 'http'},
           ]
 for index in range(len(INPUT)):
     copy1 = EVENT_TEMPL.copy()
