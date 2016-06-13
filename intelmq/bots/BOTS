@@ -1089,6 +1089,13 @@
             "module": "intelmq.bots.parsers.phishtank.parser",
             "parameters": {}
         },
+        "ShadowServer": {
+            "description": "ShadowServer Parser is a bot capable of parsing shadowserver feeds, depending on configuration files",
+            "module": "intelmq.bots.parsers.shadowserver.parser",
+            "parameters": {
+                "feedname": ""
+            }
+        },
         "ShadowServer Chargen": {
             "description": "ShadowServer Chargen Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.shadowserver.chargen_parser",
