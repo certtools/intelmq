@@ -61,6 +61,12 @@ class ShadowserverParser(Bot):
             event = Event(report)
             extra = {}
 
+            # set classification.type
+            # TODO this might get dynamic in some fields.
+            # How to handle that?
+
+            event.add('classification.type', conf.get('classification_type'))
+
             # Iterate Config, add required fields.
             # Fail hard if not possible:
             for item in conf.get('required_fields'):
