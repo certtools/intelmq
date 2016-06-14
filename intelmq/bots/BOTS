@@ -1122,46 +1122,6 @@
                 "feedname": ""
             }
         },
-        "ShadowServer Chargen": {
-            "description": "ShadowServer Chargen Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.shadowserver.chargen_parser",
-            "parameters": {}
-        },
-        "ShadowServer Drone": {
-            "description": "ShadowServer Drone Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.shadowserver.drone_parser",
-            "parameters": {}
-        },
-        "ShadowServer NTP-Monitor": {
-            "description": "ShadowServer NTP-Monitor Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.shadowserver.ntp_parser",
-            "parameters": {}
-        },
-        "ShadowServer Microsoft Sinkhole": {
-            "description": "ShadowServer Microsoft Sinkhole Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.shadowserver.microsoft_sinkhole_parser",
-            "parameters": {}
-        },
-        "ShadowServer Open-Memcached": {
-            "description": "ShadowServer Open-Memcached Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.shadowserver.open_memcached_parser",
-            "parameters": {}
-        },
-        "ShadowServer QOTD": {
-            "description": "ShadowServer QOTD Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.shadowserver.qotd_parser",
-            "parameters": {}
-        },
-        "ShadowServer SNMP": {
-            "description": "ShadowServer SNMP Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.shadowserver.snmp_parser",
-            "parameters": {}
-        },
-        "ShadowServer SSL Scan (POODLE)": {
-            "description": "ShadowServer SSL Scan (POODLE) Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.shadowserver.ssl_scan_parser",
-            "parameters": {}
-        },
         "Spamhaus CERT": {
             "description": "Spamhaus CERT Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.spamhaus.parser_cert",
