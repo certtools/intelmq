@@ -31,7 +31,7 @@ def get_feed(feedname):
         "Open-Memcached": open_memcached,
         "Ssl-Scan": ssl_scan,  # Aka Poodle
         "NTP-Monitor": ntp_monitor,
-        "DNS-open-resolvers": dns_open_resolvers, # TODO Check implementation.
+        "DNS-open-resolvers": dns_open_resolvers,  # TODO Check implementation.
         "Open-Elasticsearch": open_elasticsearch,  # TODO Check implementation.
         "Open-Net BIOS": open_net_bios,  # TODO Check implementation.
         "Open-Mongo DB": open_mongo_db,  # TODO Check implementation.
@@ -42,7 +42,7 @@ def get_feed(feedname):
         "Open-Portmapper": open_portmapper,  # TODO Check implementation.
         "Open-Redis": open_redis,  # TODO Check implementation.
         "Microsoft-Sinkhole": microsoft_sinkhole,  # copy of sinkhole-http-drone
-        "Open-TFTP": open_tftp, # TODO Check implementation.
+        "Open-TFTP": open_tftp,  # TODO Check implementation.
         "Open-Chargen": open_chargen,  # TODO Check implementation.
         "Sinkhole-HTTP-Drone": sinkhole_http_drone,  # TODO Check implementation. Especially the TOR-Converter
         "Open-m DNS": open_m_dns,  # TODO Check implementation.
@@ -54,6 +54,7 @@ def get_feed(feedname):
 def add_UTC_to_timestamp(value):
     return value + ' UTC'
 
+
 # TODO this function is a wild guess...
 def set_tor_node(value):
     if value:
@@ -61,8 +62,9 @@ def set_tor_node(value):
     else:
         return None
 
+
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-mDNS
-open_m_dns  = {
+open_m_dns = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
@@ -118,10 +120,9 @@ open_chargen = {
         # sic
         # sector
     ],
-    'classification_type': 'exploit' # TODO the original parser lists vulnerable service here.
-                                     # Not sure if this is correct
+    'classification_type': 'exploit'  # TODO the original parser lists vulnerable service here.
+    # Not sure if this is correct
 }
-
 
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-TFTP
 open_tftp = {
@@ -249,7 +250,7 @@ open_portmapper = {
 }
 
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-IPMI
-open_ipmi  = {
+open_ipmi = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
@@ -345,13 +346,12 @@ open_snmp = {
     'classification_type': 'exploit'
 }
 
-
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-MSSQL
 open_mssql = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port') # TODO:  check if this is really the source.port!
+        ('source.port', 'port')  # TODO:  check if this is really the source.port!
     ],
     'optional_fields': [
         ('protocol.transport', 'protocol'),
@@ -457,7 +457,7 @@ open_elasticsearch = {
 }
 
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/DNS-open-resolvers
-dns_open_resolvers =  {
+dns_open_resolvers = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
