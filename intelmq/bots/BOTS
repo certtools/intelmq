@@ -473,6 +473,7 @@
                 "search_queue": "Incident Reports",
                 "search_status": "new",
                 "search_subject_like": "Report",
+                "set_status": "open",
                 "take_ticket": true,
                 "unzip_attachment": true,
                 "uri": "http://localhost/rt/REST/1.0",

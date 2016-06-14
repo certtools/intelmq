@@ -12,8 +12,9 @@ first history item is matched against the URL-regex.
 Attachments can be optionally unzipped, remote files are downloaded with the
 `http_*` settings applied (see `defaults.conf`).
 
-Optionally, tickets can be taken by the used user, which is recommended
-(otherwise the search may find the ticket again).
+Optionally, tickets can be taken by the used user and/or the status can be
+changed (leave empty for unmodified). One of the both should be used, otherwise
+the search will find the ticket every time.
 
     "request-tracker-collector": {
         "attachment_regex": "\\.csv\\.zip$",
@@ -23,6 +24,7 @@ Optionally, tickets can be taken by the used user, which is recommended
         "search_subject_like": "Report",
         "search_owner": "nobody",
         "search_status": "new",
+        "set_status": "open",
         "take_ticket": true,
         "rate_limit": 3600,
         "url_regex": "https://dl.shadowserver.org/[a-zA-Z0-9?_-]*",
