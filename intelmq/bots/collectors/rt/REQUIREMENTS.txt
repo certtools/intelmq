@@ -1,1 +1,1 @@
--e https://github.com/wtsi-hgi/python-rt.git#egg=rt
+-e git://github.com/wtsi-hgi/python-rt.git#egg=rt
