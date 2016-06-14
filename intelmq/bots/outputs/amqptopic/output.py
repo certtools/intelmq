@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 import sys
 
-import pika
+try:
+    import pika
+except ImportError:
+pika = None
+
 from intelmq.lib.bot import Bot
 
 
@@ -40,7 +44,7 @@ class AMQPTopicBot(Bot):
                                                                self.connection_port, self.connection_vhost))
         try:
             self.connection = pika.BlockingConnection(self.connection_parameters)
-        except pika.exceptions.AMQPConnectionError:
+        except (pika.exceptions.AMQPConnectionError,pika.exceptions.ConnectionResetError,pika.exceptions.ProbableAuthenticationError):
             self.logger.exception(
                 'AMQP connection to {}:{}/{} failled!!'.format(
                     self.connection_host,
@@ -57,7 +61,7 @@ class AMQPTopicBot(Bot):
         ''' Stop the Bot if cannot connect to AMQP Server after the defined connection attempts '''
 
         try:
-            if (self.connection.is_closed or self.channel.is_closed):
+            if self.connection.is_closed or self.channel.is_closed:
                 self.connect_server()
         except AttributeError:
             self.logger.exception('Bad configuration or server unavailable! Exiting...')
@@ -65,7 +69,7 @@ class AMQPTopicBot(Bot):
 
         event = self.receive_message()
 
-        if (not self.keep_raw_field):
+        if not self.keep_raw_field:
             del event['raw']
 
         ''' If routing key or exchange name are invalid or non existent, the message is accepted by the server but we receive no confirmation '''
