@@ -86,7 +86,10 @@ class RTCollectorBot(Bot):
             self.send_message(report)
 
             if self.parameters.take_ticket:
-                RT.edit_ticket(ticket_id, Owner=self.parameters.user)
+                try:
+                    RT.take(ticket_id)
+                except rt.BadRequest:
+                    self.logger.exception("Could not take ticket %s." % ticket_id)
 
 
 if __name__ == "__main__":
