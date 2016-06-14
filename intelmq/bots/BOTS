@@ -426,10 +426,10 @@
             "module": "intelmq.bots.collectors.misp.collector",
             "parameters": {
                 "feed": "misp_generic",
-                "misp_url": "<insert url of MISP server (with trailing '/')>",
                 "misp_key": "<insert MISP Authkey>",
                 "misp_tag_to_process": "<insert MISP tag for events to be processed>",
                 "misp_tag_processed": "<insert MISP tag for processed events>",
+                "misp_url": "<insert url of MISP server (with trailing '/')>",
                 "rate_limit": 3600
             }
         },
