@@ -4,7 +4,7 @@ import sys
 try:
     import pika
 except ImportError:
-pika = None
+    pika = None
 
 from intelmq.lib.bot import Bot
 
@@ -44,7 +44,7 @@ class AMQPTopicBot(Bot):
                                                                self.connection_port, self.connection_vhost))
         try:
             self.connection = pika.BlockingConnection(self.connection_parameters)
-        except (pika.exceptions.AMQPConnectionError,pika.exceptions.ConnectionResetError,pika.exceptions.ProbableAuthenticationError):
+        except (pika.exceptions.AMQPConnectionError,pika.exceptions.ProbableAuthenticationError):
             self.logger.exception(
                 'AMQP connection to {}:{}/{} failled!!'.format(
                     self.connection_host,
