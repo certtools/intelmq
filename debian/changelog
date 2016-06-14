@@ -1,3 +1,53 @@
+intelmq (1.0.0~dev4~beta10) experimental; urgency=low
+
+  * Merged master, fixes
+  * Added a bunch of features from other branches, see
+    customer-releases branch
+
+ -- Dustin Demuth <dustin@intevation.de>  Tue, 17 May 2016 12:00:00 +0200
+
+intelmq (1.0.0~dev4~beta9) experimental; urgency=low
+
+  * Merged master, fixes
+    https://github.com/certtools/intelmq/issues/506
+
+ -- Sascha Wilde <wilde@intevation.de>  Tue, 10 May 2016 15:07:08 +0200
+
+intelmq (1.0.0~dev4~beta8) experimental; urgency=medium
+
+  * Merged master.
+  * Require imbox >= 0.8, which fixes
+    https://github.com/martinrusev/imbox/issues/47
+
+ -- Sascha Wilde <wilde@intevation.de>  Mon, 09 May 2016 17:33:22 +0200
+
+intelmq (1.0.0~dev4~beta7) experimental; urgency=low
+
+  * Added scripts to retrieve data for some expert bots:
+    tor nodes, maxmind geoip, asn lookup.
+  * Added cron fragment to run the update script to /etc/cron.d
+
+ -- Sascha Wilde <wilde@intevation.de>  Wed, 04 May 2016 11:56:51 +0200
+
+intelmq (1.0.0~dev4~beta6) experimental; urgency=critical
+
+  * Fix: Marks config files as such...
+
+ -- Sascha Wilde <wilde@intevation.de>  Mon, 02 May 2016 13:09:34 +0200
+
+intelmq (1.0.0~dev4~beta5) experimental; urgency=low
+
+  * Added python3-geoip2 to recommendations.
+
+ -- Sascha Wilde <wilde@intevation.de>  Mon, 02 May 2016 11:36:00 +0200
+
+intelmq (1.0.0~dev4~beta4) experimental; urgency=low
+
+  * Merged current master.
+  * Added python3-sleekxmpp to recommendations.
+
+ -- Sascha Wilde <wilde@intevation.de>  Wed, 20 Apr 2016 17:27:49 +0200
+
 intelmq (1.0.0~dev4~beta3) experimental; urgency=low
 
   * Dropped support for Python 2, removing superfluous dependencies
