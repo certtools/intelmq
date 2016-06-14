@@ -58,21 +58,12 @@ class MISPParserBot(Bot):
     }
 
     def process(self):
-        self.logger.info('MISPParserBot processing message from collector')
-
         report = self.receive_message()
-        if not report or not report.contains('raw'):
-            self.acknowledge_message()
-            return
-
         raw_report = utils.base64_decode(report.get('raw'))
         misp_events = json.loads(raw_report)
 
         # iterate through the results
         for misp_event in misp_events:
-
-            self.logger.debug('MISPParserBot processing event: '
-                              '{}'.format(json.dumps(misp_event)))
 
             # Set the classifier based on the ecsirt tag
             classifier = None
@@ -87,9 +78,8 @@ class MISPParserBot(Bot):
             # payload type - get malware variant for the event
             malware_variant = None
             for attribute in event_attributes:
-                category = attribute['category']
-                if category == 'Payload type':
-                    value = attribute['value']
+                if attribute['category'] == 'Payload type':
+                    value = attribute['value'].lower()
                     if value and harmonization.MalwareName.is_valid(value):
                         malware_variant = value
 
@@ -113,14 +103,13 @@ class MISPParserBot(Bot):
 
                     # Create and send the intelmq event
                     event = Event(report)
+                    event.add('raw', json.dumps(misp_event))
                     event.add(self.MISP_TYPE_MAPPING[type_], value)
                     event.add('comment', comment)
                     event.add('event_description.text', category)
                     event.add('event_description.url', misp_event_url)
-                    if malware_variant:
-                        event.add('malware.name', malware_variant)
-                    if classifier:
-                        event.add('classification.type', classifier)
+                    event.add('malware.name', malware_variant)
+                    event.add('classification.type', classifier)
                     event.add('time.source', '{} UTC'.format(
                               datetime.fromtimestamp(float(timestamp))))
                     self.send_message(event)

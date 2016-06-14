@@ -25,8 +25,6 @@ from intelmq.lib.message import Report
 class MISPCollectorBot(Bot):
 
     def init(self):
-        self.logger.info('MISPCollectorBot initialising')
-
         # Initialise MISP connection
         self.misp = PyMISP(self.parameters.misp_url,
                            self.parameters.misp_key, 'json')
@@ -38,8 +36,6 @@ class MISPCollectorBot(Bot):
                                         'events/removeTag')
 
     def process(self):
-        self.logger.info('MISPCollectorBot collecting events from MISP')
-
         # Grab the events from MISP
         misp_result = self.misp.search(
             tags=self.parameters.misp_tag_to_process
@@ -48,37 +44,10 @@ class MISPCollectorBot(Bot):
         # Process the response and events
         if 'response' in misp_result:
 
+            # Extract the MISP event details
             misp_events = list()
             for result in misp_result['response']:
-
-                misp_event = result['Event']
-                misp_event_id = misp_event['id']
-                misp_events.append(misp_event)
-
-                # Finally, update the tags on the MISP event.
-                # Note PyMISP does not currently support this so we use
-                # the API URLs directly with the requests module.
-
-                # Remove the 'to be processed' tag
-                session = requests.Session()
-                session.headers.update({
-                    'Authorization': self.misp.key,
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                })
-                tag = self.parameters.misp_tag_to_process
-                post_data = {
-                    'request': {
-                        'Event': {
-                            'tag': tag,
-                            'id': misp_event_id,
-                }}}
-                session.post(self.misp_del_tag_url, data=json.dumps(post_data))
-
-                # Add a 'processed' tag to the event
-                tag = self.parameters.misp_tag_processed
-                post_data['request']['Event']['tag'] = tag
-                session.post(self.misp_add_tag_url, data=json.dumps(post_data))
+                misp_events.append(result['Event'])
 
             # Send the results to the parser
             report = Report()
@@ -87,6 +56,36 @@ class MISPCollectorBot(Bot):
             report.add('feed.url', self.parameters.misp_url)
             report.add('feed.accuracy', self.parameters.accuracy)
             self.send_message(report)
+
+            # Finally, update the tags on the MISP events.
+            # Note PyMISP does not currently support this so we use
+            # the API URLs directly with the requests module.
+
+            session = requests.Session()
+            session.headers.update({
+                'Authorization': self.misp.key,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            })
+            post_data = {
+                'request': {
+                    'Event': {
+                        'tag': None,
+                        'id': None,
+            }}}
+
+            for misp_event in misp_events:
+                post_data['request']['Event']['id'] = misp_event['id']
+
+                # Remove the 'to be processed' tag
+                tag = self.parameters.misp_tag_to_process
+                post_data['request']['Event']['tag'] = tag
+                session.post(self.misp_del_tag_url, data=json.dumps(post_data))
+
+                # Add a 'processed' tag to the event
+                tag = self.parameters.misp_tag_processed
+                post_data['request']['Event']['tag'] = tag
+                session.post(self.misp_add_tag_url, data=json.dumps(post_data))
 
 
 if __name__ == '__main__':
