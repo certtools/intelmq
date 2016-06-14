@@ -36,16 +36,16 @@ def get_feed(feedname):
         "Open-Net BIOS": open_net_bios,  # TODO Check implementation.
         "Open-Mongo DB": open_mongo_db,  # TODO Check implementation.
         "Open-MSSQL": open_mssql,  # TODO Check implementation.
-        "Open-SNMP": open_snmp,  # TODO not yet implemented
-        "Open-SSDP": open_ssdp,  # TODO not yet implemented
-        "Open-IPMI": open_ipmi,  # TODO not yet implemented
-        "Open-Portmapper": open_portmapper,  # TODO not yet implemented
-        "Open-Redis": open_redis,  # TODO not yet implemented
-        "Microsoft-Sinkhole": microsoft_sinkhole,  # TODO not yet implemented
-        "Open-TFTP": open_tftp,  # TODO not yet implemented
-        "Open-Chargen": open_chargen,  # TODO not yet implemented
-        "Sinkhole-HTTP-Drone": sinkhole-http-drone,  # TODO not yet implemented
-        "Open-m DNS": open_m_dns,  # TODO not yet implemented
+        "Open-SNMP": open_snmp,  # TODO Check implementation.
+        "Open-SSDP": open_ssdp,  # TODO Check implementation.
+        "Open-IPMI": open_ipmi,  # TODO VERIFY THIS FEED, as dmth did not have example data
+        "Open-Portmapper": open_portmapper,  # TODO Check implementation.
+        "Open-Redis": open_redis,  # TODO Check implementation.
+        "Microsoft-Sinkhole": microsoft_sinkhole,  # copy of sinkhole-http-drone
+        "Open-TFTP": open_tftp, # TODO Check implementation.
+        "Open-Chargen": open_chargen,  # TODO Check implementation.
+        "Sinkhole-HTTP-Drone": sinkhole_http_drone,  # TODO Check implementation. Especially the TOR-Converter
+        "Open-m DNS": open_m_dns,  # TODO Check implementation.
     }
 
     return feed_idx.get(feedname)
@@ -53,6 +53,298 @@ def get_feed(feedname):
 
 def add_UTC_to_timestamp(value):
     return value + ' UTC'
+
+# TODO this function is a wild guess...
+def set_tor_node(value):
+    if value:
+        return True
+    else:
+        return None
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-mDNS
+open_m_dns  = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port')
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        # Other known fields  which will go into "extra"
+        # tag
+        # naics
+        # sic
+        # mdns_name
+        # mdns_ipv4
+        # mdns_ipv6
+        # workstation_name
+        # workstation_ipv4
+        # workstation_ipv6
+        # workstation_info
+        # http_name"
+        # http_ipv4
+        # http_ipv6
+        # http_ptr
+        # http_info
+        # http_target
+        # http_port
+    ],
+    'classification_type': 'exploit'
+}
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-Chargen
+open_chargen = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port')
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        # Other known fields  which will go into "extra"
+        # tag
+        # size
+        # naics
+        # sic
+        # sector
+    ],
+    'classification_type': 'exploit' # TODO the original parser lists vulnerable service here.
+                                     # Not sure if this is correct
+}
+
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-TFTP
+open_tftp = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port')
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        # Other known fields  which will go into "extra"
+        # tag
+        # naics
+        # sic
+        # opcode
+        # errocode
+        # error
+        # errormessage
+        # size
+    ],
+    'classification_type': 'vulnerable service'
+}
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Sinkhole-HTTP-Drone
+sinkhole_http_drone = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'src_port')
+    ],
+    'optional_fields': [
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('malware.name', 'type'),
+        ('source.tor_node', 'tor', set_tor_node),
+        ('source.reverse_dns', 'hostname'),
+        ('destination.port', 'dst_port'),
+        ('destination.ip', 'dst_ip'),
+        ('destination.asn', 'dst_asn'),
+        ('destination.geolocation.cc', 'dst_geo')
+        # Other known fields  which will go into "extra"
+        # http_agent
+        # p0f_genre
+        # p0f_detail
+        # http_host
+        # http_referer
+        # http_referer_ip
+        # http_referer_asn
+        # http_referer_geo
+        # naics
+        # sic
+    ],
+    'classification_type': 'botnet drone'
+}
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Microsoft-Sinkhole
+# Format should be same as sinkhole-http-drone
+microsoft_sinkhole = sinkhole_http_drone
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-Redis
+open_redis = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port')
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        # Other known fields  which will go into "extra"
+        # tag
+        # version
+        # naics
+        # sic
+        # git_sha1
+        # git_dirty_flag
+        # build_id
+        # mode
+        # os
+        # architecture
+        # multiplexing_api
+        # gcc_version
+        # process_id
+        # run_id
+        # uptime
+        # connected_clients
+        # sector
+    ],
+    'classification_type': 'vulnerable service'
+}
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-Portmapper
+open_portmapper = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port')
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        # Other known fields  which will go into "extra"
+        # tag
+        # naics
+        # sic
+        # programs
+        # mountd_port
+        # exports
+        # sector
+    ],
+    'classification_type': 'exploit'
+}
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-IPMI
+open_ipmi  = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port')
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        # Other known fields  which will go into "extra"
+        # ipmi_version
+        # none_auth
+        # md2_auth
+        # md5_auth
+        # passkey_auth
+        # oem_auth
+        # defaultkg
+        # permessage_auth
+        # userlevel_auth
+        # usernames
+        # nulluser
+        # anon_login
+        # error
+        # deviceid
+        # devicerev
+        # firmwarerev
+        # version
+        # manufacturerid
+        # manufacturername
+        # productid
+        # productname
+    ],
+    'classification_type': 'vulnerable service'
+}
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-SSDP
+open_ssdp = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port')
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        # Other known fields  which will go into "extra"
+        # tag
+        # header
+        # systime
+        # cache_control
+        # location
+        # server
+        # search_target
+        # unique_service_name
+        # host
+        # nts
+        # nt
+        # naics
+        # sic
+        # sector
+    ],
+    'classification_type': 'exploit'
+}
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-SNMP
+open_snmp = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port')
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        # Other known fields  which will go into "extra"
+        # sysdesc
+        # sysname
+        # naics
+        # sic
+        # sector
+    ],
+    'classification_type': 'exploit'
+}
+
 
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-MSSQL
 open_mssql = {
@@ -80,7 +372,7 @@ open_mssql = {
         # response_lenght
         # sector
     ],
-    'classification_type': 'Vulnerable Service'
+    'classification_type': 'vulnerable service'
 }
 
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-MongoDB
@@ -114,7 +406,7 @@ open_mongo_db = {
         # visible_databases
         # sector
     ],
-    'classification_type': 'Vulnerable Service'
+    'classification_type': 'vulnerable service'
 }
 
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-NetBIOS
@@ -138,7 +430,7 @@ open_net_bios = {
         # mac_address
         # workgroup
     ],
-    'classification_type': 'Vulnerable Service'
+    'classification_type': 'vulnerable service'
 }
 
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-Elasticsearch
