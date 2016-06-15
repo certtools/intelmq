@@ -12,7 +12,7 @@ It expects the files
 * ripe.db.aut-num.gz
 
 to be present in the same folder as the script. These files can be downloaded
-from the [RIPE website](ftp://ftp.ripe.net/ripe/dbase/split/).
+from the RIPE website (ftp://ftp.ripe.net/ripe/dbase/split/).
 
 
 Usage
