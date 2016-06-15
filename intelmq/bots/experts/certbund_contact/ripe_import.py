@@ -24,6 +24,7 @@ import urllib
 parser = argparse.ArgumentParser()
 parser.add_argument("-v", "--verbose",
                     help="increase output verbosity",
+                    default=False,
                     action="store_true")
 parser.add_argument("--database",
                     help="Specify the Postgres DB")
@@ -50,7 +51,8 @@ def parse_file(filename, fields, index_field=None):
                         If not provided, the first element of 'fielfs' will be used
     :return: returns a list with the read out values as well as the number of entri
     '''
-    print('** Reading file {0}'.format(filename))
+    if args.verbose:
+        print('** Reading file {0}'.format(filename))
 
     out = []
     tmp = {}
@@ -88,13 +90,15 @@ def parse_file(filename, fields, index_field=None):
                 tmp[key].append(value)
 
     f.close()
-    print('   -> read {0} entries'.format(len(out)))
+    if args.verbose:
+        print('   -> read {0} entries'.format(len(out)))
     return out
 
 
 def main():
-    print('Parsing RIPE database...')
-    print('------------------------')
+    if args.verbose:
+        print('Parsing RIPE database...')
+        print('------------------------')
 
     asn_list = parse_file(args.asn_file,
                           ('aut-num', 'org'),
@@ -117,7 +121,9 @@ def main():
         #
         # AS numbers
         #
-        print('** Saving AS data to database...')
+        if args.verbose:
+            print('** Saving AS data to database...')
+        cur.execute("DELETE FROM role_automatic;")
         cur.execute("DELETE FROM organisation_to_asn_automatic;")
         cur.execute("DELETE FROM autonomous_system_automatic;")
         for entry in asn_list:
@@ -140,7 +146,8 @@ def main():
         #
         # Organisation
         #
-        print('** Saving organisation data to database...')
+        if args.verbose:
+            print('** Saving organisation data to database...')
         cur.execute("DELETE FROM organisation_automatic;")
         for entry in organisation_list:
             # Not all entries have an organisation associated
@@ -162,6 +169,7 @@ def main():
                                             'asn': []}
             mapping[org_ripe_handle]['org_id'] = org_id
 
+        # many-to-many table organisation <-> as number
         for org_ripe_handle in mapping:
             org_id = mapping[org_ripe_handle]['org_id']
             asn_ids = mapping[org_ripe_handle]['asn']
@@ -171,7 +179,6 @@ def main():
 
             # TODO: what should be the default for notification_interval?
             for asn_id in asn_ids:
-                # print(org_id)
                 cur.execute("""
                 INSERT INTO organisation_to_asn_automatic (notification_interval,
                                                            organisation_id,
@@ -182,7 +189,8 @@ def main():
         #
         # Role
         #
-        print('** Saving contacts data to database...')
+        if args.verbose:
+            print('** Saving contacts data to database...')
         cur.execute("DELETE FROM contact_automatic;")
         for entry in role_list:
             # No all entries have email contact
