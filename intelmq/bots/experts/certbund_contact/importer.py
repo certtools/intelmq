@@ -91,6 +91,7 @@ def parse_file(filename, fields, index_field=None):
     print('   -> read {0} entries'.format(len(out)))
     return out
 
+
 def main():
     print('Parsing RIPE database...')
     print('------------------------')
@@ -99,13 +100,13 @@ def main():
                           ('aut-num', 'org'),
                           'aut-num')
     role_list = parse_file(args.role_file,
-                           ('nic-hdl', 'abuse-mailbox',),
+                           ('nic-hdl', 'abuse-mailbox', 'org'),
                            'role')
     organisation_list = parse_file(args.organisation_file,
                                    ('organisation', 'org-name'))
 
     # Mapping dictionary that holds the database IDs between organisations,
-    # contacts ans AS numbers
+    # contacts and AS numbers
     mapping = {}
 
     con = None
@@ -117,6 +118,7 @@ def main():
         # AS numbers
         #
         print('** Saving AS data to database...')
+        cur.execute("DELETE FROM organisation_to_asn_automatic;")
         cur.execute("DELETE FROM autonomous_system_automatic;")
         for entry in asn_list:
             if not entry or not entry.get('aut-num') or not entry.get('org'):
@@ -134,7 +136,6 @@ def main():
                                             'contact_id': [],
                                             'asn': []}
             mapping[org_ripe_handle]['asn'].append(as_number)
-
 
         #
         # Organisation
@@ -161,7 +162,6 @@ def main():
                                             'asn': []}
             mapping[org_ripe_handle]['org_id'] = org_id
 
-        cur.execute("DELETE FROM organisation_to_asn_automatic;")
         for org_ripe_handle in mapping:
             org_id = mapping[org_ripe_handle]['org_id']
             asn_ids = mapping[org_ripe_handle]['asn']
@@ -173,7 +173,9 @@ def main():
             for asn_id in asn_ids:
                 # print(org_id)
                 cur.execute("""
-                INSERT INTO organisation_to_asn_automatic (notification_interval, organisation_id, asn_id)
+                INSERT INTO organisation_to_asn_automatic (notification_interval,
+                                                           organisation_id,
+                                                           asn_id)
                 VALUES (180, %s, %s);
                 """, (org_id, asn_id))
 
@@ -186,8 +188,11 @@ def main():
             # No all entries have email contact
             if not entry or not entry.get('abuse-mailbox'):
                 continue
+            try:
+                org_ripe_handle = entry['org'][0]
+            except IndexError:
+                org_ripe_handle = None
             email = entry['abuse-mailbox'][0]
-            org_ripe_handle = entry['nic-hdl'][0]
 
             cur.execute("""
                 INSERT INTO contact_automatic (format_id, email)
@@ -197,24 +202,23 @@ def main():
             result = cur.fetchone()
             contact_id = result[0]
 
-
             if org_ripe_handle and mapping.get(org_ripe_handle):
-                mapping[org_ripe_handle]['contact_id'] = contact_id
-            else:
-                pass
-                # print('count not find org handle {0}'.format(org_ripe_handle))
-
-            #
-            # mapping['contacts'][ripe_org_handle] = contact_id
+                mapping[org_ripe_handle]['contact_id'].append(contact_id)
 
         # many-to-many table organisation <-> contact
         cur.execute("DELETE FROM role_automatic;")
-        # for entry in mapping['orgs']:
-        #     print(orgs)
-        #     # cur.execute("""
-        #     #     INSERT INTO role_automatic (organisation_id, contact_id)
-        #     #     VALUES (%s, %s);
-        #     #     """, (email, ))
+        for org_ripe_handle in mapping:
+            org_id = mapping[org_ripe_handle]['org_id']
+            contact_ids = mapping[org_ripe_handle]['contact_id']
+
+            if not org_id:
+                continue
+
+            for contact_id in contact_ids:
+                cur.execute("""
+                INSERT INTO role_automatic (organisation_id, contact_id)
+                VALUES (%s, %s);
+                """, (org_id, contact_id))
 
         # Commit all data
         con.commit()
