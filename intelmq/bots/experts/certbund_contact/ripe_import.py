@@ -19,30 +19,32 @@ import sys
 import gzip
 import psycopg2
 import argparse
-import urllib
 
-parser = argparse.ArgumentParser()
+parser = argparse.ArgumentParser(description='''This script can be used to import
+automatic contact data to the certBUND contact database. It is intended to be
+called automatically, e.g. by a cronjob.''')
 parser.add_argument("-v", "--verbose",
                     help="increase output verbosity",
                     default=False,
                     action="store_true")
 parser.add_argument("--database",
-                    help="Specify the Postgres DB")
+                    default='contactdb',
+                    help="Specify the Postgres DB. Default: contactdb")
 parser.add_argument("--organisation-file",
                     default='ripe.db.organisation.gz',
-                    help="Specify the ASN Set CSV file. Default: ripe.db.organisation.gz")
+                    help="Specify the organisation data file. Default: ripe.db.organisation.gz")
 parser.add_argument("--role-file",
                     default='ripe.db.role.gz',
-                    help="Specify the ASN Set CSV file. Default: ripe.db.role.gz")
+                    help="Specify the contact role data file. Default: ripe.db.role.gz")
 parser.add_argument("--asn-file",
                     default='ripe.db.aut-num.gz',
-                    help="Specify the ASN CSV file. Default: ripe.db.aut-num.gz")
+                    help="Specify the AS number data file. Default: ripe.db.aut-num.gz")
 args = parser.parse_args()
 
 
 def parse_file(filename, fields, index_field=None):
     '''
-    Parses a (split) file from the RIPE database set
+    Parses a file from the RIPE (split) database set
 
     ftp://ftp.ripe.net/ripe/dbase/split/
     :param filename: the gziped filename
@@ -81,7 +83,6 @@ def parse_file(filename, fields, index_field=None):
                 tmp = {}
 
             for tmp_field in fields:
-                # if tmp_field not in tmp.keys():
                 if not tmp.get(tmp_field):
                     tmp[tmp_field] = []
 
@@ -110,7 +111,8 @@ def main():
                                    ('organisation', 'org-name'))
 
     # Mapping dictionary that holds the database IDs between organisations,
-    # contacts and AS numbers
+    # contacts and AS numbers. This needs to be done here because we can't
+    # use the RIPE org-ids.
     mapping = {}
 
     con = None
@@ -219,6 +221,8 @@ def main():
             org_id = mapping[org_ripe_handle]['org_id']
             contact_ids = mapping[org_ripe_handle]['contact_id']
 
+            # Not all contacts from RIPE are connected to an organisation, some
+            # for example are only responsible for a network.
             if not org_id:
                 continue
 
