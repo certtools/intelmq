@@ -59,6 +59,7 @@ class MISPParserBot(Bot):
 
     def process(self):
         report = self.receive_message()
+        self.logger.debug(json.dumps(report))
         raw_report = utils.base64_decode(report.get('raw'))
         misp_events = json.loads(raw_report)
 
@@ -103,7 +104,7 @@ class MISPParserBot(Bot):
 
                     # Create and send the intelmq event
                     event = Event(report)
-                    event.add('raw', json.dumps(misp_event))
+                    event.add('raw', json.dumps(misp_event, sort_keys=True))
                     event.add(self.MISP_TYPE_MAPPING[type_], value)
                     event.add('comment', comment)
                     event.add('event_description.text', category)
@@ -112,6 +113,7 @@ class MISPParserBot(Bot):
                     event.add('classification.type', classifier)
                     event.add('time.source', '{} UTC'.format(
                               datetime.fromtimestamp(float(timestamp))))
+                    self.logger.debug(json.dumps(event))
                     self.send_message(event)
 
         self.acknowledge_message()

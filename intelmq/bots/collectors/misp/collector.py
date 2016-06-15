@@ -51,7 +51,7 @@ class MISPCollectorBot(Bot):
 
             # Send the results to the parser
             report = Report()
-            report.add('raw', json.dumps(misp_events))
+            report.add('raw', json.dumps(misp_events, sort_keys=True))
             report.add('feed.name', self.parameters.feed)
             report.add('feed.url', self.parameters.misp_url)
             report.add('feed.accuracy', self.parameters.accuracy)
