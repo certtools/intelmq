@@ -111,7 +111,7 @@ class MISPParserBot(Bot):
                     event.add('malware.name', malware_variant)
                     event.add('classification.type', classifier)
                     event.add('time.source', '{} UTC'.format(
-                              datetime.fromtimestamp(float(timestamp))))
+                              datetime.utcfromtimestamp(float(timestamp))))
                     self.send_message(event)
 
         self.acknowledge_message()
