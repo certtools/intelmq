@@ -25,9 +25,6 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-v", "--verbose",
                     help="increase output verbosity",
                     action="store_true")
-parser.add_argument("--no-download",
-                    help="Don't download files from RIPE, use local copy",
-                    action="store_true")
 parser.add_argument("--database",
                     help="Specify the Postgres DB")
 parser.add_argument("--organisation-file",
@@ -40,17 +37,6 @@ parser.add_argument("--asn-file",
                     default='ripe.db.aut-num.gz',
                     help="Specify the ASN CSV file. Default: ripe.db.aut-num.gz")
 args = parser.parse_args()
-
-
-def download_file(filename):
-    '''
-    Downloads the given filename from RIPE and saves to disc
-    :param filename: the filename to use, consult ftp://ftp.ripe.net/ripe/dbase/split/
-                     for other possible names.
-    '''
-    ripe = urllib.URLopener()
-    ripe.retrieve("ftp://ftp.ripe.net/ripe/dbase/split/{}".format(filename), filename)
-    print('** Downloaded {0} '.format(filename))
 
 
 def parse_file(filename, fields, index_field=None):
@@ -106,15 +92,6 @@ def parse_file(filename, fields, index_field=None):
     return out
 
 def main():
-    if not args.no_download:
-        print('Downloading files...')
-        download_file(args.role_file)
-        download_file(args.organisation_file)
-        download_file(args.asn_file)
-    else:
-        print('Not downloading files, using local copy...')
-    print('')
-
     print('Parsing RIPE database...')
     print('------------------------')
 
