@@ -59,7 +59,6 @@ class MISPParserBot(Bot):
 
     def process(self):
         report = self.receive_message()
-        self.logger.debug(json.dumps(report))
         raw_report = utils.base64_decode(report.get('raw'))
         misp_events = json.loads(raw_report)
 
@@ -113,7 +112,6 @@ class MISPParserBot(Bot):
                     event.add('classification.type', classifier)
                     event.add('time.source', '{} UTC'.format(
                               datetime.fromtimestamp(float(timestamp))))
-                    self.logger.debug(json.dumps(event))
                     self.send_message(event)
 
         self.acknowledge_message()
