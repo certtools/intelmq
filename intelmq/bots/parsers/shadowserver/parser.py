@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 """
+Copyright (C) 2016 by Bundesamt für Sicherheit in der Informationstechnik
+Software engineering by Intevation GmbH
+
 This is a "generic" parser for a lot of shadowserver feeds.
 It depends on the configuration in the file "config"
 which holds information on how to treat certain shadowserverfeeds.
 
 Most, if not all, feeds from shadowserver are in csv format.
 This parser will only work with those.
-
-TODO: Evaluate new line-based IntelMQ Parser.
-
 """
 import csv
 import io
@@ -22,6 +22,7 @@ from intelmq.lib.message import Event
 from intelmq.lib.exceptions import InvalidValue
 
 import intelmq.bots.parsers.shadowserver.config as config
+
 
 class ShadowserverParser(Bot):
 
@@ -47,11 +48,18 @@ class ShadowserverParser(Bot):
         # those were automagically created by the dictreader
         allfields = csvr.fieldnames
 
+        # Set a switch if the parser shall reset the feed.name,
+        # code and feedurl for this event
+        self.override = False
+        if hasattr(self.parameters, 'override'):
+            if self.parameters.override:
+                self.override = True
+
         for row in csvr:
 
             # we need to copy here...
             fields = copy.copy(allfields)
-            # We will uses this variable later.
+            # We will use this variable later.
             # Each time a field was successfully added to the
             # intelmq-event, this field will be removed from
             # the fields array.
@@ -59,13 +67,44 @@ class ShadowserverParser(Bot):
             # extra field.
 
             event = Event(report)
-            extra = {}
+            extra = {}  # The Json-Object which might get into the Extra field
+            sserver = {}  # The Json-Object which will be populated with the
+            # fields that coul not be added to the standard intelmq fields
+            # the parser is going to write this information into an object
+            # one level below the "extra root"
+            # e.g.: extra {'shadowserver': {'cc_dns': '127.0.0.1'}
 
             # set classification.type
-            # TODO this might get dynamic in some fields.
+            # TODO this might get dynamic in some feeds.
             # How to handle that?
 
-            event.add('classification.type', conf.get('classification_type'))
+            if not conf.get('classification_type'):
+                self.logger.warn("The classification type for "
+                    + self.parameters.feedname
+                    + " could not be determined. Check ParserConfig!")
+            else:
+                event.add('classification.type', conf.get('classification_type'))
+
+            # set feed.name and url, honor the override parameter
+
+            if 'feed.url' in event and self.override:
+                event.add('feed.url', conf.get('feed_url'), force=True)
+            else:
+                event.add('feed.url', conf.get('feed_url'))
+
+
+            if hasattr(self.parameters, 'feedname'):
+                if 'feed.name' in event and self.override:
+                    event.add('feed.name', self.parameters.feedname, force=True)
+                else:
+                    event.add('feed.name', self.parameters.feedname)
+
+
+            if hasattr(self.parameters, 'feedcode'):
+                if 'feed.code' in event and self.override:
+                    event.add('feed.code', self.parameters.feedcode, force=True)
+                else:
+                    event.add('feed.code', self.parameters.feedcode)
 
             # Iterate Config, add required fields.
             # Fail hard if not possible:
@@ -107,18 +146,22 @@ class ShadowserverParser(Bot):
                         event.add(intelmqkey, value)
                         fields.remove(shadowkey)
                     except InvalidValue:
-                        self.logger.warn(
+                        self.logger.info(
                             'Could not add event "{}";' \
                             ' adding it to extras...'.format(shadowkey)
                         )
+                        self.logger.debug('The value of the event is %s', value)
 
             event.add('raw', '"'+','.join(map(str, row.items()))+'"')
 
             # Add everything which could not be resolved to extra.
             for f in fields:
-                extra[f] = row[f]
+                val = row[f]
+                if not val == "":
+                    sserver[f] = val
 
-            if extra:
+            if sserver:
+                extra['shadowserver'] = sserver
                 event.add('extra', extra)
 
             self.send_message(event)
@@ -128,3 +171,4 @@ class ShadowserverParser(Bot):
 if __name__ == "__main__":
     bot = ShadowserverParser(sys.argv[1])
     bot.start()
+

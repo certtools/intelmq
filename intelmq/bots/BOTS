@@ -1119,7 +1119,9 @@
             "description": "ShadowServer Parser is a bot capable of parsing shadowserver feeds, depending on configuration files",
             "module": "intelmq.bots.parsers.shadowserver.parser",
             "parameters": {
-                "feedname": ""
+                "feedname": "",
+                "feedcode": "",
+                "override": "1"
             }
         },
         "Spamhaus CERT": {
