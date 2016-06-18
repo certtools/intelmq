@@ -1,3 +1,6 @@
+from .version import __version__
+
+
 ROOT_DIR = "/opt/intelmq/"
 CONFIG_DIR = ROOT_DIR + "etc/"
 DEFAULT_LOGGING_LEVEL = "INFO"
