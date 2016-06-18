@@ -57,6 +57,7 @@ LOG_LEVEL = {
 
 RETURN_TYPES = ['text', 'json']
 RETURN_TYPE = None
+QUIET = False
 
 
 def log_list_queues(queues):
@@ -71,6 +72,8 @@ def log_bot_error(status, *args):
 
 
 def log_bot_message(status, *args):
+    if QUIET:
+        return
     if RETURN_TYPE == 'text':
         logger.info(MESSAGES[status].format(*args))
 
@@ -81,6 +84,8 @@ def log_botnet_error(status):
 
 
 def log_botnet_message(status):
+    if QUIET:
+        return
     if RETURN_TYPE == 'text':
         logger.info(MESSAGES[status].format('Botnet'))
 
@@ -135,6 +140,7 @@ class IntelMQContoller():
     def __init__(self):
         global RETURN_TYPE
         global logger
+        global QUIET
         logger = utils.log('intelmqctl', log_level='DEBUG')
         self.logger = logger
         if os.geteuid() == 0:
@@ -205,6 +211,9 @@ Get logs of a bot:
                             metavar='[start|stop|restart|status|reload|run|'
                                     'list|clear|log]')
         parser.add_argument('parameter', nargs='*')
+        parser.add_argument('--quiet', '-q', action='store_const', const=True,
+                            help='Quiet mode, useful for reloads initiated'
+                                 'scripts like logrotate')
         self.parser = parser
         self.args = parser.parse_args()
         if self.args.action == 'help':
@@ -212,6 +221,7 @@ Get logs of a bot:
             exit(0)
 
         RETURN_TYPE = self.args.type
+        QUIET = self.args.quiet
 
         with open(STARTUP_CONF_FILE, 'r') as fp:
             self.startup = json.load(fp)
@@ -425,12 +435,18 @@ Get logs of a bot:
         return botnet_status
 
     def list_bots(self):
+        """
+        Lists all configured bots from startup.conf with bot id and
+        description.
+
+        If description is not set, None is used instead.
+        """
         if self.args.type == 'text':
             for bot_id in sorted(self.startup.keys()):
                 print("Bot ID: {}\nDescription: {}"
-                      "".format(bot_id, self.startup[bot_id]['description']))
+                      "".format(bot_id, self.startup[bot_id].get('description')))
         return [{'id': bot_id,
-                 'description': self.startup[bot_id]['description']}
+                 'description': self.startup[bot_id].get('description')}
                 for bot_id in sorted(self.startup.keys())]
 
     def list_queues(self):
