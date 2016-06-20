@@ -16,3 +16,6 @@ override_dh_auto_install:
 	rmdir debian/intelmq/opt/intelmq/etc/examples
 	mkdir -p debian/intelmq/opt/intelmq/var/log
 	mkdir -p debian/intelmq/opt/intelmq/var/lib/bots/file-output
+	# install a modifier bot conf file besides the example file
+	cp -a debian/intelmq/opt/intelmq/var/lib/bots/modify/example/modify.conf \
+		debian/intelmq/opt/intelmq/var/lib/bots/modify/modify.conf
