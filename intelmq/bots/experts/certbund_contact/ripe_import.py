@@ -185,7 +185,7 @@ def main():
                 INSERT INTO organisation_to_asn_automatic (notification_interval,
                                                            organisation_id,
                                                            asn_id)
-                VALUES (180, %s, %s);
+                VALUES (0, %s, %s);
                 """, (org_id, asn_id))
 
         #
