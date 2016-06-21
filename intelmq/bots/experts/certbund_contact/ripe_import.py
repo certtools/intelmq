@@ -126,6 +126,7 @@ def main():
         if args.verbose:
             print('** Saving AS data to database...')
         cur.execute("DELETE FROM role_automatic;")
+        cur.execute("DELETE FROM organisation_to_template_automatic;")
         cur.execute("DELETE FROM organisation_to_asn_automatic;")
         cur.execute("DELETE FROM autonomous_system_automatic;")
         for entry in asn_list:
