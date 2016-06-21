@@ -199,32 +199,6 @@ class Message(dict):
         class_name = self.harmonization_config[key]
         return class_name
 
-
-class Event(Message):
-
-    def __init__(self, message=(), auto=False):
-        """
-        Parameters
-        ----------
-        message : dict
-            Give a report and feed.name, feed.url and
-            time.observation will be used to construct the Event if given.
-            If it's another type, the value is given to dict's init
-        """
-        if isinstance(message, Report):
-            template = {}
-            if 'feed.name' in message:
-                template['feed.name'] = message['feed.name']
-            if 'feed.url' in message:
-                template['feed.url'] = message['feed.url']
-            if 'feed.accuracy' in message:
-                template['feed.accuracy'] = message['feed.accuracy']
-            if 'time.observation' in message:
-                template['time.observation'] = message['time.observation']
-        else:
-            template = message
-        super(Event, self).__init__(template)
-
     def __hash__(self):
         event_hash = hashlib.sha256()
 
@@ -260,6 +234,32 @@ class Event(Message):
     def to_json(self):
         json_dict = self.to_dict()
         return utils.decode(json.dumps(json_dict, ensure_ascii=False))
+
+
+class Event(Message):
+
+    def __init__(self, message=(), auto=False):
+        """
+        Parameters
+        ----------
+        message : dict
+            Give a report and feed.name, feed.url and
+            time.observation will be used to construct the Event if given.
+            If it's another type, the value is given to dict's init
+        """
+        if isinstance(message, Report):
+            template = {}
+            if 'feed.name' in message:
+                template['feed.name'] = message['feed.name']
+            if 'feed.url' in message:
+                template['feed.url'] = message['feed.url']
+            if 'feed.accuracy' in message:
+                template['feed.accuracy'] = message['feed.accuracy']
+            if 'time.observation' in message:
+                template['time.observation'] = message['time.observation']
+        else:
+            template = message
+        super(Event, self).__init__(template)
 
 
 class Report(Message):

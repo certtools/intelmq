@@ -49,7 +49,7 @@ CREATE TABLE organisation (
 CREATE TABLE organisation_automatic (
     id SERIAL PRIMARY KEY,
 
-    name VARCHAR(500) UNIQUE NOT NULL,
+    name VARCHAR(500) NOT NULL,
 
     sector_id INTEGER,
 

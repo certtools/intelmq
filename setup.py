@@ -51,13 +51,16 @@ except(IOError, ImportError):
     DESCRIPTION = open('README.md').read()
 
 
+exec(open('intelmq/version.py').read())  # defines __version__
+
+
 setup(
     name='intelmq',
-    version='1.0.0.dev4',
+    version=__version__,
     maintainer='Sebastian Wagner',
     maintainer_email='wagner@cert.at',
     install_requires=REQUIRES,
-    test_requires=REQUIRES+[
+    tests_requires=REQUIRES+[
         'mock>=1.1.1',
         'nose',
         ],
@@ -92,10 +95,10 @@ setup(
     keywords='incident handling cert csirt',
     data_files=DATA,
     scripts=[
-        'intelmq/bots/experts/certbund_contact/cdb_import.py',
         'intelmq/bots/experts/tor_nodes/update-tor-nodes',
         'intelmq/bots/experts/maxmind_geoip/update-geoip-data',
         'intelmq/bots/experts/asn_lookup/update-asn-data',
+        'intelmq/bots/experts/certbund_contact/ripe_import.py',
     ],
     entry_points={
         'console_scripts': [
