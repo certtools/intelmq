@@ -21,7 +21,7 @@ from intelmq.lib import exceptions, utils
 from intelmq.lib.message import MessageFactory
 from intelmq.lib.pipeline import PipelineFactory
 
-__all__ = ['Bot']
+__all__ = ['Bot', 'ParserBot']
 
 
 class Bot(object):
@@ -31,7 +31,6 @@ class Bot(object):
         self.parameters = Parameters()
 
         self.__current_message = None
-        self.__last_message = None
         self.__message_counter = 0
         self.__error_retries_counter = 0
         self.__source_pipeline = None
@@ -144,8 +143,6 @@ class Bot(object):
                     self.logger.error("Bot has found a problem.")
 
                 if self.parameters.error_log_message:
-                    self.logger.info("Last Correct Message(event): {!r}."
-                                     "".format(self.__last_message)[:500])
                     self.logger.info("Current Message(event): {!r}."
                                      "".format(self.__current_message)[:500])
 
@@ -169,7 +166,9 @@ class Bot(object):
                         if error_on_message:
 
                             if self.parameters.error_dump_message:
-                                self._dump_message(error_traceback)
+                                self._dump_message(error_traceback,
+                                                   message=self.__current_message)
+                                self.__current_message = None
 
                             # remove message from pipeline
                             self.acknowledge_message()
@@ -286,12 +285,9 @@ class Bot(object):
         return self.__current_message
 
     def acknowledge_message(self):
-        self.__last_message = self.__current_message
         self.__source_pipeline.acknowledge()
 
-    def _dump_message(self, error_traceback, message=None):
-        if message is None:
-            message = self.__current_message
+    def _dump_message(self, error_traceback, message):
         if message is None:
             return
 
@@ -307,7 +303,7 @@ class Bot(object):
         new_dump_data[timestamp]["source_queue"] = self.__source_queues
         new_dump_data[timestamp]["traceback"] = error_traceback
 
-        new_dump_data[timestamp]["message"] = self.__current_message.serialize()
+        new_dump_data[timestamp]["message"] = message.serialize()
 
         try:
             with open(dump_file, 'r') as fp:
@@ -320,7 +316,6 @@ class Bot(object):
             json.dump(dump_data, fp, indent=4, sort_keys=True)
 
         self.logger.info('Message dumped.')
-        self.__current_message = None
 
     def __load_defaults_configuration(self):
         self.__log_buffer.append(('debug', "Loading defaults configuration."))
