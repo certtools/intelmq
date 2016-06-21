@@ -5,6 +5,5 @@
 /opt/intelmq/etc/startup.conf
 /opt/intelmq/etc/system.conf
 /opt/intelmq/etc/runtime.conf
-/etc/cron.d/intelmq-update-data
 /opt/intelmq/var/lib/bots/modify/modify.conf
 /opt/intelmq/var/lib/bots/parsers/shadowserver/config.py
