@@ -24,7 +24,7 @@ from intelmq.lib.exceptions import InvalidValue
 import intelmq.bots.parsers.shadowserver.config as config
 
 
-class ShadowserverParser(Bot):
+class ShadowserverParserBot(Bot):
 
     def init(self):
         self.sparser_config = None
@@ -169,6 +169,6 @@ class ShadowserverParser(Bot):
 
 
 if __name__ == "__main__":
-    bot = ShadowserverParser(sys.argv[1])
+    bot = ShadowserverParserBot(sys.argv[1])
     bot.start()
 
