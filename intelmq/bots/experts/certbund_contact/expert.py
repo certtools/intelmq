@@ -77,6 +77,30 @@ class CERTBundKontaktExpertBot(Bot):
                     .format(criterion), (value, classification))
         return cur.fetchall()
 
+    def lookup_by_asn_only(self, cur, asn):
+        # temporary fallback to lookup contacts by ASN from automatic
+        # and manual tables without regard to classification identifier
+        # or other criteria.
+        for automation in ("", "_automatic"):
+            cur.execute("SELECT DISTINCT"
+                        "       c.email as email, o.name as organisation,"
+                        "       '' as template_path,"
+                        "       'feed_specific' as format_name,"
+                        "       0 as notification_interval"
+                        "  FROM contact{0} AS c"
+                        "  JOIN role{0} AS r ON r.contact_id = c.id"
+                        "  JOIN organisation_to_asn{0} AS oa"
+                        "    ON oa.organisation_id = r.organisation_id"
+                        "  JOIN organisation{0} o"
+                        "    ON o.id = r.organisation_id"
+                        "  JOIN autonomous_system{0} AS a"
+                        "    ON a.number = oa.asn_id"
+                        " WHERE a.number = %s".format(automation), (asn,))
+            result = cur.fetchall()
+            if result:
+                return result
+        return []
+
     def lookup_contact(self, classification, ip, fqdn, asn):
         self.logger.debug("Looking up ip: %r, classification: %r",
                           ip, classification)
@@ -90,8 +114,11 @@ class CERTBundKontaktExpertBot(Bot):
                                                         classification)
                 raw_result.extend(ip_result)
                 if not ip_result:
-                    raw_result.extend(self.lookup_manual_and_auto(
-                        cur, "asn", asn, classification))
+                    asn_notifications = self.lookup_manual_and_auto(
+                        cur, "asn", asn, classification)
+                    if not asn_notifications and asn:
+                        asn_notifications = self.lookup_by_asn_only(cur, asn)
+                    raw_result.extend(asn_notifications)
             finally:
                 cur.close()
         except psycopg2.OperationalError:
