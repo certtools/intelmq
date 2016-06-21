@@ -7,7 +7,7 @@ from intelmq.lib.message import Event
 
 class DragonResearchGroupVNCParserBot(ParserBot):
 
-    def parseline(self, line, report):
+    def parse_line(self, line, report):
         if line.startswith('#'):
             self.tempdata.append(line)
         else:

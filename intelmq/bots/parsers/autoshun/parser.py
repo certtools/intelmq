@@ -28,7 +28,7 @@ class AutoshunParserBot(ParserBot):
         for line in splitted[2:]:
             yield line.strip()
 
-    def parseline(self, line, report):
+    def parse_line(self, line, report):
         event = Event(report)
 
         info = line.split("<td>")

@@ -11,7 +11,7 @@ from intelmq.lib.message import Event
 
 class ArborParserBot(ParserBot):
 
-    def parseline(self, row, report):
+    def parse_line(self, row, report):
         if row.startswith('other'):
             yield
         else:

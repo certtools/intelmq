@@ -17,7 +17,7 @@ CLASSIFICATION = {
 
 class AlienVaultParserBot(Bot):
 
-    def parseline(self, row, report):
+    def parse_line(self, row, report):
         values = row.split("#")
 
         # Send one event per classification

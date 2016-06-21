@@ -71,7 +71,7 @@ MAPPING = {
 
 class BlockListDEParserBot(ParserBot):
 
-    def parseline(self, line, report):
+    def parse_line(self, line, report):
         path = urlparse(report['feed.url']).path
         filename = posixpath.basename(path)
 

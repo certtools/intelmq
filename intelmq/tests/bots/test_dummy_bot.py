@@ -43,7 +43,7 @@ class DummyParserBot(bot.ParserBot):
     A dummy bot only for testing purpose.
     """
 
-    def parseline(self, line, report):
+    def parse_line(self, line, report):
         if line.startswith('#'):
             self.logger.info('Lorem ipsum dolor sit amet')
             self.tempdata.append(line)
@@ -60,7 +60,7 @@ class DummyParserBot(bot.ParserBot):
             event['classification.type'] = 'malware'
             yield event
 
-    def recoverline(self, line):
+    def recover_line(self, line):
         return '\n'.join([self.tempdata[0], line, self.tempdata[1]])
 
 

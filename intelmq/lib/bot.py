@@ -261,7 +261,7 @@ class Bot(object):
         for message in messages:
             if not message:
                 self.logger.warning("Ignoring empty message at sending.")
-                return False
+                continue
 
             self.logger.debug("Sending message.")
             self.__message_counter += 1
@@ -398,7 +398,7 @@ class ParserBot(Bot):
 
     def parse_csv(self, report):
         """
-        CSV parser.
+        A basic CSV parser.
         """
         raw_report = utils.base64_decode(report.get("raw"))
         for line in csv.reader(io.StringIO(raw_report)):
@@ -406,13 +406,29 @@ class ParserBot(Bot):
 
     def parse(self, report):
         """
-        Default parser yielding stripped lines.
+        A generator yielding the single elements of the data.
+
+        Comments, headers etc. can be processed here. Data needed by
+        `self.parse_line` can be saved in `self.tempdata` (list).
+
+        Default parser yields stripped lines.
+        Override for your use or use an exisiting parser, e.g.:
+            parse = ParserBot.parse_csv
         """
         for line in utils.base64_decode(report.get("raw")).splitlines():
             yield line.strip()
 
+    def parse_line(self, line, report):
+        """
+        A generator which can yield one or more messages contained in line.
+
+        Report has the full message, thus you can access some metadata.
+        Override for your use.
+        """
+        raise NotImplementedError
+
     def process(self):
-        self.tempdata = []
+        self.tempdata = []  # temporary data for parse, parse_line and recover_line
         self.__failed = []
         report = self.receive_message()
 
@@ -421,24 +437,27 @@ class ParserBot(Bot):
                 continue
             try:
                 # filter out None
-                events = list(filter(bool, self.parseline(line, report)))
+                events = list(filter(bool, self.parse_line(line, report)))
             except Exception as exc:
                 self.logger.exception('Failed to parse line.')
                 self.__failed.append((exc, line))
             else:
-                if events:
-                    self.send_message(*events)
+                self.send_message(*events)
 
-        if self.__failed:
-            for exc, line in self.__failed:
-                self._dump_message(exc, self.recoverline(line))
+        for exc, line in self.__failed:
+            self._dump_message(exc, self.recover_line(line))
 
         self.acknowledge_message()
 
-    def recoverline(self, line):
+    def recover_line(self, line):
+        """
+        Reverse of parse for single lines.
+
+        Recovers a fully functional report with only the problematic line.
+        """
         return '\n'.join(self.tempdata + [line])
 
-    def recoverline_csv(self, line):
+    def recover_line_csv(self, line):
         out = io.StringIO()
         writer = csv.writer(out)
         writer.writerow(line)

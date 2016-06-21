@@ -23,7 +23,7 @@ SOURCE_FEEDS = {'https://feodotracker.abuse.ch/blocklist/?download=ipblocklist':
 class AbusechIPParserBot(ParserBot):
     lastgenerated = None
 
-    def parseline(self, line, report):
+    def parse_line(self, line, report):
         if line.startswith('#'):
             self.tempdata.append(line)
             if 'Generated on' in line:
@@ -38,7 +38,7 @@ class AbusechIPParserBot(ParserBot):
             event.add("malware.name", SOURCE_FEEDS[report["feed.url"]])
             yield event
 
-    def recoverline(self, line):
+    def recover_line(self, line):
         return '\n'.join(self.tempdata + [line])
 
 
