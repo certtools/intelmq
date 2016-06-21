@@ -10,7 +10,7 @@ create 640 intelmq intelmq
     notifempty
     sharedscripts
     postrotate
-        /usr/local/bin/intelmqctl reload
+        /usr/local/bin/intelmqctl reload --quiet
     endscript
 }
 
@@ -21,6 +21,6 @@ create 640 intelmq intelmq
         notifempty
     sharedscripts
     postrotate
-        /usr/local/bin/intelmqctl reload
+        /usr/local/bin/intelmqctl reload --quiet
     endscript
 }

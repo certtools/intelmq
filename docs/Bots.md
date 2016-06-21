@@ -358,7 +358,7 @@ The default rule/action list may not exist. If the value is an empty string, the
 
 We have an event with `feed.name = Spamhaus Cert` and `malware.name = confickerab`. The expert loops over all sections in the file and enters section `Spamhaus Cert`. First, the default condition is checked, it matches! Ok, going on. Otherwise the expert would have continued to the next section. Now, iteration through the rules, the first is rule `conficker`. We combine the conditions of this rule with the default conditions, and both rules match! So we can apply the action, here `classification.identifier` is set to `conficker`, the trivial name.
 
-Assume we have an event with `feed.name = Spamhaus Cert` and `malware.name = feodo`. The default condition matches, but no others. So the default action is applied. The value for `classification.identifier` is `{msg[malware.name]}`, this is [standard Python string format syntax](https://docs.python.org/3/library/string.html#formatspec). Thus you can use any value from the processed event, which is available as `msg`.
+Assume we have an event with `feed.name = Spamhaus Cert` and `malware.name = feodo`. The default condition matches, but no others. So the default action is applied. The value for `classification.identifier` is `{msg[malware.name]}`, this is [standard Python string format syntax](https://docs.python.org/3/library/string.html#format-string-syntax). Thus you can use any value from the processed event, which is available as `msg`.
 
 #### Types
 
