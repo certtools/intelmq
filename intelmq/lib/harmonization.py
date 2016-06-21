@@ -381,8 +381,11 @@ class IPAddress(GenericType):
             return False
 
         try:
-            ipaddress.ip_address(value)
+            address = ipaddress.ip_address(value)
         except ValueError:
+            return False
+
+        if address == ipaddress.ip_address('0.0.0.0'):
             return False
 
         return True

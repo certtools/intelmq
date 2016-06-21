@@ -29,13 +29,15 @@ class ModifyExpertBot(Bot):
             if name not in event:
                 return False
             if not isinstance(rule, type(event[name])):
-                self.logger.warn("Type of rule ({!r}) and data ({!r}) do not "
-                                 "match in {!s}, {}!".format(type(rule),
-                                                             type(event[name]),
-                                                             identifiers,
-                                                             name))
-            if not isinstance(event[name], str):  # int, float, etc
-                return event[name] == rule
+                if isinstance(rule, str) and isinstance(event[name], (int, float)):
+                    if not re.search(rule, str(event[name])):
+                        return False
+                else:
+                    self.logger.warn("Type of rule ({!r}) and data ({!r}) do not "
+                                     "match in {!s}, {}!".format(type(rule), type(event[name]), identifiers, name))
+            elif not isinstance(event[name], str):  # int, float, etc
+                if event[name] != rule:
+                    return False
             else:
                 if not re.search(rule, event[name]):
                     return False
@@ -68,9 +70,8 @@ class ModifyExpertBot(Bot):
                     applied = True
                     continue
 
-            if not applied:
-                self.logger.debug('Apply default rule {}/__default.'
-                                  ''.format(section_id))
+            if not applied and default_action != {}:
+                self.logger.debug('Apply {}/__default.'.format(section_id))
                 self.apply_action(event, default_action)
 
         self.send_message(event)
