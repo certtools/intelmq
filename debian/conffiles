@@ -6,4 +6,3 @@
 /opt/intelmq/etc/system.conf
 /opt/intelmq/etc/runtime.conf
 /opt/intelmq/var/lib/bots/modify/modify.conf
-/opt/intelmq/var/lib/bots/parsers/shadowserver/config.py
