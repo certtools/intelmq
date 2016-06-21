@@ -1,3 +1,15 @@
+intelmq (1.0.0~dev4+intevation.1.2~alpha1) experimental; urgency=low
+
+  * New Release from customer-releases branch
+  * Merged upstream master
+  * Merged certbund-contact
+  * Merged shadowserver-feeds (new, configurable shadowserver parser bot)
+  * Merged shadowserver-modify-bot
+  * Merged lost changes from versions 1.0.0~dev4+intevation.1.0~beta2 through
+    1.0.0~dev4+intevation.1.0~rc2
+
+ -- Gernot Schulz <gernot@intevation.de>  Tue, 21 Jun 2016 12:53:22 +0200
+
 intelmq (1.0.0~dev4+intevation.1.1~beta1) experimental; urgency=low
 
   * New Release from customer-releases branch
