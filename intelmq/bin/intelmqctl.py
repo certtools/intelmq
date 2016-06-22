@@ -35,6 +35,8 @@ MESSAGES = {
     'running': '{} is running.',
     'stopped': '{} is stopped.',
     'stopping': 'Stopping {}...',
+    'reloading': 'Reloading {} ...',
+    'reloaded': '{} is reloaded.',
 }
 
 ERROR_MESSAGES = {
@@ -55,6 +57,7 @@ LOG_LEVEL = {
 
 RETURN_TYPES = ['text', 'json']
 RETURN_TYPE = None
+QUIET = False
 
 
 def log_list_queues(queues):
@@ -69,6 +72,8 @@ def log_bot_error(status, *args):
 
 
 def log_bot_message(status, *args):
+    if QUIET:
+        return
     if RETURN_TYPE == 'text':
         logger.info(MESSAGES[status].format(*args))
 
@@ -79,6 +84,8 @@ def log_botnet_error(status):
 
 
 def log_botnet_message(status):
+    if QUIET:
+        return
     if RETURN_TYPE == 'text':
         logger.info(MESSAGES[status].format('Botnet'))
 
@@ -133,6 +140,7 @@ class IntelMQContoller():
     def __init__(self):
         global RETURN_TYPE
         global logger
+        global QUIET
         logger = utils.log('intelmqctl', log_level='DEBUG')
         self.logger = logger
         if os.geteuid() == 0:
@@ -145,8 +153,8 @@ class IntelMQContoller():
 
         Outputs are logged to /opt/intelmq/var/log/intelmqctl"""
         USAGE = '''
-        intelmqctl [start|stop|restart|status|run] bot-id
-        intelmqctl [start|stop|restart|status]
+        intelmqctl [start|stop|restart|status|reload|run] bot-id
+        intelmqctl [start|stop|restart|status|reload]
         intelmqctl list [bots|queues]
         intelmqctl log bot-id [number-of-lines [log-level]]
         intelmqctl clear queue-id
@@ -198,10 +206,14 @@ Get logs of a bot:
 
         parser.add_argument('action',
                             choices=['start', 'stop', 'restart', 'status',
-                                     'run', 'list', 'clear', 'help', 'log'],
-                            metavar='[start|stop|restart|status|run|list|clear'
-                                    '|log]')
+                                     'reload', 'run', 'list', 'clear', 'help',
+                                     'log'],
+                            metavar='[start|stop|restart|status|reload|run|'
+                                    'list|clear|log]')
         parser.add_argument('parameter', nargs='*')
+        parser.add_argument('--quiet', '-q', action='store_const', const=True,
+                            help='Quiet mode, useful for reloads initiated'
+                                 'scripts like logrotate')
         self.parser = parser
         self.args = parser.parse_args()
         if self.args.action == 'help':
@@ -209,6 +221,7 @@ Get logs of a bot:
             exit(0)
 
         RETURN_TYPE = self.args.type
+        QUIET = self.args.quiet
 
         with open(STARTUP_CONF_FILE, 'r') as fp:
             self.startup = json.load(fp)
@@ -244,7 +257,8 @@ Get logs of a bot:
 
     def run(self):
         results = None
-        if self.args.action in ['start', 'restart', 'stop', 'status']:
+        if self.args.action in ['start', 'restart', 'stop', 'status',
+                                'reload']:
             if self.args.parameter:
                 call_method = getattr(self, "bot_" + self.args.action)
                 results = call_method(self.args.parameter[0])
@@ -291,7 +305,9 @@ Get logs of a bot:
             return 'error'
         else:
             module = importlib.import_module(bot_module)
-            botname = [name for name in dir(module) if hasattr(getattr(module, name), 'process')][0]
+            botname = [name for name in dir(module)
+                       if hasattr(getattr(module, name), 'process') and
+                       name.endswith('Bot')][0]
             bot = getattr(module, botname)
             instance = bot(bot_id)
             instance.start()
@@ -344,6 +360,24 @@ Get logs of a bot:
         log_bot_message('stopped', bot_id)
         return 'stopped'
 
+    def bot_reload(self, bot_id):
+        pid = read_pidfile(bot_id)
+        if not pid:
+            log_bot_error('stopped', bot_id)
+            return 'stopped'
+        if not status_process(pid):
+            remove_pidfile(bot_id)
+            log_bot_error('stopped', bot_id)
+            return 'stopped'
+        log_bot_message('reloading', bot_id)
+        proc = psutil.Process(int(pid))
+        proc.send_signal(signal.SIGHUP)
+        if status_process(pid):
+            log_bot_message('running', bot_id)
+            return 'running'
+        log_bot_error('stopped', bot_id)
+        return 'stopped'
+
     def bot_restart(self, bot_id):
         status_stop = self.bot_stop(bot_id)
         status_start = self.bot_start(bot_id)
@@ -373,6 +407,14 @@ Get logs of a bot:
         log_botnet_message('stopped')
         return botnet_status
 
+    def botnet_reload(self):
+        botnet_status = {}
+        log_botnet_message('reloading')
+        for bot_id in sorted(self.startup.keys()):
+            botnet_status[bot_id] = self.bot_reload(bot_id)
+        log_botnet_message('reloaded')
+        return botnet_status
+
     def botnet_restart(self):
         botnet_status = {}
         log_botnet_message('stopping')
@@ -393,12 +435,18 @@ Get logs of a bot:
         return botnet_status
 
     def list_bots(self):
+        """
+        Lists all configured bots from startup.conf with bot id and
+        description.
+
+        If description is not set, None is used instead.
+        """
         if self.args.type == 'text':
             for bot_id in sorted(self.startup.keys()):
                 print("Bot ID: {}\nDescription: {}"
-                      "".format(bot_id, self.startup[bot_id]['description']))
+                      "".format(bot_id, self.startup[bot_id].get('description')))
         return [{'id': bot_id,
-                 'description': self.startup[bot_id]['description']}
+                 'description': self.startup[bot_id].get('description')}
                 for bot_id in sorted(self.startup.keys())]
 
     def list_queues(self):

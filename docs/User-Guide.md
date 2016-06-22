@@ -424,6 +424,8 @@ optional arguments:
   --type {text,json}, -t {text,json}
                         choose if it should return regular text or other
                         machine-readable
+  --quiet, -q           Quiet mode, useful for reloads initiatedscripts like
+                        logrotate
 
 description: intelmqctl is the tool to control intelmq system. Outputs are
 logged to /opt/intelmq/var/log/intelmqctl
