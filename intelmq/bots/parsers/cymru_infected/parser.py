@@ -1,13 +1,11 @@
-# -*- coding: utf-8 -*-
 """
-Generic CSV parser
+Parser for CYMRU Infected Feed
+Based on Generic CSV Parser
+The Parser makes use of the undocumented type_translation
+feature of the generic csv parser
 
-Parameters:
-columns: string
-delimiter: string
-default_url_protocol: string
-type: string
-type_translation: string
+Format: report|ip|asn|timestamp|comments|asn_name
+classification.type,source.ip,source.asn,time.source,comment
 
 """
 import csv
@@ -22,21 +20,28 @@ from intelmq.lib import utils
 from intelmq.lib.bot import Bot
 from intelmq.lib.message import Event
 
+class CymruInfectedParserBot(Bot):
 
-class GenericCsvParserBot(Bot):
+    TYPEMAP = {
+        "bruteforce": "brute-force",
+        "openresolvers": "other",
+        "proxy": "other",
+        "bots": "botnet drone"
+    }
+
+    COLUMNS = ["classification.type",
+            "source.ip",
+            "source.asn",
+            "time.source",
+            "comment"]
+
+    DELIM = "|"
 
     def process(self):
         report = self.receive_message()
 
-        columns = self.parameters.columns
-
-        #convert columns to an array
-        if type(columns) is str:
-            columns = columns.split(",")
-
-        type_translation = None
-        if hasattr(self.parameters, 'type_translation'):
-            type_translation = json.loads(self.parameters.type_translation)
+        columns = self.COLUMNS
+        type_translation = self.TYPEMAP
 
         raw_report = utils.base64_decode(report.get("raw"))
         # ignore lines starting with #
@@ -44,7 +49,7 @@ class GenericCsvParserBot(Bot):
         # ignore null bytes
         raw_report = re.sub(r'(?m)\0', '', raw_report)
         for row in csv.reader(io.StringIO(raw_report),
-                              delimiter=str(self.parameters.delimiter)):
+                              delimiter=str(self.DELIM)):
             event = Event(report)
 
             for key, value in zip(columns, row):
@@ -85,13 +90,11 @@ class GenericCsvParserBot(Bot):
                             '{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2'
                             '[0-4]\d|1\d\d|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d\d|'
                             '[1-9]?\d)){3}))|:)))(%.+)?').match(value).group()
-                    elif key.endswith('.url') and '://' not in value:
-                        value = self.parameters.default_url_protocol + value
                     elif key in ["classification.type"] and type_translation:
                         if value in type_translation:
                             value = type_translation[value]
-                        elif not hasattr(self.parameters, 'type'):
-                            continue
+                        else:
+                            value = 'unknown'
 
                 except:
                     self.logger.warning('Encountered error while parsing line'
@@ -100,15 +103,15 @@ class GenericCsvParserBot(Bot):
                     continue
                 event.add(key, value)
 
-            if hasattr(self.parameters, 'type')\
-                    and not event.contains("classification.type"):
-                event.add('classification.type', self.parameters.type)
             event.add("raw", ",".join(row))
+
+            self.logger.debug(event)
 
             self.send_message(event)
         self.acknowledge_message()
 
 
 if __name__ == "__main__":
-    bot = GenericCsvParserBot(sys.argv[1])
+    bot = CymruInfectedParserBot(sys.argv[1])
     bot.start()
+
