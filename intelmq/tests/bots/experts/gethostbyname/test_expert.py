@@ -6,7 +6,7 @@ Testing Fqdn2Ip.
 import unittest
 
 import intelmq.lib.test as test
-from intelmq.bots.experts.fqdn2ip.expert import Fqdn2IpExpertBot
+from intelmq.bots.experts.gethostbyname.expert import GethostbynameExpertBot
 
 EXAMPLE_INPUT = {"__type": "Event",
                  "source.fqdn": "example.com",
@@ -22,14 +22,14 @@ EXAMPLE_OUTPUT = {"__type": "Event",
                   }
 
 
-class TestFqdn2IpExpertBot(test.BotTestCase, unittest.TestCase):
+class TestGethostbynameExpertBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for Fqdn2IpExpertBot.
     """
 
     @classmethod
     def set_bot(self):
-        self.bot_reference = Fqdn2IpExpertBot
+        self.bot_reference = GethostbynameExpertBot
         self.default_input_message = {'__type': 'Event'}
 
     def test(self):
@@ -39,4 +39,3 @@ class TestFqdn2IpExpertBot(test.BotTestCase, unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-    
