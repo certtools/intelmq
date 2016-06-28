@@ -1,36 +1,32 @@
 # -*- coding: utf-8 -*-
+"""
+Completely untested. If you have example data, please contact us!
+"""
+
 import sys
 
-from intelmq.lib import utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 from intelmq.lib.message import Event
 
 
-class ArborParserBot(Bot):
+class ArborParserBot(ParserBot):
 
-    def process(self):
-        report = self.receive_message()
+    def parse_line(self, row, report):
+        if row.startswith('other'):
+            return
 
-        raw_report = utils.base64_decode(report.get("raw"))
-        for row in raw_report.splitlines():
-            row = row.strip()
+        event = Event(report)
 
-            if len(row) == 0 or row.startswith('other'):
-                continue
+        event.add('classification.type', 'brute-force')
+        event.add("raw", row)
 
-            event = Event(report)
+        columns = ["source.ip"]
+        row = row.split()
 
-            event.add('classification.type', 'brute-force')
-            event.add("raw", row)
+        for key, value in zip(columns, row):
+            event.add(key, value)
 
-            columns = ["source.ip"]
-            row = row.split()
-
-            for key, value in zip(columns, row):
-                event.add(key, value)
-
-            self.send_message(event)
-        self.acknowledge_message()
+        yield event
 
 
 if __name__ == "__main__":
