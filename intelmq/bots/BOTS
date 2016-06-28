@@ -704,6 +704,11 @@
                 "filter_value": "<PT>"
             }
         },
+        "Gethostbyname": {
+            "description": "fqdn2ip is the bot responsible to parsing the ip from the fqdn.",
+            "module": "intelmq.bots.experts.gethostbyname.expert",
+            "parameters": {}
+        },
         "MaxMind GeoIP": {
             "description": "MaxMind GeoIP is the bot responsible for adding geolocation information to events (Country, City, Longitude, Latitude, etc..)",
             "module": "intelmq.bots.experts.maxmind_geoip.expert",
