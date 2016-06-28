@@ -32,33 +32,31 @@ class AutoshunParserBot(ParserBot):
         event = Event(report)
 
         info = line.split("<td>")
-        if len(line) <= 0:
-            yield
-        elif len(info) < 3:
-            yield
+        if len(line) <= 0 or len(info) < 3:
+            return
+
+        ip = info[1].split('</td>')[0].strip()
+        last_seen = info[2].split('</td>')[0].strip() + '-05:00'
+        description = self.parser.unescape(info[3].split('</td>')[0].strip())
+
+        for key in ClassificationType.allowed_values:
+            if description.lower().find(key.lower()) > -1:
+                event.add("classification.type", key)
+                break
         else:
-            ip = info[1].split('</td>')[0].strip()
-            last_seen = info[2].split('</td>')[0].strip() + '-05:00'
-            description = self.parser.unescape(info[3].split('</td>')[0].strip())
-
-            for key in ClassificationType.allowed_values:
+            for key, value in TAXONOMY.items():
                 if description.lower().find(key.lower()) > -1:
-                    event.add("classification.type", key)
+                    event.add("classification.type", value)
                     break
-            else:
-                for key, value in TAXONOMY.items():
-                    if description.lower().find(key.lower()) > -1:
-                        event.add("classification.type", value)
-                        break
 
-            if not event.contains("classification.type"):
-                event.add("classification.type", 'unknown')
+        if not event.contains("classification.type"):
+            event.add("classification.type", 'unknown')
 
-            event.add("time.source", last_seen)
-            event.add("source.ip", ip)
-            event.add("event_description.text", description)
-            event.add("raw", line+"</tr>")
-            yield event
+        event.add("time.source", last_seen)
+        event.add("source.ip", ip)
+        event.add("event_description.text", description)
+        event.add("raw", line+"</tr>")
+        yield event
 
 
 if __name__ == "__main__":

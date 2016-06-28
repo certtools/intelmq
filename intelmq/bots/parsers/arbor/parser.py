@@ -13,20 +13,20 @@ class ArborParserBot(ParserBot):
 
     def parse_line(self, row, report):
         if row.startswith('other'):
-            yield
-        else:
-            event = Event(report)
+            return
 
-            event.add('classification.type', 'brute-force')
-            event.add("raw", row)
+        event = Event(report)
 
-            columns = ["source.ip"]
-            row = row.split()
+        event.add('classification.type', 'brute-force')
+        event.add("raw", row)
 
-            for key, value in zip(columns, row):
-                event.add(key, value)
+        columns = ["source.ip"]
+        row = row.split()
 
-            yield event
+        for key, value in zip(columns, row):
+            event.add(key, value)
+
+        yield event
 
 
 if __name__ == "__main__":
