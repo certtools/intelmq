@@ -349,6 +349,18 @@
                 "rate_limit": 3600
             }
         },
+        "MISP Generic": {
+            "description": "Collect events from a MISP server.",
+            "module": "intelmq.bots.collectors.misp.collector",
+            "parameters": {
+                "feed": "misp_generic",
+                "misp_key": "<insert MISP Authkey>",
+                "misp_tag_processed": "<insert MISP tag for processed events>",
+                "misp_tag_to_process": "<insert MISP tag for events to be processed>",
+                "misp_url": "<insert url of MISP server (with trailing '/')>",
+                "rate_limit": 3600
+            }
+        },
         "Malc0de Domain Blacklist": {
             "description": "Malc0de Domain Blacklist Collector is the bot responsible to get the report from source of information.",
             "module": "intelmq.bots.collectors.http.collector_http",
@@ -419,18 +431,6 @@
                 "feed": "MalwarePatrol",
                 "http_url": "https://lists.malwarepatrol.net/cgi/getfile?receipt=< API KEY >&product=8&list=dansguardian",
                 "rate_limit": 180000
-            }
-        },
-        "MISP Generic": {
-            "description": "Collect events from a MISP server.",
-            "module": "intelmq.bots.collectors.misp.collector",
-            "parameters": {
-                "feed": "misp_generic",
-                "misp_key": "<insert MISP Authkey>",
-                "misp_tag_to_process": "<insert MISP tag for events to be processed>",
-                "misp_tag_processed": "<insert MISP tag for processed events>",
-                "misp_url": "<insert url of MISP server (with trailing '/')>",
-                "rate_limit": 3600
             }
         },
         "N6stomp": {
@@ -1041,6 +1041,11 @@
                 "error_log_message": false
             }
         },
+        "MISP": {
+            "description": "MISP event parser.",
+            "module": "intelmq.bots.parsers.misp.parser",
+            "parameters": {}
+        },
         "Malc0de Domain Blacklist": {
             "description": "Malc0de Domain Blacklist Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.malc0de.parser_domain_blacklist",
@@ -1079,11 +1084,6 @@
         "MalwarePatrol Dans Guardian": {
             "description": "MalwarePatrol Dans Guardian Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.malwarepatrol.parser_dansguardian",
-            "parameters": {}
-        },
-        "MISP": {
-            "description": "MISP event parser.",
-            "module": "intelmq.bots.parsers.misp.parser",
             "parameters": {}
         },
         "N6Stomp": {
