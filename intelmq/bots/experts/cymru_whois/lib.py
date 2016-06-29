@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
 """
 Reference: http://www.team-cymru.org/Services/ip-to-asn.html#dns
+
+If the query returns more than one network, we select the more specific one.
+See https://github.com/certtools/intelmq/issues/543
 """
 import io
+import ipaddress
 
 import dns.resolver
 
@@ -18,7 +22,20 @@ class Cymru():
     @staticmethod
     def query(ip):
         raw_result = Cymru.__ip_query(ip)
-        result = Cymru.__ip_query_parse(raw_result)
+        results = map(Cymru.__ip_query_parse, raw_result)
+        result = None
+        for res in results:
+            if result is None:
+                result = res
+            elif 'network' not in res:
+                continue
+            elif 'network' not in result:
+                result = res
+            else:
+                ips_a = ipaddress.ip_network(res['network']).num_addresses
+                ips_b = ipaddress.ip_network(result['network']).num_addresses
+                if ips_a < ips_b:
+                    result = res
 
         if "asn" in result:
             raw_result = Cymru.__asn_query(result['asn'])
@@ -35,7 +52,7 @@ class Cymru():
                 query_result.to_wire(fp)
                 value = fp.getvalue()[1:]  # ignore first character
                 fp.close()
-                return utils.decode(value)
+                yield utils.decode(value)
 
         except dns.exception.DNSException:
             return None
@@ -58,7 +75,7 @@ class Cymru():
     @staticmethod
     def __asn_query(asn):
         query = ASN_QUERY % (asn)
-        return Cymru.__query(query)
+        return list(Cymru.__query(query))[0]  # TODO: we assume there is only one result
 
     @staticmethod
     def __query_parse(text):

@@ -37,12 +37,6 @@ DATA = [
     ('/opt/intelmq/var/lib/bots/file-output/',
      [],
      ),
-    ('/usr/bin',
-     ['intelmq/bots/experts/tor_nodes/update-tor-nodes',
-      'intelmq/bots/experts/maxmind_geoip/update-geoip-data',
-      'intelmq/bots/experts/asn_lookup/update-asn-data',
-      ],
-     ),
 ]
 
 try:
@@ -52,13 +46,16 @@ except(IOError, ImportError):
     DESCRIPTION = open('README.md').read()
 
 
+exec(open('intelmq/version.py').read())  # defines __version__
+
+
 setup(
     name='intelmq',
-    version='1.0.0.dev4',
+    version=__version__,
     maintainer='Sebastian Wagner',
     maintainer_email='wagner@cert.at',
     install_requires=REQUIRES,
-    test_requires=REQUIRES+[
+    tests_requires=REQUIRES+[
         'mock>=1.1.1',
         'nose',
         ],
@@ -99,4 +96,9 @@ setup(
             'intelmq_psql_initdb = intelmq.bin.intelmq_psql_initdb:main',
         ],
     },
+    scripts=[
+        'intelmq/bots/experts/tor_nodes/update-tor-nodes',
+        'intelmq/bots/experts/maxmind_geoip/update-geoip-data',
+        'intelmq/bots/experts/asn_lookup/update-asn-data',
+    ],
 )

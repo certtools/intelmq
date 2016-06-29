@@ -100,6 +100,7 @@ class BotTestCase(object):
         cls.maxDiff = None  # For unittest module, prints long diffs
         cls.pipe = None
         cls.sysconfig = {}
+        cls.allowed_error_count = 0  # allows dumping of some lines
 
         cls.set_bot()
 
@@ -214,7 +215,8 @@ class BotTestCase(object):
         """ Test if bot logs initialized message. """
         self.run_bot()
         self.assertLoglineMatches(0, "{} initialized with id {} and version"
-                                     " [0-9.]{{5}} \([a-zA-Z, 0-9:]+\)."
+                                     " [0-9.]{{5}} \([a-zA-Z0-9,:. ]+\)"
+                                     " as process [0-9]+\."
                                      "".format(self.bot_name,
                                                self.bot_id), "INFO")
 
@@ -239,7 +241,8 @@ class BotTestCase(object):
     def test_log_not_error(self):
         """ Test if bot does not log errors. """
         self.run_bot()
-        self.assertNotRegexpMatchesLog("ERROR")
+        self.assertNotRegexpMatchesLog("(ERROR.*?){}"
+                                       "".format(self.allowed_error_count))
 
     def test_log_not_critical(self):
         """ Test if bot does not log critical errors. """

@@ -200,7 +200,7 @@ def main():
                     continue
 
                 if queue_name is None:
-                    if len(answer) == 2:
+                    if len(answer) == 3:
                         queue_name = answer[2]
                     else:
                         queue_name = entry['source_queue']
