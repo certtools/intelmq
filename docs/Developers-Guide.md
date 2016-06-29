@@ -325,6 +325,80 @@ class ExampleParserBot(Bot):
 * Check [Expert Bots](../intelmq/bots/experts/)
 * Check [Parser Bots](../intelmq/bots/parsers/)
 
+### Parsers
+
+Parsers can use a different, specialized Bot-class. It allows to work on individual elements of a report, splitting the functionality of the parser into multiple functions:
+
+ * `process`: getting and sending data, handling of failures etc.
+ * `parse`: Parses the report and splits it into single elements (e.g. lines). Can be overridden.
+ * `parse_line`: Parses elements, returns an Event. Can be overridden.
+ * `recover_line`: In case of failures and for the field `raw`, this function recovers a fully functional report containing only one element. Can be overridden.
+
+For common cases, like CSV, exisiting function can be used, reducing the amount of code to implement. In the best case, only `parse_line` needs to be coded, as only this part interprets the data.
+
+You can have a look at the implementation `intelmq/lib/bot.py` or at examples, e.g. the DummyBot in `intelmq/tests/bots/test_dummy_bot.py`. This is a stub for creating a new Parser, showing the parameters and possible code:
+
+```python
+class MyParserBot(ParserBot):
+
+    def parse(self, report):
+        """
+        A generator yielding the single elements of the data.
+
+        Comments, headers etc. can be processed here. Data needed by
+        `self.parse_line` can be saved in `self.tempdata` (list).
+
+        Default parser yields stripped lines.
+        Override for your use or use an exisiting parser, e.g.:
+            parse = ParserBot.parse_csv
+        """
+        for line in utils.base64_decode(report.get("raw")).splitlines():
+            yield line.strip()
+
+    def parse_line(self, line, report):
+        """
+        A generator which can yield one or more messages contained in line.
+
+        Report has the full message, thus you can access some metadata.
+        Override for your use.
+        """
+        raise NotImplementedError
+
+    def process(self):
+        self.tempdata = []  # temporary data for parse, parse_line and recover_line
+        self.__failed = []
+        report = self.receive_message()
+
+        for line in self.parse(report):
+            if not line:
+                continue
+            try:
+                # filter out None
+                events = list(filter(bool, self.parse_line(line, report)))
+            except Exception as exc:
+                self.logger.exception('Failed to parse line.')
+                self.__failed.append((exc, line))
+            else:
+                self.send_message(*events)
+
+        for exc, line in self.__failed:
+            self._dump_message(exc, self.recover_line(line))
+
+        self.acknowledge_message()
+
+    def recover_line(self, line):
+        """
+        Reverse of parse for single lines.
+
+        Recovers a fully functional report with only the problematic line.
+        """
+        return '\n'.join(self.tempdata + [line])
+
+```
+
+#### parse_line
+One line can lead to multiple events, thus `parse_line` can't just return one Event. Thus, this function is a generator, which allows to easily return multple values. Use `yield event` for valid Events and `return` in case of a void result (not parseable line, invalid data etc.).
+
 ### Tests
 
 In order to do automated tests on the bot, it is necessary to write tests including sample data. Have a look at some existing tests:

@@ -2,48 +2,40 @@
 import sys
 from urllib.parse import urlparse
 
-from intelmq.lib import utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 from intelmq.lib.harmonization import IPAddress
 from intelmq.lib.message import Event
 
 
-class VXVaultParserBot(Bot):
+class VXVaultParserBot(ParserBot):
 
-    def process(self):
-        report = self.receive_message()
-        raw_report = utils.base64_decode(report.get("raw"))
-        for row in raw_report.splitlines():
+    def parse_line(self, row, report):
+        if not row.startswith('http'):
+            return
 
-            row = row.strip()
+        url_object = urlparse(row)
 
-            if len(row) == 0 or not row.startswith('http'):
-                continue
+        if not url_object:
+            return
 
-            url_object = urlparse(row)
+        url = url_object.geturl()
+        hostname = url_object.hostname
+        port = url_object.port
 
-            if not url_object:
-                continue
+        event = Event(report)
 
-            url = url_object.geturl()
-            hostname = url_object.hostname
-            port = url_object.port
+        if IPAddress.is_valid(hostname):
+            event.add("source.ip", hostname)
+        else:
+            event.add("source.fqdn", hostname)
 
-            event = Event(report)
+        event.add('classification.type', 'malware')
+        event.add("source.url", url)
+        if port:
+            event.add("source.port", port)
+        event.add("raw", row)
 
-            if IPAddress.is_valid(hostname):
-                event.add("source.ip", hostname)
-            else:
-                event.add("source.fqdn", hostname)
-
-            event.add('classification.type', 'malware')
-            event.add("source.url", url)
-            if port:
-                event.add("source.port", port)
-            event.add("raw", row)
-
-            self.send_message(event)
-        self.acknowledge_message()
+        self.send_message(event)
 
 
 if __name__ == "__main__":
