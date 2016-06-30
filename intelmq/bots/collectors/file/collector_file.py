@@ -13,7 +13,7 @@ Parameters:
 path: string
 extension: string
 delete_file: boolean
-    default: True
+    default: False
 """
 
 import sys
