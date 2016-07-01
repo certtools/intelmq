@@ -126,6 +126,7 @@ def main():
         if args.verbose:
             print('** Saving AS data to database...')
         cur.execute("DELETE FROM role_automatic;")
+        cur.execute("DELETE FROM organisation_to_template_automatic;")
         cur.execute("DELETE FROM organisation_to_asn_automatic;")
         cur.execute("DELETE FROM autonomous_system_automatic;")
         for entry in asn_list:
@@ -185,7 +186,7 @@ def main():
                 INSERT INTO organisation_to_asn_automatic (notification_interval,
                                                            organisation_id,
                                                            asn_id)
-                VALUES (180, %s, %s);
+                VALUES (0, %s, %s);
                 """, (org_id, asn_id))
 
         #
