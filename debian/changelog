@@ -1,3 +1,10 @@
+intelmq (1.0.0~dev4+intevation.1.2~alpha3) experimental; urgency=low
+
+  * New Release from customer-releases branch
+  * Merged certbund-contact
+
+ -- Gernot Schulz <gernot@intevation.de>  Fri, 01 Jul 2016 18:41:24 +0200
+
 intelmq (1.0.0~dev4+intevation.1.2~alpha2) experimental; urgency=low
 
   * New Release from customer-releases branch
