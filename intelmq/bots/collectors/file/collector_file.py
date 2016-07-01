@@ -13,7 +13,7 @@ Parameters:
 path: string
 extension: string
 delete_file: boolean
-    default: True
+    default: False
 """
 
 import sys
@@ -27,15 +27,18 @@ from intelmq.lib.message import Report
 class FileCollectorBot(Bot):
 
     def init(self):
-        # Test if path can be accessed
-        try:
-            if not os.path.isdir(self.parameters.path):
-                self.logger.error("The path does not lead to " \
-                    "a directory")
-
-        except:
-            self.logger.error("The path is not accessible")
+        # Test if path is a directory
+        if not os.path.isdir(self.parameters.path):
+            self.logger.error("The path does not lead to a directory")
             raise exceptions.InvalidArgument('path', got=self.parameters.path)
+
+        if not self.parameters.extension:
+            self.logger.warn("No file extension was set. The collector will" \
+                " read all files in %s", self.parameters.path)
+            if self.parameters.delete_file:
+                self.logger.error("This configuration would delete all files" \
+                    " in %s. I'm stopping now....", self.parameters.path)
+                self.stop()
 
     def process(self):
         self.logger.debug("Started looking for Files")
@@ -45,30 +48,35 @@ class FileCollectorBot(Bot):
 
             #iterate over all files in dir
             for f in os.listdir(p):
-                if fnmatch.fnmatch(f, '*'+self.parameters.extension):
-                    filename = p + '/' + f
+                filename = os.path.join(p, f)
+                if os.path.isfile(filename):
+                    if fnmatch.fnmatch(f, '*'+self.parameters.extension):
 
-                    self.logger.debug("Found file to process: %s" %filename)
+                        self.logger.debug("Found file to process: %s" %filename)
 
-                    f = open(filename, 'r')
+                        with open(filename, 'r') as f:
 
-                    report = Report()
-                    report.add("raw", f.read())
-                    report.add("feed.name", self.parameters.feed)
-                    report.add("feed.url", "file:/%s" %filename)
-                    report.add("feed.accuracy", self.parameters.accuracy)
-                    self.send_message(report)
+                            report = Report()
+                            report.add("raw", f.read())
+                            report.add("feed.name", self.parameters.feed)
+                            report.add("feed.url", "file:/%s" %filename)
+                            report.add("feed.accuracy",
+                                       self.parameters.accuracy)
+                            self.send_message(report)
 
-                    f.close()
 
-                    if self.parameters.delete_file == True:
-                        try:
-                            os.remove(filename)
-                            self.logger.debug("Deleting file: %s" %filename)
-                        except:
-                            self.logger.error("Could not delete file %s" \
-                                %filename)
-                            raise
+                        if self.parameters.delete_file:
+                            try:
+                                os.remove(filename)
+                                self.logger.debug("Deleting file: %s" %filename)
+                            except PermissionError:
+                                self.logger.error("Could not delete file %s" \
+                                    %filename)
+                                self.logger.info("Maybe I don't have" \
+                                    " sufficient rights on that file?")
+                                self.logger.error("Stopping now, to prevent" \
+                                    " reading this file again.")
+                                self.stop()
 
 if __name__ == "__main__":
     bot = FileCollectorBot(sys.argv[1])

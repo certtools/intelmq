@@ -107,7 +107,7 @@ default, the installation method puts it's distributed configuration files into
 first run, copy them to `etc`.
 
 * `defaults.conf`: default values for bots and their behavior, e.g.
-error handling, log options and pipeline configuration. Will be removed in [future](https://github.com/certtools/intelmq/issues/267).
+error handling, log options and pipeline configuration. Will be removed in the [future](https://github.com/certtools/intelmq/issues/267).
 * `system.conf`: System configuration for e.g. the logger and the pipeline.
 * `startup.conf`: Maps the bot ids to python modules.
 * `runtime.conf`: Configuration for the individual bots.
@@ -131,7 +131,7 @@ Use the IntelMQ Manager mentioned above to generate the configuration files if u
 
 ## Startup Configuration
 
-This configuration is used by intelmqctl tool to launch bots. Usually, the IntelMQ sysadmin don't need to touch in this file because IntelMQ Manager generates it.
+This configuration is used by intelmqctl tool to launch bots. Usually, the IntelMQ sysadmins don't need to touch this file because IntelMQ Manager generates it.
 
 **Template:**
 ```
@@ -168,7 +168,7 @@ More examples can be found at `intelmq/etc/startup.conf` directory in IntelMQ re
 
 ## Pipeline Configuration
 
-This configuration is used by each bot to load the source pipeline and destination pipelines associated to each of them. IntelMQ Manager generate this configuration.
+This configuration is used by each bot to load the source pipeline and destination pipelines associated to each of them. IntelMQ Manager generates this configuration.
 
 **Template:**
 ```
@@ -204,14 +204,14 @@ More examples can be found at `intelmq/etc/pipeline.conf` directory in IntelMQ r
 
 ## Defaults Configuration
 
-All bots inherits this configuration parameters and they can overwrite them using the same parameters in configuration.
+All bots inherit this configuration parameters and they can overwrite them using the same parameters in configuration.
 
 #### Error Handling
 
-* **`error_log_message`** - in case of an error, this option will allows the bot to write the message (report or event) in the log file. Use the following values:
+* **`error_log_message`** - in case of an error, this option will allow the bot to write the message (report or event) in the log file. Use the following values:
     * **`true/false`** - write or not write message in log file
 
-* **`error_log_exception`** - in case of an error, this option will allows the bot to write the error exception in the log file. Use the following values:
+* **`error_log_exception`** - in case of an error, this option will allow the bot to write the error exception in the log file. Use the following values:
     * **`true/false`** - write or not write exception in log file
 
 * **`error_procedure`** - in case of an error, this option defines the procedure that the bot will adopt. Use the following values:
@@ -261,7 +261,7 @@ All bots inherits this configuration parameters and they can overwrite them usin
 
 ## Runtime Configuration
 
-This configuration is used by each bot to load the specific parameters associated to each of them. Usually, BOTS file is used to generate runtime.conf. IntelMQ Manager generate this configuration.
+This configuration is used by each bot to load the specific parameters associated to each of them. Usually, BOTS file is used to generate runtime.conf. IntelMQ Manager generates this configuration.
 
 **Template:**
 ```
@@ -342,7 +342,7 @@ More examples can be found at `intelmq/etc/harmonization.conf` directory in Inte
 
 ## Management
 
-IntelMQ has a modular structure consisting on bots. There are four types of bots:
+IntelMQ has a modular structure consisting of bots. There are four types of bots:
 
 * *CollectorBots* retrieve data from internal or external sources, the output
 are *reports* consisting of many individual data sets.
@@ -570,7 +570,7 @@ Consult the [FAQ.md](FAQ) if you encountered any problem.
 
 # Additional Information
 
-## Perfomance Tests
+## Performance Tests
 
 Somes tests have been made with a virtual machine with 
 the following specifications:

@@ -300,11 +300,11 @@
             "description": "Fileinput collector fetches data from a file.",
             "module": "intelmq.bots.collectors.file.collector_file",
             "parameters": {
-                "delete_file": "False",
-                "extension": "csv",
+                "delete_file": "",
+                "extension": ".csv",
                 "feed": "FileCollector",
                 "path": "/tmp/",
-                "rate_limit": 10800
+                "rate_limit": 300
             }
         },
         "Fraunhofer DGA": {
@@ -357,6 +357,18 @@
             "parameters": {
                 "feed": "HpHosts",
                 "http_url": "http://hosts-file.net/download/hosts.txt",
+                "rate_limit": 3600
+            }
+        },
+        "MISP Generic": {
+            "description": "Collect events from a MISP server.",
+            "module": "intelmq.bots.collectors.misp.collector",
+            "parameters": {
+                "feed": "misp_generic",
+                "misp_key": "<insert MISP Authkey>",
+                "misp_tag_processed": "<insert MISP tag for processed events>",
+                "misp_tag_to_process": "<insert MISP tag for events to be processed>",
+                "misp_url": "<insert url of MISP server (with trailing '/')>",
                 "rate_limit": 3600
             }
         },
@@ -718,6 +730,11 @@
                 "filter_value": "<PT>"
             }
         },
+        "Gethostbyname": {
+            "description": "fqdn2ip is the bot responsible to parsing the ip from the fqdn.",
+            "module": "intelmq.bots.experts.gethostbyname.expert",
+            "parameters": {}
+        },
         "MaxMind GeoIP": {
             "description": "MaxMind GeoIP is the bot responsible for adding geolocation information to events (Country, City, Longitude, Latitude, etc..)",
             "module": "intelmq.bots.experts.maxmind_geoip.expert",
@@ -1050,6 +1067,7 @@
                 ],
                 "default_url_protocol": "http://",
                 "delimiter": ",",
+                "skip_header": true,
                 "type": "c&c"
             }
         },
@@ -1063,6 +1081,11 @@
         "JSON": {
             "description": "JSON Parser converts from a JSON-String into an Event",
             "module": "intelmq.bots.parsers.json.parser",
+            "parameters": {}
+        },
+        "MISP": {
+            "description": "MISP event parser.",
+            "module": "intelmq.bots.parsers.misp.parser",
             "parameters": {}
         },
         "Malc0de Domain Blacklist": {
