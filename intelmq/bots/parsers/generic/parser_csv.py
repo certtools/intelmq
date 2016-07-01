@@ -6,6 +6,7 @@ Parameters:
 columns: string
 delimiter: string
 default_url_protocol: string
+skip_header: boolean
 type: string
 type_translation: string
 
@@ -35,6 +36,9 @@ class GenericCsvParserBot(ParserBot):
         raw_report = re.sub(r'(?m)^#.*\n?', '', raw_report)
         # ignore null bytes
         raw_report = re.sub(r'(?m)\0', '', raw_report)
+        # skip header
+        if hasattr(self.parameters, 'skip_header') and self.parameters.skip_header:
+            raw_report = raw_report[raw_report.find('\n')+1:]
         for row in csv.reader(io.StringIO(raw_report),
                               delimiter=str(self.parameters.delimiter)):
             yield row
