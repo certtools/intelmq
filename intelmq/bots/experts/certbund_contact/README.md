@@ -1,27 +1,6 @@
 # Expert bot to lookup contact information in a simple database
 
-Requires psycopg and PostgreSQL
-
-
-## Mailgen Setup
-
-To create a PostgreSQL database for use with the expert bot, execute the
-following commands as the user `postgres` from the top-level directory of
-the IntelMQ source tree:
-
-```
-
-  # add a user for mailgen and generate signing key
-  useradd -c 'User to send IntelMQ mail notifications using mailgen.' -m -r -s /bin/false mailgen
-  su - -s /bin/bash mailgen
-  gpg --gen-key
-
-  /etc/intelmq/intelmq-mailgen.conf:
-
-  # Test Mail-Template:
-  mkdir -p /usr/local/lib/intelmq/mailgen/templates
-
-```
+Requires Psycopg.
 
 ## Contact DB
 
