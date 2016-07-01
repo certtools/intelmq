@@ -20,7 +20,7 @@ Usage
 
 Example usage:
 ```
- importer.py --database contactdb --verbose
+ripe_import.py --database contactdb --verbose
 ```
 
 See also the help provided by ``--help``
