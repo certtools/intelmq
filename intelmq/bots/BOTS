@@ -1113,11 +1113,11 @@
             "parameters": {}
         },
         "ShadowServer": {
-            "description": "ShadowServer Parser is a bot capable of parsing shadowserver feeds, depending on configuration files",
+            "description": "ShadowServer Parser is a bot capable of parsing all shadowserver feeds, depending on configuration files. Parameter 'feedname' is used as identifier to chose the correct mapping.",
             "module": "intelmq.bots.parsers.shadowserver.parser",
             "parameters": {
-                "feedname": "",
                 "feedcode": "",
+                "feedname": "",
                 "override": "1"
             }
         },
