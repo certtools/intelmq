@@ -1,3 +1,87 @@
+intelmq (1.0.0~dev4+intevation.1.2~alpha3) experimental; urgency=low
+
+  * New Release from customer-releases branch
+  * Merged certbund-contact
+
+ -- Gernot Schulz <gernot@intevation.de>  Fri, 01 Jul 2016 18:41:24 +0200
+
+intelmq (1.0.0~dev4+intevation.1.2~alpha2) experimental; urgency=low
+
+  * New Release from customer-releases branch
+  * Merged upstream master
+  * Merged certbund-contact
+  * Merged universal-shadowserver-parser
+  * Merged file-collector
+  * Merged shadowserver-modify-bot
+
+ -- Gernot Schulz <gernot@intevation.de>  Fri, 01 Jul 2016 10:46:59 +0200
+
+intelmq (1.0.0~dev4+intevation.1.2~alpha1) experimental; urgency=low
+
+  * New Release from customer-releases branch
+  * Merged upstream master
+  * Merged certbund-contact
+  * Merged shadowserver-feeds (new, configurable shadowserver parser bot)
+  * Merged shadowserver-modify-bot
+  * Merged lost changes from versions 1.0.0~dev4+intevation.1.0~beta2 through
+    1.0.0~dev4+intevation.1.0~rc2
+
+ -- Gernot Schulz <gernot@intevation.de>  Tue, 21 Jun 2016 12:53:22 +0200
+
+intelmq (1.0.0~dev4+intevation.1.1~beta1) experimental; urgency=low
+
+  * New Release from customer-releases branch
+  * Merged upstream master
+  * Merged certbund-contact
+    CAUTION: This changes DB the schema which will need a manual upgrade
+  * Merged shadowserver-feeds
+
+ -- Gernot Schulz <gernot@intevation.de>  Fri, 03 Jun 2016 14:45:18 +0200
+
+intelmq (1.0.0~dev4+intevation.1.0~rc2) testing; urgency=high
+
+  * Install certbund sql files and READMEs.
+
+ -- Sascha Wilde <wilde@intevation.de>  Mon, 23 May 2016 18:16:16 +0200
+
+intelmq (1.0.0~dev4+intevation.1.0~rc1) testing; urgency=low
+
+  * Merged upstream master.
+  * Merged certbund_contact.
+  * Merged shadowserver-feeds.
+  * Install logrotate script.
+
+ -- Sascha Wilde <wilde@intevation.de>  Mon, 23 May 2016 16:19:41 +0200
+
+intelmq (1.0.0~dev4+intevation.1.0~beta3) experimental; urgency=low
+
+  * Depend on python3-ipaddr for certbund-contact bot import script.
+
+ -- Sascha Wilde <wilde@intevation.de>  Fri, 20 May 2016 16:58:26 +0200
+
+intelmq (1.0.0~dev4+intevation.1.0~beta2) experimental; urgency=low
+
+  * New Release from customer-releases branch.
+  * Merged certbund-contact (install import script)
+
+ -- Sascha Wilde <wilde@intevation.de>  Fri, 20 May 2016 16:33:08 +0200
+
+intelmq (1.0.0~dev4+intevation.1.0~beta1) experimental; urgency=low
+
+  * New Release from customer-releases branch.
+  * Merged upstream master
+  * Merged certbund-contact
+  * Used debugging_level INFO as default (was DEBUG).
+
+ -- Sascha Wilde <wilde@intevation.de>  Fri, 20 May 2016 15:40:47 +0200
+
+intelmq (1.0.0~dev4~beta11) experimental; urgency=low
+
+  * New Release from customer-releases branch.
+    6fa20f245860ad3b2b66dbf5c8826a708394939b
+
+ -- Sascha Wilde <wilde@intevation.de>  Wed, 18 May 2016 15:58:34 +0200
+
 intelmq (1.0.0~dev4~beta10) experimental; urgency=low
 
   * Merged master, fixes

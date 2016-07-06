@@ -1,0 +1,6 @@
+intelmq (1.0.0~dev4+intevation.1.2~alpha1) experimental; urgency=low
+
+  The individual Shadowserver parser bots have been replaced with a single
+  bot, so existing configurations may need to be updated.
+
+  -- Gernot Schulz <gernot@intevation.de>  Tue, 21 Jun 2016 16:38:00 +0200

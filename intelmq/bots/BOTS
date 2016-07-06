@@ -296,6 +296,17 @@
                 "rate_limit": 10800
             }
         },
+        "Fileinput": {
+            "description": "Fileinput collector fetches data from a file.",
+            "module": "intelmq.bots.collectors.file.collector_file",
+            "parameters": {
+                "delete_file": "",
+                "extension": ".csv",
+                "feed": "FileCollector",
+                "path": "/tmp/",
+                "rate_limit": 300
+            }
+        },
         "Fraunhofer DGA": {
             "description": "Fraunhofer DGA collector fetches data from Fraunhofers domain generation archive.",
             "module": "intelmq.bots.collectors.http.collector_http",
@@ -636,12 +647,15 @@
                 "rate_limit": 3600
             }
         },
-        "XMPP collector": {
-            "description": "XMPP collector is the bot responsible to get events from xmpp server",
+        "XMPP": {
+            "description": "This bot can connect to an XMPP Server and one room, in order to receive reports from it.",
             "module": "intelmq.bots.collectors.xmpp.collector",
             "parameters": {
-                "rate_limit": "3600",
+                "rate_limit": 3600,
                 "xmpp_password": "xmpp password",
+                "xmpp_room": "xmpp room",
+                "xmpp_room_nick": "xmpp room nick",
+                "xmpp_room_password": "xmpp room password",
                 "xmpp_server": "xmpp server",
                 "xmpp_user": "xmpp username"
             }
@@ -663,6 +677,18 @@
                 "redis_cache_host": "127.0.0.1",
                 "redis_cache_port": "6379",
                 "redis_cache_ttl": "86400"
+            }
+        },
+        "CERT-bund Contact Database": {
+            "description": "Retrieve CIDR contact information from a PostgreSQL database.",
+            "module": "intelmq.bots.experts.certbund_contact.expert",
+            "parameters": {
+                "database": "contactdb",
+                "host": "localhost",
+                "password": "<password>",
+                "port": "5432",
+                "sslmode": "require",
+                "user": "intelmq"
             }
         },
         "CERT.at Contact Database": {
@@ -986,6 +1012,11 @@
             "module": "intelmq.bots.parsers.cymru_full_bogons.parser",
             "parameters": {}
         },
+        "Cymru Infected": {
+            "description": "Cymru infected Parser",
+            "module": "intelmq.bots.parsers.cymru_infected.parser",
+            "parameters": {}
+        },
         "DShield AS": {
             "description": "DShield AS Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.dshield.parser_asn",
@@ -1046,6 +1077,11 @@
             "parameters": {
                 "error_log_message": false
             }
+        },
+        "JSON": {
+            "description": "JSON Parser converts from a JSON-String into an Event",
+            "module": "intelmq.bots.parsers.json.parser",
+            "parameters": {}
         },
         "MISP": {
             "description": "MISP event parser.",
@@ -1112,30 +1148,14 @@
             "module": "intelmq.bots.parsers.phishtank.parser",
             "parameters": {}
         },
-        "ShadowServer Chargen": {
-            "description": "ShadowServer Chargen Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.shadowserver.chargen_parser",
-            "parameters": {}
-        },
-        "ShadowServer Drone": {
-            "description": "ShadowServer Drone Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.shadowserver.drone_parser",
-            "parameters": {}
-        },
-        "ShadowServer Microsoft Sinkhole": {
-            "description": "ShadowServer Microsoft Sinkhole Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.shadowserver.microsoft_sinkhole_parser",
-            "parameters": {}
-        },
-        "ShadowServer QOTD": {
-            "description": "ShadowServer QOTD Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.shadowserver.qotd_parser",
-            "parameters": {}
-        },
-        "ShadowServer SNMP": {
-            "description": "ShadowServer SNMP Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.shadowserver.snmp_parser",
-            "parameters": {}
+        "ShadowServer": {
+            "description": "ShadowServer Parser is a bot capable of parsing shadowserver feeds, depending on configuration files",
+            "module": "intelmq.bots.parsers.shadowserver.parser",
+            "parameters": {
+                "feedname": "",
+                "feedcode": "",
+                "override": "1"
+            }
         },
         "Spamhaus CERT": {
             "description": "Spamhaus CERT Parser is the bot responsible to parse the report and sanitize the information.",

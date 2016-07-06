@@ -8,7 +8,6 @@ PATH=/bin:/usr/bin
 # export HTTPS_PROXY=https://proxy.example.com:8080/
 # export FTP_PROXY=ftp://proxy.example.com:8080/
 
-
 set -e
 trap cleanup EXIT
 

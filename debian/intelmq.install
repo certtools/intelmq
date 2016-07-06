@@ -1,1 +1,3 @@
+intelmq/bots/experts/certbund_contact/README*.md usr/share/doc/intelmq/certbund_contact/
 debian/cron.d/intelmq-update-data etc/cron.d/
+intelmq/bots/parsers/shadowserver/README.md usr/share/doc/intelmq/bots/parsers/shadowserver/
