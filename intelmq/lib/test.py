@@ -91,7 +91,6 @@ class BotTestCase(object):
         cls.bot = None
         cls.bot_reference = None
         cls.bot_type = None
-        cls.config = {}
         cls.default_input_message = ''
         cls.input_message = None
         cls.loglines = []

@@ -62,3 +62,10 @@ Every bot-type is defined by a dictionary with three values:
   In both cases, the data will be added to extra.
 - `additional_fields`: A dictionary with a static mapping of field name to
   data, e.g. to set classifications or protocols.
+
+The tuples can be of following format:
+
+- `('intelmqkey', 'shadowkey')`
+- `('intelmqkey', 'shadowkey', conversion_function)`
+- `('shadowkey', conversion_function)`, data will be added to extra in this case
+- `('intelmqkey', 'shadowkey', conversion_function, True)`, the function gets two parameters here, the second one is the full row (as dictionary)

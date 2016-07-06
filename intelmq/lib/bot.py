@@ -463,6 +463,18 @@ class ParserBot(Bot):
         writer.writerow(line)
         return out.getvalue()
 
+    csv_params = {}
+
+    def recover_line_csv_dict(self, line):
+        """
+        Converts dictionaries to csv. self.csv_fieldnames must be list of fields.
+        """
+        out = io.StringIO()
+        writer = csv.DictWriter(out, self.csv_fieldnames, **self.csv_params)
+        writer.writeheader()
+        writer.writerow(line)
+        return out.getvalue()
+
 
 class Parameters(object):
     pass
