@@ -5,13 +5,13 @@ import unittest
 
 import intelmq.lib.test as test
 import intelmq.lib.utils as utils
-from intelmq.bots.parsers.shadowserver.drone_parser import \
-    ShadowServerDroneParserBot
+from intelmq.bots.parsers.shadowserver.parser import ShadowserverParserBot
 
-with open(os.path.join(os.path.dirname(__file__), 'drone.csv')) as handle:
+with open(os.path.join(os.path.dirname(__file__), 'drone-hadoop.csv')) as handle:
     EXAMPLE_FILE = handle.read()
+EXAMPLE_LINES = EXAMPLE_FILE.splitlines()
 
-EXAMPLE_REPORT = {"feed.name": "ShadowServer Drone",
+EXAMPLE_REPORT = {"feed.name": "ShadowServer Botnet Drone Hadoop",
                   "raw": utils.base64_encode(EXAMPLE_FILE),
                   "__type": "Report",
                   "time.observation": "2015-01-01T00:00:00+00:00",
@@ -22,12 +22,12 @@ EVENTS = [{'__type': 'Event',
            'destination.geolocation.cc': 'US',
            'destination.ip': '74.208.164.166',
            'destination.port': 80,
-           'extra': '{"os.name": "Windows", "connection_count": 1, "os.version'
-           '": "2000 SP4, XP SP1+"}',
-           'feed.name': 'ShadowServer Drone',
+           'extra': '{"connection_count": 1, "naics": 0, "os.name": "Windows", "os.version": "2000 SP4, XP SP1+", "sic": 0}',
+           'feed.name': 'ShadowServer Botnet Drone Hadoop',
            'malware.name': 'sinkhole',
            'protocol.transport': 'tcp',
-           'raw': 'Iih1J2NjJywgdSc3NC4yMDguMTY0LjE2NicpLCh1J2lwJywgdScyMTAuMjMuMTM5LjEzMCcpLCh1J2FnZW50JywgdScnKSwodSdwb3J0JywgdSczMjE4JyksKHUnY2l0eScsIHUnTUVMQk9VUk5FJyksKHUnaG9zdG5hbWUnLCB1JycpLCh1J3NpYycsIHUnMCcpLCh1J2FwcGxpY2F0aW9uJywgdScnKSwodSd0eXBlJywgdSd0Y3AnKSwodSdwMGZfZ2VucmUnLCB1J1dpbmRvd3MnKSwodSdjY19wb3J0JywgdSc4MCcpLCh1J3AwZl9kZXRhaWwnLCB1JzIwMDAgU1A0LCBYUCBTUDErJyksKHUndGltZXN0YW1wJywgdScyMDExLTA0LTIzIDAwOjAwOjA1JyksKHUnaW5mZWN0aW9uJywgdSdzaW5raG9sZScpLCh1J3Byb3h5JywgdScnKSwodSdjY19hc24nLCB1Jzg1NjAnKSwodSdnZW8nLCB1J0FVJyksKHUnYXNuJywgdSc3NTQzJyksKHUnY291bnQnLCB1JzEnKSwodSdjY19kbnMnLCB1JycpLCh1J25haWNzJywgdScwJyksKHUndXJsJywgdScnKSwodSdyZWdpb24nLCB1J1ZJQ1RPUklBJyksKHUnY2NfZ2VvJywgdSdVUycpIg==',
+           'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                                 EXAMPLE_LINES[1], ''])),
            'source.asn': 7543,
            'source.geolocation.cc': 'AU',
            'source.geolocation.city': 'MELBOURNE',
@@ -42,11 +42,11 @@ EVENTS = [{'__type': 'Event',
            'destination.geolocation.cc': 'NL',
            'destination.ip': '94.75.228.147',
            'destination.reverse_dns': '015.maxided.com',
-           'extra': '{"os.name": "WINXP", "connection_count": 1, "os.version":'
-           ' ""}',
-           'feed.name': 'ShadowServer Drone',
+           'extra': '{"connection_count": 1, "naics": 0, "os.name": "WINXP", "sic": 0}',
+           'feed.name': 'ShadowServer Botnet Drone Hadoop',
            'malware.name': 'spyeye',
-           'raw': 'Iih1J2NjJywgdSc5NC43NS4yMjguMTQ3JyksKHUnaXAnLCB1JzExNS4xNjYuNTQuNDQnKSwodSdhZ2VudCcsIHUnJyksKHUncG9ydCcsIHUnJyksKHUnY2l0eScsIHUnQURFTEFJREUnKSwodSdob3N0bmFtZScsIHUnMTE1LTE2Ni01NC00NC5pcC5hZGFtLmNvbS5hdScpLCh1J3NpYycsIHUnMCcpLCh1J2FwcGxpY2F0aW9uJywgdScnKSwodSd0eXBlJywgdScnKSwodSdwMGZfZ2VucmUnLCB1J1dJTlhQJyksKHUnY2NfcG9ydCcsIHUnJyksKHUncDBmX2RldGFpbCcsIHUnJyksKHUndGltZXN0YW1wJywgdScyMDExLTA0LTIzIDAwOjAwOjA4JyksKHUnaW5mZWN0aW9uJywgdSdzcHlleWUnKSwodSdwcm94eScsIHUnJyksKHUnY2NfYXNuJywgdScxNjI2NScpLCh1J2dlbycsIHUnQVUnKSwodSdhc24nLCB1Jzk1NTYnKSwodSdjb3VudCcsIHUnMScpLCh1J2NjX2RucycsIHUnMDE1Lm1heGlkZWQuY29tJyksKHUnbmFpY3MnLCB1JzAnKSwodSd1cmwnLCB1JycpLCh1J3JlZ2lvbicsIHUnU09VVEggQVVTVFJBTElBJyksKHUnY2NfZ2VvJywgdSdOTCcpIg==',
+           'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                                 EXAMPLE_LINES[2], ''])),
            'source.asn': 9556,
            'source.geolocation.cc': 'AU',
            'source.geolocation.city': 'ADELAIDE',
@@ -61,12 +61,12 @@ EVENTS = [{'__type': 'Event',
            'destination.geolocation.cc': 'DE',
            'destination.ip': '87.106.24.200',
            'destination.port': 80,
-           'extra': '{"os.name": "Windows", "connection_count": 1, "os.version'
-           '": "XP SP1+, 2000 SP3 (2)"}',
-           'feed.name': 'ShadowServer Drone',
+           'extra': '{"connection_count": 1, "naics": 0, "os.name": "Windows", "os.version": "XP SP1+, 2000 SP3 (2)", "sic": 0}',
+           'feed.name': 'ShadowServer Botnet Drone Hadoop',
            'malware.name': 'sinkhole',
            'protocol.transport': 'tcp',
-           'raw': 'Iih1J2NjJywgdSc4Ny4xMDYuMjQuMjAwJyksKHUnaXAnLCB1JzExNi4yMTIuMjA1Ljc0JyksKHUnYWdlbnQnLCB1JycpLCh1J3BvcnQnLCB1JzQ4OTg2JyksKHUnY2l0eScsIHUnUEVSVEgnKSwodSdob3N0bmFtZScsIHUnJyksKHUnc2ljJywgdScwJyksKHUnYXBwbGljYXRpb24nLCB1JycpLCh1J3R5cGUnLCB1J3RjcCcpLCh1J3AwZl9nZW5yZScsIHUnV2luZG93cycpLCh1J2NjX3BvcnQnLCB1JzgwJyksKHUncDBmX2RldGFpbCcsIHUnWFAgU1AxKywgMjAwMCBTUDMgKDIpJyksKHUndGltZXN0YW1wJywgdScyMDExLTA0LTIzIDAwOjAwOjEwJyksKHUnaW5mZWN0aW9uJywgdSdzaW5raG9sZScpLCh1J3Byb3h5JywgdScnKSwodSdjY19hc24nLCB1Jzg1NjAnKSwodSdnZW8nLCB1J0FVJyksKHUnYXNuJywgdSc5ODIyJyksKHUnY291bnQnLCB1JzEnKSwodSdjY19kbnMnLCB1JycpLCh1J25haWNzJywgdScwJyksKHUndXJsJywgdScnKSwodSdyZWdpb24nLCB1J1dFU1RFUk4gQVVTVFJBTElBJyksKHUnY2NfZ2VvJywgdSdERScpIg==',
+           'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                                 EXAMPLE_LINES[3], ''])),
            'source.asn': 9822,
            'source.geolocation.cc': 'AU',
            'source.geolocation.city': 'PERTH',
@@ -81,12 +81,12 @@ EVENTS = [{'__type': 'Event',
            'destination.geolocation.cc': 'DE',
            'destination.ip': '87.106.24.200',
            'destination.port': 443,
-           'extra': '{"os.name": "Windows", "connection_count": 1, "os.version'
-           '": "2000 SP4, XP SP1+"}',
-           'feed.name': 'ShadowServer Drone',
+           'extra': '{"connection_count": 1, "naics": 0, "os.name": "Windows", "os.version": "2000 SP4, XP SP1+", "sic": 0}',
+           'feed.name': 'ShadowServer Botnet Drone Hadoop',
            'malware.name': 'sinkhole',
            'protocol.transport': 'tcp',
-           'raw': 'Iih1J2NjJywgdSc4Ny4xMDYuMjQuMjAwJyksKHUnaXAnLCB1JzU4LjE2OS44Mi4xMTMnKSwodSdhZ2VudCcsIHUnJyksKHUncG9ydCcsIHUnMjQyMycpLCh1J2NpdHknLCB1J0RFVk9OUE9SVCcpLCh1J2hvc3RuYW1lJywgdScnKSwodSdzaWMnLCB1JzAnKSwodSdhcHBsaWNhdGlvbicsIHUnJyksKHUndHlwZScsIHUndGNwJyksKHUncDBmX2dlbnJlJywgdSdXaW5kb3dzJyksKHUnY2NfcG9ydCcsIHUnNDQzJyksKHUncDBmX2RldGFpbCcsIHUnMjAwMCBTUDQsIFhQIFNQMSsnKSwodSd0aW1lc3RhbXAnLCB1JzIwMTEtMDQtMjMgMDA6MDA6MTUnKSwodSdpbmZlY3Rpb24nLCB1J3Npbmtob2xlJyksKHUncHJveHknLCB1JycpLCh1J2NjX2FzbicsIHUnODU2MCcpLCh1J2dlbycsIHUnQVUnKSwodSdhc24nLCB1JzEyMjEnKSwodSdjb3VudCcsIHUnMScpLCh1J2NjX2RucycsIHUnJyksKHUnbmFpY3MnLCB1JzAnKSwodSd1cmwnLCB1JycpLCh1J3JlZ2lvbicsIHUnVEFTTUFOSUEnKSwodSdjY19nZW8nLCB1J0RFJyki',
+           'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                                 EXAMPLE_LINES[4], ''])),
            'source.asn': 1221,
            'source.geolocation.cc': 'AU',
            'source.geolocation.city': 'DEVONPORT',
@@ -101,12 +101,12 @@ EVENTS = [{'__type': 'Event',
            'destination.geolocation.cc': 'US',
            'destination.ip': '74.208.164.166',
            'destination.port': 443,
-           'extra': '{"os.name": "Windows", "connection_count": 1, "os.version'
-           '": "2000 SP4, XP SP1+"}',
-           'feed.name': 'ShadowServer Drone',
+           'extra': '{"connection_count": 1, "naics": 0, "os.name": "Windows", "os.version": "2000 SP4, XP SP1+", "sic": 0}',
+           'feed.name': 'ShadowServer Botnet Drone Hadoop',
            'malware.name': 'sinkhole',
            'protocol.transport': 'tcp',
-           'raw': 'Iih1J2NjJywgdSc3NC4yMDguMTY0LjE2NicpLCh1J2lwJywgdScxMTQuNzguMTcuNDgnKSwodSdhZ2VudCcsIHUnJyksKHUncG9ydCcsIHUnMjc2OScpLCh1J2NpdHknLCB1J0JSSVNCQU5FJyksKHUnaG9zdG5hbWUnLCB1JycpLCh1J3NpYycsIHUnMCcpLCh1J2FwcGxpY2F0aW9uJywgdScnKSwodSd0eXBlJywgdSd0Y3AnKSwodSdwMGZfZ2VucmUnLCB1J1dpbmRvd3MnKSwodSdjY19wb3J0JywgdSc0NDMnKSwodSdwMGZfZGV0YWlsJywgdScyMDAwIFNQNCwgWFAgU1AxKycpLCh1J3RpbWVzdGFtcCcsIHUnMjAxMS0wNC0yMyAwMDowMDoyNicpLCh1J2luZmVjdGlvbicsIHUnc2lua2hvbGUnKSwodSdwcm94eScsIHUnJyksKHUnY2NfYXNuJywgdSc4NTYwJyksKHUnZ2VvJywgdSdBVScpLCh1J2FzbicsIHUnNDgwNCcpLCh1J2NvdW50JywgdScxJyksKHUnY2NfZG5zJywgdScnKSwodSduYWljcycsIHUnMCcpLCh1J3VybCcsIHUnJyksKHUncmVnaW9uJywgdSdRVUVFTlNMQU5EJyksKHUnY2NfZ2VvJywgdSdVUycpIg==',
+           'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                                 EXAMPLE_LINES[5], ''])),
            'source.asn': 4804,
            'source.geolocation.cc': 'AU',
            'source.geolocation.city': 'BRISBANE',
@@ -121,12 +121,12 @@ EVENTS = [{'__type': 'Event',
            'destination.geolocation.cc': 'DE',
            'destination.ip': '87.106.24.200',
            'destination.port': 443,
-           'extra': '{"os.name": "Windows", "connection_count": 1, "os.version'
-           '": "2000 SP4, XP SP1+"}',
-           'feed.name': 'ShadowServer Drone',
+           'extra': '{"connection_count": 1, "naics": 0, "os.name": "Windows", "os.version": "2000 SP4, XP SP1+", "sic": 0}',
+           'feed.name': 'ShadowServer Botnet Drone Hadoop',
            'malware.name': 'sinkhole',
            'protocol.transport': 'tcp',
-           'raw': 'Iih1J2NjJywgdSc4Ny4xMDYuMjQuMjAwJyksKHUnaXAnLCB1JzEyNC4xOTAuMTYuMTEnKSwodSdhZ2VudCcsIHUnJyksKHUncG9ydCcsIHUnNDA5NScpLCh1J2NpdHknLCB1J01FTEJPVVJORScpLCh1J2hvc3RuYW1lJywgdScnKSwodSdzaWMnLCB1JzAnKSwodSdhcHBsaWNhdGlvbicsIHUnJyksKHUndHlwZScsIHUndGNwJyksKHUncDBmX2dlbnJlJywgdSdXaW5kb3dzJyksKHUnY2NfcG9ydCcsIHUnNDQzJyksKHUncDBmX2RldGFpbCcsIHUnMjAwMCBTUDQsIFhQIFNQMSsnKSwodSd0aW1lc3RhbXAnLCB1JzIwMTEtMDQtMjMgMDA6MDA6MjgnKSwodSdpbmZlY3Rpb24nLCB1J3Npbmtob2xlJyksKHUncHJveHknLCB1JycpLCh1J2NjX2FzbicsIHUnODU2MCcpLCh1J2dlbycsIHUnQVUnKSwodSdhc24nLCB1JzEyMjEnKSwodSdjb3VudCcsIHUnMScpLCh1J2NjX2RucycsIHUnJyksKHUnbmFpY3MnLCB1JzAnKSwodSd1cmwnLCB1JycpLCh1J3JlZ2lvbicsIHUnVklDVE9SSUEnKSwodSdjY19nZW8nLCB1J0RFJyki',
+           'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                                 EXAMPLE_LINES[6], ''])),
            'source.asn': 1221,
            'source.geolocation.cc': 'AU',
            'source.geolocation.city': 'MELBOURNE',
@@ -141,12 +141,12 @@ EVENTS = [{'__type': 'Event',
            'destination.geolocation.cc': 'DE',
            'destination.ip': '87.106.24.200',
            'destination.port': 443,
-           'extra': '{"os.name": "Windows", "connection_count": 1, "os.version'
-           '": "XP/2000 (RFC1323+, w+, tstamp+)"}',
-           'feed.name': 'ShadowServer Drone',
+           'extra': '{"connection_count": 1, "naics": 0, "os.name": "Windows", "os.version": "XP/2000 (RFC1323+, w+, tstamp+)", "sic": 0}',
+           'feed.name': 'ShadowServer Botnet Drone Hadoop',
            'malware.name': 'sinkhole',
            'protocol.transport': 'tcp',
-           'raw': 'Iih1J2NjJywgdSc4Ny4xMDYuMjQuMjAwJyksKHUnaXAnLCB1JzEyNC4xODIuMzYuMzMnKSwodSdhZ2VudCcsIHUnJyksKHUncG9ydCcsIHUnNjA4MzcnKSwodSdjaXR5JywgdSdQRVJUSCcpLCh1J2hvc3RuYW1lJywgdScnKSwodSdzaWMnLCB1JzAnKSwodSdhcHBsaWNhdGlvbicsIHUnJyksKHUndHlwZScsIHUndGNwJyksKHUncDBmX2dlbnJlJywgdSdXaW5kb3dzJyksKHUnY2NfcG9ydCcsIHUnNDQzJyksKHUncDBmX2RldGFpbCcsIHUnWFAvMjAwMCAoUkZDMTMyMyssIHcrLCB0c3RhbXArKScpLCh1J3RpbWVzdGFtcCcsIHUnMjAxMS0wNC0yMyAwMDowMDoyOScpLCh1J2luZmVjdGlvbicsIHUnc2lua2hvbGUnKSwodSdwcm94eScsIHUnJyksKHUnY2NfYXNuJywgdSc4NTYwJyksKHUnZ2VvJywgdSdBVScpLCh1J2FzbicsIHUnMTIyMScpLCh1J2NvdW50JywgdScxJyksKHUnY2NfZG5zJywgdScnKSwodSduYWljcycsIHUnMCcpLCh1J3VybCcsIHUnJyksKHUncmVnaW9uJywgdSdXRVNURVJOIEFVU1RSQUxJQScpLCh1J2NjX2dlbycsIHUnREUnKSI=',
+           'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                                 EXAMPLE_LINES[7], ''])),
            'source.asn': 1221,
            'source.geolocation.cc': 'AU',
            'source.geolocation.city': 'PERTH',
@@ -161,12 +161,12 @@ EVENTS = [{'__type': 'Event',
            'destination.geolocation.cc': 'US',
            'destination.ip': '74.208.164.166',
            'destination.port': 80,
-           'extra': '{"os.name": "Windows", "connection_count": 1, "os.version'
-           '": "XP SP1+, 2000 SP3 (2)"}',
-           'feed.name': 'ShadowServer Drone',
+           'extra': '{"connection_count": 1, "naics": 0, "os.name": "Windows", "os.version": "XP SP1+, 2000 SP3 (2)", "sic": 0}',
+           'feed.name': 'ShadowServer Botnet Drone Hadoop',
            'malware.name': 'sinkhole',
            'protocol.transport': 'tcp',
-           'raw': 'Iih1J2NjJywgdSc3NC4yMDguMTY0LjE2NicpLCh1J2lwJywgdScxMTYuMjEyLjIwNS43NCcpLCh1J2FnZW50JywgdScnKSwodSdwb3J0JywgdScyMzMyMScpLCh1J2NpdHknLCB1J1BFUlRIJyksKHUnaG9zdG5hbWUnLCB1JycpLCh1J3NpYycsIHUnMCcpLCh1J2FwcGxpY2F0aW9uJywgdScnKSwodSd0eXBlJywgdSd0Y3AnKSwodSdwMGZfZ2VucmUnLCB1J1dpbmRvd3MnKSwodSdjY19wb3J0JywgdSc4MCcpLCh1J3AwZl9kZXRhaWwnLCB1J1hQIFNQMSssIDIwMDAgU1AzICgyKScpLCh1J3RpbWVzdGFtcCcsIHUnMjAxMS0wNC0yMyAwMDowMDozMycpLCh1J2luZmVjdGlvbicsIHUnc2lua2hvbGUnKSwodSdwcm94eScsIHUnJyksKHUnY2NfYXNuJywgdSc4NTYwJyksKHUnZ2VvJywgdSdBVScpLCh1J2FzbicsIHUnOTgyMicpLCh1J2NvdW50JywgdScxJyksKHUnY2NfZG5zJywgdScnKSwodSduYWljcycsIHUnMCcpLCh1J3VybCcsIHUnJyksKHUncmVnaW9uJywgdSdXRVNURVJOIEFVU1RSQUxJQScpLCh1J2NjX2dlbycsIHUnVVMnKSI=',
+           'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                                 EXAMPLE_LINES[8], ''])),
            'source.asn': 9822,
            'source.geolocation.cc': 'AU',
            'source.geolocation.city': 'PERTH',
@@ -181,12 +181,12 @@ EVENTS = [{'__type': 'Event',
            'destination.geolocation.cc': 'US',
            'destination.ip': '74.208.164.166',
            'destination.port': 443,
-           'extra': '{"os.name": "Windows", "connection_count": 1, "os.version'
-           '": "2000 SP4, XP SP1+"}',
-           'feed.name': 'ShadowServer Drone',
+           'extra': '{"connection_count": 1, "naics": 0, "os.name": "Windows", "os.version": "2000 SP4, XP SP1+", "sic": 0}',
+           'feed.name': 'ShadowServer Botnet Drone Hadoop',
            'malware.name': 'sinkhole',
            'protocol.transport': 'tcp',
-           'raw': 'Iih1J2NjJywgdSc3NC4yMDguMTY0LjE2NicpLCh1J2lwJywgdScxMjQuMTkwLjE2LjExJyksKHUnYWdlbnQnLCB1JycpLCh1J3BvcnQnLCB1JzQwODknKSwodSdjaXR5JywgdSdNRUxCT1VSTkUnKSwodSdob3N0bmFtZScsIHUnJyksKHUnc2ljJywgdScwJyksKHUnYXBwbGljYXRpb24nLCB1JycpLCh1J3R5cGUnLCB1J3RjcCcpLCh1J3AwZl9nZW5yZScsIHUnV2luZG93cycpLCh1J2NjX3BvcnQnLCB1JzQ0MycpLCh1J3AwZl9kZXRhaWwnLCB1JzIwMDAgU1A0LCBYUCBTUDErJyksKHUndGltZXN0YW1wJywgdScyMDExLTA0LTIzIDAwOjAwOjM2JyksKHUnaW5mZWN0aW9uJywgdSdzaW5raG9sZScpLCh1J3Byb3h5JywgdScnKSwodSdjY19hc24nLCB1Jzg1NjAnKSwodSdnZW8nLCB1J0FVJyksKHUnYXNuJywgdScxMjIxJyksKHUnY291bnQnLCB1JzEnKSwodSdjY19kbnMnLCB1JycpLCh1J25haWNzJywgdScwJyksKHUndXJsJywgdScnKSwodSdyZWdpb24nLCB1J1ZJQ1RPUklBJyksKHUnY2NfZ2VvJywgdSdVUycpIg==',
+           'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                                 EXAMPLE_LINES[9], ''])),
            'source.asn': 1221,
            'source.geolocation.cc': 'AU',
            'source.geolocation.city': 'MELBOURNE',
@@ -201,12 +201,12 @@ EVENTS = [{'__type': 'Event',
            'destination.geolocation.cc': 'DE',
            'destination.ip': '87.106.24.200',
            'destination.port': 443,
-           'extra': '{"os.name": "Windows", "connection_count": 1, "os.version'
-           '": "2000 SP4, XP SP1+"}',
-           'feed.name': 'ShadowServer Drone',
+           'extra': '{"connection_count": 1, "naics": 0, "os.name": "Windows", "os.version": "2000 SP4, XP SP1+", "sic": 0}',
+           'feed.name': 'ShadowServer Botnet Drone Hadoop',
            'malware.name': 'sinkhole',
            'protocol.transport': 'tcp',
-           'raw': 'Iih1J2NjJywgdSc4Ny4xMDYuMjQuMjAwJyksKHUnaXAnLCB1JzE2NS4yMjguOTMuMjA3JyksKHUnYWdlbnQnLCB1JycpLCh1J3BvcnQnLCB1JzI3MTA1JyksKHUnY2l0eScsIHUnU1lETkVZJyksKHUnaG9zdG5hbWUnLCB1JycpLCh1J3NpYycsIHUnMCcpLCh1J2FwcGxpY2F0aW9uJywgdScnKSwodSd0eXBlJywgdSd0Y3AnKSwodSdwMGZfZ2VucmUnLCB1J1dpbmRvd3MnKSwodSdjY19wb3J0JywgdSc0NDMnKSwodSdwMGZfZGV0YWlsJywgdScyMDAwIFNQNCwgWFAgU1AxKycpLCh1J3RpbWVzdGFtcCcsIHUnMjAxMS0wNC0yMyAwMDowMDozNycpLCh1J2luZmVjdGlvbicsIHUnc2lua2hvbGUnKSwodSdwcm94eScsIHUnJyksKHUnY2NfYXNuJywgdSc4NTYwJyksKHUnZ2VvJywgdSdBVScpLCh1J2FzbicsIHUnMTIyMScpLCh1J2NvdW50JywgdScxJyksKHUnY2NfZG5zJywgdScnKSwodSduYWljcycsIHUnMCcpLCh1J3VybCcsIHUnJyksKHUncmVnaW9uJywgdSdORVcgU09VVEggV0FMRVMnKSwodSdjY19nZW8nLCB1J0RFJyki',
+           'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                                 EXAMPLE_LINES[10], ''])),
            'source.asn': 1221,
            'source.geolocation.cc': 'AU',
            'source.geolocation.city': 'SYDNEY',
@@ -217,15 +217,16 @@ EVENTS = [{'__type': 'Event',
            'time.source': '2011-04-23T00:00:37+00:00'}]
 
 
-class TestShadowServerDroneParserBot(test.BotTestCase, unittest.TestCase):
+class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
     """
-    A TestCase for a ShadowServerDroneParserBot.
+    A TestCase for a ShadowserverParserBot.
     """
 
     @classmethod
     def set_bot(cls):
-        cls.bot_reference = ShadowServerDroneParserBot
+        cls.bot_reference = ShadowserverParserBot
         cls.default_input_message = EXAMPLE_REPORT
+        cls.sysconfig = {'feedname': 'Botnet-Drone-Hadoop'}
 
     def test_event(self):
         """ Test if correct Event has been produced. """
