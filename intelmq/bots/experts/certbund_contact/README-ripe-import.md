@@ -14,6 +14,13 @@ It expects the files
 to be present in the same folder as the script. These files can be downloaded
 from the RIPE website (ftp://ftp.ripe.net/ripe/dbase/split/).
 
+For each contact that is created by this script, the format `feed_specific`
+will be set as default. You can change this by using the parameter
+`--notification-format`.
+
+You can also set the notification intervall with `--notification-intervall`.
+Default is 0. The intervall is set in seconds. 0: Immediate notification,
+-1 No Notification, 60: 1 Minute, etc...
 
 Usage
 =====
