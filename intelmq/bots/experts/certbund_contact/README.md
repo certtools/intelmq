@@ -19,7 +19,7 @@ default configuration of the bot.
     psql -f /usr/share/intelmq/certbund_contact/initdb.sql   contactdb
     psql -f /usr/share/intelmq/certbund_contact/defaults.sql contactdb
 
-    createuser intelmq
+    createuser intelmq --pwprompt
     psql -c "GRANT SELECT ON ALL TABLES IN SCHEMA public TO intelmq;" contactdb
 
 ```
@@ -36,6 +36,39 @@ Connect to the database:
   psql contactdb
 
 ```
+
+#### Expected classification types
+
+FIXME: For each classifcation type name that will come along
+in the intelmq you need to have an entry 
+in the table ```classification_type```.
+
+For example create them like this
+```
+COPY classification_type (name) FROM stdin;
+botnet drone
+spam
+malware
+ransomware
+malware configuration
+c&c
+scanner
+exploit
+brute-force
+ids alert
+defacement
+compromised
+backdoor
+ddos
+dropzone
+phishing
+vulnerable service
+blacklist
+other
+unknown
+\.
+```
+
 
 #### Configure Templates
 
