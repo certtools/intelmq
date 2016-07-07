@@ -39,6 +39,12 @@ parser.add_argument("--role-file",
 parser.add_argument("--asn-file",
                     default='ripe.db.aut-num.gz',
                     help="Specify the AS number data file. Default: ripe.db.aut-num.gz")
+parser.add_argument("--notification-format",
+                    default='feed_specific',
+                    help="Specify the data format the contacts linked with e.g. csv. Default: feed_specific")
+parser.add_argument("--notification-interval",
+                    default='0',
+                    help="Specify the default notification intervall in seconds. Default: 0")
 args = parser.parse_args()
 
 
@@ -120,6 +126,20 @@ def main():
         con = psycopg2.connect("dbname='{}'".format(args.database))
         cur = con.cursor()
 
+        if args.verbose:
+            print('** Looking for %s' % (args.notification_format, ))
+
+        cur.execute("SELECT id FROM format WHERE name = %s",
+                    (args.notification_format, ))
+        result = cur.fetchall()
+
+        if result:
+            notification_fid = result[0]
+        else:
+            print('The notification format %s could not be determined'
+                  % (args.notification_format, ))
+            sys.exit(1)
+
         #
         # AS numbers
         #
@@ -180,21 +200,22 @@ def main():
             if not org_id:
                 continue
 
-            # TODO: what should be the default for notification_interval?
             for asn_id in asn_ids:
                 cur.execute("""
                 INSERT INTO organisation_to_asn_automatic (notification_interval,
                                                            organisation_id,
                                                            asn_id)
-                VALUES (0, %s, %s);
-                """, (org_id, asn_id))
+                VALUES (%s, %s, %s);
+                """, (args.notification_interval, org_id, asn_id))
 
         #
         # Role
         #
         if args.verbose:
             print('** Saving contacts data to database...')
+
         cur.execute("DELETE FROM contact_automatic;")
+
         for entry in role_list:
             # No all entries have email contact
             if not entry or not entry.get('abuse-mailbox'):
@@ -207,9 +228,9 @@ def main():
 
             cur.execute("""
                 INSERT INTO contact_automatic (format_id, email)
-                VALUES (1, %s)
+                VALUES (%s, %s)
                 RETURNING id;
-                """, (email, ))
+                """, (notification_fid,email, ))
             result = cur.fetchone()
             contact_id = result[0]
 
