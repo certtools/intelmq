@@ -27,7 +27,7 @@ $HEADER
   * Automatic test build of $REF
     by $LOGNAME on $(hostname)
 
- -- Auto Build <autobuild@intevation.invalid>  $(date -R)
+ -- Auto Build <no-reply@intevation.de>  $(date -R)
 
 EOF
 }
