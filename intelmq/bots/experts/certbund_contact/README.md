@@ -19,7 +19,7 @@ default configuration of the bot.
     psql -f /usr/share/intelmq/certbund_contact/initdb.sql   contactdb
     psql -f /usr/share/intelmq/certbund_contact/defaults.sql contactdb
 
-    createuser intelmq
+    createuser intelmq --pwprompt
     psql -c "GRANT SELECT ON ALL TABLES IN SCHEMA public TO intelmq;" contactdb
 
 ```
