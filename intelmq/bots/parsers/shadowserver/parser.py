@@ -106,12 +106,6 @@ class ShadowserverParserBot(ParserBot):
             elif 'feed.name' not in event:
                 event.add('feed.name', self.parameters.feedname)
 
-        if hasattr(self.parameters, 'feedcode'):
-            if 'feed.code' in event and self.override:
-                event.add('feed.code', self.parameters.feedcode, force=True)
-            elif 'feed.code' not in event:
-                event.add('feed.code', self.parameters.feedcode)
-
         # Iterate Config, add required fields.
         # Fail hard if not possible:
         for item in conf.get('required_fields'):
