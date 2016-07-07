@@ -41,6 +41,8 @@ parser.add_argument("--asn-file",
                     help="Specify the AS number data file. Default: ripe.db.aut-num.gz")
 args = parser.parse_args()
 
+SOURCE_NAME = 'ripe'
+
 
 def parse_file(filename, fields, index_field=None):
     '''
@@ -136,9 +138,9 @@ def main():
             org_ripe_handle = entry['org'][0]
 
             cur.execute("""
-                INSERT INTO autonomous_system_automatic (number)
-                VALUES (%s);
-                """, (as_number, ))
+                INSERT INTO autonomous_system_automatic (number, import_source, import_time)
+                VALUES (%s, %s, CURRENT_TIMESTAMP);
+                """, (as_number, SOURCE_NAME ))
 
             if not mapping.get(org_ripe_handle):
                 mapping[org_ripe_handle] = {'org_id': None,
@@ -160,9 +162,9 @@ def main():
             org_ripe_handle = entry['organisation'][0]
 
             cur.execute("""
-                INSERT INTO organisation_automatic (name, ripe_org_hdl)
-                VALUES (%s, %s) RETURNING id;
-                """, (org_name, org_ripe_handle))
+                INSERT INTO organisation_automatic (name, ripe_org_hdl, import_source, import_time)
+                VALUES (%s, %s, %s, CURRENT_TIMESTAMP) RETURNING id;
+                """, (org_name, org_ripe_handle, SOURCE_NAME))
             result = cur.fetchone()
             org_id = result[0]
 
@@ -185,9 +187,11 @@ def main():
                 cur.execute("""
                 INSERT INTO organisation_to_asn_automatic (notification_interval,
                                                            organisation_id,
-                                                           asn_id)
-                VALUES (0, %s, %s);
-                """, (org_id, asn_id))
+                                                           asn_id,
+                                                           import_source,
+                                                           import_time)
+                VALUES (0, %s, %s, %s, CURRENT_TIMESTAMP);
+                """, (org_id, asn_id, SOURCE_NAME))
 
         #
         # Role
@@ -206,10 +210,10 @@ def main():
             email = entry['abuse-mailbox'][0]
 
             cur.execute("""
-                INSERT INTO contact_automatic (format_id, email)
-                VALUES (1, %s)
+                INSERT INTO contact_automatic (format_id, email, import_source, import_time)
+                VALUES (1, %s, %s, CURRENT_TIMESTAMP)
                 RETURNING id;
-                """, (email, ))
+                """, (email, SOURCE_NAME))
             result = cur.fetchone()
             contact_id = result[0]
 
@@ -229,9 +233,9 @@ def main():
 
             for contact_id in contact_ids:
                 cur.execute("""
-                INSERT INTO role_automatic (organisation_id, contact_id)
-                VALUES (%s, %s);
-                """, (org_id, contact_id))
+                INSERT INTO role_automatic (organisation_id, contact_id, import_source, import_time)
+                VALUES (%s, %s, %s, CURRENT_TIMESTAMP);
+                """, (org_id, contact_id, SOURCE_NAME))
 
         # Commit all data
         con.commit()
