@@ -1,3 +1,9 @@
+intelmq (1.0.0~dev4+intevation.1.2~alpha4) experimental; urgency=low
+
+  * New Release from integrated branch.
+
+ -- Bernhard Reiter <bernhard@intevation.de>  Fri, 08 Jul 2016 10:00:00 +0200
+
 intelmq (1.0.0~dev4+intevation.1.2~alpha3) experimental; urgency=low
 
   * New Release from customer-releases branch
