@@ -1,6 +1,7 @@
 #!/bin/bash
+#to be run in the toplevel directory where a "debian" packaging subdir exists
 
-cd $(dirname $0)
+#cd $(dirname $0)
 TMP=$(mktemp)
 TIMESTAMP="$(date +%Y%m%d%H%M%S)"
 
