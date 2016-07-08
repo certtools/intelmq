@@ -147,10 +147,10 @@ def main():
         #
         if args.verbose:
             print('** Saving AS data to database...')
-        cur.execute("DELETE FROM role_automatic;")
-        cur.execute("DELETE FROM organisation_to_template_automatic;")
-        cur.execute("DELETE FROM organisation_to_asn_automatic;")
-        cur.execute("DELETE FROM autonomous_system_automatic;")
+        cur.execute("DELETE FROM role_automatic WHERE import_source = %s;", (SOURCE_NAME,))
+        cur.execute("DELETE FROM organisation_to_template_automatic WHERE import_source = %s;", (SOURCE_NAME,))
+        cur.execute("DELETE FROM organisation_to_asn_automatic WHERE import_source = %s;", (SOURCE_NAME,))
+        cur.execute("DELETE FROM autonomous_system_automatic WHERE import_source = %s;", (SOURCE_NAME,))
         for entry in asn_list:
             if not entry or not entry.get('aut-num') or not entry.get('org'):
                 continue
@@ -173,7 +173,7 @@ def main():
         #
         if args.verbose:
             print('** Saving organisation data to database...')
-        cur.execute("DELETE FROM organisation_automatic;")
+        cur.execute("DELETE FROM organisation_automatic WHERE import_source = %s;", (SOURCE_NAME,))
         for entry in organisation_list:
             # Not all entries have an organisation associated
             if not entry:
@@ -218,7 +218,7 @@ def main():
         if args.verbose:
             print('** Saving contacts data to database...')
 
-        cur.execute("DELETE FROM contact_automatic;")
+        cur.execute("DELETE FROM contact_automatic WHERE import_source = %s;", (SOURCE_NAME,))
 
         for entry in role_list:
             # No all entries have email contact
@@ -242,7 +242,7 @@ def main():
                 mapping[org_ripe_handle]['contact_id'].append(contact_id)
 
         # many-to-many table organisation <-> contact
-        cur.execute("DELETE FROM role_automatic;")
+        cur.execute("DELETE FROM role_automatic WHERE import_source = %s;", (SOURCE_NAME,))
         for org_ripe_handle in mapping:
             org_id = mapping[org_ripe_handle]['org_id']
             contact_ids = mapping[org_ripe_handle]['contact_id']

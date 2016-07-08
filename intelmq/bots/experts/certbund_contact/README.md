@@ -43,6 +43,9 @@ FIXME: For each classifcation type name that will come along
 in the intelmq you need to have an entry 
 in the table ```classification_type```.
 
+FIXME: Adding entries here will clash with the instructions below ("configure
+templates").
+
 For example create them like this
 ```
 COPY classification_type (name) FROM stdin;
@@ -105,10 +108,12 @@ unknown
 -- 2. Prepare contact information
 
   \set asn 3320
-  \set org_name 'org1' -- unique name of the organization
+  -- unique name of the organization:
+  \set org_name 'org1'
   \set org_comment 'Test comment'
   \set contact_email 'test@example.com'
-  \set contact_format_id 1 -- CSV
+  -- set format to feed_spefic (ID 2 as per the setup with defaults.sql above):
+  \set contact_format_id 2
   \set contact_comment 'Test contact'
   \set notification_interval 0
 
