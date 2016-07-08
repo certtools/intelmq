@@ -112,8 +112,8 @@ unknown
   \set org_name 'org1'
   \set org_comment 'Test comment'
   \set contact_email 'test@example.com'
-  -- CSV
-  \set contact_format_id 1
+  -- set format to feed_spefic (ID 2 as per the setup with defaults.sql above):
+  \set contact_format_id 2
   \set contact_comment 'Test contact'
   \set notification_interval 0
 
