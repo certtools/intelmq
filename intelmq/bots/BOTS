@@ -358,6 +358,7 @@
                 "misp_tag_processed": "<insert MISP tag for processed events>",
                 "misp_tag_to_process": "<insert MISP tag for events to be processed>",
                 "misp_url": "<insert url of MISP server (with trailing '/')>",
+                "misp_verify": true,
                 "rate_limit": 3600
             }
         },
