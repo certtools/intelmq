@@ -11,14 +11,12 @@ Parameters:
 """
 import json
 import sys
-import time
 from urllib.parse import urljoin
 
 import requests
 from pymisp import PyMISP
 
 from intelmq.lib.bot import Bot
-from intelmq.lib.harmonization import DateTime
 from intelmq.lib.message import Report
 
 
@@ -27,7 +25,8 @@ class MISPCollectorBot(Bot):
     def init(self):
         # Initialise MISP connection
         self.misp = PyMISP(self.parameters.misp_url,
-                           self.parameters.misp_key, 'json')
+                           self.parameters.misp_key,
+                           self.parameters.misp_verify)
 
         # URLs used for deleting and adding MISP event tags
         self.misp_add_tag_url = urljoin(self.parameters.misp_url,
@@ -72,7 +71,9 @@ class MISPCollectorBot(Bot):
                     'Event': {
                         'tag': None,
                         'id': None,
-            }}}
+                    }
+                }
+            }
 
             for misp_event in misp_events:
                 post_data['request']['Event']['id'] = misp_event['id']
