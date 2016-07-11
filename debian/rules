@@ -21,3 +21,8 @@ override_dh_auto_install:
 	# install a modifier bot conf file besides the example file
 	cp -a debian/intelmq/opt/intelmq/var/lib/bots/modify/example/modify.conf \
 		debian/intelmq/opt/intelmq/var/lib/bots/modify/modify.conf
+	# Fix a path in postgresql output bot README
+	mkdir -p debian/intelmq/usr/share/doc/intelmq/bots/outputs/postgresql/
+	sed 's@intelmq/bin/intelmq_psql_initdb.py@intelmq_psql_initdb@' \
+		intelmq/bots/outputs/postgresql/README.md > \
+		debian/intelmq/usr/share/doc/intelmq/bots/outputs/postgresql/README.md
