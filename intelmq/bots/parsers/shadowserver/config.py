@@ -70,6 +70,8 @@ def set_tor_node(value):
 def validate_ip(value):
     if value == '0.0.0.0':
         return None
+    return value
+
 
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-mDNS
 open_m_dns = {
