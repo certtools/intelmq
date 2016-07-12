@@ -180,12 +180,12 @@ sinkhole_http_drone = {
         ('destination.port', 'dst_port'),
         ('destination.ip', 'dst_ip'),
         ('destination.asn', 'dst_asn'),
-        ('destination.geolocation.cc', 'dst_geo')
+        ('destination.geolocation.cc', 'dst_geo'),
+        ('destination.fqdn', 'http_host'),
         # Other known fields  which will go into "extra"
         # http_agent
         # p0f_genre
         # p0f_detail
-        # http_host
         # http_referer
         # http_referer_ip
         # http_referer_asn
