@@ -55,8 +55,13 @@ apt-get install git build-essential libcurl4-gnutls-dev libffi-dev
 apt-get install python3-dev
 apt-get install redis-server
 ```
-**Note**: if you are using Debian 8, you need to install this package extra: ``apt-get install libgnutls28-dev``.
-
+**Special note for Debian 8**: 
+if you are using Debian 8, you need to install this package extra: ``apt-get install libgnutls28-dev``.
+In addition, Debian 8 has an old version of pip3. Please get a current one via:
+```bash
+curl "https://bootstrap.pypa.io/get-pip.py" -o "/tmp/get-pip.py"
+python3.4 /tmp/get-pip.py
+```
 
 ##### CentOS 7
 
