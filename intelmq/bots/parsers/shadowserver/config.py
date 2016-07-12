@@ -12,7 +12,12 @@ of at least three keys:
  2) optional fields:
     the parser will try to interpret these values.
     if it fails, the value is written to the extra field
- 3) The classification type of this field and additional properties.
+ 3) constant fields:
+    Some information about an event may not be explicitly stated in a
+    feed because it is implicit in the nature of the feed. For instance
+    a feed that is exclusively about HTTP may not have a field for the
+    protocol because it's always TCP.
+ 4) The classification type of this field and additional properties.
 
 The first value is the IntelMQ key,
 the second value is the row in the shadowserver csv.
@@ -192,6 +197,12 @@ sinkhole_http_drone = {
         # http_referer_geo
         # naics
         # sic
+    ],
+    'constant_fields': [
+        # The feed does not include explicit information about the
+        # protocol, but since it is about HTTP the protocol is always
+        # tcp.
+        ('protocol.transport', 'tcp'),
     ],
     'classification_type': 'botnet drone',
     'feed_url': 'https://www.shadowserver.org/wiki/pmwiki.php/Services/Sinkhole-HTTP-Drone'
