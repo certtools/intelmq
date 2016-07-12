@@ -12,10 +12,8 @@ Both files are required for the parser to work properly.
 Add the Shadowserver parser to your Botnet.
 
 **Parameters**
- * feedname: The Name of the feed
- * feedcode: A Codename for the feed
- * override: A switch, 0 or 1 deciding if the parse shall override information
-   which was added by a preceding collector.
+ * feedname: The Name of the feed, see list below for possible values.
+ * override: If an existing `feed.name` should be overriden.
 
 Set at least the parameter `feedname`. it is required to find the correct
 configuration. If this parameter is not set or not correct, the bot fail!
