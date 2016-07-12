@@ -107,7 +107,7 @@ class ShadowserverParserBot(Bot):
                     event.add('feed.code', self.parameters.feedcode)
 
             # Add constant fields
-            for (intelmqkey, value) in conf.get('constant_fields'):
+            for (intelmqkey, value) in conf.get('constant_fields', []):
                 event.add(intelmqkey, value)
 
             # Iterate Config, add required fields.
