@@ -165,7 +165,6 @@ class ShadowserverParserBot(ParserBot):
                     extra[intelmqkey] = value
                     fields.remove(shadowkey)
             else:
-                self.logger.debug(shadowkey)
                 fields.remove(shadowkey)
 
         # Now add additional constant fields.
