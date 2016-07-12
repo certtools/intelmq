@@ -10,15 +10,19 @@ The following commands assume that PostgreSQL is running and listening on the
 default port. They create a database called "contactdb" which matches the
 default configuration of the bot.
 
-
 ```
-
     su - postgres
 
     createdb --encoding=UTF8 --template=template0 contactdb
     psql -f /usr/share/intelmq/certbund_contact/initdb.sql   contactdb
     psql -f /usr/share/intelmq/certbund_contact/defaults.sql contactdb
+```
 
+A database user with the right to select the data in the Contact DB
+must be created.  This is the account, which will be used in the bot's
+configuration for accessing the database.
+
+```
     createuser intelmq --pwprompt
     psql -c "GRANT SELECT ON ALL TABLES IN SCHEMA public TO intelmq;" contactdb
 
@@ -26,16 +30,18 @@ default configuration of the bot.
 
 ### Adding New Contacts
 
-The database is configured directly using SQL.
+Contacts can be added to the database directly using SQL.  These
+manually configured contacts will take precedence over contacts which
+were imported automatically, i.e. by `ripe_import.py`.
 
 Connect to the database:
 
 ```
-
   su - postgres
   psql contactdb
 
 ```
+Add a contact:
 
 ```pgsql
 
@@ -44,11 +50,10 @@ Connect to the database:
   \set asn 3320
   -- unique name of the organization:
   \set org_name 'org1'
-  \set org_comment 'Test comment'
+  \set org_comment 'Example comment on organization.'
   \set contact_email 'test@example.com'
-  -- set format to feed_spefic (ID 2 as per the setup with defaults.sql above):
-  \set contact_format_id 2
-  \set contact_comment 'Test contact'
+  \set contact_comment 'Test comment on contact.'
+  -- set the notification interval in seconds
   \set notification_interval 0
 
 -- 2. Add new contact
@@ -62,7 +67,7 @@ Connect to the database:
   ),
   new_contact AS (
     INSERT INTO contact (email,format_id,comment)
-    VALUES (:'contact_email', :contact_format_id, :'contact_comment')
+    VALUES (:'contact_email', 2, :'contact_comment')
     RETURNING id
   ),
   new_ota AS (
