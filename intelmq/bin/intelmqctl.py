@@ -12,7 +12,7 @@ import pkg_resources
 import psutil
 
 from intelmq import (DEFAULTS_CONF_FILE, PIPELINE_CONF_FILE, RUNTIME_CONF_FILE,
-                     STARTUP_CONF_FILE, SYSTEM_CONF_FILE)
+                     STARTUP_CONF_FILE, SYSTEM_CONF_FILE, VAR_RUN_PATH)
 from intelmq.lib import utils
 from intelmq.lib.pipeline import PipelineFactory
 
@@ -20,8 +20,8 @@ from intelmq.lib.pipeline import PipelineFactory
 class Parameters(object):
     pass
 
-PIDDIR = "/opt/intelmq/var/run/"
-PIDFILE = "/opt/intelmq/var/run/{}.pid"
+PIDDIR = VAR_RUN_PATH
+PIDFILE = os.path.join(PIDDIR, "{}.pid")
 
 STATUSES = {
     'starting': 0,
