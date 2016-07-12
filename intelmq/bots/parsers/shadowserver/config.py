@@ -115,8 +115,8 @@ open_m_dns = {
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
         # Other known fields which will go into "extra"
-        ('naics', int),
-        ('sic', int),
+        ('extra.', 'naics', int),
+        ('extra.', 'sic', int),
         # tag
         # mdns_name
         # mdns_ipv4
@@ -154,8 +154,8 @@ open_chargen = {
         ('source.geolocation.city', 'city'),
         # Other known fields which will go into "extra"
         ('response_size', 'size', int),
-        ('naics', int),
-        ('sic', int),
+        ('extra.', 'naics', int),
+        ('extra.', 'sic', int),
         # tag
         # sector
     ],
@@ -181,9 +181,9 @@ open_tftp = {
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
         # Other known fields which will go into "extra"
-        ('size', int),
-        ('naics', int),
-        ('sic', int),
+        ('extra.', 'size', int),
+        ('extra.', 'naics', int),
+        ('extra.', 'sic', int),
         # tag
         # opcode
         # errocode
@@ -217,8 +217,8 @@ sinkhole_http_drone = {
         ('user_agent', 'http_agent'),
         ('os.name', 'p0f_genre'),
         ('os.version', 'p0f_detail'),
-        ('naics', int),
-        ('sic', int),
+        ('extra.', 'naics', int),
+        ('extra.', 'sic', int),
         # http_referer
         # http_referer_ip
         # http_referer_asn
@@ -256,11 +256,11 @@ microsoft_sinkhole = {
         ('os.name', 'p0f_genre'),
         ('os.version', 'p0f_detail'),
         ('destination.url', 'http_host', convert_host_and_url, True),
-        ('url', lambda x: None),  # remove URl here, is included in above conversion
-        ('naics', int),
-        ('sic', int),
+        ('', 'url', lambda x: None),  # remove URl here, is included in above conversion
+        ('extra.', 'naics', int),
+        ('extra.', 'sic', int),
         # http_host
-        ('http_referer', validate_to_none),
+        ('extra.', 'http_referer', validate_to_none),
         # http_referer_ip
         # http_referer_asn
         # http_referer_geo
@@ -286,8 +286,8 @@ open_redis = {
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
         # Other known fields which will go into "extra"
-        ('naics', int),
-        ('sic', int),
+        ('extra.', 'naics', int),
+        ('extra.', 'sic', int),
         # tag
         # version
         # git_sha1
@@ -324,8 +324,8 @@ open_portmapper = {
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
         # Other known fields which will go into "extra"
-        ('naics', int),
-        ('sic', int),
+        ('extra.', 'naics', int),
+        ('extra.', 'sic', int),
         # tag
         # programs
         # mountd_port
@@ -353,17 +353,17 @@ open_ipmi = {
         ('source.geolocation.city', 'city'),
         # Other known fields which will go into "extra"
         # ipmi_version
-        ('none_auth', convert_bool),
-        ('md2_auth', convert_bool),
-        ('md5_auth', convert_bool),
-        ('passkey_auth', convert_bool),
-        ('oem_auth', convert_bool),
+        ('extra.', 'none_auth', convert_bool),
+        ('extra.', 'md2_auth', convert_bool),
+        ('extra.', 'md5_auth', convert_bool),
+        ('extra.', 'passkey_auth', convert_bool),
+        ('extra.', 'oem_auth', convert_bool),
         # defaultkg
-        ('permessage_auth', convert_bool),
-        ('userlevel_auth', convert_bool),
-        ('usernames', convert_bool),
-        ('nulluser', convert_bool),
-        ('anon_login', convert_bool),
+        ('extra.', 'permessage_auth', convert_bool),
+        ('extra.', 'userlevel_auth', convert_bool),
+        ('extra.', 'usernames', convert_bool),
+        ('extra.', 'nulluser', convert_bool),
+        ('extra.', 'anon_login', convert_bool),
         # error
         # deviceid
         # devicerev
@@ -395,8 +395,8 @@ open_qotd = {
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
         # Other known fields which will go into "extra"
-        ('naics', int),
-        ('sic', int),
+        ('extra.', 'naics', int),
+        ('extra.', 'sic', int),
         # tag
         # quote
         # sector
@@ -424,8 +424,8 @@ open_ssdp = {
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
         # Other known fields which will go into "extra"
-        ('naics', int),
-        ('sic', int),
+        ('extra.', 'naics', int),
+        ('extra.', 'sic', int),
         # tag
         # header
         # systime
@@ -459,9 +459,9 @@ open_snmp = {
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
         # Other known fields which will go into "extra"
-        ('naics', int),
-        ('sic', int),
-        ('version', int),
+        ('extra.', 'naics', int),
+        ('extra.', 'sic', int),
+        ('extra.', 'version', int),
         # sysdesc
         # sysname
         # sector
@@ -489,8 +489,8 @@ open_mssql = {
         ('source.geolocation.city', 'city'),
         ('source.local_hostname', 'server_name'),
         # Other known fields which will go into "extra"
-        ('naics', int),
-        ('sic', int),
+        ('extra.', 'naics', int),
+        ('extra.', 'sic', int),
         # tag
         # version
         # instance_name
@@ -520,8 +520,8 @@ open_mongo_db = {
         ('source.geolocation.city', 'city'),
         ('source.account', 'username'),
         # Other known fields which will go into "extra"
-        ('naics', int),
-        ('sic', int),
+        ('extra.', 'naics', int),
+        ('extra.', 'sic', int),
         # tag
         # version
         # gitversion
@@ -606,8 +606,8 @@ dns_open_resolvers = {
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
         # Other known fields which will go into "extra"
-        ('naics', int),
-        ('sic', int),
+        ('extra.', 'naics', int),
+        ('extra.', 'sic', int),
         # elasticsearch
         # version
         # ok
@@ -711,8 +711,8 @@ botnet_drone_hadoop = {
         ('user_agent', 'agent'),
         ('os.name', 'p0f_genre'),
         ('os.version', 'p0f_detail'),
-        ('naics', int),
-        ('sic', int),
+        ('extra.', 'naics', int),
+        ('extra.', 'sic', int),
     ],
     'constant_fields': {
         'classification.type': 'botnet drone',

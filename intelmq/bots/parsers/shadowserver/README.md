@@ -67,5 +67,5 @@ The tuples can be of following format:
 
 - `('intelmqkey', 'shadowkey')`
 - `('intelmqkey', 'shadowkey', conversion_function)`
-- `('shadowkey', conversion_function)`, data will be added to extra in this case
+- `('extra.', 'shadowkey', conversion_function)`, data will be added to extra in this case
 - `('intelmqkey', 'shadowkey', conversion_function, True)`, the function gets two parameters here, the second one is the full row (as dictionary)
