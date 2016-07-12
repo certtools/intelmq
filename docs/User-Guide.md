@@ -55,6 +55,8 @@ apt-get install git build-essential libcurl4-gnutls-dev libffi-dev
 apt-get install python3-dev
 apt-get install redis-server
 ```
+**Note**: if you are using Debian 8, you need to install this package extra: ``apt-get install libgnutls28-dev``.
+
 
 ##### CentOS 7
 
