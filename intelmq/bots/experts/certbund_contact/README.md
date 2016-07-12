@@ -10,114 +10,54 @@ The following commands assume that PostgreSQL is running and listening on the
 default port. They create a database called "contactdb" which matches the
 default configuration of the bot.
 
-
 ```
-
     su - postgres
 
     createdb --encoding=UTF8 --template=template0 contactdb
     psql -f /usr/share/intelmq/certbund_contact/initdb.sql   contactdb
     psql -f /usr/share/intelmq/certbund_contact/defaults.sql contactdb
+```
 
+A database user with the right to select the data in the Contact DB
+must be created.  This is the account, which will be used in the bot's
+configuration for accessing the database.
+
+```
     createuser intelmq --pwprompt
     psql -c "GRANT SELECT ON ALL TABLES IN SCHEMA public TO intelmq;" contactdb
 
 ```
 
-### Configuration
+### Adding New Contacts
 
-The database is configured directly using SQL.
+Contacts can be added to the database directly using SQL.  These
+manually configured contacts will take precedence over contacts which
+were imported automatically, i.e. by `ripe_import.py`.
 
 Connect to the database:
 
 ```
-
   su - postgres
   psql contactdb
 
 ```
-
-#### Expected classification types
-
-FIXME: For each classifcation type name that will come along
-in the intelmq you need to have an entry 
-in the table ```classification_type```.
-
-FIXME: Adding entries here will clash with the instructions below ("configure
-templates").
-
-For example create them like this
-```
-COPY classification_type (name) FROM stdin;
-botnet drone
-spam
-malware
-ransomware
-malware configuration
-c&c
-scanner
-exploit
-brute-force
-ids alert
-defacement
-compromised
-backdoor
-ddos
-dropzone
-phishing
-vulnerable service
-blacklist
-other
-unknown
-\.
-```
-
-
-#### Configure Templates
-
-```
-
--- Configure templates
-  BEGIN TRANSACTION;
-  WITH new_classification_type AS (
-    INSERT INTO classification_type (name) VALUES ('botnet drone')
-    RETURNING id
-  ),
-  new_template AS (
-    INSERT INTO template (path,classification_type_id)
-    VALUES ('/usr/local/lib/intelmq/mailgen/templates/test01',
-      (SELECT id from new_classification_type))
-    RETURNING *
-  )
-  select * from new_template;
-  COMMIT TRANSACTION;
-
-```
-
-#### Add New Contacts
+Add a contact:
 
 ```pgsql
 
--- 1. Choose a template
-
-  SELECT * FROM template;
-
-  -- use its ID to set it for the new contact
-  \set template_id 1
-
--- 2. Prepare contact information
+-- 1. Prepare contact information
 
   \set asn 3320
   -- unique name of the organization:
   \set org_name 'org1'
-  \set org_comment 'Test comment'
+  \set org_comment 'Example comment on organization.'
   \set contact_email 'test@example.com'
-  -- set format to feed_spefic (ID 2 as per the setup with defaults.sql above):
-  \set contact_format_id 2
-  \set contact_comment 'Test contact'
+  \set contact_comment 'Test comment on contact.'
+  -- set the notification interval in seconds
   \set notification_interval 0
 
--- 3. Add new contact
+-- 2. Add new contact
+
   BEGIN TRANSACTION;
   INSERT INTO autonomous_system (number) VALUES (:asn);
   WITH new_org AS (
@@ -127,20 +67,13 @@ unknown
   ),
   new_contact AS (
     INSERT INTO contact (email,format_id,comment)
-    VALUES (:'contact_email', :contact_format_id, :'contact_comment')
+    VALUES (:'contact_email', 2, :'contact_comment')
     RETURNING id
   ),
   new_ota AS (
     INSERT INTO organisation_to_asn (organisation_id,asn_id,notification_interval)
     VALUES (
       (SELECT id from new_org), :asn, :notification_interval
-    )
-  ),
-  new_ott AS (
-    INSERT INTO organisation_to_template (organisation_id,template_id)
-    VALUES (
-      (SELECT id from new_org),
-      (SELECT id FROM template WHERE id = :template_id)
     )
   )
   INSERT INTO role (organisation_id,contact_id) VALUES (
@@ -151,4 +84,3 @@ unknown
   COMMIT TRANSACTION;
 
 ```
-
