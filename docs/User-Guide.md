@@ -111,7 +111,12 @@ By default, one collector, one parser and one output are started. The default co
 The configuration directory is `/opt/intelmq/etc/`, all files are JSON. By
 default, the installation method puts it's distributed configuration files into
 `etc/examples`, so it does not override your local configuration. Prior to the
-first run, copy them to `etc`.
+first run, copy them to `etc`:
+
+```bash
+cd /opt/intelmq/etc
+cp -a examples/* .
+```
 
 * `defaults.conf`: default values for bots and their behavior, e.g.
 error handling, log options and pipeline configuration. Will be removed in the [future](https://github.com/certtools/intelmq/issues/267).
