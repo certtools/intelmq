@@ -52,20 +52,33 @@ It is required to look up the correct configuration.
 
 ### Configuration
 
+In the following, *intelmqkey* are arbitrary keys from intelmq's harmonization
+and *shadowkey* is a column name from shadowserver's data.
+
 Every bot-type is defined by a dictionary with three values:
 - `required_fields`: A list of tuples containing intelmq's field name, field
-  name from data and an optional conversion function. Errors are raisen, when
+  name from data and an optional conversion function. Errors are raised, if the
   field does not exists in data.
-- `optional_fields`: Same format as above, but does not raise errors of field
-  does not exist. If there's no mapping to an intelmq field, you can give a
-  tuple of showserver key and conversion function or not mention it at all.
-  In both cases, the data will be added to extra.
-- `constand_fields`: A dictionary with a static mapping of field name to
-  data, e.g. to set classifications or protocols.
+- `optional_fields`: Same format as above, but does not raise errors if the
+  field does not exist. If there's no mapping to an intelmq field, you can set
+  the intelmqkey to `extra.` and the field will be added to the extra field
+  using the original field name. See section below for possible tuple-values.
+- `constant_fields`: A dictionary with a static mapping of field name to data,
+  e.g. to set classifications or protocols.
 
 The tuples can be of following format:
 
-- `('intelmqkey', 'shadowkey')`
-- `('intelmqkey', 'shadowkey', conversion_function)`
-- `('extra.', 'shadowkey', conversion_function)`, data will be added to extra in this case
-- `('intelmqkey', 'shadowkey', conversion_function, True)`, the function gets two parameters here, the second one is the full row (as dictionary)
+- `('intelmqkey', 'shadowkey')`, the data from the column *shadowkey* will be
+  saved in the event's field *intelmqkey*. Logically equivalent to:
+  `event[`*intelmqkey*`] = row[`*shadowkey*`]`.
+- `('intelmqkey', 'shadowkey', conversion_function)`, the given function will be
+  used to convert and/or validate the data. Logically equivalent to:
+  `event[`*intelmqkey*`] = conversion_function(row[`*shadowkey*`)]`.
+- `('intelmqkey', 'shadowkey', conversion_function, True)`, the function gets
+  two parameters here, the second one is the full row (as dictionary). Logically
+  equivalent to:
+  `event[`*intelmqkey*`] = conversion_function(row[`*shadowkey*`, row)]`.
+- `('extra.', 'shadowkey', conversion_function)`, the data will be added to
+  extra in this case, the resulting name is `extra.[shadowkey]`. The
+  `conversion_function` is optional. Logically equivalent to:
+  `event[extra.`*intelmqkey*`] = conversion_function(row[`*shadowkey*`)]`.
