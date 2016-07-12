@@ -60,7 +60,7 @@ Every bot-type is defined by a dictionary with three values:
   does not exist. If there's no mapping to an intelmq field, you can give a
   tuple of showserver key and conversion function or not mention it at all.
   In both cases, the data will be added to extra.
-- `additional_fields`: A dictionary with a static mapping of field name to
+- `constand_fields`: A dictionary with a static mapping of field name to
   data, e.g. to set classifications or protocols.
 
 The tuples can be of following format:

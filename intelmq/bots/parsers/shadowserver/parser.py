@@ -106,12 +106,6 @@ class ShadowserverParserBot(ParserBot):
             elif 'feed.name' not in event:
                 event.add('feed.name', self.parameters.feedname)
 
-        if hasattr(self.parameters, 'feedcode'):
-            if 'feed.code' in event and self.override:
-                event.add('feed.code', self.parameters.feedcode, force=True)
-            elif 'feed.code' not in event:
-                event.add('feed.code', self.parameters.feedcode)
-
         # Iterate Config, add required fields.
         # Fail hard if not possible:
         for item in conf.get('required_fields'):
@@ -179,8 +173,8 @@ class ShadowserverParserBot(ParserBot):
                 self.logger.debug(shadowkey)
                 fields.remove(shadowkey)
 
-        # Now add additional fields.
-        for key, value in conf.get('additional_fields', {}).items():
+        # Now add additional constant fields.
+        for key, value in conf.get('constant_fields', {}).items():
             event.add(key, value)
 
         raw_line = {k: self.conv_csv_shadowserver(v) for k, v in row.items()}

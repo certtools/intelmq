@@ -12,7 +12,11 @@ of at least three keys:
  2) optional fields:
     the parser will try to interpret these values.
     if it fails, the value is written to the extra field
- 3) The classification type of this field and additional properties.
+ 3) constant fields:
+    Some information about an event may not be explicitly stated in a
+    feed because it is implicit in the nature of the feed. For instance
+    a feed that is exclusively about HTTP may not have a field for the
+    protocol because it's always TCP.
 
 The first value is the IntelMQ key,
 the second value is the row in the shadowserver csv.
@@ -129,7 +133,7 @@ open_m_dns = {
         # http_target
         # http_port
     ],
-    'additional_fields': {
+    'constant_fields': {
         'classification.type': 'exploit',
     },
 }
@@ -155,7 +159,7 @@ open_chargen = {
         # tag
         # sector
     ],
-    'additional_fields': {
+    'constant_fields': {
         'classification.identifier': 'chargen',
         'classification.type': 'vulnerable service',
         'protocol.application': 'chargen',
@@ -186,7 +190,7 @@ open_tftp = {
         # error
         # errormessage
     ],
-    'additional_fields': {
+    'constant_fields': {
         'classification.type': 'vulnerable service',
     },
 }
@@ -220,7 +224,11 @@ sinkhole_http_drone = {
         # http_referer_asn
         # http_referer_geo
     ],
-    'additional_fields': {
+    'constant_fields': {
+        # The feed does not include explicit information about the
+        # protocol, but since it is about HTTP the protocol is always
+        # tcp.
+        'protocol.transport': 'tcp',
         'classification.type': 'botnet drone',
     },
 }
@@ -257,7 +265,7 @@ microsoft_sinkhole = {
         # http_referer_asn
         # http_referer_geo
     ],
-    'additional_fields': {
+    'constant_fields': {
         'classification.type': 'botnet drone',
         'protocol.application': 'http',
     },
@@ -296,7 +304,7 @@ open_redis = {
         # connected_clients
         # sector
     ],
-    'additional_fields': {
+    'constant_fields': {
         'classification.type': 'vulnerable service',
     },
 }
@@ -324,7 +332,7 @@ open_portmapper = {
         # exports
         # sector
     ],
-    'additional_fields': {
+    'constant_fields': {
         'classification.type': 'exploit',
     },
 }
@@ -366,7 +374,7 @@ open_ipmi = {
         # productid
         # productname
     ],
-    'additional_fields': {
+    'constant_fields': {
         'classification.type': 'vulnerable service',
     },
 }
@@ -393,7 +401,7 @@ open_qotd = {
         # quote
         # sector
     ],
-    'additional_fields': {
+    'constant_fields': {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'qotd',
         'protocol.application': 'qotd',
@@ -431,7 +439,7 @@ open_ssdp = {
         # nt
         # sector
     ],
-    'additional_fields': {
+    'constant_fields': {
         'classification.type': 'exploit',
     },
 }
@@ -458,7 +466,7 @@ open_snmp = {
         # sysname
         # sector
     ],
-    'additional_fields': {
+    'constant_fields': {
         'classification.type': 'vulnerable service',
         'protocol.application': 'snmp',
         'classification.identifier': 'snmp',
@@ -491,7 +499,7 @@ open_mssql = {
         # response_lenght
         # sector
     ],
-    'additional_fields': {
+    'constant_fields': {
         'classification.type': 'vulnerable service',
     },
 }
@@ -527,7 +535,7 @@ open_mongo_db = {
         # visible_databases
         # sector
     ],
-    'additional_fields': {
+    'constant_fields': {
         'classification.type': 'vulnerable service',
     },
 }
@@ -553,7 +561,7 @@ open_net_bios = {
         # mac_address
         # workgroup
     ],
-    'additional_fields': {
+    'constant_fields': {
         'classification.type': 'vulnerable service',
     },
 }
@@ -578,7 +586,7 @@ open_elasticsearch = {
         # p0f_genre
         # p0f_detail
     ],
-    'additional_fields': {
+    'constant_fields': {
         'classification.type': 'vulnerable service',
     },
 }
@@ -611,7 +619,7 @@ dns_open_resolvers = {
         # build_snaphost
         # lucene_version
     ],
-    'additional_fields': {
+    'constant_fields': {
         'classification.type': 'vulnerable service',
     },
 }
@@ -631,7 +639,7 @@ ntp_monitor = {
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
     ],
-    'additional_fields': {
+    'constant_fields': {
         'classification.type': 'vulnerable service',
     },
 }
@@ -651,7 +659,7 @@ ssl_scan = {
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
     ],
-    'additional_fields': {
+    'constant_fields': {
         'classification.type': 'vulnerable service',
     },
 }
@@ -671,7 +679,7 @@ open_memcached = {
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
     ],
-    'additional_fields': {
+    'constant_fields': {
         'classification.type': 'vulnerable service',
     },
 }
@@ -706,7 +714,7 @@ botnet_drone_hadoop = {
         ('naics', int),
         ('sic', int),
     ],
-    'additional_fields': {
+    'constant_fields': {
         'classification.type': 'botnet drone',
     },
 }
