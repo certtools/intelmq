@@ -10,7 +10,7 @@ Now create a database-user and a database:
 # su - postgres
 $ createuser intelmq
 $ createdb -O intelmq intelmq-events
-$ psql -c 'ALTER ROLE intelmq PASSWORD '**************';'
+$ psql -c "ALTER ROLE intelmq PASSWORD '**************';"
 $ exit
 # su - intelmq
 $ psql intelmq-events </tmp/initdb.sql
