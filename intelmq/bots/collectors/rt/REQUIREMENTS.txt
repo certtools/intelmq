@@ -1,1 +1,1 @@
--e git://github.com/wtsi-hgi/python-rt.git#egg=rt
+rt>=1.0.9

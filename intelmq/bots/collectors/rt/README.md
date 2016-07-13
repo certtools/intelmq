@@ -1,8 +1,11 @@
 Request Tracker collector
 =========================
 
-A fork of python-rt is needed which fixes relevant bugs:
-https://github.com/wtsi-hgi/python-rt.git
+You need the rt-library from nic.cz, available via [pypi](https://pypi.python.org/pypi/rt):
+
+    pip install rt
+
+Version 1.0.9 is required, as older version have bugs.
 
 The bot searches for tickets matching the criteria in `search_*`, all of these
 will be inspected. Then, all attachments of the ticket are iterated and the
