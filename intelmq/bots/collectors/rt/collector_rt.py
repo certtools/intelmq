@@ -79,7 +79,7 @@ class RTCollectorBot(Bot):
 
             report = Report()
             report.add("raw", raw, sanitize=True)
-            report.add("rtir_id", ticket_id, sanitize=True)
+            report.add("rtir_report_id", ticket_id, sanitize=True)
             report.add("feed.name", self.parameters.feed, sanitize=True)
             report.add("feed.accuracy", self.parameters.accuracy,
                        sanitize=True)
