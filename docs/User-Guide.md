@@ -52,8 +52,15 @@ Please report any errors you encounter at https://github.com/certtools/intelmq/i
 ```bash
 apt-get install python3 python3-pip
 apt-get install git build-essential libcurl4-gnutls-dev libffi-dev
-apt-get install python-dev
+apt-get install python3-dev
 apt-get install redis-server
+```
+**Special note for Debian 8**: 
+if you are using Debian 8, you need to install this package extra: ``apt-get install libgnutls28-dev``.
+In addition, Debian 8 has an old version of pip3. Please get a current one via:
+```bash
+curl "https://bootstrap.pypa.io/get-pip.py" -o "/tmp/get-pip.py"
+python3.4 /tmp/get-pip.py
 ```
 
 ##### CentOS 7
@@ -104,7 +111,12 @@ By default, one collector, one parser and one output are started. The default co
 The configuration directory is `/opt/intelmq/etc/`, all files are JSON. By
 default, the installation method puts it's distributed configuration files into
 `etc/examples`, so it does not override your local configuration. Prior to the
-first run, copy them to `etc`.
+first run, copy them to `etc`:
+
+```bash
+cd /opt/intelmq/etc
+cp -a examples/* .
+```
 
 * `defaults.conf`: default values for bots and their behavior, e.g.
 error handling, log options and pipeline configuration. Will be removed in the [future](https://github.com/certtools/intelmq/issues/267).
