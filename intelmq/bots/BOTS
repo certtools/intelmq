@@ -480,20 +480,18 @@
             "parameters": {
                 "attachment_regex": "\\.csv\\.zip$",
                 "feed": "Request Tracker",
-                "gnupg_decrypt": false,
-                "gnupg_homedir": "/opt/intelmq/",
-                "gnupg_passphrase": null,
-                "gnupg_trust": true,
                 "password": "password",
                 "rate_limit": 3600,
                 "search_owner": "nobody",
                 "search_queue": "Incident Reports",
                 "search_status": "new",
                 "search_subject_like": "Report",
+                "set_status": "open",
                 "take_ticket": true,
                 "unzip_attachment": true,
                 "uri": "http://localhost/rt/REST/1.0",
-                "user": "root"
+                "url_regex": "https://dl.shadowserver.org/[a-zA-Z0-9?_-]*",
+                "user": "intelmq"
             }
         },
         "ShadowServer Chargen": {
