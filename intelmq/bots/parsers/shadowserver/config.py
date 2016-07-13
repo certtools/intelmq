@@ -40,7 +40,7 @@ def get_feed(feedname):
         "Ssl-Scan": ssl_scan,  # Aka Poodle
         "NTP-Monitor": ntp_monitor,
         "DNS-open-resolvers": dns_open_resolvers,  # TODO Check implementation.
-        "Open-Elasticsearch": open_elasticsearch,  # TODO Check implementation.
+        "Open-Elasticsearch": open_elasticsearch,
         "Open-Net BIOS": open_net_bios,  # TODO Check implementation.
         "Open-Mongo DB": open_mongo_db,  # TODO Check implementation.
         "Open-MSSQL": open_mssql,  # TODO Check implementation.
@@ -65,9 +65,9 @@ def add_UTC_to_timestamp(value):
 
 
 def convert_bool(value):
-    if value in ('yes', 'enabled'):
+    if value.lower() in ('yes', 'true', 'enabled'):
         return True
-    elif value in ('no', 'disabled'):
+    elif value.lower() in ('no', 'false', 'disabled'):
         return False
 
 
@@ -75,6 +75,14 @@ def validate_to_none(value):
     if value == '0' or not len(value):
         return None
     return value
+
+
+def convert_int(value):
+    """ Returns an int or None for empty strings. """
+    if not value:
+        return None
+    else:
+        return int(value)
 
 
 def convert_host_and_url(value, row):
@@ -588,10 +596,20 @@ open_elasticsearch = {
         ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
         # Other known fields which will go into "extra"
-        # min_amplification
-        # dns_version
-        # p0f_genre
-        # p0f_detail
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'status', convert_int),
+        ('extra.', 'build_snapshot', convert_bool),
+        # version
+        # ok
+        # name
+        # cluster_name
+        # build_hash
+        # build_timestamp
+        # build_snapshot
+        # lucene_version
+        # tagline
+
     ],
     'constant_fields': {
         'classification.type': 'vulnerable service',
