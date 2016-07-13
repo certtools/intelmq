@@ -66,7 +66,7 @@ See [Developers Guide](docs/Developers-Guide.md).
 <a name="control-platform"></a>
 ## IntelMQ Manager
 
-Check the [tool](https://github.com/certtools/intelmq-manager) and manage easily IntelMQ system.
+Check out this graphical [tool](https://github.com/certtools/intelmq-manager) and manage easily IntelMQ system via a web browser.
 
 
 <a name="incident-handling-automation-project"></a>
