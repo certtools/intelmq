@@ -3,7 +3,9 @@
 
 """
 
+import csv
 import datetime
+import io
 import json
 import re
 import requests
@@ -20,7 +22,7 @@ from intelmq.lib import exceptions, utils
 from intelmq.lib.message import MessageFactory
 from intelmq.lib.pipeline import PipelineFactory
 
-__all__ = ['Bot']
+__all__ = ['Bot', 'ParserBot']
 
 
 class Bot(object):
@@ -30,7 +32,6 @@ class Bot(object):
         self.parameters = Parameters()
 
         self.__current_message = None
-        self.__last_message = None
         self.__message_counter = 0
         self.__error_retries_counter = 0
         self.__source_pipeline = None
@@ -124,7 +125,7 @@ class Bot(object):
                 self.process()
                 self.__error_retries_counter = 0  # reset counter
 
-                self.__source_pipeline.sleep(self.parameters.rate_limit)
+                time.sleep(self.parameters.rate_limit)
 
             except exceptions.PipelineError:
                 error_on_pipeline = True
@@ -146,8 +147,6 @@ class Bot(object):
                     self.logger.error("Bot has found a problem.")
 
                 if self.parameters.error_log_message:
-                    self.logger.info("Last Correct Message(event): {!r}."
-                                     "".format(self.__last_message)[:500])
                     self.logger.info("Current Message(event): {!r}."
                                      "".format(self.__current_message)[:500])
 
@@ -177,7 +176,9 @@ class Bot(object):
                         if error_on_message:
 
                             if self.parameters.error_dump_message:
-                                self.__dump_message(error_traceback)
+                                self._dump_message(error_traceback,
+                                                   message=self.__current_message)
+                                self.__current_message = None
 
                             # remove message from pipeline
                             self.acknowledge_message()
@@ -266,18 +267,19 @@ class Bot(object):
             self.__destination_pipeline = None
             self.logger.info("Disconnecting from destination pipeline.")
 
-    def send_message(self, message):
-        if not message:
-            self.logger.warning("Sending Message: Empty message found.")
-            return False
+    def send_message(self, *messages):
+        for message in messages:
+            if not message:
+                self.logger.warning("Ignoring empty message at sending.")
+                continue
 
-        self.logger.debug("Sending message.")
-        self.__message_counter += 1
-        if self.__message_counter % 500 == 0:
-            self.logger.info("Processed %s messages." % self.__message_counter)
+            self.logger.debug("Sending message.")
+            self.__message_counter += 1
+            if self.__message_counter % 500 == 0:
+                self.logger.info("Processed %s messages." % self.__message_counter)
 
-        raw_message = MessageFactory.serialize(message)
-        self.__destination_pipeline.send(raw_message)
+            raw_message = MessageFactory.serialize(message)
+            self.__destination_pipeline.send(raw_message)
 
     def receive_message(self):
         self.logger.debug('Receiving Message.')
@@ -293,11 +295,10 @@ class Bot(object):
         return self.__current_message
 
     def acknowledge_message(self):
-        self.__last_message = self.__current_message
         self.__source_pipeline.acknowledge()
 
-    def __dump_message(self, error_traceback):
-        if self.__current_message is None:
+    def _dump_message(self, error_traceback, message):
+        if message is None:
             return
 
         self.logger.info('Dumping message from pipeline to dump file.')
@@ -312,7 +313,7 @@ class Bot(object):
         new_dump_data[timestamp]["source_queue"] = self.__source_queues
         new_dump_data[timestamp]["traceback"] = error_traceback
 
-        new_dump_data[timestamp]["message"] = self.__current_message.serialize()
+        new_dump_data[timestamp]["message"] = message.serialize()
 
         try:
             with open(dump_file, 'r') as fp:
@@ -325,7 +326,6 @@ class Bot(object):
             json.dump(dump_data, fp, indent=4, sort_keys=True)
 
         self.logger.info('Message dumped.')
-        self.__current_message = None
 
     def __load_defaults_configuration(self):
         self.__log_buffer.append(('debug', "Loading defaults configuration."))
@@ -402,6 +402,76 @@ class Bot(object):
                         raise exceptions.ConfigurationError(
                             'harmonization',
                             "Key %s is not valid." % _key)
+
+
+class ParserBot(Bot):
+
+    def parse_csv(self, report):
+        """
+        A basic CSV parser.
+        """
+        raw_report = utils.base64_decode(report.get("raw"))
+        for line in csv.reader(io.StringIO(raw_report)):
+            yield line
+
+    def parse(self, report):
+        """
+        A generator yielding the single elements of the data.
+
+        Comments, headers etc. can be processed here. Data needed by
+        `self.parse_line` can be saved in `self.tempdata` (list).
+
+        Default parser yields stripped lines.
+        Override for your use or use an exisiting parser, e.g.:
+            parse = ParserBot.parse_csv
+        """
+        for line in utils.base64_decode(report.get("raw")).splitlines():
+            yield line.strip()
+
+    def parse_line(self, line, report):
+        """
+        A generator which can yield one or more messages contained in line.
+
+        Report has the full message, thus you can access some metadata.
+        Override for your use.
+        """
+        raise NotImplementedError
+
+    def process(self):
+        self.tempdata = []  # temporary data for parse, parse_line and recover_line
+        self.__failed = []
+        report = self.receive_message()
+
+        for line in self.parse(report):
+            if not line:
+                continue
+            try:
+                # filter out None
+                events = list(filter(bool, self.parse_line(line, report)))
+            except Exception as exc:
+                self.logger.exception('Failed to parse line.')
+                self.__failed.append((exc, line))
+            else:
+                self.send_message(*events)
+
+        for exc, line in self.__failed:
+            self._dump_message(exc, self.recover_line(line))
+
+        self.acknowledge_message()
+
+    def recover_line(self, line):
+        """
+        Reverse of parse for single lines.
+
+        Recovers a fully functional report with only the problematic line.
+        """
+        return '\n'.join(self.tempdata + [line])
+
+    def recover_line_csv(self, line):
+        out = io.StringIO()
+        writer = csv.writer(out)
+        writer.writerow(line)
+        return out.getvalue()
 
 
 class Parameters(object):
