@@ -39,7 +39,15 @@ parser.add_argument("--role-file",
 parser.add_argument("--asn-file",
                     default='ripe.db.aut-num.gz',
                     help="Specify the AS number data file. Default: ripe.db.aut-num.gz")
+parser.add_argument("--notification-format",
+                    default='feed_specific',
+                    help="Specify the data format the contacts linked with e.g. csv. Default: feed_specific")
+parser.add_argument("--notification-interval",
+                    default='0',
+                    help="Specify the default notification intervall in seconds. Default: 0")
 args = parser.parse_args()
+
+SOURCE_NAME = 'ripe'
 
 
 def parse_file(filename, fields, index_field=None):
@@ -120,15 +128,29 @@ def main():
         con = psycopg2.connect("dbname='{}'".format(args.database))
         cur = con.cursor()
 
+        if args.verbose:
+            print('** Looking for %s' % (args.notification_format, ))
+
+        cur.execute("SELECT id FROM format WHERE name = %s",
+                    (args.notification_format, ))
+        result = cur.fetchall()
+
+        if result:
+            notification_fid = result[0]
+        else:
+            print('The notification format %s could not be determined'
+                  % (args.notification_format, ))
+            sys.exit(1)
+
         #
         # AS numbers
         #
         if args.verbose:
             print('** Saving AS data to database...')
-        cur.execute("DELETE FROM role_automatic;")
-        cur.execute("DELETE FROM organisation_to_template_automatic;")
-        cur.execute("DELETE FROM organisation_to_asn_automatic;")
-        cur.execute("DELETE FROM autonomous_system_automatic;")
+        cur.execute("DELETE FROM role_automatic WHERE import_source = %s;", (SOURCE_NAME,))
+        cur.execute("DELETE FROM organisation_to_template_automatic WHERE import_source = %s;", (SOURCE_NAME,))
+        cur.execute("DELETE FROM organisation_to_asn_automatic WHERE import_source = %s;", (SOURCE_NAME,))
+        cur.execute("DELETE FROM autonomous_system_automatic WHERE import_source = %s;", (SOURCE_NAME,))
         for entry in asn_list:
             if not entry or not entry.get('aut-num') or not entry.get('org'):
                 continue
@@ -136,9 +158,9 @@ def main():
             org_ripe_handle = entry['org'][0]
 
             cur.execute("""
-                INSERT INTO autonomous_system_automatic (number)
-                VALUES (%s);
-                """, (as_number, ))
+                INSERT INTO autonomous_system_automatic (number, import_source, import_time)
+                VALUES (%s, %s, CURRENT_TIMESTAMP);
+                """, (as_number, SOURCE_NAME ))
 
             if not mapping.get(org_ripe_handle):
                 mapping[org_ripe_handle] = {'org_id': None,
@@ -151,7 +173,7 @@ def main():
         #
         if args.verbose:
             print('** Saving organisation data to database...')
-        cur.execute("DELETE FROM organisation_automatic;")
+        cur.execute("DELETE FROM organisation_automatic WHERE import_source = %s;", (SOURCE_NAME,))
         for entry in organisation_list:
             # Not all entries have an organisation associated
             if not entry:
@@ -160,9 +182,9 @@ def main():
             org_ripe_handle = entry['organisation'][0]
 
             cur.execute("""
-                INSERT INTO organisation_automatic (name, ripe_org_hdl)
-                VALUES (%s, %s) RETURNING id;
-                """, (org_name, org_ripe_handle))
+                INSERT INTO organisation_automatic (name, ripe_org_hdl, import_source, import_time)
+                VALUES (%s, %s, %s, CURRENT_TIMESTAMP) RETURNING id;
+                """, (org_name, org_ripe_handle, SOURCE_NAME))
             result = cur.fetchone()
             org_id = result[0]
 
@@ -180,21 +202,24 @@ def main():
             if not org_id:
                 continue
 
-            # TODO: what should be the default for notification_interval?
             for asn_id in asn_ids:
                 cur.execute("""
                 INSERT INTO organisation_to_asn_automatic (notification_interval,
                                                            organisation_id,
-                                                           asn_id)
-                VALUES (0, %s, %s);
-                """, (org_id, asn_id))
+                                                           asn_id,
+                                                           import_source,
+                                                           import_time)
+                VALUES (%s, %s, %s, %s, CURRENT_TIMESTAMP);
+                """, (args.notification_interval, org_id, asn_id, SOURCE_NAME))
 
         #
         # Role
         #
         if args.verbose:
             print('** Saving contacts data to database...')
-        cur.execute("DELETE FROM contact_automatic;")
+
+        cur.execute("DELETE FROM contact_automatic WHERE import_source = %s;", (SOURCE_NAME,))
+
         for entry in role_list:
             # No all entries have email contact
             if not entry or not entry.get('abuse-mailbox'):
@@ -206,10 +231,10 @@ def main():
             email = entry['abuse-mailbox'][0]
 
             cur.execute("""
-                INSERT INTO contact_automatic (format_id, email)
-                VALUES (1, %s)
+                INSERT INTO contact_automatic (format_id, email, import_source, import_time)
+                VALUES (%s, %s, %s, CURRENT_TIMESTAMP)
                 RETURNING id;
-                """, (email, ))
+                """, (notification_fid, email, SOURCE_NAME))
             result = cur.fetchone()
             contact_id = result[0]
 
@@ -217,7 +242,7 @@ def main():
                 mapping[org_ripe_handle]['contact_id'].append(contact_id)
 
         # many-to-many table organisation <-> contact
-        cur.execute("DELETE FROM role_automatic;")
+        cur.execute("DELETE FROM role_automatic WHERE import_source = %s;", (SOURCE_NAME,))
         for org_ripe_handle in mapping:
             org_id = mapping[org_ripe_handle]['org_id']
             contact_ids = mapping[org_ripe_handle]['contact_id']
@@ -229,9 +254,9 @@ def main():
 
             for contact_id in contact_ids:
                 cur.execute("""
-                INSERT INTO role_automatic (organisation_id, contact_id)
-                VALUES (%s, %s);
-                """, (org_id, contact_id))
+                INSERT INTO role_automatic (organisation_id, contact_id, import_source, import_time)
+                VALUES (%s, %s, %s, CURRENT_TIMESTAMP);
+                """, (org_id, contact_id, SOURCE_NAME))
 
         # Commit all data
         con.commit()
