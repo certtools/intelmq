@@ -328,8 +328,8 @@ class Bot(object):
         for option, value in config.items():
             setattr(self.parameters, option, value)
             self.__log_buffer.append(('debug',
-                                      "Defaults configuration: parameter '{}' "
-                                      "loaded  with value '{}'.".format(option,
+                                      "Defaults configuration: parameter {!r} "
+                                      "loaded  with value {!r}.".format(option,
                                                                         value)))
 
     def __load_system_configuration(self):
@@ -339,8 +339,8 @@ class Bot(object):
         for option, value in config.items():
             setattr(self.parameters, option, value)
             self.__log_buffer.append(('debug',
-                                      "System configuration: parameter '{}' "
-                                      "loaded  with value '{}'.".format(option,
+                                      "System configuration: parameter {!r} "
+                                      "loaded  with value {!r}.".format(option,
                                                                         value)))
 
     def __load_runtime_configuration(self):
@@ -350,8 +350,8 @@ class Bot(object):
         if self.__bot_id in list(config.keys()):
             for option, value in config[self.__bot_id].items():
                 setattr(self.parameters, option, value)
-                self.logger.debug("Runtime configuration: parameter '%s' "
-                                  "loaded with value '%s'." % (option, value))
+                self.logger.debug("Runtime configuration: parameter {!r} "
+                                  "loaded with value {!r}.".format(option, value))
 
     def __load_pipeline_configuration(self):
         self.logger.debug("Loading pipeline configuration")
@@ -365,8 +365,8 @@ class Bot(object):
             if 'source-queue' in config[self.__bot_id].keys():
                 self.__source_queues = config[self.__bot_id]['source-queue']
                 self.logger.debug("Pipeline configuration: parameter "
-                                  "'source-queue' loaded with the value '%s'."
-                                  % self.__source_queues)
+                                  "'source-queue' loaded with the value {!r}."
+                                  "".format(self.__source_queues))
 
             if 'destination-queues' in config[self.__bot_id].keys():
 
@@ -374,11 +374,11 @@ class Bot(object):
                     self.__bot_id]['destination-queues']
                 self.logger.debug("Pipeline configuration: parameter"
                                   "'destination-queues' loaded with the value "
-                                  "'%s'." % ", ".join(self.__destination_queues))
+                                  "{!r}.".format(", ".join(self.__destination_queues)))
 
         else:
             self.logger.error("Pipeline configuration: no key "
-                              "'{}'.".format(self.__bot_id))
+                              "{!r}.".format(self.__bot_id))
             self.stop()
 
     def __load_harmonization_configuration(self):
