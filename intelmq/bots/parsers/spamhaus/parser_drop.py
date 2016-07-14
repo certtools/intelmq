@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 
 import sys
 
 from dateutil.parser import parse as dateparser
+
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
 from intelmq.lib.message import Event
@@ -17,13 +17,9 @@ class SpamhausDropParserBot(Bot):
         report = self.receive_message()
         self.event_date = None
 
-        if report is None or not report.contains("raw"):
-            self.acknowledge_message()
-            return
-
         raw_report = utils.base64_decode(report.get("raw"))
 
-        for row in raw_report.split('\n'):
+        for row in raw_report.splitlines():
 
             row = row.strip()
 
@@ -44,7 +40,7 @@ class SpamhausDropParserBot(Bot):
             if self.event_date:
                 event.add('time.source', self.event_date.isoformat())
 
-            event.add('classification.type', u'spam')
+            event.add('classification.type', 'spam')
             event.add('raw', row)
 
             self.send_message(event)

@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import print_function, unicode_literals
-
 import time
 
 import redis
@@ -8,7 +6,6 @@ import redis
 import intelmq.lib.exceptions as exceptions
 import intelmq.lib.pipeline
 import intelmq.lib.utils as utils
-
 
 __all__ = ['Pipeline', 'PipelineFactory', 'Redis', 'Pythonlist']
 
@@ -111,10 +108,13 @@ class Redis(Pipeline):
 
     def receive(self):
         try:
-            if self.pipe.llen(self.internal_queue) > 0:
-                return utils.decode(self.pipe.lindex(self.internal_queue, -1))
-            return utils.decode(self.pipe.brpoplpush(self.source_queue,
-                                                     self.internal_queue, 0))
+            retval = self.pipe.lindex(self.internal_queue, -1)  # returns None if no value
+            if not retval:
+                retval = self.pipe.brpoplpush(self.source_queue,
+                                              self.internal_queue, 0)
+            return utils.decode(retval)
+        except redis.exceptions.ConnectionError:
+            pass  # raised e.g. on SIGHUP
         except Exception as exc:
             raise exceptions.PipelineError(exc)
 

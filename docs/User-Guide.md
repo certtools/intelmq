@@ -3,15 +3,10 @@
   * [Requirements](#requirements)
   * [Install](#install)
     * [Install Dependencies](#install-dependencies)
-        * [Python 3.4 (recommended)](#python-34-recommended)
-          * [Ubuntu 14.04 / Debian 8](#ubuntu-1404--debian-8)
-          * [CentOS 7](#centos-7)
-        * [Python 2.7](#python-27)
-          * [Ubuntu 14.04 / Debian 8](#ubuntu-1404--debian-8-1)
-          * [CentOS 7](#centos-7-1)
+        * [Ubuntu 14.04 / Debian 8](#ubuntu-1404--debian-8)
+        * [CentOS 7](#centos-7)
     * [Install](#install-1)
-        * [Python 3.4 (recommended)](#python-34-recommended-1)
-        * [Python 2.7](#python-27-1)
+      * [Python 3.4 (recommended)](#python-34-recommended-1)
   * [Configuration](#configuration)
     * [System Configuration](#system-configuration)
     * [Startup Configuration](#startup-configuration)
@@ -26,7 +21,6 @@
       * [Web interface: IntelMQ Manager](#web-interface-intelmq-manager)
       * [Command-line interface: intelmqctl](#command-line-interface-intelmqctl)
         * [Botnet Concept](#botnet-concept)
-        * [Start bots with non-default Python](#start-bots-with-non-default-python)
         * [Forcing reset pipeline and cache (be careful)](#forcing-reset-pipeline-and-cache-be-careful)
     * [Error Handling](#error-handling-1)
       * [Tool: intelmqdump](#tool-intelmqdump)
@@ -53,15 +47,20 @@ Please report any errors you encounter at https://github.com/certtools/intelmq/i
 
 ## Install Dependencies
 
-#### Python 3.4 (recommended)
-
-##### Ubuntu 14.04 / Debian 8
+#### Ubuntu 14.04 / Debian 8
 
 ```bash
 apt-get install python3 python3-pip
 apt-get install git build-essential libcurl4-gnutls-dev libffi-dev
-apt-get install python-dev
+apt-get install python3-dev
 apt-get install redis-server
+```
+**Special note for Debian 8**: 
+if you are using Debian 8, you need to install this package extra: ``apt-get install libgnutls28-dev``.
+In addition, Debian 8 has an old version of pip3. Please get a current one via:
+```bash
+curl "https://bootstrap.pypa.io/get-pip.py" -o "/tmp/get-pip.py"
+python3.4 /tmp/get-pip.py
 ```
 
 ##### CentOS 7
@@ -85,38 +84,11 @@ systemctl enable redis
 systemctl start redis
 ```
 
-#### Python 2.7
-
-##### Ubuntu 14.04 / Debian 8
-
-```bash
-apt-get install python python-pip
-apt-get install git build-essential libcurl4-gnutls-dev libffi-dev libgnutls28-dev
-apt-get install python-dev python-pycurl python-openssl python-pyasn1
-apt-get install redis-server
-```
-
-##### CentOS 7
-
-```bash
-yum install git libcurl-devel gcc gcc-c++
-yum install python python-devel 
-yum install redis
-```
-
-Enable redis (default broker) on startup:
-```bash
-systemctl enable redis
-systemctl start redis
-```
-
 ## Install
 
 The `REQUIREMENTS` files define a list python packages and versions, which are necessary to run *all components* of IntelMQ. The defined versions are recommendations.
 
 If you do not do any modifications on the code, use `pip install intelmq` instead of `pip install .`!
-
-#### Python 3 (recommended)
 
 ```bash
 git clone https://github.com/certtools/intelmq.git /tmp/intelmq
@@ -128,38 +100,26 @@ pip3 install -r REQUIREMENTS
 pip3 install .
 
 useradd -d /opt/intelmq -U -s /bin/bash intelmq
-echo 'export PATH="$PATH:$HOME/bin"' >> /opt/intelmq/.profile
-chmod -R 0770 /opt/intelmq
-chown -R intelmq.intelmq /opt/intelmq
-echo 'export INTELMQ_PYTHON=/usr/bin/python3' >> /opt/intelmq/.profile
-```
-
-#### Python 2.7
-
-```bash
-sudo -s
-
-git clone https://github.com/certtools/intelmq.git /tmp/intelmq
-cd /tmp/intelmq
-
-pip2 install -r REQUIREMENTS2
-pip2 install .
-
-useradd -d /opt/intelmq -U -s /bin/bash intelmq
-echo 'export PATH="$PATH:$HOME/bin"' >> /opt/intelmq/.profile
 chmod -R 0770 /opt/intelmq
 chown -R intelmq.intelmq /opt/intelmq
 ```
-
 
 # Configuration
 
 By default, one collector, one parser and one output are started. The default collector and the parser handle data from malware domain list, the file output bot writes all data to `/opt/intelmq/var/lib/bots/file-output/events.txt`.
 
-The configuration directory is `/opt/intelmq/etc/`, all files are JSON.
+The configuration directory is `/opt/intelmq/etc/`, all files are JSON. By
+default, the installation method puts it's distributed configuration files into
+`etc/examples`, so it does not override your local configuration. Prior to the
+first run, copy them to `etc`:
+
+```bash
+cd /opt/intelmq/etc
+cp -a examples/* .
+```
 
 * `defaults.conf`: default values for bots and their behavior, e.g.
-error handling, log options and pipeline configuration. Will be removed in [future](https://github.com/certtools/intelmq/issues/267).
+error handling, log options and pipeline configuration. Will be removed in the [future](https://github.com/certtools/intelmq/issues/267).
 * `system.conf`: System configuration for e.g. the logger and the pipeline.
 * `startup.conf`: Maps the bot ids to python modules.
 * `runtime.conf`: Configuration for the individual bots.
@@ -183,7 +143,7 @@ Use the IntelMQ Manager mentioned above to generate the configuration files if u
 
 ## Startup Configuration
 
-This configuration is used by intelmqctl tool to launch bots. Usually, the IntelMQ sysadmin don't need to touch in this file because IntelMQ Manager generates it.
+This configuration is used by intelmqctl tool to launch bots. Usually, the IntelMQ sysadmins don't need to touch this file because IntelMQ Manager generates it.
 
 **Template:**
 ```
@@ -220,7 +180,7 @@ More examples can be found at `intelmq/etc/startup.conf` directory in IntelMQ re
 
 ## Pipeline Configuration
 
-This configuration is used by each bot to load the source pipeline and destination pipelines associated to each of them. IntelMQ Manager generate this configuration.
+This configuration is used by each bot to load the source pipeline and destination pipelines associated to each of them. IntelMQ Manager generates this configuration.
 
 **Template:**
 ```
@@ -256,14 +216,14 @@ More examples can be found at `intelmq/etc/pipeline.conf` directory in IntelMQ r
 
 ## Defaults Configuration
 
-All bots inherits this configuration parameters and they can overwrite them using the same parameters in configuration.
+All bots inherit this configuration parameters and they can overwrite them using the same parameters in configuration.
 
 #### Error Handling
 
-* **`error_log_message`** - in case of an error, this option will allows the bot to write the message (report or event) in the log file. Use the following values:
+* **`error_log_message`** - in case of an error, this option will allow the bot to write the message (report or event) in the log file. Use the following values:
     * **`true/false`** - write or not write message in log file
 
-* **`error_log_exception`** - in case of an error, this option will allows the bot to write the error exception in the log file. Use the following values:
+* **`error_log_exception`** - in case of an error, this option will allow the bot to write the error exception in the log file. Use the following values:
     * **`true/false`** - write or not write exception in log file
 
 * **`error_procedure`** - in case of an error, this option defines the procedure that the bot will adopt. Use the following values:
@@ -286,7 +246,7 @@ All bots inherits this configuration parameters and they can overwrite them usin
     * **`false`** - duplicates the messages into each queue
 
 * **`broker`** - select which broker intelmq can use. Use the following values:
-    * **`redis`** - Redis allows some persistence but is not so fast as ZeroMQ (in development).
+    * **`redis`** - Redis allows some persistence but is not so fast as ZeroMQ (in development). But note that persistence has to be manually activated. See http://redis.io/topics/persistence
 
 * **`rate_limit`** - time interval (in seconds) between messages processing. The value must be an `integer value`.
 
@@ -313,7 +273,7 @@ All bots inherits this configuration parameters and they can overwrite them usin
 
 ## Runtime Configuration
 
-This configuration is used by each bot to load the specific parameters associated to each of them. Usually, BOTS file is used to generate runtime.conf. IntelMQ Manager generate this configuration.
+This configuration is used by each bot to load the specific parameters associated to each of them. Usually, BOTS file is used to generate runtime.conf. IntelMQ Manager generates this configuration.
 
 **Template:**
 ```
@@ -394,7 +354,7 @@ More examples can be found at `intelmq/etc/harmonization.conf` directory in Inte
 
 ## Management
 
-IntelMQ has a modular structure consisting on bots. There are four types of bots:
+IntelMQ has a modular structure consisting of bots. There are four types of bots:
 
 * *CollectorBots* retrieve data from internal or external sources, the output
 are *reports* consisting of many individual data sets.
@@ -426,31 +386,58 @@ See [IntelMQ Manager repository](https://github.com/certtools/intelmq-manager).
 ```bash
 # su - intelmq
 
-$ intelmqctl --h
+$ intelmqctl -h
 usage: 
-        intelmqctl --bot [start|stop|restart|status] --id=cymru-expert
-        intelmqctl --botnet [start|stop|restart|status]
-        intelmqctl --list [bots|queues]
+        intelmqctl [start|stop|restart|status|run] bot-id
+        intelmqctl [start|stop|restart|status]
+        intelmqctl list [bots|queues]
+        intelmqctl log bot-id [number-of-lines [log-level]]
+        intelmqctl clear queue-id
+
+Starting a bot:
+    intelmqctl start bot-id
+Stopping a bot:
+    intelmqctl stop bot-id
+Restarting a bot:
+    intelmqctl restart bot-id
+Get status of a bot:
+    intelmqctl status bot-id
+
+Run a bot directly (blocking) for debugging purpose:
+    intelmqctl run bot-id
+
+Starting the botnet (all bots):
+    intelmqctl start
+    etc.
+
+Get a list of all configured bots:
+    intelmqctl list bots
+
+Get a list of all queues:
+    intelmqctl list queues
+
+Clear a queue:
+    intelmqctl clear queue-id
+
+Get logs of a bot:
+    intelmqctl log bot-id [number-of-lines [log-level]]
+    Reads the last lines from bot log, or from system log if no bot ID was
+    given. Log level should be one of DEBUG, INFO, ERROR or CRITICAL.
+    Default is INFO. Number of lines defaults to 10, -1 gives all. Result
+    can be longer due to our logging format!
+
+positional arguments:
+  [start|stop|restart|status|run|list|clear|log]
+  parameter
 
 optional arguments:
   -h, --help            show this help message and exit
   -v, --version         show program's version number and exit
-  --id BOT_ID, -i BOT_ID
-                        bot ID
   --type {text,json}, -t {text,json}
-                        choose if it should return regular text or other forms
-                        of output
-  --log [log-level]:[number-of-lines], -l [log-level]:[number-of-lines]
-                        Reads the last lines from bot log, or from system log
-                        if no bot ID was given. Log level should be one of
-                        DEBUG, INFO, ERROR or CRTICAL. Default is INFO. Number
-                        of lines defaults to 10, -1 gives all. Reading from
-                        system log is not implemented yet.
-  --bot [start|stop|restart|status], -b [start|stop|restart|status]
-  --botnet [start|stop|restart|status], -n [start|stop|restart|status]
-  --list [bots|queues], -s [bots|queues]
-  --clear queue, -c queue
-                        Clears the given queue in broker
+                        choose if it should return regular text or other
+                        machine-readable
+  --quiet, -q           Quiet mode, useful for reloads initiatedscripts like
+                        logrotate
 
 description: intelmqctl is the tool to control intelmq system. Outputs are
 logged to /opt/intelmq/var/log/intelmqctl
@@ -458,16 +445,7 @@ logged to /opt/intelmq/var/log/intelmqctl
 
 #### Botnet Concept
 
-The botnet represents all currently configured bots. To get an overview which bots are running, use `intelmqctl -n status`or use IntelMQ Manager.
-
-#### Start bots with non-default Python
-
-The python version/path can be specified by the `INTELMQ_PYTHON` environment variable. By default it's the default python binary. This can be used to start the bots with current Python (version 3), while the default Python version for the operating system is still Legacy Python (version 2).
-
-```
-$ export INTELMQ_PYTHON=/usr/bin/python3.4
-$ intelmqctl -n start
-```
+The botnet represents all currently configured bots. To get an overview which bots are running, use `intelmqctl status`or use IntelMQ Manager.
 
 #### Forcing reset pipeline and cache (be careful)
 
@@ -604,7 +582,7 @@ Consult the [FAQ.md](FAQ) if you encountered any problem.
 
 # Additional Information
 
-## Perfomance Tests
+## Performance Tests
 
 Somes tests have been made with a virtual machine with 
 the following specifications:

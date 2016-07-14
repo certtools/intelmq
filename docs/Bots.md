@@ -339,7 +339,14 @@ The configuration is called `modify.conf` and looks like this:
         }, {
             "classification.identifier": "urlzone"
         }]
-	}
+    },
+"Standard Protocols": {
+    "http": [{
+            "source.port": "^(80|443)$"
+        }, {
+            "protocol.application": "http"
+        }]
+    }
 }
 ```
 
@@ -351,9 +358,11 @@ The default rule/action list may not exist. If the value is an empty string, the
 
 We have an event with `feed.name = Spamhaus Cert` and `malware.name = confickerab`. The expert loops over all sections in the file and enters section `Spamhaus Cert`. First, the default condition is checked, it matches! Ok, going on. Otherwise the expert would have continued to the next section. Now, iteration through the rules, the first is rule `conficker`. We combine the conditions of this rule with the default conditions, and both rules match! So we can apply the action, here `classification.identifier` is set to `conficker`, the trivial name.
 
-Assume we have an event with `feed.name = Spamhaus Cert` and `malware.name = feodo`. The default condition matches, but no others. So the default action is applied. The value for `classification.identifier` is `{msg[malware.name]}`, this is [standard Python string format syntax](https://docs.python.org/3/library/string.html#formatspec). Thus you can use any value from the processed event, which is available as `msg`.
+Assume we have an event with `feed.name = Spamhaus Cert` and `malware.name = feodo`. The default condition matches, but no others. So the default action is applied. The value for `classification.identifier` is `{msg[malware.name]}`, this is [standard Python string format syntax](https://docs.python.org/3/library/string.html#format-string-syntax). Thus you can use any value from the processed event, which is available as `msg`.
 
+#### Types
 
+If the rule is a string, a regex-search is performed, also for numeric values (`str()` is called on them). If the rule is numeric for numeric values, a simple comparison is done. If other types are mixed, a warning will be thrown.
 
 
 <a name="outputs"></a>
@@ -396,16 +405,9 @@ Assume we have an event with `feed.name = Spamhaus Cert` and `malware.name = feo
 
 #### Installation Requirements
 
-Using Python 3.4 (recommended):
 ```
 pip3 install pymongo>=2.7.1
 ```
-
-Using Python 2.7:
-```
-pip2 install pymongo>=2.7.1
-```
-
 
 * * *
 
@@ -429,16 +431,9 @@ pip2 install pymongo>=2.7.1
 
 #### Installation Requirements
 
-Using Python 3.4 (recommended):
 ```
 pip3 install pymongo>=2.7.1
 ```
-
-Using Python 2.7:
-```
-pip2 install pymongo>=2.7.1
-```
-
 
 * * *
 
@@ -468,14 +463,8 @@ pip2 install pymongo>=2.7.1
 
 #### Installation Requirements
 
-Using Python 3.4 (recommended):
 ```
 pip3 install psycopg2>=2.5.5
-```
-
-Using Python 2.7:
-```
-pip2 install psycopg2>=2.5.5
 ```
 
 #### PostgreSQL Installation

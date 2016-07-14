@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 
 import unittest
 
 import intelmq.lib.test as test
-from intelmq.bots.parsers.generic.parser_csv import \
-    GenericCsvParserBot
+from intelmq.bots.parsers.generic.parser_csv import GenericCsvParserBot
 
 EXAMPLE_REPORT = {"feed.name": "Sample CSV Feed",
                   "feed.url": "http://www.samplecsvthreatfeed.com/list",

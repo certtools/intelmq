@@ -21,7 +21,6 @@
 ; ip, asn, country, lastseen, botname, domain, remote_ip, remote_port,
 local_port, protocol
 """
-from __future__ import unicode_literals
 import sys
 
 from intelmq.lib import utils
@@ -30,7 +29,6 @@ from intelmq.lib.exceptions import InvalidValue
 from intelmq.lib.harmonization import DateTime
 from intelmq.lib.message import Event
 
-
 __all__ = ['SpamhausCERTParserBot']
 
 
@@ -38,10 +36,6 @@ class SpamhausCERTParserBot(Bot):
 
     def process(self):
         report = self.receive_message()
-
-        if report is None or not report.contains("raw"):
-            self.acknowledge_message()
-            return
 
         raw_report = utils.base64_decode(report["raw"])
 
@@ -70,7 +64,7 @@ class SpamhausCERTParserBot(Bot):
                 event.add('extra', {'destination.local_port':
                                     int(row_splitted[8])})
             event.add('protocol.transport', row_splitted[9])
-            event.add('classification.type', u'botnet drone')
+            event.add('classification.type', 'botnet drone')
             event.add('raw', row)
 
             self.send_message(event)

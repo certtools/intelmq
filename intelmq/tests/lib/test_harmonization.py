@@ -2,7 +2,6 @@
 """
 Testing harmonization classes
 """
-from __future__ import unicode_literals
 
 import unittest
 
@@ -185,13 +184,11 @@ class TestHarmonization(unittest.TestCase):
         """ Test FQDN.is_valid with valid arguments. """
         self.assertTrue(harmonization.FQDN.is_valid('ex-am.ple.example'))
         self.assertTrue(harmonization.FQDN.is_valid('intelmq.org'))
-        self.assertTrue(harmonization.FQDN.is_valid('sub.sub2.example.net'))
+        self.assertTrue(harmonization.FQDN.is_valid('sub_sub2.example.net'))
 
     def test_fqdn_invalid(self):
         """ Test FQDN.is_valid with invalid arguments. """
         self.assertFalse(harmonization.FQDN.is_valid('ex-am.ple.example.',
-                                                     sanitize=False))
-        self.assertFalse(harmonization.FQDN.is_valid('sub_sub2.example.net.',
                                                      sanitize=False))
 
     def test_fqdn_sanitize(self):
@@ -200,6 +197,12 @@ class TestHarmonization(unittest.TestCase):
                                                     sanitize=True))
         self.assertTrue(harmonization.FQDN.is_valid('example.net',
                                                     sanitize=True))
+
+    def test_fqdn_to_ip(self):
+        """ Test FQDN.to_ip """
+        self.assertEqual(None, harmonization.FQDN.to_ip('localhost'))
+        self.assertEqual('93.184.216.34',
+                         harmonization.FQDN.to_ip('example.org'))
 
     def test_json_valid(self):
         """ Test JSON.is_valid with valid arguments. """

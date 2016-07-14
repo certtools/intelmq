@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals, print_function
 
 import os
 import unittest
@@ -45,7 +44,7 @@ EVENTS = [{'__type': 'Event',
            'source.asn': 3786,
            'source.geolocation.cc': 'KR',
            'source.geolocation.city': 'SEOUL',
-           'source.geolocation.region': u"SEOUL-T'UKPYOLSI",
+           'source.geolocation.region': "SEOUL-T'UKPYOLSI",
            'source.ip': '123.140.149.131',
            'source.port': 17,
            'time.observation': '2015-01-01T00:00:00+00:00',

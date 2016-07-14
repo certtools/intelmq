@@ -1,49 +1,59 @@
 **Table of Contents**
 
-1. [Code and Repository Rules](#code-and-repository-rules)
+1. [Intended Audience](#audience)
+2. [Goals](#goals)
+2. [Code and Repository Rules](#code-and-repository-rules)
 2. [System Overview](#system-overview)
 3. [Bot Developer Guide](#bot-developer-guide)
 
-<a name="code-and-repository-rules"></a>
-# Development Guide
+# Intended Audience
+This guide is for developers of IntelMQ. It explains the code architecture, coding guidelines as well as ways you can contribute code or documentation.
+If you have not done so, please read the [User Guide](User-Guide.md) first.
+Once you feel comfortable running IntelMQ with open source bots and you feel adventurous enough to contribute to the project, this guide is for you.
+It does not matter if you are an experienced Python programmer or just a beginner. There are a lot of samples to help you out.
 
-If you are digging into the code of IntelMQ or want to write new bots, this document should give you an overview of the system, the responsibilities and how to adapt it to your needs. Please read the [User Guide](User-Guide.md) first.
+Hoever, before we go into the details, it is important to observe and internalise some overall project goals.
 
+
+
+<a name="goals"></a>
 ## Goals
 
-It is important, that developers agree and stick to these meta-guidelines. We expect you to always try to:
+It is important, that all developers agree and stick to these meta-guidelines. 
+IntelMQ tries to:
 
-* reduce the complexity of system administration
-* reduce the complexity of writing new bots for new data feeds
-* make your code easily and pleasantly readable
-* reduce the probability of events lost in all process with persistence functionality (even system crash)
-* strictly adhere to the existing [Data Harmonization Ontology](Data-Harmonization.md) for key-values in events
-* always use JSON format for all messages internally
-* help and support the interconnection between IntelMQ and existing tools like AbuseHelper, CIF, etc. or new tools (in other words: we will not accept data-silos!)
-* provide an easy way to store data into Log Collectors like ElasticSearch, Splunk
-* provide an easy way to create your own black-lists
-* provide easy to understand interfaces with other systems via HTTP RESTFUL API
+* Be well tested. For developers this means, we expect you to write unit tests for bots. Every time.
+* Reduce the complexity of system administration
+* Reduce the complexity of writing new bots for new data feeds
+* Make your code easily and pleasantly readable
+* Reduce the probability of events lost in all process with persistence functionality (even system crash)
+* Strictly adhere to the existing [Data Harmonization Ontology](Data-Harmonization.md) for key-values in events
+* Always use JSON format for all messages internally
+* Help and support the interconnection between IntelMQ and existing tools like AbuseHelper, CIF, etc. or new tools (in other words: we will not accept data-silos!)
+* Provide an easy way to store data into Log Collectors like ElasticSearch, Splunk
+* Provide an easy way to create your own black-lists
+* Provide easy to understand interfaces with other systems via HTTP RESTFUL API
 
 The main take away point from the list above is: things **MUST** stay __intuitive__ and __easy__.
-How do you test if things are easy? Let them new programmers test-drive your features and if it is not understandable in 15 minutes, go back to the drawing board.
+How do you ultimately test if things are still easy? Let them new programmers test-drive your features and if it is not understandable in 15 minutes, go back to the drawing board.
 
 Similarly, if code does not get accepted upstream by the main developers, it is usually only because of the ease-of-use argument. Do not give up , go back to the drawing board, and re-submit again.
 
+
 ## Installation
+Developers might want to install intelmq with `pip3 -e`, which gives you a so called *editable* installation. No code is copied in the libraries directories, there's just a link to your code.
 
-Install intelmq with `pip -e`, which gives you a so called *editable* installation. No code is copied in the libraries directories, there's just a link to your code.
-
-    pip install -e .
+    pip3 install -e .
 
 If you do any changes on setup.py, data files (e.g. example configurations), you need to run the installation again of course.
 
 ## Testing
 
-All changes have to be tested and new contributions must be accompanied by according tests if possible. You can run the tests by changing to the directory with intelmq repository and running either `unittest` or `nosetests`:
+All changes have to be tested and new contributions must be accompanied by according unit tests. You can run the tests by changing to the directory with intelmq repository and running either `unittest` or `nosetests`:
 
     cd intelmq
-    python -m unittest {discover|filename}  # or
-    nosetests [filename]
+    python3 -m unittest {discover|filename}  # or
+    nosetests3 [filename]
 
 It may be necessary to switch the user to `intelmq` if the run-path (`/opt/intelmq/var/run/`) is not writeable by the current user. Some bots need local databases to succeed. If you don't mind about those and only want to test one explicit test file, give the filepath as argument.
 
@@ -57,6 +67,7 @@ We recommend reading it before committing code.
 There are some exceptions: sometimes it does not make sense to check for every PEP8 error (such as whitespace indentation when you want to make a dict=() assignment
 look pretty. Therefore, we do have some exceptions defined in the `setup.cfg` file.
 
+We support Python 3 only.
 
 ### Unicode
 
@@ -82,8 +93,6 @@ Any component of IntelMQ MUST respect the "Data Harmonization Ontology".
 ## Directory layout in the repository
 ```bash
 intelmq\
-  bin\
-    intelmqctl
   lib\
     bot.py
     cache.py
@@ -218,7 +227,7 @@ In the `intelmq/lib/` directory you can find some libraries:
 
 ### Code Architecture
 
-![Code Architecture](http://s28.postimg.org/5wmak1upp/intelmq_arch_schema.png)
+![Code Architecture](images/intelmq-arch-schema.png)
 
 
 <a name="bot-developer-guide"></a>
@@ -226,11 +235,12 @@ In the `intelmq/lib/` directory you can find some libraries:
 
 There's a dummy bot including tests at `intelmq/tests/bots/test_dummy_bot.py`.
 
-You can always start any parser directly from command line by either invoking the script or the python module. Don't forget to give an bot id as first argument. Also, running bots with other users than `intelmq` will raise permission errors.
+You can always start any bot directly from command line by either invoking the script or the python module. Don't forget to give an bot id as first argument. Also, running bots with other users than `intelmq` will raise permission errors.
 ```bash
 sudo -i intelmq
-python -m intelmq.bots.outputs.file.output file-output
-python intelmq/bots/outputs/file/output.py file-output
+python3 -m intelmq.bots.outputs.file.output file-output
+python3 intelmq/bots/outputs/file/output.py file-output
+intelmqctl run file-output  # if configured
 ```
 You will get all logging outputs directly on stderr as well as in the log file.
 
@@ -253,9 +263,6 @@ from intelmq.lib.bot import Bot
 class ExampleParserBot(Bot):
     def process(self):
         report = self.receive_message()
-        if report is None:  # Can be a None object in case the received message is empty
-            self.acknowledge_message()
-            return
 
         event = Event(report)  # copies feed.name, time.observation
         ... # implement the logic here
@@ -271,6 +278,19 @@ if __name__ == "__main__":
     bot.start()
 ```
 
+There are some names with special meaning. These can be used i.e. called:
+* `stop`: Shuts the bot down.
+* `receive_message`, `send_message`, `acknowledge_message`: see next section
+* `parameters`: the bots configuration as object
+* `start`: internal method to run the bot
+
+These can be defined:
+* `init`: called at startup, use it to set up the bot (initializing classes, loading files etc)
+* `process`: processes the messages
+* `shutdown`: To Gracefully stop the bot, e.g. terminate connections
+
+All other names can be used freely.
+
 ### Pipeline interactions
 
 A can call three methods related to the pipeline:
@@ -285,7 +305,7 @@ The bot class itself has error handling implemented. The bot itself is allowed t
 
 ### Initialization
 
-Maybe it is necessary so setup a Cache instance or load a file into memory. Use the `init` function for this purpose: 
+Maybe it is necessary so setup a Cache instance or load a file into memory. Use the `init` function for this purpose:
 
 ```python
 class ExampleParserBot(Bot):
@@ -304,6 +324,80 @@ class ExampleParserBot(Bot):
 
 * Check [Expert Bots](../intelmq/bots/experts/)
 * Check [Parser Bots](../intelmq/bots/parsers/)
+
+### Parsers
+
+Parsers can use a different, specialized Bot-class. It allows to work on individual elements of a report, splitting the functionality of the parser into multiple functions:
+
+ * `process`: getting and sending data, handling of failures etc.
+ * `parse`: Parses the report and splits it into single elements (e.g. lines). Can be overridden.
+ * `parse_line`: Parses elements, returns an Event. Can be overridden.
+ * `recover_line`: In case of failures and for the field `raw`, this function recovers a fully functional report containing only one element. Can be overridden.
+
+For common cases, like CSV, exisiting function can be used, reducing the amount of code to implement. In the best case, only `parse_line` needs to be coded, as only this part interprets the data.
+
+You can have a look at the implementation `intelmq/lib/bot.py` or at examples, e.g. the DummyBot in `intelmq/tests/bots/test_dummy_bot.py`. This is a stub for creating a new Parser, showing the parameters and possible code:
+
+```python
+class MyParserBot(ParserBot):
+
+    def parse(self, report):
+        """
+        A generator yielding the single elements of the data.
+
+        Comments, headers etc. can be processed here. Data needed by
+        `self.parse_line` can be saved in `self.tempdata` (list).
+
+        Default parser yields stripped lines.
+        Override for your use or use an exisiting parser, e.g.:
+            parse = ParserBot.parse_csv
+        """
+        for line in utils.base64_decode(report.get("raw")).splitlines():
+            yield line.strip()
+
+    def parse_line(self, line, report):
+        """
+        A generator which can yield one or more messages contained in line.
+
+        Report has the full message, thus you can access some metadata.
+        Override for your use.
+        """
+        raise NotImplementedError
+
+    def process(self):
+        self.tempdata = []  # temporary data for parse, parse_line and recover_line
+        self.__failed = []
+        report = self.receive_message()
+
+        for line in self.parse(report):
+            if not line:
+                continue
+            try:
+                # filter out None
+                events = list(filter(bool, self.parse_line(line, report)))
+            except Exception as exc:
+                self.logger.exception('Failed to parse line.')
+                self.__failed.append((exc, line))
+            else:
+                self.send_message(*events)
+
+        for exc, line in self.__failed:
+            self._dump_message(exc, self.recover_line(line))
+
+        self.acknowledge_message()
+
+    def recover_line(self, line):
+        """
+        Reverse of parse for single lines.
+
+        Recovers a fully functional report with only the problematic line.
+        """
+        return '\n'.join(self.tempdata + [line])
+
+```
+
+#### parse_line
+One line can lead to multiple events, thus `parse_line` can't just return one Event. Thus, this function is a generator, which allows to easily return multple values. Use `yield event` for valid Events and `return` in case of a void result (not parseable line, invalid data etc.).
 
 ### Tests
 
@@ -336,7 +430,7 @@ class TestExampleParserBot(test.BotTestCase, unittest.TestCase):  # adjust test 
         cls.bot_reference = ExampleParserBot  # adjust bot class name
         cls.default_input_message = EXAMPLE_EVENT  # adjust source of the example event (dict)
 
-	# This is an example how to test the log output
+    # This is an example how to test the log output
     def test_log_test_line(self):
         """ Test if bot does log example message. """
         self.run_bot()

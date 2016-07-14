@@ -12,7 +12,6 @@
 #
 # source IP <tab> Reports <tab> Targets <tab> First Seen <tab> Last Seen <tab> Updated <CR>
 """
-from __future__ import unicode_literals
 import sys
 
 from intelmq.lib import utils
@@ -25,12 +24,8 @@ class DShieldASNParserBot(Bot):
     def process(self):
         report = self.receive_message()
 
-        if report is None or not report.contains("raw"):
-            self.acknowledge_message()
-            return
-
         raw_report = utils.base64_decode(report.get("raw"))
-        for row in raw_report.split('\n'):
+        for row in raw_report.splitlines():
 
             if row.startswith('#'):
                 continue

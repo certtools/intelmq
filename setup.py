@@ -1,24 +1,18 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-import sys
 
 from setuptools import find_packages, setup
 
 REQUIRES = [
-    'ipaddress>=1.0.14',
-    'psutil>=2.1.1',
-    'python-dateutil>=2.4.2',
+    'dnspython3>=1.11.1',
+    'psutil>=1.2.1',
+    'python-dateutil>=2.0',
     'python-termstyle>=0.1.10',
-    'pytz>=2015.4',
+    'pytz>=2014.1',
     'redis>=2.10.3',
     'requests>=2.7.0',
-    'six>=1.9.0',
     'tabulate>=0.7.5',
 ]
-if sys.version_info[0] == 2:
-    REQUIRES += ['dnspython>=1.12.0']
-elif sys.version_info[0] == 3:
-    REQUIRES += ['dnspython3>=1.12.0']
 
 DATA = [
     ('/opt/intelmq/etc/',
@@ -55,13 +49,16 @@ except(IOError, ImportError):
     DESCRIPTION = open('README.md').read()
 
 
+exec(open('intelmq/version.py').read())  # defines __version__
+
+
 setup(
     name='intelmq',
-    version='1.0.0.dev4',
+    version=__version__,
     maintainer='Sebastian Wagner',
     maintainer_email='wagner@cert.at',
     install_requires=REQUIRES,
-    test_requires=REQUIRES+[
+    tests_requires=REQUIRES+[
         'mock>=1.1.1',
         'nose',
         ],
@@ -87,9 +84,8 @@ setup(
         'Intended Audience :: Telecommunications Industry',
         'License :: OSI Approved :: GNU Affero General Public License v3',
         'Operating System :: Unix',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Topic :: Security',
@@ -104,4 +100,9 @@ setup(
             'intelmq_psql_initdb = intelmq.bin.intelmq_psql_initdb:main',
         ],
     },
+    scripts=[
+        'intelmq/bots/experts/tor_nodes/update-tor-nodes',
+        'intelmq/bots/experts/maxmind_geoip/update-geoip-data',
+        'intelmq/bots/experts/asn_lookup/update-asn-data',
+    ],
 )

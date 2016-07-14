@@ -4,17 +4,14 @@ Messages are the information packages in pipelines.
 
 Use MessageFactory to get a Message object (types Report and Event).
 """
-from __future__ import unicode_literals
 import hashlib
 import json
 import re
-import six
 
 import intelmq.lib.exceptions as exceptions
 import intelmq.lib.harmonization
 from intelmq import HARMONIZATION_CONF_FILE
 from intelmq.lib import utils
-
 
 __all__ = ['Event', 'Message', 'MessageFactory', 'Report']
 
@@ -184,12 +181,12 @@ class Message(dict):
         if not class_reference().is_valid(value):
             return (False, 'is_valid returned False.')
         if 'length' in config:
-            length = len(six.text_type(value))
+            length = len(str(value))
             if not length <= config['length']:
                 return (False, 'too long: {} > {}.'.format(length,
                                                            config['length']))
         if 'regex' in config:
-            if not re.search(config['regex'], six.text_type(value)):
+            if not re.search(config['regex'], str(value)):
                 return (False, 'regex did not match.')
         return (True, )
 
@@ -201,32 +198,6 @@ class Message(dict):
     def __get_type_config(self, key):
         class_name = self.harmonization_config[key]
         return class_name
-
-
-class Event(Message):
-
-    def __init__(self, message=(), auto=False):
-        """
-        Parameters
-        ----------
-        message : dict
-            Give a report and feed.name, feed.url and
-            time.observation will be used to construct the Event if given.
-            If it's another type, the value is given to dict's init
-        """
-        if isinstance(message, Report):
-            template = {}
-            if 'feed.name' in message:
-                template['feed.name'] = message['feed.name']
-            if 'feed.url' in message:
-                template['feed.url'] = message['feed.url']
-            if 'feed.accuracy' in message:
-                template['feed.accuracy'] = message['feed.accuracy']
-            if 'time.observation' in message:
-                template['time.observation'] = message['time.observation']
-        else:
-            template = message
-        super(Event, self).__init__(template)
 
     def __hash__(self):
         event_hash = hashlib.sha256()
@@ -263,6 +234,36 @@ class Event(Message):
     def to_json(self):
         json_dict = self.to_dict()
         return utils.decode(json.dumps(json_dict, ensure_ascii=False))
+
+
+class Event(Message):
+
+    def __init__(self, message=(), auto=False):
+        """
+        Parameters
+        ----------
+        message : dict
+            Give a report and feed.name, feed.url and
+            time.observation will be used to construct the Event if given.
+            If it's another type, the value is given to dict's init
+        """
+        if isinstance(message, Report):
+            template = {}
+            if 'feed.accuracy' in message:
+                template['feed.accuracy'] = message['feed.accuracy']
+            if 'feed.code' in message:
+                template['feed.code'] = message['feed.code']
+            if 'feed.name' in message:
+                template['feed.name'] = message['feed.name']
+            if 'feed.url' in message:
+                template['feed.url'] = message['feed.url']
+            if 'rtir_id' in message:
+                template['rtir_id'] = message['rtir_id']
+            if 'time.observation' in message:
+                template['time.observation'] = message['time.observation']
+        else:
+            template = message
+        super(Event, self).__init__(template)
 
 
 class Report(Message):

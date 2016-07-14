@@ -55,7 +55,7 @@
             }
         },
         "AlienVault": {
-            "description": "AlienVault Collector is the bot responsible to get the report from source of information.",
+            "description": "AlienVault Collector retrieves reports via the SDK https://github.com/AlienVault-Labs/OTX-Python-SDK/ from https://otx.alienvault.com/ http_ssl_proxy does apply.",
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "AlienVault",
@@ -88,6 +88,14 @@
                 "feed": "Autoshun",
                 "http_url": "https://www.autoshun.org/files/shunlist.html",
                 "rate_limit": 3600
+            }
+        },
+        "BitSight Ciberfeed Stream": {
+            "description": "Bitsight Collector is the bot reponsible to get Bitsight Ciberfeed Alert Stream",
+            "module": "intelmq.bots.collectors.bitsight.collector",
+            "parameters": {
+                "feed": "BitSight",
+                "http_url": "http://alerts.bitsighttech.com:8080/stream?key=<api>"
             }
         },
         "BlockList.DE Apache": {
@@ -299,12 +307,58 @@
                 "rate_limit": 10800
             }
         },
+        "Generic Mail Attachment Fetcher": {
+            "description": "Monitor IMAP mailboxes and retrieve mail attachments",
+            "module": "intelmq.bots.collectors.mail.collector_mail_attach",
+            "parameters": {
+                "attach_regex": "csv.zip",
+                "attach_unzip": true,
+                "feed": "",
+                "folder": "INBOX",
+                "mail_host": "<host>",
+                "mail_password": "<password>",
+                "mail_ssl": true,
+                "mail_user": "<user>",
+                "rate_limit": "60",
+                "subject_regex": "<subject>"
+            }
+        },
+        "Generic Mail URL Fetcher": {
+            "description": "Monitor IMAP mailboxes and fetch files from URLs contained in mail bodies",
+            "module": "intelmq.bots.collectors.mail.collector_mail_url",
+            "parameters": {
+                "feed": "",
+                "folder": "INBOX",
+                "http_password": "<password>",
+                "http_user": "<user>",
+                "mail_host": "<host>",
+                "mail_password": "<password>",
+                "mail_ssl": true,
+                "mail_user": "<user>",
+                "rate_limit": "60",
+                "subject_regex": "<subject>",
+                "url_regex": "http://"
+            }
+        },
         "HpHosts": {
             "description": "HPHost Collector is the bot responsible to get the report from source of information.",
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "HpHosts",
                 "http_url": "http://hosts-file.net/download/hosts.txt",
+                "rate_limit": 3600
+            }
+        },
+        "MISP Generic": {
+            "description": "Collect events from a MISP server.",
+            "module": "intelmq.bots.collectors.misp.collector",
+            "parameters": {
+                "feed": "misp_generic",
+                "misp_key": "<insert MISP Authkey>",
+                "misp_tag_processed": "<insert MISP tag for processed events>",
+                "misp_tag_to_process": "<insert MISP tag for events to be processed>",
+                "misp_url": "<insert url of MISP server (with trailing '/')>",
+                "misp_verify": true,
                 "rate_limit": 3600
             }
         },
@@ -426,26 +480,26 @@
             "parameters": {
                 "attachment_regex": "\\.csv\\.zip$",
                 "feed": "Request Tracker",
-                "gnupg_decrypt": false,
-                "gnupg_homedir": "/opt/intelmq/",
-                "gnupg_passphrase": null,
-                "gnupg_trust": true,
                 "password": "password",
                 "rate_limit": 3600,
                 "search_owner": "nobody",
                 "search_queue": "Incident Reports",
                 "search_status": "new",
                 "search_subject_like": "Report",
+                "set_status": "open",
                 "take_ticket": true,
                 "unzip_attachment": true,
                 "uri": "http://localhost/rt/REST/1.0",
-                "user": "root"
+                "url_regex": "https://dl.shadowserver.org/[a-zA-Z0-9?_-]*",
+                "user": "intelmq"
             }
         },
         "ShadowServer Chargen": {
             "description": "ShadowServer Chargen Collector is the bot responsible to get the report from source of information. https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-Chargen",
-            "module": "intelmq.bots.collectors.mail.mail-url",
+            "module": "intelmq.bots.collectors.mail.collector_mail_url",
             "parameters": {
+                "accuracy": "",
+                "feed": "",
                 "folder": "Inbox.shadowserver",
                 "mail_host": "<host>",
                 "mail_password": "<password>",
@@ -458,7 +512,7 @@
         },
         "ShadowServer Drone": {
             "description": "ShadowServer Drone Collector is the bot responsible to get the report from source of information. https://www.shadowserver.org/wiki/pmwiki.php/Services/Botnet-Drone-Hadoop",
-            "module": "intelmq.bots.collectors.mail.mail-attach",
+            "module": "intelmq.bots.collectors.mail.collector_mail_attach",
             "parameters": {
                 "attach_regex": "csv.zip",
                 "attach_unzip": true,
@@ -473,7 +527,7 @@
         },
         "ShadowServer Microsoft Sinkhole": {
             "description": "ShadowServer Microsoft Sinkhole Collector is the bot responsible to get the report from source of information. https://www.shadowserver.org/wiki/pmwiki.php/Services/Microsoft-Sinkhole",
-            "module": "intelmq.bots.collectors.mail.mail-attach",
+            "module": "intelmq.bots.collectors.mail.collector_mail_attach",
             "parameters": {
                 "attach_regex": "csv.zip",
                 "attach_unzip": true,
@@ -488,10 +542,12 @@
         },
         "ShadowServer QOTD": {
             "description": "ShadowServer QOTD Collector is the bot responsible to get the report from source of information. https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-QOTD",
-            "module": "intelmq.bots.collectors.mail.mail-url",
+            "module": "intelmq.bots.collectors.mail.collector_mail_url",
             "parameters": {
+                "accuracy": "",
                 "attach_regex": "csv.zip",
                 "attach_unzip": true,
+                "feed": "",
                 "folder": "Inbox.shadowserver",
                 "mail_host": "<host>",
                 "mail_password": "<password>",
@@ -503,7 +559,7 @@
         },
         "ShadowServer SNMP": {
             "description": "ShadowServer Microsoft Sinkhole Collector is the bot responsible to get the report from source of information. https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-SNMP",
-            "module": "intelmq.bots.collectors.mail.mail-attach",
+            "module": "intelmq.bots.collectors.mail.collector_mail_attach",
             "parameters": {
                 "attach_regex": "csv.zip",
                 "attach_unzip": true,
@@ -628,7 +684,7 @@
             }
         },
         "Deduplicator": {
-            "description": "Deduplicator is the bot responsible to detect and remove deduplicated messages.",
+            "description": "Deduplicator is the bot responsible for detection and removal of duplicate messages. Messages get cached for <redis_cache_ttl> seconds. If found in the cache, it is assumed to be a duplicate.",
             "module": "intelmq.bots.experts.deduplicator.expert",
             "parameters": {
                 "ignore_keys": "raw,time.observation",
@@ -647,8 +703,13 @@
                 "filter_value": "<PT>"
             }
         },
+        "Gethostbyname": {
+            "description": "fqdn2ip is the bot responsible to parsing the ip from the fqdn.",
+            "module": "intelmq.bots.experts.gethostbyname.expert",
+            "parameters": {}
+        },
         "MaxMind GeoIP": {
-            "description": "MaxMind GeoIP is the bot responsible to add geolocation information to the events (Country, City, Longitude, Latitude, etc..)",
+            "description": "MaxMind GeoIP is the bot responsible for adding geolocation information to events (Country, City, Longitude, Latitude, etc..)",
             "module": "intelmq.bots.experts.maxmind_geoip.expert",
             "parameters": {
                 "database": "/opt/intelmq/var/lib/bots/maxmind_geoip/GeoLite2-City.mmdb"
@@ -775,6 +836,18 @@
                 "host": "<host>"
             }
         },
+        "Redis": {
+            "description": "Redis is the bot responsible to send events to a Redis server.",
+            "module": "intelmq.bots.outputs.redis.output",
+            "parameters": {
+                "redis_db": 2,
+                "redis_password": "<password>",
+                "redis_queue": "external-redis-queue",
+                "redis_server_ip": "127.0.0.1",
+                "redis_server_port": 6379,
+                "redis_timeout": 50000
+            }
+        },
         "TCP": {
             "description": "TCP is the bot responsible to send events to a tcp port (Splunk, ElasticSearch, etc..).",
             "module": "intelmq.bots.outputs.tcp.output",
@@ -844,6 +917,11 @@
         "Autoshun": {
             "description": "Autoshun Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.autoshun.parser",
+            "parameters": {}
+        },
+        "BitSight Ciberfeed Stream": {
+            "description": "Bitsight Ciberfeed parser is the bot reponsible to parse and sanitize the information.",
+            "module": "intelmq.bots.parsers.bitsight.parser",
             "parameters": {}
         },
         "BlockList.DE Apache": {
@@ -971,6 +1049,7 @@
                 ],
                 "default_url_protocol": "http://",
                 "delimiter": ",",
+                "skip_header": true,
                 "type": "c&c"
             }
         },
@@ -980,6 +1059,11 @@
             "parameters": {
                 "error_log_message": false
             }
+        },
+        "MISP": {
+            "description": "MISP event parser.",
+            "module": "intelmq.bots.parsers.misp.parser",
+            "parameters": {}
         },
         "Malc0de Domain Blacklist": {
             "description": "Malc0de Domain Blacklist Parser is the bot responsible to parse the report and sanitize the information.",

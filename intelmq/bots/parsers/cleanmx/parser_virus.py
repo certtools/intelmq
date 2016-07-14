@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+import csv
 import io
 import sys
 
@@ -41,14 +41,9 @@ class CleanMXVirusParserBot(Bot):
 
     def process(self):
         report = self.receive_message()
-
-        if report is None or not report.contains("raw"):
-            self.acknowledge_message()
-            return
-
         raw_report = utils.base64_decode(report.get("raw"))
 
-        for row in utils.csv_reader(raw_report, dictreader=True):
+        for row in csv.DictReader(io.StringIO(raw_report)):
             event = Event(report)
 
             for key, value in row.items():
@@ -83,7 +78,7 @@ class CleanMXVirusParserBot(Bot):
 
                 event.add(key, value)
 
-            event.add('classification.type', u'malware')
+            event.add('classification.type', 'malware')
             event.add("raw", ",".join(row))
 
             self.send_message(event)

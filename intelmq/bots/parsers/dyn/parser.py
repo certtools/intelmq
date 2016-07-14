@@ -3,9 +3,9 @@
 format:
 ponmocup-malware-IP ponmocup-malware-domain ponmocup-malware-URI-path ponmocup-htaccess-infected-domain
 """
-from __future__ import unicode_literals
 
 import sys
+
 import dateutil.parser
 
 from intelmq.lib import utils
@@ -21,11 +21,6 @@ class DynParserBot(Bot):
 
     def process(self):
         report = self.receive_message()
-
-        if report is None or not report.contains("raw"):
-            self.acknowledge_message()
-            return
-
         raw_report = utils.base64_decode(report.get("raw"))
         source_time = None
 

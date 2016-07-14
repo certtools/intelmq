@@ -4,7 +4,11 @@ CHANGELOG
 v1.0 (in development, master branch)
 ----
 
+### General changes
+- Dropped support for Python 2
+
 ### Bot changes
+- ENH: added bots.collectors.rt.collector
 - ENH: added bots.parsers.spamhaus.parser_cert
 - ENH: added bots.parsers.fraunhofer.parser_dga
 - ENH: added bots.experts.certat_contact.expert

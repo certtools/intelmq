@@ -1,0 +1,25 @@
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: intelmq-manager
+Upstream-Contact:  Aaron Kaplan <kaplan@cert.at>
+Source: https://github.com/certtools/intelmq.git
+
+Files: *
+Copyright: 2014-2016 see /usr/share/doc/intelmq/COPYRIGHT
+License: AGPL-3
+
+Files: debian/*
+Copyright: 2016 Intevation GmbH
+License: AGPL-3
+
+License: AGPL-3
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the Affero General Public License as published by
+ the Free Software Foundation, version 3.
+ .
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ .
+ A copy of the Affero General Public License is installed by this
+ package as: /usr/share/doc/intelmq/LICENSE.gz

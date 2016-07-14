@@ -1,18 +1,23 @@
 # -*- coding: utf-8 -*-
 """
 """
-from __future__ import unicode_literals
 import sys
-
-import pyasn
-import six
 from intelmq.lib.bot import Bot
 from intelmq.lib.harmonization import IPAddress
+
+try:
+    import pyasn
+except ImportError:
+    pyasn = None
 
 
 class ASNLookupExpertBot(Bot):
 
     def init(self):
+        if pyasn is None:
+            self.logger.error('Could not import pyasn. Please install it.')
+            self.stop()
+
         try:
             self.database = pyasn.pyasn(self.parameters.database)
         except IOError:
@@ -24,10 +29,6 @@ class ASNLookupExpertBot(Bot):
 
     def process(self):
         event = self.receive_message()
-
-        if event is None:
-            self.acknowledge_message()
-            return
 
         for key in ["source.", "destination."]:
 
@@ -48,9 +49,9 @@ class ASNLookupExpertBot(Bot):
 
             if info:
                 if info[0]:
-                    event.add(asn_key, six.text_type(info[0]), force=True)
+                    event.add(asn_key, str(info[0]), force=True)
                 if info[1]:
-                    event.add(bgp_key, six.text_type(info[1]), force=True)
+                    event.add(bgp_key, str(info[1]), force=True)
 
         self.send_message(event)
         self.acknowledge_message()

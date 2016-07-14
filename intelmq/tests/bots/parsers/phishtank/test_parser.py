@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 
 import unittest
 
@@ -15,7 +14,6 @@ class TestPhishTankParserBot(test.BotTestCase, unittest.TestCase):
     @classmethod
     def set_bot(cls):
         cls.bot_reference = PhishTankParserBot
-        cls.default_input_message = {'__type': 'Report'}
 
 if __name__ == '__main__':
     unittest.main()

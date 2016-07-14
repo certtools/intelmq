@@ -8,17 +8,24 @@ In case of errors, the bot tries to reconnect if the error is of operational
 and thus temporary. We don't want to catch too much, like programming errors
 (missing fields etc).
 """
-from __future__ import unicode_literals
 import sys
 
-import psycopg2
 from intelmq.lib.bot import Bot
+
+try:
+    import psycopg2
+except ImportError:
+    psycopg2 = None
 
 
 class PostgreSQLBot(Bot):
 
     def init(self):
-        self.logger.debug("Connecting to PostgreSQL")
+        self.logger.debug("Connecting to PostgreSQL.")
+        if psycopg2 is None:
+            self.logger.error('Could not import psycopg2. Please install it.')
+            self.stop()
+
         try:
             if hasattr(self.parameters, 'connect_timeout'):
                 connect_timeout = self.parameters.connect_timeout
@@ -44,10 +51,6 @@ class PostgreSQLBot(Bot):
 
     def process(self):
         event = self.receive_message()
-
-        if not event:
-            self.acknowledge_message()
-            return
 
         keys = '", "'.join(event.keys())
         values = list(event.values())
