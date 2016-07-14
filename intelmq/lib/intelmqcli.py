@@ -107,7 +107,7 @@ CSV_FIELDS=["time.source", "source.ip", "protocol.transport", "source.port", "pr
             "source.geolocation.city",
             "classification.taxonomy", "classification.type", "classification.identifier",
             "destination.ip", "destination.port", "destination.fqdn", "destination.url",
-            "feed", "event_description.text", "event_description.url", "malware.name", "comment", "additional_field_freetext", "version: 1.0"
+            "feed", "event_description.text", "event_description.url", "malware.name", "extra", "comment", "additional_field_freetext", "version: 1.1"
             ]
 
 QUERY_BY_ASCONTACT = """
