@@ -569,7 +569,6 @@ Subject: {subj}
         query = lib.QUERY_COUNT_ASN.format(evtab=self.config['database']['events_table'],
                                            cc=self.config['filter']['cc'],
                                            conttab=self.config['database']['contacts_table'])
-        quietprint("query = '%r'" %query)
         self.cur.execute(query, (self.config['filter']['fqdn'], feed, taxonomy))
         return self.cur.fetchall()
 

@@ -7,7 +7,7 @@ export LC_CTYPE=en_US.UTF-8
 IFS=""
 
 while read -r t ; do 
-	./intelmqcli --taxonomy="$t" --batch 
+	./intelmqcli --taxonomy="$t" --batch  --quiet
 done
 
 
