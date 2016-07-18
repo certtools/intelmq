@@ -1,4 +1,4 @@
-"timestamp","ip","port","asn","geo","region","city","hostname","type","infection","url","agent","cc","cc_port","cc_asn","cc_geo","cc_dns","count","proxy","application","p0f_genre","p0f_detail","naics","sic"
+"timestamp","ip","port","asn","geo","region","city","hostname","type","infection","url","agent","cc_ip","cc_port","cc_asn","cc_geo","cc_dns","count","proxy","application","p0f_genre","p0f_detail","naics","sic"
 "2011-04-23 00:00:05","210.23.139.130",3218,7543,"AU","VICTORIA","MELBOURNE",,"tcp","sinkhole",,,"74.208.164.166",80,8560,"US",,1,,,"Windows","2000 SP4, XP SP1+",0,0
 "2011-04-23 00:00:08","115.166.54.44",,9556,"AU","SOUTH AUSTRALIA","ADELAIDE","115-166-54-44.ip.adam.com.au",,"spyeye",,,"94.75.228.147",,16265,"NL","015.maxided.com",1,,,"WINXP",,0,0
 "2011-04-23 00:00:10","116.212.205.74",48986,9822,"AU","WESTERN AUSTRALIA","PERTH",,"tcp","sinkhole",,,"87.106.24.200",80,8560,"DE",,1,,,"Windows","XP SP1+, 2000 SP3 (2)",0,0
