@@ -249,12 +249,16 @@ class Event(Message):
         """
         if isinstance(message, Report):
             template = {}
+            if 'feed.accuracy' in message:
+                template['feed.accuracy'] = message['feed.accuracy']
+            if 'feed.code' in message:
+                template['feed.code'] = message['feed.code']
             if 'feed.name' in message:
                 template['feed.name'] = message['feed.name']
             if 'feed.url' in message:
                 template['feed.url'] = message['feed.url']
-            if 'feed.accuracy' in message:
-                template['feed.accuracy'] = message['feed.accuracy']
+            if 'rtir_id' in message:
+                template['rtir_id'] = message['rtir_id']
             if 'time.observation' in message:
                 template['time.observation'] = message['time.observation']
         else:
