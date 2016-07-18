@@ -349,6 +349,18 @@
                 "rate_limit": 3600
             }
         },
+        "MISP Generic": {
+            "description": "Collect events from a MISP server.",
+            "module": "intelmq.bots.collectors.misp.collector",
+            "parameters": {
+                "feed": "misp_generic",
+                "misp_key": "<insert MISP Authkey>",
+                "misp_tag_processed": "<insert MISP tag for processed events>",
+                "misp_tag_to_process": "<insert MISP tag for events to be processed>",
+                "misp_url": "<insert url of MISP server (with trailing '/')>",
+                "rate_limit": 3600
+            }
+        },
         "Malc0de Domain Blacklist": {
             "description": "Malc0de Domain Blacklist Collector is the bot responsible to get the report from source of information.",
             "module": "intelmq.bots.collectors.http.collector_http",
@@ -692,6 +704,11 @@
                 "filter_value": "<PT>"
             }
         },
+        "Gethostbyname": {
+            "description": "fqdn2ip is the bot responsible to parsing the ip from the fqdn.",
+            "module": "intelmq.bots.experts.gethostbyname.expert",
+            "parameters": {}
+        },
         "MaxMind GeoIP": {
             "description": "MaxMind GeoIP is the bot responsible for adding geolocation information to events (Country, City, Longitude, Latitude, etc..)",
             "module": "intelmq.bots.experts.maxmind_geoip.expert",
@@ -1019,6 +1036,7 @@
                 ],
                 "default_url_protocol": "http://",
                 "delimiter": ",",
+                "skip_header": true,
                 "type": "c&c"
             }
         },
@@ -1028,6 +1046,11 @@
             "parameters": {
                 "error_log_message": false
             }
+        },
+        "MISP": {
+            "description": "MISP event parser.",
+            "module": "intelmq.bots.parsers.misp.parser",
+            "parameters": {}
         },
         "Malc0de Domain Blacklist": {
             "description": "Malc0de Domain Blacklist Parser is the bot responsible to parse the report and sanitize the information.",
@@ -1090,12 +1113,11 @@
             "parameters": {}
         },
         "ShadowServer": {
-            "description": "ShadowServer Parser is a bot capable of parsing shadowserver feeds, depending on configuration files",
+            "description": "ShadowServer Parser is a bot capable of parsing all shadowserver feeds, depending on configuration files. Parameter 'feedname' is used as identifier to chose the correct mapping.",
             "module": "intelmq.bots.parsers.shadowserver.parser",
             "parameters": {
                 "feedname": "",
-                "feedcode": "",
-                "override": "1"
+                "override": true
             }
         },
         "Spamhaus CERT": {
