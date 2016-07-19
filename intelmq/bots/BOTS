@@ -1111,30 +1111,13 @@
             "module": "intelmq.bots.parsers.phishtank.parser",
             "parameters": {}
         },
-        "ShadowServer Chargen": {
-            "description": "ShadowServer Chargen Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.shadowserver.chargen_parser",
-            "parameters": {}
-        },
-        "ShadowServer Drone": {
-            "description": "ShadowServer Drone Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.shadowserver.drone_parser",
-            "parameters": {}
-        },
-        "ShadowServer Microsoft Sinkhole": {
-            "description": "ShadowServer Microsoft Sinkhole Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.shadowserver.microsoft_sinkhole_parser",
-            "parameters": {}
-        },
-        "ShadowServer QOTD": {
-            "description": "ShadowServer QOTD Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.shadowserver.qotd_parser",
-            "parameters": {}
-        },
-        "ShadowServer SNMP": {
-            "description": "ShadowServer SNMP Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.shadowserver.snmp_parser",
-            "parameters": {}
+        "ShadowServer": {
+            "description": "ShadowServer Parser is a bot capable of parsing all shadowserver feeds, depending on configuration files. Parameter 'feedname' is used as identifier to chose the correct mapping.",
+            "module": "intelmq.bots.parsers.shadowserver.parser",
+            "parameters": {
+                "feedname": "",
+                "override": true
+            }
         },
         "Spamhaus CERT": {
             "description": "Spamhaus CERT Parser is the bot responsible to parse the report and sanitize the information.",
