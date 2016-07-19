@@ -21,6 +21,14 @@ of at least three keys:
 The first value is the IntelMQ key,
 the second value is the row in the shadowserver csv.
 
+
+Reference material:
+    * when setting the classification.* fields, please use the taxonomy from
+    [eCSIRT II](https://www.enisa.europa.eu/topics/csirt-cert-services/community-projects/existing-taxonomies)
+
+    * please respect the Data harmonisation ontology: https://github.com/certtools/intelmq/blob/master/docs/Data-Harmonization.md
+
+
 TODOs:
     There is a bunch of inline todos.
     Most of them show lines of code were the mapping  has to be validated
@@ -150,7 +158,10 @@ open_m_dns = {
         # http_port
     ],
     'constant_fields': {
-        'classification.type': 'exploit',
+        'classification.type': 'vulnerable service',
+        'classification.taxonomy': 'Other',
+        'protocol.application': 'mdns',
+        'classification.identifier': 'mdns',
     },
 }
 
@@ -178,6 +189,7 @@ open_chargen = {
     'constant_fields': {
         'classification.identifier': 'chargen',
         'classification.type': 'vulnerable service',
+        'classification.taxonomy': 'Other',
         'protocol.application': 'chargen',
     },
 }
@@ -207,7 +219,10 @@ open_tftp = {
         # errormessage
     ],
     'constant_fields': {
+        'classification.identifier': 'opentftp',
         'classification.type': 'vulnerable service',
+        'classification.taxonomy': 'Other',
+        'protocol.application': 'tftp',
     },
 }
 
@@ -246,6 +261,7 @@ sinkhole_http_drone = {
         # tcp.
         'protocol.transport': 'tcp',
         'classification.type': 'botnet drone',
+        'classification.taxonomy': 'Malicious Code',
     },
 }
 
@@ -283,6 +299,7 @@ microsoft_sinkhole = {
     'constant_fields': {
         'classification.type': 'botnet drone',
         'protocol.application': 'http',
+        'classification.taxonomy': 'Malicious Code',
     },
 }
 
@@ -320,7 +337,10 @@ open_redis = {
         # sector
     ],
     'constant_fields': {
+        'classification.identifier': 'openredis',
         'classification.type': 'vulnerable service',
+        'classification.taxonomy': 'Other',
+        'protocol.application': 'redis',
     },
 }
 
@@ -348,7 +368,10 @@ open_portmapper = {
         # sector
     ],
     'constant_fields': {
-        'classification.type': 'exploit',
+        'classification.identifier': 'openportmapper',
+        'classification.type': 'vulnerable service',
+        'classification.taxonomy': 'Other',
+        'protocol.application': 'portmapper',
     },
 }
 
@@ -390,7 +413,10 @@ open_ipmi = {
         # productname
     ],
     'constant_fields': {
+        'classification.identifier': 'openipmi',
         'classification.type': 'vulnerable service',
+        'classification.taxonomy': 'Other',
+        'protocol.application': 'ipmi',
     },
 }
 
@@ -418,6 +444,7 @@ open_qotd = {
     ],
     'constant_fields': {
         'classification.type': 'vulnerable service',
+        'classification.taxonomy': 'Other',
         'classification.identifier': 'qotd',
         'protocol.application': 'qotd',
     },
@@ -455,7 +482,10 @@ open_ssdp = {
         # sector
     ],
     'constant_fields': {
-        'classification.type': 'exploit',
+        'classification.type': 'vulnerable service',
+        'classification.taxonomy': 'Other',
+        'classification.identifier': 'openssdp',
+        'protocol.application': 'ssdp',
     },
 }
 
@@ -483,6 +513,7 @@ open_snmp = {
     ],
     'constant_fields': {
         'classification.type': 'vulnerable service',
+        'classification.taxonomy': 'Other',
         'protocol.application': 'snmp',
         'classification.identifier': 'snmp',
     },
@@ -516,6 +547,9 @@ open_mssql = {
     ],
     'constant_fields': {
         'classification.type': 'vulnerable service',
+        'classification.taxonomy': 'Other',
+        'classification.identifier': 'openmssql',
+        'protocol.application': 'mssql',
     },
 }
 
@@ -552,6 +586,9 @@ open_mongo_db = {
     ],
     'constant_fields': {
         'classification.type': 'vulnerable service',
+        'classification.taxonomy': 'Other',
+        'classification.identifier': 'openmongodb',
+        'protocol.application': 'mongodb',
     },
 }
 
@@ -578,6 +615,9 @@ open_net_bios = {
     ],
     'constant_fields': {
         'classification.type': 'vulnerable service',
+        'classification.taxonomy': 'Other',
+        'classification.identifier': 'opennetbios',
+        'protocol.application': 'netbios',
     },
 }
 
@@ -613,8 +653,9 @@ open_elasticsearch = {
     ],
     'constant_fields': {
         'classification.type': 'vulnerable service',
-        'classification.taxonomy': 'vulnerable',
+        'classification.taxonomy': 'Other',
         'classification.identifier': 'elasticsearch',
+        'protocol.application': 'elasticsearch',
     },
 }
 
@@ -648,6 +689,9 @@ dns_open_resolvers = {
     ],
     'constant_fields': {
         'classification.type': 'vulnerable service',
+        'classification.taxonomy': 'Other',
+        'classification.identifier': 'opendns',
+        'protocol.application': 'dns',
     },
 }
 
@@ -668,6 +712,9 @@ ntp_monitor = {
     ],
     'constant_fields': {
         'classification.type': 'vulnerable service',
+        'classification.taxonomy': 'Other',
+        'classification.identifier': 'openntp',
+        'protocol.application': 'ntp',
     },
 }
 
@@ -688,6 +735,7 @@ ssl_scan = {
     ],
     'constant_fields': {
         'classification.type': 'vulnerable service',
+        # XXX FIXME needs work!!
     },
 }
 
@@ -708,6 +756,9 @@ open_memcached = {
     ],
     'constant_fields': {
         'classification.type': 'vulnerable service',
+        'classification.taxonomy': 'Other',
+        'classification.identifier': 'openmemcached',
+        'protocol.application': 'memcached',
     },
 }
 
@@ -743,5 +794,6 @@ botnet_drone_hadoop = {
     ],
     'constant_fields': {
         'classification.type': 'botnet drone',
+        'classification.taxonomy': 'Malicious Code',
     },
 }
