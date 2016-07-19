@@ -215,6 +215,10 @@ def main():
                     del content[key]
                     save_file(fname, content)
                     print(green('Recovered dump {}.'.format(count)))
+            if not content:
+                os.remove(fname)
+                print('Deleted empty file {}'.format(fname))
+                break
         elif answer[0] == 'd':
             # delete dumpfile
             os.remove(fname)
