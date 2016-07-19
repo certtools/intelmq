@@ -452,10 +452,12 @@ Get logs of a bot:
     def list_queues(self):
         source_queues = set()
         destination_queues = set()
+        internal_queues = set()
 
-        for key, value in self.pipepline_configuration.items():
+        for botid, value in self.pipepline_configuration.items():
             if 'source-queue' in value:
                 source_queues.add(value['source-queue'])
+                internal_queues.add(value['source-queue'] + '-internal')
             if 'destination-queues' in value:
                 destination_queues.update(value['destination-queues'])
 
@@ -463,8 +465,8 @@ Get logs of a bot:
         pipeline.set_queues(source_queues, "source")
         pipeline.connect()
 
-        queues = source_queues.union(destination_queues)
-        counters = pipeline.count_queued_messages(queues)
+        queues = source_queues.union(destination_queues).union(internal_queues)
+        counters = pipeline.count_queued_messages(*queues)
         log_list_queues(counters)
 
         return_dict = dict()
@@ -474,6 +476,7 @@ Get logs of a bot:
             if 'source-queue' in info:
                 return_dict[bot_id]['source_queue'] = (
                     info['source-queue'], counters[info['source-queue']])
+                return_dict[bot_id]['internal_queue'] = counters[info['source-queue'] + '-internal']
 
             if 'destination-queues' in info:
                 return_dict[bot_id]['destination_queues'] = list()
