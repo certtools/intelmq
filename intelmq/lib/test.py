@@ -92,7 +92,6 @@ class BotTestCase(object):
         cls.bot = None
         cls.bot_reference = None
         cls.bot_type = None
-        cls.config = {}
         cls.default_input_message = ''
         cls.input_message = None
         cls.loglines = []
@@ -216,7 +215,7 @@ class BotTestCase(object):
         """ Test if bot logs initialized message. """
         self.run_bot()
         self.assertLoglineMatches(0, "{} initialized with id {} and version"
-                                     " [0-9.]{{5}} \([a-zA-Z0-9,:. ]+\)"
+                                     " [0-9.]{{5}} \([a-zA-Z0-9,:. ]+\)( \[GCC\])?"
                                      " as process [0-9]+\."
                                      "".format(self.bot_name,
                                                self.bot_id), "INFO")

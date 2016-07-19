@@ -34,7 +34,7 @@ Harmonization field names
 |Event_Description|event_description.text|String|A free-form textual description of an abuse event.|
 |Event_Description|event_description.url|URL|A description URL is a link to a further description of the the abuse event in question.|
 ||event_hash|String|Computed event hash with specific keys and values that identify a unique event. At present, the hash should default to using the SHA1 function. Please note that for an event hash to be able to match more than one event (deduplication) the receiver of an event should calculate it based on a minimal set of keys and values present in the event. Using for example the observation time in the calculation will most likely render the checksum useless for deduplication purposes.|
-||extra|JSON|All anecdotal information, which cannot be parsed into the data harmonization elements. E.g. os.name, os.version, user_agent.|
+||extra|JSON|All anecdotal information, which cannot be parsed into the data harmonization elements. E.g. os.name, os.version, etc. **Note**: this is **only** intended for mapping any fields which can not map naturally into the data harmonization. It is **not** intended for extending the data harmonization with your own fields. |
 |Feed|feed.accuracy|Accuracy|A float between 0 and 100 that represents how accurate the data in the feed is|
 |Feed|feed.code|String|Code name for the feed, e.g. DFGS, HSDAG etc.|
 |Feed|feed.name|String|Name for the feed, usually found in collector bot configuration.|
