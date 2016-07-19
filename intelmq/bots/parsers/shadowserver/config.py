@@ -90,7 +90,7 @@ def convert_host_and_url(value, row):
     URLs are split into hostname and path, we can also guess the protocol here.
     """
     if row['http_host'] and row['url']:
-        return 'http://'+row['http_host']+row['url']
+        return 'http://' + row['http_host'] + row['url']
     return value
 
 
@@ -613,6 +613,9 @@ open_elasticsearch = {
     ],
     'constant_fields': {
         'classification.type': 'vulnerable service',
+        'classification.taxonomy': 'vulnerable',
+        'classification.identifier': 'shadowserver-openelasticsearch',
+        'feed.code': 'shadowserver-openelastic',
     },
 }
 
