@@ -614,8 +614,7 @@ open_elasticsearch = {
     'constant_fields': {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'vulnerable',
-        'classification.identifier': 'shadowserver-openelasticsearch',
-        'feed.code': 'shadowserver-openelastic',
+        'classification.identifier': 'elasticsearch',
     },
 }
 
