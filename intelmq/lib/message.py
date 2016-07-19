@@ -213,11 +213,14 @@ class Message(dict):
 
         return int(event_hash.hexdigest(), 16)
 
-    def to_dict(self):
+    def to_dict(self, hierarchical=True):
         json_dict = dict()
 
         for key, value in self.items():
-            subkeys = key.split('.')
+            if hierarchical:
+                subkeys = key.split('.')
+            else:
+                subkeys = [key]
             json_dict_fp = json_dict
 
             for subkey in subkeys:
