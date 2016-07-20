@@ -26,3 +26,4 @@ debian/intelmq.postinst.debhelper
 debian/intelmq.prerm.debhelper
 debian/intelmq.substvars
 debian/intelmq/
+/.pc/*
