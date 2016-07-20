@@ -28,7 +28,7 @@ DATA = [
       ],
      ),
     ('/opt/intelmq/var/lib/bots/modify/example',
-     ['intelmq/bots/experts/modify/modify.conf',
+     ['intelmq/bots/experts/modify/examples/default.conf',
       ],
      ),
     ('/opt/intelmq/var/log/',
