@@ -786,7 +786,7 @@ botnet_drone_hadoop = {
         ('source.geolocation.city', 'city'),
         ('source.reverse_dns', 'hostname'),
         # Other known fields which will go into "extra"
-        ('connection_count', 'count', int),
+        ('connection_count', 'count', convert_int),
         ('user_agent', 'agent'),
         ('os.name', 'p0f_genre'),
         ('os.version', 'p0f_detail'),
