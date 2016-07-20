@@ -86,7 +86,7 @@ class CERTBundKontaktExpertBot(Bot):
                         "       c.email as email, o.name as organisation,"
                         "       '' as template_path,"
                         "       'feed_specific' as format_name,"
-                        "       0 as notification_interval"
+                        "       oa.notification_interval as notification_interval"
                         "  FROM contact{0} AS c"
                         "  JOIN role{0} AS r ON r.contact_id = c.id"
                         "  JOIN organisation_to_asn{0} AS oa"

@@ -59,6 +59,9 @@ CREATE TABLE organisation_automatic (
     ti_handle    VARCHAR(500),
     first_handle VARCHAR(500),
 
+    import_source VARCHAR(500),
+    import_time TIMESTAMP,
+
     FOREIGN KEY (sector_id) REFERENCES sector(id)
 );
 
@@ -100,6 +103,9 @@ CREATE TABLE contact_automatic (
 
     comment TEXT NOT NULL DEFAULT '',
 
+    import_source VARCHAR(500),
+    import_time TIMESTAMP,
+
     FOREIGN KEY (format_id) REFERENCES format (id)
 );
 
@@ -129,6 +135,9 @@ CREATE TABLE role_automatic (
 
     organisation_id INTEGER NOT NULL,
     contact_id INTEGER NOT NULL,
+
+    import_source VARCHAR(500),
+    import_time TIMESTAMP,
 
     FOREIGN KEY (organisation_id) REFERENCES organisation_automatic(id),
     FOREIGN KEY (contact_id) REFERENCES contact_automatic(id)
@@ -161,6 +170,9 @@ CREATE TABLE autonomous_system_automatic (
     number BIGINT PRIMARY KEY,
 
     ripe_aut_num  VARCHAR(100),
+
+    import_source VARCHAR(500),
+    import_time TIMESTAMP,
 
     comment TEXT NOT NULL DEFAULT ''
 );
@@ -212,6 +224,9 @@ CREATE TABLE network_automatic (
     -- Network address as CIDR.
     address cidr UNIQUE NOT NULL,
 
+    import_source VARCHAR(500),
+    import_time TIMESTAMP,
+
     comment TEXT NOT NULL DEFAULT ''
 );
 CREATE INDEX network_automatic_cidr_lower_idx
@@ -237,6 +252,9 @@ CREATE TABLE fqdn_automatic (
 
     -- The fully qualified domain name
     fqdn TEXT UNIQUE NOT NULL,
+
+    import_source VARCHAR(500),
+    import_time TIMESTAMP,
 
     comment TEXT NOT NULL DEFAULT ''
 );
@@ -295,6 +313,9 @@ CREATE TABLE organisation_to_asn_automatic (
     asn_id BIGINT,
     notification_interval INTEGER NOT NULL, -- interval in seconds
 
+    import_source VARCHAR(500),
+    import_time TIMESTAMP,
+
     PRIMARY KEY (organisation_id, asn_id),
 
     FOREIGN KEY (asn_id) REFERENCES autonomous_system_automatic (number),
@@ -318,6 +339,9 @@ CREATE TABLE organisation_to_network_automatic (
     net_id INTEGER,
     notification_interval INTEGER NOT NULL, -- interval in seconds
 
+    import_source VARCHAR(500),
+    import_time TIMESTAMP,
+
     PRIMARY KEY (organisation_id, net_id),
 
     FOREIGN KEY (organisation_id) REFERENCES organisation_automatic (id),
@@ -340,6 +364,9 @@ CREATE TABLE organisation_to_fqdn_automatic (
     organisation_id INTEGER,
     fqdn_id INTEGER,
     notification_interval INTEGER NOT NULL,
+
+    import_source VARCHAR(500),
+    import_time TIMESTAMP,
 
     PRIMARY KEY (organisation_id, fqdn_id),
 
@@ -367,6 +394,9 @@ CREATE TABLE organisation_to_template_automatic (
     id SERIAL PRIMARY KEY,
     organisation_id INTEGER NOT NULL,
     template_id INTEGER NOT NULL,
+
+    import_source VARCHAR(500),
+    import_time TIMESTAMP,
 
     FOREIGN KEY (organisation_id) REFERENCES organisation_automatic (id),
     FOREIGN KEY (template_id) REFERENCES template (id)
