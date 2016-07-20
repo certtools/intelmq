@@ -53,6 +53,19 @@ class TestPythonlist(unittest.TestCase):
         self.assertEqual(SAMPLES['unicode'][0],
                          self.pipe.state['dst'][0])
 
+    def test_count(self):
+        self.pipe.send(SAMPLES['normal'][0])
+        self.pipe.send(SAMPLES['normal'][1])
+        self.pipe.send(SAMPLES['unicode'][0])
+        self.assertEqual(self.pipe.count_queued_messages('dst'), {'dst': 3})
+
+    def test_count_multi(self):
+        self.pipe.state['src'] = [SAMPLES['normal'][0]]
+        self.pipe.send(SAMPLES['normal'][0])
+        self.pipe.send(SAMPLES['unicode'][0])
+        self.assertEqual(self.pipe.count_queued_messages('src', 'dst'),
+                         {'src': 1, 'dst': 2})
+
 
 class TestRedis(unittest.TestCase):
 
@@ -78,6 +91,12 @@ class TestRedis(unittest.TestCase):
         self.clear()
         self.pipe.send(SAMPLES['unicode'][1])
         self.assertEqual(SAMPLES['unicode'][1], self.pipe.receive())
+
+    def test_count(self):
+        self.pipe.send(SAMPLES['normal'][0])
+        self.pipe.send(SAMPLES['normal'][1])
+        self.pipe.send(SAMPLES['unicode'][0])
+        self.assertEqual(self.pipe.count_queued_messages('test'), {'test': 3})
 
     def tearDown(self):
         self.pipe.disconnect()

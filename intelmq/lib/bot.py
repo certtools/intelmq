@@ -121,7 +121,8 @@ class Bot(object):
                 self.process()
                 self.__error_retries_counter = 0  # reset counter
 
-                self.__source_pipeline.sleep(self.parameters.rate_limit)
+                self.logger.info("Idling for {!s}s now.".format(self.parameters.rate_limit))
+                time.sleep(self.parameters.rate_limit)
 
             except exceptions.PipelineError:
                 error_on_pipeline = True
@@ -143,8 +144,9 @@ class Bot(object):
                     self.logger.error("Bot has found a problem.")
 
                 if self.parameters.error_log_message:
+                    # Dump full message if explicitly requested by config
                     self.logger.info("Current Message(event): {!r}."
-                                     "".format(self.__current_message)[:500])
+                                     "".format(self.__current_message))
 
             except KeyboardInterrupt:
                 self.logger.error("Received KeyboardInterrupt.")
@@ -225,24 +227,24 @@ class Bot(object):
             self.stop()
 
     def __connect_pipelines(self):
-        self.logger.info("Loading source pipeline.")
+        self.logger.debug("Loading source pipeline.")
         self.__source_pipeline = PipelineFactory.create(self.parameters)
-        self.logger.info("Loading source queue.")
+        self.logger.debug("Loading source queue.")
         self.__source_pipeline.set_queues(self.__source_queues, "source")
-        self.logger.info("Source queue loaded {}."
+        self.logger.debug("Source queue loaded {}."
                          "".format(self.__source_queues))
         self.__source_pipeline.connect()
-        self.logger.info("Connected to source queue.")
+        self.logger.debug("Connected to source queue.")
 
-        self.logger.info("Loading destination pipeline.")
+        self.logger.debug("Loading destination pipeline.")
         self.__destination_pipeline = PipelineFactory.create(self.parameters)
-        self.logger.info("Loading destination queues.")
+        self.logger.debug("Loading destination queues.")
         self.__destination_pipeline.set_queues(self.__destination_queues,
                                                "destination")
-        self.logger.info("Destination queues loaded {}."
+        self.logger.debug("Destination queues loaded {}."
                          "".format(self.__destination_queues))
         self.__destination_pipeline.connect()
-        self.logger.info("Connected to destination queues.")
+        self.logger.debug("Connected to destination queues.")
 
         self.logger.info("Pipeline ready.")
 
@@ -251,11 +253,11 @@ class Bot(object):
         if self.__source_pipeline:
             self.__source_pipeline.disconnect()
             self.__source_pipeline = None
-            self.logger.info("Disconnecting from source pipeline.")
+            self.logger.debug("Disconnecting from source pipeline.")
         if self.__destination_pipeline:
             self.__destination_pipeline.disconnect()
             self.__destination_pipeline = None
-            self.logger.info("Disconnecting from destination pipeline.")
+            self.logger.debug("Disconnecting from destination pipeline.")
 
     def send_message(self, *messages):
         for message in messages:
@@ -272,16 +274,22 @@ class Bot(object):
             self.__destination_pipeline.send(raw_message)
 
     def receive_message(self):
-        self.logger.debug('Receiving Message.')
+        self.logger.debug('Waiting for incomong message.')
         message = None
         while not message:
             message = self.__source_pipeline.receive()
             if not message:
                 self.logger.warning('Empty message received.')
                 continue
-            self.logger.debug('Receive message {!r}...'.format(message[:500]))
-
         self.__current_message = MessageFactory.unserialize(message)
+
+        if 'raw' in self.__current_message and len(self.__current_message['raw']) > 400:
+            tmp_msg = self.__current_message.to_dict(hierarchical=False)
+            tmp_msg['raw'] = tmp_msg['raw'][:397] + '...'
+        else:
+            tmp_msg = self.__current_message
+        self.logger.debug('Received message {!r}.'.format(tmp_msg))
+
         return self.__current_message
 
     def acknowledge_message(self):
@@ -315,7 +323,7 @@ class Bot(object):
         with open(dump_file, 'w') as fp:
             json.dump(dump_data, fp, indent=4, sort_keys=True)
 
-        self.logger.info('Message dumped.')
+        self.logger.warn('Message dumped.')
 
     def __load_defaults_configuration(self):
         self.__log_buffer.append(('debug', "Loading defaults configuration."))
@@ -328,8 +336,8 @@ class Bot(object):
         for option, value in config.items():
             setattr(self.parameters, option, value)
             self.__log_buffer.append(('debug',
-                                      "Defaults configuration: parameter '{}' "
-                                      "loaded  with value '{}'.".format(option,
+                                      "Defaults configuration: parameter {!r} "
+                                      "loaded  with value {!r}.".format(option,
                                                                         value)))
 
     def __load_system_configuration(self):
@@ -339,8 +347,8 @@ class Bot(object):
         for option, value in config.items():
             setattr(self.parameters, option, value)
             self.__log_buffer.append(('debug',
-                                      "System configuration: parameter '{}' "
-                                      "loaded  with value '{}'.".format(option,
+                                      "System configuration: parameter {!r} "
+                                      "loaded  with value {!r}.".format(option,
                                                                         value)))
 
     def __load_runtime_configuration(self):
@@ -350,8 +358,8 @@ class Bot(object):
         if self.__bot_id in list(config.keys()):
             for option, value in config[self.__bot_id].items():
                 setattr(self.parameters, option, value)
-                self.logger.debug("Runtime configuration: parameter '%s' "
-                                  "loaded with value '%s'." % (option, value))
+                self.logger.debug("Runtime configuration: parameter {!r} "
+                                  "loaded with value {!r}.".format(option, value))
 
     def __load_pipeline_configuration(self):
         self.logger.debug("Loading pipeline configuration")
@@ -365,8 +373,8 @@ class Bot(object):
             if 'source-queue' in config[self.__bot_id].keys():
                 self.__source_queues = config[self.__bot_id]['source-queue']
                 self.logger.debug("Pipeline configuration: parameter "
-                                  "'source-queue' loaded with the value '%s'."
-                                  % self.__source_queues)
+                                  "'source-queue' loaded with the value {!r}."
+                                  "".format(self.__source_queues))
 
             if 'destination-queues' in config[self.__bot_id].keys():
 
@@ -374,11 +382,11 @@ class Bot(object):
                     self.__bot_id]['destination-queues']
                 self.logger.debug("Pipeline configuration: parameter"
                                   "'destination-queues' loaded with the value "
-                                  "'%s'." % ", ".join(self.__destination_queues))
+                                  "{!r}.".format(", ".join(self.__destination_queues)))
 
         else:
             self.logger.error("Pipeline configuration: no key "
-                              "'{}'.".format(self.__bot_id))
+                              "{!r}.".format(self.__bot_id))
             self.stop()
 
     def __load_harmonization_configuration(self):
@@ -460,6 +468,18 @@ class ParserBot(Bot):
     def recover_line_csv(self, line):
         out = io.StringIO()
         writer = csv.writer(out)
+        writer.writerow(line)
+        return out.getvalue()
+
+    csv_params = {}
+
+    def recover_line_csv_dict(self, line):
+        """
+        Converts dictionaries to csv. self.csv_fieldnames must be list of fields.
+        """
+        out = io.StringIO()
+        writer = csv.DictWriter(out, self.csv_fieldnames, **self.csv_params)
+        writer.writeheader()
         writer.writerow(line)
         return out.getvalue()
 
