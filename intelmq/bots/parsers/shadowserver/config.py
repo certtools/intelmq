@@ -775,7 +775,7 @@ botnet_drone_hadoop = {
         ('destination.geolocation.cc', 'cc_geo'),
         ('destination.ip', 'cc_ip', validate_ip),
         ('destination.port', 'cc_port'),
-        ('destination.reverse_dns', 'cc_dns'),
+        ('destination.fqdn', 'cc_dns'),
         ('destination.url', 'url'),
         ('malware.name', 'infection'),
         ('protocol.application', 'application'),
