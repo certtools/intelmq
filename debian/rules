@@ -35,7 +35,3 @@ override_dh_auto_install: $(BOTDOCS)
 		mkdir -p $(DOCS_DIR)/bots/$$(dirname $$readme); \
 		cp intelmq/bots/$$readme $(DOCS_DIR)/bots/$$(dirname $$readme); \
 	done
-	# Fix a path in postgresql output bot README
-	sed 's@intelmq/bin/intelmq_psql_initdb.py@intelmq_psql_initdb@' \
-		intelmq/bots/outputs/postgresql/README.md > \
-		debian/intelmq/usr/share/doc/intelmq/bots/outputs/postgresql/README.md
