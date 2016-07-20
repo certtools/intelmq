@@ -14,19 +14,17 @@ BOTDOCS := $(foreach bot,$(BOTS),$(wildcard $(bot)/*.md))
 # Wed, 23 Mar 2016 17:49:26 +0000
 export PYBUILD_NAME=intelmq
 %:
-	dh $@ --with python3 --without python2 --buildsystem=pybuild
+	dh $@ --with python3 --without python2 --buildsystem=pybuild --with quilt
 
 override_dh_auto_build:
 
 override_dh_auto_install: $(BOTDOCS)
 	python3 setup.py install --root=debian/intelmq --prefix=/usr
 	mv debian/intelmq/opt/intelmq/etc/examples/* debian/intelmq/opt/intelmq/etc/
-	sed -i '/logging_level/s/DEBUG/INFO/' debian/intelmq/opt/intelmq/etc/system.conf
 	rmdir debian/intelmq/opt/intelmq/etc/examples
 	mkdir -p debian/intelmq/opt/intelmq/var/log
 	mkdir -p debian/intelmq/opt/intelmq/var/lib/bots/file-output
 	mkdir -p debian/intelmq/etc/logrotate.d
-	sed 's@/usr/local/bin@/usr/bin@' contrib/logrotate/intelmq >debian/intelmq/etc/logrotate.d/intelmq
 	# install a modifier bot conf file besides the example file
 	cp -a debian/intelmq/opt/intelmq/var/lib/bots/modify/example/modify.conf \
 		debian/intelmq/opt/intelmq/var/lib/bots/modify/modify.conf
@@ -37,7 +35,3 @@ override_dh_auto_install: $(BOTDOCS)
 		mkdir -p $(DOCS_DIR)/bots/$$(dirname $$readme); \
 		cp intelmq/bots/$$readme $(DOCS_DIR)/bots/$$(dirname $$readme); \
 	done
-	# Fix a path in postgresql output bot README
-	sed 's@intelmq/bin/intelmq_psql_initdb.py@intelmq_psql_initdb@' \
-		intelmq/bots/outputs/postgresql/README.md > \
-		debian/intelmq/usr/share/doc/intelmq/bots/outputs/postgresql/README.md
