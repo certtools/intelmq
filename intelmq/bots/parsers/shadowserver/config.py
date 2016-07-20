@@ -24,7 +24,8 @@ the second value is the row in the shadowserver csv.
 
 Reference material:
     * when setting the classification.* fields, please use the taxonomy from
-    [eCSIRT II](https://www.enisa.europa.eu/topics/csirt-cert-services/community-projects/existing-taxonomies)
+    [eCSIRT II](https://www.trusted-introducer.org/Incident-Classification-Taxonomy.pdf)
+    Also to be found on the [ENISA page](https://www.enisa.europa.eu/topics/csirt-cert-services/community-projects/existing-taxonomies)
 
     * please respect the Data harmonisation ontology: https://github.com/certtools/intelmq/blob/master/docs/Data-Harmonization.md
 
@@ -159,7 +160,7 @@ open_m_dns = {
     ],
     'constant_fields': {
         'classification.type': 'vulnerable service',
-        'classification.taxonomy': 'Other',
+        'classification.taxonomy': 'Vulnerable',
         'protocol.application': 'mdns',
         'classification.identifier': 'mdns',
     },
@@ -189,7 +190,7 @@ open_chargen = {
     'constant_fields': {
         'classification.identifier': 'chargen',
         'classification.type': 'vulnerable service',
-        'classification.taxonomy': 'Other',
+        'classification.taxonomy': 'Vulnerable',
         'protocol.application': 'chargen',
     },
 }
@@ -221,7 +222,7 @@ open_tftp = {
     'constant_fields': {
         'classification.identifier': 'opentftp',
         'classification.type': 'vulnerable service',
-        'classification.taxonomy': 'Other',
+        'classification.taxonomy': 'Vulnerable',
         'protocol.application': 'tftp',
     },
 }
@@ -339,7 +340,7 @@ open_redis = {
     'constant_fields': {
         'classification.identifier': 'openredis',
         'classification.type': 'vulnerable service',
-        'classification.taxonomy': 'Other',
+        'classification.taxonomy': 'Vulnerable',
         'protocol.application': 'redis',
     },
 }
@@ -370,7 +371,7 @@ open_portmapper = {
     'constant_fields': {
         'classification.identifier': 'openportmapper',
         'classification.type': 'vulnerable service',
-        'classification.taxonomy': 'Other',
+        'classification.taxonomy': 'Vulnerable',
         'protocol.application': 'portmapper',
     },
 }
@@ -415,7 +416,7 @@ open_ipmi = {
     'constant_fields': {
         'classification.identifier': 'openipmi',
         'classification.type': 'vulnerable service',
-        'classification.taxonomy': 'Other',
+        'classification.taxonomy': 'Vulnerable',
         'protocol.application': 'ipmi',
     },
 }
@@ -444,7 +445,7 @@ open_qotd = {
     ],
     'constant_fields': {
         'classification.type': 'vulnerable service',
-        'classification.taxonomy': 'Other',
+        'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'qotd',
         'protocol.application': 'qotd',
     },
@@ -483,7 +484,7 @@ open_ssdp = {
     ],
     'constant_fields': {
         'classification.type': 'vulnerable service',
-        'classification.taxonomy': 'Other',
+        'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'openssdp',
         'protocol.application': 'ssdp',
     },
@@ -513,7 +514,7 @@ open_snmp = {
     ],
     'constant_fields': {
         'classification.type': 'vulnerable service',
-        'classification.taxonomy': 'Other',
+        'classification.taxonomy': 'Vulnerable',
         'protocol.application': 'snmp',
         'classification.identifier': 'snmp',
     },
@@ -547,7 +548,7 @@ open_mssql = {
     ],
     'constant_fields': {
         'classification.type': 'vulnerable service',
-        'classification.taxonomy': 'Other',
+        'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'openmssql',
         'protocol.application': 'mssql',
     },
@@ -586,7 +587,7 @@ open_mongo_db = {
     ],
     'constant_fields': {
         'classification.type': 'vulnerable service',
-        'classification.taxonomy': 'Other',
+        'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'openmongodb',
         'protocol.application': 'mongodb',
     },
@@ -615,7 +616,7 @@ open_net_bios = {
     ],
     'constant_fields': {
         'classification.type': 'vulnerable service',
-        'classification.taxonomy': 'Other',
+        'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'opennetbios',
         'protocol.application': 'netbios',
     },
@@ -653,8 +654,8 @@ open_elasticsearch = {
     ],
     'constant_fields': {
         'classification.type': 'vulnerable service',
-        'classification.taxonomy': 'Other',
-        'classification.identifier': 'elasticsearch',
+        'classification.taxonomy': 'Vulnerable',
+        'classification.identifier': 'openelasticsearch',
         'protocol.application': 'elasticsearch',
     },
 }
@@ -689,7 +690,7 @@ dns_open_resolvers = {
     ],
     'constant_fields': {
         'classification.type': 'vulnerable service',
-        'classification.taxonomy': 'Other',
+        'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'opendns',
         'protocol.application': 'dns',
     },
@@ -712,7 +713,7 @@ ntp_monitor = {
     ],
     'constant_fields': {
         'classification.type': 'vulnerable service',
-        'classification.taxonomy': 'Other',
+        'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'openntp',
         'protocol.application': 'ntp',
     },
@@ -756,7 +757,7 @@ open_memcached = {
     ],
     'constant_fields': {
         'classification.type': 'vulnerable service',
-        'classification.taxonomy': 'Other',
+        'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'openmemcached',
         'protocol.application': 'memcached',
     },
@@ -785,7 +786,7 @@ botnet_drone_hadoop = {
         ('source.geolocation.city', 'city'),
         ('source.reverse_dns', 'hostname'),
         # Other known fields which will go into "extra"
-        ('connection_count', 'count', int),
+        ('connection_count', 'count', convert_int),
         ('user_agent', 'agent'),
         ('os.name', 'p0f_genre'),
         ('os.version', 'p0f_detail'),
