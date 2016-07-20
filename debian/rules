@@ -21,7 +21,6 @@ override_dh_auto_build:
 override_dh_auto_install: $(BOTDOCS)
 	python3 setup.py install --root=debian/intelmq --prefix=/usr
 	mv debian/intelmq/opt/intelmq/etc/examples/* debian/intelmq/opt/intelmq/etc/
-	sed -i '/logging_level/s/DEBUG/INFO/' debian/intelmq/opt/intelmq/etc/system.conf
 	rmdir debian/intelmq/opt/intelmq/etc/examples
 	mkdir -p debian/intelmq/opt/intelmq/var/log
 	mkdir -p debian/intelmq/opt/intelmq/var/lib/bots/file-output
