@@ -29,8 +29,8 @@ class ShadowserverParserBot(ParserBot):
     def init(self):
         self.sparser_config = None
         if hasattr(self.parameters, 'feedname'):
-            feedname = self.parameters.feedname
-            self.sparser_config = config.get_feed(feedname)
+            self.feedname = self.parameters.feedname
+            self.sparser_config = config.get_feed(self.feedname)
 
         if not self.sparser_config:
             self.logger.error('No feedname provided or feedname not in conf.')
@@ -76,7 +76,7 @@ class ShadowserverParserBot(ParserBot):
             if hasattr(value, '__len__') and not len(value):
                 return ''
             else:
-                return '"'+value+'"'
+                return '"' + value + '"'
 
     def parse_line(self, row, report):
 
