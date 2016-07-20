@@ -72,15 +72,6 @@
                 "rate_limit": "3600"
             }
         },
-        "Arbor": {
-            "description": "Arbor Collector is the bot responsible to get the report from source of information.",
-            "module": "intelmq.bots.collectors.http.collector_http",
-            "parameters": {
-                "feed": "Arbor",
-                "http_url": "http://atlas-public.ec2.arbor.net/public/ssh_attackers",
-                "rate_limit": 3600
-            }
-        },
         "Autoshun": {
             "description": "Autoshun Collector is the bot responsible to get the report from source of information.",
             "module": "intelmq.bots.collectors.http.collector_http",
@@ -919,11 +910,6 @@
         "AlienVault OTX": {
             "description": "AlienVault Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.alienvault.parser_otx",
-            "parameters": {}
-        },
-        "Arbor": {
-            "description": "Arbor Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.arbor.parser",
             "parameters": {}
         },
         "Autoshun": {

@@ -124,7 +124,7 @@ class Redis(Pipeline):
         except Exception as e:
             raise exceptions.PipelineError(e)
 
-    def count_queued_messages(self, queues):
+    def count_queued_messages(self, *queues):
         queue_dict = dict()
         for queue in queues:
             try:
@@ -206,7 +206,7 @@ class Pythonlist(Pipeline):
         """Removes a message from the internal queue and returns it"""
         return self.state.get(self.internal_queue, [None]).pop(0)
 
-    def count_queued_messages(self, queues):
+    def count_queued_messages(self, *queues):
         """Returns the amount of queued messages
            over all given queue names.
            But only without a real message broker behind.

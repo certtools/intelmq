@@ -368,6 +368,16 @@ class TestMessageFactory(unittest.TestCase):
                                                       '00:00'}},
                              event.to_dict())
 
+    def test_event_dict_flat(self):
+        """ Test Event to_dict with hierarchical=False. """
+        event = message.Event()
+        event = self.add_event_examples(event)
+        self.assertDictEqual({'feed.name': 'Example',
+                              'feed.url': 'https://example.com/',
+                              'raw': 'bG9yZW0gaXBzdW0=',
+                              'time.observation': '2015-01-01T13:37:00+00:00'},
+                             event.to_dict(hierarchical=False))
+
     def test_event_json(self):
         """ Test Event to_json. """
         event = message.MessageFactory.unserialize('{"__type": "Event"}')

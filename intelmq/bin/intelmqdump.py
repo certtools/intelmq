@@ -11,6 +11,7 @@ import traceback
 
 from termstyle import bold, green, inverted, red
 
+import intelmq.bin.intelmqctl as intelmqctl
 import intelmq.lib.exceptions as exceptions
 import intelmq.lib.pipeline as pipeline
 import intelmq.lib.utils as utils
@@ -118,6 +119,7 @@ def main():
     parser.add_argument('botid', metavar='botid', nargs='?',
                         default=None, help='botid to inspect dumps of')
     args = parser.parse_args()
+    ctl = intelmqctl.IntelMQContoller()
 
     if args.botid is None:
         filenames = glob.glob(os.path.join(DEFAULT_LOGGING_PATH, '*.dump'))
@@ -134,7 +136,8 @@ def main():
             info = dump_info(fname)
             print("{c:3}: {s:{l}} {i}".format(c=count, s=shortname, i=info,
                                               l=length))
-        botid = input(inverted('Which dump file to process (id or name)? '))
+        botid = input(inverted('Which dump file to process (id or name)?') +
+                      ' ')
         botid = botid.strip()
         if botid == 'q' or not botid:
             exit(0)
@@ -152,6 +155,13 @@ def main():
     while True:
         info = dump_info(fname)
         print('Processing {}: {}'.format(bold(botid), info))
+        # Determine bot status
+        bot_status = ctl.bot_status(botid)
+        if bot_status == 'running':
+            print(red('Attention: This bot is currently running!'))
+        elif bot_status == 'error':
+            print(red('Attention: This bot is not defined!'))
+
         try:
             with io.open(fname, 'rt') as handle:
                 content = json.load(handle)
@@ -164,7 +174,7 @@ def main():
             available_opts = [item[0] for item in ACTIONS.values()]
             for count, line in enumerate(meta):
                 print('{:3}: {} {}'.format(count, *line))
-        answer = input(inverted(', '.join(available_opts) + '? ')).split()
+        answer = input(inverted(', '.join(available_opts) + '?') + ' ').split()
         if not answer:
             continue
         if any([answer[0] == char for char in AVAILABLE_IDS]):
@@ -194,7 +204,7 @@ def main():
                 if entry['message']:
                     msg = entry['message']
                 else:
-                    print('No message here, deleting directly.')
+                    print('No message here, deleting entry.')
                     del content[key]
                     save_file(fname, content)
                     continue
@@ -215,6 +225,10 @@ def main():
                     del content[key]
                     save_file(fname, content)
                     print(green('Recovered dump {}.'.format(count)))
+            if not content:
+                os.remove(fname)
+                print('Deleted empty file {}'.format(fname))
+                break
         elif answer[0] == 'd':
             # delete dumpfile
             os.remove(fname)
