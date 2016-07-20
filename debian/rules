@@ -26,7 +26,6 @@ override_dh_auto_install: $(BOTDOCS)
 	mkdir -p debian/intelmq/opt/intelmq/var/log
 	mkdir -p debian/intelmq/opt/intelmq/var/lib/bots/file-output
 	mkdir -p debian/intelmq/etc/logrotate.d
-	sed 's@/usr/local/bin@/usr/bin@' contrib/logrotate/intelmq >debian/intelmq/etc/logrotate.d/intelmq
 	# install a modifier bot conf file besides the example file
 	cp -a debian/intelmq/opt/intelmq/var/lib/bots/modify/example/modify.conf \
 		debian/intelmq/opt/intelmq/var/lib/bots/modify/modify.conf

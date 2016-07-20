@@ -1,1 +1,2 @@
 debian/cron.d/intelmq-update-data etc/cron.d/
+contrib/logrotate/intelmq etc/logrotate.d/intelmq
