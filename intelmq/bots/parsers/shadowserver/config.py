@@ -446,7 +446,7 @@ open_qotd = {
     'constant_fields': {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'Vulnerable',
-        'classification.identifier': 'qotd',
+        'classification.identifier': 'openqotd',
         'protocol.application': 'qotd',
     },
 }
