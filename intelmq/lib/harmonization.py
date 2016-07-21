@@ -200,7 +200,7 @@ class DateTime(GenericType):
     @staticmethod
     def __parse(value):
         try:
-            value = dateutil.parser.parse(value)
+            value = dateutil.parser.parse(value, fuzzy=True)
             value = value.astimezone(pytz.utc)
             value = value.isoformat()
         except ValueError:
