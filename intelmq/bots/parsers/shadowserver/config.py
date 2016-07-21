@@ -174,6 +174,7 @@ open_chargen = {
         ('source.port', 'port')
     ],
     'optional_fields': [
+        ('source.reverse_dns', 'hostname'),
         ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
         ('source.asn', 'asn'),
@@ -181,14 +182,14 @@ open_chargen = {
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
         # Other known fields which will go into "extra"
-        ('response_size', 'size', int),
+        ('response_size', 'size', convert_int),
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
         # tag
         # sector
     ],
     'constant_fields': {
-        'classification.identifier': 'chargen',
+        'classification.identifier': 'openchargen',
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'Vulnerable',
         'protocol.application': 'chargen',

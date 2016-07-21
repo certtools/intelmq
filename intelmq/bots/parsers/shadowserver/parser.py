@@ -145,7 +145,14 @@ class ShadowserverParserBot(ParserBot):
                 if len(item) == 4 and item[3]:
                     value = conv_func(raw_value, row)
                 else:
-                    value = conv_func(raw_value)
+                    try:
+                        value = conv_func(raw_value)
+                    except:
+                        self.logger.error('could not convert shadowkey: "{}", ' +
+                                          'value: "{}" via conversion function {}'.format(shadowkey, raw_value, repr(conv_func)))
+                        value = None
+                        # """ fail early and often in this case. We want to be able to convert everything """
+                        # self.stop()
 
             if value is not None:
                 if intelmqkey == 'extra.':
