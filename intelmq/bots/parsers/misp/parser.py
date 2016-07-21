@@ -67,10 +67,11 @@ class MISPParserBot(Bot):
 
             # Set the classifier based on the ecsirt tag
             classifier = None
-            for tag in misp_event['Tag']:
-                if tag['name'] in self.MISP_TAXONOMY_MAPPING:
-                    classifier = self.MISP_TAXONOMY_MAPPING[tag['name']]
-                    break
+            if misp_event.get('Tag'):
+                for tag in misp_event['Tag']:
+                    if tag['name'] in self.MISP_TAXONOMY_MAPPING:
+                        classifier = self.MISP_TAXONOMY_MAPPING[tag['name']]
+                        break
 
             # get the attributes from the event
             event_attributes = misp_event['Attribute']

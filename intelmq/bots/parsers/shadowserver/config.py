@@ -21,6 +21,15 @@ of at least three keys:
 The first value is the IntelMQ key,
 the second value is the row in the shadowserver csv.
 
+
+Reference material:
+    * when setting the classification.* fields, please use the taxonomy from
+    [eCSIRT II](https://www.trusted-introducer.org/Incident-Classification-Taxonomy.pdf)
+    Also to be found on the [ENISA page](https://www.enisa.europa.eu/topics/csirt-cert-services/community-projects/existing-taxonomies)
+
+    * please respect the Data harmonisation ontology: https://github.com/certtools/intelmq/blob/master/docs/Data-Harmonization.md
+
+
 TODOs:
     There is a bunch of inline todos.
     Most of them show lines of code were the mapping  has to be validated
@@ -40,7 +49,7 @@ def get_feed(feedname):
         "Ssl-Scan": ssl_scan,  # Aka Poodle
         "NTP-Monitor": ntp_monitor,
         "DNS-open-resolvers": dns_open_resolvers,  # TODO Check implementation.
-        "Open-Elasticsearch": open_elasticsearch,  # TODO Check implementation.
+        "Open-Elasticsearch": open_elasticsearch,
         "Open-Net BIOS": open_net_bios,  # TODO Check implementation.
         "Open-Mongo DB": open_mongo_db,  # TODO Check implementation.
         "Open-MSSQL": open_mssql,  # TODO Check implementation.
@@ -65,9 +74,9 @@ def add_UTC_to_timestamp(value):
 
 
 def convert_bool(value):
-    if value in ('yes', 'enabled'):
+    if value.lower() in ('yes', 'true', 'enabled'):
         return True
-    elif value in ('no', 'disabled'):
+    elif value.lower() in ('no', 'false', 'disabled'):
         return False
 
 
@@ -77,12 +86,20 @@ def validate_to_none(value):
     return value
 
 
+def convert_int(value):
+    """ Returns an int or None for empty strings. """
+    if not value:
+        return None
+    else:
+        return int(value)
+
+
 def convert_host_and_url(value, row):
     """
     URLs are split into hostname and path, we can also guess the protocol here.
     """
     if row['http_host'] and row['url']:
-        return 'http://'+row['http_host']+row['url']
+        return 'http://' + row['http_host'] + row['url']
     return value
 
 
@@ -142,7 +159,10 @@ open_m_dns = {
         # http_port
     ],
     'constant_fields': {
-        'classification.type': 'exploit',
+        'classification.type': 'vulnerable service',
+        'classification.taxonomy': 'Vulnerable',
+        'protocol.application': 'mdns',
+        'classification.identifier': 'mdns',
     },
 }
 
@@ -170,6 +190,7 @@ open_chargen = {
     'constant_fields': {
         'classification.identifier': 'chargen',
         'classification.type': 'vulnerable service',
+        'classification.taxonomy': 'Vulnerable',
         'protocol.application': 'chargen',
     },
 }
@@ -199,7 +220,10 @@ open_tftp = {
         # errormessage
     ],
     'constant_fields': {
+        'classification.identifier': 'opentftp',
         'classification.type': 'vulnerable service',
+        'classification.taxonomy': 'Vulnerable',
+        'protocol.application': 'tftp',
     },
 }
 
@@ -238,6 +262,7 @@ sinkhole_http_drone = {
         # tcp.
         'protocol.transport': 'tcp',
         'classification.type': 'botnet drone',
+        'classification.taxonomy': 'Malicious Code',
     },
 }
 
@@ -275,6 +300,7 @@ microsoft_sinkhole = {
     'constant_fields': {
         'classification.type': 'botnet drone',
         'protocol.application': 'http',
+        'classification.taxonomy': 'Malicious Code',
     },
 }
 
@@ -312,7 +338,10 @@ open_redis = {
         # sector
     ],
     'constant_fields': {
+        'classification.identifier': 'openredis',
         'classification.type': 'vulnerable service',
+        'classification.taxonomy': 'Vulnerable',
+        'protocol.application': 'redis',
     },
 }
 
@@ -340,7 +369,10 @@ open_portmapper = {
         # sector
     ],
     'constant_fields': {
-        'classification.type': 'exploit',
+        'classification.identifier': 'openportmapper',
+        'classification.type': 'vulnerable service',
+        'classification.taxonomy': 'Vulnerable',
+        'protocol.application': 'portmapper',
     },
 }
 
@@ -382,7 +414,10 @@ open_ipmi = {
         # productname
     ],
     'constant_fields': {
+        'classification.identifier': 'openipmi',
         'classification.type': 'vulnerable service',
+        'classification.taxonomy': 'Vulnerable',
+        'protocol.application': 'ipmi',
     },
 }
 
@@ -410,6 +445,7 @@ open_qotd = {
     ],
     'constant_fields': {
         'classification.type': 'vulnerable service',
+        'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'qotd',
         'protocol.application': 'qotd',
     },
@@ -447,7 +483,10 @@ open_ssdp = {
         # sector
     ],
     'constant_fields': {
-        'classification.type': 'exploit',
+        'classification.type': 'vulnerable service',
+        'classification.taxonomy': 'Vulnerable',
+        'classification.identifier': 'openssdp',
+        'protocol.application': 'ssdp',
     },
 }
 
@@ -475,6 +514,7 @@ open_snmp = {
     ],
     'constant_fields': {
         'classification.type': 'vulnerable service',
+        'classification.taxonomy': 'Vulnerable',
         'protocol.application': 'snmp',
         'classification.identifier': 'snmp',
     },
@@ -508,6 +548,9 @@ open_mssql = {
     ],
     'constant_fields': {
         'classification.type': 'vulnerable service',
+        'classification.taxonomy': 'Vulnerable',
+        'classification.identifier': 'openmssql',
+        'protocol.application': 'mssql',
     },
 }
 
@@ -525,7 +568,6 @@ open_mongo_db = {
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
-        ('source.account', 'username'),
         # Other known fields which will go into "extra"
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
@@ -544,6 +586,9 @@ open_mongo_db = {
     ],
     'constant_fields': {
         'classification.type': 'vulnerable service',
+        'classification.taxonomy': 'Vulnerable',
+        'classification.identifier': 'openmongodb',
+        'protocol.application': 'mongodb',
     },
 }
 
@@ -570,6 +615,9 @@ open_net_bios = {
     ],
     'constant_fields': {
         'classification.type': 'vulnerable service',
+        'classification.taxonomy': 'Vulnerable',
+        'classification.identifier': 'opennetbios',
+        'protocol.application': 'netbios',
     },
 }
 
@@ -588,13 +636,26 @@ open_elasticsearch = {
         ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
         # Other known fields which will go into "extra"
-        # min_amplification
-        # dns_version
-        # p0f_genre
-        # p0f_detail
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'status', convert_int),
+        ('extra.', 'build_snapshot', convert_bool),
+        # version
+        # ok
+        # name
+        # cluster_name
+        # build_hash
+        # build_timestamp
+        # build_snapshot
+        # lucene_version
+        # tagline
+
     ],
     'constant_fields': {
         'classification.type': 'vulnerable service',
+        'classification.taxonomy': 'Vulnerable',
+        'classification.identifier': 'openelasticsearch',
+        'protocol.application': 'elasticsearch',
     },
 }
 
@@ -628,6 +689,9 @@ dns_open_resolvers = {
     ],
     'constant_fields': {
         'classification.type': 'vulnerable service',
+        'classification.taxonomy': 'Vulnerable',
+        'classification.identifier': 'opendns',
+        'protocol.application': 'dns',
     },
 }
 
@@ -648,6 +712,9 @@ ntp_monitor = {
     ],
     'constant_fields': {
         'classification.type': 'vulnerable service',
+        'classification.taxonomy': 'Vulnerable',
+        'classification.identifier': 'openntp',
+        'protocol.application': 'ntp',
     },
 }
 
@@ -668,6 +735,7 @@ ssl_scan = {
     ],
     'constant_fields': {
         'classification.type': 'vulnerable service',
+        # XXX FIXME needs work!!
     },
 }
 
@@ -688,6 +756,9 @@ open_memcached = {
     ],
     'constant_fields': {
         'classification.type': 'vulnerable service',
+        'classification.taxonomy': 'Vulnerable',
+        'classification.identifier': 'openmemcached',
+        'protocol.application': 'memcached',
     },
 }
 
@@ -703,7 +774,7 @@ botnet_drone_hadoop = {
         ('destination.geolocation.cc', 'cc_geo'),
         ('destination.ip', 'cc_ip', validate_ip),
         ('destination.port', 'cc_port'),
-        ('destination.reverse_dns', 'cc_dns'),
+        ('destination.fqdn', 'cc_dns'),
         ('destination.url', 'url'),
         ('malware.name', 'infection'),
         ('protocol.application', 'application'),
@@ -714,7 +785,7 @@ botnet_drone_hadoop = {
         ('source.geolocation.city', 'city'),
         ('source.reverse_dns', 'hostname'),
         # Other known fields which will go into "extra"
-        ('connection_count', 'count', int),
+        ('connection_count', 'count', convert_int),
         ('user_agent', 'agent'),
         ('os.name', 'p0f_genre'),
         ('os.version', 'p0f_detail'),
@@ -723,5 +794,6 @@ botnet_drone_hadoop = {
     ],
     'constant_fields': {
         'classification.type': 'botnet drone',
+        'classification.taxonomy': 'Malicious Code',
     },
 }
