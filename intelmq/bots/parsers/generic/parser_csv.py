@@ -95,7 +95,7 @@ class GenericCsvParserBot(ParserBot):
         if hasattr(self.parameters, 'type')\
                 and not event.contains("classification.type"):
             event.add('classification.type', self.parameters.type)
-        event.add("raw", ",".join(row))
+        event.add("raw", self.recover_line(row))
         yield event
 
     recover_line = ParserBot.recover_line_csv
