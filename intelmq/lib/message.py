@@ -188,6 +188,9 @@ class Message(dict):
         if 'regex' in config:
             if not re.search(config['regex'], str(value)):
                 return (False, 'regex did not match.')
+        if 'iregex' in config:
+            if not re.search(config['regex'], str(value), re.IGNORECASE):
+                return (False, 'regex (case insensitive) did not match.')
         return (True, )
 
     def __sanitize_value(self, key, value):
