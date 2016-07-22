@@ -50,7 +50,7 @@ def get_feed(feedname):
         "NTP-Monitor": ntp_monitor,
         "DNS-open-resolvers": dns_open_resolvers,  # TODO Check implementation.
         "Open-Elasticsearch": open_elasticsearch,
-        "Open-Net BIOS": open_net_bios,  # TODO Check implementation.
+        "Open-NetBIOS": open_net_bios,  # TODO Check implementation.
         "Open-Mongo DB": open_mongo_db,  # TODO Check implementation.
         "Open-MSSQL": open_mssql,  # TODO Check implementation.
         "Open-SNMP": open_snmp,
