@@ -70,8 +70,8 @@ class ShadowserverParserBot(ParserBot):
         Else: " quoting
         """
         try:
-            if str(int(value)) == value:
-                return str(value)
+            int(value)
+            return value
         except ValueError:
             if hasattr(value, '__len__') and not len(value):
                 return ''
@@ -179,6 +179,7 @@ class ShadowserverParserBot(ParserBot):
             event.add(key, value)
 
         raw_line = {k: self.conv_csv_shadowserver(v) for k, v in row.items()}
+        self.logger.debug("raw_line: {!r}".format(raw_line))
         event.add('raw', self.recover_line(raw_line))
 
         # Add everything which could not be resolved to extra.
