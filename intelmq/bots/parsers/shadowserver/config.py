@@ -181,14 +181,14 @@ open_chargen = {
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
         # Other known fields which will go into "extra"
-        ('response_size', 'size', int),
+        ('response_size', 'size', convert_int),
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
         # tag
         # sector
     ],
     'constant_fields': {
-        'classification.identifier': 'chargen',
+        'classification.identifier': 'openchargen',
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'Vulnerable',
         'protocol.application': 'chargen',
@@ -446,7 +446,7 @@ open_qotd = {
     'constant_fields': {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'Vulnerable',
-        'classification.identifier': 'qotd',
+        'classification.identifier': 'openqotd',
         'protocol.application': 'qotd',
     },
 }

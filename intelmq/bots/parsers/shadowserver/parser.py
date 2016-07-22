@@ -29,8 +29,8 @@ class ShadowserverParserBot(ParserBot):
     def init(self):
         self.sparser_config = None
         if hasattr(self.parameters, 'feedname'):
-            feedname = self.parameters.feedname
-            self.sparser_config = config.get_feed(feedname)
+            self.feedname = self.parameters.feedname
+            self.sparser_config = config.get_feed(self.feedname)
 
         if not self.sparser_config:
             self.logger.error('No feedname provided or feedname not in conf.')
@@ -76,7 +76,7 @@ class ShadowserverParserBot(ParserBot):
             if hasattr(value, '__len__') and not len(value):
                 return ''
             else:
-                return '"'+value+'"'
+                return '"' + value + '"'
 
     def parse_line(self, row, report):
 
@@ -93,7 +93,7 @@ class ShadowserverParserBot(ParserBot):
 
         event = Event(report)
         extra = {}  # The Json-Object which will be populated with the
-        # fields that coul not be added to the standard intelmq fields
+        # fields that could not be added to the standard intelmq fields
         # the parser is going to write this information into an object
         # one level below the "extra root"
         # e.g.: extra {'cc_dns': '127.0.0.1'}
@@ -111,19 +111,19 @@ class ShadowserverParserBot(ParserBot):
         for item in conf.get('required_fields'):
             intelmqkey, shadowkey = item[:2]
             if len(item) > 2:
-                conv = item[2]
+                conv_func = item[2]
             else:
-                conv = None
+                conv_func = None
 
             raw_value = row.get(shadowkey)
 
             value = raw_value
 
-            if conv is not None and raw_value is not None:
+            if conv_func is not None and raw_value is not None:
                 if len(item) == 4 and item[3]:
-                    value = conv(raw_value, row)
+                    value = conv_func(raw_value, row)
                 else:
-                    value = conv(raw_value)
+                    value = conv_func(raw_value)
 
             if value is not None:
                 event.add(intelmqkey, value)
@@ -135,17 +135,24 @@ class ShadowserverParserBot(ParserBot):
         for item in conf.get('optional_fields'):
             intelmqkey, shadowkey = item[:2]
             if len(item) > 2:
-                conv = item[2]
+                conv_func = item[2]
             else:
-                conv = None
+                conv_func = None
             raw_value = row.get(shadowkey)
             value = raw_value
 
-            if conv is not None and raw_value is not None:
+            if conv_func is not None and raw_value is not None:
                 if len(item) == 4 and item[3]:
-                    value = conv(raw_value, row)
+                    value = conv_func(raw_value, row)
                 else:
-                    value = conv(raw_value)
+                    try:
+                        value = conv_func(raw_value)
+                    except:
+                        self.logger.error('could not convert shadowkey: "{}", ' +
+                                          'value: "{}" via conversion function {}'.format(shadowkey, raw_value, repr(conv_func)))
+                        value = None
+                        # """ fail early and often in this case. We want to be able to convert everything """
+                        # self.stop()
 
             if value is not None:
                 if intelmqkey == 'extra.':
