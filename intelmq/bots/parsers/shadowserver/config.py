@@ -162,7 +162,8 @@ open_m_dns = {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'Vulnerable',
         'protocol.application': 'mdns',
-        'classification.identifier': 'mdns',
+        'feed.code': 'shadowserver-openmdns',
+        'classification.identifier': 'openmdns',
     },
 }
 
@@ -188,9 +189,10 @@ open_chargen = {
         # sector
     ],
     'constant_fields': {
-        'classification.identifier': 'openchargen',
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'Vulnerable',
+        'classification.identifier': 'openchargen',
+        'feed.code': 'shadowserver-openchargen',
         'protocol.application': 'chargen',
     },
 }
@@ -220,9 +222,10 @@ open_tftp = {
         # errormessage
     ],
     'constant_fields': {
-        'classification.identifier': 'opentftp',
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'Vulnerable',
+        'classification.identifier': 'opentftp',
+        'feed.code': 'shadowserver-opentftp',
         'protocol.application': 'tftp',
     },
 }
@@ -338,9 +341,10 @@ open_redis = {
         # sector
     ],
     'constant_fields': {
-        'classification.identifier': 'openredis',
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'Vulnerable',
+        'classification.identifier': 'openredis',
+        'feed.code': 'shadowserver-openredis',
         'protocol.application': 'redis',
     },
 }
@@ -369,9 +373,10 @@ open_portmapper = {
         # sector
     ],
     'constant_fields': {
-        'classification.identifier': 'openportmapper',
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'Vulnerable',
+        'classification.identifier': 'openportmapper',
+        'feed.code': 'shadowserver-openportmapper',
         'protocol.application': 'portmapper',
     },
 }
@@ -414,9 +419,10 @@ open_ipmi = {
         # productname
     ],
     'constant_fields': {
-        'classification.identifier': 'openipmi',
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'Vulnerable',
+        'classification.identifier': 'openipmi',
+        'feed.code': 'shadowserver-openipmi',
         'protocol.application': 'ipmi',
     },
 }
@@ -447,6 +453,7 @@ open_qotd = {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'openqotd',
+        'feed.code': 'shadowserver-openqotd',
         'protocol.application': 'qotd',
     },
 }
@@ -486,6 +493,7 @@ open_ssdp = {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'openssdp',
+        'feed.code': 'shadowserver-openssdp',
         'protocol.application': 'ssdp',
     },
 }
@@ -517,6 +525,7 @@ open_snmp = {
         'classification.taxonomy': 'Vulnerable',
         'protocol.application': 'snmp',
         'classification.identifier': 'snmp',
+        'feed.code': 'shadowserver-opensnmp',
     },
 }
 
@@ -550,6 +559,7 @@ open_mssql = {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'openmssql',
+        'feed.code': 'shadowserver-openmssql',
         'protocol.application': 'mssql',
     },
 }
@@ -588,6 +598,7 @@ open_mongo_db = {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'openmongodb',
+        'feed.code': 'shadowserver-openmongodb',
         'protocol.application': 'mongodb',
     },
 }
@@ -617,6 +628,7 @@ open_net_bios = {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'opennetbios',
+        'feed.code': 'shadowserver-opennetbios',
         'protocol.application': 'netbios',
     },
 }
@@ -655,6 +667,7 @@ open_elasticsearch = {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'openelasticsearch',
+        'feed.code': 'shadowserver-openelasticsearch',
         'protocol.application': 'elasticsearch',
     },
 }
@@ -691,6 +704,7 @@ dns_open_resolvers = {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'opendns',
+        'feed.code': 'shadowserver-opendns',
         'protocol.application': 'dns',
     },
 }
@@ -714,6 +728,7 @@ ntp_monitor = {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'openntp',
+        'feed.code': 'shadowserver-openntp',
         'protocol.application': 'ntp',
     },
 }
@@ -758,6 +773,7 @@ open_memcached = {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'openmemcached',
+        'feed.code': 'shadowserver-openmemcached',
         'protocol.application': 'memcached',
     },
 }
