@@ -51,8 +51,9 @@ ERROR_MESSAGES = {
 LOG_LEVEL = {
     'DEBUG': 0,
     'INFO': 1,
-    'ERROR': 2,
-    'CRITICAL': 3,
+    'WARNING': 2,
+    'ERROR': 3,
+    'CRITICAL': 4,
 }
 
 RETURN_TYPES = ['text', 'json']
