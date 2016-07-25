@@ -168,6 +168,13 @@ Valid values are only unicode strings with JSON dictionaries.
 
 ### URL
 
+URI type. Local and remote.
+
+Sanitation converts hxxp and hxxps to http and https.
+For local URIs (file) a missing host is replaced by localhost.
+
+Valid values must have the host (network location part).
+
 
 
 ### UUID
