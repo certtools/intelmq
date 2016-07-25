@@ -30,10 +30,10 @@ class FileCollectorBot(Bot):
     def init(self):
         # Test if path is a directory
         if not os.path.isdir(self.parameters.path):
-            self.logger.error("The path does not lead to a directory")
-            raise exceptions.InvalidArgument('path', got=self.parameters.path)
+            raise exceptions.InvalidArgument('path', got=self.parameters.path,
+                                             expected="directory")
 
-        if not self.parameters.extension:
+        if not self.parameters.postfix:
             self.logger.warn("No file extension was set. The collector will"
                              " read all files in %s", self.parameters.path)
             if self.parameters.delete_file:
@@ -52,7 +52,7 @@ class FileCollectorBot(Bot):
             for f in os.listdir(p):
                 filename = os.path.join(p, f)
                 if os.path.isfile(filename):
-                    if fnmatch.fnmatch(f, '*' + self.parameters.extension):
+                    if fnmatch.fnmatch(f, '*' + self.parameters.postfix):
                         self.logger.info("Processing file %r." % filename)
 
                         with open(filename, 'r') as f:
@@ -60,7 +60,7 @@ class FileCollectorBot(Bot):
                             report = Report()
                             report.add("raw", f.read())
                             report.add("feed.name", self.parameters.feed)
-                            report.add("feed.url", "file:/%s" % filename)
+                            report.add("feed.url", "file://localhost%s" % filename)
                             report.add("feed.accuracy", self.parameters.accuracy)
                             self.send_message(report)
 
