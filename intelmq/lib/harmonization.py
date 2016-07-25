@@ -11,10 +11,9 @@ The following types are implemented with sanitize() and is_valid() functions:
  - GenericType
  - IPAddress
  - IPNetwork
- - MalwareName
+ - LowercaseString
  - String
  - URL
- - UUID
 """
 import binascii
 import datetime
@@ -31,7 +30,7 @@ import intelmq.lib.utils as utils
 
 __all__ = ['Base64', 'Boolean', 'ClassificationType', 'DateTime', 'FQDN',
            'Float', 'Accuracy', 'GenericType', 'IPAddress', 'IPNetwork',
-           'Integer', 'JSON', 'MalwareName', 'String', 'URL', 'UUID',
+           'Integer', 'JSON', 'LowercaseString', 'String', 'URL',
            ]
 
 
@@ -501,15 +500,15 @@ class JSON(GenericType):
             return None
 
 
-class MalwareName(GenericType):
+class LowercaseString(GenericType):
 
     @staticmethod
     def is_valid(value, sanitize=False):
         if sanitize:
-            value = GenericType().sanitize(value)
-            value = MalwareName().sanitize(value)
+            value = String().sanitize(value)
+            value = LowercaseString().sanitize(value)
 
-        if not GenericType().is_valid(value):
+        if not String().is_valid(value):
             return False
 
         if value != value.lower():
@@ -520,7 +519,7 @@ class MalwareName(GenericType):
     @staticmethod
     def sanitize(value):
         value = value.lower()
-        return GenericType().sanitize(value)
+        return String().sanitize(value)
 
 
 class String(GenericType):
@@ -597,7 +596,3 @@ class URL(GenericType):
         if value.netloc != "" and not IPAddress.is_valid(value.netloc):
             return value.netloc
         return None
-
-
-class UUID(String):
-    pass

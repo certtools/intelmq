@@ -236,6 +236,19 @@ class TestHarmonization(unittest.TestCase):
         self.assertTrue(harmonization.JSON.is_valid(b'{"foo": "bar"}',
                                                     sanitize=True))
 
+    def test_lowercasestring_valid(self):
+        """ Test LowercaseString.is_valid with valid arguments. """
+        self.assertTrue(harmonization.LowercaseString.is_valid('foobar'))
+
+    def test_lowercasestring_invalid(self):
+        """ Test LowercaseString.is_valid with invalid arguments. """
+        self.assertFalse(harmonization.LowercaseString.is_valid('fooBar'))
+
+    def test_lowercasestring_sanitize(self):
+        """ Test LowercaseString.sanitize with valid arguments. """
+        self.assertTrue(harmonization.LowercaseString.is_valid(b'fooBar',
+                                                               sanitize=True))
+
     def test_url_valid(self):
         """ Test URL.is_valid with valid arguments. """
         self.assertTrue(harmonization.URL.is_valid('http://example.com'))
