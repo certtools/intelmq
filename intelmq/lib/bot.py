@@ -121,8 +121,9 @@ class Bot(object):
                 self.process()
                 self.__error_retries_counter = 0  # reset counter
 
-                self.logger.info("Idling for {!s}s now.".format(self.parameters.rate_limit))
-                time.sleep(self.parameters.rate_limit)
+                if self.parameters.rate_limit:
+                    self.logger.info("Idling for {!s}s now.".format(self.parameters.rate_limit))
+                    time.sleep(self.parameters.rate_limit)
 
             except exceptions.PipelineError:
                 error_on_pipeline = True
