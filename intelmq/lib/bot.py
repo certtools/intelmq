@@ -404,6 +404,13 @@ class Bot(object):
 
 class ParserBot(Bot):
 
+    def __init__(self, bot_id):
+        super(ParserBot, self).__init__(bot_id=bot_id)
+        if self.__class__.__name__ == 'ParserBot':
+            self.logger.error('ParserBot can\'t be started itself. '
+                              'Possible Misconfiguration.')
+            self.stop()
+
     def parse_csv(self, report):
         """
         A basic CSV parser.
