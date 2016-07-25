@@ -311,10 +311,7 @@ class Bot(object):
         new_dump_data[timestamp]["source_queue"] = self.__source_queues
         new_dump_data[timestamp]["traceback"] = error_traceback
 
-        if (type(message) == str):
-            new_dump_data[timestamp]["message"] = message
-        else:
-            new_dump_data[timestamp]["message"] = message.serialize()
+        new_dump_data[timestamp]["message"] = message.serialize()
 
         try:
             with open(dump_file, 'r') as fp:
