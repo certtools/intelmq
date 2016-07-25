@@ -51,7 +51,7 @@ def get_feed(feedname):
         "DNS-open-resolvers": dns_open_resolvers,  # TODO Check implementation.
         "Open-Elasticsearch": open_elasticsearch,
         "Open-NetBIOS": open_net_bios,  # TODO Check implementation.
-        "Open-Mongo DB": open_mongo_db,  # TODO Check implementation.
+        "Open-MongoDB": open_mongodb,  # TODO Check implementation.
         "Open-MSSQL": open_mssql,  # TODO Check implementation.
         "Open-SNMP": open_snmp,
         "Open-SSDP": open_ssdp,  # TODO Check implementation.
@@ -565,7 +565,7 @@ open_mssql = {
 }
 
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-MongoDB
-open_mongo_db = {
+open_mongodb = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
