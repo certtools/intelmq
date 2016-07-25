@@ -21,7 +21,7 @@ import datetime
 import ipaddress
 import json
 import socket
-from urllib.parse import urlparse
+import urllib.parse as parse
 
 import dateutil.parser
 import dns.resolver
@@ -544,6 +544,14 @@ class String(GenericType):
 
 
 class URL(GenericType):
+    """
+    URI type. Local and remote.
+
+    Sanitation converts hxxp and hxxps to http and https.
+    For local URIs (file) a missing host is replaced by localhost.
+
+    Valid values must have the host (network location part).
+    """
 
     @staticmethod
     def is_valid(value, sanitize=False):
@@ -554,7 +562,7 @@ class URL(GenericType):
         if not GenericType().is_valid(value):
             return False
 
-        result = urlparse(value)
+        result = parse.urlsplit(value)
         if result.netloc == "":
             return False
 
@@ -565,19 +573,27 @@ class URL(GenericType):
         value = value.replace('hxxp://', 'http://')
         value = value.replace('hxxps://', 'https://')
 
-        if urlparse(value).netloc != "":
+        result = parse.urlsplit(value)
+        if result.scheme == "file" and result.netloc == '':
+            # add localhost as netloc
+            result_split = list(result)
+            result_split[1] = 'localhost'
+            value = parse.urlunsplit(result_split)
+            result = parse.urlsplit(value)
+
+        if result.netloc != "":
             return GenericType().sanitize(value)
 
     @staticmethod
     def to_ip(url):
-        value = urlparse(url)
+        value = parse.urlsplit(url)
         if value.netloc != "":
             return FQDN().to_ip(value.netloc)
         return None
 
     @staticmethod
     def to_domain_name(url):
-        value = urlparse(url)
+        value = parse.urlsplit(url)
         if value.netloc != "" and not IPAddress.is_valid(value.netloc):
             return value.netloc
         return None

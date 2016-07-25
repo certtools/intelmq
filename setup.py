@@ -29,6 +29,7 @@ DATA = [
      ),
     ('/opt/intelmq/var/lib/bots/modify/example',
      ['intelmq/bots/experts/modify/examples/default.conf',
+      'intelmq/bots/experts/modify/examples/morefeeds.conf',
       ],
      ),
     ('/opt/intelmq/var/log/',
