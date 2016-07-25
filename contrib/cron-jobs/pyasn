@@ -1,6 +1,14 @@
 #!/bin/sh
 
 
+###
+## ATTENTION: this is an example. It is left here for educational purposes.
+## A better example can be found in debian/cron.d/*
+##
+## (This file might go away in the future)
+###
+
+
 # How often should this run? 
 #  Once a day max
 

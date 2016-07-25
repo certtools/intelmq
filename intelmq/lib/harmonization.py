@@ -200,7 +200,7 @@ class DateTime(GenericType):
     @staticmethod
     def __parse(value):
         try:
-            value = dateutil.parser.parse(value)
+            value = dateutil.parser.parse(value, fuzzy=True)
             value = value.astimezone(pytz.utc)
             value = value.isoformat()
         except ValueError:
@@ -381,8 +381,11 @@ class IPAddress(GenericType):
             return False
 
         try:
-            ipaddress.ip_address(value)
+            address = ipaddress.ip_address(value)
         except ValueError:
+            return False
+
+        if address == ipaddress.ip_address('0.0.0.0'):
             return False
 
         return True

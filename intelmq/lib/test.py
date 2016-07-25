@@ -15,7 +15,8 @@ import pkg_resources
 
 import intelmq.lib.pipeline as pipeline
 import intelmq.lib.utils as utils
-from intelmq import PIPELINE_CONF_FILE, RUNTIME_CONF_FILE, SYSTEM_CONF_FILE
+from intelmq import (PIPELINE_CONF_FILE, RUNTIME_CONF_FILE, SYSTEM_CONF_FILE,
+                     CONFIG_DIR)
 
 __all__ = ['BotTestCase']
 
@@ -34,13 +35,6 @@ BOT_CONFIG = {
     "redis_cache_port": 6379,
     "redis_cache_db": 10,
     "redis_cache_ttl": 10,
-    ## needed for redis-output-bot
-    "redis_server_ip": "127.0.0.1",
-    "redis_server_port": 6379,
-    "redis_db": 10,
-    "redis_queue": "test-redis-output-queue",
-    "redis_password": "none",
-    "redis_timeout": "50000"
 }
 
 
@@ -56,7 +50,7 @@ def mocked_config(bot_id='test-bot', src_name='', dst_names=(), sysconfig={}):
             conf = BOT_CONFIG.copy()
             conf.update(sysconfig)
             return conf
-        elif conf_file.startswith('/opt/intelmq/etc/'):
+        elif conf_file.startswith(CONFIG_DIR):
             confname = os.path.join('etc/', os.path.split(conf_file)[-1])
             fname = pkg_resources.resource_filename('intelmq',
                                                     confname)
@@ -98,7 +92,6 @@ class BotTestCase(object):
         cls.bot = None
         cls.bot_reference = None
         cls.bot_type = None
-        cls.config = {}
         cls.default_input_message = ''
         cls.input_message = None
         cls.loglines = []
@@ -107,6 +100,7 @@ class BotTestCase(object):
         cls.maxDiff = None  # For unittest module, prints long diffs
         cls.pipe = None
         cls.sysconfig = {}
+        cls.allowed_error_count = 0  # allows dumping of some lines
 
         cls.set_bot()
 
@@ -221,7 +215,8 @@ class BotTestCase(object):
         """ Test if bot logs initialized message. """
         self.run_bot()
         self.assertLoglineMatches(0, "{} initialized with id {} and version"
-                                     " [0-9.]{{5}} \([a-zA-Z, 0-9:]+\)."
+                                     " [0-9.]{{5}} \([a-zA-Z0-9,:. ]+\)( \[GCC\])?"
+                                     " as process [0-9]+\."
                                      "".format(self.bot_name,
                                                self.bot_id), "INFO")
 
@@ -246,7 +241,8 @@ class BotTestCase(object):
     def test_log_not_error(self):
         """ Test if bot does not log errors. """
         self.run_bot()
-        self.assertNotRegexpMatchesLog("ERROR")
+        self.assertNotRegexpMatchesLog("(ERROR.*?){}"
+                                       "".format(self.allowed_error_count))
 
     def test_log_not_critical(self):
         """ Test if bot does not log critical errors. """

@@ -175,6 +175,15 @@ class TestHarmonization(unittest.TestCase):
                                                                'America/'
                                                                'Guyana'))
 
+    def test_datetime_sanitize(self):
+        """ Test DateTime.sanitize method. """
+        self.assertEqual('2016-07-19T04:40:01.617719+00:00',
+                         harmonization.DateTime.sanitize(
+                         '2016-07-19 06:40:01.617719+02:00 UTC'))
+        self.assertEqual('2016-07-19T13:08:38+00:00',
+                         harmonization.DateTime.sanitize(
+                         '2016-07-19 13:08:38 UTC'))
+
     def test_datetime_from_timestamp_invalid(self):
         """ Test DateTime.from_timestamp method with invalid inputs. """
         with self.assertRaises(TypeError):
