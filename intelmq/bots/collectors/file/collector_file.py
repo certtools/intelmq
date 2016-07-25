@@ -11,7 +11,7 @@ Software engineering by Intevation GmbH
 
 Parameters:
 path: string
-extension: string
+postfix: string
 delete_file: boolean
     default: False
 """
