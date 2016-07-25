@@ -16,10 +16,11 @@ delete_file: boolean
     default: False
 """
 
-import sys
-import os
 import fnmatch
+import os
+import sys
 
+import intelmq.lib.exceptions as exceptions
 from intelmq.lib.bot import Bot
 from intelmq.lib.message import Report
 
@@ -33,11 +34,12 @@ class FileCollectorBot(Bot):
             raise exceptions.InvalidArgument('path', got=self.parameters.path)
 
         if not self.parameters.extension:
-            self.logger.warn("No file extension was set. The collector will" \
-                " read all files in %s", self.parameters.path)
+            self.logger.warn("No file extension was set. The collector will"
+                             " read all files in %s", self.parameters.path)
             if self.parameters.delete_file:
-                self.logger.error("This configuration would delete all files" \
-                    " in %s. I'm stopping now....", self.parameters.path)
+                self.logger.error("This configuration would delete all files"
+                                  " in %s. I'm stopping now....",
+                                  self.parameters.path)
                 self.stop()
 
     def process(self):
@@ -46,36 +48,30 @@ class FileCollectorBot(Bot):
         if os.path.isdir(self.parameters.path):
             p = os.path.abspath(self.parameters.path)
 
-            #iterate over all files in dir
+            # iterate over all files in dir
             for f in os.listdir(p):
                 filename = os.path.join(p, f)
                 if os.path.isfile(filename):
-                    if fnmatch.fnmatch(f, '*'+self.parameters.extension):
-
-                        self.logger.debug("Found file to process: %s" %filename)
+                    if fnmatch.fnmatch(f, '*' + self.parameters.extension):
+                        self.logger.info("Processing file %r." % filename)
 
                         with open(filename, 'r') as f:
 
                             report = Report()
                             report.add("raw", f.read())
                             report.add("feed.name", self.parameters.feed)
-                            report.add("feed.url", "file:/%s" %filename)
-                            report.add("feed.accuracy",
-                                       self.parameters.accuracy)
+                            report.add("feed.url", "file:/%s" % filename)
+                            report.add("feed.accuracy", self.parameters.accuracy)
                             self.send_message(report)
-
 
                         if self.parameters.delete_file:
                             try:
                                 os.remove(filename)
-                                self.logger.debug("Deleting file: %s" %filename)
+                                self.logger.debug("Deleted file: %s" % filename)
                             except PermissionError:
-                                self.logger.error("Could not delete file %s" \
-                                    %filename)
-                                self.logger.info("Maybe I don't have" \
-                                    " sufficient rights on that file?")
-                                self.logger.error("Stopping now, to prevent" \
-                                    " reading this file again.")
+                                self.logger.error("Could not delete file %s" % filename)
+                                self.logger.info("Maybe I don't have sufficient rights on that file?")
+                                self.logger.error("Stopping now, to prevent reading this file again.")
                                 self.stop()
 
 if __name__ == "__main__":
