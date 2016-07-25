@@ -453,14 +453,16 @@ class ParserBot(Bot):
             try:
                 # filter out None
                 events = list(filter(bool, self.parse_line(line, report)))
-            except Exception as exc:
+            except Exception:
                 self.logger.exception('Failed to parse line.')
-                self.__failed.append((exc, line))
+                self.__failed.append((traceback.format_exc(), line))
             else:
                 self.send_message(*events)
 
         for exc, line in self.__failed:
-            self._dump_message(exc, self.recover_line(line))
+            report_dump = report.copy()
+            report_dump.update('raw', self.recover_line(line))
+            self._dump_message(exc, report_dump)
 
         self.acknowledge_message()
 
