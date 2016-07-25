@@ -423,9 +423,10 @@ class TestMessageFactory(unittest.TestCase):
         """ Test if the regex for malware.name is tested correctly. """
         event = message.MessageFactory.unserialize('{"__type": "Event"}')
         event.add('malware.name', 'multiple-malware citadel:report')
+        event.update('malware.name', 'yahoo!')
         del event['malware.name']
         with self.assertRaises(exceptions.InvalidValue):
-            event.add('malware.name', 'tu234t2t$#%$')
+            event.add('malware.name', 'tu234t2\nt$#%$')
 
     def test_protocol_ascii(self):
         """ Test if ascii for protocol is tested correctly. """
