@@ -213,7 +213,7 @@ open_tftp = {
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
         # Other known fields which will go into "extra"
-        ('extra.', 'size', int),
+        ('extra.', 'size', convert_int),
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
         # tag
@@ -516,7 +516,7 @@ open_snmp = {
         # Other known fields which will go into "extra"
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
-        ('extra.', 'version', int),
+        ('extra.', 'version', convert_int),
         # sysdesc
         # sysname
         # sector
