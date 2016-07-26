@@ -69,6 +69,8 @@ class ShadowserverParserBot(ParserBot):
         Empty string: no quoting
         Else: " quoting
         """
+        if value is None:
+            return ''
         try:
             int(value)
             return value
@@ -134,6 +136,8 @@ class ShadowserverParserBot(ParserBot):
         # extra if an add operation failed
         for item in conf.get('optional_fields'):
             intelmqkey, shadowkey = item[:2]
+            if shadowkey not in fields:  # key does not exist in data (not even in the header)
+                continue
             if len(item) > 2:
                 conv_func = item[2]
             else:
@@ -178,9 +182,8 @@ class ShadowserverParserBot(ParserBot):
         for key, value in conf.get('constant_fields', {}).items():
             event.add(key, value)
 
-        raw_line = {k: self.conv_csv_shadowserver(v) for k, v in row.items()}
-        self.logger.debug("raw_line: {!r}".format(raw_line))
-        event.add('raw', self.recover_line(raw_line))
+        self.logger.debug("raw_line: {!r}".format(row))
+        event.add('raw', self.recover_line(row))
 
         # Add everything which could not be resolved to extra.
         for f in fields:
