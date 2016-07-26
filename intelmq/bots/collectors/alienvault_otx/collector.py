@@ -19,8 +19,6 @@ class AlienVaultOTXCollectorBot(Bot):
 
         report = Report()
         report.add("raw", json.dumps(pulses))
-        report.add("feed.name", self.parameters.feed)
-        report.add("feed.accuracy", self.parameters.accuracy)
         self.send_message(report)
 
 

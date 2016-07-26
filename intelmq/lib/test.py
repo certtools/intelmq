@@ -166,7 +166,8 @@ class BotTestCase(object):
                     self.input_queue.append(msg)
             self.input_message = None
         else:
-            self.input_queue = [self.default_input_message]
+            if self.default_input_message:  # None for collectors
+                self.input_queue = [self.default_input_message]
 
     def run_bot(self, iterations=1):
         """

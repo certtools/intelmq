@@ -500,5 +500,38 @@ class ParserBot(Bot):
         return out.getvalue()
 
 
+class CollectorBot(Bot):
+    """
+    Base class for collectors.
+
+    Does some sanity checks on message sending.
+    """
+    def __init__(self, bot_id):
+        super(CollectorBot, self).__init__(bot_id=bot_id)
+        if self.__class__.__name__ == 'CollectorBot':
+            self.logger.error('CollectorBot can\'t be started itself. '
+                              'Possible Misconfiguration.')
+            self.stop()
+
+    def __filter_empty_report(self, message):
+        if 'raw' not in message:
+            self.logger.warning('Ignoring report without raw field. '
+                                'Possible bug or miconfiguration of this bot.')
+            return False
+        return True
+
+    def __add_report_fields(self, report):
+        report.add("feed.name", self.parameters.feed)
+        if hasattr(self.parameters, 'code'):
+            report.add("feed.code", self.parameters.code)
+        report.add("feed.accuracy", self.parameters.accuracy)
+        return report
+
+    def send_message(self, *messages):
+        messages = filter(self.__filter_empty_report, messages)
+        messages = map(self.__add_report_fields, messages)
+        super(CollectorBot, self).send_message(*messages)
+
+
 class Parameters(object):
     pass
