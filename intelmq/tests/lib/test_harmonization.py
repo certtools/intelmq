@@ -240,16 +240,20 @@ class TestHarmonization(unittest.TestCase):
         """ Test URL.is_valid with valid arguments. """
         self.assertTrue(harmonization.URL.is_valid('http://example.com'))
         self.assertTrue(harmonization.URL.is_valid('http://example.com/foo'))
+        self.assertTrue(harmonization.URL.is_valid('file://localhost/etc/hosts'))
 
     def test_url_invalid(self):
         """ Test URL.is_valid with invalid arguments. """
         self.assertFalse(harmonization.URL.is_valid('example.com'))
+        self.assertFalse(harmonization.URL.is_valid('file:///etc/hosts'))
 
     def test_url_sanitize(self):
         """ Test URL.sanitize with valid arguments. """
         self.assertTrue(harmonization.URL.is_valid(b'http://example.com',
                                                    sanitize=True))
         self.assertTrue(harmonization.URL.is_valid('hxxps://example.com/foo',
+                                                   sanitize=True))
+        self.assertTrue(harmonization.URL.is_valid('file:///etc/hosts',
                                                    sanitize=True))
 
     def test_url_sanitize_invalid(self):
