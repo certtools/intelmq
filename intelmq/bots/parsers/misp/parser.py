@@ -106,8 +106,8 @@ class MISPParserBot(Bot):
                 # FIXME: Send the whole MISP event with each attribute?
                 event.add('raw', json.dumps(misp_event, sort_keys=True))
                 event.add(self.MISP_TYPE_MAPPING[type_], value)
-                event.add('misp_uuid', misp_event['uuid'])
-                event.add('misp_attribute_uuid', uuid)
+                event.add('misp.event_uuid', misp_event['uuid'])
+                event.add('misp.attribute_uuid', uuid)
                 event.add('comment', comment)
                 event.add('event_description.text', category)
                 event.add('event_description.url', misp_event_url)

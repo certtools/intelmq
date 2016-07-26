@@ -35,8 +35,8 @@ EXAMPLE_EVENT = {
     "event_description.url": "http://192.168.56.102/event/view/2",
     "classification.type": "ransomware",
     "malware.name": "locky",
-    'misp_attribute_uuid': '575c8598-f1f0-4c16-a94a-0612c0a83866',
-    'misp_uuid': '5758ebf5-c898-48e6-9fe9-5665c0a83866',
+    'misp.attribute_uuid': '575c8598-f1f0-4c16-a94a-0612c0a83866',
+    'misp.event_uuid': '5758ebf5-c898-48e6-9fe9-5665c0a83866',
     "raw": base64_encode(intelmq_misp_event)
 }
 

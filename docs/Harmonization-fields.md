@@ -44,7 +44,8 @@ Harmonization field names
 |Malware Hash|malware.hash.sha1|String|A string depicting a SHA1 checksum for a file, be it a malware sample for example. Includes hash type according to https://en.wikipedia.org/wiki/Crypt_%28C%29|
 |Malware|malware.name|MalwareName|A malware family name in lower case.|
 |Malware|malware.version|String|A version string for an identified artifact generation, e.g. a crime-ware kit.|
-||misp_uuid|UUID|MISP - Malware Information Sharing Platform & Threat Sharing UUID.|
+||misp.event_uuid|UUID|MISP - Malware Information Sharing Platform & Threat Sharing event UUID.|
+||misp.attribute_uuid|UUID|MISP - Malware Information Sharing Platform & Threat Sharing attribute UUID.|
 |Protocol|protocol.application|String|e.g. vnc, ssh, sip, irc, http or p2p.|
 |Protocol|protocol.transport|String|e.g. tcp, udp, icmp.|
 ||raw|Base64|The original line of the event from encoded in base64.|
