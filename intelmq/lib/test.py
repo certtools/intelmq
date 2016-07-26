@@ -303,6 +303,22 @@ class BotTestCase(object):
             self.assertIn('raw', event)
             self.assertIn('time.observation', event)
 
+    def assertAnyLoglineEqual(self, message, levelname="ERROR"):
+        """Asserts if any logline matches a specific requirement.
+           Args:
+                message: Message text which is compared
+                type: Type of logline which is asserted"""
+
+        self.assertIsNotNone(self.loglines)
+        for logline in self.loglines:
+            fields = utils.parse_logline(logline)
+
+            if levelname == fields["log_level"] and message == fields["message"]:
+                return
+        else:
+            raise ValueError('Logline with level {!r} and message {!r} not found'
+                             ''.format(levelname, message))
+
     def assertLoglineEqual(self, line_no, message, levelname="ERROR"):
         """Asserts if a logline matches a specific requirement.
            Args:

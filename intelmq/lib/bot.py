@@ -448,6 +448,12 @@ class ParserBot(Bot):
         self.__failed = []
         report = self.receive_message()
 
+        if 'raw' not in report:
+            self.logger.warning('Report without raw field received. Possible '
+                                'bug or misconfiguration in previous bots.')
+            self.acknowledge_message()
+            return
+
         for line in self.parse(report):
             if not line:
                 continue
