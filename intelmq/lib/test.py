@@ -372,6 +372,7 @@ class BotTestCase(object):
         event_dict = json.loads(event)
         expected = expected_msg.copy()
         del event_dict['time.observation']
-        del expected['time.observation']
+        if 'time.observation' in expected:
+            del expected['time.observation']
 
         self.assertDictEqual(expected, event_dict)
