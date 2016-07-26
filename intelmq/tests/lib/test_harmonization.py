@@ -197,14 +197,16 @@ class TestHarmonization(unittest.TestCase):
 
     def test_fqdn_invalid(self):
         """ Test FQDN.is_valid with invalid arguments. """
-        self.assertFalse(harmonization.FQDN.is_valid('ex-am.ple.example.',
-                                                     sanitize=False))
+        self.assertFalse(harmonization.FQDN.is_valid('ex-am.ple.example.'))
+        self.assertFalse(harmonization.FQDN.is_valid('exAmple.com'))
 
     def test_fqdn_sanitize(self):
         """ Test FQDN.sanitize with valid arguments. """
         self.assertTrue(harmonization.FQDN.is_valid('example.example.',
                                                     sanitize=True))
         self.assertTrue(harmonization.FQDN.is_valid('example.net',
+                                                    sanitize=True))
+        self.assertTrue(harmonization.FQDN.is_valid('exAmple.net',
                                                     sanitize=True))
 
     def test_fqdn_to_ip(self):

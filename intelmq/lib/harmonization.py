@@ -294,8 +294,8 @@ class FQDN(GenericType):
     """
     Fully qualified domain name type.
 
-    All valid domains are accepted, no IP addresses or URLs. Trailing dot is
-    not allowed.
+    All valid lowercase domains are accepted, no IP addresses or URLs. Trailing
+    dot is not allowed.
     """
 
     @staticmethod
@@ -319,14 +319,14 @@ class FQDN(GenericType):
             return False
         """
 
-        if value[-1] == '.':
+        if value[-1] == '.' or value != value.lower():
             return False
 
         return True
 
     @staticmethod
     def sanitize(value):
-        return value.rstrip('.')
+        return value.rstrip('.').lower()
 
     @staticmethod
     def to_ip(value):
