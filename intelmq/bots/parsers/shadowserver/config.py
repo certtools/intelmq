@@ -303,6 +303,7 @@ microsoft_sinkhole = {
     ],
     'constant_fields': {
         'classification.type': 'botnet drone',
+        'protocol.transport': 'tcp',
         'protocol.application': 'http',
         'classification.taxonomy': 'Malicious Code',
     },
