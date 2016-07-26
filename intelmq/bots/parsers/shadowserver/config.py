@@ -47,6 +47,7 @@ def get_feed(feedname):
         "Botnet-Drone-Hadoop": botnet_drone_hadoop,
         "Open-Memcached": open_memcached,
         "Ssl-Scan": ssl_scan,  # Aka Poodle
+        "Ssl-Freak-Scan": ssl_scan, # Only differs in a few extra fields
         "NTP-Monitor": ntp_monitor,
         "DNS-open-resolvers": dns_open_resolvers,  # TODO Check implementation.
         "Open-Elasticsearch": open_elasticsearch,
