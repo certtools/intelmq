@@ -743,8 +743,7 @@ ssl_scan = {
         ('source.port', 'port')
     ],
     'optional_fields': [
-        ('protocol.transport', 'protocol'),
-        ('source.reverse_dns', 'hostname'),  # TODO
+        ('source.reverse_dns', 'hostname'),
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
