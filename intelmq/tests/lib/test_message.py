@@ -432,7 +432,7 @@ class TestMessageFactory(unittest.TestCase):
         """ Test if ascii for protocol is tested correctly. """
         event = message.MessageFactory.unserialize('{"__type": "Event"}')
         with self.assertRaises(exceptions.InvalidValue):
-            event.add('protocol.application', 'a€80"')
+            event.add('protocol.application', 'A\n€80"')
 
     def test_protocol_length(self):
         """ Test if the length for protocol is tested correctly. """
