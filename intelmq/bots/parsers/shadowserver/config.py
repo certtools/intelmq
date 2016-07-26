@@ -286,14 +286,14 @@ microsoft_sinkhole = {
         ('source.reverse_dns', 'hostname'),
         ('destination.port', 'dst_port'),
         ('destination.ip', 'dst_ip'),
+        ('destination.fqdn', 'http_host'),
         ('destination.asn', 'dst_asn'),
         ('destination.geolocation.cc', 'dst_geo'),
-        # Other known fields which will go into "extra"
         ('user_agent', 'http_agent'),
         ('os.name', 'p0f_genre'),
         ('os.version', 'p0f_detail'),
-        ('destination.url', 'http_host', convert_host_and_url, True),
-        ('', 'url', lambda x: None),  # remove URl here, is included in above conversion
+        ('destination.url', 'url', convert_host_and_url, True),
+        # Other known fields which will go into "extra"
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
         ('extra.', 'http_referer', validate_to_none),
