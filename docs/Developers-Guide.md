@@ -6,6 +6,7 @@
 2. [System Overview](#system-overview)
 3. [Bot Developer Guide](#bot-developer-guide)
 
+<a name="audience"></a>
 # Intended Audience
 This guide is for developers of IntelMQ. It explains the code architecture, coding guidelines as well as ways you can contribute code or documentation.
 If you have not done so, please read the [User Guide](User-Guide.md) first.
@@ -59,8 +60,17 @@ It may be necessary to switch the user to `intelmq` if the run-path (`/opt/intel
 
 There is a [Travis-CI](https://travis-ci.org/certtools/intelmq/builds) setup for automatic testing, which triggers on pull requests. You can also easily activate it for your forks.
 
-<a href="code-and-repository-rules"></a>
+<a name="code-and-repository-rules"></a>
 ## Repository rules for submissions
+
+### Releases, Repositories and branches
+
+  * The main repository is in [github.com/certtools/intelmq](https://github.com/certtools/intelmq).
+  * There are a couple of forks which might/should be regularly merged into the main repository.
+  * The "master" branch is the current development branch. Releases are tagged as release branch.
+  * Releases shall receive non-breaking bug fixes. The "master" branch can change and might introduce non-compatible changes. 
+  * If you contribute something, please fork and create a separate branch and use this for pull requests.
+  * Name your branch accordingly (example: "shadowserver-bugfixes").
 
 ### Generic requirements in order to contribute to IntelMQ:
 
