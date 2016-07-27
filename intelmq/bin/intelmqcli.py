@@ -422,7 +422,8 @@ Subject: {subj}
             return
         if True:
             self.save_to_rt(ids=ids, subject=subject, requestor=requestor,
-                            csvfile=csvfile, body=text, feed=feed, taxonomy=taxonomy)
+                            csvfile=csvfile, body=text, feed=feed, taxonomy=taxonomy,
+                            query=query)
         else:  # TODO: Config option for single events (best in ascontacts db)
             header = attachment_lines[0]
             for id_, attach_line, row in zip(ids, attachment_lines[1:], query):
@@ -439,7 +440,7 @@ Subject: {subj}
                                      target=lib.target_from_row(row)))
                 self.save_to_rt(ids=(id_, ), subject=subject,
                                 requestor=requestor, feed=feed, taxonomy=taxonomy, csvfile=csvfile,
-                                body=text)
+                                body=text, query=query)
 
         if requestor != contact and not self.dryrun:
             answer = input(inverted('Save recipient {!r} for ASNs {!s}? [Y/n] '
@@ -457,7 +458,7 @@ Subject: {subj}
                                                   contact=requestor,
                                                   comment=comment)
 
-    def save_to_rt(self, ids, subject, requestor, feed, taxonomy, csvfile, body):
+    def save_to_rt(self, ids, subject, requestor, feed, taxonomy, csvfile, body, query):
         if self.dryrun:
             quietprint('Not writing to RT, dry-run selected.')
             return
@@ -465,15 +466,10 @@ Subject: {subj}
         if taxonomy == '%':
             taxonomy='Unknown'
 
-        report_id = self.rt.create_ticket(Queue='Incident Reports',
-                                          Subject=subject,
-                                          Owner=self.config['rt']['user'])
-        if report_id == -1:
-            error(red('Could not create Incident Report.'))
-            return
-        quietprint(green('Created Incident Report {}.'.format(report_id)))
-        self.query_set_rtirid(events_ids=ids, rtir_id=report_id,
-                              rtir_type='report')
+        report_ids = set()
+        for row in query:
+            report_ids.add(row['rtir_report_id'])
+
         if True:  # TODO: implement zip config
             attachment = csvfile
             attachment.seek(0)
@@ -499,9 +495,10 @@ Subject: {subj}
                             CF__RTIR_Constituency='national',
                             CF__RTIR_Function='IncidentCoord')
         quietprint(green('Created Incident {}.'.format(incident_id)))
-        if not self.rt.edit_link(report_id, 'MemberOf', incident_id):
-            error(red('Could not link Incident to Incident Report: ({} -> {}).'.format(incident_id, report_id)))
-            return
+        for report_id in report_ids:
+            if not self.rt.edit_link(report_id, 'MemberOf', incident_id):
+                error(red('Could not link Incident to Incident Report: ({} -> {}).'.format(incident_id, report_id)))
+                return
         self.query_set_rtirid(events_ids=ids, rtir_id=incident_id,
                               rtir_type='incident')
         investigation_id = self.rt.create_ticket(Queue='Investigations',

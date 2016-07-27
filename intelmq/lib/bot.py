@@ -125,8 +125,9 @@ class Bot(object):
                 self.process()
                 self.__error_retries_counter = 0  # reset counter
 
-                self.logger.info("Idling for {!s}s now.".format(self.parameters.rate_limit))
-                time.sleep(self.parameters.rate_limit)
+                if self.parameters.rate_limit:
+                    self.logger.info("Idling for {!s}s now.".format(self.parameters.rate_limit))
+                    time.sleep(self.parameters.rate_limit)
 
             except exceptions.PipelineError:
                 error_on_pipeline = True
@@ -284,7 +285,7 @@ class Bot(object):
             self.__destination_pipeline.send(raw_message)
 
     def receive_message(self):
-        self.logger.debug('Waiting for incomong message.')
+        self.logger.debug('Waiting for incoming message.')
         message = None
         while not message:
             message = self.__source_pipeline.receive()
@@ -414,6 +415,13 @@ class Bot(object):
 
 class ParserBot(Bot):
 
+    def __init__(self, bot_id):
+        super(ParserBot, self).__init__(bot_id=bot_id)
+        if self.__class__.__name__ == 'ParserBot':
+            self.logger.error('ParserBot can\'t be started itself. '
+                              'Possible Misconfiguration.')
+            self.stop()
+
     def parse_csv(self, report):
         """
         A basic CSV parser.
@@ -450,20 +458,28 @@ class ParserBot(Bot):
         self.__failed = []
         report = self.receive_message()
 
+        if 'raw' not in report:
+            self.logger.warning('Report without raw field received. Possible '
+                                'bug or misconfiguration in previous bots.')
+            self.acknowledge_message()
+            return
+
         for line in self.parse(report):
             if not line:
                 continue
             try:
                 # filter out None
                 events = list(filter(bool, self.parse_line(line, report)))
-            except Exception as exc:
+            except Exception:
                 self.logger.exception('Failed to parse line.')
-                self.__failed.append((exc, line))
+                self.__failed.append((traceback.format_exc(), line))
             else:
                 self.send_message(*events)
 
         for exc, line in self.__failed:
-            self._dump_message(exc, self.recover_line(line))
+            report_dump = report.copy()
+            report_dump.update('raw', self.recover_line(line))
+            self._dump_message(exc, report_dump)
 
         self.acknowledge_message()
 

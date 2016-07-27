@@ -125,7 +125,7 @@ A list of allowed fields can be found in [Harmonization-fields.md](Harmonization
 Intelmq classifies events using three labels: taxonomy, type and identifier. This tuple of three values can be used for deduplication of events and describes what happened.
 TODO: examples from chat
 
-The taxonomy can be automatically added by the taxonomy expert bot based on the given type. The following taxonomy-type mapping is based on eCSIRT Taxonomy:
+The taxonomy can be automatically added by the taxonomy expert bot based on the given type. The following taxonomy-type mapping is based on [eCSIRT II Taxonomy](https://www.trusted-introducer.org/Incident-Classification-Taxonomy.pdf):
 
 |Type|Taxonomy|Description|
 |----|--------|-----------|

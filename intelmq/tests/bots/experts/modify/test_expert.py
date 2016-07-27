@@ -52,7 +52,7 @@ class TestModifyExpertBot(test.BotTestCase, unittest.TestCase):
     def set_bot(cls):
         cls.bot_reference = ModifyExpertBot
         config_path = resource_filename('intelmq',
-                                        'bots/experts/modify/modify.conf')
+                                        'bots/experts/modify/examples/default.conf')
         cls.sysconfig = {'configuration_path': config_path
                          }
         cls.default_input_message = {'__type': 'Event'}
