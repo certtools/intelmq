@@ -31,7 +31,7 @@ Possible feednames:
 * Open-Memcached
 * Open-m DNS
 * Open-TFTP
-* Open-Net BIOS
+* Open-NetBIOS
 * NTP-Monitor
 * Open-SSDP
 * Open-Chargen

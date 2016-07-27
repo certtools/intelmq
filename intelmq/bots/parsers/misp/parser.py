@@ -60,60 +60,62 @@ class MISPParserBot(Bot):
     def process(self):
         report = self.receive_message()
         raw_report = utils.base64_decode(report.get('raw'))
-        misp_events = json.loads(raw_report)
+        misp_event = json.loads(raw_report)
 
-        # iterate through the results
-        for misp_event in misp_events:
+        # Set the classifier based on the ecsirt tag
+        classifier = None
+        if misp_event.get('Tag'):
+            for tag in misp_event['Tag']:
+                if tag['name'] in self.MISP_TAXONOMY_MAPPING:
+                    classifier = self.MISP_TAXONOMY_MAPPING[tag['name']]
+                    break
 
-            # Set the classifier based on the ecsirt tag
-            classifier = None
-            if misp_event.get('Tag'):
-                for tag in misp_event['Tag']:
-                    if tag['name'] in self.MISP_TAXONOMY_MAPPING:
-                        classifier = self.MISP_TAXONOMY_MAPPING[tag['name']]
-                        break
+        # get the attributes from the event
+        event_attributes = misp_event['Attribute']
 
-            # get the attributes from the event
-            event_attributes = misp_event['Attribute']
+        # payload type - get malware variant for the event
+        malware_variant = None
+        for attribute in event_attributes:
+            if attribute['category'] == 'Payload type':
+                value = attribute['value'].lower()
+                # TODO: use misp galaxies
+                if value and harmonization.MalwareName.is_valid(value):
+                    malware_variant = value
 
-            # payload type - get malware variant for the event
-            malware_variant = None
-            for attribute in event_attributes:
-                if attribute['category'] == 'Payload type':
-                    value = attribute['value'].lower()
-                    if value and harmonization.MalwareName.is_valid(value):
-                        malware_variant = value
+        # MISP event URL
+        url_path = 'event/view/{}'.format(misp_event['id'])
+        misp_event_url = urljoin(report['feed.url'], url_path)
 
-            # MISP event URL
-            url_path = 'event/view/{}'.format(misp_event['id'])
-            misp_event_url = urljoin(report['feed.url'], url_path)
+        # Process MISP event attributes as separate IntelMQ events
+        for attribute in event_attributes:
 
-            # Process MISP event attributes as separate IntelMQ events
-            for attribute in event_attributes:
+            # get details of attribute
+            value = attribute['value']
+            uuid = attribute['uuid']
+            comment = attribute['comment']
+            timestamp = attribute['timestamp']
+            category = attribute['category']
+            type_ = attribute['type']
 
-                # get details of attribute
-                value = attribute['value']
-                comment = attribute['comment']
-                timestamp = attribute['timestamp']
-                category = attribute['category']
-                type_ = attribute['type']
+            # create intelmq events based on the category
+            if (category in self.SUPPORTED_MISP_CATEGORIES and
+                    type_ in self.MISP_TYPE_MAPPING):
 
-                # create intelmq events based on the category
-                if (category in self.SUPPORTED_MISP_CATEGORIES and
-                        type_ in self.MISP_TYPE_MAPPING):
-
-                    # Create and send the intelmq event
-                    event = Event(report)
-                    event.add('raw', json.dumps(misp_event, sort_keys=True))
-                    event.add(self.MISP_TYPE_MAPPING[type_], value)
-                    event.add('comment', comment)
-                    event.add('event_description.text', category)
-                    event.add('event_description.url', misp_event_url)
-                    event.add('malware.name', malware_variant)
-                    event.add('classification.type', classifier)
-                    event.add('time.source', '{} UTC'.format(
-                              datetime.utcfromtimestamp(float(timestamp))))
-                    self.send_message(event)
+                # Create and send the intelmq event
+                event = Event(report)
+                # FIXME: Send the whole MISP event with each attribute?
+                event.add('raw', json.dumps(misp_event, sort_keys=True))
+                event.add(self.MISP_TYPE_MAPPING[type_], value)
+                event.add('misp.event_uuid', misp_event['uuid'])
+                event.add('misp.attribute_uuid', uuid)
+                event.add('comment', comment)
+                event.add('event_description.text', category)
+                event.add('event_description.url', misp_event_url)
+                event.add('malware.name', malware_variant)
+                event.add('classification.type', classifier)
+                event.add('time.source', '{} UTC'.format(
+                          datetime.utcfromtimestamp(float(timestamp))))
+                self.send_message(event)
 
         self.acknowledge_message()
 
