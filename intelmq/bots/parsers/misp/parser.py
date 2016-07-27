@@ -79,7 +79,7 @@ class MISPParserBot(Bot):
             if attribute['category'] == 'Payload type':
                 value = attribute['value'].lower()
                 # TODO: use misp galaxies
-                if value and harmonization.MalwareName.is_valid(value):
+                if value and harmonization.LowercaseString.is_valid(value):
                     malware_variant = value
 
         # MISP event URL

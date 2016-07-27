@@ -1,0 +1,3 @@
+"timestamp","ip","protocol","port","hostname","tag","size","asn","geo","region","city"
+"2014-11-26 05:20:54","192.168.45.68","udp",19,,"chargen",,8447,"AT",3,"WIEN"
+

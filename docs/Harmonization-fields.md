@@ -118,8 +118,8 @@ Sanitation accepts string 'true' and 'false' and integers 0 and 1.
 
 Fully qualified domain name type.
 
-All valid domains are accepted, no IP addresses or URLs. Trailing dot is
-not allowed.
+All valid lowercase domains are accepted, no IP addresses or URLs. Trailing
+dot is not allowed.
 
 
 
@@ -159,7 +159,7 @@ Valid values are only unicode strings with JSON dictionaries.
 
 
 
-### MalwareName
+### LowercaseString
 
 
 
@@ -175,10 +175,6 @@ Sanitation converts hxxp and hxxps to http and https.
 For local URIs (file) a missing host is replaced by localhost.
 
 Valid values must have the host (network location part).
-
-
-
-### UUID
 
 
 
