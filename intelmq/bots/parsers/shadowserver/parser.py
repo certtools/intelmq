@@ -111,6 +111,8 @@ class ShadowserverParserBot(ParserBot):
         for item in conf.get('optional_fields'):
             intelmqkey, shadowkey = item[:2]
             if shadowkey not in fields:  # key does not exist in data (not even in the header)
+                self.logger.warning('Optional key {!r} not found data. Possible change in data'
+                                    ' format or misconfiguration.')
                 continue
             if len(item) > 2:
                 conv_func = item[2]
@@ -153,8 +155,7 @@ class ShadowserverParserBot(ParserBot):
                 fields.remove(shadowkey)
 
         # Now add additional constant fields.
-        for key, value in conf.get('constant_fields', {}).items():
-            event.add(key, value)
+        dict.update(event, conf.get('constant_fields', {}))  # TODO: rewrite in 1.0
 
         self.logger.debug("Raw_line: {!r}.".format(row))
         event.add('raw', self.recover_line(row))
