@@ -688,19 +688,11 @@ dns_open_resolvers = {
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
+        ('os.name', 'p0f_genre'),
+        ('os.version', 'p0f_detail'),
         # Other known fields which will go into "extra"
-        ('extra.', 'naics', invalidate_zero),
-        ('extra.', 'sic', invalidate_zero),
-        # elasticsearch
-        # version
-        # ok
-        # name
-        # cluster_name
-        # status
-        # build_hash
-        # build_timestamp
-        # build_snaphost
-        # lucene_version
+        # min_amplification
+        # dns_version
     ],
     'constant_fields': {
         'classification.type': 'vulnerable service',
