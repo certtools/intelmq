@@ -284,7 +284,7 @@ class Bot(object):
             self.__destination_pipeline.send(raw_message)
 
     def receive_message(self):
-        self.logger.debug('Waiting for incomong message.')
+        self.logger.debug('Waiting for incoming message.')
         message = None
         while not message:
             message = self.__source_pipeline.receive()

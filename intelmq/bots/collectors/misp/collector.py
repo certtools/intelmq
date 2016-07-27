@@ -44,22 +44,22 @@ class MISPCollectorBot(Bot):
         if 'response' in misp_result:
 
             # Extract the MISP event details
-            misp_events = misp_result['response']
-            misp_events_details = [e['Event'] for e in misp_events]
+            for e in misp_result['response']:
+                misp_event = e['Event']
 
-            # Send the results to the parser
-            report = Report()
-            report.add('raw', json.dumps(misp_events_details, sort_keys=True))
-            report.add('feed.name', self.parameters.feed)
-            report.add('feed.url', self.parameters.misp_url)
-            report.add('feed.accuracy', self.parameters.accuracy)
-            self.send_message(report)
+                # Send the results to the parser
+                report = Report()
+                report.add('raw', json.dumps(misp_event, sort_keys=True))
+                report.add('feed.name', self.parameters.feed)
+                report.add('feed.url', self.parameters.misp_url)
+                report.add('feed.accuracy', self.parameters.accuracy)
+                self.send_message(report)
 
             # Finally, update the tags on the MISP events.
             # Note PyMISP does not currently support this so we use
             # the API URLs directly with the requests module.
 
-            for misp_event in misp_events:
+            for misp_event in misp_result['response']:
                 # Remove the 'to be processed' tag
                 self.misp.remove_tag(misp_event,
                                      self.parameters.misp_tag_to_process)

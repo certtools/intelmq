@@ -6,6 +6,7 @@
 2. [System Overview](#system-overview)
 3. [Bot Developer Guide](#bot-developer-guide)
 
+<a name="audience"></a>
 # Intended Audience
 This guide is for developers of IntelMQ. It explains the code architecture, coding guidelines as well as ways you can contribute code or documentation.
 If you have not done so, please read the [User Guide](User-Guide.md) first.
@@ -59,7 +60,41 @@ It may be necessary to switch the user to `intelmq` if the run-path (`/opt/intel
 
 There is a [Travis-CI](https://travis-ci.org/certtools/intelmq/builds) setup for automatic testing, which triggers on pull requests. You can also easily activate it for your forks.
 
+<a name="code-and-repository-rules"></a>
+## Repository rules for submissions
+
+### Releases, Repositories and branches
+
+  * The main repository is in [github.com/certtools/intelmq](https://github.com/certtools/intelmq).
+  * There are a couple of forks which might/should be regularly merged into the main repository.
+  * The "master" branch is the current development branch. Releases are tagged as release branch.
+  * Releases shall receive non-breaking bug fixes. The "master" branch can change and might introduce non-compatible changes. 
+  * If you contribute something, please fork and create a separate branch and use this for pull requests.
+  * Name your branch accordingly (example: "shadowserver-bugfixes").
+
+### Generic requirements in order to contribute to IntelMQ:
+
+  * Make separate pull requests / branches on github for changes. This allows us to discuss things via github.
+  * One Pull Request per fix/feature/change/...
+  * Only very small changes (docs, ...) might be commited directly without Pull Request.
+  * Keep the amount of commits per PR as small as possible: if for any reason, you need to fix your commit after the pull request, please squash the changes in one single commit (or tell us why not)
+  * Always make sure it is mergeable in the master branch 
+  * Please make sure that local tests work and also check if Travis CI works on this request, or update the test cases if needed
+
+### What does it do?
+
+If it fixes an existing issue, please use github syntax: #<IssueID>
+
+### Prepare for discussion in github.
+
+If we don't discuss it, it's probably not tested.
+
+
 ## Coding-Rules
+
+Most important: **KEEP IT SIMPLE**!!
+This can not be over-estimated. Feature creep can destroy any good software project. But if new folks can not understand what you wrote in 10-15 minutes, it is not good. It's not about the performance, etc. It's about readability.
+
 
 In general, we follow the [Style Guide for Python Code (PEP8)](https://www.python.org/dev/peps/pep-0008/).
 We recommend reading it before committing code.
@@ -68,6 +103,8 @@ There are some exceptions: sometimes it does not make sense to check for every P
 look pretty. Therefore, we do have some exceptions defined in the `setup.cfg` file.
 
 We support Python 3 only.
+
+
 
 ### Unicode
 
