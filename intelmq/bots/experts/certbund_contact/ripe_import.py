@@ -134,12 +134,15 @@ def main():
                            ('nic-hdl', 'abuse-mailbox', 'org'),
                            'role')
     organisation_list = parse_file(args.organisation_file,
-                                   ('organisation', 'org-name'))
+                                   ('organisation', 'org-name', 'abuse-c'))
 
     # Mapping dictionary that holds the database IDs between organisations,
     # contacts and AS numbers. This needs to be done here because we can't
     # use the RIPE org-ids.
     mapping = {}
+
+    # Mapping of the organisation abuse-c contact to contacts
+    organisation_abuse_c = {}
 
     con = None
     try:
@@ -203,6 +206,7 @@ def main():
             if not entry:
                 continue
             org_name = entry['org-name'][0]
+            abuse_c = entry['abuse-c'][0] if entry['abuse-c'] else None
             org_ripe_handle = entry['organisation'][0]
 
             cur.execute("""
@@ -211,6 +215,11 @@ def main():
                 """, (org_name, org_ripe_handle, SOURCE_NAME))
             result = cur.fetchone()
             org_id = result[0]
+
+            if abuse_c and not organisation_abuse_c.get(abuse_c):
+                organisation_abuse_c[abuse_c] = {'org_id': org_id,
+                                                 'org_name': org_name,
+                                                 'contact_id': None}
 
             if not mapping.get(org_ripe_handle):
                 mapping[org_ripe_handle] = {'org_id': None,
@@ -253,6 +262,7 @@ def main():
             except IndexError:
                 org_ripe_handle = None
             email = entry['abuse-mailbox'][0]
+            nic_hdl = entry['nic-hdl'][0]
 
             cur.execute("""
                 INSERT INTO contact_automatic (format_id, email, import_source, import_time)
@@ -264,6 +274,9 @@ def main():
 
             if org_ripe_handle and mapping.get(org_ripe_handle):
                 mapping[org_ripe_handle]['contact_id'].append(contact_id)
+
+            if organisation_abuse_c.get(nic_hdl):
+                organisation_abuse_c[nic_hdl]['contact_id'] = contact_id
 
         # many-to-many table organisation <-> contact
         cur.execute("DELETE FROM role_automatic WHERE import_source = %s;", (SOURCE_NAME,))
@@ -278,6 +291,18 @@ def main():
 
             for contact_id in contact_ids:
                 cur.execute("""
+                INSERT INTO role_automatic (organisation_id, contact_id, import_source, import_time)
+                VALUES (%s, %s, %s, CURRENT_TIMESTAMP);
+                """, (org_id, contact_id, SOURCE_NAME))
+
+        for contact_ripe_handle in organisation_abuse_c:
+            org_id = organisation_abuse_c[contact_ripe_handle]['org_id']
+            contact_id = organisation_abuse_c[contact_ripe_handle]['contact_id']
+
+            if not contact_id or not org_id:
+                continue
+
+            cur.execute("""
                 INSERT INTO role_automatic (organisation_id, contact_id, import_source, import_time)
                 VALUES (%s, %s, %s, CURRENT_TIMESTAMP);
                 """, (org_id, contact_id, SOURCE_NAME))
