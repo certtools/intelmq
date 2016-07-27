@@ -22,6 +22,10 @@ You can also set the notification intervall with `--notification-intervall`.
 Default is 0. The intervall is set in seconds. 0: Immediate notification,
 -1 No Notification, 60: 1 Minute, etc...
 
+It is also possible to provide a whitelist of ASNs to load. Use the ``--asn-whitelist-file``
+parameter to pass a filename. The script expects one AS entry per line, with
+the AS-prefix, e.g. ``AS123``.
+
 Usage
 =====
 
