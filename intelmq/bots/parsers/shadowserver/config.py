@@ -391,7 +391,6 @@ open_ipmi = {
         ('source.port', 'port')
     ],
     'optional_fields': [
-        ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
@@ -426,6 +425,7 @@ open_ipmi = {
         'classification.identifier': 'openipmi',
         'feed.code': 'shadowserver-openipmi',
         'protocol.application': 'ipmi',
+        'protocol.transport': 'udp',
     },
 }
 
