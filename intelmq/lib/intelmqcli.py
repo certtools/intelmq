@@ -69,8 +69,9 @@ QUERY_COUNT_ASN = """
     FROM {evtab}
     LEFT OUTER JOIN as_contacts ON {evtab}."source.asn" = {conttab}.asnum
     WHERE
-        notify = TRUE AND (
-            {evtab}.rtir_report_id IS NULL OR
+        notify = TRUE AND
+        {evtab}.rtir_report_id IS NOT NULL AND
+        (
             {evtab}.rtir_incident_id IS NULL OR
             {evtab}.rtir_investigation_id IS NULL
         )
@@ -163,14 +164,16 @@ SELECT
     {evtab}."notify",
     {evtab}."protocol.application",
     {evtab}."protocol.transport",
+    {evtab}."rtir_report_id",
     {evtab}."screenshot_url",
     {evtab}."status",
     {evtab}."time.observation"
 FROM {evtab}
 LEFT OUTER JOIN {conttab} ON {evtab}."source.asn" = {conttab}.asnum
 WHERE
-    notify = TRUE AND (
-        {evtab}.rtir_report_id IS NULL OR
+    notify = TRUE AND
+    {evtab}.rtir_report_id IS NOT NULL AND
+    (
         {evtab}.rtir_incident_id IS NULL OR
         {evtab}.rtir_investigation_id IS NULL
     ) AND
@@ -237,14 +240,16 @@ SELECT
     {evtab}."notify",
     {evtab}."protocol.application",
     {evtab}."protocol.transport",
+    {evtab}."rtir_report_id",
     {evtab}."screenshot_url",
     {evtab}."status",
     {evtab}."time.observation"
 FROM {evtab}
 LEFT OUTER JOIN {conttab} ON {evtab}."source.asn" = {conttab}.asnum
 WHERE
-    notify = TRUE AND (
-        {evtab}.rtir_report_id IS NULL OR
+    notify = TRUE AND
+    {evtab}.rtir_report_id IS NOT NULL AND
+    (
         {evtab}.rtir_incident_id IS NULL OR
         {evtab}.rtir_investigation_id IS NULL
     ) AND
