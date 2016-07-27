@@ -45,9 +45,24 @@ parser.add_argument("--notification-format",
 parser.add_argument("--notification-interval",
                     default='0',
                     help="Specify the default notification intervall in seconds. Default: 0")
+parser.add_argument("--asn-whitelist-file",
+                    default='',
+                    help="A file name with a whitelist of ASNs. If this option is not set, all ASNs are imported")
 args = parser.parse_args()
 
 SOURCE_NAME = 'ripe'
+
+
+def read_asn_whitelist():
+    out = []
+    if args.asn_whitelist_file:
+        with open(args.asn_whitelist_file) as f:
+            out = [line.strip() for line in f]
+
+            if args.verbose and out:
+                print('** Loaded {} entries from ASN whitelist {}'.format(len(out),
+                                                                          args.asn_whitelist_file))
+    return out
 
 
 def parse_file(filename, fields, index_field=None):
@@ -109,6 +124,9 @@ def main():
         print('Parsing RIPE database...')
         print('------------------------')
 
+    # Load ASN whitelist
+    asn_whitelist = read_asn_whitelist()
+
     asn_list = parse_file(args.asn_file,
                           ('aut-num', 'org'),
                           'aut-num')
@@ -151,9 +169,15 @@ def main():
         cur.execute("DELETE FROM organisation_to_template_automatic WHERE import_source = %s;", (SOURCE_NAME,))
         cur.execute("DELETE FROM organisation_to_asn_automatic WHERE import_source = %s;", (SOURCE_NAME,))
         cur.execute("DELETE FROM autonomous_system_automatic WHERE import_source = %s;", (SOURCE_NAME,))
+
         for entry in asn_list:
             if not entry or not entry.get('aut-num') or not entry.get('org'):
                 continue
+
+            # Only
+            if args.asn_whitelist_file and entry['aut-num'][0] not in asn_whitelist:
+                continue
+
             as_number = entry['aut-num'][0][2:]
             org_ripe_handle = entry['org'][0]
 
