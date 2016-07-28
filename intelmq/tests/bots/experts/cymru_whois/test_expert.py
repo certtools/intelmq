@@ -49,6 +49,10 @@ UNICODE_OUTPUT = {"__type": "Event",
                   "destination.asn": 28333,
                   "destination.network": "189.50.192.0/23",
                   }
+EMPTY_INPUT = {"__type": "Event",
+               "source.ip": "198.105.125.77",  # no result
+               "time.observation": "2015-01-01T00:00:00+00:00",
+               }
 
 
 class TestCymruExpertBot(test.BotTestCase, unittest.TestCase):
@@ -75,6 +79,11 @@ class TestCymruExpertBot(test.BotTestCase, unittest.TestCase):
         self.input_message = UNICODE_INPUT
         self.run_bot()
         self.assertMessageEqual(0, UNICODE_OUTPUT)
+
+    def test_empty_result(self):
+        self.input_message = EMPTY_INPUT
+        self.run_bot()
+        self.assertMessageEqual(0, EMPTY_INPUT)
 
     @classmethod
     def tearDownClass(cls):

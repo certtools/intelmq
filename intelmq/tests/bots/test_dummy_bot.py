@@ -36,6 +36,9 @@ EXAMPLE_EVENT = {"feed.url": "http://www.example.com/",
 EXPECTED_DUMP = '''# ignore this
 2015/06/04_13:37 +00,example.org,192.0.2.3,reverse.example.net,example description,report@example.org,0
 #ending line'''
+EXAMPLE_EMPTY_REPORT = {"feed.url": "http://www.example.com/",
+                        "__type": "Report",
+                        "feed.name": "Example"}
 
 
 class DummyParserBot(bot.ParserBot):
@@ -92,6 +95,14 @@ class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
         """ Test if correct Event has been produced. """
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_EVENT)
+
+    def test_missing_raw(self):
+        """ Test if correct Event has been produced. """
+        self.input_message = EXAMPLE_EMPTY_REPORT
+        self.run_bot()
+        self.assertAnyLoglineEqual(message='Report without raw field received. Possible '
+                                           'bug or misconfiguration in previous bots.',
+                                   levelname='WARNING')
 
 
 if __name__ == '__main__':

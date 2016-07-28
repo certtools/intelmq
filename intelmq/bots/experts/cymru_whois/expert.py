@@ -52,6 +52,8 @@ class CymruExpertBot(Bot):
                 result = json.loads(result_json)
             else:
                 result = Cymru.query(ip)
+                if not result:
+                    continue
                 result_json = json.dumps(result)
                 self.cache.set(cache_key, result_json)
 
