@@ -36,11 +36,6 @@ class ShadowserverParserBot(ParserBot):
             self.logger.error('No feedname provided or feedname not in conf.')
             self.stop()
 
-        self.csv_params = {'quoting': csv.QUOTE_NONE,
-                           'escapechar': None,
-                           'quotechar': '',
-                           'dialect': 'unix'}
-
         # Set a switch if the parser shall reset the feed.name,
         # code and feedurl for this event
         self.override = False
@@ -55,30 +50,9 @@ class ShadowserverParserBot(ParserBot):
         # create an array of fieldnames,
         # those were automagically created by the dictreader
         self.fieldnames = csvr.fieldnames
-        self.csv_fieldnames = map(self.conv_csv_shadowserver, self.fieldnames)
-        self.header = ','.join(self.csv_fieldnames)
 
         for row in csvr:
             yield row
-
-    def conv_csv_shadowserver(self, value):
-        """
-        Converts a dict to shadowservers csv quoting format.
-
-        Numeric: no quoting
-        Empty string: no quoting
-        Else: " quoting
-        """
-        if value is None:
-            return ''
-        try:
-            int(value)
-            return value
-        except ValueError:
-            if hasattr(value, '__len__') and not len(value):
-                return ''
-            else:
-                return '"' + value + '"'
 
     def parse_line(self, row, report):
 
@@ -197,12 +171,13 @@ class ShadowserverParserBot(ParserBot):
         yield event
 
     def recover_line(self, line):
-        out = self.header + '\n'
-        ordered_line = [self.conv_csv_shadowserver(line[v]) for v in
-                        self.fieldnames]
-        out += ','.join(ordered_line) + '\n'
-        return out
-
+        out = io.StringIO()
+        writer = csv.DictWriter(out, self.fieldnames,
+                                dialect='unix',
+                                extrasaction='ignore')
+        writer.writeheader()
+        writer.writerow(line)
+        return out.getvalue()
 
 if __name__ == "__main__":
     bot = ShadowserverParserBot(sys.argv[1])
