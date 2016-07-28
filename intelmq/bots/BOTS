@@ -331,6 +331,8 @@
             "description": "Monitor IMAP mailboxes and fetch files from URLs contained in mail bodies",
             "module": "intelmq.bots.collectors.mail.collector_mail_url",
             "parameters": {
+                "chunk_replicate_header": true,
+                "chunk_size": null,
                 "feed": "",
                 "folder": "INBOX",
                 "http_password": "<password>",
