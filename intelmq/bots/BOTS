@@ -291,6 +291,8 @@
             "description": "Fileinput collector fetches data from a file.",
             "module": "intelmq.bots.collectors.file.collector_file",
             "parameters": {
+                "chunk_replicate_header": true,
+                "chunk_size": null,
                 "delete_file": false,
                 "feed": "FileCollector",
                 "path": "/tmp/",

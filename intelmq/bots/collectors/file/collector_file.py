@@ -23,6 +23,7 @@ import sys
 import intelmq.lib.exceptions as exceptions
 from intelmq.lib.bot import Bot
 from intelmq.lib.message import Report
+from intelmq.lib.splitreports import generate_reports
 
 
 class FileCollectorBot(Bot):
@@ -55,14 +56,15 @@ class FileCollectorBot(Bot):
                     if fnmatch.fnmatch(f, '*' + self.parameters.postfix):
                         self.logger.info("Processing file %r." % filename)
 
-                        with open(filename, 'r') as f:
+                        template = Report()
+                        template.add("feed.name", self.parameters.feed)
+                        template.add("feed.url", "file://localhost%s" % filename)
+                        template.add("feed.accuracy", self.parameters.accuracy)
 
-                            report = Report()
-                            report.add("raw", f.read())
-                            report.add("feed.name", self.parameters.feed)
-                            report.add("feed.url", "file://localhost%s" % filename)
-                            report.add("feed.accuracy", self.parameters.accuracy)
-                            self.send_message(report)
+                        with open(filename, 'rb') as f:
+                            for report in generate_reports(template, f, self.parameters.chunk_size,
+                                                           self.parameters.chunk_replicate_header):
+                                self.send_message(report)
 
                         if self.parameters.delete_file:
                             try:
