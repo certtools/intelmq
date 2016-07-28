@@ -23,7 +23,7 @@ https://www.shadowserver.org/wiki/pmwiki.php/Services/Botnet-Drone-Hadoop
 
 Possible feednames:
 * DNS-open-resolvers
-* Open-Mongo DB
+* Open-MongoDB
 * Open-Elasticsearch
 * Open-SNMP
 * Ssl-Scan

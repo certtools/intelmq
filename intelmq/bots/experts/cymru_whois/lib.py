@@ -37,6 +37,9 @@ class Cymru():
                 if ips_a < ips_b:
                     result = res
 
+        if not result:
+            return
+
         if "asn" in result:
             raw_result = Cymru.__asn_query(result['asn'])
             extra_info = Cymru.__asn_query_parse(raw_result)
