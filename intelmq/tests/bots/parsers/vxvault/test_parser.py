@@ -20,7 +20,7 @@ EXAMPLE_EVENT = {"feed.name": "VxVault",
                  "__type": "Event",
                  "raw": "aHR0cDovL2V4YW1wbGUuY29tL2JhZC9wcm9ncmFtLmV4ZQ==",
                  "source.fqdn": "example.com",
-                 "time.observation": "2015-01-01T00:00:00+00:00",
+                 "time.source": "2015-08-17T14:36:19+00:00",
                  }
 
 
