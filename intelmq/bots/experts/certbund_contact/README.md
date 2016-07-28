@@ -54,6 +54,7 @@ Add a contact:
   \set contact_email 'test@example.com'
   \set contact_comment 'Test comment on contact.'
   -- set the notification interval in seconds
+  -- an interval of -1 means no notifications will be generated
   \set notification_interval 0
 
 -- 2. Add new contact
