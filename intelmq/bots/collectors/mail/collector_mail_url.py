@@ -2,6 +2,7 @@
 
 import re
 import sys
+import io
 
 try:
     import imbox
@@ -11,6 +12,9 @@ import requests
 
 from intelmq.lib.bot import Bot
 from intelmq.lib.message import Report
+from intelmq.lib.splitreports import generate_reports
+
+
 
 
 class MailURLCollectorBot(Bot):
@@ -78,12 +82,13 @@ class MailURLCollectorBot(Bot):
 
                         self.logger.info("Report downloaded.")
 
-                        report = Report()
-                        report.add("raw", resp.content)
-                        report.add("feed.name",
-                                   self.parameters.feed)
-                        report.add("feed.accuracy", self.parameters.accuracy)
-                        self.send_message(report)
+                        template = Report()
+                        template.add("feed.name", self.parameters.feed)
+                        template.add("feed.accuracy", self.parameters.accuracy)
+
+                        for report in generate_reports(template, io.BytesIO(resp.content), self.parameters.chunk_size,
+                                                       self.parameters.chunk_replicate_header):
+                            self.send_message(report)
 
                         # Only mark read if message relevant to this instance,
                         # so other instances watching this mailbox will still
