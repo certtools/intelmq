@@ -22,25 +22,25 @@ E.g. `Botnet-Drone-Hadoop` for the feed corresponding to:
 https://www.shadowserver.org/wiki/pmwiki.php/Services/Botnet-Drone-Hadoop
 
 Possible feednames:
-* DNS-open-resolvers
-* Open-MongoDB
-* Open-Elasticsearch
-* Open-SNMP
-* Ssl-Scan
-* Open-Redis
-* Open-Memcached
-* Open-m DNS
-* Open-TFTP
-* Open-NetBIOS
-* NTP-Monitor
-* Open-SSDP
-* Open-Chargen
-* Open-Portmapper
-* Botnet-Drone-Hadoop
-* Open-IPMI
-* Open-MSSQL
-* Sinkhole-HTTP-Drone
-* Microsoft-Sinkhole
+* `DNS-open-resolvers`
+* `Open-MongoDB`
+* `Open-Elasticsearch`
+* `Open-SNMP`
+* `Ssl-Scan`
+* `Open-Redis`
+* `Open-Memcached`
+* `Open-mDNS`
+* `Open-TFTP`
+* `Open-NetBIOS`
+* `NTP-Monitor`
+* `Open-SSDP`
+* `Open-Chargen`
+* `Open-Portmapper`
+* `Botnet-Drone-Hadoop`
+* `Open-IPMI`
+* `Open-MSSQL`
+* `Sinkhole-HTTP-Drone`
+* `Microsoft-Sinkhole`
 
 
 ## Add new Feedformats:
