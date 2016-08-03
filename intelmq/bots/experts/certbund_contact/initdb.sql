@@ -1,6 +1,14 @@
 BEGIN;
 
 /*
+ Template table containing with elements for automatic tables 
+ */
+CREATE TEMP TABLE automatic_templ (
+    import_source VARCHAR(500) NOT NULL CHECK (import_source <> ''),
+    import_time TIMESTAMP NOT NULL
+);
+
+/*
  Supported data formats like csv, iodef, etc.
 */
 CREATE TABLE format (
@@ -24,7 +32,10 @@ CREATE TABLE organisation (
     id SERIAL PRIMARY KEY,
 
     -- The name of the organisation.
-    name VARCHAR(500) UNIQUE NOT NULL,
+
+    -- In the ripe db there are names identical for more than one
+    -- organisation, so we can not make this key unique.
+    name VARCHAR(500) NOT NULL,
 
     -- The sector the organisation belongs to.
     sector_id INTEGER,
@@ -47,20 +58,8 @@ CREATE TABLE organisation (
 
 
 CREATE TABLE organisation_automatic (
-    id SERIAL PRIMARY KEY,
-
-    name VARCHAR(500) NOT NULL,
-
-    sector_id INTEGER,
-
-    comment TEXT NOT NULL DEFAULT '',
-
-    ripe_org_hdl VARCHAR(100),
-    ti_handle    VARCHAR(500),
-    first_handle VARCHAR(500),
-
-    import_source VARCHAR(500),
-    import_time TIMESTAMP,
+    LIKE automatic_templ INCLUDING ALL,
+    LIKE organisation INCLUDING ALL,
 
     FOREIGN KEY (sector_id) REFERENCES sector(id)
 );
@@ -87,24 +86,8 @@ CREATE TABLE contact (
 );
 
 CREATE TABLE contact_automatic (
-    id SERIAL PRIMARY KEY,
-
-    firstname VARCHAR (500) NOT NULL DEFAULT '',
-    lastname  VARCHAR (500) NOT NULL DEFAULT '',
-    tel       VARCHAR (500) NOT NULL DEFAULT '',
-
-    pgp_key_id VARCHAR(128) NOT NULL DEFAULT '',
-
-    -- the email-address of the contact
-    email VARCHAR(100) NOT NULL,
-
-    -- The data format to be used in emails sent to this contact.
-    format_id INTEGER NOT NULL,
-
-    comment TEXT NOT NULL DEFAULT '',
-
-    import_source VARCHAR(500),
-    import_time TIMESTAMP,
+    LIKE automatic_templ INCLUDING ALL,
+    LIKE contact INCLUDING ALL,
 
     FOREIGN KEY (format_id) REFERENCES format (id)
 );
@@ -128,16 +111,8 @@ CREATE TABLE role (
 
 -- Roles serve as an m-n relationship between organisations and contacts
 CREATE TABLE role_automatic (
-    id SERIAL PRIMARY KEY,
-
-    role_type    VARCHAR (500) NOT NULL default 'abuse-c',
-    is_primary_contact BOOLEAN NOT NULL DEFAULT FALSE,
-
-    organisation_id INTEGER NOT NULL,
-    contact_id INTEGER NOT NULL,
-
-    import_source VARCHAR(500),
-    import_time TIMESTAMP,
+    LIKE automatic_templ INCLUDING ALL,
+    LIKE role INCLUDING ALL,
 
     FOREIGN KEY (organisation_id) REFERENCES organisation_automatic(id),
     FOREIGN KEY (contact_id) REFERENCES contact_automatic(id)
@@ -166,15 +141,8 @@ CREATE INDEX autonomous_system_number_idx ON autonomous_system (number);
 
 
 CREATE TABLE autonomous_system_automatic (
-    -- The atonomous system number
-    number BIGINT PRIMARY KEY,
-
-    ripe_aut_num  VARCHAR(100),
-
-    import_source VARCHAR(500),
-    import_time TIMESTAMP,
-
-    comment TEXT NOT NULL DEFAULT ''
+    LIKE automatic_templ INCLUDING ALL,
+    LIKE autonomous_system INCLUDING ALL
 );
 CREATE INDEX autonomous_system_automatic_number_idx
     ON autonomous_system_automatic (number);
@@ -219,15 +187,8 @@ CREATE INDEX network_cidr_upper_idx
 
 
 CREATE TABLE network_automatic (
-    id SERIAL PRIMARY KEY,
-
-    -- Network address as CIDR.
-    address cidr UNIQUE NOT NULL,
-
-    import_source VARCHAR(500),
-    import_time TIMESTAMP,
-
-    comment TEXT NOT NULL DEFAULT ''
+    LIKE automatic_templ INCLUDING ALL,
+    LIKE network INCLUDING ALL
 );
 CREATE INDEX network_automatic_cidr_lower_idx
           ON network_automatic ((inet(host(network(address)))));
@@ -248,15 +209,8 @@ CREATE TABLE fqdn (
 CREATE INDEX fqdn_fqdn_idx ON fqdn (fqdn);
 
 CREATE TABLE fqdn_automatic (
-    id SERIAL PRIMARY KEY,
-
-    -- The fully qualified domain name
-    fqdn TEXT UNIQUE NOT NULL,
-
-    import_source VARCHAR(500),
-    import_time TIMESTAMP,
-
-    comment TEXT NOT NULL DEFAULT ''
+    LIKE automatic_templ INCLUDING ALL,
+    LIKE fqdn INCLUDING ALL
 );
 CREATE INDEX fqdn_automatic_fqdn_idx ON fqdn (fqdn);
 
@@ -309,14 +263,8 @@ CREATE TABLE organisation_to_asn (
 
 
 CREATE TABLE organisation_to_asn_automatic (
-    organisation_id INTEGER,
-    asn_id BIGINT,
-    notification_interval INTEGER NOT NULL, -- interval in seconds
-
-    import_source VARCHAR(500),
-    import_time TIMESTAMP,
-
-    PRIMARY KEY (organisation_id, asn_id),
+    LIKE automatic_templ INCLUDING ALL,
+    LIKE organisation_to_asn INCLUDING ALL,
 
     FOREIGN KEY (asn_id) REFERENCES autonomous_system_automatic (number),
     FOREIGN KEY (organisation_id) REFERENCES organisation_automatic (id)
@@ -335,14 +283,8 @@ CREATE TABLE organisation_to_network (
 );
 
 CREATE TABLE organisation_to_network_automatic (
-    organisation_id INTEGER,
-    net_id INTEGER,
-    notification_interval INTEGER NOT NULL, -- interval in seconds
-
-    import_source VARCHAR(500),
-    import_time TIMESTAMP,
-
-    PRIMARY KEY (organisation_id, net_id),
+    LIKE automatic_templ INCLUDING ALL,
+    LIKE organisation_to_network INCLUDING ALL,
 
     FOREIGN KEY (organisation_id) REFERENCES organisation_automatic (id),
     FOREIGN KEY (net_id) REFERENCES network_automatic (id)
@@ -361,14 +303,8 @@ CREATE TABLE organisation_to_fqdn (
 );
 
 CREATE TABLE organisation_to_fqdn_automatic (
-    organisation_id INTEGER,
-    fqdn_id INTEGER,
-    notification_interval INTEGER NOT NULL,
-
-    import_source VARCHAR(500),
-    import_time TIMESTAMP,
-
-    PRIMARY KEY (organisation_id, fqdn_id),
+    LIKE automatic_templ INCLUDING ALL,
+    LIKE organisation_to_fqdn INCLUDING ALL,
 
     FOREIGN KEY (organisation_id) REFERENCES organisation_automatic (id),
     FOREIGN KEY (fqdn_id) REFERENCES fqdn_automatic (id)
@@ -391,12 +327,8 @@ CREATE INDEX organisation_to_template_template_idx
 
 
 CREATE TABLE organisation_to_template_automatic (
-    id SERIAL PRIMARY KEY,
-    organisation_id INTEGER NOT NULL,
-    template_id INTEGER NOT NULL,
-
-    import_source VARCHAR(500),
-    import_time TIMESTAMP,
+    LIKE automatic_templ INCLUDING ALL,
+    LIKE organisation_to_template INCLUDING ALL,
 
     FOREIGN KEY (organisation_id) REFERENCES organisation_automatic (id),
     FOREIGN KEY (template_id) REFERENCES template (id)
@@ -412,6 +344,7 @@ CREATE INDEX organisation_to_template_automatic_template_idx
 CREATE TYPE notification AS (
     email VARCHAR(100),
     organisation VARCHAR(500),
+    sector VARCHAR(100),
     template_path VARCHAR(200),
     format_name VARCHAR(80),
     notification_interval INTEGER
@@ -424,11 +357,13 @@ CREATE TYPE notification AS (
 CREATE OR REPLACE VIEW organisation_settings (
     organisation_id,
     organisation_name,
+    sector,
     template_path,
     classification_type
 ) AS
-SELECT o.id, o.name, t.path, ci.name
+SELECT o.id, o.name, s.name, t.path, ci.name
   FROM organisation AS o
+  LEFT OUTER JOIN sector AS s on s.id = o.sector_id
   JOIN organisation_to_template AS ot ON ot.organisation_id = o.id
   JOIN template AS t ON ot.template_id = t.id
   JOIN classification_type AS ci
@@ -438,11 +373,13 @@ SELECT o.id, o.name, t.path, ci.name
 CREATE OR REPLACE VIEW organisation_settings_automatic (
     organisation_id,
     organisation_name,
+    sector,
     template_path,
     classification_type
 ) AS
-SELECT o.id, o.name, t.path, ct.name
+SELECT o.id, o.name, s.name, t.path, ct.name
   FROM organisation_automatic AS o
+  LEFT OUTER JOIN sector AS s on s.id = o.sector_id
   JOIN organisation_to_template_automatic AS ot ON ot.organisation_id = o.id
   JOIN template AS t ON ot.template_id = t.id
   JOIN classification_type AS ct
@@ -468,7 +405,7 @@ BEGIN
               JOIN network AS n ON n.id = orgn.net_id
              WHERE inet(host(network(n.address))) <= event_ip
                AND event_ip <= inet(host(broadcast(n.address))))
-    SELECT mc.email, os.organisation_name, os.template_path, f.name,
+    SELECT mc.email, os.organisation_name, os.sector, os.template_path, f.name,
            mc.notification_interval
       FROM matched_contacts mc
       JOIN organisation_settings AS os
@@ -497,7 +434,7 @@ BEGIN
               JOIN network_automatic AS n ON n.id = orgn.net_id
              WHERE inet(host(network(n.address))) <= event_ip
                AND event_ip <= inet(host(broadcast(n.address))))
-    SELECT mc.email, os.organisation_name, os.template_path, f.name,
+    SELECT mc.email, os.organisation_name, os.sector, os.template_path, f.name,
            mc.notification_interval
       FROM matched_contacts mc
       JOIN organisation_settings_automatic AS os
@@ -526,7 +463,7 @@ BEGIN
                 ON orga.organisation_id = r.organisation_id
               JOIN autonomous_system AS a ON a.number = orga.asn_id
              WHERE a.number = event_asn)
-    SELECT mc.email, os.organisation_name, os.template_path, f.name,
+    SELECT mc.email, os.organisation_name, os.sector, os.template_path, f.name,
            mc.notification_interval
       FROM matched_contacts mc
       JOIN organisation_settings AS os
@@ -553,7 +490,7 @@ BEGIN
                 ON orga.organisation_id = r.organisation_id
               JOIN autonomous_system_automatic AS a ON a.number = orga.asn_id
              WHERE a.number = event_asn)
-    SELECT mc.email, os.organisation_name, os.template_path, f.name,
+    SELECT mc.email, os.organisation_name, os.sector, os.template_path, f.name,
            mc.notification_interval
       FROM matched_contacts AS mc
       JOIN organisation_settings_automatic AS os
@@ -581,7 +518,7 @@ BEGIN
                 ON orgf.organisation_id = r.organisation_id
               JOIN fqdn AS f ON f.id = orgf.fqdn_id
              WHERE f.fqdn = event_fqdn)
-    SELECT mc.email, os.organisation_name, os.template_path, f.name,
+    SELECT mc.email, os.organisation_name, os.sector, os.template_path, f.name,
            mc.notification_interval
       FROM matched_contacts AS mc
       JOIN organisation_settings AS os
@@ -608,7 +545,7 @@ BEGIN
                 ON orgf.organisation_id = r.organisation_id
               JOIN fqdn_automatic AS f ON f.id = orgf.fqdn_id
              WHERE f.fqdn = event_fqdn)
-    SELECT mc.email, os.organisation_name, os.template_path, f.name,
+    SELECT mc.email, os.organisation_name, os.sector, os.template_path, f.name,
            mc.notification_interval
       FROM matched_contacts AS mc
       JOIN organisation_settings_automatic AS os
