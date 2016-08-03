@@ -20,15 +20,18 @@ EVENT_TEMPL = {"__type": "Event",
                }
 INPUT = [{'malware.name': 'confickerab'},
          {'malware.name': 'gozi2'},
-         {'malware.name': 'feodo'},
+         {'feed.name': 'Abuse.ch',
+          'feed.url': 'https://feodotracker.abuse.ch/blocklist/?download=domainblocklist'},
          {'malware.name': 'zeus_gameover_us'},
          {'malware.name': 'foobar', 'feed.name': 'Other Feed'},
+         {'feed.name': '', 'source.port': 80},
          ]
 OUTPUT = [{'classification.identifier': 'conficker'},
           {'classification.identifier': 'gozi'},
           {'classification.identifier': 'feodo'},
           {'classification.identifier': 'zeus'},
           {},
+          {'protocol.application': 'http'},
           ]
 for index in range(len(INPUT)):
     copy1 = EVENT_TEMPL.copy()
@@ -49,7 +52,7 @@ class TestModifyExpertBot(test.BotTestCase, unittest.TestCase):
     def set_bot(cls):
         cls.bot_reference = ModifyExpertBot
         config_path = resource_filename('intelmq',
-                                        'bots/experts/modify/modify.conf')
+                                        'bots/experts/modify/examples/default.conf')
         cls.sysconfig = {'configuration_path': config_path
                          }
         cls.default_input_message = {'__type': 'Event'}

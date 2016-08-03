@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-
-import re
 import sys
 
 from intelmq.lib.bot import Bot
@@ -24,15 +22,10 @@ class BitsightCollectorBot(Bot):
         self.conn.setopt(pycurl.WRITEFUNCTION, self.on_receive)
 
     def process(self):
-        try:                     # hugly hack, when bot executes self.stop() pycurl raises an exception that makes the bot restart again.
-            self.conn.perform()
-        except pycurl.error as e:
-            if e.args[0] == 23:  # Failed writing body, code 23, we want to catch only this.
-                self.logger.info('Shutting down pycurl gracefully')
-                self.conn.close()
-                self.stop()
-            else:
-                raise            # and raise everything else, eg: timouts.
+        self.conn.perform()
+
+    def shutdown(self):
+        self.conn.close()
 
     def on_receive(self, data):
         for line in data.decode().splitlines():

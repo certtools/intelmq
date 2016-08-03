@@ -5,25 +5,42 @@ import unittest
 
 import intelmq.lib.test as test
 import intelmq.lib.utils as utils
-from intelmq.bots.parsers.shadowserver.chargen_parser import \
-    ShadowServerChargenParserBot
+from intelmq.bots.parsers.shadowserver.parser import ShadowserverParserBot
 
 with open(os.path.join(os.path.dirname(__file__), 'chargen.csv')) as handle:
     EXAMPLE_FILE = handle.read()
+EXAMPLE_LINES = EXAMPLE_FILE.splitlines()
+with open(os.path.join(os.path.dirname(__file__), 'chargen_short.csv')) as handle:
+    EXAMPLE_FILE_SHORT = handle.read()
+EXAMPLE_LINE_SHORT = EXAMPLE_FILE_SHORT.splitlines()
+
+with open(os.path.join(os.path.dirname(__file__),
+                       'chargen_RECONSTRUCTED.csv')) as handle:
+    RECONSTRUCTED_FILE = handle.read()
+RECONSTRUCTED_LINES = RECONSTRUCTED_FILE.splitlines()
 
 EXAMPLE_REPORT = {"feed.name": "ShadowServer Chargen",
                   "raw": utils.base64_encode(EXAMPLE_FILE),
                   "__type": "Report",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   }
+EXAMPLE_REPORT_SHORT = {"feed.name": "ShadowServer Chargen",
+                        "raw": utils.base64_encode(EXAMPLE_FILE_SHORT),
+                        "__type": "Report",
+                        "time.observation": "2015-01-01T00:00:00+00:00",
+                        }
 EVENTS = [{'__type': 'Event',
            'classification.type': 'vulnerable service',
-           'classification.identifier': 'chargen',
-           'extra': '{"sic": 654321, "response_size": 116, "naics": 123456}',
+           'classification.identifier': 'openchargen',
+           'classification.taxonomy': 'Vulnerable',
+           'extra': '{"naics": 123456, "response_size": 116, "sic": 654321, '
+                    '"tag": "chargen"}',
+           'feed.code': 'shadowserver-openchargen',
            'feed.name': 'ShadowServer Chargen',
            'protocol.application': 'chargen',
            'protocol.transport': 'udp',
-           'raw': 'Iih1J3NlY3RvcicsIHUnJyksKHUnY2l0eScsIHUnUkVZS0pBVklLJyksKHUncHJvdG9jb2wnLCB1J3VkcCcpLCh1J25haWNzJywgdScxMjM0NTYnKSwodSd0aW1lc3RhbXAnLCB1JzIwMTQtMDMtMTYgMDQ6MTU6MTknKSwodSdyZWdpb24nLCB1J0hPRlVPQk9SR0FSU1ZBT0lPJyksKHUnaG9zdG5hbWUnLCB1JycpLCh1J2FzbicsIHUnMTI5NjknKSwodSdzaWMnLCB1JzY1NDMyMScpLCh1J3RhZycsIHUnY2hhcmdlbicpLCh1J2lwJywgdSc4OC4xNDkuMjMuMjMwJyksKHUnZ2VvJywgdSdJUycpLCh1J3BvcnQnLCB1JzE5JyksKHUnc2l6ZScsIHUnMTE2Jyki',
+           'raw': utils.base64_encode('\n'.join([RECONSTRUCTED_LINES[0],
+                                                 RECONSTRUCTED_LINES[1], ''])),
            'source.asn': 12969,
            'source.geolocation.cc': 'IS',
            'source.geolocation.city': 'REYKJAVIK',
@@ -34,12 +51,18 @@ EVENTS = [{'__type': 'Event',
            'time.source': '2014-03-16T04:15:19+00:00'},
           {'__type': 'Event',
            'classification.type': 'vulnerable service',
-           'classification.identifier': 'chargen',
-           'extra': '{"response_size": 116}',
+           'classification.identifier': 'openchargen',
+           'classification.taxonomy': 'Vulnerable',
+           'extra': '{"response_size": 116, "tag": "chargen"}',
+           'feed.code': 'shadowserver-openchargen',
            'feed.name': 'ShadowServer Chargen',
            'protocol.application': 'chargen',
            'protocol.transport': 'udp',
-           'raw': 'Iih1J3NlY3RvcicsIHUnJyksKHUnY2l0eScsIHUnVEhBTkggUEhPIEhPIENISSBNSU5IJyksKHUncHJvdG9jb2wnLCB1J3VkcCcpLCh1J25haWNzJywgdScwJyksKHUndGltZXN0YW1wJywgdScyMDE0LTAzLTE2IDA0OjE1OjE5JyksKHUncmVnaW9uJywgdSdITyBDSEkgTUlOSCcpLCh1J2hvc3RuYW1lJywgdScnKSwodSdhc24nLCB1JzQ1NTQzJyksKHUnc2ljJywgdScwJyksKHUndGFnJywgdSdjaGFyZ2VuJyksKHUnaXAnLCB1JzExMi4xOTcuMjQwLjEnKSwodSdnZW8nLCB1J1ZOJyksKHUncG9ydCcsIHUnMTknKSwodSdzaXplJywgdScxMTYnKSI=',
+           'raw': utils.base64_encode(
+               '\n'.join([EXAMPLE_LINES[0],
+                          ('"2014-03-16 04:15:19","112.197.240.1","udp","19",'
+                           '"","chargen","116","45543","VN","HO CHI MINH",'
+                           '"THANH PHO HO CHI MINH","0","0",""'), ''])),
            'source.asn': 45543,
            'source.geolocation.cc': 'VN',
            'source.geolocation.city': 'THANH PHO HO CHI MINH',
@@ -50,12 +73,18 @@ EVENTS = [{'__type': 'Event',
            'time.source': '2014-03-16T04:15:19+00:00'},
           {'__type': 'Event',
            'classification.type': 'vulnerable service',
-           'classification.identifier': 'chargen',
-           'extra': '{"response_size": 116}',
+           'classification.identifier': 'openchargen',
+           'classification.taxonomy': 'Vulnerable',
+           'extra': '{"response_size": 116, "tag": "chargen"}',
+           'feed.code': 'shadowserver-openchargen',
            'feed.name': 'ShadowServer Chargen',
            'protocol.application': 'chargen',
            'protocol.transport': 'udp',
-           'raw': 'Iih1J3NlY3RvcicsIHUnJyksKHUnY2l0eScsIHUnUk9NQScpLCh1J3Byb3RvY29sJywgdSd1ZHAnKSwodSduYWljcycsIHUnMCcpLCh1J3RpbWVzdGFtcCcsIHUnMjAxNC0wMy0xNiAwNDoxNToxOScpLCh1J3JlZ2lvbicsIHUnTEFaSU8nKSwodSdob3N0bmFtZScsIHUnaG9zdDI2LTE0Ni1zdGF0aWMuMzYtODUtYi5idXNpbmVzcy50ZWxlY29taXRhbGlhLml0JyksKHUnYXNuJywgdSczMjY5JyksKHUnc2ljJywgdScwJyksKHUndGFnJywgdSdjaGFyZ2VuJyksKHUnaXAnLCB1Jzg1LjM2LjE0Ni4yNicpLCh1J2dlbycsIHUnSVQnKSwodSdwb3J0JywgdScxOScpLCh1J3NpemUnLCB1JzExNicpIg==',
+           'raw': utils.base64_encode(
+               '\n'.join([EXAMPLE_LINES[0],
+                          ('"2014-03-16 04:15:19","85.36.146.26","udp","19",'
+                           '"host26-146-static.36-85-b.business.telecomitalia.it",'
+                           '"chargen","116","3269","IT","LAZIO","ROMA","0","0",""'), ''])),
            'source.asn': 3269,
            'source.geolocation.cc': 'IT',
            'source.geolocation.city': 'ROMA',
@@ -68,12 +97,18 @@ EVENTS = [{'__type': 'Event',
            'time.source': '2014-03-16T04:15:19+00:00'},
           {'__type': 'Event',
            'classification.type': 'vulnerable service',
-           'classification.identifier': 'chargen',
-           'extra': '{"response_size": 116}',
+           'classification.identifier': 'openchargen',
+           'classification.taxonomy': 'Vulnerable',
+           'extra': '{"response_size": 116, "tag": "chargen"}',
+           'feed.code': 'shadowserver-openchargen',
            'feed.name': 'ShadowServer Chargen',
            'protocol.application': 'chargen',
            'protocol.transport': 'udp',
-           'raw': 'Iih1J3NlY3RvcicsIHUnJyksKHUnY2l0eScsIHUnVklDVE9SSUEnKSwodSdwcm90b2NvbCcsIHUndWRwJyksKHUnbmFpY3MnLCB1JzAnKSwodSd0aW1lc3RhbXAnLCB1JzIwMTQtMDMtMTYgMDQ6MTU6MTknKSwodSdyZWdpb24nLCB1J0JSSVRJU0ggQ09MVU1CSUEnKSwodSdob3N0bmFtZScsIHUnJyksKHUnYXNuJywgdSc2MzI3JyksKHUnc2ljJywgdScwJyksKHUndGFnJywgdSdjaGFyZ2VuJyksKHUnaXAnLCB1JzE4NC42OS4xNjguMjM3JyksKHUnZ2VvJywgdSdDQScpLCh1J3BvcnQnLCB1JzE5JyksKHUnc2l6ZScsIHUnMTE2Jyki',
+           'raw': utils.base64_encode(
+               '\n'.join([EXAMPLE_LINES[0],
+                          ('"2014-03-16 04:15:19","184.69.168.237","udp","19",'
+                           '"","chargen","116","6327","CA","BRITISH COLUMBIA",'
+                           '"VICTORIA","0","0",""'), ''])),
            'source.asn': 6327,
            'source.geolocation.cc': 'CA',
            'source.geolocation.city': 'VICTORIA',
@@ -84,12 +119,18 @@ EVENTS = [{'__type': 'Event',
            'time.source': '2014-03-16T04:15:19+00:00'},
           {'__type': 'Event',
            'classification.type': 'vulnerable service',
-           'classification.identifier': 'chargen',
-           'extra': '{"response_size": 116}',
+           'classification.identifier': 'openchargen',
+           'classification.taxonomy': 'Vulnerable',
+           'extra': '{"response_size": 116, "tag": "chargen"}',
+           'feed.code': 'shadowserver-openchargen',
            'feed.name': 'ShadowServer Chargen',
            'protocol.application': 'chargen',
            'protocol.transport': 'udp',
-           'raw': 'Iih1J3NlY3RvcicsIHUnJyksKHUnY2l0eScsIHUnSE9OT0xVTFUnKSwodSdwcm90b2NvbCcsIHUndWRwJyksKHUnbmFpY3MnLCB1JzAnKSwodSd0aW1lc3RhbXAnLCB1JzIwMTQtMDMtMTYgMDQ6MTU6MTknKSwodSdyZWdpb24nLCB1J0hBV0FJSScpLCh1J2hvc3RuYW1lJywgdSdkaGNwLTEyOC0xNzEtMzItMTIuYmlsZ2VyLmhhd2FpaS5lZHUnKSwodSdhc24nLCB1JzYzNjAnKSwodSdzaWMnLCB1JzAnKSwodSd0YWcnLCB1J2NoYXJnZW4nKSwodSdpcCcsIHUnMTI4LjE3MS4zMi4xMicpLCh1J2dlbycsIHUnVVMnKSwodSdwb3J0JywgdScxOScpLCh1J3NpemUnLCB1JzExNicpIg==',
+           'raw': utils.base64_encode(
+               '\n'.join([EXAMPLE_LINES[0],
+                          ('"2014-03-16 04:15:19","128.171.32.12","udp","19",'
+                           '"dhcp-128-171-32-12.bilger.hawaii.edu","chargen",'
+                           '"116","6360","US","HAWAII","HONOLULU","0","0",""'), ''])),
            'source.asn': 6360,
            'source.geolocation.cc': 'US',
            'source.geolocation.city': 'HONOLULU',
@@ -99,23 +140,49 @@ EVENTS = [{'__type': 'Event',
            'source.reverse_dns': 'dhcp-128-171-32-12.bilger.hawaii.edu',
            'time.observation': '2015-01-01T00:00:00+00:00',
            'time.source': '2014-03-16T04:15:19+00:00'}]
+EVENT_SHORT = {'__type': 'Event',
+               'classification.type': 'vulnerable service',
+               'classification.identifier': 'openchargen',
+               'classification.taxonomy': 'Vulnerable',
+               'extra': '{"tag": "chargen"}',
+               'feed.code': 'shadowserver-openchargen',
+               'feed.name': 'ShadowServer Chargen',
+               'protocol.application': 'chargen',
+               'protocol.transport': 'udp',
+               'raw': utils.base64_encode('\n'.join([EXAMPLE_LINE_SHORT[0],
+                                                    '"2014-11-26 05:20:54","192.168.45.68","udp","19",'
+                                                    '"","chargen","","8447","AT","3","WIEN"', ''])),
+               'source.asn': 8447,
+               'source.geolocation.cc': 'AT',
+               'source.geolocation.city': 'WIEN',
+               'source.geolocation.region': '3',
+               'source.ip': '192.168.45.68',
+               'source.port': 19,
+               'time.source': '2014-11-26T05:20:54+00:00'}
 
 
-class TestShadowServerChargenParserBot(test.BotTestCase, unittest.TestCase):
+class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
     """
-    A TestCase for a ShadowServerChargenParserBot.
+    A TestCase for a ShadowserverParserBot.
     """
 
     @classmethod
     def set_bot(cls):
-        cls.bot_reference = ShadowServerChargenParserBot
+        cls.bot_reference = ShadowserverParserBot
         cls.default_input_message = EXAMPLE_REPORT
+        cls.sysconfig = {'feedname': 'Open-Chargen'}
 
     def test_event(self):
         """ Test if correct Event has been produced. """
         self.run_bot()
         for i, EVENT in enumerate(EVENTS):
             self.assertMessageEqual(i, EVENT)
+
+    def test_event_short(self):
+        """ Test with short header. """
+        self.input_message = EXAMPLE_REPORT_SHORT
+        self.run_bot()
+        self.assertMessageEqual(0, EVENT_SHORT)
 
 
 if __name__ == '__main__':

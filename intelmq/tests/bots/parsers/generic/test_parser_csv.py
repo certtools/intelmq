@@ -32,7 +32,7 @@ EXAMPLE_EVENT = {"feed.name": "Sample CSV Feed",
                         "LmNlbm5vd29ybGQuY29tL1BheW1lbnRfQ29uZmlybWF0aW9uL1BheW"
                         "1lbnRfQ29uZmlybWF0aW9uLnppcCwxOTguMTA1LjIyMS41OjgwLG1h"
                         "aWw1LmJ1bGxzLnVuaXNvbnBsYXRmb3JtLmNvbSxqdXN0IGFub3RoZX"
-                        "IgY29tbWVudA==",
+                        "IgY29tbWVudA0K",
                  "time.observation": "2015-01-01T00:00:00+00:00",
                  }
 

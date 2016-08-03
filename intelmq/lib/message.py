@@ -188,6 +188,9 @@ class Message(dict):
         if 'regex' in config:
             if not re.search(config['regex'], str(value)):
                 return (False, 'regex did not match.')
+        if 'iregex' in config:
+            if not re.search(config['iregex'], str(value), re.IGNORECASE):
+                return (False, 'regex (case insensitive) did not match.')
         return (True, )
 
     def __sanitize_value(self, key, value):
@@ -198,32 +201,6 @@ class Message(dict):
     def __get_type_config(self, key):
         class_name = self.harmonization_config[key]
         return class_name
-
-
-class Event(Message):
-
-    def __init__(self, message=(), auto=False):
-        """
-        Parameters
-        ----------
-        message : dict
-            Give a report and feed.name, feed.url and
-            time.observation will be used to construct the Event if given.
-            If it's another type, the value is given to dict's init
-        """
-        if isinstance(message, Report):
-            template = {}
-            if 'feed.name' in message:
-                template['feed.name'] = message['feed.name']
-            if 'feed.url' in message:
-                template['feed.url'] = message['feed.url']
-            if 'feed.accuracy' in message:
-                template['feed.accuracy'] = message['feed.accuracy']
-            if 'time.observation' in message:
-                template['time.observation'] = message['time.observation']
-        else:
-            template = message
-        super(Event, self).__init__(template)
 
     def __hash__(self):
         event_hash = hashlib.sha256()
@@ -239,11 +216,14 @@ class Event(Message):
 
         return int(event_hash.hexdigest(), 16)
 
-    def to_dict(self):
+    def to_dict(self, hierarchical=True):
         json_dict = dict()
 
         for key, value in self.items():
-            subkeys = key.split('.')
+            if hierarchical:
+                subkeys = key.split('.')
+            else:
+                subkeys = [key]
             json_dict_fp = json_dict
 
             for subkey in subkeys:
@@ -260,6 +240,36 @@ class Event(Message):
     def to_json(self):
         json_dict = self.to_dict()
         return utils.decode(json.dumps(json_dict, ensure_ascii=False))
+
+
+class Event(Message):
+
+    def __init__(self, message=(), auto=False):
+        """
+        Parameters
+        ----------
+        message : dict
+            Give a report and feed.name, feed.url and
+            time.observation will be used to construct the Event if given.
+            If it's another type, the value is given to dict's init
+        """
+        if isinstance(message, Report):
+            template = {}
+            if 'feed.accuracy' in message:
+                template['feed.accuracy'] = message['feed.accuracy']
+            if 'feed.code' in message:
+                template['feed.code'] = message['feed.code']
+            if 'feed.name' in message:
+                template['feed.name'] = message['feed.name']
+            if 'feed.url' in message:
+                template['feed.url'] = message['feed.url']
+            if 'rtir_id' in message:
+                template['rtir_id'] = message['rtir_id']
+            if 'time.observation' in message:
+                template['time.observation'] = message['time.observation']
+        else:
+            template = message
+        super(Event, self).__init__(template)
 
 
 class Report(Message):

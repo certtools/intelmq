@@ -1,0 +1,78 @@
+{
+    "Attribute": [
+        {
+            "ShadowAttribute": [],
+            "SharingGroup": [],
+            "category": "Payload delivery",
+            "comment": "",
+            "deleted": false,
+            "distribution": "5",
+            "event_id": "2",
+            "id": "7",
+            "sharing_group_id": "0",
+            "timestamp": "1465681304",
+            "to_ids": false,
+            "type": "url",
+            "uuid": "575c8598-f1f0-4c16-a94a-0612c0a83866",
+            "value": "http://fake.website.com/malware/is/here"
+        },
+        {
+            "ShadowAttribute": [],
+            "SharingGroup": [],
+            "category": "Payload type",
+            "comment": "",
+            "deleted": false,
+            "distribution": "5",
+            "event_id": "2",
+            "id": "6",
+            "sharing_group_id": "0",
+            "timestamp": "1465681801",
+            "to_ids": false,
+            "type": "text",
+            "uuid": "575c8549-9010-4555-8b37-057ac0a83866",
+            "value": "Locky"
+        }
+    ],
+    "Org": {
+        "id": "1",
+        "name": "ORGNAME",
+        "uuid": "57586e9a-4a64-4f79-9009-4dc1c0a83866"
+    },
+    "Orgc": {
+        "id": "1",
+        "name": "ORGNAME",
+        "uuid": "57586e9a-4a64-4f79-9009-4dc1c0a83866"
+    },
+    "RelatedEvent": [],
+    "ShadowAttribute": [],
+    "Tag": [
+        {
+            "colour": "#005a5a",
+            "exportable": true,
+            "id": "6",
+            "name": "ecsirt:malicious-code=\"ransomware\""
+        },
+        {
+            "colour": "#142bf7",
+            "exportable": true,
+            "id": "1",
+            "name": "for_intelmq_processing"
+        }
+    ],
+    "analysis": "0",
+    "attribute_count": "2",
+    "date": "2016-06-09",
+    "distribution": "0",
+    "id": "2",
+    "info": "A Random Event",
+    "locked": false,
+    "org_id": "1",
+    "orgc_id": "1",
+    "proposal_email_lock": false,
+    "publish_timestamp": "0",
+    "published": false,
+    "sharing_group_id": "0",
+    "threat_level_id": "1",
+    "timestamp": "1465681801",
+    "uuid": "5758ebf5-c898-48e6-9fe9-5665c0a83866"
+}
