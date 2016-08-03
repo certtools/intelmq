@@ -412,6 +412,7 @@ CREATE INDEX organisation_to_template_automatic_template_idx
 CREATE TYPE notification AS (
     email VARCHAR(100),
     organisation VARCHAR(500),
+    sector VARCHAR(100),
     template_path VARCHAR(200),
     format_name VARCHAR(80),
     notification_interval INTEGER
@@ -424,11 +425,13 @@ CREATE TYPE notification AS (
 CREATE OR REPLACE VIEW organisation_settings (
     organisation_id,
     organisation_name,
+    sector,
     template_path,
     classification_type
 ) AS
-SELECT o.id, o.name, t.path, ci.name
+SELECT o.id, o.name, s.name, t.path, ci.name
   FROM organisation AS o
+  LEFT OUTER JOIN sector AS s on s.id = o.sector_id
   JOIN organisation_to_template AS ot ON ot.organisation_id = o.id
   JOIN template AS t ON ot.template_id = t.id
   JOIN classification_type AS ci
@@ -438,11 +441,13 @@ SELECT o.id, o.name, t.path, ci.name
 CREATE OR REPLACE VIEW organisation_settings_automatic (
     organisation_id,
     organisation_name,
+    sector,
     template_path,
     classification_type
 ) AS
-SELECT o.id, o.name, t.path, ct.name
+SELECT o.id, o.name, s.name, t.path, ct.name
   FROM organisation_automatic AS o
+  LEFT OUTER JOIN sector AS s on s.id = o.sector_id
   JOIN organisation_to_template_automatic AS ot ON ot.organisation_id = o.id
   JOIN template AS t ON ot.template_id = t.id
   JOIN classification_type AS ct
@@ -468,7 +473,7 @@ BEGIN
               JOIN network AS n ON n.id = orgn.net_id
              WHERE inet(host(network(n.address))) <= event_ip
                AND event_ip <= inet(host(broadcast(n.address))))
-    SELECT mc.email, os.organisation_name, os.template_path, f.name,
+    SELECT mc.email, os.organisation_name, os.sector, os.template_path, f.name,
            mc.notification_interval
       FROM matched_contacts mc
       JOIN organisation_settings AS os
@@ -497,7 +502,7 @@ BEGIN
               JOIN network_automatic AS n ON n.id = orgn.net_id
              WHERE inet(host(network(n.address))) <= event_ip
                AND event_ip <= inet(host(broadcast(n.address))))
-    SELECT mc.email, os.organisation_name, os.template_path, f.name,
+    SELECT mc.email, os.organisation_name, os.sector, os.template_path, f.name,
            mc.notification_interval
       FROM matched_contacts mc
       JOIN organisation_settings_automatic AS os
@@ -526,7 +531,7 @@ BEGIN
                 ON orga.organisation_id = r.organisation_id
               JOIN autonomous_system AS a ON a.number = orga.asn_id
              WHERE a.number = event_asn)
-    SELECT mc.email, os.organisation_name, os.template_path, f.name,
+    SELECT mc.email, os.organisation_name, os.sector, os.template_path, f.name,
            mc.notification_interval
       FROM matched_contacts mc
       JOIN organisation_settings AS os
@@ -553,7 +558,7 @@ BEGIN
                 ON orga.organisation_id = r.organisation_id
               JOIN autonomous_system_automatic AS a ON a.number = orga.asn_id
              WHERE a.number = event_asn)
-    SELECT mc.email, os.organisation_name, os.template_path, f.name,
+    SELECT mc.email, os.organisation_name, os.sector, os.template_path, f.name,
            mc.notification_interval
       FROM matched_contacts AS mc
       JOIN organisation_settings_automatic AS os
@@ -581,7 +586,7 @@ BEGIN
                 ON orgf.organisation_id = r.organisation_id
               JOIN fqdn AS f ON f.id = orgf.fqdn_id
              WHERE f.fqdn = event_fqdn)
-    SELECT mc.email, os.organisation_name, os.template_path, f.name,
+    SELECT mc.email, os.organisation_name, os.sector, os.template_path, f.name,
            mc.notification_interval
       FROM matched_contacts AS mc
       JOIN organisation_settings AS os
@@ -608,7 +613,7 @@ BEGIN
                 ON orgf.organisation_id = r.organisation_id
               JOIN fqdn_automatic AS f ON f.id = orgf.fqdn_id
              WHERE f.fqdn = event_fqdn)
-    SELECT mc.email, os.organisation_name, os.template_path, f.name,
+    SELECT mc.email, os.organisation_name, os.sector, os.template_path, f.name,
            mc.notification_interval
       FROM matched_contacts AS mc
       JOIN organisation_settings_automatic AS os
