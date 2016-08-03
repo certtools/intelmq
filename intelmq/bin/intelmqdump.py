@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+"""
+
+
+TODO: check if action is allowed when called
+"""
 import argparse
 import glob
-import io
 import json
 import os.path
 import pprint
@@ -68,10 +72,10 @@ AVAILABLE_IDS = [key for key, value in ACTIONS.items() if value[1]]
 def dump_info(fname):
     info = red('unknwon error')
     if not os.path.getsize(fname):
-        info = 'empty file'
+        info = red('empty file')
     else:
         try:
-            handle = io.open(fname, 'rt')
+            handle = open(fname, 'rt')
         except OSError as exc:
             info = red('unable to open file: {!s}'.format(exc))
         else:
@@ -162,15 +166,13 @@ def main():
         elif bot_status == 'error':
             print(red('Attention: This bot is not defined!'))
 
-        try:
-            with io.open(fname, 'rt') as handle:
+        if info.startswith(str(red)):
+            available_opts = [item[0] for item in ACTIONS.values() if item[2]]
+            print('Restricted actions.')
+        else:
+            with open(fname, 'rt') as handle:
                 content = json.load(handle)
             meta = load_meta(content)
-        except ValueError:
-            available_opts = [item[0] for item in ACTIONS.values() if item[2]]
-            print(bold('Could not load file:') + '\n{}\nRestricted actions.'
-                  ''.format(traceback.format_exc()))
-        else:
             available_opts = [item[0] for item in ACTIONS.values()]
             for count, line in enumerate(meta):
                 print('{:3}: {} {}'.format(count, *line))

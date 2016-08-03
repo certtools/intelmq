@@ -54,7 +54,6 @@ class ShadowserverParserBot(ParserBot):
         for row in csvr:
             yield row
 
-
     def parse_line(self, row, report):
 
         conf = self.sparser_config
@@ -111,6 +110,8 @@ class ShadowserverParserBot(ParserBot):
         # extra if an add operation failed
         for item in conf.get('optional_fields'):
             intelmqkey, shadowkey = item[:2]
+            if shadowkey not in fields:  # key does not exist in data (not even in the header)
+                continue
             if len(item) > 2:
                 conv_func = item[2]
             else:

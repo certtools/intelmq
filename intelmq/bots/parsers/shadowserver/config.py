@@ -64,7 +64,7 @@ def get_feed(feedname):
         "Open-Chargen": open_chargen,
         "Open-QOTD": open_qotd,
         "Sinkhole-HTTP-Drone": sinkhole_http_drone,  # TODO Check implementation. Especially the TOR-Converter
-        "Open-m DNS": open_m_dns,  # TODO Check implementation.
+        "Open-mDNS": open_mdns,  # TODO Check implementation.
     }
 
     return feed_idx.get(feedname)
@@ -127,7 +127,7 @@ def validate_ip(value):
     return value
 
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-mDNS
-open_m_dns = {
+open_mdns = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
