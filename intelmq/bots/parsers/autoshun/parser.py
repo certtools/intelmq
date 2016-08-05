@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import html
 import html.parser
 import sys
 
@@ -37,7 +38,10 @@ class AutoshunParserBot(ParserBot):
 
         ip = info[1].split('</td>')[0].strip()
         last_seen = info[2].split('</td>')[0].strip() + '-05:00'
-        description = self.parser.unescape(info[3].split('</td>')[0].strip())
+        if sys.version_info < (3, 4):
+            description = self.parser.unescape(info[3].split('</td>')[0].strip())
+        else:
+            description = html.unescape(info[3].split('</td>')[0].strip())
 
         for key in ClassificationType.allowed_values:
             if description.lower().find(key.lower()) > -1:

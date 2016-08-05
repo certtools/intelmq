@@ -188,6 +188,9 @@ class Message(dict):
         if 'regex' in config:
             if not re.search(config['regex'], str(value)):
                 return (False, 'regex did not match.')
+        if 'iregex' in config:
+            if not re.search(config['iregex'], str(value), re.IGNORECASE):
+                return (False, 'regex (case insensitive) did not match.')
         return (True, )
 
     def __sanitize_value(self, key, value):
@@ -213,11 +216,14 @@ class Message(dict):
 
         return int(event_hash.hexdigest(), 16)
 
-    def to_dict(self):
+    def to_dict(self, hierarchical=True):
         json_dict = dict()
 
         for key, value in self.items():
-            subkeys = key.split('.')
+            if hierarchical:
+                subkeys = key.split('.')
+            else:
+                subkeys = [key]
             json_dict_fp = json_dict
 
             for subkey in subkeys:

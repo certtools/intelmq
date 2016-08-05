@@ -16,37 +16,25 @@ import sys
 import copy
 
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 from intelmq.lib.message import Event
 
-from intelmq.lib.exceptions import InvalidValue
+from intelmq.lib.exceptions import InvalidValue, InvalidKey
 
 import intelmq.bots.parsers.shadowserver.config as config
 
 
-class ShadowserverParserBot(Bot):
+class ShadowserverParserBot(ParserBot):
 
     def init(self):
         self.sparser_config = None
         if hasattr(self.parameters, 'feedname'):
-            feedname = self.parameters.feedname
-            self.sparser_config = config.get_feed(feedname)
+            self.feedname = self.parameters.feedname
+            self.sparser_config = config.get_feed(self.feedname)
 
         if not self.sparser_config:
             self.logger.error('No feedname provided or feedname not in conf.')
             self.stop()
-
-    def process(self):
-        conf = self.sparser_config
-
-        report = self.receive_message()
-
-        raw_report = utils.base64_decode(report["raw"])
-        csvr = csv.DictReader(io.StringIO(raw_report))
-
-        # create an array of fieldnames,
-        # those were automagically created by the dictreader
-        allfields = csvr.fieldnames
 
         # Set a switch if the parser shall reset the feed.name,
         # code and feedurl for this event
@@ -55,124 +43,141 @@ class ShadowserverParserBot(Bot):
             if self.parameters.override:
                 self.override = True
 
+    def parse(self, report):
+        raw_report = utils.base64_decode(report["raw"])
+        csvr = csv.DictReader(io.StringIO(raw_report))
+
+        # create an array of fieldnames,
+        # those were automagically created by the dictreader
+        self.fieldnames = csvr.fieldnames
+
         for row in csvr:
+            yield row
 
-            # we need to copy here...
-            fields = copy.copy(allfields)
-            # We will use this variable later.
-            # Each time a field was successfully added to the
-            # intelmq-event, this field will be removed from
-            # the fields array.
-            # at the end, all remaining fields are added to the
-            # extra field.
+    def parse_line(self, row, report):
 
-            event = Event(report)
-            extra = {}  # The Json-Object which might get into the Extra field
-            sserver = {}  # The Json-Object which will be populated with the
-            # fields that coul not be added to the standard intelmq fields
-            # the parser is going to write this information into an object
-            # one level below the "extra root"
-            # e.g.: extra {'shadowserver': {'cc_dns': '127.0.0.1'}
+        conf = self.sparser_config
 
-            # set classification.type
-            # TODO this might get dynamic in some feeds.
-            # How to handle that?
+        # we need to copy here...
+        fields = copy.copy(self.fieldnames)
+        # We will use this variable later.
+        # Each time a field was successfully added to the
+        # intelmq-event, this field will be removed from
+        # the fields array.
+        # at the end, all remaining fields are added to the
+        # extra field.
 
-            if not conf.get('classification_type'):
-                self.logger.warn("The classification type for "
-                    + self.parameters.feedname
-                    + " could not be determined. Check ParserConfig!")
+        event = Event(report)
+        extra = {}  # The Json-Object which will be populated with the
+        # fields that could not be added to the standard intelmq fields
+        # the parser is going to write this information into an object
+        # one level below the "extra root"
+        # e.g.: extra {'cc_dns': '127.0.0.1'}
+
+        # set feed.name and code, honor the override parameter
+
+        if hasattr(self.parameters, 'feedname'):
+            if 'feed.name' in event and self.override:
+                event.add('feed.name', self.parameters.feedname, force=True)
+            elif 'feed.name' not in event:
+                event.add('feed.name', self.parameters.feedname)
+
+        # Iterate Config, add required fields.
+        # Fail hard if not possible:
+        for item in conf.get('required_fields'):
+            intelmqkey, shadowkey = item[:2]
+            if len(item) > 2:
+                conv_func = item[2]
             else:
-                event.add('classification.type', conf.get('classification_type'))
+                conv_func = None
 
-            # set feed.name and url, honor the override parameter
+            raw_value = row.get(shadowkey)
 
-            if 'feed.url' in event and self.override:
-                event.add('feed.url', conf.get('feed_url'), force=True)
-            else:
-                event.add('feed.url', conf.get('feed_url'))
+            value = raw_value
 
-
-            if hasattr(self.parameters, 'feedname'):
-                if 'feed.name' in event and self.override:
-                    event.add('feed.name', self.parameters.feedname, force=True)
+            if conv_func is not None and raw_value is not None:
+                if len(item) == 4 and item[3]:
+                    value = conv_func(raw_value, row)
                 else:
-                    event.add('feed.name', self.parameters.feedname)
+                    value = conv_func(raw_value)
 
-
-            if hasattr(self.parameters, 'feedcode'):
-                if 'feed.code' in event and self.override:
-                    event.add('feed.code', self.parameters.feedcode, force=True)
-                else:
-                    event.add('feed.code', self.parameters.feedcode)
-
-            # Add constant fields
-            for (intelmqkey, value) in conf.get('constant_fields', []):
+            if value is not None:
                 event.add(intelmqkey, value)
+                fields.remove(shadowkey)
 
-            # Iterate Config, add required fields.
-            # Fail hard if not possible:
-            for item in conf.get('required_fields'):
-                intelmqkey, shadowkey = item[:2]
-                if len(item) > 2:
-                    conv = item[2]
+        # Now add optional fields.
+        # This action may fail, the value is added to
+        # extra if an add operation failed
+        for item in conf.get('optional_fields'):
+            intelmqkey, shadowkey = item[:2]
+            if shadowkey not in fields:  # key does not exist in data (not even in the header)
+                continue
+            if len(item) > 2:
+                conv_func = item[2]
+            else:
+                conv_func = None
+            raw_value = row.get(shadowkey)
+            value = raw_value
+
+            if conv_func is not None and raw_value is not None:
+                if len(item) == 4 and item[3]:
+                    value = conv_func(raw_value, row)
                 else:
-                    conv = None
+                    try:
+                        value = conv_func(raw_value)
+                    except:
+                        self.logger.error('could not convert shadowkey: "{}", ' +
+                                          'value: "{}" via conversion function {}'.format(shadowkey, raw_value, repr(conv_func)))
+                        value = None
+                        # """ fail early and often in this case. We want to be able to convert everything """
+                        # self.stop()
 
-                raw_value = row.get(shadowkey)
-
-                value = raw_value
-
-                if conv is not None and raw_value is not None:
-                    value = conv(raw_value)
-
-                if value is not None:
+            if value is not None:
+                if intelmqkey == 'extra.':
+                    extra[shadowkey] = value
+                    fields.remove(shadowkey)
+                    continue
+                try:
                     event.add(intelmqkey, value)
                     fields.remove(shadowkey)
+                except InvalidValue:
+                    self.logger.info(
+                        'Could not add key "{}";'
+                        ' adding it to extras...'.format(shadowkey)
+                    )
+                    self.logger.debug('The value of the event is %s', value)
+                except InvalidKey:
+                    extra[intelmqkey] = value
+                    fields.remove(shadowkey)
+            else:
+                fields.remove(shadowkey)
 
-            # Now add optional fields.
-            # This action may fail, the value is added to
-            # extra if an add operation failed
-            for item in conf.get('optional_fields'):
-                intelmqkey, shadowkey = item[:2]
-                if len(item) > 2:
-                    conv = item[2]
-                else:
-                    conv = None
-                raw_value = row.get(shadowkey)
-                value = raw_value
+        # Now add additional constant fields.
+        for key, value in conf.get('constant_fields', {}).items():
+            event.add(key, value)
 
-                if conv is not None and raw_value is not None:
-                    value = conv(raw_value)
+        event.add('raw', self.recover_line(row))
 
-                if value is not None:
-                    try:
-                        event.add(intelmqkey, value)
-                        fields.remove(shadowkey)
-                    except InvalidValue:
-                        self.logger.info(
-                            'Could not add event "{}";' \
-                            ' adding it to extras...'.format(shadowkey)
-                        )
-                        self.logger.debug('The value of the event is %s', value)
+        # Add everything which could not be resolved to extra.
+        for f in fields:
+            val = row[f]
+            if not val == "":
+                extra[f] = val
 
-            event.add('raw', '"'+','.join(map(str, row.items()))+'"')
+        if extra:
+            event.add('extra', extra)
 
-            # Add everything which could not be resolved to extra.
-            for f in fields:
-                val = row[f]
-                if not val == "":
-                    sserver[f] = val
+        yield event
 
-            if sserver:
-                extra['shadowserver'] = sserver
-                event.add('extra', extra)
-
-            self.send_message(event)
-        self.acknowledge_message()
-
+    def recover_line(self, line):
+        out = io.StringIO()
+        writer = csv.DictWriter(out, self.fieldnames,
+                                dialect='unix',
+                                extrasaction='ignore')
+        writer.writeheader()
+        writer.writerow(line)
+        return out.getvalue()
 
 if __name__ == "__main__":
     bot = ShadowserverParserBot(sys.argv[1])
     bot.start()
-

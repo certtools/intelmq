@@ -175,6 +175,15 @@ class TestHarmonization(unittest.TestCase):
                                                                'America/'
                                                                'Guyana'))
 
+    def test_datetime_sanitize(self):
+        """ Test DateTime.sanitize method. """
+        self.assertEqual('2016-07-19T04:40:01.617719+00:00',
+                         harmonization.DateTime.sanitize(
+                         '2016-07-19 06:40:01.617719+02:00 UTC'))
+        self.assertEqual('2016-07-19T13:08:38+00:00',
+                         harmonization.DateTime.sanitize(
+                         '2016-07-19 13:08:38 UTC'))
+
     def test_datetime_from_timestamp_invalid(self):
         """ Test DateTime.from_timestamp method with invalid inputs. """
         with self.assertRaises(TypeError):
@@ -188,14 +197,16 @@ class TestHarmonization(unittest.TestCase):
 
     def test_fqdn_invalid(self):
         """ Test FQDN.is_valid with invalid arguments. """
-        self.assertFalse(harmonization.FQDN.is_valid('ex-am.ple.example.',
-                                                     sanitize=False))
+        self.assertFalse(harmonization.FQDN.is_valid('ex-am.ple.example.'))
+        self.assertFalse(harmonization.FQDN.is_valid('exAmple.com'))
 
     def test_fqdn_sanitize(self):
         """ Test FQDN.sanitize with valid arguments. """
         self.assertTrue(harmonization.FQDN.is_valid('example.example.',
                                                     sanitize=True))
         self.assertTrue(harmonization.FQDN.is_valid('example.net',
+                                                    sanitize=True))
+        self.assertTrue(harmonization.FQDN.is_valid('exAmple.net',
                                                     sanitize=True))
 
     def test_fqdn_to_ip(self):
@@ -227,20 +238,37 @@ class TestHarmonization(unittest.TestCase):
         self.assertTrue(harmonization.JSON.is_valid(b'{"foo": "bar"}',
                                                     sanitize=True))
 
+    def test_lowercasestring_valid(self):
+        """ Test LowercaseString.is_valid with valid arguments. """
+        self.assertTrue(harmonization.LowercaseString.is_valid('foobar'))
+
+    def test_lowercasestring_invalid(self):
+        """ Test LowercaseString.is_valid with invalid arguments. """
+        self.assertFalse(harmonization.LowercaseString.is_valid('fooBar'))
+
+    def test_lowercasestring_sanitize(self):
+        """ Test LowercaseString.sanitize with valid arguments. """
+        self.assertTrue(harmonization.LowercaseString.is_valid(b'fooBar',
+                                                               sanitize=True))
+
     def test_url_valid(self):
         """ Test URL.is_valid with valid arguments. """
         self.assertTrue(harmonization.URL.is_valid('http://example.com'))
         self.assertTrue(harmonization.URL.is_valid('http://example.com/foo'))
+        self.assertTrue(harmonization.URL.is_valid('file://localhost/etc/hosts'))
 
     def test_url_invalid(self):
         """ Test URL.is_valid with invalid arguments. """
         self.assertFalse(harmonization.URL.is_valid('example.com'))
+        self.assertFalse(harmonization.URL.is_valid('file:///etc/hosts'))
 
     def test_url_sanitize(self):
         """ Test URL.sanitize with valid arguments. """
         self.assertTrue(harmonization.URL.is_valid(b'http://example.com',
                                                    sanitize=True))
         self.assertTrue(harmonization.URL.is_valid('hxxps://example.com/foo',
+                                                   sanitize=True))
+        self.assertTrue(harmonization.URL.is_valid('file:///etc/hosts',
                                                    sanitize=True))
 
     def test_url_sanitize_invalid(self):

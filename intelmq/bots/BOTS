@@ -72,15 +72,6 @@
                 "rate_limit": "3600"
             }
         },
-        "Arbor": {
-            "description": "Arbor Collector is the bot responsible to get the report from source of information.",
-            "module": "intelmq.bots.collectors.http.collector_http",
-            "parameters": {
-                "feed": "Arbor",
-                "http_url": "http://atlas-public.ec2.arbor.net/public/ssh_attackers",
-                "rate_limit": 3600
-            }
-        },
         "Autoshun": {
             "description": "Autoshun Collector is the bot responsible to get the report from source of information.",
             "module": "intelmq.bots.collectors.http.collector_http",
@@ -300,10 +291,12 @@
             "description": "Fileinput collector fetches data from a file.",
             "module": "intelmq.bots.collectors.file.collector_file",
             "parameters": {
-                "delete_file": "",
-                "extension": ".csv",
+                "chunk_replicate_header": true,
+                "chunk_size": null,
+                "delete_file": false,
                 "feed": "FileCollector",
                 "path": "/tmp/",
+                "postfix": ".csv",
                 "rate_limit": 300
             }
         },
@@ -338,6 +331,8 @@
             "description": "Monitor IMAP mailboxes and fetch files from URLs contained in mail bodies",
             "module": "intelmq.bots.collectors.mail.collector_mail_url",
             "parameters": {
+                "chunk_replicate_header": true,
+                "chunk_size": null,
                 "feed": "",
                 "folder": "INBOX",
                 "http_password": "<password>",
@@ -921,11 +916,6 @@
             "module": "intelmq.bots.parsers.alienvault.parser_otx",
             "parameters": {}
         },
-        "Arbor": {
-            "description": "Arbor Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.arbor.parser",
-            "parameters": {}
-        },
         "Autoshun": {
             "description": "Autoshun Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.autoshun.parser",
@@ -1148,12 +1138,11 @@
             "parameters": {}
         },
         "ShadowServer": {
-            "description": "ShadowServer Parser is a bot capable of parsing shadowserver feeds, depending on configuration files",
+            "description": "ShadowServer Parser is a bot capable of parsing all shadowserver feeds, depending on configuration files. Parameter 'feedname' is used as identifier to chose the correct mapping.",
             "module": "intelmq.bots.parsers.shadowserver.parser",
             "parameters": {
                 "feedname": "",
-                "feedcode": "",
-                "override": "1"
+                "override": true
             }
         },
         "Spamhaus CERT": {

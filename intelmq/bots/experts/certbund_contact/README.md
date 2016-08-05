@@ -14,8 +14,8 @@ default configuration of the bot.
     su - postgres
 
     createdb --encoding=UTF8 --template=template0 contactdb
-    psql -f /usr/share/intelmq/certbund_contact/initdb.sql   contactdb
-    psql -f /usr/share/intelmq/certbund_contact/defaults.sql contactdb
+    psql -f intelmq/bots/experts/certbund_contact/initdb.sql   contactdb
+    psql -f intelmq/bots/experts/certbund_contact/defaults.sql contactdb
 ```
 
 A database user with the right to select the data in the Contact DB
@@ -54,6 +54,7 @@ Add a contact:
   \set contact_email 'test@example.com'
   \set contact_comment 'Test comment on contact.'
   -- set the notification interval in seconds
+  -- an interval of -1 means no notifications will be generated
   \set notification_interval 0
 
 -- 2. Add new contact

@@ -84,7 +84,7 @@ class CERTBundKontaktExpertBot(Bot):
         for automation in ("", "_automatic"):
             cur.execute("SELECT DISTINCT"
                         "       c.email as email, o.name as organisation,"
-                        "       '' as template_path,"
+                        "       s.name as sector, '' as template_path,"
                         "       'feed_specific' as format_name,"
                         "       oa.notification_interval as notification_interval"
                         "  FROM contact{0} AS c"
@@ -93,6 +93,8 @@ class CERTBundKontaktExpertBot(Bot):
                         "    ON oa.organisation_id = r.organisation_id"
                         "  JOIN organisation{0} o"
                         "    ON o.id = r.organisation_id"
+                        "  LEFT OUTER JOIN sector AS s"
+                        "    ON s.id = o.sector_id"
                         "  JOIN autonomous_system{0} AS a"
                         "    ON a.number = oa.asn_id"
                         " WHERE a.number = %s".format(automation), (asn,))
@@ -127,9 +129,9 @@ class CERTBundKontaktExpertBot(Bot):
             self.init()
             return None
 
-        return [dict(email=email, organisation=organisation,
+        return [dict(email=email, organisation=organisation, sector=sector,
                      template_path=template_path, format=format, ttl=ttl)
-                for (email, organisation, template_path, format, ttl)
+                for (email, organisation, sector, template_path, format, ttl)
                 in raw_result]
 
 
