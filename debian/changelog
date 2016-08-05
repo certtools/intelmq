@@ -1,3 +1,18 @@
+intelmq (1.0.0~dev4+intevation.1.2~beta3) experimental; urgency=low
+
+  * New DB schema removes restriction on "raw" field length (requires
+    reinitialization)
+  * Include all bot docs in /usr/share/doc/intelmq/bots/
+  * Move certbund_contact docs to new standard location (see above)
+  * Move modify bot example configs to new standard location (see above)
+  * There are now two modify bot example configs.  Upstream's has been renamed
+    to default.conf, certbund's has been renamed to morefeeds.conf.  The
+    latter is still installed by default.
+  * Rename dependency dnspython to dnspython3 (this was renamed upstream but
+    the package name didn't change in Ubuntu, of course)
+
+ -- Gernot Schulz <gernot@intevation.de>  Fri, 05 Aug 2016 16:46:41 +0200
+
 intelmq (1.0.0~dev4+intevation.1.2~beta2) experimental; urgency=low
 
   * New Release from release branch
