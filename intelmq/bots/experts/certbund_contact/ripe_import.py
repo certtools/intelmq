@@ -27,9 +27,11 @@ parser.add_argument("-v", "--verbose",
                     help="increase output verbosity",
                     default=False,
                     action="store_true")
-parser.add_argument("--database",
-                    default='contactdb',
-                    help="Specify the Postgres DB. Default: contactdb")
+parser.add_argument("--conninfo",
+                    default='dbname=contactdb',
+                    help="Libpg connection string. E.g. 'host=localhost"
+                         " port=5432 user=intelmq dbname=connectdb'"
+                         " Default: 'dbname=contactdb'")
 parser.add_argument("--organisation-file",
                     default='ripe.db.organisation.gz',
                     help="Specify the organisation data file. Default: ripe.db.organisation.gz")
@@ -146,7 +148,7 @@ def main():
 
     con = None
     try:
-        con = psycopg2.connect("dbname='{}'".format(args.database))
+        con = psycopg2.connect(dsn=args.conninfo)
         cur = con.cursor()
 
         if args.verbose:

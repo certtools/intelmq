@@ -51,14 +51,14 @@ downloaded.
 ```
 cd /tmp/ripe
 su postgres
-ripe_import.py --database contactdb --verbose
+ripe_import.py --conninfo dbname=contactdb --verbose
 ```
 
 In case you are somewhere else, use:
 
 ```
 su postgres
-ripe_import.py --database contactdb \
+ripe_import.py --conninfo dbname=contactdb \
     --organisation-file=/tmp/ripe/ripe.db.organisation.gz \
     --role-file=/tmp/ripe/ripe.db.role.gz \
     --asn-file=/tmp/ripe/ripe.db.aut-num.gz \
@@ -66,3 +66,6 @@ ripe_import.py --database contactdb \
 ```
 
 See also the help provided by ``--help``
+and the documentation of the libpg conninfo string
+  https://www.postgresql.org/docs/current/static/libpq-envars.html
+it shows how to use a ~/.pgpass file to savely provide a password.
