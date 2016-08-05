@@ -65,7 +65,7 @@ ripe_import.py --conninfo dbname=contactdb \
     --verbose
 ```
 
-See also the help provided by ``--help``
-and the documentation of the libpg conninfo string
-  https://www.postgresql.org/docs/current/static/libpq-envars.html
-it shows how to use a ~/.pgpass file to savely provide a password.
+See also the help provided by ``--help`` and the
+[documentation of the libpg conninfo string](https://www.postgresql.org/docs/current/static/libpq-connect.html#LIBPQ-CONNSTRING).
+The [documentaion on environment variables](https://www.postgresql.org/docs/current/static/libpq-envars.html) to the connection also
+points towards how to savely provide a password with a ~/.pgpass file.
