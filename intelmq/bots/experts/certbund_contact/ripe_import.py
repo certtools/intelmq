@@ -82,7 +82,12 @@ def parse_file(filename, fields, index_field=None):
         print('** Reading file {0}'.format(filename))
 
     out = []
+    #init new record. TODO: remove code duplication with (**) below
     tmp = {}
+    for tmp_field in fields:
+        if not tmp.get(tmp_field):
+            tmp[tmp_field] = []
+
     f = gzip.open(filename, 'rt', encoding='latin1')
     if not index_field:
         index_field = fields[0]
@@ -105,11 +110,12 @@ def parse_file(filename, fields, index_field=None):
             # the previous data and start again
             if key == index_field:
                 out.append(tmp)
-                tmp = {}
 
-            for tmp_field in fields:
-                if not tmp.get(tmp_field):
-                    tmp[tmp_field] = []
+                # see (**) above
+                tmp = {}
+                for tmp_field in fields:
+                    if not tmp.get(tmp_field):
+                        tmp[tmp_field] = []
 
             # Only add the fields we are interested in to the result set
             if key in fields:
