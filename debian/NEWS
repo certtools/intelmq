@@ -1,6 +1,20 @@
+intelmq (1.0.0~dev4+intevation.1.2~beta3) experimental; urgency=low
+
+  The events database has to be reinitialized because its schema has changed.
+  This was necessary to remove restrictions on the length of "raw" fields.
+
+  This package now includes the documentation of all bots.
+  Previously-packaged docs and examples have been moved to the new standard
+  location: /usr/share/doc/intelmq/bots.
+
+  Specifically, the certbund_contact docs and the modify bot examples have
+  been moved there.
+
+ -- Gernot Schulz <gernot@intevation.de>  Fri, 05 Aug 2016 16:46:41 +0200
+
 intelmq (1.0.0~dev4+intevation.1.2~alpha1) experimental; urgency=low
 
   The individual Shadowserver parser bots have been replaced with a single
   bot, so existing configurations may need to be updated.
 
-  -- Gernot Schulz <gernot@intevation.de>  Tue, 21 Jun 2016 16:38:00 +0200
+ -- Gernot Schulz <gernot@intevation.de>  Tue, 21 Jun 2016 16:38:00 +0200
