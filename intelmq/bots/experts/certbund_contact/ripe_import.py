@@ -136,10 +136,10 @@ def main():
     asn_whitelist = read_asn_whitelist()
 
     asn_list = parse_file(args.asn_file, ('aut-num', 'org'), 'aut-num')
-    role_list = parse_file(args.role_file,
-                           ('nic-hdl', 'abuse-mailbox', 'org'), 'role')
     organisation_list = parse_file(args.organisation_file,
                                    ('organisation', 'org-name', 'abuse-c'))
+    role_list = parse_file(args.role_file,
+                           ('nic-hdl', 'abuse-mailbox', 'org'), 'role')
 
     # Mapping dictionary that holds the database IDs between organisations,
     # contacts and AS numbers. This needs to be done here because we can't
@@ -207,9 +207,6 @@ def main():
             print('** Saving organisation data to database...')
         cur.execute("DELETE FROM organisation_automatic WHERE import_source = %s;", (SOURCE_NAME,))
         for entry in organisation_list:
-            # Not all entries have an organisation associated
-            if not entry:
-                continue
             org_name = entry['org-name'][0]
             abuse_c = entry['abuse-c'][0] if entry['abuse-c'] else None
             org_ripe_handle = entry['organisation'][0]
