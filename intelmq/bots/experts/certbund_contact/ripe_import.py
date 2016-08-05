@@ -1,4 +1,4 @@
-#!/bin/env python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 # This file is part of intelMQ RIPE importer.
@@ -27,9 +27,11 @@ parser.add_argument("-v", "--verbose",
                     help="increase output verbosity",
                     default=False,
                     action="store_true")
-parser.add_argument("--database",
-                    default='contactdb',
-                    help="Specify the Postgres DB. Default: contactdb")
+parser.add_argument("--conninfo",
+                    default='dbname=contactdb',
+                    help="Libpg connection string. E.g. 'host=localhost"
+                         " port=5432 user=intelmq dbname=connectdb'"
+                         " Default: 'dbname=contactdb'")
 parser.add_argument("--organisation-file",
                     default='ripe.db.organisation.gz',
                     help="Specify the organisation data file. Default: ripe.db.organisation.gz")
@@ -71,10 +73,10 @@ def parse_file(filename, fields, index_field=None):
 
     ftp://ftp.ripe.net/ripe/dbase/split/
     :param filename: the gziped filename
-    :param fields: the field name to read
-    :param index_field: a field that occurs only once per dataset.
-                        If not provided, the first element of 'fielfs' will be used
-    :return: returns a list with the read out values as well as the number of entri
+    :param fields: the field names to read
+    :param index_field: the field that marks the beginning of a dataset.
+        If not provided, the first element of 'fields' will be used
+    :return: returns a list with the read out values
     '''
     if args.verbose:
         print('** Reading file {0}'.format(filename))
@@ -146,7 +148,7 @@ def main():
 
     con = None
     try:
-        con = psycopg2.connect("dbname='{}'".format(args.database))
+        con = psycopg2.connect(dsn=args.conninfo)
         cur = con.cursor()
 
         if args.verbose:

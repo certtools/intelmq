@@ -51,18 +51,21 @@ downloaded.
 ```
 cd /tmp/ripe
 su postgres
-ripe_import.py --database contactdb --verbose
+ripe_import.py --conninfo dbname=contactdb --verbose
 ```
 
 In case you are somewhere else, use:
 
 ```
 su postgres
-ripe_import.py --database contactdb \
+ripe_import.py --conninfo dbname=contactdb \
     --organisation-file=/tmp/ripe/ripe.db.organisation.gz \
     --role-file=/tmp/ripe/ripe.db.role.gz \
     --asn-file=/tmp/ripe/ripe.db.aut-num.gz \
     --verbose
 ```
 
-See also the help provided by ``--help``
+See also the help provided by ``--help`` and the
+[documentation of the libpg conninfo string](https://www.postgresql.org/docs/current/static/libpq-connect.html#LIBPQ-CONNSTRING).
+The [documentaion on environment variables](https://www.postgresql.org/docs/current/static/libpq-envars.html) to the connection also
+points towards how to savely provide a password with a ~/.pgpass file.
