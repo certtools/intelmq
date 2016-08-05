@@ -73,10 +73,10 @@ def parse_file(filename, fields, index_field=None):
 
     ftp://ftp.ripe.net/ripe/dbase/split/
     :param filename: the gziped filename
-    :param fields: the field name to read
-    :param index_field: a field that occurs only once per dataset.
-                        If not provided, the first element of 'fielfs' will be used
-    :return: returns a list with the read out values as well as the number of entri
+    :param fields: the field names to read
+    :param index_field: the field that marks the beginning of a dataset.
+        If not provided, the first element of 'fields' will be used
+    :return: returns a list with the read out values
     '''
     if args.verbose:
         print('** Reading file {0}'.format(filename))
