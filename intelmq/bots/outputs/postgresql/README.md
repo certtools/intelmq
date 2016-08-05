@@ -21,7 +21,7 @@ Create the new database:
 createdb --owner=intelmq intelmq-events
 ```
 
-Now initialise it as database-user `intelmq`:
+Now initialise it as database-user `intelmq` (should ask for the password):
 ```
-psql intelmq-events --username=intelmq </tmp/initdb.sql
+psql -h localhost intelmq-events intelmq </tmp/initdb.sql
 ```
