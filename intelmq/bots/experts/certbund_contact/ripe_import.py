@@ -135,12 +135,9 @@ def main():
     # Load ASN whitelist
     asn_whitelist = read_asn_whitelist()
 
-    asn_list = parse_file(args.asn_file,
-                          ('aut-num', 'org'),
-                          'aut-num')
+    asn_list = parse_file(args.asn_file, ('aut-num', 'org'), 'aut-num')
     role_list = parse_file(args.role_file,
-                           ('nic-hdl', 'abuse-mailbox', 'org'),
-                           'role')
+                           ('nic-hdl', 'abuse-mailbox', 'org'), 'role')
     organisation_list = parse_file(args.organisation_file,
                                    ('organisation', 'org-name', 'abuse-c'))
 
