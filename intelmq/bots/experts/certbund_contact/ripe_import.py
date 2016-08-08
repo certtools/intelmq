@@ -83,11 +83,7 @@ def parse_file(filename, fields, index_field=None):
         print('** Reading file {0}'.format(filename))
 
     out = []
-    #init new record. TODO: remove code duplication with (**) below
-    tmp = {}
-    for tmp_field in fields:
-        if not tmp.get(tmp_field):
-            tmp[tmp_field] = []
+    tmp = None
 
     f = gzip.open(filename, 'rt', encoding='latin1')
     if not index_field:
@@ -110,9 +106,9 @@ def parse_file(filename, fields, index_field=None):
             # If we reach the index again, we have reached the next dataset, add
             # the previous data and start again
             if key == index_field:
-                out.append(tmp)
+                if tmp: # template is filled, except on the first record
+                    out.append(tmp)
 
-                # see (**) above
                 tmp = {}
                 for tmp_field in fields:
                     if not tmp.get(tmp_field):
@@ -208,9 +204,9 @@ def main():
             print('** Saving organisation data to database...')
         cur.execute("DELETE FROM organisation_automatic WHERE import_source = %s;", (SOURCE_NAME,))
         for entry in organisation_list:
+            org_ripe_handle = entry['organisation'][0]
             org_name = entry['org-name'][0]
             abuse_c = entry['abuse-c'][0] if entry['abuse-c'] else None
-            org_ripe_handle = entry['organisation'][0]
 
             cur.execute("""
                 INSERT INTO organisation_automatic (name, ripe_org_hdl, import_source, import_time)
@@ -257,15 +253,27 @@ def main():
         cur.execute("DELETE FROM contact_automatic WHERE import_source = %s;", (SOURCE_NAME,))
 
         for entry in role_list:
-            # No all entries have email contact
+            # Sanity check.
+            # abuse-mailbox is mandatory for a role used in abuse-c.
             if not entry or not entry.get('abuse-mailbox'):
                 continue
+
+            # "org:" attribute is optional
             try:
                 org_ripe_handle = entry['org'][0]
             except IndexError:
                 org_ripe_handle = None
-            email = entry['abuse-mailbox'][0]
+
             nic_hdl = entry['nic-hdl'][0]
+
+            # abuse-mailbox: could be type LIST or occur multiple time
+            # TODO: Check if we can handle LIST a@example, b@example
+            email = entry['abuse-mailbox'][0]
+            # For multiple lines: As not seen in ftp bulk data, 
+            # we only record if it happens as WARNING for now
+            if len(entry['abuse-mailbox'])>1:
+                print('Role with nic-hdl {} has two '
+                      'abuse-mailbox lines. Taking the first.'.format(nic_hdl))
 
             cur.execute("""
                 INSERT INTO contact_automatic (format_id, email, import_source, import_time)
