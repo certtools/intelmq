@@ -68,8 +68,7 @@ def read_asn_whitelist():
 
 
 def parse_file(filename, fields, index_field=None):
-    '''
-    Parses a file from the RIPE (split) database set
+    '''Parses a file from the RIPE (split) database set.
 
     ftp://ftp.ripe.net/ripe/dbase/split/
     :param filename: the gziped filename
@@ -77,6 +76,8 @@ def parse_file(filename, fields, index_field=None):
     :param index_field: the field that marks the beginning of a dataset.
         If not provided, the first element of 'fields' will be used
     :return: returns a list with the read out values
+
+    NOTE: Does **not** handle "continuation lines" (see rfc2622 section 2).
     '''
     if args.verbose:
         print('** Reading file {0}'.format(filename))
