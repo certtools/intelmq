@@ -146,6 +146,10 @@ def main():
     # Mapping of the organisation abuse-c contact to contacts
     organisation_abuse_c = {}
 
+    # Mapping from abuse-c to organisation
+    abuse_c_organisation = {}
+
+
     con = None
     try:
         con = psycopg2.connect(dsn=args.conninfo)
@@ -215,10 +219,12 @@ def main():
             result = cur.fetchone()
             org_id = result[0]
 
-            if abuse_c and not organisation_abuse_c.get(abuse_c):
-                organisation_abuse_c[abuse_c] = {'org_id': org_id,
-                                                 'org_name': org_name,
-                                                 'contact_id': None}
+            if abuse_c:
+                if not organisation_abuse_c.get(abuse_c):
+                    organisation_abuse_c[abuse_c] = {'org_id': org_id,
+                                                     'contact_id': None}
+                abuse_c_organisation.setdefault(abuse_c,
+                                                []).append(org_ripe_handle)
 
             if not mapping.get(org_ripe_handle):
                 mapping[org_ripe_handle] = {'org_id': None,
@@ -231,7 +237,7 @@ def main():
             org_id = mapping[org_ripe_handle]['org_id']
             asn_ids = mapping[org_ripe_handle]['asn']
 
-            if org_id:
+            if org_id is not None:
                 for asn_id in asn_ids:
                     cur.execute("""
                     INSERT INTO organisation_to_asn_automatic (
@@ -255,10 +261,10 @@ def main():
         for entry in role_list:
             # Sanity check.
             # abuse-mailbox is mandatory for a role used in abuse-c.
-            if not entry or not entry.get('abuse-mailbox'):
+            if not entry.get('abuse-mailbox'):
                 continue
 
-            # "org:" attribute is optional
+            # "org:" attribute is optional, see FIXME below
             try:
                 org_ripe_handle = entry['org'][0]
             except IndexError:
@@ -283,40 +289,54 @@ def main():
             result = cur.fetchone()
             contact_id = result[0]
 
-            if org_ripe_handle and mapping.get(org_ripe_handle):
-                mapping[org_ripe_handle]['contact_id'].append(contact_id)
+            # This is the only place where contact_id is added to mapping
+            # FIXME: We ignore the org_ripe handle for now, it could be
+            # used for consistency checking
+            #if org_ripe_handle and mapping.get(org_ripe_handle):
+            #    mapping[org_ripe_handle]['contact_id'].append(contact_id)
+            #else:
+            #
+            for orh in abuse_c_organisation.get(nic_hdl, []):
+                mapping[orh]['contact_id'].append(contact_id)
 
             if organisation_abuse_c.get(nic_hdl):
                 organisation_abuse_c[nic_hdl]['contact_id'] = contact_id
 
         # many-to-many table organisation <-> contact
         cur.execute("DELETE FROM role_automatic WHERE import_source = %s;", (SOURCE_NAME,))
+
         for org_ripe_handle in mapping:
             org_id = mapping[org_ripe_handle]['org_id']
             contact_ids = mapping[org_ripe_handle]['contact_id']
 
             # Not all contacts from RIPE are connected to an organisation, some
             # for example are only responsible for a network.
-            if not org_id:
+            if org_id is None:
                 continue
 
+            ## each one with contact_id is only added to mapping
+            ## if it was found in a role, so we only have to add ..FIXME
+            ## in the organisation_abuse_c loop belowk.
+            #if org_ripe_handle not in organisation_abuse_c:
+            #    print("org_ripe_handle {} "
+            #          " is not in organisation_abuse_c!".format(org_ripe_handle))
             for contact_id in contact_ids:
                 cur.execute("""
                 INSERT INTO role_automatic (organisation_id, contact_id, import_source, import_time)
                 VALUES (%s, %s, %s, CURRENT_TIMESTAMP);
                 """, (org_id, contact_id, SOURCE_NAME))
 
-        for contact_ripe_handle in organisation_abuse_c:
-            org_id = organisation_abuse_c[contact_ripe_handle]['org_id']
-            contact_id = organisation_abuse_c[contact_ripe_handle]['contact_id']
-
-            if not contact_id or not org_id:
-                continue
-
-            cur.execute("""
-                INSERT INTO role_automatic (organisation_id, contact_id, import_source, import_time)
-                VALUES (%s, %s, %s, CURRENT_TIMESTAMP);
-                """, (org_id, contact_id, SOURCE_NAME))
+#        for contact_ripe_handle in organisation_abuse_c:
+#            org_id = organisation_abuse_c[contact_ripe_handle]['org_id']
+#            contact_id = organisation_abuse_c[contact_ripe_handle]['contact_id']
+#
+#            if not contact_id or not org_id:
+#                continue
+#
+#            cur.execute("""
+#                INSERT INTO role_automatic (organisation_id, contact_id, import_source, import_time)
+#                VALUES (%s, %s, %s, CURRENT_TIMESTAMP);
+#                """, (org_id, contact_id, SOURCE_NAME))
 
         # Commit all data
         con.commit()
