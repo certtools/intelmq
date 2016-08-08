@@ -235,18 +235,18 @@ def main():
             org_id = mapping[org_ripe_handle]['org_id']
             asn_ids = mapping[org_ripe_handle]['asn']
 
-            if not org_id:
-                continue
-
-            for asn_id in asn_ids:
-                cur.execute("""
-                INSERT INTO organisation_to_asn_automatic (notification_interval,
-                                                           organisation_id,
-                                                           asn_id,
-                                                           import_source,
-                                                           import_time)
-                VALUES (%s, %s, %s, %s, CURRENT_TIMESTAMP);
-                """, (args.notification_interval, org_id, asn_id, SOURCE_NAME))
+            if org_id:
+                for asn_id in asn_ids:
+                    cur.execute("""
+                    INSERT INTO organisation_to_asn_automatic (
+                                                        notification_interval,
+                                                        organisation_id,
+                                                        asn_id,
+                                                        import_source,
+                                                        import_time)
+                    VALUES (%s, %s, %s, %s, CURRENT_TIMESTAMP);
+                    """, (args.notification_interval, org_id,
+                          asn_id, SOURCE_NAME))
 
         #
         # Role
