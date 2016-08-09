@@ -188,7 +188,7 @@ def main():
                 continue
 
             as_number = entry['aut-num'][0][2:]
-            org_ripe_handle = entry['org'][0]
+            org_ripe_handle = entry['org'][0].upper()
 
             cur.execute("""
                 INSERT INTO autonomous_system_automatic (number, import_source, import_time)
@@ -208,9 +208,9 @@ def main():
             print('** Saving organisation data to database...')
         cur.execute("DELETE FROM organisation_automatic WHERE import_source = %s;", (SOURCE_NAME,))
         for entry in organisation_list:
-            org_ripe_handle = entry['organisation'][0]
+            org_ripe_handle = entry['organisation'][0].upper()
             org_name = entry['org-name'][0]
-            abuse_c = entry['abuse-c'][0] if entry['abuse-c'] else None
+            abuse_c = entry['abuse-c'][0].upper() if entry['abuse-c'] else None
 
             cur.execute("""
                 INSERT INTO organisation_automatic (name, ripe_org_hdl, import_source, import_time)
@@ -266,11 +266,11 @@ def main():
 
             # "org:" attribute is optional, see FIXME below
             try:
-                org_ripe_handle = entry['org'][0]
+                org_ripe_handle = entry['org'][0].upper()
             except IndexError:
                 org_ripe_handle = None
 
-            nic_hdl = entry['nic-hdl'][0]
+            nic_hdl = entry['nic-hdl'][0].upper()
 
             # abuse-mailbox: could be type LIST or occur multiple time
             # TODO: Check if we can handle LIST a@example, b@example
