@@ -50,6 +50,9 @@ parser.add_argument("--notification-interval",
 parser.add_argument("--asn-whitelist-file",
                     default='',
                     help="A file name with a whitelist of ASNs. If this option is not set, all ASNs are imported")
+
+#TODO: move parsing of arguments into the main() block to avoid while being
+# executed during import
 args = parser.parse_args()
 
 SOURCE_NAME = 'ripe'
@@ -68,21 +71,28 @@ def read_asn_whitelist():
 
 
 def parse_file(filename, fields, index_field=None):
-    '''
-    Parses a file from the RIPE (split) database set
+    '''Parses a file from the RIPE (split) database set.
 
     ftp://ftp.ripe.net/ripe/dbase/split/
     :param filename: the gziped filename
     :param fields: the field names to read
     :param index_field: the field that marks the beginning of a dataset.
         If not provided, the first element of 'fields' will be used
-    :return: returns a list with the read out values
+    :return: returns a list of lists with the read out values
+
+    NOTE: Does **not** handle "continuation lines" (see rfc2622 section 2).
+
+    NOTE: Preserves the contents of the fields like lower and upper case
+          characters, though the RPSL is case insensitive and ASCII only.
+          Thus for some fields it makes sense to upper() them (before
+          comparing).
     '''
     if args.verbose:
         print('** Reading file {0}'.format(filename))
 
     out = []
-    tmp = {}
+    tmp = None
+
     f = gzip.open(filename, 'rt', encoding='latin1')
     if not index_field:
         index_field = fields[0]
@@ -104,12 +114,13 @@ def parse_file(filename, fields, index_field=None):
             # If we reach the index again, we have reached the next dataset, add
             # the previous data and start again
             if key == index_field:
-                out.append(tmp)
-                tmp = {}
+                if tmp: # template is filled, except on the first record
+                    out.append(tmp)
 
-            for tmp_field in fields:
-                if not tmp.get(tmp_field):
-                    tmp[tmp_field] = []
+                tmp = {}
+                for tmp_field in fields:
+                    if not tmp.get(tmp_field):
+                        tmp[tmp_field] = []
 
             # Only add the fields we are interested in to the result set
             if key in fields:
@@ -129,22 +140,20 @@ def main():
     # Load ASN whitelist
     asn_whitelist = read_asn_whitelist()
 
-    asn_list = parse_file(args.asn_file,
-                          ('aut-num', 'org'),
-                          'aut-num')
-    role_list = parse_file(args.role_file,
-                           ('nic-hdl', 'abuse-mailbox', 'org'),
-                           'role')
+    asn_list = parse_file(args.asn_file, ('aut-num', 'org'), 'aut-num')
     organisation_list = parse_file(args.organisation_file,
                                    ('organisation', 'org-name', 'abuse-c'))
+    role_list = parse_file(args.role_file,
+                           ('nic-hdl', 'abuse-mailbox', 'org'), 'role')
 
     # Mapping dictionary that holds the database IDs between organisations,
     # contacts and AS numbers. This needs to be done here because we can't
     # use the RIPE org-ids.
     mapping = {}
 
-    # Mapping of the organisation abuse-c contact to contacts
-    organisation_abuse_c = {}
+    # Mapping from abuse-c to organisation
+    abuse_c_organisation = {}
+
 
     con = None
     try:
@@ -184,7 +193,7 @@ def main():
                 continue
 
             as_number = entry['aut-num'][0][2:]
-            org_ripe_handle = entry['org'][0]
+            org_ripe_handle = entry['org'][0].upper()
 
             cur.execute("""
                 INSERT INTO autonomous_system_automatic (number, import_source, import_time)
@@ -204,12 +213,9 @@ def main():
             print('** Saving organisation data to database...')
         cur.execute("DELETE FROM organisation_automatic WHERE import_source = %s;", (SOURCE_NAME,))
         for entry in organisation_list:
-            # Not all entries have an organisation associated
-            if not entry:
-                continue
+            org_ripe_handle = entry['organisation'][0].upper()
             org_name = entry['org-name'][0]
-            abuse_c = entry['abuse-c'][0] if entry['abuse-c'] else None
-            org_ripe_handle = entry['organisation'][0]
+            abuse_c = entry['abuse-c'][0].upper() if entry['abuse-c'] else None
 
             cur.execute("""
                 INSERT INTO organisation_automatic (name, ripe_org_hdl, import_source, import_time)
@@ -218,10 +224,9 @@ def main():
             result = cur.fetchone()
             org_id = result[0]
 
-            if abuse_c and not organisation_abuse_c.get(abuse_c):
-                organisation_abuse_c[abuse_c] = {'org_id': org_id,
-                                                 'org_name': org_name,
-                                                 'contact_id': None}
+            if abuse_c:
+                abuse_c_organisation.setdefault(abuse_c,
+                                                []).append(org_ripe_handle)
 
             if not mapping.get(org_ripe_handle):
                 mapping[org_ripe_handle] = {'org_id': None,
@@ -234,18 +239,18 @@ def main():
             org_id = mapping[org_ripe_handle]['org_id']
             asn_ids = mapping[org_ripe_handle]['asn']
 
-            if not org_id:
-                continue
-
-            for asn_id in asn_ids:
-                cur.execute("""
-                INSERT INTO organisation_to_asn_automatic (notification_interval,
-                                                           organisation_id,
-                                                           asn_id,
-                                                           import_source,
-                                                           import_time)
-                VALUES (%s, %s, %s, %s, CURRENT_TIMESTAMP);
-                """, (args.notification_interval, org_id, asn_id, SOURCE_NAME))
+            if org_id is not None:
+                for asn_id in asn_ids:
+                    cur.execute("""
+                    INSERT INTO organisation_to_asn_automatic (
+                                                        notification_interval,
+                                                        organisation_id,
+                                                        asn_id,
+                                                        import_source,
+                                                        import_time)
+                    VALUES (%s, %s, %s, %s, CURRENT_TIMESTAMP);
+                    """, (args.notification_interval, org_id,
+                          asn_id, SOURCE_NAME))
 
         #
         # Role
@@ -256,15 +261,24 @@ def main():
         cur.execute("DELETE FROM contact_automatic WHERE import_source = %s;", (SOURCE_NAME,))
 
         for entry in role_list:
-            # No all entries have email contact
-            if not entry or not entry.get('abuse-mailbox'):
+            # Sanity check.
+            # abuse-mailbox is mandatory for a role used in abuse-c.
+            if not entry.get('abuse-mailbox'):
                 continue
-            try:
-                org_ripe_handle = entry['org'][0]
-            except IndexError:
-                org_ripe_handle = None
+
+            # "org" attribute of a role entry is optional,
+            # thus we don't use it for now
+
+            nic_hdl = entry['nic-hdl'][0].upper()
+
+            # abuse-mailbox: could be type LIST or occur multiple time
+            # TODO: Check if we can handle LIST a@example, b@example
             email = entry['abuse-mailbox'][0]
-            nic_hdl = entry['nic-hdl'][0]
+            # For multiple lines: As not seen in ftp bulk data, 
+            # we only record if it happens as WARNING for now
+            if len(entry['abuse-mailbox'])>1:
+                print('Role with nic-hdl {} has two '
+                      'abuse-mailbox lines. Taking the first.'.format(nic_hdl))
 
             cur.execute("""
                 INSERT INTO contact_automatic (format_id, email, import_source, import_time)
@@ -274,37 +288,22 @@ def main():
             result = cur.fetchone()
             contact_id = result[0]
 
-            if org_ripe_handle and mapping.get(org_ripe_handle):
-                mapping[org_ripe_handle]['contact_id'].append(contact_id)
+            for orh in abuse_c_organisation.get(nic_hdl, []):
+                mapping[orh]['contact_id'].append(contact_id)
 
-            if organisation_abuse_c.get(nic_hdl):
-                organisation_abuse_c[nic_hdl]['contact_id'] = contact_id
 
         # many-to-many table organisation <-> contact
         cur.execute("DELETE FROM role_automatic WHERE import_source = %s;", (SOURCE_NAME,))
+
         for org_ripe_handle in mapping:
             org_id = mapping[org_ripe_handle]['org_id']
             contact_ids = mapping[org_ripe_handle]['contact_id']
 
-            # Not all contacts from RIPE are connected to an organisation, some
-            # for example are only responsible for a network.
-            if not org_id:
+            if org_id is None:
                 continue
 
             for contact_id in contact_ids:
                 cur.execute("""
-                INSERT INTO role_automatic (organisation_id, contact_id, import_source, import_time)
-                VALUES (%s, %s, %s, CURRENT_TIMESTAMP);
-                """, (org_id, contact_id, SOURCE_NAME))
-
-        for contact_ripe_handle in organisation_abuse_c:
-            org_id = organisation_abuse_c[contact_ripe_handle]['org_id']
-            contact_id = organisation_abuse_c[contact_ripe_handle]['contact_id']
-
-            if not contact_id or not org_id:
-                continue
-
-            cur.execute("""
                 INSERT INTO role_automatic (organisation_id, contact_id, import_source, import_time)
                 VALUES (%s, %s, %s, CURRENT_TIMESTAMP);
                 """, (org_id, contact_id, SOURCE_NAME))
