@@ -6,7 +6,7 @@ import json
 import textwrap
 
 import intelmq.lib.harmonization
-from intelmq import HARMONIZATION_CONF_FILE
+import pkg_resources
 
 print("""
 Harmonization field names
@@ -15,14 +15,15 @@ Harmonization field names
 |Section|Name|Type|Description|
 |:------|:---|:---|:----------|""")
 
-
-with open(HARMONIZATION_CONF_FILE) as fhandle:
+HARM_CONF = pkg_resources.resource_filename('intelmq', 'etc/harmonization.conf')
+with open(HARM_CONF) as fhandle:
     HARM = json.load(fhandle)['event']
 
 for key, value in sorted(HARM.items()):
     section = ' '.join([sec.title() for sec in key.split('.')[:-1]])
-    print('|{}|{}|{}|{}|'.format(section, key, value['type'],
-                                 value['description']))
+    print('|{}|{}|[{}](#{})|{}|'.format(section, key, value['type'],
+                                        value['type'].lower(),
+                                        value['description']))
 
 print("""
 
