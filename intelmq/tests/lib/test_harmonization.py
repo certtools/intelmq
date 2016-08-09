@@ -251,6 +251,19 @@ class TestHarmonization(unittest.TestCase):
         self.assertTrue(harmonization.LowercaseString.is_valid(b'fooBar',
                                                                sanitize=True))
 
+    def test_uppercasestring_valid(self):
+        """ Test UppercaseString.is_valid with valid arguments. """
+        self.assertTrue(harmonization.UppercaseString.is_valid('FOOBAR'))
+
+    def test_uppercasestring_invalid(self):
+        """ Test UppercaseString.is_valid with invalid arguments. """
+        self.assertFalse(harmonization.UppercaseString.is_valid('fooBar'))
+
+    def test_uppercasestring_sanitize(self):
+        """ Test UppercaseString.sanitize with valid arguments. """
+        self.assertTrue(harmonization.UppercaseString.is_valid(b'fooBar',
+                                                               sanitize=True))
+
     def test_url_valid(self):
         """ Test URL.is_valid with valid arguments. """
         self.assertTrue(harmonization.URL.is_valid('http://example.com'))

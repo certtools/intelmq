@@ -596,3 +596,25 @@ class URL(GenericType):
         if value.netloc != "" and not IPAddress.is_valid(value.netloc):
             return value.netloc
         return None
+
+
+class UppercaseString(GenericType):
+
+    @staticmethod
+    def is_valid(value, sanitize=False):
+        if sanitize:
+            value = String().sanitize(value)
+            value = UppercaseString().sanitize(value)
+
+        if not String().is_valid(value):
+            return False
+
+        if value != value.upper():
+            return False
+
+        return True
+
+    @staticmethod
+    def sanitize(value):
+        value = value.upper()
+        return String().sanitize(value)
