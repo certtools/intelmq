@@ -17,7 +17,7 @@ EXAMPLE_OUTPUT = {"__type": "Event",
                   "source.network": "93.184.216.0/24",
                   "source.allocated": "2008-06-02T00:00:00+00:00",
                   "source.asn": 15133,
-                  "source.as_name": "EDGECAST - EdgeCast Networks, Inc., US",
+                  "source.as_name": "EDGECAST - MCI Communications Services, Inc. d/b/a Verizon Business, US",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   }
 EXAMPLE_INPUT6 = {"__type": "Event",
