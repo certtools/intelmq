@@ -7,6 +7,7 @@ Use MessageFactory to get a Message object (types Report and Event).
 import hashlib
 import json
 import re
+import warnings
 
 import intelmq.lib.exceptions as exceptions
 import intelmq.lib.harmonization
@@ -107,6 +108,8 @@ class Message(dict):
             raise exceptions.InvalidKey(key)
 
         try:
+            warnings.warn('The ignore-argument will be removed in 1.0.',
+                          DeprecationWarning)
             if value in ignore:
                 return
         except TypeError:
@@ -127,6 +130,12 @@ class Message(dict):
         super(Message, self).__setitem__(key, value)
 
     def update(self, key, value, sanitize=True):
+        warnings.warn('update(...) will be changed to dict.update() in 1.0. '
+                      'Use change(key, value, sanitize) instead.',
+                      DeprecationWarning)
+        self.change(key, value, sanitize)
+
+    def change(self, key, value, sanitize=True):
         if key not in self:
             raise exceptions.KeyNotExists(key)
         self.add(key, value, force=True, sanitize=sanitize)
