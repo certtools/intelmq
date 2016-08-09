@@ -50,6 +50,9 @@ parser.add_argument("--notification-interval",
 parser.add_argument("--asn-whitelist-file",
                     default='',
                     help="A file name with a whitelist of ASNs. If this option is not set, all ASNs are imported")
+
+#TODO: move parsing of arguments into the main() block to avoid while being
+# executed during import
 args = parser.parse_args()
 
 SOURCE_NAME = 'ripe'
@@ -75,9 +78,14 @@ def parse_file(filename, fields, index_field=None):
     :param fields: the field names to read
     :param index_field: the field that marks the beginning of a dataset.
         If not provided, the first element of 'fields' will be used
-    :return: returns a list with the read out values
+    :return: returns a list of lists with the read out values
 
     NOTE: Does **not** handle "continuation lines" (see rfc2622 section 2).
+
+    NOTE: Preserves the contents of the fields like lower and upper case
+          characters, though the RPSL is case insensitive and ASCII only.
+          Thus for some fields it makes sense to upper() them (before
+          comparing).
     '''
     if args.verbose:
         print('** Reading file {0}'.format(filename))
