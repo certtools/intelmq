@@ -57,6 +57,8 @@ class TestConf(unittest.TestCase):
         for value in interpreted['event'].values():
             if 'regex' in value:
                 re.compile(value['regex'])
+            if 'iregex' in value:
+                re.compile(value['iregex'])
             if 'length' in value:
                 self.assertIsInstance(value['length'], int)
                 self.assertGreater(value['length'], 0)
