@@ -100,9 +100,8 @@ class Message(dict):
         if value is None or value == "":
             return
 
-        for invalid_value in ["-", "N/A"]:
-            if value == invalid_value:
-                return
+        if value in ["-", "N/A"]:
+            return
 
         if not self.__is_valid_key(key):
             raise exceptions.InvalidKey(key)
@@ -278,7 +277,7 @@ class Event(Message):
                 template['time.observation'] = message['time.observation']
         else:
             template = message
-        super(Event, self).__init__(template)
+        super(Event, self).__init__(template, auto)
 
 
 class Report(Message):
@@ -292,7 +291,7 @@ class Report(Message):
         auto : boolean
             if false (default), time.observation is automatically added.
         """
-        super(Report, self).__init__(message)
+        super(Report, self).__init__(message, auto)
         if not auto and 'time.observation' not in self:
             time_observation = intelmq.lib.harmonization.DateTime().generate_datetime_now()
             self.add('time.observation', time_observation, sanitize=False)
