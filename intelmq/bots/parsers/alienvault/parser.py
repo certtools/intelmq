@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import sys
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 from intelmq.lib.message import Event
 
 CLASSIFICATION = {
@@ -15,7 +15,7 @@ CLASSIFICATION = {
 }
 
 
-class AlienVaultParserBot(Bot):
+class AlienVaultParserBot(ParserBot):
 
     def parse_line(self, row, report):
         values = row.split("#")

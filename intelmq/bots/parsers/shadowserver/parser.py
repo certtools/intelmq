@@ -126,8 +126,8 @@ class ShadowserverParserBot(ParserBot):
                     try:
                         value = conv_func(raw_value)
                     except:
-                        self.logger.error('could not convert shadowkey: "{}", ' +
-                                          'value: "{}" via conversion function {}'.format(shadowkey, raw_value, repr(conv_func)))
+                        self.logger.error('Could not convert shadowkey: "{}", ' +
+                                          'value: "{}" via conversion function {}.'.format(shadowkey, raw_value, repr(conv_func)))
                         value = None
                         # """ fail early and often in this case. We want to be able to convert everything """
                         # self.stop()
@@ -142,10 +142,10 @@ class ShadowserverParserBot(ParserBot):
                     fields.remove(shadowkey)
                 except InvalidValue:
                     self.logger.info(
-                        'Could not add key "{}";'
+                        'Could not add key {!r};'
                         ' adding it to extras...'.format(shadowkey)
                     )
-                    self.logger.debug('The value of the event is %s', value)
+                    self.logger.debug('The value of the event is {!r}.'.format(value))
                 except InvalidKey:
                     extra[intelmqkey] = value
                     fields.remove(shadowkey)
@@ -156,7 +156,7 @@ class ShadowserverParserBot(ParserBot):
         for key, value in conf.get('constant_fields', {}).items():
             event.add(key, value)
 
-        self.logger.debug("raw_line: {!r}".format(row))
+        self.logger.debug("Raw_line: {!r}.".format(row))
         event.add('raw', self.recover_line(row))
 
         # Add everything which could not be resolved to extra.

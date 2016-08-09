@@ -342,7 +342,7 @@ class Bot(object):
                                                                         value)))
 
     def __load_system_configuration(self):
-        self.__log_buffer.append(('debug', "Loading system configuration"))
+        self.__log_buffer.append(('debug', "Loading system configuration."))
         config = utils.load_configuration(SYSTEM_CONF_FILE)
 
         for option, value in config.items():
@@ -353,7 +353,7 @@ class Bot(object):
                                                                         value)))
 
     def __load_runtime_configuration(self):
-        self.logger.debug("Loading runtime configuration")
+        self.logger.debug("Loading runtime configuration.")
         config = utils.load_configuration(RUNTIME_CONF_FILE)
 
         if self.__bot_id in list(config.keys()):
@@ -363,7 +363,7 @@ class Bot(object):
                                   "loaded with value {!r}.".format(option, value))
 
     def __load_pipeline_configuration(self):
-        self.logger.debug("Loading pipeline configuration")
+        self.logger.debug("Loading pipeline configuration.")
         config = utils.load_configuration(PIPELINE_CONF_FILE)
 
         self.__source_queues = None
