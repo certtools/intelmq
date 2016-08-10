@@ -54,7 +54,8 @@ su postgres
 ripe_import.py --conninfo dbname=contactdb --verbose
 ```
 
-In case you are somewhere else, use:
+If you start the script from a different working directory,
+you can give the paths to the ripe files like:
 
 ```
 su postgres
