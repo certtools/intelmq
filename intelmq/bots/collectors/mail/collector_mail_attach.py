@@ -65,6 +65,7 @@ class MailAttachCollectorBot(Bot):
                         # check it.
                         mailbox.mark_seen(uid)
                 self.logger.info("Email report read")
+        mailbox.logout()
 
 
 if __name__ == "__main__":
