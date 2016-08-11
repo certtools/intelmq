@@ -4,7 +4,6 @@
 Implemented workarounds for old packages:
     BytesIO instead of StringIO on Python 2 for csv module
 
-TODO: "feed.name" ILIKE '%' is slow
 """
 from __future__ import print_function, unicode_literals
 
@@ -36,10 +35,10 @@ from intelmq.lib import utils
 
 error = partial(print, file=sys.stderr)
 quiet = False
+old_print = print
 
 
-# wrapper around print()
-def quietprint(*args, **kwargs):
+def print(*args, **kwargs):
     if not quiet:
         print(*args, **kwargs)
 
@@ -54,13 +53,9 @@ if six.PY2:
 
 
 class IntelMQCLIContoller():
-    table_mode = False  # for sticky table mode
-    dryrun = False
     verbose = False
-    batch = False
     compress_csv = False
     boilerplate = None
-    filter_asns = []
 
     def __init__(self):
         global quiet
@@ -127,42 +122,42 @@ class IntelMQCLIContoller():
         if args.text:
             self.boilerplate = args.text
 
-        self.read_config()
-        self.connect_database()
+        self.config = read_config()
+        self.con, self.cur = connect_database()
 
         if args.list_feeds:
             self.cur.execute(lib.QUERY_FEED_NAMES)
             for row in self.cur.fetchall():
                 if row['feed.name']:
-                    quietprint(row['feed.name'])
+                    print(row['feed.name'])
             exit(0)
 
         if args.list_texts:
             self.cur.execute(lib.QUERY_TEXT_NAMES)
             for row in self.cur.fetchall():
                 if row['key']:
-                    quietprint(row['key'])
+                    print(row['key'])
             exit(0)
 
         if args.list_identifiers:
             self.cur.execute(lib.QUERY_IDENTIFIER_NAMES)
             for row in self.cur.fetchall():
                 if row['classification.identifier']:
-                    quietprint(row['classification.identifier'])
+                    print(row['classification.identifier'])
             exit(0)
 
         if args.list_taxonomies:
             self.cur.execute(lib.QUERY_TAXONOMY_NAMES)
             for row in self.cur.fetchall():
                 if row['classification.taxonomy']:
-                    quietprint(row['classification.taxonomy'])
+                    print(row['classification.taxonomy'])
             exit(0)
 
         if args.list_types:
             self.cur.execute(lib.QUERY_TYPE_NAMES)
             for row in self.cur.fetchall():
                 if row['classification.type']:
-                    quietprint(row['classification.type'])
+                    print(row['classification.type'])
             exit(0)
 
         if locale.getpreferredencoding() != 'UTF-8':
@@ -175,102 +170,50 @@ class IntelMQCLIContoller():
                                                             self.config['rt']['uri'])))
             exit(2)
         else:
-            quietprint('Logged in as {} on {}.'.format(self.config['rt']['user'],
-                                                       self.config['rt']['uri']))
+            print('Logged in as {} on {}.'.format(self.config['rt']['user'],
+                                                  self.config['rt']['uri']))
         try:
-            answer = 'init'
-            while answer != 'q':
-                asn_count = self.count_by_asn(feed=args.feed,
-                                              taxonomy=args.taxonomy)
-                if self.verbose:
-                    error('asn_count = {}.'.format(asn_count))
-                if self.batch and answer != 'q':
-                    answer = 'a'
-                else:
-                    answer = input('{i}detailed view by id, {b}[a]{i}utomatic '
-                                   'sending, {b}[q]{i}uit?{r} '
-                                   ''.format(b=bold, i=myinverted,
-                                             r=reset)).strip()
-                try:
-                    answer = int(answer)
-                except ValueError:
-                    pass
-                if answer == 'q':
-                    break
-                elif answer == 'a':
-                    for item in asn_count:
-                        if item['contacts']:
-                            self.query_by_as(item['contacts'], automatic=True,
-                                             feed=args.feed,
-                                             taxonomy=args.taxonomy)
-                        else:
-                            if item['asn']:
-                                self.query_by_as(int(item['asn']), automatic=True,
-                                                 feed=args.feed,
-                                                 taxonomy=args.taxonomy)
-                            else:
-                                error(red('Can not query the data of an unknown ASN. Ignoring.'))
-                    answer = 'q'
-                elif not self.batch and isinstance(answer, int):
-                    if asn_count[answer]['contacts']:
-                        self.query_by_as(asn_count[answer]['contacts'],
-                                         feed=args.feed,
-                                         taxonomy=args.taxonomy)
-                    else:
-                        if asn_count[answer] and asn_count[answer]['asn']:
-                            self.query_by_as(int(asn_count[answer]['asn']),
-                                             feed=args.feed,
-                                             taxonomy=args.taxonomy)
-                        else:
-                            error(red('no ASNs known. Ignoring.'))
-                else:
-                    error(red('Unknown answer {!r}.'.format(answer)))
+            self.cur.execute(QUERY_OPEN_TAXONOMIES)
+            taxonomies = [x['classification.taxonomy'] for x in self.cur.fetchall()]
+            for taxonomy in taxonomies:
+                print('Handling taxonomy {!r}.'.format(taxonomy))
+                self.cur.execute(QUERY_OPEN_EVENT_REPORTS_BY_TAXONOMY, (taxonomy, ))
+                report_ids = [x[0] for x in self.cur.fetchall()]
+                self.cur.execute(QUERY_OPEN_EVENT_IDS_BY_TAXONOMY, (taxonomy, ))
+                event_ids = [x[0] for x in self.cur.fetchall()]
+                print(report_ids)
+                print(event_ids)
+                subject = 'Incidents of {} on {}'.format(taxonomy, time.strftime('%Y-%m-%d'))
 
-        except BaseException as exc:
-            if isinstance(exc, (SystemExit, KeyboardInterrupt)):
-                pass
-            else:
-                raise
+                incident_id = self.rt.create_ticket(Queue='Incidents', Subject=subject,
+                                                 Owner=config['rt']['user'])
+                if incident_id == -1:
+                    error('Could not create Incident ({}).'.format(incident_id))
+                    continue
+                # XXX TODO: distinguish between national and other constituencies
+                self.rt.edit_ticket(incident_id)#, CF__RTIR_Classification=taxonomy,
+#                                 CF__RTIR_Constituency='national',
+#                                 CF__RTIR_Function='IncidentCoord')
+
+                for report_id in report_ids:
+                    if not self.rt.edit_link(report_id, 'MemberOf', incident_id):
+                        error(red('Could not link Incident to Incident Report: ({} -> {}).'.format(incident_id, report_id)))
+                        continue
+                self.cur.executemany("UPDATE events SET rtir_incident_id = %s WHERE id = %s",
+                                     [(incident_id, event_id) for event_id in event_ids])
+                self.send(None)  # Continue here
         finally:
             self.rt.logout()
 
-    def read_config(self):
-        with open('/etc/intelmq/intelmqcli.conf') as conf_handle:
-            self.config = json.load(conf_handle)
-        home = os.path.expanduser("~")      # needed for OSX
-        with open(os.path.expanduser(home + '/.intelmq/intelmqcli.conf')) as conf_handle:
-            user_config = json.load(conf_handle)
+    def query_get_text(self, text_id):
+        self.cur.execute(lib.QUERY_GET_TEXT.format(texttab=self.config['database']['text_table']),
+                                                   (text_id, ))
 
-        for key, value in user_config.items():
-            if key in self.config and isinstance(value, dict):
-                self.config[key].update(value)
-            else:
-                self.config[key] = value
-
-        self.rt = rt.Rt(self.config['rt']['uri'], self.config['rt']['user'],
-                        self.config['rt']['password'])
-
-    def connect_database(self):
-        self.con = psycopg2.connect(database=self.config['database']['database'],
-                                    user=self.config['database']['user'],
-                                    password=self.config['database']['password'],
-                                    host=self.config['database']['host'],
-                                    port=self.config['database']['port'],
-                                    sslmode=self.config['database']['sslmode'],
-                                    )
-        self.cur = self.con.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        self.con.autocommit = True
-
-    def get_text(self, query):
+    def get_text(self, text_id):
         text = None
-        text_id = None
         if self.boilerplate:  # get id from parameter
             text_id = self.boilerplate
         else:  # get id from type (if only one type present)
-            types = [row['classification.identifier'] for row in query
-                     if 'classification.identifier' in row]
-            if len(types) == 1:
-                text_id = types[0]
         if text_id:  # get text from db if possible
             self.query_get_text(text_id)
             if self.cur.rowcount:
@@ -295,30 +238,23 @@ class IntelMQCLIContoller():
                     empty[key] = False
         return [{k: v for k, v in dicti.items() if not empty[k]} for dicti in d]
 
-    def query_by_as(self, contact, requestor=None, automatic=False, feed='%',
-                    taxonomy='%'):
-        if isinstance(contact, int):
-            query = self.query_by_asnum(contact, feed, taxonomy)
-            if requestor is None:
-                requestor = ''
-        else:
-            query = self.query_by_ascontact(contact, feed, taxonomy)
-            if requestor is None:
-                requestor = contact
+    def send(self, contact):
+        query = self.query_by_ascontact(contact, feed, taxonomy)
+        requestor = contact
         query = self.shrink_dict(query)
         ids = list(str(row['id']) for row in query)
         asns = set(str(row['source.asn']) for row in query)
 
-        subject = ('{date}: {count} incidents for your AS {asns}'
+        subject = ('{date}: {count} {tax} incidents for your AS {asns}'
                    ''.format(count=len(query),
                              date=datetime.datetime.now().strftime('%Y-%m-%d'),
                              asns=', '.join(asns)))
-        text = self.get_text(query)
+        text = self.get_text(taxonomy)
         if six.PY2:
             csvfile = io.BytesIO()
         else:
             csvfile = io.StringIO()
-        quietprint(repr(lib.CSV_FIELDS))
+        print(repr(lib.CSV_FIELDS))
         if lib.CSV_FIELDS:
             fieldnames = lib.CSV_FIELDS
         else:
@@ -335,7 +271,7 @@ class IntelMQCLIContoller():
         attachment_lines = attachment_text.splitlines()
 
         if self.verbose:
-            quietprint(text)
+            print(text)
 
         showed_text = '=' * 100 + '''
 To: {to}
@@ -360,26 +296,26 @@ Subject: {subj}
                     handle.seek(0)
                     subprocess.call(['less', handle.name])
             else:
-                quietprint(showed_text,
-                           tabulate.tabulate(query_unicode, headers='keys',
-                                             tablefmt='psql'), sep='\n')
+                print(showed_text,
+                      tabulate.tabulate(query_unicode, headers='keys',
+                                        tablefmt='psql'), sep='\n')
         else:
             if quiet:
                 height = 80
             else:
                 height = lib.getTerminalHeight() - 4
             if 5 + len(query) > height:  # cut query too, 5 is length of text
-                quietprint('\n'.join(showed_text.splitlines()[:5]))
-                quietprint('...')
-                quietprint('\n'.join(attachment_lines[:height - 5]))
-                quietprint('...')
+                print('\n'.join(showed_text.splitlines()[:5]))
+                print('...')
+                print('\n'.join(attachment_lines[:height - 5]))
+                print('...')
             elif showed_text_len + len(query) > height > 5 + len(query):
-                quietprint('\n'.join(showed_text.splitlines()[:height - len(query)]))
-                quietprint('...')
-                quietprint(attachment_text)
+                print('\n'.join(showed_text.splitlines()[:height - len(query)]))
+                print('...')
+                print(attachment_text)
             else:
-                quietprint(showed_text, attachment_text, sep='\n')
-        quietprint('-' * 100)
+                print(showed_text, attachment_text, sep='\n')
+        print('-' * 100)
         if automatic and requestor:
             answer = 's'
         else:
@@ -420,27 +356,9 @@ Subject: {subj}
         if text.startswith(str(red)):
             error(red('I won\'t send with a missing text!'))
             return
-        if True:
-            self.save_to_rt(ids=ids, subject=subject, requestor=requestor,
-                            csvfile=csvfile, body=text, feed=feed, taxonomy=taxonomy,
-                            query=query)
-        else:  # TODO: Config option for single events (best in ascontacts db)
-            header = attachment_lines[0]
-            for id_, attach_line, row in zip(ids, attachment_lines[1:], query):
-                if six.PY2:
-                    csvfile = io.BytesIO()
-                else:
-                    csvfile = io.StringIO()
-                csvfile.write(header + str('\n'))
-                csvfile.write(attach_line)
-                subj_date = datetime.datetime.now().strftime('%Y-%m-%d')
-                subject = ('{date}: Incident {type} for {target}'
-                           ''.format(date=subj_date,
-                                     type=row['classification.type'],
-                                     target=lib.target_from_row(row)))
-                self.save_to_rt(ids=(id_, ), subject=subject,
-                                requestor=requestor, feed=feed, taxonomy=taxonomy, csvfile=csvfile,
-                                body=text, query=query)
+        self.save_to_rt(ids=ids, subject=subject, requestor=requestor,
+                        csvfile=csvfile, body=text, feed=feed, taxonomy=taxonomy,
+                        query=query)
 
         if requestor != contact and not self.dryrun:
             answer = input(inverted('Save recipient {!r} for ASNs {!s}? [Y/n] '
@@ -459,48 +377,6 @@ Subject: {subj}
                                                   comment=comment)
 
     def save_to_rt(self, ids, subject, requestor, feed, taxonomy, csvfile, body, query):
-        if self.dryrun:
-            quietprint('Not writing to RT, dry-run selected.')
-            return
-
-        if taxonomy == '%':
-            taxonomy='Unknown'
-
-        report_ids = set()
-        for row in query:
-            report_ids.add(row['rtir_report_id'])
-
-        if True:  # TODO: implement zip config
-            attachment = csvfile
-            attachment.seek(0)
-            filename = 'events.csv'
-        else:
-            attachment = io.BytesIO()
-            ziphandle = zipfile.ZipFile(attachment, mode='w')
-            ziphandle.writestr('events.csv', csvfile.getvalue())
-            ziphandle.close()
-            attachment.seek(0)
-            filename = 'events.zip'
-
-        if self.verbose:
-            error("save_to_rt: feed = {}".format(feed))
-            error("save_to_rt: taxonomy = {}".format(taxonomy))
-        incident_id = self.rt.create_ticket(Queue='Incidents', Subject=subject,
-                                            Owner=self.config['rt']['user'])
-        if incident_id == -1:
-            error(red('Could not create Incident ({}).'.format(incident_id)))
-            return
-        # XXX TODO: distinguish between national and other constituencies
-        self.rt.edit_ticket(incident_id, CF__RTIR_Classification=taxonomy,
-                            CF__RTIR_Constituency='national',
-                            CF__RTIR_Function='IncidentCoord')
-        quietprint(green('Created Incident {}.'.format(incident_id)))
-        for report_id in report_ids:
-            if not self.rt.edit_link(report_id, 'MemberOf', incident_id):
-                error(red('Could not link Incident to Incident Report: ({} -> {}).'.format(incident_id, report_id)))
-                return
-        self.query_set_rtirid(events_ids=ids, rtir_id=incident_id,
-                              rtir_type='incident')
         investigation_id = self.rt.create_ticket(Queue='Investigations',
                                                  Subject=subject,
                                                  Owner=self.config['rt']['user'],
@@ -509,7 +385,7 @@ Subject: {subj}
         if investigation_id == -1:
             error(red('Could not create Investigation.'))
             return
-        quietprint(green('Created Investigation {}.'.format(investigation_id)))
+        print(green('Created Investigation {}.'.format(investigation_id)))
         if not self.rt.edit_link(incident_id, 'HasMember', investigation_id):
             error(red('Could not link Investigation to Incident.'))
             return
@@ -520,73 +396,12 @@ Subject: {subj}
         if not correspond:
             error(red('Could not correspond with text and file.'))
             return
-        quietprint(green('Correspondence added to Investigation.'))
+        print(green('Correspondence added to Investigation.'))
 
         self.query_set_rtirid(events_ids=ids, rtir_id=investigation_id,
                               rtir_type='investigation')
         if not self.rt.edit_ticket(incident_id, Status='resolved'):
             error(red('Could not close incident {}.'.format(incident_id)))
-
-    def count_by_asn(self, feed='%', taxonomy='%'):
-        # TODO: Existing RT ids!
-        asn_count = self.query_count_asn(feed, taxonomy)
-        if not asn_count:
-            quietprint('No incidents!')
-            exit(0)
-        headers = map(bold, ['id', 'n°', 'ASNs', 'contacts', 'types', 'feeds'])
-        tabledata = []
-        for number, row in enumerate(asn_count):
-            tabledata.append([number, row['count'], row['asn'],
-                              row['contacts'], row['classification'],
-                              row['feeds']])
-        quietprint(tabulate.tabulate(tabledata, headers=headers, tablefmt='psql'))
-
-        quietprint('{} incidents for {} contacts.'
-                   ''.format(sum((row['count'] for row in asn_count)),
-                             len(asn_count)))
-        return asn_count
-
-    def query_by_ascontact(self, contact, feed='%', taxonomy='%'):
-        query = lib.QUERY_BY_ASCONTACT.format(evtab=self.config['database']['events_table'],
-                                              cc=self.config['filter']['cc'],
-                                              conttab=self.config['database']['contacts_table'])
-        self.cur.execute(query, (self.config['filter']['fqdn'], contact, feed,
-                                 taxonomy))
-        return self.cur.fetchall()
-
-    def query_by_asnum(self, asn, feed, taxonomy='%'):
-        query = lib.QUERY_BY_ASNUM.format(evtab=self.config['database']['events_table'],
-                                          cc=self.config['filter']['cc'],
-                                          conttab=self.config['database']['contacts_table'])
-        self.cur.execute(query, (self.config['filter']['fqdn'], asn, feed,
-                                 taxonomy))
-        return self.cur.fetchall()
-
-    def query_count_asn(self, feed, taxonomy='%'):
-        query = lib.QUERY_COUNT_ASN.format(evtab=self.config['database']['events_table'],
-                                           cc=self.config['filter']['cc'],
-                                           conttab=self.config['database']['contacts_table'])
-        self.cur.execute(query, (self.config['filter']['fqdn'], feed, taxonomy))
-        return self.cur.fetchall()
-
-    def query_set_rtirid(self, events_ids, rtir_id, rtir_type):
-        query = lib.QUERY_SET_RTIRID.format(evtab=self.config['database']['events_table'],
-                                            rtirid=rtir_id, type=rtir_type,
-                                            ids=','.join(events_ids))
-        self.cur.execute(query)
-
-    def query_update_contact(self, contact, asns):
-        query = lib.QUERY_UPDATE_CONTACT.format(conttab=self.config['database']['contacts_table'],
-                                                ids=','.join(asns))
-        self.cur.execute(query, (contact, ))
-
-    def query_insert_contact(self, contact, asn, comment):
-        query = lib.QUERY_INSERT_CONTACT.format(conttab=self.config['database']['contacts_table'])
-        self.cur.execute(query, (asn, contact, comment))
-
-    def query_get_text(self, text_id):
-        self.cur.execute(lib.QUERY_GET_TEXT.format(texttab=self.config['database']['text_table']),
-                         (text_id, ))
 
 
 def main():

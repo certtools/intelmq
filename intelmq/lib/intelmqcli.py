@@ -4,13 +4,21 @@ Utilities for intelmqcli.
 
 Static data (queries)
 """
+import json
+import os
 import subprocess
+
+import psycopg2
 
 __all__ = ['QUERY_INSERT_CONTACT', 'QUERY_GET_TEXT', 'CSV_FIELDS', 'QUERY_BY_ASCONTACT',
            'getTerminalHeight', 'EPILOG', 'QUERY_BY_ASNUM', 'APPNAME', 'QUERY_COUNT_ASN',
            'QUERY_SET_RTIRID', 'USAGE', 'QUERY_UPDATE_CONTACT', 'DESCRIPTION',
            'QUERY_FEED_NAMES', 'QUERY_IDENTIFIER_NAMES', 'QUERY_TAXONOMY_NAMES',
-           'QUERY_TYPE_NAMES', 'QUERY_TEXT_NAMES', 'target_from_row']
+           'QUERY_TYPE_NAMES', 'QUERY_TEXT_NAMES', 'QUERY_OPEN_EVENTS_BY_FEEDNAME',
+           'QUERY_OPEN_TAXONOMIES', 'QUERY_OPEN_FEEDNAMES',
+           'QUERY_OPEN_EVENT_REPORTS_BY_TAXONOMY', 'QUERY_OPEN_EVENT_IDS_BY_TAXONOMY',
+           'target_from_row', 'read_config',
+           'connect_database']
 APPNAME = "intelmqcli"
 DESCRIPTION = """
 """
@@ -56,35 +64,6 @@ USAGE = '''
     intelmqcli --list-texts
     intelmqcli --text='boilerplate name'
     intelmqcli --feed='feedname' '''
-QUERY_COUNT_ASN = """
-    SELECT
-        COUNT(*) as count,
-        COALESCE({conttab}.contacts, '') as contacts,
-        string_agg(DISTINCT cast({evtab}."source.asn" as varchar), ', ') as asn,
-        string_agg(DISTINCT {evtab}."classification.type", ', ') as classification,
-        string_agg(DISTINCT {evtab}."classification.taxonomy", ', ') as taxonomy,
-        string_agg(DISTINCT {evtab}."feed.code", ', ') as feeds,
-        COALESCE({conttab}.contacts, cast({evtab}."source.asn" as varchar))
-            as grouping
-    FROM {evtab}
-    LEFT OUTER JOIN as_contacts ON {evtab}."source.asn" = {conttab}.asnum
-    WHERE
-        notify = TRUE AND
-        {evtab}.rtir_report_id IS NOT NULL AND
-        (
-            {evtab}.rtir_incident_id IS NULL OR
-            {evtab}.rtir_investigation_id IS NULL
-        )
-        AND
-        (
-            {evtab}."source.geolocation.cc" LIKE '{cc}' OR
-            {evtab}."source.fqdn" LIKE %s
-        )
-        AND {evtab}."feed.name" ILIKE %s AND
-        {evtab}."time.source" IS NOT NULL AND
-        {evtab}."classification.taxonomy" ILIKE %s
-    GROUP BY {conttab}.contacts, grouping;
-    """
 
 QUERY_FEED_NAMES = "SELECT DISTINCT \"feed.name\" from events"
 
@@ -187,91 +166,6 @@ WHERE
     {evtab}."classification.taxonomy" ILIKE %s;
 """
 
-QUERY_BY_ASNUM = """
-SELECT
-    to_char({evtab}."time.source" at time zone 'UTC',
-            'YYYY-MM-DD"T"HH24:MI:SSOF') as "time.source",
-    {evtab}.id,
-    {evtab}."feed.code" as feed,
-    {evtab}."source.ip",
-    {evtab}."source.port",
-    {evtab}."source.asn",
-    {evtab}."source.network",
-    {evtab}."source.geolocation.cc",
-    {evtab}."source.geolocation.region",
-    {evtab}."source.geolocation.city",
-    {evtab}."source.account",
-    {evtab}."source.fqdn",
-    {evtab}."source.local_hostname",
-    {evtab}."source.local_ip",
-    {evtab}."source.reverse_dns",
-    {evtab}."source.tor_node",
-    {evtab}."source.url",
-    {evtab}."classification.identifier",
-    {evtab}."classification.taxonomy",
-    {evtab}."classification.type",
-    {evtab}."comment",
-    {evtab}."destination.ip",
-    {evtab}."destination.port",
-    {evtab}."destination.asn",
-    {evtab}."destination.network",
-    {evtab}."destination.geolocation.cc",
-    {evtab}."destination.geolocation.region",
-    {evtab}."destination.geolocation.city",
-    {evtab}."destination.account",
-    {evtab}."destination.fqdn",
-    {evtab}."destination.local_hostname",
-    {evtab}."destination.local_ip",
-    {evtab}."destination.reverse_dns",
-    {evtab}."destination.tor_node",
-    {evtab}."destination.url",
-    {evtab}."event_description.target",
-    {evtab}."event_description.text",
-    {evtab}."event_description.url",
-    {evtab}."event_hash",
-    {evtab}."extra",
-    {evtab}."feed.accuracy",
-    {evtab}."malware.hash",
-    {evtab}."malware.hash.md5",
-    {evtab}."malware.hash.sha1",
-    {evtab}."malware.name",
-    {evtab}."malware.version",
-    {evtab}."misp_uuid",
-    {evtab}."notify",
-    {evtab}."protocol.application",
-    {evtab}."protocol.transport",
-    {evtab}."rtir_report_id",
-    {evtab}."screenshot_url",
-    {evtab}."status",
-    {evtab}."time.observation"
-FROM {evtab}
-LEFT OUTER JOIN {conttab} ON {evtab}."source.asn" = {conttab}.asnum
-WHERE
-    notify = TRUE AND
-    {evtab}.rtir_report_id IS NOT NULL AND
-    (
-        {evtab}.rtir_incident_id IS NULL OR
-        {evtab}.rtir_investigation_id IS NULL
-    ) AND
-    (
-        {evtab}."source.geolocation.cc" LIKE '{cc}' OR
-        {evtab}."source.fqdn" LIKE %s
-    ) AND
-    {evtab}."source.asn" = %s AND
-    {evtab}."feed.name" ILIKE %s AND
-    {evtab}."time.source" IS NOT NULL AND
-    {evtab}."classification.taxonomy" ILIKE %s;
-"""
-
-
-QUERY_SET_RTIRID = """
-UPDATE {evtab} SET
-    rtir_{type}_id = {rtirid},
-    sent_at = LOCALTIMESTAMP
-WHERE
-    id = ANY('{{{ids}}}'::int[]);
-"""
-
 QUERY_UPDATE_CONTACT = """
 UPDATE {conttab} SET
     contacts = %s
@@ -294,6 +188,84 @@ FROM {texttab}
 WHERE
     key = %s
 """
+
+BASE_WHERE = """
+"notify" = TRUE AND
+"time.source" IS NOT NULL AND
+"sent_at" IS NULL AND
+"feed.name" IS NOT NULL AND
+"classification.taxonomy" IS NOT NULL
+"""
+# PART 1: CREATE REPORTS
+QUERY_OPEN_FEEDNAMES = """
+SELECT
+    DISTINCT "feed.name"
+FROM "events"
+WHERE
+    "rtir_report_id" IS NULL AND
+""" + BASE_WHERE
+QUERY_OPEN_EVENTS_BY_FEEDNAME = """
+SELECT *
+FROM "events"
+WHERE
+    "feed.name" = %s AND
+    "rtir_report_id" IS NULL
+""" + BASE_WHERE
+# PART 2: INCIDENTS +  INVESTIGATIONS
+QUERY_OPEN_TAXONOMIES = """
+SELECT
+    DISTINCT "classification.taxonomy"
+FROM "events"
+WHERE
+    "rtir_report_id" IS NOT NULL AND
+    "rtir_incident_id" IS NULL AND
+""" + BASE_WHERE
+QUERY_OPEN_EVENT_REPORTS_BY_TAXONOMY = """
+SELECT
+    DISTINCT "rtir_report_id"
+FROM "events"
+WHERE
+    "rtir_report_id" IS NOT NULL AND
+    "rtir_incident_id" IS NULL AND
+    "classification.taxonomy" = %s AND
+""" + BASE_WHERE
+QUERY_OPEN_EVENT_IDS_BY_TAXONOMY = """
+SELECT
+    "id"
+FROM "events"
+WHERE
+    "rtir_report_id" IS NOT NULL AND
+    "rtir_incident_id" IS NULL AND
+    "classification.taxonomy" = %s AND
+""" + BASE_WHERE
+
+
+def read_config():
+    with open('/etc/intelmq/intelmqcli.conf') as conf_handle:
+        config = json.load(conf_handle)
+    home = os.path.expanduser("~")      # needed for OSX
+    with open(os.path.expanduser(home + '/.intelmq/intelmqcli.conf')) as conf_handle:
+        user_config = json.load(conf_handle)
+
+    for key, value in user_config.items():
+        if key in config and isinstance(value, dict):
+            config[key].update(value)
+        else:
+            config[key] = value
+    return config
+
+
+def connect_database(config):
+    con = psycopg2.connect(database=config['database']['database'],
+                           user=config['database']['user'],
+                           password=config['database']['password'],
+                           host=config['database']['host'],
+                           port=config['database']['port'],
+                           sslmode=config['database']['sslmode'],
+                           )
+    con.autocommit = True
+    cur = con.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    return con, cur
 
 
 def getTerminalHeight():

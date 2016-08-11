@@ -96,6 +96,7 @@ setup(
     entry_points={
         'console_scripts': [
             'intelmqcli = intelmq.bin.intelmqcli:main',
+            'intelmqcli_create_reports = intelmq.bin.intelmqcli_create_reports:main',
             'intelmqctl = intelmq.bin.intelmqctl:main',
             'intelmqdump = intelmq.bin.intelmqdump:main',
             'intelmq_psql_initdb = intelmq.bin.intelmq_psql_initdb:main',
