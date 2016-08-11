@@ -61,6 +61,12 @@ INPUT7['source.fqdn'] = 'example.com'
 del INPUT7['source.ip']
 OUTPUT7 = INPUT7.copy()
 
+INPUT8 = INPUT1.copy()
+del INPUT8['notify']
+del INPUT8['source.asn']
+OUTPUT8 = INPUT8.copy()
+OUTPUT8['notify'] = False
+
 
 class TestSquelcherExpertBot(test.BotTestCase, unittest.TestCase):
     """
@@ -178,6 +184,11 @@ class TestSquelcherExpertBot(test.BotTestCase, unittest.TestCase):
         self.input_message = INPUT7
         self.run_bot()
         self.assertMessageEqual(0, OUTPUT7)
+
+    def test_missing_asn(self):
+        self.input_message = INPUT8
+        self.run_bot()
+        self.assertMessageEqual(0, OUTPUT8)
 
     @classmethod
     def tearDownClass(cls):

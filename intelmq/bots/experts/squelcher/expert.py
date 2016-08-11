@@ -61,6 +61,10 @@ class SquelcherExpertBot(Bot):
             event.add('notify', True, force=True)
             self.modify_end(event)
             return
+        if 'source.asn' not in event:
+            event.add('notify', False, force=True)
+            self.modify_end(event)
+            return
 
         ttl = None
         for ruleset in self.config:
