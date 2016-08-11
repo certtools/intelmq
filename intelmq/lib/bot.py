@@ -28,12 +28,14 @@ __all__ = ['Bot', 'ParserBot']
 
 class Bot(object):
 
+    """ Not to be reset when initialized again on reload. """
+    __current_message = None
+    __message_counter = 0
+
     def __init__(self, bot_id):
         self.__log_buffer = []
         self.parameters = Parameters()
 
-        self.__current_message = None
-        self.__message_counter = 0
         self.__error_retries_counter = 0
         self.__source_pipeline = None
         self.__destination_pipeline = None
@@ -76,13 +78,28 @@ class Bot(object):
 
             self.init()
 
-            signal.signal(signal.SIGHUP, self.__sighup)
+            self.__sighup = False
+            signal.signal(signal.SIGHUP, self.__handle_sighup_signal)
+            # system calls should not be interrupted, but restarted
+            signal.siginterrupt(signal.SIGHUP, False)
         except:
             self.logger.exception('Bot initialization failed.')
             raise
 
-    def __sighup(self, signum, stack):
-        self.logger.info('Received SIGHUP, initializing again.')
+    def __handle_sighup_signal(self, signum, stack):
+        """
+        Called when signal is received and postpone.
+        """
+        self.logger.info('Received SIGHUP, initializing again later.')
+        self.__sighup = True
+
+    def __handle_sighup(self):
+        """
+        Handle SIGHUP.
+        """
+        if not self.__sighup:
+            return False
+        self.logger.info('Handling SIGHUP, initializing again now.')
         self.__disconnect_pipelines()
         self.logger.handlers = []  # remove all existing handlers
         self.__init__(self.__bot_id)
@@ -122,12 +139,12 @@ class Bot(object):
                     self.logger.info("Start processing.")
                     starting = False
 
+                self.__handle_sighup()
                 self.process()
                 self.__error_retries_counter = 0  # reset counter
 
                 if self.parameters.rate_limit:
-                    self.logger.info("Idling for {!s}s now.".format(self.parameters.rate_limit))
-                    time.sleep(self.parameters.rate_limit)
+                    self.__sleep()
 
             except exceptions.PipelineError:
                 error_on_pipeline = True
@@ -191,9 +208,26 @@ class Bot(object):
                         # error_procedure: pass
                         else:
                             self.__error_retries_counter = 0  # reset counter
+            self.__handle_sighup()
 
     def __del__(self):
         self.stop()
+
+    def __sleep(self):
+        """
+        Sleep handles interrupts and changed rate_limit-parameter.
+
+        time.sleep is stopped by signals such as SIGHUP. As rate_limit could
+        have been changed, we initialize again and continue to sleep, if
+        necessary at all.
+        """
+        starttime = time.time()
+        remaining = self.parameters.rate_limit
+        while remaining > 0:
+            self.logger.info("Idling for {:.1f}s now.".format(remaining))
+            time.sleep(remaining)
+            self.__handle_sighup()
+            remaining = self.parameters.rate_limit - (time.time() - starttime)
 
     def stop(self):
         self.shutdown()
@@ -291,6 +325,9 @@ class Bot(object):
         else:
             tmp_msg = self.__current_message
         self.logger.debug('Received message {!r}.'.format(tmp_msg))
+
+        # handle a sighup which happened during blocking read
+        self.__handle_sighup()
 
         return self.__current_message
 
