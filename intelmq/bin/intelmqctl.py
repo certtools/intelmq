@@ -521,19 +521,18 @@ Get logs of a bot:
         First checks if the queue does exist in the pipeline configuration.
         """
         logger.info("Clearing queue {}".format(queue))
-        source_queues = set()
-        destination_queues = set()
+        queues = set()
         for key, value in self.pipepline_configuration.items():
             if 'source-queue' in value:
-                source_queues.add(value['source-queue'])
+                queues.add(value['source-queue'])
+                queues.add(value['source-queue'] + '-internal')
             if 'destination-queues' in value:
-                destination_queues.update(value['destination-queues'])
+                queues.update(value['destination-queues'])
 
         pipeline = PipelineFactory.create(self.parameters)
-        pipeline.set_queues(source_queues, "source")
+        pipeline.set_queues(queues, "source")
         pipeline.connect()
 
-        queues = source_queues.union(destination_queues)
         if queue not in queues:
             logger.error("Queue {} does not exist!".format(queue))
             return 'not-found'
