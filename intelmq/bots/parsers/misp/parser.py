@@ -103,8 +103,7 @@ class MISPParserBot(Bot):
 
                 # Create and send the intelmq event
                 event = Event(report)
-                # FIXME: Send the whole MISP event with each attribute?
-                event.add('raw', json.dumps(misp_event, sort_keys=True))
+                event.add('raw', json.dumps(attribute, sort_keys=True))
                 event.add(self.MISP_TYPE_MAPPING[type_], value)
                 event.add('misp.event_uuid', misp_event['uuid'])
                 event.add('misp.attribute_uuid', uuid)
