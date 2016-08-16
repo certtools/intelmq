@@ -49,7 +49,9 @@ class RTCollectorBot(Bot):
                                       ''.format(att_id, att_name))
                     break
             else:
-                text = RT.get_history(ticket_id)[0]['Content']
+                ticket = RT.get_history(ticket_id)[0]
+                text = ticket['Content']
+                created = ticket['Created']
                 urlmatch = re.search(self.parameters.url_regex, text)
                 if urlmatch:
                     content = 'url'
@@ -59,6 +61,7 @@ class RTCollectorBot(Bot):
                     continue
             if content == 'attachment':
                 attachment = RT.get_attachment_content(ticket_id, att_id)
+                created = RT.get_attachment(ticket_id, att_id)['Created']
 
                 if self.parameters.unzip_attachment:
                     file_obj = io.BytesIO(attachment)
@@ -83,6 +86,7 @@ class RTCollectorBot(Bot):
             report.add("feed.name", self.parameters.feed, sanitize=True)
             report.add("feed.accuracy", self.parameters.accuracy,
                        sanitize=True)
+            report.add("time.observation", created + ' UTC', force=True)
             self.send_message(report)
 
             if self.parameters.take_ticket:

@@ -25,7 +25,8 @@ the second value is the row in the shadowserver csv.
 Reference material:
     * when setting the classification.* fields, please use the taxonomy from
     [eCSIRT II](https://www.trusted-introducer.org/Incident-Classification-Taxonomy.pdf)
-    Also to be found on the [ENISA page](https://www.enisa.europa.eu/topics/csirt-cert-services/community-projects/existing-taxonomies)
+    Also to be found on the
+    [ENISA page](https://www.enisa.europa.eu/topics/csirt-cert-services/community-projects/existing-taxonomies)
 
     * please respect the Data harmonisation ontology: https://github.com/certtools/intelmq/blob/master/docs/Data-Harmonization.md
 
@@ -47,6 +48,7 @@ def get_feed(feedname):
         "Botnet-Drone-Hadoop": botnet_drone_hadoop,
         "Open-Memcached": open_memcached,
         "Ssl-Scan": ssl_scan,  # Aka Poodle
+        "Ssl-Freak-Scan": ssl_scan,  # Only differs in a few extra fields
         "NTP-Monitor": ntp_monitor,
         "DNS-open-resolvers": dns_open_resolvers,  # TODO Check implementation.
         "Open-Elasticsearch": open_elasticsearch,
@@ -63,7 +65,7 @@ def get_feed(feedname):
         "Open-Chargen": open_chargen,
         "Open-QOTD": open_qotd,
         "Sinkhole-HTTP-Drone": sinkhole_http_drone,  # TODO Check implementation. Especially the TOR-Converter
-        "Open-m DNS": open_m_dns,  # TODO Check implementation.
+        "Open-mDNS": open_mdns,  # TODO Check implementation.
     }
 
     return feed_idx.get(feedname)
@@ -126,7 +128,7 @@ def validate_ip(value):
     return value
 
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-mDNS
-open_m_dns = {
+open_mdns = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
@@ -212,7 +214,7 @@ open_tftp = {
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
         # Other known fields which will go into "extra"
-        ('extra.', 'size', int),
+        ('extra.', 'size', convert_int),
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
         # tag
@@ -285,14 +287,14 @@ microsoft_sinkhole = {
         ('source.reverse_dns', 'hostname'),
         ('destination.port', 'dst_port'),
         ('destination.ip', 'dst_ip'),
+        ('destination.fqdn', 'http_host'),
         ('destination.asn', 'dst_asn'),
         ('destination.geolocation.cc', 'dst_geo'),
-        # Other known fields which will go into "extra"
         ('user_agent', 'http_agent'),
         ('os.name', 'p0f_genre'),
         ('os.version', 'p0f_detail'),
-        ('destination.url', 'http_host', convert_host_and_url, True),
-        ('', 'url', lambda x: None),  # remove URl here, is included in above conversion
+        ('destination.url', 'url', convert_host_and_url, True),
+        # Other known fields which will go into "extra"
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
         ('extra.', 'http_referer', validate_to_none),
@@ -302,6 +304,7 @@ microsoft_sinkhole = {
     ],
     'constant_fields': {
         'classification.type': 'botnet drone',
+        'protocol.transport': 'tcp',
         'protocol.application': 'http',
         'classification.taxonomy': 'Malicious Code',
     },
@@ -389,7 +392,6 @@ open_ipmi = {
         ('source.port', 'port')
     ],
     'optional_fields': [
-        ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
@@ -424,6 +426,7 @@ open_ipmi = {
         'classification.identifier': 'openipmi',
         'feed.code': 'shadowserver-openipmi',
         'protocol.application': 'ipmi',
+        'protocol.transport': 'udp',
     },
 }
 
@@ -515,7 +518,7 @@ open_snmp = {
         # Other known fields which will go into "extra"
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
-        ('extra.', 'version', int),
+        ('extra.', 'version', convert_int),
         # sysdesc
         # sysname
         # sector
@@ -686,19 +689,11 @@ dns_open_resolvers = {
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
+        ('os.name', 'p0f_genre'),
+        ('os.version', 'p0f_detail'),
         # Other known fields which will go into "extra"
-        ('extra.', 'naics', invalidate_zero),
-        ('extra.', 'sic', invalidate_zero),
-        # elasticsearch
-        # version
-        # ok
-        # name
-        # cluster_name
-        # status
-        # build_hash
-        # build_timestamp
-        # build_snaphost
-        # lucene_version
+        # min_amplification
+        # dns_version
     ],
     'constant_fields': {
         'classification.type': 'vulnerable service',
@@ -741,8 +736,7 @@ ssl_scan = {
         ('source.port', 'port')
     ],
     'optional_fields': [
-        ('protocol.transport', 'protocol'),
-        ('source.reverse_dns', 'hostname'),  # TODO
+        ('source.reverse_dns', 'hostname'),
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),

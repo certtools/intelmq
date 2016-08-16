@@ -206,52 +206,29 @@ class BotTestCase(object):
         return [utils.decode(text) for text
                 in self.pipe.state["%s-output" % self.bot_id]]
 
-    def test_bot_start(self):
-        """Tests if we can start a bot and feed data into
-            it and have a reasonable output"""
-        self.run_bot()
-
-    def test_log_init(self):
-        """ Test if bot logs initialized message. """
+    def test_logs(self):
+        """ Test if bot log messages are correctly formatted. """
         self.run_bot()
         self.assertLoglineMatches(0, "{} initialized with id {} and version"
                                      " [0-9.]{{5}} \([a-zA-Z0-9,:. ]+\)( \[GCC\])?"
                                      " as process [0-9]+\."
                                      "".format(self.bot_name,
                                                self.bot_id), "INFO")
-
-    def test_log_starting(self):
-        """ Test if bot logs starting message. """
-        self.run_bot()
         self.assertRegexpMatchesLog("INFO - Bot is starting.")
-
-    def test_log_stopped(self):
-        """ Test if bot logs stopped message. """
-        self.run_bot()
         self.assertLoglineEqual(-1, "Bot stopped.", "INFO")
-
-    def test_log_end_dot(self):
-        """ Test if every log lines ends with a dot. """
         for logline in self.loglines:
             fields = utils.parse_logline(logline)
-            self.assertTrue(fields['message'].endswith('.'),
-                            msg='Logline {} does not end with dot.'
+            self.assertTrue(fields['message'][-1] in '.?!',
+                            msg='Logline {!r} does not end with .? or !.'
                                 ''.format(fields['message']))
-
-    def test_log_not_error(self):
-        """ Test if bot does not log errors. """
-        self.run_bot()
+            self.assertTrue(fields['message'].upper() == fields['message'].upper(),
+                            msg='Logline {!r} does not beginn with an upper case char.'
+                                ''.format(fields['message']))
         self.assertNotRegexpMatchesLog("(ERROR.*?){}"
                                        "".format(self.allowed_error_count))
-
-    def test_log_not_critical(self):
-        """ Test if bot does not log critical errors. """
-        self.run_bot()
         self.assertNotRegexpMatchesLog("CRITICAL")
 
-    def test_pipe_names(self):
-        """ Test if all pipes are created with correct names. """
-        self.run_bot()
+#        """ Test if all pipes are created with correct names. """
         pipenames = ["{}-input", "{}-input-internal", "{}-output"]
         self.assertSetEqual({x.format(self.bot_id) for x in pipenames},
                             set(self.pipe.state.keys()))
@@ -291,7 +268,7 @@ class BotTestCase(object):
 
     def test_event(self):
         """ Test if event has required fields. """
-        if self.bot_type not in ['parser', 'expert']:
+        if self.bot_type != 'parser':
             return
 
         self.run_bot()
