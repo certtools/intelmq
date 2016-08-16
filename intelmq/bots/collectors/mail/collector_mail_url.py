@@ -44,8 +44,7 @@ class MailURLCollectorBot(Bot):
                         url = url.strip()     # strip leading and trailing spaces, newlines and carriage returns
 
                         # Build request
-                        self.http_header = getattr(self.parameters,
-                                'http_header', {})
+                        self.http_header = getattr(self.parameters, 'http_header', {})
                         self.http_verify_cert = getattr(self.parameters,
                                                         'http_verify_cert', True)
 

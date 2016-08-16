@@ -55,6 +55,7 @@ class FTPS(FTP_TLS):
         return self.welcome
 # END content from Stack Overflow
 
+
 class FTPSCollectorBot(Bot):
     def process(self):
         self.logger.info("Downloading report from %s" %
@@ -87,8 +88,7 @@ class FTPSCollectorBot(Bot):
         files = fnmatch.filter(ftps.nlst(), filemask)
         self.logger.info('Found following files in the directory: ' +
                          repr(files))
-        self.logger.info('Looking for latest file matching following pattern: '
-                         + filemask)
+        self.logger.info('Looking for latest file matching following pattern: ' + filemask)
 
         if files:
             self.logger.info('Retrieving file: ' + files[-1])
@@ -105,8 +105,7 @@ class FTPSCollectorBot(Bot):
         except zipfile.BadZipfile:
             raw_reports.append(mem.getvalue())
         else:
-            self.logger.info('Downloaded zip file, extracting following files: '
-                             + ', '.join(zfp.namelist()))
+            self.logger.info('Downloaded zip file, extracting following files: ' + ', '.join(zfp.namelist()))
             for filename in zfp.namelist():
                 raw_reports.append(zfp.read(filename))
 
@@ -118,6 +117,7 @@ class FTPSCollectorBot(Bot):
                        str(self.parameters.ftps_port), sanitize=True)
             report.add("feed.accuracy", self.parameters.accuracy, sanitize=True)
             self.send_message(report)
+
 
 if __name__ == "__main__":
     bot = FTPSCollectorBot(sys.argv[1])

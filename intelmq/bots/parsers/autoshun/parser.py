@@ -59,7 +59,7 @@ class AutoshunParserBot(ParserBot):
         event.add("time.source", last_seen)
         event.add("source.ip", ip)
         event.add("event_description.text", description)
-        event.add("raw", line+"</tr>")
+        event.add("raw", line + "</tr>")
         yield event
 
 

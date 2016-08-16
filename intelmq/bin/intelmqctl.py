@@ -294,8 +294,7 @@ Get logs of a bot:
                 self.parser.print_help()
                 exit(2)
         elif self.args.action == 'list':
-            if not self.args.parameter or \
-                 self.args.parameter[0] not in ['bots', 'queues']:
+            if not self.args.parameter or self.args.parameter[0] not in ['bots', 'queues']:
                 print("Second argument for list must be 'bots' or 'queues'.")
                 self.parser.print_help()
                 exit(2)

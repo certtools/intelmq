@@ -207,7 +207,7 @@ class BotTestCase(object):
                 in self.pipe.state["%s-output" % self.bot_id]]
 
     def test_logs(self):
-#        """ Test if bot logs initialized message. """
+        """ Test if bot log messages are correctly formatted. """
         self.run_bot()
         self.assertLoglineMatches(0, "{} initialized with id {} and version"
                                      " [0-9.]{{5}} \([a-zA-Z0-9,:. ]+\)( \[GCC\])?"
