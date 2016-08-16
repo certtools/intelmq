@@ -233,7 +233,7 @@ class Bot(object):
         self.logger.debug("Loading source queue.")
         self.__source_pipeline.set_queues(self.__source_queues, "source")
         self.logger.debug("Source queue loaded {}."
-                         "".format(self.__source_queues))
+                          "".format(self.__source_queues))
         self.__source_pipeline.connect()
         self.logger.debug("Connected to source queue.")
 
@@ -243,7 +243,7 @@ class Bot(object):
         self.__destination_pipeline.set_queues(self.__destination_queues,
                                                "destination")
         self.logger.debug("Destination queues loaded {}."
-                         "".format(self.__destination_queues))
+                          "".format(self.__destination_queues))
         self.__destination_pipeline.connect()
         self.logger.debug("Connected to destination queues.")
 

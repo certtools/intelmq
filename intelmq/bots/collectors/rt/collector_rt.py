@@ -86,7 +86,7 @@ class RTCollectorBot(Bot):
             report.add("feed.name", self.parameters.feed, sanitize=True)
             report.add("feed.accuracy", self.parameters.accuracy,
                        sanitize=True)
-            report.add("time.observation", created+' UTC', force=True)
+            report.add("time.observation", created + ' UTC', force=True)
             self.send_message(report)
 
             if self.parameters.take_ticket:
