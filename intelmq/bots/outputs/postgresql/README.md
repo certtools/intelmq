@@ -1,6 +1,6 @@
 # How to install:
 
-Use `intelmq/bin/intelmq_psql_initdb.py` to create initial sql-statements
+Use `intelmq_psql_initdb` to create initial sql-statements
 from Harmonization.conf. The script will create the required table layout
 and save it as /tmp/initdb.sql
 
