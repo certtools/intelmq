@@ -110,6 +110,8 @@ class IntelMQCLIContoller():
                             help='Do not output anything, except for error messages. Useful in combination with --batch.')
         parser.add_argument('-n', '--dry-run', action='store_true',
                             help='Do not store anything or change anything. Just simulate.')
+        parser.add_argument('-z', '--zip', action='store_true',
+                            help='Zip every events.csv attachement to an investigation for RT')
         args = parser.parse_args()
 
         if args.quiet:
@@ -126,6 +128,8 @@ class IntelMQCLIContoller():
             self.filter_asns = args.asn
         if args.text:
             self.boilerplate = args.text
+        if args.zip:
+            self.zipme = True
 
         self.read_config()
         self.connect_database()
@@ -470,14 +474,14 @@ Subject: {subj}
         for row in query:
             report_ids.add(row['rtir_report_id'])
 
-        if True:  # TODO: implement zip config
+        if not self.zipme:
             attachment = csvfile
             attachment.seek(0)
             filename = 'events.csv'
         else:
             attachment = io.BytesIO()
             ziphandle = zipfile.ZipFile(attachment, mode='w')
-            ziphandle.writestr('events.csv', csvfile.getvalue())
+            ziphandle.writestr('events.csv', csvfile.getvalue().encode('utf-8'))
             ziphandle.close()
             attachment.seek(0)
             filename = 'events.zip'
