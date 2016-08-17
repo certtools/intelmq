@@ -1,23 +1,24 @@
 # -*- coding: utf-8 -*-
 
 import unittest
-import dateutil.parser
 import mock
 
 import intelmq.lib.bot
 import intelmq.lib.bot as bot
 import intelmq.lib.test as test
+import intelmq.lib.utils as utils
 from intelmq.lib.message import Event
+
+RAW = """# ignore this
+2015/06/04 13:37 +00,example.org,192.0.2.3,reverse.example.net,example description,report@example.org,0
+
+2015/06/04_13:37 +00,example.org,192.0.2.3,reverse.example.net,example description,report@example.org,0
+#ending line"""
+
 
 EXAMPLE_REPORT = {"feed.url": "http://www.example.com/",
                   "time.observation": "2015-08-11T13:03:40+00:00",
-                  "raw": """
-IyBpZ25vcmUgdGhpcwoyMDE1LzA2LzA0IDEzOjM3ICswMCxleGFtcGxlLm9yZywxOTIuMC4yLjMs
-cmV2ZXJzZS5leGFtcGxlLm5ldCxleGFtcGxlIGRlc2NyaXB0aW9uLHJlcG9ydEBleGFtcGxlLm9y
-ZywwCgoyMDE1LzA2LzA0XzEzOjM3ICswMCxleGFtcGxlLm9yZywxOTIuMC4yLjMscmV2ZXJzZS5l
-eGFtcGxlLm5ldCxleGFtcGxlIGRlc2NyaXB0aW9uLHJlcG9ydEBleGFtcGxlLm9yZywwCiNlbmRp
-bmcgbGluZQ==
-""",
+                  "raw": utils.base64_encode(RAW),
                   "__type": "Report",
                   "feed.name": "Example"}
 EXAMPLE_EVENT = {"feed.url": "http://www.example.com/",
@@ -48,12 +49,12 @@ class DummyParserBot(bot.ParserBot):
 
     def parse_line(self, line, report):
         if line.startswith('#'):
-            self.logger.info('Lorem ipsum dolor sit amet')
+            self.logger.info('Lorem ipsum dolor sit amet.')
             self.tempdata.append(line)
         else:
             event = Event(report)
             line = line.split(',')
-            event['time.source'] = str(dateutil.parser.parse(line[0]))
+            event['time.source'] = line[0]
             event['source.fqdn'] = line[1]
             event['source.ip'] = line[2]
             event['source.reverse_dns'] = line[3]
@@ -89,7 +90,7 @@ class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
     def test_log_test_line(self):
         """ Test if bot does log example message. """
         self.run_bot()
-        self.assertRegexpMatchesLog("INFO - Lorem ipsum dolor sit amet")
+        self.assertRegexpMatchesLog("INFO - Lorem ipsum dolor sit amet.")
 
     def test_event(self):
         """ Test if correct Event has been produced. """

@@ -2,6 +2,7 @@
 import sys
 from urllib.parse import urlparse
 
+from intelmq.lib import utils
 from intelmq.lib.bot import ParserBot
 from intelmq.lib.harmonization import IPAddress
 from intelmq.lib.message import Event
@@ -9,14 +10,20 @@ from intelmq.lib.message import Event
 
 class VXVaultParserBot(ParserBot):
 
+    def parse(self, report):
+        report_split = utils.base64_decode(report["raw"]).strip().splitlines()
+        self.tempdata = report_split[:2]
+        for line in report_split[3:]:
+            yield line.strip()
+
     def parse_line(self, row, report):
         if not row.startswith('http'):
-            return
+            return []
 
         url_object = urlparse(row)
 
         if not url_object:
-            return
+            return []
 
         url = url_object.geturl()
         hostname = url_object.hostname
@@ -34,8 +41,12 @@ class VXVaultParserBot(ParserBot):
         if port:
             event.add("source.port", port)
         event.add("raw", row)
+        event.add("time.source", self.tempdata[1])
 
-        self.send_message(event)
+        yield event
+
+    def recover_line(self, line):
+        return '\n'.join(self.tempdata + [line])
 
 
 if __name__ == "__main__":

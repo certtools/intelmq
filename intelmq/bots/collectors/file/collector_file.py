@@ -35,7 +35,7 @@ class FileCollectorBot(Bot):
 
         if not self.parameters.postfix:
             self.logger.warn("No file extension was set. The collector will"
-                             " read all files in %s", self.parameters.path)
+                             " read all files in %s.", self.parameters.path)
             if self.parameters.delete_file:
                 self.logger.error("This configuration would delete all files"
                                   " in %s. I'm stopping now....",
@@ -43,7 +43,7 @@ class FileCollectorBot(Bot):
                 self.stop()
 
     def process(self):
-        self.logger.debug("Started looking for Files")
+        self.logger.debug("Started looking for files.")
 
         if os.path.isdir(self.parameters.path):
             p = os.path.abspath(self.parameters.path)
@@ -67,9 +67,9 @@ class FileCollectorBot(Bot):
                         if self.parameters.delete_file:
                             try:
                                 os.remove(filename)
-                                self.logger.debug("Deleted file: %s" % filename)
+                                self.logger.debug("Deleted file: %r." % filename)
                             except PermissionError:
-                                self.logger.error("Could not delete file %s" % filename)
+                                self.logger.error("Could not delete file %r." % filename)
                                 self.logger.info("Maybe I don't have sufficient rights on that file?")
                                 self.logger.error("Stopping now, to prevent reading this file again.")
                                 self.stop()
