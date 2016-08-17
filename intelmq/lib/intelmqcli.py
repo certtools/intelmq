@@ -10,15 +10,16 @@ import subprocess
 
 import psycopg2
 
-__all__ = ['QUERY_INSERT_CONTACT', 'QUERY_GET_TEXT', 'CSV_FIELDS', 'QUERY_BY_ASCONTACT',
-           'getTerminalHeight', 'EPILOG', 'QUERY_BY_ASNUM', 'APPNAME', 'QUERY_COUNT_ASN',
-           'QUERY_SET_RTIRID', 'USAGE', 'QUERY_UPDATE_CONTACT', 'DESCRIPTION',
-           'QUERY_FEED_NAMES', 'QUERY_IDENTIFIER_NAMES', 'QUERY_TAXONOMY_NAMES',
-           'QUERY_TYPE_NAMES', 'QUERY_TEXT_NAMES', 'QUERY_OPEN_EVENTS_BY_FEEDNAME',
-           'QUERY_OPEN_TAXONOMIES', 'QUERY_OPEN_FEEDNAMES',
-           'QUERY_OPEN_EVENT_REPORTS_BY_TAXONOMY', 'QUERY_OPEN_EVENT_IDS_BY_TAXONOMY',
-           'target_from_row', 'read_config',
-           'connect_database']
+__all__ = ['APPNAME', 'BASE_WHERE', 'CSV_FIELDS', 'DESCRIPTION', 'EPILOG',
+           'QUERY_DISTINCT_CONTACTS_BY_INCIDENT', 'QUERY_EVENTS_BY_ASCONTACT_INCIDENT',
+           'QUERY_FEED_NAMES', 'QUERY_GET_TEXT', 'QUERY_IDENTIFIER_NAMES',
+           'QUERY_INSERT_CONTACT', 'QUERY_OPEN_EVENTS_BY_FEEDNAME',
+           'QUERY_OPEN_EVENT_IDS_BY_TAXONOMY', 'QUERY_OPEN_EVENT_REPORTS_BY_TAXONOMY',
+           'QUERY_OPEN_FEEDNAMES', 'QUERY_OPEN_TAXONOMIES', 'QUERY_TAXONOMY_NAMES',
+           'QUERY_TEXT_NAMES', 'QUERY_TYPE_NAMES', 'QUERY_UPDATE_CONTACT', 'USAGE',
+           'connect_database', 'getTerminalHeight', 'read_config',
+           ]
+
 APPNAME = "intelmqcli"
 DESCRIPTION = """
 """
@@ -90,91 +91,15 @@ CSV_FIELDS=["time.source", "source.ip", "protocol.transport", "source.port", "pr
             "feed", "event_description.text", "event_description.url", "malware.name", "extra", "comment", "additional_field_freetext", "version: 1.1"
             ]
 
-QUERY_BY_ASCONTACT = """
-SELECT
-    to_char({evtab}."time.source",
-            'YYYY-MM-DD"T"HH24:MI:SSOF') as "time.source",
-    {evtab}.id,
-    {evtab}."feed.code" as feed,
-    {evtab}."source.ip",
-    {evtab}."source.port",
-    {evtab}."source.asn",
-    {evtab}."source.network",
-    {evtab}."source.geolocation.cc",
-    {evtab}."source.geolocation.region",
-    {evtab}."source.geolocation.city",
-    {evtab}."source.account",
-    {evtab}."source.fqdn",
-    {evtab}."source.local_hostname",
-    {evtab}."source.local_ip",
-    {evtab}."source.reverse_dns",
-    {evtab}."source.tor_node",
-    {evtab}."source.url",
-    {evtab}."classification.identifier",
-    {evtab}."classification.taxonomy",
-    {evtab}."classification.type",
-    {evtab}."comment",
-    {evtab}."destination.ip",
-    {evtab}."destination.port",
-    {evtab}."destination.asn",
-    {evtab}."destination.network",
-    {evtab}."destination.geolocation.cc",
-    {evtab}."destination.geolocation.region",
-    {evtab}."destination.geolocation.city",
-    {evtab}."destination.account",
-    {evtab}."destination.fqdn",
-    {evtab}."destination.local_hostname",
-    {evtab}."destination.local_ip",
-    {evtab}."destination.reverse_dns",
-    {evtab}."destination.tor_node",
-    {evtab}."destination.url",
-    {evtab}."event_description.target",
-    {evtab}."event_description.text",
-    {evtab}."event_description.url",
-    {evtab}."event_hash",
-    {evtab}."extra",
-    {evtab}."feed.accuracy",
-    {evtab}."malware.hash",
-    {evtab}."malware.hash.md5",
-    {evtab}."malware.hash.sha1",
-    {evtab}."malware.name",
-    {evtab}."malware.version",
-    {evtab}."misp_uuid",
-    {evtab}."notify",
-    {evtab}."protocol.application",
-    {evtab}."protocol.transport",
-    {evtab}."rtir_report_id",
-    {evtab}."screenshot_url",
-    {evtab}."status",
-    {evtab}."time.observation"
-FROM {evtab}
-LEFT OUTER JOIN {conttab} ON {evtab}."source.asn" = {conttab}.asnum
-WHERE
-    notify = TRUE AND
-    {evtab}.rtir_report_id IS NOT NULL AND
-    (
-        {evtab}.rtir_incident_id IS NULL OR
-        {evtab}.rtir_investigation_id IS NULL
-    ) AND
-    (
-        {evtab}."source.geolocation.cc" LIKE '{cc}' OR
-        {evtab}."source.fqdn" LIKE %s
-    ) AND
-    {conttab}.contacts = %s AND
-    {evtab}."feed.name" ILIKE %s AND
-    {evtab}."time.source" IS NOT NULL AND
-    {evtab}."classification.taxonomy" ILIKE %s;
-"""
-
 QUERY_UPDATE_CONTACT = """
-UPDATE {conttab} SET
+UPDATE as_contacts SET
     contacts = %s
 WHERE
-    asnum = ANY('{{{ids}}}'::int[]);
+    asnum = %s
 """
 
 QUERY_INSERT_CONTACT = """
-INSERT INTO {conttab} (
+INSERT INTO as_contacts (
     asnum, contacts, comment, unreliable
 ) VALUES (
     %s, %s, %s, FALSE
@@ -194,28 +119,32 @@ BASE_WHERE = """
 "time.source" IS NOT NULL AND
 "sent_at" IS NULL AND
 "feed.name" IS NOT NULL AND
-"classification.taxonomy" IS NOT NULL
+"classification.taxonomy" IS NOT NULL AND
+as_contacts.contacts IS NOT NULL
 """
 # PART 1: CREATE REPORTS
 QUERY_OPEN_FEEDNAMES = """
 SELECT
     DISTINCT "feed.name"
 FROM "events"
+LEFT OUTER JOIN as_contacts ON events."source.asn" = as_contacts.asnum
 WHERE
     "rtir_report_id" IS NULL AND
 """ + BASE_WHERE
 QUERY_OPEN_EVENTS_BY_FEEDNAME = """
 SELECT *
 FROM "events"
+LEFT OUTER JOIN as_contacts ON events."source.asn" = as_contacts.asnum
 WHERE
     "feed.name" = %s AND
     "rtir_report_id" IS NULL
 """ + BASE_WHERE
-# PART 2: INCIDENTS +  INVESTIGATIONS
+# PART 2: INCIDENTS
 QUERY_OPEN_TAXONOMIES = """
 SELECT
     DISTINCT "classification.taxonomy"
 FROM "events"
+LEFT OUTER JOIN as_contacts ON events."source.asn" = as_contacts.asnum
 WHERE
     "rtir_report_id" IS NOT NULL AND
     "rtir_incident_id" IS NULL AND
@@ -224,6 +153,7 @@ QUERY_OPEN_EVENT_REPORTS_BY_TAXONOMY = """
 SELECT
     DISTINCT "rtir_report_id"
 FROM "events"
+LEFT OUTER JOIN as_contacts ON events."source.asn" = as_contacts.asnum
 WHERE
     "rtir_report_id" IS NOT NULL AND
     "rtir_incident_id" IS NULL AND
@@ -233,17 +163,94 @@ QUERY_OPEN_EVENT_IDS_BY_TAXONOMY = """
 SELECT
     "id"
 FROM "events"
+LEFT OUTER JOIN as_contacts ON events."source.asn" = as_contacts.asnum
 WHERE
     "rtir_report_id" IS NOT NULL AND
     "rtir_incident_id" IS NULL AND
     "classification.taxonomy" = %s AND
+""" + BASE_WHERE
+# PART 3: INVESTIGATIONS
+QUERY_DISTINCT_CONTACTS_BY_INCIDENT = """
+SELECT
+DISTINCT "contacts"
+FROM events
+LEFT OUTER JOIN as_contacts ON events."source.asn" = as_contacts.asnum
+WHERE
+    rtir_report_id IS NOT NULL AND
+    rtir_incident_id = %s AND
+    rtir_investigation_id IS NULL AND
+""" + BASE_WHERE
+QUERY_EVENTS_BY_ASCONTACT_INCIDENT = """
+SELECT
+    to_char(events."time.source",
+            'YYYY-MM-DD"T"HH24:MI:SSOF') as "time.source",
+    events.id,
+    events."feed.code" as feed,
+    events."source.ip",
+    events."source.port",
+    events."source.asn",
+    events."source.network",
+    events."source.geolocation.cc",
+    events."source.geolocation.region",
+    events."source.geolocation.city",
+    events."source.account",
+    events."source.fqdn",
+    events."source.local_hostname",
+    events."source.local_ip",
+    events."source.reverse_dns",
+    events."source.tor_node",
+    events."source.url",
+    events."classification.identifier",
+    events."classification.taxonomy",
+    events."classification.type",
+    events."comment",
+    events."destination.ip",
+    events."destination.port",
+    events."destination.asn",
+    events."destination.network",
+    events."destination.geolocation.cc",
+    events."destination.geolocation.region",
+    events."destination.geolocation.city",
+    events."destination.account",
+    events."destination.fqdn",
+    events."destination.local_hostname",
+    events."destination.local_ip",
+    events."destination.reverse_dns",
+    events."destination.tor_node",
+    events."destination.url",
+    events."event_description.target",
+    events."event_description.text",
+    events."event_description.url",
+    events."event_hash",
+    events."extra",
+    events."feed.accuracy",
+    events."malware.hash",
+    events."malware.hash.md5",
+    events."malware.hash.sha1",
+    events."malware.name",
+    events."malware.version",
+    events."misp_uuid",
+    events."notify",
+    events."protocol.application",
+    events."protocol.transport",
+    events."rtir_report_id",
+    events."screenshot_url",
+    events."status",
+    events."time.observation"
+FROM events
+LEFT OUTER JOIN as_contacts ON events."source.asn" = as_contacts.asnum
+WHERE
+    events.rtir_report_id IS NOT NULL AND
+    events.rtir_incident_id = %s AND
+    events.rtir_investigation_id IS NULL AND
+    as_contacts.contacts = %s AND
 """ + BASE_WHERE
 
 
 def read_config():
     with open('/etc/intelmq/intelmqcli.conf') as conf_handle:
         config = json.load(conf_handle)
-    home = os.path.expanduser("~")      # needed for OSX
+    home = os.path.expanduser("~")
     with open(os.path.expanduser(home + '/.intelmq/intelmqcli.conf')) as conf_handle:
         user_config = json.load(conf_handle)
 
@@ -264,20 +271,9 @@ def connect_database(config):
                            sslmode=config['database']['sslmode'],
                            )
     con.autocommit = True
-    cur = con.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    cur = con.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     return con, cur
 
 
 def getTerminalHeight():
     return int(subprocess.check_output(['stty', 'size']).strip().split()[0])
-
-
-def target_from_row(row):
-    """
-    Returns the first value in give row that exists from this list of keys:
-    'source.ip', 'source.fqdn', 'source.url', 'source.account'
-    """
-    keys = ['source.ip', 'source.fqdn', 'source.url', 'source.account']
-    for key in keys:
-        if key in row:
-            return row[key]
