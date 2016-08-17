@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
+#
+# Copyright (C) 2016 by Bundesamt für Sicherheit in der Informationstechnik
+# Software engineering by Intevation GmbH
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Affero General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
@@ -13,6 +16,9 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/agpl.html>.
+#
+# Author(s):
+#   Gernot Schulz <gernot.schulz@intevation.de>
 
 import sys
 import psycopg2
@@ -40,8 +46,8 @@ def get_automatic_org_name(cur, asn):
 def add_contact(cur, asn, email, org_name=None):
     # Add AS number to manual table if necessary
     cur.execute("""
-            SELECT EXISTS(SELECT number from autonomous_system WHERE number = %s);
-            """,
+        SELECT EXISTS(SELECT number from autonomous_system WHERE number = %s);
+        """,
             (asn,))
     result = cur.fetchall()
     exists = result[0][0]
@@ -58,42 +64,35 @@ def add_contact(cur, asn, email, org_name=None):
 
     # Check if a *manual* organization with the provided name exists, and use
     # it if possible; else add new manual organization
-    cur.execute("""
-            SELECT id FROM organisation WHERE name = %s;
-            """,
-            (org_name,))
+    cur.execute("SELECT id FROM organisation WHERE name = %s;", (org_name,))
     result = cur.fetchall()
     if result:
         org_id = result[0][0]
     else:
-        cur.execute("INSERT INTO organisation (name) VALUES (%s) RETURNING id;",
+        cur.execute(
+                "INSERT INTO organisation (name) VALUES (%s) RETURNING id;",
                 (org_name,))
         result = cur.fetchall()
         org_id = result[0][0]
 
     # Check if a *manual* contact with the provided name exists, and use it if
     # possible; else add new manual contact
-    cur.execute("""
-            SELECT id FROM contact WHERE email = %s;
-            """,
-            (email,))
+    cur.execute("SELECT id FROM contact WHERE email = %s;", (email,))
     result = cur.fetchall()
     if result:
         contact_id = result[0][0]
     else:
         cur.execute("""
-                INSERT INTO contact (email,format_id) VALUES (%s,%s) RETURNING id;
-                """,
-                (email, FORMAT_ID))
+            INSERT INTO contact (email,format_id) VALUES (%s,%s) RETURNING id;
+            """, (email, FORMAT_ID))
         result = cur.fetchall()
         contact_id = result[0][0]
 
     # Add relations
     cur.execute("""
-            SELECT EXISTS( SELECT (organisation_id,asn_id)
-            FROM organisation_to_asn WHERE organisation_id = %s AND asn_id = %s);
-            """,
-            (org_id, asn))
+        SELECT EXISTS( SELECT (organisation_id,asn_id)
+        FROM organisation_to_asn WHERE organisation_id = %s AND asn_id = %s);
+        """, (org_id, asn))
     result = cur.fetchall()
     exists = result[0][0]
     if not exists:
@@ -101,21 +100,18 @@ def add_contact(cur, asn, email, org_name=None):
                 INSERT INTO organisation_to_asn
                 (organisation_id,asn_id,notification_interval)
                 VALUES (%s, %s, %s);
-                """,
-                (org_id, asn, NOTIFICATION_INTERVAL))
+                """, (org_id, asn, NOTIFICATION_INTERVAL))
 
     cur.execute("""
             SELECT EXISTS( SELECT (organisation_id,contact_id)
             FROM role WHERE organisation_id = %s AND contact_id = %s);
-            """,
-            (org_id, contact_id))
+            """, (org_id, contact_id))
     result = cur.fetchall()
     exists = result[0][0]
     if not exists:
-        cur.execute("""
-                INSERT INTO role (organisation_id,contact_id) VALUES (%s, %s);
-                """,
-                (org_id, contact_id))
+        cur.execute(
+            "INSERT INTO role (organisation_id,contact_id) VALUES (%s, %s);",
+            (org_id, contact_id))
     return cur
 
 def parse_file(reader):
@@ -167,5 +163,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-# vim :set et sw=4 ts=4:
