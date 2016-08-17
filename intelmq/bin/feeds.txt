@@ -1,6 +1,10 @@
-Dragon Research Group
-Turris Greylist
-Malware Domain List
-n6stomp
-BlockList.de
-Abuse.ch
+Open-Portmapper
+Open-NetBIOS
+Open-Elasticsearch
+Open-MSSQL
+Open-Memcached
+Open-MongoDB
+Open-Chargen
+Open-QOTD
+Open-TFTP
+Open-Redis
