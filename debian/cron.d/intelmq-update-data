@@ -1,5 +1,5 @@
 # /etc/cron.d/intelmq-update-data: crontab fragment for intelmq
-#  This upodates the data files used by some expert bots.
+#  This updates the data files used by some expert bots.
 #
 # m h  dom mon dow      command
 # Update data for tor_nodes bot:

@@ -36,11 +36,6 @@ class ShadowserverParserBot(ParserBot):
             self.logger.error('No feedname provided or feedname not in conf.')
             self.stop()
 
-        self.csv_params = {'quoting': csv.QUOTE_NONE,
-                           'escapechar': None,
-                           'quotechar': '',
-                           'dialect': 'unix'}
-
         # Set a switch if the parser shall reset the feed.name,
         # code and feedurl for this event
         self.override = False
@@ -55,30 +50,9 @@ class ShadowserverParserBot(ParserBot):
         # create an array of fieldnames,
         # those were automagically created by the dictreader
         self.fieldnames = csvr.fieldnames
-        self.csv_fieldnames = map(self.conv_csv_shadowserver, self.fieldnames)
-        self.header = ','.join(self.csv_fieldnames)
 
         for row in csvr:
             yield row
-
-    def conv_csv_shadowserver(self, value):
-        """
-        Converts a dict to shadowservers csv quoting format.
-
-        Numeric: no quoting
-        Empty string: no quoting
-        Else: " quoting
-        """
-        if value is None:
-            return ''
-        try:
-            int(value)
-            return value
-        except ValueError:
-            if hasattr(value, '__len__') and not len(value):
-                return ''
-            else:
-                return '"' + value + '"'
 
     def parse_line(self, row, report):
 
@@ -137,6 +111,8 @@ class ShadowserverParserBot(ParserBot):
         for item in conf.get('optional_fields'):
             intelmqkey, shadowkey = item[:2]
             if shadowkey not in fields:  # key does not exist in data (not even in the header)
+                self.logger.warning('Optional key {!r} not found data. Possible change in data'
+                                    ' format or misconfiguration.')
                 continue
             if len(item) > 2:
                 conv_func = item[2]
@@ -152,8 +128,8 @@ class ShadowserverParserBot(ParserBot):
                     try:
                         value = conv_func(raw_value)
                     except:
-                        self.logger.error('could not convert shadowkey: "{}", ' +
-                                          'value: "{}" via conversion function {}'.format(shadowkey, raw_value, repr(conv_func)))
+                        self.logger.error('Could not convert shadowkey: "{}", ' +
+                                          'value: "{}" via conversion function {}.'.format(shadowkey, raw_value, repr(conv_func)))
                         value = None
                         # """ fail early and often in this case. We want to be able to convert everything """
                         # self.stop()
@@ -168,10 +144,10 @@ class ShadowserverParserBot(ParserBot):
                     fields.remove(shadowkey)
                 except InvalidValue:
                     self.logger.info(
-                        'Could not add key "{}";'
+                        'Could not add key {!r};'
                         ' adding it to extras...'.format(shadowkey)
                     )
-                    self.logger.debug('The value of the event is %s', value)
+                    self.logger.debug('The value of the event is {!r}.'.format(value))
                 except InvalidKey:
                     extra[intelmqkey] = value
                     fields.remove(shadowkey)
@@ -179,10 +155,9 @@ class ShadowserverParserBot(ParserBot):
                 fields.remove(shadowkey)
 
         # Now add additional constant fields.
-        for key, value in conf.get('constant_fields', {}).items():
-            event.add(key, value)
+        dict.update(event, conf.get('constant_fields', {}))  # TODO: rewrite in 1.0
 
-        self.logger.debug("raw_line: {!r}".format(row))
+        self.logger.debug("Raw_line: {!r}.".format(row))
         event.add('raw', self.recover_line(row))
 
         # Add everything which could not be resolved to extra.
@@ -197,12 +172,13 @@ class ShadowserverParserBot(ParserBot):
         yield event
 
     def recover_line(self, line):
-        out = self.header + '\n'
-        ordered_line = [self.conv_csv_shadowserver(line[v]) for v in
-                        self.fieldnames]
-        out += ','.join(ordered_line) + '\n'
-        return out
-
+        out = io.StringIO()
+        writer = csv.DictWriter(out, self.fieldnames,
+                                dialect='unix',
+                                extrasaction='ignore')
+        writer.writeheader()
+        writer.writerow(line)
+        return out.getvalue()
 
 if __name__ == "__main__":
     bot = ShadowserverParserBot(sys.argv[1])

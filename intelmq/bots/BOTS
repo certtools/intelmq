@@ -633,7 +633,7 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "VxVault",
-                "http_url": "http://vxvault.siri-urz.net/URL_List.php",
+                "http_url": "http://vxvault.net/URL_List.php",
                 "rate_limit": 3600
             }
         },

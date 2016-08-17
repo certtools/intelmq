@@ -24,9 +24,9 @@ class XMPPCollectorBot(Bot):
 
         if self.xmpp is None:
             self.xmpp = sleekxmpp.XMPPBot(self.parameters.xmpp_user + '@' + self.parameters.xmpp_server,
-                                self.parameters.xmpp_password,
-                                self.send_message,
-                                self.logger)
+                                          self.parameters.xmpp_password,
+                                          self.send_message,
+                                          self.logger)
             self.xmpp.connect(reattempt=True)
             self.xmpp.process()
 
