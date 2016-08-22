@@ -356,12 +356,12 @@ More examples can be found at `intelmq/etc/harmonization.conf` directory in Inte
 
 IntelMQ has a modular structure consisting of bots. There are four types of bots:
 
-* *CollectorBots* retrieve data from internal or external sources, the output
+* [CollectorBots](Bots.md#collectors) retrieve data from internal or external sources, the output
 are *reports* consisting of many individual data sets.
-* *ParserBots* parse the data by splitting it into individual *events* and
+* [ParserBots](Bots.md#parsers) parse the data by splitting it into individual *events* and
 giving them a defined structure, see also [Data Harmonization](Data-Harmonization.md).
-* *ExpertBots* enrich the existing events by e.g. reverse records, geographic location information or abuse contacts.
-* *OutputBots* write events to files, databases, (REST)-APIs, etc.
+* [ExpertBots](Bots.md#experts) enrich the existing events by e.g. reverse records, geographic location information or abuse contacts.
+* [OutputBots](Bots.md#outputs) write events to files, databases, (REST)-APIs, etc.
 
 Each bot has one source queue (except collectors) and can have multiple
 destination queues (except outputs). But multiple bots can write to the same pipeline, resulting in multiple inputs for the next bot.
@@ -577,7 +577,7 @@ rm -rf /opt/intelmq
 
 # Frequently Asked Questions
 
-Consult the [FAQ.md](FAQ) if you encountered any problem.
+Consult the [FAQ](FAQ.md) if you encountered any problem.
 
 
 # Additional Information
