@@ -48,7 +48,7 @@ def get_feed(feedname):
         "Botnet-Drone-Hadoop": botnet_drone_hadoop,
         "Open-Memcached": open_memcached,
         "Ssl-Scan": ssl_scan,  # Aka Poodle
-        "Ssl-Freak-Scan": ssl_scan,  # Only differs in a few extra fields
+        "Ssl-Freak-Scan": ssl_freak_scan,  # Only differs in a few extra fields
         "NTP-Monitor": ntp_monitor,
         "DNS-open-resolvers": dns_open_resolvers,  # TODO Check implementation.
         "Open-Elasticsearch": open_elasticsearch,
@@ -268,6 +268,8 @@ sinkhole_http_drone = {
         'protocol.transport': 'tcp',
         'classification.type': 'botnet drone',
         'classification.taxonomy': 'Malicious Code',
+        'classification.identifier': 'botnet',
+        'feed.code': 'shadowserver-sinkhole-http-drone',
     },
 }
 
@@ -307,6 +309,8 @@ microsoft_sinkhole = {
         'protocol.transport': 'tcp',
         'protocol.application': 'http',
         'classification.taxonomy': 'Malicious Code',
+        'classification.identifier': 'botnet',
+        'feed.code': 'shadowserver-microsoft-sinkhole',
     },
 }
 
@@ -728,6 +732,30 @@ ntp_monitor = {
     },
 }
 
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Ssl-Freak-Scan
+ssl_freak_scan = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port')
+    ],
+    'optional_fields': [
+        ('source.reverse_dns', 'hostname'),
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+    ],
+    'constant_fields': {
+        'classification.type': 'vulnerable service',
+        'classification.taxonomy': 'Vulnerable',
+        'classification.identifier': 'SSL-FREAK',
+        'feed.code': 'shadowserver-ssl-freak-scan',
+        'protocol.application': 'https',
+    },
+}
+
+
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Ssl-Scan
 ssl_scan = {
     'required_fields': [
@@ -744,7 +772,10 @@ ssl_scan = {
     ],
     'constant_fields': {
         'classification.type': 'vulnerable service',
-        # XXX FIXME needs work!!
+        'classification.taxonomy': 'Vulnerable',
+        'classification.identifier': 'SSL-Poodle',
+        'feed.code': 'shadowserver-ssl-scan',
+        'protocol.application': 'https',
     },
 }
 
@@ -805,5 +836,7 @@ botnet_drone_hadoop = {
     'constant_fields': {
         'classification.type': 'botnet drone',
         'classification.taxonomy': 'Malicious Code',
+        'classification.identifier': 'botnet',
+        'feed.code': 'shadowserver-botnet-drone-hadoop',
     },
 }
