@@ -90,9 +90,6 @@ setup(
     ],
     keywords='incident handling cert csirt',
     data_files=DATA,
-    scripts=[
-        'intelmq/bots/experts/certbund_contact/ripe_import.py',
-    ],
     entry_points={
         'console_scripts': [
             'intelmqctl = intelmq.bin.intelmqctl:main',
@@ -104,5 +101,6 @@ setup(
         'intelmq/bots/experts/tor_nodes/update-tor-nodes',
         'intelmq/bots/experts/maxmind_geoip/update-geoip-data',
         'intelmq/bots/experts/asn_lookup/update-asn-data',
+        'intelmq/bots/experts/certbund_contact/ripe_import.py',
     ],
 )
