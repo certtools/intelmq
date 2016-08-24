@@ -47,26 +47,27 @@ def get_feed(feedname):
     feed_idx = {
         "Botnet-Drone-Hadoop": botnet_drone_hadoop,
         "Open-Memcached": open_memcached,
-        "Ssl-Scan": ssl_scan,  # Aka Poodle
+        "Ssl-Scan": ssl_scan,  # a.k.a POODLE
         "Ssl-Freak-Scan": ssl_freak_scan,  # Only differs in a few extra fields
         "NTP-Monitor": ntp_monitor,
         "DNS-open-resolvers": dns_open_resolvers,  # TODO Check implementation.
         "Open-Elasticsearch": open_elasticsearch,
-        "Open-NetBIOS": open_net_bios,  # TODO Check implementation.
-        "Open-MongoDB": open_mongodb,  # TODO Check implementation.
+        "Open-NetBIOS": open_netbios,
+        "Open-MongoDB": open_mongodb,
         "Open-MSSQL": open_mssql,  # TODO Check implementation.
         "Open-SNMP": open_snmp,
         "Open-SSDP": open_ssdp,  # TODO Check implementation.
         "Open-IPMI": open_ipmi,  # TODO VERIFY THIS FEED, as dmth did not have example data
-        "Open-Portmapper": open_portmapper,  # TODO Check implementation.
-        "Open-Redis": open_redis,  # TODO Check implementation.
+        "Open-Portmapper": open_portmapper,
+        "Open-Redis": open_redis,
         "Microsoft-Sinkhole": microsoft_sinkhole,
-        "Open-TFTP": open_tftp,  # TODO Check implementation.
+        "Open-TFTP": open_tftp,
         "Open-Chargen": open_chargen,
         "Open-QOTD": open_qotd,
         "Sinkhole-HTTP-Drone": sinkhole_http_drone,  # TODO Check implementation. Especially the TOR-Converter
         "Open-mDNS": open_mdns,  # TODO Check implementation.
-        "Open-XDMCP": open_xdmcp,  # TODO Check implementation.
+        "Open-XDMCP": open_xdmcp,
+        "Open-NATPMP": open_natpmp,
     }
 
     return feed_idx.get(feedname)
@@ -612,7 +613,7 @@ open_mongodb = {
 }
 
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-NetBIOS
-open_net_bios = {
+open_netbios = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
@@ -867,8 +868,40 @@ open_xdmcp = {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'Vulnerable',
         'protocol.application': 'xdmcp',
-        'feed.code': 'shadowserver-openmdns',
+        'feed.code': 'shadowserver-openxdmcp',
         'feed.url': 'https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-XDMCP',
-        'classification.identifier': 'openmdns',
+        'classification.identifier': 'openxdmcp',
+    },
+}
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-NATPMP
+open_natpmp = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port')
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        # Other known fields which will go into "extra"
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'version'),
+        ('extra.', 'opcode'),
+        ('extra.', 'uptime'),
+        ('extra.', 'external_ip'),
+    ],
+    'constant_fields': {
+        'classification.type': 'vulnerable service',
+        'classification.taxonomy': 'Vulnerable',
+        'protocol.application': 'nat-pmp',
+        'feed.code': 'shadowserver-opennatpmp',
+        'feed.url': 'https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-NATPMP',
+        'classification.identifier': 'opennatpmp',
     },
 }
