@@ -36,7 +36,8 @@ class RTCollectorBot(Bot):
         query = RT.search(Queue=self.parameters.search_queue,
                           Subject__like=self.parameters.search_subject_like,
                           Owner=self.parameters.search_owner,
-                          Status=self.parameters.search_status)
+                          Status=self.parameters.search_status,
+                          order='Created')
         self.logger.info('{} results on search query.'.format(len(query)))
 
         for ticket in query:
