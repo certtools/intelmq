@@ -66,6 +66,7 @@ def get_feed(feedname):
         "Open-QOTD": open_qotd,
         "Sinkhole-HTTP-Drone": sinkhole_http_drone,  # TODO Check implementation. Especially the TOR-Converter
         "Open-mDNS": open_mdns,  # TODO Check implementation.
+        "Open-XDMCP": open_xdmcp,  # TODO Check implementation.
     }
 
     return feed_idx.get(feedname)
@@ -838,5 +839,36 @@ botnet_drone_hadoop = {
         'classification.taxonomy': 'Malicious Code',
         'classification.identifier': 'botnet',
         'feed.code': 'shadowserver-botnet-drone-hadoop',
+    },
+}
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-XDMCP
+open_xdmcp = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port')
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        # Other known fields which will go into "extra"
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'opcode'),
+        ('extra.', 'reported_hostname'),
+        ('extra.', 'status'),
+    ],
+    'constant_fields': {
+        'classification.type': 'vulnerable service',
+        'classification.taxonomy': 'Vulnerable',
+        'protocol.application': 'xdmcp',
+        'feed.code': 'shadowserver-openmdns',
+        'feed.url': 'https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-XDMCP',
+        'classification.identifier': 'openmdns',
     },
 }
