@@ -120,7 +120,8 @@ BASE_WHERE = """
 "sent_at" IS NULL AND
 "feed.name" IS NOT NULL AND
 "classification.taxonomy" IS NOT NULL AND
-as_contacts.contacts IS NOT NULL
+as_contacts.contacts IS NOT NULL AND
+UPPER("source.geolocation.cc") = 'AT'
 """
 # PART 1: CREATE REPORTS
 QUERY_OPEN_FEEDNAMES = """
@@ -137,7 +138,7 @@ FROM "events"
 LEFT OUTER JOIN as_contacts ON events."source.asn" = as_contacts.asnum
 WHERE
     "feed.name" = %s AND
-    "rtir_report_id" IS NULL
+    "rtir_report_id" IS NULL AND
 """ + BASE_WHERE
 # PART 2: INCIDENTS
 QUERY_OPEN_TAXONOMIES = """

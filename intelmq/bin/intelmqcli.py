@@ -403,7 +403,8 @@ Subject: {subj}
             return
         print(green('Correspondence added to Investigation.'))
 
-        self.cur.executemany("UPDATE events SET rtir_investigation_id = %s WHERE id = %s",
+        self.cur.executemany("UPDATE events SET rtir_investigation_id = %s, "
+                             "sent_at = LOCALTIMESTAMP WHERE id = %s",
                              [(investigation_id, evid) for evid in ids])
         if not self.rt.edit_ticket(incident_id, Status='resolved'):
             error(red('Could not close incident {}.'.format(incident_id)))
