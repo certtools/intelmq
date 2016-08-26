@@ -24,7 +24,6 @@ DATA = [
       'intelmq/etc/pipeline.conf',
       'intelmq/etc/runtime.conf',
       'intelmq/etc/startup.conf',
-      'intelmq/etc/system.conf',
       ],
      ),
     ('/opt/intelmq/var/lib/bots/modify/example',

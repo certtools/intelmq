@@ -120,7 +120,6 @@ cp -a examples/* .
 
 * `defaults.conf`: default values for bots and their behavior, e.g.
 error handling, log options and pipeline configuration. Will be removed in the [future](https://github.com/certtools/intelmq/issues/267).
-* `system.conf`: System configuration for e.g. the logger and the pipeline.
 * `startup.conf`: Maps the bot ids to python modules.
 * `runtime.conf`: Configuration for the individual bots.
 * `pipeline.conf`: Defines source and destination queues per bot.
@@ -133,7 +132,11 @@ Configure source and destination queues in `pipeline.conf`.
 Use the IntelMQ Manager mentioned above to generate the configuration files if unsure.
 
 
-## System Configuration
+## System Configuration (defaults)
+
+All bots inherit this configuration parameters and they can overwrite them using the same parameters in configuration.
+
+Small extract:
 
 * `logging_handler`: Can be one of `"file"` or `"syslog"`.
 * `logging_level`: Defines for all system the level of logging that will be use by all bots and intelmqctl tool. Possible values are: `"CRITICAL"`, `"ERROR"`, `"WARNING"`, `"INFO"` and `"DEBUG"`.
@@ -213,10 +216,6 @@ This configuration is used by each bot to load the source pipeline and destinati
 ```
 
 More examples can be found at `intelmq/etc/pipeline.conf` directory in IntelMQ repository.
-
-## Defaults Configuration
-
-All bots inherit this configuration parameters and they can overwrite them using the same parameters in configuration.
 
 #### Error Handling
 
