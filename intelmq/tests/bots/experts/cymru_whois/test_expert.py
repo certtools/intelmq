@@ -64,7 +64,7 @@ NO_ASN_OUTPUT = {"__type": "Event",
                  "source.geolocation.cc": 'RU',
                  "source.ip": '212.92.127.126',
                  "source.network": '212.92.127.0/24',
-                 "source.registry": 'ripencc',
+                 "source.registry": 'RIPENCC',
                  }
 
 
