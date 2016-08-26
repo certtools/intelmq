@@ -3,12 +3,12 @@ import json
 import logging
 import sys
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import CollectorBot
 from intelmq.lib.message import Report
 from sdk.blueliv_api import BluelivAPI
 
 
-class BluelivCrimeserverCollectorBot(Bot):
+class BluelivCrimeserverCollectorBot(CollectorBot):
 
     def process(self):
         self.logger.info("Downloading report through API")
@@ -28,8 +28,6 @@ class BluelivCrimeserverCollectorBot(Bot):
 
         report = Report()
         report.add("raw", json.dumps([item for item in response.items]))
-        report.add("feed.name", self.parameters.feed)
-        report.add("feed.accuracy", self.parameters.accuracy)
         self.send_message(report)
 
 

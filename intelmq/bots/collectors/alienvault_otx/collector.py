@@ -2,13 +2,13 @@
 import json
 import sys
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import CollectorBot
 from intelmq.lib.message import Report
 
 from .OTXv2 import OTXv2
 
 
-class AlienVaultOTXCollectorBot(Bot):
+class AlienVaultOTXCollectorBot(CollectorBot):
 
     def process(self):
         self.logger.info("Downloading report through API")

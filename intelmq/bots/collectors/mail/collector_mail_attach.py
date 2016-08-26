@@ -7,13 +7,12 @@ try:
     import imbox
 except ImportError:
     imbox = None
-import requests
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import CollectorBot
 from intelmq.lib.message import Report
 
 
-class MailAttachCollectorBot(Bot):
+class MailAttachCollectorBot(CollectorBot):
 
     def init(self):
         if imbox is None:
@@ -55,8 +54,6 @@ class MailAttachCollectorBot(Bot):
 
                         report = Report()
                         report.add("raw", raw_report)
-                        report.add("feed.name", self.parameters.feed)
-                        report.add("feed.accuracy", self.parameters.accuracy)
 
                         self.send_message(report)
 

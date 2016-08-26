@@ -20,8 +20,7 @@ import zipfile
 import io
 import fnmatch
 
-from intelmq.lib.bot import Bot
-from intelmq.lib.harmonization import DateTime
+from intelmq.lib.bot import CollectorBot
 from intelmq.lib.message import Report
 
 
@@ -56,7 +55,7 @@ class FTPS(FTP_TLS):
 # END content from Stack Overflow
 
 
-class FTPSCollectorBot(Bot):
+class FTPSCollectorBot(CollectorBot):
     def process(self):
         self.logger.info("Downloading report from %s" %
                          self.parameters.ftps_host + ':' +
@@ -112,10 +111,8 @@ class FTPSCollectorBot(Bot):
         for raw_report in raw_reports:
             report = Report()
             report.add("raw", raw_report, sanitize=True)
-            report.add("feed.name", self.parameters.feed, sanitize=True)
             report.add("feed.url", 'ftps://' + self.parameters.ftps_host + ':' +
                        str(self.parameters.ftps_port), sanitize=True)
-            report.add("feed.accuracy", self.parameters.accuracy, sanitize=True)
             self.send_message(report)
 
 
