@@ -13,10 +13,15 @@ install:
   - pip install codecov
   - pip install pep8
   - sudo pip install .
+  - sudo cp /opt/intelmq/etc/examples/* /opt/intelmq/etc/
 before_script:
   - psql -c "CREATE DATABASE intelmq;" -U postgres
   - psql -c "CREATE USER intelmq WITH PASSWORD 'intelmq';" -U postgres
   - psql -c "GRANT ALL PRIVILEGES ON DATABASE intelmq TO intelmq;" -U postgres
+  - intelmq_psql_initdb
+  - sed -i 's/events/tests/' /tmp/initdb.sql
+  - psql -v ON_ERROR_STOP=on -f /tmp/initdb.sql intelmq -U postgres
+  - psql -c "GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO intelmq;" -U postgres
 script:
   - nosetests --with-coverage --cover-package=intelmq
   - dpkg-buildpackage -us -uc
@@ -27,3 +32,5 @@ services:
 after_success:
   - codecov
   - coveralls
+addons:
+  postgresql: "9.4"
