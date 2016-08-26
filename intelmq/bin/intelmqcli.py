@@ -18,6 +18,7 @@ import subprocess
 import sys
 import tempfile
 import time
+import zipfile
 from functools import partial
 
 import pkg_resources
@@ -58,6 +59,7 @@ class IntelMQCLIContoller():
     batch = False
     compress_csv = False
     boilerplate = None
+    zipme = False
 
     def __init__(self):
         global quiet
@@ -107,6 +109,10 @@ class IntelMQCLIContoller():
                             help='Do not output anything, except for error messages. Useful in combination with --batch.')
         parser.add_argument('-n', '--dry-run', action='store_true',
                             help='Do not store anything or change anything. Just simulate.')
+
+        parser.add_argument('-z', '--zip', action='store_true',
+                            help='Zip every events.csv attachement to an'
+                                 'investigation for RT (defaults to false)')
         args = parser.parse_args()
 
         if args.quiet:
@@ -123,6 +129,8 @@ class IntelMQCLIContoller():
             self.filter_asns = args.asn
         if args.text:
             self.boilerplate = args.text
+        if args.zip:
+            self.zipme = True
 
         self.config = lib.read_config()
         self.con, self.cur = lib.connect_database(config=self.config)
@@ -274,6 +282,7 @@ class IntelMQCLIContoller():
         else:
             fieldnames = query[0].keys()    # send all
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames,
+                                quoting=csv.QUOTE_MINIMAL, delimiter=str(";"),
                                 extrasaction='ignore', lineterminator='\n')
         writer.writeheader()
         query_unicode = query
@@ -281,7 +290,8 @@ class IntelMQCLIContoller():
             query = [{key: utils.encode(val) if isinstance(val, six.text_type) else val for key, val in row.items()} for row in query]
         writer.writerows(query)
         # note this might contain UTF-8 chars! let's ignore utf-8 errors. sorry.
-        attachment_text = utils.decode(csvfile.getvalue(), force=True)
+        data = unicode(csvfile.getvalue(), 'utf-8')
+        attachment_text = data.encode('ascii', 'ignore')
         attachment_lines = attachment_text.splitlines()
 
         if self.verbose:
@@ -369,7 +379,7 @@ Subject: {subj}
             return
         self.save_to_rt(ids=ids, subject=subject, requestor=requestor,
                         body=text, taxonomy=taxonomy,
-                        attachment=csvfile, incident_id=incident_id)
+                        csvfile=csvfile, incident_id=incident_id)
 
         if requestor != contact and not self.dryrun:
             answer = input(inverted('Save recipient {!r} for ASNs {!s}? [Y/n] '
@@ -381,7 +391,7 @@ Subject: {subj}
                     self.query_insert_contact(asns=asns, contact=requestor)
 
     def save_to_rt(self, ids, subject, requestor, taxonomy, body,
-                   attachment, incident_id):
+                   csvfile, incident_id):
         investigation_id = self.rt.create_ticket(Queue='Investigations',
                                                  Subject=subject,
                                                  Owner=self.config['rt']['user'],
@@ -395,9 +405,26 @@ Subject: {subj}
             error(red('Could not link Investigation to Incident.'))
             return
 
+        if self.zipme:
+            attachment = io.BytesIO()
+            ziphandle = zipfile.ZipFile(attachment, mode='w',
+                                        compression=zipfile.ZIP_DEFLATED)
+            data = csvfile.getvalue()
+            data = unicode(data, 'utf-8')
+            ziphandle.writestr('events.csv', data.encode('utf-8'))
+            ziphandle.close()
+            attachment.seek(0)
+            filename = 'events.csv.zip'
+            mimetype = 'application/octet-stream'
+        else:
+            attachment = csvfile
+            attachment.seek(0)
+            filename = 'events.csv'
+            mimetype = 'text/csv'
+
         # TODO: CC
         correspond = self.rt.reply(investigation_id, text=body,
-                                   files=[('events.csv', attachment, 'text/csv')])
+                                   files=[(filename, attachment, mimetype)])
         if not correspond:
             error(red('Could not correspond with text and file.'))
             return
