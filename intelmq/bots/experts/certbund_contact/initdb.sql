@@ -226,6 +226,14 @@ CREATE TABLE classification_type (
 CREATE INDEX classification_type_name_idx
           ON classification_type (name);
 
+CREATE TABLE classification_identifier (
+    id SERIAL PRIMARY KEY,
+    name TEXT UNIQUE NOT NULL
+);
+
+CREATE INDEX classification_identifier_name_idx
+          ON classification_identifier (name);
+
 /*
  Template
 */
@@ -338,6 +346,52 @@ CREATE INDEX organisation_to_template_automatic_organisation_idx
           ON organisation_to_template_automatic (organisation_id);
 CREATE INDEX organisation_to_template_automatic_template_idx
           ON organisation_to_template_automatic (template_id);
+
+
+-- Inhibit notifications
+
+CREATE TABLE inhibition (
+    id SERIAL PRIMARY KEY,
+
+    asn_id BIGINT,
+    net_id INTEGER,
+
+    classification_identifier_id INTEGER,
+
+    comment TEXT NOT NULL DEFAULT '',
+
+    FOREIGN KEY (asn_id) REFERENCES autonomous_system (number),
+    FOREIGN KEY (net_id) REFERENCES network (id),
+
+    FOREIGN KEY (classification_identifier_id)
+     REFERENCES classification_identifier (id),
+
+    CHECK (asn_id IS NOT NULL OR net_id IS NOT NULL)
+);
+
+
+-- Determine whether notifications are inhibited for the event.
+-- Notifications are inhibited if a matching entry exists in inhibition.
+CREATE OR REPLACE FUNCTION
+notifications_inhibited(event_asn BIGINT, event_ip INET,
+                        event_classification_identifier TEXT)
+RETURNS BOOLEAN
+AS $$
+BEGIN
+    RETURN EXISTS (
+       SELECT * FROM inhibition
+        WHERE (asn_id IS NULL OR asn_id = event_asn)
+          AND (net_id IS NULL
+               OR net_id = (SELECT n.id FROM network n
+                             WHERE inet(host(network(n.address))) <= event_ip
+                               AND event_ip <= inet(host(broadcast(n.address)))))
+          AND (classification_identifier_id IS NULL
+	       OR classification_identifier_id
+	        = (SELECT id FROM classification_identifier c
+                    WHERE c.name = event_classification_identifier)));
+END;
+$$ LANGUAGE plpgsql VOLATILE;
+
 
 
 -- Type for a single notification

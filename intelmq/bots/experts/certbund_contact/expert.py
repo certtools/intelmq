@@ -43,8 +43,10 @@ class CERTBundKontaktExpertBot(Bot):
             ip = event.get(section + ".ip")
             asn = event.get(section + ".asn")
             fqdn = event.get(section + ".fqdn")
-            classification = event.get("classification.type")
-            notifications = self.lookup_contact(classification, ip, fqdn, asn)
+            class_type = event.get("classification.type")
+            class_identifier = event.get("classification.identifier")
+            notifications = self.lookup_contact(class_type, class_identifier,
+                                                ip, fqdn, asn)
             if notifications is None:
                 # stop processing the message because an error occurred
                 # during the database query
@@ -64,17 +66,17 @@ class CERTBundKontaktExpertBot(Bot):
         certbund[key] = value
         event.add("extra", extra, force=True)
 
-    def lookup_manual_and_auto(self, cur, criterion, value, classification):
+    def lookup_manual_and_auto(self, cur, criterion, value, class_type):
         assert criterion in ("fqdn", "ip", "asn")
         if not value:
             return []
         cur.execute("SELECT * FROM notifications_for_{}(%s, %s)"
-                    .format(criterion), (value, classification))
+                    .format(criterion), (value, class_type))
         result = cur.fetchall()
         if result:
             return result
         cur.execute("SELECT * FROM notifications_for_{}_automatic(%s, %s)"
-                    .format(criterion), (value, classification))
+                    .format(criterion), (value, class_type))
         return cur.fetchall()
 
     def lookup_by_asn_only(self, cur, asn):
@@ -103,21 +105,31 @@ class CERTBundKontaktExpertBot(Bot):
                 return result
         return []
 
-    def lookup_contact(self, classification, ip, fqdn, asn):
-        self.logger.debug("Looking up ip: %r, classification: %r",
-                          ip, classification)
+    def notification_inhibited(self, cur, class_identifier, ip, fqdn, asn):
+        cur.execute("SELECT notifications_inhibited(%s, %s, %s);",
+                    (asn, ip, class_identifier))
+        return cur.fetchone()[0]
+
+    def lookup_contact(self, class_type, class_identifier, ip, fqdn, asn):
+        self.logger.debug("Looking up ip: %r, classification.type: %r,"
+                          " classification.identifier: %r, ",
+                          ip, class_type)
         try:
             cur = self.con.cursor()
             try:
+                if self.notification_inhibited(cur, class_identifier, ip, fqdn,
+                                               asn):
+                    return []
+
                 raw_result = self.lookup_manual_and_auto(cur, "fqdn", fqdn,
-                                                         classification)
+                                                         class_type)
 
                 ip_result = self.lookup_manual_and_auto(cur, "ip", ip,
-                                                        classification)
+                                                        class_type)
                 raw_result.extend(ip_result)
                 if not ip_result:
                     asn_notifications = self.lookup_manual_and_auto(
-                        cur, "asn", asn, classification)
+                        cur, "asn", asn, class_type)
                     if not asn_notifications and asn:
                         asn_notifications = self.lookup_by_asn_only(cur, asn)
                     raw_result.extend(asn_notifications)

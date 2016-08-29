@@ -49,7 +49,7 @@ class CERTBundKontaktMockDBExpertBot(CERTBundKontaktExpertBot):
     def connect_to_database(self):
         pass
 
-    def lookup_contact(self, classification, ip, fqdn, asn):
+    def lookup_contact(self, class_type, class_identifier, ip, fqdn, asn):
         if ip.startswith("192.168.42."):
             return [dict(email="foo@example.com",
                          organisation="Acme",
