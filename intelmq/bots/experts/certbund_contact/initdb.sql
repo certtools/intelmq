@@ -356,6 +356,7 @@ CREATE TABLE inhibition (
     asn_id BIGINT,
     net_id INTEGER,
 
+    classification_type_id INTEGER,
     classification_identifier_id INTEGER,
 
     comment TEXT NOT NULL DEFAULT '',
@@ -363,6 +364,8 @@ CREATE TABLE inhibition (
     FOREIGN KEY (asn_id) REFERENCES autonomous_system (number),
     FOREIGN KEY (net_id) REFERENCES network (id),
 
+    FOREIGN KEY (classification_type_id)
+     REFERENCES classification_type (id),
     FOREIGN KEY (classification_identifier_id)
      REFERENCES classification_identifier (id),
 
@@ -374,6 +377,7 @@ CREATE TABLE inhibition (
 -- Notifications are inhibited if a matching entry exists in inhibition.
 CREATE OR REPLACE FUNCTION
 notifications_inhibited(event_asn BIGINT, event_ip INET,
+                        event_classification_type TEXT,
                         event_classification_identifier TEXT)
 RETURNS BOOLEAN
 AS $$
@@ -385,6 +389,10 @@ BEGIN
                OR net_id = (SELECT n.id FROM network n
                              WHERE inet(host(network(n.address))) <= event_ip
                                AND event_ip <= inet(host(broadcast(n.address)))))
+          AND (classification_type_id IS NULL
+	       OR classification_type_id
+	        = (SELECT id FROM classification_type c
+                    WHERE c.name = event_classification_type))
           AND (classification_identifier_id IS NULL
 	       OR classification_identifier_id
 	        = (SELECT id FROM classification_identifier c

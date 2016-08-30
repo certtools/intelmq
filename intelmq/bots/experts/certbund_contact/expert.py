@@ -105,9 +105,10 @@ class CERTBundKontaktExpertBot(Bot):
                 return result
         return []
 
-    def notification_inhibited(self, cur, class_identifier, ip, fqdn, asn):
-        cur.execute("SELECT notifications_inhibited(%s, %s, %s);",
-                    (asn, ip, class_identifier))
+    def notification_inhibited(self, cur, class_type, class_identifier,
+                               ip, fqdn, asn):
+        cur.execute("SELECT notifications_inhibited(%s, %s, %s, %s);",
+                    (asn, ip, class_type, class_identifier))
         return cur.fetchone()[0]
 
     def lookup_contact(self, class_type, class_identifier, ip, fqdn, asn):
@@ -117,8 +118,8 @@ class CERTBundKontaktExpertBot(Bot):
         try:
             cur = self.con.cursor()
             try:
-                if self.notification_inhibited(cur, class_identifier, ip, fqdn,
-                                               asn):
+                if self.notification_inhibited(cur, class_type,
+                                               class_identifier, ip, fqdn, asn):
                     return []
 
                 raw_result = self.lookup_manual_and_auto(cur, "fqdn", fqdn,
