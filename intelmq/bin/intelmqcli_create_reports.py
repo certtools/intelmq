@@ -19,12 +19,12 @@ import sys
 import time
 import zipfile
 from functools import partial
+from termstyle import bold, green, inverted, red, reset
 
 import psycopg2
 import psycopg2.extras
 
-import rt
-from intelmq.lib.intelmqcli import *
+import intelmq.lib.intelmqcli as lib
 
 # Use unicode for all input and output, needed for Py2
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
@@ -40,57 +40,70 @@ def print(*args, **kwargs):
         old_print(*args, **kwargs)
 
 
-def main():
-    config = read_config()
-    rtir = rt.Rt(config['rt']['uri'], config['rt']['user'],
-                 config['rt']['password'])
-    if not rtir.login():
-        error('Could not login as {} on {}.'.format(config['rt']['user'],
-                                                    config['rt']['uri']))
-        exit(2)
-    else:
-        print('Logged in as {} on {}.'.format(config['rt']['user'],
-                                              config['rt']['uri']))
-    con, cur = connect_database(config)
+class IntelMQCLIContoller(lib.IntelMQCLIContollerTemplate):
+    appname = 'intelmqcli_create_reports'
 
-    cur.execute(QUERY_OPEN_FEEDNAMES)
-    feednames = [x['feed.name'] for x in cur.fetchall()]
-    for feedname in feednames:
-        print('Handling feedname {!r}.'.format(feedname))
-        cur.execute(QUERY_OPEN_EVENTS_BY_FEEDNAME,
-                    (feedname, ))
-        feeddata = []
-        for row in cur:
-            """
-            First, we ignore None-data
-            Second, we ignore raw
-            Third, we convert everything to strings, e.g. datetime-objects
-            """
-            feeddata.append({k: (str(v) if isinstance(v, datetime.datetime) else v)
-                             for k, v in row.items() if v is not None and k != 'raw'})
+    def init(self):
+        self.parse_args()
+        if self.args.quiet:
+            global quiet
+            quiet = True
 
-        attachment = io.BytesIO()
-        ziphandle = zipfile.ZipFile(attachment, mode='w')
-        ziphandle.writestr('events.json', json.dumps(feeddata))
-        ziphandle.close()
-        attachment.seek(0)
-        subject = 'Reports of {} on {}'.format(feedname, time.strftime('%Y-%m-%d'))
-
-        report_id = rtir.create_ticket(Queue='Incident Reports', Subject=subject,
-                                       Owner=config['rt']['user'])
-        if report_id == -1:
-            error('Could not create Incident ({}).'.format(report_id))
-            return
+        if not self.rt.login():
+            error(red('Could not login as {} on {}.'.format(self.config['rt']['user'],
+                                                            self.config['rt']['uri'])))
+            exit(2)
         else:
-            print('Created Report {}.'.format(report_id))
-        comment_id = rtir.comment(report_id,
-                                  files=[('events.zip', attachment, 'application/zip')])
-        if not comment_id:
-            error('Could not correspond with file.')
-            return
+            print('Logged in as {} on {}.'.format(self.config['rt']['user'],
+                                                  self.config['rt']['uri']))
+        self.connect_database()
 
-        cur.executemany("UPDATE events SET rtir_report_id = %s WHERE id = %s",
-                        [(report_id, row['id']) for row in feeddata])
+        self.execute(lib.QUERY_OPEN_FEEDNAMES)
+        feednames = [x['feed.name'] for x in self.cur.fetchall()]
+        print("All feeds: " + ",".join(feednames))
+        for feedname in feednames:
+            print('Handling feedname {!r}.'.format(feedname))
+            self.execute(lib.QUERY_OPEN_EVENTS_BY_FEEDNAME,
+                         (feedname, ))
+            feeddata = []
+            print('Found %s events.' % self.cur.rowcount)
+            for row in self.cur:
+                """
+                First, we ignore None-data
+                Second, we ignore raw
+                Third, we convert everything to strings, e.g. datetime-objects
+                """
+                feeddata.append({k: (str(v) if isinstance(v, datetime.datetime) else v)
+                                 for k, v in row.items() if v is not None and k != 'raw'})
+
+            attachment = io.BytesIO()
+            ziphandle = zipfile.ZipFile(attachment, mode='w',
+                                        compression=zipfile.ZIP_DEFLATED)
+            ziphandle.writestr('events.json', json.dumps(feeddata))
+            ziphandle.close()
+            attachment.seek(0)
+            subject = 'Reports of {} on {}'.format(feedname, time.strftime('%Y-%m-%d'))
+
+            report_id = self.rt.create_ticket(Queue='Incident Reports', Subject=subject,
+                                              Owner=self.config['rt']['user'])
+            if report_id == -1:
+                error('Could not create Incident ({}).'.format(report_id))
+                return
+            else:
+                print('Created Report {}.'.format(report_id))
+            comment_id = self.rt.comment(report_id,
+                                         files=[('events.zip', attachment, 'application/zip')])
+            if not comment_id:
+                error('Could not correspond with file.')
+                return
+
+            self.executemany("UPDATE events SET rtir_report_id = %s WHERE id = %s",
+                             [(report_id, row['id']) for row in feeddata])
+            print(green('Linked events to report.'))
+
+
+def main():
+    IntelMQCLIContoller()
 
 if __name__ == '__main__':
     main()

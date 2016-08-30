@@ -4,25 +4,32 @@ Utilities for intelmqcli.
 
 Static data (queries)
 """
+import argparse
 import json
 import os
+import rt
 import subprocess
+import pkg_resources
+import sys
+
+import intelmq.lib.utils as utils
 
 import psycopg2
 
-__all__ = ['APPNAME', 'BASE_WHERE', 'CSV_FIELDS', 'DESCRIPTION', 'EPILOG',
+# Use unicode for all input and output, needed for Py2
+psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
+psycopg2.extensions.register_type(psycopg2.extensions.UNICODEARRAY)
+
+__all__ = ['BASE_WHERE', 'CSV_FIELDS', 'EPILOG',
            'QUERY_DISTINCT_CONTACTS_BY_INCIDENT', 'QUERY_EVENTS_BY_ASCONTACT_INCIDENT',
            'QUERY_FEED_NAMES', 'QUERY_GET_TEXT', 'QUERY_IDENTIFIER_NAMES',
            'QUERY_INSERT_CONTACT', 'QUERY_OPEN_EVENTS_BY_FEEDNAME',
            'QUERY_OPEN_EVENT_IDS_BY_TAXONOMY', 'QUERY_OPEN_EVENT_REPORTS_BY_TAXONOMY',
            'QUERY_OPEN_FEEDNAMES', 'QUERY_OPEN_TAXONOMIES', 'QUERY_TAXONOMY_NAMES',
            'QUERY_TEXT_NAMES', 'QUERY_TYPE_NAMES', 'QUERY_UPDATE_CONTACT', 'USAGE',
-           'connect_database', 'getTerminalHeight', 'read_config',
+           'getTerminalHeight', 'IntelMQCLIContollerTemplate'
            ]
 
-APPNAME = "intelmqcli"
-DESCRIPTION = """
-"""
 EPILOG = """
 Searches for all unprocessed incidents. Incidents will be filtered by country
 code and the TLD of a domain according to configuration.
@@ -248,33 +255,108 @@ WHERE
 """ + BASE_WHERE
 
 
-def read_config():
-    with open('/etc/intelmq/intelmqcli.conf') as conf_handle:
-        config = json.load(conf_handle)
-    home = os.path.expanduser("~")
-    with open(os.path.expanduser(home + '/.intelmq/intelmqcli.conf')) as conf_handle:
-        user_config = json.load(conf_handle)
-
-    for key, value in user_config.items():
-        if key in config and isinstance(value, dict):
-            config[key].update(value)
-        else:
-            config[key] = value
-    return config
-
-
-def connect_database(config):
-    con = psycopg2.connect(database=config['database']['database'],
-                           user=config['database']['user'],
-                           password=config['database']['password'],
-                           host=config['database']['host'],
-                           port=config['database']['port'],
-                           sslmode=config['database']['sslmode'],
-                           )
-    con.autocommit = True
-    cur = con.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    return con, cur
-
-
 def getTerminalHeight():
     return int(subprocess.check_output(['stty', 'size']).strip().split()[0])
+
+
+class IntelMQCLIContollerTemplate():
+    additional_where = ""
+    usage = ''
+    epilog = ''
+    additional_params = ()
+
+    def __init__(self):
+        with open('/etc/intelmq/intelmqcli.conf') as conf_handle:
+            self.config = json.load(conf_handle)
+        home = os.path.expanduser("~")
+        with open(os.path.expanduser(home + '/.intelmq/intelmqcli.conf')) as conf_handle:
+            user_config = json.load(conf_handle)
+
+        for key, value in user_config.items():
+            if key in self.config and isinstance(value, dict):
+                self.config[key].update(value)
+            else:
+                self.config[key] = value
+
+        self.logger = utils.log('intelmqcli', log_path='/tmp/',
+                                log_level=self.config['log_level'],
+                                stream=sys.stdout)
+
+        self.rt = rt.Rt(self.config['rt']['uri'], self.config['rt']['user'],
+                        self.config['rt']['password'])
+
+        self.parser = argparse.ArgumentParser(prog=self.appname,
+                                              usage = self.usage,
+                                              epilog=self.epilog,
+                                              formatter_class=argparse.RawDescriptionHelpFormatter,
+        )
+        VERSION = pkg_resources.get_distribution("intelmq").version
+        self.parser.add_argument('--version',
+                                 action='version', version=VERSION)
+        self.parser.add_argument('-v', '--verbose', action='store_true',
+                                 help='Print verbose messages.')
+
+        self.parser.add_argument('-f', '--feed', nargs='+',
+                                 help='Show only incidents reported by one of the given feeds.')
+        self.parser.add_argument('--taxonomy', nargs='+',
+                                 help='Select only events with given taxonomy.')
+        self.parser.add_argument('-a', '--asn', type=int, nargs='+',
+                                 help='Specify one or more AS numbers (integers) to process.')
+
+        self.parser.add_argument('-b', '--batch', action='store_true',
+                                 help='Run in batch mode (defaults to "yes" to all).')
+        self.parser.add_argument('-q', '--quiet', action='store_true',
+                                 help='Do not output anything, except for error messages. Useful in combination with --batch.')
+        self.parser.add_argument('-n', '--dry-run', action='store_true',
+                                 help='Do not store anything or change anything. Just simulate.')
+
+        self.init()
+
+    def parse_args(self):
+        self.args = self.parser.parse_args()
+
+        if self.args.verbose:
+            self.verbose = True
+        if self.args.dry_run:
+            self.dryrun = True
+        if self.args.batch:
+            self.batch = True
+
+        if self.args.feed:
+            self.additional_where += """ AND "feed.name" = ANY(%s::VARCHAR[]) """
+            self.additional_params += ('{'+','.join(self.args.feed)+'}', )
+        if self.args.asn:
+            self.additional_where += """ AND "source.asn" = ANY(%s::INT[]) """
+            self.additional_params += ('{'+','.join(map(str, self.args.asn))+'}', )
+        if self.args.taxonomy:
+            self.additional_where += """ AND "classification.taxonomy" = ANY(%s::VARCHAR[]) """
+            self.additional_params += ('{'+','.join(self.args.taxonomy)+'}', )
+
+    def connect_database(self):
+        self.con = psycopg2.connect(database=self.config['database']['database'],
+                                    user=self.config['database']['user'],
+                                    password=self.config['database']['password'],
+                                    host=self.config['database']['host'],
+                                    port=self.config['database']['port'],
+                                    sslmode=self.config['database']['sslmode'],
+                                    )
+        self.con.autocommit = True
+        self.cur = self.con.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+
+    def execute(self, query, parameters=(), extend=True):
+        """ Passes query to database. """
+        if extend:
+            query = query + self.additional_where
+            parameters = parameters + self.additional_params
+        self.logger.debug(self.cur.mogrify(query, parameters))
+        self.cur.execute(query, parameters)
+
+    def executemany(self, query, parameters=(), extend=True):
+        """ Passes query to database. """
+        if extend:
+            query = query + self.additional_where
+            parameters = [param + self.additional_params for param in parameters]
+        if self.config['log_level'] == 'debug':
+            for param in parameters:
+                self.logger.debug(self.cur.mogrify(query, param))
+        self.cur.executemany(query, parameters)
