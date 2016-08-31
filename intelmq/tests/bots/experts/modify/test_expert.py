@@ -65,6 +65,47 @@ class TestModifyExpertBot(test.BotTestCase, unittest.TestCase):
         for position, event_out in enumerate(OUTPUT):
             self.assertMessageEqual(position, event_out)
 
+INPUT2 = [
+    {'malware.name': 'Citadel certpl'},
+    {'malware.name': 'dridex-date'},
+    {'malware.name': 'bitdefender-nivdort'},
+
+         ]
+OUTPUT2 = [
+    {'classification.identifier': 'citadel'},
+    {'classification.identifier': 'dridex'},
+    {'malware.name': 'nivdort'},
+          ]
+for index in range(len(INPUT2)):
+    copy1 = EVENT_TEMPL.copy()
+    copy2 = EVENT_TEMPL.copy()
+    copy1.update(INPUT2[index])
+    copy2.update(INPUT2[index])
+    copy2.update(OUTPUT2[index])
+    INPUT2[index] = copy1
+    OUTPUT2[index] = copy2
+
+class TestMoreFeedsModifyExpertBot(test.BotTestCase, unittest.TestCase):
+    """Testing ModifyExpertBot for 'morefeeds' configuration.
+    """
+
+    @classmethod
+    def set_bot(cls):
+        cls.bot_reference = ModifyExpertBot
+        config_path = resource_filename('intelmq',
+                                        'bots/experts/modify/examples/morefeeds.conf')
+        cls.sysconfig = {'configuration_path': config_path
+                         }
+        cls.default_input_message = {'__type': 'Event'}
+
+    def test_events(self):
+        """ Test if correct Events have been produced. """
+        self.input_message = INPUT2
+        self.run_bot(iterations=len(INPUT2))
+
+        for position, event_out in enumerate(OUTPUT2):
+            self.assertMessageEqual(position, event_out)
+
 
 if __name__ == '__main__':
     unittest.main()
