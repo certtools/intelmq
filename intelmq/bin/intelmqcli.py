@@ -220,6 +220,8 @@ class IntelMQCLIContoller(lib.IntelMQCLIContollerTemplate):
             return
         if not requestor:
             requestor = contact
+
+        ### PREPARATION
         query = self.shrink_dict(query)
         ids = list(str(row['id']) for row in query)
 
@@ -245,7 +247,7 @@ class IntelMQCLIContoller(lib.IntelMQCLIContollerTemplate):
             query = [{key: utils.encode(val) if isinstance(val, six.text_type) else val for key, val in row.items()} for row in query]
         writer.writerows(query)
         # note this might contain UTF-8 chars! let's ignore utf-8 errors. sorry.
-        data = unicode(csvfile.getvalue(), 'utf-8')
+        data = unicode(csvfile.getvalue(), 'utf-8')  # TODO: PY2 only
         attachment_text = data.encode('ascii', 'ignore')
         attachment_lines = attachment_text.splitlines()
 
@@ -260,6 +262,7 @@ Subject: {subj}
     '''.format(to=requestor, subj=subject, text=text)
         showed_text_len = showed_text.count('\n')
 
+        ### SHOW DATA
         if self.table_mode and six.PY2:
             print(red('Sorry, no table mode for ancient python versions!'))
         elif self.table_mode and not six.PY2:
@@ -298,6 +301,8 @@ Subject: {subj}
                 print(showed_text, attachment_text, sep='\n')
         print('-' * 100)
         automatic = False  # TODO: implement later
+
+        ### MENU
         if automatic and requestor:
             answer = 's'
         else:
@@ -332,22 +337,8 @@ Subject: {subj}
         if text.startswith(str(red)):
             error(red('I won\'t send with a missing text!'))
             return
-        self.save_to_rt(ids=ids, subject=subject, requestor=requestor,
-                        body=text, taxonomy=taxonomy,
-                        csvfile=csvfile, incident_id=incident_id)
 
-        if requestor != contact and not self.dryrun:
-            asns = set(str(row['source.asn']) for row in query)
-            answer = input(inverted('Save recipient {!r} for ASNs {!s}? [Y/n] '
-                                    ''.format(requestor,
-                                              ', '.join(asns)))).strip()
-            if answer.strip().lower() in ('', 'y', 'j'):
-                self.query_update_contact(asns=asns, contact=requestor)
-                if self.cur.rowcount == 0:
-                    self.query_insert_contact(asns=asns, contact=requestor)
-
-    def save_to_rt(self, ids, subject, requestor, taxonomy, body,
-                   csvfile, incident_id):
+        ### INVESTIGATION
         investigation_id = self.rt.create_ticket(Queue='Investigations',
                                                  Subject=subject,
                                                  Owner=self.config['rt']['user'],
@@ -361,12 +352,14 @@ Subject: {subj}
             error(red('Could not link Investigation to Incident.'))
             return
 
+
+        ### CORRESPOND
         if self.zipme:
             attachment = io.BytesIO()
             ziphandle = zipfile.ZipFile(attachment, mode='w',
                                         compression=zipfile.ZIP_DEFLATED)
             data = csvfile.getvalue()
-            data = unicode(data, 'utf-8')
+            data = unicode(data, 'utf-8')  # TODO: PY2 only
             ziphandle.writestr('events.csv', data.encode('utf-8'))
             ziphandle.close()
             attachment.seek(0)
@@ -379,7 +372,7 @@ Subject: {subj}
             mimetype = 'text/csv'
 
         # TODO: CC
-        correspond = self.rt.reply(investigation_id, text=body,
+        correspond = self.rt.reply(investigation_id, text=text,
                                    files=[(filename, attachment, mimetype)])
         if not correspond:
             error(red('Could not correspond with text and file.'))
@@ -391,12 +384,19 @@ Subject: {subj}
                          [(investigation_id, evid) for evid in ids])
         print(green('Linked events to investigation.'))
 
+        ### RESOLVE
         if not self.rt.edit_ticket(incident_id, Status='resolved'):
             error(red('Could not close incident {}.'.format(incident_id)))
-
-    def query_update_contact(self, contact, asns):
-        self.executemany(lib.QUERY_UPDATE_CONTACT,
-                         [(contact, asn) for asn in asns])
+        if requestor != contact and not self.dryrun:
+            asns = set(str(row['source.asn']) for row in query)
+            answer = input(inverted('Save recipient {!r} for ASNs {!s}? [Y/n] '
+                                    ''.format(requestor,
+                                              ', '.join(asns)))).strip()
+            if answer.strip().lower() in ('', 'y', 'j'):
+                self.executemany(lib.QUERY_UPDATE_CONTACT,
+                                 [(requestor, asn) for asn in asns])
+                if self.cur.rowcount == 0:
+                    self.query_insert_contact(asns=asns, contact=requestor)
 
     def query_insert_contact(self, contact, asns):
         user = os.environ['USER']
