@@ -32,7 +32,7 @@
   * [Uninstall](#uninstall)
   * [Frequently Asked Questions](#frequently-asked-questions)
   * [Additional Information](#additional-information)
-    * [Perfomance Tests](#perfomance-tests)
+    * [Performance Tests](#performance-tests)
 
 
 # Requirements
