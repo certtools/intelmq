@@ -1,3 +1,4 @@
+* Install the REQUIREMENTS.TXT
 * Download database from https://geolite.maxmind.com/download/geoip/database/GeoLite2-City.mmdb.gz
 * Unzip
 * Create geoip folder '/opt/intelmq/var/lib/bots/maxmind_geoip'
