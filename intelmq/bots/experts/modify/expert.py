@@ -66,7 +66,7 @@ class ModifyExpertBot(Bot):
 
         return matches
 
-    def apply_action(self, event, action, matches):
+    def apply_action(self, event, action, matches={}):
         for name, value in action.items():
             event.add(name, value.format(msg=event,
                                          matches={k: MatchGroupMapping(v)
@@ -79,8 +79,9 @@ class ModifyExpertBot(Bot):
         for section_id, section in self.config.items():
             default_cond = section.get('__default', [{}, {}])[0]
             default_action = section.get('__default', [{}, {}])[1]
-            if self.matches((section_id, '__default'),
-                            event, default_cond) is None:
+            default_matches =  self.matches((section_id, '__default'),
+                                                event, default_cond)
+            if default_matches is None:
                 continue
 
             applied = False
@@ -98,7 +99,7 @@ class ModifyExpertBot(Bot):
 
             if not applied and default_action != {}:
                 self.logger.debug('Apply {}/__default.'.format(section_id))
-                self.apply_action(event, default_action)
+                self.apply_action(event, default_action, default_matches)
 
         self.send_message(event)
         self.acknowledge_message()
