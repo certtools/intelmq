@@ -57,7 +57,6 @@ setup(
     maintainer_email='wagner@cert.at',
     install_requires=REQUIRES,
     tests_requires=REQUIRES+[
-        'mock>=1.1.1',
         'nose',
         ],
     test_suite='nose.collector',
