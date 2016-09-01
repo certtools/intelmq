@@ -46,135 +46,90 @@ parser.add_argument("--cidentifier",
                     default=None,
                     help="Specify the classification.identifier")
 parser.add_argument("--comment",
-                    default=None,
+                    default="",
                     help="Specify a comment")
 
-TABLENAME = "inhibition"
-CTTABLENAME = "classification_type"
-CITABLENAME = "classification_identifier"
+
+def lookup_classification(cur, kind, value):
+    if value is not None:
+        cur.execute("SELECT id FROM classification_{} WHERE name = %s;"
+                    .format(kind), (value,))
+        result = cur.fetchall()
+        if result:
+            return result[0]
+    return None
+
+
+def lookup_or_create_as(cur, asn):
+    if asn is not None:
+        cur.execute("SELECT true FROM autonomous_system WHERE number = %s;",
+                    (asn,))
+        if bool(cur.fetchall()):
+            return asn
+        cur.execute("INSERT INTO autonomous_system (number, comment)"
+                    " VALUES (%s, %s);",
+                    (asn, "Created by add_inhibition.py"))
+        return asn
+    return None
+
+
+def lookup_or_create_network(cur, network):
+    if network is not None:
+        cur.execute("SELECT id FROM network WHERE address = %s;", (network,))
+        result = cur.fetchall()
+        if result:
+            return result[0]
+        cur.execute("INSERT INTO network (address, comment) VALUES (%s, %s)"
+                    " RETURNING id;",
+                    (network, "Created by add_inhibition.py"))
+        return cur.fetchall()[0]
+    return None
+
+
+def add_inhibition(cur, asn, network, ctype, cidentifier, comment):
+    ctype_id = lookup_classification(cur, "type", ctype)
+    cidentifier_id = lookup_classification(cur, "identifier", cidentifier)
+
+    classification_ok = True
+    if ctype is not None and ctype_id is None:
+        classification_ok = False
+        print("Could not find classification.type %r" % ctype, file=sys.stderr)
+    if cidentifier is not None and cidentifier_id is None:
+        classification_ok = False
+        print("Could not find classification.identifier %r" % cidentifier,
+              file=sys.stderr)
+    if not classification_ok:
+        sys.exit(1)
+
+    asn_id = lookup_or_create_as(cur, asn)
+    network_id = lookup_or_create_network(cur, network)
+
+    cur.execute("INSERT INTO inhibition"
+                " (asn_id, net_id, classification_type_id,"
+                "  classification_identifier_id, comment)"
+                " VALUES (%s, %s, %s, %s, %s);",
+                (asn_id, network_id, ctype_id, cidentifier_id, comment))
 
 
 def main():
     args = parser.parse_args()
+
+    if args.asn is None and args.network is None:
+        print("At least one of --asn and --network must be specified",
+              file=sys.stderr)
+        sys.exit(1)
+
     if args.verbose:
         print('Trying to insert data')
         print('---------------------')
 
-    con = None
+    con = psycopg2.connect(dsn=args.conninfo)
     try:
-        con = psycopg2.connect(dsn=args.conninfo)
-        cur = con.cursor()
-
-        cidentifier_id = None
-        ctype_id = None
-        asn_id = None
-        network_id = None
-
-        # Type
-        if args.ctype:
-            if args.verbose:
-                print('** Determining the ID of the classification type %s'
-                      % (args.ctype, ))
-
-            cur.execute("SELECT id FROM %s WHERE name = %s",
-                        (CTTABLENAME, args.ctype, ))
-            result = cur.fetchall()
-
-            if not result or not result.size() == 1:
-                ctype_id = result[0]
-                result = None
-            else:
-                print('The classification type %s could not be determined'
-                      % (args.ctype, ))
-                if con:
-                    con.close()
-                sys.exit(1)
-
-        # Identifier
-        if args.cidentifier:
-            if args.verbose:
-                print('** Determining the ID of the classification identifier '
-                      '%s' % (args.cidentifier, ))
-
-            cur.execute("SELECT id FROM %s WHERE name = %s",
-                        (CITABLENAME, args.cidentifier, ))
-            result = cur.fetchall()
-
-            if not result or not result.size() == 1:
-                cidentifier_id = result[0]
-                result = None
-            else:
-                print('The classification identifier %s could not be '
-                      'determined' % (args.cidentifier, ))
-                if con:
-                    con.close()
-                sys.exit(1)
-
-        # IP / CIDR
-        if args.network:
-            if args.verbose:
-                print('** Determining the ID of the network %s'
-                      % (args.network, ))
-
-            # TODO Does this need to order by Network Size??
-            cur.execute("SELECT id FROM %s WHERE address <<= %s",
-                        ("network", args.network, ))
-            result = cur.fetchall()
-
-            if not result:
-                network_id = result[0]
-                result = None
-            else:
-                print('The network %s could not be determined'
-                      % (args.network, ))
-                if con:
-                    con.close()
-                sys.exit(1)
-
-        # ASN
-        if args.asn:
-            if args.verbose:
-                print('** Determining the ID of the autonomous system %s'
-                      % (args.cidentifier, ))
-
-            # TODO is this correct?
-            cur.execute("SELECT number FROM %s WHERE ripe_aut_num = %s",
-                        ("autonomous_system", args.cidentifier, ))
-            result = cur.fetchall()
-
-            if not result or not result.size() == 1:
-                asn_id = result[0]
-                result = None
-            else:
-                print('The classification type %s could not be determined'
-                      % (args.cidentifier, ))
-                if con:
-                    con.close()
-                sys.exit(1)
-
-        if asn_id or network_id or cidentifier_id or ctype_id:
-            if args.verbose:
-                print('** All set, we are inserting now...')
-            cur.execute("INSERT into %s (asn_id, net_id, "
-                        "classification_type_id, classification_identifier_id"
-                        ", comment) VALUES (%s, %s, %s, %s, %s)",
-                        (TABLENAME, asn_id, network_id, ctype_id,
-                        cidentifier_id, comment, ))
-
-        else:
-            print('** I don\'t know what I should insert. Exiting.')
-            if con:
-                con.close()
-            sys.exit(1)
-
-    except psycopg2.DatabaseError as e:
-        if con:
-            con.rollback()
-        print("Error {}".format(e))
-        sys.exit(1)
+        add_inhibition(con.cursor(), args.asn, args.network, args.ctype,
+                       args.cidentifier, args.comment)
+        con.commit()
     finally:
-        if con:
-            con.close()
+        con.close()
 
 
 if __name__ == '__main__':
