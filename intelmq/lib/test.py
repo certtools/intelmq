@@ -9,8 +9,8 @@ import io
 import json
 import logging
 import os
+import unittest.mock as mock
 
-import mock
 import pkg_resources
 
 import intelmq.lib.pipeline as pipeline
