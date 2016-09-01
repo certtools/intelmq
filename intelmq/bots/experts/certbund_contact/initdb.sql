@@ -206,13 +206,13 @@ CREATE TABLE fqdn (
 
     comment TEXT NOT NULL DEFAULT ''
 );
-CREATE INDEX fqdn_fqdn_idx ON fqdn (fqdn);
+
 
 CREATE TABLE fqdn_automatic (
     LIKE automatic_templ INCLUDING ALL,
     LIKE fqdn INCLUDING ALL
 );
-CREATE INDEX fqdn_automatic_fqdn_idx ON fqdn (fqdn);
+
 
 
 /*
