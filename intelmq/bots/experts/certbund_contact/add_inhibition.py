@@ -36,7 +36,7 @@ parser.add_argument("--conninfo",
 parser.add_argument("--network",
                     default=None,
                     help="Specify the network as CIDR or IP-Address")
-parser.add_argument("--asn"
+parser.add_argument("--asn",
                     default=None,
                     help="Specify the autonomous system number")
 parser.add_argument("--ctype",
