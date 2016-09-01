@@ -82,8 +82,7 @@ INPUT2 = [
 OUTPUT2 = [
     {'classification.identifier': 'citadel'},
     {'classification.identifier': 'dridex'},
-    { 'classification.identifier': 'bitdefender-nivdort',
-      'malware.name': 'nivdort'},
+    { 'malware.name': 'nivdort'},
           ]
 for index in range(len(INPUT2)):
     copy1 = EVENT_TEMPL2.copy()
