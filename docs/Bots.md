@@ -338,6 +338,11 @@ The configuration is called `modify.conf` and looks like this:
             "malware.name": "^urlzone2?$"
         }, {
             "classification.identifier": "urlzone"
+        }],
+    "bitdefender" : [{
+            "malware.name": "bitdefender-(.*)$"
+        }, {
+            "malware.name": "{matches[malware.name][1]}"
         }]
     },
 "Standard Protocols": {
@@ -350,15 +355,43 @@ The configuration is called `modify.conf` and looks like this:
 }
 ```
 
-The dictionary in the first level holds sections, here called `Spamhaus Cert` to group the rulessets and for easier navigation. It holds another dictionary of rules, consisting of *conditions* and *actions*. The first matching rule is used. Conditions and actions are again dictionaries holding the field names of harmonization and have regex-expressions to existing values (condition) or new values (action). The rule conditions are merged with the default condition and the default action is applied if no rule matches.
+The dictionary on the first level holds sections to group the rules.
+In our example above we have two sections labled `Spamhaus Cert` and `Standard Protocols`. 
+All sections will be considered, but in undefined order.
 
-The default rule/action list may not exist. If the value is an empty string, the bot checks if the field does not exist. This is useful to apply default values for empty fields.
+Each section holds a dictionary of rules, consisting of *conditions* and *actions*. 
+`__default` indicates an optional default rule. If a default rule exist, the section 
+will only be entered, if its conditions match. Actions are optional for the default rule.
+
+Conditions and actions are again dictionaries holding the field names of events 
+and regex-expressions to match values (condition) or set values (action).  
+All matching rules will be applied in no particular order.
+If no rule within a section matches, existing actions of the default rule for the section are applied.
+
+If the value for a condition is an empty string, the bot checks if the field does not exist. 
+This is useful to apply default values for empty fields.
+
+**Attention**: Because the order of execution is undefined,
+you need to take care that no rule depends on values modifed by another rule. 
+Otherwise the results of the bot may be different from one run to the other.
+(A redesign is [under discussion](https://github.com/certtools/intelmq/issues/662) 
+to improve the situation for future versions.)
+
+#### Actions
+
+You can set the value of the field to a string literal or number.
+
+In addition you can use the [standard Python string format syntax](https://docs.python.org/3/library/string.html#format-string-syntax)
+to access the values from the processed event as `msg` and the match groups
+of the conditions as `matches`, see the bitdefender example above. 
+Note that `matches` will also contain the match groups
+from the default conditions if there were any.
 
 #### Examples
 
-We have an event with `feed.name = Spamhaus Cert` and `malware.name = confickerab`. The expert loops over all sections in the file and enters section `Spamhaus Cert`. First, the default condition is checked, it matches! Ok, going on. Otherwise the expert would have continued to the next section. Now, iteration through the rules, the first is rule `conficker`. We combine the conditions of this rule with the default conditions, and both rules match! So we can apply the action, here `classification.identifier` is set to `conficker`, the trivial name.
+We have an event with `feed.name = Spamhaus Cert` and `malware.name = confickerab`. The expert loops over all sections in the file and eventually enters section `Spamhaus Cert`. First, the default condition is checked, it matches! Ok, going on. Otherwise the expert would have selected a different section that has not yet been considered. Now, go through the rules, until we hit the rule `conficker`. We combine the conditions of this rule with the default conditions, and both rules match! So we can apply the action: `classification.identifier` is set to `conficker`, the trivial name.
 
-Assume we have an event with `feed.name = Spamhaus Cert` and `malware.name = feodo`. The default condition matches, but no others. So the default action is applied. The value for `classification.identifier` is `{msg[malware.name]}`, this is [standard Python string format syntax](https://docs.python.org/3/library/string.html#format-string-syntax). Thus you can use any value from the processed event, which is available as `msg`.
+Assume we have an event with `feed.name = Spamhaus Cert` and `malware.name = feodo`. The default condition matches, but no others. So the default action is applied. The value for `classification.identifier` will be set to `feodo` by `{msg[malware.name]}`. 
 
 #### Types
 
