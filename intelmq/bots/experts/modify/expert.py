@@ -66,7 +66,7 @@ class ModifyExpertBot(Bot):
 
         return matches
 
-    def apply_action(self, event, action, matches={}):
+    def apply_action(self, event, action, matches):
         for name, value in action.items():
             event.add(name, value.format(msg=event,
                                          matches={k: MatchGroupMapping(v)
