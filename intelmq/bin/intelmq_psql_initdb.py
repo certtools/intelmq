@@ -57,7 +57,7 @@ def main():
 
         FIELDS[field] = dbtype
 
-    initdb = """CREATE TABLE IF NOT EXISTS events (
+    initdb = """CREATE TABLE events (
     "id" BIGSERIAL UNIQUE PRIMARY KEY,"""
     for field, field_type in sorted(FIELDS.items()):
         initdb += '\n    "{name}" {type},'.format(name=field, type=field_type)

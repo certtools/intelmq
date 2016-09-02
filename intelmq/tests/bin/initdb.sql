@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS events (
+CREATE TABLE events (
     "id" BIGSERIAL UNIQUE PRIMARY KEY,
     "classification.identifier" text,
     "classification.taxonomy" varchar(100),
