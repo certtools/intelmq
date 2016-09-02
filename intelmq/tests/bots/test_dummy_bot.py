@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import unittest
-import mock
+import unittest.mock as mock
 
 import intelmq.lib.bot
 import intelmq.lib.bot as bot
