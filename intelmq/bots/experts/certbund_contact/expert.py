@@ -54,6 +54,9 @@ class CERTBundKontaktExpertBot(Bot):
             if notifications:
                 self.set_certbund_field(event, "notify_" + section,
                                         notifications)
+            elif notifications is False:
+                self.set_certbund_field(event, section + "_inhibited", [])
+
         self.send_message(event)
         self.acknowledge_message()
 
@@ -120,7 +123,7 @@ class CERTBundKontaktExpertBot(Bot):
             try:
                 if self.notification_inhibited(cur, class_type,
                                                class_identifier, ip, fqdn, asn):
-                    return []
+                    return False
 
                 raw_result = self.lookup_manual_and_auto(cur, "fqdn", fqdn,
                                                          class_type)
