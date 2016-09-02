@@ -137,15 +137,12 @@ CREATE TABLE autonomous_system (
 
     comment TEXT NOT NULL DEFAULT ''
 );
-CREATE INDEX autonomous_system_number_idx ON autonomous_system (number);
 
 
 CREATE TABLE autonomous_system_automatic (
     LIKE automatic_templ INCLUDING ALL,
     LIKE autonomous_system INCLUDING ALL
 );
-CREATE INDEX autonomous_system_automatic_number_idx
-    ON autonomous_system_automatic (number);
 
 
 -- A network
@@ -206,13 +203,13 @@ CREATE TABLE fqdn (
 
     comment TEXT NOT NULL DEFAULT ''
 );
-CREATE INDEX fqdn_fqdn_idx ON fqdn (fqdn);
+
 
 CREATE TABLE fqdn_automatic (
     LIKE automatic_templ INCLUDING ALL,
     LIKE fqdn INCLUDING ALL
 );
-CREATE INDEX fqdn_automatic_fqdn_idx ON fqdn (fqdn);
+
 
 
 /*
