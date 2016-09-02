@@ -11,8 +11,8 @@ from intelmq.bots.parsers.misp.parser import MISPParserBot
 with open(os.path.join(os.path.dirname(__file__), 'misp_event.json')) as handle:
     EXAMPLE_MISP_EVENT = handle.read()
 
-intelmq_misp_event = json.dumps(json.loads(EXAMPLE_MISP_EVENT), sort_keys=True,
-                                separators=(', ', ': '))
+with open(os.path.join(os.path.dirname(__file__), 'misp_attribute.json')) as handle:
+    EXAMPLE_MISP_ATTR = handle.read()
 
 EXAMPLE_REPORT = {
     "__type": "Report",
@@ -37,7 +37,7 @@ EXAMPLE_EVENT = {
     "malware.name": "locky",
     'misp.attribute_uuid': '575c8598-f1f0-4c16-a94a-0612c0a83866',
     'misp.event_uuid': '5758ebf5-c898-48e6-9fe9-5665c0a83866',
-    "raw": base64_encode(intelmq_misp_event)
+    "raw": base64_encode(EXAMPLE_MISP_ATTR)
 }
 
 

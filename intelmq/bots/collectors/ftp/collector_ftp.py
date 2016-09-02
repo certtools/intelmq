@@ -31,11 +31,11 @@ class FTPCollectorBot(Bot):
 
         ftp = FTP()
         ftp.connect(host=self.parameters.ftp_host,
-                     port=self.parameters.ftp_port)
+                    port=self.parameters.ftp_port)
         if hasattr(self.parameters, 'ftp_username') \
                 and hasattr(self.parameters, 'ftp_password'):
             ftp.login(user=self.parameters.ftp_username,
-                       passwd=self.parameters.ftp_password)
+                      passwd=self.parameters.ftp_password)
         cwd = '/'
         if hasattr(self.parameters, 'ftp_directory'):
             self.logger.info('Changing working directory to: ' +
@@ -53,8 +53,7 @@ class FTPCollectorBot(Bot):
         files = fnmatch.filter(ftp.nlst(), filemask)
         self.logger.info('Found following files in the directory: ' +
                          repr(files))
-        self.logger.info('Looking for latest file matching following pattern: '
-                         + filemask)
+        self.logger.info('Looking for latest file matching following pattern: ' + filemask)
 
         if files:
             self.logger.info('Retrieving file: ' + files[-1])
@@ -71,8 +70,7 @@ class FTPCollectorBot(Bot):
         except zipfile.BadZipfile:
             raw_reports.append(mem.getvalue())
         else:
-            self.logger.info('Downloaded zip file, extracting following files: '
-                             + ', '.join(zfp.namelist()))
+            self.logger.info('Downloaded zip file, extracting following files: ' + ', '.join(zfp.namelist()))
             for filename in zfp.namelist():
                 raw_reports.append(zfp.read(filename))
 
@@ -84,6 +82,7 @@ class FTPCollectorBot(Bot):
                        str(self.parameters.ftp_port), sanitize=True)
             report.add("feed.accuracy", self.parameters.accuracy, sanitize=True)
             self.send_message(report)
+
 
 if __name__ == "__main__":
     bot = FTPCollectorBot(sys.argv[1])
