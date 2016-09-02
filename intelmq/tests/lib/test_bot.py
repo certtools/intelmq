@@ -8,8 +8,8 @@ import json
 import logging
 import os
 import unittest
+import unittest.mock as mock
 
-import mock
 import pkg_resources
 
 import intelmq.lib.pipeline as pipeline

@@ -1,20 +1,24 @@
 sudo: required
+dist: trusty
 language: python
 python:
   - "3.3"
   - "3.4"
   - "3.5"
 install:
+  - sudo apt-get install dpkg-dev dh-python python-setuptools python3-setuptools python3-all debhelper quilt
   - pip install -r REQUIREMENTS
   - for file in intelmq/bots/*/*/REQUIREMENTS.txt; do pip install -r $file; done
   - pip install coveralls
   - pip install codecov
   - pip install pep8
   - sudo pip install .
-script: nosetests --with-coverage --cover-package=intelmq
+script:
+  - nosetests --with-coverage --cover-package=intelmq
+  - dpkg-buildpackage -us -uc
+  - pep8 intelmq/{bots,lib,bin}
 services:
   - redis-server
 after_success:
   - codecov
   - coveralls
-  - pep8 --config=.pep8 intelmq/

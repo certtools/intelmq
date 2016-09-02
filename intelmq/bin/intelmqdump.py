@@ -201,8 +201,8 @@ def main():
             runtime = utils.load_configuration(RUNTIME_CONF_FILE)
             params = utils.load_parameters(default, runtime)
             pipe = pipeline.PipelineFactory.create(params)
-            for key, entry in [item for (count, item)
-                               in enumerate(content.items()) if count in ids]:
+            for i, (key, entry) in enumerate([item for (count, item)
+                                              in enumerate(content.items()) if count in ids]):
                 if entry['message']:
                     msg = entry['message']
                 else:
@@ -226,7 +226,7 @@ def main():
                 else:
                     del content[key]
                     save_file(fname, content)
-                    print(green('Recovered dump {}.'.format(count)))
+                    print(green('Recovered dump {}.'.format(i)))
             if not content:
                 os.remove(fname)
                 print('Deleted empty file {}'.format(fname))

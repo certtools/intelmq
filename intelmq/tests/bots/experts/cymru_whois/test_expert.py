@@ -17,7 +17,7 @@ EXAMPLE_OUTPUT = {"__type": "Event",
                   "source.network": "93.184.216.0/24",
                   "source.allocated": "2008-06-02T00:00:00+00:00",
                   "source.asn": 15133,
-                  "source.as_name": "EDGECAST - EdgeCast Networks, Inc., US",
+                  "source.as_name": "EDGECAST - MCI Communications Services, Inc. d/b/a Verizon Business, US",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   }
 EXAMPLE_INPUT6 = {"__type": "Event",
@@ -53,6 +53,19 @@ EMPTY_INPUT = {"__type": "Event",
                "source.ip": "198.105.125.77",  # no result
                "time.observation": "2015-01-01T00:00:00+00:00",
                }
+NO_ASN_INPUT = {"__type": "Event",
+                "source.ip": "212.92.127.126",
+                "time.observation": "2015-01-01T00:00:00+00:00",
+                }
+NO_ASN_OUTPUT = {"__type": "Event",
+                 "source.ip": "212.92.127.126",
+                 "time.observation": "2015-01-01T00:00:00+00:00",
+                 "source.asn": 23456,
+                 "source.geolocation.cc": 'RU',
+                 "source.ip": '212.92.127.126',
+                 "source.network": '212.92.127.0/24',
+                 "source.registry": 'ripencc',
+                 }
 
 
 class TestCymruExpertBot(test.BotTestCase, unittest.TestCase):
@@ -84,6 +97,16 @@ class TestCymruExpertBot(test.BotTestCase, unittest.TestCase):
         self.input_message = EMPTY_INPUT
         self.run_bot()
         self.assertMessageEqual(0, EMPTY_INPUT)
+
+    def test_missing_asn(self):
+        """
+        No information for ASN.
+
+        https://github.com/certtools/intelmq/issues/635
+        """
+        self.input_message = NO_ASN_INPUT
+        self.run_bot()
+        self.assertMessageEqual(0, NO_ASN_OUTPUT)
 
     @classmethod
     def tearDownClass(cls):
