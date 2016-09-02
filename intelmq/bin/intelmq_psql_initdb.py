@@ -53,9 +53,7 @@ def main():
         elif value['type'] == 'JSON':
             dbtype = 'json'
         else:
-            print('Unknow type {!r}, assuming varchar(2000) by default'
-                  ''.format(value['type']))
-            dbtype = 'varchar(2000)'
+            raise ValueError('Unknow type %r.' % value['type'])
 
         FIELDS[field] = dbtype
 
