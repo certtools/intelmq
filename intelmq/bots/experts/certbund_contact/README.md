@@ -85,3 +85,65 @@ Add a contact:
   COMMIT TRANSACTION;
 
 ```
+
+## Suppress notification of contacts based upon certain criteria:
+
+It ist possible to suppress the notification of contacts based upon certain
+criteria. Such can be: AS-number, IP address or network (CIDR-notation),
+classification type and classification identifier.
+
+The rules for this suppression are stored in the `inhibition` table.
+
+To add new rules to the inhibition-table, simply run the script `add_inhibiton`.
+Please see `add_inhibition.py --help` for a list of available commands.
+
+The criteria within a rule are "linked" with a "and-operation".
+
+**Examples**:
+
+Suppose you have inserted a rule for `AS123456` and a
+Classification-Type `malware` and a classification.identifier `botnet-drone`.
+The contact of the event:
+
+```
+{
+    "source.as": "as123456",
+    "classification.type": "malware",
+    "classification.identifier": "botnet-drone"
+}
+```
+Would not be notified, wheras the same contact would be notified, if the event
+is:
+```
+{
+    "source.as": "as123456",
+    "classification.type": "malware",
+    "classification.identifier": "zeus"
+}
+```
+
+
+Suppose you have inserted a rule for `AS123456` and a
+Classification-Type `c&c` and no classification.identifier.
+
+For both events, no notification would be created, as the rule matches:
+```
+{
+    "source.as": "as123456",
+    "classification.type": "c&c",
+    "classification.identifier": "myC&C"
+}
+
+{
+    "source.as": "as123456",
+    "classification.type": "malware",
+    "classification.identifier": "AnotherIdentifier"
+}
+```
+
+
+
+# Generating a graphic which visualizes the schema of the ContactDB
+
+You can use `postgresql-autodoc` to do this. PG autodoc is available on both
+debian and ubuntu via apt.
