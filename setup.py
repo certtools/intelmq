@@ -101,5 +101,6 @@ setup(
         'intelmq/bots/experts/maxmind_geoip/update-geoip-data',
         'intelmq/bots/experts/asn_lookup/update-asn-data',
         'intelmq/bots/experts/certbund_contact/ripe_import.py',
+        'intelmq/bots/experts/certbund_contact/add_inhibition.py',
     ],
 )
