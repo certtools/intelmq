@@ -76,6 +76,28 @@ USAGE = '''
     intelmqcli --text='boilerplate name'
     intelmqcli --feed='feedname' '''
 
+SUBJECT = {'spam': None,
+           'malware': None,
+           'botnet drone': None,
+           'ransomware': None,
+           'malware configuration': None,
+           'c&c': None,
+           'scanner': None,
+           'exploit': None,
+           'brute-force': None,
+           'ids alert': None,
+           'defacement': None,
+           'compromised': None,
+           'backdoor': None,
+           'ddos': 'Potential DDoS Sources',
+           'dropzone': None,
+           'phishing': None,
+           'vulnerable service': 'Vulnerable systems',
+           'blacklist': None,
+           'unknown': None,
+           'test': 'Tests',
+           }
+
 QUERY_FEED_NAMES = "SELECT DISTINCT \"feed.name\" from events"
 
 QUERY_IDENTIFIER_NAMES = "SELECT DISTINCT \"classification.identifier\" from events"

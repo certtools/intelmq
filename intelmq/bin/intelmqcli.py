@@ -14,7 +14,6 @@ import os
 import readline  # nopep8, hooks into input()
 import subprocess
 import tempfile
-import time
 import zipfile
 
 import psycopg2
@@ -132,12 +131,16 @@ class IntelMQCLIContoller(lib.IntelMQCLIContollerTemplate):
             self.logger.info("All taxonomies: " + ",".join(taxonomies))
             for taxonomy in taxonomies:
                 self.logger.info('Handling taxonomy {!r}.'.format(taxonomy))
+                if taxonomy not in lib.SUBJECT or lib.SUBJECT[taxonomy] is None:
+                    self.logger.error('No subject defined for %r.' % taxonomy)
+                    continue
                 self.execute(lib.QUERY_OPEN_EVENT_REPORTS_BY_TAXONOMY, (taxonomy, ))
                 report_ids = [x['rtir_report_id'] for x in self.cur.fetchall()]
                 self.execute(lib.QUERY_OPEN_EVENT_IDS_BY_TAXONOMY, (taxonomy, ))
                 event_ids = [x['id'] for x in self.cur.fetchall()]
                 subject = ('%s %s incidents of %s'
-                           '' % (len(event_ids), taxonomy, time.strftime('%Y-%m-%d')))
+                           '' % (len(event_ids), taxonomy,
+                                 datetime.datetime.now().strftime('%Y-%m-%d')))
 
                 if self.dryrun:
                     self.logger.info('Dry run: Skipping creation of incident.')
@@ -221,10 +224,10 @@ class IntelMQCLIContoller(lib.IntelMQCLIContollerTemplate):
         query = self.shrink_dict(query)
         ids = list(str(row['id']) for row in query)
 
-        subject = ('{date}: {count} {tax} incidents for your network'
+        subject = ('{count} {tax} in your network: {date}'
                    ''.format(count=len(query),
                              date=datetime.datetime.now().strftime('%Y-%m-%d'),
-                             tax=taxonomy))
+                             tax=lib.SUBJECT[taxonomy]))
         text = self.get_text(taxonomy)
         if six.PY2:
             csvfile = io.BytesIO()
@@ -337,8 +340,6 @@ Subject: {subj}
             return
 
         ### INVESTIGATION
-        subject = ('%s %s incidents in your network: %s'
-                   ''% (len(query), taxonomy, time.strftime('%Y-%m-%d')))
         investigation_id = self.rt.create_ticket(Queue='Investigations',
                                                  Subject=subject,
                                                  Owner=self.config['rt']['user'],
@@ -353,7 +354,7 @@ Subject: {subj}
             return
 
         ### CORRESPOND
-        filename = '%s-%s.csv' % (time.strftime('%Y-%m-%d'), taxonomy)
+        filename = '%s-%s.csv' % (datetime.datetime.now().strftime('%Y-%m-%d'), taxonomy)
         if self.zipme or len(query) > self.config['rt']['zip_threshold']:
             attachment = io.BytesIO()
             ziphandle = zipfile.ZipFile(attachment, mode='w',
