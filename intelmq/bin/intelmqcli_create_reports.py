@@ -44,10 +44,20 @@ class IntelMQCLIContoller(lib.IntelMQCLIContollerTemplate):
     appname = 'intelmqcli_create_reports'
 
     def init(self):
+        self.parser.add_argument('-l', '--list-feeds', action='store_true',
+                                 help='List all open feeds')
         self.setup()
         if self.args.quiet:
             global quiet
             quiet = True
+
+        self.connect_database()
+        if self.args.list_feeds:
+            self.execute(lib.QUERY_OPEN_FEEDNAMES)
+            for row in self.cur.fetchall():
+                if row['feed.name']:
+                    print(row['feed.name'])
+            exit(0)
 
         if not self.rt.login():
             error(red('Could not login as {} on {}.'.format(self.config['rt']['user'],
@@ -56,12 +66,11 @@ class IntelMQCLIContoller(lib.IntelMQCLIContollerTemplate):
         else:
             print('Logged in as {} on {}.'.format(self.config['rt']['user'],
                                                   self.config['rt']['uri']))
-        self.connect_database()
 
         self.execute(lib.QUERY_OPEN_FEEDNAMES)
         feednames = [x['feed.name'] for x in self.cur.fetchall()]
         if feednames:
-            print("All feeds: " + ",".join(feednames))
+            print("All feeds: " + ", ".join(['%r']*len(feednames))%tuple(feednames))
         else:
             print('Nothing to do.')
         for feedname in feednames:

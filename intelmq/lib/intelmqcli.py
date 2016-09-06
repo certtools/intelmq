@@ -123,11 +123,11 @@ WHERE
 
 BASE_WHERE = """
 "notify" = TRUE AND
-"time.source" IS NOT NULL AND
+"time.source" >= now() - interval '1 month' AND
 "sent_at" IS NULL AND
 "feed.name" IS NOT NULL AND
 "classification.taxonomy" IS NOT NULL AND
-as_contacts.contacts IS NOT NULL AND
+"source.abuse_contact" IS NOT NULL AND
 UPPER("source.geolocation.cc") = 'AT'
 """
 # PART 1: CREATE REPORTS
@@ -135,14 +135,12 @@ QUERY_OPEN_FEEDNAMES = """
 SELECT
     DISTINCT "feed.name"
 FROM "events"
-LEFT OUTER JOIN as_contacts ON events."source.asn" = as_contacts.asnum
 WHERE
     "rtir_report_id" IS NULL AND
 """ + BASE_WHERE
 QUERY_OPEN_EVENTS_BY_FEEDNAME = """
 SELECT *
 FROM "events"
-LEFT OUTER JOIN as_contacts ON events."source.asn" = as_contacts.asnum
 WHERE
     "feed.name" = %s AND
     "rtir_report_id" IS NULL AND
@@ -152,7 +150,6 @@ QUERY_OPEN_TAXONOMIES = """
 SELECT
     DISTINCT "classification.taxonomy"
 FROM "events"
-LEFT OUTER JOIN as_contacts ON events."source.asn" = as_contacts.asnum
 WHERE
     "rtir_report_id" IS NOT NULL AND
     "rtir_incident_id" IS NULL AND
@@ -161,7 +158,6 @@ QUERY_OPEN_EVENT_REPORTS_BY_TAXONOMY = """
 SELECT
     DISTINCT "rtir_report_id"
 FROM "events"
-LEFT OUTER JOIN as_contacts ON events."source.asn" = as_contacts.asnum
 WHERE
     "rtir_report_id" IS NOT NULL AND
     "rtir_incident_id" IS NULL AND
@@ -171,7 +167,6 @@ QUERY_OPEN_EVENT_IDS_BY_TAXONOMY = """
 SELECT
     "id"
 FROM "events"
-LEFT OUTER JOIN as_contacts ON events."source.asn" = as_contacts.asnum
 WHERE
     "rtir_report_id" IS NOT NULL AND
     "rtir_incident_id" IS NULL AND
@@ -180,9 +175,8 @@ WHERE
 # PART 3: INVESTIGATIONS
 QUERY_DISTINCT_CONTACTS_BY_INCIDENT = """
 SELECT
-DISTINCT "contacts"
+DISTINCT "source.abuse_contact"
 FROM events
-LEFT OUTER JOIN as_contacts ON events."source.asn" = as_contacts.asnum
 WHERE
     rtir_report_id IS NOT NULL AND
     rtir_incident_id = %s AND
@@ -190,68 +184,67 @@ WHERE
 """ + BASE_WHERE
 QUERY_EVENTS_BY_ASCONTACT_INCIDENT = """
 SELECT
-    to_char(events."time.source",
+    to_char("time.source",
             'YYYY-MM-DD"T"HH24:MI:SSOF') as "time.source",
-    events.id,
-    events."feed.code" as feed,
-    events."source.ip",
-    events."source.port",
-    events."source.asn",
-    events."source.network",
-    events."source.geolocation.cc",
-    events."source.geolocation.region",
-    events."source.geolocation.city",
-    events."source.account",
-    events."source.fqdn",
-    events."source.local_hostname",
-    events."source.local_ip",
-    events."source.reverse_dns",
-    events."source.tor_node",
-    events."source.url",
-    events."classification.identifier",
-    events."classification.taxonomy",
-    events."classification.type",
-    events."comment",
-    events."destination.ip",
-    events."destination.port",
-    events."destination.asn",
-    events."destination.network",
-    events."destination.geolocation.cc",
-    events."destination.geolocation.region",
-    events."destination.geolocation.city",
-    events."destination.account",
-    events."destination.fqdn",
-    events."destination.local_hostname",
-    events."destination.local_ip",
-    events."destination.reverse_dns",
-    events."destination.tor_node",
-    events."destination.url",
-    events."event_description.target",
-    events."event_description.text",
-    events."event_description.url",
-    events."event_hash",
-    events."extra",
-    events."feed.accuracy",
-    events."malware.hash",
-    events."malware.hash.md5",
-    events."malware.hash.sha1",
-    events."malware.name",
-    events."malware.version",
-    events."misp_uuid",
-    events."notify",
-    events."protocol.application",
-    events."protocol.transport",
-    events."rtir_report_id",
-    events."screenshot_url",
-    events."status",
-    events."time.observation"
+    id,
+    "feed.code" as feed,
+    "source.ip",
+    "source.port",
+    "source.asn",
+    "source.network",
+    "source.geolocation.cc",
+    "source.geolocation.region",
+    "source.geolocation.city",
+    "source.account",
+    "source.fqdn",
+    "source.local_hostname",
+    "source.local_ip",
+    "source.reverse_dns",
+    "source.tor_node",
+    "source.url",
+    "classification.identifier",
+    "classification.taxonomy",
+    "classification.type",
+    "comment",
+    "destination.ip",
+    "destination.port",
+    "destination.asn",
+    "destination.network",
+    "destination.geolocation.cc",
+    "destination.geolocation.region",
+    "destination.geolocation.city",
+    "destination.account",
+    "destination.fqdn",
+    "destination.local_hostname",
+    "destination.local_ip",
+    "destination.reverse_dns",
+    "destination.tor_node",
+    "destination.url",
+    "event_description.target",
+    "event_description.text",
+    "event_description.url",
+    "event_hash",
+    "extra",
+    "feed.accuracy",
+    "malware.hash",
+    "malware.hash.md5",
+    "malware.hash.sha1",
+    "malware.name",
+    "malware.version",
+    "misp_uuid",
+    "notify",
+    "protocol.application",
+    "protocol.transport",
+    "rtir_report_id",
+    "screenshot_url",
+    "status",
+    "time.observation"
 FROM events
-LEFT OUTER JOIN as_contacts ON events."source.asn" = as_contacts.asnum
 WHERE
-    events.rtir_report_id IS NOT NULL AND
-    events.rtir_incident_id = %s AND
-    events.rtir_investigation_id IS NULL AND
-    as_contacts.contacts = %s AND
+    rtir_report_id IS NOT NULL AND
+    rtir_incident_id = %s AND
+    rtir_investigation_id IS NULL AND
+    "source.abuse_contact" = %s AND
 """ + BASE_WHERE
 
 
@@ -264,6 +257,7 @@ class IntelMQCLIContollerTemplate():
     usage = ''
     epilog = ''
     additional_params = ()
+    dryrun = False
 
     def __init__(self):
 

@@ -78,8 +78,8 @@ class IntelMQCLIContoller(lib.IntelMQCLIContollerTemplate):
                                  help='Automatically compress/shrink the attached CSV report if fields are empty (default = False).')
 
         self.parser.add_argument('-z', '--zip', action='store_true',
-                                 help='Zip every events.csv attachement to an'
-                                     'investigation for RT (defaults to false)')
+                                 help='Zip every events.csv attachement to an '
+                                      'investigation for RT (defaults to false)')
         self.setup()
 
         if self.args.quiet:
@@ -151,7 +151,8 @@ class IntelMQCLIContoller(lib.IntelMQCLIContollerTemplate):
                 report_ids = [x['rtir_report_id'] for x in self.cur.fetchall()]
                 self.execute(lib.QUERY_OPEN_EVENT_IDS_BY_TAXONOMY, (taxonomy, ))
                 event_ids = [x['id'] for x in self.cur.fetchall()]
-                subject = 'Incidents of {} on {}'.format(taxonomy, time.strftime('%Y-%m-%d'))
+                subject = ('%s %s incidents of %s'
+                           ''% (len(event_ids), taxonomy, time.strftime('%Y-%m-%d')))
 
                 if self.dryrun:
                     print('Dry run: Skipping creation of incident.')
@@ -178,13 +179,17 @@ class IntelMQCLIContoller(lib.IntelMQCLIContollerTemplate):
                 print(green('Linked events to incident.'))
 
                 self.execute(lib.QUERY_DISTINCT_CONTACTS_BY_INCIDENT, (incident_id, ))
-                contacts = [x['contacts'] for x in self.cur.fetchall()]
+                contacts = [x['source.abuse_contact'] for x in self.cur.fetchall()]
                 for contact in contacts:
                     print('Handling contact ' + contact)
                     self.execute(lib.QUERY_EVENTS_BY_ASCONTACT_INCIDENT,
                                  (incident_id, contact, ))
                     data = self.cur.fetchall()
-                    self.send(taxonomy, contact, data, incident_id)
+                    try:
+                        self.send(taxonomy, contact, data, incident_id)
+                    except IndexError:
+                        # Bug in RT/python-rt
+                        pass
 
         finally:
             self.rt.logout()
@@ -347,6 +352,8 @@ Subject: {subj}
             return
 
         ### INVESTIGATION
+        subject = ('%s %s incidents in your network: %s'
+                   ''% (len(query), taxonomy, time.strftime('%Y-%m-%d')))
         investigation_id = self.rt.create_ticket(Queue='Investigations',
                                                  Subject=subject,
                                                  Owner=self.config['rt']['user'],
@@ -360,8 +367,8 @@ Subject: {subj}
             error(red('Could not link Investigation to Incident.'))
             return
 
-
         ### CORRESPOND
+        filename = '%s-%s.csv'.format(time.strftime('%Y-%m-%d'), taxonomy)
         if self.zipme:
             attachment = io.BytesIO()
             ziphandle = zipfile.ZipFile(attachment, mode='w',
@@ -371,12 +378,11 @@ Subject: {subj}
             ziphandle.writestr('events.csv', data.encode('utf-8'))
             ziphandle.close()
             attachment.seek(0)
-            filename = 'events.csv.zip'
+            filename += '.zip'
             mimetype = 'application/octet-stream'
         else:
             attachment = csvfile
             attachment.seek(0)
-            filename = 'events.csv'
             mimetype = 'text/csv'
 
         # TODO: CC
