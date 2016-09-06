@@ -171,11 +171,7 @@ class IntelMQCLIContoller(lib.IntelMQCLIContollerTemplate):
                     self.execute(lib.QUERY_EVENTS_BY_ASCONTACT_INCIDENT,
                                  (incident_id, contact, ))
                     data = self.cur.fetchall()
-                    try:
-                        self.send(taxonomy, contact, data, incident_id)
-                    except IndexError:
-                        # Bug in RT/python-rt
-                        pass
+                    self.send(taxonomy, contact, data, incident_id)
 
         finally:
             self.rt.logout()
@@ -388,8 +384,12 @@ Subject: {subj}
         self.logger.info('Linked events to investigation.')
 
         ### RESOLVE
-        if not self.rt.edit_ticket(incident_id, Status='resolved'):
-            self.logger.error('Could not close incident {}.'.format(incident_id))
+        try:
+            if not self.rt.edit_ticket(incident_id, Status='resolved'):
+                self.logger.error('Could not close incident {}.'.format(incident_id))
+        except IndexError:
+            # Bug in RT/python-rt
+            pass
         if requestor != contact and not self.dryrun:
             asns = set(str(row['source.asn']) for row in query)
             answer = input(inverted('Save recipient {!r} for ASNs {!s}? [Y/n] '
