@@ -44,7 +44,7 @@ class IntelMQCLIContoller(lib.IntelMQCLIContollerTemplate):
     appname = 'intelmqcli_create_reports'
 
     def init(self):
-        self.parse_args()
+        self.setup()
         if self.args.quiet:
             global quiet
             quiet = True
@@ -60,7 +60,10 @@ class IntelMQCLIContoller(lib.IntelMQCLIContollerTemplate):
 
         self.execute(lib.QUERY_OPEN_FEEDNAMES)
         feednames = [x['feed.name'] for x in self.cur.fetchall()]
-        print("All feeds: " + ",".join(feednames))
+        if feednames:
+            print("All feeds: " + ",".join(feednames))
+        else:
+            print('Nothing to do.')
         for feedname in feednames:
             print('Handling feedname {!r}.'.format(feedname))
             self.execute(lib.QUERY_OPEN_EVENTS_BY_FEEDNAME,
@@ -83,6 +86,10 @@ class IntelMQCLIContoller(lib.IntelMQCLIContollerTemplate):
             ziphandle.close()
             attachment.seek(0)
             subject = 'Reports of {} on {}'.format(feedname, time.strftime('%Y-%m-%d'))
+
+            if self.dryrun:
+                print('Dry run: Skipping creation of report.')
+                continue
 
             report_id = self.rt.create_ticket(Queue='Incident Reports', Subject=subject,
                                               Owner=self.config['rt']['user'])

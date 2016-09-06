@@ -266,24 +266,6 @@ class IntelMQCLIContollerTemplate():
     additional_params = ()
 
     def __init__(self):
-        with open('/etc/intelmq/intelmqcli.conf') as conf_handle:
-            self.config = json.load(conf_handle)
-        home = os.path.expanduser("~")
-        with open(os.path.expanduser(home + '/.intelmq/intelmqcli.conf')) as conf_handle:
-            user_config = json.load(conf_handle)
-
-        for key, value in user_config.items():
-            if key in self.config and isinstance(value, dict):
-                self.config[key].update(value)
-            else:
-                self.config[key] = value
-
-        self.logger = utils.log('intelmqcli', log_path='/tmp/',
-                                log_level=self.config['log_level'],
-                                stream=sys.stdout)
-
-        self.rt = rt.Rt(self.config['rt']['uri'], self.config['rt']['user'],
-                        self.config['rt']['password'])
 
         self.parser = argparse.ArgumentParser(prog=self.appname,
                                               usage = self.usage,
@@ -312,7 +294,7 @@ class IntelMQCLIContollerTemplate():
 
         self.init()
 
-    def parse_args(self):
+    def setup(self):
         self.args = self.parser.parse_args()
 
         if self.args.verbose:
@@ -331,6 +313,25 @@ class IntelMQCLIContollerTemplate():
         if self.args.taxonomy:
             self.additional_where += """ AND "classification.taxonomy" = ANY(%s::VARCHAR[]) """
             self.additional_params += ('{'+','.join(self.args.taxonomy)+'}', )
+
+        with open('/etc/intelmq/intelmqcli.conf') as conf_handle:
+            self.config = json.load(conf_handle)
+        home = os.path.expanduser("~")
+        with open(os.path.expanduser(home + '/.intelmq/intelmqcli.conf')) as conf_handle:
+            user_config = json.load(conf_handle)
+
+        for key, value in user_config.items():
+            if key in self.config and isinstance(value, dict):
+                self.config[key].update(value)
+            else:
+                self.config[key] = value
+
+        self.logger = utils.log('intelmqcli', log_path='/tmp/',
+                                log_level=self.config['log_level'],
+                                stream=sys.stdout)
+
+        self.rt = rt.Rt(self.config['rt']['uri'], self.config['rt']['user'],
+                        self.config['rt']['password'])
 
     def connect_database(self):
         self.con = psycopg2.connect(database=self.config['database']['database'],

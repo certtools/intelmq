@@ -30,6 +30,10 @@ from termstyle import bold, green, inverted, red, reset
 import intelmq.lib.intelmqcli as lib
 from intelmq.lib import utils
 
+# Use unicode for all input and output, needed for Py2
+psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
+psycopg2.extensions.register_type(psycopg2.extensions.UNICODEARRAY)
+
 error = partial(print, file=sys.stderr)
 quiet = False
 old_print = print
@@ -76,7 +80,7 @@ class IntelMQCLIContoller(lib.IntelMQCLIContollerTemplate):
         self.parser.add_argument('-z', '--zip', action='store_true',
                                  help='Zip every events.csv attachement to an'
                                      'investigation for RT (defaults to false)')
-        self.parse_args()
+        self.setup()
 
         if self.args.quiet:
             global quiet
@@ -148,6 +152,10 @@ class IntelMQCLIContoller(lib.IntelMQCLIContollerTemplate):
                 self.execute(lib.QUERY_OPEN_EVENT_IDS_BY_TAXONOMY, (taxonomy, ))
                 event_ids = [x['id'] for x in self.cur.fetchall()]
                 subject = 'Incidents of {} on {}'.format(taxonomy, time.strftime('%Y-%m-%d'))
+
+                if self.dryrun:
+                    print('Dry run: Skipping creation of incident.')
+                    continue
 
                 incident_id = self.rt.create_ticket(Queue='Incidents', Subject=subject,
                                                     Owner=self.config['rt']['user'])
