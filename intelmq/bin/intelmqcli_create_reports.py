@@ -9,6 +9,8 @@ foreach distinct feed.names in evlist
    report_data = create a zipped json file (minus raw attribute) with events from current feed.name
    create report with attachment report_data
    set report_id for the used events to newly created report
+
+TODO: Non-batch mode
 """
 from __future__ import print_function, unicode_literals
 

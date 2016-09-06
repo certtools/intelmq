@@ -4,7 +4,7 @@
 Implemented workarounds for old packages:
     BytesIO instead of StringIO on Python 2 for csv module
 
-TODO: Implement automatic mode
+TODO: Setup logger (file, stderr) like with intelmqctl run
 """
 from __future__ import print_function, unicode_literals
 
@@ -77,7 +77,6 @@ class IntelMQCLIContoller(lib.IntelMQCLIContollerTemplate):
 
         self.parser.add_argument('-c', '--compress-csv', action='store_true',
                                  help='Automatically compress/shrink the attached CSV report if fields are empty (default = False).')
-
         self.parser.add_argument('-z', '--zip', action='store_true',
                                  help='Zip every events.csv attachement to an '
                                       'investigation for RT (defaults to false)')
@@ -314,16 +313,15 @@ Subject: {subj}
             else:
                 print(showed_text, attachment_text, sep='\n')
         print('-' * 100)
-        automatic = False  # TODO: implement later
 
         ### MENU
-        if automatic and requestor:
+        if self.batch and requestor:
             answer = 's'
         else:
             answer = 'q'
-            if automatic:
+            if self.batch:
                 error(red('You need to set a valid requestor!'))
-            if not self.batch:
+            else:
                 answer = input('{i}{b}[n]{i}ext, {i}{b}[s]{i}end, show {b}[t]{i}able,'
                                ' change {b}[r]{i}equestor or {b}[q]{i}uit?{r} '
                                ''.format(b=bold, i=myinverted, r=reset)).strip()
@@ -331,6 +329,8 @@ Subject: {subj}
             exit(0)
         elif answer == 'n':
             return
+        elif answer == 'a':
+            self.batch = True
         elif answer == 't':
             self.table_mode = bool((self.table_mode + 1) % 2)
             self.send(taxonomy, contact, query, incident_id, requestor)
