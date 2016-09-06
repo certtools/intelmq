@@ -216,7 +216,8 @@ class StreamHandler(logging.StreamHandler):
 
 
 def log(name: str, log_path: str=intelmq.DEFAULT_LOGGING_PATH, log_level: str="DEBUG",
-        stream: Optional[object]=None, syslog: Union[bool, str, list, tuple]=None):
+        stream: Optional[object]=None, syslog: Union[bool, str, list, tuple]=None,
+        log_format_stream: str=LOG_FORMAT_STREAM):
     """
     Returns a logger instance logging to file and sys.stderr or other stream.
 
@@ -231,6 +232,8 @@ def log(name: str, log_path: str=intelmq.DEFAULT_LOGGING_PATH, log_level: str="D
             If False (default), FileHandler will be used. Otherwise either a list/
             tuple with address and UDP port are expected, e.g. `["localhost", 514]`
             or a string with device name, e.g. `"/dev/log"`.
+        log_format_stream:
+            The log format used for streaming output. Default: LOG_FORMAT_STREAM
 
     Returns:
         logger: An instance of logging.Logger
@@ -259,7 +262,7 @@ def log(name: str, log_path: str=intelmq.DEFAULT_LOGGING_PATH, log_level: str="D
         logger.addHandler(handler)
 
     if stream or stream is None:
-        console_formatter = logging.Formatter(LOG_FORMAT_STREAM)
+        console_formatter = logging.Formatter(log_format_stream)
         if stream is None:
             console_handler = StreamHandler()
         else:
