@@ -16,6 +16,10 @@ REQUIRES = [
 ]
 
 DATA = [
+    ('/etc/intelmq/',
+     ['intelmq/etc/intelmqcli.conf',
+      ],
+     ),
     ('/opt/intelmq/etc/',
      ['intelmq/bots/BOTS',
       ],
