@@ -3,6 +3,9 @@
 Utilities for intelmqcli.
 
 Static data (queries)
+
+TODO: Implement cc-filer
+TODO: Implement fqdn-filter
 """
 import argparse
 import json

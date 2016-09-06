@@ -4,6 +4,7 @@
 Implemented workarounds for old packages:
     BytesIO instead of StringIO on Python 2 for csv module
 
+TODO: Implement automatic mode
 """
 from __future__ import print_function, unicode_literals
 
@@ -152,7 +153,7 @@ class IntelMQCLIContoller(lib.IntelMQCLIContollerTemplate):
                 self.execute(lib.QUERY_OPEN_EVENT_IDS_BY_TAXONOMY, (taxonomy, ))
                 event_ids = [x['id'] for x in self.cur.fetchall()]
                 subject = ('%s %s incidents of %s'
-                           ''% (len(event_ids), taxonomy, time.strftime('%Y-%m-%d')))
+                           '' % (len(event_ids), taxonomy, time.strftime('%Y-%m-%d')))
 
                 if self.dryrun:
                     print('Dry run: Skipping creation of incident.')
@@ -368,8 +369,8 @@ Subject: {subj}
             return
 
         ### CORRESPOND
-        filename = '%s-%s.csv'.format(time.strftime('%Y-%m-%d'), taxonomy)
-        if self.zipme:
+        filename = '%s-%s.csv' % (time.strftime('%Y-%m-%d'), taxonomy)
+        if self.zipme or len(query) > self.config['rt']['zip_threshold']:
             attachment = io.BytesIO()
             ziphandle = zipfile.ZipFile(attachment, mode='w',
                                         compression=zipfile.ZIP_DEFLATED)
