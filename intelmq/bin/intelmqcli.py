@@ -3,8 +3,6 @@
 """
 Implemented workarounds for old packages:
     BytesIO instead of StringIO on Python 2 for csv module
-
-TODO: Setup logger (file, stderr) like with intelmqctl run
 """
 from __future__ import print_function, unicode_literals
 
@@ -15,18 +13,16 @@ import locale
 import os
 import readline  # nopep8, hooks into input()
 import subprocess
-import sys
 import tempfile
 import time
 import zipfile
-from functools import partial
 
 import psycopg2
 import psycopg2.extensions
 import psycopg2.extras
 import six
 import tabulate
-from termstyle import bold, green, inverted, red, reset
+from termstyle import bold, inverted, reset
 
 import intelmq.lib.intelmqcli as lib
 from intelmq.lib import utils
@@ -34,15 +30,6 @@ from intelmq.lib import utils
 # Use unicode for all input and output, needed for Py2
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODEARRAY)
-
-error = partial(print, file=sys.stderr)
-quiet = False
-old_print = print
-
-
-def print(*args, **kwargs):
-    if not quiet:
-        old_print(*args, **kwargs)
 
 
 myinverted = str(reset) + str(inverted)
@@ -76,15 +63,13 @@ class IntelMQCLIContoller(lib.IntelMQCLIContollerTemplate):
                                  help='List all types')
 
         self.parser.add_argument('-c', '--compress-csv', action='store_true',
-                                 help='Automatically compress/shrink the attached CSV report if fields are empty (default = False).')
+                                 help='Automatically compress/shrink the attached CSV report if'
+                                      ' fields are empty (default = False).')
         self.parser.add_argument('-z', '--zip', action='store_true',
                                  help='Zip every events.csv attachement to an '
                                       'investigation for RT (defaults to false)')
         self.setup()
 
-        if self.args.quiet:
-            global quiet
-            quiet = True
         if self.args.compress_csv:
             self.compress_csv = True
         if self.args.text:
@@ -98,55 +83,55 @@ class IntelMQCLIContoller(lib.IntelMQCLIContollerTemplate):
             self.execute(lib.QUERY_FEED_NAMES)
             for row in self.cur.fetchall():
                 if row['feed.name']:
-                    print(row['feed.name'])
+                    self.logger.info(row['feed.name'])
             exit(0)
 
         if self.args.list_texts:
             self.execute(lib.QUERY_TEXT_NAMES)
             for row in self.cur.fetchall():
                 if row['key']:
-                    print(row['key'])
+                    self.logger.info(row['key'])
             exit(0)
 
         if self.args.list_identifiers:
             self.execute(lib.QUERY_IDENTIFIER_NAMES)
             for row in self.cur.fetchall():
                 if row['classification.identifier']:
-                    print(row['classification.identifier'])
+                    self.logger.info(row['classification.identifier'])
             exit(0)
 
         if self.args.list_taxonomies:
             self.execute(lib.QUERY_TAXONOMY_NAMES)
             for row in self.cur.fetchall():
                 if row['classification.taxonomy']:
-                    print(row['classification.taxonomy'])
+                    self.logger.info(row['classification.taxonomy'])
             exit(0)
 
         if self.args.list_types:
             self.execute(lib.QUERY_TYPE_NAMES)
             for row in self.cur.fetchall():
                 if row['classification.type']:
-                    print(row['classification.type'])
+                    self.logger.info(row['classification.type'])
             exit(0)
 
         if locale.getpreferredencoding() != 'UTF-8':
-            error(red('The preferred encoding of your locale setting is not UTF-8 '
-                      'but {}. Exiting.'.format(locale.getpreferredencoding())))
+            self.logger.error('The preferred encoding of your locale setting is not UTF-8 '
+                              'but {}. Exiting.'.format(locale.getpreferredencoding()))
             exit(1)
 
         if not self.rt.login():
-            error(red('Could not login as {} on {}.'.format(self.config['rt']['user'],
-                                                            self.config['rt']['uri'])))
+            self.logger.error('Could not login as {} on {}.'.format(self.config['rt']['user'],
+                                                                    self.config['rt']['uri']))
             exit(2)
         else:
-            print('Logged in as {} on {}.'.format(self.config['rt']['user'],
-                                                  self.config['rt']['uri']))
+            self.logger.info('Logged in as {} on {}.'.format(self.config['rt']['user'],
+                                                             self.config['rt']['uri']))
         try:
             self.execute(lib.QUERY_OPEN_TAXONOMIES)
             taxonomies = [x['classification.taxonomy'] for x in self.cur.fetchall()]
-            print("All taxonomies: " + ",".join(taxonomies))
+            self.logger.info("All taxonomies: " + ",".join(taxonomies))
             for taxonomy in taxonomies:
-                print('Handling taxonomy {!r}.'.format(taxonomy))
+                self.logger.info('Handling taxonomy {!r}.'.format(taxonomy))
                 self.execute(lib.QUERY_OPEN_EVENT_REPORTS_BY_TAXONOMY, (taxonomy, ))
                 report_ids = [x['rtir_report_id'] for x in self.cur.fetchall()]
                 self.execute(lib.QUERY_OPEN_EVENT_IDS_BY_TAXONOMY, (taxonomy, ))
@@ -155,16 +140,16 @@ class IntelMQCLIContoller(lib.IntelMQCLIContollerTemplate):
                            '' % (len(event_ids), taxonomy, time.strftime('%Y-%m-%d')))
 
                 if self.dryrun:
-                    print('Dry run: Skipping creation of incident.')
+                    self.logger.info('Dry run: Skipping creation of incident.')
                     continue
 
                 incident_id = self.rt.create_ticket(Queue='Incidents', Subject=subject,
                                                     Owner=self.config['rt']['user'])
                 if incident_id == -1:
-                    error('Could not create Incident ({}).'.format(incident_id))
+                    self.logger.error('Could not create Incident ({}).'.format(incident_id))
                     continue
                 else:
-                    print(green('Created Incident %s.' % incident_id))
+                    self.logger.info('Created Incident %s.' % incident_id)
                 # XXX TODO: distinguish between national and other constituencies
                 self.rt.edit_ticket(incident_id, CF__RTIR_Classification=taxonomy,
                                     CF__RTIR_Constituency='national',
@@ -172,16 +157,17 @@ class IntelMQCLIContoller(lib.IntelMQCLIContollerTemplate):
 
                 for report_id in report_ids:
                     if not self.rt.edit_link(report_id, 'MemberOf', incident_id):
-                        error(red('Could not link Incident to Incident Report: ({} -> {}).'.format(incident_id, report_id)))
+                        self.logger.error('Could not link Incident to Incident Report: ({} -> {}).'
+                                          ''.format(incident_id, report_id))
                         continue
                 self.executemany("UPDATE events SET rtir_incident_id = %s WHERE id = %s",
                                  [(incident_id, event_id) for event_id in event_ids])
-                print(green('Linked events to incident.'))
+                self.logger.info('Linked events to incident.')
 
                 self.execute(lib.QUERY_DISTINCT_CONTACTS_BY_INCIDENT, (incident_id, ))
                 contacts = [x['source.abuse_contact'] for x in self.cur.fetchall()]
                 for contact in contacts:
-                    print('Handling contact ' + contact)
+                    self.logger.info('Handling contact ' + contact)
                     self.execute(lib.QUERY_EVENTS_BY_ASCONTACT_INCIDENT,
                                  (incident_id, contact, ))
                     data = self.cur.fetchall()
@@ -212,7 +198,8 @@ class IntelMQCLIContoller(lib.IntelMQCLIContollerTemplate):
             if self.cur.rowcount:
                 text = self.cur.fetchall()[0]['body']
             else:
-                return red('Default text not found!')
+                self.logger.error('Default text not found!')
+                return None
 
         return text
 
@@ -229,7 +216,7 @@ class IntelMQCLIContoller(lib.IntelMQCLIContollerTemplate):
 
     def send(self, taxonomy, contact, query, incident_id, requestor=None):
         if not query:
-            print(red('No data!'))
+            self.logger.error('No data!')
             return
         if not requestor:
             requestor = contact
@@ -265,7 +252,7 @@ class IntelMQCLIContoller(lib.IntelMQCLIContollerTemplate):
         attachment_lines = attachment_text.splitlines()
 
         if self.verbose:
-            print(text)
+            self.logger.info(text)
 
         showed_text = '=' * 100 + '''
 To: {to}
@@ -277,9 +264,9 @@ Subject: {subj}
 
         ### SHOW DATA
         if self.table_mode and six.PY2:
-            print(red('Sorry, no table mode for ancient python versions!'))
+            self.logger.error('Sorry, no table mode for ancient python versions!')
         elif self.table_mode and not six.PY2:
-            if quiet:
+            if self.quiet:
                 height = 80     # assume anything for quiet mode
             else:
                 height = lib.getTerminalHeight() - 3 - showed_text_len
@@ -293,26 +280,27 @@ Subject: {subj}
                     handle.seek(0)
                     subprocess.call(['less', handle.name])
             else:
-                print(showed_text,
-                      tabulate.tabulate(query_unicode, headers='keys',
-                                        tablefmt='psql'), sep='\n')
+                self.logger.info(showed_text)
+                self.logger.info(tabulate.tabulate(query_unicode, headers='keys',
+                                                   tablefmt='psql'))
         else:
-            if quiet:
+            if self.quiet:
                 height = 80
             else:
                 height = lib.getTerminalHeight() - 4
             if 5 + len(query) > height:  # cut query too, 5 is length of text
-                print('\n'.join(showed_text.splitlines()[:5]))
-                print('...')
-                print('\n'.join(attachment_lines[:height - 5]))
-                print('...')
+                self.logger.info('\n'.join(showed_text.splitlines()[:5]))
+                self.logger.info('...')
+                self.logger.info('\n'.join(attachment_lines[:height - 5]))
+                self.logger.info('...')
             elif showed_text_len + len(query) > height > 5 + len(query):
-                print('\n'.join(showed_text.splitlines()[:height - len(query)]))
-                print('...')
-                print(attachment_text)
+                self.logger.info('\n'.join(showed_text.splitlines()[:height - len(query)]))
+                self.logger.info('...')
+                self.logger.info(attachment_text)
             else:
-                print(showed_text, attachment_text, sep='\n')
-        print('-' * 100)
+                self.logger.info(showed_text)
+                self.logger.info(attachment_text)
+        self.logger.info('-' * 100)
 
         ### MENU
         if self.batch and requestor:
@@ -320,10 +308,10 @@ Subject: {subj}
         else:
             answer = 'q'
             if self.batch:
-                error(red('You need to set a valid requestor!'))
+                self.logger.error('You need to set a valid requestor!')
             else:
-                answer = input('{i}{b}[n]{i}ext, {i}{b}[s]{i}end, show {b}[t]{i}able,'
-                               ' change {b}[r]{i}equestor or {b}[q]{i}uit?{r} '
+                answer = input('{i}{b}[a]{i}utomatic, {b}[n]{i}ext, {i}{b}[s]{i}end, show '
+                               '{b}[t]{i}able, change {b}[r]{i}equestor or {b}[q]{i}uit?{r} '
                                ''.format(b=bold, i=myinverted, r=reset)).strip()
         if answer == 'q':
             exit(0)
@@ -344,12 +332,12 @@ Subject: {subj}
             self.send(taxonomy, contact, query, incident_id, requestor)
             return
         elif answer != 's':
-            error(red('Unknow command {!r}.'.format(answer)))
+            self.logger.error('Unknow command {!r}.'.format(answer))
             self.send(taxonomy, contact, query, incident_id, requestor)
             return
 
-        if text.startswith(str(red)):
-            error(red('I won\'t send with a missing text!'))
+        if text is None:
+            self.logger.error('I won\'t send with a missing text!')
             return
 
         ### INVESTIGATION
@@ -361,11 +349,11 @@ Subject: {subj}
                                                  Requestor=requestor)
 
         if investigation_id == -1:
-            error(red('Could not create Investigation.'))
+            self.logger.error('Could not create Investigation.')
             return
-        print(green('Created Investigation {}.'.format(investigation_id)))
+        self.logger.info('Created Investigation {}.'.format(investigation_id))
         if not self.rt.edit_link(incident_id, 'HasMember', investigation_id):
-            error(red('Could not link Investigation to Incident.'))
+            self.logger.error('Could not link Investigation to Incident.')
             return
 
         ### CORRESPOND
@@ -390,18 +378,18 @@ Subject: {subj}
         correspond = self.rt.reply(investigation_id, text=text,
                                    files=[(filename, attachment, mimetype)])
         if not correspond:
-            error(red('Could not correspond with text and file.'))
+            self.logger.error('Could not correspond with text and file.')
             return
-        print(green('Correspondence added to Investigation.'))
+        self.logger.info('Correspondence added to Investigation.')
 
         self.executemany("UPDATE events SET rtir_investigation_id = %s, "
                          "sent_at = LOCALTIMESTAMP WHERE id = %s",
                          [(investigation_id, evid) for evid in ids])
-        print(green('Linked events to investigation.'))
+        self.logger.info('Linked events to investigation.')
 
         ### RESOLVE
         if not self.rt.edit_ticket(incident_id, Status='resolved'):
-            error(red('Could not close incident {}.'.format(incident_id)))
+            self.logger.error('Could not close incident {}.'.format(incident_id))
         if requestor != contact and not self.dryrun:
             asns = set(str(row['source.asn']) for row in query)
             answer = input(inverted('Save recipient {!r} for ASNs {!s}? [Y/n] '

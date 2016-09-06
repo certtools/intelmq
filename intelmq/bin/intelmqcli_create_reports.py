@@ -17,11 +17,8 @@ from __future__ import print_function, unicode_literals
 import datetime
 import io
 import json
-import sys
 import time
 import zipfile
-from functools import partial
-from termstyle import bold, green, inverted, red, reset
 
 import psycopg2
 import psycopg2.extras
@@ -32,15 +29,6 @@ import intelmq.lib.intelmqcli as lib
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODE)
 psycopg2.extensions.register_type(psycopg2.extensions.UNICODEARRAY)
 
-error = partial(print, file=sys.stderr)
-quiet = False
-old_print = print
-
-
-def print(*args, **kwargs):
-    if not quiet:
-        old_print(*args, **kwargs)
-
 
 class IntelMQCLIContoller(lib.IntelMQCLIContollerTemplate):
     appname = 'intelmqcli_create_reports'
@@ -48,39 +36,37 @@ class IntelMQCLIContoller(lib.IntelMQCLIContollerTemplate):
     def init(self):
         self.parser.add_argument('-l', '--list-feeds', action='store_true',
                                  help='List all open feeds')
-        self.setup()
-        if self.args.quiet:
-            global quiet
-            quiet = True
 
+        self.setup()
         self.connect_database()
+
         if self.args.list_feeds:
             self.execute(lib.QUERY_OPEN_FEEDNAMES)
             for row in self.cur.fetchall():
                 if row['feed.name']:
-                    print(row['feed.name'])
+                    self.logger.info(row['feed.name'])
             exit(0)
 
         if not self.rt.login():
-            error(red('Could not login as {} on {}.'.format(self.config['rt']['user'],
-                                                            self.config['rt']['uri'])))
+            self.logger.error('Could not login as {} on {}.'.format(self.config['rt']['user'],
+                                                                    self.config['rt']['uri']))
             exit(2)
         else:
-            print('Logged in as {} on {}.'.format(self.config['rt']['user'],
-                                                  self.config['rt']['uri']))
+            self.logger.info('Logged in as {} on {}.'.format(self.config['rt']['user'],
+                                                             self.config['rt']['uri']))
 
         self.execute(lib.QUERY_OPEN_FEEDNAMES)
         feednames = [x['feed.name'] for x in self.cur.fetchall()]
         if feednames:
-            print("All feeds: " + ", ".join(['%r']*len(feednames))%tuple(feednames))
+            self.logger.info("All feeds: " + ", ".join(['%r']*len(feednames))%tuple(feednames))
         else:
-            print('Nothing to do.')
+            self.logger.info('Nothing to do.')
         for feedname in feednames:
-            print('Handling feedname {!r}.'.format(feedname))
+            self.logger.info('Handling feedname {!r}.'.format(feedname))
             self.execute(lib.QUERY_OPEN_EVENTS_BY_FEEDNAME,
                          (feedname, ))
             feeddata = []
-            print('Found %s events.' % self.cur.rowcount)
+            self.logger.info('Found %s events.' % self.cur.rowcount)
             for row in self.cur:
                 """
                 First, we ignore None-data
@@ -99,25 +85,25 @@ class IntelMQCLIContoller(lib.IntelMQCLIContollerTemplate):
             subject = 'Reports of {} on {}'.format(feedname, time.strftime('%Y-%m-%d'))
 
             if self.dryrun:
-                print('Dry run: Skipping creation of report.')
+                self.logger.info('Dry run: Skipping creation of report.')
                 continue
 
             report_id = self.rt.create_ticket(Queue='Incident Reports', Subject=subject,
                                               Owner=self.config['rt']['user'])
             if report_id == -1:
-                error('Could not create Incident ({}).'.format(report_id))
+                self.logger.error('Could not create Incident ({}).'.format(report_id))
                 return
             else:
-                print('Created Report {}.'.format(report_id))
+                self.logger.info('Created Report {}.'.format(report_id))
             comment_id = self.rt.comment(report_id,
                                          files=[('events.zip', attachment, 'application/zip')])
             if not comment_id:
-                error('Could not correspond with file.')
+                self.logger.error('Could not correspond with file.')
                 return
 
             self.executemany("UPDATE events SET rtir_report_id = %s WHERE id = %s",
                              [(report_id, row['id']) for row in feeddata])
-            print(green('Linked events to report.'))
+            self.logger.info('Linked events to report.')
 
 
 def main():

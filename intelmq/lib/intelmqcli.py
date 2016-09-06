@@ -261,6 +261,7 @@ class IntelMQCLIContollerTemplate():
     epilog = ''
     additional_params = ()
     dryrun = False
+    quiet = False
 
     def __init__(self):
 
@@ -300,6 +301,8 @@ class IntelMQCLIContollerTemplate():
             self.dryrun = True
         if self.args.batch:
             self.batch = True
+        if self.args.quiet:
+            self.quiet = True
 
         if self.args.feed:
             self.additional_where += """ AND "feed.name" = ANY(%s::VARCHAR[]) """
@@ -323,9 +326,13 @@ class IntelMQCLIContollerTemplate():
             else:
                 self.config[key] = value
 
-        self.logger = utils.log('intelmqcli', log_path='/tmp/',
-                                log_level=self.config['log_level'],
-                                stream=sys.stdout)
+        if self.quiet:
+            stream = None
+        else:
+            stream = sys.stderr
+        self.logger = utils.log('intelmqcli', syslog='/dev/log',
+                                log_level=self.config['log_level'].upper(),
+                                stream=stream, log_format_stream='%(message)s')
 
         self.rt = rt.Rt(self.config['rt']['uri'], self.config['rt']['user'],
                         self.config['rt']['password'])
