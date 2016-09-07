@@ -682,7 +682,7 @@
             "description": "Retrieve CIDR contact information from a PostgreSQL database.",
             "module": "intelmq.bots.experts.certbund_contact.nonotificationexpert",
             "parameters": {
-                "dropforsource": "true"
+                "dropforsource": "true",
                 "dropfordestination": "true"
             }
         },
