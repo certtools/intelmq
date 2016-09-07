@@ -29,9 +29,11 @@ def main():
     for field in DATA.keys():
         value = DATA[field]
 
-        if value['type'] in ('String', 'Base64', 'URL', 'FQDN',
+        if value['type'] in ('String', 'URL', 'FQDN',
                              'MalwareName', 'ClassificationType'):
             dbtype = 'varchar({})'.format(value.get('length', 2000))
+        elif value['type'] == 'Base64':
+            dbtype = 'text'
         elif value['type'] in ('IPAddress', 'IPNetwork'):
             dbtype = 'inet'
         elif value['type'] == 'DateTime':
