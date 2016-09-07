@@ -141,6 +141,28 @@ For both events, no notification would be created, as the rule matches:
 }
 ```
 
+If this is not sufficient, you can make use of the NoNotification Expert.
+
+
+### NoNotificationExpert
+
+The NoNotificationExpert is an Expertbot which is shipped together with the
+CertBund-Contact Expert. The Bots task is quite simple:
+You can use it to set a flag within the notification which indicates, that
+a notification must not be sent.
+
+This is handy if you want to use the filter expert in order to determine
+whether a notification has to be generated.
+
+The bot can be configured for two parameters only:
+
+ 1. dropforsource
+ 2. dropfordestination
+
+If one or both of these parameters are set to any value (except 0 or None),
+the notifications for all contacts for the events source (or destination or
+both) which were determined by the CertBund-Contact Expert are altered by
+setting their notification intervall (ttl) to -1.
 
 
 # Generating a graphic which visualizes the schema of the ContactDB
