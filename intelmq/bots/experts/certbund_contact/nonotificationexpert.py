@@ -1,4 +1,4 @@
-
+import sys
 import json
 
 from intelmq.lib.bot import Bot
@@ -10,7 +10,7 @@ from intelmq.lib.bot import Bot
 # with -1 which indicates that no information should be sent.
 
 
-class NoNotitficationExpertBot(Bot):
+class NoNotificationExpertBot(Bot):
 
     def __misconfigurationWarning(self):
         self.logger.warn("This bot is not configured properly."
@@ -22,11 +22,11 @@ class NoNotitficationExpertBot(Bot):
         self.dropdst = self.parameters.dropfordestination
 
         if not self.dropsrc and not self.dropdst:
-            __misconfigurationWarning()
+            self.__misconfigurationWarning()
 
     def process(self):
         self.logger.debug("Calling receive_message")
-        nt = self.receive_message()
+        event = self.receive_message()
 
         if event is None:
             self.acknowledge_message()
@@ -42,42 +42,45 @@ class NoNotitficationExpertBot(Bot):
             event = self.removeAllNotificationInformation(event)
 
         else:
-            __misconfigurationWarning()
+            self.__misconfigurationWarning()
 
         self.send_message(event)
         self.acknowledge_message()
 
-    def removeSrcNotificationInformation(event):
+    def removeSrcNotificationInformation(self, event):
         return self.removeNotificationInformation(event, "source")
 
-    def removeDstNotificationInformation(event):
+    def removeDstNotificationInformation(self, event):
         return self.removeNotificationInformation(event, "destination")
 
-    def removeAllNotificationInformation(event):
-        return self.removeNotificationInformation(event, "both")
+    def removeAllNotificationInformation(self, event):
+        return self.removeNotificationInformation(event, "all")
 
     # Retrieve the JSON field "extra" of the event and search for the
     # dictionary called "certbund".
     # This dict can contain two additional fields "notify_source" and
     # "notify_destination"
-    def removeNotificationInformation(event, where):
-        if event and where in ["source", "destination", "both"]:
+    def removeNotificationInformation(self, event, where):
+        if event and where in ["source", "destination", "all"]:
             if "extra" in event:
                 extra = json.loads(event["extra"])
-                cb = extra.get("certbund")
 
+                cb = extra.get("certbund")
                 src = cb.get("notify_source")
                 dst = cb.get("notify_destination")
 
-                if where == "source" or where == "both":
+                if src and (where == "source" or where == "all"):
                     for element in src:
                         if "ttl" in element:
                             element["ttl"] = -1
 
-                if where == "destination" or where == "both":
+                if dst and (where == "destination" or where == "all"):
                     for element in dst:
                         if "ttl" in element:
                             element["ttl"] = -1
+
+                self.logger.debug("Replaced '%s' occurences of ttl with -1",
+                                  where)
 
                 # Now add the possibly modified extra-dict to the
                 # event by overwriting the old one.

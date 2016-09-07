@@ -678,12 +678,12 @@
                 "user": "intelmq"
             }
         },
-        "CERT-bund Contact Drop Notification Expert": {
+        "CERT-bund Contact No Notification": {
             "description": "Retrieve CIDR contact information from a PostgreSQL database.",
             "module": "intelmq.bots.experts.certbund_contact.nonotificationexpert",
             "parameters": {
-                "dropforsource": "true",
-                "dropfordestination": "true"
+                "dropfordestination": "true",
+                "dropforsource": "true"
             }
         },
         "CERT.at Contact Database": {
