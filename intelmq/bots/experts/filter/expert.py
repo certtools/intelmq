@@ -68,11 +68,12 @@ class FilterExpertBot(Bot):
             self.filter = False
 
         self.use_regex = None
-        if self.parameters.filter_regex in ("search", "match"):
-            self.use_regex = self.parameters.filter_regex
-        elif self.parameters.filter_regex:
-            self.logger.warn("Invalid configuration for filter_regex parameter"
-                             " You can use: 'search' or 'match'")
+        if hasattr(self.parameters,'filter_regex'):
+            if self.parameters.filter_regex in ("search", "match"):
+                self.use_regex = self.parameters.filter_regex
+            elif self.parameters.filter_regex:
+                self.logger.warn("Invalid configuration for filter_regex parameter"
+                                 " You can use: 'search' or 'match'")
 
 
         if not (self.filter or self.not_after is not None or self.not_before is not None):
