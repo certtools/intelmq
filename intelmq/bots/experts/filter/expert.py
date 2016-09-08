@@ -140,7 +140,7 @@ class FilterExpertBot(Bot):
         elif self.use_regex == "match":
             return self.regexMatchFilter(event, key, condition)
         else:
-            return self.equalsFitler(event, key, condition)
+            return self.equalsFilter(event, key, condition)
 
     def equalsFilter(self, event, key, value):
         return (event.contains(key) and
