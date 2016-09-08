@@ -17,6 +17,8 @@ xmpp_password: boolean
 xmpp_room: string
 xmpp_room_password: string
 xmpp_room_nick: string
+
+TODO: All messages are duplicated
 """
 
 import sys
@@ -66,7 +68,7 @@ class XMPPCollectorBot(Bot):
             self.logger.info("There was no XMPPClient I could stop.")
 
     def log_message(self, msg):
-        self.logger.debug("Received Stanza: %r , from %r", msg['body'],
+        self.logger.debug("Received Stanza: %r from %r", msg['body'],
                           msg['from'])
         self.logger.info("Stanza received")
 
