@@ -685,6 +685,14 @@
                 "user": "intelmq"
             }
         },
+        "CERT-bund Contact No Notification": {
+            "description": "Retrieve CIDR contact information from a PostgreSQL database.",
+            "module": "intelmq.bots.experts.certbund_contact.nonotificationexpert",
+            "parameters": {
+                "dropfordestination": "true",
+                "dropforsource": "true"
+            }
+        },
         "CERT.at Contact Database": {
             "description": "Cert.at Contact Database is the bot responsible to get CERT. Set filter to true if you want to filter out events for cert.at. Set add_cc to true if you want to overwrite an existing CC value.",
             "module": "intelmq.bots.experts.certat_contact.expert",
