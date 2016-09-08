@@ -114,7 +114,7 @@ class BotTestCase(object):
             cls.default_input_message = {'__type': 'Report',
                                          'raw': 'Cg==',
                                          'feed.name': 'Test Feed',
-                                         'time.observation': '2016-01-01T00:00'}
+                                         'time.observation': '2016-01-01T00:00:00+00:00'}
         if type(cls.default_input_message) is dict:
             cls.default_input_message = \
                 utils.decode(json.dumps(cls.default_input_message))
@@ -216,6 +216,10 @@ class BotTestCase(object):
                                                self.bot_id), "INFO")
         self.assertRegexpMatchesLog("INFO - Bot is starting.")
         self.assertLoglineEqual(-1, "Bot stopped.", "INFO")
+        self.assertNotRegexpMatchesLog("(ERROR.*?){}"
+                                       "".format(self.allowed_error_count))
+        self.assertNotRegexpMatchesLog("CRITICAL")
+        """ If no error happened (incl. tracebacks, we can check for formatting) """
         for logline in self.loglines:
             fields = utils.parse_logline(logline)
             self.assertTrue(fields['message'][-1] in '.?!',
@@ -224,9 +228,6 @@ class BotTestCase(object):
             self.assertTrue(fields['message'].upper() == fields['message'].upper(),
                             msg='Logline {!r} does not beginn with an upper case char.'
                                 ''.format(fields['message']))
-        self.assertNotRegexpMatchesLog("(ERROR.*?){}"
-                                       "".format(self.allowed_error_count))
-        self.assertNotRegexpMatchesLog("CRITICAL")
 
 #        """ Test if all pipes are created with correct names. """
         pipenames = ["{}-input", "{}-input-internal", "{}-output"]

@@ -94,7 +94,10 @@ class Message(dict):
         elif isinstance(message, tuple):
             iterable = message
         for key, value in iterable:
-            self.add(key, value, sanitize=False)
+            try:
+                self.add(key, value, sanitize=False)
+            except exceptions.InvalidValue:
+                self.add(key, value, sanitize=True)
 
     def __setitem__(self, key, value):
         self.add(key, value)

@@ -16,7 +16,6 @@ EVENT_TEMPL = {"__type": "Event",
                            "<CERTNAME>&key=<APIKEY>",
                "classification.type": "botnet drone",
                "time.observation": "2015-01-01T00:00:00+00:00",
-               "raw": "",
                }
 INPUT = [{'malware.name': 'confickerab'},
          {'malware.name': 'gozi2'},
@@ -24,14 +23,14 @@ INPUT = [{'malware.name': 'confickerab'},
           'feed.url': 'https://feodotracker.abuse.ch/blocklist/?download=domainblocklist'},
          {'malware.name': 'zeus_gameover_us'},
          {'malware.name': 'foobar', 'feed.name': 'Other Feed'},
-         {'feed.name': '', 'source.port': 80},
+         {'source.port': 80, 'malware.name': 'zeus'},
          ]
 OUTPUT = [{'classification.identifier': 'conficker'},
           {'classification.identifier': 'gozi'},
           {'classification.identifier': 'feodo'},
           {'classification.identifier': 'zeus'},
           {},
-          {'protocol.application': 'http'},
+          {'protocol.application': 'http', 'classification.identifier': 'zeus'},
           ]
 for index in range(len(INPUT)):
     copy1 = EVENT_TEMPL.copy()
@@ -70,11 +69,10 @@ EVENT_TEMPL2 = {"__type": "Event",
                "feed.url": "https://intelmq.org/does-not-exist",
                "classification.type": "botnet drone",
                "time.observation": "2015-01-02T01:20:00+00:00",
-               "raw": "",
                }
 
 INPUT2 = [
-    {'malware.name': 'Citadel certpl'},
+    {'malware.name': 'citadel certpl'},
     {'malware.name': 'dridex-data'},
     {'malware.name': 'bitdefender-nivdort'},
     {'malware.name': 'securityscorecard-someexample-value'},
@@ -82,8 +80,8 @@ INPUT2 = [
 OUTPUT2 = [
     {'classification.identifier': 'citadel'},
     {'classification.identifier': 'dridex'},
-    { 'malware.name': 'nivdort'},
-    { 'malware.name': 'someexample-value'},
+    {'malware.name': 'nivdort'},
+    {'malware.name': 'someexample-value'},
           ]
 for index in range(len(INPUT2)):
     copy1 = EVENT_TEMPL2.copy()
@@ -93,6 +91,7 @@ for index in range(len(INPUT2)):
     copy2.update(OUTPUT2[index])
     INPUT2[index] = copy1
     OUTPUT2[index] = copy2
+
 
 class TestMoreFeedsModifyExpertBot(test.BotTestCase, unittest.TestCase):
     """Testing ModifyExpertBot for 'morefeeds' configuration.
@@ -107,11 +106,9 @@ class TestMoreFeedsModifyExpertBot(test.BotTestCase, unittest.TestCase):
                          }
         cls.default_input_message = {'__type': 'Event'}
 
-
     def test_bot_name(self):
         "Do **not** test that our second test has the same name as the bot."
         pass
-
 
     def test_events(self):
         """ Test if correct Events have been produced. """

@@ -453,6 +453,12 @@ class TestMessageFactory(unittest.TestCase):
         with self.assertRaises(exceptions.InvalidValue):
             message.Event(event)
 
+    def test_event_init_check_tuple(self):
+        """ Test if initialization method checks fields from tuple. """
+        event = (('__type', 'Event'), ('source.asn', 'foo'))
+        with self.assertRaises(exceptions.InvalidValue):
+            message.Event(event)
+
     def test_event_init(self):
         """ Test if initialization method checks fields. """
         event = '{"__type": "Event", "source.asn": "foo"}'
