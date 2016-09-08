@@ -270,11 +270,11 @@ class TestMessageFactory(unittest.TestCase):
         with self.assertRaises(exceptions.InvalidValue):
             report.add('feed.name', '\r\n', sanitize=True)
 
-    def test_report_update(self):
-        """ Test report value update function. """
+    def test_report_change(self):
+        """ Test report value change function. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         report.add('feed.name', 'Example 1')
-        report.update('feed.name', 'Example 2')
+        report.change('feed.name', 'Example 2')
         self.assertEqual('Example 2', report['feed.name'])
 
     def test_report_contains(self):
@@ -283,11 +283,11 @@ class TestMessageFactory(unittest.TestCase):
         report.add('feed.name', 'Example 1')
         self.assertTrue(report.contains('feed.name'))
 
-    def test_report_update_duplicate(self):
-        """ Test report value update function, rejects duplicate. """
+    def test_report_change_duplicate(self):
+        """ Test report value change function, rejects duplicate. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         with self.assertRaises(exceptions.KeyNotExists):
-            report.update('feed.name', 'Example')
+            report.change('feed.name', 'Example')
 
     def test_factory_serialize(self):
         """ Test MessageFactory serialize method. """
@@ -330,7 +330,7 @@ class TestMessageFactory(unittest.TestCase):
 
     def test_copy_content(self):
         """ Test if copy does return the same items. """
-        report = message.MessageFactory.unserialize('{"__type": "Report"}')
+        report = message.Report()
         report = self.add_report_examples(report)
         self.assertSetEqual(set(report.copy().items()),
                             set(report.items()))
@@ -423,7 +423,7 @@ class TestMessageFactory(unittest.TestCase):
         """ Test if the regex for malware.name is tested correctly. """
         event = message.MessageFactory.unserialize('{"__type": "Event"}')
         event.add('malware.name', 'multiple-malware citadel:report')
-        event.update('malware.name', 'yahoo!')
+        event.change('malware.name', 'yahoo!')
         del event['malware.name']
         with self.assertRaises(exceptions.InvalidValue):
             event.add('malware.name', 'tu234t2\nt$#%$')
@@ -446,6 +446,18 @@ class TestMessageFactory(unittest.TestCase):
         event_type = type(message.MessageFactory.from_dict(event))
         self.assertTrue(event_type is message.Event,
                         msg='Type is {} instead of Event.'.format(event_type))
+
+    def test_event_init_check(self):
+        """ Test if initialization method checks fields. """
+        event = {'__type': 'Event', 'source.asn': 'foo'}
+        with self.assertRaises(exceptions.InvalidValue):
+            message.Event(event)
+
+    def test_event_init(self):
+        """ Test if initialization method checks fields. """
+        event = '{"__type": "Event", "source.asn": "foo"}'
+        with self.assertRaises(exceptions.InvalidValue):
+            message.MessageFactory.unserialize(event)
 
 if __name__ == '__main__':
     unittest.main()
