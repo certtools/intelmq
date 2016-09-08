@@ -76,7 +76,7 @@ USAGE = '''
     intelmqcli --text='boilerplate name'
     intelmqcli --feed='feedname' '''
 
-SUBJECT = {"Abusive Content": "with abusive content (spam, ...)",
+SUBJECT = {"Abusive Content": "Abusive content (spam, ...)",
            "Malicious Code": "Malicious code (malware, botnet, ...)",
            "Information Gathering": "Information Gathering (scanning, ...)",
            "Intrusion Attempts": "Intrusion Attempt",

@@ -138,8 +138,8 @@ class IntelMQCLIContoller(lib.IntelMQCLIContollerTemplate):
                 report_ids = [x['rtir_report_id'] for x in self.cur.fetchall()]
                 self.execute(lib.QUERY_OPEN_EVENT_IDS_BY_TAXONOMY, (taxonomy, ))
                 event_ids = [x['id'] for x in self.cur.fetchall()]
-                subject = ('%s %s incidents of %s'
-                           '' % (len(event_ids), taxonomy,
+                subject = ('%s %s incidents on %s'
+                           '' % (len(event_ids), lib.SUBJECT[taxonomy],
                                  datetime.datetime.now().strftime('%Y-%m-%d')))
 
                 if self.dryrun:
