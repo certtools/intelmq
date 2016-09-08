@@ -136,7 +136,7 @@ class FilterExpertBot(Bot):
 
     def doFilter(self, event, key, condition):
         if self.use_regex == "search":
-            return self.regexMatchFilter(event, key, condition)
+            return self.regexSearchFilter(event, key, condition)
         elif self.use_regex == "match":
             return self.regexMatchFilter(event, key, condition)
         else:
