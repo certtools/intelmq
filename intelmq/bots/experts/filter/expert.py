@@ -134,31 +134,31 @@ class FilterExpertBot(Bot):
         self.send_message(event)
         self.acknowledge_message()
 
-        def doFilter(self, event, key, condition):
-            if self.use_regex == "search":
-                return self.regexMatchFilter(event, key, condition)
-            elif self.use_regex == "match":
-                return self.regexMatchFilter(event, key, condition)
-            else:
-                return self.equalsFitler(event, key, condition)
+    def doFilter(self, event, key, condition):
+        if self.use_regex == "search":
+            return self.regexMatchFilter(event, key, condition)
+        elif self.use_regex == "match":
+            return self.regexMatchFilter(event, key, condition)
+        else:
+            return self.equalsFitler(event, key, condition)
 
-        def equalsFilter(self, event, key, value):
-            return (event.contains(key) and
-                    event.get(key) == value)
+    def equalsFilter(self, event, key, value):
+        return (event.contains(key) and
+                event.get(key) == value)
 
-        def regexSearchFilter(self, event, key, regex):
-            if event.contains(key):
-                exp = re.compile(regex)
-                return exp.search(event.get(key))
-            else:
-                return False
+    def regexSearchFilter(self, event, key, regex):
+        if event.contains(key):
+            exp = re.compile(regex)
+            return exp.search(event.get(key))
+        else:
+            return False
 
-        def regexMatchFilter(self, event, key, regex):
-            if event.contains(key):
-                exp = re.compile(regex)
-                return exp.match(event.get(key))
-            else:
-                return False
+    def regexMatchFilter(self, event, key, regex):
+        if event.contains(key):
+            exp = re.compile(regex)
+            return exp.match(event.get(key))
+        else:
+            return False
 
 if __name__ == "__main__":
     bot = FilterExpertBot(sys.argv[1])
