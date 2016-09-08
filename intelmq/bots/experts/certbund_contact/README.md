@@ -97,6 +97,15 @@ The rules for this suppression are stored in the `inhibition` table.
 To add new rules to the inhibition-table, simply run the script `add_inhibiton`.
 Please see `add_inhibition.py --help` for a list of available commands.
 
+The shell script `add_inhibitions_from_file.sh` is capable of repeating this
+step for all entries of a provided csv file. The file has to follow the format:
+```
+asn;network;ctype;cidentifier;comment
+```
+The file may not contain header information or blank lines.
+You need to be the user `postgres` to run this scripts.
+
+
 The criteria within a rule are "linked" with a "and-operation".
 
 **Examples**:
@@ -163,6 +172,7 @@ If one or both of these parameters are set to any value (except 0 or None),
 the notifications for all contacts for the events source (or destination or
 both) which were determined by the CertBund-Contact Expert are altered by
 setting their notification intervall (ttl) to -1.
+
 
 
 # Generating a graphic which visualizes the schema of the ContactDB
