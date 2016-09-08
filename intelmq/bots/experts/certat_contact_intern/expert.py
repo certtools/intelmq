@@ -48,6 +48,12 @@ class CERTatContactExpertBot(Bot):
     def process(self):
         event = self.receive_message()
 
+        if 'source.asn' not in event:
+            self.logger.warning('source.asn not present in event. Skipping event')
+            self.send_message(event)
+            self.acknowledge_message()
+            return
+
         if 'source.abuse_contact' in event and not self.parameters.override:
             self.send_message(event)
             self.acknowledge_message()
@@ -66,7 +72,7 @@ class CERTatContactExpertBot(Bot):
                 raise ValueError('Lookup returned more then one result. Please inspect.')
             elif self.cur.rowcount == 1:
                 result = self.cur.fetchone()[0]
-                self.logger.debug('Setting `source.abuse_contact` to %r.' % result)
+                self.logger.debug('Changing `source.abuse_contact` from %r to %r.' % (event.get('source.abuse_contact'), result))
 
                 if 'source.abuse_contact' in event:
                     event.change('source.abuse_contact', result)
