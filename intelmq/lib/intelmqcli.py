@@ -76,26 +76,17 @@ USAGE = '''
     intelmqcli --text='boilerplate name'
     intelmqcli --feed='feedname' '''
 
-SUBJECT = {'spam': None,
-           'malware': None,
-           'botnet drone': None,
-           'ransomware': None,
-           'malware configuration': None,
-           'c&c': None,
-           'scanner': None,
-           'exploit': None,
-           'brute-force': None,
-           'ids alert': None,
-           'defacement': None,
-           'compromised': None,
-           'backdoor': None,
-           'ddos': 'Potential DDoS Sources',
-           'dropzone': None,
-           'phishing': None,
-           'vulnerable service': 'Vulnerable systems',
-           'blacklist': None,
-           'unknown': None,
-           'test': 'Tests',
+SUBJECT = {"Abusive Content": "Abusive content (spam, ...)",
+           "Malicious Code": "Malicious code (malware, botnet, ...)",
+           "Information Gathering": "Information Gathering (scanning, ...)",
+           "Intrusion Attempts": "Intrusion Attempt",
+           "Intrusions": "Network intrusion",
+           "Availability": "Availability (DDOS, ...)",
+           "Information Content Security": "Information Content Security (dropzone,...)",
+           "Fraud": "Fraud",
+           "Vulnerable": "Vulnerable device",
+           "Other": "Other",
+           "Test": "Test"
            }
 
 QUERY_FEED_NAMES = "SELECT DISTINCT \"feed.name\" from events"
@@ -288,10 +279,10 @@ class IntelMQCLIContollerTemplate():
     def __init__(self):
 
         self.parser = argparse.ArgumentParser(prog=self.appname,
-                                              usage = self.usage,
+                                              usage=self.usage,
                                               epilog=self.epilog,
                                               formatter_class=argparse.RawDescriptionHelpFormatter,
-        )
+                                              )
         VERSION = pkg_resources.get_distribution("intelmq").version
         self.parser.add_argument('--version',
                                  action='version', version=VERSION)
@@ -328,13 +319,13 @@ class IntelMQCLIContollerTemplate():
 
         if self.args.feed:
             self.additional_where += """ AND "feed.name" = ANY(%s::VARCHAR[]) """
-            self.additional_params += ('{'+','.join(self.args.feed)+'}', )
+            self.additional_params += ('{' + ','.join(self.args.feed) + '}', )
         if self.args.asn:
             self.additional_where += """ AND "source.asn" = ANY(%s::INT[]) """
-            self.additional_params += ('{'+','.join(map(str, self.args.asn))+'}', )
+            self.additional_params += ('{' + ','.join(map(str, self.args.asn)) + '}', )
         if self.args.taxonomy:
             self.additional_where += """ AND "classification.taxonomy" = ANY(%s::VARCHAR[]) """
-            self.additional_params += ('{'+','.join(self.args.taxonomy)+'}', )
+            self.additional_params += ('{' + ','.join(self.args.taxonomy) + '}', )
 
         with open('/etc/intelmq/intelmqcli.conf') as conf_handle:
             self.config = json.load(conf_handle)
