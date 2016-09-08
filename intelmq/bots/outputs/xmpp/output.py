@@ -4,8 +4,8 @@ Connects to a XMPP Server and sends data to a user.
 
 TODO: Introduce Multi User Chat like in XMPP Collector
 
-Requires Python >= 3.4
-Requires sleekxmpp >= 1.0.0-beta5
+Tested with Python >= 3.4
+Tested with sleekxmpp >= 1.0.0-beta5
 
 Copyright (C) 2016 by Bundesamt für Sicherheit in der Informationstechnik
 Software engineering by Intevation GmbH

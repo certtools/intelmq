@@ -4,8 +4,8 @@ Connects to a XMPP Server and a Room and reads data from the room.
 If no room is provided, which is equivalent to an empty string,
 it only collects events which were sent to the xmpp user directly.
 
-Requires Python >= 3.4
-Requires sleekxmpp >= 1.0.0-beta5
+Tested with Python >= 3.4
+Tested with sleekxmpp >= 1.0.0-beta5
 
 Copyright (C) 2016 by Bundesamt für Sicherheit in der Informationstechnik
 Software engineering by Intevation GmbH
