@@ -74,9 +74,13 @@ class XMPPCollectorBot(Bot):
         else:
             body = msg['body']
 
-        self.logger.debug("Received Stanza: %r from %r", body,
+        if len(body) > 400:
+            tmp_body = body[:397] + '...'
+        else:
+            tmp_body = body
+
+        self.logger.debug("Received Stanza: %r from %r", tmp_body,
                           msg['from'])
-        self.logger.info("Stanza received")
 
         raw_msg = body
 
