@@ -4,8 +4,8 @@ Connects to a XMPP Server and sends data to a user.
 
 TODO: Introduce Multi User Chat like in XMPP Collector
 
-Requires Python >= 3.4
-Requires sleekxmpp >= 1.0.0-beta5
+Tested with Python >= 3.4
+Tested with sleekxmpp >= 1.0.0-beta5
 
 Copyright (C) 2016 by Bundesamt für Sicherheit in der Informationstechnik
 Software engineering by Intevation GmbH
@@ -37,48 +37,46 @@ class XMPPOutputBot(Bot):
             self.logger.error('Could not import sleekxmpp. Please install it.')
             self.stop()
 
-        self.xmpp = XMPPClientBot(self.parameters.xmpp_user + '@'
-                                  + self.parameters.xmpp_server,
-                                  self.parameters.xmpp_password,
-                                  self.logger)
+        self.xmpp = XMPPClient(self.parameters.xmpp_user + '@' +
+                               self.parameters.xmpp_server,
+                               self.parameters.xmpp_password,
+                               self.logger)
         self.xmpp.connect(reattempt=True)
         self.xmpp.process()
 
     def process(self):
         event = self.receive_message()
 
-        receiver = self.parameters.xmpp_to_user + '@' \
-                   + self.parameters.xmpp_to_server
+        receiver = self.parameters.xmpp_to_user + '@' +\
+            self.parameters.xmpp_to_server
 
-        if event is None:
-            self.acknowledge_message()
-        else:
-            jevent = event.to_json()
+        jevent = str(event)
 
-            try:
-                # TODO: proper error handling. Right now it cannot be
-                # detected if the message was sent successfully.
-                self.logger.debug("Trying to send Event: %r , to %r",
-                                  jevent,
-                                  receiver)
-                self.xmpp.send_message(mto=receiver, mbody=jevent)
-            except sleekxmpp.exceptions.XMPPError as err:
-                self.logger.error('There was an error when sending the event')
-                self.logger.error(err.iq['error']['condition'])
+        try:
+            # TODO: proper error handling. Right now it cannot be
+            # detected if the message was sent successfully.
+            self.logger.debug("Trying to send Event: %r to %r",
+                              jevent,
+                              receiver)
+            self.xmpp.send_message(mto=receiver, mbody=jevent)
+        except sleekxmpp.exceptions.XMPPError as err:
+            self.logger.error('There was an error when sending the event')
+            self.logger.error(err.iq['error']['condition'])
 
-            self.acknowledge_message()
+        self.acknowledge_message()
 
     def stop(self):
-        self.xmpp.disconnect()
-        self.logger.info("Disconnected from xmpp")
+        if self.xmpp:
+            self.xmpp.disconnect()
+            self.logger.info("Disconnected from XMPP")
 
-        super(XMPPOutputBot, self).stop()
+            super(XMPPOutputBot, self).stop()
+        else:
+            self.logger.info("There was no XMPPClient I could stop")
 
-class XMPPClientBot(sleekxmpp.ClientXMPP):
-    def __init__(self,
-                 jid,
-                 password,
-                 logger):
+
+class XMPPClient(sleekxmpp.ClientXMPP):
+    def __init__(self, jid, password, logger):
         sleekxmpp.ClientXMPP.__init__(self, jid, password)
 
         self.logger = logger

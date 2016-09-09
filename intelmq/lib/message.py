@@ -75,7 +75,6 @@ class MessageFactory(object):
 class Message(dict):
 
     def __init__(self, message=(), auto=False):
-        super(Message, self).__init__(message)
         try:
             classname = message['__type'].lower()
             del message['__type']
@@ -89,6 +88,16 @@ class Message(dict):
                                              got=classname,
                                              expected=list(harm_config.keys()),
                                              docs=HARMONIZATION_CONF_FILE)
+        super(Message, self).__init__()
+        if isinstance(message, dict):
+            iterable = message.items()
+        elif isinstance(message, tuple):
+            iterable = message
+        for key, value in iterable:
+            try:
+                self.add(key, value, sanitize=False)
+            except exceptions.InvalidValue:
+                self.add(key, value, sanitize=True)
 
     def __setitem__(self, key, value):
         self.add(key, value)
@@ -106,9 +115,11 @@ class Message(dict):
         if not self.__is_valid_key(key):
             raise exceptions.InvalidKey(key)
 
-        try:
+        if ignore:
             warnings.warn('The ignore-argument will be removed in 1.0.',
                           DeprecationWarning)
+
+        try:
             if value in ignore:
                 return
         except TypeError:
@@ -153,7 +164,6 @@ class Message(dict):
         retval = getattr(intelmq.lib.message,
                          class_ref)(super(Message, self).copy())
         del self['__type']
-        del retval['__type']
         return retval
 
     def deep_copy(self):

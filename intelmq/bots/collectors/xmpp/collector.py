@@ -4,13 +4,14 @@ Connects to a XMPP Server and a Room and reads data from the room.
 If no room is provided, which is equivalent to an empty string,
 it only collects events which were sent to the xmpp user directly.
 
-Requires Python >= 3.4
-Requires sleekxmpp >= 1.0.0-beta5
+Tested with Python >= 3.4
+Tested with sleekxmpp >= 1.0.0-beta5
 
 Copyright (C) 2016 by Bundesamt für Sicherheit in der Informationstechnik
 Software engineering by Intevation GmbH
 
 Parameters:
+strip_message: boolean
 xmpp_user: string
 xmpp_server: string
 xmpp_password: boolean
@@ -22,7 +23,7 @@ xmpp_room_nick: string
 import sys
 
 from intelmq.lib.bot import CollectorBot
-from intelmq.bots.outputs.xmpp.output import XMPPBot
+from intelmq.lib.message import Report
 
 try:
     import sleekxmpp
@@ -41,13 +42,13 @@ class XMPPCollectorBot(CollectorBot):
 
     def process(self):
         if self.xmpp is None:
-            self.xmpp = XMPPClientBot(self.parameters.xmpp_user + '@'
-                                      + self.parameters.xmpp_server,
-                                      self.parameters.xmpp_password,
-                                      self.parameters.xmpp_room,
-                                      self.parameters.xmpp_room_nick,
-                                      self.parameters.xmpp_room_password,
-                                      self.logger)
+            self.xmpp = XMPPClient(self.parameters.xmpp_user + '@' +
+                                   self.parameters.xmpp_server,
+                                   self.parameters.xmpp_password,
+                                   self.parameters.xmpp_room,
+                                   self.parameters.xmpp_room_nick,
+                                   self.parameters.xmpp_room_password,
+                                   self.logger)
             self.xmpp.connect(reattempt=True)
             self.xmpp.process()
 
@@ -55,20 +56,31 @@ class XMPPCollectorBot(CollectorBot):
             self.xmpp.register_plugin('xep_0030')  # Service Discovery
             self.xmpp.register_plugin('xep_0045')  # Multi-User Chat
             self.xmpp.add_event_handler("message", self.log_message)
-            self.xmpp.add_event_handler("groupchat_message", self.log_message)
 
     def stop(self):
-        self.xmpp.disconnect()
-        self.logger.info("Disconnected from xmpp")
+        if self.xmpp:
+            self.xmpp.disconnect()
+            self.logger.info("Disconnected from XMPP")
 
-        super(XMPPCollectorBot, self).stop()
+            super(XMPPCollectorBot, self).stop()
+        else:
+            self.logger.info("There was no XMPPClient I could stop.")
 
     def log_message(self, msg):
-        self.logger.debug("Received Stanza: %r , from %r", msg['body'],
-                          msg['from'])
-        self.logger.info("Stanza received")
+        if self.parameters.strip_message:
+            body = msg['body'].strip()
+        else:
+            body = msg['body']
 
-        raw_msg = msg['body']
+        if len(body) > 400:
+            tmp_body = body[:397] + '...'
+        else:
+            tmp_body = body
+
+        self.logger.debug("Received Stanza: %r from %r", tmp_body,
+                          msg['from'])
+
+        raw_msg = body
 
         # Read msg-body and add as raw to a new report.
         # now it's up to a parser to do the interpretation of the message.
@@ -78,7 +90,7 @@ class XMPPCollectorBot(CollectorBot):
             self.send_message(report)
 
 
-class XMPPClientBot(sleekxmpp.ClientXMPP):
+class XMPPClient(sleekxmpp.ClientXMPP):
     def __init__(self,
                  jid,
                  password,
@@ -110,7 +122,7 @@ class XMPPClientBot(sleekxmpp.ClientXMPP):
             self.logger.error('Server is taking too long to respond')
             self.disconnect()
 
-        if self.xmpp_room:
+        if self.xmpp_room and self.plugin.get('xep_0045'):
             self.logger.debug("Joining room: %s", self.xmpp_room)
             pwd = self.xmpp_room_password if self.xmpp_room_password else ""
             self.plugin['xep_0045'].joinMUC(self.xmpp_room,
