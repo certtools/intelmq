@@ -24,7 +24,7 @@ TODO: All messages are duplicated
 
 import sys
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import CollectorBot
 from intelmq.lib.message import Report
 
 try:
@@ -33,7 +33,8 @@ except ImportError:
     sleekxmpp = None
 
 
-class XMPPCollectorBot(Bot):
+class XMPPCollectorBot(CollectorBot):
+
     xmpp = None
 
     def init(self):

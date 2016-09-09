@@ -641,6 +641,7 @@
             "description": "This bot can connect to an XMPP Server and one room, in order to receive reports from it.",
             "module": "intelmq.bots.collectors.xmpp.collector",
             "parameters": {
+                "feed": "XMPP",
                 "rate_limit": 3600,
                 "strip_message": true,
                 "xmpp_password": "xmpp password",
