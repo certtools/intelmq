@@ -26,7 +26,7 @@ Harmonization field names
 |Destination|destination.local_ip|[IPAddress](#ipaddress)|Some sources report a internal (NATed) IP address related a compromized system. N.B. RFC1918 IPs are OK here.|
 |Destination|destination.network|[IPNetwork](#ipnetwork)|CIDR for an autonomous system. Also known as BGP prefix. If multiple values are possible, select the most specific.|
 |Destination|destination.port|[Integer](#integer)|The port to which the connection headed.|
-|Destination|destination.registry|[UppercaseString](#uppercasestring)|The IP registry a given ip address is allocated by.|
+|Destination|destination.registry|[Registry](#registry)|The IP registry a given ip address is allocated by.|
 |Destination|destination.reverse_dns|[FQDN](#fqdn)|Reverse DNS name acquired through a reverse DNS query on an IP address. N.B. Record types other than PTR records may also appear in the reverse DNS tree. Furthermore, unfortunately, there is no rule prohibiting people from writing anything in a PTR record. Even Javascript will work. A final point is stripped, string is converted to lower case characters.|
 |Destination|destination.tor_node|[Boolean](#boolean)|If the destination IP was a known tor node.|
 |Destination|destination.url|[URL](#url)|A URL denotes on IOC, which refers to a malicious resource, whose interpretation is defined by the abuse type. A URL with the abuse type phishing refers to a phishing resource.|
@@ -71,7 +71,7 @@ Harmonization field names
 |Source|source.local_ip|[IPAddress](#ipaddress)|Some sources report a internal (NATed) IP address related a compromized system. N.B. RFC1918 IPs are OK here.|
 |Source|source.network|[IPNetwork](#ipnetwork)|CIDR for an autonomous system. Also known as BGP prefix. If multiple values are possible, select the most specific.|
 |Source|source.port|[Integer](#integer)|The port from which the connection originated.|
-|Source|source.registry|[UppercaseString](#uppercasestring)|The IP registry a given ip address is allocated by.|
+|Source|source.registry|[Registry](#registry)|The IP registry a given ip address is allocated by.|
 |Source|source.reverse_dns|[FQDN](#fqdn)|Reverse DNS name acquired through a reverse DNS query on an IP address. N.B. Record types other than PTR records may also appear in the reverse DNS tree. Furthermore, unfortunately, there is no rule prohibiting people from writing anything in a PTR record. Even Javascript will work. A final point is stripped, string is converted to lower case characters.|
 |Source|source.tor_node|[Boolean](#boolean)|If the source IP was a known tor node.|
 |Source|source.url|[URL](#url)|A URL denotes an IOC, which refers to a malicious resource, whose interpretation is defined by the abuse type. A URL with the abuse type phishing refers to a phishing resource.|
@@ -148,6 +148,14 @@ Valid values are only unicode strings with JSON dictionaries.
 
 
 ### LowercaseString
+
+
+### Registry
+
+Registry type. Derived from UppercaseString.
+
+Only valid values: AFRINIC, APNIC, ARIN, LACNIC, RIPE.
+RIPE-NCC and RIPENCC are normalized to RIPE.
 
 
 ### String

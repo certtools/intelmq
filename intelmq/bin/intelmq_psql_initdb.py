@@ -33,7 +33,7 @@ def main():
 
         if value['type'] in ('String', 'Base64', 'URL', 'FQDN',
                              'MalwareName', 'ClassificationType',
-                             'LowercaseString', 'UppercaseString'):
+                             'LowercaseString', 'UppercaseString', 'Registry'):
             if 'length' in value:
                 dbtype = 'varchar({})'.format(value['length'])
             else:
