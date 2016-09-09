@@ -50,7 +50,7 @@ class XMPPOutputBot(Bot):
         receiver = self.parameters.xmpp_to_user + '@' +\
             self.parameters.xmpp_to_server
 
-        jevent = event.to_json()
+        jevent = str(event)
 
         try:
             # TODO: proper error handling. Right now it cannot be
