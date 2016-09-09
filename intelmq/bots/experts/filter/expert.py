@@ -68,10 +68,9 @@ class FilterExpertBot(Bot):
             self.filter = False
 
         self.use_regex = False
-        if hasattr(self.parameters,'filter_regex'):
-            if not self.parameters.filter_regex == None:
+        if hasattr(self.parameters, 'filter_regex'):
+            if not self.parameters.filter_regex is None:
                 self.use_regex = True
-
 
         if not (self.filter or self.not_after is not None or self.not_before is not None):
             self.logger.error("No relevant filter configuration found, stopping...")
@@ -126,7 +125,6 @@ class FilterExpertBot(Bot):
             else:
                 self.acknowledge_message()
                 return
-
 
         self.send_message(event)
         self.acknowledge_message()
