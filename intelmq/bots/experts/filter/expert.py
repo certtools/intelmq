@@ -22,7 +22,7 @@ class FilterExpertBot(Bot):
         try:
             result = re.findall(r'^(\d+)\s+(\w+[^s])s?$', relative_time, re.UNICODE)
         except ValueError as e:
-            raise ValueError("Could not apply regex to attribute \"%s\" with exception %s",
+            raise ValueError("Could not apply regex to attribute \"%s\" with exception %s.",
                              repr(relative_time), repr(e.args))
         if len(result) == 1 and len(result[0]) == 2 and result[0][1] in FilterExpertBot.timespans:
             return int(result[0][0]) * FilterExpertBot.timespans[result[0][1]]
@@ -35,10 +35,10 @@ class FilterExpertBot(Bot):
             absolute = parser.parse(time_attr)
         except ValueError:
             relative = timedelta(minutes=self.parse_relative(time_attr))
-            self.logger.info("Filtering out events to (relative time) " + repr(relative))
+            self.logger.info("Filtering out events to (relative time) {!r}.".format(relative))
             return relative
         else:
-            self.logger.info("Filtering out events to (absolute time) " + repr(absolute))
+            self.logger.info("Filtering out events to (absolute time) {!r}.".format(absolute))
             return absolute
         return None
 
@@ -79,25 +79,25 @@ class FilterExpertBot(Bot):
             try:
                 event_time = parser.parse(str(event.get('time.source'))).replace(tzinfo=pytz.timezone('UTC'))
             except ValueError:
-                self.logger.error("Could not parse time.source " + str(event.get('time.source')))
+                self.logger.error("Could not parse time.source {!s}.".format(event.get('time.source')))
             else:
                 if type(self.not_after) is datetime and event_time > self.not_after:
                     self.acknowledge_message()
-                    self.logger.debug("Filtered out event with time.source " + repr(event.get('time.source')))
+                    self.logger.debug("Filtered out event with time.source {!s}.".format(event.get('time.source')))
                     return
                 if type(self.not_before) is datetime and event_time < self.not_before:
                     self.acknowledge_message()
-                    self.logger.debug("Filtered out event with time.source " + repr(event.get('time.source')))
+                    self.logger.debug("Filtered out event with time.source {!r}.".format(event.get('time.source')))
                     return
 
                 now = datetime.now(tz=pytz.timezone('UTC'))
                 if type(self.not_after) is timedelta and event_time > (now - self.not_after):
                     self.acknowledge_message()
-                    self.logger.debug("Filtered out event with time.source " + repr(event.get('time.source')))
+                    self.logger.debug("Filtered out event with time.source {!r}.".format(event.get('time.source')))
                     return
                 if type(self.not_before) is timedelta and event_time < (now - self.not_before):
                     self.acknowledge_message()
-                    self.logger.debug("Filtered out event with time.source " + repr(event.get('time.source')))
+                    self.logger.debug("Filtered out event with time.source {!r}.".format(event.get('time.source')))
                     return
 
         # key/value based filtering

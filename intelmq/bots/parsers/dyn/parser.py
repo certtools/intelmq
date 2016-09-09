@@ -16,8 +16,8 @@ from intelmq.lib.message import Event
 class DynParserBot(Bot):
 
     def init(self):
-        self.TZOFFSETS = {'PST': -8*60*60,
-                          'PDT': -7*60*60}
+        self.TZOFFSETS = {'PST': -8 * 60 * 60,
+                          'PDT': -7 * 60 * 60}
 
     def process(self):
         report = self.receive_message()
@@ -26,7 +26,7 @@ class DynParserBot(Bot):
 
         for row in raw_report.splitlines():
             if row.startswith("# last updated:"):
-                source_time = dateutil.parser.parse(row[row.find(':')+1:],
+                source_time = dateutil.parser.parse(row[row.find(':') + 1:],
                                                     tzinfos=self.TZOFFSETS)
                 source_time = source_time.isoformat()
                 continue
