@@ -213,8 +213,11 @@ Get logs of a bot:
         with open(STARTUP_CONF_FILE, 'r') as fp:
             self.startup = json.load(fp)
 
-        with open(SYSTEM_CONF_FILE, 'r') as fp:
-            self.system = json.load(fp)
+        if os.path.exists(SYSTEM_CONF_FILE):
+            self.logger.warn("system.conf is deprecated and will be"
+                             "removed in 1.0. Use defaults.conf instead!")
+            with open(SYSTEM_CONF_FILE, 'r') as fp:
+                self.system = json.load(fp)
 
         if not os.path.exists(PIDDIR):
             os.makedirs(PIDDIR)
@@ -266,9 +269,10 @@ Get logs of a bot:
             QUIET = self.args.quiet
 
     def load_system_configuration(self):
-        config = utils.load_configuration(SYSTEM_CONF_FILE)
-        for option, value in config.items():
-            setattr(self.parameters, option, value)
+        if os.path.exists(SYSTEM_CONF_FILE):
+            config = utils.load_configuration(SYSTEM_CONF_FILE)
+            for option, value in config.items():
+                setattr(self.parameters, option, value)
 
     def load_defaults_configuration(self):
         # Load defaults configuration section

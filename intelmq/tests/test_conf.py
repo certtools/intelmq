@@ -59,13 +59,6 @@ class TestConf(unittest.TestCase):
         interpreted = json.loads(fcontent)
         self.assertEqual(to_json(interpreted), fcontent)
 
-    def test_system_syntax(self):
-        """ Test if system.conf has correct syntax. """
-        with open(CONF_FILES['system']) as fhandle:
-            fcontent = fhandle.read()
-        interpreted = json.loads(fcontent)
-        self.assertEqual(to_json(interpreted), fcontent)
-
     def test_BOTS_syntax(self):
         """ Test if BOTS has correct syntax. """
         with open(pkg_resources.resource_filename('intelmq',
