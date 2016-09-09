@@ -31,7 +31,7 @@ import intelmq.lib.utils as utils
 
 __all__ = ['Base64', 'Boolean', 'ClassificationType', 'DateTime', 'FQDN',
            'Float', 'Accuracy', 'GenericType', 'IPAddress', 'IPNetwork',
-           'Integer', 'JSON', 'LowercaseString', 'Registry','String', 'URL',
+           'Integer', 'JSON', 'LowercaseString', 'Registry', 'String', 'URL',
            ]
 
 
