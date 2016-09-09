@@ -102,14 +102,15 @@ send out.  This is based on the order and fields of shadowserver.
 Shadowserver format:
     timestamp,"ip","protocol","port","hostname","packets","size","asn","geo","region","city","naics","sic","sector"
 """
-CSV_FIELDS=["time.source", "source.ip", "protocol.transport", "source.port", "protocol.application",
-            "source.fqdn", "source.local_hostname", "source.local_ip", "source.url",
-            "source.asn", "source.geolocation.cc",
-            "source.geolocation.city",
-            "classification.taxonomy", "classification.type", "classification.identifier",
-            "destination.ip", "destination.port", "destination.fqdn", "destination.url",
-            "feed", "event_description.text", "event_description.url", "malware.name", "extra", "comment", "additional_field_freetext", "version: 1.1"
-            ]
+CSV_FIELDS = ["time.source", "source.ip", "protocol.transport", "source.port", "protocol.application",
+              "source.fqdn", "source.local_hostname", "source.local_ip", "source.url",
+              "source.asn", "source.geolocation.cc",
+              "source.geolocation.city",
+              "classification.taxonomy", "classification.type", "classification.identifier",
+              "destination.ip", "destination.port", "destination.fqdn", "destination.url",
+              "feed", "event_description.text", "event_description.url", "malware.name", "extra",
+              "comment", "additional_field_freetext", "version: 1.1"
+              ]
 
 QUERY_BY_ASCONTACT = """
 SELECT
