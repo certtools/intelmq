@@ -642,6 +642,7 @@
             "module": "intelmq.bots.collectors.xmpp.collector",
             "parameters": {
                 "rate_limit": 3600,
+                "strip_message": true,
                 "xmpp_password": "xmpp password",
                 "xmpp_room": "xmpp room",
                 "xmpp_room_nick": "xmpp room nick",

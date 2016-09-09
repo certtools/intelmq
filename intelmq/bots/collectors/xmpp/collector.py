@@ -11,6 +11,7 @@ Copyright (C) 2016 by Bundesamt für Sicherheit in der Informationstechnik
 Software engineering by Intevation GmbH
 
 Parameters:
+strip_message: boolean
 xmpp_user: string
 xmpp_server: string
 xmpp_password: boolean
@@ -68,11 +69,16 @@ class XMPPCollectorBot(Bot):
             self.logger.info("There was no XMPPClient I could stop.")
 
     def log_message(self, msg):
-        self.logger.debug("Received Stanza: %r from %r", msg['body'],
+        if self.parameters.strip_message:
+            body = msg['body'].strip()
+        else:
+            body = msg['body']
+
+        self.logger.debug("Received Stanza: %r from %r", body,
                           msg['from'])
         self.logger.info("Stanza received")
 
-        raw_msg = msg['body']
+        raw_msg = body
 
         # Read msg-body and add as raw to a new report.
         # now it's up to a parser to do the interpretation of the message.
