@@ -333,7 +333,7 @@ Get logs of a bot:
             botname = [name for name in dir(module)
                        if hasattr(getattr(module, name), 'process') and
                        name.endswith('Bot') and
-                       name != 'ParserBot'][0]
+                       name not in ['CollectorBot', 'ParserBot']][0]
             bot = getattr(module, botname)
             instance = bot(bot_id)
             instance.start()
