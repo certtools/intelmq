@@ -18,8 +18,6 @@ xmpp_password: boolean
 xmpp_room: string
 xmpp_room_password: string
 xmpp_room_nick: string
-
-TODO: All messages are duplicated
 """
 
 import sys
@@ -58,7 +56,6 @@ class XMPPCollectorBot(CollectorBot):
             self.xmpp.register_plugin('xep_0030')  # Service Discovery
             self.xmpp.register_plugin('xep_0045')  # Multi-User Chat
             self.xmpp.add_event_handler("message", self.log_message)
-            self.xmpp.add_event_handler("groupchat_message", self.log_message)
 
     def stop(self):
         if self.xmpp:
