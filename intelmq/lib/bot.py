@@ -15,7 +15,7 @@ import sys
 import time
 import traceback
 
-from intelmq import (DEFAULT_LOGGING_LEVEL, DEFAULT_LOGGING_PATH,
+from intelmq import (DEFAULT_LOGGING_PATH,
                      DEFAULTS_CONF_FILE, HARMONIZATION_CONF_FILE,
                      PIPELINE_CONF_FILE, RUNTIME_CONF_FILE, SYSTEM_CONF_FILE)
 from intelmq.lib import exceptions, utils
@@ -59,6 +59,7 @@ class Bot(object):
             else:
                 syslog = False
             self.logger = utils.log(self.__bot_id, syslog=syslog,
+                                    log_path=self.parameters.logging_path,
                                     log_level=self.parameters.logging_level)
         except:
             self.__log_buffer.append(('critical', traceback.format_exc()))
@@ -165,7 +166,7 @@ class Bot(object):
                     self.last_heartbeat = datetime.datetime.now()
 
             finally:
-                if self.parameters.testing:
+                if getattr(self.parameters, 'testing', False):
                     self.stop()
                     break
 
@@ -212,15 +213,12 @@ class Bot(object):
             self.__log_buffer.append(('info', 'Bot stopped.'))
             self.__print_log_buffer()
 
-        if not self.parameters.testing:
-            self.__terminate()
-
-    def __terminate(self):
-        try:
-            self.logger.error("Exiting.")
-        except:
-            print("Exiting")
-        exit(-1)
+        if not getattr(self.parameters, 'testing', False):
+            try:
+                self.logger.error("Exiting.")
+            except:
+                print("Exiting")
+            exit(-1)
 
     def __print_log_buffer(self):
         for level, message in self.__log_buffer:
@@ -340,9 +338,7 @@ class Bot(object):
         self.__log_buffer.append(('debug', "Loading defaults configuration."))
         config = utils.load_configuration(DEFAULTS_CONF_FILE)
 
-        setattr(self.parameters, 'testing', False)
         setattr(self.parameters, 'logging_path', DEFAULT_LOGGING_PATH)
-        setattr(self.parameters, 'logging_level', DEFAULT_LOGGING_LEVEL)
 
         for option, value in config.items():
             setattr(self.parameters, option, value)
@@ -352,15 +348,17 @@ class Bot(object):
                                                                         value)))
 
     def __load_system_configuration(self):
-        self.__log_buffer.append(('debug', "Loading system configuration."))
-        config = utils.load_configuration(SYSTEM_CONF_FILE)
+        if os.path.exists(SYSTEM_CONF_FILE):
+            self.__log_buffer.append(('warning', "system.conf is deprecated and will be"
+                                      "removed in 1.0. Use defaults.conf instead!"))
+            self.__log_buffer.append(('debug', "Loading system configuration."))
+            config = utils.load_configuration(SYSTEM_CONF_FILE)
 
-        for option, value in config.items():
-            setattr(self.parameters, option, value)
-            self.__log_buffer.append(('debug',
-                                      "System configuration: parameter {!r} "
-                                      "loaded  with value {!r}.".format(option,
-                                                                        value)))
+            for option, value in config.items():
+                setattr(self.parameters, option, value)
+                self.__log_buffer.append(('debug',
+                                          "System configuration: parameter {!r} "
+                                          "loaded  with value {!r}.".format(option, value)))
 
     def __load_runtime_configuration(self):
         self.logger.debug("Loading runtime configuration.")
@@ -508,6 +506,39 @@ class ParserBot(Bot):
         writer.writeheader()
         writer.writerow(line)
         return out.getvalue()
+
+
+class CollectorBot(Bot):
+    """
+    Base class for collectors.
+
+    Does some sanity checks on message sending.
+    """
+    def __init__(self, bot_id):
+        super(CollectorBot, self).__init__(bot_id=bot_id)
+        if self.__class__.__name__ == 'CollectorBot':
+            self.logger.error('CollectorBot can\'t be started itself. '
+                              'Possible Misconfiguration.')
+            self.stop()
+
+    def __filter_empty_report(self, message):
+        if 'raw' not in message:
+            self.logger.warning('Ignoring report without raw field. '
+                                'Possible bug or miconfiguration of this bot.')
+            return False
+        return True
+
+    def __add_report_fields(self, report):
+        report.add("feed.name", self.parameters.feed)
+        if hasattr(self.parameters, 'code'):
+            report.add("feed.code", self.parameters.code)
+        report.add("feed.accuracy", self.parameters.accuracy)
+        return report
+
+    def send_message(self, *messages):
+        messages = filter(self.__filter_empty_report, messages)
+        messages = map(self.__add_report_fields, messages)
+        super(CollectorBot, self).send_message(*messages)
 
 
 class Parameters(object):

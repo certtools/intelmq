@@ -749,7 +749,7 @@
             "description": "Reverse DNS is the bot resposible to get the correspondent domain name source IP and destination IP of the events",
             "module": "intelmq.bots.experts.reverse_dns.expert",
             "parameters": {
-                "redis_cache_db": "5",
+                "redis_cache_db": "7",
                 "redis_cache_host": "127.0.0.1",
                 "redis_cache_port": "6379",
                 "redis_cache_ttl": "86400"

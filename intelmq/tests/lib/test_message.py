@@ -8,8 +8,8 @@ but has a valid Harmonization configuration.
 """
 import json
 import unittest
+import unittest.mock as mock
 
-import mock
 import pkg_resources
 
 import intelmq.lib.exceptions as exceptions

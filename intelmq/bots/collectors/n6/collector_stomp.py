@@ -2,7 +2,7 @@
 import os.path
 import sys
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import CollectorBot
 from intelmq.lib.message import Report
 
 try:
@@ -32,7 +32,6 @@ class StompListener(stomp.listener.PrintingListener):
                                     '{!r}...'.format(message[:500]))
         report = Report()
         report.add("raw", message.rstrip())
-        report.add("feed.name", self.n6stomper.parameters.feed)
         report.add("feed.url", "stomp://" +
                    self.n6stomper.parameters.server +
                    ":" + str(self.n6stomper.parameters.port) +
@@ -41,7 +40,7 @@ class StompListener(stomp.listener.PrintingListener):
         self.n6stomper.logger.debug('Receiving Message.')
 
 
-class n6stompCollectorBot(Bot):
+class n6stompCollectorBot(CollectorBot):
     """ main class for the n6 STOMP protocol collector """
 
     def init(self):
