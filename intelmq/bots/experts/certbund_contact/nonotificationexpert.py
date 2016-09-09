@@ -33,28 +33,19 @@ class NoNotificationExpertBot(Bot):
             return
 
         if self.dropsrc and not self.dropdst:
-            event = self.removeSrcNotificationInformation(event)
+            event = self.removeNotificationInformation(event, "source")
 
         elif self.dropdst and not self.dropsrc:
-            event = self.removeDstNotificationInformation(event)
+            event = self.removeNotificationInformation(event, "destination")
 
         elif self.dropsrc and self.dropdst:
-            event = self.removeAllNotificationInformation(event)
+            event = self.removeNotificationInformation(event, "all")
 
         else:
             self.__misconfigurationWarning()
 
         self.send_message(event)
         self.acknowledge_message()
-
-    def removeSrcNotificationInformation(self, event):
-        return self.removeNotificationInformation(event, "source")
-
-    def removeDstNotificationInformation(self, event):
-        return self.removeNotificationInformation(event, "destination")
-
-    def removeAllNotificationInformation(self, event):
-        return self.removeNotificationInformation(event, "all")
 
     # Retrieve the JSON field "extra" of the event and search for the
     # dictionary called "certbund".
