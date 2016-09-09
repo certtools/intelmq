@@ -67,13 +67,10 @@ class FilterExpertBot(Bot):
             self.logger.info("Filter_action parameter definition unknown.")
             self.filter = False
 
-        self.use_regex = None
+        self.use_regex = False
         if hasattr(self.parameters,'filter_regex'):
-            if self.parameters.filter_regex in ("search", "match"):
-                self.use_regex = self.parameters.filter_regex
-            elif self.parameters.filter_regex:
-                self.logger.warn("Invalid configuration for filter_regex parameter"
-                                 " You can use: 'search' or 'match'")
+            if not self.parameters.filter_regex == None:
+                self.use_regex = True
 
 
         if not (self.filter or self.not_after is not None or self.not_before is not None):
@@ -135,10 +132,8 @@ class FilterExpertBot(Bot):
         self.acknowledge_message()
 
     def doFilter(self, event, key, condition):
-        if self.use_regex == "search":
+        if self.use_regex:
             return self.regexSearchFilter(event, key, condition)
-        elif self.use_regex == "match":
-            return self.regexMatchFilter(event, key, condition)
         else:
             return self.equalsFilter(event, key, condition)
 
@@ -150,13 +145,6 @@ class FilterExpertBot(Bot):
         if event.contains(key):
             exp = re.compile(regex)
             return exp.search(event.get(key))
-        else:
-            return False
-
-    def regexMatchFilter(self, event, key, regex):
-        if event.contains(key):
-            exp = re.compile(regex)
-            return exp.match(event.get(key))
         else:
             return False
 

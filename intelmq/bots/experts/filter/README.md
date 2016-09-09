@@ -7,9 +7,7 @@ The filter bot is capable of filtering specific events.
 * `filter_value` - value for the key
 * `filter_action` - action when a message match to the criteria (possible actions: keep/drop)
 * `filter_regex` - attribute determines if the `filter_value` shall be treated as regular expression or not.
-   Your options are: `match` or `search` any other value will be treated as invalid an normal key-value
-   based filtering will be used. `match` will always start at the beginning of the value, whilst `search`
-   will iterate over the full string.
+   If this attribute is not empty, the bot uses python's "search" function to evaluate the filter.
 
 ## Parameters for time based filtering:
 * `not_before` - events before this time will be dropped
