@@ -9,11 +9,11 @@ except ImportError:
     imbox = None
 import requests
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import CollectorBot
 from intelmq.lib.message import Report
 
 
-class MailURLCollectorBot(Bot):
+class MailURLCollectorBot(CollectorBot):
 
     def init(self):
         if imbox is None:
@@ -79,9 +79,6 @@ class MailURLCollectorBot(Bot):
 
                         report = Report()
                         report.add("raw", resp.content)
-                        report.add("feed.name",
-                                   self.parameters.feed)
-                        report.add("feed.accuracy", self.parameters.accuracy)
                         self.send_message(report)
 
                         # Only mark read if message relevant to this instance,
