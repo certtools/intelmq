@@ -10,14 +10,14 @@ except ImportError:
     imbox = None
 import requests
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import CollectorBot
 from intelmq.lib.message import Report
 from intelmq.lib.splitreports import generate_reports
 
 
 
 
-class MailURLCollectorBot(Bot):
+class MailURLCollectorBot(CollectorBot):
 
     def init(self):
         if imbox is None:

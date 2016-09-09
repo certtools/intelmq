@@ -21,8 +21,8 @@ xmpp_room_nick: string
 
 import sys
 
-from intelmq.lib.bot import Bot
-from intelmq.lib.message import Report
+from intelmq.lib.bot import CollectorBot
+from intelmq.bots.outputs.xmpp.output import XMPPBot
 
 try:
     import sleekxmpp
@@ -30,7 +30,8 @@ except ImportError:
     sleekxmpp = None
 
 
-class XMPPCollectorBot(Bot):
+class XMPPCollectorBot(CollectorBot):
+
     xmpp = None
 
     def init(self):
