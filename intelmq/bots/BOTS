@@ -730,7 +730,7 @@
                 "filter_action": "<keep/drop>",
                 "filter_key": "<source.geolocation.cc>",
                 "filter_value": "<PT>",
-                "filter_regex": "<match/search/None>"
+                "filter_regex": ""
             }
         },
         "Gethostbyname": {
