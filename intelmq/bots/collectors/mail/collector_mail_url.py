@@ -82,8 +82,6 @@ class MailURLCollectorBot(CollectorBot):
                         self.logger.info("Report downloaded.")
 
                         template = Report()
-                        template.add("feed.name", self.parameters.feed)
-                        template.add("feed.accuracy", self.parameters.accuracy)
 
                         for report in generate_reports(template, io.BytesIO(resp.content), self.parameters.chunk_size,
                                                        self.parameters.chunk_replicate_header):

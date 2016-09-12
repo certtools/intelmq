@@ -57,9 +57,7 @@ class FileCollectorBot(CollectorBot):
                         self.logger.info("Processing file %r." % filename)
 
                         template = Report()
-                        template.add("feed.name", self.parameters.feed)
                         template.add("feed.url", "file://localhost%s" % filename)
-                        template.add("feed.accuracy", self.parameters.accuracy)
 
                         with open(filename, 'rb') as f:
                             for report in generate_reports(template, f, self.parameters.chunk_size,
