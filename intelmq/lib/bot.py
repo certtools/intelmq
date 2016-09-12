@@ -121,8 +121,9 @@ class Bot(object):
                 self.process()
                 self.__error_retries_counter = 0  # reset counter
 
-                self.logger.info("Idling for {!s}s now.".format(self.parameters.rate_limit))
-                time.sleep(self.parameters.rate_limit)
+                if self.parameters.rate_limit:
+                    self.logger.info("Idling for {!s}s now.".format(self.parameters.rate_limit))
+                    time.sleep(self.parameters.rate_limit)
 
             except exceptions.PipelineError:
                 error_on_pipeline = True
@@ -232,7 +233,7 @@ class Bot(object):
         self.logger.debug("Loading source queue.")
         self.__source_pipeline.set_queues(self.__source_queues, "source")
         self.logger.debug("Source queue loaded {}."
-                         "".format(self.__source_queues))
+                          "".format(self.__source_queues))
         self.__source_pipeline.connect()
         self.logger.debug("Connected to source queue.")
 
@@ -242,7 +243,7 @@ class Bot(object):
         self.__destination_pipeline.set_queues(self.__destination_queues,
                                                "destination")
         self.logger.debug("Destination queues loaded {}."
-                         "".format(self.__destination_queues))
+                          "".format(self.__destination_queues))
         self.__destination_pipeline.connect()
         self.logger.debug("Connected to destination queues.")
 
@@ -341,7 +342,7 @@ class Bot(object):
                                                                         value)))
 
     def __load_system_configuration(self):
-        self.__log_buffer.append(('debug', "Loading system configuration"))
+        self.__log_buffer.append(('debug', "Loading system configuration."))
         config = utils.load_configuration(SYSTEM_CONF_FILE)
 
         for option, value in config.items():
@@ -352,7 +353,7 @@ class Bot(object):
                                                                         value)))
 
     def __load_runtime_configuration(self):
-        self.logger.debug("Loading runtime configuration")
+        self.logger.debug("Loading runtime configuration.")
         config = utils.load_configuration(RUNTIME_CONF_FILE)
 
         if self.__bot_id in list(config.keys()):
@@ -362,7 +363,7 @@ class Bot(object):
                                   "loaded with value {!r}.".format(option, value))
 
     def __load_pipeline_configuration(self):
-        self.logger.debug("Loading pipeline configuration")
+        self.logger.debug("Loading pipeline configuration.")
         config = utils.load_configuration(PIPELINE_CONF_FILE)
 
         self.__source_queues = None
@@ -404,6 +405,13 @@ class Bot(object):
 
 class ParserBot(Bot):
 
+    def __init__(self, bot_id):
+        super(ParserBot, self).__init__(bot_id=bot_id)
+        if self.__class__.__name__ == 'ParserBot':
+            self.logger.error('ParserBot can\'t be started itself. '
+                              'Possible Misconfiguration.')
+            self.stop()
+
     def parse_csv(self, report):
         """
         A basic CSV parser.
@@ -440,20 +448,28 @@ class ParserBot(Bot):
         self.__failed = []
         report = self.receive_message()
 
+        if 'raw' not in report:
+            self.logger.warning('Report without raw field received. Possible '
+                                'bug or misconfiguration in previous bots.')
+            self.acknowledge_message()
+            return
+
         for line in self.parse(report):
             if not line:
                 continue
             try:
                 # filter out None
                 events = list(filter(bool, self.parse_line(line, report)))
-            except Exception as exc:
+            except Exception:
                 self.logger.exception('Failed to parse line.')
-                self.__failed.append((exc, line))
+                self.__failed.append((traceback.format_exc(), line))
             else:
                 self.send_message(*events)
 
         for exc, line in self.__failed:
-            self._dump_message(exc, self.recover_line(line))
+            report_dump = report.copy()
+            report_dump.update('raw', self.recover_line(line))
+            self._dump_message(exc, report_dump)
 
         self.acknowledge_message()
 

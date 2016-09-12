@@ -79,7 +79,7 @@ class MISPParserBot(Bot):
             if attribute['category'] == 'Payload type':
                 value = attribute['value'].lower()
                 # TODO: use misp galaxies
-                if value and harmonization.MalwareName.is_valid(value):
+                if value and harmonization.LowercaseString.is_valid(value):
                     malware_variant = value
 
         # MISP event URL
@@ -103,8 +103,7 @@ class MISPParserBot(Bot):
 
                 # Create and send the intelmq event
                 event = Event(report)
-                # FIXME: Send the whole MISP event with each attribute?
-                event.add('raw', json.dumps(misp_event, sort_keys=True))
+                event.add('raw', json.dumps(attribute, sort_keys=True))
                 event.add(self.MISP_TYPE_MAPPING[type_], value)
                 event.add('misp.event_uuid', misp_event['uuid'])
                 event.add('misp.attribute_uuid', uuid)

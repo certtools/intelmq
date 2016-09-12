@@ -48,8 +48,7 @@ class MailURLCollectorBot(Bot):
                         url = url.strip()     # strip leading and trailing spaces, newlines and carriage returns
 
                         # Build request
-                        self.http_header = getattr(self.parameters,
-                                'http_header', {})
+                        self.http_header = getattr(self.parameters, 'http_header', {})
                         self.http_verify_cert = getattr(self.parameters,
                                                         'http_verify_cert', True)
 
@@ -95,6 +94,7 @@ class MailURLCollectorBot(Bot):
                         # check it.
                         mailbox.mark_seen(uid)
                 self.logger.info("Email report read")
+        mailbox.logout()
 
 
 if __name__ == "__main__":
