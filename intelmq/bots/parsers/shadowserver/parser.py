@@ -43,6 +43,9 @@ class ShadowserverParserBot(ParserBot):
             if self.parameters.override:
                 self.override = True
 
+        # Already warned about deprecation
+        self.depr_warning = False
+
     def parse(self, report):
         raw_report = utils.base64_decode(report["raw"])
         csvr = csv.DictReader(io.StringIO(raw_report))
@@ -156,6 +159,13 @@ class ShadowserverParserBot(ParserBot):
 
         # Now add additional constant fields.
         dict.update(event, conf.get('constant_fields', {}))  # TODO: rewrite in 1.0
+        if 'feed.code' in conf.get('constant_fields', {}).keys() and not self.depr_warning:
+            self.depr_warning = True
+            # could not get this working with logging.captureWarnings(True) :(
+            # TODO: remove from config 1.0
+            self.logger.warn('`feed.code` will be removed from the constant_fields in '
+                             'default config in favor of the `code` parameter in collectors '
+                             'in 1.0!')
 
         self.logger.debug("Raw_line: {!r}.".format(row))
         event.add('raw', self.recover_line(row))

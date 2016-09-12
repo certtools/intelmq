@@ -10,14 +10,14 @@ except ImportError:
     imbox = None
 import requests
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import CollectorBot
 from intelmq.lib.message import Report
 from intelmq.lib.splitreports import generate_reports
 
 
 
 
-class MailURLCollectorBot(Bot):
+class MailURLCollectorBot(CollectorBot):
 
     def init(self):
         if imbox is None:
@@ -82,8 +82,6 @@ class MailURLCollectorBot(Bot):
                         self.logger.info("Report downloaded.")
 
                         template = Report()
-                        template.add("feed.name", self.parameters.feed)
-                        template.add("feed.accuracy", self.parameters.accuracy)
 
                         for report in generate_reports(template, io.BytesIO(resp.content), self.parameters.chunk_size,
                                                        self.parameters.chunk_replicate_header):

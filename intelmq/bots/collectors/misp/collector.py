@@ -16,11 +16,11 @@ from urllib.parse import urljoin
 
 from pymisp import PyMISP
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import CollectorBot
 from intelmq.lib.message import Report
 
 
-class MISPCollectorBot(Bot):
+class MISPCollectorBot(CollectorBot):
 
     def init(self):
         # Initialise MISP connection
@@ -50,9 +50,7 @@ class MISPCollectorBot(Bot):
                 # Send the results to the parser
                 report = Report()
                 report.add('raw', json.dumps(misp_event, sort_keys=True))
-                report.add('feed.name', self.parameters.feed)
                 report.add('feed.url', self.parameters.misp_url)
-                report.add('feed.accuracy', self.parameters.accuracy)
                 self.send_message(report)
 
             # Finally, update the tags on the MISP events.

@@ -21,12 +21,12 @@ import os
 import sys
 
 import intelmq.lib.exceptions as exceptions
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import CollectorBot
 from intelmq.lib.message import Report
 from intelmq.lib.splitreports import generate_reports
 
 
-class FileCollectorBot(Bot):
+class FileCollectorBot(CollectorBot):
 
     def init(self):
         # Test if path is a directory
@@ -57,9 +57,7 @@ class FileCollectorBot(Bot):
                         self.logger.info("Processing file %r." % filename)
 
                         template = Report()
-                        template.add("feed.name", self.parameters.feed)
                         template.add("feed.url", "file://localhost%s" % filename)
-                        template.add("feed.accuracy", self.parameters.accuracy)
 
                         with open(filename, 'rb') as f:
                             for report in generate_reports(template, f, self.parameters.chunk_size,
