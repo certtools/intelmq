@@ -641,6 +641,7 @@
             "description": "This bot can connect to an XMPP Server and one room, in order to receive reports from it.",
             "module": "intelmq.bots.collectors.xmpp.collector",
             "parameters": {
+                "ca_certs": "/etc/ssl/certs/ca-certificates.crt",
                 "feed": "XMPP",
                 "rate_limit": 3600,
                 "strip_message": true,
@@ -853,6 +854,7 @@
             "description": "XMPP is the bot responsible to send events to an XMPP server.",
             "module": "intelmq.bots.outputs.xmpp.output",
             "parameters": {
+                "ca_certs": "/etc/ssl/certs/ca-certificates.crt",
                 "xmpp_password": "xmpp password",
                 "xmpp_server": "xmpp server",
                 "xmpp_to_server": "destination server",

@@ -2,6 +2,8 @@
 XMPP Output Bot
 Connects to a XMPP Server and sends data to a user.
 
+TLS is used by default.
+
 TODO: Introduce Multi User Chat like in XMPP Collector
 
 Tested with Python >= 3.4
@@ -11,6 +13,7 @@ Copyright (C) 2016 by Bundesamt für Sicherheit in der Informationstechnik
 Software engineering by Intevation GmbH
 
 Parameters:
+ca_certs: string to a CA-bundle file or false/empty string for no checks
 xmpp_user: string
 xmpp_server: string
 xmpp_password: boolean
@@ -41,6 +44,8 @@ class XMPPOutputBot(Bot):
                                self.parameters.xmpp_server,
                                self.parameters.xmpp_password,
                                self.logger)
+        if self.parameters.ca_certs:
+            self.xmpp.ca_certs = self.parameters.ca_certs
         self.xmpp.connect(reattempt=True)
         self.xmpp.process()
 

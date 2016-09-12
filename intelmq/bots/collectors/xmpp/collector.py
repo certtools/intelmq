@@ -4,6 +4,8 @@ Connects to a XMPP Server and a Room and reads data from the room.
 If no room is provided, which is equivalent to an empty string,
 it only collects events which were sent to the xmpp user directly.
 
+TLS is used by default.
+
 Tested with Python >= 3.4
 Tested with sleekxmpp >= 1.0.0-beta5
 
@@ -11,6 +13,7 @@ Copyright (C) 2016 by Bundesamt für Sicherheit in der Informationstechnik
 Software engineering by Intevation GmbH
 
 Parameters:
+ca_certs: string to a CA-bundle file or false/empty string for no checks
 strip_message: boolean
 xmpp_user: string
 xmpp_server: string
@@ -49,6 +52,8 @@ class XMPPCollectorBot(CollectorBot):
                                    self.parameters.xmpp_room_nick,
                                    self.parameters.xmpp_room_password,
                                    self.logger)
+            if self.parameters.ca_certs:
+                self.xmpp.ca_certs = self.parameters.ca_certs
             self.xmpp.connect(reattempt=True)
             self.xmpp.process()
 
