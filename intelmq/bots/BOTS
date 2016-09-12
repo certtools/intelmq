@@ -210,7 +210,7 @@
             "description": "CleanMX Virus Collector is the bot responsible to get the report from source of information.",
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
-                "feed": "CleanMX",
+                "feed": "CleanMX",fi
                 "http_url": "http://support.clean-mx.de/clean-mx/xmlviruses?response=alive&format=csv&domain=",
                 "rate_limit": 129600
             }
@@ -702,8 +702,8 @@
             "parameters": {
                 "filter_action": "<keep/drop>",
                 "filter_key": "<source.geolocation.cc>",
-                "filter_value": "<PT>",
-                "filter_regex": ""
+                "filter_regex": "",
+                "filter_value": "<PT>"
             }
         },
         "Gethostbyname": {
