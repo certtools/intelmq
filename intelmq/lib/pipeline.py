@@ -63,10 +63,11 @@ class Redis(Pipeline):
                             "{}_pipeline_port".format(queues_type), "6379")
         self.db = getattr(self.parameters,
                           "{}_pipeline_db".format(queues_type), 2)
+        #  socket_timeout is None by default, which means no timeout
         self.socket_timeout = getattr(self.parameters,
                                       "{}_pipeline_socket_timeout".format(
                                           queues_type),
-                                      50000)
+                                      None)
         self.load_balance = getattr(self.parameters, "load_balance", False)
         self.load_balance_iterator = 0
 
