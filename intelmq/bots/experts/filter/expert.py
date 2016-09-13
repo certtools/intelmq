@@ -68,9 +68,8 @@ class FilterExpertBot(Bot):
             self.filter = False
 
         self.use_regex = False
-        if hasattr(self.parameters, 'filter_regex'):
-            if not self.parameters.filter_regex is None:
-                self.use_regex = True
+        if hasattr(self.parameters, 'filter_regex') and self.parameters.filter_regex:
+            self.use_regex = True
 
         if not (self.filter or self.not_after is not None or self.not_before is not None):
             self.logger.error("No relevant filter configuration found, stopping...")
@@ -137,7 +136,7 @@ class FilterExpertBot(Bot):
 
     def equalsFilter(self, event, key, value):
         return (event.contains(key) and
-                str(event.get(key)) == value)
+                event.get(key) == value)
 
     def regexSearchFilter(self, event, key, regex):
         if event.contains(key):
