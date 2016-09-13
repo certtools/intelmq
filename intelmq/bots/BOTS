@@ -821,7 +821,8 @@
             "parameters": {
                 "auth_token": "<token>",
                 "auth_token_name": "<token name>",
-                "host": "<host>"
+                "host": "<host>",
+                "use_json": true
             }
         },
         "Redis": {
