@@ -143,36 +143,45 @@ class IntelMQCLIContoller(lib.IntelMQCLIContollerTemplate):
                                  datetime.datetime.now().strftime('%Y-%m-%d')))
 
                 if self.dryrun:
-                    self.logger.info('Dry run: Skipping creation of incident.')
-                    continue
-
-                incident_id = self.rt.create_ticket(Queue='Incidents', Subject=subject,
-                                                    Owner=self.config['rt']['user'])
-                if incident_id == -1:
-                    self.logger.error('Could not create Incident ({}).'.format(incident_id))
-                    continue
+                    self.logger.info('Simulate creation of incident.')
+                    incident_id = -1
                 else:
+                    incident_id = self.rt.create_ticket(Queue='Incidents', Subject=subject,
+                                                        Owner=self.config['rt']['user'])
+                    if incident_id == -1:
+                        self.logger.error('Could not create Incident ({}).'.format(incident_id))
+                        continue
+
                     self.logger.info('Created Incident %s.' % incident_id)
-                # XXX TODO: distinguish between national and other constituencies
-                self.rt.edit_ticket(incident_id, CF__RTIR_Classification=taxonomy,
-                                    CF__RTIR_Constituency='national',
-                                    CF__RTIR_Function='IncidentCoord')
+                    # XXX TODO: distinguish between national and other constituencies
+                    self.rt.edit_ticket(incident_id, CF__RTIR_Classification=taxonomy,
+                                        CF__RTIR_Constituency='national',
+                                        CF__RTIR_Function='IncidentCoord')
 
                 for report_id in report_ids:
-                    if not self.rt.edit_link(report_id, 'MemberOf', incident_id):
+                    if not self.dryrun and not self.rt.edit_link(report_id, 'MemberOf', incident_id):
                         self.logger.error('Could not link Incident to Incident Report: ({} -> {}).'
                                           ''.format(incident_id, report_id))
                         continue
+
                 self.executemany("UPDATE events SET rtir_incident_id = %s WHERE id = %s",
                                  [(incident_id, event_id) for event_id in event_ids])
+                self.con.commit()
                 self.logger.info('Linked events to incident.')
 
-                self.execute(lib.QUERY_DISTINCT_CONTACTS_BY_INCIDENT, (incident_id, ))
+                if not self.dryrun:
+                    self.execute(lib.QUERY_DISTINCT_CONTACTS_BY_INCIDENT, (incident_id, ))
+                else:
+                    self.execute(lib.DRY_QUERY_DISTINCT_CONTACTS_BY_TAXONOMY, (taxonomy, ))
                 contacts = [x['source.abuse_contact'] for x in self.cur.fetchall()]
                 for contact in contacts:
                     self.logger.info('Handling contact ' + contact)
-                    self.execute(lib.QUERY_EVENTS_BY_ASCONTACT_INCIDENT,
-                                 (incident_id, contact, ))
+                    if not self.dryrun:
+                        self.execute(lib.QUERY_EVENTS_BY_ASCONTACT_INCIDENT,
+                                     (incident_id, contact, ))
+                    else:
+                        self.execute(lib.DRY_QUERY_EVENTS_BY_ASCONTACT_TAXONOMY,
+                                     (taxonomy, contact, ))
                     data = self.cur.fetchall()
                     self.send(taxonomy, contact, data, incident_id)
 
@@ -246,7 +255,10 @@ class IntelMQCLIContoller(lib.IntelMQCLIContollerTemplate):
             query = [{key: utils.encode(val) if isinstance(val, six.text_type) else val for key, val in row.items()} for row in query]
         writer.writerows(query)
         # note this might contain UTF-8 chars! let's ignore utf-8 errors. sorry.
-        data = unicode(csvfile.getvalue(), 'utf-8')  # TODO: PY2 only
+        if six.PY2:
+            data = unicode(csvfile.getvalue(), 'utf-8')
+        else:
+            data = csvfile.getvalue()
         attachment_text = data.encode('ascii', 'ignore')
         attachment_lines = attachment_text.splitlines()
 
@@ -340,18 +352,23 @@ Subject: {subj}
             return
 
         ### INVESTIGATION
-        investigation_id = self.rt.create_ticket(Queue='Investigations',
-                                                 Subject=subject,
-                                                 Owner=self.config['rt']['user'],
-                                                 Requestor=requestor)
+        if self.dryrun:
+            self.logger.info('Simulate creation of investigation.')
+            investigation_id = -1
+        else:
+            investigation_id = self.rt.create_ticket(Queue='Investigations',
+                                                     Subject=subject,
+                                                     Owner=self.config['rt']['user'],
+                                                     Requestor=requestor)
 
-        if investigation_id == -1:
-            self.logger.error('Could not create Investigation.')
-            return
-        self.logger.info('Created Investigation {}.'.format(investigation_id))
-        if not self.rt.edit_link(incident_id, 'HasMember', investigation_id):
-            self.logger.error('Could not link Investigation to Incident.')
-            return
+            if investigation_id == -1:
+                self.logger.error('Could not create Investigation.')
+                return
+
+            self.logger.info('Created Investigation {}.'.format(investigation_id))
+            if not self.rt.edit_link(incident_id, 'HasMember', investigation_id):
+                self.logger.error('Could not link Investigation to Incident.')
+                return
 
         ### CORRESPOND
         filename = '%s-%s.csv' % (datetime.datetime.now().strftime('%Y-%m-%d'), taxonomy)
@@ -360,7 +377,8 @@ Subject: {subj}
             ziphandle = zipfile.ZipFile(attachment, mode='w',
                                         compression=zipfile.ZIP_DEFLATED)
             data = csvfile.getvalue()
-            data = unicode(data, 'utf-8')  # TODO: PY2 only
+            if six.PY2:
+                data = unicode(data, 'utf-8')
             ziphandle.writestr('events.csv', data.encode('utf-8'))
             ziphandle.close()
             attachment.seek(0)
@@ -372,26 +390,30 @@ Subject: {subj}
             mimetype = 'text/csv'
 
         # TODO: CC
-        correspond = self.rt.reply(investigation_id, text=text,
-                                   files=[(filename, attachment, mimetype)])
-        if not correspond:
-            self.logger.error('Could not correspond with text and file.')
-            return
-        self.logger.info('Correspondence added to Investigation.')
+        if self.dryrun:
+            self.logger.info('Simulate creation of correspondence.')
+        else:
+            correspond = self.rt.reply(investigation_id, text=text,
+                                       files=[(filename, attachment, mimetype)])
+            if not correspond:
+                self.logger.error('Could not correspond with text and file.')
+                return
+            self.logger.info('Correspondence added to Investigation.')
 
         self.executemany("UPDATE events SET rtir_investigation_id = %s, "
                          "sent_at = LOCALTIMESTAMP WHERE id = %s",
                          [(investigation_id, evid) for evid in ids])
+        self.con.commit()
         self.logger.info('Linked events to investigation.')
 
         ### RESOLVE
         try:
-            if not self.rt.edit_ticket(incident_id, Status='resolved'):
+            if not self.dryrun and not self.rt.edit_ticket(incident_id, Status='resolved'):
                 self.logger.error('Could not close incident {}.'.format(incident_id))
         except IndexError:
             # Bug in RT/python-rt
             pass
-        if requestor != contact and not self.dryrun:
+        if requestor != contact:
             asns = set(str(row['source.asn']) for row in query)
             answer = input(inverted('Save recipient {!r} for ASNs {!s}? [Y/n] '
                                     ''.format(requestor,
@@ -399,6 +421,7 @@ Subject: {subj}
             if answer.strip().lower() in ('', 'y', 'j'):
                 self.executemany(lib.QUERY_UPDATE_CONTACT,
                                  [(requestor, asn) for asn in asns])
+                self.con.commit()
                 if self.cur.rowcount == 0:
                     self.query_insert_contact(asns=asns, contact=requestor)
 
@@ -408,6 +431,7 @@ Subject: {subj}
         comment = 'Added by {user} @ {time}'.format(user=user, time=time)
         self.executemany(lib.QUERY_INSERT_CONTACT,
                          [(asn, contact, comment) for asn in asns])
+        self.con.commit()
 
 
 def main():

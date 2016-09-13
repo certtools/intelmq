@@ -86,20 +86,23 @@ class IntelMQCLIContoller(lib.IntelMQCLIContollerTemplate):
 
             if self.dryrun:
                 self.logger.info('Dry run: Skipping creation of report.')
-                continue
-
-            report_id = self.rt.create_ticket(Queue='Incident Reports', Subject=subject,
-                                              Owner=self.config['rt']['user'])
-            if report_id == -1:
-                self.logger.error('Could not create Incident ({}).'.format(report_id))
-                return
             else:
-                self.logger.info('Created Report {}.'.format(report_id))
-            comment_id = self.rt.comment(report_id,
-                                         files=[('events.zip', attachment, 'application/zip')])
-            if not comment_id:
-                self.logger.error('Could not correspond with file.')
-                return
+                report_id = self.rt.create_ticket(Queue='Incident Reports', Subject=subject,
+                                                  Owner=self.config['rt']['user'])
+                if report_id == -1:
+                    self.logger.error('Could not create Incident ({}).'.format(report_id))
+                    return
+                else:
+                    self.logger.info('Created Report {}.'.format(report_id))
+
+            if self.dryrun:
+                self.logger.info('Dry run: Skipping creation of attachment.')
+            else:
+                comment_id = self.rt.comment(report_id,
+                                             files=[('events.zip', attachment, 'application/zip')])
+                if not comment_id:
+                    self.logger.error('Could not correspond with file.')
+                    return
 
             self.executemany("UPDATE events SET rtir_report_id = %s WHERE id = %s",
                              [(report_id, row['id']) for row in feeddata])

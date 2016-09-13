@@ -198,6 +198,16 @@ WHERE
     rtir_incident_id = %s AND
     rtir_investigation_id IS NULL AND
 """ + BASE_WHERE
+DRY_QUERY_DISTINCT_CONTACTS_BY_TAXONOMY = """
+SELECT
+DISTINCT "source.abuse_contact"
+FROM events
+WHERE
+    rtir_report_id IS NOT NULL AND
+    "rtir_incident_id" IS NULL AND
+    rtir_investigation_id IS NULL AND
+    "classification.taxonomy" = %s AND
+""" + BASE_WHERE
 QUERY_EVENTS_BY_ASCONTACT_INCIDENT = """
 SELECT
     to_char("time.source",
@@ -260,6 +270,12 @@ WHERE
     rtir_report_id IS NOT NULL AND
     rtir_incident_id = %s AND
     rtir_investigation_id IS NULL AND
+    "source.abuse_contact" = %s AND
+""" + BASE_WHERE
+DRY_QUERY_EVENTS_BY_ASCONTACT_TAXONOMY = QUERY_EVENTS_BY_ASCONTACT_INCIDENT[:QUERY_EVENTS_BY_ASCONTACT_INCIDENT.find('WHERE')+6] + """
+    rtir_report_id IS NOT NULL AND
+    rtir_investigation_id IS NULL AND
+    "classification.taxonomy" = %s AND
     "source.abuse_contact" = %s AND
 """ + BASE_WHERE
 
@@ -358,7 +374,7 @@ class IntelMQCLIContollerTemplate():
                                     port=self.config['database']['port'],
                                     sslmode=self.config['database']['sslmode'],
                                     )
-        self.con.autocommit = True
+        self.con.autocommit = False  # Starts transaction in the beginning
         self.cur = self.con.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
     def execute(self, query, parameters=(), extend=True):
@@ -367,7 +383,8 @@ class IntelMQCLIContollerTemplate():
             query = query + self.additional_where
             parameters = parameters + self.additional_params
         self.logger.debug(self.cur.mogrify(query, parameters))
-        self.cur.execute(query, parameters)
+        if not self.dryrun or query.strip().upper().startswith('SELECT'):
+            self.cur.execute(query, parameters)
 
     def executemany(self, query, parameters=(), extend=True):
         """ Passes query to database. """
@@ -377,4 +394,5 @@ class IntelMQCLIContollerTemplate():
         if self.config['log_level'] == 'debug':
             for param in parameters:
                 self.logger.debug(self.cur.mogrify(query, param))
-        self.cur.executemany(query, parameters)
+        if not self.dryrun or query.strip().upper().startswith('SELECT'):
+            self.cur.executemany(query, parameters)
