@@ -137,12 +137,12 @@ class FilterExpertBot(Bot):
 
     def equalsFilter(self, event, key, value):
         return (event.contains(key) and
-                event.get(key) == value)
+                str(event.get(key)) == value)
 
     def regexSearchFilter(self, event, key, regex):
         if event.contains(key):
             exp = re.compile(regex)
-            return exp.search(event.get(key))
+            return exp.search(str(event.get(key)))
         else:
             return False
 
