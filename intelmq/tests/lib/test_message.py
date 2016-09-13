@@ -361,28 +361,39 @@ class TestMessageFactory(unittest.TestCase):
         """ Test Event to_dict. """
         event = message.MessageFactory.unserialize('{"__type": "Event"}')
         event = self.add_event_examples(event)
+        self.assertDictEqual({'feed.name': 'Example',
+                              'feed.url': 'https://example.com/',
+                              'raw': 'bG9yZW0gaXBzdW0=',
+                              'time.observation': '2015-01-01T13:37:00+00:00'},
+                             event.to_dict())
+
+    def test_event_dict_hierarchical(self):
+        """ Test Event to_dict. """
+        event = message.MessageFactory.unserialize('{"__type": "Event"}')
+        event = self.add_event_examples(event)
         self.assertDictEqual({'feed': {'name': 'Example',
                                        'url': 'https://example.com/'},
                               'raw': 'bG9yZW0gaXBzdW0=',
                               'time': {'observation': '2015-01-01T13:37:00+'
                                                       '00:00'}},
-                             event.to_dict())
-
-    def test_event_dict_flat(self):
-        """ Test Event to_dict with hierarchical=False. """
-        event = message.Event()
-        event = self.add_event_examples(event)
-        self.assertDictEqual({'feed.name': 'Example',
-                              'feed.url': 'https://example.com/',
-                              'raw': 'bG9yZW0gaXBzdW0=',
-                              'time.observation': '2015-01-01T13:37:00+00:00'},
-                             event.to_dict(hierarchical=False))
+                             event.to_dict(hierarchical=True))
 
     def test_event_json(self):
         """ Test Event to_json. """
         event = message.MessageFactory.unserialize('{"__type": "Event"}')
         event = self.add_event_examples(event)
         actual = event.to_json()
+        self.assertIsInstance(actual, str)
+        expected = ('{"feed.url": "https://example.com/", "feed.name": '
+                    '"Example", "raw": "bG9yZW0gaXBzdW0=", "time.observation": '
+                    '"2015-01-01T13:37:00+00:00"}')
+        self.assertDictEqual(json.loads(expected), json.loads(actual))
+
+    def test_event_json_hierarchical(self):
+        """ Test Event to_json. """
+        event = message.MessageFactory.unserialize('{"__type": "Event"}')
+        event = self.add_event_examples(event)
+        actual = event.to_json(hierarchical=True)
         self.assertIsInstance(actual, str)
         expected = ('{"feed": {"url": "https://example.com/", "name": '
                     '"Example"}, "raw": "bG9yZW0gaXBzdW0=", "time": '
