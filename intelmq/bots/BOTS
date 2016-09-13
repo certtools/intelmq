@@ -785,7 +785,8 @@
             "description": "File is the bot responsible to send events to a file.",
             "module": "intelmq.bots.outputs.file.output",
             "parameters": {
-                "file": "/opt/intelmq/var/lib/bots/file-output/events.txt"
+                "file": "/opt/intelmq/var/lib/bots/file-output/events.txt",
+                "hierarchical_output": false
             }
         },
         "IntelMQ Mailer": {
@@ -794,6 +795,7 @@
             "parameters": {
                 "collection": "<collection>",
                 "database": "<database>",
+                "hierarchical_output": false,
                 "host": "<ip>",
                 "port": "<port>"
             }
@@ -804,6 +806,7 @@
             "parameters": {
                 "collection": "<collection>",
                 "database": "<database>",
+                "hierarchical_output": false,
                 "host": "<ip>",
                 "port": "<port>"
             }
@@ -828,6 +831,7 @@
             "parameters": {
                 "auth_token": "<token>",
                 "auth_token_name": "<token name>",
+                "hierarchical_output": false,
                 "host": "<host>"
             }
         },
@@ -856,6 +860,7 @@
             "module": "intelmq.bots.outputs.xmpp.output",
             "parameters": {
                 "ca_certs": "/etc/ssl/certs/ca-certificates.crt",
+                "hierarchical_output": false,
                 "xmpp_password": "xmpp password",
                 "xmpp_server": "xmpp server",
                 "xmpp_to_server": "destination server",

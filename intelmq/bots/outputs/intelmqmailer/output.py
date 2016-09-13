@@ -26,7 +26,7 @@ class IntelMQMailerOutputBot(Bot):
     def process(self):
         event = self.receive_message()
 
-        event_dict = event.to_dict()
+        event_dict = event.to_dict(hierarchical=self.parameters.hierarchical_output)
 
         time = event_dict['time']['observation']
         event_dict['time']['observation'] = dateutil.parser.parse(time)

@@ -14,6 +14,7 @@ Software engineering by Intevation GmbH
 
 Parameters:
 ca_certs: string to a CA-bundle file or false/empty string for no checks
+hierarchical_output: boolean (false by default)
 xmpp_user: string
 xmpp_server: string
 xmpp_password: boolean
@@ -55,7 +56,7 @@ class XMPPOutputBot(Bot):
         receiver = self.parameters.xmpp_to_user + '@' +\
             self.parameters.xmpp_to_server
 
-        jevent = str(event)
+        jevent = event.to_json(hierarchical=self.parameters.hierarchical_output)
 
         try:
             # TODO: proper error handling. Right now it cannot be
