@@ -136,7 +136,7 @@ class FilterExpertBot(Bot):
 
     def equalsFilter(self, event, key, value):
         return (event.contains(key) and
-                str(event.get(key)) == value)
+                event.get(key) == value)
 
     def regexSearchFilter(self, event, key, regex):
         if event.contains(key):
