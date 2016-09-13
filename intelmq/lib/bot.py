@@ -8,6 +8,7 @@ import datetime
 import importlib
 import io
 import json
+import logging
 import os
 import re
 import signal
@@ -236,6 +237,7 @@ class Bot(object):
 
         if self.logger:
             self.logger.info("Bot stopped.")
+            logging.shutdown()
         else:
             self.__log_buffer.append(('info', 'Bot stopped.'))
             self.__print_log_buffer()
