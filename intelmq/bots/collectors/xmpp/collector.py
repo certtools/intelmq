@@ -72,10 +72,13 @@ class XMPPCollectorBot(CollectorBot):
             self.logger.info("There was no XMPPClient I could stop.")
 
     def log_message(self, msg):
-        if self.parameters.strip_message:
-            body = msg['body'].strip()
+        if self.parameters.pass_full_xml:
+            body = str(msg)
         else:
-            body = msg['body']
+            if self.parameters.strip_message:
+                body = msg['body'].strip()
+            else:
+                body = msg['body']
 
         if len(body) > 400:
             tmp_body = body[:397] + '...'

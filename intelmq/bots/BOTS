@@ -638,11 +638,12 @@
             }
         },
         "XMPP": {
-            "description": "This bot can connect to an XMPP Server and one room, in order to receive reports from it.",
+            "description": "This bot can connect to an XMPP Server and one room, in order to receive reports from it. TLS is used by default. rate_limit is ineffective here. Bot can either pass the body or the whole event.",
             "module": "intelmq.bots.collectors.xmpp.collector",
             "parameters": {
                 "ca_certs": "/etc/ssl/certs/ca-certificates.crt",
                 "feed": "XMPP",
+                "pass_full_xml": false,
                 "rate_limit": 3600,
                 "strip_message": true,
                 "xmpp_password": "xmpp password",
