@@ -16,7 +16,7 @@ import tempfile
 from intelmq import HARMONIZATION_CONF_FILE
 
 
-def main():
+def generate():
     FIELDS = dict()
 
     try:
@@ -67,7 +67,7 @@ def main():
     return initdb
 
 
-if __name__ == '__main__':
+def main():
     OUTPUTFILE = "/tmp/initdb.sql"
     fp = None
     try:
@@ -78,9 +78,13 @@ if __name__ == '__main__':
             fp = os.fdopen(os_fp, 'wt')
         else:
             fp = open(OUTPUTFILE, 'wt')
-        psql = main()
+        psql = generate()
         print("INFO - Writing %s file" % OUTPUTFILE)
         fp.write(psql)
     finally:
         if fp:
             fp.close()
+
+
+if __name__ == '__main__':
+    main()
