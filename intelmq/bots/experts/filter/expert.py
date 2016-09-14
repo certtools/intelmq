@@ -107,7 +107,7 @@ class FilterExpertBot(Bot):
         # key/value based filtering
         if self.filter and self.parameters.filter_action == "drop":
             if self.doFilter(event, self.parameters.filter_key,
-                        self.parameters.filter_value):
+                             self.parameters.filter_value):
                 self.acknowledge_message()
                 return
             else:
@@ -117,7 +117,7 @@ class FilterExpertBot(Bot):
 
         if self.filter and self.parameters.filter_action == "keep":
             if self.doFilter(event, self.parameters.filter_key,
-                        self.parameters.filter_value):
+                             self.parameters.filter_value):
                 self.send_message(event)
                 self.acknowledge_message()
                 return
