@@ -202,7 +202,7 @@ def load_parameters(*configs):
 
 
 def log(name, log_path=intelmq.DEFAULT_LOGGING_PATH, log_level="DEBUG",
-        stream=None, syslog=None):
+        stream=sys.stderr, syslog=None, log_format_stream=LOG_FORMAT_STREAM):
     """
     Returns a logger instance logging to file and sys.stderr or other stream.
 
@@ -251,12 +251,9 @@ def log(name, log_path=intelmq.DEFAULT_LOGGING_PATH, log_level="DEBUG",
     handler.setFormatter(formatter)
     logger.addHandler(handler)
 
-    if stream or stream is None:
-        console_formatter = logging.Formatter(LOG_FORMAT_STREAM)
-        if stream is None:
-            console_handler = logging.StreamHandler(sys.stderr)
-        else:
-            console_handler = logging.StreamHandler(stream)
+    if stream:
+        console_formatter = logging.Formatter(log_format_stream)
+        console_handler = logging.StreamHandler(stream)
         console_handler.setFormatter(console_formatter)
         logger.addHandler(console_handler)
         console_handler.setLevel(log_level)
