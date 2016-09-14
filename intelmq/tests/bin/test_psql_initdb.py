@@ -20,7 +20,7 @@ class TestPsqlInit(unittest.TestCase):
         with open(os.path.join(os.path.dirname(__file__),
                                'initdb.sql')) as handle:
             expected = handle.read()
-        self.assertEqual(psql_initd.main().strip(), expected.strip())
+        self.assertEqual(psql_initd.generate().strip(), expected.strip())
 
 
 if __name__ == '__main__':

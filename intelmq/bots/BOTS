@@ -342,6 +342,16 @@
                 "url_regex": "http://"
             }
         },
+        "HTTP Stream": {
+            "description": "The HTTP stream collector can process individual lines from a streaming source. rate_limt is the time between the stop of the stream and the reconnect.",
+            "module": "intelmq.bots.collectors.http.collector_http_stream",
+            "parameters": {
+                "feed": "HTTP Stream",
+                "rate_limit": 5,
+                "strip_lines": true,
+                "url": "https://example.com/"
+            }
+        },
         "HpHosts": {
             "description": "HPHost Collector is the bot responsible to get the report from source of information.",
             "module": "intelmq.bots.collectors.http.collector_http",
@@ -828,7 +838,7 @@
                 "collection": "<collection>",
                 "database": "<database>",
                 "host": "<ip>",
-                "port": "<port>"
+                "port": 27017
             }
         },
         "PostgreSQL": {
@@ -851,7 +861,8 @@
             "parameters": {
                 "auth_token": "<token>",
                 "auth_token_name": "<token name>",
-                "host": "<host>"
+                "host": "<host>",
+                "use_json": true
             }
         },
         "Redis": {
@@ -871,7 +882,8 @@
             "module": "intelmq.bots.outputs.tcp.output",
             "parameters": {
                 "ip": "<ip>",
-                "port": "<port>"
+                "port": "<port>",
+                "separator": "\n"
             }
         },
         "XMPP": {

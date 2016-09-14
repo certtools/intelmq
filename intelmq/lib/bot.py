@@ -5,19 +5,22 @@
 
 import csv
 import datetime
+import importlib
 import io
 import json
-import re
 import requests
+import logging
 import os
+import re
 import signal
 import sys
 import time
 import traceback
 
-from intelmq import (DEFAULT_LOGGING_PATH,
-                     DEFAULTS_CONF_FILE, HARMONIZATION_CONF_FILE,
-                     PIPELINE_CONF_FILE, RUNTIME_CONF_FILE, SYSTEM_CONF_FILE)
+import intelmq.lib.message
+from intelmq import (DEFAULT_LOGGING_PATH, DEFAULTS_CONF_FILE,
+                     HARMONIZATION_CONF_FILE, PIPELINE_CONF_FILE,
+                     RUNTIME_CONF_FILE, SYSTEM_CONF_FILE)
 from intelmq.lib import exceptions, utils
 from intelmq.lib.message import MessageFactory
 from intelmq.lib.pipeline import PipelineFactory
@@ -27,12 +30,14 @@ __all__ = ['Bot', 'ParserBot']
 
 class Bot(object):
 
+    """ Not to be reset when initialized again on reload. """
+    __current_message = None
+    __message_counter = 0
+
     def __init__(self, bot_id):
         self.__log_buffer = []
         self.parameters = Parameters()
 
-        self.__current_message = None
-        self.__message_counter = 0
         self.__error_retries_counter = 0
         self.__source_pipeline = None
         self.__destination_pipeline = None
@@ -78,16 +83,38 @@ class Bot(object):
 
             self.init()
 
-            signal.signal(signal.SIGHUP, self.__sighup)
-        except:
-            self.logger.exception('Bot initialization failed.')
+            self.__sighup = False
+            signal.signal(signal.SIGHUP, self.__handle_sighup_signal)
+            # system calls should not be interrupted, but restarted
+            signal.siginterrupt(signal.SIGHUP, False)
+        except Exception as exc:
+            if self.parameters.error_log_exception:
+                self.logger.exception('Bot initialization failed.')
+            else:
+                self.logger.error(utils.error_message_from_exc(exc))
+                self.logger.error('Bot initialization failed.')
+
+            self.stop()
             raise
 
-    def __sighup(self, signum, stack):
-        self.logger.info('Received SIGHUP, initializing again.')
+    def __handle_sighup_signal(self, signum, stack):
+        """
+        Called when signal is received and postpone.
+        """
+        self.logger.info('Received SIGHUP, initializing again later.')
+        self.__sighup = True
+
+    def __handle_sighup(self):
+        """
+        Handle SIGHUP.
+        """
+        if not self.__sighup:
+            return False
+        self.logger.info('Handling SIGHUP, initializing again now.')
         self.__disconnect_pipelines()
         self.logger.handlers = []  # remove all existing handlers
         self.__init__(self.__bot_id)
+        importlib.reload(intelmq.lib.message)
         self.__connect_pipelines()
 
     def init(self):
@@ -123,16 +150,15 @@ class Bot(object):
                     self.logger.info("Start processing.")
                     starting = False
 
+                self.__handle_sighup()
                 self.process()
                 self.__error_retries_counter = 0  # reset counter
 
                 if self.parameters.rate_limit:
-                    self.logger.info("Idling for {!s}s now.".format(self.parameters.rate_limit))
-                    time.sleep(self.parameters.rate_limit)
+                    self.__sleep()
 
             except exceptions.PipelineError:
                 error_on_pipeline = True
-                error_traceback = traceback.format_exc()
 
                 if self.parameters.error_log_exception:
                     self.logger.exception('Pipeline failed.')
@@ -140,13 +166,13 @@ class Bot(object):
                     self.logger.error('Pipeline failed.')
                 self.__disconnect_pipelines()
 
-            except Exception:
+            except Exception as exc:
                 error_on_message = True
-                error_traceback = traceback.format_exc()
 
                 if self.parameters.error_log_exception:
                     self.logger.exception("Bot has found a problem.")
                 else:
+                    self.logger.error(utils.error_message_from_exc(exc))
                     self.logger.error("Bot has found a problem.")
 
                 if self.parameters.error_log_message:
@@ -156,7 +182,8 @@ class Bot(object):
 
             except KeyboardInterrupt:
                 self.logger.error("Received KeyboardInterrupt.")
-                self.stop()
+                self.stop(exitcode=0)
+                del self
                 break
 
             else:
@@ -180,6 +207,7 @@ class Bot(object):
                         if error_on_message:
 
                             if self.parameters.error_dump_message:
+                                error_traceback = traceback.format_exc()
                                 self._dump_message(error_traceback,
                                                    message=self.__current_message)
                                 self.__current_message = None
@@ -198,17 +226,35 @@ class Bot(object):
                         # error_procedure: pass
                         else:
                             self.__error_retries_counter = 0  # reset counter
+            self.__handle_sighup()
 
-    def __del__(self):
-        self.stop()
+    def __sleep(self):
+        """
+        Sleep handles interrupts and changed rate_limit-parameter.
 
-    def stop(self):
-        self.shutdown()
+        time.sleep is stopped by signals such as SIGHUP. As rate_limit could
+        have been changed, we initialize again and continue to sleep, if
+        necessary at all.
+        """
+        starttime = time.time()
+        remaining = self.parameters.rate_limit
+        while remaining > 0:
+            self.logger.info("Idling for {:.1f}s now.".format(remaining))
+            time.sleep(remaining)
+            self.__handle_sighup()
+            remaining = self.parameters.rate_limit - (time.time() - starttime)
+
+    def stop(self, exitcode=1):
+        try:
+            self.shutdown()
+        except:
+            pass
 
         self.__disconnect_pipelines()
 
         if self.logger:
             self.logger.info("Bot stopped.")
+            logging.shutdown()
         else:
             self.__log_buffer.append(('info', 'Bot stopped.'))
             self.__print_log_buffer()
@@ -218,7 +264,8 @@ class Bot(object):
                 self.logger.error("Exiting.")
             except:
                 print("Exiting")
-            exit(-1)
+            del self
+            exit(exitcode)
 
     def __print_log_buffer(self):
         for level, message in self.__log_buffer:
@@ -298,6 +345,9 @@ class Bot(object):
         else:
             tmp_msg = self.__current_message
         self.logger.debug('Received message {!r}.'.format(tmp_msg))
+
+        # handle a sighup which happened during blocking read
+        self.__handle_sighup()
 
         return self.__current_message
 

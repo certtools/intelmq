@@ -18,6 +18,7 @@ import logging.handlers
 import os
 import re
 import sys
+import traceback
 
 import pkg_resources
 
@@ -25,7 +26,7 @@ import intelmq
 
 __all__ = ['base64_decode', 'base64_encode', 'decode', 'encode',
            'load_configuration', 'load_parameters', 'log', 'parse_logline',
-           'reverse_readline',
+           'reverse_readline', 'error_message_from_exc',
            ]
 
 # Used loglines format
@@ -310,3 +311,20 @@ def parse_logline(logline):
         return dict(list(zip(fields, match.group(*fields))))
     except AttributeError:
         return logline
+
+
+def error_message_from_exc(exc):
+    """
+    >>> exc = IndexError('This is a test')
+    >>> error_message_from_exc(exc)
+    'This is a test'
+
+    Parameters:
+    -----------
+    exc: Exception
+
+    Returns:
+    result : string
+        The error message of exc
+    """
+    return traceback.format_exception_only(type(exc), exc)[-1].strip().replace(type(exc).__name__ + ': ', '')
