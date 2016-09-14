@@ -389,30 +389,36 @@ Subject: {subj}
             attachment.seek(0)
             mimetype = 'text/csv'
 
-        # TODO: CC
-        if self.dryrun:
-            self.logger.info('Simulate creation of correspondence.')
-        else:
-            correspond = self.rt.reply(investigation_id, text=text,
-                                       files=[(filename, attachment, mimetype)])
-            if not correspond:
-                self.logger.error('Could not correspond with text and file.')
-                return
-            self.logger.info('Correspondence added to Investigation.')
-
-        self.executemany("UPDATE events SET rtir_investigation_id = %s, "
-                         "sent_at = LOCALTIMESTAMP WHERE id = %s",
-                         [(investigation_id, evid) for evid in ids])
-        self.con.commit()
-        self.logger.info('Linked events to investigation.')
-
-        ### RESOLVE
         try:
-            if not self.dryrun and not self.rt.edit_ticket(incident_id, Status='resolved'):
-                self.logger.error('Could not close incident {}.'.format(incident_id))
-        except IndexError:
-            # Bug in RT/python-rt
-            pass
+            # TODO: CC
+            if self.dryrun:
+                self.logger.info('Simulate creation of correspondence.')
+            else:
+                correspond = self.rt.reply(investigation_id, text=text,
+                                           files=[(filename, attachment, mimetype)])
+                if not correspond:
+                    self.logger.error('Could not correspond with text and file.')
+                    return
+                self.logger.info('Correspondence added to Investigation.')
+
+            self.executemany("UPDATE events SET rtir_investigation_id = %s, "
+                             "sent_at = LOCALTIMESTAMP WHERE id = %s",
+                             [(investigation_id, evid) for evid in ids])
+            self.logger.info('Linked events to investigation.')
+        except:
+            self.con.rollback()
+            raise
+        else:
+            self.con.commit()
+
+            ### RESOLVE
+            try:
+                if not self.dryrun and not self.rt.edit_ticket(incident_id, Status='resolved'):
+                    self.logger.error('Could not close incident {}.'.format(incident_id))
+            except IndexError:
+                # Bug in RT/python-rt
+                pass
+
         if requestor != contact:
             asns = set(str(row['source.asn']) for row in query)
             answer = input(inverted('Save recipient {!r} for ASNs {!s}? [Y/n] '
