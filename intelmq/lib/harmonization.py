@@ -12,6 +12,7 @@ The following types are implemented with sanitize() and is_valid() functions:
  - IPAddress
  - IPNetwork
  - LowercaseString
+ - Registry
  - String
  - URL
 """
@@ -30,7 +31,7 @@ import intelmq.lib.utils as utils
 
 __all__ = ['Base64', 'Boolean', 'ClassificationType', 'DateTime', 'FQDN',
            'Float', 'Accuracy', 'GenericType', 'IPAddress', 'IPNetwork',
-           'Integer', 'JSON', 'LowercaseString', 'String', 'URL',
+           'Integer', 'JSON', 'LowercaseString', 'Registry', 'String', 'URL',
            ]
 
 
@@ -596,3 +597,54 @@ class URL(GenericType):
         if value.netloc != "" and not IPAddress.is_valid(value.netloc):
             return value.netloc
         return None
+
+
+class UppercaseString(GenericType):
+
+    @staticmethod
+    def is_valid(value, sanitize=False):
+        if sanitize:
+            value = UppercaseString().sanitize(value)
+
+        if not String().is_valid(value):
+            return False
+
+        if value != value.upper():
+            return False
+
+        return True
+
+    @staticmethod
+    def sanitize(value):
+        value = value.upper()
+        return String().sanitize(value)
+
+
+class Registry(UppercaseString):
+    """
+    Registry type. Derived from UppercaseString.
+
+    Only valid values: AFRINIC, APNIC, ARIN, LACNIC, RIPE.
+    RIPE-NCC and RIPENCC are normalized to RIPE.
+    """
+    ENUM = ['AFRINIC', 'APNIC', 'ARIN', 'LACNIC', 'RIPE']
+
+    @staticmethod
+    def is_valid(value, sanitize=False):
+        if sanitize:
+            value = Registry.sanitize(value)
+
+        if not UppercaseString.is_valid(value):
+            return False
+
+        if value not in Registry.ENUM:
+            return False
+
+        return True
+
+    @staticmethod
+    def sanitize(value):
+        value = UppercaseString.sanitize(value)
+        if value in ['RIPENCC', 'RIPE-NCC']:
+            value = 'RIPE'
+        return value

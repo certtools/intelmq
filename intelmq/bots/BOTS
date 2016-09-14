@@ -712,6 +712,7 @@
             "parameters": {
                 "filter_action": "<keep/drop>",
                 "filter_key": "<source.geolocation.cc>",
+                "filter_regex": "",
                 "filter_value": "<PT>"
             }
         },
