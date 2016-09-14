@@ -106,6 +106,7 @@ class IntelMQCLIContoller(lib.IntelMQCLIContollerTemplate):
 
             self.executemany("UPDATE events SET rtir_report_id = %s WHERE id = %s",
                              [(report_id, row['id']) for row in feeddata])
+            self.con.commit()
             self.logger.info('Linked events to report.')
 
 
