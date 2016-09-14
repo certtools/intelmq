@@ -411,7 +411,7 @@ class TestMessageFactory(unittest.TestCase):
         """ Test if the regex for event_hash is tested correctly. """
         event = message.MessageFactory.unserialize('{"__type": "Event"}')
         with self.assertRaises(exceptions.InvalidValue):
-            event.add('event_hash', 'dasf78')
+            event.add('event_hash', 'das f78')
 
     def test_port_regex(self):
         """ Test if the regex for port (integer) is tested correctly. """
@@ -446,6 +446,39 @@ class TestMessageFactory(unittest.TestCase):
         event_type = type(message.MessageFactory.from_dict(event))
         self.assertTrue(event_type is message.Event,
                         msg='Type is {} instead of Event.'.format(event_type))
+
+    def test_malware_hash_md5(self):
+        """ Test if MD5 is checked correctly. """
+        event = message.MessageFactory.unserialize('{"__type": "Event"}')
+        event.add('malware.hash.md5', 'mSwgIswdjlTY0YxV7HBVm0')
+        self.assertEqual(event['malware.hash.md5'], 'mSwgIswdjlTY0YxV7HBVm0')
+        event.update('malware.hash.md5', '$md5$mSwgIswdjlTY0YxV7HBVm0')
+        event.update('malware.hash.md5', '$md5,rounds=500$mSwgIswdjlTY0YxV7HBVm0')
+        # TODO: Fix when normalization of hashes is defined
+#        with self.assertRaises(exceptions.InvalidValue):
+#            event.update('malware.hash.md5', '$md5, $mSwgIswdjlTY0YxV7HBVm0')
+
+    def test_malware_hash_sha1(self):
+        """ Test if SHA1 is checked correctly. """
+        event = message.MessageFactory.unserialize('{"__type": "Event"}')
+        event.add('malware.hash.sha1', 'hBNaIXkt4wBI2o5rsi8KejSjNqIq')
+        self.assertEqual(event['malware.hash.sha1'], 'hBNaIXkt4wBI2o5rsi8KejSjNqIq')
+        event.update('malware.hash.sha1', '$sha1$hBNaIXkt4wBI2o5rsi8KejSjNqIq')
+        event.update('malware.hash.sha1', '$sha1$40000$hBNaIXkt4wBI2o5rsi8KejSjNqIq')
+        event.update('malware.hash.sha1', '$sha1$40000$jtNX3nZ2$hBNaIXkt4wBI2o5rsi8KejSjNqIq')
+        # TODO: Fix when normalization of hashes is defined
+#        with self.assertRaises(exceptions.InvalidValue):
+#            event.update('malware.hash.sha1', '$sha1$ $jtNX3nZ2$hBNaIXkt4wBI2o5rsi8KejSjNqIq')
+
+    def test_registry(self):
+        """ Test source.registry """
+        event = message.MessageFactory.unserialize('{"__type": "Event"}')
+        event.add('source.registry', 'APNIC')
+        event.update('source.registry', 'afrinic')
+        with self.assertRaises(exceptions.InvalidValue):
+            event.update('source.registry', 'afrinic', sanitize=False)
+        with self.assertRaises(exceptions.InvalidValue):
+            event.update('source.registry', 'afri nic', sanitize=False)
 
 if __name__ == '__main__':
     unittest.main()

@@ -31,6 +31,7 @@ v1.0 (in development, master branch)
 - ENH: Additional data types: integer, float and Boolean
 - ENH: Added descriptions and matching types to all fields
 - DOC: harmonization documentation has same fields as configuration, docs are generated from configuration
+- ENH: New type LowercaseString and UppercaseString
 
 #### Most important changes:
 - `(source|destination).bgp_prefix` is now `(source|destination).network`

@@ -366,6 +366,8 @@ will only be entered, if its conditions match. Actions are optional for the defa
 Conditions and actions are again dictionaries holding the field names of events 
 and regex-expressions to match values (condition) or set values (action).  
 All matching rules will be applied in no particular order.
+Matching checks if all joined conditions of the rule and the default rule
+are true before performing the actions.
 If no rule within a section matches, existing actions of the default rule for the section are applied.
 
 If the value for a condition is an empty string, the bot checks if the field does not exist. 
