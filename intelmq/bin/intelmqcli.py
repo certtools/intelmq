@@ -102,12 +102,14 @@ class IntelMQCLIContoller():
                             help='Print verbose messages.')
 
         parser.add_argument('-c', '--compress-csv', action='store_true',
-                            help='Automatically compress/shrink the attached CSV report if fields are empty (default = False).')
+                            help='Automatically compress/shrink the attached CSV report if fields'
+                                 ' are empty (default = False).')
 
         parser.add_argument('-b', '--batch', action='store_true',
                             help='Run in batch mode (defaults to "yes" to all).')
         parser.add_argument('-q', '--quiet', action='store_true',
-                            help='Do not output anything, except for error messages. Useful in combination with --batch.')
+                            help='Do not output anything, except for error messages. Useful in'
+                                  ' combination with --batch.')
         parser.add_argument('-n', '--dry-run', action='store_true',
                             help='Do not store anything or change anything. Just simulate.')
         args = parser.parse_args()
@@ -328,7 +330,8 @@ class IntelMQCLIContoller():
         writer.writeheader()
         query_unicode = query
         if six.PY2:
-            query = [{key: utils.encode(val) if isinstance(val, six.text_type) else val for key, val in row.items()} for row in query]
+            query = [{key: utils.encode(val) if isinstance(val, six.text_type) else val for key, val in row.items()}
+                     for row in query]
         writer.writerows(query)
         # note this might contain UTF-8 chars! let's ignore utf-8 errors. sorry.
         attachment_text = utils.decode(csvfile.getvalue(), force=True)
@@ -464,7 +467,7 @@ Subject: {subj}
             return
 
         if taxonomy == '%':
-            taxonomy='Unknown'
+            taxonomy = 'Unknown'
 
         report_ids = set()
         for row in query:
