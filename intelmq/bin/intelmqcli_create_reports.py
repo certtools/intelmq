@@ -58,7 +58,7 @@ class IntelMQCLIContoller(lib.IntelMQCLIContollerTemplate):
         self.execute(lib.QUERY_OPEN_FEEDNAMES)
         feednames = [x['feed.name'] for x in self.cur.fetchall()]
         if feednames:
-            self.logger.info("All feeds: " + ", ".join(['%r']*len(feednames))%tuple(feednames))
+            self.logger.info("All feeds: " + ", ".join(['%r'] * len(feednames)) % tuple(feednames))
         else:
             self.logger.info('Nothing to do.')
         for feedname in feednames:

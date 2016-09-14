@@ -229,7 +229,7 @@ class IntelMQCLIContoller(lib.IntelMQCLIContollerTemplate):
         if not requestor:
             requestor = contact
 
-        ### PREPARATION
+        # PREPARATION
         query = self.shrink_dict(query)
         ids = list(str(row['id']) for row in query)
 
@@ -274,7 +274,7 @@ Subject: {subj}
     '''.format(to=requestor, subj=subject, text=text)
         showed_text_len = showed_text.count('\n')
 
-        ### SHOW DATA
+        # SHOW DATA
         if self.table_mode and six.PY2:
             self.logger.error('Sorry, no table mode for ancient python versions!')
         elif self.table_mode and not six.PY2:
@@ -314,7 +314,7 @@ Subject: {subj}
                 self.logger.info(attachment_text)
         self.logger.info('-' * 100)
 
-        ### MENU
+        # MENU
         if self.batch and requestor:
             answer = 's'
         else:
@@ -352,7 +352,7 @@ Subject: {subj}
             self.logger.error('I won\'t send with a missing text!')
             return
 
-        ### INVESTIGATION
+        # INVESTIGATION
         if self.dryrun:
             self.logger.info('Simulate creation of investigation.')
             investigation_id = -1
@@ -371,7 +371,7 @@ Subject: {subj}
                 self.logger.error('Could not link Investigation to Incident.')
                 return
 
-        ### CORRESPOND
+        # CORRESPOND
         filename = '%s-%s.csv' % (datetime.datetime.now().strftime('%Y-%m-%d'), taxonomy)
         if self.zipme or len(query) > self.config['rt']['zip_threshold']:
             attachment = io.BytesIO()
@@ -412,7 +412,7 @@ Subject: {subj}
         else:
             self.con.commit()
 
-            ### RESOLVE
+            # RESOLVE
             try:
                 if not self.dryrun and not self.rt.edit_ticket(incident_id, Status='resolved'):
                     self.logger.error('Could not close incident {}.'.format(incident_id))
