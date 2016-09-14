@@ -83,8 +83,14 @@ class Bot(object):
             signal.signal(signal.SIGHUP, self.__handle_sighup_signal)
             # system calls should not be interrupted, but restarted
             signal.siginterrupt(signal.SIGHUP, False)
-        except:
-            self.logger.exception('Bot initialization failed.')
+        except Exception as exc:
+            if self.parameters.error_log_exception:
+                self.logger.exception('Bot initialization failed.')
+            else:
+                self.logger.error(utils.error_message_from_exc(exc))
+                self.logger.error('Bot initialization failed.')
+
+            self.stop()
             raise
 
     def __handle_sighup_signal(self, signum, stack):
@@ -149,7 +155,6 @@ class Bot(object):
 
             except exceptions.PipelineError:
                 error_on_pipeline = True
-                error_traceback = traceback.format_exc()
 
                 if self.parameters.error_log_exception:
                     self.logger.exception('Pipeline failed.')
@@ -157,13 +162,13 @@ class Bot(object):
                     self.logger.error('Pipeline failed.')
                 self.__disconnect_pipelines()
 
-            except Exception:
+            except Exception as exc:
                 error_on_message = True
-                error_traceback = traceback.format_exc()
 
                 if self.parameters.error_log_exception:
                     self.logger.exception("Bot has found a problem.")
                 else:
+                    self.logger.error(utils.error_message_from_exc(exc))
                     self.logger.error("Bot has found a problem.")
 
                 if self.parameters.error_log_message:
@@ -173,7 +178,8 @@ class Bot(object):
 
             except KeyboardInterrupt:
                 self.logger.error("Received KeyboardInterrupt.")
-                self.stop()
+                self.stop(exitcode=0)
+                del self
                 break
 
             finally:
@@ -191,6 +197,7 @@ class Bot(object):
                         if error_on_message:
 
                             if self.parameters.error_dump_message:
+                                error_traceback = traceback.format_exc()
                                 self._dump_message(error_traceback,
                                                    message=self.__current_message)
                                 self.__current_message = None
@@ -211,9 +218,6 @@ class Bot(object):
                             self.__error_retries_counter = 0  # reset counter
             self.__handle_sighup()
 
-    def __del__(self):
-        self.stop()
-
     def __sleep(self):
         """
         Sleep handles interrupts and changed rate_limit-parameter.
@@ -230,8 +234,11 @@ class Bot(object):
             self.__handle_sighup()
             remaining = self.parameters.rate_limit - (time.time() - starttime)
 
-    def stop(self):
-        self.shutdown()
+    def stop(self, exitcode=1):
+        try:
+            self.shutdown()
+        except:
+            pass
 
         self.__disconnect_pipelines()
 
@@ -247,7 +254,8 @@ class Bot(object):
                 self.logger.error("Exiting.")
             except:
                 print("Exiting")
-            exit(-1)
+            del self
+            exit(exitcode)
 
     def __print_log_buffer(self):
         for level, message in self.__log_buffer:
