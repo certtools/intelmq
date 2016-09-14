@@ -173,7 +173,10 @@ class IntelMQCLIContoller(lib.IntelMQCLIContollerTemplate):
                     self.execute(lib.QUERY_DISTINCT_CONTACTS_BY_INCIDENT, (incident_id, ))
                 else:
                     self.execute(lib.DRY_QUERY_DISTINCT_CONTACTS_BY_TAXONOMY, (taxonomy, ))
+
                 contacts = [x['source.abuse_contact'] for x in self.cur.fetchall()]
+                inv_results = []
+
                 for contact in contacts:
                     self.logger.info('Handling contact ' + contact)
                     if not self.dryrun:
@@ -183,7 +186,16 @@ class IntelMQCLIContoller(lib.IntelMQCLIContollerTemplate):
                         self.execute(lib.DRY_QUERY_EVENTS_BY_ASCONTACT_TAXONOMY,
                                      (taxonomy, contact, ))
                     data = self.cur.fetchall()
-                    self.send(taxonomy, contact, data, incident_id)
+                    inv_results.append(self.send(taxonomy, contact, data, incident_id))
+
+                if all(inv_results):
+                    try:
+                        if not self.dryrun and not self.rt.edit_ticket(incident_id,
+                                                                       Status='resolved'):
+                            self.logger.error('Could not close incident {}.'.format(incident_id))
+                    except IndexError:
+                        # Bug in RT/python-rt
+                        pass
 
         finally:
             self.rt.logout()
@@ -225,7 +237,7 @@ class IntelMQCLIContoller(lib.IntelMQCLIContollerTemplate):
     def send(self, taxonomy, contact, query, incident_id, requestor=None):
         if not query:
             self.logger.error('No data!')
-            return
+            return False
         if not requestor:
             requestor = contact
 
@@ -328,29 +340,26 @@ Subject: {subj}
         if answer == 'q':
             exit(0)
         elif answer == 'n':
-            return
+            return False
         elif answer == 'a':
             self.batch = True
         elif answer == 't':
             self.table_mode = bool((self.table_mode + 1) % 2)
-            self.send(taxonomy, contact, query, incident_id, requestor)
-            return
+            return self.send(taxonomy, contact, query, incident_id, requestor)
         elif answer == 'r':
             answer = input(inverted('New requestor address:') + ' ').strip()
             if len(answer) == 0:
                 requestor = contact
             else:
                 requestor = answer
-            self.send(taxonomy, contact, query, incident_id, requestor)
-            return
+            return self.send(taxonomy, contact, query, incident_id, requestor)
         elif answer != 's':
             self.logger.error('Unknow command {!r}.'.format(answer))
-            self.send(taxonomy, contact, query, incident_id, requestor)
-            return
+            return self.send(taxonomy, contact, query, incident_id, requestor)
 
         if text is None:
             self.logger.error('I won\'t send with a missing text!')
-            return
+            return False
 
         # INVESTIGATION
         if self.dryrun:
@@ -364,12 +373,12 @@ Subject: {subj}
 
             if investigation_id == -1:
                 self.logger.error('Could not create Investigation.')
-                return
+                return False
 
             self.logger.info('Created Investigation {}.'.format(investigation_id))
             if not self.rt.edit_link(incident_id, 'HasMember', investigation_id):
                 self.logger.error('Could not link Investigation to Incident.')
-                return
+                return False
 
         # CORRESPOND
         filename = '%s-%s.csv' % (datetime.datetime.now().strftime('%Y-%m-%d'), taxonomy)
@@ -399,7 +408,7 @@ Subject: {subj}
                                            files=[(filename, attachment, mimetype)])
                 if not correspond:
                     self.logger.error('Could not correspond with text and file.')
-                    return
+                    return False
                 self.logger.info('Correspondence added to Investigation.')
 
             self.executemany("UPDATE events SET rtir_investigation_id = %s, "
@@ -414,8 +423,9 @@ Subject: {subj}
 
             # RESOLVE
             try:
-                if not self.dryrun and not self.rt.edit_ticket(incident_id, Status='resolved'):
-                    self.logger.error('Could not close incident {}.'.format(incident_id))
+                if not self.dryrun and not self.rt.edit_ticket(investigation_id,
+                                                               Status='resolved'):
+                    self.logger.error('Could not close investigation {}.'.format(incident_id))
             except IndexError:
                 # Bug in RT/python-rt
                 pass
@@ -431,6 +441,8 @@ Subject: {subj}
                 self.con.commit()
                 if self.cur.rowcount == 0:
                     self.query_insert_contact(asns=asns, contact=requestor)
+
+        return True
 
     def query_insert_contact(self, contact, asns):
         user = os.environ['USER']
