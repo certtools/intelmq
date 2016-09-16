@@ -18,6 +18,6 @@
 CONTRIBUTING.md	export-ignore
 debian  export-ignore
 MANIFEST.in export-ignore
-README.md	export-ignore
+README.rst	export-ignore
 REQUIREMENTS	export-ignore
 setup.cfg   export-ignore

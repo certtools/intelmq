@@ -39,13 +39,6 @@ DATA = [
      ),
 ]
 
-try:
-    import pypandoc
-    DESCRIPTION = pypandoc.convert('README.md', 'rst')
-except(IOError, ImportError):
-    DESCRIPTION = open('README.md').read()
-
-
 exec(open('intelmq/version.py').read())  # defines __version__
 
 
@@ -68,7 +61,7 @@ setup(
     license='AGPLv3',
     description='IntelMQ is a solution for CERTs to process data feeds, '
                 'pastebins, tweets throught a message queue.',
-    long_description=DESCRIPTION,
+    long_description=open('docs/README.rst').read(),
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Console',
