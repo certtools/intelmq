@@ -55,10 +55,7 @@ setup(
     maintainer='Sebastian Wagner',
     maintainer_email='wagner@cert.at',
     install_requires=REQUIRES,
-    tests_requires=REQUIRES+[
-        'nose',
-        ],
-    test_suite='nose.collector',
+    test_suite='intelmq.tests',
     packages=find_packages(),
     package_data={'intelmq': [
         'etc/*.conf',
