@@ -670,6 +670,7 @@
             "description": "Abusix is the bot resposible to get the correspondent abuse contact from source IP and destination IP of the events",
             "module": "intelmq.bots.experts.abusix.expert",
             "parameters": {
+                "overwrite": false,
                 "redis_cache_db": "5",
                 "redis_cache_host": "127.0.0.1",
                 "redis_cache_port": "6379",
