@@ -2,7 +2,6 @@
 """
 
 """
-
 import csv
 import datetime
 import importlib
@@ -25,7 +24,7 @@ from intelmq.lib import exceptions, utils
 from intelmq.lib.message import MessageFactory
 from intelmq.lib.pipeline import PipelineFactory
 
-__all__ = ['Bot', 'ParserBot']
+__all__ = ['Bot', 'CollectorBot', 'ParserBot']
 
 
 class Bot(object):
@@ -52,6 +51,7 @@ class Bot(object):
                                       ''.format(self.__class__.__name__,
                                                 bot_id, version_info,
                                                 os.getpid())))
+            self.__log_buffer.append(('debug', 'Library path: %r.' % __file__))
 
             self.__load_defaults_configuration()
             self.__load_system_configuration()
@@ -362,7 +362,7 @@ class Bot(object):
         timestamp = datetime.datetime.utcnow()
         timestamp = timestamp.isoformat()
 
-        dump_file = "%s%s.dump" % (self.parameters.logging_path, self.__bot_id)
+        dump_file = os.path.join(self.parameters.logging_path, self.__bot_id + ".dump")
 
         new_dump_data = dict()
         new_dump_data[timestamp] = dict()

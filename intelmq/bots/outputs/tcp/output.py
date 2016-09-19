@@ -18,8 +18,7 @@ class TCPOutputBot(Bot):
 
         data = event.to_json()
         try:
-            self.con.send(utils.encode(data))
-            self.con.sendall(self.separator)
+            self.con.sendall(utils.encode(data) + self.separator)
         except socket.error as exc:
             self.logger.exception(exc.args[1] + ". Reconnecting..")
             self.con.close()

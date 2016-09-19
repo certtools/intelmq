@@ -167,7 +167,6 @@ class ShadowserverParserBot(ParserBot):
                              'default config in favor of the `code` parameter in collectors '
                              'in 1.0!')
 
-        self.logger.debug("Raw_line: {!r}.".format(row))
         event.add('raw', self.recover_line(row))
 
         # Add everything which could not be resolved to extra.
