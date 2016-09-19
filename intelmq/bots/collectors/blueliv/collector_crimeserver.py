@@ -5,10 +5,18 @@ import sys
 
 from intelmq.lib.bot import CollectorBot
 from intelmq.lib.message import Report
-from sdk.blueliv_api import BluelivAPI
+
+try:
+    from sdk.blueliv_api import BluelivAPI
+except ImportError:
+    BluelivAPI = None
 
 
 class BluelivCrimeserverCollectorBot(CollectorBot):
+    def init(self):
+        if BluelivAPI is None:
+            self.logger.error('Could not import BluelivAPI. Please install it.')
+            self.stop()
 
     def process(self):
         self.logger.info("Downloading report through API")
