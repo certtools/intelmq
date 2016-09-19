@@ -24,7 +24,7 @@ from intelmq.lib import exceptions, utils
 from intelmq.lib.message import MessageFactory
 from intelmq.lib.pipeline import PipelineFactory
 
-__all__ = ['Bot', 'ParserBot']
+__all__ = ['Bot', 'CollectorBot', 'ParserBot']
 
 
 class Bot(object):
