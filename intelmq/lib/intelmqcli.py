@@ -102,7 +102,7 @@ QUERY_COUNT_ASN = """
         )
         AND {evtab}."feed.name" ILIKE %s AND
         {evtab}."time.source" IS NOT NULL AND
-        {evtab}."time.source" >= now() - interval '1 month' AND
+        {evtab}."time.source" >= now() - interval '2 days' AND
         {evtab}."classification.taxonomy" ILIKE %s
     GROUP BY {conttab}.contacts, grouping;
     """
@@ -221,7 +221,7 @@ WHERE
     {conttab}.contacts = %s AND
     {evtab}."feed.name" ILIKE %s AND
     {evtab}."time.source" IS NOT NULL AND
-    {evtab}."time.source" >= now() - interval '1 month' AND
+    {evtab}."time.source" >= now() - interval '2 days' AND
     {evtab}."classification.taxonomy" ILIKE %s;
 """
 
