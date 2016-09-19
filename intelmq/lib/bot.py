@@ -2,7 +2,6 @@
 """
 
 """
-
 import csv
 import datetime
 import importlib
@@ -352,7 +351,7 @@ class Bot(object):
         timestamp = datetime.datetime.utcnow()
         timestamp = timestamp.isoformat()
 
-        dump_file = "%s%s.dump" % (self.parameters.logging_path, self.__bot_id)
+        dump_file = os.path.join(self.parameters.logging_path, self.__bot_id + ".dump")
 
         new_dump_data = dict()
         new_dump_data[timestamp] = dict()
