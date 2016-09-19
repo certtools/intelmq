@@ -49,6 +49,7 @@ class Bot(object):
                                       ''.format(self.__class__.__name__,
                                                 bot_id, version_info,
                                                 os.getpid())))
+            self.__log_buffer.append(('debug', 'Library path: %r.' % __file__))
 
             self.__load_defaults_configuration()
             self.__load_system_configuration()
