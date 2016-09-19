@@ -13,17 +13,15 @@ ftp_file: string
 from __future__ import unicode_literals
 import sys
 from ftplib import FTP
-import socket
 import zipfile
 import io
 import fnmatch
 
-from intelmq.lib.bot import Bot
-from intelmq.lib.harmonization import DateTime
+from intelmq.lib.bot import CollectorBot
 from intelmq.lib.message import Report
 
 
-class FTPCollectorBot(Bot):
+class FTPCollectorBot(CollectorBot):
     def process(self):
         self.logger.info("Downloading report from %s" %
                          self.parameters.ftp_host + ':' +
@@ -77,10 +75,8 @@ class FTPCollectorBot(Bot):
         for raw_report in raw_reports:
             report = Report()
             report.add("raw", raw_report, sanitize=True)
-            report.add("feed.name", self.parameters.feed, sanitize=True)
             report.add("feed.url", 'ftp://' + self.parameters.ftp_host + ':' +
                        str(self.parameters.ftp_port), sanitize=True)
-            report.add("feed.accuracy", self.parameters.accuracy, sanitize=True)
             self.send_message(report)
 
 

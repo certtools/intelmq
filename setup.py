@@ -16,6 +16,10 @@ REQUIRES = [
 ]
 
 DATA = [
+    ('/etc/intelmq/',
+     ['intelmq/etc/intelmqcli.conf',
+      ],
+     ),
     ('/opt/intelmq/etc/',
      ['intelmq/bots/BOTS',
       ],
@@ -27,7 +31,6 @@ DATA = [
       'intelmq/etc/pipeline.conf',
       'intelmq/etc/runtime.conf',
       'intelmq/etc/startup.conf',
-      'intelmq/etc/system.conf',
       'intelmq/etc/squelcher.conf',
       ],
      ),
@@ -61,7 +64,6 @@ setup(
     maintainer_email='wagner@cert.at',
     install_requires=REQUIRES,
     tests_requires=REQUIRES+[
-        'mock>=1.1.1',
         'nose',
         ],
     test_suite='nose.collector',
@@ -97,6 +99,7 @@ setup(
     entry_points={
         'console_scripts': [
             'intelmqcli = intelmq.bin.intelmqcli:main',
+            'intelmqcli_create_reports = intelmq.bin.intelmqcli_create_reports:main',
             'intelmqctl = intelmq.bin.intelmqctl:main',
             'intelmqdump = intelmq.bin.intelmqdump:main',
             'intelmq_psql_initdb = intelmq.bin.intelmq_psql_initdb:main',

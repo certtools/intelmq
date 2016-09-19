@@ -18,6 +18,7 @@ import logging.handlers
 import os
 import re
 import sys
+import traceback
 
 import pkg_resources
 
@@ -25,7 +26,7 @@ import intelmq
 
 __all__ = ['base64_decode', 'base64_encode', 'decode', 'encode',
            'load_configuration', 'load_parameters', 'log', 'parse_logline',
-           'reverse_readline',
+           'reverse_readline', 'error_message_from_exc',
            ]
 
 # Used loglines format
@@ -202,7 +203,7 @@ def load_parameters(*configs):
 
 
 def log(name, log_path=intelmq.DEFAULT_LOGGING_PATH, log_level="DEBUG",
-        stream=None, syslog=None):
+        stream=sys.stderr, syslog=None, log_format_stream=LOG_FORMAT_STREAM):
     """
     Returns a logger instance logging to file and sys.stderr or other stream.
 
@@ -251,12 +252,9 @@ def log(name, log_path=intelmq.DEFAULT_LOGGING_PATH, log_level="DEBUG",
     handler.setFormatter(formatter)
     logger.addHandler(handler)
 
-    if stream or stream is None:
-        console_formatter = logging.Formatter(LOG_FORMAT_STREAM)
-        if stream is None:
-            console_handler = logging.StreamHandler(sys.stderr)
-        else:
-            console_handler = logging.StreamHandler(stream)
+    if stream:
+        console_formatter = logging.Formatter(log_format_stream)
+        console_handler = logging.StreamHandler(stream)
         console_handler.setFormatter(console_formatter)
         logger.addHandler(console_handler)
         console_handler.setLevel(log_level)
@@ -313,3 +311,20 @@ def parse_logline(logline):
         return dict(list(zip(fields, match.group(*fields))))
     except AttributeError:
         return logline
+
+
+def error_message_from_exc(exc):
+    """
+    >>> exc = IndexError('This is a test')
+    >>> error_message_from_exc(exc)
+    'This is a test'
+
+    Parameters:
+    -----------
+    exc: Exception
+
+    Returns:
+    result : string
+        The error message of exc
+    """
+    return traceback.format_exception_only(type(exc), exc)[-1].strip().replace(type(exc).__name__ + ': ', '')

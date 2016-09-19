@@ -32,7 +32,7 @@
   * [Uninstall](#uninstall)
   * [Frequently Asked Questions](#frequently-asked-questions)
   * [Additional Information](#additional-information)
-    * [Perfomance Tests](#perfomance-tests)
+    * [Performance Tests](#performance-tests)
 
 
 # Requirements
@@ -120,7 +120,6 @@ cp -a examples/* .
 
 * `defaults.conf`: default values for bots and their behavior, e.g.
 error handling, log options and pipeline configuration. Will be removed in the [future](https://github.com/certtools/intelmq/issues/267).
-* `system.conf`: System configuration for e.g. the logger and the pipeline.
 * `startup.conf`: Maps the bot ids to python modules.
 * `runtime.conf`: Configuration for the individual bots.
 * `pipeline.conf`: Defines source and destination queues per bot.
@@ -133,7 +132,11 @@ Configure source and destination queues in `pipeline.conf`.
 Use the IntelMQ Manager mentioned above to generate the configuration files if unsure.
 
 
-## System Configuration
+## System Configuration (defaults)
+
+All bots inherit this configuration parameters and they can overwrite them using the same parameters in configuration.
+
+Small extract:
 
 * `logging_handler`: Can be one of `"file"` or `"syslog"`.
 * `logging_level`: Defines for all system the level of logging that will be use by all bots and intelmqctl tool. Possible values are: `"CRITICAL"`, `"ERROR"`, `"WARNING"`, `"INFO"` and `"DEBUG"`.
@@ -213,10 +216,6 @@ This configuration is used by each bot to load the source pipeline and destinati
 ```
 
 More examples can be found at `intelmq/etc/pipeline.conf` directory in IntelMQ repository.
-
-## Defaults Configuration
-
-All bots inherit this configuration parameters and they can overwrite them using the same parameters in configuration.
 
 #### Error Handling
 
@@ -356,12 +355,12 @@ More examples can be found at `intelmq/etc/harmonization.conf` directory in Inte
 
 IntelMQ has a modular structure consisting of bots. There are four types of bots:
 
-* *CollectorBots* retrieve data from internal or external sources, the output
+* [CollectorBots](Bots.md#collectors) retrieve data from internal or external sources, the output
 are *reports* consisting of many individual data sets.
-* *ParserBots* parse the data by splitting it into individual *events* and
+* [ParserBots](Bots.md#parsers) parse the data by splitting it into individual *events* and
 giving them a defined structure, see also [Data Harmonization](Data-Harmonization.md).
-* *ExpertBots* enrich the existing events by e.g. reverse records, geographic location information or abuse contacts.
-* *OutputBots* write events to files, databases, (REST)-APIs, etc.
+* [ExpertBots](Bots.md#experts) enrich the existing events by e.g. reverse records, geographic location information or abuse contacts.
+* [OutputBots](Bots.md#outputs) write events to files, databases, (REST)-APIs, etc.
 
 Each bot has one source queue (except collectors) and can have multiple
 destination queues (except outputs). But multiple bots can write to the same pipeline, resulting in multiple inputs for the next bot.
@@ -577,7 +576,7 @@ rm -rf /opt/intelmq
 
 # Frequently Asked Questions
 
-Consult the [FAQ.md](FAQ) if you encountered any problem.
+Consult the [FAQ](FAQ.md) if you encountered any problem.
 
 
 # Additional Information

@@ -67,6 +67,10 @@ class FilterExpertBot(Bot):
             self.logger.info("Filter_action parameter definition unknown.")
             self.filter = False
 
+        self.use_regex = False
+        if hasattr(self.parameters, 'filter_regex') and self.parameters.filter_regex:
+            self.use_regex = True
+
         if not (self.filter or self.not_after is not None or self.not_before is not None):
             self.logger.error("No relevant filter configuration found, stopping...")
             self.stop()
@@ -102,9 +106,8 @@ class FilterExpertBot(Bot):
 
         # key/value based filtering
         if self.filter and self.parameters.filter_action == "drop":
-            if (event.contains(self.parameters.filter_key) and
-                    event.get(self.parameters.filter_key) ==
-                    self.parameters.filter_value):
+            if self.doFilter(event, self.parameters.filter_key,
+                             self.parameters.filter_value):
                 self.acknowledge_message()
                 return
             else:
@@ -113,9 +116,8 @@ class FilterExpertBot(Bot):
                 return
 
         if self.filter and self.parameters.filter_action == "keep":
-            if (event.contains(self.parameters.filter_key) and
-                    event.get(self.parameters.filter_key) ==
-                    self.parameters.filter_value):
+            if self.doFilter(event, self.parameters.filter_key,
+                             self.parameters.filter_value):
                 self.send_message(event)
                 self.acknowledge_message()
                 return
@@ -125,6 +127,23 @@ class FilterExpertBot(Bot):
 
         self.send_message(event)
         self.acknowledge_message()
+
+    def doFilter(self, event, key, condition):
+        if self.use_regex:
+            return self.regexSearchFilter(event, key, condition)
+        else:
+            return self.equalsFilter(event, key, condition)
+
+    def equalsFilter(self, event, key, value):
+        return (event.contains(key) and
+                event.get(key) == value)
+
+    def regexSearchFilter(self, event, key, regex):
+        if event.contains(key):
+            exp = re.compile(regex)
+            return exp.search(str(event.get(key)))
+        else:
+            return False
 
 if __name__ == "__main__":
     bot = FilterExpertBot(sys.argv[1])

@@ -342,6 +342,16 @@
                 "url_regex": "http://"
             }
         },
+        "HTTP Stream": {
+            "description": "The HTTP stream collector can process individual lines from a streaming source. rate_limt is the time between the stop of the stream and the reconnect.",
+            "module": "intelmq.bots.collectors.http.collector_http_stream",
+            "parameters": {
+                "feed": "HTTP Stream",
+                "rate_limit": 5,
+                "strip_lines": true,
+                "url": "https://example.com/"
+            }
+        },
         "HpHosts": {
             "description": "HPHost Collector is the bot responsible to get the report from source of information.",
             "module": "intelmq.bots.collectors.http.collector_http",
@@ -660,6 +670,7 @@
             "description": "Abusix is the bot resposible to get the correspondent abuse contact from source IP and destination IP of the events",
             "module": "intelmq.bots.experts.abusix.expert",
             "parameters": {
+                "overwrite": false,
                 "redis_cache_db": "5",
                 "redis_cache_host": "127.0.0.1",
                 "redis_cache_port": "6379",
@@ -673,6 +684,21 @@
                 "filter": false,
                 "http_verify_cert": true,
                 "overwrite_cc": false
+            }
+        },
+        "CERT.at Contact Database intern": {
+            "description": "Fetches abuse contacts from a database per ASN.",
+            "module": "intelmq.bots.experts.certat_contact_intern.expert",
+            "parameters": {
+                "ascolumn": "asn",
+                "column": "contact",
+                "database": "intelmq",
+                "host": "localhost",
+                "password": "<password>",
+                "port": "5432",
+                "sslmode": "require",
+                "table": "contacts",
+                "user": "intelmq"
             }
         },
         "Cymru Whois": {
@@ -702,6 +728,7 @@
             "parameters": {
                 "filter_action": "<keep/drop>",
                 "filter_key": "<source.geolocation.cc>",
+                "filter_regex": "",
                 "filter_value": "<PT>"
             }
         },
@@ -749,7 +776,7 @@
             "description": "Reverse DNS is the bot resposible to get the correspondent domain name source IP and destination IP of the events",
             "module": "intelmq.bots.experts.reverse_dns.expert",
             "parameters": {
-                "redis_cache_db": "5",
+                "redis_cache_db": "7",
                 "redis_cache_host": "127.0.0.1",
                 "redis_cache_port": "6379",
                 "redis_cache_ttl": "86400"
@@ -812,7 +839,7 @@
                 "collection": "<collection>",
                 "database": "<database>",
                 "host": "<ip>",
-                "port": "<port>"
+                "port": 27017
             }
         },
         "PostgreSQL": {
@@ -835,7 +862,8 @@
             "parameters": {
                 "auth_token": "<token>",
                 "auth_token_name": "<token name>",
-                "host": "<host>"
+                "host": "<host>",
+                "use_json": true
             }
         },
         "Redis": {
@@ -855,7 +883,8 @@
             "module": "intelmq.bots.outputs.tcp.output",
             "parameters": {
                 "ip": "<ip>",
-                "port": "<port>"
+                "port": "<port>",
+                "separator": "\n"
             }
         },
         "XMPP": {

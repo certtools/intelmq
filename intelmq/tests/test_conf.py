@@ -1,12 +1,20 @@
 # -*- coding: utf-8 -*-
-
+"""
+Tests if configuration in /etc is valid
+"""
 import json
+import re
 import unittest
 
 import pkg_resources
 
+import intelmq.lib.harmonization as harmonization
+
 
 def to_json(obj):
+    """
+    Transforms object into JSON with intelmq-style.
+    """
     return json.dumps(obj, indent=4, sort_keys=True,
                       separators=(',', ': ')) + '\n'
 
@@ -31,12 +39,30 @@ class TestConf(unittest.TestCase):
         interpreted = json.loads(fcontent)
         self.assertEqual(to_json(interpreted), fcontent)
 
-    def test_harmonization_syntax(self):
-        """ Test if harmonization.conf has correct syntax. """
+    def test_harmonization(self):
+        """ Test if harmonization.conf has correct syntax and valid content. """
         with open(CONF_FILES['harmonization']) as fhandle:
             fcontent = fhandle.read()
         interpreted = json.loads(fcontent)
+        # Check Json syntax and style
         self.assertEqual(to_json(interpreted), fcontent)
+
+        # check if everything from report is in event and equal, except raw-description
+        del interpreted['report']['raw']['description']
+        event_copy = interpreted['event'].copy()
+        del event_copy['raw']['description']
+        self.assertDictContainsSubset(interpreted['report'], event_copy)
+
+        # check for valid regex, length and type
+        for value in interpreted['event'].values():
+            if 'regex' in value:
+                re.compile(value['regex'])
+            if 'iregex' in value:
+                re.compile(value['iregex'])
+            if 'length' in value:
+                self.assertIsInstance(value['length'], int)
+                self.assertGreater(value['length'], 0)
+            getattr(harmonization, value['type'])
 
     def test_pipeline_syntax(self):
         """ Test if pipeline.conf has correct syntax. """
@@ -55,13 +81,6 @@ class TestConf(unittest.TestCase):
     def test_startup_syntax(self):
         """ Test if startup.conf has correct syntax. """
         with open(CONF_FILES['startup']) as fhandle:
-            fcontent = fhandle.read()
-        interpreted = json.loads(fcontent)
-        self.assertEqual(to_json(interpreted), fcontent)
-
-    def test_system_syntax(self):
-        """ Test if system.conf has correct syntax. """
-        with open(CONF_FILES['system']) as fhandle:
             fcontent = fhandle.read()
         interpreted = json.loads(fcontent)
         self.assertEqual(to_json(interpreted), fcontent)
