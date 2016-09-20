@@ -4,7 +4,7 @@
 from setuptools import find_packages, setup
 
 REQUIRES = [
-    'dnspython3>=1.11.1',
+    'dnspython>=1.11.1',
     'psutil>=1.2.1',
     'python-dateutil>=2.0',
     'python-termstyle>=0.1.10',
@@ -24,11 +24,11 @@ DATA = [
       'intelmq/etc/pipeline.conf',
       'intelmq/etc/runtime.conf',
       'intelmq/etc/startup.conf',
-      'intelmq/etc/system.conf',
       ],
      ),
     ('/opt/intelmq/var/lib/bots/modify/example',
-     ['intelmq/bots/experts/modify/modify.conf',
+     ['intelmq/bots/experts/modify/examples/default.conf',
+      'intelmq/bots/experts/modify/examples/morefeeds.conf',
       ],
      ),
     ('/opt/intelmq/var/log/',
@@ -39,24 +39,16 @@ DATA = [
      ),
 ]
 
-try:
-    import pypandoc
-    DESCRIPTION = pypandoc.convert('README.md', 'rst')
-except(IOError, ImportError):
-    DESCRIPTION = open('README.md').read()
+exec(open('intelmq/version.py').read())  # defines __version__
 
 
 setup(
     name='intelmq',
-    version='1.0.0.dev4',
+    version=__version__,
     maintainer='Sebastian Wagner',
     maintainer_email='wagner@cert.at',
     install_requires=REQUIRES,
-    test_requires=REQUIRES+[
-        'mock>=1.1.1',
-        'nose',
-        ],
-    test_suite='nose.collector',
+    test_suite='intelmq.tests',
     packages=find_packages(),
     package_data={'intelmq': [
         'etc/*.conf',
@@ -69,7 +61,7 @@ setup(
     license='AGPLv3',
     description='IntelMQ is a solution for CERTs to process data feeds, '
                 'pastebins, tweets throught a message queue.',
-    long_description=DESCRIPTION,
+    long_description=open('docs/README.rst').read(),
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Console',
@@ -93,4 +85,9 @@ setup(
             'intelmq_psql_initdb = intelmq.bin.intelmq_psql_initdb:main',
         ],
     },
+    scripts=[
+        'intelmq/bots/experts/tor_nodes/update-tor-nodes',
+        'intelmq/bots/experts/maxmind_geoip/update-geoip-data',
+        'intelmq/bots/experts/asn_lookup/update-asn-data',
+    ],
 )

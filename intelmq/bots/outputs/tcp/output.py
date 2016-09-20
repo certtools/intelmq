@@ -12,7 +12,7 @@ class TCPBot(Bot):
     def process(self):
         event = self.receive_message()
 
-        data = event.to_json()
+        data = event.to_json(hierarchical=self.parameters.hierarchical_output)
         self.send_data(data)
         self.acknowledge_message()
 

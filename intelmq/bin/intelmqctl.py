@@ -12,7 +12,7 @@ import pkg_resources
 import psutil
 
 from intelmq import (DEFAULTS_CONF_FILE, PIPELINE_CONF_FILE, RUNTIME_CONF_FILE,
-                     STARTUP_CONF_FILE, SYSTEM_CONF_FILE)
+                     STARTUP_CONF_FILE, SYSTEM_CONF_FILE, VAR_RUN_PATH)
 from intelmq.lib import utils
 from intelmq.lib.pipeline import PipelineFactory
 
@@ -20,8 +20,8 @@ from intelmq.lib.pipeline import PipelineFactory
 class Parameters(object):
     pass
 
-PIDDIR = "/opt/intelmq/var/run/"
-PIDFILE = "/opt/intelmq/var/run/{}.pid"
+PIDDIR = VAR_RUN_PATH
+PIDFILE = os.path.join(PIDDIR, "{}.pid")
 
 STATUSES = {
     'starting': 0,
@@ -35,6 +35,8 @@ MESSAGES = {
     'running': '{} is running.',
     'stopped': '{} is stopped.',
     'stopping': 'Stopping {}...',
+    'reloading': 'Reloading {} ...',
+    'reloaded': '{} is reloaded.',
 }
 
 ERROR_MESSAGES = {
@@ -49,12 +51,14 @@ ERROR_MESSAGES = {
 LOG_LEVEL = {
     'DEBUG': 0,
     'INFO': 1,
-    'ERROR': 2,
-    'CRITICAL': 3,
+    'WARNING': 2,
+    'ERROR': 3,
+    'CRITICAL': 4,
 }
 
 RETURN_TYPES = ['text', 'json']
 RETURN_TYPE = None
+QUIET = False
 
 
 def log_list_queues(queues):
@@ -69,6 +73,8 @@ def log_bot_error(status, *args):
 
 
 def log_bot_message(status, *args):
+    if QUIET:
+        return
     if RETURN_TYPE == 'text':
         logger.info(MESSAGES[status].format(*args))
 
@@ -79,6 +85,8 @@ def log_botnet_error(status):
 
 
 def log_botnet_message(status):
+    if QUIET:
+        return
     if RETURN_TYPE == 'text':
         logger.info(MESSAGES[status].format('Botnet'))
 
@@ -130,11 +138,30 @@ def status_process(pid):
 
 class IntelMQContoller():
 
-    def __init__(self):
+    def __init__(self, interactive=False, return_type="python", quiet=False):
+        """
+        Initializes intelmqctl.
+
+        Parameters
+        ==========
+        interactive : boolean
+            for cli-interface true, functions can exits, parameters are used
+        return_type : string
+            'python': no special treatment, can be used for use by other
+                python code
+            'text': user-friendly output for cli, default for interactive use
+            'json': machine-readable output for managers
+        quiet : boolean
+            False by default, can be activated for cronjobs etc.
+        """
         global RETURN_TYPE
+        RETURN_TYPE = return_type
         global logger
+        global QUIET
+        QUIET = quiet
         logger = utils.log('intelmqctl', log_level='DEBUG')
         self.logger = logger
+        self.interactive = interactive
         if os.geteuid() == 0:
             logger.warning('Running intelmq as root is highly discouraged!')
 
@@ -145,8 +172,8 @@ class IntelMQContoller():
 
         Outputs are logged to /opt/intelmq/var/log/intelmqctl"""
         USAGE = '''
-        intelmqctl [start|stop|restart|status|run] bot-id
-        intelmqctl [start|stop|restart|status]
+        intelmqctl [start|stop|restart|status|reload|run] bot-id
+        intelmqctl [start|stop|restart|status|reload]
         intelmqctl list [bots|queues]
         intelmqctl log bot-id [number-of-lines [log-level]]
         intelmqctl clear queue-id
@@ -183,37 +210,14 @@ Get logs of a bot:
     Default is INFO. Number of lines defaults to 10, -1 gives all. Result
     can be longer due to our logging format!'''
 
-        parser = argparse.ArgumentParser(
-            prog=APPNAME,
-            usage=USAGE,
-            epilog=DESCRIPTION
-        )
-
-        parser.add_argument('-v', '--version',
-                            action='version', version=VERSION)
-        parser.add_argument('--type', '-t', choices=RETURN_TYPES,
-                            default=RETURN_TYPES[0],
-                            help='choose if it should return regular text or '
-                                 'other machine-readable')
-
-        parser.add_argument('action',
-                            choices=['start', 'stop', 'restart', 'status',
-                                     'run', 'list', 'clear', 'help', 'log'],
-                            metavar='[start|stop|restart|status|run|list|clear'
-                                    '|log]')
-        parser.add_argument('parameter', nargs='*')
-        self.args = parser.parse_args()
-        if self.args.action == 'help':
-            parser.print_help()
-            exit(0)
-
-        RETURN_TYPE = self.args.type
-
         with open(STARTUP_CONF_FILE, 'r') as fp:
             self.startup = json.load(fp)
 
-        with open(SYSTEM_CONF_FILE, 'r') as fp:
-            self.system = json.load(fp)
+        if os.path.exists(SYSTEM_CONF_FILE):
+            self.logger.warn("system.conf is deprecated and will be"
+                             "removed in 1.0. Use defaults.conf instead!")
+            with open(SYSTEM_CONF_FILE, 'r') as fp:
+                self.system = json.load(fp)
 
         if not os.path.exists(PIDDIR):
             os.makedirs(PIDDIR)
@@ -230,10 +234,45 @@ Get logs of a bot:
         self.startup_configuration = utils.load_configuration(
             STARTUP_CONF_FILE)
 
+        if self.interactive:
+            parser = argparse.ArgumentParser(
+                prog=APPNAME,
+                usage=USAGE,
+                epilog=DESCRIPTION
+            )
+
+            parser.add_argument('-v', '--version',
+                                action='version', version=VERSION)
+            parser.add_argument('--type', '-t', choices=RETURN_TYPES,
+                                default=RETURN_TYPES[0],
+                                help='choose if it should return regular text '
+                                     'or other machine-readable')
+
+            parser.add_argument('action',
+                                choices=['start', 'stop', 'restart', 'status',
+                                         'reload', 'run', 'list', 'clear',
+                                         'help', 'log'],
+                                metavar='[start|stop|restart|status|reload|run'
+                                        '|list|clear|log]')
+            parser.add_argument('parameter', nargs='*')
+            parser.add_argument('--quiet', '-q', action='store_const',
+                                help='Quiet mode, useful for reloads initiated'
+                                     'scripts like logrotate',
+                                const=True)
+            self.parser = parser
+            self.args = parser.parse_args()
+            if self.args.action == 'help':
+                parser.print_help()
+                exit(0)
+
+            RETURN_TYPE = self.args.type
+            QUIET = self.args.quiet
+
     def load_system_configuration(self):
-        config = utils.load_configuration(SYSTEM_CONF_FILE)
-        for option, value in config.items():
-            setattr(self.parameters, option, value)
+        if os.path.exists(SYSTEM_CONF_FILE):
+            config = utils.load_configuration(SYSTEM_CONF_FILE)
+            for option, value in config.items():
+                setattr(self.parameters, option, value)
 
     def load_defaults_configuration(self):
         # Load defaults configuration section
@@ -243,24 +282,25 @@ Get logs of a bot:
 
     def run(self):
         results = None
-        if self.args.action in ['start', 'restart', 'stop', 'status']:
+        if self.args.action in ['start', 'restart', 'stop', 'status',
+                                'reload']:
             if self.args.parameter:
-                method_name = "bot_" + self.args.action
-                call_method = getattr(self, method_name)
-                results = call_method(self.args.parameter)
+                call_method = getattr(self, "bot_" + self.args.action)
+                results = call_method(self.args.parameter[0])
             else:
-                method_name = "botnet_" + self.args.action
-                call_method = getattr(self, method_name)
+                call_method = getattr(self, "botnet_" + self.args.action)
                 results = call_method()
         elif self.args.action == 'run':
             if self.args.parameter and len(self.args.parameter) == 1:
                 self.bot_run(self.args.parameter[0])
             else:
                 print("Exactly one bot-id must be given for run.")
+                self.parser.print_help()
                 exit(2)
         elif self.args.action == 'list':
-            if self.args.parameter[0] not in ['bots', 'queues']:
-                print("Second argument must be 'bots' or 'queues'.")
+            if not self.args.parameter or self.args.parameter[0] not in ['bots', 'queues']:
+                print("Second argument for list must be 'bots' or 'queues'.")
+                self.parser.print_help()
                 exit(2)
             method_name = "list_" + self.args.parameter[0]
             call_method = getattr(self, method_name)
@@ -268,13 +308,15 @@ Get logs of a bot:
         elif self.args.action == 'log':
             if not self.args.parameter:
                 print("You must give parameters for 'log'.")
+                self.parser.print_help()
                 exit(2)
             results = self.read_log(*self.args.parameter)
         elif self.args.action == 'clear':
             if not self.args.parameter:
                 print("Queue name not given.")
+                self.parser.print_help()
                 exit(2)
-            results = self.clear_queue(self.args.parameter)
+            results = self.clear_queue(self.args.parameter[0])
 
         if self.args.type == 'json':
             print(json.dumps(results))
@@ -287,7 +329,11 @@ Get logs of a bot:
             return 'error'
         else:
             module = importlib.import_module(bot_module)
-            botname = [name for name in dir(module) if hasattr(getattr(module, name), 'process')][0]
+            # TODO: Search for bot class is dirty (but works)
+            botname = [name for name in dir(module)
+                       if hasattr(getattr(module, name), 'process') and
+                       name.endswith('Bot') and
+                       name not in ['CollectorBot', 'ParserBot']][0]
             bot = getattr(module, botname)
             instance = bot(bot_id)
             instance.start()
@@ -340,6 +386,24 @@ Get logs of a bot:
         log_bot_message('stopped', bot_id)
         return 'stopped'
 
+    def bot_reload(self, bot_id):
+        pid = read_pidfile(bot_id)
+        if not pid:
+            log_bot_error('stopped', bot_id)
+            return 'stopped'
+        if not status_process(pid):
+            remove_pidfile(bot_id)
+            log_bot_error('stopped', bot_id)
+            return 'stopped'
+        log_bot_message('reloading', bot_id)
+        proc = psutil.Process(int(pid))
+        proc.send_signal(signal.SIGHUP)
+        if status_process(pid):
+            log_bot_message('running', bot_id)
+            return 'running'
+        log_bot_error('stopped', bot_id)
+        return 'stopped'
+
     def bot_restart(self, bot_id):
         status_stop = self.bot_stop(bot_id)
         status_start = self.bot_start(bot_id)
@@ -350,6 +414,11 @@ Get logs of a bot:
         if pid and status_process(pid):
             log_bot_message('running', bot_id)
             return 'running'
+
+        if bot_id not in self.startup:
+            log_bot_error('notfound', bot_id)
+            return 'error'
+
         log_bot_message('stopped', bot_id)
         return 'stopped'
 
@@ -367,6 +436,14 @@ Get logs of a bot:
         for bot_id in sorted(self.startup.keys()):
             botnet_status[bot_id] = self.bot_stop(bot_id)
         log_botnet_message('stopped')
+        return botnet_status
+
+    def botnet_reload(self):
+        botnet_status = {}
+        log_botnet_message('reloading')
+        for bot_id in sorted(self.startup.keys()):
+            botnet_status[bot_id] = self.bot_reload(bot_id)
+        log_botnet_message('reloaded')
         return botnet_status
 
     def botnet_restart(self):
@@ -389,21 +466,29 @@ Get logs of a bot:
         return botnet_status
 
     def list_bots(self):
-        print("List of Bots:\n-------------")
-        for bot_id in sorted(self.startup.keys()):
-            print("\nBot ID: {}\nDescription: {}"
-                  "".format(bot_id, self.startup[bot_id]['description']))
+        """
+        Lists all configured bots from startup.conf with bot id and
+        description.
+
+        If description is not set, None is used instead.
+        """
+        if self.args.type == 'text':
+            for bot_id in sorted(self.startup.keys()):
+                print("Bot ID: {}\nDescription: {}"
+                      "".format(bot_id, self.startup[bot_id].get('description')))
         return [{'id': bot_id,
-                 'description': self.startup[bot_id]['description']}
+                 'description': self.startup[bot_id].get('description')}
                 for bot_id in sorted(self.startup.keys())]
 
     def list_queues(self):
         source_queues = set()
         destination_queues = set()
+        internal_queues = set()
 
-        for key, value in self.pipepline_configuration.items():
+        for botid, value in self.pipepline_configuration.items():
             if 'source-queue' in value:
                 source_queues.add(value['source-queue'])
+                internal_queues.add(value['source-queue'] + '-internal')
             if 'destination-queues' in value:
                 destination_queues.update(value['destination-queues'])
 
@@ -411,8 +496,8 @@ Get logs of a bot:
         pipeline.set_queues(source_queues, "source")
         pipeline.connect()
 
-        queues = source_queues.union(destination_queues)
-        counters = pipeline.count_queued_messages(queues)
+        queues = source_queues.union(destination_queues).union(internal_queues)
+        counters = pipeline.count_queued_messages(*queues)
         log_list_queues(counters)
 
         return_dict = dict()
@@ -422,6 +507,7 @@ Get logs of a bot:
             if 'source-queue' in info:
                 return_dict[bot_id]['source_queue'] = (
                     info['source-queue'], counters[info['source-queue']])
+                return_dict[bot_id]['internal_queue'] = counters[info['source-queue'] + '-internal']
 
             if 'destination-queues' in info:
                 return_dict[bot_id]['destination_queues'] = list()
@@ -438,19 +524,18 @@ Get logs of a bot:
         First checks if the queue does exist in the pipeline configuration.
         """
         logger.info("Clearing queue {}".format(queue))
-        source_queues = set()
-        destination_queues = set()
+        queues = set()
         for key, value in self.pipepline_configuration.items():
             if 'source-queue' in value:
-                source_queues.add(value['source-queue'])
+                queues.add(value['source-queue'])
+                queues.add(value['source-queue'] + '-internal')
             if 'destination-queues' in value:
-                destination_queues.update(value['destination-queues'])
+                queues.update(value['destination-queues'])
 
         pipeline = PipelineFactory.create(self.parameters)
-        pipeline.set_queues(source_queues, "source")
+        pipeline.set_queues(queues, "source")
         pipeline.connect()
 
-        queues = source_queues.union(destination_queues)
         if queue not in queues:
             logger.error("Queue {} does not exist!".format(queue))
             return 'not-found'
@@ -518,7 +603,7 @@ Get logs of a bot:
 
 
 def main():
-    x = IntelMQContoller()
+    x = IntelMQContoller(interactive=True)
     x.run()
 
 if __name__ == "__main__":

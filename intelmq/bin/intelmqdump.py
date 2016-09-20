@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+"""
+
+
+TODO: check if action is allowed when called
+"""
 import argparse
 import glob
-import io
 import json
 import os.path
 import pprint
@@ -11,6 +15,7 @@ import traceback
 
 from termstyle import bold, green, inverted, red
 
+import intelmq.bin.intelmqctl as intelmqctl
 import intelmq.lib.exceptions as exceptions
 import intelmq.lib.pipeline as pipeline
 import intelmq.lib.utils as utils
@@ -67,10 +72,10 @@ AVAILABLE_IDS = [key for key, value in ACTIONS.items() if value[1]]
 def dump_info(fname):
     info = red('unknwon error')
     if not os.path.getsize(fname):
-        info = 'empty file'
+        info = red('empty file')
     else:
         try:
-            handle = io.open(fname, 'rt')
+            handle = open(fname, 'rt')
         except OSError as exc:
             info = red('unable to open file: {!s}'.format(exc))
         else:
@@ -118,6 +123,7 @@ def main():
     parser.add_argument('botid', metavar='botid', nargs='?',
                         default=None, help='botid to inspect dumps of')
     args = parser.parse_args()
+    ctl = intelmqctl.IntelMQContoller()
 
     if args.botid is None:
         filenames = glob.glob(os.path.join(DEFAULT_LOGGING_PATH, '*.dump'))
@@ -134,7 +140,8 @@ def main():
             info = dump_info(fname)
             print("{c:3}: {s:{l}} {i}".format(c=count, s=shortname, i=info,
                                               l=length))
-        botid = input(inverted('Which dump file to process (id or name)? '))
+        botid = input(inverted('Which dump file to process (id or name)?') +
+                      ' ')
         botid = botid.strip()
         if botid == 'q' or not botid:
             exit(0)
@@ -152,19 +159,24 @@ def main():
     while True:
         info = dump_info(fname)
         print('Processing {}: {}'.format(bold(botid), info))
-        try:
-            with io.open(fname, 'rt') as handle:
+        # Determine bot status
+        bot_status = ctl.bot_status(botid)
+        if bot_status == 'running':
+            print(red('Attention: This bot is currently running!'))
+        elif bot_status == 'error':
+            print(red('Attention: This bot is not defined!'))
+
+        if info.startswith(str(red)):
+            available_opts = [item[0] for item in ACTIONS.values() if item[2]]
+            print('Restricted actions.')
+        else:
+            with open(fname, 'rt') as handle:
                 content = json.load(handle)
             meta = load_meta(content)
-        except ValueError:
-            available_opts = [item[0] for item in ACTIONS.values() if item[2]]
-            print(bold('Could not load file:') + '\n{}\nRestricted actions.'
-                  ''.format(traceback.format_exc()))
-        else:
             available_opts = [item[0] for item in ACTIONS.values()]
             for count, line in enumerate(meta):
                 print('{:3}: {} {}'.format(count, *line))
-        answer = input(inverted(', '.join(available_opts) + '? ')).split()
+        answer = input(inverted(', '.join(available_opts) + '?') + ' ').split()
         if not answer:
             continue
         if any([answer[0] == char for char in AVAILABLE_IDS]):
@@ -189,18 +201,18 @@ def main():
             runtime = utils.load_configuration(RUNTIME_CONF_FILE)
             params = utils.load_parameters(default, runtime)
             pipe = pipeline.PipelineFactory.create(params)
-            for key, entry in [item for (count, item)
-                               in enumerate(content.items()) if count in ids]:
+            for i, (key, entry) in enumerate([item for (count, item)
+                                              in enumerate(content.items()) if count in ids]):
                 if entry['message']:
                     msg = entry['message']
                 else:
-                    print('No message here, deleting directly.')
+                    print('No message here, deleting entry.')
                     del content[key]
                     save_file(fname, content)
                     continue
 
                 if queue_name is None:
-                    if len(answer) == 2:
+                    if len(answer) == 3:
                         queue_name = answer[2]
                     else:
                         queue_name = entry['source_queue']
@@ -214,7 +226,11 @@ def main():
                 else:
                     del content[key]
                     save_file(fname, content)
-                    print(green('Recovered dump {}.'.format(count)))
+                    print(green('Recovered dump {}.'.format(i)))
+            if not content:
+                os.remove(fname)
+                print('Deleted empty file {}'.format(fname))
+                break
         elif answer[0] == 'd':
             # delete dumpfile
             os.remove(fname)

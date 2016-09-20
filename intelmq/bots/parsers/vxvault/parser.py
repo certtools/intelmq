@@ -3,47 +3,50 @@ import sys
 from urllib.parse import urlparse
 
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 from intelmq.lib.harmonization import IPAddress
 from intelmq.lib.message import Event
 
 
-class VXVaultParserBot(Bot):
+class VXVaultParserBot(ParserBot):
 
-    def process(self):
-        report = self.receive_message()
-        raw_report = utils.base64_decode(report.get("raw"))
-        for row in raw_report.splitlines():
+    def parse(self, report):
+        report_split = utils.base64_decode(report["raw"]).strip().splitlines()
+        self.tempdata = report_split[:2]
+        for line in report_split[3:]:
+            yield line.strip()
 
-            row = row.strip()
+    def parse_line(self, row, report):
+        if not row.startswith('http'):
+            return []
 
-            if len(row) == 0 or not row.startswith('http'):
-                continue
+        url_object = urlparse(row)
 
-            url_object = urlparse(row)
+        if not url_object:
+            return []
 
-            if not url_object:
-                continue
+        url = url_object.geturl()
+        hostname = url_object.hostname
+        port = url_object.port
 
-            url = url_object.geturl()
-            hostname = url_object.hostname
-            port = url_object.port
+        event = Event(report)
 
-            event = Event(report)
+        if IPAddress.is_valid(hostname):
+            event.add("source.ip", hostname)
+        else:
+            event.add("source.fqdn", hostname)
 
-            if IPAddress.is_valid(hostname):
-                event.add("source.ip", hostname)
-            else:
-                event.add("source.fqdn", hostname)
+        event.add('classification.type', 'malware')
+        event.add("source.url", url)
+        if port:
+            event.add("source.port", port)
+        event.add("raw", row)
+        event.add("time.source", self.tempdata[1])
 
-            event.add('classification.type', 'malware')
-            event.add("source.url", url)
-            if port:
-                event.add("source.port", port)
-            event.add("raw", row)
+        yield event
 
-            self.send_message(event)
-        self.acknowledge_message()
+    def recover_line(self, line):
+        return '\n'.join(self.tempdata + [line])
 
 
 if __name__ == "__main__":

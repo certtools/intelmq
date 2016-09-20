@@ -50,7 +50,7 @@ class CERTatContactExpertBot(Bot):
 
                 if abuse in event:
                     old_abuse = event[abuse]
-                    event.update(abuse, old_abuse + ',' + response[3])
+                    event.change(abuse, old_abuse + ',' + response[3])
                 else:
                     event.add(abuse, response[3])
 

@@ -2,7 +2,7 @@
 import os.path
 import sys
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import CollectorBot
 from intelmq.lib.message import Report
 
 try:
@@ -19,11 +19,10 @@ class StompListener(stomp.listener.PrintingListener):
         self.n6stomper = n6stompcollector
 
     def on_heartbeat_timeout(self):
-        self.n6stomper.logger.warn("Heartbeat timeout.")
-        # currently we don't do anything XXX need to test timeouts and fix it
-        # self.n6stomper.conn.disconnect()
-        # status = self.n6stomper.conn.connect(wait=False)
-        # self.n6stomper.logger.warn("Re-connected: %s" % status)
+        self.n6stomper.logger.warn("Heartbeat timeout. Attempting to re-connect")
+        self.n6stomper.conn.disconnect()
+        status = self.n6stomper.conn.connect(wait=False)
+        self.n6stomper.logger.warn("Re-connected: {}".format(status))
 
     def on_error(self, headers, message):
         self.n6stomper.logger.warn('Received an error :"%s".' % repr(message))
@@ -33,7 +32,6 @@ class StompListener(stomp.listener.PrintingListener):
                                     '{!r}...'.format(message[:500]))
         report = Report()
         report.add("raw", message.rstrip())
-        report.add("feed.name", self.n6stomper.parameters.feed)
         report.add("feed.url", "stomp://" +
                    self.n6stomper.parameters.server +
                    ":" + str(self.n6stomper.parameters.port) +
@@ -42,7 +40,7 @@ class StompListener(stomp.listener.PrintingListener):
         self.n6stomper.logger.debug('Receiving Message.')
 
 
-class n6stompCollectorBot(Bot):
+class n6stompCollectorBot(CollectorBot):
     """ main class for the n6 STOMP protocol collector """
 
     def init(self):
@@ -82,6 +80,7 @@ class n6stompCollectorBot(Bot):
         self.conn.start()
         self.conn.connect(wait=False)
         self.conn.subscribe(destination=self.exchange, id=1, ack='auto')
+        self.logger.info('Successfully connected and subscribed to {}:{}'.format(self.server, self.port))
 
     def disconnect(self):
         self.conn.disconnect()

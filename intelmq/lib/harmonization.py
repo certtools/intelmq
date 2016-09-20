@@ -11,17 +11,17 @@ The following types are implemented with sanitize() and is_valid() functions:
  - GenericType
  - IPAddress
  - IPNetwork
- - MalwareName
+ - LowercaseString
+ - Registry
  - String
  - URL
- - UUID
 """
 import binascii
 import datetime
 import ipaddress
 import json
 import socket
-from urllib.parse import urlparse
+import urllib.parse as parse
 
 import dateutil.parser
 import dns.resolver
@@ -31,7 +31,7 @@ import intelmq.lib.utils as utils
 
 __all__ = ['Base64', 'Boolean', 'ClassificationType', 'DateTime', 'FQDN',
            'Float', 'Accuracy', 'GenericType', 'IPAddress', 'IPNetwork',
-           'Integer', 'JSON', 'MalwareName', 'String', 'URL', 'UUID',
+           'Integer', 'JSON', 'LowercaseString', 'Registry', 'String', 'URL',
            ]
 
 
@@ -200,7 +200,7 @@ class DateTime(GenericType):
     @staticmethod
     def __parse(value):
         try:
-            value = dateutil.parser.parse(value)
+            value = dateutil.parser.parse(value, fuzzy=True)
             value = value.astimezone(pytz.utc)
             value = value.isoformat()
         except ValueError:
@@ -295,8 +295,8 @@ class FQDN(GenericType):
     """
     Fully qualified domain name type.
 
-    All valid domains are accepted, no IP addresses or URLs. Trailing dot is
-    not allowed.
+    All valid lowercase domains are accepted, no IP addresses or URLs. Trailing
+    dot is not allowed.
     """
 
     @staticmethod
@@ -320,14 +320,14 @@ class FQDN(GenericType):
             return False
         """
 
-        if value[-1] == '.':
+        if value[-1] == '.' or value != value.lower():
             return False
 
         return True
 
     @staticmethod
     def sanitize(value):
-        return value.rstrip('.')
+        return value.rstrip('.').lower()
 
     @staticmethod
     def to_ip(value):
@@ -381,8 +381,11 @@ class IPAddress(GenericType):
             return False
 
         try:
-            ipaddress.ip_address(value)
+            address = ipaddress.ip_address(value)
         except ValueError:
+            return False
+
+        if address == ipaddress.ip_address('0.0.0.0'):
             return False
 
         return True
@@ -498,15 +501,15 @@ class JSON(GenericType):
             return None
 
 
-class MalwareName(GenericType):
+class LowercaseString(GenericType):
 
     @staticmethod
     def is_valid(value, sanitize=False):
         if sanitize:
-            value = GenericType().sanitize(value)
-            value = MalwareName().sanitize(value)
+            value = String().sanitize(value)
+            value = LowercaseString().sanitize(value)
 
-        if not GenericType().is_valid(value):
+        if not String().is_valid(value):
             return False
 
         if value != value.lower():
@@ -517,7 +520,7 @@ class MalwareName(GenericType):
     @staticmethod
     def sanitize(value):
         value = value.lower()
-        return GenericType().sanitize(value)
+        return String().sanitize(value)
 
 
 class String(GenericType):
@@ -541,6 +544,14 @@ class String(GenericType):
 
 
 class URL(GenericType):
+    """
+    URI type. Local and remote.
+
+    Sanitation converts hxxp and hxxps to http and https.
+    For local URIs (file) a missing host is replaced by localhost.
+
+    Valid values must have the host (network location part).
+    """
 
     @staticmethod
     def is_valid(value, sanitize=False):
@@ -551,7 +562,7 @@ class URL(GenericType):
         if not GenericType().is_valid(value):
             return False
 
-        result = urlparse(value)
+        result = parse.urlsplit(value)
         if result.netloc == "":
             return False
 
@@ -562,23 +573,78 @@ class URL(GenericType):
         value = value.replace('hxxp://', 'http://')
         value = value.replace('hxxps://', 'https://')
 
-        if urlparse(value).netloc != "":
+        result = parse.urlsplit(value)
+        if result.scheme == "file" and result.netloc == '':
+            # add localhost as netloc
+            result_split = list(result)
+            result_split[1] = 'localhost'
+            value = parse.urlunsplit(result_split)
+            result = parse.urlsplit(value)
+
+        if result.netloc != "":
             return GenericType().sanitize(value)
 
     @staticmethod
     def to_ip(url):
-        value = urlparse(url)
+        value = parse.urlsplit(url)
         if value.netloc != "":
             return FQDN().to_ip(value.netloc)
         return None
 
     @staticmethod
     def to_domain_name(url):
-        value = urlparse(url)
+        value = parse.urlsplit(url)
         if value.netloc != "" and not IPAddress.is_valid(value.netloc):
             return value.netloc
         return None
 
 
-class UUID(String):
-    pass
+class UppercaseString(GenericType):
+
+    @staticmethod
+    def is_valid(value, sanitize=False):
+        if sanitize:
+            value = UppercaseString().sanitize(value)
+
+        if not String().is_valid(value):
+            return False
+
+        if value != value.upper():
+            return False
+
+        return True
+
+    @staticmethod
+    def sanitize(value):
+        value = value.upper()
+        return String().sanitize(value)
+
+
+class Registry(UppercaseString):
+    """
+    Registry type. Derived from UppercaseString.
+
+    Only valid values: AFRINIC, APNIC, ARIN, LACNIC, RIPE.
+    RIPE-NCC and RIPENCC are normalized to RIPE.
+    """
+    ENUM = ['AFRINIC', 'APNIC', 'ARIN', 'LACNIC', 'RIPE']
+
+    @staticmethod
+    def is_valid(value, sanitize=False):
+        if sanitize:
+            value = Registry.sanitize(value)
+
+        if not UppercaseString.is_valid(value):
+            return False
+
+        if value not in Registry.ENUM:
+            return False
+
+        return True
+
+    @staticmethod
+    def sanitize(value):
+        value = UppercaseString.sanitize(value)
+        if value in ['RIPENCC', 'RIPE-NCC']:
+            value = 'RIPE'
+        return value
