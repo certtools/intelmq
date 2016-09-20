@@ -270,11 +270,11 @@ class TestMessageFactory(unittest.TestCase):
         with self.assertRaises(exceptions.InvalidValue):
             report.add('feed.name', '\r\n', sanitize=True)
 
-    def test_report_update(self):
-        """ Test report value update function. """
+    def test_report_change(self):
+        """ Test report value change function. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         report.add('feed.name', 'Example 1')
-        report.update('feed.name', 'Example 2')
+        report.change('feed.name', 'Example 2')
         self.assertEqual('Example 2', report['feed.name'])
 
     def test_report_contains(self):
@@ -283,11 +283,11 @@ class TestMessageFactory(unittest.TestCase):
         report.add('feed.name', 'Example 1')
         self.assertTrue(report.contains('feed.name'))
 
-    def test_report_update_duplicate(self):
-        """ Test report value update function, rejects duplicate. """
+    def test_report_change_duplicate(self):
+        """ Test report value change function, rejects duplicate. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         with self.assertRaises(exceptions.KeyNotExists):
-            report.update('feed.name', 'Example')
+            report.change('feed.name', 'Example')
 
     def test_factory_serialize(self):
         """ Test MessageFactory serialize method. """
@@ -330,7 +330,7 @@ class TestMessageFactory(unittest.TestCase):
 
     def test_copy_content(self):
         """ Test if copy does return the same items. """
-        report = message.MessageFactory.unserialize('{"__type": "Report"}')
+        report = message.Report()
         report = self.add_report_examples(report)
         self.assertSetEqual(set(report.copy().items()),
                             set(report.items()))
@@ -361,28 +361,39 @@ class TestMessageFactory(unittest.TestCase):
         """ Test Event to_dict. """
         event = message.MessageFactory.unserialize('{"__type": "Event"}')
         event = self.add_event_examples(event)
+        self.assertDictEqual({'feed.name': 'Example',
+                              'feed.url': 'https://example.com/',
+                              'raw': 'bG9yZW0gaXBzdW0=',
+                              'time.observation': '2015-01-01T13:37:00+00:00'},
+                             event.to_dict())
+
+    def test_event_dict_hierarchical(self):
+        """ Test Event to_dict. """
+        event = message.MessageFactory.unserialize('{"__type": "Event"}')
+        event = self.add_event_examples(event)
         self.assertDictEqual({'feed': {'name': 'Example',
                                        'url': 'https://example.com/'},
                               'raw': 'bG9yZW0gaXBzdW0=',
                               'time': {'observation': '2015-01-01T13:37:00+'
                                                       '00:00'}},
-                             event.to_dict())
-
-    def test_event_dict_flat(self):
-        """ Test Event to_dict with hierarchical=False. """
-        event = message.Event()
-        event = self.add_event_examples(event)
-        self.assertDictEqual({'feed.name': 'Example',
-                              'feed.url': 'https://example.com/',
-                              'raw': 'bG9yZW0gaXBzdW0=',
-                              'time.observation': '2015-01-01T13:37:00+00:00'},
-                             event.to_dict(hierarchical=False))
+                             event.to_dict(hierarchical=True))
 
     def test_event_json(self):
         """ Test Event to_json. """
         event = message.MessageFactory.unserialize('{"__type": "Event"}')
         event = self.add_event_examples(event)
         actual = event.to_json()
+        self.assertIsInstance(actual, str)
+        expected = ('{"feed.url": "https://example.com/", "feed.name": '
+                    '"Example", "raw": "bG9yZW0gaXBzdW0=", "time.observation": '
+                    '"2015-01-01T13:37:00+00:00"}')
+        self.assertDictEqual(json.loads(expected), json.loads(actual))
+
+    def test_event_json_hierarchical(self):
+        """ Test Event to_json. """
+        event = message.MessageFactory.unserialize('{"__type": "Event"}')
+        event = self.add_event_examples(event)
+        actual = event.to_json(hierarchical=True)
         self.assertIsInstance(actual, str)
         expected = ('{"feed": {"url": "https://example.com/", "name": '
                     '"Example"}, "raw": "bG9yZW0gaXBzdW0=", "time": '
@@ -423,7 +434,7 @@ class TestMessageFactory(unittest.TestCase):
         """ Test if the regex for malware.name is tested correctly. """
         event = message.MessageFactory.unserialize('{"__type": "Event"}')
         event.add('malware.name', 'multiple-malware citadel:report')
-        event.update('malware.name', 'yahoo!')
+        event.change('malware.name', 'yahoo!')
         del event['malware.name']
         with self.assertRaises(exceptions.InvalidValue):
             event.add('malware.name', 'tu234t2\nt$#%$')
@@ -446,6 +457,24 @@ class TestMessageFactory(unittest.TestCase):
         event_type = type(message.MessageFactory.from_dict(event))
         self.assertTrue(event_type is message.Event,
                         msg='Type is {} instead of Event.'.format(event_type))
+
+    def test_event_init_check(self):
+        """ Test if initialization method checks fields. """
+        event = {'__type': 'Event', 'source.asn': 'foo'}
+        with self.assertRaises(exceptions.InvalidValue):
+            message.Event(event)
+
+    def test_event_init_check_tuple(self):
+        """ Test if initialization method checks fields from tuple. """
+        event = (('__type', 'Event'), ('source.asn', 'foo'))
+        with self.assertRaises(exceptions.InvalidValue):
+            message.Event(event)
+
+    def test_event_init(self):
+        """ Test if initialization method checks fields. """
+        event = '{"__type": "Event", "source.asn": "foo"}'
+        with self.assertRaises(exceptions.InvalidValue):
+            message.MessageFactory.unserialize(event)
 
     def test_malware_hash_md5(self):
         """ Test if MD5 is checked correctly. """

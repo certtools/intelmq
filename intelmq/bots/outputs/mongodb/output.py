@@ -24,7 +24,7 @@ class MongoDBBot(Bot):
     def process(self):
         event = self.receive_message()
 
-        self.collection.insert(event.to_dict())
+        self.collection.insert(event.to_dict(hierarchical=self.parameters.hierarchical_output))
         self.acknowledge_message()
 
 

@@ -18,10 +18,11 @@ class RestAPI(Bot):
 
     def process(self):
         event = self.receive_message()
+        jevent = event.to_json(hierarchical=self.parameters.hierarchical_output)
 
         try:
             r = self.session.post(self.parameters.host,
-                                  event.to_json().encode('utf-8'))
+                                  jevent)
             r.raise_for_status()
         except requests.exceptions.RequestException as e:
             if r:
