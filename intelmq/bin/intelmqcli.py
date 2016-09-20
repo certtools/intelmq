@@ -154,9 +154,9 @@ class IntelMQCLIContoller(lib.IntelMQCLIContollerTemplate):
 
                     self.logger.info('Created Incident %s.' % incident_id)
                     # XXX TODO: distinguish between national and other constituencies
-                    self.rt.edit_ticket(incident_id)#, CF__RTIR_Classification=taxonomy,
-#                                        CF__RTIR_Constituency='national',
-#                                        CF__RTIR_Function='IncidentCoord')
+                    self.rt.edit_ticket(incident_id, CF__RTIR_Classification=taxonomy,
+                                        CF__RTIR_Constituency='national',
+                                        CF__RTIR_Function='IncidentCoord')
 
                 for report_id in report_ids:
                     if not self.dryrun and not self.rt.edit_link(report_id, 'MemberOf', incident_id):
@@ -215,7 +215,7 @@ class IntelMQCLIContoller(lib.IntelMQCLIContollerTemplate):
                 for contact in contacts:
                     self.logger.info('Handling contact ' + contact)
                     self.execute(lib.QUERY_EVENTS_BY_ASCONTACT_INCIDENT,
-                                     (incident_id, contact, ))
+                                 (incident_id, contact, ))
                     data = self.cur.fetchall()
                     inv_results.append(self.send(taxonomy, contact, data, incident_id))
 
