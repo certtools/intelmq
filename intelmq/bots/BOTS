@@ -792,16 +792,6 @@
                 "file": "/opt/intelmq/var/lib/bots/file-output/events.txt"
             }
         },
-        "IntelMQ Mailer": {
-            "description": "IntelMQ Mailer is the bot responsible to send events to a MongoDB database.",
-            "module": "intelmq.bots.outputs.intelmqmailer.output",
-            "parameters": {
-                "collection": "<collection>",
-                "database": "<database>",
-                "host": "<ip>",
-                "port": "<port>"
-            }
-        },
         "MongoDB": {
             "description": "MongoDB is the bot responsible to send events to a MongoDB database.",
             "module": "intelmq.bots.outputs.mongodb.output",

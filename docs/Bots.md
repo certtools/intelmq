@@ -442,31 +442,6 @@ If the rule is a string, a regex-search is performed, also for numeric values (`
 pip3 install pymongo>=2.7.1
 ```
 
-* * *
-
-
-### IntelMQ Mailer
-
-#### Information:
-* `name:` intelmqmailer
-* `lookup:` no
-* `public:` yes
-* `cache (redis db):` none
-* `ipv6 support:` yes
-* `description:` IntelMQ Mailer is the bot responsible to send events to a MongoDB database that supports IntelMQ Mailer platform
-
-#### Configuration Parameters:
-
-* `collection`: MongoDB collection
-* `database`: MongoDB database
-* `host`: MongoDB host (FQDN or IP)
-* `port`: MongoDB port
-
-#### Installation Requirements
-
-```
-pip3 install pymongo>=2.7.1
-```
 
 * * *
 
