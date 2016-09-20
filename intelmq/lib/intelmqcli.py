@@ -405,5 +405,7 @@ class IntelMQCLIContollerTemplate():
         if self.config['log_level'].upper() == 'DEBUG':  # on other log levels we can skip the iteration
             for param in parameters:
                 self.logger.debug(self.cur.mogrify(query, param))
-        if not self.dryrun or query.strip().upper().startswith('SELECT'):
+            if not parameters:
+                self.logger.debug(self.cur.mogrify(query))
+        if not self.dryrun or query.strip().upper().startswith('SELECT'):  # no update in dry run
             self.cur.executemany(query, parameters)

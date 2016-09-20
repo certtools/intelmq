@@ -413,6 +413,10 @@ Subject: {subj}
                 self.logger.error('Could not link Investigation to Incident.')
                 return False
 
+            self.executemany("UPDATE events SET rtir_investigation_id = %s WHERE id = %s",
+                             [(investigation_id, evid) for evid in ids])
+            self.logger.info('Linked events to investigation.')
+
         # CORRESPOND
         filename = '%s-%s.csv' % (datetime.datetime.now().strftime('%Y-%m-%d'), taxonomy)
         if self.zipme or len(query) > self.config['rt']['zip_threshold']:
@@ -444,10 +448,10 @@ Subject: {subj}
                     return False
                 self.logger.info('Correspondence added to Investigation.')
 
-            self.executemany("UPDATE events SET rtir_investigation_id = %s, "
-                             "sent_at = LOCALTIMESTAMP WHERE id = %s",
-                             [(investigation_id, evid) for evid in ids])
-            self.logger.info('Linked events to investigation.')
+            self.executemany("UPDATE events SET sent_at = LOCALTIMESTAMP WHERE "
+                             "rtir_investigation_id = %s",
+                             [(investigation_id, ) for evid in ids])
+            self.logger.info('Marked events as sent.')
         except:
             self.con.rollback()
             raise
