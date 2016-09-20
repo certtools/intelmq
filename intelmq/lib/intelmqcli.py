@@ -75,38 +75,6 @@ USAGE = '''
     intelmqcli --list-texts
     intelmqcli --text='boilerplate name'
     intelmqcli --feed='feedname' '''
-<<<<<<< HEAD
-QUERY_COUNT_ASN = """
-    SELECT
-        COUNT(*) as count,
-        COALESCE({conttab}.contacts, '') as contacts,
-        string_agg(DISTINCT cast({evtab}."source.asn" as varchar), ', ') as asn,
-        string_agg(DISTINCT {evtab}."classification.type", ', ') as classification,
-        string_agg(DISTINCT {evtab}."classification.taxonomy", ', ') as taxonomy,
-        string_agg(DISTINCT {evtab}."feed.code", ', ') as feeds,
-        COALESCE({conttab}.contacts, cast({evtab}."source.asn" as varchar))
-            as grouping
-    FROM {evtab}
-    LEFT OUTER JOIN as_contacts ON {evtab}."source.asn" = {conttab}.asnum
-    WHERE
-        notify = TRUE AND
-        {evtab}.rtir_report_id IS NOT NULL AND
-        (
-            {evtab}.rtir_incident_id IS NULL OR
-            {evtab}.rtir_investigation_id IS NULL
-        )
-        AND
-        (
-            {evtab}."source.geolocation.cc" LIKE '{cc}' OR
-            {evtab}."source.fqdn" LIKE %s
-        )
-        AND {evtab}."feed.name" ILIKE %s AND
-        {evtab}."time.source" IS NOT NULL AND
-        {evtab}."time.source" >= now() - interval '2 days' AND
-        {evtab}."classification.taxonomy" ILIKE %s
-    GROUP BY {conttab}.contacts, grouping;
-    """
-=======
 
 SUBJECT = {"Abusive Content": "Abusive content (spam, ...)",
            "Malicious Code": "Malicious code (malware, botnet, ...)",
@@ -120,7 +88,6 @@ SUBJECT = {"Abusive Content": "Abusive content (spam, ...)",
            "Other": "Other",
            "Test": "Test"
            }
->>>>>>> 544e5e8d61b164e38dd07308812c72736b4961d2
 
 QUERY_FEED_NAMES = "SELECT DISTINCT \"feed.name\" from events"
 
@@ -138,179 +105,6 @@ send out.  This is based on the order and fields of shadowserver.
 Shadowserver format:
     timestamp,"ip","protocol","port","hostname","packets","size","asn","geo","region","city","naics","sic","sector"
 """
-<<<<<<< HEAD
-CSV_FIELDS=["time.source", "source.ip", "protocol.transport", "source.port", "protocol.application",
-            "source.fqdn", "source.local_hostname", "source.local_ip", "source.url",
-            "source.asn", "source.geolocation.cc",
-            "source.geolocation.city",
-            "classification.taxonomy", "classification.type", "classification.identifier",
-            "destination.ip", "destination.port", "destination.fqdn", "destination.url",
-            "feed", "event_description.text", "event_description.url", "malware.name", "extra", "comment", "additional_field_freetext", "version: 1.1"
-            ]
-
-QUERY_BY_ASCONTACT = """
-SELECT
-    to_char({evtab}."time.source",
-            'YYYY-MM-DD"T"HH24:MI:SSOF') as "time.source",
-    {evtab}.id,
-    {evtab}."feed.code" as feed,
-    {evtab}."source.ip",
-    {evtab}."source.port",
-    {evtab}."source.asn",
-    {evtab}."source.network",
-    {evtab}."source.geolocation.cc",
-    {evtab}."source.geolocation.region",
-    {evtab}."source.geolocation.city",
-    {evtab}."source.account",
-    {evtab}."source.fqdn",
-    {evtab}."source.local_hostname",
-    {evtab}."source.local_ip",
-    {evtab}."source.reverse_dns",
-    {evtab}."source.tor_node",
-    {evtab}."source.url",
-    {evtab}."classification.identifier",
-    {evtab}."classification.taxonomy",
-    {evtab}."classification.type",
-    {evtab}."comment",
-    {evtab}."destination.ip",
-    {evtab}."destination.port",
-    {evtab}."destination.asn",
-    {evtab}."destination.network",
-    {evtab}."destination.geolocation.cc",
-    {evtab}."destination.geolocation.region",
-    {evtab}."destination.geolocation.city",
-    {evtab}."destination.account",
-    {evtab}."destination.fqdn",
-    {evtab}."destination.local_hostname",
-    {evtab}."destination.local_ip",
-    {evtab}."destination.reverse_dns",
-    {evtab}."destination.tor_node",
-    {evtab}."destination.url",
-    {evtab}."event_description.target",
-    {evtab}."event_description.text",
-    {evtab}."event_description.url",
-    {evtab}."event_hash",
-    {evtab}."extra",
-    {evtab}."feed.accuracy",
-    {evtab}."malware.hash",
-    {evtab}."malware.hash.md5",
-    {evtab}."malware.hash.sha1",
-    {evtab}."malware.name",
-    {evtab}."malware.version",
-    {evtab}."misp_uuid",
-    {evtab}."notify",
-    {evtab}."protocol.application",
-    {evtab}."protocol.transport",
-    {evtab}."rtir_report_id",
-    {evtab}."screenshot_url",
-    {evtab}."status",
-    {evtab}."time.observation"
-FROM {evtab}
-LEFT OUTER JOIN {conttab} ON {evtab}."source.asn" = {conttab}.asnum
-WHERE
-    notify = TRUE AND
-    {evtab}.rtir_report_id IS NOT NULL AND
-    (
-        {evtab}.rtir_incident_id IS NULL OR
-        {evtab}.rtir_investigation_id IS NULL
-    ) AND
-    (
-        {evtab}."source.geolocation.cc" LIKE '{cc}' OR
-        {evtab}."source.fqdn" LIKE %s
-    ) AND
-    {conttab}.contacts = %s AND
-    {evtab}."feed.name" ILIKE %s AND
-    {evtab}."time.source" IS NOT NULL AND
-    {evtab}."time.source" >= now() - interval '2 days' AND
-    {evtab}."classification.taxonomy" ILIKE %s;
-"""
-
-QUERY_BY_ASNUM = """
-SELECT
-    to_char({evtab}."time.source" at time zone 'UTC',
-            'YYYY-MM-DD"T"HH24:MI:SSOF') as "time.source",
-    {evtab}.id,
-    {evtab}."feed.code" as feed,
-    {evtab}."source.ip",
-    {evtab}."source.port",
-    {evtab}."source.asn",
-    {evtab}."source.network",
-    {evtab}."source.geolocation.cc",
-    {evtab}."source.geolocation.region",
-    {evtab}."source.geolocation.city",
-    {evtab}."source.account",
-    {evtab}."source.fqdn",
-    {evtab}."source.local_hostname",
-    {evtab}."source.local_ip",
-    {evtab}."source.reverse_dns",
-    {evtab}."source.tor_node",
-    {evtab}."source.url",
-    {evtab}."classification.identifier",
-    {evtab}."classification.taxonomy",
-    {evtab}."classification.type",
-    {evtab}."comment",
-    {evtab}."destination.ip",
-    {evtab}."destination.port",
-    {evtab}."destination.asn",
-    {evtab}."destination.network",
-    {evtab}."destination.geolocation.cc",
-    {evtab}."destination.geolocation.region",
-    {evtab}."destination.geolocation.city",
-    {evtab}."destination.account",
-    {evtab}."destination.fqdn",
-    {evtab}."destination.local_hostname",
-    {evtab}."destination.local_ip",
-    {evtab}."destination.reverse_dns",
-    {evtab}."destination.tor_node",
-    {evtab}."destination.url",
-    {evtab}."event_description.target",
-    {evtab}."event_description.text",
-    {evtab}."event_description.url",
-    {evtab}."event_hash",
-    {evtab}."extra",
-    {evtab}."feed.accuracy",
-    {evtab}."malware.hash",
-    {evtab}."malware.hash.md5",
-    {evtab}."malware.hash.sha1",
-    {evtab}."malware.name",
-    {evtab}."malware.version",
-    {evtab}."misp_uuid",
-    {evtab}."notify",
-    {evtab}."protocol.application",
-    {evtab}."protocol.transport",
-    {evtab}."rtir_report_id",
-    {evtab}."screenshot_url",
-    {evtab}."status",
-    {evtab}."time.observation"
-FROM {evtab}
-LEFT OUTER JOIN {conttab} ON {evtab}."source.asn" = {conttab}.asnum
-WHERE
-    notify = TRUE AND
-    {evtab}.rtir_report_id IS NOT NULL AND
-    (
-        {evtab}.rtir_incident_id IS NULL OR
-        {evtab}.rtir_investigation_id IS NULL
-    ) AND
-    (
-        {evtab}."source.geolocation.cc" LIKE '{cc}' OR
-        {evtab}."source.fqdn" LIKE %s
-    ) AND
-    {evtab}."source.asn" = %s AND
-    {evtab}."feed.name" ILIKE %s AND
-    {evtab}."time.source" IS NOT NULL AND
-    {evtab}."time.source" >= now() - interval '1 month' AND
-    {evtab}."classification.taxonomy" ILIKE %s;
-"""
-
-
-QUERY_SET_RTIRID = """
-UPDATE {evtab} SET
-    rtir_{type}_id = {rtirid},
-    sent_at = LOCALTIMESTAMP
-WHERE
-    id = ANY('{{{ids}}}'::int[]);
-"""
-=======
 CSV_FIELDS = ["time.source", "source.ip", "protocol.transport", "source.port", "protocol.application",
               "source.fqdn", "source.local_hostname", "source.local_ip", "source.url",
               "source.asn", "source.geolocation.cc",
@@ -320,7 +114,6 @@ CSV_FIELDS = ["time.source", "source.ip", "protocol.transport", "source.port", "
               "feed", "event_description.text", "event_description.url", "malware.name", "extra",
               "comment", "additional_field_freetext", "version: 1.1"
               ]
->>>>>>> 544e5e8d61b164e38dd07308812c72736b4961d2
 
 QUERY_UPDATE_CONTACT = """
 UPDATE as_contacts SET
