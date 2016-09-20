@@ -86,6 +86,7 @@ class IntelMQCLIContoller(lib.IntelMQCLIContollerTemplate):
 
             if self.dryrun:
                 self.logger.info('Dry run: Skipping creation of report.')
+                report_id = None
             else:
                 report_id = self.rt.create_ticket(Queue='Incident Reports', Subject=subject,
                                                   Owner=self.config['rt']['user'])

@@ -128,7 +128,7 @@ class IntelMQCLIContoller(lib.IntelMQCLIContollerTemplate):
         try:
             self.execute(lib.QUERY_OPEN_TAXONOMIES)
             taxonomies = [x['classification.taxonomy'] for x in self.cur.fetchall()]
-            self.logger.info("All taxonomies: " + ",".join(taxonomies))
+            self.logger.info("All taxonomies: " + ", ".join(taxonomies))
             for taxonomy in taxonomies:
                 self.logger.info('Handling taxonomy {!r}.'.format(taxonomy))
                 if taxonomy not in lib.SUBJECT or lib.SUBJECT[taxonomy] is None:
@@ -154,9 +154,9 @@ class IntelMQCLIContoller(lib.IntelMQCLIContollerTemplate):
 
                     self.logger.info('Created Incident %s.' % incident_id)
                     # XXX TODO: distinguish between national and other constituencies
-                    self.rt.edit_ticket(incident_id, CF__RTIR_Classification=taxonomy,
-                                        CF__RTIR_Constituency='national',
-                                        CF__RTIR_Function='IncidentCoord')
+                    self.rt.edit_ticket(incident_id)#, CF__RTIR_Classification=taxonomy,
+#                                        CF__RTIR_Constituency='national',
+#                                        CF__RTIR_Function='IncidentCoord')
 
                 for report_id in report_ids:
                     if not self.dryrun and not self.rt.edit_link(report_id, 'MemberOf', incident_id):
@@ -196,6 +196,39 @@ class IntelMQCLIContoller(lib.IntelMQCLIContollerTemplate):
                     except IndexError:
                         # Bug in RT/python-rt
                         pass
+                else:
+                    self.logger.info('Not all investigations completed -> Can\'t be resolved!')
+            self.execute(lib.QUERY_HALF_PROC_INCIDENTS)
+            query = [(x['rtir_incident_id'], x['classification.taxonomy'])
+                     for x in self.cur.fetchall()]
+            self.logger.info("All half processed incidents and taxonomy: " + str(query))
+            for incident_id, taxonomy in query:
+                self.logger.info('Handling incident {!r} and taxonomy {!r}.'.format(incident_id, taxonomy))
+                if taxonomy not in lib.SUBJECT or lib.SUBJECT[taxonomy] is None:
+                    self.logger.error('No subject defined for %r.' % taxonomy)
+                    continue
+
+                self.execute(lib.QUERY_DISTINCT_CONTACTS_BY_INCIDENT, (incident_id, ))
+                contacts = [x['source.abuse_contact'] for x in self.cur.fetchall()]
+
+                inv_results = []
+                for contact in contacts:
+                    self.logger.info('Handling contact ' + contact)
+                    self.execute(lib.QUERY_EVENTS_BY_ASCONTACT_INCIDENT,
+                                     (incident_id, contact, ))
+                    data = self.cur.fetchall()
+                    inv_results.append(self.send(taxonomy, contact, data, incident_id))
+
+                if all(inv_results):
+                    try:
+                        if not self.dryrun and not self.rt.edit_ticket(incident_id,
+                                                                       Status='resolved'):
+                            self.logger.error('Could not close incident {}.'.format(incident_id))
+                    except IndexError:
+                        # Bug in RT/python-rt
+                        pass
+                else:
+                    self.logger.info('Not all investigations completed -> Can\'t be resolved!')
 
         finally:
             self.rt.logout()
