@@ -37,7 +37,7 @@ class MongoDBOutputBot(Bot):
         event = self.receive_message()
 
         try:
-            self.collection.insert(event.to_dict())
+            self.collection.insert(event.to_dict(hierarchical=self.parameters.hierarchical_output))
         except pymongo.errors.AutoReconnect:
             self.logger.error('Connection Lost. Connecting again.')
             self.connect()

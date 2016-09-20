@@ -10,6 +10,7 @@ EXAMPLE_INPUT = {"__type": "Event",
                  "time.source": "2005-01-01T00:00:00+00:00",
                  "time.observation": "2015-09-12T00:00:00+00:00",
                  "feed.name": "test-feed",
+                 "raw": "Cg=="
                  }
 
 
@@ -22,9 +23,11 @@ class TestFilterExpertBot(test.BotTestCase, unittest.TestCase):
     def set_bot(cls):
         cls.bot_reference = FilterExpertBot
         cls.input_message = EXAMPLE_INPUT
-        cls.sysconfig = {'not_after': '2014-01-01T00:00:00+00:00'}
+        cls.sysconfig = {'filter_regex': 'search',
+                         'filter_key': 'feed.name',
+                         'filter_value': 'feed'}
 
-    def test_Absolute_After(self):
+    def test_searchRegex(self):
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_INPUT)
 

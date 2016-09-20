@@ -20,9 +20,9 @@ class RestAPIOutputBot(Bot):
     def process(self):
         event = self.receive_message()
         if self.parameters.use_json:
-            kwargs = {'json': event.to_dict()}
+            kwargs = {'json': event.to_dict(hierarchical=self.parameters.hierarchical_output)}
         else:
-            kwargs = {'data': event.to_dict()}
+            kwargs = {'data': event.to_dict(hierarchical=self.parameters.hierarchical_output)}
 
         try:
             r = self.session.post(self.parameters.host, **kwargs)

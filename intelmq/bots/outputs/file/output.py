@@ -15,7 +15,7 @@ class FileBot(Bot):
     def process(self):
         event = self.receive_message()
 
-        event_data = event.to_json()
+        event_data = event.to_json(hierarchical=self.parameters.hierarchical_output)
         self.file.write(event_data)
         self.file.write("\n")
         self.file.flush()

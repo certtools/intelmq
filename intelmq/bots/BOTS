@@ -647,12 +647,19 @@
                 "rate_limit": 3600
             }
         },
-        "XMPP collector": {
-            "description": "XMPP collector is the bot responsible to get events from xmpp server",
+        "XMPP": {
+            "description": "This bot can connect to an XMPP Server and one room, in order to receive reports from it. TLS is used by default. rate_limit is ineffective here. Bot can either pass the body or the whole event.",
             "module": "intelmq.bots.collectors.xmpp.collector",
             "parameters": {
-                "rate_limit": "3600",
+                "ca_certs": "/etc/ssl/certs/ca-certificates.crt",
+                "feed": "XMPP",
+                "pass_full_xml": false,
+                "rate_limit": 3600,
+                "strip_message": true,
                 "xmpp_password": "xmpp password",
+                "xmpp_room": "xmpp room",
+                "xmpp_room_nick": "xmpp room nick",
+                "xmpp_room_password": "xmpp room password",
                 "xmpp_server": "xmpp server",
                 "xmpp_user": "xmpp username"
             }
@@ -713,6 +720,7 @@
             "parameters": {
                 "filter_action": "<keep/drop>",
                 "filter_key": "<source.geolocation.cc>",
+                "filter_regex": "",
                 "filter_value": "<PT>"
             }
         },
@@ -789,7 +797,8 @@
             "description": "File is the bot responsible to send events to a file.",
             "module": "intelmq.bots.outputs.file.output",
             "parameters": {
-                "file": "/opt/intelmq/var/lib/bots/file-output/events.txt"
+                "file": "/opt/intelmq/var/lib/bots/file-output/events.txt",
+                "hierarchical_output": false
             }
         },
         "MongoDB": {
@@ -798,6 +807,7 @@
             "parameters": {
                 "collection": "<collection>",
                 "database": "<database>",
+                "hierarchical_output": false,
                 "host": "<ip>",
                 "port": 27017
             }
@@ -822,6 +832,8 @@
             "parameters": {
                 "auth_token": "<token>",
                 "auth_token_name": "<token name>",
+                "host": "<host>",
+                "hierarchical_output": false,
                 "host": "<host>",
                 "use_json": true
             }
@@ -851,6 +863,8 @@
             "description": "XMPP is the bot responsible to send events to an XMPP server.",
             "module": "intelmq.bots.outputs.xmpp.output",
             "parameters": {
+                "ca_certs": "/etc/ssl/certs/ca-certificates.crt",
+                "hierarchical_output": false,
                 "xmpp_password": "xmpp password",
                 "xmpp_server": "xmpp server",
                 "xmpp_to_server": "destination server",
@@ -1045,6 +1059,11 @@
             "parameters": {
                 "error_log_message": false
             }
+        },
+        "JSON": {
+            "description": "JSON Parser converts from a JSON-String into an Event",
+            "module": "intelmq.bots.parsers.json.parser",
+            "parameters": {}
         },
         "MISP": {
             "description": "MISP event parser.",

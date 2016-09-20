@@ -14,7 +14,6 @@ class TestBruteForceBlockerParserBot(test.BotTestCase, unittest.TestCase):
     @classmethod
     def set_bot(cls):
         cls.bot_reference = BruteForceBlockerParserBot
-        cls.default_input_message = {'__type': 'Report', 'raw': ''}
 
 if __name__ == '__main__':
     unittest.main()
