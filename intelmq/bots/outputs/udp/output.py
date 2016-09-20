@@ -12,22 +12,24 @@ class UDPBot(Bot):
     def init(self):
         self.delimiter = self.parameters.field_delimiter
         self.header = self.parameters.header
-        self.udp_host = self.parameters.ip
-        self.udp_port = int(self.parameters.port)
-        self.upd_address = (self.udp_host, self.udp_port)
+        self.udp_host = socket.gethostbyname(self.parameters.udp_host)
+        self.upd_address = (self.udp_host, self.parameters.udp_port)
         self.udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.keep_raw_field = bool(self.parameters.keep_raw_field)
-        self.format = self.parameters.format
+        self.format = self.parameters.format.lower()
+        if self.format not in ['json', 'delimited']:
+            self.logger.error('Unknown format %r given. Check your configuration.' % self.format)
+            self.stop()
 
     def process(self):
         event = self.receive_message()
 
-        if ( not self.keep_raw_field ):
+        if not self.keep_raw_field:
             del event['raw']
 
-        if self.format.upper() == 'JSON':
-            self.send(self.header + ' ' + event.to_json())
-        else:
+        if self.format == 'json':
+            self.send(self.header + event.to_json())
+        elif self.format == 'delimited':
             self.send(self.delimited(event))
 
     def remove_control_char(self, s):
@@ -41,7 +43,7 @@ class UDPBot(Bot):
         return log_line
 
     def send(self, rawdata):
-        data = utils.encode(self.remove_control_char(rawdata))
+        data = utils.encode(self.remove_control_char(rawdata) + '\n')
         try:
             self.udp.sendto(data, self.upd_address)
         except:
