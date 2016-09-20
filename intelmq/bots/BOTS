@@ -856,6 +856,18 @@
                 "port": "<port>"
             }
         },
+        "UDP": {
+            "description": "UDP is a simple UDP bot responsible to send events to a udp port (e.g.: syslog daemon). For more explanations about the parameters field, checkout out the README.md",
+            "module": "intelmq.bots.outputs.udp.output",
+            "parameters": {
+                "field_delimiter": "|",
+                "format": "<json/delimited> read README.md",
+                "header": "<header text>",
+                "keep_raw_field": false,
+                "udp_host": "localhost",
+                "udp_port": "<port>"
+            }
+        },
         "XMPP": {
             "description": "XMPP is the bot responsible to send events to an XMPP server.",
             "module": "intelmq.bots.outputs.xmpp.output",
