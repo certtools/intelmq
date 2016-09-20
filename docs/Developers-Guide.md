@@ -54,7 +54,8 @@ All changes have to be tested and new contributions must be accompanied by accor
 
     cd intelmq
     python3 -m unittest {discover|filename}  # or
-    nosetests3 [filename]
+    nosetests3 [filename]  # or
+    python3 setup.py test  # uses a build environment
 
 It may be necessary to switch the user to `intelmq` if the run-path (`/opt/intelmq/var/run/`) is not writeable by the current user. Some bots need local databases to succeed. If you don't mind about those and only want to test one explicit test file, give the filepath as argument.
 
