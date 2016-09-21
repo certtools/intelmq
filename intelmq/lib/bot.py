@@ -4,7 +4,6 @@
 """
 import csv
 import datetime
-import importlib
 import io
 import json
 import requests
@@ -16,10 +15,9 @@ import sys
 import time
 import traceback
 
-import intelmq.lib.message
-from intelmq import (DEFAULT_LOGGING_PATH, DEFAULTS_CONF_FILE,
-                     HARMONIZATION_CONF_FILE, PIPELINE_CONF_FILE,
-                     RUNTIME_CONF_FILE, SYSTEM_CONF_FILE)
+from intelmq import (DEFAULT_LOGGING_PATH,
+                     DEFAULTS_CONF_FILE, HARMONIZATION_CONF_FILE,
+                     PIPELINE_CONF_FILE, RUNTIME_CONF_FILE, SYSTEM_CONF_FILE)
 from intelmq.lib import exceptions, utils
 from intelmq.lib.message import MessageFactory
 from intelmq.lib.pipeline import PipelineFactory
@@ -114,7 +112,6 @@ class Bot(object):
         self.__disconnect_pipelines()
         self.logger.handlers = []  # remove all existing handlers
         self.__init__(self.__bot_id)
-        importlib.reload(intelmq.lib.message)
         self.__connect_pipelines()
 
     def init(self):
