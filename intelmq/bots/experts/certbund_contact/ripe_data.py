@@ -15,6 +15,7 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 
+import collections
 import gzip
 
 
@@ -79,3 +80,54 @@ def parse_file(filename, fields, index_field=None, verbose=False):
     if verbose:
         print('   -> read {0} entries'.format(len(out)))
     return out
+
+
+def sanitize_asn_list(asn_list, whitelist=None):
+    """Return a sanitized copy of the AS list read from a RIPE aut-num file.
+    The returned list retains only those entries which have the
+    attributes 'aut-num' and 'org'. Also, if the whitelist parameter is
+    given and not None, the first of the aut-num values must be in
+    whitelist.
+    """
+    return [entry for entry in asn_list
+
+            # keep only entries for which we have the minimal
+            # necessary attributes
+            if entry.get('aut-num') and entry.get('org')
+
+            # when using a white-list, keep only AS in the whitelist:
+            if whitelist is None or entry['aut-num'][0] in whitelist]
+
+
+def sanitize_role_list(role_list):
+    """Return a sanitized copy of the role list read from a RIPE role
+    file. The returned list retains only those entries which have an
+    'abuse-mailbox' attribute.
+    """
+    return [entry for entry in role_list
+
+            # abuse-mailbox is mandatory for a role used in abuse-c
+            if entry.get('abuse-mailbox')]
+
+
+def org_to_asn_mapping(asn_list):
+    """Return a dictionary mapping RIPE org handles to the corresponding ASNs.
+    The parameter is an AS list as read by parse_file and is assumed to
+    have been sanitized by sanitize_asn_list which makes sure that the
+    relevant information is present in all entries in the list.
+    """
+    org_to_asn = collections.defaultdict(list)
+    for entry in asn_list:
+        org_to_asn[entry['org'][0].upper()].append(entry['aut-num'][0][2:])
+    return org_to_asn
+
+
+def role_to_org_mapping(organisation_list):
+    """Return a dictionary mapping RIPE role handles to their organisations.
+    """
+    mapping = collections.defaultdict(list)
+    for entry in organisation_list:
+        abuse_c = entry['abuse-c'][0].upper() if entry['abuse-c'] else None
+        if abuse_c:
+            mapping[abuse_c].append(entry['organisation'][0].upper())
+    return mapping
