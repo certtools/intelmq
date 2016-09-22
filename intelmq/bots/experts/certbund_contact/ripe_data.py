@@ -82,6 +82,16 @@ def parse_file(filename, fields, index_field=None, verbose=False):
     return out
 
 
+def sanitize_asn_entry(entry):
+    """Return a sanitized version of an ASN entry.
+    The sanitized version always has an upper case org handle.
+    The input entry must already have an org attribute.
+    """
+    entry = entry.copy()
+    entry["org"] = [handle.upper() for handle in entry["org"]]
+    return entry
+
+
 def sanitize_asn_list(asn_list, whitelist=None):
     """Return a sanitized copy of the AS list read from a RIPE aut-num file.
     The returned list retains only those entries which have the
@@ -89,7 +99,7 @@ def sanitize_asn_list(asn_list, whitelist=None):
     given and not None, the first of the aut-num values must be in
     whitelist.
     """
-    return [entry for entry in asn_list
+    return [sanitize_asn_entry(entry) for entry in asn_list
 
             # keep only entries for which we have the minimal
             # necessary attributes
@@ -99,15 +109,45 @@ def sanitize_asn_list(asn_list, whitelist=None):
             if whitelist is None or entry['aut-num'][0] in whitelist]
 
 
+def sanitize_role_entry(entry):
+    """Return a sanitized version of a role entry.
+    The sanitized version always has upper case nic-hdl values.
+    The input entry must already have a nic-hdl attribute.
+    """
+    entry = entry.copy()
+    entry["nic-hdl"] = [handle.upper() for handle in entry["nic-hdl"]]
+    return entry
+
+
 def sanitize_role_list(role_list):
-    """Return a sanitized copy of the role list read from a RIPE role
-    file. The returned list retains only those entries which have an
+    """Return a sanitized copy of the role list read from a RIPE role file.
+    The returned list retains only those entries which have an
     'abuse-mailbox' attribute.
     """
-    return [entry for entry in role_list
+    return [sanitize_role_entry(entry) for entry in role_list
 
             # abuse-mailbox is mandatory for a role used in abuse-c
             if entry.get('abuse-mailbox')]
+
+
+def sanitize_organisation_entry(entry):
+    """Return a sanitized version of a organisation entry.
+    The sanitized version always has upper case values for organisation
+    and abuse-c. The input entry must already have a organisation
+    and abuse-c attributes.
+    """
+    entry = entry.copy()
+    entry["organisation"] = [handle.upper() for handle in entry["organisation"]]
+    entry["abuse-c"] = [handle.upper() for handle in entry["abuse-c"]]
+    return entry
+
+
+def sanitize_organisation_list(organisation_list):
+    """Return a sanitized copy of the organisation list read from a RIPE file.
+    The entries in the returned list have been sanitized with
+    sanitize_organisation_entry.
+    """
+    return [sanitize_organisation_entry(entry) for entry in organisation_list]
 
 
 def org_to_asn_mapping(asn_list):
@@ -118,7 +158,7 @@ def org_to_asn_mapping(asn_list):
     """
     org_to_asn = collections.defaultdict(list)
     for entry in asn_list:
-        org_to_asn[entry['org'][0].upper()].append(entry['aut-num'][0][2:])
+        org_to_asn[entry['org'][0]].append(entry['aut-num'][0][2:])
     return org_to_asn
 
 
@@ -127,7 +167,7 @@ def role_to_org_mapping(organisation_list):
     """
     mapping = collections.defaultdict(list)
     for entry in organisation_list:
-        abuse_c = entry['abuse-c'][0].upper() if entry['abuse-c'] else None
+        abuse_c = entry['abuse-c'][0] if entry['abuse-c'] else None
         if abuse_c:
-            mapping[abuse_c].append(entry['organisation'][0].upper())
+            mapping[abuse_c].append(entry['organisation'][0])
     return mapping

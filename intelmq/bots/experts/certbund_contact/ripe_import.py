@@ -21,8 +21,8 @@ import argparse
 import collections
 
 from intelmq.bots.experts.certbund_contact.ripe_data import parse_file, \
-     sanitize_asn_list, sanitize_role_list, org_to_asn_mapping, \
-     role_to_org_mapping
+     sanitize_asn_list, sanitize_role_list, sanitize_organisation_list, \
+     org_to_asn_mapping, role_to_org_mapping
 
 
 parser = argparse.ArgumentParser(description='''This script can be used to import
@@ -97,6 +97,8 @@ def main():
                                  asn_whitelist if args.asn_whitelist_file
                                  else None)
 
+    organisation_list = sanitize_organisation_list(organisation_list)
+
     role_list = sanitize_role_list(role_list)
 
 
@@ -156,7 +158,7 @@ def main():
             print('** Saving organisation data to database...')
         cur.execute("DELETE FROM organisation_automatic WHERE import_source = %s;", (SOURCE_NAME,))
         for entry in organisation_list:
-            org_ripe_handle = entry['organisation'][0].upper()
+            org_ripe_handle = entry['organisation'][0]
             org_name = entry['org-name'][0]
 
             cur.execute("""
@@ -197,7 +199,7 @@ def main():
             # "org" attribute of a role entry is optional,
             # thus we don't use it for now
 
-            nic_hdl = entry['nic-hdl'][0].upper()
+            nic_hdl = entry['nic-hdl'][0]
 
             # abuse-mailbox: could be type LIST or occur multiple time
             # TODO: Check if we can handle LIST a@example, b@example
