@@ -119,6 +119,21 @@ CREATE TABLE role_automatic (
 );
 
 
+-- create indices on rol after role_automatic has been created to avoid
+-- duplication of indeces due to the "LIKE role INCLUDING ALL" in the
+-- CREATE TABLE statement for role_automatic.
+CREATE INDEX role_organisation_id_idx
+          ON role (organisation_id);
+CREATE INDEX role_contact_id_idx
+          ON role (contact_id);
+
+
+CREATE INDEX role_automatic_organisation_id_idx
+          ON role_automatic (organisation_id);
+CREATE INDEX role_automatic_contact_id_idx
+          ON role_automatic (contact_id);
+
+
 /*
   Network related tables, such as:
   AS, IP-Ranges, FQDN
