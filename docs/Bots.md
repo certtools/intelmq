@@ -486,23 +486,29 @@ pip3 install pymongo>=2.7.1
 
 #### Configuration Parameters:
 
-* `autocommit`: FIXME
+The parameters marked with 'PostgreSQL' will be send
+to libpq via psycopg2. Check the
+[libpq parameter documentation] (https://www.postgresql.org/docs/current/static/libpq-connect.html#LIBPQ-PARAMKEYWORDS)
+for the versions you are using.
+
+* `autocommit`: [psycopg's autocommit mode](http://initd.org/psycopg/docs/connection.html?#connection.autocommit), optional, default True
+* `connect_timeout`: PostgreSQL connect_timeout, optional, default 5 seconds
 * `database`: PostgreSQL database
 * `host`: PostgreSQL host
 * `port`: PostgreSQL port
 * `user`: PostgreSQL user
 * `password`: PostgreSQL password
-* `sslmode`: FIXME
-* `autocommit`: FIXME
-* `table`: FIXME
+* `sslmode`: PostgreSQL sslmode
+* `table`: name of the database table into which events are to be inserted
 
 #### Installation Requirements
 
-```
-pip3 install psycopg2>=2.5.5
-```
+See [REQUIREMENTS.txt](../bots/outputs/postgresql/REQUIREMENTS.txt)
+from your installation.
 
 #### PostgreSQL Installation
+
+FIXME unify with https://github.com/certtools/intelmq/blob/master/intelmq/bots/outputs/postgresql/README.md
 
 * Install PostgreSQL, at least version 9.4 is recommended.
 
@@ -528,16 +534,6 @@ pip3 install psycopg2>=2.5.5
 * Depending on your setup adjust `/etc/postgresql/9.4/main/pg_hba.conf` to allow network connections for the intelmq user.
 
 * Restart PostgreSQL.
-
-* Generate `initdb.sql` by using the [psql_initdb_generator.py](https://github.com/certtools/intelmq/blob/master/intelmq/bin/intelmq_psql_initdb.py) tool which extracts all field names and data types from `Data-Harmonization.md`.
-
-* Create the `events` table:
-
-```bash
-> psql intelmq-events < /tmp/initdb.sql # as intelmq user
-> psql -U intelmq intelmq-events -W < /tmp/initdb.sql # as other user
-```
-
 
 * * *
 
