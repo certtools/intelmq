@@ -503,7 +503,7 @@ for the versions you are using.
 
 #### Installation Requirements
 
-See [REQUIREMENTS.txt](../bots/outputs/postgresql/REQUIREMENTS.txt)
+See [REQUIREMENTS.txt](../intelmq/bots/outputs/postgresql/REQUIREMENTS.txt)
 from your installation.
 
 #### PostgreSQL Installation
