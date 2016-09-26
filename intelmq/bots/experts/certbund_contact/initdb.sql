@@ -184,7 +184,7 @@ CREATE TABLE network (
 --   inet(host(network(n.address))) <= ip
 --   AND ip <= inet(host(broadcast(n.address)))
 --
--- FIXME: In PostgreSQL 9.4 there's GiST indexes for the intet and cidr
+-- FIXME: In PostgreSQL 9.4 there's GiST indexes for the inet and cidr
 -- types (see http://www.postgresql.org/docs/9.4/static/release-9-4.html).
 -- We cannot use that at the moment, because we still need to support
 -- PostgreSQL 9.3 which is the version available in Ubuntu 14.04LTS.
