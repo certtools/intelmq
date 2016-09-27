@@ -1,25 +1,28 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-""" Example using ripe_import as module use to examine the ripe database.
+""" Example using ripe_data as module use to examine the ripe database.
 
   This file is part of intelMQ RIPE importer, see the license there.
 """
 
 import sys
 
-from ripe_import import parse_file, args
+from ripe_data import parse_file
 
 def main():
     asn_file = 'ripe.db.aut-num.gz'
     organisation_file = 'ripe.db.organisation.gz'
     role_file = 'ripe.db.role.gz'
 
-    args.verbose = True
-    asn_list = parse_file(asn_file, ('aut-num', 'org', 'status'), 'aut-num')
+    verbose = True
+
+    asn_list = parse_file(asn_file,
+                          ('aut-num', 'org', 'status'), 'aut-num', verbose)
     organisation_list = parse_file(organisation_file,
-                                   ('organisation', 'org-name', 'abuse-c'))
+                                   ('organisation', 'org-name', 'abuse-c'),
+                                   verbose=verbose)
     role_list = parse_file(role_file,
-                           ('nic-hdl', 'abuse-mailbox', 'org'), 'role')
+                           ('nic-hdl', 'abuse-mailbox', 'org'), 'role', verbose)
 
     a='x.txt'
     asfilename = a
