@@ -508,32 +508,8 @@ from your installation.
 
 #### PostgreSQL Installation
 
-FIXME unify with https://github.com/certtools/intelmq/blob/master/intelmq/bots/outputs/postgresql/README.md
-
-* Install PostgreSQL, at least version 9.4 is recommended.
-
-```bash
-> apt-get install postgresql-9.4 python-psycopg2 postgresql-server-dev-9.4
-```
-
-* Create a User and Database:
-
-```shell
-> su - postgres
-> createuser intelmq -W
-  Shall the new role be a superuser? (y/n) n
-  Shall the new role be allowed to create databases? (y/n) y
-  Shall the new role be allowed to create more new roles? (y/n) n
-  Password: 
-
-> createdb -O intelmq --encoding='utf-8' intelmq-events
-```
-
-* Please note the --encoding='utf-8' in the line above! Without it, the output but will not be able to insert utf-8 data into the table.
-
-* Depending on your setup adjust `/etc/postgresql/9.4/main/pg_hba.conf` to allow network connections for the intelmq user.
-
-* Restart PostgreSQL.
+See [outputs/postgresql/README.md](../intelmq/bots/outputs/postgresql/README.md)
+from your installation.
 
 * * *
 
