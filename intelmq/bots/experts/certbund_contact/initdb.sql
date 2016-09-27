@@ -119,8 +119,8 @@ CREATE TABLE role_automatic (
 );
 
 
--- create indices on rol after role_automatic has been created to avoid
--- duplication of indeces due to the "LIKE role INCLUDING ALL" in the
+-- create indices on role after role_automatic has been created to avoid
+-- duplication of indices due to the "LIKE role INCLUDING ALL" in the
 -- CREATE TABLE statement for role_automatic.
 CREATE INDEX role_organisation_id_idx
           ON role (organisation_id);
