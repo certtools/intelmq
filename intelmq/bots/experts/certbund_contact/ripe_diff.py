@@ -15,7 +15,9 @@ SOURCE_NAME = "ripe"
 
 
 def load_ripe_files(options):
+    # FIXME refactor out to ripe_data, unify with section in ripe_import.main
 
+    ## Step 1: read all files
     asn_whitelist = read_asn_whitelist(options.asn_whitelist_file,
                                        verbose=options.verbose)
 
@@ -29,9 +31,25 @@ def load_ripe_files(options):
                            ('nic-hdl', 'abuse-mailbox', 'org'), 'role',
                            verbose=options.verbose)
 
-    return (sanitize_asn_list(asn_list, asn_whitelist),
-            sanitize_organisation_list(organisation_list),
-            sanitize_role_list(role_list))
+    ## Step 2: Prepare new data for insertion
+    asn_list = sanitize_asn_list(asn_list, asn_whitelist)
+
+    org_to_asn = org_to_asn_mapping(asn_list)
+
+    organisation_list = sanitize_organisation_list(organisation_list,
+                                                   org_to_asn)
+    if options.verbose:
+        print('** Found {} orgs to be relevant.'.format(len(organisation_list)))
+
+    abuse_c_organisation = role_to_org_mapping(organisation_list)
+
+    role_list = sanitize_role_list(role_list, abuse_c_organisation)
+
+    if options.verbose:
+        print('** Found {} contacts to be relevant.'.format(len(role_list)))
+
+
+    return (asn_list, organisation_list, role_list)
 
 
 def extract_asn(aut_entry):
@@ -160,7 +178,7 @@ def compare_orgs(old_orgs, new_orgs):
     if removed:
         print("organisations to be deleted:")
         for handle in removed:
-            print("    %r" % (old_orgs[handle],))
+            print("    %s: %r" % (handle, old_orgs[handle].name,))
 
     if both:
         all_changes = list(organisation_changes(both, old_orgs, new_orgs))

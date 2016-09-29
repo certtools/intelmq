@@ -68,6 +68,7 @@ def main():
         print('Parsing RIPE database...')
         print('------------------------')
 
+    ## Step 1: read all files
     asn_whitelist = read_asn_whitelist(args.asn_whitelist_file,
                                        verbose=args.verbose)
 
@@ -80,20 +81,26 @@ def main():
                            ('nic-hdl', 'abuse-mailbox', 'org'), 'role',
                            verbose=args.verbose)
 
-    # Prepare new data for insertion
+
+    ## Step 2: Prepare new data for insertion
     asn_list = sanitize_asn_list(asn_list, asn_whitelist)
 
-    organisation_list = sanitize_organisation_list(organisation_list)
-
-    role_list = sanitize_role_list(role_list)
-
-
-    # build mapping from org handles to corresponding AS
     org_to_asn = org_to_asn_mapping(asn_list)
 
-    # Mapping from roles to organisation.
+    organisation_list = sanitize_organisation_list(organisation_list,
+                                                   org_to_asn)
+    if args.verbose:
+        print('** Found {} orgs to be relevant.'.format(len(organisation_list)))
+
     abuse_c_organisation = role_to_org_mapping(organisation_list)
 
+    role_list = sanitize_role_list(role_list, abuse_c_organisation)
+
+    if args.verbose:
+        print('** Found {} contacts to be relevant.'.format(len(role_list)))
+
+
+    ## Step 3: insert data into db
 
     # Mapping dictionary that holds the database IDs between organisations,
     # contacts and AS numbers. This needs to be done here because we can't

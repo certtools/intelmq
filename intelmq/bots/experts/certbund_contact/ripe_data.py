@@ -137,14 +137,22 @@ def sanitize_role_entry(entry):
     return entry
 
 
-def sanitize_role_list(role_list):
+def sanitize_role_list(role_list, abuse_c_to_org=None):
     """Return a sanitized copy of the role list read from a RIPE role file.
     The returned list retains only those entries which have an
     'abuse-mailbox' attribute.
+
+    If abuse_c_to_org dict is given, only entries that are keys are returned.
     """
-    return [sanitize_role_entry(entry) for entry in role_list
-            # abuse-mailbox is mandatory for a role used in abuse-c
-            if entry.get('abuse-mailbox')]
+    new_list = [sanitize_role_entry(entry) for entry in role_list
+                # abuse-mailbox is mandatory for a role used in abuse-c
+                if entry.get('abuse-mailbox')]
+
+    if abuse_c_to_org:
+        new_list = [entry for entry in role_list
+                    if entry['nic-hdl'][0] in abuse_c_to_org]
+
+    return new_list
 
 
 def sanitize_organisation_entry(entry):
@@ -159,12 +167,21 @@ def sanitize_organisation_entry(entry):
     return entry
 
 
-def sanitize_organisation_list(organisation_list):
+def sanitize_organisation_list(organisation_list, org_to_asn=None):
     """Return a sanitized copy of the organisation list read from a RIPE file.
     The entries in the returned list have been sanitized with
     sanitize_organisation_entry.
+
+    If org_to_asn dict is given, only entries that are keys are returned.
     """
-    return [sanitize_organisation_entry(entry) for entry in organisation_list]
+    new_list = [sanitize_organisation_entry(entry)
+                for entry in organisation_list]
+
+    if org_to_asn:
+        new_list = [org for org in new_list
+                    if org['organisation'][0] in org_to_asn]
+
+    return new_list
 
 
 def org_to_asn_mapping(asn_list):
