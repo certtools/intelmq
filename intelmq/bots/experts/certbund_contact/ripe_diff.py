@@ -192,7 +192,7 @@ def compare_orgs_with_db(cur, asn_list, organisation_list, role_list):
     db_unattached_as = get_unattached_asns_from_db(cur)
     db_unattached_roles = get_unattached_contacts_from_db(cur)
 
-    compare_orgs(orgs, db_orgs)
+    compare_orgs(db_orgs, orgs)
 
     compare_unattached("AS", db_unattached_as,
                        [extract_asn(a) for a in unattached_as])
