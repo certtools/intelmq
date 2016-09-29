@@ -149,7 +149,7 @@ def sanitize_role_list(role_list, abuse_c_to_org=None):
                 if entry.get('abuse-mailbox')]
 
     if abuse_c_to_org:
-        new_list = [entry for entry in role_list
+        new_list = [entry for entry in new_list
                     if entry['nic-hdl'][0] in abuse_c_to_org]
 
     return new_list
