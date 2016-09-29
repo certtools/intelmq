@@ -148,7 +148,7 @@ def sanitize_role_list(role_list, abuse_c_to_org=None):
                 # abuse-mailbox is mandatory for a role used in abuse-c
                 if entry.get('abuse-mailbox')]
 
-    if abuse_c_to_org:
+    if abuse_c_to_org is not None:
         new_list = [entry for entry in new_list
                     if entry['nic-hdl'][0] in abuse_c_to_org]
 
@@ -177,7 +177,7 @@ def sanitize_organisation_list(organisation_list, org_to_asn=None):
     new_list = [sanitize_organisation_entry(entry)
                 for entry in organisation_list]
 
-    if org_to_asn:
+    if org_to_asn is not None:
         new_list = [org for org in new_list
                     if org['organisation'][0] in org_to_asn]
 
