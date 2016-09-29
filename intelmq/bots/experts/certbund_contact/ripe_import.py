@@ -22,7 +22,7 @@ import collections
 
 from intelmq.bots.experts.certbund_contact.ripe_data import parse_file, \
      sanitize_asn_list, sanitize_role_list, sanitize_organisation_list, \
-     org_to_asn_mapping, role_to_org_mapping
+     org_to_asn_mapping, role_to_org_mapping, read_asn_whitelist
 
 
 parser = argparse.ArgumentParser(description='''This script can be used to import
@@ -63,25 +63,13 @@ args = parser.parse_args()
 SOURCE_NAME = 'ripe'
 
 
-def read_asn_whitelist():
-    out = []
-    if args.asn_whitelist_file:
-        with open(args.asn_whitelist_file) as f:
-            out = [line.strip() for line in f]
-
-            if args.verbose and out:
-                print('** Loaded {} entries from ASN whitelist {}'.format(len(out),
-                                                                          args.asn_whitelist_file))
-    return out
-
-
 def main():
     if args.verbose:
         print('Parsing RIPE database...')
         print('------------------------')
 
-    # Load ASN whitelist
-    asn_whitelist = read_asn_whitelist()
+    asn_whitelist = read_asn_whitelist(args.asn_whitelist_file,
+                                       verbose=args.verbose)
 
     asn_list = parse_file(args.asn_file, ('aut-num', 'org'), 'aut-num',
                           verbose=args.verbose)
@@ -93,9 +81,7 @@ def main():
                            verbose=args.verbose)
 
     # Prepare new data for insertion
-    asn_list = sanitize_asn_list(asn_list,
-                                 asn_whitelist if args.asn_whitelist_file
-                                 else None)
+    asn_list = sanitize_asn_list(asn_list, asn_whitelist)
 
     organisation_list = sanitize_organisation_list(organisation_list)
 

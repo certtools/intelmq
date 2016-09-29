@@ -8,13 +8,17 @@ import psycopg2
 
 from intelmq.bots.experts.certbund_contact.ripe_data import parse_file, \
      sanitize_asn_list, sanitize_role_list, sanitize_organisation_list, \
-     org_to_asn_mapping, role_to_org_mapping
+     org_to_asn_mapping, role_to_org_mapping, read_asn_whitelist
 
 
 SOURCE_NAME = "ripe"
 
 
 def load_ripe_files(options):
+
+    asn_whitelist = read_asn_whitelist(options.asn_whitelist_file,
+                                       verbose=options.verbose)
+
     asn_list = parse_file(options.asn_file,
                           ('aut-num', 'org', 'status'),
                           verbose=options.verbose)
@@ -25,7 +29,7 @@ def load_ripe_files(options):
                            ('nic-hdl', 'abuse-mailbox', 'org'), 'role',
                            verbose=options.verbose)
 
-    return (sanitize_asn_list(asn_list),
+    return (sanitize_asn_list(asn_list, asn_whitelist),
             sanitize_organisation_list(organisation_list),
             sanitize_role_list(role_list))
 
@@ -221,6 +225,9 @@ parser.add_argument("--asn-file",
                     default='ripe.db.aut-num.gz',
                     help=("Specify the AS number data file."
                           " Default: ripe.db.aut-num.gz"))
+parser.add_argument("--asn-whitelist-file",
+                    default='',
+                    help="A file name with a whitelist of ASNs. If this option is not set, all ASNs are considered.")
 
 
 def main():

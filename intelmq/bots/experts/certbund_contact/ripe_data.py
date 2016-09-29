@@ -18,6 +18,24 @@
 import collections
 import gzip
 
+def read_asn_whitelist(filename, verbose=False):
+    '''Reads a list of ASNs from file.
+
+    Each line of the file being one ASN in the format "ASnnnnnn".
+
+    :return: list of ASN strings (maybe empty) or None
+    '''
+    if filename:
+        out = []
+        with open(filename) as f:
+            out = [line.strip() for line in f]
+
+        if verbose and out:
+            print('** Loaded {} entries from '
+                  'ASN whitelist {}'.format(len(out), filename))
+        return out
+    else:
+        return None
 
 def parse_file(filename, fields, index_field=None, verbose=False):
     '''Parses a file from the RIPE (split) database set.
