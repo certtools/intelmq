@@ -143,7 +143,6 @@ def sanitize_role_list(role_list):
     'abuse-mailbox' attribute.
     """
     return [sanitize_role_entry(entry) for entry in role_list
-
             # abuse-mailbox is mandatory for a role used in abuse-c
             if entry.get('abuse-mailbox')]
 
