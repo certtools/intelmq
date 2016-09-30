@@ -20,87 +20,37 @@ import psycopg2
 import argparse
 import collections
 
-from intelmq.bots.experts.certbund_contact.ripe_data import parse_file, \
-     sanitize_asn_list, sanitize_role_list, sanitize_organisation_list, \
-     org_to_asn_mapping, role_to_org_mapping, read_asn_whitelist
+import intelmq.bots.experts.certbund_contact.ripe_data as ripe_data
 
-
-parser = argparse.ArgumentParser(description='''This script can be used to import
-automatic contact data to the certBUND contact database. It is intended to be
-called automatically, e.g. by a cronjob.''')
-parser.add_argument("-v", "--verbose",
-                    help="increase output verbosity",
-                    default=False,
-                    action="store_true")
-parser.add_argument("--conninfo",
-                    default='dbname=contactdb',
-                    help="Libpg connection string. E.g. 'host=localhost"
-                         " port=5432 user=intelmq dbname=connectdb'"
-                         " Default: 'dbname=contactdb'")
-parser.add_argument("--organisation-file",
-                    default='ripe.db.organisation.gz',
-                    help="Specify the organisation data file. Default: ripe.db.organisation.gz")
-parser.add_argument("--role-file",
-                    default='ripe.db.role.gz',
-                    help="Specify the contact role data file. Default: ripe.db.role.gz")
-parser.add_argument("--asn-file",
-                    default='ripe.db.aut-num.gz',
-                    help="Specify the AS number data file. Default: ripe.db.aut-num.gz")
-parser.add_argument("--notification-format",
-                    default='feed_specific',
-                    help="Specify the data format the contacts linked with e.g. csv. Default: feed_specific")
-parser.add_argument("--notification-interval",
-                    default='0',
-                    help="Specify the default notification intervall in seconds. Default: 0")
-parser.add_argument("--asn-whitelist-file",
-                    default='',
-                    help="A file name with a whitelist of ASNs. If this option is not set, all ASNs are imported")
-
-#TODO: move parsing of arguments into the main() block to avoid while being
-# executed during import
-args = parser.parse_args()
 
 SOURCE_NAME = 'ripe'
 
 
 def main():
+    parser = argparse.ArgumentParser(description='''This script can be used to import
+automatic contact data to the certBUND contact database. It is intended to be
+called automatically, e.g. by a cronjob.''')
+
+    ripe_data.add_db_args(parser)
+    ripe_data.add_common_args(parser)
+
+    parser.add_argument("--notification-format",
+                    default='feed_specific',
+                    help="Specify the data format the contacts linked with e.g. csv. Default: feed_specific")
+    parser.add_argument("--notification-interval",
+                    default='0',
+                    help="Specify the default notification intervall in seconds. Default: 0")
+
+    args = parser.parse_args()
+
+
     if args.verbose:
         print('Parsing RIPE database...')
         print('------------------------')
 
-    ## Step 1: read all files
-    asn_whitelist = read_asn_whitelist(args.asn_whitelist_file,
-                                       verbose=args.verbose)
+    (asn_list, organisation_list, role_list,
+     org_to_asn, abusec_to_org) = ripe_data.load_ripe_files(args)
 
-    asn_list = parse_file(args.asn_file, ('aut-num', 'org'), 'aut-num',
-                          verbose=args.verbose)
-    organisation_list = parse_file(args.organisation_file,
-                                   ('organisation', 'org-name', 'abuse-c'),
-                                   verbose=args.verbose)
-    role_list = parse_file(args.role_file,
-                           ('nic-hdl', 'abuse-mailbox', 'org'), 'role',
-                           verbose=args.verbose)
-
-
-    ## Step 2: Prepare new data for insertion
-    asn_list = sanitize_asn_list(asn_list, asn_whitelist)
-
-    org_to_asn = org_to_asn_mapping(asn_list)
-
-    organisation_list = sanitize_organisation_list(organisation_list,
-                                                   org_to_asn)
-    if args.verbose:
-        print('** Found {} orgs to be relevant.'.format(len(organisation_list)))
-
-    abuse_c_organisation = role_to_org_mapping(organisation_list)
-
-    role_list = sanitize_role_list(role_list, abuse_c_organisation)
-
-    if args.verbose:
-        print('** Found {} contacts to be relevant.'.format(len(role_list)))
-
-
-    ## Step 3: insert data into db
 
     # Mapping dictionary that holds the database IDs between organisations,
     # contacts and AS numbers. This needs to be done here because we can't
@@ -211,7 +161,7 @@ def main():
             result = cur.fetchone()
             contact_id = result[0]
 
-            for orh in abuse_c_organisation[nic_hdl]:
+            for orh in abusec_to_org[nic_hdl]:
                 mapping[orh]['contact_id'].append(contact_id)
 
 
