@@ -23,45 +23,27 @@ import collections
 import intelmq.bots.experts.certbund_contact.ripe_data as ripe_data
 
 
-parser = argparse.ArgumentParser(description='''This script can be used to import
-automatic contact data to the certBUND contact database. It is intended to be
-called automatically, e.g. by a cronjob.''')
-parser.add_argument("-v", "--verbose",
-                    help="increase output verbosity",
-                    default=False,
-                    action="store_true")
-parser.add_argument("--conninfo",
-                    default='dbname=contactdb',
-                    help="Libpg connection string. E.g. 'host=localhost"
-                         " port=5432 user=intelmq dbname=connectdb'"
-                         " Default: 'dbname=contactdb'")
-parser.add_argument("--organisation-file",
-                    default='ripe.db.organisation.gz',
-                    help="Specify the organisation data file. Default: ripe.db.organisation.gz")
-parser.add_argument("--role-file",
-                    default='ripe.db.role.gz',
-                    help="Specify the contact role data file. Default: ripe.db.role.gz")
-parser.add_argument("--asn-file",
-                    default='ripe.db.aut-num.gz',
-                    help="Specify the AS number data file. Default: ripe.db.aut-num.gz")
-parser.add_argument("--notification-format",
-                    default='feed_specific',
-                    help="Specify the data format the contacts linked with e.g. csv. Default: feed_specific")
-parser.add_argument("--notification-interval",
-                    default='0',
-                    help="Specify the default notification intervall in seconds. Default: 0")
-parser.add_argument("--asn-whitelist-file",
-                    default='',
-                    help="A file name with a whitelist of ASNs. If this option is not set, all ASNs are imported")
-
-#TODO: move parsing of arguments into the main() block to avoid while being
-# executed during import
-args = parser.parse_args()
-
 SOURCE_NAME = 'ripe'
 
 
 def main():
+    parser = argparse.ArgumentParser(description='''This script can be used to import
+automatic contact data to the certBUND contact database. It is intended to be
+called automatically, e.g. by a cronjob.''')
+
+    ripe_data.add_db_args(parser)
+    ripe_data.add_common_args(parser)
+
+    parser.add_argument("--notification-format",
+                    default='feed_specific',
+                    help="Specify the data format the contacts linked with e.g. csv. Default: feed_specific")
+    parser.add_argument("--notification-interval",
+                    default='0',
+                    help="Specify the default notification intervall in seconds. Default: 0")
+
+    args = parser.parse_args()
+
+
     if args.verbose:
         print('Parsing RIPE database...')
         print('------------------------')

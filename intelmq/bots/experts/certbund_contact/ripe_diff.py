@@ -182,37 +182,14 @@ def compare_orgs_with_db(cur, asn_list, organisation_list, role_list,
                        [r['abuse-mailbox'][0] for r in unattached_roles])
 
 
-
-parser = argparse.ArgumentParser(
-    description=("Show the differences between a set of RIPE DB files"
-                 " and the contents of the database."))
-parser.add_argument("-v", "--verbose",
-                    help="increase output verbosity",
-                    default=False,
-                    action="store_true")
-parser.add_argument("--conninfo",
-                    default='dbname=contactdb',
-                    help=("Libpg connection string. E.g. 'host=localhost"
-                          " port=5432 user=intelmq dbname=connectdb'"
-                          " Default: 'dbname=contactdb'"))
-parser.add_argument("--organisation-file",
-                    default='ripe.db.organisation.gz',
-                    help=("Specify the organisation data file."
-                          " Default: ripe.db.organisation.gz"))
-parser.add_argument("--role-file",
-                    default='ripe.db.role.gz',
-                    help=("Specify the contact role data file."
-                          " Default: ripe.db.role.gz"))
-parser.add_argument("--asn-file",
-                    default='ripe.db.aut-num.gz',
-                    help=("Specify the AS number data file."
-                          " Default: ripe.db.aut-num.gz"))
-parser.add_argument("--asn-whitelist-file",
-                    default='',
-                    help="A file name with a whitelist of ASNs. If this option is not set, all ASNs are considered.")
-
-
 def main():
+    parser = argparse.ArgumentParser(
+        description=("Show the differences between a set of RIPE DB files"
+                     " and the contents of the database."))
+
+    ripe_data.add_db_args(parser)
+    ripe_data.add_common_args(parser)
+
     options = parser.parse_args()
 
     (asn_list, organisation_list, role_list,
