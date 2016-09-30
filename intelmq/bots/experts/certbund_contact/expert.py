@@ -4,6 +4,7 @@ import json
 import psycopg2
 
 from intelmq.lib.bot import Bot
+import intelmq.bots.experts.certbund_contact.common as common
 
 
 class CERTBundKontaktExpertBot(Bot):
@@ -87,23 +88,7 @@ class CERTBundKontaktExpertBot(Bot):
         # and manual tables without regard to classification identifier
         # or other criteria.
         for automation in ("", "_automatic"):
-            cur.execute("SELECT DISTINCT"
-                        "       c.email as email, o.name as organisation,"
-                        "       s.name as sector, '' as template_path,"
-                        "       'feed_specific' as format_name,"
-                        "       oa.notification_interval as notification_interval"
-                        "  FROM contact{0} AS c"
-                        "  JOIN role{0} AS r ON r.contact_id = c.id"
-                        "  JOIN organisation_to_asn{0} AS oa"
-                        "    ON oa.organisation_id = r.organisation_id"
-                        "  JOIN organisation{0} o"
-                        "    ON o.id = r.organisation_id"
-                        "  LEFT OUTER JOIN sector AS s"
-                        "    ON s.id = o.sector_id"
-                        "  JOIN autonomous_system{0} AS a"
-                        "    ON a.number = oa.asn_id"
-                        " WHERE a.number = %s".format(automation), (asn,))
-            result = cur.fetchall()
+            result = common.lookup_by_asn_only(cur, automation, asn)
             if result:
                 return result
         return []

@@ -6,6 +6,7 @@ import argparse
 
 import psycopg2
 
+import intelmq.bots.experts.certbund_contact.common as common
 import intelmq.bots.experts.certbund_contact.ripe_data as ripe_data
 
 
@@ -129,18 +130,29 @@ def organisation_changes(handles, orgs_a, orgs_b):
         if changes:
             yield handle, changes
 
+def find_overlaid_asns_db(cur, org):
+    for asn in org.asns:
+        results = common.lookup_by_asn_only(cur, '', asn)
+        if results:
+            print("        AS{} via manual db entries resolves to:".format(asn))
+            for result in results:
+                print("            {}".format(result))
 
-def compare_orgs(old_orgs, new_orgs):
+
+def compare_orgs(cur, old_orgs, new_orgs):
     removed, both, added = compare_dicts(old_orgs, new_orgs)
 
     if added:
         print("organisations to be added:")
         for handle in added:
             print("    %s: %r" % (handle, new_orgs[handle].name,))
+            find_overlaid_asns_db(cur, new_orgs[handle])
+
     if removed:
         print("organisations to be deleted:")
         for handle in removed:
             print("    %s: %r" % (handle, old_orgs[handle].name,))
+            find_overlaid_asns_db(cur, old_orgs[handle])
 
     if both:
         all_changes = list(organisation_changes(both, old_orgs, new_orgs))
@@ -150,6 +162,7 @@ def compare_orgs(old_orgs, new_orgs):
                 print("    %r:" % (handle,))
                 for change in changes:
                     print("        %s" % (change,))
+                find_overlaid_asns_db(cur, new_orgs[handle])
 
 
 def compare_unattached(name, old, new):
@@ -174,7 +187,7 @@ def compare_orgs_with_db(cur, asn_list, organisation_list, role_list,
     db_unattached_as = get_unattached_asns_from_db(cur)
     db_unattached_roles = get_unattached_contacts_from_db(cur)
 
-    compare_orgs(db_orgs, orgs)
+    compare_orgs(cur, db_orgs, orgs)
 
     compare_unattached("AS", db_unattached_as,
                        [extract_asn(a) for a in unattached_as])
