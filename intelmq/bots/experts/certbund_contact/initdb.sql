@@ -119,6 +119,21 @@ CREATE TABLE role_automatic (
 );
 
 
+-- create indices on role after role_automatic has been created to avoid
+-- duplication of indices due to the "LIKE role INCLUDING ALL" in the
+-- CREATE TABLE statement for role_automatic.
+CREATE INDEX role_organisation_id_idx
+          ON role (organisation_id);
+CREATE INDEX role_contact_id_idx
+          ON role (contact_id);
+
+
+CREATE INDEX role_automatic_organisation_id_idx
+          ON role_automatic (organisation_id);
+CREATE INDEX role_automatic_contact_id_idx
+          ON role_automatic (contact_id);
+
+
 /*
   Network related tables, such as:
   AS, IP-Ranges, FQDN
@@ -169,7 +184,7 @@ CREATE TABLE network (
 --   inet(host(network(n.address))) <= ip
 --   AND ip <= inet(host(broadcast(n.address)))
 --
--- FIXME: In PostgreSQL 9.4 there's GiST indexes for the intet and cidr
+-- FIXME: In PostgreSQL 9.4 there's GiST indexes for the inet and cidr
 -- types (see http://www.postgresql.org/docs/9.4/static/release-9-4.html).
 -- We cannot use that at the moment, because we still need to support
 -- PostgreSQL 9.3 which is the version available in Ubuntu 14.04LTS.

@@ -16,9 +16,14 @@
 # You should have received a copy of the GNU Affero General Public License
 
 import sys
-import gzip
 import psycopg2
 import argparse
+import collections
+
+from intelmq.bots.experts.certbund_contact.ripe_data import parse_file, \
+     sanitize_asn_list, sanitize_role_list, sanitize_organisation_list, \
+     org_to_asn_mapping, role_to_org_mapping, read_asn_whitelist
+
 
 parser = argparse.ArgumentParser(description='''This script can be used to import
 automatic contact data to the certBUND contact database. It is intended to be
@@ -58,101 +63,50 @@ args = parser.parse_args()
 SOURCE_NAME = 'ripe'
 
 
-def read_asn_whitelist():
-    out = []
-    if args.asn_whitelist_file:
-        with open(args.asn_whitelist_file) as f:
-            out = [line.strip() for line in f]
-
-            if args.verbose and out:
-                print('** Loaded {} entries from ASN whitelist {}'.format(len(out),
-                                                                          args.asn_whitelist_file))
-    return out
-
-
-def parse_file(filename, fields, index_field=None):
-    '''Parses a file from the RIPE (split) database set.
-
-    ftp://ftp.ripe.net/ripe/dbase/split/
-    :param filename: the gziped filename
-    :param fields: the field names to read
-    :param index_field: the field that marks the beginning of a dataset.
-        If not provided, the first element of 'fields' will be used
-    :return: returns a list of lists with the read out values
-
-    NOTE: Does **not** handle "continuation lines" (see rfc2622 section 2).
-
-    NOTE: Preserves the contents of the fields like lower and upper case
-          characters, though the RPSL is case insensitive and ASCII only.
-          Thus for some fields it makes sense to upper() them (before
-          comparing).
-    '''
-    if args.verbose:
-        print('** Reading file {0}'.format(filename))
-
-    out = []
-    tmp = None
-
-    f = gzip.open(filename, 'rt', encoding='latin1')
-    if not index_field:
-        index_field = fields[0]
-
-    important_fields = list(fields) + [index_field]
-    for line in f:
-
-        # Comments and remarks
-        if line.startswith('%') or line.startswith('#') or line.startswith('remarks:'):
-            continue
-
-        if ":" in line:
-            key, value = [x.strip() for x in line.split(":", 1)]
-
-            # Fields we are interested in, plus the index
-            if key not in important_fields:
-                continue
-
-            # If we reach the index again, we have reached the next dataset, add
-            # the previous data and start again
-            if key == index_field:
-                if tmp: # template is filled, except on the first record
-                    out.append(tmp)
-
-                tmp = {}
-                for tmp_field in fields:
-                    if not tmp.get(tmp_field):
-                        tmp[tmp_field] = []
-
-            # Only add the fields we are interested in to the result set
-            if key in fields:
-                tmp[key].append(value)
-
-    f.close()
-    if args.verbose:
-        print('   -> read {0} entries'.format(len(out)))
-    return out
-
-
 def main():
     if args.verbose:
         print('Parsing RIPE database...')
         print('------------------------')
 
-    # Load ASN whitelist
-    asn_whitelist = read_asn_whitelist()
+    ## Step 1: read all files
+    asn_whitelist = read_asn_whitelist(args.asn_whitelist_file,
+                                       verbose=args.verbose)
 
-    asn_list = parse_file(args.asn_file, ('aut-num', 'org'), 'aut-num')
+    asn_list = parse_file(args.asn_file, ('aut-num', 'org'), 'aut-num',
+                          verbose=args.verbose)
     organisation_list = parse_file(args.organisation_file,
-                                   ('organisation', 'org-name', 'abuse-c'))
+                                   ('organisation', 'org-name', 'abuse-c'),
+                                   verbose=args.verbose)
     role_list = parse_file(args.role_file,
-                           ('nic-hdl', 'abuse-mailbox', 'org'), 'role')
+                           ('nic-hdl', 'abuse-mailbox', 'org'), 'role',
+                           verbose=args.verbose)
+
+
+    ## Step 2: Prepare new data for insertion
+    asn_list = sanitize_asn_list(asn_list, asn_whitelist)
+
+    org_to_asn = org_to_asn_mapping(asn_list)
+
+    organisation_list = sanitize_organisation_list(organisation_list,
+                                                   org_to_asn)
+    if args.verbose:
+        print('** Found {} orgs to be relevant.'.format(len(organisation_list)))
+
+    abuse_c_organisation = role_to_org_mapping(organisation_list)
+
+    role_list = sanitize_role_list(role_list, abuse_c_organisation)
+
+    if args.verbose:
+        print('** Found {} contacts to be relevant.'.format(len(role_list)))
+
+
+    ## Step 3: insert data into db
 
     # Mapping dictionary that holds the database IDs between organisations,
     # contacts and AS numbers. This needs to be done here because we can't
     # use the RIPE org-ids.
-    mapping = {}
-
-    # Mapping from abuse-c to organisation
-    abuse_c_organisation = {}
+    mapping = collections.defaultdict(lambda: {'org_id': None,
+                                               'contact_id': []})
 
 
     con = None
@@ -185,26 +139,10 @@ def main():
         cur.execute("DELETE FROM autonomous_system_automatic WHERE import_source = %s;", (SOURCE_NAME,))
 
         for entry in asn_list:
-            if not entry or not entry.get('aut-num') or not entry.get('org'):
-                continue
-
-            # Only
-            if args.asn_whitelist_file and entry['aut-num'][0] not in asn_whitelist:
-                continue
-
-            as_number = entry['aut-num'][0][2:]
-            org_ripe_handle = entry['org'][0].upper()
-
-            cur.execute("""
-                INSERT INTO autonomous_system_automatic (number, import_source, import_time)
-                VALUES (%s, %s, CURRENT_TIMESTAMP);
-                """, (as_number, SOURCE_NAME ))
-
-            if not mapping.get(org_ripe_handle):
-                mapping[org_ripe_handle] = {'org_id': None,
-                                            'contact_id': [],
-                                            'asn': []}
-            mapping[org_ripe_handle]['asn'].append(as_number)
+            cur.execute("""INSERT INTO autonomous_system_automatic
+                                       (number, import_source, import_time)
+                                VALUES (%s, %s, CURRENT_TIMESTAMP);""",
+                        (entry['aut-num'][0][2:], SOURCE_NAME ))
 
         #
         # Organisation
@@ -213,9 +151,8 @@ def main():
             print('** Saving organisation data to database...')
         cur.execute("DELETE FROM organisation_automatic WHERE import_source = %s;", (SOURCE_NAME,))
         for entry in organisation_list:
-            org_ripe_handle = entry['organisation'][0].upper()
+            org_ripe_handle = entry['organisation'][0]
             org_name = entry['org-name'][0]
-            abuse_c = entry['abuse-c'][0].upper() if entry['abuse-c'] else None
 
             cur.execute("""
                 INSERT INTO organisation_automatic (name, ripe_org_hdl, import_source, import_time)
@@ -224,23 +161,14 @@ def main():
             result = cur.fetchone()
             org_id = result[0]
 
-            if abuse_c:
-                abuse_c_organisation.setdefault(abuse_c,
-                                                []).append(org_ripe_handle)
-
-            if not mapping.get(org_ripe_handle):
-                mapping[org_ripe_handle] = {'org_id': None,
-                                            'contact_id': [],
-                                            'asn': []}
             mapping[org_ripe_handle]['org_id'] = org_id
 
         # many-to-many table organisation <-> as number
         for org_ripe_handle in mapping:
             org_id = mapping[org_ripe_handle]['org_id']
-            asn_ids = mapping[org_ripe_handle]['asn']
 
             if org_id is not None:
-                for asn_id in asn_ids:
+                for asn_id in org_to_asn[org_ripe_handle]:
                     cur.execute("""
                     INSERT INTO organisation_to_asn_automatic (
                                                         notification_interval,
@@ -261,15 +189,10 @@ def main():
         cur.execute("DELETE FROM contact_automatic WHERE import_source = %s;", (SOURCE_NAME,))
 
         for entry in role_list:
-            # Sanity check.
-            # abuse-mailbox is mandatory for a role used in abuse-c.
-            if not entry.get('abuse-mailbox'):
-                continue
-
             # "org" attribute of a role entry is optional,
             # thus we don't use it for now
 
-            nic_hdl = entry['nic-hdl'][0].upper()
+            nic_hdl = entry['nic-hdl'][0]
 
             # abuse-mailbox: could be type LIST or occur multiple time
             # TODO: Check if we can handle LIST a@example, b@example
@@ -288,7 +211,7 @@ def main():
             result = cur.fetchone()
             contact_id = result[0]
 
-            for orh in abuse_c_organisation.get(nic_hdl, []):
+            for orh in abuse_c_organisation[nic_hdl]:
                 mapping[orh]['contact_id'].append(contact_id)
 
 
