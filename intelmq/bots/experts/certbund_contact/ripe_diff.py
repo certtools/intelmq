@@ -41,15 +41,15 @@ def load_ripe_files(options):
     if options.verbose:
         print('** Found {} orgs to be relevant.'.format(len(organisation_list)))
 
-    abuse_c_organisation = role_to_org_mapping(organisation_list)
+    abusec_to_org = role_to_org_mapping(organisation_list)
 
-    role_list = sanitize_role_list(role_list, abuse_c_organisation)
+    role_list = sanitize_role_list(role_list, abusec_to_org)
 
     if options.verbose:
         print('** Found {} contacts to be relevant.'.format(len(role_list)))
 
 
-    return (asn_list, organisation_list, role_list)
+    return (asn_list, organisation_list, role_list, org_to_asn, abusec_to_org)
 
 
 def extract_asn(aut_entry):
@@ -251,7 +251,8 @@ parser.add_argument("--asn-whitelist-file",
 def main():
     options = parser.parse_args()
 
-    (asn_list, organisation_list, role_list) = load_ripe_files(options)
+    (asn_list, organisation_list, role_list,
+     org_to_asn, abusec_to_org) = load_ripe_files(options)
 
     con = psycopg2.connect(dsn=options.conninfo)
     try:
