@@ -6,50 +6,12 @@ import argparse
 
 import psycopg2
 
-from intelmq.bots.experts.certbund_contact.ripe_data import parse_file, \
-     sanitize_asn_list, sanitize_role_list, sanitize_organisation_list, \
-     org_to_asn_mapping, role_to_org_mapping, read_asn_whitelist
+import intelmq.bots.experts.certbund_contact.ripe_data as ripe_data
 
 
 SOURCE_NAME = "ripe"
 
 
-def load_ripe_files(options):
-    # FIXME refactor out to ripe_data, unify with section in ripe_import.main
-
-    ## Step 1: read all files
-    asn_whitelist = read_asn_whitelist(options.asn_whitelist_file,
-                                       verbose=options.verbose)
-
-    asn_list = parse_file(options.asn_file,
-                          ('aut-num', 'org', 'status'),
-                          verbose=options.verbose)
-    organisation_list = parse_file(options.organisation_file,
-                                   ('organisation', 'org-name', 'abuse-c'),
-                                   verbose=options.verbose)
-    role_list = parse_file(options.role_file,
-                           ('nic-hdl', 'abuse-mailbox', 'org'), 'role',
-                           verbose=options.verbose)
-
-    ## Step 2: Prepare new data for insertion
-    asn_list = sanitize_asn_list(asn_list, asn_whitelist)
-
-    org_to_asn = org_to_asn_mapping(asn_list)
-
-    organisation_list = sanitize_organisation_list(organisation_list,
-                                                   org_to_asn)
-    if options.verbose:
-        print('** Found {} orgs to be relevant.'.format(len(organisation_list)))
-
-    abusec_to_org = role_to_org_mapping(organisation_list)
-
-    role_list = sanitize_role_list(role_list, abusec_to_org)
-
-    if options.verbose:
-        print('** Found {} contacts to be relevant.'.format(len(role_list)))
-
-
-    return (asn_list, organisation_list, role_list, org_to_asn, abusec_to_org)
 
 
 def extract_asn(aut_entry):
@@ -65,8 +27,8 @@ class Organisation:
         self.contacts = list(contacts)
 
 
-def build_organisation_objects(asn_list, organisation_list, role_list):
-    role_to_org = role_to_org_mapping(organisation_list)
+def build_organisation_objects(asn_list, organisation_list, role_list,
+                               role_to_org):
 
     orgs = {entry["organisation"][0]: Organisation(entry["organisation"][0],
                                                    entry['org-name'][0])
@@ -202,9 +164,11 @@ def compare_unattached(name, old, new):
             print("    ", item)
 
 
-def compare_orgs_with_db(cur, asn_list, organisation_list, role_list):
+def compare_orgs_with_db(cur, asn_list, organisation_list, role_list,
+                         abusec_to_org):
     orgs, unattached_as, unattached_roles = \
-          build_organisation_objects(asn_list, organisation_list, role_list)
+          build_organisation_objects(asn_list, organisation_list,
+                                     role_list, abusec_to_org)
 
     db_orgs = build_organisation_objects_from_db(cur)
     db_unattached_as = get_unattached_asns_from_db(cur)
@@ -252,12 +216,12 @@ def main():
     options = parser.parse_args()
 
     (asn_list, organisation_list, role_list,
-     org_to_asn, abusec_to_org) = load_ripe_files(options)
+     org_to_asn, abusec_to_org) = ripe_data.load_ripe_files(options)
 
     con = psycopg2.connect(dsn=options.conninfo)
     try:
         compare_orgs_with_db(con.cursor(), asn_list, organisation_list,
-                             role_list)
+                             role_list, abusec_to_org)
     finally:
         con.close()
 

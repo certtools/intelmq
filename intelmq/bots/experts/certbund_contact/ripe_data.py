@@ -18,6 +18,47 @@
 import collections
 import gzip
 
+
+def load_ripe_files(options):
+    '''Read ripe files as given in the command line options.
+
+    :return: tuple of (asn_list, org_list, role_list, org_to_asn, abusec_to_org)
+    '''
+
+    ## Step 1: read all files
+    asn_whitelist = read_asn_whitelist(options.asn_whitelist_file,
+                                       verbose=options.verbose)
+
+    asn_list = parse_file(options.asn_file,
+                          ('aut-num', 'org', 'status'),
+                          verbose=options.verbose)
+    organisation_list = parse_file(options.organisation_file,
+                                   ('organisation', 'org-name', 'abuse-c'),
+                                   verbose=options.verbose)
+    role_list = parse_file(options.role_file,
+                           ('nic-hdl', 'abuse-mailbox', 'org'), 'role',
+                           verbose=options.verbose)
+
+    ## Step 2: Prepare new data for insertion
+    asn_list = sanitize_asn_list(asn_list, asn_whitelist)
+
+    org_to_asn = org_to_asn_mapping(asn_list)
+
+    organisation_list = sanitize_organisation_list(organisation_list,
+                                                   org_to_asn)
+    if options.verbose:
+        print('** Found {} orgs to be relevant.'.format(len(organisation_list)))
+
+    abusec_to_org = role_to_org_mapping(organisation_list)
+
+    role_list = sanitize_role_list(role_list, abusec_to_org)
+
+    if options.verbose:
+        print('** Found {} contacts to be relevant.'.format(len(role_list)))
+
+
+    return (asn_list, organisation_list, role_list, org_to_asn, abusec_to_org)
+
 def read_asn_whitelist(filename, verbose=False):
     '''Reads a list of ASNs from file.
 
