@@ -30,6 +30,46 @@ from intelmq.lib.message import Report
 
 try:
     import sleekxmpp
+
+    class XMPPClient(sleekxmpp.ClientXMPP):
+        def __init__(self,
+                     jid,
+                     password,
+                     room,
+                     room_nick,
+                     room_password,
+                     logger):
+            sleekxmpp.ClientXMPP.__init__(self, jid, password)
+
+            self.logger = logger
+            self.logger.info("Initiated")
+            self.xmpp_room = room
+            self.xmpp_room_nick = room_nick
+            self.xmpp_room_password = room_password
+
+            self.add_event_handler("session_start", self.session_start)
+
+        def session_start(self, event):
+            self.send_presence()
+            self.logger.debug("Session started")
+
+            try:
+                self.get_roster()
+            except sleekxmpp.exceptions.IqError as err:
+                self.logger.error('There was an error getting the roster')
+                self.logger.error(err.iq['error']['condition'])
+                self.disconnect()
+            except sleekxmpp.exceptions.IqTimeout:
+                self.logger.error('Server is taking too long to respond')
+                self.disconnect()
+
+            if self.xmpp_room and self.plugin.get('xep_0045'):
+                self.logger.debug("Joining room: %s", self.xmpp_room)
+                pwd = self.xmpp_room_password if self.xmpp_room_password else ""
+                self.plugin['xep_0045'].joinMUC(self.xmpp_room,
+                                                self.xmpp_room_nick,
+                                                password=pwd,
+                                                wait=True)
 except ImportError:
     sleekxmpp = None
 
@@ -96,47 +136,6 @@ class XMPPCollectorBot(CollectorBot):
             report = Report()
             report.add("raw", raw_msg)
             self.send_message(report)
-
-
-class XMPPClient(sleekxmpp.ClientXMPP):
-    def __init__(self,
-                 jid,
-                 password,
-                 room,
-                 room_nick,
-                 room_password,
-                 logger):
-        sleekxmpp.ClientXMPP.__init__(self, jid, password)
-
-        self.logger = logger
-        self.logger.info("Initiated")
-        self.xmpp_room = room
-        self.xmpp_room_nick = room_nick
-        self.xmpp_room_password = room_password
-
-        self.add_event_handler("session_start", self.session_start)
-
-    def session_start(self, event):
-        self.send_presence()
-        self.logger.debug("Session started")
-
-        try:
-            self.get_roster()
-        except sleekxmpp.exceptions.IqError as err:
-            self.logger.error('There was an error getting the roster')
-            self.logger.error(err.iq['error']['condition'])
-            self.disconnect()
-        except sleekxmpp.exceptions.IqTimeout:
-            self.logger.error('Server is taking too long to respond')
-            self.disconnect()
-
-        if self.xmpp_room and self.plugin.get('xep_0045'):
-            self.logger.debug("Joining room: %s", self.xmpp_room)
-            pwd = self.xmpp_room_password if self.xmpp_room_password else ""
-            self.plugin['xep_0045'].joinMUC(self.xmpp_room,
-                                            self.xmpp_room_nick,
-                                            password=pwd,
-                                            wait=True)
 
 
 if __name__ == "__main__":
