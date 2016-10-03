@@ -2,10 +2,10 @@
 """
 Tests if configuration in /etc is valid
 """
+import collections
 import json
 import re
 import unittest
-import collections
 
 import pkg_resources
 
@@ -94,7 +94,7 @@ class TestConf(unittest.TestCase):
         interpreted = json.loads(fcontent)
         self.assertEqual(to_json(interpreted), fcontent)
 
-    def test_BOTS_syntax(self):
+    def test_bots_syntax(self):
         """ Test if BOTS has correct syntax. """
         with open(pkg_resources.resource_filename('intelmq',
                                                   'bots/BOTS')) as fhandle:
