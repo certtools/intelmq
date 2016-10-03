@@ -98,7 +98,7 @@ Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
 
 Parser: Abuse.ch IP (`intelmq.bots.parsers.abusech.parser_ip`)
 
-This list only includes IPv4 addresses that are used by the ZeuS trojan. It is the recommended list if you want to block only ZeuS IPs. It excludes IP addresses that ZeuS Tracker believes to be hijacked (level 2) or belong to a free web hosting provider (level 3). Hence the false positive rate should be much lower compared to the standard ZeuS IP blocklist.
+This list only includes IPv4 addresses that are used by the ZeuS Trojan. It is the recommended list if you want to block only ZeuS IPs. It excludes IP addresses that ZeuS Tracker believes to be hijacked (level 2) or belong to a free web hosting provider (level 3). Hence the false positive rate should be much lower compared to the standard ZeuS IP blocklist.
 
 
 ## AlienVault
@@ -195,7 +195,7 @@ Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
 
 Parser: Blocklist.de (`intelmq.bots.parsers.blocklistde.parser`)
 
-BlockList.DE IMAP Collector is the bot responsible to get the report from source of information. All IP addresses which have been reported within the last 48 hours for attacks on the Service imap, sasl, pop3.....
+BlockList.DE IMAP Collector is the bot responsible to get the report from source of information. All IP addresses which have been reported within the last 48 hours for attacks on the Service IMAP, SASL, POP3.....
 
 ### IRC Bot
 
@@ -367,7 +367,7 @@ Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
 
 Parser: Fraunhofer DGA (`intelmq.bots.parsers.fraunhofer.parser_dga`)
 
-Fraunhofer DGA collector fetches data from Fraunhofers domain generation archive.
+Fraunhofer DGA collector fetches data from Fraunhofer's domain generation archive.
 
 ## HPHosts
 
