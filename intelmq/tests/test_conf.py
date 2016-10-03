@@ -2,6 +2,7 @@
 """
 Tests if configuration in /etc is valid
 """
+import collections
 import json
 import re
 import unittest
@@ -16,6 +17,14 @@ def to_json(obj):
     Transforms object into JSON with intelmq-style.
     """
     return json.dumps(obj, indent=4, sort_keys=True,
+                      separators=(',', ': ')) + '\n'
+
+
+def to_unsorted_json(obj):
+    """
+    Transforms object into JSON with intelmq-style (without sorting).
+    """
+    return json.dumps(obj, indent=4, sort_keys=False,
                       separators=(',', ': ')) + '\n'
 
 
@@ -85,13 +94,15 @@ class TestConf(unittest.TestCase):
         interpreted = json.loads(fcontent)
         self.assertEqual(to_json(interpreted), fcontent)
 
-    def test_BOTS_syntax(self):
+    def test_bots_syntax(self):
         """ Test if BOTS has correct syntax. """
         with open(pkg_resources.resource_filename('intelmq',
                                                   'bots/BOTS')) as fhandle:
             fcontent = fhandle.read()
-        interpreted = json.loads(fcontent)
-        self.assertEqual(to_json(interpreted), fcontent)
+
+        interpreted = json.loads(fcontent,
+                                 object_pairs_hook=collections.OrderedDict)
+        self.assertEqual(to_unsorted_json(interpreted), fcontent)
 
 
 if __name__ == '__main__':
