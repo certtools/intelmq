@@ -28,11 +28,13 @@ class AbusixExpertBot(Bot):
 
         for key in ['source.', 'destination.']:
             ip_key = key + "ip"
+            abuse_contact_key = key + "abuse_contact"
+            if abuse_contact_key in event and not self.parameters.overwrite:
+                continue
             if event.contains(ip_key):
                 ip = event.get(ip_key)
                 email = self.lookup(ip)
                 if email:
-                    abuse_contact_key = key + "abuse_contact"
                     event.add(abuse_contact_key, email, force=True)
 
         self.send_message(event)

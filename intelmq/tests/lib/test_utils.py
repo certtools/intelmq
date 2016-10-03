@@ -128,6 +128,11 @@ class TestUtils(unittest.TestCase):
         actual = utils.parse_logline(line)
         self.assertEqual(line, actual)
 
+    def test_error_message_from_exc(self):
+        """Tests if error_message_from_exc correctly returns the error message."""
+        exc = IndexError('This is a test')
+        self.assertEqual(utils.error_message_from_exc(exc), 'This is a test')
+
 
 if __name__ == "__main__":
     unittest.main()

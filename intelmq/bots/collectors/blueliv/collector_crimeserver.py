@@ -13,6 +13,10 @@ except ImportError:
 
 
 class BluelivCrimeserverCollectorBot(CollectorBot):
+    def init(self):
+        if BluelivAPI is None:
+            self.logger.error('Could not import BluelivAPI. Please install it.')
+            self.stop()
 
     def init(self):
         if BluelivAPI is None:
