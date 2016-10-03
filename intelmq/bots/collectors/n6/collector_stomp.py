@@ -7,37 +7,36 @@ from intelmq.lib.message import Report
 
 try:
     import stomp
+
+    class StompListener(stomp.listener.PrintingListener):
+        """ the stomp listener gets called asynchronously for
+            every STOMP message
+        """
+        def __init__(self, n6stompcollector):
+            self.n6stomper = n6stompcollector
+
+        def on_heartbeat_timeout(self):
+            self.n6stomper.logger.warn("Heartbeat timeout. Attempting to re-connect")
+            self.n6stomper.conn.disconnect()
+            status = self.n6stomper.conn.connect(wait=False)
+            self.n6stomper.logger.warn("Re-connected: {}".format(status))
+
+        def on_error(self, headers, message):
+            self.n6stomper.logger.warn('Received an error :"%s".' % repr(message))
+
+        def on_message(self, headers, message):
+            self.n6stomper.logger.debug('Receive message '
+                                        '{!r}...'.format(message[:500]))
+            report = Report()
+            report.add("raw", message.rstrip())
+            report.add("feed.url", "stomp://" +
+                       self.n6stomper.parameters.server +
+                       ":" + str(self.n6stomper.parameters.port) +
+                       "/" + self.n6stomper.parameters.exchange)
+            self.n6stomper.send_message(report)
+            self.n6stomper.logger.debug('Receiving Message.')
 except ImportError:
     stomp = None
-
-
-class StompListener(stomp.listener.PrintingListener):
-    """ the stomp listener gets called asynchronously for
-        every STOMP message
-    """
-    def __init__(self, n6stompcollector):
-        self.n6stomper = n6stompcollector
-
-    def on_heartbeat_timeout(self):
-        self.n6stomper.logger.warn("Heartbeat timeout. Attempting to re-connect")
-        self.n6stomper.conn.disconnect()
-        status = self.n6stomper.conn.connect(wait=False)
-        self.n6stomper.logger.warn("Re-connected: {}".format(status))
-
-    def on_error(self, headers, message):
-        self.n6stomper.logger.warn('Received an error :"%s".' % repr(message))
-
-    def on_message(self, headers, message):
-        self.n6stomper.logger.debug('Receive message '
-                                    '{!r}...'.format(message[:500]))
-        report = Report()
-        report.add("raw", message.rstrip())
-        report.add("feed.url", "stomp://" +
-                   self.n6stomper.parameters.server +
-                   ":" + str(self.n6stomper.parameters.port) +
-                   "/" + self.n6stomper.parameters.exchange)
-        self.n6stomper.send_message(report)
-        self.n6stomper.logger.debug('Receiving Message.')
 
 
 class n6stompCollectorBot(CollectorBot):

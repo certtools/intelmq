@@ -18,8 +18,9 @@ class RTCollectorBot(CollectorBot):
 
     def init(self):
         if rt is None:
-            self.logger.error('Could not import python-rt. Please install it.')
+            self.logger.error('Could not import rt. Please install it.')
             self.stop()
+
         self.http_header = getattr(self.parameters, 'http_header', {})
         self.http_verify_cert = getattr(self.parameters, 'http_verify_cert',
                                         True)

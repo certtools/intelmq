@@ -31,6 +31,29 @@ from intelmq.lib.bot import Bot
 
 try:
     import sleekxmpp
+
+    class XMPPClient(sleekxmpp.ClientXMPP):
+        def __init__(self, jid, password, logger):
+            sleekxmpp.ClientXMPP.__init__(self, jid, password)
+
+            self.logger = logger
+            self.logger.info("Connected to Server")
+
+            self.add_event_handler("session_start", self.session_start)
+
+        def session_start(self, event):
+            self.send_presence()
+            self.logger.debug("Session started")
+
+            try:
+                self.get_roster()
+            except sleekxmpp.exceptions.IqError as err:
+                self.logger.error('There was an error getting the roster')
+                self.logger.error(err.iq['error']['condition'])
+                self.disconnect()
+            except sleekxmpp.exceptions.IqTimeout:
+                self.logger.error('Server is taking too long to respond')
+                self.disconnect()
 except ImportError:
     sleekxmpp = None
 
@@ -79,30 +102,6 @@ class XMPPOutputBot(Bot):
             super(XMPPOutputBot, self).stop()
         else:
             self.logger.info("There was no XMPPClient I could stop")
-
-
-class XMPPClient(sleekxmpp.ClientXMPP):
-    def __init__(self, jid, password, logger):
-        sleekxmpp.ClientXMPP.__init__(self, jid, password)
-
-        self.logger = logger
-        self.logger.info("Connected to Server")
-
-        self.add_event_handler("session_start", self.session_start)
-
-    def session_start(self, event):
-        self.send_presence()
-        self.logger.debug("Session started")
-
-        try:
-            self.get_roster()
-        except sleekxmpp.exceptions.IqError as err:
-            self.logger.error('There was an error getting the roster')
-            self.logger.error(err.iq['error']['condition'])
-            self.disconnect()
-        except sleekxmpp.exceptions.IqTimeout:
-            self.logger.error('Server is taking too long to respond')
-            self.disconnect()
 
 
 if __name__ == "__main__":
