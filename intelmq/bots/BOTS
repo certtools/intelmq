@@ -424,6 +424,21 @@
                 "filter_value": "<PT>"
             }
         },
+        "Generic Contact DB Lookup": {
+            "description": "Fetches abuse contacts from a database per ASN.",
+            "module": "intelmq.bots.experts.contact_db_lookup.expert",
+            "parameters": {
+                "ascolumn": "asn",
+                "column": "contact",
+                "database": "intelmq",
+                "host": "localhost",
+                "password": "<password>",
+                "port": "5432",
+                "sslmode": "require",
+                "table": "contacts",
+                "user": "intelmq"
+            }
+        },
         "Gethostbyname": {
             "description": "fqdn2ip is the bot responsible to parsing the ip from the fqdn.",
             "module": "intelmq.bots.experts.gethostbyname.expert",
