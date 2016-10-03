@@ -1089,21 +1089,6 @@
             "module": "intelmq.bots.parsers.malwaredomains.parser",
             "parameters": {}
         },
-        "Malware Group Domains": {
-            "description": "Malware Group Domains Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.malwaregroup.parser_domains",
-            "parameters": {}
-        },
-        "Malware Group IPs": {
-            "description": "Malware Group IPs Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.malwaregroup.parser_ips",
-            "parameters": {}
-        },
-        "Malware Group Proxies": {
-            "description": "Malware Group Proxies Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.malwaregroup.parser_proxies",
-            "parameters": {}
-        },
         "MalwarePatrol Dans Guardian": {
             "description": "MalwarePatrol Dans Guardian Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.malwarepatrol.parser_dansguardian",
