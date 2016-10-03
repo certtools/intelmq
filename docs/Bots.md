@@ -486,58 +486,30 @@ pip3 install pymongo>=2.7.1
 
 #### Configuration Parameters:
 
-* `autocommit`: FIXME
+The parameters marked with 'PostgreSQL' will be send
+to libpq via psycopg2. Check the
+[libpq parameter documentation] (https://www.postgresql.org/docs/current/static/libpq-connect.html#LIBPQ-PARAMKEYWORDS)
+for the versions you are using.
+
+* `autocommit`: [psycopg's autocommit mode](http://initd.org/psycopg/docs/connection.html?#connection.autocommit), optional, default True
+* `connect_timeout`: PostgreSQL connect_timeout, optional, default 5 seconds
 * `database`: PostgreSQL database
 * `host`: PostgreSQL host
 * `port`: PostgreSQL port
 * `user`: PostgreSQL user
 * `password`: PostgreSQL password
-* `sslmode`: FIXME
-* `autocommit`: FIXME
-* `table`: FIXME
+* `sslmode`: PostgreSQL sslmode
+* `table`: name of the database table into which events are to be inserted
 
 #### Installation Requirements
 
-```
-pip3 install psycopg2>=2.5.5
-```
+See [REQUIREMENTS.txt](../intelmq/bots/outputs/postgresql/REQUIREMENTS.txt)
+from your installation.
 
 #### PostgreSQL Installation
 
-* Install PostgreSQL, at least version 9.4 is recommended.
-
-```bash
-> apt-get install postgresql-9.4 python-psycopg2 postgresql-server-dev-9.4
-```
-
-* Create a User and Database:
-
-```shell
-> su - postgres
-> createuser intelmq -W
-  Shall the new role be a superuser? (y/n) n
-  Shall the new role be allowed to create databases? (y/n) y
-  Shall the new role be allowed to create more new roles? (y/n) n
-  Password: 
-
-> createdb -O intelmq --encoding='utf-8' intelmq-events
-```
-
-* Please note the --encoding='utf-8' in the line above! Without it, the output but will not be able to insert utf-8 data into the table.
-
-* Depending on your setup adjust `/etc/postgresql/9.4/main/pg_hba.conf` to allow network connections for the intelmq user.
-
-* Restart PostgreSQL.
-
-* Generate `initdb.sql` by using the [psql_initdb_generator.py](https://github.com/certtools/intelmq/blob/master/intelmq/bin/intelmq_psql_initdb.py) tool which extracts all field names and data types from `Data-Harmonization.md`.
-
-* Create the `events` table:
-
-```bash
-> psql intelmq-events < /tmp/initdb.sql # as intelmq user
-> psql -U intelmq intelmq-events -W < /tmp/initdb.sql # as other user
-```
-
+See [outputs/postgresql/README.md](../intelmq/bots/outputs/postgresql/README.md)
+from your installation.
 
 * * *
 
