@@ -393,21 +393,6 @@
                 "overwrite_cc": false
             }
         },
-        "CERT.at Contact Database intern": {
-            "description": "Fetches abuse contacts from a database per ASN.",
-            "module": "intelmq.bots.experts.certat_contact_intern.expert",
-            "parameters": {
-                "ascolumn": "asn",
-                "column": "contact",
-                "database": "intelmq",
-                "host": "localhost",
-                "password": "<password>",
-                "port": "5432",
-                "sslmode": "require",
-                "table": "contacts",
-                "user": "intelmq"
-            }
-        },
         "Cymru Whois": {
             "description": "Cymry Whois (IP to ASN) is the bot responsible to add network information to the events (BGP, ASN, AS Name, Country, etc..).",
             "module": "intelmq.bots.experts.cymru_whois.expert",
@@ -437,6 +422,21 @@
                 "filter_key": "<source.geolocation.cc>",
                 "filter_regex": "",
                 "filter_value": "<PT>"
+            }
+        },
+        "Generic Contact DB Lookup": {
+            "description": "Fetches abuse contacts from a database per ASN.",
+            "module": "intelmq.bots.experts.contact_db_lookup.expert",
+            "parameters": {
+                "ascolumn": "asn",
+                "column": "contact",
+                "database": "intelmq",
+                "host": "localhost",
+                "password": "<password>",
+                "port": "5432",
+                "sslmode": "require",
+                "table": "contacts",
+                "user": "intelmq"
             }
         },
         "Gethostbyname": {

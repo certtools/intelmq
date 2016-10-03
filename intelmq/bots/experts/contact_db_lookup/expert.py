@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-CERT.at geolocate the national CERT abuse service
+Generic Contact DB Lookup
 """
 import sys
 
@@ -12,7 +12,7 @@ except ImportError:
     psycopg2 = None
 
 
-class CERTatContactExpertBot(Bot):
+class ContactDBLookupExpertBot(Bot):
 
     def init(self):
         self.logger.debug("Connecting to database.")
@@ -86,5 +86,5 @@ class CERTatContactExpertBot(Bot):
 
 
 if __name__ == "__main__":
-    bot = CERTatContactExpertBot(sys.argv[1])
+    bot = ContactDBLookupExpertBot(sys.argv[1])
     bot.start()
