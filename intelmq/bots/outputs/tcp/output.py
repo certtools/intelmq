@@ -16,7 +16,7 @@ class TCPOutputBot(Bot):
     def process(self):
         event = self.receive_message()
 
-        data = event.to_json()
+        data = event.to_json(hierarchical=self.parameters.hierarchical_output)
         try:
             self.con.sendall(utils.encode(data) + self.separator)
         except socket.error as exc:
