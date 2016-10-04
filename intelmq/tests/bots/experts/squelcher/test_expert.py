@@ -25,7 +25,6 @@ INPUT1 = {"__type": "Event",
           "source.ip": "192.0.2.1",
           "time.observation": harmonization.DateTime.generate_datetime_now(),
           "feed.name": "Example Feed",
-          "raw": "",
           }
 
 INPUT2 = INPUT1.copy()
