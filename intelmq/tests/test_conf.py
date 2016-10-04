@@ -28,8 +28,7 @@ def to_unsorted_json(obj):
                       separators=(',', ': ')) + '\n'
 
 
-CONF_NAMES = ['defaults', 'harmonization', 'pipeline', 'runtime', 'startup',
-              'system']
+CONF_NAMES = ['defaults', 'harmonization', 'pipeline', 'runtime', 'system']
 
 CONF_FILES = {name: pkg_resources.resource_filename('intelmq',
                                                     'etc/' + name + '.conf')
@@ -83,13 +82,6 @@ class TestConf(unittest.TestCase):
     def test_runtime_syntax(self):
         """ Test if runtime.conf has correct syntax. """
         with open(CONF_FILES['runtime']) as fhandle:
-            fcontent = fhandle.read()
-        interpreted = json.loads(fcontent)
-        self.assertEqual(to_json(interpreted), fcontent)
-
-    def test_startup_syntax(self):
-        """ Test if startup.conf has correct syntax. """
-        with open(CONF_FILES['startup']) as fhandle:
             fcontent = fhandle.read()
         interpreted = json.loads(fcontent)
         self.assertEqual(to_json(interpreted), fcontent)
