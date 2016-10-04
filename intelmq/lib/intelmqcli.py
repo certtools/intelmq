@@ -72,6 +72,7 @@ USAGE = '''
     intelmqcli --list-taxonomies
     intelmqcli --taxonomy='taxonomy'
     intelmqcli --type='type'
+    intelmqcli --identifier='identifier'
     intelmqcli --list-types
     intelmqcli --list-texts
     intelmqcli --text='boilerplate name'
@@ -325,6 +326,8 @@ class IntelMQCLIContollerTemplate():
                                  help='Specify one or more AS numbers (integers) to process.')
         self.parser.add_argument('--type', nargs='+',
                                  help='Specify one or more classifications types to process.')
+        self.parser.add_argument('--identifier', nargs='+',
+                                 help='Specify one or more classifications identifiers to process.')
 
         self.parser.add_argument('-b', '--batch', action='store_true',
                                  help='Run in batch mode (defaults to "yes" to all).')
@@ -359,6 +362,9 @@ class IntelMQCLIContollerTemplate():
         if self.args.type:
             self.additional_where += """ AND "classification.type" = ANY(%s::VARCHAR[]) """
             self.additional_params += ('{' + ','.join(self.args.type) + '}', )
+        if self.args.identifier:
+            self.additional_where += """ AND "classification.identifier" = ANY(%s::VARCHAR[]) """
+            self.additional_params += ('{' + ','.join(self.args.identifier) + '}', )
 
         with open('/etc/intelmq/intelmqcli.conf') as conf_handle:
             self.config = json.load(conf_handle)
