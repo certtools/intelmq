@@ -23,7 +23,6 @@ DATA = [
       'intelmq/etc/harmonization.conf',
       'intelmq/etc/pipeline.conf',
       'intelmq/etc/runtime.conf',
-      'intelmq/etc/startup.conf',
       ],
      ),
     ('/opt/intelmq/var/lib/bots/modify/example',

@@ -402,7 +402,12 @@ class Bot(object):
         config = utils.load_configuration(RUNTIME_CONF_FILE)
 
         if self.__bot_id in list(config.keys()):
-            for option, value in config[self.__bot_id].items():
+            params = config[self.__bot_id]
+            if 'parameters' in params:
+                params = params['parameters']
+            else:
+                self.logger.warning('Old runtime configuration format found.')
+            for option, value in params.items():
                 setattr(self.parameters, option, value)
                 self.logger.debug("Runtime configuration: parameter {!r} "
                                   "loaded with value {!r}.".format(option, value))
