@@ -558,6 +558,34 @@ class CollectorBot(Bot):
                               'Possible Misconfiguration.')
             self.stop()
 
+    def start(self, starting=True, error_on_pipeline=True,
+              error_on_message=False, source_pipeline=None,
+              destination_pipeline=None):
+        """
+        Collector-Bots have their own start-method,
+        in order to enable the deactivation of a Collector-Bot,
+        one can use the 'enabled' parameter in the Bot's
+        JSON configuration if no paramter is provided, the bot will
+        start up normally.
+        """
+        if hasattr(self.parameters, 'enabled'):
+            enabled = utils.to_bool(self.parameters.enabled, True)
+            # Set to_bool fallback mode to True, in order to always
+            # start a bot, even when the value in the config could not
+            # be mapped to a boolean
+
+            if not enabled:
+                self.logger.warn('The bot was disabled by configuration. '
+                                 'It will not be started as long as this '
+                                 'configuration is present')
+                self.stop()
+                # code should have exited by now... just to be sure
+                return None
+
+        super(CollectorBot, self).start(starting, error_on_pipeline,
+                                        error_on_message, source_pipeline,
+                                        destination_pipeline)
+
     def __filter_empty_report(self, message):
         if 'raw' not in message:
             self.logger.warning('Ignoring report without raw field. '
