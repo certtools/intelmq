@@ -543,7 +543,7 @@ open_snmp = {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'Vulnerable',
         'protocol.application': 'snmp',
-        'classification.identifier': 'snmp',
+        'classification.identifier': 'opensnmp',
         'feed.code': 'shadowserver-opensnmp',
         'feed.name': 'shadowserver',
     },
