@@ -278,9 +278,8 @@ class IntelMQCLIContoller(lib.IntelMQCLIContollerTemplate):
         query = self.shrink_dict(query)
         ids = list(str(row['id']) for row in query)
 
-        subject = ('{count} {tax} in your network: {date}'
-                   ''.format(count=len(query),
-                             date=datetime.datetime.now().strftime('%Y-%m-%d'),
+        subject = ('{tax} in your network: {date}'
+                   ''.format(date=datetime.datetime.now().strftime('%Y-%m-%d'),
                              tax=lib.SUBJECT[taxonomy]))
         text = self.get_text(taxonomy)
         if six.PY2:
