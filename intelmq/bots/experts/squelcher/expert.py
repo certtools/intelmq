@@ -14,7 +14,7 @@ from intelmq.lib.utils import load_configuration
 SELECT_QUERY = '''
 SELECT COUNT(*) FROM {table}
 WHERE
-"time.source" + INTERVAL '%s SECONDS' > LOCALTIMESTAMP AND
+"time.source" + INTERVAL '%s SECONDS' >= LOCALTIMESTAMP AND
 "classification.type" = %s AND
 "classification.identifier" = %s AND
 "source.ip" = %s AND
