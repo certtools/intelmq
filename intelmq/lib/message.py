@@ -223,15 +223,17 @@ class Message(dict):
     def __hash__(self):
         return int(self.hash(), 16)
 
-    def hash(self):
+    def hash(self, blacklist=frozenset()):
         """Return a sha256 hash of the message as a hexadecimal string.
-        The hash is computed over all key/value pairs, except for
-        'time.observation'.
+        The hash is computed over almost all key/value pairs. The only
+        keys omitted are 'time.observation' and all keys contained in
+        the optional blacklist parameter. If given, the blacklist
+        parameter should be a set.
         """
         event_hash = hashlib.sha256()
 
         for key, value in sorted(self.items()):
-            if "time.observation" == key:
+            if "time.observation" == key or key in blacklist:
                 continue
 
             event_hash.update(utils.encode(key))
