@@ -27,7 +27,7 @@ class DeduplicatorExpertBot(Bot):
             if ignore_key in auxiliar_message:
                 del auxiliar_message[ignore_key]
 
-        message_hash = hash(auxiliar_message)
+        message_hash = auxiliar_message.hash()
 
         if not self.cache.exists(message_hash):
             self.cache.set(message_hash, 'hash')

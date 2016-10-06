@@ -221,6 +221,13 @@ class Message(dict):
         return class_name
 
     def __hash__(self):
+        return int(self.hash(), 16)
+
+    def hash(self):
+        """Return a sha256 hash of the message as a hexadecimal string.
+        The hash is computed over all key/value pairs, except for
+        'time.observation'.
+        """
         event_hash = hashlib.sha256()
 
         for key, value in sorted(self.items()):
@@ -232,7 +239,7 @@ class Message(dict):
             event_hash.update(utils.encode(repr(value)))
             event_hash.update(b"\xc0")
 
-        return int(event_hash.hexdigest(), 16)
+        return event_hash.hexdigest()
 
     def to_dict(self, hierarchical=False):
         json_dict = dict()
