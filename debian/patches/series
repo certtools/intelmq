@@ -1,3 +1,2 @@
-change-log-level.patch
 fix-logrotate-path.patch
 fix-dnspython-name.patch

@@ -9,47 +9,42 @@ import io
 import json
 import logging
 import os
+import unittest.mock as mock
 
-import mock
 import pkg_resources
 
 import intelmq.lib.pipeline as pipeline
 import intelmq.lib.utils as utils
-from intelmq import (PIPELINE_CONF_FILE, RUNTIME_CONF_FILE, SYSTEM_CONF_FILE,
-                     CONFIG_DIR)
+from intelmq import (PIPELINE_CONF_FILE, RUNTIME_CONF_FILE, CONFIG_DIR)
 
 __all__ = ['BotTestCase']
 
-
-BOT_CONFIG = {
-    "logging_level": "DEBUG",
-    "http_proxy": None,
-    "https_proxy": None,
-    "broker": "pythonlist",
-    "rate_limit": 0,
-    "retry_delay": 0,
-    "error_retry_delay": 0,
-    "error_max_retries": 0,
-    "testing": True,
-    "redis_cache_host": "localhost",
-    "redis_cache_port": 6379,
-    "redis_cache_db": 10,
-    "redis_cache_ttl": 10,
-}
+BOT_CONFIG = {"logging_level": "DEBUG",
+              "http_proxy": None,
+              "https_proxy": None,
+              "broker": "pythonlist",
+              "rate_limit": 0,
+              "retry_delay": 0,
+              "error_retry_delay": 0,
+              "error_max_retries": 0,
+              "redis_cache_host": "localhost",
+              "redis_cache_port": 6379,
+              "redis_cache_db": 10,
+              "redis_cache_ttl": 10,
+              "testing": True,
+              }
 
 
 def mocked_config(bot_id='test-bot', src_name='', dst_names=(), sysconfig={}):
-    def mock(conf_file):
+    def mocked(conf_file):
         if conf_file == PIPELINE_CONF_FILE:
             return {bot_id: {"source-queue": src_name,
                              "destination-queues": dst_names},
                     }
         elif conf_file == RUNTIME_CONF_FILE:
-            return {bot_id: {}}
-        elif conf_file == SYSTEM_CONF_FILE:
             conf = BOT_CONFIG.copy()
             conf.update(sysconfig)
-            return conf
+            return {bot_id: conf}
         elif conf_file.startswith(CONFIG_DIR):
             confname = os.path.join('etc/', os.path.split(conf_file)[-1])
             fname = pkg_resources.resource_filename('intelmq',
@@ -58,7 +53,7 @@ def mocked_config(bot_id='test-bot', src_name='', dst_names=(), sysconfig={}):
                 return json.load(fpconfig)
         else:
             return utils.load_configuration(conf_file)
-    return mock
+    return mocked
 
 
 with mock.patch('intelmq.lib.utils.load_configuration', new=mocked_config()):
@@ -114,7 +109,7 @@ class BotTestCase(object):
             cls.default_input_message = {'__type': 'Report',
                                          'raw': 'Cg==',
                                          'feed.name': 'Test Feed',
-                                         'time.observation': '2016-01-01T00:00'}
+                                         'time.observation': '2016-01-01T00:00:00+00:00'}
         if type(cls.default_input_message) is dict:
             cls.default_input_message = \
                 utils.decode(json.dumps(cls.default_input_message))
@@ -166,7 +161,8 @@ class BotTestCase(object):
                     self.input_queue.append(msg)
             self.input_message = None
         else:
-            self.input_queue = [self.default_input_message]
+            if self.default_input_message:  # None for collectors
+                self.input_queue = [self.default_input_message]
 
     def run_bot(self, iterations=1):
         """
@@ -216,6 +212,10 @@ class BotTestCase(object):
                                                self.bot_id), "INFO")
         self.assertRegexpMatchesLog("INFO - Bot is starting.")
         self.assertLoglineEqual(-1, "Bot stopped.", "INFO")
+        self.assertNotRegexpMatchesLog("(ERROR.*?){}"
+                                       "".format(self.allowed_error_count))
+        self.assertNotRegexpMatchesLog("CRITICAL")
+        """ If no error happened (incl. tracebacks, we can check for formatting) """
         for logline in self.loglines:
             fields = utils.parse_logline(logline)
             self.assertTrue(fields['message'][-1] in '.?!',
@@ -224,9 +224,6 @@ class BotTestCase(object):
             self.assertTrue(fields['message'].upper() == fields['message'].upper(),
                             msg='Logline {!r} does not beginn with an upper case char.'
                                 ''.format(fields['message']))
-        self.assertNotRegexpMatchesLog("(ERROR.*?){}"
-                                       "".format(self.allowed_error_count))
-        self.assertNotRegexpMatchesLog("CRITICAL")
 
 #        """ Test if all pipes are created with correct names. """
         pipenames = ["{}-input", "{}-input-internal", "{}-output"]
