@@ -140,11 +140,15 @@ def main():
             info = dump_info(fname)
             print("{c:3}: {s:{l}} {i}".format(c=count, s=shortname, i=info,
                                               l=length))
-        botid = input(inverted('Which dump file to process (id or name)?') +
-                      ' ')
-        botid = botid.strip()
-        if botid == 'q' or not botid:
+        try:
+            botid = input(inverted('Which dump file to process (id or name)?') +
+                          ' ')
+        except EOFError:
             exit(0)
+        else:
+            botid = botid.strip()
+            if botid == 'q' or not botid:
+                exit(0)
         try:
             fname, botid = filenames[int(botid)]
         except ValueError:
@@ -176,9 +180,13 @@ def main():
             available_opts = [item[0] for item in ACTIONS.values()]
             for count, line in enumerate(meta):
                 print('{:3}: {} {}'.format(count, *line))
-        answer = input(inverted(', '.join(available_opts) + '?') + ' ').split()
-        if not answer:
-            continue
+        try:
+            answer = input(inverted(', '.join(available_opts) + '?') + ' ').split()
+        except EOFError:
+            break
+        else:
+            if not answer:
+                continue
         if any([answer[0] == char for char in AVAILABLE_IDS]):
             ids = [int(item) for item in answer[1].split(',')]
         queue_name = None
