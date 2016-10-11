@@ -160,9 +160,25 @@ def main():
     if not os.path.isfile(fname):
         print(bold('Given file does not exist: {}'.format(fname)))
         exit(1)
+
+    answer = None
     while True:
         info = dump_info(fname)
         print('Processing {}: {}'.format(bold(botid), info))
+
+        if info.startswith(str(red)):
+            available_opts = [item[0] for item in ACTIONS.values() if item[2]]
+            print('Restricted actions.')
+        else:
+            # don't display list after 'show' command
+            if not (answer and isinstance(answer, list) and answer[0] == 's'):
+                with open(fname, 'rt') as handle:
+                    content = json.load(handle)
+                meta = load_meta(content)
+                available_opts = [item[0] for item in ACTIONS.values()]
+                for count, line in enumerate(meta):
+                    print('{:3}: {} {}'.format(count, *line))
+
         # Determine bot status
         bot_status = ctl.bot_status(botid)
         if bot_status == 'running':
@@ -170,16 +186,6 @@ def main():
         elif bot_status == 'error':
             print(red('Attention: This bot is not defined!'))
 
-        if info.startswith(str(red)):
-            available_opts = [item[0] for item in ACTIONS.values() if item[2]]
-            print('Restricted actions.')
-        else:
-            with open(fname, 'rt') as handle:
-                content = json.load(handle)
-            meta = load_meta(content)
-            available_opts = [item[0] for item in ACTIONS.values()]
-            for count, line in enumerate(meta):
-                print('{:3}: {} {}'.format(count, *line))
         try:
             answer = input(inverted(', '.join(available_opts) + '?') + ' ').split()
         except EOFError:
