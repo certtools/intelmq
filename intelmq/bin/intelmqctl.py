@@ -210,18 +210,6 @@ Get logs of a bot:
     Default is INFO. Number of lines defaults to 10, -1 gives all. Result
     can be longer due to our logging format!'''
 
-        with open(STARTUP_CONF_FILE, 'r') as fp:
-            self.startup = json.load(fp)
-
-        if os.path.exists(SYSTEM_CONF_FILE):
-            self.logger.warn("system.conf is deprecated and will be"
-                             "removed in 1.0. Use defaults.conf instead!")
-            with open(SYSTEM_CONF_FILE, 'r') as fp:
-                self.system = json.load(fp)
-
-        if not os.path.exists(PIDDIR):
-            os.makedirs(PIDDIR)
-
         # stolen functions from the bot file
         # this will not work with various instances of REDIS
         self.parameters = Parameters()
@@ -231,8 +219,22 @@ Get logs of a bot:
             PIPELINE_CONF_FILE)
         self.runtime_configuration = utils.load_configuration(
             RUNTIME_CONF_FILE)
-        self.startup_configuration = utils.load_configuration(
-            STARTUP_CONF_FILE)
+
+        if os.path.exists(STARTUP_CONF_FILE):
+            self.logger.warning('Deprecated startup.conf file found, please migrate to runtime.conf soon.')
+            with open(STARTUP_CONF_FILE, 'r') as fp:
+                startup = json.load(fp)
+                for bot_id, bot_values in startup.items():
+                    if 'parameters' in self.runtime_configuration[bot_id]:
+                        self.logger.warning('Mixed setup of new runtime.conf and old startup.conf'
+                                            ' found. Ignoring startup.conf, please fix this!')
+                        continue
+                    params = self.runtime_configuration[bot_id].copy()
+                    self.runtime_configuration[bot_id]['parameters'] = params
+                    self.runtime_configuration[bot_id].update(bot_values)
+
+        if not os.path.exists(PIDDIR):
+            os.makedirs(PIDDIR)
 
         if self.interactive:
             parser = argparse.ArgumentParser(
@@ -568,7 +570,7 @@ Get logs of a bot:
         return self.read_bot_log(bot_id, log_level, number_of_lines)
 
     def read_bot_log(self, bot_id, log_level, number_of_lines):
-        bot_log_path = os.path.join(self.system['logging_path'],
+        bot_log_path = os.path.join(self.parameters.logging_path,
                                     bot_id + '.log')
         if not os.path.isfile(bot_log_path):
             logger.error("Log path not found: {}".format(bot_log_path))
