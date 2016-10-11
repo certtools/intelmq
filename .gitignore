@@ -19,3 +19,11 @@ htmlcov/
 *.key
 src/
 .eggs
+
+# Debian build filed
+debian/files
+debian/intelmq.postinst.debhelper
+debian/intelmq.prerm.debhelper
+debian/intelmq.substvars
+debian/intelmq/
+/.pc/*

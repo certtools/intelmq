@@ -7,6 +7,7 @@ Use MessageFactory to get a Message object (types Report and Event).
 import hashlib
 import json
 import re
+import warnings
 
 import intelmq.lib.exceptions as exceptions
 import intelmq.lib.harmonization
@@ -86,7 +87,6 @@ class MessageFactory(object):
 class Message(dict):
 
     def __init__(self, message=(), auto=False):
-        super(Message, self).__init__(message)
         try:
             classname = message['__type'].lower()
             del message['__type']
@@ -100,6 +100,16 @@ class Message(dict):
                                              got=classname,
                                              expected=list(harm_config.keys()),
                                              docs=HARMONIZATION_CONF_FILE)
+        super(Message, self).__init__()
+        if isinstance(message, dict):
+            iterable = message.items()
+        elif isinstance(message, tuple):
+            iterable = message
+        for key, value in iterable:
+            try:
+                self.add(key, value, sanitize=False)
+            except exceptions.InvalidValue:
+                self.add(key, value, sanitize=True)
 
     def __setitem__(self, key, value):
         self.add(key, value)
@@ -111,12 +121,15 @@ class Message(dict):
         if value is None or value == "":
             return
 
-        for invalid_value in ["-", "N/A"]:
-            if value == invalid_value:
-                return
+        if value in ["-", "N/A"]:
+            return
 
         if not self.__is_valid_key(key):
             raise exceptions.InvalidKey(key)
+
+        if ignore:
+            warnings.warn('The ignore-argument will be removed in 1.0.',
+                          DeprecationWarning)
 
         try:
             if value in ignore:
@@ -139,6 +152,12 @@ class Message(dict):
         super(Message, self).__setitem__(key, value)
 
     def update(self, key, value, sanitize=True):
+        warnings.warn('update(...) will be changed to dict.update() in 1.0. '
+                      'Use change(key, value, sanitize) instead.',
+                      DeprecationWarning)
+        self.change(key, value, sanitize)
+
+    def change(self, key, value, sanitize=True):
         if key not in self:
             raise exceptions.KeyNotExists(key)
         self.add(key, value, force=True, sanitize=sanitize)
@@ -159,7 +178,6 @@ class Message(dict):
         retval = getattr(intelmq.lib.message,
                          class_ref)(super(Message, self).copy())
         del self['__type']
-        del retval['__type']
         return retval
 
     def deep_copy(self):
@@ -210,6 +228,9 @@ class Message(dict):
         if 'regex' in config:
             if not re.search(config['regex'], str(value)):
                 return (False, 'regex did not match.')
+        if 'iregex' in config:
+            if not re.search(config['iregex'], str(value), re.IGNORECASE):
+                return (False, 'regex (case insensitive) did not match.')
         return (True, )
 
     def __sanitize_value(self, key, value):
@@ -235,7 +256,7 @@ class Message(dict):
 
         return int(event_hash.hexdigest(), 16)
 
-    def to_dict(self, hierarchical=True):
+    def to_dict(self, hierarchical=False):
         json_dict = dict()
 
         for key, value in self.items():
@@ -256,9 +277,9 @@ class Message(dict):
                 json_dict_fp = json_dict_fp[subkey]
         return json_dict
 
-    def to_json(self):
-        json_dict = self.to_dict()
-        return utils.decode(json.dumps(json_dict, ensure_ascii=False))
+    def to_json(self, hierarchical=False):
+        json_dict = self.to_dict(hierarchical=hierarchical)
+        return json.dumps(json_dict, ensure_ascii=False)
 
 
 class Event(Message):
@@ -288,7 +309,7 @@ class Event(Message):
                 template['time.observation'] = message['time.observation']
         else:
             template = message
-        super(Event, self).__init__(template)
+        super(Event, self).__init__(template, auto)
 
 
 class Report(Message):
@@ -302,7 +323,7 @@ class Report(Message):
         auto : boolean
             if false (default), time.observation is automatically added.
         """
-        super(Report, self).__init__(message)
+        super(Report, self).__init__(message, auto)
         if not auto and 'time.observation' not in self:
             time_observation = intelmq.lib.harmonization.DateTime().generate_datetime_now()
             self.add('time.observation', time_observation, sanitize=False)

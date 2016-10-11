@@ -1,0 +1,23 @@
+*.conf  text eol=lf
+*.csv   text eol=lf
+*.html  text eol=lf
+*.json  text eol=lf
+*.less  text eol=lf
+*.md    text eol=lf
+*.py    text diff=python
+*.sh    text eol=lf
+*.sql   text eol=lf
+*.txt   text eol=lf
+*.xml   text eol=lf
+*.yml   text eol=lf
+
+*.jpg binary
+*.png binary
+
+/.*  export-ignore
+/CONTRIBUTING.md	export-ignore
+/debian  export-ignore
+/MANIFEST.in export-ignore
+/README.rst	export-ignore
+/REQUIREMENTS	export-ignore
+/setup.cfg   export-ignore

@@ -26,6 +26,11 @@ EXAMPLE_OUTPUT6 = {"__type": "Event",
                    "source.abuse_contact": "ops@icann.org",
                    "time.observation": "2015-01-01T00:00:00+00:00",
                    }
+EXAMPLE_EXISTING = {"__type": "Event",
+                    "source.ip": "2001:500:88:200::7",
+                    "source.abuse_contact": "example@example.org",
+                    "time.observation": "2015-01-01T00:00:00+00:00",
+                    }
 
 
 class TestAbusixExpertBot(test.BotTestCase, unittest.TestCase):
@@ -37,6 +42,7 @@ class TestAbusixExpertBot(test.BotTestCase, unittest.TestCase):
     def set_bot(cls):
         cls.bot_reference = AbusixExpertBot
         cls.default_input_message = {'__type': 'Report'}
+        cls.sysconfig = {'overwrite': True}
 
     def test_ipv4_lookup(self):
         self.input_message = EXAMPLE_INPUT
@@ -47,6 +53,12 @@ class TestAbusixExpertBot(test.BotTestCase, unittest.TestCase):
         self.input_message = EXAMPLE_INPUT6
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_OUTPUT6)
+
+    def test_lookup_existing(self):
+        self.sysconfig = {'overwrite': False}
+        self.input_message = EXAMPLE_EXISTING
+        self.run_bot()
+        self.assertMessageEqual(0, EXAMPLE_EXISTING)
 
 if __name__ == '__main__':
     unittest.main()

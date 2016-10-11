@@ -61,7 +61,11 @@ class ReverseDnsExpertBot(Bot):
                     result = resolver.query(rev_name, "PTR")
                     expiration = result.expiration
                     result = result[0]
-                except dns.exception.DNSException as e:
+
+                    if str(result) == '.':
+                        result = None
+                        raise ValueError
+                except (dns.exception.DNSException, ValueError) as e:
                     if isinstance(e, dns.resolver.NXDOMAIN):
                         continue
                 else:

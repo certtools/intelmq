@@ -2,36 +2,38 @@
 """
 
 """
-
 import csv
 import datetime
 import io
 import json
-import re
+import logging
 import os
+import re
 import signal
 import sys
 import time
 import traceback
 
-from intelmq import (DEFAULT_LOGGING_LEVEL, DEFAULT_LOGGING_PATH,
+from intelmq import (DEFAULT_LOGGING_PATH,
                      DEFAULTS_CONF_FILE, HARMONIZATION_CONF_FILE,
                      PIPELINE_CONF_FILE, RUNTIME_CONF_FILE, SYSTEM_CONF_FILE)
 from intelmq.lib import exceptions, utils
 from intelmq.lib.message import MessageFactory
 from intelmq.lib.pipeline import PipelineFactory
 
-__all__ = ['Bot', 'ParserBot']
+__all__ = ['Bot', 'CollectorBot', 'ParserBot']
 
 
 class Bot(object):
+
+    """ Not to be reset when initialized again on reload. """
+    __current_message = None
+    __message_counter = 0
 
     def __init__(self, bot_id):
         self.__log_buffer = []
         self.parameters = Parameters()
 
-        self.__current_message = None
-        self.__message_counter = 0
         self.__error_retries_counter = 0
         self.__source_pipeline = None
         self.__destination_pipeline = None
@@ -45,6 +47,7 @@ class Bot(object):
                                       ''.format(self.__class__.__name__,
                                                 bot_id, version_info,
                                                 os.getpid())))
+            self.__log_buffer.append(('debug', 'Library path: %r.' % __file__))
 
             self.__load_defaults_configuration()
             self.__load_system_configuration()
@@ -57,6 +60,7 @@ class Bot(object):
             else:
                 syslog = False
             self.logger = utils.log(self.__bot_id, syslog=syslog,
+                                    log_path=self.parameters.logging_path,
                                     log_level=self.parameters.logging_level)
         except:
             self.__log_buffer.append(('critical', traceback.format_exc()))
@@ -73,13 +77,34 @@ class Bot(object):
 
             self.init()
 
-            signal.signal(signal.SIGHUP, self.__sighup)
-        except:
-            self.logger.exception('Bot initialization failed.')
+            self.__sighup = False
+            signal.signal(signal.SIGHUP, self.__handle_sighup_signal)
+            # system calls should not be interrupted, but restarted
+            signal.siginterrupt(signal.SIGHUP, False)
+        except Exception as exc:
+            if self.parameters.error_log_exception:
+                self.logger.exception('Bot initialization failed.')
+            else:
+                self.logger.error(utils.error_message_from_exc(exc))
+                self.logger.error('Bot initialization failed.')
+
+            self.stop()
             raise
 
-    def __sighup(self, signum, stack):
-        self.logger.info('Received SIGHUP, initializing again.')
+    def __handle_sighup_signal(self, signum, stack):
+        """
+        Called when signal is received and postpone.
+        """
+        self.logger.info('Received SIGHUP, initializing again later.')
+        self.__sighup = True
+
+    def __handle_sighup(self):
+        """
+        Handle SIGHUP.
+        """
+        if not self.__sighup:
+            return False
+        self.logger.info('Handling SIGHUP, initializing again now.')
         self.__disconnect_pipelines()
         self.logger.handlers = []  # remove all existing handlers
         self.__init__(self.__bot_id)
@@ -118,15 +143,15 @@ class Bot(object):
                     self.logger.info("Start processing.")
                     starting = False
 
+                self.__handle_sighup()
                 self.process()
                 self.__error_retries_counter = 0  # reset counter
 
-                self.logger.info("Idling for {!s}s now.".format(self.parameters.rate_limit))
-                time.sleep(self.parameters.rate_limit)
+                if self.parameters.rate_limit:
+                    self.__sleep()
 
             except exceptions.PipelineError:
                 error_on_pipeline = True
-                error_traceback = traceback.format_exc()
 
                 if self.parameters.error_log_exception:
                     self.logger.exception('Pipeline failed.')
@@ -134,13 +159,13 @@ class Bot(object):
                     self.logger.error('Pipeline failed.')
                 self.__disconnect_pipelines()
 
-            except Exception:
+            except Exception as exc:
                 error_on_message = True
-                error_traceback = traceback.format_exc()
 
                 if self.parameters.error_log_exception:
                     self.logger.exception("Bot has found a problem.")
                 else:
+                    self.logger.error(utils.error_message_from_exc(exc))
                     self.logger.error("Bot has found a problem.")
 
                 if self.parameters.error_log_message:
@@ -150,11 +175,12 @@ class Bot(object):
 
             except KeyboardInterrupt:
                 self.logger.error("Received KeyboardInterrupt.")
-                self.stop()
+                self.stop(exitcode=0)
+                del self
                 break
 
             finally:
-                if self.parameters.testing:
+                if getattr(self.parameters, 'testing', False):
                     self.stop()
                     break
 
@@ -168,6 +194,7 @@ class Bot(object):
                         if error_on_message:
 
                             if self.parameters.error_dump_message:
+                                error_traceback = traceback.format_exc()
                                 self._dump_message(error_traceback,
                                                    message=self.__current_message)
                                 self.__current_message = None
@@ -186,30 +213,46 @@ class Bot(object):
                         # error_procedure: pass
                         else:
                             self.__error_retries_counter = 0  # reset counter
+            self.__handle_sighup()
 
-    def __del__(self):
-        self.stop()
+    def __sleep(self):
+        """
+        Sleep handles interrupts and changed rate_limit-parameter.
 
-    def stop(self):
-        self.shutdown()
+        time.sleep is stopped by signals such as SIGHUP. As rate_limit could
+        have been changed, we initialize again and continue to sleep, if
+        necessary at all.
+        """
+        starttime = time.time()
+        remaining = self.parameters.rate_limit
+        while remaining > 0:
+            self.logger.info("Idling for {:.1f}s now.".format(remaining))
+            time.sleep(remaining)
+            self.__handle_sighup()
+            remaining = self.parameters.rate_limit - (time.time() - starttime)
+
+    def stop(self, exitcode=1):
+        try:
+            self.shutdown()
+        except:
+            pass
 
         self.__disconnect_pipelines()
 
         if self.logger:
             self.logger.info("Bot stopped.")
+            logging.shutdown()
         else:
             self.__log_buffer.append(('info', 'Bot stopped.'))
             self.__print_log_buffer()
 
-        if not self.parameters.testing:
-            self.__terminate()
-
-    def __terminate(self):
-        try:
-            self.logger.error("Exiting.")
-        except:
-            print("Exiting")
-        exit(-1)
+        if not getattr(self.parameters, 'testing', False):
+            try:
+                self.logger.error("Exiting.")
+            except:
+                print("Exiting")
+            del self
+            exit(exitcode)
 
     def __print_log_buffer(self):
         for level, message in self.__log_buffer:
@@ -232,7 +275,7 @@ class Bot(object):
         self.logger.debug("Loading source queue.")
         self.__source_pipeline.set_queues(self.__source_queues, "source")
         self.logger.debug("Source queue loaded {}."
-                         "".format(self.__source_queues))
+                          "".format(self.__source_queues))
         self.__source_pipeline.connect()
         self.logger.debug("Connected to source queue.")
 
@@ -242,7 +285,7 @@ class Bot(object):
         self.__destination_pipeline.set_queues(self.__destination_queues,
                                                "destination")
         self.logger.debug("Destination queues loaded {}."
-                         "".format(self.__destination_queues))
+                          "".format(self.__destination_queues))
         self.__destination_pipeline.connect()
         self.logger.debug("Connected to destination queues.")
 
@@ -274,7 +317,7 @@ class Bot(object):
             self.__destination_pipeline.send(raw_message)
 
     def receive_message(self):
-        self.logger.debug('Waiting for incomong message.')
+        self.logger.debug('Waiting for incoming message.')
         message = None
         while not message:
             message = self.__source_pipeline.receive()
@@ -290,6 +333,9 @@ class Bot(object):
             tmp_msg = self.__current_message
         self.logger.debug('Received message {!r}.'.format(tmp_msg))
 
+        # handle a sighup which happened during blocking read
+        self.__handle_sighup()
+
         return self.__current_message
 
     def acknowledge_message(self):
@@ -303,7 +349,7 @@ class Bot(object):
         timestamp = datetime.datetime.utcnow()
         timestamp = timestamp.isoformat()
 
-        dump_file = "%s%s.dump" % (self.parameters.logging_path, self.__bot_id)
+        dump_file = os.path.join(self.parameters.logging_path, self.__bot_id + ".dump")
 
         new_dump_data = dict()
         new_dump_data[timestamp] = dict()
@@ -329,9 +375,7 @@ class Bot(object):
         self.__log_buffer.append(('debug', "Loading defaults configuration."))
         config = utils.load_configuration(DEFAULTS_CONF_FILE)
 
-        setattr(self.parameters, 'testing', False)
         setattr(self.parameters, 'logging_path', DEFAULT_LOGGING_PATH)
-        setattr(self.parameters, 'logging_level', DEFAULT_LOGGING_LEVEL)
 
         for option, value in config.items():
             setattr(self.parameters, option, value)
@@ -341,18 +385,20 @@ class Bot(object):
                                                                         value)))
 
     def __load_system_configuration(self):
-        self.__log_buffer.append(('debug', "Loading system configuration"))
-        config = utils.load_configuration(SYSTEM_CONF_FILE)
+        if os.path.exists(SYSTEM_CONF_FILE):
+            self.__log_buffer.append(('warning', "system.conf is deprecated and will be"
+                                      "removed in 1.0. Use defaults.conf instead!"))
+            self.__log_buffer.append(('debug', "Loading system configuration."))
+            config = utils.load_configuration(SYSTEM_CONF_FILE)
 
-        for option, value in config.items():
-            setattr(self.parameters, option, value)
-            self.__log_buffer.append(('debug',
-                                      "System configuration: parameter {!r} "
-                                      "loaded  with value {!r}.".format(option,
-                                                                        value)))
+            for option, value in config.items():
+                setattr(self.parameters, option, value)
+                self.__log_buffer.append(('debug',
+                                          "System configuration: parameter {!r} "
+                                          "loaded  with value {!r}.".format(option, value)))
 
     def __load_runtime_configuration(self):
-        self.logger.debug("Loading runtime configuration")
+        self.logger.debug("Loading runtime configuration.")
         config = utils.load_configuration(RUNTIME_CONF_FILE)
 
         if self.__bot_id in list(config.keys()):
@@ -362,7 +408,7 @@ class Bot(object):
                                   "loaded with value {!r}.".format(option, value))
 
     def __load_pipeline_configuration(self):
-        self.logger.debug("Loading pipeline configuration")
+        self.logger.debug("Loading pipeline configuration.")
         config = utils.load_configuration(PIPELINE_CONF_FILE)
 
         self.__source_queues = None
@@ -404,6 +450,13 @@ class Bot(object):
 
 class ParserBot(Bot):
 
+    def __init__(self, bot_id):
+        super(ParserBot, self).__init__(bot_id=bot_id)
+        if self.__class__.__name__ == 'ParserBot':
+            self.logger.error('ParserBot can\'t be started itself. '
+                              'Possible Misconfiguration.')
+            self.stop()
+
     def parse_csv(self, report):
         """
         A basic CSV parser.
@@ -440,20 +493,28 @@ class ParserBot(Bot):
         self.__failed = []
         report = self.receive_message()
 
+        if 'raw' not in report:
+            self.logger.warning('Report without raw field received. Possible '
+                                'bug or misconfiguration in previous bots.')
+            self.acknowledge_message()
+            return
+
         for line in self.parse(report):
             if not line:
                 continue
             try:
                 # filter out None
                 events = list(filter(bool, self.parse_line(line, report)))
-            except Exception as exc:
+            except Exception:
                 self.logger.exception('Failed to parse line.')
-                self.__failed.append((exc, line))
+                self.__failed.append((traceback.format_exc(), line))
             else:
                 self.send_message(*events)
 
         for exc, line in self.__failed:
-            self._dump_message(exc, self.recover_line(line))
+            report_dump = report.copy()
+            report_dump.update('raw', self.recover_line(line))
+            self._dump_message(exc, report_dump)
 
         self.acknowledge_message()
 
@@ -482,6 +543,39 @@ class ParserBot(Bot):
         writer.writeheader()
         writer.writerow(line)
         return out.getvalue()
+
+
+class CollectorBot(Bot):
+    """
+    Base class for collectors.
+
+    Does some sanity checks on message sending.
+    """
+    def __init__(self, bot_id):
+        super(CollectorBot, self).__init__(bot_id=bot_id)
+        if self.__class__.__name__ == 'CollectorBot':
+            self.logger.error('CollectorBot can\'t be started itself. '
+                              'Possible Misconfiguration.')
+            self.stop()
+
+    def __filter_empty_report(self, message):
+        if 'raw' not in message:
+            self.logger.warning('Ignoring report without raw field. '
+                                'Possible bug or miconfiguration of this bot.')
+            return False
+        return True
+
+    def __add_report_fields(self, report):
+        report.add("feed.name", self.parameters.feed)
+        if hasattr(self.parameters, 'code'):
+            report.add("feed.code", self.parameters.code)
+        report.add("feed.accuracy", self.parameters.accuracy)
+        return report
+
+    def send_message(self, *messages):
+        messages = filter(self.__filter_empty_report, messages)
+        messages = map(self.__add_report_fields, messages)
+        super(CollectorBot, self).send_message(*messages)
 
 
 class Parameters(object):

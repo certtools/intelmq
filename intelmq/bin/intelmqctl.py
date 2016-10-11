@@ -51,8 +51,9 @@ ERROR_MESSAGES = {
 LOG_LEVEL = {
     'DEBUG': 0,
     'INFO': 1,
-    'ERROR': 2,
-    'CRITICAL': 3,
+    'WARNING': 2,
+    'ERROR': 3,
+    'CRITICAL': 4,
 }
 
 RETURN_TYPES = ['text', 'json']
@@ -212,8 +213,11 @@ Get logs of a bot:
         with open(STARTUP_CONF_FILE, 'r') as fp:
             self.startup = json.load(fp)
 
-        with open(SYSTEM_CONF_FILE, 'r') as fp:
-            self.system = json.load(fp)
+        if os.path.exists(SYSTEM_CONF_FILE):
+            self.logger.warn("system.conf is deprecated and will be"
+                             "removed in 1.0. Use defaults.conf instead!")
+            with open(SYSTEM_CONF_FILE, 'r') as fp:
+                self.system = json.load(fp)
 
         if not os.path.exists(PIDDIR):
             os.makedirs(PIDDIR)
@@ -265,9 +269,10 @@ Get logs of a bot:
             QUIET = self.args.quiet
 
     def load_system_configuration(self):
-        config = utils.load_configuration(SYSTEM_CONF_FILE)
-        for option, value in config.items():
-            setattr(self.parameters, option, value)
+        if os.path.exists(SYSTEM_CONF_FILE):
+            config = utils.load_configuration(SYSTEM_CONF_FILE)
+            for option, value in config.items():
+                setattr(self.parameters, option, value)
 
     def load_defaults_configuration(self):
         # Load defaults configuration section
@@ -293,8 +298,7 @@ Get logs of a bot:
                 self.parser.print_help()
                 exit(2)
         elif self.args.action == 'list':
-            if not self.args.parameter or \
-                 self.args.parameter[0] not in ['bots', 'queues']:
+            if not self.args.parameter or self.args.parameter[0] not in ['bots', 'queues']:
                 print("Second argument for list must be 'bots' or 'queues'.")
                 self.parser.print_help()
                 exit(2)
@@ -325,9 +329,11 @@ Get logs of a bot:
             return 'error'
         else:
             module = importlib.import_module(bot_module)
+            # TODO: Search for bot class is dirty (but works)
             botname = [name for name in dir(module)
                        if hasattr(getattr(module, name), 'process') and
-                       name.endswith('Bot')][0]
+                       name.endswith('Bot') and
+                       name not in ['CollectorBot', 'ParserBot']][0]
             bot = getattr(module, botname)
             instance = bot(bot_id)
             instance.start()
@@ -518,19 +524,18 @@ Get logs of a bot:
         First checks if the queue does exist in the pipeline configuration.
         """
         logger.info("Clearing queue {}".format(queue))
-        source_queues = set()
-        destination_queues = set()
+        queues = set()
         for key, value in self.pipepline_configuration.items():
             if 'source-queue' in value:
-                source_queues.add(value['source-queue'])
+                queues.add(value['source-queue'])
+                queues.add(value['source-queue'] + '-internal')
             if 'destination-queues' in value:
-                destination_queues.update(value['destination-queues'])
+                queues.update(value['destination-queues'])
 
         pipeline = PipelineFactory.create(self.parameters)
-        pipeline.set_queues(source_queues, "source")
+        pipeline.set_queues(queues, "source")
         pipeline.connect()
 
-        queues = source_queues.union(destination_queues)
         if queue not in queues:
             logger.error("Queue {} does not exist!".format(queue))
             return 'not-found'

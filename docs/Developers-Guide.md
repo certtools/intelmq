@@ -6,6 +6,7 @@
 2. [System Overview](#system-overview)
 3. [Bot Developer Guide](#bot-developer-guide)
 
+<a name="audience"></a>
 # Intended Audience
 This guide is for developers of IntelMQ. It explains the code architecture, coding guidelines as well as ways you can contribute code or documentation.
 If you have not done so, please read the [User Guide](User-Guide.md) first.
@@ -53,13 +54,94 @@ All changes have to be tested and new contributions must be accompanied by accor
 
     cd intelmq
     python3 -m unittest {discover|filename}  # or
-    nosetests3 [filename]
+    nosetests3 [filename]  # or
+    python3 setup.py test  # uses a build environment
 
 It may be necessary to switch the user to `intelmq` if the run-path (`/opt/intelmq/var/run/`) is not writeable by the current user. Some bots need local databases to succeed. If you don't mind about those and only want to test one explicit test file, give the filepath as argument.
 
 There is a [Travis-CI](https://travis-ci.org/certtools/intelmq/builds) setup for automatic testing, which triggers on pull requests. You can also easily activate it for your forks.
 
+<a name="code-and-repository-rules"></a>
+## Repository rules for submissions
+
+### Releases, Repositories and branches
+
+  * The main repository is in [github.com/certtools/intelmq](https://github.com/certtools/intelmq).
+  * There are a couple of forks which might be regularly merged into the main repository. They are independent and can have incompatible changes and can deviate from the upstream repository.
+  * The "master" branch is the current development branch for the next feature release. Releases are tagged as release branch together with release branches for bugfixes and bugfix releases.
+  * We use [semantic versioning](http://semver.org/).
+  * Releases shall receive non-breaking bug fixes. The "master" branch can change and might introduce non-compatible changes.
+  * If you contribute something, please fork the repository and create a separate branch and use this for pull requests, see section below.
+
+### How to contribute to IntelMQ:
+
+  * Make separate pull requests / branches on github for changes. This allows us to discuss things via github.
+  * We prefer one  Pull Request per feature or change. If you have a bunch of small fixes, please don't create one RP per fix :)
+  * Only very small and changes (docs, ...) might be commited directly to development branches without Pull Request by the [core-team](https://github.com/orgs/certtools/teams/core).
+  * Keep the balance betweeen atomic commits and keeping the amount of commits per PR small. You can use interactive rebasing to squash multiple small commits into one. (`rebase -i master`)
+  * Make sure your PR is mergeable in the master branch and all tests are successfull.
+  * If possible [sign your commits with GPG](https://help.github.com/articles/signing-commits-using-gpg/).
+
+### Workflow
+
+We assume here, that origin is your own fork. We first add the upstream repository:
+
+```bash
+> git remote add upstream https://github.com/certtools/intelmq.git
+```
+
+Syncing master:
+
+```bash
+> git checkout master
+> git pull upstream master
+> git push origin master
+
+```
+Create a separate feature-branch to work on, sync master with upstream. Create working branch from master:
+```bash
+> git checkout master
+> git checkout -b bugfix
+# your work
+> git commit
+```
+
+Gettting upstream's changes:
+```bash
+> git checkout master
+> git pull upstream master
+> git push origin master
+```
+There are 2 possibilities to get upstream's commits into your branch. Rebasing and Merging. Using rebasing, your history is rewritten, putting your changes on top of all other commits. You can use this if your changes are not published yet (or only in your fork).
+```bash
+> git checkout bugfix
+> git rebase master
+```
+Using the `-i` flag for rebase enables interactive rebasing. You can then remove, reorder and squash commits, rewrite commit messages, beginning with the given branch, e.g. master.
+
+Or using merging. This doesn't break the history. It's considered more , but also pollutes the history with merge commits.
+```bash
+> git checkout bugfix
+> git merge master
+```
+
+Also see the [development workflow of Scipy](https://docs.scipy.org/doc/numpy/dev/gitwash/development_workflow.html) which has more examples.
+
+You can then create a PR with your branch `bugfix` to our upstream repository, using github's webinterface.
+
+### Commit messages
+
+If it fixes an existing issue, please use github syntax, e.g.: `fixes certtools/intelmq#<IssueID>`
+
+### Prepare for discussion in github.
+
+If we don't discuss it, it's probably not tested.
+
 ## Coding-Rules
+
+Most important: **KEEP IT SIMPLE**!!
+This can not be over-estimated. Feature creep can destroy any good software project. But if new folks can not understand what you wrote in 10-15 minutes, it is not good. It's not about the performance, etc. It's about readability.
+
 
 In general, we follow the [Style Guide for Python Code (PEP8)](https://www.python.org/dev/peps/pep-0008/).
 We recommend reading it before committing code.
@@ -68,6 +150,8 @@ There are some exceptions: sometimes it does not make sense to check for every P
 look pretty. Therefore, we do have some exceptions defined in the `setup.cfg` file.
 
 We support Python 3 only.
+
+
 
 ### Unicode
 

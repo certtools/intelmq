@@ -5,15 +5,22 @@ import requests
 import sys
 import zipfile
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import CollectorBot
 from intelmq.lib.message import Report
 
-import rt
+try:
+    import rt
+except ImportError:
+    rt = None
 
 
-class RTCollectorBot(Bot):
+class RTCollectorBot(CollectorBot):
 
     def init(self):
+        if rt is None:
+            self.logger.error('Could not import rt. Please install it.')
+            self.stop()
+
         self.http_header = getattr(self.parameters, 'http_header', {})
         self.http_verify_cert = getattr(self.parameters, 'http_verify_cert',
                                         True)
@@ -36,7 +43,8 @@ class RTCollectorBot(Bot):
         query = RT.search(Queue=self.parameters.search_queue,
                           Subject__like=self.parameters.search_subject_like,
                           Owner=self.parameters.search_owner,
-                          Status=self.parameters.search_status)
+                          Status=self.parameters.search_status,
+                          order='Created')
         self.logger.info('{} results on search query.'.format(len(query)))
 
         for ticket in query:
@@ -49,7 +57,9 @@ class RTCollectorBot(Bot):
                                       ''.format(att_id, att_name))
                     break
             else:
-                text = RT.get_history(ticket_id)[0]['Content']
+                ticket = RT.get_history(ticket_id)[0]
+                text = ticket['Content']
+                created = ticket['Created']
                 urlmatch = re.search(self.parameters.url_regex, text)
                 if urlmatch:
                     content = 'url'
@@ -59,6 +69,7 @@ class RTCollectorBot(Bot):
                     continue
             if content == 'attachment':
                 attachment = RT.get_attachment_content(ticket_id, att_id)
+                created = RT.get_attachment(ticket_id, att_id)['Created']
 
                 if self.parameters.unzip_attachment:
                     file_obj = io.BytesIO(attachment)
@@ -80,9 +91,7 @@ class RTCollectorBot(Bot):
             report = Report()
             report.add("raw", raw, sanitize=True)
             report.add("rtir_id", ticket_id, sanitize=True)
-            report.add("feed.name", self.parameters.feed, sanitize=True)
-            report.add("feed.accuracy", self.parameters.accuracy,
-                       sanitize=True)
+            report.add("time.observation", created + ' UTC', force=True)
             self.send_message(report)
 
             if self.parameters.take_ticket:
