@@ -193,8 +193,10 @@ def main():
         else:
             if not answer:
                 continue
-        if any([answer[0] == char for char in AVAILABLE_IDS]):
+        if any([answer[0] == char for char in AVAILABLE_IDS]) and len(answer) > 1:
             ids = [int(item) for item in answer[1].split(',')]
+        else:
+            ids = []
         queue_name = None
         if answer[0] == 'a':
             # recover all -> recover all by ids
