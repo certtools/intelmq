@@ -32,6 +32,8 @@ class DeduplicatorExpertBot(Bot):
         if not self.cache.exists(message_hash):
             self.cache.set(message_hash, 'hash')
             self.send_message(message)
+        else:
+            self.logger.debug('Dropped message.')
 
         self.acknowledge_message()
 
