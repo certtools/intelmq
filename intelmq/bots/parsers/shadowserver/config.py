@@ -847,7 +847,7 @@ open_xdmcp = {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'Vulnerable',
         'protocol.application': 'xdmcp',
-        #'feed.url': 'https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-XDMCP',
+        # 'feed.url': 'https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-XDMCP',
         'classification.identifier': 'openxdmcp',
     },
 }
@@ -878,7 +878,7 @@ open_natpmp = {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'Vulnerable',
         'protocol.application': 'nat-pmp',
-        #'feed.url': 'https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-NATPMP',
+        # 'feed.url': 'https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-NATPMP',
         'classification.identifier': 'opennatpmp',
     },
 }
