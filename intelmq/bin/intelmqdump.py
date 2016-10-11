@@ -228,7 +228,6 @@ def main():
                 else:
                     print('No message here, deleting entry.')
                     del content[key]
-                    save_file(fname, content)
                     continue
 
                 if queue_name is None:
@@ -245,8 +244,8 @@ def main():
                               ''.format(queue_name, traceback.format_exc())))
                 else:
                     del content[key]
-                    save_file(fname, content)
                     print(green('Recovered dump {}.'.format(i)))
+            save_file(fname, content)
             if not content:
                 os.remove(fname)
                 print('Deleted empty file {}'.format(fname))
