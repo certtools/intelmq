@@ -210,6 +210,10 @@ def main():
                 del content[meta[entry][0]]
             save_file(fname, content)
         elif answer[0] == 'r':
+            if bot_status == 'running':
+                # See https://github.com/certtools/intelmq/issues/574
+                print(red('Recovery for running bots not possible.'))
+                continue
             # recover entries
             default = utils.load_configuration(DEFAULTS_CONF_FILE)
             runtime = utils.load_configuration(RUNTIME_CONF_FILE)
