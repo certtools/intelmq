@@ -277,13 +277,16 @@ class Bot(object):
         self.__source_pipeline.connect()
         self.logger.debug("Connected to source queue.")
 
-        self.logger.debug("Loading destination pipeline.")
-        self.__destination_pipeline = PipelineFactory.create(self.parameters)
-        self.logger.debug("Loading destination queues %r." % self.__destination_queues)
-        self.__destination_pipeline.set_queues(self.__destination_queues,
-                                               "destination")
-        self.__destination_pipeline.connect()
-        self.logger.debug("Connected to destination queues.")
+        if self.__destination_queues:
+            self.logger.debug("Loading destination pipeline.")
+            self.__destination_pipeline = PipelineFactory.create(self.parameters)
+            self.logger.debug("Loading destination queues %r." % self.__destination_queues)
+            self.__destination_pipeline.set_queues(self.__destination_queues,
+                                                   "destination")
+            self.__destination_pipeline.connect()
+            self.logger.debug("Connected to destination queues.")
+        else:
+            self.logger.debug("Not loading destination queues %r." % self.__destination_queues)
 
         self.logger.info("Pipeline ready.")
 
