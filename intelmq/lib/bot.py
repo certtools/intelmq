@@ -272,20 +272,16 @@ class Bot(object):
     def __connect_pipelines(self):
         self.logger.debug("Loading source pipeline.")
         self.__source_pipeline = PipelineFactory.create(self.parameters)
-        self.logger.debug("Loading source queue.")
+        self.logger.debug("Loading source queue %r." % self.__source_queues)
         self.__source_pipeline.set_queues(self.__source_queues, "source")
-        self.logger.debug("Source queue loaded {}."
-                          "".format(self.__source_queues))
         self.__source_pipeline.connect()
         self.logger.debug("Connected to source queue.")
 
         self.logger.debug("Loading destination pipeline.")
         self.__destination_pipeline = PipelineFactory.create(self.parameters)
-        self.logger.debug("Loading destination queues.")
+        self.logger.debug("Loading destination queues %r." % self.__destination_queues)
         self.__destination_pipeline.set_queues(self.__destination_queues,
                                                "destination")
-        self.logger.debug("Destination queues loaded {}."
-                          "".format(self.__destination_queues))
         self.__destination_pipeline.connect()
         self.logger.debug("Connected to destination queues.")
 
@@ -372,7 +368,8 @@ class Bot(object):
         self.logger.warn('Message dumped.')
 
     def __load_defaults_configuration(self):
-        self.__log_buffer.append(('debug', "Loading defaults configuration."))
+        self.__log_buffer.append(('debug', "Loading defaults configuration from %r."
+                                  "" % DEFAULTS_CONF_FILE))
         config = utils.load_configuration(DEFAULTS_CONF_FILE)
 
         setattr(self.parameters, 'logging_path', DEFAULT_LOGGING_PATH)
@@ -388,7 +385,8 @@ class Bot(object):
         if os.path.exists(SYSTEM_CONF_FILE):
             self.__log_buffer.append(('warning', "system.conf is deprecated and will be"
                                       "removed in 1.0. Use defaults.conf instead!"))
-            self.__log_buffer.append(('debug', "Loading system configuration."))
+            self.__log_buffer.append(('debug', "Loading system configuration from %r."
+                                      "" % SYSTEM_CONF_FILE))
             config = utils.load_configuration(SYSTEM_CONF_FILE)
 
             for option, value in config.items():
@@ -398,7 +396,7 @@ class Bot(object):
                                           "loaded  with value {!r}.".format(option, value)))
 
     def __load_runtime_configuration(self):
-        self.logger.debug("Loading runtime configuration.")
+        self.logger.debug("Loading runtime configuration from %r." % RUNTIME_CONF_FILE)
         config = utils.load_configuration(RUNTIME_CONF_FILE)
 
         if self.__bot_id in list(config.keys()):
@@ -408,7 +406,7 @@ class Bot(object):
                                   "loaded with value {!r}.".format(option, value))
 
     def __load_pipeline_configuration(self):
-        self.logger.debug("Loading pipeline configuration.")
+        self.logger.debug("Loading pipeline configuration from %r." % PIPELINE_CONF_FILE)
         config = utils.load_configuration(PIPELINE_CONF_FILE)
 
         self.__source_queues = None
@@ -436,7 +434,7 @@ class Bot(object):
             self.stop()
 
     def __load_harmonization_configuration(self):
-        self.logger.debug("Loading Harmonization configuration.")
+        self.logger.debug("Loading Harmonization configuration from %r." % HARMONIZATION_CONF_FILE)
         config = utils.load_configuration(HARMONIZATION_CONF_FILE)
 
         for message_types in config.keys():
