@@ -386,8 +386,9 @@ class Bot(object):
 
     def __load_system_configuration(self):
         if os.path.exists(SYSTEM_CONF_FILE):
-            self.__log_buffer.append(('warning', "system.conf is deprecated and will be"
-                                      "removed in 1.0. Use defaults.conf instead!"))
+            self.__log_buffer.append(('warning', "system.conf is deprecated "
+                                     "and will be removed in 1.0. "
+                                     "Use defaults.conf instead!"))
             self.__log_buffer.append(('debug', "Loading system configuration."))
             config = utils.load_configuration(SYSTEM_CONF_FILE)
 
