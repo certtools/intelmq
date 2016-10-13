@@ -214,7 +214,7 @@ Get logs of a bot:
             self.startup = json.load(fp)
 
         if os.path.exists(SYSTEM_CONF_FILE):
-            self.logger.warn("system.conf is deprecated and will be"
+            self.logger.warn("system.conf is deprecated and will be "
                              "removed in 1.0. Use defaults.conf instead!")
             with open(SYSTEM_CONF_FILE, 'r') as fp:
                 self.system = json.load(fp)
