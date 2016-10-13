@@ -97,8 +97,13 @@ def dump_info(fname):
 
 
 def save_file(fname, content):
-    with open(fname, 'wt') as handle:
-        json.dump(content, handle)
+    try:
+        with open(fname, 'wt') as handle:
+            json.dump(content, handle)
+    except KeyboardInterrupt:
+        with open(fname, 'wt') as handle:
+            json.dump(content, handle)
+        exit(1)
 
 
 def load_meta(dump):
@@ -221,31 +226,33 @@ def main():
             runtime = utils.load_configuration(RUNTIME_CONF_FILE)
             params = utils.load_parameters(default, runtime)
             pipe = pipeline.PipelineFactory.create(params)
-            for i, (key, entry) in enumerate([item for (count, item)
-                                              in enumerate(content.items()) if count in ids]):
-                if entry['message']:
-                    msg = entry['message']
-                else:
-                    print('No message here, deleting entry.')
-                    del content[key]
-                    continue
-
-                if queue_name is None:
-                    if len(answer) == 3:
-                        queue_name = answer[2]
+            try:
+                for i, (key, entry) in enumerate([item for (count, item)
+                                                  in enumerate(content.items()) if count in ids]):
+                    if entry['message']:
+                        msg = entry['message']
                     else:
-                        queue_name = entry['source_queue']
-                try:
-                    pipe.set_queues(queue_name, 'destination')
-                    pipe.connect()
-                    pipe.send(msg)
-                except exceptions.PipelineError:
-                    print(red('Could not reinject into queue {}: {}'
-                              ''.format(queue_name, traceback.format_exc())))
-                else:
-                    del content[key]
-                    print(green('Recovered dump {}.'.format(i)))
-            save_file(fname, content)
+                        print('No message here, deleting entry.')
+                        del content[key]
+                        continue
+
+                    if queue_name is None:
+                        if len(answer) == 3:
+                            queue_name = answer[2]
+                        else:
+                            queue_name = entry['source_queue']
+                    try:
+                        pipe.set_queues(queue_name, 'destination')
+                        pipe.connect()
+                        pipe.send(msg)
+                    except exceptions.PipelineError:
+                        print(red('Could not reinject into queue {}: {}'
+                                  ''.format(queue_name, traceback.format_exc())))
+                    else:
+                        del content[key]
+                        print(green('Recovered dump {}.'.format(i)))
+            finally:
+                save_file(fname, content)
             if not content:
                 os.remove(fname)
                 print('Deleted empty file {}'.format(fname))
