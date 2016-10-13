@@ -45,7 +45,7 @@ class GenericDBLookupExpertBot(Bot):
 
         self.replace = self.parameters.replace_fields
         self.match = self.parameters.match_fields
-        query = 'SELECT "{replace}" FROM "{table}" WHERE ' + 'AND '.join(['"{}" = %s ']*len(self.match))
+        query = 'SELECT "{replace}" FROM "{table}" WHERE ' + 'AND '.join(['"{}" = %s '] * len(self.match))
         self.query = query.format(*self.match.values(),
                                   table=self.parameters.table,
                                   replace='", "'.join(self.replace.keys()))
