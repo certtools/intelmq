@@ -175,8 +175,8 @@ def main():
             available_opts = [item[0] for item in ACTIONS.values() if item[2]]
             print('Restricted actions.')
         else:
-            # don't display list after 'show' command
-            if not (answer and isinstance(answer, list) and answer[0] == 's'):
+            # don't display list after 'show' and 'recover' command
+            if not (answer and isinstance(answer, list) and answer[0] in ['s', 'r']):
                 with open(fname, 'rt') as handle:
                     content = json.load(handle)
                 meta = load_meta(content)
