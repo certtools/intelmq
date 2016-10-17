@@ -23,10 +23,25 @@ class MatchGroupMapping:
         return self.match.group(key)
 
 
+def convert_config(old):
+    config = []
+    for groupname, group in old.items():
+        rules = []
+        for rule_name, rule in group.items():
+            rules.append({"rule": rule_name,
+                          "selection": rule[0],
+                          "action": rule[1]})
+        config.append({"group": groupname, "rules": rules})
+
+    return config
+
+
 class ModifyExpertBot(Bot):
 
     def init(self):
         self.config = load_configuration(self.parameters.configuration_path)
+        if type(self.config) is dict:
+            self.config = convert_config(self.config)
 
     def matches(self, identifiers, event, *rules):
         condition = {}
@@ -76,29 +91,32 @@ class ModifyExpertBot(Bot):
     def process(self):
         event = self.receive_message()
 
-        for section_id, section in self.config.items():
-            default_cond = section.get('__default', [{}, {}])[0]
-            default_action = section.get('__default', [{}, {}])[1]
-            default_matches = self.matches((section_id, '__default'),
-                                           event, default_cond)
+        for group in self.config:
+            group_id = group['group']
+            (default_selection,
+             default_action) = ([(rule['selection'], rule['action']) for rule in group['rules']
+                                 if rule['rule'] == '__default'] or [[{}, {}]])[0]
+            default_matches = self.matches((group_id, '__default'),
+                                           event, default_selection)
             if default_matches is None:
                 continue
 
             applied = False
-            for rule_id, (rule_cond, rule_action) in section.items():
+            for rule in group['rules']:
+                rule_id, rule_selection, rule_action = rule['rule'], rule['selection'], rule['action']
                 if rule_id == '__default':
                     continue
-                matches = self.matches((section_id, rule_id),
-                                       event, default_cond, rule_cond)
+                matches = self.matches((group_id, rule_id),
+                                       event, default_selection, rule_selection)
                 if matches is not None:
-                    self.logger.debug('Apply rule {}/{}.'.format(section_id,
+                    self.logger.debug('Apply rule {}/{}.'.format(group_id,
                                                                  rule_id))
                     self.apply_action(event, rule_action, matches)
                     applied = True
                     continue
 
             if not applied and default_action != {}:
-                self.logger.debug('Apply {}/__default.'.format(section_id))
+                self.logger.debug('Apply {}/__default.'.format(group_id))
                 self.apply_action(event, default_action, default_matches)
 
         self.send_message(event)
