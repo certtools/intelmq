@@ -173,7 +173,11 @@ EVENTS = [{'__type': 'Event',
            'time.source': '2014-03-16T03:45:51+00:00'},
           {'__type': 'Event',
            'feed.name': 'ShadowServer XDMCP',
+<<<<<<< HEAD
            'classification.identifier': 'openxdmcp',
+=======
+           'classification.identifier': 'xdmcp',
+>>>>>>> 02a5d283367b95c18e502aa63176d43615e8c0e9
            'classification.taxonomy': 'Vulnerable',
            'classification.type': 'vulnerable service',
            'extra': '{"version": 2}',
