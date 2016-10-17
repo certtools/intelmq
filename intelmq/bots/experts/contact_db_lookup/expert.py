@@ -54,7 +54,7 @@ class ContactDBLookupExpertBot(Bot):
             self.acknowledge_message()
             return
 
-        if 'source.abuse_contact' in event and not self.parameters.override:
+        if 'source.abuse_contact' in event and not self.parameters.overwrite:
             self.send_message(event)
             self.acknowledge_message()
             return
