@@ -508,6 +508,27 @@
         }
     },
     "Output": {
+        "AMQP Topic": {
+            "description": "AMQP Topic is the bot responsible to send events to a AMQP topic exchange.",
+            "module": "intelmq.bots.outputs.amqptopic.output",
+            "parameters": {
+                "connection_attempts": 3,
+                "connection_heartbeat": 3600,
+                "connection_host": "127.0.0.1",
+                "connection_port": 5672,
+                "connection_vhost": "<your virtual host>",
+                "content_type": "application/json",
+                "delivery_mode": 2,
+                "exchange_durable": true,
+                "exchange_name": "<your exchange name>",
+                "exchange_type": "topic",
+                "keep_raw_field": false,
+                "password": "<your amqp password>",
+                "require_confirmation": true,
+                "routing_key": "<your routing key>",
+                "username": "<your amqp username>"
+            }
+        },
         "File": {
             "description": "File is the bot responsible to send events to a file.",
             "module": "intelmq.bots.outputs.file.output",
