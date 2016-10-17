@@ -57,7 +57,6 @@ class TestASNLookupExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_OUTPUT)
 
-    @unittest.expectedFailure
     def test_ipv6_lookup(self):
         self.input_message = EXAMPLE_INPUT6
         self.run_bot()

@@ -8,14 +8,14 @@ import json
 import logging
 import os
 import unittest
+import unittest.mock as mock
 
-import mock
 import pkg_resources
 
 import intelmq.lib.pipeline as pipeline
 import intelmq.lib.utils as utils
-from intelmq import PIPELINE_CONF_FILE, RUNTIME_CONF_FILE, SYSTEM_CONF_FILE
-from intelmq.lib.test import mocked_logger
+from intelmq import (PIPELINE_CONF_FILE, RUNTIME_CONF_FILE, CONFIG_DIR)
+from intelmq.lib.test import mocked_logger, BOT_CONFIG
 
 
 def mocked_config(bot_id='', src_name='', dst_names=(),
@@ -27,20 +27,10 @@ def mocked_config(bot_id='', src_name='', dst_names=(),
                              "destination-queues": dst_names},
                     }
         elif conf_file == RUNTIME_CONF_FILE:
-            return {bot_id: {}}
-        elif conf_file == SYSTEM_CONF_FILE:
-            return {"logging_level": "DEBUG",
-                    "http_proxy": None,
-                    "https_proxy": None,
-                    "broker": "pythonlist",
-                    "raise_on_connect": raise_on_connect,
-                    "rate_limit": 0,
-                    "retry_delay": 0,
-                    "error_retry_delay": 0,
-                    "error_max_retries": 0,
-                    "testing": True,
-                    }
-        elif conf_file.startswith('/opt/intelmq/etc/'):
+            conf = BOT_CONFIG.copy()
+            conf.update({"raise_on_connect": raise_on_connect})
+            return {bot_id: conf}
+        elif conf_file.startswith(CONFIG_DIR):
             confname = os.path.join('etc/', os.path.split(conf_file)[-1])
             fname = pkg_resources.resource_filename('intelmq',
                                                     confname)

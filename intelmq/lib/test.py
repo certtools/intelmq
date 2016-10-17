@@ -9,47 +9,43 @@ import io
 import json
 import logging
 import os
+import unittest.mock as mock
 
-import mock
 import pkg_resources
 
 import intelmq.lib.pipeline as pipeline
 import intelmq.lib.utils as utils
-from intelmq import PIPELINE_CONF_FILE, RUNTIME_CONF_FILE, SYSTEM_CONF_FILE
+from intelmq import (PIPELINE_CONF_FILE, RUNTIME_CONF_FILE, CONFIG_DIR)
 
 __all__ = ['BotTestCase']
 
-
-BOT_CONFIG = {
-    "logging_level": "DEBUG",
-    "http_proxy": None,
-    "https_proxy": None,
-    "broker": "pythonlist",
-    "rate_limit": 0,
-    "retry_delay": 0,
-    "error_retry_delay": 0,
-    "error_max_retries": 0,
-    "testing": True,
-    "redis_cache_host": "localhost",
-    "redis_cache_port": 6379,
-    "redis_cache_db": 10,
-    "redis_cache_ttl": 10,
-}
+BOT_CONFIG = {"logging_level": "DEBUG",
+              "http_proxy": None,
+              "https_proxy": None,
+              "broker": "pythonlist",
+              "rate_limit": 0,
+              "retry_delay": 0,
+              "error_retry_delay": 0,
+              "error_max_retries": 0,
+              "redis_cache_host": "localhost",
+              "redis_cache_port": 6379,
+              "redis_cache_db": 10,
+              "redis_cache_ttl": 10,
+              "testing": True,
+              }
 
 
 def mocked_config(bot_id='test-bot', src_name='', dst_names=(), sysconfig={}):
-    def mock(conf_file):
+    def mocked(conf_file):
         if conf_file == PIPELINE_CONF_FILE:
             return {bot_id: {"source-queue": src_name,
                              "destination-queues": dst_names},
                     }
         elif conf_file == RUNTIME_CONF_FILE:
-            return {bot_id: {}}
-        elif conf_file == SYSTEM_CONF_FILE:
             conf = BOT_CONFIG.copy()
             conf.update(sysconfig)
-            return conf
-        elif conf_file.startswith('/opt/intelmq/etc/'):
+            return {bot_id: conf}
+        elif conf_file.startswith(CONFIG_DIR):
             confname = os.path.join('etc/', os.path.split(conf_file)[-1])
             fname = pkg_resources.resource_filename('intelmq',
                                                     confname)
@@ -57,7 +53,7 @@ def mocked_config(bot_id='test-bot', src_name='', dst_names=(), sysconfig={}):
                 return json.load(fpconfig)
         else:
             return utils.load_configuration(conf_file)
-    return mock
+    return mocked
 
 
 with mock.patch('intelmq.lib.utils.load_configuration', new=mocked_config()):
@@ -91,7 +87,6 @@ class BotTestCase(object):
         cls.bot = None
         cls.bot_reference = None
         cls.bot_type = None
-        cls.config = {}
         cls.default_input_message = ''
         cls.input_message = None
         cls.loglines = []
@@ -100,6 +95,7 @@ class BotTestCase(object):
         cls.maxDiff = None  # For unittest module, prints long diffs
         cls.pipe = None
         cls.sysconfig = {}
+        cls.allowed_error_count = 0  # allows dumping of some lines
 
         cls.set_bot()
 
@@ -113,7 +109,7 @@ class BotTestCase(object):
             cls.default_input_message = {'__type': 'Report',
                                          'raw': 'Cg==',
                                          'feed.name': 'Test Feed',
-                                         'time.observation': '2016-01-01T00:00'}
+                                         'time.observation': '2016-01-01T00:00:00+00:00'}
         if type(cls.default_input_message) is dict:
             cls.default_input_message = \
                 utils.decode(json.dumps(cls.default_input_message))
@@ -165,7 +161,8 @@ class BotTestCase(object):
                     self.input_queue.append(msg)
             self.input_message = None
         else:
-            self.input_queue = [self.default_input_message]
+            if self.default_input_message:  # None for collectors
+                self.input_queue = [self.default_input_message]
 
     def run_bot(self, iterations=1):
         """
@@ -205,50 +202,30 @@ class BotTestCase(object):
         return [utils.decode(text) for text
                 in self.pipe.state["%s-output" % self.bot_id]]
 
-    def test_bot_start(self):
-        """Tests if we can start a bot and feed data into
-            it and have a reasonable output"""
-        self.run_bot()
-
-    def test_log_init(self):
-        """ Test if bot logs initialized message. """
+    def test_logs(self):
+        """ Test if bot log messages are correctly formatted. """
         self.run_bot()
         self.assertLoglineMatches(0, "{} initialized with id {} and version"
-                                     " [0-9.]{{5}} \([a-zA-Z, 0-9:]+\)."
+                                     " [0-9.]{{5}} \([a-zA-Z0-9,:. ]+\)( \[GCC\])?"
+                                     " as process [0-9]+\."
                                      "".format(self.bot_name,
                                                self.bot_id), "INFO")
-
-    def test_log_starting(self):
-        """ Test if bot logs starting message. """
-        self.run_bot()
         self.assertRegexpMatchesLog("INFO - Bot is starting.")
-
-    def test_log_stopped(self):
-        """ Test if bot logs stopped message. """
-        self.run_bot()
         self.assertLoglineEqual(-1, "Bot stopped.", "INFO")
-
-    def test_log_end_dot(self):
-        """ Test if every log lines ends with a dot. """
+        self.assertNotRegexpMatchesLog("(ERROR.*?){}"
+                                       "".format(self.allowed_error_count))
+        self.assertNotRegexpMatchesLog("CRITICAL")
+        """ If no error happened (incl. tracebacks, we can check for formatting) """
         for logline in self.loglines:
             fields = utils.parse_logline(logline)
-            self.assertTrue(fields['message'].endswith('.'),
-                            msg='Logline {} does not end with dot.'
+            self.assertTrue(fields['message'][-1] in '.?!',
+                            msg='Logline {!r} does not end with .? or !.'
+                                ''.format(fields['message']))
+            self.assertTrue(fields['message'].upper() == fields['message'].upper(),
+                            msg='Logline {!r} does not beginn with an upper case char.'
                                 ''.format(fields['message']))
 
-    def test_log_not_error(self):
-        """ Test if bot does not log errors. """
-        self.run_bot()
-        self.assertNotRegexpMatchesLog("ERROR")
-
-    def test_log_not_critical(self):
-        """ Test if bot does not log critical errors. """
-        self.run_bot()
-        self.assertNotRegexpMatchesLog("CRITICAL")
-
-    def test_pipe_names(self):
-        """ Test if all pipes are created with correct names. """
-        self.run_bot()
+#        """ Test if all pipes are created with correct names. """
         pipenames = ["{}-input", "{}-input-internal", "{}-output"]
         self.assertSetEqual({x.format(self.bot_id) for x in pipenames},
                             set(self.pipe.state.keys()))
@@ -288,7 +265,7 @@ class BotTestCase(object):
 
     def test_event(self):
         """ Test if event has required fields. """
-        if self.bot_type not in ['parser', 'expert']:
+        if self.bot_type != 'parser':
             return
 
         self.run_bot()
@@ -299,6 +276,22 @@ class BotTestCase(object):
             self.assertIn('feed.name', event)
             self.assertIn('raw', event)
             self.assertIn('time.observation', event)
+
+    def assertAnyLoglineEqual(self, message, levelname="ERROR"):
+        """Asserts if any logline matches a specific requirement.
+           Args:
+                message: Message text which is compared
+                type: Type of logline which is asserted"""
+
+        self.assertIsNotNone(self.loglines)
+        for logline in self.loglines:
+            fields = utils.parse_logline(logline)
+
+            if levelname == fields["log_level"] and message == fields["message"]:
+                return
+        else:
+            raise ValueError('Logline with level {!r} and message {!r} not found'
+                             ''.format(levelname, message))
 
     def assertLoglineEqual(self, line_no, message, levelname="ERROR"):
         """Asserts if a logline matches a specific requirement.
@@ -369,6 +362,7 @@ class BotTestCase(object):
         event_dict = json.loads(event)
         expected = expected_msg.copy()
         del event_dict['time.observation']
-        del expected['time.observation']
+        if 'time.observation' in expected:
+            del expected['time.observation']
 
         self.assertDictEqual(expected, event_dict)

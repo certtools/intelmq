@@ -1,0 +1,24 @@
+Description: Fix paths in logroate config to match obey FHS
+Author: Gernot Schulz <gernot@intevation.de>
+Last-Update: 2016-07-20
+---
+This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
+--- a/contrib/logrotate/intelmq
++++ b/contrib/logrotate/intelmq
+@@ -11,7 +11,7 @@
+     notifempty
+     sharedscripts
+     postrotate
+-        /usr/local/bin/intelmqctl reload --quiet
++        /usr/bin/intelmqctl reload --quiet
+     endscript
+ }
+ 
+@@ -23,6 +23,6 @@
+     notifempty
+     sharedscripts
+     postrotate
+-        /usr/local/bin/intelmqctl reload file-output --quiet
++        /usr/bin/intelmqctl reload file-output --quiet
+     endscript
+ }

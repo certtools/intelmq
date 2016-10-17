@@ -18,7 +18,7 @@ class BruteForceBlockerParserBot(Bot):
         raw_report = utils.base64_decode(report.get("raw"))
         for row in raw_report.splitlines():
 
-            if row.startswith('#'):
+            if not row or row.startswith('#'):
                 continue
 
             event = Event(report)
@@ -30,6 +30,10 @@ class BruteForceBlockerParserBot(Bot):
             match = re.search(REGEX_TIMESTAMP, row)
             if match:
                 timestamp = match.group(1) + " UTC"
+                continue
+
+            if not timestamp:
+                raise ValueError('No timestamp found.')
 
             event.add('time.source', timestamp)
             event.add('source.ip', ip)

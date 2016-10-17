@@ -9,11 +9,11 @@ except ImportError:
     imbox = None
 import requests
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import CollectorBot
 from intelmq.lib.message import Report
 
 
-class MailURLCollectorBot(Bot):
+class MailURLCollectorBot(CollectorBot):
 
     def init(self):
         if imbox is None:
@@ -44,8 +44,7 @@ class MailURLCollectorBot(Bot):
                         url = url.strip()     # strip leading and trailing spaces, newlines and carriage returns
 
                         # Build request
-                        self.http_header = getattr(self.parameters,
-                                'http_header', {})
+                        self.http_header = getattr(self.parameters, 'http_header', {})
                         self.http_verify_cert = getattr(self.parameters,
                                                         'http_verify_cert', True)
 
@@ -80,9 +79,6 @@ class MailURLCollectorBot(Bot):
 
                         report = Report()
                         report.add("raw", resp.content)
-                        report.add("feed.name",
-                                   self.parameters.feed)
-                        report.add("feed.accuracy", self.parameters.accuracy)
                         self.send_message(report)
 
                         # Only mark read if message relevant to this instance,
@@ -90,6 +86,7 @@ class MailURLCollectorBot(Bot):
                         # check it.
                         mailbox.mark_seen(uid)
                 self.logger.info("Email report read")
+        mailbox.logout()
 
 
 if __name__ == "__main__":

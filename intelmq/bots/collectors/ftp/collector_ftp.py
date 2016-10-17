@@ -13,17 +13,15 @@ ftp_file: string
 from __future__ import unicode_literals
 import sys
 from ftplib import FTP
-import socket
 import zipfile
 import io
 import fnmatch
 
-from intelmq.lib.bot import Bot
-from intelmq.lib.harmonization import DateTime
+from intelmq.lib.bot import CollectorBot
 from intelmq.lib.message import Report
 
 
-class FTPCollectorBot(Bot):
+class FTPCollectorBot(CollectorBot):
     def process(self):
         self.logger.info("Downloading report from %s" %
                          self.parameters.ftp_host + ':' +
@@ -31,11 +29,11 @@ class FTPCollectorBot(Bot):
 
         ftp = FTP()
         ftp.connect(host=self.parameters.ftp_host,
-                     port=self.parameters.ftp_port)
+                    port=self.parameters.ftp_port)
         if hasattr(self.parameters, 'ftp_username') \
                 and hasattr(self.parameters, 'ftp_password'):
             ftp.login(user=self.parameters.ftp_username,
-                       passwd=self.parameters.ftp_password)
+                      passwd=self.parameters.ftp_password)
         cwd = '/'
         if hasattr(self.parameters, 'ftp_directory'):
             self.logger.info('Changing working directory to: ' +
@@ -53,8 +51,7 @@ class FTPCollectorBot(Bot):
         files = fnmatch.filter(ftp.nlst(), filemask)
         self.logger.info('Found following files in the directory: ' +
                          repr(files))
-        self.logger.info('Looking for latest file matching following pattern: '
-                         + filemask)
+        self.logger.info('Looking for latest file matching following pattern: ' + filemask)
 
         if files:
             self.logger.info('Retrieving file: ' + files[-1])
@@ -71,19 +68,17 @@ class FTPCollectorBot(Bot):
         except zipfile.BadZipfile:
             raw_reports.append(mem.getvalue())
         else:
-            self.logger.info('Downloaded zip file, extracting following files: '
-                             + ', '.join(zfp.namelist()))
+            self.logger.info('Downloaded zip file, extracting following files: ' + ', '.join(zfp.namelist()))
             for filename in zfp.namelist():
                 raw_reports.append(zfp.read(filename))
 
         for raw_report in raw_reports:
             report = Report()
             report.add("raw", raw_report, sanitize=True)
-            report.add("feed.name", self.parameters.feed, sanitize=True)
             report.add("feed.url", 'ftp://' + self.parameters.ftp_host + ':' +
                        str(self.parameters.ftp_port), sanitize=True)
-            report.add("feed.accuracy", self.parameters.accuracy, sanitize=True)
             self.send_message(report)
+
 
 if __name__ == "__main__":
     bot = FTPCollectorBot(sys.argv[1])

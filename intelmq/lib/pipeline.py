@@ -63,10 +63,11 @@ class Redis(Pipeline):
                             "{}_pipeline_port".format(queues_type), "6379")
         self.db = getattr(self.parameters,
                           "{}_pipeline_db".format(queues_type), 2)
+        #  socket_timeout is None by default, which means no timeout
         self.socket_timeout = getattr(self.parameters,
                                       "{}_pipeline_socket_timeout".format(
                                           queues_type),
-                                      50000)
+                                      None)
         self.load_balance = getattr(self.parameters, "load_balance", False)
         self.load_balance_iterator = 0
 
@@ -108,12 +109,11 @@ class Redis(Pipeline):
 
     def receive(self):
         try:
-            if self.pipe.llen(self.internal_queue) > 0:
-                return utils.decode(self.pipe.lindex(self.internal_queue, -1))
-            return utils.decode(self.pipe.brpoplpush(self.source_queue,
-                                                     self.internal_queue, 0))
-        except redis.exceptions.ConnectionError:
-            pass  # raised e.g. on SIGHUP
+            retval = self.pipe.lindex(self.internal_queue, -1)  # returns None if no value
+            if not retval:
+                retval = self.pipe.brpoplpush(self.source_queue,
+                                              self.internal_queue, 0)
+            return utils.decode(retval)
         except Exception as exc:
             raise exceptions.PipelineError(exc)
 
@@ -123,7 +123,7 @@ class Redis(Pipeline):
         except Exception as e:
             raise exceptions.PipelineError(e)
 
-    def count_queued_messages(self, queues):
+    def count_queued_messages(self, *queues):
         queue_dict = dict()
         for queue in queues:
             try:
@@ -205,7 +205,7 @@ class Pythonlist(Pipeline):
         """Removes a message from the internal queue and returns it"""
         return self.state.get(self.internal_queue, [None]).pop(0)
 
-    def count_queued_messages(self, queues):
+    def count_queued_messages(self, *queues):
         """Returns the amount of queued messages
            over all given queue names.
            But only without a real message broker behind.
