@@ -25,3 +25,10 @@ Bot parameters:
 ### Examples of usage:
 
 * Usefull to send events to a RabbitMQ exchange topic to be futher processed in other platforms.
+
+### Confirmation
+
+If routing key or exchange name are invalid or non existent, the message is
+accepted by the server but we receive no confirmation.
+If parameter require_confirmation is True and no confirmation is received, an
+error is raised.

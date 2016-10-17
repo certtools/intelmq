@@ -75,9 +75,6 @@ class AMQPTopicBot(Bot):
         if not self.keep_raw_field:
             del event['raw']
 
-        ''' If routing key or exchange name are invalid or non existent, the message is accepted by the server but we receive no confirmation '''
-        ''' Allways require confirmation. If parameter require_confirmation is True and no confirmation is received, raise error. '''
-
         try:
             if not self.channel.basic_publish(exchange=self.exchange,
                                               routing_key=self.routing_key,
