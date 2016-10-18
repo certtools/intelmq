@@ -90,7 +90,7 @@ class RTCollectorBot(CollectorBot):
 
             report = Report()
             report.add("raw", raw, sanitize=True)
-            report.add("rtir_id", ticket_id, sanitize=True)
+            report.add("rtir_report_id", ticket_id, sanitize=True)
             report.add("time.observation", created + ' UTC', force=True)
             self.send_message(report)
 

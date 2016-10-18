@@ -6,6 +6,7 @@ import csv
 import datetime
 import io
 import json
+import requests
 import logging
 import os
 import re
@@ -38,6 +39,7 @@ class Bot(object):
         self.__source_pipeline = None
         self.__destination_pipeline = None
         self.logger = None
+        self.last_heartbeat = None
 
         try:
             version_info = sys.version.splitlines()[0].strip()
@@ -74,6 +76,8 @@ class Bot(object):
             self.__load_runtime_configuration()
             self.__load_pipeline_configuration()
             self.__load_harmonization_configuration()
+
+            self.heartbeat_time = datetime.timedelta(seconds=self.parameters.bot_heartbeat_min_wait)
 
             self.init()
 
@@ -178,6 +182,12 @@ class Bot(object):
                 self.stop(exitcode=0)
                 del self
                 break
+
+            else:
+                if (not self.last_heartbeat or
+                        (datetime.datetime.now() - self.last_heartbeat) > self.heartbeat_time):
+                    requests.get(self.parameters.bot_heartbeat_url.format(bot_id=self.__bot_id))
+                    self.last_heartbeat = datetime.datetime.now()
 
             finally:
                 if getattr(self.parameters, 'testing', False):

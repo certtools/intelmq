@@ -46,11 +46,15 @@ Harmonization field names
 |Malware|malware.version|[String](#string)|A version string for an identified artifact generation, e.g. a crime-ware kit.|
 |Misp|misp.attribute_uuid|[LowercaseString](#lowercasestring)|MISP - Malware Information Sharing Platform & Threat Sharing UUID of an attribute.|
 |Misp|misp.event_uuid|[LowercaseString](#lowercasestring)|MISP - Malware Information Sharing Platform & Threat Sharing UUID.|
+||notify|[Boolean](#boolean)|If mail will be sent out to affected or responsible contact.|
 |Protocol|protocol.application|[LowercaseString](#lowercasestring)|e.g. vnc, ssh, sip, irc, http or p2p.|
 |Protocol|protocol.transport|[LowercaseString](#lowercasestring)|e.g. tcp, udp, icmp.|
 ||raw|[Base64](#base64)|The original line of the event from encoded in base64.|
-||rtir_id|[Integer](#integer)|Request Tracker Incident Response incident id.|
+||rtir_incident_id|[Integer](#integer)|Request Tracker Incident Response incident id.|
+||rtir_investigation_id|[Integer](#integer)|Request Tracker Incident Response investigation id.|
+||rtir_report_id|[Integer](#integer)|Request Tracker Incident Response incident report id.|
 ||screenshot_url|[URL](#url)|Some source may report URLs related to a an image generated of a resource without any metadata. Or an URL pointing to resource, which has been rendered into a webshot, e.g. a PNG image and the relevant metadata related to its retrieval/generation.|
+||sent_at|[DateTime](#datetime)|Time when the report has been sent to the responsible recipient.|
 |Source|source.abuse_contact|[LowercaseString](#lowercasestring)|Abuse contact for source address. A comma separated list.|
 |Source|source.account|[String](#string)|An account name or email address, which has been identified to relate to the source of an abuse event.|
 |Source|source.allocated|[DateTime](#datetime)|Allocation date corresponding to bgp prefix.|

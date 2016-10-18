@@ -10,10 +10,16 @@ REQUIRES = [
     'python-termstyle>=0.1.10',
     'pytz>=2014.1',
     'redis>=2.10.3',
-    'requests>=2.2.0',
+    'requests>=2.7.0',
+    'tabulate>=0.7.5',
+    'rt>=1.0.9',
 ]
 
 DATA = [
+    ('/etc/intelmq/',
+     ['intelmq/etc/intelmqcli.conf',
+      ],
+     ),
     ('/opt/intelmq/etc/',
      ['intelmq/bots/BOTS',
       ],
@@ -21,9 +27,11 @@ DATA = [
     ('/opt/intelmq/etc/examples',
      ['intelmq/etc/defaults.conf',
       'intelmq/etc/harmonization.conf',
+      'intelmq/etc/intelmqcli.conf',
       'intelmq/etc/pipeline.conf',
       'intelmq/etc/runtime.conf',
       'intelmq/etc/startup.conf',
+      'intelmq/etc/squelcher.conf',
       ],
      ),
     ('/opt/intelmq/var/lib/bots/modify/example',
@@ -80,6 +88,8 @@ setup(
     data_files=DATA,
     entry_points={
         'console_scripts': [
+            'intelmqcli = intelmq.bin.intelmqcli:main',
+            'intelmqcli_create_reports = intelmq.bin.intelmqcli_create_reports:main',
             'intelmqctl = intelmq.bin.intelmqctl:main',
             'intelmqdump = intelmq.bin.intelmqdump:main',
             'intelmq_psql_initdb = intelmq.bin.intelmq_psql_initdb:main',
