@@ -74,7 +74,7 @@ def get_feed(feedname):
         "Sandbox-URL": sandbox_url,
         "Spam-URL": spam_url,
         "Open-Proxy": open_proxy,
-        "Sinkhole-HTTP-Referer": sinkhole_http_referer,
+        "Sinkhole-HTTP-Referer": sinkhole_http_referer,  # TODO is 'classification.identifier' a 'compromised-website' ?
         "Vulnerable-ISAKMP": vulnerable_isakmp,
         "Botnet-CCIP": botnet_ccip,  # TODO Recheck the format and field's names - in the latest/new reports they can be different
         "Accessible-RDP": accessible_rdp,
