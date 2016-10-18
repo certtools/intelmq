@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import copy
 import sys
 
 from intelmq.lib.bot import Bot
