@@ -50,6 +50,7 @@ def get_feed(feedname):
         "Ssl-Scan": ssl_scan,  # a.k.a POODLE
         "Ssl-Freak-Scan": ssl_freak_scan,  # Only differs in a few extra fields
         "NTP-Monitor": ntp_monitor,
+        "NTP-Version": ntp_version,
         "DNS-open-resolvers": dns_open_resolvers,  # TODO Check implementation.
         "Open-Elasticsearch": open_elasticsearch,
         "Open-NetBIOS": open_netbios,
@@ -68,6 +69,15 @@ def get_feed(feedname):
         "Open-mDNS": open_mdns,  # TODO Check implementation.
         "Open-XDMCP": open_xdmcp,
         "Open-NATPMP": open_natpmp,
+        "Compromised-Website": compromised_website,
+        "Open-Netis": open_netis,
+        "Sandbox-URL": sandbox_url,
+        "Spam-URL": spam_url,
+        "Open-Proxy": open_proxy,
+        "Sinkhole-HTTP-Referer": sinkhole_http_referer,
+        "Vulnerable-ISAKMP": vulnerable_isakmp,
+        "Botnet-CCIP": botnet_ccip,
+        "Accessible-RDP": accessible_rdp,
     }
 
     return feed_idx.get(feedname)
@@ -134,42 +144,40 @@ open_mdns = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')
+        ('source.port', 'port'),
     ],
     'optional_fields': [
-        ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # This will be 'mdns' in constant fields
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
-        # Other known fields which will go into "extra"
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
-        # tag
-        # mdns_name
-        # mdns_ipv4
-        # mdns_ipv6
-        # workstation_name
-        # workstation_ipv4
-        # workstation_ipv6
-        # workstation_info
-        # http_name"
-        # http_ipv4
-        # http_ipv6
-        # http_ptr
-        # http_info
-        # http_target
-        # http_port
+        ('extra.', 'mdns_name', validate_to_none),
+        ('extra.', 'mdns_ipv4', validate_to_none),
+        ('extra.', 'mdns_ipv6', validate_to_none),
+        ('extra.', 'services', validate_to_none),
+        ('extra.', 'workstation_name', validate_to_none),
+        ('extra.', 'workstation_ipv4', validate_to_none),
+        ('extra.', 'workstation_ipv6', validate_to_none),
+        ('extra.', 'workstation_info', validate_to_none),
+        ('extra.', 'http_name', validate_to_none),
+        ('extra.', 'http_ipv4', validate_to_none),
+        ('extra.', 'http_ipv6', validate_to_none),
+        ('extra.', 'http_ptr', validate_to_none),
+        ('extra.', 'http_info', validate_to_none),
+        ('extra.', 'http_target', validate_to_none),
+        ('extra.', 'http_port', validate_to_none),
     ],
     'constant_fields': {
-        'classification.type': 'vulnerable service',
-        'classification.taxonomy': 'Vulnerable',
+        'protocol.transport': 'udp',
         'protocol.application': 'mdns',
+        'classification.type': 'vulnerable service',
         'feed.code': 'shadowserver-openmdns',
-        'feed.name': 'shadowserver',
         'classification.identifier': 'openmdns',
-    },
+    }
 }
 
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-Chargen
@@ -926,5 +934,306 @@ open_natpmp = {
         'feed.name': 'shadowserver',
         'feed.url': 'https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-NATPMP',
         'classification.identifier': 'opennatpmp',
+    },
+}
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Compromised-Website
+compromised_website = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port')
+    ],
+    'optional_fields': [
+        ('source.reverse_dns', 'hostname'),
+        ('malware.name', 'tag'),
+        ('protocol.application', 'application'),
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('event_description.url', 'url'),
+        ('event_description.target', 'http_host'),
+        ('event_description.text', 'category'),
+        ('extra.', 'system', validate_to_none),
+        ('extra.', 'detected_since', validate_to_none),
+        ('extra.', 'server', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.type': 'compromised',
+        'classification.identifier': 'compromised-website',
+        'feed.code': 'shadowserver-compromised-website',
+    },
+}
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Netis-Router
+open_netis = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port')
+    ],
+    'optional_fields': [
+        ('source.reverse_dns', 'hostname'),
+        ('event_description.text', 'tag'),
+        ('extra.', 'response', validate_to_none),
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+    ],
+    'constant_fields': {
+        'protocol.transport': 'udp',
+        'classification.type': 'vulnerable service',
+        'classification.identifier': 'opennetis',
+        'feed.code': 'shadowserver-opennetis',
+    },
+}
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/NTP-Version
+ntp_version = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port')
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'version', validate_to_none),
+        ('extra.', 'clk_wander', validate_to_none),
+        ('extra.', 'clock', validate_to_none),
+        ('extra.', 'error', validate_to_none),
+        ('extra.', 'frequency', validate_to_none),
+        ('extra.', 'jitter', validate_to_none),
+        ('extra.', 'leap', validate_to_none),
+        ('extra.', 'mintc', validate_to_none),
+        ('extra.', 'noise', validate_to_none),
+        ('extra.', 'offset', validate_to_none),
+        ('extra.', 'peer', validate_to_none),
+        ('extra.', 'phase', validate_to_none),
+        ('extra.', 'poll', validate_to_none),
+        ('extra.', 'precision', validate_to_none),
+        ('extra.', 'processor', validate_to_none),
+        ('extra.', 'refid', validate_to_none),
+        ('extra.', 'reftime', validate_to_none),
+        ('extra.', 'rootdelay', validate_to_none),
+        ('extra.', 'rootdispersion', validate_to_none),
+        ('extra.', 'stability', validate_to_none),
+        ('extra.', 'state', validate_to_none),
+        ('extra.', 'stratum', validate_to_none),
+        ('extra.', 'system', validate_to_none),
+        ('extra.', 'tai', validate_to_none),
+        ('extra.', 'tc', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.type': 'vulnerable service',
+        'classification.identifier': 'openntpversion',
+        'feed.code': 'shadowserver-openntpversion',
+        'protocol.application': 'ntp',
+    },
+}
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Sandbox-URL
+sandbox_url = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+    ],
+    'optional_fields': [
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('malware.hash.md5', 'md5hash'),
+        ('event_description.url', 'url'),
+        ('extra.', 'user_agent', validate_to_none),
+        ('extra.', 'host', validate_to_none),
+        ('extra.', 'method', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.type': 'malware',
+        'feed.code': 'shadowserver-sandboxurl',
+        'classification.identifier': 'sandboxurl',
+    },
+}
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Spam-URL
+spam_url = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+    ],
+    'optional_fields': [
+        ('event_description.url', 'url'),
+        ('source.reverse_dns', 'host'),
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'subject', validate_to_none),
+        ('extra.', 'src', validate_to_none),
+        ('extra.', 'src_asn', validate_to_none),
+        ('extra.', 'src_geo', validate_to_none),
+        ('extra.', 'src_region', validate_to_none),
+        ('extra.', 'src_city', validate_to_none),
+        ('extra.', 'sender', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.type': 'spam',
+        'feed.code': 'shadowserver-spamurl',
+        'classification.identifier': 'spamurl',
+    },
+}
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-Proxy
+open_proxy = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('source.reverse_dns', 'dns'),
+        #('source.reverse_dns', 'hostname'),  # ..this is an old column name
+        ('protocol.application', 'type'),
+        ('extra.', 'password', validate_to_none),
+        ('extra.', 'os_name', validate_to_none),
+        ('extra.', 'os_version', validate_to_none),
+        ('event_description.text', 'via'),
+    ],
+    'constant_fields': {
+        'classification.type': 'other',
+        'feed.code': 'shadowserver-openproxy',
+        'classification.identifier': 'openproxy',
+    },
+}
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Sinkhole-HTTP-Referer
+sinkhole_http_referer = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        #('source.ip', 'ip'),  # ..this is an old column name
+        ('source.ip', 'inet'),
+    ],
+    'optional_fields': [
+        ('malware.name', 'type'),
+        ('extra.', 'http_host', validate_to_none),
+        ('extra.', 'http_referer', validate_to_none),
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+    ],
+    'constant_fields': {
+        'protocol.transport': 'tcp',
+        'classification.type': 'compromised',
+        'feed.code': 'shadowserver-sinkhole-http-referer',
+        #'classification.identifier': 'compromised-website',
+    },
+}
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Vulnerable-ISAKMP
+vulnerable_isakmp = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # This will be 'openike' in constant fields
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'initiator_spi', validate_to_none),
+        ('extra.', 'responder_spi', validate_to_none),
+        ('extra.', 'next_payload', validate_to_none),
+        ('extra.', 'version', validate_to_none),
+        ('extra.', 'exchange_type', validate_to_none),
+        ('extra.', 'flags', validate_to_none),
+        ('extra.', 'message_id', validate_to_none),
+        ('extra.', 'next_payload2', validate_to_none),
+        ('extra.', 'domain_of_interpretation', validate_to_none),
+        ('extra.', 'protocol_id', validate_to_none),
+        ('extra.', 'spi_size', validate_to_none),
+        ('extra.', 'notify_message_type', validate_to_none),
+    ],
+    'constant_fields': {
+        'protocol.transport': 'udp',
+        'classification.type': 'vulnerable service',
+        'feed.code': 'shadowserver-vulnerable-isakmp',
+        'classification.identifier': 'openike',
+    }
+}
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Botnet-CCIP
+# TODO: Recheck the format and field's names - in the latest/new reports they can be different
+botnet_ccip = {
+    'required_fields': [
+        ('time.source', 'first_seen', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('extra.', 'channel', validate_to_none),
+        ('source.asn', 'asn'),
+        ('source.as_name', 'as_name'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('source.fqdn', 'domain'),
+    ],
+    'constant_fields': {
+        'classification.type': 'c&c',
+        'feed.code': 'shadowserver-botnet-ccip',
+    }
+}
+
+accessible_rdp = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # This will be 'openrdp' in constant fields
+        ('extra.', 'handshake', validate_to_none),
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'rdp_protocol', validate_to_none),
+        ('extra.', 'cert_length', validate_to_none),
+        ('extra.', 'subject_common_name', validate_to_none),
+        ('extra.', 'issuer_common_name', validate_to_none),
+        ('extra.', 'cert_issue_date', validate_to_none),
+        ('extra.', 'cert_expiration_date', validate_to_none),
+        ('extra.', 'sha1_fingerprint', validate_to_none),
+        ('extra.', 'cert_serial_number', validate_to_none),
+        ('extra.', 'ssl_version', validate_to_none),
+        ('extra.', 'signature_algorithm', validate_to_none),
+        ('extra.', 'key_algorithm', validate_to_none),
+        ('extra.', 'sha256_fingerprint', validate_to_none),
+        ('extra.', 'sha512_fingerprint', validate_to_none),
+        ('extra.', 'md5_fingerprint', validate_to_none),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'sector', validate_to_none),
+    ],
+    'constant_fields': {
+        'protocol.transport': 'tcp',
+        'protocol.application': 'rdp',
+        'classification.type': 'vulnerable service',
+        'feed.code': 'shadowserver-accessible-rdp',
+        'classification.identifier': 'openrdp',
     },
 }
