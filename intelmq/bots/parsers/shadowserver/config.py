@@ -76,7 +76,7 @@ def get_feed(feedname):
         "Open-Proxy": open_proxy,
         "Sinkhole-HTTP-Referer": sinkhole_http_referer,
         "Vulnerable-ISAKMP": vulnerable_isakmp,
-        "Botnet-CCIP": botnet_ccip,
+        "Botnet-CCIP": botnet_ccip,  # TODO Recheck the format and field's names - in the latest/new reports they can be different
         "Accessible-RDP": accessible_rdp,
     }
 
@@ -1175,7 +1175,6 @@ vulnerable_isakmp = {
 }
 
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Botnet-CCIP
-# TODO: Recheck the format and field's names - in the latest/new reports they can be different
 botnet_ccip = {
     'required_fields': [
         ('time.source', 'first_seen', add_UTC_to_timestamp),
