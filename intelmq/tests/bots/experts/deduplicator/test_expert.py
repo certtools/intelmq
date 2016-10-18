@@ -4,7 +4,6 @@ import unittest
 
 import redis
 
-import intelmq.lib.harmonization as harmonization
 import intelmq.lib.message as message
 import intelmq.lib.test as test
 from intelmq.bots.experts.deduplicator.expert import DeduplicatorExpertBot
@@ -12,7 +11,7 @@ from intelmq.bots.experts.deduplicator.expert import DeduplicatorExpertBot
 INPUT1 = {"__type": "Event",
           "classification.identifier": "zeus",
           "source.ip": "192.0.2.1",
-          "time.observation": harmonization.DateTime.generate_datetime_now(),
+          "time.observation": '2015-01-01T13:37:00+00:00',
           }
 INPUT2 = INPUT1.copy()
 INPUT2['source.ip'] = '192.168.0.4'
@@ -48,6 +47,14 @@ class TestDeduplicatorExpertBot(test.BotTestCase, unittest.TestCase):
         self.input_message = INPUT2
         self.run_bot()
         self.assertMessageEqual(0, INPUT2)
+
+    def test_old_hash(self):
+        self.redis.flushdb()
+        self.redis.set(1241421362111650194, 'hash')
+        self.redis.expire(1241421362111650194, 3600)
+        self.input_message = INPUT1
+        self.run_bot()
+        self.assertOutputQueueLen()
 
     @classmethod
     def tearDownClass(cls):
