@@ -357,6 +357,16 @@ class TestMessageFactory(unittest.TestCase):
                    force=True, sanitize=True)
         self.assertEqual(hash(event1), hash(event2))
 
+    def test_event_hash_fixed(self):
+        """ Test if Event hash hasn't changed unintentionally. """
+        event = message.MessageFactory.unserialize('{"__type": "Event"}')
+        event1 = self.add_event_examples(event)
+        event2 = event1.deep_copy()
+        event2.add('time.observation', '2015-12-12T13:37:50+01:00',
+                   force=True, sanitize=True)
+        self.assertEqual(event1.hash(),
+                         'd04aa050afdc58a39329c78c3b59ce6fb6f11effe180fe8084b4f1e89007de71')
+
     def test_event_hash_method(self):
         """ Test Event hash() 'time.observation' should be ignored. """
         event = message.MessageFactory.unserialize('{"__type": "Event"}')
