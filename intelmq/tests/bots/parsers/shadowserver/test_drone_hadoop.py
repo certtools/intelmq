@@ -291,7 +291,7 @@ class TestOverwriteShadowserverParserBot(test.BotTestCase, unittest.TestCase):
 
         self.run_bot()
         for i, EVENT in enumerate(EVENTS):
-            EVENT['feed.name'] = 'Botnet-Drone-Hadoop'
+            #EVENT['feed.name'] = 'Botnet-Drone-Hadoop'
             self.assertMessageEqual(i, EVENT)
 
 
