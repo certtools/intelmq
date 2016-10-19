@@ -38,10 +38,10 @@ class ShadowserverParserBot(ParserBot):
 
         # Set a switch if the parser shall reset the feed.name,
         # code and feedurl for this event
-        self.override = False
-        if hasattr(self.parameters, 'override'):
-            if self.parameters.override:
-                self.override = True
+        self.overwrite = False
+        if hasattr(self.parameters, 'overwrite'):
+            if self.parameters.overwrite:
+                self.overwrite = True
 
         # Already warned about deprecation
         self.depr_warning = False
@@ -77,10 +77,10 @@ class ShadowserverParserBot(ParserBot):
         # one level below the "extra root"
         # e.g.: extra {'cc_dns': '127.0.0.1'}
 
-        # set feed.name and code, honor the override parameter
+        # set feed.name and code, honor the overwrite parameter
 
         if hasattr(self.parameters, 'feedname'):
-            if 'feed.name' in event and self.override:
+            if 'feed.name' in event and self.overwrite:
                 event.add('feed.name', self.parameters.feedname, force=True)
             elif 'feed.name' not in event:
                 event.add('feed.name', self.parameters.feedname)
