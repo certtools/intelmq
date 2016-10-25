@@ -47,4 +47,4 @@ def lookup_by_asn_only(cur, table_extension, asn):
                 "  JOIN autonomous_system{0} AS a"
                 "    ON a.number = oa.asn_id"
                 " WHERE a.number = %s".format(table_extension), (asn,))
-    return(cur.fetchall())
+    return cur.fetchall()
