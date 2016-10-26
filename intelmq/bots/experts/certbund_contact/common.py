@@ -33,9 +33,7 @@ def lookup_by_asn_only(cur, table_extension, asn):
     """
     cur.execute("SELECT DISTINCT"
                 "       c.email as email, o.name as organisation,"
-                "       s.name as sector, '' as template_path,"
-                "       'feed_specific' as format_name,"
-                "       oa.notification_interval as notification_interval"
+                "       s.name as sector"
                 "  FROM contact{0} AS c"
                 "  JOIN role{0} AS r ON r.contact_id = c.id"
                 "  JOIN organisation_to_asn{0} AS oa"
@@ -47,4 +45,41 @@ def lookup_by_asn_only(cur, table_extension, asn):
                 "  JOIN autonomous_system{0} AS a"
                 "    ON a.number = oa.asn_id"
                 " WHERE a.number = %s".format(table_extension), (asn,))
+    return cur.fetchall()
+
+
+def lookup_by_ipaddress_only(cur, table_extension, ipaddress):
+    cur.execute("SELECT DISTINCT"
+                "       c.email as email, o.name as organisation,"
+                "       s.name as sector"
+                "  FROM contact{0} AS c"
+                "  JOIN role{0} AS r ON r.contact_id = c.id"
+                "  JOIN organisation{0} o"
+                "    ON o.id = r.organisation_id"
+                "  LEFT OUTER JOIN sector AS s"
+                "    ON s.id = o.sector_id"
+                "  JOIN organisation_to_network{0} AS orgn"
+                "    ON orgn.organisation_id = r.organisation_id"
+                "  JOIN network{0} AS n ON n.id = orgn.net_id"
+                " WHERE inet(host(network(n.address))) <= %s"
+                "   AND %s <= inet(host(broadcast(n.address)))"
+                .format(table_extension), (ipaddress, ipaddress))
+    return cur.fetchall()
+
+
+def lookup_by_fqdn_only(cur, table_extension, fqdn):
+    cur.execute("SELECT DISTINCT"
+                "       c.email as email, o.name as organisation,"
+                "       s.name as sector"
+                "  FROM contact{0} AS c"
+                "  JOIN role{0} AS r ON r.contact_id = c.id"
+                "  JOIN organisation{0} o"
+                "    ON o.id = r.organisation_id"
+                "  LEFT OUTER JOIN sector AS s"
+                "    ON s.id = o.sector_id"
+                "  JOIN organisation_to_fqdn{0} AS orgf"
+                "    ON orgf.organisation_id = r.organisation_id"
+                "  JOIN fqdn{0} AS f ON f.id = orgf.fqdn_id"
+                " WHERE f.fqdn = %s"
+                .format(table_extension), (fqdn,))
     return cur.fetchall()
