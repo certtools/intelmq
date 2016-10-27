@@ -563,7 +563,7 @@ class CollectorBot(Bot):
     def __filter_empty_report(self, message):
         if 'raw' not in message:
             self.logger.warning('Ignoring report without raw field. '
-                                'Possible bug or miconfiguration of this bot.')
+                                'Possible bug or misconfiguration of this bot.')
             return False
         return True
 
@@ -571,6 +571,8 @@ class CollectorBot(Bot):
         report.add("feed.name", self.parameters.feed)
         if hasattr(self.parameters, 'code'):
             report.add("feed.code", self.parameters.code)
+        if hasattr(self.parameters, 'provider'):
+            report.add("feed.provider", self.parameters.provider)
         report.add("feed.accuracy", self.parameters.accuracy)
         return report
 
