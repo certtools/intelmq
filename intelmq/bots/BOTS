@@ -37,14 +37,18 @@
                 "provider": "",
                 "folder": "INBOX",
                 "http_password": "<password>",
-                "http_user": "<user>",
+                "http_username": "<user>",
                 "mail_host": "<host>",
                 "mail_password": "<password>",
                 "mail_ssl": true,
                 "mail_user": "<user>",
                 "rate_limit": 60,
                 "subject_regex": "<subject>",
-                "url_regex": "http://"
+                "url_regex": "http://",
+                "http_proxy": "",
+                "https_proxy":"",
+                "http_user_agent": "",
+                "ssl_client_certificate": "<path to client SSL certificate>"
             }
         },
         "Generic URL Fetcher": {
@@ -54,6 +58,12 @@
                 "feed": "",
                 "provider": "",
                 "http_url": "<insert url of feed>",
+                "http_username": "",
+                "http_password": "",
+                "http_proxy": "",
+                "https_proxy":"",
+                "http_user_agent": "",
+                "ssl_client_certificate": "<path to client SSL certificate>",
                 "rate_limit": 3600
             }
         },
@@ -89,7 +99,13 @@
                 "unzip_attachment": true,
                 "uri": "http://localhost/rt/REST/1.0",
                 "url_regex": "https://dl.shadowserver.org/[a-zA-Z0-9?_-]*",
-                "user": "intelmq"
+                "user": "intelmq",
+                "http_username": "",
+                "http_password": "",
+                "http_proxy": "",
+                "https_proxy":"",
+                "http_user_agent": "",
+                "ssl_client_certificate": "<path to client SSL certificate>"
             }
         },
         "XMPP collector": {

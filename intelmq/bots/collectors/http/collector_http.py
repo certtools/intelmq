@@ -25,25 +25,7 @@ from intelmq.lib.message import Report
 class HTTPCollectorBot(CollectorBot):
 
     def init(self):
-        self.http_header = getattr(self.parameters, 'http_header', {})
-        self.http_verify_cert = getattr(self.parameters, 'http_verify_cert',
-                                        True)
-
-        if hasattr(self.parameters, 'http_username') and hasattr(
-                self.parameters, 'http_password'):
-            self.auth = (self.parameters.http_username,
-                         self.parameters.http_password)
-        else:
-            self.auth = None
-
-        http_proxy = getattr(self.parameters, 'http_proxy', None)
-        https_proxy = getattr(self.parameters, 'http_ssl_proxy', None)
-        if http_proxy and https_proxy:
-            self.proxy = {'http': http_proxy, 'https': https_proxy}
-        else:
-            self.proxy = None
-
-        self.http_header['User-agent'] = self.parameters.http_user_agent
+        self.set_request_parameters()
 
     def process(self):
         self.logger.info("Downloading report from %s" %
@@ -51,7 +33,7 @@ class HTTPCollectorBot(CollectorBot):
 
         resp = requests.get(url=self.parameters.http_url, auth=self.auth,
                             proxies=self.proxy, headers=self.http_header,
-                            verify=self.http_verify_cert)
+                            verify=self.http_verify_cert, cert=self.ssl_cl_cert)
 
         if resp.status_code // 100 != 2:
             raise ValueError('HTTP response status code was {}.'
