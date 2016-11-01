@@ -5,6 +5,8 @@ import psycopg2
 
 from intelmq.lib.bot import Bot
 import intelmq.bots.experts.certbund_contact.common as common
+from intelmq.bots.experts.certbund_contact.eventjson import \
+     set_certbund_contacts
 
 
 class CERTBundKontaktExpertBot(Bot):
@@ -50,20 +52,11 @@ class CERTBundKontaktExpertBot(Bot):
                 # during the database query
                 return
             if contacts:
-                self.set_certbund_field(event, section + "_contacts",
-                                        contacts)
+                set_certbund_contacts(event, section, contacts)
 
         self.send_message(event)
         self.acknowledge_message()
 
-    def set_certbund_field(self, event, key, value):
-        if "extra" in event:
-            extra = json.loads(event["extra"])
-        else:
-            extra = {}
-        certbund = extra.setdefault("certbund", {})
-        certbund[key] = value
-        event.add("extra", extra, force=True)
 
     def lookup_contact_by(self, cur, fieldname, value):
         result = []
