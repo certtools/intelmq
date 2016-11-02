@@ -17,6 +17,10 @@ def contacts_key(section):
     return section + "_contacts"
 
 
+def directives_key(section):
+    return section + "_directives"
+
+
 def set_certbund_field(event, key, value):
     extra = get_parsed_extra_field(event)
     certbund = extra.setdefault("certbund", {})
@@ -34,3 +38,11 @@ def set_certbund_contacts(event, section, contacts):
 
 def get_certbund_contacts(event, section):
     return get_certbund_field(event).get(contacts_key(section), [])
+
+
+def set_certbund_directives(event, section, directives):
+    set_certbund_field(event, directives_key(section), directives)
+
+
+def get_certbund_directives(event, section):
+    return get_certbund_field(event).get(directives_key(section), [])
