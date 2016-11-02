@@ -24,5 +24,13 @@ def set_certbund_field(event, key, value):
     event.add("extra", extra, force=True)
 
 
+def get_certbund_field(event):
+    return get_parsed_extra_field(event).get("certbund", {})
+
+
 def set_certbund_contacts(event, section, contacts):
     set_certbund_field(event, contacts_key(section), contacts)
+
+
+def get_certbund_contacts(event, section):
+    return get_certbund_field(event).get(contacts_key(section), [])
