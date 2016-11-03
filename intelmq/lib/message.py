@@ -288,6 +288,8 @@ class Event(Message):
                 template['feed.code'] = message['feed.code']
             if 'feed.name' in message:
                 template['feed.name'] = message['feed.name']
+            if 'feed.provider' in message:
+                template['feed.provider'] = message['feed.provider']
             if 'feed.url' in message:
                 template['feed.url'] = message['feed.url']
             if 'rtir_id' in message:
