@@ -42,7 +42,7 @@ class MailGatherOutputBot(Bot):
                 # rewrite destination address
                 if message["source.abuse_contact"] in mail_rewrite:
                     message.update("source.abuse_contact",
-                                   str(mail_rewrite[message["source.abuse_contact"]])) # unicode( , "utf-8")
+                                   str(mail_rewrite[message["source.abuse_contact"]], encoding = "utf-8"))
                     mail = mail_rewrite[mail]
 
                 self.cache.redis.rpush("mail:"+mail, message)
