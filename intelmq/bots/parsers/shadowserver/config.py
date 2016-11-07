@@ -47,37 +47,38 @@ def get_feed(feedname):
     feed_idx = {
         "Botnet-Drone-Hadoop": botnet_drone_hadoop,
         "Open-Memcached": open_memcached,
-        "Ssl-Scan": ssl_scan,  # a.k.a POODLE
-        "Ssl-Freak-Scan": ssl_freak_scan,  # Only differs in a few extra fields
+        "Ssl-Scan": ssl_scan,  # Aka Poodle
+        "Ssl-Freak-Scan": ssl_freak_scan,
         "NTP-Monitor": ntp_monitor,
-        "NTP-Version": ntp_version,
+        "NTP-Version": ntp_version, 
         "DNS-open-resolvers": dns_open_resolvers,  # TODO Check implementation.
         "Open-Elasticsearch": open_elasticsearch,
-        "Open-NetBIOS": open_netbios,
-        "Open-MongoDB": open_mongodb,
+        "Open-NetBIOS": open_net_bios,  # TODO Check implementation.
+        "Open-MongoDB": open_mongodb,  # TODO Check implementation.
         "Open-MSSQL": open_mssql,  # TODO Check implementation.
         "Open-SNMP": open_snmp,
         "Open-SSDP": open_ssdp,  # TODO Check implementation.
         "Open-IPMI": open_ipmi,  # TODO VERIFY THIS FEED, as dmth did not have example data
-        "Open-Portmapper": open_portmapper,
-        "Open-Redis": open_redis,
+        "Open-Portmapper": open_portmapper,  # TODO Check implementation.
+        "Open-Redis": open_redis,  # TODO Check implementation.
         "Microsoft-Sinkhole": microsoft_sinkhole,
-        "Open-TFTP": open_tftp,
+        "Open-TFTP": open_tftp,  # TODO Check implementation.
         "Open-Chargen": open_chargen,
         "Open-QOTD": open_qotd,
         "Sinkhole-HTTP-Drone": sinkhole_http_drone,  # TODO Check implementation. Especially the TOR-Converter
         "Open-mDNS": open_mdns,  # TODO Check implementation.
         "Open-XDMCP": open_xdmcp,
-        "Open-NATPMP": open_natpmp,
         "Compromised-Website": compromised_website,
+        "Open-NATPMP": open_natpmp,
         "Open-Netis": open_netis,
         "Sandbox-URL": sandbox_url,
         "Spam-URL": spam_url,
         "Open-Proxy": open_proxy,
-        "Sinkhole-HTTP-Referer": sinkhole_http_referer,  # TODO is 'classification.identifier' a 'compromised-website' ?
+        "Sinkhole-HTTP-Referer": sinkhole_http_referer,
         "Vulnerable-ISAKMP": vulnerable_isakmp,
-        "Botnet-CCIP": botnet_ccip,  # TODO Recheck the format and field's names - in the latest/new reports they can be different
         "Accessible-RDP": accessible_rdp,
+        "Open-mDNS": open_mdns,
+        "Open-LDAP": open_ldap,
     }
 
     return feed_idx.get(feedname)
@@ -144,40 +145,41 @@ open_mdns = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port'),
+        ('source.port', 'port')
     ],
     'optional_fields': [
+        ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
-        # ('classification.identifier', 'tag'),  # This will be 'mdns' in constant fields
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
+        # Other known fields which will go into "extra"
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
-        ('extra.', 'mdns_name', validate_to_none),
-        ('extra.', 'mdns_ipv4', validate_to_none),
-        ('extra.', 'mdns_ipv6', validate_to_none),
-        ('extra.', 'services', validate_to_none),
-        ('extra.', 'workstation_name', validate_to_none),
-        ('extra.', 'workstation_ipv4', validate_to_none),
-        ('extra.', 'workstation_ipv6', validate_to_none),
-        ('extra.', 'workstation_info', validate_to_none),
-        ('extra.', 'http_name', validate_to_none),
-        ('extra.', 'http_ipv4', validate_to_none),
-        ('extra.', 'http_ipv6', validate_to_none),
-        ('extra.', 'http_ptr', validate_to_none),
-        ('extra.', 'http_info', validate_to_none),
-        ('extra.', 'http_target', validate_to_none),
-        ('extra.', 'http_port', validate_to_none),
+        # tag
+        # mdns_name
+        # mdns_ipv4
+        # mdns_ipv6
+        # workstation_name
+        # workstation_ipv4
+        # workstation_ipv6
+        # workstation_info
+        # http_name"
+        # http_ipv4
+        # http_ipv6
+        # http_ptr
+        # http_info
+        # http_target
+        # http_port
     ],
     'constant_fields': {
-        'protocol.transport': 'udp',
-        'protocol.application': 'mdns',
         'classification.type': 'vulnerable service',
+        'classification.taxonomy': 'Vulnerable',
+        'protocol.application': 'mdns',
         'feed.code': 'shadowserver-openmdns',
         'classification.identifier': 'openmdns',
-    }
+    },
 }
 
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-Chargen
@@ -206,7 +208,6 @@ open_chargen = {
         'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'openchargen',
         'feed.code': 'shadowserver-openchargen',
-        'feed.name': 'shadowserver',
         'protocol.application': 'chargen',
     },
 }
@@ -240,7 +241,6 @@ open_tftp = {
         'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'opentftp',
         'feed.code': 'shadowserver-opentftp',
-        'feed.name': 'shadowserver',
         'protocol.application': 'tftp',
     },
 }
@@ -281,9 +281,7 @@ sinkhole_http_drone = {
         'protocol.transport': 'tcp',
         'classification.type': 'botnet drone',
         'classification.taxonomy': 'Malicious Code',
-        'classification.identifier': 'botnet',
         'feed.code': 'shadowserver-sinkhole-http-drone',
-        'feed.name': 'shadowserver',
     },
 }
 
@@ -323,9 +321,7 @@ microsoft_sinkhole = {
         'protocol.transport': 'tcp',
         'protocol.application': 'http',
         'classification.taxonomy': 'Malicious Code',
-        'classification.identifier': 'botnet',
         'feed.code': 'shadowserver-microsoft-sinkhole',
-        'feed.name': 'shadowserver',
     },
 }
 
@@ -367,7 +363,6 @@ open_redis = {
         'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'openredis',
         'feed.code': 'shadowserver-openredis',
-        'feed.name': 'shadowserver',
         'protocol.application': 'redis',
     },
 }
@@ -400,7 +395,6 @@ open_portmapper = {
         'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'openportmapper',
         'feed.code': 'shadowserver-openportmapper',
-        'feed.name': 'shadowserver',
         'protocol.application': 'portmapper',
     },
 }
@@ -446,7 +440,6 @@ open_ipmi = {
         'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'openipmi',
         'feed.code': 'shadowserver-openipmi',
-        'feed.name': 'shadowserver',
         'protocol.application': 'ipmi',
         'protocol.transport': 'udp',
     },
@@ -479,7 +472,6 @@ open_qotd = {
         'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'openqotd',
         'feed.code': 'shadowserver-openqotd',
-        'feed.name': 'shadowserver',
         'protocol.application': 'qotd',
     },
 }
@@ -520,7 +512,6 @@ open_ssdp = {
         'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'openssdp',
         'feed.code': 'shadowserver-openssdp',
-        'feed.name': 'shadowserver',
         'protocol.application': 'ssdp',
     },
 }
@@ -551,9 +542,8 @@ open_snmp = {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'Vulnerable',
         'protocol.application': 'snmp',
-        'classification.identifier': 'opensnmp',
+        'classification.identifier': 'snmp',
         'feed.code': 'shadowserver-opensnmp',
-        'feed.name': 'shadowserver',
     },
 }
 
@@ -588,7 +578,6 @@ open_mssql = {
         'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'openmssql',
         'feed.code': 'shadowserver-openmssql',
-        'feed.name': 'shadowserver',
         'protocol.application': 'mssql',
     },
 }
@@ -628,13 +617,12 @@ open_mongodb = {
         'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'openmongodb',
         'feed.code': 'shadowserver-openmongodb',
-        'feed.name': 'shadowserver',
         'protocol.application': 'mongodb',
     },
 }
 
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-NetBIOS
-open_netbios = {
+open_net_bios = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
@@ -659,7 +647,6 @@ open_netbios = {
         'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'opennetbios',
         'feed.code': 'shadowserver-opennetbios',
-        'feed.name': 'shadowserver',
         'protocol.application': 'netbios',
     },
 }
@@ -699,7 +686,6 @@ open_elasticsearch = {
         'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'openelasticsearch',
         'feed.code': 'shadowserver-openelasticsearch',
-        'feed.name': 'shadowserver',
         'protocol.application': 'elasticsearch',
     },
 }
@@ -729,7 +715,6 @@ dns_open_resolvers = {
         'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'opendns',
         'feed.code': 'shadowserver-opendns',
-        'feed.name': 'shadowserver',
         'protocol.application': 'dns',
     },
 }
@@ -754,8 +739,30 @@ ntp_monitor = {
         'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'openntp',
         'feed.code': 'shadowserver-openntp',
-        'feed.name': 'shadowserver',
         'protocol.application': 'ntp',
+    },
+}
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Ssl-Scan
+ssl_scan = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port')
+    ],
+    'optional_fields': [
+        ('source.reverse_dns', 'hostname'),
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+    ],
+    'constant_fields': {
+        'classification.type': 'vulnerable service',
+        'classification.identifier': 'sslpoodle',
+        'feed.code': 'shadowserver-ssl-poodle-scan',
+        'protocol.application': 'https',
+        # XXX FIXME needs work!!
     },
 }
 
@@ -775,36 +782,9 @@ ssl_freak_scan = {
     ],
     'constant_fields': {
         'classification.type': 'vulnerable service',
-        'classification.taxonomy': 'Vulnerable',
-        'classification.identifier': 'SSL-FREAK',
+        'classification.identifier': 'sslfreak',
         'feed.code': 'shadowserver-ssl-freak-scan',
-        'feed.name': 'shadowserver',
-        'protocol.application': 'https',
-    },
-}
-
-
-# https://www.shadowserver.org/wiki/pmwiki.php/Services/Ssl-Scan
-ssl_scan = {
-    'required_fields': [
-        ('time.source', 'timestamp', add_UTC_to_timestamp),
-        ('source.ip', 'ip'),
-        ('source.port', 'port')
-    ],
-    'optional_fields': [
-        ('source.reverse_dns', 'hostname'),
-        ('source.asn', 'asn'),
-        ('source.geolocation.cc', 'geo'),
-        ('source.geolocation.region', 'region'),
-        ('source.geolocation.city', 'city'),
-    ],
-    'constant_fields': {
-        'classification.type': 'vulnerable service',
-        'classification.taxonomy': 'Vulnerable',
-        'classification.identifier': 'SSL-Poodle',
-        'feed.code': 'shadowserver-ssl-scan',
-        'feed.name': 'shadowserver',
-        'protocol.application': 'https',
+        # XXX FIXME needs work!!
     },
 }
 
@@ -828,7 +808,6 @@ open_memcached = {
         'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'openmemcached',
         'feed.code': 'shadowserver-openmemcached',
-        'feed.name': 'shadowserver',
         'protocol.application': 'memcached',
     },
 }
@@ -866,9 +845,7 @@ botnet_drone_hadoop = {
     'constant_fields': {
         'classification.type': 'botnet drone',
         'classification.taxonomy': 'Malicious Code',
-        'classification.identifier': 'botnet',
         'feed.code': 'shadowserver-botnet-drone-hadoop',
-        'feed.name': 'shadowserver',
     },
 }
 
@@ -881,59 +858,24 @@ open_xdmcp = {
     ],
     'optional_fields': [
         ('protocol.transport', 'protocol'),
-        ('source.reverse_dns', 'hostname'),
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
-        # Other known fields which will go into "extra"
+        ('source.reverse_dns', 'hostname'),
+        #tag
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
-        ('extra.', 'opcode'),
-        ('extra.', 'reported_hostname'),
-        ('extra.', 'status'),
+        ('extra.', 'opcode', validate_to_none),
+        ('extra.', 'reported_hostname', validate_to_none),
+        ('extra.', 'status', validate_to_none),
+        ('extra.', 'size', invalidate_zero),
     ],
     'constant_fields': {
         'classification.type': 'vulnerable service',
-        'classification.taxonomy': 'Vulnerable',
-        'protocol.application': 'xdmcp',
-        'feed.code': 'shadowserver-openxdmcp',
-        'feed.name': 'shadowserver',
-        'feed.url': 'https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-XDMCP',
         'classification.identifier': 'openxdmcp',
-    },
-}
-
-# https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-NATPMP
-open_natpmp = {
-    'required_fields': [
-        ('time.source', 'timestamp', add_UTC_to_timestamp),
-        ('source.ip', 'ip'),
-        ('source.port', 'port')
-    ],
-    'optional_fields': [
-        ('protocol.transport', 'protocol'),
-        ('source.reverse_dns', 'hostname'),
-        ('source.asn', 'asn'),
-        ('source.geolocation.cc', 'geo'),
-        ('source.geolocation.region', 'region'),
-        ('source.geolocation.city', 'city'),
-        # Other known fields which will go into "extra"
-        ('extra.', 'naics', invalidate_zero),
-        ('extra.', 'sic', invalidate_zero),
-        ('extra.', 'version'),
-        ('extra.', 'opcode'),
-        ('extra.', 'uptime'),
-        ('extra.', 'external_ip'),
-    ],
-    'constant_fields': {
-        'classification.type': 'vulnerable service',
-        'classification.taxonomy': 'Vulnerable',
-        'protocol.application': 'nat-pmp',
-        'feed.code': 'shadowserver-opennatpmp',
-        'feed.name': 'shadowserver',
-        'feed.url': 'https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-NATPMP',
-        'classification.identifier': 'opennatpmp',
+        'feed.code': 'shadowserver-openxdmcp',
+        'protocol.application': 'xdmcp',
     },
 }
 
@@ -952,8 +894,8 @@ compromised_website = {
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
-        ('event_description.url', 'url'),
-        ('event_description.target', 'http_host'),
+        ('source.url', 'url'),
+        ('source.fqdn', 'http_host'),
         ('event_description.text', 'category'),
         ('extra.', 'system', validate_to_none),
         ('extra.', 'detected_since', validate_to_none),
@@ -963,6 +905,35 @@ compromised_website = {
         'classification.type': 'compromised',
         'classification.identifier': 'compromised-website',
         'feed.code': 'shadowserver-compromised-website',
+    },
+}
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-NATPMP
+open_natpmp = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port')
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'version', validate_to_none),
+        ('extra.', 'opcode', validate_to_none),
+        ('extra.', 'uptime', validate_to_none),
+        ('extra.', 'external_ip', validate_ip),
+    ],
+    'constant_fields': {
+        'classification.type': 'vulnerable service',
+        'classification.identifier': 'opennatpmp',
+        'feed.code': 'shadowserver-opennatpmp',
+        'protocol.application': 'nat-pmp',
     },
 }
 
@@ -1048,9 +1019,9 @@ sandbox_url = {
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('malware.hash.md5', 'md5hash'),
-        ('event_description.url', 'url'),
+        ('source.url', 'url'),
         ('extra.', 'user_agent', validate_to_none),
-        ('extra.', 'host', validate_to_none),
+        ('source.fqdn', 'host'),
         ('extra.', 'method', validate_to_none),
     ],
     'constant_fields': {
@@ -1064,17 +1035,17 @@ sandbox_url = {
 spam_url = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
-        ('source.ip', 'ip'),
+        ('source.ip', 'src'),
     ],
     'optional_fields': [
-        ('event_description.url', 'url'),
+        ('source.url', 'url'),
         ('source.reverse_dns', 'host'),
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
         ('extra.', 'subject', validate_to_none),
-        ('extra.', 'src', validate_to_none),
+        ('extra.', 'ip', validate_to_none),
         ('extra.', 'src_asn', validate_to_none),
         ('extra.', 'src_geo', validate_to_none),
         ('extra.', 'src_region', validate_to_none),
@@ -1174,28 +1145,7 @@ vulnerable_isakmp = {
     }
 }
 
-# https://www.shadowserver.org/wiki/pmwiki.php/Services/Botnet-CCIP
-botnet_ccip = {
-    'required_fields': [
-        ('time.source', 'first_seen', add_UTC_to_timestamp),
-        ('source.ip', 'ip'),
-        ('source.port', 'port'),
-    ],
-    'optional_fields': [
-        ('extra.', 'channel', validate_to_none),
-        ('source.asn', 'asn'),
-        ('source.as_name', 'as_name'),
-        ('source.geolocation.cc', 'geo'),
-        ('source.geolocation.region', 'region'),
-        ('source.geolocation.city', 'city'),
-        ('source.fqdn', 'domain'),
-    ],
-    'constant_fields': {
-        'classification.type': 'c&c',
-        'feed.code': 'shadowserver-botnet-ccip',
-    }
-}
-
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Accessible-RDP
 accessible_rdp = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1236,3 +1186,92 @@ accessible_rdp = {
         'classification.identifier': 'openrdp',
     },
 }
+
+open_mdns = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # This will be 'mdns' in constant fields
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'mdns_name', validate_to_none),
+        ('extra.', 'mdns_ipv4', validate_to_none),
+        ('extra.', 'mdns_ipv6', validate_to_none),
+        ('extra.', 'services', validate_to_none),
+        ('extra.', 'workstation_name', validate_to_none),
+        ('extra.', 'workstation_ipv4', validate_to_none),
+        ('extra.', 'workstation_ipv6', validate_to_none),
+        ('extra.', 'workstation_info', validate_to_none),
+        ('extra.', 'http_name', validate_to_none),
+        ('extra.', 'http_ipv4', validate_to_none),
+        ('extra.', 'http_ipv6', validate_to_none),
+        ('extra.', 'http_ptr', validate_to_none),
+        ('extra.', 'http_info', validate_to_none),
+        ('extra.', 'http_target', validate_to_none),
+        ('extra.', 'http_port', validate_to_none),
+    ],
+    'constant_fields': {
+        'protocol.transport': 'udp',
+        'protocol.application': 'mdns',
+        'classification.type': 'vulnerable service',
+        'feed.code': 'shadowserver-openmdns',
+        'classification.identifier': 'openmdns',
+    }
+}
+
+open_ldap = {
+     'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # This will be 'openldap' in constant fields
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'size', validate_to_none),
+        ('extra.', 'configuration_naming_context', validate_to_none),
+        ('extra.', 'current_time', validate_to_none),
+        ('extra.', 'default_naming_context', validate_to_none),
+        ('destination.local_hostname', 'dns_host_name'),
+        ('extra.', 'domain_controller_functionality', validate_to_none),
+        ('extra.', 'domain_functionality', validate_to_none),
+        ('extra.', 'ds_service_name', validate_to_none),
+        ('extra.', 'forest_functionality', validate_to_none),
+        ('extra.', 'highest_committed_usn', validate_to_none),
+        ('extra.', 'is_global_catalog_ready', validate_to_none),
+        ('extra.', 'is_synchronized', validate_to_none),
+        ('extra.', 'ldap_service_name', validate_to_none),
+        ('extra.', 'naming_contexts', validate_to_none),
+        ('extra.', 'root_domain_naming_context', validate_to_none),
+        ('extra.', 'schema_naming_context', validate_to_none),
+        ('extra.', 'server_name', validate_to_none),
+        ('extra.', 'subschema_subentry', validate_to_none),
+        ('extra.', 'supported_capabilities', validate_to_none),
+        ('extra.', 'supported_control', validate_to_none),
+        ('extra.', 'supported_ldap_policies', validate_to_none),
+        ('extra.', 'supported_ldap_version', validate_to_none),
+        ('extra.', 'supported_sasl_mechanisms', validate_to_none),
+    ],
+    'constant_fields': {
+        'protocol.transport': 'udp',
+        'protocol.application': 'ldap',
+        'classification.type': 'vulnerable service',
+        'feed.code': 'shadowserver-openldap',
+        'classification.identifier': 'openldap',
+    }
+}
+
