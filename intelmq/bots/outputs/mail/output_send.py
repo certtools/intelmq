@@ -74,11 +74,11 @@ class MailSendOutputBot(Bot):
 
         for mail_record in self.cache.redis.keys("mail:*"):
             self.logger.warning("Next:")
-            self.logger.warning("Mail:" + mail_record)
+            self.logger.warning("Mail:" + str(mail_record))
             lines = []
             self.logger.debug(mail_record)
             for message in self.cache.redis.lrange(mail_record, 0, -1):
-                lines.append(json.loads(unicode(message)))
+                lines.append(json.loads(str(message,encoding="utf-8")))
 
             # prepare rows for csv attachment
             fieldnames = set()
@@ -114,7 +114,7 @@ class MailSendOutputBot(Bot):
     def _send_mail(self, emailfrom, emailto, subject, text, fileContents=None):        
         server = self.parameters.smtp_server
         if hasattr(self.parameters, 'testing_to'):
-            subject = subject + " (intended for " + emailto + ")"
+            subject = subject + " (intended for " + str(emailto,encoding="utf-8") + ")"
             emailto = self.parameters.testing_to
         msg = MIMEMultipart()
         msg["From"] = emailfrom
