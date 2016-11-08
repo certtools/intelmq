@@ -226,14 +226,22 @@ Get logs of a bot:
                 startup = json.load(fp)
                 for bot_id, bot_values in startup.items():
                     if 'parameters' in self.runtime_configuration[bot_id]:
-                        self.logger.warning('Mixed setup of new runtime.conf and old startup.conf'
-                                            ' found. Ignoring startup.conf, please fix this!')
-                        continue
+                        self.logger.error('Mixed setup of new runtime.conf and old startup.conf'
+                                          ' found. Ignoring startup.conf, please fix this!')
+                        exit(1)
                     params = self.runtime_configuration[bot_id].copy()
+                    self.runtime_configuration[bot_id].clear()
                     self.runtime_configuration[bot_id]['parameters'] = params
                     self.runtime_configuration[bot_id].update(bot_values)
-        else:
-            self.startup = self.runtime_configuration
+            try:
+                with open(RUNTIME_CONF_FILE + '.new', 'w') as fp:
+                    json.dump(self.runtime_configuration, fp, indent=4, sort_keys=True,
+                              separators=(',', ': '))
+            except PermissionError:
+                self.logger.info('Failed to write new configuration format to %r.'
+                                 '' % (RUNTIME_CONF_FILE + '.new'))
+            else:
+                self.logger.info('%r with new format written.' % (RUNTIME_CONF_FILE + '.new'))
 
         if not os.path.exists(PIDDIR):
             os.makedirs(PIDDIR)
@@ -327,7 +335,7 @@ Get logs of a bot:
 
     def bot_run(self, bot_id):
         try:
-            bot_module = self.startup[bot_id]['module']
+            bot_module = self.runtime_configuration[bot_id]['module']
         except KeyError:
             log_bot_error('notfound', bot_id)
             return 'error'
@@ -355,7 +363,7 @@ Get logs of a bot:
                 remove_pidfile(bot_id)
         log_bot_message('starting', bot_id)
         try:
-            module = self.startup[bot_id]['module']
+            module = self.runtime_configuration[bot_id]['module']
         except KeyError:
             log_bot_error('notfound', bot_id)
             return 'error'
@@ -419,7 +427,7 @@ Get logs of a bot:
             log_bot_message('running', bot_id)
             return 'running'
 
-        if bot_id not in self.startup:
+        if bot_id not in self.runtime_configuration:
             log_bot_error('notfound', bot_id)
             return 'error'
 
@@ -429,7 +437,7 @@ Get logs of a bot:
     def botnet_start(self):
         botnet_status = {}
         log_botnet_message('starting')
-        for bot_id in sorted(self.startup.keys()):
+        for bot_id in sorted(self.runtime_configuration.keys()):
             botnet_status[bot_id] = self.bot_start(bot_id)
         log_botnet_message('running')
         return botnet_status
@@ -437,7 +445,7 @@ Get logs of a bot:
     def botnet_stop(self):
         botnet_status = {}
         log_botnet_message('stopping')
-        for bot_id in sorted(self.startup.keys()):
+        for bot_id in sorted(self.runtime_configuration.keys()):
             botnet_status[bot_id] = self.bot_stop(bot_id)
         log_botnet_message('stopped')
         return botnet_status
@@ -445,7 +453,7 @@ Get logs of a bot:
     def botnet_reload(self):
         botnet_status = {}
         log_botnet_message('reloading')
-        for bot_id in sorted(self.startup.keys()):
+        for bot_id in sorted(self.runtime_configuration.keys()):
             botnet_status[bot_id] = self.bot_reload(bot_id)
         log_botnet_message('reloaded')
         return botnet_status
@@ -453,19 +461,19 @@ Get logs of a bot:
     def botnet_restart(self):
         botnet_status = {}
         log_botnet_message('stopping')
-        for bot_id in sorted(self.startup.keys()):
+        for bot_id in sorted(self.runtime_configuration.keys()):
             botnet_status[bot_id] = tuple(self.bot_stop(bot_id))
         time.sleep(3)
         log_botnet_message('stopped')
         log_botnet_message('starting')
-        for bot_id in sorted(self.startup.keys()):
+        for bot_id in sorted(self.runtime_configuration.keys()):
             botnet_status[bot_id] += tuple(self.bot_start(bot_id))
         log_botnet_message('running')
         return botnet_status
 
     def botnet_status(self):
         botnet_status = {}
-        for bot_id in sorted(self.startup.keys()):
+        for bot_id in sorted(self.runtime_configuration.keys()):
             botnet_status[bot_id] = self.bot_status(bot_id)
         return botnet_status
 
@@ -477,12 +485,12 @@ Get logs of a bot:
         If description is not set, None is used instead.
         """
         if self.args.type == 'text':
-            for bot_id in sorted(self.startup.keys()):
+            for bot_id in sorted(self.runtime_configuration.keys()):
                 print("Bot ID: {}\nDescription: {}"
-                      "".format(bot_id, self.startup[bot_id].get('description')))
+                      "".format(bot_id, self.runtime_configuration[bot_id].get('description')))
         return [{'id': bot_id,
-                 'description': self.startup[bot_id].get('description')}
-                for bot_id in sorted(self.startup.keys())]
+                 'description': self.runtime_configuration[bot_id].get('description')}
+                for bot_id in sorted(self.runtime_configuration.keys())]
 
     def list_queues(self):
         source_queues = set()
