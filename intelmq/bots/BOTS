@@ -336,7 +336,7 @@
             "module": "intelmq.bots.parsers.shadowserver.parser",
             "parameters": {
                 "feedname": "",
-                "override": true
+                "overwrite": true
             }
         },
         "Spamhaus CERT": {
