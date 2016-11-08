@@ -16,7 +16,7 @@ import traceback
 
 from intelmq import (DEFAULT_LOGGING_PATH,
                      DEFAULTS_CONF_FILE, HARMONIZATION_CONF_FILE,
-                     PIPELINE_CONF_FILE, RUNTIME_CONF_FILE, SYSTEM_CONF_FILE)
+                     PIPELINE_CONF_FILE, RUNTIME_CONF_FILE, SYSTEM_CONF_FILE, VAR_RUN_PATH)
 from intelmq.lib import exceptions, utils
 from intelmq.lib.message import MessageFactory
 from intelmq.lib.pipeline import PipelineFactory
@@ -48,6 +48,14 @@ class Bot(object):
                                                 bot_id, version_info,
                                                 os.getpid())))
             self.__log_buffer.append(('debug', 'Library path: %r.' % __file__))
+
+            self.__pidfile = os.path.join(VAR_RUN_PATH, bot_id + ".pid")
+
+            pid = utils.write_pidfile(bot_id)
+            if pid is not True:
+                self.__log_buffer.append(('error', 'Pid file existst with content %r.'
+                                          '' % pid))
+                self.stop(remove_pidfile=False)
 
             self.__load_defaults_configuration()
             self.__load_system_configuration()
@@ -231,13 +239,24 @@ class Bot(object):
             self.__handle_sighup()
             remaining = self.parameters.rate_limit - (time.time() - starttime)
 
-    def stop(self, exitcode=1):
+    def stop(self, exitcode=1, remove_pidfile=True):
         try:
             self.shutdown()
         except:
             pass
 
         self.__disconnect_pipelines()
+
+        if not getattr(self.parameters, 'testing', False):
+            if remove_pidfile:
+                try:
+                    os.remove(self.__pidfile)
+                except:
+                    if self.logger:
+                        self.logger.exception('Could not remove pid file.')
+                    else:
+                        self.__log_buffer.append(('exception', 'Could not remove pid file.'))
+                pass
 
         if self.logger:
             self.logger.info("Bot stopped.")

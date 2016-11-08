@@ -26,7 +26,8 @@ import intelmq
 
 __all__ = ['base64_decode', 'base64_encode', 'decode', 'encode',
            'load_configuration', 'load_parameters', 'log', 'parse_logline',
-           'reverse_readline', 'error_message_from_exc',
+           'reverse_readline', 'error_message_from_exc', 'write_pidfile',
+           'read_pidfile'
            ]
 
 # Used loglines format
@@ -38,6 +39,8 @@ LOG_REGEX = (r'^(?P<date>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d+) -'
              r' (?P<bot_id>[-\w]+) - '
              r'(?P<log_level>[A-Z]+) - '
              r'(?P<message>.+)$')
+
+PIDFILE = os.path.join(intelmq.VAR_RUN_PATH, "%s.pid")
 
 
 class Parameters(object):
@@ -331,3 +334,29 @@ def error_message_from_exc(exc):
         The error message of exc
     """
     return traceback.format_exception_only(type(exc), exc)[-1].strip().replace(type(exc).__name__ + ': ', '')
+
+
+def write_pidfile(bot_id):
+    try:
+        with open(PIDFILE % bot_id, 'x') as pidfile:
+            pidfile.write(str(os.getpid()))
+        return True
+    except FileExistsError:
+        return read_pidfile()
+
+
+def read_pidfile(bot_id):
+    pidfile = os.path.join(intelmq.VAR_RUN_PATH, bot_id + ".pid")
+    if not os.path.exists(PIDFILE % bot_id):
+        return False
+    with open(PIDFILE % bot_id, 'r') as pidfile:
+        content = pidfile.read()
+    return content
+
+
+def remove_pidfile(bot_id, force=False):
+    if (force or read_pidfile(bot_id) == str(os.getpid())) and os.path.exists(PIDFILE % bot_id):
+        os.remove(PIDFILE % bot_id)
+        return True
+    else:
+        return False

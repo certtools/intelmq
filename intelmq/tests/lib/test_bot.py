@@ -78,7 +78,8 @@ class TestBot(unittest.TestCase):
         with mock.patch('intelmq.lib.utils.load_configuration',
                         new=self.mocked_config):
             with mock.patch('intelmq.lib.utils.log', self.mocked_log):
-                self.bot = self.bot_reference(self.bot_id)
+                with mock.patch('intelmq.lib.utils.write_pidfile', lambda x: True):
+                    self.bot = self.bot_reference(self.bot_id)
         self.pipe = pipe
 
     def run_bot(self, raise_on_connect=False):
