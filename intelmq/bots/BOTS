@@ -435,16 +435,22 @@
                 "filter_value": "<PT>"
             }
         },
-        "Generic Contact DB Lookup": {
-            "description": "Fetches abuse contacts from a database per ASN.",
-            "module": "intelmq.bots.experts.contact_db_lookup.expert",
+        "Generic DB Lookup": {
+            "description": "Fetches data from a database.",
+            "module": "intelmq.bots.experts.generic_db_lookup.expert",
             "parameters": {
-                "ascolumn": "asn",
-                "column": "contact",
                 "database": "intelmq",
                 "host": "localhost",
+                "match_fields": {
+                    "source.asn": "asn"
+                },
+                "overwrite": false,
                 "password": "<password>",
                 "port": "5432",
+                "replace_fields": {
+                    "contact": "source.abuse_contact",
+                    "note": "comment"
+                },
                 "sslmode": "require",
                 "table": "contacts",
                 "user": "intelmq"
