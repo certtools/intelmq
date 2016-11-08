@@ -5,13 +5,12 @@
 3. [Experts](#experts)
 4. [Outputs](#outputs)
 
+All Bots can be extended with an `enabled` parameter in `runtime.conf`. If the parameter is set to `True`
+(which is assumed as defaut if it is missing) the bot will start. If the parameter was set to `False`, the
+Bot will not start, and terminate immediately. Nevertheless you will be informed about this in the bots' log file.
 
 <a name="collectors"></a>
 ## Collectors
-
-* All Collector-Bots can be extended with an `enabled` parameter in `runtime.conf`. If the parameter is set to `True`
-  (which is assumed as defaut if it is missing) the bot will start. If the parameter was set to `False`, the
-  Bot will not start, and terminate immediately. Nevertheless you will be informed about this in the bots' log file.
 
 ### HTTP
 
