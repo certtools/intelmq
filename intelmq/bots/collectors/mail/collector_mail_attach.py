@@ -9,7 +9,6 @@ except ImportError:
     imbox = None
 
 from intelmq.lib.bot import CollectorBot
-from intelmq.lib.message import Report
 
 
 class MailAttachCollectorBot(CollectorBot):
@@ -52,7 +51,7 @@ class MailAttachCollectorBot(CollectorBot):
                         else:
                             raw_report = attach['content'].read()
 
-                        report = Report()
+                        report = self.new_report()
                         report.add("raw", raw_report)
 
                         self.send_message(report)

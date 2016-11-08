@@ -4,7 +4,6 @@ import sys
 import requests
 
 from intelmq.lib.bot import CollectorBot
-from intelmq.lib.message import Report
 from intelmq.lib.utils import decode
 
 
@@ -24,7 +23,7 @@ class HTTPStreamCollectorBot(CollectorBot):
                     # filter out keep-alive new lines and empty lines
                     continue
 
-                report = Report()
+                report = self.new_report()
                 report.add("raw", decode(line))
                 self.send_message(report)
             self.logger.info('Stream stopped.')

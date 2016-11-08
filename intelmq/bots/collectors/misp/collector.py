@@ -17,7 +17,6 @@ from urllib.parse import urljoin
 from pymisp import PyMISP
 
 from intelmq.lib.bot import CollectorBot
-from intelmq.lib.message import Report
 
 
 class MISPCollectorBot(CollectorBot):
@@ -48,7 +47,7 @@ class MISPCollectorBot(CollectorBot):
                 misp_event = e['Event']
 
                 # Send the results to the parser
-                report = Report()
+                report = self.new_report()
                 report.add('raw', json.dumps(misp_event, sort_keys=True))
                 report.add('feed.url', self.parameters.misp_url)
                 self.send_message(report)

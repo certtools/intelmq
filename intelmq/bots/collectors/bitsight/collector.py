@@ -2,7 +2,6 @@
 import sys
 
 from intelmq.lib.bot import CollectorBot
-from intelmq.lib.message import Report
 
 import pycurl
 
@@ -13,7 +12,7 @@ class BitsightCollectorBot(CollectorBot):
         self.logger.info("Connecting to BitSightTech stream server")
         http_proxy = self.parameters.http_proxy
         https_proxy = self.parameters.http_ssl_proxy
-        self.conn  = pycurl.Curl()
+        self.conn = pycurl.Curl()
         if http_proxy:
             self.conn.setopt(pycurl.PROXY, str(http_proxy))
         if https_proxy:
@@ -33,7 +32,7 @@ class BitsightCollectorBot(CollectorBot):
             if line == "":
                 continue
 
-            report = Report()
+            report = self.new_report()
             report.add("raw", line)
             report.add("feed.url", self.parameters.http_url)
 

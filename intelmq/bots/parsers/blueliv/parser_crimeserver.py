@@ -7,7 +7,6 @@ import sys
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.message import Event
 
 TYPES = {
     'PHISHING': 'phishing',
@@ -26,7 +25,7 @@ class BluelivCrimeserverParserBot(Bot):
         raw_report = utils.base64_decode(report.get('raw'))
 
         for item in json.loads(raw_report):
-            event = Event(report)
+            event = self.new_event(report)
             if 'url' in item:
                 event.add('source.url', item['url'])
             if 'ip' in item:

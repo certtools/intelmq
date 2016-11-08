@@ -5,7 +5,6 @@ import sys
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.message import Event
 
 CLASSIFICATION = {
     "brute-force": ["brute-force", "brute force", "mysql"],
@@ -45,7 +44,7 @@ class TaichungCityNetflowParserBot(Bot):
                 "<td>[\ ]*(\d{4}-\d{2}-\d{2}\ \d{2}:\d{2}:\d{2})[\ ]*</td>",
                 row)
 
-            event = Event(report)
+            event = self.new_event(report)
 
             description = info1.group(2)
             description = utils.decode(description)

@@ -6,7 +6,6 @@ import sys
 import zipfile
 
 from intelmq.lib.bot import CollectorBot
-from intelmq.lib.message import Report
 
 try:
     import rt
@@ -88,7 +87,7 @@ class RTCollectorBot(CollectorBot):
                 self.logger.info("Report downloaded.")
                 raw = resp.text
 
-            report = Report()
+            report = self.new_report()
             report.add("raw", raw, sanitize=True)
             report.add("rtir_id", ticket_id, sanitize=True)
             report.add("time.observation", created + ' UTC', force=True)

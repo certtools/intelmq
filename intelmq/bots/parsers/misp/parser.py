@@ -7,7 +7,6 @@ from urllib.parse import urljoin
 from intelmq.lib import harmonization
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.message import Event
 
 
 class MISPParserBot(Bot):
@@ -102,7 +101,7 @@ class MISPParserBot(Bot):
                     type_ in self.MISP_TYPE_MAPPING):
 
                 # Create and send the intelmq event
-                event = Event(report)
+                event = self.new_event(report)
                 event.add('raw', json.dumps(attribute, sort_keys=True))
                 event.add(self.MISP_TYPE_MAPPING[type_], value)
                 event.add('misp.event_uuid', misp_event['uuid'])

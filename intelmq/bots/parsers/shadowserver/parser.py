@@ -17,7 +17,6 @@ import copy
 
 from intelmq.lib import utils
 from intelmq.lib.bot import ParserBot
-from intelmq.lib.message import Event
 
 from intelmq.lib.exceptions import InvalidValue, InvalidKey
 
@@ -75,7 +74,7 @@ class ShadowserverParserBot(ParserBot):
         # at the end, all remaining fields are added to the
         # extra field.
 
-        event = Event(report)
+        event = self.new_event(report)
         extra = {}  # The Json-Object which will be populated with the
         # fields that could not be added to the standard intelmq fields
         # the parser is going to write this information into an object

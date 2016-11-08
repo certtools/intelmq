@@ -3,7 +3,6 @@ import json
 import sys
 
 from intelmq.lib.bot import CollectorBot
-from intelmq.lib.message import Report
 
 from .OTXv2 import OTXv2
 
@@ -17,7 +16,7 @@ class AlienVaultOTXCollectorBot(CollectorBot):
         pulses = otx.getall()
         self.logger.info("Report downloaded.")
 
-        report = Report()
+        report = self.new_report()
         report.add("raw", json.dumps(pulses))
         self.send_message(report)
 

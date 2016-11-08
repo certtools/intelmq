@@ -18,7 +18,7 @@ from intelmq import (DEFAULT_LOGGING_PATH,
                      DEFAULTS_CONF_FILE, HARMONIZATION_CONF_FILE,
                      PIPELINE_CONF_FILE, RUNTIME_CONF_FILE, SYSTEM_CONF_FILE)
 from intelmq.lib import exceptions, utils
-from intelmq.lib.message import MessageFactory
+import intelmq.lib.message as libmessage
 from intelmq.lib.pipeline import PipelineFactory
 
 __all__ = ['Bot', 'CollectorBot', 'ParserBot']
@@ -319,7 +319,7 @@ class Bot(object):
             if self.__message_counter % 500 == 0:
                 self.logger.info("Processed %s messages." % self.__message_counter)
 
-            raw_message = MessageFactory.serialize(message)
+            raw_message = libmessage.MessageFactory.serialize(message)
             self.__destination_pipeline.send(raw_message)
 
     def receive_message(self):
@@ -330,7 +330,7 @@ class Bot(object):
             if not message:
                 self.logger.warning('Empty message received.')
                 continue
-        self.__current_message = MessageFactory.unserialize(message)
+        self.__current_message = libmessage.MessageFactory.unserialize(message)
 
         if 'raw' in self.__current_message and len(self.__current_message['raw']) > 400:
             tmp_msg = self.__current_message.to_dict(hierarchical=False)
@@ -460,6 +460,9 @@ class Bot(object):
                         raise exceptions.ConfigurationError(
                             'harmonization',
                             "Key %s is not valid." % _key)
+
+    def new_event(self, *args, **kwargs):
+        return libmessage.Event(*args, **kwargs)
 
 
 class ParserBot(Bot):
@@ -592,6 +595,9 @@ class CollectorBot(Bot):
         messages = filter(self.__filter_empty_report, messages)
         messages = map(self.__add_report_fields, messages)
         super(CollectorBot, self).send_message(*messages)
+
+    def new_report(self):
+        return libmessage.Report()
 
 
 class Parameters(object):

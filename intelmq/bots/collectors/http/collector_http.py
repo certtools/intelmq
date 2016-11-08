@@ -19,7 +19,6 @@ import zipfile
 import requests
 
 from intelmq.lib.bot import CollectorBot
-from intelmq.lib.message import Report
 
 
 class HTTPCollectorBot(CollectorBot):
@@ -71,7 +70,7 @@ class HTTPCollectorBot(CollectorBot):
                 raw_reports.append(zfp.read(filename))
 
         for raw_report in raw_reports:
-            report = Report()
+            report = self.new_report()
             report.add("raw", raw_report)
             report.add("feed.url", self.parameters.http_url)
             self.send_message(report)

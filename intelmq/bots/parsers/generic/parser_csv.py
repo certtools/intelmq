@@ -21,7 +21,6 @@ from dateutil.parser import parse
 
 from intelmq.lib import utils
 from intelmq.lib.bot import ParserBot
-from intelmq.lib.message import Event
 
 
 class GenericCsvParserBot(ParserBot):
@@ -50,7 +49,7 @@ class GenericCsvParserBot(ParserBot):
             yield row
 
     def parse_line(self, row, report):
-        event = Event(report)
+        event = self.new_event(report)
 
         for key, value in zip(self.columns, row):
 
