@@ -26,7 +26,7 @@ import intelmq
 
 __all__ = ['base64_decode', 'base64_encode', 'decode', 'encode',
            'load_configuration', 'load_parameters', 'log', 'parse_logline',
-           'reverse_readline', 'error_message_from_exc', 'to_bool',
+           'reverse_readline', 'error_message_from_exc',
            ]
 
 # Used loglines format
@@ -331,44 +331,3 @@ def error_message_from_exc(exc):
         The error message of exc
     """
     return traceback.format_exception_only(type(exc), exc)[-1].strip().replace(type(exc).__name__ + ': ', '')
-
-
-def to_bool(inStr, fallbackmode=False):
-    """
-    This method tries to convert an input value to a boolean.
-    The function is handy when user-input comes as a String
-    (i.e. from intelmq-manager) and should still be interpreted
-    as a bool. We use it to circumvent the "False" == True problem
-    :param inStr: An arbitrary String
-    :param fallbackmode: The fallback of the method. If it is True the function
-                  will evaluate to True if the input inStr could not be mapped
-                  in the function. If it is False, the function will evaluate
-                  to False as a fallback.
-    :return: True or False based on the boolmap and the fallbackmode
-    """
-    boolmap = {
-        "yes": True,
-        "no": False,
-        "true": True,
-        "false": False,
-        "0": False,
-        "1": True,
-    }
-
-    if inStr is True:
-        return True
-    elif inStr is False:
-        return False
-    elif inStr is None:
-        return False
-    elif inStr is 0:
-        return False
-    elif inStr is 1:
-        return True
-    else:
-        inStr = str.lower(str(inStr))
-        if inStr in boolmap:
-            return boolmap[inStr]
-        else:
-            return fallbackmode
-
