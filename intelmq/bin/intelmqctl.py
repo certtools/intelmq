@@ -162,6 +162,7 @@ class IntelMQContoller():
         logger = utils.log('intelmqctl', log_level='DEBUG')
         self.logger = logger
         self.interactive = interactive
+        self.args = None
         if os.geteuid() == 0:
             logger.warning('Running intelmq as root is highly discouraged!')
 
@@ -484,7 +485,7 @@ Get logs of a bot:
 
         If description is not set, None is used instead.
         """
-        if self.args.type == 'text':
+        if self.args and self.args.type == 'text':
             for bot_id in sorted(self.runtime_configuration.keys()):
                 print("Bot ID: {}\nDescription: {}"
                       "".format(bot_id, self.runtime_configuration[bot_id].get('description')))
