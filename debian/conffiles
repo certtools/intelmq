@@ -3,5 +3,4 @@
 /opt/intelmq/etc/BOTS
 /opt/intelmq/etc/pipeline.conf
 /opt/intelmq/etc/defaults.conf
-/opt/intelmq/etc/startup.conf
 /opt/intelmq/etc/runtime.conf
