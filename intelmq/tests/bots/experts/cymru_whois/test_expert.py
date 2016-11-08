@@ -44,7 +44,7 @@ UNICODE_OUTPUT = {"__type": "Event",
                   "destination.registry": "LACNIC",
                   "destination.allocated": "2007-08-10T00:00:00+00:00",
                   "destination.as_name": "Local Datacenter Solu\xe7\xf5es em"
-                                         " Comunica\xe7\xe3o Ltda., BR",
+                                         " Comunica\xe7\xe3o Ltda.,,, BR",
                   "destination.geolocation.cc": "BR",
                   "destination.asn": 28333,
                   "destination.network": "189.50.192.0/23",
