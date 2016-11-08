@@ -571,7 +571,7 @@
             "parameters": {
                 "collection": "<collection>",
                 "database": "<database>",
-                "hierarchical_output": false,
+                "hierarchical_output": true,
                 "host": "<ip>",
                 "port": "<port>"
             }

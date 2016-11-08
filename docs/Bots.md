@@ -421,6 +421,7 @@ If the rule is a string, a regex-search is performed, also for numeric values (`
 * `database`: MongoDB database
 * `host`: MongoDB host (FQDN or IP)
 * `port`: MongoDB port
+* `hierarchical_output`: Boolean (default true) as mongodb does not allow saving keys with dots, we split the dictionay in sub-dictionaries.
 
 #### Installation Requirements
 
