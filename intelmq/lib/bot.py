@@ -83,6 +83,12 @@ class Bot(object):
             self.__load_pipeline_configuration()
             self.__load_harmonization_configuration()
 
+            if not getattr(self.parameters, 'enabled', True):
+                self.logger.warn('The bot was disabled by configuration. '
+                                 'It will not be started as long as this '
+                                 'configuration is present.')
+                self.stop()
+
             self.init()
 
             self.__sighup = False
@@ -127,6 +133,7 @@ class Bot(object):
     def start(self, starting=True, error_on_pipeline=True,
               error_on_message=False, source_pipeline=None,
               destination_pipeline=None):
+
         self.__source_pipeline = source_pipeline
         self.__destination_pipeline = destination_pipeline
         self.logger.info('Bot starts processings.')
@@ -423,7 +430,12 @@ class Bot(object):
         config = utils.load_configuration(RUNTIME_CONF_FILE)
 
         if self.__bot_id in list(config.keys()):
-            for option, value in config[self.__bot_id].items():
+            params = config[self.__bot_id]
+            if 'parameters' in params:
+                params = params['parameters']
+            else:
+                self.logger.warning('Old runtime configuration format found.')
+            for option, value in params.items():
                 setattr(self.parameters, option, value)
                 self.logger.debug("Runtime configuration: parameter {!r} "
                                   "loaded with value {!r}.".format(option, value))
@@ -582,7 +594,7 @@ class CollectorBot(Bot):
     def __filter_empty_report(self, message):
         if 'raw' not in message:
             self.logger.warning('Ignoring report without raw field. '
-                                'Possible bug or miconfiguration of this bot.')
+                                'Possible bug or misconfiguration of this bot.')
             return False
         return True
 
@@ -590,6 +602,8 @@ class CollectorBot(Bot):
         report.add("feed.name", self.parameters.feed)
         if hasattr(self.parameters, 'code'):
             report.add("feed.code", self.parameters.code)
+        if hasattr(self.parameters, 'provider'):
+            report.add("feed.provider", self.parameters.provider)
         report.add("feed.accuracy", self.parameters.accuracy)
         return report
 

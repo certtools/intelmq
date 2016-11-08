@@ -57,7 +57,7 @@ class TestDummyCollectorBot(test.BotTestCase, unittest.TestCase):
         self.sysconfig['raw'] = False
         self.run_bot()
         self.assertAnyLoglineEqual(message='Ignoring report without raw field. '
-                                           'Possible bug or miconfiguration of this bot.',
+                                           'Possible bug or misconfiguration of this bot.',
                                    levelname='WARNING')
 
 

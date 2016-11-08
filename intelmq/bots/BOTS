@@ -6,6 +6,7 @@
             "parameters": {
                 "delete_file": false,
                 "feed": "FileCollector",
+                "provider": "",
                 "path": "/tmp/",
                 "postfix": ".csv",
                 "rate_limit": 300
@@ -18,6 +19,7 @@
                 "attach_regex": "csv.zip",
                 "attach_unzip": true,
                 "feed": "",
+                "provider": "",
                 "folder": "INBOX",
                 "mail_host": "<host>",
                 "mail_password": "<password>",
@@ -32,6 +34,7 @@
             "module": "intelmq.bots.collectors.mail.collector_mail_url",
             "parameters": {
                 "feed": "",
+                "provider": "",
                 "folder": "INBOX",
                 "http_password": "<password>",
                 "http_user": "<user>",
@@ -49,6 +52,7 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "",
+                "provider": "",
                 "http_url": "<insert url of feed>",
                 "rate_limit": 3600
             }
@@ -58,6 +62,7 @@
             "module": "intelmq.bots.collectors.misp.collector",
             "parameters": {
                 "feed": "misp_generic",
+                "provider": "",
                 "misp_key": "<insert MISP Authkey>",
                 "misp_tag_processed": "<insert MISP tag for processed events>",
                 "misp_tag_to_process": "<insert MISP tag for events to be processed>",
@@ -72,6 +77,7 @@
             "parameters": {
                 "attachment_regex": "\\.csv\\.zip$",
                 "feed": "Request Tracker",
+                "provider": "",
                 "password": "password",
                 "rate_limit": 3600,
                 "search_owner": "nobody",
@@ -92,6 +98,7 @@
             "parameters": {
                 "ca_certs": "/etc/ssl/certs/ca-certificates.crt",
                 "feed": "XMPP",
+                "provider": "",
                 "pass_full_xml": false,
                 "rate_limit": 3600,
                 "strip_message": true,
@@ -109,6 +116,7 @@
             "parameters": {
                 "api_key": "<insert your api key>",
                 "feed": "AlienVault OTX",
+                "provider": "AlienVault",
                 "rate_limit": 3600
             }
         },
@@ -117,6 +125,7 @@
             "module": "intelmq.bots.collectors.bitsight.collector",
             "parameters": {
                 "feed": "BitSight",
+                "provider": "BitSight",
                 "http_url": "http://alerts.bitsighttech.com:8080/stream?key=<api>"
             }
         },
@@ -126,6 +135,7 @@
             "parameters": {
                 "api_key": "<insert your api key>",
                 "feed": "Blueliv Crimeserver",
+                "provider": "Blueliv",
                 "rate_limit": 3600
             }
         },
@@ -135,6 +145,7 @@
             "parameters": {
                 "exchange": "<INSERT your exchange point as given by CERT.pl>",
                 "feed": "n6stomp",
+                "provider": "N6",
                 "port": 61614,
                 "server": "n6stream.cert.pl",
                 "ssl_ca_certificate": "<insert path to CA file for CERT.pl's n6>",
@@ -325,7 +336,7 @@
             "module": "intelmq.bots.parsers.shadowserver.parser",
             "parameters": {
                 "feedname": "",
-                "override": true
+                "overwrite": true
             }
         },
         "Spamhaus CERT": {
@@ -424,16 +435,22 @@
                 "filter_value": "<PT>"
             }
         },
-        "Generic Contact DB Lookup": {
-            "description": "Fetches abuse contacts from a database per ASN.",
-            "module": "intelmq.bots.experts.contact_db_lookup.expert",
+        "Generic DB Lookup": {
+            "description": "Fetches data from a database.",
+            "module": "intelmq.bots.experts.generic_db_lookup.expert",
             "parameters": {
-                "ascolumn": "asn",
-                "column": "contact",
                 "database": "intelmq",
                 "host": "localhost",
+                "match_fields": {
+                    "source.asn": "asn"
+                },
+                "overwrite": false,
                 "password": "<password>",
                 "port": "5432",
+                "replace_fields": {
+                    "contact": "source.abuse_contact",
+                    "note": "comment"
+                },
                 "sslmode": "require",
                 "table": "contacts",
                 "user": "intelmq"
@@ -554,7 +571,7 @@
             "parameters": {
                 "collection": "<collection>",
                 "database": "<database>",
-                "hierarchical_output": false,
+                "hierarchical_output": true,
                 "host": "<ip>",
                 "port": "<port>"
             }
@@ -600,7 +617,8 @@
             "module": "intelmq.bots.outputs.tcp.output",
             "parameters": {
                 "ip": "<ip>",
-                "port": "<port>"
+                "port": "<port>",
+                "separator": "\n"
             }
         },
         "UDP": {

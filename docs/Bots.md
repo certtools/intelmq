@@ -5,6 +5,9 @@
 3. [Experts](#experts)
 4. [Outputs](#outputs)
 
+All Bots can be extended with an `enabled` parameter in `runtime.conf`. If the parameter is set to `True`
+(which is assumed as defaut if it is missing) the bot will start. If the parameter was set to `False`, the
+Bot will not start, and terminate immediately. Nevertheless you will be informed about this in the bots' log file.
 
 <a name="collectors"></a>
 ## Collectors
@@ -418,6 +421,7 @@ If the rule is a string, a regex-search is performed, also for numeric values (`
 * `database`: MongoDB database
 * `host`: MongoDB host (FQDN or IP)
 * `port`: MongoDB port
+* `hierarchical_output`: Boolean (default true) as mongodb does not allow saving keys with dots, we split the dictionay in sub-dictionaries.
 
 #### Installation Requirements
 
