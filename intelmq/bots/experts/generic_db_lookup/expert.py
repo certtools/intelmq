@@ -62,7 +62,7 @@ class GenericDBLookupExpertBot(Bot):
                 return
 
         # Skip events with existing data and overwrite is not allowed
-        if all([key in event for key in self.replace.values()]) and not self.parameters.override:
+        if all([key in event for key in self.replace.values()]) and not self.parameters.overwrite:
             self.send_message(event)
             self.acknowledge_message()
             return
