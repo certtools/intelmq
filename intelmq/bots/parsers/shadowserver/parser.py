@@ -39,7 +39,7 @@ class ShadowserverParserBot(ParserBot):
         # Set a switch if the parser shall reset the feed.name,
         # code and feedurl for this event
         self.overwrite = False
-        if  hasattr(self.parameters, 'override'): # TODOv1.1: remove
+        if hasattr(self.parameters, 'override'):  # TODOv1.1: remove
             self.logger.error('Parameter "override" is deprecated, '
                               'it is now called "overwrite". Stopping now. '
                               '(This warning will be removed before v1.1.)')
