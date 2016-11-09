@@ -348,7 +348,7 @@ class ExampleParserBot(Bot):
     def process(self):
         report = self.receive_message()
 
-        event = Event(report)  # copies feed.name, time.observation
+        event = self.new_event(report)  # copies feed.name, time.observation
         ... # implement the logic here
         event.add('source.ip', '127.0.0.1')
         event.add('extra', {"os.name": "Linux"})

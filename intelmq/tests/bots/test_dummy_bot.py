@@ -7,7 +7,6 @@ import intelmq.lib.bot
 import intelmq.lib.bot as bot
 import intelmq.lib.test as test
 import intelmq.lib.utils as utils
-from intelmq.lib.message import Event
 
 RAW = """# ignore this
 2015/06/04 13:37 +00,example.org,192.0.2.3,reverse.example.net,example description,report@example.org,0
@@ -52,7 +51,7 @@ class DummyParserBot(bot.ParserBot):
             self.logger.info('Lorem ipsum dolor sit amet.')
             self.tempdata.append(line)
         else:
-            event = Event(report)
+            event = self.new_event(report)
             line = line.split(',')
             event['time.source'] = line[0]
             event['source.fqdn'] = line[1]

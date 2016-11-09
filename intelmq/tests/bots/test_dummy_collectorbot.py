@@ -8,7 +8,6 @@ import unittest
 
 import intelmq.lib.bot as bot
 import intelmq.lib.test as test
-from intelmq.lib.message import Report
 
 EXAMPLE_REPORT = {"__type": "Report",
                   "feed.name": "Example Feed",
@@ -24,7 +23,7 @@ class DummyCollectorBot(bot.CollectorBot):
     """
 
     def process(self):
-        report = Report()
+        report = self.new_report()
         if self.parameters.raw:
             report['raw'] = 'test'
         self.send_message(report)
