@@ -8,6 +8,7 @@ some basic generic tests (logged errors, correct pipeline setup).
 import io
 import json
 import logging
+import re
 import os
 import unittest.mock as mock
 
@@ -329,6 +330,21 @@ class BotTestCase(object):
         self.assertEqual(levelname, fields["log_level"])
         self.assertRegex(fields["message"], pattern)
 
+    def assertLogMatches(self, pattern, levelname="ERROR"):
+        """Asserts if any logline matches a specific requirement.
+           Args:
+                pattern: Message text which is compared
+                type: Type of logline which is asserted"""
+
+        self.assertIsNotNone(self.loglines)
+        for logline in self.loglines:
+            fields = utils.parse_logline(logline)
+
+            if levelname == fields["log_level"] and re.match(pattern, fields["message"]):
+                break
+        else:
+            raise ValueError('No matching logline found.')
+
     def assertRegexpMatchesLog(self, pattern):
         """Asserts that pattern matches against log. """
 
@@ -361,7 +377,8 @@ class BotTestCase(object):
 
         event_dict = json.loads(event)
         expected = expected_msg.copy()
-        del event_dict['time.observation']
+        if 'time.observation' in event_dict:
+            del event_dict['time.observation']
         if 'time.observation' in expected:
             del expected['time.observation']
 
