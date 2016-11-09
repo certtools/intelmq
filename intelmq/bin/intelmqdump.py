@@ -109,7 +109,10 @@ def save_file(fname, content):
 def load_meta(dump):
     retval = []
     for key, value in dump.items():
-        error = value['traceback'].splitlines()[-1]
+        if type(value['traceback']) is not list:
+            error = value['traceback'].splitlines()[-1]
+        else:
+            error = value['traceback'][-1].strip()
         if len(error) > 200:
             error = error[:100] + '...' + error[-100:]
         retval.append((key, error))
@@ -275,7 +278,8 @@ def main():
                             len(value['message']['raw']) > 1000):
                         value['message']['raw'] = value['message'][
                             'raw'][:1000] + '...[truncated]'
-                value['traceback'] = value['traceback'].splitlines()
+                if type(value['traceback']) is not list:
+                    value['traceback'] = value['traceback'].splitlines()
                 pprint.pprint(value)
 
 if __name__ == '__main__':
