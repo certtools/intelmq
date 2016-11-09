@@ -25,6 +25,7 @@ import urllib.parse as parse
 
 import dateutil.parser
 import dns.resolver
+import encodings.idna
 import pytz
 
 import intelmq.lib.utils as utils
@@ -314,6 +315,9 @@ class FQDN(GenericType):
         if URL().is_valid(value):
             return False
 
+        if encodings.idna.ToASCII(value).decode() != value:
+            return False
+
         """
         # "localhost" is a valid hostname
         if len(value.split('.')) <= 1:
@@ -327,7 +331,7 @@ class FQDN(GenericType):
 
     @staticmethod
     def sanitize(value):
-        return value.rstrip('.').lower()
+        return encodings.idna.ToASCII(value).decode().rstrip('.').lower()
 
     @staticmethod
     def to_ip(value):
