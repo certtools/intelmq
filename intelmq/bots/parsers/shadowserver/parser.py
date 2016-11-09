@@ -163,13 +163,6 @@ class ShadowserverParserBot(ParserBot):
 
         # Now add additional constant fields.
         dict.update(event, conf.get('constant_fields', {}))  # TODO: rewrite in 1.0
-        if 'feed.code' in conf.get('constant_fields', {}).keys() and not self.depr_warning:
-            self.depr_warning = True
-            # could not get this working with logging.captureWarnings(True) :(
-            # TODO: remove from config 1.0
-            self.logger.warn('`feed.code` will be removed from the constant_fields in '
-                             'default config in favor of the `code` parameter in collectors '
-                             'in 1.0!')
 
         event.add('raw', self.recover_line(row))
 
