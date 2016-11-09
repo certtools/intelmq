@@ -330,7 +330,12 @@ class Bot(object):
             if not message:
                 self.logger.warning('Empty message received.')
                 continue
-        self.__current_message = libmessage.MessageFactory.unserialize(message)
+
+        # handle a sighup which happened during blocking read
+        self.__handle_sighup()
+
+        self.__current_message = libmessage.MessageFactory.unserialize(message,
+                                                                       harmonization=self.harmonization)
 
         if 'raw' in self.__current_message and len(self.__current_message['raw']) > 400:
             tmp_msg = self.__current_message.to_dict(hierarchical=False)
@@ -338,9 +343,6 @@ class Bot(object):
         else:
             tmp_msg = self.__current_message
         self.logger.debug('Received message {!r}.'.format(tmp_msg))
-
-        # handle a sighup which happened during blocking read
-        self.__handle_sighup()
 
         return self.__current_message
 
@@ -451,18 +453,10 @@ class Bot(object):
 
     def __load_harmonization_configuration(self):
         self.logger.debug("Loading Harmonization configuration from %r." % HARMONIZATION_CONF_FILE)
-        config = utils.load_configuration(HARMONIZATION_CONF_FILE)
-
-        for message_types in config.keys():
-            for key in config[message_types].keys():
-                for _key in config.keys():
-                    if _key.startswith("%s." % key):
-                        raise exceptions.ConfigurationError(
-                            'harmonization',
-                            "Key %s is not valid." % _key)
+        self.harmonization = utils.load_configuration(HARMONIZATION_CONF_FILE)
 
     def new_event(self, *args, **kwargs):
-        return libmessage.Event(*args, **kwargs)
+        return libmessage.Event(*args, harmonization=self.harmonization, **kwargs)
 
 
 class ParserBot(Bot):
