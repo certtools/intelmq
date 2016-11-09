@@ -357,7 +357,50 @@ class TestMessageFactory(unittest.TestCase):
                    force=True, sanitize=True)
         self.assertEqual(hash(event1), hash(event2))
 
+    def test_event_hash_fixed(self):
+        """ Test if Event hash hasn't changed unintentionally. """
+        event = message.MessageFactory.unserialize('{"__type": "Event"}')
+        event1 = self.add_event_examples(event)
+        event2 = event1.deep_copy()
+        event2.add('time.observation', '2015-12-12T13:37:50+01:00',
+                   force=True, sanitize=True)
+        self.assertEqual(event1.hash(),
+                         'd04aa050afdc58a39329c78c3b59ce6fb6f11effe180fe8084b4f1e89007de71')
+
+    def test_event_hash_method(self):
+        """ Test Event hash() 'time.observation' should be ignored. """
+        event = message.MessageFactory.unserialize('{"__type": "Event"}')
+        event1 = self.add_event_examples(event)
+        event2 = event1.deep_copy()
+        event2.add('time.observation', '2015-12-12T13:37:50+01:00',
+                   force=True, sanitize=True)
+        self.assertEqual(event1.hash(), event2.hash())
+
+    def test_event_hash_method_blacklist(self):
+        """ Test Event hash(blacklist) """
+        event = message.MessageFactory.unserialize('{"__type": "Event"}')
+        event1 = self.add_event_examples(event)
+        event2 = event1.deep_copy()
+        event2.add('time.observation', '2015-12-12T13:37:50+01:00',
+                   force=True, sanitize=True)
+        event2.add('feed.name', 'Some Other Feed', force=True, sanitize=True)
+        # The feed.name is usually taken into account:
+        self.assertNotEqual(event1.hash(), event2.hash())
+        # But not if we blacklist it (time.observation does not have to
+        # blacklisted explicitly):
+        self.assertEqual(event1.hash({"feed.name"}), event2.hash({"feed.name"}))
+
     def test_event_dict(self):
+        """ Test Event to_dict. """
+        event = message.MessageFactory.unserialize('{"__type": "Event"}')
+        event = self.add_event_examples(event)
+        self.assertDictEqual({'feed.name': 'Example',
+                              'feed.url': 'https://example.com/',
+                              'raw': 'bG9yZW0gaXBzdW0=',
+                              'time.observation': '2015-01-01T13:37:00+00:00'},
+                             event.to_dict())
+
+    def test_event_dict_hierarchical(self):
         """ Test Event to_dict. """
         event = message.MessageFactory.unserialize('{"__type": "Event"}')
         event = self.add_event_examples(event)
@@ -366,23 +409,24 @@ class TestMessageFactory(unittest.TestCase):
                               'raw': 'bG9yZW0gaXBzdW0=',
                               'time': {'observation': '2015-01-01T13:37:00+'
                                                       '00:00'}},
-                             event.to_dict())
-
-    def test_event_dict_flat(self):
-        """ Test Event to_dict with hierarchical=False. """
-        event = message.Event()
-        event = self.add_event_examples(event)
-        self.assertDictEqual({'feed.name': 'Example',
-                              'feed.url': 'https://example.com/',
-                              'raw': 'bG9yZW0gaXBzdW0=',
-                              'time.observation': '2015-01-01T13:37:00+00:00'},
-                             event.to_dict(hierarchical=False))
+                             event.to_dict(hierarchical=True))
 
     def test_event_json(self):
         """ Test Event to_json. """
         event = message.MessageFactory.unserialize('{"__type": "Event"}')
         event = self.add_event_examples(event)
         actual = event.to_json()
+        self.assertIsInstance(actual, str)
+        expected = ('{"feed.url": "https://example.com/", "feed.name": '
+                    '"Example", "raw": "bG9yZW0gaXBzdW0=", "time.observation": '
+                    '"2015-01-01T13:37:00+00:00"}')
+        self.assertDictEqual(json.loads(expected), json.loads(actual))
+
+    def test_event_json_hierarchical(self):
+        """ Test Event to_json. """
+        event = message.MessageFactory.unserialize('{"__type": "Event"}')
+        event = self.add_event_examples(event)
+        actual = event.to_json(hierarchical=True)
         self.assertIsInstance(actual, str)
         expected = ('{"feed": {"url": "https://example.com/", "name": '
                     '"Example"}, "raw": "bG9yZW0gaXBzdW0=", "time": '
@@ -411,7 +455,7 @@ class TestMessageFactory(unittest.TestCase):
         """ Test if the regex for event_hash is tested correctly. """
         event = message.MessageFactory.unserialize('{"__type": "Event"}')
         with self.assertRaises(exceptions.InvalidValue):
-            event.add('event_hash', 'dasf78')
+            event.add('event_hash', 'das f78')
 
     def test_port_regex(self):
         """ Test if the regex for port (integer) is tested correctly. """
@@ -464,6 +508,39 @@ class TestMessageFactory(unittest.TestCase):
         event = '{"__type": "Event", "source.asn": "foo"}'
         with self.assertRaises(exceptions.InvalidValue):
             message.MessageFactory.unserialize(event)
+
+    def test_malware_hash_md5(self):
+        """ Test if MD5 is checked correctly. """
+        event = message.MessageFactory.unserialize('{"__type": "Event"}')
+        event.add('malware.hash.md5', 'mSwgIswdjlTY0YxV7HBVm0')
+        self.assertEqual(event['malware.hash.md5'], 'mSwgIswdjlTY0YxV7HBVm0')
+        event.update('malware.hash.md5', '$md5$mSwgIswdjlTY0YxV7HBVm0')
+        event.update('malware.hash.md5', '$md5,rounds=500$mSwgIswdjlTY0YxV7HBVm0')
+        # TODO: Fix when normalization of hashes is defined
+#        with self.assertRaises(exceptions.InvalidValue):
+#            event.update('malware.hash.md5', '$md5, $mSwgIswdjlTY0YxV7HBVm0')
+
+    def test_malware_hash_sha1(self):
+        """ Test if SHA1 is checked correctly. """
+        event = message.MessageFactory.unserialize('{"__type": "Event"}')
+        event.add('malware.hash.sha1', 'hBNaIXkt4wBI2o5rsi8KejSjNqIq')
+        self.assertEqual(event['malware.hash.sha1'], 'hBNaIXkt4wBI2o5rsi8KejSjNqIq')
+        event.update('malware.hash.sha1', '$sha1$hBNaIXkt4wBI2o5rsi8KejSjNqIq')
+        event.update('malware.hash.sha1', '$sha1$40000$hBNaIXkt4wBI2o5rsi8KejSjNqIq')
+        event.update('malware.hash.sha1', '$sha1$40000$jtNX3nZ2$hBNaIXkt4wBI2o5rsi8KejSjNqIq')
+        # TODO: Fix when normalization of hashes is defined
+#        with self.assertRaises(exceptions.InvalidValue):
+#            event.update('malware.hash.sha1', '$sha1$ $jtNX3nZ2$hBNaIXkt4wBI2o5rsi8KejSjNqIq')
+
+    def test_registry(self):
+        """ Test source.registry """
+        event = message.MessageFactory.unserialize('{"__type": "Event"}')
+        event.add('source.registry', 'APNIC')
+        event.update('source.registry', 'afrinic')
+        with self.assertRaises(exceptions.InvalidValue):
+            event.update('source.registry', 'afrinic', sanitize=False)
+        with self.assertRaises(exceptions.InvalidValue):
+            event.update('source.registry', 'afri nic', sanitize=False)
 
 if __name__ == '__main__':
     unittest.main()

@@ -15,40 +15,36 @@ import pkg_resources
 
 import intelmq.lib.pipeline as pipeline
 import intelmq.lib.utils as utils
-from intelmq import (PIPELINE_CONF_FILE, RUNTIME_CONF_FILE, DEFAULTS_CONF_FILE,
-                     CONFIG_DIR)
+from intelmq import (PIPELINE_CONF_FILE, RUNTIME_CONF_FILE, CONFIG_DIR)
 
 __all__ = ['BotTestCase']
 
-BOT_CONFIG = utils.load_configuration(DEFAULTS_CONF_FILE)
-BOT_CONFIG.update({"logging_level": "DEBUG",
-                   "http_proxy": None,
-                   "https_proxy": None,
-                   "broker": "pythonlist",
-                   "rate_limit": 0,
-                   "retry_delay": 0,
-                   "error_retry_delay": 0,
-                   "error_max_retries": 0,
-                   "redis_cache_host": "localhost",
-                   "redis_cache_port": 6379,
-                   "redis_cache_db": 10,
-                   "redis_cache_ttl": 10,
-                   "testing": True,
-                   })
+BOT_CONFIG = {"logging_level": "DEBUG",
+              "http_proxy": None,
+              "https_proxy": None,
+              "broker": "pythonlist",
+              "rate_limit": 0,
+              "retry_delay": 0,
+              "error_retry_delay": 0,
+              "error_max_retries": 0,
+              "redis_cache_host": "localhost",
+              "redis_cache_port": 6379,
+              "redis_cache_db": 10,
+              "redis_cache_ttl": 10,
+              "testing": True,
+              }
 
 
 def mocked_config(bot_id='test-bot', src_name='', dst_names=(), sysconfig={}):
-    def mock(conf_file):
+    def mocked(conf_file):
         if conf_file == PIPELINE_CONF_FILE:
             return {bot_id: {"source-queue": src_name,
                              "destination-queues": dst_names},
                     }
         elif conf_file == RUNTIME_CONF_FILE:
-            return {bot_id: {}}
-        elif conf_file == DEFAULTS_CONF_FILE:
             conf = BOT_CONFIG.copy()
             conf.update(sysconfig)
-            return conf
+            return {bot_id: conf}
         elif conf_file.startswith(CONFIG_DIR):
             confname = os.path.join('etc/', os.path.split(conf_file)[-1])
             fname = pkg_resources.resource_filename('intelmq',
@@ -57,7 +53,7 @@ def mocked_config(bot_id='test-bot', src_name='', dst_names=(), sysconfig={}):
                 return json.load(fpconfig)
         else:
             return utils.load_configuration(conf_file)
-    return mock
+    return mocked
 
 
 with mock.patch('intelmq.lib.utils.load_configuration', new=mocked_config()):

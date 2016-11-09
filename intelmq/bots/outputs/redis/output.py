@@ -22,14 +22,10 @@ class RedisOutputBot(Bot):
     def process(self):
         event = self.receive_message()
 
-        if event is None:
-            self.acknowledge_message()
-            return
-
         try:
             self.output.lpush(self.queue, event)
         except:
-            self.logger.exception('Redis: failled to sent message!')
+            self.logger.exception('Failed to send message. Reconnecting.')
             self.connect()
         else:
             self.acknowledge_message()
@@ -40,6 +36,7 @@ class RedisOutputBot(Bot):
             info = self.output.info()
         except redis.ConnectionError:
             self.logger.exception("Redis connection to {}:{} failed!!".format(self.host, self.port))
+            self.stop()
         else:
             self.logger.info("Connected successfully to Redis {} at {}:{}!".format(info['redis_version'], self.host, self.port))
 

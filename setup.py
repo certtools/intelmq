@@ -23,7 +23,6 @@ DATA = [
       'intelmq/etc/harmonization.conf',
       'intelmq/etc/pipeline.conf',
       'intelmq/etc/runtime.conf',
-      'intelmq/etc/startup.conf',
       ],
      ),
     ('/opt/intelmq/var/lib/bots/modify/example',
@@ -44,13 +43,6 @@ DATA = [
      ),
 ]
 
-try:
-    import pypandoc
-    DESCRIPTION = pypandoc.convert('README.md', 'rst')
-except(IOError, ImportError):
-    DESCRIPTION = open('README.md').read()
-
-
 exec(open('intelmq/version.py').read())  # defines __version__
 
 
@@ -60,10 +52,7 @@ setup(
     maintainer='Sebastian Wagner',
     maintainer_email='wagner@cert.at',
     install_requires=REQUIRES,
-    tests_requires=REQUIRES+[
-        'nose',
-        ],
-    test_suite='nose.collector',
+    test_suite='intelmq.tests',
     packages=find_packages(),
     package_data={'intelmq': [
         'etc/*.conf',
@@ -76,7 +65,7 @@ setup(
     license='AGPLv3',
     description='IntelMQ is a solution for CERTs to process data feeds, '
                 'pastebins, tweets throught a message queue.',
-    long_description=DESCRIPTION,
+    long_description=open('docs/README.rst').read(),
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Console',
