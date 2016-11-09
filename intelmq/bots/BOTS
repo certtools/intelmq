@@ -46,7 +46,7 @@
                 "subject_regex": "<subject>",
                 "url_regex": "http://",
                 "http_proxy": "",
-                "https_proxy":"",
+                "https_proxy": "",
                 "http_user_agent": "",
                 "ssl_client_certificate": "<path to client SSL certificate>"
             }
@@ -61,7 +61,7 @@
                 "http_username": "",
                 "http_password": "",
                 "http_proxy": "",
-                "https_proxy":"",
+                "https_proxy": "",
                 "http_user_agent": "",
                 "ssl_client_certificate": "<path to client SSL certificate>",
                 "rate_limit": 3600
@@ -103,7 +103,7 @@
                 "http_username": "",
                 "http_password": "",
                 "http_proxy": "",
-                "https_proxy":"",
+                "https_proxy": "",
                 "http_user_agent": "",
                 "ssl_client_certificate": "<path to client SSL certificate>"
             }

@@ -9,7 +9,7 @@ http_header: dictionary
 http_verify_cert: boolean
     default: True
 http_username, http_password: string
-http_proxy, http_ssl_proxy: string
+http_proxy, https_proxy: string
 
 """
 import io

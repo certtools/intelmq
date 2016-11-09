@@ -30,7 +30,7 @@ Bot will not start, and terminate immediately. Nevertheless you will be informed
 * `http_username`: FIXME
 * `http_password`: FIXME
 * `http_proxy`: FIXME
-* `http_ssl_proxy`: FIXME
+* `https_proxy`: FIXME
 
 
 * * *

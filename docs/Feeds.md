@@ -111,7 +111,7 @@ Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
 
 Parser: AlienVault (`intelmq.bots.parsers.alienvault.parser`)
 
-AlienVault Collector retrieves reports via the SDK https://github.com/AlienVault-Labs/OTX-Python-SDK/ from https://otx.alienvault.com/ http_ssl_proxy does apply.
+AlienVault Collector retrieves reports via the SDK https://github.com/AlienVault-Labs/OTX-Python-SDK/ from https://otx.alienvault.com/ https_proxy does apply.
 
 ### OTX
 

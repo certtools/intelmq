@@ -608,7 +608,7 @@ class CollectorBot(Bot):
             self.auth = None
 
         http_proxy = getattr(self.parameters, 'http_proxy', None)
-        https_proxy = getattr(self.parameters, 'http_ssl_proxy', None)
+        https_proxy = getattr(self.parameters, 'https_proxy', None)
         if http_proxy and https_proxy:
             self.proxy = {'http': http_proxy, 'https': https_proxy}
         else:
