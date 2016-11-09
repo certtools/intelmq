@@ -104,7 +104,7 @@ class MailSendOutputBot(Bot):
             dict_writer.writerows(rows_output)
 
             # send the whole message
-            self._send_mail(self.parameters.emailFrom, mail_record[len("mail:"):],
+            self._send_mail(self.parameters.emailFrom, str(mail_record[len("mail:"):], encoding="utf-8"),
                             'PROKI - upozorneni na nalezene incidenty', mailContents, output.getvalue())
             if not (MailSendOutputBot.debug or hasattr(self.parameters, 'testing_to')):
                 self.cache.redis.delete(mail_record)
