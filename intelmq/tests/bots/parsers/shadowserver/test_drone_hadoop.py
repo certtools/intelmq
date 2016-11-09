@@ -262,12 +262,13 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
 
 TESTING_OVERWRITE_FEEDNAME = 'My-Botnet-Drone-Hadoop'
 
+
 class TestOverwriteShadowserverParserBot(test.BotTestCase, unittest.TestCase):
 
     @classmethod
     def set_bot(cls):
         cls.bot_reference = ShadowserverParserBot
-        cls.default_input_message = EXAMPLE_REPORT
+        cls.default_input_message = EXAMPLE_REPORT.copy()
         cls.default_input_message['feed.name'] = TESTING_OVERWRITE_FEEDNAME
         cls.sysconfig = {'feedname': 'Botnet-Drone-Hadoop',
                          'overwrite': True}
@@ -281,8 +282,9 @@ class TestOverwriteShadowserverParserBot(test.BotTestCase, unittest.TestCase):
 
         self.run_bot()
         for i, EVENT in enumerate(EVENTS):
-            #EVENT['feed.name'] = 'Botnet-Drone-Hadoop'
-            self.assertMessageEqual(i, EVENT)
+            event = EVENT.copy()
+            event['feed.name'] = 'Botnet-Drone-Hadoop'
+            self.assertMessageEqual(i, event)
 
 
 if __name__ == '__main__':
