@@ -2,7 +2,6 @@
 """
 Testing certat_contact
 """
-
 import unittest
 
 import intelmq.lib.test as test

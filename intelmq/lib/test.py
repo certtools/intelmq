@@ -9,7 +9,9 @@ import io
 import json
 import logging
 import re
+import redis
 import os
+import unittest
 import unittest.mock as mock
 
 import pkg_resources
@@ -67,6 +69,11 @@ def mocked_logger(logger):
     return log
 
 
+def skip_redis():
+    return unittest.skipIf(os.environ.get('INTELMQ_SKIP_REDIS'),
+                           'Skipping without running redis.')
+
+
 class BotTestCase(object):
     """
     Provides common tests and assert methods for bot testing.
@@ -96,6 +103,7 @@ class BotTestCase(object):
         cls.maxDiff = None  # For unittest module, prints long diffs
         cls.pipe = None
         cls.sysconfig = {}
+        cls.use_cache = False
         cls.allowed_error_count = 0  # allows dumping of some lines
 
         cls.set_bot()
@@ -116,6 +124,12 @@ class BotTestCase(object):
         if type(cls.default_input_message) is dict:
             cls.default_input_message = \
                 utils.decode(json.dumps(cls.default_input_message))
+
+        if cls.use_cache and not os.environ.get('INTELMQ_SKIP_REDIS'):
+            cls.cache = redis.Redis(host=BOT_CONFIG['redis_cache_host'],
+                                    port=BOT_CONFIG['redis_cache_port'],
+                                    db=BOT_CONFIG['redis_cache_db'],
+                                    socket_timeout=BOT_CONFIG['redis_cache_ttl'])
 
     def prepare_bot(self):
         """Reconfigures the bot with the changed attributes"""
@@ -230,6 +244,11 @@ class BotTestCase(object):
             self.assertTrue(fields['message'].upper() == fields['message'].upper(),
                             msg='Logline {!r} does not beginn with an upper case char.'
                                 ''.format(fields['message']))
+
+    @classmethod
+    def tearDownClass(cls):
+        if cls.use_cache and not os.environ.get('INTELMQ_SKIP_REDIS'):
+            cls.cache.flushdb()
 
     def get_input_queue(self):
         """Returns the input queue of this bot which can be filled

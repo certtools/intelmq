@@ -46,6 +46,7 @@ class TestRedisOutputBot(test.BotTestCase, unittest.TestCase):
                          "redis_password": "none",
                          "redis_timeout": "50000"}
 
+    @test.skip_redis()
     def test_event(self):
         """ Setup Redis connection """
         redis_ip = self.sysconfig['redis_server_ip']
