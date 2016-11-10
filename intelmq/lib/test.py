@@ -47,7 +47,7 @@ def mocked_config(bot_id='test-bot', src_name='', dst_names=(), sysconfig={}):
         elif conf_file == RUNTIME_CONF_FILE:
             conf = BOT_CONFIG.copy()
             conf.update(sysconfig)
-            return {bot_id: conf}
+            return {bot_id: {'parameters': conf}}
         elif conf_file.startswith(CONFIG_DIR):
             confname = os.path.join('etc/', os.path.split(conf_file)[-1])
             fname = pkg_resources.resource_filename('intelmq',
