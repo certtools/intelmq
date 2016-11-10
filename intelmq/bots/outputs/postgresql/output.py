@@ -18,7 +18,7 @@ except ImportError:
     psycopg2 = None
 
 
-class PostgreSQLBot(Bot):
+class PostgreSQLOutputBot(Bot):
 
     def init(self):
         self.logger.debug("Connecting to PostgreSQL.")
@@ -78,5 +78,5 @@ class PostgreSQLBot(Bot):
 
 
 if __name__ == "__main__":
-    bot = PostgreSQLBot(sys.argv[1])
+    bot = PostgreSQLOutputBot(sys.argv[1])
     bot.start()
