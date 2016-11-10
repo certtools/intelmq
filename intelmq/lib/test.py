@@ -111,6 +111,8 @@ class BotTestCase(object):
                                          'raw': 'Cg==',
                                          'feed.name': 'Test Feed',
                                          'time.observation': '2016-01-01T00:00:00+00:00'}
+        elif cls.default_input_message == '':
+            cls.default_input_message = {'__type': 'Event'}
         if type(cls.default_input_message) is dict:
             cls.default_input_message = \
                 utils.decode(json.dumps(cls.default_input_message))

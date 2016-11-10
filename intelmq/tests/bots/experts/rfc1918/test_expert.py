@@ -50,7 +50,6 @@ class TestRFC1918ExpertBot(test.BotTestCase, unittest.TestCase):
                                    'destination.fqdn,source.url',
                          'policy': 'del,drop,drop,del,drop',
                          }
-        cls.default_input_message = {'__type': 'Event'}
 
     def test_del(self):
         self.input_message = INPUT1

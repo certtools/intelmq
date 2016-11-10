@@ -56,7 +56,6 @@ class TestModifyExpertBot(test.BotTestCase, unittest.TestCase):
                                         'bots/experts/modify/examples/default.conf')
         cls.sysconfig = {'configuration_path': config_path
                          }
-        cls.default_input_message = {'__type': 'Event'}
 
     def test_events(self):
         """ Test if correct Events have been produced. """
@@ -150,7 +149,6 @@ class TestMoreFeedsModifyExpertBot(test.BotTestCase, unittest.TestCase):
                                         'bots/experts/modify/examples/morefeeds.conf')
         cls.sysconfig = {'configuration_path': config_path
                          }
-        cls.default_input_message = {'__type': 'Event'}
 
     def test_bot_name(self):
         "Do **not** test that our second test has the same name as the bot."

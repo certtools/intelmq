@@ -50,7 +50,6 @@ class TestASNLookupExpertBot(test.BotTestCase, unittest.TestCase):
     def set_bot(cls):
         cls.bot_reference = ASNLookupExpertBot
         cls.sysconfig = {'database': ASN_DB}
-        cls.default_input_message = {'__type': 'Report'}
 
     def test_ipv4_lookup(self):
         self.input_message = EXAMPLE_INPUT
