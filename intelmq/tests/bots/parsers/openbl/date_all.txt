@@ -1,0 +1,7 @@
+# openbl.org/lists/date_all.txt
+# Copyright (c) 2009-2016 OpenBL.org
+# Thu Nov 10 15:17:29 2016 UTC
+#
+# source ip	date
+192.88.99.4	1478790683
+192.0.0.5	1478790553

@@ -1,0 +1,7 @@
+// This file will be automatically updated daily and populated with the last 30 days of malicious domains.
+// It will return 127.0.0.1 for all domains found to be distributing malware
+// Additional information to get this working can be found http://www.malwaredomains.com/wordpress/?page_id=6
+// Last updated 2016-11-10	
+
+PRIMARY example.com blockeddomain.hosts
+PRIMARY example.org blockeddomain.hosts
