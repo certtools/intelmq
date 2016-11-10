@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import sys
 
 from intelmq.lib.bot import CollectorBot
 from intelmq.lib.message import Report
@@ -38,7 +37,3 @@ class BitsightCollectorBot(CollectorBot):
             report.add("feed.url", self.parameters.http_url)
 
             self.send_message(report)
-
-if __name__ == "__main__":
-    bot = BitsightCollectorBot(sys.argv[1])
-    bot.start()

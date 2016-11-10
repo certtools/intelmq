@@ -2,7 +2,6 @@
 import io
 import re
 import requests
-import sys
 import zipfile
 
 from intelmq.lib.bot import CollectorBot
@@ -101,8 +100,3 @@ class RTCollectorBot(CollectorBot):
                     self.logger.exception("Could not take ticket %s." % ticket_id)
             if self.parameters.set_status:
                 RT.edit_ticket(ticket_id, status=self.parameters.set_status)
-
-
-if __name__ == "__main__":
-    bot = RTCollectorBot(sys.argv[1])
-    bot.start()

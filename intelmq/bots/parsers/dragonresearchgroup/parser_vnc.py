@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import sys
 
 from intelmq.lib.bot import ParserBot
 from intelmq.lib.message import Event
@@ -34,8 +33,3 @@ class DragonResearchGroupVNCParserBot(ParserBot):
             event.add("raw", line)
 
             yield event
-
-
-if __name__ == "__main__":
-    bot = DragonResearchGroupVNCParserBot(sys.argv[1])
-    bot.start()

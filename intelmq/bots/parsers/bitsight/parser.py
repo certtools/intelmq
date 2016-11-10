@@ -14,7 +14,6 @@ _geo_env_remote_addr.country_name       Country location of the IP              
 """
 
 import json
-import sys
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
@@ -64,7 +63,3 @@ class BitsightParserBot(Bot):
                 event.add('source.geolocation.country', value["country_name"])
         self.send_message(event)
         self.acknowledge_message()
-
-if __name__ == "__main__":
-    bot = BitsightParserBot(sys.argv[1])
-    bot.start()

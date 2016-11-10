@@ -12,7 +12,6 @@ This parser will only work with those.
 """
 import csv
 import io
-import sys
 import copy
 
 from intelmq.lib import utils
@@ -186,7 +185,3 @@ class ShadowserverParserBot(ParserBot):
         writer.writeheader()
         writer.writerow(line)
         return out.getvalue()
-
-if __name__ == "__main__":
-    bot = ShadowserverParserBot(sys.argv[1])
-    bot.start()

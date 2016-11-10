@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import re
-import sys
 from datetime import datetime, timedelta
 
 import pytz
@@ -144,7 +143,3 @@ class FilterExpertBot(Bot):
             return exp.search(str(event.get(key)))
         else:
             return False
-
-if __name__ == "__main__":
-    bot = FilterExpertBot(sys.argv[1])
-    bot.start()

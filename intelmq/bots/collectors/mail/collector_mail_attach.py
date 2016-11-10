@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import re
-import sys
 import zipfile
 
 try:
@@ -63,8 +62,3 @@ class MailAttachCollectorBot(CollectorBot):
                         mailbox.mark_seen(uid)
                 self.logger.info("Email report read")
         mailbox.logout()
-
-
-if __name__ == "__main__":
-    bot = MailAttachCollectorBot(sys.argv[1])
-    bot.start()

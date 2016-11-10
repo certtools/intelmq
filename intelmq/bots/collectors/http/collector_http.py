@@ -13,7 +13,6 @@ http_proxy, http_ssl_proxy: string
 
 """
 import io
-import sys
 import zipfile
 
 import requests
@@ -75,8 +74,3 @@ class HTTPCollectorBot(CollectorBot):
             report.add("raw", raw_report)
             report.add("feed.url", self.parameters.http_url)
             self.send_message(report)
-
-
-if __name__ == "__main__":
-    bot = HTTPCollectorBot(sys.argv[1])
-    bot.start()

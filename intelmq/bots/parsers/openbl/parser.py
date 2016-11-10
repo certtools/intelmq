@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import sys
 from datetime import datetime
 
 from intelmq.lib import utils
@@ -37,8 +36,3 @@ class OpenBLParserBot(Bot):
 
             self.send_message(event)
         self.acknowledge_message()
-
-
-if __name__ == "__main__":
-    bot = OpenBLParserBot(sys.argv[1])
-    bot.start()

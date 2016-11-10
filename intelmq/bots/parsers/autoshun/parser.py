@@ -61,8 +61,3 @@ class AutoshunParserBot(ParserBot):
         event.add("event_description.text", description)
         event.add("raw", line + "</tr>")
         yield event
-
-
-if __name__ == "__main__":
-    bot = AutoshunParserBot(sys.argv[1])
-    bot.start()

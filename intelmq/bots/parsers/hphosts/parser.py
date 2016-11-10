@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import sys
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
@@ -43,7 +42,3 @@ class HpHostsParserBot(Bot):
 
             self.send_message(event)
         self.acknowledge_message()
-
-if __name__ == "__main__":
-    bot = HpHostsParserBot(sys.argv[1])
-    bot.start()

@@ -2,7 +2,6 @@
 """
 pymongo library automatically tries to reconnect if connection has been lost
 """
-import sys
 
 from intelmq.lib.bot import Bot
 
@@ -46,8 +45,3 @@ class MongoDBOutputBot(Bot):
 
     def shutdown(self):
         self.client.close()
-
-
-if __name__ == "__main__":
-    bot = MongoDBOutputBot(sys.argv[1])
-    bot.start()

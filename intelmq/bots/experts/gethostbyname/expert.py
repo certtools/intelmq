@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import sys
 import socket
 
 import intelmq.lib.harmonization
@@ -24,8 +23,3 @@ class GethostbynameExpertBot(Bot):
 
         self.send_message(event)
         self.acknowledge_message()
-
-
-if __name__ == "__main__":
-    bot = GethostbynameExpertBot(sys.argv[1])
-    bot.start()

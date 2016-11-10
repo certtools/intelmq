@@ -3,7 +3,6 @@
 TODO: Test this with a real stomp server
 """
 import os.path
-import sys
 
 from intelmq.lib.bot import Bot
 from intelmq.lib.message import MessageFactory
@@ -63,8 +62,3 @@ class StompOutputBot(Bot):
         message = MessageFactory.serialize(message)
         self.conn.send(body=message, destination=self.exchange)
         self.acknowledge_message()
-
-
-if __name__ == "__main__":
-    bot = StompOutputBot(sys.argv[1])
-    bot.start()

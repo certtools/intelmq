@@ -22,7 +22,6 @@ TODO: Extend for example domains
 """
 
 import ipaddress
-import sys
 from urllib.parse import urlparse
 
 from intelmq.lib.bot import Bot
@@ -69,7 +68,3 @@ class RFC1918ExpertBot(Bot):
                 break
         self.send_message(event)
         self.acknowledge_message()
-
-if __name__ == "__main__":
-    bot = RFC1918ExpertBot(sys.argv[1])
-    bot.start()

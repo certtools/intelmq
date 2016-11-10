@@ -342,11 +342,7 @@ Get logs of a bot:
             return 'error'
         else:
             module = importlib.import_module(bot_module)
-            # TODO: Search for bot class is dirty (but works)
-            botname = [name for name in dir(module)
-                       if hasattr(getattr(module, name), 'process') and
-                       name.endswith('Bot') and
-                       name not in ['CollectorBot', 'ParserBot']][0]
+            botname = utils.get_botname_from_module(module)
             bot = getattr(module, botname)
             instance = bot(bot_id)
             instance.start()

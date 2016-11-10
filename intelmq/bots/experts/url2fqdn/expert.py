@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import sys
 from urllib.parse import urlparse
 
 import intelmq.lib.harmonization
@@ -24,8 +23,3 @@ class Url2fqdnExpertBot(Bot):
 
         self.send_message(event)
         self.acknowledge_message()
-
-
-if __name__ == "__main__":
-    bot = Url2fqdnExpertBot(sys.argv[1])
-    bot.start()

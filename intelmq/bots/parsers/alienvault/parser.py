@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import sys
 
 from intelmq.lib.bot import ParserBot
 from intelmq.lib.message import Event
@@ -56,8 +55,3 @@ class AlienVaultParserBot(ParserBot):
             event.add("raw", row)
 
             yield event
-
-
-if __name__ == "__main__":
-    bot = AlienVaultParserBot(sys.argv[1])
-    bot.start()

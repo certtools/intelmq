@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import sys
 
 from intelmq.lib.bot import Bot
 
@@ -43,8 +42,3 @@ class TaxonomyExpertBot(Bot):
 
         self.send_message(event)
         self.acknowledge_message()
-
-
-if __name__ == "__main__":
-    bot = TaxonomyExpertBot(sys.argv[1])
-    bot.start()

@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import sys
 
 from intelmq.lib.bot import Bot
 
@@ -60,8 +59,3 @@ class GeoIPExpertBot(Bot):
 
         self.send_message(event)
         self.acknowledge_message()
-
-
-if __name__ == "__main__":
-    bot = GeoIPExpertBot(sys.argv[1])
-    bot.start()

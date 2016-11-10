@@ -331,3 +331,13 @@ def error_message_from_exc(exc):
         The error message of exc
     """
     return traceback.format_exception_only(type(exc), exc)[-1].strip().replace(type(exc).__name__ + ': ', '')
+
+
+def get_botname_from_module(module):
+    """
+    Search for bot class is dirty (but works)
+    """
+    return [name for name in dir(module)
+            if hasattr(getattr(module, name), 'process') and
+            name.endswith('Bot') and
+            name not in ['CollectorBot', 'ParserBot']][0]

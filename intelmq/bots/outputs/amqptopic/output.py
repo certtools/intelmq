@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import sys
 
 try:
     import pika
@@ -90,7 +89,3 @@ class AMQPTopicBot(Bot):
             self.logger.exception('Error publishing the message.')
         else:
             self.acknowledge_message()
-
-if __name__ == "__main__":
-    bot = AMQPTopicBot(sys.argv[1])
-    bot.start()

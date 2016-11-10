@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import json
 import logging
-import sys
 
 from intelmq.lib.bot import CollectorBot
 from intelmq.lib.message import Report
@@ -42,8 +41,3 @@ class BluelivCrimeserverCollectorBot(CollectorBot):
         report = Report()
         report.add("raw", json.dumps([item for item in response.items]))
         self.send_message(report)
-
-
-if __name__ == "__main__":
-    bot = BluelivCrimeserverCollectorBot(sys.argv[1])
-    bot.start()

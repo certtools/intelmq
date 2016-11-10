@@ -4,7 +4,6 @@ format:
 ponmocup-malware-IP ponmocup-malware-domain ponmocup-malware-URI-path ponmocup-htaccess-infected-domain
 """
 
-import sys
 
 import dateutil.parser
 
@@ -66,7 +65,3 @@ class DynParserBot(Bot):
             self.send_message(event_compromised)
 
         self.acknowledge_message()
-
-if __name__ == "__main__":
-    bot = DynParserBot(sys.argv[1])
-    bot.start()

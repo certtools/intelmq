@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import os.path
-import sys
 
 from intelmq.lib.bot import CollectorBot
 from intelmq.lib.message import Report
@@ -86,7 +85,3 @@ class n6stompCollectorBot(CollectorBot):
 
     def process(self):
         pass
-
-if __name__ == "__main__":
-    bot = n6stompCollectorBot(sys.argv[1])
-    bot.start()

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import socket
-import sys
 import unicodedata
 
 import intelmq.lib.utils as utils
@@ -51,8 +50,3 @@ class UDPBot(Bot):
                                   .format(self.udp_host, self.udp_port))
         else:
             self.acknowledge_message()
-
-
-if __name__ == "__main__":
-    bot = UDPBot(sys.argv[1])
-    bot.start()

@@ -3,7 +3,6 @@
 """
 
 import json
-import sys
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
@@ -40,7 +39,3 @@ class BluelivCrimeserverParserBot(Bot):
             event.add("raw", json.dumps(item, sort_keys=True))
             self.send_message(event)
         self.acknowledge_message()
-
-if __name__ == "__main__":
-    bot = BluelivCrimeserverParserBot(sys.argv[1])
-    bot.start()

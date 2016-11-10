@@ -12,7 +12,6 @@ ftps_file: string
 
 """
 from __future__ import unicode_literals
-import sys
 from ftplib import FTP_TLS
 import socket
 import ssl
@@ -114,8 +113,3 @@ class FTPSCollectorBot(CollectorBot):
             report.add("feed.url", 'ftps://' + self.parameters.ftps_host + ':' +
                        str(self.parameters.ftps_port), sanitize=True)
             self.send_message(report)
-
-
-if __name__ == "__main__":
-    bot = FTPSCollectorBot(sys.argv[1])
-    bot.start()

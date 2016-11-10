@@ -21,7 +21,6 @@
 ; ip, asn, country, lastseen, botname, domain, remote_ip, remote_port,
 local_port, protocol
 """
-import sys
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
@@ -69,7 +68,3 @@ class SpamhausCERTParserBot(Bot):
 
             self.send_message(event)
         self.acknowledge_message()
-
-if __name__ == "__main__":
-    bot = SpamhausCERTParserBot(sys.argv[1])
-    bot.start()

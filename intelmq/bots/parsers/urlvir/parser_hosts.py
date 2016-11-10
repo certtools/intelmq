@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import sys
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
@@ -31,7 +30,3 @@ class URLVirHostsParserBot(Bot):
 
             self.send_message(event)
         self.acknowledge_message()
-
-if __name__ == "__main__":
-    bot = URLVirHostsParserBot(sys.argv[1])
-    bot.start()

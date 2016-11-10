@@ -4,6 +4,7 @@
 """
 import csv
 import datetime
+import importlib
 import io
 import json
 import logging
@@ -460,6 +461,16 @@ class Bot(object):
                         raise exceptions.ConfigurationError(
                             'harmonization',
                             "Key %s is not valid." % _key)
+
+    @staticmethod
+    def run():
+        module = importlib.import_module(os.path.basename(sys.argv[0]))
+        botname = utils.get_botname_from_module(module)
+        bot = getattr(module, botname)
+        if len(sys.argv) < 2:
+            exit('No bot ID given.')
+        instance = bot(sys.argv[1])
+        instance.start()
 
 
 class ParserBot(Bot):

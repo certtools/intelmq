@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import sys
 
 import requests
 
@@ -28,8 +27,3 @@ class HTTPStreamCollectorBot(CollectorBot):
                 report.add("raw", decode(line))
                 self.send_message(report)
             self.logger.info('Stream stopped.')
-
-
-if __name__ == "__main__":
-    bot = HTTPStreamCollectorBot(sys.argv[1])
-    bot.start()

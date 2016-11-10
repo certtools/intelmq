@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import sys
 
 from dateutil.parser import parse as dateparser
 
@@ -45,7 +44,3 @@ class SpamhausDropParserBot(Bot):
 
             self.send_message(event)
         self.acknowledge_message()
-
-if __name__ == "__main__":
-    bot = SpamhausDropParserBot(sys.argv[1])
-    bot.start()

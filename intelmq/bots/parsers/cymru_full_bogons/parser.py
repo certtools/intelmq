@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import sys
 
 import dateutil
 
@@ -43,7 +42,3 @@ class CymruFullBogonsParserBot(Bot):
 
             self.send_message(event)
         self.acknowledge_message()
-
-if __name__ == "__main__":
-    bot = CymruFullBogonsParserBot(sys.argv[1])
-    bot.start()

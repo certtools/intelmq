@@ -15,7 +15,6 @@ import csv
 import io
 import json
 import re
-import sys
 
 from dateutil.parser import parse
 
@@ -105,7 +104,3 @@ class GenericCsvParserBot(ParserBot):
         yield event
 
     recover_line = ParserBot.recover_line_csv
-
-if __name__ == "__main__":
-    bot = GenericCsvParserBot(sys.argv[1])
-    bot.start()

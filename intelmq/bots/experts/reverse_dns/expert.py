@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import sys
 from datetime import datetime
 
 import dns
@@ -78,8 +77,3 @@ class ReverseDnsExpertBot(Bot):
 
         self.send_message(event)
         self.acknowledge_message()
-
-
-if __name__ == "__main__":
-    bot = ReverseDnsExpertBot(sys.argv[1])
-    bot.start()

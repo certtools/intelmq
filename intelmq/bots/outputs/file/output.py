@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import io
-import sys
 
 from intelmq.lib.bot import Bot
 
@@ -20,8 +19,3 @@ class FileBot(Bot):
         self.file.write("\n")
         self.file.flush()
         self.acknowledge_message()
-
-
-if __name__ == "__main__":
-    bot = FileBot(sys.argv[1])
-    bot.start()

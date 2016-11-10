@@ -11,7 +11,6 @@ Parameters:
 
 """
 import json
-import sys
 from urllib.parse import urljoin
 
 from pymisp import PyMISP
@@ -65,8 +64,3 @@ class MISPCollectorBot(CollectorBot):
                 # Add a 'processed' tag to the event
                 self.misp.add_tag(misp_event,
                                   self.parameters.misp_tag_processed)
-
-
-if __name__ == '__main__':
-    bot = MISPCollectorBot(sys.argv[1])
-    bot.start()

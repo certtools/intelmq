@@ -18,7 +18,6 @@ delete_file: boolean
 
 import fnmatch
 import os
-import sys
 
 import intelmq.lib.exceptions as exceptions
 from intelmq.lib.bot import CollectorBot
@@ -71,7 +70,3 @@ class FileCollectorBot(CollectorBot):
                                 self.logger.info("Maybe I don't have sufficient rights on that file?")
                                 self.logger.error("Stopping now, to prevent reading this file again.")
                                 self.stop()
-
-if __name__ == "__main__":
-    bot = FileCollectorBot(sys.argv[1])
-    bot.start()

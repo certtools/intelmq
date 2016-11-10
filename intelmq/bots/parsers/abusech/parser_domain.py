@@ -8,7 +8,6 @@ Docs:
  - https://zeustracker.abuse.ch/blocklist.php
 """
 
-import sys
 
 import dateutil.parser
 
@@ -40,8 +39,3 @@ class AbusechDomainParserBot(ParserBot):
 
     def recover_line(self, line):
         return '\n'.join(self.tempdata + [line])
-
-
-if __name__ == "__main__":
-    bot = AbusechDomainParserBot(sys.argv[1])
-    bot.start()
