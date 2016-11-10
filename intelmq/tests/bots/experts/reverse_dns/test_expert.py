@@ -39,6 +39,7 @@ INVALID_PTR_OUT = {"__type": "Event",
 
 
 @test.skip_redis()
+@test.skip_internet()
 class TestReverseDnsExpertBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for AbusixExpertBot.

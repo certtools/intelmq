@@ -33,7 +33,7 @@ EXAMPLE_EXISTING = {"__type": "Event",
                     }
 
 
-@unittest.skipIf(os.environ.get('INTELMQ_SKIP_INTERNET'), 'Skipping without internet connection.')
+@test.skip_internet()
 class TestAbusixExpertBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for AbusixExpertBot.

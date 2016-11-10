@@ -74,6 +74,11 @@ def skip_database():
                                'Skipping database tests.')
 
 
+def skip_internet():
+    return unittest.skipIf(os.environ.get('INTELMQ_SKIP_INTERNET'),
+                           'Skipping without internet connection.')
+
+
 def skip_redis():
     return unittest.skipIf(os.environ.get('INTELMQ_SKIP_REDIS'),
                            'Skipping without running redis.')

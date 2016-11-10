@@ -67,6 +67,7 @@ NO_ASN_OUTPUT = {"__type": "Event",
 
 
 @test.skip_redis()
+@test.skip_internet()
 class TestCymruExpertBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for AbusixExpertBot.
