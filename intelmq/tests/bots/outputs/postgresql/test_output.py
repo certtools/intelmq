@@ -16,6 +16,7 @@ INPUT1 = {"__type": "Event",
           }
 
 
+@test.skip_database()
 class TestPostgreSQLOutputBot(test.BotTestCase, unittest.TestCase):
 
     @classmethod

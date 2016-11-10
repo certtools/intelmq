@@ -22,7 +22,7 @@ before_script:
   - sed -i 's/events/tests/' /tmp/initdb.sql
   - psql -v ON_ERROR_STOP=on -f /tmp/initdb.sql intelmq -U intelmq
 script:
-  - nosetests --with-coverage --cover-package=intelmq
+  - INTELMQ_TEST_DATABASES=1 nosetests --with-coverage --cover-package=intelmq
   - dpkg-buildpackage -us -uc
   - pep8 intelmq/{bots,lib,bin}
 services:

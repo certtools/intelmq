@@ -69,6 +69,11 @@ def mocked_logger(logger):
     return log
 
 
+def skip_database():
+    return unittest.skipUnless(os.environ.get('INTELMQ_TEST_DATABASES'),
+                               'Skipping database tests.')
+
+
 def skip_redis():
     return unittest.skipIf(os.environ.get('INTELMQ_SKIP_REDIS'),
                            'Skipping without running redis.')
