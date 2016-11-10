@@ -38,7 +38,6 @@ class TestRIPENCCExpertBot(test.BotTestCase, unittest.TestCase):
     @classmethod
     def set_bot(cls):
         cls.bot_reference = RIPENCCExpertBot
-        cls.default_input_message = {'__type': 'Report'}
         cls.sysconfig = {'query_ripe_db_asn': True,
                          'query_ripe_db_ip': True,
                          'query_ripe_stat': True,

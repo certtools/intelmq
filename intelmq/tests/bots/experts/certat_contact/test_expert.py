@@ -47,7 +47,6 @@ class TestCERTatContactExpertBot(test.BotTestCase, unittest.TestCase):
                          'overwrite_cc': False,
                          'http_verify_cert': False,
                          }
-        cls.default_input_message = {'__type': 'Report'}
 
     def test_ipv4_lookup(self):
         self.input_message = EXAMPLE_INPUT

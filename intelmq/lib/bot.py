@@ -167,7 +167,7 @@ class Bot(object):
                 self.__disconnect_pipelines()
 
             except Exception as exc:
-                error_on_message = True
+                error_on_message = sys.exc_info()
 
                 if self.parameters.error_log_exception:
                     self.logger.exception("Bot has found a problem.")
@@ -201,7 +201,7 @@ class Bot(object):
                         if error_on_message:
 
                             if self.parameters.error_dump_message:
-                                error_traceback = traceback.format_exc()
+                                error_traceback = traceback.format_exception(*error_on_message)
                                 self._dump_message(error_traceback,
                                                    message=self.__current_message)
                                 self.__current_message = None

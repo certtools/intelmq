@@ -38,7 +38,6 @@ class TestTorExpertBot(test.BotTestCase, unittest.TestCase):
     def set_bot(cls):
         cls.bot_reference = TorExpertBot
         cls.sysconfig = {'database': TOR_DB}
-        cls.default_input_message = {'__type': 'Report'}
 
     def test_lookup(self):
         self.input_message = EXAMPLE_INPUT

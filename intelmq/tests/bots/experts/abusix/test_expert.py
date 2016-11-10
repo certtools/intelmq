@@ -41,7 +41,6 @@ class TestAbusixExpertBot(test.BotTestCase, unittest.TestCase):
     @classmethod
     def set_bot(cls):
         cls.bot_reference = AbusixExpertBot
-        cls.default_input_message = {'__type': 'Report'}
         cls.sysconfig = {'overwrite': True}
 
     def test_ipv4_lookup(self):
