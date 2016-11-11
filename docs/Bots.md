@@ -307,83 +307,65 @@ The configuration is called `modify.conf` and looks like this:
 ```json
 [
     {
-        "group": "Standard Protocols",
-        "rules": [
-            {
-                "rule": "http",
-                "action": {
-                    "protocol.application": "http"
-                },
-                "selection": {
-                    "source.port": "^(80|443)$"
-                }
-            }
-        ]
+        "rule": "Standard Protocols http",
+        "action": {
+            "protocol.application": "http"
+        },
+        "selection": {
+            "source.port": "^(80|443)$"
+        }
     },
     {
-        "group": "Spamhaus Cert",
-        "rules": [
-            {
-                "rule": "conficker",
-                "action": {
-                    "classification.identifier": "conficker"
-                },
-                "selection": {
-                    "malware.name": "^conficker(ab)?$"
-                }
-            },
-            {
-                "rule": "bitdefender",
-                "action": {
-                    "malware.name": "{matches[malware.name][1]}"
-                },
-                "selection": {
-                    "malware.name": "bitdefender-(.*)$"
-                }
-            },
-            {
-                "rule": "urlzone",
-                "action": {
-                    "classification.identifier": "urlzone"
-                },
-                "selection": {
-                    "malware.name": "^urlzone2?$"
-                }
-            },
-            {
-                "rule": "__default",
-                "action": {
-                    "classification.identifier": "{msg[malware.name]}"
-                },
-                "selection": {
-                    "feed.name": "^Spamhaus Cert$"
-                }
-            }
-        ]
+        "rule": "Spamhaus Cert conficker",
+        "action": {
+            "classification.identifier": "conficker"
+        },
+        "selection": {
+            "malware.name": "^conficker(ab)?$"
+        }
+    },
+    {
+        "rule": "bitdefender",
+        "action": {
+            "malware.name": "{matches[malware.name][1]}"
+        },
+        "selection": {
+            "malware.name": "bitdefender-(.*)$"
+        }
+    },
+    {
+        "rule": "urlzone",
+        "action": {
+            "classification.identifier": "urlzone"
+        },
+        "selection": {
+            "malware.name": "^urlzone2?$"
+        }
+    },
+    {
+        "rule": "default",
+        "action": {
+            "classification.identifier": "{msg[malware.name]}"
+        },
+        "selection": {
+            "feed.name": "^Spamhaus Cert$"
+        }
     }
 ]
 ```
 
-The list on the first level holds of rules.
-In our example above we have two groups labeled `Spamhaus Cert` and `Standard Protocols`.
+In our example above we have five groups labeled `Standard Protocols http`,
+`Spamhaus Cert conficker`, `bitdefender`, `urlzone` and `default`.
 All sections will be considered, in the given order.
 
-Each group holds a list of rules, consisting of *conditions* and *actions*.
-`__default` indicates an optional default rule. If a default rule exist, the section
-will only be entered, if its conditions match. Actions are optional for the default rule.
-
-Conditions and actions are again dictionaries holding the field names of events
+Each rule consists of *conditions* and *actions*.
+Conditions and actions are dictionaries holding the field names of events
 and regex-expressions to match values (selection) or set values (action).
-All matching rules will be applied in the given order, except for the default rule.
-Matching checks if all joined selections of the rule and the default rule
-are true before performing the actions.
-If no rule within a section matches, existing actions of the default rule for the section are applied.
+All matching rules will be applied in the given order.
+The actions are only performed if all selections apply.
 
 If the value for a condition is an empty string, the bot checks if the field does not exist.
 This is useful to apply default values for empty fields.
-
-A redesign to improve the readability and usability of the configuration
-is [under discussion](https://github.com/certtools/intelmq/issues/662).
 
 
 #### Actions
