@@ -6,6 +6,7 @@ Decoding and Encoding, Logging functionality (file and stream), and log
 parsing.
 base64 de-/encoding is not tested yet, as we fully rely on the module.
 """
+import importlib
 import io
 import os
 import tempfile
@@ -132,6 +133,14 @@ class TestUtils(unittest.TestCase):
         """Tests if error_message_from_exc correctly returns the error message."""
         exc = IndexError('This is a test')
         self.assertEqual(utils.error_message_from_exc(exc), 'This is a test')
+
+    def test_get_botname_from_module(self):
+        module = importlib.import_module('intelmq.bots.collectors.alienvault_otx.collector')
+        self.assertEqual(utils.get_botname_from_module(module),
+                         'AlienVaultOTXCollectorBot')
+        module = importlib.import_module('intelmq.bots.parsers.taichung.parser')
+        self.assertEqual(utils.get_botname_from_module(module),
+                         'TaichungCityNetflowParserBot')
 
 
 if __name__ == "__main__":
