@@ -21,11 +21,11 @@ import os
 import sys
 
 import intelmq.lib.exceptions as exceptions
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import CollectorBot
 from intelmq.lib.message import Report
 
 
-class FileCollectorBot(Bot):
+class FileCollectorBot(CollectorBot):
 
     def init(self):
         # Test if path is a directory
@@ -59,9 +59,7 @@ class FileCollectorBot(Bot):
 
                             report = Report()
                             report.add("raw", f.read())
-                            report.add("feed.name", self.parameters.feed)
                             report.add("feed.url", "file://localhost%s" % filename)
-                            report.add("feed.accuracy", self.parameters.accuracy)
                             self.send_message(report)
 
                         if self.parameters.delete_file:

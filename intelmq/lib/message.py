@@ -75,7 +75,6 @@ class MessageFactory(object):
 class Message(dict):
 
     def __init__(self, message=(), auto=False):
-        super(Message, self).__init__(message)
         try:
             classname = message['__type'].lower()
             del message['__type']
@@ -89,6 +88,16 @@ class Message(dict):
                                              got=classname,
                                              expected=list(harm_config.keys()),
                                              docs=HARMONIZATION_CONF_FILE)
+        super(Message, self).__init__()
+        if isinstance(message, dict):
+            iterable = message.items()
+        elif isinstance(message, tuple):
+            iterable = message
+        for key, value in iterable:
+            try:
+                self.add(key, value, sanitize=False)
+            except exceptions.InvalidValue:
+                self.add(key, value, sanitize=True)
 
     def __setitem__(self, key, value):
         self.add(key, value)
@@ -106,9 +115,11 @@ class Message(dict):
         if not self.__is_valid_key(key):
             raise exceptions.InvalidKey(key)
 
-        try:
+        if ignore:
             warnings.warn('The ignore-argument will be removed in 1.0.',
                           DeprecationWarning)
+
+        try:
             if value in ignore:
                 return
         except TypeError:
@@ -153,7 +164,6 @@ class Message(dict):
         retval = getattr(intelmq.lib.message,
                          class_ref)(super(Message, self).copy())
         del self['__type']
-        del retval['__type']
         return retval
 
     def deep_copy(self):
@@ -211,10 +221,19 @@ class Message(dict):
         return class_name
 
     def __hash__(self):
+        return int(self.hash(), 16)
+
+    def hash(self, blacklist=frozenset()):
+        """Return a sha256 hash of the message as a hexadecimal string.
+        The hash is computed over almost all key/value pairs. The only
+        keys omitted are 'time.observation' and all keys contained in
+        the optional blacklist parameter. If given, the blacklist
+        parameter should be a set.
+        """
         event_hash = hashlib.sha256()
 
         for key, value in sorted(self.items()):
-            if "time.observation" == key:
+            if "time.observation" == key or key in blacklist:
                 continue
 
             event_hash.update(utils.encode(key))
@@ -222,9 +241,9 @@ class Message(dict):
             event_hash.update(utils.encode(repr(value)))
             event_hash.update(b"\xc0")
 
-        return int(event_hash.hexdigest(), 16)
+        return event_hash.hexdigest()
 
-    def to_dict(self, hierarchical=True):
+    def to_dict(self, hierarchical=False):
         json_dict = dict()
 
         for key, value in self.items():
@@ -245,9 +264,9 @@ class Message(dict):
                 json_dict_fp = json_dict_fp[subkey]
         return json_dict
 
-    def to_json(self):
-        json_dict = self.to_dict()
-        return utils.decode(json.dumps(json_dict, ensure_ascii=False))
+    def to_json(self, hierarchical=False):
+        json_dict = self.to_dict(hierarchical=hierarchical)
+        return json.dumps(json_dict, ensure_ascii=False)
 
 
 class Event(Message):
@@ -269,6 +288,8 @@ class Event(Message):
                 template['feed.code'] = message['feed.code']
             if 'feed.name' in message:
                 template['feed.name'] = message['feed.name']
+            if 'feed.provider' in message:
+                template['feed.provider'] = message['feed.provider']
             if 'feed.url' in message:
                 template['feed.url'] = message['feed.url']
             if 'rtir_id' in message:

@@ -18,11 +18,11 @@ import zipfile
 
 import requests
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import CollectorBot
 from intelmq.lib.message import Report
 
 
-class HTTPCollectorBot(Bot):
+class HTTPCollectorBot(CollectorBot):
 
     def init(self):
         self.http_header = getattr(self.parameters, 'http_header', {})
@@ -73,9 +73,7 @@ class HTTPCollectorBot(Bot):
         for raw_report in raw_reports:
             report = Report()
             report.add("raw", raw_report)
-            report.add("feed.name", self.parameters.feed)
             report.add("feed.url", self.parameters.http_url)
-            report.add("feed.accuracy", self.parameters.accuracy)
             self.send_message(report)
 
 

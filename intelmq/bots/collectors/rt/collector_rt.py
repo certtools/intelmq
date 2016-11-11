@@ -5,15 +5,22 @@ import requests
 import sys
 import zipfile
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import CollectorBot
 from intelmq.lib.message import Report
 
-import rt
+try:
+    import rt
+except ImportError:
+    rt = None
 
 
-class RTCollectorBot(Bot):
+class RTCollectorBot(CollectorBot):
 
     def init(self):
+        if rt is None:
+            self.logger.error('Could not import rt. Please install it.')
+            self.stop()
+
         self.http_header = getattr(self.parameters, 'http_header', {})
         self.http_verify_cert = getattr(self.parameters, 'http_verify_cert',
                                         True)
@@ -84,9 +91,6 @@ class RTCollectorBot(Bot):
             report = Report()
             report.add("raw", raw, sanitize=True)
             report.add("rtir_id", ticket_id, sanitize=True)
-            report.add("feed.name", self.parameters.feed, sanitize=True)
-            report.add("feed.accuracy", self.parameters.accuracy,
-                       sanitize=True)
             report.add("time.observation", created + ' UTC', force=True)
             self.send_message(report)
 

@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import copy
 import sys
 
 from intelmq.lib.bot import Bot
@@ -18,20 +17,17 @@ class DeduplicatorExpertBot(Bot):
     def process(self):
         message = self.receive_message()
 
-        auxiliar_message = copy.copy(message)
+        ignore_keys = set(k.strip()
+                          for k in self.parameters.ignore_keys.split(','))
+        message_hash = message.hash(ignore_keys)
 
-        ignore_keys = self.parameters.ignore_keys.split(',')
+        old_hash = hash(int(message_hash, 16))
 
-        for ignore_key in ignore_keys:
-            ignore_key = ignore_key.strip()
-            if ignore_key in auxiliar_message:
-                del auxiliar_message[ignore_key]
-
-        message_hash = hash(auxiliar_message)
-
-        if not self.cache.exists(message_hash):
+        if not (self.cache.exists(message_hash) or self.cache.exists(old_hash)):
             self.cache.set(message_hash, 'hash')
             self.send_message(message)
+        else:
+            self.logger.debug('Dropped message.')
 
         self.acknowledge_message()
 

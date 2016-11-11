@@ -9,11 +9,12 @@
 # -------------------------------------------------------------------
 
 ME=`basename "$0"`
+CONNINFO=${2:-"dbname=contactdb"}
 
 usage()
 {
   cat <<EOF
-$ME INHIBITIONS_FILE
+$ME INHIBITIONS_FILE [ CONNINFO ]
 
 Execute add_inhibition.py to create a inhibition for each line 
 in INHIBITIONS_FILE.
@@ -22,6 +23,7 @@ The format of INHIBITIONS_FILE is:
 
   asn;network;ctype;cidentifier;comment
 
+If CONNINFO is given use it as libpg connection string.
 EOF
 }
 
@@ -40,12 +42,13 @@ gen_commands()
       [ "${vals[$i]}" ] && cmd+=" --${optnames[$i]} ${vals[$i]}"
     done
     echo "Executing: $cmd"
-    eval $cmd
+    cmd+=" --conninfo \"$CONNINFO\""
+    eval $cmd 
   done
 }
 
 #-----------------------------------------------------------------------
 # main
 
-[ $# -eq 1 ] || { usage ; exit 1 ; }
+[ $# -eq 1 -o $# -eq 2 ] || { usage ; exit 1 ; }
 cat "$1" | gen_commands

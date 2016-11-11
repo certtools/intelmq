@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 import sys
 
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import CollectorBot
 from intelmq.lib.message import Report
 
 import pycurl
 
 
-class BitsightCollectorBot(Bot):
+class BitsightCollectorBot(CollectorBot):
 
     def init(self):
         self.logger.info("Connecting to BitSightTech stream server")
@@ -35,8 +35,6 @@ class BitsightCollectorBot(Bot):
 
             report = Report()
             report.add("raw", line)
-            report.add("feed.name", self.parameters.feed)
-            report.add("feed.accuracy", self.parameters.accuracy)
             report.add("feed.url", self.parameters.http_url)
 
             self.send_message(report)

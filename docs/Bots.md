@@ -5,6 +5,9 @@
 3. [Experts](#experts)
 4. [Outputs](#outputs)
 
+All Bots can be extended with an `enabled` parameter in `runtime.conf`. If the parameter is set to `True`
+(which is assumed as defaut if it is missing) the bot will start. If the parameter was set to `False`, the
+Bot will not start, and terminate immediately. Nevertheless you will be informed about this in the bots' log file.
 
 <a name="collectors"></a>
 ## Collectors
@@ -16,7 +19,6 @@
 * `lookup:` yes
 * `public:` yes
 * `cache (redis db):` none
-* `ipv6 support:` yes
 * `description:` collect report messages from remote hosts using http protocol
 
 #### Configuration Parameters:
@@ -40,14 +42,13 @@
 * `lookup:` yes
 * `public:` yes
 * `cache (redis db):` none
-* `ipv6 support:` yes
-* `description:` collect messages from mailboxes, extract urls from that messages and download the report messages from the urls.
+* `description:` collect messages from mailboxes, extract URLs from that messages and download the report messages from the URLs.
 
 #### Configuration Parameters:
 
 * `feed`: Name for the feed, usually found in collector bot configuration.
 * `rate_limit`: time interval (in seconds) between messages processing
-* `mail_host`: fqdn or ip of mail server
+* `mail_host`: FQDN or IP of mail server
 * `mail_user`: user account of the email account
 * `mail_password`: password associated to user account
 * `mail_ssl`: FIXME
@@ -64,7 +65,6 @@
 * `lookup:` yes
 * `public:` yes
 * `cache (redis db):` none
-* `ipv6 support:` -
 * `description:` collect messages from mailboxes, download the report messages from the attachments.
 
 #### Configuration Parameters:
@@ -92,7 +92,6 @@
 * `lookup:` yes
 * `public:` yes
 * `cache (redis db):` none
-* `ipv6 support:` -
 * `description:` collect report messages from Alien Vault OTX API
 
 #### Configuration Parameters:
@@ -110,12 +109,11 @@
 ### \<ParserBot\>
 
 #### Information:
-* `name:` 
-* `lookup:` 
-* `public:` 
-* `cache (redis db):` 
-* `ipv6 support:` 
-* `description:` 
+* `name:`
+* `lookup:`
+* `public:`
+* `cache (redis db):`
+* `description:`
 
 #### Configuration Parameters:
 
@@ -134,7 +132,6 @@
 * `lookup:` dns
 * `public:` yes
 * `cache (redis db):` 5
-* `ipv6 support:` no (implementation missing)
 * `description:` FIXME
 * `notes`: https://abusix.com/contactdb.html
 
@@ -147,12 +144,11 @@ FIXME
 ### ASN Lookup
 
 #### Information:
-* `name:` asn-lookup
+* `name:` ASN lookup
 * `lookup:` local database
 * `public:` yes
 * `cache (redis db):` none
-* `ipv6 support:` yes
-* `description:` ip to asn
+* `description:` IP to ASN
 
 #### Configuration Parameters:
 
@@ -167,7 +163,6 @@ FIXME
 * `lookup:` https
 * `public:` yes
 * `cache (redis db):` none
-* `ipv6 support:` yes
 * `description:` https://contacts.cert.at offers an IP address to national CERT contact (and cc) mapping. See https://contacts.cert.at for more info.
 
 #### Configuration Parameters:
@@ -184,8 +179,7 @@ FIXME
 * `lookup:` cymru dns
 * `public:` yes
 * `cache (redis db):` 6
-* `ipv6 support:` yes 
-* `description:` ip to geolocation, asn, bgp prefix
+* `description:` IP to geolocation, ASN, BGP prefix
 
 #### Configuration Parameters:
 
@@ -200,7 +194,6 @@ FIXME
 * `lookup:` redis cache
 * `public:` yes
 * `cache (redis db):` 7
-* `ipv6 support:` yes
 * `description:` message deduplicator
 
 #### Configuration Parameters:
@@ -216,7 +209,6 @@ FIXME
 * `lookup:` none
 * `public:` yes
 * `cache (redis db):` none
-* `ipv6 support:` yes
 * `description:` filter messages (drop or pass messages) FIXME
 
 #### Configuration Parameters:
@@ -232,8 +224,7 @@ FIXME
 * `lookup:` local database
 * `public:` yes
 * `cache (redis db):` none
-* `ipv6 support:` yes
-* `description:` ip to geolocation
+* `description:` IP to geolocation
 
 #### Configuration Parameters:
 
@@ -248,8 +239,7 @@ FIXME
 * `lookup:` dns
 * `public:` yes
 * `cache (redis db):` 8
-* `ipv6 support:` no
-* `description:` ip to domain
+* `description:` IP to domain
 
 #### Configuration Parameters:
 
@@ -264,8 +254,7 @@ FIXME
 * `lookup:` https api
 * `public:` yes
 * `cache (redis db):` 9
-* `ipv6 support:` yes
-* `description:` ip to abuse contact
+* `description:` IP to abuse contact
 
 #### Configuration Parameters:
 
@@ -280,7 +269,6 @@ FIXME
 * `lookup:` local config
 * `public:` yes
 * `cache (redis db):` none
-* `ipv6 support:` -
 * `description:` use eCSIRT taxonomy to classify events (classification type to classification taxonomy)
 
 #### Configuration Parameters:
@@ -296,8 +284,7 @@ FIXME
 * `lookup:` local database
 * `public:` yes
 * `cache (redis db):` none
-* `ipv6 support:` yes
-* `description:` check if ip is tor node
+* `description:` check if IP is tor node
 
 #### Configuration Parameters:
 
@@ -312,7 +299,6 @@ FIXME
 * `lookup:` local config
 * `public:` yes
 * `cache (redis db):` none
-* `ipv6 support:` -
 * `description:` modify expert bot allows you to change arbitrary field values of events just using a configuration file
 
 #### Configuration Parameters:
@@ -338,6 +324,11 @@ The configuration is called `modify.conf` and looks like this:
             "malware.name": "^urlzone2?$"
         }, {
             "classification.identifier": "urlzone"
+        }],
+    "bitdefender" : [{
+            "malware.name": "bitdefender-(.*)$"
+        }, {
+            "malware.name": "{matches[malware.name][1]}"
         }]
     },
 "Standard Protocols": {
@@ -350,15 +341,45 @@ The configuration is called `modify.conf` and looks like this:
 }
 ```
 
-The dictionary in the first level holds sections, here called `Spamhaus Cert` to group the rulessets and for easier navigation. It holds another dictionary of rules, consisting of *conditions* and *actions*. The first matching rule is used. Conditions and actions are again dictionaries holding the field names of harmonization and have regex-expressions to existing values (condition) or new values (action). The rule conditions are merged with the default condition and the default action is applied if no rule matches.
+The dictionary on the first level holds sections to group the rules.
+In our example above we have two sections labeled `Spamhaus Cert` and `Standard Protocols`.
+All sections will be considered, but in undefined order.
 
-The default rule/action list may not exist. If the value is an empty string, the bot checks if the field does not exist. This is useful to apply default values for empty fields.
+Each section holds a dictionary of rules, consisting of *conditions* and *actions*.
+`__default` indicates an optional default rule. If a default rule exist, the section
+will only be entered, if its conditions match. Actions are optional for the default rule.
+
+Conditions and actions are again dictionaries holding the field names of events
+and regex-expressions to match values (condition) or set values (action).
+All matching rules will be applied in no particular order.
+Matching checks if all joined conditions of the rule and the default rule
+are true before performing the actions.
+If no rule within a section matches, existing actions of the default rule for the section are applied.
+
+If the value for a condition is an empty string, the bot checks if the field does not exist.
+This is useful to apply default values for empty fields.
+
+**Attention**: Because the order of execution is undefined,
+you need to take care that no rule depends on values modified by another rule.
+Otherwise the results of the bot may be different from one run to the other.
+(A redesign is [under discussion](https://github.com/certtools/intelmq/issues/662)
+to improve the situation for future versions.)
+
+#### Actions
+
+You can set the value of the field to a string literal or number.
+
+In addition you can use the [standard Python string format syntax](https://docs.python.org/3/library/string.html#format-string-syntax)
+to access the values from the processed event as `msg` and the match groups
+of the conditions as `matches`, see the bitdefender example above.
+Note that `matches` will also contain the match groups
+from the default conditions if there were any.
 
 #### Examples
 
-We have an event with `feed.name = Spamhaus Cert` and `malware.name = confickerab`. The expert loops over all sections in the file and enters section `Spamhaus Cert`. First, the default condition is checked, it matches! Ok, going on. Otherwise the expert would have continued to the next section. Now, iteration through the rules, the first is rule `conficker`. We combine the conditions of this rule with the default conditions, and both rules match! So we can apply the action, here `classification.identifier` is set to `conficker`, the trivial name.
+We have an event with `feed.name = Spamhaus Cert` and `malware.name = confickerab`. The expert loops over all sections in the file and eventually enters section `Spamhaus Cert`. First, the default condition is checked, it matches! Ok, going on. Otherwise the expert would have selected a different section that has not yet been considered. Now, go through the rules, until we hit the rule `conficker`. We combine the conditions of this rule with the default conditions, and both rules match! So we can apply the action: `classification.identifier` is set to `conficker`, the trivial name.
 
-Assume we have an event with `feed.name = Spamhaus Cert` and `malware.name = feodo`. The default condition matches, but no others. So the default action is applied. The value for `classification.identifier` is `{msg[malware.name]}`, this is [standard Python string format syntax](https://docs.python.org/3/library/string.html#format-string-syntax). Thus you can use any value from the processed event, which is available as `msg`.
+Assume we have an event with `feed.name = Spamhaus Cert` and `malware.name = feodo`. The default condition matches, but no others. So the default action is applied. The value for `classification.identifier` will be set to `feodo` by `{msg[malware.name]}`.
 
 #### Types
 
@@ -375,12 +396,11 @@ If the rule is a string, a regex-search is performed, also for numeric values (`
 * `lookup:` no
 * `public:` yes
 * `cache (redis db):` none
-* `ipv6 support:` yes
 * `description:` output messages (reports or events) to file
 
 #### Configuration Parameters:
 
-* `file`: filepath of output file
+* `file`: file path of output file
 
 
 * * *
@@ -393,34 +413,7 @@ If the rule is a string, a regex-search is performed, also for numeric values (`
 * `lookup:` no
 * `public:` yes
 * `cache (redis db):` none
-* `ipv6 support:` yes
 * `description:` MongoDB is the bot responsible to send events to a MongoDB database
-
-#### Configuration Parameters:
-
-* `collection`: MongoDB collection
-* `database`: MongoDB database
-* `host`: MongoDB host (fqdn or IP)
-* `port`: MongoDB port
-
-#### Installation Requirements
-
-```
-pip3 install pymongo>=2.7.1
-```
-
-* * *
-
-
-### IntelMQ Mailer
-
-#### Information:
-* `name:` intelmqmailer
-* `lookup:` no
-* `public:` yes
-* `cache (redis db):` none
-* `ipv6 support:` yes
-* `description:` IntelMQ Mailer is the bot responsible to send events to a MongoDB database that supports IntelMQ Mailer platform
 
 #### Configuration Parameters:
 
@@ -428,6 +421,7 @@ pip3 install pymongo>=2.7.1
 * `database`: MongoDB database
 * `host`: MongoDB host (FQDN or IP)
 * `port`: MongoDB port
+* `hierarchical_output`: Boolean (default true) as mongodb does not allow saving keys with dots, we split the dictionay in sub-dictionaries.
 
 #### Installation Requirements
 
@@ -442,67 +436,38 @@ pip3 install pymongo>=2.7.1
 
 #### Information:
 * `name:` postgresql
-* `lookup:` no 
+* `lookup:` no
 * `public:` yes
 * `cache (redis db):` none
-* `ipv6 support:` yes
 * `description:` PostgreSQL is the bot responsible to send events to a PostgreSQL Database
 * `notes`: When activating autocommit, transactions are not used: http://initd.org/psycopg/docs/connection.html#connection.autocommit
 
 #### Configuration Parameters:
 
-* `autocommit`: FIXME
+The parameters marked with 'PostgreSQL' will be sent
+to libpq via psycopg2. Check the
+[libpq parameter documentation] (https://www.postgresql.org/docs/current/static/libpq-connect.html#LIBPQ-PARAMKEYWORDS)
+for the versions you are using.
+
+* `autocommit`: [psycopg's autocommit mode](http://initd.org/psycopg/docs/connection.html?#connection.autocommit), optional, default True
+* `connect_timeout`: PostgreSQL connect_timeout, optional, default 5 seconds
 * `database`: PostgreSQL database
 * `host`: PostgreSQL host
 * `port`: PostgreSQL port
 * `user`: PostgreSQL user
 * `password`: PostgreSQL password
-* `sslmode`: FIXME
-* `autocommit`: FIXME
-* `table`: FIXME
+* `sslmode`: PostgreSQL sslmode
+* `table`: name of the database table into which events are to be inserted
 
 #### Installation Requirements
 
-```
-pip3 install psycopg2>=2.5.5
-```
+See [REQUIREMENTS.txt](../intelmq/bots/outputs/postgresql/REQUIREMENTS.txt)
+from your installation.
 
 #### PostgreSQL Installation
 
-* Install PostgreSQL, at least version 9.4 is recommended.
-
-```bash
-> apt-get install postgresql-9.4 python-psycopg2 postgresql-server-dev-9.4
-```
-
-* Create a User and Database:
-
-```shell
-> su - postgres
-> createuser intelmq -W
-  Shall the new role be a superuser? (y/n) n
-  Shall the new role be allowed to create databases? (y/n) y
-  Shall the new role be allowed to create more new roles? (y/n) n
-  Password: 
-
-> createdb -O intelmq --encoding='utf-8' intelmq-events
-```
-
-* Please note the --encoding='utf-8' in the line above! Without it, the output but will not be able to insert utf-8 data into the table.
-
-* Depending on your setup adjust `/etc/postgresql/9.4/main/pg_hba.conf` to allow network connections for the intelmq user.
-
-* Restart PostgreSQL.
-
-* Generate `initdb.sql` by using the [psql_initdb_generator.py](https://github.com/certtools/intelmq/blob/master/intelmq/bin/intelmq_psql_initdb.py) tool which extracts all field names and data types from `Data-Harmonization.md`.
-
-* Create the `events` table:
-
-```bash
-> psql intelmq-events < /tmp/initdb.sql # as intelmq user
-> psql -U intelmq intelmq-events -W < /tmp/initdb.sql # as other user
-```
-
+See [outputs/postgresql/README.md](../intelmq/bots/outputs/postgresql/README.md)
+from your installation.
 
 * * *
 
@@ -514,7 +479,6 @@ pip3 install psycopg2>=2.5.5
 * `lookup:` no
 * `public:` yes
 * `cache (redis db):` none
-* `ipv6 support:` yes
 * `description:` REST API is the bot responsible to send events to a REST API listener through POST
 
 #### Configuration Parameters:
@@ -534,7 +498,6 @@ pip3 install psycopg2>=2.5.5
 * `lookup:` no
 * `public:` yes
 * `cache (redis db):` none
-* `ipv6 support:` yes
 * `description:` TCP is the bot responsible to send events to a tcp port (Splunk, ElasticSearch, etc..)
 
 #### Configuration Parameters:
