@@ -58,13 +58,13 @@ class CERTBundKontaktExpertBot(Bot):
         self.acknowledge_message()
 
 
-    def lookup_contact_by(self, cur, fieldname, value):
+    def lookup_contacts(self, cur, asn, ipaddress, fqdn):
         result = []
-        for (resultvalue, suffix) in (("manual", ""),
-                                      ("automatic", "_automatic")):
-            dbfunction = getattr(common, "lookup_by_" + fieldname + "_only")
-            for row in dbfunction(cur, suffix, value):
-                result.append(row[:3] + (fieldname, resultvalue))
+        for (automation, suffix) in (("manual", ""),
+                                     ("automatic", "_automatic")):
+            for row in common.lookup_contacts(cur, suffix, asn, ipaddress,
+                                              fqdn):
+                result.append(row + (automation,))
         return result
 
     def lookup_contact(self, ip, fqdn, asn):
@@ -72,9 +72,7 @@ class CERTBundKontaktExpertBot(Bot):
         try:
             cur = self.con.cursor()
             try:
-                raw_result = (self.lookup_contact_by(cur, "asn", asn)
-                              + self.lookup_contact_by(cur, "ipaddress", ip)
-                              + self.lookup_contact_by(cur, "fqdn", fqdn))
+                raw_result = self.lookup_contacts(cur, asn, ip, fqdn)
             finally:
                 cur.close()
         except psycopg2.OperationalError:

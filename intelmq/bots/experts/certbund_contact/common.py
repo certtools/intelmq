@@ -48,38 +48,44 @@ def lookup_by_asn_only(cur, table_extension, asn):
     return cur.fetchall()
 
 
-def lookup_by_ipaddress_only(cur, table_extension, ipaddress):
-    cur.execute("SELECT DISTINCT"
-                "       c.email as email, o.name as organisation,"
-                "       s.name as sector"
-                "  FROM contact{0} AS c"
-                "  JOIN role{0} AS r ON r.contact_id = c.id"
-                "  JOIN organisation{0} o"
-                "    ON o.id = r.organisation_id"
-                "  LEFT OUTER JOIN sector AS s"
-                "    ON s.id = o.sector_id"
-                "  JOIN organisation_to_network{0} AS orgn"
-                "    ON orgn.organisation_id = r.organisation_id"
-                "  JOIN network{0} AS n ON n.id = orgn.net_id"
-                " WHERE inet(host(network(n.address))) <= %s"
-                "   AND %s <= inet(host(broadcast(n.address)))"
-                .format(table_extension), (ipaddress, ipaddress))
-    return cur.fetchall()
+def lookup_contacts(cur, table_extension, asn, ipaddress, fqdn):
+    cur.execute("""
+    WITH matched_asn (organisation_id, reason)
+             AS (SELECT oa.organisation_id, ('asn' :: TEXT)
+                   FROM autonomous_system{0} AS a
+                   JOIN organisation_to_asn{0} AS oa
+                     ON a.number = oa.asn_id
+                  WHERE a.number = %(asn)s),
+         matched_ipaddress (organisation_id, reason)
+             AS (SELECT "on".organisation_id, ('ipaddress' :: TEXT)
+                   FROM network{0} AS n
+                   JOIN organisation_to_network{0} AS "on"
+                     ON n.id = "on".net_id
+                  WHERE inet(host(network(n.address))) <= %(ipaddress)s
+                    AND %(ipaddress)s <= inet(host(broadcast(n.address)))),
+         matched_fqdn (organisation_id, reason)
+             AS (SELECT of.organisation_id, ('fqdn' :: TEXT)
+                   FROM fqdn{0} AS f
+                   JOIN organisation_to_fqdn{0} AS of
+                     ON f.id = of.fqdn_id
+                  WHERE f.fqdn = %(fqdn)s),
+         grouped_matches (organisation_id, reasons)
+             AS (SELECT u.organisation_id, array_agg(u.reason)
+                   FROM (SELECT organisation_id, reason FROM matched_asn
+                         UNION
+                         SELECT organisation_id, reason FROM matched_ipaddress
+                         UNION
+                         SELECT organisation_id, reason FROM matched_fqdn) u
+               GROUP BY u.organisation_id)
 
-
-def lookup_by_fqdn_only(cur, table_extension, fqdn):
-    cur.execute("SELECT DISTINCT"
-                "       c.email as email, o.name as organisation,"
-                "       s.name as sector"
-                "  FROM contact{0} AS c"
-                "  JOIN role{0} AS r ON r.contact_id = c.id"
-                "  JOIN organisation{0} o"
-                "    ON o.id = r.organisation_id"
-                "  LEFT OUTER JOIN sector AS s"
-                "    ON s.id = o.sector_id"
-                "  JOIN organisation_to_fqdn{0} AS orgf"
-                "    ON orgf.organisation_id = r.organisation_id"
-                "  JOIN fqdn{0} AS f ON f.id = orgf.fqdn_id"
-                " WHERE f.fqdn = %s"
-                .format(table_extension), (fqdn,))
+    SELECT DISTINCT
+           c.email as email, o.name as organisation, s.name as sector,
+           m.reasons as reasons
+      FROM grouped_matches as m
+      JOIN organisation{0} o ON o.id = m.organisation_id
+      JOIN role{0} AS r ON r.organisation_id = o.id
+      JOIN contact{0} AS c ON c.id = r.contact_id
+      LEFT OUTER JOIN sector AS s ON s.id = o.sector_id
+      """.format(table_extension),
+                {"asn": asn, "ipaddress": ipaddress, "fqdn": fqdn})
     return cur.fetchall()
