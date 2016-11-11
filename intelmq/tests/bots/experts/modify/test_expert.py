@@ -75,8 +75,8 @@ class TestModifyExpertBot(test.BotTestCase, unittest.TestCase):
         new_path = resource_filename('intelmq',
                                      'tests/bots/experts/modify/new_format.conf')
         new_config = load_configuration(new_path)
-        self.assertCountEqual(convert_config(old_config),
-                              new_config)
+        self.assertDictEqual(convert_config(old_config)[0],
+                             new_config[0])
 
 EVENT_TEMPL2 = {"__type": "Event",
                "feed.name": "Testing IntelMQ Mock Feed",
