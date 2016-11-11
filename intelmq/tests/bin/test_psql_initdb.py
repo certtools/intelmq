@@ -6,6 +6,7 @@ Created on Tue Aug  9 14:04:13 2016
 """
 import os
 import unittest
+import pkg_resources
 
 import intelmq.bin.intelmq_psql_initdb as psql_initd
 
@@ -20,7 +21,8 @@ class TestPsqlInit(unittest.TestCase):
         with open(os.path.join(os.path.dirname(__file__),
                                'initdb.sql')) as handle:
             expected = handle.read()
-        self.assertEqual(psql_initd.generate().strip(), expected.strip())
+        fname = pkg_resources.resource_filename('intelmq', 'etc/harmonization.conf')
+        self.assertEqual(psql_initd.generate(fname).strip(), expected.strip())
 
 
 if __name__ == '__main__':
