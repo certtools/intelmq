@@ -30,7 +30,6 @@ class TestUrl2fqdnExpertBot(test.BotTestCase, unittest.TestCase):
     @classmethod
     def set_bot(self):
         self.bot_reference = Url2fqdnExpertBot
-        self.default_input_message = {'__type': 'Event'}
 
     def test(self):
         self.input_message = EXAMPLE_INPUT

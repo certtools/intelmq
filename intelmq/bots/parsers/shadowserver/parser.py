@@ -38,10 +38,18 @@ class ShadowserverParserBot(ParserBot):
 
         # Set a switch if the parser shall reset the feed.name,
         # code and feedurl for this event
-        self.override = False
-        if hasattr(self.parameters, 'override'):
-            if self.parameters.override:
-                self.override = True
+        self.overwrite = False
+        if hasattr(self.parameters, 'override'):  # TODOv1.1: remove
+            self.logger.error('Parameter "override" is deprecated, '
+                              'it is now called "overwrite". Stopping now. '
+                              '(This warning will be removed before v1.1.)')
+            self.stop()
+        if hasattr(self.parameters, 'overwrite'):
+            if self.parameters.overwrite:
+                self.overwrite = True
+
+        # Already warned about deprecation
+        self.depr_warning = False
 
     def parse(self, report):
         raw_report = utils.base64_decode(report["raw"])
@@ -74,10 +82,10 @@ class ShadowserverParserBot(ParserBot):
         # one level below the "extra root"
         # e.g.: extra {'cc_dns': '127.0.0.1'}
 
-        # set feed.name and code, honor the override parameter
+        # set feed.name and code, honor the overwrite parameter
 
         if hasattr(self.parameters, 'feedname'):
-            if 'feed.name' in event and self.override:
+            if 'feed.name' in event and self.overwrite:
                 event.add('feed.name', self.parameters.feedname, force=True)
             elif 'feed.name' not in event:
                 event.add('feed.name', self.parameters.feedname)
@@ -157,7 +165,6 @@ class ShadowserverParserBot(ParserBot):
         # Now add additional constant fields.
         dict.update(event, conf.get('constant_fields', {}))  # TODO: rewrite in 1.0
 
-        self.logger.debug("Raw_line: {!r}.".format(row))
         event.add('raw', self.recover_line(row))
 
         # Add everything which could not be resolved to extra.
