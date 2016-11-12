@@ -462,14 +462,11 @@ class Bot(object):
                             'harmonization',
                             "Key %s is not valid." % _key)
 
-    @staticmethod
-    def run():
-        module = importlib.import_module(os.path.basename(sys.argv[0]))
-        botname = utils.get_botname_from_module(module)
-        bot = getattr(module, botname)
+    @classmethod
+    def run(cls):
         if len(sys.argv) < 2:
             exit('No bot ID given.')
-        instance = bot(sys.argv[1])
+        instance = cls(sys.argv[1])
         instance.start()
 
 
