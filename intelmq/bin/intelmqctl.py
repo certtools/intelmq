@@ -365,7 +365,7 @@ Get logs of a bot:
             log_bot_error('notfound', bot_id)
             return 'error'
         else:
-            cmdargs = ["python3", "-m", module, bot_id]
+            cmdargs = [module, bot_id]
             with open('/dev/null', 'w') as devnull:
                 proc = psutil.Popen(cmdargs, stdout=devnull, stderr=devnull)
                 filename = PIDFILE.format(bot_id)
