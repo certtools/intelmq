@@ -481,7 +481,7 @@ class MyParserBot(ParserBot):
 ```
 
 #### parse_line
-One line can lead to multiple events, thus `parse_line` can't just return one Event. Thus, this function is a generator, which allows to easily return multple values. Use `yield event` for valid Events and `return` in case of a void result (not parseable line, invalid data etc.).
+One line can lead to multiple events, thus `parse_line` can't just return one Event. Thus, this function is a generator, which allows to easily return multiple values. Use `yield event` for valid Events and `return` in case of a void result (not parseable line, invalid data etc.).
 
 ### Tests
 
