@@ -150,7 +150,8 @@ class BotTestCase(object):
         with mock.patch('intelmq.lib.utils.load_configuration',
                         new=self.mocked_config):
             with mock.patch('intelmq.lib.utils.log', self.mocked_log):
-                self.bot = self.bot_reference(self.bot_id)
+                with mock.patch('intelmq.lib.utils.write_pidfile', lambda x: True):
+                    self.bot = self.bot_reference(self.bot_id)
         if self.input_message is not None:
             if type(self.input_message) is not list:
                 self.input_message = [self.input_message]
