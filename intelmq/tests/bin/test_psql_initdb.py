@@ -23,5 +23,5 @@ class TestPsqlInit(unittest.TestCase):
         self.assertEqual(psql_initd.generate().strip(), expected.strip())
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

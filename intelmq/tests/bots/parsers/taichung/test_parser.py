@@ -16,5 +16,5 @@ class TestTaichungCityNetflowParserBot(test.BotTestCase, unittest.TestCase):
         cls.bot_reference = TaichungCityNetflowParserBot
         cls.default_input_message = {'__type': 'Report', 'raw': 'Cg=='}
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

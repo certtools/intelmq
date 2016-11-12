@@ -58,5 +58,5 @@ class TestAutoshunParserBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(1, EXAMPLE_EVENT1)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

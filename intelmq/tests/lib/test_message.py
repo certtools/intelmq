@@ -542,5 +542,5 @@ class TestMessageFactory(unittest.TestCase):
         with self.assertRaises(exceptions.InvalidValue):
             event.update('source.registry', 'afri nic', sanitize=False)
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover  # pragma: no cover
     unittest.main()

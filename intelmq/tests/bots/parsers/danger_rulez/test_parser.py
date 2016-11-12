@@ -15,5 +15,5 @@ class TestBruteForceBlockerParserBot(test.BotTestCase, unittest.TestCase):
     def set_bot(cls):
         cls.bot_reference = BruteForceBlockerParserBot
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

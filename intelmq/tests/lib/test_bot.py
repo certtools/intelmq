@@ -100,5 +100,5 @@ class TestBot(unittest.TestCase):
                       self.log_stream.getvalue())
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover  # pragma: no cover
     unittest.main()

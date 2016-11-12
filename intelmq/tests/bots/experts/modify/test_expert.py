@@ -163,5 +163,5 @@ class TestMoreFeedsModifyExpertBot(test.BotTestCase, unittest.TestCase):
             self.assertMessageEqual(position, event_out)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

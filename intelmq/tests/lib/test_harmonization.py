@@ -307,5 +307,5 @@ class TestHarmonization(unittest.TestCase):
         self.assertFalse(harmonization.URL.is_valid('http://',
                                                     sanitize=True))
 
-if __name__ == "__main__":
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

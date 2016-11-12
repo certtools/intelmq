@@ -287,5 +287,5 @@ class TestOverwriteShadowserverParserBot(test.BotTestCase, unittest.TestCase):
             self.assertMessageEqual(i, event)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()
