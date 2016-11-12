@@ -180,6 +180,11 @@
             "module": "intelmq.bots.parsers.autoshun.parser",
             "parameters": {}
         },
+        "Bambenek C2 Domain Feed": {
+            "description": "Bambenek C2 Domain parser is the bot responsible to parse and and sanatize the information.",
+            "module": "intelmq.bots.parsers.bambenek.parser_c2dommasterlist",
+            "parameters": {}
+        },
         "BitSight Ciberfeed Stream": {
             "description": "Bitsight Ciberfeed parser is the bot reponsible to parse and sanitize the information.",
             "module": "intelmq.bots.parsers.bitsight.parser",
