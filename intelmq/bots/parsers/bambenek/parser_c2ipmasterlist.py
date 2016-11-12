@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-http://osint.bambenekconsulting.com/feeds/c2-dommasterlist.txt
+http://osint.bambenekconsulting.com/feeds/c2-ipmasterlist.txt
 format:
-ooxnererwyatanb.com,Domain used by banjori,2016-11-10 15:04,http://osint.bambenekconsulting.com/manual/banjori.txt
-destination.fqdn,event_description.text,time.source,event_description.url
+31.170.178.179,IP used by beebone C&C,2016-11-12 14:09,http://osint.bambenekconsulting.com/manual/beebone.txt
+destination.ip,event_description.text,time.source,event_description.url
 """
 
 import sys
@@ -11,7 +11,7 @@ from intelmq.lib import utils
 from intelmq.lib.bot import Bot
 from intelmq.lib.message import Event
 
-class Bambenekc2dommasterlistParserBot(Bot):
+class Bambenekc2ipmasterlistParserBot(Bot):
 
     def process(self):
         report = self.receive_message()
@@ -25,7 +25,7 @@ class Bambenekc2dommasterlistParserBot(Bot):
 
             event = Event(report)
 
-            event.add('destination.fqdn', row_split[0])
+            event.add('destination.ip', row_split[0])
             event.add('event_description.text', row_split[1])
             event.add('time.source', row_split[2] + " UTC")
             event.add('event_description.url', row_split[3])
@@ -37,5 +37,5 @@ class Bambenekc2dommasterlistParserBot(Bot):
         self.acknowledge_message()
 
 if __name__ == "__main__":
-    bot = Bambenekc2dommasterlistParserBot(sys.argv[1])
+    bot = Bambenekc2ipmasterlistParserBot(sys.argv[1])
     bot.start()

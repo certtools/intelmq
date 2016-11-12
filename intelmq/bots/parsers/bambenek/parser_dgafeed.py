@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-http://osint.bambenekconsulting.com/feeds/c2-dommasterlist.txt
+feed:
+http://osint.bambenekconsulting.com/feeds/dga-feed.txt
 format:
-ooxnererwyatanb.com,Domain used by banjori,2016-11-10 15:04,http://osint.bambenekconsulting.com/manual/banjori.txt
+xqmclnusaswvof.com,Domain used by Cryptolocker - Flashback DGA for 10 Nov 2016,2016-11-10,http://osint.bambenekconsulting.com/manual/cl.txt
 destination.fqdn,event_description.text,time.source,event_description.url
 """
 
@@ -11,7 +12,7 @@ from intelmq.lib import utils
 from intelmq.lib.bot import Bot
 from intelmq.lib.message import Event
 
-class Bambenekc2dommasterlistParserBot(Bot):
+class BambenekDGAfeedParserBot(Bot):
 
     def process(self):
         report = self.receive_message()
@@ -27,15 +28,14 @@ class Bambenekc2dommasterlistParserBot(Bot):
 
             event.add('destination.fqdn', row_split[0])
             event.add('event_description.text', row_split[1])
-            event.add('time.source', row_split[2] + " UTC")
+            event.add('time.source', row_split[2] + " 00:00 UTC")
             event.add('event_description.url', row_split[3])
-            event.add('classification.type', 'c&c')
-            event.add('status', 'online')
+            event.add('classification.type', 'ransomware')
             event.add('raw', row)
 
             self.send_message(event)
         self.acknowledge_message()
 
 if __name__ == "__main__":
-    bot = Bambenekc2dommasterlistParserBot(sys.argv[1])
+    bot = BambenekDGAfeedParserBot(sys.argv[1])
     bot.start()
