@@ -16,7 +16,7 @@ EXAMPLE_REPORT = {"feed.name": "Bambenek C2 IP Feed",
                   "__type": "Report",
                   "time.observation": "2016-01-01T00:00:00+00:00",
                  }
-EVENTS = [{"feed.name": "Bambenek C2 Domain Feed",
+EVENTS = [{"feed.name": "Bambenek C2 IP Feed",
            "feed.url": "http://osint.bambenekconsulting.com/feeds/c2-ipmasterlist.txt",
            "__type": "Event",
            "time.source": "2016-11-12T18:02:00+00:00",
