@@ -1,0 +1,15 @@
+#############################################################
+## Domain feed of known DGA domains from -2 to +3 days
+## 
+## Feed generated at: Sat Nov 12 00:15:01 UTC 2016 
+##
+## Feed Provided By: John Bambenek of Bambenek Consulting
+## jcb@bambenekconsulting.com // http://bambenekconsulting.com
+##
+## Use of this feed is governed by the license here: 
+## http://osint.bambenekconsulting.com/license.txt 
+## For more information on this feed go to: 
+## http://osint.bambenekconsulting.com/manual/dga-feed.txt
+## 
+#############################################################
+xqmclnusaswvof.com,Domain used by Cryptolocker - Flashback DGA for 10 Nov 2016,2016-11-10,http://osint.bambenekconsulting.com/manual/cl.txt
