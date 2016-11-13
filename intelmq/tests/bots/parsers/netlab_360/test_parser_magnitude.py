@@ -13,7 +13,7 @@ with open(os.path.join(os.path.dirname(__file__), 'magnitude.txt')) as handle:
 EXAMPLE_REPORT = {"feed.name": "Netlab 360 Magnitude",
                   "feed.url": "http://data.netlab.360.com/feeds/ek/magnitude.txt",
                   "raw": utils.base64_encode(EXAMPLE_FILE),
-                  "__type": "report",
+                  "__type": "Report",
                   "time.observation": "2016-01-01T00:00:00+00:00",
                  }
 EVENTS = [{"feed.name": "Netlab 360 Magnitude",
@@ -25,7 +25,7 @@ EVENTS = [{"feed.name": "Netlab 360 Magnitude",
            "destination.url": "http://3ebo08o4ct0f6n2336.insides.party/d97cc5cfab47e305536690a9987115ac",
            "classification.type": "exploit",
            "time.observation": "2016-01-01T00:00:00+00:00",
-           "event_description.text": "magnitude",
+           "classification.identifier": "magnitude",
            "event_description.url": "http://data.netlab.360.com/ek",
            "raw": "TWFnbml0dWRlCTE0Nzg5NDY2NjUJMTc4LjMyLjIyNy4xMgkzZWJvMDhvNGN0MGY2bjIzMzYuaW5zaWRlcy5wYXJ0eQlodHRwOi8vM2VibzA4bzRjdDBmNm4yMzM2Lmluc2lkZXMucGFydHkvZDk3Y2M1Y2ZhYjQ3ZTMwNTUzNjY5MGE5OTg3MTE1YWM=",
           }]

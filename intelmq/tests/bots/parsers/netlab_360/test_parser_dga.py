@@ -13,7 +13,7 @@ with open(os.path.join(os.path.dirname(__file__), 'dga.txt')) as handle:
 EXAMPLE_REPORT = {"feed.name": "Netlab 360 DGA",
                   "feed.url": "http://data.netlab.360.com/feeds/dga/dga.txt",
                   "raw": utils.base64_encode(EXAMPLE_FILE),
-                  "__type": "report",
+                  "__type": "Report",
                   "time.observation": "2016-01-01T00:00:00+00:00",
                  }
 EVENTS = [{"feed.name": "Netlab 360 DGA",
@@ -23,7 +23,7 @@ EVENTS = [{"feed.name": "Netlab 360 DGA",
            "destination.fqdn": "difficultdress.net",
            "classification.type": "malware",
            "time.observation": "2016-01-01T00:00:00+00:00",
-           "event_description.text": "suppobox",
+           "classification.identifier": "suppobox",
            "event_description.url": "http://data.netlab.360.com/dga",
            "raw": "c3VwcG9ib3ggICAgICAgIGRpZmZpY3VsdGRyZXNzLm5ldCAgICAgIDIwMTYtMTEtMTIgMTE6NTg6NTYgICAgIDIwMTYtMTEtMTMgMDA6MDQ6MTU=",
           }]

@@ -10,6 +10,7 @@ http://data.netlab.360.com/ek
 """
 
 import sys
+from datetime import datetime
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
 from intelmq.lib.message import Event
@@ -28,8 +29,8 @@ class Netlab360MagnitudeParserBot(Bot):
 
             event = Event(report)
 
-            event.add('event_description.text', row_split[0].lower())
-            event.add('time.source', row_split[1])
+            event.add('classification.identifier', row_split[0].lower())
+            event.add('time.source', datetime.utcfromtimestamp(int(row_split[1])).strftime('%Y-%m-%dT%H:%M:%S+00:00'))
             event.add('destination.ip', row_split[2])
             event.add('destination.fqdn', row_split[3])
             event.add('destination.url', row_split[4])

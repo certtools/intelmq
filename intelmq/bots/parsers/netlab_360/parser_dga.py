@@ -27,7 +27,7 @@ class Netlab360DGAParserBot(Bot):
 
             event = Event(report)
 
-            event.add('event_description.text', row_split[0].lower())
+            event.add('classification.identifier', row_split[0].lower())
             event.add('time.source', row_split[3] + " UTC")
             event.add('destination.fqdn', row_split[1])
             event.add('raw', row)
