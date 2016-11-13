@@ -25,7 +25,7 @@ EVENTS = [{"feed.name": "Netlab 360 DGA",
            "time.observation": "2016-01-01T00:00:00+00:00",
            "classification.identifier": "suppobox",
            "event_description.url": "http://data.netlab.360.com/dga",
-           "raw": "c3VwcG9ib3ggICAgICAgIGRpZmZpY3VsdGRyZXNzLm5ldCAgICAgIDIwMTYtMTEtMTIgMTE6NTg6NTYgICAgIDIwMTYtMTEtMTMgMDA6MDQ6MTU=",
+           "raw": "c3VwcG9ib3gJZGlmZmljdWx0ZHJlc3MubmV0CTIwMTYtMTEtMTIgMTE6NTg6NTYJMjAxNi0xMS0xMyAwMDowNDoxNQ==",
           }]
 
 class TestNetlab360DGAParserBot(test.BotTestCase, unittest.TestCase):
