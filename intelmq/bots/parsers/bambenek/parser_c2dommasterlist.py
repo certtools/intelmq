@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-See doc/Feeds.md
+See docs/Feeds.md
 """
 
 import sys
@@ -10,6 +10,7 @@ from intelmq.lib.message import Event
 
 
 class Bambenekc2dommasterlistParserBot(ParserBot):
+
     def parse_line(self, line, report):
         if line.startswith('#'):
             self.tempdata.append(line)
@@ -24,6 +25,7 @@ class Bambenekc2dommasterlistParserBot(ParserBot):
             event.add('classification.type', 'c&c')
             event.add('status', 'online')
             event.add('raw', line)
+
             yield event
 
 if __name__ == "__main__":

@@ -1,41 +1,32 @@
 # -*- coding: utf-8 -*-
 """
-http://osint.bambenekconsulting.com/feeds/c2-ipmasterlist.txt
-format:
-31.170.178.179,IP used by beebone C&C,2016-11-12 14:09,http://osint.bambenekconsulting.com/manual/beebone.txt
-destination.ip,event_description.text,time.source,event_description.url
+Se docs/Feeds.md
 """
 
 import sys
-from intelmq.lib import utils
-from intelmq.lib.bot import Bot
+
+from intelmq.lib.bot import ParserBot
 from intelmq.lib.message import Event
 
 
-class Bambenekc2ipmasterlistParserBot(Bot):
+class Bambenekc2ipmasterlistParserBot(ParserBot):
 
-    def process(self):
-        report = self.receive_message()
-        raw_report = utils.base64_decode(report.get("raw"))
-
-        for row in raw_report.splitlines():
-            if row.startswith('#'):
-                continue
-
-            row_split = row.split(',')
-
+    def parse_line(self, line, report):
+        if line.startswith('#'):
+            self.tempdata.append(line)
+        else:
+            lvalue = line.split(',')
             event = Event(report)
 
-            event.add('destination.ip', row_split[0])
-            event.add('event_description.text', row_split[1])
-            event.add('time.source', row_split[2] + " UTC")
-            event.add('event_description.url', row_split[3])
+            event.add('destination.ip', lvalue[0])
+            event.add('event_description.text', lvalue[1])
+            event.add('time.source', lvalue[2] + " UTC")
+            event.add('event_description.url', lvalue[3])
             event.add('classification.type', 'c&c')
             event.add('status', 'online')
-            event.add('raw', row)
+            event.add('raw', line)
 
-            self.send_message(event)
-        self.acknowledge_message()
+            yield event
 
 if __name__ == "__main__":
     bot = Bambenekc2ipmasterlistParserBot(sys.argv[1])
