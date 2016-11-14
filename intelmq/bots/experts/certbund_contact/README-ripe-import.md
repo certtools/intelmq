@@ -43,7 +43,7 @@ Optionally construct an asn-whitelist for your country, for example for `DE`:
 ```shell
 curl -O ftp://ftp.ripe.net/ripe/stats/delegated-ripencc-latest
 cat delegated-ripencc-latest | \
-  gawk --field-separator='|' '{if ($2=="DE" && $3=="asn") print "AS"$4}' \
+  awk -F'|' '{if ($2=="DE" && $3=="asn") print "AS"$4}' \
   >asn-DE.txt
 ```
 
