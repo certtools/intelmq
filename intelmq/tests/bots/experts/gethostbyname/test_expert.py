@@ -22,6 +22,7 @@ EXAMPLE_OUTPUT = {"__type": "Event",
                   }
 
 
+@test.skip_internet()
 class TestGethostbynameExpertBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for Fqdn2IpExpertBot.

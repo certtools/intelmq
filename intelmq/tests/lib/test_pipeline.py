@@ -15,6 +15,7 @@ TODO: check internal representation of data in redis (like with Pythonlist)
 import unittest
 
 import intelmq.lib.pipeline as pipeline
+import intelmq.lib.test as test
 
 SAMPLES = {'normal': [b'Lorem ipsum dolor sit amet',
                       'Lorem ipsum dolor sit amet'],
@@ -67,6 +68,7 @@ class TestPythonlist(unittest.TestCase):
                          {'src': 1, 'dst': 2})
 
 
+@test.skip_redis()
 class TestRedis(unittest.TestCase):
 
     def setUp(self):

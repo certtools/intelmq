@@ -28,6 +28,7 @@ OUTPUT3['comment'] = 'bar'
 OUTPUT3['source.abuse_contact'] = 'abuse@example.com'
 
 
+@test.skip_database()
 class TestGenericDBLookupExpertBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for GenericDBLookupExpertBot.

@@ -6,6 +6,7 @@ Testing harmonization classes
 import unittest
 
 import intelmq.lib.harmonization as harmonization
+import intelmq.lib.test as test
 
 
 class TestHarmonization(unittest.TestCase):
@@ -209,6 +210,7 @@ class TestHarmonization(unittest.TestCase):
         self.assertTrue(harmonization.FQDN.is_valid('exAmple.net',
                                                     sanitize=True))
 
+    @test.skip_internet()
     def test_fqdn_to_ip(self):
         """ Test FQDN.to_ip """
         self.assertEqual(None, harmonization.FQDN.to_ip('localhost'))

@@ -15,5 +15,8 @@ class TestPhishTankParserBot(test.BotTestCase, unittest.TestCase):
     def set_bot(cls):
         cls.bot_reference = PhishTankParserBot
 
+    def test_empty(self):
+        self.run_bot()
+
 if __name__ == '__main__':
     unittest.main()

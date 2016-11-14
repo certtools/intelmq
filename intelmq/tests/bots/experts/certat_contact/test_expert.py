@@ -2,7 +2,6 @@
 """
 Testing certat_contact
 """
-
 import unittest
 
 import intelmq.lib.test as test
@@ -35,6 +34,7 @@ EXAMPLE_OUTPUT6 = {"__type": "Event",
                    }
 
 
+@test.skip_internet()
 class TestCERTatContactExpertBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for AbusixExpertBot.

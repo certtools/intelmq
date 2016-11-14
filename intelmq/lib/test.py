@@ -9,7 +9,9 @@ import io
 import json
 import logging
 import re
+import redis
 import os
+import unittest
 import unittest.mock as mock
 
 import pkg_resources
@@ -45,7 +47,7 @@ def mocked_config(bot_id='test-bot', src_name='', dst_names=(), sysconfig={}):
         elif conf_file == RUNTIME_CONF_FILE:
             conf = BOT_CONFIG.copy()
             conf.update(sysconfig)
-            return {bot_id: conf}
+            return {bot_id: {'parameters': conf}}
         elif conf_file.startswith(CONFIG_DIR):
             confname = os.path.join('etc/', os.path.split(conf_file)[-1])
             fname = pkg_resources.resource_filename('intelmq',
@@ -65,6 +67,21 @@ def mocked_logger(logger):
     def log(name, log_path=None, log_level=None, stream=None, syslog=None):
         return logger
     return log
+
+
+def skip_database():
+    return unittest.skipUnless(os.environ.get('INTELMQ_TEST_DATABASES'),
+                               'Skipping database tests.')
+
+
+def skip_internet():
+    return unittest.skipIf(os.environ.get('INTELMQ_SKIP_INTERNET'),
+                           'Skipping without internet connection.')
+
+
+def skip_redis():
+    return unittest.skipIf(os.environ.get('INTELMQ_SKIP_REDIS'),
+                           'Skipping without running redis.')
 
 
 class BotTestCase(object):
@@ -96,6 +113,7 @@ class BotTestCase(object):
         cls.maxDiff = None  # For unittest module, prints long diffs
         cls.pipe = None
         cls.sysconfig = {}
+        cls.use_cache = False
         cls.allowed_error_count = 0  # allows dumping of some lines
 
         cls.set_bot()
@@ -116,6 +134,12 @@ class BotTestCase(object):
         if type(cls.default_input_message) is dict:
             cls.default_input_message = \
                 utils.decode(json.dumps(cls.default_input_message))
+
+        if cls.use_cache and not os.environ.get('INTELMQ_SKIP_REDIS'):
+            cls.cache = redis.Redis(host=BOT_CONFIG['redis_cache_host'],
+                                    port=BOT_CONFIG['redis_cache_port'],
+                                    db=BOT_CONFIG['redis_cache_db'],
+                                    socket_timeout=BOT_CONFIG['redis_cache_ttl'])
 
     def prepare_bot(self):
         """Reconfigures the bot with the changed attributes"""
@@ -187,27 +211,30 @@ class BotTestCase(object):
         self.loglines_buffer = self.log_stream.getvalue()
         self.loglines = self.loglines_buffer.splitlines()
 
-    def get_input_queue(self):
-        """Returns the input queue of this bot which can be filled
-           with fixture data in setUp()"""
+        """ Test if report has required fields. """
+        if self.bot_type != 'collector':
+            return
 
-        return self.pipe.state["%s-input" % self.bot_id]
+        for report_json in self.get_output_queue():
+            report = message.MessageFactory.unserialize(report_json)
+            self.assertIsInstance(report, message.Report)
+            self.assertIn('feed.name', report)
+            self.assertIn('raw', report)
+            self.assertIn('time.observation', report)
 
-    def set_input_queue(self, seq):
-        """Setter for the input queue of this bot"""
-        self.pipe.state["%s-input" % self.bot_id] = [utils.encode(text) for
-                                                     text in seq]
+        """ Test if event has required fields. """
+        if self.bot_type != 'parser':
+            return
 
-    input_queue = property(get_input_queue, set_input_queue)
+        for event_json in self.get_output_queue():
+            event = message.MessageFactory.unserialize(event_json)
+            self.assertIsInstance(event, message.Event)
+            self.assertIn('classification.type', event)
+            self.assertIn('feed.name', event)
+            self.assertIn('raw', event)
+            self.assertIn('time.observation', event)
 
-    def get_output_queue(self):
-        """Getter for the input queue of this bot. Use in TestCase scenarios"""
-        return [utils.decode(text) for text
-                in self.pipe.state["%s-output" % self.bot_id]]
-
-    def test_logs(self):
         """ Test if bot log messages are correctly formatted. """
-        self.run_bot()
         self.assertLoglineMatches(0, "{} initialized with id {} and version"
                                      " [0-9.]{{5}} \([a-zA-Z0-9,:. ]+\)( \[GCC\])?"
                                      " as process [0-9]+\."
@@ -227,6 +254,30 @@ class BotTestCase(object):
             self.assertTrue(fields['message'].upper() == fields['message'].upper(),
                             msg='Logline {!r} does not beginn with an upper case char.'
                                 ''.format(fields['message']))
+
+    @classmethod
+    def tearDownClass(cls):
+        if cls.use_cache and not os.environ.get('INTELMQ_SKIP_REDIS'):
+            cls.cache.flushdb()
+
+    def get_input_queue(self):
+        """Returns the input queue of this bot which can be filled
+           with fixture data in setUp()"""
+
+        return self.pipe.state["%s-input" % self.bot_id]
+
+    def set_input_queue(self, seq):
+        """Setter for the input queue of this bot"""
+        self.pipe.state["%s-input" % self.bot_id] = [utils.encode(text) for
+                                                     text in seq]
+
+    input_queue = property(get_input_queue, set_input_queue)
+
+    def get_output_queue(self):
+        """Getter for the input queue of this bot. Use in TestCase scenarios"""
+        return [utils.decode(text) for text
+                in self.pipe.state["%s-output" % self.bot_id]]
+
 
 #        """ Test if all pipes are created with correct names. """
         pipenames = ["{}-input", "{}-input-internal", "{}-output"]
@@ -252,33 +303,6 @@ class BotTestCase(object):
 
         self.assertEqual('Test{}'.format(self.bot_name),
                          self.__class__.__name__)
-
-    def test_report(self):
-        """ Test if report has required fields. """
-        if self.bot_type != 'collector':
-            return
-
-        self.run_bot()
-        for report_json in self.get_output_queue():
-            report = message.MessageFactory.unserialize(report_json)
-            self.assertIsInstance(report, message.Report)
-            self.assertIn('feed.name', report)
-            self.assertIn('raw', report)
-            self.assertIn('time.observation', report)
-
-    def test_event(self):
-        """ Test if event has required fields. """
-        if self.bot_type != 'parser':
-            return
-
-        self.run_bot()
-        for event_json in self.get_output_queue():
-            event = message.MessageFactory.unserialize(event_json)
-            self.assertIsInstance(event, message.Event)
-            self.assertIn('classification.type', event)
-            self.assertIn('feed.name', event)
-            self.assertIn('raw', event)
-            self.assertIn('time.observation', event)
 
     def assertAnyLoglineEqual(self, message, levelname="ERROR"):
         """Asserts if any logline matches a specific requirement.

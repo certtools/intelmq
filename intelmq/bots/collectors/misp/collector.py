@@ -14,7 +14,10 @@ import json
 import sys
 from urllib.parse import urljoin
 
-from pymisp import PyMISP
+try:
+    from pymisp import PyMISP
+except ImportError:
+    PyMISP = None
 
 from intelmq.lib.bot import CollectorBot
 from intelmq.lib.message import Report
@@ -23,6 +26,10 @@ from intelmq.lib.message import Report
 class MISPCollectorBot(CollectorBot):
 
     def init(self):
+        if PyMISP is None:
+            self.logger.error('Could not import pymisp. Please install it.')
+            self.stop()
+
         # Initialise MISP connection
         self.misp = PyMISP(self.parameters.misp_url,
                            self.parameters.misp_key,
