@@ -29,7 +29,7 @@ Usage
 
 Download data to a directory:
 
-```
+```shell
 d=`date +%F`
 mkdir $d
 cd $d
@@ -37,13 +37,13 @@ for db in ripe.db.organisation.gz ripe.db.role.gz ripe.db.aut-num.gz
  do
   curl -O "http://ftp.ripe.net/ripe/dbase/split/$db"
  done
+ curl -O ftp://ftp.ripe.net/ripe/stats/delegated-ripencc-latest
 ```
 
 Optionally construct an asn-whitelist for your country, for example for `DE`:
 ```shell
-curl -O ftp://ftp.ripe.net/ripe/stats/delegated-ripencc-latest
 cat delegated-ripencc-latest | \
-  gawk --field-separator='|' '{if ($2=="DE" && $3=="asn") print "AS"$4}' \
+  awk -F'|' '{if ($2=="DE" && $3=="asn") print "AS"$4}' \
   >asn-DE.txt
 ```
 
