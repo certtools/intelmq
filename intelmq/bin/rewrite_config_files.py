@@ -15,7 +15,7 @@ def rewrite(fobj):
     fobj.write(clean)
     fobj.truncate()
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     DESCRIPTION = """
     Rewrites JSON configuration files for developers of intelmq.
 

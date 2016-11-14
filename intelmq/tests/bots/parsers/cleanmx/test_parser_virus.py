@@ -19,5 +19,5 @@ class TestCleanMXVirusParserBot(test.BotTestCase, unittest.TestCase):
     def test_empty(self):
         self.run_bot()
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

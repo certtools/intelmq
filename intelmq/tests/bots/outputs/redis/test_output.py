@@ -71,5 +71,5 @@ class TestRedisOutputBot(test.BotTestCase, unittest.TestCase):
         self.assertDictEqual(EXAMPLE_EVENT, event_dict)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

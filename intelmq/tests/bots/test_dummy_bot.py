@@ -106,5 +106,5 @@ class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
                                    levelname='WARNING')
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

@@ -282,5 +282,5 @@ def main():
                     value['traceback'] = value['traceback'].splitlines()
                 pprint.pprint(value)
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     main()

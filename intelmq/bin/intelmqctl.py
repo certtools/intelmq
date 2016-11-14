@@ -615,9 +615,9 @@ Get logs of a bot:
         return messages[::-1]
 
 
-def main():
+def main():  # pragma: no cover
     x = IntelMQContoller(interactive=True)
     x.run()
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     main()

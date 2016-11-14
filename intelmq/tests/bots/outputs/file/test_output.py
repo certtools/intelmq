@@ -29,5 +29,5 @@ class TestFileOutputBot(test.BotTestCase, unittest.TestCase):
         os.remove(cls.filename)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

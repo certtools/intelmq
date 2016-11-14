@@ -29,7 +29,7 @@ class TestPostgreSQLOutputBot(test.BotTestCase, unittest.TestCase):
                          "user": "intelmq",
                          "password": "intelmq",
                          "sslmode": "require",
-                         "table": "tests",}
+                         "table": "tests"}
         cls.con = psycopg2.connect(database=cls.sysconfig['database'],
                                    user=cls.sysconfig['user'],
                                    password=cls.sysconfig['password'],
@@ -56,5 +56,5 @@ class TestPostgreSQLOutputBot(test.BotTestCase, unittest.TestCase):
         cls.con.close()
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

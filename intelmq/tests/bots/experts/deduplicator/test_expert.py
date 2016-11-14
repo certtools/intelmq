@@ -52,5 +52,5 @@ class TestDeduplicatorExpertBot(test.BotTestCase, unittest.TestCase):
         self.assertOutputQueueLen()
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()
