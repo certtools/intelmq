@@ -12,7 +12,7 @@ from intelmq.lib.message import Event
 class Bambenekc2dommasterlistParserBot(ParserBot):
     def parse_line(self, line, report):
         if line.startswith('#'):
-            self.tempdata(line)
+            self.tempdata.append(line)
         else:
             lvalue = line.split(',')
             event = Event(report)
