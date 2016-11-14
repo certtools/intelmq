@@ -1,41 +1,27 @@
 # -*- coding: utf-8 -*-
 """
-http://osint.bambenekconsulting.com/feeds/c2-dommasterlist.txt
-format:
-ooxnererwyatanb.com,Domain used by banjori,2016-11-10 15:04,http://osint.bambenekconsulting.com/manual/banjori.txt
-destination.fqdn,event_description.text,time.source,event_description.url
+See doc/Feeds.md
 """
 
 import sys
-from intelmq.lib import utils
-from intelmq.lib.bot import Bot
+
+from intelmq.lib.bot import ParserBot
 from intelmq.lib.message import Event
 
 
-class Bambenekc2dommasterlistParserBot(Bot):
+class Bambenekc2dommasterlistParserBot(ParserBot):
+    def parse_line(self, line, report):
+        lvalue = line.split(',')
+        event = Event(report)
 
-    def process(self):
-        report = self.receive_message()
-        raw_report = utils.base64_decode(report.get("raw"))
-
-        for row in raw_report.splitlines():
-            if row.startswith('#'):
-                continue
-
-            row_split = row.split(',')
-
-            event = Event(report)
-
-            event.add('destination.fqdn', row_split[0])
-            event.add('event_description.text', row_split[1])
-            event.add('time.source', row_split[2] + " UTC")
-            event.add('event_description.url', row_split[3])
-            event.add('classification.type', 'c&c')
-            event.add('status', 'online')
-            event.add('raw', row)
-
-            self.send_message(event)
-        self.acknowledge_message()
+        event.add('source.fqdn', lvalue[0])
+        event.add('event_description.text', lvalue[1])
+        event.add('time.source', lvalue[2] + " UTC")
+        event.add('event_description.url', lvalue[3])
+        event.add('classification.type', 'c&c')
+        event.add('status', 'online')
+        event.add('raw', line)
+        yield event
 
 if __name__ == "__main__":
     bot = Bambenekc2dommasterlistParserBot(sys.argv[1])
