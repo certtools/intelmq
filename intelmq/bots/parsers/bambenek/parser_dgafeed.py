@@ -3,7 +3,8 @@
 feed:
 http://osint.bambenekconsulting.com/feeds/dga-feed.txt
 format:
-xqmclnusaswvof.com,Domain used by Cryptolocker - Flashback DGA for 10 Nov 2016,2016-11-10,http://osint.bambenekconsulting.com/manual/cl.txt
+xqmclnusaswvof.com,Domain used by Cryptolocker - Flashback DGA for 10 Nov 2016,2016-11-10,
+http://osint.bambenekconsulting.com/manual/cl.txt
 destination.fqdn,event_description.text,time.source,event_description.url
 """
 

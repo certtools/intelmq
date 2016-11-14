@@ -11,6 +11,7 @@ from intelmq.lib import utils
 from intelmq.lib.bot import Bot
 from intelmq.lib.message import Event
 
+
 class Bambenekc2dommasterlistParserBot(Bot):
 
     def process(self):
