@@ -18,7 +18,7 @@ class Bambenekc2ipmasterlistParserBot(ParserBot):
             lvalue = line.split(',')
             event = Event(report)
 
-            event.add('destination.ip', lvalue[0])
+            event.add('source.ip', lvalue[0])
             event.add('event_description.text', lvalue[1])
             event.add('time.source', lvalue[2] + " UTC")
             event.add('event_description.url', lvalue[3])
