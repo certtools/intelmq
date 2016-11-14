@@ -34,9 +34,6 @@ called automatically, e.g. by a cronjob.''')
     ripe_data.add_db_args(parser)
     ripe_data.add_common_args(parser)
 
-    parser.add_argument("--notification-format",
-                    default='feed_specific',
-                    help="Specify the data format the contacts linked with e.g. csv. Default: feed_specific")
     parser.add_argument("--notification-interval",
                     default='0',
                     help="Specify the default notification intervall in seconds. Default: 0")
@@ -64,27 +61,12 @@ called automatically, e.g. by a cronjob.''')
         con = psycopg2.connect(dsn=args.conninfo)
         cur = con.cursor()
 
-        if args.verbose:
-            print('** Looking for %s' % (args.notification_format, ))
-
-        cur.execute("SELECT id FROM format WHERE name = %s",
-                    (args.notification_format, ))
-        result = cur.fetchall()
-
-        if result:
-            notification_fid = result[0]
-        else:
-            print('The notification format %s could not be determined'
-                  % (args.notification_format, ))
-            sys.exit(1)
-
         #
         # AS numbers
         #
         if args.verbose:
             print('** Saving AS data to database...')
         cur.execute("DELETE FROM role_automatic WHERE import_source = %s;", (SOURCE_NAME,))
-        cur.execute("DELETE FROM organisation_to_template_automatic WHERE import_source = %s;", (SOURCE_NAME,))
         cur.execute("DELETE FROM organisation_to_asn_automatic WHERE import_source = %s;", (SOURCE_NAME,))
         cur.execute("DELETE FROM autonomous_system_automatic WHERE import_source = %s;", (SOURCE_NAME,))
 
@@ -154,10 +136,10 @@ called automatically, e.g. by a cronjob.''')
                       'abuse-mailbox lines. Taking the first.'.format(nic_hdl))
 
             cur.execute("""
-                INSERT INTO contact_automatic (format_id, email, import_source, import_time)
-                VALUES (%s, %s, %s, CURRENT_TIMESTAMP)
+                INSERT INTO contact_automatic (email, import_source, import_time)
+                VALUES (%s, %s, CURRENT_TIMESTAMP)
                 RETURNING id;
-                """, (notification_fid, email, SOURCE_NAME))
+                """, (email, SOURCE_NAME))
             result = cur.fetchone()
             contact_id = result[0]
 
