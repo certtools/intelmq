@@ -9,7 +9,6 @@ install:
   - sudo apt-get install dpkg-dev dh-python python-setuptools python3-setuptools python3-all debhelper quilt
   - pip install -r REQUIREMENTS
   - for file in intelmq/bots/*/*/REQUIREMENTS.txt; do pip install -r $file; done
-  - pip install coveralls
   - pip install codecov
   - pip install pep8
   - sudo pip install .
@@ -30,6 +29,5 @@ services:
   - postgresql
 after_success:
   - codecov
-  - coveralls
 addons:
   postgresql: "9.4"
