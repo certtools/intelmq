@@ -4,8 +4,6 @@ Testing the pipeline functions of intelmq.
 
 We are testing sending and receiving on the same queue for Redis and
 Pythonlist.
-Unicode compatibility is not tested, as it needs discussion.
-TODO: #281
 TODO: clear_queues
 TODO: count_queued_messages
 TODO: acknowledge

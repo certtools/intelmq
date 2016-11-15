@@ -315,7 +315,7 @@ class TestMessageFactory(unittest.TestCase):
         self.assertSetEqual(set(report.deep_copy().items()),
                             set(report.items()))
 
-    def test_deep_copy_items(self):  # TODO: Sort by key
+    def test_deep_copy_items(self):
         """ Test if deep_copy does not return the same objects. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         report = self.add_report_examples(report)

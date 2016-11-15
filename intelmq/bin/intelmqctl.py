@@ -563,7 +563,6 @@ Get logs of a bot:
             return 'error'
 
     def read_log(self, bot_id, number_of_lines=10, log_level='INFO'):
-        # TODO: Parse number of lines
         try:
             number_of_lines = int(number_of_lines)
         except ValueError:
