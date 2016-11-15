@@ -173,6 +173,7 @@ Parser: Bambenek DGA Domain Feed (`intelmq.bots.parsers.bambenek.parser_dgafeed`
 Domain feed of known DGA domains from -2 to +3 days
  * License: http://osint.bambenekconsulting.com/license.txt
 
+
 ## BitSight Ciberfeed Stream
 
 Status: Unknown
@@ -496,6 +497,9 @@ Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
 
 Parser: Netlab 360 DGA (`intelmq.bots.parsers.netlab_360.parser_dga`)
 
+This feed lists DGA family, Domain, Start and end of valid time(UTC) of a number of DGA families.
+ * reference: http://data.netlab.360.com/dga
+
 ### Magnitude EK Feed
 
 Status: Unknown
@@ -504,6 +508,9 @@ Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
  * http_url: http://data.netlab.360.com/feeds/ek/magnitude.txt
 
 Parser: Netlab 360 Magnitude (`intelmq.bots.parsers.netlab_360.parser_magnitude`)
+
+This feed lists FQDN and possibly the URL used by Magnitude Exploit Kit.  Information also includes the IP address used for the domain and last time seen.
+ * reference: http://data.netlab.360.com/ek
 
 
 ## OpenBL

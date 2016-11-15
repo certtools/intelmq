@@ -7,7 +7,7 @@ import sys
 
 from datetime import datetime
 from intelmq.lib.bot import ParserBot
-from intelmq.lib.harmonization import FQDN, IPAddress, URL
+from intelmq.lib.harmonization import FQDN, IPAddress, URL, DateTime
 from intelmq.lib.message import Event
 
 
@@ -21,9 +21,7 @@ class Netlab360MagnitudeParserBot(ParserBot):
             event = Event(report)
 
             event.add('classification.identifier', lvalue[0].lower())
-            event.add('time.source',
-                      datetime.utcfromtimestamp(int(lvalue[1])).strftime('%Y-%m-%dT%H:%M:%S+00:00'))
-
+            event.add('time.source', DateTime.from_timestamp(int(lvalue[1])))
             if IPAddress.is_valid(lvalue[2]):
                 event.add('source.ip', lvalue[2])
 

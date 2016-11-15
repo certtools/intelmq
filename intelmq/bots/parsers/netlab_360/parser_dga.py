@@ -20,15 +20,10 @@ class Netlab360DGAParserBot(ParserBot):
             event = Event(report)
 
             event.add('classification.identifier', lvalue[0].lower())
+            event.add('source.fqdn', lvalue[1])
             event.add('time.source', lvalue[3] + " UTC")
-
-            if FQDN.is_valid(lvalue[1]):
-                event.add('source.fqdn', lvalue[1])
-            else:
-                event.add('source.ip', lvalue[1])
-
             event.add('raw', line)
-            event.add('classification.type', 'malware')
+            event.add('classification.type', 'c&c')
             event.add('event_description.url', 'http://data.netlab.360.com/dga')
 
             yield event
