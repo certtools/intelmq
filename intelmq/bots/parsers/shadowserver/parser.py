@@ -120,7 +120,7 @@ class ShadowserverParserBot(ParserBot):
             intelmqkey, shadowkey = item[:2]
             if shadowkey not in fields:  # key does not exist in data (not even in the header)
                 self.logger.warning('Optional key {!r} not found data. Possible change in data'
-                                    ' format or misconfiguration.')
+                                    ' format or misconfiguration.'.format(shadowkey))
                 continue
             if len(item) > 2:
                 conv_func = item[2]
