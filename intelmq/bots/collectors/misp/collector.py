@@ -23,7 +23,6 @@ except ImportError:
     PyMISP = None
 
 
-
 class MISPCollectorBot(CollectorBot):
 
     def init(self):

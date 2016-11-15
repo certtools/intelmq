@@ -12,7 +12,6 @@ except ImportError:
     imbox = None
 
 
-
 class MailAttachCollectorBot(CollectorBot):
 
     def init(self):

@@ -9,7 +9,6 @@ except ImportError:
     pika = None
 
 
-
 class AMQPTopicBot(Bot):
 
     def init(self):

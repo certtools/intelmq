@@ -14,7 +14,6 @@ except ImportError:
     imbox = None
 
 
-
 class MailURLCollectorBot(CollectorBot):
 
     def init(self):
