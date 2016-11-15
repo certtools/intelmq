@@ -3,7 +3,6 @@
 import unittest
 import unittest.mock as mock
 
-import intelmq.lib.bot
 import intelmq.lib.bot as bot
 import intelmq.lib.test as test
 import intelmq.lib.utils as utils
@@ -83,7 +82,7 @@ class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
         self.assertEqual(EXPECTED_DUMP, message)
 
     def run_bot(self):
-        with mock.patch.object(intelmq.lib.bot.Bot, "_dump_message",
+        with mock.patch.object(bot.Bot, "_dump_message",
                                self.dump_message):
             super(TestDummyParserBot, self).run_bot()
 

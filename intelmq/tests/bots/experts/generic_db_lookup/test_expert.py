@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-import psycopg2
 import unittest
 
 import intelmq.lib.test as test
-from intelmq.bots.experts.generic_db_lookup.expert import GenericDBLookupExpertBot
-
+import psycopg2
+from intelmq.bots.experts.generic_db_lookup.expert import \
+    GenericDBLookupExpertBot
 
 INPUT1 = {"__type": "Event",
           "classification.identifier": "zeus",

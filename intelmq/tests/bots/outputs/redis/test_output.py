@@ -3,11 +3,11 @@
 import json
 import unittest
 
+import redis
+
 import intelmq.lib.test as test
 import intelmq.lib.utils as utils
 from intelmq.bots.outputs.redis.output import RedisOutputBot
-
-import redis
 
 EXAMPLE_EVENT = {"classification.type": "malware",
                  "destination.port": 9796,

@@ -3,13 +3,14 @@ import re
 import sys
 import zipfile
 
+from intelmq.lib.bot import CollectorBot
+from intelmq.lib.message import Report
+
 try:
     import imbox
 except ImportError:
     imbox = None
 
-from intelmq.lib.bot import CollectorBot
-from intelmq.lib.message import Report
 
 
 class MailAttachCollectorBot(CollectorBot):

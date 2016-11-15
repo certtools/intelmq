@@ -10,18 +10,16 @@ which holds information on how to treat certain shadowserverfeeds.
 Most, if not all, feeds from shadowserver are in csv format.
 This parser will only work with those.
 """
+import copy
 import csv
 import io
 import sys
-import copy
-
-from intelmq.lib import utils
-from intelmq.lib.bot import ParserBot
-from intelmq.lib.message import Event
-
-from intelmq.lib.exceptions import InvalidValue, InvalidKey
 
 import intelmq.bots.parsers.shadowserver.config as config
+from intelmq.lib import utils
+from intelmq.lib.bot import ParserBot
+from intelmq.lib.exceptions import InvalidKey, InvalidValue
+from intelmq.lib.message import Event
 
 
 class ShadowserverParserBot(ParserBot):

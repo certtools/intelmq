@@ -14,8 +14,8 @@ import pkg_resources
 
 import intelmq.lib.pipeline as pipeline
 import intelmq.lib.utils as utils
-from intelmq import (PIPELINE_CONF_FILE, RUNTIME_CONF_FILE, CONFIG_DIR)
-from intelmq.lib.test import mocked_logger, BOT_CONFIG
+from intelmq import CONFIG_DIR, PIPELINE_CONF_FILE, RUNTIME_CONF_FILE
+from intelmq.lib.test import BOT_CONFIG, mocked_logger
 
 
 def mocked_config(bot_id='', src_name='', dst_names=(),

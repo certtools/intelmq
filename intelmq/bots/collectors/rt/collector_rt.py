@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 import io
 import re
-import requests
 import sys
 import zipfile
+
+import requests
 
 from intelmq.lib.bot import CollectorBot
 from intelmq.lib.message import Report

@@ -2,6 +2,7 @@
 """
 """
 import sys
+
 from intelmq.lib.bot import Bot
 from intelmq.lib.harmonization import IPAddress
 

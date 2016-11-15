@@ -4,8 +4,8 @@
 import argparse
 import glob
 import json
-import traceback
 import os
+import traceback
 
 
 def rewrite(fobj):

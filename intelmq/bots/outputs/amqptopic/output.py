@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 import sys
 
+from intelmq.lib.bot import Bot
+
 try:
     import pika
 except ImportError:
     pika = None
 
-from intelmq.lib.bot import Bot
 
 
 class AMQPTopicBot(Bot):

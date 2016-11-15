@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
-import psycopg2
-import psycopg2.extras
 import unittest
 
 import intelmq.lib.test as test
+import psycopg2
+import psycopg2.extras
 from intelmq.bots.outputs.postgresql.output import PostgreSQLOutputBot
-
 
 INPUT1 = {"__type": "Event",
           "classification.identifier": "zeus",

@@ -5,7 +5,6 @@ import unittest
 import intelmq.lib.test as test
 from intelmq.bots.parsers.ci_army.parser import CIArmyParserBot
 
-
 OUTPUT1 = {'__type': 'Event',
            'classification.type': 'blacklist',
            'raw': 'MTAuMC4wLjk=',

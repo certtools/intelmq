@@ -3,14 +3,16 @@
 import re
 import sys
 
-try:
-    import imbox
-except ImportError:
-    imbox = None
 import requests
 
 from intelmq.lib.bot import CollectorBot
 from intelmq.lib.message import Report
+
+try:
+    import imbox
+except ImportError:
+    imbox = None
+
 
 
 class MailURLCollectorBot(CollectorBot):
