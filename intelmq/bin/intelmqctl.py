@@ -644,20 +644,20 @@ Get logs of a bot:
         for bot_id, bot_config in files[RUNTIME_CONF_FILE].items():
             # pipeline keys
             for field in ['description', 'group', 'module', 'name']:
-                if not field in bot_config:
+                if field not in bot_config:
                     self.logger.warning('Bot %r has no %r.' % (bot_id, field))
-            if not bot_id in files[PIPELINE_CONF_FILE]:
+            if bot_id not in files[PIPELINE_CONF_FILE]:
                 self.logger.error('No pipeline configuration found for %r.' % bot_id)
             else:
                 if ('group' in bot_config and
                         bot_config['group'] in ['Collector', 'Parser', 'Expert'] and
-                        (not 'destination-queues' in files[PIPELINE_CONF_FILE][bot_id] or
+                        ('destination-queues' not in files[PIPELINE_CONF_FILE][bot_id] or
                          (not isinstance(files[PIPELINE_CONF_FILE][bot_id]['destination-queues'], list) or
                           len(files[PIPELINE_CONF_FILE][bot_id]['destination-queues']) < 1))):
                     self.logger.error('No destination queues for %r.' % bot_id)
                 if ('group' in bot_config and
                         bot_config['group'] in ['Parser', 'Expert', 'Output'] and
-                        (not 'source-queue' in files[PIPELINE_CONF_FILE][bot_id] or
+                        ('source-queue' not in files[PIPELINE_CONF_FILE][bot_id] or
                          not isinstance(files[PIPELINE_CONF_FILE][bot_id]['source-queue'], str))):
                     self.logger.error('No source queue for %r.' % bot_id)
 
