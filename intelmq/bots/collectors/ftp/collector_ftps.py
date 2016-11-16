@@ -12,13 +12,14 @@ ftps_file: string
 
 """
 from __future__ import unicode_literals
-import sys
-from ftplib import FTP_TLS
+
+import fnmatch
+import io
 import socket
 import ssl
+import sys
 import zipfile
-import io
-import fnmatch
+from ftplib import FTP_TLS
 
 from intelmq.lib.bot import CollectorBot
 from intelmq.lib.message import Report

@@ -5,7 +5,6 @@ import unittest
 import intelmq.lib.test as test
 from intelmq.bots.parsers.alienvault.parser import AlienVaultParserBot
 
-
 RAW = "MTkyLjAuMC4xIzQjMiNNYWxpY2lvdXMgSG9zdCNERSMjMCwxIzMKMTAuMC4wLjQjMyMyI1NjYW5uaW5nIEhvc3QjR0IjTG9uZG9uIzIsMyMxMQ=="
 OUTPUT1 = {'__type': 'Event',
            'classification.type': 'malware',

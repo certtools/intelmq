@@ -12,8 +12,6 @@ from intelmq.lib.bot import Bot
 from intelmq.lib.message import Event
 
 __all__ = ['N6StompParserBot']
-# FIXME: setting the identifier could be done in the modify.conf file.
-# However, it was easier here. TBD.
 mapping = dict()
 mapping['amplifier']    = {"taxonomy": "Vulnerable",
                            "type": "vulnerable service",

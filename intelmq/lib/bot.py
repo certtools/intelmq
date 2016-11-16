@@ -14,9 +14,9 @@ import sys
 import time
 import traceback
 
-from intelmq import (DEFAULT_LOGGING_PATH,
-                     DEFAULTS_CONF_FILE, HARMONIZATION_CONF_FILE,
-                     PIPELINE_CONF_FILE, RUNTIME_CONF_FILE, SYSTEM_CONF_FILE)
+from intelmq import (DEFAULT_LOGGING_PATH, DEFAULTS_CONF_FILE,
+                     HARMONIZATION_CONF_FILE, PIPELINE_CONF_FILE,
+                     RUNTIME_CONF_FILE, SYSTEM_CONF_FILE)
 from intelmq.lib import exceptions, utils
 from intelmq.lib.message import MessageFactory
 from intelmq.lib.pipeline import PipelineFactory

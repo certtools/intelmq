@@ -14,13 +14,13 @@ import json
 import sys
 from urllib.parse import urljoin
 
+from intelmq.lib.bot import CollectorBot
+from intelmq.lib.message import Report
+
 try:
     from pymisp import PyMISP
 except ImportError:
     PyMISP = None
-
-from intelmq.lib.bot import CollectorBot
-from intelmq.lib.message import Report
 
 
 class MISPCollectorBot(CollectorBot):

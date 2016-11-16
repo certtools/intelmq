@@ -521,7 +521,9 @@
         "url2fqdn": {
             "description": "url2fqdn is the bot responsible to parsing the fqdn from the url.",
             "module": "intelmq.bots.experts.url2fqdn.expert",
-            "parameters": {}
+            "parameters": {
+                "overwrite": false
+            }
         }
     },
     "Output": {

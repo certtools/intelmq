@@ -34,7 +34,6 @@ class TestDeduplicatorExpertBot(test.BotTestCase, unittest.TestCase):
         msg_hash = hash(msg)
         self.cache.set(msg_hash, 'hash')
         self.cache.expire(msg_hash, 3600)
-        self.input_message = INPUT1
         self.run_bot()
         self.assertOutputQueueLen()
 
@@ -47,7 +46,6 @@ class TestDeduplicatorExpertBot(test.BotTestCase, unittest.TestCase):
         self.cache.flushdb()
         self.cache.set(1241421362111650194, 'hash')
         self.cache.expire(1241421362111650194, 3600)
-        self.input_message = INPUT1
         self.run_bot()
         self.assertOutputQueueLen()
 

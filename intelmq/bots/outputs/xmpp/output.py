@@ -4,8 +4,6 @@ Connects to a XMPP Server and sends data to a user.
 
 TLS is used by default.
 
-TODO: Introduce Multi User Chat like in XMPP Collector
-
 Tested with Python >= 3.4
 Tested with sleekxmpp >= 1.0.0-beta5
 
@@ -20,9 +18,6 @@ xmpp_server: string
 xmpp_password: boolean
 xmpp_to_user: string
 xmpp_to_server: string
-# TODO xmpp_room: string
-# TODO xmpp_room_password: string
-# TODO xmpp_room_nick: string
 """
 
 import sys

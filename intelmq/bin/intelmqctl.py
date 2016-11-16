@@ -32,6 +32,7 @@ STATUSES = {
 }
 
 MESSAGES = {
+    'disabled': '{} is disabled.',
     'starting': 'Starting {}...',
     'running': '{} is running.',
     'stopped': '{} is stopped.',
@@ -386,8 +387,12 @@ Get logs of a bot:
     def bot_stop(self, bot_id):
         pid = read_pidfile(bot_id)
         if not pid:
-            log_bot_error('stopped', bot_id)
-            return 'stopped'
+            if self.runtime_configuration[bot_id].get('enabled', True):
+                log_bot_error('stopped', bot_id)
+                return 'stopped'
+            else:
+                log_bot_message('disabled', bot_id)
+                return 'disabled'
         if not status_process(pid):
             remove_pidfile(bot_id)
             log_bot_error('stopped', bot_id)
@@ -406,8 +411,12 @@ Get logs of a bot:
     def bot_reload(self, bot_id):
         pid = read_pidfile(bot_id)
         if not pid:
-            log_bot_error('stopped', bot_id)
-            return 'stopped'
+            if self.runtime_configuration[bot_id].get('enabled', True):
+                log_bot_error('stopped', bot_id)
+                return 'stopped'
+            else:
+                log_bot_message('disabled', bot_id)
+                return 'disabled'
         if not status_process(pid):
             remove_pidfile(bot_id)
             log_bot_error('stopped', bot_id)
@@ -436,14 +445,21 @@ Get logs of a bot:
             log_bot_error('notfound', bot_id)
             return 'error'
 
-        log_bot_message('stopped', bot_id)
-        return 'stopped'
+        if self.runtime_configuration[bot_id].get('enabled', True):
+            log_bot_message('stopped', bot_id)
+            return 'stopped'
+        else:
+            log_bot_message('disabled', bot_id)
+            return 'disabled'
 
     def botnet_start(self):
         botnet_status = {}
-        log_botnet_message('starting')
         for bot_id in sorted(self.runtime_configuration.keys()):
-            botnet_status[bot_id] = self.bot_start(bot_id)
+            if self.runtime_configuration[bot_id].get('enabled', True):
+                botnet_status[bot_id] = self.bot_start(bot_id)
+            else:
+                log_bot_message('disabled', bot_id)
+                botnet_status[bot_id] = 'disabled'
         log_botnet_message('running')
         return botnet_status
 
@@ -464,17 +480,8 @@ Get logs of a bot:
         return botnet_status
 
     def botnet_restart(self):
-        botnet_status = {}
-        log_botnet_message('stopping')
-        for bot_id in sorted(self.runtime_configuration.keys()):
-            botnet_status[bot_id] = tuple(self.bot_stop(bot_id))
-        time.sleep(3)
-        log_botnet_message('stopped')
-        log_botnet_message('starting')
-        for bot_id in sorted(self.runtime_configuration.keys()):
-            botnet_status[bot_id] += tuple(self.bot_start(bot_id))
-        log_botnet_message('running')
-        return botnet_status
+        self.botnet_stop()
+        return self.botnet_start()
 
     def botnet_status(self):
         botnet_status = {}
@@ -567,7 +574,6 @@ Get logs of a bot:
             return 'error'
 
     def read_log(self, bot_id, number_of_lines=10, log_level='INFO'):
-        # TODO: Parse number of lines
         try:
             number_of_lines = int(number_of_lines)
         except ValueError:

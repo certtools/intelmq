@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Testing File Collector
-
-TODO: test deleting files using tempfile
 """
 import os
 import unittest

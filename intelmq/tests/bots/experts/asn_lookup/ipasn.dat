@@ -1,0 +1,9 @@
+; IP-ASN32-DAT file
+; Original file : latest-bview.bz2
+; Converted on  : Tue Nov 15 21:33:28 2016
+; Prefixes-v4   : 2
+; Prefixes-v6   : 1
+;
+93.184.216.0/24	15133
+192.0.43.0/24	40528
+2001:500:88::/48	16876

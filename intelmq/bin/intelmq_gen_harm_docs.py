@@ -5,8 +5,10 @@
 import json
 import textwrap
 
-import intelmq.lib.harmonization
 import pkg_resources
+
+import intelmq.lib.harmonization
+
 
 HEADER = """
 Harmonization field names

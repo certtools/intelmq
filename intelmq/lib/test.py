@@ -8,17 +8,17 @@ some basic generic tests (logged errors, correct pipeline setup).
 import io
 import json
 import logging
-import re
-import redis
 import os
+import re
 import unittest
 import unittest.mock as mock
 
 import pkg_resources
+import redis
 
 import intelmq.lib.pipeline as pipeline
 import intelmq.lib.utils as utils
-from intelmq import (PIPELINE_CONF_FILE, RUNTIME_CONF_FILE, CONFIG_DIR)
+from intelmq import CONFIG_DIR, PIPELINE_CONF_FILE, RUNTIME_CONF_FILE
 
 __all__ = ['BotTestCase']
 
@@ -212,27 +212,21 @@ class BotTestCase(object):
         self.loglines = self.loglines_buffer.splitlines()
 
         """ Test if report has required fields. """
-        if self.bot_type != 'collector':
-            return
-
-        for report_json in self.get_output_queue():
-            report = message.MessageFactory.unserialize(report_json)
-            self.assertIsInstance(report, message.Report)
-            self.assertIn('feed.name', report)
-            self.assertIn('raw', report)
-            self.assertIn('time.observation', report)
+        if self.bot_type == 'collector':
+            for report_json in self.get_output_queue():
+                report = message.MessageFactory.unserialize(report_json)
+                self.assertIsInstance(report, message.Report)
+                self.assertIn('feed.name', report)
+                self.assertIn('raw', report)
+                self.assertIn('time.observation', report)
 
         """ Test if event has required fields. """
-        if self.bot_type != 'parser':
-            return
-
-        for event_json in self.get_output_queue():
-            event = message.MessageFactory.unserialize(event_json)
-            self.assertIsInstance(event, message.Event)
-            self.assertIn('classification.type', event)
-            self.assertIn('feed.name', event)
-            self.assertIn('raw', event)
-            self.assertIn('time.observation', event)
+        if self.bot_type == 'parser':
+            for event_json in self.get_output_queue():
+                event = message.MessageFactory.unserialize(event_json)
+                self.assertIsInstance(event, message.Event)
+                self.assertIn('classification.type', event)
+                self.assertIn('raw', event)
 
         """ Test if bot log messages are correctly formatted. """
         self.assertLoglineMatches(0, "{} initialized with id {} and version"
@@ -242,18 +236,18 @@ class BotTestCase(object):
                                                self.bot_id), "INFO")
         self.assertRegexpMatchesLog("INFO - Bot is starting.")
         self.assertLoglineEqual(-1, "Bot stopped.", "INFO")
-        self.assertNotRegexpMatchesLog("(ERROR.*?){}"
-                                       "".format(self.allowed_error_count))
+        self.assertNotRegexpMatchesLog("(ERROR.*?){%d}" % (self.allowed_error_count + 1))
         self.assertNotRegexpMatchesLog("CRITICAL")
         """ If no error happened (incl. tracebacks, we can check for formatting) """
-        for logline in self.loglines:
-            fields = utils.parse_logline(logline)
-            self.assertTrue(fields['message'][-1] in '.?!',
-                            msg='Logline {!r} does not end with .? or !.'
-                                ''.format(fields['message']))
-            self.assertTrue(fields['message'].upper() == fields['message'].upper(),
-                            msg='Logline {!r} does not beginn with an upper case char.'
-                                ''.format(fields['message']))
+        if not self.allowed_error_count:  # This would fail for tracebacks currently
+            for logline in self.loglines:
+                fields = utils.parse_logline(logline)
+                self.assertTrue(fields['message'][-1] in '.:?!',
+                                msg='Logline {!r} does not end with .? or !.'
+                                    ''.format(fields['message']))
+                self.assertTrue(fields['message'].upper() == fields['message'].upper(),
+                                msg='Logline {!r} does not beginn with an upper case char.'
+                                    ''.format(fields['message']))
 
     @classmethod
     def tearDownClass(cls):

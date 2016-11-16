@@ -45,9 +45,9 @@ class PostgreSQLOutputBot(Bot):
 
             self.table = self.parameters.table
         except:
-            self.logger.exception('Failed to connect to database')
+            self.logger.exception('Failed to connect to database.')
             self.stop()
-        self.logger.info("Connected to PostgreSQL")
+        self.logger.info("Connected to PostgreSQL.")
 
     def process(self):
         event = self.receive_message()
@@ -58,7 +58,7 @@ class PostgreSQLOutputBot(Bot):
         query = ('INSERT INTO {table} ("{keys}") VALUES ({values})'
                  ''.format(table=self.table, keys=keys, values=fvalues[:-2]))
 
-        self.logger.debug('Query: {!r} with values {!r}'.format(query, values))
+        self.logger.debug('Query: {!r} with values {!r}.'.format(query, values))
         try:
             # note: this assumes, the DB was created with UTF-8 support!
             self.cur.execute(query, values)

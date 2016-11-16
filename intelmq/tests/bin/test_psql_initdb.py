@@ -6,6 +6,7 @@ Created on Tue Aug  9 14:04:13 2016
 """
 import os
 import unittest
+
 import pkg_resources
 
 import intelmq.bin.intelmq_psql_initdb as psql_initd

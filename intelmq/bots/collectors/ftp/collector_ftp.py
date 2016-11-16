@@ -11,11 +11,12 @@ ftp_file: string
 
 """
 from __future__ import unicode_literals
-import sys
-from ftplib import FTP
-import zipfile
-import io
+
 import fnmatch
+import io
+import sys
+import zipfile
+from ftplib import FTP
 
 from intelmq.lib.bot import CollectorBot
 from intelmq.lib.message import Report

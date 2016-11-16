@@ -4,8 +4,7 @@ import sys
 from datetime import datetime
 from urllib.parse import urljoin
 
-from intelmq.lib import harmonization
-from intelmq.lib import utils
+from intelmq.lib import harmonization, utils
 from intelmq.lib.bot import Bot
 from intelmq.lib.message import Event
 

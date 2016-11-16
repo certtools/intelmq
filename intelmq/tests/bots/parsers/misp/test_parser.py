@@ -4,9 +4,9 @@ import json
 import os
 import unittest
 
+from intelmq.bots.parsers.misp.parser import MISPParserBot
 from intelmq.lib import test
 from intelmq.lib.utils import base64_encode
-from intelmq.bots.parsers.misp.parser import MISPParserBot
 
 with open(os.path.join(os.path.dirname(__file__), 'misp_event.json')) as handle:
     EXAMPLE_MISP_EVENT = handle.read()
