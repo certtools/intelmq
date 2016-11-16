@@ -151,11 +151,10 @@ class ShadowserverParserBot(ParserBot):
                     event.add(intelmqkey, value)
                     fields.remove(shadowkey)
                 except InvalidValue:
-                    self.logger.info(
+                    self.logger.debug(
                         'Could not add key {!r};'
-                        ' adding it to extras...'.format(shadowkey)
+                        ' adding it to extras. It\'s value is {!r}'.format(shadowkey, value)
                     )
-                    self.logger.debug('The value of the event is {!r}.'.format(value))
                 except InvalidKey:
                     extra[intelmqkey] = value
                     fields.remove(shadowkey)
