@@ -22,7 +22,7 @@ class MongoDBOutputBot(Bot):
         self.connect()
 
     def connect(self):
-        self.logger.info('Connecting to mongodb server.')
+        self.logger.debug('Connecting to mongodb server.')
         try:
             self.client = pymongo.MongoClient(self.parameters.host,
                                               int(self.parameters.port))

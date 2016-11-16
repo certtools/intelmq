@@ -34,8 +34,6 @@ class MailAttachCollectorBot(CollectorBot):
                                       message.subject)):
                     continue
 
-                self.logger.info("Reading email report")
-
                 for attach in message.attachments:
                     if not attach:
                         continue
@@ -61,7 +59,7 @@ class MailAttachCollectorBot(CollectorBot):
                         # so other instances watching this mailbox will still
                         # check it.
                         mailbox.mark_seen(uid)
-                self.logger.info("Email report read")
+                self.logger.debug("Email report read.")
         mailbox.logout()
 
 

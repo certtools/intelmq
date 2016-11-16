@@ -18,13 +18,8 @@ class BluelivCrimeserverCollectorBot(CollectorBot):
             self.logger.error('Could not import BluelivAPI. Please install it.')
             self.stop()
 
-    def init(self):
-        if BluelivAPI is None:
-            self.logger.error('Could not import sdk.blueliv_api.BluelivAPI. Please install it.')
-            self.stop()
-
     def process(self):
-        self.logger.info("Downloading report through API")
+        self.logger.debug("Downloading report through API.")
         http_proxy = getattr(self.parameters, 'http_proxy', None)
         https_proxy = getattr(self.parameters, 'http_ssl_proxy', None)
         proxy = None
