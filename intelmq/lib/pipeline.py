@@ -72,11 +72,20 @@ class Redis(Pipeline):
         self.load_balance_iterator = 0
 
     def connect(self):
-        self.pipe = redis.Redis(host=self.host,
-                                port=int(self.port),
-                                db=self.db,
-                                socket_timeout=self.socket_timeout
-                                )
+        if self.host.startswith("/"):
+            kwargs = {"unix_socket_path": self.host}
+
+        elif self.host.startswith("unix://"):
+            kwargs = {"unix_socket_path": self.host.replace("unix://", "")}
+
+        else:
+            kwargs = {
+                "host": self.host,
+                "port": int(self.port),
+                "socket_timeout": self.socket_timeout,
+            }
+
+        self.pipe = redis.Redis(db=self.db, **kwargs)
 
     def disconnect(self):
         pass
