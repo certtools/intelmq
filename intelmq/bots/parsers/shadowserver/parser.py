@@ -153,7 +153,7 @@ class ShadowserverParserBot(ParserBot):
                 except InvalidValue:
                     self.logger.debug(
                         'Could not add key {!r};'
-                        ' adding it to extras. It\'s value is {!r}'.format(shadowkey, value)
+                        ' adding it to extras. It\'s value is {!r}.'.format(shadowkey, value)
                     )
                 except InvalidKey:
                     extra[intelmqkey] = value
