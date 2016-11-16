@@ -47,7 +47,7 @@ class PostgreSQLOutputBot(Bot):
         except:
             self.logger.exception('Failed to connect to database')
             self.stop()
-        self.logger.info("Connected to PostgreSQL")
+        self.logger.info("Connected to PostgreSQL.")
 
     def process(self):
         event = self.receive_message()

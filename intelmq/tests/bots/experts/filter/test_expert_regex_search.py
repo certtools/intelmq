@@ -22,8 +22,9 @@ class TestFilterExpertBot(test.BotTestCase, unittest.TestCase):
     @classmethod
     def set_bot(cls):
         cls.bot_reference = FilterExpertBot
-        cls.input_message = EXAMPLE_INPUT
-        cls.sysconfig = {'filter_regex': 'search',
+        cls.default_input_message = EXAMPLE_INPUT
+        cls.sysconfig = {'filter_action': 'keep',
+                         'filter_regex': 'search',
                          'filter_key': 'feed.name',
                          'filter_value': 'feed'}
 
