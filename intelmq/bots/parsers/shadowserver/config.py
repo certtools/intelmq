@@ -101,12 +101,15 @@ def convert_int(value):
 def convert_hostname_and_url(value, row):
     """
     URLs are split into hostname and path, we can also guess the protocol here.
+    but only guess if the protocol is in a set of known good values.
     """
-    if row['hostname'] and row['url']:
-        if row['application']:
+    if row['application'] in ['http', 'https', 'irc']:
+        if row['hostname'] and row['url']:
             return row['application'] + '://' + row['hostname'] + row['url']
-        else:
-            return 'http://' + row['hostname'] + row['url']
+
+        elif row['hostname'] and not row['url']:
+            return row['application'] + '://' + row['hostname']
+
     return value
 
 
