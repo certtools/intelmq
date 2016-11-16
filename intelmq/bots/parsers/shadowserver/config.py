@@ -97,13 +97,18 @@ def convert_int(value):
     else:
         return int(value)
 
+
 def convert_hostname_and_url(value, row):
     """
     URLs are split into hostname and path, we can also guess the protocol here.
     """
     if row['hostname'] and row['url']:
-        return 'http://' + row['hostname'] + row['url']
+        if row['application']:
+            return row['application'] + '://' + row['hostname'] + row['url']
+        else:
+            return 'http://' + row['hostname'] + row['url']
     return value
+
 
 def convert_httphost_and_url(value, row):
     """
