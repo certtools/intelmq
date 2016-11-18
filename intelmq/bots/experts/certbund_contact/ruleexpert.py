@@ -1,7 +1,4 @@
 import sys
-import os
-import json
-import glob
 
 from intelmqmail.script import load_scripts
 
