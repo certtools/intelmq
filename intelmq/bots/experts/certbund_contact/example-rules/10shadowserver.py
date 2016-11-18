@@ -4,22 +4,25 @@ The notitification directives are determined based on the feed.name
 attribute of the event.
 """
 
+from intelmq.bots.experts.certbund_contact.rulesupport import Directive
 
-def determine_directives(event, contacts, section):
-    directives = []
-    shadowserver_params = shadowserver_mapping.get(event.get("feed.name"))
+
+def determine_directives(context):
+    if context.section == "destination":
+        return
+    shadowserver_params = shadowserver_mapping.get(context.get("feed.name"))
     if shadowserver_params is not None:
-        for contact in contacts:
-            directive = dict(medium="email", recipient_address=contact["email"])
+        for contact in context.contacts:
+            directive = Directive.from_contact(contact)
             directive.update(shadowserver_params)
-            directives.append(directive)
-    return directives
+            context.add_directive(directive)
+        return True
 
 
 def shadowserver_csv_entry(basename):
-    return dict(template_name="shadowserver_csv_" + basename,
-                event_data_format="csv_" + basename,
-                notification_interval=3600)
+    return Directive(template_name="shadowserver_csv_" + basename,
+                     event_data_format="csv_" + basename,
+                     notification_interval=3600)
 
 
 shadowserver_malware = shadowserver_csv_entry("malware")

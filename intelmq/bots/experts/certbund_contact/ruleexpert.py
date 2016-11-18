@@ -3,8 +3,7 @@ import sys
 from intelmqmail.script import load_scripts
 
 from intelmq.lib.bot import Bot
-from intelmq.bots.experts.certbund_contact.eventjson import \
-     get_certbund_contacts, set_certbund_directives
+from intelmq.bots.experts.certbund_contact.rulesupport import Context
 
 
 class CERTBundRuleExpertBot(Bot):
@@ -26,11 +25,11 @@ class CERTBundRuleExpertBot(Bot):
             return
 
         for section in ["source", "destination"]:
-            contacts = get_certbund_contacts(event, section)
+            context = Context(event, section)
             for entry in self.entry_points:
-                directives = entry(event, contacts, section)
-                if directives:
-                    set_certbund_directives(event, section, directives)
+                finished = entry(context)
+                if finished:
+                    event = context.get_updated_event()
                     break
 
         self.send_message(event)
