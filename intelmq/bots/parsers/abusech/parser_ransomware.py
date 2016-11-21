@@ -49,7 +49,6 @@ class AbuseCHRansomwaretrackerParserBot(Bot):
                         if URL.is_valid(nrow[4]):
                             ev.add('source.url', nrow[4])
                         self.send_message(ev)
-                self.acknowledge_message()
             else:
                 event = Event(report)
                 event.add('classification.identifier', row[2].lower())
@@ -64,7 +63,7 @@ class AbuseCHRansomwaretrackerParserBot(Bot):
                 if URL.is_valid(row[4]):
                     event.add('source.url', row[4])
                 self.send_message(event)
-            self.acknowledge_message()
+        self.acknowledge_message()
 
 if __name__ == '__main__':
     bot = AbuseCHRansomwaretrackerParserBot(sys.argv[1])
