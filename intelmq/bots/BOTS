@@ -341,6 +341,11 @@
             "module": "intelmq.bots.parsers.netlab_360.parser_magnitude",
             "parameters": {}
         },
+        "Nothink": {
+            "description": "Nothink Feed Parser is the bot responsible to parse the SNMP, SSH, and Telnet reports and sanitize the information.",
+            "module": "intelmq.bots.parsers.nothink.parser",
+            "parameters": {}
+        },
         "OpenBL": {
             "description": "OpenBL Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.openbl.parser",
