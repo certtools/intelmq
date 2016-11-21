@@ -98,7 +98,22 @@ def convert_int(value):
         return int(value)
 
 
-def convert_host_and_url(value, row):
+def convert_hostname_and_url(value, row):
+    """
+    URLs are split into hostname and path, we can also guess the protocol here.
+    but only guess if the protocol is in a set of known good values.
+    """
+    if row['application'] in ['http', 'https', 'irc']:
+        if row['hostname'] and row['url']:
+            return row['application'] + '://' + row['hostname'] + row['url']
+
+        elif row['hostname'] and not row['url']:
+            return row['application'] + '://' + row['hostname']
+
+    return value
+
+
+def convert_httphost_and_url(value, row):
     """
     URLs are split into hostname and path, we can also guess the protocol here.
     """
@@ -293,7 +308,7 @@ microsoft_sinkhole = {
         ('user_agent', 'http_agent'),
         ('os.name', 'p0f_genre'),
         ('os.version', 'p0f_detail'),
-        ('destination.url', 'url', convert_host_and_url, True),
+        ('destination.url', 'url', convert_httphost_and_url, True),
         # Other known fields which will go into "extra"
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
@@ -798,7 +813,7 @@ botnet_drone_hadoop = {
         ('destination.ip', 'cc_ip', validate_ip),
         ('destination.port', 'cc_port'),
         ('destination.fqdn', 'cc_dns'),
-        ('destination.url', 'url'),
+        ('destination.url', 'url', convert_hostname_and_url, True),
         ('malware.name', 'infection'),
         ('protocol.application', 'application'),
         ('protocol.transport', 'type'),
