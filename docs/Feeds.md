@@ -520,7 +520,11 @@ This feed lists FQDN and possibly the URL used by Magnitude Exploit Kit.  Inform
 Status: Unknown
 
 Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+
+There are a number of feeds you can use to depend on how far back you would like to go.  The time.source will still be the date and time the feed was generated at nothink.
  * http_url: http://www.nothink.org/blacklist/blacklist_snmp_day.txt
+ * http_url: http://www.nothink.org/blacklist/blacklist_snmp_week.txt
+ * http_url: http://www.nothink.org/blacklist/blacklist_snmp_year.txt
 
 Parser: Nothink (`intelmq.bots.parsers.nothink.parser`)
 
@@ -532,7 +536,11 @@ This feed provides IP addresses of systems that have connected to a honeypot via
 Status: Unknown
 
 Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+
+There are a number of feeds you can use to depend on how far back you would like to go.  The time.source will still be the date and time the feed was generated at nothink.
  * http_url: http://www.nothink.org/blacklist/blacklist_ssh_day.txt
+ * http_url: http://www.nothink.org/blacklist/blacklist_ssh_week.txt
+ * http_url: http://www.nothink.org/blacklist/blacklist_ssh_year.txt
 
 Parser: Nothink (`intelmq.bots.parsers.nothink.parser`)
 
@@ -544,7 +552,11 @@ This feed provides IP addresses of systems that have connected to a honeypot via
 Status: Unknown
 
 Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+
+There are a number of feeds you can use to depend on how far back you would like to go.  The time.source will still be the date and time the feed was generated at nothink.
  * http_url: http://www.nothink.org/blacklist/blacklist_telnet_day.txt
+ * http_url: http://www.nothink.org/blacklist/blacklist_telnet_week.txt
+ * http_url: http://www.nothink.org/blacklist/blacklist_telnet_year.txt
 
 Parser: Nothink (`intelmq.bots.parsers.nothink.parser`)
 
