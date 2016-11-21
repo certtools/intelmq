@@ -22,7 +22,7 @@ class BambenekDGAfeedParserBot(ParserBot):
             event.add('event_description.text', lvalue[1])
             event.add('time.source', lvalue[2] + " 00:00 UTC")
             event.add('event_description.url', lvalue[3])
-            event.add('classification.type', 'ransomware')
+            event.add('classification.type', 'dga domain')
             event.add('raw', line)
 
             yield event

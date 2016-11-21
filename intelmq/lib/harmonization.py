@@ -140,6 +140,7 @@ class ClassificationType(GenericType):
                       'malware',
                       'botnet drone',
                       'ransomware',
+                      'dga domain',
                       'malware configuration',
                       'c&c',
                       'scanner',
