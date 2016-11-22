@@ -72,8 +72,7 @@ class FilterExpertBot(Bot):
             self.use_regex = True
 
         if not (self.filter or self.not_after is not None or self.not_before is not None):
-            self.logger.error("No relevant filter configuration found, stopping...")
-            self.stop()
+            raise ValueError("No relevant filter configuration found.")
 
     def process(self):
         event = self.receive_message()

@@ -6,13 +6,13 @@ from intelmq.lib.bot import Bot
 try:
     import geoip2.database
 except ImportError:
-    geoip2.database = None
+    geoip2 = None
 
 
 class GeoIPExpertBot(Bot):
 
     def init(self):
-        if geoip2.database is None:
+        if geoip2 is None:
             self.logger.error('Could not import geoip2. Please install it.')
             self.stop()
 

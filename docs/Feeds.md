@@ -7,6 +7,8 @@ The available feeds are grouped by the source of the feeds. For each feed the co
 - [Abuse.ch](#abusech)
 - [AlienVault](#alienvault)
 - [Autoshun](#autoshun)
+- [Bambenek](#bambenek)
+- [Bitcash](#bitcash)
 - [BitSight Ciberfeed Stream](#bitsight-ciberfeed-stream)
 - [Blocklist.de](#blocklistde)
 - [Blueliv Crimeserver](#blueliv-crimeserver)
@@ -24,6 +26,8 @@ The available feeds are grouped by the source of the feeds. For each feed the co
 - [Malware Domains](#malware-domains)
 - [MalwarePatrol Dans Guardian](#malwarepatrol-dans-guardian)
 - [N6](#n6)
+- [Netlab 360](#netlab-360)
+- [Nothink](#nothink)
 - [OpenBL](#openbl)
 - [OpenPhish](#openphish)
 - [PhishTank](#phishtank)
@@ -80,6 +84,19 @@ Parser: Abuse.ch IP (`intelmq.bots.parsers.abusech.parser_ip`)
 
 Palevo C&C IP Blocklist includes IP addresses which are being used as botnet C&C for the Palevo crimeware.
 
+
+### Ransomware Tracker
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+ * http_url: https://ransomwaretracker.abuse.ch/feeds/csv/
+
+Parser: Abuse.ch Ranswomware (`intelmq.bots.parsers.abusech.parser_ransomware`)
+
+Ransomware Tracker feed includes FQDN's, URL's, and known IP addresses that were used for said FQDN's and URL's for various ransomware families.
+
+
 ### ZeuS Tracker Domains
 
 Status: Unknown
@@ -111,7 +128,6 @@ Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
 
 Parser: AlienVault (`intelmq.bots.parsers.alienvault.parser`)
 
-AlienVault Collector retrieves reports via the SDK https://github.com/AlienVault-Labs/OTX-Python-SDK/ from https://otx.alienvault.com/ https_proxy does apply.
 
 ### OTX
 
@@ -133,6 +149,58 @@ Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
 Parser: Autoshun (`intelmq.bots.parsers.autoshun.parser`)
 
 You need to register in order to use the list.
+
+
+## Bambenek
+
+### C2-dommasterlist
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+ * http_url: http://osint.bambenekconsulting.com/feeds/c2-dommasterlist.txt
+
+Parser: Bambenek C2 Domain Feed (`intelmq.bots.parsers.bambenek.parser_c2dommasterlist`)
+
+Master Feed of known, active and non-sinkholed C&Cs domain names.
+ * License: http://osint.bambenekconsulting.com/license.txt
+
+### C2-ipmasterlist
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+ * http_url: http://osint.bambenekconsulting.com/feeds/c2-ipmasterlist.txt
+
+Parser: Bambenek C2 IP Feed (`intelmq.bots.parsers.bambenek.parser_c2ipmasterlist`)
+
+Master Feed of known, active and non-sinkholed C&Cs IP addresses
+ * License: http://osint.bambenekconsulting.com/license.txt
+
+### DGA Domain Feed
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+ * http_url: http://osint.bambenekconsulting.com/feeds/dga-feed.txt
+
+Parser: Bambenek DGA Domain Feed (`intelmq.bots.parsers.bambenek.parser_dgafeed`)
+
+Domain feed of known DGA domains from -2 to +3 days
+ * License: http://osint.bambenekconsulting.com/license.txt
+
+
+## Bitcash
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+ * http_url: http://bitcash.cz/misc/log/blacklist
+
+Parser: Bitcash Blocklist Feed (`intelmq.bots.parsers.bitcash.parser`)
+
+Blocklist provided by bitcash.cz of banned IPs for service abuse, this includes scanning, sniffing, harvesting, and dos attacks.
+
 
 ## BitSight Ciberfeed Stream
 
@@ -444,6 +512,84 @@ Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
   * http_url: https://n6beta.cert.pl/report/inside.json
 
 Parser: Missing
+
+
+## Netlab 360
+
+### DGA Feed
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+ * http_url: http://data.netlab.360.com/feeds/dga/dga.txt
+
+Parser: Netlab 360 DGA (`intelmq.bots.parsers.netlab_360.parser_dga`)
+
+This feed lists DGA family, Domain, Start and end of valid time(UTC) of a number of DGA families.
+ * reference: http://data.netlab.360.com/dga
+
+### Magnitude EK Feed
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+ * http_url: http://data.netlab.360.com/feeds/ek/magnitude.txt
+
+Parser: Netlab 360 Magnitude (`intelmq.bots.parsers.netlab_360.parser_magnitude`)
+
+This feed lists FQDN and possibly the URL used by Magnitude Exploit Kit.  Information also includes the IP address used for the domain and last time seen.
+ * reference: http://data.netlab.360.com/ek
+
+## Nothink
+
+### SNMP Feed
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+
+There are a number of feeds you can use to depend on how far back you would like to go.  The time.source will still be the date and time the feed was generated at nothink.
+ * http_url: http://www.nothink.org/blacklist/blacklist_snmp_day.txt
+ * http_url: http://www.nothink.org/blacklist/blacklist_snmp_week.txt
+ * http_url: http://www.nothink.org/blacklist/blacklist_snmp_year.txt
+
+Parser: Nothink (`intelmq.bots.parsers.nothink.parser`)
+
+This feed provides IP addresses of systems that have connected to a honeypot via SNMP in the last 24 hours.
+ * reference: http://www.nothink.org/honeypot_snmp.php
+
+### SSH Feed
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+
+There are a number of feeds you can use to depend on how far back you would like to go.  The time.source will still be the date and time the feed was generated at nothink.
+ * http_url: http://www.nothink.org/blacklist/blacklist_ssh_day.txt
+ * http_url: http://www.nothink.org/blacklist/blacklist_ssh_week.txt
+ * http_url: http://www.nothink.org/blacklist/blacklist_ssh_year.txt
+
+Parser: Nothink (`intelmq.bots.parsers.nothink.parser`)
+
+This feed provides IP addresses of systems that have connected to a honeypot via SSH in the last 24 hours.
+ * reference: http://www.nothink.org/honeypots.php
+
+### Telnet Feed
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+
+There are a number of feeds you can use to depend on how far back you would like to go.  The time.source will still be the date and time the feed was generated at nothink.
+ * http_url: http://www.nothink.org/blacklist/blacklist_telnet_day.txt
+ * http_url: http://www.nothink.org/blacklist/blacklist_telnet_week.txt
+ * http_url: http://www.nothink.org/blacklist/blacklist_telnet_year.txt
+
+Parser: Nothink (`intelmq.bots.parsers.nothink.parser`)
+
+This feed provides IP addresses of systems that have connected to a honeypot via Telnet in the last 24 hours.
+ * reference: http://www.nothink.org/honeypots.php
+
 
 ## OpenBL
 

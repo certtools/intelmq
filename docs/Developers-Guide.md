@@ -481,7 +481,7 @@ class MyParserBot(ParserBot):
 ```
 
 #### parse_line
-One line can lead to multiple events, thus `parse_line` can't just return one Event. Thus, this function is a generator, which allows to easily return multple values. Use `yield event` for valid Events and `return` in case of a void result (not parseable line, invalid data etc.).
+One line can lead to multiple events, thus `parse_line` can't just return one Event. Thus, this function is a generator, which allows to easily return multiple values. Use `yield event` for valid Events and `return` in case of a void result (not parseable line, invalid data etc.).
 
 ### Tests
 
@@ -512,7 +512,7 @@ class TestExampleParserBot(test.BotTestCase, unittest.TestCase):  # adjust test 
     @classmethod
     def set_bot(cls):
         cls.bot_reference = ExampleParserBot  # adjust bot class name
-        cls.default_input_message = EXAMPLE_EVENT  # adjust source of the example event (dict)
+        cls.default_input_message = EXAMPLE_EVENT  # adjust source of the example event (dict), by default an empty event or report (depeding on bot type)
 
     # This is an example how to test the log output
     def test_log_test_line(self):

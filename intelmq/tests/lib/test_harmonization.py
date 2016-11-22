@@ -6,6 +6,7 @@ Testing harmonization classes
 import unittest
 
 import intelmq.lib.harmonization as harmonization
+import intelmq.lib.test as test
 
 
 class TestHarmonization(unittest.TestCase):
@@ -194,11 +195,13 @@ class TestHarmonization(unittest.TestCase):
         self.assertTrue(harmonization.FQDN.is_valid('ex-am.ple.example'))
         self.assertTrue(harmonization.FQDN.is_valid('intelmq.org'))
         self.assertTrue(harmonization.FQDN.is_valid('sub_sub2.example.net'))
+        self.assertTrue(harmonization.FQDN.is_valid('xn--1.at-4qa'))
 
     def test_fqdn_invalid(self):
         """ Test FQDN.is_valid with invalid arguments. """
         self.assertFalse(harmonization.FQDN.is_valid('ex-am.ple.example.'))
         self.assertFalse(harmonization.FQDN.is_valid('exAmple.com'))
+        self.assertFalse(harmonization.FQDN.is_valid('ö1.at'))
 
     def test_fqdn_sanitize(self):
         """ Test FQDN.sanitize with valid arguments. """
@@ -208,7 +211,9 @@ class TestHarmonization(unittest.TestCase):
                                                     sanitize=True))
         self.assertTrue(harmonization.FQDN.is_valid('exAmple.net',
                                                     sanitize=True))
+        self.assertTrue(harmonization.FQDN.is_valid('ö1.at', sanitize=True))
 
+    @test.skip_internet()
     def test_fqdn_to_ip(self):
         """ Test FQDN.to_ip """
         self.assertEqual(None, harmonization.FQDN.to_ip('localhost'))
@@ -307,5 +312,5 @@ class TestHarmonization(unittest.TestCase):
         self.assertFalse(harmonization.URL.is_valid('http://',
                                                     sanitize=True))
 
-if __name__ == "__main__":
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

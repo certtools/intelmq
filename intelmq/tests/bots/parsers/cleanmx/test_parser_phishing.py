@@ -17,5 +17,8 @@ class TestCleanMXPhishingParserBot(test.BotTestCase, unittest.TestCase):
         cls.bot_reference = CleanMXPhishingParserBot
         cls.default_input_message = {'__type': 'Report', 'raw': 'Cg=='}
 
-if __name__ == '__main__':
+    def test_empty(self):
+        self.run_bot()
+
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

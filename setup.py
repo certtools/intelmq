@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import os
 
 from setuptools import find_packages, setup
 
@@ -38,7 +39,8 @@ DATA = [
      ),
 ]
 
-exec(open('intelmq/version.py').read())  # defines __version__
+exec(open(os.path.join(os.path.dirname(__file__),
+                       'intelmq/version.py')).read())  # defines __version__
 
 
 setup(
@@ -60,7 +62,8 @@ setup(
     license='AGPLv3',
     description='IntelMQ is a solution for CERTs to process data feeds, '
                 'pastebins, tweets throught a message queue.',
-    long_description=open('docs/README.rst').read(),
+    long_description=open(os.path.join(os.path.dirname(__file__),
+                                       'docs/README.rst')).read(),
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Console',

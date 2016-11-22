@@ -18,7 +18,7 @@ except ImportError:
     psycopg2 = None
 
 
-class PostgreSQLBot(Bot):
+class PostgreSQLOutputBot(Bot):
 
     def init(self):
         self.logger.debug("Connecting to PostgreSQL.")
@@ -45,9 +45,9 @@ class PostgreSQLBot(Bot):
 
             self.table = self.parameters.table
         except:
-            self.logger.exception('Failed to connect to database')
+            self.logger.exception('Failed to connect to database.')
             self.stop()
-        self.logger.info("Connected to PostgreSQL")
+        self.logger.info("Connected to PostgreSQL.")
 
     def process(self):
         event = self.receive_message()
@@ -58,7 +58,7 @@ class PostgreSQLBot(Bot):
         query = ('INSERT INTO {table} ("{keys}") VALUES ({values})'
                  ''.format(table=self.table, keys=keys, values=fvalues[:-2]))
 
-        self.logger.debug('Query: {!r} with values {!r}'.format(query, values))
+        self.logger.debug('Query: {!r} with values {!r}.'.format(query, values))
         try:
             # note: this assumes, the DB was created with UTF-8 support!
             self.cur.execute(query, values)
@@ -78,5 +78,5 @@ class PostgreSQLBot(Bot):
 
 
 if __name__ == "__main__":
-    bot = PostgreSQLBot(sys.argv[1])
+    bot = PostgreSQLOutputBot(sys.argv[1])
     bot.start()

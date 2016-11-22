@@ -11,7 +11,7 @@ from intelmq.lib.cache import Cache
 from intelmq.lib.harmonization import IPAddress
 
 MINIMUM_BGP_PREFIX_IPV4 = 24
-MINIMUM_BGP_PREFIX_IPV6 = 128  # FIXME
+MINIMUM_BGP_PREFIX_IPV6 = 128
 
 
 class ReverseDnsExpertBot(Bot):
@@ -43,11 +43,6 @@ class ReverseDnsExpertBot(Bot):
 
             elif ip_version == 6:
                 minimum = MINIMUM_BGP_PREFIX_IPV6
-
-            else:
-                self.logger.warning("Invalid IP version {}".format(ip_version))
-                self.send_message(event)
-                self.acknowledge_message()
 
             cache_key = bin(ip_integer)[2: minimum + 2]
             cachevalue = self.cache.get(cache_key)

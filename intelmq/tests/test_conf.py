@@ -97,5 +97,5 @@ class TestConf(unittest.TestCase):
         self.assertEqual(to_unsorted_json(interpreted), fcontent)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

@@ -181,6 +181,11 @@
             "module": "intelmq.bots.parsers.abusech.parser_ip",
             "parameters": {}
         },
+        "Abuse.ch Ransomware": {
+            "description": "Abuse.ch Ransomware Parser is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.abusech.parser_ransomware",
+            "parameters": {}
+        },
         "AlienVault": {
             "description": "AlienVault Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.alienvault.parser",
@@ -194,6 +199,26 @@
         "Autoshun": {
             "description": "Autoshun Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.autoshun.parser",
+            "parameters": {}
+        },
+        "Bambenek C2 Domain Feed": {
+            "description": "Bambenek C2 Domain parser is the bot responsible to parse and and sanatize the information.",
+            "module": "intelmq.bots.parsers.bambenek.parser_c2dommasterlist",
+            "parameters": {}
+        },
+        "Bambenek C2 IP Feed": {
+            "description": "Bambenek C2 IP parser is the bot responsible to parse and and sanatize the information.",
+            "module": "intelmq.bots.parsers.bambenek.parser_c2ipmasterlist",
+            "parameters": {}
+        },
+        "Bambenek DGA Domain Feed": {
+            "description": "Bambenek DGA Domain parser is the bot responsible to parse and and sanatize the information.",
+            "module": "intelmq.bots.parsers.bambenek.parser_dgafeed",
+            "parameters": {}
+        },
+        "Bitcash Blocklist Feed": {
+            "description": "Bitcash Blocklist parser is the bot responsible to parse and sanitize the information.",
+            "module": "intelmq.bots.parsers.bitcash.parser",
             "parameters": {}
         },
         "BitSight Ciberfeed Stream": {
@@ -330,6 +355,21 @@
         "N6Stomp": {
             "description": "N6 Collector - CERT.pl's N6 Parser - N6 feed via STOMP interface",
             "module": "intelmq.bots.parsers.n6.parser_n6stomp",
+            "parameters": {}
+        },
+        "Netlab 360 DGA": {
+            "description": "Netlab 360 DGA Feed Parser is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.netlab_360.parser_dga",
+            "parameters": {}
+        },
+        "Netlab 360 Magnitude": {
+            "description": "Netlab 360 Magnitude EK Feed Parser is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.netlab_360.parser_magnitude",
+            "parameters": {}
+        },
+        "Nothink": {
+            "description": "Nothink Feed Parser is the bot responsible to parse the SNMP, SSH, and Telnet reports and sanitize the information.",
+            "module": "intelmq.bots.parsers.nothink.parser",
             "parameters": {}
         },
         "OpenBL": {
@@ -537,7 +577,9 @@
         "url2fqdn": {
             "description": "url2fqdn is the bot responsible to parsing the fqdn from the url.",
             "module": "intelmq.bots.experts.url2fqdn.expert",
-            "parameters": {}
+            "parameters": {
+                "overwrite": false
+            }
         }
     },
     "Output": {

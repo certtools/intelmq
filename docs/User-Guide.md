@@ -143,6 +143,7 @@ Small extract:
 * `logging_path`: If `logging_handler` is `file`. Defines for all system the logs folder that will be use by all bots and intelmqctl tool. Default value is: `/opt/intelmq/var/log/`
 * `logging_syslog`: If `logging_handler` is `syslog`. Either a list with hostname and UDP port of syslog service, e.g. `["localhost", 514]` or a device name, e.g. the default `"/var/log"`.
 
+We recommend logging_level WARNING for production environments and INFO if you want more details. In any case, monitor your free disk space.
 
 ## Startup Configuration
 

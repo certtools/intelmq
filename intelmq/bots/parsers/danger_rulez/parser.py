@@ -30,7 +30,6 @@ class BruteForceBlockerParserBot(Bot):
             match = re.search(REGEX_TIMESTAMP, row)
             if match:
                 timestamp = match.group(1) + " UTC"
-                continue
 
             if not timestamp:
                 raise ValueError('No timestamp found.')

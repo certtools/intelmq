@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
-
+import base64
 import unittest
 import unittest.mock as mock
 
-import intelmq.lib.bot
 import intelmq.lib.bot as bot
 import intelmq.lib.test as test
 import intelmq.lib.utils as utils
@@ -12,9 +11,9 @@ from intelmq.lib.message import Event
 RAW = """# ignore this
 2015/06/04 13:37 +00,example.org,192.0.2.3,reverse.example.net,example description,report@example.org,0
 
-2015/06/04_13:37 +00,example.org,192.0.2.3,reverse.example.net,example description,report@example.org,0
+2015/06/04 13:38 +00,example.org,19d2.0.2.3,reverse.example.net,example description,report@example.org,0
 #ending line"""
-
+RAW_SPLIT = RAW.splitlines()
 
 EXAMPLE_REPORT = {"feed.url": "http://www.example.com/",
                   "time.observation": "2015-08-11T13:03:40+00:00",
@@ -32,11 +31,14 @@ EXAMPLE_EVENT = {"feed.url": "http://www.example.com/",
                  "classification.type": "malware",
                  "event_description.text": "example description",
                  "source.asn": 0,
-                 "feed.name": "Example"}
+                 "feed.name": "Example",
+                 "raw": utils.base64_encode('\n'.join(RAW_SPLIT[:2]))}
 
-EXPECTED_DUMP = '''# ignore this
-2015/06/04_13:37 +00,example.org,192.0.2.3,reverse.example.net,example description,report@example.org,0
-#ending line'''
+EXPECTED_DUMP = EXAMPLE_REPORT.copy()
+del EXPECTED_DUMP['__type']
+EXPECTED_DUMP['raw'] = base64.b64encode(b'''# ignore this
+2015/06/04 13:38 +00,example.org,19d2.0.2.3,reverse.example.net,example description,report@example.org,0
+#ending line''').decode()
 EXAMPLE_EMPTY_REPORT = {"feed.url": "http://www.example.com/",
                         "__type": "Report",
                         "feed.name": "Example"}
@@ -62,6 +64,7 @@ class DummyParserBot(bot.ParserBot):
             event['source.account'] = line[5]
             event['source.asn'] = line[6]
             event['classification.type'] = 'malware'
+            event['raw'] = '\n'.join(self.tempdata+[','.join(line)])
             yield event
 
     def recover_line(self, line):
@@ -70,7 +73,7 @@ class DummyParserBot(bot.ParserBot):
 
 class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
     """
-    A TestCase for a DummyBot.
+    A TestCase for a DummyParserBot.
     """
 
     @classmethod
@@ -80,17 +83,12 @@ class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
         cls.allowed_error_count = 1
 
     def dump_message(self, error_traceback, message=None):
-        self.assertEqual(EXPECTED_DUMP, message)
+        self.assertDictEqual(EXPECTED_DUMP, message)
 
     def run_bot(self):
-        with mock.patch.object(intelmq.lib.bot.Bot, "_dump_message",
+        with mock.patch.object(bot.Bot, "_dump_message",
                                self.dump_message):
             super(TestDummyParserBot, self).run_bot()
-
-    def test_log_test_line(self):
-        """ Test if bot does log example message. """
-        self.run_bot()
-        self.assertRegexpMatchesLog("INFO - Lorem ipsum dolor sit amet.")
 
     def test_event(self):
         """ Test if correct Event has been produced. """
@@ -106,5 +104,5 @@ class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
                                    levelname='WARNING')
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

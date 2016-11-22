@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-TODO: subject needs to be regex
-TODO: attachments needs to be regex
 TODO: accept multiple attachment names
 """
+import re
 
 import imbox
 
@@ -41,7 +40,7 @@ class Mail():
                                                    sent_to=sent_to)
 
         for uid, message in messages_folder:
-            if subject and subject not in message.subject:
+            if subject and re.search(subject, message.subject):
                 continue
 
             return uid, message

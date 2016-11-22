@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 import sys
 
+import pycurl
 from intelmq.lib.bot import CollectorBot
 from intelmq.lib.message import Report
-
-import pycurl
 
 
 class BitsightCollectorBot(CollectorBot):

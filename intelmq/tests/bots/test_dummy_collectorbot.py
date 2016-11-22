@@ -29,9 +29,6 @@ class DummyCollectorBot(bot.CollectorBot):
             report['raw'] = 'test'
         self.send_message(report)
 
-    def recover_line(self, line):
-        return '\n'.join([self.tempdata[0], line, self.tempdata[1]])
-
 
 class TestDummyCollectorBot(test.BotTestCase, unittest.TestCase):
     """
@@ -61,5 +58,5 @@ class TestDummyCollectorBot(test.BotTestCase, unittest.TestCase):
                                    levelname='WARNING')
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

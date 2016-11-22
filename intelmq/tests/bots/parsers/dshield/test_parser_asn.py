@@ -58,5 +58,5 @@ class TestDShieldASNParserBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(1, EVENTS[1])
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()
