@@ -8,7 +8,7 @@ import intelmq.lib.utils as utils
 
 from intelmq.bots.parsers.nothink.parser_dns_attacks import NothinkDNSAttackParserBot
 
-with open(os.path.join(os.path.dirname(__FILE__), 'honeypot_dns_attacks.txt')) as handle:
+with open(os.path.join(os.path.dirname(__file__), 'honeypot_dns_attacks.txt')) as handle:
     EXAMPLE_FILE = handle.read()
 
 EXAMPLE_REPORT = {'feed.url': 'http://www.nothink.org/honeypot_dns_attacks.txt',
