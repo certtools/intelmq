@@ -78,7 +78,17 @@ def lookup_contacts(cur, table_extension, asn, ip, fqdn):
                          SELECT organisation_id, reason FROM matched_fqdn) u
                GROUP BY u.organisation_id)
 
-    SELECT DISTINCT
+    -- we explicitly check the DISTINCT in the main SELECT statement
+    -- only on c.email and o.id because all other fields are functional
+    -- dependencies of these:
+    --
+    --  c.email      obviously
+    --  o.name       o.id is a key of the organisation table
+    --  s.name       ditto + sector.id is a key of sector
+    --  m.reasons    grouped_matches is grouped by organisation id alone,
+    --               so it#s a key in grouped_matches
+
+    SELECT DISTINCT ON (c.email, o.id)
            c.email as email, o.name as organisation, s.name as sector,
            m.reasons as reasons
       FROM grouped_matches as m
