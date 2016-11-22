@@ -23,7 +23,8 @@ class BitcashBlocklistParserBot(ParserBot):
             if FQDN.is_valid(line[2]):
                 event.add('source.reverse_dns', line[2])
             event.add('classification.type', 'scanner')
-            event.add('event_description.text', 'IPs banned for serious abusing of Bitcash services (scanning, sniffing, harvesting, dos attacks)')
+            event.add('event_description.text', 'IPs banned for serious abusing of Bitcash services '
+                                                '(scanning, sniffing, harvesting, dos attacks)')
             event.add('raw', ','.join(line))
 
             yield event
