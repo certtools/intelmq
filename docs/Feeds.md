@@ -8,6 +8,7 @@ The available feeds are grouped by the source of the feeds. For each feed the co
 - [AlienVault](#alienvault)
 - [Autoshun](#autoshun)
 - [Bambenek](#bambenek)
+- [Bitcash](#bitcash)
 - [BitSight Ciberfeed Stream](#bitsight-ciberfeed-stream)
 - [Blocklist.de](#blocklistde)
 - [Blueliv Crimeserver](#blueliv-crimeserver)
@@ -172,6 +173,18 @@ Parser: Bambenek DGA Domain Feed (`intelmq.bots.parsers.bambenek.parser_dgafeed`
 
 Domain feed of known DGA domains from -2 to +3 days
  * License: http://osint.bambenekconsulting.com/license.txt
+
+
+## Bitcash
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+ * http_url: http://bitcash.cz/misc/log/blacklist
+
+Parser: Bitcash Blocklist Feed (`intelmq.bots.parsers.bitcash.parser`)
+
+Blocklist provided by bitcash.cz of banned IPs for service abuse, this includes scanning, sniffing, harvesting, and dos attacks.
 
 
 ## BitSight Ciberfeed Stream
