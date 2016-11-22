@@ -27,6 +27,7 @@ The available feeds are grouped by the source of the feeds. For each feed the co
 - [MalwarePatrol Dans Guardian](#malwarepatrol-dans-guardian)
 - [N6](#n6)
 - [Netlab 360](#netlab-360)
+- [Nothink](#nothink)
 - [OpenBL](#openbl)
 - [OpenPhish](#openphish)
 - [PhishTank](#phishtank)
@@ -537,6 +538,56 @@ Parser: Netlab 360 Magnitude (`intelmq.bots.parsers.netlab_360.parser_magnitude`
 
 This feed lists FQDN and possibly the URL used by Magnitude Exploit Kit.  Information also includes the IP address used for the domain and last time seen.
  * reference: http://data.netlab.360.com/ek
+
+## Nothink
+
+### SNMP Feed
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+
+There are a number of feeds you can use to depend on how far back you would like to go.  The time.source will still be the date and time the feed was generated at nothink.
+ * http_url: http://www.nothink.org/blacklist/blacklist_snmp_day.txt
+ * http_url: http://www.nothink.org/blacklist/blacklist_snmp_week.txt
+ * http_url: http://www.nothink.org/blacklist/blacklist_snmp_year.txt
+
+Parser: Nothink (`intelmq.bots.parsers.nothink.parser`)
+
+This feed provides IP addresses of systems that have connected to a honeypot via SNMP in the last 24 hours.
+ * reference: http://www.nothink.org/honeypot_snmp.php
+
+### SSH Feed
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+
+There are a number of feeds you can use to depend on how far back you would like to go.  The time.source will still be the date and time the feed was generated at nothink.
+ * http_url: http://www.nothink.org/blacklist/blacklist_ssh_day.txt
+ * http_url: http://www.nothink.org/blacklist/blacklist_ssh_week.txt
+ * http_url: http://www.nothink.org/blacklist/blacklist_ssh_year.txt
+
+Parser: Nothink (`intelmq.bots.parsers.nothink.parser`)
+
+This feed provides IP addresses of systems that have connected to a honeypot via SSH in the last 24 hours.
+ * reference: http://www.nothink.org/honeypots.php
+
+### Telnet Feed
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+
+There are a number of feeds you can use to depend on how far back you would like to go.  The time.source will still be the date and time the feed was generated at nothink.
+ * http_url: http://www.nothink.org/blacklist/blacklist_telnet_day.txt
+ * http_url: http://www.nothink.org/blacklist/blacklist_telnet_week.txt
+ * http_url: http://www.nothink.org/blacklist/blacklist_telnet_year.txt
+
+Parser: Nothink (`intelmq.bots.parsers.nothink.parser`)
+
+This feed provides IP addresses of systems that have connected to a honeypot via Telnet in the last 24 hours.
+ * reference: http://www.nothink.org/honeypots.php
 
 
 ## OpenBL
