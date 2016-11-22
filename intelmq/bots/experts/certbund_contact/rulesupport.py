@@ -43,6 +43,20 @@ class Directive:
                 " notification_interval={notification_interval}"
                 .format(**self.__dict__))
 
+    def __eq__(self, other):
+        return (self.medium == other.medium
+                and self.recipient_address == other.recipient_address
+                and self.template_name == other.template_name
+                and self.event_data_format == other.event_data_format
+                and self.notification_interval == other.notification_interval)
+
+    def __hash__(self):
+        return hash((self.medium,
+                     self.recipient_address,
+                     self.template_name,
+                     self.event_data_format,
+                     self.notification_interval))
+
     @classmethod
     def from_contact(cls, contact, **kw):
         return cls(recipient_address=contact.email, medium="email", **kw)
