@@ -12,7 +12,7 @@ with open(os.path.join(os.path.dirname(__file__), 'blacklist')) as handle:
     EXAMPLE_FILE = handle.read()
 
 EXAMPLE_REPORT = {'feed.url': 'http://bitcash.cz/misc/log/blacklist',
-                 'feed.name': 'bitcach_blocklist',
+                 'feed.name': 'bitcash_blocklist',
                  '__type': 'Report',
                  'raw': utils.base64_encode(EXAMPLE_FILE),
                  'time.observation': '2016-11-21T20:05:54+00:00'
@@ -24,9 +24,8 @@ EXAMPLE_EVENT = [{'feed.url': 'http://bitcash.cz/misc/log/blacklist',
                  'source.ip': '81.95.123.209',
                  'source.reverse_dns': 'npvpn.dco.fusa.be',
                  'classification.type': 'scanner',
-                 'event_description.text': 'IPs banned for serious abusing of Bitcash services \
-                                               (scanning, sniffing, harvesting, dos attacks)',
-                 'raw': 'ODEuOTUuMTIzLjIwOSAjICAgbnB2cG4uZGNvLmZ1c2EuYmUgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBsYXN0IGFjY2VzcyAyMDE2LTEwLTAxIDAwOjE1OjAx',
+                 'event_description.text': 'IPs banned for serious abusing of Bitcash services (scanning, sniffing, harvesting, dos attacks)',
+                 'raw': 'ODEuOTUuMTIzLjIwOSwjLG5wdnBuLmRjby5mdXNhLmJlLGxhc3QsYWNjZXNzLDIwMTYtMTAtMDEsMDA6MTU6MDE=',
                  '__type': 'Event'
                  },
                  {'feed.url': 'http://bitcash.cz/misc/log/blacklist',
@@ -34,9 +33,8 @@ EXAMPLE_EVENT = [{'feed.url': 'http://bitcash.cz/misc/log/blacklist',
                  'time.source': '2016-10-01T17:10:01+00:00',
                  'source.ip': '194.213.39.138',
                  'classification.type': 'scanner',
-                 'event_description.text': 'IPs banned for serious abusing of Bitcash services \
-                                               (scanning, sniffing, harvesting, dos attacks)',
-                 'raw': 'MTk0LjIxMy4zOS4xMzggIyAgMTk0LjIxMy4zOS4xMzggICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBsYXN0IGFjY2VzcyAyMDE2LTEwLTAxIDE3OjEwOjAx',
+                 'event_description.text': 'IPs banned for serious abusing of Bitcash services (scanning, sniffing, harvesting, dos attacks)',
+                 'raw': 'MTk0LjIxMy4zOS4xMzgsIywxOTQuMjEzLjM5LjEzOCxsYXN0LGFjY2VzcywyMDE2LTEwLTAxLDE3OjEwOjAx',
                  '__type': 'Event'
                  }]
 
