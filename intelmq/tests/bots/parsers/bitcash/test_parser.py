@@ -40,12 +40,12 @@ EXAMPLE_EVENT = [{'feed.url': 'http://bitcash.cz/misc/log/blacklist',
                  '__type': 'Event'
                  }]
 
-class TestBitcashBlockListParserBot(test.BotTestCase, unittest.TestCase):
+class TestBitcashBlocklistParserBot(test.BotTestCase, unittest.TestCase):
     """ A TestCase of BitcashBlockListParserBot """
 
     @classmethod
     def set_bot(cls):
-        cls.bot_reference =BitcashBlocklistParserBot
+        cls.bot_reference = BitcashBlocklistParserBot
         cls.default_input_message = EXAMPLE_REPORT
 
     def test_event(self):
