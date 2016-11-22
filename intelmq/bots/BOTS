@@ -197,7 +197,7 @@
         },
         "Bitcash Blocklist Feed": {
             "description": "Bitcash Blocklist parser is the bot responsible to parse and sanitize the information.",
-            "module": "intelmq.bots.parsers.bitcash.parser,"
+            "module": "intelmq.bots.parsers.bitcash.parser",
             "parameters": {}
         },
         "BitSight Ciberfeed Stream": {
