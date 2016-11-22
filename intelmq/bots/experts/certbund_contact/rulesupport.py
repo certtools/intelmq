@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from intelmq.bots.experts.certbund_contact.eventjson import \
      get_certbund_contacts, set_certbund_directives
 
@@ -104,3 +106,23 @@ class Context:
                                 [d.as_dict_for_event(self._event)
                                  for d in self._directives])
         return self._event
+
+
+
+def most_specific_contacts(contacts):
+    by_source = defaultdict(lambda : {"manual": set(), "automatic": set()})
+
+    for contact in contacts:
+        for field in contact.matched_fields:
+            by_source[field][contact.automation].add(contact)
+
+    def get_preferred_by_source(key):
+        if key not in by_source:
+            return set()
+        else:
+            by_automation = by_source[key]
+            return by_automation["manual"] or by_automation["automatic"]
+
+    return list(get_preferred_by_source("fqdn")
+                | (get_preferred_by_source("ip")
+                   or get_preferred_by_source("asn")))
