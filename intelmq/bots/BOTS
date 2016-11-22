@@ -195,6 +195,11 @@
             "module": "intelmq.bots.parsers.bambenek.parser_dgafeed",
             "parameters": {}
         },
+        "Bitcash Blocklist Feed": {
+            "description": "Bitcash Blocklist parser is the bot responsible to parse and sanitize the information.",
+            "module": "intelmq.bots.parsers.bitcash.parser",
+            "parameters": {}
+        },
         "BitSight Ciberfeed Stream": {
             "description": "Bitsight Ciberfeed parser is the bot reponsible to parse and sanitize the information.",
             "module": "intelmq.bots.parsers.bitsight.parser",
