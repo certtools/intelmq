@@ -1,0 +1,4 @@
+# Provided by nothink.org
+# Honeypot DNS and amplification attacks
+# Generated 2016-11-21 23:08:02#Dateins,IP ATTACKED,ASN,ASN org,DNS,Geo
+"2016-11-11 15:13:20","186.2.167.14","262254","DANCOM LTD,,, BZ","ddos-guard.net","BZ"

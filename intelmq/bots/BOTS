@@ -356,6 +356,11 @@
             "module": "intelmq.bots.parsers.nothink.parser",
             "parameters": {}
         },
+        "Nothink DNS Attack": {
+            "description": "Nothink DNS Attacks Feed Parser is the bot responsible to parse the DNS Attacks report and sanitize the information.",
+            "module": "intelmq.bots.parsers.nothink.parser_dns_attacks",
+            "parameters": {}
+        },
         "OpenBL": {
             "description": "OpenBL Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.openbl.parser",
