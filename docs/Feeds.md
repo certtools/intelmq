@@ -83,6 +83,19 @@ Parser: Abuse.ch IP (`intelmq.bots.parsers.abusech.parser_ip`)
 
 Palevo C&C IP Blocklist includes IP addresses which are being used as botnet C&C for the Palevo crimeware.
 
+
+### Ransomware Tracker
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+ * http_url: https://ransomwaretracker.abuse.ch/feeds/csv/
+
+Parser: Abuse.ch Ranswomware (`intelmq.bots.parsers.abusech.parser_ransomware`)
+
+Ransomware Tracker feed includes FQDN's, URL's, and known IP addresses that were used for said FQDN's and URL's for various ransomware families.
+
+
 ### ZeuS Tracker Domains
 
 Status: Unknown
