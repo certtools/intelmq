@@ -48,7 +48,7 @@ def lookup_by_asn_only(cur, table_extension, asn):
     return cur.fetchall()
 
 
-def lookup_contacts(cur, table_extension, asn, ipaddress, fqdn):
+def lookup_contacts(cur, table_extension, asn, ip, fqdn):
     cur.execute("""
     WITH matched_asn (organisation_id, reason)
              AS (SELECT oa.organisation_id, ('asn' :: TEXT)
@@ -56,13 +56,13 @@ def lookup_contacts(cur, table_extension, asn, ipaddress, fqdn):
                    JOIN organisation_to_asn{0} AS oa
                      ON a.number = oa.asn_id
                   WHERE a.number = %(asn)s),
-         matched_ipaddress (organisation_id, reason)
-             AS (SELECT "on".organisation_id, ('ipaddress' :: TEXT)
+         matched_ip (organisation_id, reason)
+             AS (SELECT "on".organisation_id, ('ip' :: TEXT)
                    FROM network{0} AS n
                    JOIN organisation_to_network{0} AS "on"
                      ON n.id = "on".net_id
-                  WHERE inet(host(network(n.address))) <= %(ipaddress)s
-                    AND %(ipaddress)s <= inet(host(broadcast(n.address)))),
+                  WHERE inet(host(network(n.address))) <= %(ip)s
+                    AND %(ip)s <= inet(host(broadcast(n.address)))),
          matched_fqdn (organisation_id, reason)
              AS (SELECT of.organisation_id, ('fqdn' :: TEXT)
                    FROM fqdn{0} AS f
@@ -73,7 +73,7 @@ def lookup_contacts(cur, table_extension, asn, ipaddress, fqdn):
              AS (SELECT u.organisation_id, array_agg(u.reason)
                    FROM (SELECT organisation_id, reason FROM matched_asn
                          UNION
-                         SELECT organisation_id, reason FROM matched_ipaddress
+                         SELECT organisation_id, reason FROM matched_ip
                          UNION
                          SELECT organisation_id, reason FROM matched_fqdn) u
                GROUP BY u.organisation_id)
@@ -87,5 +87,5 @@ def lookup_contacts(cur, table_extension, asn, ipaddress, fqdn):
       JOIN contact{0} AS c ON c.id = r.contact_id
       LEFT OUTER JOIN sector AS s ON s.id = o.sector_id
       """.format(table_extension),
-                {"asn": asn, "ipaddress": ipaddress, "fqdn": fqdn})
+                {"asn": asn, "ip": ip, "fqdn": fqdn})
     return cur.fetchall()

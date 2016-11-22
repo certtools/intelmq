@@ -58,12 +58,11 @@ class CERTBundKontaktExpertBot(Bot):
         self.acknowledge_message()
 
 
-    def lookup_contacts(self, cur, asn, ipaddress, fqdn):
+    def lookup_contacts(self, cur, asn, ip, fqdn):
         result = []
         for (automation, suffix) in (("manual", ""),
                                      ("automatic", "_automatic")):
-            for row in common.lookup_contacts(cur, suffix, asn, ipaddress,
-                                              fqdn):
+            for row in common.lookup_contacts(cur, suffix, asn, ip, fqdn):
                 result.append(row + (automation,))
         return result
 
