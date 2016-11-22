@@ -33,7 +33,8 @@ class HTTPCollectorBot(CollectorBot):
 
         resp = requests.get(url=self.parameters.http_url, auth=self.auth,
                             proxies=self.proxy, headers=self.http_header,
-                            verify=self.http_verify_cert, cert=self.ssl_cl_cert)
+                            verify=self.http_verify_cert,
+                            cert=self.ssl_client_cert)
 
         if resp.status_code // 100 != 2:
             raise ValueError('HTTP response status code was {}.'

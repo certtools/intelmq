@@ -586,8 +586,8 @@ class CollectorBot(Bot):
         self.http_header = getattr(self.parameters, 'http_header', {})
         self.http_verify_cert = getattr(self.parameters, 'http_verify_cert',
                                         True)
-        self.ssl_cl_cert = getattr(self.parameters, 'ssl_client_certificate',
-                                   None)
+        self.ssl_client_cert = getattr(self.parameters,
+                                       'ssl_client_certificate', None)
 
         if hasattr(self.parameters, 'http_username') and hasattr(
                 self.parameters, 'http_password'):
@@ -596,10 +596,9 @@ class CollectorBot(Bot):
         else:
             self.auth = None
 
-        http_proxy = getattr(self.parameters, 'http_proxy', None)
-        https_proxy = getattr(self.parameters, 'https_proxy', None)
-        if http_proxy and https_proxy:
-            self.proxy = {'http': http_proxy, 'https': https_proxy}
+        if self.parameters.http_proxy and self.parameters.https_proxy:
+            self.proxy = {'http': self.parameters.http_proxy,
+                          'https': self.parameters.https_proxy}
         else:
             self.proxy = None
 
