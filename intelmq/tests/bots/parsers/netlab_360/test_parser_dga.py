@@ -15,7 +15,7 @@ EXAMPLE_REPORT = {"feed.name": "Netlab 360 DGA",
                   "raw": utils.base64_encode(EXAMPLE_FILE),
                   "__type": "Report",
                   "time.observation": "2016-01-01T00:00:00+00:00",
-                 }
+                  }
 EVENTS = [{"feed.name": "Netlab 360 DGA",
            "feed.url": "http://data.netlab.360.com/feeds/dga/dga.txt",
            "__type": "Event",
@@ -26,7 +26,8 @@ EVENTS = [{"feed.name": "Netlab 360 DGA",
            "classification.identifier": "suppobox",
            "event_description.url": "http://data.netlab.360.com/dga",
            "raw": "c3VwcG9ib3gJZGlmZmljdWx0ZHJlc3MubmV0CTIwMTYtMTEtMTIgMTE6NTg6NTYJMjAxNi0xMS0xMyAwMDowNDoxNQ==",
-          }]
+           }]
+
 
 class TestNetlab360DGAParserBot(test.BotTestCase, unittest.TestCase):
     """
@@ -42,5 +43,5 @@ class TestNetlab360DGAParserBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, EVENTS[0])
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

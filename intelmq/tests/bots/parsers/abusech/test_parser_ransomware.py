@@ -56,7 +56,8 @@ EXAMPLE_EVENT = [{'feed.url': 'https://ransomwaretracker.abuse.ch/feeds/csv',
                  'source.ip': '5.79.96.33',
                  'source.fqdn': 'ojmekzw4mujvqeju.minitili.at',
                  'source.url': 'http://ojmekzw4mujvqeju.minitili.at/',
-                 }]
+                  }]
+
 
 class TestAbuseCHRansomwaretrackerParserBot(test.BotTestCase, unittest.TestCase):
     """ A TestCase for AbuseCHRansomwaretrackerParserBot. """
@@ -74,5 +75,5 @@ class TestAbuseCHRansomwaretrackerParserBot(test.BotTestCase, unittest.TestCase)
         self.assertMessageEqual(2, EXAMPLE_EVENT[2])
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

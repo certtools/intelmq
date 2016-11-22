@@ -16,7 +16,7 @@ EXAMPLE_REPORT = {'feed.url': 'http://bitcash.cz/misc/log/blacklist',
                  '__type': 'Report',
                  'raw': utils.base64_encode(EXAMPLE_FILE),
                  'time.observation': '2016-11-21T20:05:54+00:00'
-                 }
+                  }
 
 EXAMPLE_EVENT = [{'feed.url': 'http://bitcash.cz/misc/log/blacklist',
                  'feed.name': 'bitcash_blocklist',
@@ -36,7 +36,8 @@ EXAMPLE_EVENT = [{'feed.url': 'http://bitcash.cz/misc/log/blacklist',
                  'event_description.text': 'IPs banned for serious abusing of Bitcash services (scanning, sniffing, harvesting, dos attacks)',
                  'raw': 'MTk0LjIxMy4zOS4xMzgsIywxOTQuMjEzLjM5LjEzOCxsYXN0LGFjY2VzcywyMDE2LTEwLTAxLDE3OjEwOjAx',
                  '__type': 'Event'
-                 }]
+                  }]
+
 
 class TestBitcashBlocklistParserBot(test.BotTestCase, unittest.TestCase):
     """ A TestCase of BitcashBlockListParserBot """
@@ -52,5 +53,5 @@ class TestBitcashBlocklistParserBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(0, EXAMPLE_EVENT[0])
         self.assertMessageEqual(1, EXAMPLE_EVENT[1])
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

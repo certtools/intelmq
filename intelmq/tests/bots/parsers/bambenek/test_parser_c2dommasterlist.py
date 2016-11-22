@@ -15,7 +15,7 @@ EXAMPLE_REPORT = {"feed.name": "Bambenek C2 Domain Feed",
                   "raw": utils.base64_encode(EXAMPLE_FILE),
                   "__type": "Report",
                   "time.observation": "2016-01-01T00:00:00+00:00",
-                 }
+                  }
 EVENTS = [{"feed.name": "Bambenek C2 Domain Feed",
            "feed.url": "http://osint.bambenekconsulting.com/feeds/c2-dommasterlist.txt",
            "__type": "Event",
@@ -27,7 +27,8 @@ EVENTS = [{"feed.name": "Bambenek C2 Domain Feed",
            "event_description.text": "Domain used by shiotob/urlzone/bebloh",
            "event_description.url": "http://osint.bambenekconsulting.com/manual/bebloh.txt",
            "raw": "c2ZraDIxb2tycm5sdS5jb20sRG9tYWluIHVzZWQgYnkgc2hpb3RvYi91cmx6b25lL2JlYmxvaCwyMDE2LTExLTEyIDE1OjAyLGh0dHA6Ly9vc2ludC5iYW1iZW5la2NvbnN1bHRpbmcuY29tL21hbnVhbC9iZWJsb2gudHh0",
-          }]
+           }]
+
 
 class TestBambenekc2dommasterlistParserBot(test.BotTestCase, unittest.TestCase):
     """
@@ -44,5 +45,5 @@ class TestBambenekc2dommasterlistParserBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, EVENTS[0])
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

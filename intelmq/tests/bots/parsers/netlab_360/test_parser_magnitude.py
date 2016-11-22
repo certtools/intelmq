@@ -15,7 +15,7 @@ EXAMPLE_REPORT = {"feed.name": "Netlab 360 Magnitude",
                   "raw": utils.base64_encode(EXAMPLE_FILE),
                   "__type": "Report",
                   "time.observation": "2016-01-01T00:00:00+00:00",
-                 }
+                  }
 EVENTS = [{"feed.name": "Netlab 360 Magnitude",
            "feed.url": "http://data.netlab.360.com/feeds/ek/magnitude.txt",
            "__type": "Event",
@@ -28,7 +28,8 @@ EVENTS = [{"feed.name": "Netlab 360 Magnitude",
            "classification.identifier": "magnitude",
            "event_description.url": "http://data.netlab.360.com/ek",
            "raw": "TWFnbml0dWRlCTE0Nzg5NDY2NjUJMTc4LjMyLjIyNy4xMgkzZWJvMDhvNGN0MGY2bjIzMzYuaW5zaWRlcy5wYXJ0eQlodHRwOi8vM2VibzA4bzRjdDBmNm4yMzM2Lmluc2lkZXMucGFydHkvZDk3Y2M1Y2ZhYjQ3ZTMwNTUzNjY5MGE5OTg3MTE1YWM=",
-          }]
+           }]
+
 
 class TestNetlab360MagnitudeParserBot(test.BotTestCase, unittest.TestCase):
     """
@@ -44,5 +45,5 @@ class TestNetlab360MagnitudeParserBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, EVENTS[0])
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

@@ -28,6 +28,7 @@ EXAMPLE_EVENT = {'feed.url': 'http://www.nothink.org/blacklist/blacklist_snmp_da
                  '__type': 'Event'
                  }
 
+
 class TestNothinkParserBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase of NothinkParserBot.
@@ -44,5 +45,5 @@ class TestNothinkParserBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(0, EXAMPLE_EVENT)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

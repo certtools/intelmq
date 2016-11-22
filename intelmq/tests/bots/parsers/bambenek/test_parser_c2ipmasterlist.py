@@ -15,7 +15,7 @@ EXAMPLE_REPORT = {"feed.name": "Bambenek C2 IP Feed",
                   "raw": utils.base64_encode(EXAMPLE_FILE),
                   "__type": "Report",
                   "time.observation": "2016-01-01T00:00:00+00:00",
-                 }
+                  }
 EVENTS = [{"feed.name": "Bambenek C2 IP Feed",
            "feed.url": "http://osint.bambenekconsulting.com/feeds/c2-ipmasterlist.txt",
            "__type": "Event",
@@ -27,7 +27,8 @@ EVENTS = [{"feed.name": "Bambenek C2 IP Feed",
            "event_description.text": "IP used by shiotob/urlzone/bebloh C&C",
            "event_description.url": "http://osint.bambenekconsulting.com/manual/bebloh.txt",
            "raw": "MjEzLjI0Ny40Ny4xOTAsSVAgdXNlZCBieSBzaGlvdG9iL3VybHpvbmUvYmVibG9oIEMmQywyMDE2LTExLTEyIDE4OjAyLGh0dHA6Ly9vc2ludC5iYW1iZW5la2NvbnN1bHRpbmcuY29tL21hbnVhbC9iZWJsb2gudHh0",
-          }]
+           }]
+
 
 class TestBambenekc2ipmasterlistParserBot(test.BotTestCase, unittest.TestCase):
     """
@@ -44,5 +45,5 @@ class TestBambenekc2ipmasterlistParserBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, EVENTS[0])
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

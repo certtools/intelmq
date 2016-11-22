@@ -15,7 +15,7 @@ EXAMPLE_REPORT = {"feed.name": "Bambenek DGA Domain Feed",
                   "raw": utils.base64_encode(EXAMPLE_FILE),
                   "__type": "Report",
                   "time.observation": "2016-01-01T00:00:00+00:00",
-                 }
+                  }
 EVENTS = [{"feed.name": "Bambenek DGA Domain Feed",
            "feed.url": "http://osint.bambenekconsulting.com/feeds/dga-feed.txt",
            "__type": "Event",
@@ -26,7 +26,8 @@ EVENTS = [{"feed.name": "Bambenek DGA Domain Feed",
            "event_description.text": "Domain used by Cryptolocker - Flashback DGA for 10 Nov 2016",
            "event_description.url": "http://osint.bambenekconsulting.com/manual/cl.txt",
            "raw": "eHFtY2xudXNhc3d2b2YuY29tLERvbWFpbiB1c2VkIGJ5IENyeXB0b2xvY2tlciAtIEZsYXNoYmFjayBER0EgZm9yIDEwIE5vdiAyMDE2LDIwMTYtMTEtMTAsaHR0cDovL29zaW50LmJhbWJlbmVrY29uc3VsdGluZy5jb20vbWFudWFsL2NsLnR4dA==",
-          }]
+           }]
+
 
 class TestBambenekDGAfeedParserBot(test.BotTestCase, unittest.TestCase):
     """
@@ -43,5 +44,5 @@ class TestBambenekDGAfeedParserBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, EVENTS[0])
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()
