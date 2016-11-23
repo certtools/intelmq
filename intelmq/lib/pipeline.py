@@ -64,7 +64,8 @@ class Redis(Pipeline):
         self.db = getattr(self.parameters,
                           "{}_pipeline_db".format(queues_type), 2)
         self.password = getattr(self.parameters,
-                          "{}_pipeline_password".format(queues_type), None)
+                                "{}_pipeline_password".format(queues_type),
+                                None)
         #  socket_timeout is None by default, which means no timeout
         self.socket_timeout = getattr(self.parameters,
                                       "{}_pipeline_socket_timeout".format(
