@@ -45,3 +45,6 @@ class VXVaultParserBot(ParserBot):
 
     def recover_line(self, line):
         return '\n'.join(self.tempdata + [line])
+
+
+BOT = VXVaultParserBot

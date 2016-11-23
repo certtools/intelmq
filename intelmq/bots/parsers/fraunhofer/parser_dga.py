@@ -32,3 +32,6 @@ class FraunhoferDGAParserBot(Bot):
 
             self.send_message(event)
         self.acknowledge_message()
+
+
+BOT = FraunhoferDGAParserBot

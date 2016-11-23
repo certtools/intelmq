@@ -66,3 +66,6 @@ class RFC1918ExpertBot(Bot):
                 break
         self.send_message(event)
         self.acknowledge_message()
+
+
+BOT = RFC1918ExpertBot

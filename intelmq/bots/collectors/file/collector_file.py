@@ -69,3 +69,6 @@ class FileCollectorBot(CollectorBot):
                                 self.logger.info("Maybe I don't have sufficient rights on that file?")
                                 self.logger.error("Stopping now, to prevent reading this file again.")
                                 self.stop()
+
+
+BOT = FileCollectorBot

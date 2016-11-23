@@ -35,3 +35,6 @@ class RestAPIOutputBot(Bot):
             else:
                 self.logger.error(repr(e))
         self.acknowledge_message()
+
+
+BOT = RestAPIOutputBot

@@ -111,3 +111,6 @@ class FTPSCollectorBot(CollectorBot):
             report.add("feed.url", 'ftps://' + self.parameters.ftps_host + ':' +
                        str(self.parameters.ftps_port), sanitize=True)
             self.send_message(report)
+
+
+BOT = FTPSCollectorBot

@@ -154,3 +154,6 @@ class N6StompParserBot(Bot):
                 self.send_message(ev)
 
         self.acknowledge_message()
+
+
+BOT = N6StompParserBot

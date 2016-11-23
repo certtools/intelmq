@@ -39,3 +39,6 @@ class BluelivCrimeserverCollectorBot(CollectorBot):
         report = self.new_report()
         report.add("raw", json.dumps([item for item in response.items]))
         self.send_message(report)
+
+
+BOT = BluelivCrimeserverCollectorBot

@@ -3,10 +3,7 @@
 See docs/Feeds.md
 """
 
-import sys
-
 from intelmq.lib.bot import ParserBot
-from intelmq.lib.harmonization import FQDN
 from intelmq.lib.message import Event
 
 
@@ -28,6 +25,4 @@ class Netlab360DGAParserBot(ParserBot):
 
             yield event
 
-if __name__ == "__main__":
-    bot = Netlab360DGAParserBot(sys.argv[1])
-    bot.start()
+BOT = Netlab360DGAParserBot

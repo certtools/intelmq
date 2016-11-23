@@ -24,3 +24,6 @@ class AlienVaultOTXCollectorBot(CollectorBot):
         report = self.new_report()
         report.add("raw", json.dumps(pulses))
         self.send_message(report)
+
+
+BOT = AlienVaultOTXCollectorBot

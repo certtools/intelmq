@@ -54,3 +54,6 @@ class AlienVaultParserBot(ParserBot):
             event.add("raw", row)
 
             yield event
+
+
+BOT = AlienVaultParserBot

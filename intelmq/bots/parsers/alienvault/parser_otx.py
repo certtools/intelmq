@@ -64,3 +64,6 @@ class AlienVaultOTXParserBot(Bot):
                 event.add("raw", json.dumps(indicator, sort_keys=True))
                 self.send_message(event)
         self.acknowledge_message()
+
+
+BOT = AlienVaultOTXParserBot

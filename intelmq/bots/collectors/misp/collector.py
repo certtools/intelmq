@@ -70,3 +70,6 @@ class MISPCollectorBot(CollectorBot):
                 # Add a 'processed' tag to the event
                 self.misp.add_tag(misp_event,
                                   self.parameters.misp_tag_processed)
+
+
+BOT = MISPCollectorBot

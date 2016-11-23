@@ -133,3 +133,6 @@ class XMPPCollectorBot(CollectorBot):
             report = self.new_report()
             report.add("raw", raw_msg)
             self.send_message(report)
+
+
+BOT = XMPPCollectorBot

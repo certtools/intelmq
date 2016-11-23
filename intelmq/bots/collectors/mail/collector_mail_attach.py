@@ -59,3 +59,6 @@ class MailAttachCollectorBot(CollectorBot):
                         mailbox.mark_seen(uid)
                 self.logger.debug("Email report read.")
         mailbox.logout()
+
+
+BOT = MailAttachCollectorBot

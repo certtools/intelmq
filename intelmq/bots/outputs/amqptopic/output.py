@@ -89,3 +89,6 @@ class AMQPTopicBot(Bot):
             self.logger.exception('Error publishing the message.')
         else:
             self.acknowledge_message()
+
+
+BOT = AMQPTopicBot

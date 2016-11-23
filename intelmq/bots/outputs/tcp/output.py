@@ -37,3 +37,6 @@ class TCPOutputBot(Bot):
         else:
             self.logger.info("Connected successfully to {!s}: {}"
                              "".format(self.address[0], self.address[1]))
+
+
+BOT = TCPOutputBot

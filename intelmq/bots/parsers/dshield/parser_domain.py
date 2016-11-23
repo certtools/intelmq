@@ -41,3 +41,6 @@ class DshieldDomainParserBot(Bot):
 
             self.send_message(event)
         self.acknowledge_message()
+
+
+BOT = DshieldDomainParserBot

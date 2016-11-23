@@ -25,3 +25,6 @@ class Malc0deIPBlacklistParserBot(Bot):
 
             self.send_message(event)
         self.acknowledge_message()
+
+
+BOT = Malc0deIPBlacklistParserBot

@@ -50,3 +50,6 @@ class UDPBot(Bot):
                                   .format(self.udp_host, self.udp_port))
         else:
             self.acknowledge_message()
+
+
+BOT = UDPBot

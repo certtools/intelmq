@@ -62,3 +62,6 @@ class StompOutputBot(Bot):
         message = MessageFactory.serialize(message)
         self.conn.send(body=message, destination=self.exchange)
         self.acknowledge_message()
+
+
+BOT = StompOutputBot

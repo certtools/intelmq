@@ -103,3 +103,6 @@ class GenericCsvParserBot(ParserBot):
         yield event
 
     recover_line = ParserBot.recover_line_csv
+
+
+BOT = GenericCsvParserBot

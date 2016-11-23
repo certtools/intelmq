@@ -64,3 +64,6 @@ class DynParserBot(Bot):
             self.send_message(event_compromised)
 
         self.acknowledge_message()
+
+
+BOT = DynParserBot

@@ -39,3 +39,6 @@ class BitsightCollectorBot(CollectorBot):
             report.add("feed.url", self.parameters.http_url)
 
             self.send_message(report)
+
+
+BOT = BitsightCollectorBot

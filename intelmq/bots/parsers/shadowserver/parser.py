@@ -184,3 +184,6 @@ class ShadowserverParserBot(ParserBot):
         writer.writeheader()
         writer.writerow(line)
         return out.getvalue()
+
+
+BOT = ShadowserverParserBot

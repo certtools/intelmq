@@ -81,3 +81,6 @@ class CleanMXVirusParserBot(Bot):
 
             self.send_message(event)
         self.acknowledge_message()
+
+
+BOT = CleanMXVirusParserBot

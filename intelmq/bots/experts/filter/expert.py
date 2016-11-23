@@ -142,3 +142,6 @@ class FilterExpertBot(Bot):
             return exp.search(str(event.get(key)))
         else:
             return False
+
+
+BOT = FilterExpertBot

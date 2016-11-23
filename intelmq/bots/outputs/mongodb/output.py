@@ -45,3 +45,6 @@ class MongoDBOutputBot(Bot):
 
     def shutdown(self):
         self.client.close()
+
+
+BOT = MongoDBOutputBot

@@ -22,3 +22,6 @@ class JSONParserBot(Bot):
 
         self.send_message(event)
         self.acknowledge_message()
+
+
+BOT = JSONParserBot

@@ -62,3 +62,6 @@ class BitsightParserBot(Bot):
                 event.add('source.geolocation.country', value["country_name"])
         self.send_message(event)
         self.acknowledge_message()
+
+
+BOT = BitsightParserBot

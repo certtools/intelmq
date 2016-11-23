@@ -32,3 +32,6 @@ class DragonResearchGroupVNCParserBot(ParserBot):
             event.add("raw", line)
 
             yield event
+
+
+BOT = DragonResearchGroupVNCParserBot

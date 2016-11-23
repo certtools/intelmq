@@ -74,3 +74,6 @@ class PostgreSQLOutputBot(Bot):
         else:
             self.con.commit()
             self.acknowledge_message()
+
+
+BOT = PostgreSQLBot

@@ -60,3 +60,6 @@ class AutoshunParserBot(ParserBot):
         event.add("event_description.text", description)
         event.add("raw", line + "</tr>")
         yield event
+
+
+BOT = AutoshunParserBot

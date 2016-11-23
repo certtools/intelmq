@@ -94,3 +94,6 @@ class XMPPOutputBot(Bot):
             super(XMPPOutputBot, self).stop()
         else:
             self.logger.info("There was no XMPPClient I could stop.")
+
+
+BOT = XMPPOutputBot

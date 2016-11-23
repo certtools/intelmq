@@ -84,3 +84,6 @@ class n6stompCollectorBot(CollectorBot):
 
     def process(self):
         pass
+
+
+BOT = n6stompCollectorBot

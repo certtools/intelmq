@@ -38,3 +38,6 @@ class BluelivCrimeserverParserBot(Bot):
             event.add("raw", json.dumps(item, sort_keys=True))
             self.send_message(event)
         self.acknowledge_message()
+
+
+BOT = BluelivCrimeserverParserBot

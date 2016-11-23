@@ -43,3 +43,6 @@ class SpamhausDropParserBot(Bot):
 
             self.send_message(event)
         self.acknowledge_message()
+
+
+BOT = SpamhausDropParserBot

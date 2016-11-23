@@ -26,3 +26,6 @@ class HTTPStreamCollectorBot(CollectorBot):
                 report.add("raw", decode(line))
                 self.send_message(report)
             self.logger.info('Stream stopped.')
+
+
+BOT = HTTPStreamCollectorBot

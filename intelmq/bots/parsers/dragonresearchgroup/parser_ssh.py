@@ -33,3 +33,6 @@ class DragonResearchGroupSSHParserBot(ParserBot):
             event.add("raw", line)
 
             yield event
+
+
+BOT = DragonResearchGroupSSHParserBot

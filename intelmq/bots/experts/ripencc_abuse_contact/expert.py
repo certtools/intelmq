@@ -46,3 +46,6 @@ class RIPENCCExpertBot(Bot):
 
         self.send_message(event)
         self.acknowledge_message()
+
+
+BOT = RIPENCCExpertBot

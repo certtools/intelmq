@@ -19,3 +19,6 @@ class FileOutputBot(Bot):
         self.file.write("\n")
         self.file.flush()
         self.acknowledge_message()
+
+
+BOT = FileBot

@@ -38,3 +38,6 @@ class RedisOutputBot(Bot):
             self.stop()
         else:
             self.logger.info("Connected successfully to Redis {} at {}:{}!".format(info['redis_version'], self.host, self.port))
+
+
+BOT = RedisOutputBot

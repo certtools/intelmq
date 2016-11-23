@@ -56,3 +56,6 @@ class HTTPCollectorBot(CollectorBot):
             report.add("raw", raw_report)
             report.add("feed.url", self.parameters.http_url)
             self.send_message(report)
+
+
+BOT = HTTPCollectorBot

@@ -29,3 +29,6 @@ class DeduplicatorExpertBot(Bot):
             self.logger.debug('Dropped message.')
 
         self.acknowledge_message()
+
+
+BOT = DeduplicatorExpertBot

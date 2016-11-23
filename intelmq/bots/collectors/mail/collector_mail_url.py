@@ -68,3 +68,6 @@ class MailURLCollectorBot(CollectorBot):
                         mailbox.mark_seen(uid)
                 self.logger.info("Email report read.")
         mailbox.logout()
+
+
+BOT = MailURLCollectorBot

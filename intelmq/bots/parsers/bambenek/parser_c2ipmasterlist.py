@@ -3,8 +3,6 @@
 Se docs/Feeds.md
 """
 
-import sys
-
 from intelmq.lib.bot import ParserBot
 from intelmq.lib.message import Event
 
@@ -28,6 +26,4 @@ class Bambenekc2ipmasterlistParserBot(ParserBot):
 
             yield event
 
-if __name__ == "__main__":
-    bot = Bambenekc2ipmasterlistParserBot(sys.argv[1])
-    bot.start()
+BOT = Bambenekc2ipmasterlistParserBot

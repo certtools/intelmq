@@ -83,3 +83,6 @@ class BlockListDEParserBot(ParserBot):
 
         event.add("raw", line)
         yield event
+
+
+BOT = BlockListDEParserBot

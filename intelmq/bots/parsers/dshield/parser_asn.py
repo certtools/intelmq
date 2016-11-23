@@ -55,3 +55,6 @@ class DShieldASNParserBot(Bot):
 
             self.send_message(event)
         self.acknowledge_message()
+
+
+BOT = DShieldASNParserBot
