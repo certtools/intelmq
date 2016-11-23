@@ -542,6 +542,18 @@ This feed lists FQDN and possibly the URL used by Magnitude Exploit Kit.  Inform
 
 ## Nothink
 
+### DNS Attack Feed
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+ * http_url: http://www.nothink.org/honeypot_dns_attacks.txt
+
+Parser: Nothink DNS Attacks (`intelmq.bots.parsers.nothink.parser_dns_attacks`)
+
+This feed provides attack information for attack information against DNS honeypots.
+ * reference: http://www.nothink.org/honeypot_dns.php
+
 ### SNMP Feed
 
 Status: Unknown
