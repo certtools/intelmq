@@ -19,7 +19,6 @@ import zipfile
 from ftplib import FTP
 
 from intelmq.lib.bot import CollectorBot
-from intelmq.lib.message import Report
 
 
 class FTPCollectorBot(CollectorBot):
@@ -72,7 +71,7 @@ class FTPCollectorBot(CollectorBot):
                 raw_reports.append(zfp.read(filename))
 
         for raw_report in raw_reports:
-            report = Report()
+            report = self.new_report()
             report.add("raw", raw_report, sanitize=True)
             report.add("feed.url", 'ftp://' + self.parameters.ftp_host + ':' +
                        str(self.parameters.ftp_port), sanitize=True)

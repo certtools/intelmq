@@ -27,7 +27,6 @@ from intelmq.lib import utils
 from intelmq.lib.bot import Bot
 from intelmq.lib.exceptions import InvalidValue
 from intelmq.lib.harmonization import DateTime
-from intelmq.lib.message import Event
 
 __all__ = ['SpamhausCERTParserBot']
 
@@ -46,7 +45,7 @@ class SpamhausCERTParserBot(Bot):
                 continue
 
             row_splitted = [field.strip() for field in row.split(',')]
-            event = Event(report)
+            event = self.new_event(report)
 
             event.add('source.ip', row_splitted[0])
             event.add('source.asn', row_splitted[1].replace('AS', ''))

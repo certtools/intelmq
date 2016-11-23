@@ -4,7 +4,6 @@ import logging
 import sys
 
 from intelmq.lib.bot import CollectorBot
-from intelmq.lib.message import Report
 
 try:
     from sdk.blueliv_api import BluelivAPI
@@ -15,7 +14,7 @@ except ImportError:
 class BluelivCrimeserverCollectorBot(CollectorBot):
     def init(self):
         if BluelivAPI is None:
-            self.logger.error('Could not import BluelivAPI. Please install it.')
+            self.logger.error('Could not import sdk.blueliv_api.BluelivAPI. Please install it.')
             self.stop()
 
     def process(self):
@@ -34,7 +33,7 @@ class BluelivCrimeserverCollectorBot(CollectorBot):
         response = api.crime_servers.online()
         self.logger.info("Report downloaded.")
 
-        report = Report()
+        report = self.new_report()
         report.add("raw", json.dumps([item for item in response.items]))
         self.send_message(report)
 

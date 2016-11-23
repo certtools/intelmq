@@ -18,7 +18,7 @@ from intelmq import (DEFAULT_LOGGING_PATH, DEFAULTS_CONF_FILE,
                      HARMONIZATION_CONF_FILE, PIPELINE_CONF_FILE,
                      RUNTIME_CONF_FILE, SYSTEM_CONF_FILE)
 from intelmq.lib import exceptions, utils
-from intelmq.lib.message import MessageFactory
+import intelmq.lib.message as libmessage
 from intelmq.lib.pipeline import PipelineFactory
 
 __all__ = ['Bot', 'CollectorBot', 'ParserBot']
@@ -315,7 +315,7 @@ class Bot(object):
             if self.__message_counter % 500 == 0:
                 self.logger.info("Processed %s messages." % self.__message_counter)
 
-            raw_message = MessageFactory.serialize(message)
+            raw_message = libmessage.MessageFactory.serialize(message)
             self.__destination_pipeline.send(raw_message)
 
     def receive_message(self):
@@ -326,7 +326,12 @@ class Bot(object):
             if not message:
                 self.logger.warning('Empty message received. Some previous bot sent invalid data.')
                 continue
-        self.__current_message = MessageFactory.unserialize(message)
+
+        # handle a sighup which happened during blocking read
+        self.__handle_sighup()
+
+        self.__current_message = libmessage.MessageFactory.unserialize(message,
+                                                                       harmonization=self.harmonization)
 
         if 'raw' in self.__current_message and len(self.__current_message['raw']) > 400:
             tmp_msg = self.__current_message.to_dict(hierarchical=False)
@@ -334,9 +339,6 @@ class Bot(object):
         else:
             tmp_msg = self.__current_message
         self.logger.debug('Received message {!r}.'.format(tmp_msg))
-
-        # handle a sighup which happened during blocking read
-        self.__handle_sighup()
 
         return self.__current_message
 
@@ -440,15 +442,10 @@ class Bot(object):
 
     def __load_harmonization_configuration(self):
         self.logger.debug("Loading Harmonization configuration from %r." % HARMONIZATION_CONF_FILE)
-        config = utils.load_configuration(HARMONIZATION_CONF_FILE)
+        self.harmonization = utils.load_configuration(HARMONIZATION_CONF_FILE)
 
-        for message_types in config.keys():
-            for key in config[message_types].keys():
-                for _key in config.keys():
-                    if _key.startswith("%s." % key):
-                        raise exceptions.ConfigurationError(
-                            'harmonization',
-                            "Key %s is not valid." % _key)
+    def new_event(self, *args, **kwargs):
+        return libmessage.Event(*args, harmonization=self.harmonization, **kwargs)
 
 
 class ParserBot(Bot):
@@ -581,6 +578,9 @@ class CollectorBot(Bot):
         messages = filter(self.__filter_empty_report, messages)
         messages = map(self.__add_report_fields, messages)
         super(CollectorBot, self).send_message(*messages)
+
+    def new_report(self):
+        return libmessage.Report()
 
 
 class Parameters(object):

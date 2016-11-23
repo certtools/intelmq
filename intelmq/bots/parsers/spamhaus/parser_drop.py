@@ -6,7 +6,6 @@ from dateutil.parser import parse as dateparser
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.message import Event
 
 __all__ = ['SpamhausDropParserBot']
 
@@ -33,7 +32,7 @@ class SpamhausDropParserBot(Bot):
             row_splitted = row.split(';')
             network = row_splitted[0].strip()
 
-            event = Event(report)
+            event = self.new_event(report)
 
             event.add('source.network', network)
             event.add('extra', {'blocklist': row_splitted[1].strip()})

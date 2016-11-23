@@ -6,7 +6,6 @@ import sys
 import requests
 
 from intelmq.lib.bot import CollectorBot
-from intelmq.lib.message import Report
 
 try:
     import imbox
@@ -76,7 +75,7 @@ class MailURLCollectorBot(CollectorBot):
 
                         self.logger.info("Report downloaded.")
 
-                        report = Report()
+                        report = self.new_report()
                         report.add("raw", resp.content)
                         self.send_message(report)
 

@@ -3,7 +3,6 @@ import sys
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.message import Event
 
 
 class Malc0deIPBlacklistParserBot(Bot):
@@ -19,7 +18,7 @@ class Malc0deIPBlacklistParserBot(Bot):
             if row == "" or row[:2] == "//":
                 continue
 
-            event = Event(report)
+            event = self.new_event(report)
 
             event.add('classification.type', 'malware')
             event.add('source.ip', row)

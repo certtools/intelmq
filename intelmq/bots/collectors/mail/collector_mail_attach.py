@@ -4,7 +4,6 @@ import sys
 import zipfile
 
 from intelmq.lib.bot import CollectorBot
-from intelmq.lib.message import Report
 
 try:
     import imbox
@@ -50,7 +49,7 @@ class MailAttachCollectorBot(CollectorBot):
                         else:
                             raw_report = attach['content'].read()
 
-                        report = Report()
+                        report = self.new_report()
                         report.add("raw", raw_report)
 
                         self.send_message(report)

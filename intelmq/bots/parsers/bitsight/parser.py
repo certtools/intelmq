@@ -20,7 +20,6 @@ from intelmq.lib import utils
 from intelmq.lib.bot import Bot
 from intelmq.lib.exceptions import InvalidValue
 from intelmq.lib.harmonization import DateTime
-from intelmq.lib.message import Event
 
 
 class BitsightParserBot(Bot):
@@ -32,7 +31,7 @@ class BitsightParserBot(Bot):
             return
         raw_report = json.loads(utils.base64_decode(report.get('raw')))
         extra = {}
-        event = Event(report)
+        event = self.new_event(report)
         event.add("raw", report.get('raw'), sanitize=False)
         event.add('classification.type', 'malware')
         event.add('event_description.text', 'Sinkhole attempted connection')
