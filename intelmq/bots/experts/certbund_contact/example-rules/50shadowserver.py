@@ -15,6 +15,7 @@ def determine_directives(context):
         for contact in context.contacts:
             directive = Directive.from_contact(contact)
             directive.update(shadowserver_params)
+            directive.aggregate_by_field(context.section + ".asn")
             context.add_directive(directive)
         return True
 
