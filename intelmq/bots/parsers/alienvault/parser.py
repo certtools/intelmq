@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from intelmq.lib.bot import ParserBot
-from intelmq.lib.message import Event
 
 CLASSIFICATION = {
     "c&c": "c&c",
@@ -28,7 +27,7 @@ class AlienVaultParserBot(ParserBot):
 
         for ctype in classification_types:
 
-            event = Event(report)
+            event = self.new_event(report)
 
             if ctype.lower() in CLASSIFICATION:
                 event.add('classification.type',

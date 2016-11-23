@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-
-
-TODO: check if action is allowed when called
 """
 import argparse
 import glob
@@ -201,6 +198,9 @@ def main():
         else:
             if not answer:
                 continue
+        if answer not in available_opts:
+            print('Action not allowed.')
+            continue
         if any([answer[0] == char for char in AVAILABLE_IDS]) and len(answer) > 1:
             ids = [int(item) for item in answer[1].split(',')]
         else:
@@ -282,5 +282,5 @@ def main():
                     value['traceback'] = value['traceback'].splitlines()
                 pprint.pprint(value)
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     main()

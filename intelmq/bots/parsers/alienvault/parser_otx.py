@@ -10,7 +10,6 @@ import json
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.message import Event
 
 HASHES = {
     'FileHash-SHA256': '$5$',
@@ -29,7 +28,7 @@ class AlienVaultOTXParserBot(Bot):
         for pulse in json.loads(raw_report):
             additional = {"author": pulse['author_name'], "pulse": pulse['name']}
             for indicator in pulse["indicators"]:
-                event = Event(report)
+                event = self.new_event(report)
                 # hashes
                 if indicator["type"] in HASHES.keys():
                     event.add('malware.hash', HASHES[indicator["type"]] +

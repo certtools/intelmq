@@ -4,7 +4,6 @@ import io
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.message import Event
 
 
 class PhishTankParserBot(Bot):
@@ -33,7 +32,7 @@ class PhishTankParserBot(Bot):
             if "phish_id" in row:
                 continue
 
-            event = Event(report)
+            event = self.new_event(report)
 
             for key, value in zip(columns, row):
 

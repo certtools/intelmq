@@ -5,7 +5,6 @@ import io
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
 from intelmq.lib.harmonization import IPAddress
-from intelmq.lib.message import Event
 
 COLUMNS = {
     "line": "__IGNORE__",
@@ -43,7 +42,7 @@ class CleanMXVirusParserBot(Bot):
         raw_report = utils.base64_decode(report.get("raw"))
 
         for row in csv.DictReader(io.StringIO(raw_report)):
-            event = Event(report)
+            event = self.new_event(report)
 
             for key, value in row.items():
                 if not value:

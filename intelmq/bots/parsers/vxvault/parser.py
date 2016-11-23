@@ -4,7 +4,6 @@ from urllib.parse import urlparse
 from intelmq.lib import utils
 from intelmq.lib.bot import ParserBot
 from intelmq.lib.harmonization import IPAddress
-from intelmq.lib.message import Event
 
 
 class VXVaultParserBot(ParserBot):
@@ -28,7 +27,7 @@ class VXVaultParserBot(ParserBot):
         hostname = url_object.hostname
         port = url_object.port
 
-        event = Event(report)
+        event = self.new_event(report)
 
         if IPAddress.is_valid(hostname):
             event.add("source.ip", hostname)

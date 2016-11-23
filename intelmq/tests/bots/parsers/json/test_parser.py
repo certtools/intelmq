@@ -5,7 +5,6 @@ import unittest
 import intelmq.lib.test as test
 from intelmq.bots.parsers.json.parser import JSONParserBot
 
-
 EXAMPLE_REPORT = {"feed.name": "Test",
                   "raw": "eyJmZWVkLm5hbWUiOiAiVGVzdCBmZWVkIiwgInJhdyI6ICJabTl2WW1GeUNnPT0iLCAiX190eXBl"
                   "IjogIkV2ZW50IiwgInRpbWUub2JzZXJ2YXRpb24iOiAiMjAxNS0wMS0wMVQwMDowMDowMCswMDow"
@@ -37,5 +36,5 @@ class TestJSONParserBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(0, EXAMPLE_EVENT)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

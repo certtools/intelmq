@@ -8,7 +8,6 @@ import json
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
 from intelmq.lib.exceptions import InvalidValue
-from intelmq.lib.message import Event
 
 __all__ = ['FraunhoferDGAParserBot']
 
@@ -22,7 +21,7 @@ class FraunhoferDGAParserBot(Bot):
         # add all lists together, only one loop needed
         for row in sum(dict_report.values(), []):
 
-            event = Event(report)
+            event = self.new_event(report)
 
             event.add('classification.type', 'c&c')
             try:

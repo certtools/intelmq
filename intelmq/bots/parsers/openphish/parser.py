@@ -2,7 +2,6 @@
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.message import Event
 
 
 class OpenPhishParserBot(Bot):
@@ -18,7 +17,7 @@ class OpenPhishParserBot(Bot):
             if row == "":
                 continue
 
-            event = Event(report)
+            event = self.new_event(report)
 
             event.add('classification.type', 'phishing')
             event.add('source.url', row)

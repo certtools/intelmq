@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import os
+import pprint
 import unittest
 
 import intelmq.lib.test as test
 import intelmq.lib.utils as utils
-import pprint
-
 from intelmq.bots.parsers.shadowserver.parser import ShadowserverParserBot
 
 with open(os.path.join(os.path.dirname(__file__), 'xdmcp.csv')) as handle:
@@ -203,5 +202,5 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
             self.assertMessageEqual(i, EVENT)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

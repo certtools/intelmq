@@ -17,7 +17,8 @@ class JSONParserBot(Bot):
     def process(self):
         report = self.receive_message()
 
-        event = MessageFactory.unserialize(base64_decode(report['raw']))
+        event = MessageFactory.unserialize(base64_decode(report['raw']),
+                                           harmonization=self.harmonization)
 
         self.send_message(event)
         self.acknowledge_message()

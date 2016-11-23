@@ -17,8 +17,6 @@ https://tools.ietf.org/html/rfc3849
 https://tools.ietf.org/html/rfc4291
 https://tools.ietf.org/html/rfc5737
 https://en.wikipedia.org/wiki/IPv4
-
-TODO: Extend for example domains
 """
 
 import ipaddress

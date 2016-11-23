@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from intelmq.lib.bot import Bot
-
 import redis
+
+from intelmq.lib.bot import Bot
 
 
 class RedisOutputBot(Bot):

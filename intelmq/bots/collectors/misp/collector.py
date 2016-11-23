@@ -13,15 +13,21 @@ Parameters:
 import json
 from urllib.parse import urljoin
 
-from pymisp import PyMISP
-
 from intelmq.lib.bot import CollectorBot
-from intelmq.lib.message import Report
+
+try:
+    from pymisp import PyMISP
+except ImportError:
+    PyMISP = None
 
 
 class MISPCollectorBot(CollectorBot):
 
     def init(self):
+        if PyMISP is None:
+            self.logger.error('Could not import pymisp. Please install it.')
+            self.stop()
+
         # Initialise MISP connection
         self.misp = PyMISP(self.parameters.misp_url,
                            self.parameters.misp_key,
@@ -47,7 +53,7 @@ class MISPCollectorBot(CollectorBot):
                 misp_event = e['Event']
 
                 # Send the results to the parser
-                report = Report()
+                report = self.new_report()
                 report.add('raw', json.dumps(misp_event, sort_keys=True))
                 report.add('feed.url', self.parameters.misp_url)
                 self.send_message(report)

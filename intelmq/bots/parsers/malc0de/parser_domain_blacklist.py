@@ -2,7 +2,6 @@
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.message import Event
 
 
 class Malc0deDomainBlacklistParserBot(Bot):
@@ -18,7 +17,7 @@ class Malc0deDomainBlacklistParserBot(Bot):
             if row == "" or row[:2] == "//":
                 continue
 
-            event = Event(report)
+            event = self.new_event(report)
 
             event.add('classification.type', 'malware')
             event.add('source.fqdn', row.split(" ")[1])

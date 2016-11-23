@@ -3,7 +3,6 @@ from datetime import datetime
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.message import Event
 
 
 class OpenBLParserBot(Bot):
@@ -20,7 +19,7 @@ class OpenBLParserBot(Bot):
                 continue
 
             splitted_row = row.split()
-            event = Event(report)
+            event = self.new_event(report)
 
             columns = ["source.ip", "time.source"]
 

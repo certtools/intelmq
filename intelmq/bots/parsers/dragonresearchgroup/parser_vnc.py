@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from intelmq.lib.bot import ParserBot
-from intelmq.lib.message import Event
 
 
 class DragonResearchGroupVNCParserBot(ParserBot):
@@ -11,7 +10,7 @@ class DragonResearchGroupVNCParserBot(ParserBot):
             self.tempdata.append(line)
         else:
             splitted_row = line.split('|')
-            event = Event(report)
+            event = self.new_event(report)
 
             columns = ["source.asn", "source.as_name",
                        "source.ip", "time.source"]

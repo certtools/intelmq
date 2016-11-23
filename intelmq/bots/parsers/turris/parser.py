@@ -4,7 +4,6 @@ import io
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.message import Event
 
 
 class TurrisGreylistParserBot(Bot):
@@ -27,7 +26,7 @@ class TurrisGreylistParserBot(Bot):
                 headers = False
                 continue
 
-            event = Event(report)
+            event = self.new_event(report)
 
             for key, value in zip(columns, row):
                 if key == "__IGNORE__":

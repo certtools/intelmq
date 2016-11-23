@@ -3,11 +3,11 @@
 import json
 import unittest
 
+import redis
+
 import intelmq.lib.test as test
 import intelmq.lib.utils as utils
 from intelmq.bots.outputs.redis.output import RedisOutputBot
-
-import redis
 
 EXAMPLE_EVENT = {"classification.type": "malware",
                  "destination.port": 9796,
@@ -46,6 +46,7 @@ class TestRedisOutputBot(test.BotTestCase, unittest.TestCase):
                          "redis_password": "none",
                          "redis_timeout": "50000"}
 
+    @test.skip_redis()
     def test_event(self):
         """ Setup Redis connection """
         redis_ip = self.sysconfig['redis_server_ip']
@@ -70,5 +71,5 @@ class TestRedisOutputBot(test.BotTestCase, unittest.TestCase):
         self.assertDictEqual(EXAMPLE_EVENT, event_dict)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

@@ -8,11 +8,8 @@ import json
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.message import Event
 
 __all__ = ['N6StompParserBot']
-# FIXME: setting the identifier could be done in the modify.conf file.
-# However, it was easier here. TBD.
 mapping = dict()
 mapping['amplifier']    = {"taxonomy": "Vulnerable",
                            "type": "vulnerable service",
@@ -79,7 +76,7 @@ class N6StompParserBot(Bot):
             return
 
         # try to parse a JSON object
-        event = Event(report)
+        event = self.new_event(report)
         dict_report = json.loads(peek)
 
         event.add("raw", report.get("raw"), sanitize=False)
@@ -139,12 +136,12 @@ class N6StompParserBot(Bot):
                              "neither an address nor an fqdn given")
         elif ("fqdn" in dict_report):
             # need to handle domain based data later (for example via gethostbyname bot)
-            ev = Event(event)
+            ev = self.new_event(event)
             self.send_message(ev)
         else:
             # split up the event into multiple ones, one for each address
             for addr in dict_report['address']:
-                ev = Event(event)
+                ev = self.new_event(event)
                 ev.add("source.ip", addr["ip"])
                 if ("asn" in addr):
                     ev.add("source.asn", addr["asn"])

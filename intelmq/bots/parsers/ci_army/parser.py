@@ -2,7 +2,6 @@
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.message import Event
 
 
 class CIArmyParserBot(Bot):
@@ -17,7 +16,7 @@ class CIArmyParserBot(Bot):
             if row.startswith('#') or row == "":
                 continue
 
-            event = Event(report)
+            event = self.new_event(report)
 
             event.add('source.ip', row)
             event.add('classification.type', 'blacklist')

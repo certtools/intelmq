@@ -3,7 +3,6 @@
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
 from intelmq.lib.harmonization import IPAddress
-from intelmq.lib.message import Event
 
 
 class URLVirHostsParserBot(Bot):
@@ -18,7 +17,7 @@ class URLVirHostsParserBot(Bot):
             if row == "" or row.startswith("#"):
                 continue
 
-            event = Event(report)
+            event = self.new_event(report)
 
             if IPAddress.is_valid(row):
                 event.add('source.ip', row)

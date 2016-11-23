@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import socket
+import sys
 
 import intelmq.lib.harmonization
 from intelmq.lib.bot import Bot
