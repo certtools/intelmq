@@ -2,17 +2,19 @@ from collections import defaultdict
 
 from intelmq.bots.experts.certbund_contact.eventjson import \
      get_certbund_contacts, set_certbund_directives
+import intelmq.bots.experts.certbund_contact.annotations as annotations
 
 
 class Contact:
 
     def __init__(self, automation, email, organisation, sector=None,
-                 matched_fields=()):
+                 matched_fields=(), annotations=()):
         self.email = email
         self.organisation = organisation
         self.sector = sector
         self.matched_fields = matched_fields
         self.automation = automation
+        self.annotations = annotations
 
     def __repr__(self):
         return ("Contact(automation=%r, email=%r, organisation=%r)"
@@ -24,7 +26,10 @@ class Contact:
                    email=jsondict["email"],
                    organisation=jsondict["organisation"],
                    sector=jsondict["sector"],
-                   matched_fields=jsondict["matched_fields"])
+                   matched_fields=jsondict["matched_fields"],
+                   annotations=map(annotations.from_json,
+                                   jsondict["annotations"]))
+
 
 
 class Directive:
