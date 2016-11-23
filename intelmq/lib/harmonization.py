@@ -316,7 +316,7 @@ class FQDN(GenericType):
         if URL().is_valid(value):
             return False
 
-        if encodings.idna.ToASCII(value).decode() != value:
+        if value.encode('idna').decode() != value:
             return False
 
         """
@@ -332,7 +332,7 @@ class FQDN(GenericType):
 
     @staticmethod
     def sanitize(value):
-        return encodings.idna.ToASCII(value).decode().rstrip('.').lower()
+        return value.encode('idna').decode().rstrip('.').lower()
 
     @staticmethod
     def to_ip(value):
