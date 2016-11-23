@@ -204,6 +204,7 @@ class TestHarmonization(unittest.TestCase):
         self.assertFalse(harmonization.FQDN.is_valid('ex-am.ple.example.'))
         self.assertFalse(harmonization.FQDN.is_valid('exAmple.com'))
         self.assertFalse(harmonization.FQDN.is_valid('ö1.at'))
+        self.assertFalse(harmonization.FQDN.is_valid('n/a'))
 
     def test_fqdn_sanitize(self):
         """ Test FQDN.sanitize with valid arguments. """

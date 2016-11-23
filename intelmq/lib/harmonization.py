@@ -25,7 +25,6 @@ import urllib.parse as parse
 
 import dateutil.parser
 import dns.resolver
-import encodings.idna
 import pytz
 
 import intelmq.lib.utils as utils
@@ -313,7 +312,9 @@ class FQDN(GenericType):
         if IPAddress().is_valid(value):
             return False
 
-        if URL().is_valid(value):
+        url = parse.urlsplit(value)
+        if (url.scheme != '' or url.netloc != '' or url.query != '' or url.fragment != '' or
+           url.path.find('/') >= 0):
             return False
 
         if value.encode('idna').decode() != value:
