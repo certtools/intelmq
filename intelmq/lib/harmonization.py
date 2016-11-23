@@ -309,6 +309,9 @@ class FQDN(GenericType):
         if not GenericType().is_valid(value):
             return False
 
+        if value.rstrip('.') != value or value != value.lower():
+            return False
+
         if IPAddress().is_valid(value):
             return False
 
@@ -320,20 +323,13 @@ class FQDN(GenericType):
         if value.encode('idna').decode() != value:
             return False
 
-        """
-        # "localhost" is a valid hostname
-        if len(value.split('.')) <= 1:
-            return False
-        """
-
-        if value[-1] == '.' or value != value.lower():
-            return False
-
         return True
 
     @staticmethod
     def sanitize(value):
-        return value.encode('idna').decode().rstrip('.').lower()
+        value = value.rstrip('.')
+        if value:
+            return value.encode('idna').decode().lower()
 
     @staticmethod
     def to_ip(value):
