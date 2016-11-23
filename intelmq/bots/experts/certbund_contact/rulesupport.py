@@ -34,17 +34,22 @@ class Contact:
 
 class Directive:
 
-    def __init__(self, medium=None, recipient_address=None, template_name=None,
+    def __init__(self, medium=None, recipient_address=None,
+                 aggregate_fields=(), aggregate_key=(), template_name=None,
                  event_data_format=None, notification_interval=None):
         self.medium = medium
         self.recipient_address = recipient_address
         self.template_name = template_name
         self.event_data_format = event_data_format
         self.notification_interval = notification_interval
+        self.aggregate_fields = set(aggregate_fields)
+        self.aggregate_key = dict(aggregate_key)
 
     def __repr__(self):
         return ("Directive(medium={medium},"
                 " recipient_address={recipient_address},"
+                " aggregate_fields={aggregate_fields},"
+                " aggregate_key={aggregate_key},"
                 " template_name={template_name},"
                 " event_data_format={event_data_format},"
                 " notification_interval={notification_interval}"
@@ -53,6 +58,8 @@ class Directive:
     def __eq__(self, other):
         return (self.medium == other.medium
                 and self.recipient_address == other.recipient_address
+                and self.aggregate_fields == other.aggregate_fields
+                and self.aggregate_key == other.aggregate_key
                 and self.template_name == other.template_name
                 and self.event_data_format == other.event_data_format
                 and self.notification_interval == other.notification_interval)
@@ -60,6 +67,8 @@ class Directive:
     def __hash__(self):
         return hash((self.medium,
                      self.recipient_address,
+                     self.aggregate_fields,
+                     self.aggregate_key,
                      self.template_name,
                      self.event_data_format,
                      self.notification_interval))
@@ -69,12 +78,20 @@ class Directive:
         return cls(recipient_address=contact.email, medium="email", **kw)
 
     def as_dict_for_event(self, event):
+        aggregate_identifier = self.aggregate_key.copy()
+        for field in self.aggregate_fields:
+            aggregate_identifier[field] = event.get(field)
+
         return dict(medium=self.medium,
                     recipient_address=self.recipient_address,
                     template_name=self.template_name,
                     event_data_format=self.event_data_format,
-                    notification_interval=self.notification_interval)
+                    notification_interval=self.notification_interval,
+                    aggregate_identifier=aggregate_identifier)
 
+
+    def aggregate_by_field(self, fieldname):
+        self.aggregate_fields.add(fieldname)
 
     def update(self, directive):
         for attr in ["medium", "recipient_address", "template_name",
@@ -82,6 +99,8 @@ class Directive:
             new = getattr(directive, attr)
             if new is not None:
                 setattr(self, attr, new)
+        self.aggregate_fields.update(directive.aggregate_fields)
+        self.aggregate_key.update(directive.aggregate_key)
 
 
 class Context:
