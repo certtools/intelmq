@@ -90,7 +90,10 @@ def lookup_contacts(cur, table_extension, asn, ip, fqdn):
 
     SELECT DISTINCT ON (c.email, o.id)
            c.email as email, o.name as organisation, s.name as sector,
-           m.reasons as reasons
+           m.reasons as reasons,
+           (SELECT json_agg(annotation)
+              FROM organisation_annotations ann
+             WHERE ann.organisation_id = o.id) as annotations
       FROM grouped_matches as m
       JOIN organisation{0} o ON o.id = m.organisation_id
       JOIN role{0} AS r ON r.organisation_id = o.id

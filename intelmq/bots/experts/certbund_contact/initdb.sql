@@ -48,6 +48,18 @@ CREATE TABLE organisation (
 );
 
 
+CREATE TABLE organisation_annotations (
+    id SERIAL PRIMARY KEY,
+    organisation_id INTEGER NOT NULL,
+    annotation JSON NOT NULL,
+
+    FOREIGN KEY (organisation_id) REFERENCES organisation(id)
+);
+
+CREATE INDEX organisation_annotations_organisation_idx
+          ON organisation_annotations (organisation_id);
+
+
 CREATE TABLE organisation_automatic (
     LIKE automatic_templ INCLUDING ALL,
     LIKE organisation INCLUDING ALL,

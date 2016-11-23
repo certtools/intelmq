@@ -9,6 +9,12 @@ from intelmq.bots.experts.certbund_contact.eventjson import \
      set_certbund_contacts
 
 
+def maybe_parse_json(string_or_json):
+    if isinstance(string_or_json, str):
+        return json.loads(string_or_json)
+    return string_or_json
+
+
 class CERTBundKontaktExpertBot(Bot):
 
     def init(self):
@@ -81,8 +87,11 @@ class CERTBundKontaktExpertBot(Bot):
             return None
 
         return [dict(email=email, organisation=organisation, sector=sector,
-                     matched_fields=matched, automation=automation)
-                for (email, organisation, sector, matched, automation)
+                     matched_fields=matched,
+                     annotations=maybe_parse_json(annotations),
+                     automation=automation)
+                for (email, organisation, sector, matched, annotations,
+                     automation)
                 in raw_result]
 
 
