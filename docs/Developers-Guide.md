@@ -354,6 +354,9 @@ class ExampleParserBot(Bot):
 
         self.send_message(event)
         self.acknowledge_message()
+
+
+BOT = ExampleParserBot
 ```
 
 There are some names with special meaning. These can be used i.e. called:
@@ -472,6 +475,8 @@ class MyParserBot(ParserBot):
         """
         return '\n'.join(self.tempdata + [line])
 
+
+BOT = MyParserBot
 ```
 
 #### parse_line
@@ -521,7 +526,7 @@ class TestExampleParserBot(test.BotTestCase, unittest.TestCase):  # adjust test 
         self.assertMessageEqual(0, EXAMPLE_REPORT)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()
 ```
 
