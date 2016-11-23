@@ -22,9 +22,9 @@ class NothinkDNSAttackParserBot(ParserBot):
             event.add('source.ip', line[1])
             event.add('source.asn', line[2])
             event.add('source.as_name', line[3])
-            if FQDN.is_valid(line[4]):
+            if line[4] not in ['.', 'n/a', 'bka']:
                 event.add('source.reverse_dns', line[4])
-            if len(line[5]) == 2:
+            if line[5] != 'UNK':
                 event.add('source.geolocation.cc', line[5])
             event.add('classification.type', 'ddos')
             event.add('event_description.text', 'On time.source the source.ip was seen'
