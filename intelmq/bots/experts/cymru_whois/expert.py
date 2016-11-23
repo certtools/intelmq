@@ -18,7 +18,8 @@ class CymruExpertBot(Bot):
                            self.parameters.redis_cache_port,
                            self.parameters.redis_cache_db,
                            self.parameters.redis_cache_ttl,
-                           self.parameters.get("redis_cache_password", None)
+                           getattr(self.parameters, "redis_cache_password",
+                                   None)
                            )
 
     def process(self):
