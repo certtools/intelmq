@@ -17,14 +17,18 @@ class BluelivCrimeserverCollectorBot(CollectorBot):
             self.logger.error('Could not import sdk.blueliv_api.BluelivAPI. Please install it.')
             self.stop()
 
+        if hasattr(self.parameters, 'http_ssl_proxy'):
+            self.logger.warning("Parameter 'http_ssl_proxy' is deprecated and will be removed in "
+                                "version 1.0!")
+            if not self.parameters.https_proxy:
+                self.parameters.https_proxy = self.parameters.http_ssl_proxy
+
     def process(self):
         self.logger.debug("Downloading report through API.")
-        http_proxy = getattr(self.parameters, 'http_proxy', None)
-        https_proxy = getattr(self.parameters, 'https_proxy', None)
         proxy = None
-        if http_proxy and https_proxy:
-            proxy = {'http': http_proxy,
-                     'https': https_proxy}
+        if self.parameters.http_proxy and self.parameters.https_proxy:
+            proxy = {'http': self.parameters.http_proxy,
+                     'https': self.parameters.https_proxy}
         api = BluelivAPI(base_url='https://freeapi.blueliv.com',
                          token=self.parameters.api_key,
                          log_level=logging.INFO,

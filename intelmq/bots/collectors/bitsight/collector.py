@@ -8,15 +8,19 @@ from intelmq.lib.bot import CollectorBot
 class BitsightCollectorBot(CollectorBot):
 
     def init(self):
+        if hasattr(self.parameters, 'http_ssl_proxy'):
+            self.logger.warning("Parameter 'http_ssl_proxy' is deprecated and will be removed in "
+                                "version 1.0!")
+            if not self.parameters.https_proxy:
+                self.parameters.https_proxy = self.parameters.http_ssl_proxy
+
         self.logger.info("Connecting to BitSightTech stream server")
-        http_proxy = self.parameters.http_proxy
-        https_proxy = self.parameters.https_proxy
         self.conn = pycurl.Curl()
-        if http_proxy:
-            self.conn.setopt(pycurl.PROXY, str(http_proxy))
-        if https_proxy:
-            self.conn.setopt(pycurl.PROXY, str(https_proxy))
-        self.conn.setopt(pycurl.URL, str(self.parameters.http_url))
+        if self.parameters.http_proxy:
+            self.conn.setopt(pycurl.PROXY, self.parameters.http_proxy)
+        if self.parameters.https_proxy:
+            self.conn.setopt(pycurl.PROXY, self.parameters.https_proxy)
+        self.conn.setopt(pycurl.URL, self.parameters.http_url)
         self.conn.setopt(pycurl.WRITEFUNCTION, self.on_receive)
 
     def process(self):

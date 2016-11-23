@@ -45,9 +45,6 @@
                 "rate_limit": 60,
                 "subject_regex": "<subject>",
                 "url_regex": "http://",
-                "http_proxy": null,
-                "https_proxy": null,
-                "http_user_agent": "",
                 "ssl_client_certificate": "<path to client SSL certificate>"
             }
         },
@@ -60,9 +57,6 @@
                 "http_url": "<insert url of feed>",
                 "http_username": "",
                 "http_password": "",
-                "http_proxy": null,
-                "https_proxy": null,
-                "http_user_agent": "",
                 "ssl_client_certificate": "<path to client SSL certificate>",
                 "rate_limit": 3600
             }
@@ -102,9 +96,6 @@
                 "user": "intelmq",
                 "http_username": "",
                 "http_password": "",
-                "http_proxy": null,
-                "https_proxy": null,
-                "http_user_agent": "",
                 "ssl_client_certificate": "<path to client SSL certificate>"
             }
         },
