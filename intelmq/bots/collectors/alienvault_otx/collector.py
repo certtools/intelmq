@@ -11,7 +11,7 @@ class AlienVaultOTXCollectorBot(CollectorBot):
 
     def process(self):
         self.logger.info("Downloading report through API")
-        https_proxy = getattr(self.parameters, 'http_ssl_proxy', None)
+        https_proxy = getattr(self.parameters, 'https_proxy', None)
         otx = OTXv2(self.parameters.api_key, proxy=https_proxy)
         pulses = otx.getall()
         self.logger.info("Report downloaded.")

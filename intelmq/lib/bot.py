@@ -582,6 +582,28 @@ class CollectorBot(Bot):
     def new_report(self):
         return libmessage.Report()
 
+    def set_request_parameters(self):
+        self.http_header = getattr(self.parameters, 'http_header', {})
+        self.http_verify_cert = getattr(self.parameters, 'http_verify_cert',
+                                        True)
+        self.ssl_client_cert = getattr(self.parameters,
+                                       'ssl_client_certificate', None)
+
+        if hasattr(self.parameters, 'http_username') and hasattr(
+                self.parameters, 'http_password'):
+            self.auth = (self.parameters.http_username,
+                         self.parameters.http_password)
+        else:
+            self.auth = None
+
+        if self.parameters.http_proxy and self.parameters.https_proxy:
+            self.proxy = {'http': self.parameters.http_proxy,
+                          'https': self.parameters.https_proxy}
+        else:
+            self.proxy = None
+
+        self.http_header['User-agent'] = self.parameters.http_user_agent
+
 
 class Parameters(object):
     pass

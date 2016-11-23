@@ -128,6 +128,7 @@ Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
 
 Parser: AlienVault (`intelmq.bots.parsers.alienvault.parser`)
 
+
 ### OTX
 
 Status: Unknown

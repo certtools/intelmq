@@ -20,7 +20,7 @@ class BluelivCrimeserverCollectorBot(CollectorBot):
     def process(self):
         self.logger.debug("Downloading report through API.")
         http_proxy = getattr(self.parameters, 'http_proxy', None)
-        https_proxy = getattr(self.parameters, 'http_ssl_proxy', None)
+        https_proxy = getattr(self.parameters, 'https_proxy', None)
         proxy = None
         if http_proxy and https_proxy:
             proxy = {'http': http_proxy,

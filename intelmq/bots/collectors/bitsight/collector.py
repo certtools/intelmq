@@ -10,7 +10,7 @@ class BitsightCollectorBot(CollectorBot):
     def init(self):
         self.logger.info("Connecting to BitSightTech stream server")
         http_proxy = self.parameters.http_proxy
-        https_proxy = self.parameters.http_ssl_proxy
+        https_proxy = self.parameters.https_proxy
         self.conn = pycurl.Curl()
         if http_proxy:
             self.conn.setopt(pycurl.PROXY, str(http_proxy))
