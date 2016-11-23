@@ -21,4 +21,4 @@ class FileOutputBot(Bot):
         self.acknowledge_message()
 
 
-BOT = FileBot
+BOT = FileOutputBot

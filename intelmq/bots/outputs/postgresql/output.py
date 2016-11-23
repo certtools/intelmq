@@ -76,4 +76,4 @@ class PostgreSQLOutputBot(Bot):
             self.acknowledge_message()
 
 
-BOT = PostgreSQLBot
+BOT = PostgreSQLOutputBot
