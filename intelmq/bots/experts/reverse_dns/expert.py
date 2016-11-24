@@ -64,9 +64,10 @@ class ReverseDnsExpertBot(Bot):
                         result = None
                         raise ValueError
                 except (dns.exception.DNSException, ValueError) as e:
-                    if isinstance(e, dns.resolver.NXDOMAIN):
-                        self.cache.set(cache_key, DNS_EXCEPTION_VALUE, ttl=60)
-                        continue
+                    # Set longer TTL for 'DNS query name does not exist' error
+                    ttl = 3600 if isinstance(e, dns.resolver.NXDOMAIN) else 60
+                    self.cache.set(cache_key, DNS_EXCEPTION_VALUE, ttl)
+
                 else:
                     ttl = datetime.fromtimestamp(expiration) - datetime.now()
                     self.cache.set(cache_key, str(result),
