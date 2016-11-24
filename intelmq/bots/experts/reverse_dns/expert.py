@@ -12,6 +12,7 @@ from intelmq.lib.harmonization import IPAddress
 
 MINIMUM_BGP_PREFIX_IPV4 = 24
 MINIMUM_BGP_PREFIX_IPV6 = 128
+DNS_EXCEPTION_VALUE = "__dns-exception"
 
 
 class ReverseDnsExpertBot(Bot):
@@ -48,7 +49,9 @@ class ReverseDnsExpertBot(Bot):
             cachevalue = self.cache.get(cache_key)
 
             result = None
-            if cachevalue:
+            if cachevalue == DNS_EXCEPTION_VALUE:
+                continue
+            elif cachevalue:
                 result = cachevalue
             else:
                 rev_name = reversename.from_address(ip)
@@ -62,6 +65,7 @@ class ReverseDnsExpertBot(Bot):
                         raise ValueError
                 except (dns.exception.DNSException, ValueError) as e:
                     if isinstance(e, dns.resolver.NXDOMAIN):
+                        self.cache.set(cache_key, DNS_EXCEPTION_VALUE, ttl=60)
                         continue
                 else:
                     ttl = datetime.fromtimestamp(expiration) - datetime.now()
