@@ -169,12 +169,12 @@ class TestHarmonization(unittest.TestCase):
             '2015-08-31T08:16:10+00:00'))
         self.assertTrue(harmonization.DateTime.is_valid(
             '2015-08-31T08:16:10.1234+00:00'))
-        self.assertTrue(harmonization.DateTime.is_valid(
-            '2015-08-31T08:16:10+05:00'))
-        self.assertTrue(harmonization.DateTime.is_valid(
-            '2015-08-31T08:16:10.1234+05:00'))
 
     def test_datetime_invalid(self):
+        self.assertFalse(harmonization.DateTime.is_valid(
+            '2015-08-31T08:16:10+05:00'))
+        self.assertFalse(harmonization.DateTime.is_valid(
+            '2015-08-31T08:16:10.1234+05:00'))
         self.assertFalse(harmonization.DateTime.is_valid(
             '2015-08-31T36:16:10+00:00'
         ))
