@@ -150,3 +150,12 @@ def most_specific_contacts(contacts):
     return list(get_preferred_by_source("fqdn")
                 | (get_preferred_by_source("ip")
                    or get_preferred_by_source("asn")))
+
+
+def notification_inhibited(context):
+    """Return whether any inhibition annotation in the contacts matches event.
+    """
+    return any(annotation.matches(context)
+               for contact in context.contacts
+               for annotation in contact.annotations
+               if isinstance(annotation, annotations.Inhibition))

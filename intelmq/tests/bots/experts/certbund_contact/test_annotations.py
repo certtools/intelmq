@@ -26,6 +26,33 @@ class TestAnnotations(unittest.TestCase):
         with self.assertRaises(AnnotationError):
             from_json(json.loads('{"type": "tag", "value": 123}'))
 
+    def test_inhibition(self):
+        tag = from_json(json.loads('{"type": "inhibition"'
+                                   ',"condition":'
+                                   '["eq"'
+                                   ', ["event_field"'
+                                   '  , "classification.identifier"'
+                                   '  ]'
+                                   ', "openportmapper"]'
+                                   '}'))
+        self.assertTrue(tag.matches({"classification.identifier":
+                                     "openportmapper"}))
+        self.assertFalse(tag.matches({"classification.identifier":
+                                      "openmongodb"}))
+
+    def test_inhibition_unknown_function(self):
+        with self.assertRaises(AnnotationError):
+            from_json(json.loads('{"type": "inhibition"'
+                                 ',"condition": ["some_function", 1, "value"]'
+                                 '}'))
+
+    def test_inhibition_eq_missing_parameters(self):
+        with self.assertRaises(AnnotationError):
+            from_json(json.loads('{"type": "inhibition"'
+                                   ',"condition":'
+                                 '["eq", "openportmapper"]'
+                                 '}'))
+
 
 
 if __name__ == "__main__":
