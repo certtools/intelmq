@@ -198,7 +198,7 @@ def main():
         else:
             if not answer:
                 continue
-        if answer not in available_opts:
+        if len(answer) == 0 or answer[0] not in ['s', 'r', 'e', 'a', 'd', 'q']:
             print('Action not allowed.')
             continue
         if any([answer[0] == char for char in AVAILABLE_IDS]) and len(answer) > 1:
