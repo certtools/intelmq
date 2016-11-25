@@ -48,7 +48,7 @@ CREATE TABLE organisation (
 );
 
 
-CREATE TABLE organisation_annotations (
+CREATE TABLE organisation_annotation (
     id SERIAL PRIMARY KEY,
     organisation_id INTEGER NOT NULL,
     annotation JSON NOT NULL,
@@ -56,8 +56,8 @@ CREATE TABLE organisation_annotations (
     FOREIGN KEY (organisation_id) REFERENCES organisation(id)
 );
 
-CREATE INDEX organisation_annotations_organisation_idx
-          ON organisation_annotations (organisation_id);
+CREATE INDEX organisation_annotation_organisation_idx
+          ON organisation_annotation (organisation_id);
 
 
 CREATE TABLE organisation_automatic (
