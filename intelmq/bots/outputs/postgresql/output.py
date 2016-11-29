@@ -68,6 +68,11 @@ class PostgreSQLOutputBot(Bot):
                 self.con.rollback()
                 self.logger.exception('Executed rollback command '
                                       'after failed query execution.')
+            except psycopg2.OperationalError:
+                self.con.rollback()
+                self.logger.exception('Executed rollback command '
+                                      'after failed query execution.')
+                self.init()
             except Exception:
                 self.logger.exception('Cursor has been closed, connecting '
                                       'again.')
