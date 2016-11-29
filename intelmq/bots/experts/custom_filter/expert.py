@@ -5,7 +5,9 @@ from intelmq.lib.bot import Bot
 import json
 
 class CustomFilterExpertBot(Bot):
-    """ Filter bot has filters. Filters have conditions. """
+    """ Filter bot has filters. Filters have conditions. 
+    If the value conforms with any part of the condition, it is passed.    
+    """
 
     filters = {}
 
@@ -22,8 +24,9 @@ class CustomFilterExpertBot(Bot):
                     break
                 else:
                     passed = False
-                    for value in filter["conditions"][condition]: # XX nefunguje wildcard *@isp.cz
-                        if value == message[condition]:
+                    for value in filter["conditions"][condition]:
+                        if (type(value) == "list" and message[condition] in value) or value == message[condition]: # we should add wildcard *@isp.cz
+                        #if value == message[condition]:
                             passed = True
                             break
                     if passed == False:
@@ -47,11 +50,12 @@ class CustomFilterExpertBot(Bot):
 
 
     def process(self):
-        message = self.receive_message()
+        message = self.receive_message()        
         if message and self.meet_condition(message):
             self.send_message(message)
+            self.logger.error("PASSING message: " + repr(message) + ".") # .debug not displayed until an .error is called
         else:
-            self.logger.debug("Dropping message: " + repr(message))
+            self.logger.error("Dropping message: " + repr(message) + ".")
         self.acknowledge_message()
 
 if __name__ == "__main__":
