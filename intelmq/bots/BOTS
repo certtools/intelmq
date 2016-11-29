@@ -45,7 +45,7 @@
                 "rate_limit": 60,
                 "subject_regex": "<subject>",
                 "url_regex": "http://",
-                "ssl_client_certificate": "<path to client SSL certificate>"
+                "ssl_client_certificate": null
             }
         },
         "Generic URL Fetcher": {
@@ -55,9 +55,9 @@
                 "feed": "",
                 "provider": "",
                 "http_url": "<insert url of feed>",
-                "http_username": "",
-                "http_password": "",
-                "ssl_client_certificate": "<path to client SSL certificate>",
+                "http_username": null,
+                "http_password": null,
+                "ssl_client_certificate": null,
                 "rate_limit": 3600
             }
         },
@@ -94,9 +94,9 @@
                 "uri": "http://localhost/rt/REST/1.0",
                 "url_regex": "https://dl.shadowserver.org/[a-zA-Z0-9?_-]*",
                 "user": "intelmq",
-                "http_username": "",
-                "http_password": "",
-                "ssl_client_certificate": "<path to client SSL certificate>"
+                "http_username": null,
+                "http_password": null,
+                "ssl_client_certificate": null
             }
         },
         "XMPP collector": {
