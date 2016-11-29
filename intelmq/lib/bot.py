@@ -465,6 +465,14 @@ class ParserBot(Bot):
         for line in csv.reader(io.StringIO(raw_report)):
             yield line
 
+    def parse_csv_dict(self, report):
+        """
+        A basic CSV Dictionary parser.
+        """
+        raw_report = utils.base64_decode(report.get("raw"))
+        for line in csv.DictReader(io.StringIO(raw_report)):
+            yield line
+
     def parse(self, report):
         """
         A generator yielding the single elements of the data.
