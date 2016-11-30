@@ -14,6 +14,7 @@ TAXONOMY = {
     "malware": "Malicious Code",
     "botnet drone": "Malicious Code",
     "ransomware": "Malicious Code",
+    "dga domain": "Malicious Code",
     "malware configuration": "Malicious Code",
     "c&c": "Malicious Code",
     "exploit": "Intrusion Attempts",

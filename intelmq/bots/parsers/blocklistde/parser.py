@@ -4,7 +4,6 @@ import sys
 from urllib.parse import urlparse
 
 from intelmq.lib.bot import ParserBot
-from intelmq.lib.message import Event
 
 MAPPING = {
     "all.txt": {
@@ -75,7 +74,7 @@ class BlockListDEParserBot(ParserBot):
         path = urlparse(report['feed.url']).path
         filename = posixpath.basename(path)
 
-        event = Event(report)
+        event = self.new_event(report)
         event.add('source.ip', line)
         if filename in MAPPING:
             for key, value in MAPPING[filename].items():

@@ -110,7 +110,7 @@ By default, one collector, one parser and one output are started. The default co
 
 The configuration directory is `/opt/intelmq/etc/`, all files are JSON. By
 default, the installation method puts it's distributed configuration files into
-`etc/examples`, so it does not override your local configuration. Prior to the
+`etc/examples`, so it does not overwrite your local configuration. Prior to the
 first run, copy them to `etc`:
 
 ```bash
@@ -143,6 +143,7 @@ Small extract:
 * `logging_path`: If `logging_handler` is `file`. Defines for all system the logs folder that will be use by all bots and intelmqctl tool. Default value is: `/opt/intelmq/var/log/`
 * `logging_syslog`: If `logging_handler` is `syslog`. Either a list with hostname and UDP port of syslog service, e.g. `["localhost", 514]` or a device name, e.g. the default `"/var/log"`.
 
+We recommend logging_level WARNING for production environments and INFO if you want more details. In any case, monitor your free disk space.
 
 ## Startup Configuration
 
@@ -249,15 +250,15 @@ More examples can be found at `intelmq/etc/pipeline.conf` directory in IntelMQ r
 
 * **`rate_limit`** - time interval (in seconds) between messages processing. The value must be an `integer value`.
 
-* **`source_pipeline_host`** - broker IP or FQDN that the bot will use to connect and receive messages.
+* **`source_pipeline_host`** - broker IP, FQDN or Unix socket that the bot will use to connect and receive messages.
 
-* **`source_pipeline_port`** - broker port that the bot will use to connect and receive messages.
+* **`source_pipeline_port`** - broker port that the bot will use to connect and receive messages. Can be empty for Unix socket.
 
 * **`source_pipeline_db`** - broker database that the bot will use to connect and receive messages (requirement from redis broker).
 
-* **`destination_pipeline_host`** - broker IP or FQDN that the bot will use to connect and send messages.
+* **`destination_pipeline_host`** - broker IP, FQDN or Unix socket that the bot will use to connect and send messages. 
 
-* **`destination_pipeline_port`** - broker port that the bot will use to connect and send messages.
+* **`destination_pipeline_port`** - broker port that the bot will use to connect and send messages. Can be empty for Unix socket.
 
 * **`destination_pipeline_db`** - broker database that the bot will use to connect and send messages (requirement from redis broker).
 

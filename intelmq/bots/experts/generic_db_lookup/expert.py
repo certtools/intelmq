@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Generic Contact DB Lookup
+Generic DB Lookup
 """
 import sys
 
@@ -8,11 +8,12 @@ from intelmq.lib.bot import Bot
 
 try:
     import psycopg2
+    import psycopg2.extras
 except ImportError:
     psycopg2 = None
 
 
-class ContactDBLookupExpertBot(Bot):
+class GenericDBLookupExpertBot(Bot):
 
     def init(self):
         self.logger.debug("Connecting to database.")
@@ -34,35 +35,43 @@ class ContactDBLookupExpertBot(Bot):
                                         sslmode=self.parameters.sslmode,
                                         connect_timeout=connect_timeout,
                                         )
-            self.cur = self.con.cursor()
+            self.con.autocommit = True  # prevents deadlocks
+            self.cur = self.con.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
         except:
-            self.logger.exception('Failed to connect to database')
+            self.logger.exception('Failed to connect to database.')
             self.stop()
-        self.logger.info("Connected to PostgreSQL")
+        self.logger.info("Connected to PostgreSQL.")
 
-        self.query = ('SELECT "{column}" FROM "{table}" WHERE "{ascolumn}" = %s'
-                      ''.format(table=self.parameters.table, column=self.parameters.column,
-                                ascolumn=self.parameters.ascolumn))
+        self.replace = self.parameters.replace_fields
+        self.match = self.parameters.match_fields
+        query = 'SELECT "{replace}" FROM "{table}" WHERE ' + 'AND '.join(['"{}" = %s '] * len(self.match))
+        self.query = query.format(*self.match.values(),
+                                  table=self.parameters.table,
+                                  replace='", "'.join(self.replace.keys()))
 
     def process(self):
         event = self.receive_message()
 
-        if 'source.asn' not in event:
-            self.logger.warning('source.asn not present in event. Skipping event')
-            self.send_message(event)
-            self.acknowledge_message()
-            return
+        # Skip events with missing match-keys
+        for key in self.match.keys():
+            if key not in event:
+                self.logger.debug('%s not present in event. Skipping event.' % key)
+                self.send_message(event)
+                self.acknowledge_message()
+                return
 
-        if 'source.abuse_contact' in event and not self.parameters.override:
+        # Skip events with existing data and overwrite is not allowed
+        if all([key in event for key in self.replace.values()]) and not self.parameters.overwrite:
             self.send_message(event)
             self.acknowledge_message()
             return
 
         try:
             self.logger.debug('Executing %r.' % self.cur.mogrify(self.query,
-                                                                 (event['source.asn'], )))
-            self.cur.execute(self.query, (event['source.asn'], ))
+                                                                 [event[key] for key in self.match.keys()]))
+            self.cur.execute(self.query, [event[key] for key in self.match.keys()])
+            self.logger.debug('Done.')
         except (psycopg2.InterfaceError, psycopg2.InternalError,
                 psycopg2.OperationalError, AttributeError):
             self.logger.exception('Database connection problem, connecting again.')
@@ -71,20 +80,17 @@ class ContactDBLookupExpertBot(Bot):
             if self.cur.rowcount > 1:
                 raise ValueError('Lookup returned more then one result. Please inspect.')
             elif self.cur.rowcount == 1:
-                result = self.cur.fetchone()[0]
-                self.logger.debug('Changing `source.abuse_contact` from %r to %r.' % (event.get('source.abuse_contact'), result))
-
-                if 'source.abuse_contact' in event:
-                    event.change('source.abuse_contact', result)
-                else:
-                    event['source.abuse_contact'] = result
+                result = self.cur.fetchone()
+                for key, value in self.replace.items():
+                    event.add(value, result[key], force=True)
+                self.logger.debug('Applied.')
             else:
-                self.logger.debug('No contact found.')
+                self.logger.debug('No row found.')
 
             self.send_message(event)
             self.acknowledge_message()
 
 
 if __name__ == "__main__":
-    bot = ContactDBLookupExpertBot(sys.argv[1])
+    bot = GenericDBLookupExpertBot(sys.argv[1])
     bot.start()

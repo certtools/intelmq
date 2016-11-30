@@ -60,5 +60,5 @@ class TestDragonResearchGroupVNCParserBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(0, EVENT1)
         self.assertMessageEqual(1, EVENT2)
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

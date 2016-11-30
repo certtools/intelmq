@@ -3,13 +3,12 @@ import re
 import sys
 import zipfile
 
+from intelmq.lib.bot import CollectorBot
+
 try:
     import imbox
 except ImportError:
     imbox = None
-
-from intelmq.lib.bot import CollectorBot
-from intelmq.lib.message import Report
 
 
 class MailAttachCollectorBot(CollectorBot):
@@ -34,8 +33,6 @@ class MailAttachCollectorBot(CollectorBot):
                                       message.subject)):
                     continue
 
-                self.logger.info("Reading email report")
-
                 for attach in message.attachments:
                     if not attach:
                         continue
@@ -52,7 +49,7 @@ class MailAttachCollectorBot(CollectorBot):
                         else:
                             raw_report = attach['content'].read()
 
-                        report = Report()
+                        report = self.new_report()
                         report.add("raw", raw_report)
 
                         self.send_message(report)
@@ -61,7 +58,7 @@ class MailAttachCollectorBot(CollectorBot):
                         # so other instances watching this mailbox will still
                         # check it.
                         mailbox.mark_seen(uid)
-                self.logger.info("Email report read")
+                self.logger.debug("Email report read.")
         mailbox.logout()
 
 

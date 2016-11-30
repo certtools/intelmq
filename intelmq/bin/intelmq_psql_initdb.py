@@ -16,15 +16,15 @@ import tempfile
 from intelmq import HARMONIZATION_CONF_FILE
 
 
-def main():
+def generate(harmonization_file=HARMONIZATION_CONF_FILE):
     FIELDS = dict()
 
     try:
-        print("INFO - Reading %s file" % HARMONIZATION_CONF_FILE)
-        with open(HARMONIZATION_CONF_FILE, 'r') as fp:
+        print("INFO - Reading %s file" % harmonization_file)
+        with open(harmonization_file, 'r') as fp:
             DATA = json.load(fp)['event']
     except IOError:
-        print("ERROR - Could not find %s" % HARMONIZATION_CONF_FILE)
+        print("ERROR - Could not find %s" % harmonization_file)
         print("ERROR - Make sure that you have intelmq installed.")
         sys.exit(2)
 
@@ -67,7 +67,7 @@ def main():
     return initdb
 
 
-if __name__ == '__main__':
+def main():
     OUTPUTFILE = "/tmp/initdb.sql"
     fp = None
     try:
@@ -78,9 +78,13 @@ if __name__ == '__main__':
             fp = os.fdopen(os_fp, 'wt')
         else:
             fp = open(OUTPUTFILE, 'wt')
-        psql = main()
+        psql = generate()
         print("INFO - Writing %s file" % OUTPUTFILE)
         fp.write(psql)
     finally:
         if fp:
             fp.close()
+
+
+if __name__ == '__main__':  # pragma: no cover
+    main()

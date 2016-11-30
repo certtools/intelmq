@@ -6,6 +6,7 @@ v1.0 (in development, master branch)
 
 ### General changes
 - Dropped support for Python 2
+- Dropped startup.conf and system.conf. Sections in BOTS can be copied directly yo runtime.conf now.
 
 ### Bot changes
 - ENH: added bots.collectors.rt.collector
@@ -25,13 +26,18 @@ v1.0 (in development, master branch)
 - STY: code obeys PEP8, new code should always be properly formatted
 - ENH: More code is Python 3 compatible
 - DOC: Updated user and dev guide
+
+###Configuration
 - ENH: New parameter and field named accuracy to represent the accuracy of each feed
+- Consistent naming "overwrite" to switch overwriting capabilities of bots (as opposed to override)
+- Renamed http_ssl_proxy to https_proxy
 
 ### Harmonization
 - ENH: Additional data types: integer, float and Boolean
 - ENH: Added descriptions and matching types to all fields
 - DOC: harmonization documentation has same fields as configuration, docs are generated from configuration
 - ENH: New type LowercaseString and UppercaseString
+- BUG: FQDNs are only allowed in IDN representation
 
 #### Most important changes:
 - `(source|destination).bgp_prefix` is now `(source|destination).network`

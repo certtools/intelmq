@@ -26,7 +26,6 @@ xmpp_room_nick: string
 import sys
 
 from intelmq.lib.bot import CollectorBot
-from intelmq.lib.message import Report
 
 try:
     import sleekxmpp
@@ -42,7 +41,7 @@ try:
             sleekxmpp.ClientXMPP.__init__(self, jid, password)
 
             self.logger = logger
-            self.logger.info("Initiated")
+            self.logger.info("Initiated.")
             self.xmpp_room = room
             self.xmpp_room_nick = room_nick
             self.xmpp_room_password = room_password
@@ -51,20 +50,20 @@ try:
 
         def session_start(self, event):
             self.send_presence()
-            self.logger.debug("Session started")
+            self.logger.debug("Session started.")
 
             try:
                 self.get_roster()
             except sleekxmpp.exceptions.IqError as err:
-                self.logger.error('There was an error getting the roster')
+                self.logger.error('There was an error getting the roster.')
                 self.logger.error(err.iq['error']['condition'])
                 self.disconnect()
             except sleekxmpp.exceptions.IqTimeout:
-                self.logger.error('Server is taking too long to respond')
+                self.logger.error('Server is taking too long to respond.')
                 self.disconnect()
 
             if self.xmpp_room and self.plugin.get('xep_0045'):
-                self.logger.debug("Joining room: %s", self.xmpp_room)
+                self.logger.debug("Joining room: %s." % self.xmpp_room)
                 pwd = self.xmpp_room_password if self.xmpp_room_password else ""
                 self.plugin['xep_0045'].joinMUC(self.xmpp_room,
                                                 self.xmpp_room_nick,
@@ -105,7 +104,7 @@ class XMPPCollectorBot(CollectorBot):
     def stop(self):
         if self.xmpp:
             self.xmpp.disconnect()
-            self.logger.info("Disconnected from XMPP")
+            self.logger.info("Disconnected from XMPP.")
 
             super(XMPPCollectorBot, self).stop()
         else:
@@ -125,15 +124,14 @@ class XMPPCollectorBot(CollectorBot):
         else:
             tmp_body = body
 
-        self.logger.debug("Received Stanza: %r from %r", tmp_body,
-                          msg['from'])
+        self.logger.debug("Received Stanza: %r from %r." % (tmp_body, msg['from']))
 
         raw_msg = body
 
         # Read msg-body and add as raw to a new report.
         # now it's up to a parser to do the interpretation of the message.
         if raw_msg:
-            report = Report()
+            report = self.new_report()
             report.add("raw", raw_msg)
             self.send_message(report)
 

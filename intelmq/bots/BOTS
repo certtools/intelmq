@@ -6,6 +6,7 @@
             "parameters": {
                 "delete_file": false,
                 "feed": "FileCollector",
+                "provider": "",
                 "path": "/tmp/",
                 "postfix": ".csv",
                 "rate_limit": 300
@@ -18,6 +19,7 @@
                 "attach_regex": "csv.zip",
                 "attach_unzip": true,
                 "feed": "",
+                "provider": "",
                 "folder": "INBOX",
                 "mail_host": "<host>",
                 "mail_password": "<password>",
@@ -32,16 +34,18 @@
             "module": "intelmq.bots.collectors.mail.collector_mail_url",
             "parameters": {
                 "feed": "",
+                "provider": "",
                 "folder": "INBOX",
                 "http_password": "<password>",
-                "http_user": "<user>",
+                "http_username": "<user>",
                 "mail_host": "<host>",
                 "mail_password": "<password>",
                 "mail_ssl": true,
                 "mail_user": "<user>",
                 "rate_limit": 60,
                 "subject_regex": "<subject>",
-                "url_regex": "http://"
+                "url_regex": "http://",
+                "ssl_client_certificate": null
             }
         },
         "Generic URL Fetcher": {
@@ -49,7 +53,11 @@
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
                 "feed": "",
+                "provider": "",
                 "http_url": "<insert url of feed>",
+                "http_username": null,
+                "http_password": null,
+                "ssl_client_certificate": null,
                 "rate_limit": 3600
             }
         },
@@ -58,6 +66,7 @@
             "module": "intelmq.bots.collectors.misp.collector",
             "parameters": {
                 "feed": "misp_generic",
+                "provider": "",
                 "misp_key": "<insert MISP Authkey>",
                 "misp_tag_processed": "<insert MISP tag for processed events>",
                 "misp_tag_to_process": "<insert MISP tag for events to be processed>",
@@ -72,6 +81,7 @@
             "parameters": {
                 "attachment_regex": "\\.csv\\.zip$",
                 "feed": "Request Tracker",
+                "provider": "",
                 "password": "password",
                 "rate_limit": 3600,
                 "search_owner": "nobody",
@@ -83,7 +93,10 @@
                 "unzip_attachment": true,
                 "uri": "http://localhost/rt/REST/1.0",
                 "url_regex": "https://dl.shadowserver.org/[a-zA-Z0-9?_-]*",
-                "user": "intelmq"
+                "user": "intelmq",
+                "http_username": null,
+                "http_password": null,
+                "ssl_client_certificate": null
             }
         },
         "XMPP collector": {
@@ -92,6 +105,7 @@
             "parameters": {
                 "ca_certs": "/etc/ssl/certs/ca-certificates.crt",
                 "feed": "XMPP",
+                "provider": "",
                 "pass_full_xml": false,
                 "rate_limit": 3600,
                 "strip_message": true,
@@ -109,6 +123,7 @@
             "parameters": {
                 "api_key": "<insert your api key>",
                 "feed": "AlienVault OTX",
+                "provider": "AlienVault",
                 "rate_limit": 3600
             }
         },
@@ -117,6 +132,7 @@
             "module": "intelmq.bots.collectors.bitsight.collector",
             "parameters": {
                 "feed": "BitSight",
+                "provider": "BitSight",
                 "http_url": "http://alerts.bitsighttech.com:8080/stream?key=<api>"
             }
         },
@@ -126,6 +142,7 @@
             "parameters": {
                 "api_key": "<insert your api key>",
                 "feed": "Blueliv Crimeserver",
+                "provider": "Blueliv",
                 "rate_limit": 3600
             }
         },
@@ -135,6 +152,7 @@
             "parameters": {
                 "exchange": "<INSERT your exchange point as given by CERT.pl>",
                 "feed": "n6stomp",
+                "provider": "N6",
                 "port": 61614,
                 "server": "n6stream.cert.pl",
                 "ssl_ca_certificate": "<insert path to CA file for CERT.pl's n6>",
@@ -154,6 +172,11 @@
             "module": "intelmq.bots.parsers.abusech.parser_ip",
             "parameters": {}
         },
+        "Abuse.ch Ransomware": {
+            "description": "Abuse.ch Ransomware Parser is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.abusech.parser_ransomware",
+            "parameters": {}
+        },
         "AlienVault": {
             "description": "AlienVault Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.alienvault.parser",
@@ -167,6 +190,26 @@
         "Autoshun": {
             "description": "Autoshun Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.autoshun.parser",
+            "parameters": {}
+        },
+        "Bambenek C2 Domain Feed": {
+            "description": "Bambenek C2 Domain parser is the bot responsible to parse and and sanatize the information.",
+            "module": "intelmq.bots.parsers.bambenek.parser_c2dommasterlist",
+            "parameters": {}
+        },
+        "Bambenek C2 IP Feed": {
+            "description": "Bambenek C2 IP parser is the bot responsible to parse and and sanatize the information.",
+            "module": "intelmq.bots.parsers.bambenek.parser_c2ipmasterlist",
+            "parameters": {}
+        },
+        "Bambenek DGA Domain Feed": {
+            "description": "Bambenek DGA Domain parser is the bot responsible to parse and and sanatize the information.",
+            "module": "intelmq.bots.parsers.bambenek.parser_dgafeed",
+            "parameters": {}
+        },
+        "Bitcash Blocklist Feed": {
+            "description": "Bitcash Blocklist parser is the bot responsible to parse and sanitize the information.",
+            "module": "intelmq.bots.parsers.bitcash.parser",
             "parameters": {}
         },
         "BitSight Ciberfeed Stream": {
@@ -305,6 +348,26 @@
             "module": "intelmq.bots.parsers.n6.parser_n6stomp",
             "parameters": {}
         },
+        "Netlab 360 DGA": {
+            "description": "Netlab 360 DGA Feed Parser is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.netlab_360.parser_dga",
+            "parameters": {}
+        },
+        "Netlab 360 Magnitude": {
+            "description": "Netlab 360 Magnitude EK Feed Parser is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.netlab_360.parser_magnitude",
+            "parameters": {}
+        },
+        "Nothink": {
+            "description": "Nothink Feed Parser is the bot responsible to parse the SNMP, SSH, and Telnet reports and sanitize the information.",
+            "module": "intelmq.bots.parsers.nothink.parser",
+            "parameters": {}
+        },
+        "Nothink DNS Attack": {
+            "description": "Nothink DNS Attacks Feed Parser is the bot responsible to parse the DNS Attacks report and sanitize the information.",
+            "module": "intelmq.bots.parsers.nothink.parser_dns_attacks",
+            "parameters": {}
+        },
         "OpenBL": {
             "description": "OpenBL Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.openbl.parser",
@@ -325,7 +388,7 @@
             "module": "intelmq.bots.parsers.shadowserver.parser",
             "parameters": {
                 "feedname": "",
-                "override": true
+                "overwrite": true
             }
         },
         "Spamhaus CERT": {
@@ -424,16 +487,22 @@
                 "filter_value": "<PT>"
             }
         },
-        "Generic Contact DB Lookup": {
-            "description": "Fetches abuse contacts from a database per ASN.",
-            "module": "intelmq.bots.experts.contact_db_lookup.expert",
+        "Generic DB Lookup": {
+            "description": "Fetches data from a database.",
+            "module": "intelmq.bots.experts.generic_db_lookup.expert",
             "parameters": {
-                "ascolumn": "asn",
-                "column": "contact",
                 "database": "intelmq",
                 "host": "localhost",
+                "match_fields": {
+                    "source.asn": "asn"
+                },
+                "overwrite": false,
                 "password": "<password>",
                 "port": "5432",
+                "replace_fields": {
+                    "contact": "source.abuse_contact",
+                    "note": "comment"
+                },
                 "sslmode": "require",
                 "table": "contacts",
                 "user": "intelmq"
@@ -504,7 +573,9 @@
         "url2fqdn": {
             "description": "url2fqdn is the bot responsible to parsing the fqdn from the url.",
             "module": "intelmq.bots.experts.url2fqdn.expert",
-            "parameters": {}
+            "parameters": {
+                "overwrite": false
+            }
         }
     },
     "Output": {
@@ -554,7 +625,7 @@
             "parameters": {
                 "collection": "<collection>",
                 "database": "<database>",
-                "hierarchical_output": false,
+                "hierarchical_output": true,
                 "host": "<ip>",
                 "port": "<port>"
             }
@@ -600,7 +671,8 @@
             "module": "intelmq.bots.outputs.tcp.output",
             "parameters": {
                 "ip": "<ip>",
-                "port": "<port>"
+                "port": "<port>",
+                "separator": "\n"
             }
         },
         "UDP": {

@@ -75,5 +75,5 @@ class TestSpamhausDropParserBot(test.BotTestCase, unittest.TestCase):
             cls.assertMessageEqual(count, event)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

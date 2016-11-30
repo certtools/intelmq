@@ -3,7 +3,6 @@ import sys
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.message import Event
 
 
 class URLVirIPsParserBot(Bot):
@@ -18,7 +17,7 @@ class URLVirIPsParserBot(Bot):
             if row == "" or row.startswith("#"):
                 continue
 
-            event = Event(report)
+            event = self.new_event(report)
 
             event.add('source.ip', row)
 
