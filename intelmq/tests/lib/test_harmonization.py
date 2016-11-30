@@ -164,6 +164,21 @@ class TestHarmonization(unittest.TestCase):
         self.assertFalse(harmonization.IPNetwork.is_valid(b'2001:DB8Z::1/7',
                                                           sanitize=True))
 
+    def test_datetime_valid(self):
+        self.assertTrue(harmonization.DateTime.is_valid(
+            '2015-08-31T08:16:10+00:00'))
+        self.assertTrue(harmonization.DateTime.is_valid(
+            '2015-08-31T08:16:10.1234+00:00'))
+
+    def test_datetime_invalid(self):
+        self.assertFalse(harmonization.DateTime.is_valid(
+            '2015-08-31T08:16:10+05:00'))
+        self.assertFalse(harmonization.DateTime.is_valid(
+            '2015-08-31T08:16:10.1234+05:00'))
+        self.assertFalse(harmonization.DateTime.is_valid(
+            '2015-08-31T36:16:10+00:00'
+        ))
+
     def test_datetime_from_timestamp(self):
         """ Test DateTime.from_timestamp method. """
         self.assertEqual('2015-08-31T08:16:10+00:00',
