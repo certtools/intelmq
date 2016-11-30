@@ -169,10 +169,12 @@ def main():
     answer = None
     while True:
         info = dump_info(fname)
+        available_answers = ACTIONS.keys()
         print('Processing {}: {}'.format(bold(botid), info))
 
         if info.startswith(str(red)):
             available_opts = [item[0] for item in ACTIONS.values() if item[2]]
+            available_answers = [k for k, v in ACTIONS.items() if v[2]]
             print('Restricted actions.')
         else:
             # don't display list after 'show' and 'recover' command
@@ -198,7 +200,7 @@ def main():
         else:
             if not answer:
                 continue
-        if answer not in available_opts:
+        if len(answer) == 0 or answer[0] not in available_answers:
             print('Action not allowed.')
             continue
         if any([answer[0] == char for char in AVAILABLE_IDS]) and len(answer) > 1:
