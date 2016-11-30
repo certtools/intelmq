@@ -27,9 +27,9 @@ def convert_config(old):
     config = []
     for groupname, group in old.items():
         for rule_name, rule in group.items():
-            config.append({"rule": groupname + ' ' + rule_name,
-                           "selection": rule[0],
-                           "action": rule[1]})
+            config.append({"rulename": groupname + ' ' + rule_name,
+                           "if": rule[0],
+                           "then": rule[1]})
 
     return config
 
@@ -87,7 +87,7 @@ class ModifyExpertBot(Bot):
         event = self.receive_message()
 
         for rule in self.config:
-            rule_id, rule_selection, rule_action = rule['rule'], rule['selection'], rule['action']
+            rule_id, rule_selection, rule_action = rule['rulename'], rule['if'], rule['then']
             matches = self.matches(rule_id, event, rule_selection)
             if matches is not None:
                 self.logger.debug('Apply rule {}.'.format(rule_id))

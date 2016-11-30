@@ -419,48 +419,48 @@ The configuration is called `modify.conf` and looks like this:
 ```json
 [
     {
-        "rule": "Standard Protocols http",
-        "action": {
-            "protocol.application": "http"
-        },
-        "selection": {
+        "rulename": "Standard Protocols http",
+        "if": {
             "source.port": "^(80|443)$"
+        },
+        "then": {
+            "protocol.application": "http"
         }
     },
     {
         "rule": "Spamhaus Cert conficker",
-        "action": {
-            "classification.identifier": "conficker"
-        },
-        "selection": {
+        "if": {
             "malware.name": "^conficker(ab)?$"
+        },
+        "then": {
+            "classification.identifier": "conficker"
         }
     },
     {
         "rule": "bitdefender",
-        "action": {
-            "malware.name": "{matches[malware.name][1]}"
-        },
-        "selection": {
+        "if": {
             "malware.name": "bitdefender-(.*)$"
+        },
+        "then": {
+            "malware.name": "{matches[malware.name][1]}"
         }
     },
     {
         "rule": "urlzone",
-        "action": {
-            "classification.identifier": "urlzone"
-        },
-        "selection": {
+        "if": {
             "malware.name": "^urlzone2?$"
+        },
+        "then": {
+            "classification.identifier": "urlzone"
         }
     },
     {
         "rule": "default",
-        "action": {
-            "classification.identifier": "{msg[malware.name]}"
-        },
-        "selection": {
+        "if": {
             "feed.name": "^Spamhaus Cert$"
+        },
+        "then": {
+            "classification.identifier": "{msg[malware.name]}"
         }
     }
 ]
@@ -468,7 +468,7 @@ The configuration is called `modify.conf` and looks like this:
 
 In our example above we have five groups labeled `Standard Protocols http`,
 `Spamhaus Cert conficker`, `bitdefender`, `urlzone` and `default`.
-All sections will be considered, in the given order.
+All sections will be considered, in the given order (from top to bottom).
 
 Each rule consists of *conditions* and *actions*.
 Conditions and actions are dictionaries holding the field names of events
