@@ -343,8 +343,7 @@ Get logs of a bot:
             return 'error'
         else:
             module = importlib.import_module(bot_module)
-            botname = utils.get_botname_from_module(module)
-            bot = getattr(module, botname)
+            bot = getattr(module, 'BOT')
             instance = bot(bot_id)
             instance.start()
 

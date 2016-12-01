@@ -134,14 +134,6 @@ class TestUtils(unittest.TestCase):
         exc = IndexError('This is a test')
         self.assertEqual(utils.error_message_from_exc(exc), 'This is a test')
 
-    def test_get_botname_from_module(self):
-        module = importlib.import_module('intelmq.bots.collectors.alienvault_otx.collector')
-        self.assertEqual(utils.get_botname_from_module(module),
-                         'AlienVaultOTXCollectorBot')
-        module = importlib.import_module('intelmq.bots.parsers.taichung.parser')
-        self.assertEqual(utils.get_botname_from_module(module),
-                         'TaichungCityNetflowParserBot')
-
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
