@@ -192,19 +192,9 @@
             "module": "intelmq.bots.parsers.autoshun.parser",
             "parameters": {}
         },
-        "Bambenek C2 Domain Feed": {
-            "description": "Bambenek C2 Domain parser is the bot responsible to parse and and sanatize the information.",
-            "module": "intelmq.bots.parsers.bambenek.parser_c2dommasterlist",
-            "parameters": {}
-        },
-        "Bambenek C2 IP Feed": {
-            "description": "Bambenek C2 IP parser is the bot responsible to parse and and sanatize the information.",
-            "module": "intelmq.bots.parsers.bambenek.parser_c2ipmasterlist",
-            "parameters": {}
-        },
-        "Bambenek DGA Domain Feed": {
-            "description": "Bambenek DGA Domain parser is the bot responsible to parse and and sanatize the information.",
-            "module": "intelmq.bots.parsers.bambenek.parser_dgafeed",
+        "Bambenek": {
+            "description": "Bambenek parser is the bot responsible to parse and and sanatize the information from the feeds available from Bambenek.",
+            "module": "intelmq.bots.parsers.bambenek.parser",
             "parameters": {}
         },
         "Bitcash Blocklist Feed": {
