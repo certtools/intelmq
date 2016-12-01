@@ -523,7 +523,7 @@ Status: Unknown
 Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
  * http_url: http://data.netlab.360.com/feeds/dga/dga.txt
 
-Parser: Netlab 360 DGA (`intelmq.bots.parsers.netlab_360.parser_dga`)
+Parser: Netlab 360 DGA (`intelmq.bots.parsers.netlab_360.parser`)
 
 This feed lists DGA family, Domain, Start and end of valid time(UTC) of a number of DGA families.
  * reference: http://data.netlab.360.com/dga
@@ -535,7 +535,7 @@ Status: Unknown
 Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
  * http_url: http://data.netlab.360.com/feeds/ek/magnitude.txt
 
-Parser: Netlab 360 Magnitude (`intelmq.bots.parsers.netlab_360.parser_magnitude`)
+Parser: Netlab 360 Magnitude (`intelmq.bots.parsers.netlab_360.parser`)
 
 This feed lists FQDN and possibly the URL used by Magnitude Exploit Kit.  Information also includes the IP address used for the domain and last time seen.
  * reference: http://data.netlab.360.com/ek
