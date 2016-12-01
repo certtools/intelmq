@@ -11,7 +11,7 @@ from intelmq.bots.parsers.bambenek.parser import BambenekParserBot
 with open(os.path.join(os.path.dirname(__file__), 'c2-dommasterlist.txt')) as handle:
     DOMAIN_FILE = handle.read()
 
-with open(os.path.join(os.path.dirname(__file__), 'c2ipmasterlist.txt')) as handle:
+with open(os.path.join(os.path.dirname(__file__), 'c2-ipmasterlist.txt')) as handle:
     IP_FILE = handle.read()
 
 with open(os.path.join(os.path.dirname(__file__), 'dga-feed.txt')) as handle:
