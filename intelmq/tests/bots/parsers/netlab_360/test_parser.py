@@ -28,7 +28,7 @@ DGA_EVENTS = {'feed.name': 'Netlab 360 DGA',
               'time.source': '2016-11-13T00:04:15+00:00',
               'source.fqdn': 'difficultdress.net',
               'classification.type': 'c&c',
-              'classifucation.identifier': 'suppobox',
+              'classification.identifier': 'suppobox',
               'event_description.url': 'http://data.netlab.360.com/dga',
               'raw': 'c3VwcG9ib3gJZGlmZmljdWx0ZHJlc3MubmV0CTIwMTYtMTEtMTIgMTE6NTg6NTYJMjAxNi0xMS0xMyAwMDowNDoxNQ==',
              }
