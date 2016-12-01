@@ -333,14 +333,9 @@
             "module": "intelmq.bots.parsers.n6.parser_n6stomp",
             "parameters": {}
         },
-        "Netlab 360 DGA": {
-            "description": "Netlab 360 DGA Feed Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.netlab_360.parser_dga",
-            "parameters": {}
-        },
-        "Netlab 360 Magnitude": {
-            "description": "Netlab 360 Magnitude EK Feed Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.netlab_360.parser_magnitude",
+        "Netlab 360": {
+            "description": "Netlab 360 Parser is the bot responsible to parse the DGA and Magnitude reports and sanitize the information.",
+            "module": "intelmq.bots.parsers.netlab_360.parser",
             "parameters": {}
         },
         "Nothink": {
