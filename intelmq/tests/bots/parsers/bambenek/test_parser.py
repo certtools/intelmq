@@ -52,6 +52,7 @@ IP_EVENTS = {'feed.url': 'http://osint.bambenekconsulting.com/feeds/c2-ipmasterl
              'source.ip': '213.247.47.190',
              'classification.type': 'c&c',
              'status': 'online',
+             'time.source': '2016-11-12T18:02:00+00:00',
              'event_description.text': 'IP used by shiotob/urlzone/bebloh C&C',
              'event_description.url': 'http://osint.bambenekconsulting.com/manual/bebloh.txt'
             }
