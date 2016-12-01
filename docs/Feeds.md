@@ -140,7 +140,7 @@ Status: Unknown
 Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
  * http_url: http://osint.bambenekconsulting.com/feeds/c2-dommasterlist.txt
 
-Parser: Bambenek C2 Domain Feed (`intelmq.bots.parsers.bambenek.parser_c2dommasterlist`)
+Parser: Bambenek C2 Domain Feed (`intelmq.bots.parsers.bambenek.parser`)
 
 Master Feed of known, active and non-sinkholed C&Cs domain names.
  * License: http://osint.bambenekconsulting.com/license.txt
@@ -152,7 +152,7 @@ Status: Unknown
 Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
  * http_url: http://osint.bambenekconsulting.com/feeds/c2-ipmasterlist.txt
 
-Parser: Bambenek C2 IP Feed (`intelmq.bots.parsers.bambenek.parser_c2ipmasterlist`)
+Parser: Bambenek C2 IP Feed (`intelmq.bots.parsers.bambenek.parser`)
 
 Master Feed of known, active and non-sinkholed C&Cs IP addresses
  * License: http://osint.bambenekconsulting.com/license.txt
@@ -164,7 +164,7 @@ Status: Unknown
 Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
  * http_url: http://osint.bambenekconsulting.com/feeds/dga-feed.txt
 
-Parser: Bambenek DGA Domain Feed (`intelmq.bots.parsers.bambenek.parser_dgafeed`)
+Parser: Bambenek DGA Domain Feed (`intelmq.bots.parsers.bambenek.parser`)
 
 Domain feed of known DGA domains from -2 to +3 days
  * License: http://osint.bambenekconsulting.com/license.txt
