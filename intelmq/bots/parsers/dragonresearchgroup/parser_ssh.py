@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import sys
 
 from intelmq.lib.bot import ParserBot
 
@@ -36,6 +35,4 @@ class DragonResearchGroupSSHParserBot(ParserBot):
             yield event
 
 
-if __name__ == "__main__":
-    bot = DragonResearchGroupSSHParserBot(sys.argv[1])
-    bot.start()
+BOT = DragonResearchGroupSSHParserBot

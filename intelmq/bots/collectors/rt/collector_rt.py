@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import io
 import re
-import sys
 import zipfile
 
 import requests
@@ -94,6 +93,4 @@ class RTCollectorBot(CollectorBot):
                 RT.edit_ticket(ticket_id, status=self.parameters.set_status)
 
 
-if __name__ == "__main__":
-    bot = RTCollectorBot(sys.argv[1])
-    bot.start()
+BOT = RTCollectorBot

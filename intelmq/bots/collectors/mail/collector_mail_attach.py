@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import re
-import sys
 import zipfile
 
 from intelmq.lib.bot import CollectorBot
@@ -62,6 +61,4 @@ class MailAttachCollectorBot(CollectorBot):
         mailbox.logout()
 
 
-if __name__ == "__main__":
-    bot = MailAttachCollectorBot(sys.argv[1])
-    bot.start()
+BOT = MailAttachCollectorBot

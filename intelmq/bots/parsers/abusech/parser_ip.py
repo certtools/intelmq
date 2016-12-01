@@ -8,7 +8,6 @@ Docs:
  - https://zeustracker.abuse.ch/blocklist.php
 """
 
-import sys
 
 import dateutil
 
@@ -41,6 +40,4 @@ class AbusechIPParserBot(ParserBot):
         return '\n'.join(self.tempdata + [line])
 
 
-if __name__ == "__main__":
-    bot = AbusechIPParserBot(sys.argv[1])
-    bot.start()
+BOT = AbusechIPParserBot

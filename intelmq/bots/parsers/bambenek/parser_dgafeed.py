@@ -3,8 +3,6 @@
 See docs/Feeds.md
 """
 
-import sys
-
 from intelmq.lib.bot import ParserBot
 from intelmq.lib.message import Event
 
@@ -27,6 +25,4 @@ class BambenekDGAfeedParserBot(ParserBot):
 
             yield event
 
-if __name__ == "__main__":
-    bot = BambenekDGAfeedParserBot(sys.argv[1])
-    bot.start()
+BOT = BambenekDGAfeedParserBot

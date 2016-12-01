@@ -321,10 +321,9 @@ There's a dummy bot including tests at `intelmq/tests/bots/test_dummy_bot.py`.
 
 You can always start any bot directly from command line by either invoking the script or the python module. Don't forget to give an bot id as first argument. Also, running bots with other users than `intelmq` will raise permission errors.
 ```bash
-sudo -i intelmq
-python3 -m intelmq.bots.outputs.file.output file-output
-python3 intelmq/bots/outputs/file/output.py file-output
-intelmqctl run file-output  # if configured
+$ sudo -i intelmq
+$ intelmqctl run file-output  # if configured
+$ intelmq.bots.outputs.file.output file-output
 ```
 You will get all logging outputs directly on stderr as well as in the log file.
 
@@ -357,9 +356,7 @@ class ExampleParserBot(Bot):
         self.acknowledge_message()
 
 
-if __name__ == "__main__":
-    bot = ExampleParserBot(sys.argv[1])
-    bot.start()
+BOT = ExampleParserBot
 ```
 
 There are some names with special meaning. These can be used i.e. called:
@@ -478,6 +475,8 @@ class MyParserBot(ParserBot):
         """
         return '\n'.join(self.tempdata + [line])
 
+
+BOT = MyParserBot
 ```
 
 #### parse_line
@@ -527,7 +526,7 @@ class TestExampleParserBot(test.BotTestCase, unittest.TestCase):  # adjust test 
         self.assertMessageEqual(0, EXAMPLE_REPORT)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()
 ```
 

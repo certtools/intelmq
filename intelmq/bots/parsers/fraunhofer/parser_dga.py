@@ -4,7 +4,6 @@ The source provides a JSOn file with a dictionary. The keys of this dict are
 identifiers and the values are lists of domains.
 """
 import json
-import sys
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
@@ -34,6 +33,5 @@ class FraunhoferDGAParserBot(Bot):
             self.send_message(event)
         self.acknowledge_message()
 
-if __name__ == "__main__":
-    bot = FraunhoferDGAParserBot(sys.argv[1])
-    bot.start()
+
+BOT = FraunhoferDGAParserBot

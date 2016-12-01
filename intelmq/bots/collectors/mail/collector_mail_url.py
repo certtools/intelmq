@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import re
-import sys
 
 import requests
 
@@ -71,6 +70,4 @@ class MailURLCollectorBot(CollectorBot):
         mailbox.logout()
 
 
-if __name__ == "__main__":
-    bot = MailURLCollectorBot(sys.argv[1])
-    bot.start()
+BOT = MailURLCollectorBot

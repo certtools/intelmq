@@ -23,7 +23,6 @@ xmpp_room_password: string
 xmpp_room_nick: string
 """
 
-import sys
 
 from intelmq.lib.bot import CollectorBot
 
@@ -136,6 +135,4 @@ class XMPPCollectorBot(CollectorBot):
             self.send_message(report)
 
 
-if __name__ == "__main__":
-    bot = XMPPCollectorBot(sys.argv[1])
-    bot.start()
+BOT = XMPPCollectorBot

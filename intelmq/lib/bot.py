@@ -4,6 +4,7 @@
 """
 import csv
 import datetime
+import importlib
 import io
 import json
 import logging
@@ -446,6 +447,13 @@ class Bot(object):
 
     def new_event(self, *args, **kwargs):
         return libmessage.Event(*args, harmonization=self.harmonization, **kwargs)
+
+    @classmethod
+    def run(cls):
+        if len(sys.argv) < 2:
+            exit('No bot ID given.')
+        instance = cls(sys.argv[1])
+        instance.start()
 
 
 class ParserBot(Bot):

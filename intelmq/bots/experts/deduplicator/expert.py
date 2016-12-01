@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import sys
 
 from intelmq.lib.bot import Bot
 from intelmq.lib.cache import Cache
@@ -32,6 +31,4 @@ class DeduplicatorExpertBot(Bot):
         self.acknowledge_message()
 
 
-if __name__ == "__main__":
-    bot = DeduplicatorExpertBot(sys.argv[1])
-    bot.start()
+BOT = DeduplicatorExpertBot

@@ -3,9 +3,6 @@
 See docs/Feeds.md
 """
 
-import sys
-
-from datetime import datetime
 from intelmq.lib.bot import ParserBot
 from intelmq.lib.harmonization import FQDN, IPAddress, URL, DateTime
 from intelmq.lib.message import Event
@@ -37,6 +34,4 @@ class Netlab360MagnitudeParserBot(ParserBot):
 
             yield event
 
-if __name__ == "__main__":
-    bot = Netlab360MagnitudeParserBot(sys.argv[1])
-    bot.start()
+BOT = Netlab360MagnitudeParserBot

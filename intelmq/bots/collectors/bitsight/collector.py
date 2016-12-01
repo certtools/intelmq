@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import sys
 
 import pycurl
 from intelmq.lib.bot import CollectorBot
@@ -41,6 +40,5 @@ class BitsightCollectorBot(CollectorBot):
 
             self.send_message(report)
 
-if __name__ == "__main__":
-    bot = BitsightCollectorBot(sys.argv[1])
-    bot.start()
+
+BOT = BitsightCollectorBot
