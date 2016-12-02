@@ -68,7 +68,7 @@ ASN_EVENTS = [{'feed.name': 'Spamhaus ASN feed',
                'classification.type': 'spam',
                'source.asn': 10516,
                'source.as_name': 'Orb-bit Design Group',
-               'raw': 'QVMxMDUxNiA7ICB8IE9yYi1iaXQgRGVzaWduIEdyb3Vw',
+               'raw': 'QVMxMDUxNiA7IHwgT3JiLWJpdCBEZXNpZ24gR3JvdXA=',
               }]
 
 
