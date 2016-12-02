@@ -666,10 +666,46 @@ Spamhaus CERT Insight Portal. Access limited to CERTs and CSIRTs with national o
 ### Drop
 
 Status: Unknown
+
 Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
   * http_url: https://www.spamhaus.org/drop/drop.txt
 
 Parser: Spamhaus Drop (`intelmq.bots.parsers.spamhaus.parser_drop`)
+
+The DROP list will not include any IP address space under the control of any legitimate network - even if being used by "the spammers from hell". DROP will only include netblocks allocated directly by an established Regional Internet Registry (RIR) or National Internet Registry (NIR) such as ARIN, RIPE, AFRINIC, APNIC, LACNIC or KRNIC or direct RIR allocations.
+
+### EDrop
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+  * http_url: https://www.spamhaus.org/drop/edrop.txt
+
+Parser: Spamhaus Drop (`intelmq.bots.parsers.spamhaus.parser_drop`)
+
+EDROP is an extension of the DROP list that includes suballocated netblocks controlled by spammers or cyber criminals. EDROP is meant to be used in addition to the direct allocations on the DROP list.
+
+### Dropv6
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+  * http_url: https://www.spamhaus.org/drop/dropv6.txt
+
+Parser: Spamhaus Drop (`intelmq.bots.parsers.spamhaus.parser_drop`)
+
+The DROPv6 list includes IPv6 ranges allocated to spammers or cyber criminals. DROPv6 will only include IPv6 netblocks allocated directly by an established Regional Internet Registry (RIR) or National Internet Registry (NIR) such as ARIN, RIPE, AFRINIC, APNIC, LACNIC or KRNIC or direct RIR allocations.
+
+### ASN-Drop
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+  * http_url: https://www.spamhaus.org/drop/asndrop.txt
+
+Parser: Spamhaus Drop (`intelmq.bots.parsers.spamhaus.parser_drop`)
+ASN-DROP contains a list of Autonomous System Numbers controlled by spammers or cyber criminals, as well as "hijacked" ASNs. ASN-DROP can be used to filter BGP routes which are being used for malicious purposes.
+
 
 ## Taichung
 
