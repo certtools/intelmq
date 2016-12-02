@@ -38,7 +38,7 @@ NETWORK_EVENTS = [{'feed.name': 'Spamhaus drop feed',
                    'time.source': '2015-09-14T04:39:22+00:00',
                    'classification.type': 'spam',
                    'source.network': '2a06:e480::/29',
-                   'extra': '{"blocklist": "SBL256893"}',
+                   'extra': '{"blocklist": "SBL301771"}',
                    'raw': 'MmEwNjplNDgwOjovMjkgOyBTQkwzMDE3NzE=',
                   }]
 
