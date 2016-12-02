@@ -29,7 +29,7 @@ class SpamhausDropParserBot(ParserBot):
 
         else:
             event = Event(report)
-            if report['feed.url'] in SpamhausParserBot.NETWORK_DROP_URLS:
+            if report['feed.url'] in SpamhausDropParserBot.NETWORK_DROP_URLS:
                 value = line.strip().split(';')
                 if self.lastgenerated:
                     event.add('time.source', self.lastgenerated)
@@ -38,7 +38,7 @@ class SpamhausDropParserBot(ParserBot):
                 event.add('classification.type', 'spam')
                 event.add('raw', line)
 
-            if report['feed.url'] in SpamhausParserBot.ASN_DROP_URLS:
+            if report['feed.url'] in SpamhausDropParserBot.ASN_DROP_URLS:
                 value = line.replace('|', ';').split(';')
                 if self.lastgenerated:
                     event.add('time.source', self.lastgenerated)
