@@ -377,7 +377,7 @@
             "parameters": {}
         },
         "Spamhaus Drop": {
-            "description": "Spamhaus Drop Parser is the bot responsible to parse the report and sanitize the information.",
+            "description": "Spamhaus Drop Parser is the bot responsible to parse the DROP, EDROP, DROPv6, and ASN-DROP reports and sanitize the information.",
             "module": "intelmq.bots.parsers.spamhaus.parser_drop",
             "parameters": {}
         },
