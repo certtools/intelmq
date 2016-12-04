@@ -729,18 +729,25 @@ Parser: Turris Greylist (`intelmq.bots.parsers.turris.parser`)
 ### Hosts
 
 Status: Unknown
+
 Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
  * http_url: http://www.urlvir.com/export-hosts/
 
-Parser: URLVir Hosts (`intelmq.bots.parsers.urlvir.parser_hosts`)
+Parser: URLVir Hosts (`intelmq.bots.parsers.urlvir.parser`)
+
+This feed provides FQDN's or IP addresses for Active Malicious Hosts.
 
 ### IPs
 
 Status: Unknown
+
 Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
  * http_url: http://www.urlvir.com/export-ip-addresses/
 
-Parser: URLVir IPs (`intelmq.bots.parsers.urlvir.parser_ips`)
+Parser: URLVir IPs (`intelmq.bots.parsers.urlvir.parser`)
+
+This feed provides IP addresses hosting Malware.
+
 
 ## VXVault
 
