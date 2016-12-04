@@ -31,7 +31,7 @@ BOOT_EVENT = [{'feed.name': 'Windows Format',
                'time.source': '2016-11-10T00:00:00+00:00',
                'raw': 'UFJJTUFSWSBleGFtcGxlLmNvbSBibG9ja2VkZG9tYWluLmhvc3Rz',
                'source.fqdn': 'example.com',
-               'event_description.text': 'http://malc0de.com/database/index.php?search=example.com',
+               'event_description.url': 'http://malc0de.com/database/index.php?search=example.com',
                'classification.type': 'malware'
               },
               {'feed.name': 'Windows Format',
@@ -41,7 +41,7 @@ BOOT_EVENT = [{'feed.name': 'Windows Format',
                'time.source': '2016-11-10T00:00:00+00:00',
                'raw': 'UFJJTUFSWSBleGFtcGxlLm9yZyBibG9ja2VkZG9tYWluLmhvc3Rz',
                'source.fqdn': 'example.org',
-               'event_description.text': 'http://malc0de.com/database/index.php?search=example.org',
+               'event_description.url': 'http://malc0de.com/database/index.php?search=example.org',
                'classification.type': 'malware'
               }]
 
@@ -59,7 +59,7 @@ ZONE_EVENT = [{'feed.name': 'Bind Format',
                'time.source': '2016-11-10T00:00:00+00:00',
                'raw': 'em9uZSAiZXhhbXBsZS5jb20iICB7dHlwZSBtYXN0ZXI7IGZpbGUgIi9ldGMvbmFtZWRiL2Jsb2NrZWRkb21haW4uaG9zdHMiO307',
                'source.fqdn': 'example.com',
-               'event_description.text': 'http://malc0de.com/database/index.php?search=example.com',
+               'event_description.url': 'http://malc0de.com/database/index.php?search=example.com',
                'classification.type': 'malware'
               },
               {'feed.name': 'Bind Format',
@@ -69,7 +69,7 @@ ZONE_EVENT = [{'feed.name': 'Bind Format',
                'time.source': '2016-11-10T00:00:00+00:00',
                'raw': 'em9uZSAiZXhhbXBsZS5vcmciICB7dHlwZSBtYXN0ZXI7IGZpbGUgIi9ldGMvbmFtZWRiL2Jsb2NrZWRkb21haW4uaG9zdHMiO307',
                'source.fqdn': 'example.org',
-               'event_description.text': 'http://malc0de.com/database/index.php?search=example.org',
+               'event_description.url': 'http://malc0de.com/database/index.php?search=example.org',
                'classification.type': 'malware'
               }]
 
@@ -87,7 +87,7 @@ IP_BLACKLIST_EVENT = [{'feed.name': 'IP Blacklist',
                        'time.source': '2016-11-10T00:00:00+00:00',
                        'raw': 'MTkyLjg4Ljk5LjQ=',
                        'source.ip': '192.88.99.4',
-                       'event_description.text': 'http://malc0de.com/database/index.php?search=192.88.99.4',
+                       'event_description.url': 'http://malc0de.com/database/index.php?search=192.88.99.4',
                        'classification.type': 'malware'
                       },
                       {'feed.name': 'IP Blacklist',
@@ -97,7 +97,7 @@ IP_BLACKLIST_EVENT = [{'feed.name': 'IP Blacklist',
                        'time.source': '2016-11-10T00:00:00+00:00',
                        'raw': 'MTkyLjAuMC41',
                        'source.ip': '192.0.0.5',
-                       'event_description.text': 'http://malc0de.com/database/index.php?search=192.0.0.5',
+                       'event_description.url': 'http://malc0de.com/database/index.php?search=192.0.0.5',
                        'classification.type': 'malware'
                       }]
 
