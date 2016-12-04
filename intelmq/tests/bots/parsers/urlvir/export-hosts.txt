@@ -1,0 +1,7 @@
+################################################################## 
+#URLVir Active Malicious Hosts 
+#Updated on December 4, 2016, 8:29 am 
+#Free for noncommercial use only, contact us for more information 
+################################################################## 
+indirlivexstore.com 
+188.138.68.177

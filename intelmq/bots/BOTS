@@ -393,14 +393,9 @@
             "module": "intelmq.bots.parsers.turris.parser",
             "parameters": {}
         },
-        "URLVir Hosts": {
-            "description": "URLVir Hosts Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.urlvir.parser_hosts",
-            "parameters": {}
-        },
-        "URLVir IPs": {
-            "description": "URLVir IPs Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.urlvir.parser_ips",
+        "URLVir": {
+            "description": "URLVir Parser is the bot responsible to parse the Export Hosts and Export IP Addresses reports and sanitize the information.",
+            "module": "intelmq.bots.parsers.urlvir.parser",
             "parameters": {}
         },
         "VXVault": {
