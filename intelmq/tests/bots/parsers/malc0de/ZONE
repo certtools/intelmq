@@ -1,0 +1,8 @@
+// This bind zone is intended to be included in a running dns server for a local net
+// It will return 127.0.0.1 for domains serving malicious executables observed by malc0de.com/database/
+// This file will be automatically updated daily and populated with the last 30 days of malicious domains.
+// Additional information to get this working can be found http://www.malwaredomains.com/wordpress/?page_id=6
+// Last updated 2016-11-10	
+
+zone "example.com"  {type master; file "/etc/namedb/blockeddomain.hosts";};
+zone "example.org"  {type master; file "/etc/namedb/blockeddomain.hosts";};

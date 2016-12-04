@@ -303,14 +303,9 @@
             "module": "intelmq.bots.parsers.misp.parser",
             "parameters": {}
         },
-        "Malc0de Domain Blacklist": {
-            "description": "Malc0de Domain Blacklist Parser is the bot responsible to parse the report and sanitize the information.",
+        "Malc0de": {
+            "description": "Malc0de Parser is the bot responsible to parse the IP Blacklist and either Windows Format or Bind Format reports and sanitize the information.",
             "module": "intelmq.bots.parsers.malc0de.parser_domain_blacklist",
-            "parameters": {}
-        },
-        "Malc0de IP Blacklist": {
-            "description": "Malc0de IP Blacklist Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.malc0de.parser_ip_blacklist",
             "parameters": {}
         },
         "Malware Domain List": {
