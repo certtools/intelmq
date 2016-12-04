@@ -448,13 +448,27 @@ Parser: HPHosts (`intelmq.bots.parsers.hphosts.parser`)
 
 ## Malc0de
 
-### Domain Blacklist
+### Windows Format
 
 Status: Unknown
+
 Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
  * http_url: https://malc0de.com/bl/BOOT
 
-Parser: Malc0de Domain Blacklist (`intelmq.bots.parsers.malc0de.parser_domain_blacklist`)
+Parser: Malc0de (`intelmq.bots.parsers.malc0de.parser`)
+
+This feed includes FQDN's of malicious hosts, the file format is in Windows Hosts file format.
+
+### Bind Format
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+ * http_url: https://malc0de.com/bl/BOOT
+
+Parser: Malc0de (`intelmq.bots.parsers.malc0de.parser`)
+
+This feed includes FQDN's of malicious hosts, the file format is in Bind format.
 
 ### IP Blacklist
 
@@ -463,6 +477,9 @@ Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
  * http_url: https://malc0de.com/bl/IP_Blacklist.txt
 
 Parser: Malc0de IP Blacklist (`intelmq.bots.parsers.malc0de.parser_ip_blacklist`)
+
+This feed includes IP Addresses of malicious hosts.
+
 
 ## Malware Domain List
 
