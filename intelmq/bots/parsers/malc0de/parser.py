@@ -11,14 +11,13 @@ from intelmq.lib.message import Event
 class Malc0deParserBot(ParserBot):
 
     WINDOWS_FORMAT = {'http://malc0de.com/bl/BOOT',
-                      'http://malc0de.com/bl/BOOT'
-                     }
+                      'http://malc0de.com/bl/BOOT'}
+
     BIND_FORMAT = {'http://malc0de.com/bl/ZONES',
-                   'https://malc0de.com/bl/ZONES'
-                  }
+                   'https://malc0de.com/bl/ZONES'}
+
     IP_BLACKLIST = {'http://malc0de.com/bl/IP_Blacklist.txt',
-                    'https://malc0de.com/bl/IP_Blacklist.txt'
-                   }
+                    'https://malc0de.com/bl/IP_Blacklist.txt'}
 
     def parse_line(self, line, report):
         lastgenerated = None
