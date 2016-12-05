@@ -138,7 +138,8 @@ class TestNothinkParserBot(test.BotTestCase, unittest.TestCase):
         """ Test if correct DNS event has been produced. """
         self.input_message = DNS_REPORT
         self.run_bot()
-        self.assertMessageEqual(0, DNS_EVENT)
+        self.assertMessageEqual(0, DNS_EVENT[0])
+        self.assertMessageEqual(1, DNS_EVENT[1])
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
