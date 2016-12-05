@@ -334,13 +334,8 @@
             "parameters": {}
         },
         "Nothink": {
-            "description": "Nothink Feed Parser is the bot responsible to parse the SNMP, SSH, and Telnet reports and sanitize the information.",
+            "description": "Nothink Feed Parser is the bot responsible to parse the SNMP, SSH, Telnet, and DNS Attack reports and sanitize the information.",
             "module": "intelmq.bots.parsers.nothink.parser",
-            "parameters": {}
-        },
-        "Nothink DNS Attack": {
-            "description": "Nothink DNS Attacks Feed Parser is the bot responsible to parse the DNS Attacks report and sanitize the information.",
-            "module": "intelmq.bots.parsers.nothink.parser_dns_attacks",
             "parameters": {}
         },
         "OpenBL": {
