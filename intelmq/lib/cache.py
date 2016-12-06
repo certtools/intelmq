@@ -16,7 +16,7 @@ __all__ = ['Cache']
 
 class Cache():
 
-    def __init__(self, host, port, db, ttl):
+    def __init__(self, host, port, db, ttl, password=None):
         if host.startswith("/"):
             kwargs = {"unix_socket_path": host}
 
@@ -30,7 +30,7 @@ class Cache():
                 "socket_timeout": 5,
             }
 
-        self.redis = redis.Redis(db=db, **kwargs)
+        self.redis = redis.Redis(db=db, password=password, **kwargs)
 
         self.ttl = ttl
 
