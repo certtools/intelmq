@@ -9,7 +9,6 @@
       * [Python 3.4 (recommended)](#python-34-recommended-1)
   * [Configuration](#configuration)
     * [System Configuration](#system-configuration)
-    * [Startup Configuration](#startup-configuration)
     * [Pipeline Configuration](#pipeline-configuration)
     * [Defaults Configuration](#defaults-configuration)
         * [Error Handling](#error-handling)
@@ -120,14 +119,13 @@ cp -a examples/* .
 
 * `defaults.conf`: default values for bots and their behavior, e.g.
 error handling, log options and pipeline configuration. Will be removed in the [future](https://github.com/certtools/intelmq/issues/267).
-* `startup.conf`: Maps the bot ids to python modules.
 * `runtime.conf`: Configuration for the individual bots.
 * `pipeline.conf`: Defines source and destination queues per bot.
 * `BOTS`: Includes configuration hints for all bots. E.g. feed URLs or
-database connection parameters. Use this as a template for `startup.conf` and `runtime.conf`. Also read by the intelmq-manager.
+database connection parameters. Use this as a template for `runtime.conf`. Also read by the intelmq-manager.
 
-To configure a new bot, you need to define it first in `startup.conf`.
-Then do the configuration in `runtime.conf` using the bot if.
+To configure a new bot, you need to define and configure it in `runtime.conf`
+using the template from BOTS.
 Configure source and destination queues in `pipeline.conf`.
 Use the IntelMQ Manager mentioned above to generate the configuration files if unsure.
 
@@ -144,43 +142,6 @@ Small extract:
 * `logging_syslog`: If `logging_handler` is `syslog`. Either a list with hostname and UDP port of syslog service, e.g. `["localhost", 514]` or a device name, e.g. the default `"/var/log"`.
 
 We recommend logging_level WARNING for production environments and INFO if you want more details. In any case, monitor your free disk space.
-
-## Startup Configuration
-
-This configuration is used by intelmqctl tool to launch bots. Usually, the IntelMQ sysadmins don't need to touch this file because IntelMQ Manager generates it.
-
-**Template:**
-```
-{
-	...
-
-    "<bot ID>": {
-        "group": "<bot type (Collector, Parser, Expert, Output)>",
-        "name": "<human-readable bot name>",
-        "module": "<bot code (python module)>",
-        "description": "<generic description of the bot>"
-    },
-
-	...
-}
-```
-
-**Example:**
-```
-{
-	...
-    "malware-domain-list-collector": {
-        "group": "Collector",
-        "name": "Malware Domain List",
-        "module": "intelmq.bots.collectors.http.collector_http",
-        "description": "Malware Domain List Collector is the bot responsible to get the report from source of information."
-    },
-	...
-}
-```
-
-More examples can be found at `intelmq/etc/startup.conf` directory in IntelMQ repository.
-
 
 ## Pipeline Configuration
 
@@ -281,13 +242,8 @@ This configuration is used by each bot to load the specific parameters associate
 
 **Template:**
 ```
-{
-	...
-    "<bot ID>": {
-        "<parameter 1>": "<value 1>",
-        "<parameter 2>": "<value 2>",
-        "<parameter 3>": "<value 3>"
     },
+
 	...
 }
 ```
@@ -295,13 +251,34 @@ This configuration is used by each bot to load the specific parameters associate
 **Example:**
 ```
 {
-	...
+    "<bot ID>": {
+        "group": "<bot type (Collector, Parser, Expert, Output)>",
+        "name": "<human-readable bot name>",
+        "module": "<bot code (python module)>",
+        "description": "<generic description of the bot>",
+        "parameters": {
+            "<parameter 1>": "<value 1>",
+            "<parameter 2>": "<value 2>",
+            "<parameter 3>": "<value 3>"
+        }
+    }
+}
+```
+
+**Example:**
+```
+{
     "malware-domain-list-collector": {
-        "http_url": "http://www.malwaredomainlist.com/updatescsv.php",
-        "feed": "Malware Domain List",
-        "rate_limit": 3600
-    },
-	...
+        "group": "Collector",
+        "name": "Malware Domain List",
+        "module": "intelmq.bots.collectors.http.collector_http",
+        "description": "Malware Domain List Collector is the bot responsible to get the report from source of information.",
+        "parameters": {
+            "http_url": "http://www.malwaredomainlist.com/updatescsv.php",
+            "feed": "Malware Domain List",
+            "rate_limit": 3600
+        }
+    }
 }
 ```
 
@@ -379,7 +356,7 @@ Currently only one instance of one bot can be run. Concepts for multiprocessing 
 IntelMQ has a tool called IntelMQ Manager that gives to user a easy way to 
 configure all pipeline with bots that your team needs. It is recommended to
 use the IntelMQ Manager to become acquainted with the functionalities and concepts.
-The IntelMQ Manager has all possibilities of intelmqctl tool and has a graphical interface for startup and pipeline configuration.
+The IntelMQ Manager has all possibilities of intelmqctl tool and has a graphical interface for runtime and pipeline configuration.
 
 See [IntelMQ Manager repository](https://github.com/certtools/intelmq-manager).
 

@@ -200,7 +200,6 @@ intelmq\
   \conf
     pipeline.conf
     runtime.conf
-    startup.conf
     system.conf
 ```
 
