@@ -267,16 +267,6 @@
             "module": "intelmq.bots.parsers.danger_rulez.parser",
             "parameters": {}
         },
-        "Dragon Research Group SSH": {
-            "description": "Dragon Research Group SSH Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.dragonresearchgroup.parser_ssh",
-            "parameters": {}
-        },
-        "Dragon Research Group VNC": {
-            "description": "Dragon Research Group VNC Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.dragonresearchgroup.parser_vnc",
-            "parameters": {}
-        },
         "DynDNS ponmocup Domains": {
             "description": "Dyn Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.dyn.parser",
