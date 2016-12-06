@@ -254,11 +254,15 @@ More examples can be found at `intelmq/etc/pipeline.conf` directory in IntelMQ r
 
 * **`source_pipeline_port`** - broker port that the bot will use to connect and receive messages. Can be empty for Unix socket.
 
+* **`source_pipeline_password`** - broker password that the bot will use to connect and receive messages. Can be empty for unprotected broker.
+
 * **`source_pipeline_db`** - broker database that the bot will use to connect and receive messages (requirement from redis broker).
 
 * **`destination_pipeline_host`** - broker IP, FQDN or Unix socket that the bot will use to connect and send messages. 
 
 * **`destination_pipeline_port`** - broker port that the bot will use to connect and send messages. Can be empty for Unix socket.
+
+* **`destination_pipeline_password`** - broker password that the bot will use to connect and send messages. Can be empty for unprotected broker.
 
 * **`destination_pipeline_db`** - broker database that the bot will use to connect and send messages (requirement from redis broker).
 
