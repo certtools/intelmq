@@ -318,7 +318,9 @@ In the `intelmq/lib/` directory you can find some libraries:
 
 There's a dummy bot including tests at `intelmq/tests/bots/test_dummy_bot.py`.
 
-You can always start any bot directly from command line by either invoking the script or the python module. Don't forget to give an bot id as first argument. Also, running bots with other users than `intelmq` will raise permission errors.
+You can always start any bot directly from command line by calling the executable.
+The executable will be created during installation a directory for binaries. After adding new bots to the code, install IntelMQ to get the files created.
+Don't forget to give an bot id as first argument. Also, running bots with other users than `intelmq` will raise permission errors.
 ```bash
 $ sudo -i intelmq
 $ intelmqctl run file-output  # if configured
