@@ -11,7 +11,7 @@ class DataplaneParserBot(ParserBot):
 
     CATEGORY = {
         'sipquery': {
-            'classification.typ': 'brute-force',
+            'classification.type': 'brute-force',
             'protocol.application': 'sip',
             'event_description.text': 'Address has been seen initiating a SIP OPTIONS query to a remote host. '
                                       'The source report lists hosts that are suspicious of more than just port '
@@ -37,7 +37,7 @@ class DataplaneParserBot(ParserBot):
         'sshclient': {
             'classification.type': 'scanner',
             'protocol.application': 'ssh',
-            'event_description': 'Address has been seen initiating an SSH connection to a remote host. The source '
+            'event_description.text': 'Address has been seen initiating an SSH connection to a remote host. The source '
                                  'report lists hosts that are suspicious of more than just port scanning.  These hosts '
                                  'may be SSH server cataloging or conducting authentication attack attempts.',
         },
