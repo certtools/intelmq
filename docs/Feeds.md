@@ -17,7 +17,7 @@ The available feeds are grouped by the source of the feeds. For each feed the co
 - [Cymru](#cymru)
 - [DShield](#dshield)
 - [Danger Rulez](#danger-rulez)
-- [Dataplane](#dataolane)
+- [Dataplane](#dataplane)
 - [DynDNS](#dyndns)
 - [Fraunhofer DGA](#fraunhofer-dga)
 - [HPHosts](#hphosts)

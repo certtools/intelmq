@@ -62,12 +62,14 @@ class DataplaneParserBot(ParserBot):
             if value[0].strip() != 'NA':
                 event.add('source.asn', value[0].strip())
             if value[1].strip() != 'NA':
-                event.add('source.as_name', value[1].strip())
+                event.add('source.as_name', value[1].strip().split(' ')[0])
             event.add('source.ip', value[2].strip())
 
             if value[4].strip() in DataplaneParserBot.CATEGORY:
-                for key, value in DataplaneParserBot.CATEGORY[value[4].strip()].items():
-                    event.add(key, value)
+                dict.update(event, DataplaneParserBot.CATEGORY[value[4].strip()])
+
+            else:
+                raise ValueError('Unknown data feed %s' % value[4].strip())
 
             event.add('raw', line)
             yield event
