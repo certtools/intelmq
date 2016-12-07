@@ -58,12 +58,12 @@ Table of Contents
 How to Install
 ==============
 
-See `UserGuide <docs/User-Guide.md>`__.
+See `UserGuide <User-Guide.md>`__.
 
 Developers Guide
 ================
 
-See `Developers Guide <docs/Developers-Guide.md>`__.
+See `Developers Guide <Developers-Guide.md>`__.
 
 IntelMQ Manager
 ===============
@@ -83,7 +83,7 @@ Data Harmonization
 ==================
 
 IntelMQ use the Data Harmonization. Check the following
-`document <docs/Data-Harmonization.md>`__.
+`document <Data-Harmonization.md>`__.
 
 How to participate
 ==================
