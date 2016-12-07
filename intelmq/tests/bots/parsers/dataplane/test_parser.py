@@ -61,7 +61,7 @@ SIP_QUERY_EVENT = {'feed.url': 'http://dataplane.org/sipquery.txt',
                    'raw': 'MjA5ICAgICAgICAgIHwgIENFTlRVUllMSU5LLVVTLUxFR0FDWS1RV0VTVCAtICAgfCAgICAgIDY1LjE1Ny40Mi42ICB8ICAyMDE2LTEyLTA1IDE0OjAxOjIxICB8ICBzaXBxdWVyeQ==',
                    'event_description.text': 'Address has been seen initiating a SIP OPTIONS query to a remote host. '
                                              'The source report lists hosts that are suspicious of more than just port '
-                                             'scanning. These hosts may be SIP server cataloging or conducting various forms '
+                                             'scanning. The host may be SIP server cataloging or conducting various forms '
                                              'of telephony abuse.',
                    'source.asn': 209,
                    'source.ip': '65.157.42.6',
@@ -85,7 +85,7 @@ SIP_REGISTER_EVENT = {'feed.url': 'http://dataplane.org/sipregistration.txt',
                       'raw': 'ODU2MCAgICAgICAgIHwgIE9ORUFORE9ORS1BUyBCcmF1ZXJzdHJhc3NlIDQ4LCAgfCAgIDc0LjIwOC4xNTIuMjA4ICB8ICAyMDE2LTEyLTA0IDIzOjE0OjAxICB8ICBzaXByZWdpc3RyYXRpb24=',
                       'event_description.text': 'Address has been seen initiating a SIP REGISTER operation to a remote host. '
                                                 'The source report lists hosts that are suspicious of more than just port '
-                                                'scanning. These hosts may be SIP client cataloging or conducting various forms '
+                                                'scanning. The host may be SIP client cataloging or conducting various forms '
                                                 'of telephony abuse.',
                       'source.asn': 8560,
                       'source.ip': '74.208.152.208',
@@ -108,7 +108,7 @@ SSH_CLIENT_EVENT = [{'feed.url': 'http://dataplane.org/sshclient.txt',
                      'time.observation': '2016-12-07T06:27:26+00:00',
                      'raw': 'TkEgICAgICAgICAgIHwgIE5BICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgICAgICA1LjE1Ny43LjgyICB8ICAyMDE2LTEyLTAxIDIwOjQxOjA5ICB8ICBzc2hjbGllbnQ=',
                      'event_description.text': 'Address has been seen initiating an SSH connection to a remote host. The source '
-                                               'report lists hosts that are suspicious of more than just port scanning.  These hosts '
+                                               'report lists hosts that are suspicious of more than just port scanning.  The host '
                                                'may be SSH server cataloging or conducting authentication attack attempts.',
                      'source.ip': '5.157.7.82',
                      'time.source': '2016-12-01T20:41:09+00:00',
@@ -121,7 +121,7 @@ SSH_CLIENT_EVENT = [{'feed.url': 'http://dataplane.org/sshclient.txt',
                      'time.observation': '2016-12-07T06:27:26+00:00',
                      'raw': 'Mzk0NDcyICAgICAgIHwgIFNXT0ktQVNOIC0gU1dPSSwgVVMgICAgICAgICAgICAgfCAgMTA0LjI0MS4yMzIuMjM4ICB8ICAyMDE2LTEyLTA1IDAxOjQ5OjE5ICB8ICBzc2hjbGllbnQ=',
                      'event_description.text': 'Address has been seen initiating an SSH connection to a remote host. The source '
-                                               'report lists hosts that are suspicious of more than just port scanning.  These hosts '
+                                               'report lists hosts that are suspicious of more than just port scanning.  The host '
                                                'may be SSH server cataloging or conducting authentication attack attempts.',
                      'source.asn': 394472,
                      'source.ip': '104.241.232.238',
