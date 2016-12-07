@@ -17,6 +17,7 @@ The available feeds are grouped by the source of the feeds. For each feed the co
 - [Cymru](#cymru)
 - [DShield](#dshield)
 - [Danger Rulez](#danger-rulez)
+- [Dataplane](#dataolane)
 - [Dragon Research Group](#dragon-research-group)
 - [DynDNS](#dyndns)
 - [Fraunhofer DGA](#fraunhofer-dga)
@@ -396,6 +397,70 @@ Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
  * http_url: http://danger.rulez.sk/projects/bruteforceblocker/blist.php
 
 Parser: Danger Rulez (`intelmq.bots.parsers.danger_rulez.parser`)
+
+
+## Dataplane
+
+### SIP Invitation
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+ * http_url: http://dataplane.org/sipinvitation.txt
+
+Parser: Dataplane Feeds (`intelmq.bots.parsers.dataplane.parser`)
+
+Entries consist of fields with identifying characteristics of a source IP address that has been seen initiating a SIP INVITE operation to a remote host.  The report lists hosts that are suspicious of more than just port scanning.  These hosts may be SIP client cataloging or conducting various forms of telephony abuse.  
+Report is updated hourly.
+
+### SIP Query
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+ * http_url: http://dataplane.org/sipquery.txt
+
+Parser: Dataplane Feeds (`intelmq.bots.parsers.dataplane.parser`)
+
+Entries consist of fields with identifying characteristics of a source IP address that has been seen initiating a SIP OPTIONS query to a remote host.  This report lists hosts that are suspicious of more than just port scanning.  The hosts may be SIP server cataloging or conducting various forms of telephony abuse.  
+Report is updated hourly.
+
+### SIP Registration
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+ * http_url: http://dataplane.org/sipregistration.txt
+
+Parser: Dataplane Feeds (`intelmq.bots.parsers.dataplane.parser`)
+
+Entries consist of fields with identifying characteristics of a source IP address that has been seen initiating a SIP REGISTER operation to a remote host.  This report lists hosts that are suspicious of more than just port scanning.  The hosts may be SIP client cataloging or conducting various forms of telephony abuse.  
+Report is updated hourly.
+
+### SSH Client Connection
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+ * http_url: http://dataplane.org/sshclient.txt
+
+Parser: Dataplane Feeds (`intelmq.bots.parsers.dataplane.parser`)
+
+Entries below consist of fields with identifying characteristics of a source IP address that has been seen initiating an SSH connection to a remote host.  This report lists hosts that are suspicious of more than just port scanning.  The hosts may be SSH server cataloging or conducting authentication attack attempts.  
+Report is updated hourly.
+
+### SSH Password Authentication
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+ * http_url: http://dataplane.org/sshpwauth.txt
+
+Parser: Dataplane Feeds (`intelmq.bots.parsers.dataplane.parser`)
+
+Entries below consist of fields with identifying characteristics of a source IP address that has been seen attempting to remotely login to a host using SSH password authentication.  The report lists hosts that are highly suspicious and are likely conducting malicious SSH password authentication attacks.
+Report is updated hourly.
+
 
 ## Dragon Research Group
 

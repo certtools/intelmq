@@ -267,6 +267,11 @@
             "module": "intelmq.bots.parsers.danger_rulez.parser",
             "parameters": {}
         },
+        "Dataplane Feeds": {
+            "description": "Dataplane Parser is the bot responsible to parse the Dataplane reports and sanitize the information.",
+            "module": "intelmq.bots.parsers.dataplane.parser",
+            "parameters": {}
+        },
         "Dragon Research Group SSH": {
             "description": "Dragon Research Group SSH Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.dragonresearchgroup.parser_ssh",
