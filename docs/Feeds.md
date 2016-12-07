@@ -18,7 +18,6 @@ The available feeds are grouped by the source of the feeds. For each feed the co
 - [DShield](#dshield)
 - [Danger Rulez](#danger-rulez)
 - [Dataplane](#dataolane)
-- [Dragon Research Group](#dragon-research-group)
 - [DynDNS](#dyndns)
 - [Fraunhofer DGA](#fraunhofer-dga)
 - [HPHosts](#hphosts)
@@ -64,26 +63,6 @@ Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
 Parser: Abuse.ch IP (`intelmq.bots.parsers.abusech.parser_ip`)
 
 The Feodo Tracker Feodo IP Blocklist contains IP addresses (IPv4) used as C&C communication channel by the Feodo Trojan. This lists contains two types of IP address: Feodo C&C servers used by version A, version C and version D of the Feodo Trojan (these IP addresses are usually compromised servers running an nginx daemon on port 8080 TCP or 7779 TCP that is acting as proxy, forwarding all traffic to a tier 2 proxy node) and Feodo C&C servers used by version B which are usually used for the exclusive purpose of hosting a Feodo C&C server. Attention: Since Feodo C&C servers associated with version A, version C and version D are usually hosted on compromised servers, its likely that you also block/drop legit traffic e.g. towards websites hosted on a certain IP address acting as Feodo C&C for version A, version C and version D. If you only want to block/drop traffic to Feodo C&C servers hosted on bad IPs (version B), please use the blocklist BadIPs documented below.
-
-### Palevo Tracker Domains
-
-Status: Unknown
-Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
- * http_url: https://palevotracker.abuse.ch/blocklists.php?download=domainblocklist
-
-Parser: Abuse.ch Domain (`intelmq.bots.parsers.abusech.parser_domain`)
-
-Palevo C&C Domain Blocklists includes domain names which are being used as botnet C&C for the Palevo crimeware.
-
-### Palevo Tracker IPs
-
-Status: Unknown
-Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
- * http_url: https://palevotracker.abuse.ch/blocklists.php?download=ipblocklist
-
-Parser: Abuse.ch IP (`intelmq.bots.parsers.abusech.parser_ip`)
-
-Palevo C&C IP Blocklist includes IP addresses which are being used as botnet C&C for the Palevo crimeware.
 
 
 ### Ransomware Tracker
@@ -461,24 +440,6 @@ Parser: Dataplane Feeds (`intelmq.bots.parsers.dataplane.parser`)
 Entries below consist of fields with identifying characteristics of a source IP address that has been seen attempting to remotely login to a host using SSH password authentication.  The report lists hosts that are highly suspicious and are likely conducting malicious SSH password authentication attacks.
 Report is updated hourly.
 
-
-## Dragon Research Group
-
-### SSH
-
-Status: Unknown
-Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
- * http_url: https://dragonresearchgroup.org/insight/sshpwauth.txt
-
-Parser: Dragon Research Group (`intelmq.bots.parsers.dragonresearchgroup.parser_ssh`)
-
-### VNC
-
-Status: Unknown
-Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
- * http_url: https://dragonresearchgroup.org/insight/vncprobe.txt
-
-Parser: Dragon Research Group VNC (`intelmq.bots.parsers.dragonresearchgroup.parser_vnc`)
 
 ## DynDNS
 

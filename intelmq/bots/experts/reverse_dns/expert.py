@@ -20,6 +20,8 @@ class ReverseDnsExpertBot(Bot):
                            self.parameters.redis_cache_port,
                            self.parameters.redis_cache_db,
                            self.parameters.redis_cache_ttl,
+                           getattr(self.parameters, "redis_cache_password",
+                                   None)
                            )
 
     def process(self):

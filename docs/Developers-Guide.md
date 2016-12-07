@@ -176,41 +176,40 @@ Any component of IntelMQ MUST respect the "Data Harmonization Ontology".
 
 ## Directory layout in the repository
 ```bash
-intelmq\
-  lib\
+intelmq/
+  lib/
     bot.py
     cache.py
     message.py
     pipeline.py
     utils.py
-  bots\
-    collector\
-      <bot name>\
+  bots/
+    collector/
+      <bot name>/
             collector.py
-    parser\
-      <bot name>\
+    parser/
+      <bot name>/
             parser.py
-    expert\
-      <bot name>\
+    expert/
+      <bot name>/
             expert.py
-    output\
-      <bot name>\
+    output/
+      <bot name>/
             output.py
     BOTS
-  \conf
+  /conf
     pipeline.conf
     runtime.conf
-    startup.conf
     system.conf
 ```
 
-Assuming you want to create a bot for 'Abuse.ch Zeus' feed. It turns out that here it is necessary to create different parsers for the respective kind of events (C&C, Binaries, Dropzones). Therefore, the hierarchy ‘intelmq\bots\parser\abusech\parser.py’ would not be suitable because it is necessary to have more parsers, as mentioned above. The solution is to use the same hierarchy with an additional "description" in the file name, separated by underscore. Also see the section *Directories and Files naming*.
+Assuming you want to create a bot for 'Abuse.ch Zeus' feed. It turns out that here it is necessary to create different parsers for the respective kind of events (C&C, Binaries, Dropzones). Therefore, the hierarchy ‘intelmq/bots/parser/abusech/parser.py’ would not be suitable because it is necessary to have more parsers, as mentioned above. The solution is to use the same hierarchy with an additional "description" in the file name, separated by underscore. Also see the section *Directories and Files naming*.
 
 Example:
 ```
-\intelmq\bots\parser\abusech\parser_zeus_cc.py
-\intelmq\bots\parser\abusech\parser_zeus_binaries.py
-\intelmq\bots\parser\abusech\parser_zeus_dropzones.py
+/intelmq/bots/parser/abusech/parser_zeus_cc.py
+/intelmq/bots/parser/abusech/parser_zeus_binaries.py
+/intelmq/bots/parser/abusech/parser_zeus_dropzones.py
 ```
 
 
@@ -319,7 +318,9 @@ In the `intelmq/lib/` directory you can find some libraries:
 
 There's a dummy bot including tests at `intelmq/tests/bots/test_dummy_bot.py`.
 
-You can always start any bot directly from command line by either invoking the script or the python module. Don't forget to give an bot id as first argument. Also, running bots with other users than `intelmq` will raise permission errors.
+You can always start any bot directly from command line by calling the executable.
+The executable will be created during installation a directory for binaries. After adding new bots to the code, install IntelMQ to get the files created.
+Don't forget to give an bot id as first argument. Also, running bots with other users than `intelmq` will raise permission errors.
 ```bash
 $ sudo -i intelmq
 $ intelmqctl run file-output  # if configured
