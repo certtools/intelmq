@@ -134,7 +134,7 @@ SSH_CLIENT_EVENT = [{'feed.url': 'http://dataplane.org/sshclient.txt',
 SSH_AUTH_REPORT = {'feed.url': 'http://dataplane.org/sshpwauth.txt',
                    'feed.name': 'SSH Password Authentication',
                    '__type': 'Report',
-                   'raw': utils.base64_encode(SSH_AUTH_REPORT),
+                   'raw': utils.base64_encode(SSH_AUTH_FILE),
                    'time.observation': '2016-12-07T06:27:26+00:00'
                    }
 
