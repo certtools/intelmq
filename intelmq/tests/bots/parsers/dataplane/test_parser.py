@@ -37,7 +37,7 @@ SIP_INVITE_EVENT = {'feed.url': 'http://dataplane.org/sipinvitation.txt',
                     'raw': 'ODU2MCAgICAgICAgIHwgIE9ORUFORE9ORS1BUyBCcmF1ZXJzdHJhc3NlIDQ4LCAgfCAgIDc0LjIwOC4xNDkuMjMxICB8ICAyMDE2LTEyLTA1IDE2OjA4OjI5ICB8ICBzaXBpbnZpdGF0aW9u',
                     'event_description.text': 'Address has been seen initiating a SIP INVITE operation to a remote host. '
                                               'The source report lists hosts that are suspicious of more than just port '
-                                              'scanning. These hosts may be SIP client cataloging or conducting various forms '
+                                              'scanning. The host may be SIP client cataloging or conducting various forms '
                                               'of telephony abuse.',
                     'source.asn': 8560,
                     'source.ip': '74.208.149.231',
