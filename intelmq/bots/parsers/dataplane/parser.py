@@ -15,7 +15,7 @@ class DataplaneParserBot(ParserBot):
             'protocol.application': 'sip',
             'event_description.text': 'Address has been seen initiating a SIP OPTIONS query to a remote host. '
                                       'The source report lists hosts that are suspicious of more than just port '
-                                      'scanning. These hosts may be SIP server cataloging or conducting various forms '
+                                      'scanning. The host may be SIP server cataloging or conducting various forms '
                                       'of telephony abuse.',
         },
         'sipinvitation': {
@@ -23,7 +23,7 @@ class DataplaneParserBot(ParserBot):
             'protocol.application': 'sip',
             'event_description.text': 'Address has been seen initiating a SIP INVITE operation to a remote host. '
                                       'The source report lists hosts that are suspicious of more than just port '
-                                      'scanning. These hosts may be SIP client cataloging or conducting various forms '
+                                      'scanning. The host may be SIP client cataloging or conducting various forms '
                                       'of telephony abuse.',
         },
         'sipregistration': {
@@ -31,15 +31,16 @@ class DataplaneParserBot(ParserBot):
             'protocol.application': 'sip',
             'event_description.text': 'Address has been seen initiating a SIP REGISTER operation to a remote host. '
                                       'The source report lists hosts that are suspicious of more than just port '
-                                      'scanning. These hosts may be SIP client cataloging or conducting various forms '
+                                      'scanning. The host may be SIP client cataloging or conducting various forms '
                                       'of telephony abuse.',
         },
         'sshclient': {
             'classification.type': 'scanner',
             'protocol.application': 'ssh',
             'event_description.text': 'Address has been seen initiating an SSH connection to a remote host. The source '
-                                 'report lists hosts that are suspicious of more than just port scanning.  These hosts '
-                                 'may be SSH server cataloging or conducting authentication attack attempts.',
+                                      'report lists hosts that are suspicious of more than just port scanning.  '
+                                      'The host may be SSH server cataloging or conducting authentication attack '
+                                      'attempts.',
         },
         'sshpwauth': {
             'classification.type': 'brute-force',
