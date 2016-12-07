@@ -72,6 +72,4 @@ class DataplaneParserBot(ParserBot):
             yield event
 
 
-if __name__ == '__main__':
-    bot = DataplaneParserBot(sys.argv[1])
-    bot.start()
+BOT = DataplaneParserBot
