@@ -3,10 +3,10 @@ set -e
 
 if [ "$1" = "configure" ] ; then
     if ! getent passwd intelmq >/dev/null 2>&1; then
-        useradd -d /opt/intelmq -U -s /bin/bash intelmq
+        useradd -d /var/lib/intelmq -U -s /bin/bash intelmq
     fi
-    chmod -R g+w /opt/intelmq/*
-    chown -R intelmq:intelmq /opt/intelmq
+    chmod -R g+w /var/lib/intelmq/*
+    chown -R intelmq:intelmq /var/lib/intelmq
 fi
 
 #DEBHELPER#
