@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 """ IntelMQ parser for Malc0de feeds """
 
-import sys
 import dateutil.parser
 
 from intelmq.lib.bot import ParserBot
-from intelmq.lib.message import Event
 
 
 class Malc0deParserBot(ParserBot):
@@ -29,33 +27,29 @@ class Malc0deParserBot(ParserBot):
                 self.lastgenerated = dateutil.parser.parse(self.lastgenerated + 'T00:00:00+00:00').isoformat()
 
         else:
-            event = Event(report)
+            event = self.new_event(report)
+            if self.lastgenerated:
+                event.add('time.source', self.lastgenerated)
+            event.add('classification.type', 'malware')
+            event.add('raw', line)
+
             if report['feed.url'] in Malc0deParserBot.WINDOWS_FORMAT:
                 value = line.split(' ')[1]
-                if self.lastgenerated:
-                    event.add('time.source', self.lastgenerated)
                 event.add('source.fqdn', value)
-                event.add('classification.type', 'malware')
                 event.add('event_description.url', 'http://malc0de.com/database/index.php?search=' + value)
-                event.add('raw', line)
 
-            if report['feed.url'] in Malc0deParserBot.BIND_FORMAT:
+            elif report['feed.url'] in Malc0deParserBot.BIND_FORMAT:
                 value = line.split(' ')[1].strip('"')
-                if self.lastgenerated:
-                    event.add('time.source', self.lastgenerated)
                 event.add('source.fqdn', value)
-                event.add('classification.type', 'malware')
                 event.add('event_description.url', 'http://malc0de.com/database/index.php?search=' + value)
-                event.add('raw', line)
 
-            if report['feed.url'] in Malc0deParserBot.IP_BLACKLIST:
+            elif report['feed.url'] in Malc0deParserBot.IP_BLACKLIST:
                 value = line.strip()
-                if self.lastgenerated:
-                    event.add('time.source', self.lastgenerated)
                 event.add('source.ip', value)
-                event.add('classification.type', 'malware')
                 event.add('event_description.url', 'http://malc0de.com/database/index.php?search=' + value)
-                event.add('raw', line)
+
+            else:
+                raise ValueError('Unknown data feed %s.' % report['feed.url'])
 
             yield event
 
