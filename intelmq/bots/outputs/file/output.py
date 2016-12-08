@@ -6,6 +6,7 @@ import os
 from intelmq.lib.bot import Bot
 
 
+
 class FileBot(Bot):
 
     def init(self):
@@ -15,23 +16,16 @@ class FileBot(Bot):
 
     def process(self):
         event = self.receive_message()
-        
-
         event_data = event.to_json(hierarchical=self.parameters.hierarchical_output)
+        self.acknowledge_message()
 
         try:
             os.stat(self.parameters.file)
         except FileNotFoundError:
-            self.logger.debug("Reopening %r file." % self.parameters.file)
-            self.file = io.open(self.parameters.file, mode='at', encoding="utf-8")
-            self.logger.info("File %r is open." % self.parameters.file)
+            self.init()
         finally:
             self.file.write(event_data)
             self.file.write("\n")
             self.file.flush()
-            self.acknowledge_message()
 
 
-if __name__ == "__main__":
-    bot = FileBot(sys.argv[1])
-    bot.start()
