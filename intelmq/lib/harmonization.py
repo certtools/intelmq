@@ -153,7 +153,7 @@ class ClassificationType(GenericType):
                       'ddos',
                       'dropzone',
                       'phishing',
-                      'proxy'
+                      'proxy',
                       'vulnerable service',
                       'blacklist',
                       'other',
