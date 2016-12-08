@@ -402,4 +402,7 @@ class BotTestCase(object):
         if 'time.observation' in expected:
             del expected['time.observation']
 
+        print(expected)
+        print(event_dict)
+
         self.assertDictEqual(expected, event_dict)
