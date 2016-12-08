@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """ IntelMQ Dataplane Parser """
 
-import sys
-
 from intelmq.lib.bot import ParserBot
 from intelmq.lib.message import Event
 
@@ -62,12 +60,11 @@ class DataplaneParserBot(ParserBot):
             if value[0].strip() != 'NA':
                 event.add('source.asn', value[0].strip())
             if value[1].strip() != 'NA':
-                event.add('source.as_name', value[1].strip().split(' ')[0])
+                event.add('source.as_name', value[1].split()[0])
             event.add('source.ip', value[2].strip())
 
             if value[4].strip() in DataplaneParserBot.CATEGORY:
                 dict.update(event, DataplaneParserBot.CATEGORY[value[4].strip()])
-
             else:
                 raise ValueError('Unknown data feed %s' % value[4].strip())
 
