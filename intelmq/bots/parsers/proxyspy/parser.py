@@ -16,10 +16,9 @@ class ProxyspyParserBot(ParserBot):
                 self.lastgenerated = line.strip('Proxy list updated at')[5:]
                 self.lastgenerated = dateutil.parser.parse(self.lastgenerated).isoformat()
 
-
         else:
             value = line.split(' ')
-            self.new_event(report)
+            event = self.new_event(report)
             event.add('time.source', self.lastgenerated)
             event.add('source.ip', value[0].split(':')[0])
             event.add('source.port', value[0].split(':')[1])
