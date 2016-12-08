@@ -5,8 +5,7 @@
     * [Install Dependencies](#install-dependencies)
         * [Ubuntu 14.04 / Debian 8](#ubuntu-1404--debian-8)
         * [CentOS 7](#centos-7)
-    * [Install](#install-1)
-      * [Python 3.4 (recommended)](#python-34-recommended-1)
+    * [Installation](#install)
   * [Configuration](#configuration)
     * [System Configuration](#system-configuration)
     * [Pipeline Configuration](#pipeline-configuration)
@@ -38,7 +37,7 @@
 
 The following instructions assume the following requirements:
 
-* **Operating System:** Ubuntu 14.04 LTS or Debian 8 or CentOS 7
+* **Operating System:** Ubuntu 14.04 and 16.04 LTS, Debian 8, CentOS 7 or OpenSUSE Leap 42.x
 
 Please report any errors you encounter at https://github.com/certtools/intelmq/issues
 
@@ -83,7 +82,7 @@ systemctl enable redis
 systemctl start redis
 ```
 
-## Install
+## Installation
 
 The `REQUIREMENTS` files define a list python packages and versions, which are necessary to run *all components* of IntelMQ. The defined versions are recommendations.
 
@@ -242,14 +241,6 @@ This configuration is used by each bot to load the specific parameters associate
 
 **Template:**
 ```
-    },
-
-	...
-}
-```
-
-**Example:**
-```
 {
     "<bot ID>": {
         "group": "<bot type (Collector, Parser, Expert, Output)>",
@@ -292,7 +283,6 @@ This configuration is used to specify the fields for all message types. The harm
 **Template:**
 ```
 {
-	...
     "<message type>": {
         "<field 1>": {
             "description": "<field 1 description>",
@@ -303,14 +293,12 @@ This configuration is used to specify the fields for all message types. The harm
             "type": "<field value type>"
         }
     },
-	...
 }
 ```
 
 **Example:**
 ```
 {
-	...
     "event": {
         "destination.asn": {
             "description": "The autonomous system number from which originated the connection.",
@@ -321,9 +309,7 @@ This configuration is used to specify the fields for all message types. The harm
             "regex": "^[a-zA-Z0-9]{2}$",
             "type": "String"
         },
-    	...
     },
-	...
 }
 ```
 
