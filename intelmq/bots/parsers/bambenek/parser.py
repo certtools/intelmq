@@ -41,8 +41,7 @@ class BambenekParserBot(ParserBot):
                 event.add('classification.type', 'dga domain')
 
             else:
-                raise ValueError('Unknown data feed %s.' % report['feed.url'] )
-
+                raise ValueError('Unknown data feed %s.' % report['feed.url'])
 
             yield event
 
