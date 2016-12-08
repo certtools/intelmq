@@ -20,22 +20,24 @@ class BambenekParserBot(ParserBot):
             event = self.new_event(report)
 
             event.add('event_description.text', value[1])
-            event.add('time.source', value[2] + ' UTC')
             event.add('event_description.url', value[3])
             event.add('raw', line)
 
             if report['feed.url'] in BambenekParserBot.IPMASTERLIST:
                 event.add('source.ip', value[0])
+                event.add('time.source', value[2] + ' UTC')
                 event.add('classification.type', 'c&c')
                 event.add('status', 'online')
 
             elif report['feed.url'] in BambenekParserBot.DOMMASTERLIST:
                 event.add('source.fqdn', value[0])
+                event.add('time.source', value[2] + ' UTC')
                 event.add('classification.type', 'c&c')
                 event.add('status', 'online')
 
             elif report['feed.url'] in BambenekParserBot.DGA_FEED:
                 event.add('source.fqdn', value[0])
+                event.add('time.source', value[2] + ' 00:00 UTC')
                 event.add('classification.type', 'dga domain')
 
             else:
