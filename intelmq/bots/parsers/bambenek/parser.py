@@ -41,6 +41,7 @@ class BambenekParserBot(ParserBot):
             else:
                 raise ValueError('Unknown data feed %s.' % report['feed.url'] )
 
+
             yield event
 
 BOT = BambenekParserBot
