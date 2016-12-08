@@ -91,14 +91,18 @@ def lookup_contacts(cur, table_extension, asn, ip, fqdn):
     SELECT DISTINCT ON (c.email, o.id)
            c.email as email, o.name as organisation, s.name as sector,
            m.reasons as reasons,
-           (SELECT json_agg(annotation)
-              FROM organisation_annotation ann
-             WHERE ann.organisation_id = o.id) as annotations
+           CASE WHEN %(extension)s = ''
+                THEN (SELECT json_agg(annotation)
+                        FROM organisation_annotation ann
+                       WHERE ann.organisation_id = o.id)
+                ELSE ('[]' :: JSON)
+           END AS annotations
       FROM grouped_matches as m
       JOIN organisation{0} o ON o.id = m.organisation_id
       JOIN role{0} AS r ON r.organisation_id = o.id
       JOIN contact{0} AS c ON c.id = r.contact_id
       LEFT OUTER JOIN sector AS s ON s.id = o.sector_id
       """.format(table_extension),
-                {"asn": asn, "ip": ip, "fqdn": fqdn})
+                {"asn": asn, "ip": ip, "fqdn": fqdn,
+                 "extension": table_extension})
     return cur.fetchall()
