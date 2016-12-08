@@ -6,6 +6,7 @@ from intelmq.lib.bot import Bot
 
 TAXONOMY = {
     "phishing": "Fraud",
+    "proxy": "Suspicious",
     "ddos": "Availability",
     "spam": "Abusive Content",
     "scanner": "Information Gathering",
