@@ -29,3 +29,4 @@ class FileBot(Bot):
             self.file.flush()
 
 
+BOT = FileOutputBot
