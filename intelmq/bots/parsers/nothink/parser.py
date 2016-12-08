@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 """ IntelMQ parser for Nothink feeds """
 
-import sys
 import dateutil.parser
 
 from intelmq.lib.bot import ParserBot
-from intelmq.lib.message import Event
 
 
 class NothinkParserBot(ParserBot):
@@ -44,15 +42,15 @@ class NothinkParserBot(ParserBot):
                 self.lastgenerated = dateutil.parser.parse(self.lastgenerated + '+00:00').isoformat()
 
         else:
-            event = Event(report)
+            event = self.new_event(report)
+            event.add('raw', line)
             if report['feed.url'] in NothinkParserBot.BLACKLIST_FEED:
                 event.add('time.source', self.lastgenerated)
                 event.add('source.ip', line)
                 event.add('classification.type', 'scanner')
                 event.add('protocol.application', NothinkParserBot.SOURCE_FEEDS[report['feed.url']])
-                event.add('raw', line)
 
-            if report['feed.url'] in NothinkParserBot.DNS_FEED:
+            elif report['feed.url'] in NothinkParserBot.DNS_FEED:
                 value = line.strip('"').split('","')
                 event.add('time.source', dateutil.parser.parse(value[0] + '+00:00').isoformat())
                 event.add('source.ip', value[1])
@@ -66,7 +64,9 @@ class NothinkParserBot(ParserBot):
                 event.add('classification.type', 'ddos')
                 event.add('event_description.text', 'On time.source the source.ip was seen'
                                                     ' performing DNS amplification attacks against honeypots')
-                event.add('raw', line)
+
+            else:
+                raise ValueError('Unknown data feed %s.' % report['feed.url'])
 
             yield event
 

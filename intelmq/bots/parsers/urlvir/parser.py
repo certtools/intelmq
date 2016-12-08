@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
 """ IntelMQ parser for URLVIR feeds """
 
-import sys
 import dateutil.parser
 
 from intelmq.lib.bot import ParserBot
 from intelmq.lib.harmonization import IPAddress
-from intelmq.lib.message import Event
 
 
 class URLVirParserBot(ParserBot):
@@ -24,30 +22,29 @@ class URLVirParserBot(ParserBot):
                 self.lastgenerated = dateutil.parser.parse(self.lastgenerated + ' -04:00').isoformat()
 
         else:
-            event = Event(report)
+            event = self.new_event(report)
+            value = line.strip()
+            if self.lastgenerated:
+                event.add('time.source', self.lastgenerated)
+            event.add('raw', line)
+            event.add('classification.type', 'malware')
+
             if report['feed.url'] in URLVirParserBot.IP_FEED:
-                value = line.strip()
-                if self.lastgenerated:
-                    event.add('time.source', self.lastgenerated)
                 event.add('source.ip', value)
-                event.add('classification.type', 'malware')
                 event.add('event_description.text', 'Active Malicious IP Addresses Hosting Malware')
                 event.add('event_description.url', 'http://www.urlvir.com/search-ip-address/' + value + '/')
-                event.add('raw', line)
 
-            if report['feed.url'] in URLVirParserBot.HOST_FEED:
-                value = line.strip()
-                if self.lastgenerated:
-                    event.add('time.source', self.lastgenerated)
+            elif report['feed.url'] in URLVirParserBot.HOST_FEED:
                 if IPAddress.is_valid(value):
                     event.add('source.ip', value)
                     event.add('event_description.url', 'http://www.urlvir.com/search-ip-address/' + value + '/')
                 else:
                     event.add('source.fqdn', value)
                     event.add('event_description.url', 'http://www.urlvir.com/search-host/' + value + '/')
-                event.add('classification.type', 'malware')
                 event.add('event_description.text', 'Active Malicious Hosts')
-                event.add('raw', line)
+
+            else:
+                raise ValueError('Unknown data feed %s.' % report['feed.url'])
 
             yield event
 

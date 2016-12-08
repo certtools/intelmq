@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 """ IntelMQ parser for Bambenek DGA, Domain, and IP feeds """
 
-import sys
-
 from intelmq.lib.bot import ParserBot
-from intelmq.lib.message import Event
 
 
 class BambenekParserBot(ParserBot):
@@ -20,33 +17,24 @@ class BambenekParserBot(ParserBot):
 
         else:
             value = line.split(',')
-            event = Event(report)
+            event = self.new_event(report)
 
-            if report['feed.url'] in BambenekParserBot.IPMASTERLIST:
-                event.add('source.ip', value[0])
-                event.add('event_description.text', value[1])
-                event.add('time.source', value[2] + ' UTC')
-                event.add('event_description.url', value[3])
+            event.add('source.ip', value[0])
+            event.add('event_description.text', value[1])
+            event.add('time.source', value[2] + ' UTC')
+            event.add('event_description.url', value[3])
+
+            if report['feed.url'] in BambenekParserBot.IPMASTERLIST or report['feed.url'] in BambenekParserBot.DOMMASTERLIST:
                 event.add('classification.type', 'c&c')
                 event.add('status', 'online')
                 event.add('raw', line)
 
-            if report['feed.url'] in BambenekParserBot.DOMMASTERLIST:
-                event.add('source.fqdn', value[0])
-                event.add('event_description.text', value[1])
-                event.add('time.source', value[2] + ' UTC')
-                event.add('event_description.url', value[3])
-                event.add('classification.type', 'c&c')
-                event.add('status', 'online')
-                event.add('raw', line)
-
-            if report['feed.url'] in BambenekParserBot.DGA_FEED:
-                event.add('source.fqdn', value[0])
-                event.add('event_description.text', value[1])
-                event.add('time.source', value[2] + ' 00:00 UTC')
-                event.add('event_description.url', value[3])
+            elif report['feed.url'] in BambenekParserBot.DGA_FEED:
                 event.add('classification.type', 'dga domain')
                 event.add('raw', line)
+
+            else:
+                raise ValueError('Unknown data feed %s.' % report['feed.url'] )
 
             yield event
 
