@@ -20,7 +20,6 @@ xmpp_to_user: string
 xmpp_to_server: string
 """
 
-import sys
 
 from intelmq.lib.bot import Bot
 
@@ -97,6 +96,4 @@ class XMPPOutputBot(Bot):
             self.logger.info("There was no XMPPClient I could stop.")
 
 
-if __name__ == "__main__":
-    bot = XMPPOutputBot(sys.argv[1])
-    bot.start()
+BOT = XMPPOutputBot

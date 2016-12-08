@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import sys
 from urllib.parse import urlparse
 
 from intelmq.lib import utils
@@ -48,6 +47,4 @@ class VXVaultParserBot(ParserBot):
         return '\n'.join(self.tempdata + [line])
 
 
-if __name__ == "__main__":
-    bot = VXVaultParserBot(sys.argv[1])
-    bot.start()
+BOT = VXVaultParserBot

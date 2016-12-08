@@ -3,7 +3,6 @@
 Reference: https://abusix.com/contactdb.html
 RIPE abuse contacts resolving through DNS TXT queries
 '''
-import sys
 
 from intelmq.bots.experts.abusix.lib import Abusix
 from intelmq.lib.bot import Bot
@@ -41,6 +40,4 @@ class AbusixExpertBot(Bot):
         self.acknowledge_message()
 
 
-if __name__ == "__main__":
-    bot = AbusixExpertBot(sys.argv[1])
-    bot.start()
+BOT = AbusixExpertBot

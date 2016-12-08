@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import sys
 
 import requests
 
@@ -29,6 +28,4 @@ class HTTPStreamCollectorBot(CollectorBot):
             self.logger.info('Stream stopped.')
 
 
-if __name__ == "__main__":
-    bot = HTTPStreamCollectorBot(sys.argv[1])
-    bot.start()
+BOT = HTTPStreamCollectorBot

@@ -40,6 +40,4 @@ class Netlab360ParserBot(ParserBot):
 
             yield event
 
-if __name__ == '__main__':
-    bot = Netlab360ParserBot(sys.argv[1])
-    bot.start()
+BOT = Netlab360ParserBot

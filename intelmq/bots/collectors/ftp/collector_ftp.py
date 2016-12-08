@@ -14,7 +14,6 @@ from __future__ import unicode_literals
 
 import fnmatch
 import io
-import sys
 import zipfile
 from ftplib import FTP
 
@@ -78,6 +77,4 @@ class FTPCollectorBot(CollectorBot):
             self.send_message(report)
 
 
-if __name__ == "__main__":
-    bot = FTPCollectorBot(sys.argv[1])
-    bot.start()
+BOT = FTPCollectorBot

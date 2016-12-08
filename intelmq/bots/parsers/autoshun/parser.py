@@ -62,6 +62,4 @@ class AutoshunParserBot(ParserBot):
         yield event
 
 
-if __name__ == "__main__":
-    bot = AutoshunParserBot(sys.argv[1])
-    bot.start()
+BOT = AutoshunParserBot

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import json
-import sys
 from datetime import datetime
 from urllib.parse import urljoin
 
@@ -117,6 +116,4 @@ class MISPParserBot(Bot):
         self.acknowledge_message()
 
 
-if __name__ == '__main__':
-    bot = MISPParserBot(sys.argv[1])
-    bot.start()
+BOT = MISPParserBot

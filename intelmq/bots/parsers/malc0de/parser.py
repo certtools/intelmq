@@ -59,6 +59,4 @@ class Malc0deParserBot(ParserBot):
 
             yield event
 
-if __name__ == '__main__':
-    bot = Malc0deParserBot(sys.argv[1])
-    bot.start()
+BOT = Malc0deParserBot

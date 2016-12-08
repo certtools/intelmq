@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import sys
 
 from intelmq.lib.bot import Bot
 
@@ -91,6 +90,5 @@ class AMQPTopicBot(Bot):
         else:
             self.acknowledge_message()
 
-if __name__ == "__main__":
-    bot = AMQPTopicBot(sys.argv[1])
-    bot.start()
+
+BOT = AMQPTopicBot

@@ -3,7 +3,6 @@
 Parser for Intelmq and Abuse.ch Ransomware feed.
 """
 
-import sys
 import csv
 import io
 
@@ -65,6 +64,5 @@ class AbuseCHRansomwaretrackerParserBot(Bot):
                 self.send_message(event)
         self.acknowledge_message()
 
-if __name__ == '__main__':
-    bot = AbuseCHRansomwaretrackerParserBot(sys.argv[1])
-    bot.start()
+
+BOT = AbuseCHRansomwaretrackerParserBot

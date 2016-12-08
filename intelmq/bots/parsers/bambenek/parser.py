@@ -50,6 +50,4 @@ class BambenekParserBot(ParserBot):
 
             yield event
 
-if __name__ == '__main__':
-    bot = BambenekParserBot(sys.argv[1])
-    bot.start()
+BOT = BambenekParserBot

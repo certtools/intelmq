@@ -347,12 +347,7 @@ Get logs of a bot:
             return 'error'
         else:
             module = importlib.import_module(bot_module)
-            # TODO: Search for bot class is dirty (but works)
-            botname = [name for name in dir(module)
-                       if hasattr(getattr(module, name), 'process') and
-                       name.endswith('Bot') and
-                       name not in ['CollectorBot', 'ParserBot']][0]
-            bot = getattr(module, botname)
+            bot = getattr(module, 'BOT')
             instance = bot(bot_id)
             instance.start()
 
@@ -374,7 +369,7 @@ Get logs of a bot:
             log_bot_error('notfound', bot_id)
             return 'error'
         else:
-            cmdargs = ["python3", "-m", module, bot_id]
+            cmdargs = [module, bot_id]
             with open('/dev/null', 'w') as devnull:
                 proc = psutil.Popen(cmdargs, stdout=devnull, stderr=devnull)
                 filename = PIDFILE.format(bot_id)

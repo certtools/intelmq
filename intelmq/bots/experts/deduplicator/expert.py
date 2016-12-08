@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import sys
 
 from intelmq.lib.bot import Bot
 from intelmq.lib.cache import Cache
@@ -12,6 +11,8 @@ class DeduplicatorExpertBot(Bot):
                            self.parameters.redis_cache_port,
                            self.parameters.redis_cache_db,
                            self.parameters.redis_cache_ttl,
+                           getattr(self.parameters, "redis_cache_password",
+                                   None)
                            )
 
     def process(self):
@@ -32,6 +33,4 @@ class DeduplicatorExpertBot(Bot):
         self.acknowledge_message()
 
 
-if __name__ == "__main__":
-    bot = DeduplicatorExpertBot(sys.argv[1])
-    bot.start()
+BOT = DeduplicatorExpertBot

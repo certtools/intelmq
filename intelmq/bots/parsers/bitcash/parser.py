@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """ Parser for Bitcash blocklist feed. """
 
-import sys
-
 from intelmq.lib.bot import ParserBot
 from intelmq.lib.harmonization import FQDN
 from intelmq.lib.message import Event
@@ -29,6 +27,4 @@ class BitcashBlocklistParserBot(ParserBot):
 
             yield event
 
-if __name__ == '__main__':
-    bot = BitcashBlocklistParserBot(sys.argv[1])
-    bot.start()
+BOT = BitcashBlocklistParserBot

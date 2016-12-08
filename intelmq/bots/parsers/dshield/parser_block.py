@@ -19,7 +19,6 @@
 #    (7) contact email address
 """
 
-import sys
 
 import dateutil
 
@@ -77,6 +76,4 @@ class DshieldBlockParserBot(Bot):
         self.acknowledge_message()
 
 
-if __name__ == "__main__":
-    bot = DshieldBlockParserBot(sys.argv[1])
-    bot.start()
+BOT = DshieldBlockParserBot

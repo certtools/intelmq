@@ -70,6 +70,4 @@ class NothinkParserBot(ParserBot):
 
             yield event
 
-if __name__ == '__main__':
-    bot = NothinkParserBot(sys.argv[1])
-    bot.start()
+BOT = NothinkParserBot
