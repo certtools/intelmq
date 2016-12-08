@@ -1,0 +1,5 @@
+s/opt\/intelmq\/var\/run/var\/run\/intelmq/g
+s/opt\/intelmq\/var\/log/var\/log\/intelmq/g
+s/opt\/intelmq\/var\/lib/var\/lib\/intelmq/g
+s/opt\/intelmq\/etc\//etc\/intelmq\//g
+s/opt\/intelmq/etc\/intelmq/g

@@ -19,6 +19,7 @@ export PYBUILD_NAME=intelmq
 override_dh_auto_build:
 
 override_dh_auto_install: $(BOTDOCS)
+	find . -type f -exec sed -i -f debian/sedfile {} \;
 	python3 setup.py install --root=debian/intelmq --prefix=/usr
 	mv debian/intelmq/etc/intelmq/examples/* debian/intelmq/etc/intelmq/
 	rmdir debian/intelmq/etc/intelmq/examples
