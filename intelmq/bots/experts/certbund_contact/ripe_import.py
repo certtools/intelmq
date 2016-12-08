@@ -34,10 +34,6 @@ called automatically, e.g. by a cronjob.''')
     ripe_data.add_db_args(parser)
     ripe_data.add_common_args(parser)
 
-    parser.add_argument("--notification-interval",
-                    default='0',
-                    help="Specify the default notification intervall in seconds. Default: 0")
-
     args = parser.parse_args()
 
 
@@ -103,14 +99,12 @@ called automatically, e.g. by a cronjob.''')
                 for asn_id in org_to_asn[org_ripe_handle]:
                     cur.execute("""
                     INSERT INTO organisation_to_asn_automatic (
-                                                        notification_interval,
                                                         organisation_id,
                                                         asn_id,
                                                         import_source,
                                                         import_time)
-                    VALUES (%s, %s, %s, %s, CURRENT_TIMESTAMP);
-                    """, (args.notification_interval, org_id,
-                          asn_id, SOURCE_NAME))
+                    VALUES (%s, %s, %s, CURRENT_TIMESTAMP);
+                    """, (org_id, asn_id, SOURCE_NAME))
 
         #
         # Role
