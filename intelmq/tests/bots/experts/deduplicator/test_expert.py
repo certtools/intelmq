@@ -2,8 +2,6 @@
 
 import unittest
 
-import redis
-
 import intelmq.lib.message as message
 import intelmq.lib.test as test
 from intelmq.bots.experts.deduplicator.expert import DeduplicatorExpertBot
@@ -17,6 +15,7 @@ INPUT2 = INPUT1.copy()
 INPUT2['source.ip'] = '192.168.0.4'
 
 
+@test.skip_redis()
 class TestDeduplicatorExpertBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for DeduplicatorExpertBot.
@@ -28,18 +27,13 @@ class TestDeduplicatorExpertBot(test.BotTestCase, unittest.TestCase):
         cls.default_input_message = INPUT1
         cls.sysconfig = {"redis_cache_ttl": "86400",
                          "ignore_keys": "raw ,time.observation "}
-        cls.redis = redis.Redis(host=test.BOT_CONFIG['redis_cache_host'],
-                                port=test.BOT_CONFIG['redis_cache_port'],
-                                db=test.BOT_CONFIG['redis_cache_db'],
-                                socket_timeout=5)
-        cls.redis.flushdb()
+        cls.use_cache = True
 
     def test_suppress(self):
         msg = message.MessageFactory.from_dict(INPUT1)
         msg_hash = hash(msg)
-        self.redis.set(msg_hash, 'hash')
-        self.redis.expire(msg_hash, 3600)
-        self.input_message = INPUT1
+        self.cache.set(msg_hash, 'hash')
+        self.cache.expire(msg_hash, 3600)
         self.run_bot()
         self.assertOutputQueueLen()
 
@@ -49,17 +43,12 @@ class TestDeduplicatorExpertBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(0, INPUT2)
 
     def test_old_hash(self):
-        self.redis.flushdb()
-        self.redis.set(1241421362111650194, 'hash')
-        self.redis.expire(1241421362111650194, 3600)
-        self.input_message = INPUT1
+        self.cache.flushdb()
+        self.cache.set(1241421362111650194, 'hash')
+        self.cache.expire(1241421362111650194, 3600)
         self.run_bot()
         self.assertOutputQueueLen()
 
-    @classmethod
-    def tearDownClass(cls):
-        cls.redis.flushdb()
 
-
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

@@ -6,7 +6,6 @@ event.
 Copyright (C) 2016 by Bundesamt für Sicherheit in der Informationstechnik
 Software engineering by Intevation GmbH
 """
-import sys
 
 from intelmq.lib.bot import Bot
 from intelmq.lib.message import MessageFactory
@@ -18,12 +17,11 @@ class JSONParserBot(Bot):
     def process(self):
         report = self.receive_message()
 
-        event = MessageFactory.unserialize(base64_decode(report['raw']))
+        event = MessageFactory.unserialize(base64_decode(report['raw']),
+                                           harmonization=self.harmonization)
 
         self.send_message(event)
         self.acknowledge_message()
 
 
-if __name__ == "__main__":
-    bot = JSONParserBot(sys.argv[1])
-    bot.start()
+BOT = JSONParserBot

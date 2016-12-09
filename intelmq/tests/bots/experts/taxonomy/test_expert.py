@@ -24,7 +24,6 @@ class TestTaxonomyExpertBot(test.BotTestCase, unittest.TestCase):
     @classmethod
     def set_bot(cls):
         cls.bot_reference = TaxonomyExpertBot
-        cls.default_input_message = {'__type': 'Report'}
 
     def test_classification(self):
         self.input_message = EXAMPLE_INPUT
@@ -32,5 +31,5 @@ class TestTaxonomyExpertBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(0, EXAMPLE_OUTPUT)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

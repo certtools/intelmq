@@ -17,12 +17,9 @@ https://tools.ietf.org/html/rfc3849
 https://tools.ietf.org/html/rfc4291
 https://tools.ietf.org/html/rfc5737
 https://en.wikipedia.org/wiki/IPv4
-
-TODO: Extend for example domains
 """
 
 import ipaddress
-import sys
 from urllib.parse import urlparse
 
 from intelmq.lib.bot import Bot
@@ -70,6 +67,5 @@ class RFC1918ExpertBot(Bot):
         self.send_message(event)
         self.acknowledge_message()
 
-if __name__ == "__main__":
-    bot = RFC1918ExpertBot(sys.argv[1])
-    bot.start()
+
+BOT = RFC1918ExpertBot

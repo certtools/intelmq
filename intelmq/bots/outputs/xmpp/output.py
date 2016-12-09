@@ -4,8 +4,6 @@ Connects to a XMPP Server and sends data to a user.
 
 TLS is used by default.
 
-TODO: Introduce Multi User Chat like in XMPP Collector
-
 Tested with Python >= 3.4
 Tested with sleekxmpp >= 1.0.0-beta5
 
@@ -20,12 +18,8 @@ xmpp_server: string
 xmpp_password: boolean
 xmpp_to_user: string
 xmpp_to_server: string
-# TODO xmpp_room: string
-# TODO xmpp_room_password: string
-# TODO xmpp_room_nick: string
 """
 
-import sys
 
 from intelmq.lib.bot import Bot
 
@@ -37,22 +31,22 @@ try:
             sleekxmpp.ClientXMPP.__init__(self, jid, password)
 
             self.logger = logger
-            self.logger.info("Connected to Server")
+            self.logger.info("Connected to Server.")
 
             self.add_event_handler("session_start", self.session_start)
 
         def session_start(self, event):
             self.send_presence()
-            self.logger.debug("Session started")
+            self.logger.debug("Session started.")
 
             try:
                 self.get_roster()
             except sleekxmpp.exceptions.IqError as err:
-                self.logger.error('There was an error getting the roster')
+                self.logger.error('There was an error getting the roster.')
                 self.logger.error(err.iq['error']['condition'])
                 self.disconnect()
             except sleekxmpp.exceptions.IqTimeout:
-                self.logger.error('Server is taking too long to respond')
+                self.logger.error('Server is taking too long to respond.')
                 self.disconnect()
 except ImportError:
     sleekxmpp = None
@@ -79,17 +73,16 @@ class XMPPOutputBot(Bot):
         receiver = self.parameters.xmpp_to_user + '@' +\
             self.parameters.xmpp_to_server
 
-        jevent = event.to_json(hierarchical=self.parameters.hierarchical_output)
+        jevent = event.to_json(hierarchical=self.parameters.hierarchical_output,
+                               with_type=True)
 
         try:
             # TODO: proper error handling. Right now it cannot be
             # detected if the message was sent successfully.
-            self.logger.debug("Trying to send Event: %r to %r",
-                              jevent,
-                              receiver)
+            self.logger.debug("Trying to send Event: %r to %r." % (jevent, receiver))
             self.xmpp.send_message(mto=receiver, mbody=jevent)
         except sleekxmpp.exceptions.XMPPError as err:
-            self.logger.error('There was an error when sending the event')
+            self.logger.error('There was an error when sending the event.')
             self.logger.error(err.iq['error']['condition'])
 
         self.acknowledge_message()
@@ -97,13 +90,11 @@ class XMPPOutputBot(Bot):
     def stop(self):
         if self.xmpp:
             self.xmpp.disconnect()
-            self.logger.info("Disconnected from XMPP")
+            self.logger.info("Disconnected from XMPP.")
 
             super(XMPPOutputBot, self).stop()
         else:
-            self.logger.info("There was no XMPPClient I could stop")
+            self.logger.info("There was no XMPPClient I could stop.")
 
 
-if __name__ == "__main__":
-    bot = XMPPOutputBot(sys.argv[1])
-    bot.start()
+BOT = XMPPOutputBot

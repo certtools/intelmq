@@ -5,37 +5,57 @@
 3. [Experts](#experts)
 4. [Outputs](#outputs)
 
+All Bots can be extended with an `enabled` parameter in `runtime.conf`. If the parameter is set to `True`
+(which is assumed as defaut if it is missing) the bot will start. If the parameter was set to `False`, the
+Bot will not start, and terminate immediately. Nevertheless you will be informed about this in the bots' log file.
 
 <a name="collectors"></a>
 ## Collectors
 
-### HTTP
+**Feed parameters**: Common configuration options for all collectors
+
+* `feed`: Name for the feed.
+* `code`: Code for the feed.
+* `provider`: Name of the provider of the feed.
+* `rate_limit`: time interval (in seconds) between messages processing.
+
+**HTTP parameters**: Common URL fetching parameters used in multiple collectors
+
+* `http_username`: username for basic authentication.
+* `http_password`: password for basic authentication.
+* `http_proxy`: proxy to use for http
+* `https_proxy`: proxy to use for https
+* `http_user_agent`: user agent to use for the request.
+* `http_verify_cert`: path to trusted CA bundle or directory, `false` to ignore verifying SSL certificates,  or `true` (default) to verify SSL certificates
+* `ssl_client_certificate`: SSL client certificate to use.
+* `http_header`: HTTP request headers
+
+
+
+### Generic URL Fetcher
+
 
 #### Information:
-* `name:` http
+* `name:` intelmq.bots.collectors.http.collector_http
 * `lookup:` yes
 * `public:` yes
 * `cache (redis db):` none
 * `description:` collect report messages from remote hosts using http protocol
 
 #### Configuration Parameters:
-* `feed`: Name for the feed, usually found in collector bot configuration.
-* `rate_limit`: time interval (in seconds) between messages processing
+
+* **Feed parameters** (see above)
+* **HTTP parameters** (see above)
 * `http_url`: location of information resource (e.g. https://feodotracker.abuse.ch/blocklist/?download=domainblocklist)
-* `http_header`: FIXME
-* `http_verify_cert`: FIXME
-* `http_username`: FIXME
-* `http_password`: FIXME
-* `http_proxy`: FIXME
-* `http_ssl_proxy`: FIXME
 
 
 * * *
 
-### Mail (URL)
+### Generic Mail URL Fetcher
+
 
 #### Information:
-* `name:` collector_mail_url
+* `name:` intelmq.bots.collectors.mail.collector_mail_url
 * `lookup:` yes
 * `public:` yes
 * `cache (redis db):` none
@@ -43,22 +63,23 @@
 
 #### Configuration Parameters:
 
-* `feed`: Name for the feed, usually found in collector bot configuration.
-* `rate_limit`: time interval (in seconds) between messages processing
+* **Feed parameters** (see above)
+* **HTTP parameters** (see above)
 * `mail_host`: FQDN or IP of mail server
 * `mail_user`: user account of the email account
-* `mail_password`: password associated to user account
-* `mail_ssl`: FIXME
-* `mail_folder`: FIXME
-* `mail_subject_regex`: FIXME
-* `mail_url_regex`: FIXME
+* `mail_password`: password associated with the user account
+* `mail_ssl`: whether the mail account uses SSL (default: `true`)
+* `folder`: folder in which to look for mails (default: `INBOX`)
+* `subject_regex`: regular expression to look for a subject
+* `url_regex`: regular expression of the feed URL to search for in the mail body 
 
 * * *
 
-### Mail (Attach)
+### Generic Mail Attachment Fetcher
+
 
 #### Information:
-* `name:` collector_mail_attach
+* `name:` intelmq.bots.collectors.mail.collector_mail_attach
 * `lookup:` yes
 * `public:` yes
 * `cache (redis db):` none
@@ -66,26 +87,118 @@
 
 #### Configuration Parameters:
 
-* `feed`: Name for the feed, usually found in collector bot configuration.
-* `rate_limit`: time interval (in seconds) between messages processing
-* `mail_host`: FIXME
-* `mail_user`: FIXME
-* `mail_password`: FIXME
-* `mail_ssl`: FIXME
-* `mail_folder`: FIXME
-* `mail_subject_regex`: FIXME
-* `mail_folder`: FIXME
-* `mail_attach_regex`: FIXME
-* `mail_attach_unzip`: FIXME
+* **Feed parameters** (see above)
+* `mail_host`: FQDN or IP of mail server
+* `mail_user`: user account of the email account
+* `mail_password`: password associated with the user account
+* `mail_ssl`: whether the mail account uses SSL (default: `true`)
+* `folder`: folder in which to look for mails (default: `INBOX`)
+* `subject_regex`: regular expression to look for a subject
+* `attach_regex`: regular expression of the name of the attachment
+* `attach_unzip`: whether to unzip the attachment (default: `true`)
 
+* * *
+
+### Fileinput
+
+#### Information:
+* `name:` intelmq.bots.collectors.file.collector_file
+* `lookup:` yes
+* `public:` yes
+* `cache (redis db):` none
+* `description:` collect messages from a file.
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `path`: path to file
+* `postfix`: FIXME
+* `delete_file`: whether to delete the file after reading (default: `false`)
+
+
+* * *
+
+### MISP Generic
+
+
+#### Information:
+* `name:` intelmq.bots.collectors.misp.collector
+* `lookup:` yes
+* `public:` yes
+* `cache (redis db):` none
+* `description:` collect messages from a MISP server.
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `misp_url`: url of MISP server (with trailing '/')
+* `misp_key`: MISP Authkey
+* `misp_verify`: (default: `true`)
+* `misp_tag_to_process`: MISP tag for events to be processed
+* `misp_tag_processed`: MISP tag for processed events
+
+* * *
+
+### Request Tracker
+
+        
+#### Information:
+* `name:` intelmq.bots.collectors.rt.collector_rt
+* `lookup:` yes
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Request Tracker Collector fetches attachments from an RTIR instance and optionally decrypts them with gnupg.
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* **HTTP parameters** (see above)
+* `uri`: url of the REST interface of the RT
+* `user`: RT username
+* `password`: RT password
+* `search_owner`: owner of the ticket to search for (default: `nobody`)
+* `search_queue`: queue of the ticket to search for (default: `Incident Reports`)
+* `search_status`: status of the ticket to search for (default: `new`)
+* `search_subject_like`: part of the subject of the ticket to search for (default: `Report`)
+* `set_status`: status to set the ticket to after processing (default: `open`)
+* `take_ticket`: whether to take the ticket (default: `true`)
+* `url_regex`: regular expression of an URL to search for in the ticket
+* `attachment_regex`: regular expression of an attachment in the ticket
+* `unzip_attachment`: whether to unzip a found attachment
+        
+* * *
+
+### XMPP collector
+
+
+#### Information:
+* `name:` intelmq.bots.collectors.xmpp.collector
+* `lookup:` yes
+* `public:` yes
+* `cache (redis db):` none
+* `description:` This bot can connect to an XMPP Server and one room, in order to receive reports from it. TLS is used by default. rate_limit is ineffective here. Bot can either pass the body or the whole event.
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `xmpp_server`: FIXME
+* `xmpp_user`: FIXME
+* `xmpp_password`: FIXME
+* `xmpp_room`: FIXME
+* `xmpp_room_nick`: FIXME
+* `xmpp_room_passsword`: FIXME
+* `ca_certs`: FIXME (default: `/etc/ssl/certs/ca-certificates.crt`)
+* `strip_message`: FIXME (default: `true`)
+* `pass_full_xml`: FIXME (default: `false`)
 
 * * *
 
 
 ### Alien Vault OTX
 
+
 #### Information:
-* `name:` http
+* `name:` intelmq.bots.collectors.alienvault_otx.collector
 * `lookup:` yes
 * `public:` yes
 * `cache (redis db):` none
@@ -93,8 +206,7 @@
 
 #### Configuration Parameters:
 
-* `feed`: Name for the feed, usually found in collector bot configuration.
-* `rate_limit`: time interval (in seconds) between messages processing
+* **Feed parameters** (see above)
 * `api_key`: location of information resource (e.g. FIXME)
 
 
@@ -418,6 +530,7 @@ If the rule is a string, a regex-search is performed, also for numeric values (`
 * `database`: MongoDB database
 * `host`: MongoDB host (FQDN or IP)
 * `port`: MongoDB port
+* `hierarchical_output`: Boolean (default true) as mongodb does not allow saving keys with dots, we split the dictionay in sub-dictionaries.
 
 #### Installation Requirements
 

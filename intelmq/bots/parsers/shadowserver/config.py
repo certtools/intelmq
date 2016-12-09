@@ -98,7 +98,22 @@ def convert_int(value):
         return int(value)
 
 
-def convert_host_and_url(value, row):
+def convert_hostname_and_url(value, row):
+    """
+    URLs are split into hostname and path, we can also guess the protocol here.
+    but only guess if the protocol is in a set of known good values.
+    """
+    if row['application'] in ['http', 'https', 'irc']:
+        if row['hostname'] and row['url']:
+            return row['application'] + '://' + row['hostname'] + row['url']
+
+        elif row['hostname'] and not row['url']:
+            return row['application'] + '://' + row['hostname']
+
+    return value
+
+
+def convert_httphost_and_url(value, row):
     """
     URLs are split into hostname and path, we can also guess the protocol here.
     """
@@ -166,8 +181,6 @@ open_mdns = {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'Vulnerable',
         'protocol.application': 'mdns',
-        'feed.code': 'shadowserver-openmdns',
-        'feed.name': 'shadowserver',
         'classification.identifier': 'openmdns',
     },
 }
@@ -197,8 +210,6 @@ open_chargen = {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'openchargen',
-        'feed.code': 'shadowserver-openchargen',
-        'feed.name': 'shadowserver',
         'protocol.application': 'chargen',
     },
 }
@@ -231,8 +242,6 @@ open_tftp = {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'opentftp',
-        'feed.code': 'shadowserver-opentftp',
-        'feed.name': 'shadowserver',
         'protocol.application': 'tftp',
     },
 }
@@ -274,8 +283,6 @@ sinkhole_http_drone = {
         'classification.type': 'botnet drone',
         'classification.taxonomy': 'Malicious Code',
         'classification.identifier': 'botnet',
-        'feed.code': 'shadowserver-sinkhole-http-drone',
-        'feed.name': 'shadowserver',
     },
 }
 
@@ -301,7 +308,7 @@ microsoft_sinkhole = {
         ('user_agent', 'http_agent'),
         ('os.name', 'p0f_genre'),
         ('os.version', 'p0f_detail'),
-        ('destination.url', 'url', convert_host_and_url, True),
+        ('destination.url', 'url', convert_httphost_and_url, True),
         # Other known fields which will go into "extra"
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
@@ -316,8 +323,6 @@ microsoft_sinkhole = {
         'protocol.application': 'http',
         'classification.taxonomy': 'Malicious Code',
         'classification.identifier': 'botnet',
-        'feed.code': 'shadowserver-microsoft-sinkhole',
-        'feed.name': 'shadowserver',
     },
 }
 
@@ -358,8 +363,6 @@ open_redis = {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'openredis',
-        'feed.code': 'shadowserver-openredis',
-        'feed.name': 'shadowserver',
         'protocol.application': 'redis',
     },
 }
@@ -391,8 +394,6 @@ open_portmapper = {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'openportmapper',
-        'feed.code': 'shadowserver-openportmapper',
-        'feed.name': 'shadowserver',
         'protocol.application': 'portmapper',
     },
 }
@@ -437,8 +438,6 @@ open_ipmi = {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'openipmi',
-        'feed.code': 'shadowserver-openipmi',
-        'feed.name': 'shadowserver',
         'protocol.application': 'ipmi',
         'protocol.transport': 'udp',
     },
@@ -470,8 +469,6 @@ open_qotd = {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'openqotd',
-        'feed.code': 'shadowserver-openqotd',
-        'feed.name': 'shadowserver',
         'protocol.application': 'qotd',
     },
 }
@@ -511,8 +508,6 @@ open_ssdp = {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'openssdp',
-        'feed.code': 'shadowserver-openssdp',
-        'feed.name': 'shadowserver',
         'protocol.application': 'ssdp',
     },
 }
@@ -544,8 +539,6 @@ open_snmp = {
         'classification.taxonomy': 'Vulnerable',
         'protocol.application': 'snmp',
         'classification.identifier': 'opensnmp',
-        'feed.code': 'shadowserver-opensnmp',
-        'feed.name': 'shadowserver',
     },
 }
 
@@ -579,8 +572,6 @@ open_mssql = {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'openmssql',
-        'feed.code': 'shadowserver-openmssql',
-        'feed.name': 'shadowserver',
         'protocol.application': 'mssql',
     },
 }
@@ -619,8 +610,6 @@ open_mongodb = {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'openmongodb',
-        'feed.code': 'shadowserver-openmongodb',
-        'feed.name': 'shadowserver',
         'protocol.application': 'mongodb',
     },
 }
@@ -650,8 +639,6 @@ open_netbios = {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'opennetbios',
-        'feed.code': 'shadowserver-opennetbios',
-        'feed.name': 'shadowserver',
         'protocol.application': 'netbios',
     },
 }
@@ -690,8 +677,6 @@ open_elasticsearch = {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'openelasticsearch',
-        'feed.code': 'shadowserver-openelasticsearch',
-        'feed.name': 'shadowserver',
         'protocol.application': 'elasticsearch',
     },
 }
@@ -720,8 +705,6 @@ dns_open_resolvers = {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'opendns',
-        'feed.code': 'shadowserver-opendns',
-        'feed.name': 'shadowserver',
         'protocol.application': 'dns',
     },
 }
@@ -745,8 +728,6 @@ ntp_monitor = {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'openntp',
-        'feed.code': 'shadowserver-openntp',
-        'feed.name': 'shadowserver',
         'protocol.application': 'ntp',
     },
 }
@@ -769,8 +750,6 @@ ssl_freak_scan = {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'SSL-FREAK',
-        'feed.code': 'shadowserver-ssl-freak-scan',
-        'feed.name': 'shadowserver',
         'protocol.application': 'https',
     },
 }
@@ -794,8 +773,6 @@ ssl_scan = {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'SSL-Poodle',
-        'feed.code': 'shadowserver-ssl-scan',
-        'feed.name': 'shadowserver',
         'protocol.application': 'https',
     },
 }
@@ -819,8 +796,6 @@ open_memcached = {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'openmemcached',
-        'feed.code': 'shadowserver-openmemcached',
-        'feed.name': 'shadowserver',
         'protocol.application': 'memcached',
     },
 }
@@ -838,7 +813,7 @@ botnet_drone_hadoop = {
         ('destination.ip', 'cc_ip', validate_ip),
         ('destination.port', 'cc_port'),
         ('destination.fqdn', 'cc_dns'),
-        ('destination.url', 'url'),
+        ('destination.url', 'url', convert_hostname_and_url, True),
         ('malware.name', 'infection'),
         ('protocol.application', 'application'),
         ('protocol.transport', 'type'),
@@ -859,8 +834,6 @@ botnet_drone_hadoop = {
         'classification.type': 'botnet drone',
         'classification.taxonomy': 'Malicious Code',
         'classification.identifier': 'botnet',
-        'feed.code': 'shadowserver-botnet-drone-hadoop',
-        'feed.name': 'shadowserver',
     },
 }
 
@@ -889,9 +862,7 @@ open_xdmcp = {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'Vulnerable',
         'protocol.application': 'xdmcp',
-        'feed.code': 'shadowserver-openxdmcp',
-        'feed.name': 'shadowserver',
-        'feed.url': 'https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-XDMCP',
+        # 'feed.url': 'https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-XDMCP',
         'classification.identifier': 'openxdmcp',
     },
 }
@@ -922,9 +893,7 @@ open_natpmp = {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'Vulnerable',
         'protocol.application': 'nat-pmp',
-        'feed.code': 'shadowserver-opennatpmp',
-        'feed.name': 'shadowserver',
-        'feed.url': 'https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-NATPMP',
+        # 'feed.url': 'https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-NATPMP',
         'classification.identifier': 'opennatpmp',
     },
 }

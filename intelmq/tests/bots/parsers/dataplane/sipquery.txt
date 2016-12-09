@@ -1,0 +1,70 @@
+# DataPlane.org - for operators, by operators
+# sipquery
+# 2016-11-29 14:00 - 2016-12-06 14:00
+#
+# The sipquery report is for free for non-commercial use ONLY.  If you
+# wish to discuss commercial use of this service, please contact us at
+# info@dataplane.org.  Redistribution of the sipquery report in whole
+# or in part without the express permission of DataPlane is expressly
+# prohibited.
+#
+# This report is made possible through the generous support of people
+# like you.  Sensor, processing and distribution systems require
+# non-free resources to setup and maintain.  We are always looking for
+# financial contributions to help pay the bills and hosting to increase
+# visibility.  If you find what we do useful, please consider supporting
+# us.
+#
+# This report is informational.  It is not a blacklist, but some may
+# choose to use it to actively protect their networks and systems.  The
+# report is provided on an as-is basis with no expressed warranty or
+# guarantee of accuracy.  Use of this data is at your own risk.  If you
+# have questions about this report do not hesitate to contact us.
+#
+# Entries below consist of fields with identifying characteristics of a
+# a source IP address that has been seen initiating a SIP OPTIONS query
+# to a remote host.  This report lists hosts that are suspicious of more
+# than just port scanning.  These hosts may be SIP server cataloging or
+# conducting various forms of telephony abuse.  Each entry is sorted
+# according to a route origination ASN.  An entry for the IP address may
+# be listed more than once if there are multiple origin AS (MOAS)
+# announcements for the covering prefix.  We use the Team Cymru IP
+# address to ASN mapping service to construct an origin AS number and
+# name.  For details about this Team Cymru service, see:
+#
+#   <http://www.team-cymru.org/Services/ip-to-asn.html>.
+#
+# The report format is as follows:
+#
+# ASN  |  ASname  |  saddr  |  utc  |  category
+#
+# Each field is described below.  Please note any special formatting
+# rules to aid in processing this file with automated tools and scripts.
+# Blank lines may be present to improve the visual display of this file.
+# Lines beginning with a hash ('#') character are comment lines.  All
+# other lines are report entries.  Each field is separated by a pipe
+# symbol ('|') and at least two whitespace characters on either side.
+#
+#   ASN       Autonomous system number originating a route for the entry
+#             IP address. Note, 4-byte ASNs are supported and will be
+#             displayed as a 32-bit integer.
+#
+#   ASname    A descriptive network name for the associated ASN.  The
+#             name is truncated to 30 characters.
+#
+#   saddr     The source IPv4 or IPv6 address that is being reported.
+#
+#   utc       A last seen timestamp formatted as YYYY-MM-DD HH:MM:SS
+#             and in UTC time.
+#
+#   category  Descriptive tag name for this entry.  For this report,
+#             the text sipquery will appear.
+#
+# A commented footer section shows an aggregate count of ASNs and
+# addresses seen in the current report.
+#
+209          |  CENTURYLINK-US-LEGACY-QWEST -   |      65.157.42.6  |  2016-12-05 14:01:21  |  sipquery
+#
+# Statistics
+#        ASNs: 1
+#   Addresses: 1

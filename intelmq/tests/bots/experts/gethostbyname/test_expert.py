@@ -22,6 +22,7 @@ EXAMPLE_OUTPUT = {"__type": "Event",
                   }
 
 
+@test.skip_internet()
 class TestGethostbynameExpertBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for Fqdn2IpExpertBot.
@@ -30,12 +31,11 @@ class TestGethostbynameExpertBot(test.BotTestCase, unittest.TestCase):
     @classmethod
     def set_bot(self):
         self.bot_reference = GethostbynameExpertBot
-        self.default_input_message = {'__type': 'Event'}
 
     def test(self):
         self.input_message = EXAMPLE_INPUT
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_OUTPUT)
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()
