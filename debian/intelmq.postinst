@@ -6,7 +6,7 @@ if [ "$1" = "configure" ] ; then
         groupadd -r intelmq
     fi
     if ! getent passwd intelmq >/dev/null 2>&1; then
-        useradd -r -d /var/lib/intelmq/ -c "user running intelmq" -U -s /bin/bash intelmq
+        useradd -r -d /var/lib/intelmq/ -c "user running intelmq" -g intelmq -s /bin/bash intelmq
     fi
     chmod -R g+w /var/lib/intelmq/*
     chown -R intelmq:intelmq /etc/intelmq/ /var/lib/intelmq/ /var/log/intelmq/
