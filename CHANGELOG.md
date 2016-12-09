@@ -15,6 +15,7 @@ v1.0 (in development, master branch)
 - ENH: added bots.experts.certat_contact.expert
 - MAINT: renamed bots.parsers.spamhaus.parser to bots.parsers.spamhaus.parser_drop
 - Dropped dragon research group feeds: discontinued
+- changed configuration syntax for bots.experts.modify
 
 ### Bug fixes
 - FIX: all bots handle message which are None
