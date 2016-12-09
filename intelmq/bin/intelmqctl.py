@@ -21,9 +21,6 @@ from intelmq.lib.pipeline import PipelineFactory
 class Parameters(object):
     pass
 
-PIDDIR = VAR_RUN_PATH
-PIDFILE = os.path.join(PIDDIR, "{}.pid")
-
 STATUSES = {
     'starting': 0,
     'running': 1,
@@ -104,41 +101,139 @@ def log_log_messages(messages):
                 pass
 
 
-def remove_pidfile(bot_id):
-    filename = PIDFILE.format(bot_id)
-    os.remove(filename)
+class BotProcessManager:
+    PIDDIR = VAR_RUN_PATH
+    PIDFILE = os.path.join(PIDDIR, "{}.pid")
 
+    def __init__(self, runtime_configuration):
+        self.__runtime_configuration = runtime_configuration
 
-def read_pidfile(bot_id):
-    filename = PIDFILE.format(bot_id)
-    if check_pidfile(bot_id):
-        with open(filename, 'r') as fp:
-            pid = fp.read()
-        return pid.strip()
-    return None
+        if not os.path.exists(self.PIDDIR):
+            os.makedirs(self.PIDDIR)
 
-
-def check_pidfile(bot_id):
-    filename = PIDFILE.format(bot_id)
-    if os.path.isfile(filename):
+    def bot_start(self, bot_id):
+        pid = self.__read_pidfile(bot_id)
+        if pid:
+            if self.__status_process(pid):
+                log_bot_message('running', bot_id)
+                return 'running'
+            else:
+                self.__remove_pidfile(bot_id)
+        log_bot_message('starting', bot_id)
         try:
+            module = self.__runtime_configuration[bot_id]['module']
+        except KeyError:
+            log_bot_error('notfound', bot_id)
+            return 'error'
+        else:
+            cmdargs = [module, bot_id]
+            with open('/dev/null', 'w') as devnull:
+                proc = psutil.Popen(cmdargs, stdout=devnull, stderr=devnull)
+                filename = self.PIDFILE.format(bot_id)
+                with open(filename, 'w') as fp:
+                    fp.write(str(proc.pid))
+
+        time.sleep(0.25)
+        return self.bot_status(bot_id)
+
+    def bot_stop(self, bot_id):
+        pid = self.__read_pidfile(bot_id)
+        if not pid:
+            if self._is_enabled(bot_id):
+                log_bot_error('stopped', bot_id)
+                return 'stopped'
+            else:
+                log_bot_message('disabled', bot_id)
+                return 'disabled'
+        if not self.__status_process(pid):
+            self.__remove_pidfile(bot_id)
+            log_bot_error('stopped', bot_id)
+            return 'stopped'
+        log_bot_message('stopping', bot_id)
+        proc = psutil.Process(int(pid))
+        proc.send_signal(signal.SIGINT)
+        self.__remove_pidfile(bot_id)
+        time.sleep(0.25)
+        if self.__status_process(pid):
+            log_bot_error('running', bot_id)
+            return 'running'
+        log_bot_message('stopped', bot_id)
+        return 'stopped'
+
+    def bot_reload(self, bot_id):
+        pid = self.__read_pidfile(bot_id)
+        if not pid:
+            if self._is_enabled(bot_id):
+                log_bot_error('stopped', bot_id)
+                return 'stopped'
+            else:
+                log_bot_message('disabled', bot_id)
+                return 'disabled'
+        if not self.__status_process(pid):
+            self.__remove_pidfile(bot_id)
+            log_bot_error('stopped', bot_id)
+            return 'stopped'
+        log_bot_message('reloading', bot_id)
+        proc = psutil.Process(int(pid))
+        proc.send_signal(signal.SIGHUP)
+        if self.__status_process(pid):
+            log_bot_message('running', bot_id)
+            return 'running'
+        log_bot_error('stopped', bot_id)
+        return 'stopped'
+
+    def bot_status(self, bot_id):
+        pid = self.__read_pidfile(bot_id)
+        if pid and self.__status_process(pid):
+            log_bot_message('running', bot_id)
+            return 'running'
+
+        if bot_id not in self.__runtime_configuration:
+            log_bot_error('notfound', bot_id)
+            return 'error'
+
+        if self._is_enabled(bot_id):
+            log_bot_message('stopped', bot_id)
+            return 'stopped'
+        else:
+            log_bot_message('disabled', bot_id)
+            return 'disabled'
+
+    def _is_enabled(self, bot_id):
+        return self.__runtime_configuration[bot_id].get('enabled', True)
+
+    def __read_pidfile(self, bot_id):
+        filename = self.PIDFILE.format(bot_id)
+        if self.__check_pidfile(bot_id):
             with open(filename, 'r') as fp:
                 pid = fp.read()
-            return int(pid.strip())
-        except ValueError:
-            return None
-    return None
+            return pid.strip()
+        return None
+
+    def __check_pidfile(self, bot_id):
+        filename = self.PIDFILE.format(bot_id)
+        if os.path.isfile(filename):
+            try:
+                with open(filename, 'r') as fp:
+                    pid = fp.read()
+                return int(pid.strip())
+            except ValueError:
+                return None
+        return None
+
+    def __remove_pidfile(self, bot_id):
+        filename = self.PIDFILE.format(bot_id)
+        os.remove(filename)
+
+    def __status_process(self, pid):
+        try:
+            psutil.Process(int(pid))
+            return True
+        except psutil.NoSuchProcess:
+            return False
 
 
-def status_process(pid):
-    try:
-        psutil.Process(int(pid))
-        return True
-    except psutil.NoSuchProcess:
-        return False
-
-
-class IntelMQContoller():
+class IntelMQController():
 
     def __init__(self, interactive=False, return_type="python", quiet=False):
         """
@@ -247,8 +342,9 @@ Get logs of a bot:
             else:
                 self.logger.info('%r with new format written.' % (RUNTIME_CONF_FILE + '.new'))
 
-        if not os.path.exists(PIDDIR):
-            os.makedirs(PIDDIR)
+        self.bot_process_manager = BotProcessManager(
+            self.runtime_configuration
+        )
 
         if self.interactive:
             parser = argparse.ArgumentParser(
@@ -355,75 +451,14 @@ Get logs of a bot:
         if bot_id is None:
             log_bot_error('noid')
             return 'error'
-        pid = read_pidfile(bot_id)
-        if pid:
-            if status_process(pid):
-                log_bot_message('running', bot_id)
-                return 'running'
-            else:
-                remove_pidfile(bot_id)
-        log_bot_message('starting', bot_id)
-        try:
-            module = self.runtime_configuration[bot_id]['module']
-        except KeyError:
-            log_bot_error('notfound', bot_id)
-            return 'error'
-        else:
-            cmdargs = [module, bot_id]
-            with open('/dev/null', 'w') as devnull:
-                proc = psutil.Popen(cmdargs, stdout=devnull, stderr=devnull)
-                filename = PIDFILE.format(bot_id)
-                with open(filename, 'w') as fp:
-                    fp.write(str(proc.pid))
 
-        time.sleep(0.25)
-        return self.bot_status(bot_id)
+        return self.bot_process_manager.bot_start(bot_id)
 
     def bot_stop(self, bot_id):
-        pid = read_pidfile(bot_id)
-        if not pid:
-            if self.runtime_configuration[bot_id].get('enabled', True):
-                log_bot_error('stopped', bot_id)
-                return 'stopped'
-            else:
-                log_bot_message('disabled', bot_id)
-                return 'disabled'
-        if not status_process(pid):
-            remove_pidfile(bot_id)
-            log_bot_error('stopped', bot_id)
-            return 'stopped'
-        log_bot_message('stopping', bot_id)
-        proc = psutil.Process(int(pid))
-        proc.send_signal(signal.SIGINT)
-        remove_pidfile(bot_id)
-        time.sleep(0.25)
-        if status_process(pid):
-            log_bot_error('running', bot_id)
-            return 'running'
-        log_bot_message('stopped', bot_id)
-        return 'stopped'
+        return self.bot_process_manager.bot_stop(bot_id)
 
     def bot_reload(self, bot_id):
-        pid = read_pidfile(bot_id)
-        if not pid:
-            if self.runtime_configuration[bot_id].get('enabled', True):
-                log_bot_error('stopped', bot_id)
-                return 'stopped'
-            else:
-                log_bot_message('disabled', bot_id)
-                return 'disabled'
-        if not status_process(pid):
-            remove_pidfile(bot_id)
-            log_bot_error('stopped', bot_id)
-            return 'stopped'
-        log_bot_message('reloading', bot_id)
-        proc = psutil.Process(int(pid))
-        proc.send_signal(signal.SIGHUP)
-        if status_process(pid):
-            log_bot_message('running', bot_id)
-            return 'running'
-        log_bot_error('stopped', bot_id)
-        return 'stopped'
+        return self.bot_process_manager.bot_reload(bot_id)
 
     def bot_restart(self, bot_id):
         status_stop = self.bot_stop(bot_id)
@@ -431,21 +466,7 @@ Get logs of a bot:
         return (status_stop, status_start)
 
     def bot_status(self, bot_id):
-        pid = read_pidfile(bot_id)
-        if pid and status_process(pid):
-            log_bot_message('running', bot_id)
-            return 'running'
-
-        if bot_id not in self.runtime_configuration:
-            log_bot_error('notfound', bot_id)
-            return 'error'
-
-        if self.runtime_configuration[bot_id].get('enabled', True):
-            log_bot_message('stopped', bot_id)
-            return 'stopped'
-        else:
-            log_bot_message('disabled', bot_id)
-            return 'disabled'
+        return self.bot_process_manager.bot_status(bot_id)
 
     def botnet_start(self):
         botnet_status = {}
@@ -664,7 +685,7 @@ Get logs of a bot:
 
 
 def main():  # pragma: no cover
-    x = IntelMQContoller(interactive=True)
+    x = IntelMQController(interactive=True)
     x.run()
 
 if __name__ == "__main__":  # pragma: no cover
