@@ -114,4 +114,7 @@ def lookup_contacts(cur, table_extension, asn, ip, fqdn):
       """.format(table_extension),
                 {"asn": asn, "ip": ip, "fqdn": fqdn,
                  "extension": table_extension})
-    return cur.fetchall()
+    return ((email, organisation, sector, matched,
+             maybe_parse_json(annotations))
+            for (email, organisation, sector, matched, annotations)
+            in cur.fetchall())

@@ -80,8 +80,7 @@ class CERTBundKontaktExpertBot(Bot):
             return None
 
         return [dict(email=email, organisation=organisation, sector=sector,
-                     matched_fields=matched,
-                     annotations=common.maybe_parse_json(annotations),
+                     matched_fields=matched, annotations=annotations,
                      automation=automation)
                 for (email, organisation, sector, matched, annotations,
                      automation)
