@@ -1,48 +1,52 @@
 # -*- coding: utf-8 -*-
+""" Single IntelMQ parser for Spamhaus drop feeds """
+
+import dateutil.parser
+
+from intelmq.lib.bot import ParserBot
 
 
-from dateutil.parser import parse as dateparser
+class SpamhausDropParserBot(ParserBot):
+    """ Spamhaus Drop Parser Bot """
 
-from intelmq.lib import utils
-from intelmq.lib.bot import Bot
+    NETWORK_DROP_URLS = {'https://www.spamhaus.org/drop/edrop.txt',
+                         'https://www.spamhaus.org/drop/dropv6.txt',
+                         'https://www.spamhaus.org/drop/drop.txt',
+                         'https://www.spamhaus.org/drop/drop.lasso'}
 
-__all__ = ['SpamhausDropParserBot']
+    ASN_DROP_URLS = {'https://www.spamhaus.org/drop/asndrop.txt'}
 
+    def parse_line(self, line, report):
+        lastgenerated = None
 
-class SpamhausDropParserBot(Bot):
+        if line.startswith(';') or len(line) == 0:
+            self.tempdata.append(line)
+            if 'Last-Modified:' in line:
+                self.lastgenerated = line.strip('; ')[15:]
+                self.lastgenerated = dateutil.parser.parse(self.lastgenerated).isoformat()
 
-    def process(self):
-        report = self.receive_message()
-        self.event_date = None
-
-        raw_report = utils.base64_decode(report.get("raw"))
-
-        for row in raw_report.splitlines():
-
-            row = row.strip()
-
-            if row.startswith('; Last-Modified:'):
-                self.event_date = row.split('; Last-Modified: ')[1].strip()
-                self.event_date = dateparser(self.event_date)
-
-            if row == "" or row.startswith(';'):
-                continue
-
-            row_splitted = row.split(';')
-            network = row_splitted[0].strip()
-
+        else:
             event = self.new_event(report)
-
-            event.add('source.network', network)
-            event.add('extra', {'blocklist': row_splitted[1].strip()})
-            if self.event_date:
-                event.add('time.source', self.event_date.isoformat())
-
+            if self.lastgenerated:
+                event.add('time.source', self.lastgenerated)
             event.add('classification.type', 'spam')
-            event.add('raw', row)
+            event.add('raw', line)
 
-            self.send_message(event)
-        self.acknowledge_message()
+            if report['feed.url'] in SpamhausDropParserBot.NETWORK_DROP_URLS:
+                value = line.strip().split(';')
+                event.add('source.network', value[0].strip())
+                event.add('extra', {'blocklist': value[1].strip()})
 
+            elif report['feed.url'] in SpamhausDropParserBot.ASN_DROP_URLS:
+                value = line.replace('|', ';').split(';')
+                event.add('source.asn', value[0].strip('AS').strip())
+                event.add('source.as_name', value[2].strip())
+                if value[1] != '':
+                    event.add('source.geolocation.cc', value[1].strip())
+
+            else:
+                raise ValueError('Unknown data feed %s.' % report['feed.url'])
+
+            yield event
 
 BOT = SpamhausDropParserBot

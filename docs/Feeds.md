@@ -140,7 +140,7 @@ Status: Unknown
 Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
  * http_url: http://osint.bambenekconsulting.com/feeds/c2-dommasterlist.txt
 
-Parser: Bambenek C2 Domain Feed (`intelmq.bots.parsers.bambenek.parser_c2dommasterlist`)
+Parser: Bambenek C2 Domain Feed (`intelmq.bots.parsers.bambenek.parser`)
 
 Master Feed of known, active and non-sinkholed C&Cs domain names.
  * License: http://osint.bambenekconsulting.com/license.txt
@@ -152,7 +152,7 @@ Status: Unknown
 Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
  * http_url: http://osint.bambenekconsulting.com/feeds/c2-ipmasterlist.txt
 
-Parser: Bambenek C2 IP Feed (`intelmq.bots.parsers.bambenek.parser_c2ipmasterlist`)
+Parser: Bambenek C2 IP Feed (`intelmq.bots.parsers.bambenek.parser`)
 
 Master Feed of known, active and non-sinkholed C&Cs IP addresses
  * License: http://osint.bambenekconsulting.com/license.txt
@@ -164,7 +164,7 @@ Status: Unknown
 Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
  * http_url: http://osint.bambenekconsulting.com/feeds/dga-feed.txt
 
-Parser: Bambenek DGA Domain Feed (`intelmq.bots.parsers.bambenek.parser_dgafeed`)
+Parser: Bambenek DGA Domain Feed (`intelmq.bots.parsers.bambenek.parser`)
 
 Domain feed of known DGA domains from -2 to +3 days
  * License: http://osint.bambenekconsulting.com/license.txt
@@ -474,13 +474,27 @@ Parser: HPHosts (`intelmq.bots.parsers.hphosts.parser`)
 
 ## Malc0de
 
-### Domain Blacklist
+### Windows Format
 
 Status: Unknown
+
 Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
  * http_url: https://malc0de.com/bl/BOOT
 
-Parser: Malc0de Domain Blacklist (`intelmq.bots.parsers.malc0de.parser_domain_blacklist`)
+Parser: Malc0de (`intelmq.bots.parsers.malc0de.parser`)
+
+This feed includes FQDN's of malicious hosts, the file format is in Windows Hosts file format.
+
+### Bind Format
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+ * http_url: https://malc0de.com/bl/BOOT
+
+Parser: Malc0de (`intelmq.bots.parsers.malc0de.parser`)
+
+This feed includes FQDN's of malicious hosts, the file format is in Bind format.
 
 ### IP Blacklist
 
@@ -489,6 +503,9 @@ Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
  * http_url: https://malc0de.com/bl/IP_Blacklist.txt
 
 Parser: Malc0de IP Blacklist (`intelmq.bots.parsers.malc0de.parser_ip_blacklist`)
+
+This feed includes IP Addresses of malicious hosts.
+
 
 ## Malware Domain List
 
@@ -549,7 +566,7 @@ Status: Unknown
 Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
  * http_url: http://data.netlab.360.com/feeds/dga/dga.txt
 
-Parser: Netlab 360 DGA (`intelmq.bots.parsers.netlab_360.parser_dga`)
+Parser: Netlab 360 DGA (`intelmq.bots.parsers.netlab_360.parser`)
 
 This feed lists DGA family, Domain, Start and end of valid time(UTC) of a number of DGA families.
  * reference: http://data.netlab.360.com/dga
@@ -561,7 +578,7 @@ Status: Unknown
 Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
  * http_url: http://data.netlab.360.com/feeds/ek/magnitude.txt
 
-Parser: Netlab 360 Magnitude (`intelmq.bots.parsers.netlab_360.parser_magnitude`)
+Parser: Netlab 360 Magnitude (`intelmq.bots.parsers.netlab_360.parser`)
 
 This feed lists FQDN and possibly the URL used by Magnitude Exploit Kit.  Information also includes the IP address used for the domain and last time seen.
  * reference: http://data.netlab.360.com/ek
@@ -575,7 +592,7 @@ Status: Unknown
 Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
  * http_url: http://www.nothink.org/honeypot_dns_attacks.txt
 
-Parser: Nothink DNS Attacks (`intelmq.bots.parsers.nothink.parser_dns_attacks`)
+Parser: Nothink (`intelmq.bots.parsers.nothink.parser`)
 
 This feed provides attack information for attack information against DNS honeypots.
  * reference: http://www.nothink.org/honeypot_dns.php
@@ -692,10 +709,46 @@ Spamhaus CERT Insight Portal. Access limited to CERTs and CSIRTs with national o
 ### Drop
 
 Status: Unknown
+
 Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
   * http_url: https://www.spamhaus.org/drop/drop.txt
 
 Parser: Spamhaus Drop (`intelmq.bots.parsers.spamhaus.parser_drop`)
+
+The DROP list will not include any IP address space under the control of any legitimate network - even if being used by "the spammers from hell". DROP will only include netblocks allocated directly by an established Regional Internet Registry (RIR) or National Internet Registry (NIR) such as ARIN, RIPE, AFRINIC, APNIC, LACNIC or KRNIC or direct RIR allocations.
+
+### EDrop
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+  * http_url: https://www.spamhaus.org/drop/edrop.txt
+
+Parser: Spamhaus Drop (`intelmq.bots.parsers.spamhaus.parser_drop`)
+
+EDROP is an extension of the DROP list that includes suballocated netblocks controlled by spammers or cyber criminals. EDROP is meant to be used in addition to the direct allocations on the DROP list.
+
+### Dropv6
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+  * http_url: https://www.spamhaus.org/drop/dropv6.txt
+
+Parser: Spamhaus Drop (`intelmq.bots.parsers.spamhaus.parser_drop`)
+
+The DROPv6 list includes IPv6 ranges allocated to spammers or cyber criminals. DROPv6 will only include IPv6 netblocks allocated directly by an established Regional Internet Registry (RIR) or National Internet Registry (NIR) such as ARIN, RIPE, AFRINIC, APNIC, LACNIC or KRNIC or direct RIR allocations.
+
+### ASN-Drop
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+  * http_url: https://www.spamhaus.org/drop/asndrop.txt
+
+Parser: Spamhaus Drop (`intelmq.bots.parsers.spamhaus.parser_drop`)
+ASN-DROP contains a list of Autonomous System Numbers controlled by spammers or cyber criminals, as well as "hijacked" ASNs. ASN-DROP can be used to filter BGP routes which are being used for malicious purposes.
+
 
 ## Taichung
 
@@ -719,18 +772,25 @@ Parser: Turris Greylist (`intelmq.bots.parsers.turris.parser`)
 ### Hosts
 
 Status: Unknown
+
 Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
  * http_url: http://www.urlvir.com/export-hosts/
 
-Parser: URLVir Hosts (`intelmq.bots.parsers.urlvir.parser_hosts`)
+Parser: URLVir Hosts (`intelmq.bots.parsers.urlvir.parser`)
+
+This feed provides FQDN's or IP addresses for Active Malicious Hosts.
 
 ### IPs
 
 Status: Unknown
+
 Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
  * http_url: http://www.urlvir.com/export-ip-addresses/
 
-Parser: URLVir IPs (`intelmq.bots.parsers.urlvir.parser_ips`)
+Parser: URLVir IPs (`intelmq.bots.parsers.urlvir.parser`)
+
+This feed provides IP addresses hosting Malware.
+
 
 ## VXVault
 

@@ -192,19 +192,9 @@
             "module": "intelmq.bots.parsers.autoshun.parser",
             "parameters": {}
         },
-        "Bambenek C2 Domain Feed": {
-            "description": "Bambenek C2 Domain parser is the bot responsible to parse and and sanatize the information.",
-            "module": "intelmq.bots.parsers.bambenek.parser_c2dommasterlist",
-            "parameters": {}
-        },
-        "Bambenek C2 IP Feed": {
-            "description": "Bambenek C2 IP parser is the bot responsible to parse and and sanatize the information.",
-            "module": "intelmq.bots.parsers.bambenek.parser_c2ipmasterlist",
-            "parameters": {}
-        },
-        "Bambenek DGA Domain Feed": {
-            "description": "Bambenek DGA Domain parser is the bot responsible to parse and and sanatize the information.",
-            "module": "intelmq.bots.parsers.bambenek.parser_dgafeed",
+        "Bambenek": {
+            "description": "Bambenek parser is the bot responsible to parse and and sanatize the information from the feeds available from Bambenek.",
+            "module": "intelmq.bots.parsers.bambenek.parser",
             "parameters": {}
         },
         "Bitcash Blocklist Feed": {
@@ -313,14 +303,9 @@
             "module": "intelmq.bots.parsers.misp.parser",
             "parameters": {}
         },
-        "Malc0de Domain Blacklist": {
-            "description": "Malc0de Domain Blacklist Parser is the bot responsible to parse the report and sanitize the information.",
+        "Malc0de": {
+            "description": "Malc0de Parser is the bot responsible to parse the IP Blacklist and either Windows Format or Bind Format reports and sanitize the information.",
             "module": "intelmq.bots.parsers.malc0de.parser_domain_blacklist",
-            "parameters": {}
-        },
-        "Malc0de IP Blacklist": {
-            "description": "Malc0de IP Blacklist Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.malc0de.parser_ip_blacklist",
             "parameters": {}
         },
         "Malware Domain List": {
@@ -343,24 +328,14 @@
             "module": "intelmq.bots.parsers.n6.parser_n6stomp",
             "parameters": {}
         },
-        "Netlab 360 DGA": {
-            "description": "Netlab 360 DGA Feed Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.netlab_360.parser_dga",
-            "parameters": {}
-        },
-        "Netlab 360 Magnitude": {
-            "description": "Netlab 360 Magnitude EK Feed Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.netlab_360.parser_magnitude",
+        "Netlab 360": {
+            "description": "Netlab 360 Parser is the bot responsible to parse the DGA and Magnitude reports and sanitize the information.",
+            "module": "intelmq.bots.parsers.netlab_360.parser",
             "parameters": {}
         },
         "Nothink": {
-            "description": "Nothink Feed Parser is the bot responsible to parse the SNMP, SSH, and Telnet reports and sanitize the information.",
+            "description": "Nothink Feed Parser is the bot responsible to parse the SNMP, SSH, Telnet, and DNS Attack reports and sanitize the information.",
             "module": "intelmq.bots.parsers.nothink.parser",
-            "parameters": {}
-        },
-        "Nothink DNS Attack": {
-            "description": "Nothink DNS Attacks Feed Parser is the bot responsible to parse the DNS Attacks report and sanitize the information.",
-            "module": "intelmq.bots.parsers.nothink.parser_dns_attacks",
             "parameters": {}
         },
         "OpenBL": {
@@ -392,7 +367,7 @@
             "parameters": {}
         },
         "Spamhaus Drop": {
-            "description": "Spamhaus Drop Parser is the bot responsible to parse the report and sanitize the information.",
+            "description": "Spamhaus Drop Parser is the bot responsible to parse the DROP, EDROP, DROPv6, and ASN-DROP reports and sanitize the information.",
             "module": "intelmq.bots.parsers.spamhaus.parser_drop",
             "parameters": {}
         },
@@ -408,14 +383,9 @@
             "module": "intelmq.bots.parsers.turris.parser",
             "parameters": {}
         },
-        "URLVir Hosts": {
-            "description": "URLVir Hosts Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.urlvir.parser_hosts",
-            "parameters": {}
-        },
-        "URLVir IPs": {
-            "description": "URLVir IPs Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.urlvir.parser_ips",
+        "URLVir": {
+            "description": "URLVir Parser is the bot responsible to parse the Export Hosts and Export IP Addresses reports and sanitize the information.",
+            "module": "intelmq.bots.parsers.urlvir.parser",
             "parameters": {}
         },
         "VXVault": {
