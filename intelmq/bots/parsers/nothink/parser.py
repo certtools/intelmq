@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import sys
-
 import dateutil
 
 from intelmq.lib.bot import ParserBot
@@ -34,6 +32,4 @@ class NothinkParserBot(ParserBot):
     def recover_line(self, line):
         return '\n'.join(self.tempdata + [line])
 
-if __name__ == '__main__':
-    bot = NothinkParserBot(sys.argv[1])
-    bot.start()
+BOT = NothinkParserBot

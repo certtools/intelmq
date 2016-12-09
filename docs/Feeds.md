@@ -17,7 +17,7 @@ The available feeds are grouped by the source of the feeds. For each feed the co
 - [Cymru](#cymru)
 - [DShield](#dshield)
 - [Danger Rulez](#danger-rulez)
-- [Dragon Research Group](#dragon-research-group)
+- [Dataplane](#dataplane)
 - [DynDNS](#dyndns)
 - [Fraunhofer DGA](#fraunhofer-dga)
 - [HPHosts](#hphosts)
@@ -63,26 +63,6 @@ Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
 Parser: Abuse.ch IP (`intelmq.bots.parsers.abusech.parser_ip`)
 
 The Feodo Tracker Feodo IP Blocklist contains IP addresses (IPv4) used as C&C communication channel by the Feodo Trojan. This lists contains two types of IP address: Feodo C&C servers used by version A, version C and version D of the Feodo Trojan (these IP addresses are usually compromised servers running an nginx daemon on port 8080 TCP or 7779 TCP that is acting as proxy, forwarding all traffic to a tier 2 proxy node) and Feodo C&C servers used by version B which are usually used for the exclusive purpose of hosting a Feodo C&C server. Attention: Since Feodo C&C servers associated with version A, version C and version D are usually hosted on compromised servers, its likely that you also block/drop legit traffic e.g. towards websites hosted on a certain IP address acting as Feodo C&C for version A, version C and version D. If you only want to block/drop traffic to Feodo C&C servers hosted on bad IPs (version B), please use the blocklist BadIPs documented below.
-
-### Palevo Tracker Domains
-
-Status: Unknown
-Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
- * http_url: https://palevotracker.abuse.ch/blocklists.php?download=domainblocklist
-
-Parser: Abuse.ch Domain (`intelmq.bots.parsers.abusech.parser_domain`)
-
-Palevo C&C Domain Blocklists includes domain names which are being used as botnet C&C for the Palevo crimeware.
-
-### Palevo Tracker IPs
-
-Status: Unknown
-Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
- * http_url: https://palevotracker.abuse.ch/blocklists.php?download=ipblocklist
-
-Parser: Abuse.ch IP (`intelmq.bots.parsers.abusech.parser_ip`)
-
-Palevo C&C IP Blocklist includes IP addresses which are being used as botnet C&C for the Palevo crimeware.
 
 
 ### Ransomware Tracker
@@ -397,23 +377,69 @@ Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
 
 Parser: Danger Rulez (`intelmq.bots.parsers.danger_rulez.parser`)
 
-## Dragon Research Group
 
-### SSH
+## Dataplane
 
-Status: Unknown
-Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
- * http_url: https://dragonresearchgroup.org/insight/sshpwauth.txt
-
-Parser: Dragon Research Group (`intelmq.bots.parsers.dragonresearchgroup.parser_ssh`)
-
-### VNC
+### SIP Invitation
 
 Status: Unknown
-Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
- * http_url: https://dragonresearchgroup.org/insight/vncprobe.txt
 
-Parser: Dragon Research Group VNC (`intelmq.bots.parsers.dragonresearchgroup.parser_vnc`)
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+ * http_url: http://dataplane.org/sipinvitation.txt
+
+Parser: Dataplane Feeds (`intelmq.bots.parsers.dataplane.parser`)
+
+Entries consist of fields with identifying characteristics of a source IP address that has been seen initiating a SIP INVITE operation to a remote host.  The report lists hosts that are suspicious of more than just port scanning.  These hosts may be SIP client cataloging or conducting various forms of telephony abuse.  
+Report is updated hourly.
+
+### SIP Query
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+ * http_url: http://dataplane.org/sipquery.txt
+
+Parser: Dataplane Feeds (`intelmq.bots.parsers.dataplane.parser`)
+
+Entries consist of fields with identifying characteristics of a source IP address that has been seen initiating a SIP OPTIONS query to a remote host.  This report lists hosts that are suspicious of more than just port scanning.  The hosts may be SIP server cataloging or conducting various forms of telephony abuse.  
+Report is updated hourly.
+
+### SIP Registration
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+ * http_url: http://dataplane.org/sipregistration.txt
+
+Parser: Dataplane Feeds (`intelmq.bots.parsers.dataplane.parser`)
+
+Entries consist of fields with identifying characteristics of a source IP address that has been seen initiating a SIP REGISTER operation to a remote host.  This report lists hosts that are suspicious of more than just port scanning.  The hosts may be SIP client cataloging or conducting various forms of telephony abuse.  
+Report is updated hourly.
+
+### SSH Client Connection
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+ * http_url: http://dataplane.org/sshclient.txt
+
+Parser: Dataplane Feeds (`intelmq.bots.parsers.dataplane.parser`)
+
+Entries below consist of fields with identifying characteristics of a source IP address that has been seen initiating an SSH connection to a remote host.  This report lists hosts that are suspicious of more than just port scanning.  The hosts may be SSH server cataloging or conducting authentication attack attempts.  
+Report is updated hourly.
+
+### SSH Password Authentication
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+ * http_url: http://dataplane.org/sshpwauth.txt
+
+Parser: Dataplane Feeds (`intelmq.bots.parsers.dataplane.parser`)
+
+Entries below consist of fields with identifying characteristics of a source IP address that has been seen attempting to remotely login to a host using SSH password authentication.  The report lists hosts that are highly suspicious and are likely conducting malicious SSH password authentication attacks.
+Report is updated hourly.
+
 
 ## DynDNS
 
@@ -541,6 +567,18 @@ This feed lists FQDN and possibly the URL used by Magnitude Exploit Kit.  Inform
  * reference: http://data.netlab.360.com/ek
 
 ## Nothink
+
+### DNS Attack Feed
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+ * http_url: http://www.nothink.org/honeypot_dns_attacks.txt
+
+Parser: Nothink DNS Attacks (`intelmq.bots.parsers.nothink.parser_dns_attacks`)
+
+This feed provides attack information for attack information against DNS honeypots.
+ * reference: http://www.nothink.org/honeypot_dns.php
 
 ### SNMP Feed
 

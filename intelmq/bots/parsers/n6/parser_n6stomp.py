@@ -5,7 +5,6 @@ identifiers and the values are lists of domains.
 """
 
 import json
-import sys
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
@@ -157,6 +156,4 @@ class N6StompParserBot(Bot):
         self.acknowledge_message()
 
 
-if __name__ == "__main__":
-    bot = N6StompParserBot(sys.argv[1])
-    bot.start()
+BOT = N6StompParserBot

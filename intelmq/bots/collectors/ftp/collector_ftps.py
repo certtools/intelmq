@@ -17,7 +17,6 @@ import fnmatch
 import io
 import socket
 import ssl
-import sys
 import zipfile
 from ftplib import FTP_TLS
 
@@ -114,6 +113,4 @@ class FTPSCollectorBot(CollectorBot):
             self.send_message(report)
 
 
-if __name__ == "__main__":
-    bot = FTPSCollectorBot(sys.argv[1])
-    bot.start()
+BOT = FTPSCollectorBot

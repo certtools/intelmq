@@ -13,7 +13,6 @@ http_proxy, https_proxy: string
 
 """
 import io
-import sys
 import zipfile
 
 import requests
@@ -59,6 +58,4 @@ class HTTPCollectorBot(CollectorBot):
             self.send_message(report)
 
 
-if __name__ == "__main__":
-    bot = HTTPCollectorBot(sys.argv[1])
-    bot.start()
+BOT = HTTPCollectorBot

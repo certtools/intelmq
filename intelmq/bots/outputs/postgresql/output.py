@@ -8,7 +8,6 @@ In case of errors, the bot tries to reconnect if the error is of operational
 and thus temporary. We don't want to catch too much, like programming errors
 (missing fields etc).
 """
-import sys
 
 from intelmq.lib.bot import Bot
 
@@ -68,6 +67,11 @@ class PostgreSQLOutputBot(Bot):
                 self.con.rollback()
                 self.logger.exception('Executed rollback command '
                                       'after failed query execution.')
+            except psycopg2.OperationalError:
+                self.con.rollback()
+                self.logger.exception('Executed rollback command '
+                                      'after failed query execution.')
+                self.init()
             except Exception:
                 self.logger.exception('Cursor has been closed, connecting '
                                       'again.')
@@ -77,6 +81,4 @@ class PostgreSQLOutputBot(Bot):
             self.acknowledge_message()
 
 
-if __name__ == "__main__":
-    bot = PostgreSQLOutputBot(sys.argv[1])
-    bot.start()
+BOT = PostgreSQLOutputBot

@@ -45,7 +45,7 @@
                 "rate_limit": 60,
                 "subject_regex": "<subject>",
                 "url_regex": "http://",
-                "ssl_client_certificate": "<path to client SSL certificate>"
+                "ssl_client_certificate": null
             }
         },
         "Generic URL Fetcher": {
@@ -55,9 +55,9 @@
                 "feed": "",
                 "provider": "",
                 "http_url": "<insert url of feed>",
-                "http_username": "",
-                "http_password": "",
-                "ssl_client_certificate": "<path to client SSL certificate>",
+                "http_username": null,
+                "http_password": null,
+                "ssl_client_certificate": null,
                 "rate_limit": 3600
             }
         },
@@ -94,9 +94,9 @@
                 "uri": "http://localhost/rt/REST/1.0",
                 "url_regex": "https://dl.shadowserver.org/[a-zA-Z0-9?_-]*",
                 "user": "intelmq",
-                "http_username": "",
-                "http_password": "",
-                "ssl_client_certificate": "<path to client SSL certificate>"
+                "http_username": null,
+                "http_password": null,
+                "ssl_client_certificate": null
             }
         },
         "XMPP collector": {
@@ -267,14 +267,9 @@
             "module": "intelmq.bots.parsers.danger_rulez.parser",
             "parameters": {}
         },
-        "Dragon Research Group SSH": {
-            "description": "Dragon Research Group SSH Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.dragonresearchgroup.parser_ssh",
-            "parameters": {}
-        },
-        "Dragon Research Group VNC": {
-            "description": "Dragon Research Group VNC Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.dragonresearchgroup.parser_vnc",
+        "Dataplane Feeds": {
+            "description": "Dataplane Parser is the bot responsible to parse the Dataplane reports and sanitize the information.",
+            "module": "intelmq.bots.parsers.dataplane.parser",
             "parameters": {}
         },
         "DynDNS ponmocup Domains": {
@@ -363,6 +358,11 @@
             "module": "intelmq.bots.parsers.nothink.parser",
             "parameters": {}
         },
+        "Nothink DNS Attack": {
+            "description": "Nothink DNS Attacks Feed Parser is the bot responsible to parse the DNS Attacks report and sanitize the information.",
+            "module": "intelmq.bots.parsers.nothink.parser_dns_attacks",
+            "parameters": {}
+        },
         "OpenBL": {
             "description": "OpenBL Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.openbl.parser",
@@ -439,6 +439,7 @@
                 "redis_cache_db": "5",
                 "redis_cache_host": "127.0.0.1",
                 "redis_cache_port": "6379",
+                "redis_cache_password": null,
                 "redis_cache_ttl": "86400"
             }
         },
@@ -458,6 +459,7 @@
                 "redis_cache_db": "5",
                 "redis_cache_host": "127.0.0.1",
                 "redis_cache_port": "6379",
+                "redis_cache_password": null,
                 "redis_cache_ttl": "86400"
             }
         },
@@ -469,6 +471,7 @@
                 "redis_cache_db": "6",
                 "redis_cache_host": "127.0.0.1",
                 "redis_cache_port": "6379",
+                "redis_cache_password": null,
                 "redis_cache_ttl": "86400"
             }
         },
@@ -540,6 +543,7 @@
                 "redis_cache_db": "5",
                 "redis_cache_host": "127.0.0.1",
                 "redis_cache_port": "6379",
+                "redis_cache_password": null,
                 "redis_cache_ttl": "86400"
             }
         },
@@ -550,6 +554,7 @@
                 "redis_cache_db": "7",
                 "redis_cache_host": "127.0.0.1",
                 "redis_cache_port": "6379",
+                "redis_cache_password": null,
                 "redis_cache_ttl": "86400"
             }
         },
