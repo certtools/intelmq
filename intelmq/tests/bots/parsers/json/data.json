@@ -1,0 +1,2 @@
+{"__type": "Event", "source.ip": "127.0.0.1", "classification.type": "c&c"}
+{"__type": "Event", "source.ip": "127.0.0.2", "classification.type": "c&c"}
