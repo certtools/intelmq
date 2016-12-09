@@ -26,6 +26,8 @@ override_dh_auto_install: $(BOTDOCS)
 	sed -i -e '/#!\/usr\/bin\//d' intelmq/bin/*.py
 	find . -type f -exec sed -i -f debian/sedfile {} \;
 	python3 setup.py install --root=debian/intelmq --prefix=/usr
+	mv debian/intelmq/etc/intelmq/examples/* debian/intelmq/etc/intelmq/
+	rmdir debian/intelmq/etc/intelmq/examples
 	# these are already in /usr/bin/
 	#rm %{buildroot}/%{python3_sitelib}/intelmq/bots/experts/maxmind_geoip/update-geoip-data
 	#rm %{buildroot}/%{python3_sitelib}/intelmq/bots/experts/asn_lookup/update-asn-data
@@ -39,12 +41,7 @@ override_dh_auto_install: $(BOTDOCS)
 	mkdir -p debian/intelmq/var/log/intelmq
 	mkdir -p debian/intelmq/var/lib/intelmq/bots/file-output
 	mkdir -p debian/intelmq/etc/logrotate.d
-	# Install a modifier bot config file based on an example
-	cp -a debian/intelmq/var/lib/intelmq/bots/modify/example/default.conf \
-		debian/intelmq/var/lib/intelmq/bots/modify/modify.conf
-	# Remove modify bot example configs from their original location because
-	# intelmq.install copies them to the /usr/share/doc/intelmq/bots hierarchy
-	rm -vr debian/intelmq/var/lib/intelmq/bots/modify/example
+	mkdir -p debian/intelmq/var/lib/intelmq/bots/modify/
 	## BOTS
 	# Include all bot READMEs
 	for readme in $(foreach bot,$(BOTDOCS),$(subst intelmq/bots/,,$(bot))); \
