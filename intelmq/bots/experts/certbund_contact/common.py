@@ -23,6 +23,15 @@ Author(s):
   Bernhard Herzog <bernhard.herzog@intevation.de>
 """
 
+import json
+
+
+def maybe_parse_json(string_or_json):
+    if isinstance(string_or_json, str):
+        return json.loads(string_or_json)
+    return string_or_json
+
+
 def lookup_by_asn_only(cur, table_extension, asn):
     """Find email addresses for ASN from either manual or auto tables.
 

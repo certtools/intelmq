@@ -1,5 +1,4 @@
 import sys
-import json
 
 import psycopg2
 
@@ -7,12 +6,6 @@ from intelmq.lib.bot import Bot
 import intelmq.bots.experts.certbund_contact.common as common
 from intelmq.bots.experts.certbund_contact.eventjson import \
      set_certbund_contacts
-
-
-def maybe_parse_json(string_or_json):
-    if isinstance(string_or_json, str):
-        return json.loads(string_or_json)
-    return string_or_json
 
 
 class CERTBundKontaktExpertBot(Bot):
@@ -88,7 +81,7 @@ class CERTBundKontaktExpertBot(Bot):
 
         return [dict(email=email, organisation=organisation, sector=sector,
                      matched_fields=matched,
-                     annotations=maybe_parse_json(annotations),
+                     annotations=common.maybe_parse_json(annotations),
                      automation=automation)
                 for (email, organisation, sector, matched, annotations,
                      automation)
