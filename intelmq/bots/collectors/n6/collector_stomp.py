@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 import os.path
-import sys
 
 from intelmq.lib.bot import CollectorBot
-from intelmq.lib.message import Report
 
 try:
     import stomp
@@ -16,25 +14,24 @@ try:
             self.n6stomper = n6stompcollector
 
         def on_heartbeat_timeout(self):
-            self.n6stomper.logger.warn("Heartbeat timeout. Attempting to re-connect")
+            self.n6stomper.logger.warn("Heartbeat timeout. Attempting to re-connect.")
             self.n6stomper.conn.disconnect()
             status = self.n6stomper.conn.connect(wait=False)
-            self.n6stomper.logger.warn("Re-connected: {}".format(status))
+            self.n6stomper.logger.info("Re-connected: {}.".format(status))
 
         def on_error(self, headers, message):
-            self.n6stomper.logger.warn('Received an error :"%s".' % repr(message))
+            self.n6stomper.logger.error('Received an error :"%s".' % repr(message))
 
         def on_message(self, headers, message):
             self.n6stomper.logger.debug('Receive message '
                                         '{!r}...'.format(message[:500]))
-            report = Report()
+            report = self.n6stomper.new_report()
             report.add("raw", message.rstrip())
             report.add("feed.url", "stomp://" +
                        self.n6stomper.parameters.server +
                        ":" + str(self.n6stomper.parameters.port) +
                        "/" + self.n6stomper.parameters.exchange)
             self.n6stomper.send_message(report)
-            self.n6stomper.logger.debug('Receiving Message.')
 except ImportError:
     stomp = None
 
@@ -64,7 +61,7 @@ class n6stompCollectorBot(CollectorBot):
         # check if certificates exist
         for f in [self.ssl_ca_cert, self.ssl_cl_cert, self.ssl_cl_cert_key]:
             if not os.path.isfile(f):
-                raise ValueError("Could not open file '%s'." % f)
+                raise ValueError("Could not open file %r." % f)
 
         _host = [(self.server, self.port)]
         self.conn = stomp.Connection(host_and_ports=_host, use_ssl=True,
@@ -79,7 +76,8 @@ class n6stompCollectorBot(CollectorBot):
         self.conn.start()
         self.conn.connect(wait=False)
         self.conn.subscribe(destination=self.exchange, id=1, ack='auto')
-        self.logger.info('Successfully connected and subscribed to {}:{}'.format(self.server, self.port))
+        self.logger.info('Successfully connected and subscribed to {}:{}.'
+                         ''.format(self.server, self.port))
 
     def disconnect(self):
         self.conn.disconnect()
@@ -87,6 +85,5 @@ class n6stompCollectorBot(CollectorBot):
     def process(self):
         pass
 
-if __name__ == "__main__":
-    bot = n6stompCollectorBot(sys.argv[1])
-    bot.start()
+
+BOT = n6stompCollectorBot

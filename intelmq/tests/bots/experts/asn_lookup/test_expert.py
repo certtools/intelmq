@@ -6,13 +6,14 @@ see asn_lookup README for how to download database
 It is expected at /opt/intelmq/var/lib/bots/asn_lookup/ipasn.dat by default
 """
 
-import os
 import unittest
+
+import pkg_resources
 
 import intelmq.lib.test as test
 from intelmq.bots.experts.asn_lookup.expert import ASNLookupExpertBot
 
-ASN_DB = '/opt/intelmq/var/lib/bots/asn_lookup/ipasn.dat'
+ASN_DB = pkg_resources.resource_filename('intelmq', 'tests/bots/experts/asn_lookup/ipasn.dat')
 EXAMPLE_INPUT = {"__type": "Event",
                  "source.ip": "93.184.216.34",  # example.com
                  "destination.ip": "192.0.43.8",  # iana.org
@@ -39,8 +40,6 @@ EXAMPLE_OUTPUT6 = {"__type": "Event",
                    }
 
 
-@unittest.skipUnless(os.path.exists(ASN_DB), 'asn-lookup database does not'
-                                             'exist in {}.'.format(ASN_DB))
 class TestASNLookupExpertBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for AbusixExpertBot.
@@ -62,5 +61,5 @@ class TestASNLookupExpertBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(0, EXAMPLE_OUTPUT6)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

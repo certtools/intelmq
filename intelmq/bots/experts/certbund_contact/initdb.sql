@@ -171,6 +171,11 @@ CREATE TABLE network (
     comment TEXT NOT NULL DEFAULT ''
 );
 
+CREATE TABLE network_automatic (
+    LIKE automatic_templ INCLUDING ALL,
+    LIKE network INCLUDING ALL
+);
+
 -- Indexes on the cidr column to improve queries that look up a network
 -- based on an IP-address. The default btree index of PostgreSQL is not
 -- used for those queries, so we need to do it in some other way. A
@@ -197,11 +202,6 @@ CREATE INDEX network_cidr_lower_idx
 CREATE INDEX network_cidr_upper_idx
           ON network ((inet(host(broadcast(address)))));
 
-
-CREATE TABLE network_automatic (
-    LIKE automatic_templ INCLUDING ALL,
-    LIKE network INCLUDING ALL
-);
 CREATE INDEX network_automatic_cidr_lower_idx
           ON network_automatic ((inet(host(network(address)))));
 CREATE INDEX network_automatic_cidr_upper_idx
@@ -235,16 +235,10 @@ CREATE TABLE classification_type (
     name VARCHAR(100) UNIQUE NOT NULL
 );
 
-CREATE INDEX classification_type_name_idx
-          ON classification_type (name);
-
 CREATE TABLE classification_identifier (
     id SERIAL PRIMARY KEY,
     name TEXT UNIQUE NOT NULL
 );
-
-CREATE INDEX classification_identifier_name_idx
-          ON classification_identifier (name);
 
 /*
  Template
@@ -340,12 +334,6 @@ CREATE TABLE organisation_to_template (
     FOREIGN KEY (template_id) REFERENCES template (id)
 );
 
-CREATE INDEX organisation_to_template_organisation_idx
-          ON organisation_to_template (organisation_id);
-CREATE INDEX organisation_to_template_template_idx
-          ON organisation_to_template (template_id);
-
-
 CREATE TABLE organisation_to_template_automatic (
     LIKE automatic_templ INCLUDING ALL,
     LIKE organisation_to_template INCLUDING ALL,
@@ -353,6 +341,12 @@ CREATE TABLE organisation_to_template_automatic (
     FOREIGN KEY (organisation_id) REFERENCES organisation_automatic (id),
     FOREIGN KEY (template_id) REFERENCES template (id)
 );
+
+
+CREATE INDEX organisation_to_template_organisation_idx
+          ON organisation_to_template (organisation_id);
+CREATE INDEX organisation_to_template_template_idx
+          ON organisation_to_template (template_id);
 
 CREATE INDEX organisation_to_template_automatic_organisation_idx
           ON organisation_to_template_automatic (organisation_id);

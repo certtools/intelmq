@@ -7,7 +7,7 @@ Welcome to IntelMQ!
 
    IntelMQ
 
-|Build Status| |Coverage Status| |codecov.io|
+|Build Status| |codecov.io|
 
 **IntelMQ** is a solution for CERTs for collecting and processing
 security feeds, pastebins, tweets and log files using a message queuing
@@ -58,12 +58,12 @@ Table of Contents
 How to Install
 ==============
 
-See `UserGuide <docs/User-Guide.md>`__.
+See `UserGuide <User-Guide.md>`__.
 
 Developers Guide
 ================
 
-See `Developers Guide <docs/Developers-Guide.md>`__.
+See `Developers Guide <Developers-Guide.md>`__.
 
 IntelMQ Manager
 ===============
@@ -83,7 +83,7 @@ Data Harmonization
 ==================
 
 IntelMQ use the Data Harmonization. Check the following
-`document <docs/Data-Harmonization.md>`__.
+`document <Data-Harmonization.md>`__.
 
 How to participate
 ==================
@@ -104,7 +104,5 @@ version 3
 
 .. |Build Status| image:: https://travis-ci.org/certtools/intelmq.svg?branch=master
    :target: https://travis-ci.org/certtools/intelmq
-.. |Coverage Status| image:: https://coveralls.io/repos/github/certtools/intelmq/badge.svg?branch=master
-   :target: https://coveralls.io/github/certtools/intelmq?branch=master
 .. |codecov.io| image:: https://codecov.io/github/certtools/intelmq/coverage.svg?branch=master
    :target: https://codecov.io/github/certtools/intelmq?branch=master

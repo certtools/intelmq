@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-
-
-TODO: check if action is allowed when called
 """
 import argparse
 import glob
@@ -172,10 +169,12 @@ def main():
     answer = None
     while True:
         info = dump_info(fname)
+        available_answers = ACTIONS.keys()
         print('Processing {}: {}'.format(bold(botid), info))
 
         if info.startswith(str(red)):
             available_opts = [item[0] for item in ACTIONS.values() if item[2]]
+            available_answers = [k for k, v in ACTIONS.items() if v[2]]
             print('Restricted actions.')
         else:
             # don't display list after 'show' and 'recover' command
@@ -201,6 +200,9 @@ def main():
         else:
             if not answer:
                 continue
+        if len(answer) == 0 or answer[0] not in available_answers:
+            print('Action not allowed.')
+            continue
         if any([answer[0] == char for char in AVAILABLE_IDS]) and len(answer) > 1:
             ids = [int(item) for item in answer[1].split(',')]
         else:
@@ -282,5 +284,5 @@ def main():
                     value['traceback'] = value['traceback'].splitlines()
                 pprint.pprint(value)
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     main()

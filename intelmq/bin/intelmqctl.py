@@ -12,7 +12,8 @@ import pkg_resources
 import psutil
 
 from intelmq import (DEFAULTS_CONF_FILE, PIPELINE_CONF_FILE, RUNTIME_CONF_FILE,
-                     STARTUP_CONF_FILE, SYSTEM_CONF_FILE, VAR_RUN_PATH)
+                     STARTUP_CONF_FILE, SYSTEM_CONF_FILE, VAR_RUN_PATH,
+                     BOTS_FILE)
 from intelmq.lib import utils
 from intelmq.lib.pipeline import PipelineFactory
 
@@ -31,6 +32,7 @@ STATUSES = {
 }
 
 MESSAGES = {
+    'disabled': '{} is disabled.',
     'starting': 'Starting {}...',
     'running': '{} is running.',
     'stopped': '{} is stopped.',
@@ -178,6 +180,7 @@ class IntelMQContoller():
         intelmqctl list [bots|queues]
         intelmqctl log bot-id [number-of-lines [log-level]]
         intelmqctl clear queue-id
+        intelmqctl check
 
 Starting a bot:
     intelmqctl start bot-id
@@ -264,9 +267,9 @@ Get logs of a bot:
             parser.add_argument('action',
                                 choices=['start', 'stop', 'restart', 'status',
                                          'reload', 'run', 'list', 'clear',
-                                         'help', 'log'],
+                                         'help', 'log', 'check'],
                                 metavar='[start|stop|restart|status|reload|run'
-                                        '|list|clear|log]')
+                                        '|list|clear|log|check]')
             parser.add_argument('parameter', nargs='*')
             parser.add_argument('--quiet', '-q', action='store_const',
                                 help='Quiet mode, useful for reloads initiated'
@@ -330,6 +333,8 @@ Get logs of a bot:
                 self.parser.print_help()
                 exit(2)
             results = self.clear_queue(self.args.parameter[0])
+        elif self.args.action == 'check':
+            results = self.check()
 
         if self.args.type == 'json':
             print(json.dumps(results))
@@ -342,12 +347,7 @@ Get logs of a bot:
             return 'error'
         else:
             module = importlib.import_module(bot_module)
-            # TODO: Search for bot class is dirty (but works)
-            botname = [name for name in dir(module)
-                       if hasattr(getattr(module, name), 'process') and
-                       name.endswith('Bot') and
-                       name not in ['CollectorBot', 'ParserBot']][0]
-            bot = getattr(module, botname)
+            bot = getattr(module, 'BOT')
             instance = bot(bot_id)
             instance.start()
 
@@ -369,7 +369,7 @@ Get logs of a bot:
             log_bot_error('notfound', bot_id)
             return 'error'
         else:
-            cmdargs = ["python3", "-m", module, bot_id]
+            cmdargs = [module, bot_id]
             with open('/dev/null', 'w') as devnull:
                 proc = psutil.Popen(cmdargs, stdout=devnull, stderr=devnull)
                 filename = PIDFILE.format(bot_id)
@@ -382,8 +382,12 @@ Get logs of a bot:
     def bot_stop(self, bot_id):
         pid = read_pidfile(bot_id)
         if not pid:
-            log_bot_error('stopped', bot_id)
-            return 'stopped'
+            if self.runtime_configuration[bot_id].get('enabled', True):
+                log_bot_error('stopped', bot_id)
+                return 'stopped'
+            else:
+                log_bot_message('disabled', bot_id)
+                return 'disabled'
         if not status_process(pid):
             remove_pidfile(bot_id)
             log_bot_error('stopped', bot_id)
@@ -402,8 +406,12 @@ Get logs of a bot:
     def bot_reload(self, bot_id):
         pid = read_pidfile(bot_id)
         if not pid:
-            log_bot_error('stopped', bot_id)
-            return 'stopped'
+            if self.runtime_configuration[bot_id].get('enabled', True):
+                log_bot_error('stopped', bot_id)
+                return 'stopped'
+            else:
+                log_bot_message('disabled', bot_id)
+                return 'disabled'
         if not status_process(pid):
             remove_pidfile(bot_id)
             log_bot_error('stopped', bot_id)
@@ -432,14 +440,21 @@ Get logs of a bot:
             log_bot_error('notfound', bot_id)
             return 'error'
 
-        log_bot_message('stopped', bot_id)
-        return 'stopped'
+        if self.runtime_configuration[bot_id].get('enabled', True):
+            log_bot_message('stopped', bot_id)
+            return 'stopped'
+        else:
+            log_bot_message('disabled', bot_id)
+            return 'disabled'
 
     def botnet_start(self):
         botnet_status = {}
-        log_botnet_message('starting')
         for bot_id in sorted(self.runtime_configuration.keys()):
-            botnet_status[bot_id] = self.bot_start(bot_id)
+            if self.runtime_configuration[bot_id].get('enabled', True):
+                botnet_status[bot_id] = self.bot_start(bot_id)
+            else:
+                log_bot_message('disabled', bot_id)
+                botnet_status[bot_id] = 'disabled'
         log_botnet_message('running')
         return botnet_status
 
@@ -460,17 +475,8 @@ Get logs of a bot:
         return botnet_status
 
     def botnet_restart(self):
-        botnet_status = {}
-        log_botnet_message('stopping')
-        for bot_id in sorted(self.runtime_configuration.keys()):
-            botnet_status[bot_id] = tuple(self.bot_stop(bot_id))
-        time.sleep(3)
-        log_botnet_message('stopped')
-        log_botnet_message('starting')
-        for bot_id in sorted(self.runtime_configuration.keys()):
-            botnet_status[bot_id] += tuple(self.bot_start(bot_id))
-        log_botnet_message('running')
-        return botnet_status
+        self.botnet_stop()
+        return self.botnet_start()
 
     def botnet_status(self):
         botnet_status = {}
@@ -563,7 +569,6 @@ Get logs of a bot:
             return 'error'
 
     def read_log(self, bot_id, number_of_lines=10, log_level='INFO'):
-        # TODO: Parse number of lines
         try:
             number_of_lines = int(number_of_lines)
         except ValueError:
@@ -614,10 +619,53 @@ Get logs of a bot:
         log_log_messages(messages[::-1])
         return messages[::-1]
 
+    def check(self):
+        # loading files and syntex check
+        files = {DEFAULTS_CONF_FILE: None, PIPELINE_CONF_FILE: None,
+                 RUNTIME_CONF_FILE: None, BOTS_FILE: None}
+        for filename in files:
+            try:
+                with open(filename) as file_handle:
+                    files[filename] = json.load(file_handle)
+            except (IOError, json.decoder.JSONDecodeError) as exc:
+                self.logger.error('Coud not load %r: %s.' % (filename, exc))
+                return 'error'
 
-def main():
+        if os.path.exists(STARTUP_CONF_FILE):
+            self.logger.warning('Deprecated startup.conf file found, migrate to runtime.conf.')
+        if os.path.exists(SYSTEM_CONF_FILE):
+            self.logger.warning('Deprecated startup.conf file found, migrate to runtime.conf.')
+
+        for bot_id, bot_config in files[RUNTIME_CONF_FILE].items():
+            # pipeline keys
+            for field in ['description', 'group', 'module', 'name']:
+                if field not in bot_config:
+                    self.logger.warning('Bot %r has no %r.' % (bot_id, field))
+            if bot_id not in files[PIPELINE_CONF_FILE]:
+                self.logger.error('No pipeline configuration found for %r.' % bot_id)
+            else:
+                if ('group' in bot_config and
+                        bot_config['group'] in ['Collector', 'Parser', 'Expert'] and
+                        ('destination-queues' not in files[PIPELINE_CONF_FILE][bot_id] or
+                         (not isinstance(files[PIPELINE_CONF_FILE][bot_id]['destination-queues'], list) or
+                          len(files[PIPELINE_CONF_FILE][bot_id]['destination-queues']) < 1))):
+                    self.logger.error('No destination queues for %r.' % bot_id)
+                if ('group' in bot_config and
+                        bot_config['group'] in ['Parser', 'Expert', 'Output'] and
+                        ('source-queue' not in files[PIPELINE_CONF_FILE][bot_id] or
+                         not isinstance(files[PIPELINE_CONF_FILE][bot_id]['source-queue'], str))):
+                    self.logger.error('No source queue for %r.' % bot_id)
+
+            # importable module
+            try:
+                importlib.import_module(bot_config['module'])
+            except ImportError:
+                self.logger.error('Module of %r not importable.' % bot_id)
+
+
+def main():  # pragma: no cover
     x = IntelMQContoller(interactive=True)
     x.run()
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     main()

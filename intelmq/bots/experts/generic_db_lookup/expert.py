@@ -2,7 +2,6 @@
 """
 Generic DB Lookup
 """
-import sys
 
 from intelmq.lib.bot import Bot
 
@@ -56,7 +55,7 @@ class GenericDBLookupExpertBot(Bot):
         # Skip events with missing match-keys
         for key in self.match.keys():
             if key not in event:
-                self.logger.warning('%s not present in event. Skipping event' % key)
+                self.logger.debug('%s not present in event. Skipping event.' % key)
                 self.send_message(event)
                 self.acknowledge_message()
                 return
@@ -91,6 +90,4 @@ class GenericDBLookupExpertBot(Bot):
             self.acknowledge_message()
 
 
-if __name__ == "__main__":
-    bot = GenericDBLookupExpertBot(sys.argv[1])
-    bot.start()
+BOT = GenericDBLookupExpertBot
