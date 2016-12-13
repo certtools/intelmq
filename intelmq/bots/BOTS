@@ -222,14 +222,9 @@
             "module": "intelmq.bots.parsers.ci_army.parser",
             "parameters": {}
         },
-        "CleanMX Phishing": {
-            "description": "CleanMX Phishing Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.cleanmx.parser_phishing",
-            "parameters": {}
-        },
-        "CleanMX Virus": {
-            "description": "CleanMX Virus Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.cleanmx.parser_virus",
+        "CleanMX": {
+            "description": "CleanMX Parser is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.cleanmx.parser",
             "parameters": {}
         },
         "Cymru Full Bogons": {
@@ -307,7 +302,7 @@
         },
         "Malc0de": {
             "description": "Malc0de Parser is the bot responsible to parse the IP Blacklist and either Windows Format or Bind Format reports and sanitize the information.",
-            "module": "intelmq.bots.parsers.malc0de.parser_domain_blacklist",
+            "module": "intelmq.bots.parsers.malc0de.parser",
             "parameters": {}
         },
         "Malware Domain List": {
@@ -579,17 +574,6 @@
             "parameters": {
                 "file": "/opt/intelmq/var/lib/bots/file-output/events.txt",
                 "hierarchical_output": false
-            }
-        },
-        "IntelMQ Mailer": {
-            "description": "IntelMQ Mailer is the bot responsible to send events to a MongoDB database.",
-            "module": "intelmq.bots.outputs.intelmqmailer.output",
-            "parameters": {
-                "collection": "<collection>",
-                "database": "<database>",
-                "hierarchical_output": false,
-                "host": "<ip>",
-                "port": "<port>"
             }
         },
         "MongoDB": {
