@@ -133,6 +133,7 @@ The taxonomy can be automatically added by the taxonomy expert bot based on the 
 |malware|Malicious Code|A URL is the most common resource with reference to malware binary distribution.|
 |botnet drone|Malicious Code|This is a compromized machine, which has been observed to make a connection to a command and control server.|
 |ransomware|Malicious Code|This IOC refers to a specific type of compromized machine, where the computer has been hijacked for ransom by the criminals.|
+|dga domain|Malicious Code|DGA Domains are seen various families of malware that are used to periodically generate a large number of domain names that can be used as rendezvous points with their command and control servers.|
 |malware configuration|Malicious Code|This is a resource which updates botnet drones with a new configuration.|
 |c&c|Malicious Code|This is a command and control server in charge of a given number of botnet drones.|
 |scanner|Information Gathering|This IOC refers to port scanning activity specifically.|
@@ -158,6 +159,7 @@ Meaning of source, destination and local values for each classification type and
 |malware|*infected device*||internal at source|zeus, palevo, feodo|
 |botnet drone|*infected device*||||
 |ransomware|*infected device*||||
+|dga domain|*infected device*||||
 |malware configuration|*infected device*||||
 |c&c|*(sinkholed) c&c server*|||zeus, palevo, feodo|
 |scanner|*scanning device*|scanned device|||

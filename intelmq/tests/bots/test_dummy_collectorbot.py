@@ -8,7 +8,6 @@ import unittest
 
 import intelmq.lib.bot as bot
 import intelmq.lib.test as test
-from intelmq.lib.message import Report
 
 EXAMPLE_REPORT = {"__type": "Report",
                   "feed.name": "Example Feed",
@@ -24,13 +23,10 @@ class DummyCollectorBot(bot.CollectorBot):
     """
 
     def process(self):
-        report = Report()
+        report = self.new_report()
         if self.parameters.raw:
             report['raw'] = 'test'
         self.send_message(report)
-
-    def recover_line(self, line):
-        return '\n'.join([self.tempdata[0], line, self.tempdata[1]])
 
 
 class TestDummyCollectorBot(test.BotTestCase, unittest.TestCase):
@@ -61,5 +57,5 @@ class TestDummyCollectorBot(test.BotTestCase, unittest.TestCase):
                                    levelname='WARNING')
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

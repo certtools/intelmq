@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 import re
-import sys
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.message import Event
 
 REGEX_IP = "^[^ \t]+"
 REGEX_TIMESTAMP = "# ([^ \t]+ [^ \t]+)"
@@ -21,7 +19,7 @@ class BruteForceBlockerParserBot(Bot):
             if not row or row.startswith('#'):
                 continue
 
-            event = Event(report)
+            event = self.new_event(report)
 
             match = re.search(REGEX_IP, row)
             if match:
@@ -30,7 +28,6 @@ class BruteForceBlockerParserBot(Bot):
             match = re.search(REGEX_TIMESTAMP, row)
             if match:
                 timestamp = match.group(1) + " UTC"
-                continue
 
             if not timestamp:
                 raise ValueError('No timestamp found.')
@@ -43,6 +40,5 @@ class BruteForceBlockerParserBot(Bot):
             self.send_message(event)
         self.acknowledge_message()
 
-if __name__ == "__main__":
-    bot = BruteForceBlockerParserBot(sys.argv[1])
-    bot.start()
+
+BOT = BruteForceBlockerParserBot

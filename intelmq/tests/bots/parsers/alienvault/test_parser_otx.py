@@ -8,7 +8,7 @@ import intelmq.lib.utils as utils
 from intelmq.bots.parsers.alienvault.parser_otx import AlienVaultOTXParserBot
 
 with open(os.path.join(os.path.dirname(__file__),
-                       'test_parser_otx.data')) as handle:
+                       'test_parser_otx.data'), encoding='utf-8') as handle:
     EXAMPLE_FILE = handle.read()
 
 EXAMPLE_REPORT = {"feed.name": "AlienVault OTX",
@@ -58,5 +58,5 @@ class TestAlienVaultOTXParserBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_EVENT)
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

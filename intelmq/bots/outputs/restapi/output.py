@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import sys
 
 import requests
 
@@ -38,6 +37,4 @@ class RestAPIOutputBot(Bot):
         self.acknowledge_message()
 
 
-if __name__ == "__main__":
-    bot = RestAPIOutputBot(sys.argv[1])
-    bot.start()
+BOT = RestAPIOutputBot

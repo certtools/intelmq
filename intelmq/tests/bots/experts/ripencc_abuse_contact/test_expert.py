@@ -30,6 +30,7 @@ EXAMPLE_OUTPUT6 = {"__type": "Event",
                    }
 
 
+@test.skip_internet()
 class TestRIPENCCExpertBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for AbusixExpertBot.
@@ -54,5 +55,5 @@ class TestRIPENCCExpertBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(0, EXAMPLE_OUTPUT6)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

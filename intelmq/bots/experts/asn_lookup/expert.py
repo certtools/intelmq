@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 """
-import sys
 from intelmq.lib.bot import Bot
-from intelmq.lib.harmonization import IPAddress
 
 try:
     import pyasn
@@ -51,6 +49,4 @@ class ASNLookupExpertBot(Bot):
         self.acknowledge_message()
 
 
-if __name__ == "__main__":
-    bot = ASNLookupExpertBot(sys.argv[1])
-    bot.start()
+BOT = ASNLookupExpertBot

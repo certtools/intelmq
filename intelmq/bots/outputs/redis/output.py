@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
-import sys
-
-from intelmq.lib.bot import Bot
 
 import redis
+
+from intelmq.lib.bot import Bot
 
 
 class RedisOutputBot(Bot):
@@ -41,6 +40,4 @@ class RedisOutputBot(Bot):
             self.logger.info("Connected successfully to Redis {} at {}:{}!".format(info['redis_version'], self.host, self.port))
 
 
-if __name__ == "__main__":
-    bot = RedisOutputBot(sys.argv[1])
-    bot.start()
+BOT = RedisOutputBot

@@ -15,13 +15,11 @@ import csv
 import io
 import json
 import re
-import sys
 
 from dateutil.parser import parse
 
 from intelmq.lib import utils
 from intelmq.lib.bot import ParserBot
-from intelmq.lib.message import Event
 
 
 class GenericCsvParserBot(ParserBot):
@@ -50,7 +48,7 @@ class GenericCsvParserBot(ParserBot):
             yield row
 
     def parse_line(self, row, report):
-        event = Event(report)
+        event = self.new_event(report)
 
         for key, value in zip(self.columns, row):
 
@@ -106,6 +104,5 @@ class GenericCsvParserBot(ParserBot):
 
     recover_line = ParserBot.recover_line_csv
 
-if __name__ == "__main__":
-    bot = GenericCsvParserBot(sys.argv[1])
-    bot.start()
+
+BOT = GenericCsvParserBot
