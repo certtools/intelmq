@@ -30,7 +30,7 @@ class GenericCsvParserBot(ParserBot):
         self.columns = self.parameters.columns
         # convert columns to an array
         if type(self.parameters.columns) is str:
-            self.columns = map(str.strip, self.columns.split(","))
+            self.columns = self.columns.split(",")
 
         if hasattr(self.parameters, 'type_translation'):
             self.type_translation = json.loads(self.parameters.type_translation)
