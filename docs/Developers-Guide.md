@@ -316,7 +316,7 @@ In the `intelmq/lib/` directory you can find some libraries:
 <a name="bot-developer-guide"></a>
 ## Bot Developer Guide
 
-There's a dummy bot including tests at `intelmq/tests/bots/test_dummy_bot.py`.
+There's a dummy bot including tests at `intelmq/tests/lib/test_parser_bot.py`.
 
 You can always start any bot directly from command line by calling the executable.
 The executable will be created during installation a directory for binaries. After adding new bots to the code, install IntelMQ to get the files created.
@@ -418,7 +418,7 @@ Parsers can use a different, specialized Bot-class. It allows to work on individ
 
 For common cases, like CSV, exisiting function can be used, reducing the amount of code to implement. In the best case, only `parse_line` needs to be coded, as only this part interprets the data.
 
-You can have a look at the implementation `intelmq/lib/bot.py` or at examples, e.g. the DummyBot in `intelmq/tests/bots/test_dummy_bot.py`. This is a stub for creating a new Parser, showing the parameters and possible code:
+You can have a look at the implementation `intelmq/lib/bot.py` or at examples, e.g. the DummyBot in `intelmq/tests/lib/test_parser_bot.py`. This is a stub for creating a new Parser, showing the parameters and possible code:
 
 ```python
 class MyParserBot(ParserBot):
@@ -487,7 +487,7 @@ One line can lead to multiple events, thus `parse_line` can't just return one Ev
 
 In order to do automated tests on the bot, it is necessary to write tests including sample data. Have a look at some existing tests:
 
- - The DummyParserBot in `intelmq/tests/bots/test_dummy_bot.py`. This test has the example data (report and event) inside the file, defined as dictionary.
+ - The DummyParserBot in `intelmq/tests/lib/test_paerser_bot.py`. This test has the example data (report and event) inside the file, defined as dictionary.
  - The parser for malwaregroup at `intelmq/tests/bots/parsers/malwaregroup/test_parser_*.py`. The latter loads a sample HTML file from the same directory, which is the raw report.
  - The test for ASNLookupExpertBot has two event tests, one is an expected fail (IPv6).
 
