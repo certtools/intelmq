@@ -76,12 +76,6 @@ class Bot(object):
             self.__load_pipeline_configuration()
             self.__load_harmonization_configuration()
 
-            if not getattr(self.parameters, 'enabled', True):
-                self.logger.warn('The bot was disabled by configuration. '
-                                 'It will not be started as long as this '
-                                 'configuration is present.')
-                self.stop()
-
             self.init()
 
             self.__sighup = False
