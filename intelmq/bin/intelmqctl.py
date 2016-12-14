@@ -646,6 +646,12 @@ Get logs of a bot:
         if os.path.exists(SYSTEM_CONF_FILE):
             self.logger.warning('Deprecated startup.conf file found, migrate to runtime.conf.')
 
+        if bool(files[DEFAULTS_CONF_FILE]['http_proxy']) != bool(files[DEFAULTS_CONF_FILE]['https_proxy']):
+            self.logger.warning('Only {}_proxy seems to be set. '
+                                'Both http and https proxies must be set.'
+                                .format('http' if files[DEFAULTS_CONF_FILE]['http_proxy']
+                                        else 'https'))
+
         for bot_id, bot_config in files[RUNTIME_CONF_FILE].items():
             # pipeline keys
             for field in ['description', 'group', 'module', 'name']:

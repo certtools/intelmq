@@ -615,6 +615,11 @@ class CollectorBot(Bot):
         if self.parameters.http_proxy and self.parameters.https_proxy:
             self.proxy = {'http': self.parameters.http_proxy,
                           'https': self.parameters.https_proxy}
+        elif self.parameters.http_proxy or self.parameters.https_proxy:
+            self.logger.warning('Only {}_proxy seems to be set.'
+                                'Both http and https proxies must be set.'
+                                .format('http' if self.parameters.http_proxy else 'https'))
+            self.proxy = None
         else:
             self.proxy = None
 
