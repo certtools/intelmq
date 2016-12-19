@@ -58,7 +58,7 @@ def get_feed(feedname):
         "Open-MSSQL": open_mssql,  # TODO Check implementation.
         "Open-SNMP": open_snmp,
         "Open-SSDP": open_ssdp,  # TODO Check implementation.
-        "Open-IPMI": open_ipmi,
+        "Open-IPMI": open_ipmi,  # TODO VERIFY THIS FEED, as dmth did not have example data
         "Open-Portmapper": open_portmapper,
         "Open-Redis": open_redis,
         "Microsoft-Sinkhole": microsoft_sinkhole,
@@ -72,14 +72,13 @@ def get_feed(feedname):
         "Open-Netis": open_netis,
         "Sandbox-URL": sandbox_url,
         "Spam-URL": spam_url,
-        "Open-Proxy": open_proxy,
-        "Sinkhole-HTTP-Referer": sinkhole_http_referer,
         "Vulnerable-ISAKMP": vulnerable_isakmp,
         "Accessible-RDP": accessible_rdp,
         "Open-mDNS": open_mdns,
         "Open-LDAP": open_ldap,
         "Blacklisted-IP": blacklisted_ip,
         "Accessible-Telnet": accessible_telnet,
+        "Accessible-CWMP": accessible_cwmp,
     }
 
     return feed_idx.get(feedname)
@@ -971,31 +970,34 @@ ntp_version = {
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
-        ('extra.', 'version', validate_to_none),
+        ('extra.', 'version', convert_int),
         ('extra.', 'clk_wander', validate_to_none),
         ('extra.', 'clock', validate_to_none),
         ('extra.', 'error', validate_to_none),
         ('extra.', 'frequency', validate_to_none),
         ('extra.', 'jitter', validate_to_none),
-        ('extra.', 'leap', validate_to_none),
+        ('extra.', 'leap', convert_int),
         ('extra.', 'mintc', validate_to_none),
         ('extra.', 'noise', validate_to_none),
         ('extra.', 'offset', validate_to_none),
-        ('extra.', 'peer', validate_to_none),
+        ('extra.', 'peer', convert_int),
         ('extra.', 'phase', validate_to_none),
-        ('extra.', 'poll', validate_to_none),
-        ('extra.', 'precision', validate_to_none),
+        ('extra.', 'poll', convert_int),
+        ('extra.', 'precision', convert_int),
         ('extra.', 'processor', validate_to_none),
         ('extra.', 'refid', validate_to_none),
         ('extra.', 'reftime', validate_to_none),
         ('extra.', 'rootdelay', validate_to_none),
         ('extra.', 'rootdispersion', validate_to_none),
         ('extra.', 'stability', validate_to_none),
-        ('extra.', 'state', validate_to_none),
-        ('extra.', 'stratum', validate_to_none),
+        ('extra.', 'state', convert_int),
+        ('extra.', 'stratum', convert_int),
         ('extra.', 'system', validate_to_none),
         ('extra.', 'tai', validate_to_none),
         ('extra.', 'tc', validate_to_none),
+        ('extra.', 'naics', convert_int),
+        ('extra.', 'sic', convert_int),
+        ('extra.', 'sector', validate_to_none),
     ],
     'constant_fields': {
         'classification.type': 'vulnerable service',
@@ -1052,53 +1054,6 @@ spam_url = {
     },
 }
 
-# https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-Proxy
-open_proxy = {
-    'required_fields': [
-        ('time.source', 'timestamp', add_UTC_to_timestamp),
-        ('source.ip', 'ip'),
-        ('source.port', 'port'),
-    ],
-    'optional_fields': [
-        ('source.asn', 'asn'),
-        ('source.geolocation.cc', 'geo'),
-        ('source.geolocation.region', 'region'),
-        ('source.geolocation.city', 'city'),
-        ('source.reverse_dns', 'dns'),
-        #('source.reverse_dns', 'hostname'),  # ..this is an old column name
-        ('protocol.application', 'type'),
-        ('extra.', 'password', validate_to_none),
-        ('extra.', 'os_name', validate_to_none),
-        ('extra.', 'os_version', validate_to_none),
-        ('event_description.text', 'via'),
-    ],
-    'constant_fields': {
-        'classification.type': 'other',
-        'classification.identifier': 'openproxy',
-    },
-}
-
-# https://www.shadowserver.org/wiki/pmwiki.php/Services/Sinkhole-HTTP-Referer
-sinkhole_http_referer = {
-    'required_fields': [
-        ('time.source', 'timestamp', add_UTC_to_timestamp),
-        #('source.ip', 'ip'),  # ..this is an old column name
-        ('source.ip', 'inet'),
-    ],
-    'optional_fields': [
-        ('malware.name', 'type'),
-        ('extra.', 'http_host', validate_to_none),
-        ('extra.', 'http_referer', validate_to_none),
-        ('source.asn', 'asn'),
-        ('source.geolocation.cc', 'geo'),
-    ],
-    'constant_fields': {
-        'protocol.transport': 'tcp',
-        'classification.type': 'compromised',
-        'classification.identifier': 'compromised-website',
-    },
-}
-
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Vulnerable-ISAKMP
 vulnerable_isakmp = {
     'required_fields': [
@@ -1107,6 +1062,7 @@ vulnerable_isakmp = {
         ('source.port', 'port'),
     ],
     'optional_fields': [
+        ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
         # ('classification.identifier', 'tag'),  # This will be 'openike' in constant fields
         ('source.asn', 'asn'),
@@ -1118,7 +1074,6 @@ vulnerable_isakmp = {
         ('extra.', 'initiator_spi', validate_to_none),
         ('extra.', 'responder_spi', validate_to_none),
         ('extra.', 'next_payload', validate_to_none),
-        ('extra.', 'version', validate_to_none),
         ('extra.', 'exchange_type', validate_to_none),
         ('extra.', 'flags', validate_to_none),
         ('extra.', 'message_id', validate_to_none),
@@ -1129,7 +1084,6 @@ vulnerable_isakmp = {
         ('extra.', 'notify_message_type', validate_to_none),
     ],
     'constant_fields': {
-        'protocol.transport': 'udp',
         'classification.type': 'vulnerable service',
         'classification.identifier': 'openike',
     }
@@ -1151,14 +1105,14 @@ accessible_rdp = {
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
         ('extra.', 'rdp_protocol', validate_to_none),
-        ('extra.', 'cert_length', validate_to_none),
+        ('extra.', 'cert_length', invalidate_zero),
         ('extra.', 'subject_common_name', validate_to_none),
         ('extra.', 'issuer_common_name', validate_to_none),
         ('extra.', 'cert_issue_date', validate_to_none),
         ('extra.', 'cert_expiration_date', validate_to_none),
         ('extra.', 'sha1_fingerprint', validate_to_none),
         ('extra.', 'cert_serial_number', validate_to_none),
-        ('extra.', 'ssl_version', validate_to_none),
+        ('extra.', 'ssl_version', invalidate_zero),
         ('extra.', 'signature_algorithm', validate_to_none),
         ('extra.', 'key_algorithm', validate_to_none),
         ('extra.', 'sha256_fingerprint', validate_to_none),
@@ -1184,6 +1138,7 @@ open_ldap = {
         ('source.port', 'port'),
     ],
     'optional_fields': [
+        ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
         # ('classification.identifier', 'tag'),  # This will be 'openldap' in constant fields
         ('source.asn', 'asn'),
@@ -1197,13 +1152,13 @@ open_ldap = {
         ('extra.', 'current_time', validate_to_none),
         ('extra.', 'default_naming_context', validate_to_none),
         ('destination.local_hostname', 'dns_host_name'),
-        ('extra.', 'domain_controller_functionality', validate_to_none),
-        ('extra.', 'domain_functionality', validate_to_none),
+        ('extra.', 'domain_controller_functionality', invalidate_zero),
+        ('extra.', 'domain_functionality', invalidate_zero),
         ('extra.', 'ds_service_name', validate_to_none),
-        ('extra.', 'forest_functionality', validate_to_none),
-        ('extra.', 'highest_committed_usn', validate_to_none),
-        ('extra.', 'is_global_catalog_ready', validate_to_none),
-        ('extra.', 'is_synchronized', validate_to_none),
+        ('extra.', 'forest_functionality', invalidate_zero),
+        ('extra.', 'highest_committed_usn', invalidate_zero),
+        ('extra.', 'is_global_catalog_ready', convert_bool),
+        ('extra.', 'is_synchronized', convert_bool),
         ('extra.', 'ldap_service_name', validate_to_none),
         ('extra.', 'naming_contexts', validate_to_none),
         ('extra.', 'root_domain_naming_context', validate_to_none),
@@ -1217,7 +1172,6 @@ open_ldap = {
         ('extra.', 'supported_sasl_mechanisms', validate_to_none),
     ],
     'constant_fields': {
-        'protocol.transport': 'udp',
         'protocol.application': 'ldap',
         'classification.type': 'vulnerable service',
         'classification.identifier': 'openldap',
@@ -1271,6 +1225,42 @@ accessible_telnet = {
         'protocol.application': 'telnet',
         'classification.type': 'vulnerable service',
         'classification.identifier': 'opentelnet',
+    }
+}
+
+
+accessible_cwmp = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        # 'tag' will always be 'cwmp', so it's inside constant fields as 'protocol.application'
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'http', validate_to_none),
+        ('extra.', 'http_code', invalidate_zero),
+        ('extra.', 'http_reason', validate_to_none),
+        ('extra.', 'content_type', validate_to_none),
+        ('extra.', 'connection', validate_to_none),
+        ('extra.', 'www_authenticate', validate_to_none),
+        ('extra.', 'set_cookie', validate_to_none),
+        ('extra.', 'server', validate_to_none),
+        ('extra.', 'content_length', invalidate_zero),
+        ('extra.', 'transfer_encoding', validate_to_none),
+        ('extra.', 'date', validate_to_none),
+    ],
+    'constant_fields': {
+        'protocol.application': 'cwmp',
+        'classification.type': 'vulnerable service',
+        'classification.identifier': 'opencwmp',
     }
 }
 
