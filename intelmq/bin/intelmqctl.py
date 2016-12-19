@@ -220,7 +220,7 @@ Get logs of a bot:
         self.load_defaults_configuration()
         self.load_system_configuration()
         try:
-            self.pipepline_configuration = utils.load_configuration(PIPELINE_CONF_FILE)
+            self.pipeline_configuration = utils.load_configuration(PIPELINE_CONF_FILE)
         except ValueError as exc:
             exit('Invalid syntax in %r: %s' % (PIPELINE_CONF_FILE, exc))
         try:
@@ -514,7 +514,7 @@ Get logs of a bot:
         destination_queues = set()
         internal_queues = set()
 
-        for botid, value in self.pipepline_configuration.items():
+        for botid, value in self.pipeline_configuration.items():
             if 'source-queue' in value:
                 source_queues.add(value['source-queue'])
                 internal_queues.add(value['source-queue'] + '-internal')
@@ -530,7 +530,7 @@ Get logs of a bot:
         log_list_queues(counters)
 
         return_dict = dict()
-        for bot_id, info in self.pipepline_configuration.items():
+        for bot_id, info in self.pipeline_configuration.items():
             return_dict[bot_id] = dict()
 
             if 'source-queue' in info:
@@ -554,7 +554,7 @@ Get logs of a bot:
         """
         logger.info("Clearing queue {}".format(queue))
         queues = set()
-        for key, value in self.pipepline_configuration.items():
+        for key, value in self.pipeline_configuration.items():
             if 'source-queue' in value:
                 queues.add(value['source-queue'])
                 queues.add(value['source-queue'] + '-internal')
@@ -644,7 +644,13 @@ Get logs of a bot:
         if os.path.exists(STARTUP_CONF_FILE):
             self.logger.warning('Deprecated startup.conf file found, migrate to runtime.conf.')
         if os.path.exists(SYSTEM_CONF_FILE):
-            self.logger.warning('Deprecated startup.conf file found, migrate to runtime.conf.')
+            self.logger.warning('Deprecated system.conf file found, migrate to defaults.conf.')
+
+        if bool(files[DEFAULTS_CONF_FILE]['http_proxy']) != bool(files[DEFAULTS_CONF_FILE]['https_proxy']):
+            self.logger.warning('Only {}_proxy seems to be set. '
+                                'Both http and https proxies must be set.'
+                                .format('http' if files[DEFAULTS_CONF_FILE]['http_proxy']
+                                        else 'https'))
 
         for bot_id, bot_config in files[RUNTIME_CONF_FILE].items():
             # pipeline keys

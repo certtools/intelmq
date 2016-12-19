@@ -596,7 +596,7 @@ class CollectorBot(Bot):
         if hasattr(self.parameters, 'http_ssl_proxy'):
             self.logger.warning("Parameter 'http_ssl_proxy' is deprecated and will be removed in "
                                 "version 1.0!")
-            if not self.parameters.https_proxy:
+            if not hasattr(self.parameters, 'https_proxy'):
                 self.parameters.https_proxy = self.parameters.http_ssl_proxy
 
         self.http_header = getattr(self.parameters, 'http_header', {})
@@ -615,6 +615,11 @@ class CollectorBot(Bot):
         if self.parameters.http_proxy and self.parameters.https_proxy:
             self.proxy = {'http': self.parameters.http_proxy,
                           'https': self.parameters.https_proxy}
+        elif self.parameters.http_proxy or self.parameters.https_proxy:
+            self.logger.warning('Only {}_proxy seems to be set.'
+                                'Both http and https proxies must be set.'
+                                .format('http' if self.parameters.http_proxy else 'https'))
+            self.proxy = None
         else:
             self.proxy = None
 
