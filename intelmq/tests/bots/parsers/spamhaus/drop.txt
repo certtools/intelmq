@@ -1,0 +1,6 @@
+; Spamhaus DROP List 2015/09/14 - (c) 2015 The Spamhaus Project
+; http://www.spamhaus.org/drop/drop.txt
+; Last-Modified: Mon, 14 Sep 2015 04:39:22 GMT
+; Expires: Mon, 14 Sep 2015 10:13:00 GMT
+1.4.0.0/17 ; SBL256893
+2a06:e480::/29 ; SBL301771

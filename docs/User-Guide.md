@@ -5,11 +5,9 @@
     * [Install Dependencies](#install-dependencies)
         * [Ubuntu 14.04 / Debian 8](#ubuntu-1404--debian-8)
         * [CentOS 7](#centos-7)
-    * [Install](#install-1)
-      * [Python 3.4 (recommended)](#python-34-recommended-1)
+    * [Installation](#install)
   * [Configuration](#configuration)
     * [System Configuration](#system-configuration)
-    * [Startup Configuration](#startup-configuration)
     * [Pipeline Configuration](#pipeline-configuration)
     * [Defaults Configuration](#defaults-configuration)
         * [Error Handling](#error-handling)
@@ -39,7 +37,7 @@
 
 The following instructions assume the following requirements:
 
-* **Operating System:** Ubuntu 14.04 LTS or Debian 8 or CentOS 7
+* **Operating System:** Ubuntu 14.04 and 16.04 LTS, Debian 8, CentOS 7 or OpenSUSE Leap 42.x
 
 Please report any errors you encounter at https://github.com/certtools/intelmq/issues
 
@@ -84,7 +82,7 @@ systemctl enable redis
 systemctl start redis
 ```
 
-## Install
+## Installation
 
 The `REQUIREMENTS` files define a list python packages and versions, which are necessary to run *all components* of IntelMQ. The defined versions are recommendations.
 
@@ -110,7 +108,7 @@ By default, one collector, one parser and one output are started. The default co
 
 The configuration directory is `/opt/intelmq/etc/`, all files are JSON. By
 default, the installation method puts it's distributed configuration files into
-`etc/examples`, so it does not override your local configuration. Prior to the
+`etc/examples`, so it does not overwrite your local configuration. Prior to the
 first run, copy them to `etc`:
 
 ```bash
@@ -120,14 +118,13 @@ cp -a examples/* .
 
 * `defaults.conf`: default values for bots and their behavior, e.g.
 error handling, log options and pipeline configuration. Will be removed in the [future](https://github.com/certtools/intelmq/issues/267).
-* `startup.conf`: Maps the bot ids to python modules.
 * `runtime.conf`: Configuration for the individual bots.
 * `pipeline.conf`: Defines source and destination queues per bot.
 * `BOTS`: Includes configuration hints for all bots. E.g. feed URLs or
-database connection parameters. Use this as a template for `startup.conf` and `runtime.conf`. Also read by the intelmq-manager.
+database connection parameters. Use this as a template for `runtime.conf`. Also read by the intelmq-manager.
 
-To configure a new bot, you need to define it first in `startup.conf`.
-Then do the configuration in `runtime.conf` using the bot if.
+To configure a new bot, you need to define and configure it in `runtime.conf`
+using the template from BOTS.
 Configure source and destination queues in `pipeline.conf`.
 Use the IntelMQ Manager mentioned above to generate the configuration files if unsure.
 
@@ -143,43 +140,7 @@ Small extract:
 * `logging_path`: If `logging_handler` is `file`. Defines for all system the logs folder that will be use by all bots and intelmqctl tool. Default value is: `/opt/intelmq/var/log/`
 * `logging_syslog`: If `logging_handler` is `syslog`. Either a list with hostname and UDP port of syslog service, e.g. `["localhost", 514]` or a device name, e.g. the default `"/var/log"`.
 
-
-## Startup Configuration
-
-This configuration is used by intelmqctl tool to launch bots. Usually, the IntelMQ sysadmins don't need to touch this file because IntelMQ Manager generates it.
-
-**Template:**
-```
-{
-	...
-
-    "<bot ID>": {
-        "group": "<bot type (Collector, Parser, Expert, Output)>",
-        "name": "<human-readable bot name>",
-        "module": "<bot code (python module)>",
-        "description": "<generic description of the bot>"
-    },
-
-	...
-}
-```
-
-**Example:**
-```
-{
-	...
-    "malware-domain-list-collector": {
-        "group": "Collector",
-        "name": "Malware Domain List",
-        "module": "intelmq.bots.collectors.http.collector_http",
-        "description": "Malware Domain List Collector is the bot responsible to get the report from source of information."
-    },
-	...
-}
-```
-
-More examples can be found at `intelmq/etc/startup.conf` directory in IntelMQ repository.
-
+We recommend logging_level WARNING for production environments and INFO if you want more details. In any case, monitor your free disk space.
 
 ## Pipeline Configuration
 
@@ -249,15 +210,19 @@ More examples can be found at `intelmq/etc/pipeline.conf` directory in IntelMQ r
 
 * **`rate_limit`** - time interval (in seconds) between messages processing. The value must be an `integer value`.
 
-* **`source_pipeline_host`** - broker IP or FQDN that the bot will use to connect and receive messages.
+* **`source_pipeline_host`** - broker IP, FQDN or Unix socket that the bot will use to connect and receive messages.
 
-* **`source_pipeline_port`** - broker port that the bot will use to connect and receive messages.
+* **`source_pipeline_port`** - broker port that the bot will use to connect and receive messages. Can be empty for Unix socket.
+
+* **`source_pipeline_password`** - broker password that the bot will use to connect and receive messages. Can be null for unprotected broker.
 
 * **`source_pipeline_db`** - broker database that the bot will use to connect and receive messages (requirement from redis broker).
 
-* **`destination_pipeline_host`** - broker IP or FQDN that the bot will use to connect and send messages.
+* **`destination_pipeline_host`** - broker IP, FQDN or Unix socket that the bot will use to connect and send messages. 
 
-* **`destination_pipeline_port`** - broker port that the bot will use to connect and send messages.
+* **`destination_pipeline_port`** - broker port that the bot will use to connect and send messages. Can be empty for Unix socket.
+
+* **`destination_pipeline_password`** - broker password that the bot will use to connect and send messages. Can be null for unprotected broker.
 
 * **`destination_pipeline_db`** - broker database that the bot will use to connect and send messages (requirement from redis broker).
 
@@ -277,26 +242,34 @@ This configuration is used by each bot to load the specific parameters associate
 **Template:**
 ```
 {
-	...
     "<bot ID>": {
-        "<parameter 1>": "<value 1>",
-        "<parameter 2>": "<value 2>",
-        "<parameter 3>": "<value 3>"
-    },
-	...
+        "group": "<bot type (Collector, Parser, Expert, Output)>",
+        "name": "<human-readable bot name>",
+        "module": "<bot code (python module)>",
+        "description": "<generic description of the bot>",
+        "parameters": {
+            "<parameter 1>": "<value 1>",
+            "<parameter 2>": "<value 2>",
+            "<parameter 3>": "<value 3>"
+        }
+    }
 }
 ```
 
 **Example:**
 ```
 {
-	...
     "malware-domain-list-collector": {
-        "http_url": "http://www.malwaredomainlist.com/updatescsv.php",
-        "feed": "Malware Domain List",
-        "rate_limit": 3600
-    },
-	...
+        "group": "Collector",
+        "name": "Malware Domain List",
+        "module": "intelmq.bots.collectors.http.collector_http",
+        "description": "Malware Domain List Collector is the bot responsible to get the report from source of information.",
+        "parameters": {
+            "http_url": "http://www.malwaredomainlist.com/updatescsv.php",
+            "feed": "Malware Domain List",
+            "rate_limit": 3600
+        }
+    }
 }
 ```
 
@@ -310,7 +283,6 @@ This configuration is used to specify the fields for all message types. The harm
 **Template:**
 ```
 {
-	...
     "<message type>": {
         "<field 1>": {
             "description": "<field 1 description>",
@@ -321,14 +293,12 @@ This configuration is used to specify the fields for all message types. The harm
             "type": "<field value type>"
         }
     },
-	...
 }
 ```
 
 **Example:**
 ```
 {
-	...
     "event": {
         "destination.asn": {
             "description": "The autonomous system number from which originated the connection.",
@@ -339,9 +309,7 @@ This configuration is used to specify the fields for all message types. The harm
             "regex": "^[a-zA-Z0-9]{2}$",
             "type": "String"
         },
-    	...
     },
-	...
 }
 ```
 
@@ -374,7 +342,7 @@ Currently only one instance of one bot can be run. Concepts for multiprocessing 
 IntelMQ has a tool called IntelMQ Manager that gives to user a easy way to 
 configure all pipeline with bots that your team needs. It is recommended to
 use the IntelMQ Manager to become acquainted with the functionalities and concepts.
-The IntelMQ Manager has all possibilities of intelmqctl tool and has a graphical interface for startup and pipeline configuration.
+The IntelMQ Manager has all possibilities of intelmqctl tool and has a graphical interface for runtime and pipeline configuration.
 
 See [IntelMQ Manager repository](https://github.com/certtools/intelmq-manager).
 

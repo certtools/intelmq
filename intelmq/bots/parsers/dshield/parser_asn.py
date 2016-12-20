@@ -12,11 +12,9 @@
 #
 # source IP <tab> Reports <tab> Targets <tab> First Seen <tab> Last Seen <tab> Updated <CR>
 """
-import sys
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.message import Event
 
 
 class DShieldASNParserBot(Bot):
@@ -45,7 +43,7 @@ class DShieldASNParserBot(Bot):
             url = report['feed.url']
             asn = int(url[url.rfind('?as=') + 4:])
 
-            event = Event(report)
+            event = self.new_event(report)
 
             event.add('source.ip', source_ip)
             event.add('source.asn', asn)
@@ -59,6 +57,4 @@ class DShieldASNParserBot(Bot):
         self.acknowledge_message()
 
 
-if __name__ == "__main__":
-    bot = DShieldASNParserBot(sys.argv[1])
-    bot.start()
+BOT = DShieldASNParserBot

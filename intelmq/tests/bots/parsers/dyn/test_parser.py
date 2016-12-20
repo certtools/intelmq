@@ -88,5 +88,5 @@ class TestDynParserBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(2, EXAMPLE_EVENTS[2])
         self.assertMessageEqual(3, EXAMPLE_EVENTS[3])
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

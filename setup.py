@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import json
+import os
 
 from setuptools import find_packages, setup
 
@@ -23,7 +25,6 @@ DATA = [
       'intelmq/etc/harmonization.conf',
       'intelmq/etc/pipeline.conf',
       'intelmq/etc/runtime.conf',
-      'intelmq/etc/startup.conf',
       ],
      ),
     ('/opt/intelmq/var/lib/bots/modify/example',
@@ -39,8 +40,14 @@ DATA = [
      ),
 ]
 
-exec(open('intelmq/version.py').read())  # defines __version__
-
+exec(open(os.path.join(os.path.dirname(__file__),
+                       'intelmq/version.py')).read())  # defines __version__
+BOTS = []
+bots = json.load(open(os.path.join(os.path.dirname(__file__), 'intelmq/bots/BOTS')))
+for bot_type, bots in bots.items():
+    for bot_name, bot in bots.items():
+        module = bot['module']
+        BOTS.append('{0} = {0}:BOT.run'.format(module))
 
 setup(
     name='intelmq',
@@ -61,7 +68,8 @@ setup(
     license='AGPLv3',
     description='IntelMQ is a solution for CERTs to process data feeds, '
                 'pastebins, tweets throught a message queue.',
-    long_description=open('docs/README.rst').read(),
+    long_description=open(os.path.join(os.path.dirname(__file__),
+                                       'docs/README.rst')).read(),
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Console',
@@ -83,7 +91,7 @@ setup(
             'intelmqctl = intelmq.bin.intelmqctl:main',
             'intelmqdump = intelmq.bin.intelmqdump:main',
             'intelmq_psql_initdb = intelmq.bin.intelmq_psql_initdb:main',
-        ],
+        ] + BOTS,
     },
     scripts=[
         'intelmq/bots/experts/tor_nodes/update-tor-nodes',

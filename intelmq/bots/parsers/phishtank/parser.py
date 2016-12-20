@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 import csv
 import io
-import sys
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.message import Event
 
 
 class PhishTankParserBot(Bot):
@@ -34,7 +32,7 @@ class PhishTankParserBot(Bot):
             if "phish_id" in row:
                 continue
 
-            event = Event(report)
+            event = self.new_event(report)
 
             for key, value in zip(columns, row):
 
@@ -50,6 +48,4 @@ class PhishTankParserBot(Bot):
         self.acknowledge_message()
 
 
-if __name__ == "__main__":
-    bot = PhishTankParserBot(sys.argv[1])
-    bot.start()
+BOT = PhishTankParserBot

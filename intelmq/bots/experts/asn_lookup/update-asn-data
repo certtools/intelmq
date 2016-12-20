@@ -1,7 +1,7 @@
 #!/bin/bash
 # Update asn data
 # The target file must be given as only argument on the commandline.
-PATH=/bin:/usr/bin
+PATH=/bin:/usr/bin:/usr/local/bin
 
 # set the http proxy here:
 # export http_proxy=http://proxy.example.com:8080/
@@ -34,10 +34,10 @@ cleanup()
 fetch_and_install()
 {
   cd "$TMP_DIR"
-  # FIXME: we have to use http as the data is not available via httpd,
+  # FIXME: we have to use http as the data is not available via https,
   # so this is not a secure connection... :-(
-  curl --silent -k -s -O http://data.ris.ripe.net/rrc12/latest-bview.gz
-  gunzip -q -c <latest-bview.gz | bzip2 -q -c >latest-bview.bz2 
+  curl -k -s -O http://data.ris.ripe.net/rrc12/latest-bview.gz
+  gunzip -q -c <latest-bview.gz | bzip2 -q -c >latest-bview.bz2
   pyasn_util_convert.py --single latest-bview.bz2 ipasn.dat \
                         --no-progress >/dev/null
   mv -f ipasn.dat "$DEST_FILE"

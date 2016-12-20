@@ -15,28 +15,27 @@ import csv
 import io
 import json
 import re
-import sys
 
 from dateutil.parser import parse
 
 from intelmq.lib import utils
 from intelmq.lib.bot import ParserBot
-from intelmq.lib.message import Event
 
 
 class GenericCsvParserBot(ParserBot):
 
-    def parse(self, report):
+    def init(self):
         self.type_translation = None
 
         self.columns = self.parameters.columns
         # convert columns to an array
-        if type(self.parameters.columns) is str:
-            self.columns = map(str.strip, self.columns.split(","))
+        if type(self.columns) is str:
+            self.columns = [column.strip() for column in self.columns.split(",")]
 
         if hasattr(self.parameters, 'type_translation'):
             self.type_translation = json.loads(self.parameters.type_translation)
 
+    def parse(self, report):
         raw_report = utils.base64_decode(report.get("raw"))
         # ignore lines starting with #
         raw_report = re.sub(r'(?m)^#.*\n?', '', raw_report)
@@ -50,7 +49,7 @@ class GenericCsvParserBot(ParserBot):
             yield row
 
     def parse_line(self, row, report):
-        event = Event(report)
+        event = self.new_event(report)
 
         for key, value in zip(self.columns, row):
 
@@ -106,6 +105,5 @@ class GenericCsvParserBot(ParserBot):
 
     recover_line = ParserBot.recover_line_csv
 
-if __name__ == "__main__":
-    bot = GenericCsvParserBot(sys.argv[1])
-    bot.start()
+
+BOT = GenericCsvParserBot

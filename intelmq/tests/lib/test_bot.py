@@ -4,45 +4,18 @@ Tests the Bot class itself.
 """
 
 import io
-import json
 import logging
-import os
 import unittest
 import unittest.mock as mock
 
-import pkg_resources
 
 import intelmq.lib.pipeline as pipeline
 import intelmq.lib.utils as utils
-from intelmq import (PIPELINE_CONF_FILE, RUNTIME_CONF_FILE, CONFIG_DIR)
-from intelmq.lib.test import mocked_logger, BOT_CONFIG
+import intelmq.lib.test as test
 
 
-def mocked_config(bot_id='', src_name='', dst_names=(),
-                  raise_on_connect=False):
-
-    def load_conf(conf_file):
-        if conf_file == PIPELINE_CONF_FILE:
-            return {bot_id: {"source-queue": src_name,
-                             "destination-queues": dst_names},
-                    }
-        elif conf_file == RUNTIME_CONF_FILE:
-            conf = BOT_CONFIG.copy()
-            conf.update({"raise_on_connect": raise_on_connect})
-            return {bot_id: conf}
-        elif conf_file.startswith(CONFIG_DIR):
-            confname = os.path.join('etc/', os.path.split(conf_file)[-1])
-            fname = pkg_resources.resource_filename('intelmq',
-                                                    confname)
-            with open(fname, 'rt') as fpconfig:
-                return json.load(fpconfig)
-        else:
-            with open(conf_file, 'r') as fpconfig:
-                return json.load(fpconfig)
-    return load_conf
-
-with mock.patch('intelmq.lib.utils.load_configuration', new=mocked_config()):
-    from intelmq.tests.bots import test_dummy_bot
+with mock.patch('intelmq.lib.utils.load_configuration', new=test.mocked_config()):
+    from intelmq.tests.lib import test_parser_bot
 
 
 class TestBot(unittest.TestCase):
@@ -55,17 +28,17 @@ class TestBot(unittest.TestCase):
         src_name = "{}-input".format(self.bot_id)
         dst_name = "{}-output".format(self.bot_id)
 
-        self.mocked_config = mocked_config(self.bot_id,
-                                           src_name,
-                                           [dst_name],
-                                           raise_on_connect)
+        self.mocked_config = test.mocked_config(self.bot_id,
+                                                src_name,
+                                                [dst_name],
+                                                {"raise_on_connect": raise_on_connect})
         logger = logging.getLogger(self.bot_id)
         logger.setLevel("DEBUG")
         console_formatter = logging.Formatter(utils.LOG_FORMAT)
         console_handler = logging.StreamHandler(self.log_stream)
         console_handler.setFormatter(console_formatter)
         logger.addHandler(console_handler)
-        self.mocked_log = mocked_logger(logger)
+        self.mocked_log = test.mocked_logger(logger)
 
         class Parameters(object):
             source_queue = src_name
@@ -89,16 +62,16 @@ class TestBot(unittest.TestCase):
                 self.bot.start()
 
     def test_pipeline_raising(self):
-        self.bot_reference = test_dummy_bot.DummyParserBot
+        self.bot_reference = test_parser_bot.DummyParserBot
         self.run_bot(raise_on_connect=True)
         self.assertIn('ERROR - Pipeline failed', self.log_stream.getvalue())
 
     def test_pipeline_empty(self):
-        self.bot_reference = test_dummy_bot.DummyParserBot
+        self.bot_reference = test_parser_bot.DummyParserBot
         self.run_bot()
         self.assertIn('ERROR - Bot has found a problem',
                       self.log_stream.getvalue())
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover  # pragma: no cover
     unittest.main()

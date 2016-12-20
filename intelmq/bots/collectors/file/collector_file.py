@@ -18,11 +18,9 @@ delete_file: boolean
 
 import fnmatch
 import os
-import sys
 
 import intelmq.lib.exceptions as exceptions
 from intelmq.lib.bot import CollectorBot
-from intelmq.lib.message import Report
 
 
 class FileCollectorBot(CollectorBot):
@@ -57,7 +55,7 @@ class FileCollectorBot(CollectorBot):
 
                         with open(filename, 'r') as f:
 
-                            report = Report()
+                            report = self.new_report()
                             report.add("raw", f.read())
                             report.add("feed.url", "file://localhost%s" % filename)
                             self.send_message(report)
@@ -72,6 +70,5 @@ class FileCollectorBot(CollectorBot):
                                 self.logger.error("Stopping now, to prevent reading this file again.")
                                 self.stop()
 
-if __name__ == "__main__":
-    bot = FileCollectorBot(sys.argv[1])
-    bot.start()
+
+BOT = FileCollectorBot

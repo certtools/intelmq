@@ -8,7 +8,6 @@ TODO: Load RIPE networks prefixes into memory.
 TODO: Compare each IP with networks prefixes loaded.
 TODO: If ip matches, query RIPE
 '''
-import sys
 
 from intelmq.bots.experts.ripencc_abuse_contact import lib
 from intelmq.lib.bot import Bot
@@ -48,6 +47,5 @@ class RIPENCCExpertBot(Bot):
         self.send_message(event)
         self.acknowledge_message()
 
-if __name__ == "__main__":
-    bot = RIPENCCExpertBot(sys.argv[1])
-    bot.start()
+
+BOT = RIPENCCExpertBot

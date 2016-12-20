@@ -12,7 +12,8 @@ import pkg_resources
 import psutil
 
 from intelmq import (DEFAULTS_CONF_FILE, PIPELINE_CONF_FILE, RUNTIME_CONF_FILE,
-                     STARTUP_CONF_FILE, SYSTEM_CONF_FILE, VAR_RUN_PATH)
+                     STARTUP_CONF_FILE, SYSTEM_CONF_FILE, VAR_RUN_PATH,
+                     BOTS_FILE)
 from intelmq.lib import utils
 from intelmq.lib.pipeline import PipelineFactory
 
@@ -31,6 +32,7 @@ STATUSES = {
 }
 
 MESSAGES = {
+    'disabled': '{} is disabled.',
     'starting': 'Starting {}...',
     'running': '{} is running.',
     'stopped': '{} is stopped.',
@@ -162,6 +164,7 @@ class IntelMQContoller():
         logger = utils.log('intelmqctl', log_level='DEBUG')
         self.logger = logger
         self.interactive = interactive
+        self.args = None
         if os.geteuid() == 0:
             logger.warning('Running intelmq as root is highly discouraged!')
 
@@ -177,6 +180,7 @@ class IntelMQContoller():
         intelmqctl list [bots|queues]
         intelmqctl log bot-id [number-of-lines [log-level]]
         intelmqctl clear queue-id
+        intelmqctl check
 
 Starting a bot:
     intelmqctl start bot-id
@@ -210,29 +214,45 @@ Get logs of a bot:
     Default is INFO. Number of lines defaults to 10, -1 gives all. Result
     can be longer due to our logging format!'''
 
-        with open(STARTUP_CONF_FILE, 'r') as fp:
-            self.startup = json.load(fp)
-
-        if os.path.exists(SYSTEM_CONF_FILE):
-            self.logger.warn("system.conf is deprecated and will be "
-                             "removed in 1.0. Use defaults.conf instead!")
-            with open(SYSTEM_CONF_FILE, 'r') as fp:
-                self.system = json.load(fp)
-
-        if not os.path.exists(PIDDIR):
-            os.makedirs(PIDDIR)
-
         # stolen functions from the bot file
         # this will not work with various instances of REDIS
         self.parameters = Parameters()
         self.load_defaults_configuration()
         self.load_system_configuration()
-        self.pipepline_configuration = utils.load_configuration(
-            PIPELINE_CONF_FILE)
-        self.runtime_configuration = utils.load_configuration(
-            RUNTIME_CONF_FILE)
-        self.startup_configuration = utils.load_configuration(
-            STARTUP_CONF_FILE)
+        try:
+            self.pipeline_configuration = utils.load_configuration(PIPELINE_CONF_FILE)
+        except ValueError as exc:
+            exit('Invalid syntax in %r: %s' % (PIPELINE_CONF_FILE, exc))
+        try:
+            self.runtime_configuration = utils.load_configuration(RUNTIME_CONF_FILE)
+        except ValueError as exc:
+            exit('Invalid syntax in %r: %s' % (RUNTIME_CONF_FILE, exc))
+
+        if os.path.exists(STARTUP_CONF_FILE):
+            self.logger.warning('Deprecated startup.conf file found, please migrate to runtime.conf soon.')
+            with open(STARTUP_CONF_FILE, 'r') as fp:
+                startup = json.load(fp)
+                for bot_id, bot_values in startup.items():
+                    if 'parameters' in self.runtime_configuration[bot_id]:
+                        self.logger.error('Mixed setup of new runtime.conf and old startup.conf'
+                                          ' found. Ignoring startup.conf, please fix this!')
+                        exit(1)
+                    params = self.runtime_configuration[bot_id].copy()
+                    self.runtime_configuration[bot_id].clear()
+                    self.runtime_configuration[bot_id]['parameters'] = params
+                    self.runtime_configuration[bot_id].update(bot_values)
+            try:
+                with open(RUNTIME_CONF_FILE + '.new', 'w') as fp:
+                    json.dump(self.runtime_configuration, fp, indent=4, sort_keys=True,
+                              separators=(',', ': '))
+            except PermissionError:
+                self.logger.info('Failed to write new configuration format to %r.'
+                                 '' % (RUNTIME_CONF_FILE + '.new'))
+            else:
+                self.logger.info('%r with new format written.' % (RUNTIME_CONF_FILE + '.new'))
+
+        if not os.path.exists(PIDDIR):
+            os.makedirs(PIDDIR)
 
         if self.interactive:
             parser = argparse.ArgumentParser(
@@ -251,9 +271,9 @@ Get logs of a bot:
             parser.add_argument('action',
                                 choices=['start', 'stop', 'restart', 'status',
                                          'reload', 'run', 'list', 'clear',
-                                         'help', 'log'],
+                                         'help', 'log', 'check'],
                                 metavar='[start|stop|restart|status|reload|run'
-                                        '|list|clear|log]')
+                                        '|list|clear|log|check]')
             parser.add_argument('parameter', nargs='*')
             parser.add_argument('--quiet', '-q', action='store_const',
                                 help='Quiet mode, useful for reloads initiated'
@@ -270,13 +290,19 @@ Get logs of a bot:
 
     def load_system_configuration(self):
         if os.path.exists(SYSTEM_CONF_FILE):
-            config = utils.load_configuration(SYSTEM_CONF_FILE)
+            try:
+                config = utils.load_configuration(SYSTEM_CONF_FILE)
+            except ValueError as exc:
+                exit('Invalid syntax in %r: %s' % (SYSTEM_CONF_FILE, exc))
             for option, value in config.items():
                 setattr(self.parameters, option, value)
 
     def load_defaults_configuration(self):
         # Load defaults configuration section
-        config = utils.load_configuration(DEFAULTS_CONF_FILE)
+        try:
+            config = utils.load_configuration(DEFAULTS_CONF_FILE)
+        except ValueError as exc:
+            exit('Invalid syntax in %r: %s' % (DEFAULTS_CONF_FILE, exc))
         for option, value in config.items():
             setattr(self.parameters, option, value)
 
@@ -317,24 +343,21 @@ Get logs of a bot:
                 self.parser.print_help()
                 exit(2)
             results = self.clear_queue(self.args.parameter[0])
+        elif self.args.action == 'check':
+            results = self.check()
 
         if self.args.type == 'json':
             print(json.dumps(results))
 
     def bot_run(self, bot_id):
         try:
-            bot_module = self.startup[bot_id]['module']
+            bot_module = self.runtime_configuration[bot_id]['module']
         except KeyError:
             log_bot_error('notfound', bot_id)
             return 'error'
         else:
             module = importlib.import_module(bot_module)
-            # TODO: Search for bot class is dirty (but works)
-            botname = [name for name in dir(module)
-                       if hasattr(getattr(module, name), 'process') and
-                       name.endswith('Bot') and
-                       name not in ['CollectorBot', 'ParserBot']][0]
-            bot = getattr(module, botname)
+            bot = getattr(module, 'BOT')
             instance = bot(bot_id)
             instance.start()
 
@@ -351,12 +374,12 @@ Get logs of a bot:
                 remove_pidfile(bot_id)
         log_bot_message('starting', bot_id)
         try:
-            module = self.startup[bot_id]['module']
+            module = self.runtime_configuration[bot_id]['module']
         except KeyError:
             log_bot_error('notfound', bot_id)
             return 'error'
         else:
-            cmdargs = ["python3", "-m", module, bot_id]
+            cmdargs = [module, bot_id]
             with open('/dev/null', 'w') as devnull:
                 proc = psutil.Popen(cmdargs, stdout=devnull, stderr=devnull)
                 filename = PIDFILE.format(bot_id)
@@ -369,8 +392,12 @@ Get logs of a bot:
     def bot_stop(self, bot_id):
         pid = read_pidfile(bot_id)
         if not pid:
-            log_bot_error('stopped', bot_id)
-            return 'stopped'
+            if self.runtime_configuration[bot_id].get('enabled', True):
+                log_bot_error('stopped', bot_id)
+                return 'stopped'
+            else:
+                log_bot_message('disabled', bot_id)
+                return 'disabled'
         if not status_process(pid):
             remove_pidfile(bot_id)
             log_bot_error('stopped', bot_id)
@@ -389,8 +416,12 @@ Get logs of a bot:
     def bot_reload(self, bot_id):
         pid = read_pidfile(bot_id)
         if not pid:
-            log_bot_error('stopped', bot_id)
-            return 'stopped'
+            if self.runtime_configuration[bot_id].get('enabled', True):
+                log_bot_error('stopped', bot_id)
+                return 'stopped'
+            else:
+                log_bot_message('disabled', bot_id)
+                return 'disabled'
         if not status_process(pid):
             remove_pidfile(bot_id)
             log_bot_error('stopped', bot_id)
@@ -415,25 +446,32 @@ Get logs of a bot:
             log_bot_message('running', bot_id)
             return 'running'
 
-        if bot_id not in self.startup:
+        if bot_id not in self.runtime_configuration:
             log_bot_error('notfound', bot_id)
             return 'error'
 
-        log_bot_message('stopped', bot_id)
-        return 'stopped'
+        if self.runtime_configuration[bot_id].get('enabled', True):
+            log_bot_message('stopped', bot_id)
+            return 'stopped'
+        else:
+            log_bot_message('disabled', bot_id)
+            return 'disabled'
 
     def botnet_start(self):
         botnet_status = {}
-        log_botnet_message('starting')
-        for bot_id in sorted(self.startup.keys()):
-            botnet_status[bot_id] = self.bot_start(bot_id)
+        for bot_id in sorted(self.runtime_configuration.keys()):
+            if self.runtime_configuration[bot_id].get('enabled', True):
+                botnet_status[bot_id] = self.bot_start(bot_id)
+            else:
+                log_bot_message('disabled', bot_id)
+                botnet_status[bot_id] = 'disabled'
         log_botnet_message('running')
         return botnet_status
 
     def botnet_stop(self):
         botnet_status = {}
         log_botnet_message('stopping')
-        for bot_id in sorted(self.startup.keys()):
+        for bot_id in sorted(self.runtime_configuration.keys()):
             botnet_status[bot_id] = self.bot_stop(bot_id)
         log_botnet_message('stopped')
         return botnet_status
@@ -441,27 +479,18 @@ Get logs of a bot:
     def botnet_reload(self):
         botnet_status = {}
         log_botnet_message('reloading')
-        for bot_id in sorted(self.startup.keys()):
+        for bot_id in sorted(self.runtime_configuration.keys()):
             botnet_status[bot_id] = self.bot_reload(bot_id)
         log_botnet_message('reloaded')
         return botnet_status
 
     def botnet_restart(self):
-        botnet_status = {}
-        log_botnet_message('stopping')
-        for bot_id in sorted(self.startup.keys()):
-            botnet_status[bot_id] = tuple(self.bot_stop(bot_id))
-        time.sleep(3)
-        log_botnet_message('stopped')
-        log_botnet_message('starting')
-        for bot_id in sorted(self.startup.keys()):
-            botnet_status[bot_id] += tuple(self.bot_start(bot_id))
-        log_botnet_message('running')
-        return botnet_status
+        self.botnet_stop()
+        return self.botnet_start()
 
     def botnet_status(self):
         botnet_status = {}
-        for bot_id in sorted(self.startup.keys()):
+        for bot_id in sorted(self.runtime_configuration.keys()):
             botnet_status[bot_id] = self.bot_status(bot_id)
         return botnet_status
 
@@ -472,20 +501,20 @@ Get logs of a bot:
 
         If description is not set, None is used instead.
         """
-        if self.args.type == 'text':
-            for bot_id in sorted(self.startup.keys()):
+        if self.args and self.args.type == 'text':
+            for bot_id in sorted(self.runtime_configuration.keys()):
                 print("Bot ID: {}\nDescription: {}"
-                      "".format(bot_id, self.startup[bot_id].get('description')))
+                      "".format(bot_id, self.runtime_configuration[bot_id].get('description')))
         return [{'id': bot_id,
-                 'description': self.startup[bot_id].get('description')}
-                for bot_id in sorted(self.startup.keys())]
+                 'description': self.runtime_configuration[bot_id].get('description')}
+                for bot_id in sorted(self.runtime_configuration.keys())]
 
     def list_queues(self):
         source_queues = set()
         destination_queues = set()
         internal_queues = set()
 
-        for botid, value in self.pipepline_configuration.items():
+        for botid, value in self.pipeline_configuration.items():
             if 'source-queue' in value:
                 source_queues.add(value['source-queue'])
                 internal_queues.add(value['source-queue'] + '-internal')
@@ -501,7 +530,7 @@ Get logs of a bot:
         log_list_queues(counters)
 
         return_dict = dict()
-        for bot_id, info in self.pipepline_configuration.items():
+        for bot_id, info in self.pipeline_configuration.items():
             return_dict[bot_id] = dict()
 
             if 'source-queue' in info:
@@ -525,7 +554,7 @@ Get logs of a bot:
         """
         logger.info("Clearing queue {}".format(queue))
         queues = set()
-        for key, value in self.pipepline_configuration.items():
+        for key, value in self.pipeline_configuration.items():
             if 'source-queue' in value:
                 queues.add(value['source-queue'])
                 queues.add(value['source-queue'] + '-internal')
@@ -550,7 +579,6 @@ Get logs of a bot:
             return 'error'
 
     def read_log(self, bot_id, number_of_lines=10, log_level='INFO'):
-        # TODO: Parse number of lines
         try:
             number_of_lines = int(number_of_lines)
         except ValueError:
@@ -568,7 +596,7 @@ Get logs of a bot:
         return self.read_bot_log(bot_id, log_level, number_of_lines)
 
     def read_bot_log(self, bot_id, log_level, number_of_lines):
-        bot_log_path = os.path.join(self.system['logging_path'],
+        bot_log_path = os.path.join(self.parameters.logging_path,
                                     bot_id + '.log')
         if not os.path.isfile(bot_log_path):
             logger.error("Log path not found: {}".format(bot_log_path))
@@ -601,10 +629,59 @@ Get logs of a bot:
         log_log_messages(messages[::-1])
         return messages[::-1]
 
+    def check(self):
+        # loading files and syntex check
+        files = {DEFAULTS_CONF_FILE: None, PIPELINE_CONF_FILE: None,
+                 RUNTIME_CONF_FILE: None, BOTS_FILE: None}
+        for filename in files:
+            try:
+                with open(filename) as file_handle:
+                    files[filename] = json.load(file_handle)
+            except (IOError, ValueError) as exc:
+                self.logger.error('Coud not load %r: %s.' % (filename, exc))
+                return 'error'
 
-def main():
+        if os.path.exists(STARTUP_CONF_FILE):
+            self.logger.warning('Deprecated startup.conf file found, migrate to runtime.conf.')
+        if os.path.exists(SYSTEM_CONF_FILE):
+            self.logger.warning('Deprecated system.conf file found, migrate to defaults.conf.')
+
+        if bool(files[DEFAULTS_CONF_FILE]['http_proxy']) != bool(files[DEFAULTS_CONF_FILE]['https_proxy']):
+            self.logger.warning('Only {}_proxy seems to be set. '
+                                'Both http and https proxies must be set.'
+                                .format('http' if files[DEFAULTS_CONF_FILE]['http_proxy']
+                                        else 'https'))
+
+        for bot_id, bot_config in files[RUNTIME_CONF_FILE].items():
+            # pipeline keys
+            for field in ['description', 'group', 'module', 'name']:
+                if field not in bot_config:
+                    self.logger.warning('Bot %r has no %r.' % (bot_id, field))
+            if bot_id not in files[PIPELINE_CONF_FILE]:
+                self.logger.error('No pipeline configuration found for %r.' % bot_id)
+            else:
+                if ('group' in bot_config and
+                        bot_config['group'] in ['Collector', 'Parser', 'Expert'] and
+                        ('destination-queues' not in files[PIPELINE_CONF_FILE][bot_id] or
+                         (not isinstance(files[PIPELINE_CONF_FILE][bot_id]['destination-queues'], list) or
+                          len(files[PIPELINE_CONF_FILE][bot_id]['destination-queues']) < 1))):
+                    self.logger.error('No destination queues for %r.' % bot_id)
+                if ('group' in bot_config and
+                        bot_config['group'] in ['Parser', 'Expert', 'Output'] and
+                        ('source-queue' not in files[PIPELINE_CONF_FILE][bot_id] or
+                         not isinstance(files[PIPELINE_CONF_FILE][bot_id]['source-queue'], str))):
+                    self.logger.error('No source queue for %r.' % bot_id)
+
+            # importable module
+            try:
+                importlib.import_module(bot_config['module'])
+            except ImportError:
+                self.logger.error('Module of %r not importable.' % bot_id)
+
+
+def main():  # pragma: no cover
     x = IntelMQContoller(interactive=True)
     x.run()
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     main()

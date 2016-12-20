@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import re
-import sys
 from datetime import datetime, timedelta
 
 import pytz
@@ -72,8 +71,7 @@ class FilterExpertBot(Bot):
             self.use_regex = True
 
         if not (self.filter or self.not_after is not None or self.not_before is not None):
-            self.logger.error("No relevant filter configuration found, stopping...")
-            self.stop()
+            raise ValueError("No relevant filter configuration found.")
 
     def process(self):
         event = self.receive_message()
@@ -145,6 +143,5 @@ class FilterExpertBot(Bot):
         else:
             return False
 
-if __name__ == "__main__":
-    bot = FilterExpertBot(sys.argv[1])
-    bot.start()
+
+BOT = FilterExpertBot

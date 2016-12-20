@@ -176,41 +176,40 @@ Any component of IntelMQ MUST respect the "Data Harmonization Ontology".
 
 ## Directory layout in the repository
 ```bash
-intelmq\
-  lib\
+intelmq/
+  lib/
     bot.py
     cache.py
     message.py
     pipeline.py
     utils.py
-  bots\
-    collector\
-      <bot name>\
+  bots/
+    collector/
+      <bot name>/
             collector.py
-    parser\
-      <bot name>\
+    parser/
+      <bot name>/
             parser.py
-    expert\
-      <bot name>\
+    expert/
+      <bot name>/
             expert.py
-    output\
-      <bot name>\
+    output/
+      <bot name>/
             output.py
     BOTS
-  \conf
+  /conf
     pipeline.conf
     runtime.conf
-    startup.conf
     system.conf
 ```
 
-Assuming you want to create a bot for 'Abuse.ch Zeus' feed. It turns out that here it is necessary to create different parsers for the respective kind of events (C&C, Binaries, Dropzones). Therefore, the hierarchy ‘intelmq\bots\parser\abusech\parser.py’ would not be suitable because it is necessary to have more parsers, as mentioned above. The solution is to use the same hierarchy with an additional "description" in the file name, separated by underscore. Also see the section *Directories and Files naming*.
+Assuming you want to create a bot for 'Abuse.ch Zeus' feed. It turns out that here it is necessary to create different parsers for the respective kind of events (C&C, Binaries, Dropzones). Therefore, the hierarchy ‘intelmq/bots/parser/abusech/parser.py’ would not be suitable because it is necessary to have more parsers, as mentioned above. The solution is to use the same hierarchy with an additional "description" in the file name, separated by underscore. Also see the section *Directories and Files naming*.
 
 Example:
 ```
-\intelmq\bots\parser\abusech\parser_zeus_cc.py
-\intelmq\bots\parser\abusech\parser_zeus_binaries.py
-\intelmq\bots\parser\abusech\parser_zeus_dropzones.py
+/intelmq/bots/parser/abusech/parser_zeus_cc.py
+/intelmq/bots/parser/abusech/parser_zeus_binaries.py
+/intelmq/bots/parser/abusech/parser_zeus_dropzones.py
 ```
 
 
@@ -317,14 +316,15 @@ In the `intelmq/lib/` directory you can find some libraries:
 <a name="bot-developer-guide"></a>
 ## Bot Developer Guide
 
-There's a dummy bot including tests at `intelmq/tests/bots/test_dummy_bot.py`.
+There's a dummy bot including tests at `intelmq/tests/lib/test_parser_bot.py`.
 
-You can always start any bot directly from command line by either invoking the script or the python module. Don't forget to give an bot id as first argument. Also, running bots with other users than `intelmq` will raise permission errors.
+You can always start any bot directly from command line by calling the executable.
+The executable will be created during installation a directory for binaries. After adding new bots to the code, install IntelMQ to get the files created.
+Don't forget to give an bot id as first argument. Also, running bots with other users than `intelmq` will raise permission errors.
 ```bash
-sudo -i intelmq
-python3 -m intelmq.bots.outputs.file.output file-output
-python3 intelmq/bots/outputs/file/output.py file-output
-intelmqctl run file-output  # if configured
+$ sudo -i intelmq
+$ intelmqctl run file-output  # if configured
+$ intelmq.bots.outputs.file.output file-output
 ```
 You will get all logging outputs directly on stderr as well as in the log file.
 
@@ -348,7 +348,7 @@ class ExampleParserBot(Bot):
     def process(self):
         report = self.receive_message()
 
-        event = Event(report)  # copies feed.name, time.observation
+        event = self.new_event(report)  # copies feed.name, time.observation
         ... # implement the logic here
         event.add('source.ip', '127.0.0.1')
         event.add('extra', {"os.name": "Linux"})
@@ -357,9 +357,7 @@ class ExampleParserBot(Bot):
         self.acknowledge_message()
 
 
-if __name__ == "__main__":
-    bot = ExampleParserBot(sys.argv[1])
-    bot.start()
+BOT = ExampleParserBot
 ```
 
 There are some names with special meaning. These can be used i.e. called:
@@ -420,7 +418,7 @@ Parsers can use a different, specialized Bot-class. It allows to work on individ
 
 For common cases, like CSV, exisiting function can be used, reducing the amount of code to implement. In the best case, only `parse_line` needs to be coded, as only this part interprets the data.
 
-You can have a look at the implementation `intelmq/lib/bot.py` or at examples, e.g. the DummyBot in `intelmq/tests/bots/test_dummy_bot.py`. This is a stub for creating a new Parser, showing the parameters and possible code:
+You can have a look at the implementation `intelmq/lib/bot.py` or at examples, e.g. the DummyBot in `intelmq/tests/lib/test_parser_bot.py`. This is a stub for creating a new Parser, showing the parameters and possible code:
 
 ```python
 class MyParserBot(ParserBot):
@@ -478,16 +476,18 @@ class MyParserBot(ParserBot):
         """
         return '\n'.join(self.tempdata + [line])
 
+
+BOT = MyParserBot
 ```
 
 #### parse_line
-One line can lead to multiple events, thus `parse_line` can't just return one Event. Thus, this function is a generator, which allows to easily return multple values. Use `yield event` for valid Events and `return` in case of a void result (not parseable line, invalid data etc.).
+One line can lead to multiple events, thus `parse_line` can't just return one Event. Thus, this function is a generator, which allows to easily return multiple values. Use `yield event` for valid Events and `return` in case of a void result (not parseable line, invalid data etc.).
 
 ### Tests
 
 In order to do automated tests on the bot, it is necessary to write tests including sample data. Have a look at some existing tests:
 
- - The DummyParserBot in `intelmq/tests/bots/test_dummy_bot.py`. This test has the example data (report and event) inside the file, defined as dictionary.
+ - The DummyParserBot in `intelmq/tests/lib/test_paerser_bot.py`. This test has the example data (report and event) inside the file, defined as dictionary.
  - The parser for malwaregroup at `intelmq/tests/bots/parsers/malwaregroup/test_parser_*.py`. The latter loads a sample HTML file from the same directory, which is the raw report.
  - The test for ASNLookupExpertBot has two event tests, one is an expected fail (IPv6).
 
@@ -512,7 +512,7 @@ class TestExampleParserBot(test.BotTestCase, unittest.TestCase):  # adjust test 
     @classmethod
     def set_bot(cls):
         cls.bot_reference = ExampleParserBot  # adjust bot class name
-        cls.default_input_message = EXAMPLE_EVENT  # adjust source of the example event (dict)
+        cls.default_input_message = EXAMPLE_EVENT  # adjust source of the example event (dict), by default an empty event or report (depeding on bot type)
 
     # This is an example how to test the log output
     def test_log_test_line(self):
@@ -527,7 +527,7 @@ class TestExampleParserBot(test.BotTestCase, unittest.TestCase):  # adjust test 
         self.assertMessageEqual(0, EXAMPLE_REPORT)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()
 ```
 
