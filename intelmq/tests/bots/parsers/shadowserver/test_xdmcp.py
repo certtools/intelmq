@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import os
-import pprint
 import unittest
 
 import intelmq.lib.test as test
@@ -16,8 +15,6 @@ with open(os.path.join(os.path.dirname(__file__),
                        'xdmcp_RECONSTRUCTED.csv')) as handle:
     RECONSTRUCTED_FILE = handle.read()
 RECONSTRUCTED_LINES = RECONSTRUCTED_FILE.splitlines()
-
-pprint.pprint(RECONSTRUCTED_LINES)
 
 EXAMPLE_REPORT = {"feed.name": "ShadowServer XDMCP",
                   "raw": utils.base64_encode(EXAMPLE_FILE),

@@ -17,7 +17,7 @@ with open(os.path.join(os.path.dirname(__file__), 'blacklist_ssh_day.txt')) as h
 with open(os.path.join(os.path.dirname(__file__), 'blacklist_telnet_day.txt')) as handle:
     TELNET_FILE = handle.read()
 
-with open(os.path.join(os.path.dirname(__file__), 'honeypot_dns_attacks.txt')) as handle:
+with open(os.path.join(os.path.dirname(__file__), 'honeypot_dns_attacks.txt'), encoding='utf-8') as handle:
     DNS_ATTACK_FILE = handle.read()
 
 SNMP_REPORT = {'feed.name': 'SNMP Blacklist',
