@@ -14,13 +14,13 @@ class DeduplicatorExpertBot(Bot):
                            getattr(self.parameters, "redis_cache_password",
                                    None)
                            )
+        self.ignore_keys = set(k.strip() for k in
+                               self.parameters.ignore_keys.split(','))
 
     def process(self):
         message = self.receive_message()
 
-        ignore_keys = set(k.strip()
-                          for k in self.parameters.ignore_keys.split(','))
-        message_hash = message.hash(ignore_keys)
+        message_hash = message.hash(self.ignore_keys)
 
         old_hash = hash(int(message_hash, 16))
 

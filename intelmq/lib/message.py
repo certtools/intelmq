@@ -247,8 +247,11 @@ class Message(dict):
 
         return event_hash.hexdigest()
 
-    def to_dict(self, hierarchical=False):
+    def to_dict(self, hierarchical=False, with_type=False):
         json_dict = dict()
+
+        if with_type:
+            self['__type'] = self.__class__.__name__
 
         for key, value in self.items():
             if hierarchical:
@@ -266,10 +269,14 @@ class Message(dict):
                     json_dict_fp[subkey] = dict()
 
                 json_dict_fp = json_dict_fp[subkey]
+
+        if with_type:
+            del self['__type']
+
         return json_dict
 
-    def to_json(self, hierarchical=False):
-        json_dict = self.to_dict(hierarchical=hierarchical)
+    def to_json(self, hierarchical=False, with_type=False):
+        json_dict = self.to_dict(hierarchical=hierarchical, with_type=with_type)
         return json.dumps(json_dict, ensure_ascii=False)
 
 

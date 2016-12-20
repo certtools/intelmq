@@ -314,10 +314,14 @@ Get logs of a bot:
         self.parameters = Parameters()
         self.load_defaults_configuration()
         self.load_system_configuration()
-        self.pipepline_configuration = utils.load_configuration(
-            PIPELINE_CONF_FILE)
-        self.runtime_configuration = utils.load_configuration(
-            RUNTIME_CONF_FILE)
+        try:
+            self.pipeline_configuration = utils.load_configuration(PIPELINE_CONF_FILE)
+        except ValueError as exc:
+            exit('Invalid syntax in %r: %s' % (PIPELINE_CONF_FILE, exc))
+        try:
+            self.runtime_configuration = utils.load_configuration(RUNTIME_CONF_FILE)
+        except ValueError as exc:
+            exit('Invalid syntax in %r: %s' % (RUNTIME_CONF_FILE, exc))
 
         if os.path.exists(STARTUP_CONF_FILE):
             self.logger.warning('Deprecated startup.conf file found, please migrate to runtime.conf soon.')
@@ -382,13 +386,19 @@ Get logs of a bot:
 
     def load_system_configuration(self):
         if os.path.exists(SYSTEM_CONF_FILE):
-            config = utils.load_configuration(SYSTEM_CONF_FILE)
+            try:
+                config = utils.load_configuration(SYSTEM_CONF_FILE)
+            except ValueError as exc:
+                exit('Invalid syntax in %r: %s' % (SYSTEM_CONF_FILE, exc))
             for option, value in config.items():
                 setattr(self.parameters, option, value)
 
     def load_defaults_configuration(self):
         # Load defaults configuration section
-        config = utils.load_configuration(DEFAULTS_CONF_FILE)
+        try:
+            config = utils.load_configuration(DEFAULTS_CONF_FILE)
+        except ValueError as exc:
+            exit('Invalid syntax in %r: %s' % (DEFAULTS_CONF_FILE, exc))
         for option, value in config.items():
             setattr(self.parameters, option, value)
 
@@ -525,7 +535,7 @@ Get logs of a bot:
         destination_queues = set()
         internal_queues = set()
 
-        for botid, value in self.pipepline_configuration.items():
+        for botid, value in self.pipeline_configuration.items():
             if 'source-queue' in value:
                 source_queues.add(value['source-queue'])
                 internal_queues.add(value['source-queue'] + '-internal')
@@ -541,7 +551,7 @@ Get logs of a bot:
         log_list_queues(counters)
 
         return_dict = dict()
-        for bot_id, info in self.pipepline_configuration.items():
+        for bot_id, info in self.pipeline_configuration.items():
             return_dict[bot_id] = dict()
 
             if 'source-queue' in info:
@@ -565,7 +575,7 @@ Get logs of a bot:
         """
         logger.info("Clearing queue {}".format(queue))
         queues = set()
-        for key, value in self.pipepline_configuration.items():
+        for key, value in self.pipeline_configuration.items():
             if 'source-queue' in value:
                 queues.add(value['source-queue'])
                 queues.add(value['source-queue'] + '-internal')
@@ -648,14 +658,20 @@ Get logs of a bot:
             try:
                 with open(filename) as file_handle:
                     files[filename] = json.load(file_handle)
-            except (IOError, json.decoder.JSONDecodeError) as exc:
+            except (IOError, ValueError) as exc:
                 self.logger.error('Coud not load %r: %s.' % (filename, exc))
                 return 'error'
 
         if os.path.exists(STARTUP_CONF_FILE):
             self.logger.warning('Deprecated startup.conf file found, migrate to runtime.conf.')
         if os.path.exists(SYSTEM_CONF_FILE):
-            self.logger.warning('Deprecated startup.conf file found, migrate to runtime.conf.')
+            self.logger.warning('Deprecated system.conf file found, migrate to defaults.conf.')
+
+        if bool(files[DEFAULTS_CONF_FILE]['http_proxy']) != bool(files[DEFAULTS_CONF_FILE]['https_proxy']):
+            self.logger.warning('Only {}_proxy seems to be set. '
+                                'Both http and https proxies must be set.'
+                                .format('http' if files[DEFAULTS_CONF_FILE]['http_proxy']
+                                        else 'https'))
 
         for bot_id, bot_config in files[RUNTIME_CONF_FILE].items():
             # pipeline keys

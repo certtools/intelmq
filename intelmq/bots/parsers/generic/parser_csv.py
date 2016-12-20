@@ -24,17 +24,18 @@ from intelmq.lib.bot import ParserBot
 
 class GenericCsvParserBot(ParserBot):
 
-    def parse(self, report):
+    def init(self):
         self.type_translation = None
 
         self.columns = self.parameters.columns
         # convert columns to an array
-        if type(self.parameters.columns) is str:
-            self.columns = map(str.strip, self.columns.split(","))
+        if type(self.columns) is str:
+            self.columns = [column.strip() for column in self.columns.split(",")]
 
         if hasattr(self.parameters, 'type_translation'):
             self.type_translation = json.loads(self.parameters.type_translation)
 
+    def parse(self, report):
         raw_report = utils.base64_decode(report.get("raw"))
         # ignore lines starting with #
         raw_report = re.sub(r'(?m)^#.*\n?', '', raw_report)

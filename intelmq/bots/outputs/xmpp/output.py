@@ -73,7 +73,8 @@ class XMPPOutputBot(Bot):
         receiver = self.parameters.xmpp_to_user + '@' +\
             self.parameters.xmpp_to_server
 
-        jevent = event.to_json(hierarchical=self.parameters.hierarchical_output)
+        jevent = event.to_json(hierarchical=self.parameters.hierarchical_output,
+                               with_type=True)
 
         try:
             # TODO: proper error handling. Right now it cannot be
