@@ -96,7 +96,7 @@ def convert_bool(value):
 
 
 def validate_to_none(value):
-    if value == '0' or not len(value):
+    if not len(value) or value in ['0', 'unknown']:
         return None
     return value
 
@@ -107,6 +107,14 @@ def convert_int(value):
         return None
     else:
         return int(value)
+
+
+def convert_float(value):
+    """ Returns an int or None for empty strings. """
+    if not value:
+        return None
+    else:
+        return float(value)
 
 
 def convert_hostname_and_url(value, row):
@@ -970,31 +978,31 @@ ntp_version = {
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
-        ('extra.', 'version', convert_int),
-        ('extra.', 'clk_wander', validate_to_none),
+        ('extra.', 'version', validate_to_none),
+        ('extra.', 'clk_wander', convert_float),
         ('extra.', 'clock', validate_to_none),
         ('extra.', 'error', validate_to_none),
-        ('extra.', 'frequency', validate_to_none),
-        ('extra.', 'jitter', validate_to_none),
+        ('extra.', 'frequency', convert_float),
+        ('extra.', 'jitter', convert_float),
         ('extra.', 'leap', convert_int),
         ('extra.', 'mintc', validate_to_none),
-        ('extra.', 'noise', validate_to_none),
-        ('extra.', 'offset', validate_to_none),
+        ('extra.', 'noise', convert_float),
+        ('extra.', 'offset', convert_float),
         ('extra.', 'peer', convert_int),
-        ('extra.', 'phase', validate_to_none),
+        ('extra.', 'phase', convert_float),
         ('extra.', 'poll', convert_int),
         ('extra.', 'precision', convert_int),
         ('extra.', 'processor', validate_to_none),
         ('extra.', 'refid', validate_to_none),
         ('extra.', 'reftime', validate_to_none),
-        ('extra.', 'rootdelay', validate_to_none),
-        ('extra.', 'rootdispersion', validate_to_none),
-        ('extra.', 'stability', validate_to_none),
+        ('extra.', 'rootdelay', convert_float),
+        ('extra.', 'rootdispersion', convert_float),
+        ('extra.', 'stability', convert_float),
         ('extra.', 'state', convert_int),
         ('extra.', 'stratum', convert_int),
         ('extra.', 'system', validate_to_none),
-        ('extra.', 'tai', validate_to_none),
-        ('extra.', 'tc', validate_to_none),
+        ('extra.', 'tai', convert_int),
+        ('extra.', 'tc', convert_int),
         ('extra.', 'naics', convert_int),
         ('extra.', 'sic', convert_int),
         ('extra.', 'sector', validate_to_none),
@@ -1073,15 +1081,15 @@ vulnerable_isakmp = {
         ('extra.', 'sic', invalidate_zero),
         ('extra.', 'initiator_spi', validate_to_none),
         ('extra.', 'responder_spi', validate_to_none),
-        ('extra.', 'next_payload', validate_to_none),
-        ('extra.', 'exchange_type', validate_to_none),
-        ('extra.', 'flags', validate_to_none),
-        ('extra.', 'message_id', validate_to_none),
-        ('extra.', 'next_payload2', validate_to_none),
-        ('extra.', 'domain_of_interpretation', validate_to_none),
-        ('extra.', 'protocol_id', validate_to_none),
-        ('extra.', 'spi_size', validate_to_none),
-        ('extra.', 'notify_message_type', validate_to_none),
+        ('extra.', 'next_payload', convert_int),
+        ('extra.', 'exchange_type', convert_int),
+        ('extra.', 'flags', convert_int),
+        ('extra.', 'message_id', convert_int),
+        ('extra.', 'next_payload2', convert_int),
+        ('extra.', 'domain_of_interpretation', convert_int),
+        ('extra.', 'protocol_id', convert_int),  # no data seen here yet
+        ('extra.', 'spi_size', convert_int),
+        ('extra.', 'notify_message_type', convert_int),
     ],
     'constant_fields': {
         'classification.type': 'vulnerable service',
@@ -1152,11 +1160,11 @@ open_ldap = {
         ('extra.', 'current_time', validate_to_none),
         ('extra.', 'default_naming_context', validate_to_none),
         ('destination.local_hostname', 'dns_host_name'),
-        ('extra.', 'domain_controller_functionality', invalidate_zero),
-        ('extra.', 'domain_functionality', invalidate_zero),
+        ('extra.', 'domain_controller_functionality', convert_int),
+        ('extra.', 'domain_functionality', convert_int),
         ('extra.', 'ds_service_name', validate_to_none),
-        ('extra.', 'forest_functionality', invalidate_zero),
-        ('extra.', 'highest_committed_usn', invalidate_zero),
+        ('extra.', 'forest_functionality', convert_int),
+        ('extra.', 'highest_committed_usn', convert_int),
         ('extra.', 'is_global_catalog_ready', convert_bool),
         ('extra.', 'is_synchronized', convert_bool),
         ('extra.', 'ldap_service_name', validate_to_none),
@@ -1253,7 +1261,7 @@ accessible_cwmp = {
         ('extra.', 'www_authenticate', validate_to_none),
         ('extra.', 'set_cookie', validate_to_none),
         ('extra.', 'server', validate_to_none),
-        ('extra.', 'content_length', invalidate_zero),
+        ('extra.', 'content_length', convert_int),
         ('extra.', 'transfer_encoding', validate_to_none),
         ('extra.', 'date', validate_to_none),
     ],
@@ -1263,4 +1271,3 @@ accessible_cwmp = {
         'classification.identifier': 'opencwmp',
     }
 }
-
