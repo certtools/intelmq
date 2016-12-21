@@ -6,6 +6,7 @@ Decoding and Encoding, Logging functionality (file and stream), and log
 parsing.
 base64 de-/encoding is not tested yet, as we fully rely on the module.
 """
+import importlib
 import io
 import os
 import tempfile
@@ -134,5 +135,5 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(utils.error_message_from_exc(exc), 'This is a test')
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

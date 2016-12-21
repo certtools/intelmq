@@ -80,6 +80,4 @@ class NoNotificationExpertBot(Bot):
         return event
 
 
-if __name__ == "__main__":
-    bot = NoNotificationExpertBot(sys.argv[1])
-    bot.start()
+BOT = NoNotificationExpertBot

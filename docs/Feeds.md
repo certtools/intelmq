@@ -7,6 +7,8 @@ The available feeds are grouped by the source of the feeds. For each feed the co
 - [Abuse.ch](#abusech)
 - [AlienVault](#alienvault)
 - [Autoshun](#autoshun)
+- [Bambenek](#bambenek)
+- [Bitcash](#bitcash)
 - [BitSight Ciberfeed Stream](#bitsight-ciberfeed-stream)
 - [Blocklist.de](#blocklistde)
 - [Blueliv Crimeserver](#blueliv-crimeserver)
@@ -15,7 +17,7 @@ The available feeds are grouped by the source of the feeds. For each feed the co
 - [Cymru](#cymru)
 - [DShield](#dshield)
 - [Danger Rulez](#danger-rulez)
-- [Dragon Research Group](#dragon-research-group)
+- [Dataplane](#dataplane)
 - [DynDNS](#dyndns)
 - [Fraunhofer DGA](#fraunhofer-dga)
 - [HPHosts](#hphosts)
@@ -24,6 +26,8 @@ The available feeds are grouped by the source of the feeds. For each feed the co
 - [Malware Domains](#malware-domains)
 - [MalwarePatrol Dans Guardian](#malwarepatrol-dans-guardian)
 - [N6](#n6)
+- [Netlab 360](#netlab-360)
+- [Nothink](#nothink)
 - [OpenBL](#openbl)
 - [OpenPhish](#openphish)
 - [PhishTank](#phishtank)
@@ -60,25 +64,18 @@ Parser: Abuse.ch IP (`intelmq.bots.parsers.abusech.parser_ip`)
 
 The Feodo Tracker Feodo IP Blocklist contains IP addresses (IPv4) used as C&C communication channel by the Feodo Trojan. This lists contains two types of IP address: Feodo C&C servers used by version A, version C and version D of the Feodo Trojan (these IP addresses are usually compromised servers running an nginx daemon on port 8080 TCP or 7779 TCP that is acting as proxy, forwarding all traffic to a tier 2 proxy node) and Feodo C&C servers used by version B which are usually used for the exclusive purpose of hosting a Feodo C&C server. Attention: Since Feodo C&C servers associated with version A, version C and version D are usually hosted on compromised servers, its likely that you also block/drop legit traffic e.g. towards websites hosted on a certain IP address acting as Feodo C&C for version A, version C and version D. If you only want to block/drop traffic to Feodo C&C servers hosted on bad IPs (version B), please use the blocklist BadIPs documented below.
 
-### Palevo Tracker Domains
+
+### Ransomware Tracker
 
 Status: Unknown
+
 Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
- * http_url: https://palevotracker.abuse.ch/blocklists.php?download=domainblocklist
+ * http_url: https://ransomwaretracker.abuse.ch/feeds/csv/
 
-Parser: Abuse.ch Domain (`intelmq.bots.parsers.abusech.parser_domain`)
+Parser: Abuse.ch Ranswomware (`intelmq.bots.parsers.abusech.parser_ransomware`)
 
-Palevo C&C Domain Blocklists includes domain names which are being used as botnet C&C for the Palevo crimeware.
+Ransomware Tracker feed includes FQDN's, URL's, and known IP addresses that were used for said FQDN's and URL's for various ransomware families.
 
-### Palevo Tracker IPs
-
-Status: Unknown
-Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
- * http_url: https://palevotracker.abuse.ch/blocklists.php?download=ipblocklist
-
-Parser: Abuse.ch IP (`intelmq.bots.parsers.abusech.parser_ip`)
-
-Palevo C&C IP Blocklist includes IP addresses which are being used as botnet C&C for the Palevo crimeware.
 
 ### ZeuS Tracker Domains
 
@@ -111,7 +108,6 @@ Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
 
 Parser: AlienVault (`intelmq.bots.parsers.alienvault.parser`)
 
-AlienVault Collector retrieves reports via the SDK https://github.com/AlienVault-Labs/OTX-Python-SDK/ from https://otx.alienvault.com/ http_ssl_proxy does apply.
 
 ### OTX
 
@@ -133,6 +129,58 @@ Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
 Parser: Autoshun (`intelmq.bots.parsers.autoshun.parser`)
 
 You need to register in order to use the list.
+
+
+## Bambenek
+
+### C2-dommasterlist
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+ * http_url: http://osint.bambenekconsulting.com/feeds/c2-dommasterlist.txt
+
+Parser: Bambenek C2 Domain Feed (`intelmq.bots.parsers.bambenek.parser`)
+
+Master Feed of known, active and non-sinkholed C&Cs domain names.
+ * License: http://osint.bambenekconsulting.com/license.txt
+
+### C2-ipmasterlist
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+ * http_url: http://osint.bambenekconsulting.com/feeds/c2-ipmasterlist.txt
+
+Parser: Bambenek C2 IP Feed (`intelmq.bots.parsers.bambenek.parser`)
+
+Master Feed of known, active and non-sinkholed C&Cs IP addresses
+ * License: http://osint.bambenekconsulting.com/license.txt
+
+### DGA Domain Feed
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+ * http_url: http://osint.bambenekconsulting.com/feeds/dga-feed.txt
+
+Parser: Bambenek DGA Domain Feed (`intelmq.bots.parsers.bambenek.parser`)
+
+Domain feed of known DGA domains from -2 to +3 days
+ * License: http://osint.bambenekconsulting.com/license.txt
+
+
+## Bitcash
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+ * http_url: http://bitcash.cz/misc/log/blacklist
+
+Parser: Bitcash Blocklist Feed (`intelmq.bots.parsers.bitcash.parser`)
+
+Blocklist provided by bitcash.cz of banned IPs for service abuse, this includes scanning, sniffing, harvesting, and dos attacks.
+
 
 ## BitSight Ciberfeed Stream
 
@@ -329,23 +377,69 @@ Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
 
 Parser: Danger Rulez (`intelmq.bots.parsers.danger_rulez.parser`)
 
-## Dragon Research Group
 
-### SSH
+## Dataplane
 
-Status: Unknown
-Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
- * http_url: https://dragonresearchgroup.org/insight/sshpwauth.txt
-
-Parser: Dragon Research Group (`intelmq.bots.parsers.dragonresearchgroup.parser_ssh`)
-
-### VNC
+### SIP Invitation
 
 Status: Unknown
-Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
- * http_url: https://dragonresearchgroup.org/insight/vncprobe.txt
 
-Parser: Dragon Research Group VNC (`intelmq.bots.parsers.dragonresearchgroup.parser_vnc`)
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+ * http_url: http://dataplane.org/sipinvitation.txt
+
+Parser: Dataplane Feeds (`intelmq.bots.parsers.dataplane.parser`)
+
+Entries consist of fields with identifying characteristics of a source IP address that has been seen initiating a SIP INVITE operation to a remote host.  The report lists hosts that are suspicious of more than just port scanning.  These hosts may be SIP client cataloging or conducting various forms of telephony abuse.  
+Report is updated hourly.
+
+### SIP Query
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+ * http_url: http://dataplane.org/sipquery.txt
+
+Parser: Dataplane Feeds (`intelmq.bots.parsers.dataplane.parser`)
+
+Entries consist of fields with identifying characteristics of a source IP address that has been seen initiating a SIP OPTIONS query to a remote host.  This report lists hosts that are suspicious of more than just port scanning.  The hosts may be SIP server cataloging or conducting various forms of telephony abuse.  
+Report is updated hourly.
+
+### SIP Registration
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+ * http_url: http://dataplane.org/sipregistration.txt
+
+Parser: Dataplane Feeds (`intelmq.bots.parsers.dataplane.parser`)
+
+Entries consist of fields with identifying characteristics of a source IP address that has been seen initiating a SIP REGISTER operation to a remote host.  This report lists hosts that are suspicious of more than just port scanning.  The hosts may be SIP client cataloging or conducting various forms of telephony abuse.  
+Report is updated hourly.
+
+### SSH Client Connection
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+ * http_url: http://dataplane.org/sshclient.txt
+
+Parser: Dataplane Feeds (`intelmq.bots.parsers.dataplane.parser`)
+
+Entries below consist of fields with identifying characteristics of a source IP address that has been seen initiating an SSH connection to a remote host.  This report lists hosts that are suspicious of more than just port scanning.  The hosts may be SSH server cataloging or conducting authentication attack attempts.  
+Report is updated hourly.
+
+### SSH Password Authentication
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+ * http_url: http://dataplane.org/sshpwauth.txt
+
+Parser: Dataplane Feeds (`intelmq.bots.parsers.dataplane.parser`)
+
+Entries below consist of fields with identifying characteristics of a source IP address that has been seen attempting to remotely login to a host using SSH password authentication.  The report lists hosts that are highly suspicious and are likely conducting malicious SSH password authentication attacks.
+Report is updated hourly.
+
 
 ## DynDNS
 
@@ -380,13 +474,27 @@ Parser: HPHosts (`intelmq.bots.parsers.hphosts.parser`)
 
 ## Malc0de
 
-### Domain Blacklist
+### Windows Format
 
 Status: Unknown
+
 Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
  * http_url: https://malc0de.com/bl/BOOT
 
-Parser: Malc0de Domain Blacklist (`intelmq.bots.parsers.malc0de.parser_domain_blacklist`)
+Parser: Malc0de (`intelmq.bots.parsers.malc0de.parser`)
+
+This feed includes FQDN's of malicious hosts, the file format is in Windows Hosts file format.
+
+### Bind Format
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+ * http_url: https://malc0de.com/bl/BOOT
+
+Parser: Malc0de (`intelmq.bots.parsers.malc0de.parser`)
+
+This feed includes FQDN's of malicious hosts, the file format is in Bind format.
 
 ### IP Blacklist
 
@@ -395,6 +503,9 @@ Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
  * http_url: https://malc0de.com/bl/IP_Blacklist.txt
 
 Parser: Malc0de IP Blacklist (`intelmq.bots.parsers.malc0de.parser_ip_blacklist`)
+
+This feed includes IP Addresses of malicious hosts.
+
 
 ## Malware Domain List
 
@@ -444,6 +555,96 @@ Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
   * http_url: https://n6beta.cert.pl/report/inside.json
 
 Parser: Missing
+
+
+## Netlab 360
+
+### DGA Feed
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+ * http_url: http://data.netlab.360.com/feeds/dga/dga.txt
+
+Parser: Netlab 360 DGA (`intelmq.bots.parsers.netlab_360.parser`)
+
+This feed lists DGA family, Domain, Start and end of valid time(UTC) of a number of DGA families.
+ * reference: http://data.netlab.360.com/dga
+
+### Magnitude EK Feed
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+ * http_url: http://data.netlab.360.com/feeds/ek/magnitude.txt
+
+Parser: Netlab 360 Magnitude (`intelmq.bots.parsers.netlab_360.parser`)
+
+This feed lists FQDN and possibly the URL used by Magnitude Exploit Kit.  Information also includes the IP address used for the domain and last time seen.
+ * reference: http://data.netlab.360.com/ek
+
+## Nothink
+
+### DNS Attack Feed
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+ * http_url: http://www.nothink.org/honeypot_dns_attacks.txt
+
+Parser: Nothink (`intelmq.bots.parsers.nothink.parser`)
+
+This feed provides attack information for attack information against DNS honeypots.
+ * reference: http://www.nothink.org/honeypot_dns.php
+
+### SNMP Feed
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+
+There are a number of feeds you can use to depend on how far back you would like to go.  The time.source will still be the date and time the feed was generated at nothink.
+ * http_url: http://www.nothink.org/blacklist/blacklist_snmp_day.txt
+ * http_url: http://www.nothink.org/blacklist/blacklist_snmp_week.txt
+ * http_url: http://www.nothink.org/blacklist/blacklist_snmp_year.txt
+
+Parser: Nothink (`intelmq.bots.parsers.nothink.parser`)
+
+This feed provides IP addresses of systems that have connected to a honeypot via SNMP in the last 24 hours.
+ * reference: http://www.nothink.org/honeypot_snmp.php
+
+### SSH Feed
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+
+There are a number of feeds you can use to depend on how far back you would like to go.  The time.source will still be the date and time the feed was generated at nothink.
+ * http_url: http://www.nothink.org/blacklist/blacklist_ssh_day.txt
+ * http_url: http://www.nothink.org/blacklist/blacklist_ssh_week.txt
+ * http_url: http://www.nothink.org/blacklist/blacklist_ssh_year.txt
+
+Parser: Nothink (`intelmq.bots.parsers.nothink.parser`)
+
+This feed provides IP addresses of systems that have connected to a honeypot via SSH in the last 24 hours.
+ * reference: http://www.nothink.org/honeypots.php
+
+### Telnet Feed
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+
+There are a number of feeds you can use to depend on how far back you would like to go.  The time.source will still be the date and time the feed was generated at nothink.
+ * http_url: http://www.nothink.org/blacklist/blacklist_telnet_day.txt
+ * http_url: http://www.nothink.org/blacklist/blacklist_telnet_week.txt
+ * http_url: http://www.nothink.org/blacklist/blacklist_telnet_year.txt
+
+Parser: Nothink (`intelmq.bots.parsers.nothink.parser`)
+
+This feed provides IP addresses of systems that have connected to a honeypot via Telnet in the last 24 hours.
+ * reference: http://www.nothink.org/honeypots.php
+
 
 ## OpenBL
 
@@ -508,10 +709,46 @@ Spamhaus CERT Insight Portal. Access limited to CERTs and CSIRTs with national o
 ### Drop
 
 Status: Unknown
+
 Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
   * http_url: https://www.spamhaus.org/drop/drop.txt
 
 Parser: Spamhaus Drop (`intelmq.bots.parsers.spamhaus.parser_drop`)
+
+The DROP list will not include any IP address space under the control of any legitimate network - even if being used by "the spammers from hell". DROP will only include netblocks allocated directly by an established Regional Internet Registry (RIR) or National Internet Registry (NIR) such as ARIN, RIPE, AFRINIC, APNIC, LACNIC or KRNIC or direct RIR allocations.
+
+### EDrop
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+  * http_url: https://www.spamhaus.org/drop/edrop.txt
+
+Parser: Spamhaus Drop (`intelmq.bots.parsers.spamhaus.parser_drop`)
+
+EDROP is an extension of the DROP list that includes suballocated netblocks controlled by spammers or cyber criminals. EDROP is meant to be used in addition to the direct allocations on the DROP list.
+
+### Dropv6
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+  * http_url: https://www.spamhaus.org/drop/dropv6.txt
+
+Parser: Spamhaus Drop (`intelmq.bots.parsers.spamhaus.parser_drop`)
+
+The DROPv6 list includes IPv6 ranges allocated to spammers or cyber criminals. DROPv6 will only include IPv6 netblocks allocated directly by an established Regional Internet Registry (RIR) or National Internet Registry (NIR) such as ARIN, RIPE, AFRINIC, APNIC, LACNIC or KRNIC or direct RIR allocations.
+
+### ASN-Drop
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+  * http_url: https://www.spamhaus.org/drop/asndrop.txt
+
+Parser: Spamhaus Drop (`intelmq.bots.parsers.spamhaus.parser_drop`)
+ASN-DROP contains a list of Autonomous System Numbers controlled by spammers or cyber criminals, as well as "hijacked" ASNs. ASN-DROP can be used to filter BGP routes which are being used for malicious purposes.
+
 
 ## Taichung
 
@@ -535,18 +772,25 @@ Parser: Turris Greylist (`intelmq.bots.parsers.turris.parser`)
 ### Hosts
 
 Status: Unknown
+
 Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
  * http_url: http://www.urlvir.com/export-hosts/
 
-Parser: URLVir Hosts (`intelmq.bots.parsers.urlvir.parser_hosts`)
+Parser: URLVir Hosts (`intelmq.bots.parsers.urlvir.parser`)
+
+This feed provides FQDN's or IP addresses for Active Malicious Hosts.
 
 ### IPs
 
 Status: Unknown
+
 Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
  * http_url: http://www.urlvir.com/export-ip-addresses/
 
-Parser: URLVir IPs (`intelmq.bots.parsers.urlvir.parser_ips`)
+Parser: URLVir IPs (`intelmq.bots.parsers.urlvir.parser`)
+
+This feed provides IP addresses hosting Malware.
+
 
 ## VXVault
 

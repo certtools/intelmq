@@ -95,6 +95,4 @@ class CERTBundKontaktExpertBot(Bot):
                 in raw_result]
 
 
-if __name__ == "__main__":
-    bot = CERTBundKontaktExpertBot(sys.argv[1])
-    bot.start()
+BOT = CERTBundKontaktExpertBot

@@ -1,0 +1,8 @@
+# DGA Domain List
+# The list contains four columns:
+#       DGA family, Domian, Start and end of valid time(UTC)
+#
+# Feed Provided By: netlab 360
+# netlab@360.cn
+
+suppobox	difficultdress.net	2016-11-12 11:58:56	2016-11-13 00:04:15

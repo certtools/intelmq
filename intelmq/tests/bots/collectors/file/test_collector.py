@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """
 Testing File Collector
-
-TODO: test deleting files using tempfile
 """
 import os
 import unittest
@@ -47,5 +45,5 @@ class TestFileCollectorBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(0, OUTPUT)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

@@ -56,5 +56,5 @@ class TestFraunhoferDGAParserBot(test.BotTestCase, unittest.TestCase):
             self.assertMessageEqual(position, event)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()
