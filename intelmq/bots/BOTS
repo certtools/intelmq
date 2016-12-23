@@ -642,7 +642,9 @@
                 "xmpp_server": "xmpp server",
                 "xmpp_to_server": "destination server",
                 "xmpp_to_user": "destination username",
-                "xmpp_user": "xmpp username"
+                "xmpp_user": "xmpp username",
+                "xmpp_room_password": "",
+                "is_muc": false
             }
         }
     }

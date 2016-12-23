@@ -61,7 +61,7 @@ try:
                 self.logger.error('Server is taking too long to respond.')
                 self.disconnect()
 
-            if self.xmpp_room and self.plugin.get('xep_0045'):
+            if self.xmpp_room: # and self.plugin.get('xep_0045') # this check should also exist!
                 self.logger.debug("Joining room: %s." % self.xmpp_room)
                 pwd = self.xmpp_room_password if self.xmpp_room_password else ""
                 self.plugin['xep_0045'].joinMUC(self.xmpp_room,
