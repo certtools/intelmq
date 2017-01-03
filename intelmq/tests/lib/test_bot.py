@@ -15,7 +15,7 @@ import intelmq.lib.test as test
 
 
 with mock.patch('intelmq.lib.utils.load_configuration', new=test.mocked_config()):
-    from intelmq.tests.bots import test_dummy_bot
+    from intelmq.tests.lib import test_parser_bot
 
 
 class TestBot(unittest.TestCase):
@@ -62,12 +62,12 @@ class TestBot(unittest.TestCase):
                 self.bot.start()
 
     def test_pipeline_raising(self):
-        self.bot_reference = test_dummy_bot.DummyParserBot
+        self.bot_reference = test_parser_bot.DummyParserBot
         self.run_bot(raise_on_connect=True)
         self.assertIn('ERROR - Pipeline failed', self.log_stream.getvalue())
 
     def test_pipeline_empty(self):
-        self.bot_reference = test_dummy_bot.DummyParserBot
+        self.bot_reference = test_parser_bot.DummyParserBot
         self.run_bot()
         self.assertIn('ERROR - Bot has found a problem',
                       self.log_stream.getvalue())

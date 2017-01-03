@@ -40,10 +40,8 @@
                 "feed": "",
                 "provider": "",
                 "folder": "INBOX",
-                "http_username": "<user>",
-                "http_password": "<password>",
-                "http_proxy": "<proxy>",
-                "https_proxy": "<proxy>",
+                "http_password": null,
+                "http_username": null,
                 "mail_host": "<host>",
                 "mail_password": "<password>",
                 "mail_ssl": true,
@@ -61,10 +59,8 @@
                 "feed": "",
                 "provider": "",
                 "http_url": "<insert url of feed>",
-                "http_username": "<user>",
-                "http_password": "<password>",
-                "http_proxy": "<proxy>",
-                "https_proxy": "<proxy>",
+                "http_username": null,
+                "http_password": null,
                 "ssl_client_certificate": null,
                 "rate_limit": 3600
             }
@@ -230,24 +226,14 @@
             "module": "intelmq.bots.parsers.ci_army.parser",
             "parameters": {}
         },
-        "CleanMX Phishing": {
-            "description": "CleanMX Phishing Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.cleanmx.parser_phishing",
-            "parameters": {}
-        },
-        "CleanMX Virus": {
-            "description": "CleanMX Virus Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.cleanmx.parser_virus",
+        "CleanMX": {
+            "description": "CleanMX Parser is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.cleanmx.parser",
             "parameters": {}
         },
         "Cymru Full Bogons": {
             "description": "Cymru Full Bogons Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.cymru_full_bogons.parser",
-            "parameters": {}
-        },
-        "Cymru Infected": {
-            "description": "Cymru infected Parser",
-            "module": "intelmq.bots.parsers.cymru_infected.parser",
             "parameters": {}
         },
         "DShield AS": {
@@ -320,7 +306,7 @@
         },
         "Malc0de": {
             "description": "Malc0de Parser is the bot responsible to parse the IP Blacklist and either Windows Format or Bind Format reports and sanitize the information.",
-            "module": "intelmq.bots.parsers.malc0de.parser_domain_blacklist",
+            "module": "intelmq.bots.parsers.malc0de.parser",
             "parameters": {}
         },
         "Malware Domain List": {
@@ -490,6 +476,27 @@
                 "filter_value": "<PT>"
             }
         },
+        "Generic DB Lookup": {
+            "description": "Fetches data from a database.",
+            "module": "intelmq.bots.experts.generic_db_lookup.expert",
+            "parameters": {
+                "database": "intelmq",
+                "host": "localhost",
+                "match_fields": {
+                    "source.asn": "asn"
+                },
+                "overwrite": false,
+                "password": "<password>",
+                "port": "5432",
+                "replace_fields": {
+                    "contact": "source.abuse_contact",
+                    "note": "comment"
+                },
+                "sslmode": "require",
+                "table": "contacts",
+                "user": "intelmq"
+            }
+        },
         "Gethostbyname": {
             "description": "fqdn2ip is the bot responsible to parsing the ip from the fqdn.",
             "module": "intelmq.bots.experts.gethostbyname.expert",
@@ -564,21 +571,33 @@
         }
     },
     "Output": {
+        "AMQP Topic": {
+            "description": "AMQP Topic is the bot responsible to send events to a AMQP topic exchange.",
+            "module": "intelmq.bots.outputs.amqptopic.output",
+            "parameters": {
+                "connection_attempts": 3,
+                "connection_heartbeat": 3600,
+                "connection_host": "127.0.0.1",
+                "connection_port": 5672,
+                "connection_vhost": "<your virtual host>",
+                "content_type": "application/json",
+                "delivery_mode": 2,
+                "exchange_durable": true,
+                "exchange_name": "<your exchange name>",
+                "exchange_type": "topic",
+                "keep_raw_field": false,
+                "password": "<your amqp password>",
+                "require_confirmation": true,
+                "routing_key": "<your routing key>",
+                "username": "<your amqp username>"
+            }
+        },
         "File": {
             "description": "File is the bot responsible to send events to a file.",
             "module": "intelmq.bots.outputs.file.output",
             "parameters": {
-                "file": "/opt/intelmq/var/lib/bots/file-output/events.txt"
-            }
-        },
-        "IntelMQ Mailer": {
-            "description": "IntelMQ Mailer is the bot responsible to send events to a MongoDB database.",
-            "module": "intelmq.bots.outputs.intelmqmailer.output",
-            "parameters": {
-                "collection": "<collection>",
-                "database": "<database>",
-                "host": "<ip>",
-                "port": "<port>"
+                "file": "/opt/intelmq/var/lib/bots/file-output/events.txt",
+                "hierarchical_output": false
             }
         },
         "MongoDB": {
@@ -587,6 +606,7 @@
             "parameters": {
                 "collection": "<collection>",
                 "database": "<database>",
+                "hierarchical_output": true,
                 "host": "<ip>",
                 "port": "<port>"
             }
@@ -611,6 +631,7 @@
             "parameters": {
                 "auth_token": "<token>",
                 "auth_token_name": "<token name>",
+                "hierarchical_output": false,
                 "host": "<host>"
             }
         },
@@ -631,13 +652,28 @@
             "module": "intelmq.bots.outputs.tcp.output",
             "parameters": {
                 "ip": "<ip>",
-                "port": "<port>"
+                "port": "<port>",
+                "separator": "\n"
+            }
+        },
+        "UDP": {
+            "description": "UDP is a simple UDP bot responsible to send events to a udp port (e.g.: syslog daemon). For more explanations about the parameters field, checkout out the README.md",
+            "module": "intelmq.bots.outputs.udp.output",
+            "parameters": {
+                "field_delimiter": "|",
+                "format": "<json/delimited> read README.md",
+                "header": "<header text>",
+                "keep_raw_field": false,
+                "udp_host": "localhost",
+                "udp_port": "<port>"
             }
         },
         "XMPP": {
             "description": "XMPP is the bot responsible to send events to an XMPP server.",
             "module": "intelmq.bots.outputs.xmpp.output",
             "parameters": {
+                "ca_certs": "/etc/ssl/certs/ca-certificates.crt",
+                "hierarchical_output": false,
                 "xmpp_password": "xmpp password",
                 "xmpp_server": "xmpp server",
                 "xmpp_to_server": "destination server",

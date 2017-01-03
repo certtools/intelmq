@@ -76,12 +76,6 @@ class Bot(object):
             self.__load_pipeline_configuration()
             self.__load_harmonization_configuration()
 
-            if not getattr(self.parameters, 'enabled', True):
-                self.logger.warn('The bot was disabled by configuration. '
-                                 'It will not be started as long as this '
-                                 'configuration is present.')
-                self.stop()
-
             self.init()
 
             self.__sighup = False
@@ -621,6 +615,11 @@ class CollectorBot(Bot):
         if self.parameters.http_proxy and self.parameters.https_proxy:
             self.proxy = {'http': self.parameters.http_proxy,
                           'https': self.parameters.https_proxy}
+        elif self.parameters.http_proxy or self.parameters.https_proxy:
+            self.logger.warning('Only {}_proxy seems to be set.'
+                                'Both http and https proxies must be set.'
+                                .format('http' if self.parameters.http_proxy else 'https'))
+            self.proxy = None
         else:
             self.proxy = None
 
