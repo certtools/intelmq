@@ -18,6 +18,10 @@ xmpp_server: string
 xmpp_password: boolean
 xmpp_to_user: string
 xmpp_to_server: string
+xmpp_room: string
+xmpp_room_nick: string
+xmpp_room_password: string
+use_muc: boolean
 """
 
 
@@ -74,30 +78,63 @@ except ImportError:
 
 
 class XMPPOutputBot(Bot):
+
+    xmpp = None
+
     def init(self):
         if sleekxmpp is None:
             self.logger.error('Could not import sleekxmpp. Please install it.')
             self.stop()
 
-        if self.parameters.is_muc:
-            self.logger.debug("Trying MUC")
-            self.xmpp_room = self.parameters.xmpp_to_user + '@' + self.parameters.xmpp_to_server
-            self.xmpp_room_nick = self.parameters.xmpp_user + '@' + self.parameters.xmpp_server
-            self.xmpp_room_password = self.parameters.xmpp_room_password
-        else:
-            self.xmpp_room = None
-            self.xmpp_room_nick = None
-            self.xmpp_room_password = None
+        # Retrieve Parameters from configuration
+        xmpp_user = getattr(self.parameters, "xmpp_user", None)
+        xmpp_server = getattr(self.parameters, "xmpp_server", None)
+        xmpp_password = getattr(self.parameters, "xmpp_password", None)
 
-        self.xmpp = XMPPClient(self.parameters.xmpp_user + '@' +
-                               self.parameters.xmpp_server,
-                               self.parameters.xmpp_password,
-                               self.xmpp_room,
-                               self.xmpp_room_nick,
-                               self.xmpp_room_password,
+        if None in (xmpp_user, xmpp_server, xmpp_password):
+            self.logger.error('No User / Password provided')
+            self.stop()
+        else:
+            xmpp_login = xmpp_user + '@' + xmpp_server
+
+        self.muc = getattr(self.parameters, "use_muc", None)
+        xmpp_to_user = getattr(self.parameters, "xmpp_to_user", None)
+        xmpp_to_server = getattr(self.parameters, "xmpp_to_server", None)
+        xmpp_room = getattr(self.parameters, "xmpp_room", None) if self.muc else None
+        xmpp_room_nick = getattr(self.parameters, "xmpp_room_nick", None) if self.muc else None
+        xmpp_room_password = getattr(self.parameters, "xmpp_room_password", None) if self.muc else None
+
+        ca_certs = getattr(self.parameters, "ca_certs", None)
+
+        # Be sure the receiver was set up
+        if not self.muc and None in (xmpp_to_user, xmpp_to_server):
+            self.logger.error('No receiver for direct messages provided')
+            self.stop()
+        else:
+            self.xmpp_receiver = xmpp_to_user + '@' +\
+                xmpp_to_server
+
+        if self.muc and not xmpp_room:
+            self.logger.error('No room provided')
+            self.stop()
+        else:
+            self.xmpp_receiver = xmpp_room
+
+        if self.muc:
+            if not xmpp_room_nick:
+                # create the room_nick from user and server
+                xmpp_room_nick = xmpp_login
+
+        self.xmpp = XMPPClient(xmpp_login, xmpp_password,
+                               xmpp_room,
+                               xmpp_room_nick,
+                               xmpp_room_password,
                                self.logger)
-        if self.parameters.ca_certs:
-            self.xmpp.ca_certs = self.parameters.ca_certs
+
+        if ca_certs:
+            # Set CA-Certificates
+            self.xmpp.ca_certs = ca_certs
+
         self.xmpp.connect(reattempt=True)
         self.xmpp.process()
 
@@ -105,39 +142,37 @@ class XMPPOutputBot(Bot):
         self.xmpp.register_plugin('xep_0030')  # Service Discovery
         self.xmpp.register_plugin('xep_0045')  # Multi-User Chat
 
+
     def process(self):
         event = self.receive_message()
-
-        receiver = self.parameters.xmpp_to_user + '@' +\
-            self.parameters.xmpp_to_server
-        # The Receiver can also be a room.
 
         jevent = event.to_json(hierarchical=self.parameters.hierarchical_output,
                                with_type=True)
 
         try:
-            # TODO: proper error handling. Right now it cannot be
-            # detected if the message was sent successfully.
-            if self.parameters.is_muc:
-                self.logger.debug("Trying to send to room %s." % self.xmpp_room)
-                self.xmpp.send_message(mto=self.xmpp_room, mbody=jevent, mtype='groupchat')
+            # TODO: proper error handling.
+            # Right now it cannot be detected if the message was sent successfully.
+            if self.muc:
+                self.logger.debug("Trying to send to room %s." % self.xmpp_receiver)
+                self.xmpp.send_message(mto=self.xmpp_receiver, mbody=jevent, mtype='groupchat')
             else:
-                self.logger.debug("Trying to send Event: %r to %r." % (jevent, receiver))
-                self.xmpp.send_message(mto=receiver, mbody=jevent)
+                self.logger.debug("Trying to send to %s." % (self.xmpp_receiver))
+                self.xmpp.send_message(mto=self.xmpp_receiver, mbody=jevent)
         except sleekxmpp.exceptions.XMPPError as err:
             self.logger.error('There was an error when sending the event.')
             self.logger.error(err.iq['error']['condition'])
 
         self.acknowledge_message()
 
+
     def stop(self):
         if self.xmpp:
             self.xmpp.disconnect()
             self.logger.info("Disconnected from XMPP.")
-
-            super(XMPPOutputBot, self).stop()
         else:
             self.logger.info("There was no XMPPClient I could stop.")
+
+        super(XMPPOutputBot, self).stop()
 
 
 BOT = XMPPOutputBot
