@@ -65,7 +65,7 @@ try:
                 self.logger.error('Server is taking too long to respond.')
                 self.disconnect()
 
-            if self.xmpp_room: # and self.plugin.get('xep_0045') # this check should also exist!
+            if self.xmpp_room:  # and self.plugin.get('xep_0045') # this check should also exist!
                 self.logger.debug("Joining room: %s." % self.xmpp_room)
                 pwd = self.xmpp_room_password if self.xmpp_room_password else ""
                 self.plugin['xep_0045'].joinMUC(self.xmpp_room,
@@ -142,17 +142,15 @@ class XMPPCollectorBot(CollectorBot):
         self.xmpp.add_event_handler("message", self.log_message)
 
     def process(self):
-        # Processing is done by function called from teh eventhandler...
+        # Processing is done by function called from the eventhandler...
         pass
 
-    def stop(self):
+    def shutdown(self):
         if self.xmpp:
             self.xmpp.disconnect()
             self.logger.info("Disconnected from XMPP.")
         else:
             self.logger.info("There was no XMPPClient I could stop.")
-
-        super(XMPPCollectorBot, self).stop()
 
     def log_message(self, msg):
 

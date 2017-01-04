@@ -65,7 +65,7 @@ try:
 
             self.logger.debug('Room:' + self.xmpp_room)
 
-            if self.xmpp_room: # and self.plugin.get('xep_0045') # this check should also exist!
+            if self.xmpp_room:  # and self.plugin.get('xep_0045') # this check should also exist!
                 self.logger.debug("Joining room: %s." % self.xmpp_room)
                 pwd = self.xmpp_room_password if self.xmpp_room_password else ""
                 self.plugin['xep_0045'].joinMUC(self.xmpp_room,
@@ -142,7 +142,6 @@ class XMPPOutputBot(Bot):
         self.xmpp.register_plugin('xep_0030')  # Service Discovery
         self.xmpp.register_plugin('xep_0045')  # Multi-User Chat
 
-
     def process(self):
         event = self.receive_message()
 
@@ -164,15 +163,12 @@ class XMPPOutputBot(Bot):
 
         self.acknowledge_message()
 
-
-    def stop(self):
+    def shutdown(self):
         if self.xmpp:
             self.xmpp.disconnect()
             self.logger.info("Disconnected from XMPP.")
         else:
             self.logger.info("There was no XMPPClient I could stop.")
-
-        super(XMPPOutputBot, self).stop()
 
 
 BOT = XMPPOutputBot
