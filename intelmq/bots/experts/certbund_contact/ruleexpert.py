@@ -36,6 +36,4 @@ class CERTBundRuleExpertBot(Bot):
         self.acknowledge_message()
 
 
-if __name__ == "__main__":
-    bot = CERTBundRuleExpertBot(sys.argv[1])
-    bot.start()
+BOT = CERTBundRuleExpertBot
