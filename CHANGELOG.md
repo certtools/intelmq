@@ -16,6 +16,7 @@ v1.0 (in development, master branch)
 - MAINT: renamed bots.parsers.spamhaus.parser to bots.parsers.spamhaus.parser_drop
 - Dropped dragon research group feeds: discontinued
 - changed configuration syntax for bots.experts.modify
+- dropped bots.collectors.bitsight.collector in favor of bots.collectors.http.collector_http_stream
 
 ### Bug fixes
 - FIX: all bots handle message which are None

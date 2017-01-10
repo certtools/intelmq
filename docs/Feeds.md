@@ -182,15 +182,16 @@ Parser: Bitcash Blocklist Feed (`intelmq.bots.parsers.bitcash.parser`)
 Blocklist provided by bitcash.cz of banned IPs for service abuse, this includes scanning, sniffing, harvesting, and dos attacks.
 
 
-## BitSight Ciberfeed Stream
+## BitSight Cyberfeed Stream
 
 Status: Unknown
-Collector: BitSight Ciberfeed Stream (`intelmq.bots.collectors.bitsight.collector`)
- * http_url: http://alerts.bitsighttech.com:8080/stream?key={{ your api key }}
+
+Collector: Generic URL Stream Fetcher (`intelmq.bots.collectors.http.collector_http_stream`)
+ * http_url: "https://prod.cyberfeed.net/stream?key={{ your api key }}",
 
 Parser: BitSight Ciberfeed Stream (`intelmq.bots.parsers.bitsight.parser`)
 
-Bitsight Collector is the bot responsible to get Bitsight Ciberfeed Alert Stream
+Malware infection data from sinkholed C&C servers
 
 
 ## Blocklist.de

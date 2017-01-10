@@ -141,15 +141,6 @@
                 "rate_limit": 3600
             }
         },
-        "BitSight Ciberfeed Stream": {
-            "description": "Bitsight Collector is the bot reponsible to get Bitsight Ciberfeed Alert Stream",
-            "module": "intelmq.bots.collectors.bitsight.collector",
-            "parameters": {
-                "feed": "BitSight",
-                "provider": "BitSight",
-                "http_url": "http://alerts.bitsighttech.com:8080/stream?key=<api>"
-            }
-        },
         "Blueliv Crimeserver": {
             "description": "Blueliv Crimeserver Collector is the bot responsible to get the report through the API.",
             "module": "intelmq.bots.collectors.blueliv.collector_crimeserver",

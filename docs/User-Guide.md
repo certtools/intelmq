@@ -49,7 +49,7 @@ Please report any errors you encounter at https://github.com/certtools/intelmq/i
 
 ```bash
 apt-get install python3 python3-pip
-apt-get install git build-essential libcurl4-gnutls-dev libffi-dev
+apt-get install git build-essential libffi-dev
 apt-get install python3-dev
 apt-get install redis-server
 ```
@@ -66,7 +66,7 @@ python3.4 /tmp/get-pip.py
 ```bash
 yum install epel-release
 yum install python34 python34-devel
-yum install git libcurl-devel gcc gcc-c++
+yum install git gcc gcc-c++
 yum install redis
 ```
 
