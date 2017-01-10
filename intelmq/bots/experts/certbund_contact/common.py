@@ -23,6 +23,7 @@ Author(s):
   Bernhard Herzog <bernhard.herzog@intevation.de>
 """
 
+from enum import Enum
 import json
 
 
@@ -57,7 +58,19 @@ def lookup_by_asn_only(cur, table_extension, asn):
     return cur.fetchall()
 
 
-def lookup_contacts(cur, table_extension, asn, ip, fqdn):
+# Enum type for the "managed" parameter of lookup_contacts.
+Managed = Enum("Managed", "manual automatic")
+
+
+def lookup_contacts(cur, managed, asn, ip, fqdn):
+    if managed is Managed.manual:
+        table_extension = ""
+    elif managed is Managed.automatic:
+        table_extension = "_automatic"
+    else:
+        raise ValueError("The 'managed' parameter must be one of the values"
+                         " of the Managed enum, not %r" % (managed,))
+
     cur.execute("""
     WITH matched_asn (organisation_id, reason)
              AS (SELECT oa.organisation_id, ('asn' :: TEXT)

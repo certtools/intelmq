@@ -59,10 +59,9 @@ class CERTBundKontaktExpertBot(Bot):
 
     def lookup_contacts(self, cur, asn, ip, fqdn):
         result = []
-        for (automation, suffix) in (("manual", ""),
-                                     ("automatic", "_automatic")):
-            for row in common.lookup_contacts(cur, suffix, asn, ip, fqdn):
-                result.append(row + (automation,))
+        for managed in common.Managed:
+            for row in common.lookup_contacts(cur, managed, asn, ip, fqdn):
+                result.append(row + (managed.name,))
         return result
 
     def lookup_contact(self, ip, fqdn, asn):
