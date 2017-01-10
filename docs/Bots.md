@@ -51,6 +51,26 @@ Bot will not start, and terminate immediately. Nevertheless you will be informed
 
 * * *
 
+### Generic URL Stream Fetcher
+
+
+#### Information:
+* `name:` intelmq.bots.collectors.http.collector_http_stream
+* `lookup:` yes
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Opens a streaming connection to the URL and sends the received lines.
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* **HTTP parameters** (see above)
+* `http_url`: location of HTTP streaming resource
+* `strip_lines`: boolean, if single lines should be stripped (removing whitespace)
+
+
+* * *
+
 ### Generic Mail URL Fetcher
 
 

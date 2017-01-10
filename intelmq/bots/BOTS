@@ -61,6 +61,20 @@
                 "rate_limit": 3600
             }
         },
+        "Generic URL Stream Fetcher": {
+            "description": "Opens a streaming connection to the URL and sends the received lines.",
+            "module": "intelmq.bots.collectors.http.collector_http_stream",
+            "parameters": {
+                "feed": "",
+                "provider": "",
+                "http_url": "<insert url of feed>",
+                "http_username": null,
+                "http_password": null,
+                "ssl_client_certificate": null,
+                "strip_lines": true,
+                "rate_limit": 3600
+            }
+        },
         "MISP Generic": {
             "description": "Collect events from a MISP server.",
             "module": "intelmq.bots.collectors.misp.collector",
