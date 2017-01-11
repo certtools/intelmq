@@ -659,6 +659,7 @@
                 "xmpp_to_user": "<destination username>",
                 "xmpp_to_server": "<destination server>",
                 "xmpp_room": null,
+                "xmpp_room_nick:" null,
                 "xmpp_room_password": null,
                 "use_muc": false
             }
