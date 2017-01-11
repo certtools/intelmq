@@ -238,6 +238,11 @@ class TestMessageFactory(unittest.TestCase):
             report.add(key, value)
         self.assertListUnorderdEqual(list(FEED.items()), list(report.items()))
 
+    def test_report_add_raise_failure(self):
+        """ Test if report returns all keys in list with items(). """
+        report = message.MessageFactory.unserialize('{"__type": "Report"}')
+        self.assertFalse(report.add('feed.url', 'invalid', raise_failure=False))
+
     def test_report_add_byte(self):
         """ Test if report rejects a byte string. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')

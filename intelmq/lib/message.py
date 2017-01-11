@@ -137,7 +137,8 @@ class Message(dict):
             return True
         return False
 
-    def add(self, key, value, sanitize=True, force=False, overwrite=False, ignore=()):
+    def add(self, key, value, sanitize=True, force=False, overwrite=False, ignore=(),
+            raise_failure=True):
         overwrite = force or overwrite
         if force:
             warnings.warn('The force-argument is deprecated by overwrite and will be removed in'
@@ -167,13 +168,20 @@ class Message(dict):
             old_value = value
             value = self.__sanitize_value(key, value)
             if value is None:
-                raise exceptions.InvalidValue(key, old_value)
+                if raise_failure:
+                    raise exceptions.InvalidValue(key, old_value)
+                else:
+                    return False
 
         valid_value = self.__is_valid_value(key, value)
         if not valid_value[0]:
-            raise exceptions.InvalidValue(key, value, reason=valid_value[1])
+            if raise_failure:
+                raise exceptions.InvalidValue(key, value, reason=valid_value[1])
+            else:
+                return False
 
         super(Message, self).__setitem__(key, value)
+        return True
 
     def update(self, key, value, sanitize=True):
         warnings.warn('update(...) will be changed to dict.update() in 1.0. '
