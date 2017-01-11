@@ -137,8 +137,12 @@ class Message(dict):
             return True
         return False
 
-    def add(self, key, value, sanitize=True, force=False, ignore=()):
-        if not force and key in self:
+    def add(self, key, value, sanitize=True, force=False, overwrite=False, ignore=()):
+        overwrite = force or overwrite
+        if force:
+            warnings.warn('The force-argument is deprecated by overwrite and will be removed in'
+                          '1.0.', DeprecationWarning)
+        if not overwrite and key in self:
             raise exceptions.KeyExists(key)
 
         if value is None or value in ["", "-", "N/A"]:
