@@ -551,6 +551,10 @@ Consult the [FAQ](FAQ.md) if you encountered any problem.
 
 # Additional Information
 
+## Bash Completion
+
+To enable bash completion on `intelmqctl` and `intelmqdump` in order to help you run the commands in an easy manner, follow the installation process [here](../contrib/bash-completion/README.md).
+
 ## Performance Tests
 
 Somes tests have been made with a virtual machine with 
