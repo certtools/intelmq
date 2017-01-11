@@ -14,6 +14,10 @@ Bash completion for `intelmqctl` and `intelmqdump` can be set up with the follow
 
     yum install bash-completion jq
 
+### SUSE
+
+    zypper install bash-completion jq
+
 ## Installation
 
 1. Copy intelmq.sh to '/etc/bash_completion.d/'
