@@ -166,6 +166,17 @@ class TestMessageFactory(unittest.TestCase):
         report.add('feed.name', '-')
         self.assertNotIn('feed.name', report)
 
+    def test_report_is_valid(self):
+        """ Test if report ignores '-'. """
+        event = message.MessageFactory.unserialize('{"__type": "Event"}')
+        self.assertFalse(event.is_valid('feed.name', '-'))
+        self.assertFalse(event.is_valid('feed.name', None))
+        self.assertFalse(event.is_valid('source.ip', '127.0.0.1/24'))
+        self.assertFalse(event.is_valid('source.ip', '127.0.0.1/24', sanitize=False))
+        self.assertTrue(event.is_valid('source.ip', '127.0.0.1'))
+        with self.assertRaises(exceptions.InvalidKey):
+            event.is_valid('invalid', 0)
+
     def test_report_ignore_na(self):
         """ Test if report ignores 'N/A'. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')

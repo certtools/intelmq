@@ -106,14 +106,42 @@ class Message(dict):
     def __setitem__(self, key, value):
         self.add(key, value)
 
+    def is_valid(self, key, value, sanitize=True):
+        """
+        Checks if a value is valid for the key.
+
+        Parameters
+        ==========
+        key : string
+        value : string
+        sanitize : boolean
+
+        Returns
+        =======
+        retval : boolean
+
+        Raises
+        ======
+        intelmq.lib.exceptions.InvalidKey if key is invalid
+
+        """
+        if not self.__is_valid_key(key):
+            raise exceptions.InvalidKey(key)
+
+        if value is None or value in ["", "-", "N/A"]:
+            return False
+        if sanitize:
+            value = self.__sanitize_value(key, value)
+        valid = self.__is_valid_value(key, value)
+        if valid[0]:
+            return True
+        return False
+
     def add(self, key, value, sanitize=True, force=False, ignore=()):
         if not force and key in self:
             raise exceptions.KeyExists(key)
 
-        if value is None or value == "":
-            return
-
-        if value in ["-", "N/A"]:
+        if value is None or value in ["", "-", "N/A"]:
             return
 
         if not self.__is_valid_key(key):
