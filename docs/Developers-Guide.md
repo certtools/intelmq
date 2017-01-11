@@ -203,13 +203,15 @@ intelmq/
     system.conf
 ```
 
-Assuming you want to create a bot for 'Abuse.ch Zeus' feed. It turns out that here it is necessary to create different parsers for the respective kind of events (C&C, Binaries, Dropzones). Therefore, the hierarchy ‘intelmq/bots/parser/abusech/parser.py’ would not be suitable because it is necessary to have more parsers, as mentioned above. The solution is to use the same hierarchy with an additional "description" in the file name, separated by underscore. Also see the section *Directories and Files naming*.
+Assuming you want to create a bot for a new 'Abuse.ch' feed. It turns out that here it is necessary to create different parsers for the respective kind of events (e.g. malicious URLs). Therefore, the usual hierarchy ‘intelmq/bots/parser/<FEED>/parser.py’ would not be suitable because it is necessary to have more parsers for each Abuse.ch Feed. The solution is to use the same hierarchy with an additional "description" in the file name, separated by underscore. Also see the section *Directories and Files naming*.
 
-Example:
+Example (including the current ones):
 ```
-/intelmq/bots/parser/abusech/parser_zeus_cc.py
-/intelmq/bots/parser/abusech/parser_zeus_binaries.py
-/intelmq/bots/parser/abusech/parser_zeus_dropzones.py
+/intelmq/bots/parser/abusech/parser_domain.py
+/intelmq/bots/parser/abusech/parser_ip.py
+/intelmq/bots/parser/abusech/parser_ransomware.py
+
+/intelmq/bots/parser/abusech/parser_malicious_url.py
 ```
 
 
