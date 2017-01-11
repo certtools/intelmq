@@ -379,10 +379,7 @@ class Bot(object):
 
         for option, value in config.items():
             setattr(self.parameters, option, value)
-            self.__log_buffer.append(('debug',
-                                      "Defaults configuration: parameter {!r} "
-                                      "loaded  with value {!r}.".format(option,
-                                                                        value)))
+            self.__log_configuration_parameter("defaults", option, value)
 
     def __load_system_configuration(self):
         if os.path.exists(SYSTEM_CONF_FILE):
@@ -395,9 +392,7 @@ class Bot(object):
 
             for option, value in config.items():
                 setattr(self.parameters, option, value)
-                self.__log_buffer.append(('debug',
-                                          "System configuration: parameter {!r} "
-                                          "loaded  with value {!r}.".format(option, value)))
+                self.__log_configuration_parameter("system", option, value)
 
     def __load_runtime_configuration(self):
         self.logger.debug("Loading runtime configuration from %r." % RUNTIME_CONF_FILE)
@@ -411,8 +406,7 @@ class Bot(object):
                 self.logger.warning('Old runtime configuration format found.')
             for option, value in params.items():
                 setattr(self.parameters, option, value)
-                self.logger.debug("Runtime configuration: parameter {!r} "
-                                  "loaded with value {!r}.".format(option, value))
+                self.__log_configuration_parameter("runtime", option, value)
 
     def __load_pipeline_configuration(self):
         self.logger.debug("Loading pipeline configuration from %r." % PIPELINE_CONF_FILE)
@@ -434,6 +428,18 @@ class Bot(object):
         else:
             raise ValueError("Pipeline configuration: no key "
                              "{!r}.".format(self.__bot_id))
+
+    def __log_configuration_parameter(self, config_name, option, value):
+        if "password" in option:
+            value = "HIDDEN"
+
+        message = "{} configuration: parameter {!r} loaded with value {!r}."\
+            .format(config_name.title(), option, value)
+
+        if self.logger:
+            self.logger.debug(message)
+        else:
+            self.__log_buffer.append(("debug", message))
 
     def __load_harmonization_configuration(self):
         self.logger.debug("Loading Harmonization configuration from %r." % HARMONIZATION_CONF_FILE)
