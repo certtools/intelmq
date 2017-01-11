@@ -98,7 +98,7 @@ class GenericCsvParserBot(ParserBot):
             event.add(key, value)
 
         if hasattr(self.parameters, 'type')\
-                and not event.contains("classification.type"):
+                and "classification.type" not in event:
             event.add('classification.type', self.parameters.type)
         event.add("raw", self.recover_line(row))
         yield event

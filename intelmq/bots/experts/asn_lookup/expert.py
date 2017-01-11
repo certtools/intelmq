@@ -34,7 +34,7 @@ class ASNLookupExpertBot(Bot):
             asn_key = key + "asn"
             bgp_key = key + "network"
 
-            if not event.contains(ip_key):
+            if ip_key not in event:
                 continue
 
             info = self.database.lookup(event.get(ip_key))

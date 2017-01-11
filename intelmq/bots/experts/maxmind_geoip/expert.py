@@ -31,7 +31,7 @@ class GeoIPExpertBot(Bot):
         for key in ["source.%s", "destination.%s"]:
             geo_key = key % "geolocation.%s"
 
-            if not event.contains(key % "ip"):
+            if key % "ip" not in event:
                 continue
 
             ip = event.get(key % "ip")

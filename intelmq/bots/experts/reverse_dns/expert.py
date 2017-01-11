@@ -33,7 +33,7 @@ class ReverseDnsExpertBot(Bot):
         for key in keys:
             ip_key = key % "ip"
 
-            if not event.contains(ip_key):
+            if ip_key not in event:
                 continue
 
             ip = event.get(ip_key)

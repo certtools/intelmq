@@ -52,7 +52,7 @@ class AutoshunParserBot(ParserBot):
                     event.add("classification.type", value)
                     break
 
-        if not event.contains("classification.type"):
+        if "classification.type" not in event:
             event.add("classification.type", 'unknown')
 
         event.add("time.source", last_seen)

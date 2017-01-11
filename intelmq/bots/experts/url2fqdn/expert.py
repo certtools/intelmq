@@ -17,7 +17,7 @@ class Url2fqdnExpertBot(Bot):
 
             key_url = key + "url"
             key_fqdn = key + "fqdn"
-            if not event.contains(key_url):
+            if key_url not in event:
                 continue
             if key_fqdn in event and not self.overwrite:
                 continue

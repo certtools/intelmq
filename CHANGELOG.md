@@ -28,6 +28,7 @@ v1.0 (in development, master branch)
 - STY: code obeys PEP8, new code should always be properly formatted
 - ENH: More code is Python 3 compatible
 - DOC: Updated user and dev guide
+- Removed Message.contains, Message.update methods Message.add ignore parameter
 
 ###Configuration
 - ENH: New parameter and field named accuracy to represent the accuracy of each feed

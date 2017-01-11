@@ -155,6 +155,8 @@ class Message(dict):
         self.add(key, value, force=True, sanitize=sanitize)
 
     def contains(self, key):
+        warnings.warn('The contains-method will be removed in 1.0.',
+                      DeprecationWarning)
         return key in self
 
     def finditems(self, keyword):
