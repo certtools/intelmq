@@ -108,13 +108,14 @@ class Message(dict):
 
     def is_valid(self, key, value, sanitize=True):
         """
-        Checks if a value is valid for the key.
+        Checks if a value is valid for the key (after sanitation).
 
         Parameters
         ==========
         key : string
         value : string
         sanitize : boolean
+            Sanitation of harmonization type will be called before validation (default: True)
 
         Returns
         =======
@@ -122,7 +123,7 @@ class Message(dict):
 
         Raises
         ======
-        intelmq.lib.exceptions.InvalidKey if key is invalid
+        intelmq.lib.exceptions.InvalidKey: if key is invalid.
 
         """
         if not self.__is_valid_key(key):
@@ -139,6 +140,42 @@ class Message(dict):
 
     def add(self, key, value, sanitize=True, force=False, overwrite=False, ignore=(),
             raise_failure=True):
+        """
+        Add a value for the key (after sanitation).
+
+        Parameters
+        ==========
+        key : string
+            Key as defined in the harmonization
+        value : string
+            A valid value as defined in the harmonization
+        sanitize : boolean
+            Sanitation of harmonization type will be called before validation (default: True)
+        force : boolean
+            Deprecated, use overwrite (default: False)
+        overwrite : boolean
+            Overwrite an existing value if it already exists (default: False)
+        ignore : list, tuple
+            List of values to ignore, deprecated (default: ())
+        raise_failure : boolean
+            If a intelmq.lib.exceptions.InvalidValue should be raisen for invalid values
+            (default: True). If false, the return parameter will be False in case of invalid
+            values.
+
+        Returns
+        =======
+        retval : boolean
+            True if the value has been added
+            False if the value is invalid and raise_failure is False
+
+        Raises
+        ======
+        intelmq.lib.exceptions.KeyExists: If key exists and won't be overwritten explcitly.
+        intelmq.lib.exceptions.InvalidKey: if key is invalid.
+        intelmq.lib.exceptions.InvalidArgument: if ignore is not list or tuple.
+        intelmq.lib.exceptions.InvalidValue: If value is not valid for the given key and
+            raise_failure is True.
+        """
         overwrite = force or overwrite
         if force:
             warnings.warn('The force-argument is deprecated by overwrite and will be removed in'
