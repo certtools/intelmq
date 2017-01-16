@@ -12,7 +12,7 @@ def determine_directives(context):
         return
     shadowserver_params = shadowserver_mapping.get(context.get("feed.name"))
     if shadowserver_params is not None:
-        for contact in context.contacts:
+        for contact in context.all_contacts():
             directive = Directive.from_contact(contact)
             directive.update(shadowserver_params)
             directive.aggregate_by_field(context.section + ".asn")

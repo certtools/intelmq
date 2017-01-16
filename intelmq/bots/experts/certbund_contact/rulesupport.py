@@ -5,30 +5,83 @@ from intelmq.bots.experts.certbund_contact.eventjson import \
 import intelmq.bots.experts.certbund_contact.annotations as annotations
 
 
-class Contact:
+class Organisation:
 
-    def __init__(self, automation, email, organisation, sector=None,
-                 matched_fields=(), annotations=()):
-        self.email = email
-        self.organisation = organisation
+    def __init__(self, orgid, name, managed, sector, contacts, annotations):
+        self.orgid = orgid
+        self.name = name
+        self.managed = managed
         self.sector = sector
-        self.matched_fields = matched_fields
-        self.automation = automation
+        self.contacts = contacts
         self.annotations = annotations
-
-    def __repr__(self):
-        return ("Contact(automation=%r, email=%r, organisation=%r)"
-                % (self.automation, self.email, self.organisation))
 
     @classmethod
     def from_json(cls, jsondict):
-        return cls(automation=jsondict["automation"],
-                   email=jsondict["email"],
-                   organisation=jsondict["organisation"],
+        return cls(orgid=jsondict["id"],
+                   name=jsondict["name"],
+                   managed=jsondict["managed"],
                    sector=jsondict["sector"],
-                   matched_fields=jsondict["matched_fields"],
-                   annotations=map(annotations.from_json,
-                                   jsondict["annotations"]))
+                   contacts=[Contact.from_json(c)
+                             for c in jsondict["contacts"]],
+                   annotations=[annotations.from_json(a)
+                                for a in jsondict["annotations"]])
+
+
+class Contact:
+
+    def __init__(self, email, is_primary_contact, managed, role):
+        self.email = email
+        self.is_primary_contact= is_primary_contact
+        self.managed = managed
+        self.role = role
+
+    def __repr__(self):
+        return ("Contact(email=%r, is_primary_contact=%r, managed=%r, role=%r)"
+                % (self.email, self.is_primary_contact, self.managed,
+                   self.role))
+
+    @classmethod
+    def from_json(cls, jsondict):
+        return cls(email=jsondict["email"],
+                   is_primary_contact=jsondict["is_primary_contact"],
+                   managed=jsondict["managed"],
+                   role=jsondict["role"])
+
+
+class Match:
+
+    def __init__(self, field, managed, organisations, address=None):
+        self.field = field
+        self.managed = managed
+        self.organisations = organisations
+        self.address = address
+
+    def __repr__(self):
+        return ("Match(field=%r, managed=%r, organisations=%r, address=%r)"
+                % (self.field, self.managed, self.organisations, self.address))
+
+    def __eq__(self, other):
+        return (self.field == other.field
+                and self.managed == other.managed
+                and self.organisations == other.organisations
+                and self.address == other.address)
+
+    def __hash__(self):
+        return hash((self.field, self.managed, tuple(self.organisations),
+                     self.address))
+
+    @classmethod
+    def from_json(cls, jsondict):
+        field = jsondict["field"]
+        if field == "ip":
+            address = jsondict["address"]
+        else:
+            address = None
+        return cls(field=field,
+                   managed=jsondict["managed"],
+                   organisations=jsondict["organisations"],
+                   address=address)
+
 
 
 
@@ -103,14 +156,35 @@ class Directive:
         self.aggregate_key.update(directive.aggregate_key)
 
 
+def contact_info_from_json(jsondict):
+    return ([Match.from_json(m) for m in jsondict["matches"]],
+            [Organisation.from_json(o) for o in jsondict["organisations"]])
+
+
 class Context:
 
     def __init__(self, event, section):
         self._event = event
         self.section = section
-        self.contacts = [Contact.from_json(j)
-                         for j in get_certbund_contacts(event, section)]
+        self.matches, self.organisations = \
+              contact_info_from_json(get_certbund_contacts(event, section))
         self._directives = []
+        self._organisation_map = {org.orgid: org
+                                  for org in self.organisations}
+
+    def all_annotations(self):
+        """Return an iterator over all contact annotations."""
+        for organisation in self.organisations:
+            for annotation in organisation.annotations:
+                yield annotation
+
+    def lookup_organisation(self, orgid):
+        return self._organisation_map[orgid]
+
+    def all_contacts(self):
+        for org in self.organisations:
+            for contact in org.contacts:
+                yield contact
 
     @property
     def directives(self):
@@ -133,29 +207,49 @@ class Context:
 
 
 
-def most_specific_contacts(contacts):
-    by_source = defaultdict(lambda : {"manual": set(), "automatic": set()})
+def most_specific_matches(context):
+    by_field = defaultdict(lambda : {"manual": set(), "automatic": set()})
 
-    for contact in contacts:
-        for field in contact.matched_fields:
-            by_source[field][contact.automation].add(contact)
+    for match in context.matches:
+        by_field[match.field][match.managed].add(match)
 
-    def get_preferred_by_source(key):
-        if key not in by_source:
+    def get_preferred_by_field(field):
+        if field not in by_field:
             return set()
         else:
-            by_automation = by_source[key]
-            return by_automation["manual"] or by_automation["automatic"]
+            by_managed = by_field[field]
+            return by_managed["manual"] or by_managed["automatic"]
 
-    return list(get_preferred_by_source("fqdn")
-                | (get_preferred_by_source("ip")
-                   or get_preferred_by_source("asn")))
+    return (get_preferred_by_field("fqdn")
+            | (get_preferred_by_field("ip") or get_preferred_by_field("asn")))
+
+
+def keep_most_specific_contacts(context):
+    orgids = set()
+    matches = most_specific_matches(context)
+    for match in matches:
+        orgids |= set(match.organisations)
+    for organisation in context.organisations:
+        if organisation.orgid in orgids:
+            primary = []
+            other = []
+            for contact in organisation.contacts:
+                if contact.is_primary_contact:
+                    primary.append(contact)
+                else:
+                    other.append(contact)
+            if primary:
+                keep = primary
+            else:
+                keep = other
+        else:
+            keep = []
+        organisation.contacts = keep
 
 
 def notification_inhibited(context):
     """Return whether any inhibition annotation in the contacts matches event.
     """
     return any(annotation.matches(context)
-               for contact in context.contacts
-               for annotation in contact.annotations
+               for annotation in context.all_annotations()
                if isinstance(annotation, annotations.Inhibition))

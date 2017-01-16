@@ -21,26 +21,60 @@ EXAMPLE_INPUT = {"__type": "Event",
                  "classification.type": "other"
                  }
 
-EXAMPLE_OUTPUT = {"__type": "Event",
-                  "source.ip": "192.168.42.23",
-                  "destination.ip": "192.168.42.47",
-                  "time.observation": "2016-02-26T10:11:12+00:00",
-                  "feed.name": "test",
-                  "raw": "",
-                  "classification.type": "other",
-                  'extra': ('{"certbund": {'
-                            '"notify_destination": ['
-                            '{"email": "foo@example.com",'
-                            ' "format": "CSV", "organisation": "Acme",'
-                            ' "template_path": "/usr/local/templates/default",'
-                            ' "ttl": 3600}], '
-                            '"notify_source": ['
-                            '{"email": "foo@example.com",'
-                            ' "format": "CSV", "organisation": "Acme",'
-                            ' "template_path": "/usr/local/templates/default",'
-                            ' "ttl": 3600}]'
-                            '}}'),
-                  }
+EXAMPLE_OUTPUT = {
+    "__type": "Event",
+    "source.ip": "192.168.42.23",
+    "destination.ip": "192.168.42.47",
+    "time.observation": "2016-02-26T10:11:12+00:00",
+    "feed.name": "test",
+    "classification.type": "other",
+    'extra': ('{"certbund": {"destination_contacts": {'
+              '"matches": ['
+              '{"address": "192.168.42.0/24", "field": "ip",'
+              ' "managed": "automatic", "organisations": [0]'
+              '}, '
+              '{"field": "fqdn", "managed": "manual", "organisations": [1]}'
+              '], '
+              '"organisations": ['
+              '{"annotations": [{"type": "tag", "value": "daily"}],'
+              ' "contacts": ['
+              '{"email": "someone@example.com", "is_primary_contact": false,'
+              ' "managed": "automatic", "role": "abuse-c"}'
+              '],'
+              ' "id": 0, "managed": "automatic",'
+              ' "name": "Some Organisation", "sector": null'
+              '}, '
+              '{"annotations": [{"type": "tag", "value": ""}],'
+              ' "contacts": ['
+              '{"email": "other@example.com", "is_primary_contact": true,'
+              ' "managed": "manual", "role": "abuse-c"}'
+              '],'
+              ' "id": 1, "managed": "manual", "name": "Another Organisation",'
+              ' "sector": "IT"}]}, '
+              '"source_contacts": {'
+              '"matches": ['
+              '{"address": "192.168.42.0/24", "field": "ip",'
+              ' "managed": "automatic", "organisations": [0]'
+              '}, '
+              '{"field": "fqdn", "managed": "manual", "organisations": [1]}'
+              '], '
+              '"organisations": ['
+              '{"annotations": [{"type": "tag", "value": "daily"}],'
+              ' "contacts": ['
+              '{"email": "someone@example.com", "is_primary_contact": false,'
+              ' "managed": "automatic", "role": "abuse-c"}'
+              '],'
+              ' "id": 0, "managed": "automatic",'
+              ' "name": "Some Organisation", "sector": null'
+              '}, '
+              '{"annotations": [{"type": "tag", "value": ""}],'
+              ' "contacts": ['
+              '{"email": "other@example.com", "is_primary_contact": true,'
+              ' "managed": "manual", "role": "abuse-c"}'
+              '],'
+              ' "id": 1, "managed": "manual", "name": "Another Organisation",'
+              ' "sector": "IT"}]}}}'),
+    }
 
 class CERTBundKontaktMockDBExpertBot(CERTBundKontaktExpertBot):
 
@@ -49,14 +83,40 @@ class CERTBundKontaktMockDBExpertBot(CERTBundKontaktExpertBot):
     def connect_to_database(self):
         pass
 
-    def lookup_contact(self, class_type, class_identifier, ip, fqdn, asn):
+    def lookup_contact(self, ip, fqdn, asn):
         if ip.startswith("192.168.42."):
-            return [dict(email="foo@example.com",
-                         organisation="Acme",
-                         template_path="/usr/local/templates/default",
-                         format="CSV",
-                         ttl=3600)]
-        return []
+            return {"matches": [{"field": "ip", "managed": "automatic",
+                                 "address": "192.168.42.0/24",
+                                 "organisations": [0]},
+                                {"field": "fqdn", "managed": "manual",
+                                 "organisations": [1]}],
+                    "organisations": [
+                        {"id": 0,
+                         "name": "Some Organisation",
+                         "managed": "automatic",
+                         "sector": None,
+                         "annotations": [{"type": "tag", "value": "daily"}],
+                         "contacts": [{
+                             "email": "someone@example.com",
+                             "is_primary_contact": False,
+                             "managed": "automatic",
+                             "role": "abuse-c"
+                             }],
+                         },
+                        {"id": 1,
+                         "name": "Another Organisation",
+                         "managed": "manual",
+                         "sector": "IT",
+                         "annotations": [{"type": "tag", "value": ""}],
+                         "contacts": [{
+                             "email": "other@example.com",
+                             "is_primary_contact": True,
+                             "managed": "manual",
+                             "role": "abuse-c"
+                             }],
+                         }]
+                    }
+        return {"matches": [], "organisations": []}
 
 
 class TestCERTBundKontaktMockDBExpertBot(test.BotTestCase, unittest.TestCase):

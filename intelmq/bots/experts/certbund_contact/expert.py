@@ -1,4 +1,5 @@
 import sys
+import operator
 
 import psycopg2
 
@@ -58,18 +59,30 @@ class CERTBundKontaktExpertBot(Bot):
 
 
     def lookup_contacts(self, cur, asn, ip, fqdn):
-        result = []
-        for managed in common.Managed:
-            for row in common.lookup_contacts(cur, managed, asn, ip, fqdn):
-                result.append(row + (managed.name,))
-        return result
+        automatic = common.lookup_contacts(cur, common.Managed.automatic, asn,
+                                           ip, fqdn)
+        self.renumber_organisations_in_place(automatic)
+        manual = common.lookup_contacts(cur, common.Managed.manual, asn, ip,
+                                        fqdn)
+        self.renumber_organisations_in_place(manual,
+                                             len(automatic["organisations"]))
+        return {key: automatic[key] + manual[key] for key in automatic}
+
+    def renumber_organisations_in_place(self, matches, start=0):
+        idmap = {}
+        for new_id, org in enumerate(matches["organisations"], start):
+            idmap[org["id"]] = new_id
+            org["id"] = new_id
+
+        for match in matches["matches"]:
+            match["organisations"] = [idmap[i] for i in match["organisations"]]
 
     def lookup_contact(self, ip, fqdn, asn):
         self.logger.debug("Looking up ip: %r, fqdn: %r, asn: %r.", ip, fqdn, asn)
         try:
             cur = self.con.cursor()
             try:
-                raw_result = self.lookup_contacts(cur, asn, ip, fqdn)
+                return self.lookup_contacts(cur, asn, ip, fqdn)
             finally:
                 cur.close()
         except psycopg2.OperationalError:
@@ -77,13 +90,6 @@ class CERTBundKontaktExpertBot(Bot):
             self.logger.exception("OperationalError. Trying to reconnect.")
             self.init()
             return None
-
-        return [dict(email=email, organisation=organisation, sector=sector,
-                     matched_fields=matched, annotations=annotations,
-                     automation=automation)
-                for (email, organisation, sector, matched, annotations,
-                     automation)
-                in raw_result]
 
 
 BOT = CERTBundKontaktExpertBot

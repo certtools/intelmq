@@ -72,62 +72,130 @@ def lookup_contacts(cur, managed, asn, ip, fqdn):
                          " of the Managed enum, not %r" % (managed,))
 
     cur.execute("""
-    WITH matched_asn (organisation_id, reason)
-             AS (SELECT oa.organisation_id, ('asn' :: TEXT)
+    WITH
+         -- all organisations related to the ASN
+         matched_asn (organisation_id)
+             AS (SELECT oa.organisation_id
                    FROM autonomous_system{0} AS a
                    JOIN organisation_to_asn{0} AS oa
                      ON a.number = oa.asn_id
                   WHERE a.number = %(asn)s),
-         matched_ip (organisation_id, reason)
-             AS (SELECT "on".organisation_id, ('ip' :: TEXT)
+         -- the ASN matches in a form useful for conversion to JSON
+         asn_json_rows (field, organisations, managed)
+             AS (SELECT 'asn' AS field,
+                        ARRAY(SELECT * FROM matched_asn) AS organisations,
+                        %(managed)s AS managed),
+
+         -- The FADN IDs for the given FQDN
+         matched_fqdn_ids (fqdn_id)
+             AS (SELECT f.id AS fqdn_id
+                   FROM fqdn{0} AS f
+                  WHERE f.fqdn = %(fqdn)s),
+         -- all organisations related to the matched_fqdn_ids
+         matched_fqdn (organisation_id)
+             AS (SELECT of.organisation_id AS organisation_id
+                   FROM matched_fqdn_ids AS f
+                   JOIN organisation_to_fqdn{0} AS of
+                     ON f.fqdn_id = of.fqdn_id),
+         -- the FQDN matches in a form useful for conversion to JSON
+         fqdn_json_rows (field, organisations, managed)
+             AS (SELECT 'fqdn' AS field,
+                        ARRAY(SELECT * FROM matched_fqdn) AS organisations,
+                        %(managed)s AS managed),
+
+         -- all matched networks including their cidr addresses
+         matched_networks (network_id, address)
+             AS (SELECT n.id AS network_id, n.address AS address
                    FROM network{0} AS n
-                   JOIN organisation_to_network{0} AS "on"
-                     ON n.id = "on".net_id
                   WHERE inet(host(network(n.address))) <= %(ip)s
                     AND %(ip)s <= inet(host(broadcast(n.address)))),
-         matched_fqdn (organisation_id, reason)
-             AS (SELECT of.organisation_id, ('fqdn' :: TEXT)
-                   FROM fqdn{0} AS f
-                   JOIN organisation_to_fqdn{0} AS of
-                     ON f.id = of.fqdn_id
-                  WHERE f.fqdn = %(fqdn)s),
-         grouped_matches (organisation_id, reasons)
-             AS (SELECT u.organisation_id, array_agg(u.reason)
-                   FROM (SELECT organisation_id, reason FROM matched_asn
-                         UNION
-                         SELECT organisation_id, reason FROM matched_ip
-                         UNION
-                         SELECT organisation_id, reason FROM matched_fqdn) u
-               GROUP BY u.organisation_id)
 
-    -- we explicitly check the DISTINCT in the main SELECT statement
-    -- only on c.email and o.id because all other fields are functional
-    -- dependencies of these:
-    --
-    --  c.email      obviously
-    --  o.name       o.id is a key of the organisation table
-    --  s.name       ditto + sector.id is a key of sector
-    --  m.reasons    grouped_matches is grouped by organisation id alone,
-    --               so it#s a key in grouped_matches
+         -- all matched networks in a form useful for conversion to JSON
+         network_json_rows (field, address, organisations, managed)
+             AS (SELECT 'ip' AS field,
+                        mn.address AS address,
+                        ARRAY(SELECT orgn.organisation_id
+                                FROM organisation_to_network{0} orgn
+                               WHERE mn.network_id = orgn.net_id)
+                        AS organisations,
+                        %(managed)s AS managed
+                   FROM matched_networks mn),
 
-    SELECT DISTINCT ON (c.email, o.id)
-           c.email as email, o.name as organisation, s.name as sector,
-           m.reasons as reasons,
-           CASE WHEN %(extension)s = ''
-                THEN (SELECT json_agg(annotation)
-                        FROM organisation_annotation ann
-                       WHERE ann.organisation_id = o.id)
-                ELSE ('[]' :: JSON)
-           END AS annotations
-      FROM grouped_matches as m
-      JOIN organisation{0} o ON o.id = m.organisation_id
-      JOIN role{0} AS r ON r.organisation_id = o.id
-      JOIN contact{0} AS c ON c.id = r.contact_id
-      LEFT OUTER JOIN sector AS s ON s.id = o.sector_id
+         -- The IDs of all matched organisations
+         grouped_matches (organisation_id)
+             AS (SELECT u.organisation_id
+                   FROM (SELECT organisation_id FROM matched_asn
+                         UNION
+                         SELECT orgn.organisation_id
+                           FROM matched_networks mn
+                           JOIN organisation_to_network{0} orgn
+                             ON mn.network_id = orgn.net_id
+                         UNION
+                         SELECT organisation_id FROM matched_fqdn) u),
+
+         -- map organisation IDs to that organisation's contacts in JSON
+         -- form
+         org_contacts (org_id, contacts)
+             AS (SELECT r.organisation_id,
+                        ARRAY(SELECT row_to_json(sub)
+                              FROM (SELECT r2.role_type as role,
+                                           c.email as email,
+                                           r2.is_primary_contact
+                                              AS is_primary_contact,
+                                           %(managed)s AS managed
+                                     FROM role{0} r2
+                                     JOIN contact{0} c ON c.id = r2.contact_id
+                                    WHERE r2.organisation_id
+                                              = r.organisation_id) sub)
+                 FROM role r
+                 GROUP BY r.organisation_id),
+
+         -- All matched organisations as rows that can be easily
+         -- converted to JSON
+         org_json_rows (id, name, sector, contacts, annotations, managed)
+             AS (SELECT o.id as id, o.name as name, sector.name as sector,
+                        coalesce((SELECT oc.contacts
+                                  FROM org_contacts oc
+                                  WHERE oc.org_id = o.id),
+                                 ARRAY[] :: JSON[])
+                        AS contacts,
+                        coalesce(CASE WHEN %(extension)s = ''
+                                      THEN (SELECT json_agg(annotation)
+                                              FROM organisation_annotation ann
+                                             WHERE ann.organisation_id = o.id)
+                                 END,
+                                 ('[]' :: JSON))
+                        AS annotations,
+                        %(managed)s AS managed
+                  FROM organisation{0} o
+                  LEFT OUTER JOIN sector ON sector.id = o.sector_id
+                 WHERE o.id IN (select * FROM grouped_matches))
+
+      SELECT coalesce((SELECT json_agg(row_to_json(org_json_rows))
+                       FROM org_json_rows),
+                       '[]' :: JSON)
+             AS organisations,
+
+             coalesce((SELECT json_agg(row_to_json(asn_json_rows))
+                       FROM asn_json_rows),
+                       '[]' :: JSON)
+             AS asn_matches,
+
+             coalesce((SELECT json_agg(row_to_json(fqdn_json_rows))
+                      FROM fqdn_json_rows),
+                      '[]' :: JSON)
+             AS fqdn_matches,
+
+             coalesce((SELECT json_agg(row_to_json(network_json_rows))
+                       FROM network_json_rows),
+                       '[]' :: JSON)
+             AS network_matches
       """.format(table_extension),
-                {"asn": asn, "ip": ip, "fqdn": fqdn,
-                 "extension": table_extension})
-    return ((email, organisation, sector, matched,
-             maybe_parse_json(annotations))
-            for (email, organisation, sector, matched, annotations)
-            in cur.fetchall())
+                {"asn": asn, "fqdn": fqdn, "ip": ip,
+                 "managed": managed.name, "extension": table_extension})
+
+    org_result = cur.fetchone()
+    return {"organisations": maybe_parse_json(org_result[0]),
+            "matches": (maybe_parse_json(org_result[1])
+                        + maybe_parse_json(org_result[2])
+                        + maybe_parse_json(org_result[3]))}

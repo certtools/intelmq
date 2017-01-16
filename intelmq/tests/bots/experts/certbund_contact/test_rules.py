@@ -7,17 +7,50 @@ Testing rules
 
 import unittest
 
+from intelmq.lib.message import Event
+
 from intelmq.bots.experts.certbund_contact.rulesupport import \
-     Contact, most_specific_contacts
+     Context, keep_most_specific_contacts
+
+from intelmq.bots.experts.certbund_contact.eventjson import \
+     set_certbund_contacts
+
+
+def build_test_event(contact_descriptions, section):
+    """Build an empty event with contact info derived from contact_descriptions.
+    """
+    organisations = []
+    matches = []
+    for email, managed, fields in contact_descriptions:
+        orgid = len(organisations)
+        organisations.append({"annotations": [],
+                              "contacts": [{"email": email,
+                                            "is_primary_contact": True,
+                                            "managed": managed,
+                                            "role": "abuse-c",
+                                            }],
+                              "id": orgid,
+                              "managed": managed,
+                              "name": "Test Organisation %d" % (orgid,),
+                              "sector": None})
+        for field in fields:
+            matches.append({"field": field, "managed": managed,
+                            "organisations": [orgid], "address": None})
+
+    event = Event()
+    set_certbund_contacts(event, section,
+                          {"matches": matches, "organisations": organisations})
+    return event
 
 
 class TestMostSpecificContact(unittest.TestCase):
 
     def check(self, contact_descriptions, expected_emails):
-        contacts = [Contact(auto, email, "", matched_fields=fields)
-                    for email, auto, fields in contact_descriptions]
+        event = build_test_event(contact_descriptions, "source")
+        context = Context(event, "source")
+        keep_most_specific_contacts(context)
         self.assertEqual(sorted(c.email
-                                for c in most_specific_contacts(contacts)),
+                                for c in context.all_contacts()),
                          sorted(expected_emails))
 
     def test_manual_fqdn_only(self):
