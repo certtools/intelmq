@@ -66,7 +66,7 @@ Bot will not start, and terminate immediately. Nevertheless you will be informed
 * **Feed parameters** (see above)
 * **HTTP parameters** (see above)
 * `http_url`: location of HTTP streaming resource
-* `strip_lines`: boolean, if single lines should be stripped (removing whitespace)
+* `strip_lines`: boolean, if single lines should be stripped (removing whitespace from the beginning and the end of the line)
 
 
 * * *
