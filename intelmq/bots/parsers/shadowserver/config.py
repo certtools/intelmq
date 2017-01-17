@@ -110,7 +110,7 @@ def convert_int(value):
 
 
 def convert_float(value):
-    """ Returns an int or None for empty strings. """
+    """ Returns an float or None for empty strings. """
     if not value:
         return None
     else:
@@ -199,6 +199,7 @@ open_mdns = {
         'protocol.transport': 'udp',
         'protocol.application': 'mdns',
         'classification.type': 'vulnerable service',
+        'classification.taxonomy': 'Vulnerable',
         'classification.identifier': 'openmdns',
     }
 }
