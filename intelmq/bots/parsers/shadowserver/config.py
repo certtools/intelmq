@@ -40,6 +40,7 @@ TODOs:
     check if the mappings are correct.
 
 """
+import intelmq.lib.harmonization as harmonization
 
 
 def get_feed(feedname):
@@ -161,7 +162,14 @@ def validate_ip(value):
     """Remove "invalid" IP."""
     if value == '0.0.0.0':
         return None
-    return value
+    if harmonization.IPAddress.is_valid(value, sanitize=True):
+        return value
+
+
+def validate_fqdn(value):
+    if harmonization.FQDN.is_valid(value, sanitize=True):
+        return value
+
 
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-mDNS
 open_mdns = {
@@ -901,8 +909,8 @@ compromised_website = {
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
-        ('source.url', 'url'),
-        ('source.fqdn', 'http_host'),
+        ('source.url', 'url', convert_hostname_and_url, True),
+        ('source.fqdn', 'http_host', validate_fqdn),
         ('event_description.text', 'category'),
         ('extra.', 'system', validate_to_none),
         ('extra.', 'detected_since', validate_to_none),
@@ -1027,7 +1035,7 @@ sandbox_url = {
         ('malware.hash.md5', 'md5hash'),
         ('source.url', 'url'),
         ('extra.', 'user_agent', validate_to_none),
-        ('source.fqdn', 'host'),
+        ('source.fqdn', 'host', validate_fqdn),
         ('extra.', 'method', validate_to_none),
     ],
     'constant_fields': {
@@ -1085,7 +1093,7 @@ vulnerable_isakmp = {
         ('extra.', 'next_payload', convert_int),
         ('extra.', 'exchange_type', convert_int),
         ('extra.', 'flags', convert_int),
-        ('extra.', 'message_id', convert_int),
+        ('extra.', 'message_id'),
         ('extra.', 'next_payload2', convert_int),
         ('extra.', 'domain_of_interpretation', convert_int),
         ('extra.', 'protocol_id', convert_int),  # no data seen here yet
