@@ -29,6 +29,7 @@ Bot will not start, and terminate immediately. Nevertheless you will be informed
 * `http_verify_cert`: path to trusted CA bundle or directory, `false` to ignore verifying SSL certificates,  or `true` (default) to verify SSL certificates
 * `ssl_client_certificate`: SSL client certificate to use.
 * `http_header`: HTTP request headers
+* `http_timeout`: Seconds for read and connect timeout. Can be one float (applies for both timeouts) or a tuple of two floats. Default: 60 seconds. See also https://requests.readthedocs.io/en/master/user/advanced/#timeouts
 
 
 
@@ -68,6 +69,7 @@ Bot will not start, and terminate immediately. Nevertheless you will be informed
 * `http_url`: location of HTTP streaming resource
 * `strip_lines`: boolean, if single lines should be stripped (removing whitespace from the beginning and the end of the line)
 
+If the stream is interrupted, the connection will be aborted using the timeout parameter. Then, an error will be thrown and rate_limit applies if not null.
 
 * * *
 

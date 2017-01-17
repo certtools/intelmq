@@ -623,6 +623,8 @@ class CollectorBot(Bot):
         else:
             self.proxy = None
 
+        self.http_timeout = getattr(self.parameters, 'http_timeout', 60)
+
         self.http_header['User-agent'] = self.parameters.http_user_agent
 
 
