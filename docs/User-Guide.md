@@ -118,7 +118,7 @@ cp -a examples/* .
 
 * `defaults.conf`: default values for bots and their behavior, e.g.
 error handling, log options and pipeline configuration. Will be removed in the [future](https://github.com/certtools/intelmq/issues/267).
-* `runtime.conf`: Configuration for the individual bots.
+* `runtime.conf`: Configuration for the individual bots. See Bots.md for more details.
 * `pipeline.conf`: Defines source and destination queues per bot.
 * `BOTS`: Includes configuration hints for all bots. E.g. feed URLs or
 database connection parameters. Use this as a template for `runtime.conf`. Also read by the intelmq-manager.
@@ -273,7 +273,7 @@ This configuration is used by each bot to load the specific parameters associate
 }
 ```
 
-More examples can be found at `intelmq/etc/runtime.conf` directory in IntelMQ repository.
+More examples can be found at `intelmq/etc/runtime.conf` directory in IntelMQ repository. See Bots.md for more details.
 
 By default all of the bots are started when you start the whole botnet, however there is a possibility to *disable* a bot. This means that the bot will not start every time you start the botnet, but you can start and stop the bot if you specify the bot explicitly. To disable a bot, add the following to your runtime.conf: `"enabled": false`. For example: 
 
@@ -430,7 +430,35 @@ logged to /opt/intelmq/var/log/intelmqctl
 
 #### Botnet Concept
 
-The botnet represents all currently configured bots. To get an overview which bots are running, use `intelmqctl status`or use IntelMQ Manager.
+The botnet represents all currently configured bots which are not disabled. To get an overview which bots are running, use `intelmqctl status`or use IntelMQ Manager.
+
+Disabled bots can still be started explicitly, but are marked as disabled if stopped. They are not started by `intelmqctl start` in analogy to the behavior of widely used initialization systems.
+
+#### Oneshot bots
+
+In may cases it is useful to schedule a bot using cron or similar services. This can be used to fetch data once a day at a given time. To do this, set `enabled` to `false` in the `runtime.conf` for the bot and set `type` to `oneshot` (both outside the runtime parameters). E.g.:
+
+```json
+{
+    "json-parser": {
+        "parameters": {
+            "splitlines": false
+        },
+        "name": "JSON",
+        "group": "Parser",
+        "module": "intelmq.bots.parsers.json.parser",
+        "description": "JSON Parser converts from a JSON-String into an Event",
+		"enabled": false,
+		"type": "oneshot"
+    }
+}
+```
+
+You can now schedule the bot using cron, e.g:
+```
+0 7 * * * intelmq.bots.collectors.rt.collector rt-collector
+```
+
 
 #### Forcing reset pipeline and cache (be careful)
 

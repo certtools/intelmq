@@ -5,13 +5,48 @@
 3. [Experts](#experts)
 4. [Outputs](#outputs)
 
-By default all of the bots are started when you start the whole botnet, however there is a possibility to 
-*disable* a bot. This means that the bot will not start every time you start the botnet, but you can start 
-and stop the bot if you specify the bot explicitly. To disable a bot, add the following to your 
-`runtime.conf`: `"enabled": false`. Be aware that this is **not** a normal parameter (like the others 
-described in this file). It is set outside of the `parameters` object in `runtime.conf`. Check the 
-[User-Guide](./User-Guide.md) for an example.
+## General remarks
 
+There are two different types of parameters, the initialization parameters are need to start the bot. The runtime parameters are needed by the bot itself during runtime.
+
+The initialization parameters are in the first level, the runtime parameters live in the `parameters` sub-dictionary:
+
+```json
+{
+    "bot-id": {
+        "parameters": {
+            runtime parameters...
+        },
+        initialization parameters...
+    }
+}
+```
+For example:
+```json
+{
+    "json-parser": {
+        "parameters": {
+            "splitlines": false
+        },
+        "name": "JSON",
+        "group": "Parser",
+        "module": "intelmq.bots.parsers.json.parser",
+        "description": "JSON Parser converts from a JSON-String into an Event",
+        "enabled": false,
+        "type": "oneshot"
+    }
+}
+```
+
+This configration resides in the file `runtime.conf` in your intelmq's configuration directory.
+
+## Initialization parameters
+
+* `name` and `description`: The name and description of the bot as can be found in BOTS-file, not used by the bot itself.
+* `group`: Can be `"Collector"`, `"Parser"`, `"Expert"` or `"Output"`. Only used for visualization by other tools.
+* `module`: The executable (should be in `$PATH`) which will be started.
+* `enabled`: If the parameter is set to `True` (which is assumed as defaut if it is missing) the bot will start when the botnet is started (`intelmqctl start`). If the parameter was set to `False`, the Bot will not be started by intelmqctl. Check the [User-Guide](./User-Guide.md) for more details.
+* `type`: Can be "simple" (default) or "oneshot". In the first case, the bot will be running forever until stopped or exits because of errors (depending on configuration). In the latter case, the bot will stop after a successfull run and rate limiting won't be applied. This is especially useful when scheduling bots via cron.
 
 <a name="collectors"></a>
 ## Collectors
