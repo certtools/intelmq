@@ -9,11 +9,11 @@ Welcome to IntelMQ!
 
 |Build Status| |codecov.io|
 
-**IntelMQ** is a solution for CERTs for collecting and processing
-security feeds, pastebins, tweets and log files using a message queuing
+**IntelMQ** is a solution for IT security teams (CERTs, CSIRTs, abuse departments,...) 
+for collecting and processing security feeds (such as log files) using a message queuing
 protocol. It's a community driven initiative called **IHAP** (Incident
 Handling Automation Project) which was conceptually designed by European
-CERTs during several InfoSec events. Its main goal is to give to
+CERTs/CSIRTs during several InfoSec events. Its main goal is to give to
 incident responders an easy way to collect & process threat intelligence
 thus improving the incident handling processes of CERTs.
 
@@ -29,7 +29,7 @@ however it was re-written from scratch and aims at:
 -  Use JSON format for all messages
 -  Integration of the existing tools (AbuseHelper, CIF)
 -  Provide easy way to store data into Log Collectors like
-   ElasticSearch, Splunk
+   ElasticSearch, Splunk, databases (such as PostgreSQL)
 -  Provide easy way to create your own black-lists
 -  Provide easy communication with other systems via HTTP RESTFUL API
 
