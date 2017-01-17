@@ -378,7 +378,7 @@
             "module": "intelmq.bots.parsers.phishtank.parser",
             "parameters": {}
         },
-        "Pproxyspy": {
+        "Proxyspy": {
             "description": "Proxyspy Parser is the bot responsible to parse the Proxyspy report and sanitize the information.",
             "module": "intelmq.bots.parsers.proxyspy.parser",
             "parameters": {}
