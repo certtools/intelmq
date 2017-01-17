@@ -18,6 +18,10 @@ xmpp_server: string
 xmpp_password: boolean
 xmpp_to_user: string
 xmpp_to_server: string
+xmpp_room: string
+xmpp_room_nick: string
+xmpp_room_password: string
+use_muc: boolean
 """
 
 
@@ -27,8 +31,18 @@ try:
     import sleekxmpp
 
     class XMPPClient(sleekxmpp.ClientXMPP):
-        def __init__(self, jid, password, logger):
+        def __init__(self,
+                     jid,
+                     password,
+                     room,
+                     room_nick,
+                     room_password,
+                     logger):
             sleekxmpp.ClientXMPP.__init__(self, jid, password)
+
+            self.xmpp_room = room
+            self.xmpp_room_nick = room_nick
+            self.xmpp_room_password = room_password
 
             self.logger = logger
             self.logger.info("Connected to Server.")
@@ -48,51 +62,111 @@ try:
             except sleekxmpp.exceptions.IqTimeout:
                 self.logger.error('Server is taking too long to respond.')
                 self.disconnect()
+
+            self.logger.debug('Room:' + self.xmpp_room)
+
+            if self.xmpp_room:  # and self.plugin.get('xep_0045') # this check should also exist!
+                self.logger.debug("Joining room: %s." % self.xmpp_room)
+                pwd = self.xmpp_room_password if self.xmpp_room_password else ""
+                self.plugin['xep_0045'].joinMUC(self.xmpp_room,
+                                                self.xmpp_room_nick,
+                                                password=pwd,
+                                                wait=True)
+
 except ImportError:
     sleekxmpp = None
 
 
 class XMPPOutputBot(Bot):
+
+    xmpp = None
+
     def init(self):
         if sleekxmpp is None:
             self.logger.error('Could not import sleekxmpp. Please install it.')
             self.stop()
 
-        self.xmpp = XMPPClient(self.parameters.xmpp_user + '@' +
-                               self.parameters.xmpp_server,
-                               self.parameters.xmpp_password,
+        # Retrieve Parameters from configuration
+        xmpp_user = getattr(self.parameters, "xmpp_user", None)
+        xmpp_server = getattr(self.parameters, "xmpp_server", None)
+        xmpp_password = getattr(self.parameters, "xmpp_password", None)
+
+        if None in (xmpp_user, xmpp_server, xmpp_password):
+            self.logger.error('No User / Password provided')
+            self.stop()
+        else:
+            xmpp_login = xmpp_user + '@' + xmpp_server
+
+        self.muc = getattr(self.parameters, "use_muc", None)
+        xmpp_to_user = getattr(self.parameters, "xmpp_to_user", None)
+        xmpp_to_server = getattr(self.parameters, "xmpp_to_server", None)
+        xmpp_room = getattr(self.parameters, "xmpp_room", None) if self.muc else None
+        xmpp_room_nick = getattr(self.parameters, "xmpp_room_nick", None) if self.muc else None
+        xmpp_room_password = getattr(self.parameters, "xmpp_room_password", None) if self.muc else None
+
+        ca_certs = getattr(self.parameters, "ca_certs", None)
+
+        # Be sure the receiver was set up
+        if not self.muc and None in (xmpp_to_user, xmpp_to_server):
+            self.logger.error('No receiver for direct messages provided')
+            self.stop()
+        else:
+            self.xmpp_receiver = xmpp_to_user + '@' +\
+                xmpp_to_server
+
+        if self.muc and not xmpp_room:
+            self.logger.error('No room provided')
+            self.stop()
+        else:
+            self.xmpp_receiver = xmpp_room
+
+        if self.muc:
+            if not xmpp_room_nick:
+                # create the room_nick from user and server
+                xmpp_room_nick = xmpp_login
+
+        self.xmpp = XMPPClient(xmpp_login, xmpp_password,
+                               xmpp_room,
+                               xmpp_room_nick,
+                               xmpp_room_password,
                                self.logger)
-        if self.parameters.ca_certs:
-            self.xmpp.ca_certs = self.parameters.ca_certs
+
+        if ca_certs:
+            # Set CA-Certificates
+            self.xmpp.ca_certs = ca_certs
+
         self.xmpp.connect(reattempt=True)
         self.xmpp.process()
 
+        # Add Handlers and register Plugins
+        self.xmpp.register_plugin('xep_0030')  # Service Discovery
+        self.xmpp.register_plugin('xep_0045')  # Multi-User Chat
+
     def process(self):
         event = self.receive_message()
-
-        receiver = self.parameters.xmpp_to_user + '@' +\
-            self.parameters.xmpp_to_server
 
         jevent = event.to_json(hierarchical=self.parameters.hierarchical_output,
                                with_type=True)
 
         try:
-            # TODO: proper error handling. Right now it cannot be
-            # detected if the message was sent successfully.
-            self.logger.debug("Trying to send Event: %r to %r." % (jevent, receiver))
-            self.xmpp.send_message(mto=receiver, mbody=jevent)
+            # TODO: proper error handling.
+            # Right now it cannot be detected if the message was sent successfully.
+            if self.muc:
+                self.logger.debug("Trying to send to room %s." % self.xmpp_receiver)
+                self.xmpp.send_message(mto=self.xmpp_receiver, mbody=jevent, mtype='groupchat')
+            else:
+                self.logger.debug("Trying to send to %s." % (self.xmpp_receiver))
+                self.xmpp.send_message(mto=self.xmpp_receiver, mbody=jevent)
         except sleekxmpp.exceptions.XMPPError as err:
             self.logger.error('There was an error when sending the event.')
             self.logger.error(err.iq['error']['condition'])
 
         self.acknowledge_message()
 
-    def stop(self):
+    def shutdown(self):
         if self.xmpp:
             self.xmpp.disconnect()
             self.logger.info("Disconnected from XMPP.")
-
-            super(XMPPOutputBot, self).stop()
         else:
             self.logger.info("There was no XMPPClient I could stop.")
 

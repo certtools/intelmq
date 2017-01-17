@@ -21,6 +21,10 @@ xmpp_password: boolean
 xmpp_room: string
 xmpp_room_password: string
 xmpp_room_nick: string
+pass_full_xml: boolean
+strip_message: boolean
+xmpp_userlist: array
+xmpp_whitelist_mode: boolean
 """
 
 
@@ -61,7 +65,7 @@ try:
                 self.logger.error('Server is taking too long to respond.')
                 self.disconnect()
 
-            if self.xmpp_room and self.plugin.get('xep_0045'):
+            if self.xmpp_room:  # and self.plugin.get('xep_0045') # this check should also exist!
                 self.logger.debug("Joining room: %s." % self.xmpp_room)
                 pwd = self.xmpp_room_password if self.xmpp_room_password else ""
                 self.plugin['xep_0045'].joinMUC(self.xmpp_room,
@@ -81,39 +85,90 @@ class XMPPCollectorBot(CollectorBot):
             self.logger.error('Could not import sleekxmpp. Please install it.')
             self.stop()
 
+        # Retrieve Parameters from configuration
+        xmpp_user = getattr(self.parameters, "xmpp_user", None)
+        xmpp_server = getattr(self.parameters, "xmpp_server", None)
+        xmpp_password = getattr(self.parameters, "xmpp_password", None)
+
+        if None in (xmpp_user, xmpp_server, xmpp_password):
+            self.logger.error('No User / Password provided')
+            self.stop()
+        else:
+            xmpp_login = xmpp_user + '@' + xmpp_server
+
+        self.userlist = getattr(self.parameters, "xmpp_userlist", [])
+        # When configured in manager this is most likely a ,-separated string, we'd like an array
+        if type(self.userlist) is str:
+            self.userlist = [u.strip() for u in self.userlist.split(",")]
+
+        self.whitelist_mode = getattr(self.parameters, "xmpp_whitelist_mode", False)
+
+        self.muc = getattr(self.parameters, "use_muc", None)
+        xmpp_room = getattr(self.parameters, "xmpp_room", None) if self.muc else None
+        xmpp_room_nick = getattr(self.parameters, "xmpp_room_nick", None) if self.muc else None
+        xmpp_room_password = getattr(self.parameters, "xmpp_room_password", None) if self.muc else None
+
+        self.pass_full_xml = getattr(self.parameters, "pass_full_xml", None)
+        self.strip_message = getattr(self.parameters, "strip_message", None)
+
+        ca_certs = getattr(self.parameters, "ca_certs", None)
+
+        if self.muc and not xmpp_room:
+            self.logger.error('No room provided')
+            self.stop()
+
+        if self.muc:
+            if not xmpp_room_nick:
+                # create the room_nick from user and server
+                xmpp_room_nick = xmpp_login
+
+        self.xmpp = XMPPClient(xmpp_login, xmpp_password,
+                               xmpp_room,
+                               xmpp_room_nick,
+                               xmpp_room_password,
+                               self.logger)
+
+        if ca_certs:
+            # Set CA-Certificates
+            self.xmpp.ca_certs = ca_certs
+
+        self.xmpp.connect(reattempt=True)
+        self.xmpp.process()
+
+        # Add Handlers and register Plugins
+        self.xmpp.register_plugin('xep_0030')  # Service Discovery
+        self.xmpp.register_plugin('xep_0045')  # Multi-User Chat
+
+        self.xmpp.add_event_handler("message", self.log_message)
+
     def process(self):
-        if self.xmpp is None:
-            self.xmpp = XMPPClient(self.parameters.xmpp_user + '@' +
-                                   self.parameters.xmpp_server,
-                                   self.parameters.xmpp_password,
-                                   self.parameters.xmpp_room,
-                                   self.parameters.xmpp_room_nick,
-                                   self.parameters.xmpp_room_password,
-                                   self.logger)
-            if self.parameters.ca_certs:
-                self.xmpp.ca_certs = self.parameters.ca_certs
-            self.xmpp.connect(reattempt=True)
-            self.xmpp.process()
+        # Processing is done by function called from the eventhandler...
+        pass
 
-            # Add Handlers and register Plugins
-            self.xmpp.register_plugin('xep_0030')  # Service Discovery
-            self.xmpp.register_plugin('xep_0045')  # Multi-User Chat
-            self.xmpp.add_event_handler("message", self.log_message)
-
-    def stop(self):
+    def shutdown(self):
         if self.xmpp:
             self.xmpp.disconnect()
             self.logger.info("Disconnected from XMPP.")
-
-            super(XMPPCollectorBot, self).stop()
         else:
             self.logger.info("There was no XMPPClient I could stop.")
 
     def log_message(self, msg):
-        if self.parameters.pass_full_xml:
+
+        # Check if the message was sent by a users that is on
+        # the white or blacklist, determine if the message shall
+        # be processed.
+        if self.muc:
+            if not msg['mucnick'] in self.userlist and self.whitelist_mode:
+                # Whitelist-Case
+                return
+            elif msg['mucnick'] in self.userlist and not self.whitelist_mode:
+                # Blacklist Case
+                return
+
+        if self.pass_full_xml:
             body = str(msg)
         else:
-            if self.parameters.strip_message:
+            if self.strip_message:
                 body = msg['body'].strip()
             else:
                 body = msg['body']
