@@ -19,6 +19,7 @@
       * [Web interface: IntelMQ Manager](#web-interface-intelmq-manager)
       * [Command-line interface: intelmqctl](#command-line-interface-intelmqctl)
         * [Botnet Concept](#botnet-concept)
+        * [Oneshot bots](#oneshot-bots)
         * [Forcing reset pipeline and cache (be careful)](#forcing-reset-pipeline-and-cache-be-careful)
     * [Error Handling](#error-handling-1)
       * [Tool: intelmqdump](#tool-intelmqdump)
@@ -430,34 +431,43 @@ logged to /opt/intelmq/var/log/intelmqctl
 
 #### Botnet Concept
 
-The botnet represents all currently configured bots which are not disabled. To get an overview which bots are running, use `intelmqctl status`or use IntelMQ Manager.
+The botnet represents all currently configured bots which are not explicitly disabled. To get an overview which bots are running, use `intelmqctl status` or use IntelMQ Manager. Set `"disabled": true` in the runtime configuration to disable a bot. By default, all configured bots are enabled. See [Bots](Bots.md) for more details on configuration.
 
-Disabled bots can still be started explicitly, but are marked as disabled if stopped. They are not started by `intelmqctl start` in analogy to the behavior of widely used initialization systems.
+Disabled bots can still be started explicitly using `intelmqctl start bot-id`, but are marked as disabled if stopped. They are not started by `intelmqctl start` in analogy to the behavior of widely used initialization systems.
+
+Use this for some bots which are tempoarily disabled or in conjunction with the oneshot type, see the section below.
 
 #### Oneshot bots
 
-In may cases it is useful to schedule a bot using cron or similar services. This can be used to fetch data once a day at a given time. To do this, set `enabled` to `false` in the `runtime.conf` for the bot and set `type` to `oneshot` (both outside the runtime parameters). E.g.:
+In many cases it is useful to schedule a bot using cron or similar services. This can be used to fetch data once a day at a fixed time. To do this, set `enabled` to `false` (see section above) and `type` to `oneshot`  in the `runtime.conf` for the bot (both outside the runtime parameters). E.g.:
 
 ```json
-{
-    "json-parser": {
-        "parameters": {
-            "splitlines": false
-        },
-        "name": "JSON",
-        "group": "Parser",
-        "module": "intelmq.bots.parsers.json.parser",
-        "description": "JSON Parser converts from a JSON-String into an Event",
-		"enabled": false,
-		"type": "oneshot"
-    }
-}
+"blocklistde-apache": {
+    "description": "All IP addresses which have been reported within the last 48 hours as having run attacks on the service Apache, Apache-DDOS, RFI-Attacks.",
+	"enabled": false,
+    "module": "intelmq.bots.collectors.http.collector_http",
+    "parameters": {
+        "feed": "Blocklist.de Apache",
+        "provider": "Blocklist.de",
+        "http_url": "https://lists.blocklist.de/lists/apache.txt",
+        "ssl_client_certificate": null
+    },
+	"type": "oneshot"
+},
 ```
 
-You can now schedule the bot using cron, e.g:
+You can now schedule the bot using cron for the user intelmq, e.g:
 ```
-0 7 * * * intelmq.bots.collectors.rt.collector rt-collector
+0 7 * * * intelmqctl start blocklistde-apache
 ```
+
+Oneshot bots exit after the first successful run.
+
+As opposed to the rate limiting approach, scheduling via cron has several advantages:
+ * Unaffected by `intelmqctl restart` which would trigger all collector and then fetching data leading to more load, traffic and possibly duplicate data.
+ * No idling processes.
+ * Easy monitoring via cron. If the bot fails, the exitcode is non-zero and cron will alert you automatically.
+ * The bot will run at a fixed time, thus the data is available for sure. Using rate limiting, the execution time depends on the initial starting time and the time needed to run the bot.
 
 
 #### Forcing reset pipeline and cache (be careful)

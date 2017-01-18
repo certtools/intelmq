@@ -7,7 +7,7 @@
 
 ## General remarks
 
-There are two different types of parameters, the initialization parameters are need to start the bot. The runtime parameters are needed by the bot itself during runtime.
+There are two different types of parameters: The initialization parameters are need to start the bot. The runtime parameters are needed by the bot itself during runtime.
 
 The initialization parameters are in the first level, the runtime parameters live in the `parameters` sub-dictionary:
 
@@ -38,15 +38,15 @@ For example:
 }
 ```
 
-This configration resides in the file `runtime.conf` in your intelmq's configuration directory.
+This configration resides in the file `runtime.conf` in your intelmq's configuration directory for each configured bot.
 
 ## Initialization parameters
 
 * `name` and `description`: The name and description of the bot as can be found in BOTS-file, not used by the bot itself.
 * `group`: Can be `"Collector"`, `"Parser"`, `"Expert"` or `"Output"`. Only used for visualization by other tools.
 * `module`: The executable (should be in `$PATH`) which will be started.
-* `enabled`: If the parameter is set to `True` (which is assumed as defaut if it is missing) the bot will start when the botnet is started (`intelmqctl start`). If the parameter was set to `False`, the Bot will not be started by intelmqctl. Check the [User-Guide](./User-Guide.md) for more details.
-* `type`: Can be "simple" (default) or "oneshot". In the first case, the bot will be running forever until stopped or exits because of errors (depending on configuration). In the latter case, the bot will stop after a successfull run and rate limiting won't be applied. This is especially useful when scheduling bots via cron.
+* `enabled`: If the parameter is set to `True` (which is assumed as defaut if it is missing) the bot will start when the botnet is started (`intelmqctl start`). If the parameter was set to `False`, the Bot will not be started by `intelmqctl start`. Check the [User-Guide](./User-Guide.md) section 'Botnet concept' for more details.
+* `type`: Can be "simple" (default) or "oneshot". In the first case, the bot will be running forever until stopped or exits because of errors (depending on configuration). In the latter case, the bot will stop after a successfull run and rate limiting won't be applied. This is especially useful when scheduling bots via cron. Check the [User-Guide](./User-Guide.md) section 'Oneshot Bots' for more details.
 
 <a name="collectors"></a>
 ## Collectors
