@@ -1,0 +1,7 @@
+Proxy list updated at Thu, 08 Dec 16 13:55:02 +0300
+IP address:Port Country-Anonymity(Noa/Anm/Hia)-SSL_support(S)-Google_passed(+)
+
+178.253.217.131:6666 RS-N-S + 
+96.234.43.134:80 US-H -
+
+Free HTTP/HTTPS(SSL) proxy list only. Text format. Updated hourly.
