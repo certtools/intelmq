@@ -3,7 +3,6 @@ from urllib.parse import urlparse
 
 from intelmq.lib import utils
 from intelmq.lib.bot import ParserBot
-from intelmq.lib.harmonization import IPAddress
 
 
 class VXVaultParserBot(ParserBot):
@@ -29,9 +28,7 @@ class VXVaultParserBot(ParserBot):
 
         event = self.new_event(report)
 
-        if IPAddress.is_valid(hostname):
-            event.add("source.ip", hostname)
-        else:
+        if not event.add("source.ip", hostname, raise_failure=False):
             event.add("source.fqdn", hostname)
 
         event.add('classification.type', 'malware')

@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 import socket
-import sys
 
-import intelmq.lib.harmonization
 from intelmq.lib.bot import Bot
 
 
@@ -19,8 +17,7 @@ class GethostbynameExpertBot(Bot):
             if key_ip in event:
                 continue
             ip = socket.gethostbyname(event.get(key_fqdn))
-            if intelmq.lib.harmonization.IPAddress.is_valid(ip, sanitize=True):
-                event.add(key_ip, ip, sanitize=True)
+            event.add(key_ip, ip, raise_failure=False)
 
         self.send_message(event)
         self.acknowledge_message()

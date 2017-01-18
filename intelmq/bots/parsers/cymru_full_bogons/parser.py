@@ -5,7 +5,6 @@ import dateutil
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.harmonization import IPAddress
 
 
 class CymruFullBogonsParserBot(Bot):
@@ -30,9 +29,7 @@ class CymruFullBogonsParserBot(Bot):
 
             event = self.new_event(report)
 
-            if IPAddress.is_valid(val):
-                event.add('source.ip', val)
-            else:
+            if not event.add('source.ip', val, raise_failure=False):
                 event.add('source.network', val)
 
             event.add('time.source', time)

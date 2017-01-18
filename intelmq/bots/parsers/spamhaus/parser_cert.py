@@ -24,7 +24,6 @@ local_port, protocol
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.exceptions import InvalidValue
 from intelmq.lib.harmonization import DateTime
 
 __all__ = ['SpamhausCERTParserBot']
@@ -52,10 +51,8 @@ class SpamhausCERTParserBot(Bot):
             event.add('time.source',
                       DateTime.from_timestamp(int(row_splitted[3])))
             event.add('malware.name', row_splitted[4].lower())
-            try:
-                event.add('destination.fqdn', row_splitted[5])
-            except InvalidValue:
-                pass  # otherwise the same ip, ignore
+            # otherwise the same ip, ignore
+            event.add('destination.fqdn', row_splitted[5], raise_failure=False)
             event.add('destination.ip', row_splitted[6])
             event.add('destination.port', row_splitted[7])
             if row_splitted[8] and row_splitted[8] != '-':

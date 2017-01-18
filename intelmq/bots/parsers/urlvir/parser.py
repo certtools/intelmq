@@ -4,7 +4,6 @@
 import dateutil.parser
 
 from intelmq.lib.bot import ParserBot
-from intelmq.lib.harmonization import IPAddress
 
 
 class URLVirParserBot(ParserBot):
@@ -13,8 +12,6 @@ class URLVirParserBot(ParserBot):
     HOST_FEED = {'http://www.urlvir.com/export-hosts/'}
 
     def parse_line(self, line, report):
-        lastgenerated = None
-
         if line.startswith('#') or len(line) == 0:
             self.tempdata.append(line)
             if '#Updated on' in line:
@@ -35,7 +32,7 @@ class URLVirParserBot(ParserBot):
                 event.add('event_description.url', 'http://www.urlvir.com/search-ip-address/' + value + '/')
 
             elif report['feed.url'] in URLVirParserBot.HOST_FEED:
-                if IPAddress.is_valid(value):
+                if event.is_valid('source.ip', value):
                     event.add('source.ip', value)
                     event.add('event_description.url', 'http://www.urlvir.com/search-ip-address/' + value + '/')
                 else:
