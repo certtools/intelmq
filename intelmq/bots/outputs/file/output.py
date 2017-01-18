@@ -13,12 +13,16 @@ class FileOutputBot(Bot):
 
     def process(self):
         event = self.receive_message()
-
         event_data = event.to_json(hierarchical=self.parameters.hierarchical_output)
-        self.file.write(event_data)
-        self.file.write("\n")
-        self.file.flush()
-        self.acknowledge_message()
+
+        try:
+            self.file.write(event_data)
+            self.file.write("\n")
+            self.file.flush()
+        except FileNotFoundError:
+            self.init()
+        else:
+            self.acknowledge_message()
 
 
 BOT = FileOutputBot
