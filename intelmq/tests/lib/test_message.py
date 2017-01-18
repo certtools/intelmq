@@ -293,11 +293,11 @@ class TestMessageFactory(unittest.TestCase):
         report.change('feed.name', 'Example 2')
         self.assertEqual('Example 2', report['feed.name'])
 
-    def test_report_contains(self):
-        """ Test report value contains function. """
+    def test_report_in(self):
+        """ Test report value in function. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         report.add('feed.name', 'Example 1')
-        self.assertTrue(report.contains('feed.name'))
+        self.assertTrue('feed.name' in report)
 
     def test_report_change_duplicate(self):
         """ Test report value change function, rejects duplicate. """
