@@ -34,7 +34,7 @@ class AbusixExpertBot(Bot):
                 ip = event.get(ip_key)
                 email = self.lookup(ip)
                 if email:
-                    event.add(abuse_contact_key, email, force=True)
+                    event.add(abuse_contact_key, email, overwrite=True)
 
         self.send_message(event)
         self.acknowledge_message()

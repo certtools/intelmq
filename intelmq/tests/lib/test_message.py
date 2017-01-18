@@ -206,7 +206,7 @@ class TestMessageFactory(unittest.TestCase):
         """ Test if report can add raw value. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         report.add('raw', LOREM_BASE64, sanitize=False)
-        report.add('raw', DOLOR_BASE64, force=True, sanitize=False)
+        report.add('raw', DOLOR_BASE64, overwrite=True, sanitize=False)
         self.assertDictContainsSubset({'raw': DOLOR_BASE64},
                                       report)
 
@@ -370,7 +370,7 @@ class TestMessageFactory(unittest.TestCase):
         event1 = self.add_event_examples(event)
         event2 = event1.deep_copy()
         event2.add('time.observation', '2015-12-12T13:37:50+01:00',
-                   force=True, sanitize=True)
+                   overwrite=True, sanitize=True)
         self.assertEqual(hash(event1), hash(event2))
 
     def test_event_hash_fixed(self):
@@ -379,7 +379,7 @@ class TestMessageFactory(unittest.TestCase):
         event1 = self.add_event_examples(event)
         event2 = event1.deep_copy()
         event2.add('time.observation', '2015-12-12T13:37:50+01:00',
-                   force=True, sanitize=True)
+                   overwrite=True, sanitize=True)
         self.assertEqual(event1.hash(),
                          'd04aa050afdc58a39329c78c3b59ce6fb6f11effe180fe8084b4f1e89007de71')
 
@@ -389,7 +389,7 @@ class TestMessageFactory(unittest.TestCase):
         event1 = self.add_event_examples(event)
         event2 = event1.deep_copy()
         event2.add('time.observation', '2015-12-12T13:37:50+01:00',
-                   force=True, sanitize=True)
+                   overwrite=True, sanitize=True)
         self.assertEqual(event1.hash(), event2.hash())
 
     def test_event_hash_method_blacklist(self):
@@ -398,8 +398,8 @@ class TestMessageFactory(unittest.TestCase):
         event1 = self.add_event_examples(event)
         event2 = event1.deep_copy()
         event2.add('time.observation', '2015-12-12T13:37:50+01:00',
-                   force=True, sanitize=True)
-        event2.add('feed.name', 'Some Other Feed', force=True, sanitize=True)
+                   overwrite=True, sanitize=True)
+        event2.add('feed.name', 'Some Other Feed', overwrite=True, sanitize=True)
         # The feed.name is usually taken into account:
         self.assertNotEqual(event1.hash(), event2.hash())
         # But not if we blacklist it (time.observation does not have to

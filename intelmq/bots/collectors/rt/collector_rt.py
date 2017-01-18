@@ -81,7 +81,7 @@ class RTCollectorBot(CollectorBot):
             report = self.new_report()
             report.add("raw", raw, sanitize=True)
             report.add("rtir_id", ticket_id, sanitize=True)
-            report.add("time.observation", created + ' UTC', force=True)
+            report.add("time.observation", created + ' UTC', overwrite=True)
             self.send_message(report)
 
             if self.parameters.take_ticket:

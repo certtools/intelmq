@@ -41,18 +41,18 @@ class GeoIPExpertBot(Bot):
 
                 if info.country.iso_code:
                     event.add(geo_key % "cc", info.country.iso_code,
-                              force=True)
+                              overwrite=True)
 
                 if info.location.latitude:
                     event.add(geo_key % "latitude", info.location.latitude,
-                              force=True)
+                              overwrite=True)
 
                 if info.location.longitude:
                     event.add(geo_key % "longitude", info.location.longitude,
-                              force=True)
+                              overwrite=True)
 
                 if info.city.name:
-                    event.add(geo_key % "city", info.city.name, force=True)
+                    event.add(geo_key % "city", info.city.name, overwrite=True)
 
             except geoip2.errors.AddressNotFoundError:
                 pass

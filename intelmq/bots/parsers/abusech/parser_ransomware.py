@@ -38,7 +38,7 @@ class AbuseCHRansomwaretrackerParserBot(Bot):
                         ev = Event(report)
                         ev.add('classification.identifier', nrow[2].lower())
                         ev.add('classification.type', 'c&c')
-                        ev.add('time.source', nrow[0] + ' UTC', force=True)
+                        ev.add('time.source', nrow[0] + ' UTC', overwrite=True)
                         ev.add('status', nrow[5])
                         ev.add('source.ip', nrow[7])
                         ev.add('raw', ','.join(nrow))

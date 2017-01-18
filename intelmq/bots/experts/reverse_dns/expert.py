@@ -77,7 +77,7 @@ class ReverseDnsExpertBot(Bot):
                                    ttl=int(ttl.total_seconds()))
 
             if result is not None:
-                event.add(key % 'reverse_dns', str(result), force=True)
+                event.add(key % 'reverse_dns', str(result), overwrite=True)
 
         self.send_message(event)
         self.acknowledge_message()

@@ -41,9 +41,9 @@ class ASNLookupExpertBot(Bot):
 
             if info:
                 if info[0]:
-                    event.add(asn_key, str(info[0]), force=True)
+                    event.add(asn_key, str(info[0]), overwrite=True)
                 if info[1]:
-                    event.add(bgp_key, str(info[1]), force=True)
+                    event.add(bgp_key, str(info[1]), overwrite=True)
 
         self.send_message(event)
         self.acknowledge_message()

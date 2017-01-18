@@ -42,7 +42,7 @@ class RIPENCCExpertBot(Bot):
             if self.query_stat_ip and ip:
                 abuse.extend(lib.query_ripestat(ip))
 
-            event.add(abuse_key, ','.join(filter(None, set(abuse))), force=True)
+            event.add(abuse_key, ','.join(filter(None, set(abuse))), overwrite=True)
 
         self.send_message(event)
         self.acknowledge_message()

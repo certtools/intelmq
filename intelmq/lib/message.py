@@ -227,7 +227,7 @@ class Message(dict):
     def change(self, key, value, sanitize=True):
         if key not in self:
             raise exceptions.KeyNotExists(key)
-        self.add(key, value, force=True, sanitize=sanitize)
+        self.add(key, value, overwrite=True, sanitize=sanitize)
 
     def contains(self, key):
         warnings.warn('The contains-method will be removed in 1.0.',
