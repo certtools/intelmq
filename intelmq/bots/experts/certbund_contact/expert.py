@@ -12,15 +12,15 @@ class CERTBundKontaktExpertBot(Bot):
 
     def init(self):
         try:
-            self.logger.debug("Trying to connect to database")
+            self.logger.debug("Trying to connect to database.")
             self.connect_to_database()
         except:
-            self.logger.exception("Failed to connect to database")
+            self.logger.exception("Failed to connect to database!")
             self.stop()
 
     def connect_to_database(self):
         self.logger.debug("Connecting to PostgreSQL: database=%r, user=%r, "
-                          "host=%r, port=%r, sslmode=%r",
+                          "host=%r, port=%r, sslmode=%r.",
                           self.parameters.database, self.parameters.user,
                           self.parameters.host, self.parameters.port,
                           self.parameters.sslmode)
@@ -31,10 +31,10 @@ class CERTBundKontaktExpertBot(Bot):
                                     password=self.parameters.password,
                                     sslmode=self.parameters.sslmode)
         self.con.autocommit = True
-        self.logger.debug("Connected to PostgreSQL")
+        self.logger.debug("Connected to PostgreSQL.")
 
     def process(self):
-        self.logger.debug("Calling receive_message")
+        self.logger.debug("Calling receive_message.")
         event = self.receive_message()
 
         if event is None:
@@ -65,7 +65,7 @@ class CERTBundKontaktExpertBot(Bot):
         return result
 
     def lookup_contact(self, ip, fqdn, asn):
-        self.logger.debug("Looking up ip: %r, fqdn: %r, asn: %r", ip, fqdn, asn)
+        self.logger.debug("Looking up ip: %r, fqdn: %r, asn: %r.", ip, fqdn, asn)
         try:
             cur = self.con.cursor()
             try:
