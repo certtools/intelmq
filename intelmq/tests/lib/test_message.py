@@ -253,7 +253,7 @@ class TestMessageFactory(unittest.TestCase):
     def test_report_sanitize_url(self):
         """ Test if report sanitizes an URL. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
-        report.add('feed.url', URL_UNSANE, sanitize=True)
+        report.add('feed.url', URL_UNSANE)
         self.assertEqual(URL_SANE, report['feed.url'])
 
     def test_report_invalid_url(self):
@@ -271,7 +271,7 @@ class TestMessageFactory(unittest.TestCase):
     def test_report_sanitize_accuracy(self):
         """ Test if report sanitizes the accuracy parameter. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
-        report.add('feed.accuracy', ACCURACY_UNSANE, sanitize=True)
+        report.add('feed.accuracy', ACCURACY_UNSANE)
         self.assertEqual(ACCURACY_SANE, report['feed.accuracy'])
 
     def test_report_invalid_accuracy(self):
@@ -284,7 +284,7 @@ class TestMessageFactory(unittest.TestCase):
         """ Test if report raises error when invalid after sanitize. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         with self.assertRaises(exceptions.InvalidValue):
-            report.add('feed.name', '\r\n', sanitize=True)
+            report.add('feed.name', '\r\n')
 
     def test_report_change(self):
         """ Test report value change function. """
@@ -370,7 +370,7 @@ class TestMessageFactory(unittest.TestCase):
         event1 = self.add_event_examples(event)
         event2 = event1.deep_copy()
         event2.add('time.observation', '2015-12-12T13:37:50+01:00',
-                   overwrite=True, sanitize=True)
+                   overwrite=True)
         self.assertEqual(hash(event1), hash(event2))
 
     def test_event_hash_fixed(self):
@@ -379,7 +379,7 @@ class TestMessageFactory(unittest.TestCase):
         event1 = self.add_event_examples(event)
         event2 = event1.deep_copy()
         event2.add('time.observation', '2015-12-12T13:37:50+01:00',
-                   overwrite=True, sanitize=True)
+                   overwrite=True)
         self.assertEqual(event1.hash(),
                          'd04aa050afdc58a39329c78c3b59ce6fb6f11effe180fe8084b4f1e89007de71')
 
@@ -389,7 +389,7 @@ class TestMessageFactory(unittest.TestCase):
         event1 = self.add_event_examples(event)
         event2 = event1.deep_copy()
         event2.add('time.observation', '2015-12-12T13:37:50+01:00',
-                   overwrite=True, sanitize=True)
+                   overwrite=True)
         self.assertEqual(event1.hash(), event2.hash())
 
     def test_event_hash_method_blacklist(self):
@@ -398,8 +398,8 @@ class TestMessageFactory(unittest.TestCase):
         event1 = self.add_event_examples(event)
         event2 = event1.deep_copy()
         event2.add('time.observation', '2015-12-12T13:37:50+01:00',
-                   overwrite=True, sanitize=True)
-        event2.add('feed.name', 'Some Other Feed', overwrite=True, sanitize=True)
+                   overwrite=True)
+        event2.add('feed.name', 'Some Other Feed', overwrite=True)
         # The feed.name is usually taken into account:
         self.assertNotEqual(event1.hash(), event2.hash())
         # But not if we blacklist it (time.observation does not have to

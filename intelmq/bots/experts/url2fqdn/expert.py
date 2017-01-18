@@ -22,7 +22,7 @@ class Url2fqdnExpertBot(Bot):
                 continue
 
             hostname = urlparse(event.get(key_url)).hostname
-            event.add(key_fqdn, hostname, sanitize=True, overwrite=True, raise_failure=False)
+            event.add(key_fqdn, hostname, overwrite=True, raise_failure=False)
 
         self.send_message(event)
         self.acknowledge_message()
