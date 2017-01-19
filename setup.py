@@ -62,7 +62,7 @@ setup(
     url='https://github.com/certtools/intelmq/',
     license='AGPLv3',
     description='IntelMQ is a solution for IT security teams for collecting and '
-                'processing security feeds throught a message queue.',
+                'processing security feeds using message queues.',
     long_description=open(os.path.join(os.path.dirname(__file__),
                                        'docs/README.rst')).read(),
     classifiers=[
