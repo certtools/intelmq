@@ -5,9 +5,13 @@
 3. [Experts](#experts)
 4. [Outputs](#outputs)
 
-All Bots can be extended with an `enabled` parameter in `runtime.conf`. If the parameter is set to `True`
-(which is assumed as defaut if it is missing) the bot will start. If the parameter was set to `False`, the
-Bot will not start, and terminate immediately. Nevertheless you will be informed about this in the bots' log file.
+By default all of the bots are started when you start the whole botnet, however there is a possibility to 
+*disable* a bot. This means that the bot will not start every time you start the botnet, but you can start 
+and stop the bot if you specify the bot explicitly. To disable a bot, add the following to your 
+`runtime.conf`: `"enabled": false`. Be aware that this is **not** a normal parameter (like the others 
+described in this file). It is set outside of the `parameters` object in `runtime.conf`. Check the 
+[User-Guide](./User-Guide.md) for an example.
+
 
 <a name="collectors"></a>
 ## Collectors

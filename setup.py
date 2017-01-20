@@ -66,8 +66,8 @@ setup(
     include_package_data=True,
     url='https://github.com/certtools/intelmq/',
     license='AGPLv3',
-    description='IntelMQ is a solution for CERTs to process data feeds, '
-                'pastebins, tweets throught a message queue.',
+    description='IntelMQ is a solution for IT security teams for collecting and '
+                'processing security feeds using a message queuing protocol.',
     long_description=open(os.path.join(os.path.dirname(__file__),
                                        'docs/README.rst')).read(),
     classifiers=[
@@ -82,6 +82,7 @@ setup(
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
         'Topic :: Security',
     ],
     keywords='incident handling cert csirt',

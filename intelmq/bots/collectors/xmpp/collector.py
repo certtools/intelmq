@@ -108,7 +108,7 @@ class XMPPCollectorBot(CollectorBot):
         xmpp_room_nick = getattr(self.parameters, "xmpp_room_nick", None) if self.muc else None
         xmpp_room_password = getattr(self.parameters, "xmpp_room_password", None) if self.muc else None
 
-        self.full_xml = getattr(self.parameters, "pass_full_xml", None)
+        self.pass_full_xml = getattr(self.parameters, "pass_full_xml", None)
         self.strip_message = getattr(self.parameters, "strip_message", None)
 
         ca_certs = getattr(self.parameters, "ca_certs", None)
@@ -165,7 +165,7 @@ class XMPPCollectorBot(CollectorBot):
                 # Blacklist Case
                 return
 
-        if self.full_xml:
+        if self.pass_full_xml:
             body = str(msg)
         else:
             if self.strip_message:

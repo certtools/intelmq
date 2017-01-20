@@ -5,7 +5,7 @@ v1.0 (in development, master branch)
 ----
 
 ### General changes
-- Dropped support for Python 2
+- Dropped support for Python 2, Python >= 3.3 is needed
 - Dropped startup.conf and system.conf. Sections in BOTS can be copied directly yo runtime.conf now.
 
 ### Bot changes

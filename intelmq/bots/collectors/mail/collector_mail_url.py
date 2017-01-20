@@ -38,7 +38,7 @@ class MailURLCollectorBot(CollectorBot):
 
                 if (self.parameters.subject_regex and
                         not re.search(self.parameters.subject_regex,
-                                      message.subject)):
+                                      re.sub("\r\n\s", " ", message.subject))):
                     continue
 
                 for body in message.body['plain']:

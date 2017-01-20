@@ -31,6 +31,7 @@ The available feeds are grouped by the source of the feeds. For each feed the co
 - [OpenBL](#openbl)
 - [OpenPhish](#openphish)
 - [PhishTank](#phishtank)
+- [Proxyspy](#proxyspy)
 - [Shadowserver](#shadowserver)
 - [Spamhaus](#spamhaus)
 - [Taichung](#taichung)
@@ -669,6 +670,19 @@ Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
   * http_url: https://data.phishtank.com/data/{{ your API key }}/online-valid.csv
 
 Parser: PhishTank (`intelmq.bots.parsers.phishtank.parser`)
+
+
+## Proxyspy
+
+Status: Unknown
+
+Collector: Generic URL Fetcher (`intelmq.bots.collectors.http.collector_http`)
+  * http_url: http://txt.proxyspy.net/proxy.txt
+
+Parser: Proxyspy (`intelmq.bots.parsers.proxyspy.parser`)
+
+This feed provides IP addresses, ports and country codes for available proxies.  Feed is updated hourly.
+
 
 ## Shadowserver
 

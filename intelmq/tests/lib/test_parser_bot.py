@@ -42,6 +42,27 @@ EXAMPLE_EMPTY_REPORT = {"feed.url": "http://www.example.com/",
                         "__type": "Report",
                         "feed.name": "Example"}
 
+RAW = """
+# ignore this
+source.ip,foobar
+192.0.2.3,bllaa
+#ending line
+"""
+RAW_SPLIT = RAW.strip().splitlines()
+
+EXAMPLE_REPO_1 = {"feed.url": "http://www.example.com/",
+                  "time.observation": "2015-08-11T13:03:40+00:00",
+                  "raw": utils.base64_encode(RAW),
+                  "__type": "Report",
+                  "feed.name": "Example"}
+EXAMPLE_EVE_1 = {"feed.url": "http://www.example.com/",
+                 "source.ip": "192.0.2.3",
+                 "__type": "Event",
+                 "classification.type": "malware",
+                 "feed.name": "Example",
+                 'raw': 'c291cmNlLmlwLGZvb2Jhcg0KMTkyLjAuMi4zLGJsbGFhDQo='
+                 }
+
 
 class DummyParserBot(bot.ParserBot):
     """
@@ -68,6 +89,24 @@ class DummyParserBot(bot.ParserBot):
 
     def recover_line(self, line):
         return '\n'.join([self.tempdata[0], line, self.tempdata[1]])
+
+
+class DummyCSVParserBot(bot.ParserBot):
+    """
+    A csv parser bot only for testing purpose.
+    """
+    csv_fieldnames = ['source.ip', 'foobar']
+    ignore_lines_starting = ['#']
+
+    def parse_line(self, line, report):
+        event = self.new_event(report)
+        event['source.ip'] = line['source.ip']
+        event['classification.type'] = 'malware'
+        event['raw'] = self.recover_line(line)
+        yield event
+
+    parse = bot.ParserBot.parse_csv_dict
+    recover_line = bot.ParserBot.recover_line_csv_dict
 
 
 class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
@@ -101,6 +140,18 @@ class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
         self.assertAnyLoglineEqual(message='Report without raw field received. Possible '
                                            'bug or misconfiguration in previous bots.',
                                    levelname='WARNING')
+
+
+class TestDummyCSVParserBot(test.BotTestCase, unittest.TestCase):
+    @classmethod
+    def set_bot(cls):
+        cls.bot_reference = DummyCSVParserBot
+        cls.default_input_message = EXAMPLE_REPO_1
+
+    def test_event(self):
+        """ Test if correct Event has been produced. """
+        self.run_bot()
+        self.assertMessageEqual(0, EXAMPLE_EVE_1)
 
 
 if __name__ == '__main__':  # pragma: no cover
