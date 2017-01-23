@@ -37,6 +37,8 @@ class MailURLCollectorBot(CollectorBot):
                                       re.sub("\r\n\s", " ", message.subject))):
                     continue
 
+                erroneous = False  # If errors occured this will be set to true.
+
                 for body in message.body['plain']:
                     match = re.search(self.parameters.url_regex, str(body))
                     if match:
@@ -46,11 +48,26 @@ class MailURLCollectorBot(CollectorBot):
                         url = url.strip()
 
                         self.logger.info("Downloading report from %r." % url)
-                        resp = requests.get(url=url,
+
+                        timeoutretries = 0
+                        while timeoutretries < 3:
+                            try:
+                                resp = requests.get(url=url,
                                             auth=self.auth, proxies=self.proxy,
                                             headers=self.http_header,
                                             verify=self.http_verify_cert,
-                                            cert=self.ssl_client_cert)
+                                            cert=self.ssl_client_cert,
+                                            timeout = self.http_timeout_sec)
+
+                            except requests.exceptions.Timeout:
+                                timeoutretries = timeoutretries + 1
+                                self.logger.warn("Timeout whilst downloading the report.")
+
+                        if timeoutretries >= 3:
+                            self.logger.error("Request timed out three times in a row. ")
+                            erroneous = True
+                            # The download timed out too often, leave the Loop.
+                            continue
 
                         if resp.status_code // 100 != 2:
                             raise ValueError('HTTP response status code was {}.'
@@ -66,7 +83,12 @@ class MailURLCollectorBot(CollectorBot):
                         # so other instances watching this mailbox will still
                         # check it.
                         mailbox.mark_seen(uid)
-                self.logger.info("Email report read.")
+
+                if not erroneous:
+                    self.logger.info("Email report read.")
+                else:
+                    self.logger.error("Email report read with errors, the report was not processed.")
+
         mailbox.logout()
 
 
