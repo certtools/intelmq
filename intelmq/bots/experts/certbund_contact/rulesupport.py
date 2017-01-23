@@ -1,3 +1,4 @@
+from contextlib import contextmanager
 from collections import defaultdict
 
 from intelmq.bots.experts.certbund_contact.eventjson import \
@@ -163,9 +164,12 @@ def contact_info_from_json(jsondict):
 
 class Context:
 
-    def __init__(self, event, section):
+    def __init__(self, event, section, base_logger):
         self._event = event
         self.section = section
+        # base_logger should only be None for testing purposes.
+        self.logger = (base_logger.getChild("script") if base_logger is not None
+                       else None)
         self.matches, self.organisations = \
               contact_info_from_json(get_certbund_contacts(event, section))
         self._directives = []

@@ -25,9 +25,15 @@ class CERTBundRuleExpertBot(Bot):
             return
 
         for section in ["source", "destination"]:
-            context = Context(event, section)
+            context = Context(event, section, self.logger)
+            self.logger.debug("Calling scripts for section %r.", section)
             for entry in self.entry_points:
-                finished = entry(context)
+                self.logger.debug("Calling script %r.", entry.filename)
+                try:
+                    finished = entry(context)
+                    self.logger.debug("Script returned %r.", finished)
+                finally:
+                    self.logger.debug("Script finished.")
                 if finished:
                     event = context.get_updated_event()
                     break

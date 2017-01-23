@@ -47,7 +47,7 @@ class TestMostSpecificContact(unittest.TestCase):
 
     def check(self, contact_descriptions, expected_emails):
         event = build_test_event(contact_descriptions, "source")
-        context = Context(event, "source")
+        context = Context(event, "source", None)
         keep_most_specific_contacts(context)
         self.assertEqual(sorted(c.email
                                 for c in context.all_contacts()),
