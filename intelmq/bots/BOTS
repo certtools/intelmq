@@ -207,9 +207,9 @@
             "module": "intelmq.bots.parsers.bitcash.parser",
             "parameters": {}
         },
-        "BitSight Ciberfeed Stream": {
-            "description": "Bitsight Ciberfeed parser is the bot reponsible to parse and sanitize the information.",
-            "module": "intelmq.bots.parsers.bitsight.parser",
+        "AnubisNetworks Ciberfeed Stream": {
+            "description": "Parsers single JSON-events from AnubisNetworks Cyberfeed stream.",
+            "module": "intelmq.bots.parsers.anubisnetworks.parser",
             "parameters": {}
         },
         "Blocklist.de": {

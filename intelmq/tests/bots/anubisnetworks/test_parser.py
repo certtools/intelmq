@@ -3,13 +3,13 @@
 import unittest
 
 import intelmq.lib.test as test
-from intelmq.bots.parsers.bitsight.parser import BitsightParserBot
+from intelmq.bots.parsers.anubisnetworks.parser import AnubisNetworksParserBot
 
 
 EXAMPLE_REPORT = {"feed.url": "https://prod.cyberfeed.net/stream?key=",
                   "feed.accuracy": 100.0,
                   "__type": "Report",
-                  "feed.name": "BitSight",
+                  "feed.name": "AnubisNetworks",
                   "raw": "eyJfZ2VvX2Vudl9yZW1vdGVfYWRkciI6eyJwYXRoIjoiZW52LnJlbW90ZV9hZGRyIiwiYXNuX25hbWUiOiJFeGFtcGxlQVMiLCJhc24iOjY1NTM2LCJsb25naXR1ZGUiOjEzLCJsYXRpdHVkZSI6MzcsImlwIjoiMjAzLjAuMTEzLjIiLCJuZXRtYXNrIjoyNCwiY291bnRyeV9jb2RlIjoiQVQiLCJjb3VudHJ5X25hbWUiOiJBdXN0cmlhIiwicmVnaW9uIjoiVmllbm5hIiwicmVnaW9uX2NvZGUiOiIwMSIsImNpdHkiOiJWaWVubmEiLCJwb3N0YWxfY29kZSI6IjEwMTAifSwiX3RzIjoxNDg0MDQxNTMwLCJxdHlwZSI6IkEiLCJfb3JpZ2luIjoiZG5zbWFsd2FyZSIsIl9wcm92aWRlciI6InNwaWtlbnMiLCJ0cm9qYW5mYW1pbHkiOiJOaXZkb3J0IiwiZW52Ijp7InNlcnZlcl9wb3J0Ijo4MCwicmVtb3RlX2FkZHIiOiIyMDMuMC4xMTMuMiIsInJlcXVlc3RfbWV0aG9kIjoiUE9TVCJ9fQ==",
                   "time.observation": "2016-04-19T23:16:08+00:00"
                   }
@@ -33,12 +33,12 @@ EXAMPLE_EVENT  = {"classification.type": "malware",
                   "source.as_name": "ExampleAS",
                   "time.observation": "2016-04-19T23:16:08+00:00",
                   "__type": "Event",
-                  "feed.name": "BitSight",
+                  "feed.name": "AnubisNetworks",
                   "raw": EXAMPLE_REPORT['raw'],
                   'extra': '{"request_method": "POST"}',
                   }
 
-EXAMPLE_REPORT2 = {"feed.name": "BitSight",
+EXAMPLE_REPORT2 = {"feed.name": "AnubisNetworks",
                    "feed.accuracy": 100.0,
                    "feed.url": "http://alerts.bitsighttech.com:8080/stream?",
                    "raw": "eyJ0cm9qYW5mYW1pbHkiOiJTcHlBcHAiLCJlbnYiOnsicmVtb"
@@ -54,7 +54,7 @@ EXAMPLE_REPORT2 = {"feed.name": "BitSight",
                    "2016-04-19T23:16:10+00:00"
                    }
 
-EXAMPLE_EVENT2  = {"feed.name": "BitSight",
+EXAMPLE_EVENT2  = {"feed.name": "AnubisNetworks",
                    "malware.name": "spyapp",
                    "destination.fqdn": "dev-update.info",
                    "source.ip": "190.124.67.211",
@@ -81,11 +81,11 @@ EXAMPLE_EVENT2  = {"feed.name": "BitSight",
                    }
 
 
-class TestBitsightParserBot(test.BotTestCase, unittest.TestCase):
+class TestAnubisNetworksParserBot(test.BotTestCase, unittest.TestCase):
 
     @classmethod
     def set_bot(cls):
-        cls.bot_reference = BitsightParserBot
+        cls.bot_reference = AnubisNetworksParserBot
         cls.default_input_message = EXAMPLE_REPORT
 
     def test_event(self):

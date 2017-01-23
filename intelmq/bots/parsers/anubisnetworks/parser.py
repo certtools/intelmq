@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Anubisnetwork Bitsight Alert Stream parser
+AnubisNetworks Cyberfeed Stream parser
 
 _ts                                     => time.source
 trojanfamily                            => malware.name
@@ -57,7 +57,7 @@ MAP_geo_env_remote_addr = {'country_code': 'source.geolocation.cc',
                            }
 
 
-class BitsightParserBot(Bot):
+class AnubisNetworksParserBot(Bot):
 
     def process(self):
         report = self.receive_message()
@@ -104,4 +104,4 @@ class BitsightParserBot(Bot):
         self.acknowledge_message()
 
 
-BOT = BitsightParserBot
+BOT = AnubisNetworksParserBot

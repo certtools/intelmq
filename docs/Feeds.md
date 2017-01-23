@@ -184,12 +184,12 @@ Blocklist provided by bitcash.cz of banned IPs for service abuse, this includes 
 
 ## BitSight Cyberfeed Stream
 
-Status: Unknown
+Status: Active
 
 Collector: Generic URL Stream Fetcher (`intelmq.bots.collectors.http.collector_http_stream`)
  * http_url: "https://prod.cyberfeed.net/stream?key={{ your api key }}",
 
-Parser: BitSight Ciberfeed Stream (`intelmq.bots.parsers.bitsight.parser`)
+Parser: AnubisNetworks Cyberfeed Stream (`intelmq.bots.parsers.anubisnetworks.parser`)
 
 Malware infection data from sinkholed C&C servers
 
