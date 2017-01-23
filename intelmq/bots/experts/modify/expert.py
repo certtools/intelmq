@@ -70,7 +70,7 @@ class ModifyExpertBot(Bot):
             event.add(name, value.format(msg=event,
                                          matches={k: MatchGroupMapping(v)
                                                   for (k, v) in matches.items()}),
-                      force=True)
+                      overwrite=True)
 
     def process(self):
         event = self.receive_message()

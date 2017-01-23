@@ -3,7 +3,7 @@ import json
 from datetime import datetime
 from urllib.parse import urljoin
 
-from intelmq.lib import harmonization, utils
+from intelmq.lib import utils
 from intelmq.lib.bot import Bot
 
 
@@ -74,10 +74,7 @@ class MISPParserBot(Bot):
         malware_variant = None
         for attribute in event_attributes:
             if attribute['category'] == 'Payload type':
-                value = attribute['value'].lower()
-                # TODO: use misp galaxies
-                if value and harmonization.LowercaseString.is_valid(value):
-                    malware_variant = value
+                malware_variant = attribute['value'].lower()
 
         # MISP event URL
         url_path = 'event/view/{}'.format(misp_event['id'])
@@ -107,7 +104,7 @@ class MISPParserBot(Bot):
                 event.add('comment', comment)
                 event.add('event_description.text', category)
                 event.add('event_description.url', misp_event_url)
-                event.add('malware.name', malware_variant)
+                event.add('malware.name', malware_variant, raise_failure=False)
                 event.add('classification.type', classifier)
                 event.add('time.source', '{} UTC'.format(
                           datetime.utcfromtimestamp(float(timestamp))))

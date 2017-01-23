@@ -29,7 +29,7 @@ class CymruExpertBot(Bot):
         for key in keys:
             ip_key = key % "ip"
 
-            if not event.contains(ip_key):
+            if ip_key not in event:
                 continue
 
             ip = event.get(ip_key)
@@ -59,7 +59,7 @@ class CymruExpertBot(Bot):
                 self.cache.set(cache_key, result_json)
 
             for result_key, result_value in result.items():
-                event.add(key % result_key, result_value, force=True)
+                event.add(key % result_key, result_value, overwrite=True)
 
         self.send_message(event)
         self.acknowledge_message()

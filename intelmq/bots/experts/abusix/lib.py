@@ -4,8 +4,6 @@ import re
 
 import dns.resolver
 
-import intelmq.lib.harmonization as harmonization
-
 QUERY_HOST = ".abuse-contacts.abusix.org"
 REGEX = r"[^@]+@[^@]+\.[^@]+"
 
@@ -15,7 +13,7 @@ class Abusix():
     @staticmethod
     def query(ip):
 
-        if harmonization.IPAddress.version(ip) == 6:
+        if ipaddress.ip_address(ip).version == 6:
             addr = ipaddress.ip_address(ip).exploded
             rev = '.'.join(reversed(addr.replace(':', '')))
         else:

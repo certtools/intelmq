@@ -81,7 +81,7 @@ class GenericDBLookupExpertBot(Bot):
             elif self.cur.rowcount == 1:
                 result = self.cur.fetchone()
                 for key, value in self.replace.items():
-                    event.add(value, result[key], force=True)
+                    event.add(value, result[key], overwrite=True)
                 self.logger.debug('Applied.')
             else:
                 self.logger.debug('No row found.')
