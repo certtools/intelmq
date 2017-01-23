@@ -30,8 +30,9 @@ class HTTPCollectorBot(CollectorBot):
                          self.parameters.http_url)
 
         timeoutretries=0
+        resp = None
 
-        while timeoutretries < 3:
+        while timeoutretries < 3 and resp is None:
             try:
                 resp = requests.get(url=self.parameters.http_url, auth=self.auth,
                             proxies=self.proxy, headers=self.http_header,
