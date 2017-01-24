@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 
-import sys
 
 import dateutil
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
 from intelmq.lib.harmonization import IPAddress
-from intelmq.lib.message import Event
 
 
 class CymruFullBogonsParserBot(Bot):
@@ -30,7 +28,7 @@ class CymruFullBogonsParserBot(Bot):
             if not len(val) or val.startswith('#') or val.startswith('//'):
                 continue
 
-            event = Event(report)
+            event = self.new_event(report)
 
             if IPAddress.is_valid(val):
                 event.add('source.ip', val)
@@ -44,6 +42,5 @@ class CymruFullBogonsParserBot(Bot):
             self.send_message(event)
         self.acknowledge_message()
 
-if __name__ == "__main__":
-    bot = CymruFullBogonsParserBot(sys.argv[1])
-    bot.start()
+
+BOT = CymruFullBogonsParserBot

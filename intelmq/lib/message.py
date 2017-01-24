@@ -44,7 +44,7 @@ class MessageFactory(object):
         return class_reference(message, auto=True)
 
     @staticmethod
-    def unserialize(raw_message):
+    def unserialize(raw_message, harmonization=None):
         """
         Takes JSON-encoded Message object, returns instance of correct class.
 
@@ -59,7 +59,7 @@ class MessageFactory(object):
                                              expected=list(harm_config.keys()),
                                              docs=HARMONIZATION_CONF_FILE)
         del message["__type"]
-        return class_reference(message, auto=True)
+        return class_reference(message, auto=True, harmonization=harmonization)
 
     @staticmethod
     def serialize(message):
@@ -74,21 +74,34 @@ class MessageFactory(object):
 
 class Message(dict):
 
-    def __init__(self, message=(), auto=False):
-        super(Message, self).__init__(message)
+    def __init__(self, message=(), auto=False, harmonization=None):
         try:
             classname = message['__type'].lower()
             del message['__type']
         except (KeyError, TypeError):
             classname = self.__class__.__name__.lower()
 
-        try:
-            self.harmonization_config = harm_config[classname]
-        except KeyError:
-            raise exceptions.InvalidArgument('__type',
-                                             got=classname,
-                                             expected=list(harm_config.keys()),
-                                             docs=HARMONIZATION_CONF_FILE)
+        if harmonization is None:
+            try:
+                self.harmonization_config = harm_config[classname]
+            except KeyError:
+                raise exceptions.InvalidArgument('__type',
+                                                 got=classname,
+                                                 expected=list(harm_config.keys()),
+                                                 docs=HARMONIZATION_CONF_FILE)
+        else:
+            self.harmonization_config = harmonization[classname]
+
+        super(Message, self).__init__()
+        if isinstance(message, dict):
+            iterable = message.items()
+        elif isinstance(message, tuple):
+            iterable = message
+        for key, value in iterable:
+            try:
+                self.add(key, value, sanitize=False)
+            except exceptions.InvalidValue:
+                self.add(key, value, sanitize=True)
 
     def __setitem__(self, key, value):
         self.add(key, value)
@@ -106,9 +119,11 @@ class Message(dict):
         if not self.__is_valid_key(key):
             raise exceptions.InvalidKey(key)
 
-        try:
+        if ignore:
             warnings.warn('The ignore-argument will be removed in 1.0.',
                           DeprecationWarning)
+
+        try:
             if value in ignore:
                 return
         except TypeError:
@@ -153,7 +168,6 @@ class Message(dict):
         retval = getattr(intelmq.lib.message,
                          class_ref)(super(Message, self).copy())
         del self['__type']
-        del retval['__type']
         return retval
 
     def deep_copy(self):
@@ -211,10 +225,19 @@ class Message(dict):
         return class_name
 
     def __hash__(self):
+        return int(self.hash(), 16)
+
+    def hash(self, blacklist=frozenset()):
+        """Return a sha256 hash of the message as a hexadecimal string.
+        The hash is computed over almost all key/value pairs. The only
+        keys omitted are 'time.observation' and all keys contained in
+        the optional blacklist parameter. If given, the blacklist
+        parameter should be a set.
+        """
         event_hash = hashlib.sha256()
 
         for key, value in sorted(self.items()):
-            if "time.observation" == key:
+            if "time.observation" == key or key in blacklist:
                 continue
 
             event_hash.update(utils.encode(key))
@@ -222,10 +245,13 @@ class Message(dict):
             event_hash.update(utils.encode(repr(value)))
             event_hash.update(b"\xc0")
 
-        return int(event_hash.hexdigest(), 16)
+        return event_hash.hexdigest()
 
-    def to_dict(self, hierarchical=True):
+    def to_dict(self, hierarchical=False, with_type=False):
         json_dict = dict()
+
+        if with_type:
+            self['__type'] = self.__class__.__name__
 
         for key, value in self.items():
             if hierarchical:
@@ -243,16 +269,20 @@ class Message(dict):
                     json_dict_fp[subkey] = dict()
 
                 json_dict_fp = json_dict_fp[subkey]
+
+        if with_type:
+            del self['__type']
+
         return json_dict
 
-    def to_json(self):
-        json_dict = self.to_dict()
-        return utils.decode(json.dumps(json_dict, ensure_ascii=False))
+    def to_json(self, hierarchical=False, with_type=False):
+        json_dict = self.to_dict(hierarchical=hierarchical, with_type=with_type)
+        return json.dumps(json_dict, ensure_ascii=False)
 
 
 class Event(Message):
 
-    def __init__(self, message=(), auto=False):
+    def __init__(self, message=(), auto=False, harmonization=None):
         """
         Parameters
         ----------
@@ -269,6 +299,8 @@ class Event(Message):
                 template['feed.code'] = message['feed.code']
             if 'feed.name' in message:
                 template['feed.name'] = message['feed.name']
+            if 'feed.provider' in message:
+                template['feed.provider'] = message['feed.provider']
             if 'feed.url' in message:
                 template['feed.url'] = message['feed.url']
             if 'rtir_id' in message:
@@ -277,12 +309,12 @@ class Event(Message):
                 template['time.observation'] = message['time.observation']
         else:
             template = message
-        super(Event, self).__init__(template, auto)
+        super(Event, self).__init__(template, auto, harmonization)
 
 
 class Report(Message):
 
-    def __init__(self, message=(), auto=False):
+    def __init__(self, message=(), auto=False, harmonization=None):
         """
         Parameters
         ----------
@@ -291,7 +323,7 @@ class Report(Message):
         auto : boolean
             if false (default), time.observation is automatically added.
         """
-        super(Report, self).__init__(message, auto)
+        super(Report, self).__init__(message, auto, harmonization)
         if not auto and 'time.observation' not in self:
             time_observation = intelmq.lib.harmonization.DateTime().generate_datetime_now()
             self.add('time.observation', time_observation, sanitize=False)

@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
-import sys
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
 from intelmq.lib.harmonization import IPAddress
-from intelmq.lib.message import Event
 
 
 class HpHostsParserBot(Bot):
@@ -31,7 +29,7 @@ class HpHostsParserBot(Bot):
             if values[1].lower().strip() == "localhost":
                 continue
 
-            event = Event(report)
+            event = self.new_event(report)
 
             if IPAddress.is_valid(values[1]):
                 event.add("source.ip", values[1])
@@ -44,6 +42,5 @@ class HpHostsParserBot(Bot):
             self.send_message(event)
         self.acknowledge_message()
 
-if __name__ == "__main__":
-    bot = HpHostsParserBot(sys.argv[1])
-    bot.start()
+
+BOT = HpHostsParserBot

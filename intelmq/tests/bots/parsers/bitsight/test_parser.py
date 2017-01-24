@@ -102,5 +102,5 @@ class TestBitsightParserBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(0, EXAMPLE_EVENT2)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

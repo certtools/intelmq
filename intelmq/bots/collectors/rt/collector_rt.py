@@ -1,31 +1,26 @@
 # -*- coding: utf-8 -*-
 import io
 import re
-import requests
-import sys
 import zipfile
 
-from intelmq.lib.bot import CollectorBot
-from intelmq.lib.message import Report
+import requests
 
-import rt
+from intelmq.lib.bot import CollectorBot
+
+try:
+    import rt
+except ImportError:
+    rt = None
 
 
 class RTCollectorBot(CollectorBot):
 
     def init(self):
-        self.http_header = getattr(self.parameters, 'http_header', {})
-        self.http_verify_cert = getattr(self.parameters, 'http_verify_cert',
-                                        True)
+        if rt is None:
+            self.logger.error('Could not import rt. Please install it.')
+            self.stop()
 
-        http_proxy = getattr(self.parameters, 'http_proxy', None)
-        https_proxy = getattr(self.parameters, 'http_ssl_proxy', None)
-        if http_proxy and https_proxy:
-            self.proxy = {'http': http_proxy, 'https': https_proxy}
-        else:
-            self.proxy = None
-
-        self.http_header['User-agent'] = self.parameters.http_user_agent
+        self.set_request_parameters()
 
     def process(self):
         RT = rt.Rt(self.parameters.uri, self.parameters.user,
@@ -71,9 +66,11 @@ class RTCollectorBot(CollectorBot):
                 else:
                     raw = attachment
             else:
-                resp = requests.get(url=url, proxies=self.proxy,
+                resp = requests.get(url=url, auth=self.auth,
+                                    proxies=self.proxy,
                                     headers=self.http_header,
-                                    verify=self.http_verify_cert)
+                                    verify=self.http_verify_cert,
+                                    cert=self.ssl_client_cert)
 
                 if resp.status_code // 100 != 2:
                     self.logger.error('HTTP response status code was {}.'
@@ -81,7 +78,7 @@ class RTCollectorBot(CollectorBot):
                 self.logger.info("Report downloaded.")
                 raw = resp.text
 
-            report = Report()
+            report = self.new_report()
             report.add("raw", raw, sanitize=True)
             report.add("rtir_id", ticket_id, sanitize=True)
             report.add("time.observation", created + ' UTC', force=True)
@@ -96,6 +93,4 @@ class RTCollectorBot(CollectorBot):
                 RT.edit_ticket(ticket_id, status=self.parameters.set_status)
 
 
-if __name__ == "__main__":
-    bot = RTCollectorBot(sys.argv[1])
-    bot.start()
+BOT = RTCollectorBot

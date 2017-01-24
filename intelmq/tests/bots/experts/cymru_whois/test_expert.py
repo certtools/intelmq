@@ -4,7 +4,6 @@ import unittest
 
 import intelmq.lib.test as test
 from intelmq.bots.experts.cymru_whois.expert import CymruExpertBot
-from intelmq.lib.cache import Cache
 
 EXAMPLE_INPUT = {"__type": "Event",
                  "source.ip": "93.184.216.34",  # example.com
@@ -13,7 +12,7 @@ EXAMPLE_INPUT = {"__type": "Event",
 EXAMPLE_OUTPUT = {"__type": "Event",
                   "source.ip": "93.184.216.34",
                   "source.geolocation.cc": "EU",
-                  "source.registry": "ripencc",
+                  "source.registry": "RIPE",
                   "source.network": "93.184.216.0/24",
                   "source.allocated": "2008-06-02T00:00:00+00:00",
                   "source.asn": 15133,
@@ -26,7 +25,7 @@ EXAMPLE_INPUT6 = {"__type": "Event",
                   }
 EXAMPLE_OUTPUT6 = {"__type": "Event",
                    "destination.ip": "2001:500:88:200::8",  # iana.org
-                   "destination.registry": "arin",
+                   "destination.registry": "ARIN",
                    "destination.allocated": "2010-02-18T00:00:00+00:00",
                    "destination.as_name": "ICANN-DC - ICANN, US",
                    "destination.geolocation.cc": "US",
@@ -34,20 +33,19 @@ EXAMPLE_OUTPUT6 = {"__type": "Event",
                    "destination.asn": 16876,
                    "destination.network": "2001:500:88::/48",
                    }
-UNICODE_INPUT = {"__type": "Event",  # http://bgp.he.net/AS28333#_prefixes
-                 "destination.ip": "189.50.192.1",  # some brazil IP
+UNICODE_INPUT = {"__type": "Event",
+                 "destination.ip": "200.236.128.1",
                  "time.observation": "2015-01-01T00:00:00+00:00",
                  }
 UNICODE_OUTPUT = {"__type": "Event",
-                  "destination.ip": "189.50.192.1",
+                  "destination.ip": "200.236.128.1",
                   "time.observation": "2015-01-01T00:00:00+00:00",
-                  "destination.registry": "lacnic",
-                  "destination.allocated": "2007-08-10T00:00:00+00:00",
-                  "destination.as_name": "Local Datacenter Solu\xe7\xf5es em"
-                                         " Comunica\xe7\xe3o Ltda., BR",
+                  "destination.registry": "LACNIC",
+                  "destination.allocated": "2000-02-15T00:00:00+00:00",
+                  "destination.as_name": "Fundação de Desenvolvimento da Pesquisa, BR",
                   "destination.geolocation.cc": "BR",
-                  "destination.asn": 28333,
-                  "destination.network": "189.50.192.0/23",
+                  "destination.asn": 10417,
+                  "destination.network": "200.236.128.0/18",
                   }
 EMPTY_INPUT = {"__type": "Event",
                "source.ip": "198.105.125.77",  # no result
@@ -64,10 +62,12 @@ NO_ASN_OUTPUT = {"__type": "Event",
                  "source.geolocation.cc": 'RU',
                  "source.ip": '212.92.127.126',
                  "source.network": '212.92.127.0/24',
-                 "source.registry": 'ripencc',
+                 "source.registry": 'RIPE',
                  }
 
 
+@test.skip_redis()
+@test.skip_internet()
 class TestCymruExpertBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for AbusixExpertBot.
@@ -76,7 +76,7 @@ class TestCymruExpertBot(test.BotTestCase, unittest.TestCase):
     @classmethod
     def set_bot(cls):
         cls.bot_reference = CymruExpertBot
-        cls.default_input_message = {'__type': 'Report'}
+        cls.use_cache = True
 
     def test_ipv4_lookup(self):
         self.input_message = EXAMPLE_INPUT
@@ -108,15 +108,6 @@ class TestCymruExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, NO_ASN_OUTPUT)
 
-    @classmethod
-    def tearDownClass(cls):
-        cache = Cache(test.BOT_CONFIG['redis_cache_host'],
-                      test.BOT_CONFIG['redis_cache_port'],
-                      test.BOT_CONFIG['redis_cache_db'],
-                      test.BOT_CONFIG['redis_cache_ttl'],
-                      )
-        cache.flush()
 
-
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

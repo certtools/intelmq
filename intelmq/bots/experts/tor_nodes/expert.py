@@ -2,7 +2,6 @@
 """
 See README for database download.
 """
-import sys
 
 from intelmq.lib.bot import Bot
 
@@ -40,6 +39,4 @@ class TorExpertBot(Bot):
         self.acknowledge_message()
 
 
-if __name__ == "__main__":
-    bot = TorExpertBot(sys.argv[1])
-    bot.start()
+BOT = TorExpertBot

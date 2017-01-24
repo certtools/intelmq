@@ -5,4 +5,4 @@ graft contrib
 graft docs
 include COPYRIGHT
 include LICENSE
-include README.md
+include CHANGELOG.md

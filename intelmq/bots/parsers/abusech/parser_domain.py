@@ -8,12 +8,10 @@ Docs:
  - https://zeustracker.abuse.ch/blocklist.php
 """
 
-import sys
 
 import dateutil.parser
 
 from intelmq.lib.bot import ParserBot
-from intelmq.lib.message import Event
 
 SOURCE_FEEDS = {'https://feodotracker.abuse.ch/blocklist/?download=domainblocklist': 'Cridex',
                 'https://palevotracker.abuse.ch/blocklists.php?download=domainblocklist': 'Palevo',
@@ -30,7 +28,7 @@ class AbusechDomainParserBot(ParserBot):
                 row = line.strip('# ')[13:]
                 self.lastgenerated = dateutil.parser.parse(row).isoformat()
         else:
-            event = Event(report)
+            event = self.new_event(report)
             event.add('time.source', self.lastgenerated)
             event.add('classification.type', 'c&c')
             event.add('source.fqdn', line)
@@ -42,6 +40,4 @@ class AbusechDomainParserBot(ParserBot):
         return '\n'.join(self.tempdata + [line])
 
 
-if __name__ == "__main__":
-    bot = AbusechDomainParserBot(sys.argv[1])
-    bot.start()
+BOT = AbusechDomainParserBot

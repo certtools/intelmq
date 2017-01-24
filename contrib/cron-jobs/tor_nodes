@@ -23,8 +23,5 @@ export http_proxy=http://my.proxy.example.com:8080/
 
 cd /tmp/
 wget http://rules.emergingthreats.net/blockrules/emerging-tor.rules
-mv /tmp/emerging-tor.rules /opt/intelmq/var/lib/bots/tor_nodes/tor_nodes.dat
-chown intelmq.intelmq -R /opt/intelmq/var/lib/bots/tor_nodes
-
-
-
+mv /tmp/emerging-tor.rules $DEST/tor_nodes.dat
+chown intelmq.intelmq -R $DEST

@@ -1,13 +1,10 @@
 # -*- coding: utf-8 -*-
 import json
-import sys
 from datetime import datetime
 from urllib.parse import urljoin
 
-from intelmq.lib import harmonization
-from intelmq.lib import utils
+from intelmq.lib import harmonization, utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.message import Event
 
 
 class MISPParserBot(Bot):
@@ -102,7 +99,7 @@ class MISPParserBot(Bot):
                     type_ in self.MISP_TYPE_MAPPING):
 
                 # Create and send the intelmq event
-                event = Event(report)
+                event = self.new_event(report)
                 event.add('raw', json.dumps(attribute, sort_keys=True))
                 event.add(self.MISP_TYPE_MAPPING[type_], value)
                 event.add('misp.event_uuid', misp_event['uuid'])
@@ -119,6 +116,4 @@ class MISPParserBot(Bot):
         self.acknowledge_message()
 
 
-if __name__ == '__main__':
-    bot = MISPParserBot(sys.argv[1])
-    bot.start()
+BOT = MISPParserBot

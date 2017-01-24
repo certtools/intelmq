@@ -16,11 +16,21 @@ __all__ = ['Cache']
 
 class Cache():
 
-    def __init__(self, host, port, db, ttl):
-        self.redis = redis.Redis(host=host,
-                                 port=int(port),
-                                 db=db,
-                                 socket_timeout=5)
+    def __init__(self, host, port, db, ttl, password=None):
+        if host.startswith("/"):
+            kwargs = {"unix_socket_path": host}
+
+        elif host.startswith("unix://"):
+            kwargs = {"unix_socket_path": host.replace("unix://", "")}
+
+        else:
+            kwargs = {
+                "host": host,
+                "port": int(port),
+                "socket_timeout": 5,
+            }
+
+        self.redis = redis.Redis(db=db, password=password, **kwargs)
 
         self.ttl = ttl
 

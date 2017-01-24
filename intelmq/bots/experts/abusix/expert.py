@@ -3,7 +3,6 @@
 Reference: https://abusix.com/contactdb.html
 RIPE abuse contacts resolving through DNS TXT queries
 '''
-import sys
 
 from intelmq.bots.experts.abusix.lib import Abusix
 from intelmq.lib.bot import Bot
@@ -28,17 +27,17 @@ class AbusixExpertBot(Bot):
 
         for key in ['source.', 'destination.']:
             ip_key = key + "ip"
+            abuse_contact_key = key + "abuse_contact"
+            if abuse_contact_key in event and not self.parameters.overwrite:
+                continue
             if event.contains(ip_key):
                 ip = event.get(ip_key)
                 email = self.lookup(ip)
                 if email:
-                    abuse_contact_key = key + "abuse_contact"
                     event.add(abuse_contact_key, email, force=True)
 
         self.send_message(event)
         self.acknowledge_message()
 
 
-if __name__ == "__main__":
-    bot = AbusixExpertBot(sys.argv[1])
-    bot.start()
+BOT = AbusixExpertBot

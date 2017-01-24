@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
+"""
+TODO: Test this with a real stomp server
+"""
 import os.path
-import sys
 
 from intelmq.lib.bot import Bot
 from intelmq.lib.message import MessageFactory
@@ -11,7 +13,7 @@ except ImportError:
     stomp = None
 
 
-class stompOutputBot(Bot):
+class StompOutputBot(Bot):
     """ main class for the STOMP protocol output bot """
 
     def init(self):
@@ -52,19 +54,14 @@ class stompOutputBot(Bot):
         self.conn.start()
         self.conn.connect(wait=False)
 
-    def disconnect(self):
+    def shtudown(self):
         self.conn.disconnect()
 
     def process(self):
         message = self.receive_message()
-
-        if message:
-            message = MessageFactory.serialize(message)
-            self.logger.info(message)
-
+        message = MessageFactory.serialize(message)
         self.conn.send(body=message, destination=self.exchange)
+        self.acknowledge_message()
 
 
-if __name__ == "__main__":
-    bot = stompOutputBot(sys.argv[1])
-    bot.start()
+BOT = StompOutputBot

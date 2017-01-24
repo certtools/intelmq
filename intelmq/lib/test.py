@@ -9,46 +9,45 @@ import io
 import json
 import logging
 import os
+import re
+import unittest
 import unittest.mock as mock
 
 import pkg_resources
+import redis
 
 import intelmq.lib.pipeline as pipeline
 import intelmq.lib.utils as utils
-from intelmq import (PIPELINE_CONF_FILE, RUNTIME_CONF_FILE, DEFAULTS_CONF_FILE,
-                     CONFIG_DIR)
+from intelmq import CONFIG_DIR, PIPELINE_CONF_FILE, RUNTIME_CONF_FILE
 
 __all__ = ['BotTestCase']
 
-BOT_CONFIG = utils.load_configuration(DEFAULTS_CONF_FILE)
-BOT_CONFIG.update({"logging_level": "DEBUG",
-                   "http_proxy": None,
-                   "https_proxy": None,
-                   "broker": "pythonlist",
-                   "rate_limit": 0,
-                   "retry_delay": 0,
-                   "error_retry_delay": 0,
-                   "error_max_retries": 0,
-                   "redis_cache_host": "localhost",
-                   "redis_cache_port": 6379,
-                   "redis_cache_db": 10,
-                   "redis_cache_ttl": 10,
-                   "testing": True,
-                   })
+BOT_CONFIG = {"logging_level": "DEBUG",
+              "http_proxy": None,
+              "https_proxy": None,
+              "broker": "pythonlist",
+              "rate_limit": 0,
+              "retry_delay": 0,
+              "error_retry_delay": 0,
+              "error_max_retries": 0,
+              "redis_cache_host": "localhost",
+              "redis_cache_port": 6379,
+              "redis_cache_db": 10,
+              "redis_cache_ttl": 10,
+              "testing": True,
+              }
 
 
 def mocked_config(bot_id='test-bot', src_name='', dst_names=(), sysconfig={}):
-    def mock(conf_file):
+    def mocked(conf_file):
         if conf_file == PIPELINE_CONF_FILE:
             return {bot_id: {"source-queue": src_name,
                              "destination-queues": dst_names},
                     }
         elif conf_file == RUNTIME_CONF_FILE:
-            return {bot_id: {}}
-        elif conf_file == DEFAULTS_CONF_FILE:
             conf = BOT_CONFIG.copy()
             conf.update(sysconfig)
-            return conf
+            return {bot_id: {'parameters': conf}}
         elif conf_file.startswith(CONFIG_DIR):
             confname = os.path.join('etc/', os.path.split(conf_file)[-1])
             fname = pkg_resources.resource_filename('intelmq',
@@ -57,7 +56,7 @@ def mocked_config(bot_id='test-bot', src_name='', dst_names=(), sysconfig={}):
                 return json.load(fpconfig)
         else:
             return utils.load_configuration(conf_file)
-    return mock
+    return mocked
 
 
 with mock.patch('intelmq.lib.utils.load_configuration', new=mocked_config()):
@@ -68,6 +67,21 @@ def mocked_logger(logger):
     def log(name, log_path=None, log_level=None, stream=None, syslog=None):
         return logger
     return log
+
+
+def skip_database():
+    return unittest.skipUnless(os.environ.get('INTELMQ_TEST_DATABASES'),
+                               'Skipping database tests.')
+
+
+def skip_internet():
+    return unittest.skipIf(os.environ.get('INTELMQ_SKIP_INTERNET'),
+                           'Skipping without internet connection.')
+
+
+def skip_redis():
+    return unittest.skipIf(os.environ.get('INTELMQ_SKIP_REDIS'),
+                           'Skipping without running redis.')
 
 
 class BotTestCase(object):
@@ -99,6 +113,7 @@ class BotTestCase(object):
         cls.maxDiff = None  # For unittest module, prints long diffs
         cls.pipe = None
         cls.sysconfig = {}
+        cls.use_cache = False
         cls.allowed_error_count = 0  # allows dumping of some lines
 
         cls.set_bot()
@@ -113,10 +128,18 @@ class BotTestCase(object):
             cls.default_input_message = {'__type': 'Report',
                                          'raw': 'Cg==',
                                          'feed.name': 'Test Feed',
-                                         'time.observation': '2016-01-01T00:00'}
+                                         'time.observation': '2016-01-01T00:00:00+00:00'}
+        elif cls.default_input_message == '':
+            cls.default_input_message = {'__type': 'Event'}
         if type(cls.default_input_message) is dict:
             cls.default_input_message = \
                 utils.decode(json.dumps(cls.default_input_message))
+
+        if cls.use_cache and not os.environ.get('INTELMQ_SKIP_REDIS'):
+            cls.cache = redis.Redis(host=BOT_CONFIG['redis_cache_host'],
+                                    port=BOT_CONFIG['redis_cache_port'],
+                                    db=BOT_CONFIG['redis_cache_db'],
+                                    socket_timeout=BOT_CONFIG['redis_cache_ttl'])
 
     def prepare_bot(self):
         """Reconfigures the bot with the changed attributes"""
@@ -188,6 +211,49 @@ class BotTestCase(object):
         self.loglines_buffer = self.log_stream.getvalue()
         self.loglines = self.loglines_buffer.splitlines()
 
+        """ Test if report has required fields. """
+        if self.bot_type == 'collector':
+            for report_json in self.get_output_queue():
+                report = message.MessageFactory.unserialize(report_json)
+                self.assertIsInstance(report, message.Report)
+                self.assertIn('feed.name', report)
+                self.assertIn('raw', report)
+                self.assertIn('time.observation', report)
+
+        """ Test if event has required fields. """
+        if self.bot_type == 'parser':
+            for event_json in self.get_output_queue():
+                event = message.MessageFactory.unserialize(event_json)
+                self.assertIsInstance(event, message.Event)
+                self.assertIn('classification.type', event)
+                self.assertIn('raw', event)
+
+        """ Test if bot log messages are correctly formatted. """
+        self.assertLoglineMatches(0, "{} initialized with id {} and version"
+                                     " [0-9.]{{5}} \([a-zA-Z0-9,:. ]+\)( \[GCC\])?"
+                                     " as process [0-9]+\."
+                                     "".format(self.bot_name,
+                                               self.bot_id), "INFO")
+        self.assertRegexpMatchesLog("INFO - Bot is starting.")
+        self.assertLoglineEqual(-1, "Bot stopped.", "INFO")
+        self.assertNotRegexpMatchesLog("(ERROR.*?){%d}" % (self.allowed_error_count + 1))
+        self.assertNotRegexpMatchesLog("CRITICAL")
+        """ If no error happened (incl. tracebacks, we can check for formatting) """
+        if not self.allowed_error_count:  # This would fail for tracebacks currently
+            for logline in self.loglines:
+                fields = utils.parse_logline(logline)
+                self.assertTrue(fields['message'][-1] in '.:?!',
+                                msg='Logline {!r} does not end with .? or !.'
+                                    ''.format(fields['message']))
+                self.assertTrue(fields['message'].upper() == fields['message'].upper(),
+                                msg='Logline {!r} does not beginn with an upper case char.'
+                                    ''.format(fields['message']))
+
+    @classmethod
+    def tearDownClass(cls):
+        if cls.use_cache and not os.environ.get('INTELMQ_SKIP_REDIS'):
+            cls.cache.flushdb()
+
     def get_input_queue(self):
         """Returns the input queue of this bot which can be filled
            with fixture data in setUp()"""
@@ -206,27 +272,6 @@ class BotTestCase(object):
         return [utils.decode(text) for text
                 in self.pipe.state["%s-output" % self.bot_id]]
 
-    def test_logs(self):
-        """ Test if bot log messages are correctly formatted. """
-        self.run_bot()
-        self.assertLoglineMatches(0, "{} initialized with id {} and version"
-                                     " [0-9.]{{5}} \([a-zA-Z0-9,:. ]+\)( \[GCC\])?"
-                                     " as process [0-9]+\."
-                                     "".format(self.bot_name,
-                                               self.bot_id), "INFO")
-        self.assertRegexpMatchesLog("INFO - Bot is starting.")
-        self.assertLoglineEqual(-1, "Bot stopped.", "INFO")
-        for logline in self.loglines:
-            fields = utils.parse_logline(logline)
-            self.assertTrue(fields['message'][-1] in '.?!',
-                            msg='Logline {!r} does not end with .? or !.'
-                                ''.format(fields['message']))
-            self.assertTrue(fields['message'].upper() == fields['message'].upper(),
-                            msg='Logline {!r} does not beginn with an upper case char.'
-                                ''.format(fields['message']))
-        self.assertNotRegexpMatchesLog("(ERROR.*?){}"
-                                       "".format(self.allowed_error_count))
-        self.assertNotRegexpMatchesLog("CRITICAL")
 
 #        """ Test if all pipes are created with correct names. """
         pipenames = ["{}-input", "{}-input-internal", "{}-output"]
@@ -252,33 +297,6 @@ class BotTestCase(object):
 
         self.assertEqual('Test{}'.format(self.bot_name),
                          self.__class__.__name__)
-
-    def test_report(self):
-        """ Test if report has required fields. """
-        if self.bot_type != 'collector':
-            return
-
-        self.run_bot()
-        for report_json in self.get_output_queue():
-            report = message.MessageFactory.unserialize(report_json)
-            self.assertIsInstance(report, message.Report)
-            self.assertIn('feed.name', report)
-            self.assertIn('raw', report)
-            self.assertIn('time.observation', report)
-
-    def test_event(self):
-        """ Test if event has required fields. """
-        if self.bot_type != 'parser':
-            return
-
-        self.run_bot()
-        for event_json in self.get_output_queue():
-            event = message.MessageFactory.unserialize(event_json)
-            self.assertIsInstance(event, message.Event)
-            self.assertIn('classification.type', event)
-            self.assertIn('feed.name', event)
-            self.assertIn('raw', event)
-            self.assertIn('time.observation', event)
 
     def assertAnyLoglineEqual(self, message, levelname="ERROR"):
         """Asserts if any logline matches a specific requirement.
@@ -332,6 +350,21 @@ class BotTestCase(object):
         self.assertEqual(levelname, fields["log_level"])
         self.assertRegex(fields["message"], pattern)
 
+    def assertLogMatches(self, pattern, levelname="ERROR"):
+        """Asserts if any logline matches a specific requirement.
+           Args:
+                pattern: Message text which is compared
+                type: Type of logline which is asserted"""
+
+        self.assertIsNotNone(self.loglines)
+        for logline in self.loglines:
+            fields = utils.parse_logline(logline)
+
+            if levelname == fields["log_level"] and re.match(pattern, fields["message"]):
+                break
+        else:
+            raise ValueError('No matching logline found.')
+
     def assertRegexpMatchesLog(self, pattern):
         """Asserts that pattern matches against log. """
 
@@ -364,7 +397,8 @@ class BotTestCase(object):
 
         event_dict = json.loads(event)
         expected = expected_msg.copy()
-        del event_dict['time.observation']
+        if 'time.observation' in event_dict:
+            del event_dict['time.observation']
         if 'time.observation' in expected:
             del expected['time.observation']
 

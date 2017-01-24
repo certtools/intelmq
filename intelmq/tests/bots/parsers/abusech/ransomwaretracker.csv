@@ -1,0 +1,11 @@
+##############################################################################
+# Ransomware Tracker CSV Feed                                                #
+# Generated on 2016-11-15 23:30:45 UTC                                       #
+#                                                                            #
+# For questions please refer to:                                             #
+# https://ransomwaretracker.abuse.ch/feeds/                                  #
+##############################################################################
+#
+# Firstseen (UTC),Threat,Malware,Host,URL,Status,Registrar,IP address(es),ASN(s),Country
+"2016-11-11 16:06:00","Distribution Site","Locky","motefugue.com","http://motefugue.com/645d5","online","PAKNIC (PRIVATE) LIMITED","213.176.241.230|67.171.65.64","13055|7922","RU|US"
+"2016-11-15 10:07:59","Payment Site","TorrentLocker","ojmekzw4mujvqeju.minitili.at","http://ojmekzw4mujvqeju.minitili.at/","online","","5.79.96.33","60781|29182|207027|12695","NL"

@@ -11,21 +11,20 @@ ftp_file: string
 
 """
 from __future__ import unicode_literals
-import sys
-from ftplib import FTP
-import zipfile
-import io
+
 import fnmatch
+import io
+import zipfile
+from ftplib import FTP
 
 from intelmq.lib.bot import CollectorBot
-from intelmq.lib.message import Report
 
 
 class FTPCollectorBot(CollectorBot):
     def process(self):
-        self.logger.info("Downloading report from %s" %
-                         self.parameters.ftp_host + ':' +
-                         str(self.parameters.ftp_port))
+        self.logger.info("Downloading report from %s." %
+                         (self.parameters.ftp_host + ':' +
+                          str(self.parameters.ftp_port)))
 
         ftp = FTP()
         ftp.connect(host=self.parameters.ftp_host,
@@ -36,31 +35,28 @@ class FTPCollectorBot(CollectorBot):
                       passwd=self.parameters.ftp_password)
         cwd = '/'
         if hasattr(self.parameters, 'ftp_directory'):
-            self.logger.info('Changing working directory to: ' +
-                             self.parameters.ftp_directory)
+            self.logger.debug('Changing working directory to: %r.'
+                              '' % self.parameters.ftp_directory)
             cwd = self.parameters.ftp_directory
         ftp.cwd(cwd)
 
         filemask = '*'
         if hasattr(self.parameters, 'ftp_file'):
-            self.logger.info('Setting filemask to to: ' +
-                             self.parameters.ftp_file)
+            self.logger.debug('Setting filemask to to: %r.'
+                              '' % self.parameters.ftp_file)
             filemask = self.parameters.ftp_file
 
         mem = io.BytesIO()
         files = fnmatch.filter(ftp.nlst(), filemask)
-        self.logger.info('Found following files in the directory: ' +
-                         repr(files))
-        self.logger.info('Looking for latest file matching following pattern: ' + filemask)
 
         if files:
-            self.logger.info('Retrieving file: ' + files[-1])
+            self.logger.info('Retrieving file: %r.' % files[-1])
             ftp.retrbinary("RETR " + files[-1], mem.write)
         else:
-            self.logger.error("No file found, terminating download")
+            self.logger.info("No file found, terminating download.")
             return
 
-        self.logger.info("Report downloaded.")
+        self.logger.debug("Report downloaded.")
 
         raw_reports = []
         try:
@@ -68,18 +64,17 @@ class FTPCollectorBot(CollectorBot):
         except zipfile.BadZipfile:
             raw_reports.append(mem.getvalue())
         else:
-            self.logger.info('Downloaded zip file, extracting following files: ' + ', '.join(zfp.namelist()))
+            self.logger.info('Downloaded zip file, extracting following files: %r'
+                             '' % zfp.namelist())
             for filename in zfp.namelist():
                 raw_reports.append(zfp.read(filename))
 
         for raw_report in raw_reports:
-            report = Report()
+            report = self.new_report()
             report.add("raw", raw_report, sanitize=True)
             report.add("feed.url", 'ftp://' + self.parameters.ftp_host + ':' +
                        str(self.parameters.ftp_port), sanitize=True)
             self.send_message(report)
 
 
-if __name__ == "__main__":
-    bot = FTPCollectorBot(sys.argv[1])
-    bot.start()
+BOT = FTPCollectorBot

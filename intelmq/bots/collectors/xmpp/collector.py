@@ -1,12 +1,77 @@
-# -*- coding: utf-8 -*-
+"""
+XMPP Collector Bot
+Connects to a XMPP Server and a Room and reads data from the room.
+If no room is provided, which is equivalent to an empty string,
+it only collects events which were sent to the xmpp user directly.
 
-import json
-import sys
+TLS is used by default.
+
+Tested with Python >= 3.4
+Tested with sleekxmpp >= 1.0.0-beta5
+
+Copyright (C) 2016 by Bundesamt für Sicherheit in der Informationstechnik
+Software engineering by Intevation GmbH
+
+Parameters:
+ca_certs: string to a CA-bundle file or false/empty string for no checks
+strip_message: boolean
+xmpp_user: string
+xmpp_server: string
+xmpp_password: boolean
+xmpp_room: string
+xmpp_room_password: string
+xmpp_room_nick: string
+pass_full_xml: boolean
+strip_message: boolean
+xmpp_userlist: array
+xmpp_whitelist_mode: boolean
+"""
+
 
 from intelmq.lib.bot import CollectorBot
-from intelmq.bots.outputs.xmpp.output import XMPPBot
+
 try:
     import sleekxmpp
+
+    class XMPPClient(sleekxmpp.ClientXMPP):
+        def __init__(self,
+                     jid,
+                     password,
+                     room,
+                     room_nick,
+                     room_password,
+                     logger):
+            sleekxmpp.ClientXMPP.__init__(self, jid, password)
+
+            self.logger = logger
+            self.logger.info("Initiated.")
+            self.xmpp_room = room
+            self.xmpp_room_nick = room_nick
+            self.xmpp_room_password = room_password
+
+            self.add_event_handler("session_start", self.session_start)
+
+        def session_start(self, event):
+            self.send_presence()
+            self.logger.debug("Session started.")
+
+            try:
+                self.get_roster()
+            except sleekxmpp.exceptions.IqError as err:
+                self.logger.error('There was an error getting the roster.')
+                self.logger.error(err.iq['error']['condition'])
+                self.disconnect()
+            except sleekxmpp.exceptions.IqTimeout:
+                self.logger.error('Server is taking too long to respond.')
+                self.disconnect()
+
+            if self.xmpp_room:  # and self.plugin.get('xep_0045') # this check should also exist!
+                self.logger.debug("Joining room: %s." % self.xmpp_room)
+                pwd = self.xmpp_room_password if self.xmpp_room_password else ""
+                self.plugin['xep_0045'].joinMUC(self.xmpp_room,
+                                                self.xmpp_room_nick,
+                                                password=pwd,
+                                                wait=True)
 except ImportError:
     sleekxmpp = None
 
@@ -20,50 +85,109 @@ class XMPPCollectorBot(CollectorBot):
             self.logger.error('Could not import sleekxmpp. Please install it.')
             self.stop()
 
+        # Retrieve Parameters from configuration
+        xmpp_user = getattr(self.parameters, "xmpp_user", None)
+        xmpp_server = getattr(self.parameters, "xmpp_server", None)
+        xmpp_password = getattr(self.parameters, "xmpp_password", None)
+
+        if None in (xmpp_user, xmpp_server, xmpp_password):
+            self.logger.error('No User / Password provided')
+            self.stop()
+        else:
+            xmpp_login = xmpp_user + '@' + xmpp_server
+
+        self.userlist = getattr(self.parameters, "xmpp_userlist", [])
+        # When configured in manager this is most likely a ,-separated string, we'd like an array
+        if type(self.userlist) is str:
+            self.userlist = [u.strip() for u in self.userlist.split(",")]
+
+        self.whitelist_mode = getattr(self.parameters, "xmpp_whitelist_mode", False)
+
+        self.muc = getattr(self.parameters, "use_muc", None)
+        xmpp_room = getattr(self.parameters, "xmpp_room", None) if self.muc else None
+        xmpp_room_nick = getattr(self.parameters, "xmpp_room_nick", None) if self.muc else None
+        xmpp_room_password = getattr(self.parameters, "xmpp_room_password", None) if self.muc else None
+
+        self.pass_full_xml = getattr(self.parameters, "pass_full_xml", None)
+        self.strip_message = getattr(self.parameters, "strip_message", None)
+
+        ca_certs = getattr(self.parameters, "ca_certs", None)
+
+        if self.muc and not xmpp_room:
+            self.logger.error('No room provided')
+            self.stop()
+
+        if self.muc:
+            if not xmpp_room_nick:
+                # create the room_nick from user and server
+                xmpp_room_nick = xmpp_login
+
+        self.xmpp = XMPPClient(xmpp_login, xmpp_password,
+                               xmpp_room,
+                               xmpp_room_nick,
+                               xmpp_room_password,
+                               self.logger)
+
+        if ca_certs:
+            # Set CA-Certificates
+            self.xmpp.ca_certs = ca_certs
+
+        self.xmpp.connect(reattempt=True)
+        self.xmpp.process()
+
+        # Add Handlers and register Plugins
+        self.xmpp.register_plugin('xep_0030')  # Service Discovery
+        self.xmpp.register_plugin('xep_0045')  # Multi-User Chat
+
+        self.xmpp.add_event_handler("message", self.log_message)
+
     def process(self):
+        # Processing is done by function called from the eventhandler...
+        pass
 
-        if self.xmpp is None:
-            self.xmpp = sleekxmpp.XMPPBot(self.parameters.xmpp_user + '@' + self.parameters.xmpp_server,
-                                          self.parameters.xmpp_password,
-                                          self.send_message,
-                                          self.logger)
-            self.xmpp.connect(reattempt=True)
-            self.xmpp.process()
+    def shutdown(self):
+        if self.xmpp:
+            self.xmpp.disconnect()
+            self.logger.info("Disconnected from XMPP.")
+        else:
+            self.logger.info("There was no XMPPClient I could stop.")
 
-    def killbot(self):
-        self.xmpp.disconnect(wait=True)
-        self.logger.info("Disconnected")
+    def log_message(self, msg):
+
+        # Check if the message was sent by a users that is on
+        # the white or blacklist, determine if the message shall
+        # be processed.
+        if self.muc:
+            if not msg['mucnick'] in self.userlist and self.whitelist_mode:
+                # Whitelist-Case
+                return
+            elif msg['mucnick'] in self.userlist and not self.whitelist_mode:
+                # Blacklist Case
+                return
+
+        if self.pass_full_xml:
+            body = str(msg)
+        else:
+            if self.strip_message:
+                body = msg['body'].strip()
+            else:
+                body = msg['body']
+
+        if len(body) > 400:
+            tmp_body = body[:397] + '...'
+        else:
+            tmp_body = body
+
+        self.logger.debug("Received Stanza: %r from %r." % (tmp_body, msg['from']))
+
+        raw_msg = body
+
+        # Read msg-body and add as raw to a new report.
+        # now it's up to a parser to do the interpretation of the message.
+        if raw_msg:
+            report = self.new_report()
+            report.add("raw", raw_msg)
+            self.send_message(report)
 
 
-class XMPPOutputBot(sleekxmpp.ClientXMPP):
-
-    def __init__(self, jid, password, send_message, logger):
-        sleekxmpp.ClientXMPP.__init__(self, jid, password)
-        self.add_event_handler("session_start", self.session_start)
-        self.add_event_handler("message", self.message_logging)
-        self.logger = logger
-        self.logger.info("XMPP connected")
-        self.send_message = send_message
-
-    def session_start(self, event):
-        self.send_presence()
-
-        try:
-            self.get_roster()
-        except sleekxmpp.exception.IqError as err:
-            self.logger.error('There was an error getting the roster')
-            self.logger.error(err.iq['error']['condition'])
-            self.disconnect()
-        except sleekxmpp.exceptions.IqTimeout:
-            self.logger.error('Server is taking too long to respond')
-            self.disconnect()
-
-    def message_logging(self, msg):
-
-        event = json.loads(msg['body'])
-        self.logger.info("Event received from {}".format(msg['from']))
-        self.send_message(event)
-
-if __name__ == "__main__":
-    bot = XMPPCollectorBot(sys.argv[1])
-    bot.start()
+BOT = XMPPCollectorBot

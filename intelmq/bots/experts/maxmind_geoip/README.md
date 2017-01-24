@@ -8,4 +8,3 @@
 ```
     "database": "/opt/intelmq/var/lib/bots/maxmind_geoip/GeoLite2-City.mmdb"
 ```
-* Update the corresponding 'bot_id' section in '/opt/intelmq/etc/pipeline.conf'.

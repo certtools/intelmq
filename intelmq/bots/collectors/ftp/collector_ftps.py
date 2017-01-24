@@ -12,16 +12,15 @@ ftps_file: string
 
 """
 from __future__ import unicode_literals
-import sys
-from ftplib import FTP_TLS
+
+import fnmatch
+import io
 import socket
 import ssl
 import zipfile
-import io
-import fnmatch
+from ftplib import FTP_TLS
 
 from intelmq.lib.bot import CollectorBot
-from intelmq.lib.message import Report
 
 
 # BEGIN content from Stack Overflow
@@ -57,9 +56,9 @@ class FTPS(FTP_TLS):
 
 class FTPSCollectorBot(CollectorBot):
     def process(self):
-        self.logger.info("Downloading report from %s" %
-                         self.parameters.ftps_host + ':' +
-                         str(self.parameters.ftps_port))
+        self.logger.info("Downloading report from %s." %
+                         (self.parameters.ftp_host + ':' +
+                          str(self.parameters.ftp_port)))
 
         ftps = FTPS()
         ftps.connect(host=self.parameters.ftps_host,
@@ -72,22 +71,19 @@ class FTPSCollectorBot(CollectorBot):
 
         cwd = '/'
         if hasattr(self.parameters, 'ftps_directory'):
-            self.logger.info('Changing working directory to: ' +
-                             self.parameters.ftps_directory)
+            self.logger.debug('Changing working directory to: %r.'
+                              '' % self.parameters.ftp_directory)
             cwd = self.parameters.ftps_directory
         ftps.cwd(cwd)
 
         filemask = '*'
         if hasattr(self.parameters, 'ftps_file'):
-            self.logger.info('Setting filemask to to: ' +
-                             self.parameters.ftps_file)
+            self.logger.debug('Setting filemask to to: %r.'
+                              '' % self.parameters.ftp_file)
             filemask = self.parameters.ftps_file
 
         mem = io.BytesIO()
         files = fnmatch.filter(ftps.nlst(), filemask)
-        self.logger.info('Found following files in the directory: ' +
-                         repr(files))
-        self.logger.info('Looking for latest file matching following pattern: ' + filemask)
 
         if files:
             self.logger.info('Retrieving file: ' + files[-1])
@@ -104,18 +100,17 @@ class FTPSCollectorBot(CollectorBot):
         except zipfile.BadZipfile:
             raw_reports.append(mem.getvalue())
         else:
-            self.logger.info('Downloaded zip file, extracting following files: ' + ', '.join(zfp.namelist()))
+            self.logger.info('Downloaded zip file, extracting following files: %r'
+                             '' % zfp.namelist())
             for filename in zfp.namelist():
                 raw_reports.append(zfp.read(filename))
 
         for raw_report in raw_reports:
-            report = Report()
+            report = self.new_report()
             report.add("raw", raw_report, sanitize=True)
             report.add("feed.url", 'ftps://' + self.parameters.ftps_host + ':' +
                        str(self.parameters.ftps_port), sanitize=True)
             self.send_message(report)
 
 
-if __name__ == "__main__":
-    bot = FTPSCollectorBot(sys.argv[1])
-    bot.start()
+BOT = FTPSCollectorBot

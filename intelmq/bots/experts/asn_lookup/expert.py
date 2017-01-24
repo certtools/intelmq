@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 """
-import sys
 from intelmq.lib.bot import Bot
-from intelmq.lib.harmonization import IPAddress
 
 try:
     import pyasn
@@ -39,13 +37,7 @@ class ASNLookupExpertBot(Bot):
             if not event.contains(ip_key):
                 continue
 
-            ip = event.get(ip_key)
-
-            if IPAddress.version(ip) == 6:
-                # Currently not supported by pyasn, fix will come soon
-                continue
-
-            info = self.database.lookup(ip)
+            info = self.database.lookup(event.get(ip_key))
 
             if info:
                 if info[0]:
@@ -57,6 +49,4 @@ class ASNLookupExpertBot(Bot):
         self.acknowledge_message()
 
 
-if __name__ == "__main__":
-    bot = ASNLookupExpertBot(sys.argv[1])
-    bot.start()
+BOT = ASNLookupExpertBot

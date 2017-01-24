@@ -79,5 +79,5 @@ class TestSpamhausCERTParserBot(test.BotTestCase, unittest.TestCase):
             event.update(EVENT_TEMPL)
             self.assertMessageEqual(position, event)
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()
