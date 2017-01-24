@@ -19,14 +19,14 @@ made:
    This would not work, for e.g. a CSV based formats which allow
    newlines in values as long as they're within quotes.
 
- - The lines are much shorter than the maximumum chunk size
+ - The lines are much shorter than the maximum chunk size
 
    Obviously, if this condition does not hold, it may not be possible to
    split the data into small enough chunks at newline characters.
 
 Other considerations:
 
- - To accomodate CSV formats, the code can optionally replicate the
+ - To accommodate CSV formats, the code can optionally replicate the
    first line of the file at the start of all chunks.
 
  - The redis limit applies to the entire IntelMQ report, not just the
