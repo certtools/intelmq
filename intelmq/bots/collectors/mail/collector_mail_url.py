@@ -54,14 +54,14 @@ class MailURLCollectorBot(CollectorBot):
                         while timeoutretries < 3 and resp is None:
                             try:
                                 resp = requests.get(url=url,
-                                            auth=self.auth, proxies=self.proxy,
-                                            headers=self.http_header,
-                                            verify=self.http_verify_cert,
-                                            cert=self.ssl_client_cert,
-                                            timeout = self.http_timeout_sec)
+                                                    auth=self.auth, proxies=self.proxy,
+                                                    headers=self.http_header,
+                                                    verify=self.http_verify_cert,
+                                                    cert=self.ssl_client_cert,
+                                                    timeout=self.http_timeout_sec)
 
                             except requests.exceptions.Timeout:
-                                timeoutretries = timeoutretries + 1
+                                timeoutretries += 1
                                 self.logger.warn("Timeout whilst downloading the report.")
 
                         if timeoutretries >= 3:
