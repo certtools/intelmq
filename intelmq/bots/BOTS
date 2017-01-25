@@ -210,7 +210,7 @@
             "module": "intelmq.bots.parsers.bitcash.parser",
             "parameters": {}
         },
-        "AnubisNetworks Ciberfeed Stream": {
+        "AnubisNetworks Cyberfeed Stream": {
             "description": "Parsers single JSON-events from AnubisNetworks Cyberfeed stream.",
             "module": "intelmq.bots.parsers.anubisnetworks.parser",
             "parameters": {}
