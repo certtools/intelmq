@@ -47,7 +47,7 @@ The available feeds are grouped by the source of the feeds. For each feed the co
 
 ## Feodo Tracker Domains
 
-**Status:** Unknown
+**Status:** Active
 
 ### Collector Bot
 
@@ -79,7 +79,7 @@ id: abusech-feodo-domains-parser
 
 ## Feodo Tracker IPs
 
-**Status:** Unknown
+**Status:** Active
 
 ### Collector Bot
 
@@ -112,7 +112,7 @@ id: abusech-feodo-ips-parser
 
 ## Ransomware Tracker
 
-**Status:** Unknown
+**Status:** Active
 
 ### Collector Bot
 
@@ -145,7 +145,7 @@ id: abusech-ransomware-parser
 
 ## ZeuS Tracker Domains
 
-**Status:** Unknown
+**Status:** Unknown (no dates given)
 
 ### Collector Bot
 
@@ -177,7 +177,7 @@ id: abusech-zeus-domains-parser
 
 ## ZeuS Tracker IPs
 
-**Status:** Unknown
+**Status:** Unknown (no dates given)
 
 ### Collector Bot
 
@@ -243,7 +243,7 @@ id: alienvault-url-parser
 
 ## OTX
 
-**Status:** Unknown
+**Status:** Active
 
 ### Collector Bot
 
@@ -256,7 +256,6 @@ id: alienvault-url-parser
 id: alienvault-otx-collector
 provider: AlienVault
 feed: AlienVault OTX
-rate_limit: FIXME
 api_key: {{ your API key }}
 ```
 
@@ -276,7 +275,7 @@ id: alienvault-otx-parser
 
 # AnubisNetworks Cyberfeed Stream
 
-**Status:** Unknown
+**Status:** Active
 
 ## Collector Bot
 
@@ -343,7 +342,7 @@ id: autoshun-parser
 
 ## C2 Domains
 
-**Status:** Unknown
+**Status:** Active
 
 ### Collector Bot
 
@@ -376,7 +375,7 @@ License: http://osint.bambenekconsulting.com/license.txt
 
 ## C2 IPs
 
-**Status:** Unknown
+**Status:** Active
 
 ### Collector Bot
 
@@ -409,7 +408,7 @@ License: http://osint.bambenekconsulting.com/license.txt
 
 ## DGA Domains
 
-**Status:** Unknown
+**Status:** Active
 
 ### Collector Bot
 
@@ -443,7 +442,7 @@ License: http://osint.bambenekconsulting.com/license.txt
 
 # Bitcash
 
-**Status:** Unknown
+**Status:** Unknown (newest data 2016-11-15)
 
 ## Collector Bot
 
@@ -477,7 +476,7 @@ id: bitcash-parser
 
 ## Apache
 
-**Status:** Unknown
+**Status:** Active
 
 ### Collector Bot
 
@@ -509,7 +508,7 @@ id: blocklistde-apache-parser
 
 ## Bots
 
-**Status:** Unknown
+**Status:** Active
 
 ### Collector Bot
 
@@ -541,7 +540,7 @@ id: blocklistde-bots-parser
 
 ## Brute-force Logins
 
-**Status:** Unknown
+**Status:** Active
 
 ### Collector Bot
 
@@ -573,7 +572,7 @@ id: blocklistde-bruteforce-parser
 
 ## FTP
 
-**Status:** Unknown
+**Status:** Active
 
 ### Collector Bot
 
@@ -605,7 +604,7 @@ id: blocklistde-ftp-parser
 
 ## IMAP
 
-**Status:** Unknown
+**Status:** Active
 
 ### Collector Bot
 
@@ -637,7 +636,7 @@ id: blocklistde-imap-parser
 
 ## IRC Bots
 
-**Status:** Unknown
+**Status:** Active
 
 ### Collector Bot
 
@@ -667,7 +666,7 @@ id: blocklistde-mail-parser
 
 ## Mail
 
-**Status:** Unknown
+**Status:** Active
 
 ### Collector Bot
 
@@ -699,7 +698,7 @@ id: blocklistde-mail-parser
 
 ## SIP
 
-**Status:** Unknown
+**Status:** Active
 
 ### Collector Bot
 
@@ -731,7 +730,7 @@ id: blocklistde-sip-parser
 
 ## SSH
 
-**Status:** Unknown
+**Status:** Active
 
 ### Collector Bot
 
@@ -763,7 +762,7 @@ id: blocklistde-ssh-parser
 
 ## Strong IPs
 
-**Status:** Unknown
+**Status:** Active
 
 ### Collector Bot
 
@@ -827,7 +826,7 @@ rate_limit: 3600
 
 # CI Army
 
-**Status:** Unknown
+**Status:** Active
 
 ## Collector Bot
 
@@ -841,7 +840,7 @@ id: ci-army-collector
 provider: CINS Score
 feed: CI Army
 rate_limit: 3600
-http_url: http://cinsscore.com/list/ci-badguys.txt"
+http_url: http://cinsscore.com/list/ci-badguys.txt
 ```
 
 ## Parser Bot
@@ -862,7 +861,7 @@ register that user agent.
 
 ## Phishing
 
-**Status:** Unknown
+**Status:** Active
 
 ### Collector Bot
 
@@ -893,7 +892,7 @@ http_user_agent: {{ your user agent }}
 
 ## Virus
 
-**Status:** Unknown
+**Status:** Active
 
 ### Collector Bot
 
@@ -924,7 +923,7 @@ id: cleanmx-virus-parser
 
 # Cymru Full Bogons
 
-**Status:** Unknown
+**Status:** Active
 
 ## Collector Bot
 
@@ -956,7 +955,7 @@ id: cymru-full-bogons-parser
 
 ## AS
 
-**Status:** Unknown
+**Status:** Active
 
 ### Collector Bot
 
@@ -986,7 +985,7 @@ id: dshield-as-parser
 
 ## Block
 
-**Status:** Unknown
+**Status:** Active
 
 ### Collector Bot
 
@@ -1016,7 +1015,7 @@ id: dshield-block-parser
 
 ## Suspicious Domains
 
-**Status:** Unknown
+**Status:** Active
 
 ### Collector Bot
 
@@ -1046,7 +1045,7 @@ id: dshield-suspicious-domains-parser
 
 # Danger Rulez
 
-**Status:** Unknown
+**Status:** Active
 
 ## Collector Bot
 
@@ -1078,7 +1077,7 @@ id: danger-rulez-parser
 
 ## SIP Invitation
 
-**Status:** Unknown
+**Status:** Active
 
 ### Collector Bot
 
@@ -1111,7 +1110,7 @@ Report is updated hourly.
 
 ## SIP Query
 
-**Status:** Unknown
+**Status:** Active
 
 ### Collector Bot
 
@@ -1144,7 +1143,7 @@ Report is updated hourly.
 
 ## SIP Registration
 
-**Status:** Unknown
+**Status:** Active
 
 ### Collector Bot
 
@@ -1177,7 +1176,7 @@ Report is updated hourly.
 
 ## SSH Client Connection
 
-**Status:** Unknown
+**Status:** Active
 
 ### Collector Bot
 
@@ -1210,7 +1209,7 @@ Report is updated hourly.
 
 ## SSH Password Authentication
 
-**Status:** Unknown
+**Status:** Active
 
 ### Collector Bot
 
@@ -1244,7 +1243,7 @@ Report is updated hourly.
 
 # DynDNS
 
-**Status:** Unknown
+**Status:** Active
 
 ## Collector Bot
 
@@ -1276,7 +1275,7 @@ id: dyndns-parser
 
 # Fraunhofer DGA
 
-**Status:** Unknown
+**Status:** Active
 
 ## Collector Bot
 
@@ -1310,7 +1309,7 @@ id: fraunhofer-dga-parser
 
 # HPHosts
 
-**Status:** Unknown
+**Status:** Unknown (last update 2016-12-21)
 
 ## Collector Bot
 
@@ -1343,7 +1342,7 @@ error_log_message: false
 
 ## Windows Format
 
-**Status:** Unknown
+**Status:** Active
 
 ### Collector Bot
 
@@ -1375,7 +1374,7 @@ id: malc0de-windows-format-parser
 
 ## Bind Format
 
-**Status:** Unknown
+**Status:** Active
 
 ### Collector Bot
 
@@ -1407,7 +1406,7 @@ id: malc0de-ip-blacklist-parser
 
 ## IP Blacklist
 
-**Status:** Unknown
+**Status:** Active
 
 ### Collector Bot
 
@@ -1439,7 +1438,7 @@ id: malc0de-ip-blacklist-parser
 
 # Malware Domain List
 
-**Status:** Unknown
+**Status:** Active
 
 ## Collector Bot
 
@@ -1469,7 +1468,7 @@ id: malware-domain-list-parser
 
 # Malware Domains
 
-**Status:** Unknown
+**Status:** Active
 
 ## Collector Bot
 
@@ -1531,7 +1530,7 @@ http_url: https://lists.malwarepatrol.net/cgi/getfile?receipt={{ API KEY }}&prod
 
 ## Stomp
 
-**Status:** Unknown
+**Status:** Active
 
 ## Collector Bot
 
@@ -1569,7 +1568,7 @@ id: n6-parser
 
 ## DGA Feed
 
-**Status:** Unknown
+**Status:** Active
 
 ### Collector Bot
 
@@ -1602,7 +1601,7 @@ reference: http://data.netlab.360.com/dga
 
 ## Magnitude EK Feed
 
-**Status:** Unknown
+**Status:** Active
 
 ### Collector Bot
 
@@ -1637,7 +1636,7 @@ reference: http://data.netlab.360.com/ek
 
 ## DNS Attack Feed
 
-**Status:** Unknown
+**Status:** Active
 
 ### Collector Bot
 
@@ -1670,7 +1669,7 @@ reference: http://www.nothink.org/honeypot_dns.php
 
 ## SNMP Feed
 
-**Status:** Unknown
+**Status:** Active
 
 ### Collector Bot
 
@@ -1708,7 +1707,7 @@ reference: http://www.nothink.org/honeypot_snmp.php
 
 ## SSH Feed
 
-**Status:** Unknown
+**Status:** Active
 
 ### Collector Bot
 
@@ -1746,7 +1745,7 @@ Reference: http://www.nothink.org/honeypots.php
 
 ## Telnet Feed
 
-**Status:** Unknown
+**Status:** Active
 
 ### Collector Bot
 
@@ -1785,7 +1784,7 @@ reference: http://www.nothink.org/honeypots.php
 
 # OpenBL
 
-**Status:** Unknown
+**Status:** Active
 
 ## Collector Bot
 
@@ -1875,7 +1874,7 @@ id: phishtank-parser
 
 # Proxyspy
 
-**Status:** Unknown
+**Status:** Active
 
 ## Collector Bot
 
@@ -1908,7 +1907,7 @@ id: proxyspy-parser
 
 # Shadowserver
 
-**Status:** Unknown
+**Status:** Active
 
 ## Collector Bot
 
@@ -1967,7 +1966,7 @@ id: shadowserver-<report_type>-parser
 
 ## CERT
 
-**Status:** Unknown
+**Status:** Active
 
 ### Collector Bot
 
@@ -1999,7 +1998,7 @@ id: spamhaus-cert-parser
 
 ## Drop
 
-**Status:** Unknown
+**Status:** Active
 
 ### Collector Bot
 
@@ -2031,7 +2030,7 @@ id: spamhaus-drop-parser
 
 ## EDrop
 
-**Status:** Unknown
+**Status:** Active
 
 ### Collector Bot
 
@@ -2063,7 +2062,7 @@ id: spamhaus-edrop-parser
 
 ## Dropv6
 
-**Status:** Unknown
+**Status:** Active
 
 ### Collector Bot
 
@@ -2095,7 +2094,7 @@ id: spamhaus-dropv6-parser
 
 ## ASN-Drop
 
-**Status:** Unknown
+**Status:** Active
 
 ### Collector Bot
 
@@ -2128,7 +2127,7 @@ id: spamhaus-asn-drop-parser
 
 # Taichung
 
-**Status:** Unknown
+**Status:** Active
 
 ## Collector Bot
 
@@ -2159,7 +2158,7 @@ error_log_message: false
 
 # Turris Greylist
 
-**Status:** Unknown
+**Status:** Active
 
 ## Collector Bot
 
@@ -2191,7 +2190,7 @@ id: turris-greylist-parser
 
 ## Hosts
 
-**Status:** Unknown
+**Status:** Active
 
 ### Collector Bot
 
@@ -2223,7 +2222,7 @@ id: urlvir-hosts-parser
 
 ## IPs
 
-**Status:** Unknown
+**Status:** Active
 
 ### Collector Bot
 
@@ -2256,7 +2255,7 @@ id: urlvir-ips-parser
 
 # VXVault
 
-**Status:** Unknown
+**Status:** Active
 
 ## Collector Bot
 
