@@ -7,7 +7,6 @@ import json
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.exceptions import InvalidValue
 
 __all__ = ['FraunhoferDGAParserBot']
 
@@ -24,9 +23,7 @@ class FraunhoferDGAParserBot(Bot):
             event = self.new_event(report)
 
             event.add('classification.type', 'c&c')
-            try:
-                event.add('source.ip', row)
-            except InvalidValue:
+            if not event.add('source.ip', row, raise_failure=False):
                 event.add('source.fqdn', row)
             event.add("raw", row)
 

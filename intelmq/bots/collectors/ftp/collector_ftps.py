@@ -107,9 +107,9 @@ class FTPSCollectorBot(CollectorBot):
 
         for raw_report in raw_reports:
             report = self.new_report()
-            report.add("raw", raw_report, sanitize=True)
+            report.add("raw", raw_report)
             report.add("feed.url", 'ftps://' + self.parameters.ftps_host + ':' +
-                       str(self.parameters.ftps_port), sanitize=True)
+                       str(self.parameters.ftps_port))
             self.send_message(report)
 
 
