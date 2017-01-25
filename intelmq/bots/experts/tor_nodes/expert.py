@@ -31,7 +31,7 @@ class TorExpertBot(Bot):
         event = self.receive_message()
 
         for key in ["source.", "destination."]:
-            if event.contains(key + 'ip'):
+            if key + 'ip' in event:
                 if event.get(key + 'ip') in self.database:
                     event.add(key + 'tor_node', True)
 

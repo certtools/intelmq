@@ -42,7 +42,6 @@ import json
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.exceptions import InvalidValue
 from intelmq.lib.harmonization import DateTime
 
 MAP_geo_env_remote_addr = {'country_code': 'source.geolocation.cc',
@@ -83,10 +82,8 @@ class AnubisNetworksParserBot(Bot):
                 if "server_port" in value:
                     event.add('destination.port', value["server_port"])
                 if "server_name" in value:
-                    try:
-                        event.add('destination.fqdn', value["server_name"])
-                    except InvalidValue:
-                        pass
+                    event.add('destination.fqdn', value["server_name"],
+                              raise_failure=False)
                 for k in ["request_method", "cookies", "path_info", "http_referer"]:
                     if k in value:
                         extra[k] = value[k]

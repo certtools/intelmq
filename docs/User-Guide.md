@@ -275,6 +275,24 @@ This configuration is used by each bot to load the specific parameters associate
 
 More examples can be found at `intelmq/etc/runtime.conf` directory in IntelMQ repository.
 
+By default all of the bots are started when you start the whole botnet, however there is a possibility to *disable* a bot. This means that the bot will not start every time you start the botnet, but you can start and stop the bot if you specify the bot explicitly. To disable a bot, add the following to your runtime.conf: `"enabled": false`. For example: 
+
+```
+{
+    "malware-domain-list-collector": {
+        "group": "Collector",
+        "name": "Malware Domain List",
+        "module": "intelmq.bots.collectors.http.collector_http",
+        "description": "Malware Domain List Collector is the bot responsible to get the report from source of information.",
+        "enabled": false,
+        "parameters": {
+            "http_url": "http://www.malwaredomainlist.com/updatescsv.php",
+            "feed": "Malware Domain List",
+            "rate_limit": 3600
+        }
+    }
+}
+```
 
 ## Harmonization Configuration
 
@@ -548,6 +566,10 @@ Consult the [FAQ](FAQ.md) if you encountered any problem.
 
 
 # Additional Information
+
+## Bash Completion
+
+To enable bash completion on `intelmqctl` and `intelmqdump` in order to help you run the commands in an easy manner, follow the installation process [here](../contrib/bash-completion/README.md).
 
 ## Performance Tests
 
