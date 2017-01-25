@@ -33,6 +33,7 @@ described in this file). It is set outside of the `parameters` object in `runtim
 * `http_verify_cert`: path to trusted CA bundle or directory, `false` to ignore verifying SSL certificates,  or `true` (default) to verify SSL certificates
 * `ssl_client_certificate`: SSL client certificate to use.
 * `http_header`: HTTP request headers
+* `http_timeout_sec`: A tuple of floats or only one float describing the timeout of the http connection.
 
 
 

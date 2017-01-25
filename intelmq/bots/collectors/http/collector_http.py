@@ -29,10 +29,24 @@ class HTTPCollectorBot(CollectorBot):
         self.logger.info("Downloading report from %s" %
                          self.parameters.http_url)
 
-        resp = requests.get(url=self.parameters.http_url, auth=self.auth,
-                            proxies=self.proxy, headers=self.http_header,
-                            verify=self.http_verify_cert,
-                            cert=self.ssl_client_cert)
+        timeoutretries = 0
+        resp = None
+
+        while timeoutretries < 3 and resp is None:
+            try:
+                resp = requests.get(url=self.parameters.http_url, auth=self.auth,
+                                    proxies=self.proxy, headers=self.http_header,
+                                    verify=self.http_verify_cert,
+                                    cert=self.ssl_client_cert,
+                                    timeout=self.http_timeout_sec)
+
+            except requests.exceptions.Timeout:
+                timeoutretries += 1
+                self.logger.warn("Timeout whilst downloading the report.")
+
+        if timeoutretries >= 3:
+            self.logger.error("Request timed out three times in a row. ")
+            return
 
         if resp.status_code // 100 != 2:
             raise ValueError('HTTP response status code was {}.'
