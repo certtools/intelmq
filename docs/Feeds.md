@@ -821,7 +821,7 @@ rate_limit: 3600
 
 **Configuration Parameters:**
 ```
-* id: blueliv-crimeserver-parser
+ id: blueliv-crimeserver-parser
 ```
 
 **Notes:** Blueliv Crimeserver Collector is the bot responsible to get the report through the API.
@@ -889,7 +889,7 @@ http_user_agent: {{ your user agent }}
 
 **Configuration Parameters:**
 ```
-* id: cleanmx-phishing-parser
+ id: cleanmx-phishing-parser
 ```
 
 ## Virus
@@ -1270,6 +1270,8 @@ http_url: http://security-research.dyndns.org/pub/malware-feeds/ponmocup-infecte
 
 **Configuration Parameters:**
 ```
+id: dyndns-parser
+```
 
 **Notes:** DynDNS ponmocup. List of ponmocup malware redirection domains and infected web-servers. See also http://security-research.dyndns.org/pub/botnet-links.html
 
@@ -1523,7 +1525,7 @@ http_url: https://lists.malwarepatrol.net/cgi/getfile?receipt={{ API KEY }}&prod
 
 **Configuration Parameters:**
 ```
-* id: malwarepatrol-dans-guardian-parser
+ id: malwarepatrol-dans-guardian-parser
 ```
 
 # N6
@@ -1686,9 +1688,10 @@ rate_limit: FIXME
 http_url: http://www.nothink.org/blacklist/blacklist_snmp_day.txt
 http_url: http://www.nothink.org/blacklist/blacklist_snmp_week.txt
 http_url: http://www.nothink.org/blacklist/blacklist_snmp_year.txt
+```
 
 **Notes:** There are a number of feeds you can use to depend on how far back you would like to go.  The time.source will still be the date and time the feed was generated at nothink.
-```
+
 
 ### Parser Bot
 
@@ -1723,9 +1726,10 @@ rate_limit: FIXME
 http_url: http://www.nothink.org/blacklist/blacklist_ssh_day.txt
 http_url: http://www.nothink.org/blacklist/blacklist_ssh_week.txt
 http_url: http://www.nothink.org/blacklist/blacklist_ssh_year.txt
+```
 
 **Notes:** There are a number of feeds you can use to depend on how far back you would like to go.  The time.source will still be the date and time the feed was generated at nothink.
-```
+
 
 ### Parser Bot
 
@@ -1760,9 +1764,10 @@ rate_limit: FIXME
 http_url: http://www.nothink.org/blacklist/blacklist_telnet_day.txt
 http_url: http://www.nothink.org/blacklist/blacklist_telnet_week.txt
 http_url: http://www.nothink.org/blacklist/blacklist_telnet_year.txt
+```
 
 **Notes:** There are a number of feeds you can use to depend on how far back you would like to go.  The time.source will still be the date and time the feed was generated at nothink.
-```
+
 
 ### Parser Bot
 
@@ -1920,6 +1925,7 @@ feed: ShadowServer <report_type>
 rate_limit: FIXME
 subject_regex: (see individual reports below)
 url_regex: https://dl.shadowserver.org/[^ ]+
+```
 
 ## Collector Bot
 
@@ -1941,6 +1947,11 @@ attach_unzip: true
 ## Parser Bot
 
 **Bot Name:** Shadowserver
+
+**Bot Module:** intelmq.bots.parsers.shadowserver.parser
+
+**Configuration Parameters:**
+```
 id: shadowserver-<report_type>-parser
 ```
 
@@ -2270,5 +2281,7 @@ http_url: http://vxvault.net/URL_List.php
 **Bot Module:** intelmq.bots.parsers.vxvault.parser
 
 **Configuration Parameters:**
+```
+id: vxvault-parser
 ```
 
