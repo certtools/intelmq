@@ -1,3 +1,10 @@
+intelmq (1.0.0~dev4+intevation.1.2~rc1) experimental; urgency=low
+
+  * Working towards stable Release
+  * Added release-notes.txt
+
+ -- Sascha Wilde <wilde@intevation.de>  Thu, 26 Jan 2017 19:13:34 +0100
+
 intelmq (1.0.0~dev4+intevation.1.2~beta4) experimental; urgency=low
 
   * New release

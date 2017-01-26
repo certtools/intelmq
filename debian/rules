@@ -31,6 +31,8 @@ override_dh_auto_install: $(BOTDOCS)
 	# Remove modify bot example configs from their original location because
 	# intelmq.install copies them to the /usr/share/doc/intelmq/bots hierarchy
 	rm -vr debian/intelmq/opt/intelmq/var/lib/bots/modify/example
+	mkdir -p $(DOCS_DIR)
+	cp debian/release-notes.txt $(DOCS_DIR)
 	## BOTS
 	# Include all bot READMEs
 	for readme in $(foreach bot,$(BOTDOCS),$(subst intelmq/bots/,,$(bot))); \
