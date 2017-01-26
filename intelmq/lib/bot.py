@@ -159,6 +159,13 @@ class Bot(object):
                 self.__disconnect_pipelines()
 
             except Exception as exc:
+                if isinstance(exc, MemoryError):
+                    self.logger.exception('Out of memory. Exit immediately.')
+                    self.stop()
+                elif isinstance(exc, (IOError, OSError)) and exc.errno == 28:
+                    self.logger.exception('Out of disk space. Exit immediately.')
+                    self.stop()
+
                 error_on_message = sys.exc_info()
 
                 if self.parameters.error_log_exception:

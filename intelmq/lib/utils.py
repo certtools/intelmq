@@ -204,6 +204,17 @@ def load_parameters(*configs):
     return parameters
 
 
+class FileHandler(logging.FileHandler):
+    def emit_print(self, record):
+        print(record.msg, record.args)
+
+    def handleError(self, record):
+        type, value, traceback = sys.exc_info()
+        if type is OSError and value.errno == 28:
+            self.emit = self.emit_print
+            raise
+
+
 def log(name, log_path=intelmq.DEFAULT_LOGGING_PATH, log_level="DEBUG",
         stream=None, syslog=None):
     """
@@ -241,7 +252,7 @@ def log(name, log_path=intelmq.DEFAULT_LOGGING_PATH, log_level="DEBUG",
     logger.setLevel(log_level)
 
     if not syslog:
-        handler = logging.FileHandler("%s/%s.log" % (log_path, name))
+        handler = FileHandler("%s/%s.log" % (log_path, name))
         handler.setLevel(log_level)
     else:
         if type(syslog) is tuple or type(syslog) is list:
