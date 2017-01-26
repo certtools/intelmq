@@ -640,7 +640,9 @@ class CollectorBot(Bot):
             self.proxy = None
 
         self.http_timeout_sec = getattr(self.parameters, 'http_timeout_sec', None)
-        self.http_timeout_max_retries = getattr(self.parameters, 'http_timeout_max_retries', 0)
+        self.http_timeout_max_tries = getattr(self.parameters, 'http_timeout_max_tries', 1)
+        # Be sure this is always at least 1
+        self.http_timeout_max_tries = self.http_timeout_max_tries if self.http_timeout_max_tries >= 1 else 1
 
         self.http_header['User-agent'] = self.parameters.http_user_agent
 
