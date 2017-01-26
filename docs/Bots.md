@@ -33,7 +33,7 @@ described in this file). It is set outside of the `parameters` object in `runtim
 * `http_verify_cert`: path to trusted CA bundle or directory, `false` to ignore verifying SSL certificates,  or `true` (default) to verify SSL certificates
 * `ssl_client_certificate`: SSL client certificate to use.
 * `http_header`: HTTP request headers
-* `http_timeout_sec`: A tuple of floats or only one float describing the timeout of the http connection. Can be a tuple of two floats (read and connect timeout) or just one float (applies for both timeouts). Default: no timeout. See also https://requests.readthedocs.io/en/master/user/advanced/#timeouts
+* `http_timeout_sec`: A tuple of floats or only one float describing the timeout of the http connection. Can be a tuple of two floats (read and connect timeout) or just one float (applies for both timeouts). The default is 30 seconds in default.conf, if not given no timeout is used. See also https://requests.readthedocs.io/en/master/user/advanced/#timeouts
 
 
 
