@@ -82,7 +82,7 @@ Developers might want to install intelmq with `pip3 -e`, which gives you a so ca
 
 If you do any changes on setup.py, data files (e.g. example configurations) or add new bots, you need to rerun the installation routine.
 
-    pip3 install -e --upgrade .
+    pip3 install --upgrade -e .
 
 ## Testing
 
