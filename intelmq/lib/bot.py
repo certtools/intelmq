@@ -597,6 +597,8 @@ class CollectorBot(Bot):
         report.add("feed.name", self.parameters.feed)
         if hasattr(self.parameters, 'code'):
             report.add("feed.code", self.parameters.code)
+        if hasattr(self.parameters, 'documentation'):
+            report.add("feed.documentation", self.parameters.documentation)
         if hasattr(self.parameters, 'provider'):
             report.add("feed.provider", self.parameters.provider)
         report.add("feed.accuracy", self.parameters.accuracy)
