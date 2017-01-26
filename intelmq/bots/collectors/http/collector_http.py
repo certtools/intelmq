@@ -32,7 +32,7 @@ class HTTPCollectorBot(CollectorBot):
         timeoutretries = 0
         resp = None
 
-        while timeoutretries < 3 and resp is None:
+        while timeoutretries < self.http_timeout_max_retries and resp is None:
             try:
                 resp = requests.get(url=self.parameters.http_url, auth=self.auth,
                                     proxies=self.proxy, headers=self.http_header,
@@ -44,8 +44,9 @@ class HTTPCollectorBot(CollectorBot):
                 timeoutretries += 1
                 self.logger.warn("Timeout whilst downloading the report.")
 
-        if timeoutretries >= 3:
-            self.logger.error("Request timed out three times in a row. ")
+        if resp is None and timeoutretries >= self.http_timeout_max_retries:
+            self.logger.error("Request timed out %i times in a row. " %
+                              self.http_timeout_max_retries)
             return
 
         if resp.status_code // 100 != 2:
