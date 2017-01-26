@@ -70,8 +70,6 @@ class MailURLCollectorBot(CollectorBot):
                             # The download timed out too often, leave the Loop.
                             continue
 
-                        self.logger.debug(resp.content)
-
                         if resp.status_code // 100 != 2:
                             raise ValueError('HTTP response status code was {}.'
                                              ''.format(resp.status_code))
