@@ -1,21 +1,18 @@
 # -*- coding: utf-8 -*-
-
+import os
 import unittest
 
 import intelmq.lib.test as test
+import intelmq.lib.utils as utils
 from intelmq.bots.parsers.spamhaus.parser_cert import SpamhausCERTParserBot
+
+
+with open(os.path.join(os.path.dirname(__file__), 'cert.txt')) as handle:
+    FILE = handle.read()
 
 EXAMPLE_REPORT = {"feed.url": "https://portal.spamhaus.org/cert/api.php?cert="
                               "<CERTNAME>&key=<APIKEY>",
-                  "raw": "OyBpcCwgYXNuLCBjb3VudHJ5LCBsYXN0c2VlbiwgYm90bmFtZSwg"
-                         "ZG9tYWluLCByZW1vdGVfaXAsIHJlbW90ZV9wb3J0LCBsb2NhbF9w"
-                         "b3J0LCBwcm90b2NvbAoxMDkuMTI2LjY0LjIsQVMxMjYzNSxBVCwx"
-                         "NDQxMDA4OTcwLGFzcHJveCwsLDI1LCx0Y3AKMTA5LjkwLjIzMy4x"
-                         "OSxBUzY4MzAsQVQsMTQ0MTAwODM1MSxwYXRjaGVyLGR4eHQuc2lu"
-                         "a2hvbGUuZGssMjEyLjIyNy4yMC4xOSw4MCwxMDM2LHRjcAoxMDku"
-                         "OTEuMC4yMjcsQVM2ODMwLEFULDE0NDEwMTE2NTcsY29uZmlja2Vy"
-                         "LDIxNi42Ni4xNS4xMDksMjE2LjY2LjE1LjEwOSw4MCwxNDMwLHRj"
-                         "cAo=",
+                  'raw': utils.base64_encode(FILE),
                   "__type": "Report",
                   "feed.name": "Spamhaus Cert",
                   "time.observation": "2015-01-01T00:00:00+00:00",
@@ -26,8 +23,6 @@ EVENT_TEMPL = {"feed.url": "https://portal.spamhaus.org/cert/api.php?cert="
                "__type": "Event",
                "classification.type": "botnet drone",
                "time.observation": "2015-01-01T00:00:00+00:00",
-               "protocol.transport": "tcp",
-               "source.geolocation.cc": "AT",
                }
 EXAMPLE_EVENTS_PARTS = [{'raw': 'MTA5LjEyNi42NC4yLEFTMTI2MzUsQVQsMTQ0MTAwODk3M'
                                 'Cxhc3Byb3gsLCwyNSwsdGNw',
@@ -36,6 +31,8 @@ EXAMPLE_EVENTS_PARTS = [{'raw': 'MTA5LjEyNi42NC4yLEFTMTI2MzUsQVQsMTQ0MTAwODk3M'
                          'time.source': '2015-08-31T08:16:10+00:00',
                          'malware.name': 'asprox',
                          'destination.port': 25,
+                         'source.geolocation.cc': 'AT',
+                         'protocol.transport': 'tcp',
                          },
                         {'raw': 'MTA5LjkwLjIzMy4xOSxBUzY4MzAsQVQsMTQ0MTAwODM1M'
                                 'SxwYXRjaGVyLGR4eHQuc2lua2hvbGUuZGssMjEyLjIyNy'
@@ -48,6 +45,8 @@ EXAMPLE_EVENTS_PARTS = [{'raw': 'MTA5LjEyNi42NC4yLEFTMTI2MzUsQVQsMTQ0MTAwODk3M'
                          'destination.fqdn': 'dxxt.sinkhole.dk',
                          'destination.ip': '212.227.20.19',
                          'extra': '{"destination.local_port": 1036}',
+                         'source.geolocation.cc': 'AT',
+                         'protocol.transport': 'tcp',
                          },
                         {'raw': 'MTA5LjkxLjAuMjI3LEFTNjgzMCxBVCwxNDQxMDExNjU3L'
                                 'GNvbmZpY2tlciwyMTYuNjYuMTUuMTA5LDIxNi42Ni4xNS'
@@ -59,6 +58,26 @@ EXAMPLE_EVENTS_PARTS = [{'raw': 'MTA5LjEyNi42NC4yLEFTMTI2MzUsQVQsMTQ0MTAwODk3M'
                          'destination.port': 80,
                          'destination.ip': '216.66.15.109',
                          'extra': '{"destination.local_port": 1430}',
+                         'source.geolocation.cc': 'AT',
+                         'protocol.transport': 'tcp',
+                         },
+                        {'raw': 'MTExLjExMS4xMTEuMTgzLEFTMTExNzgsTFYsMTQ3MTExMTEzOSxpb3RtaXJhaSwtLD8sPyw/LD8=',
+                         'source.ip': '111.111.111.183',
+                         'source.asn': 11178,
+                         'time.source': '2016-08-13T17:58:59+00:00',
+                         'malware.name': 'iotmirai',
+                         'source.geolocation.cc': 'LV',
+                         },
+                        {'raw': 'MTExLjExMS4xMTEuMjMwLEFTMTExNzgsTFYsMTQ3MTExMTEzNCxnb290a2l0LCwxMTEuMTExLjExMS4xNjYsMTY5Nix4eHh4eHh4eHh4eC5jb20sdGNw',
+                         'source.ip': '111.111.111.230',
+                         'source.asn': 11178,
+                         'time.source': '2016-08-13T17:58:54+00:00',
+                         'malware.name': 'gootkit',
+                         'destination.ip': '111.111.111.166',
+                         'destination.fqdn': 'xxxxxxxxxxx.com',
+                         'destination.port': 1696,
+                         'source.geolocation.cc': 'LV',
+                         'protocol.transport': 'tcp',
                          }]
 
 
