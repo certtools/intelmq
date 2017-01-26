@@ -471,7 +471,7 @@ class IPNetwork(GenericType):
     def sanitize(value):
 
         try:
-            ipaddress.ip_network(str(value), strict=False)
+            value = str(ipaddress.ip_network(str(value), strict=False))
         except ValueError:
             return None
 
