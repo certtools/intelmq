@@ -162,7 +162,7 @@ class Bot(object):
                 if isinstance(exc, MemoryError):
                     self.logger.exception('Out of memory. Exit immediately.')
                     self.stop()
-                elif isinstance(exc, IOError) and exc.errno == 28:
+                elif isinstance(exc, (IOError, OSError)) and exc.errno == 28:
                     self.logger.exception('Out of disk space. Exit immediately.')
                     self.stop()
 
