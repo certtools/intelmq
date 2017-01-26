@@ -68,7 +68,7 @@ class GenericType(object):
                 value = value.decode('utf-8', 'ignore')
             return value.strip()
 
-        return None
+        return str(value)
 
 
 class Base64(GenericType):
@@ -471,7 +471,7 @@ class IPNetwork(GenericType):
     def sanitize(value):
 
         try:
-            ipaddress.ip_network(str(value))
+            ipaddress.ip_network(str(value), strict=False)
         except ValueError:
             return None
 
