@@ -77,7 +77,7 @@ class FilterExpertBot(Bot):
         event = self.receive_message()
 
         # time based filtering
-        if event.contains('time.source'):
+        if 'time.source' in event:
             try:
                 event_time = parser.parse(str(event.get('time.source'))).replace(tzinfo=pytz.timezone('UTC'))
             except ValueError:
@@ -133,11 +133,11 @@ class FilterExpertBot(Bot):
             return self.equalsFilter(event, key, condition)
 
     def equalsFilter(self, event, key, value):
-        return (event.contains(key) and
+        return (key in event and
                 event.get(key) == value)
 
     def regexSearchFilter(self, event, key, regex):
-        if event.contains(key):
+        if key in event:
             exp = re.compile(regex)
             return exp.search(str(event.get(key)))
         else:

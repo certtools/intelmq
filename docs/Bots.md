@@ -33,7 +33,7 @@ described in this file). It is set outside of the `parameters` object in `runtim
 * `http_verify_cert`: path to trusted CA bundle or directory, `false` to ignore verifying SSL certificates,  or `true` (default) to verify SSL certificates
 * `ssl_client_certificate`: SSL client certificate to use.
 * `http_header`: HTTP request headers
-* `http_timeout_sec`: A tuple of floats or only one float describing the timeout of the http connection.
+* `http_timeout_sec`: A tuple of floats or only one float describing the timeout of the http connection. Can be a tuple of two floats (read and connect timeout) or just one float (applies for both timeouts). Default: no timeout. See also https://requests.readthedocs.io/en/master/user/advanced/#timeouts
 
 
 
@@ -53,6 +53,27 @@ described in this file). It is set outside of the `parameters` object in `runtim
 * **HTTP parameters** (see above)
 * `http_url`: location of information resource (e.g. https://feodotracker.abuse.ch/blocklist/?download=domainblocklist)
 
+
+* * *
+
+### Generic URL Stream Fetcher
+
+
+#### Information:
+* `name:` intelmq.bots.collectors.http.collector_http_stream
+* `lookup:` yes
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Opens a streaming connection to the URL and sends the received lines.
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* **HTTP parameters** (see above)
+* `http_url`: location of HTTP streaming resource
+* `strip_lines`: boolean, if single lines should be stripped (removing whitespace from the beginning and the end of the line)
+
+If the stream is interrupted, the connection will be aborted using the timeout parameter. Then, an error will be thrown and rate_limit applies if not null.
 
 * * *
 

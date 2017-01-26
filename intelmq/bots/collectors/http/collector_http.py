@@ -10,7 +10,7 @@ http_verify_cert: boolean
     default: True
 http_username, http_password: string
 http_proxy, https_proxy: string
-
+http_timeout: tuple of two floats or float
 """
 import io
 import zipfile

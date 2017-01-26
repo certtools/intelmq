@@ -656,7 +656,7 @@ open_netbios = {
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
         ('source.account', 'username'),
-        ('source.local_hostname', 'machine_name'),
+        # --- moving this to extra: ('source.local_hostname', 'machine_name'),
         # Other known fields which will go into "extra"
         # tag
         # mac_address

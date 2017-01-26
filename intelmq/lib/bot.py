@@ -620,7 +620,6 @@ class CollectorBot(Bot):
         self.http_header = getattr(self.parameters, 'http_header', {})
         self.http_verify_cert = getattr(self.parameters, 'http_verify_cert', True)
         self.ssl_client_cert = getattr(self.parameters, 'ssl_client_certificate', None)
-        self.http_timeout_sec = getattr(self.parameters, 'http_timeout_sec', None)
 
         if hasattr(self.parameters, 'http_username') and hasattr(
                 self.parameters, 'http_password'):
@@ -639,6 +638,8 @@ class CollectorBot(Bot):
             self.proxy = None
         else:
             self.proxy = None
+
+        self.http_timeout_sec = getattr(self.parameters, 'http_timeout_sec', None)
 
         self.http_header['User-agent'] = self.parameters.http_user_agent
 

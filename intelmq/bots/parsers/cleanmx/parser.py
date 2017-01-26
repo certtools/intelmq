@@ -2,7 +2,6 @@
 from collections import OrderedDict
 
 from intelmq.lib.bot import ParserBot
-from intelmq.lib.harmonization import IPAddress
 
 PHISHING = OrderedDict([
     ("line", "__IGNORE__"),
@@ -91,8 +90,7 @@ class CleanMXParserBot(ParserBot):
             if key == "__IGNORE__":
                 continue
 
-            if key == "source.fqdn" and IPAddress.is_valid(value,
-                                                           sanitize=True):
+            if key == "source.fqdn" and event.is_valid('source.ip', value):
                 continue
 
             if key == "time.source":
