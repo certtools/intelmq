@@ -60,7 +60,7 @@ setup(
     package_data={'intelmq': [
         'etc/*.conf',
         'bots/BOTS',
-        'bots/experts/modify/*.conf',
+        'bots/experts/modify/examples/*.conf',
     ]
     },
     include_package_data=True,
