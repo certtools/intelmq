@@ -1,4 +1,4 @@
-intelmq (1.0.0~dev5+intevation.1.2~rc1) experimental; urgency=low
+intelmq (1.0.0~dev6+intevation.1.2~rc1) experimental; urgency=low
 
   * Working towards stable Release
   * Added release-notes.txt

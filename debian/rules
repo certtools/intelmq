@@ -26,11 +26,12 @@ override_dh_auto_install: $(BOTDOCS)
 	mkdir -p debian/intelmq/opt/intelmq/var/lib/bots/file-output
 	mkdir -p debian/intelmq/etc/logrotate.d
 	# Install a modifier bot config file based on an example
-	cp -a debian/intelmq/opt/intelmq/var/lib/bots/modify/examples/morefeeds.conf \
+	mkdir -p debian/intelmq/opt/intelmq/var/lib/bots/modify
+	cp -a debian/intelmq/usr/lib/python3.4/site-packages/intelmq/bots/experts/modify/examples/morefeeds.conf \
 		debian/intelmq/opt/intelmq/var/lib/bots/modify/modify.conf
 	# Remove modify bot example configs from their original location because
 	# intelmq.install copies them to the /usr/share/doc/intelmq/bots hierarchy
-	rm -vr debian/intelmq/opt/intelmq/var/lib/bots/modify/examples
+	rm -vr debian/intelmq/usr/lib/python3.4/site-packages/intelmq/bots/experts/modify/examples
 	mkdir -p $(DOCS_DIR)
 	cp debian/release-notes.txt $(DOCS_DIR)
 	## BOTS
