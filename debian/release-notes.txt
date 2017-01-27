@@ -1,9 +1,25 @@
 1.0.0~dev4+intevation.1.2
 -------------------------
 
-NEWS
+NEW FEATURES
 
-* TODO
+* Bots:
+
+  - Collector - Generic Mail URL Fetcher
+    Collector - Generic URL Fetcher
+
+    Bots do no longer hang, if the download connection does not terminate.
+
+  - Parser - ShadowServer
+
+    Improved Logging: non DHO fields are only reported on log level
+    "DEBUG" (no longer on "INFO") and warnings are generated if the
+    shadow server format changes.
+
+  - Expert - Modify
+
+    Evaluation order of the Rules is now deterministic
+
 
 UPGRADE
 
