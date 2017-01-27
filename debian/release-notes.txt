@@ -1,0 +1,118 @@
+1.0.0~dev4+intevation.1.2
+-------------------------
+
+NEW FEATURES
+
+* Bots:
+
+  - Collector - Generic Mail URL Fetcher
+    Collector - Generic URL Fetcher
+
+    Bots do no longer hang, if the download connection does not terminate.
+
+  - Parser - ShadowServer
+
+    Improved Logging: non DHO fields are only reported on log level
+    "DEBUG" (no longer on "INFO") and warnings are generated if the
+    shadow server format changes.
+
+  - Expert - Modify
+
+    Evaluation order of the Rules is now deterministic
+
+
+UPGRADE
+
+* from 1.0.0~dev4+intevation.1.2~beta4testbuild20160930133128
+  (upgrade from older Versions is untested)
+
+  For generic upgrade instructions see below.
+
+
+  Dependencies:
+
+  If you are using intelmq-mailgen, note that you will need at least
+  version 0.95~beta3 or later.
+
+
+  Configuration:
+
+  The startup.conf was deprecated in this release, it is substituted
+  by integrating the information into runtime.conf.  To migrate to the
+  unified runtime.conf:
+
+    # Run intelmqctl once, this will automatically generate a file
+    # runtime.conf.new: 
+    su - intelmq -c 'intelmqctl status'
+    # Move the old configuration out of the way and use the new file:
+    mv /opt/intelmq/etc/runtime.conf /opt/intelmq/etc/runtime.conf.OLD_WITH_STARTUP_CONF
+    mv /opt/intelmq/etc/startup.conf /opt/intelmq/etc/startup.conf.OLD
+    mv /opt/intelmq/etc/runtime.conf.new /opt/intelmq/etc/runtime.conf
+
+  
+  Bot Specific:
+
+  - Collector - Generic Mail URL Fetcher
+    Collector - Generic URL Fetcher
+
+    The configuration parameter `http_ssl_proxy' was renamed to
+    `https_proxy', you can update your existing configuration bu a
+    simple search and replace:
+
+      sed -i 's/http_ssl_proxy/https_proxy/' /opt/intelmq/etc/runtime.conf
+
+  - Parser - ShadowServer
+
+    `override' is deprecated, it is now called `overwrite':
+
+      sed -i 's/override/overwrite/' /opt/intelmq/etc/runtime.conf
+
+  - Expert - Modify
+
+    The semantics of the configuration have slightly changed, see:
+    https://github.com/certtools/intelmq/pull/745
+    the configuration is supposed to be backwards compatible, never
+    the less you should verify, that the results are still like
+    expected.
+
+  - Outputs - PostgreSQL
+
+    A new field was added to the events description.  To reflect this
+    in an existing database, add the field as db admin on the database
+    server:
+
+      su - postgres
+      psql intelmq-events -c 'ALTER TABLE events ADD "feed.provider" text;'
+      exit
+
+
+
+Generic Upgrade Instructions
+----------------------------
+
+All steps are executed as root user, unless stated otherise.
+
+Before upgrading intelmq should be stopped:
+
+  su - intelmq -c 'intelmqctl stop'
+
+NOTE: If there are still events in the queue they will be processed
+  after restarting IntelMQ with the new bots from the upgrade.  In
+  some rare cases this might lead to unwanted behavior.  To prevent
+  this its best to first stop all collector bots and wait for the
+  queues to empty before stopping the rest oft IntelMQ.
+
+when running the IntelMQ Manager stopping the web server should be
+considered, too:
+
+  service apache2 stop
+
+Then upgrade to the latest packages, either using dpkg or `apt
+upgrade'.  Follow the release specific upgrade notes above, the start
+IntelMQ again:
+
+  su - intelmq -c 'intelmqctl start'
+
+If you stopped the web server, restart it, too:
+
+  service apache2 start
