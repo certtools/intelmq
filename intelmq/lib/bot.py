@@ -214,7 +214,7 @@ class Bot(object):
                             self.__error_retries_counter = 0  # reset counter
 
                 # no errors, check for run mode: scheduled
-                elif self.type == 'scheduled':
+                elif self.run_mode == 'scheduled':
                     self.logger.info('Shutting down scheduled bot.')
                     self.stop()
 
@@ -406,7 +406,7 @@ class Bot(object):
 
         if self.__bot_id in list(config.keys()):
             params = config[self.__bot_id]
-            self.run_mode = params.get('run_mode')
+            self.run_mode = params.get('run_mode','stream')
             if 'parameters' in params:
                 params = params['parameters']
             else:
