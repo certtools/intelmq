@@ -1,4 +1,4 @@
-1.0.0~dev4+intevation.1.2
+1.0.0~dev6+intevation.1.2
 -------------------------
 
 NEW FEATURES
