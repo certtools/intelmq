@@ -7,7 +7,7 @@ v1.0 (in development, master branch)
 ### General changes
 - Dropped support for Python 2, Python >= 3.3 is needed
 - Dropped startup.conf and system.conf. Sections in BOTS can be copied directly yo runtime.conf now.
-- Support "oneshot" bots, allows scheduling via cron
+- Support two run modes: 'stream' which is the current implementation and a new one 'scheduled' which allows scheduling via cron or systemd.
 
 ### Bot changes
 - ENH: added bots.collectors.rt.collector

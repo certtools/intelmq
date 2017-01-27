@@ -431,43 +431,68 @@ logged to /opt/intelmq/var/log/intelmqctl
 
 #### Botnet Concept
 
-The botnet represents all currently configured bots which are not explicitly disabled. To get an overview which bots are running, use `intelmqctl status` or use IntelMQ Manager. Set `"disabled": true` in the runtime configuration to disable a bot. By default, all configured bots are enabled. See [Bots](Bots.md) for more details on configuration.
+The botnet represents all currently configured bots which are explicitly enabled. To get an overview which bots are running, use `intelmqctl status` or use IntelMQ Manager. Set `"enabled": true` in the runtime configuration to add a bot to botnet. By default, bots will be configured as `"enabled": false` therefore, does not belong to the botnet due protection reasons. See [Bots](Bots.md) for more details on configuration.
 
-Disabled bots can still be started explicitly using `intelmqctl start bot-id`, but are marked as disabled if stopped. They are not started by `intelmqctl start` in analogy to the behavior of widely used initialization systems.
+Disabled bots can still be started explicitly using `intelmqctl start <bot_id>`, but will keep marked as disabled if stopped. They are not started by `intelmqctl start` in analogy to the behavior of widely used initialization systems.
 
-Use this for some bots which are tempoarily disabled or in conjunction with the oneshot type, see the section below.
 
-#### Oneshot bots
+#### Scheduled Run Mode
 
-In many cases it is useful to schedule a bot using cron or similar services. This can be used to fetch data once a day at a fixed time. To do this, set `enabled` to `false` (see section above) and `type` to `oneshot`  in the `runtime.conf` for the bot (both outside the runtime parameters). E.g.:
+In many cases it is useful to schedule a bot, for example, to collect information from a website every day at midnight. To do this, set `run_mode` to `scheduled` in the `runtime.conf` for the bot. Check the following example:
 
 ```json
-"blocklistde-apache": {
-    "description": "All IP addresses which have been reported within the last 48 hours as having run attacks on the service Apache, Apache-DDOS, RFI-Attacks.",
-	"enabled": false,
+"blocklistde-apache-collector": {
+    "name": "Generic URL Fetcher",
+    "group": "Collector",
     "module": "intelmq.bots.collectors.http.collector_http",
+    "description": "All IP addresses which have been reported within the last 48 hours as having run attacks on the service Apache, Apache-DDOS, RFI-Attacks.",
+    "enabled": false,
+    "run_mode": "scheduled"
     "parameters": {
         "feed": "Blocklist.de Apache",
         "provider": "Blocklist.de",
         "http_url": "https://lists.blocklist.de/lists/apache.txt",
         "ssl_client_certificate": null
     },
-	"type": "oneshot"
 },
 ```
 
-You can now schedule the bot using cron for the user intelmq, e.g:
+You can now schedule the bot using the following command:
 ```
-0 7 * * * intelmqctl start blocklistde-apache
+intelmqctl start blocklistde-apache-collector
 ```
 
-Oneshot bots exit after the first successful run.
+The command above will read the configuration `"run_mode": "scheduled"` and then will write automatically a new entry on crontab like the following:
+```
+0 0 * * * python3 intelmq.bots.collectors.http.collector_http blocklistde-apache-collector
+```
 
-As opposed to the rate limiting approach, scheduling via cron has several advantages:
- * Unaffected by `intelmqctl restart` which would trigger all collector and then fetching data leading to more load, traffic and possibly duplicate data.
- * No idling processes.
- * Easy monitoring via cron. If the bot fails, the exitcode is non-zero and cron will alert you automatically.
- * The bot will run at a fixed time, thus the data is available for sure. Using rate limiting, the execution time depends on the initial starting time and the time needed to run the bot.
+Bots configured as scheduled will exit after the first successful run.
+
+
+#### Stream Run Mode
+
+Most of the cases, bots will need to be configured as stream run mode in order to have them always running and processing events. Usually, the types of bots that will require the stream mode will be Parsers, Experts and Outputs. To do this, set `run_mode` to `stream` in the `runtime.conf` for the bot. Check the following example:
+
+```json
+"blocklistde-apache-parser": {
+    "name": "Blocklist.de Parser",
+    "group": "Parser",
+    "module": "intelmq.bots.parsers.blocklistde.parser",
+    "description": "BlockList.DE Parser is the bot responsible to parse the report and sanitize the information.",
+    "enabled": false,
+    "run_mode": "stream"
+    "parameters": {
+    },
+},
+```
+
+You can now start the bot using the following command:
+```
+intelmqctl start blocklistde-apache-parser
+```
+
+Bots configured as stream will never exit except if there is an error and the error handling configuration requires the bot to exit. See Error Handling section for more details.
 
 
 #### Forcing reset pipeline and cache (be careful)
