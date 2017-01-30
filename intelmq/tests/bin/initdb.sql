@@ -76,3 +76,14 @@ CREATE TABLE events (
     "time.observation" timestamp with time zone,
     "time.source" timestamp with time zone
 );
+CREATE INDEX "idx_classification.identifier" ON events USING btree ("classification.identifier");
+CREATE INDEX "idx_classification.taxonomy" ON events USING btree ("classification.taxonomy");
+CREATE INDEX "idx_classification.type" ON events USING btree ("classification.type");
+CREATE INDEX "idx_feed.code" ON events USING btree ("feed.code");
+CREATE INDEX "idx_feed.name" ON events USING btree ("feed.name");
+CREATE INDEX "idx_source.abuse_contact" ON events USING btree ("source.abuse_contact");
+CREATE INDEX "idx_source.asn" ON events USING btree ("source.asn");
+CREATE INDEX "idx_source.ip" ON events USING btree ("source.ip");
+CREATE INDEX "idx_source.fqdn" ON events USING btree ("source.fqdn");
+CREATE INDEX "idx_time.observation" ON events USING btree ("time.observation");
+CREATE INDEX "idx_time.source" ON events USING btree ("time.source");
