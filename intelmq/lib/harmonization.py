@@ -392,6 +392,13 @@ class Integer(GenericType):
 
 
 class IPAddress(GenericType):
+    """
+    Type for IP addresses, all families. Uses the ipaddress module.
+
+    Sanitation accepts strings and objects of ipaddress.IPv4Address and ipaddress.IPv4Address.
+
+    Valid values are only strings. 0.0.0.0 is explictly not allowed.
+    """
 
     @staticmethod
     def is_valid(value, sanitize=False):
@@ -450,6 +457,14 @@ class IPAddress(GenericType):
 
 
 class IPNetwork(GenericType):
+    """
+    Type for IP networks, all families. Uses the ipaddress module.
+
+    Sanitation accepts strings and objects of ipaddress.IPv4Network and ipaddress.IPv4Network.
+    If host bits in strings are set, they will be ignored (e.g 127.0.0.1/32).
+
+    Valid values are only strings.
+    """
 
     @staticmethod
     def is_valid(value, sanitize=False):
