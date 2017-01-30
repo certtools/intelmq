@@ -152,11 +152,11 @@ class BotProcessManager:
         log_bot_message('stopping', bot_id)
         proc = psutil.Process(int(pid))
         proc.send_signal(signal.SIGINT)
-        self.__remove_pidfile(bot_id)
         time.sleep(0.25)
         if self.__status_process(pid):
             log_bot_error('running', bot_id)
             return 'running'
+        self.__remove_pidfile(bot_id)
         log_bot_message('stopped', bot_id)
         return 'stopped'
 
