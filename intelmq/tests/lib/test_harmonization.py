@@ -2,7 +2,7 @@
 """
 Testing harmonization classes
 """
-
+import ipaddress
 import unittest
 
 import intelmq.lib.harmonization as harmonization
@@ -127,6 +127,8 @@ class TestHarmonization(unittest.TestCase):
                                                          sanitize=True))
         self.assertTrue(harmonization.IPAddress.is_valid(b'2001:DB8::1',
                                                          sanitize=True))
+        self.assertTrue(harmonization.IPAddress.is_valid(ipaddress.ip_address('192.0.2.1'),
+                                                         sanitize=True))
 
     def test_ipaddress_sanitize_invalid(self):
         """ Test IPAddress.is_valid ans sanitize with invalid arguments. """
@@ -155,6 +157,10 @@ class TestHarmonization(unittest.TestCase):
         self.assertTrue(harmonization.IPNetwork.is_valid(' 192.0.2.0/24\r\n',
                                                          sanitize=True))
         self.assertTrue(harmonization.IPNetwork.is_valid(b'2001:DB8::/32',
+                                                         sanitize=True))
+        self.assertTrue(harmonization.IPNetwork.is_valid('127.0.0.1/32',
+                                                         sanitize=True))
+        self.assertTrue(harmonization.IPNetwork.is_valid(ipaddress.ip_network('192.0.2.0/32'),
                                                          sanitize=True))
 
     def test_ipnetwork_sanitize_invalid(self):
