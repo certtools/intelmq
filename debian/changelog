@@ -1,3 +1,9 @@
+intelmq (1.0.0~dev6+intevation.1.2~rc2) experimental; urgency=low
+
+  * Added fix for #864 (Shadowserver Open-LDAP key mapping)
+
+ -- Sascha Wilde <wilde@intevation.de>  Mon, 30 Jan 2017 18:05:13 +0100
+
 intelmq (1.0.0~dev6+intevation.1.2~rc1) experimental; urgency=low
 
   * Working towards stable Release

@@ -1,6 +1,16 @@
 1.0.0~dev6+intevation.1.2
 -------------------------
 
+BUG FIXES
+
+* Bots:
+
+  - Parser - ShadowServer
+
+    For the Open-LDAP feed `dns_host_name' is now mapped to
+    `source.local_hostname' instead of `destination.local_hostname'.
+
+
 NEW FEATURES
 
 * Bots:
@@ -49,6 +59,11 @@ UPGRADE
     mv /opt/intelmq/etc/startup.conf /opt/intelmq/etc/startup.conf.OLD
     mv /opt/intelmq/etc/runtime.conf.new /opt/intelmq/etc/runtime.conf
 
+  The system.conf is deprecated.  The information is now stored in
+  defaults.conf.  Merge your settings from
+  `/opt/intelmq/etc/system.conf' into `/opt/intelmq/etc/defaults.conf',
+  then delete `/opt/intelmq/etc/system.conf'.
+
   
   Bot Specific:
 
@@ -66,6 +81,16 @@ UPGRADE
     `override' is deprecated, it is now called `overwrite':
 
       sed -i 's/override/overwrite/' /opt/intelmq/etc/runtime.conf
+
+    If you are using the OpenLDAP feed in combination with a db output
+    you might want to fix your existing data to reflect the new
+    mapping of `dns_host_name' (see BUG FIXES above).  To do so, you
+    can use the following SQL statement on you events-database:
+
+      UPDATE events
+         SET "source.local_hostname"="destination.local_hostname",
+             "destination.local_hostname"=DEFAULT
+       WHERE "feed.name"='Open-LDAP' AND "source.local_hostname" IS NULL;
 
   - Expert - Modify
 
