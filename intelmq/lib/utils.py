@@ -159,9 +159,7 @@ def load_configuration(configuration_filepath):
     Parameters:
     -----------
     configuration_filepath : string
-        Path to JSON file to load. If file does not exist, and the path begins
-        with CONFIG_DIR (`/opt/intelmq/etc` by default), the file from it's
-        package data is used.
+        Path to JSON file to load.
 
     Returns:
     --------
@@ -171,13 +169,6 @@ def load_configuration(configuration_filepath):
     if os.path.exists(configuration_filepath):
         with open(configuration_filepath, 'r') as fpconfig:
             config = json.loads(fpconfig.read())
-    elif configuration_filepath.find(intelmq.CONFIG_DIR) == 0:  # at beginning
-        newpath = pkg_resources.resource_filename('intelmq', 'etc/')
-        filepath = configuration_filepath.replace(intelmq.CONFIG_DIR,
-                                                  newpath)
-        if os.path.exists(filepath):
-            with open(filepath, 'r') as fpconfig:
-                config = json.loads(fpconfig.read())
     else:
         raise ValueError('File not found: %r.' % configuration_filepath)
     return config

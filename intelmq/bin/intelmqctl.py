@@ -333,11 +333,11 @@ Get logs of a bot:
         try:
             self.pipeline_configuration = utils.load_configuration(PIPELINE_CONF_FILE)
         except ValueError as exc:
-            exit('Invalid syntax in %r: %s' % (PIPELINE_CONF_FILE, exc))
+            exit('Error loading %r: %s' % (PIPELINE_CONF_FILE, exc))
         try:
             self.runtime_configuration = utils.load_configuration(RUNTIME_CONF_FILE)
         except ValueError as exc:
-            exit('Invalid syntax in %r: %s' % (RUNTIME_CONF_FILE, exc))
+            exit('Error loading %r: %s' % (RUNTIME_CONF_FILE, exc))
 
         if os.path.exists(STARTUP_CONF_FILE):
             self.logger.warning('Deprecated startup.conf file found, please migrate to runtime.conf soon.')
@@ -411,7 +411,7 @@ Get logs of a bot:
                 setattr(self.parameters, option, value)
 
     def load_defaults_configuration(self):
-        # Load defaults configuration section
+        # Load defaults configuration
         try:
             config = utils.load_configuration(DEFAULTS_CONF_FILE)
         except ValueError as exc:
