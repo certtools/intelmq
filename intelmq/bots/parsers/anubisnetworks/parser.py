@@ -37,7 +37,6 @@ Currently ignored and probably useful:
     dcu_ts (timestamp)
     _geo_env_remote_addr.postal_code
 """
-import ipaddress
 import json
 
 from intelmq.lib import utils
