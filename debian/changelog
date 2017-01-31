@@ -1,3 +1,10 @@
+intelmq (1.0.0~dev6+intevation.1.2) testing; urgency=medium
+
+  * Final Release of dev6+intevation.1.2
+  * Broken parsers/cymru_infected was removed.
+
+ -- Sascha Wilde <wilde@intevation.de>  Tue, 31 Jan 2017 18:45:49 +0100
+
 intelmq (1.0.0~dev6+intevation.1.2~rc2) experimental; urgency=low
 
   * Added fix for #864 (Shadowserver Open-LDAP key mapping)
