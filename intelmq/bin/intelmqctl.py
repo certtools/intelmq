@@ -5,6 +5,7 @@ import importlib
 import json
 import os
 import signal
+import subprocess
 import time
 import traceback
 
@@ -105,11 +106,16 @@ class BotProcessManager:
     PIDDIR = VAR_RUN_PATH
     PIDFILE = os.path.join(PIDDIR, "{}.pid")
 
-    def __init__(self, runtime_configuration):
+    def __init__(self, runtime_configuration, logger):
         self.__runtime_configuration = runtime_configuration
+        self.logger = logger
 
         if not os.path.exists(self.PIDDIR):
-            os.makedirs(self.PIDDIR)
+            try:
+                os.makedirs(self.PIDDIR)
+            except PermissionError as exc:
+                self.logger.error('Directory %s does not exist and cannot be '
+                                  'created: %s.' % (self.PIDDIR, exc))
 
     def bot_start(self, bot_id):
         pid = self.__read_pidfile(bot_id)
@@ -256,15 +262,23 @@ class IntelMQController():
         global logger
         global QUIET
         QUIET = quiet
-        logger = utils.log('intelmqctl', log_level='DEBUG')
+        try:
+            logger = utils.log('intelmqctl', log_level='DEBUG')
+        except (FileNotFoundError, PermissionError) as exc:
+            logger = utils.log('intelmqctl', log_level='DEBUG', log_path=False)
+            logger.error('Not logging to file: %s' % exc)
         self.logger = logger
         self.interactive = interactive
         self.args = None
         if os.geteuid() == 0:
-            logger.warning('Running intelmq as root is highly discouraged!')
+            logger.warning('Running intelmqctl as root is highly discouraged!')
 
         APPNAME = "intelmqctl"
-        VERSION = pkg_resources.get_distribution("intelmq").version
+        try:
+            VERSION = pkg_resources.get_distribution("intelmq").version
+        except pkg_resources.DistributionNotFound:  # pragma: no cover
+            self.logger.error('No valid IntelMQ installation found: DistributionNotFound')
+            exit(1)
         DESCRIPTION = """
         description: intelmqctl is the tool to control intelmq system.
 
@@ -347,7 +361,8 @@ Get logs of a bot:
                 self.logger.info('%r with new format written.' % (RUNTIME_CONF_FILE + '.new'))
 
         self.bot_process_manager = BotProcessManager(
-            self.runtime_configuration
+            self.runtime_configuration,
+            logger,
         )
 
         if self.interactive:
@@ -444,6 +459,8 @@ Get logs of a bot:
 
         if self.args.type == 'json':
             print(json.dumps(results))
+        if type(results) is int:
+            return results
 
     def bot_run(self, bot_id):
         try:
@@ -651,58 +668,88 @@ Get logs of a bot:
         return messages[::-1]
 
     def check(self):
+        retval = 0
         # loading files and syntex check
         files = {DEFAULTS_CONF_FILE: None, PIPELINE_CONF_FILE: None,
                  RUNTIME_CONF_FILE: None, BOTS_FILE: None}
+        self.logger.info('Reading configuration files.')
         for filename in files:
             try:
                 with open(filename) as file_handle:
                     files[filename] = json.load(file_handle)
             except (IOError, ValueError) as exc:
                 self.logger.error('Coud not load %r: %s.' % (filename, exc))
-                return 'error'
+                retval = 1
+        if retval:
+            self.logger.error('Fatal errors occured.')
+            return retval
 
         if os.path.exists(STARTUP_CONF_FILE):
             self.logger.warning('Deprecated startup.conf file found, migrate to runtime.conf.')
+            retval = 1
         if os.path.exists(SYSTEM_CONF_FILE):
             self.logger.warning('Deprecated system.conf file found, migrate to defaults.conf.')
+            retval = 1
 
-        if bool(files[DEFAULTS_CONF_FILE]['http_proxy']) != bool(files[DEFAULTS_CONF_FILE]['https_proxy']):
-            self.logger.warning('Only {}_proxy seems to be set. '
-                                'Both http and https proxies must be set.'
-                                .format('http' if files[DEFAULTS_CONF_FILE]['http_proxy']
-                                        else 'https'))
+        self.logger.info('Checking runtime configuration.')
+        http_proxy = files[DEFAULTS_CONF_FILE].get('http_proxy')
+        https_proxy = files[DEFAULTS_CONF_FILE].get('https_proxy')
+        # Either both are given or both are not given
+        if (not http_proxy or not https_proxy) and not (http_proxy == https_proxy):
+            self.logger.warning('Incomplete configuration: Both http and https proxies must be set.')
+            retval = 1
 
+        self.logger.info('Checking pipeline configuration.')
         for bot_id, bot_config in files[RUNTIME_CONF_FILE].items():
             # pipeline keys
             for field in ['description', 'group', 'module', 'name']:
                 if field not in bot_config:
                     self.logger.warning('Bot %r has no %r.' % (bot_id, field))
+                    retval = 1
             if bot_id not in files[PIPELINE_CONF_FILE]:
-                self.logger.error('No pipeline configuration found for %r.' % bot_id)
+                self.logger.error('Misconfiguration: No pipeline configuration found for %r.' % bot_id)
+                retval = 1
             else:
                 if ('group' in bot_config and
                         bot_config['group'] in ['Collector', 'Parser', 'Expert'] and
                         ('destination-queues' not in files[PIPELINE_CONF_FILE][bot_id] or
                          (not isinstance(files[PIPELINE_CONF_FILE][bot_id]['destination-queues'], list) or
                           len(files[PIPELINE_CONF_FILE][bot_id]['destination-queues']) < 1))):
-                    self.logger.error('No destination queues for %r.' % bot_id)
+                    self.logger.error('Misconfiguration: No destination queues for %r.' % bot_id)
+                    retval = 1
                 if ('group' in bot_config and
                         bot_config['group'] in ['Parser', 'Expert', 'Output'] and
                         ('source-queue' not in files[PIPELINE_CONF_FILE][bot_id] or
                          not isinstance(files[PIPELINE_CONF_FILE][bot_id]['source-queue'], str))):
-                    self.logger.error('No source queue for %r.' % bot_id)
+                    self.logger.error('Misconfiguration: No source queue for %r.' % bot_id)
+                    retval = 1
 
+        self.logger.info('Checking for bots.')
+        for bot_id, bot_config in files[RUNTIME_CONF_FILE].items():
             # importable module
             try:
                 importlib.import_module(bot_config['module'])
             except ImportError:
-                self.logger.error('Module of %r not importable.' % bot_id)
+                self.logger.error('Incomplete installation: Module %r not importable.' % bot_id)
+                retval = 1
+        for group in files[BOTS_FILE].values():
+            for bot_id, bot in group.items():
+                if subprocess.call(['which', bot['module']], stdout=subprocess.DEVNULL):
+                    self.logger.error('Incomplete installation: Executable %r for %r not found.'
+                                      '' % (bot['module'], bot_id))
+                    retval = 1
+
+        if retval:
+            self.logger.error('Some issues have been found, please check the above output.')
+        else:
+            self.logger.info('No issues found.')
+
+        return retval
 
 
 def main():  # pragma: no cover
     x = IntelMQController(interactive=True)
-    x.run()
+    return x.run()
 
 if __name__ == "__main__":  # pragma: no cover
-    main()
+    exit(main())

@@ -226,6 +226,7 @@ def log(name, log_path=intelmq.DEFAULT_LOGGING_PATH, log_level="DEBUG",
         filename for logfile or string preceding lines in stream
     log_path : string
         Path to log directory, defaults to DEFAULT_LOGGING_PATH
+        If False, nothing is logged to files.
     log_level : string
         default is "DEBUG"
     stream : object
@@ -251,19 +252,20 @@ def log(name, log_path=intelmq.DEFAULT_LOGGING_PATH, log_level="DEBUG",
     logger = logging.getLogger(name)
     logger.setLevel(log_level)
 
-    if not syslog:
+    if log_path and not syslog:
         handler = FileHandler("%s/%s.log" % (log_path, name))
         handler.setLevel(log_level)
-    else:
+    elif syslog:
         if type(syslog) is tuple or type(syslog) is list:
             handler = logging.handlers.SysLogHandler(address=tuple(syslog))
         else:
             handler = logging.handlers.SysLogHandler(address=syslog)
         handler.setLevel(log_level)
 
-    formatter = logging.Formatter(LOG_FORMAT)
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
+    if log_path or syslog:
+        formatter = logging.Formatter(LOG_FORMAT)
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
 
     if stream or stream is None:
         console_formatter = logging.Formatter(LOG_FORMAT_STREAM)
