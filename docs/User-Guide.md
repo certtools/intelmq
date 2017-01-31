@@ -192,7 +192,7 @@ More examples can be found at `intelmq/etc/pipeline.conf` directory in IntelMQ r
     
     * **`pass`** - will pass to the next message after retry X times, removing from pipeline the current message. If the option `error_dump_message` is enable, the bot will dump the removed message to the dump log.
 
-* **`error_max_retries`** - in case of an error and the value of the `error_procedure` option is `retry`, bot will try to start processing the current message X times defined at `error_max_retries` option. The value must be an `integer value`.
+* **`error_max_retries`** - in case of an error the bot will try to start processing the current message X times defined at `error_max_retries` option. The value must be an integer value.
 
 * **`error_retry_delay`** - in case of an error, this option will allows you to define the number of seconds which bot will wait until next retry. The value must be an `integer value`.
 
