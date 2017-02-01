@@ -4,6 +4,7 @@
   * [Goals](#goals)
 * [Development Environment](#development-environment)
   * [Installation](#installation)
+  * [Update](#update)
   * [Testing](#testing)
 * [Development Guidelines](#development-guidelines)
   * [Coding-Rules](#coding-rules)
