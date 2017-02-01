@@ -316,8 +316,9 @@ class Message(dict):
         if filter_type not in ["whitelist", "blacklist"]:
 
             raise exceptions.InvalidArgument('filter_type',
-                                     got=filter_type,
-                                     expected='<whitelist> or <blacklist>')
+                                             got=filter_type,
+                                             expected='<whitelist> or'
+                                             '<blacklist>')
 
         event_hash = hashlib.sha256()
 

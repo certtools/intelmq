@@ -33,7 +33,7 @@ class DeduplicatorExpertBot(Bot):
                                    None)
                            )
         self.filter_keys_list = set(k.strip() for k in
-                               self.parameters.filter_keys.split(','))
+                                    self.parameters.filter_keys.split(','))
 
     def process(self):
         message = self.receive_message()
