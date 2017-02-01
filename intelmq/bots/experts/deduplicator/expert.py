@@ -12,7 +12,6 @@ redis_cache_password: string
     default: {None}
 
 filter_type: string ["blacklist", "whitelist"]
-    default: {"blacklist"}
 filter_keys: string with multiple keys separated by comma. Please
              note that time.observation key is never consider by the
              system because system will always ignore this key.

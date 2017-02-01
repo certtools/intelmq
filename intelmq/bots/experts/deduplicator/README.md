@@ -4,7 +4,7 @@ Bot responsible for ignore duplicated messages. The bot can be configured to per
 
 ## Parameters
 
-### Parameters for connecting to cache:
+### Parameters for connecting to cache
 * `redis_cache_host` - redis host to connect (e.g. `127.0.0.1`)
 * `redis_cache_db` - redis db to connect (e.g. `6`)
 * `redis_cache_ttl` - ttl (in seconds) for each entry inserted on cache (e.g. `86400`)
@@ -14,7 +14,7 @@ Bot responsible for ignore duplicated messages. The bot can be configured to per
 
 * `filter_type`: type of the filtering ("blacklist", "whitelist") which will be applied
 using the parameter `filter_keys` to generate an hash without fields that are not important
-to detect duplication. By default is `blacklist.`
+to detect duplication.
 * `filter_keys`: string with multiple keys separated by comma. Please note that `time.observation` key will not be considered even if defined, because the system always ignore that key.
 
 
@@ -22,7 +22,7 @@ to detect duplication. By default is `blacklist.`
 
 #### Example 1
 
-The bot with this configuration will detect duplication only based on `source.ip` and `destination.ip` keys
+The bot with this configuration will detect duplication only based on `source.ip` and `destination.ip` keys.
 
 ```
 "parameters": {
