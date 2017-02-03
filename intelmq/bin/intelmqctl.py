@@ -116,6 +116,35 @@ class BotProcessManager:
                 self.logger.error('Directory %s does not exist and cannot be '
                                   'created: %s.' % (self.PIDDIR, exc))
 
+    def bot_run(self, bot_id):
+        pid = self.__read_pidfile(bot_id)
+        if pid:
+            if self.__status_process(pid):
+                log_bot_error('running', bot_id)
+                return 'running'
+            else:
+                self.__remove_pidfile(bot_id)
+        log_bot_message('starting', bot_id)
+        filename = self.PIDFILE.format(bot_id)
+        with open(filename, 'w') as fp:
+            fp.write(str(os.getpid()))
+
+        bot_module = self.__runtime_configuration[bot_id]['module']
+        module = importlib.import_module(bot_module)
+        bot = getattr(module, 'BOT')
+        try:
+            instance = bot(bot_id)
+            instance.start()
+        except (Exception, KeyboardInterrupt) as exc:
+            print('Bot failed: %s' % exc)
+            retval = 1
+        except SystemExit as exc:
+            print('Bot exited with code %s.' % exc)
+            retval = exc
+
+        self.__remove_pidfile(bot_id)
+        return retval
+
     def bot_start(self, bot_id):
         pid = self.__read_pidfile(bot_id)
         if pid:
@@ -496,11 +525,7 @@ can be longer due to our logging format!'''
             return 1
 
     def bot_run(self, bot_id):
-        bot_module = self.runtime_configuration[bot_id]['module']
-        module = importlib.import_module(bot_module)
-        bot = getattr(module, 'BOT')
-        instance = bot(bot_id)
-        return instance.start()
+        return self.bot_process_manager.bot_run(bot_id)
 
     def bot_start(self, bot_id):
         if bot_id is None:
