@@ -114,7 +114,7 @@ class BotProcessManager:
         if not os.path.exists(self.PIDDIR):
             try:
                 os.makedirs(self.PIDDIR)
-            except PermissionError as exc:
+            except PermissionError as exc:  # pragma: no cover
                 self.logger.error('Directory %s does not exist and cannot be '
                                   'created: %s.' % (self.PIDDIR, exc))
 
@@ -277,6 +277,7 @@ class IntelMQController():
         try:
             VERSION = pkg_resources.get_distribution("intelmq").version
         except pkg_resources.DistributionNotFound:  # pragma: no cover
+            # can only happen in interactive mode
             self.logger.error('No valid IntelMQ installation found: DistributionNotFound')
             exit(1)
         DESCRIPTION = """
@@ -331,23 +332,34 @@ can be longer due to our logging format!'''
         self.load_system_configuration()
         try:
             self.pipeline_configuration = utils.load_configuration(PIPELINE_CONF_FILE)
-        except ValueError as exc:
-            exit('Error loading %r: %s' % (PIPELINE_CONF_FILE, exc))
+        except ValueError as exc:  # pragma: no cover
+            msg = 'Error loading %r: %s' % (PIPELINE_CONF_FILE, exc)
+            if interactive:
+                exit(msg)
+            else:
+                raise ValueError(msg)
 
         try:
             self.runtime_configuration = utils.load_configuration(RUNTIME_CONF_FILE)
-        except ValueError as exc:
-            exit('Error loading %r: %s' % (RUNTIME_CONF_FILE, exc))
+        except ValueError as exc:  # pragma: no cover
+            msg = 'Error loading %r: %s' % (RUNTIME_CONF_FILE, exc)
+            if interactive:
+                exit(msg)
+            else:
+                raise ValueError(msg)
 
         if os.path.exists(STARTUP_CONF_FILE):
             self.logger.warning('Deprecated startup.conf file found, please migrate to runtime.conf soon.')
             with open(STARTUP_CONF_FILE, 'r') as fp:
                 startup = json.load(fp)
                 for bot_id, bot_values in startup.items():
-                    if 'parameters' in self.runtime_configuration[bot_id]:
-                        self.logger.error('Mixed setup of new runtime.conf and old startup.conf'
-                                          ' found. Ignoring startup.conf, please fix this!')
-                        exit(1)
+                    if 'parameters' in self.runtime_configuration[bot_id]:  # pragma: no cover
+                        msg = ('Mixed setup of new runtime.conf and old startup.conf'
+                               ' found. Ignoring startup.conf, please fix this!')
+                        if interactive:
+                            exit(msg)
+                        else:
+                            raise ValueError(msg)
                     params = self.runtime_configuration[bot_id].copy()
                     self.runtime_configuration[bot_id].clear()
                     self.runtime_configuration[bot_id]['parameters'] = params
@@ -356,7 +368,7 @@ can be longer due to our logging format!'''
                 with open(RUNTIME_CONF_FILE + '.new', 'w') as fp:
                     json.dump(self.runtime_configuration, fp, indent=4, sort_keys=True,
                               separators=(',', ': '))
-            except PermissionError:
+            except PermissionError:  # pragma: no cover
                 self.logger.info('Failed to write new configuration format to %r.'
                                  '' % (RUNTIME_CONF_FILE + '.new'))
             else:
@@ -455,8 +467,12 @@ can be longer due to our logging format!'''
         if os.path.exists(SYSTEM_CONF_FILE):
             try:
                 config = utils.load_configuration(SYSTEM_CONF_FILE)
-            except ValueError as exc:
-                exit('Invalid syntax in %r: %s' % (SYSTEM_CONF_FILE, exc))
+            except ValueError as exc:  # pragma: no cover
+                msg = 'Error loading %r: %s' % (SYSTEM_CONF_FILE, exc)
+                if interactive:
+                    exit(msg)
+                else:
+                    raise ValueError(msg)
             for option, value in config.items():
                 setattr(self.parameters, option, value)
 
@@ -464,8 +480,12 @@ can be longer due to our logging format!'''
         # Load defaults configuration
         try:
             config = utils.load_configuration(DEFAULTS_CONF_FILE)
-        except ValueError as exc:
-            exit('Invalid syntax in %r: %s' % (DEFAULTS_CONF_FILE, exc))
+        except ValueError as exc:  # pragma: no cover
+            msg = 'Error loading %r: %s' % (DEFAULTS_CONF_FILE, exc)
+            if interactive:
+                exit(msg)
+            else:
+                raise ValueError(msg)
         for option, value in config.items():
             setattr(self.parameters, option, value)
 
@@ -652,7 +672,7 @@ can be longer due to our logging format!'''
             pipeline.clear_queue(queue)
             logger.info("Successfully cleared queue {}".format(queue))
             return 'success'
-        except Exception:
+        except Exception:  # pragma: no cover
             logger.error("Error while clearing queue {}:\n{}"
                          "".format(queue, traceback.format_exc()))
             return 'error'
@@ -701,7 +721,7 @@ can be longer due to our logging format!'''
             try:
                 with open(filename) as file_handle:
                     files[filename] = json.load(file_handle)
-            except (IOError, ValueError) as exc:
+            except (IOError, ValueError) as exc:  # pragma: no cover
                 self.logger.error('Coud not load %r: %s.' % (filename, exc))
                 retval = 1
         if retval:
