@@ -21,6 +21,7 @@ import sys
 import traceback
 
 import pkg_resources
+from typing import Sequence, Union
 
 import intelmq
 
@@ -44,24 +45,21 @@ class Parameters(object):
     pass
 
 
-def decode(text, encodings=("utf-8", ), force=False):
+def decode(text: Union[bytes, str], encodings: Sequence[str]=("utf-8", ),
+           force: bool=False) -> str:
     """
     Decode given string to UTF-8 (default).
 
     Parameters:
-    -----------
-    text : bytes string
-        if unicode string is given, same object is returned
-    encodings : iterable of strings
-        list/tuple of encodings to use, default ('utf-8')
-    force : boolean
-        Ignore invalid characters, default: False
+        text: if unicode string is given, same object is returned
+        encodings: list/tuple of encodings to use
+        force: Ignore invalid characters
 
-    Returns
-    -------
-    text : unicode string
-        unicode string is always returned, even when encoding is ascii
-        (Python 3 compat)
+    Returns:
+        text: converted unicode string
+
+    Raises:
+        ValueError: if decoding failed
     """
     if isinstance(text, str):
         return text
@@ -83,18 +81,21 @@ def decode(text, encodings=("utf-8", ), force=False):
                      ".".format(encodings))
 
 
-def encode(text, encodings=("utf-8", ), force=False):
+def encode(text: Union[bytes, str], encodings: Sequence[str]=("utf-8", ),
+           force: bool=False) -> str:
     """
     Encode given string from UTF-8 (default).
 
     Parameters:
-    -----------
-    text : unicode string
-        if bytes string is given, same object is returned
-    encodings : iterable of strings
-        list/tuple of encodings to use, default ('utf-8')
-    force : boolean
-        Ignore invalid characters, default: False
+        text: if bytes string is given, same object is returned
+        encodings: list/tuple of encodings to use
+        force: Ignore invalid characters
+
+    Returns
+        text: converted bytes string
+
+    Raises:
+        ValueError: if encoding failed
     """
     if isinstance(text, bytes):
         return text
@@ -116,57 +117,49 @@ def encode(text, encodings=("utf-8", ), force=False):
                      ".".format(encodings))
 
 
-def base64_decode(value):
+def base64_decode(value: Union[bytes, str]) -> str:
     """
-    Parameters
-    ----------
-    value : string
-        base 64, will be encoded to bytes if not already.
+    Parameters:
+        value: base64 encoded string
 
-    Returns
-    -------
-    retval : unicode string
+    Returns:
+        retval: decoded string
 
-    Notes
-    -----
-    Possible bytes - unicode conversions problems are ignored.
+    Notes:
+        Possible bytes - unicode conversions problems are ignored.
     """
     return decode(base64.b64decode(encode(value, force=True)), force=True)
 
 
-def base64_encode(value):
+def base64_encode(value: Union[bytes, str]) -> str:
     """
-    Parameters
-    ----------
-    value : string
-        Will be encoded to bytes if not already of type bytes.
+    Parameters:
+        value: string to be encoded
 
-    Returns
-    -------
-    retval : unicode string
+    Returns:
+        retval: base64 representation of value
 
-    Notes
-    -----
-    Possible bytes - unicode conversions problems are ignored.
+    Notes:
+        Possible bytes - unicode conversions problems are ignored.
     """
     return decode(base64.b64encode(encode(value, force=True)), force=True)
 
 
-def load_configuration(configuration_filepath):
+def load_configuration(configuration_filepath: str) -> dict:
     """
     Load JSON configuration file.
 
     Parameters:
-    -----------
-    configuration_filepath : string
-        Path to JSON file to load. If file does not exist, and the path begins
-        with CONFIG_DIR (`/opt/intelmq/etc` by default), the file from it's
-        package data is used.
+        configuration_filepath:
+            Path to JSON file to load. If file does not exist, and the path begins
+            with CONFIG_DIR (`/opt/intelmq/etc` by default), the file from it's
+            package data is used.
 
     Returns:
-    --------
-    config : dict
-        Parsed configuration
+        config: Parsed configuration
+
+    Raises:
+        ValueError: if file not found
     """
     if os.path.exists(configuration_filepath):
         with open(configuration_filepath, 'r') as fpconfig:
@@ -183,19 +176,15 @@ def load_configuration(configuration_filepath):
     return config
 
 
-def load_parameters(*configs):
+def load_parameters(*configs: dict) -> Parameters:
     """
     Load dictionaries into new Parameters() instance.
 
     Parameters:
-    -----------
-    *configs : dict
-        Arbitrary number of dictionaries to load.
+        *configs: Arbitrary number of dictionaries to load.
 
     Returns:
-    --------
-    parameters : Parameters
-        class instance with items of configs as attributes
+        parameters: class instance with items of configs as attributes
     """
     parameters = Parameters()
     for config in configs:
@@ -215,38 +204,28 @@ class FileHandler(logging.FileHandler):
             raise
 
 
-def log(name, log_path=intelmq.DEFAULT_LOGGING_PATH, log_level="DEBUG",
-        stream=None, syslog=None):
+def log(name: str, log_path: str=intelmq.DEFAULT_LOGGING_PATH, log_level: str="DEBUG",
+        stream: Union[None, object]=None, syslog: Union[bool, str, list, tuple]=None):
     """
     Returns a logger instance logging to file and sys.stderr or other stream.
 
     Parameters:
-    -----------
-    name : string
-        filename for logfile or string preceding lines in stream
-    log_path : string
-        Path to log directory, defaults to DEFAULT_LOGGING_PATH
-    log_level : string
-        default is "DEBUG"
-    stream : object
-        By default (None), stderr will be used, stream objects can be
-        given. If False, stream output is not used.
-    syslog: boolean, list/tuple, string
-        If False (default), FileHandler will be used. Otherwise either a list/
-        tuple with address and UDP port are expected, e.g. `["localhost", 514]`
-        or a string with device name, e.g. `"/dev/log"`.
+        name: filename for logfile or string preceding lines in stream
+        log_path: Path to log directory, defaults to DEFAULT_LOGGING_PATH
+        log_level: default is "DEBUG"
+        stream: By default (None), stderr will be used, stream objects can be
+            given. If False, stream output is not used.
+        syslog:
+            If False (default), FileHandler will be used. Otherwise either a list/
+            tuple with address and UDP port are expected, e.g. `["localhost", 514]`
+            or a string with device name, e.g. `"/dev/log"`.
 
-    Returns
-    -------
-    logger : object
-        A `logging` instance.
+    Returns:
+        logger: An instance of logging.Logger
 
-    See also
-    --------
-    LOG_FORMAT : string
-        Default log format for file handler
-    LOG_FORMAT_STREAM : string
-        Default log format for stream handler
+    See also:
+        LOG_FORMAT: Default log format for file handler
+        LOG_FORMAT_STREAM: Default log format for stream handler
     """
     logger = logging.getLogger(name)
     logger.setLevel(log_level)
@@ -278,10 +257,10 @@ def log(name, log_path=intelmq.DEFAULT_LOGGING_PATH, log_level="DEBUG",
     return logger
 
 
-def reverse_readline(filename, buf_size=100000):
+def reverse_readline(filename: str, buf_size=100000) -> str:
     """
-    https://github.com/certtools/intelmq/issues/393#issuecomment-154041996
-
+    See also:
+        https://github.com/certtools/intelmq/issues/393#issuecomment-154041996
     """
     with open(filename) as qfile:
         qfile.seek(0, os.SEEK_END)
@@ -306,18 +285,15 @@ def reverse_readline(filename, buf_size=100000):
         yield line[::-1]
 
 
-def parse_logline(logline):
+def parse_logline(logline: str) -> dict:
     """
     Parses the given logline string into its components.
 
     Parameters:
-    -----------
-    logline : string
+        logline: logline to be parsed
 
     Returns:
-    --------
-    result : dict
-        dictionary with keys: ['date', 'bot_id', 'log_level', 'message']
+        result: dictionary with keys: ['date', 'bot_id', 'log_level', 'message']
     """
 
     match = re.match(LOG_REGEX, logline)
@@ -329,18 +305,16 @@ def parse_logline(logline):
         return logline
 
 
-def error_message_from_exc(exc):
+def error_message_from_exc(exc: Exception) -> str:
     """
     >>> exc = IndexError('This is a test')
     >>> error_message_from_exc(exc)
     'This is a test'
 
     Parameters:
-    -----------
-    exc: Exception
+        exc
 
     Returns:
-    result : string
-        The error message of exc
+        result: The error message of exc
     """
     return traceback.format_exception_only(type(exc), exc)[-1].strip().replace(type(exc).__name__ + ': ', '')
