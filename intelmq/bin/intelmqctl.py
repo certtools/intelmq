@@ -44,8 +44,6 @@ ERROR_MESSAGES = {
     'running': '{} is still running.',
     'stopped': '{} was NOT RUNNING.',
     'stopping': '{} failed to STOP.',
-    'noid': 'No or unconfigured ID was given, use --id',
-    'notfound': '{} not found.'
 }
 
 LOG_LEVEL = {
@@ -127,18 +125,13 @@ class BotProcessManager:
             else:
                 self.__remove_pidfile(bot_id)
         log_bot_message('starting', bot_id)
-        try:
-            module = self.__runtime_configuration[bot_id]['module']
-        except KeyError:
-            log_bot_error('notfound', bot_id)
-            return 'error'
-        else:
-            cmdargs = [module, bot_id]
-            with open('/dev/null', 'w') as devnull:
-                proc = psutil.Popen(cmdargs, stdout=devnull, stderr=devnull)
-                filename = self.PIDFILE.format(bot_id)
-                with open(filename, 'w') as fp:
-                    fp.write(str(proc.pid))
+        module = self.__runtime_configuration[bot_id]['module']
+        cmdargs = [module, bot_id]
+        with open('/dev/null', 'w') as devnull:
+            proc = psutil.Popen(cmdargs, stdout=devnull, stderr=devnull)
+            filename = self.PIDFILE.format(bot_id)
+            with open(filename, 'w') as fp:
+                fp.write(str(proc.pid))
 
         time.sleep(0.25)
         return self.bot_status(bot_id)
@@ -194,10 +187,6 @@ class BotProcessManager:
         if pid and self.__status_process(pid):
             log_bot_message('running', bot_id)
             return 'running'
-
-        if bot_id not in self.__runtime_configuration:
-            log_bot_error('notfound', bot_id)
-            return 'error'
 
         if self._is_enabled(bot_id):
             log_bot_message('stopped', bot_id)
