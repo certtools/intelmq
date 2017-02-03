@@ -71,7 +71,7 @@ def generate(harmonization_file=HARMONIZATION_CONF_FILE):
     initdb += "\n);\n"
 
     for index in INDICES:
-        initdb += 'CREATE INDEX "idx_{0}" ON events USING btree ("{0}");\n'.format(index)
+        initdb += 'CREATE INDEX "idx_events_{0}" ON events USING btree ("{0}");\n'.format(index)
     return initdb
 
 
