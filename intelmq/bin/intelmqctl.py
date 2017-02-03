@@ -341,7 +341,9 @@ Get logs of a bot:
 Reads the last lines from bot log.
 Log level should be one of DEBUG, INFO, ERROR or CRITICAL.
 Default is INFO. Number of lines defaults to 10, -1 gives all. Result
-can be longer due to our logging format!'''
+can be longer due to our logging format!
+
+Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
         # stolen functions from the bot file
         # this will not work with various instances of REDIS

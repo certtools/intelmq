@@ -370,14 +370,45 @@ See [IntelMQ Manager repository](https://github.com/certtools/intelmq-manager).
 
 ```bash
 # su - intelmq
-
 $ intelmqctl -h
-usage: 
-        intelmqctl [start|stop|restart|status|run] bot-id
-        intelmqctl [start|stop|restart|status]
+intelmqctl [-h] [-v] [--type {text,json}] [--quiet]
+                  {list,check,clear,log,run,help,start,stop,restart,reload,status}
+                  ...
+
+        description: intelmqctl is the tool to control intelmq system.
+
+        Outputs are logged to /opt/intelmq/var/log/intelmqctl
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -v, --version         show program's version number and exit
+  --type {text,json}, -t {text,json}
+                        choose if it should return regular text or other
+                        machine-readable
+  --quiet, -q           Quiet mode, useful for reloads initiated scripts like
+                        logrotate
+
+subcommands:
+  {list,check,clear,log,run,help,start,stop,restart,reload,status}
+    list                Listing bots or queues
+    check               Check installation and configuration
+    clear               Clear a queue
+    log                 Get last log lines of a bot
+    run                 Run a bot interactively
+    check               Check installation and configuration
+    help                Show the help
+    start               Start a bot or botnet
+    stop                Stop a bot or botnet
+    restart             Restart a bot or botnet
+    reload              Reload a bot or botnet
+    status              Status of a bot or botnet
+
+        intelmqctl [start|stop|restart|status|reload|run] bot-id
+        intelmqctl [start|stop|restart|status|reload]
         intelmqctl list [bots|queues]
         intelmqctl log bot-id [number-of-lines [log-level]]
         intelmqctl clear queue-id
+        intelmqctl check
 
 Starting a bot:
     intelmqctl start bot-id
@@ -400,32 +431,19 @@ Get a list of all configured bots:
 
 Get a list of all queues:
     intelmqctl list queues
+If -q is given, only queues with more than one item are listed.
 
 Clear a queue:
     intelmqctl clear queue-id
 
 Get logs of a bot:
-    intelmqctl log bot-id [number-of-lines [log-level]]
-    Reads the last lines from bot log, or from system log if no bot ID was
-    given. Log level should be one of DEBUG, INFO, ERROR or CRITICAL.
-    Default is INFO. Number of lines defaults to 10, -1 gives all. Result
-    can be longer due to our logging format!
+    intelmqctl log bot-id number-of-lines log-level
+Reads the last lines from bot log.
+Log level should be one of DEBUG, INFO, ERROR or CRITICAL.
+Default is INFO. Number of lines defaults to 10, -1 gives all. Result
+can be longer due to our logging format!
 
-positional arguments:
-  [start|stop|restart|status|run|list|clear|log]
-  parameter
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -v, --version         show program's version number and exit
-  --type {text,json}, -t {text,json}
-                        choose if it should return regular text or other
-                        machine-readable
-  --quiet, -q           Quiet mode, useful for reloads initiatedscripts like
-                        logrotate
-
-description: intelmqctl is the tool to control intelmq system. Outputs are
-logged to /opt/intelmq/var/log/intelmqctl
+Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl
 ```
 
 #### Botnet Concept
