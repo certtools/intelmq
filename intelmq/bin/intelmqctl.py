@@ -105,9 +105,10 @@ class IntelMQProcessManager:
     PIDDIR = VAR_RUN_PATH
     PIDFILE = os.path.join(PIDDIR, "{}.pid")
 
-    def __init__(self, runtime_configuration, logger):
+    def __init__(self, runtime_configuration, logger, controller):
         self.__runtime_configuration = runtime_configuration
         self.logger = logger
+        self.controller = controller
 
         if not os.path.exists(self.PIDDIR):
             try:
@@ -168,7 +169,7 @@ class IntelMQProcessManager:
     def bot_stop(self, bot_id):
         pid = self.__read_pidfile(bot_id)
         if not pid:
-            if self._is_enabled(bot_id):
+            if self.controller._is_enabled(bot_id):
                 log_bot_error('stopped', bot_id)
                 return 'stopped'
             else:
@@ -192,7 +193,7 @@ class IntelMQProcessManager:
     def bot_reload(self, bot_id):
         pid = self.__read_pidfile(bot_id)
         if not pid:
-            if self._is_enabled(bot_id):
+            if self.controller._is_enabled(bot_id):
                 log_bot_error('stopped', bot_id)
                 return 'stopped'
             else:
@@ -217,15 +218,12 @@ class IntelMQProcessManager:
             log_bot_message('running', bot_id)
             return 'running'
 
-        if self._is_enabled(bot_id):
+        if self.controller._is_enabled(bot_id):
             log_bot_message('stopped', bot_id)
             return 'stopped'
         else:
             log_bot_message('disabled', bot_id)
             return 'disabled'
-
-    def _is_enabled(self, bot_id):
-        return self.__runtime_configuration[bot_id].get('enabled', True)
 
     def __read_pidfile(self, bot_id):
         filename = self.PIDFILE.format(bot_id)
@@ -408,6 +406,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         self.bot_process_manager = PROCESS_MANAGER[process_manager](
             self.runtime_configuration,
             logger,
+            self
         )
 
         if self.interactive:
@@ -616,6 +615,9 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             return self.list_queues()
         elif kind == 'bots':
             return self.list_bots()
+
+    def _is_enabled(self, bot_id):
+        return self.runtime_configuration[bot_id].get('enabled', True)
 
     def list_bots(self):
         """
