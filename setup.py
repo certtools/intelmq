@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import json
+import os
 
 from setuptools import find_packages, setup
 
@@ -23,12 +25,6 @@ DATA = [
       'intelmq/etc/harmonization.conf',
       'intelmq/etc/pipeline.conf',
       'intelmq/etc/runtime.conf',
-      'intelmq/etc/startup.conf',
-      ],
-     ),
-    ('/opt/intelmq/var/lib/bots/modify/example',
-     ['intelmq/bots/experts/modify/examples/default.conf',
-      'intelmq/bots/experts/modify/examples/morefeeds.conf',
       ],
      ),
     ('/opt/intelmq/var/log/',
@@ -39,8 +35,18 @@ DATA = [
      ),
 ]
 
-exec(open('intelmq/version.py').read())  # defines __version__
+exec(open(os.path.join(os.path.dirname(__file__),
+                       'intelmq/version.py')).read())  # defines __version__
+BOTS = []
+bots = json.load(open(os.path.join(os.path.dirname(__file__), 'intelmq/bots/BOTS')))
+for bot_type, bots in bots.items():
+    for bot_name, bot in bots.items():
+        module = bot['module']
+        BOTS.append('{0} = {0}:BOT.run'.format(module))
 
+with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as handle:
+    README = handle.read().replace('<docs/',
+                                   '<https://github.com/certtools/intelmq/blob/master/docs/')
 
 setup(
     name='intelmq',
@@ -53,15 +59,15 @@ setup(
     package_data={'intelmq': [
         'etc/*.conf',
         'bots/BOTS',
-        'bots/experts/modify/*.conf',
+        'bots/experts/modify/examples/*.conf',
     ]
     },
     include_package_data=True,
     url='https://github.com/certtools/intelmq/',
     license='AGPLv3',
-    description='IntelMQ is a solution for CERTs to process data feeds, '
-                'pastebins, tweets throught a message queue.',
-    long_description=open('docs/README.rst').read(),
+    description='IntelMQ is a solution for IT security teams for collecting and '
+                'processing security feeds using a message queuing protocol.',
+    long_description=README,
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Console',
@@ -74,6 +80,7 @@ setup(
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
         'Topic :: Security',
     ],
     keywords='incident handling cert csirt',
@@ -83,7 +90,7 @@ setup(
             'intelmqctl = intelmq.bin.intelmqctl:main',
             'intelmqdump = intelmq.bin.intelmqdump:main',
             'intelmq_psql_initdb = intelmq.bin.intelmq_psql_initdb:main',
-        ],
+        ] + BOTS,
     },
     scripts=[
         'intelmq/bots/experts/tor_nodes/update-tor-nodes',

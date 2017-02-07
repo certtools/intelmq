@@ -1,12 +1,46 @@
 **Table of Contents**
 
-1. [Intended Audience](#audience)
-2. [Goals](#goals)
-2. [Code and Repository Rules](#code-and-repository-rules)
-2. [System Overview](#system-overview)
-3. [Bot Developer Guide](#bot-developer-guide)
+* [Intended Audience](#intended-audience)
+  * [Goals](#goals)
+* [Development Environment](#development-environment)
+  * [Installation](#installation)
+  * [Update](#update)
+  * [Testing](#testing)
+* [Development Guidelines](#development-guidelines)
+  * [Coding-Rules](#coding-rules)
+    * [Unicode](#unicode)
+    * [Back-end independence](#back-end-independence)
+    * [Compatibility](#compatibility)
+  * [Layout Rules](#layout-rules)
+    * [Directories Hierarchy on Default Installation](#directories-hierarchy-on-default-installation)
+    * [Directories and Files naming](#directories-and-files-naming)
+    * [Class Names](#class-names)
+  * [Data Harmonization Rules](#data-harmonization-rules)
+  * [Code Submission Rules](#code-submission-rules)
+    * [Releases, Repositories and Branches](#releases-repositories-and-branches)
+    * [How to Contribute](#how-to-contribute)
+    * [Workflow](#workflow)
+    * [Commit Messages](#commit-messages)
+    * [Prepare for Discussion in GitHub](#prepare-for-discussion-in-github)
+  * [License and Author files](#license-and-author-files)
+* [System Overview](#system-overview)
+  * [Code Architecture](#code-architecture)
+  * [Pipeline](#pipeline)
+* [Bot Developer Guide](#bot-developer-guide)
+  * [Template](#template)
+  * [Pipeline interactions](#pipeline-interactions)
+  * [Logging](#logging)
+    * [Log Messages Format](#log-messages-format)
+    * [Log Levels](#log-levels)
+    * [What to Log](#what-to-log)
+    * [How to Log](#how-to-log)
+  * [Error handling](#error-handling)
+  * [Initialization](#initialization)
+  * [Examples](#examples)
+  * [Parsers](#parsers)
+  * [Tests](#tests)
+  * [Configuration](#configuration)
 
-<a name="audience"></a>
 # Intended Audience
 This guide is for developers of IntelMQ. It explains the code architecture, coding guidelines as well as ways you can contribute code or documentation.
 If you have not done so, please read the [User Guide](User-Guide.md) first.
@@ -15,9 +49,6 @@ It does not matter if you are an experienced Python programmer or just a beginne
 
 Hoever, before we go into the details, it is important to observe and internalise some overall project goals.
 
-
-
-<a name="goals"></a>
 ## Goals
 
 It is important, that all developers agree and stick to these meta-guidelines. 
@@ -41,12 +72,18 @@ How do you ultimately test if things are still easy? Let them new programmers te
 Similarly, if code does not get accepted upstream by the main developers, it is usually only because of the ease-of-use argument. Do not give up , go back to the drawing board, and re-submit again.
 
 
+# Development Environment
+
 ## Installation
 Developers might want to install intelmq with `pip3 -e`, which gives you a so called *editable* installation. No code is copied in the libraries directories, there's just a link to your code.
 
     pip3 install -e .
 
-If you do any changes on setup.py, data files (e.g. example configurations), you need to run the installation again of course.
+## Update
+
+If you do any changes on setup.py, data files (e.g. example configurations) or add new bots, you need to rerun the installation routine.
+
+    pip3 install --upgrade -e .
 
 ## Testing
 
@@ -61,10 +98,120 @@ It may be necessary to switch the user to `intelmq` if the run-path (`/opt/intel
 
 There is a [Travis-CI](https://travis-ci.org/certtools/intelmq/builds) setup for automatic testing, which triggers on pull requests. You can also easily activate it for your forks.
 
-<a name="code-and-repository-rules"></a>
-## Repository rules for submissions
 
-### Releases, Repositories and branches
+# Development Guidelines
+
+## Coding-Rules
+
+Most important: **KEEP IT SIMPLE**!!
+This can not be over-estimated. Feature creep can destroy any good software project. But if new folks can not understand what you wrote in 10-15 minutes, it is not good. It's not about the performance, etc. It's about readability.
+
+
+In general, we follow the [Style Guide for Python Code (PEP8)](https://www.python.org/dev/peps/pep-0008/).
+We recommend reading it before committing code.
+
+There are some exceptions: sometimes it does not make sense to check for every PEP8 error (such as whitespace indentation when you want to make a dict=() assignment
+look pretty. Therefore, we do have some exceptions defined in the `setup.cfg` file.
+
+We support Python 3 only.
+
+### Unicode
+
+* Each internal object in IntelMQ (Event, Report, etc) that has strings, their strings MUST be in UTF-8 Unicode format.
+* Any data received from external sources MUST be transformed into UTF-8 unicode format before add it to IntelMQ objects.
+
+### Back-end independence
+
+Any component of the IntelMQ MUST be independent of the message queue technology (Redis, RabbitMQ, etc...), except `lib/pipeline.py`. Intelmq bots MAY only assume to use the class specified in `lib/pipeline.py` and `lib/cache.py` for inter-process or inter-bot communications.
+
+### Compatibility
+
+IntelMQ core (including intelmqctl) MUST be compatible with IntelMQ Manager.
+
+
+## Layout Rules
+
+```bash
+intelmq/
+  lib/
+    bot.py
+    cache.py
+    message.py
+    pipeline.py
+    utils.py
+  bots/
+    collector/
+      <bot name>/
+            collector.py
+    parser/
+      <bot name>/
+            parser.py
+    expert/
+      <bot name>/
+            expert.py
+    output/
+      <bot name>/
+            output.py
+    BOTS
+  /conf
+    pipeline.conf
+    runtime.conf
+    system.conf
+```
+
+Assuming you want to create a bot for a new 'Abuse.ch' feed. It turns out that here it is necessary to create different parsers for the respective kind of events (e.g. malicious URLs). Therefore, the usual hierarchy ‘intelmq/bots/parser/<FEED>/parser.py’ would not be suitable because it is necessary to have more parsers for each Abuse.ch Feed. The solution is to use the same hierarchy with an additional "description" in the file name, separated by underscore. Also see the section *Directories and Files naming*.
+
+Example (including the current ones):
+```
+/intelmq/bots/parser/abusech/parser_domain.py
+/intelmq/bots/parser/abusech/parser_ip.py
+/intelmq/bots/parser/abusech/parser_ransomware.py
+
+/intelmq/bots/parser/abusech/parser_malicious_url.py
+```
+
+### Directories Hierarchy on Default Installation
+
+* Configuration Files Path: `/opt/intelmq/etc/`
+* PID Files Path: `/opt/intelmq/var/run/`
+* Logs Files and dumps Path: `/opt/intelmq/var/log/`
+* Additional Bot Files Path, e.g. templates or databases: `/opt/intelmq/var/lib/bots/[bot-name]/`
+
+### Directories and Files naming
+
+Any directory and file of IntelMQ has to follow the Directories and Files naming. Any file name or folder name has to
+* be represented with lowercase and in case of the name has multiple words, the spaces between them must be removed or replaced by underscores;
+* be self-explaining what the content contains.
+
+In the bot directories name, the name must correspond to the feed name. If necessary, some words can be added to give context by joining together using underscores.
+
+Example (without context words):
+```
+intelmq/bots/parser/dragonresearchgroup
+intelmq/bots/parser/malwaredomainlist
+```
+
+Example (with context words):
+```
+intelmq/bots/parser/cymru_full_bogons
+intelmq/bots/parser/taichung_city_netflow
+```
+
+### Class Names
+
+Class name of the bot (ex: PhishTank Parser) must correspond to the type of the bot (ex: Parser) e.g. `PhishTankParserBot`
+
+
+## Data Harmonization Rules
+
+Any component of IntelMQ MUST respect the "Data Harmonization Ontology".
+
+**Reference:** IntelMQ Data Harmonization - [Data Harmonization Ontology](Data-Harmonization.md)
+
+
+## Code Submission Rules
+
+### Releases, Repositories and Branches
 
   * The main repository is in [github.com/certtools/intelmq](https://github.com/certtools/intelmq).
   * There are a couple of forks which might be regularly merged into the main repository. They are independent and can have incompatible changes and can deviate from the upstream repository.
@@ -73,7 +220,7 @@ There is a [Travis-CI](https://travis-ci.org/certtools/intelmq/builds) setup for
   * Releases shall receive non-breaking bug fixes. The "master" branch can change and might introduce non-compatible changes.
   * If you contribute something, please fork the repository and create a separate branch and use this for pull requests, see section below.
 
-### How to contribute to IntelMQ:
+### How to Contribute
 
   * Make separate pull requests / branches on github for changes. This allows us to discuss things via github.
   * We prefer one  Pull Request per feature or change. If you have a bunch of small fixes, please don't create one RP per fix :)
@@ -129,123 +276,15 @@ Also see the [development workflow of Scipy](https://docs.scipy.org/doc/numpy/de
 
 You can then create a PR with your branch `bugfix` to our upstream repository, using github's webinterface.
 
-### Commit messages
+### Commit Messages
 
 If it fixes an existing issue, please use github syntax, e.g.: `fixes certtools/intelmq#<IssueID>`
 
-### Prepare for discussion in github.
+### Prepare for Discussion in GitHub
 
 If we don't discuss it, it's probably not tested.
 
-## Coding-Rules
-
-Most important: **KEEP IT SIMPLE**!!
-This can not be over-estimated. Feature creep can destroy any good software project. But if new folks can not understand what you wrote in 10-15 minutes, it is not good. It's not about the performance, etc. It's about readability.
-
-
-In general, we follow the [Style Guide for Python Code (PEP8)](https://www.python.org/dev/peps/pep-0008/).
-We recommend reading it before committing code.
-
-There are some exceptions: sometimes it does not make sense to check for every PEP8 error (such as whitespace indentation when you want to make a dict=() assignment
-look pretty. Therefore, we do have some exceptions defined in the `setup.cfg` file.
-
-We support Python 3 only.
-
-
-
-### Unicode
-
-* Each internal object in IntelMQ (Event, Report, etc) that has strings, their strings MUST be in UTF-8 Unicode format.
-* Any data received from external sources MUST be transformed into UTF-8 unicode format before add it to IntelMQ objects.
-
-### Back-end independence
-
-Any component of the IntelMQ MUST be independent of the message queue technology (Redis, RabbitMQ, etc...), except `lib/pipeline.py`. Intelmq bots MAY only assume to use the class specified in `lib/pipeline.py` and `lib/cache.py` for inter-process or inter-bot communications.
-
-### Compatibility
-
-IntelMQ core (including intelmqctl) MUST be compatible with IntelMQ Manager.
-
-
-## Event Harmonization
-
-Any component of IntelMQ MUST respect the "Data Harmonization Ontology".
-
-**Reference:** IntelMQ Data Harmonization - [Data Harmonization Ontology](Data-Harmonization.md)
-
-
-## Directory layout in the repository
-```bash
-intelmq\
-  lib\
-    bot.py
-    cache.py
-    message.py
-    pipeline.py
-    utils.py
-  bots\
-    collector\
-      <bot name>\
-            collector.py
-    parser\
-      <bot name>\
-            parser.py
-    expert\
-      <bot name>\
-            expert.py
-    output\
-      <bot name>\
-            output.py
-    BOTS
-  \conf
-    pipeline.conf
-    runtime.conf
-    startup.conf
-    system.conf
-```
-
-Assuming you want to create a bot for 'Abuse.ch Zeus' feed. It turns out that here it is necessary to create different parsers for the respective kind of events (C&C, Binaries, Dropzones). Therefore, the hierarchy ‘intelmq\bots\parser\abusech\parser.py’ would not be suitable because it is necessary to have more parsers, as mentioned above. The solution is to use the same hierarchy with an additional "description" in the file name, separated by underscore. Also see the section *Directories and Files naming*.
-
-Example:
-```
-\intelmq\bots\parser\abusech\parser_zeus_cc.py
-\intelmq\bots\parser\abusech\parser_zeus_binaries.py
-\intelmq\bots\parser\abusech\parser_zeus_dropzones.py
-```
-
-
-### Directories Hierarchy on Default Installation
-
-* Configuration Files Path: `/opt/intelmq/etc/`
-* PID Files Path: `/opt/intelmq/var/run/`
-* Logs Files and dumps Path: `/opt/intelmq/var/log/`
-* Additional Bot Files Path, e.g. templates or databases: `/opt/intelmq/var/lib/bots/[bot-name]/`
-
-### Directories and Files naming
-
-Any directory and file of IntelMQ has to follow the Directories and Files naming. Any file name or folder name has to
-* be represented with lowercase and in case of the name has multiple words, the spaces between them must be removed or replaced by underscores;
-* be self-explaining what the content contains.
-
-In the bot directories name, the name must correspond to the feed name. If necessary, some words can be added to give context by joining together using underscores.
-
-Example (without context words):
-```
-intelmq/bots/parser/dragonresearchgroup
-intelmq/bots/parser/malwaredomainlist
-```
-
-Example (with context words):
-```
-intelmq/bots/parser/cymru_full_bogons
-intelmq/bots/parser/taichung_city_netflow
-```
-
-#### Class Names
-
-Class name of the bot (ex: PhishTank Parser) must correspond to the type of the bot (ex: Parser) e.g. `PhishTankParserBot`
-
-### Licence and Author files
+## License and Author files
 
 License and Authors files can be found at the root of repository.
 * License file **MUST NOT** be modified except by the explicit written permission by CNCS/CERT.PT or CERT.at
@@ -253,48 +292,8 @@ License and Authors files can be found at the root of repository.
 
 License and authors must be only listed in an external file but not inside the code files.
 
-## Logging
-### Log Messages Format
 
-Log messages have to be clear and well formatted. The format is the following:
-
-Format:
-```
-<timestamp> - <bot id> - <log level> - <log message>
-```
-
-Rules:
-* the Log message MUST follow the common rules of a sentence, beginning with uppercase and ending with period.
-* the sentence MUST describe the problem or has useful information to give to an unexperienced user a context. Pure stack traces without any further explanation are not helpful.
-
-When the logger instance is created, the bot id must be given as parameter anyway. The function call defines the log level, see below.
-
-### Log levels
-
-* *debug*: Debugging informations includes retrieved and sent messages, detailed status information. Can include sensitive information like passwords and amount can be huge.
-* *info*: Logs include loaded databases, fetched reports or waiting messages.
-* *warning*: Unexpected, but handled behavior.
-* *error*: Errors and Exceptions.
-* *critical* Program is failing.
-
-### What to log?
-
-* Try to keep a balance between obscuring the source code file with hundreds of log messages and having too little log messages. 
-* In general, a bot MUST report error conditions.
-
-### How to log
-The Bot class creates a logger with that should be used by bots. Other components won't log anyway currently. Examples:
-
-```python
-self.logger.info('Bot start processing')
-self.logger.error('Pipeline failed')
-self.logger.exception('Pipeline failed')
-```
-The `exception` method automatically appends an exception traceback. The logger instance writes by default to the file `/opt/intelmq/var/log/[bot-id].log` and to stderr.
-
-
-<a name="system-overview"></a>
-## System Overview
+# System Overview
 
 In the `intelmq/lib/` directory you can find some libraries:
  * Bots: Defines base structure for bots and handling of startup, stop, messages etc.
@@ -305,30 +304,31 @@ In the `intelmq/lib/` directory you can find some libraries:
  * Test: Base class for bot tests with predefined test and assert methods.
  * Utils: Utility functions used by system components.
 
-### Pipeline
-
-  * collector bot
-
-### Code Architecture
+## Code Architecture
 
 ![Code Architecture](images/intelmq-arch-schema.png)
 
+## Pipeline
 
-<a name="bot-developer-guide"></a>
-## Bot Developer Guide
+  * collector bot
+  **TBD**
 
-There's a dummy bot including tests at `intelmq/tests/bots/test_dummy_bot.py`.
 
-You can always start any bot directly from command line by either invoking the script or the python module. Don't forget to give an bot id as first argument. Also, running bots with other users than `intelmq` will raise permission errors.
+# Bot Developer Guide
+
+There's a dummy bot including tests at `intelmq/tests/lib/test_parser_bot.py`.
+
+You can always start any bot directly from command line by calling the executable.
+The executable will be created during installation a directory for binaries. After adding new bots to the code, install IntelMQ to get the files created.
+Don't forget to give an bot id as first argument. Also, running bots with other users than `intelmq` will raise permission errors.
 ```bash
-sudo -i intelmq
-python3 -m intelmq.bots.outputs.file.output file-output
-python3 intelmq/bots/outputs/file/output.py file-output
-intelmqctl run file-output  # if configured
+$ sudo -i intelmq
+$ intelmqctl run file-output  # if configured
+$ intelmq.bots.outputs.file.output file-output
 ```
 You will get all logging outputs directly on stderr as well as in the log file.
 
-### Template
+## Template
 Please adjust the doc strings accordingly and remove the in-line comments (`#`).
 ```python
 # -*- coding: utf-8 -*-
@@ -348,7 +348,7 @@ class ExampleParserBot(Bot):
     def process(self):
         report = self.receive_message()
 
-        event = Event(report)  # copies feed.name, time.observation
+        event = self.new_event(report)  # copies feed.name, time.observation
         ... # implement the logic here
         event.add('source.ip', '127.0.0.1')
         event.add('extra', {"os.name": "Linux"})
@@ -357,9 +357,7 @@ class ExampleParserBot(Bot):
         self.acknowledge_message()
 
 
-if __name__ == "__main__":
-    bot = ExampleParserBot(sys.argv[1])
-    bot.start()
+BOT = ExampleParserBot
 ```
 
 There are some names with special meaning. These can be used i.e. called:
@@ -375,7 +373,7 @@ These can be defined:
 
 All other names can be used freely.
 
-### Pipeline interactions
+## Pipeline interactions
 
 A can call three methods related to the pipeline:
 
@@ -383,11 +381,51 @@ A can call three methods related to the pipeline:
   - `self.send_message(event)`: Processed message is sent to destination queues.
   - `self.acknowledge_message()`: Message formerly received by `receive_message` is removed from the internal queue. This should always be done after processing and after the sending of the new message. In case of errors, this function is not called and the message will stay in the internal queue waiting to be processed again.
 
-### Error handling
+## Logging
+
+### Log Messages Format
+
+Log messages have to be clear and well formatted. The format is the following:
+
+Format:
+```
+<timestamp> - <bot id> - <log level> - <log message>
+```
+
+Rules:
+* the Log message MUST follow the common rules of a sentence, beginning with uppercase and ending with period.
+* the sentence MUST describe the problem or has useful information to give to an unexperienced user a context. Pure stack traces without any further explanation are not helpful.
+
+When the logger instance is created, the bot id must be given as parameter anyway. The function call defines the log level, see below.
+
+### Log Levels
+
+* *debug*: Debugging informations includes retrieved and sent messages, detailed status information. Can include sensitive information like passwords and amount can be huge.
+* *info*: Logs include loaded databases, fetched reports or waiting messages.
+* *warning*: Unexpected, but handled behavior.
+* *error*: Errors and Exceptions.
+* *critical* Program is failing.
+
+### What to Log
+
+* Try to keep a balance between obscuring the source code file with hundreds of log messages and having too little log messages. 
+* In general, a bot MUST report error conditions.
+
+### How to Log
+The Bot class creates a logger with that should be used by bots. Other components won't log anyway currently. Examples:
+
+```python
+self.logger.info('Bot start processing')
+self.logger.error('Pipeline failed')
+self.logger.exception('Pipeline failed')
+```
+The `exception` method automatically appends an exception traceback. The logger instance writes by default to the file `/opt/intelmq/var/log/[bot-id].log` and to stderr.
+
+## Error handling
 
 The bot class itself has error handling implemented. The bot itself is allowed to throw exceptions and **intended to fail**! The bot should fail in case of malicious messages, and in case of unavailable but necessary resources. The bot class handles the exception and will restart until the maximum number of tries is reached and fail then. Additionally, the message in question is dumped to the file `/opt/intelmq/var/log/[bot-id].dump` and removed from the queue.
 
-### Initialization
+## Initialization
 
 Maybe it is necessary so setup a Cache instance or load a file into memory. Use the `init` function for this purpose:
 
@@ -404,12 +442,12 @@ class ExampleParserBot(Bot):
             self.stop()
 ```
 
-### Examples
+## Examples
 
 * Check [Expert Bots](../intelmq/bots/experts/)
 * Check [Parser Bots](../intelmq/bots/parsers/)
 
-### Parsers
+## Parsers
 
 Parsers can use a different, specialized Bot-class. It allows to work on individual elements of a report, splitting the functionality of the parser into multiple functions:
 
@@ -420,7 +458,7 @@ Parsers can use a different, specialized Bot-class. It allows to work on individ
 
 For common cases, like CSV, exisiting function can be used, reducing the amount of code to implement. In the best case, only `parse_line` needs to be coded, as only this part interprets the data.
 
-You can have a look at the implementation `intelmq/lib/bot.py` or at examples, e.g. the DummyBot in `intelmq/tests/bots/test_dummy_bot.py`. This is a stub for creating a new Parser, showing the parameters and possible code:
+You can have a look at the implementation `intelmq/lib/bot.py` or at examples, e.g. the DummyBot in `intelmq/tests/lib/test_parser_bot.py`. This is a stub for creating a new Parser, showing the parameters and possible code:
 
 ```python
 class MyParserBot(ParserBot):
@@ -478,16 +516,18 @@ class MyParserBot(ParserBot):
         """
         return '\n'.join(self.tempdata + [line])
 
+
+BOT = MyParserBot
 ```
 
-#### parse_line
-One line can lead to multiple events, thus `parse_line` can't just return one Event. Thus, this function is a generator, which allows to easily return multple values. Use `yield event` for valid Events and `return` in case of a void result (not parseable line, invalid data etc.).
+### parse_line
+One line can lead to multiple events, thus `parse_line` can't just return one Event. Thus, this function is a generator, which allows to easily return multiple values. Use `yield event` for valid Events and `return` in case of a void result (not parseable line, invalid data etc.).
 
-### Tests
+## Tests
 
 In order to do automated tests on the bot, it is necessary to write tests including sample data. Have a look at some existing tests:
 
- - The DummyParserBot in `intelmq/tests/bots/test_dummy_bot.py`. This test has the example data (report and event) inside the file, defined as dictionary.
+ - The DummyParserBot in `intelmq/tests/lib/test_paerser_bot.py`. This test has the example data (report and event) inside the file, defined as dictionary.
  - The parser for malwaregroup at `intelmq/tests/bots/parsers/malwaregroup/test_parser_*.py`. The latter loads a sample HTML file from the same directory, which is the raw report.
  - The test for ASNLookupExpertBot has two event tests, one is an expected fail (IPv6).
 
@@ -512,7 +552,7 @@ class TestExampleParserBot(test.BotTestCase, unittest.TestCase):  # adjust test 
     @classmethod
     def set_bot(cls):
         cls.bot_reference = ExampleParserBot  # adjust bot class name
-        cls.default_input_message = EXAMPLE_EVENT  # adjust source of the example event (dict)
+        cls.default_input_message = EXAMPLE_EVENT  # adjust source of the example event (dict), by default an empty event or report (depeding on bot type)
 
     # This is an example how to test the log output
     def test_log_test_line(self):
@@ -527,13 +567,13 @@ class TestExampleParserBot(test.BotTestCase, unittest.TestCase):  # adjust test 
         self.assertMessageEqual(0, EXAMPLE_REPORT)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()
 ```
 
 When calling the file directly, only the tests in this file for the bot will be expected. Some default tests are always executed (via the `test.BotTestCase` class), such as pipeline and message checks, logging, bot naming or empty message handling.
 
-### Configure IntelMQ
+## Configuration
 
 In the end, the new information about the new bot should be added to BOTS file
 located at `intelmq/bots`. Note that the file is sorted!

@@ -166,6 +166,17 @@ class TestMessageFactory(unittest.TestCase):
         report.add('feed.name', '-')
         self.assertNotIn('feed.name', report)
 
+    def test_report_is_valid(self):
+        """ Test if report ignores '-'. """
+        event = message.MessageFactory.unserialize('{"__type": "Event"}')
+        self.assertFalse(event.is_valid('feed.name', '-'))
+        self.assertFalse(event.is_valid('feed.name', None))
+        self.assertFalse(event.is_valid('source.ip', '127.0.0.1/24'))
+        self.assertFalse(event.is_valid('source.ip', '127.0.0.1/24', sanitize=False))
+        self.assertTrue(event.is_valid('source.ip', '127.0.0.1'))
+        with self.assertRaises(exceptions.InvalidKey):
+            event.is_valid('invalid', 0)
+
     def test_report_ignore_na(self):
         """ Test if report ignores 'N/A'. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
@@ -195,7 +206,7 @@ class TestMessageFactory(unittest.TestCase):
         """ Test if report can add raw value. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         report.add('raw', LOREM_BASE64, sanitize=False)
-        report.add('raw', DOLOR_BASE64, force=True, sanitize=False)
+        report.add('raw', DOLOR_BASE64, overwrite=True, sanitize=False)
         self.assertDictContainsSubset({'raw': DOLOR_BASE64},
                                       report)
 
@@ -227,6 +238,11 @@ class TestMessageFactory(unittest.TestCase):
             report.add(key, value)
         self.assertListUnorderdEqual(list(FEED.items()), list(report.items()))
 
+    def test_report_add_raise_failure(self):
+        """ Test if report returns all keys in list with items(). """
+        report = message.MessageFactory.unserialize('{"__type": "Report"}')
+        self.assertFalse(report.add('feed.url', 'invalid', raise_failure=False))
+
     def test_report_add_byte(self):
         """ Test if report rejects a byte string. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
@@ -237,7 +253,7 @@ class TestMessageFactory(unittest.TestCase):
     def test_report_sanitize_url(self):
         """ Test if report sanitizes an URL. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
-        report.add('feed.url', URL_UNSANE, sanitize=True)
+        report.add('feed.url', URL_UNSANE)
         self.assertEqual(URL_SANE, report['feed.url'])
 
     def test_report_invalid_url(self):
@@ -255,7 +271,7 @@ class TestMessageFactory(unittest.TestCase):
     def test_report_sanitize_accuracy(self):
         """ Test if report sanitizes the accuracy parameter. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
-        report.add('feed.accuracy', ACCURACY_UNSANE, sanitize=True)
+        report.add('feed.accuracy', ACCURACY_UNSANE)
         self.assertEqual(ACCURACY_SANE, report['feed.accuracy'])
 
     def test_report_invalid_accuracy(self):
@@ -268,7 +284,7 @@ class TestMessageFactory(unittest.TestCase):
         """ Test if report raises error when invalid after sanitize. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         with self.assertRaises(exceptions.InvalidValue):
-            report.add('feed.name', '\r\n', sanitize=True)
+            report.add('feed.name', '\r\n')
 
     def test_report_change(self):
         """ Test report value change function. """
@@ -277,11 +293,11 @@ class TestMessageFactory(unittest.TestCase):
         report.change('feed.name', 'Example 2')
         self.assertEqual('Example 2', report['feed.name'])
 
-    def test_report_contains(self):
-        """ Test report value contains function. """
+    def test_report_in(self):
+        """ Test report value in function. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         report.add('feed.name', 'Example 1')
-        self.assertTrue(report.contains('feed.name'))
+        self.assertTrue('feed.name' in report)
 
     def test_report_change_duplicate(self):
         """ Test report value change function, rejects duplicate. """
@@ -315,7 +331,7 @@ class TestMessageFactory(unittest.TestCase):
         self.assertSetEqual(set(report.deep_copy().items()),
                             set(report.items()))
 
-    def test_deep_copy_items(self):  # TODO: Sort by key
+    def test_deep_copy_items(self):
         """ Test if deep_copy does not return the same objects. """
         report = message.MessageFactory.unserialize('{"__type": "Report"}')
         report = self.add_report_examples(report)
@@ -354,8 +370,41 @@ class TestMessageFactory(unittest.TestCase):
         event1 = self.add_event_examples(event)
         event2 = event1.deep_copy()
         event2.add('time.observation', '2015-12-12T13:37:50+01:00',
-                   force=True, sanitize=True)
+                   overwrite=True)
         self.assertEqual(hash(event1), hash(event2))
+
+    def test_event_hash_fixed(self):
+        """ Test if Event hash hasn't changed unintentionally. """
+        event = message.MessageFactory.unserialize('{"__type": "Event"}')
+        event1 = self.add_event_examples(event)
+        event2 = event1.deep_copy()
+        event2.add('time.observation', '2015-12-12T13:37:50+01:00',
+                   overwrite=True)
+        self.assertEqual(event1.hash(),
+                         'd04aa050afdc58a39329c78c3b59ce6fb6f11effe180fe8084b4f1e89007de71')
+
+    def test_event_hash_method(self):
+        """ Test Event hash() 'time.observation' should be ignored. """
+        event = message.MessageFactory.unserialize('{"__type": "Event"}')
+        event1 = self.add_event_examples(event)
+        event2 = event1.deep_copy()
+        event2.add('time.observation', '2015-12-12T13:37:50+01:00',
+                   overwrite=True)
+        self.assertEqual(event1.hash(), event2.hash())
+
+    def test_event_hash_method_blacklist(self):
+        """ Test Event hash(blacklist) """
+        event = message.MessageFactory.unserialize('{"__type": "Event"}')
+        event1 = self.add_event_examples(event)
+        event2 = event1.deep_copy()
+        event2.add('time.observation', '2015-12-12T13:37:50+01:00',
+                   overwrite=True)
+        event2.add('feed.name', 'Some Other Feed', overwrite=True)
+        # The feed.name is usually taken into account:
+        self.assertNotEqual(event1.hash(), event2.hash())
+        # But not if we blacklist it (time.observation does not have to
+        # blacklisted explicitly):
+        self.assertEqual(event1.hash({"feed.name"}), event2.hash({"feed.name"}))
 
     def test_event_dict(self):
         """ Test Event to_dict. """
@@ -509,5 +558,5 @@ class TestMessageFactory(unittest.TestCase):
         with self.assertRaises(exceptions.InvalidValue):
             event.update('source.registry', 'afri nic', sanitize=False)
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover  # pragma: no cover
     unittest.main()

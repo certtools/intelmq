@@ -30,12 +30,18 @@ class TestUrl2fqdnExpertBot(test.BotTestCase, unittest.TestCase):
     @classmethod
     def set_bot(self):
         self.bot_reference = Url2fqdnExpertBot
-        self.default_input_message = {'__type': 'Event'}
 
     def test(self):
         self.input_message = EXAMPLE_INPUT
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_OUTPUT)
 
-if __name__ == '__main__':
+    def test_overwrite(self):
+        self.input_message = EXAMPLE_INPUT.copy()
+        self.input_message['source.fqdn'] = 'example.net'
+        self.sysconfig = {'overwrite' : True}
+        self.run_bot()
+        self.assertMessageEqual(0, EXAMPLE_OUTPUT)
+
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

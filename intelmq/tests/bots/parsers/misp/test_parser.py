@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 
-import json
 import os
 import unittest
 
+from intelmq.bots.parsers.misp.parser import MISPParserBot
 from intelmq.lib import test
 from intelmq.lib.utils import base64_encode
-from intelmq.bots.parsers.misp.parser import MISPParserBot
 
 with open(os.path.join(os.path.dirname(__file__), 'misp_event.json')) as handle:
     EXAMPLE_MISP_EVENT = handle.read()
@@ -57,5 +56,5 @@ class TestMISPParserBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(0, EXAMPLE_EVENT)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

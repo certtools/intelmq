@@ -19,13 +19,11 @@
 #    (7) contact email address
 """
 
-import sys
 
 import dateutil
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.message import Event
 
 
 class DshieldBlockParserBot(Bot):
@@ -55,7 +53,7 @@ class DshieldBlockParserBot(Bot):
             network = '%s/%s' % (network_ip, network_mask)
 
             extra = {}
-            event = Event(report)
+            event = self.new_event(report)
 
             if len(values) > 3:
                 extra['attacks'] = int(values[3])
@@ -78,6 +76,4 @@ class DshieldBlockParserBot(Bot):
         self.acknowledge_message()
 
 
-if __name__ == "__main__":
-    bot = DshieldBlockParserBot(sys.argv[1])
-    bot.start()
+BOT = DshieldBlockParserBot

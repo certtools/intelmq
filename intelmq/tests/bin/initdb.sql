@@ -34,6 +34,7 @@ CREATE TABLE events (
     "feed.accuracy" real,
     "feed.code" varchar(100),
     "feed.name" text,
+    "feed.provider" text,
     "feed.url" text,
     "malware.hash" varchar(200),
     "malware.hash.md5" varchar(200),

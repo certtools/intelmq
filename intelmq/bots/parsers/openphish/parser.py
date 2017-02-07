@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
-import sys
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.message import Event
 
 
 class OpenPhishParserBot(Bot):
@@ -19,7 +17,7 @@ class OpenPhishParserBot(Bot):
             if row == "":
                 continue
 
-            event = Event(report)
+            event = self.new_event(report)
 
             event.add('classification.type', 'phishing')
             event.add('source.url', row)
@@ -28,6 +26,5 @@ class OpenPhishParserBot(Bot):
             self.send_message(event)
         self.acknowledge_message()
 
-if __name__ == "__main__":
-    bot = OpenPhishParserBot(sys.argv[1])
-    bot.start()
+
+BOT = OpenPhishParserBot

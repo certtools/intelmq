@@ -1,0 +1,17 @@
+#############################################################
+## Master Feed of known, active and non-sinkholed C&Cs domain
+## names
+## 
+## Feed generated at: 2016-11-12 15:16 
+##
+## Feed Provided By: John Bambenek of Bambenek Consulting
+## jcb@bambenekconsulting.com // http://bambenekconsulting.com
+## Use of this feed is governed by the license here: 
+## http://osint.bambenekconsulting.com/license.txt 
+##
+## For more information on this feed go to: 
+## http://osint.bambenekconsulting.com/manual/c2-dommasterlist.txt
+## 
+## All times are in UTC
+#############################################################
+sfkh21okrrnlu.com,Domain used by shiotob/urlzone/bebloh,2016-11-12 15:02,http://osint.bambenekconsulting.com/manual/bebloh.txt

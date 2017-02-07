@@ -1,13 +1,10 @@
 # -*- coding: utf-8 -*-
 import json
-import sys
 from datetime import datetime
 from urllib.parse import urljoin
 
-from intelmq.lib import harmonization
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.message import Event
 
 
 class MISPParserBot(Bot):
@@ -77,10 +74,7 @@ class MISPParserBot(Bot):
         malware_variant = None
         for attribute in event_attributes:
             if attribute['category'] == 'Payload type':
-                value = attribute['value'].lower()
-                # TODO: use misp galaxies
-                if value and harmonization.LowercaseString.is_valid(value):
-                    malware_variant = value
+                malware_variant = attribute['value'].lower()
 
         # MISP event URL
         url_path = 'event/view/{}'.format(misp_event['id'])
@@ -102,7 +96,7 @@ class MISPParserBot(Bot):
                     type_ in self.MISP_TYPE_MAPPING):
 
                 # Create and send the intelmq event
-                event = Event(report)
+                event = self.new_event(report)
                 event.add('raw', json.dumps(attribute, sort_keys=True))
                 event.add(self.MISP_TYPE_MAPPING[type_], value)
                 event.add('misp.event_uuid', misp_event['uuid'])
@@ -110,7 +104,7 @@ class MISPParserBot(Bot):
                 event.add('comment', comment)
                 event.add('event_description.text', category)
                 event.add('event_description.url', misp_event_url)
-                event.add('malware.name', malware_variant)
+                event.add('malware.name', malware_variant, raise_failure=False)
                 event.add('classification.type', classifier)
                 event.add('time.source', '{} UTC'.format(
                           datetime.utcfromtimestamp(float(timestamp))))
@@ -119,6 +113,4 @@ class MISPParserBot(Bot):
         self.acknowledge_message()
 
 
-if __name__ == '__main__':
-    bot = MISPParserBot(sys.argv[1])
-    bot.start()
+BOT = MISPParserBot

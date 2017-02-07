@@ -159,9 +159,7 @@ def load_configuration(configuration_filepath):
     Parameters:
     -----------
     configuration_filepath : string
-        Path to JSON file to load. If file does not exist, and the path begins
-        with CONFIG_DIR (`/opt/intelmq/etc` by default), the file from it's
-        package data is used.
+        Path to JSON file to load.
 
     Returns:
     --------
@@ -171,13 +169,8 @@ def load_configuration(configuration_filepath):
     if os.path.exists(configuration_filepath):
         with open(configuration_filepath, 'r') as fpconfig:
             config = json.loads(fpconfig.read())
-    elif configuration_filepath.find(intelmq.CONFIG_DIR) == 0:  # at beginning
-        newpath = pkg_resources.resource_filename('intelmq', 'etc/')
-        filepath = configuration_filepath.replace(intelmq.CONFIG_DIR,
-                                                  newpath)
-        if os.path.exists(filepath):
-            with open(filepath, 'r') as fpconfig:
-                config = json.loads(fpconfig.read())
+    else:
+        raise ValueError('File not found: %r.' % configuration_filepath)
     return config
 
 
@@ -202,6 +195,17 @@ def load_parameters(*configs):
     return parameters
 
 
+class FileHandler(logging.FileHandler):
+    def emit_print(self, record):
+        print(record.msg, record.args)
+
+    def handleError(self, record):
+        type, value, traceback = sys.exc_info()
+        if type is OSError and value.errno == 28:
+            self.emit = self.emit_print
+            raise
+
+
 def log(name, log_path=intelmq.DEFAULT_LOGGING_PATH, log_level="DEBUG",
         stream=None, syslog=None):
     """
@@ -213,6 +217,7 @@ def log(name, log_path=intelmq.DEFAULT_LOGGING_PATH, log_level="DEBUG",
         filename for logfile or string preceding lines in stream
     log_path : string
         Path to log directory, defaults to DEFAULT_LOGGING_PATH
+        If False, nothing is logged to files.
     log_level : string
         default is "DEBUG"
     stream : object
@@ -238,19 +243,20 @@ def log(name, log_path=intelmq.DEFAULT_LOGGING_PATH, log_level="DEBUG",
     logger = logging.getLogger(name)
     logger.setLevel(log_level)
 
-    if not syslog:
-        handler = logging.FileHandler("%s/%s.log" % (log_path, name))
+    if log_path and not syslog:
+        handler = FileHandler("%s/%s.log" % (log_path, name))
         handler.setLevel(log_level)
-    else:
+    elif syslog:
         if type(syslog) is tuple or type(syslog) is list:
             handler = logging.handlers.SysLogHandler(address=tuple(syslog))
         else:
             handler = logging.handlers.SysLogHandler(address=syslog)
         handler.setLevel(log_level)
 
-    formatter = logging.Formatter(LOG_FORMAT)
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
+    if log_path or syslog:
+        formatter = logging.Formatter(LOG_FORMAT)
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
 
     if stream or stream is None:
         console_formatter = logging.Formatter(LOG_FORMAT_STREAM)

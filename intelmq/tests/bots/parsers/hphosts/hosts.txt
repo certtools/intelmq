@@ -1,0 +1,30 @@
+# hpHosts last updated on:		04/11/2016
+# hpHosts last verified by Steven Burn:	04/11/2016
+#
+# IMPORTANT:	Rename this file to "HOSTS" (no .txt extension)
+#
+# Support:	http://mysteryfcm.co.uk/?mode=contact
+#		http://forum.hosts-file.net
+#
+# Download:	http://hosts-file.net/?s=Download
+# Mirrors:	http://hosts-file.net/?s=Help#dlmirrors
+#
+# Intermittent updates:
+#
+# 	Sites are also added between updates. If you are using a program such as Hostsman,
+#	or are running a script or anything, or simply want to stay protected against sites
+#	between updates, please put a watch on the following URL.
+#
+# 	http://hosts-file.net/hphosts-partial.asp
+#
+# localhost address - DO NOT REMOVE! (unless on Windows 7)
+127.0.0.1	localhost #IPv4
+# IPv6 localhost - add "#" to the beginning of the line if using Windows XP or below, or a system without IPv6 support.
+::1	localhost # IPv6
+#
+# Trusted Hosts - Insert your trusted hosts with their correct IP addresses below this line.
+#
+# 498,048 - BAD HOSTS BEGIN HERE!!!!
+#
+127.0.0.1	example.com
+127.0.0.1	example.invalid

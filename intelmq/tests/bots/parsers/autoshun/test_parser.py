@@ -6,7 +6,6 @@ import intelmq.lib.test as test
 import intelmq.lib.utils as utils
 from intelmq.bots.parsers.autoshun.parser import AutoshunParserBot
 
-
 with open(os.path.join(os.path.dirname(__file__),
                        'shunlist.html')) as handle:
     EXAMPLE_FILE = handle.read()
@@ -58,5 +57,5 @@ class TestAutoshunParserBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(1, EXAMPLE_EVENT1)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

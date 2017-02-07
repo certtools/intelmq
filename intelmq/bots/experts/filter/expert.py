@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import re
-import sys
 from datetime import datetime, timedelta
 
 import pytz
@@ -71,14 +70,13 @@ class FilterExpertBot(Bot):
             self.use_regex = True
 
         if not (self.filter or self.not_after is not None or self.not_before is not None):
-            self.logger.error("No relevant filter configuration found, stopping...")
-            self.stop()
+            raise ValueError("No relevant filter configuration found.")
 
     def process(self):
         event = self.receive_message()
 
         # time based filtering
-        if event.contains('time.source'):
+        if 'time.source' in event:
             try:
                 event_time = parser.parse(str(event.get('time.source'))).replace(tzinfo=pytz.timezone('UTC'))
             except ValueError:
@@ -134,16 +132,15 @@ class FilterExpertBot(Bot):
             return self.equalsFilter(event, key, condition)
 
     def equalsFilter(self, event, key, value):
-        return (event.contains(key) and
+        return (key in event and
                 event.get(key) == value)
 
     def regexSearchFilter(self, event, key, regex):
-        if event.contains(key):
+        if key in event:
             exp = re.compile(regex)
             return exp.search(str(event.get(key)))
         else:
             return False
 
-if __name__ == "__main__":
-    bot = FilterExpertBot(sys.argv[1])
-    bot.start()
+
+BOT = FilterExpertBot

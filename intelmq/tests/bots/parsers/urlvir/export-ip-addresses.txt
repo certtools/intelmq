@@ -1,0 +1,6 @@
+################################################################## 
+#URLVir Active Malicious IP Addresses Hosting Malware 
+#Updated on December 4, 2016, 8:29 am 
+#Free for noncommercial use only, contact us for more information 
+################################################################## 
+103.6.246.83

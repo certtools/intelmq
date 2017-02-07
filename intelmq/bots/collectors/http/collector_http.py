@@ -9,41 +9,21 @@ http_header: dictionary
 http_verify_cert: boolean
     default: True
 http_username, http_password: string
-http_proxy, http_ssl_proxy: string
-
+http_proxy, https_proxy: string
+http_timeout: tuple of two floats or float
 """
 import io
-import sys
 import zipfile
 
 import requests
 
 from intelmq.lib.bot import CollectorBot
-from intelmq.lib.message import Report
 
 
 class HTTPCollectorBot(CollectorBot):
 
     def init(self):
-        self.http_header = getattr(self.parameters, 'http_header', {})
-        self.http_verify_cert = getattr(self.parameters, 'http_verify_cert',
-                                        True)
-
-        if hasattr(self.parameters, 'http_username') and hasattr(
-                self.parameters, 'http_password'):
-            self.auth = (self.parameters.http_username,
-                         self.parameters.http_password)
-        else:
-            self.auth = None
-
-        http_proxy = getattr(self.parameters, 'http_proxy', None)
-        https_proxy = getattr(self.parameters, 'http_ssl_proxy', None)
-        if http_proxy and https_proxy:
-            self.proxy = {'http': http_proxy, 'https': https_proxy}
-        else:
-            self.proxy = None
-
-        self.http_header['User-agent'] = self.parameters.http_user_agent
+        self.set_request_parameters()
 
     def process(self):
         self.logger.info("Downloading report from %s" %
@@ -51,7 +31,9 @@ class HTTPCollectorBot(CollectorBot):
 
         resp = requests.get(url=self.parameters.http_url, auth=self.auth,
                             proxies=self.proxy, headers=self.http_header,
-                            verify=self.http_verify_cert)
+                            verify=self.http_verify_cert,
+                            cert=self.ssl_client_cert,
+                            timeout=self.http_timeout)
 
         if resp.status_code // 100 != 2:
             raise ValueError('HTTP response status code was {}.'
@@ -71,12 +53,10 @@ class HTTPCollectorBot(CollectorBot):
                 raw_reports.append(zfp.read(filename))
 
         for raw_report in raw_reports:
-            report = Report()
+            report = self.new_report()
             report.add("raw", raw_report)
             report.add("feed.url", self.parameters.http_url)
             self.send_message(report)
 
 
-if __name__ == "__main__":
-    bot = HTTPCollectorBot(sys.argv[1])
-    bot.start()
+BOT = HTTPCollectorBot

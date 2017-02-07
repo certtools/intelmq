@@ -14,7 +14,7 @@ Harmonization field names
 |Destination|destination.as_name|[String](#string)|The autonomous system name to which the connection headed.|
 |Destination|destination.asn|[Integer](#integer)|The autonomous system number from which originated the connection.|
 |Destination|destination.fqdn|[FQDN](#fqdn)|A DNS name related to the host from which the connection originated. DNS allows even binary data in DNS, so we have to allow everything. A final point is stripped, string is converted to lower case characters.|
-|Destination Geolocation|destination.geolocation.cc|[UppercaseString](#uppercasestring)|Country-Code accoriding to ISO3166-1 alpha-2 for the destination IP.|
+|Destination Geolocation|destination.geolocation.cc|[UppercaseString](#uppercasestring)|Country-Code according to ISO3166-1 alpha-2 for the destination IP.|
 |Destination Geolocation|destination.geolocation.city|[String](#string)|Some geolocation services refer to city-level geolocation.|
 |Destination Geolocation|destination.geolocation.country|[String](#string)|The country name derived from the ISO3166 country code (assigned to cc field).|
 |Destination Geolocation|destination.geolocation.latitude|[Float](#float)|Latitude coordinates derived from a geolocation service, such as MaxMind geoip db.|
@@ -38,6 +38,7 @@ Harmonization field names
 |Feed|feed.accuracy|[Accuracy](#accuracy)|A float between 0 and 100 that represents how accurate the data in the feed is|
 |Feed|feed.code|[String](#string)|Code name for the feed, e.g. DFGS, HSDAG etc.|
 |Feed|feed.name|[String](#string)|Name for the feed, usually found in collector bot configuration.|
+|Feed|feed.provider|[String](#string)|Name for the provider of the feed, usually found in collector bot configuration.|
 |Feed|feed.url|[URL](#url)|The URL of a given abuse feed, where applicable|
 |Malware|malware.hash|[String](#string)|A string depicting a checksum for a file, be it a malware sample for example. You may include the hash type according to https://en.wikipedia.org/wiki/Crypt_%28C%29 and use only printable characters. Please see https://github.com/certtools/intelmq/pull/634 for a discussion on this issue.|
 |Malware Hash|malware.hash.md5|[String](#string)|A string depicting an MD5 checksum for a file, be it a malware sample for example. You may include the hash type according to https://en.wikipedia.org/wiki/Crypt_%28C%29 and use only printable characters. Please see https://github.com/certtools/intelmq/pull/634 for a discussion on this issue.|
@@ -57,7 +58,7 @@ Harmonization field names
 |Source|source.as_name|[String](#string)|The autonomous system name from which the connection originated.|
 |Source|source.asn|[Integer](#integer)|The autonomous system number from which originated the connection.|
 |Source|source.fqdn|[FQDN](#fqdn)|A DNS name related to the host from which the connection originated. DNS allows even binary data in DNS, so we have to allow everything. A final point is stripped, string is converted to lower case characters.|
-|Source Geolocation|source.geolocation.cc|[UppercaseString](#uppercasestring)|Country-Code accoriding to ISO3166-1 alpha-2 for the source IP.|
+|Source Geolocation|source.geolocation.cc|[UppercaseString](#uppercasestring)|Country-Code according to ISO3166-1 alpha-2 for the source IP.|
 |Source Geolocation|source.geolocation.city|[String](#string)|Some geolocation services refer to city-level geolocation.|
 |Source Geolocation|source.geolocation.country|[String](#string)|The country name derived from the ISO3166 country code (assigned to cc field).|
 |Source Geolocation|source.geolocation.cymru_cc|[UppercaseString](#uppercasestring)|The country code denoted for the ip by the Team Cymru asn to ip mapping service.|
@@ -126,8 +127,21 @@ Sanitation accepts strings and everything float() accepts.
 
 ### IPAddress
 
+Type for IP addresses, all families. Uses the ipaddress module.
+
+Sanitation accepts strings and objects of ipaddress.IPv4Address and ipaddress.IPv4Address.
+
+Valid values are only strings. 0.0.0.0 is explictly not allowed.
+
 
 ### IPNetwork
+
+Type for IP networks, all families. Uses the ipaddress module.
+
+Sanitation accepts strings and objects of ipaddress.IPv4Network and ipaddress.IPv4Network.
+If host bits in strings are set, they will be ignored (e.g 127.0.0.1/32).
+
+Valid values are only strings.
 
 
 ### Integer

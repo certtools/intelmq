@@ -6,7 +6,6 @@ import sys
 from intelmq.lib import utils
 from intelmq.lib.bot import ParserBot
 from intelmq.lib.harmonization import ClassificationType
-from intelmq.lib.message import Event
 
 TAXONOMY = {
     "brute force": "brute-force",
@@ -30,7 +29,7 @@ class AutoshunParserBot(ParserBot):
             yield line.strip()
 
     def parse_line(self, line, report):
-        event = Event(report)
+        event = self.new_event(report)
 
         info = line.split("<td>")
         if len(line) <= 0 or len(info) < 3:
@@ -53,7 +52,7 @@ class AutoshunParserBot(ParserBot):
                     event.add("classification.type", value)
                     break
 
-        if not event.contains("classification.type"):
+        if "classification.type" not in event:
             event.add("classification.type", 'unknown')
 
         event.add("time.source", last_seen)
@@ -63,6 +62,4 @@ class AutoshunParserBot(ParserBot):
         yield event
 
 
-if __name__ == "__main__":
-    bot = AutoshunParserBot(sys.argv[1])
-    bot.start()
+BOT = AutoshunParserBot
