@@ -106,6 +106,10 @@ class Redis(Pipeline):
             try:
                 self.pipe.lpush(destination_queue, message)
             except Exception as exc:
+                if 'Cannot assign requested address' in exc.args[0]:
+                    raise MemoryError
+                elif 'Redis is configured to save RDB snapshots, but is currently not able to persist on disk' in exc.args[0]:
+                    raise IOError(28, 'No space left on device. Redis can\'t save its snapshots.')
                 raise exceptions.PipelineError(exc)
 
             self.load_balance_iterator += 1

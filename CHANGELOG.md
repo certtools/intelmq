@@ -17,6 +17,7 @@ v1.0 (in development, master branch)
 - MAINT: renamed bots.parsers.spamhaus.parser to bots.parsers.spamhaus.parser_drop
 - Dropped dragon research group feeds: discontinued
 - changed configuration syntax for bots.experts.modify
+- dropped bots.collectors.bitsight.collector in favor of bots.collectors.http.collector_http_stream
 
 ### Bug fixes
 - FIX: all bots handle message which are None
@@ -29,6 +30,7 @@ v1.0 (in development, master branch)
 - STY: code obeys PEP8, new code should always be properly formatted
 - ENH: More code is Python 3 compatible
 - DOC: Updated user and dev guide
+- Removed Message.contains, Message.update methods Message.add ignore parameter
 
 ###Configuration
 - ENH: New parameter and field named accuracy to represent the accuracy of each feed

@@ -1,0 +1,6 @@
+; ip, asn, country, lastseen, botname, domain, remote_ip, remote_port, local_port, protocol
+109.126.64.2,AS12635,AT,1441008970,asprox,,,25,,tcp
+109.90.233.19,AS6830,AT,1441008351,patcher,dxxt.sinkhole.dk,212.227.20.19,80,1036,tcp
+109.91.0.227,AS6830,AT,1441011657,conficker,216.66.15.109,216.66.15.109,80,1430,tcp
+111.111.111.183,AS11178,LV,1471111139,iotmirai,-,?,?,?,?
+111.111.111.230,AS11178,LV,1471111134,gootkit,,111.111.111.166,1696,xxxxxxxxxxx.com,tcp

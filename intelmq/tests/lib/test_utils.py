@@ -6,7 +6,6 @@ Decoding and Encoding, Logging functionality (file and stream), and log
 parsing.
 base64 de-/encoding is not tested yet, as we fully rely on the module.
 """
-import importlib
 import io
 import os
 import tempfile

@@ -70,6 +70,7 @@ This configration resides in the file `runtime.conf` in your intelmq's configura
 * `http_verify_cert`: path to trusted CA bundle or directory, `false` to ignore verifying SSL certificates,  or `true` (default) to verify SSL certificates
 * `ssl_client_certificate`: SSL client certificate to use.
 * `http_header`: HTTP request headers
+* `http_timeout`: Seconds for read and connect timeout. Can be one float (applies for both timeouts) or a tuple of two floats. Default: 60 seconds. See also https://requests.readthedocs.io/en/master/user/advanced/#timeouts
 
 
 
@@ -89,6 +90,27 @@ This configration resides in the file `runtime.conf` in your intelmq's configura
 * **HTTP parameters** (see above)
 * `http_url`: location of information resource (e.g. https://feodotracker.abuse.ch/blocklist/?download=domainblocklist)
 
+
+* * *
+
+### Generic URL Stream Fetcher
+
+
+#### Information:
+* `name:` intelmq.bots.collectors.http.collector_http_stream
+* `lookup:` yes
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Opens a streaming connection to the URL and sends the received lines.
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* **HTTP parameters** (see above)
+* `http_url`: location of HTTP streaming resource
+* `strip_lines`: boolean, if single lines should be stripped (removing whitespace from the beginning and the end of the line)
+
+If the stream is interrupted, the connection will be aborted using the timeout parameter. Then, an error will be thrown and rate_limit applies if not null.
 
 * * *
 

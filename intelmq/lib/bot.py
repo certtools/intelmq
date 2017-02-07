@@ -4,7 +4,6 @@
 """
 import csv
 import datetime
-import importlib
 import io
 import json
 import logging
@@ -159,6 +158,13 @@ class Bot(object):
                 self.__disconnect_pipelines()
 
             except Exception as exc:
+                if isinstance(exc, MemoryError):
+                    self.logger.exception('Out of memory. Exit immediately.')
+                    self.stop()
+                elif isinstance(exc, (IOError, OSError)) and exc.errno == 28:
+                    self.logger.exception('Out of disk space. Exit immediately.')
+                    self.stop()
+
                 error_on_message = sys.exc_info()
 
                 if self.parameters.error_log_exception:
@@ -464,6 +470,8 @@ class Bot(object):
 
 
 class ParserBot(Bot):
+    csv_params = {}
+    ignore_lines_starting = []
 
     def __init__(self, bot_id):
         super(ParserBot, self).__init__(bot_id=bot_id)
@@ -476,7 +484,12 @@ class ParserBot(Bot):
         """
         A basic CSV parser.
         """
-        raw_report = utils.base64_decode(report.get("raw"))
+        raw_report = utils.base64_decode(report.get("raw")).strip()
+        if self.ignore_lines_starting:
+            raw_report = '\n'.join([line for line in raw_report.splitlines()
+                                    if not any([line.startswith(prefix) for prefix
+                                                in self.ignore_lines_starting])])
+
         for line in csv.reader(io.StringIO(raw_report)):
             yield line
 
@@ -484,7 +497,12 @@ class ParserBot(Bot):
         """
         A basic CSV Dictionary parser.
         """
-        raw_report = utils.base64_decode(report.get("raw"))
+        raw_report = utils.base64_decode(report.get("raw")).strip()
+        if self.ignore_lines_starting:
+            raw_report = '\n'.join([line for line in raw_report.splitlines()
+                                    if not any([line.startswith(prefix) for prefix
+                                                in self.ignore_lines_starting])])
+
         for line in csv.DictReader(io.StringIO(raw_report)):
             yield line
 
@@ -500,7 +518,9 @@ class ParserBot(Bot):
             parse = ParserBot.parse_csv
         """
         for line in utils.base64_decode(report.get("raw")).splitlines():
-            yield line.strip()
+            line = line.strip()
+            if not any([line.startswith(prefix) for prefix in self.ignore_lines_starting]):
+                yield line
 
     def parse_line(self, line, report):
         """
@@ -554,8 +574,6 @@ class ParserBot(Bot):
         writer = csv.writer(out)
         writer.writerow(line)
         return out.getvalue()
-
-    csv_params = {}
 
     def recover_line_csv_dict(self, line):
         """
@@ -635,6 +653,8 @@ class CollectorBot(Bot):
             self.proxy = None
         else:
             self.proxy = None
+
+        self.http_timeout = getattr(self.parameters, 'http_timeout', 60)
 
         self.http_header['User-agent'] = self.parameters.http_user_agent
 

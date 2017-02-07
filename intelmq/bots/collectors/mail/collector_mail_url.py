@@ -34,7 +34,7 @@ class MailURLCollectorBot(CollectorBot):
 
                 if (self.parameters.subject_regex and
                         not re.search(self.parameters.subject_regex,
-                                      message.subject)):
+                                      re.sub("\r\n\s", " ", message.subject))):
                     continue
 
                 for body in message.body['plain']:
@@ -50,7 +50,8 @@ class MailURLCollectorBot(CollectorBot):
                                             auth=self.auth, proxies=self.proxy,
                                             headers=self.http_header,
                                             verify=self.http_verify_cert,
-                                            cert=self.ssl_client_cert)
+                                            cert=self.ssl_client_cert,
+                                            timeout=self.http_timeout)
 
                         if resp.status_code // 100 != 2:
                             raise ValueError('HTTP response status code was {}.'

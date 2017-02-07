@@ -2,7 +2,6 @@
 """ Parser for Bitcash blocklist feed. """
 
 from intelmq.lib.bot import ParserBot
-from intelmq.lib.harmonization import FQDN
 from intelmq.lib.message import Event
 
 
@@ -18,8 +17,7 @@ class BitcashBlocklistParserBot(ParserBot):
             event = Event(report)
             event.add('time.source', line[5] + 'T' + line[6] + '+00:00')
             event.add('source.ip', line[0])
-            if FQDN.is_valid(line[2]):
-                event.add('source.reverse_dns', line[2])
+            event.add('source.reverse_dns', line[2], raise_failure=False)
             event.add('classification.type', 'scanner')
             event.add('event_description.text', 'IPs banned for serious abusing of Bitcash services '
                                                 '(scanning, sniffing, harvesting, dos attacks)')

@@ -146,6 +146,7 @@ The taxonomy can be automatically added by the taxonomy expert bot based on the 
 |ddos|Availability|This IOC refers to various parts of the DDOS infrastructure.|
 |dropzone|Information Content Security|This IOC refers to place where the compromized machines store the stolen user data.|
 |phishing|Fraud|This IOC most often refers to a URL, which is phishing for user credentials.|
+|proxy|Other|This refers to the use of proxies from inside your network.|
 |vulnerable service|Vulnerable|This attribute refers to a badly configured or vulnerable network service, which may be abused by a third party. For example, these services relate to open proxies, open dns resolvers, network time servers (ntp) or character generation services (chargen), simple network management services (snmp). In addition, to specify the network service and its potential abuse, one should use the protocol, destination port and description attributes for that purpose respectively.|
 |blacklist|Other|Some sources provide blacklists, which clearly refer to abusive behavior, such as spamming, but fail to denote the exact reason why a given identity has been blacklisted. The reason may be that the justification is anecdotal or missing entirely. This type should only be used if the typing fits the definition of a blacklist, but an event specific denomination is not possible for one reason or another.|
 |unknown|Other|unknown events|
@@ -172,6 +173,7 @@ Meaning of source, destination and local values for each classification type and
 |ddos|*attacker*|target|||
 |dropzone|*server hosting stolen data*||||
 |phishing|*phishing website*||||
+|proxy|*server allowing policy and security bypass*||||
 |vulnerable service|*vulnerable device*||| heartbleed, openresolver, snmp |
 |blacklist|*blacklisted device*||||
 |unknown||||||
