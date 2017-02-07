@@ -489,7 +489,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 config = utils.load_configuration(SYSTEM_CONF_FILE)
             except ValueError as exc:  # pragma: no cover
                 msg = 'Error loading %r: %s' % (SYSTEM_CONF_FILE, exc)
-                if interactive:
+                if self.interactive:
                     exit(msg)
                 else:
                     raise ValueError(msg)
@@ -502,7 +502,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             config = utils.load_configuration(DEFAULTS_CONF_FILE)
         except ValueError as exc:  # pragma: no cover
             msg = 'Error loading %r: %s' % (DEFAULTS_CONF_FILE, exc)
-            if interactive:
+            if self.interactive:
                 exit(msg)
             else:
                 raise ValueError(msg)
@@ -512,6 +512,8 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
     def run(self):
         results = None
         args = self.parser.parse_args()
+        if 'func' not in args:
+            exit(self.parser.print_help())
         args_dict = vars(args).copy()
 
         global RETURN_TYPE, QUIET
