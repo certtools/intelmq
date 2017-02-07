@@ -101,7 +101,7 @@ def log_log_messages(messages):
                 pass
 
 
-class BotProcessManager:
+class IntelMQProcessManager:
     PIDDIR = VAR_RUN_PATH
     PIDFILE = os.path.join(PIDDIR, "{}.pid")
 
@@ -258,6 +258,9 @@ class BotProcessManager:
             return False
 
 
+PROCESS_MANAGER = {'intelmq': IntelMQProcessManager}
+
+
 class IntelMQController():
 
     def __init__(self, interactive=False, return_type="python", quiet=False):
@@ -394,7 +397,15 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             else:
                 self.logger.info('%r with new format written.' % (RUNTIME_CONF_FILE + '.new'))
 
-        self.bot_process_manager = BotProcessManager(
+        process_manager = getattr(self.parameters, 'process_manager', 'intelmq')
+        if process_manager not in PROCESS_MANAGER:
+            msg = ('Invalid process manager given: %r, should be one of %r.'
+                   '' % (process_manager, list(PROCESS_MANAGER.keys())))
+            if interactive:
+                exit(msg)
+            else:
+                raise ValueError(msg)
+        self.bot_process_manager = PROCESS_MANAGER[process_manager](
             self.runtime_configuration,
             logger,
         )
