@@ -475,14 +475,9 @@ In many cases it is useful to schedule a bot, for example, to collect informatio
 },
 ```
 
-You can now schedule the bot using the following command:
+You can schedule the bot with a crontab-entry like this:
 ```
-intelmqctl start blocklistde-apache-collector
-```
-
-The command above will read the configuration `"run_mode": "scheduled"` and then will write automatically a new entry on crontab like the following:
-```
-0 0 * * * python3 intelmq.bots.collectors.http.collector_http blocklistde-apache-collector
+0 0 * * * intelmqctl start blocklistde-apache-collector
 ```
 
 Bots configured as scheduled will exit after the first successful run.

@@ -225,12 +225,6 @@ class IntelMQProcessManager:
             log_bot_message('disabled', bot_id)
             return 'disabled'
 
-    def bot_enable(self, bot_id):
-        pass
-
-    def bot_disable(self, bot_id):
-        pass
-
     def __read_pidfile(self, bot_id):
         filename = self.PIDFILE.format(bot_id)
         if self.__check_pidfile(bot_id):
@@ -566,12 +560,10 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
     def bot_enable(self, bot_id):
         self.runtime_configuration[bot_id]['enabled'] = True
         self.write_updated_runtime_config()
-        return self.bot_process_manager.bot_enable(bot_id)
 
     def bot_disable(self, bot_id):
         self.runtime_configuration[bot_id]['enabled'] = False
         self.write_updated_runtime_config()
-        return self.bot_process_manager.bot_enable(bot_id)
 
     def _is_enabled(self, bot_id):
         return self.runtime_configuration[bot_id].get('enabled', True)

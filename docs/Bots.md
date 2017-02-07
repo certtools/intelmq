@@ -47,8 +47,8 @@ This configration resides in the file `runtime.conf` in your intelmq's configura
 * `name` and `description`: The name and description of the bot as can be found in BOTS-file, not used by the bot itself.
 * `group`: Can be `"Collector"`, `"Parser"`, `"Expert"` or `"Output"`. Only used for visualization by other tools.
 * `module`: The executable (should be in `$PATH`) which will be started.
-* `enabled`: If the parameter is set to `true` (which is NOT the defaut value if it is missing as a protection) the bot will start when the botnet is started (`intelmqctl start`). If the parameter was set to `false`, the Bot will not be started by `intelmqctl start`, however you can run the bot independently using `intelmqctl start <bot_id>`. Check the [User-Guide](./User-Guide.md) for more details.
-* `run_mode`: There are two run modes, "stream" (default run mode) or "scheduled". In the first case, the bot will be running forever until stopped or exits because of errors (depending on configuration). In the latter case, the bot will stop after ome successfull run. This is especially useful when scheduling bots via cron or systemd. Check the [User-Guide](./User-Guide.md) for more details.
+* `enabled`: If the parameter is set to `true` (which is NOT the default value if it is missing as a protection) the bot will start when the botnet is started (`intelmqctl start`). If the parameter was set to `false`, the Bot will not be started by `intelmqctl start`, however you can run the bot independently using `intelmqctl start <bot_id>`. Check the [User-Guide](./User-Guide.md) for more details.
+* `run_mode`: There are two run modes, "stream" (default run mode) or "scheduled". In the first case, the bot will be running forever until stopped or exits because of errors (depending on configuration). In the latter case, the bot will stop after one successful run. This is especially useful when scheduling bots via cron or systemd. Check the [User-Guide](./User-Guide.md) for more details.
 
 <a name="collectors"></a>
 ## Collectors

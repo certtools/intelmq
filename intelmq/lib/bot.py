@@ -412,7 +412,7 @@ class Bot(object):
 
         if self.__bot_id in list(config.keys()):
             params = config[self.__bot_id]
-            self.run_mode = params.get('run_mode','stream')
+            self.run_mode = params.get('run_mode', 'stream')
             if 'parameters' in params:
                 params = params['parameters']
             else:
