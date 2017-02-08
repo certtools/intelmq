@@ -372,8 +372,8 @@ See [IntelMQ Manager repository](https://github.com/certtools/intelmq-manager).
 ```bash
 # su - intelmq
 $ intelmqctl -h
-intelmqctl [-h] [-v] [--type {text,json}] [--quiet]
-                  {list,check,clear,log,run,help,start,stop,restart,reload,status}
+usage: intelmqctl [-h] [-v] [--type {text,json}] [--quiet]
+                  {list,check,clear,log,run,help,start,stop,restart,reload,status,enable,disable}
                   ...
 
         description: intelmqctl is the tool to control intelmq system.
@@ -390,7 +390,7 @@ optional arguments:
                         logrotate
 
 subcommands:
-  {list,check,clear,log,run,help,start,stop,restart,reload,status}
+  {list,check,clear,log,run,help,start,stop,restart,reload,status,enable,disable}
     list                Listing bots or queues
     check               Check installation and configuration
     clear               Clear a queue
@@ -403,6 +403,8 @@ subcommands:
     restart             Restart a bot or botnet
     reload              Reload a bot or botnet
     status              Status of a bot or botnet
+    enable              Enable a bot
+    disable             Disable a bot
 
         intelmqctl [start|stop|restart|status|reload|run] bot-id
         intelmqctl [start|stop|restart|status|reload]

@@ -478,7 +478,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                                        choices=self.runtime_configuration.keys())
             parser_status.set_defaults(func=self.bot_enable)
 
-            parser_status = subparsers.add_parser('disable', help='Enable a bot')
+            parser_status = subparsers.add_parser('disable', help='Disable a bot')
             parser_status.add_argument('bot_id',
                                        choices=self.runtime_configuration.keys())
             parser_status.set_defaults(func=self.bot_disable)
