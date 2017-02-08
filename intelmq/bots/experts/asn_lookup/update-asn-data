@@ -1,7 +1,7 @@
 #!/bin/bash
 # Update asn data
 # The target file must be given as only argument on the commandline.
-PATH=/bin:/usr/bin
+PATH=/bin:/usr/bin:/usr/local/bin
 
 # set the http proxy here:
 # export http_proxy=http://proxy.example.com:8080/
