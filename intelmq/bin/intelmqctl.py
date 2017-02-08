@@ -373,12 +373,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                     self.runtime_configuration[bot_id].clear()
                     self.runtime_configuration[bot_id]['parameters'] = params
                     self.runtime_configuration[bot_id].update(bot_values)
-            try:
-                self.write_updated_runtime_config()
-            except PermissionError:  # pragma: no cover
-                self.logger.info('Failed to write new configuration format to %r.'
-                                 '' % (RUNTIME_CONF_FILE + '.new'))
-            else:
+            if self.write_updated_runtime_config(filename=RUNTIME_CONF_FILE + '.new'):
                 self.logger.info('%r with new format written.' % (RUNTIME_CONF_FILE + '.new'))
 
         process_manager = getattr(self.parameters, 'process_manager', 'intelmq')
@@ -617,7 +612,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         else:
             raise ValueError(message)
 
-    def write_updated_runtime_config(self):
+    def write_updated_runtime_config(self, filename=RUNTIME_CONF_FILE):
         if os.path.exists(STARTUP_CONF_FILE):
             self.abort('Can\'t update runtime configuration, startup.conf found.')
         try:
@@ -626,6 +621,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                           separators=(',', ': '))
         except PermissionError:
             self.abort('Can\'t update runtime configuration: Permission denied.')
+        return True
 
     def list_bots(self):
         """
