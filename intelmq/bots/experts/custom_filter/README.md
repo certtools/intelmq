@@ -20,11 +20,12 @@ means "DE" OR "US"
 means that in order to match this filter, the event has to have country code "DE" and has to be under taxonomy "Malicious Code"
 
 Last, but not least, every filter has to be one of the following types:
-- "include" - pass only events matching the criteria of this filter
+- "include" - pass events matching the criteria of any include filter
 - "exclude" - throw away all events matching the criteria, pass all the rest
 
 
 Sample configuration file
+```
 {
     "name": "Exclude specific malware events",
     "date": "2015-02-03",
@@ -55,3 +56,4 @@ Sample configuration file
         ]
     }
 }
+```
