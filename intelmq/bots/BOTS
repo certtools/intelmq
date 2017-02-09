@@ -334,110 +334,7 @@
             "module": "intelmq.bots.experts.url2fqdn.expert",
             "parameters": {}
         }
-    },
-    "Output": {
-        "MailGather": {
-            "module": "intelmq.bots.outputs.mail.output_gather",
-            "description": "Send mails with batches of events. Gathers events -> redis.",
-            "parameters": {
-                "rate_limit": "0",
-                "redis_cache_host": "127.0.0.1",
-                "redis_cache_port": "6379",
-                "redis_cache_db": "7",
-                "redis_cache_ttl": "86400",
-                "mail_rewrite" : "{\"original@email.com\":\"new@email.com\"}"
-            }
-        },
-        "MailSend": {
-            "module": "intelmq.bots.outputs.mail.output_send",
-            "description": "Send mails with batches of events. Redis -> mails.",
-            "parameters": {
-                "rate_limit": "3600",
-                "redis_cache_host": "127.0.0.1",
-                "redis_cache_port": "6379",
-                "redis_cache_db": "7",
-                "redis_cache_ttl": "86400",
-                "mail_template": "/opt/intelmq/etc/mail/template.txt",
-                "emailFrom": "edvard.rejthar+test_intelmq@nic.cz",
-                "smtp_server" : "127.0.0.1",
-                "testing_to": "edvard.rejthar+test_output@nic.cz"
-            }
-        },
-        "File": {
-            "description": "File is the bot responsible to send events to a file.",
-            "module": "intelmq.bots.outputs.file.output",
-            "parameters": {
-                "file": "/opt/intelmq/var/lib/bots/file-output/events.txt"
-            }
-        },
-        "IntelMQ Mailer": {
-            "description": "IntelMQ Mailer is the bot responsible to send events to a MongoDB database.",
-            "module": "intelmq.bots.outputs.intelmqmailer.output",
-            "parameters": {
-                "collection": "<collection>",
-                "database": "<database>",
-                "host": "<ip>",
-                "port": "<port>"
-            }
-        },
-        "MongoDB": {
-            "description": "MongoDB is the bot responsible to send events to a MongoDB database.",
-            "module": "intelmq.bots.outputs.mongodb.output",
-            "parameters": {
-                "collection": "<collection>",
-                "database": "<database>",
-                "host": "<ip>",
-                "port": "<port>"
-            }
-        },
-        "PostgreSQL": {
-            "description": "PostgreSQL is the bot responsible to send events to a PostgreSQL Database. When activating autocommit, transactions are not used: http://initd.org/psycopg/docs/connection.html#connection.autocommit",
-            "module": "intelmq.bots.outputs.postgresql.output",
-            "parameters": {
-                "autocommit": true,
-                "database": "intelmq-events",
-                "host": "localhost",
-                "password": "<password>",
-                "port": "5432",
-                "sslmode": "require",
-                "table": "events",
-                "user": "intelmq"
-            }
-        },
-        "REST API": {
-            "description": "REST API is the bot responsible to send events to a REST API listener through POST.",
-            "module": "intelmq.bots.outputs.restapi.output",
-            "parameters": {
-                "auth_token": "<token>",
-                "auth_token_name": "<token name>",
-                "host": "<host>"
-            }
-        },
-        "Redis": {
-            "description": "Redis is the bot responsible to send events to a Redis server.",
-            "module": "intelmq.bots.outputs.redis.output",
-            "parameters": {
-                "redis_db": 2,
-                "redis_password": "<password>",
-                "redis_queue": "external-redis-queue",
-                "redis_server_ip": "127.0.0.1",
-                "redis_server_port": 6379,
-                "redis_timeout": 50000
-            }
-        },
-        "TCP": {
-            "description": "TCP is the bot responsible to send events to a tcp port (Splunk, ElasticSearch, etc..).",
-            "module": "intelmq.bots.outputs.tcp.output",
-            "parameters": {
-                "ip": "<ip>",
-                "port": "<port>"
-            }
-        },
-        "XMPP": {
-            "description": "XMPP is the bot responsible to send events to an XMPP server.",
-            "module": "intelmq.bots.outputs.xmpp.output"
-        }
-    },
+    },    
     "Parser": {
         "Abuse.ch Domain": {
             "description": "Abuse.ch Domain Parser is the bot responsible to parse the report and sanitize the information.",
@@ -856,6 +753,43 @@
             "parameters": {
                 "file": "/opt/intelmq/var/lib/bots/file-output/events.txt",
                 "hierarchical_output": false
+            }
+        },
+        "IntelMQ Mailer": {
+            "description": "IntelMQ Mailer is the bot responsible to send events to a MongoDB database.",
+            "module": "intelmq.bots.outputs.intelmqmailer.output",
+            "parameters": {
+                "collection": "<collection>",
+                "database": "<database>",
+                "host": "<ip>",
+                "port": "<port>"
+            }
+        },
+        "MailGather": {
+            "module": "intelmq.bots.outputs.mail.output_gather",
+            "description": "Send mails with batches of events. Gathers events -> redis.",
+            "parameters": {
+                "rate_limit": "0",
+                "redis_cache_host": "127.0.0.1",
+                "redis_cache_port": "6379",
+                "redis_cache_db": "7",
+                "redis_cache_ttl": "86400",
+                "mail_rewrite" : "{\"original@email.com\":\"new@email.com\"}"
+            }
+        },
+        "MailSend": {
+            "module": "intelmq.bots.outputs.mail.output_send",
+            "description": "Send mails with batches of events. Redis -> mails.",
+            "parameters": {
+                "rate_limit": "3600",
+                "redis_cache_host": "127.0.0.1",
+                "redis_cache_port": "6379",
+                "redis_cache_db": "7",
+                "redis_cache_ttl": "86400",
+                "mail_template": "/opt/intelmq/etc/mail/template.txt",
+                "emailFrom": "edvard.rejthar+test_intelmq@nic.cz",
+                "smtp_server" : "127.0.0.1",
+                "testing_to": "edvard.rejthar+test_output@nic.cz"
             }
         },
         "MongoDB": {
