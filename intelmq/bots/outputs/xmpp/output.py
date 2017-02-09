@@ -144,7 +144,6 @@ class XMPPOutputBot(Bot):
             self.logger.error("Could not connect to XMPP-Server.")
             self.stop()
 
-
     def process(self):
         event = self.receive_message()
 
