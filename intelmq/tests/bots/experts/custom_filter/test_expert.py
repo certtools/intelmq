@@ -47,7 +47,9 @@ class TestCustomFilterExpertBot(test.BotTestCase, unittest.TestCase):
     def set_bot(self):
         self.bot_reference = CustomFilterExpertBot
         self.default_input_message = {'__type': 'Report'}
-        self.sysconfig = {'rules_dir': os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) + "/filters_example/"}
+        
+        self.sysconfig = {'rules_dir': os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) + "/"}
+        
 
     def test_filter_out(self):
         """ Test if certain messages do not pass filter. """

@@ -11,33 +11,26 @@ class CustomFilterExpertBot(Bot):
 
     filters = {}
 
-    def meet_condition(self, message):
-        for filterI in CustomFilterExpertBot.filters:
-            filter = CustomFilterExpertBot.filters[filterI]
-            including = True if filter["type"] == "include" else False # typ filtru
-            conforming = True # message odpovida vsem podminkam filteru            
-            for condition in filter["conditions"]:
-                if condition not in message:
-                    if including:
-                        return False
+    def meet_condition(self, message):        
+        if not self.filters:
+            return True
+        
+        includable = False
+        for filterO in self.filters.values():                        
+            conforming = False
+            for key, value in filterO["conditions"].items():                
+                try:                    
+                    if (isinstance(value, list) and message[key] in value) or value == message[key]: # filter passed                        
+                        conforming = True                        
+                except KeyError:                    
                     conforming = False
                     break
-                else:
-                    passed = False
-                    for value in filter["conditions"][condition]:
-                        if (type(value) == "list" and message[condition] in value) or value == message[condition]: # we should add wildcard *@isp.cz
-                        #if value == message[condition]:
-                            passed = True
-                            break
-                    if passed == False:
-                        if including:
-                            return False
-                        conforming = False
-                        break
-            if conforming and including == False:
-                return False
-        return True
-
+            if conforming:
+                if filterO["type"] == "include":                    
+                    includable = True
+                elif filterO["type"] == "exclude":                    
+                    return False
+        return includable    
 
     def init(self):
         """ Loads rules from .json """
@@ -46,8 +39,7 @@ class CustomFilterExpertBot(Bot):
             with open(rule_file, 'r') as f:                
                 rule = json.load(f)                
                 CustomFilterExpertBot.filters[ruleI] = rule
-            ruleI += 1
-
+            ruleI += 1        
 
     def process(self):
         message = self.receive_message()        
@@ -57,7 +49,6 @@ class CustomFilterExpertBot(Bot):
         else:
             self.logger.error("Dropping message: " + repr(message) + ".")
         self.acknowledge_message()
+     
 
-if __name__ == "__main__":
-    bot = CustomFilterExpertBot(sys.argv[1])
-    bot.start()
+BOT = CustomFilterExpertBot
