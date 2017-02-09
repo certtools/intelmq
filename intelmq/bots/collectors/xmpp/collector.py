@@ -132,14 +132,17 @@ class XMPPCollectorBot(CollectorBot):
             # Set CA-Certificates
             self.xmpp.ca_certs = ca_certs
 
-        self.xmpp.connect(reattempt=True)
-        self.xmpp.process()
+        if self.xmpp.connect(reattempt=False):
+            self.xmpp.process()
+            # Add Handlers and register Plugins
+            self.xmpp.register_plugin('xep_0030')  # Service Discovery
+            self.xmpp.register_plugin('xep_0045')  # Multi-User Chat
 
-        # Add Handlers and register Plugins
-        self.xmpp.register_plugin('xep_0030')  # Service Discovery
-        self.xmpp.register_plugin('xep_0045')  # Multi-User Chat
+            self.xmpp.add_event_handler("message", self.log_message)
 
-        self.xmpp.add_event_handler("message", self.log_message)
+        else:
+            self.logger.error("Could not connect to XMPP-Server.")
+            self.stop()
 
     def process(self):
         # Processing is done by function called from the eventhandler...
@@ -147,8 +150,10 @@ class XMPPCollectorBot(CollectorBot):
 
     def shutdown(self):
         if self.xmpp:
-            self.xmpp.disconnect()
-            self.logger.info("Disconnected from XMPP.")
+            if self.xmpp.disconnect():
+                self.logger.info("Disconnected from XMPP Server.")
+            else:
+                self.logger.error("Could not disconnect from XMPP Server.")
         else:
             self.logger.info("There was no XMPPClient I could stop.")
 
@@ -185,9 +190,12 @@ class XMPPCollectorBot(CollectorBot):
         # Read msg-body and add as raw to a new report.
         # now it's up to a parser to do the interpretation of the message.
         if raw_msg:
-            report = self.new_report()
-            report.add("raw", raw_msg)
-            self.send_message(report)
+            try:
+                report = self.new_report()
+                report.add("raw", raw_msg)
+                self.send_message(report)
+            except:
+                self.logger.error("A message could not be converted into a report.")
 
 
 BOT = XMPPCollectorBot
