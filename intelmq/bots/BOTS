@@ -641,6 +641,7 @@
             "module": "intelmq.bots.outputs.tcp.output",
             "parameters": {
                 "ip": "<ip>",
+                "hierarchical_output": false,
                 "port": "<port>",
                 "separator": "\n"
             }
