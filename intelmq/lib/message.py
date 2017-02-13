@@ -374,6 +374,8 @@ class Event(Message):
                 template['feed.accuracy'] = message['feed.accuracy']
             if 'feed.code' in message:
                 template['feed.code'] = message['feed.code']
+            if 'feed.documentation' in message:
+                template['feed.documentation'] = message['feed.documentation']
             if 'feed.name' in message:
                 template['feed.name'] = message['feed.name']
             if 'feed.provider' in message:

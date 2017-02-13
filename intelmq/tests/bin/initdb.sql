@@ -33,6 +33,7 @@ CREATE TABLE events (
     "extra" json,
     "feed.accuracy" real,
     "feed.code" varchar(100),
+    "feed.documentation" text,
     "feed.name" text,
     "feed.provider" text,
     "feed.url" text,
