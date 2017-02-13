@@ -103,6 +103,7 @@ v1.0 (in development, master branch)
 - all hashes are lower case only
 - New parameter and field named feed.accuracy to represent the accuracy of each feed
 - New parameter and field named feed.provider to document the name of the source of each feed
+- New parameter and field named feed.documentation to link to documentation of the feed
 
 ### Known issues
  - Harmonization: hashes are not normalized and classified, see also issue #394 and pull #634
