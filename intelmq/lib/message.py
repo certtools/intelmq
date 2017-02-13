@@ -222,12 +222,12 @@ class Message(dict):
         warnings.warn('update(...) will be changed to dict.update() in 1.0. '
                       'Use change(key, value, sanitize) instead.',
                       DeprecationWarning)
-        self.change(key, value, sanitize)
+        return self.change(key, value, sanitize)
 
     def change(self, key, value, sanitize=True):
         if key not in self:
             raise exceptions.KeyNotExists(key)
-        self.add(key, value, overwrite=True, sanitize=sanitize)
+        return self.add(key, value, overwrite=True, sanitize=sanitize)
 
     def contains(self, key):
         warnings.warn('The contains-method will be removed in 1.0.',
