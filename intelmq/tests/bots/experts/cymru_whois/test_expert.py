@@ -78,26 +78,31 @@ class TestCymruExpertBot(test.BotTestCase, unittest.TestCase):
         cls.bot_reference = CymruExpertBot
         cls.use_cache = True
 
+    @unittest.skip("Team Cymru is currently offline.")
     def test_ipv4_lookup(self):
         self.input_message = EXAMPLE_INPUT
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_OUTPUT)
 
+    @unittest.skip("Team Cymru is currently offline.")
     def test_ipv6_lookup(self):
         self.input_message = EXAMPLE_INPUT6
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_OUTPUT6)
 
+    @unittest.skip("Team Cymru is currently offline.")
     def test_unicode_as_name(self):
         self.input_message = UNICODE_INPUT
         self.run_bot()
         self.assertMessageEqual(0, UNICODE_OUTPUT)
 
+    @unittest.skip("Team Cymru is currently offline.")
     def test_empty_result(self):
         self.input_message = EMPTY_INPUT
         self.run_bot()
         self.assertMessageEqual(0, EMPTY_INPUT)
 
+    @unittest.skip("Team Cymru is currently offline.")
     def test_missing_asn(self):
         """
         No information for ASN.
