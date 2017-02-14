@@ -93,17 +93,17 @@ v1.0 (in development, master branch)
 - `(source|destination).cc` is now `(source|destination).geolocation.cc`
 - `(source|destination).reverse_domain_name` is `(source|destination).reverse_dns`
 - `(source|destination).abuse_contact` is lower case only
-- `misp_id` changed to `misp_uuid`
+- `misp_id` changed to `misp.event_uuid`
 - `protocol.transport` added, a fixed list of values is allowed
-- `protocol.transport` added
 - `protocol.application` is lower case only
-- `webshot_url` removed
+- `webshot_url` is now `screenshot_url`
 - `additional_information` renamed to `extra`, must be JSON
 - `os.name`, `os.version`, `user_agent` removed in favor of `extra`
 - all hashes are lower case only
 - New parameter and field named feed.accuracy to represent the accuracy of each feed
 - New parameter and field named feed.provider to document the name of the source of each feed
 - New parameter and field named feed.documentation to link to documentation of the feed
+- New field `classification.identifier`
 
 ### Known issues
  - Harmonization: hashes are not normalized and classified, see also issue #394 and pull #634
