@@ -24,8 +24,9 @@ ALTER TABLE events
    ADD COLUMN "feed.accuracy" text,
    ADD COLUMN "feed.documentation" text,
    ADD COLUMN "feed.provider" text,
-   ADD COLUMN "malware.hash.md5" text,
-   ADD COLUMN "malware.hash.sha1" text,
+   ADD COLUMN "malware.hash.md5" varchar(200),
+   ADD COLUMN "malware.hash.sha1" varchar(200),
+   ADD COLUMN "malware.hash.sha256" varchar(200),
    ADD COLUMN "protocol.transport" text,
    RENAME COLUMN "additional_information" TO "extra",
    RENAME COLUMN "destination.bgp_prefix" TO "destination.network" text,
@@ -62,9 +63,15 @@ UPDATE events
 UPDATE events
    SET "event_hash" = lower("event_hash")
    WHERE "event_hash" IS NOT NULL;
-UPDATE events
-   SET "malware.hash" = lower("malware.hash")
-   WHERE "malware.hash" IS NOT NULL;
+UPDATE tests
+   SET "malware.hash.md5" = substring("malware.hash" from 4)
+   WHERE substring("malware.hash" from 1 for 3) = '$1$';
+UPDATE tests
+   SET "malware.hash.sha1" = substring("malware.hash" from 7)
+   WHERE substring("malware.hash" from 1 for 6) = '$sha1$';
+UPDATE tests
+   SET "malware.hash.sha256" = substring("malware.hash" from 4)
+   WHERE substring("malware.hash" from 1 for 3) = '$5$';
 UPDATE events
    SET "malware.hash.md5" = lower("malware.hash.md5")
    WHERE "malware.hash.md5" IS NOT NULL;
@@ -75,5 +82,6 @@ UPDATE events
 ALTER TABLE events
    DROP COLUMN "os.name",
    DROP COLUMN "os.version",
-   DROP COLUMN "user_agent";
+   DROP COLUMN "user_agent",
+   DROP COLUMN "malware.hash";
 ```
