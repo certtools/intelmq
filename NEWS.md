@@ -3,16 +3,21 @@ NEWS
 
 1.0
 ---
+See the changelog for a full list of changes.
 
 ### Configuration
 * For renamed bots, see the changelog for a complete list.
 * Many bots have new/change parameters
 * Syntax of runtime.conf has changed
 * system.conf and startup.conf have been dropped entirely, use defaults.conf and runtime.conf instead
+* Many bots have been renamed/moved or deleted. Please read the Bots section in the changelog and upgrade your configuration accordingly.
 
 
 ### Postgres databases
-Use this statement to upgrade your database:
+Use the following statement carefully to upgrade your database.
+Take care that no data will be lost, the statement may not be complete!
+
+Also note that size constraints have changed!
 ```SQL
 ALTER TABLE events
    ADD COLUMN "classification.identifier" text,
@@ -23,6 +28,11 @@ ALTER TABLE events
    ADD COLUMN "malware.hash.sha1" text,
    ADD COLUMN "protocol.transport" text,
    RENAME COLUMN "additional_information" TO "extra",
+   RENAME COLUMN "destination.bgp_prefix" TO "destination.network" text,
+   RENAME COLUMN "destination.cc" TO "destination.cc" text,
+   RENAME COLUMN "destination.cc" TO "destination.geolocation.cc" text,
+   RENAME COLUMN "destination.email_address" TO "destination.account" text,
+   RENAME COLUMN "destination.reverse_domain_name" TO "destination.reverse_dns" text,
    RENAME COLUMN "misp_id" TO "misp.event_uuid",
    RENAME COLUMN "source.bgp_prefix" TO "source.network" text,
    RENAME COLUMN "source.cc" TO "source.cc" text,
@@ -31,7 +41,7 @@ ALTER TABLE events
    RENAME COLUMN "source.reverse_domain_name" TO "source.reverse_dns" text,
    RENAME COLUMN "webshot_url" TO "screenshot_url" text,
    ALTER COLUMN "extra" SET DATA TYPE json,
-   ALTER COLUMN "misp.evetn_uuid" SET DATA TYPE varchar(36),
+   ALTER COLUMN "misp.event_uuid" SET DATA TYPE varchar(36);
 
 UPDATE events
    SET "source.local_hostname"="destination.local_hostname",
@@ -65,7 +75,5 @@ UPDATE events
 ALTER TABLE events
    DROP COLUMN "os.name",
    DROP COLUMN "os.version",
-   DROP COLUMN "user_agent",
+   DROP COLUMN "user_agent";
 ```
-
-Also note, that size constraints have changed!
