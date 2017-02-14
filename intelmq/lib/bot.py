@@ -107,6 +107,7 @@ class Bot(object):
         self.logger.info('Handling SIGHUP, initializing again now.')
         self.__disconnect_pipelines()
         self.logger.handlers = []  # remove all existing handlers
+        self.shutdown()  # disconnects, stops threads etc
         self.__init__(self.__bot_id)
         self.__connect_pipelines()
 
