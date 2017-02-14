@@ -100,6 +100,7 @@ v1.0 (in development, master branch)
 - `additional_information` renamed to `extra`, must be JSON
 - `os.name`, `os.version`, `user_agent` removed in favor of `extra`
 - all hashes are lower case only
+- added `malware.hash.(md5|sha1)`
 - New parameter and field named feed.accuracy to represent the accuracy of each feed
 - New parameter and field named feed.provider to document the name of the source of each feed
 - New parameter and field named feed.documentation to link to documentation of the feed

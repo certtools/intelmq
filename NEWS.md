@@ -19,6 +19,8 @@ ALTER TABLE events
    ADD COLUMN "feed.accuracy" text,
    ADD COLUMN "feed.documentation" text,
    ADD COLUMN "feed.provider" text,
+   ADD COLUMN "malware.hash.md5" text,
+   ADD COLUMN "malware.hash.sha1" text,
    ADD COLUMN "protocol.transport" text,
    RENAME COLUMN "additional_information" TO "extra",
    RENAME COLUMN "misp_id" TO "misp.event_uuid",
