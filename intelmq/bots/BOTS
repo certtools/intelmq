@@ -620,6 +620,7 @@
             "parameters": {
                 "auth_token": "<token>",
                 "auth_token_name": "<token name>",
+                "auth_type": "<http_basic_auth/http_header>",
                 "hierarchical_output": false,
                 "host": "<host>",
                 "use_json": true
