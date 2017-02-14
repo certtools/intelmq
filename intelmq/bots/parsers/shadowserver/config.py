@@ -822,7 +822,7 @@ ssl_poodle_vulnerable_servers = {
 
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-Memcached
 # "timestamp","ip","protocol","port","hostname","tag","version","asn","geo","region","city","naics","sic","pid","pointer_size","uptime","time","curr_connections","total_connections"
-# "2015-01-22 01:30:25","167.160.165.190","tcp",11211,,"memcached","1.4.20",62639,"US","CALIFORNIA","LOS ANGELES",0,0,787,64,87136,"2015-01-22 01:30:26",10,13
+# "2015-01-22 01:30:25","167.160.165.190","tcp",11211,,"memcached","1.4.20",62639,"US","CALIFORNIA","LOS ANGELES",0,0,787,64,87136,"2015-01-22 01:30:26",10,13  # noqa
 
 open_memcached = {
     'required_fields': [
