@@ -621,7 +621,8 @@
                 "auth_token": "<token>",
                 "auth_token_name": "<token name>",
                 "hierarchical_output": false,
-                "host": "<host>"
+                "host": "<host>",
+                "use_json": true
             }
         },
         "Redis": {

@@ -23,17 +23,8 @@ class RestAPIOutputBot(Bot):
         else:
             kwargs = {'data': event.to_dict(hierarchical=self.parameters.hierarchical_output)}
 
-        try:
-            r = self.session.post(self.parameters.host, **kwargs)
-            r.raise_for_status()
-        except requests.exceptions.RequestException as e:
-            if r:
-                self.logger.error('Response code: {1}\nHeaders: '
-                                  '{2}\nResponse body: {3}'
-                                  ''.format(r, r.headers,
-                                            r.text))
-            else:
-                self.logger.error(repr(e))
+        r = self.session.post(self.parameters.host, **kwargs)
+        r.raise_for_status()
         self.acknowledge_message()
 
 
