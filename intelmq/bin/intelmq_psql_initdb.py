@@ -15,6 +15,11 @@ import tempfile
 
 from intelmq import HARMONIZATION_CONF_FILE
 
+INDICES = ['classification.identifier', 'classification.taxonomy',
+           'classification.type', 'feed.code', 'feed.name',
+           'source.abuse_contact', 'source.asn', 'source.ip', 'source.fqdn',
+           'time.observation', 'time.source']
+
 
 def generate(harmonization_file=HARMONIZATION_CONF_FILE):
     FIELDS = dict()
@@ -63,7 +68,10 @@ def generate(harmonization_file=HARMONIZATION_CONF_FILE):
         initdb += '\n    "{name}" {type},'.format(name=field, type=field_type)
 
     initdb = initdb[:-1]  # remove last ','
-    initdb += "\n);"
+    initdb += "\n);\n"
+
+    for index in INDICES:
+        initdb += 'CREATE INDEX "idx_events_{0}" ON events USING btree ("{0}");\n'.format(index)
     return initdb
 
 
