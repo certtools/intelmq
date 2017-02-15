@@ -412,11 +412,15 @@ class TestMessageFactory(unittest.TestCase):
         self.assertNotEqual(event1.hash(), event2.hash())
         # But not if we blacklist it (time.observation does not have to
         # blacklisted explicitly):
-        self.assertEqual(event1.hash("blacklist", {"feed.name"}),
-                         event2.hash("blacklist", {"feed.name"}))
+        self.assertEqual(event1.hash(filter_type="blacklist",
+                                     filter_keys={"feed.name"}),
+                         event2.hash(filter_type="blacklist",
+                                     filter_keys={"feed.name"}))
 
-        self.assertNotEqual(event1.hash("blacklist", {"feed.url, raw"}),
-                            event2.hash("blacklist", {"feed.url, raw"}))
+        self.assertNotEqual(event1.hash(filter_type="blacklist",
+                                        filter_keys={"feed.url, raw"}),
+                            event2.hash(filter_type="blacklist",
+                                        filter_keys={"feed.url, raw"}))
 
     def test_event_hash_method_whitelist(self):
         """ Test Event hash(blacklist) """
@@ -429,11 +433,15 @@ class TestMessageFactory(unittest.TestCase):
 
         self.assertNotEqual(event1.hash(), event2.hash())
 
-        self.assertNotEqual(event1.hash("whitelist", {"feed.name"}),
-                            event2.hash("whitelist", {"feed.name"}))
+        self.assertNotEqual(event1.hash(filter_type="whitelist",
+                                        filter_keys={"feed.name"}),
+                            event2.hash(filter_type="whitelist",
+                                        filter_keys={"feed.name"}))
 
-        self.assertEqual(event1.hash("whitelist", {"feed.url, raw"}),
-                         event2.hash("whitelist", {"feed.url, raw"}))
+        self.assertEqual(event1.hash(filter_type="whitelist",
+                                     filter_keys={"feed.url, raw"}),
+                         event2.hash(filter_type="whitelist",
+                                     filter_keys={"feed.url, raw"}))
 
     def test_event_dict(self):
         """ Test Event to_dict. """
