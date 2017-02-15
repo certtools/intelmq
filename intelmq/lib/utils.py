@@ -20,7 +20,6 @@ import re
 import sys
 import traceback
 
-import pkg_resources
 from typing import Sequence, Union
 
 import intelmq
@@ -150,10 +149,7 @@ def load_configuration(configuration_filepath: str) -> dict:
     Load JSON configuration file.
 
     Parameters:
-        configuration_filepath:
-            Path to JSON file to load. If file does not exist, and the path begins
-            with CONFIG_DIR (`/opt/intelmq/etc` by default), the file from it's
-            package data is used.
+        configuration_filepath: Path to JSON file to load.
 
     Returns:
         config: Parsed configuration
@@ -164,13 +160,6 @@ def load_configuration(configuration_filepath: str) -> dict:
     if os.path.exists(configuration_filepath):
         with open(configuration_filepath, 'r') as fpconfig:
             config = json.loads(fpconfig.read())
-    elif configuration_filepath.find(intelmq.CONFIG_DIR) == 0:  # at beginning
-        newpath = pkg_resources.resource_filename('intelmq', 'etc/')
-        filepath = configuration_filepath.replace(intelmq.CONFIG_DIR,
-                                                  newpath)
-        if os.path.exists(filepath):
-            with open(filepath, 'r') as fpconfig:
-                config = json.loads(fpconfig.read())
     else:
         raise ValueError('File not found: %r.' % configuration_filepath)
     return config
@@ -212,6 +201,7 @@ def log(name: str, log_path: str=intelmq.DEFAULT_LOGGING_PATH, log_level: str="D
     Parameters:
         name: filename for logfile or string preceding lines in stream
         log_path: Path to log directory, defaults to DEFAULT_LOGGING_PATH
+            If False, nothing is logged to files.
         log_level: default is "DEBUG"
         stream: By default (None), stderr will be used, stream objects can be
             given. If False, stream output is not used.
@@ -230,19 +220,20 @@ def log(name: str, log_path: str=intelmq.DEFAULT_LOGGING_PATH, log_level: str="D
     logger = logging.getLogger(name)
     logger.setLevel(log_level)
 
-    if not syslog:
+    if log_path and not syslog:
         handler = FileHandler("%s/%s.log" % (log_path, name))
         handler.setLevel(log_level)
-    else:
+    elif syslog:
         if type(syslog) is tuple or type(syslog) is list:
             handler = logging.handlers.SysLogHandler(address=tuple(syslog))
         else:
             handler = logging.handlers.SysLogHandler(address=syslog)
         handler.setLevel(log_level)
 
-    formatter = logging.Formatter(LOG_FORMAT)
-    handler.setFormatter(formatter)
-    logger.addHandler(handler)
+    if log_path or syslog:
+        formatter = logging.Formatter(LOG_FORMAT)
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
 
     if stream or stream is None:
         console_formatter = logging.Formatter(LOG_FORMAT_STREAM)

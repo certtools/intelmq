@@ -107,6 +107,7 @@ class Bot(object):
         self.logger.info('Handling SIGHUP, initializing again now.')
         self.__disconnect_pipelines()
         self.logger.handlers = []  # remove all existing handlers
+        self.shutdown()  # disconnects, stops threads etc
         self.__init__(self.__bot_id)
         self.__connect_pipelines()
 
@@ -436,7 +437,7 @@ class Bot(object):
                              "{!r}.".format(self.__bot_id))
 
     def __log_configuration_parameter(self, config_name, option, value):
-        if "password" in option:
+        if "password" in option or "token" in option:
             value = "HIDDEN"
 
         message = "{} configuration: parameter {!r} loaded with value {!r}."\
@@ -603,6 +604,8 @@ class CollectorBot(Bot):
         report.add("feed.name", self.parameters.feed)
         if hasattr(self.parameters, 'code'):
             report.add("feed.code", self.parameters.code)
+        if hasattr(self.parameters, 'documentation'):
+            report.add("feed.documentation", self.parameters.documentation)
         if hasattr(self.parameters, 'provider'):
             report.add("feed.provider", self.parameters.provider)
         report.add("feed.accuracy", self.parameters.accuracy)

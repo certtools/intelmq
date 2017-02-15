@@ -20,7 +20,7 @@ before_script:
   - psql -c "CREATE DATABASE intelmq" -U intelmq template1
   - psql -c "GRANT ALL PRIVILEGES ON DATABASE intelmq TO intelmq" -U intelmq
   - intelmq_psql_initdb
-  - sed -i 's/events/tests/' /tmp/initdb.sql
+  - sed -i 's/events/tests/g' /tmp/initdb.sql
   - psql -v ON_ERROR_STOP=on -f /tmp/initdb.sql intelmq -U intelmq
 script:
   - INTELMQ_TEST_DATABASES=1 nosetests --with-coverage --cover-package=intelmq
