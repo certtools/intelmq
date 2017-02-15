@@ -50,6 +50,31 @@ class TestDeduplicatorExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertOutputQueueLen()
 
+    def test_whitelist_suppress(self):
+        self.sysconfig = {"redis_cache_ttl": "86400",
+                          "filter_type": "whitelist",
+                          "filter_keys": "source.ip"}
+        msg = message.Event()
+        msg.add('source.ip', '127.0.0.8')
+        msg_hash = hash(msg)
+        self.cache.set(msg_hash, 'hash')
+        self.cache.expire(msg_hash, 3600)
+
+        msg.add('destination.ip', '127.0.0.7')
+        self.input_message = msg
+        self.run_bot()
+        self.assertOutputQueueLen()
+
+    def test_whitelist_pass(self):
+        self.sysconfig = {"redis_cache_ttl": "86400",
+                          "filter_type": "whitelist",
+                          "filter_keys": "source.ip"}
+        msg = message.Event()
+        msg.add('destination.ip', '127.0.0.7')
+        self.input_message = msg
+        self.run_bot()
+        self.assertMessageEqual(0, msg)
+
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
