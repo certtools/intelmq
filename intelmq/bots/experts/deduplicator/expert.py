@@ -32,14 +32,14 @@ class DeduplicatorExpertBot(Bot):
                            getattr(self.parameters, "redis_cache_password",
                                    None)
                            )
-        self.filter_keys_list = set(k.strip() for k in
-                                    self.parameters.filter_keys.split(','))
+        self.filter_keys = set(k.strip() for k in
+                               self.parameters.filter_keys.split(','))
 
     def process(self):
         message = self.receive_message()
 
-        message_hash = message.hash(self.parameters.filter_type,
-                                    self.filter_keys_list)
+        message_hash = message.hash(filter_keys=self.filter_keys,
+                                    filter_type=self.parameters.filter_type)
 
         old_hash = hash(int(message_hash, 16))
 
