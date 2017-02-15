@@ -33,6 +33,7 @@ CREATE TABLE events (
     "extra" json,
     "feed.accuracy" real,
     "feed.code" varchar(100),
+    "feed.documentation" text,
     "feed.name" text,
     "feed.provider" text,
     "feed.url" text,
@@ -76,3 +77,14 @@ CREATE TABLE events (
     "time.observation" timestamp with time zone,
     "time.source" timestamp with time zone
 );
+CREATE INDEX "idx_events_classification.identifier" ON events USING btree ("classification.identifier");
+CREATE INDEX "idx_events_classification.taxonomy" ON events USING btree ("classification.taxonomy");
+CREATE INDEX "idx_events_classification.type" ON events USING btree ("classification.type");
+CREATE INDEX "idx_events_feed.code" ON events USING btree ("feed.code");
+CREATE INDEX "idx_events_feed.name" ON events USING btree ("feed.name");
+CREATE INDEX "idx_events_source.abuse_contact" ON events USING btree ("source.abuse_contact");
+CREATE INDEX "idx_events_source.asn" ON events USING btree ("source.asn");
+CREATE INDEX "idx_events_source.ip" ON events USING btree ("source.ip");
+CREATE INDEX "idx_events_source.fqdn" ON events USING btree ("source.fqdn");
+CREATE INDEX "idx_events_time.observation" ON events USING btree ("time.observation");
+CREATE INDEX "idx_events_time.source" ON events USING btree ("time.source");

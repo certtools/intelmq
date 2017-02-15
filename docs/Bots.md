@@ -637,5 +637,7 @@ from your installation.
 
 #### Configuration Parameters:
 
-* `ip`: FIXME
-* `port`: FIXME
+* `ip`: IP of destination server
+* `hierarchical_output`: true for a nested JSON, false for a flat JSON.
+* `port`: port of destination server
+* `separator`: separator of messages

@@ -44,6 +44,7 @@ v1.0 (in development, master branch)
 - DOC: harmonization documentation has same fields as configuration, docs are generated from configuration
 - ENH: New type LowercaseString and UppercaseString
 - BUG: FQDNs are only allowed in IDN representation
+- ENH: New fields feed.documentation and feed.provider
 
 #### Most important changes:
 - `(source|destination).bgp_prefix` is now `(source|destination).network`

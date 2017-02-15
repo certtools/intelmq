@@ -396,7 +396,10 @@ class BotTestCase(object):
         self.assertIsInstance(event, str)
 
         event_dict = json.loads(event)
-        expected = expected_msg.copy()
+        if isinstance(expected_msg, (message.Event, message.Report)):
+            expected = expected_msg.to_dict(with_type=True)
+        else:
+            expected = expected_msg.copy()
         if 'time.observation' in event_dict:
             del event_dict['time.observation']
         if 'time.observation' in expected:

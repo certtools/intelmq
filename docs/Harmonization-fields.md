@@ -37,6 +37,7 @@ Harmonization field names
 ||extra|[JSON](#json)|All anecdotal information, which cannot be parsed into the data harmonization elements. E.g. os.name, os.version, etc.  **Note**: this is only intended for mapping any fields which can not map naturally into the data harmonization. It is not intended for extending the data harmonization with your own fields.|
 |Feed|feed.accuracy|[Accuracy](#accuracy)|A float between 0 and 100 that represents how accurate the data in the feed is|
 |Feed|feed.code|[String](#string)|Code name for the feed, e.g. DFGS, HSDAG etc.|
+|Feed|feed.documentation|[String](#string)|A URL or hint where to find the documentation of this feed.|
 |Feed|feed.name|[String](#string)|Name for the feed, usually found in collector bot configuration.|
 |Feed|feed.provider|[String](#string)|Name for the provider of the feed, usually found in collector bot configuration.|
 |Feed|feed.url|[URL](#url)|The URL of a given abuse feed, where applicable|
