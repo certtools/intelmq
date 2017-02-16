@@ -75,7 +75,10 @@ CREATE TABLE contact (
     lastname  VARCHAR (500) NOT NULL DEFAULT '',
     tel       VARCHAR (500) NOT NULL DEFAULT '',
 
-    pgp_key_id VARCHAR(128) NOT NULL DEFAULT '',
+    -- The full fingerprint of the OpenPGP pubkey of the contact as GnuPG
+    -- would accept it to specify a user ID.
+    -- (This avoids ambiguities in case that there are duplicated key IDs.)
+    openpgp_fpr VARCHAR(128) NOT NULL DEFAULT '',
 
     -- the email-address of the contact
     email VARCHAR(100) NOT NULL,

@@ -28,6 +28,11 @@ configuration for accessing the database.
 
 ```
 
+### Updates
+
+When upgrading to new version take a look at
+[db-updates-sql.md](db-updates-sql.md).
+
 ### Adding New Contacts
 
 Contacts can be added to the database directly using SQL.  These

@@ -80,7 +80,7 @@ ripe_import.py --conninfo "host=localhost user=intelmqadm dbname=contactdb" \
 
 Also see the
 [documentation of the libpg conninfo string](https://www.postgresql.org/docs/current/static/libpq-connect.html#LIBPQ-CONNSTRING).
-The [documentaion on environment variables](https://www.postgresql.org/docs/current/static/libpq-envars.html) to the connection also
+The [documentation on environment variables](https://www.postgresql.org/docs/current/static/libpq-envars.html) to the connection also
 points towards how to savely provide a password with a ~/.pgpass file.
 
 ### use as a module
