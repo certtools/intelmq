@@ -81,9 +81,16 @@ def lookup_contacts(cur, managed, asn, ip, fqdn):
                      ON a.number = oa.asn_id
                   WHERE a.number = %(asn)s),
          -- the ASN matches in a form useful for conversion to JSON
-         asn_json_rows (field, organisations, managed)
+         asn_json_rows (field, organisations, annotations, managed)
              AS (SELECT 'asn' AS field,
                         ARRAY(SELECT * FROM matched_asn) AS organisations,
+                        coalesce(CASE WHEN %(extension)s = ''
+                                      THEN (SELECT json_agg(annotation)
+                                              FROM autonomous_system_annotation
+                                                   ann
+                                             WHERE ann.asn_id = %(asn)s)
+                                 END,
+                                 ('[]' :: JSON)) AS annotations,
                         %(managed)s AS managed),
 
          -- The FADN IDs for the given FQDN
@@ -98,9 +105,17 @@ def lookup_contacts(cur, managed, asn, ip, fqdn):
                    JOIN organisation_to_fqdn{0} AS of
                      ON f.fqdn_id = of.fqdn_id),
          -- the FQDN matches in a form useful for conversion to JSON
-         fqdn_json_rows (field, organisations, managed)
+         fqdn_json_rows (field, organisations, annotations, managed)
              AS (SELECT 'fqdn' AS field,
                         ARRAY(SELECT * FROM matched_fqdn) AS organisations,
+                        coalesce(CASE WHEN %(extension)s = ''
+                                      THEN (SELECT json_agg(annotation)
+                                              FROM fqdn_annotation ann
+                                             WHERE ann.fqdn_id
+                                                   IN (SELECT *
+                                                       FROM matched_fqdn_ids))
+                                 END,
+                                 ('[]' :: JSON)) AS annotations,
                         %(managed)s AS managed),
 
          -- all matched networks including their cidr addresses
@@ -111,13 +126,20 @@ def lookup_contacts(cur, managed, asn, ip, fqdn):
                     AND %(ip)s <= inet(host(broadcast(n.address)))),
 
          -- all matched networks in a form useful for conversion to JSON
-         network_json_rows (field, address, organisations, managed)
+         network_json_rows (field, address, organisations, annotations, managed)
              AS (SELECT 'ip' AS field,
                         mn.address AS address,
                         ARRAY(SELECT orgn.organisation_id
                                 FROM organisation_to_network{0} orgn
                                WHERE mn.network_id = orgn.net_id)
                         AS organisations,
+                        coalesce(CASE WHEN %(extension)s = ''
+                                      THEN (SELECT json_agg(annotation)
+                                              FROM network_annotation ann
+                                             WHERE ann.network_id
+                                                   = mn.network_id)
+                                 END,
+                                 ('[]' :: JSON)) AS annotations,
                         %(managed)s AS managed
                    FROM matched_networks mn),
 

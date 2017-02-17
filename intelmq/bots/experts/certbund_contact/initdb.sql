@@ -153,6 +153,18 @@ CREATE TABLE autonomous_system (
 );
 
 
+CREATE TABLE autonomous_system_annotation (
+    id SERIAL PRIMARY KEY,
+    asn_id BIGINT NOT NULL,
+    annotation JSON NOT NULL,
+
+    FOREIGN KEY (asn_id) REFERENCES autonomous_system (number)
+);
+
+CREATE INDEX autonomous_system_annotation_asn_id
+          ON autonomous_system_annotation (asn_id);
+
+
 CREATE TABLE autonomous_system_automatic (
     LIKE automatic_templ INCLUDING ALL,
     LIKE autonomous_system INCLUDING ALL
@@ -169,6 +181,19 @@ CREATE TABLE network (
 
     comment TEXT NOT NULL DEFAULT ''
 );
+
+
+CREATE TABLE network_annotation (
+    id SERIAL PRIMARY KEY,
+    network_id INTEGER NOT NULL,
+    annotation JSON NOT NULL,
+
+    FOREIGN KEY (network_id) REFERENCES network(id)
+);
+
+CREATE INDEX network_annotation_network_idx
+          ON network_annotation (network_id);
+
 
 CREATE TABLE network_automatic (
     LIKE automatic_templ INCLUDING ALL,
@@ -217,6 +242,18 @@ CREATE TABLE fqdn (
 
     comment TEXT NOT NULL DEFAULT ''
 );
+
+
+CREATE TABLE fqdn_annotation (
+    id SERIAL PRIMARY KEY,
+    fqdn_id INTEGER NOT NULL,
+    annotation JSON NOT NULL,
+
+    FOREIGN KEY (fqdn_id) REFERENCES fqdn(id)
+);
+
+CREATE INDEX fqdn_annotation_fqdn_idx
+          ON fqdn_annotation (fqdn_id);
 
 
 CREATE TABLE fqdn_automatic (
