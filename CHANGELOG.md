@@ -35,6 +35,8 @@ v1.0 (in development, master branch)
 - ENH: New parameter and field named accuracy to represent the accuracy of each feed
 - Consistent naming "overwrite" to switch overwriting capabilities of bots (as opposed to override)
 - Renamed http_ssl_proxy to https_proxy
+- deduplicator bot has a new parameter to configure deduplication mode
+- deduplicator bot key ignore_keys was renamed to filter_keys
 
 ### Harmonization
 - ENH: Additional data types: integer, float and Boolean

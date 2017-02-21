@@ -313,7 +313,7 @@ FIXME
 * `name:` cymru-whois
 * `lookup:` cymru dns
 * `public:` yes
-* `cache (redis db):` 6
+* `cache (redis db):` 5
 * `description:` IP to geolocation, ASN, BGP prefix
 
 #### Configuration Parameters:
@@ -328,12 +328,12 @@ FIXME
 * `name:` deduplicator
 * `lookup:` redis cache
 * `public:` yes
-* `cache (redis db):` 7
+* `cache (redis db):` 6
 * `description:` message deduplicator
 
 #### Configuration Parameters:
 
-FIXME
+Please check this [README](../intelmq/bots/experts/deduplicator/README.md) file.
 
 * * *
 
@@ -618,9 +618,12 @@ from your installation.
 
 #### Configuration Parameters:
 
-* `auth_token`: FIXME
-* `auth_token_name`: FIXME
-* `host`: FIXME
+* `auth_token`: the user name / http header key
+* `auth_token_name`: the password / http header value
+* `auth_type`: one of: `"http_basic_auth"`, `"http_header"`
+* `hierarchical_output`: boolean
+* `host`: destination URL
+* `use_json`: boolean
 
 
 * * *

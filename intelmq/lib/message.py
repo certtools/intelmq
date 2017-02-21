@@ -304,17 +304,33 @@ class Message(dict):
     def __hash__(self):
         return int(self.hash(), 16)
 
-    def hash(self, blacklist=frozenset()):
+    def hash(self, *, filter_keys=frozenset(), filter_type="blacklist"):
         """Return a sha256 hash of the message as a hexadecimal string.
-        The hash is computed over almost all key/value pairs. The only
-        keys omitted are 'time.observation' and all keys contained in
-        the optional blacklist parameter. If given, the blacklist
+        The hash is computed over almost all key/value pairs. Depending on
+        filter_type parameter (blacklist or whitelist), the keys defined in
+        filter_keys_list parameter will be considered as the keys to ignore
+        or the only ones to consider. If given, the filter_keys_list
         parameter should be a set.
+
+        'time.observation' will always be ignored.
         """
+
+        if filter_type not in ["whitelist", "blacklist"]:
+
+            raise exceptions.InvalidArgument('filter_type',
+                                             got=filter_type,
+                                             expected=['whitelist', 'blacklist'])
+
         event_hash = hashlib.sha256()
 
         for key, value in sorted(self.items()):
-            if "time.observation" == key or key in blacklist:
+            if "time.observation" == key:
+                continue
+
+            if filter_type == "whitelist" and key not in filter_keys:
+                continue
+
+            if filter_type == "blacklist" and key in filter_keys:
                 continue
 
             event_hash.update(utils.encode(key))

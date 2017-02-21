@@ -412,7 +412,36 @@ class TestMessageFactory(unittest.TestCase):
         self.assertNotEqual(event1.hash(), event2.hash())
         # But not if we blacklist it (time.observation does not have to
         # blacklisted explicitly):
-        self.assertEqual(event1.hash({"feed.name"}), event2.hash({"feed.name"}))
+        self.assertEqual(event1.hash(filter_type="blacklist",
+                                     filter_keys={"feed.name"}),
+                         event2.hash(filter_type="blacklist",
+                                     filter_keys={"feed.name"}))
+
+        self.assertNotEqual(event1.hash(filter_type="blacklist",
+                                        filter_keys={"feed.url, raw"}),
+                            event2.hash(filter_type="blacklist",
+                                        filter_keys={"feed.url, raw"}))
+
+    def test_event_hash_method_whitelist(self):
+        """ Test Event hash(blacklist) """
+        event = message.MessageFactory.unserialize('{"__type": "Event"}')
+
+        event1 = self.add_event_examples(event)
+        event2 = event1.deep_copy()
+
+        event2.add('feed.name', 'Some Other Feed', overwrite=True)
+
+        self.assertNotEqual(event1.hash(), event2.hash())
+
+        self.assertNotEqual(event1.hash(filter_type="whitelist",
+                                        filter_keys={"feed.name"}),
+                            event2.hash(filter_type="whitelist",
+                                        filter_keys={"feed.name"}))
+
+        self.assertEqual(event1.hash(filter_type="whitelist",
+                                     filter_keys={"feed.url, raw"}),
+                         event2.hash(filter_type="whitelist",
+                                     filter_keys={"feed.url, raw"}))
 
     def test_event_dict(self):
         """ Test Event to_dict. """
