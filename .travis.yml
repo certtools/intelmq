@@ -10,6 +10,7 @@ install:
   - sudo apt-get install dpkg-dev dh-python python-setuptools python3-setuptools python3-all debhelper quilt
   - pip install -r REQUIREMENTS
   - for file in intelmq/bots/*/*/REQUIREMENTS.txt; do pip install -r $file; done
+  - if [[ $TRAVIS_PYTHON_VERSION < '3.5' ]]; then pip install typing; fi
   - pip install codecov
   - pip install pep8
   - sudo pip install .
