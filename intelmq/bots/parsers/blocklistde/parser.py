@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import posixpath
-import sys
 from urllib.parse import urlparse
 
 from intelmq.lib.bot import ParserBot
@@ -86,6 +85,4 @@ class BlockListDEParserBot(ParserBot):
         yield event
 
 
-if __name__ == "__main__":
-    bot = BlockListDEParserBot(sys.argv[1])
-    bot.start()
+BOT = BlockListDEParserBot

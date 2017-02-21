@@ -2,7 +2,6 @@
 common:
   system_packages:
     - python-apt
-    - python-pycurl
     - python-pip
     - python-setuptools
     - supervisor

@@ -4,18 +4,15 @@ Parsers simple newline separated list of IPs.
 
 Docs:
  - https://feodotracker.abuse.ch/blocklist/
- - https://palevotracker.abuse.ch/blocklists.php
  - https://zeustracker.abuse.ch/blocklist.php
 """
 
-import sys
 
 import dateutil
 
 from intelmq.lib.bot import ParserBot
 
 SOURCE_FEEDS = {'https://feodotracker.abuse.ch/blocklist/?download=ipblocklist': 'Cridex',
-                'https://palevotracker.abuse.ch/blocklists.php?download=ipblocklist': 'Palevo',
                 'https://zeustracker.abuse.ch/blocklist.php?download=badips': 'Zeus'}
 
 
@@ -41,6 +38,4 @@ class AbusechIPParserBot(ParserBot):
         return '\n'.join(self.tempdata + [line])
 
 
-if __name__ == "__main__":
-    bot = AbusechIPParserBot(sys.argv[1])
-    bot.start()
+BOT = AbusechIPParserBot

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import re
-import sys
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
@@ -41,6 +40,5 @@ class BruteForceBlockerParserBot(Bot):
             self.send_message(event)
         self.acknowledge_message()
 
-if __name__ == "__main__":
-    bot = BruteForceBlockerParserBot(sys.argv[1])
-    bot.start()
+
+BOT = BruteForceBlockerParserBot

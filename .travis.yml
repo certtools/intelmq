@@ -5,10 +5,12 @@ python:
   - "3.3"
   - "3.4"
   - "3.5"
+  - "3.6"
 install:
   - sudo apt-get install dpkg-dev dh-python python-setuptools python3-setuptools python3-all debhelper quilt
   - pip install -r REQUIREMENTS
   - for file in intelmq/bots/*/*/REQUIREMENTS.txt; do pip install -r $file; done
+  - if [[ $TRAVIS_PYTHON_VERSION < '3.5' ]]; then pip install typing; fi
   - pip install codecov
   - pip install pep8
   - sudo pip install .
@@ -18,7 +20,7 @@ before_script:
   - psql -c "CREATE DATABASE intelmq" -U intelmq template1
   - psql -c "GRANT ALL PRIVILEGES ON DATABASE intelmq TO intelmq" -U intelmq
   - intelmq_psql_initdb
-  - sed -i 's/events/tests/' /tmp/initdb.sql
+  - sed -i 's/events/tests/g' /tmp/initdb.sql
   - psql -v ON_ERROR_STOP=on -f /tmp/initdb.sql intelmq -U intelmq
 script:
   - INTELMQ_TEST_DATABASES=1 nosetests --with-coverage --cover-package=intelmq

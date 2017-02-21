@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import json
-import sys
 
 from intelmq.lib.bot import CollectorBot
 
@@ -27,6 +26,4 @@ class AlienVaultOTXCollectorBot(CollectorBot):
         self.send_message(report)
 
 
-if __name__ == "__main__":
-    bot = AlienVaultOTXCollectorBot(sys.argv[1])
-    bot.start()
+BOT = AlienVaultOTXCollectorBot

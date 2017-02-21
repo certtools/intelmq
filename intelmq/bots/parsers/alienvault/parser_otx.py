@@ -7,7 +7,6 @@ howto_use_python_otx_api.ipynb
 """
 
 import json
-import sys
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
@@ -66,6 +65,5 @@ class AlienVaultOTXParserBot(Bot):
                 self.send_message(event)
         self.acknowledge_message()
 
-if __name__ == "__main__":
-    bot = AlienVaultOTXParserBot(sys.argv[1])
-    bot.start()
+
+BOT = AlienVaultOTXParserBot

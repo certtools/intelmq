@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import sys
 
 from intelmq.lib.bot import Bot
 
@@ -32,7 +31,7 @@ class GeoIPExpertBot(Bot):
         for key in ["source.%s", "destination.%s"]:
             geo_key = key % "geolocation.%s"
 
-            if not event.contains(key % "ip"):
+            if key % "ip" not in event:
                 continue
 
             ip = event.get(key % "ip")
@@ -42,18 +41,18 @@ class GeoIPExpertBot(Bot):
 
                 if info.country.iso_code:
                     event.add(geo_key % "cc", info.country.iso_code,
-                              force=True)
+                              overwrite=True)
 
                 if info.location.latitude:
                     event.add(geo_key % "latitude", info.location.latitude,
-                              force=True)
+                              overwrite=True)
 
                 if info.location.longitude:
                     event.add(geo_key % "longitude", info.location.longitude,
-                              force=True)
+                              overwrite=True)
 
                 if info.city.name:
-                    event.add(geo_key % "city", info.city.name, force=True)
+                    event.add(geo_key % "city", info.city.name, overwrite=True)
 
             except geoip2.errors.AddressNotFoundError:
                 pass
@@ -62,6 +61,4 @@ class GeoIPExpertBot(Bot):
         self.acknowledge_message()
 
 
-if __name__ == "__main__":
-    bot = GeoIPExpertBot(sys.argv[1])
-    bot.start()
+BOT = GeoIPExpertBot

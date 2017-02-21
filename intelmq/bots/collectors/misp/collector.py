@@ -11,7 +11,6 @@ Parameters:
 
 """
 import json
-import sys
 from urllib.parse import urljoin
 
 from intelmq.lib.bot import CollectorBot
@@ -73,6 +72,4 @@ class MISPCollectorBot(CollectorBot):
                                   self.parameters.misp_tag_processed)
 
 
-if __name__ == '__main__':
-    bot = MISPCollectorBot(sys.argv[1])
-    bot.start()
+BOT = MISPCollectorBot

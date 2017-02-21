@@ -48,7 +48,7 @@ class TestAbusixExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         try:
             self.assertMessageEqual(0, EXAMPLE_OUTPUT)
-        except AssertionError:
+        except AssertionError:  # pragma: no cover
             return unittest.skip('Abusix is not reliable.')
 
     def test_ipv6_lookup(self):
@@ -56,7 +56,7 @@ class TestAbusixExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         try:
             self.assertMessageEqual(0, EXAMPLE_OUTPUT6)
-        except AssertionError:
+        except AssertionError:  # pragma: no cover
             return unittest.skip('Abusix is not reliable.')
 
     def test_lookup_existing(self):
@@ -65,7 +65,7 @@ class TestAbusixExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         try:
             self.assertMessageEqual(0, EXAMPLE_EXISTING)
-        except AssertionError:
+        except AssertionError:  # pragma: no cover
             return unittest.skip('Abusix is not reliable.')
 
 if __name__ == '__main__':  # pragma: no cover

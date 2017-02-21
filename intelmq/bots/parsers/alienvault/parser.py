@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import sys
 
 from intelmq.lib.bot import ParserBot
 
@@ -57,6 +56,4 @@ class AlienVaultParserBot(ParserBot):
             yield event
 
 
-if __name__ == "__main__":
-    bot = AlienVaultParserBot(sys.argv[1])
-    bot.start()
+BOT = AlienVaultParserBot

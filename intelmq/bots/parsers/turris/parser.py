@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import csv
 import io
-import sys
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
@@ -14,9 +13,9 @@ class TurrisGreylistParserBot(Bot):
 
         columns = [
             "source.ip",
-            "__IGNORE__",
+            "source.geolocation.cc",
             "event_description.text",
-            "__IGNORE__"
+            "source.asn"
         ]
 
         headers = True
@@ -42,6 +41,4 @@ class TurrisGreylistParserBot(Bot):
         self.acknowledge_message()
 
 
-if __name__ == "__main__":
-    bot = TurrisGreylistParserBot(sys.argv[1])
-    bot.start()
+BOT = TurrisGreylistParserBot

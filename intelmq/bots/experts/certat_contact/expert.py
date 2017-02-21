@@ -14,7 +14,6 @@ Options:
 &bKeepLoglines=off	Keep original log lines (separated by "#")
 &sep={TAB, comma, semicolon, pipe}  	Separator for the (output) CSV format
 """
-import sys
 
 import requests
 
@@ -58,6 +57,4 @@ class CERTatContactExpertBot(Bot):
         self.acknowledge_message()
 
 
-if __name__ == "__main__":
-    bot = CERTatContactExpertBot(sys.argv[1])
-    bot.start()
+BOT = CERTatContactExpertBot

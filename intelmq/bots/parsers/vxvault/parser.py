@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
-import sys
 from urllib.parse import urlparse
 
 from intelmq.lib import utils
 from intelmq.lib.bot import ParserBot
-from intelmq.lib.harmonization import IPAddress
 
 
 class VXVaultParserBot(ParserBot):
@@ -30,9 +28,7 @@ class VXVaultParserBot(ParserBot):
 
         event = self.new_event(report)
 
-        if IPAddress.is_valid(hostname):
-            event.add("source.ip", hostname)
-        else:
+        if not event.add("source.ip", hostname, raise_failure=False):
             event.add("source.fqdn", hostname)
 
         event.add('classification.type', 'malware')
@@ -48,6 +44,4 @@ class VXVaultParserBot(ParserBot):
         return '\n'.join(self.tempdata + [line])
 
 
-if __name__ == "__main__":
-    bot = VXVaultParserBot(sys.argv[1])
-    bot.start()
+BOT = VXVaultParserBot

@@ -5,9 +5,13 @@
 3. [Experts](#experts)
 4. [Outputs](#outputs)
 
-All Bots can be extended with an `enabled` parameter in `runtime.conf`. If the parameter is set to `True`
-(which is assumed as defaut if it is missing) the bot will start. If the parameter was set to `False`, the
-Bot will not start, and terminate immediately. Nevertheless you will be informed about this in the bots' log file.
+By default all of the bots are started when you start the whole botnet, however there is a possibility to 
+*disable* a bot. This means that the bot will not start every time you start the botnet, but you can start 
+and stop the bot if you specify the bot explicitly. To disable a bot, add the following to your 
+`runtime.conf`: `"enabled": false`. Be aware that this is **not** a normal parameter (like the others 
+described in this file). It is set outside of the `parameters` object in `runtime.conf`. Check the 
+[User-Guide](./User-Guide.md) for an example.
+
 
 <a name="collectors"></a>
 ## Collectors
@@ -29,6 +33,7 @@ Bot will not start, and terminate immediately. Nevertheless you will be informed
 * `http_verify_cert`: path to trusted CA bundle or directory, `false` to ignore verifying SSL certificates,  or `true` (default) to verify SSL certificates
 * `ssl_client_certificate`: SSL client certificate to use.
 * `http_header`: HTTP request headers
+* `http_timeout`: Seconds for read and connect timeout. Can be one float (applies for both timeouts) or a tuple of two floats. Default: 60 seconds. See also https://requests.readthedocs.io/en/master/user/advanced/#timeouts
 
 
 
@@ -48,6 +53,27 @@ Bot will not start, and terminate immediately. Nevertheless you will be informed
 * **HTTP parameters** (see above)
 * `http_url`: location of information resource (e.g. https://feodotracker.abuse.ch/blocklist/?download=domainblocklist)
 
+
+* * *
+
+### Generic URL Stream Fetcher
+
+
+#### Information:
+* `name:` intelmq.bots.collectors.http.collector_http_stream
+* `lookup:` yes
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Opens a streaming connection to the URL and sends the received lines.
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* **HTTP parameters** (see above)
+* `http_url`: location of HTTP streaming resource
+* `strip_lines`: boolean, if single lines should be stripped (removing whitespace from the beginning and the end of the line)
+
+If the stream is interrupted, the connection will be aborted using the timeout parameter. Then, an error will be thrown and rate_limit applies if not null.
 
 * * *
 
@@ -287,7 +313,7 @@ FIXME
 * `name:` cymru-whois
 * `lookup:` cymru dns
 * `public:` yes
-* `cache (redis db):` 6
+* `cache (redis db):` 5
 * `description:` IP to geolocation, ASN, BGP prefix
 
 #### Configuration Parameters:
@@ -302,12 +328,12 @@ FIXME
 * `name:` deduplicator
 * `lookup:` redis cache
 * `public:` yes
-* `cache (redis db):` 7
+* `cache (redis db):` 6
 * `description:` message deduplicator
 
 #### Configuration Parameters:
 
-FIXME
+Please check this [README](../intelmq/bots/experts/deduplicator/README.md) file.
 
 * * *
 
@@ -598,9 +624,12 @@ from your installation.
 
 #### Configuration Parameters:
 
-* `auth_token`: FIXME
-* `auth_token_name`: FIXME
-* `host`: FIXME
+* `auth_token`: the user name / http header key
+* `auth_token_name`: the password / http header value
+* `auth_type`: one of: `"http_basic_auth"`, `"http_header"`
+* `hierarchical_output`: boolean
+* `host`: destination URL
+* `use_json`: boolean
 
 
 * * *
@@ -617,5 +646,7 @@ from your installation.
 
 #### Configuration Parameters:
 
-* `ip`: FIXME
-* `port`: FIXME
+* `ip`: IP of destination server
+* `hierarchical_output`: true for a nested JSON, false for a flat JSON.
+* `port`: port of destination server
+* `separator`: separator of messages

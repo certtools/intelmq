@@ -10,7 +10,6 @@
 #
 #      (1) site
 """
-import sys
 
 import dateutil
 
@@ -43,6 +42,5 @@ class DshieldDomainParserBot(Bot):
             self.send_message(event)
         self.acknowledge_message()
 
-if __name__ == "__main__":
-    bot = DshieldDomainParserBot(sys.argv[1])
-    bot.start()
+
+BOT = DshieldDomainParserBot

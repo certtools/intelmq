@@ -5,7 +5,6 @@ identifiers and the values are lists of domains.
 """
 
 import json
-import sys
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
@@ -119,13 +118,13 @@ class N6StompParserBot(Bot):
         if dict_report["category"] is not None:
             event.add("classification.taxonomy",
                       mapping[dict_report["category"]]["taxonomy"],
-                      force=True)
+                      overwrite=True)
             event.add("classification.type",
                       mapping[dict_report["category"]]["type"],
-                      force=True)
+                      overwrite=True)
             event.add("classification.identifier",
                       mapping[dict_report["category"]]["identifier"],
-                      force=True)
+                      overwrite=True)
 
         if extra:
             event.add("extra", extra)
@@ -157,6 +156,4 @@ class N6StompParserBot(Bot):
         self.acknowledge_message()
 
 
-if __name__ == "__main__":
-    bot = N6StompParserBot(sys.argv[1])
-    bot.start()
+BOT = N6StompParserBot
