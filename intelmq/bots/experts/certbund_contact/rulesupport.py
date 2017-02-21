@@ -1,5 +1,6 @@
 from contextlib import contextmanager
 from collections import defaultdict
+from itertools import chain
 
 from intelmq.bots.experts.certbund_contact.eventjson import \
      get_certbund_contacts, set_certbund_directives
@@ -51,25 +52,30 @@ class Contact:
 
 class Match:
 
-    def __init__(self, field, managed, organisations, address=None):
+    def __init__(self, field, managed, organisations, annotations,
+                 address=None):
         self.field = field
         self.managed = managed
         self.organisations = organisations
+        self.annotations = annotations
         self.address = address
 
     def __repr__(self):
-        return ("Match(field=%r, managed=%r, organisations=%r, address=%r)"
-                % (self.field, self.managed, self.organisations, self.address))
+        return ("Match(field=%r, managed=%r, organisations=%r, annotations=%r,"
+                " address=%r)"
+                % (self.field, self.managed, self.organisations,
+                   self.annotations, self.address))
 
     def __eq__(self, other):
         return (self.field == other.field
                 and self.managed == other.managed
                 and self.organisations == other.organisations
+                and self.annotations == other.annotations
                 and self.address == other.address)
 
     def __hash__(self):
         return hash((self.field, self.managed, tuple(self.organisations),
-                     self.address))
+                     tuple(self.annotations), self.address))
 
     @classmethod
     def from_json(cls, jsondict):
@@ -81,6 +87,8 @@ class Match:
         return cls(field=field,
                    managed=jsondict["managed"],
                    organisations=jsondict["organisations"],
+                   annotations=[annotations.from_json(a)
+                                for a in jsondict["annotations"]],
                    address=address)
 
 
@@ -178,8 +186,8 @@ class Context:
 
     def all_annotations(self):
         """Return an iterator over all contact annotations."""
-        for organisation in self.organisations:
-            for annotation in organisation.annotations:
+        for item in chain(self.organisations, self.matches):
+            for annotation in item.annotations:
                 yield annotation
 
     def lookup_organisation(self, orgid):

@@ -35,7 +35,8 @@ def build_test_event(contact_descriptions, section):
                               "sector": None})
         for field in fields:
             matches.append({"field": field, "managed": managed,
-                            "organisations": [orgid], "address": None})
+                            "organisations": [orgid], "address": None,
+                            "annotations": []})
 
     event = Event()
     set_certbund_contacts(event, section,
