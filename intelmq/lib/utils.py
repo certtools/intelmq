@@ -193,6 +193,21 @@ class FileHandler(logging.FileHandler):
             raise
 
 
+class StreamHandler(logging.StreamHandler):
+    def emit(self, record):
+        try:
+            msg = self.format(record)
+            if record.levelno < 30:  # Lower than warning (debug, info)
+                stream = sys.stdout
+            else:  # (warning, error, critical)
+                stream = sys.stderr
+            stream.write(msg)
+            stream.write(self.terminator)
+            self.flush()
+        except Exception:
+            self.handleError(record)
+
+
 def log(name: str, log_path: str=intelmq.DEFAULT_LOGGING_PATH, log_level: str="DEBUG",
         stream: Union[None, object]=None, syslog: Union[bool, str, list, tuple]=None):
     """
@@ -238,7 +253,7 @@ def log(name: str, log_path: str=intelmq.DEFAULT_LOGGING_PATH, log_level: str="D
     if stream or stream is None:
         console_formatter = logging.Formatter(LOG_FORMAT_STREAM)
         if stream is None:
-            console_handler = logging.StreamHandler(sys.stderr)
+            console_handler = StreamHandler()
         else:
             console_handler = logging.StreamHandler(stream)
         console_handler.setFormatter(console_formatter)
