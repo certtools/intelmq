@@ -437,7 +437,7 @@ class Bot(object):
                              "{!r}.".format(self.__bot_id))
 
     def __log_configuration_parameter(self, config_name, option, value):
-        if "password" in option:
+        if "password" in option or "token" in option:
             value = "HIDDEN"
 
         message = "{} configuration: parameter {!r} loaded with value {!r}."\
