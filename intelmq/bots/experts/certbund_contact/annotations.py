@@ -10,6 +10,12 @@ class Tag:
     def __init__(self, value):
         self.value = value
 
+    def __eq__(self, other):
+        return self.value == other.value
+
+    def __hash__(self):
+        return hash(self.value)
+
     @classmethod
     def from_json(cls, json_obj):
         assert json_obj["type"] == "tag"
@@ -34,6 +40,12 @@ class Inhibition:
 
     def __init__(self, condition):
         self.condition = condition
+
+    def __eq__(self, other):
+        return self.condition == other.condition
+
+    def __hash__(self):
+        return hash(self.condition)
 
     @classmethod
     def from_json(cls, json_obj):
@@ -60,6 +72,12 @@ class Eq(Expr):
         self.exp1 = exp1
         self.exp2 = exp2
 
+    def __eq__(self, other):
+        return self.exp1 == other.exp1 and self.exp2 == other.exp2
+
+    def __hash__(self):
+        return hash((self.exp1, self.exp2))
+
     @classmethod
     def from_json(cls, json_obj):
         assert json_obj[0] == "eq"
@@ -78,6 +96,12 @@ class EventFieldReference(Expr):
 
     def __init__(self, fieldname):
         self.fieldname = fieldname
+
+    def __eq__(self, other):
+        return self.fieldname == other.fieldname
+
+    def __hash__(self):
+        return hash(self.fieldname)
 
     @classmethod
     def from_json(cls, json_obj):
@@ -100,6 +124,12 @@ class Const(Expr):
 
     def __init__(self, value):
         self.value = value
+
+    def __eq__(self, other):
+        return self.value == other.value
+
+    def __hash__(self):
+        return hash(self.value)
 
     @classmethod
     def from_json(cls, json_obj):
