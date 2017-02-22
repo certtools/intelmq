@@ -76,12 +76,6 @@ class Bot(object):
             self.__load_pipeline_configuration()
             self.__load_harmonization_configuration()
 
-            if not getattr(self.parameters, 'enabled', True):
-                self.logger.warn('The bot was disabled by configuration. '
-                                 'It will not be started as long as this '
-                                 'configuration is present.')
-                self.stop()
-
             self.init()
 
             self.__sighup = False
@@ -385,10 +379,7 @@ class Bot(object):
 
         for option, value in config.items():
             setattr(self.parameters, option, value)
-            self.__log_buffer.append(('debug',
-                                      "Defaults configuration: parameter {!r} "
-                                      "loaded  with value {!r}.".format(option,
-                                                                        value)))
+            self.__log_configuration_parameter("defaults", option, value)
 
     def __load_system_configuration(self):
         if os.path.exists(SYSTEM_CONF_FILE):
@@ -401,9 +392,7 @@ class Bot(object):
 
             for option, value in config.items():
                 setattr(self.parameters, option, value)
-                self.__log_buffer.append(('debug',
-                                          "System configuration: parameter {!r} "
-                                          "loaded  with value {!r}.".format(option, value)))
+                self.__log_configuration_parameter("system", option, value)
 
     def __load_runtime_configuration(self):
         self.logger.debug("Loading runtime configuration from %r." % RUNTIME_CONF_FILE)
@@ -417,8 +406,7 @@ class Bot(object):
                 self.logger.warning('Old runtime configuration format found.')
             for option, value in params.items():
                 setattr(self.parameters, option, value)
-                self.logger.debug("Runtime configuration: parameter {!r} "
-                                  "loaded with value {!r}.".format(option, value))
+                self.__log_configuration_parameter("runtime", option, value)
 
     def __load_pipeline_configuration(self):
         self.logger.debug("Loading pipeline configuration from %r." % PIPELINE_CONF_FILE)
@@ -441,6 +429,18 @@ class Bot(object):
             raise ValueError("Pipeline configuration: no key "
                              "{!r}.".format(self.__bot_id))
 
+    def __log_configuration_parameter(self, config_name, option, value):
+        if "password" in option:
+            value = "HIDDEN"
+
+        message = "{} configuration: parameter {!r} loaded with value {!r}."\
+            .format(config_name.title(), option, value)
+
+        if self.logger:
+            self.logger.debug(message)
+        else:
+            self.__log_buffer.append(("debug", message))
+
     def __load_harmonization_configuration(self):
         self.logger.debug("Loading Harmonization configuration from %r." % HARMONIZATION_CONF_FILE)
         self.harmonization = utils.load_configuration(HARMONIZATION_CONF_FILE)
@@ -457,6 +457,8 @@ class Bot(object):
 
 
 class ParserBot(Bot):
+    csv_params = {}
+    ignore_lines_starting = []
 
     def __init__(self, bot_id):
         super(ParserBot, self).__init__(bot_id=bot_id)
@@ -469,7 +471,12 @@ class ParserBot(Bot):
         """
         A basic CSV parser.
         """
-        raw_report = utils.base64_decode(report.get("raw"))
+        raw_report = utils.base64_decode(report.get("raw")).strip()
+        if self.ignore_lines_starting:
+            raw_report = '\n'.join([line for line in raw_report.splitlines()
+                                    if not any([line.startswith(prefix) for prefix
+                                                in self.ignore_lines_starting])])
+
         for line in csv.reader(io.StringIO(raw_report)):
             yield line
 
@@ -477,7 +484,12 @@ class ParserBot(Bot):
         """
         A basic CSV Dictionary parser.
         """
-        raw_report = utils.base64_decode(report.get("raw"))
+        raw_report = utils.base64_decode(report.get("raw")).strip()
+        if self.ignore_lines_starting:
+            raw_report = '\n'.join([line for line in raw_report.splitlines()
+                                    if not any([line.startswith(prefix) for prefix
+                                                in self.ignore_lines_starting])])
+
         for line in csv.DictReader(io.StringIO(raw_report)):
             yield line
 
@@ -493,7 +505,9 @@ class ParserBot(Bot):
             parse = ParserBot.parse_csv
         """
         for line in utils.base64_decode(report.get("raw")).splitlines():
-            yield line.strip()
+            line = line.strip()
+            if not any([line.startswith(prefix) for prefix in self.ignore_lines_starting]):
+                yield line
 
     def parse_line(self, line, report):
         """
@@ -547,8 +561,6 @@ class ParserBot(Bot):
         writer = csv.writer(out)
         writer.writerow(line)
         return out.getvalue()
-
-    csv_params = {}
 
     def recover_line_csv_dict(self, line):
         """
@@ -621,6 +633,11 @@ class CollectorBot(Bot):
         if self.parameters.http_proxy and self.parameters.https_proxy:
             self.proxy = {'http': self.parameters.http_proxy,
                           'https': self.parameters.https_proxy}
+        elif self.parameters.http_proxy or self.parameters.https_proxy:
+            self.logger.warning('Only {}_proxy seems to be set.'
+                                'Both http and https proxies must be set.'
+                                .format('http' if self.parameters.http_proxy else 'https'))
+            self.proxy = None
         else:
             self.proxy = None
 

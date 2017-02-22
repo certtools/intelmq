@@ -5,6 +5,7 @@ python:
   - "3.3"
   - "3.4"
   - "3.5"
+  - "3.6"
 install:
   - sudo apt-get install dpkg-dev dh-python python-setuptools python3-setuptools python3-all debhelper quilt
   - pip install -r REQUIREMENTS

@@ -17,7 +17,6 @@ import json
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.exceptions import InvalidValue
 from intelmq.lib.harmonization import DateTime
 
 
@@ -25,9 +24,6 @@ class BitsightParserBot(Bot):
 
     def process(self):
         report = self.receive_message()
-        if report is None or not report.contains('raw'):
-            self.acknowledge_message()
-            return
         raw_report = json.loads(utils.base64_decode(report.get('raw')))
         extra = {}
         event = self.new_event(report)
@@ -50,10 +46,7 @@ class BitsightParserBot(Bot):
                 if "server_port" in value:
                     event.add('destination.port', value["server_port"])
                 if "server_name" in value:
-                    try:
-                        event.add('destination.fqdn', value["server_name"])
-                    except InvalidValue:
-                        pass
+                    event.add('destination.fqdn', value["server_name"], raise_failure=False)
                 if "request_method" in value:
                     extra['request_method'] = value["request_method"]
                 if extra:

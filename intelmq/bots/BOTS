@@ -36,8 +36,8 @@
                 "feed": "",
                 "provider": "",
                 "folder": "INBOX",
-                "http_password": "<password>",
-                "http_username": "<user>",
+                "http_password": null,
+                "http_username": null,
                 "mail_host": "<host>",
                 "mail_password": "<password>",
                 "mail_ssl": true,
@@ -109,12 +109,15 @@
                 "pass_full_xml": false,
                 "rate_limit": 3600,
                 "strip_message": true,
-                "xmpp_password": "xmpp password",
-                "xmpp_room": "xmpp room",
-                "xmpp_room_nick": "xmpp room nick",
-                "xmpp_room_password": "xmpp room password",
-                "xmpp_server": "xmpp server",
-                "xmpp_user": "xmpp username"
+                "xmpp_user": "<xmpp username>",
+                "xmpp_server": "<xmpp server>",
+                "xmpp_password": "<xmpp password>",
+                "xmpp_room": null,
+                "xmpp_room_nick": null,
+                "xmpp_room_password": null,
+                "xmpp_userlist": null,
+                "xmpp_whitelist_mode": false,
+                "use_muc": false
             }
         },
         "AlienVault OTX": {
@@ -222,14 +225,9 @@
             "module": "intelmq.bots.parsers.ci_army.parser",
             "parameters": {}
         },
-        "CleanMX Phishing": {
-            "description": "CleanMX Phishing Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.cleanmx.parser_phishing",
-            "parameters": {}
-        },
-        "CleanMX Virus": {
-            "description": "CleanMX Virus Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.cleanmx.parser_virus",
+        "CleanMX": {
+            "description": "CleanMX Parser is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.cleanmx.parser",
             "parameters": {}
         },
         "Cymru Full Bogons": {
@@ -307,7 +305,7 @@
         },
         "Malc0de": {
             "description": "Malc0de Parser is the bot responsible to parse the IP Blacklist and either Windows Format or Bind Format reports and sanitize the information.",
-            "module": "intelmq.bots.parsers.malc0de.parser_domain_blacklist",
+            "module": "intelmq.bots.parsers.malc0de.parser",
             "parameters": {}
         },
         "Malware Domain List": {
@@ -353,6 +351,11 @@
         "PhishTank": {
             "description": "PhishTank Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.phishtank.parser",
+            "parameters": {}
+        },
+        "Proxyspy": {
+            "description": "Proxyspy Parser is the bot responsible to parse the Proxyspy report and sanitize the information.",
+            "module": "intelmq.bots.parsers.proxyspy.parser",
             "parameters": {}
         },
         "ShadowServer": {
@@ -601,17 +604,6 @@
                 "hierarchical_output": false
             }
         },
-        "IntelMQ Mailer": {
-            "description": "IntelMQ Mailer is the bot responsible to send events to a MongoDB database.",
-            "module": "intelmq.bots.outputs.intelmqmailer.output",
-            "parameters": {
-                "collection": "<collection>",
-                "database": "<database>",
-                "hierarchical_output": false,
-                "host": "<ip>",
-                "port": "<port>"
-            }
-        },
         "MongoDB": {
             "description": "MongoDB is the bot responsible to send events to a MongoDB database.",
             "module": "intelmq.bots.outputs.mongodb.output",
@@ -686,11 +678,15 @@
             "parameters": {
                 "ca_certs": "/etc/ssl/certs/ca-certificates.crt",
                 "hierarchical_output": false,
-                "xmpp_password": "xmpp password",
-                "xmpp_server": "xmpp server",
-                "xmpp_to_server": "destination server",
-                "xmpp_to_user": "destination username",
-                "xmpp_user": "xmpp username"
+                "xmpp_user": "<xmpp username>",
+                "xmpp_server": "<xmpp server>",
+                "xmpp_password": "<xmpp password>",
+                "xmpp_to_user": "<destination username>",
+                "xmpp_to_server": "<destination server>",
+                "xmpp_room": null,
+                "xmpp_room_nick": null,
+                "xmpp_room_password": null,
+                "use_muc": false
             }
         }
     }
