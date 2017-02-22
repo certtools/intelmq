@@ -12,12 +12,16 @@ with open(os.path.join(os.path.dirname(__file__), 'greylist-latest.csv'), 'rb') 
 OUTPUT1 = {'__type': 'Event',
            'classification.type': 'scanner',
            'event_description.text': 'dns',
+           'source.geolocation.cc': 'AU',
+           'source.asn': 15169,
            'raw': 'MS4xLjEuMixBVSxkbnMsMTUxNjk=',
            'source.ip': '1.1.1.2'}
 OUTPUT2 = {'__type': 'Event',
            'classification.type': 'scanner',
            'event_description.text': 'telnet',
            'raw': 'MS4yMC45Ni4xNDIsVEgsdGVsbmV0LDU2MTIw',
+           'source.geolocation.cc': 'TH',
+           'source.asn': 56120,
            'source.ip': '1.20.96.142'}
 
 

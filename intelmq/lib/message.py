@@ -98,22 +98,90 @@ class Message(dict):
         elif isinstance(message, tuple):
             iterable = message
         for key, value in iterable:
-            try:
-                self.add(key, value, sanitize=False)
-            except exceptions.InvalidValue:
+            if not self.add(key, value, sanitize=False, raise_failure=False):
                 self.add(key, value, sanitize=True)
 
     def __setitem__(self, key, value):
         self.add(key, value)
 
-    def add(self, key, value, sanitize=True, force=False, ignore=()):
-        if not force and key in self:
+    def is_valid(self, key, value, sanitize=True):
+        """
+        Checks if a value is valid for the key (after sanitation).
+
+        Parameters
+        ==========
+        key : string
+        value : string
+        sanitize : boolean
+            Sanitation of harmonization type will be called before validation (default: True)
+
+        Returns
+        =======
+        retval : boolean
+
+        Raises
+        ======
+        intelmq.lib.exceptions.InvalidKey: if key is invalid.
+
+        """
+        if not self.__is_valid_key(key):
+            raise exceptions.InvalidKey(key)
+
+        if value is None or value in ["", "-", "N/A"]:
+            return False
+        if sanitize:
+            value = self.__sanitize_value(key, value)
+        valid = self.__is_valid_value(key, value)
+        if valid[0]:
+            return True
+        return False
+
+    def add(self, key, value, sanitize=True, force=False, overwrite=False, ignore=(),
+            raise_failure=True):
+        """
+        Add a value for the key (after sanitation).
+
+        Parameters
+        ==========
+        key : string
+            Key as defined in the harmonization
+        value : string
+            A valid value as defined in the harmonization
+        sanitize : boolean
+            Sanitation of harmonization type will be called before validation (default: True)
+        force : boolean
+            Deprecated, use overwrite (default: False)
+        overwrite : boolean
+            Overwrite an existing value if it already exists (default: False)
+        ignore : list, tuple
+            List of values to ignore, deprecated (default: ())
+        raise_failure : boolean
+            If a intelmq.lib.exceptions.InvalidValue should be raisen for invalid values
+            (default: True). If false, the return parameter will be False in case of invalid
+            values.
+
+        Returns
+        =======
+        retval : boolean
+            True if the value has been added
+            False if the value is invalid and raise_failure is False
+
+        Raises
+        ======
+        intelmq.lib.exceptions.KeyExists: If key exists and won't be overwritten explcitly.
+        intelmq.lib.exceptions.InvalidKey: if key is invalid.
+        intelmq.lib.exceptions.InvalidArgument: if ignore is not list or tuple.
+        intelmq.lib.exceptions.InvalidValue: If value is not valid for the given key and
+            raise_failure is True.
+        """
+        overwrite = force or overwrite
+        if force:
+            warnings.warn('The force-argument is deprecated by overwrite and will be removed in'
+                          '1.0.', DeprecationWarning)
+        if not overwrite and key in self:
             raise exceptions.KeyExists(key)
 
-        if value is None or value == "":
-            return
-
-        if value in ["-", "N/A"]:
+        if value is None or value in ["", "-", "N/A"]:
             return
 
         if not self.__is_valid_key(key):
@@ -135,13 +203,20 @@ class Message(dict):
             old_value = value
             value = self.__sanitize_value(key, value)
             if value is None:
-                raise exceptions.InvalidValue(key, old_value)
+                if raise_failure:
+                    raise exceptions.InvalidValue(key, old_value)
+                else:
+                    return False
 
         valid_value = self.__is_valid_value(key, value)
         if not valid_value[0]:
-            raise exceptions.InvalidValue(key, value, reason=valid_value[1])
+            if raise_failure:
+                raise exceptions.InvalidValue(key, value, reason=valid_value[1])
+            else:
+                return False
 
         super(Message, self).__setitem__(key, value)
+        return True
 
     def update(self, key, value, sanitize=True):
         warnings.warn('update(...) will be changed to dict.update() in 1.0. '
@@ -152,9 +227,11 @@ class Message(dict):
     def change(self, key, value, sanitize=True):
         if key not in self:
             raise exceptions.KeyNotExists(key)
-        self.add(key, value, force=True, sanitize=sanitize)
+        self.add(key, value, overwrite=True, sanitize=sanitize)
 
     def contains(self, key):
+        warnings.warn('The contains-method will be removed in 1.0.',
+                      DeprecationWarning)
         return key in self
 
     def finditems(self, keyword):

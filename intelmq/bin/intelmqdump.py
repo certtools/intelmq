@@ -128,7 +128,7 @@ def main():
     parser.add_argument('botid', metavar='botid', nargs='?',
                         default=None, help='botid to inspect dumps of')
     args = parser.parse_args()
-    ctl = intelmqctl.IntelMQContoller()
+    ctl = intelmqctl.IntelMQController()
 
     if args.botid is None:
         filenames = glob.glob(os.path.join(DEFAULT_LOGGING_PATH, '*.dump'))
