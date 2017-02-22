@@ -701,6 +701,10 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         elif self.parameters.logging_handler == 'syslog':
             bot_log_path = '/var/log/syslog'
 
+        if not os.access(bot_log_path, os.R_OK):
+            self.logger.error('File %r is not readable.' % bot_log_path)
+            return 'error'
+
         messages = list()
 
         message_overflow = ''
