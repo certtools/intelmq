@@ -12,6 +12,7 @@ reverse_readline
 parse_logline
 """
 import base64
+import dateutil.parser
 import json
 import logging
 import logging.handlers
@@ -23,6 +24,7 @@ import traceback
 from typing import Sequence, Union
 
 import intelmq
+import pytz
 
 __all__ = ['base64_decode', 'base64_encode', 'decode', 'encode',
            'load_configuration', 'load_parameters', 'log', 'parse_logline',
@@ -32,12 +34,15 @@ __all__ = ['base64_decode', 'base64_encode', 'decode', 'encode',
 # Used loglines format
 LOG_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 LOG_FORMAT_STREAM = '%(name)s: %(message)s'
+LOG_FORMAT_SYSLOG = '%(name)s: %(levelname)s %(message)s'
 
 # Regex for parsing the above LOG_FORMAT
 LOG_REGEX = (r'^(?P<date>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d+) -'
              r' (?P<bot_id>[-\w]+) - '
              r'(?P<log_level>[A-Z]+) - '
              r'(?P<message>.+)$')
+SYSLOG_REGEX = ('^(?P<date>\w{3} \d{2} \d{2}:\d{2}:\d{2}) (?P<hostname>[-\.\w]+) '
+                '(?P<bot_id>[-\w]+): (?P<log_level>[A-Z]+) (?P<message>.+)$')
 
 
 class Parameters(object):
@@ -231,6 +236,7 @@ def log(name: str, log_path: str=intelmq.DEFAULT_LOGGING_PATH, log_level: str="D
     See also:
         LOG_FORMAT: Default log format for file handler
         LOG_FORMAT_STREAM: Default log format for stream handler
+        LOG_FORMAT_SYSLOG: Default log format for syslog
     """
     logger = logging.getLogger(name)
     logger.setLevel(log_level)
@@ -238,16 +244,16 @@ def log(name: str, log_path: str=intelmq.DEFAULT_LOGGING_PATH, log_level: str="D
     if log_path and not syslog:
         handler = FileHandler("%s/%s.log" % (log_path, name))
         handler.setLevel(log_level)
+        handler.setFormatter(logging.Formatter(LOG_FORMAT))
     elif syslog:
         if type(syslog) is tuple or type(syslog) is list:
             handler = logging.handlers.SysLogHandler(address=tuple(syslog))
         else:
             handler = logging.handlers.SysLogHandler(address=syslog)
         handler.setLevel(log_level)
+        handler.setFormatter(logging.Formatter(LOG_FORMAT_SYSLOG))
 
     if log_path or syslog:
-        formatter = logging.Formatter(LOG_FORMAT)
-        handler.setFormatter(formatter)
         logger.addHandler(handler)
 
     if stream or stream is None:
@@ -291,22 +297,36 @@ def reverse_readline(filename: str, buf_size=100000) -> str:
         yield line[::-1]
 
 
-def parse_logline(logline: str) -> dict:
+def parse_logline(logline: str, regex: str=LOG_REGEX) -> dict:
     """
     Parses the given logline string into its components.
 
     Parameters:
         logline: logline to be parsed
+        regex: The regular expression used to parse the line
 
     Returns:
         result: dictionary with keys: ['date', 'bot_id', 'log_level', 'message']
+
+    See also:
+        LOG_REGEX: Regular expressen for default log format of file handler
+        SYSLOG_REGEX: Regular expressen for log format of syslog
     """
 
-    match = re.match(LOG_REGEX, logline)
+    match = re.match(regex, logline)
     fields = ("date", "bot_id", "log_level", "message")
 
     try:
-        return dict(list(zip(fields, match.group(*fields))))
+        value = dict(list(zip(fields, match.group(*fields))))
+        date = dateutil.parser.parse(value['date'])
+        try:
+            date = date.astimezone(pytz.utc)
+        except ValueError:  # astimezone() cannot be applied to a naive datetime
+            pass
+        value['date'] = date.isoformat()
+        if value['date'].endswith('+00:00'):
+            value['date'] = value['date'][:-6]
+        return value
     except AttributeError:
         return logline
 

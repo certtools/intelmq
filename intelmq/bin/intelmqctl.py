@@ -692,11 +692,14 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             return 'error'
 
     def read_bot_log(self, bot_id, log_level, number_of_lines):
-        bot_log_path = os.path.join(self.parameters.logging_path,
-                                    bot_id + '.log')
-        if not os.path.isfile(bot_log_path):
-            logger.error("Log path not found: {}".format(bot_log_path))
-            return []
+        if self.parameters.logging_handler == 'file':
+            bot_log_path = os.path.join(self.parameters.logging_path,
+                                        bot_id + '.log')
+            if not os.path.isfile(bot_log_path):
+                logger.error("Log path not found: {}".format(bot_log_path))
+                return []
+        elif self.parameters.logging_handler == 'syslog':
+            bot_log_path = '/var/log/syslog'
 
         messages = list()
 
@@ -704,12 +707,18 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         message_count = 0
 
         for line in utils.reverse_readline(bot_log_path):
-            log_message = utils.parse_logline(line)
+            if self.parameters.logging_handler == 'file':
+                log_message = utils.parse_logline(line)
+            if self.parameters.logging_handler == 'syslog':
+                log_message = utils.parse_logline(line, regex=utils.SYSLOG_REGEX)
 
             if type(log_message) is not dict:
-                message_overflow = '\n'.join([line, message_overflow])
+                if self.parameters.logging_handler == 'file':
+                    message_overflow = '\n'.join([line, message_overflow])
                 continue
             if LOG_LEVEL[log_message['log_level']] < LOG_LEVEL[log_level]:
+                continue
+            if log_message['bot_id'] != bot_id:
                 continue
 
             if message_overflow:
