@@ -169,7 +169,7 @@ def lookup_contacts(cur, managed, asn, ip, fqdn):
                                      JOIN contact{0} c ON c.id = r2.contact_id
                                     WHERE r2.organisation_id
                                               = r.organisation_id) sub)
-                 FROM role r
+                 FROM role{0} r
                  GROUP BY r.organisation_id),
 
          -- All matched organisations as rows that can be easily
