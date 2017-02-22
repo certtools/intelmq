@@ -716,14 +716,17 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 if self.parameters.logging_handler == 'file':
                     message_overflow = '\n'.join([line, message_overflow])
                 continue
-            if LOG_LEVEL[log_message['log_level']] < LOG_LEVEL[log_level]:
-                continue
             if log_message['bot_id'] != bot_id:
+                continue
+            if LOG_LEVEL[log_message['log_level']] < LOG_LEVEL[log_level]:
                 continue
 
             if message_overflow:
                 log_message['extended_message'] = message_overflow
                 message_overflow = ''
+
+            if self.parameters.logging_handler == 'syslog':
+                log_message['message'] = log_message['message'].replace('#012', '\n')
 
             message_count += 1
             messages.append(log_message)
