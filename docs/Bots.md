@@ -367,14 +367,14 @@ FIXME
 
 * * *
 
-### Reducer Bot
+### Field Reducer Bot
 
 #### Information:
 * `name:` reducer
 * `lookup:` none
 * `public:` yes
 * `cache (redis db):` none
-* `description:` The reducer bot is capable of removing fields from events.
+* `description:` The field reducer bot is capable of removing fields from events.
 
 #### Configuration Parameters:
 * `type` - either `"whitelist"` or `"blacklist"`

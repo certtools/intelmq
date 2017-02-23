@@ -7,7 +7,7 @@ from intelmq.lib.bot import Bot
 from intelmq.lib.message import Event
 
 
-class ReducerExpertBot(Bot):
+class FieldReducerExpertBot(Bot):
 
     def init(self):
         self.type = self.parameters.type
@@ -35,4 +35,4 @@ class ReducerExpertBot(Bot):
         self.acknowledge_message()
 
 
-BOT = ReducerExpertBot
+BOT = FieldReducerExpertBot

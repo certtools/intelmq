@@ -3,7 +3,7 @@
 import unittest
 
 import intelmq.lib.test as test
-from intelmq.bots.experts.reducer.expert import ReducerExpertBot
+from intelmq.bots.experts.field_reducer.expert import FieldReducerExpertBot
 
 EXAMPLE_INPUT = {"__type": "Event",
                  "classification.type": "defacement",
@@ -21,14 +21,14 @@ BLACKLIST_OUTPUT = {"__type": "Event",
                     }
 
 
-class TestReducerExpertBot(test.BotTestCase, unittest.TestCase):
+class TestFieldReducerExpertBot(test.BotTestCase, unittest.TestCase):
     """
-    A TestCase for ReducerExpertBot.
+    A TestCase for FieldReducerExpertBot.
     """
 
     @classmethod
     def set_bot(cls):
-        cls.bot_reference = ReducerExpertBot
+        cls.bot_reference = FieldReducerExpertBot
         cls.input_message = EXAMPLE_INPUT
         cls.sysconfig = {'type': 'whitelist', 'keys': ['time.source', 'time.observation']}
 
