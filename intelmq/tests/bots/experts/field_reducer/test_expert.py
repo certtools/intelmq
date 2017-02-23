@@ -7,12 +7,10 @@ from intelmq.bots.experts.field_reducer.expert import FieldReducerExpertBot
 
 EXAMPLE_INPUT = {"__type": "Event",
                  "classification.type": "defacement",
-                 "time.source": "2005-01-01T00:00:00+00:00",
                  "time.observation": "2015-09-12T00:00:00+00:00",
                  "feed.name": "test-feed",
                  }
 WHITELIST_OUTPUT = {"__type": "Event",
-                    "time.source": "2005-01-01T00:00:00+00:00",
                     "time.observation": "2015-09-12T00:00:00+00:00",
                     }
 BLACKLIST_OUTPUT = {"__type": "Event",

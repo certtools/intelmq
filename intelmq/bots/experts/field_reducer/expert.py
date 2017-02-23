@@ -24,7 +24,8 @@ class FieldReducerExpertBot(Bot):
         if self.type == 'whitelist':
             new_event = Event()
             for key in self.keys:
-                new_event.add(key, event[key], sanitize=False)
+                if key in event:
+                    new_event.add(key, event[key], sanitize=False)
             event = new_event
         else:
             for key in self.keys:
