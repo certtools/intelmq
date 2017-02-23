@@ -456,6 +456,14 @@
                 "redis_cache_ttl": "86400"
             }
         },
+        "Field Reducer": {
+            "description": "The field reducer bot is capable of removing fields from events.",
+            "module": "intelmq.bots.experts.filter.expert",
+            "parameters": {
+                "type": "<whitelist/blacklist>",
+                "keys": "<list of field names>"
+            }
+        },
         "Filter": {
             "description": "Filters out events depending on bot parameters specification (filter_key, filter_value, filter_action)",
             "module": "intelmq.bots.experts.filter.expert",
