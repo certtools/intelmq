@@ -458,7 +458,7 @@
         },
         "Field Reducer": {
             "description": "The field reducer bot is capable of removing fields from events.",
-            "module": "intelmq.bots.experts.filter.expert",
+            "module": "intelmq.bots.experts.field_reducer.expert",
             "parameters": {
                 "type": "<whitelist/blacklist>",
                 "keys": "<list of field names>"
