@@ -500,6 +500,13 @@
             "module": "intelmq.bots.experts.gethostbyname.expert",
             "parameters": {}
         },
+        "IDEA": {
+            "description": "Converts events into the IDEA format.",
+            "module": "intelmq.bots.experts.idea.expert",
+            "parameters": {
+                "test_mode": false
+            }
+        },
         "MaxMind GeoIP": {
             "description": "MaxMind GeoIP is the bot responsible for adding geolocation information to events (Country, City, Longitude, Latitude, etc..)",
             "module": "intelmq.bots.experts.maxmind_geoip.expert",
@@ -596,6 +603,17 @@
             "parameters": {
                 "file": "/opt/intelmq/var/lib/bots/file-output/events.txt",
                 "hierarchical_output": false
+            }
+        },
+        "Files": {
+            "description": "Files is the bot responsible for lockfree saving of events into separate files.",
+            "module": "intelmq.bots.outputs.files.output",
+            "parameters": {
+                "tmp": "/opt/intelmq/var/lib/bots/files-output/tmp",
+                "dir": "/opt/intelmq/var/lib/bots/files-output/incoming",
+                "suffix": ".json",
+                "hierarchical_output": false,
+                "single_key": "output"
             }
         },
         "MongoDB": {
