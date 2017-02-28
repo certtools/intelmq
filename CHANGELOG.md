@@ -1,8 +1,19 @@
 CHANGELOG
 ==========
 
-v1.0 (in development, master branch)
-----
+v1.0.0.dev7 (in development, master branch)
+-----------
+
+### Bot changes
+- ENH: added bots.experts.field_reducer.expert
+
+### Harmonization
+- New parameter and field named feed.documentation to link to documentation of the feed
+
+v1.0.0.dev6
+-----------
+
+Changes between 0.9 and 1.0.0.dev6
 
 ### General changes
 - Dropped support for Python 2, Python >= 3.3 is needed
@@ -105,7 +116,6 @@ v1.0 (in development, master branch)
 - added `malware.hash.(md5|sha1)`
 - New parameter and field named feed.accuracy to represent the accuracy of each feed
 - New parameter and field named feed.provider to document the name of the source of each feed
-- New parameter and field named feed.documentation to link to documentation of the feed
 - New field `classification.identifier`
 
 ### Known issues
@@ -118,66 +128,36 @@ v1.0 (in development, master branch)
 - logcheck example rules added
 - logrotate configuration added
 
------
 
+2016/06/18
+----------
 
-
-## 2015/06/03 (aaron)
-
-  * fixed the license to AGPL in setup.py
-  * moved back the docs/* files from the wiki repo to docs/. See #205.
-  * added python-zmq as a setup requirement in UserGuide . See #206
-
-
-
-
-## When did this happen? (XXX FIXME)
-
-* improvements in pipeline
-  FILE: lib/pipeline.py
-
+* improvements in pipeline:
   - PipelineFactory to give possibility to easily add a new broker (Redis, ZMQ, etc..)
   - Splitter feature: if this option is enable, will split the events in source queue to multiple destination queues
-
-
-
-* add different messages support
-  FILE: lib/message.py
-
+* add different messages support:
   - the system is flexible to define a new type of message like 'tweet' without change anything in bot.py, pipeline.py. Just need to add a new class in message.py and harmonization.conf
-
-
-
 * add harmonization support
-  FILE: lib/harmonization.py
-  FILE: conf/harmonization.conf
-
   - in harmonization.conf is possible to define the fields of a specific message in json format.
   - the harmonization.py has data types witch contains sanitize and validation methods that will make sure that the values are correct to be part of an event.
-
-
-
 * Error Handling
-  - multiple parameters in configuration which gives possibility to define how bot will handle some errors. Example of parameters:
-  "error_procedure" - retry or pass in case of error
-  "error_retry_delay" - time in seconds to retry
-  "error_max_retries" - number of retries
-  "error_log_message" - log or not the message in error log
-  "error_log_exception" - log or not the exception in error log
-  "error_dump_message" - log or not the message in dump log to be fixed and re-insert in pipeline
-
-
-
+ - multiple parameters in configuration which gives possibility to define how bot will handle some errors. Example of parameters:
+   - `error_procedure` - retry or pass in case of error
+   - `error_retry_delay` - time in seconds to retry
+   - `error_max_retries` - number of retries
+   - `error_log_message` - log or not the message in error log
+   - `error_log_exception` - log or not the exception in error log
+   - `error_dump_message` - log or not the message in dump log to be fixed and re-insert in pipeline
 * Exceptions
-  FILE: lib/exceptions.py
-
   - custom exceptions for IntelMQ
-
-
-
 * Defaults configurations
   - new configuration file to specify the default parameters which will be applied to all bots. Bots can overwrite the configurations.
-
-
-
 * New bots/feeds
+
+
+2015/06/03 (aaron)
+------------------
+
+  * fixed the license to AGPL in setup.py
+  * moved back the documentation from the wiki repo to `docs/`. See #205.
+  * added python-zmq as a setup requirement in UserGuide . See #206
