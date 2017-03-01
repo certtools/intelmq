@@ -13,6 +13,9 @@ See the changelog for a full list of changes.
 1.0.0.dev7 (in developement)
 ----------------------------
 
+### Configuration
+* The deduplicator expert requires a new parameter `filter_type`, the old previous default was `blacklist`.
+
 ### Postgres databases
 Use the following statement carefully to upgrade your database.
 Take care that no data will be lost, the statement may not be complete!

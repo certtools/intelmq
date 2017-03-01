@@ -87,7 +87,7 @@ Changes between 0.9 and 1.0.0.dev6
 - Consistent naming "overwrite" to switch overwriting capabilities of bots (as opposed to override)
 - Renamed `http_ssl_proxy` to `https_proxy`
 - parameter `hierarchical_output` for many output bots
-- deduplicator bot has a new parameter to configure deduplication mode
+- deduplicator bot has a new required parameter to configure deduplication mode `filter_type`
 - deduplicator bot key ignore_keys was renamed to filter_keys
 
 ### Harmonization
