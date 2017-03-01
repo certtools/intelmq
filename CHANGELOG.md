@@ -38,6 +38,8 @@ v1.0 (in development, master branch)
 - Renamed http_ssl_proxy to https_proxy
 - deduplicator bot has a new parameter to configure deduplication mode
 - deduplicator bot key ignore_keys was renamed to filter_keys
+- Since rev. eb860076bc52599e3a92bc35f7d1de72389089d0 The Mail-URL and the HTTP-Collector can be
+  configured to honor timeouts. This can be achieved by using the parameter `http_timeout_max_tries`
 
 ### Harmonization
 - ENH: Additional data types: integer, float and Boolean

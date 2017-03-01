@@ -11,6 +11,7 @@ http_verify_cert: boolean
 http_username, http_password: string
 http_proxy, https_proxy: string
 http_timeout: tuple of two floats or float
+http_timeout_max_tries: an integer depicting how often a connection attempt is retried
 """
 import io
 import zipfile
