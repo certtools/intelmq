@@ -202,9 +202,9 @@ class StreamHandler(logging.StreamHandler):
     def emit(self, record):
         try:
             msg = self.format(record)
-            if record.levelno < 30:  # Lower than warning (debug, info)
+            if record.levelno < logging.WARNING:  # debug, info
                 stream = sys.stdout
-            else:  # (warning, error, critical)
+            else:  # warning, error, critical
                 stream = sys.stderr
             stream.write(msg)
             stream.write(self.terminator)
