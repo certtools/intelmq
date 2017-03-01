@@ -71,7 +71,7 @@ class RTCollectorBot(CollectorBot):
                                     headers=self.http_header,
                                     verify=self.http_verify_cert,
                                     cert=self.ssl_client_cert,
-                                    timeout=self.http_timeout)
+                                    timeout=self.http_timeout_sec)
 
                 if resp.status_code // 100 != 2:
                     self.logger.error('HTTP response status code was {}.'

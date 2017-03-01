@@ -192,7 +192,8 @@ The parameter `http_timeout_max_tries` is of no use in this collector.
 * `url_regex`: regular expression of an URL to search for in the ticket
 * `attachment_regex`: regular expression of an attachment in the ticket
 * `unzip_attachment`: whether to unzip a found attachment
-        
+
+The parameter `http_timeout_max_tries` is of no use in this collector.
 * * *
 
 ### XMPP collector
