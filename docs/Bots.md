@@ -367,6 +367,29 @@ FIXME
 
 * * *
 
+### Field Reducer Bot
+
+#### Information:
+* `name:` reducer
+* `lookup:` none
+* `public:` yes
+* `cache (redis db):` none
+* `description:` The field reducer bot is capable of removing fields from events.
+
+#### Configuration Parameters:
+* `type` - either `"whitelist"` or `"blacklist"`
+* `keys` - a list of key names (strings)
+
+##### Whitelist
+
+Only the fields in `keys` will passed along.
+
+##### Blacklist
+
+The fields in `keys` will be removed from events.
+
+* * *
+
 ### Reverse DNS
 
 #### Information:
