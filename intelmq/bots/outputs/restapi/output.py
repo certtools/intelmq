@@ -9,6 +9,7 @@ class RestAPIOutputBot(Bot):
 
     def init(self):
         self.session = requests.Session()
+        self.set_request_parameters()
         if self.parameters.auth_token_name and self.parameters.auth_token:
             if self.parameters.auth_type == 'http_header':
                 self.session.headers.update(
@@ -26,7 +27,13 @@ class RestAPIOutputBot(Bot):
         else:
             kwargs = {'data': event.to_dict(hierarchical=self.parameters.hierarchical_output)}
 
-        r = self.session.post(self.parameters.host, **kwargs)
+        r = self.session.post(self.parameters.host,
+                              proxies=self.proxy,
+                              headers=self.http_header,
+                              verify=self.http_verify_cert,
+                              cert=self.ssl_client_cert,
+                              timeout=self.http_timeout,
+                              **kwargs)
         r.raise_for_status()
         self.logger.debug('Sent message.')
         self.acknowledge_message()

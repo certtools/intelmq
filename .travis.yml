@@ -7,7 +7,7 @@ python:
   - "3.5"
   - "3.6"
 install:
-  - sudo apt-get install dpkg-dev dh-python python-setuptools python3-setuptools python3-all debhelper quilt
+  - sudo apt-get install dpkg-dev dh-python python-setuptools python3-setuptools python3-all debhelper quilt polipo lighttpd
   - pip install -r REQUIREMENTS
   - for file in intelmq/bots/*/*/REQUIREMENTS.txt; do pip install -r $file; done
   - if [[ $TRAVIS_PYTHON_VERSION < '3.5' ]]; then pip install typing; fi
@@ -23,7 +23,7 @@ before_script:
   - sed -i 's/events/tests/g' /tmp/initdb.sql
   - psql -v ON_ERROR_STOP=on -f /tmp/initdb.sql intelmq -U intelmq
 script:
-  - INTELMQ_TEST_DATABASES=1 nosetests --with-coverage --cover-package=intelmq
+  - INTELMQ_TEST_DATABASES=1 INTELMQ_TEST_LOCAL_WEB=1 nosetests --with-coverage --cover-package=intelmq
   - dpkg-buildpackage -us -uc
   - pep8 intelmq/{bots,lib,bin}
 services:
