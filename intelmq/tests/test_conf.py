@@ -3,6 +3,7 @@
 Tests if configuration in /etc is valid
 """
 import collections
+import importlib
 import json
 import re
 import unittest
@@ -28,8 +29,7 @@ def to_unsorted_json(obj):
                       separators=(',', ': ')) + '\n'
 
 
-CONF_NAMES = ['defaults', 'harmonization', 'pipeline', 'runtime', 'startup',
-              'system']
+CONF_NAMES = ['defaults', 'harmonization', 'pipeline', 'runtime', 'system']
 
 CONF_FILES = {name: pkg_resources.resource_filename('intelmq',
                                                     'etc/' + name + '.conf')
@@ -87,15 +87,8 @@ class TestConf(unittest.TestCase):
         interpreted = json.loads(fcontent)
         self.assertEqual(to_json(interpreted), fcontent)
 
-    def test_startup_syntax(self):
-        """ Test if startup.conf has correct syntax. """
-        with open(CONF_FILES['startup']) as fhandle:
-            fcontent = fhandle.read()
-        interpreted = json.loads(fcontent)
-        self.assertEqual(to_json(interpreted), fcontent)
-
-    def test_bots_syntax(self):
-        """ Test if BOTS has correct syntax. """
+    def test_bots(self):
+        """ Test if BOTS has correct syntax and consistent contetn. """
         with open(pkg_resources.resource_filename('intelmq',
                                                   'bots/BOTS')) as fhandle:
             fcontent = fhandle.read()
@@ -104,6 +97,12 @@ class TestConf(unittest.TestCase):
                                  object_pairs_hook=collections.OrderedDict)
         self.assertEqual(to_unsorted_json(interpreted), fcontent)
 
+        for groupname, group in interpreted.items():
+            for bot_name, bot_config in group.items():
+                for field in ['description', 'module', 'parameters']:
+                    self.assertIn(field, bot_config)
+                importlib.import_module(bot_config['module'])
 
-if __name__ == '__main__':
+
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

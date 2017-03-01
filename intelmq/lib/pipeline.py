@@ -63,6 +63,9 @@ class Redis(Pipeline):
                             "{}_pipeline_port".format(queues_type), "6379")
         self.db = getattr(self.parameters,
                           "{}_pipeline_db".format(queues_type), 2)
+        self.password = getattr(self.parameters,
+                                "{}_pipeline_password".format(queues_type),
+                                None)
         #  socket_timeout is None by default, which means no timeout
         self.socket_timeout = getattr(self.parameters,
                                       "{}_pipeline_socket_timeout".format(
@@ -72,11 +75,20 @@ class Redis(Pipeline):
         self.load_balance_iterator = 0
 
     def connect(self):
-        self.pipe = redis.Redis(host=self.host,
-                                port=int(self.port),
-                                db=self.db,
-                                socket_timeout=self.socket_timeout
-                                )
+        if self.host.startswith("/"):
+            kwargs = {"unix_socket_path": self.host}
+
+        elif self.host.startswith("unix://"):
+            kwargs = {"unix_socket_path": self.host.replace("unix://", "")}
+
+        else:
+            kwargs = {
+                "host": self.host,
+                "port": int(self.port),
+                "socket_timeout": self.socket_timeout,
+            }
+
+        self.pipe = redis.Redis(db=self.db, password=self.password, **kwargs)
 
     def disconnect(self):
         pass
@@ -94,6 +106,10 @@ class Redis(Pipeline):
             try:
                 self.pipe.lpush(destination_queue, message)
             except Exception as exc:
+                if 'Cannot assign requested address' in exc.args[0]:
+                    raise MemoryError
+                elif 'Redis is configured to save RDB snapshots, but is currently not able to persist on disk' in exc.args[0]:
+                    raise IOError(28, 'No space left on device. Redis can\'t save its snapshots.')
                 raise exceptions.PipelineError(exc)
 
             self.load_balance_iterator += 1

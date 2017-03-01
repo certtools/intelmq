@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import json
-import sys
 
 from intelmq.bots.experts.cymru_whois.lib import Cymru
 from intelmq.lib.bot import Bot
@@ -8,7 +7,7 @@ from intelmq.lib.cache import Cache
 from intelmq.lib.harmonization import IPAddress
 
 MINIMUM_BGP_PREFIX_IPV4 = 24
-MINIMUM_BGP_PREFIX_IPV6 = 128  # FIXME
+MINIMUM_BGP_PREFIX_IPV6 = 128
 
 
 class CymruExpertBot(Bot):
@@ -18,6 +17,8 @@ class CymruExpertBot(Bot):
                            self.parameters.redis_cache_port,
                            self.parameters.redis_cache_db,
                            self.parameters.redis_cache_ttl,
+                           getattr(self.parameters, "redis_cache_password",
+                                   None)
                            )
 
     def process(self):
@@ -28,7 +29,7 @@ class CymruExpertBot(Bot):
         for key in keys:
             ip_key = key % "ip"
 
-            if not event.contains(ip_key):
+            if ip_key not in event:
                 continue
 
             ip = event.get(ip_key)
@@ -58,12 +59,10 @@ class CymruExpertBot(Bot):
                 self.cache.set(cache_key, result_json)
 
             for result_key, result_value in result.items():
-                event.add(key % result_key, result_value, force=True)
+                event.add(key % result_key, result_value, overwrite=True)
 
         self.send_message(event)
         self.acknowledge_message()
 
 
-if __name__ == "__main__":
-    bot = CymruExpertBot(sys.argv[1])
-    bot.start()
+BOT = CymruExpertBot

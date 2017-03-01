@@ -146,6 +146,7 @@ class MailSendOutputBot(Bot):
             smtp.close()
 
 
+BOT = MailSendOutputBot
 if __name__ == "__main__":
     if "debug" in sys.argv:
         MailSendOutputBot.debug = True
@@ -154,6 +155,5 @@ if __name__ == "__main__":
         MailSendOutputBot.debug = False
     if "process" in sys.argv:
         MailSendOutputBot.process = True
-
-    bot = MailSendOutputBot(sys.argv[1])
-    bot.start()
+    
+    BOT.start(sys.argv[1])

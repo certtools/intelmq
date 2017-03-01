@@ -2,7 +2,6 @@
 """
 pymongo library automatically tries to reconnect if connection has been lost
 """
-import sys
 
 from intelmq.lib.bot import Bot
 
@@ -22,7 +21,7 @@ class MongoDBOutputBot(Bot):
         self.connect()
 
     def connect(self):
-        self.logger.info('Connecting to mongodb server.')
+        self.logger.debug('Connecting to mongodb server.')
         try:
             self.client = pymongo.MongoClient(self.parameters.host,
                                               int(self.parameters.port))
@@ -48,6 +47,4 @@ class MongoDBOutputBot(Bot):
         self.client.close()
 
 
-if __name__ == "__main__":
-    bot = MongoDBOutputBot(sys.argv[1])
-    bot.start()
+BOT = MongoDBOutputBot

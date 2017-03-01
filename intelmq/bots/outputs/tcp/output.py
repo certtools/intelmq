@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import socket
-import sys
 
 import intelmq.lib.utils as utils
 from intelmq.lib.bot import Bot
@@ -40,6 +39,4 @@ class TCPOutputBot(Bot):
                              "".format(self.address[0], self.address[1]))
 
 
-if __name__ == "__main__":
-    bot = TCPOutputBot(sys.argv[1])
-    bot.start()
+BOT = TCPOutputBot

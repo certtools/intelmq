@@ -22,6 +22,7 @@ INPUT = [{'malware.name': 'confickerab'},
          {'feed.name': 'Abuse.ch',
           'feed.url': 'https://feodotracker.abuse.ch/blocklist/?download=domainblocklist'},
          {'malware.name': 'zeus_gameover_us'},
+         {'malware.name': 'sality-p2p'},
          {'malware.name': 'foobar', 'feed.name': 'Other Feed'},
          {'source.port': 80, 'malware.name': 'zeus'},
          ]
@@ -29,6 +30,7 @@ OUTPUT = [{'classification.identifier': 'conficker'},
           {'classification.identifier': 'gozi'},
           {'classification.identifier': 'feodo'},
           {'classification.identifier': 'zeus'},
+          {'classification.identifier': 'sality'},
           {},
           {'protocol.application': 'http', 'classification.identifier': 'zeus'},
           ]
@@ -54,7 +56,6 @@ class TestModifyExpertBot(test.BotTestCase, unittest.TestCase):
                                         'bots/experts/modify/examples/default.conf')
         cls.sysconfig = {'configuration_path': config_path
                          }
-        cls.default_input_message = {'__type': 'Event'}
 
     def test_events(self):
         """ Test if correct Events have been produced. """
@@ -100,29 +101,29 @@ INPUT2 = [
     {'malware.name': 'anyvalue'},
          ]
 OUTPUT2 = [
-    {'protocol.transport': 'tcp', 'classification.identifier': 'Trojan.Generic'},
-    {'protocol.transport': 'tcp', 'classification.identifier': 'Pykspa'},
-    {'protocol.transport': 'tcp', 'classification.identifier': 'Dridex'},
-    {'protocol.transport': 'tcp', 'classification.identifier': 'Downloader-Bot'},
-    {'protocol.transport': 'tcp', 'classification.identifier': 'Downloader-Bot'},
-    {'protocol.transport': 'tcp', 'classification.identifier': 'Dridex'},
-    {'protocol.transport': 'tcp', 'classification.identifier': 'Gameover ZeuS DGA'},
-    {'protocol.transport': 'tcp', 'classification.identifier': 'Gameover ZeuS P2P'},
-    {'protocol.transport': 'tcp', 'classification.identifier': 'Gozi'},
-    {'protocol.transport': 'tcp', 'classification.identifier': 'Sality'},
-    {'protocol.transport': 'tcp', 'classification.identifier': 'Sality'},
-    {'protocol.transport': 'tcp', 'classification.identifier': 'Tinba'},
-    {'protocol.transport': 'tcp', 'classification.identifier': 'Urlzone/Bebloh'},
-    {'protocol.transport': 'tcp', 'classification.identifier': 'Urlzone/Bebloh'},
-    {'protocol.transport': 'tcp', 'classification.identifier': 'Citadel'},
-    {'protocol.transport': 'tcp', 'classification.identifier': 'Caphaw/Shylock'},
-    {'protocol.transport': 'tcp', 'classification.identifier': 'ZeroAccess'},
-    {'protocol.transport': 'tcp', 'classification.identifier': 'Conficker'},
-    {'protocol.transport': 'tcp', 'classification.identifier': 'Sality'},
-    {'protocol.transport': 'tcp', 'classification.identifier': 'Sality'},
-    {'protocol.transport': 'tcp', 'classification.identifier': 'XCodeGhost'},
-    {'protocol.transport': 'tcp', 'classification.identifier': 'Citadel'},
-    {'protocol.transport': 'tcp', 'classification.identifier': 'Dridex'},
+    {'protocol.transport': 'tcp', 'classification.identifier': 'trojan.generic'},
+    {'protocol.transport': 'tcp', 'classification.identifier': 'pykspa'},
+    {'protocol.transport': 'tcp', 'classification.identifier': 'dridex'},
+    {'protocol.transport': 'tcp', 'classification.identifier': 'downloader-bot'},
+    {'protocol.transport': 'tcp', 'classification.identifier': 'downloader-bot'},
+    {'protocol.transport': 'tcp', 'classification.identifier': 'dridex'},
+    {'protocol.transport': 'tcp', 'classification.identifier': 'gameover zeus dga'},
+    {'protocol.transport': 'tcp', 'classification.identifier': 'gameover zeus p2p'},
+    {'protocol.transport': 'tcp', 'classification.identifier': 'gozi'},
+    {'protocol.transport': 'tcp', 'classification.identifier': 'sality'},
+    {'protocol.transport': 'tcp', 'classification.identifier': 'sality'},
+    {'protocol.transport': 'tcp', 'classification.identifier': 'tinba'},
+    {'protocol.transport': 'tcp', 'classification.identifier': 'urlzone/bebloh'},
+    {'protocol.transport': 'tcp', 'classification.identifier': 'urlzone/bebloh'},
+    {'protocol.transport': 'tcp', 'classification.identifier': 'citadel'},
+    {'protocol.transport': 'tcp', 'classification.identifier': 'caphaw/shylock'},
+    {'protocol.transport': 'tcp', 'classification.identifier': 'zeroaccess'},
+    {'protocol.transport': 'tcp', 'classification.identifier': 'conficker'},
+    {'protocol.transport': 'tcp', 'classification.identifier': 'sality'},
+    {'protocol.transport': 'tcp', 'classification.identifier': 'sality'},
+    {'protocol.transport': 'tcp', 'classification.identifier': 'xcodeghost'},
+    {'protocol.transport': 'tcp', 'classification.identifier': 'citadel'},
+    {'protocol.transport': 'tcp', 'classification.identifier': 'dridex'},
     {'protocol.transport': 'tcp', 'classification.identifier': 'nivdort'},
     {'protocol.transport': 'tcp', 'classification.identifier': 'someexample-value'},
     {'protocol.transport': 'tcp', 'classification.identifier': 'anyvalue'},
@@ -148,11 +149,9 @@ class TestMoreFeedsModifyExpertBot(test.BotTestCase, unittest.TestCase):
                                         'bots/experts/modify/examples/morefeeds.conf')
         cls.sysconfig = {'configuration_path': config_path
                          }
-        cls.default_input_message = {'__type': 'Event'}
 
     def test_bot_name(self):
         "Do **not** test that our second test has the same name as the bot."
-        pass
 
     def test_events(self):
         """ Test if correct Events have been produced. """
@@ -163,5 +162,5 @@ class TestMoreFeedsModifyExpertBot(test.BotTestCase, unittest.TestCase):
             self.assertMessageEqual(position, event_out)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

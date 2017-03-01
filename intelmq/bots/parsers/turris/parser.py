@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 import csv
 import io
-import sys
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.message import Event
 
 
 class TurrisGreylistParserBot(Bot):
@@ -15,9 +13,9 @@ class TurrisGreylistParserBot(Bot):
 
         columns = [
             "source.ip",
-            "__IGNORE__",
+            "source.geolocation.cc",
             "event_description.text",
-            "__IGNORE__"
+            "source.asn"
         ]
 
         headers = True
@@ -28,7 +26,7 @@ class TurrisGreylistParserBot(Bot):
                 headers = False
                 continue
 
-            event = Event(report)
+            event = self.new_event(report)
 
             for key, value in zip(columns, row):
                 if key == "__IGNORE__":
@@ -43,6 +41,4 @@ class TurrisGreylistParserBot(Bot):
         self.acknowledge_message()
 
 
-if __name__ == "__main__":
-    bot = TurrisGreylistParserBot(sys.argv[1])
-    bot.start()
+BOT = TurrisGreylistParserBot

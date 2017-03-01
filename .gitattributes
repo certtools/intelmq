@@ -14,10 +14,8 @@
 *.jpg binary
 *.png binary
 
-/.*  export-ignore
+/.*	export-ignore
 /CONTRIBUTING.md	export-ignore
-/debian  export-ignore
-/MANIFEST.in export-ignore
+/debian	export-ignore
+/MANIFEST.in	export-ignore
 /README.rst	export-ignore
-/REQUIREMENTS	export-ignore
-/setup.cfg   export-ignore

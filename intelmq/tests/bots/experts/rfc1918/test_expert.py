@@ -50,7 +50,6 @@ class TestRFC1918ExpertBot(test.BotTestCase, unittest.TestCase):
                                    'destination.fqdn,source.url',
                          'policy': 'del,drop,drop,del,drop',
                          }
-        cls.default_input_message = {'__type': 'Event'}
 
     def test_del(self):
         self.input_message = INPUT1
@@ -78,5 +77,5 @@ class TestRFC1918ExpertBot(test.BotTestCase, unittest.TestCase):
         self.assertOutputQueueLen(0)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

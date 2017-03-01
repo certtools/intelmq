@@ -31,7 +31,3 @@ gunzip -f GeoLite2-City.mmdb.gz
 
 mv GeoLite2-City.mmdb /opt/intelmq/var/lib/bots/maxmind_geoip/GeoLite2-City.mmdb
 chown intelmq:intelmq /opt/intelmq/var/lib/bots/maxmind_geoip/GeoLite2-City.mmdb
-
-
-
-

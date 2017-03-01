@@ -134,5 +134,5 @@ class TestUtils(unittest.TestCase):
         self.assertEqual(utils.error_message_from_exc(exc), 'This is a test')
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

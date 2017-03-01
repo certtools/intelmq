@@ -23,5 +23,5 @@ class TestGenHarmDocs(unittest.TestCase):
         self.assertEqual(gen_harm_docs.main().strip(), expected.strip())
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

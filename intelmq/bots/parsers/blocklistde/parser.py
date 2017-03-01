@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 import posixpath
-import sys
 from urllib.parse import urlparse
 
 from intelmq.lib.bot import ParserBot
-from intelmq.lib.message import Event
 
 MAPPING = {
     "all.txt": {
@@ -75,7 +73,7 @@ class BlockListDEParserBot(ParserBot):
         path = urlparse(report['feed.url']).path
         filename = posixpath.basename(path)
 
-        event = Event(report)
+        event = self.new_event(report)
         event.add('source.ip', line)
         if filename in MAPPING:
             for key, value in MAPPING[filename].items():
@@ -87,6 +85,4 @@ class BlockListDEParserBot(ParserBot):
         yield event
 
 
-if __name__ == "__main__":
-    bot = BlockListDEParserBot(sys.argv[1])
-    bot.start()
+BOT = BlockListDEParserBot

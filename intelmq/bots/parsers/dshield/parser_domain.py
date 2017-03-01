@@ -10,13 +10,11 @@
 #
 #      (1) site
 """
-import sys
 
 import dateutil
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.message import Event
 
 
 class DshieldDomainParserBot(Bot):
@@ -34,7 +32,7 @@ class DshieldDomainParserBot(Bot):
                     time = dateutil.parser.parse(time_str).isoformat()
                 continue
 
-            event = Event(report)
+            event = self.new_event(report)
 
             event.add('classification.type', 'malware')
             event.add('source.fqdn', row.strip())
@@ -44,6 +42,5 @@ class DshieldDomainParserBot(Bot):
             self.send_message(event)
         self.acknowledge_message()
 
-if __name__ == "__main__":
-    bot = DshieldDomainParserBot(sys.argv[1])
-    bot.start()
+
+BOT = DshieldDomainParserBot

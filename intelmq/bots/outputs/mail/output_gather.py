@@ -52,6 +52,4 @@ class MailGatherOutputBot(Bot):
         self.acknowledge_message() # dokoncil jsem praci (asi)
 
 
-if __name__ == "__main__":
-    bot = MailGatherOutputBot(sys.argv[1])
-    bot.start()
+BOT = MailGatherOutputBot    

@@ -1,0 +1,6 @@
+
+// This file will be automatically updated daily and populated with the last 30 days of malicious IP addresses.
+// Last updated 2016-11-10	
+
+192.88.99.4
+192.0.0.5

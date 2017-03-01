@@ -5,8 +5,10 @@
 import json
 import textwrap
 
-import intelmq.lib.harmonization
 import pkg_resources
+
+import intelmq.lib.harmonization
+
 
 HEADER = """
 Harmonization field names
@@ -59,5 +61,5 @@ def main():
 
     return output
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     print(main())

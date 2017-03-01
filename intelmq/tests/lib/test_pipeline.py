@@ -4,8 +4,6 @@ Testing the pipeline functions of intelmq.
 
 We are testing sending and receiving on the same queue for Redis and
 Pythonlist.
-Unicode compatibility is not tested, as it needs discussion.
-TODO: #281
 TODO: clear_queues
 TODO: count_queued_messages
 TODO: acknowledge
@@ -15,6 +13,7 @@ TODO: check internal representation of data in redis (like with Pythonlist)
 import unittest
 
 import intelmq.lib.pipeline as pipeline
+import intelmq.lib.test as test
 
 SAMPLES = {'normal': [b'Lorem ipsum dolor sit amet',
                       'Lorem ipsum dolor sit amet'],
@@ -67,6 +66,7 @@ class TestPythonlist(unittest.TestCase):
                          {'src': 1, 'dst': 2})
 
 
+@test.skip_redis()
 class TestRedis(unittest.TestCase):
 
     def setUp(self):
@@ -102,5 +102,5 @@ class TestRedis(unittest.TestCase):
         self.pipe.disconnect()
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover  # pragma: no cover
     unittest.main()
