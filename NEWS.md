@@ -15,6 +15,33 @@ See the changelog for a full list of changes.
 
 ### Configuration
 * The deduplicator expert requires a new parameter `filter_type`, the old previous default was `blacklist`.
+* The configuration format of the modify expert has been change to a list-based syntax.
+  Old format:
+
+      {
+      "Blocklist.de": {
+          "__default": [{
+                  "feed.name": "^BlockList\\.de$",
+                  "classification.identifier": ""
+              }, {
+              }]
+          },
+		  ...
+      }
+
+  new format:
+
+      [
+          {
+              "rulename": "Blocklist.de __default",
+              "if": {
+                  "classification.identifier": "",
+                  "feed.name": "^BlockList\\.de$"
+              },
+              "then": {}
+          },
+		  ...
+      ]
 
 ### Postgres databases
 Use the following statement carefully to upgrade your database.

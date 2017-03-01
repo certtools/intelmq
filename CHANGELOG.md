@@ -64,6 +64,7 @@ Changes between 0.9 and 1.0.0.dev6
   intelmq.bots.experts.ripencc.ripencc to intelmq.bots.experts.ripencc_abuse_contact.expert
   intelmq.bots.experts.taxonomy.taxonomy to intelmq.bots.experts.taxonomy.expert
 - enhanced all experts
+- changed configuration syntax for bots.experts.modify to a more simple variant
 
 #### Outputs
 - added: amqp, redis, restapi, stomp, tcp, udp, xmpp
