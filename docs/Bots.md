@@ -466,62 +466,68 @@ The modify expert bot allows you to change arbitrary field values of events just
 The configuration is called `modify.conf` and looks like this:
 
 ```json
-{
-"Spamhaus Cert": {
-    "__default": [{
-            "feed.name": "^Spamhaus Cert$"
-        }, {
-            "classification.identifier": "{msg[malware.name]}"
-        }],
-    "conficker": [{
-            "malware.name": "^conficker(ab)?$"
-        }, {
-            "classification.identifier": "conficker"
-        }],
-    "urlzone": [{
-            "malware.name": "^urlzone2?$"
-        }, {
-            "classification.identifier": "urlzone"
-        }],
-    "bitdefender" : [{
-            "malware.name": "bitdefender-(.*)$"
-        }, {
-            "malware.name": "{matches[malware.name][1]}"
-        }]
-    },
-"Standard Protocols": {
-    "http": [{
+[
+    {
+        "rulename": "Standard Protocols http",
+        "if": {
             "source.port": "^(80|443)$"
-        }, {
+        },
+        "then": {
             "protocol.application": "http"
-        }]
+        }
+    },
+    {
+        "rule": "Spamhaus Cert conficker",
+        "if": {
+            "malware.name": "^conficker(ab)?$"
+        },
+        "then": {
+            "classification.identifier": "conficker"
+        }
+    },
+    {
+        "rule": "bitdefender",
+        "if": {
+            "malware.name": "bitdefender-(.*)$"
+        },
+        "then": {
+            "malware.name": "{matches[malware.name][1]}"
+        }
+    },
+    {
+        "rule": "urlzone",
+        "if": {
+            "malware.name": "^urlzone2?$"
+        },
+        "then": {
+            "classification.identifier": "urlzone"
+        }
+    },
+    {
+        "rule": "default",
+        "if": {
+            "feed.name": "^Spamhaus Cert$"
+        },
+        "then": {
+            "classification.identifier": "{msg[malware.name]}"
+        }
     }
-}
+]
 ```
 
-The dictionary on the first level holds sections to group the rules.
-In our example above we have two sections labeled `Spamhaus Cert` and `Standard Protocols`.
-All sections will be considered, but in undefined order.
+In our example above we have five groups labeled `Standard Protocols http`,
+`Spamhaus Cert conficker`, `bitdefender`, `urlzone` and `default`.
+All sections will be considered, in the given order (from top to bottom).
 
-Each section holds a dictionary of rules, consisting of *conditions* and *actions*.
-`__default` indicates an optional default rule. If a default rule exist, the section
-will only be entered, if its conditions match. Actions are optional for the default rule.
-
-Conditions and actions are again dictionaries holding the field names of events
-and regex-expressions to match values (condition) or set values (action).
-All matching rules will be applied in no particular order.
-Matching checks if all joined conditions of the rule and the default rule
-are true before performing the actions.
-If no rule within a section matches, existing actions of the default rule for the section are applied.
+Each rule consists of *conditions* and *actions*.
+Conditions and actions are dictionaries holding the field names of events
+and regex-expressions to match values (selection) or set values (action).
+All matching rules will be applied in the given order.
+The actions are only performed if all selections apply.
 
 If the value for a condition is an empty string, the bot checks if the field does not exist.
 This is useful to apply default values for empty fields.
 
-**Attention**: Because the order of execution is undefined,
-you need to take care that no rule depends on values modified by another rule.
-Otherwise the results of the bot may be different from one run to the other.
-(A redesign is [under discussion](https://github.com/certtools/intelmq/issues/662)
-to improve the situation for future versions.)
 
 #### Actions
 
