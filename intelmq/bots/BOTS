@@ -65,6 +65,20 @@
                 "rate_limit": 3600
             }
         },
+        "Generic URL Stream Fetcher": {
+            "description": "Opens a streaming connection to the URL and sends the received lines.",
+            "module": "intelmq.bots.collectors.http.collector_http_stream",
+            "parameters": {
+                "feed": "",
+                "provider": "",
+                "http_url": "<insert url of feed>",
+                "http_username": null,
+                "http_password": null,
+                "ssl_client_certificate": null,
+                "strip_lines": true,
+                "rate_limit": 3600
+            }
+        },
         "MISP Generic": {
             "description": "Collect events from a MISP server.",
             "module": "intelmq.bots.collectors.misp.collector",
@@ -134,15 +148,6 @@
                 "rate_limit": 3600
             }
         },
-        "BitSight Ciberfeed Stream": {
-            "description": "Bitsight Collector is the bot reponsible to get Bitsight Ciberfeed Alert Stream",
-            "module": "intelmq.bots.collectors.bitsight.collector",
-            "parameters": {
-                "feed": "BitSight",
-                "provider": "BitSight",
-                "http_url": "http://alerts.bitsighttech.com:8080/stream?key=<api>"
-            }
-        },
         "Blueliv Crimeserver": {
             "description": "Blueliv Crimeserver Collector is the bot responsible to get the report through the API.",
             "module": "intelmq.bots.collectors.blueliv.collector_crimeserver",
@@ -209,9 +214,9 @@
             "module": "intelmq.bots.parsers.bitcash.parser",
             "parameters": {}
         },
-        "BitSight Ciberfeed Stream": {
-            "description": "Bitsight Ciberfeed parser is the bot reponsible to parse and sanitize the information.",
-            "module": "intelmq.bots.parsers.bitsight.parser",
+        "AnubisNetworks Cyberfeed Stream": {
+            "description": "Parsers single JSON-events from AnubisNetworks Cyberfeed stream.",
+            "module": "intelmq.bots.parsers.anubisnetworks.parser",
             "parameters": {}
         },
         "Blocklist.de": {
@@ -466,12 +471,21 @@
             "description": "Deduplicator is the bot responsible for detection and removal of duplicate messages. Messages get cached for <redis_cache_ttl> seconds. If found in the cache, it is assumed to be a duplicate.",
             "module": "intelmq.bots.experts.deduplicator.expert",
             "parameters": {
-                "ignore_keys": "raw,time.observation",
+                "filter_keys": "raw,time.observation",
+                "filter_type": "blacklist",
                 "redis_cache_db": "6",
                 "redis_cache_host": "127.0.0.1",
                 "redis_cache_port": "6379",
                 "redis_cache_password": null,
                 "redis_cache_ttl": "86400"
+            }
+        },
+        "Field Reducer": {
+            "description": "The field reducer bot is capable of removing fields from events.",
+            "module": "intelmq.bots.experts.field_reducer.expert",
+            "parameters": {
+                "type": "<whitelist/blacklist>",
+                "keys": "<list of field names>"
             }
         },
         "Filter": {
@@ -639,8 +653,10 @@
             "parameters": {
                 "auth_token": "<token>",
                 "auth_token_name": "<token name>",
+                "auth_type": "<http_basic_auth/http_header>",
                 "hierarchical_output": false,
-                "host": "<host>"
+                "host": "<host>",
+                "use_json": true
             }
         },
         "Redis": {
@@ -660,6 +676,7 @@
             "module": "intelmq.bots.outputs.tcp.output",
             "parameters": {
                 "ip": "<ip>",
+                "hierarchical_output": false,
                 "port": "<port>",
                 "separator": "\n"
             }

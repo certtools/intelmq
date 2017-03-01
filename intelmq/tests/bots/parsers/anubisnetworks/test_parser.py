@@ -3,43 +3,42 @@
 import unittest
 
 import intelmq.lib.test as test
-from intelmq.bots.parsers.bitsight.parser import BitsightParserBot
+from intelmq.bots.parsers.anubisnetworks.parser import AnubisNetworksParserBot
 
-EXAMPLE_REPORT = {"feed.url": "http://alerts.bitsighttech.com:8080/stream?",
+
+EXAMPLE_REPORT = {"feed.url": "https://prod.cyberfeed.net/stream?key=",
                   "feed.accuracy": 100.0,
                   "__type": "Report",
-                  "feed.name": "BitSight",
-                  "raw": "eyJ0cm9qYW5mYW1pbHkiOiJTYWxpdHlwMnAiLCJlbnYiOnsicmV"
-                         "tb3RlX2FkZHIiOiIxNTIuMTY2LjExOS4yIiwicmVtb3RlX3Bvcn"
-                         "QiOiI2NTExOCIsInNlcnZlcl9hZGRyIjoiNTIuMTguMTk2LjE2O"
-                         "SIsInNlcnZlcl9wb3J0IjoiOTc5NiJ9LCJfdHMiOjE0NjExMDc3"
-                         "NjgsIl9nZW9fZW52X3JlbW90ZV9hZGRyIjp7ImNvdW50cnlfbmF"
-                         "tZSI6IkRvbWluaWNhbiBSZXB1YmxpYyJ9fQ==",
+                  "feed.name": "AnubisNetworks",
+                  "raw": "eyJfZ2VvX2Vudl9yZW1vdGVfYWRkciI6eyJwYXRoIjoiZW52LnJlbW90ZV9hZGRyIiwiYXNuX25hbWUiOiJFeGFtcGxlQVMiLCJhc24iOjY1NTM2LCJsb25naXR1ZGUiOjEzLCJsYXRpdHVkZSI6MzcsImlwIjoiMjAzLjAuMTEzLjIiLCJuZXRtYXNrIjoyNCwiY291bnRyeV9jb2RlIjoiQVQiLCJjb3VudHJ5X25hbWUiOiJBdXN0cmlhIiwicmVnaW9uIjoiVmllbm5hIiwicmVnaW9uX2NvZGUiOiIwMSIsImNpdHkiOiJWaWVubmEiLCJwb3N0YWxfY29kZSI6IjEwMTAifSwiX3RzIjoxNDg0MDQxNTMwLCJxdHlwZSI6IkEiLCJfb3JpZ2luIjoiZG5zbWFsd2FyZSIsIl9wcm92aWRlciI6InNwaWtlbnMiLCJ0cm9qYW5mYW1pbHkiOiJOaXZkb3J0IiwiZW52Ijp7InNlcnZlcl9wb3J0Ijo4MCwicmVtb3RlX2FkZHIiOiIyMDMuMC4xMTMuMiIsInJlcXVlc3RfbWV0aG9kIjoiUE9TVCJ9fQ==",
                   "time.observation": "2016-04-19T23:16:08+00:00"
                   }
 
 EXAMPLE_EVENT  = {"classification.type": "malware",
-                  "destination.port": 9796,
+                  "destination.port": 80,
                   "feed.accuracy": 100.0,
-                  "destination.ip": "52.18.196.169",
-                  "malware.name": "salityp2p",
+                  "malware.name": "nivdort",
                   "event_description.text": "Sinkhole attempted connection",
-                  "time.source": "2016-04-19T23:16:08+00:00",
-                  "source.ip": "152.166.119.2",
-                  "feed.url": "http://alerts.bitsighttech.com:8080/stream?",
-                  "source.geolocation.country": "Dominican Republic",
+                  "time.source": "2017-01-10T09:45:30+00:00",
+                  "source.ip": "203.0.113.2",
+                  "source.network": "203.0.113.0/24",
+                  "feed.url": "https://prod.cyberfeed.net/stream?key=",
+                  "source.geolocation.country": "Austria",
+                  "source.geolocation.cc": "AT",
+                  "source.geolocation.region": "Vienna",
+                  "source.geolocation.city": "Vienna",
+                  "source.geolocation.longitude": 13.,
+                  "source.geolocation.latitude": 37.,
+                  "source.asn": 65536,
+                  "source.as_name": "ExampleAS",
                   "time.observation": "2016-04-19T23:16:08+00:00",
-                  "source.port": 65118, "__type": "Event",
-                  "feed.name": "BitSight",
-                  "raw": "eyJ0cm9qYW5mYW1pbHkiOiJTYWxpdHlwMnAiLCJlbnYiOnsic"
-                  "mVtb3RlX2FkZHIiOiIxNTIuMTY2LjExOS4yIiwicmVtb3RlX3"
-                  "BvcnQiOiI2NTExOCIsInNlcnZlcl9hZGRyIjoiNTIuMTguMTk"
-                  "2LjE2OSIsInNlcnZlcl9wb3J0IjoiOTc5NiJ9LCJfdHMiOjE0"
-                  "NjExMDc3NjgsIl9nZW9fZW52X3JlbW90ZV9hZGRyIjp7ImNvd"
-                  "W50cnlfbmFtZSI6IkRvbWluaWNhbiBSZXB1YmxpYyJ9fQ=="
+                  "__type": "Event",
+                  "feed.name": "AnubisNetworks",
+                  "raw": EXAMPLE_REPORT['raw'],
+                  'extra': '{"request_method": "POST"}',
                   }
 
-EXAMPLE_REPORT2 = {"feed.name": "BitSight",
+EXAMPLE_REPORT2 = {"feed.name": "AnubisNetworks",
                    "feed.accuracy": 100.0,
                    "feed.url": "http://alerts.bitsighttech.com:8080/stream?",
                    "raw": "eyJ0cm9qYW5mYW1pbHkiOiJTcHlBcHAiLCJlbnYiOnsicmVtb"
@@ -55,7 +54,7 @@ EXAMPLE_REPORT2 = {"feed.name": "BitSight",
                    "2016-04-19T23:16:10+00:00"
                    }
 
-EXAMPLE_EVENT2  = {"feed.name": "BitSight",
+EXAMPLE_EVENT2  = {"feed.name": "AnubisNetworks",
                    "malware.name": "spyapp",
                    "destination.fqdn": "dev-update.info",
                    "source.ip": "190.124.67.211",
@@ -82,11 +81,11 @@ EXAMPLE_EVENT2  = {"feed.name": "BitSight",
                    }
 
 
-class TestBitsightParserBot(test.BotTestCase, unittest.TestCase):
+class TestAnubisNetworksParserBot(test.BotTestCase, unittest.TestCase):
 
     @classmethod
     def set_bot(cls):
-        cls.bot_reference = BitsightParserBot
+        cls.bot_reference = AnubisNetworksParserBot
         cls.default_input_message = EXAMPLE_REPORT
 
     def test_event(self):

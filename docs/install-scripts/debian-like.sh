@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 apt-get install python3 python3-pip
-apt-get install git build-essential libcurl4-gnutls-dev libffi-dev
+apt-get install git build-essential libffi-dev
 apt-get install python-dev
 apt-get install redis-server
 

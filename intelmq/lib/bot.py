@@ -4,7 +4,6 @@
 """
 import csv
 import datetime
-import importlib
 import io
 import json
 import logging
@@ -108,6 +107,7 @@ class Bot(object):
         self.logger.info('Handling SIGHUP, initializing again now.')
         self.__disconnect_pipelines()
         self.logger.handlers = []  # remove all existing handlers
+        self.shutdown()  # disconnects, stops threads etc
         self.__init__(self.__bot_id)
         self.__connect_pipelines()
 
@@ -159,6 +159,13 @@ class Bot(object):
                 self.__disconnect_pipelines()
 
             except Exception as exc:
+                if isinstance(exc, MemoryError):
+                    self.logger.exception('Out of memory. Exit immediately.')
+                    self.stop()
+                elif isinstance(exc, (IOError, OSError)) and exc.errno == 28:
+                    self.logger.exception('Out of disk space. Exit immediately.')
+                    self.stop()
+
                 error_on_message = sys.exc_info()
 
                 if self.parameters.error_log_exception:
@@ -430,7 +437,7 @@ class Bot(object):
                              "{!r}.".format(self.__bot_id))
 
     def __log_configuration_parameter(self, config_name, option, value):
-        if "password" in option:
+        if "password" in option or "token" in option:
             value = "HIDDEN"
 
         message = "{} configuration: parameter {!r} loaded with value {!r}."\
@@ -597,6 +604,8 @@ class CollectorBot(Bot):
         report.add("feed.name", self.parameters.feed)
         if hasattr(self.parameters, 'code'):
             report.add("feed.code", self.parameters.code)
+        if hasattr(self.parameters, 'documentation'):
+            report.add("feed.documentation", self.parameters.documentation)
         if hasattr(self.parameters, 'provider'):
             report.add("feed.provider", self.parameters.provider)
         report.add("feed.accuracy", self.parameters.accuracy)
@@ -620,7 +629,6 @@ class CollectorBot(Bot):
         self.http_header = getattr(self.parameters, 'http_header', {})
         self.http_verify_cert = getattr(self.parameters, 'http_verify_cert', True)
         self.ssl_client_cert = getattr(self.parameters, 'ssl_client_certificate', None)
-        self.http_timeout_sec = getattr(self.parameters, 'http_timeout_sec', None)
 
         if hasattr(self.parameters, 'http_username') and hasattr(
                 self.parameters, 'http_password'):
@@ -639,6 +647,11 @@ class CollectorBot(Bot):
             self.proxy = None
         else:
             self.proxy = None
+
+        self.http_timeout_sec = getattr(self.parameters, 'http_timeout_sec', None)
+        self.http_timeout_max_tries = getattr(self.parameters, 'http_timeout_max_tries', 1)
+        # Be sure this is always at least 1
+        self.http_timeout_max_tries = self.http_timeout_max_tries if self.http_timeout_max_tries >= 1 else 1
 
         self.http_header['User-agent'] = self.parameters.http_user_agent
 

@@ -100,6 +100,8 @@ class XMPPCollectorBot(CollectorBot):
         # When configured in manager this is most likely a ,-separated string, we'd like an array
         if type(self.userlist) is str:
             self.userlist = [u.strip() for u in self.userlist.split(",")]
+        elif self.userlist is None:  # if value is unset, set to empty list
+            self.userlist = []
 
         self.whitelist_mode = getattr(self.parameters, "xmpp_whitelist_mode", False)
 
@@ -158,44 +160,45 @@ class XMPPCollectorBot(CollectorBot):
             self.logger.info("There was no XMPPClient I could stop.")
 
     def log_message(self, msg):
+        # If some exception happens here, the bot would silently fail.
+        # We want to know the reason, so we will log the exception manually.
+        try:
+            # Check if the message was sent by a users that is on
+            # the white or blacklist, determine if the message shall
+            # be processed.
+            if self.muc:
+                if msg['mucnick'] not in self.userlist and self.whitelist_mode:
+                    # Whitelist-Case
+                    return
+                elif msg['mucnick'] in self.userlist and not self.whitelist_mode:
+                    # Blacklist Case
+                    return
 
-        # Check if the message was sent by a users that is on
-        # the white or blacklist, determine if the message shall
-        # be processed.
-        if self.muc:
-            if not msg['mucnick'] in self.userlist and self.whitelist_mode:
-                # Whitelist-Case
-                return
-            elif msg['mucnick'] in self.userlist and not self.whitelist_mode:
-                # Blacklist Case
-                return
-
-        if self.pass_full_xml:
-            body = str(msg)
-        else:
-            if self.strip_message:
-                body = msg['body'].strip()
+            if self.pass_full_xml:
+                body = str(msg)
             else:
-                body = msg['body']
+                if self.strip_message:
+                    body = msg['body'].strip()
+                else:
+                    body = msg['body']
 
-        if len(body) > 400:
-            tmp_body = body[:397] + '...'
-        else:
-            tmp_body = body
+            if len(body) > 400:
+                tmp_body = body[:397] + '...'
+            else:
+                tmp_body = body
 
-        self.logger.debug("Received Stanza: %r from %r." % (tmp_body, msg['from']))
+            self.logger.debug("Received Stanza: %r from %r." % (tmp_body, msg['from']))
 
-        raw_msg = body
-
-        # Read msg-body and add as raw to a new report.
-        # now it's up to a parser to do the interpretation of the message.
-        if raw_msg:
-            try:
+            raw_msg = body
+            # Read msg-body and add as raw to a new report.
+            # now it's up to a parser to do the interpretation of the message.
+            if raw_msg:
                 report = self.new_report()
                 report.add("raw", raw_msg)
                 self.send_message(report)
-            except:
-                self.logger.error("A message could not be converted into a report.")
+        except Exception:
+            self.logger.exception('Error during message handling.')
+            raise
 
 
 BOT = XMPPCollectorBot

@@ -55,7 +55,7 @@ class MailURLCollectorBot(CollectorBot):
 
                         timeoutretries = 0
                         resp = None
-                        while timeoutretries < 3 and resp is None:
+                        while timeoutretries < self.http_timeout_max_tries and resp is None:
                             try:
                                 resp = requests.get(url=url,
                                                     auth=self.auth, proxies=self.proxy,
@@ -68,13 +68,12 @@ class MailURLCollectorBot(CollectorBot):
                                 timeoutretries += 1
                                 self.logger.warn("Timeout whilst downloading the report.")
 
-                        if timeoutretries >= 3:
-                            self.logger.error("Request timed out three times in a row. ")
+                        if resp is None and timeoutretries >= self.http_timeout_max_tries:
+                            self.logger.error("Request timed out %i times in a row. " %
+                                              timeoutretries)
                             erroneous = True
                             # The download timed out too often, leave the Loop.
                             continue
-
-                        self.logger.debug(resp.content)
 
                         if resp.status_code // 100 != 2:
                             raise ValueError('HTTP response status code was {}.'

@@ -10,7 +10,8 @@ http_verify_cert: boolean
     default: True
 http_username, http_password: string
 http_proxy, https_proxy: string
-
+http_timeout_sec: tuple of two floats or float
+http_timeout_max_tries: an integer depicting how often a connection attempt is retried
 """
 import io
 import zipfile
@@ -32,7 +33,7 @@ class HTTPCollectorBot(CollectorBot):
         timeoutretries = 0
         resp = None
 
-        while timeoutretries < 3 and resp is None:
+        while timeoutretries < self.http_timeout_max_tries and resp is None:
             try:
                 resp = requests.get(url=self.parameters.http_url, auth=self.auth,
                                     proxies=self.proxy, headers=self.http_header,
@@ -44,8 +45,9 @@ class HTTPCollectorBot(CollectorBot):
                 timeoutretries += 1
                 self.logger.warn("Timeout whilst downloading the report.")
 
-        if timeoutretries >= 3:
-            self.logger.error("Request timed out three times in a row. ")
+        if resp is None and timeoutretries >= self.http_timeout_max_tries:
+            self.logger.error("Request timed out %i times in a row. " %
+                              timeoutretries)
             return
 
         if resp.status_code // 100 != 2:
