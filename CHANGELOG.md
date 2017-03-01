@@ -13,6 +13,7 @@ v1.0 (in development, master branch)
 - ENH: added bots.parsers.spamhaus.parser_cert
 - ENH: added bots.parsers.fraunhofer.parser_dga
 - ENH: added bots.experts.certat_contact.expert
+- ENH: added bots.experts.field_reducer.expert
 - MAINT: renamed bots.parsers.spamhaus.parser to bots.parsers.spamhaus.parser_drop
 - Dropped dragon research group feeds: discontinued
 - changed configuration syntax for bots.experts.modify
@@ -35,6 +36,8 @@ v1.0 (in development, master branch)
 - ENH: New parameter and field named accuracy to represent the accuracy of each feed
 - Consistent naming "overwrite" to switch overwriting capabilities of bots (as opposed to override)
 - Renamed http_ssl_proxy to https_proxy
+- deduplicator bot has a new parameter to configure deduplication mode
+- deduplicator bot key ignore_keys was renamed to filter_keys
 
 ### Harmonization
 - ENH: Additional data types: integer, float and Boolean
@@ -42,6 +45,7 @@ v1.0 (in development, master branch)
 - DOC: harmonization documentation has same fields as configuration, docs are generated from configuration
 - ENH: New type LowercaseString and UppercaseString
 - BUG: FQDNs are only allowed in IDN representation
+- ENH: New fields feed.documentation and feed.provider
 
 #### Most important changes:
 - `(source|destination).bgp_prefix` is now `(source|destination).network`

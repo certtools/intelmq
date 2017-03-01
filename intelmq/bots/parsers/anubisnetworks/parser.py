@@ -37,7 +37,6 @@ Currently ignored and probably useful:
     dcu_ts (timestamp)
     _geo_env_remote_addr.postal_code
 """
-import ipaddress
 import json
 
 from intelmq.lib import utils
@@ -92,9 +91,7 @@ class AnubisNetworksParserBot(Bot):
                     if k in value:
                         event[v] = value[k]
                 if "ip" in value and "netmask" in value:
-                    event.add('source.network',
-                              str(ipaddress.ip_network('%s/%s' % (value["ip"], value["netmask"]),
-                                                       strict=False)))
+                    event.add('source.network', '%s/%s' % (value["ip"], value["netmask"]))
         if extra:
             event.add('extra', extra)
         self.send_message(event)

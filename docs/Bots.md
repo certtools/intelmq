@@ -313,7 +313,7 @@ FIXME
 * `name:` cymru-whois
 * `lookup:` cymru dns
 * `public:` yes
-* `cache (redis db):` 6
+* `cache (redis db):` 5
 * `description:` IP to geolocation, ASN, BGP prefix
 
 #### Configuration Parameters:
@@ -328,12 +328,12 @@ FIXME
 * `name:` deduplicator
 * `lookup:` redis cache
 * `public:` yes
-* `cache (redis db):` 7
+* `cache (redis db):` 6
 * `description:` message deduplicator
 
 #### Configuration Parameters:
 
-FIXME
+Please check this [README](../intelmq/bots/experts/deduplicator/README.md) file.
 
 * * *
 
@@ -364,6 +364,29 @@ FIXME
 #### Configuration Parameters:
 
 FIXME
+
+* * *
+
+### Field Reducer Bot
+
+#### Information:
+* `name:` reducer
+* `lookup:` none
+* `public:` yes
+* `cache (redis db):` none
+* `description:` The field reducer bot is capable of removing fields from events.
+
+#### Configuration Parameters:
+* `type` - either `"whitelist"` or `"blacklist"`
+* `keys` - a list of key names (strings)
+
+##### Whitelist
+
+Only the fields in `keys` will passed along.
+
+##### Blacklist
+
+The fields in `keys` will be removed from events.
 
 * * *
 
@@ -618,9 +641,12 @@ from your installation.
 
 #### Configuration Parameters:
 
-* `auth_token`: FIXME
-* `auth_token_name`: FIXME
-* `host`: FIXME
+* `auth_token`: the user name / http header key
+* `auth_token_name`: the password / http header value
+* `auth_type`: one of: `"http_basic_auth"`, `"http_header"`
+* `hierarchical_output`: boolean
+* `host`: destination URL
+* `use_json`: boolean
 
 
 * * *
@@ -637,5 +663,7 @@ from your installation.
 
 #### Configuration Parameters:
 
-* `ip`: FIXME
-* `port`: FIXME
+* `ip`: IP of destination server
+* `hierarchical_output`: true for a nested JSON, false for a flat JSON.
+* `port`: port of destination server
+* `separator`: separator of messages

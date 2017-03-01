@@ -12,6 +12,8 @@ import intelmq.lib.test as test
 EXAMPLE_REPORT = {"__type": "Report",
                   "feed.name": "Example Feed",
                   "feed.code": "Example Code",
+                  "feed.provider": "Example Provider",
+                  "feed.documentation": "Example Documentation",
                   "feed.accuracy": 100.0,
                   'raw': 'dGVzdA=='
                   }
@@ -40,6 +42,8 @@ class TestDummyCollectorBot(test.BotTestCase, unittest.TestCase):
         cls.default_input_message = None
         cls.sysconfig = {'feed': 'Example Feed',
                          'code': 'Example Code',
+                         'provider': 'Example Provider',
+                         'documentation': 'Example Documentation',
                          'raw': True
                          }
 
