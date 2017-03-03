@@ -15,6 +15,8 @@ env.cookies                             => extra.cookies
 env.path_info                           => extra.path_info
 env.http_referer                        => extra.http_referer
 
+_origin                                 => extra.origin
+
 _geo_env_remote_addr.country_code       => source.geolocation.cc
 _geo_env_remote_addr.country_name       => source.geolocation.country
 _geo_env_remote_addr.region             => source.geolocation.region
@@ -29,7 +31,6 @@ Currently ignored and probably useful:
     btrack{id(hex),checkins(int),first(timestamp),since(int),days(int),changes(int),seen(ts),last_ip(ip),sameip(int)}
            Tracking data for devices and relations to sinkholed domains
     _geo_btrack_last_ip, _geo_env_server_addr (same fields as _geo_env_remote_addr)
-    _origin (string)
     _anbtr (hex)
     pattern_verified (1)
     env.http_xff (list of ips), X-Forwarded header as injected by proxies
@@ -83,7 +84,7 @@ class AnubisNetworksParserBot(Bot):
                 if "server_name" in value:
                     event.add('destination.fqdn', value["server_name"],
                               raise_failure=False)
-                for k in ["request_method", "cookies", "path_info", "http_referer"]:
+                for k in ["request_method", "cookies", "path_info", "http_referer", "_origin"]:
                     if k in value:
                         extra[k] = value[k]
             if key == "_geo_env_remote_addr":
