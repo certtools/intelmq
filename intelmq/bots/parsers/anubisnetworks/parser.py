@@ -14,8 +14,9 @@ env.request_method                      => extra.method
 env.cookies                             => extra.cookies
 env.path_info                           => extra.path_info
 env.http_referer                        => extra.http_referer
-
-_origin                                 => extra.origin
+_origin                                 => extra._origin
+_provider                               => extra._provider
+pattern_verified                        => extra.pattern_verified
 
 _geo_env_remote_addr.country_code       => source.geolocation.cc
 _geo_env_remote_addr.country_name       => source.geolocation.country
