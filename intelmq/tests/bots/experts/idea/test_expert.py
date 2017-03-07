@@ -10,6 +10,7 @@ from intelmq.bots.experts.idea.expert import IdeaExpertBot
 TEST_INPUT1 = {
     "__type": "Event",
     "classification.type": "malware",
+    "destination.ip": "2001:DB8::BB2B:F258",
     "destination.port": 22,
     "event_description.target": "DHL",
     "event_description.text": "Angler EK",
@@ -17,6 +18,7 @@ TEST_INPUT1 = {
     "feed.accuracy": 100.0,
     "feed.name": "Malware Domain List",
     "feed.url": "http://www.malwaredomainlist.com/updatescsv.php",
+    "misp.event_uuid": "81494d6a-0341-11e7-a0ef-002564d9514f",
     "protocol.application": "ssh",
     "protocol.transport": "tcp",
     "raw": "MjAxNi8wNC8yMF8xNDoyOCx3Yzl1ai5scnZhMzJ4d2QudG9wL1NIbnhCZEUtck1UWWZwLUNTaHIvVktkdGstOTgzLUVqcUovLDE4NS4xNDEuMjUuNjAsLSxBbmdsZXIgRUssUmVnaXN0cmFudCBtYXlrb2VAbGlzdC5ydSw2MDExNw==",
@@ -38,9 +40,10 @@ TEST_OUTPUT1 = {
     "DetectTime": "2016-04-20T19:02:35+00:00",
     "EventTime": "2016-04-20T14:28:00+00:00",
     "Confidence": 1,
-    "Ref": ["http://www.phishtank.com/phish_detail.php?phish_id=3989866"],
+    "Ref": ["http://www.phishtank.com/phish_detail.php?phish_id=3989866", "misp_event:81494d6a-0341-11e7-a0ef-002564d9514f"],
     "Target": [
         {
+            "IP6": ["2001:DB8::BB2B:F258"],
             "Port": [22],
             "Proto": ["tcp", "ssh"]
         }
