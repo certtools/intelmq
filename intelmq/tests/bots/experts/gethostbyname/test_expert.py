@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Testing Fqdn2Ip.
+Testing GethostbynameExpertBot.
 """
 
 import unittest
@@ -20,22 +20,32 @@ EXAMPLE_OUTPUT = {"__type": "Event",
                   "destination.ip": "93.184.216.34",
                   "time.observation": "2015-01-01T00:00:00+00:00"
                   }
+NONEXISTING_INPUT = {"__type": "Event",
+                     "source.fqdn": "example.invalid",
+                     "destination.fqdn": "example.invalid",
+                     "time.observation": "2015-01-01T00:00:00+00:00"
+                     }
 
 
 @test.skip_internet()
 class TestGethostbynameExpertBot(test.BotTestCase, unittest.TestCase):
     """
-    A TestCase for Fqdn2IpExpertBot.
+    A TestCase for GethostbynameExpertBot.
     """
 
     @classmethod
     def set_bot(self):
         self.bot_reference = GethostbynameExpertBot
 
-    def test(self):
+    def test_existing(self):
         self.input_message = EXAMPLE_INPUT
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_OUTPUT)
+
+    def test_non_existing(self):
+        self.input_message = NONEXISTING_INPUT
+        self.run_bot()
+        self.assertMessageEqual(0, NONEXISTING_INPUT)
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()

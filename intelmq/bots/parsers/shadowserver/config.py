@@ -1168,7 +1168,7 @@ open_ldap = {
         ('extra.', 'configuration_naming_context', validate_to_none),
         ('extra.', 'current_time', validate_to_none),
         ('extra.', 'default_naming_context', validate_to_none),
-        ('destination.local_hostname', 'dns_host_name'),
+        ('source.local_hostname', 'dns_host_name'),
         ('extra.', 'domain_controller_functionality', convert_int),
         ('extra.', 'domain_functionality', convert_int),
         ('extra.', 'ds_service_name', validate_to_none),

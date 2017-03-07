@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import json
 import os
+import sys
 
 from setuptools import find_packages, setup
 
@@ -14,6 +15,9 @@ REQUIRES = [
     'redis>=2.10.3',
     'requests>=2.2.0',
 ]
+if sys.version_info < (3, 5):
+    REQUIRES.append('typing')
+
 
 DATA = [
     ('/opt/intelmq/etc/',
@@ -44,6 +48,10 @@ for bot_type, bots in bots.items():
         module = bot['module']
         BOTS.append('{0} = {0}:BOT.run'.format(module))
 
+with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as handle:
+    README = handle.read().replace('<docs/',
+                                   '<https://github.com/certtools/intelmq/blob/master/docs/')
+
 setup(
     name='intelmq',
     version=__version__,
@@ -55,7 +63,7 @@ setup(
     package_data={'intelmq': [
         'etc/*.conf',
         'bots/BOTS',
-        'bots/experts/modify/*.conf',
+        'bots/experts/modify/examples/*.conf',
     ]
     },
     include_package_data=True,
@@ -63,8 +71,7 @@ setup(
     license='AGPLv3',
     description='IntelMQ is a solution for IT security teams for collecting and '
                 'processing security feeds using a message queuing protocol.',
-    long_description=open(os.path.join(os.path.dirname(__file__),
-                                       'docs/README.rst')).read(),
+    long_description=README,
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Console',
