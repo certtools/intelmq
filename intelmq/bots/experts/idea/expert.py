@@ -39,18 +39,23 @@ class IdeaExpertBot(Bot):
         "backdoor": "Intrusion.AdminCompromise",
         "vulnerable service": "Vulnerable.Open",
         "blacklist": "Other",
+        "dga domain": "Anomaly.Behaviour",
+        "proxy": "Vulnerable.Config",
+        "other": "Other",
         "unknown": "Other",
         "test": "Test"
     }
 
     type_to_source_type = {
-        # Added nonstandard Dropzone, MalwareConf, will consider adding to Idea spec
+        # Added nonstandard Dropzone, MalwareConf, DGA, will consider adding to Idea spec
 
         "phishing": "Phishing",
         "dropzone": "Dropzone",
         "botnet drone": "Botnet",
         "malware configuration": "MalwareConf",
-        "c&c": "CC"
+        "c&c": "CC",
+        "dga domain": "DGA",
+        "proxy": "Proxy"
     }
 
     def _init_translation(self):
@@ -82,7 +87,8 @@ class IdeaExpertBot(Bot):
                 lambda s: "malid:" + quot(s["classification.identifier"]),
                 "event_description.url",
                 lambda s: "intelmq_feed:" + quot(s["feed.code"]),
-                lambda s: "misp:" + quot(s["misp_uuid"]),
+                lambda s: "misp_attr:" + quot(s["misp.attribute_uuid"]),
+                lambda s: "misp_event:" + quot(s["misp.event_uuid"]),
                 lambda s: "rtir:" + quot(s["rtir_id"]),
                 "screenshot_url"
             ],
