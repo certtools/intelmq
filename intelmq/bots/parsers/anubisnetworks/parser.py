@@ -15,7 +15,9 @@ env.cookies                             => extra.cookies
 env.path_info                           => extra.path_info
 env.http_referer                        => extra.http_referer
 
-_origin                                 => extra.origin
+_origin                                 => extra._origin
+_provider                               => extra._provider
+pattern_verified                        => extra.pattern_verified
 
 _geo_env_remote_addr.country_code       => source.geolocation.cc
 _geo_env_remote_addr.country_name       => source.geolocation.country
@@ -82,7 +84,7 @@ class AnubisNetworksParserBot(Bot):
                 if "server_name" in value:
                     event.add('destination.fqdn', value["server_name"],
                               raise_failure=False)
-                for k in ["request_method", "cookies", "path_info", "http_referer", "_origin", "_provider", "pattern_verified"]:
+                for k in ["request_method", "cookies", "path_info", "http_referer"]:
                     if k in value:
                         extra[k] = value[k]
             if key == "_geo_env_remote_addr":
@@ -91,6 +93,8 @@ class AnubisNetworksParserBot(Bot):
                         event[v] = value[k]
                 if "ip" in value and "netmask" in value:
                     event.add('source.network', '%s/%s' % (value["ip"], value["netmask"]))
+            if key in ["_origin", "_provider", "pattern_verified"]:
+                extra[key] = value
         if extra:
             event.add('extra', extra)
         self.send_message(event)
