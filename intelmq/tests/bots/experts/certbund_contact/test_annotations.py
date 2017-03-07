@@ -94,6 +94,11 @@ class TestAnnotations(unittest.TestCase):
         self.assertFalse(tag1 == tag2)
         self.assertTrue(tag1 != tag2)
 
+    def test_inhibition_true(self):
+        annotation = from_json(json.loads('{"type": "inhibition"'
+                                          ',"condition": true}'))
+        self.assertTrue(annotation.matches({}))
+
     def test_inhibition_unknown_function(self):
         with self.assertRaises(AnnotationError):
             from_json(json.loads('{"type": "inhibition"'

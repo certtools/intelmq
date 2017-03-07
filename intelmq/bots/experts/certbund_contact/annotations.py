@@ -133,7 +133,7 @@ class Const(Expr):
 
     @classmethod
     def from_json(cls, json_obj):
-        assert isinstance(json_obj, str)
+        assert isinstance(json_obj, (str, bool))
         return cls(json_obj)
 
     def evaluate(self, context):
@@ -152,7 +152,7 @@ def expr_from_json(json_obj):
             return EventFieldReference.from_json(json_obj)
         else:
             raise AnnotationError("Unknown expression function: %r" % (name,))
-    elif isinstance(json_obj, str):
+    elif isinstance(json_obj, (str, bool)):
         return Const.from_json(json_obj)
 
 
