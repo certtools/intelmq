@@ -5,7 +5,6 @@ from uuid import uuid4
 from urllib.parse import quote_plus
 
 from intelmq.lib.bot import Bot
-from intelmq.lib.message import Event
 
 
 def quot(s):
