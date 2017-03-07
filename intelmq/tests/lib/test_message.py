@@ -32,6 +32,14 @@ URL_INVALID = '/exampl\n'
 ACCURACY_UNSANE = '100'
 ACCURACY_SANE = 100
 ACCURACY_INVALID = -1
+FEED_FIELDS = {'feed.accuracy': 80,
+               'feed.code': 'code',
+               'feed.documentation': 'https://www.example.com/docs',
+               'feed.name': 'Feed',
+               'feed.provider': 'Feed Provider',
+               'feed.url': 'https://www.example.com',
+               'rtir_id': 1337,
+               }
 
 
 class TestMessageFactory(unittest.TestCase):
@@ -404,7 +412,36 @@ class TestMessageFactory(unittest.TestCase):
         self.assertNotEqual(event1.hash(), event2.hash())
         # But not if we blacklist it (time.observation does not have to
         # blacklisted explicitly):
-        self.assertEqual(event1.hash({"feed.name"}), event2.hash({"feed.name"}))
+        self.assertEqual(event1.hash(filter_type="blacklist",
+                                     filter_keys={"feed.name"}),
+                         event2.hash(filter_type="blacklist",
+                                     filter_keys={"feed.name"}))
+
+        self.assertNotEqual(event1.hash(filter_type="blacklist",
+                                        filter_keys={"feed.url, raw"}),
+                            event2.hash(filter_type="blacklist",
+                                        filter_keys={"feed.url, raw"}))
+
+    def test_event_hash_method_whitelist(self):
+        """ Test Event hash(blacklist) """
+        event = message.MessageFactory.unserialize('{"__type": "Event"}')
+
+        event1 = self.add_event_examples(event)
+        event2 = event1.deep_copy()
+
+        event2.add('feed.name', 'Some Other Feed', overwrite=True)
+
+        self.assertNotEqual(event1.hash(), event2.hash())
+
+        self.assertNotEqual(event1.hash(filter_type="whitelist",
+                                        filter_keys={"feed.name"}),
+                            event2.hash(filter_type="whitelist",
+                                        filter_keys={"feed.name"}))
+
+        self.assertEqual(event1.hash(filter_type="whitelist",
+                                     filter_keys={"feed.url, raw"}),
+                         event2.hash(filter_type="whitelist",
+                                     filter_keys={"feed.url, raw"}))
 
     def test_event_dict(self):
         """ Test Event to_dict. """
@@ -466,6 +503,12 @@ class TestMessageFactory(unittest.TestCase):
         event = message.MessageFactory.unserialize('{"__type": "Event"}')
         self.assertEqual('{"__type": "Event"}',
                          event.serialize())
+
+    def test_event_from_report(self):
+        report = message.Report()
+        dict.update(report, FEED_FIELDS)
+        event = message.Event(report)
+        self.assertDictContainsSubset(event, FEED_FIELDS)
 
     def test_event_hash_regex(self):
         """ Test if the regex for event_hash is tested correctly. """

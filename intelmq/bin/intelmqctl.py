@@ -261,21 +261,17 @@ PROCESS_MANAGER = {'intelmq': IntelMQProcessManager}
 
 class IntelMQController():
 
-    def __init__(self, interactive=False, return_type="python", quiet=False):
+    def __init__(self, interactive: bool=False, return_type: str="python", quiet: bool=False):
         """
         Initializes intelmqctl.
 
-        Parameters
-        ==========
-        interactive : boolean
-            for cli-interface true, functions can exits, parameters are used
-        return_type : string
-            'python': no special treatment, can be used for use by other
-                python code
-            'text': user-friendly output for cli, default for interactive use
-            'json': machine-readable output for managers
-        quiet : boolean
-            False by default, can be activated for cronjobs etc.
+        Parameters:
+            interactive: for cli-interface true, functions can exits, parameters are used
+            return_type: 'python': no special treatment, can be used for use by other
+                    python code
+                'text': user-friendly output for cli, default for interactive use
+                'json': machine-readable output for managers
+            quiet: False by default, can be activated for cronjobs etc.
         """
         global RETURN_TYPE
         RETURN_TYPE = return_type

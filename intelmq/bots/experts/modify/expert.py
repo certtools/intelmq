@@ -22,16 +22,25 @@ class MatchGroupMapping:
         return self.match.group(key)
 
 
+def convert_config(old):
+    config = []
+    for groupname, group in old.items():
+        for rule_name, rule in group.items():
+            config.append({"rulename": groupname + ' ' + rule_name,
+                           "if": rule[0],
+                           "then": rule[1]})
+
+    return config
+
+
 class ModifyExpertBot(Bot):
 
     def init(self):
         self.config = load_configuration(self.parameters.configuration_path)
+        if type(self.config) is dict:
+            self.config = convert_config(self.config)
 
-    def matches(self, identifiers, event, *rules):
-        condition = {}
-        for rule in rules:
-            condition.update(rule)
-
+    def matches(self, identifier, event, condition):
         matches = {}
 
         for name, rule in condition.items():
@@ -52,7 +61,8 @@ class ModifyExpertBot(Bot):
                         matches[name] = match
                 else:
                     self.logger.warn("Type of rule ({!r}) and data ({!r}) do not "
-                                     "match in {!s}, {}!".format(type(rule), type(event[name]), identifiers, name))
+                                     "match in {!s}, {}!".format(type(rule), type(event[name]),
+                                                                 identifier, name))
             elif not isinstance(event[name], str):  # int, float, etc
                 if event[name] != rule:
                     return None
@@ -75,30 +85,12 @@ class ModifyExpertBot(Bot):
     def process(self):
         event = self.receive_message()
 
-        for section_id, section in self.config.items():
-            default_cond = section.get('__default', [{}, {}])[0]
-            default_action = section.get('__default', [{}, {}])[1]
-            default_matches = self.matches((section_id, '__default'),
-                                           event, default_cond)
-            if default_matches is None:
-                continue
-
-            applied = False
-            for rule_id, (rule_cond, rule_action) in section.items():
-                if rule_id == '__default':
-                    continue
-                matches = self.matches((section_id, rule_id),
-                                       event, default_cond, rule_cond)
-                if matches is not None:
-                    self.logger.debug('Apply rule {}/{}.'.format(section_id,
-                                                                 rule_id))
-                    self.apply_action(event, rule_action, matches)
-                    applied = True
-                    continue
-
-            if not applied and default_action != {}:
-                self.logger.debug('Apply {}/__default.'.format(section_id))
-                self.apply_action(event, default_action, default_matches)
+        for rule in self.config:
+            rule_id, rule_selection, rule_action = rule['rulename'], rule['if'], rule['then']
+            matches = self.matches(rule_id, event, rule_selection)
+            if matches is not None:
+                self.logger.debug('Apply rule {}.'.format(rule_id))
+                self.apply_action(event, rule_action, matches)
 
         self.send_message(event)
         self.acknowledge_message()

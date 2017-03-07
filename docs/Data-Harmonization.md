@@ -203,5 +203,5 @@ Below, we have enumerated the minimum requirements for an actionable abuse event
 
 
 
-**NOTE:** This document was copied from [AbuseHelper repository](https://bitbucket.org/clarifiednetworks/abusehelper/wiki/Data Harmonization Ontology) and improved.
+**NOTE:** This document was copied from [AbuseHelper repository](https://github.com/abusesa/abusehelper/blob/master/docs/Harmonization.md) and improved.
 

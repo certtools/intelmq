@@ -107,6 +107,7 @@ class Bot(object):
         self.logger.info('Handling SIGHUP, initializing again now.')
         self.__disconnect_pipelines()
         self.logger.handlers = []  # remove all existing handlers
+        self.shutdown()  # disconnects, stops threads etc
         self.__init__(self.__bot_id)
         self.__connect_pipelines()
 
@@ -443,7 +444,7 @@ class Bot(object):
                              "{!r}.".format(self.__bot_id))
 
     def __log_configuration_parameter(self, config_name, option, value):
-        if "password" in option:
+        if "password" in option or "token" in option:
             value = "HIDDEN"
 
         message = "{} configuration: parameter {!r} loaded with value {!r}."\
@@ -467,6 +468,41 @@ class Bot(object):
             exit('No bot ID given.')
         instance = cls(sys.argv[1])
         instance.start()
+
+    def set_request_parameters(self):
+        if hasattr(self.parameters, 'http_ssl_proxy'):
+            self.logger.warning("Parameter 'http_ssl_proxy' is deprecated and will be removed in "
+                                "version 1.0!")
+            if not hasattr(self.parameters, 'https_proxy'):
+                self.parameters.https_proxy = self.parameters.http_ssl_proxy
+
+        self.http_header = getattr(self.parameters, 'http_header', {})
+        self.http_verify_cert = getattr(self.parameters, 'http_verify_cert',
+                                        True)
+        self.ssl_client_cert = getattr(self.parameters,
+                                       'ssl_client_certificate', None)
+
+        if hasattr(self.parameters, 'http_username') and hasattr(
+                self.parameters, 'http_password'):
+            self.auth = (self.parameters.http_username,
+                         self.parameters.http_password)
+        else:
+            self.auth = None
+
+        if self.parameters.http_proxy and self.parameters.https_proxy:
+            self.proxy = {'http': self.parameters.http_proxy,
+                          'https': self.parameters.https_proxy}
+        elif self.parameters.http_proxy or self.parameters.https_proxy:
+            self.logger.warning('Only {}_proxy seems to be set.'
+                                'Both http and https proxies must be set.'
+                                .format('http' if self.parameters.http_proxy else 'https'))
+            self.proxy = None
+        else:
+            self.proxy = None
+
+        self.http_timeout = getattr(self.parameters, 'http_timeout', 60)
+
+        self.http_header['User-agent'] = self.parameters.http_user_agent
 
 
 class ParserBot(Bot):
@@ -610,6 +646,8 @@ class CollectorBot(Bot):
         report.add("feed.name", self.parameters.feed)
         if hasattr(self.parameters, 'code'):
             report.add("feed.code", self.parameters.code)
+        if hasattr(self.parameters, 'documentation'):
+            report.add("feed.documentation", self.parameters.documentation)
         if hasattr(self.parameters, 'provider'):
             report.add("feed.provider", self.parameters.provider)
         report.add("feed.accuracy", self.parameters.accuracy)
@@ -622,41 +660,6 @@ class CollectorBot(Bot):
 
     def new_report(self):
         return libmessage.Report()
-
-    def set_request_parameters(self):
-        if hasattr(self.parameters, 'http_ssl_proxy'):
-            self.logger.warning("Parameter 'http_ssl_proxy' is deprecated and will be removed in "
-                                "version 1.0!")
-            if not hasattr(self.parameters, 'https_proxy'):
-                self.parameters.https_proxy = self.parameters.http_ssl_proxy
-
-        self.http_header = getattr(self.parameters, 'http_header', {})
-        self.http_verify_cert = getattr(self.parameters, 'http_verify_cert',
-                                        True)
-        self.ssl_client_cert = getattr(self.parameters,
-                                       'ssl_client_certificate', None)
-
-        if hasattr(self.parameters, 'http_username') and hasattr(
-                self.parameters, 'http_password'):
-            self.auth = (self.parameters.http_username,
-                         self.parameters.http_password)
-        else:
-            self.auth = None
-
-        if self.parameters.http_proxy and self.parameters.https_proxy:
-            self.proxy = {'http': self.parameters.http_proxy,
-                          'https': self.parameters.https_proxy}
-        elif self.parameters.http_proxy or self.parameters.https_proxy:
-            self.logger.warning('Only {}_proxy seems to be set.'
-                                'Both http and https proxies must be set.'
-                                .format('http' if self.parameters.http_proxy else 'https'))
-            self.proxy = None
-        else:
-            self.proxy = None
-
-        self.http_timeout = getattr(self.parameters, 'http_timeout', 60)
-
-        self.http_header['User-agent'] = self.parameters.http_user_agent
 
 
 class Parameters(object):

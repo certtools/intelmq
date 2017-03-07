@@ -85,9 +85,14 @@ systemctl start redis
 
 ## Installation
 
-The `REQUIREMENTS` files define a list python packages and versions, which are necessary to run *all components* of IntelMQ. The defined versions are recommendations.
+The `REQUIREMENTS` files define a list of python packages and versions, which are necessary to run most components of IntelMQ. The defined (minimal) versions are recommendations. Some bots have additional dependencies which are mentioned in their documentation and their own `REQUIREMENTS` file (in their source directory).
 
-If you do not do any modifications on the code, use `pip install intelmq` instead of `pip install .`!
+If your Python version is lower than 3.5 you additionally need the "typing" package:
+```bash
+pip3 install typing
+```
+
+If you do not do any modifications on the code, use `pip install intelmq` instead of `pip install .` or packages.
 
 ```bash
 git clone https://github.com/certtools/intelmq.git /tmp/intelmq

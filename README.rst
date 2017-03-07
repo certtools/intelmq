@@ -18,7 +18,7 @@ incident responders an easy way to collect & process threat intelligence
 thus improving the incident handling processes of CERTs.
 
 IntelMQ's design was influenced by
-`AbuseHelper <https://bitbucket.org/clarifiednetworks/abusehelper>`__,
+`AbuseHelper <https://github.com/abusesa/abusehelper>`__,
 however it was re-written from scratch and aims at:
 
 -  Reduce the complexity of system administration

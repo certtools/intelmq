@@ -84,6 +84,11 @@ def skip_redis():
                            'Skipping without running redis.')
 
 
+def skip_local_web():
+    return unittest.skipUnless(os.environ.get('INTELMQ_TEST_LOCAL_WEB'),
+                               'Skipping local web tests.')
+
+
 class BotTestCase(object):
     """
     Provides common tests and assert methods for bot testing.
@@ -191,14 +196,12 @@ class BotTestCase(object):
             if self.default_input_message:  # None for collectors
                 self.input_queue = [self.default_input_message]
 
-    def run_bot(self, iterations=1):
+    def run_bot(self, iterations: int=1):
         """
         Call this method for actually doing a test run for the specified bot.
 
-        Parameters
-        ----------
-        iterations : integer
-            Bot instance will be run the given times, defaults to 1.
+        Parameters:
+            iterations: Bot instance will be run the given times, defaults to 1.
         """
         self.prepare_bot()
         with mock.patch('intelmq.lib.utils.load_configuration',
@@ -298,11 +301,17 @@ class BotTestCase(object):
         self.assertEqual('Test{}'.format(self.bot_name),
                          self.__class__.__name__)
 
-    def assertAnyLoglineEqual(self, message, levelname="ERROR"):
-        """Asserts if any logline matches a specific requirement.
-           Args:
-                message: Message text which is compared
-                type: Type of logline which is asserted"""
+    def assertAnyLoglineEqual(self, message: str, levelname: str="ERROR"):
+        """
+        Asserts if any logline matches a specific requirement.
+
+        Parameters:
+            message: Message text which is compared
+            type: Type of logline which is asserted
+
+        Raises:
+            ValueError: if logline message has not been found
+        """
 
         self.assertIsNotNone(self.loglines)
         for logline in self.loglines:
@@ -314,12 +323,15 @@ class BotTestCase(object):
             raise ValueError('Logline with level {!r} and message {!r} not found'
                              ''.format(levelname, message))
 
-    def assertLoglineEqual(self, line_no, message, levelname="ERROR"):
-        """Asserts if a logline matches a specific requirement.
-           Args:
-                line_no: Number of the logline which is asserted
-                message: Message text which is compared
-                type: Type of logline which is asserted"""
+    def assertLoglineEqual(self, line_no: int, message: str, levelname: str="ERROR"):
+        """
+        Asserts if a logline matches a specific requirement.
+
+        Parameters:
+            line_no: Number of the logline which is asserted
+            message: Message text which is compared
+            levelname: Log level of logline which is asserted
+        """
 
         self.assertIsNotNone(self.loglines)
         logline = self.loglines[line_no]
@@ -332,12 +344,15 @@ class BotTestCase(object):
         self.assertEqual(levelname, fields["log_level"])
         self.assertEqual(message, fields["message"])
 
-    def assertLoglineMatches(self, line_no, pattern, levelname="ERROR"):
-        """Asserts if a logline matches a specific requirement.
-           Args:
-                line_no: Number of the logline which is asserted
-                pattern: Message text which is compared
-                type: Type of logline which is asserted"""
+    def assertLoglineMatches(self, line_no: int, pattern: str, levelname: str="ERROR"):
+        """
+        Asserts if a logline matches a specific requirement.
+
+        Parameters:
+            line_no: Number of the logline which is asserted
+            pattern: Message text which is compared
+            type: Type of logline which is asserted
+        """
 
         self.assertIsNotNone(self.loglines)
         logline = self.loglines[line_no]
@@ -350,11 +365,14 @@ class BotTestCase(object):
         self.assertEqual(levelname, fields["log_level"])
         self.assertRegex(fields["message"], pattern)
 
-    def assertLogMatches(self, pattern, levelname="ERROR"):
-        """Asserts if any logline matches a specific requirement.
-           Args:
-                pattern: Message text which is compared
-                type: Type of logline which is asserted"""
+    def assertLogMatches(self, pattern: str, levelname: str="ERROR"):
+        """
+        Asserts if any logline matches a specific requirement.
+
+        Parameters:
+            pattern: Message text which is compared
+            type: Type of logline which is asserted
+        """
 
         self.assertIsNotNone(self.loglines)
         for logline in self.loglines:
@@ -396,7 +414,10 @@ class BotTestCase(object):
         self.assertIsInstance(event, str)
 
         event_dict = json.loads(event)
-        expected = expected_msg.copy()
+        if isinstance(expected_msg, (message.Event, message.Report)):
+            expected = expected_msg.to_dict(with_type=True)
+        else:
+            expected = expected_msg.copy()
         if 'time.observation' in event_dict:
             del event_dict['time.observation']
         if 'time.observation' in expected:

@@ -288,7 +288,8 @@ id: alienvault-otx-parser
 id: anubisnetworks-collector
 provider: AnubisNetworks
 feed: AnubisNetworks Cyberfeed
-http_url: http://alerts.bitsighttech.com:8080/stream?key={{ your api key }}
+http_url: https://prod.cyberfeed.net/stream?key={{ your api key }}
+strip_lines: true
 ```
 
 ## Parser Bot
