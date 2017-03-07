@@ -15,99 +15,124 @@ from intelmq.bots.experts.certbund_contact.annotations import from_json, \
 class TestAnnotations(unittest.TestCase):
 
     def test_tag(self):
-        tag = from_json(json.loads('{"type": "tag", "value": "daily"}'))
-        self.assertEqual(tag.value, "daily")
+        annotation = from_json(json.loads('{"tag": "daily"}'))
+        self.assertEqual(annotation.tag, "daily")
 
     def test_tag_equality(self):
-        tag1 = from_json(json.loads('{"type": "tag", "value": "daily"}'))
-        tag2 = from_json(json.loads('{"type": "tag", "value": "daily"}'))
-        self.assertTrue(tag1 == tag2)
-        self.assertFalse(tag1 != tag2)
-        self.assertTrue(hash(tag1) == hash(tag2))
+        annotation1 = from_json(json.loads('{"tag": "daily"}'))
+        annotation2 = from_json(json.loads('{"tag": "daily"}'))
+        self.assertTrue(annotation1 == annotation2)
+        self.assertFalse(annotation1 != annotation2)
+        self.assertTrue(hash(annotation1) == hash(annotation2))
 
     def test_tag_inequality(self):
-        tag1 = from_json(json.loads('{"type": "tag", "value": "hourly"}'))
-        tag2 = from_json(json.loads('{"type": "tag", "value": "daily"}'))
-        self.assertTrue(tag1 != tag2)
-        self.assertFalse(tag1 == tag2)
+        annotation1 = from_json(json.loads('{"tag": "hourly"}'))
+        annotation2 = from_json(json.loads('{"tag": "daily"}'))
+        self.assertTrue(annotation1 != annotation2)
+        self.assertFalse(annotation1 == annotation2)
 
-    def test_tag_no_value(self):
+    def test_tag_condition(self):
+        annotation = from_json(json.loads('{"tag": "test-condition"'
+                                          ',"condition":'
+                                          '["eq"'
+                                          ', ["event_field"'
+                                          '  , "classification.identifier"'
+                                          '  ]'
+                                          ', "opensnmp"]'
+                                          '}'))
+        self.assertEqual(annotation.tag, "test-condition")
+        self.assertTrue(annotation.matches({"classification.identifier":
+                                            "opensnmp"}))
+
+    def test_tag_default_condition(self):
+        annotation = from_json(json.loads('{"tag": "test-default-condition"}'))
+        self.assertEqual(annotation.tag, "test-default-condition")
+        self.assertTrue(annotation.matches({}))
+
+    def test_tag_always_true(self):
+        annotation = from_json(json.loads('{"tag": "test-always-true"'
+                                          ',"condition": true'
+                                          '}'))
+        self.assertEqual(annotation.tag, "test-always-true")
+        self.assertTrue(annotation.matches({}))
+
+    def test_annotation_no_tag(self):
         with self.assertRaises(AnnotationError):
-            from_json(json.loads('{"type": "tag"}'))
+            from_json(json.loads('{"abc": "123"}'))
 
     def test_tag_non_string_value(self):
         with self.assertRaises(AnnotationError):
-            from_json(json.loads('{"type": "tag", "value": 123}'))
+            from_json(json.loads('{"tag": 123}'))
 
     def test_inhibition(self):
-        tag = from_json(json.loads('{"type": "inhibition"'
-                                   ',"condition":'
-                                   '["eq"'
-                                   ', ["event_field"'
-                                   '  , "classification.identifier"'
-                                   '  ]'
-                                   ', "openportmapper"]'
-                                   '}'))
-        self.assertTrue(tag.matches({"classification.identifier":
-                                     "openportmapper"}))
-        self.assertFalse(tag.matches({"classification.identifier":
-                                      "openmongodb"}))
+        annotation = from_json(json.loads('{"tag": "inhibition"'
+                                          ',"condition":'
+                                          '["eq"'
+                                          ', ["event_field"'
+                                          '  , "classification.identifier"'
+                                          '  ]'
+                                          ', "openportmapper"]'
+                                          '}'))
+        self.assertTrue(annotation.matches({"classification.identifier":
+                                            "openportmapper"}))
+        self.assertFalse(annotation.matches({"classification.identifier":
+                                             "openmongodb"}))
 
     def test_inhibition_equality(self):
-        tag1 = from_json(json.loads('{"type": "inhibition"'
-                                    ',"condition":'
-                                    '["eq"'
-                                    ', ["event_field"'
-                                    '  , "classification.identifier"'
-                                    '  ]'
-                                    ', "openportmapper"]'
-                                    '}'))
-        tag2 = from_json(json.loads('{"type": "inhibition"'
-                                    ',"condition":'
-                                    '["eq"'
-                                    ', ["event_field"'
-                                    '  , "classification.identifier"'
-                                    '  ]'
-                                    ', "openportmapper"]'
-                                    '}'))
-        self.assertTrue(tag1 == tag2)
-        self.assertFalse(tag1 != tag2)
-        self.assertTrue(hash(tag1) == hash(tag2))
+        annotation1 = from_json(json.loads('{"tag": "inhibition"'
+                                           ',"condition":'
+                                           '["eq"'
+                                           ', ["event_field"'
+                                           '  , "classification.identifier"'
+                                           '  ]'
+                                           ', "openportmapper"]'
+                                           '}'))
+        annotation2 = from_json(json.loads('{"tag": "inhibition"'
+                                           ',"condition":'
+                                           '["eq"'
+                                           ', ["event_field"'
+                                           '  , "classification.identifier"'
+                                           '  ]'
+                                           ', "openportmapper"]'
+                                           '}'))
+        self.assertTrue(annotation1 == annotation2)
+        self.assertFalse(annotation1 != annotation2)
+        self.assertTrue(hash(annotation1) == hash(annotation2))
 
     def test_inhibition_inequality(self):
-        tag1 = from_json(json.loads('{"type": "inhibition"'
-                                    ',"condition":'
-                                    '["eq"'
-                                    ', ["event_field"'
-                                    '  , "classification.identifier"'
-                                    '  ]'
-                                    ', "openportmapper"]'
-                                    '}'))
-        tag2 = from_json(json.loads('{"type": "inhibition"'
-                                    ',"condition":'
-                                    '["eq"'
-                                    ', ["event_field"'
-                                    '  , "classification.identifier"'
-                                    '  ]'
-                                    ', "openmongodb"]'
-                                    '}'))
-        self.assertFalse(tag1 == tag2)
-        self.assertTrue(tag1 != tag2)
+        annotation1 = from_json(json.loads('{"tag": "inhibition"'
+                                           ',"condition":'
+                                           '["eq"'
+                                           ', ["event_field"'
+                                           '  , "classification.identifier"'
+                                           '  ]'
+                                           ', "openportmapper"]'
+                                           '}'))
+        annotation2 = from_json(json.loads('{"tag": "inhibition"'
+                                           ',"condition":'
+                                           '["eq"'
+                                           ', ["event_field"'
+                                           '  , "classification.identifier"'
+                                           '  ]'
+                                           ', "openmongodb"]'
+                                           '}'))
+        self.assertFalse(annotation1 == annotation2)
+        self.assertTrue(annotation1 != annotation2)
 
     def test_inhibition_true(self):
-        annotation = from_json(json.loads('{"type": "inhibition"'
+        annotation = from_json(json.loads('{"tag": "inhibition"'
                                           ',"condition": true}'))
         self.assertTrue(annotation.matches({}))
 
     def test_inhibition_unknown_function(self):
         with self.assertRaises(AnnotationError):
-            from_json(json.loads('{"type": "inhibition"'
+            from_json(json.loads('{"tag": "inhibition"'
                                  ',"condition": ["some_function", 1, "value"]'
                                  '}'))
 
     def test_inhibition_eq_missing_parameters(self):
         with self.assertRaises(AnnotationError):
-            from_json(json.loads('{"type": "inhibition"'
+            from_json(json.loads('{"tag": "inhibition"'
                                    ',"condition":'
                                  '["eq", "openportmapper"]'
                                  '}'))

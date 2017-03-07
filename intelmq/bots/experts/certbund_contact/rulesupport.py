@@ -456,4 +456,4 @@ def notification_inhibited(context):
     """
     return any(annotation.matches(context)
                for annotation in context.all_annotations()
-               if isinstance(annotation, annotations.Inhibition))
+               if annotation.tag == "inhibition")

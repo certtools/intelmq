@@ -5,55 +5,26 @@ class AnnotationError(Exception):
     pass
 
 
-class Tag:
+class Annotation:
 
-    def __init__(self, value):
-        self.value = value
-
-    def __eq__(self, other):
-        return self.value == other.value
-
-    def __hash__(self):
-        return hash(self.value)
-
-    @classmethod
-    def from_json(cls, json_obj):
-        assert json_obj["type"] == "tag"
-        if "value" not in json_obj:
-            raise AnnotationError("Tag annotations must have a value attribute")
-        value = json_obj["value"]
-        if not isinstance(value, str):
-            raise AnnotationError("The value of a tag annotations must be a"
-                                  " string, not %r" % (type(value),))
-        return cls(value)
-
-
-class Inhibition:
-
-    """An Inhibition annotation defines when a notification should not be sent.
-
-    The annotation has a boolean expression (see Expr) which can be
-    evaluated in a rule context with the matches method. If that returns
-    true, the contact to which the annotation belongs should be ignored
-    when determining which notifications to send.
-    """
-
-    def __init__(self, condition):
+    def __init__(self, tag, condition=True):
+        self.tag = tag
         self.condition = condition
 
     def __eq__(self, other):
-        return self.condition == other.condition
+        return self.tag == other.tag and self.condition == other.condition
 
     def __hash__(self):
-        return hash(self.condition)
+        return hash((self.tag, self.condition))
 
     @classmethod
     def from_json(cls, json_obj):
-        assert json_obj["type"] == "inhibition"
-        if "condition" not in json_obj:
-            raise AnnotationError("Inhibition annotations must have a"
-                                  " condition attribute")
-        return cls(expr_from_json(json_obj["condition"]))
+        if "tag" not in json_obj:
+            raise AnnotationError("Annotation misses a tag attribute")
+        tag = json_obj["tag"]
+        if not isinstance(tag, str):
+            raise AnnotationError("Annotation's tag is not a string")
+        return cls(tag, expr_from_json(json_obj.get("condition", "true")))
 
     def matches(self, context):
         return self.condition.evaluate(context)
@@ -157,11 +128,4 @@ def expr_from_json(json_obj):
 
 
 def from_json(json_obj):
-    annotation_type = json_obj.get("type")
-    if annotation_type == "tag":
-        return Tag.from_json(json_obj)
-    elif annotation_type == "inhibition":
-        return Inhibition.from_json(json_obj)
-    else:
-        raise AnnotationError("Unknown annotation type: %r"
-                              % (annotation_type,))
+    return Annotation.from_json(json_obj)
