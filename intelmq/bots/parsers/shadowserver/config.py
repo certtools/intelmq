@@ -80,6 +80,7 @@ def get_feed(feedname):
         "Blacklisted-IP": blacklisted_ip,
         "Accessible-Telnet": accessible_telnet,
         "Accessible-CWMP": accessible_cwmp,
+        "Accessible-VNC": accessible_vnc,
     }
 
     return feed_idx.get(feedname)
@@ -1278,5 +1279,30 @@ accessible_cwmp = {
         'protocol.application': 'cwmp',
         'classification.type': 'vulnerable service',
         'classification.identifier': 'opencwmp',
+    }
+}
+
+accessible_vnc = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('source.reverse_dns', 'hostname'),
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'banner', validate_to_none),
+        ('extra.', 'product', validate_to_none),
+    ],
+    'constant_fields': {
+        'protocol.transport': 'tcp',
+        'protocol.application': 'vnc',
+        'classification.type': 'vulnerable service',
+        'classification.identifier': 'accessiblevnc',
     }
 }
