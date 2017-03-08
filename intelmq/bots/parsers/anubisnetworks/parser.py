@@ -19,6 +19,16 @@ AnubisNetworks Cyberfeed Stream parser ::
     _provider                               => extra._provider
     pattern_verified                        => extra.pattern_verified
 
+    _geo_env_remote_addr.country_code       => source.geolocation.cc
+    _geo_env_remote_addr.country_name       => source.geolocation.country
+    _geo_env_remote_addr.region             => source.geolocation.region
+    _geo_env_remote_addr.city               => source.geolocation.city
+    _geo_env_remote_addr.asn                => source.geolocation.asn
+    _geo_env_remote_addr.asn_name           => source.geolocation.as_name
+    _geo_env_remote_addr.longitude          => source.geolocation.longitude
+    _geo_env_remote_addr.longitude          => source.geolocation.longitude
+    _geo_env_remote_addr.ip + netmask       => source.network
+
 Currently ignored and probably useful::
 
     btrack{id(hex),checkins(int),first(timestamp),since(int),days(int),changes(int),seen(ts),last_ip(ip),sameip(int)}
