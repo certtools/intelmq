@@ -12,6 +12,7 @@ TYPES = {
     'MALWARE': 'malware',
     'EXPLOIT_KIT': 'exploit',
     'BACKDOOR': 'backdoor',
+    'TOR_IP': 'proxy',
     'C_AND_C': 'c&c'
 }
 
@@ -33,6 +34,8 @@ class BluelivCrimeserverParserBot(Bot):
                 event.add('source.geolocation.cc', item['country'])
             if 'type' in item:
                 event.add('classification.type', TYPES[item['type']])
+                if item['type'] == 'TOR_IP':
+                    event.add('source.tor_node', True)
             if 'firstSeenAt' in item:
                 event.add('time.source', item['firstSeenAt'][:-4] + '00:00')
             event.add("raw", json.dumps(item, sort_keys=True))
