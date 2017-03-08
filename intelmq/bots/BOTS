@@ -424,7 +424,7 @@
             }
         },
         "CERT-bund Contact Database": {
-            "description": "Retrieve CIDR contact information from a PostgreSQL database.",
+            "description": "Retrieve contact information from a PostgreSQL database.",
             "module": "intelmq.bots.experts.certbund_contact.expert",
             "parameters": {
                 "database": "contactdb",
@@ -436,7 +436,7 @@
             }
         },
         "CERT-bund Contact No Notification": {
-            "description": "Retrieve CIDR contact information from a PostgreSQL database.",
+            "description": "Replaces ttl of configured notifications with -1.",
             "module": "intelmq.bots.experts.certbund_contact.nonotificationexpert",
             "parameters": {
                 "dropfordestination": "true",
@@ -444,7 +444,7 @@
             }
         },
         "CERT-bund Contact Rules": {
-            "description": "Determine how and who to notify about the event.",
+            "description": "Determine how and whom to notify about the event.",
             "module": "intelmq.bots.experts.certbund_contact.ruleexpert",
             "parameters": {
                 "script_directory": "/opt/intelmq/var/lib/bots/notification_rules"
