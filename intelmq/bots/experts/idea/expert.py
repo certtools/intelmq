@@ -10,8 +10,10 @@ from intelmq.lib.bot import Bot
 def quot(s):
     return quote_plus(s or "")
 
+
 def addr4(s):
     return s if ":" not in s else None
+
 
 def addr6(s):
     return s if ":" in s else None
@@ -74,13 +76,21 @@ class IdeaExpertBot(Bot):
             # extra - too informal, will consider based on real world data
 
             "Format": lambda s: "IDEA0",
-            "Description": lambda s: "%s: %s" % (s["feed.name"], s.get("event_description.text", s.get("comment", s.get("classification.type", "unknown")))),
-            "Category": [lambda s: self.type_to_category[s.get("classification.type", "unknown")], lambda s: "Test" if self.parameters.test_mode else None],
+            "Description": lambda s: "%s: %s" % (
+                s["feed.name"],
+                s.get("event_description.text",
+                      s.get("comment",
+                            s.get("classification.type", "unknown")))
+            ),
+            "Category": [
+                lambda s: self.type_to_category[s.get("classification.type", "unknown")],
+                lambda s: "Test" if self.parameters.test_mode else None
+            ],
             "DetectTime": "time.observation",
             "EventTime": "time.source",
             "ID": lambda s: str(uuid4()),
             "RelID": lambda s: "hash:" + quot(s["event_hash"]),
-            "Confidence": lambda s: min(1, max(0, s["feed.accuracy"]/100)),
+            "Confidence": lambda s: min(1, max(0, s["feed.accuracy"] / 100)),
             "Note": "comment",
             "Ref": [
                 lambda s: "malid:" + quot(s["classification.identifier"]),
@@ -109,7 +119,10 @@ class IdeaExpertBot(Bot):
             "Source": [
                 {
                     "Proto": ["protocol.transport", "protocol.application"],
-                    "Type": [lambda s: self.type_to_source_type.get(s["classification.type"], None), lambda s: s["source.tor_node"] and "Tor"],
+                    "Type": [
+                        lambda s: self.type_to_source_type.get(s["classification.type"], None),
+                        lambda s: s["source.tor_node"] and "Tor"
+                    ],
                     "Account": ["source.account"],
                     "ASN": ["source.asn"],
                     "Hostname": ["source.fqdn"],

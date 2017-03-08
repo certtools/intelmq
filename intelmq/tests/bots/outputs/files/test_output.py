@@ -29,10 +29,10 @@ class TestFilesOutputBot(test.BotTestCase, unittest.TestCase):
 
     def test_event_single_key(self):
         self.sysconfig = {"hierarchical_output": True,
-                         "dir": self.incoming_path,
-                         "tmp": self.tmp_path,
-                         "single_key": "output",
-                         "suffix": ""}
+                          "dir": self.incoming_path,
+                          "tmp": self.tmp_path,
+                          "single_key": "output",
+                          "suffix": ""}
         self.run_bot()
         name = os.listdir(self.incoming_path)[0]
         with open(pth.join(self.incoming_path, name), encoding="utf-8") as f:
@@ -41,10 +41,10 @@ class TestFilesOutputBot(test.BotTestCase, unittest.TestCase):
 
     def test_event_whole(self):
         self.sysconfig = {"hierarchical_output": False,
-                         "dir": self.incoming_path,
-                         "tmp": self.tmp_path,
-                         "single_key": None,
-                         "suffix": ""}
+                          "dir": self.incoming_path,
+                          "tmp": self.tmp_path,
+                          "single_key": None,
+                          "suffix": ""}
         self.run_bot()
         name = os.listdir(self.incoming_path)[0]
         with open(pth.join(self.incoming_path, name), encoding="utf-8") as f:
@@ -54,10 +54,10 @@ class TestFilesOutputBot(test.BotTestCase, unittest.TestCase):
 
     def test_path_error(self):
         self.sysconfig = {"hierarchical_output": False,
-                         "dir": self.incoming_path,
-                         "tmp": self.tmp_path,
-                         "single_key": None,
-                         "suffix": ""}
+                          "dir": self.incoming_path,
+                          "tmp": self.tmp_path,
+                          "single_key": None,
+                          "suffix": ""}
         with open(self.incoming_path, "a"):
             pass
         with self.assertRaises(FileExistsError):

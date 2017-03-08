@@ -21,7 +21,8 @@ TEST_INPUT1 = {
     "misp.event_uuid": "81494d6a-0341-11e7-a0ef-002564d9514f",
     "protocol.application": "ssh",
     "protocol.transport": "tcp",
-    "raw": "MjAxNi8wNC8yMF8xNDoyOCx3Yzl1ai5scnZhMzJ4d2QudG9wL1NIbnhCZEUtck1UWWZwLUNTaHIvVktkdGstOTgzLUVqcUovLDE4NS4xNDEuMjUuNjAsLSxBbmdsZXIgRUssUmVnaXN0cmFudCBtYXlrb2VAbGlzdC5ydSw2MDExNw==",
+    "raw": "MjAxNi8wNC8yMF8xNDoyOCx3Yzl1ai5scnZhMzJ4d2QudG9wL1NIbnhCZEUtck1UWWZwLUNTaHIvVktkdGstOTgz"
+           "LUVqcUovLDE4NS4xNDEuMjUuNjAsLSxBbmdsZXIgRUssUmVnaXN0cmFudCBtYXlrb2VAbGlzdC5ydSw2MDExNw==",
     "source.as_name": "PURDUE - Purdue University, US",
     "source.asn": 60117,
     "source.ip": "185.141.25.60",
@@ -59,7 +60,8 @@ TEST_OUTPUT1 = {
     ],
     "Attach": [
         {
-            "Content": "2016/04/20_14:28,wc9uj.lrva32xwd.top/SHnxBdE-rMTYfp-CShr/VKdtk-983-EjqJ/,185.141.25.60,-,Angler EK,Registrant maykoe@list.ru,60117",
+            "Content": "2016/04/20_14:28,wc9uj.lrva32xwd.top/SHnxBdE-rMTYfp-CShr/VKdtk-98"
+                       "3-EjqJ/,185.141.25.60,-,Angler EK,Registrant maykoe@list.ru,60117",
             "Type": ["OrigData"],
             "Ref": ["http://www.malwaredomainlist.com/updatescsv.php"]
         }
@@ -89,6 +91,7 @@ class TestIdeaExpertBot(test.BotTestCase, unittest.TestCase):
         del TEST_OUTPUT1["ID"]
         del idea_event["ID"]
         self.assertDictEqual(TEST_OUTPUT1, idea_event)
+
 
 if __name__ == '__main__':
     unittest.main()
