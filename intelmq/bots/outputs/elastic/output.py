@@ -21,12 +21,18 @@ def replace_keys(obj, key_char = '.', replacement = '_'):
 class ElasticsearchOutputBot(Bot):
 
     def init(self):
-        self.elastic_host = self.parameters.elastic_host
-        self.elastic_port = self.parameters.elastic_port
-        self.elastic_index = self.parameters.elastic_index
-        self.elastic_doctype = self.parameters.elastic_doctype
-        self.sanitize_keys = self.parameters.sanitize_keys
-        self.replacement_char = self.parameters.replacement_char
+        self.elastic_host = getattr(self.parameters,
+                                    'elastic_host','127.0.0.1')
+        self.elastic_port = getattr(self.parameters,
+                                    'elastic_port','9200')
+        self.elastic_index = getattr(self.parameters,
+                                     'elastic_index', 'intelmq')
+        self.elastic_doctype = getattr(self.parameters,
+                                     'elastic_doctype', 'events')
+        self.sanitize_keys = getattr(self.parameters,
+                                     'sanitize_keys', True)
+        self.replacement_char = getattr(self.parameters,
+                                        'replacement_char', '_')
         self.es = Elasticsearch([
                     {'host': self.elastic_host, 'port': self.elastic_port}
                 ])
