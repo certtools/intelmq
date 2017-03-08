@@ -7,6 +7,7 @@ howto_use_python_otx_api.ipynb
 """
 
 import json
+import urllib.parse as parse
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
@@ -27,6 +28,7 @@ class AlienVaultOTXParserBot(Bot):
 
         for pulse in json.loads(raw_report):
             additional = {"author": pulse['author_name'], "pulse": pulse['name']}
+
             for indicator in pulse["indicators"]:
                 event = self.new_event(report)
                 # hashes
@@ -34,8 +36,22 @@ class AlienVaultOTXParserBot(Bot):
                     event.add('malware.hash', HASHES[indicator["type"]] +
                               indicator["indicator"])
                 # fqdn
-                if indicator["type"] in ['hostname', 'domain']:
-                    event.add('source.fqdn',
+                elif indicator["type"] in ['hostname', 'domain']:
+                    # not all domains in the report are just domains
+                    # some are urls, we can manage those here instead
+                    # of raising errors
+                    #
+                    #dirty check if there is a scheme
+
+                    resource = indicator["indicator"] \
+                                if 'tp://' in indicator["indicator"] \
+                                else 'http://'+indicator["indicator"]
+                    path = parse.urlparse(resource).path
+                    if len(path) > 0:
+                        event.add('source.url',
+                              indicator["indicator"])
+                    else:
+                        event.add('source.fqdn',
                               indicator["indicator"])
                 # IP addresses
                 elif indicator["type"] in ['IPv4', 'IPv6']:
@@ -53,16 +69,24 @@ class AlienVaultOTXParserBot(Bot):
                 elif indicator["type"] in ['CIDR']:
                     event.add('source.network',
                               indicator["indicator"])
-                # FilePath, Mutex, CVE - TODO: process these IoCs as well
+
+                # CVE
+                elif indicator["type"] in ['CVE']:
+                    additional['CVE'] = indicator["indicator"]
+                  # FilePath, Mutex, CVE - TODO: process these IoCs as well
                 else:
                     continue
 
-                event.add('comment', pulse['description'])
-                event.add('extra', additional)
-                event.add('classification.type', 'blacklist')
-                event.add('time.source', indicator["created"][:-4] + "+00:00")
-                event.add("raw", json.dumps(indicator, sort_keys=True))
-                self.send_message(event)
+        if 'tags' in pulse:
+            additional['tags'] =  pulse['tags']
+        if 'modified' in indicator:
+            additional['time.updated'] = indicator["modified"][:-4] + "+00:00"
+        event.add('comment', pulse['description'])
+        event.add('extra', additional)
+        event.add('classification.type', 'blacklist')
+        event.add('time.source', indicator["created"][:-4] + "+00:00")
+        event.add("raw", json.dumps(indicator, sort_keys=True))
+        self.send_message(event)
         self.acknowledge_message()
 
 
