@@ -508,8 +508,10 @@ class ParserBot(Bot):
         `self.parse_line` can be saved in `self.tempdata` (list).
 
         Default parser yields stripped lines.
-        Override for your use or use an exisiting parser, e.g.:
+        Override for your use or use an exisiting parser, e.g.::
+
             parse = ParserBot.parse_csv
+
         """
         for line in utils.base64_decode(report.get("raw")).splitlines():
             line = line.strip()
