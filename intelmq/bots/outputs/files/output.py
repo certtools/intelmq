@@ -16,7 +16,7 @@ class FilesOutputBot(Bot):
     def init(self):
         self.tmp = self._ensure_path(self.parameters.tmp)
         self.dir = self._ensure_path(self.parameters.dir)
-        if os.stat(self.tmp).st_dev != os.stat(self.dir).st_dev:
+        if os.stat(self.tmp).st_dev != os.stat(self.dir).st_dev:    # pragma: no cover (hard to test)
             raise ConfigurationError(
                 "bot setup",
                 "tmp and dir must reside on the same filesystem")
@@ -49,7 +49,7 @@ class FilesOutputBot(Bot):
             tmpname = self._get_new_name()
             try:
                 fd = os.open(path.join(self.tmp, tmpname), os.O_CREAT | os.O_RDWR | os.O_EXCL)
-            except OSError as e:
+            except OSError as e:    # pragma: no cover (random, hard to test)
                 if e.errno != errno.EEXIST:
                     raise   # other errors than duplicates should get noticed
                 tmpname = None
