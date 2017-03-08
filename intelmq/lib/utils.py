@@ -55,7 +55,7 @@ def decode(text: Union[bytes, str], encodings: Sequence[str]=("utf-8", ),
         force: Ignore invalid characters
 
     Returns:
-        text: converted unicode string
+        converted unicode string
 
     Raises:
         ValueError: if decoding failed
@@ -90,8 +90,8 @@ def encode(text: Union[bytes, str], encodings: Sequence[str]=("utf-8", ),
         encodings: list/tuple of encodings to use
         force: Ignore invalid characters
 
-    Returns
-        text: converted bytes string
+    Returns:
+        converted bytes string
 
     Raises:
         ValueError: if encoding failed
