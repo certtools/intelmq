@@ -47,8 +47,7 @@ class AlienVaultOTXParserBot(Bot):
                                 else 'http://'+indicator["indicator"]
                     path = parse.urlparse(resource).path
                     if len(path) > 0:
-                        event.add('source.url',
-                              indicator["indicator"])
+                        event.add('source.url', resource)
                     else:
                         event.add('source.fqdn',
                               indicator["indicator"])
@@ -62,8 +61,10 @@ class AlienVaultOTXParserBot(Bot):
                               indicator["indicator"])
                 # URLs
                 elif indicator["type"] in ['URL', 'URI']:
-                    event.add('source.url',
-                              indicator["indicator"])
+                    resource = indicator["indicator"] \
+                                if 'tp://' in indicator["indicator"] \
+                                else 'http://'+indicator["indicator"]
+                    event.add('source.url', resource)
                 # CIDR
                 elif indicator["type"] in ['CIDR']:
                     event.add('source.network',
@@ -76,16 +77,16 @@ class AlienVaultOTXParserBot(Bot):
                 else:
                     continue
 
-        if 'tags' in pulse:
-            additional['tags'] =  pulse['tags']
-        if 'modified' in indicator:
-            additional['time.updated'] = indicator["modified"][:-4] + "+00:00"
-        event.add('comment', pulse['description'])
-        event.add('extra', additional)
-        event.add('classification.type', 'blacklist')
-        event.add('time.source', indicator["created"][:-4] + "+00:00")
-        event.add("raw", json.dumps(indicator, sort_keys=True))
-        self.send_message(event)
+                if 'tags' in pulse:
+                    additional['tags'] =  pulse['tags']
+                if 'modified' in indicator:
+                    additional['time.updated'] = indicator["modified"][:-4] + "+00:00"
+                event.add('comment', pulse['description'])
+                event.add('extra', additional)
+                event.add('classification.type', 'blacklist')
+                event.add('time.source', indicator["created"][:-4] + "+00:00")
+                event.add("raw", json.dumps(indicator, sort_keys=True))
+                self.send_message(event)
         self.acknowledge_message()
 
 
