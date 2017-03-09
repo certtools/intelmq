@@ -48,8 +48,7 @@ class AlienVaultOTXParserBot(Bot):
                                 else 'http://'+indicator["indicator"]
                     path = parse.urlparse(resource).path
                     if len(path) > 0:
-                        event.add('source.url',
-                              indicator["indicator"])
+                        event.add('source.url', resource)
                     else:
                         event.add('source.fqdn',
                               indicator["indicator"])
