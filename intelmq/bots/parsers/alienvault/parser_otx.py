@@ -78,16 +78,16 @@ class AlienVaultOTXParserBot(Bot):
                 else:
                     continue
 
-        if 'tags' in pulse:
-            additional['tags'] =  pulse['tags']
-        if 'modified' in indicator:
-            additional['time.updated'] = indicator["modified"][:-4] + "+00:00"
-        event.add('comment', pulse['description'])
-        event.add('extra', additional)
-        event.add('classification.type', 'blacklist')
-        event.add('time.source', indicator["created"][:-4] + "+00:00")
-        event.add("raw", json.dumps(indicator, sort_keys=True))
-        self.send_message(event)
+                if 'tags' in pulse:
+                    additional['tags'] =  pulse['tags']
+                if 'modified' in indicator:
+                    additional['time.updated'] = indicator["modified"][:-4] + "+00:00"
+                event.add('comment', pulse['description'])
+                event.add('extra', additional)
+                event.add('classification.type', 'blacklist')
+                event.add('time.source', indicator["created"][:-4] + "+00:00")
+                event.add("raw", json.dumps(indicator, sort_keys=True))
+                self.send_message(event)
         self.acknowledge_message()
 
 
