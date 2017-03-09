@@ -80,8 +80,8 @@ class AlienVaultOTXParserBot(Bot):
 
                 if 'tags' in pulse:
                     additional['tags'] =  pulse['tags']
-                if 'modified' in indicator:
-                    additional['time.updated'] = indicator["modified"][:-4] + "+00:00"
+                if 'modified' in pulse:
+                    additional['time.updated'] = pulse["modified"][:-4] + "+00:00"
                 event.add('comment', pulse['description'])
                 event.add('extra', additional)
                 event.add('classification.type', 'blacklist')
