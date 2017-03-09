@@ -7,15 +7,14 @@ from elasticsearch import Elasticsearch
 
 from intelmq.lib.bot import Bot
 
-#improved from https://stackoverflow.com/a/34615257
-#still lacks recursion control check
-#as noted in the comments
-
+#TODO: recursion depth check
 def replace_keys(obj, key_char = '.', replacement = '_'):
     if isinstance(obj, Mapping):
-        return {key.replace('.', '_'): replace_keys(val,
-                                                    replacement = replacement)
-                    for key, val in obj.items()}
+        replacement_obj = {}
+        for key, val in obj.items():
+            replacement_key = key.replace(key_char, replacement)
+            replacement_obj[replacement_key] = replace_keys(val, key_char, replacement)
+        return replacement_obj
     return obj
 
 class ElasticsearchOutputBot(Bot):
