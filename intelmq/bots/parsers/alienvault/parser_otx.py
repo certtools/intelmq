@@ -41,17 +41,17 @@ class AlienVaultOTXParserBot(Bot):
                     # some are urls, we can manage those here instead
                     # of raising errors
                     #
-                    #dirty check if there is a scheme
+                    # dirty check if there is a scheme
 
                     resource = indicator["indicator"] \
-                                if 'tp://' in indicator["indicator"] \
-                                else 'http://'+indicator["indicator"]
+                        if 'tp://' in indicator["indicator"] \
+                        else 'http://' + indicator["indicator"]
                     path = parse.urlparse(resource).path
                     if len(path) > 0:
                         event.add('source.url', resource)
                     else:
                         event.add('source.fqdn',
-                              indicator["indicator"])
+                                  indicator["indicator"])
                 # IP addresses
                 elif indicator["type"] in ['IPv4', 'IPv6']:
                     event.add('source.ip',
@@ -63,8 +63,8 @@ class AlienVaultOTXParserBot(Bot):
                 # URLs
                 elif indicator["type"] in ['URL', 'URI']:
                     resource = indicator["indicator"] \
-                                if 'tp://' in indicator["indicator"] \
-                                else 'http://'+indicator["indicator"]
+                        if 'tp://' in indicator["indicator"] \
+                        else 'http://' + indicator["indicator"]
                     event.add('source.url', resource)
                 # CIDR
                 elif indicator["type"] in ['CIDR']:
@@ -74,12 +74,12 @@ class AlienVaultOTXParserBot(Bot):
                 # CVE
                 elif indicator["type"] in ['CVE']:
                     additional['CVE'] = indicator["indicator"]
-                  # FilePath, Mutex, CVE - TODO: process these IoCs as well
+                    # FilePath, Mutex, CVE - TODO: process these IoCs as well
                 else:
                     continue
 
                 if 'tags' in pulse:
-                    additional['tags'] =  pulse['tags']
+                    additional['tags'] = pulse['tags']
                 if 'modified' in pulse:
                     additional['time.updated'] = pulse["modified"][:-4] + "+00:00"
                 event.add('comment', pulse['description'])
