@@ -93,7 +93,7 @@ def lookup_contacts(cur, managed, asn, ip, fqdn):
                                  ('[]' :: JSON)) AS annotations,
                         %(managed)s AS managed),
 
-         -- The FADN IDs for the given FQDN
+         -- The FQDN IDs for the given FQDN
          matched_fqdn_ids (fqdn_id)
              AS (SELECT f.id AS fqdn_id
                    FROM fqdn{0} AS f
