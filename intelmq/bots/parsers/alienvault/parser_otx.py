@@ -80,7 +80,15 @@ class AlienVaultOTXParserBot(Bot):
                 if 'tags' in pulse:
                     additional['tags'] = pulse['tags']
                 if 'modified' in pulse:
-                    additional['time.updated'] = pulse["modified"][:-4] + "+00:00"
+                    additional['time.updated'] = \
+                        pulse["modified"][:-4] + "+00:00"
+                if 'industries' in pulse:
+                    additional['industries'] = pulse["industries"]
+                if '' in pulse:
+                    additional['targeted_countries'] = \
+                        pulse["targeted_countries"]
+                if 'adversary' in pulse:
+                    additional['adversary'] = pulse["adversary"]
                 event.add('comment', pulse['description'])
                 event.add('extra', additional)
                 event.add('classification.type', 'blacklist')
