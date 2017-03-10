@@ -190,22 +190,23 @@ class Directive:
     parameters for the more physical aspects of the notification (e.g.
     medium, address, etc.). The other parts have to be handled
     explicitly. In this class this is done with the two attributes
-    aggregate_key and aggregate_fields. The former is a dict whose
-    contents are simply treated as part of the aggregation identifier.
-    The latter is a set of event field names and these names together
-    with the corresponding values from the event are also treated as
-    part of the aggregation identifier. The aggregate_fields attribute
-    is mainly meant for convenience so that one does not have to copy
-    the actual attributes explicitly.
+    :py:attr:`aggregate_key` and :py:attr:`aggregate_fields`. The former
+    is a dict whose contents are simply treated as part of the
+    aggregation identifier. The latter is a set of event field names and
+    these names together with the corresponding values from the event
+    are also treated as part of the aggregation identifier. The
+    aggregate_fields attribute is mainly meant for convenience so that
+    one does not have to copy the actual attributes explicitly.
 
 
     **JSON-Representation**
 
     When converted to JSON, a directive is a JSON-Object whose keys and
     values are the public attributes of the Directive instance with the
-    exception of aggregate_fields and aggregate_key, which are combined
-    into a single dictionary in the obvious way and included in the JSON
-    object under the key "aggregate_identifier".
+    exception of :py:attr:`aggregate_fields` and
+    :py:attr:`aggregate_key`, which are combined into a single
+    dictionary in the obvious way and included in the JSON object under
+    the key ``"aggregate_identifier"``.
     """
 
     def __init__(self, medium=None, recipient_address=None,
@@ -260,7 +261,7 @@ class Directive:
 
         Args:
             event: The event from which to take the values indicated by
-                aggregate_fields
+                :py:attr:`aggregate_fields`
 
         Returns:
             A dict that can be included in the e.g. the event's extra
@@ -286,7 +287,8 @@ class Directive:
                 must be equal in two directives if they are to be
                 aggregated.
 
-        The fieldname is added to the aggregate_fields attribute.
+        The fieldname is added to the :py:attr:`aggregate_fields`
+        attribute.
         """
         self.aggregate_fields.add(fieldname)
 
@@ -337,10 +339,10 @@ class Context:
     parameter to all scripts.
 
     Attributes:
-        section (str): Either 'source' when the script is called due to
-            matches in the source attributes (source.ip, source.asn,
-            ...) or 'destination' when called for matches in the
-            destination attributes.
+        section (str): Either ``'source'`` when the script is called due
+            to matches in the source attributes (e.g. ``"source.ip"``,
+            ``"source.asn"``, ...) or ``'destination'`` when called for
+            matches in the destination attributes.
         logger: A logger object that can be used for log output.
         matches: The entries in the contact DB that matched the event
         organisations: The organisation associated with the matches
