@@ -38,7 +38,7 @@ class ElasticsearchOutputBot(Bot):
         self.replacement_char = getattr(self.parameters,
                                         'replacement_char', '_')
         self.flatten_fields = getattr(self.parameters,
-                                        'flatten_fields', [])
+                                      'flatten_fields', [])
         if isinstance(self.flatten_fields, str):
             self.flatten_fields = self.flatten_fields.split(',')
 
