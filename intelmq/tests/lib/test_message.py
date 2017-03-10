@@ -21,7 +21,7 @@ CONF = pkg_resources.resource_filename('intelmq', 'etc/harmonization.conf')
 def mocked_config(configuration_filepath):
     return load_configuration(CONF)
 with mock.patch('intelmq.lib.utils.load_configuration', new=mocked_config):
-    import intelmq.lib.message as message  # nopep8
+    import intelmq.lib.message as message  # noqa
 
 LOREM_BASE64 = 'bG9yZW0gaXBzdW0='
 DOLOR_BASE64 = 'ZG9sb3Igc2l0IGFtZXQ='
