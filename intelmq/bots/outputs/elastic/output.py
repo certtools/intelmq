@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
+from json import loads
 from collections.abc import Mapping
 
 from elasticsearch import Elasticsearch
@@ -36,6 +37,11 @@ class ElasticsearchOutputBot(Bot):
                                      'sanitize_keys', True)
         self.replacement_char = getattr(self.parameters,
                                         'replacement_char', '_')
+        self.flatten_fields = getattr(self.parameters,
+                                        'flatten_fields', [])
+        if isinstance(self.flatten_fields, str):
+            self.flatten_fields = self.flatten_fields.split(',')
+
         self.es = Elasticsearch([{'host': self.elastic_host,
                                   'port': self.elastic_port}])
         if not self.es.indices.exists(self.elastic_index):
@@ -44,9 +50,25 @@ class ElasticsearchOutputBot(Bot):
     def process(self):
         event = self.receive_message()
         event_dict = event.to_dict(hierarchical=False)
+
+        for field in self.flatten_fields:
+            if field in event_dict:
+                val = event_dict[field]
+                # if it string try to convert to json
+                if isinstance(val, str):
+                    try:
+                        val = loads(val)
+                    except:
+                        pass
+                if isinstance(val, Mapping):
+                    for key, value in val.items():
+                        event_dict[key] = value
+                    event_dict.pop(field)
+
         if self.sanitize_keys:
             event_dict = replace_keys(event_dict,
                                       replacement=self.replacement_char)
+
         self.es.index(index=self.elastic_index,
                       doc_type=self.elastic_doctype,
                       body=event_dict)
