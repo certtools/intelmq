@@ -1,6 +1,11 @@
 import sys
 
-from intelmqmail.script import load_scripts
+try:
+    from intelmqmail.script import load_scripts
+except ImportError as err:
+    # when running as part of a unittest: skip more gracefully
+    if 'unittest' in sys.modules:
+        raise unittest.SkipTest("Importing intelmqmail.script failed.")
 
 from intelmq.lib.bot import Bot
 from intelmq.bots.experts.certbund_contact.rulesupport import Context

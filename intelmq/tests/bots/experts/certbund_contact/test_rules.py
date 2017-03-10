@@ -16,7 +16,7 @@ from intelmq.bots.experts.certbund_contact.eventjson import \
      set_certbund_contacts
 
 
-def build_test_event(contact_descriptions, section):
+def build_event(contact_descriptions, section):
     """Build an empty event with contact info derived from contact_descriptions.
     """
     organisations = []
@@ -47,7 +47,7 @@ def build_test_event(contact_descriptions, section):
 class TestMostSpecificContact(unittest.TestCase):
 
     def check(self, contact_descriptions, expected_emails):
-        event = build_test_event(contact_descriptions, "source")
+        event = build_event(contact_descriptions, "source")
         context = Context(event, "source", None)
         keep_most_specific_contacts(context)
         self.assertEqual(sorted(c.email
