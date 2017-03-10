@@ -11,6 +11,7 @@ install:
   - pip install -r REQUIREMENTS
   - for file in intelmq/bots/*/*/REQUIREMENTS.txt; do pip install -r $file; done
   - if [[ $TRAVIS_PYTHON_VERSION < '3.5' ]]; then pip install typing; fi
+  - if [[ $TRAVIS_PYTHON_VERSION < '3.4' ]]; then pip install enum34; fi
   - pip install codecov
   - pip install pep8
   - sudo pip install .
