@@ -173,8 +173,7 @@ class Directive:
             similar events. Two events are considered similar in this
             sense if they have equal aggregate identifiers.
 
-    Aggregation
-    -----------
+    **Aggregation**
 
     Multiple notification directives may be aggregated into a single
     notification. Directives may only be aggregated when they are
@@ -200,8 +199,7 @@ class Directive:
     the actual attributes explicitly.
 
 
-    JSON-Representation
-    -------------------
+    **JSON-Representation**
 
     When converted to JSON, a directive is a JSON-Object whose keys and
     values are the public attributes of the Directive instance with the
@@ -259,6 +257,7 @@ class Directive:
 
     def as_dict_for_event(self, event):
         """Return a dictionary that can be attached to the given event.
+
         Args:
             event: The event from which to take the values indicated by
                 aggregate_fields
@@ -281,6 +280,7 @@ class Directive:
 
     def aggregate_by_field(self, fieldname):
         """Indicate that aggregation should consider the given event field.
+
         Args:
             fieldname (str): The name of the event field whose value
                 must be equal in two directives if they are to be
