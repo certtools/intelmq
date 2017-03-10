@@ -5,6 +5,7 @@ try:
 except ImportError as err:
     # when running as part of a unittest: skip more gracefully
     if 'unittest' in sys.modules:
+        import unittest
         raise unittest.SkipTest("Importing intelmqmail.script failed.")
 
 from intelmq.lib.bot import Bot
