@@ -50,7 +50,7 @@ def load_ripe_files(options) -> tuple:
     :return: tuple of (asn_list, org_list, role_list, org_to_asn, abusec_to_org)
     '''
 
-    ## Step 1: read all files
+    # Step 1: read all files
     asn_whitelist = read_asn_whitelist(options.asn_whitelist_file,
                                        verbose=options.verbose)
 
@@ -64,7 +64,7 @@ def load_ripe_files(options) -> tuple:
                            ('nic-hdl', 'abuse-mailbox', 'org'), 'role',
                            verbose=options.verbose)
 
-    ## Step 2: Prepare new data for insertion
+    # Step 2: Prepare new data for insertion
     asn_list = sanitize_asn_list(asn_list, asn_whitelist)
 
     org_to_asn = org_to_asn_mapping(asn_list)
@@ -135,8 +135,8 @@ def parse_file(filename, fields, index_field=None, verbose=False):
     for line in f:
 
         # Comments and remarks
-        if (line.startswith('%') or line.startswith('#')
-                or line.startswith('remarks:')):
+        if (line.startswith('%') or line.startswith('#') or
+                line.startswith('remarks:')):
             continue
 
         if ":" in line:

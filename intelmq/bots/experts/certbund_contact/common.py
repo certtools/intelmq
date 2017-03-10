@@ -218,6 +218,6 @@ def lookup_contacts(cur, managed, asn, ip, fqdn):
 
     org_result = cur.fetchone()
     return {"organisations": maybe_parse_json(org_result[0]),
-            "matches": (maybe_parse_json(org_result[1])
-                        + maybe_parse_json(org_result[2])
-                        + maybe_parse_json(org_result[3]))}
+            "matches": (maybe_parse_json(org_result[1]) +
+                        maybe_parse_json(org_result[2]) +
+                        maybe_parse_json(org_result[3]))}

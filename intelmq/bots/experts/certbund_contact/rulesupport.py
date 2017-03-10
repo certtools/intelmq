@@ -120,11 +120,11 @@ class Match:
                    self.annotations, self.address))
 
     def __eq__(self, other):
-        return (self.field == other.field
-                and self.managed == other.managed
-                and self.organisations == other.organisations
-                and self.annotations == other.annotations
-                and self.address == other.address)
+        return (self.field == other.field and
+                self.managed == other.managed and
+                self.organisations == other.organisations and
+                self.annotations == other.annotations and
+                self.address == other.address)
 
     def __hash__(self):
         return hash((self.field, self.managed, tuple(self.organisations),
@@ -232,13 +232,13 @@ class Directive:
                 .format(**self.__dict__))
 
     def __eq__(self, other):
-        return (self.medium == other.medium
-                and self.recipient_address == other.recipient_address
-                and self.aggregate_fields == other.aggregate_fields
-                and self.aggregate_key == other.aggregate_key
-                and self.template_name == other.template_name
-                and self.event_data_format == other.event_data_format
-                and self.notification_interval == other.notification_interval)
+        return (self.medium == other.medium and
+                self.recipient_address == other.recipient_address and
+                self.aggregate_fields == other.aggregate_fields and
+                self.aggregate_key == other.aggregate_key and
+                self.template_name == other.template_name and
+                self.event_data_format == other.event_data_format and
+                self.notification_interval == other.notification_interval)
 
     def __hash__(self):
         return hash((self.medium,
@@ -414,8 +414,8 @@ def most_specific_matches(context):
             by_managed = by_field[field]
             return by_managed["manual"] or by_managed["automatic"]
 
-    return (get_preferred_by_field("fqdn")
-            | (get_preferred_by_field("ip") or get_preferred_by_field("asn")))
+    return (get_preferred_by_field("fqdn") |
+            (get_preferred_by_field("ip") or get_preferred_by_field("asn")))
 
 
 def keep_most_specific_contacts(context):
