@@ -18,6 +18,9 @@ REQUIRES = [
 if sys.version_info < (3, 5):
     REQUIRES.append('typing')
 
+if sys.version_info < (3, 4):
+    REQUIRES.append('enum34')
+
 
 DATA = [
     ('/opt/intelmq/etc/',
