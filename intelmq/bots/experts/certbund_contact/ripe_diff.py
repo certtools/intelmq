@@ -13,8 +13,6 @@ import intelmq.bots.experts.certbund_contact.ripe_data as ripe_data
 SOURCE_NAME = "ripe"
 
 
-
-
 def extract_asn(aut_entry):
     return int(aut_entry['aut-num'][0][2:])
 
@@ -106,8 +104,10 @@ def get_unattached_contacts_from_db(cur):
 def compare_sets(a, b):
     return (a - b, a & b, b - a)
 
+
 def compare_dicts(a, b):
     return compare_sets(a.keys(), b.keys())
+
 
 def item_list_changes(plural_name, old, new):
     removed, both, added = compare_sets(set(old), set(new))
@@ -129,6 +129,7 @@ def organisation_changes(handles, orgs_a, orgs_b):
         changes.extend(item_list_changes("contacts", a.contacts, b.contacts))
         if changes:
             yield handle, changes
+
 
 def find_overlaid_asns_db(cur, org):
     print("        Info: this entry is responsible for ", end="")
@@ -183,8 +184,8 @@ def compare_unattached(name, old, new):
 def compare_orgs_with_db(cur, asn_list, organisation_list, role_list,
                          abusec_to_org):
     orgs, unattached_as, unattached_roles = \
-          build_organisation_objects(asn_list, organisation_list,
-                                     role_list, abusec_to_org)
+        build_organisation_objects(asn_list, organisation_list,
+                                   role_list, abusec_to_org)
 
     db_orgs = build_organisation_objects_from_db(cur)
     db_unattached_as = get_unattached_asns_from_db(cur)

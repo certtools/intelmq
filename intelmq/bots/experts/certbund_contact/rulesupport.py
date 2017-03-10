@@ -2,8 +2,8 @@ from contextlib import contextmanager
 from collections import defaultdict
 from itertools import chain
 
-from intelmq.bots.experts.certbund_contact.eventjson import \
-     get_certbund_contacts, set_certbund_directives
+from intelmq.bots.experts.certbund_contact.eventjson \
+    import get_certbund_contacts, set_certbund_directives
 import intelmq.bots.experts.certbund_contact.annotations as annotations
 
 
@@ -25,8 +25,6 @@ class Organisation:
         annotations (list of Annotation): The annotations associated
             with organisation.
     """
-
-
 
     def __init__(self, orgid, name, managed, sector, contacts, annotations):
         self.orgid = orgid
@@ -65,7 +63,7 @@ class Contact:
 
     def __init__(self, email, is_primary_contact, managed, role):
         self.email = email
-        self.is_primary_contact= is_primary_contact
+        self.is_primary_contact = is_primary_contact
         self.managed = managed
         self.role = role
 
@@ -145,8 +143,6 @@ class Match:
                    annotations=[annotations.from_json(a)
                                 for a in jsondict["annotations"]],
                    address=address)
-
-
 
 
 class Directive:
@@ -283,7 +279,6 @@ class Directive:
                     notification_interval=self.notification_interval,
                     aggregate_identifier=aggregate_identifier)
 
-
     def aggregate_by_field(self, fieldname):
         """Indicate that aggregation should consider the given event field.
         Args:
@@ -358,7 +353,7 @@ class Context:
         self.logger = (base_logger.getChild("script") if base_logger is not None
                        else None)
         self.matches, self.organisations = \
-              contact_info_from_json(get_certbund_contacts(event, section))
+            contact_info_from_json(get_certbund_contacts(event, section))
         self._directives = []
         self._organisation_map = {org.orgid: org
                                   for org in self.organisations}
@@ -405,10 +400,9 @@ class Context:
         return self._event
 
 
-
 def most_specific_matches(context):
     """Return the most specific matches from the context"""
-    by_field = defaultdict(lambda : {"manual": set(), "automatic": set()})
+    by_field = defaultdict(lambda: {"manual": set(), "automatic": set()})
 
     for match in context.matches:
         by_field[match.field][match.managed].add(match)

@@ -36,7 +36,6 @@ called automatically, e.g. by a cronjob.''')
 
     args = parser.parse_args()
 
-
     if args.verbose:
         print('Parsing RIPE database...')
         print('------------------------')
@@ -44,13 +43,11 @@ called automatically, e.g. by a cronjob.''')
     (asn_list, organisation_list, role_list,
      org_to_asn, abusec_to_org) = ripe_data.load_ripe_files(args)
 
-
     # Mapping dictionary that holds the database IDs between organisations,
     # contacts and AS numbers. This needs to be done here because we can't
     # use the RIPE org-ids.
     mapping = collections.defaultdict(lambda: {'org_id': None,
                                                'contact_id': []})
-
 
     con = None
     try:
@@ -70,7 +67,7 @@ called automatically, e.g. by a cronjob.''')
             cur.execute("""INSERT INTO autonomous_system_automatic
                                        (number, import_source, import_time)
                                 VALUES (%s, %s, CURRENT_TIMESTAMP);""",
-                        (entry['aut-num'][0][2:], SOURCE_NAME ))
+                        (entry['aut-num'][0][2:], SOURCE_NAME))
 
         #
         # Organisation
@@ -123,9 +120,9 @@ called automatically, e.g. by a cronjob.''')
             # abuse-mailbox: could be type LIST or occur multiple time
             # TODO: Check if we can handle LIST a@example, b@example
             email = entry['abuse-mailbox'][0]
-            # For multiple lines: As not seen in ftp bulk data, 
+            # For multiple lines: As not seen in ftp bulk data,
             # we only record if it happens as WARNING for now
-            if len(entry['abuse-mailbox'])>1:
+            if len(entry['abuse-mailbox']) > 1:
                 print('Role with nic-hdl {} has two '
                       'abuse-mailbox lines. Taking the first.'.format(nic_hdl))
 
@@ -139,7 +136,6 @@ called automatically, e.g. by a cronjob.''')
 
             for orh in abusec_to_org[nic_hdl]:
                 mapping[orh]['contact_id'].append(contact_id)
-
 
         # many-to-many table organisation <-> contact
         cur.execute("DELETE FROM role_automatic WHERE import_source = %s;", (SOURCE_NAME,))

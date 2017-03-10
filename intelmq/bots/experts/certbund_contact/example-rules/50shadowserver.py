@@ -49,4 +49,4 @@ shadowserver_mapping = {
     "Open-SSDP": shadowserver_csv_entry("Open-SSDP"),
     "Ssl-Freak-Scan": shadowserver_csv_entry("Ssl-Freak-Scan"),
     "Ssl-Scan": shadowserver_csv_entry("Ssl-Scan"),
-    }
+}

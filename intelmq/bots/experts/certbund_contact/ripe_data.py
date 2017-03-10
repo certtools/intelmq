@@ -18,32 +18,33 @@
 import collections
 import gzip
 
+
 def add_db_args(parser):
     parser.add_argument("--conninfo",
-                    default='dbname=contactdb',
-                    help="Libpg connection string. E.g. 'host=localhost"
-                         " port=5432 user=intelmq dbname=connectdb'"
-                         " Default: 'dbname=contactdb'")
+                        default='dbname=contactdb',
+                        help="Libpg connection string. E.g. 'host=localhost"
+                             " port=5432 user=intelmq dbname=connectdb'"
+                             " Default: 'dbname=contactdb'")
+
 
 def add_common_args(parser):
-    parser.add_argument("-v", "--verbose",
-                    help="increase output verbosity",
-                    default=False,
-                    action="store_true")
+    parser.add_argument("-v", "--verbose", help="increase output verbosity",
+                        default=False, action="store_true")
     parser.add_argument("--organisation-file",
-                    default='ripe.db.organisation.gz',
-                    help="Specify the organisation data file. Default: ripe.db.organisation.gz")
+                        default='ripe.db.organisation.gz',
+                        help="Specify the organisation data file. Default: ripe.db.organisation.gz")
     parser.add_argument("--role-file",
-                    default='ripe.db.role.gz',
-                    help="Specify the contact role data file. Default: ripe.db.role.gz")
+                        default='ripe.db.role.gz',
+                        help="Specify the contact role data file. Default: ripe.db.role.gz")
     parser.add_argument("--asn-file",
-                    default='ripe.db.aut-num.gz',
-                    help="Specify the AS number data file. Default: ripe.db.aut-num.gz")
+                        default='ripe.db.aut-num.gz',
+                        help="Specify the AS number data file. Default: ripe.db.aut-num.gz")
     parser.add_argument("--asn-whitelist-file",
-                    default='',
-                    help="A file name with a whitelist of ASNs. If this option is not set, all ASNs are imported")
+                        default='',
+                        help="A file name with a whitelist of ASNs. If this option is not set, all ASNs are imported")
 
-def load_ripe_files(options):
+
+def load_ripe_files(options) -> tuple:
     '''Read ripe files as given in the command line options.
 
     :return: tuple of (asn_list, org_list, role_list, org_to_asn, abusec_to_org)
@@ -80,8 +81,8 @@ def load_ripe_files(options):
     if options.verbose:
         print('** Found {} contacts to be relevant.'.format(len(role_list)))
 
-
     return (asn_list, organisation_list, role_list, org_to_asn, abusec_to_org)
+
 
 def read_asn_whitelist(filename, verbose=False):
     '''Reads a list of ASNs from file.
@@ -101,6 +102,7 @@ def read_asn_whitelist(filename, verbose=False):
         return out
     else:
         return None
+
 
 def parse_file(filename, fields, index_field=None, verbose=False):
     '''Parses a file from the RIPE (split) database set.
@@ -134,7 +136,7 @@ def parse_file(filename, fields, index_field=None, verbose=False):
 
         # Comments and remarks
         if (line.startswith('%') or line.startswith('#')
-            or line.startswith('remarks:')):
+                or line.startswith('remarks:')):
             continue
 
         if ":" in line:
@@ -147,7 +149,7 @@ def parse_file(filename, fields, index_field=None, verbose=False):
             # If we reach the index again, we have reached the next dataset, add
             # the previous data and start again
             if key == index_field:
-                if tmp: # template is filled, except on the first record
+                if tmp:  # template is filled, except on the first record
                     out.append(tmp)
 
                 tmp = {}

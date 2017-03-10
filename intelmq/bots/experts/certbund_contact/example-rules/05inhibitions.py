@@ -1,8 +1,8 @@
 """Handle inhibitions
 """
 
-from intelmq.bots.experts.certbund_contact.rulesupport import \
-     notification_inhibited
+from intelmq.bots.experts.certbund_contact.rulesupport \
+    import notification_inhibited
 
 
 def determine_directives(context):

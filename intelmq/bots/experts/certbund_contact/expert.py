@@ -5,8 +5,8 @@ import psycopg2
 
 from intelmq.lib.bot import Bot
 import intelmq.bots.experts.certbund_contact.common as common
-from intelmq.bots.experts.certbund_contact.eventjson import \
-     set_certbund_contacts
+from intelmq.bots.experts.certbund_contact.eventjson \
+    import set_certbund_contacts
 
 
 class CERTBundKontaktExpertBot(Bot):
@@ -56,7 +56,6 @@ class CERTBundKontaktExpertBot(Bot):
 
         self.send_message(event)
         self.acknowledge_message()
-
 
     def lookup_contacts(self, cur, asn, ip, fqdn):
         automatic = common.lookup_contacts(cur, common.Managed.automatic, asn,

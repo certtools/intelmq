@@ -270,7 +270,6 @@ class BotTestCase(object):
         return [utils.decode(text) for text
                 in self.pipe.state["%s-output" % self.bot_id]]
 
-
 #        """ Test if all pipes are created with correct names. """
         pipenames = ["{}-input", "{}-input-internal", "{}-output"]
         self.assertSetEqual({x.format(self.bot_id) for x in pipenames},

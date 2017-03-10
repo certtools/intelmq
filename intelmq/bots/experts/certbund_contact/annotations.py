@@ -36,7 +36,6 @@ class Expr:
         raise NotImplementedError
 
 
-
 class Eq(Expr):
 
     def __init__(self, exp1, exp2):
@@ -85,7 +84,6 @@ class EventFieldReference(Expr):
                                   " parameter, not %r" % (type(fieldname),))
 
         return cls(fieldname)
-
 
     def evaluate(self, context):
         return context.get(self.fieldname)
