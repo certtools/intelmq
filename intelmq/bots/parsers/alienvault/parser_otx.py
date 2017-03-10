@@ -80,7 +80,7 @@ class AlienVaultOTXParserBot(Bot):
                 if 'tags' in pulse:
                     additional['tags'] = pulse['tags']
                 if 'modified' in pulse:
-                    additional['time.updated'] = \
+                    additional['time_updated'] = \
                         pulse["modified"][:-4] + "+00:00"
                 if 'industries' in pulse:
                     additional['industries'] = pulse["industries"]
