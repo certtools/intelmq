@@ -35,6 +35,8 @@ class AlienVaultOTXParserBot(Bot):
                 if indicator["type"] in HASHES.keys():
                     event.add('malware.hash', HASHES[indicator["type"]] +
                               indicator["indicator"])
+                    additional['malware.hash.type'] = indicator["type"]
+                    additional['malware.hash.raw'] = indicator["indicator"]
                 # fqdn
                 elif indicator["type"] in ['hostname', 'domain']:
                     # not all domains in the report are just domains
