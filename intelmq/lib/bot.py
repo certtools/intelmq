@@ -145,7 +145,7 @@ class Bot(object):
                 self.process()
                 self.__error_retries_counter = 0  # reset counter
 
-                if self.parameters.rate_limit:
+                if self.parameters.rate_limit and self.run_mode != 'scheduled':
                     self.__sleep()
 
             except exceptions.PipelineError as exc:
@@ -212,13 +212,24 @@ class Bot(object):
                             # dont need to wait again
                             error_on_message = False
 
+                        # run_mode: scheduled
+                        if self.run_mode == 'scheduled':
+                            self.logger.info('Shutting down scheduled bot.')
+                            self.stop()
+
                         # error_procedure: stop
-                        if self.parameters.error_procedure == "stop":
+                        elif self.parameters.error_procedure == "stop":
                             self.stop()
 
                         # error_procedure: pass
                         else:
                             self.__error_retries_counter = 0  # reset counter
+
+                # no errors, check for run mode: scheduled
+                elif self.run_mode == 'scheduled':
+                    self.logger.info('Shutting down scheduled bot.')
+                    self.stop()
+
             self.__handle_sighup()
 
     def __sleep(self):
@@ -407,6 +418,7 @@ class Bot(object):
 
         if self.__bot_id in list(config.keys()):
             params = config[self.__bot_id]
+            self.run_mode = params.get('run_mode', 'stream')
             if 'parameters' in params:
                 params = params['parameters']
             else:

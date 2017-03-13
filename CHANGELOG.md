@@ -18,6 +18,7 @@ Changes between 0.9 and 1.0.0.dev6
 ### General changes
 - Dropped support for Python 2, Python >= 3.3 is needed
 - Dropped startup.conf and system.conf. Sections in BOTS can be copied directly to runtime.conf now.
+- Support two run modes: 'stream' which is the current implementation and a new one 'scheduled' which allows scheduling via cron or systemd.
 - Helper classes for parser bots
 - moved intelmq/conf to intelmq/etc
 - cleanup in code and repository

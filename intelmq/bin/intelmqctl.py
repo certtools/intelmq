@@ -101,13 +101,14 @@ def log_log_messages(messages):
                 pass
 
 
-class BotProcessManager:
+class IntelMQProcessManager:
     PIDDIR = VAR_RUN_PATH
     PIDFILE = os.path.join(PIDDIR, "{}.pid")
 
-    def __init__(self, runtime_configuration, logger):
+    def __init__(self, runtime_configuration, logger, controller):
         self.__runtime_configuration = runtime_configuration
         self.logger = logger
+        self.controller = controller
 
         if not os.path.exists(self.PIDDIR):
             try:
@@ -168,7 +169,7 @@ class BotProcessManager:
     def bot_stop(self, bot_id):
         pid = self.__read_pidfile(bot_id)
         if not pid:
-            if self._is_enabled(bot_id):
+            if self.controller._is_enabled(bot_id):
                 log_bot_error('stopped', bot_id)
                 return 'stopped'
             else:
@@ -192,7 +193,7 @@ class BotProcessManager:
     def bot_reload(self, bot_id):
         pid = self.__read_pidfile(bot_id)
         if not pid:
-            if self._is_enabled(bot_id):
+            if self.controller._is_enabled(bot_id):
                 log_bot_error('stopped', bot_id)
                 return 'stopped'
             else:
@@ -217,15 +218,12 @@ class BotProcessManager:
             log_bot_message('running', bot_id)
             return 'running'
 
-        if self._is_enabled(bot_id):
+        if self.controller._is_enabled(bot_id):
             log_bot_message('stopped', bot_id)
             return 'stopped'
         else:
             log_bot_message('disabled', bot_id)
             return 'disabled'
-
-    def _is_enabled(self, bot_id):
-        return self.__runtime_configuration[bot_id].get('enabled', True)
 
     def __read_pidfile(self, bot_id):
         filename = self.PIDFILE.format(bot_id)
@@ -256,6 +254,9 @@ class BotProcessManager:
             return True
         except psutil.NoSuchProcess:
             return False
+
+
+PROCESS_MANAGER = {'intelmq': IntelMQProcessManager}
 
 
 class IntelMQController():
@@ -349,20 +350,12 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         try:
             self.pipeline_configuration = utils.load_configuration(PIPELINE_CONF_FILE)
         except ValueError as exc:  # pragma: no cover
-            msg = 'Error loading %r: %s' % (PIPELINE_CONF_FILE, exc)
-            if interactive:
-                exit(msg)
-            else:
-                raise ValueError(msg)
+            self.abort('Error loading %r: %s' % (PIPELINE_CONF_FILE, exc))
 
         try:
             self.runtime_configuration = utils.load_configuration(RUNTIME_CONF_FILE)
         except ValueError as exc:  # pragma: no cover
-            msg = 'Error loading %r: %s' % (RUNTIME_CONF_FILE, exc)
-            if interactive:
-                exit(msg)
-            else:
-                raise ValueError(msg)
+            self.abort('Error loading %r: %s' % (RUNTIME_CONF_FILE, exc))
 
         if os.path.exists(STARTUP_CONF_FILE):
             self.logger.warning('Deprecated startup.conf file found, please migrate to runtime.conf soon.')
@@ -370,29 +363,23 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 startup = json.load(fp)
                 for bot_id, bot_values in startup.items():
                     if 'parameters' in self.runtime_configuration[bot_id]:  # pragma: no cover
-                        msg = ('Mixed setup of new runtime.conf and old startup.conf'
-                               ' found. Ignoring startup.conf, please fix this!')
-                        if interactive:
-                            exit(msg)
-                        else:
-                            raise ValueError(msg)
+                        self.abort('Mixed setup of new runtime.conf and old startup.conf'
+                                   ' found. Ignoring startup.conf, please fix this!')
                     params = self.runtime_configuration[bot_id].copy()
                     self.runtime_configuration[bot_id].clear()
                     self.runtime_configuration[bot_id]['parameters'] = params
                     self.runtime_configuration[bot_id].update(bot_values)
-            try:
-                with open(RUNTIME_CONF_FILE + '.new', 'w') as fp:
-                    json.dump(self.runtime_configuration, fp, indent=4, sort_keys=True,
-                              separators=(',', ': '))
-            except PermissionError:  # pragma: no cover
-                self.logger.info('Failed to write new configuration format to %r.'
-                                 '' % (RUNTIME_CONF_FILE + '.new'))
-            else:
+            if self.write_updated_runtime_config(filename=RUNTIME_CONF_FILE + '.new'):
                 self.logger.info('%r with new format written.' % (RUNTIME_CONF_FILE + '.new'))
 
-        self.bot_process_manager = BotProcessManager(
+        process_manager = getattr(self.parameters, 'process_manager', 'intelmq')
+        if process_manager not in PROCESS_MANAGER:
+            self.abort('Invalid process manager given: %r, should be one of %r.'
+                       '' % (process_manager, list(PROCESS_MANAGER.keys())))
+        self.bot_process_manager = PROCESS_MANAGER[process_manager](
             self.runtime_configuration,
             logger,
+            self
         )
 
         if self.interactive:
@@ -477,6 +464,16 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                                        choices=self.runtime_configuration.keys())
             parser_status.set_defaults(func=self.bot_status)
 
+            parser_status = subparsers.add_parser('enable', help='Enable a bot')
+            parser_status.add_argument('bot_id',
+                                       choices=self.runtime_configuration.keys())
+            parser_status.set_defaults(func=self.bot_enable)
+
+            parser_status = subparsers.add_parser('disable', help='Disable a bot')
+            parser_status.add_argument('bot_id',
+                                       choices=self.runtime_configuration.keys())
+            parser_status.set_defaults(func=self.bot_disable)
+
             self.parser = parser
 
     def load_system_configuration(self):
@@ -484,11 +481,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             try:
                 config = utils.load_configuration(SYSTEM_CONF_FILE)
             except ValueError as exc:  # pragma: no cover
-                msg = 'Error loading %r: %s' % (SYSTEM_CONF_FILE, exc)
-                if self.interactive:
-                    exit(msg)
-                else:
-                    raise ValueError(msg)
+                self.abort('Error loading %r: %s' % (SYSTEM_CONF_FILE, exc))
             for option, value in config.items():
                 setattr(self.parameters, option, value)
 
@@ -497,11 +490,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         try:
             config = utils.load_configuration(DEFAULTS_CONF_FILE)
         except ValueError as exc:  # pragma: no cover
-            msg = 'Error loading %r: %s' % (DEFAULTS_CONF_FILE, exc)
-            if self.interactive:
-                exit(msg)
-            else:
-                raise ValueError(msg)
+            self.abort('Error loading %r: %s' % (DEFAULTS_CONF_FILE, exc))
         for option, value in config.items():
             setattr(self.parameters, option, value)
 
@@ -559,6 +548,17 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         else:
             return self.bot_process_manager.bot_status(bot_id)
 
+    def bot_enable(self, bot_id):
+        self.runtime_configuration[bot_id]['enabled'] = True
+        self.write_updated_runtime_config()
+
+    def bot_disable(self, bot_id):
+        self.runtime_configuration[bot_id]['enabled'] = False
+        self.write_updated_runtime_config()
+
+    def _is_enabled(self, bot_id):
+        return self.runtime_configuration[bot_id].get('enabled', True)
+
     def botnet_start(self):
         botnet_status = {}
         for bot_id in sorted(self.runtime_configuration.keys()):
@@ -601,6 +601,23 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             return self.list_queues()
         elif kind == 'bots':
             return self.list_bots()
+
+    def abort(self, message):
+        if self.interactive:
+            exit(message)
+        else:
+            raise ValueError(message)
+
+    def write_updated_runtime_config(self, filename=RUNTIME_CONF_FILE):
+        if os.path.exists(STARTUP_CONF_FILE):
+            self.abort('Can\'t update runtime configuration, startup.conf found.')
+        try:
+            with open(RUNTIME_CONF_FILE, 'w') as handle:
+                json.dump(self.runtime_configuration, fp=handle, indent=4, sort_keys=True,
+                          separators=(',', ': '))
+        except PermissionError:
+            self.abort('Can\'t update runtime configuration: Permission denied.')
+        return True
 
     def list_bots(self):
         """

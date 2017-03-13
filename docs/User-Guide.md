@@ -19,6 +19,8 @@
       * [Web interface: IntelMQ Manager](#web-interface-intelmq-manager)
       * [Command-line interface: intelmqctl](#command-line-interface-intelmqctl)
         * [Botnet Concept](#botnet-concept)
+        * [Scheduled run mode](#scheduled-run-mode)
+        * [Continuous run mode](#continuous-run-mode)
         * [Forcing reset pipeline and cache (be careful)](#forcing-reset-pipeline-and-cache-be-careful)
     * [Error Handling](#error-handling-1)
       * [Tool: intelmqdump](#tool-intelmqdump)
@@ -123,7 +125,7 @@ cp -a examples/* .
 
 * `defaults.conf`: default values for bots and their behavior, e.g.
 error handling, log options and pipeline configuration. Will be removed in the [future](https://github.com/certtools/intelmq/issues/267).
-* `runtime.conf`: Configuration for the individual bots.
+* `runtime.conf`: Configuration for the individual bots. See [Bots](Bots.md) for more details.
 * `pipeline.conf`: Defines source and destination queues per bot.
 * `BOTS`: Includes configuration hints for all bots. E.g. feed URLs or
 database connection parameters. Use this as a template for `runtime.conf`. Also read by the intelmq-manager.
@@ -278,7 +280,7 @@ This configuration is used by each bot to load the specific parameters associate
 }
 ```
 
-More examples can be found at `intelmq/etc/runtime.conf` directory in IntelMQ repository.
+More examples can be found at `intelmq/etc/runtime.conf` directory in IntelMQ repository. See [Bots](Bots.md) for more details.
 
 By default all of the bots are started when you start the whole botnet, however there is a possibility to *disable* a bot. This means that the bot will not start every time you start the botnet, but you can start and stop the bot if you specify the bot explicitly. To disable a bot, add the following to your runtime.conf: `"enabled": false`. For example: 
 
@@ -376,8 +378,8 @@ See [IntelMQ Manager repository](https://github.com/certtools/intelmq-manager).
 ```bash
 # su - intelmq
 $ intelmqctl -h
-intelmqctl [-h] [-v] [--type {text,json}] [--quiet]
-                  {list,check,clear,log,run,help,start,stop,restart,reload,status}
+usage: intelmqctl [-h] [-v] [--type {text,json}] [--quiet]
+                  {list,check,clear,log,run,help,start,stop,restart,reload,status,enable,disable}
                   ...
 
         description: intelmqctl is the tool to control intelmq system.
@@ -394,7 +396,7 @@ optional arguments:
                         logrotate
 
 subcommands:
-  {list,check,clear,log,run,help,start,stop,restart,reload,status}
+  {list,check,clear,log,run,help,start,stop,restart,reload,status,enable,disable}
     list                Listing bots or queues
     check               Check installation and configuration
     clear               Clear a queue
@@ -407,6 +409,8 @@ subcommands:
     restart             Restart a bot or botnet
     reload              Reload a bot or botnet
     status              Status of a bot or botnet
+    enable              Enable a bot
+    disable             Disable a bot
 
         intelmqctl [start|stop|restart|status|reload|run] bot-id
         intelmqctl [start|stop|restart|status|reload]
@@ -453,7 +457,64 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl
 
 #### Botnet Concept
 
-The botnet represents all currently configured bots. To get an overview which bots are running, use `intelmqctl status`or use IntelMQ Manager.
+The botnet represents all currently configured bots which are explicitly enabled. To get an overview which bots are running, use `intelmqctl status` or use IntelMQ Manager. Set `"enabled": true` in the runtime configuration to add a bot to botnet. By default, bots will be configured as `"enabled": false` therefore, such a bot does not belong to the botnet (by default). See [Bots](Bots.md) for more details on configuration.
+
+Disabled bots can still be started explicitly using `intelmqctl start <bot_id>`, but will remain in the state `disabled` if stopped (and not be implicitly enabled by the `start` command). They are not started by `intelmqctl start` in analogy to the behavior of widely used initialization systems.
+
+
+#### Scheduled Run Mode
+
+In many cases it is useful to schedule a bot at a specific time (for example via cron(1)), for example to collect information from a website every day at midnight. To do this, set `run_mode` to `scheduled` in the `runtime.conf` for the bot. Check the following example:
+
+```json
+"blocklistde-apache-collector": {
+    "name": "Generic URL Fetcher",
+    "group": "Collector",
+    "module": "intelmq.bots.collectors.http.collector_http",
+    "description": "All IP addresses which have been reported within the last 48 hours as having run attacks on the service Apache, Apache-DDOS, RFI-Attacks.",
+    "enabled": false,
+    "run_mode": "scheduled"
+    "parameters": {
+        "feed": "Blocklist.de Apache",
+        "provider": "Blocklist.de",
+        "http_url": "https://lists.blocklist.de/lists/apache.txt",
+        "ssl_client_certificate": null
+    },
+},
+```
+
+You can schedule the bot with a crontab-entry like this:
+```
+0 0 * * * intelmqctl start blocklistde-apache-collector
+```
+
+Bots configured as `scheduled` will exit after the first successful run.
+
+
+#### Continuous Run Mode
+
+Most of the cases, bots will need to be configured as `continuous` run mode in order to have them always running and processing events. Usually, the types of bots that will require the continuous mode will be Parsers, Experts and Outputs. To do this, set `run_mode` to `continuous` in the `runtime.conf` for the bot. Check the following example:
+
+```json
+"blocklistde-apache-parser": {
+    "name": "Blocklist.de Parser",
+    "group": "Parser",
+    "module": "intelmq.bots.parsers.blocklistde.parser",
+    "description": "BlockList.DE Parser is the bot responsible to parse the report and sanitize the information.",
+    "enabled": false,
+    "run_mode": "continuous"
+    "parameters": {
+    },
+},
+```
+
+You can now start the bot using the following command:
+```
+intelmqctl start blocklistde-apache-parser
+```
+
+Bots configured as `continuous` will never exit except if there is an error and the error handling configuration requires the bot to exit. See Error Handling section for more details.
+
 
 #### Forcing reset pipeline and cache (be careful)
 
