@@ -139,6 +139,8 @@
             "module": "intelmq.bots.collectors.alienvault_otx.collector",
             "parameters": {
                 "api_key": "<insert your api key>",
+                "modified_pulses_only": false,
+                "interval": 24,
                 "feed": "AlienVault OTX",
                 "provider": "AlienVault",
                 "rate_limit": 3600
