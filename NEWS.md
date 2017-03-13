@@ -15,6 +15,7 @@ See the changelog for a full list of changes.
 
 ### Configuration
 * The deduplicator expert requires a new parameter `filter_type`, the old previous default was `blacklist`. The key `ignore_keys` has been renamed to `filter_keys`.
+* The tor_nodes expert has a new parameter `overwrite`, which is by default `false`.
 * The configuration format of the modify expert has been change to a list-based syntax.
   Old format:
 
