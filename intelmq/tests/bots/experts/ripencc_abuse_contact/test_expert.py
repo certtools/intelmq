@@ -13,7 +13,7 @@ EXAMPLE_INPUT = {"__type": "Event",
                  }
 EXAMPLE_OUTPUT = {"__type": "Event",
                   "source.ip": "93.184.216.34",
-                  "source.abuse_contact": "abuse@edgecast.com",
+                  "source.abuse_contact": "abuse@verizondigitalmedia.com",
                   "destination.ip": "193.238.157.5",
                   "destination.abuse_contact": "abuse@funkfeuer.at",
                   "destination.asn": 35492,

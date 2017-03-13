@@ -35,7 +35,7 @@ EXAMPLE_EVENT  = {"classification.type": "malware",
                   "__type": "Event",
                   "feed.name": "AnubisNetworks",
                   "raw": EXAMPLE_REPORT['raw'],
-                  'extra': '{"request_method": "POST"}',
+                  'extra': '{"_origin": "dnsmalware", "_provider": "spikens", "request_method": "POST"}',
                   }
 
 EXAMPLE_REPORT2 = {"feed.name": "AnubisNetworks",

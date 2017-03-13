@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import json
 import os
+import sys
 
 from setuptools import find_packages, setup
 
@@ -14,6 +15,9 @@ REQUIRES = [
     'redis>=2.10.3',
     'requests>=2.2.0',
 ]
+if sys.version_info < (3, 5):
+    REQUIRES.append('typing')
+
 
 DATA = [
     ('/opt/intelmq/etc/',
