@@ -5,6 +5,7 @@ import json
 
 import intelmq.lib.test as test
 from intelmq.bots.experts.idea.expert import IdeaExpertBot
+from intelmq.lib.harmonization import ClassificationType
 
 
 TEST_INPUT1 = {
@@ -91,6 +92,14 @@ class TestIdeaExpertBot(test.BotTestCase, unittest.TestCase):
         del TEST_OUTPUT1["ID"]
         del idea_event["ID"]
         self.assertDictEqual(TEST_OUTPUT1, idea_event)
+
+
+class TestHarmonization(unittest.TestCase):
+
+    def test_classification_coverage(self):
+        intelmq_harmonization = set(ClassificationType.allowed_values)
+        idea_expert = set(IdeaExpertBot.type_to_category.keys())
+        self.assertSetEqual(intelmq_harmonization, idea_expert)
 
 
 if __name__ == '__main__':

@@ -43,8 +43,7 @@ class IdeaExpertBot(Bot):
         "dga domain": "Anomaly.Behaviour",
         "proxy": "Vulnerable.Config",
         "other": "Other",
-        "unknown": "Other",
-        "test": "Test"
+        "unknown": "Other"
     }
 
     type_to_source_type = {
