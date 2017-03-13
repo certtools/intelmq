@@ -27,6 +27,7 @@ import intelmq.lib.exceptions as exceptions
 from intelmq.lib.bot import CollectorBot
 from intelmq.lib.splitreports import generate_reports
 
+
 class FileCollectorBot(CollectorBot):
 
     def init(self):

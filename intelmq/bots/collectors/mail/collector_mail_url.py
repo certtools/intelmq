@@ -14,8 +14,6 @@ from intelmq.lib.bot import CollectorBot
 from intelmq.lib.splitreports import generate_reports
 
 
-
-
 class MailURLCollectorBot(CollectorBot):
 
     def init(self):
