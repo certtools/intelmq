@@ -164,14 +164,21 @@ class Directive:
             below.
         aggregate_key (dict): Key/value pairs to be part of the
             aggregate identifier. See aggregation, below.
-        template_name (str): The name of the template to use. Its meaning
-            depends on the notification format
-        event_data_format (str): The format to use for event data
-            included in the notification. Its meaning depends on the
-            notification format.
         notification_interval (int): Interval between notifications for
             similar events. Two events are considered similar in this
             sense if they have equal aggregate identifiers.
+        notification_format (str): The main format of the notification.
+            Suggested values: ``"text"`` for human readable mail with
+            e.g. event data inline or as attachment, ``"xarf"`` for
+            mail in X-ARF format.
+        event_data_format (str): The format to use for event data
+            included in the notification. Its meaning depends on the
+            notification format.
+        template_name (str): The name of the template for the contents
+            of the notification. Its meaning depends on the notification
+            format. Mostly useful for human readable (parts of)
+            notifications, e.g. text email or the human readable part of
+            X-ARF mails.
 
     **Aggregation**
 
@@ -210,24 +217,27 @@ class Directive:
     """
 
     def __init__(self, medium=None, recipient_address=None,
-                 aggregate_fields=(), aggregate_key=(), template_name=None,
-                 event_data_format=None, notification_interval=None):
+                 aggregate_fields=(), aggregate_key=(),
+                 notification_interval=None, notification_format=None,
+                 event_data_format=None, template_name=None):
         self.medium = medium
         self.recipient_address = recipient_address
-        self.template_name = template_name
-        self.event_data_format = event_data_format
-        self.notification_interval = notification_interval
         self.aggregate_fields = set(aggregate_fields)
         self.aggregate_key = dict(aggregate_key)
+        self.notification_interval = notification_interval
+        self.notification_format = notification_format
+        self.event_data_format = event_data_format
+        self.template_name = template_name
 
     def __repr__(self):
         return ("Directive(medium={medium},"
                 " recipient_address={recipient_address},"
                 " aggregate_fields={aggregate_fields},"
                 " aggregate_key={aggregate_key},"
-                " template_name={template_name},"
-                " event_data_format={event_data_format},"
                 " notification_interval={notification_interval}"
+                " notification_format={notification_format}"
+                " event_data_format={event_data_format},"
+                " template_name={template_name},"
                 .format(**self.__dict__))
 
     def __eq__(self, other):
@@ -235,18 +245,20 @@ class Directive:
                 self.recipient_address == other.recipient_address and
                 self.aggregate_fields == other.aggregate_fields and
                 self.aggregate_key == other.aggregate_key and
-                self.template_name == other.template_name and
+                self.notification_interval == other.notification_interval and
+                self.notification_format == other.notification_format and
                 self.event_data_format == other.event_data_format and
-                self.notification_interval == other.notification_interval)
+                self.template_name == other.template_name)
 
     def __hash__(self):
         return hash((self.medium,
                      self.recipient_address,
                      self.aggregate_fields,
                      self.aggregate_key,
-                     self.template_name,
+                     self.notification_interval,
+                     self.notification_format,
                      self.event_data_format,
-                     self.notification_interval))
+                     self.template_name))
 
     @classmethod
     def from_contact(cls, contact, **kw):
@@ -274,10 +286,11 @@ class Directive:
 
         return dict(medium=self.medium,
                     recipient_address=self.recipient_address,
-                    template_name=self.template_name,
-                    event_data_format=self.event_data_format,
+                    aggregate_identifier=aggregate_identifier,
                     notification_interval=self.notification_interval,
-                    aggregate_identifier=aggregate_identifier)
+                    notification_format=self.notification_format,
+                    event_data_format=self.event_data_format,
+                    template_name=self.template_name)
 
     def aggregate_by_field(self, fieldname):
         """Indicate that aggregation should consider the given event field.
@@ -314,8 +327,9 @@ class Directive:
                         context.add_directive(directive)
                 return True
         """
-        for attr in ["medium", "recipient_address", "template_name",
-                     "event_data_format", "notification_interval"]:
+        for attr in ["medium", "recipient_address", "notification_interval",
+                     "notification_format", "event_data_format",
+                     "template_name"]:
             new = getattr(directive, attr)
             if new is not None:
                 setattr(self, attr, new)
