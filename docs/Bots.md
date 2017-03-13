@@ -431,6 +431,21 @@ none
 
 * * *
 
+### IDEA
+
+#### Information:
+* `name:` idea
+* `lookup:` local config
+* `public:` yes
+* `cache (redis db):` none
+* `description:` The bot does a best effort translation of events into the IDEA format.
+
+#### Configuration Parameters:
+
+* `test_mode`: add `Test` category to mark all outgoing IDEA events as informal (meant to simplify setting up and debugging new IDEA producers) (default: `true`)
+
+* * *
+
 ### MaxMind GeoIP
 
 See the README.md
@@ -664,6 +679,27 @@ FIXME
 #### Configuration Parameters:
 
 * `file`: file path of output file
+
+
+* * *
+
+
+### Files
+
+#### Information:
+* `name:` files
+* `lookup:` no
+* `public:` yes
+* `cache (redis db):` none
+* `description:` saving of messages as separate files
+
+#### Configuration Parameters:
+
+* `dir`: output directory (default `/opt/intelmq/var/lib/bots/files-output/incoming`)
+* `tmp`: temporary directory (must reside on the same filesystem as `dir`) (default: `/opt/intelmq/var/lib/bots/files-output/tmp`)
+* `suffix`: extension of created files (default `.json`)
+* `hierarchical_output`: if `true`, use nested dictionaries; if `false`, use flat structure with dot separated keys (default)
+* `single_key`: if `none`, the whole event is saved; otherwise bot saves only contents of the specified key (default: `output`)
 
 
 * * *
