@@ -89,13 +89,13 @@ UPDATE events
 UPDATE events
    SET "event_hash" = lower("event_hash")
    WHERE "event_hash" IS NOT NULL;
-UPDATE tests
+UPDATE events
    SET "malware.hash.md5" = substring("malware.hash" from 4)
    WHERE substring("malware.hash" from 1 for 3) = '$1$';
-UPDATE tests
+UPDATE events
    SET "malware.hash.sha1" = substring("malware.hash" from 7)
    WHERE substring("malware.hash" from 1 for 6) = '$sha1$';
-UPDATE tests
+UPDATE events
    SET "malware.hash.sha256" = substring("malware.hash" from 4)
    WHERE substring("malware.hash" from 1 for 3) = '$5$';
 UPDATE events
