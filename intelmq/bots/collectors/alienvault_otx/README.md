@@ -1,4 +1,6 @@
 - Collector for: https://otx.alienvault.com
-- Needs this script to be run: https://github.com/AlienVault-Labs/OTX-Python-SDK/blob/master/OTXv2.py
+- Install the libary from github, as there is no package in pypi:
+  ```language
+  pip install -r REQUIREMENTS.txt
+   ```
 - The runtime.conf parameter "api_key" has to be set (register on the website to get one)
-
