@@ -211,7 +211,7 @@ The same as start and stop consecutively.
 The same as reload of every bot.
 
 ### enable / disable
-The subcommands `enable` and `disable` are setting the according flags in the runtime.conf and thus make them part of the botnet.
+The subcommands `enable` and `disable` set the corresponding flags in runtime.conf.
 
 ```bash
 > intelmqctl status
