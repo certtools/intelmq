@@ -22,6 +22,7 @@ def determine_directives(context):
 
 def shadowserver_csv_entry(basename):
     return Directive(template_name="shadowserver_csv_" + basename,
+                     notification_format="text",
                      event_data_format="csv_" + basename,
                      notification_interval=3600)
 

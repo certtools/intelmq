@@ -34,6 +34,7 @@ def determine_directives(context):
 
 
 def xarf_entry():
-    return Directive(template_name="bot-infection_0.2.0_unstable",
-                     event_data_format="xarf",
+    return Directive(template_name="xarf-description",
+                     notification_format="xarf",
+                     event_data_format="bot-infection_0.2.0_unstable",
                      notification_interval=0)
