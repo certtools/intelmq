@@ -28,33 +28,35 @@ import argparse
 NOTIFICATION_INTERVAL = 300
 FORMAT_ID = 2
 
+
 def get_automatic_org_name(cur, asn):
     # Get existing Org ID & name from _automatic tables
-    cur.execute("""
-            SELECT organisation_id from
-            organisation_to_asn_automatic WHERE asn_id = %s;
-            """,
-        (asn,))
+    cur.execute(
+        """
+        SELECT organisation_id from
+        organisation_to_asn_automatic WHERE asn_id = %s;
+        """, (asn,))
     result = cur.fetchall()
     org_id = result[0][0]
     cur.execute("SELECT name from organisation_automatic WHERE id = %s;",
-            (org_id,))
+                (org_id,))
     result = cur.fetchall()
     org_name = result[0][0]
     return cur, org_id, org_name
 
+
 def add_contact(cur, asn, email, org_name=None):
     # Add AS number to manual table if necessary
-    cur.execute("""
+    cur.execute(
+        """
         SELECT EXISTS(SELECT number from autonomous_system WHERE number = %s);
-        """,
-            (asn,))
+        """, (asn,))
     result = cur.fetchall()
     exists = result[0][0]
     if not exists:
         # Insert AS into manual AS table
         cur.execute("INSERT INTO autonomous_system (number) VALUES (%s);",
-                (asn,))
+                    (asn,))
 
     # If no organization name was supplied, try to find it in the imported RIPE
     # data
@@ -70,8 +72,8 @@ def add_contact(cur, asn, email, org_name=None):
         org_id = result[0][0]
     else:
         cur.execute(
-                "INSERT INTO organisation (name) VALUES (%s) RETURNING id;",
-                (org_name,))
+            "INSERT INTO organisation (name) VALUES (%s) RETURNING id;",
+            (org_name,))
         result = cur.fetchall()
         org_id = result[0][0]
 
@@ -114,6 +116,7 @@ def add_contact(cur, asn, email, org_name=None):
             (org_id, contact_id))
     return cur
 
+
 def parse_file(reader):
     list = []
     # AS|Email|Organisation name
@@ -126,14 +129,14 @@ def parse_file(reader):
                 list.append((row[0], email, None))
     return list
 
-def main():
 
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--conninfo",
                         default='dbname=contactdb',
                         help="Libpg connection string. E.g. 'host=localhost"
-                            " port=5432 user=intelmq dbname=connectdb'"
-                            " Default: 'dbname=contactdb'")
+                             " port=5432 user=intelmq dbname=connectdb'"
+                             " Default: 'dbname=contactdb'")
     parser.add_argument("--input", "-i",
                         help="Specify the input CSV file")
     args = parser.parse_args()

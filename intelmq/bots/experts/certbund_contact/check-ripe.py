@@ -9,6 +9,7 @@ import sys
 
 from ripe_data import parse_file
 
+
 def main():
     asn_file = 'ripe.db.aut-num.gz'
     organisation_file = 'ripe.db.organisation.gz'
@@ -24,7 +25,7 @@ def main():
     role_list = parse_file(role_file,
                            ('nic-hdl', 'abuse-mailbox', 'org'), 'role', verbose)
 
-    a='x.txt'
+    a = 'x.txt'
     asfilename = a
     print("Checking AS numbers from {}..".format(asfilename))
 
@@ -37,7 +38,7 @@ def main():
 
             for a in asn_list:
                 if a["aut-num"][0] == "AS{}".format(asn):
-                    as2org[asn]=a["org"][0].upper()
+                    as2org[asn] = a["org"][0].upper()
                     print(a)
 
     for asn in as2org:

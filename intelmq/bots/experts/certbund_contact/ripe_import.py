@@ -34,15 +34,7 @@ called automatically, e.g. by a cronjob.''')
     ripe_data.add_db_args(parser)
     ripe_data.add_common_args(parser)
 
-    parser.add_argument("--notification-format",
-                    default='feed_specific',
-                    help="Specify the data format the contacts linked with e.g. csv. Default: feed_specific")
-    parser.add_argument("--notification-interval",
-                    default='0',
-                    help="Specify the default notification intervall in seconds. Default: 0")
-
     args = parser.parse_args()
-
 
     if args.verbose:
         print('Parsing RIPE database...')
@@ -51,32 +43,16 @@ called automatically, e.g. by a cronjob.''')
     (asn_list, organisation_list, role_list,
      org_to_asn, abusec_to_org) = ripe_data.load_ripe_files(args)
 
-
     # Mapping dictionary that holds the database IDs between organisations,
     # contacts and AS numbers. This needs to be done here because we can't
     # use the RIPE org-ids.
     mapping = collections.defaultdict(lambda: {'org_id': None,
                                                'contact_id': []})
 
-
     con = None
     try:
         con = psycopg2.connect(dsn=args.conninfo)
         cur = con.cursor()
-
-        if args.verbose:
-            print('** Looking for %s' % (args.notification_format, ))
-
-        cur.execute("SELECT id FROM format WHERE name = %s",
-                    (args.notification_format, ))
-        result = cur.fetchall()
-
-        if result:
-            notification_fid = result[0]
-        else:
-            print('The notification format %s could not be determined'
-                  % (args.notification_format, ))
-            sys.exit(1)
 
         #
         # AS numbers
@@ -84,7 +60,6 @@ called automatically, e.g. by a cronjob.''')
         if args.verbose:
             print('** Saving AS data to database...')
         cur.execute("DELETE FROM role_automatic WHERE import_source = %s;", (SOURCE_NAME,))
-        cur.execute("DELETE FROM organisation_to_template_automatic WHERE import_source = %s;", (SOURCE_NAME,))
         cur.execute("DELETE FROM organisation_to_asn_automatic WHERE import_source = %s;", (SOURCE_NAME,))
         cur.execute("DELETE FROM autonomous_system_automatic WHERE import_source = %s;", (SOURCE_NAME,))
 
@@ -92,7 +67,7 @@ called automatically, e.g. by a cronjob.''')
             cur.execute("""INSERT INTO autonomous_system_automatic
                                        (number, import_source, import_time)
                                 VALUES (%s, %s, CURRENT_TIMESTAMP);""",
-                        (entry['aut-num'][0][2:], SOURCE_NAME ))
+                        (entry['aut-num'][0][2:], SOURCE_NAME))
 
         #
         # Organisation
@@ -121,14 +96,12 @@ called automatically, e.g. by a cronjob.''')
                 for asn_id in org_to_asn[org_ripe_handle]:
                     cur.execute("""
                     INSERT INTO organisation_to_asn_automatic (
-                                                        notification_interval,
                                                         organisation_id,
                                                         asn_id,
                                                         import_source,
                                                         import_time)
-                    VALUES (%s, %s, %s, %s, CURRENT_TIMESTAMP);
-                    """, (args.notification_interval, org_id,
-                          asn_id, SOURCE_NAME))
+                    VALUES (%s, %s, %s, CURRENT_TIMESTAMP);
+                    """, (org_id, asn_id, SOURCE_NAME))
 
         #
         # Role
@@ -147,23 +120,22 @@ called automatically, e.g. by a cronjob.''')
             # abuse-mailbox: could be type LIST or occur multiple time
             # TODO: Check if we can handle LIST a@example, b@example
             email = entry['abuse-mailbox'][0]
-            # For multiple lines: As not seen in ftp bulk data, 
+            # For multiple lines: As not seen in ftp bulk data,
             # we only record if it happens as WARNING for now
-            if len(entry['abuse-mailbox'])>1:
+            if len(entry['abuse-mailbox']) > 1:
                 print('Role with nic-hdl {} has two '
                       'abuse-mailbox lines. Taking the first.'.format(nic_hdl))
 
             cur.execute("""
-                INSERT INTO contact_automatic (format_id, email, import_source, import_time)
-                VALUES (%s, %s, %s, CURRENT_TIMESTAMP)
+                INSERT INTO contact_automatic (email, import_source, import_time)
+                VALUES (%s, %s, CURRENT_TIMESTAMP)
                 RETURNING id;
-                """, (notification_fid, email, SOURCE_NAME))
+                """, (email, SOURCE_NAME))
             result = cur.fetchone()
             contact_id = result[0]
 
             for orh in abusec_to_org[nic_hdl]:
                 mapping[orh]['contact_id'].append(contact_id)
-
 
         # many-to-many table organisation <-> contact
         cur.execute("DELETE FROM role_automatic WHERE import_source = %s;", (SOURCE_NAME,))
