@@ -13,6 +13,7 @@ import dateutil
 from intelmq.lib.bot import ParserBot
 
 SOURCE_FEEDS = {'https://feodotracker.abuse.ch/blocklist/?download=ipblocklist': 'Cridex',
+                'https://zeustracker.abuse.ch/blocklist.php?download=ipblocklist': 'Zeus',
                 'https://zeustracker.abuse.ch/blocklist.php?download=badips': 'Zeus'}
 
 
