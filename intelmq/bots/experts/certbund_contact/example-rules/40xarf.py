@@ -37,4 +37,3 @@ def xarf_entry():
     return Directive(template_name="bot-infection_0.2.0_unstable",
                      event_data_format="xarf",
                      notification_interval=0)
-
