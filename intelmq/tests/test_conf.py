@@ -38,7 +38,7 @@ CONF_FILES = {name: pkg_resources.resource_filename('intelmq',
 
 class TestConf(unittest.TestCase):
     """
-    A TestCase for configutation files.
+    A TestCase for configuration files.
     """
 
     def test_defaults_syntax(self):
@@ -88,7 +88,7 @@ class TestConf(unittest.TestCase):
         self.assertEqual(to_json(interpreted), fcontent)
 
     def test_bots(self):
-        """ Test if BOTS has correct syntax and consistent contetn. """
+        """ Test if BOTS has correct syntax and consistent content. """
         with open(pkg_resources.resource_filename('intelmq',
                                                   'bots/BOTS')) as fhandle:
             fcontent = fhandle.read()

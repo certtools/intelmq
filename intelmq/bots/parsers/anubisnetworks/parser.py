@@ -1,35 +1,36 @@
 # -*- coding: utf-8 -*-
 """
-AnubisNetworks Cyberfeed Stream parser
+AnubisNetworks Cyberfeed Stream parser ::
 
-_ts                                     => time.source
-trojanfamily                            => malware.name
+    _ts                                     => time.source
+    trojanfamily                            => malware.name
 
-env.remote_addr                         => source.ip
-env.remote_port                         => source.port
-env.server_addr                         => destination.ip
-env.server_port                         => destination.port
-env.server_name                         => destination.fqdn
-env.request_method                      => extra.method
-env.cookies                             => extra.cookies
-env.path_info                           => extra.path_info
-env.http_referer                        => extra.http_referer
+    env.remote_addr                         => source.ip
+    env.remote_port                         => source.port
+    env.server_addr                         => destination.ip
+    env.server_port                         => destination.port
+    env.server_name                         => destination.fqdn
+    env.request_method                      => extra.method
+    env.cookies                             => extra.cookies
+    env.path_info                           => extra.path_info
+    env.http_referer                        => extra.http_referer
 
-_origin                                 => extra._origin
-_provider                               => extra._provider
-pattern_verified                        => extra.pattern_verified
+    _origin                                 => extra._origin
+    _provider                               => extra._provider
+    pattern_verified                        => extra.pattern_verified
 
-_geo_env_remote_addr.country_code       => source.geolocation.cc
-_geo_env_remote_addr.country_name       => source.geolocation.country
-_geo_env_remote_addr.region             => source.geolocation.region
-_geo_env_remote_addr.city               => source.geolocation.city
-_geo_env_remote_addr.asn                => source.geolocation.asn
-_geo_env_remote_addr.asn_name           => source.geolocation.as_name
-_geo_env_remote_addr.longitude          => source.geolocation.longitude
-_geo_env_remote_addr.longitude          => source.geolocation.longitude
-_geo_env_remote_addr.ip + netmask       => source.network
+    _geo_env_remote_addr.country_code       => source.geolocation.cc
+    _geo_env_remote_addr.country_name       => source.geolocation.country
+    _geo_env_remote_addr.region             => source.geolocation.region
+    _geo_env_remote_addr.city               => source.geolocation.city
+    _geo_env_remote_addr.asn                => source.geolocation.asn
+    _geo_env_remote_addr.asn_name           => source.geolocation.as_name
+    _geo_env_remote_addr.longitude          => source.geolocation.longitude
+    _geo_env_remote_addr.longitude          => source.geolocation.longitude
+    _geo_env_remote_addr.ip + netmask       => source.network
 
-Currently ignored and probably useful:
+Currently ignored and probably useful::
+
     btrack{id(hex),checkins(int),first(timestamp),since(int),days(int),changes(int),seen(ts),last_ip(ip),sameip(int)}
            Tracking data for devices and relations to sinkholed domains
     _geo_btrack_last_ip, _geo_env_server_addr (same fields as _geo_env_remote_addr)
@@ -37,6 +38,7 @@ Currently ignored and probably useful:
     env.http_xff (list of ips), X-Forwarded header as injected by proxies
     dcu_ts (timestamp)
     _geo_env_remote_addr.postal_code
+
 """
 import json
 
