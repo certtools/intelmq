@@ -58,7 +58,7 @@ class IdeaExpertBot(Bot):
         "proxy": "Proxy"
     }
 
-    def _init_translation(self):
+    def init(self):
         # Translation initialization is moved to method and called during
         # instantiation, because we need access to self.
         self.translation = {
@@ -187,10 +187,6 @@ class IdeaExpertBot(Bot):
             if val is not None:
                 target[key] = val
         return target or None
-
-    def __init__(self, *args, **kwargs):
-        self._init_translation()
-        super().__init__(*args, **kwargs)
 
     def process(self):
         event = self.receive_message()
