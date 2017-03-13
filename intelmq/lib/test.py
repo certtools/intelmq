@@ -84,6 +84,11 @@ def skip_redis():
                            'Skipping without running redis.')
 
 
+def skip_local_web():
+    return unittest.skipUnless(os.environ.get('INTELMQ_TEST_LOCAL_WEB'),
+                               'Skipping local web tests.')
+
+
 class BotTestCase(object):
     """
     Provides common tests and assert methods for bot testing.

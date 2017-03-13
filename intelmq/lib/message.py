@@ -117,7 +117,7 @@ class Message(dict):
                 (default: True)
 
         Returns:
-            retval: True if the value is valid, otherwise False
+            True if the value is valid, otherwise False
 
         Raises:
             intelmq.lib.exceptions.InvalidKey: if given key is invalid.
@@ -141,7 +141,7 @@ class Message(dict):
         """
         Add a value for the key (after sanitation).
 
-        Parameters
+        Parameters:
             key: Key as defined in the harmonization
             value: A valid value as defined in the harmonization
             sanitize: Sanitation of harmonization type will be called before validation
@@ -154,8 +154,8 @@ class Message(dict):
                 False in case of invalid values.
 
         Returns:
-            retval: True if the value has been added
-                False if the value is invalid and raise_failure is False
+            * True if the value has been added.
+            * False if the value is invalid and raise_failure is False.
 
         Raises:
             intelmq.lib.exceptions.KeyExists: If key exists and won't be overwritten explcitly.

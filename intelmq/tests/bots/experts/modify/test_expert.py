@@ -8,7 +8,8 @@ import unittest
 from pkg_resources import resource_filename
 
 import intelmq.lib.test as test
-from intelmq.bots.experts.modify.expert import ModifyExpertBot
+from intelmq.lib.utils import load_configuration
+from intelmq.bots.experts.modify.expert import ModifyExpertBot, convert_config
 
 EVENT_TEMPL = {"__type": "Event",
                "feed.name": "Spamhaus Cert",
@@ -64,6 +65,17 @@ class TestModifyExpertBot(test.BotTestCase, unittest.TestCase):
 
         for position, event_out in enumerate(OUTPUT):
             self.assertMessageEqual(position, event_out)
+
+    def test_conversion(self):
+        """ Test if the conversion from old dict-based config to new list based is correct. """
+        old_path = resource_filename('intelmq',
+                                     'tests/bots/experts/modify/old_format.conf')
+        old_config = load_configuration(old_path)
+        new_path = resource_filename('intelmq',
+                                     'tests/bots/experts/modify/new_format.conf')
+        new_config = load_configuration(new_path)
+        self.assertDictEqual(convert_config(old_config)[0],
+                             new_config[0])
 
 EVENT_TEMPL2 = {"__type": "Event",
                "feed.name": "Testing IntelMQ Mock Feed",
