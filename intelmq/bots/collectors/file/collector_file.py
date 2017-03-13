@@ -10,9 +10,12 @@ Copyright (C) 2016 by Bundesamt für Sicherheit in der Informationstechnik
 Software engineering by Intevation GmbH
 
 Parameters:
-path: string
-postfix: string
-delete_file: boolean
+    path: string
+
+    postfix: string
+
+    delete_file: boolean
+
     default: False
 """
 

@@ -3,15 +3,19 @@
 HTTP collector bot
 
 Parameters:
-http_url: string
-http_header: dictionary
-    default: {}
-http_verify_cert: boolean
-    default: True
-http_username, http_password: string
-http_proxy, https_proxy: string
-http_timeout_sec: tuple of two floats or float
-http_timeout_max_tries: an integer depicting how often a connection attempt is retried
+    http_url: string
+
+    http_header: dictionary. default: {}
+
+    http_verify_cert: boolean. default: True
+
+    http_username, http_password: string
+
+    http_proxy, https_proxy: string
+
+    http_timeout_sec: tuple of two floats or float
+
+    http_timeout_max_tries: an integer depicting how often a connection attempt is retried
 """
 import io
 import zipfile

@@ -267,7 +267,7 @@ class IntelMQController():
         Parameters:
             interactive: for cli-interface true, functions can exits, parameters are used
             return_type: 'python': no special treatment, can be used for use by other
-                    python code
+                python code
                 'text': user-friendly output for cli, default for interactive use
                 'json': machine-readable output for managers
             quiet: False by default, can be activated for cronjobs etc.
