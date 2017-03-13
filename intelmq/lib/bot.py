@@ -180,7 +180,7 @@ class Bot(object):
                                      "".format(self.__current_message))
 
             except KeyboardInterrupt:
-                self.logger.error("Received KeyboardInterrupt.")
+                self.logger.info("Received KeyboardInterrupt.")
                 self.stop(exitcode=0)
                 del self
                 break
@@ -253,10 +253,6 @@ class Bot(object):
             self.__print_log_buffer()
 
         if not getattr(self.parameters, 'testing', False):
-            try:
-                self.logger.error("Exiting.")
-            except:
-                print("Exiting")
             del self
             exit(exitcode)
 
