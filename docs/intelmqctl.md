@@ -229,7 +229,6 @@ intelmqctl: file-output-queue-internal - 0
 ## Log
 
 intelmqctl can show the last log lines for a bot, filtered by the log level.
-Only works for file logs.
 
 See the help page for more information.
 
