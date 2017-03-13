@@ -212,8 +212,13 @@ class Bot(object):
                             # dont need to wait again
                             error_on_message = False
 
+                        # run_mode: scheduled
+                        if self.run_mode == 'scheduled':
+                            self.logger.info('Shutting down scheduled bot.')
+                            self.stop()
+
                         # error_procedure: stop
-                        if self.parameters.error_procedure == "stop":
+                        elif self.parameters.error_procedure == "stop":
                             self.stop()
 
                         # error_procedure: pass
