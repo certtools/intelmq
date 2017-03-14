@@ -34,15 +34,13 @@ class BluelivCrimeserverParserBot(Bot):
                     event.add('source.tor_node', True)
                     tor_node = True
             if 'url' in item:
-                # crimeserver reports tor ips in url instead of ip field
+                # crimeserver reports tor ips in url as well, skip those
 
                 if not tor_node:
                     event.add('source.url', item['url'])
                 else:
                     valid_ip = IPAddress.is_valid(item['url'])
-                    if valid_ip:
-                        event.add('source.ip', item['url'])
-                    else:
+                    if not valid_ip:
                         event.add('source.url', item['url'])
             if 'ip' in item:
                 event.add('source.ip', item['ip'])
