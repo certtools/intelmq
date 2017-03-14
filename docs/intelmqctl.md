@@ -105,7 +105,7 @@ intelmqctl: file-output is running.
 
 Sends a SIGHUP to the bot, which will then reload the configuration.
 
-```
+```bash
 > intelmqctl reload file-output
 intelmqctl: Reloading file-output ...
 intelmqctl: file-output is running.
@@ -210,13 +210,33 @@ The same as start and stop consecutively.
 ### reload
 The same as reload of every bot.
 
+### enable / disable
+The subcommands `enable` and `disable` set the corresponding flags in runtime.conf.
+
+```bash
+> intelmqctl status
+intelmqctl: file-output is stopped.
+intelmqctl: malware-domain-list-collector is stopped.
+intelmqctl: malware-domain-list-parser is stopped.
+> intelmqctl disable file-output
+> intelmqctl status
+intelmqctl: file-output is disabled.
+intelmqctl: malware-domain-list-collector is stopped.
+intelmqctl: malware-domain-list-parser is stopped.
+> intelmqctl enable file-output
+> intelmqctl status
+intelmqctl: file-output is stopped.
+intelmqctl: malware-domain-list-collector is stopped.
+intelmqctl: malware-domain-list-parser is stopped.
+```
+
 ## List bots
 `intelmqctl list bots` does list all configured bots and their description.
 
 ## List queues
 `intelmqctl list queues` shows all queues which are currently in use according to the configuration and how much events are in it:
 
-```
+```bash
 > intelmqctl list queues
 intelmqctl: abusech-domain-parser-queue - 0
 intelmqctl: abusech-domain-parser-queue-internal - 0
@@ -224,6 +244,13 @@ intelmqctl: deduplicator-expert-queue - 0
 intelmqctl: deduplicator-expert-queue-internal - 0
 intelmqctl: file-output-queue - 234
 intelmqctl: file-output-queue-internal - 0
+```
+
+Use the `-q` or `--quiet` flag to only show non-empty queues:
+
+```bash
+> intelmqctl list queues -q
+intelmqctl: file-output-queue - 234
 ```
 
 ## Log
