@@ -159,6 +159,7 @@ class Bot(object):
                 self.__disconnect_pipelines()
 
             except Exception as exc:
+                # in case of serious system issues, exit immediately
                 if isinstance(exc, MemoryError):
                     self.logger.exception('Out of memory. Exit immediately.')
                     self.stop()
@@ -178,6 +179,10 @@ class Bot(object):
                     # Dump full message if explicitly requested by config
                     self.logger.info("Current Message(event): {!r}."
                                      "".format(self.__current_message))
+
+                # In case of permanent failures, stop now
+                if isinstance(exc, exceptions.ConfigurationError):
+                    self.stop()
 
             except KeyboardInterrupt:
                 self.logger.error("Received KeyboardInterrupt.")
@@ -322,6 +327,10 @@ class Bot(object):
             if not message:
                 self.logger.warning("Ignoring empty message at sending. Possible bug in bot.")
                 continue
+            if not self.__destination_pipeline:
+                raise exceptions.ConfigurationError('pipeline', 'No destination pipline given, '
+                                                    'but needed')
+                self.stop()
 
             self.logger.debug("Sending message.")
             self.__message_counter += 1
@@ -445,8 +454,8 @@ class Bot(object):
                     self.__bot_id]['destination-queues']
 
         else:
-            raise ValueError("Pipeline configuration: no key "
-                             "{!r}.".format(self.__bot_id))
+            raise exceptions.ConfigurationError('pipeline', "no key "
+                                                "{!r}.".format(self.__bot_id))
 
     def __log_configuration_parameter(self, config_name, option, value):
         if "password" in option or "token" in option:
