@@ -352,8 +352,13 @@ class Bot(object):
         # handle a sighup which happened during blocking read
         self.__handle_sighup()
 
-        self.__current_message = libmessage.MessageFactory.unserialize(message,
-                                                                       harmonization=self.harmonization)
+        try:
+            self.__current_message = libmessage.MessageFactory.unserialize(message,
+                                                                           harmonization=self.harmonization)
+        except exceptions.InvalidKey as exc:
+            # In case a incoming message is malformed an does not conform with the currently
+            # loaded harmonization, stop now as this will happen repeatedly without any change
+            raise exceptions.ConfigurationError('harmonization', exc.args[0])
 
         if 'raw' in self.__current_message and len(self.__current_message['raw']) > 400:
             tmp_msg = self.__current_message.to_dict(hierarchical=False)
