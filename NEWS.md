@@ -56,6 +56,15 @@ UPDATE events
    SET "source.local_hostname"="destination.local_hostname",
        "destination.local_hostname"=DEFAULT
    WHERE "feed.name"='Open-LDAP' AND "source.local_hostname" IS NULL;
+UPDATE  events
+   SET "feed.url" = substring("feed.url" from 1 for 37)
+   WHERE SUBSTRING("feed.url" from 1 for 38) = 'https://prod.cyberfeed.net/stream?key='
+UPDATE events
+   SET "feed.url" = regexp_replace("feed.url", 'receipt=([^&])*', '')
+   WHERE substring("feed.url" from 1 for 43) = 'https://lists.malwarepatrol.net/cgi/getfile'
+UPDATE events
+   SET "feed.url" = substring("feed.url" from 1 for 36)
+   WHERE SUBSTRING("feed.url" from 1 for 37) = 'https://data.phishtank.com/data/'
 ```
 
 1.0.0.dev6
