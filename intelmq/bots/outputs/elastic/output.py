@@ -1,16 +1,11 @@
 # -*- coding: utf-8 -*-
 
-import sys
 from json import loads
 from collections.abc import Mapping
 
 from elasticsearch import Elasticsearch
 
 from intelmq.lib.bot import Bot
-
-#
-# TODO: recursion depth check
-
 
 def replace_keys(obj, key_char='.', replacement='_'):
     if isinstance(obj, Mapping):
