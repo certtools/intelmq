@@ -91,6 +91,7 @@ Changes between 0.9 and 1.0.0.dev6
 - parameter `hierarchical_output` for many output bots
 - deduplicator bot has a new required parameter to configure deduplication mode `filter_type`
 - deduplicator bot key ignore_keys was renamed to filter_keys
+- The tor_nodes expert has a new parameter `overwrite`, which is by default `false`.
 
 ### Harmonization
 - ENH: Additional data types: integer, float and Boolean
