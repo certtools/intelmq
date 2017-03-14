@@ -742,7 +742,7 @@ FIXME
 * `tmp`: temporary directory (must reside on the same filesystem as `dir`) (default: `/opt/intelmq/var/lib/bots/files-output/tmp`)
 * `suffix`: extension of created files (default `.json`)
 * `hierarchical_output`: if `true`, use nested dictionaries; if `false`, use flat structure with dot separated keys (default)
-* `single_key`: if `none`, the whole event is saved; otherwise bot saves only contents of the specified key (default: `output`)
+* `single_key`: if `none`, the whole event is saved (default); otherwise bot saves only contents of the specified key
 
 
 * * *

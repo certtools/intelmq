@@ -613,7 +613,7 @@
                 "dir": "/opt/intelmq/var/lib/bots/files-output/incoming",
                 "suffix": ".json",
                 "hierarchical_output": false,
-                "single_key": "output"
+                "single_key": null
             }
         },
         "MongoDB": {
