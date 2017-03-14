@@ -26,7 +26,7 @@ See the changelog for a full list of changes.
               }, {
               }]
           },
-		  ...
+          ...
       }
 
   new format:
@@ -40,7 +40,7 @@ See the changelog for a full list of changes.
               },
               "then": {}
           },
-		  ...
+          ...
       ]
 
 ### Postgres databases
@@ -90,8 +90,20 @@ UPDATE events
    SET "event_hash" = lower("event_hash")
    WHERE "event_hash" IS NOT NULL;
 UPDATE events
-   SET "malware.hash" = lower("malware.hash")
-   WHERE "malware.hash" IS NOT NULL;
+   SET "malware.hash.md5" = lower("malware.hash.md5");
+UPDATE events
+   SET "malware.hash.sha1" = lower("malware.hash.sha1");
+UPDATE events
+   SET "malware.hash.sha256" = lower("malware.hash.sha256");
+UPDATE events
+   SET "malware.hash.md5" = lower(substring("malware.hash" from 4))
+   WHERE substring("malware.hash" from 1 for 3) = '$1$';
+UPDATE events
+   SET "malware.hash.sha1" = lower(substring("malware.hash" from 7))
+   WHERE substring("malware.hash" from 1 for 6) = '$sha1$';
+UPDATE events
+   SET "malware.hash.sha256" = lower(substring("malware.hash" from 4))
+   WHERE substring("malware.hash" from 1 for 3) = '$5$';
 UPDATE events
    SET "malware.hash.md5" = lower("malware.hash.md5")
    WHERE "malware.hash.md5" IS NOT NULL;
@@ -107,7 +119,7 @@ UPDATE events
 
 ```sql
 ALTER TABLE events
-   ADD CO   ADD COLUMN "classification.identifier" text,
+   ADD COLUMN "classification.identifier" text,
    ADD COLUMN "feed.accuracy" text,
    ADD COLUMN "feed.code" text,
    ADD COLUMN "malware.hash.md5" text,
@@ -135,5 +147,6 @@ UPDATE events
 ALTER TABLE events
    DROP COLUMN "os.name",
    DROP COLUMN "os.version",
-   DROP COLUMN "user_agent";
+   DROP COLUMN "user_agent",
+   DROP COLUMN "malware.hash";
 ```

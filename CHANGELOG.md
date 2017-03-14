@@ -115,7 +115,7 @@ Changes between 0.9 and 1.0.0.dev6
 - `additional_information` renamed to `extra`, must be JSON
 - `os.name`, `os.version`, `user_agent` removed in favor of `extra`
 - all hashes are lower case only
-- added `malware.hash.(md5|sha1)`
+- added `malware.hash.(md5|sha1|sha256)`, removed `malware.hash`
 - New parameter and field named feed.accuracy to represent the accuracy of each feed
 - New parameter and field named feed.provider to document the name of the source of each feed
 - New field `classification.identifier`

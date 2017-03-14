@@ -41,9 +41,9 @@ Harmonization field names
 |Feed|feed.name|[String](#string)|Name for the feed, usually found in collector bot configuration.|
 |Feed|feed.provider|[String](#string)|Name for the provider of the feed, usually found in collector bot configuration.|
 |Feed|feed.url|[URL](#url)|The URL of a given abuse feed, where applicable|
-|Malware|malware.hash|[String](#string)|A string depicting a checksum for a file, be it a malware sample for example. You may include the hash type according to https://en.wikipedia.org/wiki/Crypt_%28C%29 and use only printable characters. Please see https://github.com/certtools/intelmq/pull/634 for a discussion on this issue.|
-|Malware Hash|malware.hash.md5|[String](#string)|A string depicting an MD5 checksum for a file, be it a malware sample for example. You may include the hash type according to https://en.wikipedia.org/wiki/Crypt_%28C%29 and use only printable characters. Please see https://github.com/certtools/intelmq/pull/634 for a discussion on this issue.|
-|Malware Hash|malware.hash.sha1|[String](#string)|A string depicting a SHA1 checksum for a file, be it a malware sample for example. You may include the hash type according to https://en.wikipedia.org/wiki/Crypt_%28C%29 and use only printable characters. Please see https://github.com/certtools/intelmq/pull/634 for a discussion on this issue.|
+|Malware Hash|malware.hash.md5|[String](#string)|A string depicting an MD5 checksum for a file, be it a malware sample for example.|
+|Malware Hash|malware.hash.sha1|[String](#string)|A string depicting a SHA1 checksum for a file, be it a malware sample for example.|
+|Malware Hash|malware.hash.sha256|[String](#string)|A string depicting a SHA256 checksum for a file, be it a malware sample for example.|
 |Malware|malware.name|[LowercaseString](#lowercasestring)|A malware family name in lower case.|
 |Malware|malware.version|[String](#string)|A version string for an identified artifact generation, e.g. a crime-ware kit.|
 |Misp|misp.attribute_uuid|[LowercaseString](#lowercasestring)|MISP - Malware Information Sharing Platform & Threat Sharing UUID of an attribute.|
