@@ -6,9 +6,12 @@ v1.0.0.dev7 (in development, master branch)
 
 ### Bot changes
 - ENH: added bots.experts.field_reducer.expert
+- ENH: added bots.experts.idea.expert
+- ENH: added bots.outputs.files.output
 
 ### Harmonization
 - New parameter and field named feed.documentation to link to documentation of the feed
+- New field named output to support export to foreign formats
 
 v1.0.0.dev6
 -----------

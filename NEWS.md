@@ -50,7 +50,8 @@ Take care that no data will be lost, the statement may not be complete!
 Also note that size constraints have changed!
 ```SQL
 ALTER TABLE events
-   ADD COLUMN "feed.documentation" text
+   ADD COLUMN "feed.documentation" text,
+   ADD COLUMN "output" json;
 
 UPDATE events
    SET "source.local_hostname"="destination.local_hostname",
