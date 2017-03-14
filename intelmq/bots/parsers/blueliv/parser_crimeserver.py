@@ -41,7 +41,7 @@ class BluelivCrimeserverParserBot(Bot):
                 else:
                     valid_ip = IPAddress.is_valid(item['url'])
                     if valid_ip:
-                        event.add('source.ip', item['ip'])
+                        event.add('source.ip', item['url'])
                     else:
                         event.add('source.url', item['url'])
             if 'ip' in item:
