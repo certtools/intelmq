@@ -94,7 +94,7 @@ class AlienVaultOTXParserBot(Bot):
                 if 'adversary' in pulse:
                     additional_indicator['adversary'] = pulse["adversary"]
 
-                additional = additiona_pulse.copy()
+                additional = additional_pulse.copy()
                 additional.update(additional_indicator)
 
                 event.add('comment', pulse['description'])
