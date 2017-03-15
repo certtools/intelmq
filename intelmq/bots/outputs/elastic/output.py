@@ -7,6 +7,7 @@ from elasticsearch import Elasticsearch
 
 from intelmq.lib.bot import Bot
 
+
 def replace_keys(obj, key_char='.', replacement='_'):
     if isinstance(obj, Mapping):
         replacement_obj = {}
