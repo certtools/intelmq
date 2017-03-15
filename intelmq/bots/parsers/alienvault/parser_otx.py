@@ -43,7 +43,7 @@ class AlienVaultOTXParserBot(Bot):
                     # dirty check if there is a scheme
 
                     resource = indicator["indicator"] \
-                        if 'tp://' in indicator["indicator"] \
+                        if '://' in indicator["indicator"] \
                         else 'http://' + indicator["indicator"]
                     path = parse.urlparse(resource).path
                     if len(path) > 0:
@@ -62,7 +62,7 @@ class AlienVaultOTXParserBot(Bot):
                 # URLs
                 elif indicator["type"] in ['URL', 'URI']:
                     resource = indicator["indicator"] \
-                        if 'tp://' in indicator["indicator"] \
+                        if '://' in indicator["indicator"] \
                         else 'http://' + indicator["indicator"]
                     event.add('source.url', resource)
                 # CIDR
@@ -73,7 +73,7 @@ class AlienVaultOTXParserBot(Bot):
                 # CVE
                 elif indicator["type"] in ['CVE']:
                     additional['CVE'] = indicator["indicator"]
-                    # FilePath, Mutex, CVE - TODO: process these IoCs as well
+                    # TODO: Process these IoCs: FilePath, Mutex
                 else:
                     continue
 
