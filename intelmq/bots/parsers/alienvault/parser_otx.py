@@ -27,15 +27,17 @@ class AlienVaultOTXParserBot(Bot):
         raw_report = utils.base64_decode(report.get("raw"))
 
         for pulse in json.loads(raw_report):
-            additional = {"author": pulse['author_name'], "pulse": pulse['name']}
+            additional_pulse = {"author": pulse['author_name'],
+                                "pulse": pulse['name']}
 
             for indicator in pulse["indicators"]:
+                additional_indicator = {}
                 event = self.new_event(report)
                 # hashes
                 if indicator["type"] in HASHES.keys():
                     event.add(HASHES[indicator["type"]], indicator["indicator"])
-                    additional['malware.hash.type'] = indicator["type"]
-                    additional['malware.hash.raw'] = indicator["indicator"]
+                    additional_indicator['malware.hash.type'] = indicator["type"]
+                    additional_indicator['malware.hash.raw'] = indicator["indicator"]
                 # fqdn
                 elif indicator["type"] in ['hostname', 'domain']:
                     # not all domains in the report are just domains
@@ -74,23 +76,27 @@ class AlienVaultOTXParserBot(Bot):
 
                 # CVE
                 elif indicator["type"] in ['CVE']:
-                    additional['CVE'] = indicator["indicator"]
+                    additional_indicator['CVE'] = indicator["indicator"]
                     # TODO: Process these IoCs: FilePath, Mutex
                 else:
                     continue
 
                 if 'tags' in pulse:
-                    additional['tags'] = pulse['tags']
+                    additional_indicator['tags'] = pulse['tags']
                 if 'modified' in pulse:
-                    additional['time_updated'] = \
+                    additional_indicator['time_updated'] = \
                         pulse["modified"][:-4] + "+00:00"
                 if 'industries' in pulse:
-                    additional['industries'] = pulse["industries"]
+                    additional_indicator['industries'] = pulse["industries"]
                 if '' in pulse:
-                    additional['targeted_countries'] = \
+                    additional_indicator['targeted_countries'] = \
                         pulse["targeted_countries"]
                 if 'adversary' in pulse:
-                    additional['adversary'] = pulse["adversary"]
+                    additional_indicator['adversary'] = pulse["adversary"]
+
+                additional = additiona_pulse.copy()
+                additional.update(additional_indicator)
+
                 event.add('comment', pulse['description'])
                 event.add('extra', additional)
                 event.add('classification.type', 'blacklist')
