@@ -8,6 +8,8 @@
    * [status](#status)
    * [restart](#restart)
    * [reload](#reload)
+   * [disable](#disable)
+   * [enable](#enable)
   * [Manage the botnet](#manage-the-botnet)
    * [start](#start-1)
    * [stop](#stop-1)
@@ -114,6 +116,32 @@ If the bot is not running, we can't reload it:
 ```bash
 > intelmqctl reload file-output
 intelmqctl: file-output was NOT RUNNING.
+```
+
+### disable
+
+Sets the `enabled` flag in runtime.conf to `false`.
+Assume the bot is now enabled (default for all bots).
+
+```bash
+> intelmqctl status file-output
+intelmqctl: file-output is stopped.
+> intelmqctl disable file-output
+> intelmqctl status file-output
+intelmqctl: file-output is disabled.
+```
+
+### enable
+
+Ensures that the `enabled` flag in runtime.conf is not set to `false`.
+Assumume that the bot is now diabled.
+
+```bash
+> intelmqctl status file-output
+intelmqctl: file-output is disabled.
+> intelmqctl enable file-output
+> intelmqctl status file-output
+intelmqctl: file-output is stopped.
 ```
 
 
