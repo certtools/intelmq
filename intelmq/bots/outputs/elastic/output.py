@@ -28,8 +28,6 @@ class ElasticsearchOutputBot(Bot):
                                      'elastic_index', 'intelmq')
         self.elastic_doctype = getattr(self.parameters,
                                        'elastic_doctype', 'events')
-        self.sanitize_keys = getattr(self.parameters,
-                                     'sanitize_keys', True)
         self.replacement_char = getattr(self.parameters,
                                         'replacement_char', '_')
         self.flatten_fields = getattr(self.parameters,
@@ -60,9 +58,8 @@ class ElasticsearchOutputBot(Bot):
                         event_dict[key] = value
                     event_dict.pop(field)
 
-        if self.sanitize_keys:
-            event_dict = replace_keys(event_dict,
-                                      replacement=self.replacement_char)
+        event_dict = replace_keys(event_dict,
+                                  replacement=self.replacement_char)
 
         self.es.index(index=self.elastic_index,
                       doc_type=self.elastic_doctype,
