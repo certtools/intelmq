@@ -19,7 +19,9 @@ EXAMPLE_REPORT = {"feed.name": "AlienVault OTX",
 EXAMPLE_EVENT = {
     "__type": "Event",
     "extra": '{"author": "AlienVault", "pulse": "The Spy Kittens Are Back: '
-             'Rocket Kitten 2"}',
+        'Rocket Kitten 2", "tags": ["spy kittens", "rocket kitten", "ghole",'
+        ' "spearphishing", "Social engineering", "TSPY_WOOLERG", "apt",'
+        ' "trendmicro"], "time_updated": "2015-09-02T09:22:22.97+00:00"}',
     "comment": """Our findings show that Rocket Kitten is still active, retains
 a growing level of persistence, and acts ever more aggressively in terms of
 attack method. We also found that recent publications on the group’s activity
