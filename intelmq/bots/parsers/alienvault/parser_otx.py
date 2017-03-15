@@ -33,8 +33,7 @@ class AlienVaultOTXParserBot(Bot):
                 event = self.new_event(report)
                 # hashes
                 if indicator["type"] in HASHES.keys():
-                    event.add('malware.hash', HASHES[indicator["type"]] +
-                              indicator["indicator"])
+                    event.add(HASHES[indicator["type"]], indicator["indicator"])
                     additional['malware.hash.type'] = indicator["type"]
                     additional['malware.hash.raw'] = indicator["indicator"]
                 # fqdn
