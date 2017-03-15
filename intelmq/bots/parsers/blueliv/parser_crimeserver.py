@@ -6,7 +6,6 @@ import json
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.harmonization import IPAddress
 
 TYPES = {
     'PHISHING': 'phishing',
@@ -36,12 +35,9 @@ class BluelivCrimeserverParserBot(Bot):
             if 'url' in item:
                 # crimeserver reports tor ips in url as well, skip those
 
-                if not tor_node:
-                    event.add('source.url', item['url'])
-                else:
-                    valid_ip = IPAddress.is_valid(item['url'])
-                    if not valid_ip:
-                        event.add('source.url', item['url'])
+                raise_failure = False if tor_node else True
+                event.add('source.url', item['url'],
+                          raise_failure=raise_failure)
             if 'ip' in item:
                 event.add('source.ip', item['ip'])
             if 'country' in item:
