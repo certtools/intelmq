@@ -13,9 +13,9 @@ from intelmq.lib import utils
 from intelmq.lib.bot import Bot
 
 HASHES = {
-    'FileHash-SHA256': '$5$',
-    'FileHash-SHA1': '$sha1$',
-    'FileHash-MD5': '$1$'
+    'FileHash-SHA256': 'malware.hash.sha265',
+    'FileHash-SHA1': 'malware.hash.sha1',
+    'FileHash-MD5': 'malware.hash.md5'
 }
 
 

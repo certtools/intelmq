@@ -145,7 +145,7 @@ class Bot(object):
                 self.process()
                 self.__error_retries_counter = 0  # reset counter
 
-                if self.parameters.rate_limit:
+                if self.parameters.rate_limit and self.run_mode != 'scheduled':
                     self.__sleep()
 
             except exceptions.PipelineError as exc:
@@ -180,7 +180,7 @@ class Bot(object):
                                      "".format(self.__current_message))
 
             except KeyboardInterrupt:
-                self.logger.error("Received KeyboardInterrupt.")
+                self.logger.info("Received KeyboardInterrupt.")
                 self.stop(exitcode=0)
                 del self
                 break
@@ -212,13 +212,24 @@ class Bot(object):
                             # dont need to wait again
                             error_on_message = False
 
+                        # run_mode: scheduled
+                        if self.run_mode == 'scheduled':
+                            self.logger.info('Shutting down scheduled bot.')
+                            self.stop()
+
                         # error_procedure: stop
-                        if self.parameters.error_procedure == "stop":
+                        elif self.parameters.error_procedure == "stop":
                             self.stop()
 
                         # error_procedure: pass
                         else:
                             self.__error_retries_counter = 0  # reset counter
+
+                # no errors, check for run mode: scheduled
+                elif self.run_mode == 'scheduled':
+                    self.logger.info('Shutting down scheduled bot.')
+                    self.stop()
+
             self.__handle_sighup()
 
     def __sleep(self):
@@ -253,10 +264,6 @@ class Bot(object):
             self.__print_log_buffer()
 
         if not getattr(self.parameters, 'testing', False):
-            try:
-                self.logger.error("Exiting.")
-            except:
-                print("Exiting")
             del self
             exit(exitcode)
 
@@ -407,6 +414,7 @@ class Bot(object):
 
         if self.__bot_id in list(config.keys()):
             params = config[self.__bot_id]
+            self.run_mode = params.get('run_mode', 'stream')
             if 'parameters' in params:
                 params = params['parameters']
             else:
@@ -543,8 +551,10 @@ class ParserBot(Bot):
         `self.parse_line` can be saved in `self.tempdata` (list).
 
         Default parser yields stripped lines.
-        Override for your use or use an exisiting parser, e.g.:
+        Override for your use or use an exisiting parser, e.g.::
+
             parse = ParserBot.parse_csv
+
         """
         for line in utils.base64_decode(report.get("raw")).splitlines():
             line = line.strip()
