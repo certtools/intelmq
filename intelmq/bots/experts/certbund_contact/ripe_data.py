@@ -32,16 +32,21 @@ def add_common_args(parser):
                         default=False, action="store_true")
     parser.add_argument("--organisation-file",
                         default='ripe.db.organisation.gz',
-                        help="Specify the organisation data file. Default: ripe.db.organisation.gz")
+                        help=("Specify the organisation data file."
+                              " Default: ripe.db.organisation.gz"))
     parser.add_argument("--role-file",
                         default='ripe.db.role.gz',
-                        help="Specify the contact role data file. Default: ripe.db.role.gz")
+                        help=("Specify the contact role data file."
+                              " Default: ripe.db.role.gz"))
     parser.add_argument("--asn-file",
                         default='ripe.db.aut-num.gz',
-                        help="Specify the AS number data file. Default: ripe.db.aut-num.gz")
+                        help=("Specify the AS number data file."
+                              " Default: ripe.db.aut-num.gz"))
     parser.add_argument("--asn-whitelist-file",
                         default='',
-                        help="A file name with a whitelist of ASNs. If this option is not set, all ASNs are imported")
+                        help=("A file name with a whitelist of ASNs."
+                              " If this option is not set,"
+                              " all ASNs are imported"))
 
 
 def load_ripe_files(options) -> tuple:
