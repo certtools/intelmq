@@ -50,10 +50,11 @@ def add_common_args(parser):
 
 
 def load_ripe_files(options) -> tuple:
-    '''Read ripe files as given in the command line options.
+    """Read ripe files as given in the command line options.
 
-    :return: tuple of (asn_list, org_list, role_list, org_to_asn, abusec_to_org)
-    '''
+    Returns:
+        tuple of (asn_list, org_list, role_list, org_to_asn, abusec_to_org)
+    """
 
     # Step 1: read all files
     asn_whitelist = read_asn_whitelist(options.asn_whitelist_file,
@@ -90,12 +91,13 @@ def load_ripe_files(options) -> tuple:
 
 
 def read_asn_whitelist(filename, verbose=False):
-    '''Reads a list of ASNs from file.
+    """Read a list of ASNs from file.
 
     Each line of the file being one ASN in the format "ASnnnnnn".
 
-    :return: list of ASN strings (maybe empty) or None
-    '''
+    Returns:
+        list of ASN strings (maybe empty) or None
+    """
     if filename:
         out = []
         with open(filename) as f:
@@ -110,22 +112,29 @@ def read_asn_whitelist(filename, verbose=False):
 
 
 def parse_file(filename, fields, index_field=None, verbose=False):
-    '''Parses a file from the RIPE (split) database set.
+    """Parses a file from the RIPE (split) database set.
 
     ftp://ftp.ripe.net/ripe/dbase/split/
-    :param filename: the gziped filename
-    :param fields: the field names to read
-    :param index_field: the field that marks the beginning of a dataset.
-        If not provided, the first element of 'fields' will be used
-    :return: returns a list of lists with the read out values
 
-    NOTE: Does **not** handle "continuation lines" (see rfc2622 section 2).
+    Args:
+        filename (str): name of the gzipped file
+        fields (list of str): names of the fields to read
+        index_field (str): the field that marks the beginning of a dataset.
+            If not provided, the first element of ``fields`` will be used
 
-    NOTE: Preserves the contents of the fields like lower and upper case
-          characters, though the RPSL is case insensitive and ASCII only.
-          Thus for some fields it makes sense to upper() them (before
-          comparing).
-    '''
+    Returns:
+        list of dictionaries: The entries read from the file. Each value
+        in the dictionaries is a list.
+
+    Note:
+        Does **not** handle "continuation lines" (see rfc2622 section 2).
+
+    Note:
+        Preserves the contents of the fields like lower and upper case
+        characters, though the RPSL is case insensitive and ASCII only.
+        Thus for some fields it makes sense to upper() them (before
+        comparing).
+    """
     if verbose:
         print('** Reading file {0}'.format(filename))
 
