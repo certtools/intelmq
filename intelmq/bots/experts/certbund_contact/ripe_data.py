@@ -129,16 +129,17 @@ def parse_file(filename, fields, index_field=None, verbose=False):
     if verbose:
         print('** Reading file {0}'.format(filename))
 
+    if not index_field:
+        index_field = fields[0]
+
+    important_fields = set(fields)
+    important_fields.add(index_field)
+
     out = []
     tmp = None
 
     f = gzip.open(filename, 'rt', encoding='latin1')
-    if not index_field:
-        index_field = fields[0]
-
-    important_fields = list(fields) + [index_field]
     for line in f:
-
         # Comments and remarks
         if (line.startswith('%') or line.startswith('#') or
                 line.startswith('remarks:')):
@@ -157,18 +158,17 @@ def parse_file(filename, fields, index_field=None, verbose=False):
                 if tmp:  # template is filled, except on the first record
                     out.append(tmp)
 
-                tmp = {}
-                for tmp_field in fields:
-                    if not tmp.get(tmp_field):
-                        tmp[tmp_field] = []
+                tmp = collections.defaultdict(list)
 
             # Only add the fields we are interested in to the result set
             if key in fields:
                 tmp[key].append(value)
 
     f.close()
+
     if verbose:
         print('   -> read {0} entries'.format(len(out)))
+
     return out
 
 
