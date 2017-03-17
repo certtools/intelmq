@@ -181,9 +181,8 @@ def parse_file(filename, fields, index_field=None, verbose=False):
     return out
 
 
-def sanitize_asn_entry(entry):
-    """Return a sanitized version of an ASN entry.
-    The sanitized version always has an upper case org handle.
+def uppercase_org_handle(entry):
+    """Return a copy of the entry with the 'org' value in upper-case.
     The input entry must already have an org attribute.
     """
     entry = entry.copy()
@@ -198,7 +197,7 @@ def sanitize_asn_list(asn_list, whitelist=None):
     given and not None, the first of the aut-num values must be in
     whitelist.
     """
-    return [sanitize_asn_entry(entry) for entry in asn_list
+    return [uppercase_org_handle(entry) for entry in asn_list
 
             # keep only entries for which we have the minimal
             # necessary attributes
