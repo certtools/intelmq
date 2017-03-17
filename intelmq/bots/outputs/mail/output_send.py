@@ -114,7 +114,7 @@ class MailSendOutputBot(Bot):
             # send the whole message
             self._send_mail(self.parameters.emailFrom, str(mail_record[len("mail:"):], encoding="utf-8"),
                             'PROKI - upozorneni na nalezene incidenty', mailContents, output.getvalue())
-            if not (MailSendOutputBot.debug or hasattr(self.parameters, 'testing_to')):
+            if MailSendOutputBot.live is True: # Xand not hasattr(self.parameters, 'testing_to'))
                 self.cache.redis.delete(mail_record)
         self.logger.warning("DONE!")
 
@@ -145,8 +145,6 @@ class MailSendOutputBot(Bot):
                                   filename='proki_{}.csv'.format(time.strftime("%Y%m%d")))
             msg.attach(attachment)
     
-            #print("NEPOSLU - nefunguje delete!")
-            #return
             smtp = smtplib.SMTP(server)
             smtp.sendmail(emailfrom, rcpts, msg.as_string().encode('ascii'))
             smtp.close()
