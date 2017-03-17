@@ -37,11 +37,12 @@ except ImportError:
 
 
 class MailSendOutputBot(Bot):
-    def process(self):
+    def process(self):        
         pass
 
     debug = False # if True, nothing is sent
-    process = False # if True, it exits after mails are sent
+    live = False # if True, it exits after mails are sent
+
 
     def set_cache(self):
         self.cache = Cache(
@@ -52,8 +53,15 @@ class MailSendOutputBot(Bot):
                            )
 
     def init(self):
-        self.set_cache()
-        if MailSendOutputBot.debug or MailSendOutputBot.process:
+        self.set_cache()         
+        if len(sys.argv) > 2:
+            if sys.argv[2] == "debug":
+                print("****** Debug session started. ******")
+                MailSendOutputBot.debug = True
+            elif sys.argv[2] == "live":
+                MailSendOutputBot.live = True        
+            else:
+                return "Unknown state"
             self.send_mails()
             print("MailSendOutputBot done.")
             sys.exit(0)
@@ -127,11 +135,7 @@ class MailSendOutputBot(Bot):
             #msg["Bcc"] = self.parameters.bcc
             rcpts.append(self.parameters.bcc)
 
-        if MailSendOutputBot.debug:
-            print('To: ' + emailto + '; Subject: ' + subject)
-            print('Events: ' + str((fileContents.count('\n') - 1)))
-            print('-------------------------------------------------')
-        else:
+        if MailSendOutputBot.live is True:
             msg.attach(MIMEText(text, "plain", "utf-8"))
 
             maintype, subtype = "text/csv".split("/", 1)
@@ -140,20 +144,16 @@ class MailSendOutputBot(Bot):
             attachment.add_header("Content-Disposition", "attachment",
                                   filename='proki_{}.csv'.format(time.strftime("%Y%m%d")))
             msg.attach(attachment)
-
+    
+            print("NEPOSLU - nefunguje delete!")
+            return
             smtp = smtplib.SMTP(server)
             smtp.sendmail(emailfrom, rcpts, msg.as_string().encode('ascii'))
             smtp.close()
+        else:
+            print('To: ' + emailto + '; Subject: ' + subject)
+            print('Events: ' + str((fileContents.count('\n') - 1)))
+            print('-------------------------------------------------')
 
 
 BOT = MailSendOutputBot
-if __name__ == "__main__":
-    if "debug" in sys.argv:
-        MailSendOutputBot.debug = True
-        print("****** Debug session started. ******")
-    else:
-        MailSendOutputBot.debug = False
-    if "process" in sys.argv:
-        MailSendOutputBot.process = True
-    
-    BOT.start(sys.argv[1])
