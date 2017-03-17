@@ -145,8 +145,8 @@ class MailSendOutputBot(Bot):
                                   filename='proki_{}.csv'.format(time.strftime("%Y%m%d")))
             msg.attach(attachment)
     
-            print("NEPOSLU - nefunguje delete!")
-            return
+            #print("NEPOSLU - nefunguje delete!")
+            #return
             smtp = smtplib.SMTP(server)
             smtp.sendmail(emailfrom, rcpts, msg.as_string().encode('ascii'))
             smtp.close()
