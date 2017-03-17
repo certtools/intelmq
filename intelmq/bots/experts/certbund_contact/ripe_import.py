@@ -77,21 +77,19 @@ def insert_new_organisations(cur, organisation_list, verbose):
     return mapping
 
 
-def insert_new_asn_org_entries(cur, org_to_asn, mapping):
+def insert_new_asn_org_entries(cur, asn_list, mapping):
     # many-to-many table organisation <-> as number
-    for org_ripe_handle in mapping:
-        org_id = mapping[org_ripe_handle]['org_id']
+    for entry in asn_list:
+        org_id = mapping[entry["org"][0]].get("org_id")
+        if org_id is None:
+            print("org_id None for AS entry {!r}".format(entry))
+            continue
 
-        if org_id is not None:
-            for asn_id in org_to_asn[org_ripe_handle]:
-                cur.execute("""
-                INSERT INTO organisation_to_asn_automatic (
-                                                    organisation_id,
-                                                    asn_id,
-                                                    import_source,
-                                                    import_time)
-                VALUES (%s, %s, %s, CURRENT_TIMESTAMP);
-                """, (org_id, asn_id, SOURCE_NAME))
+        cur.execute("""INSERT INTO organisation_to_asn_automatic
+                                   (organisation_id, asn_id, import_source,
+                                    import_time)
+                            VALUES (%s, %s, %s, CURRENT_TIMESTAMP);""",
+                    (org_id, entry['aut-num'][0][2:], SOURCE_NAME))
 
 
 def insert_new_contact_entries(cur, role_list, abusec_to_org, mapping, verbose):
@@ -155,8 +153,8 @@ called automatically, e.g. by a cronjob.''')
         print('Parsing RIPE database...')
         print('------------------------')
 
-    (asn_list, organisation_list, role_list,
-     org_to_asn, abusec_to_org) = ripe_data.load_ripe_files(args)
+    (asn_list, organisation_list, role_list, abusec_to_org) \
+        = ripe_data.load_ripe_files(args)
 
     con = None
     try:
@@ -174,7 +172,9 @@ called automatically, e.g. by a cronjob.''')
         # Organisation
         #
         mapping = insert_new_organisations(cur, organisation_list, args.verbose)
-        insert_new_asn_org_entries(cur, org_to_asn, mapping)
+
+        # relate organisations to AS
+        insert_new_asn_org_entries(cur, asn_list, mapping)
 
         #
         # Role

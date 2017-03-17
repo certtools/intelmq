@@ -87,7 +87,7 @@ def load_ripe_files(options) -> tuple:
     if options.verbose:
         print('** Found {} contacts to be relevant.'.format(len(role_list)))
 
-    return (asn_list, organisation_list, role_list, org_to_asn, abusec_to_org)
+    return (asn_list, organisation_list, role_list, abusec_to_org)
 
 
 def read_asn_whitelist(filename, verbose=False):
