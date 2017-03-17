@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU Affero General Public License
 
 import collections
+import itertools
 import gzip
 
 
@@ -73,10 +74,10 @@ def load_ripe_files(options) -> tuple:
     # Step 2: Prepare new data for insertion
     asn_list = sanitize_asn_list(asn_list, asn_whitelist)
 
-    org_to_asn = org_to_asn_mapping(asn_list)
+    known_organisations = referenced_organisations(asn_list)
 
     organisation_list = sanitize_organisation_list(organisation_list,
-                                                   org_to_asn)
+                                                   known_organisations)
     if options.verbose:
         print('** Found {} orgs to be relevant.'.format(len(organisation_list)))
 
@@ -247,33 +248,29 @@ def sanitize_organisation_entry(entry):
     return entry
 
 
-def sanitize_organisation_list(organisation_list, org_to_asn=None):
+def sanitize_organisation_list(organisation_list, known_organisations=None):
     """Return a sanitized copy of the organisation list read from a RIPE file.
     The entries in the returned list have been sanitized with
     sanitize_organisation_entry.
 
-    If org_to_asn dict is given, only entries that are keys are returned.
+    If known_organisations is given it should be a set. Only entries
+    from organisation_list whose handle is in that set are returned.
     """
     new_list = [sanitize_organisation_entry(entry)
                 for entry in organisation_list]
 
-    if org_to_asn is not None:
+    if known_organisations is not None:
         new_list = [org for org in new_list
-                    if org['organisation'][0] in org_to_asn]
+                    if org['organisation'][0] in known_organisations]
 
     return new_list
 
 
-def org_to_asn_mapping(asn_list):
-    """Return a dictionary mapping RIPE org handles to the corresponding ASNs.
-    The parameter is an AS list as read by parse_file and is assumed to
-    have been sanitized by sanitize_asn_list which makes sure that the
-    relevant information is present in all entries in the list.
+def referenced_organisations(*org_referencing_lists):
+    """Return the set of all org handles referenced by the entries in the lists.
     """
-    org_to_asn = collections.defaultdict(list)
-    for entry in asn_list:
-        org_to_asn[entry['org'][0]].append(entry['aut-num'][0][2:])
-    return org_to_asn
+    return {entry['org'][0]
+            for entry in itertools.chain.from_iterable(org_referencing_lists)}
 
 
 def role_to_org_mapping(organisation_list):
