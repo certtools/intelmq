@@ -209,8 +209,8 @@ def main():
 
     options = parser.parse_args()
 
-    (asn_list, organisation_list, role_list, abusec_to_org) \
-        = ripe_data.load_ripe_files(options)
+    (asn_list, organisation_list, role_list, abusec_to_org, inetnum_list,
+     inet6num_list) = ripe_data.load_ripe_files(options)
 
     con = psycopg2.connect(dsn=options.conninfo)
     try:

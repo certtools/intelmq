@@ -19,6 +19,7 @@ import sys
 import psycopg2
 import argparse
 import collections
+import ipaddress
 
 import intelmq.bots.experts.certbund_contact.ripe_data as ripe_data
 
@@ -34,8 +35,12 @@ def remove_old_entries(cur, verbose):
                 (SOURCE_NAME,))
     cur.execute("DELETE FROM organisation_to_asn_automatic"
                 "      WHERE import_source = %s;", (SOURCE_NAME,))
+    cur.execute("DELETE FROM organisation_to_network_automatic"
+                "      WHERE import_source = %s;", (SOURCE_NAME,))
     cur.execute("DELETE FROM autonomous_system_automatic"
                 "      WHERE import_source = %s;", (SOURCE_NAME,))
+    cur.execute("DELETE FROM network_automatic WHERE import_source = %s;",
+                (SOURCE_NAME,))
     cur.execute("DELETE FROM organisation_automatic WHERE import_source = %s;",
                 (SOURCE_NAME,))
     cur.execute("DELETE FROM contact_automatic WHERE import_source = %s;",
@@ -52,6 +57,71 @@ def insert_new_asn_entries(cur, asn_list, verbose):
                                    (number, import_source, import_time)
                             VALUES (%s, %s, CURRENT_TIMESTAMP);""",
                     (entry['aut-num'][0][2:], SOURCE_NAME))
+
+
+def convert_ip6num(ipnum):
+    return [ipaddress.ip_network(ipnum).compressed]
+
+
+def convert_ipnum_range(ipnum):
+    first, last = [ipaddress.ip_address(s.strip()) for s in ipnum.split("-", 1)]
+    return [network.compressed
+            for network in ipaddress.summarize_address_range(first, last)]
+
+
+def insert_new_network_entries(cur, network_list, key, ipconverter, verbose):
+    """Insert the networks from network_list into the database.
+
+    In some cases a single entry read from the RIPE data file may have
+    to be stored as several entries in the network_automatic table
+    because the address range can only be expressed by the union of
+    severa network addresses in CIDR notation. This also means that some
+    entries in the RIPE data for different ranges may need the same CIDR
+    value as part of their network_automatic entries. This function will
+    only create one entry in network_automatic in such cases.
+
+    The return value contains maps organisation handles to the IDs of
+    the network_automatic entries created by these functions, allowing
+    to connect the network_automatic entries to the
+    organisation_automatic entries.
+
+    Args:
+        network_list (list of dict): The list of dictionaries for the
+            networks as returned by e.g. ripe_data.load_ripe_files.
+
+        key (str): the key to use to lookup the network address in the
+            dicts in network_list. Usually either 'inetnum' or
+            'inet6num'.
+
+        ipconverter (function): A function mapping the address taken
+            from the dict to a list of strings with network addresses in
+            CIDR notation. Usually either convert_ip6num or
+            convert_ipnum_range.
+
+        verbose (bool): If true, print some information about the data
+
+    Return:
+        A dictionary mapping organisation handles to lists of database
+        IDs for the networks associated with the organisation
+    """
+    if verbose:
+        print('** Saving {} data to database...'.format(key))
+    net_org_map = collections.defaultdict(set)
+    for entry in network_list:
+        for addr in ipconverter(entry[key][0]):
+            net_org_map[addr].add(entry["org"][0])
+
+    org_net_map = collections.defaultdict(list)
+    for addr, orgs in net_org_map.items():
+        cur.execute("""INSERT INTO network_automatic
+                                   (address, import_source, import_time)
+                            VALUES (%s, %s, CURRENT_TIMESTAMP)
+                       RETURNING id;""",
+                    (addr, SOURCE_NAME))
+        network_id = cur.fetchone()[0]
+        for org in orgs:
+            org_net_map[org].append(network_id)
+    return org_net_map
 
 
 def insert_new_organisations(cur, organisation_list, verbose):
@@ -90,6 +160,22 @@ def insert_new_asn_org_entries(cur, asn_list, mapping):
                                     import_time)
                             VALUES (%s, %s, %s, CURRENT_TIMESTAMP);""",
                     (org_id, entry['aut-num'][0][2:], SOURCE_NAME))
+
+
+def insert_new_network_org_entries(cur, org_net_mapping, mapping):
+    # many-to-many table organisation <-> network number
+    for org, networks in org_net_mapping.items():
+        org_id = mapping[org].get("org_id")
+        if org_id is None:
+            print("org_id None for network entry {!r}".format((org, networks)))
+            continue
+
+        for network_id in networks:
+            cur.execute("""INSERT INTO organisation_to_network_automatic
+                                       (organisation_id, net_id,
+                                        import_source, import_time)
+                            VALUES (%s, %s, %s, CURRENT_TIMESTAMP);""",
+                        (org_id, network_id, SOURCE_NAME))
 
 
 def insert_new_contact_entries(cur, role_list, abusec_to_org, mapping, verbose):
@@ -153,8 +239,8 @@ called automatically, e.g. by a cronjob.''')
         print('Parsing RIPE database...')
         print('------------------------')
 
-    (asn_list, organisation_list, role_list, abusec_to_org) \
-        = ripe_data.load_ripe_files(args)
+    (asn_list, organisation_list, role_list, abusec_to_org, inetnum_list,
+     inet6num_list) = ripe_data.load_ripe_files(args)
 
     con = None
     try:
@@ -168,13 +254,21 @@ called automatically, e.g. by a cronjob.''')
         #
         insert_new_asn_entries(cur, asn_list, args.verbose)
 
+        # network addresses
+        org_inet6_mapping = insert_new_network_entries(
+            cur, inet6num_list, "inet6num", convert_ip6num, args.verbose)
+        org_inet_mapping = insert_new_network_entries(
+            cur, inetnum_list, "inetnum", convert_ipnum_range, args.verbose)
+
         #
         # Organisation
         #
         mapping = insert_new_organisations(cur, organisation_list, args.verbose)
 
-        # relate organisations to AS
+        # relate organisations to AS, networks, etc.
         insert_new_asn_org_entries(cur, asn_list, mapping)
+        insert_new_network_org_entries(cur, org_inet6_mapping, mapping)
+        insert_new_network_org_entries(cur, org_inet_mapping, mapping)
 
         #
         # Role

@@ -43,6 +43,14 @@ def add_common_args(parser):
                         default='ripe.db.aut-num.gz',
                         help=("Specify the AS number data file."
                               " Default: ripe.db.aut-num.gz"))
+    parser.add_argument("--inetnum-file",
+                        default='ripe.db.inetnum.gz',
+                        help=("Specify the inetnum data file."
+                              " Default: ripe.db.inetnum.gz"))
+    parser.add_argument("--inet6num-file",
+                        default='ripe.db.inet6num.gz',
+                        help=("Specify the inet6num data file."
+                              " Default: ripe.db.inet6num.gz"))
     parser.add_argument("--asn-whitelist-file",
                         default='',
                         help=("A file name with a whitelist of ASNs."
@@ -54,7 +62,8 @@ def load_ripe_files(options) -> tuple:
     """Read ripe files as given in the command line options.
 
     Returns:
-        tuple of (asn_list, org_list, role_list, org_to_asn, abusec_to_org)
+        tuple of (asn_list, organisation_list, role_list, abusec_to_org,
+                  inetnum_list, inet6num_list)
     """
 
     # Step 1: read all files
@@ -64,6 +73,12 @@ def load_ripe_files(options) -> tuple:
     asn_list = parse_file(options.asn_file,
                           ('aut-num', 'org', 'status'),
                           verbose=options.verbose)
+    inetnum_list = parse_file(options.inetnum_file,
+                              ('inetnum', 'org'),
+                              verbose=options.verbose)
+    inet6num_list = parse_file(options.inet6num_file,
+                               ('inet6num', 'org'),
+                               verbose=options.verbose)
     organisation_list = parse_file(options.organisation_file,
                                    ('organisation', 'org-name', 'abuse-c'),
                                    verbose=options.verbose)
@@ -74,7 +89,14 @@ def load_ripe_files(options) -> tuple:
     # Step 2: Prepare new data for insertion
     asn_list = sanitize_asn_list(asn_list, asn_whitelist)
 
-    known_organisations = referenced_organisations(asn_list)
+    inetnum_list = sanitize_inetnum_list(inetnum_list)
+    if options.verbose:
+        print('** {} importable inetnums.'.format(len(inetnum_list)))
+    inet6num_list = sanitize_inet6num_list(inet6num_list)
+    print('** {} importable inet6nums.'.format(len(inet6num_list)))
+
+    known_organisations = referenced_organisations(asn_list, inetnum_list,
+                                                   inet6num_list)
 
     organisation_list = sanitize_organisation_list(organisation_list,
                                                    known_organisations)
@@ -88,7 +110,8 @@ def load_ripe_files(options) -> tuple:
     if options.verbose:
         print('** Found {} contacts to be relevant.'.format(len(role_list)))
 
-    return (asn_list, organisation_list, role_list, abusec_to_org)
+    return (asn_list, organisation_list, role_list, abusec_to_org,
+            inetnum_list, inet6num_list)
 
 
 def read_asn_whitelist(filename, verbose=False):
@@ -206,6 +229,22 @@ def sanitize_asn_list(asn_list, whitelist=None):
 
             # when using a white-list, keep only AS in the whitelist:
             if whitelist is None or entry['aut-num'][0] in whitelist]
+
+
+def sanitize_inetnum_list(inetnum_list):
+    return [uppercase_org_handle(entry) for entry in inetnum_list
+
+            # keep only entries for which we have the minimal
+            # necessary attributes
+            if entry.get('inetnum') and entry.get('org')]
+
+
+def sanitize_inet6num_list(inet6num_list):
+    return [uppercase_org_handle(entry) for entry in inet6num_list
+
+            # keep only entries for which we have the minimal
+            # necessary attributes
+            if entry.get('inet6num') and entry.get('org')]
 
 
 def sanitize_role_entry(entry):
