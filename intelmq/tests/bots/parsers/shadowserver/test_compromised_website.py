@@ -2,7 +2,6 @@
 
 import os
 import unittest
-import copy
 
 import intelmq.lib.test as test
 import intelmq.lib.utils as utils
@@ -45,7 +44,7 @@ EVENT00 = {'__type': 'Event',
        'time.observation': '2015-01-01T00:00:00+00:00',
        'time.source': '2017-01-16T00:43:48+00:00'}
 
-EVENT01 = copy.copy(EVENT00)
+EVENT01 = EVENT00.copy()
 EVENT01['raw'] = utils.base64_encode('\n'.join([RECONSTRUCTED_LINES[0],
                                                RECONSTRUCTED_LINES[2], '']))
 
