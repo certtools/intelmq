@@ -557,7 +557,8 @@
             "description": "Tor Nodes is the bot responsible to check if an IP is an Tor Exit Node.",
             "module": "intelmq.bots.experts.tor_nodes.expert",
             "parameters": {
-                "database": "/opt/intelmq/var/lib/bots/tor_nodes/tor_nodes.dat"
+                "database": "/opt/intelmq/var/lib/bots/tor_nodes/tor_nodes.dat",
+                "overwrite": false
             }
         },
         "url2fqdn": {
