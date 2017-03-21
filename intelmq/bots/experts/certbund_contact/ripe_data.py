@@ -51,6 +51,16 @@ def add_common_args(parser):
                         default='ripe.db.inet6num.gz',
                         help=("Specify the inet6num data file."
                               " Default: ripe.db.inet6num.gz"))
+    parser.add_argument("--ripe-delegated-file",
+                        default='',
+                        help=("Name of the delegated-ripencc-latest file to"
+                              " read. Only useful when --restrict-to-country"
+                              " is also given. In that case this file is"
+                              " read and only the ASNs given in the file"
+                              " that match the country code from"
+                              " --restrict-to-country are imported."
+                              " If --asn-whitelist-file is also given it"
+                              " takes precedence"))
     parser.add_argument("--asn-whitelist-file",
                         default='',
                         help=("A file name with a whitelist of ASNs."
@@ -72,8 +82,18 @@ def load_ripe_files(options) -> tuple:
     """
 
     # Step 1: read all files
-    asn_whitelist = read_asn_whitelist(options.asn_whitelist_file,
-                                       verbose=options.verbose)
+    asn_whitelist = None
+    if options.asn_whitelist_file:
+        asn_whitelist = read_asn_whitelist(options.asn_whitelist_file,
+                                           verbose=options.verbose)
+    elif options.ripe_delegated_file:
+        if not options.restrict_to_country:
+            print("** --ripe-delegated-file ignored because no country was"
+                  " specified with --restrict-to-country")
+        else:
+            asn_whitelist = read_delegated_file(options.ripe_delegated_file,
+                                                options.restrict_to_country,
+                                                verbose=options.verbose)
 
     def restrict_country(record):
         country = options.restrict_to_country
@@ -123,6 +143,19 @@ def load_ripe_files(options) -> tuple:
 
     return (asn_list, organisation_list, role_list, abusec_to_org,
             inetnum_list, inet6num_list)
+
+
+def read_delegated_file(filename, country, verbose=False):
+    """Read the ASN entries from the delegated file for the given country."""
+    asns = []
+    with open(filename) as f:
+        for line in f:
+            parts = line.split("|")
+            if parts[2] == "asn" and parts[1] == country:
+                asns.append("AS" + parts[3])
+    print('** Loaded {} entries from delegated file {}'
+          .format(len(asns), filename))
+    return asns
 
 
 def read_asn_whitelist(filename, verbose=False):
