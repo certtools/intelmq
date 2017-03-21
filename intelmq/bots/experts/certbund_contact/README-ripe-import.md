@@ -7,18 +7,14 @@ The following input files are required:
 * ripe.db.organisation.gz
 * ripe.db.role.gz
 * ripe.db.aut-num.gz
+* ripe.db.inetnum.gz
+* ripe.db.inet6num.gz
 
-They will be searching in the current working directory by default.
+The Tools `ripe_import` and `ripe_diff` will be searching for these files
+in the current working directory by default.
+
 The files can be downloaded
 from the RIPE website (ftp://ftp.ripe.net/ripe/dbase/split/).
-
-For each contact that is created by this script, the format `feed_specific`
-will be set as default. You can change this by using the parameter
-`--notification-format`.
-
-You can also set the notification intervall with `--notification-intervall`.
-Default is 0. The intervall is set in seconds. 0: Immediate notification,
--1 No Notification, 60: 1 Minute, etc...
 
 It is also possible to provide a whitelist of ASNs to load. Use the ``--asn-whitelist-file``
 parameter to pass a filename. The script expects one AS entry per line, with
@@ -33,19 +29,20 @@ Download data to a directory:
 d=`date +%F`
 mkdir $d
 cd $d
-for db in ripe.db.organisation.gz ripe.db.role.gz ripe.db.aut-num.gz
+for db in ripe.db.organisation.gz ripe.db.role.gz ripe.db.aut-num.gz ripe.db.inetnum.gz ripe.db.inet6num.gz
  do
   curl -O "http://ftp.ripe.net/ripe/dbase/split/$db"
  done
  curl -O ftp://ftp.ripe.net/ripe/stats/delegated-ripencc-latest
 ```
-
 Optionally construct an asn-whitelist for your country, for example for `DE`:
 ```shell
 cat delegated-ripencc-latest | \
   awk -F'|' '{if ($2=="DE" && $3=="asn") print "AS"$4}' \
   >asn-DE.txt
 ```
+
+**Or use the script** `ripe_download.sh` **to download the required datasets**
 
 Call `ripe_import.py --help` or `ripe_diff.py --help`
 to see all command line options.
