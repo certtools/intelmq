@@ -16,6 +16,7 @@
 # You should have received a copy of the GNU Affero General Public License
 
 import collections
+import itertools
 import gzip
 
 
@@ -32,23 +33,38 @@ def add_common_args(parser):
                         default=False, action="store_true")
     parser.add_argument("--organisation-file",
                         default='ripe.db.organisation.gz',
-                        help="Specify the organisation data file. Default: ripe.db.organisation.gz")
+                        help=("Specify the organisation data file."
+                              " Default: ripe.db.organisation.gz"))
     parser.add_argument("--role-file",
                         default='ripe.db.role.gz',
-                        help="Specify the contact role data file. Default: ripe.db.role.gz")
+                        help=("Specify the contact role data file."
+                              " Default: ripe.db.role.gz"))
     parser.add_argument("--asn-file",
                         default='ripe.db.aut-num.gz',
-                        help="Specify the AS number data file. Default: ripe.db.aut-num.gz")
+                        help=("Specify the AS number data file."
+                              " Default: ripe.db.aut-num.gz"))
+    parser.add_argument("--inetnum-file",
+                        default='ripe.db.inetnum.gz',
+                        help=("Specify the inetnum data file."
+                              " Default: ripe.db.inetnum.gz"))
+    parser.add_argument("--inet6num-file",
+                        default='ripe.db.inet6num.gz',
+                        help=("Specify the inet6num data file."
+                              " Default: ripe.db.inet6num.gz"))
     parser.add_argument("--asn-whitelist-file",
                         default='',
-                        help="A file name with a whitelist of ASNs. If this option is not set, all ASNs are imported")
+                        help=("A file name with a whitelist of ASNs."
+                              " If this option is not set,"
+                              " all ASNs are imported"))
 
 
 def load_ripe_files(options) -> tuple:
-    '''Read ripe files as given in the command line options.
+    """Read ripe files as given in the command line options.
 
-    :return: tuple of (asn_list, org_list, role_list, org_to_asn, abusec_to_org)
-    '''
+    Returns:
+        tuple of (asn_list, organisation_list, role_list, abusec_to_org,
+                  inetnum_list, inet6num_list)
+    """
 
     # Step 1: read all files
     asn_whitelist = read_asn_whitelist(options.asn_whitelist_file,
@@ -57,6 +73,12 @@ def load_ripe_files(options) -> tuple:
     asn_list = parse_file(options.asn_file,
                           ('aut-num', 'org', 'status'),
                           verbose=options.verbose)
+    inetnum_list = parse_file(options.inetnum_file,
+                              ('inetnum', 'org'),
+                              verbose=options.verbose)
+    inet6num_list = parse_file(options.inet6num_file,
+                               ('inet6num', 'org'),
+                               verbose=options.verbose)
     organisation_list = parse_file(options.organisation_file,
                                    ('organisation', 'org-name', 'abuse-c'),
                                    verbose=options.verbose)
@@ -67,10 +89,17 @@ def load_ripe_files(options) -> tuple:
     # Step 2: Prepare new data for insertion
     asn_list = sanitize_asn_list(asn_list, asn_whitelist)
 
-    org_to_asn = org_to_asn_mapping(asn_list)
+    inetnum_list = sanitize_inetnum_list(inetnum_list)
+    if options.verbose:
+        print('** {} importable inetnums.'.format(len(inetnum_list)))
+    inet6num_list = sanitize_inet6num_list(inet6num_list)
+    print('** {} importable inet6nums.'.format(len(inet6num_list)))
+
+    known_organisations = referenced_organisations(asn_list, inetnum_list,
+                                                   inet6num_list)
 
     organisation_list = sanitize_organisation_list(organisation_list,
-                                                   org_to_asn)
+                                                   known_organisations)
     if options.verbose:
         print('** Found {} orgs to be relevant.'.format(len(organisation_list)))
 
@@ -81,16 +110,18 @@ def load_ripe_files(options) -> tuple:
     if options.verbose:
         print('** Found {} contacts to be relevant.'.format(len(role_list)))
 
-    return (asn_list, organisation_list, role_list, org_to_asn, abusec_to_org)
+    return (asn_list, organisation_list, role_list, abusec_to_org,
+            inetnum_list, inet6num_list)
 
 
 def read_asn_whitelist(filename, verbose=False):
-    '''Reads a list of ASNs from file.
+    """Read a list of ASNs from file.
 
     Each line of the file being one ASN in the format "ASnnnnnn".
 
-    :return: list of ASN strings (maybe empty) or None
-    '''
+    Returns:
+        list of ASN strings (maybe empty) or None
+    """
     if filename:
         out = []
         with open(filename) as f:
@@ -105,35 +136,43 @@ def read_asn_whitelist(filename, verbose=False):
 
 
 def parse_file(filename, fields, index_field=None, verbose=False):
-    '''Parses a file from the RIPE (split) database set.
+    """Parses a file from the RIPE (split) database set.
 
     ftp://ftp.ripe.net/ripe/dbase/split/
-    :param filename: the gziped filename
-    :param fields: the field names to read
-    :param index_field: the field that marks the beginning of a dataset.
-        If not provided, the first element of 'fields' will be used
-    :return: returns a list of lists with the read out values
 
-    NOTE: Does **not** handle "continuation lines" (see rfc2622 section 2).
+    Args:
+        filename (str): name of the gzipped file
+        fields (list of str): names of the fields to read
+        index_field (str): the field that marks the beginning of a dataset.
+            If not provided, the first element of ``fields`` will be used
 
-    NOTE: Preserves the contents of the fields like lower and upper case
-          characters, though the RPSL is case insensitive and ASCII only.
-          Thus for some fields it makes sense to upper() them (before
-          comparing).
-    '''
+    Returns:
+        list of dictionaries: The entries read from the file. Each value
+        in the dictionaries is a list.
+
+    Note:
+        Does **not** handle "continuation lines" (see rfc2622 section 2).
+
+    Note:
+        Preserves the contents of the fields like lower and upper case
+        characters, though the RPSL is case insensitive and ASCII only.
+        Thus for some fields it makes sense to upper() them (before
+        comparing).
+    """
     if verbose:
         print('** Reading file {0}'.format(filename))
+
+    if not index_field:
+        index_field = fields[0]
+
+    important_fields = set(fields)
+    important_fields.add(index_field)
 
     out = []
     tmp = None
 
     f = gzip.open(filename, 'rt', encoding='latin1')
-    if not index_field:
-        index_field = fields[0]
-
-    important_fields = list(fields) + [index_field]
     for line in f:
-
         # Comments and remarks
         if (line.startswith('%') or line.startswith('#') or
                 line.startswith('remarks:')):
@@ -152,24 +191,22 @@ def parse_file(filename, fields, index_field=None, verbose=False):
                 if tmp:  # template is filled, except on the first record
                     out.append(tmp)
 
-                tmp = {}
-                for tmp_field in fields:
-                    if not tmp.get(tmp_field):
-                        tmp[tmp_field] = []
+                tmp = collections.defaultdict(list)
 
             # Only add the fields we are interested in to the result set
             if key in fields:
                 tmp[key].append(value)
 
     f.close()
+
     if verbose:
         print('   -> read {0} entries'.format(len(out)))
+
     return out
 
 
-def sanitize_asn_entry(entry):
-    """Return a sanitized version of an ASN entry.
-    The sanitized version always has an upper case org handle.
+def uppercase_org_handle(entry):
+    """Return a copy of the entry with the 'org' value in upper-case.
     The input entry must already have an org attribute.
     """
     entry = entry.copy()
@@ -184,7 +221,7 @@ def sanitize_asn_list(asn_list, whitelist=None):
     given and not None, the first of the aut-num values must be in
     whitelist.
     """
-    return [sanitize_asn_entry(entry) for entry in asn_list
+    return [uppercase_org_handle(entry) for entry in asn_list
 
             # keep only entries for which we have the minimal
             # necessary attributes
@@ -192,6 +229,22 @@ def sanitize_asn_list(asn_list, whitelist=None):
 
             # when using a white-list, keep only AS in the whitelist:
             if whitelist is None or entry['aut-num'][0] in whitelist]
+
+
+def sanitize_inetnum_list(inetnum_list):
+    return [uppercase_org_handle(entry) for entry in inetnum_list
+
+            # keep only entries for which we have the minimal
+            # necessary attributes
+            if entry.get('inetnum') and entry.get('org')]
+
+
+def sanitize_inet6num_list(inet6num_list):
+    return [uppercase_org_handle(entry) for entry in inet6num_list
+
+            # keep only entries for which we have the minimal
+            # necessary attributes
+            if entry.get('inet6num') and entry.get('org')]
 
 
 def sanitize_role_entry(entry):
@@ -234,33 +287,29 @@ def sanitize_organisation_entry(entry):
     return entry
 
 
-def sanitize_organisation_list(organisation_list, org_to_asn=None):
+def sanitize_organisation_list(organisation_list, known_organisations=None):
     """Return a sanitized copy of the organisation list read from a RIPE file.
     The entries in the returned list have been sanitized with
     sanitize_organisation_entry.
 
-    If org_to_asn dict is given, only entries that are keys are returned.
+    If known_organisations is given it should be a set. Only entries
+    from organisation_list whose handle is in that set are returned.
     """
     new_list = [sanitize_organisation_entry(entry)
                 for entry in organisation_list]
 
-    if org_to_asn is not None:
+    if known_organisations is not None:
         new_list = [org for org in new_list
-                    if org['organisation'][0] in org_to_asn]
+                    if org['organisation'][0] in known_organisations]
 
     return new_list
 
 
-def org_to_asn_mapping(asn_list):
-    """Return a dictionary mapping RIPE org handles to the corresponding ASNs.
-    The parameter is an AS list as read by parse_file and is assumed to
-    have been sanitized by sanitize_asn_list which makes sure that the
-    relevant information is present in all entries in the list.
+def referenced_organisations(*org_referencing_lists):
+    """Return the set of all org handles referenced by the entries in the lists.
     """
-    org_to_asn = collections.defaultdict(list)
-    for entry in asn_list:
-        org_to_asn[entry['org'][0]].append(entry['aut-num'][0][2:])
-    return org_to_asn
+    return {entry['org'][0]
+            for entry in itertools.chain.from_iterable(org_referencing_lists)}
 
 
 def role_to_org_mapping(organisation_list):
