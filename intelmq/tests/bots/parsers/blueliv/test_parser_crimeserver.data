@@ -1,5 +1,5 @@
 [
-{"country": "US", "firstSeenAt": "2015-10-20T06:14:00+0000", "ip": "199.34.228.54", "lastSeenAt": "2015-12-09T04:43:29+0000", "latitude": 37.7989, "longitude": -122.3984, "status": "ONLINE", "type": "MALWARE", "updatedAt": "2015-12-09T04:45:53+0000", "url": "http://amirosterweil.weebly.com/uploads/2/3/2/5/23258576/corporate_elearning.pdf"},
+{"confidence": 4, "country": "US", "firstSeenAt": "2015-10-20T06:14:00+0000", "ip": "199.34.228.54", "lastSeenAt": "2015-12-09T04:43:29+0000", "latitude": 37.7989, "longitude": -122.3984, "status": "ONLINE", "type": "MALWARE", "updatedAt": "2015-12-09T04:45:53+0000", "url": "http://amirosterweil.weebly.com/uploads/2/3/2/5/23258576/corporate_elearning.pdf"},
 {"country": "US", "firstSeenAt": "2015-07-04T17:08:23+0000", "lastSeenAt": "2015-12-13T13:53:55+0000", "latitude": 33.6119, "longitude": -111.8906, "status": "ONLINE", "type": "PHISHING", "updatedAt": "2015-12-13T13:55:54+0000", "url": "http://mondeos-italo.com/store/apple/"},
-{"ip": "10.0.0.1", "lastSeenAt": "2015-12-13T17:26:23+0000", "latitude": 33.749, "longitude": -84.388, "status": "ONLINE", "type": "TOR_IP", "updatedAt": "2015-12-13T17:28:10+0000", "url": "10.0.0.1"}
+{"ip": "10.0.0.1", "lastSeenAt": "2015-12-13T17:26:23+0000", "latitude": 33.749, "longitude": -84.388, "status": "ONLINE", "type": "TOR_IP", "url": "10.0.0.1"}
 ]
