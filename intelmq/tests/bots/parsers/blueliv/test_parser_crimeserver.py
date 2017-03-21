@@ -24,7 +24,7 @@ EXAMPLE_EVENTS = [{
     "classification.type": "malware",
     "raw": utils.base64_encode(EXAMPLE_LINES[0][:-1]),  # nopep8
     "source.url": "http://amirosterweil.weebly.com/uploads/2/3/2/5/23258576/corporate_elearning.pdf",
-    "time.source": "2015-10-20T06:14:00+00:00",
+    "time.source": "2015-12-09T04:43:29+00:00",
     "time.observation": "2015-09-02T14:17:58+00:00",
     "source.geolocation.cc": "US",
     "source.ip": "199.34.228.54"
@@ -34,7 +34,7 @@ EXAMPLE_EVENTS = [{
     "classification.type": "phishing",
     "raw": utils.base64_encode(EXAMPLE_LINES[1][:-1]),  # nopep8
     "source.url": "http://mondeos-italo.com/store/apple/",
-    "time.source": "2015-07-04T17:08:23+00:00",
+    "time.source": "2015-12-13T13:53:55+00:00",
     "time.observation": "2015-09-02T14:17:58+00:00",
     "source.geolocation.cc": "US",
     },{
@@ -43,7 +43,7 @@ EXAMPLE_EVENTS = [{
     "classification.type": "proxy",
     "raw": utils.base64_encode(EXAMPLE_LINES[2]),  # nopep8
     "source.tor_node": True,
-    "time.source": "2015-09-30T13:29:04+00:00",
+    "time.source": "2015-12-13T17:26:23+00:00",
     "time.observation": "2015-12-13T17:26:23+00:00",
     "source.ip": "10.0.0.1"
 }]
