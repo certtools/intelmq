@@ -179,7 +179,7 @@ def read_asn_whitelist(filename, verbose=False):
         return None
 
 
-def parse_file(filename, fields, index_field=None, restriction=None,
+def parse_file(filename, fields, index_field=None, restriction=lambda x: True,
                verbose=False):
     """Parses a file from the RIPE (split) database set.
 
@@ -190,11 +190,10 @@ def parse_file(filename, fields, index_field=None, restriction=None,
         fields (list of str): names of the fields to read
         index_field (str): the field that marks the beginning of a dataset.
             If not provided, the first element of ``fields`` will be used
-
-        restriction (optional function): If given and not None, this
-            function is called once for every record read from the file.
-            The record is only included if this function returns true.
-            If not given or None, all records are included.
+        restriction (optional function): This function is called once
+            for every record read from the file. The record is only
+            included if this function returns true. It defaults to a
+            function that returns True for every record.
 
     Returns:
         list of dictionaries: The entries read from the file. Each value
@@ -214,9 +213,6 @@ def parse_file(filename, fields, index_field=None, restriction=None,
 
     if not index_field:
         index_field = fields[0]
-
-    if restriction is None:
-        restriction = lambda x: True
 
     important_fields = set(fields)
     important_fields.add(index_field)
