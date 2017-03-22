@@ -51,11 +51,26 @@ def add_common_args(parser):
                         default='ripe.db.inet6num.gz',
                         help=("Specify the inet6num data file."
                               " Default: ripe.db.inet6num.gz"))
+    parser.add_argument("--ripe-delegated-file",
+                        default='',
+                        help=("Name of the delegated-ripencc-latest file to"
+                              " read. Only useful when --restrict-to-country"
+                              " is also given. In that case this file is"
+                              " read and only the ASNs given in the file"
+                              " that match the country code from"
+                              " --restrict-to-country are imported."
+                              " If --asn-whitelist-file is also given it"
+                              " takes precedence"))
     parser.add_argument("--asn-whitelist-file",
                         default='',
                         help=("A file name with a whitelist of ASNs."
                               " If this option is not set,"
                               " all ASNs are imported"))
+    parser.add_argument("--restrict-to-country",
+                        metavar="COUNTRY_CODE",
+                        help=("A country code, e.g. DE, to restrict which"
+                              " information is actually read from the files."
+                              " Only applies to inetnum and inet6num files."))
 
 
 def load_ripe_files(options) -> tuple:
@@ -67,17 +82,33 @@ def load_ripe_files(options) -> tuple:
     """
 
     # Step 1: read all files
-    asn_whitelist = read_asn_whitelist(options.asn_whitelist_file,
-                                       verbose=options.verbose)
+    asn_whitelist = None
+    if options.asn_whitelist_file:
+        asn_whitelist = read_asn_whitelist(options.asn_whitelist_file,
+                                           verbose=options.verbose)
+    elif options.ripe_delegated_file:
+        if not options.restrict_to_country:
+            print("** --ripe-delegated-file ignored because no country was"
+                  " specified with --restrict-to-country")
+        else:
+            asn_whitelist = read_delegated_file(options.ripe_delegated_file,
+                                                options.restrict_to_country,
+                                                verbose=options.verbose)
+
+    def restrict_country(record):
+        country = options.restrict_to_country
+        return country and record["country"][0] == country
 
     asn_list = parse_file(options.asn_file,
                           ('aut-num', 'org', 'status'),
                           verbose=options.verbose)
     inetnum_list = parse_file(options.inetnum_file,
-                              ('inetnum', 'org'),
+                              ('inetnum', 'org', 'country'),
+                              restriction=restrict_country,
                               verbose=options.verbose)
     inet6num_list = parse_file(options.inet6num_file,
-                               ('inet6num', 'org'),
+                               ('inet6num', 'org', 'country'),
+                               restriction=restrict_country,
                                verbose=options.verbose)
     organisation_list = parse_file(options.organisation_file,
                                    ('organisation', 'org-name', 'abuse-c'),
@@ -114,6 +145,19 @@ def load_ripe_files(options) -> tuple:
             inetnum_list, inet6num_list)
 
 
+def read_delegated_file(filename, country, verbose=False):
+    """Read the ASN entries from the delegated file for the given country."""
+    asns = []
+    with open(filename) as f:
+        for line in f:
+            parts = line.split("|")
+            if parts[2] == "asn" and parts[1] == country:
+                asns.append("AS" + parts[3])
+    print('** Loaded {} entries from delegated file {}'
+          .format(len(asns), filename))
+    return asns
+
+
 def read_asn_whitelist(filename, verbose=False):
     """Read a list of ASNs from file.
 
@@ -135,7 +179,8 @@ def read_asn_whitelist(filename, verbose=False):
         return None
 
 
-def parse_file(filename, fields, index_field=None, verbose=False):
+def parse_file(filename, fields, index_field=None, restriction=None,
+               verbose=False):
     """Parses a file from the RIPE (split) database set.
 
     ftp://ftp.ripe.net/ripe/dbase/split/
@@ -145,6 +190,11 @@ def parse_file(filename, fields, index_field=None, verbose=False):
         fields (list of str): names of the fields to read
         index_field (str): the field that marks the beginning of a dataset.
             If not provided, the first element of ``fields`` will be used
+
+        restriction (optional function): If given and not None, this
+            function is called once for every record read from the file.
+            The record is only included if this function returns true.
+            If not given or None, all records are included.
 
     Returns:
         list of dictionaries: The entries read from the file. Each value
@@ -164,6 +214,9 @@ def parse_file(filename, fields, index_field=None, verbose=False):
 
     if not index_field:
         index_field = fields[0]
+
+    if restriction is None:
+        restriction = lambda x: True
 
     important_fields = set(fields)
     important_fields.add(index_field)
@@ -188,7 +241,10 @@ def parse_file(filename, fields, index_field=None, verbose=False):
             # If we reach the index again, we have reached the next dataset, add
             # the previous data and start again
             if key == index_field:
-                if tmp:  # template is filled, except on the first record
+                # keep previous record if any (tmp will be false before
+                # the first record has been read) and if we want to keep
+                # it
+                if tmp and restriction(tmp):
                     out.append(tmp)
 
                 tmp = collections.defaultdict(list)

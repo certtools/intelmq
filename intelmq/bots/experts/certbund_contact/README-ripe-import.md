@@ -7,18 +7,14 @@ The following input files are required:
 * ripe.db.organisation.gz
 * ripe.db.role.gz
 * ripe.db.aut-num.gz
+* ripe.db.inetnum.gz
+* ripe.db.inet6num.gz
 
-They will be searching in the current working directory by default.
+The Tools `ripe_import` and `ripe_diff` will be searching for these files
+in the current working directory by default.
+
 The files can be downloaded
 from the RIPE website (ftp://ftp.ripe.net/ripe/dbase/split/).
-
-For each contact that is created by this script, the format `feed_specific`
-will be set as default. You can change this by using the parameter
-`--notification-format`.
-
-You can also set the notification intervall with `--notification-intervall`.
-Default is 0. The intervall is set in seconds. 0: Immediate notification,
--1 No Notification, 60: 1 Minute, etc...
 
 It is also possible to provide a whitelist of ASNs to load. Use the ``--asn-whitelist-file``
 parameter to pass a filename. The script expects one AS entry per line, with
@@ -33,13 +29,12 @@ Download data to a directory:
 d=`date +%F`
 mkdir $d
 cd $d
-for db in ripe.db.organisation.gz ripe.db.role.gz ripe.db.aut-num.gz
+for db in ripe.db.organisation.gz ripe.db.role.gz ripe.db.aut-num.gz ripe.db.inetnum.gz ripe.db.inet6num.gz
  do
   curl -O "http://ftp.ripe.net/ripe/dbase/split/$db"
  done
  curl -O ftp://ftp.ripe.net/ripe/stats/delegated-ripencc-latest
 ```
-
 Optionally construct an asn-whitelist for your country, for example for `DE`:
 ```shell
 cat delegated-ripencc-latest | \
@@ -47,8 +42,21 @@ cat delegated-ripencc-latest | \
   >asn-DE.txt
 ```
 
+**Or use the script** `ripe_download.sh` **to download the required datasets**
+
 Call `ripe_import.py --help` or `ripe_diff.py --help`
 to see all command line options.
+
+The importer is capable of importing only entries which can be associated to a CountryCode.
+This is suppported natively for `inetnum` and `inetnum6` data (IP-Data). For ASN an
+additional step is required, as the `autnum` datasets (ASN-Data) do not provide this 
+information. Thats where the `delegated-list` comes to play. In order to import only IP 
+and ASN Data for one country, for instance DE, use the following parameters:
+`--restrict-to-country DE` and `--ripe-delegated-file delegated-ripencc-latest`.
+
+Note: When providing an asn-whitelist file, the file specified with `--ripe-delegated-file`
+and CountryCode based imports will be ignored for ASN-Data. Only the ASN specified
+in the whitelist will be imported. IP-Data will not be affected.
 
 Now import the data into your ContactDB, we assume you used `contactdb` as
 database name.
@@ -75,6 +83,8 @@ ripe_import.py --conninfo "host=localhost user=intelmqadm dbname=contactdb" \
     --organisation-file=/tmp/ripe/ripe.db.organisation.gz \
     --role-file=/tmp/ripe/ripe.db.role.gz \
     --asn-file=/tmp/ripe/ripe.db.aut-num.gz \
+    --ripe-delegated-file==/tmp/ripe/delegated-ripencc-latest \
+    --restrict-to-country DE \ 
     --verbose
 ```
 
