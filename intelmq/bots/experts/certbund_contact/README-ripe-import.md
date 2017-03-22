@@ -47,6 +47,17 @@ cat delegated-ripencc-latest | \
 Call `ripe_import.py --help` or `ripe_diff.py --help`
 to see all command line options.
 
+The importer is capable of importing only entries which can be associated to a CountryCode.
+This is suppported natively for `inetnum` and `inetnum6` data (IP-Data). For ASN an
+additional step is required, as the `autnum` datasets (ASN-Data) do not provide this 
+information. Thats where the `delegated-list` comes to play. In order to import only IP 
+and ASN Data for one country, for instance DE, use the following parameters:
+`--restrict-to-country DE` and `--ripe-delegated-file delegated-ripencc-latest`.
+
+Note: When providing an asn-whitelist file, the file specified with `--ripe-delegated-file`
+and CountryCode based imports will be ignored for ASN-Data. Only the ASN specified
+in the whitelist will be imported. IP-Data will not be affected.
+
 Now import the data into your ContactDB, we assume you used `contactdb` as
 database name.
 
@@ -72,6 +83,8 @@ ripe_import.py --conninfo "host=localhost user=intelmqadm dbname=contactdb" \
     --organisation-file=/tmp/ripe/ripe.db.organisation.gz \
     --role-file=/tmp/ripe/ripe.db.role.gz \
     --asn-file=/tmp/ripe/ripe.db.aut-num.gz \
+    --ripe-delegated-file==/tmp/ripe/delegated-ripencc-latest \
+    --restrict-to-country DE \ 
     --verbose
 ```
 
