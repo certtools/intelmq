@@ -5,6 +5,7 @@
 3. [Experts](#experts)
 4. [Outputs](#outputs)
 
+## General remarks
 
 By default all of the bots are started when you start the whole botnet, however there is a possibility to 
 *disable* a bot. This means that the bot will not start every time you start the botnet, but you can start 
@@ -13,6 +14,48 @@ and stop the bot if you specify the bot explicitly. To disable a bot, add the fo
 described in this file). It is set outside of the `parameters` object in `runtime.conf`. Check the 
 [User-Guide](./User-Guide.md) for an example.
 
+There are two different types of parameters: The initialization parameters are need to start the bot. The runtime parameters are needed by the bot itself during runtime.
+
+The initialization parameters are in the first level, the runtime parameters live in the `parameters` sub-dictionary:
+
+```json
+{
+    "bot-id": {
+        "parameters": {
+            runtime parameters...
+        },
+        initialization parameters...
+    }
+}
+```
+For example:
+```json
+{
+    "abusech-feodo-domains-collector": {
+        "parameters": {
+            "provider": "Abuse.ch",
+            "feed": "Abuse.ch Feodo Domains",
+            "http_url": "http://example.org/feodo-domains.txt"
+        },
+        "name": "Generic URL Fetcher",
+        "group": "Collector",
+        "module": "intelmq.bots.collectors.http.collector_http",
+        "description": "collect report messages from remote hosts using http protocol",
+        "enabled": true,
+        "run_mode": "scheduled"
+    }
+}
+```
+
+This configration resides in the file `runtime.conf` in your intelmq's configuration directory for each configured bot.
+
+## Initialization parameters
+
+* `name` and `description`: The name and description of the bot as can be found in BOTS-file, not used by the bot itself.
+* `group`: Can be `"Collector"`, `"Parser"`, `"Expert"` or `"Output"`. Only used for visualization by other tools.
+* `module`: The executable (should be in `$PATH`) which will be started.
+* `enabled`: If the parameter is set to `true` (which is NOT the default value if it is missing as a protection) the bot will start when the botnet is started (`intelmqctl start`). If the parameter was set to `false`, the Bot will not be started by `intelmqctl start`, however you can run the bot independently using `intelmqctl start <bot_id>`. Check the [User-Guide](./User-Guide.md) for more details.
+* `run_mode`: There are two run modes, "continuous" (default run mode) or "scheduled". In the first case, the bot will be running forever until stopped or exits because of errors (depending on configuration). In the latter case, the bot will stop after one successful run. This is especially useful when scheduling bots via cron or systemd. Default is `continuous`. Check the [User-Guide](./User-Guide.md) for more details.
 
 <a name="collectors"></a>
 ## Collectors

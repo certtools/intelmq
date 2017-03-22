@@ -18,6 +18,7 @@ Changes between 0.9 and 1.0.0.dev6
 ### General changes
 - Dropped support for Python 2, Python >= 3.3 is needed
 - Dropped startup.conf and system.conf. Sections in BOTS can be copied directly to runtime.conf now.
+- Support two run modes: 'stream' which is the current implementation and a new one 'scheduled' which allows scheduling via cron or systemd.
 - Helper classes for parser bots
 - moved intelmq/conf to intelmq/etc
 - cleanup in code and repository
@@ -90,8 +91,6 @@ Changes between 0.9 and 1.0.0.dev6
 - parameter `hierarchical_output` for many output bots
 - deduplicator bot has a new required parameter to configure deduplication mode `filter_type`
 - deduplicator bot key ignore_keys was renamed to filter_keys
-- Since rev. eb860076bc52599e3a92bc35f7d1de72389089d0 The Mail-URL and the HTTP-Collector can be
-  configured to honor timeouts. This can be achieved by using the parameter `http_timeout_max_tries`
 
 ### Harmonization
 - ENH: Additional data types: integer, float and Boolean
@@ -116,7 +115,7 @@ Changes between 0.9 and 1.0.0.dev6
 - `additional_information` renamed to `extra`, must be JSON
 - `os.name`, `os.version`, `user_agent` removed in favor of `extra`
 - all hashes are lower case only
-- added `malware.hash.(md5|sha1)`
+- added `malware.hash.(md5|sha1|sha256)`, removed `malware.hash`
 - New parameter and field named feed.accuracy to represent the accuracy of each feed
 - New parameter and field named feed.provider to document the name of the source of each feed
 - New field `classification.identifier`

@@ -65,6 +65,7 @@ class AnubisNetworksParserBot(Bot):
         raw_report = json.loads(utils.base64_decode(report.get('raw')))
         extra = {}
         event = self.new_event(report)
+        event.change("feed.url", event["feed.url"].split("?key=")[0])
         event.add("raw", report.get('raw'), sanitize=False)
         event.add('classification.type', 'malware')
         event.add('event_description.text', 'Sinkhole attempted connection')

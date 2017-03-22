@@ -126,7 +126,8 @@ def convert_hostname_and_url(value, row):
     """
     if row['application'] in ['http', 'https', 'irc']:
         if row['hostname'] and row['url']:
-            return row['application'] + '://' + row['hostname'] + row['url']
+            url = row['url'] if row['url'].startswith('/') else '/' + row['url']
+            return row['application'] + '://' + row['hostname'] + url
 
         elif row['hostname'] and not row['url']:
             return row['application'] + '://' + row['hostname']
