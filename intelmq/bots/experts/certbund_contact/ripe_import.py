@@ -182,7 +182,6 @@ def insert_new_contact_entries(cur, role_list, abusec_to_org, mapping, verbose):
     if verbose:
         print('** Saving contacts data to database...')
 
-
     for entry in role_list:
         # "org" attribute of a role entry is optional,
         # thus we don't use it for now
