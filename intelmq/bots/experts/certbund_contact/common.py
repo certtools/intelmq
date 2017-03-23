@@ -91,7 +91,9 @@ def lookup_contacts(cur, managed, asn, ip, fqdn):
                                              WHERE ann.asn_id = %(asn)s)
                                  END,
                                  ('[]' :: JSON)) AS annotations,
-                        %(managed)s AS managed),
+                        %(managed)s AS managed
+                 -- only generate a row if matches were found:
+                 HAVING EXISTS(SELECT * FROM matched_asn)),
 
          -- The FQDN IDs for the given FQDN
          matched_fqdn_ids (fqdn_id)
@@ -116,7 +118,9 @@ def lookup_contacts(cur, managed, asn, ip, fqdn):
                                                        FROM matched_fqdn_ids))
                                  END,
                                  ('[]' :: JSON)) AS annotations,
-                        %(managed)s AS managed),
+                        %(managed)s AS managed
+                 -- only generate a row if matches were found:
+                 HAVING EXISTS(SELECT * FROM matched_fqdn)),
 
          -- all matched networks including their cidr addresses
          matched_networks (network_id, address)
