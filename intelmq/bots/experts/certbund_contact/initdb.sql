@@ -262,6 +262,45 @@ CREATE TABLE fqdn_automatic (
 );
 
 
+
+-- Information about national CERTs
+
+-- national_cert relates a country code to the organisation considered
+-- the national CERT for that country.
+CREATE TABLE national_cert (
+    id SERIAL PRIMARY KEY,
+
+    -- The country code for the CERT
+    country_code CHARACTER(2) NOT NULL,
+
+    -- The ID of the organisation representing the CERT
+    organisation_id INTEGER NOT NULL,
+
+    comment TEXT NOT NULL DEFAULT '',
+
+    FOREIGN KEY (organisation_id) REFERENCES organisation (id)
+);
+
+
+-- Like national_cert but for automatically maintained data.
+CREATE TABLE national_cert_automatic (
+    id SERIAL PRIMARY KEY,
+
+    -- The country code for the CERT
+    country_code CHARACTER(2) NOT NULL,
+
+    -- The ID of the organisation representing the CERT
+    organisation_id INTEGER NOT NULL,
+
+    comment TEXT NOT NULL DEFAULT '',
+
+    LIKE automatic_templ INCLUDING ALL,
+
+    FOREIGN KEY (organisation_id) REFERENCES organisation_automatic (id)
+);
+
+
+
 /*
  Relations A_to_B
  Some of them (contact_to_X) carry an additional column TTL
