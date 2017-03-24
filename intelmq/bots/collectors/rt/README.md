@@ -33,3 +33,5 @@ Optionally, the RT bot can "take" RT tickets (i.e. the `user` is assigned this t
         "unzip_attachment": true
     },
 
+In case a resource needs to be fetched and this resource is permanently not available (status code is 4xx), the ticket status will be set according to the configuration to avoid processing the ticket over and over.
+For temporary failures the status is not modified, instead the ticket will be skipped in this run.

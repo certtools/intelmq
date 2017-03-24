@@ -46,9 +46,8 @@ class RTCollectorBot(CollectorBot):
                     break
             else:
                 ticket = RT.get_history(ticket_id)[0]
-                text = ticket['Content']
                 created = ticket['Created']
-                urlmatch = re.search(self.parameters.url_regex, text)
+                urlmatch = re.search(self.parameters.url_regex, ticket['Content'])
                 if urlmatch:
                     content = 'url'
                     url = urlmatch.group(0)
@@ -73,9 +72,18 @@ class RTCollectorBot(CollectorBot):
                                     cert=self.ssl_client_cert,
                                     timeout=self.http_timeout)
 
-                if resp.status_code // 100 != 2:
-                    self.logger.error('HTTP response status code was {}.'
-                                      ''.format(resp.status_code))
+                response_code_class = resp.status_code // 100
+                if response_code_class != 2:
+                    self.logger.error('HTTP response status code for {!r} was {}.'
+                                      ''.format(url, resp.status_code))
+                    if response_code_class == 4:
+                        self.logger.debug('Server response: {!r}.'.format(resp.text))
+                        self.logger.warning('Setting status of unprocessable ticket.')
+                        if self.parameters.set_status:
+                            RT.edit_ticket(ticket_id, status=self.parameters.set_status)
+                    else:
+                        self.logger.info('Skipping now.')
+                        continue
                 self.logger.info("Report downloaded.")
                 raw = resp.text
 
