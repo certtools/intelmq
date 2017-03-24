@@ -300,6 +300,12 @@ CREATE TABLE national_cert_automatic (
 );
 
 
+CREATE INDEX national_cert_country_code_idx
+          ON national_cert (country_code);
+
+CREATE INDEX national_cert_automatic_country_code_idx
+          ON national_cert_automatic (country_code);
+
 
 /*
  Relations A_to_B
