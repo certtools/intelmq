@@ -35,15 +35,15 @@ CREATE TEMP TABLE organisation_templ (
     comment TEXT NOT NULL DEFAULT '',
 
     -- The org: nic handle in the RIPE DB, if available
-    ripe_org_hdl VARCHAR(100),
+    ripe_org_hdl VARCHAR(100) NOT NULL DEFAULT '',
 
     -- The Trusted Introducer (TI) handle or URL: for example
     -- https://www.trusted-introducer.org/directory/teams/certat.html
-    ti_handle    VARCHAR(500),
+    ti_handle VARCHAR(500) NOT NULL DEFAULT '',
 
     -- The FIRST.org handle or URL: for example
     -- https://api.first.org/data/v1/teams?q=aconet-cert
-    first_handle    VARCHAR(500)
+    first_handle VARCHAR(500) NOT NULL DEFAULT ''
 );
 
 
@@ -162,7 +162,7 @@ CREATE TEMP TABLE autonomous_system_templ (
     -- https://www.ripe.net/manage-ips-and-asns/db/support/documentation/ripe-database-documentation/ripe-database-structure/3-1-list-of-primary-objects)
     -- and:
     -- https://www.ripe.net/manage-ips-and-asns/db/support/documentation/ripe-database-documentation/rpsl-object-types/4-2-descriptions-of-primary-objects/4-2-1-description-of-the-aut-num-object
-    ripe_aut_num  VARCHAR(100),
+    ripe_aut_num VARCHAR(100) NOT NULL DEFAULT '',
 
     comment TEXT NOT NULL DEFAULT ''
 );
