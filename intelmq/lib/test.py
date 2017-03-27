@@ -16,6 +16,7 @@ import unittest.mock as mock
 import pkg_resources
 import redis
 
+import intelmq.lib.message as message
 import intelmq.lib.pipeline as pipeline
 import intelmq.lib.utils as utils
 from intelmq import CONFIG_DIR, PIPELINE_CONF_FILE, RUNTIME_CONF_FILE
@@ -57,10 +58,6 @@ def mocked_config(bot_id='test-bot', src_name='', dst_names=(), sysconfig={}):
         else:
             return utils.load_configuration(conf_file)
     return mocked
-
-
-with mock.patch('intelmq.lib.utils.load_configuration', new=mocked_config()):
-    import intelmq.lib.message as message
 
 
 def mocked_logger(logger):
@@ -146,6 +143,15 @@ class BotTestCase(object):
                                     db=BOT_CONFIG['redis_cache_db'],
                                     socket_timeout=BOT_CONFIG['redis_cache_ttl'])
 
+    harmonization = utils.load_configuration(pkg_resources.resource_filename('intelmq',
+                                                                             'etc/harmonization.conf'))
+
+    def new_report(self, auto=False, examples=False):
+        return message.Report(harmonization=self.harmonization, auto=auto)
+
+    def new_event(self):
+        return message.Event(harmonization=self.harmonization)
+
     def prepare_bot(self):
         """Reconfigures the bot with the changed attributes"""
 
@@ -217,7 +223,8 @@ class BotTestCase(object):
         """ Test if report has required fields. """
         if self.bot_type == 'collector':
             for report_json in self.get_output_queue():
-                report = message.MessageFactory.unserialize(report_json)
+                report = message.MessageFactory.unserialize(report_json,
+                                                            harmonization=self.harmonization)
                 self.assertIsInstance(report, message.Report)
                 self.assertIn('feed.name', report)
                 self.assertIn('raw', report)
@@ -226,7 +233,8 @@ class BotTestCase(object):
         """ Test if event has required fields. """
         if self.bot_type == 'parser':
             for event_json in self.get_output_queue():
-                event = message.MessageFactory.unserialize(event_json)
+                event = message.MessageFactory.unserialize(event_json,
+                                                           harmonization=self.harmonization)
                 self.assertIsInstance(event, message.Event)
                 self.assertIn('classification.type', event)
                 self.assertIn('raw', event)

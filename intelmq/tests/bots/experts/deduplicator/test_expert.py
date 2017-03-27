@@ -31,7 +31,7 @@ class TestDeduplicatorExpertBot(test.BotTestCase, unittest.TestCase):
         cls.use_cache = True
 
     def test_suppress(self):
-        msg = message.MessageFactory.from_dict(INPUT1)
+        msg = message.MessageFactory.from_dict(INPUT1, harmonization=self.harmonization)
         msg_hash = hash(msg)
         self.cache.set(msg_hash, 'hash')
         self.cache.expire(msg_hash, 3600)
@@ -54,7 +54,7 @@ class TestDeduplicatorExpertBot(test.BotTestCase, unittest.TestCase):
         self.sysconfig = {"redis_cache_ttl": "86400",
                           "filter_type": "whitelist",
                           "filter_keys": "source.ip"}
-        msg = message.Event()
+        msg = self.new_event()
         msg.add('source.ip', '127.0.0.8')
         msg_hash = hash(msg)
         self.cache.set(msg_hash, 'hash')
@@ -69,7 +69,7 @@ class TestDeduplicatorExpertBot(test.BotTestCase, unittest.TestCase):
         self.sysconfig = {"redis_cache_ttl": "86400",
                           "filter_type": "whitelist",
                           "filter_keys": "source.ip"}
-        msg = message.Event()
+        msg = self.new_event()
         msg.add('destination.ip', '127.0.0.7')
         self.input_message = msg
         self.run_bot()
