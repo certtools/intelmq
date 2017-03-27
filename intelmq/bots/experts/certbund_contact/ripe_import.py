@@ -52,11 +52,15 @@ def remove_old_entries(cur, verbose):
 def insert_new_asn_entries(cur, asn_list, verbose):
     if verbose:
         print('** Saving AS data to database...')
+    org_asn_map = collections.defaultdict(list)
     for entry in asn_list:
         cur.execute("""INSERT INTO autonomous_system_automatic
                                    (number, import_source, import_time)
-                            VALUES (%s, %s, CURRENT_TIMESTAMP);""",
+                            VALUES (%s, %s, CURRENT_TIMESTAMP)
+                         RETURNING id;""",
                     (entry['aut-num'][0][2:], SOURCE_NAME))
+        org_asn_map[entry["org"][0]].append(cur.fetchone()[0])
+    return org_asn_map
 
 
 def convert_ip6num(ipnum):
@@ -147,19 +151,20 @@ def insert_new_organisations(cur, organisation_list, verbose):
     return mapping
 
 
-def insert_new_asn_org_entries(cur, asn_list, mapping):
+def insert_new_asn_org_entries(cur, org_asn_mapping, mapping):
     # many-to-many table organisation <-> as number
-    for entry in asn_list:
-        org_id = mapping[entry["org"][0]].get("org_id")
+    for org, asn_ids in org_asn_mapping.items():
+        org_id = mapping[org].get("org_id")
         if org_id is None:
-            print("org_id None for AS entry {!r}".format(entry))
+            print("org_id None for AS organisation handle {!r}".format(org))
             continue
 
-        cur.execute("""INSERT INTO organisation_to_asn_automatic
-                                   (organisation_id, asn_id, import_source,
-                                    import_time)
-                            VALUES (%s, %s, %s, CURRENT_TIMESTAMP);""",
-                    (org_id, entry['aut-num'][0][2:], SOURCE_NAME))
+        for asn_id in asn_ids:
+            cur.execute("""INSERT INTO organisation_to_asn_automatic
+                                       (organisation_id, asn_id, import_source,
+                                        import_time)
+                                VALUES (%s, %s, %s, CURRENT_TIMESTAMP);""",
+                        (org_id, asn_id, SOURCE_NAME))
 
 
 def insert_new_network_org_entries(cur, org_net_mapping, mapping):
@@ -251,7 +256,7 @@ called automatically, e.g. by a cronjob.''')
         #
         # AS numbers
         #
-        insert_new_asn_entries(cur, asn_list, args.verbose)
+        org_asn_mapping = insert_new_asn_entries(cur, asn_list, args.verbose)
 
         # network addresses
         org_inet6_mapping = insert_new_network_entries(
@@ -265,7 +270,7 @@ called automatically, e.g. by a cronjob.''')
         mapping = insert_new_organisations(cur, organisation_list, args.verbose)
 
         # relate organisations to AS, networks, etc.
-        insert_new_asn_org_entries(cur, asn_list, mapping)
+        insert_new_asn_org_entries(cur, org_asn_mapping, mapping)
         insert_new_network_org_entries(cur, org_inet6_mapping, mapping)
         insert_new_network_org_entries(cur, org_inet_mapping, mapping)
 

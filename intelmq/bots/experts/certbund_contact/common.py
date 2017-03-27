@@ -53,7 +53,7 @@ def lookup_by_asn_only(cur, table_extension, asn):
                 "  LEFT OUTER JOIN sector AS s"
                 "    ON s.id = o.sector_id"
                 "  JOIN autonomous_system{0} AS a"
-                "    ON a.number = oa.asn_id"
+                "    ON a.id = oa.asn_id"
                 " WHERE a.number = %s".format(table_extension), (asn,))
     return cur.fetchall()
 
@@ -74,12 +74,15 @@ def lookup_contacts(cur, managed, asn, ip, fqdn, country_code):
     cur.execute("""
     WITH
          -- all organisations related to the ASN
+         matched_asn_ids (asn_id)
+             AS (SELECT a.id
+                   FROM autonomous_system{0} AS a
+                  WHERE a.number = %(asn)s),
          matched_asn (organisation_id)
              AS (SELECT oa.organisation_id
-                   FROM autonomous_system{0} AS a
+                   FROM matched_asn_ids a
                    JOIN organisation_to_asn{0} AS oa
-                     ON a.number = oa.asn_id
-                  WHERE a.number = %(asn)s),
+                     ON a.asn_id = oa.asn_id),
          -- the ASN matches in a form useful for conversion to JSON
          asn_json_rows (field, organisations, annotations, managed)
              AS (SELECT 'asn' AS field,

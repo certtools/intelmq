@@ -155,8 +155,8 @@ CREATE INDEX role_automatic_contact_id_idx
 
 -- An autonomous system
 CREATE TEMP TABLE autonomous_system_templ (
-    -- The atonomous system number
-    number BIGINT PRIMARY KEY,
+    -- The autonomous system number
+    number BIGINT,
 
     -- RIPE handle (see
     -- https://www.ripe.net/manage-ips-and-asns/db/support/documentation/ripe-database-documentation/ripe-database-structure/3-1-list-of-primary-objects)
@@ -169,10 +169,12 @@ CREATE TEMP TABLE autonomous_system_templ (
 
 
 CREATE TABLE autonomous_system (
+    id SERIAL PRIMARY KEY,
     LIKE autonomous_system_templ INCLUDING ALL
 );
 
 CREATE TABLE autonomous_system_automatic (
+    id SERIAL PRIMARY KEY,
     LIKE autonomous_system_templ INCLUDING ALL,
     LIKE automatic_templ INCLUDING ALL
 );
@@ -183,7 +185,7 @@ CREATE TABLE autonomous_system_annotation (
     asn_id BIGINT NOT NULL,
     annotation JSON NOT NULL,
 
-    FOREIGN KEY (asn_id) REFERENCES autonomous_system (number)
+    FOREIGN KEY (asn_id) REFERENCES autonomous_system (id)
 );
 
 CREATE INDEX autonomous_system_annotation_asn_id
@@ -346,7 +348,7 @@ CREATE TABLE organisation_to_asn (
 
     PRIMARY KEY (organisation_id, asn_id),
 
-    FOREIGN KEY (asn_id) REFERENCES autonomous_system (number),
+    FOREIGN KEY (asn_id) REFERENCES autonomous_system (id),
     FOREIGN KEY (organisation_id) REFERENCES organisation (id)
 );
 
@@ -355,7 +357,7 @@ CREATE TABLE organisation_to_asn_automatic (
     LIKE automatic_templ INCLUDING ALL,
     LIKE organisation_to_asn INCLUDING ALL,
 
-    FOREIGN KEY (asn_id) REFERENCES autonomous_system_automatic (number),
+    FOREIGN KEY (asn_id) REFERENCES autonomous_system_automatic (id),
     FOREIGN KEY (organisation_id) REFERENCES organisation_automatic (id)
 );
 
