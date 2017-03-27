@@ -435,14 +435,6 @@
                 "user": "intelmq"
             }
         },
-        "CERT-bund Contact No Notification": {
-            "description": "Replaces ttl of configured notifications with -1.",
-            "module": "intelmq.bots.experts.certbund_contact.nonotificationexpert",
-            "parameters": {
-                "dropfordestination": "true",
-                "dropforsource": "true"
-            }
-        },
         "CERT-bund Contact Rules": {
             "description": "Determine how and whom to notify about the event.",
             "module": "intelmq.bots.experts.certbund_contact.ruleexpert",
