@@ -9,7 +9,7 @@ from setuptools import find_packages, setup
 REQUIRES = [
     'dnspython>=1.11.1',
     'psutil>=1.2.1',
-    'python-dateutil>=2.0',
+    'python-dateutil>=2.5',
     'python-termstyle>=0.1.10',
     'pytz>=2014.1',
     'redis>=2.10.3',
