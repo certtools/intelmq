@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+"""
+The ES-connection can't be closed explicitly.
+"""
 
 from json import loads
 from collections.abc import Mapping
