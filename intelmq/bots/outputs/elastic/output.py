@@ -3,7 +3,10 @@
 from json import loads
 from collections.abc import Mapping
 
-from elasticsearch import Elasticsearch
+try:
+    from elasticsearch import Elasticsearch
+except ImportError:
+    Elasticsearch = None
 
 from intelmq.lib.bot import Bot
 
@@ -21,6 +24,9 @@ def replace_keys(obj, key_char='.', replacement='_'):
 class ElasticsearchOutputBot(Bot):
 
     def init(self):
+        if Elasticsearch is None:
+            raise ValueError('Missing elasticsearch module.')
+
         self.elastic_host = getattr(self.parameters,
                                     'elastic_host', '127.0.0.1')
         self.elastic_port = getattr(self.parameters,
