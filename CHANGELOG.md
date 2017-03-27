@@ -14,6 +14,7 @@ v1.0 (in development, master branch)
 - ENH: added bots.parsers.fraunhofer.parser_dga
 - ENH: added bots.experts.certat_contact.expert
 - ENH: added bots.experts.field_reducer.expert
+- ENH: added bots.output.elasticsearch.output
 - MAINT: renamed bots.parsers.spamhaus.parser to bots.parsers.spamhaus.parser_drop
 - Dropped dragon research group feeds: discontinued
 - changed configuration syntax for bots.experts.modify
