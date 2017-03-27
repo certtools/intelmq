@@ -46,7 +46,8 @@ class CERTBundKontaktExpertBot(Bot):
             ip = event.get(section + ".ip")
             asn = event.get(section + ".asn")
             fqdn = event.get(section + ".fqdn")
-            contacts = self.lookup_contact(ip, fqdn, asn)
+            country_code = event.get(section + ".geolocation.cc")
+            contacts = self.lookup_contact(ip, fqdn, asn, country_code)
             if contacts is None:
                 # stop processing the message because an error occurred
                 # during the database query
@@ -57,12 +58,12 @@ class CERTBundKontaktExpertBot(Bot):
         self.send_message(event)
         self.acknowledge_message()
 
-    def lookup_contacts(self, cur, asn, ip, fqdn):
+    def lookup_contacts(self, cur, asn, ip, fqdn, country_code):
         automatic = common.lookup_contacts(cur, common.Managed.automatic, asn,
-                                           ip, fqdn)
+                                           ip, fqdn, country_code)
         self.renumber_organisations_in_place(automatic)
         manual = common.lookup_contacts(cur, common.Managed.manual, asn, ip,
-                                        fqdn)
+                                        fqdn, country_code)
         self.renumber_organisations_in_place(manual,
                                              len(automatic["organisations"]))
         return {key: automatic[key] + manual[key] for key in automatic}
@@ -76,12 +77,12 @@ class CERTBundKontaktExpertBot(Bot):
         for match in matches["matches"]:
             match["organisations"] = [idmap[i] for i in match["organisations"]]
 
-    def lookup_contact(self, ip, fqdn, asn):
+    def lookup_contact(self, ip, fqdn, asn, country_code):
         self.logger.debug("Looking up ip: %r, fqdn: %r, asn: %r.", ip, fqdn, asn)
         try:
             cur = self.con.cursor()
             try:
-                return self.lookup_contacts(cur, asn, ip, fqdn)
+                return self.lookup_contacts(cur, asn, ip, fqdn, country_code)
             finally:
                 cur.close()
         except psycopg2.OperationalError:

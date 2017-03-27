@@ -62,7 +62,7 @@ def lookup_by_asn_only(cur, table_extension, asn):
 Managed = Enum("Managed", "manual automatic")
 
 
-def lookup_contacts(cur, managed, asn, ip, fqdn):
+def lookup_contacts(cur, managed, asn, ip, fqdn, country_code):
     if managed is Managed.manual:
         table_extension = ""
     elif managed is Managed.automatic:
@@ -91,7 +91,9 @@ def lookup_contacts(cur, managed, asn, ip, fqdn):
                                              WHERE ann.asn_id = %(asn)s)
                                  END,
                                  ('[]' :: JSON)) AS annotations,
-                        %(managed)s AS managed),
+                        %(managed)s AS managed
+                 -- only generate a row if matches were found:
+                 HAVING EXISTS(SELECT * FROM matched_asn)),
 
          -- The FQDN IDs for the given FQDN
          matched_fqdn_ids (fqdn_id)
@@ -116,7 +118,9 @@ def lookup_contacts(cur, managed, asn, ip, fqdn):
                                                        FROM matched_fqdn_ids))
                                  END,
                                  ('[]' :: JSON)) AS annotations,
-                        %(managed)s AS managed),
+                        %(managed)s AS managed
+                 -- only generate a row if matches were found:
+                 HAVING EXISTS(SELECT * FROM matched_fqdn)),
 
          -- all matched networks including their cidr addresses
          matched_networks (network_id, address)
@@ -143,6 +147,20 @@ def lookup_contacts(cur, managed, asn, ip, fqdn):
                         %(managed)s AS managed
                    FROM matched_networks mn),
 
+         -- All CERT organisations based on country code
+         matched_certs (organisation_id)
+             AS (SELECT nc.organisation_id FROM national_cert{0} nc
+                  WHERE nc.country_code = %(country_code)s),
+
+         -- all cert matches in a form useful for conversion to JSON
+         national_cert_json_rows (field, organisations, annotations, managed)
+             AS (SELECT 'geolocation.cc' AS field,
+                        ARRAY(SELECT * FROM matched_certs) AS organisations,
+                        ('[]' :: JSON) AS annotations,
+                        %(managed)s AS managed
+                 -- only generate a row if matches were found:
+                 HAVING EXISTS(SELECT * FROM matched_certs)),
+
          -- The IDs of all matched organisations
          grouped_matches (organisation_id)
              AS (SELECT u.organisation_id
@@ -153,7 +171,9 @@ def lookup_contacts(cur, managed, asn, ip, fqdn):
                            JOIN organisation_to_network{0} orgn
                              ON mn.network_id = orgn.net_id
                          UNION
-                         SELECT organisation_id FROM matched_fqdn) u),
+                         SELECT organisation_id FROM matched_fqdn
+                         UNION
+                         SELECT organisation_id FROM matched_certs) u),
 
          -- map organisation IDs to that organisation's contacts in JSON
          -- form
@@ -211,13 +231,20 @@ def lookup_contacts(cur, managed, asn, ip, fqdn):
              coalesce((SELECT json_agg(row_to_json(network_json_rows))
                        FROM network_json_rows),
                        '[]' :: JSON)
-             AS network_matches
+             AS network_matches,
+
+             coalesce((SELECT json_agg(row_to_json(national_cert_json_rows))
+                       FROM national_cert_json_rows),
+                       '[]' :: JSON)
+             AS national_cert_matches
       """.format(table_extension),
                 {"asn": asn, "fqdn": fqdn, "ip": ip,
-                 "managed": managed.name, "extension": table_extension})
+                 "country_code": country_code, "managed": managed.name,
+                 "extension": table_extension})
 
     org_result = cur.fetchone()
     return {"organisations": maybe_parse_json(org_result[0]),
             "matches": (maybe_parse_json(org_result[1]) +
                         maybe_parse_json(org_result[2]) +
-                        maybe_parse_json(org_result[3]))}
+                        maybe_parse_json(org_result[3]) +
+                        maybe_parse_json(org_result[4]))}
