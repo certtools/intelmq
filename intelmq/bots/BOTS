@@ -592,7 +592,7 @@
         },
         "Elasticsearch": {
             "description": "Elasticsearch is the bot responsible to send events to a elasticsearch.",
-            "module": "intelmq.bots.outputs.elastic.output",
+            "module": "intelmq.bots.outputs.elasticsearch.output",
             "parameters": {
                 "elastic_host": "127.0.0.1",
                 "elastic_port": 9200,
