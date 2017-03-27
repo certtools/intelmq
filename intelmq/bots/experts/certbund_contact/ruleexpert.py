@@ -10,6 +10,8 @@ except ImportError as err:
 
 from intelmq.lib.bot import Bot
 from intelmq.bots.experts.certbund_contact.rulesupport import Context
+from intelmq.bots.experts.certbund_contact.eventjson import \
+    del_certbund_contacts
 
 
 class CERTBundRuleExpertBot(Bot):
@@ -22,6 +24,9 @@ class CERTBundRuleExpertBot(Bot):
                                          "determine_directives")
         if not self.entry_points:
             self.logger.warning("No rules loaded.")
+
+        self.remove_contact_data = getattr(self.parameters,
+                                           "remove_contact_data", "true")
 
     def process(self):
         self.logger.debug("Calling receive_message")
@@ -43,6 +48,8 @@ class CERTBundRuleExpertBot(Bot):
                 if finished:
                     event = context.get_updated_event()
                     break
+            if self.remove_contact_data:
+                del_certbund_contacts(event, section)
 
         self.send_message(event)
         self.acknowledge_message()

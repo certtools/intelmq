@@ -19,30 +19,46 @@ CREATE TABLE sector (
 /*
   Organisation and Contact
 */
-CREATE TABLE organisation (
-    id SERIAL PRIMARY KEY,
 
+-- Template to use for the actual tables. This makes sure their schemas
+-- are defined in the same way.
+CREATE TEMP TABLE organisation_templ (
     -- The name of the organisation.
-
     -- In the ripe db there are names identical for more than one
-    -- organisation, so we can not make this key unique.
+    -- organisation, so we can not make this unique.
     name VARCHAR(500) NOT NULL,
 
     -- The sector the organisation belongs to.
     sector_id INTEGER,
 
+    -- Comments about the organisation
     comment TEXT NOT NULL DEFAULT '',
 
     -- The org: nic handle in the RIPE DB, if available
-    ripe_org_hdl VARCHAR(100),
+    ripe_org_hdl VARCHAR(100) NOT NULL DEFAULT '',
 
     -- The Trusted Introducer (TI) handle or URL: for example
     -- https://www.trusted-introducer.org/directory/teams/certat.html
-    ti_handle    VARCHAR(500),
+    ti_handle VARCHAR(500) NOT NULL DEFAULT '',
 
     -- The FIRST.org handle or URL: for example
     -- https://api.first.org/data/v1/teams?q=aconet-cert
-    first_handle    VARCHAR(500),
+    first_handle VARCHAR(500) NOT NULL DEFAULT ''
+);
+
+
+CREATE TABLE organisation (
+    id SERIAL PRIMARY KEY,
+    LIKE organisation_templ INCLUDING ALL,
+
+    FOREIGN KEY (sector_id) REFERENCES sector(id)
+);
+
+
+CREATE TABLE organisation_automatic (
+    id SERIAL PRIMARY KEY,
+    LIKE organisation_templ INCLUDING ALL,
+    LIKE automatic_templ INCLUDING ALL,
 
     FOREIGN KEY (sector_id) REFERENCES sector(id)
 );
@@ -60,17 +76,8 @@ CREATE INDEX organisation_annotation_organisation_idx
           ON organisation_annotation (organisation_id);
 
 
-CREATE TABLE organisation_automatic (
-    LIKE automatic_templ INCLUDING ALL,
-    LIKE organisation INCLUDING ALL,
 
-    FOREIGN KEY (sector_id) REFERENCES sector(id)
-);
-
-
-CREATE TABLE contact (
-    id SERIAL PRIMARY KEY,
-
+CREATE TEMP TABLE contact_templ (
     firstname VARCHAR (500) NOT NULL DEFAULT '',
     lastname  VARCHAR (500) NOT NULL DEFAULT '',
     tel       VARCHAR (500) NOT NULL DEFAULT '',
@@ -86,15 +93,22 @@ CREATE TABLE contact (
     comment TEXT NOT NULL DEFAULT ''
 );
 
-CREATE TABLE contact_automatic (
-    LIKE automatic_templ INCLUDING ALL,
-    LIKE contact INCLUDING ALL
+
+CREATE TABLE contact (
+    id SERIAL PRIMARY KEY,
+    LIKE contact_templ INCLUDING ALL
 );
 
--- Roles serve as an m-n relationship between organisations and contacts
-CREATE TABLE role (
-    id SERIAL PRIMARY KEY,
 
+CREATE TABLE contact_automatic (
+    id SERIAL PRIMARY KEY,
+    LIKE contact_templ INCLUDING ALL,
+    LIKE automatic_templ INCLUDING ALL
+);
+
+
+-- Roles serve as an m-n relationship between organisations and contacts
+CREATE TEMP TABLE role_templ (
     -- free text for right now. We assume the regular tags from the
     -- RIPE DB such as "tech-c" or "abuse-c"
     -- possible values: "abuse-c", "billing-c" , "admin-c"
@@ -102,30 +116,31 @@ CREATE TABLE role (
     is_primary_contact BOOLEAN NOT NULL DEFAULT FALSE,
 
     organisation_id INTEGER NOT NULL,
-    contact_id INTEGER NOT NULL,
+    contact_id INTEGER NOT NULL
+);
+
+
+CREATE TABLE role (
+    id SERIAL PRIMARY KEY,
+    LIKE role_templ INCLUDING ALL,
 
     FOREIGN KEY (organisation_id) REFERENCES organisation(id),
     FOREIGN KEY (contact_id) REFERENCES contact(id)
 );
 
--- Roles serve as an m-n relationship between organisations and contacts
-CREATE TABLE role_automatic (
-    LIKE automatic_templ INCLUDING ALL,
-    LIKE role INCLUDING ALL,
-
-    FOREIGN KEY (organisation_id) REFERENCES organisation_automatic(id),
-    FOREIGN KEY (contact_id) REFERENCES contact_automatic(id)
-);
-
-
--- create indices on role after role_automatic has been created to avoid
--- duplication of indices due to the "LIKE role INCLUDING ALL" in the
--- CREATE TABLE statement for role_automatic.
 CREATE INDEX role_organisation_id_idx
           ON role (organisation_id);
 CREATE INDEX role_contact_id_idx
           ON role (contact_id);
 
+CREATE TABLE role_automatic (
+    id SERIAL PRIMARY KEY,
+    LIKE role_templ INCLUDING ALL,
+    LIKE automatic_templ INCLUDING ALL,
+
+    FOREIGN KEY (organisation_id) REFERENCES organisation_automatic(id),
+    FOREIGN KEY (contact_id) REFERENCES contact_automatic(id)
+);
 
 CREATE INDEX role_automatic_organisation_id_idx
           ON role_automatic (organisation_id);
@@ -139,7 +154,7 @@ CREATE INDEX role_automatic_contact_id_idx
 */
 
 -- An autonomous system
-CREATE TABLE autonomous_system (
+CREATE TEMP TABLE autonomous_system_templ (
     -- The atonomous system number
     number BIGINT PRIMARY KEY,
 
@@ -147,9 +162,19 @@ CREATE TABLE autonomous_system (
     -- https://www.ripe.net/manage-ips-and-asns/db/support/documentation/ripe-database-documentation/ripe-database-structure/3-1-list-of-primary-objects)
     -- and:
     -- https://www.ripe.net/manage-ips-and-asns/db/support/documentation/ripe-database-documentation/rpsl-object-types/4-2-descriptions-of-primary-objects/4-2-1-description-of-the-aut-num-object
-    ripe_aut_num  VARCHAR(100),
+    ripe_aut_num VARCHAR(100) NOT NULL DEFAULT '',
 
     comment TEXT NOT NULL DEFAULT ''
+);
+
+
+CREATE TABLE autonomous_system (
+    LIKE autonomous_system_templ INCLUDING ALL
+);
+
+CREATE TABLE autonomous_system_automatic (
+    LIKE autonomous_system_templ INCLUDING ALL,
+    LIKE automatic_templ INCLUDING ALL
 );
 
 
@@ -165,17 +190,10 @@ CREATE INDEX autonomous_system_annotation_asn_id
           ON autonomous_system_annotation (asn_id);
 
 
-CREATE TABLE autonomous_system_automatic (
-    LIKE automatic_templ INCLUDING ALL,
-    LIKE autonomous_system INCLUDING ALL
-);
-
 
 -- A network
 -- See also: https://www.ripe.net/manage-ips-and-asns/db/support/documentation/ripe-database-documentation/rpsl-object-types/4-2-descriptions-of-primary-objects/4-2-4-description-of-the-inetnum-object
-CREATE TABLE network (
-    id SERIAL PRIMARY KEY,
-
+CREATE TEMP TABLE network_templ (
     -- Network address as CIDR.
     address cidr UNIQUE NOT NULL,
 
@@ -183,22 +201,17 @@ CREATE TABLE network (
 );
 
 
-CREATE TABLE network_annotation (
+CREATE TABLE network (
     id SERIAL PRIMARY KEY,
-    network_id INTEGER NOT NULL,
-    annotation JSON NOT NULL,
-
-    FOREIGN KEY (network_id) REFERENCES network(id)
+    LIKE network_templ INCLUDING ALL
 );
-
-CREATE INDEX network_annotation_network_idx
-          ON network_annotation (network_id);
-
 
 CREATE TABLE network_automatic (
-    LIKE automatic_templ INCLUDING ALL,
-    LIKE network INCLUDING ALL
+    id SERIAL PRIMARY KEY,
+    LIKE network_templ INCLUDING ALL,
+    LIKE automatic_templ INCLUDING ALL
 );
+
 
 -- Indexes on the cidr column to improve queries that look up a network
 -- based on an IP-address. The default btree index of PostgreSQL is not
@@ -233,14 +246,40 @@ CREATE INDEX network_automatic_cidr_upper_idx
 
 
 
--- A fully qualified domain name
-CREATE TABLE fqdn (
+-- Annotations for networks
+CREATE TABLE network_annotation (
     id SERIAL PRIMARY KEY,
+    network_id INTEGER NOT NULL,
+    annotation JSON NOT NULL,
 
+    FOREIGN KEY (network_id) REFERENCES network(id)
+);
+
+CREATE INDEX network_annotation_network_idx
+          ON network_annotation (network_id);
+
+
+
+
+-- A fully qualified domain name
+CREATE TEMP TABLE fqdn_templ (
     -- The fully qualified domain name
     fqdn TEXT UNIQUE NOT NULL,
 
     comment TEXT NOT NULL DEFAULT ''
+);
+
+
+CREATE TABLE fqdn (
+    id SERIAL PRIMARY KEY,
+    LIKE fqdn_templ INCLUDING ALL
+);
+
+
+CREATE TABLE fqdn_automatic (
+    id SERIAL PRIMARY KEY,
+    LIKE fqdn_templ INCLUDING ALL,
+    LIKE automatic_templ INCLUDING ALL
 );
 
 
@@ -256,10 +295,44 @@ CREATE INDEX fqdn_annotation_fqdn_idx
           ON fqdn_annotation (fqdn_id);
 
 
-CREATE TABLE fqdn_automatic (
-    LIKE automatic_templ INCLUDING ALL,
-    LIKE fqdn INCLUDING ALL
+
+-- Information about national CERTs
+
+-- national_cert relates a country code to the organisation considered
+-- the national CERT for that country.
+CREATE TEMP TABLE national_cert_templ (
+    -- The country code for the CERT
+    country_code CHARACTER(2) NOT NULL,
+
+    -- The ID of the organisation representing the CERT
+    organisation_id INTEGER NOT NULL,
+
+    comment TEXT NOT NULL DEFAULT ''
 );
+
+
+CREATE TABLE national_cert (
+    id SERIAL PRIMARY KEY,
+    LIKE national_cert_templ INCLUDING ALL,
+
+    FOREIGN KEY (organisation_id) REFERENCES organisation (id)
+);
+
+CREATE INDEX national_cert_country_code_idx
+          ON national_cert (country_code);
+
+
+-- Like national_cert but for automatically maintained data.
+CREATE TABLE national_cert_automatic (
+    id SERIAL PRIMARY KEY,
+    LIKE national_cert_templ INCLUDING ALL,
+    LIKE automatic_templ INCLUDING ALL,
+
+    FOREIGN KEY (organisation_id) REFERENCES organisation_automatic (id)
+);
+
+CREATE INDEX national_cert_automatic_country_code_idx
+          ON national_cert_automatic (country_code);
 
 
 /*
