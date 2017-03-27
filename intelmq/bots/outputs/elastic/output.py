@@ -38,7 +38,7 @@ class ElasticsearchOutputBot(Bot):
         self.replacement_char = getattr(self.parameters,
                                         'replacement_char', '_')
         self.flatten_fields = getattr(self.parameters,
-                                      'flatten_fields', [])
+                                      'flatten_fields', ['extra'])
         if isinstance(self.flatten_fields, str):
             self.flatten_fields = self.flatten_fields.split(',')
 
@@ -54,15 +54,15 @@ class ElasticsearchOutputBot(Bot):
         for field in self.flatten_fields:
             if field in event_dict:
                 val = event_dict[field]
-                # if it string try to convert to json
+                # if it's a string try to parse it as JSON
                 if isinstance(val, str):
                     try:
                         val = loads(val)
-                    except:
+                    except ValueError:
                         pass
                 if isinstance(val, Mapping):
                     for key, value in val.items():
-                        event_dict[key] = value
+                        event_dict[field + '_' + key] = value
                     event_dict.pop(field)
 
         event_dict = replace_keys(event_dict,

@@ -598,6 +598,7 @@
                 "elastic_port": 9200,
                 "elastic_index": "intelmq",
                 "elastic_doctype": "events",
+                "flatten_fields": "extra",
                 "replacement_char": "_"
             }
         },

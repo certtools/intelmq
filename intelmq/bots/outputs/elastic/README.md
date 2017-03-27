@@ -10,5 +10,6 @@ Bot parameters:
 * elastic_index      : Index for the Elasticsearch output, defaults to intelmq
 * elastic_doctype    : docname to put the event data, defaults to events
 * replacement_char   : ES forbits '.' in field names since v2.0, this parameters specifies which character should be used as replacement for '.', defaults to '_'
-* flatten_fields     : In ES, some query and aggrigations work better if the fields are flat and not nested. Here you can provide a list of fields to flatten out.
-                       List of fields is seprated by comma (,) eg extra,field2
+* flatten_fields     : In ES, some query and aggrigations work better if the fields are flat and not JSON. Here you can provide a list of fields to convert.
+                       Can be a list of strings (fieldnames) or a string with fieldnames separated by a comma (,). eg `extra,field2` or `['extra', 'field2']`
+                       Default: ['extra']
