@@ -111,7 +111,5 @@ setup(
         'intelmq/bots/experts/certbund_contact/ripe_download',
         'intelmq/bots/experts/certbund_contact/ripe_import.py',
         'intelmq/bots/experts/certbund_contact/ripe_diff.py',
-        'intelmq/bots/experts/certbund_contact/add_inhibition.py',
-        'intelmq/bots/experts/certbund_contact/add_inhibitions_from_file.sh',
     ],
 )
