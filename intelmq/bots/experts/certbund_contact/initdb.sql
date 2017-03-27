@@ -170,13 +170,17 @@ CREATE TEMP TABLE autonomous_system_templ (
 
 CREATE TABLE autonomous_system (
     id SERIAL PRIMARY KEY,
-    LIKE autonomous_system_templ INCLUDING ALL
+    LIKE autonomous_system_templ INCLUDING ALL,
+
+    UNIQUE (number)
 );
 
 CREATE TABLE autonomous_system_automatic (
     id SERIAL PRIMARY KEY,
     LIKE autonomous_system_templ INCLUDING ALL,
-    LIKE automatic_templ INCLUDING ALL
+    LIKE automatic_templ INCLUDING ALL,
+
+    UNIQUE (number, import_source)
 );
 
 
@@ -197,7 +201,7 @@ CREATE INDEX autonomous_system_annotation_asn_id
 -- See also: https://www.ripe.net/manage-ips-and-asns/db/support/documentation/ripe-database-documentation/rpsl-object-types/4-2-descriptions-of-primary-objects/4-2-4-description-of-the-inetnum-object
 CREATE TEMP TABLE network_templ (
     -- Network address as CIDR.
-    address cidr UNIQUE NOT NULL,
+    address cidr NOT NULL,
 
     comment TEXT NOT NULL DEFAULT ''
 );
@@ -205,13 +209,17 @@ CREATE TEMP TABLE network_templ (
 
 CREATE TABLE network (
     id SERIAL PRIMARY KEY,
-    LIKE network_templ INCLUDING ALL
+    LIKE network_templ INCLUDING ALL,
+
+    UNIQUE (address)
 );
 
 CREATE TABLE network_automatic (
     id SERIAL PRIMARY KEY,
     LIKE network_templ INCLUDING ALL,
-    LIKE automatic_templ INCLUDING ALL
+    LIKE automatic_templ INCLUDING ALL,
+
+    UNIQUE (address, import_source)
 );
 
 
@@ -266,7 +274,7 @@ CREATE INDEX network_annotation_network_idx
 -- A fully qualified domain name
 CREATE TEMP TABLE fqdn_templ (
     -- The fully qualified domain name
-    fqdn TEXT UNIQUE NOT NULL,
+    fqdn TEXT NOT NULL,
 
     comment TEXT NOT NULL DEFAULT ''
 );
@@ -274,14 +282,18 @@ CREATE TEMP TABLE fqdn_templ (
 
 CREATE TABLE fqdn (
     id SERIAL PRIMARY KEY,
-    LIKE fqdn_templ INCLUDING ALL
+    LIKE fqdn_templ INCLUDING ALL,
+
+    UNIQUE (fqdn)
 );
 
 
 CREATE TABLE fqdn_automatic (
     id SERIAL PRIMARY KEY,
     LIKE fqdn_templ INCLUDING ALL,
-    LIKE automatic_templ INCLUDING ALL
+    LIKE automatic_templ INCLUDING ALL,
+
+    UNIQUE (fqdn, import_source)
 );
 
 
