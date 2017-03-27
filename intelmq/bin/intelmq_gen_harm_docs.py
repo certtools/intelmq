@@ -38,7 +38,8 @@ def main():
 
     for key, value in sorted(HARM.items()):
         section = ' '.join([sec.title() for sec in key.split('.')[:-1]])
-        output += '|{}|{}|[{}](#{})|{}|\n'.format(section, key, value['type'],
+        output += '|{}|{}|[{}](#{})|{}|\n'.format(' ' if not section else section,  # needed for github
+                                                  key, value['type'],
                                                   value['type'].lower(),
                                                   value['description'])
 
