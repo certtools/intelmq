@@ -2,9 +2,12 @@
 import io
 import re
 import zipfile
+from datetime import datetime, timedelta
 
 import requests
+from dateutil import parser
 
+from intelmq.bots.experts.filter.expert import FilterExpertBot
 from intelmq.lib.bot import CollectorBot
 
 try:
@@ -22,17 +25,35 @@ class RTCollectorBot(CollectorBot):
 
         self.set_request_parameters()
 
+        if getattr(self.parameters, 'search_newer_than', None):
+            try:
+                self.newer_than = parser.parse(self.parameters.search_newer_than)
+                self.newer_than_type = 'absolute'
+            except ValueError:
+                self.newer_than_relative = timedelta(minutes=FilterExpertBot.parse_relative(self.parameters.search_newer_than))
+                self.newer_than_type = 'relative'
+        else:
+            self.newer_than_type = False
+
     def process(self):
         RT = rt.Rt(self.parameters.uri, self.parameters.user,
                    self.parameters.password)
         if not RT.login():
             raise ValueError('Login failed.')
 
+        if self.newer_than_type:
+            if self.newer_than_type == 'relative':
+                self.newer_than = datetime.now() - self.newer_than_relative
+            kwargs = {'Created__gt': self.newer_than.isoformat()}
+            self.logger.debug('Searching for tickets newer than %r.' % kwargs['Created__gt'])
+        else:
+            kwargs = {}
+
         query = RT.search(Queue=self.parameters.search_queue,
                           Subject__like=self.parameters.search_subject_like,
                           Owner=self.parameters.search_owner,
                           Status=self.parameters.search_status,
-                          order='Created')
+                          order='Created', **kwargs)
         self.logger.info('{} results on search query.'.format(len(query)))
 
         for ticket in query:

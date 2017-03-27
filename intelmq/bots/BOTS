@@ -98,6 +98,7 @@
                 "provider": "",
                 "password": "password",
                 "rate_limit": 3600,
+                "search_newer_than": null,
                 "search_owner": "nobody",
                 "search_queue": "Incident Reports",
                 "search_status": "new",
