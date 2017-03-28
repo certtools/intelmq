@@ -12,7 +12,7 @@ CREATE TEMP TABLE automatic_templ (
 /* Sector to classify organisations.
 */
 CREATE TABLE sector (
-  id SERIAL PRIMARY KEY,
+  sector_id SERIAL PRIMARY KEY,
   name VARCHAR(100) NOT NULL
 );
 
@@ -48,28 +48,28 @@ CREATE TEMP TABLE organisation_templ (
 
 
 CREATE TABLE organisation (
-    id SERIAL PRIMARY KEY,
+    organisation_id SERIAL PRIMARY KEY,
     LIKE organisation_templ INCLUDING ALL,
 
-    FOREIGN KEY (sector_id) REFERENCES sector(id)
+    FOREIGN KEY (sector_id) REFERENCES sector(sector_id)
 );
 
 
 CREATE TABLE organisation_automatic (
-    id SERIAL PRIMARY KEY,
+    organisation_automatic_id SERIAL PRIMARY KEY,
     LIKE organisation_templ INCLUDING ALL,
     LIKE automatic_templ INCLUDING ALL,
 
-    FOREIGN KEY (sector_id) REFERENCES sector(id)
+    FOREIGN KEY (sector_id) REFERENCES sector(sector_id)
 );
 
 
 CREATE TABLE organisation_annotation (
-    id SERIAL PRIMARY KEY,
+    organisation_annotation_id SERIAL PRIMARY KEY,
     organisation_id INTEGER NOT NULL,
     annotation JSON NOT NULL,
 
-    FOREIGN KEY (organisation_id) REFERENCES organisation(id)
+    FOREIGN KEY (organisation_id) REFERENCES organisation(organisation_id)
 );
 
 CREATE INDEX organisation_annotation_organisation_idx
@@ -95,26 +95,28 @@ CREATE TEMP TABLE contact_templ (
 
 
 CREATE TABLE contact (
-    id SERIAL PRIMARY KEY,
+    contact_id SERIAL PRIMARY KEY,
     LIKE contact_templ INCLUDING ALL,
     organisation_id INTEGER NOT NULL,
 
-    FOREIGN KEY (organisation_id) REFERENCES organisation (id)
+    FOREIGN KEY (organisation_id) REFERENCES organisation (organisation_id)
 );
 
 CREATE INDEX contact_organisation_idx ON contact (organisation_id);
 
 
 CREATE TABLE contact_automatic (
-    id SERIAL PRIMARY KEY,
+    contact_automatic_id SERIAL PRIMARY KEY,
     LIKE contact_templ INCLUDING ALL,
     LIKE automatic_templ INCLUDING ALL,
-    organisation_id INTEGER NOT NULL,
+    organisation_automatic_id INTEGER NOT NULL,
 
-    FOREIGN KEY (organisation_id) REFERENCES organisation_automatic (id)
+    FOREIGN KEY (organisation_automatic_id)
+     REFERENCES organisation_automatic (organisation_automatic_id)
 );
 
-CREATE INDEX contact_automatic_organisation_idx ON contact (organisation_id);
+CREATE INDEX contact_automatic_organisation_idx
+          ON contact_automatic (organisation_automatic_id);
 
 /*
   Network related tables, such as:
@@ -123,7 +125,7 @@ CREATE INDEX contact_automatic_organisation_idx ON contact (organisation_id);
 
 -- Annotations for autonomous systems
 CREATE TABLE autonomous_system_annotation (
-    id SERIAL PRIMARY KEY,
+    autonomous_system_annotation_id SERIAL PRIMARY KEY,
     asn BIGINT NOT NULL,
     annotation JSON NOT NULL
 );
@@ -143,14 +145,14 @@ CREATE TEMP TABLE network_templ (
 
 
 CREATE TABLE network (
-    id SERIAL PRIMARY KEY,
+    network_id SERIAL PRIMARY KEY,
     LIKE network_templ INCLUDING ALL,
 
     UNIQUE (address)
 );
 
 CREATE TABLE network_automatic (
-    id SERIAL PRIMARY KEY,
+    network_automatic_id SERIAL PRIMARY KEY,
     LIKE network_templ INCLUDING ALL,
     LIKE automatic_templ INCLUDING ALL,
 
@@ -193,11 +195,11 @@ CREATE INDEX network_automatic_cidr_upper_idx
 
 -- Annotations for networks
 CREATE TABLE network_annotation (
-    id SERIAL PRIMARY KEY,
+    network_annotation_id SERIAL PRIMARY KEY,
     network_id INTEGER NOT NULL,
     annotation JSON NOT NULL,
 
-    FOREIGN KEY (network_id) REFERENCES network(id)
+    FOREIGN KEY (network_id) REFERENCES network(network_id)
 );
 
 CREATE INDEX network_annotation_network_idx
@@ -216,7 +218,7 @@ CREATE TEMP TABLE fqdn_templ (
 
 
 CREATE TABLE fqdn (
-    id SERIAL PRIMARY KEY,
+    fqdn_id SERIAL PRIMARY KEY,
     LIKE fqdn_templ INCLUDING ALL,
 
     UNIQUE (fqdn)
@@ -224,7 +226,7 @@ CREATE TABLE fqdn (
 
 
 CREATE TABLE fqdn_automatic (
-    id SERIAL PRIMARY KEY,
+    fqdn_automatic_id SERIAL PRIMARY KEY,
     LIKE fqdn_templ INCLUDING ALL,
     LIKE automatic_templ INCLUDING ALL,
 
@@ -233,11 +235,11 @@ CREATE TABLE fqdn_automatic (
 
 
 CREATE TABLE fqdn_annotation (
-    id SERIAL PRIMARY KEY,
+    fqdn_annotation_id SERIAL PRIMARY KEY,
     fqdn_id INTEGER NOT NULL,
     annotation JSON NOT NULL,
 
-    FOREIGN KEY (fqdn_id) REFERENCES fqdn(id)
+    FOREIGN KEY (fqdn_id) REFERENCES fqdn(fqdn_id)
 );
 
 CREATE INDEX fqdn_annotation_fqdn_idx
@@ -253,18 +255,18 @@ CREATE TEMP TABLE national_cert_templ (
     -- The country code for the CERT
     country_code CHARACTER(2) NOT NULL,
 
-    -- The ID of the organisation representing the CERT
-    organisation_id INTEGER NOT NULL,
-
     comment TEXT NOT NULL DEFAULT ''
 );
 
 
 CREATE TABLE national_cert (
-    id SERIAL PRIMARY KEY,
+    national_cert_id SERIAL PRIMARY KEY,
     LIKE national_cert_templ INCLUDING ALL,
 
-    FOREIGN KEY (organisation_id) REFERENCES organisation (id)
+    -- The ID of the organisation representing the CERT
+    organisation_id INTEGER NOT NULL,
+
+    FOREIGN KEY (organisation_id) REFERENCES organisation (organisation_id)
 );
 
 CREATE INDEX national_cert_country_code_idx
@@ -273,11 +275,15 @@ CREATE INDEX national_cert_country_code_idx
 
 -- Like national_cert but for automatically maintained data.
 CREATE TABLE national_cert_automatic (
-    id SERIAL PRIMARY KEY,
+    national_cert_automatic_id SERIAL PRIMARY KEY,
     LIKE national_cert_templ INCLUDING ALL,
+
+    organisation_automatic_id INTEGER NOT NULL,
+
     LIKE automatic_templ INCLUDING ALL,
 
-    FOREIGN KEY (organisation_id) REFERENCES organisation_automatic (id)
+    FOREIGN KEY (organisation_automatic_id)
+     REFERENCES organisation_automatic (organisation_automatic_id)
 );
 
 CREATE INDEX national_cert_automatic_country_code_idx
@@ -295,34 +301,42 @@ CREATE TABLE organisation_to_asn (
 
     PRIMARY KEY (organisation_id, asn),
 
-    FOREIGN KEY (organisation_id) REFERENCES organisation (id)
+    FOREIGN KEY (organisation_id) REFERENCES organisation (organisation_id)
 );
 
 
 CREATE TABLE organisation_to_asn_automatic (
+    organisation_automatic_id INTEGER,
+    asn BIGINT,
     LIKE automatic_templ INCLUDING ALL,
-    LIKE organisation_to_asn INCLUDING ALL,
 
-    FOREIGN KEY (organisation_id) REFERENCES organisation_automatic (id)
+    PRIMARY KEY (organisation_automatic_id, asn),
+    FOREIGN KEY (organisation_automatic_id)
+     REFERENCES organisation_automatic (organisation_automatic_id)
 );
 
 
 CREATE TABLE organisation_to_network (
     organisation_id INTEGER,
-    net_id INTEGER,
+    network_id INTEGER,
 
-    PRIMARY KEY (organisation_id, net_id),
+    PRIMARY KEY (organisation_id, network_id),
 
-    FOREIGN KEY (organisation_id) REFERENCES organisation (id),
-    FOREIGN KEY (net_id) REFERENCES network (id)
+    FOREIGN KEY (organisation_id) REFERENCES organisation (organisation_id),
+    FOREIGN KEY (network_id) REFERENCES network (network_id)
 );
 
 CREATE TABLE organisation_to_network_automatic (
+    organisation_automatic_id INTEGER,
+    network_automatic_id INTEGER,
     LIKE automatic_templ INCLUDING ALL,
-    LIKE organisation_to_network INCLUDING ALL,
 
-    FOREIGN KEY (organisation_id) REFERENCES organisation_automatic (id),
-    FOREIGN KEY (net_id) REFERENCES network_automatic (id)
+    PRIMARY KEY (organisation_automatic_id, network_automatic_id),
+
+    FOREIGN KEY (organisation_automatic_id)
+     REFERENCES organisation_automatic (organisation_automatic_id),
+    FOREIGN KEY (network_automatic_id)
+     REFERENCES network_automatic (network_automatic_id)
 );
 
 
@@ -332,16 +346,21 @@ CREATE TABLE organisation_to_fqdn (
 
     PRIMARY KEY (organisation_id, fqdn_id),
 
-    FOREIGN KEY (organisation_id) REFERENCES organisation (id),
-    FOREIGN KEY (fqdn_id) REFERENCES fqdn (id)
+    FOREIGN KEY (organisation_id) REFERENCES organisation (organisation_id),
+    FOREIGN KEY (fqdn_id) REFERENCES fqdn (fqdn_id)
 );
 
 CREATE TABLE organisation_to_fqdn_automatic (
+    organisation_automatic_id INTEGER,
+    fqdn_automatic_id INTEGER,
     LIKE automatic_templ INCLUDING ALL,
-    LIKE organisation_to_fqdn INCLUDING ALL,
 
-    FOREIGN KEY (organisation_id) REFERENCES organisation_automatic (id),
-    FOREIGN KEY (fqdn_id) REFERENCES fqdn_automatic (id)
+    PRIMARY KEY (organisation_automatic_id, fqdn_automatic_id),
+
+    FOREIGN KEY (organisation_automatic_id)
+     REFERENCES organisation_automatic (organisation_automatic_id),
+    FOREIGN KEY (fqdn_automatic_id)
+     REFERENCES fqdn_automatic (fqdn_automatic_id)
 );
 
 

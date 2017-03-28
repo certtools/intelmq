@@ -100,7 +100,7 @@ def insert_new_network_entries(cur, network_list, key, ipconverter, verbose):
         cur.execute("""INSERT INTO network_automatic
                                    (address, import_source, import_time)
                             VALUES (%s, %s, CURRENT_TIMESTAMP)
-                       RETURNING id;""",
+                       RETURNING network_automatic_id;""",
                     (addr, SOURCE_NAME))
         network_id = cur.fetchone()[0]
         for org in orgs:
@@ -123,7 +123,7 @@ def insert_new_organisations(cur, organisation_list, verbose):
                                    (name, ripe_org_hdl, import_source,
                                     import_time)
                             VALUES (%s, %s, %s, CURRENT_TIMESTAMP)
-                         RETURNING id;""",
+                         RETURNING organisation_automatic_id;""",
                     (org_name, org_ripe_handle, SOURCE_NAME))
         org_id = cur.fetchone()[0]
         mapping[org_ripe_handle]['org_id'] = org_id
@@ -141,8 +141,8 @@ def insert_new_asn_org_entries(cur, asn_list, mapping):
             continue
 
         cur.execute("""INSERT INTO organisation_to_asn_automatic
-                                   (organisation_id, asn, import_source,
-                                    import_time)
+                                   (organisation_automatic_id, asn,
+                                    import_source, import_time)
                        VALUES (%s, %s, %s, CURRENT_TIMESTAMP);""",
                     (org_id, entry['aut-num'][0][2:], SOURCE_NAME))
 
@@ -157,7 +157,8 @@ def insert_new_network_org_entries(cur, org_net_mapping, mapping):
 
         for network_id in networks:
             cur.execute("""INSERT INTO organisation_to_network_automatic
-                                       (organisation_id, net_id,
+                                       (organisation_automatic_id,
+                                        network_automatic_id,
                                         import_source, import_time)
                             VALUES (%s, %s, %s, CURRENT_TIMESTAMP);""",
                         (org_id, network_id, SOURCE_NAME))
@@ -184,8 +185,8 @@ def insert_new_contact_entries(cur, role_list, abusec_to_org, mapping, verbose):
 
         for orh in abusec_to_org[nic_hdl]:
             cur.execute("""INSERT INTO contact_automatic
-                                       (email, organisation_id, import_source,
-                                        import_time)
+                                       (email, organisation_automatic_id,
+                                        import_source, import_time)
                            VALUES (%s, %s, %s, CURRENT_TIMESTAMP)""",
                         (email, mapping[orh]['org_id'], SOURCE_NAME))
 

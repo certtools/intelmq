@@ -59,10 +59,12 @@ def build_organisation_objects_from_db(cur):
     SELECT o.ripe_org_hdl, o.name,
            ARRAY(SELECT oa.asn
                    FROM organisation_to_asn_automatic oa
-                  WHERE oa.organisation_id = o.id),
+                  WHERE oa.organisation_automatic_id
+                        = o.organisation_automatic_id),
            ARRAY(SELECT c.email
                    FROM contact_automatic c
-                  WHERE c.organisation_id = o.id)
+                  WHERE c.organisation_automatic_id
+                        = o.organisation_automatic_id)
       FROM organisation_automatic o
      WHERE o.import_source = %s;
     """, (SOURCE_NAME,))

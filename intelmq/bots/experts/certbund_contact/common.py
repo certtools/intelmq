@@ -46,11 +46,11 @@ def lookup_by_asn_only(cur, table_extension, asn):
                 "       s.name AS sector"
                 "  FROM contact{0} AS c"
                 "  JOIN organisation_to_asn{0} AS oa"
-                "    ON oa.organisation_id = c.organisation_id"
+                "    ON oa.organisation_id = c.organisation{0}_id"
                 "  JOIN organisation{0} AS o"
-                "    ON o.id = c.organisation_id"
+                "    ON o.organisation{0}_id = c.organisation{0}_id"
                 "  LEFT OUTER JOIN sector AS s"
-                "    ON s.id = o.sector_id"
+                "    ON s.sector_id = o.sector_id"
                 " WHERE oa.asn = %s".format(table_extension), (asn,))
     return cur.fetchall()
 
@@ -72,7 +72,7 @@ def lookup_contacts(cur, managed, asn, ip, fqdn, country_code):
     WITH
          -- all organisations related to the ASN
          matched_asn (organisation_id)
-             AS (SELECT oa.organisation_id
+             AS (SELECT oa.organisation{0}_id
                    FROM organisation_to_asn{0} AS oa
                      WHERE oa.asn = %(asn)s),
          -- the ASN matches in a form useful for conversion to JSON
@@ -92,15 +92,15 @@ def lookup_contacts(cur, managed, asn, ip, fqdn, country_code):
 
          -- The FQDN IDs for the given FQDN
          matched_fqdn_ids (fqdn_id)
-             AS (SELECT f.id AS fqdn_id
+             AS (SELECT f.fqdn{0}_id AS fqdn_id
                    FROM fqdn{0} AS f
                   WHERE f.fqdn = %(fqdn)s),
          -- all organisations related to the matched_fqdn_ids
          matched_fqdn (organisation_id)
-             AS (SELECT of.organisation_id AS organisation_id
+             AS (SELECT of.organisation{0}_id AS organisation_id
                    FROM matched_fqdn_ids AS f
                    JOIN organisation_to_fqdn{0} AS of
-                     ON f.fqdn_id = of.fqdn_id),
+                     ON f.fqdn_id = of.fqdn{0}_id),
          -- the FQDN matches in a form useful for conversion to JSON
          fqdn_json_rows (field, organisations, annotations, managed)
              AS (SELECT 'fqdn' AS field,
@@ -119,7 +119,7 @@ def lookup_contacts(cur, managed, asn, ip, fqdn, country_code):
 
          -- all matched networks including their cidr addresses
          matched_networks (network_id, address)
-             AS (SELECT n.id AS network_id, n.address AS address
+             AS (SELECT n.network{0}_id AS network_id, n.address AS address
                    FROM network{0} AS n
                   WHERE inet(host(network(n.address))) <= %(ip)s
                     AND %(ip)s <= inet(host(broadcast(n.address)))),
@@ -128,9 +128,9 @@ def lookup_contacts(cur, managed, asn, ip, fqdn, country_code):
          network_json_rows (field, address, organisations, annotations, managed)
              AS (SELECT 'ip' AS field,
                         mn.address AS address,
-                        ARRAY(SELECT orgn.organisation_id
+                        ARRAY(SELECT orgn.organisation{0}_id
                                 FROM organisation_to_network{0} orgn
-                               WHERE mn.network_id = orgn.net_id)
+                               WHERE mn.network_id = orgn.network{0}_id)
                         AS organisations,
                         coalesce(CASE WHEN %(extension)s = ''
                                       THEN (SELECT json_agg(annotation)
@@ -144,7 +144,7 @@ def lookup_contacts(cur, managed, asn, ip, fqdn, country_code):
 
          -- All CERT organisations based on country code
          matched_certs (organisation_id)
-             AS (SELECT nc.organisation_id FROM national_cert{0} nc
+             AS (SELECT nc.organisation{0}_id FROM national_cert{0} nc
                   WHERE nc.country_code = %(country_code)s),
 
          -- all cert matches in a form useful for conversion to JSON
@@ -161,10 +161,10 @@ def lookup_contacts(cur, managed, asn, ip, fqdn, country_code):
              AS (SELECT u.organisation_id
                    FROM (SELECT organisation_id FROM matched_asn
                          UNION
-                         SELECT orgn.organisation_id
+                         SELECT orgn.organisation{0}_id
                            FROM matched_networks mn
                            JOIN organisation_to_network{0} orgn
-                             ON mn.network_id = orgn.net_id
+                             ON mn.network_id = orgn.network{0}_id
                          UNION
                          SELECT organisation_id FROM matched_fqdn
                          UNION
@@ -173,26 +173,29 @@ def lookup_contacts(cur, managed, asn, ip, fqdn, country_code):
          -- All matched organisations as rows that can be easily
          -- converted to JSON
          org_json_rows (id, name, sector, contacts, annotations, managed)
-             AS (SELECT o.id as id, o.name as name, sector.name as sector,
+             AS (SELECT o.organisation{0}_id as id, o.name as name,
+                        sector.name as sector,
                         coalesce(ARRAY(SELECT row_to_json(sub)
                                         FROM (SELECT c.email as email,
                                                      %(managed)s AS managed
                                               FROM contact{0} c
-                                              WHERE c.organisation_id = o.id)
+                                              WHERE c.organisation{0}_id
+                                                    = o.organisation{0}_id)
                                               sub),
                                  ARRAY[] :: JSON[])
                         AS contacts,
                         coalesce(CASE WHEN %(extension)s = ''
                                       THEN (SELECT json_agg(annotation)
                                               FROM organisation_annotation ann
-                                             WHERE ann.organisation_id = o.id)
+                                             WHERE ann.organisation_id
+                                                   = o.organisation{0}_id)
                                  END,
                                  ('[]' :: JSON))
                         AS annotations,
                         %(managed)s AS managed
                   FROM organisation{0} o
-                  LEFT OUTER JOIN sector ON sector.id = o.sector_id
-                 WHERE o.id IN (select * FROM grouped_matches))
+                  LEFT OUTER JOIN sector ON sector.sector_id = o.sector_id
+                 WHERE o.organisation{0}_id IN (select * FROM grouped_matches))
 
       SELECT coalesce((SELECT json_agg(row_to_json(org_json_rows))
                        FROM org_json_rows),
