@@ -96,57 +96,25 @@ CREATE TEMP TABLE contact_templ (
 
 CREATE TABLE contact (
     id SERIAL PRIMARY KEY,
-    LIKE contact_templ INCLUDING ALL
+    LIKE contact_templ INCLUDING ALL,
+    organisation_id INTEGER NOT NULL,
+
+    FOREIGN KEY (organisation_id) REFERENCES organisation (id)
 );
+
+CREATE INDEX contact_organisation_idx ON contact (organisation_id);
 
 
 CREATE TABLE contact_automatic (
     id SERIAL PRIMARY KEY,
     LIKE contact_templ INCLUDING ALL,
-    LIKE automatic_templ INCLUDING ALL
-);
-
-
--- Roles serve as an m-n relationship between organisations and contacts
-CREATE TEMP TABLE role_templ (
-    -- free text for right now. We assume the regular tags from the
-    -- RIPE DB such as "tech-c" or "abuse-c"
-    -- possible values: "abuse-c", "billing-c" , "admin-c"
-    role_type VARCHAR (500) NOT NULL default 'abuse-c',
-    is_primary_contact BOOLEAN NOT NULL DEFAULT FALSE,
-
-    organisation_id INTEGER NOT NULL,
-    contact_id INTEGER NOT NULL
-);
-
-
-CREATE TABLE role (
-    id SERIAL PRIMARY KEY,
-    LIKE role_templ INCLUDING ALL,
-
-    FOREIGN KEY (organisation_id) REFERENCES organisation(id),
-    FOREIGN KEY (contact_id) REFERENCES contact(id)
-);
-
-CREATE INDEX role_organisation_id_idx
-          ON role (organisation_id);
-CREATE INDEX role_contact_id_idx
-          ON role (contact_id);
-
-CREATE TABLE role_automatic (
-    id SERIAL PRIMARY KEY,
-    LIKE role_templ INCLUDING ALL,
     LIKE automatic_templ INCLUDING ALL,
+    organisation_id INTEGER NOT NULL,
 
-    FOREIGN KEY (organisation_id) REFERENCES organisation_automatic(id),
-    FOREIGN KEY (contact_id) REFERENCES contact_automatic(id)
+    FOREIGN KEY (organisation_id) REFERENCES organisation_automatic (id)
 );
 
-CREATE INDEX role_automatic_organisation_id_idx
-          ON role_automatic (organisation_id);
-CREATE INDEX role_automatic_contact_id_idx
-          ON role_automatic (contact_id);
-
+CREATE INDEX contact_automatic_organisation_idx ON contact (organisation_id);
 
 /*
   Network related tables, such as:

@@ -45,11 +45,10 @@ def lookup_by_asn_only(cur, table_extension, asn):
                 "       c.email AS email, o.name AS organisation,"
                 "       s.name AS sector"
                 "  FROM contact{0} AS c"
-                "  JOIN role{0} AS r ON r.contact_id = c.id"
                 "  JOIN organisation_to_asn{0} AS oa"
-                "    ON oa.organisation_id = r.organisation_id"
+                "    ON oa.organisation_id = c.organisation_id"
                 "  JOIN organisation{0} AS o"
-                "    ON o.id = r.organisation_id"
+                "    ON o.id = c.organisation_id"
                 "  LEFT OUTER JOIN sector AS s"
                 "    ON s.id = o.sector_id"
                 "  JOIN autonomous_system{0} AS a"
@@ -178,30 +177,16 @@ def lookup_contacts(cur, managed, asn, ip, fqdn, country_code):
                          UNION
                          SELECT organisation_id FROM matched_certs) u),
 
-         -- map organisation IDs to that organisation's contacts in JSON
-         -- form
-         org_contacts (org_id, contacts)
-             AS (SELECT r.organisation_id,
-                        ARRAY(SELECT row_to_json(sub)
-                              FROM (SELECT r2.role_type as role,
-                                           c.email as email,
-                                           r2.is_primary_contact
-                                              AS is_primary_contact,
-                                           %(managed)s AS managed
-                                     FROM role{0} r2
-                                     JOIN contact{0} c ON c.id = r2.contact_id
-                                    WHERE r2.organisation_id
-                                              = r.organisation_id) sub)
-                 FROM role{0} r
-                 GROUP BY r.organisation_id),
-
          -- All matched organisations as rows that can be easily
          -- converted to JSON
          org_json_rows (id, name, sector, contacts, annotations, managed)
              AS (SELECT o.id as id, o.name as name, sector.name as sector,
-                        coalesce((SELECT oc.contacts
-                                  FROM org_contacts oc
-                                  WHERE oc.org_id = o.id),
+                        coalesce(ARRAY(SELECT row_to_json(sub)
+                                        FROM (SELECT c.email as email,
+                                                     %(managed)s AS managed
+                                              FROM contact{0} c
+                                              WHERE c.organisation_id = o.id)
+                                              sub),
                                  ARRAY[] :: JSON[])
                         AS contacts,
                         coalesce(CASE WHEN %(extension)s = ''

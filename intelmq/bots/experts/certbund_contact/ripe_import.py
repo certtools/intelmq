@@ -31,8 +31,6 @@ def remove_old_entries(cur, verbose):
     """Remove the entries imported by previous runs."""
     if verbose:
         print('** Removing old entries from database...')
-    cur.execute("DELETE FROM role_automatic WHERE import_source = %s;",
-                (SOURCE_NAME,))
     cur.execute("DELETE FROM organisation_to_asn_automatic"
                 "      WHERE import_source = %s;", (SOURCE_NAME,))
     cur.execute("DELETE FROM organisation_to_network_automatic"
@@ -44,8 +42,6 @@ def remove_old_entries(cur, verbose):
     cur.execute("DELETE FROM organisation_automatic WHERE import_source = %s;",
                 (SOURCE_NAME,))
     cur.execute("DELETE FROM contact_automatic WHERE import_source = %s;",
-                (SOURCE_NAME,))
-    cur.execute("DELETE FROM role_automatic WHERE import_source = %s;",
                 (SOURCE_NAME,))
 
 
@@ -202,31 +198,12 @@ def insert_new_contact_entries(cur, role_list, abusec_to_org, mapping, verbose):
             print('Role with nic-hdl {} has two '
                   'abuse-mailbox lines. Taking the first.'.format(nic_hdl))
 
-        cur.execute("""
-            INSERT INTO contact_automatic (email, import_source, import_time)
-            VALUES (%s, %s, CURRENT_TIMESTAMP)
-            RETURNING id;
-            """, (email, SOURCE_NAME))
-        contact_id = cur.fetchone()[0]
-
         for orh in abusec_to_org[nic_hdl]:
-            mapping[orh]['contact_id'].append(contact_id)
-
-
-def insert_new_roles(cur, mapping):
-    for org_ripe_handle in mapping:
-        org_id = mapping[org_ripe_handle]['org_id']
-        contact_ids = mapping[org_ripe_handle]['contact_id']
-
-        if org_id is None:
-            continue
-
-        for contact_id in contact_ids:
-            cur.execute("""INSERT INTO role_automatic
-                                       (organisation_id, contact_id,
-                                        import_source, import_time)
-                           VALUES (%s, %s, %s, CURRENT_TIMESTAMP);""",
-                        (org_id, contact_id, SOURCE_NAME))
+            cur.execute("""INSERT INTO contact_automatic
+                                       (email, organisation_id, import_source,
+                                        import_time)
+                           VALUES (%s, %s, %s, CURRENT_TIMESTAMP)""",
+                        (email, mapping[orh]['org_id'], SOURCE_NAME))
 
 
 def main():
@@ -279,7 +256,6 @@ called automatically, e.g. by a cronjob.''')
         #
         insert_new_contact_entries(cur, role_list, abusec_to_org, mapping,
                                    args.verbose)
-        insert_new_roles(cur, mapping)
 
         # Commit all data
         con.commit()

@@ -63,8 +63,7 @@ def build_organisation_objects_from_db(cur):
                   WHERE oa.organisation_id = o.id),
            ARRAY(SELECT c.email
                    FROM contact_automatic c
-                   JOIN role_automatic r ON r.contact_id = c.id
-                  WHERE r.organisation_id = o.id)
+                  WHERE c.organisation_id = o.id)
       FROM organisation_automatic o
      WHERE o.import_source = %s;
     """, (SOURCE_NAME,))
@@ -92,14 +91,7 @@ def get_unattached_asns_from_db(cur):
 
 
 def get_unattached_contacts_from_db(cur):
-    cur.execute("""
-    SELECT c.email
-      FROM contact_automatic c
-     WHERE c.import_source = %s
-       AND NOT EXISTS (SELECT * FROM role_automatic r
-                        WHERE r.contact_id = c.id);
-    """, (SOURCE_NAME,))
-    return [row[0] for row in cur.fetchall()]
+    return []
 
 
 def compare_sets(a, b):
