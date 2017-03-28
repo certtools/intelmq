@@ -83,7 +83,7 @@ class CERTBundKontaktMockDBExpertBot(CERTBundKontaktExpertBot):
     def connect_to_database(self):
         pass
 
-    def lookup_contact(self, ip, fqdn, asn):
+    def lookup_contact(self, ip, fqdn, asn, country_code):
         if ip.startswith("192.168.42."):
             return {"matches": [{"field": "ip", "managed": "automatic",
                                  "address": "192.168.42.0/24",
