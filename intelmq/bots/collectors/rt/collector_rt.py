@@ -7,8 +7,8 @@ from datetime import datetime, timedelta
 import requests
 from dateutil import parser
 
-from intelmq.bots.experts.filter.expert import FilterExpertBot
 from intelmq.lib.bot import CollectorBot
+from intelmq.lib.utils import parse_relative
 
 try:
     import rt
@@ -30,7 +30,7 @@ class RTCollectorBot(CollectorBot):
                 self.not_older_than = parser.parse(self.parameters.search_not_older_than)
                 self.not_older_than_type = 'absolute'
             except ValueError:
-                self.not_older_than_relative = timedelta(minutes=FilterExpertBot.parse_relative(self.parameters.search_not_older_than))
+                self.not_older_than_relative = timedelta(minutes=parse_relative(self.parameters.search_not_older_than))
                 self.not_older_than_type = 'relative'
         else:
             self.not_older_than_type = False
