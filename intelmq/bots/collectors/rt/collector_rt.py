@@ -30,7 +30,12 @@ class RTCollectorBot(CollectorBot):
                 self.not_older_than = parser.parse(self.parameters.search_not_older_than)
                 self.not_older_than_type = 'absolute'
             except ValueError:
-                self.not_older_than_relative = timedelta(minutes=parse_relative(self.parameters.search_not_older_than))
+                try:
+                    self.not_older_than_relative = timedelta(minutes=parse_relative(self.parameters.search_not_older_than))
+                except ValueError:
+                    self.logger.error("Parameter 'search_not_older_than' could not be parsed. "
+                                      "Check your configuration.")
+                    raise
                 self.not_older_than_type = 'relative'
         else:
             self.not_older_than_type = False
