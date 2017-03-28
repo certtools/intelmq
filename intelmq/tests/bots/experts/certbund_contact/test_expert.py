@@ -38,7 +38,7 @@ EXAMPLE_OUTPUT = {
               '"organisations": ['
               '{"annotations": [{"type": "tag", "value": "daily"}],'
               ' "contacts": ['
-              '{"email": "someone@example.com", "is_primary_contact": false,'
+              '{"email": "someone@example.com",'
               ' "managed": "automatic", "role": "abuse-c"}'
               '],'
               ' "id": 0, "managed": "automatic",'
@@ -46,7 +46,7 @@ EXAMPLE_OUTPUT = {
               '}, '
               '{"annotations": [{"type": "tag", "value": ""}],'
               ' "contacts": ['
-              '{"email": "other@example.com", "is_primary_contact": true,'
+              '{"email": "other@example.com",'
               ' "managed": "manual", "role": "abuse-c"}'
               '],'
               ' "id": 1, "managed": "manual", "name": "Another Organisation",'
@@ -61,7 +61,7 @@ EXAMPLE_OUTPUT = {
               '"organisations": ['
               '{"annotations": [{"type": "tag", "value": "daily"}],'
               ' "contacts": ['
-              '{"email": "someone@example.com", "is_primary_contact": false,'
+              '{"email": "someone@example.com",'
               ' "managed": "automatic", "role": "abuse-c"}'
               '],'
               ' "id": 0, "managed": "automatic",'
@@ -69,7 +69,7 @@ EXAMPLE_OUTPUT = {
               '}, '
               '{"annotations": [{"type": "tag", "value": ""}],'
               ' "contacts": ['
-              '{"email": "other@example.com", "is_primary_contact": true,'
+              '{"email": "other@example.com",'
               ' "managed": "manual", "role": "abuse-c"}'
               '],'
               ' "id": 1, "managed": "manual", "name": "Another Organisation",'
@@ -98,7 +98,6 @@ class CERTBundKontaktMockDBExpertBot(CERTBundKontaktExpertBot):
                          "annotations": [{"type": "tag", "value": "daily"}],
                          "contacts": [{
                              "email": "someone@example.com",
-                             "is_primary_contact": False,
                              "managed": "automatic",
                              "role": "abuse-c"
                              }],
@@ -110,7 +109,6 @@ class CERTBundKontaktMockDBExpertBot(CERTBundKontaktExpertBot):
                          "annotations": [{"type": "tag", "value": ""}],
                          "contacts": [{
                              "email": "other@example.com",
-                             "is_primary_contact": True,
                              "managed": "manual",
                              "role": "abuse-c"
                              }],
