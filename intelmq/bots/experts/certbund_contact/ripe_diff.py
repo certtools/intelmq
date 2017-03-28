@@ -57,8 +57,9 @@ def build_organisation_objects(asn_list, organisation_list, role_list,
 def build_organisation_objects_from_db(cur):
     cur.execute("""
     SELECT o.ripe_org_hdl, o.name,
-           ARRAY(SELECT oa.asn_id
-                   FROM organisation_to_asn_automatic oa
+           ARRAY(SELECT a.number
+                   FROM autonomous_system_automatic a
+                   JOIN organisation_to_asn_automatic oa ON a.id = oa.asn_id
                   WHERE oa.organisation_id = o.id),
            ARRAY(SELECT c.email
                    FROM contact_automatic c
@@ -85,7 +86,7 @@ def get_unattached_asns_from_db(cur):
       FROM autonomous_system_automatic a
      WHERE a.import_source = %s
        AND NOT EXISTS (SELECT * FROM organisation_to_asn_automatic oa
-                        WHERE oa.asn_id = a.number);
+                        WHERE oa.asn_id = a.id);
     """, (SOURCE_NAME,))
     return [row[0] for row in cur.fetchall()]
 
