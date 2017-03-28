@@ -121,48 +121,15 @@ CREATE INDEX contact_automatic_organisation_idx ON contact (organisation_id);
   AS, IP-Ranges, FQDN
 */
 
--- An autonomous system
-CREATE TEMP TABLE autonomous_system_templ (
-    -- The autonomous system number
-    number BIGINT,
-
-    -- RIPE handle (see
-    -- https://www.ripe.net/manage-ips-and-asns/db/support/documentation/ripe-database-documentation/ripe-database-structure/3-1-list-of-primary-objects)
-    -- and:
-    -- https://www.ripe.net/manage-ips-and-asns/db/support/documentation/ripe-database-documentation/rpsl-object-types/4-2-descriptions-of-primary-objects/4-2-1-description-of-the-aut-num-object
-    ripe_aut_num VARCHAR(100) NOT NULL DEFAULT '',
-
-    comment TEXT NOT NULL DEFAULT ''
-);
-
-
-CREATE TABLE autonomous_system (
-    id SERIAL PRIMARY KEY,
-    LIKE autonomous_system_templ INCLUDING ALL,
-
-    UNIQUE (number)
-);
-
-CREATE TABLE autonomous_system_automatic (
-    id SERIAL PRIMARY KEY,
-    LIKE autonomous_system_templ INCLUDING ALL,
-    LIKE automatic_templ INCLUDING ALL,
-
-    UNIQUE (number, import_source)
-);
-
-
+-- Annotations for autonomous systems
 CREATE TABLE autonomous_system_annotation (
     id SERIAL PRIMARY KEY,
-    asn_id BIGINT NOT NULL,
-    annotation JSON NOT NULL,
-
-    FOREIGN KEY (asn_id) REFERENCES autonomous_system (id)
+    asn BIGINT NOT NULL,
+    annotation JSON NOT NULL
 );
 
-CREATE INDEX autonomous_system_annotation_asn_id
-          ON autonomous_system_annotation (asn_id);
-
+CREATE INDEX autonomous_system_annotation_asn_idx
+          ON autonomous_system_annotation (asn);
 
 
 -- A network
@@ -324,11 +291,10 @@ CREATE INDEX national_cert_automatic_country_code_idx
 */
 CREATE TABLE organisation_to_asn (
     organisation_id INTEGER,
-    asn_id BIGINT,
+    asn BIGINT,
 
-    PRIMARY KEY (organisation_id, asn_id),
+    PRIMARY KEY (organisation_id, asn),
 
-    FOREIGN KEY (asn_id) REFERENCES autonomous_system (id),
     FOREIGN KEY (organisation_id) REFERENCES organisation (id)
 );
 
@@ -337,7 +303,6 @@ CREATE TABLE organisation_to_asn_automatic (
     LIKE automatic_templ INCLUDING ALL,
     LIKE organisation_to_asn INCLUDING ALL,
 
-    FOREIGN KEY (asn_id) REFERENCES autonomous_system_automatic (id),
     FOREIGN KEY (organisation_id) REFERENCES organisation_automatic (id)
 );
 
@@ -378,7 +343,6 @@ CREATE TABLE organisation_to_fqdn_automatic (
     FOREIGN KEY (organisation_id) REFERENCES organisation_automatic (id),
     FOREIGN KEY (fqdn_id) REFERENCES fqdn_automatic (id)
 );
-
 
 
 

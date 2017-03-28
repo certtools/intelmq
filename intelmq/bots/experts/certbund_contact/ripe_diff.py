@@ -57,9 +57,8 @@ def build_organisation_objects(asn_list, organisation_list, role_list,
 def build_organisation_objects_from_db(cur):
     cur.execute("""
     SELECT o.ripe_org_hdl, o.name,
-           ARRAY(SELECT a.number
-                   FROM autonomous_system_automatic a
-                   JOIN organisation_to_asn_automatic oa ON a.id = oa.asn_id
+           ARRAY(SELECT oa.asn
+                   FROM organisation_to_asn_automatic oa
                   WHERE oa.organisation_id = o.id),
            ARRAY(SELECT c.email
                    FROM contact_automatic c
@@ -77,17 +76,6 @@ def build_organisation_objects_from_db(cur):
         orgs[org_handle] = Organisation(org_handle, name, asns, contacts)
 
     return orgs
-
-
-def get_unattached_asns_from_db(cur):
-    cur.execute("""
-    SELECT a.number
-      FROM autonomous_system_automatic a
-     WHERE a.import_source = %s
-       AND NOT EXISTS (SELECT * FROM organisation_to_asn_automatic oa
-                        WHERE oa.asn_id = a.id);
-    """, (SOURCE_NAME,))
-    return [row[0] for row in cur.fetchall()]
 
 
 def get_unattached_contacts_from_db(cur):
@@ -181,13 +169,10 @@ def compare_orgs_with_db(cur, asn_list, organisation_list, role_list,
                                    role_list, abusec_to_org)
 
     db_orgs = build_organisation_objects_from_db(cur)
-    db_unattached_as = get_unattached_asns_from_db(cur)
     db_unattached_roles = get_unattached_contacts_from_db(cur)
 
     compare_orgs(cur, db_orgs, orgs)
 
-    compare_unattached("AS", db_unattached_as,
-                       [extract_asn(a) for a in unattached_as])
     compare_unattached("roles", db_unattached_roles,
                        [r['abuse-mailbox'][0] for r in unattached_roles])
 
