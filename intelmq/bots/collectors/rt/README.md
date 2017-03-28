@@ -20,7 +20,7 @@ Optionally, the RT bot can "take" RT tickets (i.e. the `user` is assigned this t
         "attachment_regex": "\\.csv\\.zip$",
         "feed": "Request Tracker",
         "password": "intelmq",
-        "search_newer_than": null,
+        "search_not_older_than": null,
         "search_queue": "Incident Reports",
         "search_subject_like": "Report",
         "search_owner": "nobody",
@@ -39,6 +39,6 @@ For temporary failures the status is not modified, instead the ticket will be sk
 
 ## Time search
 
-To find only tickets newer than a given absolute or relative time, you can use the `search_newer_than` parameter. Absolute time specification can be anything parseable by dateutil, best use a ISO format.
+To find only tickets newer than a given absolute or relative time, you can use the `search_not_older_than` parameter. Absolute time specification can be anything parseable by dateutil, best use a ISO format.
 
 Relative must be in this format: `[number] [timespan]s`, e.g. `3 days`. Timespan can be hour, day, week, month, year. Trailing 's' is supported for all timespans. Relative times are subtracted from the current time directly before the search is performed.

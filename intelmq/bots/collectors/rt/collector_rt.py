@@ -25,15 +25,15 @@ class RTCollectorBot(CollectorBot):
 
         self.set_request_parameters()
 
-        if getattr(self.parameters, 'search_newer_than', None):
+        if getattr(self.parameters, 'search_not_older_than', None):
             try:
-                self.newer_than = parser.parse(self.parameters.search_newer_than)
-                self.newer_than_type = 'absolute'
+                self.not_older_than = parser.parse(self.parameters.search_not_older_than)
+                self.not_older_than_type = 'absolute'
             except ValueError:
-                self.newer_than_relative = timedelta(minutes=FilterExpertBot.parse_relative(self.parameters.search_newer_than))
-                self.newer_than_type = 'relative'
+                self.not_older_than_relative = timedelta(minutes=FilterExpertBot.parse_relative(self.parameters.search_not_older_than))
+                self.not_older_than_type = 'relative'
         else:
-            self.newer_than_type = False
+            self.not_older_than_type = False
 
     def process(self):
         RT = rt.Rt(self.parameters.uri, self.parameters.user,
@@ -41,10 +41,10 @@ class RTCollectorBot(CollectorBot):
         if not RT.login():
             raise ValueError('Login failed.')
 
-        if self.newer_than_type:
-            if self.newer_than_type == 'relative':
-                self.newer_than = datetime.now() - self.newer_than_relative
-            kwargs = {'Created__gt': self.newer_than.isoformat()}
+        if self.not_older_than_type:
+            if self.not_older_than_type == 'relative':
+                self.not_older_than = datetime.now() - self.not_older_than_relative
+            kwargs = {'Created__gt': self.not_older_than.isoformat()}
             self.logger.debug('Searching for tickets newer than %r.' % kwargs['Created__gt'])
         else:
             kwargs = {}
