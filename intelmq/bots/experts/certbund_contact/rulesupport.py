@@ -54,25 +54,20 @@ class Contact:
         email (str): email address
         managed (str): Either 'manual' or 'automatic' indicating how the
             contact database entry is managed.
-        role (str): The role of the contact within the organisation,
-            e.g. 'abuse-c'
-
     """
 
-    def __init__(self, email, managed, role):
+    def __init__(self, email, managed):
         self.email = email
         self.managed = managed
-        self.role = role
 
     def __repr__(self):
-        return ("Contact(email=%r, managed=%r, role=%r)"
-                % (self.email, self.managed, self.role))
+        return ("Contact(email=%r, managed=%r)"
+                % (self.email, self.managed))
 
     @classmethod
     def from_json(cls, jsondict):
         return cls(email=jsondict["email"],
-                   managed=jsondict["managed"],
-                   role=jsondict["role"])
+                   managed=jsondict["managed"])
 
 
 class Match:
