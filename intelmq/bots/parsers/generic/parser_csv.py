@@ -20,6 +20,13 @@ from dateutil.parser import parse
 
 from intelmq.lib import utils
 from intelmq.lib.bot import ParserBot
+from intelmq.lib.exceptions import InvalidArgument
+from intelmq.lib.harmonization import DateTime
+
+
+TIME_CONVERSIONS = {'timestamp': DateTime.from_timestamp,
+                    'windows_nt': DateTime.from_windows_nt,
+                    None: lambda x: x}
 
 
 class GenericCsvParserBot(ParserBot):
@@ -36,6 +43,12 @@ class GenericCsvParserBot(ParserBot):
             self.type_translation = json.loads(self.parameters.type_translation)
 
         self.column_regex_search = getattr(self.parameters, 'column_regex_search', {})
+
+        self.time_format = getattr(self.parameters, "time_format", None)
+        if self.time_format not in TIME_CONVERSIONS.keys():
+            raise InvalidArgument('time_format', got=self.time_format,
+                                  expected=list(TIME_CONVERSIONS.keys()),
+                                  docs='docs/Bots.md')
 
     def parse(self, report):
         raw_report = utils.base64_decode(report.get("raw"))
@@ -66,8 +79,11 @@ class GenericCsvParserBot(ParserBot):
             if key in ["__IGNORE__", ""]:
                 continue
             if key in ["time.source", "time.destination"]:
-                value = parse(value, fuzzy=True).isoformat()
-                value += " UTC"
+                if self.time_format:
+                    value = TIME_CONVERSIONS[self.time_format](value)
+                else:
+                    value = parse(value, fuzzy=True).isoformat()
+                    value += " UTC"
             elif key.endswith('.url') and '://' not in value:
                 value = self.parameters.default_url_protocol + value
             elif key in ["classification.type"] and self.type_translation:

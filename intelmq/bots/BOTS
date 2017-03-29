@@ -287,7 +287,9 @@
                 "default_url_protocol": "http://",
                 "delimiter": ",",
                 "skip_header": true,
-                "type": "c&c"
+                "time_format": null,
+                "type": "c&c",
+                "type_translation": null
             }
         },
         "HpHosts": {

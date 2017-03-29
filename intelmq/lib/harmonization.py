@@ -241,6 +241,27 @@ class DateTime(GenericType):
         return str(localized.isoformat())
 
     @staticmethod
+    def from_windows_nt(tstamp: int) -> str:
+        """
+        Converts the Windows NT / LDAP / Active Directory format to ISO format.
+
+        The format is: 100 nanoseconds (10^-7s) since 1601-01-01.
+        UTC is assumed.
+
+        Parameters:
+            tstamp: Time in LDAP format as integer or string. Will be converted if necessary.
+
+        Returns:
+            Converted ISO format string
+
+        See also:
+            https://www.epochconverter.com/ldap
+        """
+        epoch = datetime.datetime(1601, 1, 1, tzinfo=pytz.utc)
+        dtime = epoch + datetime.timedelta(seconds=int(tstamp)*10**-7)
+        return dtime.isoformat()
+
+    @staticmethod
     def generate_datetime_now():
         value = datetime.datetime.now(pytz.timezone('UTC'))
         value = value.replace(microsecond=0)

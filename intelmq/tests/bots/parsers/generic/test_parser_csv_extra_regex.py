@@ -56,7 +56,7 @@ EXAMPLE_EVENT2 = {"feed.name": "Sample CSV Feed",
 
 class TestGenericCsvParserBot(test.BotTestCase, unittest.TestCase):
     """
-    A TestCase for a GenericCsvParserBot with extra and column_regex_search.
+    A TestCase for a GenericCsvParserBot with extra, column_regex_search and windows_nt time format.
     """
 
     @classmethod
@@ -72,6 +72,8 @@ class TestGenericCsvParserBot(test.BotTestCase, unittest.TestCase):
                                      "extra.http_referer", "extra.http_user_agent",
                                      "extra.http_method", "extra.http_version", "extra.http_host"],
                          "delimiter": ",",
+                         "skip_header": True,
+                         "time_format": "windows_nt",
                          "type": "botnet drone",
                          "column_regex_search": {"source.asn": "[0-9]*"}}
 
