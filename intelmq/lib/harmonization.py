@@ -258,7 +258,7 @@ class DateTime(GenericType):
             https://www.epochconverter.com/ldap
         """
         epoch = datetime.datetime(1601, 1, 1, tzinfo=pytz.utc)
-        dtime = epoch + datetime.timedelta(seconds=int(tstamp)*10**-7)
+        dtime = epoch + datetime.timedelta(seconds=int(tstamp) * 10**-7)
         return dtime.isoformat()
 
     @staticmethod

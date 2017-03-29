@@ -329,6 +329,8 @@ TODO
 
 ### Generic CSV Parser
 
+Lines starting with `'#'` will be ignored. Headers won't be interpreted.
+
 #### Configuration parameters
 
  * `"columns"`: A list of strings or a string of comma-separated values with field names. The names must match the harmonization's field names. E.g. 
@@ -341,7 +343,7 @@ TODO
  * `"column_regex_search"`: Optional. A dictionary mapping field names (as given per the columns parameter) to regular expression. The field is evaulated using `re.search`. Eg. to get the ASN out of `AS1234` use: `{"source.asn": "[0-9]*"}`.
  * `"default_url_protocol"`: For URLs you can give a defaut protocol which will be pretended to the data.
  * `"delimiter"`: separation character of the CSV, e.g. `","`
- * `"skip_header": Boolean, skip the first line of the file, optional.
+ * `"skip_header"`: Boolean, skip the first line of the file, optional. Lines starting with `#` will be skipped additionally, make sure you do not skip more lines than needed!
  * `time_format`: Optional. If `"timestamp"` or `"windows_nt"` the time will be converted first. With the default `null` fuzzy time parsing will be used.
  * `"type"`: set the `classification.type` statically, optional
  * `"type_translation"`: See below, optional
