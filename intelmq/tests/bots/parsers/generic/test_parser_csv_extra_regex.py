@@ -75,6 +75,7 @@ class TestGenericCsvParserBot(test.BotTestCase, unittest.TestCase):
                          "skip_header": True,
                          "time_format": "windows_nt",
                          "type": "botnet drone",
+                         "type_translation": None,
                          "column_regex_search": {"source.asn": "[0-9]*"}}
 
     def test_event(self):

@@ -32,17 +32,15 @@ TIME_CONVERSIONS = {'timestamp': DateTime.from_timestamp,
 class GenericCsvParserBot(ParserBot):
 
     def init(self):
-        self.type_translation = None
-
         self.columns = self.parameters.columns
         # convert columns to an array
         if type(self.columns) is str:
             self.columns = [column.strip() for column in self.columns.split(",")]
 
-        if hasattr(self.parameters, 'type_translation'):
-            self.type_translation = json.loads(self.parameters.type_translation)
+        self.type_translation = json.loads(getattr(self.parameters, 'type_translation', None) or '{}')
 
-        self.column_regex_search = getattr(self.parameters, 'column_regex_search', {})
+        # prevents empty strings:
+        self.column_regex_search = getattr(self.parameters, 'column_regex_search', None) or {}
 
         self.time_format = getattr(self.parameters, "time_format", None)
         if self.time_format not in TIME_CONVERSIONS.keys():
@@ -57,7 +55,7 @@ class GenericCsvParserBot(ParserBot):
         # ignore null bytes
         raw_report = re.sub(r'(?m)\0', '', raw_report)
         # skip header
-        if hasattr(self.parameters, 'skip_header') and self.parameters.skip_header:
+        if getattr(self.parameters, 'skip_header', False):
             raw_report = raw_report[raw_report.find('\n') + 1:]
         for row in csv.reader(io.StringIO(raw_report),
                               delimiter=str(self.parameters.delimiter)):
