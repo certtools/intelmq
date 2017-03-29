@@ -83,7 +83,7 @@ ALTER TABLE events
 ### Postgres databases
 ```sql
 ALTER TABLE events
-   ADD COL   ADD COLUMN "msip.attribute_uuid" varchar(36),
+   ADD COL   ADD COLUMN "misp.attribute_uuid" varchar(36),
    ALTER COLUMN "misp.event_uuid" SET DATA TYPE varchar(36).
    RENAME COLUMN "misp_uuid" TO "misp.event_uuid";
 
