@@ -63,7 +63,7 @@ curl "https://bootstrap.pypa.io/get-pip.py" -o "/tmp/get-pip.py"
 python3.4 /tmp/get-pip.py
 ```
 
-##### CentOS 7
+#### CentOS 7
 
 ```bash
 yum install epel-release
