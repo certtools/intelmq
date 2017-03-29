@@ -15,7 +15,6 @@ default configuration of the bot.
 
     createdb --encoding=UTF8 --template=template0 contactdb
     psql -f /usr/share/intelmq/certbund_contact/initdb.sql   contactdb
-    psql -f /usr/share/intelmq/certbund_contact/defaults.sql contactdb
 ```
 
 A database user with the right to select the data in the Contact DB
