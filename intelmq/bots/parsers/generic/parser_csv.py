@@ -26,7 +26,7 @@ from intelmq.lib.harmonization import DateTime
 
 TIME_CONVERSIONS = {'timestamp': DateTime.from_timestamp,
                     'windows_nt': DateTime.from_windows_nt,
-                    None: lambda x: x}
+                    None: lambda value: parse(value, fuzzy=True).isoformat() + " UTC"}
 
 
 class GenericCsvParserBot(ParserBot):
@@ -79,11 +79,7 @@ class GenericCsvParserBot(ParserBot):
             if key in ["__IGNORE__", ""]:
                 continue
             if key in ["time.source", "time.destination"]:
-                if self.time_format:
-                    value = TIME_CONVERSIONS[self.time_format](value)
-                else:
-                    value = parse(value, fuzzy=True).isoformat()
-                    value += " UTC"
+                value = TIME_CONVERSIONS[self.time_format](value)
             elif key.endswith('.url') and '://' not in value:
                 value = self.parameters.default_url_protocol + value
             elif key in ["classification.type"] and self.type_translation:
