@@ -7,33 +7,17 @@ import pytz
 from dateutil import parser
 
 from intelmq.lib.bot import Bot
+from intelmq.lib.utils import parse_relative
 
 
 class FilterExpertBot(Bot):
-
-    # number of minutes in time units
-    timespans = {'hour': 60, 'day': 24 * 60, 'week': 7 * 24 * 60,
-                 'month': 30 * 24 * 60, 'year': 365 * 24 * 60}
-
-    # parse relative time attributes
-    @staticmethod
-    def parse_relative(relative_time):
-        try:
-            result = re.findall(r'^(\d+)\s+(\w+[^s])s?$', relative_time, re.UNICODE)
-        except ValueError as e:
-            raise ValueError("Could not apply regex to attribute \"%s\" with exception %s.",
-                             repr(relative_time), repr(e.args))
-        if len(result) == 1 and len(result[0]) == 2 and result[0][1] in FilterExpertBot.timespans:
-            return int(result[0][0]) * FilterExpertBot.timespans[result[0][1]]
-        else:
-            raise ValueError("Could not process result of regex for attribute " + repr(relative_time))
 
     # decide format of timefilter value and parse it
     def parse_timeattr(self, time_attr):
         try:
             absolute = parser.parse(time_attr)
         except ValueError:
-            relative = timedelta(minutes=self.parse_relative(time_attr))
+            relative = timedelta(minutes=parse_relative(time_attr))
             self.logger.info("Filtering out events to (relative time) {!r}.".format(relative))
             return relative
         else:
