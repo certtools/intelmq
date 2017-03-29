@@ -161,8 +161,8 @@
                 "account_name": "",
                 "account_key": "",
                 "delete": true,
-                "feed": "n6stomp",
-                "provider": "N6",
+                "feed": "",
+                "provider": "microsoft",
                 "rate_limit": 3600
             }
         },

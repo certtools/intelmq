@@ -43,7 +43,6 @@ class MicrosoftAzureCollectorBot(CollectorBot):
                 report = self.new_report()
                 report.add('raw', unzipped)
                 self.send_message(report)
-                return  # TODO
                 if self.parameters.delete:
                     blob_service.delete_blob(container.name, blob.name,
                                              if_unmodified_since=time_blob_fetch)
