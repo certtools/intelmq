@@ -38,16 +38,14 @@ EXAMPLE_OUTPUT = {
               '"organisations": ['
               '{"annotations": [{"type": "tag", "value": "daily"}],'
               ' "contacts": ['
-              '{"email": "someone@example.com", "is_primary_contact": false,'
-              ' "managed": "automatic", "role": "abuse-c"}'
+              '{"email": "someone@example.com", "managed": "automatic"}'
               '],'
               ' "id": 0, "managed": "automatic",'
               ' "name": "Some Organisation", "sector": null'
               '}, '
               '{"annotations": [{"type": "tag", "value": ""}],'
               ' "contacts": ['
-              '{"email": "other@example.com", "is_primary_contact": true,'
-              ' "managed": "manual", "role": "abuse-c"}'
+              '{"email": "other@example.com", "managed": "manual"}'
               '],'
               ' "id": 1, "managed": "manual", "name": "Another Organisation",'
               ' "sector": "IT"}]}, '
@@ -61,16 +59,14 @@ EXAMPLE_OUTPUT = {
               '"organisations": ['
               '{"annotations": [{"type": "tag", "value": "daily"}],'
               ' "contacts": ['
-              '{"email": "someone@example.com", "is_primary_contact": false,'
-              ' "managed": "automatic", "role": "abuse-c"}'
+              '{"email": "someone@example.com", "managed": "automatic"}'
               '],'
               ' "id": 0, "managed": "automatic",'
               ' "name": "Some Organisation", "sector": null'
               '}, '
               '{"annotations": [{"type": "tag", "value": ""}],'
               ' "contacts": ['
-              '{"email": "other@example.com", "is_primary_contact": true,'
-              ' "managed": "manual", "role": "abuse-c"}'
+              '{"email": "other@example.com", "managed": "manual"}'
               '],'
               ' "id": 1, "managed": "manual", "name": "Another Organisation",'
               ' "sector": "IT"}]}}}'),
@@ -83,7 +79,7 @@ class CERTBundKontaktMockDBExpertBot(CERTBundKontaktExpertBot):
     def connect_to_database(self):
         pass
 
-    def lookup_contact(self, ip, fqdn, asn):
+    def lookup_contact(self, ip, fqdn, asn, country_code):
         if ip.startswith("192.168.42."):
             return {"matches": [{"field": "ip", "managed": "automatic",
                                  "address": "192.168.42.0/24",
@@ -98,9 +94,7 @@ class CERTBundKontaktMockDBExpertBot(CERTBundKontaktExpertBot):
                          "annotations": [{"type": "tag", "value": "daily"}],
                          "contacts": [{
                              "email": "someone@example.com",
-                             "is_primary_contact": False,
                              "managed": "automatic",
-                             "role": "abuse-c"
                              }],
                          },
                         {"id": 1,
@@ -110,9 +104,7 @@ class CERTBundKontaktMockDBExpertBot(CERTBundKontaktExpertBot):
                          "annotations": [{"type": "tag", "value": ""}],
                          "contacts": [{
                              "email": "other@example.com",
-                             "is_primary_contact": True,
                              "managed": "manual",
-                             "role": "abuse-c"
                              }],
                          }]
                     }

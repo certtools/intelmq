@@ -31,13 +31,9 @@ def remove_old_entries(cur, verbose):
     """Remove the entries imported by previous runs."""
     if verbose:
         print('** Removing old entries from database...')
-    cur.execute("DELETE FROM role_automatic WHERE import_source = %s;",
-                (SOURCE_NAME,))
     cur.execute("DELETE FROM organisation_to_asn_automatic"
                 "      WHERE import_source = %s;", (SOURCE_NAME,))
     cur.execute("DELETE FROM organisation_to_network_automatic"
-                "      WHERE import_source = %s;", (SOURCE_NAME,))
-    cur.execute("DELETE FROM autonomous_system_automatic"
                 "      WHERE import_source = %s;", (SOURCE_NAME,))
     cur.execute("DELETE FROM network_automatic WHERE import_source = %s;",
                 (SOURCE_NAME,))
@@ -45,18 +41,6 @@ def remove_old_entries(cur, verbose):
                 (SOURCE_NAME,))
     cur.execute("DELETE FROM contact_automatic WHERE import_source = %s;",
                 (SOURCE_NAME,))
-    cur.execute("DELETE FROM role_automatic WHERE import_source = %s;",
-                (SOURCE_NAME,))
-
-
-def insert_new_asn_entries(cur, asn_list, verbose):
-    if verbose:
-        print('** Saving AS data to database...')
-    for entry in asn_list:
-        cur.execute("""INSERT INTO autonomous_system_automatic
-                                   (number, import_source, import_time)
-                            VALUES (%s, %s, CURRENT_TIMESTAMP);""",
-                    (entry['aut-num'][0][2:], SOURCE_NAME))
 
 
 def convert_ip6num(ipnum):
@@ -116,7 +100,7 @@ def insert_new_network_entries(cur, network_list, key, ipconverter, verbose):
         cur.execute("""INSERT INTO network_automatic
                                    (address, import_source, import_time)
                             VALUES (%s, %s, CURRENT_TIMESTAMP)
-                       RETURNING id;""",
+                       RETURNING network_automatic_id;""",
                     (addr, SOURCE_NAME))
         network_id = cur.fetchone()[0]
         for org in orgs:
@@ -139,7 +123,7 @@ def insert_new_organisations(cur, organisation_list, verbose):
                                    (name, ripe_org_hdl, import_source,
                                     import_time)
                             VALUES (%s, %s, %s, CURRENT_TIMESTAMP)
-                         RETURNING id;""",
+                         RETURNING organisation_automatic_id;""",
                     (org_name, org_ripe_handle, SOURCE_NAME))
         org_id = cur.fetchone()[0]
         mapping[org_ripe_handle]['org_id'] = org_id
@@ -152,13 +136,14 @@ def insert_new_asn_org_entries(cur, asn_list, mapping):
     for entry in asn_list:
         org_id = mapping[entry["org"][0]].get("org_id")
         if org_id is None:
-            print("org_id None for AS entry {!r}".format(entry))
+            print("org_id None for AS organisation handle {!r}"
+                  .format(entry["org"][0]))
             continue
 
         cur.execute("""INSERT INTO organisation_to_asn_automatic
-                                   (organisation_id, asn_id, import_source,
-                                    import_time)
-                            VALUES (%s, %s, %s, CURRENT_TIMESTAMP);""",
+                                   (organisation_automatic_id, asn,
+                                    import_source, import_time)
+                       VALUES (%s, %s, %s, CURRENT_TIMESTAMP);""",
                     (org_id, entry['aut-num'][0][2:], SOURCE_NAME))
 
 
@@ -172,7 +157,8 @@ def insert_new_network_org_entries(cur, org_net_mapping, mapping):
 
         for network_id in networks:
             cur.execute("""INSERT INTO organisation_to_network_automatic
-                                       (organisation_id, net_id,
+                                       (organisation_automatic_id,
+                                        network_automatic_id,
                                         import_source, import_time)
                             VALUES (%s, %s, %s, CURRENT_TIMESTAMP);""",
                         (org_id, network_id, SOURCE_NAME))
@@ -197,31 +183,12 @@ def insert_new_contact_entries(cur, role_list, abusec_to_org, mapping, verbose):
             print('Role with nic-hdl {} has two '
                   'abuse-mailbox lines. Taking the first.'.format(nic_hdl))
 
-        cur.execute("""
-            INSERT INTO contact_automatic (email, import_source, import_time)
-            VALUES (%s, %s, CURRENT_TIMESTAMP)
-            RETURNING id;
-            """, (email, SOURCE_NAME))
-        contact_id = cur.fetchone()[0]
-
         for orh in abusec_to_org[nic_hdl]:
-            mapping[orh]['contact_id'].append(contact_id)
-
-
-def insert_new_roles(cur, mapping):
-    for org_ripe_handle in mapping:
-        org_id = mapping[org_ripe_handle]['org_id']
-        contact_ids = mapping[org_ripe_handle]['contact_id']
-
-        if org_id is None:
-            continue
-
-        for contact_id in contact_ids:
-            cur.execute("""INSERT INTO role_automatic
-                                       (organisation_id, contact_id,
+            cur.execute("""INSERT INTO contact_automatic
+                                       (email, organisation_automatic_id,
                                         import_source, import_time)
-                           VALUES (%s, %s, %s, CURRENT_TIMESTAMP);""",
-                        (org_id, contact_id, SOURCE_NAME))
+                           VALUES (%s, %s, %s, CURRENT_TIMESTAMP)""",
+                        (email, mapping[orh]['org_id'], SOURCE_NAME))
 
 
 def main():
@@ -248,11 +215,6 @@ called automatically, e.g. by a cronjob.''')
 
         remove_old_entries(cur, args.verbose)
 
-        #
-        # AS numbers
-        #
-        insert_new_asn_entries(cur, asn_list, args.verbose)
-
         # network addresses
         org_inet6_mapping = insert_new_network_entries(
             cur, inet6num_list, "inet6num", convert_ip6num, args.verbose)
@@ -274,7 +236,6 @@ called automatically, e.g. by a cronjob.''')
         #
         insert_new_contact_entries(cur, role_list, abusec_to_org, mapping,
                                    args.verbose)
-        insert_new_roles(cur, mapping)
 
         # Commit all data
         con.commit()

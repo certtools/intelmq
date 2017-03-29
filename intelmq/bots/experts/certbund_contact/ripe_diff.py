@@ -57,13 +57,14 @@ def build_organisation_objects(asn_list, organisation_list, role_list,
 def build_organisation_objects_from_db(cur):
     cur.execute("""
     SELECT o.ripe_org_hdl, o.name,
-           ARRAY(SELECT oa.asn_id
+           ARRAY(SELECT oa.asn
                    FROM organisation_to_asn_automatic oa
-                  WHERE oa.organisation_id = o.id),
+                  WHERE oa.organisation_automatic_id
+                        = o.organisation_automatic_id),
            ARRAY(SELECT c.email
                    FROM contact_automatic c
-                   JOIN role_automatic r ON r.contact_id = c.id
-                  WHERE r.organisation_id = o.id)
+                  WHERE c.organisation_automatic_id
+                        = o.organisation_automatic_id)
       FROM organisation_automatic o
      WHERE o.import_source = %s;
     """, (SOURCE_NAME,))
@@ -79,26 +80,8 @@ def build_organisation_objects_from_db(cur):
     return orgs
 
 
-def get_unattached_asns_from_db(cur):
-    cur.execute("""
-    SELECT a.number
-      FROM autonomous_system_automatic a
-     WHERE a.import_source = %s
-       AND NOT EXISTS (SELECT * FROM organisation_to_asn_automatic oa
-                        WHERE oa.asn_id = a.number);
-    """, (SOURCE_NAME,))
-    return [row[0] for row in cur.fetchall()]
-
-
 def get_unattached_contacts_from_db(cur):
-    cur.execute("""
-    SELECT c.email
-      FROM contact_automatic c
-     WHERE c.import_source = %s
-       AND NOT EXISTS (SELECT * FROM role_automatic r
-                        WHERE r.contact_id = c.id);
-    """, (SOURCE_NAME,))
-    return [row[0] for row in cur.fetchall()]
+    return []
 
 
 def compare_sets(a, b):
@@ -188,13 +171,10 @@ def compare_orgs_with_db(cur, asn_list, organisation_list, role_list,
                                    role_list, abusec_to_org)
 
     db_orgs = build_organisation_objects_from_db(cur)
-    db_unattached_as = get_unattached_asns_from_db(cur)
     db_unattached_roles = get_unattached_contacts_from_db(cur)
 
     compare_orgs(cur, db_orgs, orgs)
 
-    compare_unattached("AS", db_unattached_as,
-                       [extract_asn(a) for a in unattached_as])
     compare_unattached("roles", db_unattached_roles,
                        [r['abuse-mailbox'][0] for r in unattached_roles])
 

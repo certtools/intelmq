@@ -52,32 +52,22 @@ class Contact:
 
     Attributes:
         email (str): email address
-        is_primary_contact (bool): Whether the contact is the primary
-            contact of the organisation with which it is associated.
         managed (str): Either 'manual' or 'automatic' indicating how the
             contact database entry is managed.
-        role (str): The role of the contact within the organisation,
-            e.g. 'abuse-c'
-
     """
 
-    def __init__(self, email, is_primary_contact, managed, role):
+    def __init__(self, email, managed):
         self.email = email
-        self.is_primary_contact = is_primary_contact
         self.managed = managed
-        self.role = role
 
     def __repr__(self):
-        return ("Contact(email=%r, is_primary_contact=%r, managed=%r, role=%r)"
-                % (self.email, self.is_primary_contact, self.managed,
-                   self.role))
+        return ("Contact(email=%r, managed=%r)"
+                % (self.email, self.managed))
 
     @classmethod
     def from_json(cls, jsondict):
         return cls(email=jsondict["email"],
-                   is_primary_contact=jsondict["is_primary_contact"],
-                   managed=jsondict["managed"],
-                   role=jsondict["role"])
+                   managed=jsondict["managed"])
 
 
 class Match:
@@ -444,21 +434,8 @@ def keep_most_specific_contacts(context):
     for match in matches:
         orgids |= set(match.organisations)
     for organisation in context.organisations:
-        if organisation.orgid in orgids:
-            primary = []
-            other = []
-            for contact in organisation.contacts:
-                if contact.is_primary_contact:
-                    primary.append(contact)
-                else:
-                    other.append(contact)
-            if primary:
-                keep = primary
-            else:
-                keep = other
-        else:
-            keep = []
-        organisation.contacts = keep
+        if organisation.orgid not in orgids:
+            organisation.contacts = []
 
 
 def notification_inhibited(context):
