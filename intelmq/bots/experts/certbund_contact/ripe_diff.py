@@ -80,10 +80,6 @@ def build_organisation_objects_from_db(cur):
     return orgs
 
 
-def get_unattached_contacts_from_db(cur):
-    return []
-
-
 def compare_sets(a, b):
     return (a - b, a & b, b - a)
 
@@ -169,14 +165,8 @@ def compare_orgs_with_db(cur, asn_list, organisation_list, role_list,
     orgs, unattached_as, unattached_roles = \
         build_organisation_objects(asn_list, organisation_list,
                                    role_list, abusec_to_org)
-
     db_orgs = build_organisation_objects_from_db(cur)
-    db_unattached_roles = get_unattached_contacts_from_db(cur)
-
     compare_orgs(cur, db_orgs, orgs)
-
-    compare_unattached("roles", db_unattached_roles,
-                       [r['abuse-mailbox'][0] for r in unattached_roles])
 
 
 def main():
