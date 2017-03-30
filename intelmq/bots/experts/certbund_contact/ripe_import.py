@@ -37,9 +37,9 @@ def remove_old_entries(cur, verbose):
                 "      WHERE import_source = %s;", (SOURCE_NAME,))
     cur.execute("DELETE FROM network_automatic WHERE import_source = %s;",
                 (SOURCE_NAME,))
-    cur.execute("DELETE FROM organisation_automatic WHERE import_source = %s;",
-                (SOURCE_NAME,))
     cur.execute("DELETE FROM contact_automatic WHERE import_source = %s;",
+                (SOURCE_NAME,))
+    cur.execute("DELETE FROM organisation_automatic WHERE import_source = %s;",
                 (SOURCE_NAME,))
 
 
