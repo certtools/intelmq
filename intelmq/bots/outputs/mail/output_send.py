@@ -121,7 +121,7 @@ class MailSendOutputBot(Bot):
     # actual funtion to send email through smtp
     def _send_mail(self, emailfrom, emailto, subject, text, fileContents=None):        
         server = self.parameters.smtp_server
-        if hasattr(self.parameters, 'testing_to'):
+        if hasattr(self.parameters, 'testing_to') and self.parameters.testing_to != "":
             subject = subject + " (intended for " + str(emailto) + ")"
             emailto = self.parameters.testing_to
         msg = MIMEMultipart()
