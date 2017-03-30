@@ -46,7 +46,7 @@ def lookup_by_asn_only(cur, table_extension, asn):
                 "       s.name AS sector"
                 "  FROM contact{0} AS c"
                 "  JOIN organisation_to_asn{0} AS oa"
-                "    ON oa.organisation_id = c.organisation{0}_id"
+                "    ON oa.organisation{0}_id = c.organisation{0}_id"
                 "  JOIN organisation{0} AS o"
                 "    ON o.organisation{0}_id = c.organisation{0}_id"
                 "  LEFT OUTER JOIN sector AS s"

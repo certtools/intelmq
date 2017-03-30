@@ -19,7 +19,6 @@ import sys
 import psycopg2
 import argparse
 import collections
-import ipaddress
 
 import intelmq.bots.experts.certbund_contact.ripe_data as ripe_data
 
@@ -37,23 +36,13 @@ def remove_old_entries(cur, verbose):
                 "      WHERE import_source = %s;", (SOURCE_NAME,))
     cur.execute("DELETE FROM network_automatic WHERE import_source = %s;",
                 (SOURCE_NAME,))
-    cur.execute("DELETE FROM organisation_automatic WHERE import_source = %s;",
-                (SOURCE_NAME,))
     cur.execute("DELETE FROM contact_automatic WHERE import_source = %s;",
                 (SOURCE_NAME,))
+    cur.execute("DELETE FROM organisation_automatic WHERE import_source = %s;",
+                (SOURCE_NAME,))
 
 
-def convert_ip6num(ipnum):
-    return [ipaddress.ip_network(ipnum).compressed]
-
-
-def convert_ipnum_range(ipnum):
-    first, last = [ipaddress.ip_address(s.strip()) for s in ipnum.split("-", 1)]
-    return [network.compressed
-            for network in ipaddress.summarize_address_range(first, last)]
-
-
-def insert_new_network_entries(cur, network_list, key, ipconverter, verbose):
+def insert_new_network_entries(cur, network_list, key, verbose):
     """Insert the networks from network_list into the database.
 
     In some cases a single entry read from the RIPE data file may have
@@ -77,11 +66,6 @@ def insert_new_network_entries(cur, network_list, key, ipconverter, verbose):
             dicts in network_list. Usually either 'inetnum' or
             'inet6num'.
 
-        ipconverter (function): A function mapping the address taken
-            from the dict to a list of strings with network addresses in
-            CIDR notation. Usually either convert_ip6num or
-            convert_ipnum_range.
-
         verbose (bool): If true, print some information about the data
 
     Return:
@@ -92,8 +76,8 @@ def insert_new_network_entries(cur, network_list, key, ipconverter, verbose):
         print('** Saving {} data to database...'.format(key))
     net_org_map = collections.defaultdict(set)
     for entry in network_list:
-        for addr in ipconverter(entry[key][0]):
-            net_org_map[addr].add(entry["org"][0])
+        for addr in entry[key]:
+            net_org_map[addr.compressed].add(entry["org"][0])
 
     org_net_map = collections.defaultdict(list)
     for addr, orgs in net_org_map.items():
@@ -208,6 +192,9 @@ called automatically, e.g. by a cronjob.''')
     (asn_list, organisation_list, role_list, abusec_to_org, inetnum_list,
      inet6num_list) = ripe_data.load_ripe_files(args)
 
+    ripe_data.convert_inetnum_to_networks(inetnum_list)
+    ripe_data.convert_inet6num_to_networks(inet6num_list)
+
     con = None
     try:
         con = psycopg2.connect(dsn=args.conninfo)
@@ -217,9 +204,9 @@ called automatically, e.g. by a cronjob.''')
 
         # network addresses
         org_inet6_mapping = insert_new_network_entries(
-            cur, inet6num_list, "inet6num", convert_ip6num, args.verbose)
+            cur, inet6num_list, "inet6num", args.verbose)
         org_inet_mapping = insert_new_network_entries(
-            cur, inetnum_list, "inetnum", convert_ipnum_range, args.verbose)
+            cur, inetnum_list, "inetnum", args.verbose)
 
         #
         # Organisation

@@ -10,6 +10,6 @@ for db in ripe.db.organisation.gz ripe.db.role.gz ripe.db.aut-num.gz ripe.db.ine
  done
 
 echo "Downloading: Delegated list."
-curl -O ftp://ftp.ripe.net/ripe/stats/delegated-ripencc-latest
+curl -O http://ftp.ripe.net/ripe/stats/delegated-ripencc-latest
 
 exit 0
