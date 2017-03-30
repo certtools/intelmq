@@ -33,7 +33,7 @@ for db in ripe.db.organisation.gz ripe.db.role.gz ripe.db.aut-num.gz ripe.db.ine
  do
   curl -O "http://ftp.ripe.net/ripe/dbase/split/$db"
  done
- curl -O ftp://ftp.ripe.net/ripe/stats/delegated-ripencc-latest
+ curl -O http://ftp.ripe.net/ripe/stats/delegated-ripencc-latest
 ```
 Optionally construct an asn-whitelist for your country, for example for `DE`:
 ```shell
@@ -42,7 +42,7 @@ cat delegated-ripencc-latest | \
   >asn-DE.txt
 ```
 
-**Or use the script** `ripe_download.sh` **to download the required datasets**
+**Or use the script** `ripe_download` **to download the required datasets**
 
 Call `ripe_import.py --help` or `ripe_diff.py --help`
 to see all command line options.
@@ -79,12 +79,12 @@ Here is a different example where the paths to the files is specified
 explicitly:
 
 ```
-ripe_import.py --conninfo "host=localhost user=intelmqadm dbname=contactdb" \
+ripe_import.py --conninfo "host=localhost dbname=contactdb" \
     --organisation-file=/tmp/ripe/ripe.db.organisation.gz \
     --role-file=/tmp/ripe/ripe.db.role.gz \
     --asn-file=/tmp/ripe/ripe.db.aut-num.gz \
-    --ripe-delegated-file==/tmp/ripe/delegated-ripencc-latest \
-    --restrict-to-country DE \ 
+    --ripe-delegated-file=/tmp/ripe/delegated-ripencc-latest \
+    --restrict-to-country DE \
     --verbose
 ```
 
