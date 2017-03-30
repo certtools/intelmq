@@ -1,3 +1,10 @@
+intelmq (1.0.0~dev6+intevation.2.0~rc1) testing; urgency=high
+
+  * Working towards new stable Release
+  * New Contacts-DB-Schema
+
+ -- Sascha Wilde <wilde@intevation.de>  Thu, 30 Mar 2017 15:42:19 +0200
+
 intelmq (1.0.0~dev6+intevation.1.2) testing; urgency=medium
 
   * Final Release of dev6+intevation.1.2
