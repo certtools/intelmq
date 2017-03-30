@@ -18,6 +18,7 @@
 import collections
 import itertools
 import gzip
+import ipaddress
 
 
 def add_db_args(parser):
@@ -291,12 +292,28 @@ def sanitize_inetnum_list(inetnum_list):
             if entry.get('inetnum') and entry.get('org')]
 
 
+def convert_inetnum_to_networks(inetnum_list):
+    """Replace inetnum ranges with lists of network objects in place.
+    """
+    for entry in inetnum_list:
+        first, last = [ipaddress.ip_address(s.strip())
+                       for s in entry["inetnum"][0].split("-", 1)]
+        entry["inetnum"] = ipaddress.summarize_address_range(first, last)
+
+
 def sanitize_inet6num_list(inet6num_list):
     return [uppercase_org_handle(entry) for entry in inet6num_list
 
             # keep only entries for which we have the minimal
             # necessary attributes
             if entry.get('inet6num') and entry.get('org')]
+
+
+def convert_inet6num_to_networks(inet6num_list):
+    """Replace inet6num CIDRs with lists of network objects in place.
+    """
+    for entry in inet6num_list:
+        entry["inet6num"] = [ipaddress.ip_network(entry["inet6num"][0])]
 
 
 def sanitize_role_entry(entry):
