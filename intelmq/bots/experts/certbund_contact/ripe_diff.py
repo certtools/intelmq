@@ -3,6 +3,7 @@
 
 import sys
 import argparse
+import ipaddress
 
 import psycopg2
 
@@ -19,15 +20,16 @@ def extract_asn(aut_entry):
 
 class Organisation:
 
-    def __init__(self, handle, name, asns=(), contacts=()):
+    def __init__(self, handle, name, asns=(), networks=(), contacts=()):
         self.handle = handle
         self.name = name
         self.asns = list(asns)
+        self.networks = list(networks)
         self.contacts = list(contacts)
 
 
-def build_organisation_objects(asn_list, organisation_list, role_list,
-                               role_to_org):
+def build_organisation_objects(asn_list, inetnum_list, inet6num_list,
+                               organisation_list, role_list, role_to_org):
 
     orgs = {entry["organisation"][0]: Organisation(entry["organisation"][0],
                                                    entry['org-name'][0])
@@ -41,6 +43,14 @@ def build_organisation_objects(asn_list, organisation_list, role_list,
             org.asns.append(extract_asn(aut))
         else:
             unattached_as.append(aut)
+
+    for key, netnums in [("inetnum", inetnum_list),
+                         ("inet6num", inet6num_list)]:
+        for net in netnums:
+            org_handle = net["org"][0]
+            org = orgs.get(org_handle)
+            if org is not None:
+                org.networks.extend(net[key])
 
     unattached_roles = []
     for role in role_list:
@@ -61,6 +71,12 @@ def build_organisation_objects_from_db(cur):
                    FROM organisation_to_asn_automatic oa
                   WHERE oa.organisation_automatic_id
                         = o.organisation_automatic_id),
+           ARRAY(SELECT text(n.address)
+                   FROM network_automatic n
+                   JOIN organisation_to_network_automatic orgn
+                     ON n.network_automatic_id = orgn.network_automatic_id
+                  WHERE orgn.organisation_automatic_id
+                        = o.organisation_automatic_id),
            ARRAY(SELECT c.email
                    FROM contact_automatic c
                   WHERE c.organisation_automatic_id
@@ -74,8 +90,11 @@ def build_organisation_objects_from_db(cur):
         row = cur.fetchone()
         if row is None:
             break
-        org_handle, name, asns, contacts = row
-        orgs[org_handle] = Organisation(org_handle, name, asns, contacts)
+        org_handle, name, asns, networks, contacts = row
+        orgs[org_handle] = Organisation(org_handle, name, asns,
+                                        [ipaddress.ip_network(addr)
+                                         for addr in networks],
+                                        contacts)
 
     return orgs
 
@@ -105,6 +124,7 @@ def organisation_changes(handles, orgs_a, orgs_b):
         if a.name != b.name:
             changes.append("Name changed from %r to %r" % (a.name, b.name))
         changes.extend(item_list_changes("ASNs", a.asns, b.asns))
+        changes.extend(item_list_changes("networks", a.networks, b.networks))
         changes.extend(item_list_changes("contacts", a.contacts, b.contacts))
         if changes:
             yield handle, changes
@@ -160,11 +180,11 @@ def compare_unattached(name, old, new):
             print("    ", item)
 
 
-def compare_orgs_with_db(cur, asn_list, organisation_list, role_list,
-                         abusec_to_org):
+def compare_orgs_with_db(cur, asn_list, inetnum_list, inet6num_list,
+                         organisation_list, role_list, abusec_to_org):
     orgs, unattached_as, unattached_roles = \
-        build_organisation_objects(asn_list, organisation_list,
-                                   role_list, abusec_to_org)
+        build_organisation_objects(asn_list, inetnum_list, inet6num_list,
+                                   organisation_list, role_list, abusec_to_org)
     db_orgs = build_organisation_objects_from_db(cur)
     compare_orgs(cur, db_orgs, orgs)
 
@@ -182,10 +202,14 @@ def main():
     (asn_list, organisation_list, role_list, abusec_to_org, inetnum_list,
      inet6num_list) = ripe_data.load_ripe_files(options)
 
+    ripe_data.convert_inetnum_to_networks(inetnum_list)
+    ripe_data.convert_inet6num_to_networks(inet6num_list)
+
     con = psycopg2.connect(dsn=options.conninfo)
     try:
-        compare_orgs_with_db(con.cursor(), asn_list, organisation_list,
-                             role_list, abusec_to_org)
+        compare_orgs_with_db(con.cursor(), asn_list, inetnum_list,
+                             inet6num_list, organisation_list, role_list,
+                             abusec_to_org)
     finally:
         con.close()
 
