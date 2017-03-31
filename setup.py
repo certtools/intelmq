@@ -42,7 +42,6 @@ DATA = [
      ),
     ('share/intelmq/certbund_contact/',
      ['intelmq/bots/experts/certbund_contact/initdb.sql',
-      'intelmq/bots/experts/certbund_contact/defaults.sql',
       ],
      ),
 ]
