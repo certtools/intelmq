@@ -1,4 +1,8 @@
 /opt/intelmq/var/lib/bots/modify/modify.conf
+/opt/intelmq/var/lib/bots/notification_rules/05inhibitions.py
+/opt/intelmq/var/lib/bots/notification_rules/20prioritize_contacts.py
+/opt/intelmq/var/lib/bots/notification_rules/50shadowserver.py
+/opt/intelmq/var/lib/bots/notification_rules/40xarf.py
 /opt/intelmq/etc/harmonization.conf
 /opt/intelmq/etc/BOTS
 /opt/intelmq/etc/pipeline.conf
