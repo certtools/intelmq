@@ -4,23 +4,25 @@ copytruncate
 create 640 intelmq intelmq
 
 /opt/intelmq/var/log/*.log {
+    su intelmq intelmq
     daily
     maxsize 10M
     rotate 60
     notifempty
     sharedscripts
     postrotate
-        sudo -u intelmq /usr/local/bin/intelmqctl reload --quiet
+        /usr/local/bin/intelmqctl reload --quiet
     endscript
 }
 
 /opt/intelmq/var/lib/bots/file-output/*.txt {
-        daily
-        maxsize 10M
-        rotate 60
-        notifempty
+    su intelmq intelmq
+    daily
+    maxsize 10M
+    rotate 60
+    notifempty
     sharedscripts
     postrotate
-        sudo -u intelmq /usr/local/bin/intelmqctl reload --quiet
+        /usr/local/bin/intelmqctl reload file-output --quiet
     endscript
 }

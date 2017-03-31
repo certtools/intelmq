@@ -4,12 +4,9 @@ The source provides a JSOn file with a dictionary. The keys of this dict are
 identifiers and the values are lists of domains.
 """
 import json
-import sys
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.exceptions import InvalidValue
-from intelmq.lib.message import Event
 
 __all__ = ['FraunhoferDGAParserBot']
 
@@ -23,18 +20,15 @@ class FraunhoferDGAParserBot(Bot):
         # add all lists together, only one loop needed
         for row in sum(dict_report.values(), []):
 
-            event = Event(report)
+            event = self.new_event(report)
 
             event.add('classification.type', 'c&c')
-            try:
-                event.add('source.ip', row)
-            except InvalidValue:
+            if not event.add('source.ip', row, raise_failure=False):
                 event.add('source.fqdn', row)
             event.add("raw", row)
 
             self.send_message(event)
         self.acknowledge_message()
 
-if __name__ == "__main__":
-    bot = FraunhoferDGAParserBot(sys.argv[1])
-    bot.start()
+
+BOT = FraunhoferDGAParserBot

@@ -1,31 +1,26 @@
 # -*- coding: utf-8 -*-
 import io
 import re
-import requests
-import sys
 import zipfile
 
-from intelmq.lib.bot import Bot
-from intelmq.lib.message import Report
+import requests
 
-import rt
+from intelmq.lib.bot import CollectorBot
+
+try:
+    import rt
+except ImportError:
+    rt = None
 
 
-class RTCollectorBot(Bot):
+class RTCollectorBot(CollectorBot):
 
     def init(self):
-        self.http_header = getattr(self.parameters, 'http_header', {})
-        self.http_verify_cert = getattr(self.parameters, 'http_verify_cert',
-                                        True)
+        if rt is None:
+            self.logger.error('Could not import rt. Please install it.')
+            self.stop()
 
-        http_proxy = getattr(self.parameters, 'http_proxy', None)
-        https_proxy = getattr(self.parameters, 'http_ssl_proxy', None)
-        if http_proxy and https_proxy:
-            self.proxy = {'http': http_proxy, 'https': https_proxy}
-        else:
-            self.proxy = None
-
-        self.http_header['User-agent'] = self.parameters.http_user_agent
+        self.set_request_parameters()
 
     def process(self):
         RT = rt.Rt(self.parameters.uri, self.parameters.user,
@@ -36,7 +31,8 @@ class RTCollectorBot(Bot):
         query = RT.search(Queue=self.parameters.search_queue,
                           Subject__like=self.parameters.search_subject_like,
                           Owner=self.parameters.search_owner,
-                          Status=self.parameters.search_status)
+                          Status=self.parameters.search_status,
+                          order='Created')
         self.logger.info('{} results on search query.'.format(len(query)))
 
         for ticket in query:
@@ -49,7 +45,9 @@ class RTCollectorBot(Bot):
                                       ''.format(att_id, att_name))
                     break
             else:
-                text = RT.get_history(ticket_id)[0]['Content']
+                ticket = RT.get_history(ticket_id)[0]
+                text = ticket['Content']
+                created = ticket['Created']
                 urlmatch = re.search(self.parameters.url_regex, text)
                 if urlmatch:
                     content = 'url'
@@ -59,6 +57,7 @@ class RTCollectorBot(Bot):
                     continue
             if content == 'attachment':
                 attachment = RT.get_attachment_content(ticket_id, att_id)
+                created = RT.get_attachment(ticket_id, att_id)['Created']
 
                 if self.parameters.unzip_attachment:
                     file_obj = io.BytesIO(attachment)
@@ -67,9 +66,11 @@ class RTCollectorBot(Bot):
                 else:
                     raw = attachment
             else:
-                resp = requests.get(url=url, proxies=self.proxy,
+                resp = requests.get(url=url, auth=self.auth,
+                                    proxies=self.proxy,
                                     headers=self.http_header,
-                                    verify=self.http_verify_cert)
+                                    verify=self.http_verify_cert,
+                                    cert=self.ssl_client_cert)
 
                 if resp.status_code // 100 != 2:
                     self.logger.error('HTTP response status code was {}.'
@@ -77,12 +78,10 @@ class RTCollectorBot(Bot):
                 self.logger.info("Report downloaded.")
                 raw = resp.text
 
-            report = Report()
-            report.add("raw", raw, sanitize=True)
-            report.add("rtir_id", ticket_id, sanitize=True)
-            report.add("feed.name", self.parameters.feed, sanitize=True)
-            report.add("feed.accuracy", self.parameters.accuracy,
-                       sanitize=True)
+            report = self.new_report()
+            report.add("raw", raw)
+            report.add("rtir_id", ticket_id)
+            report.add("time.observation", created + ' UTC', overwrite=True)
             self.send_message(report)
 
             if self.parameters.take_ticket:
@@ -94,6 +93,4 @@ class RTCollectorBot(Bot):
                 RT.edit_ticket(ticket_id, status=self.parameters.set_status)
 
 
-if __name__ == "__main__":
-    bot = RTCollectorBot(sys.argv[1])
-    bot.start()
+BOT = RTCollectorBot

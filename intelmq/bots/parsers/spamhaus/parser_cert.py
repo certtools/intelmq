@@ -21,13 +21,10 @@
 ; ip, asn, country, lastseen, botname, domain, remote_ip, remote_port,
 local_port, protocol
 """
-import sys
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.exceptions import InvalidValue
 from intelmq.lib.harmonization import DateTime
-from intelmq.lib.message import Event
 
 __all__ = ['SpamhausCERTParserBot']
 
@@ -46,7 +43,7 @@ class SpamhausCERTParserBot(Bot):
                 continue
 
             row_splitted = [field.strip() for field in row.split(',')]
-            event = Event(report)
+            event = self.new_event(report)
 
             event.add('source.ip', row_splitted[0])
             event.add('source.asn', row_splitted[1].replace('AS', ''))
@@ -54,10 +51,8 @@ class SpamhausCERTParserBot(Bot):
             event.add('time.source',
                       DateTime.from_timestamp(int(row_splitted[3])))
             event.add('malware.name', row_splitted[4].lower())
-            try:
-                event.add('destination.fqdn', row_splitted[5])
-            except InvalidValue:
-                pass  # otherwise the same ip, ignore
+            # otherwise the same ip, ignore
+            event.add('destination.fqdn', row_splitted[5], raise_failure=False)
             event.add('destination.ip', row_splitted[6])
             event.add('destination.port', row_splitted[7])
             if row_splitted[8] and row_splitted[8] != '-':
@@ -70,6 +65,5 @@ class SpamhausCERTParserBot(Bot):
             self.send_message(event)
         self.acknowledge_message()
 
-if __name__ == "__main__":
-    bot = SpamhausCERTParserBot(sys.argv[1])
-    bot.start()
+
+BOT = SpamhausCERTParserBot

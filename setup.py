@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import json
+import os
 
 from setuptools import find_packages, setup
 
@@ -23,8 +25,6 @@ DATA = [
       'intelmq/etc/harmonization.conf',
       'intelmq/etc/pipeline.conf',
       'intelmq/etc/runtime.conf',
-      'intelmq/etc/startup.conf',
-      'intelmq/etc/system.conf',
       ],
      ),
     ('/opt/intelmq/var/lib/bots/modify/example',
@@ -45,15 +45,14 @@ DATA = [
      ),
 ]
 
-try:
-    import pypandoc
-    DESCRIPTION = pypandoc.convert('README.md', 'rst')
-except(IOError, ImportError):
-    DESCRIPTION = open('README.md').read()
-
-
-exec(open('intelmq/version.py').read())  # defines __version__
-
+exec(open(os.path.join(os.path.dirname(__file__),
+                       'intelmq/version.py')).read())  # defines __version__
+BOTS = []
+bots = json.load(open(os.path.join(os.path.dirname(__file__), 'intelmq/bots/BOTS')))
+for bot_type, bots in bots.items():
+    for bot_name, bot in bots.items():
+        module = bot['module']
+        BOTS.append('{0} = {0}:BOT.run'.format(module))
 
 setup(
     name='intelmq',
@@ -61,11 +60,7 @@ setup(
     maintainer='Sebastian Wagner',
     maintainer_email='wagner@cert.at',
     install_requires=REQUIRES,
-    tests_requires=REQUIRES+[
-        'mock>=1.1.1',
-        'nose',
-        ],
-    test_suite='nose.collector',
+    test_suite='intelmq.tests',
     packages=find_packages(),
     package_data={'intelmq': [
         'etc/*.conf',
@@ -76,9 +71,10 @@ setup(
     include_package_data=True,
     url='https://github.com/certtools/intelmq/',
     license='AGPLv3',
-    description='IntelMQ is a solution for CERTs to process data feeds, '
-                'pastebins, tweets throught a message queue.',
-    long_description=DESCRIPTION,
+    description='IntelMQ is a solution for IT security teams for collecting and '
+                'processing security feeds using a message queuing protocol.',
+    long_description=open(os.path.join(os.path.dirname(__file__),
+                                       'docs/README.rst')).read(),
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Console',
@@ -91,6 +87,7 @@ setup(
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
         'Topic :: Security',
     ],
     keywords='incident handling cert csirt',
@@ -100,7 +97,7 @@ setup(
             'intelmqctl = intelmq.bin.intelmqctl:main',
             'intelmqdump = intelmq.bin.intelmqdump:main',
             'intelmq_psql_initdb = intelmq.bin.intelmq_psql_initdb:main',
-        ],
+        ] + BOTS,
     },
     scripts=[
         'intelmq/bots/experts/tor_nodes/update-tor-nodes',

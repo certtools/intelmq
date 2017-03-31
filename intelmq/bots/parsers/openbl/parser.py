@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
-import sys
 from datetime import datetime
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.message import Event
 
 
 class OpenBLParserBot(Bot):
@@ -21,7 +19,7 @@ class OpenBLParserBot(Bot):
                 continue
 
             splitted_row = row.split()
-            event = Event(report)
+            event = self.new_event(report)
 
             columns = ["source.ip", "time.source"]
 
@@ -39,6 +37,4 @@ class OpenBLParserBot(Bot):
         self.acknowledge_message()
 
 
-if __name__ == "__main__":
-    bot = OpenBLParserBot(sys.argv[1])
-    bot.start()
+BOT = OpenBLParserBot

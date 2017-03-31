@@ -5,15 +5,11 @@ identifiers and the values are lists of domains.
 """
 
 import json
-import sys
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.message import Event
 
 __all__ = ['N6StompParserBot']
-# FIXME: setting the identifier could be done in the modify.conf file.
-# However, it was easier here. TBD.
 mapping = dict()
 mapping['amplifier']    = {"taxonomy": "Vulnerable",
                            "type": "vulnerable service",
@@ -72,7 +68,6 @@ class N6StompParserBot(Bot):
     def process(self):
         report = self.receive_message()
 
-
         peek = utils.base64_decode(report.get("raw"))
         self.logger.debug("Peeking at event '%s'." % peek)
         if "TEST MESSAGE" in peek:
@@ -81,7 +76,7 @@ class N6StompParserBot(Bot):
             return
 
         # try to parse a JSON object
-        event = Event(report)
+        event = self.new_event(report)
         dict_report = json.loads(peek)
 
         event.add("raw", report.get("raw"), sanitize=False)
@@ -123,13 +118,13 @@ class N6StompParserBot(Bot):
         if dict_report["category"] is not None:
             event.add("classification.taxonomy",
                       mapping[dict_report["category"]]["taxonomy"],
-                      force=True)
+                      overwrite=True)
             event.add("classification.type",
                       mapping[dict_report["category"]]["type"],
-                      force=True)
+                      overwrite=True)
             event.add("classification.identifier",
                       mapping[dict_report["category"]]["identifier"],
-                      force=True)
+                      overwrite=True)
 
         if extra:
             event.add("extra", extra)
@@ -141,12 +136,12 @@ class N6StompParserBot(Bot):
                              "neither an address nor an fqdn given")
         elif ("fqdn" in dict_report):
             # need to handle domain based data later (for example via gethostbyname bot)
-            ev = Event(event)
+            ev = self.new_event(event)
             self.send_message(ev)
         else:
             # split up the event into multiple ones, one for each address
             for addr in dict_report['address']:
-                ev = Event(event)
+                ev = self.new_event(event)
                 ev.add("source.ip", addr["ip"])
                 if ("asn" in addr):
                     ev.add("source.asn", addr["asn"])
@@ -161,6 +156,4 @@ class N6StompParserBot(Bot):
         self.acknowledge_message()
 
 
-if __name__ == "__main__":
-    bot = N6StompParserBot(sys.argv[1])
-    bot.start()
+BOT = N6StompParserBot

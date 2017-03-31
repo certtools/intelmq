@@ -57,5 +57,5 @@ class TestBlockListDEParserBot(test.BotTestCase, unittest.TestCase):
             event.update(TEMPLATE)
             self.assertMessageEqual(count, event)
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

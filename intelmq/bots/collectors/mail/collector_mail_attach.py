@@ -1,19 +1,16 @@
 # -*- coding: utf-8 -*-
 import re
-import sys
 import zipfile
+
+from intelmq.lib.bot import CollectorBot
 
 try:
     import imbox
 except ImportError:
     imbox = None
-import requests
-
-from intelmq.lib.bot import Bot
-from intelmq.lib.message import Report
 
 
-class MailAttachCollectorBot(Bot):
+class MailAttachCollectorBot(CollectorBot):
 
     def init(self):
         if imbox is None:
@@ -32,10 +29,8 @@ class MailAttachCollectorBot(Bot):
 
                 if (self.parameters.subject_regex and
                         not re.search(self.parameters.subject_regex,
-                                      message.subject)):
+                                      re.sub("\r\n\s", " ", message.subject))):
                     continue
-
-                self.logger.info("Reading email report")
 
                 for attach in message.attachments:
                     if not attach:
@@ -53,10 +48,8 @@ class MailAttachCollectorBot(Bot):
                         else:
                             raw_report = attach['content'].read()
 
-                        report = Report()
+                        report = self.new_report()
                         report.add("raw", raw_report)
-                        report.add("feed.name", self.parameters.feed)
-                        report.add("feed.accuracy", self.parameters.accuracy)
 
                         self.send_message(report)
 
@@ -64,10 +57,8 @@ class MailAttachCollectorBot(Bot):
                         # so other instances watching this mailbox will still
                         # check it.
                         mailbox.mark_seen(uid)
-                self.logger.info("Email report read")
+                self.logger.debug("Email report read.")
         mailbox.logout()
 
 
-if __name__ == "__main__":
-    bot = MailAttachCollectorBot(sys.argv[1])
-    bot.start()
+BOT = MailAttachCollectorBot

@@ -57,5 +57,5 @@ class TestDshieldBlockParserBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(0, EVENTS[0])
         self.assertMessageEqual(1, EVENTS[1])
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

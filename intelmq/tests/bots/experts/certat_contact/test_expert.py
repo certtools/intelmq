@@ -2,7 +2,6 @@
 """
 Testing certat_contact
 """
-
 import unittest
 
 import intelmq.lib.test as test
@@ -25,15 +24,17 @@ EXAMPLE_OUTPUT = {"__type": "Event",
 EXAMPLE_INPUT6 = {"__type": "Event",
                   "source.ip": "2001:500:88:200::7",  # iana.org
                   "time.observation": "2015-01-01T00:00:00+00:00",
+                  "source.abuse_contact": "existing@example.com",
                   }
 EXAMPLE_OUTPUT6 = {"__type": "Event",
                    "source.ip": "2001:500:88:200::7",
-                   "source.abuse_contact": "soc@us-cert.gov",
+                   "source.abuse_contact": "existing@example.com,soc@us-cert.gov",
                    "source.geolocation.cc": "US",
                    "time.observation": "2015-01-01T00:00:00+00:00",
                    }
 
 
+@test.skip_internet()
 class TestCERTatContactExpertBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for AbusixExpertBot.
@@ -46,7 +47,6 @@ class TestCERTatContactExpertBot(test.BotTestCase, unittest.TestCase):
                          'overwrite_cc': False,
                          'http_verify_cert': False,
                          }
-        cls.default_input_message = {'__type': 'Report'}
 
     def test_ipv4_lookup(self):
         self.input_message = EXAMPLE_INPUT
@@ -59,5 +59,5 @@ class TestCERTatContactExpertBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(0, EXAMPLE_OUTPUT6)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

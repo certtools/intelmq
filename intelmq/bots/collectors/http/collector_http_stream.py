@@ -1,35 +1,31 @@
 # -*- coding: utf-8 -*-
-import sys
 
-import pycurl
-from intelmq.lib.bot import Bot
-from intelmq.lib.message import Report
+import requests
+
+from intelmq.lib.bot import CollectorBot
+from intelmq.lib.utils import decode
 
 
-class HTTPStreamCollectorBot(Bot):
-
-    def init(self):
-        self.conn = pycurl.Curl()
-        self.conn.setopt(pycurl.URL, str(self.parameters.http_url))
-        self.conn.setopt(pycurl.WRITEFUNCTION, self.on_receive)
+class HTTPStreamCollectorBot(CollectorBot):
 
     def process(self):
-        self.conn.perform()
+        try:
+            req = requests.get(self.parameters.url, stream=True)
+        except requests.exceptions.ConnectionError:
+            raise ValueError('Connection Failed.')
+        else:
+            for line in req.iter_lines():
+                if self.parameters.strip_lines:
+                    line = line.strip()
 
-    def on_receive(self, data):
-        for line in data.decode().splitlines():
+                if not line:
+                    # filter out keep-alive new lines and empty lines
+                    continue
 
-            line = line.strip()
-            if line == "":
-                continue
-
-            report = Report()
-            report.add("raw", str(line))
-            report.add("feed.name", self.parameters.feed)
-            report.add("feed.accuracy", self.parameters.accuracy)
-            self.send_message(report)
+                report = self.new_report()
+                report.add("raw", decode(line))
+                self.send_message(report)
+            self.logger.info('Stream stopped.')
 
 
-if __name__ == "__main__":
-    bot = HTTPStreamCollectorBot(sys.argv[1])
-    bot.start()
+BOT = HTTPStreamCollectorBot

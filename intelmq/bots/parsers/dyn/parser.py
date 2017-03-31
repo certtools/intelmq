@@ -4,20 +4,18 @@ format:
 ponmocup-malware-IP ponmocup-malware-domain ponmocup-malware-URI-path ponmocup-htaccess-infected-domain
 """
 
-import sys
 
 import dateutil.parser
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.message import Event
 
 
 class DynParserBot(Bot):
 
     def init(self):
-        self.TZOFFSETS = {'PST': -8*60*60,
-                          'PDT': -7*60*60}
+        self.TZOFFSETS = {'PST': -8 * 60 * 60,
+                          'PDT': -7 * 60 * 60}
 
     def process(self):
         report = self.receive_message()
@@ -26,7 +24,7 @@ class DynParserBot(Bot):
 
         for row in raw_report.splitlines():
             if row.startswith("# last updated:"):
-                source_time = dateutil.parser.parse(row[row.find(':')+1:],
+                source_time = dateutil.parser.parse(row[row.find(':') + 1:],
                                                     tzinfos=self.TZOFFSETS)
                 source_time = source_time.isoformat()
                 continue
@@ -35,7 +33,7 @@ class DynParserBot(Bot):
 
             row_split = row.split()
 
-            event_infected = Event(report)
+            event_infected = self.new_event(report)
             event_infected.add('time.source', source_time)
             event_infected.add('classification.type', 'malware')
             if row_split[0] != '/':
@@ -50,7 +48,7 @@ class DynParserBot(Bot):
 
             self.send_message(event_infected)
 
-            event_compromised = Event(report)
+            event_compromised = self.new_event(report)
             event_compromised.add('time.source', source_time)
             event_compromised.add('classification.type', 'compromised')
             if row_split[0] != '/':
@@ -67,6 +65,5 @@ class DynParserBot(Bot):
 
         self.acknowledge_message()
 
-if __name__ == "__main__":
-    bot = DynParserBot(sys.argv[1])
-    bot.start()
+
+BOT = DynParserBot

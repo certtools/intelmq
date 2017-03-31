@@ -10,7 +10,6 @@ EXAMPLE_INPUT = {"__type": "Event",
                  "time.source": "2005-01-01T00:00:00+00:00",
                  "time.observation": "2015-09-12T00:00:00+00:00",
                  "feed.name": "test-feed",
-                 "raw": "fds56gf4jh4jhgh4j6"
                  }
 
 
@@ -29,5 +28,5 @@ class TestFilterExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertOutputQueueLen(0)
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

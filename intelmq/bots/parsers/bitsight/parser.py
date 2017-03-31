@@ -14,25 +14,19 @@ _geo_env_remote_addr.country_name       Country location of the IP              
 """
 
 import json
-import sys
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
-from intelmq.lib.exceptions import InvalidValue
 from intelmq.lib.harmonization import DateTime
-from intelmq.lib.message import Event
 
 
 class BitsightParserBot(Bot):
 
     def process(self):
         report = self.receive_message()
-        if report is None or not report.contains('raw'):
-            self.acknowledge_message()
-            return
         raw_report = json.loads(utils.base64_decode(report.get('raw')))
         extra = {}
-        event = Event(report)
+        event = self.new_event(report)
         event.add("raw", report.get('raw'), sanitize=False)
         event.add('classification.type', 'malware')
         event.add('event_description.text', 'Sinkhole attempted connection')
@@ -52,10 +46,7 @@ class BitsightParserBot(Bot):
                 if "server_port" in value:
                     event.add('destination.port', value["server_port"])
                 if "server_name" in value:
-                    try:
-                        event.add('destination.fqdn', value["server_name"])
-                    except InvalidValue:
-                        pass
+                    event.add('destination.fqdn', value["server_name"], raise_failure=False)
                 if "request_method" in value:
                     extra['request_method'] = value["request_method"]
                 if extra:
@@ -65,6 +56,5 @@ class BitsightParserBot(Bot):
         self.send_message(event)
         self.acknowledge_message()
 
-if __name__ == "__main__":
-    bot = BitsightParserBot(sys.argv[1])
-    bot.start()
+
+BOT = BitsightParserBot
