@@ -1,4 +1,3 @@
-certbund-sql-paths.patch
 postgres-bot-readme-path.patch
 change-log-level.patch
 fix-logrotate-path.patch
