@@ -93,6 +93,10 @@ class AlienVaultOTXParserBot(Bot):
                         pulse["targeted_countries"]
                 if 'adversary' in pulse:
                     additional_indicator['adversary'] = pulse["adversary"]
+                if 'targeted_countries' in pulse:
+                    tc = pulse['targeted_countries']
+                    if tc:
+                        additional_indicator['targeted_countries'] = tc.join(',')
 
                 additional = additional_pulse.copy()
                 additional.update(additional_indicator)
