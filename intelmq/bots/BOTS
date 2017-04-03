@@ -618,11 +618,11 @@
             "parameters": {
                 "collection": "<collection>",
                 "database": "<database>",
-                "db_user": "<user>",
-                "db_pass": "<password>",
+                "db_user": null,
+                "db_pass": null,
                 "hierarchical_output": true,
-                "host": "<ip>",
-                "port": "<port>"
+                "host": "localhost",
+                "port": "27017"
             }
         },
         "PostgreSQL": {
