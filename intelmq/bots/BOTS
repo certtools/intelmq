@@ -618,6 +618,8 @@
             "parameters": {
                 "collection": "<collection>",
                 "database": "<database>",
+                "db_user": "<user>",
+                "db_pass": "<password>",
                 "hierarchical_output": true,
                 "host": "<ip>",
                 "port": "<port>"
