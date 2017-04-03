@@ -96,7 +96,7 @@ class AlienVaultOTXParserBot(Bot):
                 if 'targeted_countries' in pulse:
                     tc = pulse['targeted_countries']
                     if tc:
-                        additional_indicator['targeted_countries'] = tc.join(',')
+                        additional_indicator['targeted_countries'] = tc
 
                 additional = additional_pulse.copy()
                 additional.update(additional_indicator)
