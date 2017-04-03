@@ -29,7 +29,7 @@ class MongoDBOutputBot(Bot):
             raise ValueError('Connection to mongodb server failed.')
         else:
             db = self.client[self.parameters.database]
-            if self.parameters.db_user and self.parameters.db_password:
+            if self.parameters.db_user and self.parameters.db_pass:
                 try:
                     db.authenticate(name=self.parameters.db_user,
                                     password=self.parameters.db_pass)
