@@ -31,6 +31,7 @@ services:
   - redis-server
   - postgresql
   - elasticsearch
+  - mongodb
 after_success:
   - codecov
 addons:
