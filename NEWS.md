@@ -87,6 +87,7 @@ ALTER TABLE events
 ```sql
 ALTER TABLE events
    ADD COLUMN "misp.attribute_uuid" varchar(36),
+   ADD COLUMN "malware.hash.sha256" text,
    ALTER COLUMN "misp.event_uuid" SET DATA TYPE varchar(36);
    
 ALTER TABLE events   RENAME COLUMN "misp_uuid" TO "misp.event_uuid";
