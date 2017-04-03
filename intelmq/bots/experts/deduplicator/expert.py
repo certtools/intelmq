@@ -1,21 +1,23 @@
 # -*- coding: utf-8 -*-
-"""
-Deduplicator expert bot
+"""Deduplicator expert bot
 
 Parameters:
 
-redis_cache_host: string
-redis_cache_port: int
-redis_cache_db: int
-redis_cache_ttl: int
-redis_cache_password: string
-    default: {None}
+    redis_cache_host: string
 
-filter_type: string ["blacklist", "whitelist"]
-filter_keys: string with multiple keys separated by comma. Please
-             note that time.observation key is never consider by the
-             system because system will always ignore this key.
+    redis_cache_port: int
 
+    redis_cache_db: int
+
+    redis_cache_ttl: int
+
+    redis_cache_password: string.  default: {None}
+
+    filter_type: string ["blacklist", "whitelist"]
+
+    filter_keys: string with multiple keys separated by comma. Please
+                 note that time.observation key is never consider by the
+                 system because system will always ignore this key.
 """
 
 from intelmq.lib.bot import Bot

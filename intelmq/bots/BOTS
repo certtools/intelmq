@@ -98,6 +98,7 @@
                 "provider": "",
                 "password": "password",
                 "rate_limit": 3600,
+                "search_not_older_than": null,
                 "search_owner": "nobody",
                 "search_queue": "Incident Reports",
                 "search_status": "new",
@@ -557,7 +558,8 @@
             "description": "Tor Nodes is the bot responsible to check if an IP is an Tor Exit Node.",
             "module": "intelmq.bots.experts.tor_nodes.expert",
             "parameters": {
-                "database": "/opt/intelmq/var/lib/bots/tor_nodes/tor_nodes.dat"
+                "database": "/opt/intelmq/var/lib/bots/tor_nodes/tor_nodes.dat",
+                "overwrite": false
             }
         },
         "url2fqdn": {

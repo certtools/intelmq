@@ -1,22 +1,24 @@
 # -*- coding: utf-8 -*-
 """
 Copyright (C) 2016 by Bundesamt für Sicherheit in der Informationstechnik
+
 Software engineering by Intevation GmbH
 
 This is a configuration File for the shadowserver parser
 
 Mappings are "straight forward" each mapping is a dict
 of at least three keys:
- 1) required fields:
-    the parser will work this keys first.
- 2) optional fields:
-    the parser will try to interpret these values.
-    if it fails, the value is written to the extra field
- 3) constant fields:
-    Some information about an event may not be explicitly stated in a
-    feed because it is implicit in the nature of the feed. For instance
-    a feed that is exclusively about HTTP may not have a field for the
-    protocol because it's always TCP.
+
+1. required fields:
+   the parser will work this keys first.
+2. optional fields:
+   the parser will try to interpret these values.
+   if it fails, the value is written to the extra field
+3. constant fields:
+   Some information about an event may not be explicitly stated in a
+   feed because it is implicit in the nature of the feed. For instance
+   a feed that is exclusively about HTTP may not have a field for the
+   protocol because it's always TCP.
 
 The first value is the IntelMQ key,
 the second value is the row in the shadowserver csv.
@@ -24,10 +26,9 @@ the second value is the row in the shadowserver csv.
 
 Reference material:
     * when setting the classification.* fields, please use the taxonomy from
-    [eCSIRT II](https://www.trusted-introducer.org/Incident-Classification-Taxonomy.pdf)
-    Also to be found on the
-    [ENISA page](https://www.enisa.europa.eu/topics/csirt-cert-services/community-projects/existing-taxonomies)
-
+      [eCSIRT II](https://www.trusted-introducer.org/Incident-Classification-Taxonomy.pdf)
+      Also to be found on the
+      [ENISA page](https://www.enisa.europa.eu/topics/csirt-cert-services/community-projects/existing-taxonomies)
     * please respect the Data harmonisation ontology: https://github.com/certtools/intelmq/blob/master/docs/Data-Harmonization.md
 
 
@@ -125,7 +126,8 @@ def convert_hostname_and_url(value, row):
     """
     if row['application'] in ['http', 'https', 'irc']:
         if row['hostname'] and row['url']:
-            return row['application'] + '://' + row['hostname'] + row['url']
+            url = row['url'] if row['url'].startswith('/') else '/' + row['url']
+            return row['application'] + '://' + row['hostname'] + url
 
         elif row['hostname'] and not row['url']:
             return row['application'] + '://' + row['hostname']

@@ -112,7 +112,7 @@ class TestUtils(unittest.TestCase):
                 "ERROR - Something went wrong")
 
         fields = utils.parse_logline(line)
-        self.assertDictEqual({'date': '2015-05-29 21:00:24,379',
+        self.assertDictEqual({'date': '2015-05-29T21:00:24.379000',
                               'bot_id': 'malware-domain-list-collector',
                               'log_level': 'ERROR',
                               'message': 'Something went wrong'},
@@ -128,10 +128,33 @@ class TestUtils(unittest.TestCase):
         actual = utils.parse_logline(line)
         self.assertEqual(line, actual)
 
+    def test_parse_logline_syslog(self):
+        """Tests if the parse_logline() function parses syslog correctly. """
+        line = ("Feb 22 10:17:10 host malware-domain-list-collector: ERROR "
+                "Something went wrong")
+
+        actual = utils.parse_logline(line, regex=utils.SYSLOG_REGEX)
+        self.assertEqual({'bot_id': 'malware-domain-list-collector',
+                          'date': '2017-02-22T10:17:10',
+                          'log_level': 'ERROR',
+                          'message': 'Something went wrong'}, actual)
+
     def test_error_message_from_exc(self):
         """Tests if error_message_from_exc correctly returns the error message."""
         exc = IndexError('This is a test')
         self.assertEqual(utils.error_message_from_exc(exc), 'This is a test')
+
+    def test_parse_relative(self):
+        """Tests if parse_reltive returns the correct timespan."""
+        self.assertEqual(utils.parse_relative('1 hour'), 60)
+        self.assertEqual(utils.parse_relative('2\tyears'), 1051200)
+
+    def test_parse_relative_raises(self):
+        """Tests if parse_reltive correctly raises ValueError."""
+        with self.assertRaises(ValueError):
+            utils.parse_relative('1 hou')
+        with self.assertRaises(ValueError):
+            utils.parse_relative('1 minute')
 
 
 if __name__ == '__main__':  # pragma: no cover

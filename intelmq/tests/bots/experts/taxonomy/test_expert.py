@@ -3,7 +3,9 @@
 import unittest
 
 import intelmq.lib.test as test
-from intelmq.bots.experts.taxonomy.expert import TaxonomyExpertBot
+from intelmq.bots.experts.taxonomy.expert import TaxonomyExpertBot, TAXONOMY
+from intelmq.lib.harmonization import ClassificationType
+
 
 EXAMPLE_INPUT1 = {"__type": "Event",
                  "classification.type": "defacement",
@@ -45,7 +47,7 @@ EXAMPLE_OUTPUT4 = {"__type": "Event",
 
 class TestTaxonomyExpertBot(test.BotTestCase, unittest.TestCase):
     """
-    A TestCase for AbusixExpertBot.
+    A TestCase for TaxonomyExpertBot.
     """
 
     @classmethod
@@ -65,6 +67,16 @@ class TestTaxonomyExpertBot(test.BotTestCase, unittest.TestCase):
         self.input_message = EXAMPLE_INPUT4
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_OUTPUT4)
+
+
+class TestHarmonization(unittest.TestCase):
+    def test_classification_coverage(self):
+        """
+        Assert that the types list in the taxonomy expert is the same as in the harmonization.
+        """
+        intelmq_harmonization = set(ClassificationType.allowed_values)
+        taxonomy_expert = set(TAXONOMY.keys())
+        self.assertSetEqual(intelmq_harmonization, taxonomy_expert)
 
 
 if __name__ == '__main__':  # pragma: no cover

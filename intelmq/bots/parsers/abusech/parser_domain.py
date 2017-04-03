@@ -15,6 +15,7 @@ from intelmq.lib.bot import ParserBot
 
 SOURCE_FEEDS = {'https://feodotracker.abuse.ch/blocklist/?download=domainblocklist': 'Cridex',
                 'https://palevotracker.abuse.ch/blocklists.php?download=domainblocklist': 'Palevo',
+                'https://zeustracker.abuse.ch/blocklist.php?download=domainblocklist': 'Zeus',
                 'https://zeustracker.abuse.ch/blocklist.php?download=baddomains': 'Zeus'}
 
 
