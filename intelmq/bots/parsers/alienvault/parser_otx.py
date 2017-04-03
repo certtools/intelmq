@@ -88,9 +88,6 @@ class AlienVaultOTXParserBot(Bot):
                         pulse["modified"][:-4] + "+00:00"
                 if 'industries' in pulse:
                     additional_indicator['industries'] = pulse["industries"]
-                if '' in pulse:
-                    additional_indicator['targeted_countries'] = \
-                        pulse["targeted_countries"]
                 if 'adversary' in pulse:
                     additional_indicator['adversary'] = pulse["adversary"]
                 if 'targeted_countries' in pulse:
