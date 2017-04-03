@@ -692,7 +692,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 queues.update(value['destination-queues'])
 
         pipeline = PipelineFactory.create(self.parameters)
-        pipeline.set_queues(queues, "source")
+        pipeline.set_queues(None, "source")
         pipeline.connect()
 
         if queue not in queues:
