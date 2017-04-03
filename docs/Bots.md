@@ -725,6 +725,8 @@ FIXME
 
 * `collection`: MongoDB collection
 * `database`: MongoDB database
+* `db_user` : Database user that should be used if you enabled auth
+* `db_pass` : Password associated to `db_user`
 * `host`: MongoDB host (FQDN or IP)
 * `port`: MongoDB port
 * `hierarchical_output`: Boolean (default true) as mongodb does not allow saving keys with dots, we split the dictionay in sub-dictionaries.
