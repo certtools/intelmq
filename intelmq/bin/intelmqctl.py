@@ -653,7 +653,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
     def list_queues(self):
         source_queues, destination_queues, internal_queues, all_queues = self.get_queues()
         pipeline = PipelineFactory.create(self.parameters)
-        pipeline.set_queues(source_queues, "source")
+        pipeline.set_queues(None, "source")
         pipeline.connect()
 
         counters = pipeline.count_queued_messages(*all_queues)
