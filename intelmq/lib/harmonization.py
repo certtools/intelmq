@@ -157,7 +157,8 @@ class ClassificationType(GenericType):
                       'vulnerable service',
                       'blacklist',
                       'other',
-                      'unknown'
+                      'unknown',
+                      'test'
                       ]
 
     @staticmethod
