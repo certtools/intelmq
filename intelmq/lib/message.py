@@ -13,7 +13,7 @@ import intelmq.lib.exceptions as exceptions
 import intelmq.lib.harmonization
 from intelmq import HARMONIZATION_CONF_FILE
 from intelmq.lib import utils
-from typing import Sequence
+from typing import Sequence, Union
 
 
 __all__ = ['Event', 'Message', 'MessageFactory', 'Report']
@@ -27,12 +27,22 @@ class MessageFactory(object):
     """
 
     @staticmethod
-    def from_dict(message, harmonization=None):
+    def from_dict(message: dict, harmonization=None,
+                  default_type: Union[str, None]=None) -> dict:
         """
         Takes dictionary Message object, returns instance of correct class.
 
-        The class is determined by __type attribute.
+        Parameters:
+            message: the message which should be converted to a Message object
+            harmonization: a dictionary holding the used harmonization
+            default_type: If '__type' is not present in message, the given type will be used
+
+        See also:
+            MessageFactory.unserialize
+            MessageFactory.serialize
         """
+        if default_type and "__type" not in message:
+            message["__type"] = default_type
         try:
             class_reference = getattr(intelmq.lib.message, message["__type"])
         except AttributeError:
@@ -44,22 +54,23 @@ class MessageFactory(object):
         return class_reference(message, auto=True, harmonization=harmonization)
 
     @staticmethod
-    def unserialize(raw_message, harmonization=None):
+    def unserialize(raw_message: str, harmonization: dict=None,
+                    default_type: Union[str, None]=None) -> dict:
         """
         Takes JSON-encoded Message object, returns instance of correct class.
 
-        The class is determined by __type attribute.
+        Parameters:
+            message: the message which should be converted to a Message object
+            harmonization: a dictionary holding the used harmonization
+            default_type: If '__type' is not present in message, the given type will be used
+
+        See also:
+            MessageFactory.from_dict
+            MessageFactory.serialize
         """
         message = Message.unserialize(raw_message)
-        try:
-            class_reference = getattr(intelmq.lib.message, message["__type"])
-        except AttributeError:
-            raise exceptions.InvalidArgument('__type',
-                                             got=message["__type"],
-                                             expected=VALID_MESSSAGE_TYPES,
-                                             docs=HARMONIZATION_CONF_FILE)
-        del message["__type"]
-        return class_reference(message, auto=True, harmonization=harmonization)
+        return MessageFactory.from_dict(message, harmonization=harmonization,
+                                        default_type=default_type)
 
     @staticmethod
     def serialize(message):
