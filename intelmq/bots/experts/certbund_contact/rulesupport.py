@@ -407,7 +407,16 @@ class Context:
 
 
 def most_specific_matches(context):
-    """Return the most specific matches from the context"""
+    """Return the most specific matches from the context.
+
+    Which matches are considered more specifc depends on which
+    attributes of the event matched and whether the matching entries in
+    the contact database are manually managed or automatically.
+
+    Returns:
+        set of Match objects: The match objects which are considered
+        most specific
+    """
     by_field = defaultdict(lambda: {"manual": set(), "automatic": set()})
 
     for match in context.matches:
@@ -426,8 +435,11 @@ def most_specific_matches(context):
 
 def keep_most_specific_contacts(context):
     """Modify context by removing all but the most specific matches.
-    The most specific matches are determined with most_specific_matches.
-    All other matches are removed.
+    The most specific matches are determined with
+    :py:func:`most_specific_matches`. All other matches are removed.
+
+    Args:
+        context (Context): the context used for rule scripts
     """
     orgids = set()
     matches = most_specific_matches(context)
@@ -439,7 +451,20 @@ def keep_most_specific_contacts(context):
 
 
 def notification_inhibited(context):
-    """Return whether any inhibition annotation in the contacts matches event.
+    """Return whether any inhibition annotation matches the context's event.
+
+    This function iterates over all the annotations associated with the
+    event's contact information (this includes the annotations of
+    organisations, ASNs, FQDNs, networks, etc.) and if they're
+    inhibition annotations -- i.e. if their tag is 'inhibition' --
+    evaluations their condition. If any of these conditions evaluates to
+    true, this function returns true.
+
+    Args:
+        context (Context): the context used for rule scripts
+
+    Returns:
+        bool: whether the condition of any inhibition annotation matched
     """
     return any(annotation.matches(context)
                for annotation in context.all_annotations()
