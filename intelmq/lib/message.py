@@ -17,7 +17,7 @@ from typing import Sequence
 
 
 __all__ = ['Event', 'Message', 'MessageFactory', 'Report']
-VALID_MESSSAGE_TYPES = ('event', 'message', 'report')
+VALID_MESSSAGE_TYPES = ('Event', 'Message', 'Report')
 
 
 class MessageFactory(object):
