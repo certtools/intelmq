@@ -98,6 +98,7 @@
                 "provider": "",
                 "password": "password",
                 "rate_limit": 3600,
+                "search_not_older_than": null,
                 "search_owner": "nobody",
                 "search_queue": "Incident Reports",
                 "search_status": "new",
@@ -591,6 +592,18 @@
                 "username": "<your amqp username>"
             }
         },
+        "Elasticsearch": {
+            "description": "Elasticsearch is the bot responsible to send events to a elasticsearch.",
+            "module": "intelmq.bots.outputs.elasticsearch.output",
+            "parameters": {
+                "elastic_host": "127.0.0.1",
+                "elastic_port": 9200,
+                "elastic_index": "intelmq",
+                "elastic_doctype": "events",
+                "flatten_fields": "extra",
+                "replacement_char": "_"
+            }
+        },
         "File": {
             "description": "File is the bot responsible to send events to a file.",
             "module": "intelmq.bots.outputs.file.output",
@@ -605,9 +618,11 @@
             "parameters": {
                 "collection": "<collection>",
                 "database": "<database>",
+                "db_user": null,
+                "db_pass": null,
                 "hierarchical_output": true,
-                "host": "<ip>",
-                "port": "<port>"
+                "host": "localhost",
+                "port": "27017"
             }
         },
         "PostgreSQL": {

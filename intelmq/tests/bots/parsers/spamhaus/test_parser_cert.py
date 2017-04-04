@@ -18,7 +18,7 @@ EXAMPLE_REPORT = {"feed.url": "https://portal.spamhaus.org/cert/api.php?cert="
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   }
 EVENT_TEMPL = {"feed.url": "https://portal.spamhaus.org/cert/api.php?cert="
-                           "<CERTNAME>&key=<APIKEY>",
+                           "<CERTNAME>&",
                "feed.name": "Spamhaus Cert",
                "__type": "Event",
                "classification.type": "botnet drone",

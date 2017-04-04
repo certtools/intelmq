@@ -3,7 +3,7 @@ import json
 
 from intelmq.lib.bot import CollectorBot
 
-from .OTXv2 import OTXv2
+from OTXv2 import OTXv2
 
 
 class AlienVaultOTXCollectorBot(CollectorBot):
