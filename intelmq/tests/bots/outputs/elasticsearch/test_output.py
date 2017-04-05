@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
+import os
 import time
 import unittest
 
-import elasticsearch
-
 import intelmq.lib.test as test
 from intelmq.bots.outputs.elasticsearch.output import ElasticsearchOutputBot
+
+if os.environ.get('INTELMQ_TEST_DATABASES'):
+    import elasticsearch
+
 
 INPUT1 = {"__type": "Event",
           "classification.type": "botnet drone",
@@ -40,7 +43,8 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
         cls.bot_reference = ElasticsearchOutputBot
         cls.default_input_message = INPUT1
         cls.sysconfig = {"flatten_fields": "extra"}
-        cls.con = elasticsearch.Elasticsearch()
+        if os.environ.get('INTELMQ_TEST_DATABASES'):
+            cls.con = elasticsearch.Elasticsearch()
 
     def test_event(self):
         self.run_bot()
