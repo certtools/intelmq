@@ -13,7 +13,7 @@ def determine_directives(context):
     # Determine all manual matches, and the IDs of the Organisations
     # associated to this match.
 
-    matching_orgs_manual = []
+    matching_orgs_manual = set()
     new_matches = []
 
     for match in context.matches:
