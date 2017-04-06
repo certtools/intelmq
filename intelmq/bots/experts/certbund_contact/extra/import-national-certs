@@ -17,22 +17,25 @@
 
 function gensql(cc, orgs)
 {
-    comment = "Created by import-national-certs script on " strftime("%Y-%m-%dT%H:%M")
+    source = "import-national-certs script"
+    time = strftime("%Y-%m-%dT%H:%M:%S")
     for (i in orgs)
     {
         match(orgs[i], /(.*)[[:space:]]+<(.*)>.*/, org)
         print "WITH\n" \
-              "  org_id AS (INSERT INTO organisation (name, comment)\n" \
+              "  org_id AS (INSERT INTO organisation_automatic (name, import_source, import_time)\n" \
               "                    VALUES ('" org[1] "',\n" \
-              "                            '" comment "')\n" \
-              "                    RETURNING organisation_id),\n" \
-              "  DUMMY AS (INSERT INTO contact (email, organisation_id, comment)\n" \
+              "                            '" source "', '" time "')\n" \
+              "                    RETURNING organisation_automatic_id),\n" \
+              "  DUMMY AS (INSERT INTO contact_automatic (email, organisation_automatic_id,\n" \
+              "                                           import_source, import_time)\n" \
               "                   VALUES ('" org[2] "',\n" \
-              "                           (SELECT organisation_id FROM org_id),\n" \
-              "                           '" comment "'))\n" \
-              "INSERT INTO national_cert (country_code, organisation_id, comment)\n" \
-              "       VALUES ('" cc "', (SELECT organisation_id FROM org_id),\n" \
-              "               '" comment "');"
+              "                           (SELECT organisation_automatic_id FROM org_id),\n" \
+              "                            '" source "', '" time "'))\n" \
+              "INSERT INTO national_cert_automatic (country_code, organisation_automatic_id,\n" \
+              "                                     import_source, import_time)\n" \
+              "       VALUES ('" cc "', (SELECT organisation_automatic_id FROM org_id),\n" \
+              "               '" source "', '" time "');"
     }
 }
 
