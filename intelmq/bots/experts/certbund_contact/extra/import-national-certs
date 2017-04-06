@@ -1,0 +1,52 @@
+#!/usr/bin/gawk -f
+# -------------------------------------------------------------------
+# Copyright (C) 2017 by Intevation GmbH
+# Author(s):
+# Sascha Wilde <wilde@intevation.de>
+
+# This program is free software under the GNU GPL (>=v2)
+# Read the file COPYING coming with the software for details.
+# -------------------------------------------------------------------
+
+# Import national-certs
+# input must be a file with lines of the Format:
+#
+#  CC|Org <org-email@example.com>[,Other Org <other-org-email@example.com> ...]
+#
+# Where CC is a ISO country code.
+
+function gensql(cc, orgs)
+{
+    comment = "Created by import-national-certs script on " strftime("%Y-%m-%dT%H:%M")
+    for (i in orgs)
+    {
+        match(orgs[i], /(.*)[[:space:]]+<(.*)>.*/, org)
+        print "WITH\n" \
+              "  org_id AS (INSERT INTO organisation (name, comment)\n" \
+              "                    VALUES ('" org[1] "',\n" \
+              "                            '" comment "')\n" \
+              "                    RETURNING organisation_id),\n" \
+              "  DUMMY AS (INSERT INTO contact (email, organisation_id, comment)\n" \
+              "                   VALUES ('" org[2] "',\n" \
+              "                           (SELECT organisation_id FROM org_id),\n" \
+              "                           '" comment "'))\n" \
+              "INSERT INTO national_cert (country_code, organisation_id, comment)\n" \
+              "       VALUES ('" cc "', (SELECT organisation_id FROM org_id),\n" \
+              "               '" comment "');"
+    }
+}
+
+BEGIN {
+    FS = "\\|"
+    print "BEGIN;"
+}
+
+/^[^#]/ {
+    split($2, orgs, /[[:space:]]*,[[:space:]]*/)
+    gensql($1, orgs)
+}
+
+END {
+    print "COMMIT;"
+}
+    
