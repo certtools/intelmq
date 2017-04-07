@@ -112,7 +112,7 @@ for bot in rc_data:
            rc_data[bot]['run_mode'] = 'scheduled'
 
         bot_parameters = bot_data['parameters']
-        bot_interval = int(bot_parameters['rate_limit']/5)
+        bot_interval = int(bot_parameters['rate_limit'])
         bot_run_cmd = INTELMQCTL_BIN+' run '+bot
         service_file_name = SYSTEMD_OUTPUT_DIR+os.path.sep+SERVICE_PREFIX+bot+'.service'
         timer_file_name = SYSTEMD_OUTPUT_DIR+os.path.sep+SERVICE_PREFIX+bot+'.timer'
