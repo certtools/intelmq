@@ -103,13 +103,14 @@ for bot in rc_data:
     bot_data = rc_data[bot]
     bot_group = bot_data['group']
 
-    if DISABLE_IN_CONF:
-       rc_data[bot]['enabled'] = False
-
-    if SET_RUNMODE_IN_CONF:
-       rc_data[bot]['run_mode'] = 'scheduled'
-
     if bot_group == BOT_TYPE:
+
+        if DISABLE_IN_CONF:
+           rc_data[bot]['enabled'] = False
+
+        if SET_RUNMODE_IN_CONF:
+           rc_data[bot]['run_mode'] = 'scheduled'
+
         bot_parameters = bot_data['parameters']
         bot_interval = int(bot_parameters['rate_limit']/5)
         bot_run_cmd = INTELMQCTL_BIN+' run '+bot
