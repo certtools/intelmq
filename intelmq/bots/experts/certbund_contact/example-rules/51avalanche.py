@@ -14,8 +14,7 @@ def determine_directives(context):
 
     if feedname is not "avalanche":
         # This script shall only handle avalanche data.
-        # return
-        pass
+        return
 
     if context.section == "destination":
         # We are not interested in notifiying the Destination for this event.
@@ -168,27 +167,27 @@ def get_orgs_for_match(context, match):
     return orgs
 
 
-def cert_contact_directive(notification_format="attachment", interval=0):
+def cert_contact_directive(notification_format="avalanche", data_format="avalanche_csv_attachment", interval=0):
     # Some maybe reasonable defaults 
     # CSV Attachment, for testing 0 = Immediately is a good choice.
     # In Production daily = 864000 will be better.
     return Directive(template_name="avalanche_certs.txt",
                      notification_format=notification_format,
-                     event_data_format="csv",
+                     event_data_format=data_format,
                      notification_interval=interval)
     
 
-def constituency_contact_directive(notification_format="inline", interval=0):
+def constituency_contact_directive(notification_format="avalanche", data_format="avalanche_csv_inline", interval=86400):
     # Some maybe reasonable defaults 
     # CSV Attachment, for testing 0 = Immediately is a good choice.
     # In Production hourly = 864000 will be better.
     return Directive(template_name="avalanche_constituency.txt",
                      notification_format=notification_format,
-                     event_data_format="csv",
+                     event_data_format=data_format,
                      notification_interval=interval)
 
 
-def provider_contact_directive(notification_format="inline", data_format="csv", interval=0):
+def provider_contact_directive(notification_format="avalanche", data_format="avalanche_csv_inline", interval=0):
     # Some maybe reasonable defaults 
     # Interval: for testing 0 = Immediately is a good choice.
     # In Production daily = 864000 will be better.
