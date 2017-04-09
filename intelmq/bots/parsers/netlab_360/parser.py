@@ -31,7 +31,8 @@ class Netlab360ParserBot(ParserBot):
             elif report['feed.url'] in Netlab360ParserBot.MAGNITUDE_FEED:
                 event.add('time.source', DateTime.from_timestamp(int(value[1])))
                 event.add('source.ip', value[2])
-                event.add('source.fqdn', value[3])
+                # ignore ips as fqdns
+                event.add('source.fqdn', value[3], raise_failure=False)
                 if value[4] != 'N/A':
                     event.add('source.url', value[4])
                 event.add('classification.type', 'exploit')
