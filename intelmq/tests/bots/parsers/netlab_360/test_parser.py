@@ -14,6 +14,9 @@ with open(os.path.join(os.path.dirname(__file__), 'dga.txt')) as handle:
 with open(os.path.join(os.path.dirname(__file__), 'magnitude.txt')) as handle:
     MAGNITUDE_FILE = handle.read()
 
+with open(os.path.join(os.path.dirname(__file__), 'mirai.txt')) as handle:
+    MIRAI_FILE = handle.read()
+
 DGA_REPORT = {'feed.name': 'Netlab 360 DGA',
               'feed.url': 'http://data.netlab.360.com/feeds/dga/dga.txt',
               '__type': 'Report',
@@ -54,6 +57,25 @@ MAGNITUDE_EVENTS = {'feed.name': 'Netlab 360 Magnitude',
                     'raw': 'TWFnbml0dWRlCTE0Nzg5NDY2NjUJMTc4LjMyLjIyNy4xMgkzZWJvMDhvNGN0MGY2bjIzMzYuaW5zaWRlcy5wYXJ0eQlodHRwOi8vM2VibzA4bzRjdDBmNm4yMzM2Lmluc2lkZXMucGFydHkvZDk3Y2M1Y2ZhYjQ3ZTMwNTUzNjY5MGE5OTg3MTE1YWM='
                    }
 
+MIRAI_REPORT = {'feed.name': 'Netlab 360 Mirai Scanner',
+                    'feed.url': 'http://data.netlab.360.com/feeds/mirai-scanner/scanner.list',
+                    '__type': 'Report',
+                    'time.observation': '2016-01-01T00:00:00+00:00',
+                    'raw': utils.base64_encode(MIRAI_FILE)
+                   }
+
+MIRAI_EVENTS = {'feed.name': 'Netlab 360 Mirai Scanner',
+                    'feed.url': 'http://data.netlab.360.com/feeds/mirai-scanner/scanner.list',
+                    '__type': 'Event',
+                    'destination.port': 23,
+                    'time.observation': '2016-01-01T00:00:00+00:00',
+                    'time.source': '2016-08-01T12:46:01+00:00',
+                    'source.ip': '109.86.182.249',
+                    'classification.type': 'scanner',
+                    'classification.identifier': 'mirai',
+                    'raw': 'MjAxNi0wOC0wMSAxMjo0NjowMQlzaXA9MTA5Ljg2LjE4Mi4yNDkJZHBvcnQ9MjM=',
+                   }
+
 
 class TestNetlab360ParserBot(test.BotTestCase, unittest.TestCase):
     """ A TestCase for Netlab360ParserBot with DGA and Magnitude feeds. """
@@ -71,6 +93,11 @@ class TestNetlab360ParserBot(test.BotTestCase, unittest.TestCase):
         self.input_message = MAGNITUDE_REPORT
         self.run_bot()
         self.assertMessageEqual(0, MAGNITUDE_EVENTS)
+
+    def test_mirai(self):
+        self.input_message = MIRAI_REPORT
+        self.run_bot()
+        self.assertMessageEqual(0, MIRAI_EVENTS)
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
