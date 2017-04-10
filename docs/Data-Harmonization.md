@@ -66,40 +66,6 @@ We recognize that ip geolocation is not an exact science and analysis of the abu
 
 Some sources report an internal (NATed) IP address.
 
-### Reported Identity
-
-Not used currently.
-
-#### Reported Source Identity
-
-As stated above, each abuse handling organization should define a policy, which IOC to use as the primary element describing an abuse event. Often the sources have done their attribution, but you may choose to correlate their attributive elements with your own. In practice this means that your sanitation should prefix the elements with the '''reported''' keyword, to denote that you've decided the attribute these yourself. The list below is not comprehensive, rather than a list of common things you may want to attribute yourself. Moreover, if you choose to perform your own attribution, the observation time will become your authoritative point of reference related to these IOC.
-
-#### Reported Destination Identity
-
-As stated above, each abuse handling organization should define a policy, which IOC to use as the primary elements describing an abuse event. Often the sources have done their attribution, but you may choose to correlate their attributive elements with your own. In practice this means that your sanitation should prefix the elements with the '''reported''' keyword, to denote that you've decided the attribute these yourself. The list below is not comprehensive, rather than a list of common things you may want to attribute yourself. Moreover, if you choose to perform your own attribution, the observation time will become your authoritative point of reference related to these IOC.
-
-
-#### Additional Fields
-
-TODO: description
-
-#### Malware Elements
-
-TODO: description
-
-#### Artifact Elements
-
-TODO: description
-
-
-#### Specific Elements
-
-The elements listed below are additional keys used to describe abusive behavior, which are topic specific. They may refer to the source of information, such as notified by, an augmentation source such a cymru cc or internal integration source, such as|rtir id||. The reason why they are separated from the the other IOCs is that they are not generic, rather than topic or provider specific. Their communicative function is defined as an optional way to understand what other abuse handling pipelines are most likely to call these elements.
-
-#### Classification
-
-Having a functional ontology to work with, especially for the abuse types is important for you to be able to classify, prioritize and report relevant actionable intelligence to the parties who need to be informed. The driving idea for this ontology has been to use a minimal set of values with maximal usability. See the classification section below for explanations and examples.
-
 <a name="datatypes"></a>
 ## Data types
 
