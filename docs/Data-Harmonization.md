@@ -4,7 +4,7 @@
 2. [Rules for keys](#rules)
 3. [Sections](#sections)
 4. [Data types](#basicdatatypes)
-5. [List of known fields](#fields)
+5. [Fields List and data types](#fields-list-and-data-types)
 6. [Type/Taxonomy Mapping](#mapping)
 7. [Minimum required fields](#requirements)
 
@@ -66,24 +66,10 @@ We recognize that ip geolocation is not an exact science and analysis of the abu
 
 Some sources report an internal (NATed) IP address.
 
-<a name="datatypes"></a>
-## Data types
+<a name="fields-list-and-data-types"></a>
+## Fields List and data types
 
-This section lists common data / field type definitions. The section [Fields List](#fields) references this table.
-Hence, this section also gives an overview of which basic data types need to be parseable and implemented by any system using this data harmonisation format.
-Note that this section does not yet define error handling and failure mechanisms should a field not be parseable.
-
-
-|Name                                | SQL Data type     | Regexp and Syntax       | Cybox Equivalent |  Comment                           |
-|:-----------------------------------|:------------------|:------------------------|:-----------------|:-----------------------------------|
-|<a name="#datatype-feed"></a>feed   |varchar(2000)      |  ```[a-zA-Z0-9_.-]+```  |                  | no characters allowed which could be interpreted as CSV separators |
-|<a name="#datatype-url"></a>url     |varchar(2000)      | a valid URL (see [RFC3987](http://tools.ietf.org/html/rfc3987) or similar). | [URI](http://cybox.mitre.org/language/version2.1/xsddocs/objects/URI_Object.html)  | TODO: It is recommended to use libaries such as [faup](https://github.com/stricaud/faup) for validation. |
-
-
-<a name="fields"></a>
-## Fields List
-
-A list of allowed fields can be found in [Harmonization-fields.md](Harmonization-fields.md)
+A list of allowed fields and data types can be found in [Harmonization-fields.md](Harmonization-fields.md)
 
 <a name="mapping"></a>
 ## Classification
