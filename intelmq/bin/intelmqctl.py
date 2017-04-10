@@ -5,6 +5,7 @@ import importlib
 import json
 import os
 import signal
+import subprocess
 import time
 import traceback
 
@@ -43,8 +44,6 @@ ERROR_MESSAGES = {
     'running': '{} is still running.',
     'stopped': '{} was NOT RUNNING.',
     'stopping': '{} failed to STOP.',
-    'noid': 'No or unconfigured ID was given, use --id',
-    'notfound': '{} not found.'
 }
 
 LOG_LEVEL = {
@@ -63,7 +62,8 @@ QUIET = False
 def log_list_queues(queues):
     if RETURN_TYPE == 'text':
         for queue, counter in sorted(queues.items()):
-            logger.info("{} - {}".format(queue, counter))
+            if counter or not QUIET:
+                logger.info("{} - {}".format(queue, counter))
 
 
 def log_bot_error(status, *args):
@@ -101,15 +101,50 @@ def log_log_messages(messages):
                 pass
 
 
-class BotProcessManager:
+class IntelMQProcessManager:
     PIDDIR = VAR_RUN_PATH
     PIDFILE = os.path.join(PIDDIR, "{}.pid")
 
-    def __init__(self, runtime_configuration):
+    def __init__(self, runtime_configuration, logger, controller):
         self.__runtime_configuration = runtime_configuration
+        self.logger = logger
+        self.controller = controller
 
         if not os.path.exists(self.PIDDIR):
-            os.makedirs(self.PIDDIR)
+            try:
+                os.makedirs(self.PIDDIR)
+            except PermissionError as exc:  # pragma: no cover
+                self.logger.error('Directory %s does not exist and cannot be '
+                                  'created: %s.' % (self.PIDDIR, exc))
+
+    def bot_run(self, bot_id):
+        pid = self.__read_pidfile(bot_id)
+        if pid:
+            if self.__status_process(pid):
+                log_bot_error('running', bot_id)
+                return 'running'
+            else:
+                self.__remove_pidfile(bot_id)
+        log_bot_message('starting', bot_id)
+        filename = self.PIDFILE.format(bot_id)
+        with open(filename, 'w') as fp:
+            fp.write(str(os.getpid()))
+
+        bot_module = self.__runtime_configuration[bot_id]['module']
+        module = importlib.import_module(bot_module)
+        bot = getattr(module, 'BOT')
+        try:
+            instance = bot(bot_id)
+            instance.start()
+        except (Exception, KeyboardInterrupt) as exc:
+            print('Bot failed: %s' % exc)
+            retval = 1
+        except SystemExit as exc:
+            print('Bot exited with code %s.' % exc)
+            retval = exc
+
+        self.__remove_pidfile(bot_id)
+        return retval
 
     def bot_start(self, bot_id):
         pid = self.__read_pidfile(bot_id)
@@ -120,18 +155,13 @@ class BotProcessManager:
             else:
                 self.__remove_pidfile(bot_id)
         log_bot_message('starting', bot_id)
-        try:
-            module = self.__runtime_configuration[bot_id]['module']
-        except KeyError:
-            log_bot_error('notfound', bot_id)
-            return 'error'
-        else:
-            cmdargs = [module, bot_id]
-            with open('/dev/null', 'w') as devnull:
-                proc = psutil.Popen(cmdargs, stdout=devnull, stderr=devnull)
-                filename = self.PIDFILE.format(bot_id)
-                with open(filename, 'w') as fp:
-                    fp.write(str(proc.pid))
+        module = self.__runtime_configuration[bot_id]['module']
+        cmdargs = [module, bot_id]
+        with open('/dev/null', 'w') as devnull:
+            proc = psutil.Popen(cmdargs, stdout=devnull, stderr=devnull)
+            filename = self.PIDFILE.format(bot_id)
+            with open(filename, 'w') as fp:
+                fp.write(str(proc.pid))
 
         time.sleep(0.25)
         return self.bot_status(bot_id)
@@ -139,7 +169,7 @@ class BotProcessManager:
     def bot_stop(self, bot_id):
         pid = self.__read_pidfile(bot_id)
         if not pid:
-            if self._is_enabled(bot_id):
+            if self.controller._is_enabled(bot_id):
                 log_bot_error('stopped', bot_id)
                 return 'stopped'
             else:
@@ -163,7 +193,7 @@ class BotProcessManager:
     def bot_reload(self, bot_id):
         pid = self.__read_pidfile(bot_id)
         if not pid:
-            if self._is_enabled(bot_id):
+            if self.controller._is_enabled(bot_id):
                 log_bot_error('stopped', bot_id)
                 return 'stopped'
             else:
@@ -188,19 +218,12 @@ class BotProcessManager:
             log_bot_message('running', bot_id)
             return 'running'
 
-        if bot_id not in self.__runtime_configuration:
-            log_bot_error('notfound', bot_id)
-            return 'error'
-
-        if self._is_enabled(bot_id):
+        if self.controller._is_enabled(bot_id):
             log_bot_message('stopped', bot_id)
             return 'stopped'
         else:
             log_bot_message('disabled', bot_id)
             return 'disabled'
-
-    def _is_enabled(self, bot_id):
-        return self.__runtime_configuration[bot_id].get('enabled', True)
 
     def __read_pidfile(self, bot_id):
         filename = self.PIDFILE.format(bot_id)
@@ -233,43 +256,50 @@ class BotProcessManager:
             return False
 
 
+PROCESS_MANAGER = {'intelmq': IntelMQProcessManager}
+
+
 class IntelMQController():
 
-    def __init__(self, interactive=False, return_type="python", quiet=False):
+    def __init__(self, interactive: bool=False, return_type: str="python", quiet: bool=False):
         """
         Initializes intelmqctl.
 
-        Parameters
-        ==========
-        interactive : boolean
-            for cli-interface true, functions can exits, parameters are used
-        return_type : string
-            'python': no special treatment, can be used for use by other
+        Parameters:
+            interactive: for cli-interface true, functions can exits, parameters are used
+            return_type: 'python': no special treatment, can be used for use by other
                 python code
-            'text': user-friendly output for cli, default for interactive use
-            'json': machine-readable output for managers
-        quiet : boolean
-            False by default, can be activated for cronjobs etc.
+                'text': user-friendly output for cli, default for interactive use
+                'json': machine-readable output for managers
+            quiet: False by default, can be activated for cronjobs etc.
         """
         global RETURN_TYPE
         RETURN_TYPE = return_type
         global logger
         global QUIET
         QUIET = quiet
-        logger = utils.log('intelmqctl', log_level='DEBUG')
+        try:
+            logger = utils.log('intelmqctl', log_level='DEBUG')
+        except (FileNotFoundError, PermissionError) as exc:
+            logger = utils.log('intelmqctl', log_level='DEBUG', log_path=False)
+            logger.error('Not logging to file: %s' % exc)
         self.logger = logger
         self.interactive = interactive
-        self.args = None
         if os.geteuid() == 0:
-            logger.warning('Running intelmq as root is highly discouraged!')
+            logger.warning('Running intelmqctl as root is highly discouraged!')
 
         APPNAME = "intelmqctl"
-        VERSION = pkg_resources.get_distribution("intelmq").version
+        try:
+            VERSION = pkg_resources.get_distribution("intelmq").version
+        except pkg_resources.DistributionNotFound:  # pragma: no cover
+            # can only happen in interactive mode
+            self.logger.error('No valid IntelMQ installation found: DistributionNotFound')
+            exit(1)
         DESCRIPTION = """
         description: intelmqctl is the tool to control intelmq system.
 
         Outputs are logged to /opt/intelmq/var/log/intelmqctl"""
-        USAGE = '''
+        EPILOG = '''
         intelmqctl [start|stop|restart|status|reload|run] bot-id
         intelmqctl [start|stop|restart|status|reload]
         intelmqctl list [bots|queues]
@@ -298,16 +328,19 @@ Get a list of all configured bots:
 
 Get a list of all queues:
     intelmqctl list queues
+If -q is given, only queues with more than one item are listed.
 
 Clear a queue:
     intelmqctl clear queue-id
 
 Get logs of a bot:
-    intelmqctl log bot-id [number-of-lines [log-level]]
-    Reads the last lines from bot log, or from system log if no bot ID was
-    given. Log level should be one of DEBUG, INFO, ERROR or CRITICAL.
-    Default is INFO. Number of lines defaults to 10, -1 gives all. Result
-    can be longer due to our logging format!'''
+    intelmqctl log bot-id number-of-lines log-level
+Reads the last lines from bot log.
+Log level should be one of DEBUG, INFO, ERROR or CRITICAL.
+Default is INFO. Number of lines defaults to 10, -1 gives all. Result
+can be longer due to our logging format!
+
+Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
         # stolen functions from the bot file
         # this will not work with various instances of REDIS
@@ -316,45 +349,45 @@ Get logs of a bot:
         self.load_system_configuration()
         try:
             self.pipeline_configuration = utils.load_configuration(PIPELINE_CONF_FILE)
-        except ValueError as exc:
-            exit('Invalid syntax in %r: %s' % (PIPELINE_CONF_FILE, exc))
+        except ValueError as exc:  # pragma: no cover
+            self.abort('Error loading %r: %s' % (PIPELINE_CONF_FILE, exc))
+
         try:
             self.runtime_configuration = utils.load_configuration(RUNTIME_CONF_FILE)
-        except ValueError as exc:
-            exit('Invalid syntax in %r: %s' % (RUNTIME_CONF_FILE, exc))
+        except ValueError as exc:  # pragma: no cover
+            self.abort('Error loading %r: %s' % (RUNTIME_CONF_FILE, exc))
 
         if os.path.exists(STARTUP_CONF_FILE):
             self.logger.warning('Deprecated startup.conf file found, please migrate to runtime.conf soon.')
             with open(STARTUP_CONF_FILE, 'r') as fp:
                 startup = json.load(fp)
                 for bot_id, bot_values in startup.items():
-                    if 'parameters' in self.runtime_configuration[bot_id]:
-                        self.logger.error('Mixed setup of new runtime.conf and old startup.conf'
-                                          ' found. Ignoring startup.conf, please fix this!')
-                        exit(1)
+                    if 'parameters' in self.runtime_configuration[bot_id]:  # pragma: no cover
+                        self.abort('Mixed setup of new runtime.conf and old startup.conf'
+                                   ' found. Ignoring startup.conf, please fix this!')
                     params = self.runtime_configuration[bot_id].copy()
                     self.runtime_configuration[bot_id].clear()
                     self.runtime_configuration[bot_id]['parameters'] = params
                     self.runtime_configuration[bot_id].update(bot_values)
-            try:
-                with open(RUNTIME_CONF_FILE + '.new', 'w') as fp:
-                    json.dump(self.runtime_configuration, fp, indent=4, sort_keys=True,
-                              separators=(',', ': '))
-            except PermissionError:
-                self.logger.info('Failed to write new configuration format to %r.'
-                                 '' % (RUNTIME_CONF_FILE + '.new'))
-            else:
+            if self.write_updated_runtime_config(filename=RUNTIME_CONF_FILE + '.new'):
                 self.logger.info('%r with new format written.' % (RUNTIME_CONF_FILE + '.new'))
 
-        self.bot_process_manager = BotProcessManager(
-            self.runtime_configuration
+        process_manager = getattr(self.parameters, 'process_manager', 'intelmq')
+        if process_manager not in PROCESS_MANAGER:
+            self.abort('Invalid process manager given: %r, should be one of %r.'
+                       '' % (process_manager, list(PROCESS_MANAGER.keys())))
+        self.bot_process_manager = PROCESS_MANAGER[process_manager](
+            self.runtime_configuration,
+            logger,
+            self
         )
 
         if self.interactive:
             parser = argparse.ArgumentParser(
                 prog=APPNAME,
-                usage=USAGE,
-                epilog=DESCRIPTION
+                description=DESCRIPTION,
+                epilog=EPILOG,
+                formatter_class=argparse.RawDescriptionHelpFormatter,
             )
 
             parser.add_argument('-v', '--version',
@@ -364,119 +397,167 @@ Get logs of a bot:
                                 help='choose if it should return regular text '
                                      'or other machine-readable')
 
-            parser.add_argument('action',
-                                choices=['start', 'stop', 'restart', 'status',
-                                         'reload', 'run', 'list', 'clear',
-                                         'help', 'log', 'check'],
-                                metavar='[start|stop|restart|status|reload|run'
-                                        '|list|clear|log|check]')
-            parser.add_argument('parameter', nargs='*')
             parser.add_argument('--quiet', '-q', action='store_const',
-                                help='Quiet mode, useful for reloads initiated'
+                                help='Quiet mode, useful for reloads initiated '
                                      'scripts like logrotate',
                                 const=True)
-            self.parser = parser
-            self.args = parser.parse_args()
-            if self.args.action == 'help':
-                parser.print_help()
-                exit(0)
 
-            RETURN_TYPE = self.args.type
-            QUIET = self.args.quiet
+            subparsers = parser.add_subparsers(title='subcommands')
+
+            parser_list = subparsers.add_parser('list', help='Listing bots or queues')
+            parser_list.add_argument('kind', choices=['bots', 'queues'])
+            parser_list.add_argument('--quiet', '-q', action='store_const',
+                                     help='Only list non-empty queues',
+                                     const=True)
+            parser_list.set_defaults(func=self.list)
+
+            subparsers.add_parser('check', help='Check installation and configuration')
+
+            parser_clear = subparsers.add_parser('clear', help='Clear a queue')
+            parser_clear.add_argument('queue', help='queue name',
+                                      choices=self.get_queues()[3])
+            parser_clear.set_defaults(func=self.clear_queue)
+
+            parser_log = subparsers.add_parser('log', help='Get last log lines of a bot')
+            parser_log.add_argument('bot_id', help='bot id')
+            parser_log.add_argument('number_of_lines', help='number of lines',
+                                    default=10, type=int, nargs='?')
+            parser_log.add_argument('log_level', help='logging level',
+                                    choices=LOG_LEVEL.keys(), default='INFO', nargs='?')
+            parser_log.set_defaults(func=self.read_bot_log)
+
+            parser_run = subparsers.add_parser('run', help='Run a bot interactively')
+            parser_run.add_argument('bot_id',
+                                    choices=self.runtime_configuration.keys())
+            parser_run.set_defaults(func=self.bot_run)
+
+            parser_check = subparsers.add_parser('check',
+                                                 help='Check installation and configuration')
+            parser_check.set_defaults(func=self.check)
+
+            parser_help = subparsers.add_parser('help',
+                                                help='Show the help')
+            parser_help.set_defaults(func=parser.print_help)
+
+            parser_start = subparsers.add_parser('start', help='Start a bot or botnet')
+            parser_start.add_argument('bot_id', nargs='?',
+                                      choices=self.runtime_configuration.keys())
+            parser_start.set_defaults(func=self.bot_start)
+
+            parser_stop = subparsers.add_parser('stop', help='Stop a bot or botnet')
+            parser_stop.add_argument('bot_id', nargs='?',
+                                     choices=self.runtime_configuration.keys())
+            parser_stop.set_defaults(func=self.bot_stop)
+
+            parser_restart = subparsers.add_parser('restart', help='Restart a bot or botnet')
+            parser_restart.add_argument('bot_id', nargs='?',
+                                        choices=self.runtime_configuration.keys())
+            parser_restart.set_defaults(func=self.bot_restart)
+
+            parser_reload = subparsers.add_parser('reload', help='Reload a bot or botnet')
+            parser_reload.add_argument('bot_id', nargs='?',
+                                       choices=self.runtime_configuration.keys())
+            parser_reload.set_defaults(func=self.bot_reload)
+
+            parser_status = subparsers.add_parser('status', help='Status of a bot or botnet')
+            parser_status.add_argument('bot_id', nargs='?',
+                                       choices=self.runtime_configuration.keys())
+            parser_status.set_defaults(func=self.bot_status)
+
+            parser_status = subparsers.add_parser('enable', help='Enable a bot')
+            parser_status.add_argument('bot_id',
+                                       choices=self.runtime_configuration.keys())
+            parser_status.set_defaults(func=self.bot_enable)
+
+            parser_status = subparsers.add_parser('disable', help='Disable a bot')
+            parser_status.add_argument('bot_id',
+                                       choices=self.runtime_configuration.keys())
+            parser_status.set_defaults(func=self.bot_disable)
+
+            self.parser = parser
 
     def load_system_configuration(self):
         if os.path.exists(SYSTEM_CONF_FILE):
             try:
                 config = utils.load_configuration(SYSTEM_CONF_FILE)
-            except ValueError as exc:
-                exit('Invalid syntax in %r: %s' % (SYSTEM_CONF_FILE, exc))
+            except ValueError as exc:  # pragma: no cover
+                self.abort('Error loading %r: %s' % (SYSTEM_CONF_FILE, exc))
             for option, value in config.items():
                 setattr(self.parameters, option, value)
 
     def load_defaults_configuration(self):
-        # Load defaults configuration section
+        # Load defaults configuration
         try:
             config = utils.load_configuration(DEFAULTS_CONF_FILE)
-        except ValueError as exc:
-            exit('Invalid syntax in %r: %s' % (DEFAULTS_CONF_FILE, exc))
+        except ValueError as exc:  # pragma: no cover
+            self.abort('Error loading %r: %s' % (DEFAULTS_CONF_FILE, exc))
         for option, value in config.items():
             setattr(self.parameters, option, value)
 
     def run(self):
         results = None
-        if self.args.action in ['start', 'restart', 'stop', 'status',
-                                'reload']:
-            if self.args.parameter:
-                call_method = getattr(self, "bot_" + self.args.action)
-                results = call_method(self.args.parameter[0])
-            else:
-                call_method = getattr(self, "botnet_" + self.args.action)
-                results = call_method()
-        elif self.args.action == 'run':
-            if self.args.parameter and len(self.args.parameter) == 1:
-                self.bot_run(self.args.parameter[0])
-            else:
-                print("Exactly one bot-id must be given for run.")
-                self.parser.print_help()
-                exit(2)
-        elif self.args.action == 'list':
-            if not self.args.parameter or self.args.parameter[0] not in ['bots', 'queues']:
-                print("Second argument for list must be 'bots' or 'queues'.")
-                self.parser.print_help()
-                exit(2)
-            method_name = "list_" + self.args.parameter[0]
-            call_method = getattr(self, method_name)
-            results = call_method()
-        elif self.args.action == 'log':
-            if not self.args.parameter:
-                print("You must give parameters for 'log'.")
-                self.parser.print_help()
-                exit(2)
-            results = self.read_log(*self.args.parameter)
-        elif self.args.action == 'clear':
-            if not self.args.parameter:
-                print("Queue name not given.")
-                self.parser.print_help()
-                exit(2)
-            results = self.clear_queue(self.args.parameter[0])
-        elif self.args.action == 'check':
-            results = self.check()
+        args = self.parser.parse_args()
+        if 'func' not in args:
+            exit(self.parser.print_help())
+        args_dict = vars(args).copy()
 
-        if self.args.type == 'json':
+        global RETURN_TYPE, QUIET
+        RETURN_TYPE, QUIET = args.type, args.quiet
+        del args_dict['type'], args_dict['quiet'], args_dict['func']
+        results = args.func(**args_dict)
+
+        if RETURN_TYPE == 'json':
             print(json.dumps(results))
+        if type(results) is int:
+            return results
+        elif results == 'error':
+            return 1
 
     def bot_run(self, bot_id):
-        try:
-            bot_module = self.runtime_configuration[bot_id]['module']
-        except KeyError:
-            log_bot_error('notfound', bot_id)
-            return 'error'
-        else:
-            module = importlib.import_module(bot_module)
-            bot = getattr(module, 'BOT')
-            instance = bot(bot_id)
-            instance.start()
+        return self.bot_process_manager.bot_run(bot_id)
 
     def bot_start(self, bot_id):
         if bot_id is None:
-            log_bot_error('noid')
-            return 'error'
-
-        return self.bot_process_manager.bot_start(bot_id)
+            return self.botnet_start()
+        else:
+            return self.bot_process_manager.bot_start(bot_id)
 
     def bot_stop(self, bot_id):
-        return self.bot_process_manager.bot_stop(bot_id)
+        if bot_id is None:
+            return self.botnet_stop()
+        else:
+            return self.bot_process_manager.bot_stop(bot_id)
 
     def bot_reload(self, bot_id):
-        return self.bot_process_manager.bot_reload(bot_id)
+        if bot_id is None:
+            return self.botnet_reload()
+        else:
+            return self.bot_process_manager.bot_reload(bot_id)
 
     def bot_restart(self, bot_id):
-        status_stop = self.bot_stop(bot_id)
-        status_start = self.bot_start(bot_id)
-        return (status_stop, status_start)
+        if bot_id is None:
+            return self.botnet_restart()
+        else:
+            status_stop = self.bot_stop(bot_id)
+            status_start = self.bot_start(bot_id)
+            return (status_stop, status_start)
 
     def bot_status(self, bot_id):
-        return self.bot_process_manager.bot_status(bot_id)
+        if bot_id is None:
+            return self.botnet_status()
+        else:
+            return self.bot_process_manager.bot_status(bot_id)
+
+    def bot_enable(self, bot_id):
+        self.runtime_configuration[bot_id]['enabled'] = True
+        self.write_updated_runtime_config()
+
+    def bot_disable(self, bot_id):
+        self.runtime_configuration[bot_id]['enabled'] = False
+        self.write_updated_runtime_config()
+
+    def _is_enabled(self, bot_id):
+        return self.runtime_configuration[bot_id].get('enabled', True)
 
     def botnet_start(self):
         botnet_status = {}
@@ -515,6 +596,29 @@ Get logs of a bot:
             botnet_status[bot_id] = self.bot_status(bot_id)
         return botnet_status
 
+    def list(self, kind=None):
+        if kind == 'queues':
+            return self.list_queues()
+        elif kind == 'bots':
+            return self.list_bots()
+
+    def abort(self, message):
+        if self.interactive:
+            exit(message)
+        else:
+            raise ValueError(message)
+
+    def write_updated_runtime_config(self, filename=RUNTIME_CONF_FILE):
+        if os.path.exists(STARTUP_CONF_FILE):
+            self.abort('Can\'t update runtime configuration, startup.conf found.')
+        try:
+            with open(RUNTIME_CONF_FILE, 'w') as handle:
+                json.dump(self.runtime_configuration, fp=handle, indent=4, sort_keys=True,
+                          separators=(',', ': '))
+        except PermissionError:
+            self.abort('Can\'t update runtime configuration: Permission denied.')
+        return True
+
     def list_bots(self):
         """
         Lists all configured bots from startup.conf with bot id and
@@ -522,7 +626,7 @@ Get logs of a bot:
 
         If description is not set, None is used instead.
         """
-        if self.args and self.args.type == 'text':
+        if RETURN_TYPE == 'text':
             for bot_id in sorted(self.runtime_configuration.keys()):
                 print("Bot ID: {}\nDescription: {}"
                       "".format(bot_id, self.runtime_configuration[bot_id].get('description')))
@@ -530,7 +634,7 @@ Get logs of a bot:
                  'description': self.runtime_configuration[bot_id].get('description')}
                 for bot_id in sorted(self.runtime_configuration.keys())]
 
-    def list_queues(self):
+    def get_queues(self):
         source_queues = set()
         destination_queues = set()
         internal_queues = set()
@@ -542,12 +646,17 @@ Get logs of a bot:
             if 'destination-queues' in value:
                 destination_queues.update(value['destination-queues'])
 
+        all_queues = source_queues.union(destination_queues).union(internal_queues)
+
+        return source_queues, destination_queues, internal_queues, all_queues
+
+    def list_queues(self):
+        source_queues, destination_queues, internal_queues, all_queues = self.get_queues()
         pipeline = PipelineFactory.create(self.parameters)
-        pipeline.set_queues(source_queues, "source")
+        pipeline.set_queues(None, "source")
         pipeline.connect()
 
-        queues = source_queues.union(destination_queues).union(internal_queues)
-        counters = pipeline.count_queued_messages(*queues)
+        counters = pipeline.count_queued_messages(*all_queues)
         log_list_queues(counters)
 
         return_dict = dict()
@@ -583,7 +692,7 @@ Get logs of a bot:
                 queues.update(value['destination-queues'])
 
         pipeline = PipelineFactory.create(self.parameters)
-        pipeline.set_queues(queues, "source")
+        pipeline.set_queues(None, "source")
         pipeline.connect()
 
         if queue not in queues:
@@ -594,34 +703,24 @@ Get logs of a bot:
             pipeline.clear_queue(queue)
             logger.info("Successfully cleared queue {}".format(queue))
             return 'success'
-        except Exception:
+        except Exception:  # pragma: no cover
             logger.error("Error while clearing queue {}:\n{}"
                          "".format(queue, traceback.format_exc()))
             return 'error'
 
-    def read_log(self, bot_id, number_of_lines=10, log_level='INFO'):
-        try:
-            number_of_lines = int(number_of_lines)
-        except ValueError:
-            number_of_lines = 10
-        if not log_level:
-            log_level = LOG_LEVEL['INFO']
-        else:
-            try:
-                log_level = LOG_LEVEL[log_level.upper()]
-            except KeyError:
-                logger.error("Invalid log_level. Must be one of {}"
-                             "".format(', '.join(LOG_LEVEL.keys())))
-                return[]
-
-        return self.read_bot_log(bot_id, log_level, number_of_lines)
-
     def read_bot_log(self, bot_id, log_level, number_of_lines):
-        bot_log_path = os.path.join(self.parameters.logging_path,
-                                    bot_id + '.log')
-        if not os.path.isfile(bot_log_path):
-            logger.error("Log path not found: {}".format(bot_log_path))
-            return []
+        if self.parameters.logging_handler == 'file':
+            bot_log_path = os.path.join(self.parameters.logging_path,
+                                        bot_id + '.log')
+            if not os.path.isfile(bot_log_path):
+                logger.error("Log path not found: {}".format(bot_log_path))
+                return []
+        elif self.parameters.logging_handler == 'syslog':
+            bot_log_path = '/var/log/syslog'
+
+        if not os.access(bot_log_path, os.R_OK):
+            self.logger.error('File %r is not readable.' % bot_log_path)
+            return 'error'
 
         messages = list()
 
@@ -629,17 +728,26 @@ Get logs of a bot:
         message_count = 0
 
         for line in utils.reverse_readline(bot_log_path):
-            log_message = utils.parse_logline(line)
+            if self.parameters.logging_handler == 'file':
+                log_message = utils.parse_logline(line)
+            if self.parameters.logging_handler == 'syslog':
+                log_message = utils.parse_logline(line, regex=utils.SYSLOG_REGEX)
 
             if type(log_message) is not dict:
-                message_overflow = '\n'.join([line, message_overflow])
+                if self.parameters.logging_handler == 'file':
+                    message_overflow = '\n'.join([line, message_overflow])
                 continue
-            if LOG_LEVEL[log_message['log_level']] < log_level:
+            if log_message['bot_id'] != bot_id:
+                continue
+            if LOG_LEVEL[log_message['log_level']] < LOG_LEVEL[log_level]:
                 continue
 
             if message_overflow:
                 log_message['extended_message'] = message_overflow
                 message_overflow = ''
+
+            if self.parameters.logging_handler == 'syslog':
+                log_message['message'] = log_message['message'].replace('#012', '\n')
 
             message_count += 1
             messages.append(log_message)
@@ -651,58 +759,88 @@ Get logs of a bot:
         return messages[::-1]
 
     def check(self):
+        retval = 0
         # loading files and syntex check
         files = {DEFAULTS_CONF_FILE: None, PIPELINE_CONF_FILE: None,
                  RUNTIME_CONF_FILE: None, BOTS_FILE: None}
+        self.logger.info('Reading configuration files.')
         for filename in files:
             try:
                 with open(filename) as file_handle:
                     files[filename] = json.load(file_handle)
-            except (IOError, ValueError) as exc:
+            except (IOError, ValueError) as exc:  # pragma: no cover
                 self.logger.error('Coud not load %r: %s.' % (filename, exc))
-                return 'error'
+                retval = 1
+        if retval:
+            self.logger.error('Fatal errors occured.')
+            return retval
 
         if os.path.exists(STARTUP_CONF_FILE):
             self.logger.warning('Deprecated startup.conf file found, migrate to runtime.conf.')
+            retval = 1
         if os.path.exists(SYSTEM_CONF_FILE):
             self.logger.warning('Deprecated system.conf file found, migrate to defaults.conf.')
+            retval = 1
 
-        if bool(files[DEFAULTS_CONF_FILE]['http_proxy']) != bool(files[DEFAULTS_CONF_FILE]['https_proxy']):
-            self.logger.warning('Only {}_proxy seems to be set. '
-                                'Both http and https proxies must be set.'
-                                .format('http' if files[DEFAULTS_CONF_FILE]['http_proxy']
-                                        else 'https'))
+        self.logger.info('Checking runtime configuration.')
+        http_proxy = files[DEFAULTS_CONF_FILE].get('http_proxy')
+        https_proxy = files[DEFAULTS_CONF_FILE].get('https_proxy')
+        # Either both are given or both are not given
+        if (not http_proxy or not https_proxy) and not (http_proxy == https_proxy):
+            self.logger.warning('Incomplete configuration: Both http and https proxies must be set.')
+            retval = 1
 
+        self.logger.info('Checking pipeline configuration.')
         for bot_id, bot_config in files[RUNTIME_CONF_FILE].items():
             # pipeline keys
             for field in ['description', 'group', 'module', 'name']:
                 if field not in bot_config:
                     self.logger.warning('Bot %r has no %r.' % (bot_id, field))
+                    retval = 1
             if bot_id not in files[PIPELINE_CONF_FILE]:
-                self.logger.error('No pipeline configuration found for %r.' % bot_id)
+                self.logger.error('Misconfiguration: No pipeline configuration found for %r.' % bot_id)
+                retval = 1
             else:
                 if ('group' in bot_config and
                         bot_config['group'] in ['Collector', 'Parser', 'Expert'] and
                         ('destination-queues' not in files[PIPELINE_CONF_FILE][bot_id] or
                          (not isinstance(files[PIPELINE_CONF_FILE][bot_id]['destination-queues'], list) or
                           len(files[PIPELINE_CONF_FILE][bot_id]['destination-queues']) < 1))):
-                    self.logger.error('No destination queues for %r.' % bot_id)
+                    self.logger.error('Misconfiguration: No destination queues for %r.' % bot_id)
+                    retval = 1
                 if ('group' in bot_config and
                         bot_config['group'] in ['Parser', 'Expert', 'Output'] and
                         ('source-queue' not in files[PIPELINE_CONF_FILE][bot_id] or
                          not isinstance(files[PIPELINE_CONF_FILE][bot_id]['source-queue'], str))):
-                    self.logger.error('No source queue for %r.' % bot_id)
+                    self.logger.error('Misconfiguration: No source queue for %r.' % bot_id)
+                    retval = 1
 
+        self.logger.info('Checking for bots.')
+        for bot_id, bot_config in files[RUNTIME_CONF_FILE].items():
             # importable module
             try:
                 importlib.import_module(bot_config['module'])
             except ImportError:
-                self.logger.error('Module of %r not importable.' % bot_id)
+                self.logger.error('Incomplete installation: Module %r not importable.' % bot_id)
+                retval = 1
+        for group in files[BOTS_FILE].values():
+            for bot_id, bot in group.items():
+                if subprocess.call(['which', bot['module']], stdout=subprocess.DEVNULL):
+                    self.logger.error('Incomplete installation: Executable %r for %r not found.'
+                                      '' % (bot['module'], bot_id))
+                    retval = 1
+
+        if retval:
+            self.logger.error('Some issues have been found, please check the above output.')
+        else:
+            self.logger.info('No issues found.')
+
+        return retval
 
 
 def main():  # pragma: no cover
     x = IntelMQController(interactive=True)
-    x.run()
+    return x.run()
 
 if __name__ == "__main__":  # pragma: no cover
-    main()
+    exit(main())

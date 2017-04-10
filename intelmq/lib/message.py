@@ -13,6 +13,8 @@ import intelmq.lib.exceptions as exceptions
 import intelmq.lib.harmonization
 from intelmq import HARMONIZATION_CONF_FILE
 from intelmq.lib import utils
+from typing import Sequence
+
 
 __all__ = ['Event', 'Message', 'MessageFactory', 'Report']
 
@@ -104,24 +106,21 @@ class Message(dict):
     def __setitem__(self, key, value):
         self.add(key, value)
 
-    def is_valid(self, key, value, sanitize=True):
+    def is_valid(self, key: str, value: str, sanitize: bool=True) -> bool:
         """
         Checks if a value is valid for the key (after sanitation).
 
-        Parameters
-        ==========
-        key : string
-        value : string
-        sanitize : boolean
-            Sanitation of harmonization type will be called before validation (default: True)
+        Parameters:
+            key: Key of the field
+            value: Value of the field
+            sanitize: Sanitation of harmonization type will be called before validation
+                (default: True)
 
-        Returns
-        =======
-        retval : boolean
+        Returns:
+            True if the value is valid, otherwise False
 
-        Raises
-        ======
-        intelmq.lib.exceptions.InvalidKey: if key is invalid.
+        Raises:
+            intelmq.lib.exceptions.InvalidKey: if given key is invalid.
 
         """
         if not self.__is_valid_key(key):
@@ -136,43 +135,34 @@ class Message(dict):
             return True
         return False
 
-    def add(self, key, value, sanitize=True, force=False, overwrite=False, ignore=(),
-            raise_failure=True):
+    def add(self, key: str, value: str, sanitize: bool=True, force: bool=False,
+            overwrite: bool=False, ignore: Sequence=(),
+            raise_failure: bool=True) -> bool:
         """
         Add a value for the key (after sanitation).
 
-        Parameters
-        ==========
-        key : string
-            Key as defined in the harmonization
-        value : string
-            A valid value as defined in the harmonization
-        sanitize : boolean
-            Sanitation of harmonization type will be called before validation (default: True)
-        force : boolean
-            Deprecated, use overwrite (default: False)
-        overwrite : boolean
-            Overwrite an existing value if it already exists (default: False)
-        ignore : list, tuple
-            List of values to ignore, deprecated (default: ())
-        raise_failure : boolean
-            If a intelmq.lib.exceptions.InvalidValue should be raisen for invalid values
-            (default: True). If false, the return parameter will be False in case of invalid
-            values.
+        Parameters:
+            key: Key as defined in the harmonization
+            value: A valid value as defined in the harmonization
+            sanitize: Sanitation of harmonization type will be called before validation
+                (default: True)
+            force: Deprecated, use overwrite (default: False)
+            overwrite: Overwrite an existing value if it already exists (default: False)
+            ignore: List or tuple of values to ignore, deprecated (default: ())
+            raise_failure: If a intelmq.lib.exceptions.InvalidValue should be raisen for
+                invalid values (default: True). If false, the return parameter will be
+                False in case of invalid values.
 
-        Returns
-        =======
-        retval : boolean
-            True if the value has been added
-            False if the value is invalid and raise_failure is False
+        Returns:
+            * True if the value has been added.
+            * False if the value is invalid and raise_failure is False.
 
-        Raises
-        ======
-        intelmq.lib.exceptions.KeyExists: If key exists and won't be overwritten explcitly.
-        intelmq.lib.exceptions.InvalidKey: if key is invalid.
-        intelmq.lib.exceptions.InvalidArgument: if ignore is not list or tuple.
-        intelmq.lib.exceptions.InvalidValue: If value is not valid for the given key and
-            raise_failure is True.
+        Raises:
+            intelmq.lib.exceptions.KeyExists: If key exists and won't be overwritten explcitly.
+            intelmq.lib.exceptions.InvalidKey: if key is invalid.
+            intelmq.lib.exceptions.InvalidArgument: if ignore is not list or tuple.
+            intelmq.lib.exceptions.InvalidValue: If value is not valid for the given key and
+                raise_failure is True.
         """
         overwrite = force or overwrite
         if force:
@@ -222,12 +212,12 @@ class Message(dict):
         warnings.warn('update(...) will be changed to dict.update() in 1.0. '
                       'Use change(key, value, sanitize) instead.',
                       DeprecationWarning)
-        self.change(key, value, sanitize)
+        return self.change(key, value, sanitize)
 
     def change(self, key, value, sanitize=True):
         if key not in self:
             raise exceptions.KeyNotExists(key)
-        self.add(key, value, overwrite=True, sanitize=sanitize)
+        return self.add(key, value, overwrite=True, sanitize=sanitize)
 
     def contains(self, key):
         warnings.warn('The contains-method will be removed in 1.0.',
@@ -304,17 +294,33 @@ class Message(dict):
     def __hash__(self):
         return int(self.hash(), 16)
 
-    def hash(self, blacklist=frozenset()):
+    def hash(self, *, filter_keys=frozenset(), filter_type="blacklist"):
         """Return a sha256 hash of the message as a hexadecimal string.
-        The hash is computed over almost all key/value pairs. The only
-        keys omitted are 'time.observation' and all keys contained in
-        the optional blacklist parameter. If given, the blacklist
+        The hash is computed over almost all key/value pairs. Depending on
+        filter_type parameter (blacklist or whitelist), the keys defined in
+        filter_keys_list parameter will be considered as the keys to ignore
+        or the only ones to consider. If given, the filter_keys_list
         parameter should be a set.
+
+        'time.observation' will always be ignored.
         """
+
+        if filter_type not in ["whitelist", "blacklist"]:
+
+            raise exceptions.InvalidArgument('filter_type',
+                                             got=filter_type,
+                                             expected=['whitelist', 'blacklist'])
+
         event_hash = hashlib.sha256()
 
         for key, value in sorted(self.items()):
-            if "time.observation" == key or key in blacklist:
+            if "time.observation" == key:
+                continue
+
+            if filter_type == "whitelist" and key not in filter_keys:
+                continue
+
+            if filter_type == "blacklist" and key in filter_keys:
                 continue
 
             event_hash.update(utils.encode(key))
@@ -359,14 +365,14 @@ class Message(dict):
 
 class Event(Message):
 
-    def __init__(self, message=(), auto=False, harmonization=None):
+    def __init__(self, message: dict=(), auto: bool=False, harmonization: dict=None):
         """
-        Parameters
-        ----------
-        message : dict
-            Give a report and feed.name, feed.url and
-            time.observation will be used to construct the Event if given.
-            If it's another type, the value is given to dict's init
+        Parameters:
+            message: Give a report and feed.name, feed.url and
+                time.observation will be used to construct the Event if given.
+                If it's another type, the value is given to dict's init
+            auto: unused here
+            harmonization: Harmonization definition to use
         """
         if isinstance(message, Report):
             template = {}
@@ -374,6 +380,8 @@ class Event(Message):
                 template['feed.accuracy'] = message['feed.accuracy']
             if 'feed.code' in message:
                 template['feed.code'] = message['feed.code']
+            if 'feed.documentation' in message:
+                template['feed.documentation'] = message['feed.documentation']
             if 'feed.name' in message:
                 template['feed.name'] = message['feed.name']
             if 'feed.provider' in message:
@@ -391,14 +399,12 @@ class Event(Message):
 
 class Report(Message):
 
-    def __init__(self, message=(), auto=False, harmonization=None):
+    def __init__(self, message: dict=(), auto: bool=False, harmonization: dict=None):
         """
-        Parameters
-        ----------
-        message : dict
-            Passed along to Message's and dict's init
-        auto : boolean
-            if false (default), time.observation is automatically added.
+        Parameters:
+            message: Passed along to Message's and dict's init
+            auto: if False (default), time.observation is automatically added.
+            harmonization: Harmonization definition to use
         """
         super(Report, self).__init__(message, auto, harmonization)
         if not auto and 'time.observation' not in self:

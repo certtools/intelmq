@@ -98,6 +98,7 @@
                 "provider": "",
                 "password": "password",
                 "rate_limit": 3600,
+                "search_not_older_than": null,
                 "search_owner": "nobody",
                 "search_queue": "Incident Reports",
                 "search_status": "new",
@@ -447,12 +448,21 @@
             "description": "Deduplicator is the bot responsible for detection and removal of duplicate messages. Messages get cached for <redis_cache_ttl> seconds. If found in the cache, it is assumed to be a duplicate.",
             "module": "intelmq.bots.experts.deduplicator.expert",
             "parameters": {
-                "ignore_keys": "raw,time.observation",
+                "filter_keys": "raw,time.observation",
+                "filter_type": "blacklist",
                 "redis_cache_db": "6",
                 "redis_cache_host": "127.0.0.1",
                 "redis_cache_port": "6379",
                 "redis_cache_password": null,
                 "redis_cache_ttl": "86400"
+            }
+        },
+        "Field Reducer": {
+            "description": "The field reducer bot is capable of removing fields from events.",
+            "module": "intelmq.bots.experts.field_reducer.expert",
+            "parameters": {
+                "type": "<whitelist/blacklist>",
+                "keys": "<list of field names>"
             }
         },
         "Filter": {
@@ -548,7 +558,8 @@
             "description": "Tor Nodes is the bot responsible to check if an IP is an Tor Exit Node.",
             "module": "intelmq.bots.experts.tor_nodes.expert",
             "parameters": {
-                "database": "/opt/intelmq/var/lib/bots/tor_nodes/tor_nodes.dat"
+                "database": "/opt/intelmq/var/lib/bots/tor_nodes/tor_nodes.dat",
+                "overwrite": false
             }
         },
         "url2fqdn": {
@@ -581,6 +592,18 @@
                 "username": "<your amqp username>"
             }
         },
+        "Elasticsearch": {
+            "description": "Elasticsearch is the bot responsible to send events to a elasticsearch.",
+            "module": "intelmq.bots.outputs.elasticsearch.output",
+            "parameters": {
+                "elastic_host": "127.0.0.1",
+                "elastic_port": 9200,
+                "elastic_index": "intelmq",
+                "elastic_doctype": "events",
+                "flatten_fields": "extra",
+                "replacement_char": "_"
+            }
+        },
         "File": {
             "description": "File is the bot responsible to send events to a file.",
             "module": "intelmq.bots.outputs.file.output",
@@ -595,9 +618,11 @@
             "parameters": {
                 "collection": "<collection>",
                 "database": "<database>",
+                "db_user": null,
+                "db_pass": null,
                 "hierarchical_output": true,
-                "host": "<ip>",
-                "port": "<port>"
+                "host": "localhost",
+                "port": "27017"
             }
         },
         "PostgreSQL": {
@@ -620,8 +645,10 @@
             "parameters": {
                 "auth_token": "<token>",
                 "auth_token_name": "<token name>",
+                "auth_type": "<http_basic_auth/http_header>",
                 "hierarchical_output": false,
-                "host": "<host>"
+                "host": "<host>",
+                "use_json": true
             }
         },
         "Redis": {
@@ -641,6 +668,7 @@
             "module": "intelmq.bots.outputs.tcp.output",
             "parameters": {
                 "ip": "<ip>",
+                "hierarchical_output": false,
                 "port": "<port>",
                 "separator": "\n"
             }

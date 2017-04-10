@@ -288,7 +288,8 @@ id: alienvault-otx-parser
 id: anubisnetworks-collector
 provider: AnubisNetworks
 feed: AnubisNetworks Cyberfeed
-http_url: http://alerts.bitsighttech.com:8080/stream?key={{ your api key }}
+http_url: https://prod.cyberfeed.net/stream?key={{ your api key }}
+strip_lines: true
 ```
 
 ## Parser Bot
@@ -1800,6 +1801,9 @@ feed: OpenBL
 rate_limit: 43200
 http_url: https://www.openbl.org/lists/date_all.txt
 ```
+
+**Notes:** there is a list available [here](https://www.openbl.org/lists.html) with all blacklists available by the source which can be handled with the exact same bot, only `http_url` value needs to be specified.
+
 
 ## Parser Bot
 

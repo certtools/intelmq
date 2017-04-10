@@ -5,6 +5,8 @@
 3. [Experts](#experts)
 4. [Outputs](#outputs)
 
+## General remarks
+
 By default all of the bots are started when you start the whole botnet, however there is a possibility to 
 *disable* a bot. This means that the bot will not start every time you start the botnet, but you can start 
 and stop the bot if you specify the bot explicitly. To disable a bot, add the following to your 
@@ -12,6 +14,48 @@ and stop the bot if you specify the bot explicitly. To disable a bot, add the fo
 described in this file). It is set outside of the `parameters` object in `runtime.conf`. Check the 
 [User-Guide](./User-Guide.md) for an example.
 
+There are two different types of parameters: The initialization parameters are need to start the bot. The runtime parameters are needed by the bot itself during runtime.
+
+The initialization parameters are in the first level, the runtime parameters live in the `parameters` sub-dictionary:
+
+```json
+{
+    "bot-id": {
+        "parameters": {
+            runtime parameters...
+        },
+        initialization parameters...
+    }
+}
+```
+For example:
+```json
+{
+    "abusech-feodo-domains-collector": {
+        "parameters": {
+            "provider": "Abuse.ch",
+            "feed": "Abuse.ch Feodo Domains",
+            "http_url": "http://example.org/feodo-domains.txt"
+        },
+        "name": "Generic URL Fetcher",
+        "group": "Collector",
+        "module": "intelmq.bots.collectors.http.collector_http",
+        "description": "collect report messages from remote hosts using http protocol",
+        "enabled": true,
+        "run_mode": "scheduled"
+    }
+}
+```
+
+This configration resides in the file `runtime.conf` in your intelmq's configuration directory for each configured bot.
+
+## Initialization parameters
+
+* `name` and `description`: The name and description of the bot as can be found in BOTS-file, not used by the bot itself.
+* `group`: Can be `"Collector"`, `"Parser"`, `"Expert"` or `"Output"`. Only used for visualization by other tools.
+* `module`: The executable (should be in `$PATH`) which will be started.
+* `enabled`: If the parameter is set to `true` (which is NOT the default value if it is missing as a protection) the bot will start when the botnet is started (`intelmqctl start`). If the parameter was set to `false`, the Bot will not be started by `intelmqctl start`, however you can run the bot independently using `intelmqctl start <bot_id>`. Check the [User-Guide](./User-Guide.md) for more details.
+* `run_mode`: There are two run modes, "continuous" (default run mode) or "scheduled". In the first case, the bot will be running forever until stopped or exits because of errors (depending on configuration). In the latter case, the bot will stop after one successful run. This is especially useful when scheduling bots via cron or systemd. Default is `continuous`. Check the [User-Guide](./User-Guide.md) for more details.
 
 <a name="collectors"></a>
 ## Collectors
@@ -167,7 +211,7 @@ If the stream is interrupted, the connection will be aborted using the timeout p
 
 ### Request Tracker
 
-        
+
 #### Information:
 * `name:` intelmq.bots.collectors.rt.collector_rt
 * `lookup:` yes
@@ -191,7 +235,7 @@ If the stream is interrupted, the connection will be aborted using the timeout p
 * `url_regex`: regular expression of an URL to search for in the ticket
 * `attachment_regex`: regular expression of an attachment in the ticket
 * `unzip_attachment`: whether to unzip a found attachment
-        
+
 * * *
 
 ### XMPP collector
@@ -222,6 +266,7 @@ If the stream is interrupted, the connection will be aborted using the timeout p
 
 ### Alien Vault OTX
 
+See the README.md
 
 #### Information:
 * `name:` intelmq.bots.collectors.alienvault_otx.collector
@@ -235,32 +280,59 @@ If the stream is interrupted, the connection will be aborted using the timeout p
 * **Feed parameters** (see above)
 * `api_key`: location of information resource (e.g. FIXME)
 
+* * *
 
+### Blueliv Crimeserver
+
+See the README.md
+
+#### Information:
+* `name:` intelmq.bots.collectors.blueliv.collector_crimeserver
+* `lookup:` yes
+* `public:` no
+* `cache (redis db):` none
+* `description:` collect report messages from Blueliv API
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `api_key`: location of information resource
+
+* * *
+
+### N6Stomp
+
+See the README.md
+
+#### Information:
+* `name:` intelmq.bots.collectors.n6.collector_stomp
+* `lookup:` yes
+* `public:` no
+* `cache (redis db):` none
+* `description:` collect report messages from Blueliv API
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `exchange`: exchange point as given by CERT.pl
+* `port`: 61614
+* `server`: hostname e.g. "n6stream.cert.pl"
+* `ssl_ca_certificate`: path to CA file
+* `ssl_client_certificate`: path to client cert file
+* `ssl_client_certificate_key`: path to client cert key file
 
 
 <a name="parsers"></a>
 ## Parsers
 
-### \<ParserBot\>
-
-#### Information:
-* `name:`
-* `lookup:`
-* `public:`
-* `cache (redis db):`
-* `description:`
-
-#### Configuration Parameters:
-
-* `<parameter>`: \<text\>
-
-
-
+TODO
 
 <a name="experts"></a>
 ## Experts
 
 ### Abusix
+
+See the README.md
 
 #### Information:
 * `name:` abusix
@@ -277,6 +349,8 @@ FIXME
 * * *
 
 ### ASN Lookup
+
+See the README.md
 
 #### Information:
 * `name:` ASN lookup
@@ -313,7 +387,7 @@ FIXME
 * `name:` cymru-whois
 * `lookup:` cymru dns
 * `public:` yes
-* `cache (redis db):` 6
+* `cache (redis db):` 5
 * `description:` IP to geolocation, ASN, BGP prefix
 
 #### Configuration Parameters:
@@ -324,20 +398,47 @@ FIXME
 
 ### Deduplicator
 
+See the README.md
+
 #### Information:
 * `name:` deduplicator
 * `lookup:` redis cache
 * `public:` yes
-* `cache (redis db):` 7
+* `cache (redis db):` 6
 * `description:` message deduplicator
 
 #### Configuration Parameters:
 
-FIXME
+Please check this [README](../intelmq/bots/experts/deduplicator/README.md) file.
+
+* * *
+
+### Field Reducer Bot
+
+#### Information:
+* `name:` reducer
+* `lookup:` none
+* `public:` yes
+* `cache (redis db):` none
+* `description:` The field reducer bot is capable of removing fields from events.
+
+#### Configuration Parameters:
+* `type` - either `"whitelist"` or `"blacklist"`
+* `keys` - a list of key names (strings)
+
+##### Whitelist
+
+Only the fields in `keys` will passed along.
+
+##### Blacklist
+
+The fields in `keys` will be removed from events.
 
 * * *
 
 ### Filter
+
+See the README.md
 
 #### Information:
 * `name:` filter
@@ -352,7 +453,30 @@ FIXME
 
 * * *
 
+### Generic DB Lookup
+
+See the README.md
+
+* * *
+
+### Gethostbyname
+
+#### Information:
+* `name:` gethostbyname
+* `lookup:` dns
+* `public:` yes
+* `cache (redis db):` none
+* `description:` DNS name (fqdn) to IP
+
+#### Configuration Parameters:
+
+none
+
+* * *
+
 ### MaxMind GeoIP
+
+See the README.md
 
 #### Information:
 * `name:` maxmind-geoip
@@ -364,6 +488,108 @@ FIXME
 #### Configuration Parameters:
 
 FIXME
+
+
+* * *
+
+### Modify
+
+#### Information:
+* `name:` modify
+* `lookup:` local config
+* `public:` yes
+* `cache (redis db):` none
+* `description:` modify expert bot allows you to change arbitrary field values of events just using a configuration file
+
+#### Configuration Parameters:
+
+The modify expert bot allows you to change arbitrary field values of events just using a configuration file. Thus it is possible to adapt certain values or adding new ones only by changing JSON-files without touching the code of many other bots.
+
+The configuration is called `modify.conf` and looks like this:
+
+```json
+[
+    {
+        "rulename": "Standard Protocols http",
+        "if": {
+            "source.port": "^(80|443)$"
+        },
+        "then": {
+            "protocol.application": "http"
+        }
+    },
+    {
+        "rule": "Spamhaus Cert conficker",
+        "if": {
+            "malware.name": "^conficker(ab)?$"
+        },
+        "then": {
+            "classification.identifier": "conficker"
+        }
+    },
+    {
+        "rule": "bitdefender",
+        "if": {
+            "malware.name": "bitdefender-(.*)$"
+        },
+        "then": {
+            "malware.name": "{matches[malware.name][1]}"
+        }
+    },
+    {
+        "rule": "urlzone",
+        "if": {
+            "malware.name": "^urlzone2?$"
+        },
+        "then": {
+            "classification.identifier": "urlzone"
+        }
+    },
+    {
+        "rule": "default",
+        "if": {
+            "feed.name": "^Spamhaus Cert$"
+        },
+        "then": {
+            "classification.identifier": "{msg[malware.name]}"
+        }
+    }
+]
+```
+
+In our example above we have five groups labeled `Standard Protocols http`,
+`Spamhaus Cert conficker`, `bitdefender`, `urlzone` and `default`.
+All sections will be considered, in the given order (from top to bottom).
+
+Each rule consists of *conditions* and *actions*.
+Conditions and actions are dictionaries holding the field names of events
+and regex-expressions to match values (selection) or set values (action).
+All matching rules will be applied in the given order.
+The actions are only performed if all selections apply.
+
+If the value for a condition is an empty string, the bot checks if the field does not exist.
+This is useful to apply default values for empty fields.
+
+
+#### Actions
+
+You can set the value of the field to a string literal or number.
+
+In addition you can use the [standard Python string format syntax](https://docs.python.org/3/library/string.html#format-string-syntax)
+to access the values from the processed event as `msg` and the match groups
+of the conditions as `matches`, see the bitdefender example above.
+Note that `matches` will also contain the match groups
+from the default conditions if there were any.
+
+#### Examples
+
+We have an event with `feed.name = Spamhaus Cert` and `malware.name = confickerab`. The expert loops over all sections in the file and eventually enters section `Spamhaus Cert`. First, the default condition is checked, it matches! Ok, going on. Otherwise the expert would have selected a different section that has not yet been considered. Now, go through the rules, until we hit the rule `conficker`. We combine the conditions of this rule with the default conditions, and both rules match! So we can apply the action: `classification.identifier` is set to `conficker`, the trivial name.
+
+Assume we have an event with `feed.name = Spamhaus Cert` and `malware.name = feodo`. The default condition matches, but no others. So the default action is applied. The value for `classification.identifier` will be set to `feodo` by `{msg[malware.name]}`.
+
+#### Types
+
+If the rule is a string, a regex-search is performed, also for numeric values (`str()` is called on them). If the rule is numeric for numeric values, a simple comparison is done. If other types are mixed, a warning will be thrown.
 
 * * *
 
@@ -379,6 +605,32 @@ FIXME
 #### Configuration Parameters:
 
 FIXME
+
+* * *
+
+### RFC1918
+
+Several RFCs define IPs and Hostnames (and TLDs) reserved for documentation:
+
+Sources:
+* https://tools.ietf.org/html/rfc1918
+* https://tools.ietf.org/html/rfc2606
+* https://tools.ietf.org/html/rfc3849
+* https://tools.ietf.org/html/rfc4291
+* https://tools.ietf.org/html/rfc5737
+* https://en.wikipedia.org/wiki/IPv4
+
+#### Information:
+* `name:` rfc1918
+* `lookup:` none
+* `public:` yes
+* `cache (redis db):` none
+* `description:` removes events or single fiels with invalid data
+
+#### Configuration Parameters:
+
+* `fields`: list of fields to look at. e.g. "destination.ip,source.ip,source.url"
+* `policy`: list of policies, e.g. "del,drop,drop". `drop` drops the entire event, `del` removes the field.
 
 * * *
 
@@ -414,6 +666,8 @@ FIXME
 
 ### Tor Nodes
 
+See the README.md
+
 #### Information:
 * `name:` tor-nodes
 * `lookup:` local database
@@ -425,101 +679,18 @@ FIXME
 
 FIXME
 
-* * *
-
-### Modify
+### Url2FQDN
 
 #### Information:
-* `name:` modify
-* `lookup:` local config
+* `name:` url2fqdn
+* `lookup:` none
 * `public:` yes
 * `cache (redis db):` none
-* `description:` modify expert bot allows you to change arbitrary field values of events just using a configuration file
+* `description:` writes domain name from URL to FQDN
 
 #### Configuration Parameters:
 
-The modify expert bot allows you to change arbitrary field values of events just using a configuration file. Thus it is possible to adapt certain values or adding new ones only by changing JSON-files without touching the code of many other bots.
-
-The configuration is called `modify.conf` and looks like this:
-
-```json
-{
-"Spamhaus Cert": {
-    "__default": [{
-            "feed.name": "^Spamhaus Cert$"
-        }, {
-            "classification.identifier": "{msg[malware.name]}"
-        }],
-    "conficker": [{
-            "malware.name": "^conficker(ab)?$"
-        }, {
-            "classification.identifier": "conficker"
-        }],
-    "urlzone": [{
-            "malware.name": "^urlzone2?$"
-        }, {
-            "classification.identifier": "urlzone"
-        }],
-    "bitdefender" : [{
-            "malware.name": "bitdefender-(.*)$"
-        }, {
-            "malware.name": "{matches[malware.name][1]}"
-        }]
-    },
-"Standard Protocols": {
-    "http": [{
-            "source.port": "^(80|443)$"
-        }, {
-            "protocol.application": "http"
-        }]
-    }
-}
-```
-
-The dictionary on the first level holds sections to group the rules.
-In our example above we have two sections labeled `Spamhaus Cert` and `Standard Protocols`.
-All sections will be considered, but in undefined order.
-
-Each section holds a dictionary of rules, consisting of *conditions* and *actions*.
-`__default` indicates an optional default rule. If a default rule exist, the section
-will only be entered, if its conditions match. Actions are optional for the default rule.
-
-Conditions and actions are again dictionaries holding the field names of events
-and regex-expressions to match values (condition) or set values (action).
-All matching rules will be applied in no particular order.
-Matching checks if all joined conditions of the rule and the default rule
-are true before performing the actions.
-If no rule within a section matches, existing actions of the default rule for the section are applied.
-
-If the value for a condition is an empty string, the bot checks if the field does not exist.
-This is useful to apply default values for empty fields.
-
-**Attention**: Because the order of execution is undefined,
-you need to take care that no rule depends on values modified by another rule.
-Otherwise the results of the bot may be different from one run to the other.
-(A redesign is [under discussion](https://github.com/certtools/intelmq/issues/662)
-to improve the situation for future versions.)
-
-#### Actions
-
-You can set the value of the field to a string literal or number.
-
-In addition you can use the [standard Python string format syntax](https://docs.python.org/3/library/string.html#format-string-syntax)
-to access the values from the processed event as `msg` and the match groups
-of the conditions as `matches`, see the bitdefender example above.
-Note that `matches` will also contain the match groups
-from the default conditions if there were any.
-
-#### Examples
-
-We have an event with `feed.name = Spamhaus Cert` and `malware.name = confickerab`. The expert loops over all sections in the file and eventually enters section `Spamhaus Cert`. First, the default condition is checked, it matches! Ok, going on. Otherwise the expert would have selected a different section that has not yet been considered. Now, go through the rules, until we hit the rule `conficker`. We combine the conditions of this rule with the default conditions, and both rules match! So we can apply the action: `classification.identifier` is set to `conficker`, the trivial name.
-
-Assume we have an event with `feed.name = Spamhaus Cert` and `malware.name = feodo`. The default condition matches, but no others. So the default action is applied. The value for `classification.identifier` will be set to `feodo` by `{msg[malware.name]}`.
-
-#### Types
-
-If the rule is a string, a regex-search is performed, also for numeric values (`str()` is called on them). If the rule is numeric for numeric values, a simple comparison is done. If other types are mixed, a warning will be thrown.
-
+* `overwrite`: boolean, replace existing fqdn?
 
 <a name="outputs"></a>
 ## Outputs
@@ -554,6 +725,8 @@ If the rule is a string, a regex-search is performed, also for numeric values (`
 
 * `collection`: MongoDB collection
 * `database`: MongoDB database
+* `db_user` : Database user that should be used if you enabled auth
+* `db_pass` : Password associated to `db_user`
 * `host`: MongoDB host (FQDN or IP)
 * `port`: MongoDB port
 * `hierarchical_output`: Boolean (default true) as mongodb does not allow saving keys with dots, we split the dictionay in sub-dictionaries.
@@ -618,9 +791,12 @@ from your installation.
 
 #### Configuration Parameters:
 
-* `auth_token`: FIXME
-* `auth_token_name`: FIXME
-* `host`: FIXME
+* `auth_token`: the user name / http header key
+* `auth_token_name`: the password / http header value
+* `auth_type`: one of: `"http_basic_auth"`, `"http_header"`
+* `hierarchical_output`: boolean
+* `host`: destination URL
+* `use_json`: boolean
 
 
 * * *
@@ -637,5 +813,7 @@ from your installation.
 
 #### Configuration Parameters:
 
-* `ip`: FIXME
-* `port`: FIXME
+* `ip`: IP of destination server
+* `hierarchical_output`: true for a nested JSON, false for a flat JSON.
+* `port`: port of destination server
+* `separator`: separator of messages

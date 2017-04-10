@@ -44,6 +44,7 @@ class SpamhausCERTParserBot(Bot):
 
             row_splitted = [field.strip() for field in row.split(',')]
             event = self.new_event(report)
+            event.change("feed.url", event["feed.url"].split("key=")[0])
 
             event.add('source.ip', row_splitted[0])
             event.add('source.asn', row_splitted[1].replace('AS', ''))
