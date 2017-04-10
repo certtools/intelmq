@@ -59,6 +59,7 @@ WantedBy=multi-user.target
 POST_DOCS='''
 TO INSTALL
 ==========
+cd /opt/intelmq/etc/systemd
 cp intelmq.*.service /etc/systemd/system
 cp intelmq.*.timer /etc/systemd/system
 chmod 664 /etc/systemd/system/intelmq.*.service
@@ -132,5 +133,6 @@ if DISABLE_IN_CONF or SET_RUNMODE_IN_CONF:
     intelmq_uid = pwd.getpwnam(intelmq_user).pw_uid
     intelmq_gid = grp.getgrnam(intelmq_group).gr_gid
     os.chown(RUNTIME_CONF, intelmq_uid, intelmq_gid)
+    os.chmod(RUNTIME_CONF, 0o664) #u-rw, g-rw (for intelmq-manager), o-r
 
 print(POST_DOCS)
