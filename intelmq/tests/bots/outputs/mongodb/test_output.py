@@ -29,8 +29,6 @@ class TestMongoDBOutputBot(test.BotTestCase, unittest.TestCase):
         cls.default_input_message = INPUT1
         cls.sysconfig = {"collection": "events",
                          "database": "tests",
-                         "db_user": None,
-                         "db_pass": None,
                          "host": "localhost",
                          "port": 27017,
                          "hierarchical_output": True}
