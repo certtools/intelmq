@@ -139,21 +139,21 @@ If you know of an IP address that connects to a zeus c&c server, it's about the 
 <a name="requirements"></a>
 ## Minimum requirements for events
 
-Below, we have enumerated the minimum requirements for an actionable abuse event. These keys need to be present for the abuse report to make sense for the end recipient. Please note that if you choose to anonymize your sources, you can substitute **feed** with **feed code** and that only one of the identity keys **ip**, **domain name**, **url**, **email address** must be present. All the rest of the keys enumerated above are **optional**.
+Below, we have enumerated the minimum requirements for an actionable abuse event. These keys need to be present for the abuse report to make sense for the end recipient. Please note that if you choose to anonymize your sources, you can substitute **feed** with **feed code** and that only one of the identity keys **ip**, **domain name**, **url**, **email address** must be present. All the rest of the keys are **optional**.
 
 |Category|Key|Terminology|
 |--------|---|-----------|
 |Feed|feed|Must|
-|Classification|type|Must|
-|Classification|taxonomy|Must|
-|Time|source time|Must|
-|Time|observation time|Must|
+|Classification|classification.type|Must|
+|Classification|classification.taxonomy|Must|
+|Time|time.source|Must|
+|Time|time.observation|Must|
 |Identity|source.ip|Must*|
 |Identity|source.fqdn|Must*|
 |Identity|source.url|Must*|
 |Identity|source.account|Must*|
 
-
+This list of required fields is *not* enforced by IntelMQ.
 
 **NOTE:** This document was copied from [AbuseHelper repository](https://github.com/abusesa/abusehelper/blob/master/docs/Harmonization.md) and improved.
 
