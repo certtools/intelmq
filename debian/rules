@@ -36,8 +36,7 @@ override_dh_auto_install: $(BOTDOCS)
 	mv debian/intelmq/usr/bin/update-geoip-data debian/intelmq/usr/bin/intelmq-update-geoip-data
 	mv debian/intelmq/usr/bin/update-asn-data debian/intelmq/usr/bin/intelmq-update-asn-data
 	mv debian/intelmq/usr/bin/update-tor-nodes debian/intelmq/usr/bin/intelmq-update-tor-nodes
-	# install testdata
-	# find intelmq/tests/ -type f ! -name "*.py" ! -name "*.pyc" | xargs -I '{}' cp --parents '{}' %{buildroot}/%{python3_sitelib}/
+	# create directories
 	mkdir -p debian/intelmq/var/log/intelmq
 	mkdir -p debian/intelmq/var/lib/intelmq/bots/file-output
 	mkdir -p debian/intelmq/etc/logrotate.d
