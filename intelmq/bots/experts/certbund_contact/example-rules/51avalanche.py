@@ -12,7 +12,7 @@ def determine_directives(context):
     context.logger.debug("Context Matches: %r" % context.matches)
     context.logger.debug("Most Specific Matches: %r" % most_specific_matches(context))
 
-    if feedname is not "avalanche":
+    if feedname != "avalanche":
         # This script shall only handle avalanche data.
         return
 
