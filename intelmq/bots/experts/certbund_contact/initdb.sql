@@ -220,6 +220,8 @@ CREATE TABLE fqdn (
     LIKE fqdn_templ INCLUDING ALL
 );
 
+CREATE INDEX fqdn_fqdn_idx ON fqdn (fqdn);
+
 
 CREATE TABLE fqdn_automatic (
     fqdn_automatic_id SERIAL PRIMARY KEY,
