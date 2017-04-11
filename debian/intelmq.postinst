@@ -10,6 +10,7 @@ if [ "$1" = "configure" ] ; then
     fi
     chmod -R g+w /var/lib/intelmq/*
     chown -R intelmq:intelmq /etc/intelmq/ /var/lib/intelmq/ /var/log/intelmq/
+    systemd-tmpfiles --create /usr/lib/tmpfiles.d/intelmq.conf
 fi
 
 #DEBHELPER#
