@@ -6,106 +6,44 @@ import collections
 import pwd
 import grp
 import os
+from conf import *
 
-from string import Template
+#converts the pipe data from bots:queues kvs to
+#queues: bots kv
+def convert_pipedata(pipe_data):
+    for bot in pipe_data:
+        print(bot)
 
-INTELMQ_DIR = '/opt/intelmq'
-RUNTIME_CONF = INTELMQ_DIR+'/etc/runtime.conf'
-SYSTEMD_OUTPUT_DIR = INTELMQ_DIR+'/etc/systemd'
-SERVICE_PREFIX = "intelmq."
-DISABLE_IN_CONF = True
-SET_RUNMODE_IN_CONF = True
-BOT_TYPE = "Collector"
-INTELMQCTL_BIN=shutil.which('intelmqctl')
-INTELMQ_USER='intelmq'
-INTELMQ_GROUP='intelmq'
+    pass
 
+# Return only the bots which are directly connected
+# If a bot has more than one inputs or outputs stop processing
+#
+def find_bots_in_line(bot,rc_data,pipe_data):
+    dst_qs = pipe_data[bot]['destination-queues']
+    pass
 
-service_template = Template('''[Unit]
-Description=IntelMQ bot $bot Service Unit
-After=network.target
-RefuseManualStart=no
-RefuseManualStop=no
+def main():
+    with open(RUNTIME_CONF, encoding='utf-8') as rc_file:
+        rc_data = json.loads(rc_file.read())
 
-[Service]
-Type=oneshot
-ExecStart=$bot_run_cmd
-#ExecStartPost=
-User=$intelmq_user
-Group=$intelmq_group
+    with open(PIPELINE_CONF, encoding='utf-8') as pipe_file:
+        pipe_data = json.loads(pipe_file.read())
 
-[Install]
-WantedBy=multi-user.target
-''')
+    if not os.path.exists(SYSTEMD_OUTPUT_DIR):
+            os.makedirs(SYSTEMD_OUTPUT_DIR)
 
-timer_template = Template('''[Unit]
-Description=IntelMQ bot $bot Timer Unit
-After=network.target
-RefuseManualStart=no
-RefuseManualStop=no
+    intelmq_user=INTELMQ_USER
+    intelmq_group=INTELMQ_GROUP
 
-[Timer]
-Persistent=true
-AccuracySec=100ms
-RandomizedDelaySec=45minutes
-OnActiveSec=25minutes
-OnUnitActiveSec=$bot_interval seconds
-Unit=$service_file_name
+    collectors = [i for i in rc_data if rc_data[i]['group'] == 'Collector']
+    parsers = [i for i in pipe_data if rc_data[i]['group'] == 'Parser']
 
-[Install]
-WantedBy=multi-user.target
-''')
+    for bot in collectors:
+        bot_data = rc_data[bot]
+        bot_group = bot_data['group']
 
-POST_DOCS='''
-TO INSTALL
-==========
-cd /opt/intelmq/etc/systemd
-cp intelmq.*.service /etc/systemd/system
-cp intelmq.*.timer /etc/systemd/system
-chmod 664 /etc/systemd/system/intelmq.*.service
-chmod 664 /etc/systemd/system/intelmq.*.timer
-systemctl daemon-reload
-systemctl start intelmq.*.timer
-systemctl enable intelmq.*.timer
-
-TO VIEW
-=======
-systemctl list-timers --all
-
-TO REMOVE
-=========
-systemctl stop intelmq.*.service
-systemctl stop intelmq.*.timer
-systemctl disable intelmq.*.service
-systemctl disable intelmq.*.timer
-rm /etc/systemd/system/intelmq.*.service
-rm /etc/systemd/system/intelmq.*.timer
-systemctl daemon-reload
-systemctl reset-failed
-
-
-ON DEBIAN8 GET SYSTEMD-230
-==========================
-echo "deb http://ftp.debian.org/debian jessie-backports main" >> /etc/apt/sources.list.d/debian-backports.list
-apt-get update
-apt-get -t jessie-backports install systemd
-'''
-
-with open(RUNTIME_CONF, encoding='utf-8') as rc_file:
-    rc_data = json.loads(rc_file.read())
-
-if not os.path.exists(SYSTEMD_OUTPUT_DIR):
-        os.makedirs(SYSTEMD_OUTPUT_DIR)
-
-intelmq_user=INTELMQ_USER
-intelmq_group=INTELMQ_GROUP
-
-for bot in rc_data:
-    bot_data = rc_data[bot]
-    bot_group = bot_data['group']
-
-    if bot_group == BOT_TYPE:
-
+        print (dst_q)
         if DISABLE_IN_CONF:
            rc_data[bot]['enabled'] = False
 
@@ -124,15 +62,21 @@ for bot in rc_data:
         with open(timer_file_name, "w", encoding='utf-8') as tmr_file:
             tmr_file.write(timer_data)
 
-if DISABLE_IN_CONF or SET_RUNMODE_IN_CONF:
-    shutil.move(RUNTIME_CONF, RUNTIME_CONF+'.bak')
-    rc_data = collections.OrderedDict(sorted(rc_data.items()))
-    data = json.dumps(rc_data, indent=4)
-    with open(RUNTIME_CONF, "w", encoding='utf-8') as rc_file:
-        rc_file.write(data)
-    intelmq_uid = pwd.getpwnam(intelmq_user).pw_uid
-    intelmq_gid = grp.getgrnam(intelmq_group).gr_gid
-    os.chown(RUNTIME_CONF, intelmq_uid, intelmq_gid)
-    os.chmod(RUNTIME_CONF, 0o664) #u-rw, g-rw (for intelmq-manager), o-r
+    if DISABLE_IN_CONF or SET_RUNMODE_IN_CONF:
+        shutil.move(RUNTIME_CONF, RUNTIME_CONF+'.bak')
+        rc_data = collections.OrderedDict(sorted(rc_data.items()))
+        data = json.dumps(rc_data, indent=4)
+        with open(RUNTIME_CONF, "w", encoding='utf-8') as rc_file:
+            rc_file.write(data)
+        intelmq_uid = pwd.getpwnam(intelmq_user).pw_uid
+        intelmq_gid = grp.getgrnam(intelmq_group).gr_gid
+        os.chown(RUNTIME_CONF, intelmq_uid, intelmq_gid)
+        os.chmod(RUNTIME_CONF, 0o664) #u-rw, g-rw (for intelmq-manager), o-r
 
-print(POST_DOCS)
+    print(POST_DOCS)
+if __name__=="__main__":
+    #main()
+    with open(PIPELINE_CONF, encoding='utf-8') as pipe_file:
+        pipe_data = json.loads(pipe_file.read())
+    print(pipe_data)
+    convert_pipedata(pipe_data)
