@@ -1,3 +1,10 @@
+intelmq (1.0.0~dev6+intevation.2.0~rc3) unstable; urgency=low
+
+  * Bug fixes
+  * More examples
+
+ -- Gernot Schulz <gernot@intevation.de>  Mon, 10 Apr 2017 14:58:59 +0200
+
 intelmq (1.0.0~dev6+intevation.2.0~rc2) unstable; urgency=low
 
   * Install certbund rules bot configuration.
