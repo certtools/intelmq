@@ -43,7 +43,6 @@ def main():
         bot_data = rc_data[bot]
         bot_group = bot_data['group']
 
-        print (dst_q)
         if DISABLE_IN_CONF:
            rc_data[bot]['enabled'] = False
 
@@ -75,8 +74,8 @@ def main():
 
     print(POST_DOCS)
 if __name__=="__main__":
-    #main()
-    with open(PIPELINE_CONF, encoding='utf-8') as pipe_file:
-        pipe_data = json.loads(pipe_file.read())
-    print(pipe_data)
-    convert_pipedata(pipe_data)
+    main()
+    #with open(PIPELINE_CONF, encoding='utf-8') as pipe_file:
+    #    pipe_data = json.loads(pipe_file.read())
+    #print(pipe_data)
+    #convert_pipedata(pipe_data)
