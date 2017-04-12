@@ -1649,7 +1649,7 @@ reference: http://data.netlab.360.com/ek
 id: netlab360-mirai-scanner-collector
 provider: Netlab 360
 feed: Netlab 360 Mirai Scanner List
-rate_limit: FIXME
+rate_limit: 86400
 http_url: http://data.netlab.360.com/feeds/mirai-scanner/scanner.list
 ```
 
