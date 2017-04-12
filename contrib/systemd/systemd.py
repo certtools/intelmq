@@ -11,17 +11,48 @@ from conf import *
 #converts the pipe data from bots:queues kvs to
 #queues: bots kv
 def convert_pipedata(pipe_data):
+    sqs2bot = {}
+    dsq_count = {}
     for bot in pipe_data:
-        print(bot)
+        src_qs =  pipe_data[bot].get('source-queue','')
+        src_qs =  [src_qs,]
+        dst_qs =  pipe_data[bot].get('destination-queues',[])
+        for q in src_qs:
+            if q in sqs2bot:
+                qb = sqs2bot[q]
+                qb.append(q)
+                sqs2bot[q] = qb
+            else:
+                sqs2bot[q] = [bot,]
 
-    pass
+        for q in dst_qs:
+            if q in dsq_count:
+                qb = dsq_count[q]
+                qb += 1
+                dsq_count[q] = qb
+            else:
+                dsq_count[q] = 1
+    return (sqs2bot, dsq_count)
 
 # Return only the bots which are directly connected
 # If a bot has more than one inputs or outputs stop processing
 #
-def find_bots_in_line(bot,rc_data,pipe_data):
-    dst_qs = pipe_data[bot]['destination-queues']
-    pass
+def connected_bots(bot,rc_data,pipe_data):
+    cbs = []
+    sqs2bot, dsq_count = convert_pipedata(pipe_data)
+    cbot = bot
+    while True:
+        dst_qs =  pipe_data[cbot].get('destination-queues',[])
+        if len(dst_qs) == 1:
+            dst_q = dst_qs[0]
+            _bot = sqs2bot[dst_q]
+            cbot = _bot[0]
+            count = dsq_count[dst_q]
+            if count > 1: break
+            else: cbs.append(cbot)
+        else:
+            break
+    return cbs
 
 def main():
     with open(RUNTIME_CONF, encoding='utf-8') as rc_file:
@@ -41,7 +72,9 @@ def main():
 
     for bot in collectors:
         bot_data = rc_data[bot]
-        bot_group = bot_data['group']
+        #bot_group = bot_data['group']
+
+        cbs = connected_bots(bot,rc_data,pipe_data)
 
         if DISABLE_IN_CONF:
            rc_data[bot]['enabled'] = False
@@ -76,7 +109,3 @@ def main():
     print(POST_DOCS)
 if __name__=="__main__":
     main()
-    #with open(PIPELINE_CONF, encoding='utf-8') as pipe_file:
-    #    pipe_data = json.loads(pipe_file.read())
-    #print(pipe_data)
-    #convert_pipedata(pipe_data)
