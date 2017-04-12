@@ -71,14 +71,15 @@ def lookup_contacts(cur, managed, asn, ip, fqdn, country_code):
     cur.execute("""
     WITH
          -- all organisations related to the ASN
-         matched_asn (organisation_id)
+         matched_asn_orgids (organisation_id)
              AS (SELECT oa.organisation{0}_id
                    FROM organisation_to_asn{0} AS oa
                      WHERE oa.asn = %(asn)s),
          -- the ASN matches in a form useful for conversion to JSON
          asn_json_rows (field, organisations, annotations, managed)
              AS (SELECT 'asn' AS field,
-                        ARRAY(SELECT * FROM matched_asn) AS organisations,
+                        ARRAY(SELECT * FROM matched_asn_orgids)
+                        AS organisations,
                         coalesce(CASE WHEN %(extension)s = ''
                                       THEN (SELECT json_agg(annotation)
                                               FROM autonomous_system_annotation
@@ -88,34 +89,28 @@ def lookup_contacts(cur, managed, asn, ip, fqdn, country_code):
                                  ('[]' :: JSON)) AS annotations,
                         %(managed)s AS managed
                  -- only generate a row if matches were found:
-                 HAVING EXISTS(SELECT * FROM matched_asn)),
+                 HAVING EXISTS(SELECT * FROM matched_asn_orgids)),
 
          -- The FQDN IDs for the given FQDN
-         matched_fqdn_ids (fqdn_id)
+         matched_fqdns (fqdn_id)
              AS (SELECT f.fqdn{0}_id AS fqdn_id
                    FROM fqdn{0} AS f
                   WHERE f.fqdn = %(fqdn)s),
-         -- all organisations related to the matched_fqdn_ids
-         matched_fqdn (organisation_id)
-             AS (SELECT of.organisation{0}_id AS organisation_id
-                   FROM matched_fqdn_ids AS f
-                   JOIN organisation_to_fqdn{0} AS of
-                     ON f.fqdn_id = of.fqdn{0}_id),
          -- the FQDN matches in a form useful for conversion to JSON
          fqdn_json_rows (field, organisations, annotations, managed)
              AS (SELECT 'fqdn' AS field,
-                        ARRAY(SELECT * FROM matched_fqdn) AS organisations,
+                        ARRAY(SELECT of.organisation{0}_id
+                                FROM organisation_to_fqdn{0} AS of
+                               WHERE of.fqdn{0}_id = mf.fqdn_id)
+                        AS organisations,
                         coalesce(CASE WHEN %(extension)s = ''
                                       THEN (SELECT json_agg(annotation)
                                               FROM fqdn_annotation ann
-                                             WHERE ann.fqdn_id
-                                                   IN (SELECT *
-                                                       FROM matched_fqdn_ids))
+                                             WHERE ann.fqdn_id = mf.fqdn_id)
                                  END,
                                  ('[]' :: JSON)) AS annotations,
                         %(managed)s AS managed
-                 -- only generate a row if matches were found:
-                 HAVING EXISTS(SELECT * FROM matched_fqdn)),
+                   FROM matched_fqdns mf),
 
          -- all matched networks including their cidr addresses
          matched_networks (network_id, address)
@@ -159,14 +154,17 @@ def lookup_contacts(cur, managed, asn, ip, fqdn, country_code):
          -- The IDs of all matched organisations
          grouped_matches (organisation_id)
              AS (SELECT u.organisation_id
-                   FROM (SELECT organisation_id FROM matched_asn
+                   FROM (SELECT organisation_id FROM matched_asn_orgids
                          UNION
                          SELECT orgn.organisation{0}_id
                            FROM matched_networks mn
                            JOIN organisation_to_network{0} orgn
                              ON mn.network_id = orgn.network{0}_id
                          UNION
-                         SELECT organisation_id FROM matched_fqdn
+                         SELECT of.organisation{0}_id
+                           FROM matched_fqdns AS f
+                           JOIN organisation_to_fqdn{0} AS of
+                             ON f.fqdn_id = of.fqdn{0}_id
                          UNION
                          SELECT organisation_id FROM matched_certs) u),
 
