@@ -53,6 +53,7 @@ def main():
         bot_interval = int(bot_parameters['rate_limit'])
         bot_run_cmd = INTELMQCTL_BIN+' run '+bot
         service_file_name = SYSTEMD_OUTPUT_DIR+os.path.sep+SERVICE_PREFIX+bot+'.service'
+        bot_service_name = SERVICE_PREFIX+bot+'.service'
         timer_file_name = SYSTEMD_OUTPUT_DIR+os.path.sep+SERVICE_PREFIX+bot+'.timer'
         service_data = service_template.substitute(locals())
         timer_data = timer_template.substitute(locals())
