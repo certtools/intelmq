@@ -430,7 +430,8 @@ def most_specific_matches(context):
             return by_managed["manual"] or by_managed["automatic"]
 
     return (get_preferred_by_field("fqdn") |
-           (get_preferred_by_field("ip") or get_preferred_by_field("asn") or get_preferred_by_field("geolocation.cc")))
+           (get_preferred_by_field("ip") or get_preferred_by_field("asn")) |
+            get_preferred_by_field("geolocation.cc"))
 
 
 def keep_most_specific_contacts(context):
