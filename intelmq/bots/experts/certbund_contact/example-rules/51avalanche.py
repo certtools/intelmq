@@ -53,7 +53,7 @@ def determine_directives(context):
                 continue
 
             # Determine the organisations of this match.
-            orgs = get_orgs_for_match(context, match)
+            orgs = context.organisations_for_match(match)
             # context.logger.debug("Orgs for this Match are: %r" % orgs)
 
             # Now get the annotations ("Tags") for the match
@@ -155,16 +155,6 @@ def evaluate_match(context, match, organisations):
                 directive.update(provider_contact_directive())
                 directive.aggregate_by_field(context.section + ".asn")
                 context.add_directive(directive)
-
-
-def get_orgs_for_match(context, match):
-    # Return the Organisations which are listed within a match
-    org_ids = match.organisations
-    orgs = set()
-    for o in org_ids:
-        orgs.add(context.lookup_organisation(o))
-
-    return orgs
 
 
 def cert_contact_directive(notification_format="avalanche", data_format="avalanche_csv_attachment", interval=0):

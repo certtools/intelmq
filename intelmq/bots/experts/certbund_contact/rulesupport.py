@@ -374,6 +374,20 @@ class Context:
         """Return the organisation with the given ID"""
         return self._organisation_map[orgid]
 
+    def organisations_for_match(self, match):
+        """Return the organisations associated with the match.
+        The match objects themselves contain a list of organisation IDs.
+        This method maps those IDs to the corresponding organisation
+        objects.
+
+        Args:
+            match: A Match object
+
+        Return: A list of Organisation instances
+        """
+        return [self.lookup_organisation(orgid)
+                for orgid in match.organisations]
+
     def all_contacts(self):
         """Return an iterator over all contacts."""
         for org in self.organisations:

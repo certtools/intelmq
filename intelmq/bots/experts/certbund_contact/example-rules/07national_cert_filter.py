@@ -27,7 +27,7 @@ def determine_directives(context):
         if match.field == 'geolocation.cc':
             # This indicates a candidate where REMOVAL of the Organisation
             # from the match migth be required...
-            orgs = get_orgs_for_match(context, match)
+            orgs = context.organisations_for_match(match)
             kept_org_ids = set()
 
             # Iterate the orgs.
@@ -61,15 +61,3 @@ def determine_directives(context):
     
     # We'll return None, as other scripts shall still run....
     return None 
-
-def get_orgs_for_match(context, match):
-    # TODO Duplicated from 51avalanche.py, might be 
-    # a candidate for a convenience function.
-    # Return the Organisations which are listed within a match
-    org_ids = match.organisations
-    orgs = set()
-    for o in org_ids:
-        orgs.add(context.lookup_organisation(o))
-
-    return orgs
-
