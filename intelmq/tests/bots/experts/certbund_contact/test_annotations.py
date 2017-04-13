@@ -9,7 +9,7 @@ import json
 import unittest
 
 from intelmq.bots.experts.certbund_contact.annotations import from_json, \
-     AnnotationError
+     Annotation, AnnotationError
 
 
 class TestAnnotations(unittest.TestCase):
@@ -136,6 +136,11 @@ class TestAnnotations(unittest.TestCase):
                                    ',"condition":'
                                  '["eq", "openportmapper"]'
                                  '}'))
+
+    def test_annotation_class_instantiation_no_condition(self):
+        # Annotation objects have a default condition that matches all
+        # events:
+        self.assertTrue(Annotation("a tag").matches({}))
 
 
 
