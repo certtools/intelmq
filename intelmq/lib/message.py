@@ -149,7 +149,7 @@ class Message(dict):
             force: Deprecated, use overwrite (default: False)
             overwrite: Overwrite an existing value if it already exists (default: False)
             ignore: List or tuple of values to ignore, deprecated (default: ())
-            raise_failure: If a intelmq.lib.exceptions.InvalidValue should be raisen for
+            raise_failure: If a intelmq.lib.exceptions.InvalidValue should be raised for
                 invalid values (default: True). If false, the return parameter will be
                 False in case of invalid values.
 
@@ -158,7 +158,7 @@ class Message(dict):
             * False if the value is invalid and raise_failure is False.
 
         Raises:
-            intelmq.lib.exceptions.KeyExists: If key exists and won't be overwritten explcitly.
+            intelmq.lib.exceptions.KeyExists: If key exists and won't be overwritten explicitly.
             intelmq.lib.exceptions.InvalidKey: if key is invalid.
             intelmq.lib.exceptions.InvalidArgument: if ignore is not list or tuple.
             intelmq.lib.exceptions.InvalidValue: If value is not valid for the given key and
@@ -295,7 +295,7 @@ class Message(dict):
         return int(self.hash(), 16)
 
     def hash(self, *, filter_keys=frozenset(), filter_type="blacklist"):
-        """Return a sha256 hash of the message as a hexadecimal string.
+        """Return a SHA256 hash of the message as a hexadecimal string.
         The hash is computed over almost all key/value pairs. Depending on
         filter_type parameter (blacklist or whitelist), the keys defined in
         filter_keys_list parameter will be considered as the keys to ignore

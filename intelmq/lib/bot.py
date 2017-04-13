@@ -214,7 +214,7 @@ class Bot(object):
                             self.acknowledge_message()
 
                             # when bot acknowledge the message,
-                            # dont need to wait again
+                            # don't need to wait again
                             error_on_message = False
 
                         # run_mode: scheduled
@@ -324,7 +324,7 @@ class Bot(object):
                 self.logger.warning("Ignoring empty message at sending. Possible bug in bot.")
                 continue
             if not self.__destination_pipeline:
-                raise exceptions.ConfigurationError('pipeline', 'No destination pipline given, '
+                raise exceptions.ConfigurationError('pipeline', 'No destination pipeline given, '
                                                     'but needed')
                 self.stop()
 
@@ -565,7 +565,7 @@ class ParserBot(Bot):
         `self.parse_line` can be saved in `self.tempdata` (list).
 
         Default parser yields stripped lines.
-        Override for your use or use an exisiting parser, e.g.::
+        Override for your use or use an existing parser, e.g.::
 
             parse = ParserBot.parse_csv
 

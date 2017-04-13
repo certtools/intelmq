@@ -232,7 +232,7 @@ class DateTime(GenericType):
     @staticmethod
     def from_timestamp(tstamp, tzone='UTC'):
         """
-        Returns ISO formated datetime from given timestamp.
+        Returns ISO formatted datetime from given timestamp.
         You can give timezone for given timestamp, UTC by default.
         """
         dtime = (datetime.datetime(1970, 1, 1, tzinfo=pytz.utc) +
@@ -252,7 +252,7 @@ class DateTime(GenericType):
 class Float(GenericType):
     """
     Float type. Without sanitation only python float/integer/long is
-    accepted. Boolean is excplicitly denied.
+    accepted. Boolean is explicitly denied.
 
     Sanitation accepts strings and everything float() accepts.
     """
@@ -364,7 +364,7 @@ class FQDN(GenericType):
 class Integer(GenericType):
     """
     Integer type. Without sanitation only python integer/long is accepted.
-    Bool is excplicitly denied.
+    Bool is explicitly denied.
 
     Sanitation accepts strings and everything int() accepts.
     """
@@ -398,7 +398,7 @@ class IPAddress(GenericType):
 
     Sanitation accepts strings and objects of ipaddress.IPv4Address and ipaddress.IPv4Address.
 
-    Valid values are only strings. 0.0.0.0 is explictly not allowed.
+    Valid values are only strings. 0.0.0.0 is explicitly not allowed.
     """
 
     @staticmethod
