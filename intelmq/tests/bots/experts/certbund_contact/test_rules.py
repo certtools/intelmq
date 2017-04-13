@@ -94,5 +94,38 @@ class TestMostSpecificContact(unittest.TestCase):
                    ["manual-fqdn"])
 
 
+class TestRuleContext(unittest.TestCase):
+
+    def test_organisation_removal(self):
+        event = build_event([("org1", "manual", ["fqdn", "ip"]),
+                             ("org2", "manual", ["asn"])],
+                            "source")
+        context = Context(event, "source", None)
+        # Check that the data matches what the actual test step expects:
+        # The org IDs are 0 and 1
+        self.assertEqual([org.orgid for org in context.organisations],
+                         [0, 1])
+        # the asn match references the organisation with ID 1:
+        self.assertEqual([match.organisations
+                          for match in context.matches
+                          if match.field == "asn"],
+                         [[1]])
+
+        # Remove organisation 1
+        context.organisations = [org
+                                 for org in context.organisations
+                                 if org.orgid != 1]
+
+        # Now the ASN match should have an empty organisations list:
+        self.assertEqual([match.organisations
+                          for match in context.matches
+                          if match.field == "asn"],
+                         [[]])
+
+        # It should not be possible to get the organisation for ID 1
+        with self.assertRaises(KeyError):
+            context.lookup_organisation(1)
+
+
 if __name__ == "__main__":
     unittest.main()
