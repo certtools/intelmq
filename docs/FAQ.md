@@ -15,6 +15,6 @@ If you get an error like this:
 intelmq.lib.exceptions.PipelineError: pipeline failed - ConnectionError('Error 13 connecting to unix socket: /var/run/redis/redis.sock. Permission denied.',)
 ```
 
-make sure the permissions for the socket are set accordingly in `/etc/redis/redis.conf` (or whereever your config is), e.g.:
+make sure the permissions for the socket are set accordingly in `/etc/redis/redis.conf` (or wherever your config is), e.g.:
 
     unixsocketperm 777

@@ -47,7 +47,7 @@ For example:
 }
 ```
 
-This configration resides in the file `runtime.conf` in your intelmq's configuration directory for each configured bot.
+This configuration resides in the file `runtime.conf` in your intelmq's configuration directory for each configured bot.
 
 ## Initialization parameters
 
@@ -217,7 +217,7 @@ If the stream is interrupted, the connection will be aborted using the timeout p
 * `lookup:` yes
 * `public:` yes
 * `cache (redis db):` none
-* `description:` Request Tracker Collector fetches attachments from an RTIR instance and optionally decrypts them with gnupg.
+* `description:` Request Tracker Collector fetches attachments from an RTIR instance.
 
 #### Configuration Parameters:
 
@@ -256,7 +256,7 @@ If the stream is interrupted, the connection will be aborted using the timeout p
 * `xmpp_password`: FIXME
 * `xmpp_room`: FIXME
 * `xmpp_room_nick`: FIXME
-* `xmpp_room_passsword`: FIXME
+* `xmpp_room_password`: FIXME
 * `ca_certs`: FIXME (default: `/etc/ssl/certs/ca-certificates.crt`)
 * `strip_message`: FIXME (default: `true`)
 * `pass_full_xml`: FIXME (default: `false`)
@@ -466,7 +466,7 @@ See the README.md
 * `lookup:` dns
 * `public:` yes
 * `cache (redis db):` none
-* `description:` DNS name (fqdn) to IP
+* `description:` DNS name (FQDN) to IP
 
 #### Configuration Parameters:
 
@@ -583,7 +583,7 @@ from the default conditions if there were any.
 
 #### Examples
 
-We have an event with `feed.name = Spamhaus Cert` and `malware.name = confickerab`. The expert loops over all sections in the file and eventually enters section `Spamhaus Cert`. First, the default condition is checked, it matches! Ok, going on. Otherwise the expert would have selected a different section that has not yet been considered. Now, go through the rules, until we hit the rule `conficker`. We combine the conditions of this rule with the default conditions, and both rules match! So we can apply the action: `classification.identifier` is set to `conficker`, the trivial name.
+We have an event with `feed.name = Spamhaus Cert` and `malware.name = confickerab`. The expert loops over all sections in the file and eventually enters section `Spamhaus Cert`. First, the default condition is checked, it matches! OK, going on. Otherwise the expert would have selected a different section that has not yet been considered. Now, go through the rules, until we hit the rule `conficker`. We combine the conditions of this rule with the default conditions, and both rules match! So we can apply the action: `classification.identifier` is set to `conficker`, the trivial name.
 
 Assume we have an event with `feed.name = Spamhaus Cert` and `malware.name = feodo`. The default condition matches, but no others. So the default action is applied. The value for `classification.identifier` will be set to `feodo` by `{msg[malware.name]}`.
 
@@ -610,7 +610,7 @@ FIXME
 
 ### RFC1918
 
-Several RFCs define IPs and Hostnames (and TLDs) reserved for documentation:
+Several RFCs define IP addresses and Hostnames (and TLDs) reserved for documentation:
 
 Sources:
 * https://tools.ietf.org/html/rfc1918
@@ -625,7 +625,7 @@ Sources:
 * `lookup:` none
 * `public:` yes
 * `cache (redis db):` none
-* `description:` removes events or single fiels with invalid data
+* `description:` removes events or single fields with invalid data
 
 #### Configuration Parameters:
 
@@ -690,7 +690,7 @@ FIXME
 
 #### Configuration Parameters:
 
-* `overwrite`: boolean, replace existing fqdn?
+* `overwrite`: boolean, replace existing FQDN?
 
 <a name="outputs"></a>
 ## Outputs
@@ -725,11 +725,11 @@ FIXME
 
 * `collection`: MongoDB collection
 * `database`: MongoDB database
-* `db_user` : Database user that should be used if you enabled auth
+* `db_user` : Database user that should be used if you enabled authentication
 * `db_pass` : Password associated to `db_user`
 * `host`: MongoDB host (FQDN or IP)
 * `port`: MongoDB port
-* `hierarchical_output`: Boolean (default true) as mongodb does not allow saving keys with dots, we split the dictionay in sub-dictionaries.
+* `hierarchical_output`: Boolean (default true) as mongodb does not allow saving keys with dots, we split the dictionary in sub-dictionaries.
 
 #### Installation Requirements
 

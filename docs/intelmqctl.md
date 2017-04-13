@@ -134,7 +134,7 @@ intelmqctl: file-output is disabled.
 ### enable
 
 Ensures that the `enabled` flag in runtime.conf is not set to `false`.
-Assumume that the bot is now diabled.
+Assume that the bot is now dibbled.
 
 ```bash
 > intelmqctl status file-output
@@ -239,7 +239,7 @@ The same as start and stop consecutively.
 The same as reload of every bot.
 
 ### enable / disable
-The subcommands `enable` and `disable` set the corresponding flags in runtime.conf.
+The sub commands `enable` and `disable` set the corresponding flags in runtime.conf.
 
 ```bash
 > intelmqctl status

@@ -15,7 +15,7 @@
 
 All messages (reports and events) are Python/JSON dictionaries. The key names and according types are defined by the so called *harmonization*.
 
-The purpose of this document is to list and clearly define known **fields** in Abusehelper as well as Intelmq or similar systems. A field is a ```key=value``` pair. For a clear and unique definition of a field, we must define the **key** (field-name) as well as the possible **values**. A field belongs to an **event**. An event is basically a  structured log record in the form ```key=value, key=value, key=value, …```. In the [List of known fields](#fields), each field is grouped by a **section**. We describe these sections briefly below.
+The purpose of this document is to list and clearly define known **fields** in Abusehelper as well as IntelMQ or similar systems. A field is a ```key=value``` pair. For a clear and unique definition of a field, we must define the **key** (field-name) as well as the possible **values**. A field belongs to an **event**. An event is basically a  structured log record in the form ```key=value, key=value, key=value, …```. In the [List of known fields](#fields), each field is grouped by a **section**. We describe these sections briefly below.
 Every event **MUST** contain a timestamp field.
 
 [IOC](https://en.wikipedia.org/wiki/Indicator_of_compromise) (Indicator of compromise) is a single observation like a log line.
@@ -30,7 +30,7 @@ The keys can be grouped together in sub-fields, e.g. `source.ip` or `source.geol
 <a name="sections"></a>
 ## Sections
 
-As stated above, every field is organised under some section. The following is a description of the sections and what they imply.
+As stated above, every field is organized under some section. The following is a description of the sections and what they imply.
 
 ### Feed
 
@@ -104,14 +104,14 @@ Having a functional ontology to work with, especially for the abuse types is imp
 ## Data types
 
 This section lists common data / field type definitions. The section [Fields List](#fields) references this table.
-Hence, this section also gives an overview of which basic data types need to be parseable and implemented by any system using this data harmonisation format.
+Hence, this section also gives an overview of which basic data types need to be parseable and implemented by any system using this data harmonization format.
 Note that this section does not yet define error handling and failure mechanisms should a field not be parseable.
 
 
 |Name                                | SQL Data type     | Regexp and Syntax       | Cybox Equivalent |  Comment                           |
 |:-----------------------------------|:------------------|:------------------------|:-----------------|:-----------------------------------|
 |<a name="#datatype-feed"></a>feed   |varchar(2000)      |  ```[a-zA-Z0-9_.-]+```  |                  | no characters allowed which could be interpreted as CSV separators |
-|<a name="#datatype-url"></a>url     |varchar(2000)      | a valid URL (see [RFC3987](http://tools.ietf.org/html/rfc3987) or similar). | [URI](http://cybox.mitre.org/language/version2.1/xsddocs/objects/URI_Object.html)  | TODO: It is recommended to use libaries such as [faup](https://github.com/stricaud/faup) for validation. |
+|<a name="#datatype-url"></a>url     |varchar(2000)      | a valid URL (see [RFC3987](http://tools.ietf.org/html/rfc3987) or similar). | [URI](http://cybox.mitre.org/language/version2.1/xsddocs/objects/URI_Object.html)  | TODO: It is recommended to use libraries such as [faup](https://github.com/stricaud/faup) for validation. |
 
 
 <a name="fields"></a>
@@ -122,7 +122,7 @@ A list of allowed fields can be found in [Harmonization-fields.md](Harmonization
 <a name="mapping"></a>
 ## Classification
 
-Intelmq classifies events using three labels: taxonomy, type and identifier. This tuple of three values can be used for deduplication of events and describes what happened.
+IntelMQ classifies events using three labels: taxonomy, type and identifier. This tuple of three values can be used for deduplication of events and describes what happened.
 TODO: examples from chat
 
 The taxonomy can be automatically added by the taxonomy expert bot based on the given type. The following taxonomy-type mapping is based on [eCSIRT II Taxonomy](https://www.trusted-introducer.org/Incident-Classification-Taxonomy.pdf):
@@ -131,8 +131,8 @@ The taxonomy can be automatically added by the taxonomy expert bot based on the 
 |----|--------|-----------|
 |spam|Abusive Content|This IOC refers to resources, which make up a SPAM infrastructure, be it a harvester, dictionary attacker, URL etc.|
 |malware|Malicious Code|A URL is the most common resource with reference to malware binary distribution.|
-|botnet drone|Malicious Code|This is a compromized machine, which has been observed to make a connection to a command and control server.|
-|ransomware|Malicious Code|This IOC refers to a specific type of compromized machine, where the computer has been hijacked for ransom by the criminals.|
+|botnet drone|Malicious Code|This is a compromised machine, which has been observed to make a connection to a command and control server.|
+|ransomware|Malicious Code|This IOC refers to a specific type of compromised machine, where the computer has been hijacked for ransom by the criminals.|
 |dga domain|Malicious Code|DGA Domains are seen various families of malware that are used to periodically generate a large number of domain names that can be used as rendezvous points with their command and control servers.|
 |malware configuration|Malicious Code|This is a resource which updates botnet drones with a new configuration.|
 |c&c|Malicious Code|This is a command and control server in charge of a given number of botnet drones.|
@@ -142,12 +142,12 @@ The taxonomy can be automatically added by the taxonomy expert bot based on the 
 |ids alert|Intrusion Attempts|IOCs based on a sensor network. This is a generic IOC denomination, should it be difficult to reliably denote the exact type of activity involved for example due to an anecdotal nature of the rule that triggered the alert.|
 |defacement|Intrusions|This IOC refers to hacktivism related activity.|
 |compromised|Intrusions|This IOC refers to compromised system.|
-|backdoor|Intrusions|This refers to hosts, which have been compromized and backdoored with a remote administration software or trojan in the traditional sense.|
+|backdoor|Intrusions|This refers to hosts, which have been compromised and backdoored with a remote administration software or Trojan in the traditional sense.|
 |ddos|Availability|This IOC refers to various parts of the DDOS infrastructure.|
-|dropzone|Information Content Security|This IOC refers to place where the compromized machines store the stolen user data.|
+|dropzone|Information Content Security|This IOC refers to place where the compromised machines store the stolen user data.|
 |phishing|Fraud|This IOC most often refers to a URL, which is phishing for user credentials.|
 |proxy|Other|This refers to the use of proxies from inside your network.|
-|vulnerable service|Vulnerable|This attribute refers to a badly configured or vulnerable network service, which may be abused by a third party. For example, these services relate to open proxies, open dns resolvers, network time servers (ntp) or character generation services (chargen), simple network management services (snmp). In addition, to specify the network service and its potential abuse, one should use the protocol, destination port and description attributes for that purpose respectively.|
+|vulnerable service|Vulnerable|This attribute refers to a badly configured or vulnerable network service, which may be abused by a third party. For example, these services relate to open proxies, open dns resolvers, network time servers (NTP) or character generation services (chargen), simple network management services (SNMP). In addition, to specify the network service and its potential abuse, one should use the protocol, destination port and description attributes for that purpose respectively.|
 |blacklist|Other|Some sources provide blacklists, which clearly refer to abusive behavior, such as spamming, but fail to denote the exact reason why a given identity has been blacklisted. The reason may be that the justification is anecdotal or missing entirely. This type should only be used if the typing fits the definition of a blacklist, but an event specific denomination is not possible for one reason or another.|
 |unknown|Other|unknown events|
 |test|Test|This is a value for testing purposes.|

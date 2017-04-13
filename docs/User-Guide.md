@@ -131,7 +131,7 @@ More examples can be found at `intelmq/etc/pipeline.conf` directory in IntelMQ r
 #### Miscellaneous
 
 * **`load_balance`** - this option allows you to choose the behavior of the queue. Use the following values:
-    * **`true`** - splits the messages into several queues wihtout duplication
+    * **`true`** - splits the messages into several queues without duplication
     * **`false`** - duplicates the messages into each queue
 
 * **`broker`** - select which broker intelmq can use. Use the following values:
@@ -252,7 +252,7 @@ This configuration is used to specify the fields for all message types. The harm
             "type": "Integer"
         },
         "destination.geolocation.cc": {
-            "description": "Country-Code accoriding to ISO3166-1 alpha-2 for the destination IP.",
+            "description": "Country-Code according to ISO3166-1 alpha-2 for the destination IP.",
             "regex": "^[a-zA-Z0-9]{2}$",
             "type": "String"
         },
@@ -422,7 +422,7 @@ Most of the cases, bots will need to be configured as `continuous` run mode in o
     "name": "Blocklist.de Parser",
     "group": "Parser",
     "module": "intelmq.bots.parsers.blocklistde.parser",
-    "description": "BlockList.DE Parser is the bot responsible to parse the report and sanitize the information.",
+    "description": "Blocklist.DE Parser is the bot responsible to parse the report and sanitize the information.",
     "enabled": false,
     "run_mode": "continuous"
     "parameters": {
@@ -542,12 +542,12 @@ To enable bash completion on `intelmqctl` and `intelmqdump` in order to help you
 
 ## Performance Tests
 
-Somes tests have been made with a virtual machine with 
+Some tests have been made with a virtual machine with 
 the following specifications:
 
 * CPU: 1 core dedicated from i7 processor
 * Memory: 4GB
 * HDD: 10GB
 
-The entire solution didnt have any problem handling 2.000.000 
+The entire solution didn't have any problem handling 2.000.000 
 queued events in memory with bots digesting the messages.
