@@ -11,6 +11,9 @@ class Annotation:
         self.tag = tag
         self.condition = condition
 
+    def __repr__(self):
+        return "Annotation(%r, condition=%r" % (self.tag, self.condition)
+
     def __eq__(self, other):
         return self.tag == other.tag and self.condition == other.condition
 

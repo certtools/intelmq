@@ -34,6 +34,12 @@ class Organisation:
         self.contacts = contacts
         self.annotations = annotations
 
+    def __repr__(self):
+        return ("Organisation(orgid=%r, name=%r, managed=%r, sector=%r,"
+                " contacts=%r, annotations=%r)"
+                % (self.orgid, self.name, self.managed, self.sector,
+                   self.contacts, self.annotations))
+
     @classmethod
     def from_json(cls, jsondict):
         return cls(orgid=jsondict["id"],
