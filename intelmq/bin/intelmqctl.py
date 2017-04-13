@@ -271,7 +271,7 @@ class IntelMQController():
                 python code
                 'text': user-friendly output for cli, default for interactive use
                 'json': machine-readable output for managers
-            quiet: False by default, can be activated for cronjobs etc.
+            quiet: False by default, can be activated for cron jobs etc.
         """
         global RETURN_TYPE
         RETURN_TYPE = return_type
@@ -760,7 +760,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
     def check(self):
         retval = 0
-        # loading files and syntex check
+        # loading files and syntax check
         files = {DEFAULTS_CONF_FILE: None, PIPELINE_CONF_FILE: None,
                  RUNTIME_CONF_FILE: None, BOTS_FILE: None}
         self.logger.info('Reading configuration files.')
@@ -772,7 +772,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 self.logger.error('Coud not load %r: %s.' % (filename, exc))
                 retval = 1
         if retval:
-            self.logger.error('Fatal errors occured.')
+            self.logger.error('Fatal errors occurred.')
             return retval
 
         if os.path.exists(STARTUP_CONF_FILE):

@@ -67,7 +67,7 @@ AVAILABLE_IDS = [key for key, value in ACTIONS.items() if value[1]]
 
 
 def dump_info(fname):
-    info = red('unknwon error')
+    info = red('unknown error')
     if not os.path.getsize(fname):
         info = red('empty file')
     else:
