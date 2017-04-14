@@ -70,43 +70,22 @@ def main():
 
     for bot in collectors:
         bot_data = rc_data[bot]
-        #bot_group = bot_data['group']
 
-        if PROCESS_CONNECTED:
-            connected_bots_services = connected_bots(bot,rc_data,pipe_data)
-            #connected_bots_services = [SERVICE_PREFIX+cb+'.service' for cb in cbs]
-        else:
-            connected_bots_services = []
+        if DISABLE_IN_CONF:
+           rc_data[bot]['enabled'] = False
 
-        connected_bots_services.append(bot)
-        print(connected_bots_services)
+        if SET_RUNMODE_IN_CONF:
+           rc_data[bot]['run_mode'] = 'scheduled'
 
-        for bot_ in connected_bots_services:
-            if DISABLE_IN_CONF:
-               rc_data[bot_]['enabled'] = False
-
-            if SET_RUNMODE_IN_CONF:
-               rc_data[bot_]['run_mode'] = 'scheduled'
-
-            if bot_ == bot:
-                exec_after_bots=list(connected_bots_services)
-                exec_after_bots.remove(bot)
-                bots_cmds = ['ExecStartPost='+SYSTEMCTL_BIN+' start '+i for i in exec_after_bots]
-                exec_after = '\n'.join(bots_cmds)
-            else:
-                exec_after=''
-
-
-            bot_run_cmd = INTELMQCTL_BIN+' run '+bot_
-            service_file_name = SYSTEMD_OUTPUT_DIR+os.path.sep+SERVICE_PREFIX+bot_+'.service'
-            service_data = SERVICE_TEMPLATE.substitute(INTELMQ_USER=INTELMQ_USER,
-                                                       INTELMQ_GROUP = INTELMQ_GROUP,
-                                                       bot = bot_,
-                                                       bot_run_cmd = bot_run_cmd,
-                                                       exec_after = exec_after
-                                                       )
-            with open(service_file_name, "w", encoding='utf-8') as svc_file:
-                svc_file.write(service_data)
+        bot_run_cmd = INTELMQCTL_BIN+' run '+bot
+        service_file_name = SYSTEMD_OUTPUT_DIR+os.path.sep+SERVICE_PREFIX+bot+'.service'
+        service_data = SERVICE_TEMPLATE.substitute(INTELMQ_USER=INTELMQ_USER,
+                                                   INTELMQ_GROUP = INTELMQ_GROUP,
+                                                   bot = bot,
+                                                   bot_run_cmd = bot_run_cmd
+                                                   )
+        with open(service_file_name, "w", encoding='utf-8') as svc_file:
+            svc_file.write(service_data)
 
         bot_parameters = bot_data['parameters']
         bot_service_name = SERVICE_PREFIX+bot+'.service'
