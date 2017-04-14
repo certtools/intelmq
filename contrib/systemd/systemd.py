@@ -7,9 +7,10 @@ import pwd
 import grp
 import os
 from conf import *
+from templates import *
 
 #converts the pipe data from bots:queues kvs to
-#queues: bots kv
+#src_queues: bots kv, #dst_queues: count kvs
 def convert_pipedata(pipe_data):
     sqs2bot = {}
     dsq_count = {}
@@ -64,34 +65,61 @@ def main():
     if not os.path.exists(SYSTEMD_OUTPUT_DIR):
             os.makedirs(SYSTEMD_OUTPUT_DIR)
 
-    intelmq_user=INTELMQ_USER
-    intelmq_group=INTELMQ_GROUP
-
     collectors = [i for i in rc_data if rc_data[i]['group'] == 'Collector']
-    parsers = [i for i in pipe_data if rc_data[i]['group'] == 'Parser']
+    #parsers = [i for i in pipe_data if rc_data[i]['group'] == 'Parser']
 
     for bot in collectors:
         bot_data = rc_data[bot]
         #bot_group = bot_data['group']
 
-        cbs = connected_bots(bot,rc_data,pipe_data)
+        if PROCESS_CONNECTED:
+            connected_bots_services = connected_bots(bot,rc_data,pipe_data)
+            #connected_bots_services = [SERVICE_PREFIX+cb+'.service' for cb in cbs]
+        else:
+            connected_bots_services = []
 
-        if DISABLE_IN_CONF:
-           rc_data[bot]['enabled'] = False
+        connected_bots_services.append(bot)
+        print(connected_bots_services)
 
-        if SET_RUNMODE_IN_CONF:
-           rc_data[bot]['run_mode'] = 'scheduled'
+        for bot_ in connected_bots_services:
+            if DISABLE_IN_CONF:
+               rc_data[bot_]['enabled'] = False
+
+            if SET_RUNMODE_IN_CONF:
+               rc_data[bot_]['run_mode'] = 'scheduled'
+
+            if bot_ == bot:
+                exec_after_bots=list(connected_bots_services)
+                exec_after_bots.remove(bot)
+                bots_cmds = ['ExecStartPost='+SYSTEMCTL_BIN+' start '+i for i in exec_after_bots]
+                exec_after = '\n'.join(bots_cmds)
+            else:
+                exec_after=''
+
+
+            bot_run_cmd = INTELMQCTL_BIN+' run '+bot_
+            service_file_name = SYSTEMD_OUTPUT_DIR+os.path.sep+SERVICE_PREFIX+bot_+'.service'
+            service_data = SERVICE_TEMPLATE.substitute(INTELMQ_USER=INTELMQ_USER,
+                                                       INTELMQ_GROUP = INTELMQ_GROUP,
+                                                       bot = bot_,
+                                                       bot_run_cmd = bot_run_cmd,
+                                                       exec_after = exec_after
+                                                       )
+            with open(service_file_name, "w", encoding='utf-8') as svc_file:
+                svc_file.write(service_data)
 
         bot_parameters = bot_data['parameters']
-        bot_interval = int(bot_parameters['rate_limit'])
-        bot_run_cmd = INTELMQCTL_BIN+' run '+bot
-        service_file_name = SYSTEMD_OUTPUT_DIR+os.path.sep+SERVICE_PREFIX+bot+'.service'
         bot_service_name = SERVICE_PREFIX+bot+'.service'
+        bot_interval = int(bot_parameters['rate_limit'])
         timer_file_name = SYSTEMD_OUTPUT_DIR+os.path.sep+SERVICE_PREFIX+bot+'.timer'
-        service_data = service_template.substitute(locals())
-        timer_data = timer_template.substitute(locals())
-        with open(service_file_name, "w", encoding='utf-8') as svc_file:
-            svc_file.write(service_data)
+
+        timer_data = TIMER_TEMPLATE.substitute(bot = bot,
+                                               ACCURACY_SECS = ACCURACY_SECS,
+                                               RANDOMIZE_DELAYS = RANDOMIZE_DELAYS,
+                                               ON_ACTIVE_SEC = ON_ACTIVE_SEC,
+                                               bot_interval = bot_interval,
+                                               bot_service_name = bot_service_name
+                                               )
         with open(timer_file_name, "w", encoding='utf-8') as tmr_file:
             tmr_file.write(timer_data)
 
@@ -101,8 +129,8 @@ def main():
         data = json.dumps(rc_data, indent=4)
         with open(RUNTIME_CONF, "w", encoding='utf-8') as rc_file:
             rc_file.write(data)
-        intelmq_uid = pwd.getpwnam(intelmq_user).pw_uid
-        intelmq_gid = grp.getgrnam(intelmq_group).gr_gid
+        intelmq_uid = pwd.getpwnam(INTELMQ_USER).pw_uid
+        intelmq_gid = grp.getgrnam(INTELMQ_GROUP).gr_gid
         os.chown(RUNTIME_CONF, intelmq_uid, intelmq_gid)
         os.chmod(RUNTIME_CONF, 0o664) #u-rw, g-rw (for intelmq-manager), o-r
 
