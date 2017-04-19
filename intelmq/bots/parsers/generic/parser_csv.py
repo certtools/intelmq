@@ -64,8 +64,8 @@ class GenericCsvParserBot(ParserBot):
     def parse_line(self, row, report):
         event = self.new_event(report)
 
+        extra = {}
         for key, value in zip(self.columns, row):
-            extra = {}
             regex = self.column_regex_search.get(key, None)
             if regex:
                 search = re.search(regex, value)
