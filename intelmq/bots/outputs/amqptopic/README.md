@@ -24,7 +24,7 @@ Bot parameters:
 
 ### Examples of usage:
 
-* Usefull to send events to a RabbitMQ exchange topic to be futher processed in other platforms.
+* Useful to send events to a RabbitMQ exchange topic to be further processed in other platforms.
 
 ### Confirmation
 

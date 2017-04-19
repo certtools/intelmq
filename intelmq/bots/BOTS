@@ -90,7 +90,7 @@
             }
         },
         "Request Tracker": {
-            "description": "Request Tracker Collector fetches attachments from an RTIR instance and optionally decrypts them with gnupg.",
+            "description": "Request Tracker Collector fetches attachments from an RTIR instance.",
             "module": "intelmq.bots.collectors.rt.collector_rt",
             "parameters": {
                 "attachment_regex": "\\.csv\\.zip$",
@@ -202,7 +202,7 @@
             "parameters": {}
         },
         "Bambenek": {
-            "description": "Bambenek parser is the bot responsible to parse and and sanatize the information from the feeds available from Bambenek.",
+            "description": "Bambenek parser is the bot responsible to parse and and sanitize the information from the feeds available from Bambenek.",
             "module": "intelmq.bots.parsers.bambenek.parser",
             "parameters": {}
         },
@@ -212,12 +212,12 @@
             "parameters": {}
         },
         "AnubisNetworks Cyberfeed Stream": {
-            "description": "Parsers single JSON-events from AnubisNetworks Cyberfeed stream.",
+            "description": "Parses single JSON-events from AnubisNetworks Cyberfeed stream.",
             "module": "intelmq.bots.parsers.anubisnetworks.parser",
             "parameters": {}
         },
         "Blocklist.de": {
-            "description": "BlockList.DE Parser is the bot responsible to parse the report and sanitize the information.",
+            "description": "Blocklist.DE Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.blocklistde.parser",
             "parameters": {}
         },
@@ -277,7 +277,7 @@
             "parameters": {}
         },
         "Generic CSV": {
-            "description": "Generic CSV Parser is a generic bot configurable to parse different csv collected files. Ignoring lines starting with character #. URLs without protocal can be prefixed with a default value.",
+            "description": "Generic CSV Parser is a generic bot configurable to parse different csv collected files. Ignoring lines starting with character #. URLs without protocol can be prefixed with a default value.",
             "module": "intelmq.bots.parsers.generic.parser_csv",
             "parameters": {
                 "columns": [
@@ -414,7 +414,7 @@
             }
         },
         "Abusix": {
-            "description": "Abusix is the bot resposible to get the correspondent abuse contact from source IP and destination IP of the events",
+            "description": "Abusix is the bot responsible to get the correspondent abuse contact from source IP and destination IP of the events.",
             "module": "intelmq.bots.experts.abusix.expert",
             "parameters": {
                 "redis_cache_db": "5",
@@ -434,7 +434,7 @@
             }
         },
         "Cymru Whois": {
-            "description": "Cymry Whois (IP to ASN) is the bot responsible to add network information to the events (BGP, ASN, AS Name, Country, etc..).",
+            "description": "Cymru Whois (IP to ASN) is the bot responsible to add network information to the events (BGP, ASN, AS Name, Country, etc..).",
             "module": "intelmq.bots.experts.cymru_whois.expert",
             "parameters": {
                 "redis_cache_db": "5",
@@ -524,7 +524,7 @@
             }
         },
         "RIPENCC": {
-            "description": "RIPENCC is the bot resposible to get the correspondent abuse contact from source IP and destination IP of the events. RIPEstat documentation: https://stat.ripe.net/docs/data_api ",
+            "description": "RIPENCC is the bot responsible to get the correspondent abuse contact from source IP and destination IP of the events. RIPEstat documentation: https://stat.ripe.net/docs/data_api ",
             "module": "intelmq.bots.experts.ripencc_abuse_contact.expert",
             "parameters": {
                 "query_ripe_db_asn": true,
@@ -538,7 +538,7 @@
             }
         },
         "Reverse DNS": {
-            "description": "Reverse DNS is the bot resposible to get the correspondent domain name source IP and destination IP of the events",
+            "description": "Reverse DNS is the bot responsible to get the correspondent domain name source IP and destination IP of the events.",
             "module": "intelmq.bots.experts.reverse_dns.expert",
             "parameters": {
                 "redis_cache_db": "7",
@@ -664,7 +664,7 @@
             }
         },
         "TCP": {
-            "description": "TCP is the bot responsible to send events to a tcp port (Splunk, ElasticSearch, etc..).",
+            "description": "TCP is the bot responsible to send events to a TCP port (Splunk, ElasticSearch, etc..).",
             "module": "intelmq.bots.outputs.tcp.output",
             "parameters": {
                 "ip": "<ip>",

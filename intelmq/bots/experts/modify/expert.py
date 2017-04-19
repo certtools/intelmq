@@ -44,7 +44,7 @@ class ModifyExpertBot(Bot):
         matches = {}
 
         for name, rule in condition.items():
-            # empty string means non-existant field
+            # empty string means non-existent field
             if rule == '':
                 if name in event:
                     return None

@@ -1,4 +1,4 @@
-# Shadowserver-Parser Readme
+# Shadowserver-Parser README
 
 ## Structure of this Parser Bot:
 The parser consists of two files:

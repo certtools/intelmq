@@ -14,7 +14,7 @@ You can set four parameters:
 
 ## Workflow:
 
-The bot loops over all files in `path` and tests if their filename matches
+The bot loops over all files in `path` and tests if their file name matches
 *postfix, e.g. `*.csv`. If yes, the file will be read and inserted into the
 queue.
 
@@ -24,4 +24,4 @@ is not possible, the bot will stop.
 To prevent data loss, the bot also stops when no `postfix` is set and
 `delete_file` was set. This can not be overridden.
 
-The bot always sets the filename as feed.url 
+The bot always sets the file name as feed.url

@@ -3,7 +3,7 @@ You have two basic choices to run PostgreSQL:
 2. on a different machine. In which case you would need to use a TCP connection and make sure you give the right connection parameters to each psql or client call.
 
 Make sure to consult your PostgreSQL documentation 
-about how to allow network connections and authentification in case 2.
+about how to allow network connections and authentication in case 2.
 
 
 # PostgreSQL Version
@@ -41,7 +41,7 @@ createdb --encoding='utf-8' --owner=intelmq intelmq-events
 (The encoding parameter should ensure the right encoding on platform
 where this is not the default.)
 
-Now initialise it as database-user `intelmq` (in this example
+Now initialize it as database-user `intelmq` (in this example
 a network connection to localhost is used, so you would get to test
 if the user `intelmq` can authenticate):
 ```

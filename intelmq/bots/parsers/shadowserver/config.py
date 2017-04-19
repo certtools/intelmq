@@ -29,7 +29,7 @@ Reference material:
       [eCSIRT II](https://www.trusted-introducer.org/Incident-Classification-Taxonomy.pdf)
       Also to be found on the
       [ENISA page](https://www.enisa.europa.eu/topics/csirt-cert-services/community-projects/existing-taxonomies)
-    * please respect the Data harmonisation ontology: https://github.com/certtools/intelmq/blob/master/docs/Data-Harmonization.md
+    * please respect the Data harmonization ontology: https://github.com/certtools/intelmq/blob/master/docs/Data-Harmonization.md
 
 
 TODOs:

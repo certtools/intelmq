@@ -52,7 +52,7 @@ class AMQPTopicBot(Bot):
             self.logger.error('AMQP connection failed!')
             raise
         else:
-            self.logger.info('AMQP connection succesfull.')
+            self.logger.info('AMQP connection successful.')
             self.channel = self.connection.channel()
             try:
                 self.channel.exchange_declare(exchange=self.exchange, type=self.exchange_type,

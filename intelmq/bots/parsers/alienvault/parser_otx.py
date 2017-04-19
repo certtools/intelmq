@@ -39,7 +39,7 @@ class AlienVaultOTXParserBot(Bot):
                 # fqdn
                 elif indicator["type"] in ['hostname', 'domain']:
                     # not all domains in the report are just domains
-                    # some are urls, we can manage those here instead
+                    # some are URLs, we can manage those here instead
                     # of raising errors
                     #
                     # dirty check if there is a scheme
