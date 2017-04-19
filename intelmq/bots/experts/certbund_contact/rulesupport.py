@@ -34,6 +34,12 @@ class Organisation:
         self.contacts = contacts
         self.annotations = annotations
 
+    def __repr__(self):
+        return ("Organisation(orgid=%r, name=%r, managed=%r, sector=%r,"
+                " contacts=%r, annotations=%r)"
+                % (self.orgid, self.name, self.managed, self.sector,
+                   self.contacts, self.annotations))
+
     @classmethod
     def from_json(cls, jsondict):
         return cls(orgid=jsondict["id"],
@@ -342,6 +348,14 @@ class Context:
     only need to add a new attribute to the context instead of add a new
     parameter to all scripts.
 
+    The public attributes are listed below. You may assign new lists to
+    ``matches`` and ``organisations`` from a script in order to e.g.
+    reduce the contact information available to scripts that run later
+    by removing all but the most relevant matches and contacts. Try not
+    to modify the lists in-place, though. Assigning to them triggers
+    some cleanup procedures that make sure the references from matches
+    to organisation stay consistent.
+
     Attributes:
         section (str): Either ``'source'`` when the script is called due
             to matches in the source attributes (e.g. ``"source.ip"``,
@@ -358,11 +372,72 @@ class Context:
         # base_logger should only be None for testing purposes.
         self.logger = (base_logger.getChild("script") if base_logger is not None
                        else None)
-        self.matches, self.organisations = \
+        self._matches, self._organisations = \
             contact_info_from_json(get_certbund_contacts(event, section))
         self._directives = []
+        self.ensure_data_consistency()
+
+    @property
+    def matches(self):
+        return self._matches
+
+    @matches.setter
+    def matches(self, value):
+        self._matches = value
+        self.ensure_data_consistency()
+
+    @property
+    def organisations(self):
+        return self._organisations
+
+    @organisations.setter
+    def organisations(self, value):
+        self._organisations = value
+        self.ensure_data_consistency()
+
+    def ensure_data_consistency(self):
+        """Make sure data-structure stay consistent.
+        In particular the links between matches and organisations need
+        to stay sane if scripts modify this information.
+
+        Scripts should not call this method directly! It wouldn't hurt,
+        but it should not be necessary. This method is automatically
+        called when new values are assigned to the matches or
+        organisation attributes and by the rule bot between scripts.
+
+        This method performs these cleanups:
+
+         - rebuild internal dictionaries that speed up lookups
+
+         - remove any references from matches to organisations that no
+           longer exist
+        """
+        # There are some more cleanups that might be useful but it's not
+        # clear that they're a good idea and not doing them shouldn't be
+        # a problem. In particular, possible cleanups are:
+        #
+        # - remove any matches whose organisations attribute is now
+        #   empty. it might have become empty because of a cleanup step
+        #   or due to changes performed by a script
+        #
+        #   Such match objects could no longer lead directly to a
+        #   directive because the recipient is not clear. OTOH,
+        #   inhibition annotations are useful even in this case as they
+        #   can still be used to decide *not* to send any notifications
+        #   even though the recipient isn't known.
+        #
+        # - remove organisations no longer referenced by a match object
+        #   These can still be used to create directives, in cases where
+        #   the information why an organisation matched is not
+        #   important.
+
         self._organisation_map = {org.orgid: org
                                   for org in self.organisations}
+
+        for match in self.matches:
+            match.organisations = [orgid
+                                   for orgid in match.organisations
+                                   if orgid in self._organisation_map]
 
     def all_annotations(self):
         """Return an iterator over all annotations."""
@@ -373,6 +448,20 @@ class Context:
     def lookup_organisation(self, orgid):
         """Return the organisation with the given ID"""
         return self._organisation_map[orgid]
+
+    def organisations_for_match(self, match):
+        """Return the organisations associated with the match.
+        The match objects themselves contain a list of organisation IDs.
+        This method maps those IDs to the corresponding organisation
+        objects.
+
+        Args:
+            match: A Match object
+
+        Return: A list of Organisation instances
+        """
+        return [self.lookup_organisation(orgid)
+                for orgid in match.organisations]
 
     def all_contacts(self):
         """Return an iterator over all contacts."""

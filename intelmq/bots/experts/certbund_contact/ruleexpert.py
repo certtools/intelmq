@@ -43,6 +43,7 @@ class CERTBundRuleExpertBot(Bot):
                 try:
                     finished = entry(context)
                     self.logger.debug("Script returned %r.", finished)
+                    context.ensure_data_consistency()
                 finally:
                     self.logger.debug("Script finished.")
                 if finished:

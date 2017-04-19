@@ -7,9 +7,12 @@ class AnnotationError(Exception):
 
 class Annotation:
 
-    def __init__(self, tag, condition=True):
+    def __init__(self, tag, condition=None):
         self.tag = tag
         self.condition = condition
+
+    def __repr__(self):
+        return "Annotation(%r, condition=%r" % (self.tag, self.condition)
 
     def __eq__(self, other):
         return self.tag == other.tag and self.condition == other.condition
@@ -27,7 +30,7 @@ class Annotation:
         return cls(tag, expr_from_json(json_obj.get("condition", "true")))
 
     def matches(self, context):
-        return self.condition.evaluate(context)
+        return self.condition is None or self.condition.evaluate(context)
 
 
 class Expr:

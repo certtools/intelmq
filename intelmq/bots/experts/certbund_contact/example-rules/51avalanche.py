@@ -2,15 +2,17 @@
 
 """
 
-from intelmq.bots.experts.certbund_contact.rulesupport import Directive, most_specific_matches
+from intelmq.bots.experts.certbund_contact.rulesupport import \
+    Directive, most_specific_matches
 
 
 def determine_directives(context):
     context.logger.debug("============= 51avalanche.py ===========")
 
     feedname = context.get("feed.name")
-    context.logger.debug("Context Matches: %r" % context.matches)
-    context.logger.debug("Most Specific Matches: %r" % most_specific_matches(context))
+    context.logger.debug("Context Matches: %r", context.matches)
+    context.logger.debug("Most Specific Matches: %r",
+                         most_specific_matches(context))
 
     if feedname != "avalanche":
         # This script shall only handle avalanche data.
@@ -21,16 +23,20 @@ def determine_directives(context):
         return
 
     else:
-        # Have a look at the Bots logging output. You may notice a difference:
-        # (If you are using the 20prioritize_contacts.py script, there should not be one)
-        context.logger.debug("Context Matches: %r" % context.matches)
+        # Have a look at the Bots logging output. You may notice a
+        # difference: (If you are using the 20prioritize_contacts.py
+        # script, there should not be one)
+        context.logger.debug("Context Matches: %r", context.matches)
         # This line Logs all existing matches for an event, whilst
-        context.logger.debug("Most Specific Matches: %r" % most_specific_matches(context))
-        # This line will log only those matches which are considered as "most_specific"
-        # The SourceCode of intelmq.bots.experts.certbund_contact.rulesupport can tell
-        # you more details how this is evaluated. In short:
-        # FQDN is more specific than IP than ASN than geolocation.cc (indicating a nat,cert)
-        # So we will use the Output of the helper method most_specific_matches to continue:
+        context.logger.debug("Most Specific Matches: %r",
+                             most_specific_matches(context))
+        # This line will log only those matches which are considered as
+        # "most_specific" The SourceCode of
+        # intelmq.bots.experts.certbund_contact.rulesupport can tell you
+        # more details how this is evaluated. In short: FQDN is more
+        # specific than IP than ASN than geolocation.cc (indicating a
+        # nat. cert) So we will use the Output of the helper method
+        # most_specific_matches to continue:
 
         msm = most_specific_matches(context)
 
@@ -52,58 +58,60 @@ def determine_directives(context):
                 context.logger.debug("Skipping automatic match")
                 continue
 
-            # Determine the organisations of this match.
-            orgs = get_orgs_for_match(context, match)
-            # context.logger.debug("Orgs for this Match are: %r" % orgs)
-
             # Now get the annotations ("Tags") for the match
             # Those annotations belong to the IP, ASN, FQDN or CC entry
             match_annotations = match.annotations
 
-            # Most likely we are not gooing to need them in this script.
+            # Most likely we are not going to need them in this script.
             # For demonstration-purposes we are going to log them anyway:
-            context.logger.debug("Annotations for this Match %r" % match_annotations)
+            context.logger.debug("Annotations for this Match %r",
+                                 match_annotations)
 
             # Also organisations can carry these annotations ("Tags").
-            # We don't know them yet, as we'll need to iterate over the orgs to get them.
+            # We don't know them yet, as we'll need to iterate over the
+            # orgs to get them.
 
             # Let's start actually doing things.
             # I moved the decisionsmaking to the function "evaluate_match"
             # As we are in a Loop, this function is called for every match.
-            evaluate_match(context, match, orgs)
+            evaluate_match(context, match)
 
-        # After this function has run, there should be some directives in the context
-        context.logger.debug("Directives %r" % context.directives)
-        return True  # End Processing and do not evaluate other directive - scripts
+        # After this function has run, there should be some directives
+        # in the context
+        context.logger.debug("Directives %r", context.directives)
+
+        # End Processing and do not evaluate other directive-scripts
+        return True
 
 
-def evaluate_match(context, match, organisations):
-
-    # Now do some logging in order to demonstrate different options you are having:
+def evaluate_match(context, match):
+    # For demonstration purposes, log some of the information available
+    # for decisions here
 
     # 1) If a match for a FQDN exists,
     if match.field == "fqdn":
-        context.logger.debug("Specific FQDN-Match: %r" % match)
+        context.logger.debug("Specific FQDN-Match: %r", match)
 
     # 2) If a match for an IP exist.
     # If an IP-Match exists, the Networks Address is written into
     # the match as "address"
     if match.field == "ip":
-        context.logger.debug("Specific IP-Match: %r for Network %s" % (match, match.address))
+        context.logger.debug("Specific IP-Match: %r for Network %s",
+                             match, match.address)
 
     # 3) If a match for an ASN exist,
     if match.field == "asn":
-        context.logger.debug("Specific ASN-Match: %r" % match)
+        context.logger.debug("Specific ASN-Match: %r", match)
 
     # 4) If a match for a CountryCode exists (indicating a national cert),
     if match.field == "geolocation.cc":
-        context.logger.debug("Specific Geolocation-Match: %r" % match)
+        context.logger.debug("Specific Geolocation-Match: %r", match)
 
     # You could also check how the match was managed here:
     # for instance: if match.managed == "automatic"
 
     # Let's have a look at the Organisations associated to this match:
-    for org in organisations:
+    for org in context.organisations_for_match(match):
 
         # Determine the Annotations for this Org.
         org_annotations = org.annotations
@@ -120,9 +128,10 @@ def evaluate_match(context, match, organisations):
 
 
         # Now create the Directives
-        # We need to loop again, as an organisation might have multiple contacts.
-        # In most cases this will only loop once as we expect only one contact
-        # per organisation.
+        #
+        # An organisation may have multiple contacts, so we need to
+        # iterate over them. In many cases this will only loop once as
+        # many organisations will have only one.
         for contact in org.contacts:
             directive = Directive.from_contact(contact)
             # Doing this defines "email" as medium and uses the
@@ -131,8 +140,9 @@ def evaluate_match(context, match, organisations):
             # intelmq.bots.experts.certbund_contact.rulesupport
             # If you like to know more details
 
-            # Now we will do different things depending on the Annotations
-            # of the directive and / or the Type of the Match
+            # Now fill in more details of the directive, depending on
+            # the annotations of the directive and/or the type of the
+            # match
 
             if is_critical:
                 directive.update(constituency_contact_directive())
@@ -157,40 +167,34 @@ def evaluate_match(context, match, organisations):
                 context.add_directive(directive)
 
 
-def get_orgs_for_match(context, match):
-    # Return the Organisations which are listed within a match
-    org_ids = match.organisations
-    orgs = set()
-    for o in org_ids:
-        orgs.add(context.lookup_organisation(o))
-
-    return orgs
-
-
-def cert_contact_directive(notification_format="avalanche", data_format="avalanche_csv_attachment", interval=0):
-    # Some maybe reasonable defaults 
-    # CSV Attachment, for testing 0 = Immediately is a good choice.
-    # In Production daily = 864000 will be better.
+def cert_contact_directive(notification_format="avalanche",
+                           data_format="avalanche_csv_attachment", interval=0):
+    # Some maybe reasonable defaults
+    # CSV Attachment, for testing 0 = immediately is a good choice.
+    # In production, daily = 864000 will be better.
     return Directive(template_name="avalanche_certs.txt",
                      notification_format=notification_format,
                      event_data_format=data_format,
                      notification_interval=interval)
-    
 
-def constituency_contact_directive(notification_format="avalanche", data_format="avalanche_csv_inline", interval=86400):
-    # Some maybe reasonable defaults 
-    # CSV Attachment, for testing 0 = Immediately is a good choice.
-    # In Production hourly = 864000 will be better.
+
+def constituency_contact_directive(notification_format="avalanche",
+                                   data_format="avalanche_csv_inline",
+                                   interval=86400):
+    # Some maybe reasonable defaults
+    # CSV Attachment, for testing 0 = immediately is a good choice.
+    # In production, hourly = 864000 will be better.
     return Directive(template_name="avalanche_constituency.txt",
                      notification_format=notification_format,
                      event_data_format=data_format,
                      notification_interval=interval)
 
 
-def provider_contact_directive(notification_format="avalanche", data_format="avalanche_csv_inline", interval=0):
-    # Some maybe reasonable defaults 
-    # Interval: for testing 0 = Immediately is a good choice.
-    # In Production daily = 864000 will be better.
+def provider_contact_directive(notification_format="avalanche",
+                               data_format="avalanche_csv_inline", interval=0):
+    # Some maybe reasonable defaults
+    # Interval: for testing 0 = immediately is a good choice.
+    # In production, daily = 864000 will be better.
     return Directive(template_name="avalanche_provider.txt",
                      notification_format=notification_format,
                      event_data_format=data_format,
