@@ -1,3 +1,10 @@
+intelmq (1.0.0~dev6+intevation.2.0~rc4) unstable; urgency=medium
+
+  * Fixes in certbund bot.
+  * Mark all installed rules as configuration.
+
+ -- Sascha Wilde <wilde@intevation.de>  Thu, 20 Apr 2017 13:01:53 +0200
+
 intelmq (1.0.0~dev6+intevation.2.0~rc3) unstable; urgency=low
 
   * Bug fixes
