@@ -171,7 +171,7 @@ def cert_contact_directive(notification_format="avalanche",
                            data_format="avalanche_csv_attachment", interval=0):
     # Some maybe reasonable defaults
     # CSV Attachment, for testing 0 = immediately is a good choice.
-    # In production, daily = 864000 will be better.
+    # In production, daily = 86400 will be better.
     return Directive(template_name="avalanche_certs.txt",
                      notification_format=notification_format,
                      event_data_format=data_format,
@@ -183,7 +183,7 @@ def constituency_contact_directive(notification_format="avalanche",
                                    interval=86400):
     # Some maybe reasonable defaults
     # CSV Attachment, for testing 0 = immediately is a good choice.
-    # In production, hourly = 864000 will be better.
+    # In production, daily = 86400 will be better.
     return Directive(template_name="avalanche_constituency.txt",
                      notification_format=notification_format,
                      event_data_format=data_format,
@@ -194,7 +194,7 @@ def provider_contact_directive(notification_format="avalanche",
                                data_format="avalanche_csv_inline", interval=0):
     # Some maybe reasonable defaults
     # Interval: for testing 0 = immediately is a good choice.
-    # In production, daily = 864000 will be better.
+    # In production, daily = 86400 will be better.
     return Directive(template_name="avalanche_provider.txt",
                      notification_format=notification_format,
                      event_data_format=data_format,
