@@ -63,7 +63,9 @@ This configration resides in the file `runtime.conf` in your intelmq's configura
 **Feed parameters**: Common configuration options for all collectors
 
 * `feed`: Name for the feed.
+* `accuracy`: Accuracy for the data of the feed.
 * `code`: Code for the feed.
+* `documentation`: Link to documentation for the feed.
 * `provider`: Name of the provider of the feed.
 * `rate_limit`: time interval (in seconds) between messages processing.
 
