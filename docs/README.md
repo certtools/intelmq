@@ -17,7 +17,7 @@ way to collect & process threat intelligence thus improving the incident
 handling processes of CERTs.
 
 IntelMQ's design was influenced by
-[AbuseHelper](https://bitbucket.org/clarifiednetworks/abusehelper),
+[AbuseHelper](https://github.com/abusesa/abusehelper)
 however it was re-written from scratch and aims at:
 
 -   Reduce the complexity of system administration
@@ -57,7 +57,7 @@ Table of Contents
 How to Install
 --------------
 
-See [UserGuide](User-Guide.md).
+See [INSTALL](INSTALL.md).
 
 Developers Guide
 ----------------

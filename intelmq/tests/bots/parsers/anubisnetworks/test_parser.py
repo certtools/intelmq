@@ -6,7 +6,7 @@ import intelmq.lib.test as test
 from intelmq.bots.parsers.anubisnetworks.parser import AnubisNetworksParserBot
 
 
-EXAMPLE_REPORT = {"feed.url": "https://prod.cyberfeed.net/stream?key=",
+EXAMPLE_REPORT = {"feed.url": "https://prod.cyberfeed.net/stream?key=7b7cd29c7a424b2980ca",
                   "feed.accuracy": 100.0,
                   "__type": "Report",
                   "feed.name": "AnubisNetworks",
@@ -22,7 +22,7 @@ EXAMPLE_EVENT  = {"classification.type": "malware",
                   "time.source": "2017-01-10T09:45:30+00:00",
                   "source.ip": "203.0.113.2",
                   "source.network": "203.0.113.0/24",
-                  "feed.url": "https://prod.cyberfeed.net/stream?key=",
+                  "feed.url": "https://prod.cyberfeed.net/stream",
                   "source.geolocation.country": "Austria",
                   "source.geolocation.cc": "AT",
                   "source.geolocation.region": "Vienna",
@@ -35,12 +35,12 @@ EXAMPLE_EVENT  = {"classification.type": "malware",
                   "__type": "Event",
                   "feed.name": "AnubisNetworks",
                   "raw": EXAMPLE_REPORT['raw'],
-                  'extra': '{"request_method": "POST"}',
+                  'extra': '{"_origin": "dnsmalware", "_provider": "spikens", "request_method": "POST"}',
                   }
 
 EXAMPLE_REPORT2 = {"feed.name": "AnubisNetworks",
                    "feed.accuracy": 100.0,
-                   "feed.url": "http://alerts.bitsighttech.com:8080/stream?",
+                   "feed.url": "https://prod.cyberfeed.net/stream?key=7b7cd29c7a424b2980ca",
                    "raw": "eyJ0cm9qYW5mYW1pbHkiOiJTcHlBcHAiLCJlbnYiOnsicmVtb"
                           "3RlX3BvcnQiOiI1Mjg4OCIsInNlcnZlcl9uYW1lIjoiZGV2LX"
                           "VwZGF0ZS5pbmZvIiwic2VydmVyX2FkZHIiOiIxOTUuMjIuMjg"
@@ -65,7 +65,7 @@ EXAMPLE_EVENT2  = {"feed.name": "AnubisNetworks",
                    "source.port": 52888,
                    "time.observation": "2016-04-19T23:16:10+00:00",
                    "extra": "{\"request_method\": \"POST\"}",
-                   "feed.url": "http://alerts.bitsighttech.com:8080/stream?",
+                   "feed.url": "https://prod.cyberfeed.net/stream",
                    "destination.port": 80,
                    "feed.accuracy": 100.0,
                    "raw": "eyJ0cm9qYW5mYW1pbHkiOiJTcHlBcHAiLCJlbnYiOnsicmVt"

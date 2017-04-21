@@ -17,14 +17,14 @@ _intelmqctl ()
 
     case $COMP_CWORD in
         1)
-            opts="start stop restart reload run status clear list check";
+            opts="start stop restart reload run status clear list check enable disable";
             COMPREPLY=($(compgen -W "${opts} ${generic_pre}" -- ${cur}));
             return 0
         ;;
         2)
             pipeline='/opt/intelmq/etc/pipeline.conf';
             case "${COMP_WORDS[1]}" in
-                start | stop | restart | status | reload | log | run)
+                start | stop | restart | status | reload | log | run | enable | disable)
                     runtime='/opt/intelmq/etc/runtime.conf';
                     local bots=$(jq 'keys[]' $runtime);
                     COMPREPLY=($(compgen -W "${bots}" -- ${cur}));

@@ -11,6 +11,7 @@
     * [Unicode](#unicode)
     * [Back-end independence](#back-end-independence)
     * [Compatibility](#compatibility)
+    * [Documentation](#documentation)
   * [Layout Rules](#layout-rules)
     * [Directories Hierarchy on Default Installation](#directories-hierarchy-on-default-installation)
     * [Directories and Files naming](#directories-and-files-naming)
@@ -169,6 +170,14 @@ Example (including the current ones):
 
 /intelmq/bots/parser/abusech/parser_malicious_url.py
 ```
+
+### Documentation
+
+Please document your added/modified code.
+
+For docstrings, we are using the [sphinx-napoleon-google-type-annotation](http://www.sphinx-doc.org/en/stable/ext/napoleon.html#type-annotations).
+
+Additionally, Python's type hints/annotations are used, see [PEP 484](https://www.python.org/dev/peps/pep-0484/).
 
 ### Directories Hierarchy on Default Installation
 
