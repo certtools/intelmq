@@ -1,2 +1,3 @@
 "timestamp","ip","port","hostname","tag","application","asn","geo","region","city","url","http_host","category","system","detected_since","server","redirect_target","naics","sic","sector"
 "2017-01-16 00:43:48","203.0.113.1",80,"example.com","hacked-webserver-stealrat-t1","http",64496,"AT","WIEN","VIENNA","/header.php","example.com","spam","WINNT","2015-05-09 05:51:12","Microsoft-IIS/7.5",,0,0,
+"2017-01-16 00:43:48","203.0.113.1",80,"example.com","hacked-webserver-stealrat-t1","http",64496,"AT","WIEN","VIENNA","header.php","example.com","spam","WINNT","2015-05-09 05:51:12","Microsoft-IIS/7.5",,0,0,
