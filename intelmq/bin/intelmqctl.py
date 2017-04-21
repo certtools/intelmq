@@ -561,20 +561,34 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
     def botnet_start(self):
         botnet_status = {}
+        threads = []
         for bot_id in sorted(self.runtime_configuration.keys()):
             if self.runtime_configuration[bot_id].get('enabled', True):
-                botnet_status[bot_id] = self.bot_start(bot_id)
+                thread = utils.ThreadWithReturnValue(target = self.bot_start, args=(bot_id))
+                thread.start()
+                threads.append((bot_id, thread))                
             else:
                 log_bot_message('disabled', bot_id)
                 botnet_status[bot_id] = 'disabled'
+
+        for bot_id, t in threads:
+            botnet_status[bot_id] = t.join()
+
         log_botnet_message('running')
         return botnet_status
 
     def botnet_stop(self):
         botnet_status = {}
         log_botnet_message('stopping')
+        threads = []
         for bot_id in sorted(self.runtime_configuration.keys()):
-            botnet_status[bot_id] = self.bot_stop(bot_id)
+            thread = utils.ThreadWithReturnValue(target = self.bot_stop, args=(bot_id))
+            thread.start()
+            threads.append((bot_id, thread))
+
+        for bot_id, t in threads:
+            botnet_status[bot_id] = t.join()
+
         log_botnet_message('stopped')
         return botnet_status
 

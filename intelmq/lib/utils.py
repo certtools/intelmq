@@ -20,7 +20,7 @@ import os
 import re
 import sys
 import traceback
-
+from threading import Thread
 from typing import Sequence, Union
 
 import intelmq
@@ -379,3 +379,18 @@ def parse_relative(relative_time: str) -> int:
         return int(result[0][0]) * TIMESPANS[result[0][1]]
     else:
         raise ValueError("Could not process result of regex for attribute " + repr(relative_time))
+
+
+class ThreadWithReturnValue(Thread):
+    def __init__(self, group=None, target=None, name=None, args=(), kwargs=None, daemon=None):
+        Thread.__init__(self, group, target, name, args, kwargs, daemon=daemon)
+
+        self._return = None
+
+    def run(self):
+        if self._target is not None:
+            self._return = self._target(self._args)
+
+    def join(self):
+        Thread.join(self)
+        return self._return
