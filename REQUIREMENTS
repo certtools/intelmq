@@ -1,6 +1,6 @@
 dnspython>=1.12.0
 psutil>=2.1.1
-python-dateutil>=2.4.2
+python-dateutil>=2.5.0
 python-termstyle==0.1.10
 pytz>=2015.4
 redis>=2.10.3

@@ -288,7 +288,8 @@ id: alienvault-otx-parser
 id: anubisnetworks-collector
 provider: AnubisNetworks
 feed: AnubisNetworks Cyberfeed
-http_url: http://alerts.bitsighttech.com:8080/stream?key={{ your api key }}
+http_url: https://prod.cyberfeed.net/stream?key={{ your api key }}
+strip_lines: true
 ```
 
 ## Parser Bot
@@ -1631,6 +1632,41 @@ id: netlab360-magnitude-ek-parser
 
 **Notes:** This feed lists FQDN and possibly the URL used by Magnitude Exploit Kit.  Information also includes the IP address used for the domain and last time seen.
 reference: http://data.netlab.360.com/ek
+
+
+## Mirai Scanner Feed
+
+**Status:** Active
+
+### Collector Bot
+
+**Bot Name:** Generic URL Fetcher
+
+**Bot Module:** intelmq.bots.collectors.http.collector_http
+
+**Configuration Parameters:**
+```
+id: netlab360-mirai-scanner-collector
+provider: Netlab 360
+feed: Netlab 360 Mirai Scanner List
+rate_limit: 86400
+http_url: http://data.netlab.360.com/feeds/mirai-scanner/scanner.list
+```
+
+### Parser Bot
+
+**Bot Name:** Netlab 360 Mirai Scanner
+
+**Bot Module:** intelmq.bots.parsers.netlab_360.parser
+
+**Configuration Parameters:**
+```
+id: netlab360-mirai-scanner-parser
+```
+
+**Notes:** This feed provides IP addresses which actively scan for vulnerable IoT devices and install Mirai Botnet.
+reference: http://data.netlab.360.com/mirai-scanner/
+
 
 # Nothink
 

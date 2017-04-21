@@ -45,9 +45,9 @@ try:
             self.xmpp_room_password = room_password
 
             self.logger = logger
-            self.logger.info("Connected to Server.")
-
             self.add_event_handler("session_start", self.session_start)
+
+            self.logger.info("Initialized XMPP Client.")
 
         def session_start(self, event):
             self.send_presence()
@@ -135,12 +135,14 @@ class XMPPOutputBot(Bot):
             # Set CA-Certificates
             self.xmpp.ca_certs = ca_certs
 
-        self.xmpp.connect(reattempt=True)
-        self.xmpp.process()
-
-        # Add Handlers and register Plugins
-        self.xmpp.register_plugin('xep_0030')  # Service Discovery
-        self.xmpp.register_plugin('xep_0045')  # Multi-User Chat
+        if self.xmpp.connect(reattempt=False):
+            self.xmpp.process()
+            # Add Handlers and register Plugins
+            self.xmpp.register_plugin('xep_0030')  # Service Discovery
+            self.xmpp.register_plugin('xep_0045')  # Multi-User Chat
+        else:
+            self.logger.error("Could not connect to XMPP-Server.")
+            self.stop()
 
     def process(self):
         event = self.receive_message()
@@ -165,8 +167,10 @@ class XMPPOutputBot(Bot):
 
     def shutdown(self):
         if self.xmpp:
-            self.xmpp.disconnect()
-            self.logger.info("Disconnected from XMPP.")
+            if self.xmpp.disconnect():
+                self.logger.info("Disconnected from XMPP Server.")
+            else:
+                self.logger.error("Could not disconnect from XMPP Server.")
         else:
             self.logger.info("There was no XMPPClient I could stop.")
 

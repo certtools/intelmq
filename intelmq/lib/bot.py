@@ -107,6 +107,7 @@ class Bot(object):
         self.logger.info('Handling SIGHUP, initializing again now.')
         self.__disconnect_pipelines()
         self.logger.handlers = []  # remove all existing handlers
+        self.shutdown()  # disconnects, stops threads etc
         self.__init__(self.__bot_id)
         self.__connect_pipelines()
 
@@ -144,7 +145,7 @@ class Bot(object):
                 self.process()
                 self.__error_retries_counter = 0  # reset counter
 
-                if self.parameters.rate_limit:
+                if self.parameters.rate_limit and self.run_mode != 'scheduled':
                     self.__sleep()
 
             except exceptions.PipelineError as exc:
@@ -158,6 +159,7 @@ class Bot(object):
                 self.__disconnect_pipelines()
 
             except Exception as exc:
+                # in case of serious system issues, exit immediately
                 if isinstance(exc, MemoryError):
                     self.logger.exception('Out of memory. Exit immediately.')
                     self.stop()
@@ -178,8 +180,12 @@ class Bot(object):
                     self.logger.info("Current Message(event): {!r}."
                                      "".format(self.__current_message))
 
+                # In case of permanent failures, stop now
+                if isinstance(exc, exceptions.ConfigurationError):
+                    self.stop()
+
             except KeyboardInterrupt:
-                self.logger.error("Received KeyboardInterrupt.")
+                self.logger.info("Received KeyboardInterrupt.")
                 self.stop(exitcode=0)
                 del self
                 break
@@ -211,13 +217,24 @@ class Bot(object):
                             # dont need to wait again
                             error_on_message = False
 
+                        # run_mode: scheduled
+                        if self.run_mode == 'scheduled':
+                            self.logger.info('Shutting down scheduled bot.')
+                            self.stop()
+
                         # error_procedure: stop
-                        if self.parameters.error_procedure == "stop":
+                        elif self.parameters.error_procedure == "stop":
                             self.stop()
 
                         # error_procedure: pass
                         else:
                             self.__error_retries_counter = 0  # reset counter
+
+                # no errors, check for run mode: scheduled
+                elif self.run_mode == 'scheduled':
+                    self.logger.info('Shutting down scheduled bot.')
+                    self.stop()
+
             self.__handle_sighup()
 
     def __sleep(self):
@@ -252,10 +269,6 @@ class Bot(object):
             self.__print_log_buffer()
 
         if not getattr(self.parameters, 'testing', False):
-            try:
-                self.logger.error("Exiting.")
-            except:
-                print("Exiting")
             del self
             exit(exitcode)
 
@@ -310,6 +323,10 @@ class Bot(object):
             if not message:
                 self.logger.warning("Ignoring empty message at sending. Possible bug in bot.")
                 continue
+            if not self.__destination_pipeline:
+                raise exceptions.ConfigurationError('pipeline', 'No destination pipline given, '
+                                                    'but needed')
+                self.stop()
 
             self.logger.debug("Sending message.")
             self.__message_counter += 1
@@ -331,8 +348,13 @@ class Bot(object):
         # handle a sighup which happened during blocking read
         self.__handle_sighup()
 
-        self.__current_message = libmessage.MessageFactory.unserialize(message,
-                                                                       harmonization=self.harmonization)
+        try:
+            self.__current_message = libmessage.MessageFactory.unserialize(message,
+                                                                           harmonization=self.harmonization)
+        except exceptions.InvalidKey as exc:
+            # In case a incoming message is malformed an does not conform with the currently
+            # loaded harmonization, stop now as this will happen repeatedly without any change
+            raise exceptions.ConfigurationError('harmonization', exc.args[0])
 
         if 'raw' in self.__current_message and len(self.__current_message['raw']) > 400:
             tmp_msg = self.__current_message.to_dict(hierarchical=False)
@@ -406,6 +428,7 @@ class Bot(object):
 
         if self.__bot_id in list(config.keys()):
             params = config[self.__bot_id]
+            self.run_mode = params.get('run_mode', 'stream')
             if 'parameters' in params:
                 params = params['parameters']
             else:
@@ -432,11 +455,11 @@ class Bot(object):
                     self.__bot_id]['destination-queues']
 
         else:
-            raise ValueError("Pipeline configuration: no key "
-                             "{!r}.".format(self.__bot_id))
+            raise exceptions.ConfigurationError('pipeline', "no key "
+                                                "{!r}.".format(self.__bot_id))
 
     def __log_configuration_parameter(self, config_name, option, value):
-        if "password" in option:
+        if "password" in option or "token" in option:
             value = "HIDDEN"
 
         message = "{} configuration: parameter {!r} loaded with value {!r}."\
@@ -460,6 +483,41 @@ class Bot(object):
             exit('No bot ID given.')
         instance = cls(sys.argv[1])
         instance.start()
+
+    def set_request_parameters(self):
+        if hasattr(self.parameters, 'http_ssl_proxy'):
+            self.logger.warning("Parameter 'http_ssl_proxy' is deprecated and will be removed in "
+                                "version 1.0!")
+            if not hasattr(self.parameters, 'https_proxy'):
+                self.parameters.https_proxy = self.parameters.http_ssl_proxy
+
+        self.http_header = getattr(self.parameters, 'http_header', {})
+        self.http_verify_cert = getattr(self.parameters, 'http_verify_cert',
+                                        True)
+        self.ssl_client_cert = getattr(self.parameters,
+                                       'ssl_client_certificate', None)
+
+        if hasattr(self.parameters, 'http_username') and hasattr(
+                self.parameters, 'http_password'):
+            self.auth = (self.parameters.http_username,
+                         self.parameters.http_password)
+        else:
+            self.auth = None
+
+        if self.parameters.http_proxy and self.parameters.https_proxy:
+            self.proxy = {'http': self.parameters.http_proxy,
+                          'https': self.parameters.https_proxy}
+        elif self.parameters.http_proxy or self.parameters.https_proxy:
+            self.logger.warning('Only {}_proxy seems to be set.'
+                                'Both http and https proxies must be set.'
+                                .format('http' if self.parameters.http_proxy else 'https'))
+            self.proxy = None
+        else:
+            self.proxy = None
+
+        self.http_timeout = getattr(self.parameters, 'http_timeout', 60)
+
+        self.http_header['User-agent'] = self.parameters.http_user_agent
 
 
 class ParserBot(Bot):
@@ -507,8 +565,10 @@ class ParserBot(Bot):
         `self.parse_line` can be saved in `self.tempdata` (list).
 
         Default parser yields stripped lines.
-        Override for your use or use an exisiting parser, e.g.:
+        Override for your use or use an exisiting parser, e.g.::
+
             parse = ParserBot.parse_csv
+
         """
         for line in utils.base64_decode(report.get("raw")).splitlines():
             line = line.strip()
@@ -603,6 +663,8 @@ class CollectorBot(Bot):
         report.add("feed.name", self.parameters.feed)
         if hasattr(self.parameters, 'code'):
             report.add("feed.code", self.parameters.code)
+        if hasattr(self.parameters, 'documentation'):
+            report.add("feed.documentation", self.parameters.documentation)
         if hasattr(self.parameters, 'provider'):
             report.add("feed.provider", self.parameters.provider)
         report.add("feed.accuracy", self.parameters.accuracy)
@@ -615,41 +677,6 @@ class CollectorBot(Bot):
 
     def new_report(self):
         return libmessage.Report()
-
-    def set_request_parameters(self):
-        if hasattr(self.parameters, 'http_ssl_proxy'):
-            self.logger.warning("Parameter 'http_ssl_proxy' is deprecated and will be removed in "
-                                "version 1.0!")
-            if not hasattr(self.parameters, 'https_proxy'):
-                self.parameters.https_proxy = self.parameters.http_ssl_proxy
-
-        self.http_header = getattr(self.parameters, 'http_header', {})
-        self.http_verify_cert = getattr(self.parameters, 'http_verify_cert',
-                                        True)
-        self.ssl_client_cert = getattr(self.parameters,
-                                       'ssl_client_certificate', None)
-
-        if hasattr(self.parameters, 'http_username') and hasattr(
-                self.parameters, 'http_password'):
-            self.auth = (self.parameters.http_username,
-                         self.parameters.http_password)
-        else:
-            self.auth = None
-
-        if self.parameters.http_proxy and self.parameters.https_proxy:
-            self.proxy = {'http': self.parameters.http_proxy,
-                          'https': self.parameters.https_proxy}
-        elif self.parameters.http_proxy or self.parameters.https_proxy:
-            self.logger.warning('Only {}_proxy seems to be set.'
-                                'Both http and https proxies must be set.'
-                                .format('http' if self.parameters.http_proxy else 'https'))
-            self.proxy = None
-        else:
-            self.proxy = None
-
-        self.http_timeout = getattr(self.parameters, 'http_timeout', 60)
-
-        self.http_header['User-agent'] = self.parameters.http_user_agent
 
 
 class Parameters(object):
