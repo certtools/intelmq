@@ -17,9 +17,7 @@ from typing import Sequence
 
 
 __all__ = ['Event', 'Message', 'MessageFactory', 'Report']
-
-
-harm_config = utils.load_configuration(HARMONIZATION_CONF_FILE)
+VALID_MESSSAGE_TYPES = ('Event', 'Message', 'Report')
 
 
 class MessageFactory(object):
@@ -29,7 +27,7 @@ class MessageFactory(object):
     """
 
     @staticmethod
-    def from_dict(message):
+    def from_dict(message, harmonization=None):
         """
         Takes dictionary Message object, returns instance of correct class.
 
@@ -40,10 +38,10 @@ class MessageFactory(object):
         except AttributeError:
             raise exceptions.InvalidArgument('__type',
                                              got=message["__type"],
-                                             expected=list(harm_config.keys()),
+                                             expected=VALID_MESSSAGE_TYPES,
                                              docs=HARMONIZATION_CONF_FILE)
         del message["__type"]
-        return class_reference(message, auto=True)
+        return class_reference(message, auto=True, harmonization=harmonization)
 
     @staticmethod
     def unserialize(raw_message, harmonization=None):
@@ -58,7 +56,7 @@ class MessageFactory(object):
         except AttributeError:
             raise exceptions.InvalidArgument('__type',
                                              got=message["__type"],
-                                             expected=list(harm_config.keys()),
+                                             expected=VALID_MESSSAGE_TYPES,
                                              docs=HARMONIZATION_CONF_FILE)
         del message["__type"]
         return class_reference(message, auto=True, harmonization=harmonization)
@@ -84,15 +82,14 @@ class Message(dict):
             classname = self.__class__.__name__.lower()
 
         if harmonization is None:
-            try:
-                self.harmonization_config = harm_config[classname]
-            except KeyError:
-                raise exceptions.InvalidArgument('__type',
-                                                 got=classname,
-                                                 expected=list(harm_config.keys()),
-                                                 docs=HARMONIZATION_CONF_FILE)
-        else:
+            harmonization = utils.load_configuration(HARMONIZATION_CONF_FILE)
+        try:
             self.harmonization_config = harmonization[classname]
+        except KeyError:
+            raise exceptions.InvalidArgument('__type',
+                                             got=classname,
+                                             expected=VALID_MESSSAGE_TYPES,
+                                             docs=HARMONIZATION_CONF_FILE)
 
         super(Message, self).__init__()
         if isinstance(message, dict):
@@ -233,12 +230,14 @@ class Message(dict):
         class_ref = self.__class__.__name__
         self['__type'] = class_ref
         retval = getattr(intelmq.lib.message,
-                         class_ref)(super(Message, self).copy())
+                         class_ref)(super(Message, self).copy(),
+                                    harmonization={self.__class__.__name__.lower(): self.harmonization_config})
         del self['__type']
         return retval
 
     def deep_copy(self):
-        return MessageFactory.unserialize(MessageFactory.serialize(self))
+        return MessageFactory.unserialize(MessageFactory.serialize(self),
+                                          harmonization={self.__class__.__name__.lower(): self.harmonization_config})
 
     def __unicode__(self):
         return self.serialize()
