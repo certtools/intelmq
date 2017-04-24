@@ -35,9 +35,12 @@ Other considerations:
    chunk size must take this into account, but multiplying the actual
    limit by 3/4 and subtracting a generous amount for the meta data.
 """
+from typing import BinaryIO, Generator, List
+
+from intelmq.lib.message import Report
 
 
-def split_chunks(chunk, chunk_size):
+def split_chunks(chunk: bytes, chunk_size: int) -> List[bytes]:
     """Split a bytestring into chunk_size pieces at ASCII newlines characters.
 
     The return value is a list of bytestring objects. Appending all of
@@ -47,6 +50,12 @@ def split_chunks(chunk, chunk_size):
     places where the distance between two neline characters is too long.
 
     Note in particular, that the last item may not end in a newline!
+
+    Params:
+        chunk: The string to be splitted
+        chunk_size: maximum size of each chunk
+    Returns:
+        chunks: List of resulting chunks
     """
     chunks = []
 
@@ -73,10 +82,16 @@ def split_chunks(chunk, chunk_size):
     return chunks
 
 
-def read_delimited_chunks(infile, chunk_size):
+def read_delimited_chunks(infile: BinaryIO, chunk_size: int) -> Generator[bytes, None, None]:
     """Yield the contents of infile in chunk_size pieces ending at newlines.
     The individual pieces, except for the last one, end in newlines and
     are smaller than chunk_size if possible.
+
+    Params:
+        infile: stream to read from
+        chunk_size: maximum size of each chunk
+    Yields:
+        chunk: chunk with maximum size of chunk_size if possible
     """
     leftover = b""
 
@@ -99,7 +114,8 @@ def read_delimited_chunks(infile, chunk_size):
             break
 
 
-def generate_reports(report_template, infile, chunk_size, copy_header_line):
+def generate_reports(report_template: Report, infile: BinaryIO, chunk_size: int,
+                     copy_header_line: bool) -> Generator[Report, None, None]:
     """Generate reports from a template and input file, optionally split into chunks.
 
     If chunk_size is None, a single report is generated with the entire
@@ -119,6 +135,14 @@ def generate_reports(report_template, infile, chunk_size, copy_header_line):
     two methods, readline and read, with readline only called once and
     only if copy_header_line is true. Both methods should return bytes
     objects.
+
+    Params:
+        report_template: report used as template for all yielded copies
+        infile: stream to read from
+        chunk_size: maximum size of each chunk
+        copy_header_line: copy the first line of the infile to each chunk
+    Yields:
+        report: a Report object holding the chunk in the raw field
     """
     if chunk_size is None:
         report = report_template.copy()
