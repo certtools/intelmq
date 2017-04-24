@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import re
 import io
 import requests
@@ -10,10 +9,7 @@ except ImportError:
     imbox = None
 
 from intelmq.lib.bot import CollectorBot
-from intelmq.lib.message import Report
 from intelmq.lib.splitreports import generate_reports
-
-
 
 
 class MailURLCollectorBot(CollectorBot):
@@ -25,6 +21,10 @@ class MailURLCollectorBot(CollectorBot):
 
         # Build request
         self.set_request_parameters()
+
+        self.chunk_size = getattr(self.parameters, 'chunk_size', None)
+        self.chunk_replicate_header = getattr(self.parameters,
+                                              'chunk_replicate_header', None)
 
     def process(self):
         mailbox = imbox.Imbox(self.parameters.mail_host,
@@ -63,10 +63,11 @@ class MailURLCollectorBot(CollectorBot):
 
                         self.logger.info("Report downloaded.")
 
-                        template = Report()
+                        template = self.new_report()
 
-                        for report in generate_reports(template, io.BytesIO(resp.content), self.parameters.chunk_size,
-                                                       self.parameters.chunk_replicate_header):
+                        for report in generate_reports(template, io.BytesIO(resp.content),
+                                                       self.chunk_size,
+                                                       self.chunk_replicate_header):
                             self.send_message(report)
 
                         # Only mark read if message relevant to this instance,
