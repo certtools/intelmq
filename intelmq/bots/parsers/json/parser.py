@@ -22,7 +22,8 @@ class JSONParserBot(Bot):
 
         for line in lines:
             new_event = MessageFactory.unserialize(line,
-                                                   harmonization=self.harmonization)
+                                                   harmonization=self.harmonization,
+                                                   default_type='Event')
             event = self.new_event(report)
             dict.update(event, new_event)
             if 'raw' not in event:
