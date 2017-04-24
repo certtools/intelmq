@@ -44,6 +44,10 @@ class FileCollectorBot(CollectorBot):
                                   self.parameters.path)
                 self.stop()
 
+        self.chunk_size = getattr(self.parameters, 'chunk_size', None)
+        self.chunk_replicate_header = getattr(self.parameters,
+                                              'chunk_replicate_header', None)
+
     def process(self):
         self.logger.debug("Started looking for files.")
 
@@ -61,8 +65,8 @@ class FileCollectorBot(CollectorBot):
                         template.add("feed.url", "file://localhost%s" % filename)
 
                         with open(filename, 'rb') as f:
-                            for report in generate_reports(template, f, self.parameters.chunk_size,
-                                                           self.parameters.chunk_replicate_header):
+                            for report in generate_reports(template, f, self.chunk_size,
+                                                           self.chunk_replicate_header):
                                 self.send_message(report)
 
                         if self.parameters.delete_file:
