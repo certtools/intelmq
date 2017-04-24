@@ -24,7 +24,6 @@ import os
 
 import intelmq.lib.exceptions as exceptions
 from intelmq.lib.bot import CollectorBot
-from intelmq.lib.message import Report
 from intelmq.lib.splitreports import generate_reports
 
 
@@ -58,7 +57,7 @@ class FileCollectorBot(CollectorBot):
                     if fnmatch.fnmatch(f, '*' + self.parameters.postfix):
                         self.logger.info("Processing file %r." % filename)
 
-                        template = Report()
+                        template = self.new_report()
                         template.add("feed.url", "file://localhost%s" % filename)
 
                         with open(filename, 'rb') as f:
