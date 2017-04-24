@@ -1,0 +1,1 @@
+azure-storage>=0.33

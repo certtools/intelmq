@@ -302,6 +302,26 @@ See the README.md
 
 * * *
 
+### Microsoft Azure
+
+Iterates over all blobs in all containers in an Azure storage.
+
+#### Information:
+* `name:` intelmq.bots.collectors.microsoft.collector_azure
+* `lookup:` yes
+* `public:` no
+* `cache (redis db):` none
+* `description:` collect blobs from microsoft azure using their library
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `account_name`: account name as give by Microsoft
+* `account_key`: account key as give by Microsoft
+* `delete`: boolean, delete containers and blobs after fetching
+
+* * *
+
 ### N6Stomp
 
 See the README.md
