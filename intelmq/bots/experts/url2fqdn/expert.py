@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from urllib.parse import urlparse
 
-import intelmq.lib.harmonization
 from intelmq.lib.bot import Bot
 
 
@@ -17,14 +16,13 @@ class Url2fqdnExpertBot(Bot):
 
             key_url = key + "url"
             key_fqdn = key + "fqdn"
-            if not event.contains(key_url):
+            if key_url not in event:
                 continue
             if key_fqdn in event and not self.overwrite:
                 continue
 
             hostname = urlparse(event.get(key_url)).hostname
-            if intelmq.lib.harmonization.FQDN.is_valid(hostname, sanitize=True):
-                event.add(key_fqdn, hostname, sanitize=True, force=True)
+            event.add(key_fqdn, hostname, overwrite=True, raise_failure=False)
 
         self.send_message(event)
         self.acknowledge_message()

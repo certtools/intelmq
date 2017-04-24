@@ -32,6 +32,7 @@ EXAMPLE_EVENT = {"feed.name": "Sample CSV Feed",
                  }
 EXAMPLE_EVENT2 = EXAMPLE_EVENT.copy()
 EXAMPLE_EVENT2['time.source'] = "2016-12-14T04:19:00+00:00"
+EXAMPLE_EVENT2['source.ip'] = "198.105.221.161"
 EXAMPLE_EVENT2["raw"] = utils.base64_encode(SAMPLE_SPLIT[2].replace('\t', ',')+'\r\n')
 
 
@@ -65,6 +66,8 @@ class TestGenericCsvParserBot(test.BotTestCase, unittest.TestCase):
                                      "source.fqdn, __IGNORE__",
                           "delimiter": "\t",
                           "type": "malware",
+                          "column_regex_search": "",
+                          "type_translation": "",
                           "default_url_protocol": "http://"}
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_EVENT)

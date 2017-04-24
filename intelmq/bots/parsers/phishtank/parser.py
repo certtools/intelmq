@@ -33,6 +33,7 @@ class PhishTankParserBot(Bot):
                 continue
 
             event = self.new_event(report)
+            event.change("feed.url", event["feed.url"][:event["feed.url"].find('data/')])
 
             for key, value in zip(columns, row):
 

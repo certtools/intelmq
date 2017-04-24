@@ -11,8 +11,8 @@ This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
 -dnspython>=1.12.0
 +dnspython3>=1.12.0
  psutil>=2.1.1
- pycurl>=7.19.0
- python-dateutil>=2.4.2
+ python-dateutil>=2.5.0
+ python-termstyle==0.1.10
 --- a/setup.py
 +++ b/setup.py
 @@ -4,7 +4,7 @@
@@ -22,5 +22,5 @@ This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
 -    'dnspython>=1.11.1',
 +    'dnspython3>=1.11.1',
      'psutil>=1.2.1',
-     'python-dateutil>=2.0',
+     'python-dateutil>=2.5',
      'python-termstyle>=0.1.10',

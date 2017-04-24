@@ -3,14 +3,17 @@
 HTTP collector bot
 
 Parameters:
-http_url: string
-http_header: dictionary
-    default: {}
-http_verify_cert: boolean
-    default: True
-http_username, http_password: string
-http_proxy, https_proxy: string
+    http_url: string
 
+    http_header: dictionary. default: {}
+
+    http_verify_cert: boolean. default: True
+
+    http_username, http_password: string
+
+    http_proxy, https_proxy: string
+
+    http_timeout: tuple of two floats or float
 """
 import io
 import zipfile
@@ -32,7 +35,8 @@ class HTTPCollectorBot(CollectorBot):
         resp = requests.get(url=self.parameters.http_url, auth=self.auth,
                             proxies=self.proxy, headers=self.http_header,
                             verify=self.http_verify_cert,
-                            cert=self.ssl_client_cert)
+                            cert=self.ssl_client_cert,
+                            timeout=self.http_timeout)
 
         if resp.status_code // 100 != 2:
             raise ValueError('HTTP response status code was {}.'

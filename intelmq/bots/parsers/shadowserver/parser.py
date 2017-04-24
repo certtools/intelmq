@@ -82,7 +82,7 @@ class ShadowserverParserBot(ParserBot):
 
         if hasattr(self.parameters, 'feedname'):
             if 'feed.name' in event and self.overwrite:
-                event.add('feed.name', self.parameters.feedname, force=True)
+                event.add('feed.name', self.parameters.feedname, overwrite=True)
             elif 'feed.name' not in event:
                 event.add('feed.name', self.parameters.feedname)
 
