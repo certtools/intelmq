@@ -86,6 +86,11 @@ def skip_local_web():
                                'Skipping local web tests.')
 
 
+def skip_exotic():
+    return unittest.skipUnless(os.environ.get('INTELMQ_TEST_EXOTIC'),
+                               'Skipping tests requiring exotic libs.')
+
+
 class BotTestCase(object):
     """
     Provides common tests and assert methods for bot testing.
