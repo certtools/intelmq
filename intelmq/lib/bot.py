@@ -29,6 +29,8 @@ class Bot(object):
     """ Not to be reset when initialized again on reload. """
     __current_message = None
     __message_counter = 0
+    # Bot is capable of SIGHUP delaying
+    sighup_delay = True
 
     def __init__(self, bot_id):
         self.__log_buffer = []
@@ -95,8 +97,10 @@ class Bot(object):
         """
         Called when signal is received and postpone.
         """
-        self.logger.info('Received SIGHUP, initializing again later.')
         self.__sighup = True
+        self.logger.info('Received SIGHUP, initializing again later.')
+        if not self.sighup_delay:
+            self.__handle_sighup()
 
     def __handle_sighup(self):
         """
