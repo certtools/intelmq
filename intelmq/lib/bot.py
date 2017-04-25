@@ -127,7 +127,7 @@ class Bot(object):
         while True:
             try:
                 if not starting and (error_on_pipeline or error_on_message):
-                    self.logger.info('Bot will continue in %s seconds.' %
+                    self.logger.info('Bot will continue in %s seconds.',
                                      self.parameters.error_retry_delay)
                     time.sleep(self.parameters.error_retry_delay)
 
@@ -177,8 +177,8 @@ class Bot(object):
 
                 if self.parameters.error_log_message:
                     # Dump full message if explicitly requested by config
-                    self.logger.info("Current Message(event): {!r}."
-                                     "".format(self.__current_message))
+                    self.logger.info("Current Message(event): %r.",
+                                     self.__current_message)
 
                 # In case of permanent failures, stop now
                 if isinstance(exc, exceptions.ConfigurationError):
@@ -288,15 +288,15 @@ class Bot(object):
             self.stop()
 
     def __connect_pipelines(self):
-        self.logger.debug("Loading source pipeline and queue %r." % self.__source_queues)
+        self.logger.debug("Loading source pipeline and queue %r.", self.__source_queues)
         self.__source_pipeline = PipelineFactory.create(self.parameters)
         self.__source_pipeline.set_queues(self.__source_queues, "source")
         self.__source_pipeline.connect()
         self.logger.debug("Connected to source queue.")
 
         if self.__destination_queues:
-            self.logger.debug("Loading destination pipeline and queues %r."
-                              "" % self.__destination_queues)
+            self.logger.debug("Loading destination pipeline and queues %r.",
+                              self.__destination_queues)
             self.__destination_pipeline = PipelineFactory.create(self.parameters)
             self.__destination_pipeline.set_queues(self.__destination_queues,
                                                    "destination")
@@ -331,7 +331,7 @@ class Bot(object):
             self.logger.debug("Sending message.")
             self.__message_counter += 1
             if self.__message_counter % 500 == 0:
-                self.logger.info("Processed %s messages." % self.__message_counter)
+                self.logger.info("Processed %s messages.", self.__message_counter)
 
             raw_message = libmessage.MessageFactory.serialize(message)
             self.__destination_pipeline.send(raw_message)
@@ -361,7 +361,7 @@ class Bot(object):
             tmp_msg['raw'] = tmp_msg['raw'][:397] + '...'
         else:
             tmp_msg = self.__current_message
-        self.logger.debug('Received message {!r}.'.format(tmp_msg))
+        self.logger.debug('Received message %r.', tmp_msg)
 
         return self.__current_message
 
@@ -423,7 +423,7 @@ class Bot(object):
                 self.__log_configuration_parameter("system", option, value)
 
     def __load_runtime_configuration(self):
-        self.logger.debug("Loading runtime configuration from %r." % RUNTIME_CONF_FILE)
+        self.logger.debug("Loading runtime configuration from %r.", RUNTIME_CONF_FILE)
         config = utils.load_configuration(RUNTIME_CONF_FILE)
 
         if self.__bot_id in list(config.keys()):
@@ -438,7 +438,7 @@ class Bot(object):
                 self.__log_configuration_parameter("runtime", option, value)
 
     def __load_pipeline_configuration(self):
-        self.logger.debug("Loading pipeline configuration from %r." % PIPELINE_CONF_FILE)
+        self.logger.debug("Loading pipeline configuration from %r.", PIPELINE_CONF_FILE)
         config = utils.load_configuration(PIPELINE_CONF_FILE)
 
         self.__source_queues = None
@@ -471,7 +471,7 @@ class Bot(object):
             self.__log_buffer.append(("debug", message))
 
     def __load_harmonization_configuration(self):
-        self.logger.debug("Loading Harmonization configuration from %r." % HARMONIZATION_CONF_FILE)
+        self.logger.debug("Loading Harmonization configuration from %r.", HARMONIZATION_CONF_FILE)
         self.harmonization = utils.load_configuration(HARMONIZATION_CONF_FILE)
 
     def new_event(self, *args, **kwargs):
@@ -508,9 +508,9 @@ class Bot(object):
             self.proxy = {'http': self.parameters.http_proxy,
                           'https': self.parameters.https_proxy}
         elif self.parameters.http_proxy or self.parameters.https_proxy:
-            self.logger.warning('Only {}_proxy seems to be set.'
-                                'Both http and https proxies must be set.'
-                                .format('http' if self.parameters.http_proxy else 'https'))
+            self.logger.warning('Only %s_proxy seems to be set.'
+                                'Both http and https proxies must be set.',
+                                'http' if self.parameters.http_proxy else 'https')
             self.proxy = None
         else:
             self.proxy = None

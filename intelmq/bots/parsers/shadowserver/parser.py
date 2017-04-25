@@ -91,8 +91,8 @@ class ShadowserverParserBot(ParserBot):
         for item in conf.get('required_fields'):
             intelmqkey, shadowkey = item[:2]
             if shadowkey not in fields:  # key does not exist in data (not even in the header)
-                self.logger.warning('Required key {!r} not found data. Possible change in data'
-                                    ' format or misconfiguration.'.format(shadowkey))
+                self.logger.warning('Required key %r not found data. Possible change in data'
+                                    ' format or misconfiguration.', shadowkey)
             if len(item) > 2:
                 conv_func = item[2]
             else:
@@ -118,8 +118,8 @@ class ShadowserverParserBot(ParserBot):
         for item in conf.get('optional_fields'):
             intelmqkey, shadowkey = item[:2]
             if shadowkey not in fields:  # key does not exist in data (not even in the header)
-                self.logger.warning('Optional key {!r} not found data. Possible change in data'
-                                    ' format or misconfiguration.'.format(shadowkey))
+                self.logger.warning('Optional key %r not found data. Possible change in data'
+                                    ' format or misconfiguration.', shadowkey)
                 continue
             if len(item) > 2:
                 conv_func = item[2]
@@ -135,8 +135,9 @@ class ShadowserverParserBot(ParserBot):
                     try:
                         value = conv_func(raw_value)
                     except:
-                        self.logger.error('Could not convert shadowkey: "{}", ' +
-                                          'value: "{}" via conversion function {}.'.format(shadowkey, raw_value, repr(conv_func)))
+                        self.logger.error('Could not convert shadowkey: %r, '
+                                          'value: %r via conversion function %r.',
+                                          shadowkey, raw_value, conv_func)
                         value = None
                         # """ fail early and often in this case. We want to be able to convert everything """
                         # self.stop()
@@ -150,10 +151,7 @@ class ShadowserverParserBot(ParserBot):
                     event.add(intelmqkey, value)
                     fields.remove(shadowkey)
                 except InvalidValue:
-                    self.logger.debug(
-                        'Could not add key {!r};'
-                        ' adding it to extras.'.format(shadowkey)
-                    )
+                    self.logger.debug('Could not add key %r adding it to extras.', shadowkey)
                 except InvalidKey:
                     extra[intelmqkey] = value
                     fields.remove(shadowkey)

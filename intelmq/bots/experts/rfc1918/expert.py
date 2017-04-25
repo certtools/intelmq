@@ -58,7 +58,7 @@ class RFC1918ExpertBot(Bot):
                             for domain in DOMAINS)
             if check:
                 if policy == 'del':
-                    self.logger.debug("Value removed from %s." % (field))
+                    self.logger.debug("Value removed from %s.", field)
                     del event[field]
                 elif policy == 'drop':
                     self.acknowledge_message()

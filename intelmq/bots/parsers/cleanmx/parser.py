@@ -81,7 +81,7 @@ class CleanMXParserBot(ParserBot):
 
             if key is None:
                 self.logger.warning('Value without key found, skipping the'
-                                    ' value: {!r}'.format(value))
+                                    ' value: %r', value)
                 continue
 
             key_orig = key

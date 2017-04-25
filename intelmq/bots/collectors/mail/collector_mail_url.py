@@ -45,7 +45,7 @@ class MailURLCollectorBot(CollectorBot):
                         # carriage returns
                         url = url.strip()
 
-                        self.logger.info("Downloading report from %r." % url)
+                        self.logger.info("Downloading report from %r.", url)
                         resp = requests.get(url=url,
                                             auth=self.auth, proxies=self.proxy,
                                             headers=self.http_header,

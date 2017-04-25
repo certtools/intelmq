@@ -7,7 +7,6 @@ import os
 import signal
 import subprocess
 import time
-import traceback
 
 import pkg_resources
 import psutil
@@ -30,20 +29,20 @@ STATUSES = {
 }
 
 MESSAGES = {
-    'disabled': '{} is disabled.',
-    'starting': 'Starting {}...',
-    'running': '{} is running.',
-    'stopped': '{} is stopped.',
-    'stopping': 'Stopping {}...',
-    'reloading': 'Reloading {} ...',
-    'reloaded': '{} is reloaded.',
+    'disabled': '%s is disabled.',
+    'starting': 'Starting %s...',
+    'running': '%s is running.',
+    'stopped': '%s is stopped.',
+    'stopping': 'Stopping %s...',
+    'reloading': 'Reloading %s ...',
+    'reloaded': '%s is reloaded.',
 }
 
 ERROR_MESSAGES = {
-    'starting': '{} failed to START.',
-    'running': '{} is still running.',
-    'stopped': '{} was NOT RUNNING.',
-    'stopping': '{} failed to STOP.',
+    'starting': '%s failed to START.',
+    'running': '%s is still running.',
+    'stopped': '%s was NOT RUNNING.',
+    'stopping': '%s failed to STOP.',
 }
 
 LOG_LEVEL = {
@@ -63,31 +62,31 @@ def log_list_queues(queues):
     if RETURN_TYPE == 'text':
         for queue, counter in sorted(queues.items()):
             if counter or not QUIET:
-                logger.info("{} - {}".format(queue, counter))
+                logger.info("%s - %s", queue, counter)
 
 
 def log_bot_error(status, *args):
     if RETURN_TYPE == 'text':
-        logger.error(ERROR_MESSAGES[status].format(*args))
+        logger.error(ERROR_MESSAGES[status], *args)
 
 
 def log_bot_message(status, *args):
     if QUIET:
         return
     if RETURN_TYPE == 'text':
-        logger.info(MESSAGES[status].format(*args))
+        logger.info(MESSAGES[status], *args)
 
 
 def log_botnet_error(status):
     if RETURN_TYPE == 'text':
-        logger.error(ERROR_MESSAGES[status].format('Botnet'))
+        logger.error(ERROR_MESSAGES[status], 'Botnet')
 
 
 def log_botnet_message(status):
     if QUIET:
         return
     if RETURN_TYPE == 'text':
-        logger.info(MESSAGES[status].format('Botnet'))
+        logger.info(MESSAGES[status], 'Botnet')
 
 
 def log_log_messages(messages):
@@ -115,7 +114,7 @@ class IntelMQProcessManager:
                 os.makedirs(self.PIDDIR)
             except PermissionError as exc:  # pragma: no cover
                 self.logger.error('Directory %s does not exist and cannot be '
-                                  'created: %s.' % (self.PIDDIR, exc))
+                                  'created: %s.', self.PIDDIR, exc)
 
     def bot_run(self, bot_id):
         pid = self.__read_pidfile(bot_id)
@@ -282,7 +281,7 @@ class IntelMQController():
             logger = utils.log('intelmqctl', log_level='DEBUG')
         except (FileNotFoundError, PermissionError) as exc:
             logger = utils.log('intelmqctl', log_level='DEBUG', log_path=False)
-            logger.error('Not logging to file: %s' % exc)
+            logger.error('Not logging to file: %s', exc)
         self.logger = logger
         self.interactive = interactive
         if os.geteuid() == 0:
@@ -370,7 +369,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                     self.runtime_configuration[bot_id]['parameters'] = params
                     self.runtime_configuration[bot_id].update(bot_values)
             if self.write_updated_runtime_config(filename=RUNTIME_CONF_FILE + '.new'):
-                self.logger.info('%r with new format written.' % (RUNTIME_CONF_FILE + '.new'))
+                self.logger.info('%r with new format written.', RUNTIME_CONF_FILE + '.new')
 
         process_manager = getattr(self.parameters, 'process_manager', 'intelmq')
         if process_manager not in PROCESS_MANAGER:
@@ -682,7 +681,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
         First checks if the queue does exist in the pipeline configuration.
         """
-        logger.info("Clearing queue {}".format(queue))
+        logger.info("Clearing queue %s", queue)
         queues = set()
         for key, value in self.pipeline_configuration.items():
             if 'source-queue' in value:
@@ -696,16 +695,16 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         pipeline.connect()
 
         if queue not in queues:
-            logger.error("Queue {} does not exist!".format(queue))
+            logger.error("Queue %s does not exist!", queue)
             return 'not-found'
 
         try:
             pipeline.clear_queue(queue)
-            logger.info("Successfully cleared queue {}".format(queue))
+            logger.info("Successfully cleared queue %s.", queue)
             return 'success'
         except Exception:  # pragma: no cover
-            logger.error("Error while clearing queue {}:\n{}"
-                         "".format(queue, traceback.format_exc()))
+            logger.exception("Error while clearing queue %s.",
+                             queue)
             return 'error'
 
     def read_bot_log(self, bot_id, log_level, number_of_lines):
@@ -713,13 +712,13 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             bot_log_path = os.path.join(self.parameters.logging_path,
                                         bot_id + '.log')
             if not os.path.isfile(bot_log_path):
-                logger.error("Log path not found: {}".format(bot_log_path))
+                logger.error("Log path not found: %s", bot_log_path)
                 return []
         elif self.parameters.logging_handler == 'syslog':
             bot_log_path = '/var/log/syslog'
 
         if not os.access(bot_log_path, os.R_OK):
-            self.logger.error('File %r is not readable.' % bot_log_path)
+            self.logger.error('File %r is not readable.', bot_log_path)
             return 'error'
 
         messages = list()
@@ -769,7 +768,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 with open(filename) as file_handle:
                     files[filename] = json.load(file_handle)
             except (IOError, ValueError) as exc:  # pragma: no cover
-                self.logger.error('Coud not load %r: %s.' % (filename, exc))
+                self.logger.error('Coud not load %r: %s.', filename, exc)
                 retval = 1
         if retval:
             self.logger.error('Fatal errors occured.')
@@ -795,10 +794,10 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             # pipeline keys
             for field in ['description', 'group', 'module', 'name']:
                 if field not in bot_config:
-                    self.logger.warning('Bot %r has no %r.' % (bot_id, field))
+                    self.logger.warning('Bot %r has no %r.', bot_id, field)
                     retval = 1
             if bot_id not in files[PIPELINE_CONF_FILE]:
-                self.logger.error('Misconfiguration: No pipeline configuration found for %r.' % bot_id)
+                self.logger.error('Misconfiguration: No pipeline configuration found for %r.', bot_id)
                 retval = 1
             else:
                 if ('group' in bot_config and
@@ -806,13 +805,13 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                         ('destination-queues' not in files[PIPELINE_CONF_FILE][bot_id] or
                          (not isinstance(files[PIPELINE_CONF_FILE][bot_id]['destination-queues'], list) or
                           len(files[PIPELINE_CONF_FILE][bot_id]['destination-queues']) < 1))):
-                    self.logger.error('Misconfiguration: No destination queues for %r.' % bot_id)
+                    self.logger.error('Misconfiguration: No destination queues for %r.', bot_id)
                     retval = 1
                 if ('group' in bot_config and
                         bot_config['group'] in ['Parser', 'Expert', 'Output'] and
                         ('source-queue' not in files[PIPELINE_CONF_FILE][bot_id] or
                          not isinstance(files[PIPELINE_CONF_FILE][bot_id]['source-queue'], str))):
-                    self.logger.error('Misconfiguration: No source queue for %r.' % bot_id)
+                    self.logger.error('Misconfiguration: No source queue for %r.', bot_id)
                     retval = 1
 
         self.logger.info('Checking for bots.')
@@ -821,13 +820,13 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             try:
                 importlib.import_module(bot_config['module'])
             except ImportError:
-                self.logger.error('Incomplete installation: Module %r not importable.' % bot_id)
+                self.logger.error('Incomplete installation: Module %r not importable.', bot_id)
                 retval = 1
         for group in files[BOTS_FILE].values():
             for bot_id, bot in group.items():
                 if subprocess.call(['which', bot['module']], stdout=subprocess.DEVNULL):
-                    self.logger.error('Incomplete installation: Executable %r for %r not found.'
-                                      '' % (bot['module'], bot_id))
+                    self.logger.error('Incomplete installation: Executable %r for %r not found.',
+                                      bot['module'], bot_id)
                     retval = 1
 
         if retval:

@@ -54,7 +54,7 @@ class FileCollectorBot(CollectorBot):
                 filename = os.path.join(p, f)
                 if os.path.isfile(filename):
                     if fnmatch.fnmatch(f, '*' + self.parameters.postfix):
-                        self.logger.info("Processing file %r." % filename)
+                        self.logger.info("Processing file %r.", filename)
 
                         with open(filename, 'r') as f:
 
@@ -66,9 +66,9 @@ class FileCollectorBot(CollectorBot):
                         if self.parameters.delete_file:
                             try:
                                 os.remove(filename)
-                                self.logger.debug("Deleted file: %r." % filename)
+                                self.logger.debug("Deleted file: %r.", filename)
                             except PermissionError:
-                                self.logger.error("Could not delete file %r." % filename)
+                                self.logger.error("Could not delete file %r.", filename)
                                 self.logger.info("Maybe I don't have sufficient rights on that file?")
                                 self.logger.error("Stopping now, to prevent reading this file again.")
                                 self.stop()

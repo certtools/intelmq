@@ -17,14 +17,13 @@ try:
             self.n6stomper.logger.warn("Heartbeat timeout. Attempting to re-connect.")
             self.n6stomper.conn.disconnect()
             status = self.n6stomper.conn.connect(wait=False)
-            self.n6stomper.logger.info("Re-connected: {}.".format(status))
+            self.n6stomper.logger.info("Re-connected: %s.", status)
 
         def on_error(self, headers, message):
-            self.n6stomper.logger.error('Received an error :"%s".' % repr(message))
+            self.n6stomper.logger.error('Received an error: %r.', message)
 
         def on_message(self, headers, message):
-            self.n6stomper.logger.debug('Receive message '
-                                        '{!r}...'.format(message[:500]))
+            self.n6stomper.logger.debug('Receive message %r...', message[:500])
             report = self.n6stomper.new_report()
             report.add("raw", message.rstrip())
             report.add("feed.url", "stomp://" +
@@ -76,8 +75,8 @@ class n6stompCollectorBot(CollectorBot):
         self.conn.start()
         self.conn.connect(wait=False)
         self.conn.subscribe(destination=self.exchange, id=1, ack='auto')
-        self.logger.info('Successfully connected and subscribed to {}:{}.'
-                         ''.format(self.server, self.port))
+        self.logger.info('Successfully connected and subscribed to %s:%s.',
+                         self.server, self.port)
 
     def disconnect(self):
         self.conn.disconnect()

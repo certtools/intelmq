@@ -57,7 +57,7 @@ class PostgreSQLOutputBot(Bot):
         query = ('INSERT INTO {table} ("{keys}") VALUES ({values})'
                  ''.format(table=self.table, keys=keys, values=fvalues[:-2]))
 
-        self.logger.debug('Query: {!r} with values {!r}.'.format(query, values))
+        self.logger.debug('Query: %r with values %r.', query, values)
         try:
             # note: this assumes, the DB was created with UTF-8 support!
             self.cur.execute(query, values)
