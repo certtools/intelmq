@@ -12,13 +12,12 @@ import unittest
 import pkg_resources
 
 import intelmq.lib.exceptions as exceptions
-import intelmq.lib.message as message
+import intelmq.lib.message as message  # noqa
 from intelmq.lib.utils import load_configuration
 
 HARM = load_configuration(pkg_resources.resource_filename('intelmq',
                                                           'etc/harmonization.conf'))
 
-    import intelmq.lib.message as message  # noqa
 LOREM_BASE64 = 'bG9yZW0gaXBzdW0='
 DOLOR_BASE64 = 'ZG9sb3Igc2l0IGFtZXQ='
 FEED = {'feed.url': 'https://example.com/', 'feed.name': 'Lorem ipsum'}
