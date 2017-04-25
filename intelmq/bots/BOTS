@@ -678,6 +678,19 @@
                 "redis_timeout": 50000
             }
         },
+        "Stomp": {
+            "description": "Sends event via the STMOP protocol.",
+            "module": "intelmq.bots.outputs.stomp.output",
+            "parameters": {
+                "exchange": "/exchange/_push",
+                "heartbeat": 60000,
+                "port": 61614,
+                "server": "127.0.0.1",
+                "ssl_ca_certificate": "<insert path to CA file>",
+                "ssl_client_certificate": "<insert path to client cert file>",
+                "ssl_client_certificate_key": "<insert path to client cert key file>"
+            }
+        },
         "TCP": {
             "description": "TCP is the bot responsible to send events to a tcp port (Splunk, ElasticSearch, etc..).",
             "module": "intelmq.bots.outputs.tcp.output",
