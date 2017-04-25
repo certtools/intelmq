@@ -22,6 +22,7 @@ from intelmq.lib.pipeline import PipelineFactory
 class Parameters(object):
     pass
 
+
 STATUSES = {
     'starting': 0,
     'running': 1,
@@ -146,7 +147,7 @@ class IntelMQProcessManager:
         self.__remove_pidfile(bot_id)
         return retval
 
-    def bot_start(self, bot_id, getstatus = True):
+    def bot_start(self, bot_id, getstatus=True):
         pid = self.__read_pidfile(bot_id)
         if pid:
             if self.__status_process(pid):
@@ -167,7 +168,7 @@ class IntelMQProcessManager:
             time.sleep(0.5)
             return self.bot_status(bot_id)
 
-    def bot_stop(self, bot_id, getstatus = True):
+    def bot_stop(self, bot_id, getstatus=True):
         pid = self.__read_pidfile(bot_id)
         if not pid:
             if self.controller._is_enabled(bot_id):
@@ -183,7 +184,7 @@ class IntelMQProcessManager:
         log_bot_message('stopping', bot_id)
         proc = psutil.Process(int(pid))
         proc.send_signal(signal.SIGINT)
-        
+
         if getstatus:
             time.sleep(0.5)
             if self.__status_process(pid):
@@ -296,7 +297,8 @@ class IntelMQController():
             VERSION = pkg_resources.get_distribution("intelmq").version
         except pkg_resources.DistributionNotFound:  # pragma: no cover
             # can only happen in interactive mode
-            self.logger.error('No valid IntelMQ installation found: DistributionNotFound')
+            self.logger.error(
+                'No valid IntelMQ installation found: DistributionNotFound')
             exit(1)
         DESCRIPTION = """
         description: intelmqctl is the tool to control intelmq system.
@@ -351,17 +353,20 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         self.load_defaults_configuration()
         self.load_system_configuration()
         try:
-            self.pipeline_configuration = utils.load_configuration(PIPELINE_CONF_FILE)
+            self.pipeline_configuration = utils.load_configuration(
+                PIPELINE_CONF_FILE)
         except ValueError as exc:  # pragma: no cover
             self.abort('Error loading %r: %s' % (PIPELINE_CONF_FILE, exc))
 
         try:
-            self.runtime_configuration = utils.load_configuration(RUNTIME_CONF_FILE)
+            self.runtime_configuration = utils.load_configuration(
+                RUNTIME_CONF_FILE)
         except ValueError as exc:  # pragma: no cover
             self.abort('Error loading %r: %s' % (RUNTIME_CONF_FILE, exc))
 
         if os.path.exists(STARTUP_CONF_FILE):
-            self.logger.warning('Deprecated startup.conf file found, please migrate to runtime.conf soon.')
+            self.logger.warning(
+                'Deprecated startup.conf file found, please migrate to runtime.conf soon.')
             with open(STARTUP_CONF_FILE, 'r') as fp:
                 startup = json.load(fp)
                 for bot_id, bot_values in startup.items():
@@ -373,9 +378,11 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                     self.runtime_configuration[bot_id]['parameters'] = params
                     self.runtime_configuration[bot_id].update(bot_values)
             if self.write_updated_runtime_config(filename=RUNTIME_CONF_FILE + '.new'):
-                self.logger.info('%r with new format written.' % (RUNTIME_CONF_FILE + '.new'))
+                self.logger.info('%r with new format written.' %
+                                 (RUNTIME_CONF_FILE + '.new'))
 
-        process_manager = getattr(self.parameters, 'process_manager', 'intelmq')
+        process_manager = getattr(
+            self.parameters, 'process_manager', 'intelmq')
         if process_manager not in PROCESS_MANAGER:
             self.abort('Invalid process manager given: %r, should be one of %r.'
                        '' % (process_manager, list(PROCESS_MANAGER.keys())))
@@ -407,21 +414,24 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
             subparsers = parser.add_subparsers(title='subcommands')
 
-            parser_list = subparsers.add_parser('list', help='Listing bots or queues')
+            parser_list = subparsers.add_parser(
+                'list', help='Listing bots or queues')
             parser_list.add_argument('kind', choices=['bots', 'queues'])
             parser_list.add_argument('--quiet', '-q', action='store_const',
                                      help='Only list non-empty queues',
                                      const=True)
             parser_list.set_defaults(func=self.list)
 
-            subparsers.add_parser('check', help='Check installation and configuration')
+            subparsers.add_parser(
+                'check', help='Check installation and configuration')
 
             parser_clear = subparsers.add_parser('clear', help='Clear a queue')
             parser_clear.add_argument('queue', help='queue name',
                                       choices=self.get_queues()[3])
             parser_clear.set_defaults(func=self.clear_queue)
 
-            parser_log = subparsers.add_parser('log', help='Get last log lines of a bot')
+            parser_log = subparsers.add_parser(
+                'log', help='Get last log lines of a bot')
             parser_log.add_argument('bot_id', help='bot id')
             parser_log.add_argument('number_of_lines', help='number of lines',
                                     default=10, type=int, nargs='?')
@@ -429,7 +439,8 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                                     choices=LOG_LEVEL.keys(), default='INFO', nargs='?')
             parser_log.set_defaults(func=self.read_bot_log)
 
-            parser_run = subparsers.add_parser('run', help='Run a bot interactively')
+            parser_run = subparsers.add_parser(
+                'run', help='Run a bot interactively')
             parser_run.add_argument('bot_id',
                                     choices=self.runtime_configuration.keys())
             parser_run.set_defaults(func=self.bot_run)
@@ -442,37 +453,44 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                                                 help='Show the help')
             parser_help.set_defaults(func=parser.print_help)
 
-            parser_start = subparsers.add_parser('start', help='Start a bot or botnet')
+            parser_start = subparsers.add_parser(
+                'start', help='Start a bot or botnet')
             parser_start.add_argument('bot_id', nargs='?',
                                       choices=self.runtime_configuration.keys())
             parser_start.set_defaults(func=self.bot_start)
 
-            parser_stop = subparsers.add_parser('stop', help='Stop a bot or botnet')
+            parser_stop = subparsers.add_parser(
+                'stop', help='Stop a bot or botnet')
             parser_stop.add_argument('bot_id', nargs='?',
                                      choices=self.runtime_configuration.keys())
             parser_stop.set_defaults(func=self.bot_stop)
 
-            parser_restart = subparsers.add_parser('restart', help='Restart a bot or botnet')
+            parser_restart = subparsers.add_parser(
+                'restart', help='Restart a bot or botnet')
             parser_restart.add_argument('bot_id', nargs='?',
                                         choices=self.runtime_configuration.keys())
             parser_restart.set_defaults(func=self.bot_restart)
 
-            parser_reload = subparsers.add_parser('reload', help='Reload a bot or botnet')
+            parser_reload = subparsers.add_parser(
+                'reload', help='Reload a bot or botnet')
             parser_reload.add_argument('bot_id', nargs='?',
                                        choices=self.runtime_configuration.keys())
             parser_reload.set_defaults(func=self.bot_reload)
 
-            parser_status = subparsers.add_parser('status', help='Status of a bot or botnet')
+            parser_status = subparsers.add_parser(
+                'status', help='Status of a bot or botnet')
             parser_status.add_argument('bot_id', nargs='?',
                                        choices=self.runtime_configuration.keys())
             parser_status.set_defaults(func=self.bot_status)
 
-            parser_status = subparsers.add_parser('enable', help='Enable a bot')
+            parser_status = subparsers.add_parser(
+                'enable', help='Enable a bot')
             parser_status.add_argument('bot_id',
                                        choices=self.runtime_configuration.keys())
             parser_status.set_defaults(func=self.bot_enable)
 
-            parser_status = subparsers.add_parser('disable', help='Disable a bot')
+            parser_status = subparsers.add_parser(
+                'disable', help='Disable a bot')
             parser_status.add_argument('bot_id',
                                        choices=self.runtime_configuration.keys())
             parser_status.set_defaults(func=self.bot_disable)
@@ -519,13 +537,13 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
     def bot_run(self, bot_id):
         return self.bot_process_manager.bot_run(bot_id)
 
-    def bot_start(self, bot_id, getstatus = True):
+    def bot_start(self, bot_id, getstatus=True):
         if bot_id is None:
             return self.botnet_start()
         else:
             return self.bot_process_manager.bot_start(bot_id, getstatus)
 
-    def bot_stop(self, bot_id, getstatus = True):
+    def bot_stop(self, bot_id, getstatus=True):
         if bot_id is None:
             return self.botnet_stop()
         else:
@@ -567,16 +585,16 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         bots = sorted(self.runtime_configuration.keys())
         for bot_id in bots:
             if self.runtime_configuration[bot_id].get('enabled', True):
-                self.bot_start(bot_id, getstatus = False)
+                self.bot_start(bot_id, getstatus=False)
             else:
                 log_bot_message('disabled', bot_id)
                 botnet_status[bot_id] = 'disabled'
-                
+
         time.sleep(0.75)
-        for bot_id in bots:        
+        for bot_id in bots:
             if self.runtime_configuration[bot_id].get('enabled', True):
                 botnet_status[bot_id] = self.bot_status(bot_id)
-        
+
         log_botnet_message('running')
         return botnet_status
 
@@ -585,12 +603,12 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         log_botnet_message('stopping')
         bots = sorted(self.runtime_configuration.keys())
         for bot_id in bots:
-            self.bot_stop(bot_id, getstatus = False)
-            
+            self.bot_stop(bot_id, getstatus=False)
+
         time.sleep(0.75)
         for bot_id in bots:
             botnet_status[bot_id] = self.bot_status(bot_id)
-        
+
         log_botnet_message('stopped')
         return botnet_status
 
@@ -626,13 +644,15 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
     def write_updated_runtime_config(self, filename=RUNTIME_CONF_FILE):
         if os.path.exists(STARTUP_CONF_FILE):
-            self.abort('Can\'t update runtime configuration, startup.conf found.')
+            self.abort(
+                'Can\'t update runtime configuration, startup.conf found.')
         try:
             with open(RUNTIME_CONF_FILE, 'w') as handle:
                 json.dump(self.runtime_configuration, fp=handle, indent=4, sort_keys=True,
                           separators=(',', ': '))
         except PermissionError:
-            self.abort('Can\'t update runtime configuration: Permission denied.')
+            self.abort(
+                'Can\'t update runtime configuration: Permission denied.')
         return True
 
     def list_bots(self):
@@ -662,7 +682,8 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             if 'destination-queues' in value:
                 destination_queues.update(value['destination-queues'])
 
-        all_queues = source_queues.union(destination_queues).union(internal_queues)
+        all_queues = source_queues.union(
+            destination_queues).union(internal_queues)
 
         return source_queues, destination_queues, internal_queues, all_queues
 
@@ -747,7 +768,8 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             if self.parameters.logging_handler == 'file':
                 log_message = utils.parse_logline(line)
             if self.parameters.logging_handler == 'syslog':
-                log_message = utils.parse_logline(line, regex=utils.SYSLOG_REGEX)
+                log_message = utils.parse_logline(
+                    line, regex=utils.SYSLOG_REGEX)
 
             if type(log_message) is not dict:
                 if self.parameters.logging_handler == 'file':
@@ -763,7 +785,8 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 message_overflow = ''
 
             if self.parameters.logging_handler == 'syslog':
-                log_message['message'] = log_message['message'].replace('#012', '\n')
+                log_message['message'] = log_message['message'].replace(
+                    '#012', '\n')
 
             message_count += 1
             messages.append(log_message)
@@ -792,10 +815,12 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             return retval
 
         if os.path.exists(STARTUP_CONF_FILE):
-            self.logger.warning('Deprecated startup.conf file found, migrate to runtime.conf.')
+            self.logger.warning(
+                'Deprecated startup.conf file found, migrate to runtime.conf.')
             retval = 1
         if os.path.exists(SYSTEM_CONF_FILE):
-            self.logger.warning('Deprecated system.conf file found, migrate to defaults.conf.')
+            self.logger.warning(
+                'Deprecated system.conf file found, migrate to defaults.conf.')
             retval = 1
 
         self.logger.info('Checking runtime configuration.')
@@ -803,7 +828,8 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         https_proxy = files[DEFAULTS_CONF_FILE].get('https_proxy')
         # Either both are given or both are not given
         if (not http_proxy or not https_proxy) and not (http_proxy == https_proxy):
-            self.logger.warning('Incomplete configuration: Both http and https proxies must be set.')
+            self.logger.warning(
+                'Incomplete configuration: Both http and https proxies must be set.')
             retval = 1
 
         self.logger.info('Checking pipeline configuration.')
@@ -814,7 +840,8 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                     self.logger.warning('Bot %r has no %r.' % (bot_id, field))
                     retval = 1
             if bot_id not in files[PIPELINE_CONF_FILE]:
-                self.logger.error('Misconfiguration: No pipeline configuration found for %r.' % bot_id)
+                self.logger.error(
+                    'Misconfiguration: No pipeline configuration found for %r.' % bot_id)
                 retval = 1
             else:
                 if ('group' in bot_config and
@@ -822,13 +849,15 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                         ('destination-queues' not in files[PIPELINE_CONF_FILE][bot_id] or
                          (not isinstance(files[PIPELINE_CONF_FILE][bot_id]['destination-queues'], list) or
                           len(files[PIPELINE_CONF_FILE][bot_id]['destination-queues']) < 1))):
-                    self.logger.error('Misconfiguration: No destination queues for %r.' % bot_id)
+                    self.logger.error(
+                        'Misconfiguration: No destination queues for %r.' % bot_id)
                     retval = 1
                 if ('group' in bot_config and
                         bot_config['group'] in ['Parser', 'Expert', 'Output'] and
                         ('source-queue' not in files[PIPELINE_CONF_FILE][bot_id] or
                          not isinstance(files[PIPELINE_CONF_FILE][bot_id]['source-queue'], str))):
-                    self.logger.error('Misconfiguration: No source queue for %r.' % bot_id)
+                    self.logger.error(
+                        'Misconfiguration: No source queue for %r.' % bot_id)
                     retval = 1
 
         self.logger.info('Checking for bots.')
@@ -837,7 +866,8 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             try:
                 importlib.import_module(bot_config['module'])
             except ImportError:
-                self.logger.error('Incomplete installation: Module %r not importable.' % bot_id)
+                self.logger.error(
+                    'Incomplete installation: Module %r not importable.' % bot_id)
                 retval = 1
         for group in files[BOTS_FILE].values():
             for bot_id, bot in group.items():
@@ -847,7 +877,8 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                     retval = 1
 
         if retval:
-            self.logger.error('Some issues have been found, please check the above output.')
+            self.logger.error(
+                'Some issues have been found, please check the above output.')
         else:
             self.logger.info('No issues found.')
 
@@ -857,6 +888,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 def main():  # pragma: no cover
     x = IntelMQController(interactive=True)
     return x.run()
+
 
 if __name__ == "__main__":  # pragma: no cover
     exit(main())
