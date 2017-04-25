@@ -22,6 +22,7 @@ from intelmq.lib.pipeline import PipelineFactory
 class Parameters(object):
     pass
 
+
 STATUSES = {
     'starting': 0,
     'running': 1,
@@ -841,6 +842,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 def main():  # pragma: no cover
     x = IntelMQController(interactive=True)
     return x.run()
+
 
 if __name__ == "__main__":  # pragma: no cover
     exit(main())
