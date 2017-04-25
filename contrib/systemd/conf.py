@@ -1,8 +1,11 @@
 import shutil
+import intelmq
 
 INTELMQ_DIR = '/opt/intelmq'
-RUNTIME_CONF = INTELMQ_DIR+'/etc/runtime.conf'
-PIPELINE_CONF = INTELMQ_DIR+'/etc/pipeline.conf'
+#RUNTIME_CONF = INTELMQ_DIR+'/etc/runtime.conf'
+#PIPELINE_CONF = INTELMQ_DIR+'/etc/pipeline.conf'
+RUNTIME_CONF = intelmq.RUNTIME_CONF_FILE
+PIPELINE_CONF = intelmq.PIPELINE_CONF_FILE
 SYSTEMD_OUTPUT_DIR = INTELMQ_DIR+'/etc/systemd'
 SERVICE_PREFIX = "intelmq."
 DISABLE_IN_CONF = True
