@@ -37,6 +37,15 @@ MULTILINE_EVENTS = [{"feed.name": "Test feed",
                      "source.ip": "127.0.0.2"
                      },
                     ]
+with open(os.path.join(os.path.dirname(__file__), 'data2.json'), 'rb') as fh:
+    RAW2 = base64.b64encode(fh.read()).decode()
+
+NO_DEFAULT_REPORT = {"feed.name": "Test feed",
+                     "raw": RAW2,
+                     "__type": "Report",
+                     }
+NO_DEFAULT_EVENT = MULTILINE_EVENTS[1].copy()
+NO_DEFAULT_EVENT['raw'] = 'eyJzb3VyY2UuaXAiOiAiMTI3LjAuMC4yIiwgImNsYXNzaWZpY2F0aW9uLnR5cGUiOiAiYyZjIn0K'
 
 
 class TestJSONParserBot(test.BotTestCase, unittest.TestCase):
@@ -61,6 +70,12 @@ class TestJSONParserBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, MULTILINE_EVENTS[0])
         self.assertMessageEqual(1, MULTILINE_EVENTS[1])
+
+    def test_default_event(self):
+        """ Test if correct Event has been produced. """
+        self.input_message = NO_DEFAULT_REPORT
+        self.run_bot()
+        self.assertMessageEqual(0, NO_DEFAULT_EVENT)
 
 
 if __name__ == '__main__':  # pragma: no cover
