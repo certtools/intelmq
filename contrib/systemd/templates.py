@@ -45,28 +45,28 @@ POST_DOCS='''
 TO INSTALL
 ==========
 cd /opt/intelmq/etc/systemd
-cp intelmq.*.service /etc/systemd/system
-cp intelmq.*.timer /etc/systemd/system
-chmod 664 /etc/systemd/system/intelmq.*.service
-chmod 664 /etc/systemd/system/intelmq.*.timer
-systemctl daemon-reload
-systemctl start intelmq.*.timer
-systemctl enable intelmq.*.timer
+sudo cp intelmq.*.service /etc/systemd/system
+sudo cp intelmq.*.timer /etc/systemd/system
+sudo chmod 664 /etc/systemd/system/intelmq.*.service
+sudo chmod 664 /etc/systemd/system/intelmq.*.timer
+sudo systemctl daemon-reload
+sudo systemctl start intelmq.*.timer
+sudo systemctl enable intelmq.*.timer
 
 TO VIEW
 =======
-systemctl list-timers intelmq.*
+sudo systemctl list-timers intelmq.*
 
 TO REMOVE
 =========
-systemctl stop intelmq.*.service
-systemctl stop intelmq.*.timer
-systemctl disable intelmq.*.service
-systemctl disable intelmq.*.timer
-rm /etc/systemd/system/intelmq.*.service
-rm /etc/systemd/system/intelmq.*.timer
-systemctl daemon-reload
-systemctl reset-failed
+sudo systemctl stop intelmq.*.service
+sudo systemctl stop intelmq.*.timer
+sudo systemctl disable intelmq.*.service
+sudo systemctl disable intelmq.*.timer
+sudo rm /etc/systemd/system/intelmq.*.service
+sudo rm /etc/systemd/system/intelmq.*.timer
+sudo systemctl daemon-reload
+sudo systemctl reset-failed
 
 
 ON DEBIAN8 GET SYSTEMD-230
