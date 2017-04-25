@@ -1,19 +1,21 @@
+# -*- coding: utf-8 -*-
+import os.path
 import shutil
-import intelmq
 
-INTELMQ_DIR = '/opt/intelmq'
-#RUNTIME_CONF = INTELMQ_DIR+'/etc/runtime.conf'
-#PIPELINE_CONF = INTELMQ_DIR+'/etc/pipeline.conf'
-RUNTIME_CONF = intelmq.RUNTIME_CONF_FILE
-PIPELINE_CONF = intelmq.PIPELINE_CONF_FILE
-SYSTEMD_OUTPUT_DIR = INTELMQ_DIR+'/etc/systemd'
-SERVICE_PREFIX = "intelmq."
-DISABLE_IN_CONF = True
-SET_RUNMODE_IN_CONF = True
-INTELMQCTL_BIN = shutil.which('intelmqctl')
-SYSTEMCTL_BIN = shutil.which('systemctl')
-INTELMQ_USER = 'intelmq'
-INTELMQ_GROUP = 'intelmq'
+from intelmq import ROOT_DIR
+
+__all__ = ['ACCURACY_SECS', 'DISABLE_IN_CONF', 'ON_ACTIVE_SEC', 'SET_RUNMODE_IN_CONF',
+           'INTELMQ_GROUP', 'RANDOMIZE_DELAYS', 'SYSTEMD_OUTPUT_DIR', 'ROOT_DIR', 'SYSTEMCTL_BIN',
+           'INTELMQCTL_BIN', 'SERVICE_PREFIX', 'INTELMQ_USER']
+
 ACCURACY_SECS = '100ms'
-RANDOMIZE_DELAYS = '45 minutes'
+DISABLE_IN_CONF = True
+INTELMQCTL_BIN = shutil.which('intelmqctl')
+INTELMQ_GROUP = 'intelmq'
+INTELMQ_USER = 'intelmq'
 ON_ACTIVE_SEC = '30 minutes'
+RANDOMIZE_DELAYS = '45 minutes'
+SERVICE_PREFIX = "intelmq."
+SET_RUNMODE_IN_CONF = True
+SYSTEMCTL_BIN = shutil.which('systemctl')
+SYSTEMD_OUTPUT_DIR = os.path.join(ROOT_DIR, 'etc/systemd')
