@@ -62,7 +62,7 @@ class Bot(object):
             self.logger = utils.log(self.__bot_id, syslog=syslog,
                                     log_path=self.parameters.logging_path,
                                     log_level=self.parameters.logging_level)
-        except:
+        except Exception:
             self.__log_buffer.append(('critical', traceback.format_exc()))
             self.stop()
         else:
@@ -256,7 +256,7 @@ class Bot(object):
     def stop(self, exitcode=1):
         try:
             self.shutdown()
-        except:
+        except BaseException:
             pass
 
         self.__disconnect_pipelines()
@@ -390,7 +390,7 @@ class Bot(object):
             with open(dump_file, 'r') as fp:
                 dump_data = json.load(fp)
                 dump_data.update(new_dump_data)
-        except:
+        except ValueError:
             dump_data = new_dump_data
 
         with open(dump_file, 'w') as fp:

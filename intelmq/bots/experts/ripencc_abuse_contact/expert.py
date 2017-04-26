@@ -46,7 +46,7 @@ class RIPENCCExpertBot(Bot):
                         ['abuse_c'][0]['email']]
             else:
                 return []
-        except:
+        except Exception:  # TODO: Should probably be ValueError or AttributeError?
             return []
 
     def query_ripedb(self, ip=None, asn=None):

@@ -128,7 +128,7 @@ class Cymru():
             try:
                 int(asn)
                 result['asn'] = asn
-            except:
+            except ValueError:
                 pass
 
         if items[1]:
