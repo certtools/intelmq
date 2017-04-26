@@ -53,6 +53,8 @@ class TestPostgreSQLOutputBot(test.BotTestCase, unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
+        if not os.environ.get('INTELMQ_TEST_DATABASES'):
+            return
         cls.cur.execute('TRUNCATE "tests"')
         cls.cur.close()
         cls.con.close()
