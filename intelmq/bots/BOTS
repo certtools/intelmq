@@ -676,7 +676,7 @@
                 "smtp_username": null,
                 "ssl": false,
                 "starttls": true,
-                "subject": "Icident in your AS {ev[source.asn]}",
+                "subject": "Incident in your AS {ev[source.asn]}",
                 "text": "Dear network owner,\\n\\nWe have been informed that the following device might have security problems.\\n\\nYour localhost CERT"
             }
         },

@@ -68,7 +68,7 @@ Changes between 0.9 and 1.0.0.dev6
 - changed configuration syntax for bots.experts.modify to a more simple variant
 
 #### Outputs
-- added: amqp, elasticsearch, redis, restapi, stomp, tcp, udp, xmpp
+- added: amqp, elasticsearch, redis, restapi, smtp, stomp, tcp, udp, xmpp
 - removed: debug, intelmqmailer (broken), logcollector
 - enhanced all outputs
 
