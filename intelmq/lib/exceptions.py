@@ -49,8 +49,8 @@ class PipelineError(IntelMQException):
 class ConfigurationError(IntelMQException):
 
     def __init__(self, config, argument):
-        message = "%s configuration failed - %s" % (config, repr(argument))
-        super(PipelineError, self).__init__(message)
+        message = "%s configuration failed - %s" % (config, argument)
+        super(ConfigurationError, self).__init__(message)
 
 
 class PipelineFactoryError(IntelMQException):

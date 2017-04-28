@@ -57,7 +57,7 @@ Table of Contents
 How to Install
 --------------
 
-See [UserGuide](User-Guide.md).
+See [INSTALL](INSTALL.md).
 
 Developers Guide
 ----------------

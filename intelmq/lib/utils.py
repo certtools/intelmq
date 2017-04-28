@@ -28,7 +28,7 @@ import pytz
 
 __all__ = ['base64_decode', 'base64_encode', 'decode', 'encode',
            'load_configuration', 'load_parameters', 'log', 'parse_logline',
-           'reverse_readline', 'error_message_from_exc',
+           'reverse_readline', 'error_message_from_exc', 'parse_relative'
            ]
 
 # Used loglines format
@@ -344,3 +344,38 @@ def error_message_from_exc(exc: Exception) -> str:
         result: The error message of exc
     """
     return traceback.format_exception_only(type(exc), exc)[-1].strip().replace(type(exc).__name__ + ': ', '')
+
+
+# number of minutes in time units
+TIMESPANS = {'hour': 60, 'day': 24 * 60, 'week': 7 * 24 * 60,
+             'month': 30 * 24 * 60, 'year': 365 * 24 * 60}
+
+
+def parse_relative(relative_time: str) -> int:
+    """
+    Parse relative time attributes and returns the corresponding minutes.
+
+    >>> parse_relative('4 hours')
+    240
+
+    Parameters:
+        relative_time: a string holding a relative time specification
+
+    Returns:
+        result: Minutes
+
+    Raises:
+        ValueError: If relative_time is not parseable
+
+    See also:
+        TIMESPANS: Defines the conversion of verbal timespans to minutes
+    """
+    try:
+        result = re.findall(r'^(\d+)\s+(\w+[^s])s?$', relative_time, re.UNICODE)
+    except ValueError as e:
+        raise ValueError("Could not apply regex to attribute \"%s\" with exception %s.",
+                         repr(relative_time), repr(e.args))
+    if len(result) == 1 and len(result[0]) == 2 and result[0][1] in TIMESPANS:
+        return int(result[0][0]) * TIMESPANS[result[0][1]]
+    else:
+        raise ValueError("Could not process result of regex for attribute " + repr(relative_time))

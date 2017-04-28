@@ -21,6 +21,8 @@ Recommends: python3-imbox (>= 0.8), python3-pyasn (>= 1.5.0),
 Breaks: intelmq-mailgen (<< 0.99~rc1)
 Description: IntelMQ is a solution for IT security teams (CERTs, CSIRTs, abuse
  departments,...) for collecting and processing security feeds (such as log
- files) using a message queuing protocol.
- .
- IntelMQ's design was influenced by AbuseHelper
+ files) using a message queuing protocol. It's a community driven initiative
+ called IHAP (Incident Handling Automation Project) which was conceptually
+ designed by European CERTs/CSIRTs during several InfoSec events. Its main goal
+ is to give to incident responders an easy way to collect & process threat
+ intelligence thus improving the incident handling processes of CERTs.

@@ -66,6 +66,8 @@ class TestGenericCsvParserBot(test.BotTestCase, unittest.TestCase):
                                      "source.fqdn, __IGNORE__",
                           "delimiter": "\t",
                           "type": "malware",
+                          "column_regex_search": "",
+                          "type_translation": "",
                           "default_url_protocol": "http://"}
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_EVENT)

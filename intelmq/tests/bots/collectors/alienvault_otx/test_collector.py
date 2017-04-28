@@ -2,5 +2,7 @@
 """
 Testing Alienvault OTX collector
 """
+import os
 
-import intelmq.bots.collectors.alienvault_otx.collector
+if os.environ.get('INTELMQ_TEST_EXOTIC'):
+    import intelmq.bots.collectors.alienvault_otx.collector

@@ -102,6 +102,7 @@
                 "provider": "",
                 "password": "password",
                 "rate_limit": 3600,
+                "search_not_older_than": null,
                 "search_owner": "nobody",
                 "search_queue": "Incident Reports",
                 "search_status": "new",
@@ -155,6 +156,18 @@
                 "api_key": "<insert your api key>",
                 "feed": "Blueliv Crimeserver",
                 "provider": "Blueliv",
+                "rate_limit": 3600
+            }
+        },
+        "Microsoft Azure": {
+            "description": "",
+            "module": "intelmq.bots.collectors.microsoft.collector_azure",
+            "parameters": {
+                "account_name": "",
+                "account_key": "",
+                "delete": true,
+                "feed": "",
+                "provider": "microsoft",
                 "rate_limit": 3600
             }
         },
@@ -287,10 +300,13 @@
                     "",
                     "source.fqdn"
                 ],
+                "column_regex_search": {},
                 "default_url_protocol": "http://",
                 "delimiter": ",",
                 "skip_header": true,
-                "type": "c&c"
+                "time_format": null,
+                "type": "c&c",
+                "type_translation": null
             }
         },
         "HpHosts": {
@@ -614,6 +630,18 @@
                 "username": "<your amqp username>"
             }
         },
+        "Elasticsearch": {
+            "description": "Elasticsearch is the bot responsible to send events to a elasticsearch.",
+            "module": "intelmq.bots.outputs.elasticsearch.output",
+            "parameters": {
+                "elastic_host": "127.0.0.1",
+                "elastic_port": 9200,
+                "elastic_index": "intelmq",
+                "elastic_doctype": "events",
+                "flatten_fields": "extra",
+                "replacement_char": "_"
+            }
+        },
         "File": {
             "description": "File is the bot responsible to send events to a file.",
             "module": "intelmq.bots.outputs.file.output",
@@ -628,9 +656,11 @@
             "parameters": {
                 "collection": "<collection>",
                 "database": "<database>",
+                "db_user": null,
+                "db_pass": null,
                 "hierarchical_output": true,
-                "host": "<ip>",
-                "port": "<port>"
+                "host": "localhost",
+                "port": "27017"
             }
         },
         "PostgreSQL": {
@@ -669,6 +699,19 @@
                 "redis_server_ip": "127.0.0.1",
                 "redis_server_port": 6379,
                 "redis_timeout": 50000
+            }
+        },
+        "Stomp": {
+            "description": "Sends event via the STMOP protocol.",
+            "module": "intelmq.bots.outputs.stomp.output",
+            "parameters": {
+                "exchange": "/exchange/_push",
+                "heartbeat": 60000,
+                "port": 61614,
+                "server": "127.0.0.1",
+                "ssl_ca_certificate": "<insert path to CA file>",
+                "ssl_client_certificate": "<insert path to client cert file>",
+                "ssl_client_certificate_key": "<insert path to client cert key file>"
             }
         },
         "TCP": {
