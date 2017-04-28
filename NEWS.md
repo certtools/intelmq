@@ -69,6 +69,9 @@ UPDATE events
 UPDATE events
    SET "feed.url" = substring("feed.url" from 1 for 36)
    WHERE SUBSTRING("feed.url" from 1 for 37) = 'https://data.phishtank.com/data/'
+UPDATE events
+   SET "classification.taxonomy" = lower("classification.taxonomy")
+   WHERE "classification.taxonomy" IS NOT NULL;
 ```
 
 1.0.0.dev6

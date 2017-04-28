@@ -13,13 +13,11 @@ import intelmq.lib.exceptions as exceptions
 import intelmq.lib.harmonization
 from intelmq import HARMONIZATION_CONF_FILE
 from intelmq.lib import utils
-from typing import Sequence
+from typing import Sequence, Union
 
 
 __all__ = ['Event', 'Message', 'MessageFactory', 'Report']
-
-
-harm_config = utils.load_configuration(HARMONIZATION_CONF_FILE)
+VALID_MESSSAGE_TYPES = ('Event', 'Message', 'Report')
 
 
 class MessageFactory(object):
@@ -29,39 +27,50 @@ class MessageFactory(object):
     """
 
     @staticmethod
-    def from_dict(message):
+    def from_dict(message: dict, harmonization=None,
+                  default_type: Union[str, None]=None) -> dict:
         """
         Takes dictionary Message object, returns instance of correct class.
 
-        The class is determined by __type attribute.
+        Parameters:
+            message: the message which should be converted to a Message object
+            harmonization: a dictionary holding the used harmonization
+            default_type: If '__type' is not present in message, the given type will be used
+
+        See also:
+            MessageFactory.unserialize
+            MessageFactory.serialize
         """
+        if default_type and "__type" not in message:
+            message["__type"] = default_type
         try:
             class_reference = getattr(intelmq.lib.message, message["__type"])
         except AttributeError:
             raise exceptions.InvalidArgument('__type',
                                              got=message["__type"],
-                                             expected=list(harm_config.keys()),
-                                             docs=HARMONIZATION_CONF_FILE)
-        del message["__type"]
-        return class_reference(message, auto=True)
-
-    @staticmethod
-    def unserialize(raw_message, harmonization=None):
-        """
-        Takes JSON-encoded Message object, returns instance of correct class.
-
-        The class is determined by __type attribute.
-        """
-        message = Message.unserialize(raw_message)
-        try:
-            class_reference = getattr(intelmq.lib.message, message["__type"])
-        except AttributeError:
-            raise exceptions.InvalidArgument('__type',
-                                             got=message["__type"],
-                                             expected=list(harm_config.keys()),
+                                             expected=VALID_MESSSAGE_TYPES,
                                              docs=HARMONIZATION_CONF_FILE)
         del message["__type"]
         return class_reference(message, auto=True, harmonization=harmonization)
+
+    @staticmethod
+    def unserialize(raw_message: str, harmonization: dict=None,
+                    default_type: Union[str, None]=None) -> dict:
+        """
+        Takes JSON-encoded Message object, returns instance of correct class.
+
+        Parameters:
+            message: the message which should be converted to a Message object
+            harmonization: a dictionary holding the used harmonization
+            default_type: If '__type' is not present in message, the given type will be used
+
+        See also:
+            MessageFactory.from_dict
+            MessageFactory.serialize
+        """
+        message = Message.unserialize(raw_message)
+        return MessageFactory.from_dict(message, harmonization=harmonization,
+                                        default_type=default_type)
 
     @staticmethod
     def serialize(message):
@@ -84,15 +93,14 @@ class Message(dict):
             classname = self.__class__.__name__.lower()
 
         if harmonization is None:
-            try:
-                self.harmonization_config = harm_config[classname]
-            except KeyError:
-                raise exceptions.InvalidArgument('__type',
-                                                 got=classname,
-                                                 expected=list(harm_config.keys()),
-                                                 docs=HARMONIZATION_CONF_FILE)
-        else:
+            harmonization = utils.load_configuration(HARMONIZATION_CONF_FILE)
+        try:
             self.harmonization_config = harmonization[classname]
+        except KeyError:
+            raise exceptions.InvalidArgument('__type',
+                                             got=classname,
+                                             expected=VALID_MESSSAGE_TYPES,
+                                             docs=HARMONIZATION_CONF_FILE)
 
         super(Message, self).__init__()
         if isinstance(message, dict):
@@ -233,12 +241,14 @@ class Message(dict):
         class_ref = self.__class__.__name__
         self['__type'] = class_ref
         retval = getattr(intelmq.lib.message,
-                         class_ref)(super(Message, self).copy())
+                         class_ref)(super(Message, self).copy(),
+                                    harmonization={self.__class__.__name__.lower(): self.harmonization_config})
         del self['__type']
         return retval
 
     def deep_copy(self):
-        return MessageFactory.unserialize(MessageFactory.serialize(self))
+        return MessageFactory.unserialize(MessageFactory.serialize(self),
+                                          harmonization={self.__class__.__name__.lower(): self.harmonization_config})
 
     def __unicode__(self):
         return self.serialize()

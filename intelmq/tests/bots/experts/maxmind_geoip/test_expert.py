@@ -1,3 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 
-import intelmq.bots.experts.maxmind_geoip.expert
+if os.environ.get('INTELMQ_TEST_EXOTIC'):
+    import intelmq.bots.experts.maxmind_geoip.expert

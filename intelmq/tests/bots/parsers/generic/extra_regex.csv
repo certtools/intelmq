@@ -1,0 +1,3 @@
+SourceIp, FileTimeUtc, Feed-Source, Botnet, SourcePort, SourceIpAsnNr, SourceIpCity, SourceIpCountryCode, SourceIpLatitude, SourceIpLongitude, SourceIpMetroCode, SourceIpPostalCode, SourceIpRegion, TargetIp, TargetPort, HttpRequest, HttpReferrer, HttpUserAgent, HttpMethod, HttpVersion, HttpHost
+"198.51.100.1","131349599830000000","Microsoft-DCU","B106-CeeInject","2367","AS65536","","AT","48.1","16","0","","","224.1.1.1","1604","29|"
+"198.51.100.2","131349600410000000","Microsoft-DCU","B54-CONFIG","35453","AS65536","Vienna","AT","48.2","16","0","1100","09","224.1.1.2","80","/file-34fd81-003.php","null","Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0;)","POST","1.1","dcu-a-202.microsoftinternetsafety.net"

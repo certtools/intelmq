@@ -155,6 +155,18 @@
                 "rate_limit": 3600
             }
         },
+        "Microsoft Azure": {
+            "description": "",
+            "module": "intelmq.bots.collectors.microsoft.collector_azure",
+            "parameters": {
+                "account_name": "",
+                "account_key": "",
+                "delete": true,
+                "feed": "",
+                "provider": "microsoft",
+                "rate_limit": 3600
+            }
+        },
         "N6stomp": {
             "description": "N6 Collector - CERT.pl's N6 Collector - N6 feed via STOMP interface. Note that rate_limit does not apply for this bot as it is waiting for messages on a stream.",
             "module": "intelmq.bots.collectors.n6.collector_stomp",
@@ -284,10 +296,13 @@
                     "",
                     "source.fqdn"
                 ],
+                "column_regex_search": {},
                 "default_url_protocol": "http://",
                 "delimiter": ",",
                 "skip_header": true,
-                "type": "c&c"
+                "time_format": null,
+                "type": "c&c",
+                "type_translation": null
             }
         },
         "HpHosts": {
@@ -661,6 +676,19 @@
                 "redis_server_ip": "127.0.0.1",
                 "redis_server_port": 6379,
                 "redis_timeout": 50000
+            }
+        },
+        "Stomp": {
+            "description": "Sends event via the STMOP protocol.",
+            "module": "intelmq.bots.outputs.stomp.output",
+            "parameters": {
+                "exchange": "/exchange/_push",
+                "heartbeat": 60000,
+                "port": 61614,
+                "server": "127.0.0.1",
+                "ssl_ca_certificate": "<insert path to CA file>",
+                "ssl_client_certificate": "<insert path to client cert file>",
+                "ssl_client_certificate_key": "<insert path to client cert key file>"
             }
         },
         "TCP": {
