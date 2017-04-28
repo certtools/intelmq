@@ -2,6 +2,7 @@
 import csv
 import io
 import smtplib
+import ssl
 import sys
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
@@ -22,6 +23,8 @@ class SMTPOutputBot(Bot):
             self.fieldnames = self.fieldnames.split(',')
         self.username = getattr(self.parameters, 'smtp_username', None)
         self.password = getattr(self.parameters, 'smtp_password', None)
+        self.http_verify_cert = getattr(self.parameters, 'http_verify_cert',
+                                        True)
 
     def process(self):
         event = self.receive_message()
@@ -34,9 +37,18 @@ class SMTPOutputBot(Bot):
         writer.writerow(event)
         attachment = csvfile.getvalue()
 
-        with self.smtp_class(self.parameters.smtp_host, self.parameters.smtp_port) as smtp:
+        if self.http_verify_cert and self.smtp_class == smtplib.SMTP_SSL:
+            context = ssl.create_default_context()
+        else:
+            context = None
+
+        with self.smtp_class(self.parameters.smtp_host, self.parameters.smtp_port,
+                             context=context) as smtp:
             if self.starttls:
-                smtp.starttls()
+                if self.parameters.http_verify_cert:
+                    smtp.starttls(ssl.create_default_context())
+                else:
+                    smtp.starttls()
             if self.username and self.password:
                 smtp.auth(smtp.auth_plain, user=self.username, password=self.password)
             msg = MIMEMultipart()
