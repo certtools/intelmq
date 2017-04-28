@@ -120,6 +120,7 @@ Changes between 0.9 and 1.0.0.dev6
 - New parameter and field named feed.accuracy to represent the accuracy of each feed
 - New parameter and field named feed.provider to document the name of the source of each feed
 - New field `classification.identifier`
+-`classification.taxonomy` is now lower case only
 
 ### Known issues
  - Harmonization: hashes are not normalized and classified, see also issue #394 and pull #634
