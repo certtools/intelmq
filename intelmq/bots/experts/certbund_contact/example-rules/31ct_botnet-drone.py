@@ -79,7 +79,6 @@ def determine_directives(context):
                              "Feed.Provider %s, Feed.Name %s",
                              feed_provider, feed_name)
 
-
     return
 
 
@@ -157,40 +156,40 @@ def add_avalanche_directives_to_context(context, match):
             # match
 
             if is_critical:
-                dir = create_directive(notification_format="avalanche",
-                                       target_group = "constituency",
-                                       interval=86400,
-                                       data_format="avalanche_csv_attachment")
-                directive.update(dir)
+                d = create_directive(notification_format="avalanche",
+                                     target_group="constituency",
+                                     interval=86400,
+                                     data_format="avalanche_csv_attachment")
+                directive.update(d)
                 directive.aggregate_key["cidr"] = match.address
                 context.add_directive(directive)
 
             elif is_government:
-                dir = create_directive(notification_format="avalanche",
-                                       target_group = "constituency",
-                                       interval=86400,
-                                       data_format="avalanche_csv_attachment")
-                directive.update(dir)
+                d = create_directive(notification_format="avalanche",
+                                     target_group="constituency",
+                                     interval=86400,
+                                     data_format="avalanche_csv_attachment")
+                directive.update(d)
                 directive.aggregate_key["cidr"] = match.address
                 context.add_directive(directive)
 
             elif match.field == "geolocation.cc":
                 # We know the National CERT that is responsible in this case
-                dir = create_directive(notification_format="avalanche",
-                                       target_group = "certs",
-                                       interval=0,
-                                       data_format="avalanche_csv_attachment")
-                directive.update(dir)
+                d = create_directive(notification_format="avalanche",
+                                     target_group="certs",
+                                     interval=0,
+                                     data_format="avalanche_csv_attachment")
+                directive.update(d)
                 # Aggregate by Geolocation.
                 directive.aggregate_by_field(context.section + ".geolocation.cc")
                 context.add_directive(directive)
 
             else:
-                dir = create_directive(notification_format="avalanche",
-                                       target_group = "provider",
-                                       interval=86400,
-                                       data_format="avalanche_csv_inline")
-                directive.update(dir)
+                d = create_directive(notification_format="avalanche",
+                                     target_group="provider",
+                                     interval=86400,
+                                     data_format="avalanche_csv_inline")
+                directive.update(d)
                 directive.aggregate_by_field(context.section + ".asn")
                 context.add_directive(directive)
 
@@ -262,16 +261,16 @@ def add_malware_directives_to_context(context, match):
                 # context.add_directive(directive)
 
             else:
-                dir = create_directive(notification_format="malware-infection",
-                                       target_group="provider",
-                                       interval=86400,
-                                       data_format="malware-infection_csv_inline")
-                directive.update(dir)
+                d = create_directive(notification_format="malware-infection",
+                                     target_group="provider",
+                                     interval=86400,
+                                     data_format="malware-infection_csv_inline")
+                directive.update(d)
                 directive.aggregate_by_field(context.section + ".asn")
                 context.add_directive(directive)
 
 
-def create_directive(notification_format,target_group,interval,data_format):
+def create_directive(notification_format, target_group, interval, data_format):
     """
     This method is NOT designed, to be compatible with the existing configuration
     of mailgen. You MUST can adapt Mailgen-config in order to be capable
