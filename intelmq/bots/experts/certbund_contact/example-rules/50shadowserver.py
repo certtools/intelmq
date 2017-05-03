@@ -42,13 +42,8 @@ def shadowserver_csv_entry(basename):
                      notification_interval=86400)
 
 
-shadowserver_malware = shadowserver_csv_entry("malware")
-
 # map shadowserver feed.name to settings
 shadowserver_mapping = {
-    "Botnet-Drone-Hadoop": shadowserver_malware,
-    "Sinkhole-HTTP-Drone": shadowserver_malware,
-    "Microsoft-Sinkhole": shadowserver_malware,
     "DNS-open-resolvers": shadowserver_csv_entry("DNS-open-resolvers"),
     "Open-Portmapper": shadowserver_csv_entry("Open-Portmapper"),
     "Open-SNMP": shadowserver_csv_entry("Open-SNMP"),
