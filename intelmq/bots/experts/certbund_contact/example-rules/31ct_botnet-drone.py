@@ -86,7 +86,6 @@ def determine_directives(context):
 def add_directives_to_context(context, matches, matter):
     # Generate Directives from the matches
 
-    context.logger.debug("GREP HERE")
     context.logger.debug(matches)
     for match in matches:
         # Iterate the matches...
@@ -198,7 +197,6 @@ def add_avalanche_directives_to_context(context, match):
 
 def add_malware_directives_to_context(context, match):
     # Let's have a look at the Organisations associated to this match:
-    context.logger.debug("GREP HERE")
     context.logger.debug(context.organisations_for_match(match))
     for org in context.organisations_for_match(match):
         # Determine the Annotations for this Org.
