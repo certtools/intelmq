@@ -74,9 +74,9 @@ def determine_directives(context):
 
     else:
         # We don't want to handle this data. Something may not be correct
-        context.logger.debug("31ct_botnet-drone.py tried to process an event,"
-                             "but could not generate a directive for it."
-                             "Feed.Provider %s, Feed.Name %s",
+        context.logger.info("Currently there is no rule to generate "
+                            "directives for Feed.Provider %s, "
+                            "Feed.Name %s",
                              feed_provider, feed_name)
 
     return
@@ -114,9 +114,8 @@ def add_directives_to_context(context, matches, matter):
             add_avalanche_directives_to_context(context, match)
 
         else:
-            context.logger.debug("31ct_botnet-drone.py tried to process an event,"
-                                 "but could not generate a directive for it because"
-                                 "the matter is unknown: %s.", matter)
+            context.logger.info("Cannot generate directive for matter: %s",
+                                 matter)
 
 
 def add_avalanche_directives_to_context(context, match):
