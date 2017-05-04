@@ -23,6 +23,7 @@ SUPPORTED_CLASSIFICATION_IDENTIFIERS = ['openportmapper',
                                         'openmemcached',
                                         'openelasticsearch',
                                         'openntp',
+                                        'opendns'
                                         'openmssql',
                                         'opensnmp',
                                         'openmongodb',
