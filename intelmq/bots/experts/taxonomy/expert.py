@@ -2,7 +2,7 @@
 
 from intelmq.lib.bot import Bot
 
-# FIXME: this dict should be on a sparated file
+# FIXME: this dict should be on a separated file
 
 TAXONOMY = {
     # type       # taxonomy
@@ -48,7 +48,7 @@ class TaxonomyExpertBot(Bot):
         elif "classification.taxonomy" in event and "classification.type" not in event:
             event.add("classification.type", 'unknown')
         else:
-            # classifcation given, type given... don't change it
+            # classification given, type given... don't change it
             pass
 
         self.send_message(event)

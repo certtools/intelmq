@@ -2,7 +2,7 @@
 """
 Utilities for testing intelmq bots.
 
-TheBotTestCase can be used as base class for unittests on bots. It includes
+The BotTestCase can be used as base class for unittests on bots. It includes
 some basic generic tests (logged errors, correct pipeline setup).
 """
 import io
@@ -262,7 +262,7 @@ class BotTestCase(object):
                                 msg='Logline {!r} does not end with .? or !.'
                                     ''.format(fields['message']))
                 self.assertTrue(fields['message'].upper() == fields['message'].upper(),
-                                msg='Logline {!r} does not beginn with an upper case char.'
+                                msg='Logline {!r} does not begin with an upper case char.'
                                     ''.format(fields['message']))
 
     @classmethod

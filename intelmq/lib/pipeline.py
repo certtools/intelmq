@@ -128,7 +128,7 @@ class Redis(Pipeline):
 
     def receive(self):
         if self.source_queue is None:
-            raise exceptions.ConfigurationError('pipeline', 'No source queue gievn.')
+            raise exceptions.ConfigurationError('pipeline', 'No source queue given.')
         try:
             retval = self.pipe.lindex(self.internal_queue, -1)  # returns None if no value
             if not retval:

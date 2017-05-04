@@ -6,11 +6,11 @@ Harmonization field names
 |:------|:---|:---|:----------|
 |Classification|classification.identifier|[String](#string)|The lowercase identifier defines the actual software or service (e.g. 'heartbleed' or 'ntp_version') or standardized malware name (e.g. 'zeus'). Note that you MAY overwrite this field during processing for your individual setup. This field is not standardized across IntelMQ setups/users. |
 |Classification|classification.taxonomy|[LowercaseString](#lowercasestring)|We recognize the need for the CSIRT teams to apply a static (incident) taxonomy to abuse data. With this goal in mind the type IOC will serve as a basis for this activity. Each value of the dynamic type mapping translates to a an element in the static taxonomy. The European CSIRT teams for example have decided to apply the eCSIRT.net incident classification. The value of the taxonomy key is thus a derivative of the dynamic type above. For more information about check [ENISA taxonomies](http://www.enisa.europa.eu/activities/cert/support/incident-management/browsable/incident-handling-process/incident-taxonomy/existing-taxonomies).|
-|Classification|classification.type|[ClassificationType](#classificationtype)|The abuse type IOC is one of the most crucial pieces of information for any given abuse event. The main idea of dynamic typing is to keep our ontology flexible, since we need to evolve with the evolving threatscape of abuse data. In contrast with the static taxonomy below, the dynamic typing is used to perform business decisions in the abuse handling pipeline. Furthermore, the value data set should be kept as minimal as possible to avoid “type explosion”, which in turn dilutes the business value of the dynamic typing. In general, we normally have two types of abuse type IOC: ones referring to a compromized resource or ones referring to pieces of the criminal infrastructure, such as a command and control servers for example.|
+|Classification|classification.type|[ClassificationType](#classificationtype)|The abuse type IOC is one of the most crucial pieces of information for any given abuse event. The main idea of dynamic typing is to keep our ontology flexible, since we need to evolve with the evolving threatscape of abuse data. In contrast with the static taxonomy below, the dynamic typing is used to perform business decisions in the abuse handling pipeline. Furthermore, the value data set should be kept as minimal as possible to avoid “type explosion”, which in turn dilutes the business value of the dynamic typing. In general, we normally have two types of abuse type IOC: ones referring to a compromised resource or ones referring to pieces of the criminal infrastructure, such as a command and control servers for example.|
 | |comment|[String](#string)|Free text commentary about the abuse event inserted by an analyst.|
 |Destination|destination.abuse_contact|[LowercaseString](#lowercasestring)|Abuse contact for destination address. A comma separated list.|
 |Destination|destination.account|[String](#string)|An account name or email address, which has been identified to relate to the destination of an abuse event.|
-|Destination|destination.allocated|[DateTime](#datetime)|Allocation date corresponding to bgp prefix.|
+|Destination|destination.allocated|[DateTime](#datetime)|Allocation date corresponding to BGP prefix.|
 |Destination|destination.as_name|[String](#string)|The autonomous system name to which the connection headed.|
 |Destination|destination.asn|[Integer](#integer)|The autonomous system number from which originated the connection.|
 |Destination|destination.fqdn|[FQDN](#fqdn)|A DNS name related to the host from which the connection originated. DNS allows even binary data in DNS, so we have to allow everything. A final point is stripped, string is converted to lower case characters.|
@@ -22,12 +22,12 @@ Harmonization field names
 |Destination Geolocation|destination.geolocation.region|[String](#string)|Some geolocation services refer to region-level geolocation.|
 |Destination Geolocation|destination.geolocation.state|[String](#string)|Some geolocation services refer to state-level geolocation.|
 |Destination|destination.ip|[IPAddress](#ipaddress)|The ip observed to initiate the connection.|
-|Destination|destination.local_hostname|[String](#string)|Some sources report a internal hostname within a NAT related to the name configured for a compromized system|
-|Destination|destination.local_ip|[IPAddress](#ipaddress)|Some sources report a internal (NATed) IP address related a compromized system. N.B. RFC1918 IPs are OK here.|
+|Destination|destination.local_hostname|[String](#string)|Some sources report a internal hostname within a NAT related to the name configured for a compromised system|
+|Destination|destination.local_ip|[IPAddress](#ipaddress)|Some sources report a internal (NATed) IP address related a compromised system. N.B. RFC1918 IPs are OK here.|
 |Destination|destination.network|[IPNetwork](#ipnetwork)|CIDR for an autonomous system. Also known as BGP prefix. If multiple values are possible, select the most specific.|
 |Destination|destination.port|[Integer](#integer)|The port to which the connection headed.|
 |Destination|destination.registry|[Registry](#registry)|The IP registry a given ip address is allocated by.|
-|Destination|destination.reverse_dns|[FQDN](#fqdn)|Reverse DNS name acquired through a reverse DNS query on an IP address. N.B. Record types other than PTR records may also appear in the reverse DNS tree. Furthermore, unfortunately, there is no rule prohibiting people from writing anything in a PTR record. Even Javascript will work. A final point is stripped, string is converted to lower case characters.|
+|Destination|destination.reverse_dns|[FQDN](#fqdn)|Reverse DNS name acquired through a reverse DNS query on an IP address. N.B. Record types other than PTR records may also appear in the reverse DNS tree. Furthermore, unfortunately, there is no rule prohibiting people from writing anything in a PTR record. Even JavaScript will work. A final point is stripped, string is converted to lower case characters.|
 |Destination|destination.tor_node|[Boolean](#boolean)|If the destination IP was a known tor node.|
 |Destination|destination.url|[URL](#url)|A URL denotes on IOC, which refers to a malicious resource, whose interpretation is defined by the abuse type. A URL with the abuse type phishing refers to a phishing resource.|
 |Event_Description|event_description.target|[String](#string)|Some sources denominate the target (organization) of a an attack.|
@@ -55,7 +55,7 @@ Harmonization field names
 | |screenshot_url|[URL](#url)|Some source may report URLs related to a an image generated of a resource without any metadata. Or an URL pointing to resource, which has been rendered into a webshot, e.g. a PNG image and the relevant metadata related to its retrieval/generation.|
 |Source|source.abuse_contact|[LowercaseString](#lowercasestring)|Abuse contact for source address. A comma separated list.|
 |Source|source.account|[String](#string)|An account name or email address, which has been identified to relate to the source of an abuse event.|
-|Source|source.allocated|[DateTime](#datetime)|Allocation date corresponding to bgp prefix.|
+|Source|source.allocated|[DateTime](#datetime)|Allocation date corresponding to BGP prefix.|
 |Source|source.as_name|[String](#string)|The autonomous system name from which the connection originated.|
 |Source|source.asn|[Integer](#integer)|The autonomous system number from which originated the connection.|
 |Source|source.fqdn|[FQDN](#fqdn)|A DNS name related to the host from which the connection originated. DNS allows even binary data in DNS, so we have to allow everything. A final point is stripped, string is converted to lower case characters.|
@@ -69,12 +69,12 @@ Harmonization field names
 |Source Geolocation|source.geolocation.region|[String](#string)|Some geolocation services refer to region-level geolocation.|
 |Source Geolocation|source.geolocation.state|[String](#string)|Some geolocation services refer to state-level geolocation.|
 |Source|source.ip|[IPAddress](#ipaddress)|The ip observed to initiate the connection|
-|Source|source.local_hostname|[String](#string)|Some sources report a internal hostname within a NAT related to the name configured for a compromized system|
-|Source|source.local_ip|[IPAddress](#ipaddress)|Some sources report a internal (NATed) IP address related a compromized system. N.B. RFC1918 IPs are OK here.|
+|Source|source.local_hostname|[String](#string)|Some sources report a internal hostname within a NAT related to the name configured for a compromised system|
+|Source|source.local_ip|[IPAddress](#ipaddress)|Some sources report a internal (NATed) IP address related a compromised system. N.B. RFC1918 IPs are OK here.|
 |Source|source.network|[IPNetwork](#ipnetwork)|CIDR for an autonomous system. Also known as BGP prefix. If multiple values are possible, select the most specific.|
 |Source|source.port|[Integer](#integer)|The port from which the connection originated.|
 |Source|source.registry|[Registry](#registry)|The IP registry a given ip address is allocated by.|
-|Source|source.reverse_dns|[FQDN](#fqdn)|Reverse DNS name acquired through a reverse DNS query on an IP address. N.B. Record types other than PTR records may also appear in the reverse DNS tree. Furthermore, unfortunately, there is no rule prohibiting people from writing anything in a PTR record. Even Javascript will work. A final point is stripped, string is converted to lower case characters.|
+|Source|source.reverse_dns|[FQDN](#fqdn)|Reverse DNS name acquired through a reverse DNS query on an IP address. N.B. Record types other than PTR records may also appear in the reverse DNS tree. Furthermore, unfortunately, there is no rule prohibiting people from writing anything in a PTR record. Even JavaScript will work. A final point is stripped, string is converted to lower case characters.|
 |Source|source.tor_node|[Boolean](#boolean)|If the source IP was a known tor node.|
 |Source|source.url|[URL](#url)|A URL denotes an IOC, which refers to a malicious resource, whose interpretation is defined by the abuse type. A URL with the abuse type phishing refers to a phishing resource.|
 | |status|[String](#string)|Status of the malicious resource (phishing, dropzone, etc), e.g. online, offline.|
@@ -121,7 +121,7 @@ dot is not allowed.
 ### Float
 
 Float type. Without sanitation only python float/integer/long is
-accepted. Boolean is excplicitly denied.
+accepted. Boolean is explicitly denied.
 
 Sanitation accepts strings and everything float() accepts.
 
@@ -132,7 +132,7 @@ Type for IP addresses, all families. Uses the ipaddress module.
 
 Sanitation accepts strings and objects of ipaddress.IPv4Address and ipaddress.IPv4Address.
 
-Valid values are only strings. 0.0.0.0 is explictly not allowed.
+Valid values are only strings. 0.0.0.0 is explicitly not allowed.
 
 
 ### IPNetwork
@@ -148,7 +148,7 @@ Valid values are only strings.
 ### Integer
 
 Integer type. Without sanitation only python integer/long is accepted.
-Bool is excplicitly denied.
+Bool is explicitly denied.
 
 Sanitation accepts strings and everything int() accepts.
 

@@ -28,7 +28,7 @@ class MISPCollectorBot(CollectorBot):
             self.logger.error('Could not import pymisp. Please install it.')
             self.stop()
 
-        # Initialise MISP connection
+        # Initialize MISP connection
         self.misp = PyMISP(self.parameters.misp_url,
                            self.parameters.misp_key,
                            self.parameters.misp_verify)

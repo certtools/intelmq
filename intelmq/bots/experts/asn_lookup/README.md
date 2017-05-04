@@ -10,7 +10,7 @@
 # pyasn_util_convert.py --single <downloaded_filename.bz2>  ipasn.dat
 ```
 
-Note: the '<' '>' characters only are syntactic markings, no shell rediction is necessary.
+Note: the '<' '>' characters only are syntactic markings, no shell redirection is necessary.
 
 * Copy database to IntelMQ:
 ```

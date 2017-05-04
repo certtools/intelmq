@@ -309,8 +309,8 @@ def parse_logline(logline: str, regex: str=LOG_REGEX) -> dict:
         result: dictionary with keys: ['date', 'bot_id', 'log_level', 'message']
 
     See also:
-        LOG_REGEX: Regular expressen for default log format of file handler
-        SYSLOG_REGEX: Regular expressen for log format of syslog
+        LOG_REGEX: Regular expression for default log format of file handler
+        SYSLOG_REGEX: Regular expression for log format of syslog
     """
 
     match = re.match(regex, logline)
