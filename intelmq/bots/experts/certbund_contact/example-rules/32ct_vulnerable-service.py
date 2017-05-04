@@ -38,6 +38,10 @@ SUPPORTED_CLASSIFICATION_IDENTIFIERS = ['openportmapper',
                                         # 'SSL-Poodle'
                                         ]
 
+# A set which is containing information about already logged
+# errors to prevent log-flooding
+LOGGING_SET = set()
+
 
 def determine_directives(context):
     context.logger.debug("============= 32ct_vulnerable-service.py ===========")
@@ -69,9 +73,12 @@ def determine_directives(context):
 
     if classification_identifier not in SUPPORTED_CLASSIFICATION_IDENTIFIERS:
         # We don't want to handle this data. Something may not be correct
-        context.logger.info("The Classification Identifier %s "
-                            "might not be supported, yet.",
-                            classification_identifier)
+        # Check if this was already logged to prevent log-flooding:
+        if "CI-NS_"+classification_identifier not in LOGGING_SET:
+            LOGGING_SET.add("CI-NS_"+classification_identifier)
+            context.logger.info("The Classification Identifier %s "
+                                "might not be supported, yet.",
+                                classification_identifier)
         return
 
     # Always convert the classification.identifier to lowercase from now
