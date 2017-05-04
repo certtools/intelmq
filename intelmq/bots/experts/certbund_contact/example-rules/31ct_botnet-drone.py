@@ -24,6 +24,9 @@ from intelmq.bots.experts.certbund_contact.rulesupport import \
 
 CTS_TO_WORK_WITH = ['botnet drone']
 
+# A set which is containing information about already logged
+# errors to prevent log-flooding
+LOGGING_SET = set()
 
 def determine_directives(context):
     context.logger.debug("============= 31ct_botnet-drone.py ===========")
@@ -74,10 +77,13 @@ def determine_directives(context):
 
     else:
         # We don't want to handle this data. Something may not be correct
-        context.logger.info("Currently there is no rule to generate "
-                            "directives for Feed.Provider %s, "
-                            "Feed.Name %s",
-                             feed_provider, feed_name)
+        # Check if this was already logged to prevent log-flooding:
+        if "FPFN-NS_"+feed_provider+"_"+feed_name not in LOGGING_SET:
+            LOGGING_SET.add("FPFN-NS_"+feed_provider+"_"+feed_name)
+            context.logger.info("Currently there is no rule to generate "
+                                "directives for Feed.Provider %s, "
+                                "Feed.Name %s",
+                                feed_provider, feed_name)
 
     return
 
@@ -114,8 +120,11 @@ def add_directives_to_context(context, matches, matter):
             add_avalanche_directives_to_context(context, match)
 
         else:
-            context.logger.info("Cannot generate directive for matter: %s",
-                                 matter)
+            # Check if this was already logged to prevent log-flooding:
+            if "Matter-NS_" + matter not in LOGGING_SET:
+                LOGGING_SET.add("Matter-NS_" + matter)
+                context.logger.info("Cannot generate directive for matter: %s",
+                                    matter)
 
 
 def add_avalanche_directives_to_context(context, match):
