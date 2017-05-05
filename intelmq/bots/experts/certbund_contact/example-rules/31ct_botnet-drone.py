@@ -12,10 +12,11 @@ This script is supposed to handle events from:
  - Avalanche
 
 Assumptions:
- - Events of the matter "avalanche" are sent to three different types of receivers
-   They are aggregated by ASN, Country-Code or IP-Network
- - Events of the matter Ebury or Mumblehard and from the Feedprovider Shadowserver
-   are sent to only one type of receiver, they are always aggregated by ASN
+ - Events of the matter "avalanche", "ebury" or "mumblehard" are sent to three different types of receivers
+   They are aggregated by ASN, Country-Code or IP-Network. Providers, and Constituencies and CERTs
+   are the receivers.
+ - Events of more generic matters, like those of the Feedprovider Shadowserver
+   are sent to only two types of receivers: Providers, and Constituencies
 
 """
 
@@ -24,15 +25,24 @@ from intelmq.bots.experts.certbund_contact.rulesupport import \
 
 CTS_TO_WORK_WITH = ['botnet drone']
 
+GOVERNMENT_ANNOTATION = 'government'
+CRITICAL_ANNOTATION = 'critical'
+
+SPECIAL_MATTERS = [ 'avalanche',
+                    'ebury',
+                    'mumblehard'
+                  ]
+
 # A set which is containing information about already logged
 # errors to prevent log-flooding
 LOGGING_SET = set()
 
+
 def determine_directives(context):
     context.logger.debug("============= 31ct_botnet-drone.py ===========")
 
-    feed_provider = context.get("feed.provider")
-    feed_name = context.get("feed.name")
+    feed_name = context.get("feed.name")  # This could also be the classification.identier.
+    # It should work the same way.
     classification_type = context.get("classification.type")
 
     if classification_type not in CTS_TO_WORK_WITH:
@@ -57,35 +67,16 @@ def determine_directives(context):
         context.logger.debug("There are no matches I'm willing to process.")
         return
 
-    # Handle the datasets first, which shall only be sent to one group
-    # We have two options to deal with the shadowserver datasets.
-    #  1. Try to match them because of the feed_name
-    #  2. Try to match them becaus of the feed_provider
-    # Well take Opt.2 here for demonstration purposes,
-    # but you can always switch to the other path
-
-    if feed_provider in ["Shadowserver", "shadowserver"] \
-            or feed_name in ["ebury", "mumblehard"]:
-        # handle the malware matter.
-        add_directives_to_context(context, msm, "malware")
-        return True
-
-    elif feed_name == "avalanche":
-        # handle the avalanche matter.
-        add_directives_to_context(context, msm, "avalanche")
+    if feed_name in SPECIAL_MATTERS:
+        # handle the ebury matter.
+        add_directives_to_context(context, msm, feed_name)
         return True
 
     else:
-        # We don't want to handle this data. Something may not be correct
-        # Check if this was already logged to prevent log-flooding:
-        if "FPFN-NS_"+feed_provider+"_"+feed_name not in LOGGING_SET:
-            LOGGING_SET.add("FPFN-NS_"+feed_provider+"_"+feed_name)
-            context.logger.info("Currently there is no rule to generate "
-                                "directives for Feed.Provider %s, "
-                                "Feed.Name %s",
-                                feed_provider, feed_name)
-
-    return
+        # The Feed-Provider is most likely Shadowserver or
+        # the feed carries a less specific information.
+        add_directives_to_context(context, msm, "malware-infection")
+        return True
 
 
 def add_directives_to_context(context, matches, matter):
@@ -110,24 +101,10 @@ def add_directives_to_context(context, matches, matter):
             context.logger.debug("Skipping automatic match")
             continue
 
-        # Based on the assumptions we've made earlier,
-        # we use two different paths to generate
-        # directives based upon the matter of the event
-        if matter == "malware":
-            add_malware_directives_to_context(context, match)
-
-        elif matter == "avalanche":
-            add_avalanche_directives_to_context(context, match)
-
-        else:
-            # Check if this was already logged to prevent log-flooding:
-            if "Matter-NS_" + matter not in LOGGING_SET:
-                LOGGING_SET.add("Matter-NS_" + matter)
-                context.logger.info("Cannot generate directive for matter: %s",
-                                    matter)
+        add_matter_directives_to_context(context, match, matter)
 
 
-def add_avalanche_directives_to_context(context, match):
+def add_matter_directives_to_context(context, match, matter):
     # This is Copy and Paste from 51avalanche.py, with some
     # minor edits
     # Let's have a look at the Organisations associated to this match:
@@ -141,9 +118,9 @@ def add_avalanche_directives_to_context(context, match):
         is_critical = False
 
         for annotation in org_annotations:
-            if annotation.tag == "government":
+            if annotation.tag == GOVERNMENT_ANNOTATION:
                 is_government = True
-            if annotation.tag == "critical":
+            if annotation.tag == CRITICAL_ANNOTATION:
                 is_critical = True
 
         # Now create the Directives
@@ -164,118 +141,48 @@ def add_avalanche_directives_to_context(context, match):
             # match
 
             if is_critical:
-                d = create_directive(notification_format="avalanche",
+                d = create_directive(notification_format=matter,
                                      target_group="constituency",
-                                     interval=86400,
-                                     data_format="avalanche_csv_attachment")
+                                     interval=3600,
+                                     data_format=matter + "_csv_attachment")
                 directive.update(d)
                 directive.aggregate_key["cidr"] = match.address
                 context.add_directive(directive)
 
             elif is_government:
-                d = create_directive(notification_format="avalanche",
+                d = create_directive(notification_format=matter,
                                      target_group="constituency",
-                                     interval=86400,
-                                     data_format="avalanche_csv_attachment")
+                                     interval=3600,
+                                     data_format=matter + "_csv_attachment")
                 directive.update(d)
                 directive.aggregate_key["cidr"] = match.address
                 context.add_directive(directive)
 
             elif match.field == "geolocation.cc":
-                # We know the National CERT that is responsible in this case
-                d = create_directive(notification_format="avalanche",
-                                     target_group="certs",
-                                     interval=0,
-                                     data_format="avalanche_csv_attachment")
-                directive.update(d)
-                # Aggregate by Geolocation.
-                directive.aggregate_by_field(context.section + ".geolocation.cc")
-                context.add_directive(directive)
+                if matter not in SPECIAL_MATTERS:
+                    # Do NOT send malware-infection events to CERTs
+                    pass
+
+                else:
+                    # We know the National CERT that is responsible in this case
+                    d = create_directive(notification_format=matter,
+                                         target_group="certs",
+                                         interval=86400,
+                                         data_format=matter + "_csv_attachment")
+                    directive.update(d)
+                    # Aggregate by Geolocation.
+                    directive.aggregate_by_field(context.section + ".geolocation.cc")
+                    context.add_directive(directive)
 
             else:
-                d = create_directive(notification_format="avalanche",
+                d = create_directive(notification_format=matter,
                                      target_group="provider",
                                      interval=86400,
-                                     data_format="avalanche_csv_inline")
+                                     data_format=matter + "_csv_inline")
                 directive.update(d)
                 directive.aggregate_by_field(context.section + ".asn")
                 context.add_directive(directive)
 
-
-def add_malware_directives_to_context(context, match):
-    # Let's have a look at the Organisations associated to this match:
-    context.logger.debug(context.organisations_for_match(match))
-    for org in context.organisations_for_match(match):
-        # Determine the Annotations for this Org.
-        org_annotations = org.annotations
-        context.logger.debug("Org Annotations: %r" % org_annotations)
-
-        is_government = False
-        is_critical = False
-
-        for annotation in org_annotations:
-            if annotation.tag == "government":
-                is_government = True
-            if annotation.tag == "critical":
-                is_critical = True
-
-        # Now create the Directives
-        #
-        # An organisation may have multiple contacts, so we need to
-        # iterate over them. In many cases this will only loop once as
-        # many organisations will have only one.
-        for contact in org.contacts:
-            directive = Directive.from_contact(contact)
-            # Doing this defines "email" as medium and uses the
-            # contact's email attribute as the recipient_address.
-            # One could also do this by hand, see Directive in
-            # intelmq.bots.experts.certbund_contact.rulesupport
-            # If you like to know more details
-
-            # Now fill in more details of the directive, depending on
-            # the annotations of the directive and/or the type of the
-            # match
-
-            if is_critical:
-                pass  # Right now we are not generating Notifications for this group
-                # dir = create_directive(notification_format="malware-infection",
-                #                        target_group="constituency",
-                #                       interval=86400,
-                #                       data_format="malware-infection_csv_attachment")
-                # directive.update(dir)
-                # directive.aggregate_key["cidr"] = match.address
-                # context.add_directive(directive)
-
-            elif is_government:
-                pass  # Right now we are not generating Notifications for this group
-                # dir = create_directive(notification_format="malware-infection",
-                #                       target_group="constituency",
-                #                       interval=86400,
-                #                       data_format="malware-infection_csv_attachment")
-                # directive.update(dir)
-                # directive.aggregate_key["cidr"] = match.address
-                # context.add_directive(directive)
-
-            elif match.field == "geolocation.cc":
-                pass  # Right now we are not generating Notifications for this group
-                # We know the National CERT that is responsible in this case
-                # dir = create_directive(notification_format="malware-infection",
-                #                       target_group="certs",
-                #                       interval=0,
-                #                       data_format="malware-infection_csv_attachment")
-                # directive.update(dir)
-                # Aggregate by Geolocation.
-                # directive.aggregate_by_field(context.section + ".geolocation.cc")
-                # context.add_directive(directive)
-
-            else:
-                d = create_directive(notification_format="malware-infection",
-                                     target_group="provider",
-                                     interval=86400,
-                                     data_format="malware-infection_csv_inline")
-                directive.update(d)
-                directive.aggregate_by_field(context.section + ".asn")
-                context.add_directive(directive)
 
 
 def create_directive(notification_format, target_group, interval, data_format):
