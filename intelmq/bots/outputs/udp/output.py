@@ -46,7 +46,6 @@ class UDPBot(Bot):
         try:
             self.udp.sendto(data, self.upd_address)
         except Exception:
-        except:
             self.logger.exception('Failed to send message to %s:%s!',
                                   self.udp_host, self.udp_port)
         else:
