@@ -147,7 +147,7 @@ class IntelMQProcessManager:
         self.__remove_pidfile(bot_id)
         return retval
 
-    def bot_start(self, bot_id):
+    def bot_start(self, bot_id, getstatus=True):
         pid = self.__read_pidfile(bot_id)
         if pid:
             if self.__status_process(pid):
@@ -164,10 +164,11 @@ class IntelMQProcessManager:
             with open(filename, 'w') as fp:
                 fp.write(str(proc.pid))
 
-        time.sleep(0.25)
-        return self.bot_status(bot_id)
+        if getstatus:
+            time.sleep(0.5)
+            return self.bot_status(bot_id)
 
-    def bot_stop(self, bot_id):
+    def bot_stop(self, bot_id, getstatus=True):
         pid = self.__read_pidfile(bot_id)
         if not pid:
             if self.controller._is_enabled(bot_id):
@@ -183,13 +184,15 @@ class IntelMQProcessManager:
         log_bot_message('stopping', bot_id)
         proc = psutil.Process(int(pid))
         proc.send_signal(signal.SIGINT)
-        time.sleep(0.25)
-        if self.__status_process(pid):
-            log_bot_error('running', bot_id)
-            return 'running'
-        self.__remove_pidfile(bot_id)
-        log_bot_message('stopped', bot_id)
-        return 'stopped'
+
+        if getstatus:
+            time.sleep(0.5)
+            if self.__status_process(pid):
+                log_bot_error('running', bot_id)
+                return 'running'
+            self.__remove_pidfile(bot_id)
+            log_bot_message('stopped', bot_id)
+            return 'stopped'
 
     def bot_reload(self, bot_id):
         pid = self.__read_pidfile(bot_id)
@@ -517,17 +520,17 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
     def bot_run(self, bot_id):
         return self.bot_process_manager.bot_run(bot_id)
 
-    def bot_start(self, bot_id):
+    def bot_start(self, bot_id, getstatus=True):
         if bot_id is None:
             return self.botnet_start()
         else:
-            return self.bot_process_manager.bot_start(bot_id)
+            return self.bot_process_manager.bot_start(bot_id, getstatus)
 
-    def bot_stop(self, bot_id):
+    def bot_stop(self, bot_id, getstatus=True):
         if bot_id is None:
             return self.botnet_stop()
         else:
-            return self.bot_process_manager.bot_stop(bot_id)
+            return self.bot_process_manager.bot_stop(bot_id, getstatus)
 
     def bot_reload(self, bot_id):
         if bot_id is None:
@@ -562,20 +565,33 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
     def botnet_start(self):
         botnet_status = {}
-        for bot_id in sorted(self.runtime_configuration.keys()):
+        bots = sorted(self.runtime_configuration.keys())
+        for bot_id in bots:
             if self.runtime_configuration[bot_id].get('enabled', True):
-                botnet_status[bot_id] = self.bot_start(bot_id)
+                self.bot_start(bot_id, getstatus=False)
             else:
                 log_bot_message('disabled', bot_id)
                 botnet_status[bot_id] = 'disabled'
+
+        time.sleep(0.75)
+        for bot_id in bots:
+            if self.runtime_configuration[bot_id].get('enabled', True):
+                botnet_status[bot_id] = self.bot_status(bot_id)
+
         log_botnet_message('running')
         return botnet_status
 
     def botnet_stop(self):
         botnet_status = {}
         log_botnet_message('stopping')
-        for bot_id in sorted(self.runtime_configuration.keys()):
-            botnet_status[bot_id] = self.bot_stop(bot_id)
+        bots = sorted(self.runtime_configuration.keys())
+        for bot_id in bots:
+            self.bot_stop(bot_id, getstatus=False)
+
+        time.sleep(0.75)
+        for bot_id in bots:
+            botnet_status[bot_id] = self.bot_status(bot_id)
+
         log_botnet_message('stopped')
         return botnet_status
 
