@@ -30,7 +30,8 @@ class MongoDBOutputBot(Bot):
         else:
             db = self.client[self.parameters.database]
             if hasattr(self.parameters, 'db_user') and hasattr(self.parameters, 'db_pass'):
-                self.logger.debug('Trying to authenticate to database {}.'.format(self.parameters.database))
+                self.logger.debug('Trying to authenticate to database %s.',
+                                  self.parameters.database)
                 try:
                     db.authenticate(name=self.parameters.db_user,
                                     password=self.parameters.db_pass)

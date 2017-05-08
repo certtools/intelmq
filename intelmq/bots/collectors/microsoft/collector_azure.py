@@ -38,14 +38,14 @@ class MicrosoftAzureCollectorBot(CollectorBot):
             blob_service.set_proxy(**self.proxy)
         containers = blob_service.list_containers()
         for container in containers:
-            self.logger.info('Processing Container %r.' % container.name)
+            self.logger.info('Processing Container %r.', container.name)
             if container.name == 'heartbeat':
                 if self.parameters.delete:
                     blob_service.delete_container(container.name)
                 continue
             time_container_fetch = datetime.datetime.now(pytz.timezone('UTC'))
             for blob in blob_service.list_blobs(container.name):
-                self.logger.debug('Processing blob %r.' % blob.name)
+                self.logger.debug('Processing blob %r.', blob.name)
                 time_blob_fetch = datetime.datetime.now(pytz.timezone('UTC'))
                 blob_obj = io.BytesIO(blob_service.get_blob_to_bytes(container.name,
                                                                      blob.name).content)

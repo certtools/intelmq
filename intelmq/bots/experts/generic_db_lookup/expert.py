@@ -55,7 +55,7 @@ class GenericDBLookupExpertBot(Bot):
         # Skip events with missing match-keys
         for key in self.match.keys():
             if key not in event:
-                self.logger.debug('%s not present in event. Skipping event.' % key)
+                self.logger.debug('%s not present in event. Skipping event.', key)
                 self.send_message(event)
                 self.acknowledge_message()
                 return
@@ -67,8 +67,8 @@ class GenericDBLookupExpertBot(Bot):
             return
 
         try:
-            self.logger.debug('Executing %r.' % self.cur.mogrify(self.query,
-                                                                 [event[key] for key in self.match.keys()]))
+            self.logger.debug('Executing %r.', self.cur.mogrify(self.query,
+                                                                [event[key] for key in self.match.keys()]))
             self.cur.execute(self.query, [event[key] for key in self.match.keys()])
             self.logger.debug('Done.')
         except (psycopg2.InterfaceError, psycopg2.InternalError,

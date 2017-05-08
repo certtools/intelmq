@@ -37,9 +37,8 @@ class AMQPTopicBot(Bot):
         self.connect_server()
 
     def connect_server(self):
-        self.logger.info('AMQP Connecting to {}:{}{}.'.format(self.connection_host,
-                                                              self.connection_port,
-                                                              self.connection_vhost))
+        self.logger.info('AMQP Connecting to %s:%s%s.',
+                         self.connection_host, self.connection_port, self.connection_vhost)
         try:
             self.connection = pika.BlockingConnection(self.connection_parameters)
         except pika.exceptions.ProbableAuthenticationError:
