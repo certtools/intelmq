@@ -64,4 +64,5 @@ class SMTPOutputBot(Bot):
 
         self.acknowledge_message()
 
+
 BOT = SMTPOutputBot
