@@ -678,6 +678,23 @@
                 "redis_timeout": 50000
             }
         },
+        "SMTP": {
+            "description": "Sends single events via SMTP.",
+            "module": "intelmq.bots.outputs.smtp.output",
+            "parameters": {
+                "fieldnames": "classification.taxonomy,classification.type,classification.identifier,source.ip,source.asn,source.port",
+                "mail_from": "cert@localhost",
+                "mail_to": "{ev[source.abuse_contact]}",
+                "smtp_host": "localhost",
+                "smtp_password": null,
+                "smtp_port": null,
+                "smtp_username": null,
+                "ssl": false,
+                "starttls": true,
+                "subject": "Incident in your AS {ev[source.asn]}",
+                "text": "Dear network owner,\\n\\nWe have been informed that the following device might have security problems.\\n\\nYour localhost CERT"
+            }
+        },
         "Stomp": {
             "description": "Sends event via the STMOP protocol.",
             "module": "intelmq.bots.outputs.stomp.output",

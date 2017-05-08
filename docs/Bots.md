@@ -849,6 +849,42 @@ from your installation.
 
 * * *
 
+# SMTP Output Bot
+
+Sends a MIME Multipart message containing the text and the event as CSV for every single event.
+
+#### Information:
+* `name:` smtp
+* `lookup:` no
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Sends events via SMTP
+
+#### Configuration Parameters:
+
+* `fieldnames`: a list of field names to be included in the email, comma separated string or list of strings
+* `mail_from`: string. Supports formatting, see below
+* `mail_to`: string of email addresses, comma separated. Supports formatting, see below
+* `smtp_host`: string
+* `smtp_password`: string or null, Password for authentication on your SMTP server
+* `smtp_port`: port
+* `smtp_username`: string or null, Username for authentication on your SMTP server
+* `ssl`: boolean
+* `starttls`: boolean
+* `subject`: string. Supports formatting, see below
+* `text`: string or null. Supports formatting, see below
+
+For several strings you can use values from the string using the
+[standard Python string format syntax](https://docs.python.org/3/library/string.html#format-string-syntax).
+Access the event's values with `{ev[source.ip]}` and similar.
+
+Authentication is optional. If both username and password are given, these
+mechanism are tried: CRAM-MD5, PLAIN, and LOGIN.
+
+Client certificates are not supported. If `http_verify_cert` is true, TLS certificates are checked.
+
+* * *
+
 
 ### TCP
 
