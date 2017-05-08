@@ -38,12 +38,12 @@ class SMTPOutputBot(Bot):
         attachment = csvfile.getvalue()
 
         if self.http_verify_cert and self.smtp_class == smtplib.SMTP_SSL:
-            context = ssl.create_default_context()
+            kwargs = {'context': ssl.create_default_context()}
         else:
-            context = None
+            kwargs = {}
 
         with self.smtp_class(self.parameters.smtp_host, self.parameters.smtp_port,
-                             context=context) as smtp:
+                             **kwargs) as smtp:
             if self.starttls:
                 if self.parameters.http_verify_cert:
                     smtp.starttls(ssl.create_default_context())
