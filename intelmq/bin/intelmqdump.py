@@ -188,11 +188,16 @@ def main():
                     print('{:3}: {} {}'.format(count, *line))
 
         # Determine bot status
-        bot_status = ctl.bot_status(botid)
-        if bot_status == 'running':
-            print(red('Attention: This bot is currently running!'))
-        elif bot_status == 'error':
+        try:
+            bot_status = ctl.bot_status(botid)
+            if bot_status == 'running':
+                print(red('Attention: This bot is currently running!'))
+        except KeyError:
+            bot_status = 'error'
             print(red('Attention: This bot is not defined!'))
+            available_opts = [item[0] for item in ACTIONS.values() if item[2]]
+            available_answers = [k for k, v in ACTIONS.items() if v[2]]
+            print('Restricted actions.')
 
         try:
             answer = input(inverted(', '.join(available_opts) + '?') + ' ').split()
