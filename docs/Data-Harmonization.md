@@ -4,7 +4,7 @@
 2. [Rules for keys](#rules)
 3. [Sections](#sections)
 4. [Data types](#basicdatatypes)
-5. [List of known fields](#fields)
+5. [Fields List and data types](#fields-list-and-data-types)
 6. [Type/Taxonomy Mapping](#mapping)
 7. [Minimum required fields](#requirements)
 
@@ -66,58 +66,10 @@ We recognize that ip geolocation is not an exact science and analysis of the abu
 
 Some sources report an internal (NATed) IP address.
 
-### Reported Identity
+<a name="fields-list-and-data-types"></a>
+## Fields List and data types
 
-Not used currently.
-
-#### Reported Source Identity
-
-As stated above, each abuse handling organization should define a policy, which IOC to use as the primary element describing an abuse event. Often the sources have done their attribution, but you may choose to correlate their attributive elements with your own. In practice this means that your sanitation should prefix the elements with the '''reported''' keyword, to denote that you've decided the attribute these yourself. The list below is not comprehensive, rather than a list of common things you may want to attribute yourself. Moreover, if you choose to perform your own attribution, the observation time will become your authoritative point of reference related to these IOC.
-
-#### Reported Destination Identity
-
-As stated above, each abuse handling organization should define a policy, which IOC to use as the primary elements describing an abuse event. Often the sources have done their attribution, but you may choose to correlate their attributive elements with your own. In practice this means that your sanitation should prefix the elements with the '''reported''' keyword, to denote that you've decided the attribute these yourself. The list below is not comprehensive, rather than a list of common things you may want to attribute yourself. Moreover, if you choose to perform your own attribution, the observation time will become your authoritative point of reference related to these IOC.
-
-
-#### Additional Fields
-
-TODO: description
-
-#### Malware Elements
-
-TODO: description
-
-#### Artifact Elements
-
-TODO: description
-
-
-#### Specific Elements
-
-The elements listed below are additional keys used to describe abusive behavior, which are topic specific. They may refer to the source of information, such as notified by, an augmentation source such a cymru cc or internal integration source, such as|rtir id||. The reason why they are separated from the the other IOCs is that they are not generic, rather than topic or provider specific. Their communicative function is defined as an optional way to understand what other abuse handling pipelines are most likely to call these elements.
-
-#### Classification
-
-Having a functional ontology to work with, especially for the abuse types is important for you to be able to classify, prioritize and report relevant actionable intelligence to the parties who need to be informed. The driving idea for this ontology has been to use a minimal set of values with maximal usability. See the classification section below for explanations and examples.
-
-<a name="datatypes"></a>
-## Data types
-
-This section lists common data / field type definitions. The section [Fields List](#fields) references this table.
-Hence, this section also gives an overview of which basic data types need to be parseable and implemented by any system using this data harmonization format.
-Note that this section does not yet define error handling and failure mechanisms should a field not be parseable.
-
-
-|Name                                | SQL Data type     | Regexp and Syntax       | Cybox Equivalent |  Comment                           |
-|:-----------------------------------|:------------------|:------------------------|:-----------------|:-----------------------------------|
-|<a name="#datatype-feed"></a>feed   |varchar(2000)      |  ```[a-zA-Z0-9_.-]+```  |                  | no characters allowed which could be interpreted as CSV separators |
-|<a name="#datatype-url"></a>url     |varchar(2000)      | a valid URL (see [RFC3987](http://tools.ietf.org/html/rfc3987) or similar). | [URI](http://cybox.mitre.org/language/version2.1/xsddocs/objects/URI_Object.html)  | TODO: It is recommended to use libraries such as [faup](https://github.com/stricaud/faup) for validation. |
-
-
-<a name="fields"></a>
-## Fields List
-
-A list of allowed fields can be found in [Harmonization-fields.md](Harmonization-fields.md)
+A list of allowed fields and data types can be found in [Harmonization-fields.md](Harmonization-fields.md)
 
 <a name="mapping"></a>
 ## Classification
@@ -187,21 +139,21 @@ If you know of an IP address that connects to a zeus c&c server, it's about the 
 <a name="requirements"></a>
 ## Minimum requirements for events
 
-Below, we have enumerated the minimum requirements for an actionable abuse event. These keys need to be present for the abuse report to make sense for the end recipient. Please note that if you choose to anonymize your sources, you can substitute **feed** with **feed code** and that only one of the identity keys **ip**, **domain name**, **url**, **email address** must be present. All the rest of the keys enumerated above are **optional**.
+Below, we have enumerated the minimum requirements for an actionable abuse event. These keys need to be present for the abuse report to make sense for the end recipient. Please note that if you choose to anonymize your sources, you can substitute **feed** with **feed code** and that only one of the identity keys **ip**, **domain name**, **url**, **email address** must be present. All the rest of the keys are **optional**.
 
 |Category|Key|Terminology|
 |--------|---|-----------|
 |Feed|feed|Must|
-|Classification|type|Must|
-|Classification|taxonomy|Must|
-|Time|source time|Must|
-|Time|observation time|Must|
+|Classification|classification.type|Must|
+|Classification|classification.taxonomy|Must|
+|Time|time.source|Must|
+|Time|time.observation|Must|
 |Identity|source.ip|Must*|
 |Identity|source.fqdn|Must*|
 |Identity|source.url|Must*|
 |Identity|source.account|Must*|
 
-
+This list of required fields is *not* enforced by IntelMQ.
 
 **NOTE:** This document was copied from [AbuseHelper repository](https://github.com/abusesa/abusehelper/blob/master/docs/Harmonization.md) and improved.
 
