@@ -13,7 +13,7 @@ install:
   - for file in intelmq/bots/*/*/REQUIREMENTS.txt; do pip install -r $file; done
   - if [[ $TRAVIS_PYTHON_VERSION < '3.5' ]]; then pip install typing; fi
   - pip install codecov
-  - pip install pep8
+  - pip install pycodestyle
   - sudo pip install .
   - sudo cp /opt/intelmq/etc/examples/* /opt/intelmq/etc/
 before_script:
@@ -26,7 +26,7 @@ before_script:
 script:
   - INTELMQ_TEST_DATABASES=1 INTELMQ_TEST_LOCAL_WEB=1 INTELMQ_TEST_EXOTIC=1 nosetests --with-coverage --cover-package=intelmq
   - dpkg-buildpackage -us -uc
-  - pep8 intelmq/{bots,lib,bin}
+  - pycodestyle intelmq/{bots,lib,bin}
 services:
   - redis-server
   - postgresql

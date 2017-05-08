@@ -12,7 +12,7 @@ import unittest
 import pkg_resources
 
 import intelmq.lib.exceptions as exceptions
-import intelmq.lib.message as message
+import intelmq.lib.message as message  # noqa
 from intelmq.lib.utils import load_configuration
 
 HARM = load_configuration(pkg_resources.resource_filename('intelmq',
