@@ -194,7 +194,7 @@ class IntelMQProcessManager:
             log_bot_message('stopped', bot_id)
             return 'stopped'
 
-    def bot_reload(self, bot_id):
+    def bot_reload(self, bot_id, getstatus=True):
         pid = self.__read_pidfile(bot_id)
         if not pid:
             if self.controller._is_enabled(bot_id):
@@ -210,11 +210,13 @@ class IntelMQProcessManager:
         log_bot_message('reloading', bot_id)
         proc = psutil.Process(int(pid))
         proc.send_signal(signal.SIGHUP)
-        if self.__status_process(pid):
-            log_bot_message('running', bot_id)
-            return 'running'
-        log_bot_error('stopped', bot_id)
-        return 'stopped'
+        if getstatus:
+            time.sleep(0.5)
+            if self.__status_process(pid):
+                log_bot_message('running', bot_id)
+                return 'running'
+            log_bot_error('stopped', bot_id)
+            return 'stopped'
 
     def bot_status(self, bot_id):
         pid = self.__read_pidfile(bot_id)
@@ -532,11 +534,11 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         else:
             return self.bot_process_manager.bot_stop(bot_id, getstatus)
 
-    def bot_reload(self, bot_id):
+    def bot_reload(self, bot_id, getstatus=True):
         if bot_id is None:
             return self.botnet_reload()
         else:
-            return self.bot_process_manager.bot_reload(bot_id)
+            return self.bot_process_manager.bot_reload(bot_id, getstatus)
 
     def bot_restart(self, bot_id):
         if bot_id is None:
@@ -598,8 +600,13 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
     def botnet_reload(self):
         botnet_status = {}
         log_botnet_message('reloading')
-        for bot_id in sorted(self.runtime_configuration.keys()):
-            botnet_status[bot_id] = self.bot_reload(bot_id)
+        bots = sorted(self.runtime_configuration.keys())
+        for bot_id in bots:
+            self.bot_reload(bot_id, getstatus=False)
+
+        time.sleep(0.75)
+        for bot_id in bots:
+            botnet_status[bot_id] = self.bot_status(bot_id)
         log_botnet_message('reloaded')
         return botnet_status
 
