@@ -26,6 +26,8 @@ from intelmq.lib.utils import decode
 
 class HTTPStreamCollectorBot(CollectorBot):
 
+    sighup_delay = False
+
     def init(self):
         if getattr(self.parameters, 'url', False) and \
            not getattr(self.parameters, 'http_url', False):
