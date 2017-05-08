@@ -47,40 +47,40 @@ import intelmq.lib.harmonization as harmonization
 def get_feed(feedname):
     # TODO should this be case insensitive?
     feed_idx = {
+        "Accessible-CWMP": accessible_cwmp,
+        "Accessible-RDP": accessible_rdp,
+        "Accessible-Telnet": accessible_telnet,
+        "Blacklisted-IP": blacklisted_ip,
         "Botnet-Drone-Hadoop": botnet_drone_hadoop,
-        "Open-Memcached": open_memcached,
-        "Ssl-Scan": ssl_scan,  # a.k.a POODLE
-        "Ssl-Freak-Scan": ssl_freak_scan,  # Only differs in a few extra fields
+        "Compromised-Website": compromised_website,
+        "DNS-open-resolvers": dns_open_resolvers,
+        "Microsoft-Sinkhole": microsoft_sinkhole,
         "NTP-Monitor": ntp_monitor,
         "NTP-Version": ntp_version,
-        "DNS-open-resolvers": dns_open_resolvers,  # TODO Check implementation.
-        "Open-Elasticsearch": open_elasticsearch,
-        "Open-NetBIOS": open_netbios,
-        "Open-MongoDB": open_mongodb,
-        "Open-MSSQL": open_mssql,  # TODO Check implementation.
-        "Open-SNMP": open_snmp,
-        "Open-SSDP": open_ssdp,  # TODO Check implementation.
-        "Open-IPMI": open_ipmi,  # TODO VERIFY THIS FEED, as dmth did not have example data
-        "Open-Portmapper": open_portmapper,
-        "Open-Redis": open_redis,
-        "Microsoft-Sinkhole": microsoft_sinkhole,
-        "Open-TFTP": open_tftp,
         "Open-Chargen": open_chargen,
-        "Open-QOTD": open_qotd,
-        "Sinkhole-HTTP-Drone": sinkhole_http_drone,  # TODO Check implementation. Especially the TOR-Converter
-        "Open-XDMCP": open_xdmcp,
-        "Compromised-Website": compromised_website,
-        "Open-NATPMP": open_natpmp,
-        "Open-Netis": open_netis,
-        "Sandbox-URL": sandbox_url,
-        "Spam-URL": spam_url,
-        "Vulnerable-ISAKMP": vulnerable_isakmp,
-        "Accessible-RDP": accessible_rdp,
-        "Open-mDNS": open_mdns,
+        "Open-Elasticsearch": open_elasticsearch,
+        "Open-IPMI": open_ipmi,
         "Open-LDAP": open_ldap,
-        "Blacklisted-IP": blacklisted_ip,
-        "Accessible-Telnet": accessible_telnet,
-        "Accessible-CWMP": accessible_cwmp,
+        "Open-mDNS": open_mdns,
+        "Open-Memcached": open_memcached,
+        "Open-MongoDB": open_mongodb,
+        "Open-MSSQL": open_mssql,
+        "Open-NATPMP": open_natpmp,
+        "Open-NetBIOS": open_netbios,
+        "Open-Netis": open_netis,
+        "Open-Portmapper": open_portmapper,
+        "Open-QOTD": open_qotd,
+        "Open-Redis": open_redis,
+        "Open-SNMP": open_snmp,
+        "Open-SSDP": open_ssdp,
+        "Open-TFTP": open_tftp,
+        "Open-XDMCP": open_xdmcp,
+        "Sandbox-URL": sandbox_url,
+        "Sinkhole-HTTP-Drone": sinkhole_http_drone,
+        "Spam-URL": spam_url,
+        "Ssl-Freak-Scan": ssl_freak_scan,  # Only differs in a few extra fields
+        "Ssl-Scan": ssl_scan,  # a.k.a POODLE
+        "Vulnerable-ISAKMP": vulnerable_isakmp,
     }
 
     return feed_idx.get(feedname)
