@@ -134,7 +134,7 @@ class ShadowserverParserBot(ParserBot):
                 else:
                     try:
                         value = conv_func(raw_value)
-                    except:
+                    except Exception:
                         self.logger.error('Could not convert shadowkey: "{}", ' +
                                           'value: "{}" via conversion function {}.'.format(shadowkey, raw_value, repr(conv_func)))
                         value = None

@@ -37,7 +37,7 @@ class GenericDBLookupExpertBot(Bot):
             self.con.autocommit = True  # prevents deadlocks
             self.cur = self.con.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
-        except:
+        except Exception:
             self.logger.exception('Failed to connect to database.')
             self.stop()
         self.logger.info("Connected to PostgreSQL.")

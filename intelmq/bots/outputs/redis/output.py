@@ -23,7 +23,7 @@ class RedisOutputBot(Bot):
 
         try:
             self.output.lpush(self.queue, event)
-        except:
+        except Exception:
             self.logger.exception('Failed to send message. Reconnecting.')
             self.connect()
         else:

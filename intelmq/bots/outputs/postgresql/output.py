@@ -43,7 +43,7 @@ class PostgreSQLOutputBot(Bot):
             self.con.autocommit = getattr(self.parameters, 'autocommit', True)
 
             self.table = self.parameters.table
-        except:
+        except Exception:
             self.logger.exception('Failed to connect to database.')
             self.stop()
         self.logger.info("Connected to PostgreSQL.")
