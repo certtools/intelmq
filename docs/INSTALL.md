@@ -22,7 +22,7 @@ The following instructions assume the following requirements:
 
 ### Install Dependencies
 
-If you are using packages, you can simply skip this section as all dependencies are installed automatically.
+If you are using native packages, you can simply skip this section as all dependencies are installed automatically.
 
 ##### Ubuntu 14.04 / Debian 8
 
@@ -63,7 +63,40 @@ systemctl start redis
 
 ### Installation
 
-#### from PyPi
+There are different methods to install IntelMQ:
+
+* as native deb/rpm package
+* from PyPi: to get the latest releases as python package
+* from the (local) repository: for developers to get the latest (unstable!) version and/or have local modifications
+
+#### Native packages
+
+Get the install instructions for your operating system here:
+https://software.opensuse.org/download.html?project=home%3Asebix%3Aintelmq&package=intelmq
+
+Currently, these operating systems are supported by the packages:
+* CentOS 7, install `epel-release` first
+* Debian 8
+* Fedora 25
+* openSUSE Leap 42.2
+* openSUSE Tumbleweed
+* Ubuntu 16.04
+
+Please report any errors or improvements, thanks!
+
+#### From PyPi
+
+```bash
+sudo -s
+
+pip3 install intelmq
+
+useradd -d /opt/intelmq -U -s /bin/bash intelmq
+chmod -R 0770 /opt/intelmq
+chown -R intelmq.intelmq /opt/intelmq
+```
+
+#### From the repository
 
 The `REQUIREMENTS` files define a list of python packages and versions, which are necessary to run most components of IntelMQ. The defined (minimal) versions are recommendations. Some bots have additional dependencies which are mentioned in their documentation and their own `REQUIREMENTS` file (in their source directory).
 
@@ -72,12 +105,14 @@ If your Python version is lower than 3.5 you additionally need the "typing" pack
 pip3 install typing
 ```
 
-If you do not do any modifications on the code, use `pip install intelmq` instead of `pip install .` or packages.
-
+Clone the repository if not already done:
 ```bash
 git clone https://github.com/certtools/intelmq.git /tmp/intelmq
 cd /tmp/intelmq
+```
 
+If you have a local repository and you have or will do local modification, consider using an editable installation (`pip install -e .`).
+```
 sudo -s
 
 pip3 install -r REQUIREMENTS
@@ -87,5 +122,7 @@ useradd -d /opt/intelmq -U -s /bin/bash intelmq
 chmod -R 0770 /opt/intelmq
 chown -R intelmq.intelmq /opt/intelmq
 ```
+
+## Afterwards
 
 Now continue with the [User Guide](User-Guide.md).
