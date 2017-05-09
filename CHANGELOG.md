@@ -1,14 +1,23 @@
 CHANGELOG
 ==========
 
-v1.0.0.dev7 (in development, master branch)
+v1.0.0.dev7
 -----------
 
+### Documentation
+- more verbose installation and upgrade instructions
+
 ### Bot changes
-- ENH: added bots.experts.field_reducer.expert
+- added bots.experts.field_reducer and bots.outputs.smtp
+- bots.collectors.alienvault_otx: OTX library has been removed, install it as package instead
+- bots.experts.deduplicator: `ignore_keys` has been renamed to `filter_keys` and `filter_type` has been removed.
+- bots.experts.modify: The configration is now list-based for a consistent ordering
+- bots.experts.tor_node as an optional parameter `overwrite`
+- API keys will be removed from feed.url if possible
 
 ### Harmonization
 - New parameter and field named feed.documentation to link to documentation of the feed
+- classification.taxonomy is lower case only
 
 v1.0.0.dev6
 -----------

@@ -10,8 +10,8 @@ See the changelog for a full list of changes.
 * system.conf and startup.conf have been dropped entirely, use defaults.conf and runtime.conf instead
 * Many bots have been renamed/moved or deleted. Please read the Bots section in the changelog and upgrade your configuration accordingly.
 
-1.0.0.dev7 (in developement)
-----------------------------
+1.0.0.dev7
+----------
 
 ### Configuration
 * The deduplicator expert requires a new parameter `filter_type`, the old previous default was `blacklist`. The key `ignore_keys` has been renamed to `filter_keys`.
