@@ -1,6 +1,12 @@
 CHANGELOG
 ==========
 
+in development
+--------------
+
+### Documentation
+- Dropped install scripts, see INSTALL.md for more detailed instructions and explanations
+
 v1.0.0.dev7
 -----------
 
