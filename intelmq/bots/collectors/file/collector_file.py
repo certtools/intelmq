@@ -24,6 +24,7 @@ import os
 
 import intelmq.lib.exceptions as exceptions
 from intelmq.lib.bot import CollectorBot
+from intelmq.lib.splitreports import generate_reports
 
 
 class FileCollectorBot(CollectorBot):
@@ -43,6 +44,10 @@ class FileCollectorBot(CollectorBot):
                                   self.parameters.path)
                 self.stop()
 
+        self.chunk_size = getattr(self.parameters, 'chunk_size', None)
+        self.chunk_replicate_header = getattr(self.parameters,
+                                              'chunk_replicate_header', None)
+
     def process(self):
         self.logger.debug("Started looking for files.")
 
@@ -56,12 +61,13 @@ class FileCollectorBot(CollectorBot):
                     if fnmatch.fnmatch(f, '*' + self.parameters.postfix):
                         self.logger.info("Processing file %r.", filename)
 
-                        with open(filename, 'r') as f:
+                        template = self.new_report()
+                        template.add("feed.url", "file://localhost%s" % filename)
 
-                            report = self.new_report()
-                            report.add("raw", f.read())
-                            report.add("feed.url", "file://localhost%s" % filename)
-                            self.send_message(report)
+                        with open(filename, 'rb') as f:
+                            for report in generate_reports(template, f, self.chunk_size,
+                                                           self.chunk_replicate_header):
+                                self.send_message(report)
 
                         if self.parameters.delete_file:
                             try:
