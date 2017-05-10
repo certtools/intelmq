@@ -35,7 +35,7 @@ Other considerations:
    chunk size must take this into account, but multiplying the actual
    limit by 3/4 and subtracting a generous amount for the meta data.
 """
-from typing import BinaryIO, Generator, List
+from typing import BinaryIO, Generator, Optional, List
 
 from intelmq.lib.message import Report
 
@@ -114,7 +114,7 @@ def read_delimited_chunks(infile: BinaryIO, chunk_size: int) -> Generator[bytes,
             break
 
 
-def generate_reports(report_template: Report, infile: BinaryIO, chunk_size: int,
+def generate_reports(report_template: Report, infile: BinaryIO, chunk_size: Optional[int],
                      copy_header_line: bool) -> Generator[Report, None, None]:
     """Generate reports from a template and input file, optionally split into chunks.
 
