@@ -7,6 +7,9 @@ in development
 ### Documentation
 - Dropped install scripts, see INSTALL.md for more detailed instructions and explanations
 
+### Bots
+- possibility to split large csv Reports into Chunks, currently possible for mail url and file collector
+
 v1.0.0.dev7
 -----------
 
