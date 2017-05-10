@@ -21,7 +21,7 @@ import re
 import sys
 import traceback
 
-from typing import Sequence, Union
+from typing import Sequence, Optional, Union
 
 import intelmq
 import pytz
@@ -214,7 +214,7 @@ class StreamHandler(logging.StreamHandler):
 
 
 def log(name: str, log_path: str=intelmq.DEFAULT_LOGGING_PATH, log_level: str="DEBUG",
-        stream: Union[None, object]=None, syslog: Union[bool, str, list, tuple]=None):
+        stream: Optional[object]=None, syslog: Union[bool, str, list, tuple]=None):
     """
     Returns a logger instance logging to file and sys.stderr or other stream.
 

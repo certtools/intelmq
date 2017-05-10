@@ -20,6 +20,7 @@ from intelmq import (DEFAULT_LOGGING_PATH, DEFAULTS_CONF_FILE,
 from intelmq.lib import exceptions, utils
 import intelmq.lib.message as libmessage
 from intelmq.lib.pipeline import PipelineFactory
+from typing import Any, Optional
 
 __all__ = ['Bot', 'CollectorBot', 'ParserBot']
 
@@ -32,7 +33,7 @@ class Bot(object):
     # Bot is capable of SIGHUP delaying
     sighup_delay = True
 
-    def __init__(self, bot_id):
+    def __init__(self, bot_id: str):
         self.__log_buffer = []
         self.parameters = Parameters()
 
@@ -93,7 +94,7 @@ class Bot(object):
             self.stop()
             raise
 
-    def __handle_sighup_signal(self, signum, stack):
+    def __handle_sighup_signal(self, signum: int, stack: Optional[object]):
         """
         Called when signal is received and postpone.
         """
@@ -121,9 +122,9 @@ class Bot(object):
     def shutdown(self):
         pass
 
-    def start(self, starting=True, error_on_pipeline=True,
-              error_on_message=False, source_pipeline=None,
-              destination_pipeline=None):
+    def start(self, starting: bool=True, error_on_pipeline: bool=True,
+              error_on_message: bool=False, source_pipeline: Optional[str]=None,
+              destination_pipeline: Optional[str]=None):
 
         self.__source_pipeline = source_pipeline
         self.__destination_pipeline = destination_pipeline
@@ -257,7 +258,7 @@ class Bot(object):
             self.__handle_sighup()
             remaining = self.parameters.rate_limit - (time.time() - starttime)
 
-    def stop(self, exitcode=1):
+    def stop(self, exitcode: int=1):
         try:
             self.shutdown()
         except BaseException:
@@ -283,8 +284,8 @@ class Bot(object):
             print(level.upper(), '-', message)
         self.__log_buffer = []
 
-    def __check_bot_id(self, str):
-        res = re.search('[^0-9a-zA-Z\-]+', str)
+    def __check_bot_id(self, name: str):
+        res = re.search('[^0-9a-zA-Z\-]+', name)
         if res:
             self.__log_buffer.append(('error',
                                       "Invalid bot id, must match '"
@@ -372,7 +373,7 @@ class Bot(object):
     def acknowledge_message(self):
         self.__source_pipeline.acknowledge()
 
-    def _dump_message(self, error_traceback, message):
+    def _dump_message(self, error_traceback, message: dict):
         if message is None:
             return
 
@@ -462,7 +463,7 @@ class Bot(object):
             raise exceptions.ConfigurationError('pipeline', "no key "
                                                 "{!r}.".format(self.__bot_id))
 
-    def __log_configuration_parameter(self, config_name, option, value):
+    def __log_configuration_parameter(self, config_name: str, option: str, value: Any):
         if "password" in option or "token" in option:
             value = "HIDDEN"
 
@@ -535,7 +536,7 @@ class ParserBot(Bot):
                               'Possible Misconfiguration.')
             self.stop()
 
-    def parse_csv(self, report):
+    def parse_csv(self, report: dict):
         """
         A basic CSV parser.
         """
@@ -548,7 +549,7 @@ class ParserBot(Bot):
         for line in csv.reader(io.StringIO(raw_report)):
             yield line
 
-    def parse_csv_dict(self, report):
+    def parse_csv_dict(self, report: dict):
         """
         A basic CSV Dictionary parser.
         """
@@ -561,7 +562,7 @@ class ParserBot(Bot):
         for line in csv.DictReader(io.StringIO(raw_report)):
             yield line
 
-    def parse(self, report):
+    def parse(self, report: dict):
         """
         A generator yielding the single elements of the data.
 
@@ -618,7 +619,7 @@ class ParserBot(Bot):
 
         self.acknowledge_message()
 
-    def recover_line(self, line):
+    def recover_line(self, line: str):
         """
         Reverse of parse for single lines.
 
@@ -626,13 +627,13 @@ class ParserBot(Bot):
         """
         return '\n'.join(self.tempdata + [line])
 
-    def recover_line_csv(self, line):
+    def recover_line_csv(self, line: str):
         out = io.StringIO()
         writer = csv.writer(out)
         writer.writerow(line)
         return out.getvalue()
 
-    def recover_line_csv_dict(self, line):
+    def recover_line_csv_dict(self, line: str):
         """
         Converts dictionaries to csv. self.csv_fieldnames must be list of fields.
         """
@@ -649,21 +650,21 @@ class CollectorBot(Bot):
 
     Does some sanity checks on message sending.
     """
-    def __init__(self, bot_id):
+    def __init__(self, bot_id: str):
         super(CollectorBot, self).__init__(bot_id=bot_id)
         if self.__class__.__name__ == 'CollectorBot':
             self.logger.error('CollectorBot can\'t be started itself. '
                               'Possible Misconfiguration.')
             self.stop()
 
-    def __filter_empty_report(self, message):
+    def __filter_empty_report(self, message: dict):
         if 'raw' not in message:
             self.logger.warning('Ignoring report without raw field. '
                                 'Possible bug or misconfiguration of this bot.')
             return False
         return True
 
-    def __add_report_fields(self, report):
+    def __add_report_fields(self, report: dict):
         report.add("feed.name", self.parameters.feed)
         if hasattr(self.parameters, 'code'):
             report.add("feed.code", self.parameters.code)

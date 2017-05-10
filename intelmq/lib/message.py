@@ -13,7 +13,7 @@ import intelmq.lib.exceptions as exceptions
 import intelmq.lib.harmonization
 from intelmq import HARMONIZATION_CONF_FILE
 from intelmq.lib import utils
-from typing import Sequence, Union
+from typing import Sequence, Optional
 
 
 __all__ = ['Event', 'Message', 'MessageFactory', 'Report']
@@ -28,7 +28,7 @@ class MessageFactory(object):
 
     @staticmethod
     def from_dict(message: dict, harmonization=None,
-                  default_type: Union[str, None]=None) -> dict:
+                  default_type: Optional[str]=None) -> dict:
         """
         Takes dictionary Message object, returns instance of correct class.
 
@@ -55,7 +55,7 @@ class MessageFactory(object):
 
     @staticmethod
     def unserialize(raw_message: str, harmonization: dict=None,
-                    default_type: Union[str, None]=None) -> dict:
+                    default_type: Optional[str]=None) -> dict:
         """
         Takes JSON-encoded Message object, returns instance of correct class.
 
@@ -216,23 +216,23 @@ class Message(dict):
         super(Message, self).__setitem__(key, value)
         return True
 
-    def update(self, key, value, sanitize=True):
+    def update(self, key: str, value: str, sanitize: bool=True):
         warnings.warn('update(...) will be changed to dict.update() in 1.0. '
                       'Use change(key, value, sanitize) instead.',
                       DeprecationWarning)
         return self.change(key, value, sanitize)
 
-    def change(self, key, value, sanitize=True):
+    def change(self, key: str, value: str, sanitize: bool=True):
         if key not in self:
             raise exceptions.KeyNotExists(key)
         return self.add(key, value, overwrite=True, sanitize=sanitize)
 
-    def contains(self, key):
+    def contains(self, key: str):
         warnings.warn('The contains-method will be removed in 1.0.',
                       DeprecationWarning)
         return key in self
 
-    def finditems(self, keyword):
+    def finditems(self, keyword: str):
         for key, value in super(Message, self).items():
             if key.startswith(keyword):
                 yield key, value
@@ -263,16 +263,16 @@ class Message(dict):
         return json_dump
 
     @staticmethod
-    def unserialize(message_string):
+    def unserialize(message_string: str):
         message = json.loads(message_string)
         return message
 
-    def __is_valid_key(self, key):
+    def __is_valid_key(self, key: str):
         if key in self.harmonization_config or key == '__type':
             return True
         return False
 
-    def __is_valid_value(self, key, value):
+    def __is_valid_value(self, key: str, value: str):
         if key == '__type':
             return (True, )
         config = self.__get_type_config(key)
@@ -292,12 +292,12 @@ class Message(dict):
                 return (False, 'regex (case insensitive) did not match.')
         return (True, )
 
-    def __sanitize_value(self, key, value):
+    def __sanitize_value(self, key: str, value: str):
         class_name = self.__get_type_config(key)['type']
         class_reference = getattr(intelmq.lib.harmonization, class_name)
         return class_reference().sanitize(value)
 
-    def __get_type_config(self, key):
+    def __get_type_config(self, key: str):
         class_name = self.harmonization_config[key]
         return class_name
 
@@ -340,7 +340,7 @@ class Message(dict):
 
         return event_hash.hexdigest()
 
-    def to_dict(self, hierarchical=False, with_type=False):
+    def to_dict(self, hierarchical: bool=False, with_type: bool=False):
         json_dict = dict()
 
         if with_type:
@@ -375,7 +375,8 @@ class Message(dict):
 
 class Event(Message):
 
-    def __init__(self, message: dict=(), auto: bool=False, harmonization: dict=None):
+    def __init__(self, message: Optional[dict]=(), auto: bool=False,
+                 harmonization: Optional[dict]=None):
         """
         Parameters:
             message: Give a report and feed.name, feed.url and
@@ -409,7 +410,8 @@ class Event(Message):
 
 class Report(Message):
 
-    def __init__(self, message: dict=(), auto: bool=False, harmonization: dict=None):
+    def __init__(self, message: Optional[dict]=(), auto: bool=False,
+                 harmonization: Optional[dict]=None):
         """
         Parameters:
             message: Passed along to Message's and dict's init
