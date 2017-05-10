@@ -48,7 +48,7 @@ Harmonization field names
 |Malware|malware.version|[String](#string)|A version string for an identified artifact generation, e.g. a crime-ware kit.|
 |Misp|misp.attribute_uuid|[LowercaseString](#lowercasestring)|MISP - Malware Information Sharing Platform & Threat Sharing UUID of an attribute.|
 |Misp|misp.event_uuid|[LowercaseString](#lowercasestring)|MISP - Malware Information Sharing Platform & Threat Sharing UUID.|
-||output|[JSON](#json)|Event data converted into foreign format, intended to be exported by output plugin.|
+| |output|[JSON](#json)|Event data converted into foreign format, intended to be exported by output plugin.|
 |Protocol|protocol.application|[LowercaseString](#lowercasestring)|e.g. vnc, ssh, sip, irc, http or p2p.|
 |Protocol|protocol.transport|[LowercaseString](#lowercasestring)|e.g. tcp, udp, icmp.|
 | |raw|[Base64](#base64)|The original line of the event from encoded in base64.|
