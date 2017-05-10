@@ -49,4 +49,5 @@ class SpamhausDropParserBot(ParserBot):
 
             yield event
 
+
 BOT = SpamhausDropParserBot

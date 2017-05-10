@@ -8,6 +8,8 @@
    * [status](#status)
    * [restart](#restart)
    * [reload](#reload)
+   * [disable](#disable)
+   * [enable](#enable)
   * [Manage the botnet](#manage-the-botnet)
    * [start](#start-1)
    * [stop](#stop-1)
@@ -116,6 +118,32 @@ If the bot is not running, we can't reload it:
 intelmqctl: file-output was NOT RUNNING.
 ```
 
+### disable
+
+Sets the `enabled` flag in runtime.conf to `false`.
+Assume the bot is now enabled (default for all bots).
+
+```bash
+> intelmqctl status file-output
+intelmqctl: file-output is stopped.
+> intelmqctl disable file-output
+> intelmqctl status file-output
+intelmqctl: file-output is disabled.
+```
+
+### enable
+
+Ensures that the `enabled` flag in runtime.conf is not set to `false`.
+Assume that the bot is now dibbled.
+
+```bash
+> intelmqctl status file-output
+intelmqctl: file-output is disabled.
+> intelmqctl enable file-output
+> intelmqctl status file-output
+intelmqctl: file-output is stopped.
+```
+
 
 ## Manage the botnet
 
@@ -211,7 +239,7 @@ The same as start and stop consecutively.
 The same as reload of every bot.
 
 ### enable / disable
-The subcommands `enable` and `disable` set the corresponding flags in runtime.conf.
+The sub commands `enable` and `disable` set the corresponding flags in runtime.conf.
 
 ```bash
 > intelmqctl status

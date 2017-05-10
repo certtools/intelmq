@@ -1,0 +1,1 @@
+git+https://github.com/AlienVault-Labs/OTX-Python-SDK.git@1.2.0#egg=AlienVault-Labs-OTX-Python

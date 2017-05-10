@@ -47,7 +47,7 @@ For example:
 }
 ```
 
-This configration resides in the file `runtime.conf` in your intelmq's configuration directory for each configured bot.
+This configuration resides in the file `runtime.conf` in your intelmq's configuration directory for each configured bot.
 
 ## Initialization parameters
 
@@ -63,7 +63,9 @@ This configration resides in the file `runtime.conf` in your intelmq's configura
 **Feed parameters**: Common configuration options for all collectors
 
 * `feed`: Name for the feed.
+* `accuracy`: Accuracy for the data of the feed.
 * `code`: Code for the feed.
+* `documentation`: Link to documentation for the feed.
 * `provider`: Name of the provider of the feed.
 * `rate_limit`: time interval (in seconds) between messages processing.
 
@@ -217,7 +219,7 @@ If the stream is interrupted, the connection will be aborted using the timeout p
 * `lookup:` yes
 * `public:` yes
 * `cache (redis db):` none
-* `description:` Request Tracker Collector fetches attachments from an RTIR instance and optionally decrypts them with gnupg.
+* `description:` Request Tracker Collector fetches attachments from an RTIR instance.
 
 #### Configuration Parameters:
 
@@ -256,7 +258,7 @@ If the stream is interrupted, the connection will be aborted using the timeout p
 * `xmpp_password`: FIXME
 * `xmpp_room`: FIXME
 * `xmpp_room_nick`: FIXME
-* `xmpp_room_passsword`: FIXME
+* `xmpp_room_password`: FIXME
 * `ca_certs`: FIXME (default: `/etc/ssl/certs/ca-certificates.crt`)
 * `strip_message`: FIXME (default: `true`)
 * `pass_full_xml`: FIXME (default: `false`)
@@ -300,6 +302,26 @@ See the README.md
 
 * * *
 
+### Microsoft Azure
+
+Iterates over all blobs in all containers in an Azure storage.
+
+#### Information:
+* `name:` intelmq.bots.collectors.microsoft.collector_azure
+* `lookup:` yes
+* `public:` no
+* `cache (redis db):` none
+* `description:` collect blobs from microsoft azure using their library
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `account_name`: account name as give by Microsoft
+* `account_key`: account key as give by Microsoft
+* `delete`: boolean, delete containers and blobs after fetching
+
+* * *
+
 ### N6Stomp
 
 See the README.md
@@ -326,6 +348,32 @@ See the README.md
 ## Parsers
 
 TODO
+
+### Generic CSV Parser
+
+Lines starting with `'#'` will be ignored. Headers won't be interpreted.
+
+#### Configuration parameters
+
+ * `"columns"`: A list of strings or a string of comma-separated values with field names. The names must match the harmonization's field names. E.g. 
+   ```json
+   [
+        "",
+        "source.fqdn"
+    ],
+    ```
+ * `"column_regex_search"`: Optional. A dictionary mapping field names (as given per the columns parameter) to regular expression. The field is evaulated using `re.search`. Eg. to get the ASN out of `AS1234` use: `{"source.asn": "[0-9]*"}`.
+ * `"default_url_protocol"`: For URLs you can give a defaut protocol which will be pretended to the data.
+ * `"delimiter"`: separation character of the CSV, e.g. `","`
+ * `"skip_header"`: Boolean, skip the first line of the file, optional. Lines starting with `#` will be skipped additionally, make sure you do not skip more lines than needed!
+ * `time_format`: Optional. If `"timestamp"` or `"windows_nt"` the time will be converted first. With the default `null` fuzzy time parsing will be used.
+ * `"type"`: set the `classification.type` statically, optional
+ * `"type_translation"`: See below, optional
+
+##### Type translation
+
+If the source does have a field with information for `classification.type`, but it does not correspond to intelmq's types,
+you can map them to the correct ones. The `type_translation` field can hold a JSON field with a dictionary which maps the feed's values to intelmq's.
 
 <a name="experts"></a>
 ## Experts
@@ -466,7 +514,7 @@ See the README.md
 * `lookup:` dns
 * `public:` yes
 * `cache (redis db):` none
-* `description:` DNS name (fqdn) to IP
+* `description:` DNS name (FQDN) to IP
 
 #### Configuration Parameters:
 
@@ -598,7 +646,7 @@ from the default conditions if there were any.
 
 #### Examples
 
-We have an event with `feed.name = Spamhaus Cert` and `malware.name = confickerab`. The expert loops over all sections in the file and eventually enters section `Spamhaus Cert`. First, the default condition is checked, it matches! Ok, going on. Otherwise the expert would have selected a different section that has not yet been considered. Now, go through the rules, until we hit the rule `conficker`. We combine the conditions of this rule with the default conditions, and both rules match! So we can apply the action: `classification.identifier` is set to `conficker`, the trivial name.
+We have an event with `feed.name = Spamhaus Cert` and `malware.name = confickerab`. The expert loops over all sections in the file and eventually enters section `Spamhaus Cert`. First, the default condition is checked, it matches! OK, going on. Otherwise the expert would have selected a different section that has not yet been considered. Now, go through the rules, until we hit the rule `conficker`. We combine the conditions of this rule with the default conditions, and both rules match! So we can apply the action: `classification.identifier` is set to `conficker`, the trivial name.
 
 Assume we have an event with `feed.name = Spamhaus Cert` and `malware.name = feodo`. The default condition matches, but no others. So the default action is applied. The value for `classification.identifier` will be set to `feodo` by `{msg[malware.name]}`.
 
@@ -625,7 +673,7 @@ FIXME
 
 ### RFC1918
 
-Several RFCs define IPs and Hostnames (and TLDs) reserved for documentation:
+Several RFCs define IP addresses and Hostnames (and TLDs) reserved for documentation:
 
 Sources:
 * https://tools.ietf.org/html/rfc1918
@@ -640,7 +688,7 @@ Sources:
 * `lookup:` none
 * `public:` yes
 * `cache (redis db):` none
-* `description:` removes events or single fiels with invalid data
+* `description:` removes events or single fields with invalid data
 
 #### Configuration Parameters:
 
@@ -705,7 +753,7 @@ FIXME
 
 #### Configuration Parameters:
 
-* `overwrite`: boolean, replace existing fqdn?
+* `overwrite`: boolean, replace existing FQDN?
 
 <a name="outputs"></a>
 ## Outputs
@@ -761,9 +809,11 @@ FIXME
 
 * `collection`: MongoDB collection
 * `database`: MongoDB database
+* `db_user` : Database user that should be used if you enabled authentication
+* `db_pass` : Password associated to `db_user`
 * `host`: MongoDB host (FQDN or IP)
 * `port`: MongoDB port
-* `hierarchical_output`: Boolean (default true) as mongodb does not allow saving keys with dots, we split the dictionay in sub-dictionaries.
+* `hierarchical_output`: Boolean (default true) as mongodb does not allow saving keys with dots, we split the dictionary in sub-dictionaries.
 
 #### Installation Requirements
 
@@ -832,6 +882,42 @@ from your installation.
 * `host`: destination URL
 * `use_json`: boolean
 
+
+* * *
+
+# SMTP Output Bot
+
+Sends a MIME Multipart message containing the text and the event as CSV for every single event.
+
+#### Information:
+* `name:` smtp
+* `lookup:` no
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Sends events via SMTP
+
+#### Configuration Parameters:
+
+* `fieldnames`: a list of field names to be included in the email, comma separated string or list of strings
+* `mail_from`: string. Supports formatting, see below
+* `mail_to`: string of email addresses, comma separated. Supports formatting, see below
+* `smtp_host`: string
+* `smtp_password`: string or null, Password for authentication on your SMTP server
+* `smtp_port`: port
+* `smtp_username`: string or null, Username for authentication on your SMTP server
+* `ssl`: boolean
+* `starttls`: boolean
+* `subject`: string. Supports formatting, see below
+* `text`: string or null. Supports formatting, see below
+
+For several strings you can use values from the string using the
+[standard Python string format syntax](https://docs.python.org/3/library/string.html#format-string-syntax).
+Access the event's values with `{ev[source.ip]}` and similar.
+
+Authentication is optional. If both username and password are given, these
+mechanism are tried: CRAM-MD5, PLAIN, and LOGIN.
+
+Client certificates are not supported. If `http_verify_cert` is true, TLS certificates are checked.
 
 * * *
 

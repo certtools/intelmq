@@ -1,16 +1,32 @@
 CHANGELOG
 ==========
 
-v1.0.0.dev7 (in development, master branch)
+in development
+--------------
+
+### Documentation
+- Dropped install scripts, see INSTALL.md for more detailed instructions and explanations
+
+### Bots
+- possibility to split large csv Reports into Chunks, currently possible for mail url and file collector
+
+v1.0.0.dev7
 -----------
 
+### Documentation
+- more verbose installation and upgrade instructions
+
 ### Bot changes
-- ENH: added bots.experts.field_reducer.expert
-- ENH: added bots.experts.idea.expert
-- ENH: added bots.outputs.files.output
+- added bots.experts.field_reducer, bots.outputs.smtp, bots.experts.idea, bots.outputs.files
+- bots.collectors.alienvault_otx: OTX library has been removed, install it as package instead
+- bots.experts.deduplicator: `ignore_keys` has been renamed to `filter_keys` and `filter_type` has been removed.
+- bots.experts.modify: The configration is now list-based for a consistent ordering
+- bots.experts.tor_node as an optional parameter `overwrite`
+- API keys will be removed from feed.url if possible
 
 ### Harmonization
 - New parameter and field named feed.documentation to link to documentation of the feed
+- classification.taxonomy is lower case only
 - New field named output to support export to foreign formats
 
 v1.0.0.dev6
@@ -71,7 +87,7 @@ Changes between 0.9 and 1.0.0.dev6
 - changed configuration syntax for bots.experts.modify to a more simple variant
 
 #### Outputs
-- added: amqp, redis, restapi, stomp, tcp, udp, xmpp
+- added: amqp, elasticsearch, redis, restapi, smtp, stomp, tcp, udp, xmpp
 - removed: debug, intelmqmailer (broken), logcollector
 - enhanced all outputs
 
@@ -94,6 +110,7 @@ Changes between 0.9 and 1.0.0.dev6
 - parameter `hierarchical_output` for many output bots
 - deduplicator bot has a new required parameter to configure deduplication mode `filter_type`
 - deduplicator bot key ignore_keys was renamed to filter_keys
+- The tor_nodes expert has a new parameter `overwrite`, which is by default `false`.
 
 ### Harmonization
 - ENH: Additional data types: integer, float and Boolean
@@ -118,10 +135,11 @@ Changes between 0.9 and 1.0.0.dev6
 - `additional_information` renamed to `extra`, must be JSON
 - `os.name`, `os.version`, `user_agent` removed in favor of `extra`
 - all hashes are lower case only
-- added `malware.hash.(md5|sha1)`
+- added `malware.hash.(md5|sha1|sha256)`, removed `malware.hash`
 - New parameter and field named feed.accuracy to represent the accuracy of each feed
 - New parameter and field named feed.provider to document the name of the source of each feed
 - New field `classification.identifier`
+-`classification.taxonomy` is now lower case only
 
 ### Known issues
  - Harmonization: hashes are not normalized and classified, see also issue #394 and pull #634

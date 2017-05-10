@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Parsers simple newline separated list of IPs.
+Parses simple newline separated list of IPs.
 
 Docs:
  - https://feodotracker.abuse.ch/blocklist/

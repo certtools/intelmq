@@ -1,5 +1,4 @@
 exclude .gitignore
-exclude .pep8
 exclude .travis.yml
 graft contrib
 graft docs

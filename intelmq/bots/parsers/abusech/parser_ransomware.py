@@ -16,7 +16,7 @@ class AbuseCHRansomwaretrackerParserBot(Bot):
 
     def process(self):
         """
-        The Ranswomware Tracker has comments in it.
+        The Ransomware Tracker has comments in it.
         The IP address field can also have more than one address.
         The ASN and Country code are being ignored, an expert parser can get those added.
         """

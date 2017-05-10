@@ -98,6 +98,7 @@ class TestCymruExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, EMPTY_INPUT)
 
+    @unittest.expectedFailure
     def test_missing_asn(self):
         """
         No information for ASN.

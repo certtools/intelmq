@@ -54,7 +54,7 @@ class StompOutputBot(Bot):
         self.conn.start()
         self.conn.connect(wait=False)
 
-    def shtudown(self):
+    def shutdown(self):
         self.conn.disconnect()
 
     def process(self):
