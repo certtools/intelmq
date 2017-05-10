@@ -8,7 +8,11 @@ in development
 - Dropped install scripts, see INSTALL.md for more detailed instructions and explanations
 
 ### Bots
+- added bots.experts.idea, bots.outputs.files
 - possibility to split large csv Reports into Chunks, currently possible for mail url and file collector
+
+### Harmonization
+- New field named output to support export to foreign formats
 
 v1.0.0.dev7
 -----------
@@ -17,7 +21,7 @@ v1.0.0.dev7
 - more verbose installation and upgrade instructions
 
 ### Bot changes
-- added bots.experts.field_reducer and bots.outputs.smtp
+- added bots.experts.field_reducer, bots.outputs.smtp
 - bots.collectors.alienvault_otx: OTX library has been removed, install it as package instead
 - bots.experts.deduplicator: `ignore_keys` has been renamed to `filter_keys` and `filter_type` has been removed.
 - bots.experts.modify: The configration is now list-based for a consistent ordering
