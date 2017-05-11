@@ -96,6 +96,8 @@ chmod -R 0770 /opt/intelmq
 chown -R intelmq.intelmq /opt/intelmq
 ```
 
+Please note that the PyPi / pip3 installation method does not create /opt/intelmq, as described in [#189](/certtools/intelmq/issues/819).
+
 #### From the repository
 
 The `REQUIREMENTS` files define a list of python packages and versions, which are necessary to run most components of IntelMQ. The defined (minimal) versions are recommendations. Some bots have additional dependencies which are mentioned in their documentation and their own `REQUIREMENTS` file (in their source directory).
