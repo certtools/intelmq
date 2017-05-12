@@ -9,7 +9,7 @@ from intelmq.lib.bot import ParserBot
 class Malc0deParserBot(ParserBot):
 
     WINDOWS_FORMAT = {'http://malc0de.com/bl/BOOT',
-                      'http://malc0de.com/bl/BOOT'}
+                      'https://malc0de.com/bl/BOOT'}
 
     BIND_FORMAT = {'http://malc0de.com/bl/ZONES',
                    'https://malc0de.com/bl/ZONES'}
