@@ -1,3 +1,9 @@
+intelmq (1.0.0~dev6+intevation.2.0~rc6) unstable; urgency=medium
+
+  * New rc, fixed packaging for xenial.
+
+ -- Sascha Wilde <wilde@intevation.de>  Fri, 12 May 2017 16:54:44 +0200
+
 intelmq (1.0.0~dev6+intevation.2.0~rc5) unstable; urgency=low
 
   * New rc.
