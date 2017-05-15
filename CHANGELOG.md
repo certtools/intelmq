@@ -4,6 +4,12 @@ CHANGELOG
 in development
 --------------
 
+### General changes
+- It's now configurable how often the bots are logging how much events they have sent, based on both the amount and time. (fixes #743)
+
+### Configuration
+- Added `log_processed_messages_count` (500) and `log_processed_messages_seconds` (900) to defaults.conf.
+
 ### Documentation
 - Dropped install scripts, see INSTALL.md for more detailed instructions and explanations
 
