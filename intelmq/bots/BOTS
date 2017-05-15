@@ -1,6 +1,6 @@
 {
     "Collector": {
-        "Fileinput": {
+        "File": {
             "description": "Fileinput collector fetches data from a file.",
             "module": "intelmq.bots.collectors.file.collector_file",
             "parameters": {
@@ -118,7 +118,7 @@
                 "ssl_client_certificate": null
             }
         },
-        "XMPP collector": {
+        "XMPP": {
             "description": "This bot can connect to an XMPP Server and one room, in order to receive reports from it. TLS is used by default. rate_limit is ineffective here. Bot can either pass the body or the whole event.",
             "module": "intelmq.bots.collectors.xmpp.collector",
             "parameters": {
