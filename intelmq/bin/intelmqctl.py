@@ -440,10 +440,10 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             parser_run = subparsers.add_parser('run', help='Run a bot interactively')
             parser_run.add_argument('bot_id',
                                     choices=self.runtime_configuration.keys())
-            parser_run_subparsers = parser_run.add_subparsers(title='run-subcommands')            
+            parser_run_subparsers = parser_run.add_subparsers(title='run-subcommands')
             parser_run_message = parser_run_subparsers.add_parser('message', help='Debug bot\'s pipelines. Get the message in the input pipeline, pop it (cut it) and display it, or send the message directly to bot\'s output pipeline.')
-            parser_run_message.add_argument('message_action_kind', choices = ["get","pop","send"])
-            parser_run_message.add_argument('msg', nargs = '?', help='If send was chosen, put here the message in JSON.')
+            parser_run_message.add_argument('message_action_kind', choices=["get", "pop", "send"])
+            parser_run_message.add_argument('msg', nargs='?', help='If send was chosen, put here the message in JSON.')
             parser_run_message.set_defaults(run_subcommand="message")
             parser_run_process = parser_run_subparsers.add_parser('process', help='Single run of bot\'s process() method.')
             parser_run_process.add_argument('--dryrun', '-d', action='store_true',

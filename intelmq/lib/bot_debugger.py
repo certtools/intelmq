@@ -28,7 +28,7 @@ class BotDebugger:
                 if isinstance(h, StreamHandler):
                     h.setLevel(level)
 
-        def __init__(self, module_path, bot_id, run_subcommand=None, message_kind=None, dryrun=None, msg=None):        
+        def __init__(self, module_path, bot_id, run_subcommand=None, message_kind=None, dryrun=None, msg=None):
             module = import_module(module_path)
             bot = getattr(module, 'BOT')
             self.instance = bot(bot_id)
@@ -70,14 +70,15 @@ class BotDebugger:
                 self.instance.logger.info("Trying to pop the message...")
                 pprint(self.instance.receive_message())
                 self.instance.acknowledge_message()
-            elif message_action_kind == "send":                
+            elif message_action_kind == "send":
                 if msg:
                     try:
                         msg = MessageFactory.unserialize(msg)
-                    except (Exception, KeyError, TypeError, json.JSONDecodeError) as exc:                        
+                    except (Exception, KeyError, TypeError, json.JSONDecodeError) as exc:
                         print("Message can not be parsed from JSON: " + error_message_from_exc(exc))
                         return
                     self.instance.send_message(msg)
                     self.instance.logger.info("Message sent to output pipelines.")
                 else:
                     self.instance.logger.info("Message missing!")
+                    
