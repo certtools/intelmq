@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
-
 import re
-
+import io
 import requests
-
-from intelmq.lib.bot import CollectorBot
 
 try:
     import imbox
 except ImportError:
     imbox = None
+
+from intelmq.lib.bot import CollectorBot
+from intelmq.lib.splitreports import generate_reports
 
 
 class MailURLCollectorBot(CollectorBot):
@@ -21,6 +21,10 @@ class MailURLCollectorBot(CollectorBot):
 
         # Build request
         self.set_request_parameters()
+
+        self.chunk_size = getattr(self.parameters, 'chunk_size', None)
+        self.chunk_replicate_header = getattr(self.parameters,
+                                              'chunk_replicate_header', None)
 
     def process(self):
         mailbox = imbox.Imbox(self.parameters.mail_host,
@@ -45,7 +49,7 @@ class MailURLCollectorBot(CollectorBot):
                         # carriage returns
                         url = url.strip()
 
-                        self.logger.info("Downloading report from %r." % url)
+                        self.logger.info("Downloading report from %r.", url)
                         resp = requests.get(url=url,
                                             auth=self.auth, proxies=self.proxy,
                                             headers=self.http_header,
@@ -59,9 +63,12 @@ class MailURLCollectorBot(CollectorBot):
 
                         self.logger.info("Report downloaded.")
 
-                        report = self.new_report()
-                        report.add("raw", resp.content)
-                        self.send_message(report)
+                        template = self.new_report()
+
+                        for report in generate_reports(template, io.BytesIO(resp.content),
+                                                       self.chunk_size,
+                                                       self.chunk_replicate_header):
+                            self.send_message(report)
 
                         # Only mark read if message relevant to this instance,
                         # so other instances watching this mailbox will still

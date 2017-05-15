@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Parsers simple newline separated list of domains.
+Parses simple newline separated list of domains.
 
 Docs:
  - https://feodotracker.abuse.ch/blocklist/

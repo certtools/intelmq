@@ -20,7 +20,8 @@ import os
 import re
 import sys
 import traceback
-from typing import Sequence, Union
+
+from typing import Sequence, Optional, Union
 
 import intelmq
 import pytz
@@ -213,7 +214,7 @@ class StreamHandler(logging.StreamHandler):
 
 
 def log(name: str, log_path: str=intelmq.DEFAULT_LOGGING_PATH, log_level: str="DEBUG",
-        stream: Union[None, object]=None, syslog: Union[bool, str, list, tuple]=None):
+        stream: Optional[object]=None, syslog: Union[bool, str, list, tuple]=None):
     """
     Returns a logger instance logging to file and sys.stderr or other stream.
 
@@ -308,8 +309,8 @@ def parse_logline(logline: str, regex: str=LOG_REGEX) -> dict:
         result: dictionary with keys: ['date', 'bot_id', 'log_level', 'message']
 
     See also:
-        LOG_REGEX: Regular expressen for default log format of file handler
-        SYSLOG_REGEX: Regular expressen for log format of syslog
+        LOG_REGEX: Regular expression for default log format of file handler
+        SYSLOG_REGEX: Regular expression for log format of syslog
     """
 
     match = re.match(regex, logline)

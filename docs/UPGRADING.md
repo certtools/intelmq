@@ -13,6 +13,12 @@ For installation instructions, see [INSTALL.md](INSTALL.md).
 
 ## Upgrade IntelMQ
 
+Before upgrading, check that your setup is clean and there are no events in the queues:
+```bash
+intelmqctl check
+intelmqctl list queues -q
+```
+
 The upgrade depends on how you installed IntelMQ.
 
 ### Packages
@@ -37,6 +43,7 @@ And run the installation again:
 ```bash
 > pip install .
 ```
+For editable installations, run `pip install -e .` instead.
 
 ## Check the installation
 

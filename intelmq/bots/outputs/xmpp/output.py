@@ -63,10 +63,8 @@ try:
                 self.logger.error('Server is taking too long to respond.')
                 self.disconnect()
 
-            self.logger.debug('Room:' + self.xmpp_room)
-
             if self.xmpp_room:  # and self.plugin.get('xep_0045') # this check should also exist!
-                self.logger.debug("Joining room: %s." % self.xmpp_room)
+                self.logger.debug("Joining room: %s.", self.xmpp_room)
                 pwd = self.xmpp_room_password if self.xmpp_room_password else ""
                 self.plugin['xep_0045'].joinMUC(self.xmpp_room,
                                                 self.xmpp_room_nick,
@@ -92,7 +90,7 @@ class XMPPOutputBot(Bot):
         xmpp_password = getattr(self.parameters, "xmpp_password", None)
 
         if None in (xmpp_user, xmpp_server, xmpp_password):
-            self.logger.error('No User / Password provided')
+            self.logger.error('No User / Password provided.')
             self.stop()
         else:
             xmpp_login = xmpp_user + '@' + xmpp_server
@@ -108,14 +106,14 @@ class XMPPOutputBot(Bot):
 
         # Be sure the receiver was set up
         if not self.muc and None in (xmpp_to_user, xmpp_to_server):
-            self.logger.error('No receiver for direct messages provided')
+            self.logger.error('No receiver for direct messages provided.')
             self.stop()
         else:
             self.xmpp_receiver = xmpp_to_user + '@' +\
                 xmpp_to_server
 
         if self.muc and not xmpp_room:
-            self.logger.error('No room provided')
+            self.logger.error('No room provided.')
             self.stop()
         else:
             self.xmpp_receiver = xmpp_room
@@ -154,10 +152,10 @@ class XMPPOutputBot(Bot):
             # TODO: proper error handling.
             # Right now it cannot be detected if the message was sent successfully.
             if self.muc:
-                self.logger.debug("Trying to send to room %s." % self.xmpp_receiver)
+                self.logger.debug("Trying to send to room %s.", self.xmpp_receiver)
                 self.xmpp.send_message(mto=self.xmpp_receiver, mbody=jevent, mtype='groupchat')
             else:
-                self.logger.debug("Trying to send to %s." % (self.xmpp_receiver))
+                self.logger.debug("Trying to send to %s.", self.xmpp_receiver)
                 self.xmpp.send_message(mto=self.xmpp_receiver, mbody=jevent)
         except sleekxmpp.exceptions.XMPPError as err:
             self.logger.error('There was an error when sending the event.')

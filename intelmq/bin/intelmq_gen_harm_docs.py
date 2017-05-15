@@ -38,7 +38,7 @@ def main():
 
     for key, value in sorted(HARM.items()):
         section = ' '.join([sec.title() for sec in key.split('.')[:-1]])
-        output += '|{}|{}|[{}](#{})|{}|\n'.format(' ' if not section else section,  # needed for github
+        output += '|{}|{}|[{}](#{})|{}|\n'.format(' ' if not section else section,  # needed for GitHub
                                                   key, value['type'],
                                                   value['type'].lower(),
                                                   value['description'])
@@ -61,6 +61,7 @@ def main():
             pass
 
     return output
+
 
 if __name__ == '__main__':  # pragma: no cover
     print(main())

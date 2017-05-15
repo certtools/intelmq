@@ -1,14 +1,36 @@
 CHANGELOG
 ==========
 
-v1.0.0.dev7 (in development, master branch)
+in development
+--------------
+
+### Documentation
+- Dropped install scripts, see INSTALL.md for more detailed instructions and explanations
+
+### Bots
+- added bots.experts.idea, bots.outputs.files
+- possibility to split large csv Reports into Chunks, currently possible for mail url and file collector
+
+### Harmonization
+- New field named output to support export to foreign formats
+
+v1.0.0.dev7
 -----------
 
+### Documentation
+- more verbose installation and upgrade instructions
+
 ### Bot changes
-- ENH: added bots.experts.field_reducer.expert
+- added bots.experts.field_reducer, bots.outputs.smtp
+- bots.collectors.alienvault_otx: OTX library has been removed, install it as package instead
+- bots.experts.deduplicator: `ignore_keys` has been renamed to `filter_keys` and `filter_type` has been removed.
+- bots.experts.modify: The configration is now list-based for a consistent ordering
+- bots.experts.tor_node as an optional parameter `overwrite`
+- API keys will be removed from feed.url if possible
 
 ### Harmonization
 - New parameter and field named feed.documentation to link to documentation of the feed
+- classification.taxonomy is lower case only
 
 v1.0.0.dev6
 -----------
@@ -68,7 +90,7 @@ Changes between 0.9 and 1.0.0.dev6
 - changed configuration syntax for bots.experts.modify to a more simple variant
 
 #### Outputs
-- added: amqp, elasticsearch, redis, restapi, stomp, tcp, udp, xmpp
+- added: amqp, elasticsearch, redis, restapi, smtp, stomp, tcp, udp, xmpp
 - removed: debug, intelmqmailer (broken), logcollector
 - enhanced all outputs
 
@@ -120,6 +142,7 @@ Changes between 0.9 and 1.0.0.dev6
 - New parameter and field named feed.accuracy to represent the accuracy of each feed
 - New parameter and field named feed.provider to document the name of the source of each feed
 - New field `classification.identifier`
+-`classification.taxonomy` is now lower case only
 
 ### Known issues
  - Harmonization: hashes are not normalized and classified, see also issue #394 and pull #634

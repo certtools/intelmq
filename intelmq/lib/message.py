@@ -13,67 +13,64 @@ import intelmq.lib.exceptions as exceptions
 import intelmq.lib.harmonization
 from intelmq import HARMONIZATION_CONF_FILE
 from intelmq.lib import utils
-from typing import Sequence
+from typing import Sequence, Optional
 
 
 __all__ = ['Event', 'Message', 'MessageFactory', 'Report']
-
-
-harm_config = utils.load_configuration(HARMONIZATION_CONF_FILE)
+VALID_MESSSAGE_TYPES = ('Event', 'Message', 'Report')
 
 
 class MessageFactory(object):
     """
     unserialize: JSON encoded message to object
     serialize: object to JSON encoded object
-    """    
+    """
 
     @staticmethod
-    def from_dict(message):
+    def from_dict(message: dict, harmonization=None,
+                  default_type: Optional[str]=None) -> dict:
         """
         Takes dictionary Message object, returns instance of correct class.
 
-        The class is determined by __type attribute.
+        Parameters:
+            message: the message which should be converted to a Message object
+            harmonization: a dictionary holding the used harmonization
+            default_type: If '__type' is not present in message, the given type will be used
+
+        See also:
+            MessageFactory.unserialize
+            MessageFactory.serialize
         """
+        if default_type and "__type" not in message:
+            message["__type"] = default_type
         try:
             class_reference = getattr(intelmq.lib.message, message["__type"])
         except AttributeError:
             raise exceptions.InvalidArgument('__type',
                                              got=message["__type"],
-                                             expected=list(harm_config.keys()),
-                                             docs=HARMONIZATION_CONF_FILE)
-        del message["__type"]
-        return class_reference(message, auto=True)
-
-    @staticmethod
-    def unserialize(raw_message, harmonization=None):
-        """
-        Takes JSON-encoded Message object, returns instance of correct class.
-
-        The class is determined by __type attribute.
-        """
-        message = Message.unserialize(raw_message)
-        try:
-            #logger = utils.log("message log nee",log_level='DEBUG')
-            #logger.info(message)
-            #if "__type" in message:
-                #logger.info("OK EDVARD INFO")
-            class_reference = getattr(intelmq.lib.message, message["__type"])
-            #elif type in message:
-#                logger.info("NOT OK EDVARD INFO")
-#                class_reference = getattr(intelmq.lib.message, message["type"])
-#            else:
-#                logger.info("KLURVAAAAAAAAAA TADY BUDE CHYBA PITOMY INTELMQ")
-#                raise "Edvarde, sem to nesmi dospet"
-        except AttributeError:
-            logger.info("TOHLE JE TA SPATNA MESSAGE")
-            logger.info(message)
-            raise exceptions.InvalidArgument('__type',
-                                             got=message["__type"],
-                                             expected=list(harm_config.keys()),
+                                             expected=VALID_MESSSAGE_TYPES,
                                              docs=HARMONIZATION_CONF_FILE)
         del message["__type"]
         return class_reference(message, auto=True, harmonization=harmonization)
+
+    @staticmethod
+    def unserialize(raw_message: str, harmonization: dict=None,
+                    default_type: Optional[str]=None) -> dict:
+        """
+        Takes JSON-encoded Message object, returns instance of correct class.
+
+        Parameters:
+            message: the message which should be converted to a Message object
+            harmonization: a dictionary holding the used harmonization
+            default_type: If '__type' is not present in message, the given type will be used
+
+        See also:
+            MessageFactory.from_dict
+            MessageFactory.serialize
+        """
+        message = Message.unserialize(raw_message)
+        return MessageFactory.from_dict(message, harmonization=harmonization,
+                                        default_type=default_type)
 
     @staticmethod
     def serialize(message):
@@ -96,15 +93,14 @@ class Message(dict):
             classname = self.__class__.__name__.lower()
 
         if harmonization is None:
-            try:
-                self.harmonization_config = harm_config[classname]
-            except KeyError:
-                raise exceptions.InvalidArgument('__type',
-                                                 got=classname,
-                                                 expected=list(harm_config.keys()),
-                                                 docs=HARMONIZATION_CONF_FILE)
-        else:
+            harmonization = utils.load_configuration(HARMONIZATION_CONF_FILE)
+        try:
             self.harmonization_config = harmonization[classname]
+        except KeyError:
+            raise exceptions.InvalidArgument('__type',
+                                             got=classname,
+                                             expected=VALID_MESSSAGE_TYPES,
+                                             docs=HARMONIZATION_CONF_FILE)
 
         super(Message, self).__init__()
         if isinstance(message, dict):
@@ -161,7 +157,7 @@ class Message(dict):
             force: Deprecated, use overwrite (default: False)
             overwrite: Overwrite an existing value if it already exists (default: False)
             ignore: List or tuple of values to ignore, deprecated (default: ())
-            raise_failure: If a intelmq.lib.exceptions.InvalidValue should be raisen for
+            raise_failure: If a intelmq.lib.exceptions.InvalidValue should be raised for
                 invalid values (default: True). If false, the return parameter will be
                 False in case of invalid values.
 
@@ -170,7 +166,7 @@ class Message(dict):
             * False if the value is invalid and raise_failure is False.
 
         Raises:
-            intelmq.lib.exceptions.KeyExists: If key exists and won't be overwritten explcitly.
+            intelmq.lib.exceptions.KeyExists: If key exists and won't be overwritten explicitly.
             intelmq.lib.exceptions.InvalidKey: if key is invalid.
             intelmq.lib.exceptions.InvalidArgument: if ignore is not list or tuple.
             intelmq.lib.exceptions.InvalidValue: If value is not valid for the given key and
@@ -220,39 +216,39 @@ class Message(dict):
         super(Message, self).__setitem__(key, value)
         return True
 
-    def update(self, key, value, sanitize=True):
+    def update(self, key: str, value: str, sanitize: bool=True):
         warnings.warn('update(...) will be changed to dict.update() in 1.0. '
                       'Use change(key, value, sanitize) instead.',
                       DeprecationWarning)
         return self.change(key, value, sanitize)
 
-    def change(self, key, value, sanitize=True):
+    def change(self, key: str, value: str, sanitize: bool=True):
         if key not in self:
             raise exceptions.KeyNotExists(key)
         return self.add(key, value, overwrite=True, sanitize=sanitize)
 
-    def contains(self, key):
+    def contains(self, key: str):
         warnings.warn('The contains-method will be removed in 1.0.',
                       DeprecationWarning)
         return key in self
 
-    def finditems(self, keyword):
+    def finditems(self, keyword: str):
         for key, value in super(Message, self).items():
             if key.startswith(keyword):
                 yield key, value
 
     def copy(self):
         class_ref = self.__class__.__name__
-        #logger = utils.log("message log",log_level='DEBUG')
-        #logger.info("set type copy" + str(class_ref))
         self['__type'] = class_ref
         retval = getattr(intelmq.lib.message,
-                         class_ref)(super(Message, self).copy())
+                         class_ref)(super(Message, self).copy(),
+                                    harmonization={self.__class__.__name__.lower(): self.harmonization_config})
         del self['__type']
         return retval
 
     def deep_copy(self):
-        return MessageFactory.unserialize(MessageFactory.serialize(self))
+        return MessageFactory.unserialize(MessageFactory.serialize(self),
+                                          harmonization={self.__class__.__name__.lower(): self.harmonization_config})
 
     def __unicode__(self):
         return self.serialize()
@@ -261,35 +257,27 @@ class Message(dict):
         return self.serialize()
 
     def serialize(self):
-        #logger = utils.log("message log",log_level='DEBUG')
-        #logger.info("set type serialize" + str(self.__class__.__name__))
         self['__type'] = self.__class__.__name__
         json_dump = utils.decode(json.dumps(self))
         del self['__type']
         return json_dump
 
     @staticmethod
-    def unserialize(message_string):
+    def unserialize(message_string: str):
         message = json.loads(message_string)
         return message
 
-    def __is_valid_key(self, key):
+    def __is_valid_key(self, key: str):
         if key in self.harmonization_config or key == '__type':
             return True
         return False
 
-    def __is_valid_value(self, key, value):
+    def __is_valid_value(self, key: str, value: str):
         if key == '__type':
             return (True, )
         config = self.__get_type_config(key)
         class_reference = getattr(intelmq.lib.harmonization, config['type'])
         if not class_reference().is_valid(value):
-            logger = utils.log("edvard",log_level='DEBUG')
-            logger.info(config['type'])
-            logger.info(intelmq.lib.harmonization)
-            logger.info(config)
-            logger.info(class_reference())
-            logger.info(value)
             return (False, 'is_valid returned False.')
         if 'length' in config:
             length = len(str(value))
@@ -304,12 +292,12 @@ class Message(dict):
                 return (False, 'regex (case insensitive) did not match.')
         return (True, )
 
-    def __sanitize_value(self, key, value):
+    def __sanitize_value(self, key: str, value: str):
         class_name = self.__get_type_config(key)['type']
         class_reference = getattr(intelmq.lib.harmonization, class_name)
         return class_reference().sanitize(value)
 
-    def __get_type_config(self, key):
+    def __get_type_config(self, key: str):
         class_name = self.harmonization_config[key]
         return class_name
 
@@ -317,7 +305,7 @@ class Message(dict):
         return int(self.hash(), 16)
 
     def hash(self, *, filter_keys=frozenset(), filter_type="blacklist"):
-        """Return a sha256 hash of the message as a hexadecimal string.
+        """Return a SHA256 hash of the message as a hexadecimal string.
         The hash is computed over almost all key/value pairs. Depending on
         filter_type parameter (blacklist or whitelist), the keys defined in
         filter_keys_list parameter will be considered as the keys to ignore
@@ -352,7 +340,7 @@ class Message(dict):
 
         return event_hash.hexdigest()
 
-    def to_dict(self, hierarchical=False, with_type=False):
+    def to_dict(self, hierarchical: bool=False, with_type: bool=False):
         json_dict = dict()
 
         if with_type:
@@ -387,7 +375,8 @@ class Message(dict):
 
 class Event(Message):
 
-    def __init__(self, message: dict=(), auto: bool=False, harmonization: dict=None):
+    def __init__(self, message: Optional[dict]=(), auto: bool=False,
+                 harmonization: Optional[dict]=None):
         """
         Parameters:
             message: Give a report and feed.name, feed.url and
@@ -421,7 +410,8 @@ class Event(Message):
 
 class Report(Message):
 
-    def __init__(self, message: dict=(), auto: bool=False, harmonization: dict=None):
+    def __init__(self, message: Optional[dict]=(), auto: bool=False,
+                 harmonization: Optional[dict]=None):
         """
         Parameters:
             message: Passed along to Message's and dict's init

@@ -44,7 +44,7 @@ class ModifyExpertBot(Bot):
         matches = {}
 
         for name, rule in condition.items():
-            # empty string means non-existant field
+            # empty string means non-existent field
             if rule == '':
                 if name in event:
                     return None
@@ -60,9 +60,9 @@ class ModifyExpertBot(Bot):
                     else:
                         matches[name] = match
                 else:
-                    self.logger.warn("Type of rule ({!r}) and data ({!r}) do not "
-                                     "match in {!s}, {}!".format(type(rule), type(event[name]),
-                                                                 identifier, name))
+                    self.logger.warn("Type of rule (%r) and data (%r) do not "
+                                     "match in %s, %s!",
+                                     type(rule), type(event[name]), identifier, name)
             elif not isinstance(event[name], str):  # int, float, etc
                 if event[name] != rule:
                     return None
@@ -89,7 +89,7 @@ class ModifyExpertBot(Bot):
             rule_id, rule_selection, rule_action = rule['rulename'], rule['if'], rule['then']
             matches = self.matches(rule_id, event, rule_selection)
             if matches is not None:
-                self.logger.debug('Apply rule {}.'.format(rule_id))
+                self.logger.debug('Apply rule %s.', rule_id)
                 self.apply_action(event, rule_action, matches)
 
         self.send_message(event)

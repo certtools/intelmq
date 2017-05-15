@@ -15,7 +15,7 @@ The filter bot is capable of filtering specific events.
 
 Both parameters accept string values describing absolute or relative time:
 * absolute
- * basically anything parsable by datetime parser, eg. "2015-09-012T06:22:11+00:00"
+ * basically anything parseable by datetime parser, eg. "2015-09-012T06:22:11+00:00"
  * `time.source` taken from the event will be compared to this value to decide the filter behavior
 * relative
  * accepted string formatted like this "<integer> <epoch>", where epoch could be any of following strings (could optionally end with trailing 's'): hour, day, week, month, year

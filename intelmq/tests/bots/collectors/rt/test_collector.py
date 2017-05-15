@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 """
+import os
 
-import intelmq.bots.collectors.rt.collector_rt
+if os.environ.get('INTELMQ_TEST_EXOTIC'):
+    import intelmq.bots.collectors.rt.collector_rt

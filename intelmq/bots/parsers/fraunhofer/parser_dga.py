@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-The source provides a JSOn file with a dictionary. The keys of this dict are
+The source provides a JSON file with a dictionary. The keys of this dict are
 identifiers and the values are lists of domains.
 """
 import json

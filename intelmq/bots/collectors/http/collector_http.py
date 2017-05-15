@@ -29,8 +29,7 @@ class HTTPCollectorBot(CollectorBot):
         self.set_request_parameters()
 
     def process(self):
-        self.logger.info("Downloading report from %s" %
-                         self.parameters.http_url)
+        self.logger.info("Downloading report from %s", self.parameters.http_url)
 
         resp = requests.get(url=self.parameters.http_url, auth=self.auth,
                             proxies=self.proxy, headers=self.http_header,

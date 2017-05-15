@@ -44,6 +44,7 @@ CREATE TABLE events (
     "malware.version" text,
     "misp.attribute_uuid" varchar(36),
     "misp.event_uuid" varchar(36),
+    "output" json,
     "protocol.application" varchar(100),
     "protocol.transport" varchar(11),
     "raw" text,

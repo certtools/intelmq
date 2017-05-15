@@ -232,13 +232,34 @@ class DateTime(GenericType):
     @staticmethod
     def from_timestamp(tstamp, tzone='UTC'):
         """
-        Returns ISO formated datetime from given timestamp.
+        Returns ISO formatted datetime from given timestamp.
         You can give timezone for given timestamp, UTC by default.
         """
         dtime = (datetime.datetime(1970, 1, 1, tzinfo=pytz.utc) +
                  datetime.timedelta(seconds=tstamp))
         localized = pytz.timezone(tzone).normalize(dtime)
         return str(localized.isoformat())
+
+    @staticmethod
+    def from_windows_nt(tstamp: int) -> str:
+        """
+        Converts the Windows NT / LDAP / Active Directory format to ISO format.
+
+        The format is: 100 nanoseconds (10^-7s) since 1601-01-01.
+        UTC is assumed.
+
+        Parameters:
+            tstamp: Time in LDAP format as integer or string. Will be converted if necessary.
+
+        Returns:
+            Converted ISO format string
+
+        See also:
+            https://www.epochconverter.com/ldap
+        """
+        epoch = datetime.datetime(1601, 1, 1, tzinfo=pytz.utc)
+        dtime = epoch + datetime.timedelta(seconds=int(tstamp) * 10**-7)
+        return dtime.isoformat()
 
     @staticmethod
     def generate_datetime_now():
@@ -252,7 +273,7 @@ class DateTime(GenericType):
 class Float(GenericType):
     """
     Float type. Without sanitation only python float/integer/long is
-    accepted. Boolean is excplicitly denied.
+    accepted. Boolean is explicitly denied.
 
     Sanitation accepts strings and everything float() accepts.
     """
@@ -364,7 +385,7 @@ class FQDN(GenericType):
 class Integer(GenericType):
     """
     Integer type. Without sanitation only python integer/long is accepted.
-    Bool is excplicitly denied.
+    Bool is explicitly denied.
 
     Sanitation accepts strings and everything int() accepts.
     """
@@ -398,7 +419,7 @@ class IPAddress(GenericType):
 
     Sanitation accepts strings and objects of ipaddress.IPv4Address and ipaddress.IPv4Address.
 
-    Valid values are only strings. 0.0.0.0 is explictly not allowed.
+    Valid values are only strings. 0.0.0.0 is explicitly not allowed.
     """
 
     @staticmethod

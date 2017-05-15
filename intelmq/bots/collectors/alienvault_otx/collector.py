@@ -3,12 +3,18 @@ import json
 
 from intelmq.lib.bot import CollectorBot
 
-from OTXv2 import OTXv2
+try:
+    from OTXv2 import OTXv2
+except ImportError:
+    OTXv2 = None
 
 
 class AlienVaultOTXCollectorBot(CollectorBot):
 
     def init(self):
+        if OTXv2 is None:
+            raise ValueError('Could not import OTXv2. Please install it.')
+
         if hasattr(self.parameters, 'http_ssl_proxy'):
             self.logger.warning("Parameter 'http_ssl_proxy' is deprecated and will be removed in "
                                 "version 1.0!")

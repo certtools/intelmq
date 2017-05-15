@@ -69,7 +69,7 @@ class IntelMQHarmonizationException(IntelMQException):
 
 
 '''
-    IntelMQ Harmonization Exception SubClasses
+    IntelMQ Harmonization Exception sub classes
 '''
 
 

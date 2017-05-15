@@ -10,8 +10,18 @@ See the changelog for a full list of changes.
 * system.conf and startup.conf have been dropped entirely, use defaults.conf and runtime.conf instead
 * Many bots have been renamed/moved or deleted. Please read the Bots section in the changelog and upgrade your configuration accordingly.
 
-1.0.0.dev7 (in developement)
-----------------------------
+in development
+--------------
+
+### Postgres databases
+Use the following statement carefully to upgrade your database.
+```SQL
+ALTER TABLE events
+   ADD COLUMN "output" json
+```
+
+1.0.0.dev7
+----------
 
 ### Configuration
 * The deduplicator expert requires a new parameter `filter_type`, the old previous default was `blacklist`. The key `ignore_keys` has been renamed to `filter_keys`.
@@ -54,7 +64,7 @@ Take care that no data will be lost, the statement may not be complete!
 Also note that size constraints have changed!
 ```SQL
 ALTER TABLE events
-   ADD COLUMN "feed.documentation" text
+   ADD COLUMN "feed.documentation" text;
 
 UPDATE events
    SET "source.local_hostname"="destination.local_hostname",
@@ -69,6 +79,9 @@ UPDATE events
 UPDATE events
    SET "feed.url" = substring("feed.url" from 1 for 36)
    WHERE SUBSTRING("feed.url" from 1 for 37) = 'https://data.phishtank.com/data/'
+UPDATE events
+   SET "classification.taxonomy" = lower("classification.taxonomy")
+   WHERE "classification.taxonomy" IS NOT NULL;
 ```
 
 1.0.0.dev6
