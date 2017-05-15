@@ -20,6 +20,7 @@ from intelmq import (DEFAULT_LOGGING_PATH, DEFAULTS_CONF_FILE,
 from intelmq.lib import exceptions, utils
 import intelmq.lib.message as libmessage
 from intelmq.lib.pipeline import PipelineFactory
+from typing import Any, Optional
 
 __all__ = ['Bot', 'CollectorBot', 'ParserBot']
 
@@ -29,8 +30,10 @@ class Bot(object):
     """ Not to be reset when initialized again on reload. """
     __current_message = None
     __message_counter = 0
+    # Bot is capable of SIGHUP delaying
+    sighup_delay = True
 
-    def __init__(self, bot_id):
+    def __init__(self, bot_id: str):
         self.__log_buffer = []
         self.parameters = Parameters()
 
@@ -62,7 +65,7 @@ class Bot(object):
             self.logger = utils.log(self.__bot_id, syslog=syslog,
                                     log_path=self.parameters.logging_path,
                                     log_level=self.parameters.logging_level)
-        except:
+        except Exception:
             self.__log_buffer.append(('critical', traceback.format_exc()))
             self.stop()
         else:
@@ -91,12 +94,14 @@ class Bot(object):
             self.stop()
             raise
 
-    def __handle_sighup_signal(self, signum, stack):
+    def __handle_sighup_signal(self, signum: int, stack: Optional[object]):
         """
         Called when signal is received and postpone.
         """
-        self.logger.info('Received SIGHUP, initializing again later.')
         self.__sighup = True
+        self.logger.info('Received SIGHUP, initializing again later.')
+        if not self.sighup_delay:
+            self.__handle_sighup()
 
     def __handle_sighup(self):
         """
@@ -106,8 +111,8 @@ class Bot(object):
             return False
         self.logger.info('Handling SIGHUP, initializing again now.')
         self.__disconnect_pipelines()
-        self.logger.handlers = []  # remove all existing handlers
         self.shutdown()  # disconnects, stops threads etc
+        self.logger.handlers = []  # remove all existing handlers
         self.__init__(self.__bot_id)
         self.__connect_pipelines()
 
@@ -117,9 +122,9 @@ class Bot(object):
     def shutdown(self):
         pass
 
-    def start(self, starting=True, error_on_pipeline=True,
-              error_on_message=False, source_pipeline=None,
-              destination_pipeline=None):
+    def start(self, starting: bool=True, error_on_pipeline: bool=True,
+              error_on_message: bool=False, source_pipeline: Optional[str]=None,
+              destination_pipeline: Optional[str]=None):
 
         self.__source_pipeline = source_pipeline
         self.__destination_pipeline = destination_pipeline
@@ -127,7 +132,7 @@ class Bot(object):
         while True:
             try:
                 if not starting and (error_on_pipeline or error_on_message):
-                    self.logger.info('Bot will continue in %s seconds.' %
+                    self.logger.info('Bot will continue in %s seconds.',
                                      self.parameters.error_retry_delay)
                     time.sleep(self.parameters.error_retry_delay)
 
@@ -145,7 +150,7 @@ class Bot(object):
                 self.process()
                 self.__error_retries_counter = 0  # reset counter
 
-                if self.parameters.rate_limit:
+                if self.parameters.rate_limit and self.run_mode != 'scheduled':
                     self.__sleep()
 
             except exceptions.PipelineError as exc:
@@ -159,6 +164,7 @@ class Bot(object):
                 self.__disconnect_pipelines()
 
             except Exception as exc:
+                # in case of serious system issues, exit immediately
                 if isinstance(exc, MemoryError):
                     self.logger.exception('Out of memory. Exit immediately.')
                     self.stop()
@@ -176,11 +182,15 @@ class Bot(object):
 
                 if self.parameters.error_log_message:
                     # Dump full message if explicitly requested by config
-                    self.logger.info("Current Message(event): {!r}."
-                                     "".format(self.__current_message))
+                    self.logger.info("Current Message(event): %r.",
+                                     self.__current_message)
+
+                # In case of permanent failures, stop now
+                if isinstance(exc, exceptions.ConfigurationError):
+                    self.stop()
 
             except KeyboardInterrupt:
-                self.logger.error("Received KeyboardInterrupt.")
+                self.logger.info("Received KeyboardInterrupt.")
                 self.stop(exitcode=0)
                 del self
                 break
@@ -209,16 +219,27 @@ class Bot(object):
                             self.acknowledge_message()
 
                             # when bot acknowledge the message,
-                            # dont need to wait again
+                            # don't need to wait again
                             error_on_message = False
 
+                        # run_mode: scheduled
+                        if self.run_mode == 'scheduled':
+                            self.logger.info('Shutting down scheduled bot.')
+                            self.stop()
+
                         # error_procedure: stop
-                        if self.parameters.error_procedure == "stop":
+                        elif self.parameters.error_procedure == "stop":
                             self.stop()
 
                         # error_procedure: pass
                         else:
                             self.__error_retries_counter = 0  # reset counter
+
+                # no errors, check for run mode: scheduled
+                elif self.run_mode == 'scheduled':
+                    self.logger.info('Shutting down scheduled bot.')
+                    self.stop()
+
             self.__handle_sighup()
 
     def __sleep(self):
@@ -237,10 +258,10 @@ class Bot(object):
             self.__handle_sighup()
             remaining = self.parameters.rate_limit - (time.time() - starttime)
 
-    def stop(self, exitcode=1):
+    def stop(self, exitcode: int=1):
         try:
             self.shutdown()
-        except:
+        except BaseException:
             pass
 
         self.__disconnect_pipelines()
@@ -253,10 +274,6 @@ class Bot(object):
             self.__print_log_buffer()
 
         if not getattr(self.parameters, 'testing', False):
-            try:
-                self.logger.error("Exiting.")
-            except:
-                print("Exiting")
             del self
             exit(exitcode)
 
@@ -267,8 +284,8 @@ class Bot(object):
             print(level.upper(), '-', message)
         self.__log_buffer = []
 
-    def __check_bot_id(self, str):
-        res = re.search('[^0-9a-zA-Z\-]+', str)
+    def __check_bot_id(self, name: str):
+        res = re.search('[^0-9a-zA-Z\-]+', name)
         if res:
             self.__log_buffer.append(('error',
                                       "Invalid bot id, must match '"
@@ -276,15 +293,15 @@ class Bot(object):
             self.stop()
 
     def __connect_pipelines(self):
-        self.logger.debug("Loading source pipeline and queue %r." % self.__source_queues)
+        self.logger.debug("Loading source pipeline and queue %r.", self.__source_queues)
         self.__source_pipeline = PipelineFactory.create(self.parameters)
         self.__source_pipeline.set_queues(self.__source_queues, "source")
         self.__source_pipeline.connect()
         self.logger.debug("Connected to source queue.")
 
         if self.__destination_queues:
-            self.logger.debug("Loading destination pipeline and queues %r."
-                              "" % self.__destination_queues)
+            self.logger.debug("Loading destination pipeline and queues %r.",
+                              self.__destination_queues)
             self.__destination_pipeline = PipelineFactory.create(self.parameters)
             self.__destination_pipeline.set_queues(self.__destination_queues,
                                                    "destination")
@@ -311,11 +328,15 @@ class Bot(object):
             if not message:
                 self.logger.warning("Ignoring empty message at sending. Possible bug in bot.")
                 continue
+            if not self.__destination_pipeline:
+                raise exceptions.ConfigurationError('pipeline', 'No destination pipeline given, '
+                                                    'but needed')
+                self.stop()
 
             self.logger.debug("Sending message.")
             self.__message_counter += 1
             if self.__message_counter % 500 == 0:
-                self.logger.info("Processed %s messages." % self.__message_counter)
+                self.logger.info("Processed %s messages.", self.__message_counter)
 
             raw_message = libmessage.MessageFactory.serialize(message)
             self.__destination_pipeline.send(raw_message)
@@ -332,22 +353,27 @@ class Bot(object):
         # handle a sighup which happened during blocking read
         self.__handle_sighup()
 
-        self.__current_message = libmessage.MessageFactory.unserialize(message,
-                                                                       harmonization=self.harmonization)
+        try:
+            self.__current_message = libmessage.MessageFactory.unserialize(message,
+                                                                           harmonization=self.harmonization)
+        except exceptions.InvalidKey as exc:
+            # In case a incoming message is malformed an does not conform with the currently
+            # loaded harmonization, stop now as this will happen repeatedly without any change
+            raise exceptions.ConfigurationError('harmonization', exc.args[0])
 
         if 'raw' in self.__current_message and len(self.__current_message['raw']) > 400:
             tmp_msg = self.__current_message.to_dict(hierarchical=False)
             tmp_msg['raw'] = tmp_msg['raw'][:397] + '...'
         else:
             tmp_msg = self.__current_message
-        self.logger.debug('Received message {!r}.'.format(tmp_msg))
+        self.logger.debug('Received message %r.', tmp_msg)
 
         return self.__current_message
 
     def acknowledge_message(self):
         self.__source_pipeline.acknowledge()
 
-    def _dump_message(self, error_traceback, message):
+    def _dump_message(self, error_traceback, message: dict):
         if message is None:
             return
 
@@ -369,7 +395,7 @@ class Bot(object):
             with open(dump_file, 'r') as fp:
                 dump_data = json.load(fp)
                 dump_data.update(new_dump_data)
-        except:
+        except ValueError:
             dump_data = new_dump_data
 
         with open(dump_file, 'w') as fp:
@@ -402,11 +428,12 @@ class Bot(object):
                 self.__log_configuration_parameter("system", option, value)
 
     def __load_runtime_configuration(self):
-        self.logger.debug("Loading runtime configuration from %r." % RUNTIME_CONF_FILE)
+        self.logger.debug("Loading runtime configuration from %r.", RUNTIME_CONF_FILE)
         config = utils.load_configuration(RUNTIME_CONF_FILE)
 
         if self.__bot_id in list(config.keys()):
             params = config[self.__bot_id]
+            self.run_mode = params.get('run_mode', 'stream')
             if 'parameters' in params:
                 params = params['parameters']
             else:
@@ -416,7 +443,7 @@ class Bot(object):
                 self.__log_configuration_parameter("runtime", option, value)
 
     def __load_pipeline_configuration(self):
-        self.logger.debug("Loading pipeline configuration from %r." % PIPELINE_CONF_FILE)
+        self.logger.debug("Loading pipeline configuration from %r.", PIPELINE_CONF_FILE)
         config = utils.load_configuration(PIPELINE_CONF_FILE)
 
         self.__source_queues = None
@@ -433,10 +460,10 @@ class Bot(object):
                     self.__bot_id]['destination-queues']
 
         else:
-            raise ValueError("Pipeline configuration: no key "
-                             "{!r}.".format(self.__bot_id))
+            raise exceptions.ConfigurationError('pipeline', "no key "
+                                                "{!r}.".format(self.__bot_id))
 
-    def __log_configuration_parameter(self, config_name, option, value):
+    def __log_configuration_parameter(self, config_name: str, option: str, value: Any):
         if "password" in option or "token" in option:
             value = "HIDDEN"
 
@@ -449,7 +476,7 @@ class Bot(object):
             self.__log_buffer.append(("debug", message))
 
     def __load_harmonization_configuration(self):
-        self.logger.debug("Loading Harmonization configuration from %r." % HARMONIZATION_CONF_FILE)
+        self.logger.debug("Loading Harmonization configuration from %r.", HARMONIZATION_CONF_FILE)
         self.harmonization = utils.load_configuration(HARMONIZATION_CONF_FILE)
 
     def new_event(self, *args, **kwargs):
@@ -461,6 +488,44 @@ class Bot(object):
             exit('No bot ID given.')
         instance = cls(sys.argv[1])
         instance.start()
+
+    def set_request_parameters(self):
+        if hasattr(self.parameters, 'http_ssl_proxy'):
+            self.logger.warning("Parameter 'http_ssl_proxy' is deprecated and will be removed in "
+                                "version 1.0!")
+            if not hasattr(self.parameters, 'https_proxy'):
+                self.parameters.https_proxy = self.parameters.http_ssl_proxy
+
+        self.http_header = getattr(self.parameters, 'http_header', {})
+        self.http_verify_cert = getattr(self.parameters, 'http_verify_cert',
+                                        True)
+        self.ssl_client_cert = getattr(self.parameters,
+                                       'ssl_client_certificate', None)
+
+        if hasattr(self.parameters, 'http_username') and hasattr(
+                self.parameters, 'http_password'):
+            self.auth = (self.parameters.http_username,
+                         self.parameters.http_password)
+        else:
+            self.auth = None
+
+        if self.parameters.http_proxy and self.parameters.https_proxy:
+            self.proxy = {'http': self.parameters.http_proxy,
+                          'https': self.parameters.https_proxy}
+        elif self.parameters.http_proxy or self.parameters.https_proxy:
+            self.logger.warning('Only %s_proxy seems to be set.'
+                                'Both http and https proxies must be set.',
+                                'http' if self.parameters.http_proxy else 'https')
+            self.proxy = None
+        else:
+            self.proxy = None
+
+        self.http_timeout_sec = getattr(self.parameters, 'http_timeout_sec', None)
+        self.http_timeout_max_tries = getattr(self.parameters, 'http_timeout_max_tries', 1)
+        # Be sure this is always at least 1
+        self.http_timeout_max_tries = self.http_timeout_max_tries if self.http_timeout_max_tries >= 1 else 1
+
+        self.http_header['User-agent'] = self.parameters.http_user_agent
 
 
 class ParserBot(Bot):
@@ -474,7 +539,7 @@ class ParserBot(Bot):
                               'Possible Misconfiguration.')
             self.stop()
 
-    def parse_csv(self, report):
+    def parse_csv(self, report: dict):
         """
         A basic CSV parser.
         """
@@ -487,7 +552,7 @@ class ParserBot(Bot):
         for line in csv.reader(io.StringIO(raw_report)):
             yield line
 
-    def parse_csv_dict(self, report):
+    def parse_csv_dict(self, report: dict):
         """
         A basic CSV Dictionary parser.
         """
@@ -500,7 +565,7 @@ class ParserBot(Bot):
         for line in csv.DictReader(io.StringIO(raw_report)):
             yield line
 
-    def parse(self, report):
+    def parse(self, report: dict):
         """
         A generator yielding the single elements of the data.
 
@@ -508,8 +573,10 @@ class ParserBot(Bot):
         `self.parse_line` can be saved in `self.tempdata` (list).
 
         Default parser yields stripped lines.
-        Override for your use or use an exisiting parser, e.g.:
+        Override for your use or use an existing parser, e.g.::
+
             parse = ParserBot.parse_csv
+
         """
         for line in utils.base64_decode(report.get("raw")).splitlines():
             line = line.strip()
@@ -555,7 +622,7 @@ class ParserBot(Bot):
 
         self.acknowledge_message()
 
-    def recover_line(self, line):
+    def recover_line(self, line: str):
         """
         Reverse of parse for single lines.
 
@@ -563,13 +630,13 @@ class ParserBot(Bot):
         """
         return '\n'.join(self.tempdata + [line])
 
-    def recover_line_csv(self, line):
+    def recover_line_csv(self, line: str):
         out = io.StringIO()
         writer = csv.writer(out)
         writer.writerow(line)
         return out.getvalue()
 
-    def recover_line_csv_dict(self, line):
+    def recover_line_csv_dict(self, line: str):
         """
         Converts dictionaries to csv. self.csv_fieldnames must be list of fields.
         """
@@ -586,21 +653,21 @@ class CollectorBot(Bot):
 
     Does some sanity checks on message sending.
     """
-    def __init__(self, bot_id):
+    def __init__(self, bot_id: str):
         super(CollectorBot, self).__init__(bot_id=bot_id)
         if self.__class__.__name__ == 'CollectorBot':
             self.logger.error('CollectorBot can\'t be started itself. '
                               'Possible Misconfiguration.')
             self.stop()
 
-    def __filter_empty_report(self, message):
+    def __filter_empty_report(self, message: dict):
         if 'raw' not in message:
             self.logger.warning('Ignoring report without raw field. '
                                 'Possible bug or misconfiguration of this bot.')
             return False
         return True
 
-    def __add_report_fields(self, report):
+    def __add_report_fields(self, report: dict):
         report.add("feed.name", self.parameters.feed)
         if hasattr(self.parameters, 'code'):
             report.add("feed.code", self.parameters.code)
@@ -618,42 +685,6 @@ class CollectorBot(Bot):
 
     def new_report(self):
         return libmessage.Report()
-
-    def set_request_parameters(self):
-        if hasattr(self.parameters, 'http_ssl_proxy'):
-            self.logger.warning("Parameter 'http_ssl_proxy' is deprecated and will be removed in "
-                                "version 1.0!")
-            if not hasattr(self.parameters, 'https_proxy'):
-                self.parameters.https_proxy = self.parameters.http_ssl_proxy
-
-        self.http_header = getattr(self.parameters, 'http_header', {})
-        self.http_verify_cert = getattr(self.parameters, 'http_verify_cert', True)
-        self.ssl_client_cert = getattr(self.parameters, 'ssl_client_certificate', None)
-
-        if hasattr(self.parameters, 'http_username') and hasattr(
-                self.parameters, 'http_password'):
-            self.auth = (self.parameters.http_username,
-                         self.parameters.http_password)
-        else:
-            self.auth = None
-
-        if self.parameters.http_proxy and self.parameters.https_proxy:
-            self.proxy = {'http': self.parameters.http_proxy,
-                          'https': self.parameters.https_proxy}
-        elif self.parameters.http_proxy or self.parameters.https_proxy:
-            self.logger.warning('Only {}_proxy seems to be set.'
-                                'Both http and https proxies must be set.'
-                                .format('http' if self.parameters.http_proxy else 'https'))
-            self.proxy = None
-        else:
-            self.proxy = None
-
-        self.http_timeout_sec = getattr(self.parameters, 'http_timeout_sec', None)
-        self.http_timeout_max_tries = getattr(self.parameters, 'http_timeout_max_tries', 1)
-        # Be sure this is always at least 1
-        self.http_timeout_max_tries = self.http_timeout_max_tries if self.http_timeout_max_tries >= 1 else 1
-
-        self.http_header['User-agent'] = self.parameters.http_user_agent
 
 
 class Parameters(object):

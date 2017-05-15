@@ -1,9 +1,9 @@
 # *- coding: utf-8 -*-
 """
 RFC 1918 Will Drop Local IP from a given record and a bit more.
-  It Check for RFC1918 IPv4 Host
-  It Check for Localhosts, multicast, test lans
-  It Check for Link Local and Documentation Lan in IPv6
+  It checks for RFC1918 IPv4 Hosts
+  It checks for localhost, multicast and test LANs
+  It checks for Link Local and Documentation LAN in IPv6
 
 Need only to feed the parameter "fields" to set the name of the field
 parameter designed to be filtered out.
@@ -58,7 +58,7 @@ class RFC1918ExpertBot(Bot):
                             for domain in DOMAINS)
             if check:
                 if policy == 'del':
-                    self.logger.debug("Value removed from %s." % (field))
+                    self.logger.debug("Value removed from %s.", field)
                     del event[field]
                 elif policy == 'drop':
                     self.acknowledge_message()

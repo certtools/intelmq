@@ -22,6 +22,8 @@ from intelmq.lib.utils import decode
 
 class HTTPStreamCollectorBot(CollectorBot):
 
+    sighup_delay = False
+
     def init(self):
         if getattr(self.parameters, 'url', False) and \
            not getattr(self.parameters, 'http_url', False):
@@ -30,8 +32,7 @@ class HTTPStreamCollectorBot(CollectorBot):
         self.set_request_parameters()
 
     def process(self):
-        self.logger.info("Connecting to stream at %r." %
-                         self.parameters.http_url)
+        self.logger.info("Connecting to stream at %r.", self.parameters.http_url)
 
         try:
             req = requests.get(url=self.parameters.http_url, auth=self.auth,

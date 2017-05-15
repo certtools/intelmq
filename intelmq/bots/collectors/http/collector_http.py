@@ -27,8 +27,7 @@ class HTTPCollectorBot(CollectorBot):
         self.set_request_parameters()
 
     def process(self):
-        self.logger.info("Downloading report from %s" %
-                         self.parameters.http_url)
+        self.logger.info("Downloading report from %s", self.parameters.http_url)
 
         timeoutretries = 0
         resp = None

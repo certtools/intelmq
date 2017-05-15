@@ -105,8 +105,14 @@ class Cymru():
     @staticmethod
     def __ip_query_parse(text):
         """
-        Example:   "1930       | 193.136.0.0/15  | PT | ripencc |"
-        Exception: "9395 17431 | 219.234.80.0/20 | CN | apnic   | 2002-04-17"
+        Example::
+
+            "1930       | 193.136.0.0/15  | PT | ripencc |"
+
+        Exception::
+
+            "9395 17431 | 219.234.80.0/20 | CN | apnic   | 2002-04-17"
+
         """
 
         result = dict()
@@ -122,7 +128,7 @@ class Cymru():
             try:
                 int(asn)
                 result['asn'] = asn
-            except:
+            except ValueError:
                 pass
 
         if items[1]:

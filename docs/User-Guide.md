@@ -1,11 +1,8 @@
 # User Guide
 
-  * [Requirements](#requirements)
-  * [Install](#install)
-    * [Install Dependencies](#install-dependencies)
-        * [Ubuntu 14.04 / Debian 8](#ubuntu-1404--debian-8)
-        * [CentOS 7](#centos-7)
-    * [Installation](#install)
+For installation instructions, see [INSTALL.md](INSTALL.md).
+For upgrade instructions, see [UPGRADING.md](UPGRADING.md).
+
   * [Configuration](#configuration)
     * [System Configuration](#system-configuration)
     * [Pipeline Configuration](#pipeline-configuration)
@@ -19,6 +16,8 @@
       * [Web interface: IntelMQ Manager](#web-interface-intelmq-manager)
       * [Command-line interface: intelmqctl](#command-line-interface-intelmqctl)
         * [Botnet Concept](#botnet-concept)
+        * [Scheduled run mode](#scheduled-run-mode)
+        * [Continuous run mode](#continuous-run-mode)
         * [Forcing reset pipeline and cache (be careful)](#forcing-reset-pipeline-and-cache-be-careful)
     * [Error Handling](#error-handling-1)
       * [Tool: intelmqdump](#tool-intelmqdump)
@@ -31,81 +30,6 @@
   * [Frequently Asked Questions](#frequently-asked-questions)
   * [Additional Information](#additional-information)
     * [Performance Tests](#performance-tests)
-
-
-# Requirements
-
-The following instructions assume the following requirements:
-
-* **Operating System:** Ubuntu 14.04 and 16.04 LTS, Debian 8, CentOS 7 or OpenSUSE Leap 42.x
-
-Please report any errors you encounter at https://github.com/certtools/intelmq/issues
-
-# Install
-
-## Install Dependencies
-
-#### Ubuntu 14.04 / Debian 8
-
-```bash
-apt-get install python3 python3-pip
-apt-get install git build-essential libffi-dev
-apt-get install python3-dev
-apt-get install redis-server
-```
-**Special note for Debian 8**: 
-if you are using Debian 8, you need to install this package extra: ``apt-get install libgnutls28-dev``.
-In addition, Debian 8 has an old version of pip3. Please get a current one via:
-```bash
-curl "https://bootstrap.pypa.io/get-pip.py" -o "/tmp/get-pip.py"
-python3.4 /tmp/get-pip.py
-```
-
-##### CentOS 7
-
-```bash
-yum install epel-release
-yum install python34 python34-devel
-yum install git gcc gcc-c++
-yum install redis
-```
-
-Install the last pip version:
-```bash
-curl "https://bootstrap.pypa.io/get-pip.py" -o "/tmp/get-pip.py"
-python3.4 /tmp/get-pip.py
-```
-
-Enable redis on startup:
-```bash
-systemctl enable redis
-systemctl start redis
-```
-
-## Installation
-
-The `REQUIREMENTS` files define a list of python packages and versions, which are necessary to run most components of IntelMQ. The defined (minimal) versions are recommendations. Some bots have additional dependencies which are mentioned in their documentation and their own `REQUIREMENTS` file (in their source directory).
-
-If your Python version is lower than 3.5 you additionally need the "typing" package:
-```bash
-pip3 install typing
-```
-
-If you do not do any modifications on the code, use `pip install intelmq` instead of `pip install .` or packages.
-
-```bash
-git clone https://github.com/certtools/intelmq.git /tmp/intelmq
-cd /tmp/intelmq
-
-sudo -s
-
-pip3 install -r REQUIREMENTS
-pip3 install .
-
-useradd -d /opt/intelmq -U -s /bin/bash intelmq
-chmod -R 0770 /opt/intelmq
-chown -R intelmq.intelmq /opt/intelmq
-```
 
 # Configuration
 
@@ -123,7 +47,7 @@ cp -a examples/* .
 
 * `defaults.conf`: default values for bots and their behavior, e.g.
 error handling, log options and pipeline configuration. Will be removed in the [future](https://github.com/certtools/intelmq/issues/267).
-* `runtime.conf`: Configuration for the individual bots.
+* `runtime.conf`: Configuration for the individual bots. See [Bots](Bots.md) for more details.
 * `pipeline.conf`: Defines source and destination queues per bot.
 * `BOTS`: Includes configuration hints for all bots. E.g. feed URLs or
 database connection parameters. Use this as a template for `runtime.conf`. Also read by the intelmq-manager.
@@ -207,7 +131,7 @@ More examples can be found at `intelmq/etc/pipeline.conf` directory in IntelMQ r
 #### Miscellaneous
 
 * **`load_balance`** - this option allows you to choose the behavior of the queue. Use the following values:
-    * **`true`** - splits the messages into several queues wihtout duplication
+    * **`true`** - splits the messages into several queues without duplication
     * **`false`** - duplicates the messages into each queue
 
 * **`broker`** - select which broker intelmq can use. Use the following values:
@@ -278,7 +202,7 @@ This configuration is used by each bot to load the specific parameters associate
 }
 ```
 
-More examples can be found at `intelmq/etc/runtime.conf` directory in IntelMQ repository.
+More examples can be found at `intelmq/etc/runtime.conf` directory in IntelMQ repository. See [Bots](Bots.md) for more details.
 
 By default all of the bots are started when you start the whole botnet, however there is a possibility to *disable* a bot. This means that the bot will not start every time you start the botnet, but you can start and stop the bot if you specify the bot explicitly. To disable a bot, add the following to your runtime.conf: `"enabled": false`. For example: 
 
@@ -328,7 +252,7 @@ This configuration is used to specify the fields for all message types. The harm
             "type": "Integer"
         },
         "destination.geolocation.cc": {
-            "description": "Country-Code accoriding to ISO3166-1 alpha-2 for the destination IP.",
+            "description": "Country-Code according to ISO3166-1 alpha-2 for the destination IP.",
             "regex": "^[a-zA-Z0-9]{2}$",
             "type": "String"
         },
@@ -376,8 +300,8 @@ See [IntelMQ Manager repository](https://github.com/certtools/intelmq-manager).
 ```bash
 # su - intelmq
 $ intelmqctl -h
-intelmqctl [-h] [-v] [--type {text,json}] [--quiet]
-                  {list,check,clear,log,run,help,start,stop,restart,reload,status}
+usage: intelmqctl [-h] [-v] [--type {text,json}] [--quiet]
+                  {list,check,clear,log,run,help,start,stop,restart,reload,status,enable,disable}
                   ...
 
         description: intelmqctl is the tool to control intelmq system.
@@ -394,7 +318,7 @@ optional arguments:
                         logrotate
 
 subcommands:
-  {list,check,clear,log,run,help,start,stop,restart,reload,status}
+  {list,check,clear,log,run,help,start,stop,restart,reload,status,enable,disable}
     list                Listing bots or queues
     check               Check installation and configuration
     clear               Clear a queue
@@ -407,6 +331,8 @@ subcommands:
     restart             Restart a bot or botnet
     reload              Reload a bot or botnet
     status              Status of a bot or botnet
+    enable              Enable a bot
+    disable             Disable a bot
 
         intelmqctl [start|stop|restart|status|reload|run] bot-id
         intelmqctl [start|stop|restart|status|reload]
@@ -453,7 +379,64 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl
 
 #### Botnet Concept
 
-The botnet represents all currently configured bots. To get an overview which bots are running, use `intelmqctl status`or use IntelMQ Manager.
+The botnet represents all currently configured bots which are explicitly enabled. To get an overview which bots are running, use `intelmqctl status` or use IntelMQ Manager. Set `"enabled": true` in the runtime configuration to add a bot to botnet. By default, bots will be configured as `"enabled": false` therefore, such a bot does not belong to the botnet (by default). See [Bots](Bots.md) for more details on configuration.
+
+Disabled bots can still be started explicitly using `intelmqctl start <bot_id>`, but will remain in the state `disabled` if stopped (and not be implicitly enabled by the `start` command). They are not started by `intelmqctl start` in analogy to the behavior of widely used initialization systems.
+
+
+#### Scheduled Run Mode
+
+In many cases it is useful to schedule a bot at a specific time (for example via cron(1)), for example to collect information from a website every day at midnight. To do this, set `run_mode` to `scheduled` in the `runtime.conf` for the bot. Check the following example:
+
+```json
+"blocklistde-apache-collector": {
+    "name": "Generic URL Fetcher",
+    "group": "Collector",
+    "module": "intelmq.bots.collectors.http.collector_http",
+    "description": "All IP addresses which have been reported within the last 48 hours as having run attacks on the service Apache, Apache-DDOS, RFI-Attacks.",
+    "enabled": false,
+    "run_mode": "scheduled"
+    "parameters": {
+        "feed": "Blocklist.de Apache",
+        "provider": "Blocklist.de",
+        "http_url": "https://lists.blocklist.de/lists/apache.txt",
+        "ssl_client_certificate": null
+    },
+},
+```
+
+You can schedule the bot with a crontab-entry like this:
+```
+0 0 * * * intelmqctl start blocklistde-apache-collector
+```
+
+Bots configured as `scheduled` will exit after the first successful run.
+
+
+#### Continuous Run Mode
+
+Most of the cases, bots will need to be configured as `continuous` run mode in order to have them always running and processing events. Usually, the types of bots that will require the continuous mode will be Parsers, Experts and Outputs. To do this, set `run_mode` to `continuous` in the `runtime.conf` for the bot. Check the following example:
+
+```json
+"blocklistde-apache-parser": {
+    "name": "Blocklist.de Parser",
+    "group": "Parser",
+    "module": "intelmq.bots.parsers.blocklistde.parser",
+    "description": "Blocklist.DE Parser is the bot responsible to parse the report and sanitize the information.",
+    "enabled": false,
+    "run_mode": "continuous"
+    "parameters": {
+    },
+},
+```
+
+You can now start the bot using the following command:
+```
+intelmqctl start blocklistde-apache-parser
+```
+
+Bots configured as `continuous` will never exit except if there is an error and the error handling configuration requires the bot to exit. See Error Handling section for more details.
+
 
 #### Forcing reset pipeline and cache (be careful)
 
@@ -539,43 +522,6 @@ All bots and `intelmqctl` log to `/opt/intelmq/var/log/`. In case of failures, m
 tail -f /opt/intelmq/var/log/*.log
 ```
 
-# Upgrade
-
-## Stop IntelMQ and Backup
-
-* Make sure that your IntelMQ system is completely stopped.
-* Create a backup of IntelMQ Home directory, which includes all configurations. They are not overwritten, but backups are always nice to have!
-
-```bash
-sudo su -
-
-cp -R /opt/intelmq /opt/intelmq-backup
-```
-
-## Upgrade
-
-```bash
-cd intelmq/
-git pull
-pip install -U intelmq  # or pip install -U . if you have a local repository
-```
-
-## Restore Configurations
-
-* Apply your configurations backup.
-
-```bash
-rm -rf /opt/intelmq/etc/*
-cp -R /opt/intelmq-backup/etc/* /opt/intelmq/etc/
-```
-
-## Redefine permissions
-
-```bash
-chmod -R 0770 /opt/intelmq
-chown -R intelmq.intelmq /opt/intelmq
-```
-
 # Uninstall
 
 ```bash
@@ -596,12 +542,12 @@ To enable bash completion on `intelmqctl` and `intelmqdump` in order to help you
 
 ## Performance Tests
 
-Somes tests have been made with a virtual machine with 
+Some tests have been made with a virtual machine with 
 the following specifications:
 
 * CPU: 1 core dedicated from i7 processor
 * Memory: 4GB
 * HDD: 10GB
 
-The entire solution didnt have any problem handling 2.000.000 
+The entire solution didn't have any problem handling 2.000.000 
 queued events in memory with bots digesting the messages.

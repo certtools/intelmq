@@ -27,5 +27,5 @@ class Abusix():
                 return str(response[0]).replace("\"", "")
             else:
                 return None
-        except:
+        except ValueError:
             return None

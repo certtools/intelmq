@@ -4,6 +4,8 @@
             "description": "Fileinput collector fetches data from a file.",
             "module": "intelmq.bots.collectors.file.collector_file",
             "parameters": {
+                "chunk_replicate_header": true,
+                "chunk_size": null,
                 "delete_file": false,
                 "feed": "FileCollector",
                 "provider": "",
@@ -33,6 +35,8 @@
             "description": "Monitor IMAP mailboxes and fetch files from URLs contained in mail bodies",
             "module": "intelmq.bots.collectors.mail.collector_mail_url",
             "parameters": {
+                "chunk_replicate_header": true,
+                "chunk_size": null,
                 "feed": "",
                 "provider": "",
                 "folder": "INBOX",
@@ -90,7 +94,7 @@
             }
         },
         "Request Tracker": {
-            "description": "Request Tracker Collector fetches attachments from an RTIR instance and optionally decrypts them with gnupg.",
+            "description": "Request Tracker Collector fetches attachments from an RTIR instance.",
             "module": "intelmq.bots.collectors.rt.collector_rt",
             "parameters": {
                 "attachment_regex": "\\.csv\\.zip$",
@@ -98,6 +102,7 @@
                 "provider": "",
                 "password": "password",
                 "rate_limit": 3600,
+                "search_not_older_than": null,
                 "search_owner": "nobody",
                 "search_queue": "Incident Reports",
                 "search_status": "new",
@@ -154,6 +159,18 @@
                 "rate_limit": 3600
             }
         },
+        "Microsoft Azure": {
+            "description": "",
+            "module": "intelmq.bots.collectors.microsoft.collector_azure",
+            "parameters": {
+                "account_name": "",
+                "account_key": "",
+                "delete": true,
+                "feed": "",
+                "provider": "microsoft",
+                "rate_limit": 3600
+            }
+        },
         "N6stomp": {
             "description": "N6 Collector - CERT.pl's N6 Collector - N6 feed via STOMP interface. Note that rate_limit does not apply for this bot as it is waiting for messages on a stream.",
             "module": "intelmq.bots.collectors.n6.collector_stomp",
@@ -201,7 +218,7 @@
             "parameters": {}
         },
         "Bambenek": {
-            "description": "Bambenek parser is the bot responsible to parse and and sanatize the information from the feeds available from Bambenek.",
+            "description": "Bambenek parser is the bot responsible to parse and and sanitize the information from the feeds available from Bambenek.",
             "module": "intelmq.bots.parsers.bambenek.parser",
             "parameters": {}
         },
@@ -211,12 +228,12 @@
             "parameters": {}
         },
         "AnubisNetworks Cyberfeed Stream": {
-            "description": "Parsers single JSON-events from AnubisNetworks Cyberfeed stream.",
+            "description": "Parses single JSON-events from AnubisNetworks Cyberfeed stream.",
             "module": "intelmq.bots.parsers.anubisnetworks.parser",
             "parameters": {}
         },
         "Blocklist.de": {
-            "description": "BlockList.DE Parser is the bot responsible to parse the report and sanitize the information.",
+            "description": "Blocklist.DE Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.blocklistde.parser",
             "parameters": {}
         },
@@ -276,17 +293,20 @@
             "parameters": {}
         },
         "Generic CSV": {
-            "description": "Generic CSV Parser is a generic bot configurable to parse different csv collected files. Ignoring lines starting with character #. URLs without protocal can be prefixed with a default value.",
+            "description": "Generic CSV Parser is a generic bot configurable to parse different csv collected files. Ignoring lines starting with character #. URLs without protocol can be prefixed with a default value.",
             "module": "intelmq.bots.parsers.generic.parser_csv",
             "parameters": {
                 "columns": [
                     "",
                     "source.fqdn"
                 ],
+                "column_regex_search": {},
                 "default_url_protocol": "http://",
                 "delimiter": ",",
                 "skip_header": true,
-                "type": "c&c"
+                "time_format": null,
+                "type": "c&c",
+                "type_translation": null
             }
         },
         "HpHosts": {
@@ -413,7 +433,7 @@
             }
         },
         "Abusix": {
-            "description": "Abusix is the bot resposible to get the correspondent abuse contact from source IP and destination IP of the events",
+            "description": "Abusix is the bot responsible to get the correspondent abuse contact from source IP and destination IP of the events.",
             "module": "intelmq.bots.experts.abusix.expert",
             "parameters": {
                 "redis_cache_db": "5",
@@ -433,7 +453,7 @@
             }
         },
         "Cymru Whois": {
-            "description": "Cymry Whois (IP to ASN) is the bot responsible to add network information to the events (BGP, ASN, AS Name, Country, etc..).",
+            "description": "Cymru Whois (IP to ASN) is the bot responsible to add network information to the events (BGP, ASN, AS Name, Country, etc..).",
             "module": "intelmq.bots.experts.cymru_whois.expert",
             "parameters": {
                 "redis_cache_db": "5",
@@ -500,6 +520,13 @@
             "module": "intelmq.bots.experts.gethostbyname.expert",
             "parameters": {}
         },
+        "IDEA": {
+            "description": "Converts events into the IDEA format.",
+            "module": "intelmq.bots.experts.idea.expert",
+            "parameters": {
+                "test_mode": false
+            }
+        },
         "MaxMind GeoIP": {
             "description": "MaxMind GeoIP is the bot responsible for adding geolocation information to events (Country, City, Longitude, Latitude, etc..)",
             "module": "intelmq.bots.experts.maxmind_geoip.expert",
@@ -523,7 +550,7 @@
             }
         },
         "RIPENCC": {
-            "description": "RIPENCC is the bot resposible to get the correspondent abuse contact from source IP and destination IP of the events. RIPEstat documentation: https://stat.ripe.net/docs/data_api ",
+            "description": "RIPENCC is the bot responsible to get the correspondent abuse contact from source IP and destination IP of the events. RIPEstat documentation: https://stat.ripe.net/docs/data_api ",
             "module": "intelmq.bots.experts.ripencc_abuse_contact.expert",
             "parameters": {
                 "query_ripe_db_asn": true,
@@ -537,7 +564,7 @@
             }
         },
         "Reverse DNS": {
-            "description": "Reverse DNS is the bot resposible to get the correspondent domain name source IP and destination IP of the events",
+            "description": "Reverse DNS is the bot responsible to get the correspondent domain name source IP and destination IP of the events.",
             "module": "intelmq.bots.experts.reverse_dns.expert",
             "parameters": {
                 "redis_cache_db": "7",
@@ -557,7 +584,8 @@
             "description": "Tor Nodes is the bot responsible to check if an IP is an Tor Exit Node.",
             "module": "intelmq.bots.experts.tor_nodes.expert",
             "parameters": {
-                "database": "/opt/intelmq/var/lib/bots/tor_nodes/tor_nodes.dat"
+                "database": "/opt/intelmq/var/lib/bots/tor_nodes/tor_nodes.dat",
+                "overwrite": false
             }
         },
         "url2fqdn": {
@@ -590,6 +618,18 @@
                 "username": "<your amqp username>"
             }
         },
+        "Elasticsearch": {
+            "description": "Elasticsearch is the bot responsible to send events to a elasticsearch.",
+            "module": "intelmq.bots.outputs.elasticsearch.output",
+            "parameters": {
+                "elastic_host": "127.0.0.1",
+                "elastic_port": 9200,
+                "elastic_index": "intelmq",
+                "elastic_doctype": "events",
+                "flatten_fields": "extra",
+                "replacement_char": "_"
+            }
+        },
         "File": {
             "description": "File is the bot responsible to send events to a file.",
             "module": "intelmq.bots.outputs.file.output",
@@ -598,15 +638,28 @@
                 "hierarchical_output": false
             }
         },
+        "Files": {
+            "description": "Files is the bot responsible for lockfree saving of events into separate files.",
+            "module": "intelmq.bots.outputs.files.output",
+            "parameters": {
+                "tmp": "/opt/intelmq/var/lib/bots/files-output/tmp",
+                "dir": "/opt/intelmq/var/lib/bots/files-output/incoming",
+                "suffix": ".json",
+                "hierarchical_output": false,
+                "single_key": null
+            }
+        },
         "MongoDB": {
             "description": "MongoDB is the bot responsible to send events to a MongoDB database.",
             "module": "intelmq.bots.outputs.mongodb.output",
             "parameters": {
                 "collection": "<collection>",
                 "database": "<database>",
+                "db_user": null,
+                "db_pass": null,
                 "hierarchical_output": true,
-                "host": "<ip>",
-                "port": "<port>"
+                "host": "localhost",
+                "port": "27017"
             }
         },
         "PostgreSQL": {
@@ -647,8 +700,38 @@
                 "redis_timeout": 50000
             }
         },
+        "SMTP": {
+            "description": "Sends single events via SMTP.",
+            "module": "intelmq.bots.outputs.smtp.output",
+            "parameters": {
+                "fieldnames": "classification.taxonomy,classification.type,classification.identifier,source.ip,source.asn,source.port",
+                "mail_from": "cert@localhost",
+                "mail_to": "{ev[source.abuse_contact]}",
+                "smtp_host": "localhost",
+                "smtp_password": null,
+                "smtp_port": null,
+                "smtp_username": null,
+                "ssl": false,
+                "starttls": true,
+                "subject": "Incident in your AS {ev[source.asn]}",
+                "text": "Dear network owner,\\n\\nWe have been informed that the following device might have security problems.\\n\\nYour localhost CERT"
+            }
+        },
+        "Stomp": {
+            "description": "Sends event via the STMOP protocol.",
+            "module": "intelmq.bots.outputs.stomp.output",
+            "parameters": {
+                "exchange": "/exchange/_push",
+                "heartbeat": 60000,
+                "port": 61614,
+                "server": "127.0.0.1",
+                "ssl_ca_certificate": "<insert path to CA file>",
+                "ssl_client_certificate": "<insert path to client cert file>",
+                "ssl_client_certificate_key": "<insert path to client cert key file>"
+            }
+        },
         "TCP": {
-            "description": "TCP is the bot responsible to send events to a tcp port (Splunk, ElasticSearch, etc..).",
+            "description": "TCP is the bot responsible to send events to a TCP port (Splunk, ElasticSearch, etc..).",
             "module": "intelmq.bots.outputs.tcp.output",
             "parameters": {
                 "ip": "<ip>",

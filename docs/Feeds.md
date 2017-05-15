@@ -131,7 +131,7 @@ http_url: https://ransomwaretracker.abuse.ch/feeds/csv/
 
 ### Parser Bot
 
-**Bot Name:** Abuse.ch Ranswomware
+**Bot Name:** Abuse.ch Ransomware
 
 **Bot Module:** intelmq.bots.parsers.abusech.parser_ransomware
 
@@ -488,7 +488,7 @@ id: bitcash-parser
 **Configuration Parameters:**
 ```
 id: blocklistde-apache-collector
-provider: Blocklit.de
+provider: Blocklist.de
 feed: Blocklist.de Apache
 rate_limit: 86400
 http_url: https://lists.blocklist.de/lists/apache.txt
@@ -505,7 +505,7 @@ http_url: https://lists.blocklist.de/lists/apache.txt
 id: blocklistde-apache-parser
 ```
 
-**Notes:** BlockList.DE Apache Collector is the bot responsible to get the report from source of information. All IP addresses which have been reported within the last 48 hours as having run attacks on the service Apache, Apache-DDOS, RFI-Attacks.
+**Notes:** Blocklist.DE Apache Collector is the bot responsible to get the report from source of information. All IP addresses which have been reported within the last 48 hours as having run attacks on the service Apache, Apache-DDOS, RFI-Attacks.
 
 ## Bots
 
@@ -520,7 +520,7 @@ id: blocklistde-apache-parser
 **Configuration Parameters:**
 ```
 id: blocklistde-bots-collector
-provider: Blocklit.de
+provider: Blocklist.de
 feed: Blocklist.de Bots
 rate_limit: 86400
 http_url: https://lists.blocklist.de/lists/bots.txt
@@ -537,7 +537,7 @@ http_url: https://lists.blocklist.de/lists/bots.txt
 id: blocklistde-bots-parser
 ```
 
-**Notes:** BlockList.DE Bots Collector is the bot responsible to get the report from source of information. All IP addresses which have been reported within the last 48 hours as having run attacks attacks on the RFI-Attacks, REG-Bots, IRC-Bots or BadBots (BadBots = he has posted a Spam-Comment on a open Forum or Wiki).
+**Notes:** Blocklist.DE Bots Collector is the bot responsible to get the report from source of information. All IP addresses which have been reported within the last 48 hours as having run attacks attacks on the RFI-Attacks, REG-Bots, IRC-Bots or BadBots (BadBots = he has posted a Spam-Comment on a open Forum or Wiki).
 
 ## Brute-force Logins
 
@@ -552,7 +552,7 @@ id: blocklistde-bots-parser
 **Configuration Parameters:**
 ```
 id: blocklistde-bruteforce-collector
-provider: Blocklit.de
+provider: Blocklist.de
 feed: Blocklist.de Brute-force Logins
 rate_limit: 86400
 http_url: https://lists.blocklist.de/lists/bruteforcelogin.txt
@@ -569,7 +569,7 @@ http_url: https://lists.blocklist.de/lists/bruteforcelogin.txt
 id: blocklistde-bruteforce-parser
 ```
 
-**Notes:** BlockList.DE Brute-force Login Collector is the bot responsible to get the report from source of information. All IPs which attacks Joomlas, Wordpress and other Web-Logins with Brute-Force Logins.
+**Notes:** Blocklist.DE Brute-force Login Collector is the bot responsible to get the report from source of information. All IPs which attacks Joomlas, Wordpress and other Web-Logins with Brute-Force Logins.
 
 ## FTP
 
@@ -584,7 +584,7 @@ id: blocklistde-bruteforce-parser
 **Configuration Parameters:**
 ```
 id: blocklistde-ftp-collector
-provider: Blocklit.de
+provider: Blocklist.de
 feed: Blocklist.de FTP
 rate_limit: 86400
 http_url: https://lists.blocklist.de/lists/ftp.txt
@@ -601,7 +601,7 @@ http_url: https://lists.blocklist.de/lists/ftp.txt
 id: blocklistde-ftp-parser
 ```
 
-**Notes:** BlockList.DE FTP Collector is the bot responsible to get the report from source of information. All IP addresses which have been reported within the last 48 hours for attacks on the Service FTP.
+**Notes:** Blocklist.DE FTP Collector is the bot responsible to get the report from source of information. All IP addresses which have been reported within the last 48 hours for attacks on the Service FTP.
 
 ## IMAP
 
@@ -616,7 +616,7 @@ id: blocklistde-ftp-parser
 **Configuration Parameters:**
 ```
 id: blocklistde-imap-collector
-provider: Blocklit.de
+provider: Blocklist.de
 feed: Blocklist.de IMAP
 rate_limit: 86400
 http_url: https://lists.blocklist.de/lists/imap.txt
@@ -633,7 +633,7 @@ http_url: https://lists.blocklist.de/lists/imap.txt
 id: blocklistde-imap-parser
 ```
 
-**Notes:** BlockList.DE IMAP Collector is the bot responsible to get the report from source of information. All IP addresses which have been reported within the last 48 hours for attacks on the Service IMAP, SASL, POP3.....
+**Notes:** Blocklist.DE IMAP Collector is the bot responsible to get the report from source of information. All IP addresses which have been reported within the last 48 hours for attacks on the Service IMAP, SASL, POP3.....
 
 ## IRC Bots
 
@@ -648,7 +648,7 @@ id: blocklistde-imap-parser
 **Configuration Parameters:**
 ```
 id: blocklistde-irc-bots-collector
-provider: Blocklit.de
+provider: Blocklist.de
 feed: Blocklist.de IRC Bots
 rate_limit: 86400
 http_url: https://lists.blocklist.de/lists/ircbot.txt
@@ -678,7 +678,7 @@ id: blocklistde-mail-parser
 **Configuration Parameters:**
 ```
 id: blocklistde-mail-collector
-provider: Blocklit.de
+provider: Blocklist.de
 feed: Blocklist.de Mail
 rate_limit: 86400
 http_url: https://lists.blocklist.de/lists/mail.txt
@@ -695,7 +695,7 @@ http_url: https://lists.blocklist.de/lists/mail.txt
 id: blocklistde-mail-parser
 ```
 
-**Notes:** BlockList.DE Mail Collector is the bot responsible to get the report from source of information. All IP addresses which have been reported within the last 48 hours as having run attacks on the service Mail, Postfix.
+**Notes:** Blocklist.DE Mail Collector is the bot responsible to get the report from source of information. All IP addresses which have been reported within the last 48 hours as having run attacks on the service Mail, Postfix.
 
 ## SIP
 
@@ -710,7 +710,7 @@ id: blocklistde-mail-parser
 **Configuration Parameters:**
 ```
 id: blocklistde-sip-collector
-provider: Blocklit.de
+provider: Blocklist.de
 feed: Blocklist.de SIP
 rate_limit: 86400
 http_url: https://lists.blocklist.de/lists/sip.txt
@@ -727,7 +727,7 @@ http_url: https://lists.blocklist.de/lists/sip.txt
 id: blocklistde-sip-parser
 ```
 
-**Notes:** BlockList.DE SIP Collector is the bot responsible to get the report from source of information. All IP addresses that tried to login in a SIP-, VOIP- or Asterisk-Server and are included in the IPs-List from http://www.infiltrated.net/ (Twitter).
+**Notes:** Blocklist.DE SIP Collector is the bot responsible to get the report from source of information. All IP addresses that tried to login in a SIP-, VOIP- or Asterisk-Server and are included in the IPs-List from http://www.infiltrated.net/ (Twitter).
 
 ## SSH
 
@@ -742,7 +742,7 @@ id: blocklistde-sip-parser
 **Configuration Parameters:**
 ```
 id: blocklistde-ssh-collector
-provider: Blocklit.de
+provider: Blocklist.de
 feed: Blocklist.de SSH
 rate_limit: 86400
 http_url: https://lists.blocklist.de/lists/ssh.txt
@@ -759,7 +759,7 @@ http_url: https://lists.blocklist.de/lists/ssh.txt
 id: blocklistde-ssh-parser
 ```
 
-**Notes:** BlockList.DE SSH Collector is the bot responsible to get the report from source of information. All IP addresses which have been reported within the last 48 hours as having run attacks on the service SSH.
+**Notes:** Blocklist.DE SSH Collector is the bot responsible to get the report from source of information. All IP addresses which have been reported within the last 48 hours as having run attacks on the service SSH.
 
 ## Strong IPs
 
@@ -774,7 +774,7 @@ id: blocklistde-ssh-parser
 **Configuration Parameters:**
 ```
 id: blocklistde-strong-ips-collector
-provider: Blocklit.de
+provider: Blocklist.de
 feed: Blocklist.de Strong IPs
 rate_limit: 86400
 http_url: https://lists.blocklist.de/lists/strongips.txt
@@ -791,7 +791,7 @@ http_url: https://lists.blocklist.de/lists/strongips.txt
 id: blocklistde-strong-ips-parser
 ```
 
-**Notes:** BlockList.DE Strong IPs Collector is the bot responsible to get the report from source of information. All IPs which are older then 2 month and have more then 5.000 attacks.
+**Notes:** Blocklist.DE Strong IPs Collector is the bot responsible to get the report from source of information. All IPs which are older then 2 month and have more then 5.000 attacks.
 
 
 # Blueliv Crimeserver
@@ -1633,6 +1633,41 @@ id: netlab360-magnitude-ek-parser
 **Notes:** This feed lists FQDN and possibly the URL used by Magnitude Exploit Kit.  Information also includes the IP address used for the domain and last time seen.
 reference: http://data.netlab.360.com/ek
 
+
+## Mirai Scanner Feed
+
+**Status:** Active
+
+### Collector Bot
+
+**Bot Name:** Generic URL Fetcher
+
+**Bot Module:** intelmq.bots.collectors.http.collector_http
+
+**Configuration Parameters:**
+```
+id: netlab360-mirai-scanner-collector
+provider: Netlab 360
+feed: Netlab 360 Mirai Scanner List
+rate_limit: 86400
+http_url: http://data.netlab.360.com/feeds/mirai-scanner/scanner.list
+```
+
+### Parser Bot
+
+**Bot Name:** Netlab 360 Mirai Scanner
+
+**Bot Module:** intelmq.bots.parsers.netlab_360.parser
+
+**Configuration Parameters:**
+```
+id: netlab360-mirai-scanner-parser
+```
+
+**Notes:** This feed provides IP addresses which actively scan for vulnerable IoT devices and install Mirai Botnet.
+reference: http://data.netlab.360.com/mirai-scanner/
+
+
 # Nothink
 
 ## DNS Attack Feed
@@ -2062,7 +2097,7 @@ http_url: https://www.spamhaus.org/drop/edrop.txt
 id: spamhaus-edrop-parser
 ```
 
-**Notes:** EDROP is an extension of the DROP list that includes suballocated netblocks controlled by spammers or cyber criminals. EDROP is meant to be used in addition to the direct allocations on the DROP list.
+**Notes:** EDROP is an extension of the DROP list that includes sub-allocated netblocks controlled by spammers or cyber criminals. EDROP is meant to be used in addition to the direct allocations on the DROP list.
 
 ## Dropv6
 

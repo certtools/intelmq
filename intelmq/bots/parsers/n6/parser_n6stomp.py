@@ -69,7 +69,7 @@ class N6StompParserBot(Bot):
         report = self.receive_message()
 
         peek = utils.base64_decode(report.get("raw"))
-        self.logger.debug("Peeking at event '%s'." % peek)
+        self.logger.debug("Peeking at event %r.", peek)
         if "TEST MESSAGE" in peek:
             self.logger.debug("Ignoring test message/event.")
             self.acknowledge_message()
@@ -88,7 +88,7 @@ class N6StompParserBot(Bot):
         if "dport" in dict_report:
             event.add("destination.port", dict_report["dport"])
         if "md5" in dict_report:
-            event.add("malware.hash", dict_report["md5"])
+            event.add("malware.hash.md5", dict_report["md5"])
         if "sha1" in dict_report:
             event.add("malware.hash.sha1", dict_report["sha1"])
         if "fqdn" in dict_report:

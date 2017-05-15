@@ -10,13 +10,15 @@ information in the cache.
 import redis
 
 import intelmq.lib.utils as utils
+from typing import Any, Optional
 
 __all__ = ['Cache']
 
 
 class Cache():
 
-    def __init__(self, host, port, db, ttl, password=None):
+    def __init__(self, host: str, port: int, db: str, ttl: int,
+                 password: Optional[str]=None):
         if host.startswith("/"):
             kwargs = {"unix_socket_path": host}
 
@@ -34,16 +36,16 @@ class Cache():
 
         self.ttl = ttl
 
-    def exists(self, key):
+    def exists(self, key: str):
         return self.redis.exists(key)
 
-    def get(self, key):
+    def get(self, key: str):
         retval = self.redis.get(key)
         if isinstance(retval, bytes):
             return utils.decode(retval)
         return retval
 
-    def set(self, key, value, ttl=None):
+    def set(self, key: str, value: Any, ttl: Optional[int]=None):
         if ttl is None:
             ttl = self.ttl
         if isinstance(value, str):

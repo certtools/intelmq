@@ -197,6 +197,11 @@ class TestHarmonization(unittest.TestCase):
                                                                'America/'
                                                                'Guyana'))
 
+    def test_datetime_from_windows_nt(self):
+        """ Test DateTime.from_ldap method. """
+        self.assertEqual('2011-02-01T02:43:11.572760+00:00',
+                         harmonization.DateTime.from_windows_nt(129410017915727600))
+
     def test_datetime_sanitize(self):
         """ Test DateTime.sanitize method. """
         self.assertEqual('2016-07-19T04:40:01.617719+00:00',

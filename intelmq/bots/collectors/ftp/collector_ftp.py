@@ -22,9 +22,8 @@ from intelmq.lib.bot import CollectorBot
 
 class FTPCollectorBot(CollectorBot):
     def process(self):
-        self.logger.info("Downloading report from %s." %
-                         (self.parameters.ftp_host + ':' +
-                          str(self.parameters.ftp_port)))
+        self.logger.info("Downloading report from %s.",
+                         self.parameters.ftp_host + ':' + str(self.parameters.ftp_port))
 
         ftp = FTP()
         ftp.connect(host=self.parameters.ftp_host,
@@ -35,22 +34,20 @@ class FTPCollectorBot(CollectorBot):
                       passwd=self.parameters.ftp_password)
         cwd = '/'
         if hasattr(self.parameters, 'ftp_directory'):
-            self.logger.debug('Changing working directory to: %r.'
-                              '' % self.parameters.ftp_directory)
+            self.logger.debug('Changing working directory to: %r.', self.parameters.ftp_directory)
             cwd = self.parameters.ftp_directory
         ftp.cwd(cwd)
 
         filemask = '*'
         if hasattr(self.parameters, 'ftp_file'):
-            self.logger.debug('Setting filemask to to: %r.'
-                              '' % self.parameters.ftp_file)
+            self.logger.debug('Setting filemask to to: %r.', self.parameters.ftp_file)
             filemask = self.parameters.ftp_file
 
         mem = io.BytesIO()
         files = fnmatch.filter(ftp.nlst(), filemask)
 
         if files:
-            self.logger.info('Retrieving file: %r.' % files[-1])
+            self.logger.info('Retrieving file: %r.', files[-1])
             ftp.retrbinary("RETR " + files[-1], mem.write)
         else:
             self.logger.info("No file found, terminating download.")
@@ -64,8 +61,8 @@ class FTPCollectorBot(CollectorBot):
         except zipfile.BadZipfile:
             raw_reports.append(mem.getvalue())
         else:
-            self.logger.info('Downloaded zip file, extracting following files: %r'
-                             '' % zfp.namelist())
+            self.logger.info('Downloaded zip file, extracting following files: %r',
+                             zfp.namelist())
             for filename in zfp.namelist():
                 raw_reports.append(zfp.read(filename))
 

@@ -56,9 +56,8 @@ class FTPS(FTP_TLS):
 
 class FTPSCollectorBot(CollectorBot):
     def process(self):
-        self.logger.info("Downloading report from %s." %
-                         (self.parameters.ftp_host + ':' +
-                          str(self.parameters.ftp_port)))
+        self.logger.info("Downloading report from %s.",
+                         self.parameters.ftp_host + ':' + str(self.parameters.ftp_port))
 
         ftps = FTPS()
         ftps.connect(host=self.parameters.ftps_host,
@@ -71,15 +70,15 @@ class FTPSCollectorBot(CollectorBot):
 
         cwd = '/'
         if hasattr(self.parameters, 'ftps_directory'):
-            self.logger.debug('Changing working directory to: %r.'
-                              '' % self.parameters.ftp_directory)
+            self.logger.debug('Changing working directory to: %r.',
+                              self.parameters.ftp_directory)
             cwd = self.parameters.ftps_directory
         ftps.cwd(cwd)
 
         filemask = '*'
         if hasattr(self.parameters, 'ftps_file'):
-            self.logger.debug('Setting filemask to to: %r.'
-                              '' % self.parameters.ftp_file)
+            self.logger.debug('Setting filemask to to: %r.',
+                              self.parameters.ftp_file)
             filemask = self.parameters.ftps_file
 
         mem = io.BytesIO()
@@ -100,8 +99,8 @@ class FTPSCollectorBot(CollectorBot):
         except zipfile.BadZipfile:
             raw_reports.append(mem.getvalue())
         else:
-            self.logger.info('Downloaded zip file, extracting following files: %r'
-                             '' % zfp.namelist())
+            self.logger.info('Downloaded zip file, extracting following files: %r.',
+                             zfp.namelist())
             for filename in zfp.namelist():
                 raw_reports.append(zfp.read(filename))
 
