@@ -4,13 +4,16 @@ CHANGELOG
 in development
 --------------
 
+### Configuration
+- `http_timeout` has been renamed to `http_timeout_sec` and `http_timeout_max_tries` has been added.
+   This setting is honored by bots.collectors.http.* and bots.collectors.mail.collector_mail_url, bots.collectors.rt (only `http_timeout_sec`), bots.outputs.restapi.output and bots.experts.ripencc_abuse_contact
+
 ### Documentation
 - Dropped install scripts, see INSTALL.md for more detailed instructions and explanations
 
 ### Bots
 - added bots.experts.idea, bots.outputs.files
 - possibility to split large csv Reports into Chunks, currently possible for mail url and file collector
-- The Mail-URL and the HTTP-Collector can be configured to honor timeouts. This can be achieved by using the parameter `http_timeout_max_tries`
 
 ### Harmonization
 - New field named output to support export to foreign formats
