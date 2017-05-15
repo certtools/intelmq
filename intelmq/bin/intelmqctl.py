@@ -136,11 +136,7 @@ class IntelMQProcessManager:
             retval = 0
         except KeyboardInterrupt:
             print('Keyboard interrupt.')
-            retval = 1
-        except Exception:
-            print('Bot failed:')
-            retval = 1
-            raise
+            retval = 0
         except SystemExit as exc:
             print('Bot exited with code %s.' % exc)
             retval = exc
@@ -150,7 +146,7 @@ class IntelMQProcessManager:
             self.bot_start(bot_id)
         return retval
 
-    def bot_start(self, bot_id):
+    def bot_start(self, bot_id, getstatus=True):
         pid = self.__read_pidfile(bot_id)
         if pid:
             if self.__status_process(pid):
@@ -444,19 +440,17 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             parser_run = subparsers.add_parser('run', help='Run a bot interactively')
             parser_run.add_argument('bot_id',
                                     choices=self.runtime_configuration.keys())
-            parser_run_subparsers = parser_run.add_subparsers(title='run-subcommands')
-            parser_run_message = parser_run_subparsers.add_parser(
-                'message', help='Debug bot\'s pipelines. Get the message in the input pipeline, '
-                                'pop it (cut it) and display it, or send the message directly to bot\' output pipeline.')
-            parser_run_message.add_argument('message_action_kind', choices=["get", "pop", "send"])
-            parser_run_message.add_argument('msg', nargs='?', help='If send was chosen, put here the message in quoted dict.')
+            parser_run_subparsers = parser_run.add_subparsers(title='run-subcommands')            
+            parser_run_message = parser_run_subparsers.add_parser('message', help='Debug bot\'s pipelines. Get the message in the input pipeline, pop it (cut it) and display it, or send the message directly to bot\'s output pipeline.')
+            parser_run_message.add_argument('message_action_kind', choices = ["get","pop","send"])
+            parser_run_message.add_argument('msg', nargs = '?', help='If send was chosen, put here the message in JSON.')
             parser_run_message.set_defaults(run_subcommand="message")
             parser_run_process = parser_run_subparsers.add_parser('process', help='Single run of bot\'s process() method.')
             parser_run_process.add_argument('--dryrun', '-d', action='store_true',
                                             help='Never really pop the message from the input pipeline '
                                                  'nor send to output pipeline.')
             parser_run_process.add_argument('--msg', '-m',
-                                            help='Trick the bot to process this quoted dict '
+                                            help='Trick the bot to process this JSON '
                                                  'instead of the Message in its pipeline.')
             parser_run_process.set_defaults(run_subcommand="process")
             parser_run.set_defaults(func=self.bot_run)
@@ -889,7 +883,6 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 def main():  # pragma: no cover
     x = IntelMQController(interactive=True)
     return x.run()
-
 
 if __name__ == "__main__":  # pragma: no cover
     exit(main())
