@@ -58,13 +58,7 @@ class Bot(object):
             self.__check_bot_id(bot_id)
             self.__bot_id = bot_id
 
-            if self.parameters.logging_handler == 'syslog':
-                syslog = self.parameters.logging_syslog
-            else:
-                syslog = False
-            self.logger = utils.log(self.__bot_id, syslog=syslog,
-                                    log_path=self.parameters.logging_path,
-                                    log_level=self.parameters.logging_level)
+            self.__init_logger()
         except Exception:
             self.__log_buffer.append(('critical', traceback.format_exc()))
             self.stop()
@@ -430,6 +424,7 @@ class Bot(object):
     def __load_runtime_configuration(self):
         self.logger.debug("Loading runtime configuration from %r.", RUNTIME_CONF_FILE)
         config = utils.load_configuration(RUNTIME_CONF_FILE)
+        reinitialize_logging = False
 
         if self.__bot_id in list(config.keys()):
             params = config[self.__bot_id]
@@ -441,6 +436,24 @@ class Bot(object):
             for option, value in params.items():
                 setattr(self.parameters, option, value)
                 self.__log_configuration_parameter("runtime", option, value)
+                if option.startswith('logging_'):
+                    reinitialize_logging = True
+
+        if reinitialize_logging:
+            self.logger.handlers = []  # remove all existing handlers
+            self.__init_logger()
+
+    def __init_logger(self):
+        """
+        Initialize the logger.
+        """
+        if self.parameters.logging_handler == 'syslog':
+            syslog = self.parameters.logging_syslog
+        else:
+            syslog = False
+        self.logger = utils.log(self.__bot_id, syslog=syslog,
+                                log_path=self.parameters.logging_path,
+                                log_level=self.parameters.logging_level)
 
     def __load_pipeline_configuration(self):
         self.logger.debug("Loading pipeline configuration from %r.", PIPELINE_CONF_FILE)
