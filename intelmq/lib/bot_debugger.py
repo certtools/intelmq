@@ -12,14 +12,18 @@ Depending on the subcommand received, the class either
  * processes single message, either injected or from default pipeline (process subcommand)
  * reads the message from input pipeline or send a message to output pipeline (message subcommand)
 """
+import time
+import json
+import logging
 from importlib import import_module
+
 from intelmq.lib import utils
 from intelmq.lib.message import Event
 from intelmq.lib.message import MessageFactory
 from intelmq.lib.utils import StreamHandler
 from intelmq.lib.utils import error_message_from_exc
-import json
-import logging
+
+
 class BotDebugger:
 
     EXAMPLE = """\nThe message may look like:  '{"source.network": "178.72.192.0/18", "time.observation": "2017-05-12T05:23:06+00:00"}' """
@@ -74,16 +78,20 @@ class BotDebugger:
 
     def _message(self, message_action_kind, msg):
         if message_action_kind == "get":
-            self.instance.logger.info("Trying to get the message...")
-            # never pops from source to internal queue, thx to disabling brpoplpush operation
+            self.instance.logger.info("Waiting for a message to get...")
             if not bool(self.instance._Bot__source_queues):
                 self.instance.logger.warning("Bot has no source queue.")
                 return
+
+            # Never pops from source to internal queue, thx to disabling brpoplpush operation.
+            # However, we have to wait manually till there is the message in the queue.
             pl = self.instance._Bot__source_pipeline
             pl.pipe.brpoplpush = lambda source_q, inter_q, i: pl.pipe.lindex(source_q, -1)
+            while not pl.pipe.llen(pl.source_queue):
+                time.sleep(1)
             self.pprint(self.instance.receive_message())
         elif message_action_kind == "pop":
-            self.instance.logger.info("Trying to pop the message...")
+            self.instance.logger.info("Waiting for a message to pop...")
             self.pprint(self.instance.receive_message())
             self.instance.acknowledge_message()
         elif message_action_kind == "send":
@@ -140,8 +148,6 @@ class BotDebugger:
         print(self.EXAMPLE)
         if input("Do you want to display current harmonization (available fields)? y/[n]: ") is "y":
             self.pprint(self.instance.harmonization)
-
-
 
     @staticmethod
     def pprint(msg):
