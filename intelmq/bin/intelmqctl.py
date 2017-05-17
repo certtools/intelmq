@@ -132,7 +132,7 @@ class IntelMQProcessManager:
             fp.write(str(os.getpid()))
 
         try:
-            BotDebugger(self.__runtime_configuration[bot_id]['module'], bot_id, run_subcommand, console_type, dryrun, message_action_kind, msg)
+            BotDebugger(self.__runtime_configuration[bot_id], bot_id, run_subcommand, console_type, dryrun, message_action_kind, msg)
             retval = 0
         except KeyboardInterrupt:
             print('Keyboard interrupt.')
@@ -444,13 +444,16 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             parser_run.add_argument('bot_id',
                                     choices=self.runtime_configuration.keys())
             parser_run_subparsers = parser_run.add_subparsers(title='run-subcommands')
+
             parser_run_console = parser_run_subparsers.add_parser('console', help='Get a ipdb live console.')
             parser_run_console.add_argument('console_type', nargs='?', help='You may specify which console should be run. Default is ipdb (if installed) or pudb (if installed) or pdb but you may want to use another one.')
             parser_run_console.set_defaults(run_subcommand="console")
+
             parser_run_message = parser_run_subparsers.add_parser('message', help='Debug bot\'s pipelines. Get the message in the input pipeline, pop it (cut it) and display it, or send the message directly to bot\'s output pipeline.')
             parser_run_message.add_argument('message_action_kind', choices = ["get","pop","send"])
             parser_run_message.add_argument('msg', nargs='?', help='If send was chosen, put here the message in JSON.')
             parser_run_message.set_defaults(run_subcommand="message")
+
             parser_run_process = parser_run_subparsers.add_parser('process', help='Single run of bot\'s process() method.')
             parser_run_process.add_argument('--dryrun', '-d', action='store_true',
                                             help='Never really pop the message from the input pipeline '
