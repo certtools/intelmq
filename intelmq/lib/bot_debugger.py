@@ -18,7 +18,6 @@ import logging
 from importlib import import_module
 
 from intelmq.lib import utils
-from intelmq.lib.message import Event
 from intelmq.lib.message import MessageFactory
 from intelmq.lib.utils import StreamHandler
 from intelmq.lib.utils import error_message_from_exc
@@ -42,6 +41,7 @@ class BotDebugger:
         self.instance = bot(bot_id)
 
         if not run_subcommand:
+            self.leverageLogger(logging.DEBUG)
             self.instance.start()
         else:
             self.instance._Bot__connect_pipelines()
@@ -107,6 +107,7 @@ class BotDebugger:
 
     def _process(self, dryrun, msg):
         if msg:
+            msg = MessageFactory.serialize(self.arg2msg(msg))
             self.instance._Bot__source_pipeline.receive = lambda: msg
             self.instance.logger.info(" * Message from cli will be used when processing.")
 
@@ -122,7 +123,7 @@ class BotDebugger:
         try:
             default_type = "Report" if self.runtime_configuration["group"] is "Parser" else "Event"
             msg = MessageFactory.unserialize(msg, default_type=default_type)
-        except (Exception, KeyError, TypeError, json.JSONDecodeError) as exc:
+        except (Exception, KeyError, TypeError, ValueError) as exc:
             self.messageWizzard("Message can not be parsed from JSON: {}".format(error_message_from_exc(exc)))
             exit(1)
         return msg
