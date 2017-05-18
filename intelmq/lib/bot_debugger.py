@@ -25,13 +25,15 @@ from intelmq.lib.utils import error_message_from_exc
 
 class BotDebugger:
 
-    EXAMPLE = """\nThe message may look like:  '{"source.network": "178.72.192.0/18", "time.observation": "2017-05-12T05:23:06+00:00"}' """
+    EXAMPLE = """\nThe message may look like:
+    '{"source.network": "178.72.192.0/18", "time.observation": "2017-05-12T05:23:06+00:00"}' """
 
     load_configuration = utils.load_configuration
     logging_level = "DEBUG"
     init_log_level = {"console": logging.DEBUG, "message": logging.WARNING, "process": logging.INFO, None: logging.INFO}
 
-    def __init__(self, runtime_configuration, bot_id, run_subcommand=None, console_type=None, dryrun=None, message_kind=None, msg=None):
+    def __init__(self, runtime_configuration, bot_id, run_subcommand=None, console_type=None,
+                 dryrun=None, message_kind=None, msg=None):
         self.runtime_configuration = runtime_configuration
         self.leverageLogger(level=self.init_log_level[run_subcommand])
         module = import_module(self.runtime_configuration['module'])
@@ -67,7 +69,8 @@ class BotDebugger:
             else:
                 if console_type and console != console_type:
                     print("Console {} not available.".format(console_type))
-                print("*** Using console {}. Please use 'self' to access to the bot instance properties. ***".format(module.__name__))
+                print("*** Using console {}. Please use 'self' to access to the bot instance properties. ***"
+                      .format(module.__name__))
                 break
         else:
             print("Can't run console.")
