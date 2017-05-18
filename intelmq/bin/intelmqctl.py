@@ -901,5 +901,6 @@ def main():  # pragma: no cover
     x = IntelMQController(interactive=True)
     return x.run()
 
+
 if __name__ == "__main__":  # pragma: no cover
     exit(main())
