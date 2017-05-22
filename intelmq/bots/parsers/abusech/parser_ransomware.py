@@ -40,7 +40,12 @@ class AbuseCHRansomwaretrackerParserBot(Bot):
                         ev.add('classification.type', 'c&c')
                         ev.add('time.source', nrow[0] + ' UTC', overwrite=True)
                         ev.add('status', nrow[5])
-                        ev.add('source.ip', nrow[7])
+                        # in the feed sometimes a , is seen before srcip
+                        # perhaps it is an error on feeds part
+                        # however we have to deal with it
+                        src_ip = nrow[7][1:] if nrow[7][0] == ',' else nrow[7]
+                        ev.add('source.ip', src_ip)
+                        #ev.add('source.ip', nrow[7])
                         ev.add('raw', ','.join(nrow))
                         ev.add('source.fqdn', nrow[3], raise_failure=False)
                         ev.add('source.url', nrow[4], raise_failure=False)
