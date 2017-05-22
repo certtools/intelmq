@@ -158,10 +158,15 @@ class IntelMQProcessManager:
         module = self.__runtime_configuration[bot_id]['module']
         cmdargs = [module, bot_id]
         with open('/dev/null', 'w') as devnull:
-            proc = psutil.Popen(cmdargs, stdout=devnull, stderr=devnull)
-            filename = self.PIDFILE.format(bot_id)
-            with open(filename, 'w') as fp:
-                fp.write(str(proc.pid))
+            try:
+                proc = psutil.Popen(cmdargs, stdout=devnull, stderr=devnull)
+            except FileNotFoundError:
+                log_bot_error("starting", bot_id)
+                return 'stopped'
+            else:            
+                filename = self.PIDFILE.format(bot_id)
+                with open(filename, 'w') as fp:
+                    fp.write(str(proc.pid))
 
         if getstatus:
             time.sleep(0.5)
