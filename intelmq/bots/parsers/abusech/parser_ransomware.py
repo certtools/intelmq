@@ -46,7 +46,8 @@ class AbuseCHRansomwaretrackerParserBot(Bot):
                         src_ip = nrow[7]
                         if src_ip and len(src_ip) > 8 and src_ip[0] == ',':
                             src_ip = src_ip[1:]
-                        ev.add('source.ip', src_ip)
+                        if src_ip != '0.0.0.0':
+                            ev.add('source.ip', src_ip)
                         # ev.add('source.ip', nrow[7])
                         ev.add('raw', ','.join(nrow))
                         ev.add('source.fqdn', nrow[3], raise_failure=False)
