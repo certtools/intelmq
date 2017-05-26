@@ -24,6 +24,7 @@ EXAMPLE_EVENT = {"feed.name": "Sample CSV Feed",
                  "source.ip": "11.11.11.11",
                  "feed.name": "Sample CSV Feed",
                  "source.port": 9001,
+                 'time.source': '2017-05-26T07:00:36+00:00',
                  "source.url": "http://test.com"
                  }
 
@@ -34,8 +35,22 @@ EXAMPLE_EVENT2 = {"feed.name": "Sample CSV Feed",
                  "classification.type": "botnet drone",
                  "source.ip": "11.11.11.11",
                  "feed.name": "Sample CSV Feed",
+                 'time.source': '2017-05-26T07:00:37+00:00',
                  "source.port": 9001
                  }
+
+EXAMPLE_EVENT3 = {"feed.name": "Sample CSV Feed",
+                 "__type": "Event",
+                 "raw": utils.base64_encode(SAMPLE_SPLIT[3].replace('"', '')+'\r\n'),
+                 "time.observation": "2015-01-01T00:00:00+00:00",
+                 "classification.type": "botnet drone",
+                 "source.ip": "11.11.11.11",
+                 "feed.name": "Sample CSV Feed",
+                 "source.port": 9001,
+                 'time.source': '2017-05-26T07:00:38+00:00',
+                 "source.url": "http://test.com"
+                 }
+
 
 class TestGenericCsvParserBot(test.BotTestCase, unittest.TestCase):
     """
@@ -47,10 +62,11 @@ class TestGenericCsvParserBot(test.BotTestCase, unittest.TestCase):
         cls.bot_reference = GenericCsvParserBot
         cls.default_input_message = EXAMPLE_REPORT
 #source_ip,source_url,source_port
-        cls.sysconfig = {"columns": [ "source.ip", "source.url", "source.port" ],
+        cls.sysconfig = {"columns": [ "source.ip", "source.url", "source.port", "time.source" ],
                          "delimiter": ",",
                          "skip_header": True,
                          "type": "botnet drone",
+                         "time_format": "timestamp",
                          "default_url_protocol": "http://",
                          "type_translation": None}
 
@@ -58,8 +74,10 @@ class TestGenericCsvParserBot(test.BotTestCase, unittest.TestCase):
         """ Test if correct Event has been produced. """
         self.run_bot()
         self.run_bot()
+        self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_EVENT)
         self.assertMessageEqual(1, EXAMPLE_EVENT2)
+        self.assertMessageEqual(2, EXAMPLE_EVENT3)
 
 
 if __name__ == '__main__':  # pragma: no cover

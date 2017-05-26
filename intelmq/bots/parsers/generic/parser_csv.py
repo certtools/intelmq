@@ -77,6 +77,11 @@ class GenericCsvParserBot(ParserBot):
             if key in ["__IGNORE__", ""]:
                 continue
             if key in ["time.source", "time.destination"]:
+                value = int(value) if isinstance(value, str) else value
+                if len(str(value)) == 12:
+                    value =  value/100.
+                if len(str(value)) == 13:
+                    value =  value/1000.
                 value = TIME_CONVERSIONS[self.time_format](value)
             elif key.endswith('.url') and value and value != '' and \
                 len(value) > 0 and '://' not in value:  # nopep8
