@@ -22,6 +22,7 @@ from intelmq.lib import utils
 from intelmq.lib.bot import ParserBot
 from intelmq.lib.exceptions import InvalidArgument
 from intelmq.lib.harmonization import DateTime
+import intelmq.lib.exceptions as exceptions
 
 
 TIME_CONVERSIONS = {'timestamp': DateTime.from_timestamp,
@@ -66,36 +67,50 @@ class GenericCsvParserBot(ParserBot):
 
         extra = {}
         for key, value in zip(self.columns, row):
-            regex = self.column_regex_search.get(key, None)
-            if regex:
-                search = re.search(regex, value)
-                if search:
-                    value = search.group(0)
-                else:
-                    value = None
-
-            if key in ["__IGNORE__", ""]:
-                continue
-            if key in ["time.source", "time.destination"]:
-                value = int(value) if isinstance(value, str) else value
-                if len(str(value)) == 12:
-                    value =  value/100.
-                if len(str(value)) == 13:
-                    value =  value/1000.
-                value = TIME_CONVERSIONS[self.time_format](value)
-            elif key.endswith('.url') and value and value != '' and \
-                len(value) > 0 and '://' not in value:  # nopep8
-                value = self.parameters.default_url_protocol + value
-            elif key in ["classification.type"] and self.type_translation:
-                if value in self.type_translation:
-                    value = self.type_translation[value]
-                elif not hasattr(self.parameters, 'type'):
-                    continue
-            if key.startswith('extra.'):
-                if value:
-                    extra[key[6:]] = value
+            if '|' in key:
+                keys = key.split('|')
             else:
-                event.add(key, value)
+                keys = [key, ]
+            value_added = False
+            for key in keys:
+                if value_added:
+                    break
+                regex = self.column_regex_search.get(key, None)
+                if regex:
+                    search = re.search(regex, value)
+                    if search:
+                        value = search.group(0)
+                    else:
+                        value = None
+
+                if key in ["__IGNORE__", ""]:
+                    stop = True
+                    continue
+                if key in ["time.source", "time.destination"]:
+                    value = int(value) if isinstance(value, str) else value
+                    if len(str(value)) == 12:
+                        value = value / 100.
+                    if len(str(value)) == 13:
+                        value = value / 1000.
+                    value = TIME_CONVERSIONS[self.time_format](value)
+                elif key.endswith('.url') and value and value != '' and \
+                    len(value) > 0 and '://' not in value:  # nopep8
+                    value = self.parameters.default_url_protocol + value
+                elif key in ["classification.type"] and self.type_translation:
+                    if value in self.type_translation:
+                        value = self.type_translation[value]
+                    elif not hasattr(self.parameters, 'type'):
+                        continue
+                if key.startswith('extra.'):
+                    if value:
+                        extra[key[6:]] = value
+                else:
+                    value_added = event.add(key, value, raise_failure=False)
+
+            # if the value sill remains unadded we need to inform
+            # key here will have all the values like x|y
+            if not value_added:
+                raise exceptions.InvalidValue(key, value)
 
         if hasattr(self.parameters, 'type')\
                 and "classification.type" not in event:
