@@ -78,7 +78,8 @@ class GenericCsvParserBot(ParserBot):
                 continue
             if key in ["time.source", "time.destination"]:
                 value = TIME_CONVERSIONS[self.time_format](value)
-            elif key.endswith('.url') and '://' not in value:
+            elif key.endswith('.url') and value and value != '' and \
+                len(value) > 0 and '://' not in value:  # nopep8
                 value = self.parameters.default_url_protocol + value
             elif key in ["classification.type"] and self.type_translation:
                 if value in self.type_translation:
