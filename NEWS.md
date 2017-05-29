@@ -12,6 +12,8 @@ See the changelog for a full list of changes.
 
 in development
 --------------
+### Configuration
+- `http_timeout` has been renamed to `http_timeout_sec` and `http_timeout_max_tries` has been added.
 
 ### Configuration
 Two new fields have been added to `defaults.conf` which are expected by the bots:

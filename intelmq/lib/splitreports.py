@@ -54,6 +54,7 @@ def split_chunks(chunk: bytes, chunk_size: int) -> List[bytes]:
     Params:
         chunk: The string to be splitted
         chunk_size: maximum size of each chunk
+
     Returns:
         chunks: List of resulting chunks
     """
@@ -90,6 +91,7 @@ def read_delimited_chunks(infile: BinaryIO, chunk_size: int) -> Generator[bytes,
     Params:
         infile: stream to read from
         chunk_size: maximum size of each chunk
+
     Yields:
         chunk: chunk with maximum size of chunk_size if possible
     """
@@ -141,6 +143,7 @@ def generate_reports(report_template: Report, infile: BinaryIO, chunk_size: Opti
         infile: stream to read from
         chunk_size: maximum size of each chunk
         copy_header_line: copy the first line of the infile to each chunk
+
     Yields:
         report: a Report object holding the chunk in the raw field
     """
