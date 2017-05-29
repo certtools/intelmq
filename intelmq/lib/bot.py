@@ -265,6 +265,9 @@ class Bot(object):
         except BaseException:
             pass
 
+        if self.__message_counter:
+            self.logger.info("Processed %d messages since last logging.", self.__message_counter)
+
         self.__disconnect_pipelines()
 
         if self.logger:
