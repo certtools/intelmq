@@ -96,7 +96,7 @@ class RTCollectorBot(CollectorBot):
                                     headers=self.http_header,
                                     verify=self.http_verify_cert,
                                     cert=self.ssl_client_cert,
-                                    timeout=self.http_timeout)
+                                    timeout=self.http_timeout_sec)
 
                 response_code_class = resp.status_code // 100
                 if response_code_class != 2:
