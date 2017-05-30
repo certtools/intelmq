@@ -11,6 +11,13 @@ class BambenekParserBot(ParserBot):
     DOMMASTERLIST = {'http://osint.bambenekconsulting.com/feeds/c2-dommasterlist.txt'}
     DGA_FEED = {'http://osint.bambenekconsulting.com/feeds/dga-feed.txt'}
 
+    MALWARE_NAME_MAP = {
+        "cryptolocker": "cl",
+        "p2p goz": "p2pgoz",
+        "pt goz": "ptgoz",
+        "volatile cedar": "volatile"
+    }
+
     def parse_line(self, line, report):
         if line.startswith('#') or len(line) == 0:
             self.tempdata.append(line)
@@ -22,6 +29,12 @@ class BambenekParserBot(ParserBot):
             event.add('event_description.text', value[1])
             event.add('event_description.url', value[3])
             event.add('raw', line)
+
+            # last row is a url with malware named txt file link
+            malware_name = value[-1].split('/')[-1].split('.')[0]
+            if malware_name in BambenekParserBot.MALWARE_NAME_MAP:
+                malware_name = BambenekParserBot.MALWARE_NAME_MAP[malware_name]
+            event.add('malware.name', malware_name)
 
             if report['feed.url'] in BambenekParserBot.IPMASTERLIST:
                 event.add('source.ip', value[0])
