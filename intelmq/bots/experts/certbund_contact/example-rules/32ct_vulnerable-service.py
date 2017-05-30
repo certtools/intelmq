@@ -76,6 +76,9 @@ def determine_directives(context):
     if classification_identifier not in SUPPORTED_CLASSIFICATION_IDENTIFIERS:
         # We don't want to handle this data. Something may not be correct
         # Check if this was already logged to prevent log-flooding:
+        if classification_identifier is None:
+            classification_identifier = "NONE-TYPE"
+
         if "CI-NS_"+classification_identifier not in LOGGING_SET:
             LOGGING_SET.add("CI-NS_"+classification_identifier)
             context.logger.info("The Classification Identifier %s "
