@@ -13,6 +13,26 @@ See its documentation for details.
 from intelmq.bots.experts.certbund_contact.rulesupport \
     import notification_inhibited
 
+"""
+This list of Tags defines Tag-names and conditions when a tag matches.
+The concept is quite similar to inhibitions, but moves the configuration
+efforts to another place. In this case the high efforts are on the skripting
+side and not on the Contact-DB side.
+
+When using inhibitions, the complex configuration has to be done on the
+contactdb side.
+"""
+WHITELIST_TAGS = {
+    "whitelist-malware": {
+        "field": "classification.type",
+        "values": ["botnet drone"]
+    },
+    "whitelist-opendns": {
+        "field": "classification.identifier",
+        "values": ["opendns"]
+    }
+}
+
 
 def determine_directives(context):
     if notification_inhibited(context):
@@ -22,3 +42,28 @@ def determine_directives(context):
         # indicate that no more rules should be processed to inhibit all
         # notifications for this event.
         return True
+    if inhibited_by_tag(context):
+        # According to the Tags of the Organisation or Network
+        # This event should not be reported.
+        return True
+
+
+def inhibited_by_tag(context):
+    """
+    Compare the annotations with the dict above.
+    Check if the field "field" contains one of
+    the values in "values"
+    """
+    annotations = context.all_annotations()
+    tags = set()
+    for a in annotations:
+        if a.tag != "inhibition":
+            tags.add(a.tag)
+
+    for t in tags.intersection(WHITELIST_TAGS):
+        field = WHITELIST_TAGS[t]["field"]
+        values = WHITELIST_TAGS[t]["values"]
+        if context.get(field) in values:
+            return True
+
+    return False
