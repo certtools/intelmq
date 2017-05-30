@@ -43,11 +43,9 @@ class AbuseCHRansomwaretrackerParserBot(Bot):
                         # in the feed sometimes a ',' is seen before srcip
                         # perhaps it is an error on feeds part
                         # however we have to deal with it
-                        src_ip = nrow[7]
-                        if src_ip and len(src_ip) > 8 and src_ip[0] == ',':
-                            src_ip = src_ip[1:]
+                        src_ip = nrow[7].strip(',')
                         if src_ip != '0.0.0.0':
-                            ev.add('source.ip', src_ip)
+                            ev.add('source.ip', src_ip, raise_failure=False)
                         # ev.add('source.ip', nrow[7])
                         ev.add('raw', ','.join(nrow))
                         ev.add('source.fqdn', nrow[3], raise_failure=False)
