@@ -6,6 +6,7 @@ INTELMQ_DIR = '/opt/intelmq'
 #PIPELINE_CONF = INTELMQ_DIR+'/etc/pipeline.conf'
 RUNTIME_CONF = intelmq.RUNTIME_CONF_FILE
 PIPELINE_CONF = intelmq.PIPELINE_CONF_FILE
+IGNORED_IDS_FILE = './ignored_ids.txt'
 SYSTEMD_OUTPUT_DIR = INTELMQ_DIR+'/etc/systemd'
 SERVICE_PREFIX = "intelmq."
 DISABLE_IN_CONF = True
