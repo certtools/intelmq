@@ -395,7 +395,7 @@ class Bot(object):
             with open(dump_file, 'r') as fp:
                 dump_data = json.load(fp)
                 dump_data.update(new_dump_data)
-        except ValueError:
+        except (ValueError, FileNotFoundError):
             dump_data = new_dump_data
 
         with open(dump_file, 'w') as fp:
