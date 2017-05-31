@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
+import os
 import unittest
-
-import pymongo
 
 import intelmq.lib.test as test
 from intelmq.bots.outputs.mongodb.output import MongoDBOutputBot
+
+if os.environ.get('INTELMQ_TEST_DATABASES'):
+    import pymongo
 
 INPUT1 = {"__type": "Event",
           "classification.type": "botnet drone",
@@ -29,11 +31,11 @@ class TestMongoDBOutputBot(test.BotTestCase, unittest.TestCase):
         cls.default_input_message = INPUT1
         cls.sysconfig = {"collection": "events",
                          "database": "tests",
-                         "db_user": None,
-                         "db_pass": None,
                          "host": "localhost",
                          "port": 27017,
                          "hierarchical_output": True}
+        if not os.environ.get('INTELMQ_TEST_DATABASES'):
+            return
         cls.con = pymongo.MongoClient()
         cls.db = cls.con['tests']
 

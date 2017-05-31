@@ -1,4 +1,7 @@
+# -*- coding: utf-8 -*-
 from string import Template
+
+__all__ = ['TIMER_TEMPLATE', 'SERVICE_TEMPLATE', 'POST_DOCS']
 
 
 SERVICE_TEMPLATE = Template('''[Unit]
@@ -16,8 +19,6 @@ Group=$INTELMQ_GROUP
 [Install]
 WantedBy=multi-user.target
 ''')
-
-
 
 
 TIMER_TEMPLATE = Template('''[Unit]
@@ -39,9 +40,7 @@ WantedBy=multi-user.target
 ''')
 
 
-
-
-POST_DOCS='''
+POST_DOCS = '''
 TO INSTALL
 ==========
 cd /opt/intelmq/etc/systemd

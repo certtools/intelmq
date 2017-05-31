@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 import unittest
 
 import intelmq.lib.test as test
@@ -29,6 +30,8 @@ class TestPostgreSQLOutputBot(test.BotTestCase, unittest.TestCase):
                          "password": "intelmq",
                          "sslmode": "require",
                          "table": "tests"}
+        if not os.environ.get('INTELMQ_TEST_DATABASES'):
+            return
         cls.con = psycopg2.connect(database=cls.sysconfig['database'],
                                    user=cls.sysconfig['user'],
                                    password=cls.sysconfig['password'],
