@@ -56,6 +56,31 @@ EXAMPLE_EVENT = [{'feed.url': 'https://ransomwaretracker.abuse.ch/feeds/csv',
                  'source.ip': '5.79.96.33',
                  'source.fqdn': 'ojmekzw4mujvqeju.minitili.at',
                  'source.url': 'http://ojmekzw4mujvqeju.minitili.at/',
+                  },
+                 {'feed.url': 'https://ransomwaretracker.abuse.ch/feeds/csv',
+                 'feed.name': 'AbuseCH Ransomwaretracker',
+                 '__type': 'Event',
+                 'time.observation': '2016-11-16T10:18:00+00:00',
+                 'raw': 'MjAxNi0xMS0xMSAxNjowNjowMCxEaXN0cmlidXRpb24gU2l0ZSxMb2NreSxtb3RlZnVndWUuY29tLGh0dHA6Ly9tb3RlZnVndWUuY29tLzY0NWQ1LG9ubGluZSxQQUtOSUMgKFBSSVZBVEUpIExJTUlURUQsLDY3LjE3MS42NS42NCwxMzA1NXw3OTIyLFJVfFVT',
+                 'classification.identifier': 'locky',
+                 'classification.type': 'c&c',
+                 'time.source': '2016-11-11T16:06:00+00:00',
+                 'status': 'online',
+                 'source.ip': '67.171.65.64',
+                 'source.fqdn': 'motefugue.com',
+                 'source.url': 'http://motefugue.com/645d5',
+                 },
+                 {'feed.url': 'https://ransomwaretracker.abuse.ch/feeds/csv',
+                 'feed.name': 'AbuseCH Ransomwaretracker',
+                 '__type': 'Event',
+                 'time.observation': '2016-11-16T10:18:00+00:00',
+                 'raw': 'MjAxNi0xMS0xNSAxMDowNzo1OSxQYXltZW50IFNpdGUsVG9ycmVudExvY2tlcixvam1la3p3NG11anZxZWp1Lm1pbml0aWxpLmF0LGh0dHA6Ly9vam1la3p3NG11anZxZWp1Lm1pbml0aWxpLmF0LyxvbmxpbmUsLDAuMC4wLjAsNjA3ODF8MjkxODJ8MjA3MDI3fDEyNjk1LE5M',
+                 'classification.identifier': 'torrentlocker',
+                 'classification.type': 'c&c',
+                 'time.source': '2016-11-15T10:07:59+00:00',
+                 'status': 'online',
+                 'source.fqdn': 'ojmekzw4mujvqeju.minitili.at',
+                 'source.url': 'http://ojmekzw4mujvqeju.minitili.at/',
                   }]
 
 
@@ -73,7 +98,9 @@ class TestAbuseCHRansomwaretrackerParserBot(test.BotTestCase, unittest.TestCase)
         self.assertMessageEqual(0, EXAMPLE_EVENT[0])
         self.assertMessageEqual(1, EXAMPLE_EVENT[1])
         self.assertMessageEqual(2, EXAMPLE_EVENT[2])
-
+        self.assertMessageEqual(3, EXAMPLE_EVENT[0])
+        self.assertMessageEqual(4, EXAMPLE_EVENT[3])
+        self.assertMessageEqual(5, EXAMPLE_EVENT[4])
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
