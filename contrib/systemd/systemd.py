@@ -62,10 +62,15 @@ def main():
     with open(PIPELINE_CONF, encoding='utf-8') as pipe_file:
         pipe_data = json.loads(pipe_file.read())
 
+    with open(IGNORED_IDS_FILE, encoding='utf-8') as ign_ids_file:
+        ign_ids_data = ign_ids_file.read()
+    ignored_ids = [id.strip() for id in ign_ids_data.split('\n') if not id.startswith('#')]
+    print(">> IGID ",ignored_ids)
+
     if not os.path.exists(SYSTEMD_OUTPUT_DIR):
             os.makedirs(SYSTEMD_OUTPUT_DIR)
 
-    collectors = [i for i in rc_data if rc_data[i]['group'] == 'Collector']
+    collectors = [i for i in rc_data if rc_data[i]['group'] == 'Collector' and i not in ignored_ids]
     #parsers = [i for i in pipe_data if rc_data[i]['group'] == 'Parser']
 
     for bot in collectors:
