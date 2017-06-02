@@ -34,9 +34,7 @@ class BambenekParserBot(ParserBot):
 
             # last column is a url with malware named txt file link
             malware_name = value[-1].split('/')[-1].split('.')[0]
-            if malware_name in BambenekParserBot.MALWARE_NAME_MAP:
-                malware_name = BambenekParserBot.MALWARE_NAME_MAP[malware_name]
-            event.add('malware.name', malware_name)
+            event.add('malware.name', self.MALWARE_NAME_MAP.get(malware_name, malware_name))
 
             if report['feed.url'] in BambenekParserBot.IPMASTERLIST:
                 event.add('source.ip', value[0])
