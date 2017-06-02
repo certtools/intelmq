@@ -41,7 +41,7 @@ systemctl start redis.service
 
 # Configuration
 
-By default, one collector, one parser and one output are started. The default collector and the parser handle data from malware domain list, the file output bot writes all data to `/opt/intelmq/var/lib/bots/file-output/events.txt`.
+Note: If you installed the packages, LSB paths are used instead of `/opt/intelmq`.
 
 The configuration directory is `/opt/intelmq/etc/`, all files are JSON. By
 default, the installation method puts it's distributed configuration files into
@@ -65,6 +65,7 @@ using the template from BOTS.
 Configure source and destination queues in `pipeline.conf`.
 Use the IntelMQ Manager mentioned above to generate the configuration files if unsure.
 
+In the shipped examples 4 collectors and parsers, 6 common experts and one output are configured. The default collector and the parser handle data from malware domain list, the file output bot writes all data to `/opt/intelmq/var/lib/bots/file-output/events.txt`.
 
 ## System Configuration (defaults)
 
