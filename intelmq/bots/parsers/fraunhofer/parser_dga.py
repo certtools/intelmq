@@ -36,5 +36,18 @@ class FraunhoferDGAParserBot(Bot):
 
         self.acknowledge_message()
 
+        # add all lists together, only one loop needed
+#        for row in sum(dict_report.values(), []):
+#
+#            event = self.new_event(report)
+#
+#            event.add('classification.type', 'c&c')
+#            if not event.add('source.ip', row, raise_failure=False):
+#                event.add('source.fqdn', row)
+#            event.add("raw", row)
+#
+#            self.send_message(event)
+#        self.acknowledge_message()
+
 
 BOT = FraunhoferDGAParserBot
