@@ -11,6 +11,9 @@ in development
 ### Documentation
 - Dropped install scripts, see INSTALL.md for more detailed instructions and explanations
 
+### Core
+- fix bug which prevented dumps to be written if the file did not exist (https://github.com/certtools/intelmq/pull/986)
+
 ### Bots
 - added bots.experts.idea, bots.outputs.files
 - possibility to split large csv Reports into Chunks, currently possible for mail url and file collector
