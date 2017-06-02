@@ -48,7 +48,6 @@ source.ip,foobar
 192.0.2.3,bllaa
 #ending line
 """
-RAW_SPLIT = RAW.strip().splitlines()
 
 EXAMPLE_REPO_1 = {"feed.url": "http://www.example.com/",
                   "time.observation": "2015-08-11T13:03:40+00:00",
@@ -63,6 +62,9 @@ EXAMPLE_EVE_1 = {"feed.url": "http://www.example.com/",
                  'raw': 'c291cmNlLmlwLGZvb2Jhcg0KMTkyLjAuMi4zLGJsbGFhDQo='
                  }
 
+EXAMPLE_SHORT = EXAMPLE_REPORT.copy()
+EXAMPLE_SHORT['raw'] = utils.base64_encode('\n'.join(RAW_SPLIT[:2] + [RAW_SPLIT[1]]))
+
 
 class DummyParserBot(bot.ParserBot):
     """
@@ -75,6 +77,7 @@ class DummyParserBot(bot.ParserBot):
             self.tempdata.append(line)
         else:
             event = self.new_event(report)
+            self.logger.debug('test')
             line = line.split(',')
             event['time.source'] = line[0]
             event['source.fqdn'] = line[1]

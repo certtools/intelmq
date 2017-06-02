@@ -55,12 +55,6 @@ curl "https://bootstrap.pypa.io/get-pip.py" -o "/tmp/get-pip.py"
 python3.4 /tmp/get-pip.py
 ```
 
-Enable redis on startup:
-```bash
-systemctl enable redis
-systemctl start redis
-```
-
 ### Installation
 
 There are different methods to install IntelMQ:
@@ -94,6 +88,14 @@ pip3 install intelmq
 useradd -d /opt/intelmq -U -s /bin/bash intelmq
 chmod -R 0770 /opt/intelmq
 chown -R intelmq.intelmq /opt/intelmq
+```
+
+Please note that the PyPi / pip3 installation method does not create /opt/intelmq, as described in [Issue #189](/certtools/intelmq/issues/819).
+As workaround you need to move /opt/intelmq from the site-packages directory to / manually.
+The location of this directory varies, it could be `/usr/lib/python3.4/site-packages`, `/usr/local/lib/python3.5/dist-packages/` or similar.
+For example:
+```bash
+mv /usr/lib/python3.4/site-packages/opt/ /
 ```
 
 #### From the repository

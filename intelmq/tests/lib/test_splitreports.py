@@ -3,14 +3,13 @@ Tests for intelmq.lib.splitreports
 """
 
 import io
-import os
-import tempfile
 import unittest
 import itertools
 import base64
 
 from intelmq.lib.splitreports import read_delimited_chunks, generate_reports
 from intelmq.lib.message import Report
+from .test_message import HARM
 
 csv_test_data = b"\n".join(b",".join(line) for line in
                            [[bytes("header-%d" % (col,), "ascii")
@@ -90,7 +89,7 @@ class TestGenerateReports(unittest.TestCase):
 
     def test_generate_reports_no_chunking(self):
         """Test generate_reports with chunking disabled"""
-        template = Report()
+        template = Report(harmonization=HARM)
         template.add("feed.name", "test_generate_reports_no_chunking")
         [report] = list(generate_reports(template, io.BytesIO(csv_test_data),
                                          chunk_size=None,
@@ -99,10 +98,9 @@ class TestGenerateReports(unittest.TestCase):
                          "test_generate_reports_no_chunking")
         self.assertEqual(base64.b64decode(report["raw"]), csv_test_data)
 
-
     def test_generate_reports_with_chunking_no_header(self):
         """Test generate_reports with chunking and not copying the header"""
-        template = Report()
+        template = Report(harmonization=HARM)
         template.add("feed.name", "test_generate_reports_with_chunking")
 
         chunk_size = 1000
@@ -121,7 +119,6 @@ class TestGenerateReports(unittest.TestCase):
 
         self.assertEqual(b"".join(decoded_chunks), csv_test_data)
 
-
     def test_generate_reports_with_chunking_and_copying_header(self):
         """Test generate_reports with chunking and copying the header"""
         chunk_size = 1000
@@ -130,7 +127,7 @@ class TestGenerateReports(unittest.TestCase):
         # than the chunk size
         self.assertTrue(chunk_size < len(csv_test_data))
 
-        template = Report()
+        template = Report(harmonization=HARM)
         template.add("feed.name",
                      "test_generate_reports_with_chunking_and_header")
         observation_time = template["time.observation"]

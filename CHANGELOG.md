@@ -4,8 +4,15 @@ CHANGELOG
 in development
 --------------
 
+### Configuration
+- `http_timeout` has been renamed to `http_timeout_sec` and `http_timeout_max_tries` has been added.
+   This setting is honored by bots.collectors.http.* and bots.collectors.mail.collector_mail_url, bots.collectors.rt (only `http_timeout_sec`), bots.outputs.restapi.output and bots.experts.ripencc_abuse_contact
+
 ### Documentation
 - Dropped install scripts, see INSTALL.md for more detailed instructions and explanations
+
+### Core
+- fix bug which prevented dumps to be written if the file did not exist (https://github.com/certtools/intelmq/pull/986)
 
 ### Bots
 - added bots.experts.idea, bots.outputs.files
