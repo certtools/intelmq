@@ -80,6 +80,8 @@ Small extract:
 
 We recommend logging_level WARNING for production environments and INFO if you want more details. In any case, monitor your free disk space.
 
+You can set these per bot too. The settings will become active after the runtime configuration has been read (which is after loading the defaults configuration.
+
 ## Pipeline Configuration
 
 This configuration is used by each bot to load the source pipeline and destination pipelines associated to each of them. IntelMQ Manager generates this configuration.
