@@ -7,15 +7,17 @@ from intelmq.lib.bot import ParserBot
 class BambenekParserBot(ParserBot):
     """ Single parser for Bambenek feeds """
 
-    IPMASTERLIST = {'http://osint.bambenekconsulting.com/feeds/c2-ipmasterlist.txt'}
-    DOMMASTERLIST = {'http://osint.bambenekconsulting.com/feeds/c2-dommasterlist.txt'}
+    IPMASTERLIST = {
+        'http://osint.bambenekconsulting.com/feeds/c2-ipmasterlist.txt'}
+    DOMMASTERLIST = {
+        'http://osint.bambenekconsulting.com/feeds/c2-dommasterlist.txt'}
     DGA_FEED = {'http://osint.bambenekconsulting.com/feeds/dga-feed.txt'}
 
     MALWARE_NAME_MAP = {
-        "cryptolocker": "cl",
-        "p2p goz": "p2pgoz",
-        "pt goz": "ptgoz",
-        "volatile cedar": "volatile"
+        "cl": "cryptolocker",
+        "p2pgoz": "p2p goz",
+        "ptgoz": "pt goz",
+        "volatile": "volatile cedar",
     }
 
     def parse_line(self, line, report):
@@ -30,7 +32,7 @@ class BambenekParserBot(ParserBot):
             event.add('event_description.url', value[3])
             event.add('raw', line)
 
-            # last row is a url with malware named txt file link
+            # last column is a url with malware named txt file link
             malware_name = value[-1].split('/')[-1].split('.')[0]
             if malware_name in BambenekParserBot.MALWARE_NAME_MAP:
                 malware_name = BambenekParserBot.MALWARE_NAME_MAP[malware_name]
