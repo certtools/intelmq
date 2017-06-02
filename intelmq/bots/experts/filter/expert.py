@@ -9,7 +9,6 @@ from dateutil import parser
 from intelmq.lib.bot import Bot
 from intelmq.lib.utils import parse_relative
 
-
 class FilterExpertBot(Bot):
 
     # decide format of timefilter value and parse it

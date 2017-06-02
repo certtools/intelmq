@@ -425,7 +425,7 @@ class BotTestCase(object):
         Asserts that the given expected_message is
         contained in the generated event with
         given queue position.
-        """
+        """        
         event = self.get_output_queue()[queue_pos]
         self.assertIsInstance(event, str)
 

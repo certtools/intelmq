@@ -48,7 +48,7 @@ class ReverseDnsExpertBot(Bot):
 
             cache_key = bin(ip_integer)[2: minimum + 2]
             cachevalue = self.cache.get(cache_key)
-
+            
             result = None
             if cachevalue == DNS_EXCEPTION_VALUE:
                 continue

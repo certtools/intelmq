@@ -42,7 +42,7 @@ mapping['malware-action'] = {"taxonomy": "Malicious Code",
 mapping['phish']        = {"taxonomy": "Fraud",
                            "type": "phishing", "identifier": "phishing"}
 mapping['proxy']        = {"taxonomy": "Vulnerable",
-                           "type": "proxy", "identifier": "open proxy"}
+                           "type": "vulnerable service", "identifier": "open proxy"}
 mapping['sandbox-url']  = {"taxonomy": "ignore",
                            "type": "ignore", "identifier": "ignore me"}
 mapping['scanning']     = {"taxonomy": "Information Gathering",

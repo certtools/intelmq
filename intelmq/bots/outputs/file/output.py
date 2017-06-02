@@ -11,6 +11,8 @@ class FileOutputBot(Bot):
         self.file = io.open(self.parameters.file, mode='at', encoding="utf-8")
         self.logger.info("File %r is open.", self.parameters.file)
 
+        self.logger.info("EDVARD ZDE")
+
     def process(self):
         event = self.receive_message()
         event_data = event.to_json(hierarchical=self.parameters.hierarchical_output)
