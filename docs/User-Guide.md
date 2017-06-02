@@ -73,6 +73,8 @@ All bots inherit this configuration parameters and they can overwrite them using
 
 Small extract:
 
+* `enabled`: This option defines if a bot is enable to run or not. It's useful when `intelmqctl` is executed to start all bots except the ones defined as disabled.
+     * **`true/false`** - allows the bot to run or not
 * `logging_handler`: Can be one of `"file"` or `"syslog"`.
 * `logging_level`: Defines for all system the level of logging that will be use by all bots and intelmqctl tool. Possible values are: `"CRITICAL"`, `"ERROR"`, `"WARNING"`, `"INFO"` and `"DEBUG"`.
 * `logging_path`: If `logging_handler` is `file`. Defines for all system the logs folder that will be use by all bots and intelmqctl tool. Default value is: `/opt/intelmq/var/log/`
