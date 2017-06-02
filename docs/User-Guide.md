@@ -3,6 +3,7 @@
 For installation instructions, see [INSTALL.md](INSTALL.md).
 For upgrade instructions, see [UPGRADING.md](UPGRADING.md).
 
+  * [Configure services](#configure-services)
   * [Configuration](#configuration)
     * [System Configuration](#system-configuration)
     * [Pipeline Configuration](#pipeline-configuration)
@@ -30,6 +31,13 @@ For upgrade instructions, see [UPGRADING.md](UPGRADING.md).
   * [Frequently Asked Questions](#frequently-asked-questions)
   * [Additional Information](#additional-information)
     * [Performance Tests](#performance-tests)
+
+# Configure services
+You need to enable and start Redis is not done already. Using systemd it can be done with:
+```bash
+systemctl enable redis.service
+systemctl start redis.service
+```
 
 # Configuration
 

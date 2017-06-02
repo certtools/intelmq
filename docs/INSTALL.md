@@ -55,12 +55,6 @@ curl "https://bootstrap.pypa.io/get-pip.py" -o "/tmp/get-pip.py"
 python3.4 /tmp/get-pip.py
 ```
 
-Enable redis on startup:
-```bash
-systemctl enable redis
-systemctl start redis
-```
-
 ### Installation
 
 There are different methods to install IntelMQ:
