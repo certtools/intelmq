@@ -22,7 +22,6 @@ override_dh_auto_build:
 override_dh_auto_install: $(BOTDOCS)
 	rm intelmq/bin/rewrite_config_files.py
 	rm intelmq/bin/intelmq_gen_harm_docs.py
-	rm -r docs/install-scripts/
 	sed -i -e '/#!\/usr\/bin\//d' intelmq/bin/*.py
 	find . -type f -exec sed -i -f debian/sedfile {} \;
 	python3 setup.py install --root=debian/intelmq --prefix=/usr
