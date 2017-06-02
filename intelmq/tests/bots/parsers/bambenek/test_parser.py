@@ -31,6 +31,7 @@ DOMAIN_EVENTS = {'feed.url': 'http://osint.bambenekconsulting.com/feeds/c2-domma
                  'raw': 'c2ZraDIxb2tycm5sdS5jb20sRG9tYWluIHVzZWQgYnkgc2hpb3RvYi91cmx6b25lL2JlYmxvaCwyMDE2LTExLTEyIDE1OjAyLGh0dHA6Ly9vc2ludC5iYW1iZW5la2NvbnN1bHRpbmcuY29tL21hbnVhbC9iZWJsb2gudHh0',
                  'time.source': '2016-11-12T15:02:00+00:00',
                  'source.fqdn': 'sfkh21okrrnlu.com',
+                 'malware.name': 'bebloh',
                  'classification.type': 'c&c',
                  'status': 'online',
                  'event_description.text': 'Domain used by shiotob/urlzone/bebloh',
@@ -50,6 +51,7 @@ IP_EVENTS = {'feed.url': 'http://osint.bambenekconsulting.com/feeds/c2-ipmasterl
              'time.observation': '2016-01-01T00:00:00+00:00',
              'raw': 'MjEzLjI0Ny40Ny4xOTAsSVAgdXNlZCBieSBzaGlvdG9iL3VybHpvbmUvYmVibG9oIEMmQywyMDE2LTExLTEyIDE4OjAyLGh0dHA6Ly9vc2ludC5iYW1iZW5la2NvbnN1bHRpbmcuY29tL21hbnVhbC9iZWJsb2gudHh0',
              'source.ip': '213.247.47.190',
+             'malware.name': 'bebloh',
              'classification.type': 'c&c',
              'status': 'online',
              'time.source': '2016-11-12T18:02:00+00:00',
@@ -72,6 +74,7 @@ DGA_EVENTS = {'feed.url': 'http://osint.bambenekconsulting.com/feeds/dga-feed.tx
               'time.source': '2016-11-10T00:00:00+00:00',
               'source.fqdn': 'xqmclnusaswvof.com',
               'classification.type': 'dga domain',
+              'malware.name': 'cryptolocker',
               'event_description.text': 'Domain used by Cryptolocker - Flashback DGA for 10 Nov 2016',
               'event_description.url': 'http://osint.bambenekconsulting.com/manual/cl.txt'
              }
