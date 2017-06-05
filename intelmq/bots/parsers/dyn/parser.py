@@ -30,6 +30,9 @@ class DynParserBot(Bot):
                 continue
             if row.startswith('#'):
                 continue
+            if row.startswith("date started"):
+                continue
+            
 
             row_split = row.split()
 
