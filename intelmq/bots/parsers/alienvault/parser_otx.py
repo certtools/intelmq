@@ -8,9 +8,11 @@ howto_use_python_otx_api.ipynb
 
 import json
 import urllib.parse as parse
+from traceback import format_exc
 
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
+from intelmq.lib.exceptions import InvalidValue
 
 HASHES = {
     'FileHash-SHA256': 'malware.hash.sha256',
@@ -33,50 +35,54 @@ class AlienVaultOTXParserBot(Bot):
             for indicator in pulse["indicators"]:
                 additional_indicator = {}
                 event = self.new_event(report)
-                # hashes
-                if indicator["type"] in HASHES.keys():
-                    event.add(HASHES[indicator["type"]], indicator["indicator"])
-                # fqdn
-                elif indicator["type"] in ['hostname', 'domain']:
-                    # not all domains in the report are just domains
-                    # some are URLs, we can manage those here instead
-                    # of raising errors
-                    #
-                    # dirty check if there is a scheme
+                try:
+                    # hashes
+                    if indicator["type"] in HASHES.keys():
+                        event.add(HASHES[indicator["type"]], indicator["indicator"])
+                    # fqdn
+                    elif indicator["type"] in ['hostname', 'domain']:
+                        # not all domains in the report are just domains
+                        # some are URLs, we can manage those here instead
+                        # of raising errors
+                        #
+                        # dirty check if there is a scheme
 
-                    resource = indicator["indicator"] \
-                        if '://' in indicator["indicator"] \
-                        else 'http://' + indicator["indicator"]
-                    path = parse.urlparse(resource).path
-                    if len(path) > 0:
-                        event.add('source.url', resource)
-                    else:
-                        event.add('source.fqdn',
+                        resource = indicator["indicator"] \
+                            if '://' in indicator["indicator"] \
+                            else 'http://' + indicator["indicator"]
+                        path = parse.urlparse(resource).path
+                        if len(path) > 0:
+                            event.add('source.url', resource)
+                        else:
+                            event.add('source.fqdn',
+                                      indicator["indicator"])
+                    # IP addresses
+                    elif indicator["type"] in ['IPv4', 'IPv6']:
+                        event.add('source.ip',
                                   indicator["indicator"])
-                # IP addresses
-                elif indicator["type"] in ['IPv4', 'IPv6']:
-                    event.add('source.ip',
-                              indicator["indicator"])
-                # emails
-                elif indicator["type"] == 'email':
-                    event.add('source.account',
-                              indicator["indicator"])
-                # URLs
-                elif indicator["type"] in ['URL', 'URI']:
-                    resource = indicator["indicator"] \
-                        if '://' in indicator["indicator"] \
-                        else 'http://' + indicator["indicator"]
-                    event.add('source.url', resource)
-                # CIDR
-                elif indicator["type"] in ['CIDR']:
-                    event.add('source.network',
-                              indicator["indicator"])
+                    # emails
+                    elif indicator["type"] == 'email':
+                        event.add('source.account',
+                                  indicator["indicator"])
+                    # URLs
+                    elif indicator["type"] in ['URL', 'URI']:
+                        resource = indicator["indicator"] \
+                            if '://' in indicator["indicator"] \
+                            else 'http://' + indicator["indicator"]
+                        event.add('source.url', resource)
+                    # CIDR
+                    elif indicator["type"] in ['CIDR']:
+                        event.add('source.network',
+                                  indicator["indicator"])
 
-                # CVE
-                elif indicator["type"] in ['CVE']:
-                    additional_indicator['CVE'] = indicator["indicator"]
-                    # TODO: Process these IoCs: FilePath, Mutex
-                else:
+                    # CVE
+                    elif indicator["type"] in ['CVE']:
+                        additional_indicator['CVE'] = indicator["indicator"]
+                        # TODO: Process these IoCs: FilePath, Mutex
+                    else:
+                        continue
+                except InvalidValue:
+                    self.logger.exception('Failed to parse line: {}\n{}'.format(indicator, format_exc()))
                     continue
 
                 if 'tags' in pulse:
