@@ -15,6 +15,7 @@ Depending on the subcommand received, the class either
 import time
 import json
 import logging
+from os.path import exists
 from importlib import import_module
 
 from intelmq.lib import utils
@@ -90,7 +91,7 @@ class BotDebugger:
             # However, we have to wait manually till there is the message in the queue.
             pl = self.instance._Bot__source_pipeline
             pl.pipe.brpoplpush = lambda source_q, inter_q, i: pl.pipe.lindex(source_q, -1)
-            while not pl.pipe.llen(pl.source_queue):
+            while not (pl.pipe.llen(pl.source_queue) or pl.pipe.llen(pl.internal_queue)):
                 time.sleep(1)
             self.pprint(self.instance.receive_message())
         elif message_action_kind == "pop":
@@ -126,7 +127,10 @@ class BotDebugger:
         try:
             default_type = "Report" if self.runtime_configuration["group"] is "Parser" else "Event"
             msg = MessageFactory.unserialize(msg, default_type=default_type)
-        except (Exception, KeyError, TypeError, ValueError) as exc:
+        except (Exception, KeyError, TypeError, ValueError) as exc:                        
+            if exists(msg):
+                with open(msg,"r") as f:
+                    return self.arg2msg(f.read())
             self.messageWizzard("Message can not be parsed from JSON: {}".format(error_message_from_exc(exc)))
             exit(1)
         return msg
