@@ -90,7 +90,7 @@ class BotDebugger:
             # However, we have to wait manually till there is the message in the queue.
             pl = self.instance._Bot__source_pipeline
             pl.pipe.brpoplpush = lambda source_q, inter_q, i: pl.pipe.lindex(source_q, -1)
-            while not pl.pipe.llen(pl.source_queue):
+            while not (pl.pipe.llen(pl.source_queue) or pl.pipe.llen(pl.internal_queue)):
                 time.sleep(1)
             self.pprint(self.instance.receive_message())
         elif message_action_kind == "pop":
