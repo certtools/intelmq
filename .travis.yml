@@ -17,6 +17,7 @@ install:
   - if [[ $TRAVIS_PYTHON_VERSION < '3.5' ]]; then pip install typing; fi
   - pip install codecov
   - pip install pycodestyle
+  - sudo sed -i '/^Defaults\tsecure_path.*$/ d' /etc/sudoers
   - sudo pip install .
   - sudo cp /opt/intelmq/etc/examples/* /opt/intelmq/etc/
 before_script:
