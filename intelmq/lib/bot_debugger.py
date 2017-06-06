@@ -15,6 +15,7 @@ Depending on the subcommand received, the class either
 import time
 import json
 import logging
+from os.path import exists
 from importlib import import_module
 
 from intelmq.lib import utils
@@ -127,6 +128,9 @@ class BotDebugger:
             default_type = "Report" if self.runtime_configuration["group"] is "Parser" else "Event"
             msg = MessageFactory.unserialize(msg, default_type=default_type)
         except (Exception, KeyError, TypeError, ValueError) as exc:
+            if exists(msg):
+                with open(msg,"r") as f:
+                    return self.arg2msg(f.read())
             self.messageWizzard("Message can not be parsed from JSON: {}".format(error_message_from_exc(exc)))
             exit(1)
         return msg
