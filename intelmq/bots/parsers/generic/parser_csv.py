@@ -9,6 +9,7 @@ default_url_protocol: string
 skip_header: boolean
 type: string
 type_translation: string
+data_type: string
 
 """
 import csv
@@ -29,6 +30,9 @@ TIME_CONVERSIONS = {'timestamp': DateTime.from_timestamp,
                     'windows_nt': DateTime.from_windows_nt,
                     None: lambda value: parse(value, fuzzy=True).isoformat() + " UTC"}
 
+DATA_CONVERSIONS = {
+                       'json': lambda data: json.loads(data)
+                    }
 
 class GenericCsvParserBot(ParserBot):
 
@@ -39,6 +43,7 @@ class GenericCsvParserBot(ParserBot):
             self.columns = [column.strip() for column in self.columns.split(",")]
 
         self.type_translation = json.loads(getattr(self.parameters, 'type_translation', None) or '{}')
+        self.data_type = json.loads(getattr(self.parameters, 'data_type', None) or '{}')
 
         # prevents empty strings:
         self.column_regex_search = getattr(self.parameters, 'column_regex_search', None) or {}
@@ -67,35 +72,49 @@ class GenericCsvParserBot(ParserBot):
 
         extra = {}
         for key, value in zip(self.columns, row):
+            print(">>>>>>>> (1) KEY: %s, VALUE: %s"%(key,value))
             if '|' in key:
                 keys = key.split('|')
             else:
                 keys = [key, ]
-            value_added = False
+            stop_processing = False
             for key in keys:
-                if value_added:
+                if stop_processing:
                     break
                 regex = self.column_regex_search.get(key, None)
+                print(">>>>>>>>>> (2) REGEX: %s"%regex)
                 if regex:
                     search = re.search(regex, value)
+                    print(">>>>>>>>>> (3) SEARCH: %s"%search)
                     if search:
                         value = search.group(0)
                     else:
                         value = None
+                    print(">>>> REGEX VALUE = %s"%value)
 
                 if key in ["__IGNORE__", ""]:
-                    stop = True
+                    stop_processing = True
                     continue
+                if key in self.data_type:
+                    value = DATA_CONVERSIONS[self.data_type[key]](value)
+
                 if key in ["time.source", "time.destination"]:
-                    value = int(value) if isinstance(value, str) else value
-                    if len(str(value)) == 12:
-                        value = value / 100.
-                    if len(str(value)) == 13:
-                        value = value / 1000.
-                    value = TIME_CONVERSIONS[self.time_format](value)
-                elif key.endswith('.url') and value and value != '' and \
-                    len(value) > 0 and '://' not in value:  # nopep8
-                    value = self.parameters.default_url_protocol + value
+                    if self.time_format == 'timestamp':
+                        if len(value) == 12:
+                            value = (int(value) // 100)
+                        elif len(value) == 13:
+                            value = (int(value) // 1000)
+                        else:
+                            value = int(value)
+                        value = TIME_CONVERSIONS[self.time_format](value)
+                    else:
+                        value = TIME_CONVERSIONS[self.time_format](value)
+                elif key.endswith('.url'):
+                    if len(value) < 1:
+                        stop_processing = True
+                        continue
+                    if '://' not in value:
+                        value = self.parameters.default_url_protocol + value
                 elif key in ["classification.type"] and self.type_translation:
                     if value in self.type_translation:
                         value = self.type_translation[value]
@@ -103,13 +122,16 @@ class GenericCsvParserBot(ParserBot):
                         continue
                 if key.startswith('extra.'):
                     if value:
-                        extra[key[6:]] = value
+                       extra[key[6:]] = value
+                    stop_processing = True
+                    continue
                 else:
-                    value_added = event.add(key, value, raise_failure=False)
+                    print("=====XXXX==== VALUE: %s, type: %s" % (value,type(value)))
+                    stop_processing = event.add(key, value, raise_failure=False)
 
             # if the value sill remains unadded we need to inform
             # key here will have all the values like x|y
-            if not value_added:
+            if not stop_processing:
                 raise exceptions.InvalidValue(key, value)
 
         if hasattr(self.parameters, 'type')\
