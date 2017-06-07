@@ -72,29 +72,24 @@ class GenericCsvParserBot(ParserBot):
 
         extra = {}
         for key, value in zip(self.columns, row):
-            print(">>>>>>>> (1) KEY: %s, VALUE: %s"%(key,value))
-            if '|' in key:
-                keys = key.split('|')
-            else:
-                keys = [key, ]
+
             stop_processing = False
+            keys = key.split('|') if '|' in key else [key,]
             for key in keys:
                 if stop_processing:
                     break
                 regex = self.column_regex_search.get(key, None)
-                print(">>>>>>>>>> (2) REGEX: %s"%regex)
                 if regex:
                     search = re.search(regex, value)
-                    print(">>>>>>>>>> (3) SEARCH: %s"%search)
                     if search:
                         value = search.group(0)
                     else:
                         value = None
-                    print(">>>> REGEX VALUE = %s"%value)
 
                 if key in ["__IGNORE__", ""]:
                     stop_processing = True
                     continue
+
                 if key in self.data_type:
                     value = DATA_CONVERSIONS[self.data_type[key]](value)
 
@@ -126,12 +121,10 @@ class GenericCsvParserBot(ParserBot):
                     stop_processing = True
                     continue
                 else:
-                    print("=====XXXX==== VALUE: %s, type: %s" % (value,type(value)))
                     stop_processing = event.add(key, value, raise_failure=False)
 
             # if the value sill remains unadded we need to inform
-            # key here will have all the values like x|y
-            if not stop_processing:
+            if not stop_processing and value and len(value) > 1:
                 raise exceptions.InvalidValue(key, value)
 
         if hasattr(self.parameters, 'type')\

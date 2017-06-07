@@ -32,6 +32,7 @@ EXAMPLE_EVENT = {"feed.name": "Sample CSV Feed",
                  "source.geolocation.longitude": 16.0,
                  "source.ip": "198.51.100.1",
                  "source.port": 2367,
+                 "source.asn": 65536,
                  "time.source": "2017-03-25T23:59:43+00:00"
                  }
 EXAMPLE_EVENT2 = {"feed.name": "Sample CSV Feed",
@@ -58,6 +59,7 @@ EXAMPLE_EVENT2 = {"feed.name": "Sample CSV Feed",
                   "source.geolocation.region": "09",
                   "source.ip": "198.51.100.2",
                   "source.port": 35453,
+                  "source.asn": 65536,
                   "time.source": "2017-03-26T00:00:41+00:00"
                   }
 
@@ -84,7 +86,7 @@ class TestGenericCsvParserBot(test.BotTestCase, unittest.TestCase):
                          "time_format": "windows_nt",
                          "type": "botnet drone",
                          "type_translation": None,
-                         "column_regex_search": {"source.asn": "[0-9]*"}}
+                         "column_regex_search": {"source.asn": "[0-9]+"}}
 
     def test_event(self):
         """ Test if correct Event has been produced. """
