@@ -30,9 +30,8 @@ TIME_CONVERSIONS = {'timestamp': DateTime.from_timestamp,
                     'windows_nt': DateTime.from_windows_nt,
                     None: lambda value: parse(value, fuzzy=True).isoformat() + " UTC"}
 
-DATA_CONVERSIONS = {
-                       'json': lambda data: json.loads(data)
-                    }
+DATA_CONVERSIONS = {'json': lambda data: json.loads(data)}
+
 
 class GenericCsvParserBot(ParserBot):
 
@@ -74,7 +73,7 @@ class GenericCsvParserBot(ParserBot):
         for key, value in zip(self.columns, row):
 
             stop_processing = False
-            keys = key.split('|') if '|' in key else [key,]
+            keys = key.split('|') if '|' in key else [key, ]
             for key in keys:
                 if stop_processing:
                     break
@@ -117,7 +116,7 @@ class GenericCsvParserBot(ParserBot):
                         continue
                 if key.startswith('extra.'):
                     if value:
-                       extra[key[6:]] = value
+                        extra[key[6:]] = value
                     stop_processing = True
                     continue
                 else:
