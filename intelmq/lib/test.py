@@ -96,6 +96,7 @@ class BotTestCase(object):
         cls.maxDiff = None  # For unittest module, prints long diffs
         cls.pipe = None
         cls.sysconfig = {}
+        cls.allowed_warning_count = 0
         cls.allowed_error_count = 0  # allows dumping of some lines
 
         cls.set_bot()
