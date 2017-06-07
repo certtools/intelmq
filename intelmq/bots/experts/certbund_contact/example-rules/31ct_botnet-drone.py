@@ -146,6 +146,10 @@ def add_matter_directives_to_context(context, match, matter):
                                      interval=3600,
                                      data_format=matter + "_csv_attachment")
                 directive.update(d)
+                # Add the observation time as an aggregation identifier,
+                # in order to cluster all events from the same report-batch.
+                directive.aggregate_by_field("time.observation")
+                # Always aggregate by the network
                 directive.aggregate_key["cidr"] = match.address
                 context.add_directive(directive)
 
@@ -155,6 +159,10 @@ def add_matter_directives_to_context(context, match, matter):
                                      interval=3600,
                                      data_format=matter + "_csv_attachment")
                 directive.update(d)
+                # Add the observation time as an aggregation identifier,
+                # in order to cluster all events from the same report-batch.
+                directive.aggregate_by_field("time.observation")
+                # Always aggregate by the network
                 directive.aggregate_key["cidr"] = match.address
                 context.add_directive(directive)
 
@@ -180,6 +188,10 @@ def add_matter_directives_to_context(context, match, matter):
                                      interval=86400,
                                      data_format=matter + "_csv_inline")
                 directive.update(d)
+                # Add the observation time as an aggregation identifier,
+                # in order to cluster all events from the same report-batch.
+                directive.aggregate_by_field("time.observation")
+                # Always aggregate by ASN
                 directive.aggregate_by_field(context.section + ".asn")
                 context.add_directive(directive)
 
