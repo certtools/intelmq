@@ -8,10 +8,7 @@ import unittest.mock as mock
 
 
 import intelmq.lib.test as test
-
-
-with mock.patch('intelmq.lib.utils.load_configuration', new=test.mocked_config()):
-    from intelmq.tests.lib import test_parser_bot
+from intelmq.tests.lib import test_parser_bot
 
 
 class TestBot(test.BotTestCase, unittest.TestCase):

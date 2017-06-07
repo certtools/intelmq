@@ -30,6 +30,7 @@ class Bot(object):
     """ Not to be reset when initialized again on reload. """
     __current_message = None
     __message_counter = 0
+    __message_counter_start = None
     # Bot is capable of SIGHUP delaying
     sighup_delay = True
 
@@ -258,6 +259,9 @@ class Bot(object):
         except BaseException:
             pass
 
+        if self.__message_counter:
+            self.logger.info("Processed %d messages since last logging.", self.__message_counter)
+
         self.__disconnect_pipelines()
 
         if self.logger:
@@ -329,8 +333,13 @@ class Bot(object):
 
             self.logger.debug("Sending message.")
             self.__message_counter += 1
-            if self.__message_counter % 500 == 0:
-                self.logger.info("Processed %s messages.", self.__message_counter)
+            if not self.__message_counter_start:
+                self.__message_counter_start = datetime.datetime.now()
+            if self.__message_counter % self.parameters.log_processed_messages_count == 0 or \
+               datetime.datetime.now() - self.__message_counter_start > self.parameters.log_processed_messages_seconds:
+                self.logger.info("Processed %d messages since last logging.", self.__message_counter)
+                self.__message_counter = 0
+                self.__message_counter_start = datetime.datetime.now()
 
             raw_message = libmessage.MessageFactory.serialize(message)
             self.__destination_pipeline.send(raw_message)
@@ -407,6 +416,8 @@ class Bot(object):
         for option, value in config.items():
             setattr(self.parameters, option, value)
             self.__log_configuration_parameter("defaults", option, value)
+
+        self.parameters.log_processed_messages_seconds = datetime.timedelta(seconds=self.parameters.log_processed_messages_seconds)
 
     def __load_system_configuration(self):
         if os.path.exists(SYSTEM_CONF_FILE):

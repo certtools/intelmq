@@ -4,7 +4,11 @@ CHANGELOG
 in development
 --------------
 
+### General changes
+- It's now configurable how often the bots are logging how much events they have sent, based on both the amount and time. (fixes #743)
+
 ### Configuration
+- Added `log_processed_messages_count` (500) and `log_processed_messages_seconds` (900) to defaults.conf.
 - `http_timeout` has been renamed to `http_timeout_sec` and `http_timeout_max_tries` has been added.
    This setting is honored by bots.collectors.http.* and bots.collectors.mail.collector_mail_url, bots.collectors.rt (only `http_timeout_sec`), bots.outputs.restapi.output and bots.experts.ripencc_abuse_contact
 

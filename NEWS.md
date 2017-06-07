@@ -15,6 +15,12 @@ in development
 ### Configuration
 - `http_timeout` has been renamed to `http_timeout_sec` and `http_timeout_max_tries` has been added.
 
+### Configuration
+Two new fields have been added to `defaults.conf` which are expected by the bots:
+- `"log_processed_messages_count": 500` and
+- `'log_processed_messages_seconds": 900`
+Configure them in your setup and optionally adapt the values to your needs.
+
 ### Postgres databases
 Use the following statement carefully to upgrade your database.
 ```SQL
