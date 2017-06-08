@@ -70,7 +70,8 @@ class BotDebugger:
             else:
                 if console_type and console != console_type:
                     print("Console {} not available.".format(console_type))
-                print("*** Using console {}. Please use 'self' to access to the bot instance properties. ***"
+                print("*** Using console {}. Please use 'self' to access to the bot instance properties."
+                      "You may exit the console by 'c' command (like continue). ***"
                       .format(module.__name__))
                 break
         else:
@@ -129,7 +130,7 @@ class BotDebugger:
             msg = MessageFactory.unserialize(msg, default_type=default_type)
         except (Exception, KeyError, TypeError, ValueError) as exc:
             if exists(msg):
-                with open(msg,"r") as f:
+                with open(msg, "r") as f:
                     return self.arg2msg(f.read())
             self.messageWizzard("Message can not be parsed from JSON: {}".format(error_message_from_exc(exc)))
             exit(1)

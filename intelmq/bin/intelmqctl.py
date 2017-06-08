@@ -121,12 +121,14 @@ class IntelMQProcessManager:
     def bot_run(self, bot_id, run_subcommand=None, console_type=None, message_action_kind=None, dryrun=None, msg=None):
         pid = self.__read_pidfile(bot_id)
         if pid and self.__status_process(pid):
-            self.logger.warning("Main instance of the bot is running in the background. You may want to launch: intelmqctl stop {}"
+            self.logger.warning("Main instance of the bot is running in the background and will be stopped; "
+                                "when finished, we try to relaunch it again."
+                                "You may want to launch: 'intelmqctl stop {}' to prevent this message."
                                 .format(bot_id))
-        #    paused = True
-        #    self.bot_stop(bot_id)
-        # else:
-        #    paused = False
+            paused = True
+            self.bot_stop(bot_id)
+        else:
+            paused = False
 
         # log_bot_message('starting', bot_id)
         # filename = self.PIDFILE.format(bot_id)
@@ -145,8 +147,8 @@ class IntelMQProcessManager:
             retval = exc
 
         # self.__remove_pidfile(bot_id)
-        # if paused:
-        #    self.bot_start(bot_id)
+        if paused:
+            self.bot_start(bot_id)
         return retval
 
     def bot_start(self, bot_id, getstatus=True):
