@@ -23,13 +23,13 @@ class DynParserBot(Bot):
         source_time = None
 
         for row in raw_report.splitlines():
-            if row.startswith("# last updated:"):
+            if row.startswith("date started:"):
                 source_time = dateutil.parser.parse(row[row.find(':') + 1:],
                                                     tzinfos=self.TZOFFSETS)
                 source_time = source_time.isoformat()
                 continue
             if row.startswith('#'):
-                continue
+                continue            
 
             row_split = row.split()
 
