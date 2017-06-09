@@ -73,6 +73,7 @@ class GenericCsvParserBot(ParserBot):
         for key, value in zip(self.columns, row):
 
             stop_processing = False
+            value = value.strip()
             keys = key.split('|') if '|' in key else [key, ]
             for key in keys:
                 if stop_processing:
