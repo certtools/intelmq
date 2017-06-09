@@ -1,7 +1,9 @@
 """Only handle those organisations which are participating
-in the test-run. Currently those are all Orgs that were
-added manually.
+in the test-run. Currently those are all Orgs that were added manually
+and carry the tag "testbetrieb"
 """
+
+TESTGROUP_TAG = "testbetrieb"
 
 def determine_directives(context):
     context.logger.debug("============= 06testbetrieb.py ===========")
@@ -14,31 +16,25 @@ def determine_directives(context):
     # associated to this match.
 
     matching_orgs_manual = set()
-    new_matches = []
 
     for match in context.matches:
         # Only take the manual datasets
         if match.managed == 'manual':
-            # Add this match to "new_matches"
-            new_matches.append(match)
-            # and write the ID of this matches organisation to the array.
+            # Write the ID of this matches organisation to the array.
             for org in match.organisations:
                 matching_orgs_manual.add(org)
 
 
-    # Now we know the IDs of the organisations which were added manually.
-    # As all manual matches were written into the new_matches list, we can
-    # overwrite the context's matches list with the new list.
-    # This would already suffice to stop notifying automatic contacts.
-    # But we want to be a bit more tidy, so we are removing the orgs, too.
-
     new_orgs = []
     for m in matching_orgs_manual:
         org = context.lookup_organisation(m)
-        new_orgs.append(org)
+        # Iterate the tags of the Organisations and make sure the
+        # Organisation is within the testgroup
+        for anno in org.annotations:
+            if anno.tag == TESTGROUP_TAG:
+                new_orgs.append(org)
 
     # Overwrite the context 
-    context.matches = new_matches
     context.organisations = new_orgs
     
     context.logger.debug("Content of the Context AFTER this script:")
