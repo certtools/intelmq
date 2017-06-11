@@ -476,6 +476,14 @@
                 "redis_cache_ttl": "86400"
             }
         },
+        "Domaintools": {
+            "description": "Domaintools expert is a bot which queries domaintools.com for a scoring of a domain name",
+            "module": "intelmq.bots.experts.domaintools.expert",
+            "parameters": {
+                "user": "",
+                "password": ""
+            }
+        },
         "Field Reducer": {
             "description": "The field reducer bot is capable of removing fields from events.",
             "module": "intelmq.bots.experts.field_reducer.expert",

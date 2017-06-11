@@ -26,27 +26,30 @@ class DomaintoolsExpertBot(Bot):
         self.api = API(self.parameters.user, self.parameters.password)
 
     def domaintools_get_score(self, fqdn):
-
+        score = None
         if fqdn:
-            resp = self.api.reputation(fqdn, include_reason=False)     # don't include a reason in the JSON response
+            resp = self.api.reputation(fqdn, include_reasons=False)     # don't include a reason in the JSON response
+
             try:
                 score = resp['risk_score']
             except exceptions.NotFoundException:
-                    score = None
+                score = None
             except exceptions.BadRequestException:
-                    score = None
+                score = None
             return score
 
     def process(self):
         event = self.receive_message()
+        extra = {}
 
         for key in ["source.", "destination."]:
             key_fqdn = key + "fqdn"
             if key_fqdn not in event:
                 continue        # can't query if we don't have a domain name
-            score = self.domaintools_get_score(key_fqdn)
-            if score:
-                event.add("extra.domaintools_score", score, raise_failure=False)
+            score = self.domaintools_get_score(event.get(key_fqdn))
+            if score is not None:
+                extra["domaintools_score"] = score
+                event.add("extra", extra)
 
         self.send_message(event)
         self.acknowledge_message()

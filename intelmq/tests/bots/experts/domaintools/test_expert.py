@@ -6,15 +6,15 @@ Testing GethostbynameExpertBot.
 import unittest
 
 import intelmq.lib.test as test
-from intelmq.bots.experts.gethostbyname.expert import DomaintoolsExpertBot
+from intelmq.bots.experts.domaintools.expert import DomaintoolsExpertBot
 
 EXAMPLE_INPUT = {"__type": "Event",
                  "source.fqdn": "google.com",
                  "time.observation": "2015-01-01T00:00:00+00:00"
                  }
 EXAMPLE_OUTPUT = {"__type": "Event",
-                  "source.fqdn": "example.com",
-                  "extra.domaintools_score": 0,
+                  "source.fqdn": "google.com",
+                  "extra": '{"domaintools_score": 0}',
                   "time.observation": "2015-01-01T00:00:00+00:00"
                   }
 NONEXISTING_INPUT = {"__type": "Event",
@@ -33,6 +33,7 @@ class TestDomaintoolsExpertBot(test.BotTestCase, unittest.TestCase):
     @classmethod
     def set_bot(self):
         self.bot_reference = DomaintoolsExpertBot
+        self.sysconfig = {'user': 'mkendrick_first2017', 'password': 'c0e4e-e2527-dc6af-824a4-229d5'}
 
     def test_existing(self):
         self.input_message = EXAMPLE_INPUT
