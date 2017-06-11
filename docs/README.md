@@ -46,10 +46,10 @@ Table of Contents
 -----------------
 
 1.  [How to Install](#how-to-install)
-2.  [Developers Guide](#dev-guide)
-3.  [IntelMQ Manager](#control-platform)
-4.  [Incident Handling Automation
-    Project](#incident-handling-automation-project)
+2.  [Developers Guide](#developers-guide)
+3.  [User Guide](#user-guide)
+3.  [IntelMQ Manager](#intelmq-manager)
+4.  [Incident Handling Automation Project](#incident-handling-automation-project)
 5.  [Data Harmonization](#data-harmonization)
 6.  [How to Participate](#how-to-participate)
 7.  [Licence](#licence)
@@ -62,7 +62,13 @@ See [INSTALL](INSTALL.md).
 Developers Guide
 ----------------
 
-See [Developers Guide](Developers-Guide.md).
+See [Developers Guide](https://github.com/certtools/intelmq/blob/master/docs/Developers-Guide.md).
+
+User Guide
+----------------
+
+See [User Guide](https://github.com/certtools/intelmq/blob/master/docs/User-Guide.md).
+
 
 IntelMQ Manager
 ---------------
