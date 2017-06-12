@@ -219,7 +219,7 @@ class TestHarmonization(unittest.TestCase):
     def test_fqdn_valid(self):
         """ Test FQDN.is_valid with valid arguments. """
         self.assertTrue(harmonization.FQDN.is_valid('ex-am.ple.example'))
-        self.assertTrue(harmonization.FQDN.is_valid('intelmq.org'))
+        self.assertTrue(harmonization.FQDN.is_valid('example.org'))
         self.assertTrue(harmonization.FQDN.is_valid('sub_sub2.example.net'))
         self.assertTrue(harmonization.FQDN.is_valid('xn--1-0ga.at'))
         self.assertTrue(harmonization.FQDN.is_valid('212.156.101.43.00-ebgp-atakoy1-k.301-fra-'
