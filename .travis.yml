@@ -12,7 +12,6 @@ python:
 install:
   - sudo apt-get install dpkg-dev dh-python python-setuptools python3-setuptools python3-all debhelper quilt polipo lighttpd
   - curl -O https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-5.3.0.deb && sudo dpkg -i --force-confnew elasticsearch-5.3.0.deb && sudo service elasticsearch start
-  - if [[ $REQUIREMENTS == true ]] ; then pip install -r REQUIREMENTS; fi
   - if [[ $REQUIREMENTS == true ]] ; then for file in intelmq/bots/*/*/REQUIREMENTS.txt; do pip install -r $file; done; fi
   - if [[ $TRAVIS_PYTHON_VERSION < '3.5' ]]; then pip install typing; fi
   - pip install codecov
