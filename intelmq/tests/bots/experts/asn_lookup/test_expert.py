@@ -39,7 +39,7 @@ EXAMPLE_OUTPUT6 = {"__type": "Event",
                    "source.network": "2001:500:88::/48",
                    }
 
-
+@test.skip_exotic()
 class TestASNLookupExpertBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for AbusixExpertBot.

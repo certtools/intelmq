@@ -2,9 +2,13 @@
 import unittest
 
 import intelmq.lib.test as test
-import psycopg2
-import psycopg2.extras
 from intelmq.bots.outputs.postgresql.output import PostgreSQLOutputBot
+
+
+if os.environ.get('INTELMQ_TEST_DATABASES'):
+    import psycopg2
+    import psycopg2.extras
+
 
 INPUT1 = {"__type": "Event",
           "classification.identifier": "zeus",
