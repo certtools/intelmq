@@ -629,6 +629,10 @@ class URL(GenericType):
 
     @staticmethod
     def sanitize(value):
+        value = GenericType().sanitize(value)
+        if not value:
+            return
+
         value = value.replace('hxxp://', 'http://')
         value = value.replace('hxxps://', 'https://')
 
@@ -641,7 +645,7 @@ class URL(GenericType):
             result = parse.urlsplit(value)
 
         if result.netloc != "":
-            return GenericType().sanitize(value)
+            return value
 
     @staticmethod
     def to_ip(url):
