@@ -37,7 +37,7 @@ except ImportError:
 
 
 class MailSendOutputBot(Bot):
-    def process(self):        
+    def process(self):
         pass
 
     debug = False # if True, nothing is sent
@@ -53,13 +53,13 @@ class MailSendOutputBot(Bot):
                            )
 
     def init(self):
-        self.set_cache()         
+        self.set_cache()
         if len(sys.argv) > 2:
             if sys.argv[2] == "debug":
                 print("****** Debug session started. ******")
                 MailSendOutputBot.debug = True
             elif sys.argv[2] == "live":
-                MailSendOutputBot.live = True        
+                MailSendOutputBot.live = True
             else:
                 return "Unknown state"
             self.send_mails()
@@ -67,7 +67,7 @@ class MailSendOutputBot(Bot):
             sys.exit(0)
 
     # Sends out all emails
-    def send_mails(self):        
+    def send_mails(self):
         self.logger.warning("Going to send mails...")
         allowed_fieldnames = ['time.source', 'source.ip', 'classification.taxonomy', 'classification.type',
                               'time.observation', 'source.geolocation.cc', 'source.asn', 'event_description.text',
@@ -118,10 +118,13 @@ class MailSendOutputBot(Bot):
                 self.cache.redis.delete(mail_record)
         self.logger.warning("DONE!")
 
+    def _hasTestingTo():
+        return hasattr(self.parameters, 'testing_to') and self.parameters.testing_to != ""
+
     # actual funtion to send email through smtp
-    def _send_mail(self, emailfrom, emailto, subject, text, fileContents=None):        
+    def _send_mail(self, emailfrom, emailto, subject, text, fileContents=None):
         server = self.parameters.smtp_server
-        if hasattr(self.parameters, 'testing_to') and self.parameters.testing_to != "":
+        if self.isTesting():
             subject = subject + " (intended for " + str(emailto) + ")"
             emailto = self.parameters.testing_to
         msg = MIMEMultipart()
@@ -131,9 +134,8 @@ class MailSendOutputBot(Bot):
         #if hasattr(self.parameters, 'bcc') and not hasattr(self.parameters, 'testing_to'):
         #    msg["Bcc"] = self.parameters.bcc
         rcpts = [emailto]
-        if hasattr(self.parameters, 'bcc'):
-            #msg["Bcc"] = self.parameters.bcc
-            rcpts.append(self.parameters.bcc)
+        if hasattr(self.parameters, 'bcc') and not self.isTesting():
+            rcpts += self.parameters.bcc # bcc is in fact an independent mail
 
         if MailSendOutputBot.live is True:
             msg.attach(MIMEText(text, "plain", "utf-8"))
@@ -144,7 +146,7 @@ class MailSendOutputBot(Bot):
             attachment.add_header("Content-Disposition", "attachment",
                                   filename='proki_{}.csv'.format(time.strftime("%Y%m%d")))
             msg.attach(attachment)
-    
+
             smtp = smtplib.SMTP(server)
             smtp.sendmail(emailfrom, rcpts, msg.as_string().encode('ascii'))
             smtp.close()
