@@ -72,11 +72,9 @@ class GenericCsvParserBot(ParserBot):
         extra = {}
         for key, value in zip(self.columns, row):
 
-            stop_processing = False
-            value = value.strip()
             keys = key.split('|') if '|' in key else [key, ]
             for key in keys:
-                if stop_processing:
+                if isinstance(value, str) and not value:  # empty string is never valid
                     break
                 regex = self.column_regex_search.get(key, None)
                 if regex:
@@ -87,8 +85,7 @@ class GenericCsvParserBot(ParserBot):
                         value = None
 
                 if key in ["__IGNORE__", ""]:
-                    stop_processing = True
-                    continue
+                    break
 
                 if key in self.data_type:
                     value = DATA_CONVERSIONS[self.data_type[key]](value)
@@ -105,8 +102,7 @@ class GenericCsvParserBot(ParserBot):
                     else:
                         value = TIME_CONVERSIONS[self.time_format](value)
                 elif key.endswith('.url'):
-                    if len(value) < 1:
-                        stop_processing = True
+                    if not value:
                         continue
                     if '://' not in value:
                         value = self.parameters.default_url_protocol + value
@@ -118,14 +114,13 @@ class GenericCsvParserBot(ParserBot):
                 if key.startswith('extra.'):
                     if value:
                         extra[key[6:]] = value
-                    stop_processing = True
-                    continue
+                    break
                 else:
-                    stop_processing = event.add(key, value, raise_failure=False)
-
-            # if the value sill remains unadded we need to inform
-            if not stop_processing and value and len(value) > 1:
-                raise exceptions.InvalidValue(key, value)
+                    if event.add(key, value, raise_failure=False):
+                        break
+            else:
+                # if the value sill remains unadded we need to inform
+                raise exceptions.InvalidValue(keys, value)
 
         if hasattr(self.parameters, 'type')\
                 and "classification.type" not in event:
