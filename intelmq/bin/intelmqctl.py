@@ -15,6 +15,7 @@ from intelmq import (DEFAULTS_CONF_FILE, PIPELINE_CONF_FILE, RUNTIME_CONF_FILE,
                      STARTUP_CONF_FILE, SYSTEM_CONF_FILE, VAR_RUN_PATH,
                      BOTS_FILE)
 from intelmq.lib import utils
+from intelmq.lib.bot_debugger import BotDebugger
 from intelmq.lib.pipeline import PipelineFactory
 
 
@@ -117,33 +118,37 @@ class IntelMQProcessManager:
                 self.logger.error('Directory %s does not exist and cannot be '
                                   'created: %s.', self.PIDDIR, exc)
 
-    def bot_run(self, bot_id):
+    def bot_run(self, bot_id, run_subcommand=None, console_type=None, message_action_kind=None, dryrun=None, msg=None):
         pid = self.__read_pidfile(bot_id)
-        if pid:
-            if self.__status_process(pid):
-                log_bot_error('running', bot_id)
-                return 'running'
-            else:
-                self.__remove_pidfile(bot_id)
-        log_bot_message('starting', bot_id)
-        filename = self.PIDFILE.format(bot_id)
-        with open(filename, 'w') as fp:
-            fp.write(str(os.getpid()))
+        if pid and self.__status_process(pid):
+            self.logger.warning("Main instance of the bot is running in the background and will be stopped; "
+                                "when finished, we try to relaunch it again."
+                                "You may want to launch: 'intelmqctl stop {}' to prevent this message."
+                                .format(bot_id))
+            paused = True
+            self.bot_stop(bot_id)
+        else:
+            paused = False
 
-        bot_module = self.__runtime_configuration[bot_id]['module']
-        module = importlib.import_module(bot_module)
-        bot = getattr(module, 'BOT')
+        # log_bot_message('starting', bot_id)
+        # filename = self.PIDFILE.format(bot_id)
+        # with open(filename, 'w') as fp:
+        #    fp.write(str(os.getpid()))
+
         try:
-            instance = bot(bot_id)
-            instance.start()
-        except (Exception, KeyboardInterrupt) as exc:
-            print('Bot failed: %s' % exc)
-            retval = 1
+            BotDebugger(self.__runtime_configuration[bot_id], bot_id, run_subcommand,
+                        console_type, dryrun, message_action_kind, msg)
+            retval = 0
+        except KeyboardInterrupt:
+            print('Keyboard interrupt.')
+            retval = 0
         except SystemExit as exc:
             print('Bot exited with code %s.' % exc)
             retval = exc
 
-        self.__remove_pidfile(bot_id)
+        # self.__remove_pidfile(bot_id)
+        if paused:
+            self.bot_start(bot_id)
         return retval
 
     def bot_start(self, bot_id, getstatus=True):
@@ -305,10 +310,13 @@ class IntelMQController():
 
         Outputs are logged to /opt/intelmq/var/log/intelmqctl"""
         EPILOG = '''
-        intelmqctl [start|stop|restart|status|reload|run] bot-id
+        intelmqctl [start|stop|restart|status|reload] bot-id
         intelmqctl [start|stop|restart|status|reload]
         intelmqctl list [bots|queues]
         intelmqctl log bot-id [number-of-lines [log-level]]
+        intelmqctl run bot-id message [get|pop|send]
+        intelmqctl run bot-id process [--msg|--dryrun]
+        intelmqctl run bot-id console
         intelmqctl clear queue-id
         intelmqctl check
 
@@ -321,8 +329,14 @@ Restarting a bot:
 Get status of a bot:
     intelmqctl status bot-id
 
-Run a bot directly (blocking) for debugging purpose:
+Run a bot directly for debugging purpose and temporarily leverage the logging level to DEBUG:
     intelmqctl run bot-id
+Get a pdb (or ipdb if installed) live console.
+    intelmqctl run bot-id console
+See the message that waits in the input queue.
+    intelmqctl run bot-id message get
+See additional help for further explanation.
+    intelmqctl run bot-id --help
 
 Starting the botnet (all bots):
     intelmqctl start
@@ -434,6 +448,30 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             parser_run = subparsers.add_parser('run', help='Run a bot interactively')
             parser_run.add_argument('bot_id',
                                     choices=self.runtime_configuration.keys())
+            parser_run_subparsers = parser_run.add_subparsers(title='run-subcommands')
+
+            parser_run_console = parser_run_subparsers.add_parser('console', help='Get a ipdb live console.')
+            parser_run_console.add_argument('console_type', nargs='?',
+                                            help='You may specify which console should be run. Default is ipdb (if installed)'
+                                            ' or pudb (if installed) or pdb but you may want to use another one.')
+            parser_run_console.set_defaults(run_subcommand="console")
+
+            parser_run_message = parser_run_subparsers.add_parser('message',
+                                                                  help='Debug bot\'s pipelines. Get the message in the'
+                                                                  ' input pipeline, pop it (cut it) and display it, or'
+                                                                  ' send the message directly to bot\'s output pipeline.')
+            parser_run_message.add_argument('message_action_kind', choices=["get", "pop", "send"])
+            parser_run_message.add_argument('msg', nargs='?', help='If send was chosen, put here the message in JSON.')
+            parser_run_message.set_defaults(run_subcommand="message")
+
+            parser_run_process = parser_run_subparsers.add_parser('process', help='Single run of bot\'s process() method.')
+            parser_run_process.add_argument('--dryrun', '-d', action='store_true',
+                                            help='Never really pop the message from the input pipeline '
+                                                 'nor send to output pipeline.')
+            parser_run_process.add_argument('--msg', '-m',
+                                            help='Trick the bot to process this JSON '
+                                                 'instead of the Message in its pipeline.')
+            parser_run_process.set_defaults(run_subcommand="process")
             parser_run.set_defaults(func=self.bot_run)
 
             parser_check = subparsers.add_parser('check',
@@ -518,8 +556,8 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         elif results == 'error':
             return 1
 
-    def bot_run(self, bot_id):
-        return self.bot_process_manager.bot_run(bot_id)
+    def bot_run(self, **kwargs):
+        return self.bot_process_manager.bot_run(**kwargs)
 
     def bot_start(self, bot_id, getstatus=True):
         if bot_id is None:
