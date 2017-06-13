@@ -133,7 +133,7 @@ class IntelMQProcessManager:
         log_bot_message('starting', bot_id)
         filename = self.PIDFILE.format(bot_id)
         with open(filename, 'w') as fp:
-           fp.write(str(os.getpid()))
+            fp.write(str(os.getpid()))
 
         try:
             BotDebugger(self.__runtime_configuration[bot_id], bot_id, run_subcommand,
