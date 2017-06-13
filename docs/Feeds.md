@@ -884,7 +884,7 @@ http_user_agent: {{ your user agent }}
 
 **Bot Name:** CleanMX Phishing
 
-**Bot Module:** intelmq.bots.parsers.cleanmx.parser_phishing
+**Bot Module:** intelmq.bots.parsers.cleanmx.parser
 
 **Configuration Parameters:**
 ```
@@ -915,7 +915,7 @@ http_user_agent: {{ your user agent }}
 
 **Bot Name:** CleanMX Virus
 
-**Bot Module:** intelmq.bots.parsers.cleanmx.parser_virus
+**Bot Module:** intelmq.bots.parsers.cleanmx.parser
 
 **Configuration Parameters:**
 ```
