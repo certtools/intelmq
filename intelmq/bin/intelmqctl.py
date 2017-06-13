@@ -122,7 +122,7 @@ class IntelMQProcessManager:
         pid = self.__read_pidfile(bot_id)
         if pid and self.__status_process(pid):
             self.logger.warning("Main instance of the bot is running in the background and will be stopped; "
-                                "when finished, we try to relaunch it again."
+                                "when finished, we try to relaunch it again. "
                                 "You may want to launch: 'intelmqctl stop {}' to prevent this message."
                                 .format(bot_id))
             paused = True
@@ -130,10 +130,10 @@ class IntelMQProcessManager:
         else:
             paused = False
 
-        # log_bot_message('starting', bot_id)
-        # filename = self.PIDFILE.format(bot_id)
-        # with open(filename, 'w') as fp:
-        #    fp.write(str(os.getpid()))
+        log_bot_message('starting', bot_id)
+        filename = self.PIDFILE.format(bot_id)
+        with open(filename, 'w') as fp:
+           fp.write(str(os.getpid()))
 
         try:
             BotDebugger(self.__runtime_configuration[bot_id], bot_id, run_subcommand,
@@ -146,7 +146,7 @@ class IntelMQProcessManager:
             print('Bot exited with code %s.' % exc)
             retval = exc
 
-        # self.__remove_pidfile(bot_id)
+        self.__remove_pidfile(bot_id)
         if paused:
             self.bot_start(bot_id)
         return retval
