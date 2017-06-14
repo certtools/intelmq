@@ -47,8 +47,8 @@ Table of Contents
 =================
 
 1. `How to Install <#how-to-install>`__
-2. `Developers Guide <#dev-guide>`__
-3. `IntelMQ Manager <#control-platform>`__
+2. `Developers Guide <#developers-guide>`__
+3. `IntelMQ Manager <#intelmq-manager>`__
 4. `Incident Handling Automation
    Project <#incident-handling-automation-project>`__
 5. `Data Harmonization <#data-harmonization>`__
@@ -64,6 +64,11 @@ Developers Guide
 ================
 
 See `Developers Guide <docs/Developers-Guide.md>`__.
+
+User Guide
+----------------
+
+See `User Guide <docs/User-Guide.md`__.
 
 IntelMQ Manager
 ===============
