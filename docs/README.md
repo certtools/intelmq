@@ -69,6 +69,7 @@ User Guide
 
 See [User Guide](User-Guide.md).
 
+For support use the intelmq-users mailing list: <https://lists.cert.at/cgi-bin/mailman/listinfo/intelmq-users>
 
 IntelMQ Manager
 ---------------
