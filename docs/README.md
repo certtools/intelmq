@@ -62,12 +62,12 @@ See [INSTALL](INSTALL.md).
 Developers Guide
 ----------------
 
-See [Developers Guide](https://github.com/certtools/intelmq/blob/master/docs/Developers-Guide.md).
+See [Developers Guide](Developers-Guide.md).
 
 User Guide
 ----------------
 
-See [User Guide](https://github.com/certtools/intelmq/blob/master/docs/User-Guide.md).
+See [User Guide](User-Guide.md).
 
 
 IntelMQ Manager
