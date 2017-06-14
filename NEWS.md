@@ -10,8 +10,8 @@ See the changelog for a full list of changes.
 * system.conf and startup.conf have been dropped entirely, use defaults.conf and runtime.conf instead
 * Many bots have been renamed/moved or deleted. Please read the Bots section in the changelog and upgrade your configuration accordingly.
 
-in development
---------------
+1.0.0.dev8
+----------
 ### Configuration
 - `http_timeout` has been renamed to `http_timeout_sec` and `http_timeout_max_tries` has been added.
 
