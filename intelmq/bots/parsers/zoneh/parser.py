@@ -68,6 +68,7 @@ class ZoneHParserBot(ParserBot):
         self.fieldnames = csvr.fieldnames
 
         for row in csvr:
+            # need fh to populate the raw field in main event handler
             yield row, fh.last_line.strip()
 
 
