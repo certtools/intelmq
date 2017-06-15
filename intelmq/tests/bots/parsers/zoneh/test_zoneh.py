@@ -24,19 +24,16 @@ EVENT00 = {
     'feed.name': 'ZoneH Defacements',
     'classification.type': 'compromised',
     'classification.identifier': 'compromised-website',
-    'extra': '{"accepted_date": "2016-06-01 13:20:21" }',
+    'extra': '{"accepted_date": "2016-06-01 13:20:21"}',
     'protocol.application': 'http',
-    'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
-                                          EXAMPLE_LINES[1], ''])),
-    'source.asn': 64496,
+    'raw': utils.base64_encode(EXAMPLE_LINES[1]),
     'source.geolocation.cc': 'ZZ',
     'source.ip': '203.0.113.1',
-    'source.port': 80,
     'source.url': 'http://defaced.example.com',
     'source.fqdn': 'defaced.example.com',
     'event_description.text': 'defacement',
     'time.observation': '2015-01-01T00:00:00+00:00',
-    'time.source': '2017-01-16T00:43:48+00:00'}
+    'time.source': '2016-01-01T11:56:00+00:00'}
 
 
 class TestZoneHParserBot(test.BotTestCase, unittest.TestCase):
