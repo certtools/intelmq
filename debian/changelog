@@ -1,3 +1,9 @@
+intelmq (1.0.0~dev7+intevation.2.0~rc7) unstable; urgency=medium
+
+  * New Release from integrated branch
+
+ -- Gernot Schulz <gernot@intevation.de>  Fri, 16 Jun 2017 11:23:35 +0200
+
 intelmq (1.0.0~dev6+intevation.2.0~rc6-2) unstable; urgency=medium
 
   * Removed unneccessary (and in xenial unexisting) dependencies.
