@@ -51,6 +51,11 @@ class ZoneHParserBot(ParserBot):
             event.add('source.url', row["domain"], raise_failure=False)
             if row.get("accept_date"):
                 extra["accepted_date"] = row.get("accept_date")
+            extra["actor"] = row.get("attacker")
+            extra["http_target"] = row.get("web_server")
+            extra["os.name"] = row["system"]
+            extra["compromise_method"] = row["hackmode"]
+            extra["zoneh_report_id"] = row["defacement_id"]
             if extra:
                 event.add('extra', extra)
             self.send_message(event)
