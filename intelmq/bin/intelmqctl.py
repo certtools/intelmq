@@ -46,6 +46,7 @@ ERROR_MESSAGES = {
     'stopped': '%s was NOT RUNNING.',
     'stopping': '%s failed to STOP.',
     'not found': '%s failed to START because the file cannot be found.',
+    'access denied': '%s failed to %s because of missing permissions.',
 }
 
 LOG_LEVEL = {
@@ -193,16 +194,20 @@ class IntelMQProcessManager:
             return 'stopped'
         log_bot_message('stopping', bot_id)
         proc = psutil.Process(int(pid))
-        proc.send_signal(signal.SIGINT)
-
-        if getstatus:
-            time.sleep(0.5)
-            if self.__status_process(pid):
-                log_bot_error('running', bot_id)
-                return 'running'
-            self.__remove_pidfile(bot_id)
-            log_bot_message('stopped', bot_id)
-            return 'stopped'
+        try:
+            proc.send_signal(signal.SIGINT)
+        except psutil.AccessDenied:
+            log_bot_error('access denied', bot_id, 'STOP')
+            return 'running'
+        else:
+            if getstatus:
+                time.sleep(0.5)
+                if self.__status_process(pid):
+                    log_bot_error('running', bot_id)
+                    return 'running'
+                self.__remove_pidfile(bot_id)
+                log_bot_message('stopped', bot_id)
+                return 'stopped'
 
     def bot_reload(self, bot_id, getstatus=True):
         pid = self.__read_pidfile(bot_id)
@@ -219,14 +224,19 @@ class IntelMQProcessManager:
             return 'stopped'
         log_bot_message('reloading', bot_id)
         proc = psutil.Process(int(pid))
-        proc.send_signal(signal.SIGHUP)
-        if getstatus:
-            time.sleep(0.5)
-            if self.__status_process(pid):
-                log_bot_message('running', bot_id)
-                return 'running'
-            log_bot_error('stopped', bot_id)
-            return 'stopped'
+        try:
+            proc.send_signal(signal.SIGHUP)
+        except psutil.AccessDenied:
+            log_bot_error('access denied', bot_id, 'RELOAD')
+            return 'running'
+        else:
+            if getstatus:
+                time.sleep(0.5)
+                if self.__status_process(pid):
+                    log_bot_message('running', bot_id)
+                    return 'running'
+                log_bot_error('stopped', bot_id)
+                return 'stopped'
 
     def bot_status(self, bot_id):
         pid = self.__read_pidfile(bot_id)
@@ -270,6 +280,11 @@ class IntelMQProcessManager:
             return True
         except psutil.NoSuchProcess:
             return False
+        except psutil.AccessDenied:
+            self.logger.error('Could not get status of process: Access denied.')
+            return False
+        except:
+            raise
 
 
 PROCESS_MANAGER = {'intelmq': IntelMQProcessManager}
