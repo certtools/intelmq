@@ -32,7 +32,7 @@ import intelmq.lib.utils as utils
 __all__ = ['Base64', 'Boolean', 'ClassificationType', 'DateTime', 'FQDN',
            'Float', 'Accuracy', 'GenericType', 'IPAddress', 'IPNetwork',
            'Integer', 'JSON', 'LowercaseString', 'Registry', 'String', 'URL',
-           ]
+           'ASN']
 
 
 class GenericType(object):
@@ -411,6 +411,39 @@ class Integer(GenericType):
             return int(value)
         except (ValueError, TypeError):
             return None
+
+
+class ASN(GenericType):
+    """
+    ASN type. Derived from Integer with forbidden values.
+
+    Only valid are: 0 < asn < 4294967295 and asn != 65535
+    See https://en.wikipedia.org/wiki/Autonomous_system_(Internet)
+    > The first and last ASNs of the original 16-bit integers, namely 0 and
+    > 65,535, and the last ASN of the 32-bit numbers, namely 4,294,967,295 are
+    > reserved and should not be used by operators.
+    """
+    @staticmethod
+    def check_asn(value):
+        if value not in range(1, 4294967295) or value == 65535:
+            return False
+        return True
+
+    @staticmethod
+    def is_valid(value, sanitize=False):
+        if sanitize:
+            value = Integer().sanitize(value)
+        if not Integer.is_valid(value):
+            return False
+        if not ASN.check_asn(value):
+            return False
+        return True
+
+    @staticmethod
+    def sanitize(value):
+        value = Integer.sanitize(value)
+        if value and ASN.check_asn(value):
+            return value
 
 
 class IPAddress(GenericType):

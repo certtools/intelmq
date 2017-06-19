@@ -3,6 +3,8 @@ CHANGELOG
 
 development
 -----------
+### Harmonization
+- New ASN type. Like integer but checks the range.
 
 v1.0.0.dev8
 -----------

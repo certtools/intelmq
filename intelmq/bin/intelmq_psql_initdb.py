@@ -49,7 +49,7 @@ def generate(harmonization_file=HARMONIZATION_CONF_FILE):
             dbtype = 'timestamp with time zone'
         elif value['type'] == 'Boolean':
             dbtype = 'boolean'
-        elif value['type'] == 'Integer':
+        elif value['type'] in ('Integer', 'ASN'):
             dbtype = 'integer'
         elif value['type'] in ('Float', 'Accuracy'):
             dbtype = 'real'
