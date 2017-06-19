@@ -228,7 +228,6 @@ class BotTestCase(object):
         self.loglines_buffer = self.log_stream.getvalue()
         self.loglines = self.loglines_buffer.splitlines()
 
-
         """ Test if all pipes are created with correct names. """
         pipenames = ["{}-input", "{}-input-internal", "{}-output"]
         self.assertSetEqual({x.format(self.bot_id) for x in pipenames},
