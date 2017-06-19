@@ -58,7 +58,7 @@ def generate(harmonization_file=HARMONIZATION_CONF_FILE):
         elif value['type'] == 'JSON':
             dbtype = 'json'
         else:
-            raise ValueError('Unknow type %r.' % value['type'])
+            raise ValueError('Unknown type %r.' % value['type'])
 
         FIELDS[field] = dbtype
 

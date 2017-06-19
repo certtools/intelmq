@@ -1,4 +1,4 @@
-# Shadowserver-Parser Readme
+# Shadowserver-Parser README
 
 ## Structure of this Parser Bot:
 The parser consists of two files:
@@ -22,25 +22,40 @@ E.g. `Botnet-Drone-Hadoop` for the feed corresponding to:
 https://www.shadowserver.org/wiki/pmwiki.php/Services/Botnet-Drone-Hadoop
 
 Possible feednames:
-* `DNS-open-resolvers`
-* `Open-MongoDB`
-* `Open-Elasticsearch`
-* `Open-SNMP`
-* `Ssl-Scan`
-* `Open-Redis`
-* `Open-Memcached`
-* `Open-mDNS`
-* `Open-TFTP`
-* `Open-NetBIOS`
-* `NTP-Monitor`
-* `Open-SSDP`
-* `Open-Chargen`
-* `Open-Portmapper`
+* `Accessible-CWMP`
+* `Accessible-RDP`
+* `Accessible-Telnet`
+* `Blacklisted-IP`
 * `Botnet-Drone-Hadoop`
-* `Open-IPMI`
-* `Open-MSSQL`
-* `Sinkhole-HTTP-Drone`
+* `Compromised-Website`
+* `DNS-open-resolvers`
 * `Microsoft-Sinkhole`
+* `NTP-Monitor`
+* `NTP-Version`
+* `Open-Chargen`
+* `Open-Elasticsearch`
+* `Open-IPMI`
+* `Open-LDAP`
+* `Open-mDNS`
+* `Open-Memcached`
+* `Open-MongoDB`
+* `Open-MSSQL`
+* `Open-NATPMP`
+* `Open-NetBIOS`
+* `Open-Netis`
+* `Open-Portmapper`
+* `Open-QOTD`
+* `Open-Redis`
+* `Open-SNMP`
+* `Open-SSDP`
+* `Open-TFTP`
+* `Open-XDMCP`
+* `Sandbox-URL`
+* `Sinkhole-HTTP-Drone`
+* `Spam-URL`
+* `Ssl-Freak-Scan`
+* `Ssl-Scan` (a.k.a. POODLE)
+* `Vulnerable-ISAKMP`
 
 
 ## Add new Feedformats:

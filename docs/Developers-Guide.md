@@ -48,7 +48,7 @@ If you have not done so, please read the [User Guide](User-Guide.md) first.
 Once you feel comfortable running IntelMQ with open source bots and you feel adventurous enough to contribute to the project, this guide is for you.
 It does not matter if you are an experienced Python programmer or just a beginner. There are a lot of samples to help you out.
 
-Hoever, before we go into the details, it is important to observe and internalise some overall project goals.
+However, before we go into the details, it is important to observe and internalize some overall project goals.
 
 ## Goals
 
@@ -76,7 +76,7 @@ Similarly, if code does not get accepted upstream by the main developers, it is 
 # Development Environment
 
 ## Installation
-Developers might want to install intelmq with `pip3 -e`, which gives you a so called *editable* installation. No code is copied in the libraries directories, there's just a link to your code.
+Developers might want to install IntelMQ with `pip3 -e`, which gives you a so called *editable* installation. No code is copied in the libraries directories, there's just a link to your code.
 
     pip3 install -e .
 
@@ -88,17 +88,32 @@ If you do any changes on setup.py, data files (e.g. example configurations) or a
 
 ## Testing
 
-All changes have to be tested and new contributions must be accompanied by according unit tests. You can run the tests by changing to the directory with intelmq repository and running either `unittest` or `nosetests`:
+All changes have to be tested and new contributions must be accompanied by according unit tests. You can run the tests by changing to the directory with IntelMQ repository and running either `unittest` or `nosetests`:
 
     cd intelmq
     python3 -m unittest {discover|filename}  # or
     nosetests3 [filename]  # or
     python3 setup.py test  # uses a build environment
 
-It may be necessary to switch the user to `intelmq` if the run-path (`/opt/intelmq/var/run/`) is not writeable by the current user. Some bots need local databases to succeed. If you don't mind about those and only want to test one explicit test file, give the filepath as argument.
+It may be necessary to switch the user to `intelmq` if the run-path (`/opt/intelmq/var/run/`) is not writeable by the current user. Some bots need local databases to succeed. If you don't mind about those and only want to test one explicit test file, give the file path as argument.
 
 There is a [Travis-CI](https://travis-ci.org/certtools/intelmq/builds) setup for automatic testing, which triggers on pull requests. You can also easily activate it for your forks.
 
+### Environment variables
+
+There are a bunch of environemnt variables which switch on/off some tests:
+
+* `INTELMQ_TEST_DATABASES`: databases such as postgres, elasticsearch, mongodb are not tested by default, set to 1 to test those bots.
+* `INTELMQ_SKIP_INTERNET`: tests requiring internet connection will be skipped if this is set to 1.
+* `INTELMQ_SKIP_REDIS`: redis-related tests are ran by default, set this to 1 to skip those.
+* `INTELMQ_TEST_LOCAL_WEB`: tests which connect to local web servers or proxies are active when set to 1.
+* `INTELMQ_TEST_EXOTIC`: some bots and tests require libraries which may not be available, those are skipped by default. To run them, set this to 1.
+
+For example, to run all tests you can use:
+
+```bash
+INTELMQ_TEST_DATABASES=1 INTELMQ_TEST_LOCAL_WEB=1 INTELMQ_TEST_EXOTIC=1 nosetests
+```
 
 # Development Guidelines
 
@@ -119,7 +134,7 @@ We support Python 3 only.
 ### Unicode
 
 * Each internal object in IntelMQ (Event, Report, etc) that has strings, their strings MUST be in UTF-8 Unicode format.
-* Any data received from external sources MUST be transformed into UTF-8 unicode format before add it to IntelMQ objects.
+* Any data received from external sources MUST be transformed into UTF-8 Unicode format before add it to IntelMQ objects.
 
 ### Back-end independence
 
@@ -175,7 +190,7 @@ Example (including the current ones):
 
 Please document your added/modified code.
 
-For docstrings, we are using the [sphinx-napoleon-google-type-annotation](http://www.sphinx-doc.org/en/stable/ext/napoleon.html#type-annotations).
+For doc strings, we are using the [sphinx-napoleon-google-type-annotation](http://www.sphinx-doc.org/en/stable/ext/napoleon.html#type-annotations).
 
 Additionally, Python's type hints/annotations are used, see [PEP 484](https://www.python.org/dev/peps/pep-0484/).
 
@@ -231,11 +246,11 @@ Any component of IntelMQ MUST respect the "Data Harmonization Ontology".
 
 ### How to Contribute
 
-  * Make separate pull requests / branches on github for changes. This allows us to discuss things via github.
+  * Make separate pull requests / branches on GitHub for changes. This allows us to discuss things via GitHub.
   * We prefer one  Pull Request per feature or change. If you have a bunch of small fixes, please don't create one RP per fix :)
-  * Only very small and changes (docs, ...) might be commited directly to development branches without Pull Request by the [core-team](https://github.com/orgs/certtools/teams/core).
-  * Keep the balance betweeen atomic commits and keeping the amount of commits per PR small. You can use interactive rebasing to squash multiple small commits into one. (`rebase -i master`)
-  * Make sure your PR is mergeable in the master branch and all tests are successfull.
+  * Only very small and changes (docs, ...) might be committed directly to development branches without Pull Request by the [core-team](https://github.com/orgs/certtools/teams/core).
+  * Keep the balance between atomic commits and keeping the amount of commits per PR small. You can use interactive rebasing to squash multiple small commits into one. (`rebase -i master`)
+  * Make sure your PR is merge able in the master branch and all tests are successful.
   * If possible [sign your commits with GPG](https://help.github.com/articles/signing-commits-using-gpg/).
 
 ### Workflow
@@ -262,7 +277,7 @@ Create a separate feature-branch to work on, sync master with upstream. Create w
 > git commit
 ```
 
-Gettting upstream's changes:
+Getting upstream's changes:
 ```bash
 > git checkout master
 > git pull upstream master
@@ -283,11 +298,11 @@ Or using merging. This doesn't break the history. It's considered more , but als
 
 Also see the [development workflow of Scipy](https://docs.scipy.org/doc/numpy/dev/gitwash/development_workflow.html) which has more examples.
 
-You can then create a PR with your branch `bugfix` to our upstream repository, using github's webinterface.
+You can then create a PR with your branch `bugfix` to our upstream repository, using GitHub's web interface.
 
 ### Commit Messages
 
-If it fixes an existing issue, please use github syntax, e.g.: `fixes certtools/intelmq#<IssueID>`
+If it fixes an existing issue, please use GitHub syntax, e.g.: `fixes certtools/intelmq#<IssueID>`
 
 ### Prepare for Discussion in GitHub
 
@@ -403,13 +418,13 @@ Format:
 
 Rules:
 * the Log message MUST follow the common rules of a sentence, beginning with uppercase and ending with period.
-* the sentence MUST describe the problem or has useful information to give to an unexperienced user a context. Pure stack traces without any further explanation are not helpful.
+* the sentence MUST describe the problem or has useful information to give to an inexperienced user a context. Pure stack traces without any further explanation are not helpful.
 
 When the logger instance is created, the bot id must be given as parameter anyway. The function call defines the log level, see below.
 
 ### Log Levels
 
-* *debug*: Debugging informations includes retrieved and sent messages, detailed status information. Can include sensitive information like passwords and amount can be huge.
+* *debug*: Debugging information includes retrieved and sent messages, detailed status information. Can include sensitive information like passwords and amount can be huge.
 * *info*: Logs include loaded databases, fetched reports or waiting messages.
 * *warning*: Unexpected, but handled behavior.
 * *error*: Errors and Exceptions.
@@ -465,7 +480,7 @@ Parsers can use a different, specialized Bot-class. It allows to work on individ
  * `parse_line`: Parses elements, returns an Event. Can be overridden.
  * `recover_line`: In case of failures and for the field `raw`, this function recovers a fully functional report containing only one element. Can be overridden.
 
-For common cases, like CSV, exisiting function can be used, reducing the amount of code to implement. In the best case, only `parse_line` needs to be coded, as only this part interprets the data.
+For common cases, like CSV, existing function can be used, reducing the amount of code to implement. In the best case, only `parse_line` needs to be coded, as only this part interprets the data.
 
 You can have a look at the implementation `intelmq/lib/bot.py` or at examples, e.g. the DummyBot in `intelmq/tests/lib/test_parser_bot.py`. This is a stub for creating a new Parser, showing the parameters and possible code:
 
@@ -480,7 +495,7 @@ class MyParserBot(ParserBot):
         `self.parse_line` can be saved in `self.tempdata` (list).
 
         Default parser yields stripped lines.
-        Override for your use or use an exisiting parser, e.g.:
+        Override for your use or use an existing parser, e.g.:
             parse = ParserBot.parse_csv
         """
         for line in utils.base64_decode(report.get("raw")).splitlines():
@@ -536,7 +551,7 @@ One line can lead to multiple events, thus `parse_line` can't just return one Ev
 
 In order to do automated tests on the bot, it is necessary to write tests including sample data. Have a look at some existing tests:
 
- - The DummyParserBot in `intelmq/tests/lib/test_paerser_bot.py`. This test has the example data (report and event) inside the file, defined as dictionary.
+ - The DummyParserBot in `intelmq/tests/lib/test_parser_bot.py`. This test has the example data (report and event) inside the file, defined as dictionary.
  - The parser for malwaregroup at `intelmq/tests/bots/parsers/malwaregroup/test_parser_*.py`. The latter loads a sample HTML file from the same directory, which is the raw report.
  - The test for ASNLookupExpertBot has two event tests, one is an expected fail (IPv6).
 
@@ -561,7 +576,7 @@ class TestExampleParserBot(test.BotTestCase, unittest.TestCase):  # adjust test 
     @classmethod
     def set_bot(cls):
         cls.bot_reference = ExampleParserBot  # adjust bot class name
-        cls.default_input_message = EXAMPLE_EVENT  # adjust source of the example event (dict), by default an empty event or report (depeding on bot type)
+        cls.default_input_message = EXAMPLE_EVENT  # adjust source of the example event (dict), by default an empty event or report (depending on bot type)
 
     # This is an example how to test the log output
     def test_log_test_line(self):
@@ -581,6 +596,8 @@ if __name__ == '__main__':  # pragma: no cover
 ```
 
 When calling the file directly, only the tests in this file for the bot will be expected. Some default tests are always executed (via the `test.BotTestCase` class), such as pipeline and message checks, logging, bot naming or empty message handling.
+
+See the [testing section](#testing) about how to run the tests.
 
 ## Configuration
 

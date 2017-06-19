@@ -2,9 +2,10 @@
 """
 Utilities for testing intelmq bots.
 
-TheBotTestCase can be used as base class for unittests on bots. It includes
+The BotTestCase can be used as base class for unittests on bots. It includes
 some basic generic tests (logged errors, correct pipeline setup).
 """
+import copy
 import io
 import json
 import logging
@@ -16,14 +17,14 @@ import unittest.mock as mock
 import pkg_resources
 import redis
 
+import intelmq.lib.message as message
 import intelmq.lib.pipeline as pipeline
 import intelmq.lib.utils as utils
 from intelmq import CONFIG_DIR, PIPELINE_CONF_FILE, RUNTIME_CONF_FILE
 
 __all__ = ['BotTestCase']
 
-BOT_CONFIG = {"logging_level": "DEBUG",
-              "http_proxy": None,
+BOT_CONFIG = {"http_proxy": None,
               "https_proxy": None,
               "broker": "pythonlist",
               "rate_limit": 0,
@@ -59,13 +60,12 @@ def mocked_config(bot_id='test-bot', src_name='', dst_names=(), sysconfig={}):
     return mocked
 
 
-with mock.patch('intelmq.lib.utils.load_configuration', new=mocked_config()):
-    import intelmq.lib.message as message
-
-
 def mocked_logger(logger):
     def log(name, log_path=None, log_level=None, stream=None, syslog=None):
-        return logger
+        # Return a copy as the bot may modify the logger and we should always return the intial logger
+        logger_new = copy.copy(logger)
+        logger_new.setLevel(log_level)
+        return logger_new
     return log
 
 
@@ -87,6 +87,11 @@ def skip_redis():
 def skip_local_web():
     return unittest.skipUnless(os.environ.get('INTELMQ_TEST_LOCAL_WEB'),
                                'Skipping local web tests.')
+
+
+def skip_exotic():
+    return unittest.skipUnless(os.environ.get('INTELMQ_TEST_EXOTIC'),
+                               'Skipping tests requiring exotic libs.')
 
 
 class BotTestCase(object):
@@ -146,6 +151,15 @@ class BotTestCase(object):
                                     db=BOT_CONFIG['redis_cache_db'],
                                     socket_timeout=BOT_CONFIG['redis_cache_ttl'])
 
+    harmonization = utils.load_configuration(pkg_resources.resource_filename('intelmq',
+                                                                             'etc/harmonization.conf'))
+
+    def new_report(self, auto=False, examples=False):
+        return message.Report(harmonization=self.harmonization, auto=auto)
+
+    def new_event(self):
+        return message.Event(harmonization=self.harmonization)
+
     def prepare_bot(self):
         """Reconfigures the bot with the changed attributes"""
 
@@ -161,7 +175,7 @@ class BotTestCase(object):
                                            )
 
         logger = logging.getLogger(self.bot_id)
-        logger.setLevel("DEBUG")
+        logger.setLevel("INFO")
         console_formatter = logging.Formatter(utils.LOG_FORMAT)
         console_handler = logging.StreamHandler(self.log_stream)
         console_handler.setFormatter(console_formatter)
@@ -196,7 +210,7 @@ class BotTestCase(object):
             if self.default_input_message:  # None for collectors
                 self.input_queue = [self.default_input_message]
 
-    def run_bot(self, iterations: int=1):
+    def run_bot(self, iterations: int=1, error_on_pipeline: bool=False):
         """
         Call this method for actually doing a test run for the specified bot.
 
@@ -208,7 +222,7 @@ class BotTestCase(object):
                         new=self.mocked_config):
             with mock.patch('intelmq.lib.utils.log', self.mocked_log):
                 for run in range(iterations):
-                    self.bot.start(error_on_pipeline=False,
+                    self.bot.start(error_on_pipeline=error_on_pipeline,
                                    source_pipeline=self.pipe,
                                    destination_pipeline=self.pipe)
         self.loglines_buffer = self.log_stream.getvalue()
@@ -217,7 +231,8 @@ class BotTestCase(object):
         """ Test if report has required fields. """
         if self.bot_type == 'collector':
             for report_json in self.get_output_queue():
-                report = message.MessageFactory.unserialize(report_json)
+                report = message.MessageFactory.unserialize(report_json,
+                                                            harmonization=self.harmonization)
                 self.assertIsInstance(report, message.Report)
                 self.assertIn('feed.name', report)
                 self.assertIn('raw', report)
@@ -226,7 +241,8 @@ class BotTestCase(object):
         """ Test if event has required fields. """
         if self.bot_type == 'parser':
             for event_json in self.get_output_queue():
-                event = message.MessageFactory.unserialize(event_json)
+                event = message.MessageFactory.unserialize(event_json,
+                                                           harmonization=self.harmonization)
                 self.assertIsInstance(event, message.Event)
                 self.assertIn('classification.type', event)
                 self.assertIn('raw', event)
@@ -249,7 +265,7 @@ class BotTestCase(object):
                                 msg='Logline {!r} does not end with .? or !.'
                                     ''.format(fields['message']))
                 self.assertTrue(fields['message'].upper() == fields['message'].upper(),
-                                msg='Logline {!r} does not beginn with an upper case char.'
+                                msg='Logline {!r} does not begin with an upper case char.'
                                     ''.format(fields['message']))
 
     @classmethod

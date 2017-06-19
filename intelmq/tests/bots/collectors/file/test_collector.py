@@ -34,6 +34,8 @@ class TestFileCollectorBot(test.BotTestCase, unittest.TestCase):
                          'postfix': '.txt',
                          'delete_file': False,
                          'feed': 'Example feed',
+                         'chunk_size': None,
+                         'chunk_replicate_header': True,
                          }
         cls.default_input_message = {'__type': 'Event'}
 

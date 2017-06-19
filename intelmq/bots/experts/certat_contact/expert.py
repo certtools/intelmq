@@ -9,7 +9,7 @@ HTTP POST: https://contacts.cert.at/cgi-bin/abuse-nationalcert.pl
 Options:
 &bShowNationalCERT=on	Show national CERT contact info
 &bShowHeader=on	Display a CSV header
-&bVerbose=on	Display the source of the data, and other infos
+&bVerbose=on	Display the source of the data, and other information
 &bFilter=off	Act as a filter: only show lines which geolocate to "AT"
 &bKeepLoglines=off	Keep original log lines (separated by "#")
 &sep={TAB, comma, semicolon, pipe}  	Separator for the (output) CSV format

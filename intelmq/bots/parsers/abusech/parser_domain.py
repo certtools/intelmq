@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Parsers simple newline separated list of domains.
+Parses simple newline separated list of domains.
 
 Docs:
  - https://feodotracker.abuse.ch/blocklist/
@@ -15,6 +15,7 @@ from intelmq.lib.bot import ParserBot
 
 SOURCE_FEEDS = {'https://feodotracker.abuse.ch/blocklist/?download=domainblocklist': 'Cridex',
                 'https://palevotracker.abuse.ch/blocklists.php?download=domainblocklist': 'Palevo',
+                'https://zeustracker.abuse.ch/blocklist.php?download=domainblocklist': 'Zeus',
                 'https://zeustracker.abuse.ch/blocklist.php?download=baddomains': 'Zeus'}
 
 

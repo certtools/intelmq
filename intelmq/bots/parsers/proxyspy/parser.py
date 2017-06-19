@@ -30,4 +30,5 @@ class ProxyspyParserBot(ParserBot):
 
             yield event
 
+
 BOT = ProxyspyParserBot

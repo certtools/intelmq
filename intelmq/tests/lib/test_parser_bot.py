@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import base64
+import datetime
 import unittest
 import unittest.mock as mock
 
@@ -48,7 +49,6 @@ source.ip,foobar
 192.0.2.3,bllaa
 #ending line
 """
-RAW_SPLIT = RAW.strip().splitlines()
 
 EXAMPLE_REPO_1 = {"feed.url": "http://www.example.com/",
                   "time.observation": "2015-08-11T13:03:40+00:00",
@@ -63,6 +63,9 @@ EXAMPLE_EVE_1 = {"feed.url": "http://www.example.com/",
                  'raw': 'c291cmNlLmlwLGZvb2Jhcg0KMTkyLjAuMi4zLGJsbGFhDQo='
                  }
 
+EXAMPLE_SHORT = EXAMPLE_REPORT.copy()
+EXAMPLE_SHORT['raw'] = utils.base64_encode('\n'.join(RAW_SPLIT[:2] + [RAW_SPLIT[1]]))
+
 
 class DummyParserBot(bot.ParserBot):
     """
@@ -75,6 +78,7 @@ class DummyParserBot(bot.ParserBot):
             self.tempdata.append(line)
         else:
             event = self.new_event(report)
+            self.logger.debug('test')
             line = line.split(',')
             event['time.source'] = line[0]
             event['source.fqdn'] = line[1]
@@ -140,6 +144,27 @@ class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
         self.assertAnyLoglineEqual(message='Report without raw field received. Possible '
                                            'bug or misconfiguration in previous bots.',
                                    levelname='WARNING')
+
+    def test_processed_messages_count(self):
+        self.sysconfig = {'log_processed_messages_count': 1}
+        self.input_message = EXAMPLE_SHORT
+        self.run_bot()
+        self.assertAnyLoglineEqual(message='Processed 1 messages since last logging.',
+                                   levelname='INFO')
+
+    def test_processed_messages_seconds(self):
+        self.sysconfig = {'log_processed_messages_count': 10,
+                          'log_processed_messages_seconds': datetime.timedelta(seconds=0)}
+        self.input_message = EXAMPLE_SHORT
+        self.run_bot()
+        self.assertAnyLoglineEqual(message='Processed 1 messages since last logging.',
+                                   levelname='INFO')
+
+    def test_processed_messages_shutdown(self):
+        self.input_message = EXAMPLE_SHORT
+        self.run_bot()
+        self.assertAnyLoglineEqual(message='Processed 2 messages since last logging.',
+                                   levelname='INFO')
 
 
 class TestDummyCSVParserBot(test.BotTestCase, unittest.TestCase):

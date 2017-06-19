@@ -25,4 +25,5 @@ class BitcashBlocklistParserBot(ParserBot):
 
             yield event
 
+
 BOT = BitcashBlocklistParserBot

@@ -70,4 +70,5 @@ class NothinkParserBot(ParserBot):
 
             yield event
 
+
 BOT = NothinkParserBot

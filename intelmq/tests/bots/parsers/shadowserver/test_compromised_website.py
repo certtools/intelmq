@@ -21,7 +21,7 @@ EXAMPLE_REPORT = {"feed.name": "ShadowServer Compromised Website",
                   "__type": "Report",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   }
-EVENT = {'__type': 'Event',
+EVENT00 = {'__type': 'Event',
          'feed.name': 'ShadowServer Compromised Website',
          'classification.type': 'compromised',
          'classification.identifier': 'compromised-website',
@@ -44,6 +44,9 @@ EVENT = {'__type': 'Event',
        'time.observation': '2015-01-01T00:00:00+00:00',
        'time.source': '2017-01-16T00:43:48+00:00'}
 
+EVENT01 = EVENT00.copy()
+EVENT01['raw'] = utils.base64_encode('\n'.join([RECONSTRUCTED_LINES[0],
+                                               RECONSTRUCTED_LINES[2], '']))
 
 class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
     """
@@ -59,7 +62,8 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
     def test_event(self):
         """ Test if correct Event has been produced. """
         self.run_bot()
-        self.assertMessageEqual(0, EVENT)
+        self.assertMessageEqual(0, EVENT00)
+        self.assertMessageEqual(1, EVENT01)
 
 
 if __name__ == '__main__':  # pragma: no cover

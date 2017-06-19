@@ -20,6 +20,7 @@ EVENT_TEMPL = {"feed.url": "https://dgarchive.caad.fkie.fraunhofer.de/today",
                "feed.name": "Fraunhofer DGA",
                "__type": "Event",
                "classification.type": "c&c",
+               'malware.name': 'banjori',
                "time.observation": "2015-01-01T00:00:00+00:00",
                }
 EXAMPLE_EVENTS_PARTS = [{'raw': 'YW5kZXJzZW5zaW5haXguY29t',

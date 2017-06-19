@@ -1,14 +1,68 @@
 CHANGELOG
 ==========
 
-v1.0.0.dev7 (in development, master branch)
+development
 -----------
 
+v1.0.0.dev8
+-----------
+
+### General changes
+- It's now configurable how often the bots are logging how much events they have sent, based on both the amount and time. (fixes #743)
+- switch from pycodestyle to pep8
+
+### Configuration
+- Added `log_processed_messages_count` (500) and `log_processed_messages_seconds` (900) to defaults.conf.
+- `http_timeout` has been renamed to `http_timeout_sec` and `http_timeout_max_tries` has been added.
+   This setting is honored by bots.collectors.http.* and bots.collectors.mail.collector_mail_url, bots.collectors.rt (only `http_timeout_sec`), bots.outputs.restapi.output and bots.experts.ripencc_abuse_contact
+
+### Documentation
+- Minor fixes
+- Dropped install scripts, see INSTALL.md for more detailed instructions and explanations
+- Better structure of INSTALL.md
+- Better documentation of packages
+
+### Tools
+- added a bot debugger (https://github.com/certtools/intelmq/pull/975)
+- missing bot executable is detected and handled by intelmqctl (https://github.com/certtools/intelmq/pull/979)
+
+### Core
+- fix bug which prevented dumps to be written if the file did not exist (https://github.com/certtools/intelmq/pull/986)
+- Fix reload of bots regarding logging
+- type annotions for all core libraries
+
+### Bots
+- added bots.experts.idea, bots.outputs.files
+- possibility to split large csv Reports into Chunks, currently possible for mail url and file collector
+- elasticsearch output supports HTTP Basic Auth
+- bots.collectors.mail.collector_mail_url and bots collectors.file.collector can split large reports (https://github.com/certtools/intelmq/pull/680)
+- bots.parsers.shadowserver support the VNC feed
+- handling of HTTP timeouts, see above https://github.com/certtools/intelmq/pull/859
+- bots.parsers.bambenek saves the malware name
+- bots.parsers.fraunhofer.parser_dga saves the malware name
+- bots.parsers.shadowserver handles NULL bytes
+- bots.parsers.abusech.parser_ransomware handles the IP 0.0.0.0 specially
+
+### Harmonization
+- New field named `output` to support export to foreign formats
+
+v1.0.0.dev7
+-----------
+
+### Documentation
+- more verbose installation and upgrade instructions
+
 ### Bot changes
-- ENH: added bots.experts.field_reducer.expert
+- added bots.experts.field_reducer, bots.outputs.smtp
+- bots.collectors.alienvault_otx: OTX library has been removed, install it as package instead
+- bots.experts.deduplicator: `ignore_keys` has been renamed to `filter_keys` and `filter_type` has been removed.
+- bots.experts.modify: The configration is now list-based for a consistent ordering
+- bots.experts.tor_node as an optional parameter `overwrite`
+- API keys will be removed from feed.url if possible
 
 ### Harmonization
 - New parameter and field named feed.documentation to link to documentation of the feed
+- classification.taxonomy is lower case only
 
 v1.0.0.dev6
 -----------
@@ -18,6 +72,7 @@ Changes between 0.9 and 1.0.0.dev6
 ### General changes
 - Dropped support for Python 2, Python >= 3.3 is needed
 - Dropped startup.conf and system.conf. Sections in BOTS can be copied directly to runtime.conf now.
+- Support two run modes: 'stream' which is the current implementation and a new one 'scheduled' which allows scheduling via cron or systemd.
 - Helper classes for parser bots
 - moved intelmq/conf to intelmq/etc
 - cleanup in code and repository
@@ -67,7 +122,7 @@ Changes between 0.9 and 1.0.0.dev6
 - changed configuration syntax for bots.experts.modify to a more simple variant
 
 #### Outputs
-- added: amqp, redis, restapi, stomp, tcp, udp, xmpp
+- added: amqp, elasticsearch, redis, restapi, smtp, stomp, tcp, udp, xmpp
 - removed: debug, intelmqmailer (broken), logcollector
 - enhanced all outputs
 
@@ -90,6 +145,7 @@ Changes between 0.9 and 1.0.0.dev6
 - parameter `hierarchical_output` for many output bots
 - deduplicator bot has a new required parameter to configure deduplication mode `filter_type`
 - deduplicator bot key ignore_keys was renamed to filter_keys
+- The tor_nodes expert has a new parameter `overwrite`, which is by default `false`.
 
 ### Harmonization
 - ENH: Additional data types: integer, float and Boolean
@@ -114,10 +170,11 @@ Changes between 0.9 and 1.0.0.dev6
 - `additional_information` renamed to `extra`, must be JSON
 - `os.name`, `os.version`, `user_agent` removed in favor of `extra`
 - all hashes are lower case only
-- added `malware.hash.(md5|sha1)`
+- added `malware.hash.(md5|sha1|sha256)`, removed `malware.hash`
 - New parameter and field named feed.accuracy to represent the accuracy of each feed
 - New parameter and field named feed.provider to document the name of the source of each feed
 - New field `classification.identifier`
+-`classification.taxonomy` is now lower case only
 
 ### Known issues
  - Harmonization: hashes are not normalized and classified, see also issue #394 and pull #634

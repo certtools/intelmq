@@ -8,6 +8,9 @@
    * [status](#status)
    * [restart](#restart)
    * [reload](#reload)
+   * [run](#run)
+   * [disable](#disable)
+   * [enable](#enable)
   * [Manage the botnet](#manage-the-botnet)
    * [start](#start-1)
    * [stop](#stop-1)
@@ -105,7 +108,7 @@ intelmqctl: file-output is running.
 
 Sends a SIGHUP to the bot, which will then reload the configuration.
 
-```
+```bash
 > intelmqctl reload file-output
 intelmqctl: Reloading file-output ...
 intelmqctl: file-output is running.
@@ -114,6 +117,139 @@ If the bot is not running, we can't reload it:
 ```bash
 > intelmqctl reload file-output
 intelmqctl: file-output was NOT RUNNING.
+```
+
+### run
+
+Run a bot directly for debugging purpose. Command temporarily leverages the logging level to DEBUG so that all the ```self.logger.debug("message")``` in the bot will get displayed.
+
+If launched with no arguments, the bot will call its init method and start processing messages as usual – but you see everything happens.
+
+```bash
+> intelmqctl run file-output
+file-output: RestAPIOutputBot initialized with id file-output and version 3.5.2 as process 12345.
+file-output: Bot is starting.
+file-output: Loading source pipeline and queue 'file-output-queue'.
+file-output: Connected to source queue.
+file-output: No destination queues to load.
+file-output: Pipeline ready.
+file-output: Waiting for incoming message.
+```
+
+Should you get lost any time, just use the **--help** after any argument for further explanation.
+
+```bash
+> intelmqctl run file-output --help
+```
+
+Note that if another instance of the bot is running, only warning will be displayed.
+
+```bash
+> intelmqctl run file-output
+intelmqctl: Main instance of the bot is running in the background. You may want to launch: intelmqctl stop file-output
+```
+
+
+#### console
+
+If launched with **console** argument, you get a ```pdb``` live console; or ```ipdb``` or ```pudb``` consoles if they were previously installed (I.E. ```pip3 install ipdb --user```).
+
+```bash
+> intelmqctl run file-output console
+*** Using console ipdb. Please use 'self' to access to the bot instance properties. ***
+ipdb> self. ...
+```
+
+You may specify the desired console in the next argument.
+
+```bash
+> intelmqctl run file-output console pudb
+```
+
+#### message
+
+Operate directly with the input / output pipelines.
+
+If **get** is the parameter, you see the message that waits in the input (source or internal) queue. If the argument is **pop**, the message gets popped as well.
+
+```bash
+> intelmqctl run file-output message get
+file-output: Waiting for a message to get...
+{
+    "classification.type": "c&c",
+    "feed.url": "https://example.com",
+    "raw": "1233",
+    "source.ip": "1.2.3.4",
+    "time.observation": "2017-05-17T22:00:33+00:00",
+    "time.source": "2017-05-17T22:00:32+00:00"
+}
+```
+
+To send directly to the bot's ouput queue, just as it was sent by ```self.send_message()``` in bot's ```process()``` method, use the **send** argument.
+In our case of ```file-output```, it has no destionation queue so that nothing happens.
+
+```bash
+> intelmqctl run file-output message send '{"time.observation": "2017-05-17T22:00:33+00:00", "time.source": "2017-05-17T22:00:32+00:00"}'
+file-output: Bot has no destination queues.
+```
+
+Note, if you would like to know possible parameters of the message, put a wrong one – you will be prompted if you want to list all the current bot harmonization.
+
+#### process
+
+With no other arguments, bot\'s ```process()``` method will be run one time.
+
+```bash
+> intelmqctl run file-output process
+file-output: Bot is starting.
+file-output: Pipeline ready.
+file-output: Processing...
+file-output: Waiting for incoming message.
+file-output: Received message {'raw': '1234'}.
+```
+
+If run with **--dryrun|-d** flag, the message gets never really popped out from the source or internal pipeline, nor send to the output pipeline.
+Plus, you receive a note about the exact moment the message would get sent, or acknowledged.
+
+```bash
+> intelmqctl run file-output process -d
+file-output:  * Dryrun only, no message will be really sent through.
+...
+file-output: DRYRUN: Message would be acknowledged now!
+```
+
+You may trick the bot to process a JSON instead of the Message in its pipeline with **--msg|-m** flag.
+
+```bash
+> intelmqctl run file-output process -m '{"source.ip":"1.2.3.4"}'
+file-output:  * Message from cli will be used when processing.
+...
+```
+
+### disable
+
+Sets the `enabled` flag in runtime.conf to `false`.
+Assume the bot is now enabled (default for all bots).
+
+```bash
+> intelmqctl status file-output
+intelmqctl: file-output is stopped.
+> intelmqctl disable file-output
+> intelmqctl status file-output
+intelmqctl: file-output is disabled.
+```
+
+### enable
+
+Ensures that the `enabled` flag in runtime.conf is not set to `false`.
+Assume that the bot is now dibbled.
+
+```bash
+> intelmqctl status file-output
+intelmqctl: file-output is disabled.
+> intelmqctl enable file-output
+> intelmqctl status file-output
+intelmqctl: file-output is stopped.
 ```
 
 
@@ -210,13 +346,33 @@ The same as start and stop consecutively.
 ### reload
 The same as reload of every bot.
 
+### enable / disable
+The sub commands `enable` and `disable` set the corresponding flags in runtime.conf.
+
+```bash
+> intelmqctl status
+intelmqctl: file-output is stopped.
+intelmqctl: malware-domain-list-collector is stopped.
+intelmqctl: malware-domain-list-parser is stopped.
+> intelmqctl disable file-output
+> intelmqctl status
+intelmqctl: file-output is disabled.
+intelmqctl: malware-domain-list-collector is stopped.
+intelmqctl: malware-domain-list-parser is stopped.
+> intelmqctl enable file-output
+> intelmqctl status
+intelmqctl: file-output is stopped.
+intelmqctl: malware-domain-list-collector is stopped.
+intelmqctl: malware-domain-list-parser is stopped.
+```
+
 ## List bots
 `intelmqctl list bots` does list all configured bots and their description.
 
 ## List queues
 `intelmqctl list queues` shows all queues which are currently in use according to the configuration and how much events are in it:
 
-```
+```bash
 > intelmqctl list queues
 intelmqctl: abusech-domain-parser-queue - 0
 intelmqctl: abusech-domain-parser-queue-internal - 0
@@ -226,10 +382,16 @@ intelmqctl: file-output-queue - 234
 intelmqctl: file-output-queue-internal - 0
 ```
 
+Use the `-q` or `--quiet` flag to only show non-empty queues:
+
+```bash
+> intelmqctl list queues -q
+intelmqctl: file-output-queue - 234
+```
+
 ## Log
 
 intelmqctl can show the last log lines for a bot, filtered by the log level.
-Only works for file logs.
 
 See the help page for more information.
 

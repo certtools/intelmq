@@ -67,7 +67,7 @@ AVAILABLE_IDS = [key for key, value in ACTIONS.items() if value[1]]
 
 
 def dump_info(fname):
-    info = red('unknwon error')
+    info = red('unknown error')
     if not os.path.getsize(fname):
         info = red('empty file')
     else:
@@ -139,12 +139,13 @@ def main():
                      for fname in sorted(filenames)]
 
         length = max([len(value[1]) for value in filenames])
-        print(bold("{c:>3}: {s:{l}} {i}".format(c='id', s='name (bot id)',
-                                                i='content', l=length)))
+        print(bold("{c:>3}: {s:{length}} {i}".format(c='id', s='name (bot id)',
+                                                     i='content',
+                                                     length=length)))
         for count, (fname, shortname) in enumerate(filenames):
             info = dump_info(fname)
-            print("{c:3}: {s:{l}} {i}".format(c=count, s=shortname, i=info,
-                                              l=length))
+            print("{c:3}: {s:{length}} {i}".format(c=count, s=shortname, i=info,
+                                                   length=length))
         try:
             botid = input(inverted('Which dump file to process (id or name)?') +
                           ' ')
@@ -187,11 +188,16 @@ def main():
                     print('{:3}: {} {}'.format(count, *line))
 
         # Determine bot status
-        bot_status = ctl.bot_status(botid)
-        if bot_status == 'running':
-            print(red('Attention: This bot is currently running!'))
-        elif bot_status == 'error':
+        try:
+            bot_status = ctl.bot_status(botid)
+            if bot_status == 'running':
+                print(red('Attention: This bot is currently running!'))
+        except KeyError:
+            bot_status = 'error'
             print(red('Attention: This bot is not defined!'))
+            available_opts = [item[0] for item in ACTIONS.values() if item[2]]
+            available_answers = [k for k, v in ACTIONS.items() if v[2]]
+            print('Restricted actions.')
 
         try:
             answer = input(inverted(', '.join(available_opts) + '?') + ' ').split()
@@ -283,6 +289,7 @@ def main():
                 if type(value['traceback']) is not list:
                     value['traceback'] = value['traceback'].splitlines()
                 pprint.pprint(value)
+
 
 if __name__ == '__main__':  # pragma: no cover
     main()

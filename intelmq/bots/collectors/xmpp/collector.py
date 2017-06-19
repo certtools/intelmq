@@ -66,7 +66,7 @@ try:
                 self.disconnect()
 
             if self.xmpp_room:  # and self.plugin.get('xep_0045') # this check should also exist!
-                self.logger.debug("Joining room: %s." % self.xmpp_room)
+                self.logger.debug("Joining room: %s.", self.xmpp_room)
                 pwd = self.xmpp_room_password if self.xmpp_room_password else ""
                 self.plugin['xep_0045'].joinMUC(self.xmpp_room,
                                                 self.xmpp_room_nick,
@@ -91,7 +91,7 @@ class XMPPCollectorBot(CollectorBot):
         xmpp_password = getattr(self.parameters, "xmpp_password", None)
 
         if None in (xmpp_user, xmpp_server, xmpp_password):
-            self.logger.error('No User / Password provided')
+            self.logger.error('No User / Password provided.')
             self.stop()
         else:
             xmpp_login = xmpp_user + '@' + xmpp_server
@@ -116,7 +116,7 @@ class XMPPCollectorBot(CollectorBot):
         ca_certs = getattr(self.parameters, "ca_certs", None)
 
         if self.muc and not xmpp_room:
-            self.logger.error('No room provided')
+            self.logger.error('No room provided.')
             self.stop()
 
         if self.muc:
@@ -187,7 +187,7 @@ class XMPPCollectorBot(CollectorBot):
             else:
                 tmp_body = body
 
-            self.logger.debug("Received Stanza: %r from %r." % (tmp_body, msg['from']))
+            self.logger.debug("Received Stanza: %r from %r.", tmp_body, msg['from'])
 
             raw_msg = body
             # Read msg-body and add as raw to a new report.

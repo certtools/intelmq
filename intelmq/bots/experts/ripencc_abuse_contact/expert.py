@@ -35,7 +35,7 @@ class RIPENCCExpertBot(Bot):
                                 headers=self.http_header,
                                 verify=self.http_verify_cert,
                                 cert=self.ssl_client_cert,
-                                timeout=self.http_timeout)
+                                timeout=self.http_timeout_sec)
         if response.status_code != 200:
             raise ValueError('HTTP response status code was {}.'
                              ''.format(response.status_code))
@@ -46,7 +46,7 @@ class RIPENCCExpertBot(Bot):
                         ['abuse_c'][0]['email']]
             else:
                 return []
-        except:
+        except Exception:  # TODO: Should probably be ValueError or AttributeError?
             return []
 
     def query_ripedb(self, ip=None, asn=None):
@@ -55,7 +55,7 @@ class RIPENCCExpertBot(Bot):
                                 headers=self.http_header,
                                 verify=self.http_verify_cert,
                                 cert=self.ssl_client_cert,
-                                timeout=self.http_timeout)
+                                timeout=self.http_timeout_sec)
         if response.status_code != 200:
             return []
 
@@ -67,7 +67,7 @@ class RIPENCCExpertBot(Bot):
                                 headers=self.http_header,
                                 verify=self.http_verify_cert,
                                 cert=self.ssl_client_cert,
-                                timeout=self.http_timeout)
+                                timeout=self.http_timeout_sec)
         if response.status_code != 200:
             return []
 
