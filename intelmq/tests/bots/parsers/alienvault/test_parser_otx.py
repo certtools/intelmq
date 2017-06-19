@@ -47,15 +47,15 @@ attacks.""".replace('\n', ' '),
 EXAMPLE_EVENT_2 = {
   '__type': 'Event',
    'classification.type': 'blacklist',
-  'comment': 'Active users of mobile banking apps should be aware of a new '
-             'Android banking malware campaign targeting customers of large '
-             'banks in the United States, Germany, France, Australia, Turkey, '
-             'Poland, and Austria. This banking malware can steal login '
-             'credentials from 94 different mobile banking apps. Due to its '
-             'ability to intercept SMS communications, the malware is also '
-             'able to bypass SMS-based two-factor authentication. '
-             'Additionally, it also contains modules to target some popular '
-             'social media apps.',
+      'comment': 'Active users of mobile banking apps should be aware of a new '
+                 'Android banking malware campaign targeting customers of large '
+                 'banks in the United States, Germany, France, Australia, Turkey, '
+                 'Poland, and Austria. This banking malware can steal login '
+                 'credentials from 94 different mobile banking apps. Due to its '
+                 'ability to intercept SMS communications, the malware is also '
+                 'able to bypass SMS-based two-factor authentication. '
+                 'Additionally, it also contains modules to target some popular '
+                 'social media apps.',
   'extra': '{"adversary": "", "author": "AlienVault", "industries": '
            '["banking"], "pulse": "Android banking malware masquerades as '
            'Flash Player", "tags": ["skype", "flash player", "android", '
@@ -66,6 +66,37 @@ EXAMPLE_EVENT_2 = {
   'malware.hash.sha256': 'e5df30b41b0c50594c2b77c1d5d6916a9ce925f792c563f692426c2d50aa2524',
   'raw': 'eyJhY2Nlc3NfZ3JvdXBzIjogW10sICJhY2Nlc3NfcmVhc29uIjogIiIsICJhY2Nlc3NfdHlwZSI6ICJwdWJsaWMiLCAiY29udGVudCI6ICIiLCAiY3JlYXRlZCI6ICIyMDE2LTExLTAzVDIwOjE1OjQ0IiwgImRlc2NyaXB0aW9uIjogIiIsICJleHBpcmF0aW9uIjogbnVsbCwgImlkIjogMTI2NTM1NCwgImluZGljYXRvciI6ICJlNWRmMzBiNDFiMGM1MDU5NGMyYjc3YzFkNWQ2OTE2YTljZTkyNWY3OTJjNTYzZjY5MjQyNmMyZDUwYWEyNTI0IiwgImlzX2FjdGl2ZSI6IDEsICJvYnNlcnZhdGlvbnMiOiAzLCAicm9sZSI6IG51bGwsICJ0aXRsZSI6ICIiLCAidHlwZSI6ICJGaWxlSGFzaC1TSEEyNTYifQ==',
   'time.source': '2016-11-03T20:01:00+00:00'
+  }
+
+EXAMPLE_EVENT_3 = {
+  '__type': 'Event',
+   'classification.type': 'blacklist',
+      'comment': 'Myanmar is a country currently engaged in an important '
+                 'political process. A pro-democracy reform took place \n'
+                 'in 2011 which has helped the government create an atmopshere '
+                 'conducive to investor interest. The country is \n'
+                 'resource rich, with a variety of natural resources and a steady '
+                 'labor supply. Despite recent progress, the \n'
+                 'country is subject to ongoing conflict with ethnic rebels and '
+                 'an ongoing civil war. Analysts suggest that both \n'
+                 'China and the United States are vying for greater influence in '
+                 'Myanmar, with China in particular having \n'
+                 'geopolitical interest due to sea passages, port deals, and fuel '
+                 'pipelines that are important to its goals. \n'
+                 'Geopolitical analysts have suggested that the United States may '
+                 'have its own interests that involve thwarting \n'
+                 'Chinese ambitions in the region. APT groups from multiple '
+                 'countries - including China - have been known to target '
+                 'organizations of strategic interest with aggressive '
+                 'malware-based espionage campaigns.',
+    'extra': '{"author": "AlienVault", "pulse": "PlugX Threat\\tActivity in '
+             'Myanmar", "tags": ["plugx", "Myanmar", "rat", '
+             '"Strategic\\tWeb\\tCompromise"], "time_updated": '
+             '"2015-09-01T07:47:06.00+00:00"}',
+   'feed.name': 'AlienVault OTX',
+  'raw': 'eyJfaWQiOiAiNTVlNTU3ZmE0NjM3ZjIxYzU0YzFiYWY4IiwgImNyZWF0ZWQiOiAiMjAxNS0wOS0wMVQwNzo0NzowNi4wNzMiLCAiZGVzY3JpcHRpb24iOiAiIiwgImluZGljYXRvciI6ICJodHRwOi8vd3d3LnVlY215YW5tYXIub3JnL2RtZG9jdW1lbnRzL2ludml0YXRpb25zLnJhciIsICJ0eXBlIjogIlVSTCJ9',
+    'source.url': 'http://www.uecmyanmar.org/dmdocuments/invitations.rar',
+  'time.source': '2015-09-01T07:47:06+00:00'
   }
 
 class TestAlienVaultOTXParserBot(test.BotTestCase, unittest.TestCase):
@@ -83,6 +114,7 @@ class TestAlienVaultOTXParserBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_EVENT)
         self.assertMessageEqual(11, EXAMPLE_EVENT_2)
+        self.assertMessageEqual(70, EXAMPLE_EVENT_3)
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
