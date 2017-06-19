@@ -3,6 +3,8 @@ CHANGELOG
 
 development
 -----------
+### Development
+- We are now testing with and without optional libraries/lowest recommended versions and most current versions of required libraries
 
 v1.0.0.dev8
 -----------
