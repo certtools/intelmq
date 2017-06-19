@@ -228,6 +228,12 @@ class BotTestCase(object):
         self.loglines_buffer = self.log_stream.getvalue()
         self.loglines = self.loglines_buffer.splitlines()
 
+
+        """ Test if all pipes are created with correct names. """
+        pipenames = ["{}-input", "{}-input-internal", "{}-output"]
+        self.assertSetEqual({x.format(self.bot_id) for x in pipenames},
+                            set(self.pipe.state.keys()))
+
         """ Test if report has required fields. """
         if self.bot_type == 'collector':
             for report_json in self.get_output_queue():
@@ -290,12 +296,6 @@ class BotTestCase(object):
         """Getter for the input queue of this bot. Use in TestCase scenarios"""
         return [utils.decode(text) for text
                 in self.pipe.state["%s-output" % self.bot_id]]
-
-
-#        """ Test if all pipes are created with correct names. """
-        pipenames = ["{}-input", "{}-input-internal", "{}-output"]
-        self.assertSetEqual({x.format(self.bot_id) for x in pipenames},
-                            set(self.pipe.state.keys()))
 
     def test_bot_name(self):
         """
