@@ -83,7 +83,7 @@ class TestRIPENCCExpertBot(test.BotTestCase, unittest.TestCase):
         self.allowed_error_count = 1
         self.prepare_bot()
         old = self.bot.URL_STAT
-        self.bot.URL_STAT = 'http://localhost/index.html?{}'
+        self.bot.URL_STAT = 'https://example.com/index.html?{}'
         self.run_bot(prepare=False)
         self.assertLogMatches(pattern='.*JSONDecodeError.*',
                               levelname='ERROR')
