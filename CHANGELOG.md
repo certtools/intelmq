@@ -6,6 +6,9 @@ development
 ### Harmonization
 - New ASN type. Like integer but checks the range.
 
+### Development
+- We are now testing with and without optional libraries/lowest recommended versions and most current versions of required libraries
+
 v1.0.0.dev8
 -----------
 
