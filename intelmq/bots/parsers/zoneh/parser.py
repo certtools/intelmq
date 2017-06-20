@@ -26,9 +26,6 @@ class RewindableFileHandle:
 
 
 class ZoneHParserBot(ParserBot):
-    def init(self):
-        pass
-
     def process(self):
         report = self.receive_message()
 
