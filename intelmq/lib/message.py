@@ -250,9 +250,6 @@ class Message(dict):
         return MessageFactory.unserialize(MessageFactory.serialize(self),
                                           harmonization={self.__class__.__name__.lower(): self.harmonization_config})
 
-    def __unicode__(self):
-        return self.serialize()
-
     def __str__(self):
         return self.serialize()
 
