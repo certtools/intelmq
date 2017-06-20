@@ -167,6 +167,13 @@ class TestMessageFactory(unittest.TestCase):
         report.add('feed.name', None)
         self.assertNotIn('feed.name', report)
 
+    def test_report_change_delete_none(self):
+        """ Test if report ignores None. """
+        report = self.new_report()
+        report.add('feed.name', 'foo')
+        report.change('feed.name', None)
+        self.assertNotIn('feed.name', report)
+
     def test_report_ignore_empty(self):
         """ Test if report ignores empty string. """
         report = self.new_report()
