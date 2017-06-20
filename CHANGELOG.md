@@ -6,6 +6,10 @@ development
 ### Development
 - We are now testing with and without optional libraries/lowest recommended versions and most current versions of required libraries
 
+### Bots
+- `bots.experts.ripencc_abuse_contact` now has the two additional parameters `query_ripe_stat_asn` and `query_ripe_stat_ip`.
+  Deprecated parameter `query_ripe_stat`. New parameter `mode`.
+
 v1.0.0.dev8
 -----------
 
