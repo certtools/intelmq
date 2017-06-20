@@ -394,7 +394,11 @@ class BotTestCase(object):
         for logline in self.loglines:
             fields = utils.parse_logline(logline)
 
-            if levelname == fields["log_level"] and re.match(pattern, fields["message"]):
+            #  Exception tracebacks
+            if isinstance(fields, str):
+                if levelname == "ERROR" and re.match(pattern, fields):
+                    break
+            elif levelname == fields["log_level"] and re.match(pattern, fields["message"]):
                 break
         else:
             raise ValueError('No matching logline found.')
