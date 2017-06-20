@@ -11,7 +11,7 @@ with open(
     os.path.join(os.path.dirname(__file__), 'defacement_accepted.csv')
 ) as handle:
     ACCEPTED_FILE = handle.read()
-ACCEPTED_LINES = ACCEPTED_FILE.splitlines()
+ACCEPTED_LINES = ACCEPTED_FILE.splitlines(keepends=True)
 
 
 ACCEPTED_REPORT = {
@@ -64,7 +64,7 @@ with open(
     os.path.join(os.path.dirname(__file__), 'defacement_pending.csv')
 ) as handle:
     PENDING_FILE = handle.read()
-PENDING_LINES = PENDING_FILE.splitlines()
+PENDING_LINES = PENDING_FILE.splitlines(keepends=True)
 
 PENDING_REPORT = {
     "feed.name": "ZoneH Defacements",
@@ -104,6 +104,7 @@ class TestZoneHParserBot(test.BotTestCase, unittest.TestCase):
         cls.bot_reference = ZoneHParserBot
         cls.default_input_message = ACCEPTED_REPORT
         cls.sysconfig = {'feedname': 'Compromised-Website'}
+        print(PENDING_LINES)
 
     def test_event(self):
         """ Test if correct Event has been produced. """

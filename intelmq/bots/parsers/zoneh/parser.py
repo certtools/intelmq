@@ -8,7 +8,7 @@ from urllib.parse import urlparse
 
 from intelmq.lib import utils
 from intelmq.lib.bot import ParserBot
-from intelmq.lib.exceptions import InvalidKey, InvalidValue
+from intelmq.lib.exceptions import InvalidValue
 from intelmq.lib.message import Event
 
 
@@ -74,7 +74,7 @@ class ZoneHParserBot(ParserBot):
 
         for row in csvr:
             # need fh to populate the raw field in main event handler
-            yield row, fh.last_line.strip()
+            yield row, fh.last_line
 
 
 BOT = ZoneHParserBot
