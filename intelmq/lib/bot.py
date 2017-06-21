@@ -721,3 +721,23 @@ class CollectorBot(Bot):
 
 class Parameters(object):
     pass
+
+
+class RewindableFileHandle(object):
+    """
+    Can be used for easy retrieval of last input line to populate raw field
+    during CSV parsing. See bots/parsers/zoneh/parser.py for an example.
+
+    TODO: could be used to supplement base parsers / bots, e.g. recover_csv
+    """
+    def __init__(self, f):
+        self.f = f
+        self.last_line = None
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        self.last_line = next(self.f)
+        return self.last_line
+

@@ -7,22 +7,9 @@ import io
 from urllib.parse import urlparse
 
 from intelmq.lib import utils
-from intelmq.lib.bot import ParserBot
-from intelmq.lib.exceptions import InvalidValue
+from intelmq.lib.bot import ParserBot, RewindableFileHandle
 from intelmq.lib.message import Event
 
-
-class RewindableFileHandle:
-    def __init__(self, f):
-        self.f = f
-        self.last_line = None
-
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        self.last_line = next(self.f)
-        return self.last_line
 
 
 class ZoneHParserBot(ParserBot):
