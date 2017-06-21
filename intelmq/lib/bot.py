@@ -740,4 +740,3 @@ class RewindableFileHandle(object):
     def __next__(self):
         self.last_line = next(self.f)
         return self.last_line
-

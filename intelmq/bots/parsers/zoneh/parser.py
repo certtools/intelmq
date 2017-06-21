@@ -11,7 +11,6 @@ from intelmq.lib.bot import ParserBot, RewindableFileHandle
 from intelmq.lib.message import Event
 
 
-
 class ZoneHParserBot(ParserBot):
     def process(self):
         report = self.receive_message()
