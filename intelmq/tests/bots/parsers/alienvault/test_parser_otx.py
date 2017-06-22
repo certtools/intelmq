@@ -99,6 +99,20 @@ EXAMPLE_EVENT_3 = {
   'time.source': '2015-09-01T07:47:06+00:00'
   }
 
+EXAMPLE_EVENT_4 = {
+  '__type': 'Event',
+  'classification.type': 'blacklist',
+  'comment': 'HIDDEN COBRA – North Korean Malicious Cyber Activity',
+  'extra': '{"adversary": "", "author": "bschlaps", "industries": [], '
+             '"pulse": "Alert (TA17-164A)", "pulse_key": '
+             '"5942175dd78f563d01abc79c", "tags": [], "time_updated": '
+             '"2017-06-15T05:17:12.18+00:00"}',
+  'feed.name': 'AlienVault OTX',
+  'raw': 'eyJhY2Nlc3NfZ3JvdXBzIjogW10sICJhY2Nlc3NfcmVhc29uIjogIiIsICJhY2Nlc3NfdHlwZSI6ICJwdWJsaWMiLCAiY29udGVudCI6ICIiLCAiY3JlYXRlZCI6ICIyMDE3LTA2LTE1VDA1OjEzOjAyIiwgImRlc2NyaXB0aW9uIjogIiIsICJleHBpcmF0aW9uIjogbnVsbCwgImlkIjogMTM1Nzk4OSwgImluZGljYXRvciI6ICIxMzQuMTE5LjM2LjEzNSIsICJpc19hY3RpdmUiOiAxLCAib2JzZXJ2YXRpb25zIjogMTEsICJwdWxzZV9rZXkiOiAiNTk0MjE3NWRkNzhmNTYzZDAxYWJjNzljIiwgInJvbGUiOiBudWxsLCAidGl0bGUiOiAiIiwgInR5cGUiOiAiSVB2NCJ9',
+  'source.ip': '134.119.36.135',
+  'time.source': '2017-06-15T05:01:00+00:00'
+  }
+
 class TestAlienVaultOTXParserBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for AlienVaultOTXParserBot.
@@ -115,6 +129,7 @@ class TestAlienVaultOTXParserBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(0, EXAMPLE_EVENT)
         self.assertMessageEqual(11, EXAMPLE_EVENT_2)
         self.assertMessageEqual(70, EXAMPLE_EVENT_3)
+        self.assertMessageEqual(91, EXAMPLE_EVENT_4)
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
