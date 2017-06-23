@@ -81,6 +81,8 @@ class AlienVaultOTXParserBot(Bot):
 
                 if 'pulse_key' in indicator:
                     additional_indicator['pulse_key'] = indicator['pulse_key']
+                else:
+                    additional_indicator['pulse_key'] = pulse['id']
                 if 'tags' in pulse:
                     additional_indicator['tags'] = pulse['tags']
                 if 'modified' in pulse:

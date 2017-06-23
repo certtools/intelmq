@@ -19,9 +19,10 @@ EXAMPLE_REPORT = {"feed.name": "AlienVault OTX",
 EXAMPLE_EVENT = {
     "__type": "Event",
     "extra": '{"author": "AlienVault", "pulse": "The Spy Kittens Are Back: '
-        'Rocket Kitten 2", "tags": ["spy kittens", "rocket kitten", "ghole",'
-        ' "spearphishing", "Social engineering", "TSPY_WOOLERG", "apt",'
-        ' "trendmicro"], "time_updated": "2015-09-02T09:22:22.97+00:00"}',
+             'Rocket Kitten 2", "pulse_key": "55e6bfb14637f22cb605746e", '
+             '"tags": ["spy kittens", "rocket kitten", "ghole", '
+             '"spearphishing", "Social engineering", "TSPY_WOOLERG", "apt", '
+             '"trendmicro"], "time_updated": "2015-09-02T09:22:22.97+00:00"}',
     "comment": """Our findings show that Rocket Kitten is still active, retains
 a growing level of persistence, and acts ever more aggressively in terms of
 attack method. We also found that recent publications on the group’s activity
@@ -58,10 +59,11 @@ EXAMPLE_EVENT_2 = {
                  'social media apps.',
   'extra': '{"adversary": "", "author": "AlienVault", "industries": '
            '["banking"], "pulse": "Android banking malware masquerades as '
-           'Flash Player", "tags": ["skype", "flash player", "android", '
-           '"banker"], "targeted_countries": ["United States", "Germany", '
-           '"France", "Australia", "Turkey", "Poland", "Austria"], '
-           '"time_updated": "2016-11-03T20:15:43.26+00:00"}',
+           'Flash Player", "pulse_key": "581b9aef324bc542d6b1fd84", "tags": '
+           '["skype", "flash player", "android", "banker"], '
+           '"targeted_countries": ["United States", "Germany", "France", '
+           '"Australia", "Turkey", "Poland", "Austria"], "time_updated": '
+           '"2016-11-03T20:15:43.26+00:00"}',
   'feed.name': 'AlienVault OTX',
   'malware.hash.sha256': 'e5df30b41b0c50594c2b77c1d5d6916a9ce925f792c563f692426c2d50aa2524',
   'raw': 'eyJhY2Nlc3NfZ3JvdXBzIjogW10sICJhY2Nlc3NfcmVhc29uIjogIiIsICJhY2Nlc3NfdHlwZSI6ICJwdWJsaWMiLCAiY29udGVudCI6ICIiLCAiY3JlYXRlZCI6ICIyMDE2LTExLTAzVDIwOjE1OjQ0IiwgImRlc2NyaXB0aW9uIjogIiIsICJleHBpcmF0aW9uIjogbnVsbCwgImlkIjogMTI2NTM1NCwgImluZGljYXRvciI6ICJlNWRmMzBiNDFiMGM1MDU5NGMyYjc3YzFkNWQ2OTE2YTljZTkyNWY3OTJjNTYzZjY5MjQyNmMyZDUwYWEyNTI0IiwgImlzX2FjdGl2ZSI6IDEsICJvYnNlcnZhdGlvbnMiOiAzLCAicm9sZSI6IG51bGwsICJ0aXRsZSI6ICIiLCAidHlwZSI6ICJGaWxlSGFzaC1TSEEyNTYifQ==',
@@ -90,9 +92,9 @@ EXAMPLE_EVENT_3 = {
                  'organizations of strategic interest with aggressive '
                  'malware-based espionage campaigns.',
   'extra': '{"author": "AlienVault", "pulse": "PlugX Threat\\tActivity in '
-             'Myanmar", "tags": ["plugx", "Myanmar", "rat", '
-             '"Strategic\\tWeb\\tCompromise"], "time_updated": '
-             '"2015-09-01T07:47:06.00+00:00"}',
+           'Myanmar", "pulse_key": "55e557fa4637f21c54c1bb0d", "tags": '
+           '["plugx", "Myanmar", "rat", "Strategic\\tWeb\\tCompromise"], '
+           '"time_updated": "2015-09-01T07:47:06.00+00:00"}',
   'feed.name': 'AlienVault OTX',
   'raw': 'eyJfaWQiOiAiNTVlNTU3ZmE0NjM3ZjIxYzU0YzFiYWY4IiwgImNyZWF0ZWQiOiAiMjAxNS0wOS0wMVQwNzo0NzowNi4wNzMiLCAiZGVzY3JpcHRpb24iOiAiIiwgImluZGljYXRvciI6ICJodHRwOi8vd3d3LnVlY215YW5tYXIub3JnL2RtZG9jdW1lbnRzL2ludml0YXRpb25zLnJhciIsICJ0eXBlIjogIlVSTCJ9',
   'source.url': 'http://www.uecmyanmar.org/dmdocuments/invitations.rar',
