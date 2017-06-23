@@ -79,6 +79,9 @@ class AlienVaultOTXParserBot(Bot):
                 else:
                     continue
 
+                # if pulse_key exists in the indicators use it
+                # else use id from pulse and add it as pulse_key
+                # same logic is followed by alienvault
                 if 'pulse_key' in indicator:
                     additional_indicator['pulse_key'] = indicator['pulse_key']
                 else:
