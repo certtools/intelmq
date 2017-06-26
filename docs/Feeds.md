@@ -1483,7 +1483,7 @@ id: malware-domains-collector
 provider: Malware Domains
 feed: Malware Domains
 rate_limit: 172800
-http_url: http://mirror2.malwaredomains.com/files/domains.txt
+http_url: http://mirror1.malwaredomains.com/files/domains.txt
 ```
 
 ## Parser Bot
