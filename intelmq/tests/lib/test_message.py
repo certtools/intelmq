@@ -330,12 +330,6 @@ class TestMessageFactory(unittest.TestCase):
         self.assertDictEqual(json.loads(expected),
                              json.loads(actual))
 
-    def test_report_unicode(self):
-        """ Test Message __unicode__ function, pointing to serialize. """
-        report = self.new_report(examples=True)
-        self.assertEqual(report.serialize(),
-                         str(report))
-
     def test_deep_copy_content(self):
         """ Test if deep_copy does return the same items. """
         report = self.new_report(examples=True)
