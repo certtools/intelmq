@@ -66,9 +66,9 @@ Developers Guide
 See `Developers Guide <docs/Developers-Guide.md>`__.
 
 User Guide
-----------------
+----------
 
-See `User Guide <docs/User-Guide.md`__.
+See `User Guide <docs/User-Guide.md>`__.
 
 For support use the intelmq-users mailing list: https://lists.cert.at/cgi-bin/mailman/listinfo/intelmq-users
 
