@@ -47,7 +47,6 @@ class TestGenericCsvParserBot(test.BotTestCase, unittest.TestCase):
     def set_bot(cls):
         cls.bot_reference = GenericCsvParserBot
         cls.default_input_message = EXAMPLE_REPORT
-#source_ip,source_url,source_port
         cls.sysconfig = {"columns": [ "source.ip|source.network", "source.url" ],
                          "delimiter": ",",
                          "skip_header": True,
@@ -63,9 +62,6 @@ class TestGenericCsvParserBot(test.BotTestCase, unittest.TestCase):
 
         self.run_bot()
         self.assertMessageEqual(1, EXAMPLE_EVENT2)
-
-#        with self.assertRaises((exceptions.InvalidValue,TypeError)):
-#            self.run_bot()
 
 
 if __name__ == '__main__':  # pragma: no cover
