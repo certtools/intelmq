@@ -6,6 +6,9 @@ development
 ### Development
 - We are now testing with and without optional libraries/lowest recommended versions and most current versions of required libraries
 
+### Bots
+- Removed bots.parsers.openbl as the source is offline since end of may (#1018, https://twitter.com/sshblorg/status/854669263671615489)
+
 v1.0.0.dev8
 -----------
 
