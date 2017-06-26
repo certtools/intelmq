@@ -363,11 +363,6 @@
             "module": "intelmq.bots.parsers.nothink.parser",
             "parameters": {}
         },
-        "OpenBL": {
-            "description": "OpenBL Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.openbl.parser",
-            "parameters": {}
-        },
         "OpenPhish": {
             "description": "OpenPhish Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.openphish.parser",

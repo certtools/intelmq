@@ -1817,40 +1817,6 @@ id: nothink-telnet-parser
 **Notes:** This feed provides IP addresses of systems that have connected to a honeypot via Telnet in the last 24 hours.
 reference: http://www.nothink.org/honeypots.php
 
-
-# OpenBL
-
-**Status:** Active
-
-## Collector Bot
-
-**Bot Name:** Generic URL Fetcher
-
-**Bot Module:** intelmq.bots.collectors.http.collector_http
-
-**Configuration Parameters:**
-```
-id: openbl-collector
-provider: OpenBL
-feed: OpenBL
-rate_limit: 43200
-http_url: https://www.openbl.org/lists/date_all.txt
-```
-
-**Notes:** there is a list available [here](https://www.openbl.org/lists.html) with all blacklists available by the source which can be handled with the exact same bot, only `http_url` value needs to be specified.
-
-
-## Parser Bot
-
-**Bot Name:** OpenBL
-
-**Bot Module:** intelmq.bots.parsers.openbl.parser
-
-**Configuration Parameters:**
-```
-id: openbl-parser
-```
-
 # OpenPhish
 
 **Status:** Unknown
