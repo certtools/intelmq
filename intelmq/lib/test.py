@@ -124,6 +124,7 @@ class BotTestCase(object):
         cls.pipe = None
         cls.sysconfig = {}
         cls.use_cache = False
+        cls.allowed_warning_count = 0
         cls.allowed_error_count = 0  # allows dumping of some lines
 
         cls.set_bot()
