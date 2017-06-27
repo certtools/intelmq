@@ -15,6 +15,8 @@ Parameters:
 
     filter_type: string ["blacklist", "whitelist"]
 
+    bypass: boolean
+
     filter_keys: string with multiple keys separated by comma. Please
                  note that time.observation key is never consider by the
                  system because system will always ignore this key.
@@ -36,9 +38,13 @@ class DeduplicatorExpertBot(Bot):
                            )
         self.filter_keys = set(k.strip() for k in
                                self.parameters.filter_keys.split(','))
+        self.bypass = getattr(self.parameters, "bypass", False)
 
     def process(self):
         message = self.receive_message()
+
+        if self.bypass:
+            self.send_message(message)
 
         message_hash = message.hash(filter_keys=self.filter_keys,
                                     filter_type=self.parameters.filter_type)
