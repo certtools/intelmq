@@ -162,7 +162,11 @@ def compare_orgs(cur, old_orgs, new_orgs):
         if all_changes:
             print("Changed organisations:")
             for handle, changes in all_changes:
-                print("    %r:" % (handle,))
+                if old_orgs[handle].name == new_orgs[handle].name:
+                    print("    %s: %r" % (handle, new_orgs[handle].name,))
+                else:
+                    print("    %r: %s -> %s" % (handle, old_orgs[handle].name,
+                                                new_orgs[handle].name))
                 for change in changes:
                     print("        %s" % (change,))
                 find_overlaid_asns_db(cur, new_orgs[handle])
