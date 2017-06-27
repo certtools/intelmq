@@ -45,17 +45,17 @@ class DeduplicatorExpertBot(Bot):
 
         if self.bypass:
             self.send_message(message)
-
-        message_hash = message.hash(filter_keys=self.filter_keys,
-                                    filter_type=self.parameters.filter_type)
-
-        if not self.cache.exists(message_hash):
-            self.cache.set(message_hash, 'hash')
-            self.send_message(message)
         else:
-            self.logger.debug('Dropped message.')
+            message_hash = message.hash(filter_keys=self.filter_keys,
+                                        filter_type=self.parameters.filter_type)
 
-        self.acknowledge_message()
+            if not self.cache.exists(message_hash):
+                self.cache.set(message_hash, 'hash')
+                self.send_message(message)
+            else:
+                self.logger.debug('Dropped message.')
+
+            self.acknowledge_message()
 
 
 BOT = DeduplicatorExpertBot
