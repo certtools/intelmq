@@ -221,7 +221,7 @@ open_chargen = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')
+        ('source.port', 'port'),
     ],
     'optional_fields': [
         ('protocol.transport', 'protocol'),
@@ -250,7 +250,7 @@ open_tftp = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')
+        ('source.port', 'port'),
     ],
     'optional_fields': [
         ('protocol.transport', 'protocol'),
@@ -282,7 +282,7 @@ sinkhole_http_drone = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'src_port')
+        ('source.port', 'src_port'),
     ],
     'optional_fields': [
         ('source.asn', 'asn'),
@@ -323,7 +323,7 @@ microsoft_sinkhole = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'src_port')
+        ('source.port', 'src_port'),
     ],
     'optional_fields': [
         ('source.asn', 'asn'),
@@ -362,7 +362,7 @@ open_redis = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')
+        ('source.port', 'port'),
     ],
     'optional_fields': [
         ('protocol.transport', 'protocol'),
@@ -403,7 +403,7 @@ open_portmapper = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')
+        ('source.port', 'port'),
     ],
     'optional_fields': [
         ('protocol.transport', 'protocol'),
@@ -434,7 +434,7 @@ open_ipmi = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')
+        ('source.port', 'port'),
     ],
     'optional_fields': [
         ('source.reverse_dns', 'hostname'),
@@ -480,7 +480,7 @@ open_qotd = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')
+        ('source.port', 'port'),
     ],
     'optional_fields': [
         ('protocol.transport', 'protocol'),
@@ -510,7 +510,7 @@ open_ssdp = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')
+        ('source.port', 'port'),
     ],
     'optional_fields': [
         ('protocol.transport', 'protocol'),
@@ -548,7 +548,7 @@ open_snmp = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')
+        ('source.port', 'port'),
     ],
     'optional_fields': [
         ('protocol.transport', 'protocol'),
@@ -578,7 +578,7 @@ open_mssql = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')  # TODO:  check if this is really the source.port!
+        ('source.port', 'port'),  # TODO:  check if this is really the source.port!
     ],
     'optional_fields': [
         ('protocol.transport', 'protocol'),
@@ -612,7 +612,7 @@ open_mongodb = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')
+        ('source.port', 'port'),
     ],
     'optional_fields': [
         ('protocol.transport', 'protocol'),
@@ -650,7 +650,7 @@ open_netbios = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')
+        ('source.port', 'port'),
     ],
     'optional_fields': [
         ('protocol.transport', 'protocol'),
@@ -679,7 +679,7 @@ open_elasticsearch = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')
+        ('source.port', 'port'),
     ],
     'optional_fields': [
         ('source.asn', 'asn'),
@@ -717,7 +717,7 @@ dns_open_resolvers = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')
+        ('source.port', 'port'),
     ],
     'optional_fields': [
         ('protocol.transport', 'protocol'),
@@ -745,7 +745,7 @@ ntp_monitor = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')
+        ('source.port', 'port'),
     ],
     'optional_fields': [
         ('protocol.transport', 'protocol'),
@@ -768,7 +768,7 @@ ssl_freak_scan = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')
+        ('source.port', 'port'),
     ],
     'optional_fields': [
         ('source.reverse_dns', 'hostname'),
@@ -791,7 +791,7 @@ ssl_scan = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')
+        ('source.port', 'port'),
     ],
     'optional_fields': [
         ('source.reverse_dns', 'hostname'),
@@ -813,7 +813,7 @@ open_memcached = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')
+        ('source.port', 'port'),
     ],
     'optional_fields': [
         ('protocol.transport', 'protocol'),
@@ -836,7 +836,7 @@ botnet_drone_hadoop = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')
+        ('source.port', 'port'),
     ],
     'optional_fields': [
         ('destination.asn', 'cc_asn'),
@@ -873,7 +873,7 @@ open_xdmcp = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')
+        ('source.port', 'port'),
     ],
     'optional_fields': [
         ('protocol.transport', 'protocol'),
@@ -903,7 +903,7 @@ compromised_website = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')
+        ('source.port', 'port'),
     ],
     'optional_fields': [
         ('source.reverse_dns', 'hostname'),
@@ -931,7 +931,7 @@ open_natpmp = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')
+        ('source.port', 'port'),
     ],
     'optional_fields': [
         ('protocol.transport', 'protocol'),
@@ -959,7 +959,7 @@ open_netis = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')
+        ('source.port', 'port'),
     ],
     'optional_fields': [
         ('source.reverse_dns', 'hostname'),
@@ -982,7 +982,7 @@ ntp_version = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')
+        ('source.port', 'port'),
     ],
     'optional_fields': [
         ('protocol.transport', 'protocol'),
