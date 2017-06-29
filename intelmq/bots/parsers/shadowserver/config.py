@@ -49,6 +49,7 @@ def get_feed(feedname):
     feed_idx = {
         "Accessible-CWMP": accessible_cwmp,
         "Accessible-RDP": accessible_rdp,
+        "Accessible-SMB": accessible_smb,
         "Accessible-Telnet": accessible_telnet,
         "Accessible-VNC": accessible_vnc,
         "Blacklisted-IP": blacklisted_ip,
@@ -1147,6 +1148,34 @@ accessible_rdp = {
         'protocol.application': 'rdp',
         'classification.type': 'vulnerable service',
         'classification.identifier': 'openrdp',
+    },
+}
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Accessible-SMB
+accessible_smb = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # This will be 'opensmb' in constant fields
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'smb_implant', validate_to_none),
+        ('extra.', 'arch', validate_to_none),
+        ('extra.', 'key', validate_to_none),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+    ],
+    'constant_fields': {
+        'protocol.transport': 'tcp',
+        'protocol.application': 'smb',
+        'classification.type': 'vulnerable service',
+        'classification.identifier': 'opensmb',
     },
 }
 
