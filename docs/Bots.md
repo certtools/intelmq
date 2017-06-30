@@ -357,11 +357,12 @@ Lines starting with `'#'` will be ignored. Headers won't be interpreted.
 
 #### Configuration parameters
 
- * `"columns"`: A list of strings or a string of comma-separated values with field names. The names must match the harmonization's field names. E.g. 
+ * `"columns"`: A list of strings or a string of comma-separated values with field names. The names must match the harmonization's field names. Strings starting with `extra.` will be written into the Extra-Object of the DHO. E.g. 
    ```json
    [
         "",
-        "source.fqdn"
+        "source.fqdn",
+        "extra.http_host_header"
     ],
     ```
  * `"column_regex_search"`: Optional. A dictionary mapping field names (as given per the columns parameter) to regular expression. The field is evaulated using `re.search`. Eg. to get the ASN out of `AS1234` use: `{"source.asn": "[0-9]*"}`.
