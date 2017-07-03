@@ -90,7 +90,7 @@ Harmonization types
 
 ASN type. Derived from Integer with forbidden values.
 
-Only valid are: 0 < asn < 4294967295 and asn != 65535
+Only valid are: 0 < asn <= 4294967295
 See https://en.wikipedia.org/wiki/Autonomous_system_(Internet)
 > The first and last ASNs of the original 16-bit integers, namely 0 and
 > 65,535, and the last ASN of the 32-bit numbers, namely 4,294,967,295 are

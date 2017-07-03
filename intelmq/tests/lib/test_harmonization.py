@@ -363,7 +363,7 @@ class TestHarmonization(unittest.TestCase):
 
     def test_asn_invalid(self):
         """ Test ASN.is_valid with invalid arguments. """
-        self.assertFalse(harmonization.ASN.is_valid(4294967295))
+        self.assertFalse(harmonization.ASN.is_valid(4294967296))
         self.assertFalse(harmonization.ASN.is_valid(0))
         self.assertFalse(harmonization.ASN.is_valid('foo'))
         self.assertFalse(harmonization.ASN.is_valid('1234'))
@@ -374,11 +374,11 @@ class TestHarmonization(unittest.TestCase):
                                                    sanitize=True))
 
     def test_asn_sanitize_invalid(self):
-        """ Test ASN.is_valid with valid arguments. """
+        """ Test ASN.is_valid with invalid arguments. """
         self.assertFalse(harmonization.ASN.is_valid(0, sanitize=True))
         self.assertFalse(harmonization.ASN.is_valid('asd', sanitize=True))
         self.assertFalse(harmonization.ASN.is_valid(-1, sanitize=True))
-        self.assertFalse(harmonization.ASN.is_valid(4294967295, sanitize=True))
+        self.assertFalse(harmonization.ASN.is_valid(4294967296, sanitize=True))
 
 
 if __name__ == '__main__':  # pragma: no cover
