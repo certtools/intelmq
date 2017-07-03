@@ -180,6 +180,8 @@ class Message(dict):
             raise exceptions.KeyExists(key)
 
         if value is None or value in ["", "-", "N/A"]:
+            if overwrite and key in self:
+                del self[key]
             return
 
         if not self.__is_valid_key(key):

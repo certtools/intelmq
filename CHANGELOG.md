@@ -13,6 +13,8 @@ development
 - Removed bots.parsers.openbl as the source is offline since end of may (#1018, https://twitter.com/sshblorg/status/854669263671615489)
 - Removed bots.parsers.proxyspy as the source is offline (#1031)
 - Shadowserver: Added Accessible SMB
+- `bots.experts.ripencc_abuse_contact` now has the two additional parameters `query_ripe_stat_asn` and `query_ripe_stat_ip`.
+  Deprecated parameter `query_ripe_stat`. New parameter `mode`.
 
 v1.0.0.dev8
 -----------
