@@ -1,0 +1,3 @@
+"timestamp","ip","port","hostname","asn","geo","region","city","naics","sic","smb_implant","arch","key"
+"2017-06-24 06:12:04","198.51.100.39",445,,8559,"AT","BURGENLAND","EISENSTADT",0,0,"N",,
+"2017-06-24 06:22:59","198.51.100.94",445,,8447,"AT","OBEROSTERREICH","GUNSKIRCHEN",0,0,"Y","x86","0xcb68e558"

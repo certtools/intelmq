@@ -7,8 +7,11 @@ development
 - We are now testing with and without optional libraries/lowest recommended versions and most current versions of required libraries
 
 ### Bots
-- Removed bots.parsers.openbl as the source is offline since end of may (#1018, https://twitter.com/sshblorg/status/854669263671615489)
 - HTTP collectors: If http_username and http_password are both given and empty or null, 'None:None' has been used to authenticate. It is now checked that the username evaulates to non-false/null before adding the authentication. (fixes #1017)
+
+#### Parsers
+- Removed bots.parsers.openbl as the source is offline since end of may (#1018, https://twitter.com/sshblorg/status/854669263671615489)
+- Shadowserver: Added Accessible SMB
 
 v1.0.0.dev8
 -----------

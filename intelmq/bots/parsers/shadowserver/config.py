@@ -1176,6 +1176,7 @@ accessible_smb = {
         'protocol.application': 'smb',
         'classification.type': 'vulnerable service',
         'classification.identifier': 'opensmb',
+        'classification.taxonomy': 'Vulnerable',
     },
 }
 
