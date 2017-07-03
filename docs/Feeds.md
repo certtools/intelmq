@@ -1877,39 +1877,6 @@ http_url: https://data.phishtank.com/data/{{ your API key }}/online-valid.csv
 id: phishtank-parser
 ```
 
-# Proxyspy
-
-**Status:** Active
-
-## Collector Bot
-
-**Bot Name:** Generic URL Fetcher
-
-**Bot Module:** intelmq.bots.collectors.http.collector_http
-
-**Configuration Parameters:**
-```
-id: proxyspy-collector
-provider: ProxySpy
-feed: ProxySpy
-rate_limit: FIXME
-http_url: http://txt.proxyspy.net/proxy.txt
-```
-
-## Parser Bot
-
-**Bot Name:** Proxyspy
-
-**Bot Module:** intelmq.bots.parsers.proxyspy.parser
-
-**Configuration Parameters:**
-```
-id: proxyspy-parser
-```
-
-**Notes:** This feed provides IP addresses, ports and country codes for available proxies.  Feed is updated hourly.
-
-
 # Shadowserver
 
 **Status:** Active

@@ -11,6 +11,7 @@ development
 
 #### Parsers
 - Removed bots.parsers.openbl as the source is offline since end of may (#1018, https://twitter.com/sshblorg/status/854669263671615489)
+- Removed bots.parsers.proxyspy as the source is offline (#1031)
 - Shadowserver: Added Accessible SMB
 
 v1.0.0.dev8
