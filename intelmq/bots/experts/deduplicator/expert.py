@@ -15,7 +15,7 @@ Parameters:
 
     filter_type: string ["blacklist", "whitelist"]
 
-    bypass: boolean
+    bypass: boolean  default: {False}
 
     filter_keys: string with multiple keys separated by comma. Please
                  note that time.observation key is never consider by the
@@ -55,7 +55,7 @@ class DeduplicatorExpertBot(Bot):
             else:
                 self.logger.debug('Dropped message.')
 
-            self.acknowledge_message()
+        self.acknowledge_message()
 
 
 BOT = DeduplicatorExpertBot
