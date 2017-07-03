@@ -416,22 +416,6 @@ FIXME
 
 * * *
 
-### CERT.AT Contact
-
-#### Information:
-* `name:` certat-contact
-* `lookup:` https
-* `public:` yes
-* `cache (redis db):` none
-* `description:` https://contacts.cert.at offers an IP address to national CERT contact (and cc) mapping. See https://contacts.cert.at for more info.
-
-#### Configuration Parameters:
-
-* `filter`: (true/false) act as a a filter for AT.
-* `overwrite_cc`: set to true if you want to overwrite any potentially existing cc fields in the event.
-
-* * *
-
 ### Cymru Whois
 
 #### Information:
@@ -656,6 +640,22 @@ Assume we have an event with `feed.name = Spamhaus Cert` and `malware.name = feo
 #### Types
 
 If the rule is a string, a regex-search is performed, also for numeric values (`str()` is called on them). If the rule is numeric for numeric values, a simple comparison is done. If other types are mixed, a warning will be thrown.
+
+* * *
+
+### National CERT contact lookup by CERT.AT
+
+#### Information:
+* `name:` `national_cert_contact_certat`
+* `lookup:` https
+* `public:` yes
+* `cache (redis db):` none
+* `description:` https://contacts.cert.at offers an IP address to national CERT contact (and cc) mapping. See https://contacts.cert.at for more info.
+
+#### Configuration Parameters:
+
+* `filter`: (true/false) act as a a filter for AT.
+* `overwrite_cc`: set to true if you want to overwrite any potentially existing cc fields in the event.
 
 * * *
 

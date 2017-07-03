@@ -15,6 +15,7 @@ development
 - Shadowserver: Added Accessible SMB
 - `bots.experts.ripencc_abuse_contact` now has the two additional parameters `query_ripe_stat_asn` and `query_ripe_stat_ip`.
   Deprecated parameter `query_ripe_stat`. New parameter `mode`.
+- `bots.experts.certat_contact` has been renamed to `bots.experts.national_cert_contact_certat` (#995)
 
 v1.0.0.dev8
 -----------
