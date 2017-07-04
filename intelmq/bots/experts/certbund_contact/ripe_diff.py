@@ -130,8 +130,9 @@ def organisation_changes(handles, orgs_a, orgs_b):
             yield handle, changes
 
 
-def find_overlaid_asns_db(cur, org):
-    formatted = ", ".join("AS{}".format(asn) for asn in org.asns)
+def find_overlaid_manual_entries(cur, org):
+    formatted = ", ".join(["AS{}".format(asn) for asn in org.asns]
+                          + [str(net) for net in org.networks])
     if not formatted:
         return
 
@@ -144,6 +145,13 @@ def find_overlaid_asns_db(cur, org):
             for result in results:
                 print("            {}".format(result))
 
+    for net in org.networks:
+        results = common.lookup_by_manual_network(cur, net)
+        if results:
+            print("        {} via manual db entries resolves to:".format(net))
+            for result in results:
+                print("            {}".format(result))
+
 
 def compare_orgs(cur, old_orgs, new_orgs):
     removed, both, added = compare_dicts(old_orgs, new_orgs)
@@ -152,13 +160,13 @@ def compare_orgs(cur, old_orgs, new_orgs):
         print("organisations to be added:")
         for handle in added:
             print("    %s: %r" % (handle, new_orgs[handle].name,))
-            find_overlaid_asns_db(cur, new_orgs[handle])
+            find_overlaid_manual_entries(cur, new_orgs[handle])
 
     if removed:
         print("organisations to be deleted:")
         for handle in removed:
             print("    %s: %r" % (handle, old_orgs[handle].name,))
-            find_overlaid_asns_db(cur, old_orgs[handle])
+            find_overlaid_manual_entries(cur, old_orgs[handle])
 
     if both:
         all_changes = list(organisation_changes(both, old_orgs, new_orgs))
@@ -172,7 +180,7 @@ def compare_orgs(cur, old_orgs, new_orgs):
                                                 new_orgs[handle].name))
                 for change in changes:
                     print("        %s" % (change,))
-                find_overlaid_asns_db(cur, new_orgs[handle])
+                find_overlaid_manual_entries(cur, new_orgs[handle])
 
 
 def compare_unattached(name, old, new):

@@ -55,6 +55,24 @@ def lookup_by_asn_only(cur, table_extension, asn):
     return cur.fetchall()
 
 
+def lookup_by_manual_network(cur, network):
+    """Lookup manually maintained contact information by network."""
+    cur.execute("SELECT DISTINCT"
+                "       c.email AS email, o.name AS organisation,"
+                "       s.name AS sector"
+                "  FROM contact AS c"
+                "  JOIN organisation AS o"
+                "    ON o.organisation_id = c.organisation_id"
+                "  LEFT OUTER JOIN sector AS s"
+                "    ON s.sector_id = o.sector_id"
+                "  JOIN organisation_to_network AS orgn"
+                "    ON orgn.organisation_id = c.organisation_id"
+                "  JOIN network AS n"
+                "    ON n.network_id = orgn.network_id"
+                " WHERE n.address = %s", (str(network),))
+    return cur.fetchall()
+
+
 # Enum type for the "managed" parameter of lookup_contacts.
 Managed = Enum("Managed", "manual automatic")
 
