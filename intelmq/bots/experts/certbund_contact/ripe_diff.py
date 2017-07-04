@@ -139,7 +139,7 @@ def find_overlaid_manual_entries(cur, org):
     print("        Info: this entry is responsible for {}".format(formatted))
 
     for asn in org.asns:
-        results = common.lookup_by_asn_only(cur, '', asn)
+        results = common.lookup_by_manual_asn(cur, asn)
         if results:
             print("        AS{} via manual db entries resolves to:".format(asn))
             for result in results:
