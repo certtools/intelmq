@@ -28,6 +28,9 @@ development
 - `bots.experts.cymru_whois` ignores registry `other` (#996)
 - `bots.parsers.alienvault.parser_otx`: handle timestamps without floating point seconds
 
+### Experts
+- bots.experts.deduplicator: New parameter `bypass` to deactivate deduplication, default: true
+
 v1.0.0.dev8
 -----------
 
