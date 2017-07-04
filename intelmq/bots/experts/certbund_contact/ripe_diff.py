@@ -131,8 +131,11 @@ def organisation_changes(handles, orgs_a, orgs_b):
 
 
 def find_overlaid_asns_db(cur, org):
-    print("        Info: this entry is responsible for ", end="")
-    print(", ".join("AS{}".format(asn) for asn in org.asns))
+    formatted = ", ".join("AS{}".format(asn) for asn in org.asns)
+    if not formatted:
+        return
+
+    print("        Info: this entry is responsible for {}".format(formatted))
 
     for asn in org.asns:
         results = common.lookup_by_asn_only(cur, '', asn)
