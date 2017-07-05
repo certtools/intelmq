@@ -3,6 +3,12 @@ NEWS
 
 See the changelog for a full list of changes.
 
+1.1.0
+-----
+
+1.0.0
+-----
+
 ### Configuration
 * Many bots have new/change parameters
 * Many bots have been renamed/moved or deleted. Please read the Bots section in the changelog and upgrade your configuration accordingly.
