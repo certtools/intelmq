@@ -151,5 +151,5 @@ class TestGenerateReports(unittest.TestCase):
         self.assertEqual(b"".join(decoded_chunks), csv_test_data)
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     unittest.main()

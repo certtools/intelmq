@@ -32,3 +32,7 @@ IntelMQ is requires time zone information for all timestamps. Without a time zon
 In most cases the bottlenecks are look-up experts. In these cases you can easily use the integrated load balancing features. Create multiple instances of the same bot and connect them all to the same source and destination bots. Then set the parameter `load_balance` to `true` for the bot which sends the messages to the duplicated bot. Then, the bot sends messages to only one of the destination queues and not to all of them.
 
 See also this discussion on a possible enhanced load balancing: https://github.com/certtools/intelmq/issues/186
+
+## My bot(s) died on startup with no errors logged
+
+Rather than starting your bot(s) with `intelmqctl start`, try `intelmqctl run [bot]`. This will provide valuable debug output you might not otherwise see, pointing to issues like configuration errors.

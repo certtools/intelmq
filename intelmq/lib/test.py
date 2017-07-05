@@ -124,6 +124,7 @@ class BotTestCase(object):
         cls.pipe = None
         cls.sysconfig = {}
         cls.use_cache = False
+        cls.allowed_warning_count = 0
         cls.allowed_error_count = 0  # allows dumping of some lines
 
         cls.set_bot()
@@ -210,14 +211,15 @@ class BotTestCase(object):
             if self.default_input_message:  # None for collectors
                 self.input_queue = [self.default_input_message]
 
-    def run_bot(self, iterations: int=1, error_on_pipeline: bool=False):
+    def run_bot(self, iterations: int=1, error_on_pipeline: bool=False, prepare=True):
         """
         Call this method for actually doing a test run for the specified bot.
 
         Parameters:
             iterations: Bot instance will be run the given times, defaults to 1.
         """
-        self.prepare_bot()
+        if prepare:
+            self.prepare_bot()
         with mock.patch('intelmq.lib.utils.load_configuration',
                         new=self.mocked_config):
             with mock.patch('intelmq.lib.utils.log', self.mocked_log):
@@ -393,7 +395,11 @@ class BotTestCase(object):
         for logline in self.loglines:
             fields = utils.parse_logline(logline)
 
-            if levelname == fields["log_level"] and re.match(pattern, fields["message"]):
+            #  Exception tracebacks
+            if isinstance(fields, str):
+                if levelname == "ERROR" and re.match(pattern, fields):
+                    break
+            elif levelname == fields["log_level"] and re.match(pattern, fields["message"]):
                 break
         else:
             raise ValueError('No matching logline found.')

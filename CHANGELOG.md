@@ -3,11 +3,36 @@ CHANGELOG
 
 development
 -----------
+### Core
+- Changing the value of an existing field to `None` deletes the field.
+
 ### Harmonization
 - New ASN type. Like integer but checks the range.
 
 ### Development
 - We are now testing with and without optional libraries/lowest recommended versions and most current versions of required libraries
+- Tests shadowserver with more data and checks for warnings and errors
+- Tests: if bots log warnings this counts as failure if not allowed explicitly
+- Tests: Bot preparation can be skipped
+
+### Documentation
+- The branching/releasing mechanism has been documented
+
+### Bots
+- HTTP collectors: If http_username and http_password are both given and empty or null, 'None:None' has been used to authenticate. It is now checked that the username evaulates to non-false/null before adding the authentication. (fixes #1017)
+
+#### Parsers
+- Removed bots.parsers.openbl as the source is offline since end of may (#1018, https://twitter.com/sshblorg/status/854669263671615489)
+- Removed bots.parsers.proxyspy as the source is offline (#1031)
+- Shadowserver: Added Accessible SMB
+- `bots.experts.ripencc_abuse_contact` now has the two additional parameters `query_ripe_stat_asn` and `query_ripe_stat_ip`.
+  Deprecated parameter `query_ripe_stat`. New parameter `mode`.
+- `bots.experts.certat_contact` has been renamed to `bots.experts.national_cert_contact_certat` (#995)
+- `bots.experts.cymru_whois` ignores registry `other` (#996)
+- `bots.parsers.alienvault.parser_otx`: handle timestamps without floating point seconds
+
+### Experts
+- bots.experts.deduplicator: New parameter `bypass` to deactivate deduplication, default: true
 
 v1.0.0.dev8
 -----------
