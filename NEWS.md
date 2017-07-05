@@ -21,6 +21,13 @@ Two new fields have been added to `defaults.conf` which are expected by the bots
 - `'log_processed_messages_seconds": 900`
 Configure them in your setup and optionally adapt the values to your needs.
 
+The feed names in the shadowserver parser have been adapted to the current subjects. Change your configuration accordingly:
+* `Botnet-Drone-Hadoop` to `Drone`
+* `DNS-open-resolvers` to `DNS-Open-Resolvers`
+* `Open-NetBIOS` to `Open-NetBIOS-Nameservice`
+* `Ssl-Freak-Scan` to `SSL-FREAK-Vulnerable-Servers`
+* `Ssl-Scan` to `SSL-POODLE-Vulnerable-Servers`
+
 ### Postgres databases
 Use the following statement carefully to upgrade your database.
 ```SQL

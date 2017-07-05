@@ -21,6 +21,7 @@ in development
 ### Bots
 - added bots.experts.idea, bots.outputs.files
 - possibility to split large csv Reports into Chunks, currently possible for mail url and file collector
+- changed feednames in `bots.parsers.shadowserver`. Please refer to it's README for the exact changes.
 
 ### Harmonization
 - New field named output to support export to foreign formats
