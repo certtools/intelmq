@@ -4,6 +4,7 @@
 import sys
 import argparse
 import ipaddress
+from enum import Enum
 
 import psycopg2
 
@@ -129,14 +130,24 @@ def organisation_changes(handles, orgs_a, orgs_b):
         if changes:
             yield handle, changes
 
+# Enumeration to roughly indicate the type of change.
+Change = Enum("Change", "removed modified added")
 
-def find_overlaid_manual_entries(cur, org):
+
+def find_overlaid_manual_entries(cur, org, change):
     formatted = ", ".join(["AS{}".format(asn) for asn in org.asns]
                           + [str(net) for net in org.networks])
     if not formatted:
         return
 
-    print("        Info: this entry is responsible for {}".format(formatted))
+    if change == Change.removed:
+        msg = "        Info: this entry was responsible for {formatted}"
+    elif change in (Change.modified, Change.added):
+        msg = "        Info: this entry will be responsible for {formatted}"
+    else:
+        raise ValueError("Unexpeced change value: {!r}".format(change))
+
+    print(msg.format(formatted=formatted))
 
     for asn in org.asns:
         results = common.lookup_by_manual_asn(cur, asn)
@@ -160,13 +171,13 @@ def compare_orgs(cur, old_orgs, new_orgs):
         print("organisations to be added:")
         for handle in added:
             print("    %s: %r" % (handle, new_orgs[handle].name,))
-            find_overlaid_manual_entries(cur, new_orgs[handle])
+            find_overlaid_manual_entries(cur, new_orgs[handle], Change.added)
 
     if removed:
         print("organisations to be deleted:")
         for handle in removed:
             print("    %s: %r" % (handle, old_orgs[handle].name,))
-            find_overlaid_manual_entries(cur, old_orgs[handle])
+            find_overlaid_manual_entries(cur, old_orgs[handle], Change.removed)
 
     if both:
         all_changes = list(organisation_changes(both, old_orgs, new_orgs))
@@ -180,7 +191,8 @@ def compare_orgs(cur, old_orgs, new_orgs):
                                                 new_orgs[handle].name))
                 for change in changes:
                     print("        %s" % (change,))
-                find_overlaid_manual_entries(cur, new_orgs[handle])
+                find_overlaid_manual_entries(cur, new_orgs[handle],
+                                             Change.modified)
 
 
 def compare_unattached(name, old, new):
