@@ -33,25 +33,40 @@ def maybe_parse_json(string_or_json):
     return string_or_json
 
 
-def lookup_by_asn_only(cur, table_extension, asn):
-    """Find email addresses for ASN from either manual or auto tables.
+def lookup_by_manual_asn(cur, asn):
+    """Lookup manually maintained contact information by ASN.
 
-    This is a simple version that does not consider some other criteria
-    in the database.
-
-    :return: list of returned db rows
+    :return: list of (email, organisation-name, sector) triples.
     """
     cur.execute("SELECT DISTINCT"
                 "       c.email AS email, o.name AS organisation,"
                 "       s.name AS sector"
-                "  FROM contact{0} AS c"
-                "  JOIN organisation_to_asn{0} AS oa"
-                "    ON oa.organisation{0}_id = c.organisation{0}_id"
-                "  JOIN organisation{0} AS o"
-                "    ON o.organisation{0}_id = c.organisation{0}_id"
+                "  FROM contact AS c"
+                "  JOIN organisation_to_asn AS oa"
+                "    ON oa.organisation_id = c.organisation_id"
+                "  JOIN organisation AS o"
+                "    ON o.organisation_id = c.organisation_id"
                 "  LEFT OUTER JOIN sector AS s"
                 "    ON s.sector_id = o.sector_id"
-                " WHERE oa.asn = %s".format(table_extension), (asn,))
+                " WHERE oa.asn = %s", (asn,))
+    return cur.fetchall()
+
+
+def lookup_by_manual_network(cur, network):
+    """Lookup manually maintained contact information by network."""
+    cur.execute("SELECT DISTINCT"
+                "       c.email AS email, o.name AS organisation,"
+                "       s.name AS sector"
+                "  FROM contact AS c"
+                "  JOIN organisation AS o"
+                "    ON o.organisation_id = c.organisation_id"
+                "  LEFT OUTER JOIN sector AS s"
+                "    ON s.sector_id = o.sector_id"
+                "  JOIN organisation_to_network AS orgn"
+                "    ON orgn.organisation_id = c.organisation_id"
+                "  JOIN network AS n"
+                "    ON n.network_id = orgn.network_id"
+                " WHERE n.address = %s", (str(network),))
     return cur.fetchall()
 
 
