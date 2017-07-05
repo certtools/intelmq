@@ -1,8 +1,8 @@
 CHANGELOG
 ==========
 
-development
------------
+1.0.0.rc1 Release candidate
+---------------------------
 ### Core
 - Changing the value of an existing field to `None` deletes the field.
 - `Message.update` now behaves like `dict.update`. The old behavior is implemented in `Message.change`
