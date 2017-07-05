@@ -10,6 +10,7 @@ development
 - Deprecated `http_timeout` has been dropped, use `http_timeout_sec` instead
 - Deprecated parameters force and ignore of `Message.add` have been removed
 - Deprecated method `Message.contains` has been removed
+- Drop support for deprecated configuration files `startup.conf` and `system.conf`
 
 ### Development
 - We are now testing with and without optional libraries/lowest recommended versions and most current versions of required libraries

@@ -16,7 +16,7 @@ import traceback
 
 from intelmq import (DEFAULT_LOGGING_PATH, DEFAULTS_CONF_FILE,
                      HARMONIZATION_CONF_FILE, PIPELINE_CONF_FILE,
-                     RUNTIME_CONF_FILE, SYSTEM_CONF_FILE)
+                     RUNTIME_CONF_FILE)
 from intelmq.lib import exceptions, utils
 import intelmq.lib.message as libmessage
 from intelmq.lib.pipeline import PipelineFactory
@@ -54,7 +54,6 @@ class Bot(object):
             self.__log_buffer.append(('debug', 'Library path: %r.' % __file__))
 
             self.__load_defaults_configuration()
-            self.__load_system_configuration()
 
             self.__check_bot_id(bot_id)
             self.__bot_id = bot_id
@@ -419,19 +418,6 @@ class Bot(object):
 
         self.parameters.log_processed_messages_seconds = datetime.timedelta(seconds=self.parameters.log_processed_messages_seconds)
 
-    def __load_system_configuration(self):
-        if os.path.exists(SYSTEM_CONF_FILE):
-            self.__log_buffer.append(('warning', "system.conf is deprecated "
-                                      "and will be removed in 1.0. "
-                                      "Use defaults.conf instead!"))
-            self.__log_buffer.append(('debug', "Loading system configuration from %r."
-                                      "" % SYSTEM_CONF_FILE))
-            config = utils.load_configuration(SYSTEM_CONF_FILE)
-
-            for option, value in config.items():
-                setattr(self.parameters, option, value)
-                self.__log_configuration_parameter("system", option, value)
-
     def __load_runtime_configuration(self):
         self.logger.debug("Loading runtime configuration from %r.", RUNTIME_CONF_FILE)
         config = utils.load_configuration(RUNTIME_CONF_FILE)
@@ -440,11 +426,7 @@ class Bot(object):
         if self.__bot_id in list(config.keys()):
             params = config[self.__bot_id]
             self.run_mode = params.get('run_mode', 'stream')
-            if 'parameters' in params:
-                params = params['parameters']
-            else:
-                self.logger.warning('Old runtime configuration format found.')
-            for option, value in params.items():
+            for option, value in params['parameters'].items():
                 setattr(self.parameters, option, value)
                 self.__log_configuration_parameter("runtime", option, value)
                 if option.startswith('logging_'):
