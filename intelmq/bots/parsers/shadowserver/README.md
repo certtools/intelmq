@@ -56,6 +56,12 @@ Possible feednames:
 * `SSL-POODLE-Vulnerable-Servers`
 * `Vulnerable-ISAKMP`
 
+Additionally these deprecated names can still be used until removed in version 1.3:
+* `Botnet-Drone-Hadoop` for `Drone`
+* `DNS-open-resolvers` for `DNS-Open-Resolvers`
+* `Open-NetBIOS` for `Open-NetBIOS-Nameservice`
+* `Ssl-Freak-Scan` for `SSL-FREAK-Vulnerable-Servers`
+* `Ssl-Scan` for `SSL-POODLE-Vulnerable-Servers`
 
 ## Add new Feedformats:
 Add a new feedformat and conversions if required to the file

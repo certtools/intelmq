@@ -44,7 +44,7 @@ TODOs:
 import intelmq.lib.harmonization as harmonization
 
 
-def get_feed(feedname):
+def get_feed(feedname, logger):
     # TODO should this be case insensitive?
     feed_idx = {
         "Accessible-CWMP": accessible_cwmp,
@@ -52,8 +52,8 @@ def get_feed(feedname):
         "Accessible-Telnet": accessible_telnet,
         "Accessible-VNC": accessible_vnc,
         "Blacklisted-IP": blacklisted_ip,
-        "Drone": drone,
         "Compromised-Website": compromised_website,
+        "Drone": drone,
         "DNS-Open-Resolvers": dns_open_resolvers,
         "Microsoft-Sinkhole": microsoft_sinkhole,
         "NTP-Monitor": ntp_monitor,
@@ -80,9 +80,21 @@ def get_feed(feedname):
         "Sinkhole-HTTP-Drone": sinkhole_http_drone,
         "Spam-URL": spam_url,
         "SSL-FREAK-Vulnerable-Servers": ssl_freak_vulnerable_servers,  # Only differs in a few extra fields
-        "SSL-POODLE-Vulnerable-Servers": ssl_poodle_vulnerable_servers,  # a.k.a POODLE
+        "SSL-POODLE-Vulnerable-Servers": ssl_poodle_vulnerable_servers,
         "Vulnerable-ISAKMP": vulnerable_isakmp,
     }
+    old_feed_idx = {
+        "Botnet-Drone-Hadoop": drone,
+        "DNS-open-resolvers": dns_open_resolvers,
+        "Open-NetBIOS": open_netbios_nameservice,
+        "SSL-Freak-Scan": ssl_freak_vulnerable_servers,
+        "SSL-Scan": ssl_poodle_vulnerable_servers,
+    }
+
+    if feedname in old_feed_idx:
+        logger.warning('Deprecated feedname use. Refer to the documentation for the new name. '
+                       'Backwards compatibility will be removed in version 1.3.')
+        return old_feed_idx[feedname]
 
     return feed_idx.get(feedname)
 
