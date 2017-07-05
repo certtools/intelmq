@@ -50,7 +50,7 @@ python3.4 /tmp/get-pip.py
 ## Ubuntu 16.04
 
 ```bash
-apt install python3-pip python3-typing python3-dnspython python3-psutil python3-redis python3-requests python3-termstyle python3-tz
+apt install python3-pip python3-dnspython python3-psutil python3-redis python3-requests python3-termstyle python3-tz
 apt install git redis-server
 ```
 Optional dependencies:

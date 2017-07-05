@@ -180,6 +180,8 @@ class Message(dict):
             raise exceptions.KeyExists(key)
 
         if value is None or value in ["", "-", "N/A"]:
+            if overwrite and key in self:
+                del self[key]
             return
 
         if not self.__is_valid_key(key):
@@ -249,9 +251,6 @@ class Message(dict):
     def deep_copy(self):
         return MessageFactory.unserialize(MessageFactory.serialize(self),
                                           harmonization={self.__class__.__name__.lower(): self.harmonization_config})
-
-    def __unicode__(self):
-        return self.serialize()
 
     def __str__(self):
         return self.serialize()

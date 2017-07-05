@@ -79,7 +79,7 @@ class TestModifyExpertBot(test.BotTestCase, unittest.TestCase):
 
 EVENT_TEMPL2 = {"__type": "Event",
                "feed.name": "Testing IntelMQ Mock Feed",
-               "feed.url": "https://intelmq.org/does-not-exist",
+               "feed.url": "https://example.org/does-not-exist",
                "classification.type": "botnet drone",
                "time.observation": "2015-01-02T01:20:00+00:00",
                }

@@ -175,6 +175,7 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
     def test_event_short(self):
         """ Test with short header. """
         self.input_message = EXAMPLE_REPORT_SHORT
+        self.allowed_warning_count = 2
         self.run_bot()
         self.assertMessageEqual(0, EVENT_SHORT)
 

@@ -13,63 +13,72 @@ import requests
 from intelmq.lib.bot import Bot
 
 
-URL_STAT = ('https://stat.ripe.net/data/abuse-contact-finder/'
-            'data.json?resource={}')
-URL_DB_IP = 'http://rest.db.ripe.net/abuse-contact/{}.json'
-URL_DB_AS = 'http://rest.db.ripe.net/abuse-contact/as{}.json'
+STATUS_CODE_ERROR = 'HTTP status code was %s. Possible problem at the connection endpoint or network issue.'
 
 
 class RIPENCCExpertBot(Bot):
+    URL_DB_IP = 'http://rest.db.ripe.net/abuse-contact/{}.json'
+    URL_DB_AS = 'http://rest.db.ripe.net/abuse-contact/as{}.json'
+    URL_STAT = ('https://stat.ripe.net/data/abuse-contact-finder/'
+                'data.json?resource={}')
 
     def init(self):
         self.query_db_asn = getattr(self.parameters, 'query_ripe_db_asn', True)
         self.query_db_ip = getattr(self.parameters, 'query_ripe_db_ip', True)
-        self.query_stat_asn = getattr(self.parameters, 'query_ripe_stat', True)
-        self.query_stat_ip = getattr(self.parameters, 'query_ripe_stat', True)
+        self.query_stat_asn = getattr(self.parameters, 'query_ripe_stat_asn',
+                                      getattr(self.parameters, 'query_ripe_stat', True))
+        self.query_stat_ip = getattr(self.parameters, 'query_ripe_stat_ip',
+                                     getattr(self.parameters, 'query_ripe_stat', True))
+        self.mode = getattr(self.parameters, 'mode', 'append')
+
+        if getattr(self.parameters, 'query_ripe_stat', False):
+            self.logger.warning("The parameter 'query_ripe_stat' is deprecated and will be "
+                                "removed in 1.1. Use 'query_ripe_stat_asn' and "
+                                "'query_ripe_stat_ip' instead'.")
 
         self.set_request_parameters()
 
     def query_ripestat(self, resource):
-        response = requests.get(URL_STAT.format(resource), data="",
+        response = requests.get(self.URL_STAT.format(resource), data="",
                                 proxies=self.proxy,
                                 headers=self.http_header,
                                 verify=self.http_verify_cert,
                                 cert=self.ssl_client_cert,
                                 timeout=self.http_timeout_sec)
         if response.status_code != 200:
-            raise ValueError('HTTP response status code was {}.'
-                             ''.format(response.status_code))
+            raise ValueError(STATUS_CODE_ERROR % response.status_code)
 
         try:
-            if (response.json()['data']['anti_abuse_contacts']['abuse_c']):
-                return [response.json()['data']['anti_abuse_contacts']
+            json = response.json()
+            if (json['data']['anti_abuse_contacts']['abuse_c']):
+                return [json['data']['anti_abuse_contacts']
                         ['abuse_c'][0]['email']]
             else:
                 return []
-        except Exception:  # TODO: Should probably be ValueError or AttributeError?
+        except KeyError:
             return []
 
     def query_ripedb(self, ip=None, asn=None):
-        response = requests.get(URL_DB_IP.format(ip), data="",
+        response = requests.get(self.URL_DB_IP.format(ip), data="",
                                 proxies=self.proxy,
                                 headers=self.http_header,
                                 verify=self.http_verify_cert,
                                 cert=self.ssl_client_cert,
                                 timeout=self.http_timeout_sec)
         if response.status_code != 200:
-            return []
+            raise ValueError(STATUS_CODE_ERROR % response.status_code)
 
         return [response.json()['abuse-contacts']['email']]
 
     def query_asn(self, asn):
-        response = requests.get(URL_DB_AS.format(asn), data="",
+        response = requests.get(self.URL_DB_AS.format(asn), data="",
                                 proxies=self.proxy,
                                 headers=self.http_header,
                                 verify=self.http_verify_cert,
                                 cert=self.ssl_client_cert,
                                 timeout=self.http_timeout_sec)
         if response.status_code != 200:
-            return []
+            raise ValueError(STATUS_CODE_ERROR % response.status_code)
 
         return [response.json()['abuse-contacts']['email']]
 
@@ -82,8 +91,11 @@ class RIPENCCExpertBot(Bot):
             asn_key = key + "asn"
 
             ip = event.get(ip_key, None)
-            abuse = (event.get(abuse_key).split(',') if abuse_key in event
-                     else [])
+            if self.mode == 'append':
+                abuse = (event.get(abuse_key).split(',') if abuse_key in event
+                         else [])
+            else:
+                abuse = []
             asn = event.get(asn_key, None)
             if self.query_db_asn and asn:
                 abuse.extend(self.query_asn(asn))

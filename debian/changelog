@@ -1,3 +1,9 @@
+intelmq (1.0.0.dev8-1) experimental; urgency=medium
+
+  * update to upstream version 1.0.0.dev8
+
+ -- Sebastian Wagner <wagner@cert.at>  Wed, 14 Jun 2017 17:39:00 +0200
+
 intelmq (1.0.0~dev4~beta10) experimental; urgency=low
 
   * Merged master, fixes

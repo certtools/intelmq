@@ -1,11 +1,43 @@
 CHANGELOG
 ==========
 
-in development
---------------
+development
+-----------
+### Core
+- Changing the value of an existing field to `None` deletes the field.
+
+### Development
+- We are now testing with and without optional libraries/lowest recommended versions and most current versions of required libraries
+- Tests shadowserver with more data and checks for warnings and errors
+- Tests: if bots log warnings this counts as failure if not allowed explicitly
+- Tests: Bot preparation can be skipped
+
+### Documentation
+- The branching/releasing mechanism has been documented
+
+### Bots
+- HTTP collectors: If http_username and http_password are both given and empty or null, 'None:None' has been used to authenticate. It is now checked that the username evaulates to non-false/null before adding the authentication. (fixes #1017)
+
+#### Parsers
+- Removed bots.parsers.openbl as the source is offline since end of may (#1018, https://twitter.com/sshblorg/status/854669263671615489)
+- Removed bots.parsers.proxyspy as the source is offline (#1031)
+- Shadowserver: Added Accessible SMB
+- `bots.experts.ripencc_abuse_contact` now has the two additional parameters `query_ripe_stat_asn` and `query_ripe_stat_ip`.
+  Deprecated parameter `query_ripe_stat`. New parameter `mode`.
+- `bots.experts.certat_contact` has been renamed to `bots.experts.national_cert_contact_certat` (#995)
+- `bots.experts.cymru_whois` ignores registry `other` (#996)
+- `bots.parsers.alienvault.parser_otx`: handle timestamps without floating point seconds
+- changed feednames in `bots.parsers.shadowserver`. Please refer to it's README for the exact changes.
+
+### Experts
+- bots.experts.deduplicator: New parameter `bypass` to deactivate deduplication, default: true
+
+v1.0.0.dev8
+-----------
 
 ### General changes
 - It's now configurable how often the bots are logging how much events they have sent, based on both the amount and time. (fixes #743)
+- switch from pycodestyle to pep8
 
 ### Configuration
 - Added `log_processed_messages_count` (500) and `log_processed_messages_seconds` (900) to defaults.conf.
@@ -13,18 +45,34 @@ in development
    This setting is honored by bots.collectors.http.* and bots.collectors.mail.collector_mail_url, bots.collectors.rt (only `http_timeout_sec`), bots.outputs.restapi.output and bots.experts.ripencc_abuse_contact
 
 ### Documentation
+- Minor fixes
 - Dropped install scripts, see INSTALL.md for more detailed instructions and explanations
+- Better structure of INSTALL.md
+- Better documentation of packages
+
+### Tools
+- added a bot debugger (https://github.com/certtools/intelmq/pull/975)
+- missing bot executable is detected and handled by intelmqctl (https://github.com/certtools/intelmq/pull/979)
 
 ### Core
 - fix bug which prevented dumps to be written if the file did not exist (https://github.com/certtools/intelmq/pull/986)
+- Fix reload of bots regarding logging
+- type annotions for all core libraries
 
 ### Bots
 - added bots.experts.idea, bots.outputs.files
 - possibility to split large csv Reports into Chunks, currently possible for mail url and file collector
-- changed feednames in `bots.parsers.shadowserver`. Please refer to it's README for the exact changes.
+- elasticsearch output supports HTTP Basic Auth
+- bots.collectors.mail.collector_mail_url and bots collectors.file.collector can split large reports (https://github.com/certtools/intelmq/pull/680)
+- bots.parsers.shadowserver support the VNC feed
+- handling of HTTP timeouts, see above https://github.com/certtools/intelmq/pull/859
+- bots.parsers.bambenek saves the malware name
+- bots.parsers.fraunhofer.parser_dga saves the malware name
+- bots.parsers.shadowserver handles NULL bytes
+- bots.parsers.abusech.parser_ransomware handles the IP 0.0.0.0 specially
 
 ### Harmonization
-- New field named output to support export to foreign formats
+- New field named `output` to support export to foreign formats
 
 v1.0.0.dev7
 -----------

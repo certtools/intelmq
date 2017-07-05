@@ -167,6 +167,13 @@ class TestMessageFactory(unittest.TestCase):
         report.add('feed.name', None)
         self.assertNotIn('feed.name', report)
 
+    def test_report_change_delete_none(self):
+        """ Test if report ignores None. """
+        report = self.new_report()
+        report.add('feed.name', 'foo')
+        report.change('feed.name', None)
+        self.assertNotIn('feed.name', report)
+
     def test_report_ignore_empty(self):
         """ Test if report ignores empty string. """
         report = self.new_report()
@@ -329,12 +336,6 @@ class TestMessageFactory(unittest.TestCase):
                     '": "https://example.com/", "feed.name": "Example"}')
         self.assertDictEqual(json.loads(expected),
                              json.loads(actual))
-
-    def test_report_unicode(self):
-        """ Test Message __unicode__ function, pointing to serialize. """
-        report = self.new_report(examples=True)
-        self.assertEqual(report.serialize(),
-                         str(report))
 
     def test_deep_copy_content(self):
         """ Test if deep_copy does return the same items. """

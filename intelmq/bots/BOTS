@@ -363,11 +363,6 @@
             "module": "intelmq.bots.parsers.nothink.parser",
             "parameters": {}
         },
-        "OpenBL": {
-            "description": "OpenBL Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.openbl.parser",
-            "parameters": {}
-        },
         "OpenPhish": {
             "description": "OpenPhish Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.openphish.parser",
@@ -376,11 +371,6 @@
         "PhishTank": {
             "description": "PhishTank Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.phishtank.parser",
-            "parameters": {}
-        },
-        "Proxyspy": {
-            "description": "Proxyspy Parser is the bot responsible to parse the Proxyspy report and sanitize the information.",
-            "module": "intelmq.bots.parsers.proxyspy.parser",
             "parameters": {}
         },
         "ShadowServer": {
@@ -445,7 +435,7 @@
         },
         "CERT.at Contact Database": {
             "description": "Cert.at Contact Database is the bot responsible to get CERT. Set filter to true if you want to filter out events for cert.at. Set add_cc to true if you want to overwrite an existing CC value.",
-            "module": "intelmq.bots.experts.certat_contact.expert",
+            "module": "intelmq.bots.experts.national_cert_contact_certat.expert",
             "parameters": {
                 "filter": false,
                 "http_verify_cert": true,
