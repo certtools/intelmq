@@ -6,7 +6,10 @@ development
 ### Core
 - Changing the value of an existing field to `None` deletes the field.
 - `Message.update` now behaves like `dict.update`. The old behavior is implemented in `Message.change`
-- deprecated `http_ssl_proxy` has been dropped, use `https_proxy` instead
+- Deprecated `http_ssl_proxy` has been dropped, use `https_proxy` instead
+- Deprecated `http_timeout` has been dropped, use `http_timeout_sec` instead
+- Deprecated parameters force and ignore of `Message.add` have been removed
+- Deprecated method `Message.contains` has been removed
 
 ### Development
 - We are now testing with and without optional libraries/lowest recommended versions and most current versions of required libraries

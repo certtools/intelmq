@@ -154,9 +154,7 @@ class Message(dict):
             value: A valid value as defined in the harmonization
             sanitize: Sanitation of harmonization type will be called before validation
                 (default: True)
-            force: Deprecated, use overwrite (default: False)
             overwrite: Overwrite an existing value if it already exists (default: False)
-            ignore: List or tuple of values to ignore, deprecated (default: ())
             raise_failure: If a intelmq.lib.exceptions.InvalidValue should be raised for
                 invalid values (default: True). If false, the return parameter will be
                 False in case of invalid values.
@@ -173,9 +171,6 @@ class Message(dict):
                 raise_failure is True.
         """
         overwrite = force or overwrite
-        if force:
-            warnings.warn('The force-argument is deprecated by overwrite and will be removed in'
-                          '1.0.', DeprecationWarning)
         if not overwrite and key in self:
             raise exceptions.KeyExists(key)
 
@@ -186,10 +181,6 @@ class Message(dict):
 
         if not self.__is_valid_key(key):
             raise exceptions.InvalidKey(key)
-
-        if ignore:
-            warnings.warn('The ignore-argument will be removed in 1.0.',
-                          DeprecationWarning)
 
         try:
             if value in ignore:
@@ -227,11 +218,6 @@ class Message(dict):
         if key not in self:
             raise exceptions.KeyNotExists(key)
         return self.add(key, value, overwrite=True, sanitize=sanitize)
-
-    def contains(self, key: str):
-        warnings.warn('The contains-method will be removed in 1.0.',
-                      DeprecationWarning)
-        return key in self
 
     def finditems(self, keyword: str):
         for key, value in super(Message, self).items():
