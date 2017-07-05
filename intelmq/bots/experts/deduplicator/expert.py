@@ -15,7 +15,7 @@ Parameters:
 
     filter_type: string ["blacklist", "whitelist"]
 
-    bypass: boolean  default: {False}
+    bypass: boolean default: False
 
     filter_keys: string with multiple keys separated by comma. Please
                  note that time.observation key is never consider by the
