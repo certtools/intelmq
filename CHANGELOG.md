@@ -5,6 +5,7 @@ development
 -----------
 ### Core
 - Changing the value of an existing field to `None` deletes the field.
+- `Message.update` now behaves like `dict.update`. The old behavior is implemented in `Message.change`
 
 ### Development
 - We are now testing with and without optional libraries/lowest recommended versions and most current versions of required libraries

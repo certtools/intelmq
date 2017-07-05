@@ -650,7 +650,7 @@ class ParserBot(Bot):
 
         for exc, line in self.__failed:
             report_dump = report.copy()
-            report_dump.update('raw', self.recover_line(line))
+            report_dump.change('raw', self.recover_line(line))
             self._dump_message(exc, report_dump)
 
         self.acknowledge_message()

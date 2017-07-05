@@ -218,11 +218,10 @@ class Message(dict):
         super(Message, self).__setitem__(key, value)
         return True
 
-    def update(self, key: str, value: str, sanitize: bool=True):
-        warnings.warn('update(...) will be changed to dict.update() in 1.0. '
-                      'Use change(key, value, sanitize) instead.',
-                      DeprecationWarning)
-        return self.change(key, value, sanitize)
+    def update(self, other: dict):
+        for key, value in other.items():
+            if not self.add(key, value, sanitize=False, raise_failure=False, overwrite=True):
+                self.add(key, value, sanitize=True, overwrite=True)
 
     def change(self, key: str, value: str, sanitize: bool=True):
         if key not in self:
