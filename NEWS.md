@@ -15,6 +15,7 @@ development
 ### Configuration
 - `bots.experts.ripencc_abuse_contact` now has the two additional parameters `query_ripe_stat_asn` and `query_ripe_stat_ip` instead of `query_ripe_stat`. The old parameter will be supported until version 1.1. An additional parameter `mode` has been introduced. See the bot's documentation for more details.
 - `bots.experts.certat_contact` has been renamed to `bots.experts.national_cert_contact_certat` (#995)
+- `bots.collectors.ftp` has been dropped
 
 1.0.0.dev8
 ----------
