@@ -514,12 +514,6 @@ class Bot(object):
         instance.start()
 
     def set_request_parameters(self):
-        if hasattr(self.parameters, 'http_ssl_proxy'):
-            self.logger.warning("Parameter 'http_ssl_proxy' is deprecated and will be removed in "
-                                "version 1.0!")
-            if not hasattr(self.parameters, 'https_proxy'):
-                self.parameters.https_proxy = self.parameters.http_ssl_proxy
-
         self.http_header = getattr(self.parameters, 'http_header', {})
         self.http_verify_cert = getattr(self.parameters, 'http_verify_cert',
                                         True)
