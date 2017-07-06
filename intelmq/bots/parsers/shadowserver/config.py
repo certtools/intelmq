@@ -171,8 +171,14 @@ def validate_ip(value):
 
 
 def validate_fqdn(value):
-    if harmonization.FQDN.is_valid(value, sanitize=True):
-        return value
+    # fqdn should not start with a "." character.
+    # Unfortunately this happens for certain reverse-dns-lookups
+    # see https://github.com/certtools/intelmq/issues/1022 for reference
+    if value:
+        value = value.lstrip('.')
+        # The latter will automatically take care of trailing "." characters
+        if harmonization.FQDN.is_valid(value, sanitize=True):
+            return value
 
 
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-mDNS
@@ -721,7 +727,7 @@ dns_open_resolvers = {
     ],
     'optional_fields': [
         ('protocol.transport', 'protocol'),
-        ('source.reverse_dns', 'hostname'),
+        ('source.reverse_dns', 'hostname', validate_fqdn),
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
@@ -771,7 +777,7 @@ ssl_freak_scan = {
         ('source.port', 'port'),
     ],
     'optional_fields': [
-        ('source.reverse_dns', 'hostname'),
+        ('source.reverse_dns', 'hostname', validate_fqdn),
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
@@ -817,7 +823,7 @@ open_memcached = {
     ],
     'optional_fields': [
         ('protocol.transport', 'protocol'),
-        ('source.reverse_dns', 'hostname'),  # TODO
+        ('source.reverse_dns', 'hostname', validate_fqdn),  # TODO
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
@@ -852,7 +858,7 @@ botnet_drone_hadoop = {
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
-        ('source.reverse_dns', 'hostname'),
+        ('source.reverse_dns', 'hostname', validate_fqdn),
         # Other known fields which will go into "extra"
         ('connection_count', 'count', convert_int),
         ('user_agent', 'agent'),
@@ -877,7 +883,7 @@ open_xdmcp = {
     ],
     'optional_fields': [
         ('protocol.transport', 'protocol'),
-        ('source.reverse_dns', 'hostname'),
+        ('source.reverse_dns', 'hostname', validate_fqdn),
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
@@ -906,7 +912,7 @@ compromised_website = {
         ('source.port', 'port'),
     ],
     'optional_fields': [
-        ('source.reverse_dns', 'hostname'),
+        ('source.reverse_dns', 'hostname', validate_fqdn),
         ('malware.name', 'tag'),
         ('protocol.application', 'application'),
         ('source.asn', 'asn'),
@@ -935,7 +941,7 @@ open_natpmp = {
     ],
     'optional_fields': [
         ('protocol.transport', 'protocol'),
-        ('source.reverse_dns', 'hostname'),
+        ('source.reverse_dns', 'hostname', validate_fqdn),
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
@@ -962,7 +968,7 @@ open_netis = {
         ('source.port', 'port'),
     ],
     'optional_fields': [
-        ('source.reverse_dns', 'hostname'),
+        ('source.reverse_dns', 'hostname', validate_fqdn),
         ('event_description.text', 'tag'),
         ('extra.', 'response', validate_to_none),
         ('source.asn', 'asn'),
@@ -986,7 +992,7 @@ ntp_version = {
     ],
     'optional_fields': [
         ('protocol.transport', 'protocol'),
-        ('source.reverse_dns', 'hostname'),
+        ('source.reverse_dns', 'hostname', validate_fqdn),
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
@@ -1084,7 +1090,7 @@ vulnerable_isakmp = {
     ],
     'optional_fields': [
         ('protocol.transport', 'protocol'),
-        ('source.reverse_dns', 'hostname'),
+        ('source.reverse_dns', 'hostname', validate_fqdn),
         # ('classification.identifier', 'tag'),  # This will be 'openike' in constant fields
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
@@ -1118,7 +1124,7 @@ accessible_rdp = {
         ('source.port', 'port'),
     ],
     'optional_fields': [
-        ('source.reverse_dns', 'hostname'),
+        ('source.reverse_dns', 'hostname', validate_fqdn),
         # ('classification.identifier', 'tag'),  # This will be 'openrdp' in constant fields
         ('extra.', 'handshake', validate_to_none),
         ('source.asn', 'asn'),
@@ -1159,7 +1165,7 @@ accessible_smb = {
         ('source.port', 'port'),
     ],
     'optional_fields': [
-        ('source.reverse_dns', 'hostname'),
+        ('source.reverse_dns', 'hostname', validate_fqdn),
         # ('classification.identifier', 'tag'),  # This will be 'opensmb' in constant fields
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
@@ -1189,7 +1195,7 @@ open_ldap = {
     ],
     'optional_fields': [
         ('protocol.transport', 'protocol'),
-        ('source.reverse_dns', 'hostname'),
+        ('source.reverse_dns', 'hostname', validate_fqdn),
         # ('classification.identifier', 'tag'),  # This will be 'openldap' in constant fields
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
@@ -1235,7 +1241,7 @@ blacklisted_ip = {
         ('source.ip', 'ip'),
     ],
     'optional_fields': [
-        ('source.reverse_dns', 'hostname'),
+        ('source.reverse_dns', 'hostname', validate_fqdn),
         ('extra.', 'source', validate_to_none),
         ('extra.', 'reason', validate_to_none),
         ('source.asn', 'asn'),
@@ -1260,7 +1266,7 @@ accessible_telnet = {
         ('source.port', 'port'),
     ],
     'optional_fields': [
-        ('source.reverse_dns', 'hostname'),
+        ('source.reverse_dns', 'hostname', validate_fqdn),
         # 'tag' will always be 'telnet', so it's inside constant fields as 'protocol.application'
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
@@ -1287,7 +1293,7 @@ accessible_cwmp = {
     ],
     'optional_fields': [
         ('protocol.transport', 'protocol'),
-        ('source.reverse_dns', 'hostname'),
+        ('source.reverse_dns', 'hostname', validate_fqdn),
         # 'tag' will always be 'cwmp', so it's inside constant fields as 'protocol.application'
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
@@ -1321,7 +1327,7 @@ accessible_vnc = {
         ('source.port', 'port'),
     ],
     'optional_fields': [
-        ('source.reverse_dns', 'hostname'),
+        ('source.reverse_dns', 'hostname', validate_fqdn),
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
