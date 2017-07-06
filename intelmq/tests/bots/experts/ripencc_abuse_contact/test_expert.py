@@ -85,7 +85,7 @@ class TestRIPENCCExpertBot(test.BotTestCase, unittest.TestCase):
         old = self.bot.URL_STAT
         self.bot.URL_STAT = 'https://example.com/index.html?{}'
         self.run_bot(prepare=False)
-        self.assertLogMatches(pattern='.*(JSONDecodeError|ValueError|simplejson\.scanner\.Expecting).*',
+        self.assertLogMatches(pattern='.*(JSONDecodeError|ValueError|Expecting value).*',
                               levelname='ERROR')
 
         self.bot.URL_STAT = 'http://localhost/{}'
