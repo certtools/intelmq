@@ -26,7 +26,7 @@ class ShadowserverParserBot(ParserBot):
         self.sparser_config = None
         if hasattr(self.parameters, 'feedname'):
             self.feedname = self.parameters.feedname
-            self.sparser_config = config.get_feed(self.feedname)
+            self.sparser_config = config.get_feed(self.feedname, self.logger)
 
         if not self.sparser_config:
             self.logger.error('No feedname provided or feedname not in conf.')

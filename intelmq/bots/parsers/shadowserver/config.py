@@ -44,16 +44,17 @@ TODOs:
 import intelmq.lib.harmonization as harmonization
 
 
-def get_feed(feedname):
+def get_feed(feedname, logger):
     # TODO should this be case insensitive?
     feed_idx = {
         "Accessible-CWMP": accessible_cwmp,
         "Accessible-RDP": accessible_rdp,
+        "Accessible-SMB": accessible_smb,
         "Accessible-Telnet": accessible_telnet,
         "Accessible-VNC": accessible_vnc,
         "Blacklisted-IP": blacklisted_ip,
-        "Drone": drone,
         "Compromised-Website": compromised_website,
+        "Drone": drone,
         "DNS-Open-Resolvers": dns_open_resolvers,
         "Microsoft-Sinkhole": microsoft_sinkhole,
         "NTP-Monitor": ntp_monitor,
@@ -80,9 +81,21 @@ def get_feed(feedname):
         "Sinkhole-HTTP-Drone": sinkhole_http_drone,
         "Spam-URL": spam_url,
         "SSL-FREAK-Vulnerable-Servers": ssl_freak_vulnerable_servers,  # Only differs in a few extra fields
-        "SSL-POODLE-Vulnerable-Servers": ssl_poodle_vulnerable_servers,  # a.k.a POODLE
+        "SSL-POODLE-Vulnerable-Servers": ssl_poodle_vulnerable_servers,
         "Vulnerable-ISAKMP": vulnerable_isakmp,
     }
+    old_feed_idx = {
+        "Botnet-Drone-Hadoop": drone,
+        "DNS-open-resolvers": dns_open_resolvers,
+        "Open-NetBIOS": open_netbios_nameservice,
+        "SSL-Freak-Scan": ssl_freak_vulnerable_servers,
+        "SSL-Scan": ssl_poodle_vulnerable_servers,
+    }
+
+    if feedname in old_feed_idx:
+        logger.warning('Deprecated feedname use. Refer to the documentation for the new name. '
+                       'Backwards compatibility will be removed in version 1.3.')
+        return old_feed_idx[feedname]
 
     return feed_idx.get(feedname)
 
@@ -220,7 +233,7 @@ open_chargen = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')
+        ('source.port', 'port'),
     ],
     'optional_fields': [
         ('protocol.transport', 'protocol'),
@@ -249,7 +262,7 @@ open_tftp = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')
+        ('source.port', 'port'),
     ],
     'optional_fields': [
         ('protocol.transport', 'protocol'),
@@ -281,7 +294,7 @@ sinkhole_http_drone = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'src_port')
+        ('source.port', 'src_port'),
     ],
     'optional_fields': [
         ('source.asn', 'asn'),
@@ -322,7 +335,7 @@ microsoft_sinkhole = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'src_port')
+        ('source.port', 'src_port'),
     ],
     'optional_fields': [
         ('source.asn', 'asn'),
@@ -361,7 +374,7 @@ open_redis = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')
+        ('source.port', 'port'),
     ],
     'optional_fields': [
         ('protocol.transport', 'protocol'),
@@ -402,7 +415,7 @@ open_portmapper = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')
+        ('source.port', 'port'),
     ],
     'optional_fields': [
         ('protocol.transport', 'protocol'),
@@ -433,7 +446,7 @@ open_ipmi = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')
+        ('source.port', 'port'),
     ],
     'optional_fields': [
         ('source.reverse_dns', 'hostname'),
@@ -479,7 +492,7 @@ open_qotd = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')
+        ('source.port', 'port'),
     ],
     'optional_fields': [
         ('protocol.transport', 'protocol'),
@@ -509,7 +522,7 @@ open_ssdp = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')
+        ('source.port', 'port'),
     ],
     'optional_fields': [
         ('protocol.transport', 'protocol'),
@@ -547,7 +560,7 @@ open_snmp = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')
+        ('source.port', 'port'),
     ],
     'optional_fields': [
         ('protocol.transport', 'protocol'),
@@ -577,7 +590,7 @@ open_mssql = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')  # TODO:  check if this is really the source.port!
+        ('source.port', 'port'),  # TODO:  check if this is really the source.port!
     ],
     'optional_fields': [
         ('protocol.transport', 'protocol'),
@@ -611,7 +624,7 @@ open_mongodb = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')
+        ('source.port', 'port'),
     ],
     'optional_fields': [
         ('protocol.transport', 'protocol'),
@@ -649,7 +662,7 @@ open_netbios_nameservice = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')
+        ('source.port', 'port'),
     ],
     'optional_fields': [
         ('protocol.transport', 'protocol'),
@@ -678,7 +691,7 @@ open_elasticsearch = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')
+        ('source.port', 'port'),
     ],
     'optional_fields': [
         ('source.asn', 'asn'),
@@ -716,7 +729,7 @@ dns_open_resolvers = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')
+        ('source.port', 'port'),
     ],
     'optional_fields': [
         ('protocol.transport', 'protocol'),
@@ -744,7 +757,7 @@ ntp_monitor = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')
+        ('source.port', 'port'),
     ],
     'optional_fields': [
         ('protocol.transport', 'protocol'),
@@ -767,7 +780,7 @@ ssl_freak_vulnerable_servers = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')
+        ('source.port', 'port'),
     ],
     'optional_fields': [
         ('source.reverse_dns', 'hostname'),
@@ -790,7 +803,7 @@ ssl_poodle_vulnerable_servers = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')
+        ('source.port', 'port'),
     ],
     'optional_fields': [
         ('source.reverse_dns', 'hostname'),
@@ -812,7 +825,7 @@ open_memcached = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')
+        ('source.port', 'port'),
     ],
     'optional_fields': [
         ('protocol.transport', 'protocol'),
@@ -835,7 +848,7 @@ drone = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')
+        ('source.port', 'port'),
     ],
     'optional_fields': [
         ('destination.asn', 'cc_asn'),
@@ -872,7 +885,7 @@ open_xdmcp = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')
+        ('source.port', 'port'),
     ],
     'optional_fields': [
         ('protocol.transport', 'protocol'),
@@ -902,7 +915,7 @@ compromised_website = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')
+        ('source.port', 'port'),
     ],
     'optional_fields': [
         ('source.reverse_dns', 'hostname'),
@@ -931,7 +944,7 @@ open_natpmp = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')
+        ('source.port', 'port'),
     ],
     'optional_fields': [
         ('protocol.transport', 'protocol'),
@@ -960,7 +973,7 @@ open_netis = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')
+        ('source.port', 'port'),
     ],
     'optional_fields': [
         ('source.reverse_dns', 'hostname'),
@@ -984,7 +997,7 @@ ntp_version = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port')
+        ('source.port', 'port'),
     ],
     'optional_fields': [
         ('protocol.transport', 'protocol'),
@@ -1155,6 +1168,35 @@ accessible_rdp = {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'vulnerable',
         'classification.identifier': 'open-rdp',
+    },
+}
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Accessible-SMB
+accessible_smb = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # This will be 'opensmb' in constant fields
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'smb_implant', validate_to_none),
+        ('extra.', 'arch', validate_to_none),
+        ('extra.', 'key', validate_to_none),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+    ],
+    'constant_fields': {
+        'protocol.transport': 'tcp',
+        'protocol.application': 'smb',
+        'classification.type': 'vulnerable service',
+        'classification.identifier': 'opensmb',
+        'classification.taxonomy': 'Vulnerable',
     },
 }
 

@@ -22,7 +22,9 @@ from intelmq.lib.bot import Bot
 URL = 'https://contacts.cert.at/cgi-bin/abuse-nationalcert.pl'
 
 
-class CERTatContactExpertBot(Bot):
+class NationalCERTContactCertATExpertBot(Bot):
+    def init(self):
+        self.set_request_parameters()
 
     def process(self):
         event = self.receive_message()
@@ -39,7 +41,9 @@ class CERTatContactExpertBot(Bot):
                     'sep': 'semicolon',
                 }
                 req = requests.get(URL, params=parameters,
-                                   verify=self.parameters.http_verify_cert,
+                                   proxies=self.proxy, headers=self.http_header,
+                                   verify=self.http_verify_cert,
+                                   timeout=self.http_timeout_sec
                                    )
                 response = req.text.strip().split(';')
 
@@ -57,4 +61,4 @@ class CERTatContactExpertBot(Bot):
         self.acknowledge_message()
 
 
-BOT = CERTatContactExpertBot
+BOT = NationalCERTContactCertATExpertBot
