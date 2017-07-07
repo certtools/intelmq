@@ -115,6 +115,44 @@ EXAMPLE_EVENT_4 = {
   'time.source': '2017-06-15T05:01:00+00:00'
   }
 
+EXAMPLE_EVENT_URI_1 = {
+    "__type": "Event",
+    "extra": '{"adversary": "", "author": "bschlaps", "industries": [], '
+             '"pulse": "Alert (TA17-164A)", "pulse_key": '
+             '"5942175dd78f563d01abc79c", "tags": [], "time_updated": '
+             '"2017-06-15T05:17:12.18+00:00"}',
+    "comment": "HIDDEN COBRA – North Korean Malicious Cyber Activity",
+    "feed.name": "AlienVault OTX",
+    "classification.type": "blacklist",
+    "source.url": "http://107.6.172.54/woolen/",
+    "raw": "eyJfaWQiOiAiNTVlNmJmYjE0NjM3ZjIyY2I2"
+           "MDU3NDY2IiwgImNyZWF0ZWQiOiAiMjAxNS0wO"
+           "S0wMlQwOToyMTo1My4wOTMiLCAiZGVzY3JpcH"
+           "Rpb24iOiAiIiwgImluZGljYXRvciI6ICJodHR"
+           "wOi8vMTA3LjYuMTcyLjU0L3dvb2xlbi8iLCAidHlwZSI6ICJVUkkifQ==",
+    "time.source": "2015-09-02T09:21:53+00:00",
+    "time.observation": "2015-09-02T14:17:58+00:00"
+}
+
+EXAMPLE_EVENT_URI_2 = {
+    "__type": "Event",
+    "extra": '{"adversary": "", "author": "bschlaps", "industries": [], '
+             '"pulse": "Alert (TA17-164A)", "pulse_key": '
+             '"5942175dd78f563d01abc79c", "tags": [], "time_updated": '
+             '"2017-06-15T05:17:12.18+00:00"}',
+    "comment": "HIDDEN COBRA – North Korean Malicious Cyber Activity",
+    "feed.name": "AlienVault OTX",
+    "classification.type": "blacklist",
+    "source.urlpath": "/woolen/",
+    "raw": "eyJfaWQiOiAiNTVlNmJmYjE0NjM3ZjIyY2I2MDU3NDY2IiwgImNyZWF0ZWQiOiAiMjAxNS"
+           "0wOS0wMlQwOToyMTo1My4wOTMiLCAiZGVzY3JpcHRpb24iOiAiIiwgImluZGljYXRvciI6"
+           "ICIvd29vbGVuLyIsICJ0eXBlIjogIlVSSSJ9",
+    "time.source": "2015-09-02T09:21:53+00:00",
+    "time.observation": "2015-09-02T14:17:58+00:00"
+}
+
+
+
 class TestAlienVaultOTXParserBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for AlienVaultOTXParserBot.
@@ -132,6 +170,8 @@ class TestAlienVaultOTXParserBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(11, EXAMPLE_EVENT_2)
         self.assertMessageEqual(70, EXAMPLE_EVENT_3)
         self.assertMessageEqual(91, EXAMPLE_EVENT_4)
+        self.assertMessageEqual(93, EXAMPLE_EVENT_URI_1)
+        self.assertMessageEqual(94, EXAMPLE_EVENT_URI_2)
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
