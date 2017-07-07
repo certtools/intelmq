@@ -232,6 +232,7 @@ class TestHarmonization(unittest.TestCase):
         self.assertFalse(harmonization.FQDN.is_valid('ö1.at'))
         self.assertFalse(harmonization.FQDN.is_valid('n/a'))
         self.assertFalse(harmonization.FQDN.is_valid('.'))
+        self.assertFalse(harmonization.FQDN.is_valid('.example.com'))
 
     def test_fqdn_sanitize(self):
         """ Test FQDN.sanitize with valid arguments. """
@@ -244,6 +245,8 @@ class TestHarmonization(unittest.TestCase):
         self.assertTrue(harmonization.FQDN.is_valid('ö1.at', sanitize=True))
         self.assertTrue(harmonization.FQDN.is_valid('212.156.101.43.00-ebgp-atakoy1-k.301-fra-'
                                                     'col-1.statik.turktelekom.com.tr',
+                                                    sanitize=True))
+        self.assertTrue(harmonization.FQDN.is_valid('.example.com',
                                                     sanitize=True))
 
     def test_fqdn_sanitize_invalid(self):

@@ -1,6 +1,11 @@
 CHANGELOG
 ==========
 
+1.0.0.rc2 Release candidate
+---------------------------
+### Harmonization
+- leading dots in FQDNs are rejected and removed in sanitation (#1022, #1030)
+
 1.0.0.rc1 Release candidate
 ---------------------------
 ### Core

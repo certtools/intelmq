@@ -351,7 +351,7 @@ class FQDN(GenericType):
         if not GenericType().is_valid(value):
             return False
 
-        if value.rstrip('.') != value or value != value.lower():
+        if value.strip('.') != value or value != value.lower():
             return False
 
         if IPAddress().is_valid(value):
@@ -369,7 +369,7 @@ class FQDN(GenericType):
 
     @staticmethod
     def sanitize(value):
-        value = value.rstrip('.')
+        value = value.strip('.')
         if value:
             return value.encode('idna').decode().lower()
 

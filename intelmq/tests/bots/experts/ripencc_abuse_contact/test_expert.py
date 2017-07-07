@@ -85,13 +85,14 @@ class TestRIPENCCExpertBot(test.BotTestCase, unittest.TestCase):
         old = self.bot.URL_STAT
         self.bot.URL_STAT = 'https://example.com/index.html?{}'
         self.run_bot(prepare=False)
-        self.assertLogMatches(pattern='.*(JSONDecodeError|ValueError).*',
+        # internal json in < and >= 3.5, 3.3 and simplejson
+        self.assertLogMatches(pattern='.*(JSONDecodeError|ValueError|Expecting value|No JSON object could be decoded).*',
                               levelname='ERROR')
 
         self.bot.URL_STAT = 'http://localhost/{}'
         self.run_bot(prepare=False)
         self.bot.URL_STAT = old
-        self.assertLogMatches(pattern='ValueError: HTTP status code was 404',
+        self.assertLogMatches(pattern='HTTP status code was 404',
                               levelname='ERROR')
 
     @test.skip_local_web()
@@ -108,7 +109,7 @@ class TestRIPENCCExpertBot(test.BotTestCase, unittest.TestCase):
         self.bot.URL_DB_AS = 'http://localhost/{}'
         self.run_bot(prepare=False)
         self.bot.URL_DB_AS = old
-        self.assertLogMatches(pattern='ValueError: HTTP status code was 404',
+        self.assertLogMatches(pattern='HTTP status code was 404',
                               levelname='ERROR')
 
     @test.skip_local_web()
@@ -125,7 +126,7 @@ class TestRIPENCCExpertBot(test.BotTestCase, unittest.TestCase):
         self.bot.URL_DB_IP = 'http://localhost/{}'
         self.run_bot(prepare=False)
         self.bot.URL_DB_IP = old
-        self.assertLogMatches(pattern='ValueError: HTTP status code was 404',
+        self.assertLogMatches(pattern='HTTP status code was 404',
                               levelname='ERROR')
 
     def test_replace(self):
