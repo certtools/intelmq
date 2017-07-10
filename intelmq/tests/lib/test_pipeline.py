@@ -5,7 +5,6 @@ Testing the pipeline functions of intelmq.
 We are testing sending and receiving on the same queue for Redis and
 Pythonlist.
 TODO: clear_queues
-TODO: count_queued_messages
 TODO: acknowledge
 TODO: check internal representation of data in redis (like with Pythonlist)
 """
@@ -31,39 +30,43 @@ class TestPythonlist(unittest.TestCase):
         params = Parameters()
         params.broker = 'Pythonlist'
         self.pipe = pipeline.PipelineFactory.create(params)
-        self.pipe.set_queues('src', 'source')
-        self.pipe.set_queues('dst', 'destination')
+        self.pipe.set_queues('test-bot-input', 'source')
+        self.pipe.set_queues('test-bot-output', 'destination')
 
     def test_receive(self):
-        self.pipe.state['src'] = [SAMPLES['normal'][0]]
+        self.pipe.state['test-bot-input'] = [SAMPLES['normal'][0]]
         self.assertEqual(SAMPLES['normal'][1], self.pipe.receive())
 
     def test_send(self):
         self.pipe.send(SAMPLES['normal'][1])
         self.assertEqual(SAMPLES['normal'][0],
-                         self.pipe.state['dst'][0])
+                         self.pipe.state['test-bot-output'][0])
 
     def test_receive_unicode(self):
-        self.pipe.state['src'] = [SAMPLES['unicode'][0]]
+        self.pipe.state['test-bot-input'] = [SAMPLES['unicode'][0]]
         self.assertEqual(SAMPLES['unicode'][1], self.pipe.receive())
 
     def test_send_unicode(self):
         self.pipe.send(SAMPLES['unicode'][1])
         self.assertEqual(SAMPLES['unicode'][0],
-                         self.pipe.state['dst'][0])
+                         self.pipe.state['test-bot-output'][0])
 
     def test_count(self):
         self.pipe.send(SAMPLES['normal'][0])
         self.pipe.send(SAMPLES['normal'][1])
         self.pipe.send(SAMPLES['unicode'][0])
-        self.assertEqual(self.pipe.count_queued_messages('dst'), {'dst': 3})
+        self.assertEqual(self.pipe.count_queued_messages('test-bot-output'),
+                         {'test-bot-output': 3})
 
     def test_count_multi(self):
-        self.pipe.state['src'] = [SAMPLES['normal'][0]]
+        self.pipe.state['test-bot-input'] = [SAMPLES['normal'][0]]
         self.pipe.send(SAMPLES['normal'][0])
         self.pipe.send(SAMPLES['unicode'][0])
-        self.assertEqual(self.pipe.count_queued_messages('src', 'dst'),
-                         {'src': 1, 'dst': 2})
+        self.assertEqual(self.pipe.count_queued_messages('test-bot-input', 'test-bot-output'),
+                         {'test-bot-input': 1, 'test-bot-output': 2})
+
+    def tearDown(self):
+        self.pipe.state = {}
 
 
 @test.skip_redis()
