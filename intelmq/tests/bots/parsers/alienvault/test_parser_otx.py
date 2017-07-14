@@ -115,6 +115,7 @@ EXAMPLE_EVENT_4 = {
   'time.source': '2017-06-15T05:01:00+00:00'
   }
 
+
 class TestAlienVaultOTXParserBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for AlienVaultOTXParserBot.
@@ -131,10 +132,8 @@ class TestAlienVaultOTXParserBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(0, EXAMPLE_EVENT)
         self.assertMessageEqual(11, EXAMPLE_EVENT_2)
         self.assertMessageEqual(70, EXAMPLE_EVENT_3)
-<<<<<<< patch-4
-=======
         self.assertMessageEqual(91, EXAMPLE_EVENT_4)
->>>>>>> develop
+
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
