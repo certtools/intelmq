@@ -5,7 +5,7 @@ Testing certat_contact
 import unittest
 
 import intelmq.lib.test as test
-from intelmq.bots.experts.certat_contact.expert import CERTatContactExpertBot
+from intelmq.bots.experts.national_cert_contact_certat.expert import NationalCERTContactCertATExpertBot
 
 EXAMPLE_INPUT = {"__type": "Event",
                  "source.ip": "93.184.216.34",  # example.com
@@ -35,14 +35,14 @@ EXAMPLE_OUTPUT6 = {"__type": "Event",
 
 
 @test.skip_internet()
-class TestCERTatContactExpertBot(test.BotTestCase, unittest.TestCase):
+class TestNationalCERTContactCertATExpertBot(test.BotTestCase, unittest.TestCase):
     """
-    A TestCase for AbusixExpertBot.
+    A TestCase for NationalCERTContactCertATExpertBot.
     """
 
     @classmethod
     def set_bot(cls):
-        cls.bot_reference = CERTatContactExpertBot
+        cls.bot_reference = NationalCERTContactCertATExpertBot
         cls.sysconfig = {'filter': False,
                          'overwrite_cc': False,
                          'http_verify_cert': False,

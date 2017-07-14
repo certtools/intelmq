@@ -1,30 +1,36 @@
-# Installation
+**Table of Contents**
 
-  * [Requirements](#requirements)
-  * [Install](#install)
-    * [Install Dependencies](#install-dependencies)
-        * [Ubuntu 14.04 / Debian 8](#ubuntu-1404--debian-8)
-        * [CentOS 7](#centos-7)
-    * [Installation](#install)
+1. [Requirements](#requirements)
+2. [Install Dependencies](#install-dependencies)
+   * [Ubuntu 14.04 / Debian 8](#ubuntu-1404--debian-8)
+   * [CentOS 7](#centos-7)
+   * [openSUSE Leap 42.2](#opensuse-leap-422)
+3. [Installation](#installation)
+   * [Native packages](#native-packages)
+   * [From PyPi](#from-pypi)
+   * [From the repository](#from-the-repository)
+4. [Afterwards](#afterwards)
 
 
 Please report any errors you encounter at https://github.com/certtools/intelmq/issues
 
 For upgrade instructions, see [UPGRADING.md](UPGRADING.md).
 
-## Requirements
+# Requirements
 
 The following instructions assume the following requirements:
 
-* **Operating System:** Ubuntu 14.04 and 16.04 LTS, Debian 8, CentOS 7 or OpenSUSE Leap 42.x
+Supported and recommended operating systems are:
+* CentOS 7
+* Debian 8
+* OpenSUSE Leap 42.2
+* Ubuntu: 14.04 and 16.04 LTS
 
-## Install
-
-### Install Dependencies
+# Install Dependencies
 
 If you are using native packages, you can simply skip this section as all dependencies are installed automatically.
 
-##### Ubuntu 14.04 / Debian 8
+## Ubuntu 14.04 / Debian 8
 
 ```bash
 apt-get install python3 python3-pip
@@ -32,6 +38,7 @@ apt-get install git build-essential libffi-dev
 apt-get install python3-dev
 apt-get install redis-server
 ```
+
 **Special note for Debian 8**: 
 if you are using Debian 8, you need to install this package extra: ``apt-get install libgnutls28-dev``.
 In addition, Debian 8 has an old version of pip3. Please get a current one via:
@@ -40,7 +47,19 @@ curl "https://bootstrap.pypa.io/get-pip.py" -o "/tmp/get-pip.py"
 python3.4 /tmp/get-pip.py
 ```
 
-##### CentOS 7
+## Ubuntu 16.04
+
+```bash
+apt install python3-pip python3-dnspython python3-psutil python3-redis python3-requests python3-termstyle python3-tz
+apt install git redis-server
+```
+Optional dependencies:
+```bash
+apt install bash-completion jq cron
+apt install python3-sleekxmpp python3-pymongo python3-psycopg2
+```
+
+## CentOS 7
 
 ```bash
 yum install epel-release
@@ -55,7 +74,20 @@ curl "https://bootstrap.pypa.io/get-pip.py" -o "/tmp/get-pip.py"
 python3.4 /tmp/get-pip.py
 ```
 
-### Installation
+## openSUSE Leap 42.2
+
+```bash
+zypper install python3-dnspython python3-psutil python3-pytz python3-redis python3-requests python3-python-termstyle
+zypper install git redis
+```
+
+Optional dependencies:
+```bash
+zypper in bash-completion jq cron
+zypper in python3-psycopg2 python3-sleekxmpp
+```
+
+# Installation
 
 There are different methods to install IntelMQ:
 
@@ -63,7 +95,7 @@ There are different methods to install IntelMQ:
 * from PyPi: to get the latest releases as python package
 * from the (local) repository: for developers to get the latest (unstable!) version and/or have local modifications
 
-#### Native packages
+## Native packages
 
 Get the install instructions for your operating system here:
 https://software.opensuse.org/download.html?project=home%3Asebix%3Aintelmq&package=intelmq
@@ -78,7 +110,7 @@ Currently, these operating systems are supported by the packages:
 
 Please report any errors or improvements, thanks!
 
-#### From PyPi
+## From PyPi
 
 ```bash
 sudo -s
@@ -98,7 +130,7 @@ For example:
 mv /usr/lib/python3.4/site-packages/opt/ /
 ```
 
-#### From the repository
+## From the repository
 
 The `REQUIREMENTS` files define a list of python packages and versions, which are necessary to run most components of IntelMQ. The defined (minimal) versions are recommendations. Some bots have additional dependencies which are mentioned in their documentation and their own `REQUIREMENTS` file (in their source directory).
 
@@ -125,6 +157,6 @@ chmod -R 0770 /opt/intelmq
 chown -R intelmq.intelmq /opt/intelmq
 ```
 
-## Afterwards
+# Afterwards
 
 Now continue with the [User Guide](User-Guide.md).

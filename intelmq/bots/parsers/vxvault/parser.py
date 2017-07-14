@@ -9,8 +9,8 @@ class VXVaultParserBot(ParserBot):
 
     def parse(self, report):
         report_split = utils.base64_decode(report["raw"]).strip().splitlines()
-        self.tempdata = report_split[:2]
-        for line in report_split[3:]:
+        self.tempdata = report_split[:3]
+        for line in report_split[4:]:
             yield line.strip()
 
     def parse_line(self, row, report):
@@ -36,7 +36,7 @@ class VXVaultParserBot(ParserBot):
         if port:
             event.add("source.port", port)
         event.add("raw", row)
-        event.add("time.source", self.tempdata[1])
+        event.add("time.source", self.tempdata[2])
 
         yield event
 

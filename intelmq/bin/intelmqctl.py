@@ -12,9 +12,9 @@ import pkg_resources
 import psutil
 
 from intelmq import (DEFAULTS_CONF_FILE, PIPELINE_CONF_FILE, RUNTIME_CONF_FILE,
-                     STARTUP_CONF_FILE, SYSTEM_CONF_FILE, VAR_RUN_PATH,
-                     BOTS_FILE)
+                     VAR_RUN_PATH, BOTS_FILE)
 from intelmq.lib import utils
+from intelmq.lib.bot_debugger import BotDebugger
 from intelmq.lib.pipeline import PipelineFactory
 
 
@@ -44,6 +44,8 @@ ERROR_MESSAGES = {
     'running': '%s is still running.',
     'stopped': '%s was NOT RUNNING.',
     'stopping': '%s failed to STOP.',
+    'not found': '%s failed to START because the file cannot be found.',
+    'access denied': '%s failed to %s because of missing permissions.',
 }
 
 LOG_LEVEL = {
@@ -117,33 +119,37 @@ class IntelMQProcessManager:
                 self.logger.error('Directory %s does not exist and cannot be '
                                   'created: %s.', self.PIDDIR, exc)
 
-    def bot_run(self, bot_id):
+    def bot_run(self, bot_id, run_subcommand=None, console_type=None, message_action_kind=None, dryrun=None, msg=None):
         pid = self.__read_pidfile(bot_id)
-        if pid:
-            if self.__status_process(pid):
-                log_bot_error('running', bot_id)
-                return 'running'
-            else:
-                self.__remove_pidfile(bot_id)
+        if pid and self.__status_process(pid):
+            self.logger.warning("Main instance of the bot is running in the background and will be stopped; "
+                                "when finished, we try to relaunch it again. "
+                                "You may want to launch: 'intelmqctl stop {}' to prevent this message."
+                                .format(bot_id))
+            paused = True
+            self.bot_stop(bot_id)
+        else:
+            paused = False
+
         log_bot_message('starting', bot_id)
         filename = self.PIDFILE.format(bot_id)
         with open(filename, 'w') as fp:
             fp.write(str(os.getpid()))
 
-        bot_module = self.__runtime_configuration[bot_id]['module']
-        module = importlib.import_module(bot_module)
-        bot = getattr(module, 'BOT')
         try:
-            instance = bot(bot_id)
-            instance.start()
-        except (Exception, KeyboardInterrupt) as exc:
-            print('Bot failed: %s' % exc)
-            retval = 1
+            BotDebugger(self.__runtime_configuration[bot_id], bot_id, run_subcommand,
+                        console_type, dryrun, message_action_kind, msg)
+            retval = 0
+        except KeyboardInterrupt:
+            print('Keyboard interrupt.')
+            retval = 0
         except SystemExit as exc:
             print('Bot exited with code %s.' % exc)
             retval = exc
 
         self.__remove_pidfile(bot_id)
+        if paused:
+            self.bot_start(bot_id)
         return retval
 
     def bot_start(self, bot_id, getstatus=True):
@@ -158,10 +164,15 @@ class IntelMQProcessManager:
         module = self.__runtime_configuration[bot_id]['module']
         cmdargs = [module, bot_id]
         with open('/dev/null', 'w') as devnull:
-            proc = psutil.Popen(cmdargs, stdout=devnull, stderr=devnull)
-            filename = self.PIDFILE.format(bot_id)
-            with open(filename, 'w') as fp:
-                fp.write(str(proc.pid))
+            try:
+                proc = psutil.Popen(cmdargs, stdout=devnull, stderr=devnull)
+            except FileNotFoundError:
+                log_bot_error("not found", bot_id)
+                return 'stopped'
+            else:
+                filename = self.PIDFILE.format(bot_id)
+                with open(filename, 'w') as fp:
+                    fp.write(str(proc.pid))
 
         if getstatus:
             time.sleep(0.5)
@@ -182,16 +193,20 @@ class IntelMQProcessManager:
             return 'stopped'
         log_bot_message('stopping', bot_id)
         proc = psutil.Process(int(pid))
-        proc.send_signal(signal.SIGINT)
-
-        if getstatus:
-            time.sleep(0.5)
-            if self.__status_process(pid):
-                log_bot_error('running', bot_id)
-                return 'running'
-            self.__remove_pidfile(bot_id)
-            log_bot_message('stopped', bot_id)
-            return 'stopped'
+        try:
+            proc.send_signal(signal.SIGINT)
+        except psutil.AccessDenied:
+            log_bot_error('access denied', bot_id, 'STOP')
+            return 'running'
+        else:
+            if getstatus:
+                time.sleep(0.5)
+                if self.__status_process(pid):
+                    log_bot_error('running', bot_id)
+                    return 'running'
+                self.__remove_pidfile(bot_id)
+                log_bot_message('stopped', bot_id)
+                return 'stopped'
 
     def bot_reload(self, bot_id, getstatus=True):
         pid = self.__read_pidfile(bot_id)
@@ -208,14 +223,19 @@ class IntelMQProcessManager:
             return 'stopped'
         log_bot_message('reloading', bot_id)
         proc = psutil.Process(int(pid))
-        proc.send_signal(signal.SIGHUP)
-        if getstatus:
-            time.sleep(0.5)
-            if self.__status_process(pid):
-                log_bot_message('running', bot_id)
-                return 'running'
-            log_bot_error('stopped', bot_id)
-            return 'stopped'
+        try:
+            proc.send_signal(signal.SIGHUP)
+        except psutil.AccessDenied:
+            log_bot_error('access denied', bot_id, 'RELOAD')
+            return 'running'
+        else:
+            if getstatus:
+                time.sleep(0.5)
+                if self.__status_process(pid):
+                    log_bot_message('running', bot_id)
+                    return 'running'
+                log_bot_error('stopped', bot_id)
+                return 'stopped'
 
     def bot_status(self, bot_id):
         pid = self.__read_pidfile(bot_id)
@@ -259,6 +279,11 @@ class IntelMQProcessManager:
             return True
         except psutil.NoSuchProcess:
             return False
+        except psutil.AccessDenied:
+            self.logger.error('Could not get status of process: Access denied.')
+            return False
+        except:
+            raise
 
 
 PROCESS_MANAGER = {'intelmq': IntelMQProcessManager}
@@ -305,10 +330,13 @@ class IntelMQController():
 
         Outputs are logged to /opt/intelmq/var/log/intelmqctl"""
         EPILOG = '''
-        intelmqctl [start|stop|restart|status|reload|run] bot-id
+        intelmqctl [start|stop|restart|status|reload] bot-id
         intelmqctl [start|stop|restart|status|reload]
         intelmqctl list [bots|queues]
         intelmqctl log bot-id [number-of-lines [log-level]]
+        intelmqctl run bot-id message [get|pop|send]
+        intelmqctl run bot-id process [--msg|--dryrun]
+        intelmqctl run bot-id console
         intelmqctl clear queue-id
         intelmqctl check
 
@@ -321,8 +349,14 @@ Restarting a bot:
 Get status of a bot:
     intelmqctl status bot-id
 
-Run a bot directly (blocking) for debugging purpose:
+Run a bot directly for debugging purpose and temporarily leverage the logging level to DEBUG:
     intelmqctl run bot-id
+Get a pdb (or ipdb if installed) live console.
+    intelmqctl run bot-id console
+See the message that waits in the input queue.
+    intelmqctl run bot-id message get
+See additional help for further explanation.
+    intelmqctl run bot-id --help
 
 Starting the botnet (all bots):
     intelmqctl start
@@ -351,7 +385,6 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         # this will not work with various instances of REDIS
         self.parameters = Parameters()
         self.load_defaults_configuration()
-        self.load_system_configuration()
         try:
             self.pipeline_configuration = utils.load_configuration(PIPELINE_CONF_FILE)
         except ValueError as exc:  # pragma: no cover
@@ -361,21 +394,6 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             self.runtime_configuration = utils.load_configuration(RUNTIME_CONF_FILE)
         except ValueError as exc:  # pragma: no cover
             self.abort('Error loading %r: %s' % (RUNTIME_CONF_FILE, exc))
-
-        if os.path.exists(STARTUP_CONF_FILE):
-            self.logger.warning('Deprecated startup.conf file found, please migrate to runtime.conf soon.')
-            with open(STARTUP_CONF_FILE, 'r') as fp:
-                startup = json.load(fp)
-                for bot_id, bot_values in startup.items():
-                    if 'parameters' in self.runtime_configuration[bot_id]:  # pragma: no cover
-                        self.abort('Mixed setup of new runtime.conf and old startup.conf'
-                                   ' found. Ignoring startup.conf, please fix this!')
-                    params = self.runtime_configuration[bot_id].copy()
-                    self.runtime_configuration[bot_id].clear()
-                    self.runtime_configuration[bot_id]['parameters'] = params
-                    self.runtime_configuration[bot_id].update(bot_values)
-            if self.write_updated_runtime_config(filename=RUNTIME_CONF_FILE + '.new'):
-                self.logger.info('%r with new format written.', RUNTIME_CONF_FILE + '.new')
 
         process_manager = getattr(self.parameters, 'process_manager', 'intelmq')
         if process_manager not in PROCESS_MANAGER:
@@ -434,6 +452,30 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             parser_run = subparsers.add_parser('run', help='Run a bot interactively')
             parser_run.add_argument('bot_id',
                                     choices=self.runtime_configuration.keys())
+            parser_run_subparsers = parser_run.add_subparsers(title='run-subcommands')
+
+            parser_run_console = parser_run_subparsers.add_parser('console', help='Get a ipdb live console.')
+            parser_run_console.add_argument('console_type', nargs='?',
+                                            help='You may specify which console should be run. Default is ipdb (if installed)'
+                                            ' or pudb (if installed) or pdb but you may want to use another one.')
+            parser_run_console.set_defaults(run_subcommand="console")
+
+            parser_run_message = parser_run_subparsers.add_parser('message',
+                                                                  help='Debug bot\'s pipelines. Get the message in the'
+                                                                  ' input pipeline, pop it (cut it) and display it, or'
+                                                                  ' send the message directly to bot\'s output pipeline.')
+            parser_run_message.add_argument('message_action_kind', choices=["get", "pop", "send"])
+            parser_run_message.add_argument('msg', nargs='?', help='If send was chosen, put here the message in JSON.')
+            parser_run_message.set_defaults(run_subcommand="message")
+
+            parser_run_process = parser_run_subparsers.add_parser('process', help='Single run of bot\'s process() method.')
+            parser_run_process.add_argument('--dryrun', '-d', action='store_true',
+                                            help='Never really pop the message from the input pipeline '
+                                                 'nor send to output pipeline.')
+            parser_run_process.add_argument('--msg', '-m',
+                                            help='Trick the bot to process this JSON '
+                                                 'instead of the Message in its pipeline.')
+            parser_run_process.set_defaults(run_subcommand="process")
             parser_run.set_defaults(func=self.bot_run)
 
             parser_check = subparsers.add_parser('check',
@@ -481,15 +523,6 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
             self.parser = parser
 
-    def load_system_configuration(self):
-        if os.path.exists(SYSTEM_CONF_FILE):
-            try:
-                config = utils.load_configuration(SYSTEM_CONF_FILE)
-            except ValueError as exc:  # pragma: no cover
-                self.abort('Error loading %r: %s' % (SYSTEM_CONF_FILE, exc))
-            for option, value in config.items():
-                setattr(self.parameters, option, value)
-
     def load_defaults_configuration(self):
         # Load defaults configuration
         try:
@@ -518,8 +551,8 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         elif results == 'error':
             return 1
 
-    def bot_run(self, bot_id):
-        return self.bot_process_manager.bot_run(bot_id)
+    def bot_run(self, **kwargs):
+        return self.bot_process_manager.bot_run(**kwargs)
 
     def bot_start(self, bot_id, getstatus=True):
         if bot_id is None:
@@ -632,8 +665,6 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             raise ValueError(message)
 
     def write_updated_runtime_config(self, filename=RUNTIME_CONF_FILE):
-        if os.path.exists(STARTUP_CONF_FILE):
-            self.abort('Can\'t update runtime configuration, startup.conf found.')
         try:
             with open(RUNTIME_CONF_FILE, 'w') as handle:
                 json.dump(self.runtime_configuration, fp=handle, indent=4, sort_keys=True,
@@ -644,7 +675,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
     def list_bots(self):
         """
-        Lists all configured bots from startup.conf with bot id and
+        Lists all configured bots from runtime.conf with bot id and
         description.
 
         If description is not set, None is used instead.
@@ -797,13 +828,6 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         if retval:
             self.logger.error('Fatal errors occurred.')
             return retval
-
-        if os.path.exists(STARTUP_CONF_FILE):
-            self.logger.warning('Deprecated startup.conf file found, migrate to runtime.conf.')
-            retval = 1
-        if os.path.exists(SYSTEM_CONF_FILE):
-            self.logger.warning('Deprecated system.conf file found, migrate to defaults.conf.')
-            retval = 1
 
         self.logger.info('Checking runtime configuration.')
         http_proxy = files[DEFAULTS_CONF_FILE].get('http_proxy')

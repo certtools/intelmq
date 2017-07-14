@@ -1116,9 +1116,9 @@
             "Myanmar",
             "rat",
             "Strategic\tWeb\tCompromise"
-        ],
-        "modified": "2015-09-01T07:47:06.000000",
-        "author_name": "AlienVault",
+        ], 
+        "modified": "2015-09-01T07:47:06", 
+        "author_name": "AlienVault", 
         "references": [
             "http://pages.arbornetworks.com/rs/082-KNA-087/images/ASERT%20Threat%20Intelligence%20Brief%202015-05%20PlugX%20Threat%20Activity%20in%20Myanmar.pdf"
         ],
@@ -1274,4 +1274,59 @@
         "revision": 1.0,
         "id": "55e557fa4637f21c54c1bb0d",
         "name": "PlugX Threat\tActivity in Myanmar"
-}]
+	},  
+	{
+		"industries": [],
+		"TLP": "white",
+		"description": "HIDDEN COBRA – North Korean Malicious Cyber Activity",
+		"created": "2017-06-15T05:13:01.544000",
+		"tags": [],
+		"modified": "2017-06-15T05:17:12.187000",
+		"author_name": "bschlaps",
+		"public": 1,
+		"references": [
+		  "TA-17-164A_stix.xml"
+		],
+		"targeted_countries": [],
+		"indicators": [
+		  {
+			"content": "",
+			"indicator": "134.119.36.135",
+			"description": "",
+			"created": "2017-06-15T05:13:02",
+			"is_active": 1,
+			"title": "",
+			"access_reason": "",
+			"access_type": "public",
+			"access_groups": [],
+			"pulse_key": "5942175dd78f563d01abc79c",
+			"role": null,
+			"expiration": null,
+			"type": "IPv4",
+			"id": 1357989,
+			"observations": 11
+		  },
+		  {
+			"content": "",
+			"indicator": "5d29dfe2ea9ca8da3ff7a14fb20c5e86",
+			"description": "",
+			"created": "2017-06-15T05:17:06",
+			"is_active": 1,
+			"title": "",
+			"access_reason": "",
+			"access_type": "public",
+			"access_groups": [],
+			"pulse_key": "5942175dd78f563d01abc79c",
+			"role": null,
+			"expiration": null,
+			"type": "FileHash-MD5",
+			"id": 234158,
+			"observations": 11
+		  }
+		],
+		"revision": 1,
+		"adversary": "",
+		"id": "5942175dd78f563d01abc79c",
+		"name": "Alert (TA17-164A)"
+  }
+]

@@ -82,11 +82,22 @@ class AlienVaultOTXParserBot(ParserBot):
             else:
                 continue
 
+            # if pulse_key exists in the indicators use it
+            # else use id from pulse and add it as pulse_key
+            # same logic is followed by alienvault
+            if 'pulse_key' in indicator:
+                additional_indicator['pulse_key'] = indicator['pulse_key']
+            else:
+                additional_indicator['pulse_key'] = pulse['id']
             if 'tags' in pulse:
                 additional_indicator['tags'] = pulse['tags']
             if 'modified' in pulse:
-                additional_indicator['time_updated'] = \
-                    pulse["modified"][:-4] + "+00:00"
+                    if '.' in pulse["modified"]:
+                        additional_indicator['time_updated'] = \
+                            pulse["modified"][:-4] + "+00:00"
+                    else:
+                        additional_indicator['time_updated'] = \
+                            pulse["modified"] + ".00+00:00"
             if 'industries' in pulse:
                 additional_indicator['industries'] = pulse["industries"]
             if 'adversary' in pulse:
@@ -106,8 +117,6 @@ class AlienVaultOTXParserBot(ParserBot):
             event.add("raw", json.dumps(indicator, sort_keys=True))
             events.append(event)
         return events
-
-
 
 
 BOT = AlienVaultOTXParserBot

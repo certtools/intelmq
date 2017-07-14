@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import base64
+import datetime
 import unittest
 import unittest.mock as mock
 
@@ -143,6 +144,27 @@ class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
         self.assertAnyLoglineEqual(message='Report without raw field received. Possible '
                                            'bug or misconfiguration in previous bots.',
                                    levelname='WARNING')
+
+    def test_processed_messages_count(self):
+        self.sysconfig = {'log_processed_messages_count': 1}
+        self.input_message = EXAMPLE_SHORT
+        self.run_bot()
+        self.assertAnyLoglineEqual(message='Processed 1 messages since last logging.',
+                                   levelname='INFO')
+
+    def test_processed_messages_seconds(self):
+        self.sysconfig = {'log_processed_messages_count': 10,
+                          'log_processed_messages_seconds': datetime.timedelta(seconds=0)}
+        self.input_message = EXAMPLE_SHORT
+        self.run_bot()
+        self.assertAnyLoglineEqual(message='Processed 1 messages since last logging.',
+                                   levelname='INFO')
+
+    def test_processed_messages_shutdown(self):
+        self.input_message = EXAMPLE_SHORT
+        self.run_bot()
+        self.assertAnyLoglineEqual(message='Processed 2 messages since last logging.',
+                                   levelname='INFO')
 
 
 class TestDummyCSVParserBot(test.BotTestCase, unittest.TestCase):
