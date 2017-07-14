@@ -27,6 +27,7 @@ class AlienVaultOTXParserBot(ParserBot):
         additional_pulse = {"author": pulse['author_name'],
                             "pulse": pulse['name']}
 
+        events = []
         for indicator in pulse["indicators"]:
             additional_indicator = {}
             event = self.new_event(report)
@@ -47,6 +48,15 @@ class AlienVaultOTXParserBot(ParserBot):
                 path = parse.urlparse(resource).path
                 if len(path) > 0:
                     event.add('source.url', resource)
+                # CIDR
+                elif indicator["type"] in ['CIDR']:
+                    event.add('source.network',
+                              indicator["indicator"])
+
+                # CVE
+                elif indicator["type"] in ['CVE']:
+                    additional_indicator['CVE'] = indicator["indicator"]
+                    # TODO: Process these IoCs: FilePath, Mutex
                 else:
                     event.add('source.fqdn', indicator["indicator"])
             # IP addresses
@@ -70,7 +80,7 @@ class AlienVaultOTXParserBot(ParserBot):
                 additional_indicator['CVE'] = indicator["indicator"]
                 # TODO: Process these IoCs: FilePath, Mutex
             else:
-                return
+                continue
 
             if 'tags' in pulse:
                 additional_indicator['tags'] = pulse['tags']
@@ -94,7 +104,10 @@ class AlienVaultOTXParserBot(ParserBot):
             event.add('classification.type', 'blacklist')
             event.add('time.source', indicator["created"][:-4] + "+00:00")
             event.add("raw", json.dumps(indicator, sort_keys=True))
-            return event
+            events.append(event)
+        return events
+
+
 
 
 BOT = AlienVaultOTXParserBot
