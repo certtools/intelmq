@@ -5,6 +5,16 @@ See the changelog for a full list of changes.
 
 1.1.0
 -----
+### Harmonization
+- added destination.urlpath and source.urlpath to harmonization.
+
+### Postgres databases
+Use the following statement carefully to upgrade your database.
+```SQL
+ALTER TABLE events
+   ADD COLUMN "destination.urlpath" text,
+   ADD COLUMN "source.urlpath" text;
+```
 
 1.0.0
 -----

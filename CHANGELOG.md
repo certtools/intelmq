@@ -3,6 +3,8 @@ CHANGELOG
 
 1.1.0
 -----
+### Harmonization
+- added destination.urlpath and source.urlpath to harmonization.
 
 1.0.0.rc2 Release candidate
 ---------------------------
