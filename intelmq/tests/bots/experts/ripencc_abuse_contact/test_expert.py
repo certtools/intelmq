@@ -91,7 +91,7 @@ class TestRIPENCCExpertBot(test.BotTestCase, unittest.TestCase):
         self.bot.URL_STAT = 'http://localhost/{}'
         self.run_bot(prepare=False)
         self.bot.URL_STAT = old
-        self.assertLogMatches(pattern='HTTP status code was 404',
+        self.assertLogMatches(pattern='.*HTTP status code was 404.*',
                               levelname='ERROR')
 
     @test.skip_local_web()
@@ -108,7 +108,7 @@ class TestRIPENCCExpertBot(test.BotTestCase, unittest.TestCase):
         self.bot.URL_DB_AS = 'http://localhost/{}'
         self.run_bot(prepare=False)
         self.bot.URL_DB_AS = old
-        self.assertLogMatches(pattern='HTTP status code was 404',
+        self.assertLogMatches(pattern='.*HTTP status code was 404.*',
                               levelname='ERROR')
 
     @test.skip_local_web()
@@ -125,7 +125,7 @@ class TestRIPENCCExpertBot(test.BotTestCase, unittest.TestCase):
         self.bot.URL_DB_IP = 'http://localhost/{}'
         self.run_bot(prepare=False)
         self.bot.URL_DB_IP = old
-        self.assertLogMatches(pattern='HTTP status code was 404',
+        self.assertLogMatches(pattern='.*HTTP status code was 404.*',
                               levelname='ERROR')
 
     def test_replace(self):
