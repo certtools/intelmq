@@ -49,14 +49,14 @@ EXAMPLE_EVENT_2 = {
   '__type': 'Event',
   'classification.type': 'blacklist',
   'comment': 'Active users of mobile banking apps should be aware of a new '
-             'Android banking malware campaign targeting customers of large '
-             'banks in the United States, Germany, France, Australia, Turkey, '
-             'Poland, and Austria. This banking malware can steal login '
-             'credentials from 94 different mobile banking apps. Due to its '
-             'ability to intercept SMS communications, the malware is also '
-             'able to bypass SMS-based two-factor authentication. '
-             'Additionally, it also contains modules to target some popular '
-             'social media apps.',
+                 'Android banking malware campaign targeting customers of large '
+                 'banks in the United States, Germany, France, Australia, Turkey, '
+                 'Poland, and Austria. This banking malware can steal login '
+                 'credentials from 94 different mobile banking apps. Due to its '
+                 'ability to intercept SMS communications, the malware is also '
+                 'able to bypass SMS-based two-factor authentication. '
+                 'Additionally, it also contains modules to target some popular '
+                 'social media apps.',
   'extra': '{"adversary": "", "author": "AlienVault", "industries": '
            '["banking"], "pulse": "Android banking malware masquerades as '
            'Flash Player", "pulse_key": "581b9aef324bc542d6b1fd84", "tags": '
@@ -115,6 +115,7 @@ EXAMPLE_EVENT_4 = {
   'time.source': '2017-06-15T05:01:00+00:00'
   }
 
+
 class TestAlienVaultOTXParserBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for AlienVaultOTXParserBot.
@@ -132,6 +133,7 @@ class TestAlienVaultOTXParserBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(11, EXAMPLE_EVENT_2)
         self.assertMessageEqual(70, EXAMPLE_EVENT_3)
         self.assertMessageEqual(91, EXAMPLE_EVENT_4)
+
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
