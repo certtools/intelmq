@@ -411,20 +411,18 @@ class Context:
 
          - remove any references from matches to organisations that no
            longer exist
+
+         - removes matches which are not associated to an organisation
+           anymore, for instance du to scripts which changed the context.
+           This does also remove the information about annotations and
+           inhibitions from the context. This is a safe operation, as
+           long as the scripts which care for inhibitions are executed
+           before the context was altered.
         """
         # There are some more cleanups that might be useful but it's not
         # clear that they're a good idea and not doing them shouldn't be
         # a problem. In particular, possible cleanups are:
         #
-        # - remove any matches whose organisations attribute is now
-        #   empty. it might have become empty because of a cleanup step
-        #   or due to changes performed by a script
-        #
-        #   Such match objects could no longer lead directly to a
-        #   directive because the recipient is not clear. OTOH,
-        #   inhibition annotations are useful even in this case as they
-        #   can still be used to decide *not* to send any notifications
-        #   even though the recipient isn't known.
         #
         # - remove organisations no longer referenced by a match object
         #   These can still be used to create directives, in cases where
@@ -434,10 +432,22 @@ class Context:
         self._organisation_map = {org.orgid: org
                                   for org in self.organisations}
 
+        removematches = []
+        # A list of matches which turned out to be empty (= w/o org.) and will be removed
+        # from the matches
+
         for match in self.matches:
             match.organisations = [orgid
                                    for orgid in match.organisations
                                    if orgid in self._organisation_map]
+
+            if not match.organisations:
+                removematches.append(match)
+
+        for m in removematches:
+            # remove the empty matches
+            self.matches.remove(m)
+
 
     def all_annotations(self):
         """Return an iterator over all annotations."""
