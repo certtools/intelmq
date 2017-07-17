@@ -1,4 +1,4 @@
-intelmq (1.0.0~dev6+intevation.3.0~rc1) unstable; urgency=medium
+intelmq (1.0.0~dev7+intevation.3.0~rc1) unstable; urgency=medium
 
   * certbund-contact/ruleexpert: Remove matches from the context when no
     org exists.  This fixes a issue where notifications were lost due to
@@ -6,7 +6,7 @@ intelmq (1.0.0~dev6+intevation.3.0~rc1) unstable; urgency=medium
   * FIxes and enhancements in in Shadowserver config
   * Improved ripe_diff.py (supports now with manual networks in contacts)
   
- -- Sascha Wilde <wilde@intevation.de>  Mon, 17 Jul 2017 17:22:08 +0200
+ -- Sascha Wilde <wilde@intevation.de>  Mon, 17 Jul 2017 17:36:08 +0200
 
 intelmq (1.0.0~dev7+intevation.2.0~rc7) unstable; urgency=medium
 
