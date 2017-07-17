@@ -49,14 +49,14 @@ EXAMPLE_EVENT_2 = {
   '__type': 'Event',
   'classification.type': 'blacklist',
   'comment': 'Active users of mobile banking apps should be aware of a new '
-                 'Android banking malware campaign targeting customers of large '
-                 'banks in the United States, Germany, France, Australia, Turkey, '
-                 'Poland, and Austria. This banking malware can steal login '
-                 'credentials from 94 different mobile banking apps. Due to its '
-                 'ability to intercept SMS communications, the malware is also '
-                 'able to bypass SMS-based two-factor authentication. '
-                 'Additionally, it also contains modules to target some popular '
-                 'social media apps.',
+             'Android banking malware campaign targeting customers of large '
+             'banks in the United States, Germany, France, Australia, Turkey, '
+             'Poland, and Austria. This banking malware can steal login '
+             'credentials from 94 different mobile banking apps. Due to its '
+             'ability to intercept SMS communications, the malware is also '
+             'able to bypass SMS-based two-factor authentication. '
+             'Additionally, it also contains modules to target some popular '
+             'social media apps.',
   'extra': '{"adversary": "", "author": "AlienVault", "industries": '
            '["banking"], "pulse": "Android banking malware masquerades as '
            'Flash Player", "pulse_key": "581b9aef324bc542d6b1fd84", "tags": '
