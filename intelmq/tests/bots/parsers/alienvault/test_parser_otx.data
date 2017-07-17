@@ -1322,8 +1322,22 @@
 			"type": "FileHash-MD5",
 			"id": 234158,
 			"observations": 11
-		  }
-		],
+          },
+          {
+            "indicator": "http://107.6.172.54/woolen/",
+            "_id": "55e6bfb14637f22cb6057466",
+            "type": "URI",
+            "description": "",
+            "created": "2015-09-02T09:21:53.093"
+          },
+          {
+            "indicator": "/woolen/",
+            "_id": "55e6bfb14637f22cb6057466",
+            "type": "URI",
+            "description": "",
+            "created": "2015-09-02T09:21:53.093"
+          }
+     ],
 		"revision": 1,
 		"adversary": "",
 		"id": "5942175dd78f563d01abc79c",

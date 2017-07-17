@@ -61,12 +61,17 @@ class AlienVaultOTXParserBot(Bot):
                 elif indicator["type"] == 'email':
                     event.add('source.account',
                               indicator["indicator"])
-                # URLs
+                # URLs/URIs, OTX URIs can contail both full url or only path
                 elif indicator["type"] in ['URL', 'URI']:
                     resource = indicator["indicator"] \
                         if '://' in indicator["indicator"] \
                         else 'http://' + indicator["indicator"]
-                    event.add('source.url', resource)
+                    uri_added = event.add('source.url', resource, raise_failure=False)
+                    if not uri_added:
+                        if indicator["type"] == 'URI':
+                            event.add('source.urlpath', indicator["indicator"])
+                        else:
+                            raise ValueError("Invalid value %r for URL hamonization type." % indicator["indicator"])
                 # CIDR
                 elif indicator["type"] in ['CIDR']:
                     event.add('source.network',
