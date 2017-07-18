@@ -279,7 +279,10 @@ class Bot(object):
         for level, message in self.__log_buffer:
             if self.logger:
                 getattr(self.logger, level)(message)
-            print(level.upper(), '-', message)
+            if level in ['WARNING', 'ERROR', 'critical']:
+                print(level.upper(), '-', message, file=sys.stderr)
+            else:
+                print(level.upper(), '-', message)
         self.__log_buffer = []
 
     def __check_bot_id(self, name: str):

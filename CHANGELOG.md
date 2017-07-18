@@ -3,6 +3,8 @@ CHANGELOG
 
 1.1.0
 -----
+### Tools
+- `intelmqctl start` prints bot's error messages if it failed to start
 
 1.0.0.rc2 Release candidate
 ---------------------------

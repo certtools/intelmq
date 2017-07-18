@@ -5,6 +5,8 @@ See the changelog for a full list of changes.
 
 1.1.0
 -----
+### Tools
+- `intelmqctl start` prints bot's error messages in stderr if it failed to start.
 
 1.0.0
 -----
