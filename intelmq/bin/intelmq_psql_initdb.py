@@ -55,7 +55,7 @@ def generate(harmonization_file=HARMONIZATION_CONF_FILE):
             dbtype = 'real'
         elif value['type'] == 'UUID':
             dbtype = 'UUID'
-        elif value['type'] == 'JSON':
+        elif value['type'] in ('JSON', 'JSONDict'):
             dbtype = 'json'
         else:
             raise ValueError('Unknown type %r.' % value['type'])

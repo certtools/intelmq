@@ -31,7 +31,8 @@ import intelmq.lib.utils as utils
 
 __all__ = ['Base64', 'Boolean', 'ClassificationType', 'DateTime', 'FQDN',
            'Float', 'Accuracy', 'GenericType', 'IPAddress', 'IPNetwork',
-           'Integer', 'JSON', 'LowercaseString', 'Registry', 'String', 'URL',
+           'Integer', 'JSON', 'JSONDict', 'LowercaseString', 'Registry',
+           'String', 'URL',
            ]
 
 
@@ -523,6 +524,44 @@ class JSON(GenericType):
     """
     JSON type.
 
+    Sanitation accepts any valid JSON objects.
+
+    Valid values are only unicode strings with JSON objects.
+    """
+
+    @staticmethod
+    def is_valid(value, sanitize=False):
+        if sanitize:
+            value = JSON().sanitize(value)
+
+        if not isinstance(value, str):
+            return False
+
+        try:
+            json.loads(value)
+        except ValueError:
+            return False
+
+        return True
+
+    @staticmethod
+    def sanitize(value):
+        if value is None:
+            return None
+        if isinstance(value, (str, bytes)):
+            sanitized = GenericType.sanitize(value)
+            if JSON.is_valid(sanitized):
+                return sanitized
+        try:
+            return GenericType().sanitize(json.dumps(value, sort_keys=True))
+        except TypeError:
+            return None
+
+
+class JSONDict(JSON):
+    """
+    JSONDict type.
+
     Sanitation accepts pythons dictionaries and JSON strings.
 
     Valid values are only unicode strings with JSON dictionaries.
@@ -531,7 +570,7 @@ class JSON(GenericType):
     @staticmethod
     def is_valid(value, sanitize=False):
         if sanitize:
-            value = JSON().sanitize(value)
+            value = JSONDict().sanitize(value)
 
         if not isinstance(value, str):
             return False
@@ -547,17 +586,25 @@ class JSON(GenericType):
         return False
 
     @staticmethod
+    def is_valid_subitem(value):
+        return True
+
+    @staticmethod
     def sanitize(value):
         if not value:
             return None
         if isinstance(value, (str, bytes)):
             sanitized = GenericType.sanitize(value)
-            if JSON.is_valid(sanitized):
+            if JSONDict.is_valid(sanitized):
                 return sanitized
         try:
             return GenericType().sanitize(json.dumps(value, sort_keys=True))
         except TypeError:
             return None
+
+    @staticmethod
+    def sanitize_subitem(value):
+        return value
 
 
 class LowercaseString(GenericType):

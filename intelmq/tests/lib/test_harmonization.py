@@ -266,11 +266,13 @@ class TestHarmonization(unittest.TestCase):
         """ Test JSON.is_valid with valid arguments. """
         self.assertTrue(harmonization.JSON.is_valid('{"foo": "bar"}',
                                                     sanitize=False))
+        self.assertTrue(harmonization.JSON.is_valid('"foo"',
+                                                    sanitize=False))
 
     def test_json_invalid(self):
         """ Test JSON.is_valid with invalid arguments. """
-        self.assertFalse(harmonization.JSON.is_valid('{}'))
-        self.assertFalse(harmonization.JSON.is_valid('"example"'))
+        self.assertFalse(harmonization.JSON.is_valid('{'))
+        self.assertFalse(harmonization.JSON.is_valid('["foo", ]'))
         self.assertFalse(harmonization.JSON.is_valid(b'{"foo": 1}',
                                                      sanitize=False))
         self.assertFalse(harmonization.JSON.is_valid({"foo": "bar"},
@@ -284,6 +286,29 @@ class TestHarmonization(unittest.TestCase):
                                                     sanitize=True))
         self.assertTrue(harmonization.JSON.is_valid(b'{"foo": "bar"}',
                                                     sanitize=True))
+
+    def test_jsondict_valid(self):
+        """ Test JSONDict.is_valid with valid arguments. """
+        self.assertTrue(harmonization.JSONDict.is_valid('{"foo": "bar"}',
+                                                        sanitize=False))
+
+    def test_jsondict_invalid(self):
+        """ Test JSONDict.is_valid with invalid arguments. """
+        self.assertFalse(harmonization.JSONDict.is_valid('{}'))
+        self.assertFalse(harmonization.JSONDict.is_valid('"example"'))
+        self.assertFalse(harmonization.JSONDict.is_valid(b'{"foo": 1}',
+                                                         sanitize=False))
+        self.assertFalse(harmonization.JSONDict.is_valid({"foo": "bar"},
+                                                         sanitize=False))
+
+    def test_jsondict_sanitize(self):
+        """ Test JSONDict.sanitize with valid arguments. """
+        self.assertTrue(harmonization.JSONDict.is_valid({"foo": "bar"},
+                                                        sanitize=True))
+        self.assertTrue(harmonization.JSONDict.is_valid('{"foo": "bar"}',
+                                                        sanitize=True))
+        self.assertTrue(harmonization.JSONDict.is_valid(b'{"foo": "bar"}',
+                                                        sanitize=True))
 
     def test_lowercasestring_valid(self):
         """ Test LowercaseString.is_valid with valid arguments. """

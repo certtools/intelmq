@@ -3,10 +3,20 @@ CHANGELOG
 
 1.1.0
 -----
+### Core
+- Subitems in fields of type `JSONDict` (see below) can be accessed directly. E.g. you can do:
+  event['extra.foo'] = 'bar'
+  event['extra.foo'] # gives 'bar'
+  It is still possible to set and get the field as whole, however this may be removed or changed in the future:
+  event['extra'] = '{"foo": "bar"}'
+  event['extra'] # gives '{"foo": "bar"}'
 
 ### Bots
 #### Collectors
 - Mail: New parameters; `sent_from`: filter messages by sender, `sent_to`: filter messages by recipient
+
+### Harmonization
+- Renamed `JSON` to `JSONDict` and added a new type `JSON`. `JSONDict` saves data internally as JSON, but acts like a dictionary. `JSON` accepts any valid JSON.
 
 ### Requirements
 - Requests is no longer a listed as dependency of the core. For depending bots the requirement is noted in their REQUIREMENTS.txt file

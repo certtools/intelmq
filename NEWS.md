@@ -5,6 +5,8 @@ See the changelog for a full list of changes.
 
 1.1.0
 -----
+### Configuration
+A new harmonization type `JSONDict` has been added specifically for the `extra` field. It is highly recommended to change the type of this field.
 
 1.0.0
 -----
