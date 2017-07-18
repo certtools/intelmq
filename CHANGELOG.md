@@ -3,6 +3,8 @@ CHANGELOG
 
 1.1.0
 -----
+### Requirements
+- Requests is no longer a listed as dependency of the core. For depending bots the requirement is noted in their REQUIREMENTS.txt file
 
 1.0.0.rc2 Release candidate
 ---------------------------
