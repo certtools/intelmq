@@ -7,11 +7,11 @@
 
 ## General remarks
 
-By default all of the bots are started when you start the whole botnet, however there is a possibility to 
-*disable* a bot. This means that the bot will not start every time you start the botnet, but you can start 
-and stop the bot if you specify the bot explicitly. To disable a bot, add the following to your 
-`runtime.conf`: `"enabled": false`. Be aware that this is **not** a normal parameter (like the others 
-described in this file). It is set outside of the `parameters` object in `runtime.conf`. Check the 
+By default all of the bots are started when you start the whole botnet, however there is a possibility to
+*disable* a bot. This means that the bot will not start every time you start the botnet, but you can start
+and stop the bot if you specify the bot explicitly. To disable a bot, add the following to your
+`runtime.conf`: `"enabled": false`. Be aware that this is **not** a normal parameter (like the others
+described in this file). It is set outside of the `parameters` object in `runtime.conf`. Check the
 [User-Guide](./User-Guide.md) for an example.
 
 There are two different types of parameters: The initialization parameters are need to start the bot. The runtime parameters are needed by the bot itself during runtime.
@@ -71,6 +71,8 @@ This configuration resides in the file `runtime.conf` in your intelmq's configur
 
 **HTTP parameters**: Common URL fetching parameters used in multiple collectors
 
+* `http_timeout_sec`: A tuple of floats or only one float describing the timeout of the http connection. Can be a tuple of two floats (read and connect timeout) or just one float (applies for both timeouts). The default is 30 seconds in default.conf, if not given no timeout is used. See also https://requests.readthedocs.io/en/master/user/advanced/#timeouts
+* `http_timeout_max_tries`: An integer depciting how often a connection is retried, when a timeout occured. Defaults to 3 in default.conf.
 * `http_username`: username for basic authentication.
 * `http_password`: password for basic authentication.
 * `http_proxy`: proxy to use for http
@@ -79,8 +81,6 @@ This configuration resides in the file `runtime.conf` in your intelmq's configur
 * `http_verify_cert`: path to trusted CA bundle or directory, `false` to ignore verifying SSL certificates,  or `true` (default) to verify SSL certificates
 * `ssl_client_certificate`: SSL client certificate to use.
 * `http_header`: HTTP request headers
-* `http_timeout`: Seconds for read and connect timeout. Can be one float (applies for both timeouts) or a tuple of two floats. Default: 60 seconds. See also https://requests.readthedocs.io/en/master/user/advanced/#timeouts
-
 
 
 ### Generic URL Fetcher
@@ -116,10 +116,11 @@ This configuration resides in the file `runtime.conf` in your intelmq's configur
 
 * **Feed parameters** (see above)
 * **HTTP parameters** (see above)
-* `http_url`: location of HTTP streaming resource
 * `strip_lines`: boolean, if single lines should be stripped (removing whitespace from the beginning and the end of the line)
 
 If the stream is interrupted, the connection will be aborted using the timeout parameter. Then, an error will be thrown and rate_limit applies if not null.
+The parameter `http_timeout_max_tries` is of no use in this collector.
+
 
 * * *
 
@@ -238,6 +239,7 @@ If the stream is interrupted, the connection will be aborted using the timeout p
 * `attachment_regex`: regular expression of an attachment in the ticket
 * `unzip_attachment`: whether to unzip a found attachment
 
+The parameter `http_timeout_max_tries` is of no use in this collector.
 * * *
 
 ### XMPP collector
@@ -355,11 +357,12 @@ Lines starting with `'#'` will be ignored. Headers won't be interpreted.
 
 #### Configuration parameters
 
- * `"columns"`: A list of strings or a string of comma-separated values with field names. The names must match the harmonization's field names. E.g. 
+ * `"columns"`: A list of strings or a string of comma-separated values with field names. The names must match the harmonization's field names. Strings starting with `extra.` will be written into the Extra-Object of the DHO. E.g. 
    ```json
    [
         "",
-        "source.fqdn"
+        "source.fqdn",
+        "extra.http_host_header"
     ],
     ```
  * `"column_regex_search"`: Optional. A dictionary mapping field names (as given per the columns parameter) to regular expression. The field is evaulated using `re.search`. Eg. to get the ASN out of `AS1234` use: `{"source.asn": "[0-9]*"}`.
@@ -410,22 +413,6 @@ See the README.md
 #### Configuration Parameters:
 
 FIXME
-
-* * *
-
-### CERT.AT Contact
-
-#### Information:
-* `name:` certat-contact
-* `lookup:` https
-* `public:` yes
-* `cache (redis db):` none
-* `description:` https://contacts.cert.at offers an IP address to national CERT contact (and cc) mapping. See https://contacts.cert.at for more info.
-
-#### Configuration Parameters:
-
-* `filter`: (true/false) act as a a filter for AT.
-* `overwrite_cc`: set to true if you want to overwrite any potentially existing cc fields in the event.
 
 * * *
 
@@ -656,6 +643,22 @@ If the rule is a string, a regex-search is performed, also for numeric values (`
 
 * * *
 
+### National CERT contact lookup by CERT.AT
+
+#### Information:
+* `name:` `national_cert_contact_certat`
+* `lookup:` https
+* `public:` yes
+* `cache (redis db):` none
+* `description:` https://contacts.cert.at offers an IP address to national CERT contact (and cc) mapping. See https://contacts.cert.at for more info.
+
+#### Configuration Parameters:
+
+* `filter`: (true/false) act as a a filter for AT.
+* `overwrite_cc`: set to true if you want to overwrite any potentially existing cc fields in the event.
+
+* * *
+
 ### Reverse DNS
 
 #### Information:
@@ -708,7 +711,11 @@ Sources:
 
 #### Configuration Parameters:
 
-FIXME
+* `query_ripe_db_asn`: Query for IPs at `http://rest.db.ripe.net/abuse-contact/%s.json`, default `true`
+* `query_ripe_db_ip`: Query for ASNs at `http://rest.db.ripe.net/abuse-contact/as%s.json`, default `true`
+* `query_ripe_stat_asn`: Query for ASNs at `https://stat.ripe.net/data/abuse-contact-finder/data.json?resource=%s`, default `true`
+* `query_ripe_stat_ip`: Query for IPs at `https://stat.ripe.net/data/abuse-contact-finder/data.json?resource=%s`, default `true`
+* `mode`: either `append` (default) or `replace`
 
 * * *
 
