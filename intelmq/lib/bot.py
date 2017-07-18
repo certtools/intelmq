@@ -715,6 +715,4 @@ class CollectorBot(Bot):
 
 
 class Parameters(object):
-
-    def get(self, parameter, default=None):
-        return getattr(self, parameter) if hasattr(self, parameter) else default
+    pass

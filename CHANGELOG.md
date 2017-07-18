@@ -3,6 +3,9 @@ CHANGELOG
 
 1.1.0
 -----
+### Bots
+#### Collectors
+- Mail: New parameters; `sent_from`: filter messages by sender, `sent_to`: filter messages by recipient
 
 1.0.0.rc2 Release candidate
 ---------------------------

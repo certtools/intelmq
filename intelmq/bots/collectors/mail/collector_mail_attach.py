@@ -22,7 +22,9 @@ class MailAttachCollectorBot(CollectorBot):
                               self.parameters.mail_user,
                               self.parameters.mail_password,
                               self.parameters.mail_ssl)
-        emails = mailbox.messages(folder=self.parameters.folder, unread=True, sent_from=self.parameters.get("sent_from"))
+        emails = mailbox.messages(folder=self.parameters.folder, unread=True,
+                                  sent_to=getattr(self.parameters, "sent_to", None),
+                                  sent_from=getattr(self.parameters, "sent_from", None))
 
         if emails:
             for uid, message in emails:
