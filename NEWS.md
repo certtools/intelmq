@@ -7,6 +7,7 @@ See the changelog for a full list of changes.
 -----
 ### Tools
 - `intelmqctl start` prints bot's error messages in stderr if it failed to start.
+- `intelmqctl check` checks if all keys in the packaged defaults.conf are present in the current configuration.
 
 1.0.0
 -----

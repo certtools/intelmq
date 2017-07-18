@@ -838,6 +838,12 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             self.logger.error('Fatal errors occurred.')
             return retval
 
+        self.logger.info('Checking defaults configuration.')
+        with open(pkg_resources.resource_filename('intelmq', 'etc/defaults.conf')) as fh:
+            defaults = json.load(fh)
+        keys = set(defaults.keys()) - set(files[DEFAULTS_CONF_FILE].keys())
+        self.logger.error("Keys missing in your 'defaults.conf' file: %r", keys)
+
         self.logger.info('Checking runtime configuration.')
         http_proxy = files[DEFAULTS_CONF_FILE].get('http_proxy')
         https_proxy = files[DEFAULTS_CONF_FILE].get('https_proxy')

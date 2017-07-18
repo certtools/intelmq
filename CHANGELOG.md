@@ -5,6 +5,7 @@ CHANGELOG
 -----
 ### Tools
 - `intelmqctl start` prints bot's error messages if it failed to start
+- `intelmqctl check` checks for defaults.conf completeness
 
 1.0.0.rc2 Release candidate
 ---------------------------
