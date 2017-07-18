@@ -13,6 +13,9 @@ CHANGELOG
 
 1.0.0.rc2 Release candidate
 ---------------------------
+### Core
+- use SIGTERM instead of SIGINT to stop bots (#981)
+
 ### Harmonization
 - leading dots in FQDNs are rejected and removed in sanitation (#1022, #1030)
 

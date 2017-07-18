@@ -79,6 +79,7 @@ class Bot(object):
             signal.signal(signal.SIGHUP, self.__handle_sighup_signal)
             # system calls should not be interrupted, but restarted
             signal.siginterrupt(signal.SIGHUP, False)
+            signal.signal(signal.SIGTERM, self.__handle_sigterm_signal)
         except Exception as exc:
             if self.parameters.error_log_exception:
                 self.logger.exception('Bot initialization failed.')
@@ -88,6 +89,14 @@ class Bot(object):
 
             self.stop()
             raise
+
+    def __handle_sigterm_signal(self, signum: int, stack: Optional[object]):
+        """
+        Calles when a SIGTERM is received. Stops the bot.
+        """
+        self.logger.info("Received SIGTERM.")
+        self.stop(exitcode=0)
+        del self
 
     def __handle_sighup_signal(self, signum: int, stack: Optional[object]):
         """
