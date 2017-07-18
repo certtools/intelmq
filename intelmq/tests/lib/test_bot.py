@@ -40,5 +40,5 @@ class TestBot(test.BotTestCase, unittest.TestCase):
         self.assertLogMatches(levelname='DEBUG', pattern='test')
 
 
-if __name__ == '__main__':  # pragma: no cover  # pragma: no cover
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

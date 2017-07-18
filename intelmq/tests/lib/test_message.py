@@ -608,5 +608,5 @@ class TestMessageFactory(unittest.TestCase):
             event.update({'source.asn': 'AS1'})
 
 
-if __name__ == '__main__':  # pragma: no cover  # pragma: no cover
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()
