@@ -3,14 +3,21 @@ CHANGELOG
 
 1.1.0
 -----
+
 ### Bots
 #### Collectors
 - Mail: New parameters; `sent_from`: filter messages by sender, `sent_to`: filter messages by recipient
+
+### Requirements
+- Requests is no longer a listed as dependency of the core. For depending bots the requirement is noted in their REQUIREMENTS.txt file
 
 1.0.0.rc2 Release candidate
 ---------------------------
 ### Harmonization
 - leading dots in FQDNs are rejected and removed in sanitation (#1022, #1030)
+
+### Bots
+- shadowserver parser Accessible-SMB: smb_implant is converted to bool
 
 1.0.0.rc1 Release candidate
 ---------------------------
