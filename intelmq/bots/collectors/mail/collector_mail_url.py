@@ -26,9 +26,6 @@ class MailURLCollectorBot(CollectorBot):
         self.chunk_replicate_header = getattr(self.parameters,
                                               'chunk_replicate_header', None)
 
-        print("ZDE")
-        quit()
-
     def process(self):
         mailbox = imbox.Imbox(self.parameters.mail_host,
                               self.parameters.mail_user,
