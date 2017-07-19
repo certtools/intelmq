@@ -3,6 +3,11 @@ CHANGELOG
 
 1.1.0
 -----
+
+### Bots
+#### Collectors
+- Mail: New parameters; `sent_from`: filter messages by sender, `sent_to`: filter messages by recipient
+
 ### Requirements
 - Requests is no longer a listed as dependency of the core. For depending bots the requirement is noted in their REQUIREMENTS.txt file
 

@@ -26,12 +26,17 @@ class MailURLCollectorBot(CollectorBot):
         self.chunk_replicate_header = getattr(self.parameters,
                                               'chunk_replicate_header', None)
 
+        print("ZDE")
+        quit()
+
     def process(self):
         mailbox = imbox.Imbox(self.parameters.mail_host,
                               self.parameters.mail_user,
                               self.parameters.mail_password,
                               self.parameters.mail_ssl)
-        emails = mailbox.messages(folder=self.parameters.folder, unread=True)
+        emails = mailbox.messages(folder=self.parameters.folder, unread=True,
+                                  sent_to=getattr(self.parameters, "sent_to", None),
+                                  sent_from=getattr(self.parameters, "sent_from", None))
 
         if emails:
             for uid, message in emails:
