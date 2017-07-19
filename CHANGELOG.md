@@ -15,6 +15,7 @@ CHANGELOG
 ---------------------------
 ### Core
 - use SIGTERM instead of SIGINT to stop bots (#981)
+- Fixes a thrown FileNotFound exception when stopping bots started with `intelmqctl run ...`
 
 ### Harmonization
 - leading dots in FQDNs are rejected and removed in sanitation (#1022, #1030)
