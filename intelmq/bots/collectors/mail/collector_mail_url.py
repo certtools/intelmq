@@ -31,7 +31,9 @@ class MailURLCollectorBot(CollectorBot):
                               self.parameters.mail_user,
                               self.parameters.mail_password,
                               self.parameters.mail_ssl)
-        emails = mailbox.messages(folder=self.parameters.folder, unread=True)
+        emails = mailbox.messages(folder=self.parameters.folder, unread=True,
+                                  sent_to=getattr(self.parameters, "sent_to", None),
+                                  sent_from=getattr(self.parameters, "sent_from", None))
 
         if emails:
             for uid, message in emails:
@@ -40,6 +42,8 @@ class MailURLCollectorBot(CollectorBot):
                         not re.search(self.parameters.subject_regex,
                                       re.sub("\r\n\s", " ", message.subject))):
                     continue
+
+                erroneous = False  # If errors occured this will be set to true.
 
                 for body in message.body['plain']:
                     match = re.search(self.parameters.url_regex, str(body))
@@ -50,12 +54,27 @@ class MailURLCollectorBot(CollectorBot):
                         url = url.strip()
 
                         self.logger.info("Downloading report from %r.", url)
-                        resp = requests.get(url=url,
-                                            auth=self.auth, proxies=self.proxy,
-                                            headers=self.http_header,
-                                            verify=self.http_verify_cert,
-                                            cert=self.ssl_client_cert,
-                                            timeout=self.http_timeout)
+                        timeoutretries = 0
+                        resp = None
+                        while timeoutretries < self.http_timeout_max_tries and resp is None:
+                            try:
+                                resp = requests.get(url=url,
+                                                    auth=self.auth, proxies=self.proxy,
+                                                    headers=self.http_header,
+                                                    verify=self.http_verify_cert,
+                                                    cert=self.ssl_client_cert,
+                                                    timeout=self.http_timeout_sec)
+
+                            except requests.exceptions.Timeout:
+                                timeoutretries += 1
+                                self.logger.warn("Timeout whilst downloading the report.")
+
+                        if resp is None and timeoutretries >= self.http_timeout_max_tries:
+                            self.logger.error("Request timed out %i times in a row. " %
+                                              timeoutretries)
+                            erroneous = True
+                            # The download timed out too often, leave the Loop.
+                            continue
 
                         if resp.status_code // 100 != 2:
                             raise ValueError('HTTP response status code was {}.'
@@ -74,7 +93,12 @@ class MailURLCollectorBot(CollectorBot):
                         # so other instances watching this mailbox will still
                         # check it.
                         mailbox.mark_seen(uid)
-                self.logger.info("Email report read.")
+
+                if not erroneous:
+                    self.logger.info("Email report read.")
+                else:
+                    self.logger.error("Email report read with errors, the report was not processed.")
+
         mailbox.logout()
 
 

@@ -13,6 +13,7 @@ import signal
 import sys
 import time
 import traceback
+import types
 
 from intelmq import (DEFAULT_LOGGING_PATH, DEFAULTS_CONF_FILE,
                      HARMONIZATION_CONF_FILE, PIPELINE_CONF_FILE,
@@ -562,6 +563,14 @@ class ParserBot(Bot):
         for line in csv.DictReader(io.StringIO(raw_report)):
             yield line
 
+    def parse_json(self, report: dict):
+        """
+        A basic JSON parser
+        """
+        raw_report = utils.base64_decode(report.get("raw"))
+        for line in json.loads(raw_report):
+            yield line
+
     def parse(self, report: dict):
         """
         A generator yielding the single elements of the data.
@@ -573,6 +582,9 @@ class ParserBot(Bot):
         Override for your use or use an existing parser, e.g.::
 
             parse = ParserBot.parse_csv
+
+        You should do that for recovering lines too.
+            recover_line = ParserBot.recover_line_csv
 
         """
         for line in utils.base64_decode(report.get("raw")).splitlines():
@@ -604,8 +616,14 @@ class ParserBot(Bot):
             if not line:
                 continue
             try:
-                # filter out None
-                events = list(filter(bool, self.parse_line(line, report)))
+                value = self.parse_line(line, report)
+                if value is None:
+                    continue
+                elif type(value) is list or isinstance(value, types.GeneratorType):
+                    # filter out None
+                    events = list(filter(bool, value))
+                else:
+                    events = [value]
             except Exception:
                 self.logger.exception('Failed to parse line.')
                 self.__failed.append((traceback.format_exc(), line))
@@ -642,6 +660,14 @@ class ParserBot(Bot):
         writer.writeheader()
         writer.writerow(line)
         return out.getvalue()
+
+    def recover_line_json(self, line: dict):
+        """
+        Reverse of parse for JSON pulses.
+
+        Recovers a fully functional report with only the problematic pulse.
+        """
+        return json.dumps(line)
 
 
 class CollectorBot(Bot):

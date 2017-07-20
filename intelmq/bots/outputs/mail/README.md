@@ -20,5 +20,15 @@ Celá akce přípravy emailu musí proběhnout jako transakce odolná proti výp
 
 Problém: mají být emaily anglicky nebo česky? Mohou být kombinované html + txt?
 
-
 Aby byla odolná proti výpadku, vymažu seznam událostí (tj. frontu abuse-mailer-queue ?) asi až potom, co projde příkaz, který posílá zprávu na smtp, tj. body 3 a 4 jsou prohozeny.
+
+Configuration:
+"bcc": [], # the list of e-mails to be put in the bcc field for every mail
+"emailFrom": "",
+"mail_template": "", # file containing the body of the mail
+"redis_cache_db": "",
+"redis_cache_host": "",
+"redis_cache_port": "",
+"redis_cache_ttl": "",
+"smtp_server": "mailer",
+"testing_to": "" # if a value is used, all the mails are sent TO THIS E-MAIL ONLY (with a subject line informing who the mail was intended for originally) and bcc field gets ignored
