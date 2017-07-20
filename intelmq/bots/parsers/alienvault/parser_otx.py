@@ -20,14 +20,14 @@ HASHES = {
 
 
 class AlienVaultOTXParserBot(ParserBot):
-    #import ipdb; ipdb.set_trace()
     parse = ParserBot.parse_json
     recover_line = ParserBot.recover_line_json
-    
+
     def parse_line(self, pulse, report):
         additional_pulse = {"author": pulse['author_name'],
                             "pulse": pulse['name']}
 
+        events = []
         for indicator in pulse["indicators"]:
             additional_indicator = {}
             event = self.new_event(report)
@@ -48,17 +48,23 @@ class AlienVaultOTXParserBot(ParserBot):
                 path = parse.urlparse(resource).path
                 if len(path) > 0:
                     event.add('source.url', resource)
+                # CIDR
+                elif indicator["type"] in ['CIDR']:
+                    event.add('source.network',
+                              indicator["indicator"])
+
+                # CVE
+                elif indicator["type"] in ['CVE']:
+                    additional_indicator['CVE'] = indicator["indicator"]
+                    # TODO: Process these IoCs: FilePath, Mutex
                 else:
-                    event.add('source.fqdn',
-                                indicator["indicator"])
+                    event.add('source.fqdn', indicator["indicator"])
             # IP addresses
             elif indicator["type"] in ['IPv4', 'IPv6']:
-                event.add('source.ip',
-                            indicator["indicator"])
+                event.add('source.ip', indicator["indicator"])
             # emails
             elif indicator["type"] == 'email':
-                event.add('source.account',
-                            indicator["indicator"])
+                event.add('source.account', indicator["indicator"])
             # URLs
             elif indicator["type"] in ['URL', 'URI']:
                 resource = indicator["indicator"] \
@@ -67,21 +73,31 @@ class AlienVaultOTXParserBot(ParserBot):
                 event.add('source.url', resource)
             # CIDR
             elif indicator["type"] in ['CIDR']:
-                event.add('source.network',
-                            indicator["indicator"])
+                event.add('source.network', indicator["indicator"])
 
             # CVE
             elif indicator["type"] in ['CVE']:
                 additional_indicator['CVE'] = indicator["indicator"]
                 # TODO: Process these IoCs: FilePath, Mutex
             else:
-                return
+                continue
 
+            # if pulse_key exists in the indicators use it
+            # else use id from pulse and add it as pulse_key
+            # same logic is followed by alienvault
+            if 'pulse_key' in indicator:
+                additional_indicator['pulse_key'] = indicator['pulse_key']
+            else:
+                additional_indicator['pulse_key'] = pulse['id']
             if 'tags' in pulse:
                 additional_indicator['tags'] = pulse['tags']
             if 'modified' in pulse:
-                additional_indicator['time_updated'] = \
-                    pulse["modified"][:-4] + "+00:00"
+                    if '.' in pulse["modified"]:
+                        additional_indicator['time_updated'] = \
+                            pulse["modified"][:-4] + "+00:00"
+                    else:
+                        additional_indicator['time_updated'] = \
+                            pulse["modified"] + ".00+00:00"
             if 'industries' in pulse:
                 additional_indicator['industries'] = pulse["industries"]
             if 'adversary' in pulse:
@@ -98,9 +114,9 @@ class AlienVaultOTXParserBot(ParserBot):
             event.add('extra', additional)
             event.add('classification.type', 'blacklist')
             event.add('time.source', indicator["created"][:-4] + "+00:00")
-            event.add("raw", json.dumps(indicator, sort_keys=True))            
-            return event]
-
+            event.add("raw", json.dumps(indicator, sort_keys=True))
+            events.append(event)
+        return events
 
 
 BOT = AlienVaultOTXParserBot
