@@ -144,7 +144,9 @@ The parameter `http_timeout_max_tries` is of no use in this collector.
 * `mail_ssl`: whether the mail account uses SSL (default: `true`)
 * `folder`: folder in which to look for mails (default: `INBOX`)
 * `subject_regex`: regular expression to look for a subject
-* `url_regex`: regular expression of the feed URL to search for in the mail body 
+* `url_regex`: regular expression of the feed URL to search for in the mail body
+* `sent_from`: filter messages by sender
+* `sent_to`: filter messages by recipient
 
 * * *
 
@@ -357,7 +359,7 @@ Lines starting with `'#'` will be ignored. Headers won't be interpreted.
 
 #### Configuration parameters
 
- * `"columns"`: A list of strings or a string of comma-separated values with field names. The names must match the harmonization's field names. Strings starting with `extra.` will be written into the Extra-Object of the DHO. E.g. 
+ * `"columns"`: A list of strings or a string of comma-separated values with field names. The names must match the harmonization's field names. E.g. 
    ```json
    [
         "",

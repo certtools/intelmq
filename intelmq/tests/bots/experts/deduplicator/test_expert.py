@@ -68,6 +68,22 @@ class TestDeduplicatorExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, msg)
 
+    def test_bypass(self):
+        self.sysconfig = {"redis_cache_ttl": "86400",
+                          "filter_type": "whitelist",
+                          "filter_keys": "source.ip",
+                          "bypass": True}
+        msg = self.new_event()
+        msg.add('source.ip', '127.0.0.8')
+        msg_hash = msg.hash()
+        self.cache.set(msg_hash, 'hash')
+        self.cache.expire(msg_hash, 3600)
+
+        self.input_message = msg
+        self.run_bot()
+        self.assertMessageEqual(0, msg)
+
+
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()

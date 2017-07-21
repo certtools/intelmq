@@ -32,7 +32,7 @@ class RestAPIOutputBot(Bot):
                               headers=self.http_header,
                               verify=self.http_verify_cert,
                               cert=self.ssl_client_cert,
-                              timeout=self.http_timeout,
+                              timeout=self.http_timeout_sec,
                               **kwargs)
         r.raise_for_status()
         self.logger.debug('Sent message.')

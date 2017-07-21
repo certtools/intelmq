@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # -*- coding: utf-8 -*-
 import unittest
 import json
@@ -102,5 +101,5 @@ class TestHarmonization(unittest.TestCase):
         self.assertSetEqual(intelmq_harmonization, idea_expert)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

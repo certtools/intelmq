@@ -20,5 +20,5 @@ Bash completion for `intelmqctl` and `intelmqdump` can be set up with the follow
 
 ## Installation
 
-1. Copy intelmq.sh to '/etc/bash_completion.d/'
+1. Copy from ./contrib/bash-completion/intelmq.sh to '/etc/bash_completion.d/'
 2. Logout and login to be able to use the bash completion.

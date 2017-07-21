@@ -5,6 +5,7 @@ Utilities for testing intelmq bots.
 The BotTestCase can be used as base class for unittests on bots. It includes
 some basic generic tests (logged errors, correct pipeline setup).
 """
+import copy
 import io
 import json
 import logging
@@ -23,8 +24,7 @@ from intelmq import CONFIG_DIR, PIPELINE_CONF_FILE, RUNTIME_CONF_FILE
 
 __all__ = ['BotTestCase']
 
-BOT_CONFIG = {"logging_level": "DEBUG",
-              "http_proxy": None,
+BOT_CONFIG = {"http_proxy": None,
               "https_proxy": None,
               "broker": "pythonlist",
               "rate_limit": 0,
@@ -62,7 +62,10 @@ def mocked_config(bot_id='test-bot', src_name='', dst_names=(), sysconfig={}):
 
 def mocked_logger(logger):
     def log(name, log_path=None, log_level=None, stream=None, syslog=None):
-        return logger
+        # Return a copy as the bot may modify the logger and we should always return the intial logger
+        logger_new = copy.copy(logger)
+        logger_new.setLevel(log_level)
+        return logger_new
     return log
 
 
@@ -121,6 +124,7 @@ class BotTestCase(object):
         cls.pipe = None
         cls.sysconfig = {}
         cls.use_cache = False
+        cls.allowed_warning_count = 0
         cls.allowed_error_count = 0  # allows dumping of some lines
 
         cls.set_bot()
@@ -172,7 +176,7 @@ class BotTestCase(object):
                                            )
 
         logger = logging.getLogger(self.bot_id)
-        logger.setLevel("DEBUG")
+        logger.setLevel("INFO")
         console_formatter = logging.Formatter(utils.LOG_FORMAT)
         console_handler = logging.StreamHandler(self.log_stream)
         console_handler.setFormatter(console_formatter)
@@ -207,23 +211,29 @@ class BotTestCase(object):
             if self.default_input_message:  # None for collectors
                 self.input_queue = [self.default_input_message]
 
-    def run_bot(self, iterations: int=1):
+    def run_bot(self, iterations: int=1, error_on_pipeline: bool=False, prepare=True):
         """
         Call this method for actually doing a test run for the specified bot.
 
         Parameters:
             iterations: Bot instance will be run the given times, defaults to 1.
         """
-        self.prepare_bot()
+        if prepare:
+            self.prepare_bot()
         with mock.patch('intelmq.lib.utils.load_configuration',
                         new=self.mocked_config):
             with mock.patch('intelmq.lib.utils.log', self.mocked_log):
                 for run in range(iterations):
-                    self.bot.start(error_on_pipeline=False,
+                    self.bot.start(error_on_pipeline=error_on_pipeline,
                                    source_pipeline=self.pipe,
                                    destination_pipeline=self.pipe)
         self.loglines_buffer = self.log_stream.getvalue()
         self.loglines = self.loglines_buffer.splitlines()
+
+        """ Test if all pipes are created with correct names. """
+        pipenames = ["{}-input", "{}-input-internal", "{}-output"]
+        self.assertSetEqual({x.format(self.bot_id) for x in pipenames},
+                            set(self.pipe.state.keys()))
 
         """ Test if report has required fields. """
         if self.bot_type == 'collector':
@@ -287,12 +297,6 @@ class BotTestCase(object):
         """Getter for the input queue of this bot. Use in TestCase scenarios"""
         return [utils.decode(text) for text
                 in self.pipe.state["%s-output" % self.bot_id]]
-
-
-#        """ Test if all pipes are created with correct names. """
-        pipenames = ["{}-input", "{}-input-internal", "{}-output"]
-        self.assertSetEqual({x.format(self.bot_id) for x in pipenames},
-                            set(self.pipe.state.keys()))
 
     def test_bot_name(self):
         """
@@ -391,7 +395,11 @@ class BotTestCase(object):
         for logline in self.loglines:
             fields = utils.parse_logline(logline)
 
-            if levelname == fields["log_level"] and re.match(pattern, fields["message"]):
+            #  Exception tracebacks
+            if isinstance(fields, str):
+                if levelname == "ERROR" and re.match(pattern, fields):
+                    break
+            elif levelname == fields["log_level"] and re.match(pattern, fields["message"]):
                 break
         else:
             raise ValueError('No matching logline found.')

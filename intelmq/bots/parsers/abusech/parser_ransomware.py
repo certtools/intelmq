@@ -40,7 +40,8 @@ class AbuseCHRansomwaretrackerParserBot(Bot):
                         ev.add('classification.type', 'c&c')
                         ev.add('time.source', nrow[0] + ' UTC', overwrite=True)
                         ev.add('status', nrow[5])
-                        ev.add('source.ip', nrow[7])
+                        if nrow[7] != '0.0.0.0':
+                            ev.add('source.ip', nrow[7])
                         ev.add('raw', ','.join(nrow))
                         ev.add('source.fqdn', nrow[3], raise_failure=False)
                         ev.add('source.url', nrow[4], raise_failure=False)
