@@ -13,7 +13,6 @@ REQUIRES = [
     'python-termstyle>=0.1.10',
     'pytz>=2014.1',
     'redis>=2.10.3',
-    'requests>=2.2.0',
 ]
 if sys.version_info < (3, 5):
     REQUIRES.append('typing')

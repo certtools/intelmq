@@ -25,7 +25,7 @@ class JSONParserBot(Bot):
                                                    harmonization=self.harmonization,
                                                    default_type='Event')
             event = self.new_event(report)
-            dict.update(event, new_event)
+            event.update(new_event)
             if 'raw' not in event:
                 event['raw'] = line
             self.send_message(event)

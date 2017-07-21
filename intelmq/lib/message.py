@@ -154,9 +154,7 @@ class Message(dict):
             value: A valid value as defined in the harmonization
             sanitize: Sanitation of harmonization type will be called before validation
                 (default: True)
-            force: Deprecated, use overwrite (default: False)
             overwrite: Overwrite an existing value if it already exists (default: False)
-            ignore: List or tuple of values to ignore, deprecated (default: ())
             raise_failure: If a intelmq.lib.exceptions.InvalidValue should be raised for
                 invalid values (default: True). If false, the return parameter will be
                 False in case of invalid values.
@@ -173,21 +171,16 @@ class Message(dict):
                 raise_failure is True.
         """
         overwrite = force or overwrite
-        if force:
-            warnings.warn('The force-argument is deprecated by overwrite and will be removed in'
-                          '1.0.', DeprecationWarning)
         if not overwrite and key in self:
             raise exceptions.KeyExists(key)
 
         if value is None or value in ["", "-", "N/A"]:
+            if overwrite and key in self:
+                del self[key]
             return
 
         if not self.__is_valid_key(key):
             raise exceptions.InvalidKey(key)
-
-        if ignore:
-            warnings.warn('The ignore-argument will be removed in 1.0.',
-                          DeprecationWarning)
 
         try:
             if value in ignore:
@@ -216,21 +209,15 @@ class Message(dict):
         super(Message, self).__setitem__(key, value)
         return True
 
-    def update(self, key: str, value: str, sanitize: bool=True):
-        warnings.warn('update(...) will be changed to dict.update() in 1.0. '
-                      'Use change(key, value, sanitize) instead.',
-                      DeprecationWarning)
-        return self.change(key, value, sanitize)
+    def update(self, other: dict):
+        for key, value in other.items():
+            if not self.add(key, value, sanitize=False, raise_failure=False, overwrite=True):
+                self.add(key, value, sanitize=True, overwrite=True)
 
     def change(self, key: str, value: str, sanitize: bool=True):
         if key not in self:
             raise exceptions.KeyNotExists(key)
         return self.add(key, value, overwrite=True, sanitize=sanitize)
-
-    def contains(self, key: str):
-        warnings.warn('The contains-method will be removed in 1.0.',
-                      DeprecationWarning)
-        return key in self
 
     def finditems(self, keyword: str):
         for key, value in super(Message, self).items():
@@ -249,9 +236,6 @@ class Message(dict):
     def deep_copy(self):
         return MessageFactory.unserialize(MessageFactory.serialize(self),
                                           harmonization={self.__class__.__name__.lower(): self.harmonization_config})
-
-    def __unicode__(self):
-        return self.serialize()
 
     def __str__(self):
         return self.serialize()

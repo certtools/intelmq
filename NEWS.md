@@ -3,15 +3,34 @@ NEWS
 
 See the changelog for a full list of changes.
 
+1.1.0
+-----
+
+1.0.0
+-----
+
 ### Configuration
-* For renamed bots, see the changelog for a complete list.
 * Many bots have new/change parameters
-* Syntax of runtime.conf has changed
-* system.conf and startup.conf have been dropped entirely, use defaults.conf and runtime.conf instead
 * Many bots have been renamed/moved or deleted. Please read the Bots section in the changelog and upgrade your configuration accordingly.
 
-in development
---------------
+1.0.0.rc1 Release candidate
+---------------------------
+### Configuration
+- `bots.experts.ripencc_abuse_contact` now has the two additional parameters `query_ripe_stat_asn` and `query_ripe_stat_ip` instead of `query_ripe_stat`. The old parameter will be supported until version 1.1. An additional parameter `mode` has been introduced. See the bot's documentation for more details.
+- `bots.experts.certat_contact` has been renamed to `bots.experts.national_cert_contact_certat` (#995)
+- `bots.collectors.ftp` has been dropped
+- system.conf and startup.conf have been dropped entirely, use defaults.conf and runtime.conf instead
+
+1.0.0.dev8
+----------
+### Configuration
+- `http_timeout` has been renamed to `http_timeout_sec` and `http_timeout_max_tries` has been added.
+
+### Configuration
+Two new fields have been added to `defaults.conf` which are expected by the bots:
+- `"log_processed_messages_count": 500` and
+- `'log_processed_messages_seconds": 900`
+Configure them in your setup and optionally adapt the values to your needs.
 
 ### Postgres databases
 Use the following statement carefully to upgrade your database.
@@ -139,6 +158,11 @@ UPDATE events
    SET "malware.hash.sha1" = lower("malware.hash.sha1")
    WHERE "malware.hash.sha1" IS NOT NULL;
 ```
+
+1.0.0.dev5
+----------
+* Syntax of runtime.conf has changed
+
 
 1.0.0.dev1
 ----------

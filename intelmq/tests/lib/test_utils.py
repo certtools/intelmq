@@ -71,22 +71,21 @@ class TestUtils(unittest.TestCase):
     def test_file_logger(self):
         """Tests if a logger for a file can be generated with log()."""
 
-        with tempfile.NamedTemporaryFile() as handle:
+        with tempfile.NamedTemporaryFile(suffix=".log", mode='w+') as handle:
             filename = handle.name
-            name = os.path.split(filename)[-1]
+            name = os.path.splitext(os.path.split(filename)[-1])[0]
             logger = utils.log(name, log_path=tempfile.tempdir,
                                stream=io.StringIO())
 
             logger.info(LINES['spare'][0])
             logger.error(LINES['spare'][1])
             logger.critical(LINES['spare'][2])
-
             handle.seek(0)
             file_lines = handle.readlines()
 
             line_format = [line.format(name) for line in LINES['long']]
             for ind, line in enumerate(file_lines):
-                self.assertRegex(line, line_format[ind])
+                self.assertRegex(line.strip(), line_format[ind])
 
     def test_stream_logger(self):
         """Tests if a logger for a stream can be generated with log()."""

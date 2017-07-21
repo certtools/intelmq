@@ -17,7 +17,7 @@ import types
 
 from intelmq import (DEFAULT_LOGGING_PATH, DEFAULTS_CONF_FILE,
                      HARMONIZATION_CONF_FILE, PIPELINE_CONF_FILE,
-                     RUNTIME_CONF_FILE, SYSTEM_CONF_FILE)
+                     RUNTIME_CONF_FILE)
 from intelmq.lib import exceptions, utils
 import intelmq.lib.message as libmessage
 from intelmq.lib.pipeline import PipelineFactory
@@ -31,6 +31,7 @@ class Bot(object):
     """ Not to be reset when initialized again on reload. """
     __current_message = None
     __message_counter = 0
+    __message_counter_start = None
     # Bot is capable of SIGHUP delaying
     sighup_delay = True
 
@@ -54,18 +55,11 @@ class Bot(object):
             self.__log_buffer.append(('debug', 'Library path: %r.' % __file__))
 
             self.__load_defaults_configuration()
-            self.__load_system_configuration()
 
             self.__check_bot_id(bot_id)
             self.__bot_id = bot_id
 
-            if self.parameters.logging_handler == 'syslog':
-                syslog = self.parameters.logging_syslog
-            else:
-                syslog = False
-            self.logger = utils.log(self.__bot_id, syslog=syslog,
-                                    log_path=self.parameters.logging_path,
-                                    log_level=self.parameters.logging_level)
+            self.__init_logger()
         except Exception:
             self.__log_buffer.append(('critical', traceback.format_exc()))
             self.stop()
@@ -265,6 +259,9 @@ class Bot(object):
         except BaseException:
             pass
 
+        if self.__message_counter:
+            self.logger.info("Processed %d messages since last logging.", self.__message_counter)
+
         self.__disconnect_pipelines()
 
         if self.logger:
@@ -336,8 +333,13 @@ class Bot(object):
 
             self.logger.debug("Sending message.")
             self.__message_counter += 1
-            if self.__message_counter % 500 == 0:
-                self.logger.info("Processed %s messages.", self.__message_counter)
+            if not self.__message_counter_start:
+                self.__message_counter_start = datetime.datetime.now()
+            if self.__message_counter % self.parameters.log_processed_messages_count == 0 or \
+               datetime.datetime.now() - self.__message_counter_start > self.parameters.log_processed_messages_seconds:
+                self.logger.info("Processed %d messages since last logging.", self.__message_counter)
+                self.__message_counter = 0
+                self.__message_counter_start = datetime.datetime.now()
 
             raw_message = libmessage.MessageFactory.serialize(message)
             self.__destination_pipeline.send(raw_message)
@@ -415,33 +417,37 @@ class Bot(object):
             setattr(self.parameters, option, value)
             self.__log_configuration_parameter("defaults", option, value)
 
-    def __load_system_configuration(self):
-        if os.path.exists(SYSTEM_CONF_FILE):
-            self.__log_buffer.append(('warning', "system.conf is deprecated "
-                                      "and will be removed in 1.0. "
-                                      "Use defaults.conf instead!"))
-            self.__log_buffer.append(('debug', "Loading system configuration from %r."
-                                      "" % SYSTEM_CONF_FILE))
-            config = utils.load_configuration(SYSTEM_CONF_FILE)
-
-            for option, value in config.items():
-                setattr(self.parameters, option, value)
-                self.__log_configuration_parameter("system", option, value)
+        self.parameters.log_processed_messages_seconds = datetime.timedelta(seconds=self.parameters.log_processed_messages_seconds)
 
     def __load_runtime_configuration(self):
         self.logger.debug("Loading runtime configuration from %r.", RUNTIME_CONF_FILE)
         config = utils.load_configuration(RUNTIME_CONF_FILE)
+        reinitialize_logging = False
 
         if self.__bot_id in list(config.keys()):
             params = config[self.__bot_id]
             self.run_mode = params.get('run_mode', 'stream')
-            if 'parameters' in params:
-                params = params['parameters']
-            else:
-                self.logger.warning('Old runtime configuration format found.')
-            for option, value in params.items():
+            for option, value in params['parameters'].items():
                 setattr(self.parameters, option, value)
                 self.__log_configuration_parameter("runtime", option, value)
+                if option.startswith('logging_'):
+                    reinitialize_logging = True
+
+        if reinitialize_logging:
+            self.logger.handlers = []  # remove all existing handlers
+            self.__init_logger()
+
+    def __init_logger(self):
+        """
+        Initialize the logger.
+        """
+        if self.parameters.logging_handler == 'syslog':
+            syslog = self.parameters.logging_syslog
+        else:
+            syslog = False
+        self.logger = utils.log(self.__bot_id, syslog=syslog,
+                                log_path=self.parameters.logging_path,
+                                log_level=self.parameters.logging_level)
 
     def __load_pipeline_configuration(self):
         self.logger.debug("Loading pipeline configuration from %r.", PIPELINE_CONF_FILE)
@@ -491,20 +497,15 @@ class Bot(object):
         instance.start()
 
     def set_request_parameters(self):
-        if hasattr(self.parameters, 'http_ssl_proxy'):
-            self.logger.warning("Parameter 'http_ssl_proxy' is deprecated and will be removed in "
-                                "version 1.0!")
-            if not hasattr(self.parameters, 'https_proxy'):
-                self.parameters.https_proxy = self.parameters.http_ssl_proxy
-
         self.http_header = getattr(self.parameters, 'http_header', {})
         self.http_verify_cert = getattr(self.parameters, 'http_verify_cert',
                                         True)
         self.ssl_client_cert = getattr(self.parameters,
                                        'ssl_client_certificate', None)
 
-        if hasattr(self.parameters, 'http_username') and hasattr(
-                self.parameters, 'http_password'):
+        if (hasattr(self.parameters, 'http_username') and
+            hasattr(self.parameters, 'http_password') and
+                self.parameters.http_username):
             self.auth = (self.parameters.http_username,
                          self.parameters.http_password)
         else:
@@ -521,7 +522,10 @@ class Bot(object):
         else:
             self.proxy = None
 
-        self.http_timeout = getattr(self.parameters, 'http_timeout', 60)
+        self.http_timeout_sec = getattr(self.parameters, 'http_timeout_sec', None)
+        self.http_timeout_max_tries = getattr(self.parameters, 'http_timeout_max_tries', 1)
+        # Be sure this is always at least 1
+        self.http_timeout_max_tries = self.http_timeout_max_tries if self.http_timeout_max_tries >= 1 else 1
 
         self.http_header['User-agent'] = self.parameters.http_user_agent
 
@@ -632,7 +636,7 @@ class ParserBot(Bot):
 
         for exc, line in self.__failed:
             report_dump = report.copy()
-            report_dump.update('raw', self.recover_line(line))
+            report_dump.change('raw', self.recover_line(line))
             self._dump_message(exc, report_dump)
 
         self.acknowledge_message()

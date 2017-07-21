@@ -36,6 +36,10 @@ class ElasticsearchOutputBot(Bot):
                                     'elastic_port', '9200')
         self.elastic_index = getattr(self.parameters,
                                      'elastic_index', 'intelmq')
+        self.http_username = getattr(self.parameters,
+                                     'http_username', None)
+        self.http_password = getattr(self.parameters,
+                                     'http_password', None)
         self.elastic_doctype = getattr(self.parameters,
                                        'elastic_doctype', 'events')
         self.replacement_char = getattr(self.parameters,
@@ -45,8 +49,11 @@ class ElasticsearchOutputBot(Bot):
         if isinstance(self.flatten_fields, str):
             self.flatten_fields = self.flatten_fields.split(',')
 
-        self.es = Elasticsearch([{'host': self.elastic_host,
-                                  'port': self.elastic_port}])
+        kwargs = {}
+        if self.http_username and self.http_password:
+            kwargs = {'http_auth': (self.http_username, self.http_password)}
+        self.es = Elasticsearch([{'host': self.elastic_host, 'port': self.elastic_port}], **kwargs)
+
         if not self.es.indices.exists(self.elastic_index):
             self.es.indices.create(index=self.elastic_index, ignore=400)
 

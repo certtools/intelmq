@@ -3,9 +3,13 @@ import os
 import unittest
 
 import intelmq.lib.test as test
-import psycopg2
 from intelmq.bots.experts.generic_db_lookup.expert import \
     GenericDBLookupExpertBot
+
+
+if os.environ.get('INTELMQ_TEST_DATABASES'):
+    import psycopg2
+
 
 INPUT1 = {"__type": "Event",
           "classification.identifier": "zeus",

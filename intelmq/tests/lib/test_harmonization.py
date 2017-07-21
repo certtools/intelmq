@@ -219,7 +219,7 @@ class TestHarmonization(unittest.TestCase):
     def test_fqdn_valid(self):
         """ Test FQDN.is_valid with valid arguments. """
         self.assertTrue(harmonization.FQDN.is_valid('ex-am.ple.example'))
-        self.assertTrue(harmonization.FQDN.is_valid('intelmq.org'))
+        self.assertTrue(harmonization.FQDN.is_valid('example.org'))
         self.assertTrue(harmonization.FQDN.is_valid('sub_sub2.example.net'))
         self.assertTrue(harmonization.FQDN.is_valid('xn--1-0ga.at'))
         self.assertTrue(harmonization.FQDN.is_valid('212.156.101.43.00-ebgp-atakoy1-k.301-fra-'
@@ -232,6 +232,7 @@ class TestHarmonization(unittest.TestCase):
         self.assertFalse(harmonization.FQDN.is_valid('ö1.at'))
         self.assertFalse(harmonization.FQDN.is_valid('n/a'))
         self.assertFalse(harmonization.FQDN.is_valid('.'))
+        self.assertFalse(harmonization.FQDN.is_valid('.example.com'))
 
     def test_fqdn_sanitize(self):
         """ Test FQDN.sanitize with valid arguments. """
@@ -244,6 +245,8 @@ class TestHarmonization(unittest.TestCase):
         self.assertTrue(harmonization.FQDN.is_valid('ö1.at', sanitize=True))
         self.assertTrue(harmonization.FQDN.is_valid('212.156.101.43.00-ebgp-atakoy1-k.301-fra-'
                                                     'col-1.statik.turktelekom.com.tr',
+                                                    sanitize=True))
+        self.assertTrue(harmonization.FQDN.is_valid('.example.com',
                                                     sanitize=True))
 
     def test_fqdn_sanitize_invalid(self):
@@ -333,6 +336,7 @@ class TestHarmonization(unittest.TestCase):
     def test_url_invalid(self):
         """ Test URL.is_valid with invalid arguments. """
         self.assertFalse(harmonization.URL.is_valid('example.com'))
+        self.assertFalse(harmonization.URL.is_valid(' http://example.com'))
         self.assertFalse(harmonization.URL.is_valid('file:///etc/hosts'))
 
     def test_url_sanitize(self):
@@ -343,6 +347,10 @@ class TestHarmonization(unittest.TestCase):
                                                    sanitize=True))
         self.assertTrue(harmonization.URL.is_valid('file:///etc/hosts',
                                                    sanitize=True))
+        self.assertTrue(harmonization.URL.is_valid(' http://example.com',
+                                                   sanitize=True))
+        self.assertEqual(harmonization.URL.sanitize(' http://example.com'),
+                         'http://example.com')
 
     def test_url_sanitize_invalid(self):
         """ Test URL.is_valid with valid arguments. """
