@@ -919,6 +919,8 @@ compromised_website = {
         ('extra.', 'system', validate_to_none),
         ('extra.', 'detected_since', validate_to_none),
         ('extra.', 'server', validate_to_none),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
     ],
     'constant_fields': {
         'classification.type': 'compromised',
