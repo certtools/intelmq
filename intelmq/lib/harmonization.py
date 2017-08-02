@@ -135,6 +135,34 @@ class Boolean(GenericType):
 
 
 class ClassificationType(GenericType):
+    """
+    Type of classification.type field.
+
+    Only these values are allowed:
+     * spam
+     * malware
+     * botnet drone
+     * ransomware
+     * dga domain
+     * malware configuration
+     * c&c
+     * scanner
+     * exploit
+     * brute-force
+     * ids alert
+     * defacement
+     * compromised
+     * backdoor
+     * ddos
+     * dropzone
+     * phishing
+     * proxy
+     * vulnerable service
+     * blacklist
+     * other
+     * unknown
+     * test
+    """
 
     allowed_values = ['spam',
                       'malware',
@@ -180,6 +208,15 @@ class ClassificationType(GenericType):
 
 
 class DateTime(GenericType):
+    """
+    Date and time type for timestamps.
+
+    Valid values are timestamps with time zone and in the format '%Y-%m-%dT%H:%M:%S+00:00'.
+    Invalid are missing times and missing timezone information (UTC).
+    Microseconds are also allowed.
+
+    Sanitation normalizes the timezone to UTC, which is the only allowed timezone.
+    """
 
     @staticmethod
     def is_valid(value, sanitize=False):
@@ -561,6 +598,11 @@ class JSON(GenericType):
 
 
 class LowercaseString(GenericType):
+    """
+    Like string, but only allows lower case characters.
+
+    Sanitation lowers all characters.
+    """
 
     @staticmethod
     def is_valid(value, sanitize=False):
@@ -583,6 +625,9 @@ class LowercaseString(GenericType):
 
 
 class String(GenericType):
+    """
+    Any non-empty string without leading or trailing whitespace.
+    """
 
     @staticmethod
     def is_valid(value, sanitize=False):
@@ -663,6 +708,11 @@ class URL(GenericType):
 
 
 class UppercaseString(GenericType):
+    """
+    Like string, but only allows upper case characters.
+
+    Sanitation uppers all characters.
+    """
 
     @staticmethod
     def is_valid(value, sanitize=False):
