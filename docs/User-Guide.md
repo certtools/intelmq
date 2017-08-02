@@ -6,7 +6,7 @@ For upgrade instructions, see [UPGRADING.md](UPGRADING.md).
   * [Where to get help?](#help)
   * [Configure services](#configure-services)
   * [Configuration](#configuration)
-    * [System Configuration](#system-configuration)
+    * [System Configuration](#system-configuration-defaults)
     * [Pipeline Configuration](#pipeline-configuration)
     * [Defaults Configuration](#defaults-configuration)
         * [Error Handling](#error-handling)
