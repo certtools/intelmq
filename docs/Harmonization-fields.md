@@ -107,8 +107,43 @@ Sanitation accepts string 'true' and 'false' and integers 0 and 1.
 
 ### ClassificationType
 
+Type of classification.type field.
+
+Only these values are allowed:
+ * spam
+ * malware
+ * botnet drone
+ * ransomware
+ * dga domain
+ * malware configuration
+ * c&c
+ * scanner
+ * exploit
+ * brute-force
+ * ids alert
+ * defacement
+ * compromised
+ * backdoor
+ * ddos
+ * dropzone
+ * phishing
+ * proxy
+ * vulnerable service
+ * blacklist
+ * other
+ * unknown
+ * test
+
 
 ### DateTime
+
+Date and time type for timestamps.
+
+Valid values are timestamps with time zone and in the format '%Y-%m-%dT%H:%M:%S+00:00'.
+Invalid are missing times and missing timezone information (UTC).
+Microseconds are also allowed.
+
+Sanitation normalizes the timezone to UTC, which is the only allowed timezone.
 
 
 ### FQDN
@@ -165,6 +200,10 @@ Valid values are only unicode strings with JSON dictionaries.
 
 ### LowercaseString
 
+Like string, but only allows lower case characters.
+
+Sanitation lowers all characters.
+
 
 ### Registry
 
@@ -175,6 +214,8 @@ RIPE-NCC and RIPENCC are normalized to RIPE.
 
 
 ### String
+
+Any non-empty string without leading or trailing whitespace.
 
 
 ### URL
@@ -188,6 +229,10 @@ Valid values must have the host (network location part).
 
 
 ### UppercaseString
+
+Like string, but only allows upper case characters.
+
+Sanitation uppers all characters.
 
 
 
