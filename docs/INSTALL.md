@@ -7,8 +7,9 @@
    * [openSUSE Leap 42.2](#opensuse-leap-422)
 3. [Installation](#installation)
    * [Native packages](#native-packages)
-   * [From PyPi](#from-pypi)
-   * [From the repository](#from-the-repository)
+   * [With pip](#with-pip)
+     * [From PyPi](#from-pypi)
+     * [From the repository](#from-the-repository)
 4. [Afterwards](#afterwards)
 
 
@@ -110,7 +111,19 @@ Currently, these operating systems are supported by the packages:
 
 Please report any errors or improvements, thanks!
 
-## From PyPi
+## With pip
+
+pip automatically installs the dependencies of the core-library if they are not installed yet. Some bots have additional dependencies which are mentioned in their documentation. They have also a `REQUIREMENTS` file (in their source directory) which you can use for `pip3 install -r /path/to/REQUIREMENTS`.
+
+Please note that the pip3 installation method does not (and cannot) create /opt/intelmq, as described in [Issue #189](/certtools/intelmq/issues/819).
+As workaround you need to move /opt/intelmq from the site-packages directory to / manually.
+The location of this directory varies, it could be `/usr/lib/python3.4/site-packages`, `/usr/local/lib/python3.5/dist-packages/` or similar.
+For example:
+```bash
+mv /usr/lib/python3.4/site-packages/opt/intelmq /opt/
+```
+
+### From PyPi
 
 ```bash
 sudo -s
@@ -122,22 +135,7 @@ chmod -R 0770 /opt/intelmq
 chown -R intelmq.intelmq /opt/intelmq
 ```
 
-Please note that the PyPi / pip3 installation method does not create /opt/intelmq, as described in [Issue #189](/certtools/intelmq/issues/819).
-As workaround you need to move /opt/intelmq from the site-packages directory to / manually.
-The location of this directory varies, it could be `/usr/lib/python3.4/site-packages`, `/usr/local/lib/python3.5/dist-packages/` or similar.
-For example:
-```bash
-mv /usr/lib/python3.4/site-packages/opt/ /
-```
-
-## From the repository
-
-The `REQUIREMENTS` files define a list of python packages and versions, which are necessary to run most components of IntelMQ. The defined (minimal) versions are recommendations. Some bots have additional dependencies which are mentioned in their documentation and their own `REQUIREMENTS` file (in their source directory).
-
-If your Python version is lower than 3.5 you additionally need the "typing" package:
-```bash
-pip3 install typing
-```
+### From the repository
 
 Clone the repository if not already done:
 ```bash
@@ -149,7 +147,6 @@ If you have a local repository and you have or will do local modification, consi
 ```
 sudo -s
 
-pip3 install -r REQUIREMENTS
 pip3 install .
 
 useradd -d /opt/intelmq -U -s /bin/bash intelmq
