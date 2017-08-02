@@ -138,7 +138,6 @@ sudo -s
 
 pip3 install intelmq
 
-mkdir /opt/intelmq
 useradd -d /opt/intelmq -U -s /bin/bash intelmq
 chmod -R 0770 /opt/intelmq
 chown -R intelmq.intelmq /opt/intelmq
