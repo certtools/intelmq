@@ -35,7 +35,8 @@ cleanup()
 fetch_and_install()
 {
   cd "$TMP_DIR"
-  curl -s -O https://internet2.us/static/latest.bz2
+  #-k parameter added for ignoring wrong certificate on the server, which prevents it from being successfully downloaded and expert then fails
+  curl -sk -O https://internet2.us/static/latest.bz2
   bunzip2 -q -c latest.bz2 >tor_nodes.dat
   mv -f tor_nodes.dat "$DEST_FILE"
 }
