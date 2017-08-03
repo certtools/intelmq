@@ -3,6 +3,9 @@ CHANGELOG
 
 1.0.0.rc2 Release candidate
 ---------------------------
+### Core
+- Fixes a thrown FileNotFound exception when stopping bots started with `intelmqctl run ...`
+
 ### Harmonization
 - leading dots in FQDNs are rejected and removed in sanitation (#1022, #1030)
 
