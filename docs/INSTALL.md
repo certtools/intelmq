@@ -117,7 +117,7 @@ Currently, these operating systems are supported by the packages:
 * openSUSE Tumbleweed
 * Ubuntu 16.04
 
-Please report any errors or improvements, thanks!
+Please report any errors or improvements at https://github.com/certtools/intelmq/issues Thanks!
 
 ## With pip
 
