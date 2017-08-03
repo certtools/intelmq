@@ -290,17 +290,17 @@ destination queues (except outputs). But multiple bots can write to the same pip
 
 Every bot runs in a separate process. A bot is identifiable by a *bot id*.
 
-Currently only one instance (i.e. *with the same bit id*) of a bot can run at the same time. Concepts for multiprocessing are being discussed, see this issue: [Multiprocessing per queue is not supported #186](https://github.com/certtools/intelmq/issues/186).
+Currently only one instance (i.e. *with the same bot id*) of a bot can run at the same time. Concepts for multiprocessing are being discussed, see this issue: [Multiprocessing per queue is not supported #186](https://github.com/certtools/intelmq/issues/186).
 Currently you can run multiple processes of the same bot (with *different bot ids*) in parallel.
 
-Example: multiple gethostbyname bots (with different bot ids) may run in parallel, with the same input queue and sending to the same output queue.
+Example: multiple gethostbyname bots (with different bot ids) may run in parallel, with the same input queue and sending to the same output queue. Note that the bot providing the input queue **must** have the ``load_balance`` option set to ``true``.
 
 ### Web interface: IntelMQ Manager
 
 IntelMQ has a tool called IntelMQ Manager that gives to user an easy way to 
 configure all pipelines with bots that your team needs. For beginners, it's recommended to
 use the IntelMQ Manager to become acquainted with the functionalities and concepts.
-The IntelMQ Manager has all possibilities of intelmqctl tool and has a graphical interface for runtime and pipeline configuration.
+The IntelMQ Manager offers some of the possibilities of the intelmqctl tool and has a graphical interface for runtime and pipeline configurations.
 
 See the [IntelMQ Manager repository](https://github.com/certtools/intelmq-manager).
 
@@ -402,7 +402,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl
 
 The "botnet" represents all currently configured bots which are explicitly enabled. It is, in essence, the graph (pipeline.conf) of the bots which are connected together via their input source queues and destination queues. 
 
-To get an overview which bots are running, use `intelmqctl status` or use the IntelMQ Manager. Set `"enabled": true` in the runtime configuration to add a bot to the botnet. By default, bots will be configured as `"enabled": false` therefore, such a bot does not belong to the botnet (by default). See [Bots](Bots.md) for more details on configuration.
+To get an overview which bots are running, use `intelmqctl status` or use the IntelMQ Manager. Set `"enabled": true` in the runtime configuration to add a bot to the botnet. By default, bots will be configured as `"enabled": true`. See [Bots](Bots.md) for more details on configuration.
 
 Disabled bots can still be started explicitly using `intelmqctl start <bot_id>`, but will remain in the state `disabled` if stopped (and not be implicitly enabled by the `start` command). They are not started by `intelmqctl start` in analogy to the behavior of widely used initialization systems.
 
