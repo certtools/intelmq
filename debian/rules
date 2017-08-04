@@ -1,6 +1,9 @@
 #!/usr/bin/make -f
 
+CODENAME := $(shell lsb_release -cs)
 DOCS_DIR := debian/intelmq/usr/share/doc/intelmq
+export INTELMQ_SKIP_REDIS=1
+export INTELMQ_SKIP_INTERNET=1
 
 # Compile list of bot READMEs
 BOTROOT := intelmq/bots
@@ -15,7 +18,12 @@ BOTDOCS := $(foreach bot,$(BOTS),$(wildcard $(bot)/*.md))
 export PYBUILD_NAME=intelmq
 %:
 	dh $@ --with python3 --without python2 --buildsystem=pybuild --with quilt --with systemd
-	#dh_installinit # breaks
+
+build:
+	if [ $(CODENAME) = 'xenial' ] || [ $(CODENAME) = 'jessie' ]; then\
+		patch -p1 setup.py debian/patches/fix-dnspython-name.patch;\
+	fi
+	dh build --with python3 --without python2 --buildsystem=pybuild --with quilt --with systemd
 
 override_dh_auto_build:
 
