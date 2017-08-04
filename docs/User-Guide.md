@@ -576,7 +576,7 @@ The following lists external github repositories which you might consult for exa
   * [certat repository](https://github.com/certat/intelmq)
   * [intevation's Mailgen](https://github.com/Intevation/intelmq-mailgen)
   
-If you came up with another solution for integration, we'd like to hear from you! Please reach us on the [intelmq-users list](https://lists.cert.at/cgi-bin/mailman/listinfo/intelmq-users).
+If you came up with another solution for integration, we'd like to hear from you! Please reach out to us on the [intelmq-users list](https://lists.cert.at/cgi-bin/mailman/listinfo/intelmq-users).
 
 # Frequently Asked Questions
 
