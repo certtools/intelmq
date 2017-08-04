@@ -29,7 +29,7 @@ For upgrade instructions, see [UPGRADING.md](UPGRADING.md).
     * [Upgrade](#upgrade-1)
     * [Restore Configurations](#restore-configurations)
   * [Uninstall](#uninstall)
-  * [Integration with ticket systems, etc.](#integration)
+  * [Integration with ticket systems, etc.](#integration-with-ticket-systems-etc)
   * [Frequently Asked Questions](#frequently-asked-questions)
   * [Additional Information](#additional-information)
     * [Performance Tests](#performance-tests)
@@ -565,16 +565,16 @@ rm -rf /opt/intelmq
 ```
 
 # Integration with ticket systems, etc.
-First of all, IntelMQ is a message (event) processing system: it collects feeds, processes them , enriches them , filters them and then stores them somewhere. It does this in a composable , data flow oriented fashion. Now, if you want to integrate IntelMQ with your ticket system or some other system, you need to send its output to somewhere where your ticket system or other services can pick  up IntelMQ's data. This could be a database, splunk, or you could send you events directly via email to a ticket system.
+First of all, IntelMQ is a message (event) processing system: it collects feeds, processes them, enriches them, filters them and then stores them somewhere or sends them to another system. It does this in a composable, data flow oriented fashion, based on single events. There are no aggregation or grouping features. Now, if you want to integrate IntelMQ with your ticket system or some other system, you need to send its output to somewhere where your ticket system or other services can pick up IntelMQ's data. This could be a database, splunk, or you could send you events directly via email to a ticket system.
 
 Different users came up with different solutions for this, each of them fitting their own organisation. Hence these solutions are not part of the core IntelMQ repository. 
-CERT.at uses a postgresql DB (postgres output bot) and has a small tool `intelmqcli` which fetches the events in the postgresql DB which are marked as "new" and will group them and send them out via the RT ticket system.
-Others use a tool called `mailgen`.
+  * CERT.at uses a postgresql DB (postgres output bot) and has a small tool `intelmqcli` which fetches the events in the postgresql DB which are marked as "new" and will group them and send them out via the RT ticket system.
+  * Others, including BSI, use a tool called `intelmq-mailgen`. It sends E-Mails to the recipients, optionally PGP-signed with defined text-templates, CSV formatted attachments with grouped events and generated ticket numbers.
 
 The following lists external github repositories which you might consult for examples on how to integrate IntelMQ into your workflow:
 
   * [certat repository](https://github.com/certat/intelmq)
-  * [intevation's Mailgen](https://github.com/Intevation/intelmq-mailgen)
+  * [Intevation's Mailgen](https://github.com/Intevation/intelmq-mailgen)
   
 If you came up with another solution for integration, we'd like to hear from you! Please reach out to us on the [intelmq-users list](https://lists.cert.at/cgi-bin/mailman/listinfo/intelmq-users).
 
