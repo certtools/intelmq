@@ -61,7 +61,7 @@ class AlienVaultOTXParserBot(Bot):
                 elif indicator["type"] == 'email':
                     event.add('source.account',
                               indicator["indicator"])
-                # URLs/URIs, OTX URIs can contail both full url or only path
+                # URLs/URIs, OTX URIs can contain both full url or only path
                 elif indicator["type"] in ['URL', 'URI']:
                     resource = indicator["indicator"] \
                         if '://' in indicator["indicator"] \
