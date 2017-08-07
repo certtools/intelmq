@@ -6,11 +6,10 @@ For upgrade instructions, see [UPGRADING.md](UPGRADING.md).
   * [Where to get help?](#help)
   * [Configure services](#configure-services)
   * [Configuration](#configuration)
-    * [System Configuration](#system-configuration)
-    * [Pipeline Configuration](#pipeline-configuration)
-    * [Defaults Configuration](#defaults-configuration)
+    * [System Configuration](#system-configuration-defaults)
         * [Error Handling](#error-handling)
         * [Miscellaneous](#miscellaneous)
+    * [Pipeline Configuration](#pipeline-configuration)
     * [Runtime Configuration](#runtime-configuration)
     * [Harmonization Configuration](#harmonization-configuration)
   * [Utilities](#utilities)
@@ -89,44 +88,6 @@ We recommend `logging_level` `WARNING` for production environments and `INFO` if
 
 You can set these parameters per bot as well. The settings will take effect after the runtime configuration has been (re-)read (which is after loading the defaults configuration. See the intelmqctl documentation).
 
-## Pipeline Configuration
-
-This configuration is used by each bot to load the pipeline of associated source- and destination queues. Note that the IntelMQ Manager generates this configuration.
-
-**Template:**
-```
-{
-	...
-    "<bot ID>": {
-        "source-queue": "<source pipeline name>",
-        "destination-queues": [
-            "<first destination pipeline name>",
-            "<second destination pipeline name>",
-            ...
-        ]
-    },
-	...
-}
-```
-
-**Example:**
-```
-{
-	...
-    "malware-domain-list-parser": {
-        "source-queue": "malware-domain-list-parser-queue",
-        "destination-queues": [
-            "file-output-queue"
-        ]
-    },
-	...
-}
-```
-Note that a bot must only have one (input) source queue but may have multiple destination queues.
-
-More examples can be found at `intelmq/etc/pipeline.conf` directory in IntelMQ repository.
-
-
 #### Error Handling
 
 * **`error_log_message`** - in case of an error, this option will allow the bot to write the message (report or event) to the log file. Use the following values:
@@ -183,6 +144,43 @@ More examples can be found at `intelmq/etc/pipeline.conf` directory in IntelMQ r
 
 * **`http_verify_cert`** - defines if the bot will verify SSL certificates when performing HTTPS requests (e.g. bots/collectors/collector_http.py).
     * **`true/false`** - verify or not verify SSL certificates
+
+## Pipeline Configuration
+
+This configuration is used by each bot to load the pipeline of associated source- and destination queues. Note that the IntelMQ Manager generates this configuration.
+
+**Template:**
+```
+{
+	...
+    "<bot ID>": {
+        "source-queue": "<source pipeline name>",
+        "destination-queues": [
+            "<first destination pipeline name>",
+            "<second destination pipeline name>",
+            ...
+        ]
+    },
+	...
+}
+```
+
+**Example:**
+```
+{
+	...
+    "malware-domain-list-parser": {
+        "source-queue": "malware-domain-list-parser-queue",
+        "destination-queues": [
+            "file-output-queue"
+        ]
+    },
+	...
+}
+```
+Note that a bot must only have one (input) source queue but may have multiple destination queues.
+
+More examples can be found at `intelmq/etc/pipeline.conf` directory in IntelMQ repository.
 
 ## Runtime Configuration
 
