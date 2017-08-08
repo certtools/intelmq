@@ -1,0 +1,73 @@
+SieveModel: rules*=Rule ;
+
+Rule:
+  'if' condition=Condition '{'
+    actions*=Action[';']
+  '}'
+;
+
+// Condition: SingleCondition | ConditionList ;
+
+ConditionList:
+  combination=Combination '('
+    conditions+=SingleCondition[',']
+  ')'
+;
+
+Combination:
+  'allof'         // true if every single test in parenthesis are true (logical and)
+  | 'anyof'       // true if at least one of the single tests in parenthesis is true (logical or)
+;
+
+SingleCondition: key=STRING match=MatchRule ;
+
+MatchRule: StringMatchRule | NumericMatchRule ;
+
+StringMatchRule: match_type=StringMatchType value=Value;
+
+NumericMatchRule: match_type=NumericMatchType value=NUMBER;
+
+Value: SingleValue | ValueList ;
+
+SingleValue: value=STRING ;
+
+ValueList: '[' values+=SingleValue[','] ']' ;
+
+ExistMatchType:
+  ':exists',
+  | ':notexists'
+
+StringMatchType:
+  '=='           // compares two whole strings with each other
+  | '!='         // test for string inequality
+  | ':contains'        // sub-string match
+  | '=~'         // match strings according to regular expression
+  | '!~'         // inverse match with regular expression
+;
+
+NumericMatchType:
+  '=='          // equal
+  | '!='        // not equal
+  | '<'         // less than
+  | '<='        // less than or equal
+  | '>'         // greater than
+  | '>='        // greater than or equal
+
+;
+
+FilteringAction:
+  'drop' | 'keep'
+;
+
+ModificationAction:
+    'add' key '=' value|
+;
+
+Comment:
+  /(\/\/.*$)|(\/\*.*\*\/)/  // TODO: // line comments and /* block comments */, figure out the right regex
+
+  /* bla
+   bla bla
+   bla
+   */
+;
