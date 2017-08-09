@@ -16,7 +16,7 @@ import traceback
 
 from intelmq import (DEFAULT_LOGGING_PATH, DEFAULTS_CONF_FILE,
                      HARMONIZATION_CONF_FILE, PIPELINE_CONF_FILE,
-                     RUNTIME_CONF_FILE)
+                     RUNTIME_CONF_FILE, __version__)
 from intelmq.lib import exceptions, utils
 import intelmq.lib.message as libmessage
 from intelmq.lib.pipeline import PipelineFactory
@@ -46,11 +46,11 @@ class Bot(object):
         try:
             version_info = sys.version.splitlines()[0].strip()
             self.__log_buffer.append(('info',
-                                      '{} initialized with id {} and version '
-                                      '{} as process {}.'
-                                      ''.format(self.__class__.__name__,
-                                                bot_id, version_info,
-                                                os.getpid())))
+                                      '{bot} initialized with id {id} and intelmq {intelmq}'
+                                      ' and python {python} as process {pid}.'
+                                      ''.format(bot=self.__class__.__name__,
+                                                id=bot_id, python=version_info,
+                                                pid=os.getpid(), intelmq=__version__)))
             self.__log_buffer.append(('debug', 'Library path: %r.' % __file__))
 
             self.__load_defaults_configuration()
