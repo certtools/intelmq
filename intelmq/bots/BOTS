@@ -572,6 +572,13 @@
             "module": "intelmq.bots.experts.taxonomy.expert",
             "parameters": {}
         },
+	"Sievebot": {
+            "description": "Sievebot is the bot responsible to filter and modify intelMQ events.",
+            "module": "intelmq.bots.experts.sieve.expert",
+            "parameters": {
+	    	"file" :"/opt/intelmq/var/lib/bots/filter.sieve"
+            }
+        },
         "Tor Nodes": {
             "description": "Tor Nodes is the bot responsible to check if an IP is an Tor Exit Node.",
             "module": "intelmq.bots.experts.tor_nodes.expert",
