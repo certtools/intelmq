@@ -4,6 +4,7 @@ import argparse
 import importlib
 import json
 import os
+import re
 import signal
 import subprocess
 import time
@@ -12,7 +13,7 @@ import pkg_resources
 import psutil
 
 from intelmq import (DEFAULTS_CONF_FILE, PIPELINE_CONF_FILE, RUNTIME_CONF_FILE,
-                     VAR_RUN_PATH, BOTS_FILE)
+                     VAR_RUN_PATH, BOTS_FILE, HARMONIZATION_CONF_FILE)
 from intelmq.lib import utils
 from intelmq.lib.bot_debugger import BotDebugger
 from intelmq.lib.pipeline import PipelineFactory
@@ -819,7 +820,8 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         retval = 0
         # loading files and syntax check
         files = {DEFAULTS_CONF_FILE: None, PIPELINE_CONF_FILE: None,
-                 RUNTIME_CONF_FILE: None, BOTS_FILE: None}
+                 RUNTIME_CONF_FILE: None, BOTS_FILE: None,
+                 HARMONIZATION_CONF_FILE: None}
         self.logger.info('Reading configuration files.')
         for filename in files:
             try:
@@ -864,6 +866,23 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                          not isinstance(files[PIPELINE_CONF_FILE][bot_id]['source-queue'], str))):
                     self.logger.error('Misconfiguration: No source queue for %r.', bot_id)
                     retval = 1
+
+        self.logger.info('Checking harmoization configuration.')
+        for event_type, event_type_conf in files[HARMONIZATION_CONF_FILE].items():
+            for harm_type_name, harm_type in event_type_conf.items():
+                if "description" not in harm_type:
+                    self.logger.warn('Missing description for type %r.', harm_type_name)
+                if "type" not in harm_type:
+                    self.logger.error('Missing type for type %r.', harm_type_name)
+                    retval = 1
+                    continue
+                if "regex" in harm_type:
+                    try:
+                        re.compile(harm_type['regex'])
+                    except Exception as e:
+                        self.logger.error('Invalid regex for type %r: %r.', harm_type_name, str(e))
+                        retval = 1
+                        continue
 
         self.logger.info('Checking for bots.')
         for bot_id, bot_config in files[RUNTIME_CONF_FILE].items():
