@@ -194,7 +194,7 @@ class IntelMQProcessManager:
         log_bot_message('stopping', bot_id)
         proc = psutil.Process(int(pid))
         try:
-            proc.send_signal(signal.SIGINT)
+            proc.send_signal(signal.SIGTERM)
         except psutil.AccessDenied:
             log_bot_error('access denied', bot_id, 'STOP')
             return 'running'
