@@ -1,3 +1,8 @@
+/*
+ Metamodel (grammar) for the SieveExpertBot file format.
+ For details, see: https://github.com/igordejanovic/textX
+*/
+
 SieveModel: rules*=Rule ;
 
 Rule:
@@ -16,7 +21,7 @@ Condition:
 ;
 
 
-StringMatch: key=Key op=StringOperator value=Value;
+StringMatch: key=Key op=StringOperator value=StringValue;
 StringOperator:
   '=='           // compares two whole strings with each other
   | '!='         // test for string inequality
@@ -25,7 +30,7 @@ StringOperator:
   | '!~'         // inverse match with regular expression
 ;
 
-NumericMatch: key=Key op=NumericOperator value=NUMBER;
+NumericMatch: key=Key op=NumericOperator value=NumericValue;
 NumericOperator:
   '=='          // equal
   | '!='        // not equal
@@ -35,26 +40,25 @@ NumericOperator:
   | '>='        // greater than or equal
 ;
 
-ExistMatch: op=ExistOperator key=STRING;
+ExistMatch: op=ExistOperator key=Key;
 ExistOperator: ':exists' | ':notexists';
 
 Key: /[a-z_.]+/;
 
-Value: SingleValue | ValueList ;
-SingleValue: value=STRING ;
-ValueList: '[' values+=SingleValue[','] ']' ;
+StringValue: SingleStringValue | StringValueList ;
+SingleStringValue: value=STRING ;
+StringValueList: '[' values+=SingleStringValue[','] ']' ;
+
+NumericValue: SingleNumericValue | NumericValueList ;
+SingleNumericValue: value=NUMBER ;
+NumericValueList: '[' values+=SingleNumericValue[','] ']' ;
 
 
-Action: FilteringAction | AddAction | AddForceAction | ModifyAction | RemoveAction;
-
-FilteringAction:
-  'drop' | 'keep'
-;
-
-
-AddAction: 'add' key=Key '=' value=STRING;
-AddForceAction: 'add!' key=Key '=' value=STRING;
-ModifyAction: 'modify' key=Key '=' value=STRING;
+Action: action=DropAction | (action=AddAction | action=AddForceAction | action=ModifyAction | action=RemoveAction);
+DropAction: 'drop';
+AddAction: 'add' key=Key '=' value=STRING;              // add key/value without overwriting existing key
+AddForceAction: 'add!' key=Key '=' value=STRING;        // add key/value, overriding existing key
+ModifyAction: 'modify' key=Key '=' value=STRING;        // modify key/value, do not create if not exists
 RemoveAction: 'remove' key=Key;
 
 Comment:

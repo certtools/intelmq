@@ -1,3 +1,4 @@
 if (source.ip == '127.0.0.1') {
-  keep
+  add source.asn = '559'
 }
+

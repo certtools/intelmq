@@ -13,6 +13,13 @@ EXAMPLE_INPUT = {"__type": "Event",
                  "time.observation": "2017-01-01T00:00:00+00:00",
                  }
 
+EXAMPLE_OUTPUT = {"__type": "Event",
+                 "source.ip": "127.0.0.1",
+                 "source.abuse_contact": "abuse@example.com",
+                 "time.observation": "2017-01-01T00:00:00+00:00",
+                 "source.asn": 559
+                 }
+
 class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for SieveExpertBot.
@@ -33,7 +40,8 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
     def test_event(self):
         """ Test if correct Event has been produced. """
         self.run_bot()
-#        self.assertMessageEqual(0, EXAMPLE_REPORT)
+        event = self.get_output_queue()[0]
+        self.assertMessageEqual(0, EXAMPLE_OUTPUT)
 
 
 if __name__ == '__main__':  # pragma: no cover
