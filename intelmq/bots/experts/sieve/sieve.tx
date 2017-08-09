@@ -57,10 +57,8 @@ NumericValueList: '[' values+=SingleNumericValue[','] ']' ;
 Action: action=DropAction | (action=AddAction | action=AddForceAction | action=ModifyAction | action=RemoveAction);
 DropAction: 'drop';
 AddAction: 'add' key=Key '=' value=STRING;              // add key/value without overwriting existing key
-AddForceAction: 'add!' key=Key '=' value=STRING;        // add key/value, overriding existing key
+AddForceAction: 'add!' key=Key '=' value=STRING;        // add key/value, overwriting existing key
 ModifyAction: 'modify' key=Key '=' value=STRING;        // modify key/value, do not create if not exists
 RemoveAction: 'remove' key=Key;
 
-Comment:
-  /(\/\/.*$)|(\/\*.*\*\/)/  // TODO: // line comments and /* block comments */, figure out the right regex
-;
+Comment: /\/\/.*$/ ;

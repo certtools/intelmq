@@ -149,8 +149,9 @@ class SieveExpertBot(Bot):
 
     @staticmethod
     def process_action(action, event):
-        print("process action")
-        if action.__class__.__name__ == 'DropAction':
+        print("action " + action)
+        if action == 'drop':
+            print("drop that shit")
             return False
         elif action.__class__.__name__  == 'AddAction':
             if action.key not in event:
