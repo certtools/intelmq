@@ -57,7 +57,6 @@ class SieveExpertBot(Bot):
 
     @staticmethod
     def process_rule(rule, event):
-        print("process rule")
         match = SieveExpertBot.match_expression(rule.expr, event)
         keep = True
         if match:
@@ -69,7 +68,6 @@ class SieveExpertBot(Bot):
 
     @staticmethod
     def match_expression(expr, event):
-        print("match_expression")
         for conj in expr.conj:
             if SieveExpertBot.process_conjunction(conj, event):
                 return True
@@ -77,7 +75,6 @@ class SieveExpertBot(Bot):
 
     @staticmethod
     def process_conjunction(conj, event):
-        print("process_conjunction")
         for cond in conj.cond:
             if not SieveExpertBot.process_condition(cond, event):
                 return False
@@ -85,7 +82,6 @@ class SieveExpertBot(Bot):
 
     @staticmethod
     def process_condition(cond, event):
-        print("process_condition")
         match = cond.match
         if match.__class__.__name__ == 'ExistMatch':
             return SieveExpertBot.process_exist_match(match.key, event)
@@ -103,7 +99,6 @@ class SieveExpertBot(Bot):
 
     @staticmethod
     def process_string_match(key, op, value, event):
-        print("process_string_match")
         if key not in event:
             return False
 
@@ -117,9 +112,7 @@ class SieveExpertBot(Bot):
 
     @staticmethod
     def process_string_operator(lhs, op, rhs):
-        print("process_string_operator: %s %s %s" % (lhs, op, rhs))
         if op == '==':
-            print(lhs==rhs)
             return lhs == rhs
         elif op == '!=':
             return lhs != rhs
@@ -145,22 +138,21 @@ class SieveExpertBot(Bot):
 
     @staticmethod
     def process_numeric_operator(lhs, op, rhs):
-        return eval(lhs + op + rhs)
+        return eval(str(lhs) + op + str(rhs))
 
     @staticmethod
     def process_action(action, event):
-        print("action " + action)
+        print(type(event))
         if action == 'drop':
-            print("drop that shit")
             return False
         elif action.__class__.__name__  == 'AddAction':
             if action.key not in event:
-                event[action.key] = action.value
+                event.add(action.key, action.value)
         elif action.__class__.__name__ == 'AddForceAction':
-            event[action.key] = action.value
+            event.add(action.key, action.value, overwrite=True)
         elif action.__class__.__name__ == 'ModifyAction':
             if action.key in event:
-                event[action.key] = action.value
+                event.change(action.key, action.value)
         elif action.__class__.__name__ == 'RemoveAction':
             if action.key in event:
                 del event[action.key]

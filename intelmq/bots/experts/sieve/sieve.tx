@@ -7,7 +7,7 @@ SieveModel: rules*=Rule ;
 
 Rule:
   'if' expr=Expression '{'
-    actions*=Action[';']
+    actions*=Action
   '}'
 ;
 
@@ -34,10 +34,10 @@ NumericMatch: key=Key op=NumericOperator value=NumericValue;
 NumericOperator:
   '=='          // equal
   | '!='        // not equal
-  | '<'         // less than
   | '<='        // less than or equal
-  | '>'         // greater than
   | '>='        // greater than or equal
+  | '<'         // less than
+  | '>'         // greater than
 ;
 
 ExistMatch: op=ExistOperator key=Key;
