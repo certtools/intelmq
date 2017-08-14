@@ -204,7 +204,10 @@ class IntelMQProcessManager:
                 if self.__status_process(pid):
                     log_bot_error('running', bot_id)
                     return 'running'
-                self.__remove_pidfile(bot_id)
+                try:
+                    self.__remove_pidfile(bot_id)
+                except FileNotFoundError:  # Bot was running interactively and file has been removed already
+                    pass
                 log_bot_message('stopped', bot_id)
                 return 'stopped'
 
