@@ -12,7 +12,7 @@ Harmonization field names
 |Destination|destination.account|[String](#string)|An account name or email address, which has been identified to relate to the destination of an abuse event.|
 |Destination|destination.allocated|[DateTime](#datetime)|Allocation date corresponding to BGP prefix.|
 |Destination|destination.as_name|[String](#string)|The autonomous system name to which the connection headed.|
-|Destination|destination.asn|[Integer](#integer)|The autonomous system number to which the connection headed.|
+|Destination|destination.asn|[ASN](#asn)|The autonomous system number to which the connection headed.|
 |Destination|destination.fqdn|[FQDN](#fqdn)|A DNS name related to the host from which the connection originated. DNS allows even binary data in DNS, so we have to allow everything. A final point is stripped, string is converted to lower case characters.|
 |Destination Geolocation|destination.geolocation.cc|[UppercaseString](#uppercasestring)|Country-Code according to ISO3166-1 alpha-2 for the destination IP.|
 |Destination Geolocation|destination.geolocation.city|[String](#string)|Some geolocation services refer to city-level geolocation.|
@@ -58,7 +58,7 @@ Harmonization field names
 |Source|source.account|[String](#string)|An account name or email address, which has been identified to relate to the source of an abuse event.|
 |Source|source.allocated|[DateTime](#datetime)|Allocation date corresponding to BGP prefix.|
 |Source|source.as_name|[String](#string)|The autonomous system name from which the connection originated.|
-|Source|source.asn|[Integer](#integer)|The autonomous system number from which originated the connection.|
+|Source|source.asn|[ASN](#asn)|The autonomous system number from which originated the connection.|
 |Source|source.fqdn|[FQDN](#fqdn)|A DNS name related to the host from which the connection originated. DNS allows even binary data in DNS, so we have to allow everything. A final point is stripped, string is converted to lower case characters.|
 |Source Geolocation|source.geolocation.cc|[UppercaseString](#uppercasestring)|Country-Code according to ISO3166-1 alpha-2 for the source IP.|
 |Source Geolocation|source.geolocation.city|[String](#string)|Some geolocation services refer to city-level geolocation.|
@@ -85,6 +85,17 @@ Harmonization field names
 
 Harmonization types
 -------------------
+
+### ASN
+
+ASN type. Derived from Integer with forbidden values.
+
+Only valid are: 0 < asn <= 4294967295
+See https://en.wikipedia.org/wiki/Autonomous_system_(Internet)
+> The first and last ASNs of the original 16-bit integers, namely 0 and
+> 65,535, and the last ASN of the 32-bit numbers, namely 4,294,967,295 are
+> reserved and should not be used by operators.
+
 
 ### Accuracy
 

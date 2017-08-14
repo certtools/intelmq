@@ -33,6 +33,9 @@ CHANGELOG
 - Deprecated method `Message.contains` has been removed
 - Drop support for deprecated configuration files `startup.conf` and `system.conf`
 
+### Harmonization
+- New ASN type. Like integer but checks the range.
+
 ### Development
 - We are now testing with and without optional libraries/lowest recommended versions and most current versions of required libraries
 - Tests shadowserver with more data and checks for warnings and errors
