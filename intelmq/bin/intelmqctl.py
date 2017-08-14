@@ -749,7 +749,8 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
         First checks if the queue does exist in the pipeline configuration.
         """
-        logger.info("Clearing queue %s", queue)
+        if RETURN_TYPE == 'text':
+            logger.info("Clearing queue %s", queue)
         queues = set()
         for key, value in self.pipeline_configuration.items():
             if 'source-queue' in value:
@@ -763,12 +764,14 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         pipeline.connect()
 
         if queue not in queues:
-            logger.error("Queue %s does not exist!", queue)
+            if RETURN_TYPE == 'text':
+                logger.error("Queue %s does not exist!", queue)
             return 'not-found'
 
         try:
             pipeline.clear_queue(queue)
-            logger.info("Successfully cleared queue %s.", queue)
+            if RETURN_TYPE == 'text':
+                logger.info("Successfully cleared queue %s.", queue)
             return 'success'
         except Exception:  # pragma: no cover
             logger.exception("Error while clearing queue %s.",
