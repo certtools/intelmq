@@ -406,7 +406,7 @@ In many cases it is useful to schedule a bot at a specific time (for example via
     "module": "intelmq.bots.collectors.http.collector_http",
     "description": "All IP addresses which have been reported within the last 48 hours as having run attacks on the service Apache, Apache-DDOS, RFI-Attacks.",
     "enabled": false,
-    "run_mode": "scheduled"
+    "run_mode": "scheduled",
     "parameters": {
         "feed": "Blocklist.de Apache",
         "provider": "Blocklist.de",
@@ -435,7 +435,7 @@ Most of the cases, bots will need to be configured as `continuous` run mode in o
     "module": "intelmq.bots.parsers.blocklistde.parser",
     "description": "Blocklist.DE Parser is the bot responsible to parse the report and sanitize the information.",
     "enabled": false,
-    "run_mode": "continuous"
+    "run_mode": "continuous",
     "parameters": {
     },
 },
