@@ -425,9 +425,10 @@ class ASN(GenericType):
     """
     @staticmethod
     def check_asn(value):
-        if not (0 < value <= 4294967295):
+        if 0 < value <= 4294967295:
+            return True
+        else:
             return False
-        return True
 
     @staticmethod
     def is_valid(value, sanitize=False):
