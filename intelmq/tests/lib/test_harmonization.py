@@ -232,6 +232,7 @@ class TestHarmonization(unittest.TestCase):
         self.assertFalse(harmonization.FQDN.is_valid('ö1.at'))
         self.assertFalse(harmonization.FQDN.is_valid('n/a'))
         self.assertFalse(harmonization.FQDN.is_valid('.'))
+        self.assertFalse(harmonization.FQDN.is_valid('.example.com'))
 
     def test_fqdn_sanitize(self):
         """ Test FQDN.sanitize with valid arguments. """
@@ -244,6 +245,8 @@ class TestHarmonization(unittest.TestCase):
         self.assertTrue(harmonization.FQDN.is_valid('ö1.at', sanitize=True))
         self.assertTrue(harmonization.FQDN.is_valid('212.156.101.43.00-ebgp-atakoy1-k.301-fra-'
                                                     'col-1.statik.turktelekom.com.tr',
+                                                    sanitize=True))
+        self.assertTrue(harmonization.FQDN.is_valid('.example.com',
                                                     sanitize=True))
 
     def test_fqdn_sanitize_invalid(self):
@@ -355,6 +358,31 @@ class TestHarmonization(unittest.TestCase):
                                                     sanitize=True))
         self.assertFalse(harmonization.URL.is_valid('http://',
                                                     sanitize=True))
+
+    def test_asn_valid(self):
+        """ Test ASN.is_valid with valid arguments. """
+        self.assertTrue(harmonization.ASN.is_valid(123))
+        self.assertTrue(harmonization.ASN.is_valid(1234567))
+
+    def test_asn_invalid(self):
+        """ Test ASN.is_valid with invalid arguments. """
+        self.assertFalse(harmonization.ASN.is_valid(4294967296))
+        self.assertFalse(harmonization.ASN.is_valid(0))
+        self.assertFalse(harmonization.ASN.is_valid('foo'))
+        self.assertFalse(harmonization.ASN.is_valid('1234'))
+
+    def test_asn_sanitize(self):
+        """ Test ASN.sanitize with valid arguments. """
+        self.assertTrue(harmonization.ASN.is_valid('1234',
+                                                   sanitize=True))
+
+    def test_asn_sanitize_invalid(self):
+        """ Test ASN.is_valid with invalid arguments. """
+        self.assertFalse(harmonization.ASN.is_valid(0, sanitize=True))
+        self.assertFalse(harmonization.ASN.is_valid('asd', sanitize=True))
+        self.assertFalse(harmonization.ASN.is_valid(-1, sanitize=True))
+        self.assertFalse(harmonization.ASN.is_valid(4294967296, sanitize=True))
+
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()

@@ -13,10 +13,11 @@ import signal
 import sys
 import time
 import traceback
+import types
 
 from intelmq import (DEFAULT_LOGGING_PATH, DEFAULTS_CONF_FILE,
                      HARMONIZATION_CONF_FILE, PIPELINE_CONF_FILE,
-                     RUNTIME_CONF_FILE, SYSTEM_CONF_FILE)
+                     RUNTIME_CONF_FILE, __version__)
 from intelmq.lib import exceptions, utils
 import intelmq.lib.message as libmessage
 from intelmq.lib.pipeline import PipelineFactory
@@ -46,15 +47,14 @@ class Bot(object):
         try:
             version_info = sys.version.splitlines()[0].strip()
             self.__log_buffer.append(('info',
-                                      '{} initialized with id {} and version '
-                                      '{} as process {}.'
-                                      ''.format(self.__class__.__name__,
-                                                bot_id, version_info,
-                                                os.getpid())))
+                                      '{bot} initialized with id {id} and intelmq {intelmq}'
+                                      ' and python {python} as process {pid}.'
+                                      ''.format(bot=self.__class__.__name__,
+                                                id=bot_id, python=version_info,
+                                                pid=os.getpid(), intelmq=__version__)))
             self.__log_buffer.append(('debug', 'Library path: %r.' % __file__))
 
             self.__load_defaults_configuration()
-            self.__load_system_configuration()
 
             self.__check_bot_id(bot_id)
             self.__bot_id = bot_id
@@ -79,6 +79,7 @@ class Bot(object):
             signal.signal(signal.SIGHUP, self.__handle_sighup_signal)
             # system calls should not be interrupted, but restarted
             signal.siginterrupt(signal.SIGHUP, False)
+            signal.signal(signal.SIGTERM, self.__handle_sigterm_signal)
         except Exception as exc:
             if self.parameters.error_log_exception:
                 self.logger.exception('Bot initialization failed.')
@@ -88,6 +89,14 @@ class Bot(object):
 
             self.stop()
             raise
+
+    def __handle_sigterm_signal(self, signum: int, stack: Optional[object]):
+        """
+        Calles when a SIGTERM is received. Stops the bot.
+        """
+        self.logger.info("Received SIGTERM.")
+        self.stop(exitcode=0)
+        del self
 
     def __handle_sighup_signal(self, signum: int, stack: Optional[object]):
         """
@@ -419,19 +428,6 @@ class Bot(object):
 
         self.parameters.log_processed_messages_seconds = datetime.timedelta(seconds=self.parameters.log_processed_messages_seconds)
 
-    def __load_system_configuration(self):
-        if os.path.exists(SYSTEM_CONF_FILE):
-            self.__log_buffer.append(('warning', "system.conf is deprecated "
-                                      "and will be removed in 1.0. "
-                                      "Use defaults.conf instead!"))
-            self.__log_buffer.append(('debug', "Loading system configuration from %r."
-                                      "" % SYSTEM_CONF_FILE))
-            config = utils.load_configuration(SYSTEM_CONF_FILE)
-
-            for option, value in config.items():
-                setattr(self.parameters, option, value)
-                self.__log_configuration_parameter("system", option, value)
-
     def __load_runtime_configuration(self):
         self.logger.debug("Loading runtime configuration from %r.", RUNTIME_CONF_FILE)
         config = utils.load_configuration(RUNTIME_CONF_FILE)
@@ -440,11 +436,7 @@ class Bot(object):
         if self.__bot_id in list(config.keys()):
             params = config[self.__bot_id]
             self.run_mode = params.get('run_mode', 'stream')
-            if 'parameters' in params:
-                params = params['parameters']
-            else:
-                self.logger.warning('Old runtime configuration format found.')
-            for option, value in params.items():
+            for option, value in params['parameters'].items():
                 setattr(self.parameters, option, value)
                 self.__log_configuration_parameter("runtime", option, value)
                 if option.startswith('logging_'):
@@ -514,12 +506,6 @@ class Bot(object):
         instance.start()
 
     def set_request_parameters(self):
-        if hasattr(self.parameters, 'http_ssl_proxy'):
-            self.logger.warning("Parameter 'http_ssl_proxy' is deprecated and will be removed in "
-                                "version 1.0!")
-            if not hasattr(self.parameters, 'https_proxy'):
-                self.parameters.https_proxy = self.parameters.http_ssl_proxy
-
         self.http_header = getattr(self.parameters, 'http_header', {})
         self.http_verify_cert = getattr(self.parameters, 'http_verify_cert',
                                         True)
@@ -549,14 +535,6 @@ class Bot(object):
         self.http_timeout_max_tries = getattr(self.parameters, 'http_timeout_max_tries', 1)
         # Be sure this is always at least 1
         self.http_timeout_max_tries = self.http_timeout_max_tries if self.http_timeout_max_tries >= 1 else 1
-        # Handle deprecated parameter http_timeout
-        if hasattr(self.parameters, 'http_timeout'):
-            if not self.http_timeout_sec:
-                self.logger.warning("Found deprecated parameter 'http_timeout', please use 'http_timeout_sec'.")
-                self.http_timeout_sec = self.parameters.http_timeout
-            elif self.http_timeout_sec != self.parameters.http_timeout:
-                self.logger.warning("parameter 'http_timeout_sec' will overwrite deprecated parameter 'http_timeout'.")
-            # otherwise they are equal -> ignore
 
         self.http_header['User-agent'] = self.parameters.http_user_agent
 
@@ -598,6 +576,14 @@ class ParserBot(Bot):
         for line in csv.DictReader(io.StringIO(raw_report)):
             yield line
 
+    def parse_json(self, report: dict):
+        """
+        A basic JSON parser
+        """
+        raw_report = utils.base64_decode(report.get("raw"))
+        for line in json.loads(raw_report):
+            yield line
+
     def parse(self, report: dict):
         """
         A generator yielding the single elements of the data.
@@ -609,6 +595,9 @@ class ParserBot(Bot):
         Override for your use or use an existing parser, e.g.::
 
             parse = ParserBot.parse_csv
+
+        You should do that for recovering lines too.
+            recover_line = ParserBot.recover_line_csv
 
         """
         for line in utils.base64_decode(report.get("raw")).splitlines():
@@ -640,8 +629,14 @@ class ParserBot(Bot):
             if not line:
                 continue
             try:
-                # filter out None
-                events = list(filter(bool, self.parse_line(line, report)))
+                value = self.parse_line(line, report)
+                if value is None:
+                    continue
+                elif type(value) is list or isinstance(value, types.GeneratorType):
+                    # filter out None
+                    events = list(filter(bool, value))
+                else:
+                    events = [value]
             except Exception:
                 self.logger.exception('Failed to parse line.')
                 self.__failed.append((traceback.format_exc(), line))
@@ -650,7 +645,7 @@ class ParserBot(Bot):
 
         for exc, line in self.__failed:
             report_dump = report.copy()
-            report_dump.update('raw', self.recover_line(line))
+            report_dump.change('raw', self.recover_line(line))
             self._dump_message(exc, report_dump)
 
         self.acknowledge_message()
@@ -678,6 +673,14 @@ class ParserBot(Bot):
         writer.writeheader()
         writer.writerow(line)
         return out.getvalue()
+
+    def recover_line_json(self, line: dict):
+        """
+        Reverse of parse for JSON pulses.
+
+        Recovers a fully functional report with only the problematic pulse.
+        """
+        return json.dumps(line)
 
 
 class CollectorBot(Bot):

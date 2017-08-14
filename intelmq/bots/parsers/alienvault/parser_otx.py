@@ -10,7 +10,7 @@ import json
 import urllib.parse as parse
 
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 
 HASHES = {
     'FileHash-SHA256': 'malware.hash.sha256',
@@ -19,53 +19,34 @@ HASHES = {
 }
 
 
-class AlienVaultOTXParserBot(Bot):
+class AlienVaultOTXParserBot(ParserBot):
+    parse = ParserBot.parse_json
+    recover_line = ParserBot.recover_line_json
 
-    def process(self):
-        report = self.receive_message()
+    def parse_line(self, pulse, report):
+        additional_pulse = {"author": pulse['author_name'],
+                            "pulse": pulse['name']}
 
-        raw_report = utils.base64_decode(report.get("raw"))
+        events = []
+        for indicator in pulse["indicators"]:
+            additional_indicator = {}
+            event = self.new_event(report)
+            # hashes
+            if indicator["type"] in HASHES.keys():
+                event.add(HASHES[indicator["type"]], indicator["indicator"])
+            # fqdn
+            elif indicator["type"] in ['hostname', 'domain']:
+                # not all domains in the report are just domains
+                # some are URLs, we can manage those here instead
+                # of raising errors
+                #
+                # dirty check if there is a scheme
 
-        for pulse in json.loads(raw_report):
-            additional_pulse = {"author": pulse['author_name'],
-                                "pulse": pulse['name']}
-
-            for indicator in pulse["indicators"]:
-                additional_indicator = {}
-                event = self.new_event(report)
-                # hashes
-                if indicator["type"] in HASHES.keys():
-                    event.add(HASHES[indicator["type"]], indicator["indicator"])
-                # fqdn
-                elif indicator["type"] in ['hostname', 'domain']:
-                    # not all domains in the report are just domains
-                    # some are URLs, we can manage those here instead
-                    # of raising errors
-                    #
-                    # dirty check if there is a scheme
-
-                    resource = indicator["indicator"] \
-                        if '://' in indicator["indicator"] \
-                        else 'http://' + indicator["indicator"]
-                    path = parse.urlparse(resource).path
-                    if len(path) > 0:
-                        event.add('source.url', resource)
-                    else:
-                        event.add('source.fqdn',
-                                  indicator["indicator"])
-                # IP addresses
-                elif indicator["type"] in ['IPv4', 'IPv6']:
-                    event.add('source.ip',
-                              indicator["indicator"])
-                # emails
-                elif indicator["type"] == 'email':
-                    event.add('source.account',
-                              indicator["indicator"])
-                # URLs
-                elif indicator["type"] in ['URL', 'URI']:
-                    resource = indicator["indicator"] \
-                        if '://' in indicator["indicator"] \
-                        else 'http://' + indicator["indicator"]
+                resource = indicator["indicator"] \
+                    if '://' in indicator["indicator"] \
+                    else 'http://' + indicator["indicator"]
+                path = parse.urlparse(resource).path
+                if len(path) > 0:
                     event.add('source.url', resource)
                 # CIDR
                 elif indicator["type"] in ['CIDR']:
@@ -77,36 +58,65 @@ class AlienVaultOTXParserBot(Bot):
                     additional_indicator['CVE'] = indicator["indicator"]
                     # TODO: Process these IoCs: FilePath, Mutex
                 else:
-                    continue
+                    event.add('source.fqdn', indicator["indicator"])
+            # IP addresses
+            elif indicator["type"] in ['IPv4', 'IPv6']:
+                event.add('source.ip', indicator["indicator"])
+            # emails
+            elif indicator["type"] == 'email':
+                event.add('source.account', indicator["indicator"])
+            # URLs
+            elif indicator["type"] in ['URL', 'URI']:
+                resource = indicator["indicator"] \
+                    if '://' in indicator["indicator"] \
+                    else 'http://' + indicator["indicator"]
+                event.add('source.url', resource)
+            # CIDR
+            elif indicator["type"] in ['CIDR']:
+                event.add('source.network', indicator["indicator"])
 
-                if 'tags' in pulse:
-                    additional_indicator['tags'] = pulse['tags']
-                if 'modified' in pulse:
+            # CVE
+            elif indicator["type"] in ['CVE']:
+                additional_indicator['CVE'] = indicator["indicator"]
+                # TODO: Process these IoCs: FilePath, Mutex
+            else:
+                continue
+
+            # if pulse_key exists in the indicators use it
+            # else use id from pulse and add it as pulse_key
+            # same logic is followed by alienvault
+            if 'pulse_key' in indicator:
+                additional_indicator['pulse_key'] = indicator['pulse_key']
+            else:
+                additional_indicator['pulse_key'] = pulse['id']
+            if 'tags' in pulse:
+                additional_indicator['tags'] = pulse['tags']
+            if 'modified' in pulse:
                     if '.' in pulse["modified"]:
                         additional_indicator['time_updated'] = \
                             pulse["modified"][:-4] + "+00:00"
                     else:
                         additional_indicator['time_updated'] = \
                             pulse["modified"] + ".00+00:00"
-                if 'industries' in pulse:
-                    additional_indicator['industries'] = pulse["industries"]
-                if 'adversary' in pulse:
-                    additional_indicator['adversary'] = pulse["adversary"]
-                if 'targeted_countries' in pulse:
-                    tc = pulse['targeted_countries']
-                    if tc:
-                        additional_indicator['targeted_countries'] = tc
+            if 'industries' in pulse:
+                additional_indicator['industries'] = pulse["industries"]
+            if 'adversary' in pulse:
+                additional_indicator['adversary'] = pulse["adversary"]
+            if 'targeted_countries' in pulse:
+                tc = pulse['targeted_countries']
+                if tc:
+                    additional_indicator['targeted_countries'] = tc
 
-                additional = additional_pulse.copy()
-                additional.update(additional_indicator)
+            additional = additional_pulse.copy()
+            additional.update(additional_indicator)
 
-                event.add('comment', pulse['description'])
-                event.add('extra', additional)
-                event.add('classification.type', 'blacklist')
-                event.add('time.source', indicator["created"][:-4] + "+00:00")
-                event.add("raw", json.dumps(indicator, sort_keys=True))
-                self.send_message(event)
-        self.acknowledge_message()
+            event.add('comment', pulse['description'])
+            event.add('extra', additional)
+            event.add('classification.type', 'blacklist')
+            event.add('time.source', indicator["created"][:-4] + "+00:00")
+            event.add("raw", json.dumps(indicator, sort_keys=True))
+            events.append(event)
+        return events
 
 
 BOT = AlienVaultOTXParserBot

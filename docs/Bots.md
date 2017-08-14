@@ -7,11 +7,11 @@
 
 ## General remarks
 
-By default all of the bots are started when you start the whole botnet, however there is a possibility to 
-*disable* a bot. This means that the bot will not start every time you start the botnet, but you can start 
-and stop the bot if you specify the bot explicitly. To disable a bot, add the following to your 
-`runtime.conf`: `"enabled": false`. Be aware that this is **not** a normal parameter (like the others 
-described in this file). It is set outside of the `parameters` object in `runtime.conf`. Check the 
+By default all of the bots are started when you start the whole botnet, however there is a possibility to
+*disable* a bot. This means that the bot will not start every time you start the botnet, but you can start
+and stop the bot if you specify the bot explicitly. To disable a bot, add the following to your
+`runtime.conf`: `"enabled": false`. Be aware that this is **not** a normal parameter (like the others
+described in this file). It is set outside of the `parameters` object in `runtime.conf`. Check the
 [User-Guide](./User-Guide.md) for an example.
 
 There are two different types of parameters: The initialization parameters are need to start the bot. The runtime parameters are needed by the bot itself during runtime.
@@ -144,7 +144,9 @@ The parameter `http_timeout_max_tries` is of no use in this collector.
 * `mail_ssl`: whether the mail account uses SSL (default: `true`)
 * `folder`: folder in which to look for mails (default: `INBOX`)
 * `subject_regex`: regular expression to look for a subject
-* `url_regex`: regular expression of the feed URL to search for in the mail body 
+* `url_regex`: regular expression of the feed URL to search for in the mail body
+* `sent_from`: filter messages by sender
+* `sent_to`: filter messages by recipient
 
 * * *
 
@@ -357,7 +359,7 @@ Lines starting with `'#'` will be ignored. Headers won't be interpreted.
 
 #### Configuration parameters
 
- * `"columns"`: A list of strings or a string of comma-separated values with field names. The names must match the harmonization's field names. Strings starting with `extra.` will be written into the Extra-Object of the DHO. E.g. 
+ * `"columns"`: A list of strings or a string of comma-separated values with field names. The names must match the harmonization's field names. Strings starting with `extra.` will be written into the Extra-Object of the DHO. E.g.
    ```json
    [
         "",

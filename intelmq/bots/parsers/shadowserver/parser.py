@@ -161,7 +161,7 @@ class ShadowserverParserBot(ParserBot):
                 fields.remove(shadowkey)
 
         # Now add additional constant fields.
-        dict.update(event, conf.get('constant_fields', {}))  # TODO: rewrite in 1.0
+        event.update(conf.get('constant_fields', {}))
 
         event.add('raw', self.recover_line(row))
 

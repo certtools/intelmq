@@ -105,9 +105,9 @@ def add_UTC_to_timestamp(value):
 
 
 def convert_bool(value):
-    if value.lower() in ('yes', 'true', 'enabled'):
+    if value.lower() in ('y', 'yes', 'true', 'enabled'):
         return True
-    elif value.lower() in ('no', 'false', 'disabled'):
+    elif value.lower() in ('n', 'no', 'false', 'disabled'):
         return False
 
 
@@ -1185,7 +1185,7 @@ accessible_smb = {
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
-        ('extra.', 'smb_implant', validate_to_none),
+        ('extra.', 'smb_implant', convert_bool),
         ('extra.', 'arch', validate_to_none),
         ('extra.', 'key', validate_to_none),
         ('extra.', 'naics', invalidate_zero),
