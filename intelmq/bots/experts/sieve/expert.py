@@ -25,8 +25,8 @@ class SieveExpertBot(Bot):
             filename = os.path.join(os.path.dirname(__file__), 'sieve.tx')
             self.metamodel = metamodel_from_file(filename)
         except TextXError as e:
-            self.logger.error('Could not process sieve grammar file. Error in (%d, %d)', e.line, e.col)
-            self.logger.error(str(e)) # TODO: output textx exception message properly
+            self.logger.error('Could not process sieve grammar file. Error in (%d, %d).', e.line, e.col)
+            self.logger.error(str(e))
             self.stop()
 
         # validate parameters
@@ -37,8 +37,8 @@ class SieveExpertBot(Bot):
         try:
             self.sieve = self.metamodel.model_from_file(self.parameters.file)
         except TextXError as e:
-            self.logger.error('Could not parse sieve file \'%r\', error in (%d, %d)', self.parameters.file, e.line, e.col)
-            self.logger.error(str(e)) # TODO: output textx exception message properly
+            self.logger.error('Could not parse sieve file %r, error in (%d, %d).', self.parameters.file, e.line, e.col)
+            self.logger.error(str(e))
             self.stop()
 
     def process(self):
@@ -46,8 +46,9 @@ class SieveExpertBot(Bot):
 
         keep = False
         for rule in self.sieve.rules:
-            keep = SieveExpertBot.process_rule(rule, event)
+            keep = self.process_rule(rule, event)
             if not keep:
+                self.logger.debug('Dropped event based on rule at %s: %s.', self.get_position(rule), event)
                 break
 
         if keep:
@@ -55,11 +56,11 @@ class SieveExpertBot(Bot):
 
         self.acknowledge_message()
 
-    @staticmethod
-    def process_rule(rule, event):
+    def process_rule(self, rule, event):
         match = SieveExpertBot.match_expression(rule.expr, event)
         keep = True
         if match:
+            self.logger.debug('Matched event based on rule at %s: %s.', self.get_position(rule), event)
             for action in rule.actions:
                 keep = SieveExpertBot.process_action(action.action, event)
                 if not keep:
@@ -158,5 +159,9 @@ class SieveExpertBot(Bot):
                 del event[action.key]
         return True
 
+    def get_position(self, entity):
+        """ returns the position (line,col) of an entity in the sieve file. """
+        parser = self.metamodel.parser
+        return parser.pos_to_linecol(entity._tx_position)
 
 BOT = SieveExpertBot
