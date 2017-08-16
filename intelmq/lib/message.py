@@ -8,6 +8,7 @@ import functools
 import hashlib
 import json
 import re
+import warnings
 
 import intelmq.lib.exceptions as exceptions
 import intelmq.lib.harmonization
@@ -103,6 +104,11 @@ class Message(dict):
                                              got=classname,
                                              expected=VALID_MESSSAGE_TYPES,
                                              docs=HARMONIZATION_CONF_FILE)
+
+        if classname == 'event' and self.harmonization_config['extra']['type'] == 'JSON':
+            warnings.warn("Assuming harmonization type 'JSONDict' for harmonization field 'extra'. "
+                          "This assumption will be removed in version 2.0.", DeprecationWarning)
+            self.harmonization_config['extra']['type'] = 'JSONDict'
 
         super(Message, self).__init__()
         if isinstance(message, dict):

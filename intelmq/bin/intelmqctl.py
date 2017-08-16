@@ -883,6 +883,10 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                         self.logger.error('Invalid regex for type %r: %r.', harm_type_name, str(e))
                         retval = 1
                         continue
+        extra_type = files[HARMONIZATION_CONF_FILE].get('event', {}).get('extra', {}).get('type')
+        if extra_type != 'JSONDict':
+            self.logger.warning("'extra' field needs to be of type 'JSONDict'.")
+            retval = 1
 
         self.logger.info('Checking for bots.')
         for bot_id, bot_config in files[RUNTIME_CONF_FILE].items():
