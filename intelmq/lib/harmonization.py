@@ -32,7 +32,7 @@ import intelmq.lib.utils as utils
 __all__ = ['Base64', 'Boolean', 'ClassificationType', 'DateTime', 'FQDN',
            'Float', 'Accuracy', 'GenericType', 'IPAddress', 'IPNetwork',
            'Integer', 'JSON', 'JSONDict', 'LowercaseString', 'Registry',
-           'String', 'URL',
+           'String', 'URL', 'ASN',
            ]
 
 
@@ -136,6 +136,34 @@ class Boolean(GenericType):
 
 
 class ClassificationType(GenericType):
+    """
+    Type of classification.type field.
+
+    Only these values are allowed:
+     * spam
+     * malware
+     * botnet drone
+     * ransomware
+     * dga domain
+     * malware configuration
+     * c&c
+     * scanner
+     * exploit
+     * brute-force
+     * ids alert
+     * defacement
+     * compromised
+     * backdoor
+     * ddos
+     * dropzone
+     * phishing
+     * proxy
+     * vulnerable service
+     * blacklist
+     * other
+     * unknown
+     * test
+    """
 
     allowed_values = ['spam',
                       'malware',
@@ -181,6 +209,15 @@ class ClassificationType(GenericType):
 
 
 class DateTime(GenericType):
+    """
+    Date and time type for timestamps.
+
+    Valid values are timestamps with time zone and in the format '%Y-%m-%dT%H:%M:%S+00:00'.
+    Invalid are missing times and missing timezone information (UTC).
+    Microseconds are also allowed.
+
+    Sanitation normalizes the timezone to UTC, which is the only allowed timezone.
+    """
 
     @staticmethod
     def is_valid(value, sanitize=False):
@@ -414,6 +451,40 @@ class Integer(GenericType):
             return None
 
 
+class ASN(GenericType):
+    """
+    ASN type. Derived from Integer with forbidden values.
+
+    Only valid are: 0 < asn <= 4294967295
+    See https://en.wikipedia.org/wiki/Autonomous_system_(Internet)
+    > The first and last ASNs of the original 16-bit integers, namely 0 and
+    > 65,535, and the last ASN of the 32-bit numbers, namely 4,294,967,295 are
+    > reserved and should not be used by operators.
+    """
+    @staticmethod
+    def check_asn(value):
+        if 0 < value <= 4294967295:
+            return True
+        else:
+            return False
+
+    @staticmethod
+    def is_valid(value, sanitize=False):
+        if sanitize:
+            value = Integer().sanitize(value)
+        if not Integer.is_valid(value):
+            return False
+        if not ASN.check_asn(value):
+            return False
+        return True
+
+    @staticmethod
+    def sanitize(value):
+        value = Integer.sanitize(value)
+        if value and ASN.check_asn(value):
+            return value
+
+
 class IPAddress(GenericType):
     """
     Type for IP addresses, all families. Uses the ipaddress module.
@@ -608,6 +679,11 @@ class JSONDict(JSON):
 
 
 class LowercaseString(GenericType):
+    """
+    Like string, but only allows lower case characters.
+
+    Sanitation lowers all characters.
+    """
 
     @staticmethod
     def is_valid(value, sanitize=False):
@@ -630,6 +706,9 @@ class LowercaseString(GenericType):
 
 
 class String(GenericType):
+    """
+    Any non-empty string without leading or trailing whitespace.
+    """
 
     @staticmethod
     def is_valid(value, sanitize=False):
@@ -710,6 +789,11 @@ class URL(GenericType):
 
 
 class UppercaseString(GenericType):
+    """
+    Like string, but only allows upper case characters.
+
+    Sanitation uppers all characters.
+    """
 
     @staticmethod
     def is_valid(value, sanitize=False):

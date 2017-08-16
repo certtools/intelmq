@@ -17,7 +17,7 @@ import types
 
 from intelmq import (DEFAULT_LOGGING_PATH, DEFAULTS_CONF_FILE,
                      HARMONIZATION_CONF_FILE, PIPELINE_CONF_FILE,
-                     RUNTIME_CONF_FILE)
+                     RUNTIME_CONF_FILE, __version__)
 from intelmq.lib import exceptions, utils
 import intelmq.lib.message as libmessage
 from intelmq.lib.pipeline import PipelineFactory
@@ -47,11 +47,11 @@ class Bot(object):
         try:
             version_info = sys.version.splitlines()[0].strip()
             self.__log_buffer.append(('info',
-                                      '{} initialized with id {} and version '
-                                      '{} as process {}.'
-                                      ''.format(self.__class__.__name__,
-                                                bot_id, version_info,
-                                                os.getpid())))
+                                      '{bot} initialized with id {id} and intelmq {intelmq}'
+                                      ' and python {python} as process {pid}.'
+                                      ''.format(bot=self.__class__.__name__,
+                                                id=bot_id, python=version_info,
+                                                pid=os.getpid(), intelmq=__version__)))
             self.__log_buffer.append(('debug', 'Library path: %r.' % __file__))
 
             self.__load_defaults_configuration()
@@ -79,6 +79,7 @@ class Bot(object):
             signal.signal(signal.SIGHUP, self.__handle_sighup_signal)
             # system calls should not be interrupted, but restarted
             signal.siginterrupt(signal.SIGHUP, False)
+            signal.signal(signal.SIGTERM, self.__handle_sigterm_signal)
         except Exception as exc:
             if self.parameters.error_log_exception:
                 self.logger.exception('Bot initialization failed.')
@@ -88,6 +89,14 @@ class Bot(object):
 
             self.stop()
             raise
+
+    def __handle_sigterm_signal(self, signum: int, stack: Optional[object]):
+        """
+        Calles when a SIGTERM is received. Stops the bot.
+        """
+        self.logger.info("Received SIGTERM.")
+        self.stop(exitcode=0)
+        del self
 
     def __handle_sighup_signal(self, signum: int, stack: Optional[object]):
         """

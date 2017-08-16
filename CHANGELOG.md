@@ -21,8 +21,12 @@ CHANGELOG
 ### Requirements
 - Requests is no longer a listed as dependency of the core. For depending bots the requirement is noted in their REQUIREMENTS.txt file
 
-1.0.0.rc2 Release candidate
----------------------------
+1.0.0 Stable release
+--------------------
+### Core
+- use SIGTERM instead of SIGINT to stop bots (#981)
+- Fixes a thrown FileNotFound exception when stopping bots started with `intelmqctl run ...`
+
 ### Harmonization
 - leading dots in FQDNs are rejected and removed in sanitation (#1022, #1030)
 
@@ -39,6 +43,9 @@ CHANGELOG
 - Deprecated parameters force and ignore of `Message.add` have been removed
 - Deprecated method `Message.contains` has been removed
 - Drop support for deprecated configuration files `startup.conf` and `system.conf`
+
+### Harmonization
+- New ASN type. Like integer but checks the range.
 
 ### Development
 - We are now testing with and without optional libraries/lowest recommended versions and most current versions of required libraries
