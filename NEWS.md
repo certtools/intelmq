@@ -3,6 +3,9 @@ NEWS
 
 See the changelog for a full list of changes.
 
+1.1.0
+-----
+
 1.0.0 Stable release
 --------------------
 ### Configuration
