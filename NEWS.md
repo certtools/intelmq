@@ -5,28 +5,7 @@ See the changelog for a full list of changes.
 
 1.1.0
 -----
-
-1.0.0 Stable release
---------------------
 ### Configuration
-- `bots.experts.ripencc_abuse_contact` now has the two additional parameters `query_ripe_stat_asn` and `query_ripe_stat_ip` instead of `query_ripe_stat`. The old parameter will be supported until version 1.1. An additional parameter `mode` has been introduced. See the bot's documentation for more details: docs/Bots.md#ripencc-abuse-contact
-- `bots.experts.certat_contact` has been renamed to `bots.experts.national_cert_contact_certat` (#995)
-- `bots.collectors.ftp` has been dropped (unused, unmaintained, #842)
-- system.conf and startup.conf have been dropped entirely, use defaults.conf and runtime.conf instead
-* Many bots have new/changed parameters
-* Many bots have been renamed/moved or deleted. Please read the Bots section in the changelog and upgrade your configuration accordingly.
-
-1.0.0.dev8
-----------
-### Configuration
-- `http_timeout` has been renamed to `http_timeout_sec` and `http_timeout_max_tries` has been added.
-
-### Configuration
-Two new fields have been added to `defaults.conf` which are expected by the bots:
-- `"log_processed_messages_count": 500` and
-- `'log_processed_messages_seconds": 900`
-Configure them in your setup and optionally adapt the values to your needs.
-
 The feed names in the shadowserver parser have been adapted to the current subjects. Change your configuration accordingly:
 * `Botnet-Drone-Hadoop` to `Drone`
 * `DNS-open-resolvers` to `DNS-Open-Resolvers`
@@ -35,11 +14,6 @@ The feed names in the shadowserver parser have been adapted to the current subje
 * `Ssl-Scan` to `SSL-POODLE-Vulnerable-Servers`
 
 ### Postgres databases
-Use the following statement carefully to upgrade your database.
-```SQL
-ALTER TABLE events
-   ADD COLUMN "output" json
-```
 The following statements optionally update existing data.
 Please check if you did use these feed names and eventually adapt them for your setup!
 ```SQL
@@ -143,6 +117,34 @@ UPDATE events
 UPDATE events
    SET "classification.identifier" = 'accessible-vnc'
    WHERE "classification.identifier" = 'accessiblevnc' AND "feed.name" = 'Accessible-VNC';
+```
+
+1.0.0 Stable release
+--------------------
+### Configuration
+- `bots.experts.ripencc_abuse_contact` now has the two additional parameters `query_ripe_stat_asn` and `query_ripe_stat_ip` instead of `query_ripe_stat`. The old parameter will be supported until version 1.1. An additional parameter `mode` has been introduced. See the bot's documentation for more details: docs/Bots.md#ripencc-abuse-contact
+- `bots.experts.certat_contact` has been renamed to `bots.experts.national_cert_contact_certat` (#995)
+- `bots.collectors.ftp` has been dropped (unused, unmaintained, #842)
+- system.conf and startup.conf have been dropped entirely, use defaults.conf and runtime.conf instead
+* Many bots have new/changed parameters
+* Many bots have been renamed/moved or deleted. Please read the Bots section in the changelog and upgrade your configuration accordingly.
+
+1.0.0.dev8
+----------
+### Configuration
+- `http_timeout` has been renamed to `http_timeout_sec` and `http_timeout_max_tries` has been added.
+
+### Configuration
+Two new fields have been added to `defaults.conf` which are expected by the bots:
+- `"log_processed_messages_count": 500` and
+- `'log_processed_messages_seconds": 900`
+Configure them in your setup and optionally adapt the values to your needs.
+
+### Postgres databases
+Use the following statement carefully to upgrade your database.
+```SQL
+ALTER TABLE events
+   ADD COLUMN "output" json
 ```
 
 1.0.0.dev7

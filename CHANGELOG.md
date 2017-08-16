@@ -8,6 +8,9 @@ CHANGELOG
 #### Collectors
 - Mail: New parameters; `sent_from`: filter messages by sender, `sent_to`: filter messages by recipient
 
+#### Parsers
+- changed feednames in `bots.parsers.shadowserver`. Please refer to it's README for the exact changes.
+
 ### Requirements
 - Requests is no longer a listed as dependency of the core. For depending bots the requirement is noted in their REQUIREMENTS.txt file
 
@@ -61,7 +64,6 @@ CHANGELOG
 - `bots.experts.certat_contact` has been renamed to `bots.experts.national_cert_contact_certat` (#995)
 - `bots.experts.cymru_whois` ignores registry `other` (#996)
 - `bots.parsers.alienvault.parser_otx`: handle timestamps without floating point seconds
-- changed feednames in `bots.parsers.shadowserver`. Please refer to it's README for the exact changes.
 
 ### Experts
 - bots.experts.deduplicator: New parameter `bypass` to deactivate deduplication, default: true
