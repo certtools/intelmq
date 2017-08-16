@@ -66,6 +66,9 @@ We recognize that ip geolocation is not an exact science and analysis of the abu
 
 Some sources report an internal (NATed) IP address.
 
+### Extra values
+Data which does not fit in the harmonization can be saved in the 'extra' namespace. All keys must begin with `extra.`, there are no other rules on key names and values. The values can be get/set like all other fields.
+
 <a name="fields-list-and-data-types"></a>
 ## Fields List and data types
 

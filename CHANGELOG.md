@@ -10,6 +10,8 @@ CHANGELOG
   It is still possible to set and get the field as whole, however this may be removed or changed in the future:
   event['extra'] = '{"foo": "bar"}'
   event['extra'] # gives '{"foo": "bar"}'
+  "Old" bots and configurations compatible with 1.0.x do still work.
+  Also, the extra field is now properly exploded when exporting events, analogous to all other fields.
 
 ### Bots
 #### Collectors
