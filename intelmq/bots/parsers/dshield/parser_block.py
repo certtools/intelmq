@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-#   primary URL: http://feeds.dshield.org/block.txt
-#     PGP Sign.: http://feeds.dshield.org/block.txt.asc
+#   primary URL: https://feeds.dshield.org/block.txt
+#     PGP Sign.: https://feeds.dshield.org/block.txt.asc
 #
 #    updated: Tue Dec 15 15:33:38 2015 UTC
 #
