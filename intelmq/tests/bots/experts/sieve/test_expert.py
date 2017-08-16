@@ -13,6 +13,7 @@ EXAMPLE_INPUT = {"__type": "Event",
                  "time.observation": "2017-01-01T00:00:00+00:00",
                  }
 
+
 class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for SieveExpertBot.
@@ -104,21 +105,27 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
 
     def test_precedence(self):
         """ Test precedence of operators """
+        # TODO
 
     def test_string_equal_match(self):
         """ Test == string match """
+        # TODO
 
     def test_string_not_equal_match(self):
         """ Test != string match """
+        # TODO
 
     def test_string_contains_match(self):
         """ Test :contains string match """
+        # TODO
 
     def test_string_regex_match(self):
         """ Test =~ string match """
+        # TODO
 
     def test_string_inverse_regex_match(self):
         """ Test !~ string match """
+        # TODO
 
     def test_numeric_equal_match(self):
         """ Test == numeric match """
@@ -244,18 +251,22 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
 
     def test_exists_match(self):
         """ Test :exists match """
+        # TODO
 
     def test_not_exists_match(self):
         """ Test :notexists match """
+        # TODO
 
     def test_string_match_value_list(self):
         """ Test string match with StringValueList """
+        # TODO
 
     def test_numeric_match_value_list(self):
         """ Test numeric match with StringValueList """
+        # TODO
 
     def test_drop_event(self):
-        """ Test if matched event is dropped. """
+        """ Test if matched event is dropped and processing is stopped. """
         self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_drop_event.sieve')
 
         event1 = EXAMPLE_INPUT.copy()
@@ -264,37 +275,46 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(0, event1)
 
         event2 = EXAMPLE_INPUT.copy()
-        event2['comment'] = "deleteme"
+        event2['comment'] = 'drop'
         self.input_message = event2
         self.run_bot()
         self.assertOutputQueueLen(0)
 
     def test_keep_event(self):
-        """ Test if matched event is kept. """
+        """ Test if matched event is kept and processing is stopped. """
         self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_keep_event.sieve')
 
         event1 = EXAMPLE_INPUT.copy()
+        event1['comment'] = 'continue'
         self.input_message = event1
         self.run_bot()
-        self.assertMessageEqual(0, event1)
+        expected1 = EXAMPLE_INPUT.copy()
+        expected1['comment'] = 'changed'
+        self.assertMessageEqual(0, expected1)
 
         event2 = EXAMPLE_INPUT.copy()
-        event2['comment'] = "keepme"
+        event2['comment'] = 'keep'
         self.input_message = event2
         self.run_bot()
-        self.assertMessageEqual(0, event2)
+        expected2 = EXAMPLE_INPUT.copy()
+        expected2['comment'] = 'keep'
+        self.assertMessageEqual(0, expected2)
 
     def test_add(self):
         """ Test adding key/value pairs """
+        # TODO
 
     def test_add_force(self):
         """ Test adding key/value pairs, overwriting existing key """
+        # TODO
 
     def test_modify(self):
         """ Test modifying key/value pairs """
+        # TODO
 
     def test_remove(self):
         """ Test removing keys """
+        # TODO
 
     def test_multiple_actions(self):
         """ Test applying multiple actions in one rule """
@@ -311,8 +331,6 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         del expected_result['classification.type']
 
         self.assertMessageEqual(0, expected_result)
-
-
 
 
 if __name__ == '__main__':  # pragma: no cover

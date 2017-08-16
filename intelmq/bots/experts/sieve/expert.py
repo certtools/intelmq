@@ -12,9 +12,16 @@ from __future__ import unicode_literals
 import os
 import intelmq.lib.exceptions as exceptions
 import re
+from enum import Enum
 from intelmq.lib.bot import Bot
 from textx.metamodel import metamodel_from_file
 from textx.exceptions import TextXError
+
+
+class Procedure(Enum):
+    CONTINUE = 1  # continue processing subsequent rules (default)
+    KEEP = 2      # stop processing and keep event
+    DROP = 3      # stop processing and drop event
 
 
 class SieveExpertBot(Bot):
@@ -44,28 +51,31 @@ class SieveExpertBot(Bot):
     def process(self):
         event = self.receive_message()
 
-        keep = False
+        procedure = Procedure.CONTINUE
         for rule in self.sieve.rules:
-            keep = self.process_rule(rule, event)
-            if not keep:
+            procedure = self.process_rule(rule, event)
+            if procedure == Procedure.KEEP:
+                self.logger.debug('Stop processing based on rule at %s: %s.', self.get_position(rule), event)
+                break
+            elif procedure == Procedure.DROP:
                 self.logger.debug('Dropped event based on rule at %s: %s.', self.get_position(rule), event)
                 break
 
-        if keep:
+        if procedure != Procedure.DROP:
             self.send_message(event)
 
         self.acknowledge_message()
 
     def process_rule(self, rule, event):
         match = SieveExpertBot.match_expression(rule.expr, event)
-        keep = True
+        procedure = Procedure.CONTINUE
         if match:
             self.logger.debug('Matched event based on rule at %s: %s.', self.get_position(rule), event)
             for action in rule.actions:
-                keep = SieveExpertBot.process_action(action.action, event)
-                if not keep:
+                procedure = SieveExpertBot.process_action(action.action, event)
+                if procedure != Procedure.CONTINUE:
                     break
-        return keep
+        return procedure
 
     @staticmethod
     def match_expression(expr, event):
@@ -107,7 +117,7 @@ class SieveExpertBot(Bot):
             return SieveExpertBot.process_string_operator(event[key], op, value.value)
         elif value.__class__.__name__ == 'StringValueList':
             for val in value.values:
-                if SieveExpertBot.process_string_operator(event[key], op, val):
+                if SieveExpertBot.process_string_operator(event[key], op, val.value):
                     return True
             return False
 
@@ -133,7 +143,7 @@ class SieveExpertBot(Bot):
             return SieveExpertBot.process_numeric_operator(event[key], op, value.value)
         elif value.__class__.__name__ == 'NumericValueList':
             for val in value.values:
-                if SieveExpertBot.process_numeric_operator(event[key], op, val):
+                if SieveExpertBot.process_numeric_operator(event[key], op, val.value):
                     return True
             return False
 
@@ -145,8 +155,10 @@ class SieveExpertBot(Bot):
     def process_action(action, event):
         print(type(event))
         if action == 'drop':
-            return False
-        elif action.__class__.__name__  == 'AddAction':
+            return Procedure.DROP
+        elif action == 'keep':
+            return Procedure.KEEP
+        elif action.__class__.__name__ == 'AddAction':
             if action.key not in event:
                 event.add(action.key, action.value)
         elif action.__class__.__name__ == 'AddForceAction':
@@ -157,7 +169,7 @@ class SieveExpertBot(Bot):
         elif action.__class__.__name__ == 'RemoveAction':
             if action.key in event:
                 del event[action.key]
-        return True
+        return Procedure.CONTINUE
 
     def get_position(self, entity):
         """ returns the position (line,col) of an entity in the sieve file. """

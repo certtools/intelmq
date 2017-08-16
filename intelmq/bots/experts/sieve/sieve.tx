@@ -54,8 +54,15 @@ SingleNumericValue: value=NUMBER ;
 NumericValueList: '[' values+=SingleNumericValue[','] ']' ;
 
 
-Action: action=DropAction | (action=AddAction | action=AddForceAction | action=ModifyAction | action=RemoveAction);
+Action: action=DropAction
+    | ( action=KeepAction
+        | action=AddAction
+        | action=AddForceAction
+        | action=ModifyAction
+        | action=RemoveAction
+      );
 DropAction: 'drop';
+KeepAction: 'keep';
 AddAction: 'add' key=Key '=' value=STRING;              // add key/value without overwriting existing key
 AddForceAction: 'add!' key=Key '=' value=STRING;        // add key/value, overwriting existing key
 ModifyAction: 'modify' key=Key '=' value=STRING;        // modify key/value, do not create if not exists
