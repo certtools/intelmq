@@ -17,8 +17,8 @@ STATUS_CODE_ERROR = 'HTTP status code was %s. Possible problem at the connection
 
 
 class RIPENCCExpertBot(Bot):
-    URL_DB_IP = 'http://rest.db.ripe.net/abuse-contact/{}.json'
-    URL_DB_AS = 'http://rest.db.ripe.net/abuse-contact/as{}.json'
+    URL_DB_IP = 'https://rest.db.ripe.net/abuse-contact/{}.json'
+    URL_DB_AS = 'https://rest.db.ripe.net/abuse-contact/as{}.json'
     URL_STAT = ('https://stat.ripe.net/data/abuse-contact-finder/'
                 'data.json?resource={}')
 
