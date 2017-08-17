@@ -416,11 +416,62 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
 
     def test_string_match_value_list(self):
         """ Test string match with StringValueList """
-        # TODO
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_string_match_value_list.sieve')
+
+        # Match the first rule
+        string_value_list_match_1 = EXAMPLE_INPUT.copy()
+        string_value_list_match_1['classification.type'] = 'malware'
+        string_value_list_expected_result_1=string_value_list_match_1.copy()
+        string_value_list_expected_result_1['comment'] ='infected hosts'
+        self.input_message = string_value_list_match_1
+        self.run_bot()
+        self.assertMessageEqual(0, string_value_list_expected_result_1)
+
+        # Match the second rule
+        string_value_list_match_2 = EXAMPLE_INPUT.copy()
+        string_value_list_match_2['classification.type'] = 'c&c'
+        string_value_list_expected_result_2=string_value_list_match_2.copy()
+        string_value_list_expected_result_2['comment'] ='malicious server / service'
+        self.input_message = string_value_list_match_2
+        self.run_bot()
+        self.assertMessageEqual(0, string_value_list_expected_result_2)
+
+        #don't Match any rule
+        string_value_list_match_3 = EXAMPLE_INPUT.copy()
+        string_value_list_match_3['classification.type'] = 'blacklist'
+        self.input_message = string_value_list_match_3
+        self.run_bot()
+        self.assertMessageEqual(0, string_value_list_match_3)
+
 
     def test_numeric_match_value_list(self):
-        """ Test numeric match with StringValueList """
-        # TODO
+        """ Test numeric match with NumericValueList """
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_numeric_match_value_list.sieve')
+
+        # Match the first rule
+        numeric_value_list_match_1 = EXAMPLE_INPUT.copy()
+        numeric_value_list_match_1['destination.asn'] = 6939
+        numeric_value_list_expected_result_1 = numeric_value_list_match_1.copy()
+        numeric_value_list_expected_result_1['comment'] = 'Belongs to peering group'
+        self.input_message = numeric_value_list_match_1
+        self.run_bot()
+        self.assertMessageEqual(0, numeric_value_list_expected_result_1)
+
+        # Match the second rule
+        numeric_value_list_match_2 = EXAMPLE_INPUT.copy()
+        numeric_value_list_match_2['destination.asn'] = 1930
+        numeric_value_list_expected_result_2 = numeric_value_list_match_2.copy()
+        numeric_value_list_expected_result_2['comment'] = 'Belongs constituency group'
+        self.input_message = numeric_value_list_match_2
+        self.run_bot()
+        self.assertMessageEqual(0, numeric_value_list_expected_result_2)
+
+        # don't Match any rule
+        numeric_value_list_match_3 = EXAMPLE_INPUT.copy()
+        numeric_value_list_match_3['destination.asn'] = 3356
+        self.input_message = numeric_value_list_match_3
+        self.run_bot()
+        self.assertMessageEqual(0, numeric_value_list_match_3)
 
     def test_drop_event(self):
         """ Test if matched event is dropped and processing is stopped. """
@@ -505,29 +556,7 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
 
     def test_modify(self):
         """ Test modifying key/value pairs """
-        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_modify.sieve')
-
-        # If doesn't match, nothing should have changed
-        event1 = EXAMPLE_INPUT.copy()
-        self.input_message = event1
-        self.run_bot()
-        self.assertMessageEqual(0, event1)
-
-        # If expression matches && parameter doesn't exists, nothing changes
-        event1['comment'] = 'modify new parameter'
-        result = event1.copy()
-        self.input_message = event1
-        self.run_bot()
-        self.assertMessageEqual(0, result)
-
-        # If expression matches && parameter exists, source.ip changed
-        event2 = EXAMPLE_INPUT.copy()
-        event2['comment'] = 'modify existing parameter'
-        result2 = event2.copy()
-        result2['source.ip'] = '10.9.8.7'
-        self.input_message = event2
-        self.run_bot()
-        self.assertMessageEqual(0, result2)
+        # TODO
 
     def test_remove(self):
         """ Test removing keys """
