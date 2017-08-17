@@ -1,6 +1,11 @@
 CHANGELOG
 ==========
 
+1.0.1 Bugfix release
+--------------------
+### Tools
+- intelmqctl: To check the status of a bot, the comandline of the running process is compared to the actual executable of the bot. Otherwise unrelated programs with the same PID are detected as running bot.
+
 1.0.0 Stable release
 --------------------
 ### Core
