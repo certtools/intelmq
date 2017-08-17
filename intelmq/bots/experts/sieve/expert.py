@@ -50,7 +50,6 @@ class SieveExpertBot(Bot):
 
     def process(self):
         event = self.receive_message()
-
         procedure = Procedure.CONTINUE
         for rule in self.sieve.rules:
             procedure = self.process_rule(rule, event)
@@ -61,21 +60,41 @@ class SieveExpertBot(Bot):
                 self.logger.debug('Dropped event based on rule at %s: %s.', self.get_position(rule), event)
                 break
 
+        # forwarding decision
         if procedure != Procedure.DROP:
             self.send_message(event)
 
         self.acknowledge_message()
 
     def process_rule(self, rule, event):
-        match = SieveExpertBot.match_expression(rule.expr, event)
-        procedure = Procedure.CONTINUE
-        if match:
-            self.logger.debug('Matched event based on rule at %s: %s.', self.get_position(rule), event)
-            for action in rule.actions:
+        # process mandatory 'if' clause
+        if SieveExpertBot.match_expression(rule.if_.expr, event):
+            self.logger.debug('Matched event based on rule at %s: %s.', self.get_position(rule.if_), event)
+            for action in rule.if_.actions:
                 procedure = SieveExpertBot.process_action(action.action, event)
                 if procedure != Procedure.CONTINUE:
-                    break
-        return procedure
+                    return procedure
+            return Procedure.CONTINUE
+
+        # process optional 'elif' clauses
+        for clause in rule.elif_:
+            if SieveExpertBot.match_expression(clause.expr, event):
+                self.logger.debug('Matched event based on rule at %s: %s.', self.get_position(clause), event)
+                for action in clause.actions:
+                    procedure = SieveExpertBot.process_action(action.action, event)
+                    if procedure != Procedure.CONTINUE:
+                        return procedure
+                return Procedure.CONTINUE
+
+        # process optional 'else' clause
+        if rule.else_:
+            self.logger.debug('Matched event based on rule at %s: %s.', self.get_position(rule.else_), event)
+            for action in rule.else_.actions:
+                procedure = SieveExpertBot.process_action(action.action, event)
+                if procedure != Procedure.CONTINUE:
+                    return procedure
+
+        return Procedure.CONTINUE
 
     @staticmethod
     def match_expression(expr, event):

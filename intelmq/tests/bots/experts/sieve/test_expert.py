@@ -23,6 +23,128 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
     def set_bot(cls):
         cls.bot_reference = SieveExpertBot
 
+    def test_if_clause(self):
+        """ Test processing of subsequent if clauses. """
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_if_clause.sieve')
+
+        # assert first if clause is matched
+        event1 = EXAMPLE_INPUT.copy()
+        event1['comment'] = 'changeme'
+        expected1 = EXAMPLE_INPUT.copy()
+        expected1['comment'] = 'changed'
+        self.input_message = event1
+        self.run_bot()
+        self.assertMessageEqual(0, expected1)
+
+        # assert second if clause is matched
+        event2 = EXAMPLE_INPUT.copy()
+        event2['source.ip'] = '192.168.0.1'
+        expected2 = EXAMPLE_INPUT.copy()
+        expected2['source.ip'] = '192.168.0.2'
+        self.input_message = event2
+        self.run_bot()
+        self.assertMessageEqual(0, expected2)
+
+        # assert both if clauses are matched
+        event3 = EXAMPLE_INPUT.copy()
+        event3['comment'] = 'changeme'
+        event3['source.ip'] = '192.168.0.1'
+        expected3 = EXAMPLE_INPUT.copy()
+        expected3['comment'] = 'changed'
+        expected3['source.ip'] = '192.168.0.2'
+        self.input_message = event3
+        self.run_bot()
+        self.assertMessageEqual(0, expected3)
+
+        # assert none of the if clauses matched
+        event4 = EXAMPLE_INPUT.copy()
+        self.input_message = event4
+        self.run_bot()
+        self.assertMessageEqual(0, event4)
+
+    def test_if_else_clause(self):
+        """ Test processing else clause. """
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_if_else_clause.sieve')
+
+        # assert that event matches if clause
+        event1 = EXAMPLE_INPUT.copy()
+        event1['comment'] = 'match'
+        expected1 = EXAMPLE_INPUT.copy()
+        expected1['comment'] = 'matched'
+        self.input_message = event1
+        self.run_bot()
+        self.assertMessageEqual(0, expected1)
+
+        # assert that action in else clause is applied
+        event2 = EXAMPLE_INPUT.copy()
+        event2['comment'] = 'foobar'
+        expected2 = EXAMPLE_INPUT.copy()
+        expected2['comment'] = 'notmatched'
+        self.input_message = event2
+        self.run_bot()
+        self.assertMessageEqual(0, expected2)
+
+    def test_if_elif_clause(self):
+        """ Test processing elif clauses. """
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_if_elif_clause.sieve')
+
+        # test match if clause
+        event = EXAMPLE_INPUT.copy()
+        event['comment'] = 'match1'
+        expected = EXAMPLE_INPUT.copy()
+        expected['comment'] = 'changed1'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # test match first elif clause
+        event['comment'] = 'match2'
+        expected['comment'] = 'changed2'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # test match second elif clause
+        event['comment'] = 'match3'
+        expected['comment'] = 'changed3'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # test no match
+        event['comment'] = 'foobar'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, event)
+
+    def test_if_elif_else_clause(self):
+        """ Test processing if, elif, and else clause. """
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__),
+                                              'test_sieve_files/test_if_elif_else_clause.sieve')
+
+        # test match if clause
+        event = EXAMPLE_INPUT.copy()
+        event['comment'] = 'match1'
+        expected = EXAMPLE_INPUT.copy()
+        expected['comment'] = 'changed1'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # test match elif clause
+        event['comment'] = 'match2'
+        expected['comment'] = 'changed2'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # test match else clause
+        event['comment'] = 'match3'
+        expected['comment'] = 'changed3'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
     def test_or_match(self):
         """ Test Or Operator in match"""
         self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_or_match.sieve')
@@ -129,25 +251,27 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
 
     def test_numeric_equal_match(self):
         """ Test == numeric match """
-        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_numeric_equal_match.sieve')
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__),
+                                              'test_sieve_files/test_numeric_equal_match.sieve')
 
         # if match drop
-        numeric_match_true=EXAMPLE_INPUT.copy()
-        numeric_match_true['feed.accuracy']=100.0
-        self.input_message=numeric_match_true
+        numeric_match_true = EXAMPLE_INPUT.copy()
+        numeric_match_true['feed.accuracy'] = 100.0
+        self.input_message = numeric_match_true
         self.run_bot()
         self.assertOutputQueueLen(0)
 
         # if doesn't match keep
-        numeric_match_false=EXAMPLE_INPUT.copy()
-        numeric_match_false['feed.accuracy']=50.0
-        self.input_message=numeric_match_false
+        numeric_match_false = EXAMPLE_INPUT.copy()
+        numeric_match_false['feed.accuracy'] = 50.0
+        self.input_message = numeric_match_false
         self.run_bot()
-        self.assertMessageEqual(0,numeric_match_false)
+        self.assertMessageEqual(0, numeric_match_false)
 
     def test_numeric_not_equal_match(self):
         """ Test != numeric match """
-        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_numeric_not_equal_match.sieve')
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__),
+                                              'test_sieve_files/test_numeric_not_equal_match.sieve')
 
         # if not equal drop
         numeric_match_false = EXAMPLE_INPUT.copy()
@@ -165,7 +289,8 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
 
     def test_numeric_less_than_match(self):
         """ Test < numeric match """
-        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_numeric_less_than_match.sieve')
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__),
+                                              'test_sieve_files/test_numeric_less_than_match.sieve')
 
         # if less than drop
         numeric_match_true = EXAMPLE_INPUT.copy()
@@ -183,7 +308,8 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
 
     def test_numeric_less_than_or_equal_match(self):
         """ Test <= numeric match """
-        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_numeric_less_than_or_equal_match.sieve')
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__),
+                                              'test_sieve_files/test_numeric_less_than_or_equal_match.sieve')
 
         # if less than drop
         numeric_match_false = EXAMPLE_INPUT.copy()
@@ -208,7 +334,8 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
 
     def test_numeric_greater_than_match(self):
         """ Test > numeric match """
-        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_numeric_greater_than_match.sieve')
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__),
+                                              'test_sieve_files/test_numeric_greater_than_match.sieve')
 
         # if greater than drop
         numeric_match_true = EXAMPLE_INPUT.copy()
@@ -226,7 +353,8 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
 
     def test_numeric_greater_than_or_equal_match(self):
         """ Test >= numeric match """
-        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_numeric_greater_than_or_equal_match.sieve')
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__),
+                                              'test_sieve_files/test_numeric_greater_than_or_equal_match.sieve')
 
         # if less than keep
         numeric_match_false = EXAMPLE_INPUT.copy()

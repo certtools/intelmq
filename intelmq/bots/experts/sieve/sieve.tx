@@ -5,11 +5,10 @@
 
 SieveModel: rules*=Rule ;
 
-Rule:
-  'if' expr=Expression '{'
-    actions*=Action
-  '}'
-;
+Rule: if_=IfClause (elif_=ElifClause)* (else_=ElseClause)?;
+IfClause: 'if' expr=Expression '{' actions*=Action '}';
+ElifClause: 'elif' expr=Expression '{' actions*=Action '}';
+ElseClause: 'else' '{' actions*=Action '}';
 
 Expression: conj=Conjunction ('||' conj=Conjunction)*;
 Conjunction: cond=Condition ('&&' cond=Condition)*;
