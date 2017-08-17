@@ -6,7 +6,6 @@ import os
 import intelmq.lib.test as test
 from intelmq.bots.experts.sieve.expert import SieveExpertBot
 
-
 EXAMPLE_INPUT = {"__type": "Event",
                  "source.ip": "127.0.0.1",
                  "source.abuse_contact": "abuse@example.com",
@@ -379,11 +378,41 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
 
     def test_exists_match(self):
         """ Test :exists match """
-        # TODO
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_exists_match.sieve')
+
+        # positive test
+        event = EXAMPLE_INPUT.copy()
+        event['source.fqdn'] = 'www.example.com'
+        expected = event.copy()
+        expected['comment'] = 'I think therefore I am.'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # negative test
+        event = EXAMPLE_INPUT.copy()
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, event)
 
     def test_not_exists_match(self):
         """ Test :notexists match """
-        # TODO
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_notexists_match.sieve')
+
+        # positive test
+        event = EXAMPLE_INPUT.copy()
+        expected = event.copy()
+        expected['comment'] = 'I think therefore I am.'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # negative test
+        event = EXAMPLE_INPUT.copy()
+        event['source.fqdn'] = 'www.example.com'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, event)
 
     def test_string_match_value_list(self):
         """ Test string match with StringValueList """
@@ -430,15 +459,75 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
 
     def test_add(self):
         """ Test adding key/value pairs """
-        # TODO
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_add.sieve')
+
+        # If doesn't match, nothing should have changed
+        event1 = EXAMPLE_INPUT.copy()
+        self.input_message = event1
+        self.run_bot()
+        self.assertMessageEqual(0, event1)
+
+        # If expression matches, destination.ip field is added
+        event1['comment'] = 'add field'
+        result = event1.copy()
+        result['destination.ip'] = '150.50.50.10'
+        self.input_message = event1
+        self.run_bot()
+        self.assertMessageEqual(0, result)
 
     def test_add_force(self):
         """ Test adding key/value pairs, overwriting existing key """
-        # TODO
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_add_force.sieve')
+
+        # If doesn't match, nothing should have changed
+        event1 = EXAMPLE_INPUT.copy()
+        self.input_message = event1
+        self.run_bot()
+        self.assertMessageEqual(0, event1)
+
+        # If expression matches, destination.ip field is added as new field
+        event1['comment'] = 'add force new field'
+        result = event1.copy()
+        result['destination.ip'] = '150.50.50.10'
+        self.input_message = event1
+        self.run_bot()
+        self.assertMessageEqual(0, result)
+
+        # If expression matches, destination.ip field is added as new field
+        event2 = EXAMPLE_INPUT.copy()
+        event2['comment'] = 'add force existing fields'
+        result2 = event2.copy()
+        result2['destination.ip'] = '200.10.9.7'
+        result2['source.ip'] = "10.9.8.7"
+        self.input_message = event2
+        self.run_bot()
+        self.assertMessageEqual(0, result2)
 
     def test_modify(self):
         """ Test modifying key/value pairs """
-        # TODO
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_modify.sieve')
+
+        # If doesn't match, nothing should have changed
+        event1 = EXAMPLE_INPUT.copy()
+        self.input_message = event1
+        self.run_bot()
+        self.assertMessageEqual(0, event1)
+
+        # If expression matches && parameter doesn't exists, nothing changes
+        event1['comment'] = 'modify new parameter'
+        result = event1.copy()
+        self.input_message = event1
+        self.run_bot()
+        self.assertMessageEqual(0, result)
+
+        # If expression matches && parameter exists, source.ip changed
+        event2 = EXAMPLE_INPUT.copy()
+        event2['comment'] = 'modify existing parameter'
+        result2 = event2.copy()
+        result2['source.ip'] = '10.9.8.7'
+        self.input_message = event2
+        self.run_bot()
+        self.assertMessageEqual(0, result2)
 
     def test_remove(self):
         """ Test removing keys """
@@ -459,7 +548,6 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         del expected_result['classification.type']
 
         self.assertMessageEqual(0, expected_result)
-
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()

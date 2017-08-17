@@ -2,7 +2,6 @@
 """
 SieveExpertBot filters and modifies events based on a specification language similar to mail sieve.
 
-TODO: Document possible necessary configurations.
 Parameters:
     file: string
 """
@@ -114,7 +113,7 @@ class SieveExpertBot(Bot):
     def process_condition(cond, event):
         match = cond.match
         if match.__class__.__name__ == 'ExistMatch':
-            return SieveExpertBot.process_exist_match(match.key, event)
+            return SieveExpertBot.process_exist_match(match.key, match.op, event)
         elif match.__class__.__name__ == 'StringMatch':
             return SieveExpertBot.process_string_match(match.key, match.op, match.value, event)
         elif match.__class__.__name__ == 'NumericMatch':
@@ -124,8 +123,11 @@ class SieveExpertBot(Bot):
         pass
 
     @staticmethod
-    def process_exist_match(key, event):
-        return key in event
+    def process_exist_match(key, op, event):
+        if op == ':exists':
+            return key in event
+        elif op == ':notexists':
+            return key not in event
 
     @staticmethod
     def process_string_match(key, op, value, event):
