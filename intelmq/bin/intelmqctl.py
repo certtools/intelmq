@@ -5,6 +5,7 @@ import importlib
 import json
 import os
 import re
+import shutil
 import signal
 import subprocess
 import sys
@@ -123,7 +124,8 @@ class IntelMQProcessManager:
 
     def bot_run(self, bot_id, run_subcommand=None, console_type=None, message_action_kind=None, dryrun=None, msg=None):
         pid = self.__read_pidfile(bot_id)
-        if pid and self.__status_process(pid):
+        module = self.__runtime_configuration[bot_id]['module']
+        if pid and self.__status_process(pid, module):
             self.logger.warning("Main instance of the bot is running in the background and will be stopped; "
                                 "when finished, we try to relaunch it again. "
                                 "You may want to launch: 'intelmqctl stop {}' to prevent this message."
@@ -156,8 +158,9 @@ class IntelMQProcessManager:
 
     def bot_start(self, bot_id, getstatus=True):
         pid = self.__read_pidfile(bot_id)
+        module = self.__runtime_configuration[bot_id]['module']
         if pid:
-            if self.__status_process(pid):
+            if self.__status_process(pid, module):
                 log_bot_message('running', bot_id)
                 return 'running'
             else:
@@ -181,6 +184,7 @@ class IntelMQProcessManager:
 
     def bot_stop(self, bot_id, getstatus=True):
         pid = self.__read_pidfile(bot_id)
+        module = self.__runtime_configuration[bot_id]['module']
         if not pid:
             if self.controller._is_enabled(bot_id):
                 log_bot_error('stopped', bot_id)
@@ -188,7 +192,7 @@ class IntelMQProcessManager:
             else:
                 log_bot_message('disabled', bot_id)
                 return 'disabled'
-        if not self.__status_process(pid):
+        if not self.__status_process(pid, module):
             self.__remove_pidfile(bot_id)
             log_bot_error('stopped', bot_id)
             return 'stopped'
@@ -202,7 +206,7 @@ class IntelMQProcessManager:
         else:
             if getstatus:
                 time.sleep(0.5)
-                if self.__status_process(pid):
+                if self.__status_process(pid, module):
                     log_bot_error('running', bot_id)
                     return 'running'
                 try:
@@ -214,6 +218,7 @@ class IntelMQProcessManager:
 
     def bot_reload(self, bot_id, getstatus=True):
         pid = self.__read_pidfile(bot_id)
+        module = self.__runtime_configuration[bot_id]['module']
         if not pid:
             if self.controller._is_enabled(bot_id):
                 log_bot_error('stopped', bot_id)
@@ -221,7 +226,7 @@ class IntelMQProcessManager:
             else:
                 log_bot_message('disabled', bot_id)
                 return 'disabled'
-        if not self.__status_process(pid):
+        if not self.__status_process(pid, module):
             self.__remove_pidfile(bot_id)
             log_bot_error('stopped', bot_id)
             return 'stopped'
@@ -235,7 +240,7 @@ class IntelMQProcessManager:
         else:
             if getstatus:
                 time.sleep(0.5)
-                if self.__status_process(pid):
+                if self.__status_process(pid, module):
                     log_bot_message('running', bot_id)
                     return 'running'
                 log_bot_error('stopped', bot_id)
@@ -247,11 +252,14 @@ class IntelMQProcessManager:
                 return 'running'
         else:
             pid = self.__read_pidfile(bot_id)
-            if pid and self.__status_process(pid):
+            module = self.__runtime_configuration[bot_id]['module']
+            if pid and self.__status_process(pid, module):
                 log_bot_message('running', bot_id)
                 return 'running'
 
         if self.controller._is_enabled(bot_id):
+            if self.__check_pidfile(bot_id):
+                self.__remove_pidfile(bot_id)
             log_bot_message('stopped', bot_id)
             if proc and RETURN_TYPE == 'text':
                 log = proc.stderr.read().decode()
@@ -286,10 +294,11 @@ class IntelMQProcessManager:
         filename = self.PIDFILE.format(bot_id)
         os.remove(filename)
 
-    def __status_process(self, pid):
+    def __status_process(self, pid, module):
         try:
-            psutil.Process(int(pid))
-            return True
+            proc = psutil.Process(int(pid))
+            if proc.cmdline()[1] == shutil.which(module):
+                return True
         except psutil.NoSuchProcess:
             return False
         except psutil.AccessDenied:
