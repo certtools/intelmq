@@ -1,6 +1,6 @@
 # Sieve Bot
 
-The sieve bot is used to filter and/or modify bots based on a set of rules. The
+The sieve bot is used to filter and/or modify events based on a set of rules. The
 rules are specified in an external configuration file and with a syntax similar
 to the [Sieve language](http://sieve.info/) used for mail filtering.
 
@@ -90,7 +90,7 @@ specified with quotes. Following operators may be used to match events:
 
  * `<<` matches if an IP address is contained in the specified network range:
 
-  ```if source.ip << '10.0.0.0/8' { ... }```
+   ```if source.ip << '10.0.0.0/8' { ... }```
 
  * Values to match against can also be specified as list, in which case any one
  of the values will result in a match:
