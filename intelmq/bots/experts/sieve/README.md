@@ -127,3 +127,8 @@ Example:
  next bot in the pipeline. The sieve file processing is interrupted upon
  reaching this action. No other actions may be specified besides the `drop`
  action within `{` and `}`.
+
+
+ ### Comments
+
+ Comments may be used in the sieve file: all characters after `//` and until the end of the line will be ignored.
