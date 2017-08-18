@@ -129,6 +129,23 @@ Example:
  action within `{` and `}`.
 
 
- ### Comments
+### Comments
 
- Comments may be used in the sieve file: all characters after `//` and until the end of the line will be ignored.
+Comments may be used in the sieve file: all characters after `//` and until the end of the line will be ignored.
+
+
+## Validating a sieve file
+
+Use the following command to validate your sieve files:
+```
+$ python intelmq/bots/experts/sieve/validator.py -h
+usage: validator.py [-h] sievefile
+
+Validates the syntax of sievebot files.
+
+positional arguments:
+  sievefile   Sieve file
+
+optional arguments:
+  -h, --help  show this help message and exit
+```
