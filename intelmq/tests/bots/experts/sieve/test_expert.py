@@ -622,5 +622,73 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
 
         self.assertMessageEqual(0, expected_result)
 
+    def test_ip_range_match(self):
+        """ Test IP range match operator. """
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_ip_range_match.sieve')
+
+        # match /24 network
+        event = EXAMPLE_INPUT.copy()
+        event['source.ip'] = '192.0.0.1'
+        expected = event.copy()
+        expected['comment'] = 'bogon1'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # match /16 network
+        event = EXAMPLE_INPUT.copy()
+        event['source.ip'] = '192.0.200.1'
+        expected = event.copy()
+        expected['comment'] = 'bogon2'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # no match
+        event = EXAMPLE_INPUT.copy()
+        event['source.ip'] = '192.168.0.1'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, event)
+
+        # IPv6 address
+        event = EXAMPLE_INPUT.copy()
+        event['source.ip'] = '2001:620:0:ff::56'
+        expected = event.copy()
+        expected['comment'] = 'SWITCH'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # invalid address in event should not match
+        event = EXAMPLE_INPUT.copy()
+        event['comment'] = '300.300.300.300'
+        self.input_message = event
+        self.run_bot()
+        self.assertLogMatches(pattern='^Could not parse IP address', levelname='WARNING')
+        self.assertMessageEqual(0, event)
+
+    def test_ip_range_list_match(self):
+        """ Test IP range list match operator. """
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__),
+                                              'test_sieve_files/test_ip_range_list_match.sieve')
+
+        # positive test
+        event = EXAMPLE_INPUT.copy()
+        event['source.ip'] = '192.0.0.1'
+        expected = event.copy()
+        expected['comment'] = 'bogon'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # negative test
+        event = EXAMPLE_INPUT.copy()
+        event['source.ip'] = '8.8.8.8'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, event)
+
+
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()

@@ -26,12 +26,15 @@ if :notexists source.abuse_contact || source.abuse_contact =~ '.*@example.com' {
   drop  // aborts processing of subsequent rules and drops the event.
 }
 
+if source.ip << 192.0.0.0/24 {
+    add! comment = 'bogon'
+}
 
 if classification.type == ['phishing', 'malware'] && source.fqdn =~ '.*\.(ch|li)$' {
-  add comment = 'domainabuse'
+  add! comment = 'domainabuse'
   keep
 } elsif classification.type == 'scanner' {
-  add comment = 'ignore'
+  add! comment = 'ignore'
   drop
 } else {
   remove comment
@@ -67,7 +70,8 @@ if EXPRESSION {
 Each rule specifies on or more expressions to match an event based on its keys
 and values. Event keys are specified as strings without quotes. String values
 must be enclosed in single quotes. Numeric values can be specified as integers
-or floats and are unquoted. Following operators may be used to match events:
+or floats and are unquoted. IP addresses and network ranges (IPv4 and IPv6) are
+specified with quotes. Following operators may be used to match events:
 
  * `:exists` and `:notexists` match if a given key exists, for example:
 
@@ -83,6 +87,10 @@ or floats and are unquoted. Following operators may be used to match events:
  match.
 
  * Numerical comparisons are evaluated with `<`, `<=`, `>`, `>=`.
+
+ * `<<` matches if an IP address is contained in the specified network range:
+
+  ```if source.ip << '10.0.0.0/8' { ... }```
 
  * Values to match against can also be specified as list, in which case any one
  of the values will result in a match:
