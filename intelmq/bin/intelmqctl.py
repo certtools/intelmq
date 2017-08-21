@@ -249,7 +249,7 @@ class IntelMQProcessManager:
 
         if self.controller._is_enabled(bot_id):
             log_bot_message('stopped', bot_id)
-            if proc:
+            if proc and RETURN_TYPE == 'text':
                 log = proc.stderr.read().decode()
                 if not log:  # if nothing in stderr, print stdout
                     log = proc.stdout.read().decode()
