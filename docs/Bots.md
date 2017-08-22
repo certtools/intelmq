@@ -380,7 +380,7 @@ Lines starting with `'#'` will be ignored. Headers won't be interpreted.
  * `"default_url_protocol"`: For URLs you can give a defaut protocol which will be pretended to the data.
  * `"delimiter"`: separation character of the CSV, e.g. `","`
  * `"skip_header"`: Boolean, skip the first line of the file, optional. Lines starting with `#` will be skipped additionally, make sure you do not skip more lines than needed!
- * `time_format`: Optional. If `"timestamp"`, `"windows_nt"` or `"epoch"` the time will be converted first. With the default `null` fuzzy time parsing will be used.
+ * `time_format`: Optional. If `"timestamp"`, `"windows_nt"` or `"epoch_millis"` the time will be converted first. With the default `null` fuzzy time parsing will be used.
  * `"type"`: set the `classification.type` statically, optional
  * `"data_type"`: sets the data of specific type, currently only `"json"` is supported value. An example
  
