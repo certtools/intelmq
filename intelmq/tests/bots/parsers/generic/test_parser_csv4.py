@@ -66,7 +66,7 @@ class TestGenericCsvParserBot(test.BotTestCase, unittest.TestCase):
                          "delimiter": ",",
                          "skip_header": True,
                          "type": "botnet drone",
-                         "time_format": "timestamp",
+                         "time_format": "epoch_millis",
                          "default_url_protocol": "http://",
                          "type_translation": None}
 
