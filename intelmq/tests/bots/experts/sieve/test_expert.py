@@ -226,27 +226,165 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
 
     def test_precedence(self):
         """ Test precedence of operators """
-        # TODO
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_precedence.sieve')
+
+        # test && has higher precedence than ||
+        event = EXAMPLE_INPUT.copy()
+        event['feed.provider'] = 'acme'
+        expected = event.copy()
+        expected['comment'] = 'match1'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # test round braces to change precedence
+        event = EXAMPLE_INPUT.copy()
+        event['source.abuse_contact'] = 'abuse@example.com'
+        event['source.ip'] = '5.6.7.8'
+        expected = event.copy()
+        expected['comment'] = 'match2'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
 
     def test_string_equal_match(self):
         """ Test == string match """
-        # TODO
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__),
+                                              'test_sieve_files/test_string_equal_match.sieve')
+
+        # positive test
+        event = EXAMPLE_INPUT.copy()
+        event['source.fqdn'] = 'www.example.com'
+        expected = event.copy()
+        expected['comment'] = 'match'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # negative test (key doesn't match)
+        event = EXAMPLE_INPUT.copy()
+        event['source.fqdn'] = 'www.hotmail.com'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, event)
+
+        # negative test (key not defined)
+        event = EXAMPLE_INPUT.copy()
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, event)
 
     def test_string_not_equal_match(self):
         """ Test != string match """
-        # TODO
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__),
+                                              'test_sieve_files/test_string_not_equal_match.sieve')
+
+        # positive test (key mismatch)
+        event = EXAMPLE_INPUT.copy()
+        event['source.fqdn'] = 'mail.ru'
+        expected = event.copy()
+        expected['comment'] = 'match'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # positive test (key undefined)
+        event = EXAMPLE_INPUT.copy()
+        expected = event.copy()
+        expected['comment'] = 'match'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # negative test
+        event = EXAMPLE_INPUT.copy()
+        event['source.fqdn'] = 'www.example.com'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, event)
 
     def test_string_contains_match(self):
         """ Test :contains string match """
-        # TODO
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__),
+                                              'test_sieve_files/test_string_contains_match.sieve')
+
+        # positive test
+        event = EXAMPLE_INPUT.copy()
+        event['source.url'] = 'https://www.switch.ch/security/'
+        expected = event.copy()
+        expected['comment'] = 'match'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # negative test (key mismatch)
+        event = EXAMPLE_INPUT.copy()
+        event['source.url'] = 'https://www.ripe.net/'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, event)
+
+        # negative test (key undefined)
+        event = EXAMPLE_INPUT.copy()
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, event)
 
     def test_string_regex_match(self):
         """ Test =~ string match """
-        # TODO
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__),
+                                              'test_sieve_files/test_string_regex_match.sieve')
+
+        # positive test
+        event = EXAMPLE_INPUT.copy()
+        event['source.url'] = 'https://www.switch.ch/security'
+        expected = event.copy()
+        expected['comment'] = 'match'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # negative test (key mismatch)
+        event = EXAMPLE_INPUT.copy()
+        event['source.url'] = 'http://www.example.com'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, event)
+
+        # negative test (key undefined)
+        event = EXAMPLE_INPUT.copy()
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, event)
 
     def test_string_inverse_regex_match(self):
         """ Test !~ string match """
-        # TODO
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__),
+                                              'test_sieve_files/test_string_inverse_regex_match.sieve')
+
+        # positive test (key mismatch)
+        event = EXAMPLE_INPUT.copy()
+        event['source.url'] = 'http://www.example.com'
+        expected = event.copy()
+        expected['comment'] = 'match'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # positive test (key undefined)
+        event = EXAMPLE_INPUT.copy()
+        expected = event.copy()
+        expected['comment'] = 'match'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # negative test (key match)
+        event = EXAMPLE_INPUT.copy()
+        event['source.url'] = 'https://www.switch.ch/security'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, event)
 
     def test_numeric_equal_match(self):
         """ Test == numeric match """
@@ -416,13 +554,14 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
 
     def test_string_match_value_list(self):
         """ Test string match with StringValueList """
-        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_string_match_value_list.sieve')
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__),
+                                              'test_sieve_files/test_string_match_value_list.sieve')
 
         # Match the first rule
         string_value_list_match_1 = EXAMPLE_INPUT.copy()
         string_value_list_match_1['classification.type'] = 'malware'
-        string_value_list_expected_result_1=string_value_list_match_1.copy()
-        string_value_list_expected_result_1['comment'] ='infected hosts'
+        string_value_list_expected_result_1 = string_value_list_match_1.copy()
+        string_value_list_expected_result_1['comment'] = 'infected hosts'
         self.input_message = string_value_list_match_1
         self.run_bot()
         self.assertMessageEqual(0, string_value_list_expected_result_1)
@@ -430,23 +569,23 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         # Match the second rule
         string_value_list_match_2 = EXAMPLE_INPUT.copy()
         string_value_list_match_2['classification.type'] = 'c&c'
-        string_value_list_expected_result_2=string_value_list_match_2.copy()
-        string_value_list_expected_result_2['comment'] ='malicious server / service'
+        string_value_list_expected_result_2 = string_value_list_match_2.copy()
+        string_value_list_expected_result_2['comment'] = 'malicious server / service'
         self.input_message = string_value_list_match_2
         self.run_bot()
         self.assertMessageEqual(0, string_value_list_expected_result_2)
 
-        #don't Match any rule
+        # don't match any rule
         string_value_list_match_3 = EXAMPLE_INPUT.copy()
         string_value_list_match_3['classification.type'] = 'blacklist'
         self.input_message = string_value_list_match_3
         self.run_bot()
         self.assertMessageEqual(0, string_value_list_match_3)
 
-
     def test_numeric_match_value_list(self):
         """ Test numeric match with NumericValueList """
-        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_numeric_match_value_list.sieve')
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__),
+                                              'test_sieve_files/test_numeric_match_value_list.sieve')
 
         # Match the first rule
         numeric_value_list_match_1 = EXAMPLE_INPUT.copy()

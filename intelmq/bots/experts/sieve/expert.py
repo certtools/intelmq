@@ -131,7 +131,7 @@ class SieveExpertBot(Bot):
 
     def process_string_match(self, key, op, value, event):
         if key not in event:
-            return False
+            return op == '!=' or op == '!~'
 
         if value.__class__.__name__ == 'SingleStringValue':
             return self.process_string_operator(event[key], op, value.value)
