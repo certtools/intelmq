@@ -1,0 +1,9 @@
+# This is a sample ipset file.  Please edit as appropriate.
+#
+# For example, you may already have or wish to use something other than LOGNDROP.
+#
+iptables -N LOGNDROP
+iptables -A LOGNDROP -j LOG
+iptables -A LOGNDROP -j DROP
+ipset create testIP hash:ip
+ipset add testIP 10.1.1.1
