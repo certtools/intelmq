@@ -230,6 +230,20 @@ class DateTime(GenericType):
         return value
 
     @staticmethod
+    def from_epoch_millis(tstamp, tzone='UTC'):
+        """
+        Returns ISO formatted datetime from given epoch timestamp with milliseconds.
+        It ignores the milliseconds, converts it into normal timestamp and processes it.
+        """
+        bytecount = len(str(tstamp))
+        if bytecount == 10:
+            return DateTime.from_timestamp(tstamp, tzone)
+        if bytecount == 12:
+            return DateTime.from_timestamp(tstamp // 100, tzone)
+        if bytecount == 13:
+            return DateTime.from_timestamp(tstamp // 1000, tzone)
+
+    @staticmethod
     def from_timestamp(tstamp, tzone='UTC'):
         """
         Returns ISO formatted datetime from given timestamp.

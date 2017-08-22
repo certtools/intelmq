@@ -28,6 +28,7 @@ import intelmq.lib.exceptions as exceptions
 
 TIME_CONVERSIONS = {'timestamp': DateTime.from_timestamp,
                     'windows_nt': DateTime.from_windows_nt,
+                    'epoch_millis': DateTime.from_epoch_millis,
                     None: lambda value: parse(value, fuzzy=True).isoformat() + " UTC"}
 
 DATA_CONVERSIONS = {'json': lambda data: json.loads(data)}
