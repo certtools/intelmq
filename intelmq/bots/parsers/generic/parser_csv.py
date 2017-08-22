@@ -92,16 +92,7 @@ class GenericCsvParserBot(ParserBot):
                     value = DATA_CONVERSIONS[self.data_type[key]](value)
 
                 if key in ["time.source", "time.destination"]:
-                    if self.time_format == 'timestamp':
-                        if len(value) == 12:
-                            value = (int(value) // 100)
-                        elif len(value) == 13:
-                            value = (int(value) // 1000)
-                        else:
-                            value = int(value)
-                        value = TIME_CONVERSIONS[self.time_format](value)
-                    else:
-                        value = TIME_CONVERSIONS[self.time_format](value)
+                    value = TIME_CONVERSIONS[self.time_format](value)
                 elif key.endswith('.url'):
                     if not value:
                         continue
@@ -112,13 +103,11 @@ class GenericCsvParserBot(ParserBot):
                         value = self.type_translation[value]
                     elif not hasattr(self.parameters, 'type'):
                         continue
-                if key.startswith('extra.'):
-                    if value:
-                        extra[key[6:]] = value
+                elif key.startswith('extra.') and value:
+                    extra[key[6:]] = value
                     break
-                else:
-                    if event.add(key, value, raise_failure=False):
-                        break
+                if event.add(key, value, raise_failure=False):
+                    break
             else:
                 # if the value sill remains unadded we need to inform
                 raise exceptions.InvalidValue(keys, value)
