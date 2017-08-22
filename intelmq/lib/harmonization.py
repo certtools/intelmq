@@ -236,12 +236,13 @@ class DateTime(GenericType):
         It ignores the milliseconds, converts it into normal timestamp and processes it.
         """
         bytecount = len(str(tstamp))
+        int_tstamp = tstamp if isinstance(tstamp, int) else int(tstamp)
         if bytecount == 10:
-            return DateTime.from_timestamp(tstamp, tzone)
+            return DateTime.from_timestamp(int_tstamp, tzone)
         if bytecount == 12:
-            return DateTime.from_timestamp(tstamp // 100, tzone)
+            return DateTime.from_timestamp(int_tstamp // 100, tzone)
         if bytecount == 13:
-            return DateTime.from_timestamp(tstamp // 1000, tzone)
+            return DateTime.from_timestamp(int_tstamp // 1000, tzone)
 
     @staticmethod
     def from_timestamp(tstamp, tzone='UTC'):
