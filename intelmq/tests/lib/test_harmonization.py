@@ -189,6 +189,8 @@ class TestHarmonization(unittest.TestCase):
         """ Test DateTime.from_epoch_millis method. """
         self.assertEqual('2015-08-31T08:16:10+00:00',
                          harmonization.DateTime.from_epoch_millis(1441008970))
+        self.assertEqual('2015-08-31T08:16:10+00:00',
+                         harmonization.DateTime.from_epoch_millis("1441008970"))
         self.assertEqual('2015-08-31T07:16:10-01:00',
                          harmonization.DateTime.from_epoch_millis(144100897000,
                                                                  'Etc/GMT+1'))
