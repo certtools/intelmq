@@ -53,6 +53,12 @@ class GenericCsvParserBot(ParserBot):
             raise InvalidArgument('time_format', got=self.time_format,
                                   expected=list(TIME_CONVERSIONS.keys()),
                                   docs='docs/Bots.md')
+        self.text = getattr(self.parameters, 'text', None)
+        self.text_type = getattr(self.parameters, 'text_type', None)
+        if self.text_type and self.text_type not in ('blacklist', 'whitelist'):
+            raise InvalidArgument('text_type', got=self.text_type,
+                                  expected=("blacklist", "whitelist"),
+                                  docs='docs/Bots.md')
 
     def parse(self, report):
         raw_report = utils.base64_decode(report.get("raw"))
@@ -65,7 +71,17 @@ class GenericCsvParserBot(ParserBot):
             raw_report = raw_report[raw_report.find('\n') + 1:]
         for row in csv.reader(io.StringIO(raw_report),
                               delimiter=str(self.parameters.delimiter)):
-            yield row
+
+            if self.text and self.text_type:
+                text_in_row = self.text in self.parameters.delimiter.join(row)
+                if text_in_row and self.text_type == 'whitelist':
+                    yield row
+                elif not text_in_row and self.text_type == 'blacklist':
+                    yield row
+                else:
+                    continue
+            else:
+                    yield row
 
     def parse_line(self, row, report):
         event = self.new_event(report)
