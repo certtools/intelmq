@@ -390,6 +390,17 @@ Lines starting with `'#'` will be ignored. Headers won't be interpreted.
         }```
         
         It will ensure `extra.tags` is treated as `json`.
+ * `"text"`: only process the lines containing or not containing specified text, to be used in conjection with `text_type`
+ * `"text_type"`: value can be whitelist or blacklist. If `whitelist`, only lines containing `text` will be processed, if `blacklist`, only lines NOT containing the text will be processed.
+ 
+     To process ipset format files use
+     ```
+        {
+            "text": "ipset add ",
+            "text_type": "whitelist",
+            "columns": [ "__IGNORE__", "__IGNORE__", "__IGNORE__", "source.ip"]
+        }
+     ```
  * `"type_translation"`: See below, optional
 
 
