@@ -3,8 +3,20 @@ CHANGELOG
 
 1.0.1 Bugfix release
 --------------------
+### Documentation
+- Feeds: use more https:// URLs
+- minor fixes
+
+### Bots
+- bots/experts/ripencc_abuse_contact/expert.py: Use HTTPS URLs for rest.db.ripe.net
+- bots/outputs/file/output.py: properly close the file handle on shutdown
+
+### Core
+- lib/bot: Bots will now log the used intelmq version at startup
+
 ### Tools
 - intelmqctl: To check the status of a bot, the comandline of the running process is compared to the actual executable of the bot. Otherwise unrelated programs with the same PID are detected as running bot.
+- intelmqctl: enable, disable, check, clear now support the JSON output
 
 1.0.0 Stable release
 --------------------
