@@ -611,10 +611,12 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
     def bot_enable(self, bot_id):
         self.runtime_configuration[bot_id]['enabled'] = True
         self.write_updated_runtime_config()
+        return self.bot_process_manager.bot_status(bot_id)
 
     def bot_disable(self, bot_id):
         self.runtime_configuration[bot_id]['enabled'] = False
         self.write_updated_runtime_config()
+        return self.bot_process_manager.bot_status(bot_id)
 
     def _is_enabled(self, bot_id):
         return self.runtime_configuration[bot_id].get('enabled', True)
