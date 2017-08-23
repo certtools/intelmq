@@ -24,6 +24,9 @@ CHANGELOG
 ### Harmonization
 - Renamed `JSON` to `JSONDict` and added a new type `JSON`. `JSONDict` saves data internally as JSON, but acts like a dictionary. `JSON` accepts any valid JSON.
 
+#### Parsers
+- changed feednames in `bots.parsers.shadowserver`. Please refer to it's README for the exact changes.
+
 ### Requirements
 - Requests is no longer a listed as dependency of the core. For depending bots the requirement is noted in their REQUIREMENTS.txt file
 

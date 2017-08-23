@@ -23,6 +23,7 @@ EXAMPLE_REPORT = {"feed.name": "ShadowServer Compromised Website",
                   }
 EVENT00 = {'__type': 'Event',
          'feed.name': 'ShadowServer Compromised Website',
+         'classification.taxonomy': 'intrusions',
          'classification.type': 'compromised',
          'classification.identifier': 'compromised-website',
          'extra.server': 'Microsoft-IIS/7.5',
