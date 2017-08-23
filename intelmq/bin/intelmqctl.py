@@ -7,6 +7,7 @@ import os
 import re
 import signal
 import subprocess
+import sys
 import time
 
 import pkg_resources
@@ -164,20 +165,19 @@ class IntelMQProcessManager:
         log_bot_message('starting', bot_id)
         module = self.__runtime_configuration[bot_id]['module']
         cmdargs = [module, bot_id]
-        with open('/dev/null', 'w') as devnull:
-            try:
-                proc = psutil.Popen(cmdargs, stdout=devnull, stderr=devnull)
-            except FileNotFoundError:
-                log_bot_error("not found", bot_id)
-                return 'stopped'
-            else:
-                filename = self.PIDFILE.format(bot_id)
-                with open(filename, 'w') as fp:
-                    fp.write(str(proc.pid))
+        try:
+            proc = psutil.Popen(cmdargs, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        except FileNotFoundError:
+            log_bot_error("not found", bot_id)
+            return 'stopped'
+        else:
+            filename = self.PIDFILE.format(bot_id)
+            with open(filename, 'w') as fp:
+                fp.write(str(proc.pid))
 
         if getstatus:
             time.sleep(0.5)
-            return self.bot_status(bot_id)
+            return self.bot_status(bot_id, proc=proc)
 
     def bot_stop(self, bot_id, getstatus=True):
         pid = self.__read_pidfile(bot_id)
@@ -241,14 +241,23 @@ class IntelMQProcessManager:
                 log_bot_error('stopped', bot_id)
                 return 'stopped'
 
-    def bot_status(self, bot_id):
-        pid = self.__read_pidfile(bot_id)
-        if pid and self.__status_process(pid):
-            log_bot_message('running', bot_id)
-            return 'running'
+    def bot_status(self, bot_id, *, proc=None):
+        if proc:
+            if proc.status() not in [psutil.STATUS_STOPPED, psutil.STATUS_DEAD, psutil.STATUS_ZOMBIE]:
+                return 'running'
+        else:
+            pid = self.__read_pidfile(bot_id)
+            if pid and self.__status_process(pid):
+                log_bot_message('running', bot_id)
+                return 'running'
 
         if self.controller._is_enabled(bot_id):
             log_bot_message('stopped', bot_id)
+            if proc and RETURN_TYPE == 'text':
+                log = proc.stderr.read().decode()
+                if not log:  # if nothing in stderr, print stdout
+                    log = proc.stdout.read().decode()
+                print(log.strip(), file=sys.stderr)
             return 'stopped'
         else:
             log_bot_message('disabled', bot_id)
@@ -833,6 +842,12 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         if retval:
             self.logger.error('Fatal errors occurred.')
             return retval
+
+        self.logger.info('Checking defaults configuration.')
+        with open(pkg_resources.resource_filename('intelmq', 'etc/defaults.conf')) as fh:
+            defaults = json.load(fh)
+        keys = set(defaults.keys()) - set(files[DEFAULTS_CONF_FILE].keys())
+        self.logger.error("Keys missing in your 'defaults.conf' file: %r", keys)
 
         self.logger.info('Checking runtime configuration.')
         http_proxy = files[DEFAULTS_CONF_FILE].get('http_proxy')

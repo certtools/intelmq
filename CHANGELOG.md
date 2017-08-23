@@ -3,6 +3,9 @@ CHANGELOG
 
 1.1.0
 -----
+### Tools
+- `intelmqctl start` prints bot's error messages if it failed to start
+- `intelmqctl check` checks for defaults.conf completeness
 
 ### Bots
 #### Collectors
