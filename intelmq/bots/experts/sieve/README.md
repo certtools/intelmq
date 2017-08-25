@@ -157,3 +157,10 @@ positional arguments:
 optional arguments:
   -h, --help  show this help message and exit
 ```
+
+## Installation
+
+To use this bot, you need to install the required dependencies:
+```
+$ pip install -r REQUIREMENTS.txt
+```
