@@ -14,8 +14,11 @@ import re
 import ipaddress
 from enum import Enum
 from intelmq.lib.bot import Bot
-from textx.metamodel import metamodel_from_file
-from textx.exceptions import TextXError, TextXSemanticError
+
+try:
+    import textx
+except ImportError:
+    textx = None
 
 
 class Procedure(Enum):
@@ -27,6 +30,11 @@ class Procedure(Enum):
 class SieveExpertBot(Bot):
 
     def init(self):
+        if textx is None:
+            raise ValueError('Could not import textx. Please install it.')
+        from textx.metamodel import metamodel_from_file
+        from textx.exceptions import TextXError, TextXSemanticError
+
         # read the sieve grammar
         try:
             filename = os.path.join(os.path.dirname(__file__), 'sieve.tx')
@@ -189,7 +197,6 @@ class SieveExpertBot(Bot):
         return False
 
     def process_action(self, action, event):
-        print(type(event))
         if action == 'drop':
             return Procedure.DROP
         elif action == 'keep':

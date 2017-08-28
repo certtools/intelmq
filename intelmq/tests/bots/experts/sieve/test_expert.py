@@ -13,6 +13,7 @@ EXAMPLE_INPUT = {"__type": "Event",
                  }
 
 
+@test.skip_exotic()
 class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for SieveExpertBot.
