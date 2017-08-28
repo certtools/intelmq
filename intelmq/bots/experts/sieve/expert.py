@@ -12,7 +12,6 @@ import os
 import intelmq.lib.exceptions as exceptions
 import re
 import ipaddress
-from enum import Enum
 from intelmq.lib.bot import Bot
 
 try:
@@ -21,7 +20,7 @@ except ImportError:
     textx = None
 
 
-class Procedure(Enum):
+class Procedure:
     CONTINUE = 1  # continue processing subsequent rules (default)
     KEEP = 2      # stop processing and keep event
     DROP = 3      # stop processing and drop event
@@ -157,9 +156,9 @@ class SieveExpertBot(Bot):
         elif op == ':contains':
             return lhs.find(rhs) >= 0
         elif op == '=~':
-            return re.fullmatch(rhs, lhs) is not None
+            return re.search(rhs, lhs) is not None
         elif op == '!~':
-            return re.fullmatch(rhs, lhs) is None
+            return re.search(rhs, lhs) is None
 
     def process_numeric_match(self, key, op, value, event):
         if key not in event:
