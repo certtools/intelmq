@@ -121,7 +121,6 @@ class SieveExpertBot(Bot):
             return self.process_ip_range_match(match.key, match.range, event)
         elif match.__class__.__name__ == 'Expression':
             return self.match_expression(match, event)
-        pass
 
     def process_exist_match(self, key, op, event):
         if op == ':exists':
@@ -208,8 +207,7 @@ class SieveExpertBot(Bot):
 
     def get_position(self, entity):
         """ returns the position (line,col) of an entity in the sieve file. """
-        parser = self.metamodel.parser
-        return parser.pos_to_linecol(entity._tx_position)
+        return self.metamodel.parser.pos_to_linecol(entity._tx_position)
 
     @staticmethod
     def validate_ip_range(ip_range):
