@@ -37,9 +37,7 @@ class SieveExpertBot(Bot):
             self.metamodel = metamodel_from_file(filename)
             self.metamodel.register_obj_processors({'SingleIpRange': SieveExpertBot.validate_ip_range})
         except TextXError as e:
-            self.logger.error('Could not process sieve grammar file. Error in (%d, %d).', e.line, e.col)
-            self.logger.error(str(e))
-            self.stop()
+            raise ValueError('Could not process sieve grammar file. Error in (%d, %d): %s' % (e.line, e.col, str(e)))
 
         # validate parameters
         if not os.path.exists(self.parameters.file):
@@ -49,9 +47,7 @@ class SieveExpertBot(Bot):
         try:
             self.sieve = self.metamodel.model_from_file(self.parameters.file)
         except TextXError as e:
-            self.logger.error('Could not parse sieve file %r, error in (%d, %d).', self.parameters.file, e.line, e.col)
-            self.logger.error(str(e))
-            self.stop()
+            raise ValueError('Could not parse sieve file %r, error in (%d, %d): %s' % (self.parameters.file, e.line, e.col, str(e)))
 
     def process(self):
         event = self.receive_message()
