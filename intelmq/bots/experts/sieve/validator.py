@@ -43,6 +43,7 @@ class Validator(object):
 
         self.logger.info('Sieve file %r parsed successfully.', filename)
 
+
 if __name__ == "__main__":
     logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
     parser = argparse.ArgumentParser(description="Validates the syntax of sievebot files.")
