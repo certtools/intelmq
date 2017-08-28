@@ -5,19 +5,18 @@ SieveExpertBot filters and modifies events based on a specification language sim
 Parameters:
     file: string
 """
-from __future__ import unicode_literals
-
-# imports for additional libraries and intelmq
-import os
-import intelmq.lib.exceptions as exceptions
-import re
 import ipaddress
+import os
+import re
+
+import intelmq.lib.exceptions as exceptions
 from intelmq.lib.bot import Bot
 
 try:
-    import textx
+    from textx.metamodel import metamodel_from_file
+    from textx.exceptions import TextXError, TextXSemanticError
 except ImportError:
-    textx = None
+    metamodel_from_file = None
 
 
 class Procedure:
@@ -29,10 +28,8 @@ class Procedure:
 class SieveExpertBot(Bot):
 
     def init(self):
-        if textx is None:
+        if metamodel_from_file is None:
             raise ValueError('Could not import textx. Please install it.')
-        from textx.metamodel import metamodel_from_file
-        from textx.exceptions import TextXError, TextXSemanticError
 
         # read the sieve grammar
         try:

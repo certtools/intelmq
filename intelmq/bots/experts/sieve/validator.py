@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-
-import os
 import argparse
 import logging
-from textx.metamodel import metamodel_from_file
+import os
+
 from textx.exceptions import TextXError
+from textx.metamodel import metamodel_from_file
 
 
 class Validator(object):
