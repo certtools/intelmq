@@ -44,7 +44,7 @@ if classification.type == ['phishing', 'malware'] && source.fqdn =~ '.*\.(ch|li)
 
 ## Parameters
 
-The sieve bot only takes one parameter:
+The sieve bot takes only one parameter:
  * `file` - filesystem path the the sieve file
 
 
