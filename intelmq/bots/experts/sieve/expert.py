@@ -5,19 +5,18 @@ SieveExpertBot filters and modifies events based on a specification language sim
 Parameters:
     file: string
 """
-from __future__ import unicode_literals
-
-# imports for additional libraries and intelmq
-import os
-import intelmq.lib.exceptions as exceptions
-import re
 import ipaddress
+import os
+import re
+
+import intelmq.lib.exceptions as exceptions
 from intelmq.lib.bot import Bot
 
 try:
-    import textx
+    from textx.metamodel import metamodel_from_file
+    from textx.exceptions import TextXError, TextXSemanticError
 except ImportError:
-    textx = None
+    metamodel_from_file = None
 
 
 class Procedure:
@@ -29,10 +28,8 @@ class Procedure:
 class SieveExpertBot(Bot):
 
     def init(self):
-        if textx is None:
+        if metamodel_from_file is None:
             raise ValueError('Could not import textx. Please install it.')
-        from textx.metamodel import metamodel_from_file
-        from textx.exceptions import TextXError, TextXSemanticError
 
         # read the sieve grammar
         try:
@@ -40,9 +37,7 @@ class SieveExpertBot(Bot):
             self.metamodel = metamodel_from_file(filename)
             self.metamodel.register_obj_processors({'SingleIpRange': SieveExpertBot.validate_ip_range})
         except TextXError as e:
-            self.logger.error('Could not process sieve grammar file. Error in (%d, %d).', e.line, e.col)
-            self.logger.error(str(e))
-            self.stop()
+            raise ValueError('Could not process sieve grammar file. Error in (%d, %d): %s' % (e.line, e.col, str(e)))
 
         # validate parameters
         if not os.path.exists(self.parameters.file):
@@ -52,9 +47,7 @@ class SieveExpertBot(Bot):
         try:
             self.sieve = self.metamodel.model_from_file(self.parameters.file)
         except TextXError as e:
-            self.logger.error('Could not parse sieve file %r, error in (%d, %d).', self.parameters.file, e.line, e.col)
-            self.logger.error(str(e))
-            self.stop()
+            raise ValueError('Could not parse sieve file %r, error in (%d, %d): %s' % (self.parameters.file, e.line, e.col, str(e)))
 
     def process(self):
         event = self.receive_message()
@@ -128,7 +121,6 @@ class SieveExpertBot(Bot):
             return self.process_ip_range_match(match.key, match.range, event)
         elif match.__class__.__name__ == 'Expression':
             return self.match_expression(match, event)
-        pass
 
     def process_exist_match(self, key, op, event):
         if op == ':exists':
@@ -215,8 +207,7 @@ class SieveExpertBot(Bot):
 
     def get_position(self, entity):
         """ returns the position (line,col) of an entity in the sieve file. """
-        parser = self.metamodel.parser
-        return parser.pos_to_linecol(entity._tx_position)
+        return self.metamodel.parser.pos_to_linecol(entity._tx_position)
 
     @staticmethod
     def validate_ip_range(ip_range):

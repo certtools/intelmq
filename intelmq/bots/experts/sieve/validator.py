@@ -1,11 +1,10 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-
-import os
 import argparse
 import logging
-from textx.metamodel import metamodel_from_file
+import os
+
 from textx.exceptions import TextXError
+from textx.metamodel import metamodel_from_file
 
 
 class Validator(object):
@@ -44,7 +43,7 @@ class Validator(object):
         self.logger.info('Sieve file %r parsed successfully.', filename)
 
 
-if __name__ == "__main__":
+def main():  # pragma: nocover
     logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
     parser = argparse.ArgumentParser(description="Validates the syntax of sievebot files.")
     parser.add_argument('sievefile', help='Sieve file')
@@ -53,3 +52,6 @@ if __name__ == "__main__":
 
     validator = Validator()
     validator.parse(args.sievefile)
+
+if __name__ == "__main__":  # pragma: nocover
+    main()

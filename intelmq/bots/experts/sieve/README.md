@@ -44,7 +44,7 @@ if classification.type == ['phishing', 'malware'] && source.fqdn =~ '.*\.(ch|li)
 
 ## Parameters
 
-The sieve bot only takes one parameter:
+The sieve bot takes only one parameter:
  * `file` - filesystem path the the sieve file
 
 
@@ -146,8 +146,8 @@ Comments may be used in the sieve file: all characters after `//` and until the 
 
 Use the following command to validate your sieve files:
 ```
-$ python intelmq/bots/experts/sieve/validator.py -h
-usage: validator.py [-h] sievefile
+$ intelmq.bots.experts.sieve.validator
+usage: intelmq.bots.experts.sieve.validator [-h] sievefile
 
 Validates the syntax of sievebot files.
 

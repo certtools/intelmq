@@ -572,8 +572,8 @@
             "module": "intelmq.bots.experts.taxonomy.expert",
             "parameters": {}
         },
-        "Sievebot": {
-            "description": "Sievebot is the bot responsible to filter and modify intelMQ events.",
+        "Sieve": {
+            "description": "This bot filters and modifies events based on a sieve-based language.",
             "module": "intelmq.bots.experts.sieve.expert",
             "parameters": {
                 "file": "/opt/intelmq/var/lib/bots/sieve/filter.sieve"
