@@ -3,6 +3,10 @@ NEWS
 
 See the changelog for a full list of changes.
 
+1.0.1 Bugfix release
+--------------------
+No changes needed.
+
 1.0.0 Stable release
 --------------------
 ### Configuration

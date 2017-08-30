@@ -1,4 +1,10 @@
-intelmq (1.0.1~rc1-1) UNRELEASED; urgency=low
+intelmq (1.0.1-1) experimental; urgency=low
+
+  * update to version 1.0.1
+
+ -- Wagner Sebastian <wagner@cert.at>  Wed, 30 Aug 2017 15:07:45 +0200
+
+intelmq (1.0.1~rc1-1) experimental; urgency=low
 
   * release release candidate 1.0.1 RC
 
