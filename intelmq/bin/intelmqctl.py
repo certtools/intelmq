@@ -4,6 +4,8 @@ import argparse
 import importlib
 import json
 import os
+import re
+import shutil
 import signal
 import subprocess
 import time
@@ -12,7 +14,7 @@ import pkg_resources
 import psutil
 
 from intelmq import (DEFAULTS_CONF_FILE, PIPELINE_CONF_FILE, RUNTIME_CONF_FILE,
-                     VAR_RUN_PATH, BOTS_FILE)
+                     VAR_RUN_PATH, BOTS_FILE, HARMONIZATION_CONF_FILE)
 from intelmq.lib import utils
 from intelmq.lib.bot_debugger import BotDebugger
 from intelmq.lib.pipeline import PipelineFactory
@@ -121,7 +123,8 @@ class IntelMQProcessManager:
 
     def bot_run(self, bot_id, run_subcommand=None, console_type=None, message_action_kind=None, dryrun=None, msg=None):
         pid = self.__read_pidfile(bot_id)
-        if pid and self.__status_process(pid):
+        module = self.__runtime_configuration[bot_id]['module']
+        if pid and self.__status_process(pid, module):
             self.logger.warning("Main instance of the bot is running in the background and will be stopped; "
                                 "when finished, we try to relaunch it again. "
                                 "You may want to launch: 'intelmqctl stop {}' to prevent this message."
@@ -154,8 +157,9 @@ class IntelMQProcessManager:
 
     def bot_start(self, bot_id, getstatus=True):
         pid = self.__read_pidfile(bot_id)
+        module = self.__runtime_configuration[bot_id]['module']
         if pid:
-            if self.__status_process(pid):
+            if self.__status_process(pid, module):
                 log_bot_message('running', bot_id)
                 return 'running'
             else:
@@ -180,6 +184,7 @@ class IntelMQProcessManager:
 
     def bot_stop(self, bot_id, getstatus=True):
         pid = self.__read_pidfile(bot_id)
+        module = self.__runtime_configuration[bot_id]['module']
         if not pid:
             if self.controller._is_enabled(bot_id):
                 log_bot_error('stopped', bot_id)
@@ -187,7 +192,7 @@ class IntelMQProcessManager:
             else:
                 log_bot_message('disabled', bot_id)
                 return 'disabled'
-        if not self.__status_process(pid):
+        if not self.__status_process(pid, module):
             self.__remove_pidfile(bot_id)
             log_bot_error('stopped', bot_id)
             return 'stopped'
@@ -201,7 +206,7 @@ class IntelMQProcessManager:
         else:
             if getstatus:
                 time.sleep(0.5)
-                if self.__status_process(pid):
+                if self.__status_process(pid, module):
                     log_bot_error('running', bot_id)
                     return 'running'
                 try:
@@ -213,6 +218,7 @@ class IntelMQProcessManager:
 
     def bot_reload(self, bot_id, getstatus=True):
         pid = self.__read_pidfile(bot_id)
+        module = self.__runtime_configuration[bot_id]['module']
         if not pid:
             if self.controller._is_enabled(bot_id):
                 log_bot_error('stopped', bot_id)
@@ -220,7 +226,7 @@ class IntelMQProcessManager:
             else:
                 log_bot_message('disabled', bot_id)
                 return 'disabled'
-        if not self.__status_process(pid):
+        if not self.__status_process(pid, module):
             self.__remove_pidfile(bot_id)
             log_bot_error('stopped', bot_id)
             return 'stopped'
@@ -234,7 +240,7 @@ class IntelMQProcessManager:
         else:
             if getstatus:
                 time.sleep(0.5)
-                if self.__status_process(pid):
+                if self.__status_process(pid, module):
                     log_bot_message('running', bot_id)
                     return 'running'
                 log_bot_error('stopped', bot_id)
@@ -242,11 +248,14 @@ class IntelMQProcessManager:
 
     def bot_status(self, bot_id):
         pid = self.__read_pidfile(bot_id)
-        if pid and self.__status_process(pid):
+        module = self.__runtime_configuration[bot_id]['module']
+        if pid and self.__status_process(pid, module):
             log_bot_message('running', bot_id)
             return 'running'
 
         if self.controller._is_enabled(bot_id):
+            if self.__check_pidfile(bot_id):
+                self.__remove_pidfile(bot_id)
             log_bot_message('stopped', bot_id)
             return 'stopped'
         else:
@@ -276,10 +285,11 @@ class IntelMQProcessManager:
         filename = self.PIDFILE.format(bot_id)
         os.remove(filename)
 
-    def __status_process(self, pid):
+    def __status_process(self, pid, module):
         try:
-            psutil.Process(int(pid))
-            return True
+            proc = psutil.Process(int(pid))
+            if len(proc.cmdline()) > 1 and proc.cmdline()[1] == shutil.which(module):
+                return True
         except psutil.NoSuchProcess:
             return False
         except psutil.AccessDenied:
@@ -592,10 +602,12 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
     def bot_enable(self, bot_id):
         self.runtime_configuration[bot_id]['enabled'] = True
         self.write_updated_runtime_config()
+        return self.bot_process_manager.bot_status(bot_id)
 
     def bot_disable(self, bot_id):
         self.runtime_configuration[bot_id]['enabled'] = False
         self.write_updated_runtime_config()
+        return self.bot_process_manager.bot_status(bot_id)
 
     def _is_enabled(self, bot_id):
         return self.runtime_configuration[bot_id].get('enabled', True)
@@ -739,7 +751,8 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
         First checks if the queue does exist in the pipeline configuration.
         """
-        logger.info("Clearing queue %s", queue)
+        if RETURN_TYPE == 'text':
+            logger.info("Clearing queue %s", queue)
         queues = set()
         for key, value in self.pipeline_configuration.items():
             if 'source-queue' in value:
@@ -753,12 +766,14 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         pipeline.connect()
 
         if queue not in queues:
-            logger.error("Queue %s does not exist!", queue)
+            if RETURN_TYPE == 'text':
+                logger.error("Queue %s does not exist!", queue)
             return 'not-found'
 
         try:
             pipeline.clear_queue(queue)
-            logger.info("Successfully cleared queue %s.", queue)
+            if RETURN_TYPE == 'text':
+                logger.info("Successfully cleared queue %s.", queue)
             return 'success'
         except Exception:  # pragma: no cover
             logger.exception("Error while clearing queue %s.",
@@ -817,38 +832,66 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
     def check(self):
         retval = 0
+        if RETURN_TYPE == 'json':
+            output = []
+
         # loading files and syntax check
         files = {DEFAULTS_CONF_FILE: None, PIPELINE_CONF_FILE: None,
-                 RUNTIME_CONF_FILE: None, BOTS_FILE: None}
-        self.logger.info('Reading configuration files.')
+                 RUNTIME_CONF_FILE: None, BOTS_FILE: None,
+                 HARMONIZATION_CONF_FILE: None}
+        if RETURN_TYPE == 'json':
+            output.append(['info', 'Reading configuration files.'])
+        else:
+            self.logger.info('Reading configuration files.')
         for filename in files:
             try:
                 with open(filename) as file_handle:
                     files[filename] = json.load(file_handle)
             except (IOError, ValueError) as exc:  # pragma: no cover
-                self.logger.error('Coud not load %r: %s.', filename, exc)
+                if RETURN_TYPE == 'json':
+                    output.append(['error', 'Coud not load %r: %s.' % (filename, exc)])
+                else:
+                    self.logger.error('Coud not load %r: %s.', filename, exc)
                 retval = 1
         if retval:
-            self.logger.error('Fatal errors occurred.')
+            if RETURN_TYPE == 'json':
+                return {'status': 'error', 'lines': output}
+            else:
+                self.logger.error('Fatal errors occurred.')
             return retval
 
-        self.logger.info('Checking runtime configuration.')
+        if RETURN_TYPE == 'json':
+            output.append(['info', 'Checking runtime configuration.'])
+        else:
+            self.logger.info('Checking runtime configuration.')
         http_proxy = files[DEFAULTS_CONF_FILE].get('http_proxy')
         https_proxy = files[DEFAULTS_CONF_FILE].get('https_proxy')
         # Either both are given or both are not given
         if (not http_proxy or not https_proxy) and not (http_proxy == https_proxy):
-            self.logger.warning('Incomplete configuration: Both http and https proxies must be set.')
+            if RETURN_TYPE == 'json':
+                output.append(['warning', 'Incomplete configuration: Both http and https proxies must be set.'])
+            else:
+                self.logger.warning('Incomplete configuration: Both http and https proxies must be set.')
             retval = 1
 
-        self.logger.info('Checking pipeline configuration.')
+        if RETURN_TYPE == 'json':
+            output.append(['info', 'Checking pipeline configuration.'])
+        else:
+            self.logger.info('Checking pipeline configuration.')
         for bot_id, bot_config in files[RUNTIME_CONF_FILE].items():
             # pipeline keys
             for field in ['description', 'group', 'module', 'name']:
                 if field not in bot_config:
-                    self.logger.warning('Bot %r has no %r.', bot_id, field)
+                    if RETURN_TYPE == 'json':
+                        output.append(['warning', 'Bot %r has no %r.' % (bot_id, field)])
+                    else:
+                        self.logger.warning('Bot %r has no %r.', bot_id, field)
                     retval = 1
             if bot_id not in files[PIPELINE_CONF_FILE]:
-                self.logger.error('Misconfiguration: No pipeline configuration found for %r.', bot_id)
+                if RETURN_TYPE == 'json':
+                    output.append(['error', 'Misconfiguration: No pipeline configuration found for %r.' % bot_id])
+                else:
+                    self.logger.error('Misconfiguration: No pipeline configuration found for %r.', bot_id)
                 retval = 1
             else:
                 if ('group' in bot_config and
@@ -856,36 +899,87 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                         ('destination-queues' not in files[PIPELINE_CONF_FILE][bot_id] or
                          (not isinstance(files[PIPELINE_CONF_FILE][bot_id]['destination-queues'], list) or
                           len(files[PIPELINE_CONF_FILE][bot_id]['destination-queues']) < 1))):
-                    self.logger.error('Misconfiguration: No destination queues for %r.', bot_id)
+                    if RETURN_TYPE == 'json':
+                        output.append(['error', 'Misconfiguration: No destination queues for %r.' % bot_id])
+                    else:
+                        self.logger.error('Misconfiguration: No destination queues for %r.', bot_id)
                     retval = 1
                 if ('group' in bot_config and
                         bot_config['group'] in ['Parser', 'Expert', 'Output'] and
                         ('source-queue' not in files[PIPELINE_CONF_FILE][bot_id] or
                          not isinstance(files[PIPELINE_CONF_FILE][bot_id]['source-queue'], str))):
-                    self.logger.error('Misconfiguration: No source queue for %r.', bot_id)
+                    if RETURN_TYPE == 'json':
+                        output.append(['error', 'Misconfiguration: No source queue for %r.' % bot_id])
+                    else:
+                        self.logger.error('Misconfiguration: No source queue for %r.', bot_id)
                     retval = 1
 
-        self.logger.info('Checking for bots.')
+        if RETURN_TYPE == 'json':
+            output.append(['info', 'Checking harmoization configuration.'])
+        else:
+            self.logger.info('Checking harmoization configuration.')
+        for event_type, event_type_conf in files[HARMONIZATION_CONF_FILE].items():
+            for harm_type_name, harm_type in event_type_conf.items():
+                if "description" not in harm_type:
+                    if RETURN_TYPE == 'json':
+                        output.append(['warn', 'Missing description for type %r.' % harm_type_name])
+                    else:
+                        self.logger.warn('Missing description for type %r.', harm_type_name)
+                if "type" not in harm_type:
+                    if RETURN_TYPE == 'json':
+                        output.append(['error', 'Missing type for type %r.' % harm_type_name])
+                    else:
+                        self.logger.error('Missing type for type %r.', harm_type_name)
+                    retval = 1
+                    continue
+                if "regex" in harm_type:
+                    try:
+                        re.compile(harm_type['regex'])
+                    except Exception as e:
+                        if RETURN_TYPE == 'json':
+                            output.append(['error', 'Invalid regex for type %r: %r.' % (harm_type_name, str(e))])
+                        else:
+                            self.logger.error('Invalid regex for type %r: %r.', harm_type_name, str(e))
+                        retval = 1
+                        continue
+
+        if RETURN_TYPE == 'json':
+            output.append(['info', 'Checking for bots.'])
+        else:
+            self.logger.info('Checking for bots.')
         for bot_id, bot_config in files[RUNTIME_CONF_FILE].items():
             # importable module
             try:
                 importlib.import_module(bot_config['module'])
             except ImportError:
-                self.logger.error('Incomplete installation: Module %r not importable.', bot_id)
+                if RETURN_TYPE == 'json':
+                    output.append(['error', 'Incomplete installation: Module %r not importable.' % bot_id])
+                else:
+                    self.logger.error('Incomplete installation: Module %r not importable.', bot_id)
                 retval = 1
         for group in files[BOTS_FILE].values():
             for bot_id, bot in group.items():
-                if subprocess.call(['which', bot['module']], stdout=subprocess.DEVNULL):
-                    self.logger.error('Incomplete installation: Executable %r for %r not found.',
-                                      bot['module'], bot_id)
+                if subprocess.call(['which', bot['module']], stdout=subprocess.DEVNULL,
+                                   stderr=subprocess.DEVNULL):
+                    if RETURN_TYPE == 'json':
+                        output.append(['error', 'Incomplete installation: Executable %r for %r not found.' %
+                                       (bot['module'], bot_id)])
+                    else:
+                        self.logger.error('Incomplete installation: Executable %r for %r not found.',
+                                          bot['module'], bot_id)
                     retval = 1
 
-        if retval:
-            self.logger.error('Some issues have been found, please check the above output.')
+        if RETURN_TYPE == 'json':
+            if retval:
+                return {'status': 'error', 'lines': output}
+            else:
+                return {'status': 'success', 'lines': output}
         else:
-            self.logger.info('No issues found.')
-
-        return retval
+            if retval:
+                self.logger.error('Some issues have been found, please check the above output.')
+            else:
+                self.logger.info('No issues found.')
+            return retval
 
 
 def main():  # pragma: no cover

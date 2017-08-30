@@ -24,5 +24,8 @@ class FileOutputBot(Bot):
         else:
             self.acknowledge_message()
 
+    def shutdown(self):
+        self.file.close()
+
 
 BOT = FileOutputBot
