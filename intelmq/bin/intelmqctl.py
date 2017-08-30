@@ -965,7 +965,10 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                         continue
         extra_type = files[HARMONIZATION_CONF_FILE].get('event', {}).get('extra', {}).get('type')
         if extra_type != 'JSONDict':
-            self.logger.warning("'extra' field needs to be of type 'JSONDict'.")
+            if RETURN_TYPE == 'json':
+                output.append(['warning', "'extra' field needs to be of type 'JSONDict'."])
+            else:
+                self.logger.warning("'extra' field needs to be of type 'JSONDict'.")
             retval = 1
 
         if RETURN_TYPE == 'json':
