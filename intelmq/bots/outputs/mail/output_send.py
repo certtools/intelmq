@@ -118,13 +118,13 @@ class MailSendOutputBot(Bot):
                 self.cache.redis.delete(mail_record)
         self.logger.warning("DONE!")
 
-    def _hasTestingTo():
+    def _hasTestingTo(self):
         return hasattr(self.parameters, 'testing_to') and self.parameters.testing_to != ""
 
     # actual funtion to send email through smtp
     def _send_mail(self, emailfrom, emailto, subject, text, fileContents=None):
         server = self.parameters.smtp_server
-        if self.isTesting():
+        if self._hasTestingTo():
             subject = subject + " (intended for " + str(emailto) + ")"
             emailto = self.parameters.testing_to
         msg = MIMEMultipart()
@@ -134,7 +134,7 @@ class MailSendOutputBot(Bot):
         #if hasattr(self.parameters, 'bcc') and not hasattr(self.parameters, 'testing_to'):
         #    msg["Bcc"] = self.parameters.bcc
         rcpts = [emailto]
-        if hasattr(self.parameters, 'bcc') and not self.isTesting():
+        if hasattr(self.parameters, 'bcc') and not self._hasTestingTo():
             rcpts += self.parameters.bcc # bcc is in fact an independent mail
 
         if MailSendOutputBot.live is True:
