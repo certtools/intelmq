@@ -297,7 +297,7 @@ class IntelMQProcessManager:
     def __status_process(self, pid, module):
         try:
             proc = psutil.Process(int(pid))
-            if proc.cmdline()[1] == shutil.which(module):
+            if len(proc.cmdline()) > 1 and proc.cmdline()[1] == shutil.which(module):
                 return True
         except psutil.NoSuchProcess:
             return False
