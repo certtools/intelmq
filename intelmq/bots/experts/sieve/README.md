@@ -26,7 +26,7 @@ if :notexists source.abuse_contact || source.abuse_contact =~ '.*@example.com' {
   drop  // aborts processing of subsequent rules and drops the event.
 }
 
-if source.ip << 192.0.0.0/24 {
+if source.ip << '192.0.0.0/24' {
     add! comment = 'bogon'
 }
 
@@ -45,7 +45,7 @@ if classification.type == ['phishing', 'malware'] && source.fqdn =~ '.*\.(ch|li)
 ## Parameters
 
 The sieve bot takes only one parameter:
- * `file` - filesystem path the the sieve file
+ * `file` - filesystem path of the sieve file
 
 
 ## Reference

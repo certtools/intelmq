@@ -53,5 +53,6 @@ def main():  # pragma: nocover
     validator = Validator()
     validator.parse(args.sievefile)
 
+
 if __name__ == "__main__":  # pragma: nocover
     main()
