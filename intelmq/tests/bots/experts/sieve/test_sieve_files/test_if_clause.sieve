@@ -1,7 +1,7 @@
 if comment == 'changeme' {
-    modify comment = 'changed'
+    update comment = 'changed'
 }
 
 if source.ip == '192.168.0.1' {
-    modify source.ip = '192.168.0.2'
+    update source.ip = '192.168.0.2'
 }

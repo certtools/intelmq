@@ -1,5 +1,5 @@
 if comment == 'match' {
-    modify comment = 'matched'
+    update comment = 'matched'
 } else {
-    modify comment = 'notmatched'
+    update comment = 'notmatched'
 }

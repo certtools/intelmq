@@ -1,7 +1,7 @@
 if comment == 'match1' {
-    modify comment = 'changed1'
+    update comment = 'changed1'
 } elif comment == 'match2' {
-    modify comment = 'changed2'
+    update comment = 'changed2'
 } else {
-    modify comment = 'changed3'
+    update comment = 'changed3'
 }

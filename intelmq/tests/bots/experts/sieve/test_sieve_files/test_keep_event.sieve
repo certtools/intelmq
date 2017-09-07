@@ -6,5 +6,5 @@ if comment == 'keep' {
 }
 
 if comment == ['continue', 'keep'] {
-  modify comment = 'changed'
+  update comment = 'changed'
 }

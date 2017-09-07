@@ -694,9 +694,9 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, result2)
 
-    def test_modify(self):
-        """ Test modifying key/value pairs """
-        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_modify.sieve')
+    def test_update(self):
+        """ Test updating key/value pairs """
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_update.sieve')
 
         # If doesn't match, nothing should have changed
         event1 = EXAMPLE_INPUT.copy()
@@ -705,7 +705,7 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(0, event1)
 
         # If expression matches && parameter doesn't exists, nothing changes
-        event1['comment'] = 'modify new parameter'
+        event1['comment'] = 'update new parameter'
         result = event1.copy()
         self.input_message = event1
         self.run_bot()
@@ -713,7 +713,7 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
 
         # If expression matches && parameter exists, source.ip changed
         event2 = EXAMPLE_INPUT.copy()
-        event2['comment'] = 'modify existing parameter'
+        event2['comment'] = 'update existing parameter'
         result2 = event2.copy()
         result2['source.ip'] = '10.9.8.7'
         self.input_message = event2
