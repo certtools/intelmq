@@ -16,6 +16,8 @@ CHANGELOG
   event['extra'] # gives '{"foo": "bar"}'
   "Old" bots and configurations compatible with 1.0.x do still work.
   Also, the extra field is now properly exploded when exporting events, analogous to all other fields.
+- Bots can specify a static method `check(parameters)` which can perform individual checks specific to the bot.
+  These functions will be called by `intelmqctl check` if the bot is configured with the given parameters
 
 ### Bots
 #### Collectors

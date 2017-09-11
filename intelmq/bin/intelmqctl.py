@@ -978,13 +978,24 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         for bot_id, bot_config in files[RUNTIME_CONF_FILE].items():
             # importable module
             try:
-                importlib.import_module(bot_config['module'])
+                bot_module = importlib.import_module(bot_config['module'])
             except ImportError:
                 if RETURN_TYPE == 'json':
                     output.append(['error', 'Incomplete installation: Module %r not importable.' % bot_id])
                 else:
                     self.logger.error('Incomplete installation: Module %r not importable.', bot_id)
                 retval = 1
+                continue
+            bot = getattr(bot_module, 'BOT')
+            bot_parameters = files[DEFAULTS_CONF_FILE].copy()
+            bot_parameters.update(bot_config['parameters'])
+            bot_check = bot.check(bot_parameters)
+            if bot_check:
+                if RETURN_TYPE == 'json':
+                    output.extend(bot_check)
+                else:
+                    for log_line in bot_check:
+                        getattr(self.logger, log_line[0])("Bot %r: %s" % (bot_id, log_line[1]))
         for group in files[BOTS_FILE].values():
             for bot_id, bot in group.items():
                 if subprocess.call(['which', bot['module']], stdout=subprocess.DEVNULL,

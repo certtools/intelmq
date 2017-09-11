@@ -37,6 +37,7 @@
     * [How to Log](#how-to-log)
   * [Error handling](#error-handling)
   * [Initialization](#initialization)
+  * [Custom configuration checks](#custom-configuration-checks)
   * [Examples](#examples)
   * [Parsers](#parsers)
   * [Tests](#tests)
@@ -479,6 +480,22 @@ class ExampleParserBot(Bot):
             self.logger.error("Read 'bots/experts/asn_lookup/README.md' and "
                               "follow the procedure.")
             self.stop()
+```
+
+## Custom configuration checks
+
+Every bot can define a static method `check(parameters)` which will be called by `intelmqctl check`.
+For example the check function of the ASNLookupExpert:
+
+```python
+    @staticmethod
+    def check(parameters):
+        if not os.path.exists(parameters.get('database', '')):
+            return [["error", "File given as parameter 'database' does not exist."]]
+        try:
+            pyasn.pyasn(parameters['database'])
+        except Exception as exc:
+            return [["error", "Error reading database: %r." % exc]]
 ```
 
 ## Examples
