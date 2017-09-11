@@ -3,13 +3,13 @@
 For installation instructions, see [INSTALL.md](INSTALL.md).
 For upgrade instructions, see [UPGRADING.md](UPGRADING.md).
 
+  * [Where to get help?](#help)
   * [Configure services](#configure-services)
   * [Configuration](#configuration)
-    * [System Configuration](#system-configuration)
-    * [Pipeline Configuration](#pipeline-configuration)
-    * [Defaults Configuration](#defaults-configuration)
+    * [System Configuration](#system-configuration-defaults)
         * [Error Handling](#error-handling)
         * [Miscellaneous](#miscellaneous)
+    * [Pipeline Configuration](#pipeline-configuration)
     * [Runtime Configuration](#runtime-configuration)
     * [Harmonization Configuration](#harmonization-configuration)
   * [Utilities](#utilities)
@@ -28,12 +28,20 @@ For upgrade instructions, see [UPGRADING.md](UPGRADING.md).
     * [Upgrade](#upgrade-1)
     * [Restore Configurations](#restore-configurations)
   * [Uninstall](#uninstall)
+  * [Integration with ticket systems, etc.](#integration-with-ticket-systems-etc)
   * [Frequently Asked Questions](#frequently-asked-questions)
   * [Additional Information](#additional-information)
     * [Performance Tests](#performance-tests)
 
+# Where to get help?
+
+In case you are lost or something is not discussed in this guide, you might want to subscribe to the [intelmq users mailinglist](https://lists.cert.at/cgi-bin/mailman/listinfo/intelmq-users) and ask your questions there.
+
+With that clarified, let's dig into the details...
+
+
 # Configure services
-You need to enable and start Redis is not done already. Using systemd it can be done with:
+You need to enable and start Redis if not already done. Using systemd it can be done with:
 ```bash
 systemctl enable redis.service
 systemctl start redis.service
@@ -42,9 +50,8 @@ systemctl start redis.service
 # Configuration
 
 Note: If you installed the packages, LSB paths are used instead of `/opt/intelmq`.
-
-The configuration directory is `/opt/intelmq/etc/`, all files are JSON. By
-default, the installation method puts it's distributed configuration files into
+Otherwise, the configuration directory is `/opt/intelmq/etc/`, all files are JSON. By
+default, the installation method puts its distributed configuration files into
 `etc/examples`, so it does not overwrite your local configuration. Prior to the
 first run, copy them to `etc`:
 
@@ -53,15 +60,14 @@ cd /opt/intelmq/etc
 cp -a examples/* .
 ```
 
-* `defaults.conf`: default values for bots and their behavior, e.g.
+* `defaults.conf`: default values for all bots and their behavior, e.g.
 error handling, log options and pipeline configuration. Will be removed in the [future](https://github.com/certtools/intelmq/issues/267).
 * `runtime.conf`: Configuration for the individual bots. See [Bots](Bots.md) for more details.
-* `pipeline.conf`: Defines source and destination queues per bot.
+* `pipeline.conf`: Defines source and destination queues per bot (i.e. where does a bot get its data from, where does it send it to?).
 * `BOTS`: Includes configuration hints for all bots. E.g. feed URLs or
-database connection parameters. Use this as a template for `runtime.conf`. Also read by the intelmq-manager.
+database connection parameters. Use this as a template for `runtime.conf`. This is also read by the intelmq-manager.
 
-To configure a new bot, you need to define and configure it in `runtime.conf`
-using the template from BOTS.
+To configure a new bot, you need to define and configure it in `runtime.conf` using the template from BOTS.
 Configure source and destination queues in `pipeline.conf`.
 Use the IntelMQ Manager mentioned above to generate the configuration files if unsure.
 
@@ -69,22 +75,79 @@ In the shipped examples 4 collectors and parsers, 6 common experts and one outpu
 
 ## System Configuration (defaults)
 
-All bots inherit this configuration parameters and they can overwrite them using the same parameters in configuration.
+All bots inherit this configuration parameters and they can overwrite them using the same parameters in their respective configuration in the ''runtime.conf'' file.
 
-Small extract:
+Example:
 
 * `logging_handler`: Can be one of `"file"` or `"syslog"`.
-* `logging_level`: Defines for all system the level of logging that will be use by all bots and intelmqctl tool. Possible values are: `"CRITICAL"`, `"ERROR"`, `"WARNING"`, `"INFO"` and `"DEBUG"`.
-* `logging_path`: If `logging_handler` is `file`. Defines for all system the logs folder that will be use by all bots and intelmqctl tool. Default value is: `/opt/intelmq/var/log/`
-* `logging_syslog`: If `logging_handler` is `syslog`. Either a list with hostname and UDP port of syslog service, e.g. `["localhost", 514]` or a device name, e.g. the default `"/var/log"`.
+* `logging_level`: Defines the system-wide log level that will be use by all bots and the intelmqctl tool. Possible values are: `"CRITICAL"`, `"ERROR"`, `"WARNING"`, `"INFO"` and `"DEBUG"`.
+* `logging_path`: If `logging_handler` is `file`. Defines for the system-wide log/ folder that will be use by all bots and the intelmqctl tool. Default value: `/opt/intelmq/var/log/`
+* `logging_syslog`: If `logging_handler` is `syslog`. Either a list with hostname and UDP port of syslog service, e.g. `["localhost", 514]` or a device name/path, e.g. the default `"/var/log"`.
 
-We recommend logging_level WARNING for production environments and INFO if you want more details. In any case, monitor your free disk space.
+We recommend `logging_level` `WARNING` for production environments and `INFO` if you want more details. In any case, watch your free disk space.
 
-You can set these per bot too. The settings will become active after the runtime configuration has been read (which is after loading the defaults configuration.
+You can set these parameters per bot as well. The settings will take effect after the runtime configuration has been (re-)read (which is after loading the defaults configuration. See the intelmqctl documentation).
+
+#### Error Handling
+
+* **`error_log_message`** - in case of an error, this option will allow the bot to write the message (report or event) to the log file. Use the following values:
+    * **`true/false`** - write or not write message to the log file
+
+* **`error_log_exception`** - in case of an error, this option will allow the bot to write the error exception to the log file. Use the following values:
+    * **`true/false`** - write or not write exception to the log file
+
+* **`error_procedure`** - in case of an error, this option defines the procedure that the bot will adopt. Use the following values:
+
+    * **`stop`** - stop bot after retrying X times (as defined in `error_max_retries`)  with a delay between retries (as defined in `error_retry_delay`). If the bot reaches the `error_max_retries` value, it will remove the message from the pipeline and stop. If the option `error_dump_message` is also enable, the bot will dump the removed message to its dump file (to be found in var/log).
+    
+    * **`pass`** - will skip this message and will process the next message after retrying X times, removing the current message from pipeline. If the option `error_dump_message` is also enable, then the bot will dump the removed message to its dump file.
+
+* **`error_max_retries`** - in case of an error, the bot will try to re-start processing the current message X times as defined by this option. int value.
+
+* **`error_retry_delay`** - defines the number of seconds to wait between subsequent re-tries in case of an error. int value.
+
+* **`error_dump_message`** - specifies if the bot will write queued up messages to its dump file (use intelmqdump to re-insert the message).
+    * **`true/false`** - write or not write message to the dump file
+
+#### Miscellaneous
+
+* **`load_balance`** - this option allows you to choose the behavior of the queue. Use the following values:
+    * **`true`** - splits the messages into several queues without duplication
+    * **`false`** - duplicates the messages into each queue
+
+* **`broker`** - select which broker intelmq can use. Use the following values:
+    * **`redis`** - Redis allows some persistence but is not so fast as ZeroMQ (in development). But note that persistence has to be manually activated. See http://redis.io/topics/persistence
+
+* **`rate_limit`** - time interval (in seconds) between messages processing.  int value.
+
+* **`source_pipeline_host`** - broker IP, FQDN or Unix socket that the bot will use to connect and receive messages.
+
+* **`source_pipeline_port`** - broker port that the bot will use to connect and receive messages. Can be empty for Unix socket.
+
+* **`source_pipeline_password`** - broker password that the bot will use to connect and receive messages. Can be null for unprotected broker.
+
+* **`source_pipeline_db`** - broker database that the bot will use to connect and receive messages (requirement from redis broker).
+
+* **`destination_pipeline_host`** - broker IP, FQDN or Unix socket that the bot will use to connect and send messages. 
+
+* **`destination_pipeline_port`** - broker port that the bot will use to connect and send messages. Can be empty for Unix socket.
+
+* **`destination_pipeline_password`** - broker password that the bot will use to connect and send messages. Can be null for unprotected broker.
+
+* **`destination_pipeline_db`** - broker database that the bot will use to connect and send messages (requirement from redis broker).
+
+* **`http_proxy`** - HTTP proxy the that bot will use when performing HTTP requests (e.g. bots/collectors/collector_http.py). The value must follow [RFC1738](https://www.ietf.org/rfc/rfc1738.txt).
+
+* **`https_proxy`** -  HTTPS proxy that the bot will use when performing secure HTTPS requests (e.g. bots/collectors/collector_http.py).
+
+* **`http_user_agent`** - user-agent string that the bot will use when performing HTTP/HTTPS requests (e.g. bots/collectors/collector_http.py).
+
+* **`http_verify_cert`** - defines if the bot will verify SSL certificates when performing HTTPS requests (e.g. bots/collectors/collector_http.py).
+    * **`true/false`** - verify or not verify SSL certificates
 
 ## Pipeline Configuration
 
-This configuration is used by each bot to load the source pipeline and destination pipelines associated to each of them. IntelMQ Manager generates this configuration.
+This configuration is used by each bot to load the pipeline of associated source- and destination queues. Note that the IntelMQ Manager generates this configuration.
 
 **Template:**
 ```
@@ -115,69 +178,13 @@ This configuration is used by each bot to load the source pipeline and destinati
 	...
 }
 ```
+Note that a bot must only have one (input) source queue but may have multiple destination queues.
 
 More examples can be found at `intelmq/etc/pipeline.conf` directory in IntelMQ repository.
 
-#### Error Handling
-
-* **`error_log_message`** - in case of an error, this option will allow the bot to write the message (report or event) in the log file. Use the following values:
-    * **`true/false`** - write or not write message in log file
-
-* **`error_log_exception`** - in case of an error, this option will allow the bot to write the error exception in the log file. Use the following values:
-    * **`true/false`** - write or not write exception in log file
-
-* **`error_procedure`** - in case of an error, this option defines the procedure that the bot will adopt. Use the following values:
-
-    * **`stop`** - stop bot after retry X times, defined in `error_max_retries` option with a delay between retries defined at `error_retry_delay` option. If bot reach `error_max_retries` value, it will remove the message from pipeline and stop. If the option `error_dump_message` is enable, the bot will dump the removed message to the dump log.
-    
-    * **`pass`** - will pass to the next message after retry X times, removing from pipeline the current message. If the option `error_dump_message` is enable, the bot will dump the removed message to the dump log.
-
-* **`error_max_retries`** - in case of an error the bot will try to start processing the current message X times defined at `error_max_retries` option. The value must be an integer value.
-
-* **`error_retry_delay`** - in case of an error, this option will allows you to define the number of seconds which bot will wait until next retry. The value must be an `integer value`.
-
-* **`error_dump_message`** - in case of an error, this option will allows the bot to write the message (report or event) in the dump file (use intelmqdump to re-insert the message).
-    * **`true/false`** - write or not write message in dump file
-
-#### Miscellaneous
-
-* **`load_balance`** - this option allows you to choose the behavior of the queue. Use the following values:
-    * **`true`** - splits the messages into several queues without duplication
-    * **`false`** - duplicates the messages into each queue
-
-* **`broker`** - select which broker intelmq can use. Use the following values:
-    * **`redis`** - Redis allows some persistence but is not so fast as ZeroMQ (in development). But note that persistence has to be manually activated. See http://redis.io/topics/persistence
-
-* **`rate_limit`** - time interval (in seconds) between messages processing. The value must be an `integer value`.
-
-* **`source_pipeline_host`** - broker IP, FQDN or Unix socket that the bot will use to connect and receive messages.
-
-* **`source_pipeline_port`** - broker port that the bot will use to connect and receive messages. Can be empty for Unix socket.
-
-* **`source_pipeline_password`** - broker password that the bot will use to connect and receive messages. Can be null for unprotected broker.
-
-* **`source_pipeline_db`** - broker database that the bot will use to connect and receive messages (requirement from redis broker).
-
-* **`destination_pipeline_host`** - broker IP, FQDN or Unix socket that the bot will use to connect and send messages. 
-
-* **`destination_pipeline_port`** - broker port that the bot will use to connect and send messages. Can be empty for Unix socket.
-
-* **`destination_pipeline_password`** - broker password that the bot will use to connect and send messages. Can be null for unprotected broker.
-
-* **`destination_pipeline_db`** - broker database that the bot will use to connect and send messages (requirement from redis broker).
-
-* **`http_proxy`** - proxy HTTP the that bot will use when performing HTTP requests (e.g. bots/collectors/collector_http.py). The value must follow RFC1738.
-
-* **`https_proxy`** - proxy HTTPS that the bot will use when performing secure HTTPS requests (e.g. bots/collectors/collector_http.py).
-
-* **`http_user_agent`** - user-agent that the bot will use when performing HTTP/HTTPS requests (e.g. bots/collectors/collector_http.py).
-
-* **`http_verify_cert`** - defines if the bot will verify SSL certificates when performing HTTPS requests (e.g. bots/collectors/collector_http.py).
-    * **`true/false`** - verify or not verify SSL certificates
-
 ## Runtime Configuration
 
-This configuration is used by each bot to load the specific parameters associated to each of them. Usually, BOTS file is used to generate runtime.conf. IntelMQ Manager generates this configuration.
+This configuration is used by each bot to load its specific (runtime) parameters. Usually, the `BOTS` file is used to generate `runtime.conf`. Also, the IntelMQ Manager generates this configuration. You may edit it manually as well. Be sure to re-load the bot (see the intelmqctl documentation).
 
 **Template:**
 ```
@@ -213,9 +220,9 @@ This configuration is used by each bot to load the specific parameters associate
 }
 ```
 
-More examples can be found at `intelmq/etc/runtime.conf` directory in IntelMQ repository. See [Bots](Bots.md) for more details.
+More examples can be found in the `intelmq/etc/runtime.conf` directory. See [Bots](Bots.md) for more details.
 
-By default all of the bots are started when you start the whole botnet, however there is a possibility to *disable* a bot. This means that the bot will not start every time you start the botnet, but you can start and stop the bot if you specify the bot explicitly. To disable a bot, add the following to your runtime.conf: `"enabled": false`. For example: 
+By default, all of the bots are started when you start the whole botnet, however there is a possibility to *disable* a bot. This means that the bot will not start every time you start the botnet, but you can start and stop the bot if you specify the bot explicitly. To disable a bot, add the following to your runtime.conf: `"enabled": false`. For example: 
 
 ```
 {
@@ -236,7 +243,7 @@ By default all of the bots are started when you start the whole botnet, however 
 
 ## Harmonization Configuration
 
-This configuration is used to specify the fields for all message types. The harmonization library will load this configuration to check, during the message processing, the values are compliant to harmonization. Usually, this configuration doesn't need any change.
+This configuration is used to specify the fields for all message types. The harmonization library will load this configuration to check, during the message processing, if the values are compliant to the "harmonization" format. Usually, this configuration doesn't need any change. It is mostly maintained by the intelmq maintainers.
 
 **Template:**
 ```
@@ -271,7 +278,7 @@ This configuration is used to specify the fields for all message types. The harm
 }
 ```
 
-More examples can be found at `intelmq/etc/harmonization.conf` directory in IntelMQ repository.
+More examples can be found in the `intelmq/etc/harmonization.conf` directory.
 
 
 
@@ -282,27 +289,31 @@ More examples can be found at `intelmq/etc/harmonization.conf` directory in Inte
 IntelMQ has a modular structure consisting of bots. There are four types of bots:
 
 * [CollectorBots](Bots.md#collectors) retrieve data from internal or external sources, the output
-are *reports* consisting of many individual data sets.
-* [ParserBots](Bots.md#parsers) parse the data by splitting it into individual *events* and
-giving them a defined structure, see also [Data Harmonization](Data-Harmonization.md).
-* [ExpertBots](Bots.md#experts) enrich the existing events by e.g. reverse records, geographic location information or abuse contacts.
-* [OutputBots](Bots.md#outputs) write events to files, databases, (REST)-APIs, etc.
+are *reports* consisting of many individual data sets / log lines.
+* [ParserBots](Bots.md#parsers) parse the (report) data by splitting it into individual *events* (log lines) and
+giving them a defined structure, see also [Data Harmonization](Data-Harmonization.md) for the list of fields an event may be split up into.
+* [ExpertBots](Bots.md#experts) enrich the existing events by e.g. lookup up information such as DNS reverse records, geographic location information (country code) or abuse contacts for an IP address or domain name.
+* [OutputBots](Bots.md#outputs) write events to files, databases, (REST)-APIs or any other data sink that you might want to write to.
 
 Each bot has one source queue (except collectors) and can have multiple
-destination queues (except outputs). But multiple bots can write to the same pipeline, resulting in multiple inputs for the next bot.
+destination queues (except outputs). But multiple bots can write to the same pipeline (queue), resulting in multiple inputs for the next bot.
 
-Every bot runs in a separate process, they are uniquely identifiable by a *bot id*.
+Every bot runs in a separate process. A bot is identifiable by a *bot id*.
 
-Currently only one instance of one bot can be run. Concepts for multiprocessing are being discussed, see this issue: [Multiprocessing per queue is not supported #186](https://github.com/certtools/intelmq/issues/186).
+Currently only one instance (i.e. *with the same bot id*) of a bot can run at the same time. Concepts for multiprocessing are being discussed, see this issue: [Multiprocessing per queue is not supported #186](https://github.com/certtools/intelmq/issues/186).
+Currently you can run multiple processes of the same bot (with *different bot ids*) in parallel.
+
+Example: multiple gethostbyname bots (with different bot ids) may run in parallel, with the same input queue and sending to the same output queue. Note that the bot providing the input queue **must** have the ``load_balance`` option set to ``true``.
 
 ### Web interface: IntelMQ Manager
 
-IntelMQ has a tool called IntelMQ Manager that gives to user a easy way to 
-configure all pipeline with bots that your team needs. It is recommended to
+IntelMQ has a tool called IntelMQ Manager that gives to user an easy way to 
+configure all pipelines with bots that your team needs. For beginners, it's recommended to
 use the IntelMQ Manager to become acquainted with the functionalities and concepts.
-The IntelMQ Manager has all possibilities of intelmqctl tool and has a graphical interface for runtime and pipeline configuration.
+The IntelMQ Manager offers some of the possibilities of the intelmqctl tool and has a graphical interface for runtime and pipeline configurations.
 
-See [IntelMQ Manager repository](https://github.com/certtools/intelmq-manager).
+See the [IntelMQ Manager repository](https://github.com/certtools/intelmq-manager).
+
 
 ### Command-line interface: intelmqctl
 
@@ -345,10 +356,13 @@ subcommands:
     enable              Enable a bot
     disable             Disable a bot
 
-        intelmqctl [start|stop|restart|status|reload|run] bot-id
+        intelmqctl [start|stop|restart|status|reload] bot-id
         intelmqctl [start|stop|restart|status|reload]
         intelmqctl list [bots|queues]
         intelmqctl log bot-id [number-of-lines [log-level]]
+        intelmqctl run bot-id message [get|pop|send]
+        intelmqctl run bot-id process [--msg|--dryrun]
+        intelmqctl run bot-id console
         intelmqctl clear queue-id
         intelmqctl check
 
@@ -361,8 +375,14 @@ Restarting a bot:
 Get status of a bot:
     intelmqctl status bot-id
 
-Run a bot directly (blocking) for debugging purpose:
+Run a bot directly for debugging purpose and temporarily leverage the logging level to DEBUG:
     intelmqctl run bot-id
+Get a pdb (or ipdb if installed) live console.
+    intelmqctl run bot-id console
+See the message that waits in the input queue.
+    intelmqctl run bot-id message get
+See additional help for further explanation.
+    intelmqctl run bot-id --help
 
 Starting the botnet (all bots):
     intelmqctl start
@@ -390,14 +410,16 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl
 
 #### Botnet Concept
 
-The botnet represents all currently configured bots which are explicitly enabled. To get an overview which bots are running, use `intelmqctl status` or use IntelMQ Manager. Set `"enabled": true` in the runtime configuration to add a bot to botnet. By default, bots will be configured as `"enabled": false` therefore, such a bot does not belong to the botnet (by default). See [Bots](Bots.md) for more details on configuration.
+The "botnet" represents all currently configured bots which are explicitly enabled. It is, in essence, the graph (pipeline.conf) of the bots which are connected together via their input source queues and destination queues. 
+
+To get an overview which bots are running, use `intelmqctl status` or use the IntelMQ Manager. Set `"enabled": true` in the runtime configuration to add a bot to the botnet. By default, bots will be configured as `"enabled": true`. See [Bots](Bots.md) for more details on configuration.
 
 Disabled bots can still be started explicitly using `intelmqctl start <bot_id>`, but will remain in the state `disabled` if stopped (and not be implicitly enabled by the `start` command). They are not started by `intelmqctl start` in analogy to the behavior of widely used initialization systems.
 
 
 #### Scheduled Run Mode
 
-In many cases it is useful to schedule a bot at a specific time (for example via cron(1)), for example to collect information from a website every day at midnight. To do this, set `run_mode` to `scheduled` in the `runtime.conf` for the bot. Check the following example:
+In many cases, it is useful to schedule a bot at a specific time (i.e. via cron(1)), for example to collect information from a website every day at midnight. To do this, set `run_mode` to `scheduled` in the `runtime.conf` for the bot. Check out the following example:
 
 ```json
 "blocklistde-apache-collector": {
@@ -406,7 +428,7 @@ In many cases it is useful to schedule a bot at a specific time (for example via
     "module": "intelmq.bots.collectors.http.collector_http",
     "description": "All IP addresses which have been reported within the last 48 hours as having run attacks on the service Apache, Apache-DDOS, RFI-Attacks.",
     "enabled": false,
-    "run_mode": "scheduled"
+    "run_mode": "scheduled",
     "parameters": {
         "feed": "Blocklist.de Apache",
         "provider": "Blocklist.de",
@@ -426,7 +448,7 @@ Bots configured as `scheduled` will exit after the first successful run.
 
 #### Continuous Run Mode
 
-Most of the cases, bots will need to be configured as `continuous` run mode in order to have them always running and processing events. Usually, the types of bots that will require the continuous mode will be Parsers, Experts and Outputs. To do this, set `run_mode` to `continuous` in the `runtime.conf` for the bot. Check the following example:
+Most of the cases, bots will need to be configured as `continuous` run mode (the default) in order to have them always running and processing events. Usually, the types of bots that will require the continuous mode will be Parsers, Experts and Outputs. To do this, set `run_mode` to `continuous` in the `runtime.conf` for the bot. Check the following example:
 
 ```json
 "blocklistde-apache-parser": {
@@ -435,7 +457,7 @@ Most of the cases, bots will need to be configured as `continuous` run mode in o
     "module": "intelmq.bots.parsers.blocklistde.parser",
     "description": "Blocklist.DE Parser is the bot responsible to parse the report and sanitize the information.",
     "enabled": false,
-    "run_mode": "continuous"
+    "run_mode": "continuous",
     "parameters": {
     },
 },
@@ -446,7 +468,7 @@ You can now start the bot using the following command:
 intelmqctl start blocklistde-apache-parser
 ```
 
-Bots configured as `continuous` will never exit except if there is an error and the error handling configuration requires the bot to exit. See Error Handling section for more details.
+Bots configured as `continuous` will never exit except if there is an error and the error handling configuration requires the bot to exit. See the Error Handling section for more details.
 
 
 #### Forcing reset pipeline and cache (be careful)
@@ -461,7 +483,7 @@ redis-cli FLUSHALL
 
 ### Tool: intelmqdump
 
-When bots are failing due to bad input data or programming errors, they can dump the problematic message to a file along with a traceback, if configured accordingly. These dumps are saved at `/opt/intelmq/var/log/[botid].dump` as JSON files. There is an inspection and reinjection tool included in intelmq, called `intelmqdump`. It is an interactive tool able to show all dumped files, the number of dumps per file. Choose a file by bot-id or listed numeric id. You can then choose to delete single entries from the file with `e 1,3,4`, show a message in more readable format with `s 1` (prints the raw-message, can be long!), recover some messages and put them back in the pipeline for the bot by `a` or `r 0,4,5`. Or delete the file with all dumped messages using `d`.
+When bots are failing due to bad input data or programming errors, they can dump the problematic message to a file along with a traceback, if configured accordingly. These dumps are saved at `/opt/intelmq/var/log/[botid].dump` as JSON files. IntelMQ comes with an inspection- and reinjection tool, called `intelmqdump`. It is an interactive tool to show all dumped files and the number of dumps per file. Choose a file by bot-id or listed numeric id. You can then choose to delete single entries from the file with `e 1,3,4`, show a message in more readable format with `s 1` (prints the raw-message, can be long!), recover some messages and put them back in the pipeline for the bot by `a` or `r 0,4,5`. Or delete the file with all dumped messages using `d`.
 
 ```bash
  $ intelmqdump -h
@@ -527,7 +549,7 @@ Deleted file /opt/intelmq/var/log/dragon-research-group-ssh-parser.dump
 
 ## Monitoring Logs
 
-All bots and `intelmqctl` log to `/opt/intelmq/var/log/`. In case of failures, messages are dumped to the same directory with file ending `.dump`.
+All bots and `intelmqctl` log to `/opt/intelmq/var/log/`. In case of failures, messages are dumped to the same directory with the file ending `.dump`.
 
 ```bash
 tail -f /opt/intelmq/var/log/*.log
@@ -540,9 +562,23 @@ pip uninstall intelmq
 rm -rf /opt/intelmq
 ```
 
+# Integration with ticket systems, etc.
+First of all, IntelMQ is a message (event) processing system: it collects feeds, processes them, enriches them, filters them and then stores them somewhere or sends them to another system. It does this in a composable, data flow oriented fashion, based on single events. There are no aggregation or grouping features. Now, if you want to integrate IntelMQ with your ticket system or some other system, you need to send its output to somewhere where your ticket system or other services can pick up IntelMQ's data. This could be a database, splunk, or you could send you events directly via email to a ticket system.
+
+Different users came up with different solutions for this, each of them fitting their own organisation. Hence these solutions are not part of the core IntelMQ repository. 
+  * CERT.at uses a postgresql DB (postgres output bot) and has a small tool `intelmqcli` which fetches the events in the postgresql DB which are marked as "new" and will group them and send them out via the RT ticket system.
+  * Others, including BSI, use a tool called `intelmq-mailgen`. It sends E-Mails to the recipients, optionally PGP-signed with defined text-templates, CSV formatted attachments with grouped events and generated ticket numbers.
+
+The following lists external github repositories which you might consult for examples on how to integrate IntelMQ into your workflow:
+
+  * [certat repository](https://github.com/certat/intelmq)
+  * [Intevation's Mailgen](https://github.com/Intevation/intelmq-mailgen)
+  
+If you came up with another solution for integration, we'd like to hear from you! Please reach out to us on the [intelmq-users list](https://lists.cert.at/cgi-bin/mailman/listinfo/intelmq-users).
+
 # Frequently Asked Questions
 
-Consult the [FAQ](FAQ.md) if you encountered any problem.
+Consult the [FAQ](FAQ.md) if you encountered any problems.
 
 
 # Additional Information

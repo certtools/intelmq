@@ -115,6 +115,13 @@ For example, to run all tests you can use:
 INTELMQ_TEST_DATABASES=1 INTELMQ_TEST_LOCAL_WEB=1 INTELMQ_TEST_EXOTIC=1 nosetests
 ```
 
+### Configuration files
+
+The tests use the configuration files in your working directory, not those
+installed in `/opt/intelmq/etc/` or `/etc/`.  You can run the
+tests for a locally changed intelmq without affecting an installation or
+requiring root to run them.
+
 # Development Guidelines
 
 ## Coding-Rules

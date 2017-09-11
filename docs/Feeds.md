@@ -357,7 +357,7 @@ id: bambenek-c2-domains-collector
 provider: Bambenek
 feed: Bambenek C2 Domains
 rate_limit: FIXME
-http_url: http://osint.bambenekconsulting.com/feeds/c2-dommasterlist.txt
+http_url: https://osint.bambenekconsulting.com/feeds/c2-dommasterlist.txt
 ```
 
 ### Parser Bot
@@ -372,7 +372,7 @@ id: bambenek-c2-domains-parser
 ```
 
 **Notes:** Master Feed of known, active and non-sinkholed C&Cs domain names.
-License: http://osint.bambenekconsulting.com/license.txt
+License: https://osint.bambenekconsulting.com/license.txt
 
 ## C2 IPs
 
@@ -390,7 +390,7 @@ id: bambenek-c2-ips-collector
 provider: Bambenek
 feed: Bambenek C2 IPs
 rate_limit: FIXME
-http_url: http://osint.bambenekconsulting.com/feeds/c2-ipmasterlist.txt
+http_url: https://osint.bambenekconsulting.com/feeds/c2-ipmasterlist.txt
 ```
 
 ### Parser Bot
@@ -405,7 +405,7 @@ id: bambenek-c2-ips-parser
 ```
 
 **Notes:** Master Feed of known, active and non-sinkholed C&Cs IP addresses
-License: http://osint.bambenekconsulting.com/license.txt
+License: https://osint.bambenekconsulting.com/license.txt
 
 ## DGA Domains
 
@@ -423,7 +423,7 @@ id: bambenek-dga-domains-collector
 provider: Bambenek
 feed: Bambenek DGA Domains
 rate_limit: FIXME
-http_url: http://osint.bambenekconsulting.com/feeds/dga-feed.txt
+http_url: https://osint.bambenekconsulting.com/feeds/dga-feed.txt
 ```
 
 ### Parser Bot
@@ -438,7 +438,7 @@ id: bambenek-dga-domains-parser
 ```
 
 **Notes:** Domain feed of known DGA domains from -2 to +3 days
-License: http://osint.bambenekconsulting.com/license.txt
+License: https://osint.bambenekconsulting.com/license.txt
 
 
 # Bitcash
@@ -457,7 +457,7 @@ id: bitcash-collector
 provider: BitCash
 feed: BitCash
 rate_limit: FIXME
-http_url: http://bitcash.cz/misc/log/blacklist
+http_url: https://bitcash.cz/misc/log/blacklist
 ```
 
 ## Parser Bot

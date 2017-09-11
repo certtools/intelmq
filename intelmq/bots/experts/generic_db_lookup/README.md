@@ -11,9 +11,9 @@ If more than one result is returned, a ValueError is raised.
 
 * `database`: string, defaults to "intelmq"
 * `host`: string, defaults to "localhost"
-* `password: string
-* `port: integer, defaults to 5432
-* `sslmode: string, defaults to "require"
+* `password`: string
+* `port`: integer, defaults to 5432
+* `sslmode`: string, defaults to "require"
 * `table`: defaults to "contacts"
 * `user`: defaults to "intelmq"
 
