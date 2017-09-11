@@ -28,7 +28,7 @@ CHANGELOG
 - changed feednames in `bots.parsers.shadowserver`. Please refer to it's README for the exact changes.
 
 ### Requirements
-- Requests is no longer a listed as dependency of the core. For depending bots the requirement is noted in their REQUIREMENTS.txt file
+- Requests is no longer listed as dependency of the core. For depending bots the requirement is noted in their REQUIREMENTS.txt file
 
 1.0.1 Bugfix release
 --------------------
@@ -44,7 +44,7 @@ CHANGELOG
 - lib/bot: Bots will now log the used intelmq version at startup
 
 ### Tools
-- intelmqctl: To check the status of a bot, the comandline of the running process is compared to the actual executable of the bot. Otherwise unrelated programs with the same PID are detected as running bot.
+- intelmqctl: To check the status of a bot, the command line of the running process is compared to the actual executable of the bot. Otherwise unrelated programs with the same PID are detected as running bot.
 - intelmqctl: enable, disable, check, clear now support the JSON output
 
 1.0.0 Stable release
