@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import io
+import os
 
 from intelmq.lib.bot import Bot
 
@@ -23,6 +24,17 @@ class FileOutputBot(Bot):
             self.init()
         else:
             self.acknowledge_message()
+
+    def shutdown(self):
+        self.file.close()
+
+    @staticmethod
+    def check(parameters):
+        if 'file' not in parameters:
+            return [["error", "Parameter 'file' not given."]]
+        dirname = os.path.dirname(parameters['file'])
+        if not os.path.exists(dirname):
+            return [["error", "Directory (%r) of parameter 'file' does not exist." % dirname]]
 
 
 BOT = FileOutputBot
