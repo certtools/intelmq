@@ -143,7 +143,7 @@ class Message(dict):
             return True
         return False
 
-    def add(self, key: str, value: str, sanitize: bool=True, force: bool=False,
+    def add(self, key: str, value: str, sanitize: bool=True,
             overwrite: bool=False, ignore: Sequence=(),
             raise_failure: bool=True) -> bool:
         """
@@ -170,7 +170,6 @@ class Message(dict):
             intelmq.lib.exceptions.InvalidValue: If value is not valid for the given key and
                 raise_failure is True.
         """
-        overwrite = force or overwrite
         if not overwrite and key in self:
             raise exceptions.KeyExists(key)
 
