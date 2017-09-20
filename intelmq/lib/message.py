@@ -160,7 +160,7 @@ class Message(dict):
         return False
 
     def add(self, key: str, value: str, sanitize: bool=True,
-            overwrite: bool=False, ignore: Sequence=(),
+            overwrite: Optional[bool]=None, ignore: Sequence=(),
             raise_failure: bool=True) -> bool:
         """
         Add a value for the key (after sanitation).
@@ -168,16 +168,23 @@ class Message(dict):
         Parameters:
             key: Key as defined in the harmonization
             value: A valid value as defined in the harmonization
+                If the value is None or in _IGNORED_VALUES the value will be ignored.
+                If the value is ignored, the key exists and overwrite is True, the key
+                is deleted.
             sanitize: Sanitation of harmonization type will be called before validation
                 (default: True)
-            overwrite: Overwrite an existing value if it already exists (default: False)
+            overwrite: Overwrite an existing value if it already exists (default: None)
+                If True, overwrite an existing value
+                If False, do not overwrite an existing value
+                If None, raise intelmq.exceptions.KeyExists for an existing value
             raise_failure: If a intelmq.lib.exceptions.InvalidValue should be raised for
                 invalid values (default: True). If false, the return parameter will be
                 False in case of invalid values.
 
         Returns:
             * True if the value has been added.
-            * False if the value is invalid and raise_failure is False.
+            * False if the value is invalid and raise_failure is False or the value existed
+                and has not been overwritten.
 
         Raises:
             intelmq.lib.exceptions.KeyExists: If key exists and won't be overwritten explicitly.
@@ -186,8 +193,10 @@ class Message(dict):
             intelmq.lib.exceptions.InvalidValue: If value is not valid for the given key and
                 raise_failure is True.
         """
-        if not overwrite and key in self:
+        if overwrite is None and key in self:
             raise exceptions.KeyExists(key)
+        if overwrite is False and key in self:
+            return False
 
         if value is None or value in self._IGNORED_VALUES:
             if overwrite and key in self:
