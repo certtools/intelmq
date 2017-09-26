@@ -17,6 +17,9 @@ class Organisation:
         name (str): Name of the organisation
         managed (str): Either 'manual' or 'automatic' indicating how the
             contact database entry is managed.
+        import_source (str): The source from which the data was imported
+            into the contact database. Only valid if managed is
+            'automatic'.
         sector (str): The sector of the organisation (e.g. 'IT',
             'Energe' or similar)
         contacts (list of Contact): The contacts associated with the
@@ -26,25 +29,28 @@ class Organisation:
             with organisation.
     """
 
-    def __init__(self, orgid, name, managed, sector, contacts, annotations):
+    def __init__(self, orgid, name, managed, import_source, sector, contacts,
+                 annotations):
         self.orgid = orgid
         self.name = name
         self.managed = managed
+        self.import_source = import_source
         self.sector = sector
         self.contacts = contacts
         self.annotations = annotations
 
     def __repr__(self):
-        return ("Organisation(orgid=%r, name=%r, managed=%r, sector=%r,"
-                " contacts=%r, annotations=%r)"
-                % (self.orgid, self.name, self.managed, self.sector,
-                   self.contacts, self.annotations))
+        return ("Organisation(orgid=%r, name=%r, managed=%r, import_source=%r,"
+                " sector=%r, contacts=%r, annotations=%r)"
+                % (self.orgid, self.name, self.managed, self.import_source,
+                   self.sector, self.contacts, self.annotations))
 
     @classmethod
     def from_json(cls, jsondict):
         return cls(orgid=jsondict["id"],
                    name=jsondict["name"],
                    managed=jsondict["managed"],
+                   import_source=jsondict.get("import_source", ""),
                    sector=jsondict["sector"],
                    contacts=[Contact.from_json(c)
                              for c in jsondict["contacts"]],

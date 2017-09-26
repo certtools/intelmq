@@ -77,8 +77,10 @@ Managed = Enum("Managed", "manual automatic")
 def lookup_contacts(cur, managed, asn, ip, fqdn, country_code):
     if managed is Managed.manual:
         table_extension = ""
+        import_source_expression = "''"
     elif managed is Managed.automatic:
         table_extension = "_automatic"
+        import_source_expression = "import_source"
     else:
         raise ValueError("The 'managed' parameter must be one of the values"
                          " of the Managed enum, not %r" % (managed,))
@@ -185,7 +187,8 @@ def lookup_contacts(cur, managed, asn, ip, fqdn, country_code):
 
          -- All matched organisations as rows that can be easily
          -- converted to JSON
-         org_json_rows (id, name, sector, contacts, annotations, managed)
+         org_json_rows (id, name, sector, contacts, annotations, managed,
+                        import_source)
              AS (SELECT o.organisation{0}_id as id, o.name as name,
                         sector.name as sector,
                         coalesce(ARRAY(SELECT row_to_json(sub)
@@ -205,7 +208,8 @@ def lookup_contacts(cur, managed, asn, ip, fqdn, country_code):
                                  END,
                                  ('[]' :: JSON))
                         AS annotations,
-                        %(managed)s AS managed
+                        %(managed)s AS managed,
+                        {1} as import_source
                   FROM organisation{0} o
                   LEFT OUTER JOIN sector ON sector.sector_id = o.sector_id
                  WHERE o.organisation{0}_id IN (select * FROM grouped_matches))
@@ -234,7 +238,7 @@ def lookup_contacts(cur, managed, asn, ip, fqdn, country_code):
                        FROM national_cert_json_rows),
                        '[]' :: JSON)
              AS national_cert_matches
-      """.format(table_extension),
+      """.format(table_extension, import_source_expression),
                 {"asn": asn, "fqdn": fqdn, "ip": ip,
                  "country_code": country_code, "managed": managed.name,
                  "extension": table_extension})
