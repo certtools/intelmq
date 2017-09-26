@@ -439,7 +439,8 @@
             "description": "Determine how and whom to notify about the event.",
             "module": "intelmq.bots.experts.certbund_contact.ruleexpert",
             "parameters": {
-                "script_directory": "/opt/intelmq/var/lib/bots/notification_rules"
+                "script_directory": "/opt/intelmq/var/lib/bots/notification_rules",
+                "remove_contact_data": true
             }
         },
         "CERT.at Contact Database": {
