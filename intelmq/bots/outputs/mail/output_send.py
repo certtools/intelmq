@@ -142,7 +142,7 @@ class MailSendOutputBot(Bot):
 
             maintype, subtype = "text/csv".split("/", 1)
             if maintype == "text":
-                attachment = MIMEText(fileContents, _subtype=subtype)
+                attachment = MIMEText(fileContents, subtype, "utf-8")
             attachment.add_header("Content-Disposition", "attachment",
                                   filename='proki_{}.csv'.format(time.strftime("%Y%m%d")))
             msg.attach(attachment)
