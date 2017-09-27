@@ -111,27 +111,29 @@ Meaning of source, destination and local values for each classification type and
 
 |Type|Source|Destination|Local|Possible identifiers|
 |----|------|-----------|-----|--------------------|
-|spam|*infected device*|targeted server|internal at source||
-|malware|*infected device*||internal at source|zeus, palevo, feodo|
-|botnet drone|*infected device*||||
-|ransomware|*infected device*||||
-|dga domain|*infected device*||||
-|malware configuration|*infected device*||||
-|c&c|*(sinkholed) c&c server*|||zeus, palevo, feodo|
-|scanner|*scanning device*|scanned device|||
-|exploit|*hosting server*||||
-|brute-force|*attacker*|target|||
-|ids alert|*triggering device*||||
-|defacement|*defaced website*||||
-|compromised|*server*||||
 |backdoor|*backdoored device*||||
+|blacklist|*blacklisted device*||||
+|botnet drone|*infected device*||||
+|brute-force|*attacker*|target|||
+|c&c|*(sinkholed) c&c server*|||zeus, palevo, feodo|
+|compromised|*server*||||
 |ddos|*attacker*|target|||
+|defacement|*defaced website*||||
+|dga domain|*infected device*||||
 |dropzone|*server hosting stolen data*||||
+|exploit|*hosting server*||||
+|ids alert|*triggering device*||||
+|malware|*infected device*||internal at source|zeus, palevo, feodo|
+|malware configuration|*infected device*||||
+|other||||||
 |phishing|*phishing website*||||
 |proxy|*server allowing policy and security bypass*||||
-|vulnerable service|*vulnerable device*||| heartbleed, openresolver, snmp |
-|blacklist|*blacklisted device*||||
+|ransomware|*infected device*||||
+|scanner|*scanning device*|scanned device|||
+|spam|*infected device*|targeted server|internal at source||
+|test||||||
 |unknown||||||
+|vulnerable service|*vulnerable device*||| heartbleed, openresolver, snmp |
 
 Field in italics is the interesting one for CERTs.
 

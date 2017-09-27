@@ -140,54 +140,55 @@ class ClassificationType(GenericType):
     Type of classification.type field.
 
     Only these values are allowed:
-     * spam
-     * malware
-     * botnet drone
-     * ransomware
-     * dga domain
-     * malware configuration
-     * c&c
-     * scanner
-     * exploit
-     * brute-force
-     * ids alert
-     * defacement
-     * compromised
      * backdoor
+     * blacklist
+     * botnet drone
+     * brute-force
+     * c&c
+     * compromised
      * ddos
+     * defacement
+     * dga domain
      * dropzone
+     * exploit
+     * ids alert
+     * malware
+     * malware configuration
+     * other
      * phishing
      * proxy
-     * vulnerable service
-     * blacklist
-     * other
-     * unknown
+     * ransomware
+     * scanner
+     * spam
      * test
+     * unknown
+     * vulnerable service
     """
 
-    allowed_values = ['spam',
-                      'malware',
-                      'botnet drone',
-                      'ransomware',
-                      'dga domain',
-                      'malware configuration',
-                      'c&c',
-                      'scanner',
-                      'exploit',
-                      'brute-force',
-                      'ids alert',
-                      'defacement',
-                      'compromised',
+    allowed_values = [
                       'backdoor',
+                      'blacklist',
+                      'botnet drone',
+                      'brute-force',
+                      'c&c',
+                      'compromised',
                       'ddos',
+                      'defacement',
+                      'dga domain',
                       'dropzone',
+                      'exploit',
+                      'ids alert',
+                      'malware',
+                      'malware configuration',
+                      'other',
                       'phishing',
                       'proxy',
-                      'vulnerable service',
-                      'blacklist',
-                      'other',
-                      'unknown',
+                      'ransomware',
+                      'scanner',
+                      'spam',
                       'test'
+                      'unknown',
+                      'vulnerable service',
                       ]
 
     @staticmethod
