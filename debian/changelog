@@ -1,3 +1,10 @@
+intelmq (1.0.0~dev7+intevation.3.0) unstable; urgency=medium
+
+  * New attiribute `import_source' in organisation context for the rules
+    bot.
+
+ -- Sascha Wilde <wilde@intevation.de>  Wed, 27 Sep 2017 15:31:23 +0200
+
 intelmq (1.0.0~dev6+intevation.3.0~rc1) unstable; urgency=medium
 
   * certbund-contact/ruleexpert: Remove matches from the context when no
