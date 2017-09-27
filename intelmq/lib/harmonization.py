@@ -165,8 +165,7 @@ class ClassificationType(GenericType):
      * vulnerable service
     """
 
-    allowed_values = [
-                      'backdoor',
+    allowed_values = ['backdoor',
                       'blacklist',
                       'botnet drone',
                       'brute-force',
@@ -186,7 +185,7 @@ class ClassificationType(GenericType):
                       'ransomware',
                       'scanner',
                       'spam',
-                      'test'
+                      'test',
                       'unknown',
                       'vulnerable service',
                       ]
