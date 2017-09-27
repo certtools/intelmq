@@ -10,20 +10,10 @@ See the changelog for a full list of changes.
 - `intelmqctl check` checks if all keys in the packaged defaults.conf are present in the current configuration.
 
 ### Harmonization
-- added destination.urlpath and source.urlpath to harmonization.
-
-### Postgres databases
-Use the following statement carefully to upgrade your database.
-```SQL
-ALTER TABLE events
-   ADD COLUMN "destination.urlpath" text,
-   ADD COLUMN "source.urlpath" text;
-```
+- added `destination.urlpath` and `source.urlpath` to harmonization.
 
 ### Configuration
 A new harmonization type `JSONDict` has been added specifically for the `extra` field. It is highly recommended to change the type of this field.
-
-### Configuration
 The feed names in the shadowserver parser have been adapted to the current subjects. Change your configuration accordingly:
 * `Botnet-Drone-Hadoop` to `Drone`
 * `DNS-open-resolvers` to `DNS-Open-Resolvers`
@@ -35,6 +25,9 @@ The feed names in the shadowserver parser have been adapted to the current subje
 The following statements optionally update existing data.
 Please check if you did use these feed names and eventually adapt them for your setup!
 ```SQL
+ALTER TABLE events
+   ADD COLUMN "destination.urlpath" text,
+   ADD COLUMN "source.urlpath" text;
 UPDATE events
    SET "classification.identifier" = 'openmdns'
    WHERE "classification.identifier" = 'open-mdns' AND "feed.name" = 'Open-mDNS';
