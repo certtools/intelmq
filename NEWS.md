@@ -9,6 +9,17 @@ See the changelog for a full list of changes.
 - `intelmqctl start` prints bot's error messages in stderr if it failed to start.
 - `intelmqctl check` checks if all keys in the packaged defaults.conf are present in the current configuration.
 
+### Harmonization
+- added destination.urlpath and source.urlpath to harmonization.
+
+### Postgres databases
+Use the following statement carefully to upgrade your database.
+```SQL
+ALTER TABLE events
+   ADD COLUMN "destination.urlpath" text,
+   ADD COLUMN "source.urlpath" text;
+```
+
 ### Configuration
 A new harmonization type `JSONDict` has been added specifically for the `extra` field. It is highly recommended to change the type of this field.
 
