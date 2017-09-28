@@ -4,6 +4,49 @@ Requires Psycopg.
 
 ## Contact DB
 
+### Automatic versus manual contacts
+
+Two types of contacts are supported.
+Both are modeled with a set of tables that differ
+in the table name in some columns.
+
+#### 'Automatic' for externally maintained infos
+
+The tables ending with `_automatic` shall hold contact
+information that are maintained externally to the system.
+They are designed so they can be updated or reimported
+in a straight forward way. Several import sources are possible.
+
+Therefore they have columns for `import_source` and `import_time`
+in order to later decide which information to use. And there are
+no fields for additional information as those informatiom may potentially
+get lost or be incorrect if the contents of the database changes
+during and update or reimport.
+
+The example for an external import source are contact data from RIPE,
+please see [[README-ripe-import.md]].
+
+#### 'Manual' to hold special cases
+
+If the automatic contacts contain mistakes or a special case is needed,
+the "manual" tables (that have no additional name suffix) can be used.
+The information in the manual tables is to be considered the primary
+source and maintained within this contact database.
+
+Those special information shall be entered by regular users of the system
+and should not interfere with the original external data. To keep the
+system robust and consistent, there are no direct links
+to the automatic tables.
+
+To add special information to an already existing contact in the automatic
+tables, all relevant tables entries of this specific automatic contact
+have to be copied into the manual tables. The manual contacts lack
+information in the external source, but have comment and annotations
+possibilities
+
+TODO
+
+
 ### Database Setup
 
 The following commands assume that PostgreSQL is running and listening on the
