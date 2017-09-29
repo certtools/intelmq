@@ -73,4 +73,4 @@ AddForceAction: 'add!' key=Key '=' value=STRING;        // add key/value, overwr
 UpdateAction: 'update' key=Key '=' value=STRING;        // update key/value, do not create if not exists
 RemoveAction: 'remove' key=Key;
 
-Comment: /\/\/.*$/ ;
+Comment: /(#|\/\/).*$/ ;

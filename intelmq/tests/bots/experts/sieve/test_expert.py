@@ -829,6 +829,18 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, event)
 
+    def test_comments(self):
+        """ Test comments in sieve file."""
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_comments.sieve')
+
+        event = EXAMPLE_INPUT.copy()
+        expected = event.copy()
+        expected['comment'] = 'hello'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
