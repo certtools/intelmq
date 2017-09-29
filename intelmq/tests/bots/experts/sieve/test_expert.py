@@ -331,6 +331,36 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, event)
 
+    def test_string_notcontains_match(self):
+        """ Test :notcontains string match."""
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__),
+                                              'test_sieve_files/test_string_notcontains_match.sieve')
+
+        # positive test (key undefined)
+        event = EXAMPLE_INPUT.copy()
+        expected = event.copy()
+        expected['comment'] = 'match'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # positive test (key mismatch)
+        event = EXAMPLE_INPUT.copy()
+        event['source.url'] = 'https://www.switch.ch/security/'
+        expected = event.copy()
+        expected['comment'] = 'match'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # negative test (key match)
+        event = EXAMPLE_INPUT.copy()
+        event['source.url'] = 'https://www.google.com/'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, event)
+
+
     def test_string_regex_match(self):
         """ Test =~ string match """
         self.sysconfig['file'] = os.path.join(os.path.dirname(__file__),

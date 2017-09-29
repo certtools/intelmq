@@ -23,11 +23,12 @@ Condition:
 
 StringMatch: key=Key op=StringOperator value=StringValue;
 StringOperator:
-  '=='           // compares two whole strings with each other
-  | '!='         // test for string inequality
-  | ':contains'  // sub-string match
-  | '=~'         // match strings according to regular expression
-  | '!~'         // inverse match with regular expression
+  '=='             // compares two whole strings with each other
+  | '!='           // test for string inequality
+  | ':contains'    // sub-string match
+  | ':notcontains' // inverse sub-string match
+  | '=~'           // match strings according to regular expression
+  | '!~'           // inverse match with regular expression
 ;
 
 NumericMatch: key=Key op=NumericOperator value=NumericValue;

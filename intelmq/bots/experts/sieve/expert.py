@@ -144,7 +144,7 @@ class SieveExpertBot(Bot):
 
     def process_string_match(self, key, op, value, event):
         if key not in event:
-            return op == '!=' or op == '!~'
+            return op == '!=' or op == '!~' or op == ':notcontains'
 
         if value.__class__.__name__ == 'SingleStringValue':
             return self.process_string_operator(event[key], op, value.value)
@@ -161,6 +161,8 @@ class SieveExpertBot(Bot):
             return lhs != rhs
         elif op == ':contains':
             return lhs.find(rhs) >= 0
+        elif op == ':notcontains':
+            return lhs.find(rhs) == -1
         elif op == '=~':
             return re.search(rhs, lhs) is not None
         elif op == '!~':
