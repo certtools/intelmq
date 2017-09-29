@@ -28,26 +28,40 @@ class Procedure:
 class SieveExpertBot(Bot):
 
     def init(self):
-        if metamodel_from_file is None:
-            raise ValueError('Could not import textx. Please install it.')
+        self.metamodel = SieveExpertBot.init_metamodel()
+        self.sieve = SieveExpertBot.read_sieve_file(self.parameters.file, self.metamodel)
 
-        # read the sieve grammar
+    @staticmethod
+    def init_metamodel():
+        if metamodel_from_file is None:
+            raise ValueError('Could not import textx. Please install it')
+
         try:
-            filename = os.path.join(os.path.dirname(__file__), 'sieve.tx')
-            self.metamodel = metamodel_from_file(filename)
-            self.metamodel.register_obj_processors({'SingleIpRange': SieveExpertBot.validate_ip_range})
+            grammarfile = os.path.join(os.path.dirname(__file__), 'sieve.tx')
+            metamodel = metamodel_from_file(grammarfile)
+            metamodel.register_obj_processors({'SingleIpRange': SieveExpertBot.validate_ip_range})
+            return metamodel
         except TextXError as e:
             raise ValueError('Could not process sieve grammar file. Error in (%d, %d): %s' % (e.line, e.col, str(e)))
 
-        # validate parameters
-        if not os.path.exists(self.parameters.file):
-            raise exceptions.InvalidArgument('file', got=self.parameters.file, expected='existing file')
+    @staticmethod
+    def read_sieve_file(filename, metamodel):
+        if not os.path.exists(filename):
+            raise exceptions.InvalidArgument('file', got=filename, expected='existing file')
 
-        # parse sieve file
         try:
-            self.sieve = self.metamodel.model_from_file(self.parameters.file)
+            sieve = metamodel.model_from_file(filename)
+            return sieve
         except TextXError as e:
-            raise ValueError('Could not parse sieve file %r, error in (%d, %d): %s' % (self.parameters.file, e.line, e.col, str(e)))
+            raise ValueError('Could not parse sieve file %r, error in (%d, %d): %s' % (filename, e.line, e.col, str(e)))
+
+    @staticmethod
+    def check(parameters):
+        try:
+            metamodel = SieveExpertBot.init_metamodel()
+            sieve = SieveExpertBot.read_sieve_file(parameters['file'], metamodel)
+        except Exception as e:
+            return [['error', str(e)]]
 
     def process(self):
         event = self.receive_message()
