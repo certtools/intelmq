@@ -66,7 +66,7 @@ CHANGELOG
 - `bots.parsers.alienvault.parser_otx`: handle timestamps without floating point seconds
 
 ### Experts
-- bots.experts.deduplicator: New parameter `bypass` to deactivate deduplication, default: true
+- bots.experts.deduplicator: New parameter `bypass` to deactivate deduplication, default: False
 
 v1.0.0.dev8
 -----------
