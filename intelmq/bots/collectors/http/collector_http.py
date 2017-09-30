@@ -8,6 +8,9 @@ http_header: dictionary
     default: {}
 http_verify_cert: boolean
     default: True
+extract_files: value used to extract files from downloaded compressed file
+    default: None
+    all: True; some: string with file names separated by ,
 http_username, http_password: string
 http_proxy, https_proxy: string
 http_timeout_sec: tuple of two floats or float
@@ -19,12 +22,14 @@ import zipfile
 import requests
 
 from intelmq.lib.bot import CollectorBot
+from intelmq.lib.utils import extract_tar
 
 
 class HTTPCollectorBot(CollectorBot):
 
     def init(self):
         self.set_request_parameters()
+        self.extract_files = getattr(self.parameters, "extract_files", None)
 
     def process(self):
         self.logger.info("Downloading report from %s", self.parameters.http_url)
@@ -65,6 +70,11 @@ class HTTPCollectorBot(CollectorBot):
                              ' ' + ', '.join(zfp.namelist()))
             for filename in zfp.namelist():
                 raw_reports.append(zfp.read(filename))
+
+        if self.extract_files is not None:
+            if isinstance(self.extract_files, str):
+                self.extract_files = self.extract_files.split(",")
+            raw_reports = [file for file in extract_tar(resp.content, self.extract_files)]
 
         for raw_report in raw_reports:
             report = self.new_report()
