@@ -386,6 +386,7 @@ Starting the botnet (all bots):
 
 Get a list of all configured bots:
     intelmqctl list bots
+If -q is given, only the IDs of enabled bots are listed line by line.
 
 Get a list of all queues:
     intelmqctl list queues
@@ -452,7 +453,8 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             parser_list = subparsers.add_parser('list', help='Listing bots or queues')
             parser_list.add_argument('kind', choices=['bots', 'queues'])
             parser_list.add_argument('--quiet', '-q', action='store_const',
-                                     help='Only list non-empty queues',
+                                     help='Only list non-empty queues '
+                                          'or the IDs of enabled bots.',
                                      const=True)
             parser_list.set_defaults(func=self.list)
 
@@ -706,8 +708,13 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         """
         if RETURN_TYPE == 'text':
             for bot_id in sorted(self.runtime_configuration.keys()):
-                print("Bot ID: {}\nDescription: {}"
-                      "".format(bot_id, self.runtime_configuration[bot_id].get('description')))
+                if QUIET and not self.runtime_configuration[bot_id].get('enabled'):
+                    continue
+                if QUIET:
+                    print(bot_id)
+                else:
+                    print("Bot ID: {}\nDescription: {}"
+                          "".format(bot_id, self.runtime_configuration[bot_id].get('description')))
         return [{'id': bot_id,
                  'description': self.runtime_configuration[bot_id].get('description')}
                 for bot_id in sorted(self.runtime_configuration.keys())]

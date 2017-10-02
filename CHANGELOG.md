@@ -6,6 +6,7 @@ CHANGELOG
 ### Tools
 - `intelmqctl start` prints bot's error messages if it failed to start
 - `intelmqctl check` checks for defaults.conf completeness
+- `intelmqctl list bots -q` only prints the IDs of enabled bots
 
 ### Core
 - Subitems in fields of type `JSONDict` (see below) can be accessed directly. E.g. you can do:
