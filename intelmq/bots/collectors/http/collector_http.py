@@ -32,7 +32,7 @@ class HTTPCollectorBot(CollectorBot):
         self.extract_files = getattr(self.parameters, "extract_files", None)
 
     def process(self):
-        self.logger.info("Downloading report from %s", self.parameters.http_url)
+        self.logger.info("Downloading report from %r.", self.parameters.http_url)
 
         timeoutretries = 0
         resp = None
@@ -50,13 +50,12 @@ class HTTPCollectorBot(CollectorBot):
                 self.logger.warn("Timeout whilst downloading the report.")
 
         if resp is None and timeoutretries >= self.http_timeout_max_tries:
-            self.logger.error("Request timed out %i times in a row. " %
+            self.logger.error("Request timed out %i times in a row.",
                               timeoutretries)
             return
 
         if resp.status_code // 100 != 2:
-            raise ValueError('HTTP response status code was {}.'
-                             ''.format(resp.status_code))
+            raise ValueError('HTTP response status code was %i.' % resp.status_code)
 
         self.logger.info("Report downloaded.")
 
@@ -66,14 +65,18 @@ class HTTPCollectorBot(CollectorBot):
         except zipfile.BadZipfile:
             raw_reports.append(resp.text)
         else:
-            self.logger.info('Downloaded zip file, extracting following files:'
-                             ' ' + ', '.join(zfp.namelist()))
+            self.logger.info('Extracting files from zip:'
+                             "'%s'.", "', '".join(zfp.namelist()))
             for filename in zfp.namelist():
                 raw_reports.append(zfp.read(filename))
 
         if self.extract_files is not None:
             if isinstance(self.extract_files, str):
                 self.extract_files = self.extract_files.split(",")
+                self.logger.info('Extracting files from tar.gz:'
+                                 "'%s'.", "', '".join(self.extract_files()))
+            else:
+                self.logger.info('Extracting all files from tar.gz.')
             raw_reports = [file for file in extract_tar(resp.content, self.extract_files)]
 
         for raw_report in raw_reports:
