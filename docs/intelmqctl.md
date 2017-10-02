@@ -126,7 +126,7 @@ Run a bot directly for debugging purpose. Command temporarily leverages the logg
 If launched with no arguments, the bot will call its init method and start processing messages as usual – but you see everything happens.
 
 ```bash
-> intelmqctl run file-output 
+> intelmqctl run file-output
 file-output: RestAPIOutputBot initialized with id file-output and version 3.5.2 as process 12345.
 file-output: Bot is starting.
 file-output: Loading source pipeline and queue 'file-output-queue'.
@@ -140,12 +140,12 @@ Should you get lost any time, just use the **--help** after any argument for fur
 
 ```bash
 > intelmqctl run file-output --help
-```        
+```
 
 Note that if another instance of the bot is running, only warning will be displayed.
 
 ```bash
-> intelmqctl run file-output 
+> intelmqctl run file-output
 intelmqctl: Main instance of the bot is running in the background. You may want to launch: intelmqctl stop file-output
 ```
 
@@ -168,7 +168,7 @@ You may specify the desired console in the next argument.
 
 #### message
 
-Operate directly with the input / output pipelines. 
+Operate directly with the input / output pipelines.
 
 If **get** is the parameter, you see the message that waits in the input (source or internal) queue. If the argument is **pop**, the message gets popped as well.
 
@@ -176,8 +176,8 @@ If **get** is the parameter, you see the message that waits in the input (source
 > intelmqctl run file-output message get
 file-output: Waiting for a message to get...
 {
-    "classification.type": "c&c",    
-    "feed.url": "https://example.com",    
+    "classification.type": "c&c",
+    "feed.url": "https://example.com",
     "raw": "1233",
     "source.ip": "1.2.3.4",
     "time.observation": "2017-05-17T22:00:33+00:00",
@@ -185,7 +185,7 @@ file-output: Waiting for a message to get...
 }
 ```
 
-To send directly to the bot's ouput queue, just as it was sent by ```self.send_message()``` in bot's ```process()``` method, use the **send** argument.  
+To send directly to the bot's ouput queue, just as it was sent by ```self.send_message()``` in bot's ```process()``` method, use the **send** argument.
 In our case of ```file-output```, it has no destionation queue so that nothing happens.
 
 ```bash
@@ -276,8 +276,8 @@ intelmqctl: Starting abusech-domain-parser...
 intelmqctl: abusech-domain-parser is running.
 intelmqctl: Starting abusech-feodo-domains-collector...
 intelmqctl: abusech-feodo-domains-collector is running.
-intelmqctl: Starting file-output...
-intelmqctl: file-output is running.
+intelmqctl: Starting deduplicator-expert...
+intelmqctl: deduplicator-expert is running.
 intelmqctl: file-output is disabled.
 intelmqctl: Botnet is running.
 ```
@@ -288,8 +288,8 @@ intelmqctl: Stopping abusech-domain-parser...
 intelmqctl: abusech-domain-parser is stopped.
 intelmqctl: Stopping abusech-feodo-domains-collector...
 intelmqctl: abusech-feodo-domains-collector is stopped.
-intelmqctl: Stopping file-output...
-intelmqctl: file-output is stopped.
+intelmqctl: Stopping deduplicator-expert...
+intelmqctl: deduplicator-expert is stopped.
 intelmqctl: Stopping file-output...
 intelmqctl: file-output is stopped.
 intelmqctl: Botnet is stopped.
@@ -305,8 +305,8 @@ intelmqctl: Stopping abusech-domain-parser...
 intelmqctl: abusech-domain-parser is stopped.
 intelmqctl: Stopping abusech-feodo-domains-collector...
 intelmqctl: abusech-feodo-domains-collector is stopped.
-intelmqctl: Stopping file-output...
-intelmqctl: file-output is stopped.
+intelmqctl: Stopping deduplicator-expert...
+intelmqctl: deduplicator-expert is stopped.
 intelmqctl: Stopping file-output...
 intelmqctl: file-output is stopped.
 intelmqctl: Botnet is stopped.
@@ -319,7 +319,7 @@ With this command we can see the status of all configured bots. Here, the botnet
 > intelmqctl status
 intelmqctl: abusech-domain-parser is running.
 intelmqctl: abusech-feodo-domains-collector is running.
-intelmqctl: file-output is running.
+intelmqctl: deduplicator-expert is running.
 intelmqctl: file-output is disabled.
 ```
 And if the disabled bot has also been started:
@@ -327,7 +327,7 @@ And if the disabled bot has also been started:
 > intelmqctl status
 intelmqctl: abusech-domain-parser is running.
 intelmqctl: abusech-feodo-domains-collector is running.
-intelmqctl: file-output is running.
+intelmqctl: deduplicator-expert is running.
 intelmqctl: file-output is running.
 ```
 
@@ -336,7 +336,7 @@ If the botnet is stopped, the output looks like this:
 > intelmqctl status
 intelmqctl: abusech-domain-parser is stopped.
 intelmqctl: abusech-feodo-domains-collector is stopped.
-intelmqctl: file-output is stopped.
+intelmqctl: deduplicator-expert is stopped.
 intelmqctl: file-output is disabled.
 ```
 
@@ -376,8 +376,8 @@ intelmqctl: malware-domain-list-parser is stopped.
 > intelmqctl list queues
 intelmqctl: abusech-domain-parser-queue - 0
 intelmqctl: abusech-domain-parser-queue-internal - 0
-intelmqctl: file-output-queue - 0
-intelmqctl: file-output-queue-internal - 0
+intelmqctl: deduplicator-expert-queue - 0
+intelmqctl: deduplicator-expert-queue-internal - 0
 intelmqctl: file-output-queue - 234
 intelmqctl: file-output-queue-internal - 0
 ```

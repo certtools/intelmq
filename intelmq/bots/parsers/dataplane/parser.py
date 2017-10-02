@@ -64,7 +64,7 @@ class DataplaneParserBot(ParserBot):
             event.add('source.ip', value[2].strip())
 
             if value[4].strip() in DataplaneParserBot.CATEGORY:
-                dict.update(event, DataplaneParserBot.CATEGORY[value[4].strip()])
+                event.update(DataplaneParserBot.CATEGORY[value[4].strip()])
             else:
                 raise ValueError('Unknown data feed %r.' % value[4].strip())
 

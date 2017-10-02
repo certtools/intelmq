@@ -1,3 +1,33 @@
+intelmq (1.0.1-1) experimental; urgency=low
+
+  * update to version 1.0.1
+
+ -- Wagner Sebastian <wagner@cert.at>  Wed, 30 Aug 2017 15:07:45 +0200
+
+intelmq (1.0.1~rc1-1) experimental; urgency=low
+
+  * release release candidate 1.0.1 RC
+
+ -- Wagner Sebastian <wagner@cert.at>  Wed, 23 Aug 2017 16:02:58 +0200
+
+intelmq (1.0.0.rel-1) experimental; urgency=medium
+
+  * release version 1.0.0
+
+ -- Sebastian Wagner <wagner@cert.at>  Mon, 07 Aug 2017 10:43:00 +0200
+
+intelmq (1.0.0.rc1-1) experimental; urgency=medium
+
+  * update to version 1.0.0.rc1
+
+ -- Sebastian Wagner <wagner@cert.at>  Wed, 20 Jun 2017 16:05:00 +0200
+
+intelmq (1.0.0.dev8-1) experimental; urgency=medium
+
+  * update to upstream version 1.0.0.dev8
+
+ -- Sebastian Wagner <wagner@cert.at>  Wed, 14 Jun 2017 17:39:00 +0200
+
 intelmq (1.0.0~dev4~beta10) experimental; urgency=low
 
   * Merged master, fixes
