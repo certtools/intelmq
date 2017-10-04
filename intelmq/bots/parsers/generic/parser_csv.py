@@ -86,9 +86,7 @@ class GenericCsvParserBot(ParserBot):
     def parse_line(self, row, report):
         event = self.new_event(report)
 
-        extra = {}
         for key, value in zip(self.columns, row):
-
             keys = key.split('|') if '|' in key else [key, ]
             for key in keys:
                 if isinstance(value, str) and not value:  # empty string is never valid
@@ -119,9 +117,6 @@ class GenericCsvParserBot(ParserBot):
                         value = self.type_translation[value]
                     elif not hasattr(self.parameters, 'type'):
                         continue
-                elif key.startswith('extra.') and value:
-                    extra[key[6:]] = value
-                    break
                 if event.add(key, value, raise_failure=False):
                     break
             else:
@@ -132,8 +127,6 @@ class GenericCsvParserBot(ParserBot):
                 and "classification.type" not in event:
             event.add('classification.type', self.parameters.type)
         event.add("raw", self.recover_line(row))
-        if extra:
-            event.add('extra', extra)
         yield event
 
     recover_line = ParserBot.recover_line_csv

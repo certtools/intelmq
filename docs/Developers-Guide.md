@@ -115,6 +115,13 @@ For example, to run all tests you can use:
 INTELMQ_TEST_DATABASES=1 INTELMQ_TEST_LOCAL_WEB=1 INTELMQ_TEST_EXOTIC=1 nosetests
 ```
 
+### Configuration files
+
+The tests use the configuration files in your working directory, not those
+installed in `/opt/intelmq/etc/` or `/etc/`.  You can run the
+tests for a locally changed intelmq without affecting an installation or
+requiring root to run them.
+
 # Development Guidelines
 
 ## Coding-Rules
@@ -172,7 +179,7 @@ intelmq/
   /conf
     pipeline.conf
     runtime.conf
-    system.conf
+    defaults.conf
 ```
 
 Assuming you want to create a bot for a new 'Abuse.ch' feed. It turns out that here it is necessary to create different parsers for the respective kind of events (e.g. malicious URLs). Therefore, the usual hierarchy ‘intelmq/bots/parser/<FEED>/parser.py’ would not be suitable because it is necessary to have more parsers for each Abuse.ch Feed. The solution is to use the same hierarchy with an additional "description" in the file name, separated by underscore. Also see the section *Directories and Files naming*.
@@ -239,10 +246,18 @@ Any component of IntelMQ MUST respect the "Data Harmonization Ontology".
 
   * The main repository is in [github.com/certtools/intelmq](https://github.com/certtools/intelmq).
   * There are a couple of forks which might be regularly merged into the main repository. They are independent and can have incompatible changes and can deviate from the upstream repository.
-  * The "master" branch is the current development branch for the next feature release. Releases are tagged as release branch together with release branches for bugfixes and bugfix releases.
-  * We use [semantic versioning](http://semver.org/).
-  * Releases shall receive non-breaking bug fixes. The "master" branch can change and might introduce non-compatible changes.
-  * If you contribute something, please fork the repository and create a separate branch and use this for pull requests, see section below.
+  * We use [semantic versioning](http://semver.org/). A short summary:
+    * a.x are stable releases
+    * a.b.x are bugfix/patch releases
+    * a.x must be compatible to version a.0 (i.e. API/Config-compatibility)
+  * If you contribute something, please fork the repository, create a separate branch and use this for pull requests, see section below.
+
+### Branching model
+
+  * "master" is the stable branch. It hold the latest stable release. Non-developers should only work on this branch. The recommended log level is WARNING. Code is only added by merges from the maintenance branches.
+  * "maintenance/a.b.x" branches accumulate (cherry-picked) patches for a maintenance release (a.b.x). Recommended for experienced users which deploy intelmq themselves. No new features will be added to these branches.
+  * "develop" is the development branch for the next stable release (a.x). New features must go there. Developers may want to work on this branch. This branch also holds all patches from maintenance releases if applicable. The recommended log level is DEBUG.
+  * Separate branches to develop features or bug fixes may be used by any contributor.
 
 ### How to Contribute
 

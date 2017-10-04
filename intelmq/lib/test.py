@@ -124,6 +124,7 @@ class BotTestCase(object):
         cls.pipe = None
         cls.sysconfig = {}
         cls.use_cache = False
+        cls.allowed_warning_count = 0
         cls.allowed_error_count = 0  # allows dumping of some lines
 
         cls.set_bot()
@@ -210,14 +211,15 @@ class BotTestCase(object):
             if self.default_input_message:  # None for collectors
                 self.input_queue = [self.default_input_message]
 
-    def run_bot(self, iterations: int=1, error_on_pipeline: bool=False):
+    def run_bot(self, iterations: int=1, error_on_pipeline: bool=False, prepare=True):
         """
         Call this method for actually doing a test run for the specified bot.
 
         Parameters:
             iterations: Bot instance will be run the given times, defaults to 1.
         """
-        self.prepare_bot()
+        if prepare:
+            self.prepare_bot()
         with mock.patch('intelmq.lib.utils.load_configuration',
                         new=self.mocked_config):
             with mock.patch('intelmq.lib.utils.log', self.mocked_log):
@@ -227,6 +229,11 @@ class BotTestCase(object):
                                    destination_pipeline=self.pipe)
         self.loglines_buffer = self.log_stream.getvalue()
         self.loglines = self.loglines_buffer.splitlines()
+
+        """ Test if all pipes are created with correct names. """
+        pipenames = ["{}-input", "{}-input-internal", "{}-output"]
+        self.assertSetEqual({x.format(self.bot_id) for x in pipenames},
+                            set(self.pipe.state.keys()))
 
         """ Test if report has required fields. """
         if self.bot_type == 'collector':
@@ -248,8 +255,8 @@ class BotTestCase(object):
                 self.assertIn('raw', event)
 
         """ Test if bot log messages are correctly formatted. """
-        self.assertLoglineMatches(0, "{} initialized with id {} and version"
-                                     " [0-9.]{{5}} \([a-zA-Z0-9,:. ]+\)( \[GCC\])?"
+        self.assertLoglineMatches(0, "{} initialized with id {} and intelmq [0-9a-z.]* and python"
+                                     " [0-9.]{{5}}\\+? \([a-zA-Z0-9,:. ]+\)( \[GCC\])?"
                                      " as process [0-9]+\."
                                      "".format(self.bot_name,
                                                self.bot_id), "INFO")
@@ -290,12 +297,6 @@ class BotTestCase(object):
         """Getter for the input queue of this bot. Use in TestCase scenarios"""
         return [utils.decode(text) for text
                 in self.pipe.state["%s-output" % self.bot_id]]
-
-
-#        """ Test if all pipes are created with correct names. """
-        pipenames = ["{}-input", "{}-input-internal", "{}-output"]
-        self.assertSetEqual({x.format(self.bot_id) for x in pipenames},
-                            set(self.pipe.state.keys()))
 
     def test_bot_name(self):
         """
@@ -394,7 +395,11 @@ class BotTestCase(object):
         for logline in self.loglines:
             fields = utils.parse_logline(logline)
 
-            if levelname == fields["log_level"] and re.match(pattern, fields["message"]):
+            #  Exception tracebacks
+            if isinstance(fields, str):
+                if levelname == "ERROR" and re.match(pattern, fields):
+                    break
+            elif levelname == fields["log_level"] and re.match(pattern, fields["message"]):
                 break
         else:
             raise ValueError('No matching logline found.')

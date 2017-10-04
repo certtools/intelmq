@@ -13,7 +13,6 @@ REQUIRES = [
     'python-termstyle>=0.1.10',
     'pytz>=2014.1',
     'redis>=2.10.3',
-    'requests>=2.2.0',
 ]
 if sys.version_info < (3, 5):
     REQUIRES.append('typing')
@@ -73,18 +72,20 @@ setup(
                 'processing security feeds using a message queuing protocol.',
     long_description=README,
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 5 - Production/Stable',
         'Environment :: Console',
         'Intended Audience :: Information Technology',
         'Intended Audience :: System Administrators',
         'Intended Audience :: Telecommunications Industry',
         'License :: OSI Approved :: GNU Affero General Public License v3',
-        'Operating System :: Unix',
+        'Operating System :: POSIX :: Linux',
+        'Programming Language :: Python',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3 :: Only',
+        'Programming Language :: Python :: Implementation :: CPython',
         'Topic :: Security',
     ],
     keywords='incident handling cert csirt',

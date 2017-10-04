@@ -69,5 +69,5 @@ class TestFilesOutputBot(test.BotTestCase, unittest.TestCase):
         super().tearDownClass()
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

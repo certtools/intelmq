@@ -149,7 +149,7 @@ def generate_reports(report_template: Report, infile: BinaryIO, chunk_size: Opti
     """
     if chunk_size is None:
         report = report_template.copy()
-        report.add("raw", infile.read(), force=True)
+        report.add("raw", infile.read(), overwrite=True)
         yield report
     else:
         header = b""
@@ -157,5 +157,5 @@ def generate_reports(report_template: Report, infile: BinaryIO, chunk_size: Opti
             header = infile.readline()
         for chunk in read_delimited_chunks(infile, chunk_size):
             report = report_template.copy()
-            report.add("raw", header + chunk, force=True)
+            report.add("raw", header + chunk, overwrite=True)
             yield report

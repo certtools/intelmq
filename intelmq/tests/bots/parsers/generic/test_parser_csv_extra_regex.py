@@ -21,8 +21,9 @@ EXAMPLE_EVENT = {"feed.name": "Sample CSV Feed",
                  "raw": utils.base64_encode(SAMPLE_SPLIT[1].replace('"', '')+'\r\n'),
                  "time.observation": "2015-01-01T00:00:00+00:00",
                  "classification.type": "botnet drone",
-                 'extra': '{"http_request": "29|", "source": "Microsoft-DCU", '
-                          '"source.metro_code": "0"}',
+                 "extra.source.metro_code": '0',
+                 "extra.source": "Microsoft-DCU",
+                 "extra.http_request": "29|",
                  "destination.ip": "224.1.1.1",
                  "destination.port": 1604,
                  "feed.name": "Microsoft DCU Feed",
@@ -42,14 +43,15 @@ EXAMPLE_EVENT2 = {"feed.name": "Sample CSV Feed",
                   "classification.type": "botnet drone",
                   "destination.ip": "224.1.1.2",
                   "destination.port": 80,
-                  'extra': '{"http_host": "dcu-a-202.microsoftinternetsafety.net", '
-                           '"http_method": "POST", "http_referer": "null", '
-                           '"http_request": "/file-34fd81-003.php", '
-                           '"http_user_agent": "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0;)", '
-                           '"http_version": "1.1", '
-                           '"source": "Microsoft-DCU", '
-                           '"source.metro_code": "0", '
-                           '"source.postal_code": "1100"}',
+                  "extra.http_method": "POST",
+                  "extra.source.postal_code": '1100',
+                  "extra.http_version": "1.1",
+                  "extra.http_host": "dcu-a-202.microsoftinternetsafety.net",
+                  "extra.source.metro_code": '0',
+                  "extra.http_request": "/file-34fd81-003.php",
+                  "extra.source": "Microsoft-DCU",
+                  "extra.http_referer": "null",
+                  "extra.http_user_agent": "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0;)",
                   "feed.name": "Microsoft DCU Feed",
                   "malware.name": "b54-config",
                   "source.geolocation.cc": "AT",

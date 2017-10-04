@@ -59,6 +59,8 @@ class CymruExpertBot(Bot):
                 self.cache.set(cache_key, result_json)
 
             for result_key, result_value in result.items():
+                if result_key == 'registry' and result_value == 'other':
+                    continue
                 event.add(key % result_key, result_value, overwrite=True)
 
         self.send_message(event)

@@ -4,6 +4,7 @@ Messages are the information packages in pipelines.
 
 Use MessageFactory to get a Message object (types Report and Event).
 """
+import functools
 import hashlib
 import json
 import re
@@ -85,6 +86,8 @@ class MessageFactory(object):
 
 class Message(dict):
 
+    _IGNORED_VALUES = ["", "-", "N/A"]
+
     def __init__(self, message=(), auto=False, harmonization=None):
         try:
             classname = message['__type'].lower()
@@ -102,6 +105,11 @@ class Message(dict):
                                              expected=VALID_MESSSAGE_TYPES,
                                              docs=HARMONIZATION_CONF_FILE)
 
+        if classname == 'event' and self.harmonization_config['extra']['type'] == 'JSON':
+            warnings.warn("Assuming harmonization type 'JSONDict' for harmonization field 'extra'. "
+                          "This assumption will be removed in version 2.0.", DeprecationWarning)
+            self.harmonization_config['extra']['type'] = 'JSONDict'
+
         super(Message, self).__init__()
         if isinstance(message, dict):
             iterable = message.items()
@@ -113,6 +121,14 @@ class Message(dict):
 
     def __setitem__(self, key, value):
         self.add(key, value)
+
+    def __getitem__(self, key):
+        class_name, subitem = self.__get_type_config(key)
+        if class_name['type'] == 'JSONDict' and not subitem:
+            # return extra as string for backwards compatibility
+            return json.dumps(self.to_dict(hierarchical=True)[key.split('.')[0]])
+        else:
+            return super(Message, self).__getitem__(key)
 
     def is_valid(self, key: str, value: str, sanitize: bool=True) -> bool:
         """
@@ -143,7 +159,7 @@ class Message(dict):
             return True
         return False
 
-    def add(self, key: str, value: str, sanitize: bool=True, force: bool=False,
+    def add(self, key: str, value: str, sanitize: bool=True,
             overwrite: bool=False, ignore: Sequence=(),
             raise_failure: bool=True) -> bool:
         """
@@ -154,9 +170,7 @@ class Message(dict):
             value: A valid value as defined in the harmonization
             sanitize: Sanitation of harmonization type will be called before validation
                 (default: True)
-            force: Deprecated, use overwrite (default: False)
             overwrite: Overwrite an existing value if it already exists (default: False)
-            ignore: List or tuple of values to ignore, deprecated (default: ())
             raise_failure: If a intelmq.lib.exceptions.InvalidValue should be raised for
                 invalid values (default: True). If false, the return parameter will be
                 False in case of invalid values.
@@ -172,22 +186,16 @@ class Message(dict):
             intelmq.lib.exceptions.InvalidValue: If value is not valid for the given key and
                 raise_failure is True.
         """
-        overwrite = force or overwrite
-        if force:
-            warnings.warn('The force-argument is deprecated by overwrite and will be removed in'
-                          '1.0.', DeprecationWarning)
         if not overwrite and key in self:
             raise exceptions.KeyExists(key)
 
-        if value is None or value in ["", "-", "N/A"]:
+        if value is None or value in self._IGNORED_VALUES:
+            if overwrite and key in self:
+                del self[key]
             return
 
         if not self.__is_valid_key(key):
             raise exceptions.InvalidKey(key)
-
-        if ignore:
-            warnings.warn('The ignore-argument will be removed in 1.0.',
-                          DeprecationWarning)
 
         try:
             if value in ignore:
@@ -213,24 +221,30 @@ class Message(dict):
             else:
                 return False
 
-        super(Message, self).__setitem__(key, value)
+        class_name, subitem = self.__get_type_config(key)
+        if class_name and class_name['type'] == 'JSONDict' and not subitem:
+            # for backwards compatibility allow setting the extra field as string
+            for extrakey, extravalue in json.loads(value).items():
+                if hasattr(extravalue, '__len__'):
+                    if not len(extravalue):  # ignore empty values
+                        continue
+                if extravalue in self._IGNORED_VALUES:
+                    continue
+                super(Message, self).__setitem__('%s.%s' % (key, extrakey),
+                                                 extravalue)
+        else:
+            super(Message, self).__setitem__(key, value)
         return True
 
-    def update(self, key: str, value: str, sanitize: bool=True):
-        warnings.warn('update(...) will be changed to dict.update() in 1.0. '
-                      'Use change(key, value, sanitize) instead.',
-                      DeprecationWarning)
-        return self.change(key, value, sanitize)
+    def update(self, other: dict):
+        for key, value in other.items():
+            if not self.add(key, value, sanitize=False, raise_failure=False, overwrite=True):
+                self.add(key, value, sanitize=True, overwrite=True)
 
     def change(self, key: str, value: str, sanitize: bool=True):
         if key not in self:
             raise exceptions.KeyNotExists(key)
         return self.add(key, value, overwrite=True, sanitize=sanitize)
-
-    def contains(self, key: str):
-        warnings.warn('The contains-method will be removed in 1.0.',
-                      DeprecationWarning)
-        return key in self
 
     def finditems(self, keyword: str):
         for key, value in super(Message, self).items():
@@ -250,9 +264,6 @@ class Message(dict):
         return MessageFactory.unserialize(MessageFactory.serialize(self),
                                           harmonization={self.__class__.__name__.lower(): self.harmonization_config})
 
-    def __unicode__(self):
-        return self.serialize()
-
     def __str__(self):
         return self.serialize()
 
@@ -267,17 +278,26 @@ class Message(dict):
         message = json.loads(message_string)
         return message
 
+    @functools.lru_cache(maxsize=None)
     def __is_valid_key(self, key: str):
-        if key in self.harmonization_config or key == '__type':
+        try:
+            class_name, subitem = self.__get_type_config(key)
+        except KeyError:
+            return False
+        if key in self.harmonization_config or key == '__type' or subitem:
             return True
         return False
 
     def __is_valid_value(self, key: str, value: str):
         if key == '__type':
             return (True, )
-        config = self.__get_type_config(key)
+        config, subitem = self.__get_type_config(key)
         class_reference = getattr(intelmq.lib.harmonization, config['type'])
-        if not class_reference().is_valid(value):
+        if not subitem:
+            validation = class_reference().is_valid(value)
+        else:
+            validation = class_reference().is_valid_subitem(value)
+        if not validation:
             return (False, 'is_valid returned False.')
         if 'length' in config:
             length = len(str(value))
@@ -293,13 +313,26 @@ class Message(dict):
         return (True, )
 
     def __sanitize_value(self, key: str, value: str):
-        class_name = self.__get_type_config(key)['type']
-        class_reference = getattr(intelmq.lib.harmonization, class_name)
-        return class_reference().sanitize(value)
+        class_name, subitem = self.__get_type_config(key)
+        class_reference = getattr(intelmq.lib.harmonization, class_name['type'])
+        if not subitem:
+            return class_reference().sanitize(value)
+        else:
+            return class_reference().sanitize_subitem(value)
 
+    @functools.lru_cache(maxsize=None)
     def __get_type_config(self, key: str):
-        class_name = self.harmonization_config[key]
-        return class_name
+        if key == '__type':
+            return None, None
+        try:
+            class_name = self.harmonization_config[key]
+        except KeyError:
+            # Could be done recursively in the future if needed
+            class_name = self.harmonization_config[key.split('.')[0]]
+            subitem = True
+        else:
+            subitem = False
+        return class_name, subitem
 
     def __hash__(self):
         return int(self.hash(), 16)

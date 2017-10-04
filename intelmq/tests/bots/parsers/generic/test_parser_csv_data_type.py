@@ -21,7 +21,7 @@ EXAMPLE_EVENT = {"feed.name": "Sample CSV Feed",
                  "time.observation": "2015-01-01T00:00:00+00:00",
                  "classification.type": "botnet drone",
                  "source.ip": "11.11.11.11",
-                 'extra': '{"tags": ["t1", "t2", "t3"]}',
+                 'extra.tags': ["t1", "t2", "t3"],
                  'source.url': 'http://test.com'}
 
 

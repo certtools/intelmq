@@ -23,7 +23,7 @@ EXAMPLE_EVENT = {"classification.type": "malware",
                  "source.port": 65118,
                  "__type": "Event",
                  "feed.name": "BitSight",
-                 "extra": '{"non_ascii": "ççãããã\x80\ua000 \164 \x80\x80 abcd \165\166"}',
+                 "extra.non_ascii": "ççãããã\x80\ua000 \164 \x80\x80 abcd \165\166",
                  "raw": "eyJ0cm9qYW5mYW1pbHkiOiJTYWxpdHlwMnAiLCJlbnYiOnsic"
                  "mVtb3RlX2FkZHIiOiIxNTIuMTY2LjExOS4yIiwicmVtb3RlX3"
                  "BvcnQiOiI2NTExOCIsInNlcnZlcl9hZGRyIjoiNTIuMTguMTk"

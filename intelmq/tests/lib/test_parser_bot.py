@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import base64
+import datetime
 import unittest
 import unittest.mock as mock
 
@@ -8,9 +9,9 @@ import intelmq.lib.test as test
 import intelmq.lib.utils as utils
 
 RAW = """# ignore this
-2015/06/04 13:37 +00,example.org,192.0.2.3,reverse.example.net,example description,report@example.org,0
+2015/06/04 13:37 +00,example.org,192.0.2.3,reverse.example.net,example description,report@example.org,1
 
-2015/06/04 13:38 +00,example.org,19d2.0.2.3,reverse.example.net,example description,report@example.org,0
+2015/06/04 13:38 +00,example.org,19d2.0.2.3,reverse.example.net,example description,report@example.org,1
 #ending line"""
 RAW_SPLIT = RAW.splitlines()
 
@@ -29,14 +30,14 @@ EXAMPLE_EVENT = {"feed.url": "http://www.example.com/",
                  "__type": "Event",
                  "classification.type": "malware",
                  "event_description.text": "example description",
-                 "source.asn": 0,
+                 "source.asn": 1,
                  "feed.name": "Example",
                  "raw": utils.base64_encode('\n'.join(RAW_SPLIT[:2]))}
 
 EXPECTED_DUMP = EXAMPLE_REPORT.copy()
 del EXPECTED_DUMP['__type']
 EXPECTED_DUMP['raw'] = base64.b64encode(b'''# ignore this
-2015/06/04 13:38 +00,example.org,19d2.0.2.3,reverse.example.net,example description,report@example.org,0
+2015/06/04 13:38 +00,example.org,19d2.0.2.3,reverse.example.net,example description,report@example.org,1
 #ending line''').decode()
 EXAMPLE_EMPTY_REPORT = {"feed.url": "http://www.example.com/",
                         "__type": "Report",
@@ -143,6 +144,27 @@ class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
         self.assertAnyLoglineEqual(message='Report without raw field received. Possible '
                                            'bug or misconfiguration in previous bots.',
                                    levelname='WARNING')
+
+    def test_processed_messages_count(self):
+        self.sysconfig = {'log_processed_messages_count': 1}
+        self.input_message = EXAMPLE_SHORT
+        self.run_bot()
+        self.assertAnyLoglineEqual(message='Processed 1 messages since last logging.',
+                                   levelname='INFO')
+
+    def test_processed_messages_seconds(self):
+        self.sysconfig = {'log_processed_messages_count': 10,
+                          'log_processed_messages_seconds': datetime.timedelta(seconds=0)}
+        self.input_message = EXAMPLE_SHORT
+        self.run_bot()
+        self.assertAnyLoglineEqual(message='Processed 1 messages since last logging.',
+                                   levelname='INFO')
+
+    def test_processed_messages_shutdown(self):
+        self.input_message = EXAMPLE_SHORT
+        self.run_bot()
+        self.assertAnyLoglineEqual(message='Processed 2 messages since last logging.',
+                                   levelname='INFO')
 
 
 class TestDummyCSVParserBot(test.BotTestCase, unittest.TestCase):
