@@ -23,8 +23,8 @@ no fields for additional information as those informatiom may potentially
 get lost or be incorrect if the contents of the database changes
 during and update or reimport.
 
-The example for an external import source are contact data from RIPE,
-please see [[README-ripe-import.md]].
+The example for an external import source is contact data from RIPE,
+please see [README-ripe-import.md](README-ripe-import.md).
 
 #### 'Manual' to hold special cases
 
