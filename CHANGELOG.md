@@ -19,10 +19,16 @@ Support for Python 3.3 has been dropped, it reached its end of life.
   event['extra'] # gives '{"foo": "bar"}'
   "Old" bots and configurations compatible with 1.0.x do still work.
   Also, the extra field is now properly exploded when exporting events, analogous to all other fields.
+- intelmq.lib.message.Message.add: The parameter overwrite accepts now three different values: True, False and None (new).
+  True: An existing value will be overwritten
+  False: An existing value will not be overwritten (previously and exception has been raised when the value was raised).
+  None (default): If the value exists an KeyExists Exception is thrown (previously the same as False).
+  This allows shorter code in the bots, as an 'overwrite' configuration parameter can be directly passed to the function.
 
 ### Bots
 #### Collectors
 - Mail: New parameters; `sent_from`: filter messages by sender, `sent_to`: filter messages by recipient
+- bots.experts.maxmind_geoip: New (optional) parameter `overwrite`, by default false. The current default was to overwrite!
 
 ### Harmonization
 - Renamed `JSON` to `JSONDict` and added a new type `JSON`. `JSONDict` saves data internally as JSON, but acts like a dictionary. `JSON` accepts any valid JSON.
