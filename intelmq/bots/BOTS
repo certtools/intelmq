@@ -305,6 +305,8 @@
                 "column_regex_search": {},
                 "default_url_protocol": "http://",
                 "delimiter": ",",
+                "filter_text": null,
+                "filter_type": null,
                 "skip_header": true,
                 "time_format": null,
                 "type": "c&c",

@@ -274,7 +274,7 @@ class DateTime(GenericType):
         It ignores the milliseconds, converts it into normal timestamp and processes it.
         """
         bytecount = len(str(tstamp))
-        int_tstamp = tstamp if isinstance(tstamp, int) else int(tstamp)
+        int_tstamp = int(tstamp)
         if bytecount == 10:
             return DateTime.from_timestamp(int_tstamp, tzone)
         if bytecount == 12:

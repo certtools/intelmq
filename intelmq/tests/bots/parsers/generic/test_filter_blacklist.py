@@ -7,7 +7,7 @@ import intelmq.lib.utils as utils
 import intelmq.lib.test as test
 from intelmq.bots.parsers.generic.parser_csv import GenericCsvParserBot
 
-with open(os.path.join(os.path.dirname(__file__), 'test_text_blacklist.csv')) as handle:
+with open(os.path.join(os.path.dirname(__file__), 'test_filter_blacklist.csv')) as handle:
     SAMPLE_FILE = handle.read()
 SAMPLE_SPLIT = SAMPLE_FILE.splitlines()
 
@@ -35,8 +35,8 @@ class TestGenericCsvParserBot(test.BotTestCase, unittest.TestCase):
         cls.sysconfig = {"columns": [ "__IGNORE__", "__IGNORE__", "__IGNORE__", "source.ip"],
                          "delimiter": " ",
                          "type": "blacklist",
-                         "text": "127.0.0.1",
-                         "text_type": "blacklist",
+                         "filter_text": "127.0.0.1",
+                         "filter_type": "blacklist",
                         }
     def test_event(self):
         """ Test if correct Event has been produced. """

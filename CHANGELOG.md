@@ -29,6 +29,10 @@ Support for Python 3.3 has been dropped, it reached its end of life.
 
 #### Parsers
 - changed feednames in `bots.parsers.shadowserver`. Please refer to it's README for the exact changes.
+- The Generic CSV Parser `bots.parsers.generic.parser_csv`:
+  - It is possible to filter the data before processing them using the new parameters `filter_type` and `filter_text`.
+  - It is possible to specify multiple coulmns using `|` character in parameter `columns`.
+  - The parameter `time_format` now supports `'epoch_millis'` for seconds since the Epoch, milliseconds are supported but not used.
 
 ### Requirements
 - Requests is no longer listed as dependency of the core. For depending bots the requirement is noted in their REQUIREMENTS.txt file
