@@ -2,7 +2,7 @@ Description: Undo rename of the dependency dnspython3
  The packages was renamed upstream; however, this change does not immediately
  affect this package's target distributions.
 Author: Gernot Schulz <gernot@intevation.de>
-Last-Update: 2016-07-20
+Last-Update: 2016-10-04
 ---
 This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
 --- a/setup.py

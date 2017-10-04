@@ -11,7 +11,7 @@ python:
   - "3.5"
   - "3.6"
 install:
-  - sudo apt-get install dpkg-dev dh-python python-setuptools python3-setuptools python3-all debhelper quilt polipo lighttpd fakeroot
+  - sudo apt-get install dpkg-dev dh-python python-setuptools python3-setuptools python3-all debhelper quilt polipo lighttpd fakeroot dh-systemd
   - if [[ $REQUIREMENTS == true ]] ; then for file in intelmq/bots/*/*/REQUIREMENTS.txt; do pip install -r $file; done; fi
   - if [[ $TRAVIS_PYTHON_VERSION < '3.5' ]]; then pip install typing; fi
   - pip install codecov
@@ -26,10 +26,19 @@ before_script:
   - intelmq_psql_initdb
   - sed -i 's/events/tests/g' /tmp/initdb.sql
   - psql -v ON_ERROR_STOP=on -f /tmp/initdb.sql intelmq -U intelmq
+  - VERSION=$(git describe --abbrev=0 --tags)
+  - git archive --format=tar.gz HEAD > ../intelmq_$VERSION.orig.tar.gz
+  - git archive --format=tar.gz --prefix=debian/ HEAD:debian/ > ../intelmq_$VERSION-1.debian.tar.gz
+  - pushd ..
+  - mkdir build
+  - cd build
+  - tar -xzf ../intelmq_$VERSION.orig.tar.gz
+  - tar -xzf ../intelmq_$VERSION-1.debian.tar.gz
+  - popd
 script:
   - if [[ $REQUIREMENTS == true ]] ; then INTELMQ_TEST_DATABASES=1 INTELMQ_TEST_LOCAL_WEB=1 INTELMQ_TEST_EXOTIC=1 nosetests --with-coverage --cover-package=intelmq --cover-branches; else INTELMQ_TEST_LOCAL_WEB=1 nosetests --with-coverage --cover-package=intelmq --cover-branches; fi
-  - dpkg-buildpackage -us -uc
   - pycodestyle intelmq/{bots,lib,bin}
+  - pushd ../build && dpkg-buildpackage -us -uc; popd
 services:
   - redis-server
   - postgresql
