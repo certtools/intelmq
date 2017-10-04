@@ -8,10 +8,17 @@ class BambenekParserBot(ParserBot):
     """ Single parser for Bambenek feeds """
 
     IPMASTERLIST = {
-        'http://osint.bambenekconsulting.com/feeds/c2-ipmasterlist.txt'}
+        'http://osint.bambenekconsulting.com/feeds/c2-ipmasterlist.txt',
+        'https://osint.bambenekconsulting.com/feeds/c2-ipmasterlist.txt',
+    }
     DOMMASTERLIST = {
-        'http://osint.bambenekconsulting.com/feeds/c2-dommasterlist.txt'}
-    DGA_FEED = {'http://osint.bambenekconsulting.com/feeds/dga-feed.txt'}
+        'http://osint.bambenekconsulting.com/feeds/c2-dommasterlist.txt',
+        'https://osint.bambenekconsulting.com/feeds/c2-dommasterlist.txt',
+    }
+    DGA_FEED = {
+        'http://osint.bambenekconsulting.com/feeds/dga-feed.txt',
+        'https://osint.bambenekconsulting.com/feeds/dga-feed.txt',
+    }
 
     MALWARE_NAME_MAP = {
         "cl": "cryptolocker",

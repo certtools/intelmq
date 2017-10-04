@@ -3,13 +3,62 @@ CHANGELOG
 
 1.1.0
 -----
+### Tools
+- `intelmqctl start` prints bot's error messages if it failed to start
+- `intelmqctl check` checks for defaults.conf completeness
+
+### Core
+- Subitems in fields of type `JSONDict` (see below) can be accessed directly. E.g. you can do:
+  event['extra.foo'] = 'bar'
+  event['extra.foo'] # gives 'bar'
+  It is still possible to set and get the field as whole, however this may be removed or changed in the future:
+  event['extra'] = '{"foo": "bar"}'
+  event['extra'] # gives '{"foo": "bar"}'
+  "Old" bots and configurations compatible with 1.0.x do still work.
+  Also, the extra field is now properly exploded when exporting events, analogous to all other fields.
+
+### Bots
+#### Collectors
+- Mail: New parameters; `sent_from`: filter messages by sender, `sent_to`: filter messages by recipient
+
 ### Harmonization
+- Renamed `JSON` to `JSONDict` and added a new type `JSON`. `JSONDict` saves data internally as JSON, but acts like a dictionary. `JSON` accepts any valid JSON.
 - added destination.urlpath and source.urlpath to harmonization.
 
-1.0.0.rc2 Release candidate
----------------------------
+#### Parsers
+- changed feednames in `bots.parsers.shadowserver`. Please refer to it's README for the exact changes.
+
+### Requirements
+- Requests is no longer listed as dependency of the core. For depending bots the requirement is noted in their REQUIREMENTS.txt file
+
+1.0.1 Bugfix release
+--------------------
+### Documentation
+- Feeds: use more https:// URLs
+- minor fixes
+
+### Bots
+- bots/experts/ripencc_abuse_contact/expert.py: Use HTTPS URLs for rest.db.ripe.net
+- bots/outputs/file/output.py: properly close the file handle on shutdown
+
+### Core
+- lib/bot: Bots will now log the used intelmq version at startup
+
+### Tools
+- intelmqctl: To check the status of a bot, the command line of the running process is compared to the actual executable of the bot. Otherwise unrelated programs with the same PID are detected as running bot.
+- intelmqctl: enable, disable, check, clear now support the JSON output
+
+1.0.0 Stable release
+--------------------
+### Core
+- use SIGTERM instead of SIGINT to stop bots (#981)
+- Fixes a thrown FileNotFound exception when stopping bots started with `intelmqctl run ...`
+
 ### Harmonization
 - leading dots in FQDNs are rejected and removed in sanitation (#1022, #1030)
+
+### Bots
+- shadowserver parser Accessible-SMB: smb_implant is converted to bool
 
 1.0.0.rc1 Release candidate
 ---------------------------
@@ -21,6 +70,9 @@ CHANGELOG
 - Deprecated parameters force and ignore of `Message.add` have been removed
 - Deprecated method `Message.contains` has been removed
 - Drop support for deprecated configuration files `startup.conf` and `system.conf`
+
+### Harmonization
+- New ASN type. Like integer but checks the range.
 
 ### Development
 - We are now testing with and without optional libraries/lowest recommended versions and most current versions of required libraries

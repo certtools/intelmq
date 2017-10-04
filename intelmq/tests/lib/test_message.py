@@ -607,6 +607,56 @@ class TestMessageFactory(unittest.TestCase):
         with self.assertRaises(exceptions.InvalidValue):
             event.update({'source.asn': 'AS1'})
 
+    def test_message_extra_construction(self):
+        """
+        Test if field with name starting with 'extra.' is accepted and saved.
+        """
+        event = self.new_event()
+        event.add('extra.test', 'foobar')
+        event.add('extra.test2', 'foobar2')
+        self.assertEqual(event.to_dict(hierarchical=True),
+                         {'extra': {"test": "foobar", "test2": "foobar2"}}
+                         )
+        self.assertEqual(event.to_dict(hierarchical=False),
+                         {'extra.test': "foobar", "extra.test2": "foobar2"}
+                         )
 
-if __name__ == '__main__':  # pragma: no cover  # pragma: no cover
+    def test_message_extra_getitem(self):
+        """
+        Test if extra field is saved and can be get.
+        """
+        event = self.new_event()
+        event.add('extra.test', 'foobar')
+        self.assertEqual(event['extra.test'], 'foobar')
+
+    def test_message_extra_set_oldstyle_string(self):
+        """
+        Test if extra accepts a string (backwards-compat) and field can be get.
+        """
+        event = self.new_event()
+        event.add('extra', '{"foo": "bar"}')
+        self.assertEqual(event['extra'], '{"foo": "bar"}')
+        self.assertEqual(event['extra.foo'], 'bar')
+
+    def test_message_extra_set_oldstyle_dict(self):
+        """
+        Test if extra accepts a dict and field can be get.
+        """
+        event = self.new_event()
+        event.add('extra', {"foo": "bar"})
+        self.assertEqual(event['extra'], '{"foo": "bar"}')
+        self.assertEqual(event['extra.foo'], 'bar')
+
+    def test_message_extra_set_dict_ignore_empty(self):
+        """
+        Test if extra accepts a dict and field can be get.
+        """
+        event = self.new_event()
+        event.add('extra', {"foo": ''})
+        with self.assertRaises(KeyError):
+            event['extra.foo']
+
+
+
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()
