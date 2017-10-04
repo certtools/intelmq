@@ -24,6 +24,8 @@ Support for Python 3.3 has been dropped, it reached its end of life.
   False: An existing value will not be overwritten (previously and exception has been raised when the value was raised).
   None (default): If the value exists an KeyExists Exception is thrown (previously the same as False).
   This allows shorter code in the bots, as an 'overwrite' configuration parameter can be directly passed to the function.
+- Bots can specify a static method `check(parameters)` which can perform individual checks specific to the bot.
+  These functions will be called by `intelmqctl check` if the bot is configured with the given parameters
 
 ### Bots
 #### Collectors
