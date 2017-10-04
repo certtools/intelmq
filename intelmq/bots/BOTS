@@ -523,7 +523,8 @@
             "description": "MaxMind GeoIP is the bot responsible for adding geolocation information to events (Country, City, Longitude, Latitude, etc..)",
             "module": "intelmq.bots.experts.maxmind_geoip.expert",
             "parameters": {
-                "database": "/opt/intelmq/var/lib/bots/maxmind_geoip/GeoLite2-City.mmdb"
+                "database": "/opt/intelmq/var/lib/bots/maxmind_geoip/GeoLite2-City.mmdb",
+                "overwrite": false
             }
         },
         "Modify": {

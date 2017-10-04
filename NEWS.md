@@ -21,6 +21,9 @@ The feed names in the shadowserver parser have been adapted to the current subje
 * `Ssl-Freak-Scan` to `SSL-FREAK-Vulnerable-Servers`
 * `Ssl-Scan` to `SSL-POODLE-Vulnerable-Servers`
 
+The Maxmind GeoIP expert did previously always overwrite existing data. A new parameter `overwrite` has been added,
+which is by default set to `false` to be consistent with other bots.
+
 ### Postgres databases
 The following statements optionally update existing data.
 Please check if you did use these feed names and eventually adapt them for your setup!
