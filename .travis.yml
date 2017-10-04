@@ -25,14 +25,14 @@ before_script:
   - if [[ $REQUIREMENTS == true ]] ; then intelmq_psql_initdb; fi
   - if [[ $REQUIREMENTS == true ]] ; then sed -i 's/events/tests/g' /tmp/initdb.sql; fi
   - if [[ $REQUIREMENTS == true ]] ; then psql -v ON_ERROR_STOP=on -f /tmp/initdb.sql intelmq -U intelmq; fi
-  - VERSION=$(git describe --abbrev=0 --tags)
-  - git archive --format=tar.gz HEAD > ../intelmq_$VERSION.orig.tar.gz
-  - git archive --format=tar.gz --prefix=debian/ HEAD:debian/ > ../intelmq_$VERSION-1.debian.tar.gz
+  - version=$(python3 setup.py --version 2>/dev/null)
+  - git archive --format=tar.gz HEAD > ../intelmq_$version.orig.tar.gz
+  - git archive --format=tar.gz --prefix=debian/ HEAD:debian/ > ../intelmq_$version-1.debian.tar.gz
   - pushd ..
   - mkdir build
   - cd build
-  - tar -xzf ../intelmq_$VERSION.orig.tar.gz
-  - tar -xzf ../intelmq_$VERSION-1.debian.tar.gz
+  - tar -xzf ../intelmq_$version.orig.tar.gz
+  - tar -xzf ../intelmq_$version-1.debian.tar.gz
   - popd
 script:
   - if [[ $REQUIREMENTS == true ]] ; then INTELMQ_TEST_DATABASES=1 INTELMQ_TEST_LOCAL_WEB=1 INTELMQ_TEST_EXOTIC=1 nosetests --with-coverage --cover-package=intelmq --cover-branches; else INTELMQ_TEST_LOCAL_WEB=1 nosetests --with-coverage --cover-package=intelmq --cover-branches; fi
