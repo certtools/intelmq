@@ -3,6 +3,8 @@ CHANGELOG
 
 1.1.0
 -----
+Support for Python 3.3 has been dropped, it reached its end of life.
+
 ### Tools
 - `intelmqctl start` prints bot's error messages if it failed to start
 - `intelmqctl check` checks for defaults.conf completeness
