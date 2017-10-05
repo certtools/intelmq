@@ -1,3 +1,6 @@
+
+ ** THIS FILE IS OLD and should be updated **
+
 Bot „Generate Abuse Emails“ je spouštěn v pravidelných intervalech (zatím jednou denně v 7:00 – bude uvedeno v konfiguraci bota).
 Kromě tohoto cyklického spouštění žádné akce nevykonává, pouze se mu plní fronta s novými událostmi.
 Běh bota se dělí do dvou velkých fází – Email Aggregation a Send Emails.
