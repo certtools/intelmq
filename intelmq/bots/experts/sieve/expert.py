@@ -146,7 +146,8 @@ class SieveExpertBot(Bot):
         elif match.__class__.__name__ == 'Expression':
             return self.match_expression(match, event)
 
-    def process_exist_match(self, key, op, event):
+    @staticmethod
+    def process_exist_match(key, op, event):
         if op == ':exists':
             return key in event
         elif op == ':notexists':
@@ -164,7 +165,8 @@ class SieveExpertBot(Bot):
                     return True
             return False
 
-    def process_string_operator(self, lhs, op, rhs):
+    @staticmethod
+    def process_string_operator(lhs, op, rhs):
         if op == '==':
             return lhs == rhs
         elif op == '!=':
@@ -215,7 +217,8 @@ class SieveExpertBot(Bot):
                     return True
         return False
 
-    def process_action(self, action, event):
+    @staticmethod
+    def process_action(action, event):
         if action == 'drop':
             return Procedure.DROP
         elif action == 'keep':
@@ -285,7 +288,6 @@ class SieveExpertBot(Bot):
         if as_dict:
             return dict(zip(['line', 'col'], tup))
         return tup
-
 
 
 BOT = SieveExpertBot
