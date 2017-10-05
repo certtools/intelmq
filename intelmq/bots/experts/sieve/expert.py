@@ -11,8 +11,11 @@ import re
 
 import intelmq.lib.exceptions as exceptions
 from intelmq.lib.bot import Bot
+from intelmq import HARMONIZATION_CONF_FILE
+from intelmq.lib import utils
 
 try:
+    import textx.model
     from textx.metamodel import metamodel_from_file
     from textx.exceptions import TextXError, TextXSemanticError
 except ImportError:
@@ -27,7 +30,13 @@ class Procedure:
 
 class SieveExpertBot(Bot):
 
+    harmonization = None
+
     def init(self):
+        if not SieveExpertBot.harmonization:
+            harmonization_config = utils.load_configuration(HARMONIZATION_CONF_FILE)
+            SieveExpertBot.harmonization = harmonization_config['event']
+
         self.metamodel = SieveExpertBot.init_metamodel()
         self.sieve = SieveExpertBot.read_sieve_file(self.parameters.file, self.metamodel)
 
@@ -40,6 +49,7 @@ class SieveExpertBot(Bot):
             grammarfile = os.path.join(os.path.dirname(__file__), 'sieve.tx')
             metamodel = metamodel_from_file(grammarfile)
             metamodel.register_obj_processors({'SingleIpRange': SieveExpertBot.validate_ip_range})
+            metamodel.register_obj_processors({'NumericMatch': SieveExpertBot.validate_numeric_match})
             return metamodel
         except TextXError as e:
             raise ValueError('Could not process sieve grammar file. Error in (%d, %d): %s' % (e.line, e.col, str(e)))
@@ -69,10 +79,10 @@ class SieveExpertBot(Bot):
         for rule in self.sieve.rules:
             procedure = self.process_rule(rule, event)
             if procedure == Procedure.KEEP:
-                self.logger.debug('Stop processing based on rule at %s: %s.', self.get_position(rule), event)
+                self.logger.debug('Stop processing based on rule at %s: %s.', self.get_linecol(rule), event)
                 break
             elif procedure == Procedure.DROP:
-                self.logger.debug('Dropped event based on rule at %s: %s.', self.get_position(rule), event)
+                self.logger.debug('Dropped event based on rule at %s: %s.', self.get_linecol(rule), event)
                 break
 
         # forwarding decision
@@ -84,7 +94,7 @@ class SieveExpertBot(Bot):
     def process_rule(self, rule, event):
         # process mandatory 'if' clause
         if self.match_expression(rule.if_.expr, event):
-            self.logger.debug('Matched event based on rule at %s: %s.', self.get_position(rule.if_), event)
+            self.logger.debug('Matched event based on rule at %s: %s.', self.get_linecol(rule.if_), event)
             for action in rule.if_.actions:
                 procedure = self.process_action(action.action, event)
                 if procedure != Procedure.CONTINUE:
@@ -94,7 +104,7 @@ class SieveExpertBot(Bot):
         # process optional 'elif' clauses
         for clause in rule.elif_:
             if self.match_expression(clause.expr, event):
-                self.logger.debug('Matched event based on rule at %s: %s.', self.get_position(clause), event)
+                self.logger.debug('Matched event based on rule at %s: %s.', self.get_linecol(clause), event)
                 for action in clause.actions:
                     procedure = self.process_action(action.action, event)
                     if procedure != Procedure.CONTINUE:
@@ -103,7 +113,7 @@ class SieveExpertBot(Bot):
 
         # process optional 'else' clause
         if rule.else_:
-            self.logger.debug('Matched event based on rule at %s: %s.', self.get_position(rule.else_), event)
+            self.logger.debug('Matched event based on rule at %s: %s.', self.get_linecol(rule.else_), event)
             for action in rule.else_.actions:
                 procedure = self.process_action(action.action, event)
                 if procedure != Procedure.CONTINUE:
@@ -181,7 +191,9 @@ class SieveExpertBot(Bot):
             return False
 
     def process_numeric_operator(self, lhs, op, rhs):
-        return eval(str(lhs) + op + str(rhs))  # TODO graceful error handling
+        if not self.is_numeric(lhs) or not self.is_numeric(rhs):
+            return False
+        return eval(str(lhs) + op + str(rhs))
 
     def process_ip_range_match(self, key, ip_range, event):
         if key not in event:
@@ -221,16 +233,59 @@ class SieveExpertBot(Bot):
                 del event[action.key]
         return Procedure.CONTINUE
 
-    def get_position(self, entity):
-        """ returns the position (line,col) of an entity in the sieve file. """
-        return self.metamodel.parser.pos_to_linecol(entity._tx_position)
-
     @staticmethod
     def validate_ip_range(ip_range):
+        position = SieveExpertBot.get_linecol(ip_range, as_dict=True)
         try:
             ipaddress.ip_network(ip_range.value)
         except ValueError:
-            raise TextXSemanticError('Invalid ip range: %s.', ip_range.value)
+            raise TextXSemanticError('Invalid ip range: %s.' % ip_range.value, **position)
+
+    @staticmethod
+    def validate_numeric_match(num_match):
+        """ Validates a numeric match expression.
+
+        Checks if the event key (given on the left hand side of the expression) is of a valid type for a numeric
+        match, according the the IntelMQ harmonization.
+
+            Raises:
+                TextXSemanticError: when the key is of an incompatible type for numeric match experessions.
+        """
+        valid_types = ['Integer', 'Float', 'Accuracy', 'ASN']
+        position = SieveExpertBot.get_linecol(num_match.value, as_dict=True)
+
+        # validate harmonization type (event key)
+        try:
+            type = SieveExpertBot.harmonization[num_match.key]['type']
+            if type not in valid_types:
+                raise TextXSemanticError('Incompatible type: %s.' % type, **position)
+        except KeyError:
+            raise TextXSemanticError('Invalid key: %s.' % num_match.key, **position)
+
+    @staticmethod
+    def is_numeric(num):
+        """ Returns True if argument is a number (integer or float). """
+        return str(num).lstrip('-').replace('.', '', 1).isnumeric()
+
+    @staticmethod
+    def get_linecol(model_obj, as_dict=False):
+        """ Gets the position of a model object in the sieve file.
+
+        Args:
+            model_obj: the model object
+            as_dict: return the position as a dict instead of a tuple.
+
+        Returns:
+            Returns the line and column number for the model object's position in the sieve file.
+            Default return type is a tuple of (line,col). Optionally, returns a dict when as_dict == True.
+
+        """
+        metamodel = textx.model.metamodel(model_obj)
+        tup = metamodel.parser.pos_to_linecol(model_obj._tx_position)
+        if as_dict:
+            return dict(zip(['line', 'col'], tup))
+        return tup
+
 
 
 BOT = SieveExpertBot

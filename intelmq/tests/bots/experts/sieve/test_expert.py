@@ -545,6 +545,18 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertOutputQueueLen(0)
 
+    def test_numeric_invalid_key(self):
+        """ Tests validation of harmonization for numeric types. """
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__),
+                                              'test_sieve_files/test_numeric_invalid_key.sieve')
+
+        event = EXAMPLE_INPUT.copy()
+        self.input_message = event
+        with self.assertRaises(ValueError) as context:
+            self.run_bot()
+        exception = context.exception
+        self.assertRegex(str(exception), '.*Incompatible type: FQDN\.$')
+
     def test_exists_match(self):
         """ Test :exists match """
         self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_exists_match.sieve')
