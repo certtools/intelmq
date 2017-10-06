@@ -62,7 +62,8 @@ Now import the data into your ContactDB, we assume you used `contactdb` as
 database name.
 
 You can use `ripe_diff.py` instead of `ripe_import.py` below
-to get shown what would be imported into the database by the import step.
+to get shown what would be imported into the database by the import step
+and which manual entries are related to the affected ASNs or networks.
 
 **Make sure the connection to the database is made
 with sufficient rights! Use the database superuser when in doubt.**
