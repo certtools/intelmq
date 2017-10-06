@@ -63,7 +63,7 @@ behaviour groups. The `inhibition`-annotations are powerful
 at the expense of being harder to use.
 
 
-#### How to update?
+#### How to update external sources?
 The manual entries have additional information to the automatic ones,
 but also contain copied parts of the automatic entries.
 
@@ -125,7 +125,7 @@ configuration for accessing the database.
 
 ```
 
-### Updates
+### Schema Updates
 
 When upgrading to new version take a look at
 [db-updates-sql.md](db-updates-sql.md).
