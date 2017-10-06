@@ -1,14 +1,12 @@
 # Expert bot to lookup contact information in a simple database
 
-Requires Psycopg.
-
 ## Contact DB
 
 ### Automatic versus manual contacts
 
 Two types of contacts are supported.
 Both are modeled with a set of tables that differ
-in the table name in some columns.
+in the table name and in some columns.
 
 #### 'Automatic' for externally maintained infos
 
@@ -21,7 +19,7 @@ Therefore they have columns for `import_source` and `import_time`
 in order to later decide which information to use. And there are
 no fields for additional information as those informatiom may potentially
 get lost or be incorrect if the contents of the database changes
-during and update or reimport.
+during an update or re-import.
 
 The example for an external import source is contact data from RIPE,
 please see [README-ripe-import.md](README-ripe-import.md).
@@ -40,14 +38,71 @@ to the automatic tables.
 
 To add special information to an already existing contact in the automatic
 tables, all relevant tables entries of this specific automatic contact
-have to be copied into the manual tables. The manual contacts lack
-information in the external source, but have comment and annotations
-possibilities
+have to be copied into the manual tables. The manual contact tables lack
+columns about import source, but have comment and annotations
+possibilities.
 
-TODO
+The comments are free-text fields that can be used to record additional
+information that cannot not be expressed with the existing structured fields.
+This allows for rare entries or to see what additional info people
+would like to see in the database in future version of the database schema.
+
+The annotations can be used as general "tags" to steer behaviour of
+the system that can be configured on the level of administration rights,
+but selected on the user level. The "simple" tags are designed to best be used
+to denote a group of properties for sending behaviour that can be combined.
+It is recommended to keep the numer of tags low.
+The tags have be tuned after gaining experience in production use
+and they will be easy to use if good tags are chosen over time.
+
+The `inhibition`-annotations expose a generic way to prevent
+sending out information based on field contents of the intelmq event
+to users. Which is important if no administrator is available on short notice
+or the behaviour is an exception that does not indicate a change in the general
+behaviour groups. The `inhibition`-annotations are powerful
+at the expense of being harder to use.
+
+
+#### How to update?
+The manual entries have additional information to the automatic ones,
+but also contain copied parts of the automatic entries.
+
+If an automatic import source is updated, the additional
+and copied information may be out of date and in need of change.
+
+Example 1: the manual entry corrects a contact email address.
+ With the next update, the email address in the RIPE database is
+ updated to the correct one. Ideally the manual entry is deleted
+ as it is not needed anymore. (Though it does not harm if is kept
+ for a while.)
+
+Example 2: again the manual entry corrects a contact email address.
+  Now a network not is not served anymore by the same organisation coming
+  with the RIPE database update. In this case the CIDR has to be removed
+  from the manuel entry, because otherwise notifications will be send that
+  should not go to the organisation anymore.
+
+As there is no algorithmic way to know which info is better after an update
+and thus which kind of changes have to be made,
+a human has to involved.
+
+At time of writing, this has to be done by an administrator, e.g once
+a week or every two weeks for each import source, like:
+ 1. Check diffs if you would import for necessary changes.
+ 2. Stop the lookup expert-bot.
+ 3. Do the manual changes (e.g. with fody).
+ 4. Completly replace the automatic tables of this source with the new version.
+ 5. Restart the lookup bot.
+
+For RIPE there is a script that will show the difference
+between old and new automatic entries
+and which manual entries are affected by theses changes (see link
+to the RIPE documentation above).
 
 
 ### Database Setup
+Requires the python module psycopg2 (which is already installed if
+you also use the postgresql-output bot).
 
 The following commands assume that PostgreSQL is running and listening on the
 default port. They create a database called "contactdb" which matches the
