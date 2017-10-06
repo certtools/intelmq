@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """Provide common functions to query the contactdb.
 
-Copyright (C) 2016 by Bundesamt für Sicherheit in der Informationstechnik
+Copyright (C) 2016, 2017 by Bundesamt für Sicherheit in der Informationstechnik
 Software engineering by Intevation GmbH
 
 This program is Free Software: you can redistribute it and/or modify
@@ -19,8 +19,8 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/agpl.html>.
 
 Author(s):
-  Bernhard E. Reiter <bernhard.reiter@intevation.de>
-  Bernhard Herzog <bernhard.herzog@intevation.de>
+    Bernhard E. Reiter <bernhard.reiter@intevation.de>
+    Bernhard Herzog <bernhard.herzog@intevation.de>
 """
 
 from enum import Enum
