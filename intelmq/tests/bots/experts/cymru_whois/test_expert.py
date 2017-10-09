@@ -78,7 +78,6 @@ EXAMPLE_6TO4_OUTPUT = {"__type": "Event",
 
 @test.skip_redis()
 @test.skip_internet()
-@unittest.skip('cymru is currently unreachable')
 class TestCymruExpertBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for AbusixExpertBot.
