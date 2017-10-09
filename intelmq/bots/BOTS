@@ -105,6 +105,7 @@
                 "search_not_older_than": null,
                 "search_owner": "nobody",
                 "search_queue": "Incident Reports",
+                "search_requestor": null,
                 "search_status": "new",
                 "search_subject_like": "Report",
                 "set_status": "open",

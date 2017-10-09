@@ -11,20 +11,37 @@ This rt bot will connect to RT and inspect the given `search_queue` for tickets 
 Any matches will be inspected. For each match, all (RT-) attachments of the matching RT tickets are iterated over and within this loop, the first matching filename in the attachment is processed.
 If none of the filename matches apply, the contents of the first (RT-) "history" item is matched against the URL-regex.
 
+## Configuration
+
+### Search
+
+The parameters prefixed with `search_` allow configuring the ticket search.
+
+Empty strings and `null` as value for search parameters are ignored.
+
+### File downloads
+
 Attachments can be optionally unzipped, remote files are downloaded with the `http_*` settings applied (see `defaults.conf`).
+
+### Ticket processing
 
 Optionally, the RT bot can "take" RT tickets (i.e. the `user` is assigned this ticket now) and/or the status can be changed (leave `set_status` empty in case you don't want to change the status). Please note however that you **MUST** do one of the following: either "take" the ticket  or set the status (`set_status`). Otherwise, the search will find the ticket every time and we will have generated an endless loop.
 
+In case a resource needs to be fetched and this resource is permanently not available (status code is 4xx), the ticket status will be set according to the configuration to avoid processing the ticket over and over.
+For temporary failures the status is not modified, instead the ticket will be skipped in this run.
+
+### Example
 
     "request-tracker-collector": {
         "attachment_regex": "\\.csv\\.zip$",
         "feed": "Request Tracker",
         "password": "intelmq",
         "search_not_older_than": null,
-        "search_queue": "Incident Reports",
-        "search_subject_like": "Report",
         "search_owner": "nobody",
+        "search_queue": "Incident Reports",
+        "search_requestor": null,
         "search_status": "new",
+        "search_subject_like": "Report",
         "set_status": "open",
         "take_ticket": true,
         "rate_limit": 3600,
@@ -33,9 +50,6 @@ Optionally, the RT bot can "take" RT tickets (i.e. the `user` is assigned this t
         "user": "intelmq",
         "unzip_attachment": true
     },
-
-In case a resource needs to be fetched and this resource is permanently not available (status code is 4xx), the ticket status will be set according to the configuration to avoid processing the ticket over and over.
-For temporary failures the status is not modified, instead the ticket will be skipped in this run.
 
 ## Time search
 

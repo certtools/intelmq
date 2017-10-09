@@ -18,6 +18,13 @@ except ImportError:
 
 class RTCollectorBot(CollectorBot):
 
+    parameter_mapping = {'search_owner': 'Owner',
+                         'search_queue': 'Queue',
+                         'search_requestor': 'Requestor',
+                         'search_status': 'Status',
+                         'search_subject_like': 'Subject__like',
+                         }
+
     def init(self):
         if rt is None:
             self.logger.error('Could not import rt. Please install it.')
@@ -54,11 +61,12 @@ class RTCollectorBot(CollectorBot):
         else:
             kwargs = {}
 
-        query = RT.search(Queue=self.parameters.search_queue,
-                          Subject__like=self.parameters.search_subject_like,
-                          Owner=self.parameters.search_owner,
-                          Status=self.parameters.search_status,
-                          order='Created', **kwargs)
+        for parameter_name, rt_name in self.parameter_mapping.items():
+            parameter_value = getattr(self.parameters, parameter_name, None)
+            if parameter_value:
+                kwargs[rt_name] = parameter_value
+
+        query = RT.search(order='Created', **kwargs)
         self.logger.info('%s results on search query.', len(query))
 
         for ticket in query:

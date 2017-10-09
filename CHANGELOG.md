@@ -31,6 +31,9 @@ Support for Python 3.3 has been dropped, it reached its end of life.
 #### Collectors
 - Mail: New parameters; `sent_from`: filter messages by sender, `sent_to`: filter messages by recipient
 - bots.experts.maxmind_geoip: New (optional) parameter `overwrite`, by default false. The current default was to overwrite!
+- bots.collectors.rt:
+  - New parameter `search_requestor` to search for field Requestor.
+  - Empty strings and `null` as value for search parameters are ignored.
 
 ### Harmonization
 - Renamed `JSON` to `JSONDict` and added a new type `JSON`. `JSONDict` saves data internally as JSON, but acts like a dictionary. `JSON` accepts any valid JSON.
