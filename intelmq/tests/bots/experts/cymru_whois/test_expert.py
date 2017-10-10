@@ -71,14 +71,13 @@ EXAMPLE_6TO4_INPUT = {"__type": "Event",
 EXAMPLE_6TO4_OUTPUT = {"__type": "Event",
                   "source.ip": "2002:3ee0:3972:0001::1",
                   "source.network": "2002::/16",
-                  "source.asn": 6939,
-                  "source.as_name": "HURRICANE - Hurricane Electric, Inc., US",
+                  "source.asn": 1103,
+                  "source.as_name": "SURFNET-NL SURFnet, The Netherlands, NL",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   }
 
 @test.skip_redis()
 @test.skip_internet()
-@unittest.skip('cymru is currently unreachable')
 class TestCymruExpertBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for AbusixExpertBot.

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-"""
-"""
+import os
+
 from intelmq.lib.bot import Bot
 
 try:
@@ -46,6 +46,15 @@ class ASNLookupExpertBot(Bot):
 
         self.send_message(event)
         self.acknowledge_message()
+
+    @staticmethod
+    def check(parameters):
+        if not os.path.exists(parameters.get('database', '')):
+            return [["error", "File given as parameter 'database' does not exist."]]
+        try:
+            pyasn.pyasn(parameters['database'])
+        except Exception as exc:
+            return [["error", "Error reading database: %r." % exc]]
 
 
 BOT = ASNLookupExpertBot

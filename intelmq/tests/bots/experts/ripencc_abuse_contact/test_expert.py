@@ -85,7 +85,7 @@ class TestRIPENCCExpertBot(test.BotTestCase, unittest.TestCase):
         old = self.bot.URL_STAT
         self.bot.URL_STAT = 'https://example.com/index.html?{}'
         self.run_bot(prepare=False)
-        # internal json in < and >= 3.5, 3.3 and simplejson
+        # internal json in < and >= 3.5 and simplejson
         self.assertLogMatches(pattern='.*(JSONDecodeError|ValueError|Expecting value|No JSON object could be decoded).*',
                               levelname='ERROR')
 

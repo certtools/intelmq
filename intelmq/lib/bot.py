@@ -21,7 +21,7 @@ from intelmq import (DEFAULT_LOGGING_PATH, DEFAULTS_CONF_FILE,
 from intelmq.lib import exceptions, utils
 import intelmq.lib.message as libmessage
 from intelmq.lib.pipeline import PipelineFactory
-from typing import Any, Optional
+from typing import Any, Optional, List
 
 __all__ = ['Bot', 'CollectorBot', 'ParserBot']
 
@@ -540,6 +540,23 @@ class Bot(object):
         self.http_timeout_max_tries = self.http_timeout_max_tries if self.http_timeout_max_tries >= 1 else 1
 
         self.http_header['User-agent'] = self.parameters.http_user_agent
+
+    @staticmethod
+    def check(parameters: dict) -> Optional[List[List[str]]]:
+        """
+        The bot's own check function can perform individual checks on it's
+        parameters.
+        `init()` is *not* called before, this is a staticmethod which does not
+        require class initialization.
+
+        Parameters:
+            parameters: Bot's parameters, defaults and runtime merged together
+
+        Returns:
+            output: None or a list of [log_level, log_message] pairs, both
+                strings. log_level must be a valid log level.
+        """
+        pass
 
 
 class ParserBot(Bot):

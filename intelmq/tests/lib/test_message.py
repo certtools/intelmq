@@ -222,14 +222,6 @@ class TestMessageFactory(unittest.TestCase):
         with self.assertRaises(exceptions.KeyExists):
             report.add('raw', LOREM_BASE64)
 
-    def test_report_add_duplicate_force(self):
-        """ Test if report can add raw value. """
-        report = self.new_report(auto=True)
-        report.add('raw', LOREM_BASE64, sanitize=False)
-        report.add('raw', DOLOR_BASE64, overwrite=True, sanitize=False)
-        self.assertDictContainsSubset({'raw': DOLOR_BASE64},
-                                      report)
-
     def test_report_del_(self):
         """ Test if report can del a value. """
         report = self.new_report()
@@ -656,6 +648,32 @@ class TestMessageFactory(unittest.TestCase):
         with self.assertRaises(KeyError):
             event['extra.foo']
 
+    def test_overwrite_true(self):
+        """
+        Test if values can be overwritten.
+        """
+        event = self.new_event()
+        event.add('comment', 'foo')
+        event.add('comment', 'bar', overwrite=True)
+        self.assertEqual(event['comment'], 'bar')
+
+    def test_overwrite_none(self):
+        """
+        Test if exception is raised when values exist and can't be overwritten.
+        """
+        event = self.new_event()
+        event.add('comment', 'foo')
+        with self.assertRaises(exceptions.KeyExists):
+            event['comment'] = 'bar'
+
+    def test_overwrite_false(self):
+        """
+        Test if values are not overwritten.
+        """
+        event = self.new_event()
+        event.add('comment', 'foo')
+        event.add('comment', 'bar', overwrite=False)
+        self.assertEqual(event['comment'], 'foo')
 
 
 if __name__ == '__main__':  # pragma: no cover

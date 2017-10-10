@@ -11,8 +11,8 @@ REQUIRES = [
     'psutil>=1.2.1',
     'python-dateutil>=2.5',
     'python-termstyle>=0.1.10',
-    'pytz>=2014.1',
-    'redis>=2.10.3',
+    'pytz>=2012c',
+    'redis>=2.10',
 ]
 if sys.version_info < (3, 5):
     REQUIRES.append('typing')
@@ -81,7 +81,6 @@ setup(
         'Operating System :: POSIX :: Linux',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
