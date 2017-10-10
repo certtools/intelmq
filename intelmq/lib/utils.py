@@ -20,6 +20,8 @@ import os
 import re
 import sys
 import traceback
+import tarfile
+import io
 
 from typing import Sequence, Optional, Union
 
@@ -379,3 +381,30 @@ def parse_relative(relative_time: str) -> int:
         return int(result[0][0]) * TIMESPANS[result[0][1]]
     else:
         raise ValueError("Could not process result of regex for attribute " + repr(relative_time))
+
+
+def extract_tar(file: bytes, extract_files: Union[bool, list]) -> list:
+    """
+        Extracts given compressed tar.gz file and returns content of specified or all files from it.
+
+        Parameters:
+            file: a binary representation of compressed file
+            extract_files: a value which specifies files to be extracted:
+                    True: all
+                    list: some
+
+        Returns:
+            result: list containing the string representation of specified files
+
+        Raises:
+            TypeError: If file isn't tar.gz
+    """
+    try:
+        tar = tarfile.open(fileobj=io.BytesIO(file))
+    except tarfile.TarError as te:
+        raise TypeError("Could not process given file" + repr(te.args))
+
+    if isinstance(extract_files, bool):
+        extract_files = [file.name for file in tar.getmembers()]
+
+    return [tar.extractfile(member).read() for member in tar.getmembers() if member.name in extract_files]

@@ -34,6 +34,7 @@ before_script:
   - tar -xzf ../intelmq_$version.orig.tar.gz
   - tar -xzf ../intelmq_$version-1.debian.tar.gz
   - popd
+  - sudo cp intelmq/tests/assets/* /var/www/
 script:
   - if [[ $REQUIREMENTS == true ]] ; then INTELMQ_TEST_DATABASES=1 INTELMQ_TEST_LOCAL_WEB=1 INTELMQ_TEST_EXOTIC=1 nosetests --with-coverage --cover-package=intelmq --cover-branches; else INTELMQ_TEST_LOCAL_WEB=1 nosetests --with-coverage --cover-package=intelmq --cover-branches; fi
   - pycodestyle intelmq/{bots,lib,bin}
