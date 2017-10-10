@@ -34,6 +34,7 @@ Support for Python 3.3 has been dropped, it reached its end of life.
 - bots.collectors.rt:
   - New parameter `search_requestor` to search for field Requestor.
   - Empty strings and `null` as value for search parameters are ignored.
+  - Empty parameters `attachment_regex` and `url_regex` handled.
 
 ### Harmonization
 - Renamed `JSON` to `JSONDict` and added a new type `JSON`. `JSONDict` saves data internally as JSON, but acts like a dictionary. `JSON` accepts any valid JSON.

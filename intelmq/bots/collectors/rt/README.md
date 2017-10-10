@@ -23,6 +23,8 @@ Empty strings and `null` as value for search parameters are ignored.
 
 Attachments can be optionally unzipped, remote files are downloaded with the `http_*` settings applied (see `defaults.conf`).
 
+If `url_regex` or `attachment_regex` are empty strings, false or null, they are ignored.
+
 ### Ticket processing
 
 Optionally, the RT bot can "take" RT tickets (i.e. the `user` is assigned this ticket now) and/or the status can be changed (leave `set_status` empty in case you don't want to change the status). Please note however that you **MUST** do one of the following: either "take" the ticket  or set the status (`set_status`). Otherwise, the search will find the ticket every time and we will have generated an endless loop.

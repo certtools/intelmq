@@ -74,14 +74,18 @@ class RTCollectorBot(CollectorBot):
             self.logger.debug('Process ticket %s.', ticket_id)
             content = 'attachment'
             for (att_id, att_name, _, _) in RT.get_attachments(ticket_id):
+                if not self.parameters.attachment_regex:
+                    break
                 if re.search(self.parameters.attachment_regex, att_name):
                     self.logger.debug('Found attachment %s: %r.',
                                       att_id, att_name)
                     break
             else:
-                ticket = RT.get_history(ticket_id)[0]
-                created = ticket['Created']
-                urlmatch = re.search(self.parameters.url_regex, ticket['Content'])
+                urlmatch = False
+                if self.parameters.url_regex:
+                    ticket = RT.get_history(ticket_id)[0]
+                    created = ticket['Created']
+                    urlmatch = re.search(self.parameters.url_regex, ticket['Content'])
                 if urlmatch:
                     content = 'url'
                     url = urlmatch.group(0)
