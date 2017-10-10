@@ -112,13 +112,17 @@ class RTCollectorBot(CollectorBot):
 
                 response_code_class = resp.status_code // 100
                 if response_code_class != 2:
-                    self.logger.error('HTTP response status code for %r was %s.',
-                                      url, resp.status_code)
+                    self.logger.error('HTTP response status code for %r was %s. Skipping ticket %d.',
+                                      url, resp.status_code, ticket_id)
                     if response_code_class == 4:
                         self.logger.debug('Server response: %r.', resp.text)
-                        self.logger.warning('Setting status of unprocessable ticket.')
                         if self.parameters.set_status:
                             RT.edit_ticket(ticket_id, status=self.parameters.set_status)
+                        if self.parameters.take_ticket:
+                            try:
+                                RT.take(ticket_id)
+                            except rt.BadRequest:
+                                self.logger.exception("Could not take ticket %s.", ticket_id)
                     else:
                         self.logger.info('Skipping now.')
                         continue
