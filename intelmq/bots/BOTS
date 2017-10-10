@@ -62,6 +62,7 @@
                 "http_username": null,
                 "http_password": null,
                 "ssl_client_certificate": null,
+                "extract_file": "True or string of file names separated by ,",
                 "rate_limit": 3600
             }
         },
