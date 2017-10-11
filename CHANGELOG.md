@@ -37,6 +37,8 @@ Support for Python 3.3 has been dropped, it reached its end of life.
 
 #### Parsers
 - changed feednames in `bots.parsers.shadowserver`. Please refer to it's README for the exact changes.
+- shadowserver parser: If the conversion function fails for a line, an error is raised and the offending line will be handled according to the error handling configuration.
+  Previouly errors like these were only logged and ignored otherwise.
 
 ### Requirements
 - Requests is no longer listed as dependency of the core. For depending bots the requirement is noted in their REQUIREMENTS.txt file

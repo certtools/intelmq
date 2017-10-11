@@ -137,12 +137,11 @@ class ShadowserverParserBot(ParserBot):
                     try:
                         value = conv_func(raw_value)
                     except Exception:
+                        """ fail early and often in this case. We want to be able to convert everything """
                         self.logger.error('Could not convert shadowkey: %r, '
                                           'value: %r via conversion function %r.',
-                                          shadowkey, raw_value, conv_func)
-                        value = None
-                        # """ fail early and often in this case. We want to be able to convert everything """
-                        # self.stop()
+                                          shadowkey, raw_value, conv_func.__name__)
+                        raise
 
             if value is not None:
                 if intelmqkey == 'extra.':
