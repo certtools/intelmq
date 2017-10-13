@@ -2,19 +2,15 @@
 # -*- coding: utf-8 -*-
 #
 #
-#
-# Do not send mails:
-# sudo ./output_send.py mail-output-send debug
-#
-# Do send mails:
-# sudo ./output_send.py mail-output-send live
-#
-# If launched without parameter, it would have never ended (as normal intelmq bot).
-#
+# Initiate dialog ex like this:
 # ssh -t $USER@proki.csirt.cz 'sudo docker exec -i -t intelmq intelmq.bots.outputs.mail.output_send  mailsend-output-cz dialog'
 #
 from __future__ import unicode_literals
+from base64 import b64decode
 import csv
+from collections import namedtuple, OrderedDict
+import json
+import argparse
 from email import encoders
 from email.message import Message
 from email.mime.audio import MIMEAudio
@@ -22,25 +18,26 @@ from email.mime.base import MIMEBase
 from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from intelmq.lib.bot import Bot
-from intelmq.lib.cache import Cache
-from intelmq.lib.message import Event
-import json
-from base64 import b64decode
+from email.mime.application import MIMEApplication
 import logging
 import os
 import smtplib
 import sys
 import time
-from collections import namedtuple, OrderedDict
+import zipfile
+from intelmq.lib.bot import Bot
+from intelmq.lib.cache import Cache
+from intelmq.lib.message import Event
 try:
     from StringIO import StringIO
 except ImportError:
     from io import StringIO
 
-Mail = namedtuple('Mail', ["key", "to", "attachment"])
+Mail = namedtuple('Mail', ["key", "to", "path", "count"])
 
 class MailSendOutputBot(Bot):
+    TMP_DIR = "/tmp/intelmq-mails/"
+
     def process(self):
         pass
 
@@ -54,12 +51,27 @@ class MailSendOutputBot(Bot):
 
     def init(self):
         self.set_cache()
-        if len(sys.argv) > 2 and sys.argv[2] == "dialog":
+        parser = argparse.ArgumentParser(prog=" ".join(sys.argv[0:1]))
+        parser.add_argument('cli', help='initiate cli dialog')
+        parser.add_argument('--tester', help='tester\'s e-mail')
+        args = parser.parse_args(sys.argv[2:])
+
+        if args.tester:
+            self.parameters.testing_to = args.tester
+
+        if args.cli == "cli":
+            os.makedirs(self.TMP_DIR, exist_ok=True)
             with open(self.parameters.mail_template) as f:
                 self.mailContents = f.read()
+            self.alternativeMail = {}
+            if self.parameters.alternative_mails:
+                with open(self.parameters.alternative_mails,"r") as f:
+                    reader = csv.reader(f,delimiter=",")
+                    for row in reader:
+                        self.alternativeMail[row[0]] = row[1]
 
-            print("****** Printing mail queue: ******")
-            mails = [m for m in self.prepare_mails()]
+            print("Preparing mail queue...")
+            mails = [m for m in self.prepare_mails() if m]
 
             if not len(mails):
                 print(" *** No mails in queue ***")
@@ -67,8 +79,8 @@ class MailSendOutputBot(Bot):
 
             while True:
                 print("What you would like to do?\n"
-                    "* enter for send first mail to tester's address {}.\n"
-                    "* 'debug' for sending all the e-mails to tester's address"
+                    "* enter to send first mail to tester's address {}.\n"
+                    "* 'debug' to send all the e-mails to tester's address"
                     .format(self.parameters.testing_to))
                 if self.parameters.testing_to:
                     print("* 's' for setting other tester's address")
@@ -80,28 +92,29 @@ class MailSendOutputBot(Bot):
                     sys.exit(0)
                 elif i == "all":
                     for mail in mails:
-                        self.send_mail(mail.to, mail.attachment, send=True)
+                        self.send_mail(mail, send=True)
                         self.cache.redis.delete(mail.key)
-                    print("{}× mail sent.: {}\n".format(len(mails)))
+                        os.unlink(mail.path)
+                    print("{}× mail sent.\n".format(len(mails)))
                     sys.exit(0)
                 elif i == "s":
-                    print("What e-mail should I use?")
+                    print("\nWhat e-mail should I use?")
                     self.parameters.testing_to = input()
                 elif i in ["","y","debug"]:
                     if not self.parameters.testing_to:
-                        print("What e-mail should I use?")
+                        print("\nWhat e-mail should I use?")
                         self.parameters.testing_to = input()
                     if i in ["","y"]:
                         mail = mails[0]
-                        self.send_mail(self.parameters.testing_to, mail.attachment, send=True, intendedto=mail.to)
+                        self.send_mail(mail, send=True, override_to=self.parameters.testing_to)
                         count = 1
                     elif i == "debug":
-                        [self.send_mail(self.parameters.testing_to, mail.attachment, send=True, intendedto=mail.to) for mail in mails]
+                        [self.send_mail(mail, send=True, override_to=self.parameters.testing_to) for mail in mails]
                         count = len(mails)
                     print("{}× mail sent to: {}\n".format(count, self.parameters.testing_to))
 
         else:
-            print("Running forever with no job. Run with 'dialog' parameter.")
+            print("Running forever with no job. Run with 'cli' parameter.")
 
     # Sends out all emails
     def prepare_mails(self):
@@ -147,9 +160,27 @@ class MailSendOutputBot(Bot):
             dict_writer.writerow(dict(zip(ordered_fieldnames, ordered_fieldnames)))
             dict_writer.writerows(rows_output)
 
+            count = len(rows_output)
+            filename = '{}_{}_events'.format(time.strftime("%y%m%d"), count)
+            path = self.TMP_DIR + filename + '.zip'
+
+            zf = zipfile.ZipFile(path, mode='w', compression=zipfile.ZIP_DEFLATED)
+            try:
+                zf.writestr(filename + ".csv", output.getvalue())
+            except:
+                print("Can't zip mail {}".format(mail_record))
+                yield None
+            finally:
+                zf.close()
+
+            email_to = str(mail_record[len("mail:"):], encoding="utf-8")
+            if email_to in self.alternativeMail:
+                print("Alternative: instead of {} we use {}".format(email_to, self.alternativeMail[email_to]))
+                email_to = self.alternativeMail[email_to]
+
             # send the whole message
-            mail = Mail(mail_record, str(mail_record[len("mail:"):], encoding="utf-8"), output.getvalue())
-            self.send_mail(mail.to, mail.attachment, send=False)
+            mail = Mail(mail_record, email_to, path, count)
+            self.send_mail(mail, send=False)
             yield mail
 
     #def _hasTestingTo(self):
@@ -157,37 +188,41 @@ class MailSendOutputBot(Bot):
 
 
     # actual funtion to send email through smtp
-    def send_mail(self, emailto, attachmentContents, send=False, intendedto = None):
-        emailfrom =  self.parameters.emailFrom
-        subject = self.parameters.subject
+    def send_mail(self, mail, send=False,  override_to=None):
+        if override_to:
+            intended_to = mail.to
+            email_to = override_to
+        else:
+            intended_to = None
+            email_to = mail.to
+        email_from =  self.parameters.emailFrom
         server = self.parameters.smtp_server
         text = self.mailContents
-        if intendedto:
-            subject = subject + " (intended for " + str(intendedto) + ")"
+        subject = self.parameters.subject
+        if intended_to:
+            subject = subject + " (intended for " + str(intended_to) + ")"
         msg = MIMEMultipart()
-        msg["From"] = emailfrom
+        msg["From"] = email_from
         msg["Subject"] = subject
-        msg["To"] = emailto
-        rcpts = [emailto]
-        if hasattr(self.parameters, 'bcc') and not intendedto:
+        msg["To"] = email_to
+        rcpts = [email_to]
+        if hasattr(self.parameters, 'bcc') and not intended_to:
             rcpts += self.parameters.bcc # bcc is in fact an independent mail
 
         if send is True:
             msg.attach(MIMEText(text, "html", "utf-8"))
-
-            maintype, subtype = "text/csv".split("/", 1)
-            if maintype == "text":
-                attachment = MIMEText(attachmentContents, subtype, "utf-8")
+            with open(mail.path,"rb") as f: # plain/text - with open(mail.path,"r") as f: attachment = MIMEText(f.read(), subtype, "utf-8")
+                attachment = MIMEApplication(f.read(), "zip")
             attachment.add_header("Content-Disposition", "attachment",
-                                  filename='proki_{}.csv'.format(time.strftime("%Y%m%d")))
+                                  filename='proki_{}.zip'.format(time.strftime("%Y%m%d")))
             msg.attach(attachment)
 
             smtp = smtplib.SMTP(server)
-            smtp.sendmail(emailfrom, rcpts, msg.as_string().encode('ascii'))
+            smtp.sendmail(email_from, rcpts, msg.as_string().encode('ascii'))
             smtp.close()
         else:
-            print('To: ' + emailto + '; Subject: ' + subject)
-            print('Events: ' + str((attachmentContents.count('\n') - 1)))
+            print('To: ' + email_to + '; Subject: ' + subject)
+            print('Events: {}'.format(mail.count))
             print('-------------------------------------------------')
 
 BOT = MailSendOutputBot
