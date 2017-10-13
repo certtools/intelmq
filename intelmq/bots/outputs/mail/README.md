@@ -18,14 +18,12 @@ Příloha bude csv zahrnující část informací z události v IntelMQ.
 Celá akce přípravy emailu musí proběhnout jako transakce odolná proti výpadku:
 1. Email je připraven v paměti bota
 2. Email je zapsán do nezávislé redis queue (email-template-queue)
-3. Seznam událostí použitý pro přípravu emailu je odstraněn
 4. Email je odeslán na nakonfigurovaný smtp server (uvedený v konfiguraci bota)
+3. Seznam událostí použitý pro přípravu emailu je odstraněn
 
-Problém: mají být emaily anglicky nebo česky? Mohou být kombinované html + txt?
-
-Aby byla odolná proti výpadku, vymažu seznam událostí (tj. frontu abuse-mailer-queue ?) asi až potom, co projde příkaz, který posílá zprávu na smtp, tj. body 3 a 4 jsou prohozeny.
 
 Configuration:
+"alternative_mails": None, # csv in the form original@email.com,alternative@email.com
 "bcc": [], # the list of e-mails to be put in the bcc field for every mail
 "emailFrom": "",
 "mail_template": "", # file containing the body of the mail
