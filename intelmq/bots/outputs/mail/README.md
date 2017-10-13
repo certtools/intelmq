@@ -1,35 +1,33 @@
 
- ** THIS FILE IS OLD and should be updated **
+With this bot, we are able to send e-mails.
 
-Bot „Generate Abuse Emails“ je spouštěn v pravidelných intervalech (zatím jednou denně v 7:00 – bude uvedeno v konfiguraci bota).
-Kromě tohoto cyklického spouštění žádné akce nevykonává, pouze se mu plní fronta s novými událostmi.
-Běh bota se dělí do dvou velkých fází – Email Aggregation a Send Emails.
+output_gather.py
+================
+Standard intelmq bot; has got custom output queue. It aggregates the events for later use.
 
-První úkol programu bude vytvořit si seznamy událostí se společným adresátem.
-Bot se podívá na první událost v bufferu (abuse-mailer-queue) a vytvoří nový seznam pro adresáta z této první události.
-Následně „popuje“ všechny události se stejným adresátem do tohoto nového seznamu.
-Tento cyklus s vytvořením nového seznamu pro každého unikátního adresáta se opakuje,
-    dokud není původní fronta prázdná.
-Bot zahazuje všechny události, které vůbec neobsahují abuse kontakt (emailovou adresu), i když by k tomu nemělo dojít.
+output_send.py
+==============
+Disabled intelmq bot. Its functionality gets launched by cli.
+It loads the events gathered by output_gather.py and sends them to abuse contact e-mails.
 
-Druhá fáze již připravuje a odesílá emaily.
-Pro každý seznam připravený v předchozí fázi bude vytvořen právě jeden email kombinující klasický text a strojově zpracovatelné přílohy.
-Příloha bude csv zahrnující část informací z události v IntelMQ.
-Celá akce přípravy emailu musí proběhnout jako transakce odolná proti výpadku:
-1. Email je připraven v paměti bota
-2. Email je zapsán do nezávislé redis queue (email-template-queue)
-4. Email je odeslán na nakonfigurovaný smtp server (uvedený v konfiguraci bota)
-3. Seznam událostí použitý pro přípravu emailu je odstraněn
+Launch it like that:
+</usr/local/bin executable> <bot-id> cli [--tester tester emails]
+Ex:
+intelmq.bots.outputs.mail.output_send  mailsend-output-cz cli --tester edvard.rejthar+test@nic.cz
+
+It shows ready e-mails and let you send them to tester's e-mail OR to the recipients.
+When done, e-mails are deleted.
+E-mails are send in zipped csv file, delimited by comma, strings in "".
 
 
 Configuration:
-"alternative_mails": None, # csv in the form original@email.com,alternative@email.com
+"alternative_mails": "", # empty string or or path to csv in the form original@email.com,alternative@email.com
 "bcc": [], # the list of e-mails to be put in the bcc field for every mail
-"emailFrom": "",
+"emailFrom": "", # sender's e-mail
 "mail_template": "", # file containing the body of the mail
 "redis_cache_db": "",
 "redis_cache_host": "",
 "redis_cache_port": "",
 "redis_cache_ttl": "",
 "smtp_server": "mailer",
-"testing_to": "" # if a value is used, all the mails are sent TO THIS E-MAIL ONLY (with a subject line informing who the mail was intended for originally) and bcc field gets ignored
+"testing_to": "" # default tester's e-mail

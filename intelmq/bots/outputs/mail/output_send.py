@@ -18,7 +18,9 @@ from email.mime.base import MIMEBase
 from email.mime.image import MIMEImage
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from email.mime.application import MIMEApplication
 import logging
+import os
 import smtplib
 import sys
 import time
@@ -49,15 +51,16 @@ class MailSendOutputBot(Bot):
 
     def init(self):
         self.set_cache()
-        parser = argparse.ArgumentParser()
-        parser.add_argument('dialog', help='initiate cli dialog', action="store_true")
+        parser = argparse.ArgumentParser(prog=" ".join(sys.argv[0:1]))
+        parser.add_argument('cli', help='initiate cli dialog')
         parser.add_argument('--tester', help='tester\'s e-mail')
-        args = parser.parse_args()
+        args = parser.parse_args(sys.argv[2:])
+
         if args.tester:
             self.parameters.testing_to = args.tester
 
-        if args.dialog:
-            os.makedirs(self.TMP_DIR)
+        if args.cli == "cli":
+            os.makedirs(self.TMP_DIR, exist_ok=True)
             with open(self.parameters.mail_template) as f:
                 self.mailContents = f.read()
             self.alternativeMail = {}
@@ -111,7 +114,7 @@ class MailSendOutputBot(Bot):
                     print("{}× mail sent to: {}\n".format(count, self.parameters.testing_to))
 
         else:
-            print("Running forever with no job. Run with 'dialog' parameter.")
+            print("Running forever with no job. Run with 'cli' parameter.")
 
     # Sends out all emails
     def prepare_mails(self):
@@ -157,8 +160,7 @@ class MailSendOutputBot(Bot):
             dict_writer.writerow(dict(zip(ordered_fieldnames, ordered_fieldnames)))
             dict_writer.writerows(rows_output)
 
-            count = len(rows_output) # XXX facha?
-            print("Count {} - je to ok?".format(count))
+            count = len(rows_output)
             filename = '{}_{}_events'.format(time.strftime("%y%m%d"), count)
             path = self.TMP_DIR + filename + '.zip'
 
@@ -173,7 +175,7 @@ class MailSendOutputBot(Bot):
 
             email_to = str(mail_record[len("mail:"):], encoding="utf-8")
             if email_to in self.alternativeMail:
-                print("* {} gets translated to {}".format(email_to, self.alternativeMail[email_to]))
+                print("Alternative: instead of {} we use {}".format(email_to, self.alternativeMail[email_to]))
                 email_to = self.alternativeMail[email_to]
 
             # send the whole message
@@ -209,13 +211,10 @@ class MailSendOutputBot(Bot):
 
         if send is True:
             msg.attach(MIMEText(text, "html", "utf-8"))
-
-            maintype, subtype = "text/csv".split("/", 1)
-            if maintype == "text":
-                with open(mail.path,"r") as f:
-                    attachment = MIMEText(f.read(), subtype, "utf-8")
+            with open(mail.path,"rb") as f: # plain/text - with open(mail.path,"r") as f: attachment = MIMEText(f.read(), subtype, "utf-8")
+                attachment = MIMEApplication(f.read(), "zip")
             attachment.add_header("Content-Disposition", "attachment",
-                                  filename='proki_{}.csv'.format(time.strftime("%Y%m%d")))
+                                  filename='proki_{}.zip'.format(time.strftime("%Y%m%d")))
             msg.attach(attachment)
 
             smtp = smtplib.SMTP(server)
@@ -223,7 +222,7 @@ class MailSendOutputBot(Bot):
             smtp.close()
         else:
             print('To: ' + email_to + '; Subject: ' + subject)
-            print('Events: ' + mail.count) # Xstr((attachmentContents.count('\n') - 1)))
+            print('Events: {}'.format(mail.count))
             print('-------------------------------------------------')
 
 BOT = MailSendOutputBot
