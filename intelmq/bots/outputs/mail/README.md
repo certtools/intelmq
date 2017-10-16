@@ -30,4 +30,5 @@ Configuration:
 "redis_cache_port": "",
 "redis_cache_ttl": "",
 "smtp_server": "mailer",
+"subject": "Subject may contain date formatting like this %Y-%m-%d",
 "testing_to": "" # default tester's e-mail

@@ -198,7 +198,10 @@ class MailSendOutputBot(Bot):
         email_from =  self.parameters.emailFrom
         server = self.parameters.smtp_server
         text = self.mailContents
-        subject = self.parameters.subject
+        try:
+            subject = time.strftime(self.parameters.subject)
+        except:
+            subject = self.parameters.subject
         if intended_to:
             subject = subject + " (intended for " + str(intended_to) + ")"
         msg = MIMEMultipart()
