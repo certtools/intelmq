@@ -883,10 +883,11 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         with open(pkg_resources.resource_filename('intelmq', 'etc/defaults.conf')) as fh:
             defaults = json.load(fh)
         keys = set(defaults.keys()) - set(files[DEFAULTS_CONF_FILE].keys())
-        if RETURN_TYPE == 'json':
-            output.append(['error', "Keys missing in your 'defaults.conf' file: %r" % keys])
-        else:
-            self.logger.error("Keys missing in your 'defaults.conf' file: %r", keys)
+        if keys:
+            if RETURN_TYPE == 'json':
+                output.append(['error', "Keys missing in your 'defaults.conf' file: %r" % keys])
+            else:
+                self.logger.error("Keys missing in your 'defaults.conf' file: %r", keys)
 
         if RETURN_TYPE == 'json':
             output.append(['info', 'Checking runtime configuration.'])
