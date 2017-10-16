@@ -48,8 +48,14 @@ class SieveExpertBot(Bot):
         try:
             grammarfile = os.path.join(os.path.dirname(__file__), 'sieve.tx')
             metamodel = metamodel_from_file(grammarfile)
-            metamodel.register_obj_processors({'SingleIpRange': SieveExpertBot.validate_ip_range})
-            metamodel.register_obj_processors({'NumericMatch': SieveExpertBot.validate_numeric_match})
+
+            # apply custom validation rules
+            metamodel.register_obj_processors({
+                'StringMatch': SieveExpertBot.validate_string_match,
+                'NumericMatch': SieveExpertBot.validate_numeric_match,
+                'SingleIpRange': SieveExpertBot.validate_ip_range
+            })
+
             return metamodel
         except TextXError as e:
             raise ValueError('Could not process sieve grammar file. Error in (%d, %d): %s' % (e.line, e.col, str(e)))
@@ -238,10 +244,10 @@ class SieveExpertBot(Bot):
 
     @staticmethod
     def validate_ip_range(ip_range):
-        position = SieveExpertBot.get_linecol(ip_range, as_dict=True)
         try:
             ipaddress.ip_network(ip_range.value)
         except ValueError:
+            position = SieveExpertBot.get_linecol(ip_range, as_dict=True)
             raise TextXSemanticError('Invalid ip range: %s.' % ip_range.value, **position)
 
     @staticmethod
@@ -251,8 +257,8 @@ class SieveExpertBot(Bot):
         Checks if the event key (given on the left hand side of the expression) is of a valid type for a numeric
         match, according the the IntelMQ harmonization.
 
-            Raises:
-                TextXSemanticError: when the key is of an incompatible type for numeric match experessions.
+        Raises:
+            TextXSemanticError: when the key is of an incompatible type for numeric match expressions.
         """
         valid_types = ['Integer', 'Float', 'Accuracy', 'ASN']
         position = SieveExpertBot.get_linecol(num_match.value, as_dict=True)
@@ -264,6 +270,34 @@ class SieveExpertBot(Bot):
                 raise TextXSemanticError('Incompatible type: %s.' % type, **position)
         except KeyError:
             raise TextXSemanticError('Invalid key: %s.' % num_match.key, **position)
+
+    @staticmethod
+    def validate_string_match(str_match):
+        """ Validates a string match expression.
+
+        Checks if the type of the value given on the right hand side of the expression matches the event key in the left
+        hand side, according to the IntelMQ harmonization.
+
+        Raises:
+            TextXSemanticError: when the value is of incompatible type with the event key.
+        """
+
+        # validate IPAddress
+        ipaddr_types = [k for k, v in SieveExpertBot.harmonization.items() if v['type'] == 'IPAddress']
+        if str_match.key in ipaddr_types:
+            if str_match.value.__class__.__name__ == 'SingleStringValue':
+                SieveExpertBot.validate_ip_address(str_match.value)
+            elif str_match.value.__class__.__name__ == 'StringValueList':
+                for val in str_match.value.values:
+                    SieveExpertBot.validate_ip_address(val)
+
+    @staticmethod
+    def validate_ip_address(ipaddr):
+        try:
+            ipaddress.ip_address(ipaddr.value)
+        except ValueError:
+            position = SieveExpertBot.get_linecol(ipaddr, as_dict=True)
+            raise TextXSemanticError('Invalid ip address: %s.' % ipaddr.value, **position)
 
     @staticmethod
     def is_numeric(num):

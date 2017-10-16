@@ -417,6 +417,18 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, event)
 
+    def test_string_invalid_ipaddr(self):
+        """ Tests validation of harmonization for IP addresses. """
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__),
+                                              'test_sieve_files/test_string_invalid_ipaddr.sieve')
+
+        event = EXAMPLE_INPUT.copy()
+        self.input_message = event
+        with self.assertRaises(ValueError) as context:
+            self.run_bot()
+        exception = context.exception
+        self.assertRegex(str(exception), 'Invalid ip address:')
+
     def test_numeric_equal_match(self):
         """ Test == numeric match """
         self.sysconfig['file'] = os.path.join(os.path.dirname(__file__),
