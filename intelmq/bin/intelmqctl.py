@@ -944,9 +944,9 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                     retval = 1
 
         if RETURN_TYPE == 'json':
-            output.append(['info', 'Checking harmoization configuration.'])
+            output.append(['info', 'Checking harmonization configuration.'])
         else:
-            self.logger.info('Checking harmoization configuration.')
+            self.logger.info('Checking harmonization configuration.')
         for event_type, event_type_conf in files[HARMONIZATION_CONF_FILE].items():
             for harm_type_name, harm_type in event_type_conf.items():
                 if "description" not in harm_type:
