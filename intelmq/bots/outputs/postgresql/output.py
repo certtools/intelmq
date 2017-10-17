@@ -22,8 +22,7 @@ class PostgreSQLOutputBot(Bot):
     def init(self):
         self.logger.debug("Connecting to PostgreSQL.")
         if psycopg2 is None:
-            self.logger.error('Could not import psycopg2. Please install it.')
-            self.stop()
+            raise ValueError("Could not import 'psycopg2'. Please install it.")
 
         try:
             if hasattr(self.parameters, 'connect_timeout'):
@@ -43,13 +42,14 @@ class PostgreSQLOutputBot(Bot):
             self.con.autocommit = getattr(self.parameters, 'autocommit', True)
 
             self.table = self.parameters.table
+            self.jsondict_as_string = getattr(self.parameters, 'jsondict_as_string', True)
         except Exception:
             self.logger.exception('Failed to connect to database.')
-            self.stop()
+            raise
         self.logger.info("Connected to PostgreSQL.")
 
     def process(self):
-        event = self.receive_message()
+        event = self.receive_message().to_dict(jsondict_as_string=self.jsondict_as_string)
 
         keys = '", "'.join(event.keys())
         values = list(event.values())
@@ -68,7 +68,6 @@ class PostgreSQLOutputBot(Bot):
                 self.logger.exception('Executed rollback command '
                                       'after failed query execution.')
             except psycopg2.OperationalError:
-                self.con.rollback()
                 self.logger.exception('Executed rollback command '
                                       'after failed query execution.')
                 self.init()
