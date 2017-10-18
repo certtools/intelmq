@@ -923,6 +923,27 @@ http_user_agent: {{ your user agent }}
 id: cleanmx-virus-parser
 ```
 
+# Cymru CAP program
+
+http://www.team-cymru.org/CSIRT-AP.html
+
+**Status:** Active
+
+## Collector Bot
+
+Usually via HTTPS.
+
+## Parser Bot
+
+**Bot Name:** Cymru CAP Program
+
+**Bot Module:** intelmq.bots.parsers.cymru.cap_program
+
+**Configuration Parameters:**
+```
+id: cymru-cap-program-parser
+```
+
 # Cymru Full Bogons
 
 **Status:** Active
@@ -946,7 +967,7 @@ http_url: https://www.team-cymru.org/Services/Bogons/fullbogons-ipv4.txt
 
 **Bot Name:** Cymru Full Bogons
 
-**Bot Module:** intelmq.bots.parsers.cymru_full_bogons.parser
+**Bot Module:** intelmq.bots.parsers.cymru.full_bogons
 
 **Configuration Parameters:**
 ```

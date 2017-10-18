@@ -412,6 +412,15 @@ Lines starting with `'#'` will be ignored. Headers won't be interpreted.
 If the source does have a field with information for `classification.type`, but it does not correspond to intelmq's types,
 you can map them to the correct ones. The `type_translation` field can hold a JSON field with a dictionary which maps the feed's values to intelmq's.
 
+
+### Cymru Full Bogons
+
+#### Information:
+* `name:` intelmq.bots.parsers.cymru.full_bogons
+* `public:` no
+* `cache (redis db):` none
+* `description:` 
+
 <a name="experts"></a>
 ## Experts
 
