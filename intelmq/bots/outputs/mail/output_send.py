@@ -161,8 +161,9 @@ class MailSendOutputBot(Bot):
             dict_writer.writerows(rows_output)
 
             count = len(rows_output)
+            email_to = str(mail_record[len("mail:"):], encoding="utf-8")
             filename = '{}_{}_events'.format(time.strftime("%y%m%d"), count)
-            path = self.TMP_DIR + filename + '.zip'
+            path = self.TMP_DIR + filename + '_' + email_to + '.zip'
 
             zf = zipfile.ZipFile(path, mode='w', compression=zipfile.ZIP_DEFLATED)
             try:
@@ -172,8 +173,7 @@ class MailSendOutputBot(Bot):
                 yield None
             finally:
                 zf.close()
-
-            email_to = str(mail_record[len("mail:"):], encoding="utf-8")
+            
             if email_to in self.alternativeMail:
                 print("Alternative: instead of {} we use {}".format(email_to, self.alternativeMail[email_to]))
                 email_to = self.alternativeMail[email_to]
