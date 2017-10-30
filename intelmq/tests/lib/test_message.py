@@ -675,6 +675,14 @@ class TestMessageFactory(unittest.TestCase):
         event.add('comment', 'bar', overwrite=False)
         self.assertEqual(event['comment'], 'foo')
 
+    def test_to_dict_jsondict_as_string(self):
+        """
+        Test if to_dict(jsondict_as_string) works correctly.
+        """
+        event = self.new_event()
+        event.add('extra.foo', 'bar')
+        self.assertDictEqual(event.to_dict(hierarchical=False, jsondict_as_string=True),
+                             {'extra': '{"foo": "bar"}'})
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()

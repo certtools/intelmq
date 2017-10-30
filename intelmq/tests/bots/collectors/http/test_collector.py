@@ -39,7 +39,6 @@ class TestHTTPCollectorBot(test.BotTestCase, unittest.TestCase):
                          'extract_files': True,
                          'feed': 'Example feed',
                          }
-        cls.default_input_message = {'__type': 'Event'}
 
     def test_events(self):
         """ Test if correct Events have been produced. """
