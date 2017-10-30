@@ -1,6 +1,12 @@
 CHANGELOG
 ==========
 
+1.0.2 Bugfix release
+--------------------
+
+### Bots
+- `collectors.mail.collector_mail_url`: Fix bug which prevented marking emails seen due to disconnects from server (#852).
+
 1.0.1 Bugfix release
 --------------------
 ### Documentation
