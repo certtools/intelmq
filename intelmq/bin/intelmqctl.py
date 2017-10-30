@@ -450,8 +450,6 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                                      const=True)
             parser_list.set_defaults(func=self.list)
 
-            subparsers.add_parser('check', help='Check installation and configuration')
-
             parser_clear = subparsers.add_parser('clear', help='Clear a queue')
             parser_clear.add_argument('queue', help='queue name',
                                       choices=self.get_queues()[3])
@@ -496,6 +494,9 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
             parser_check = subparsers.add_parser('check',
                                                  help='Check installation and configuration')
+            parser_check.add_argument('--quiet', '-q', action='store_const',
+                                      help='Only print warnings and errors.',
+                                      const=True)
             parser_check.set_defaults(func=self.check)
 
             parser_help = subparsers.add_parser('help',
@@ -842,6 +843,8 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         retval = 0
         if RETURN_TYPE == 'json':
             output = []
+        if QUIET:
+            logger.setLevel('WARNING')
 
         # loading files and syntax check
         files = {DEFAULTS_CONF_FILE: None, PIPELINE_CONF_FILE: None,
