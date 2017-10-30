@@ -123,7 +123,7 @@ class IntelMQProcessManager:
                                   'created: %s.', self.PIDDIR, exc)
 
     def bot_run(self, bot_id, run_subcommand=None, console_type=None, message_action_kind=None, dryrun=None, msg=None):
-        pid = self.__read_pidfile(bot_id)
+        pid = self.__check_pid(bot_id)
         module = self.__runtime_configuration[bot_id]['module']
         if pid and self.__status_process(pid, module):
             self.logger.warning("Main instance of the bot is running in the background and will be stopped; "
@@ -157,7 +157,7 @@ class IntelMQProcessManager:
         return retval
 
     def bot_start(self, bot_id, getstatus=True):
-        pid = self.__read_pidfile(bot_id)
+        pid = self.__check_pid(bot_id)
         module = self.__runtime_configuration[bot_id]['module']
         if pid:
             if self.__status_process(pid, module):
@@ -183,7 +183,7 @@ class IntelMQProcessManager:
             return self.bot_status(bot_id, proc=proc)
 
     def bot_stop(self, bot_id, getstatus=True):
-        pid = self.__read_pidfile(bot_id)
+        pid = self.__check_pid(bot_id)
         module = self.__runtime_configuration[bot_id]['module']
         if not pid:
             if self.controller._is_enabled(bot_id):
@@ -217,7 +217,7 @@ class IntelMQProcessManager:
                 return 'stopped'
 
     def bot_reload(self, bot_id, getstatus=True):
-        pid = self.__read_pidfile(bot_id)
+        pid = self.__check_pid(bot_id)
         module = self.__runtime_configuration[bot_id]['module']
         if not pid:
             if self.controller._is_enabled(bot_id):
@@ -251,14 +251,14 @@ class IntelMQProcessManager:
             if proc.status() not in [psutil.STATUS_STOPPED, psutil.STATUS_DEAD, psutil.STATUS_ZOMBIE]:
                 return 'running'
         else:
-            pid = self.__read_pidfile(bot_id)
+            pid = self.__check_pid(bot_id)
             module = self.__runtime_configuration[bot_id]['module']
             if pid and self.__status_process(pid, module):
                 log_bot_message('running', bot_id)
                 return 'running'
 
         if self.controller._is_enabled(bot_id):
-            if self.__check_pidfile(bot_id):
+            if pid:
                 self.__remove_pidfile(bot_id)
             log_bot_message('stopped', bot_id)
             if proc and RETURN_TYPE == 'text':
@@ -271,20 +271,12 @@ class IntelMQProcessManager:
             log_bot_message('disabled', bot_id)
             return 'disabled'
 
-    def __read_pidfile(self, bot_id):
-        filename = self.PIDFILE.format(bot_id)
-        if self.__check_pidfile(bot_id):
-            with open(filename, 'r') as fp:
-                pid = fp.read()
-            return pid.strip()
-        return None
-
-    def __check_pidfile(self, bot_id):
+    def __check_pid(self, bot_id):
         filename = self.PIDFILE.format(bot_id)
         if os.path.isfile(filename):
+            with open(filename, 'r') as fp:
+                pid = fp.read()
             try:
-                with open(filename, 'r') as fp:
-                    pid = fp.read()
                 return int(pid.strip())
             except ValueError:
                 return None
