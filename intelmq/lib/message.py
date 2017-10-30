@@ -15,6 +15,7 @@ import intelmq.lib.harmonization
 from intelmq import HARMONIZATION_CONF_FILE
 from intelmq.lib import utils
 from typing import Sequence, Optional
+from collections import defaultdict
 
 
 __all__ = ['Event', 'Message', 'MessageFactory', 'Report']
@@ -382,18 +383,46 @@ class Message(dict):
 
         return event_hash.hexdigest()
 
-    def to_dict(self, hierarchical: bool=False, with_type: bool=False):
-        json_dict = dict()
+    def to_dict(self, hierarchical: bool=False, with_type: bool=False,
+                jsondict_as_string: bool=False) -> dict:
+        """
+        Returns a copy of self, only based on a dict class.
+
+        Parameters:
+            hierarchical: Split all keys at a dot and save these subitems
+                in dictionaries.
+            with_type: Add a value named `__type` containing the message type
+            jsondict_as_string:
+                If False (default) treat values in JSONDict fields just as normal ones
+                If True, save such fields as JSON-encoded string. This is the old behavior
+                    before version 1.1.
+
+        Returns:
+            new_dict: A dictionary as copy of itself modified according
+                to the given parameters
+        """
+        new_dict = {}
 
         if with_type:
-            self['__type'] = self.__class__.__name__
+            new_dict['__type'] = self.__class__.__name__
+
+        jsondicts = defaultdict(dict)
 
         for key, value in self.items():
+            splitted_key = key.split('.')
             if hierarchical:
-                subkeys = key.split('.')
+                subkeys = splitted_key
             else:
                 subkeys = [key]
-            json_dict_fp = json_dict
+            json_dict_fp = new_dict
+
+            try:
+                key_type = self.__get_type_config(splitted_key[0])[0]['type']
+            except KeyError:
+                key_type = None
+            if key_type == 'JSONDict' and jsondict_as_string:
+                jsondicts[splitted_key[0]]['.'.join(splitted_key[1:])] = value
+                continue
 
             for subkey in subkeys:
                 if subkey == subkeys[-1]:
@@ -405,12 +434,12 @@ class Message(dict):
 
                 json_dict_fp = json_dict_fp[subkey]
 
-        if with_type:
-            del self['__type']
+        for key, value in jsondicts.items():
+            new_dict[key] = json.dumps(value, ensure_ascii=False)
 
-        return json_dict
+        return new_dict
 
-    def to_json(self, hierarchical=False, with_type=False):
+    def to_json(self, hierarchical=False, with_type=False, jsondict_as_string=False):
         json_dict = self.to_dict(hierarchical=hierarchical, with_type=with_type)
         return json.dumps(json_dict, ensure_ascii=False)
 

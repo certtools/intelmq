@@ -668,6 +668,7 @@
                 "autocommit": true,
                 "database": "intelmq-events",
                 "host": "localhost",
+                "jsondict_as_string": true,
                 "password": "<password>",
                 "port": "5432",
                 "sslmode": "require",

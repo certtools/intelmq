@@ -886,10 +886,11 @@ for the versions you are using.
 * `connect_timeout`: PostgreSQL connect_timeout, optional, default 5 seconds
 * `database`: PostgreSQL database
 * `host`: PostgreSQL host
+* `jsondict_as_string`: save JSONDict fields as JSON string, boolean. Default: true (like in versions before 1.1)
 * `port`: PostgreSQL port
 * `user`: PostgreSQL user
 * `password`: PostgreSQL password
-* `sslmode`: PostgreSQL sslmode
+* `sslmode`: PostgreSQL sslmode, can be `'disable'`, `'allow'`, `'prefer'` (default), `'require'`, `'verify-ca'` or `'verify-full'`. See postgresql docs: https://www.postgresql.org/docs/current/static/libpq-connect.html#libpq-connect-sslmode
 * `table`: name of the database table into which events are to be inserted
 
 #### Installation Requirements
