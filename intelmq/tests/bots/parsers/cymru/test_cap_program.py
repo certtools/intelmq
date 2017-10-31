@@ -1,50 +1,120 @@
 # -*- coding: utf-8 -*-
-
+import os.path
 import unittest
 
 import intelmq.lib.test as test
-from intelmq.bots.parsers.cymru_full_bogons.parser import \
-    CymruFullBogonsParserBot
+import intelmq.lib.utils as utils
+from intelmq.bots.parsers.cymru.cap_program import CymruCAPProgramParserBot
+
+with open(os.path.join(os.path.dirname(__file__),
+                       'infected_20171031.txt')) as handle:
+    RAW = handle.read()
+RAW_LINES = RAW.splitlines()
+
 
 REPORT = {'__type': 'Report',
-          'feed.url': 'https://www.team-cymru.org/Services/Bogons/fullbogons-ipv4.txt',
-          'raw': 'IyBsYXN0IHVwZGF0ZWQgMTQ1MDE5MzcwMiAoVHVlIERlYyAxNSAxNTozNTowMiAyMDE1IEdNVCkKMC4wLjAuMC84CjIuNTYuMC4wLzE0',
+          'raw': utils.base64_encode(RAW),
           'time.observation': '2015-11-01T00:01:45+00:05',
+          }
+EVENT0 = {'__type': 'Event',
+          'time.source': '2017-10-31 10:00:00',
+          'time.observation': '2015-11-01T00:01:45+00:05',
+          'classification.identifier': 'ssh',
+          'classification.type': 'brute-force',
+          'protocol.application': 'ssh',
+          'raw': utils.base64_encode('\n'.join(RAW_LINES[:3])),
+          'source.as_name': 'Example AS Name',
+          'source.asn': 64496,
+          'source.ip': '172.16.0.21',
+          'time.source': '2017-10-31T10:00:00+00:00',
           }
 EVENT1 = {'__type': 'Event',
-          'feed.url': 'https://www.team-cymru.org/Services/Bogons/fullbogons-ipv4.txt',
-          'time.source': '2015-12-15T15:35:02+00:00',
-          'source.network': '0.0.0.0/8',
-          'classification.type': 'blacklist',
           'time.observation': '2015-11-01T00:01:45+00:05',
-          'raw': 'MC4wLjAuMC84',
+          'classification.identifier': 'dns-open-resolver',
+          'classification.type': 'vulnerable service',
+          'protocol.application': 'dns',
+          'source.as_name': 'Example AS Name',
+          'source.asn': 64496,
+          'source.ip': '172.16.0.21',
+          'time.source': '2017-10-31T10:00:01+00:00',
+          'raw': utils.base64_encode('\n'.join(RAW_LINES[:2] + [RAW_LINES[3]])),
           }
 EVENT2 = {'__type': 'Event',
-          'feed.url': 'https://www.team-cymru.org/Services/Bogons/fullbogons-ipv4.txt',
-          'time.source': '2015-12-15T15:35:02+00:00',
-          'source.network': '2.56.0.0/14',
-          'classification.type': 'blacklist',
           'time.observation': '2015-11-01T00:01:45+00:05',
-          'raw': 'Mi41Ni4wLjAvMTQ='
+          'source.as_name': 'Example AS Name',
+          'source.asn': 64496,
+          'source.ip': '172.16.0.21',
+          'time.source': '2017-10-31T10:00:02+00:00',
+          'raw': utils.base64_encode('\n'.join(RAW_LINES[:2] + [RAW_LINES[4]])),
+          'classification.type': 'phishing',
+          'source.url': 'http://www.example.com/',
+          }
+EVENT3 = {'__type': 'Event',
+          'time.observation': '2015-11-01T00:01:45+00:05',
+          'source.as_name': 'Example AS Name',
+          'source.asn': 64496,
+          'source.ip': '172.16.0.21',
+          'time.source': '2017-10-31T10:00:03+00:00',
+          'raw': utils.base64_encode('\n'.join(RAW_LINES[:2] + [RAW_LINES[5]])),
+          'classification.type': 'proxy',
+          'extra.request': 'HTTP CONNECT (8080)',
+          }
+EVENT4 = {'__type': 'Event',
+          'time.observation': '2015-11-01T00:01:45+00:05',
+          'source.as_name': 'Example AS Name',
+          'source.asn': 64496,
+          'source.ip': '172.16.0.21',
+          'time.source': '2017-10-31T10:00:04+00:00',
+          'raw': utils.base64_encode('\n'.join(RAW_LINES[:2] + [RAW_LINES[6]])),
+          'classification.type': 'spam',
+          }
+EVENT5 = {'__type': 'Event',
+          'time.observation': '2015-11-01T00:01:45+00:05',
+          'source.as_name': 'Example AS Name',
+          'source.asn': 64496,
+          'source.ip': '172.16.0.21',
+          'time.source': '2017-10-31T10:00:05+00:00',
+          'raw': utils.base64_encode('\n'.join(RAW_LINES[:2] + [RAW_LINES[7]])),
+          'classification.type': 'botnet drone',
+          'classification.identifier': 'conficker',
+          'malware.name': 'conficker',
+          'destination.ip': '172.16.0.22',
+          'extra.source_port': '1337',
+          }
+EVENT6 = {'__type': 'Event',
+          'time.observation': '2015-11-01T00:01:45+00:05',
+          'source.as_name': 'Example AS Name',
+          'source.asn': 64496,
+          'source.ip': '172.16.0.21',
+          'time.source': '2017-10-31T10:00:06+00:00',
+          'raw': utils.base64_encode('\n'.join(RAW_LINES[:2] + [RAW_LINES[8]])),
+          'classification.type': 'botnet drone',
+          'classification.identifier': 'conficker',
+          'malware.name': 'conficker',
           }
 
 
-class TestCymruFullBogonsParserBot(test.BotTestCase, unittest.TestCase):
+class TestCymruCAPProgramParserBot(test.BotTestCase, unittest.TestCase):
     """
-    A TestCase for CymruFullBogonsParserBot.
+    A TestCase for CymruCAPProgramParserBot.
     """
 
     @classmethod
     def set_bot(cls):
-        cls.bot_reference = CymruFullBogonsParserBot
+        cls.bot_reference = CymruCAPProgramParserBot
         cls.default_input_message = {'__type': 'Report', 'raw': 'Cg=='}
 
     def test_events(self):
         """ Test if correct Events have been produced. """
         self.input_message = REPORT
         self.run_bot()
-        self.assertMessageEqual(0, EVENT1)
-        self.assertMessageEqual(1, EVENT2)
+        self.assertMessageEqual(0, EVENT0)
+        self.assertMessageEqual(1, EVENT1)
+        self.assertMessageEqual(2, EVENT2)
+        self.assertMessageEqual(3, EVENT3)
+        self.assertMessageEqual(4, EVENT4)
+        self.assertMessageEqual(5, EVENT5)
+        self.assertMessageEqual(6, EVENT6)
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
