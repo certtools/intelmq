@@ -137,10 +137,11 @@ class MailSendOutputBot(Bot):
             fieldnames = set()
             rows_output = []
             for row in lines:
+                #if "feed.name" in row and "NTP-Monitor" in row["feed.name"]: continue
                 fieldnames = fieldnames | set(row.keys())
-                keys = set(allowed_fieldnames).intersection(row)
-                ordered_keys = []
-                for field in allowed_fieldnames:
+                keys = set(allowed_fieldnames).intersection(row)                
+                ordered_keys = []                 
+                for field in allowed_fieldnames:                    
                     if field in keys:
                         ordered_keys.append(field)
                 try:
@@ -161,6 +162,8 @@ class MailSendOutputBot(Bot):
             dict_writer.writerows(rows_output)
 
             count = len(rows_output)
+            if not count:
+                continue
             email_to = str(mail_record[len("mail:"):], encoding="utf-8")
             filename = '{}_{}_events'.format(time.strftime("%y%m%d"), count)
             path = self.TMP_DIR + filename + '_' + email_to + '.zip'
@@ -169,8 +172,8 @@ class MailSendOutputBot(Bot):
             try:
                 zf.writestr(filename + ".csv", output.getvalue())
             except:
-                print("Can't zip mail {}".format(mail_record))
-                yield None
+                logger.error("Can't zip mail {}".format(mail_record))
+                continue
             finally:
                 zf.close()
             
