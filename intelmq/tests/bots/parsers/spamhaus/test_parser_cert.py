@@ -9,6 +9,7 @@ from intelmq.bots.parsers.spamhaus.parser_cert import SpamhausCERTParserBot
 
 with open(os.path.join(os.path.dirname(__file__), 'cert.txt')) as handle:
     FILE = handle.read()
+FILE_LINES = FILE.splitlines()
 
 EXAMPLE_REPORT = {"feed.url": "https://portal.spamhaus.org/cert/api.php?cert="
                               "<CERTNAME>&key=<APIKEY>",
@@ -78,6 +79,17 @@ EXAMPLE_EVENTS_PARTS = [{'raw': 'MTA5LjEyNi42NC4yLEFTMTI2MzUsQVQsMTQ0MTAwODk3M'
                          'destination.port': 1696,
                          'source.geolocation.cc': 'LV',
                          'protocol.transport': 'tcp',
+                         },
+                        {'raw': utils.base64_encode(FILE_LINES[-1]),
+                         'source.ip': '203.0.113.4',
+                         'time.source': '2017-11-06T08:08:30+00:00',
+                         'malware.name': 'locky',
+                         'destination.ip': '198.18.0.19',
+                         'destination.fqdn': 'example.invalid',
+                         'destination.port': 80,
+                         'source.geolocation.cc': 'AT',
+                         'protocol.transport': 'tcp',
+                         'extra': '{"destination.local_port": 36288}',
                          }]
 
 
