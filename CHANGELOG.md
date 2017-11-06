@@ -55,6 +55,14 @@ Support for Python 3.3 has been dropped, it reached its end of life.
 
 ### Bots
 - `collectors.mail.collector_mail_url`: Fix bug which prevented marking emails seen due to disconnects from server (#852).
+- `parsers.spamhaus.parser_cert`: Handle/ignore 'AS?' in feed (#1111)
+
+### Packaging
+- Support building for more distributions
+- Use LSB-paths (/etc/intelmq/, /var/lib/intelmq/, /run/intelmq/) (#470)
+- Use quilt instead of native
+- Fix problems in postint and postrm scripts
+- Use systemd-tmpfile for creation of /run/intelmq/
 
 ### Documentation
 - Add disclaimer on maxmind database in bot documentation and code and the cron-job (#1110)
