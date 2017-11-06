@@ -7,6 +7,9 @@ CHANGELOG
 ### Bots
 - `collectors.mail.collector_mail_url`: Fix bug which prevented marking emails seen due to disconnects from server (#852).
 
+### Documentation
+- Add disclaimer on maxmind database in bot documentation and code and the cron-job (#1110)
+
 1.0.1 Bugfix release
 --------------------
 ### Documentation

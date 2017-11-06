@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+"""
+This product includes GeoLite2 data created by MaxMind, available from
+<a href="http://www.maxmind.com">http://www.maxmind.com</a>.
+"""
 
 from intelmq.lib.bot import Bot
 
