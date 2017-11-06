@@ -56,6 +56,9 @@ Support for Python 3.3 has been dropped, it reached its end of life.
 ### Bots
 - `collectors.mail.collector_mail_url`: Fix bug which prevented marking emails seen due to disconnects from server (#852).
 
+### Documentation
+- Add disclaimer on maxmind database in bot documentation and code and the cron-job (#1110)
+
 1.0.1 Bugfix release
 --------------------
 ### Documentation
