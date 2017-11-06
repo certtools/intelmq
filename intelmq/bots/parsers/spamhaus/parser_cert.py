@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """
+Header of the File:
 ; Bots filtered by last 1 hours, prepared for <CERTNAME> on UTC = ...
 ; Copyright © 2015 The Spamhaus Project Ltd. All rights reserved.
 ; No re-distribution or public access allowed without Spamhaus permission.
@@ -47,7 +48,9 @@ class SpamhausCERTParserBot(Bot):
             event.change("feed.url", event["feed.url"].split("key=")[0])
 
             event.add('source.ip', row_splitted[0])
-            event.add('source.asn', row_splitted[1].replace('AS', ''))
+            source_asn = row_splitted[1].replace('AS', '')
+            if source_asn != '?':
+                event.add('source.asn', source_asn)
             event.add('source.geolocation.cc', row_splitted[2])
             event.add('time.source',
                       DateTime.from_timestamp(int(row_splitted[3])))
