@@ -4,14 +4,18 @@ CHANGELOG
 1.0.2 Bugfix release
 --------------------
 
+### Core
+- `lib.message.add`: parameter force has finally been removed, should have been gone in 1.0.0.rc1 already
+
 ### Bots
 - `collectors.mail.collector_mail_url`: Fix bug which prevented marking emails seen due to disconnects from server (#852).
 - `parsers.spamhaus.parser_cert`: Handle/ignore 'AS?' in feed (#1111)
 
 ### Packaging
-- Support building for more distributions
-- Use LSB-paths (/etc/intelmq/, /var/lib/intelmq/, /run/intelmq/) (#470)
-- Use quilt instead of native
+- The following changes have been in effect for the built packages already since version 1.0.0
+- Support building for more distributions, now supported: CentOS 7, Debian 8 and 9, Fedora 25 and 26, RHEL 7, openSUSE Leap 42.2 and 42.3 and Tumbleweed, Ubuntu 14.04 and 16.04
+- Use LSB-paths for created packages (/etc/intelmq/, /var/lib/intelmq/, /run/intelmq/) (#470). Does does not affect installations with setuptools/pip.
+- Change the debian package format from native to quilt
 - Fix problems in postint and postrm scripts
 - Use systemd-tmpfile for creation of /run/intelmq/
 
