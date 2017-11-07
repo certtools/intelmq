@@ -6,7 +6,7 @@ import unittest
 import os
 import inspect
 
-EXAMPLE_FILTER_PASS = {"source.ip": "192.0.2.3",
+EXAMPLE_FILTER_PASS = {"source.ip": "10.0.0.2",
                   "time.source": "2015-06-04T13:37:00+00:00",
                   "feed.url": "http://www.example.com/",
                   "source.reverse_dns": "reverse.example.net",
@@ -20,7 +20,8 @@ EXAMPLE_FILTER_PASS = {"source.ip": "192.0.2.3",
                   "event_description.text": "example description",
                   "source.asn": 00000,
                   "feed.name": "Example"}
-EXAMPLE_FILTER_OUT = {"source.ip": "192.0.2.3",
+EXAMPLE_FILTER_OUT = {"source.ip": "10.0.0.1",
+                  "source.abuse_contact": "one@example.com",
                   "time.source": "2015-06-04T13:37:00+00:00",
                   "feed.url": "http://www.example.com/",
                   "source.reverse_dns": "reverse.example.net",
@@ -33,8 +34,7 @@ EXAMPLE_FILTER_OUT = {"source.ip": "192.0.2.3",
                   "classification.type": "malware",
                   "event_description.text": "example description",
                   "source.asn": 00000,
-                  "feed.name": "Example",
-                  "Recipient": "robert.sefr@nic.cz"}
+                  "feed.name": "Example"}
 
 
 

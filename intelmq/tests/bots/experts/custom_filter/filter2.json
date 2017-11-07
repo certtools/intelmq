@@ -1,0 +1,13 @@
+{
+    "name": "Exclude specific malware events",
+    "date": "2015-02-03",
+    "type": "exclude",
+    "conditions": {
+        "source.abuse_contact": [
+            "one@example.com",
+            "two@example.com",
+        ],    
+        "source.ip": [
+            "10.0.0.1"
+        ]
+}

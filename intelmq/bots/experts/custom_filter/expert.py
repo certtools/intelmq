@@ -4,42 +4,42 @@ from glob import glob
 from intelmq.lib.bot import Bot
 import json
 
-class CustomFilterExpertBot(Bot):
-    """ Filter bot has filters. Filters have conditions. 
-    If the value conforms with any part of the condition, it is passed.    
-    """
-
+class CustomFilterExpertBot(Bot):    
     filters = {}
 
-    def meet_condition(self, message):        
-        if not self.filters:
-            return True
-        
-        includable = False
-        for filterO in self.filters.values():                        
+    def meet_condition(self, message):                           
+        includable = None
+        for filterO in self.filters.values():
             conforming = False
             for key, value in filterO["conditions"].items():                
                 try:                    
-                    if (isinstance(value, list) and message[key] in value) or value == message[key]: # filter passed                        
-                        conforming = True                        
+                    if (isinstance(value, list) and message[key] in value) or value == message[key]: # filter passed                                                
+                        conforming = True
+                    else:                        
+                        conforming = False
+                        break
                 except KeyError:                    
                     conforming = False
                     break
+            
             if conforming:
-                if filterO["type"] == "include":                    
+                if filterO["type"] == "include":
                     includable = True
-                elif filterO["type"] == "exclude":                    
+                elif filterO["type"] == "exclude":                      
                     return False
-        return includable    
+            elif filterO["type"] == "include" and includable is None:
+                includable = False                
+                    
+        if includable is None:
+            return True # none of the filters matched
+        return includable 
 
     def init(self):
-        """ Loads rules from .json """
-        ruleI = 0
-        for rule_file in glob(self.parameters.rules_dir + "*.json"):
-            with open(rule_file, 'r') as f:                
+        """ Loads rules from .json """        
+        for i, rule_file in enumerate(glob(self.parameters.rules_dir + "*.json")):
+            with open(rule_file, 'r') as f:
                 rule = json.load(f)                
-                CustomFilterExpertBot.filters[ruleI] = rule
-            ruleI += 1        
+                CustomFilterExpertBot.filters[i] = rule            
 
     def process(self):
         message = self.receive_message()        
