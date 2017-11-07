@@ -5,6 +5,7 @@ CHANGELOG
 1.0.3 Bugfix release (unreleased)
 ---------------------------------
 ### Core
+- warnings of bots are catched by the logger (#1074)
 
 ### Bots
 #### Parsers
