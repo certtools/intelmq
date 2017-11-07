@@ -8,6 +8,7 @@ CHANGELOG
 
 ### Bots
 #### Parsers
+- All CSV parsers ignore NULL-bytes now, because the csv-library cannot handle it (#967)
 - Modify Bot default ruleset: changed conficker rule to catch more spellings
 
 ### Documentation
