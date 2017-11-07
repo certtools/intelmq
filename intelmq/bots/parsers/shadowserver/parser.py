@@ -44,9 +44,6 @@ class ShadowserverParserBot(ParserBot):
             if self.parameters.overwrite:
                 self.overwrite = True
 
-        # Already warned about deprecation
-        self.depr_warning = False
-
     def parse(self, report):
         raw_report = utils.base64_decode(report["raw"])
         # Temporary fix for https://github.com/certtools/intelmq/issues/967

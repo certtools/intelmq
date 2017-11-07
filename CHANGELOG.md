@@ -62,6 +62,7 @@ Support for Python 3.3 has been dropped, it reached its end of life.
 * logrotate: use sudo for postrotate script
 
 ### Core
+- warnings of bots are catched by the logger (#1074)
 
 ### Bots
 #### Parsers
