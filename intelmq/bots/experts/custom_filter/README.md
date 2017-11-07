@@ -1,10 +1,4 @@
-A bot to filter specific events from the pipeline. This version of the bot, the filter parameters include:
-- Taxonomy - values describeb here https://github.com/certtools/intelmq/blob/master/docs/DataHarmonization.md#typetaxonomy-mapping
-- Type - values described here https://github.com/certtools/intelmq/blob/master/docs/DataHarmonization.md#typetaxonomy-mapping
-- ASN - string with autonomous system number, e.g. "12345"
-- CIDR - notation of particular subnet, e.g. "192.168.100.0/24" (yet to be finished)
-- AbuseEmail - email address including wildcards, e.g. "*@isp.cz"
-- CC - country code, e.g. "CN" or "US"
+A bot to filter specific events from the pipeline. See valid fields at https://github.com/certtools/intelmq/blob/master/docs/Harmonization-fields.md
 
 With the filter bot, one should be able to define filters such as:
  - throw away all events for specific ASN or CIDR
@@ -30,30 +24,25 @@ Sample configuration file
     "name": "Exclude specific malware events",
     "date": "2015-02-03",
     "type": "exclude",
-    "filter": {
-        "Taxonomy": [
-            "Malicious Code",
-            "Intrusion Attempts"
-        ],
-        "Type": [
-            "botnet drone",
-            "c&c"
-        ],
-        "ASN": [
-            "25761",
-            "54600"
-        ],
-        "CIDR": [
-            "192.168.100.0/24",
-            "10.10.25.38/32"
-        ],
-        "Recipient": [
-            "info@abuse.com",
-            "*@isp.cz"
-        ],
-        "CC": [
-            "US"
+    "conditions": {
+        "source.abuse_contact": [
+            "one@example.com",
+            "two@example.com",
+        ],    
+        "source.ip": [
+            "192.168.100.1"
         ]
-    }
+}
+```
+
+```
+{
+    "name": "Allow only specific IP",
+    "date": "2015-02-04",
+    "type": "include",
+    "conditions": {        
+        "source.ip": [
+            "192.168.100.1"
+        ]
 }
 ```
