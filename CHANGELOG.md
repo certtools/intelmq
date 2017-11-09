@@ -1,6 +1,17 @@
 CHANGELOG
 ==========
 
+
+1.0.3 Bugfix release (unreleased)
+---------------------------------
+### Core
+
+### Bots
+
+### Documentation
+
+### Tools
+
 1.0.2 Bugfix release
 --------------------
 
