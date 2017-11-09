@@ -7,6 +7,8 @@ CHANGELOG
 ### Core
 
 ### Bots
+#### Parsers
+- Modify Bot default ruleset: changed conficker rule to catch more spellings
 
 ### Documentation
 
