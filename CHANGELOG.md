@@ -55,6 +55,8 @@ Support for Python 3.3 has been dropped, it reached its end of life.
 ### Core
 
 ### Bots
+#### Parsers
+- Modify Bot default ruleset: changed conficker rule to catch more spellings
 
 ### Documentation
 
