@@ -89,7 +89,7 @@ EXAMPLE_EVENTS_PARTS = [{'raw': 'MTA5LjEyNi42NC4yLEFTMTI2MzUsQVQsMTQ0MTAwODk3M'
                          'destination.port': 80,
                          'source.geolocation.cc': 'AT',
                          'protocol.transport': 'tcp',
-                         'extra': '{"destination.local_port": 36288}',
+                         'extra.destination.local_port': 36288,
                          }]
 
 
