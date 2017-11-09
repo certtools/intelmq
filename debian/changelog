@@ -1,3 +1,15 @@
+intelmq (1.0.2-1) experimental; urgency=low
+
+  * Update to version 1.0.2
+
+ -- Wagner Sebastian <wagner@cert.at>  Mon, 06 Nov 2017 11:36:58 +0100
+
+intelmq (1.0.1-2) experimental; urgency=low
+
+  * New base branch 'packaging' for packages
+
+ -- Wagner Sebastian <wagner@cert.at>  Wed, 20 Sep 2017 16:26:59 +0200
+
 intelmq (1.0.1-1) experimental; urgency=low
 
   * update to version 1.0.1
@@ -19,6 +31,10 @@ intelmq (1.0.0.rel-1) experimental; urgency=medium
 intelmq (1.0.0.rc1-1) experimental; urgency=medium
 
   * update to version 1.0.0.rc1
+
+intelmq (1.0.0.dev8-2) experimental; urgency=medium
+
+  * packaging fixes
 
  -- Sebastian Wagner <wagner@cert.at>  Wed, 20 Jun 2017 16:05:00 +0200
 

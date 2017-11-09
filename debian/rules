@@ -1,12 +1,15 @@
 #!/usr/bin/make -f
 
+CODENAME := $(shell lsb_release -cs)
 DOCS_DIR := debian/intelmq/usr/share/doc/intelmq
+export INTELMQ_SKIP_REDIS=1
+export INTELMQ_SKIP_INTERNET=1
 
 # Compile list of bot READMEs
 BOTROOT := intelmq/bots
 BOTCATEGORIES := collectors experts outputs parsers
 BOTCATEGORIES := $(foreach cat,$(BOTCATEGORIES),$(BOTROOT)/$(cat))
-BOTS    := $(foreach bot,$(BOTCATEGORIES),$(wildcard $(bot)/*))
+BOTS	:= $(foreach bot,$(BOTCATEGORIES),$(wildcard $(bot)/*))
 BOTDOCS := $(foreach bot,$(BOTS),$(wildcard $(bot)/*.md))
 
 # This file is based on a version
@@ -14,17 +17,37 @@ BOTDOCS := $(foreach bot,$(BOTS),$(wildcard $(bot)/*.md))
 # Wed, 23 Mar 2016 17:49:26 +0000
 export PYBUILD_NAME=intelmq
 %:
-	dh $@ --with python3 --without python2 --buildsystem=pybuild --with quilt
+	dh $@ --with python3 --without python2 --buildsystem=pybuild --with quilt --with systemd
+
+build:
+	if [ $(CODENAME) = 'xenial' ] || [ $(CODENAME) = 'jessie' ]; then\
+		patch -p1 setup.py debian/patches/fix-dnspython-name.patch;\
+	fi
+	dh build --with python3 --without python2 --buildsystem=pybuild --with quilt --with systemd
 
 override_dh_auto_build:
 
 override_dh_auto_install: $(BOTDOCS)
+	rm intelmq/bin/rewrite_config_files.py
+	rm intelmq/bin/intelmq_gen_harm_docs.py
+	sed -i -e '/#!\/usr\/bin\//d' intelmq/bin/*.py
+	find . -type f -exec sed -i -f debian/sedfile {} \;
 	python3 setup.py install --root=debian/intelmq --prefix=/usr
-	mv debian/intelmq/opt/intelmq/etc/examples/* debian/intelmq/opt/intelmq/etc/
-	rmdir debian/intelmq/opt/intelmq/etc/examples
-	mkdir -p debian/intelmq/opt/intelmq/var/log
-	mkdir -p debian/intelmq/opt/intelmq/var/lib/bots/file-output
+	mv debian/intelmq/etc/intelmq/examples/* debian/intelmq/etc/intelmq/
+	rmdir debian/intelmq/etc/intelmq/examples
+	# these are already in /usr/bin/
+	#rm %{buildroot}/%{python3_sitelib}/intelmq/bots/experts/maxmind_geoip/update-geoip-data
+	#rm %{buildroot}/%{python3_sitelib}/intelmq/bots/experts/asn_lookup/update-asn-data
+	#rm %{buildroot}/%{python3_sitelib}/intelmq/bots/experts/tor_nodes/update-tor-nodes
+	# and rename those in /usr/bin
+	mv debian/intelmq/usr/bin/update-geoip-data debian/intelmq/usr/bin/intelmq-update-geoip-data
+	mv debian/intelmq/usr/bin/update-asn-data debian/intelmq/usr/bin/intelmq-update-asn-data
+	mv debian/intelmq/usr/bin/update-tor-nodes debian/intelmq/usr/bin/intelmq-update-tor-nodes
+	# create directories
+	mkdir -p debian/intelmq/var/log/intelmq
+	mkdir -p debian/intelmq/var/lib/intelmq/bots/file-output
 	mkdir -p debian/intelmq/etc/logrotate.d
+	mkdir -p debian/intelmq/var/lib/intelmq/bots/modify/
 	## BOTS
 	# Include all bot READMEs
 	for readme in $(foreach bot,$(BOTDOCS),$(subst intelmq/bots/,,$(bot))); \
@@ -32,3 +55,6 @@ override_dh_auto_install: $(BOTDOCS)
 		mkdir -p $(DOCS_DIR)/bots/$$(dirname $$readme); \
 		cp intelmq/bots/$$readme $(DOCS_DIR)/bots/$$(dirname $$readme); \
 	done
+
+override_dh_systemd_start:
+	dh_systemd_start --restart-after-upgrade

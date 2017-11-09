@@ -1,0 +1,24 @@
+Description: Set all paths to LSB
+Author: Sebastian Wagner <wagner@cert.at>
+Last-Update: 2017-09-20
+---
+This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
+--- a/intelmq/__init__.py
++++ b/intelmq/__init__.py
+@@ -1,13 +1,12 @@
+ from .version import __version__
+ import os
+ 
+-ROOT_DIR = "/opt/intelmq/"
+-CONFIG_DIR = os.path.join(ROOT_DIR, "etc/")
++CONFIG_DIR = "/etc/intelmq/"
+ DEFAULT_LOGGING_LEVEL = "INFO"
+ BOTS_FILE = os.path.join(CONFIG_DIR, "BOTS")
+-DEFAULT_LOGGING_PATH = os.path.join(ROOT_DIR, "var/log/")
++DEFAULT_LOGGING_PATH = "/var/log/intelmq/"
+ DEFAULTS_CONF_FILE = os.path.join(CONFIG_DIR, "defaults.conf")
+ HARMONIZATION_CONF_FILE = os.path.join(CONFIG_DIR, "harmonization.conf")
+ PIPELINE_CONF_FILE = os.path.join(CONFIG_DIR, "pipeline.conf")
+ RUNTIME_CONF_FILE = os.path.join(CONFIG_DIR, "runtime.conf")
+-VAR_RUN_PATH = os.path.join(ROOT_DIR, "var/run/")
++VAR_RUN_PATH = "/var/run/intelmq/"

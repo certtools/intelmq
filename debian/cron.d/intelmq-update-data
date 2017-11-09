@@ -3,10 +3,10 @@
 #
 # m h  dom mon dow      command
 # Update data for tor_nodes bot:
-11 0 * * *     intelmq   /usr/bin/update-tor-nodes /opt/intelmq/var/lib/bots/tor_nodes/tor_nodes.dat
+11 0 * * *     intelmq   /usr/bin/update-tor-nodes /var/lib/intelmq/bots/tor_nodes/tor_nodes.dat
 # Update data for maxmind_geoip bot:
-17 0 * * *     intelmq   /usr/bin/update-geoip-data /opt/intelmq/var/lib/bots/maxmind_geoip/GeoLite2-City.mmdb
+17 0 * * *     intelmq   /usr/bin/update-geoip-data /var/lib/intelmq/bots/maxmind_geoip/GeoLite2-City.mmdb
 # Update data for asn_lookup bot:
-23 0 * * *     intelmq   /usr/bin/update-asn-data /opt/intelmq/var/lib/bots/asn_lookup/ipasn.dat
+23 0 * * *     intelmq   /usr/bin/update-asn-data /var/lib/intelmq/bots/asn_lookup/ipasn.dat
 # Update data for the RIPE DB abuse_c offline contact lookup
-25 6 * * *     intelmq   /usr/bin/update-ripencc_abuse_contact_offline /opt/intelmq/var/lib/bots/ripencc_abuse_contact_offline/
+25 6 * * *     intelmq   /usr/bin/update-ripencc_abuse_contact_offline /var/lib/intelmq/bots/ripencc_abuse_contact_offline/
