@@ -50,6 +50,16 @@ Support for Python 3.3 has been dropped, it reached its end of life.
 ### Requirements
 - Requests is no longer listed as dependency of the core. For depending bots the requirement is noted in their REQUIREMENTS.txt file
 
+1.0.3 Bugfix release (unreleased)
+---------------------------------
+### Core
+
+### Bots
+
+### Documentation
+
+### Tools
+
 1.0.2 Bugfix release
 --------------------
 
