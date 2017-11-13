@@ -69,6 +69,9 @@ Support for Python 3.3 has been dropped, it reached its end of life.
 
 ### Tools
 
+### Packaging
+* cron jobs: fix paths of executables
+
 1.0.2 Bugfix release
 --------------------
 
