@@ -4,6 +4,9 @@ CHANGELOG
 
 1.0.3 Bugfix release (unreleased)
 ---------------------------------
+### Contrib
+* logrotate: use sudo for postrotate script
+
 ### Core
 
 ### Bots
