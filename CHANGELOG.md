@@ -14,6 +14,9 @@ CHANGELOG
 
 ### Tools
 
+### Packaging
+* cron jobs: fix paths of executables
+
 1.0.2 Bugfix release
 --------------------
 
