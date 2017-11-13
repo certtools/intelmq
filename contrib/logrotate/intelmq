@@ -11,7 +11,7 @@ create 640 intelmq intelmq
     notifempty
     sharedscripts
     postrotate
-        /usr/local/bin/intelmqctl reload --quiet
+        sudo -u intelmq /usr/local/bin/intelmqctl --quiet reload
     endscript
 }
 
@@ -23,6 +23,6 @@ create 640 intelmq intelmq
     notifempty
     sharedscripts
     postrotate
-        /usr/local/bin/intelmqctl reload file-output --quiet
+        sudo -u intelmq /usr/local/bin/intelmqctl --quiet reload file-output
     endscript
 }
