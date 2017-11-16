@@ -204,7 +204,11 @@ class Message(dict):
                 del self[key]
             return
 
-        class_name, subitem = self.__get_type_config(key)
+        try:
+            class_name, subitem = self.__get_type_config(key)
+        except KeyError:
+            class_name, subitem = None, False
+
         if not self.__is_valid_key(key, class_name, subitem):
             raise exceptions.InvalidKey(key)
 
@@ -294,6 +298,7 @@ class Message(dict):
 #            class_name, subitem = self.__get_type_config(key)
 #        except KeyError:
 #            return False
+        if not class_name: return False
         if key in self.harmonization_config or key == '__type' or subitem:
             return True
         return False
