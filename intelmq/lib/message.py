@@ -204,12 +204,7 @@ class Message(dict):
                 del self[key]
             return
 
-        try:
-            class_name, subitem = self.__get_type_config(key)
-        except KeyError:
-            class_name, subitem = None, False
-
-        if not self.__is_valid_key(key, class_name, subitem):
+        if not self.__is_valid_key(key):
             raise exceptions.InvalidKey(key)
 
         try:
@@ -222,20 +217,21 @@ class Message(dict):
 
         if sanitize and not key == '__type':
             old_value = value
-            value = self.__sanitize_value(key, value, class_name, subitem)
+            value = self.__sanitize_value(key, value)
             if value is None:
                 if raise_failure:
                     raise exceptions.InvalidValue(key, old_value)
                 else:
                     return False
 
-        valid_value = self.__is_valid_value(key, value, class_name, subitem)
+        valid_value = self.__is_valid_value(key, value)
         if not valid_value[0]:
             if raise_failure:
                 raise exceptions.InvalidValue(key, value, reason=valid_value[1])
             else:
                 return False
 
+        class_name, subitem = self.__get_type_config(key)
         if class_name and class_name['type'] == 'JSONDict' and not subitem:
             # for backwards compatibility allow setting the extra field as string
             for extrakey, extravalue in json.loads(value).items():
@@ -293,20 +289,19 @@ class Message(dict):
         return message
 
 #    @functools.lru_cache(maxsize=None)
-    def __is_valid_key(self, key: str, class_name, subitem: bool):
-#        try:
-#            class_name, subitem = self.__get_type_config(key)
-#        except KeyError:
-#            return False
-        if not class_name: return False
+    def __is_valid_key(self, key: str):
+        try:
+            class_name, subitem = self.__get_type_config(key)
+        except KeyError:
+            return False
         if key in self.harmonization_config or key == '__type' or subitem:
             return True
         return False
 
-    def __is_valid_value(self, key: str, value: str, config, subitem: bool):
+    def __is_valid_value(self, key: str, value: str):
         if key == '__type':
             return (True, )
-#        config, subitem = self.__get_type_config(key)
+        config, subitem = self.__get_type_config(key)
         class_reference = getattr(intelmq.lib.harmonization, config['type'])
         if not subitem:
             validation = class_reference().is_valid(value)
@@ -327,8 +322,8 @@ class Message(dict):
                 return (False, 'regex (case insensitive) did not match.')
         return (True, )
 
-    def __sanitize_value(self, key: str, value: str, class_name, subitem: bool):
-#        class_name, subitem = self.__get_type_config(key)
+    def __sanitize_value(self, key: str, value: str):
+        class_name, subitem = self.__get_type_config(key)
         class_reference = getattr(intelmq.lib.harmonization, class_name['type'])
         if not subitem:
             return class_reference().sanitize(value)
