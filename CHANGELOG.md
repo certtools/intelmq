@@ -38,9 +38,13 @@ Support for Python 3.3 has been dropped, it reached its end of life.
 
 ### Harmonization
 - Renamed `JSON` to `JSONDict` and added a new type `JSON`. `JSONDict` saves data internally as JSON, but acts like a dictionary. `JSON` accepts any valid JSON.
-- added destination.urlpath and source.urlpath to harmonization.
+- fixed regex for `protocol.transport` it previously allowed more values than it should have.
 
 #### Parsers
+- changed feednames in `bots.parsers.shadowserver`. Please refer to it's README for the exact changes.
+- shadowserver parser: If the conversion function fails for a line, an error is raised and the offending line will be handled according to the error handling configuration.
+  Previouly errors like these were only logged and ignored otherwise.
+- added destination.urlpath and source.urlpath to harmonization.
 - changed feednames in `bots.parsers.shadowserver`. Please refer to it's README for the exact changes.
 - The Generic CSV Parser `bots.parsers.generic.parser_csv`:
   - It is possible to filter the data before processing them using the new parameters `filter_type` and `filter_text`.
