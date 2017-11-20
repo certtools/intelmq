@@ -220,6 +220,7 @@ def log(name: str, log_path: str=intelmq.DEFAULT_LOGGING_PATH, log_level: str="D
         log_format_stream: str=LOG_FORMAT_STREAM):
     """
     Returns a logger instance logging to file and sys.stderr or other stream.
+    The warnings module will log to the same handlers.
 
     Parameters:
         name: filename for logfile or string preceding lines in stream
@@ -263,6 +264,7 @@ def log(name: str, log_path: str=intelmq.DEFAULT_LOGGING_PATH, log_level: str="D
 
     if log_path or syslog:
         logger.addHandler(handler)
+        warnings_logger.addHandler(handler)
 
     if stream or stream is None:
         console_formatter = logging.Formatter(log_format_stream)
