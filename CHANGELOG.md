@@ -12,6 +12,7 @@ CHANGELOG
 ### Bots
 #### Parsers
 - Modify Bot default ruleset: changed conficker rule to catch more spellings
+- Shadowserver Parser: Add Accessible Cisco Smart Install
 
 ### Documentation
 
