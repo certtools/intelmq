@@ -60,7 +60,4 @@ class CertStreamParserBot(Bot):
 
         self.acknowledge_message()
 
-
-if __name__ == "__main__":
-    bot = CertStreamParserBot(sys.argv[1])
-    bot.start()
+BOT = CertStreamParserBot
