@@ -19,7 +19,7 @@ class CertstreamCollectorBot(CollectorBot):
 
     def init(self):
 
-        self.logger.debug("Nothing to init.")
+        return
 
     def callback(self, message, context=None):  # callback handler for certstream events.
         CertstreamCollectorBot.send_update(message=message, self=self)
