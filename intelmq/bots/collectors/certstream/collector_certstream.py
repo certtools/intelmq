@@ -36,7 +36,7 @@ class CertstreamCollectorBot(CollectorBot):
             return
 
         if message['message_type'] == 'certificate_update':
-            new_report = report.copy()
+            new_report = self.new_report()
             new_report.add("feed.name", "Certstream")
             new_report.add("raw", json.dumps(message))
 
