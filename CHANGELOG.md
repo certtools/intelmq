@@ -61,6 +61,7 @@ Support for Python 3.3 has been dropped, it reached its end of life.
 ### Bots
 #### Parsers
 - Modify Bot default ruleset: changed conficker rule to catch more spellings
+- Shadowserver Parser: Add Accessible Cisco Smart Install
 
 ### Documentation
 

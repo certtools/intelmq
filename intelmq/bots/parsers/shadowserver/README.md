@@ -21,6 +21,7 @@ Feed-names are the subjects of the Shadowserver E-Mails.
 They are different from the wiki page names!
 
 Possible feednames:
+* `Accessible-Cisco-Smart-Install`
 * `Accessible-CWMP`
 * `Accessible-RDP`
 * `Accessible-Telnet`
