@@ -11,6 +11,7 @@ import validators
 from intelmq.lib import utils, exceptions
 from intelmq.lib.bot import Bot
 
+
 class CertStreamParserBot(Bot):
 
     def process(self):
@@ -56,7 +57,7 @@ class CertStreamParserBot(Bot):
 
         if 'chain' in data:
             for chain_element in data['chain']:
-                pass # ToDo: Add chains
+                pass  # ToDo: Add chains
 
         self.acknowledge_message()
 
