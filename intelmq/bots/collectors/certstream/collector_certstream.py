@@ -15,7 +15,7 @@ from intelmq.lib.bot import Bot
 from intelmq.lib.message import Report
 
 
-class CertstreamCollectorBot(Bot):
+class CertstreamCollectorBot(CollectorBot):
 
     def init(self):
 
