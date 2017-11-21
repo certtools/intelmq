@@ -47,6 +47,7 @@ import intelmq.lib.harmonization as harmonization
 def get_feed(feedname, logger):
     # TODO should this be case insensitive?
     feed_idx = {
+        "Accessible-Cisco-Smart-Install": accessible_cisco_smart_install,
         "Accessible-CWMP": accessible_cwmp,
         "Accessible-RDP": accessible_rdp,
         "Accessible-SMB": accessible_smb,
@@ -1374,5 +1375,29 @@ accessible_vnc = {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'vulnerable',
         'classification.identifier': 'accessible-vnc',
+    }
+}
+
+accessible_cisco_smart_install = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # This will be 'accessible-cisco-smart-install' in constant fields
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+    ],
+    'constant_fields': {
+        'protocol.application': 'cisco-smart-install',
+        'classification.type': 'vulnerable service',
+        'classification.identifier': 'accessible-cisco-smart-install',
     }
 }
