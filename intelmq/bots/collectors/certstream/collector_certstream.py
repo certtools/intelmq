@@ -44,6 +44,4 @@ class CertstreamCollectorBot(CollectorBot):
             self.logger.debug("Send certificate_update.")
 
 
-if __name__ == "__main__":
-    bot = CertstreamCollectorBot(sys.argv[1])
-    bot.start()
+BOT = CertstreamCollectorBot
