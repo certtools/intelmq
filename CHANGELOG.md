@@ -1,6 +1,25 @@
 CHANGELOG
 ==========
 
+
+1.0.3 Bugfix release (unreleased)
+---------------------------------
+### Contrib
+* logrotate: use sudo for postrotate script
+
+### Core
+
+### Bots
+#### Parsers
+- Modify Bot default ruleset: changed conficker rule to catch more spellings
+
+### Documentation
+
+### Tools
+
+### Packaging
+* cron jobs: fix paths of executables
+
 1.0.2 Bugfix release
 --------------------
 
