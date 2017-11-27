@@ -1,8 +1,8 @@
 CHANGELOG
 ==========
 
-1.1.0
------
+1.1.0 (unreleased)
+------------------
 Support for Python 3.3 has been dropped, it reached its end of life.
 
 ### Tools
