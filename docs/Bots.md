@@ -326,21 +326,21 @@ Iterates over all blobs in all containers in an Azure storage.
 
 * * *
 
-### N6Stomp
+### Stomp
 
 See the README.md
 
 #### Information:
-* `name:` intelmq.bots.collectors.n6.collector_stomp
+* `name:` intelmq.bots.collectors.stomp.collector
 * `lookup:` yes
 * `public:` no
 * `cache (redis db):` none
-* `description:` collect report messages from Blueliv API
+* `description:` collect messages from a stomp server
 
 #### Configuration Parameters:
 
 * **Feed parameters** (see above)
-* `exchange`: exchange point as given by CERT.pl
+* `exchange`: exchange point
 * `port`: 61614
 * `server`: hostname e.g. "n6stream.cert.pl"
 * `ssl_ca_certificate`: path to CA file
