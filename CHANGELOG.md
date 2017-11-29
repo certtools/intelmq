@@ -21,8 +21,8 @@ CHANGELOG
 ### Packaging
 * cron jobs: fix paths of executables
 
-1.0.2 Bugfix release
---------------------
+1.0.2 Bugfix release (2017-11-09)
+---------------------------------
 
 ### Core
 - `lib.message.add`: parameter force has finally been removed, should have been gone in 1.0.0.rc1 already
@@ -42,8 +42,8 @@ CHANGELOG
 ### Documentation
 - Add disclaimer on maxmind database in bot documentation and code and the cron-job (#1110)
 
-1.0.1 Bugfix release
---------------------
+1.0.1 Bugfix release (2017-08-30)
+---------------------------------
 ### Documentation
 - Feeds: use more https:// URLs
 - minor fixes
@@ -59,8 +59,8 @@ CHANGELOG
 - intelmqctl: To check the status of a bot, the comandline of the running process is compared to the actual executable of the bot. Otherwise unrelated programs with the same PID are detected as running bot.
 - intelmqctl: enable, disable, check, clear now support the JSON output
 
-1.0.0 Stable release
---------------------
+1.0.0 Stable release (2017-08-04)
+---------------------------------
 ### Core
 - Fixes a thrown FileNotFound exception when stopping bots started with `intelmqctl run ...`
 
@@ -70,8 +70,8 @@ CHANGELOG
 ### Bots
 - shadowserver parser Accessible-SMB: smb_implant is converted to bool
 
-1.0.0.rc1 Release candidate
----------------------------
+1.0.0.rc1 Release candidate (2017-07-05)
+----------------------------------------
 ### Core
 - Changing the value of an existing field to `None` deletes the field.
 - `Message.update` now behaves like `dict.update`. The old behavior is implemented in `Message.change`
@@ -109,8 +109,8 @@ CHANGELOG
 ### Experts
 - bots.experts.deduplicator: New parameter `bypass` to deactivate deduplication, default: False
 
-v1.0.0.dev8
------------
+v1.0.0.dev8 Beta release (2017-06-14)
+-------------------------------------
 
 ### General changes
 - It's now configurable how often the bots are logging how much events they have sent, based on both the amount and time. (fixes #743)
@@ -151,8 +151,8 @@ v1.0.0.dev8
 ### Harmonization
 - New field named `output` to support export to foreign formats
 
-v1.0.0.dev7
------------
+v1.0.0.dev7 Beta release (2017-05-09)
+-------------------------------------
 
 ### Documentation
 - more verbose installation and upgrade instructions
@@ -169,8 +169,8 @@ v1.0.0.dev7
 - New parameter and field named feed.documentation to link to documentation of the feed
 - classification.taxonomy is lower case only
 
-v1.0.0.dev6
------------
+v1.0.0.dev6 Beta release (2017-01-11)
+-------------------------------------
 
 Changes between 0.9 and 1.0.0.dev6
 
