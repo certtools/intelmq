@@ -21,10 +21,12 @@ E-mails are send in zipped csv file, delimited by comma, strings in "".
 
 
 Configuration:
+```json
 "alternative_mails": "", # empty string or or path to csv in the form original@email.com,alternative@email.com
 "bcc": [], # the list of e-mails to be put in the bcc field for every mail
 "emailFrom": "", # sender's e-mail
 "mail_template": "", # file containing the body of the mail
+"ignore_older_than_days": 0, # 1..n skip all events with time.observation older than 1..n day; 0 disabled (allow all)
 "redis_cache_db": "",
 "redis_cache_host": "",
 "redis_cache_port": "",
@@ -32,3 +34,4 @@ Configuration:
 "smtp_server": "mailer",
 "subject": "Subject may contain date formatting like this %Y-%m-%d",
 "testing_to": "" # default tester's e-mail
+```

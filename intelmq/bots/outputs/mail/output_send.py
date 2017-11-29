@@ -9,6 +9,7 @@ from __future__ import unicode_literals
 from base64 import b64decode
 import csv
 from collections import namedtuple, OrderedDict
+import datetime
 import json
 import argparse
 from email import encoders
@@ -76,42 +77,43 @@ class MailSendOutputBot(Bot):
             if not len(mails):
                 print(" *** No mails in queue ***")
                 sys.exit(0);
-
-            while True:
-                print("What you would like to do?\n"
-                    "* enter to send first mail to tester's address {}.\n"
-                    "* 'debug' to send all the e-mails to tester's address"
-                    .format(self.parameters.testing_to))
-                if self.parameters.testing_to:
-                    print("* 's' for setting other tester's address")
-                print("* 'all' for sending all the e-mails\n"
-                    "* 'x' to cancel\n"
-                    "? ", end="")
-                i = input()
-                if i == "x":
-                    sys.exit(0)
-                elif i == "all":
-                    for mail in mails:
-                        self.send_mail(mail, send=True)
-                        self.cache.redis.delete(mail.key)
-                        os.unlink(mail.path)
-                    print("{}× mail sent.\n".format(len(mails)))
-                    sys.exit(0)
-                elif i == "s":
-                    print("\nWhat e-mail should I use?")
-                    self.parameters.testing_to = input()
-                elif i in ["","y","debug"]:
-                    if not self.parameters.testing_to:
+            
+            with smtplib.SMTP(self.parameters.smtp_server) as self.smtp:
+                while True:
+                    print("What you would like to do?\n"
+                        "* enter to send first mail to tester's address {}.\n"
+                        "* 'debug' to send all the e-mails to tester's address"
+                        .format(self.parameters.testing_to))
+                    if self.parameters.testing_to:
+                        print("* 's' for setting other tester's address")
+                    print("* 'all' for sending all the e-mails\n"
+                        "* 'x' to cancel\n"
+                        "? ", end="")
+                    i = input()
+                    if i == "x":
+                        sys.exit(0)
+                    elif i == "all":
+                        count = 0
+                        for mail in mails:
+                            count += 1 if self.send_mail(mail, send=True) else 0
+                            self.cache.redis.delete(mail.key)
+                            os.unlink(mail.path)
+                        print("{}× mail sent.\n".format(count))
+                        sys.exit(0)
+                    elif i == "s":
                         print("\nWhat e-mail should I use?")
                         self.parameters.testing_to = input()
-                    if i in ["","y"]:
-                        mail = mails[0]
-                        self.send_mail(mail, send=True, override_to=self.parameters.testing_to)
-                        count = 1
-                    elif i == "debug":
-                        [self.send_mail(mail, send=True, override_to=self.parameters.testing_to) for mail in mails]
-                        count = len(mails)
-                    print("{}× mail sent to: {}\n".format(count, self.parameters.testing_to))
+                    elif i in ["","y","debug"]:
+                        if not self.parameters.testing_to:
+                            print("\nWhat e-mail should I use?")
+                            self.parameters.testing_to = input()
+                        if i in ["","y"]:
+                            mail = mails[0]
+                            self.send_mail(mail, send=True, override_to=self.parameters.testing_to)
+                            count = 1
+                        elif i == "debug":
+                            count = sum([1 for mail in mails if self.send_mail(mail, send=True, override_to=self.parameters.testing_to)])                            
+                        print("{}× mail sent to: {}\n".format(count, self.parameters.testing_to))            
 
         else:
             print("Running forever with no job. Run with 'cli' parameter.")
@@ -134,10 +136,13 @@ class MailSendOutputBot(Bot):
                 lines.append(json.loads(str(message,encoding="utf-8")))
 
             # prepare rows for csv attachment
+            threshold = datetime.datetime.now()-datetime.timedelta(days=self.parameters.ignore_older_than_days) if getattr(self.parameters, 'ignore_older_than_days', False) else False            
             fieldnames = set()
-            rows_output = []
+            rows_output = []                        
             for row in lines:
-                #if "feed.name" in row and "NTP-Monitor" in row["feed.name"]: continue
+                #if "feed.name" in row and "NTP-Monitor" in row["feed.name"]: continue                
+                if threshold and row["time.observation"][:19] < threshold.isoformat()[:19]:
+                        continue
                 fieldnames = fieldnames | set(row.keys())
                 keys = set(allowed_fieldnames).intersection(row)                
                 ordered_keys = []                 
@@ -161,25 +166,26 @@ class MailSendOutputBot(Bot):
             dict_writer.writerow(dict(zip(ordered_fieldnames, ordered_fieldnames)))
             dict_writer.writerows(rows_output)
 
-            count = len(rows_output)
-            if not count:
-                continue
             email_to = str(mail_record[len("mail:"):], encoding="utf-8")
-            filename = '{}_{}_events'.format(time.strftime("%y%m%d"), count)
-            path = self.TMP_DIR + filename + '_' + email_to + '.zip'
+            count = len(rows_output)
+            if not count:                
+                path = None
+            else:                
+                filename = '{}_{}_events'.format(time.strftime("%y%m%d"), count)
+                path = self.TMP_DIR + filename + '_' + email_to + '.zip'
 
-            zf = zipfile.ZipFile(path, mode='w', compression=zipfile.ZIP_DEFLATED)
-            try:
-                zf.writestr(filename + ".csv", output.getvalue())
-            except:
-                logger.error("Can't zip mail {}".format(mail_record))
-                continue
-            finally:
-                zf.close()
-            
-            if email_to in self.alternativeMail:
-                print("Alternative: instead of {} we use {}".format(email_to, self.alternativeMail[email_to]))
-                email_to = self.alternativeMail[email_to]
+                zf = zipfile.ZipFile(path, mode='w', compression=zipfile.ZIP_DEFLATED)
+                try:
+                    zf.writestr(filename + ".csv", output.getvalue())
+                except:
+                    logger.error("Can't zip mail {}".format(mail_record))
+                    continue
+                finally:
+                    zf.close()
+                
+                if email_to in self.alternativeMail:
+                    print("Alternative: instead of {} we use {}".format(email_to, self.alternativeMail[email_to]))
+                    email_to = self.alternativeMail[email_to]
 
             # send the whole message
             mail = Mail(mail_record, email_to, path, count)
@@ -198,8 +204,7 @@ class MailSendOutputBot(Bot):
         else:
             intended_to = None
             email_to = mail.to
-        email_from =  self.parameters.emailFrom
-        server = self.parameters.smtp_server
+        email_from =  self.parameters.emailFrom        
         text = self.mailContents
         try:
             subject = time.strftime(self.parameters.subject)
@@ -216,19 +221,23 @@ class MailSendOutputBot(Bot):
             rcpts += self.parameters.bcc # bcc is in fact an independent mail
 
         if send is True:
+            if not mail.count:
+                return False
             msg.attach(MIMEText(text, "html", "utf-8"))
             with open(mail.path,"rb") as f: # plain/text - with open(mail.path,"r") as f: attachment = MIMEText(f.read(), subtype, "utf-8")
                 attachment = MIMEApplication(f.read(), "zip")
             attachment.add_header("Content-Disposition", "attachment",
                                   filename='proki_{}.zip'.format(time.strftime("%Y%m%d")))
-            msg.attach(attachment)
-
-            smtp = smtplib.SMTP(server)
-            smtp.sendmail(email_from, rcpts, msg.as_string().encode('ascii'))
-            smtp.close()
+            msg.attach(attachment)            
+            self.smtp.sendmail(email_from, rcpts, msg.as_string().encode('ascii'))            
+            return True
         else:
             print('To: ' + email_to + '; Subject: ' + subject)
-            print('Events: {}'.format(mail.count))
+            if not mail.count:
+                print("Won't be send, all events skipped")
+            else:
+                print('Events: {}'.format(mail.count))            
             print('-------------------------------------------------')
+            return None
 
 BOT = MailSendOutputBot
