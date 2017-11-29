@@ -37,7 +37,6 @@ class TestFileCollectorBot(test.BotTestCase, unittest.TestCase):
                          'chunk_size': None,
                          'chunk_replicate_header': True,
                          }
-        cls.default_input_message = {'__type': 'Event'}
 
     def test_events(self):
         """ Test if correct Events have been produced. """

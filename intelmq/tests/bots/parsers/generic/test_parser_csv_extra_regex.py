@@ -21,8 +21,9 @@ EXAMPLE_EVENT = {"feed.name": "Sample CSV Feed",
                  "raw": utils.base64_encode(SAMPLE_SPLIT[1].replace('"', '')+'\r\n'),
                  "time.observation": "2015-01-01T00:00:00+00:00",
                  "classification.type": "botnet drone",
-                 'extra': '{"http_request": "29|", "source": "Microsoft-DCU", '
-                          '"source.metro_code": "0"}',
+                 "extra.source.metro_code": '0',
+                 "extra.source": "Microsoft-DCU",
+                 "extra.http_request": "29|",
                  "destination.ip": "224.1.1.1",
                  "destination.port": 1604,
                  "feed.name": "Microsoft DCU Feed",
@@ -32,6 +33,7 @@ EXAMPLE_EVENT = {"feed.name": "Sample CSV Feed",
                  "source.geolocation.longitude": 16.0,
                  "source.ip": "198.51.100.1",
                  "source.port": 2367,
+                 "source.asn": 65536,
                  "time.source": "2017-03-25T23:59:43+00:00"
                  }
 EXAMPLE_EVENT2 = {"feed.name": "Sample CSV Feed",
@@ -41,14 +43,15 @@ EXAMPLE_EVENT2 = {"feed.name": "Sample CSV Feed",
                   "classification.type": "botnet drone",
                   "destination.ip": "224.1.1.2",
                   "destination.port": 80,
-                  'extra': '{"http_host": "dcu-a-202.microsoftinternetsafety.net", '
-                           '"http_method": "POST", "http_referer": "null", '
-                           '"http_request": "/file-34fd81-003.php", '
-                           '"http_user_agent": "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0;)", '
-                           '"http_version": "1.1", '
-                           '"source": "Microsoft-DCU", '
-                           '"source.metro_code": "0", '
-                           '"source.postal_code": "1100"}',
+                  "extra.http_method": "POST",
+                  "extra.source.postal_code": '1100',
+                  "extra.http_version": "1.1",
+                  "extra.http_host": "dcu-a-202.microsoftinternetsafety.net",
+                  "extra.source.metro_code": '0',
+                  "extra.http_request": "/file-34fd81-003.php",
+                  "extra.source": "Microsoft-DCU",
+                  "extra.http_referer": "null",
+                  "extra.http_user_agent": "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0;)",
                   "feed.name": "Microsoft DCU Feed",
                   "malware.name": "b54-config",
                   "source.geolocation.cc": "AT",
@@ -58,6 +61,7 @@ EXAMPLE_EVENT2 = {"feed.name": "Sample CSV Feed",
                   "source.geolocation.region": "09",
                   "source.ip": "198.51.100.2",
                   "source.port": 35453,
+                  "source.asn": 65536,
                   "time.source": "2017-03-26T00:00:41+00:00"
                   }
 
@@ -84,7 +88,7 @@ class TestGenericCsvParserBot(test.BotTestCase, unittest.TestCase):
                          "time_format": "windows_nt",
                          "type": "botnet drone",
                          "type_translation": None,
-                         "column_regex_search": {"source.asn": "[0-9]*"}}
+                         "column_regex_search": {"source.asn": "[0-9]+"}}
 
     def test_event(self):
         """ Test if correct Event has been produced. """

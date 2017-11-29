@@ -36,6 +36,7 @@ The available feeds are grouped by the source of the feeds. For each feed the co
 - [Spamhaus](#spamhaus)
 - [Taichung](#taichung)
 - [Turris Greylist](#turris-greylist)
+- [University of Toulouse Blacklist](#university-of-toulouse-blacklist)
 - [URLVir](#urlvir)
 - [VXVault](#vxvault)
 
@@ -357,7 +358,7 @@ id: bambenek-c2-domains-collector
 provider: Bambenek
 feed: Bambenek C2 Domains
 rate_limit: FIXME
-http_url: http://osint.bambenekconsulting.com/feeds/c2-dommasterlist.txt
+http_url: https://osint.bambenekconsulting.com/feeds/c2-dommasterlist.txt
 ```
 
 ### Parser Bot
@@ -372,7 +373,7 @@ id: bambenek-c2-domains-parser
 ```
 
 **Notes:** Master Feed of known, active and non-sinkholed C&Cs domain names.
-License: http://osint.bambenekconsulting.com/license.txt
+License: https://osint.bambenekconsulting.com/license.txt
 
 ## C2 IPs
 
@@ -390,7 +391,7 @@ id: bambenek-c2-ips-collector
 provider: Bambenek
 feed: Bambenek C2 IPs
 rate_limit: FIXME
-http_url: http://osint.bambenekconsulting.com/feeds/c2-ipmasterlist.txt
+http_url: https://osint.bambenekconsulting.com/feeds/c2-ipmasterlist.txt
 ```
 
 ### Parser Bot
@@ -405,7 +406,7 @@ id: bambenek-c2-ips-parser
 ```
 
 **Notes:** Master Feed of known, active and non-sinkholed C&Cs IP addresses
-License: http://osint.bambenekconsulting.com/license.txt
+License: https://osint.bambenekconsulting.com/license.txt
 
 ## DGA Domains
 
@@ -423,7 +424,7 @@ id: bambenek-dga-domains-collector
 provider: Bambenek
 feed: Bambenek DGA Domains
 rate_limit: FIXME
-http_url: http://osint.bambenekconsulting.com/feeds/dga-feed.txt
+http_url: https://osint.bambenekconsulting.com/feeds/dga-feed.txt
 ```
 
 ### Parser Bot
@@ -438,7 +439,7 @@ id: bambenek-dga-domains-parser
 ```
 
 **Notes:** Domain feed of known DGA domains from -2 to +3 days
-License: http://osint.bambenekconsulting.com/license.txt
+License: https://osint.bambenekconsulting.com/license.txt
 
 
 # Bitcash
@@ -457,7 +458,7 @@ id: bitcash-collector
 provider: BitCash
 feed: BitCash
 rate_limit: FIXME
-http_url: http://bitcash.cz/misc/log/blacklist
+http_url: https://bitcash.cz/misc/log/blacklist
 ```
 
 ## Parser Bot
@@ -1483,7 +1484,7 @@ id: malware-domains-collector
 provider: Malware Domains
 feed: Malware Domains
 rate_limit: 172800
-http_url: http://mirror2.malwaredomains.com/files/domains.txt
+http_url: http://mirror1.malwaredomains.com/files/domains.txt
 ```
 
 ## Parser Bot
@@ -1817,40 +1818,6 @@ id: nothink-telnet-parser
 **Notes:** This feed provides IP addresses of systems that have connected to a honeypot via Telnet in the last 24 hours.
 reference: http://www.nothink.org/honeypots.php
 
-
-# OpenBL
-
-**Status:** Active
-
-## Collector Bot
-
-**Bot Name:** Generic URL Fetcher
-
-**Bot Module:** intelmq.bots.collectors.http.collector_http
-
-**Configuration Parameters:**
-```
-id: openbl-collector
-provider: OpenBL
-feed: OpenBL
-rate_limit: 43200
-http_url: https://www.openbl.org/lists/date_all.txt
-```
-
-**Notes:** there is a list available [here](https://www.openbl.org/lists.html) with all blacklists available by the source which can be handled with the exact same bot, only `http_url` value needs to be specified.
-
-
-## Parser Bot
-
-**Bot Name:** OpenBL
-
-**Bot Module:** intelmq.bots.parsers.openbl.parser
-
-**Configuration Parameters:**
-```
-id: openbl-parser
-```
-
 # OpenPhish
 
 **Status:** Unknown
@@ -1910,39 +1877,6 @@ http_url: https://data.phishtank.com/data/{{ your API key }}/online-valid.csv
 ```
 id: phishtank-parser
 ```
-
-# Proxyspy
-
-**Status:** Active
-
-## Collector Bot
-
-**Bot Name:** Generic URL Fetcher
-
-**Bot Module:** intelmq.bots.collectors.http.collector_http
-
-**Configuration Parameters:**
-```
-id: proxyspy-collector
-provider: ProxySpy
-feed: ProxySpy
-rate_limit: FIXME
-http_url: http://txt.proxyspy.net/proxy.txt
-```
-
-## Parser Bot
-
-**Bot Name:** Proxyspy
-
-**Bot Module:** intelmq.bots.parsers.proxyspy.parser
-
-**Configuration Parameters:**
-```
-id: proxyspy-parser
-```
-
-**Notes:** This feed provides IP addresses, ports and country codes for available proxies.  Feed is updated hourly.
-
 
 # Shadowserver
 
@@ -2223,6 +2157,40 @@ http_url: https://www.turris.cz/greylist-data/greylist-latest.csv
 **Configuration Parameters:**
 ```
 id: turris-greylist-parser
+```
+
+# University of Toulouse Blacklist
+
+**Status:** Active
+
+### Collector Bot
+
+**Bot Name:** Generic URL Fetcher
+
+**Bot Module:** intelmq.bots.collectors.http.collector_http
+
+**Configuration Parameters:**
+```
+id: university-of-toulouse-<collection name>-collector
+provider: University of Toulouse Blacklist
+feed: UT1 <collection name>
+rate_limit: 43200
+http_url: https://dsi.ut-capitole.fr/blacklists/download/<collection name>.tar.gz
+extract_files: True for all or string of file names separated by ","
+```
+**Notes:** The collections and feed description can be found on: https://dsi.ut-capitole.fr/blacklists/.
+
+### Parser Bot
+
+**Bot Name:** Generic CSV
+
+**Bot Module:** intelmq.bots.parsers.generic.parser_csv
+
+**Configuration Parameters:**
+```
+delimiter: \n
+type: <depends on a collection>
+columns:  [<depends on a collection>]
 ```
 
 # URLVir

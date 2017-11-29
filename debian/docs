@@ -1,5 +1,6 @@
+AUTHORS
 CHANGELOG.md
 COPYRIGHT
-MANIFEST.in
 NEWS.md
-docs/*md
+docs/*
+README.rst

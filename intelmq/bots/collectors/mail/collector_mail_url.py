@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import re
 import io
+import imaplib
 import requests
 
 try:
@@ -26,12 +27,18 @@ class MailURLCollectorBot(CollectorBot):
         self.chunk_replicate_header = getattr(self.parameters,
                                               'chunk_replicate_header', None)
 
-    def process(self):
+    def connect_mailbox(self):
         mailbox = imbox.Imbox(self.parameters.mail_host,
                               self.parameters.mail_user,
                               self.parameters.mail_password,
                               self.parameters.mail_ssl)
-        emails = mailbox.messages(folder=self.parameters.folder, unread=True)
+        return mailbox
+
+    def process(self):
+        mailbox = self.connect_mailbox()
+        emails = mailbox.messages(folder=self.parameters.folder, unread=True,
+                                  sent_to=getattr(self.parameters, "sent_to", None),
+                                  sent_from=getattr(self.parameters, "sent_from", None))
 
         if emails:
             for uid, message in emails:
@@ -90,7 +97,12 @@ class MailURLCollectorBot(CollectorBot):
                         # Only mark read if message relevant to this instance,
                         # so other instances watching this mailbox will still
                         # check it.
-                        mailbox.mark_seen(uid)
+                        try:
+                            mailbox.mark_seen(uid)
+                        except imaplib.abort:
+                            # Disconnect, see https://github.com/certtools/intelmq/issues/852
+                            mailbox = self.connect_mailbox()
+                            mailbox.mark_seen(uid)
 
                 if not erroneous:
                     self.logger.info("Email report read.")

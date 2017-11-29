@@ -2,11 +2,15 @@
 set -e
 
 if [ "$1" = "configure" ] ; then
-    if ! getent passwd intelmq >/dev/null 2>&1; then
-        useradd -d /opt/intelmq -U -s /bin/bash intelmq
+    if ! getent group intelmq >/dev/null 2>&1; then
+        groupadd -r intelmq
     fi
-    chmod -R g+w /opt/intelmq/*
-    chown -R intelmq:intelmq /opt/intelmq
+    if ! getent passwd intelmq >/dev/null 2>&1; then
+        useradd -r -d /var/lib/intelmq/ -c "user running intelmq" -g intelmq -s /bin/bash intelmq
+    fi
+    chmod -R g+w /var/lib/intelmq/*
+    chown -R intelmq:intelmq /etc/intelmq/ /var/lib/intelmq/ /var/log/intelmq/
+    systemd-tmpfiles --create /usr/lib/tmpfiles.d/intelmq.conf
 fi
 
 #DEBHELPER#
