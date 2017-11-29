@@ -11,6 +11,7 @@ Support for Python 3.3 has been dropped, it reached its end of life.
 - `intelmqctl list bots -q` only prints the IDs of enabled bots
 
 ### Core
+- use SIGTERM instead of SIGINT to stop bots (#981)
 - Subitems in fields of type `JSONDict` (see below) can be accessed directly. E.g. you can do:
   event['extra.foo'] = 'bar'
   event['extra.foo'] # gives 'bar'
@@ -39,6 +40,7 @@ Support for Python 3.3 has been dropped, it reached its end of life.
 ### Harmonization
 - Renamed `JSON` to `JSONDict` and added a new type `JSON`. `JSONDict` saves data internally as JSON, but acts like a dictionary. `JSON` accepts any valid JSON.
 - fixed regex for `protocol.transport` it previously allowed more values than it should have.
+- New ASN type. Like integer but checks the range.
 
 #### Parsers
 - changed feednames in `bots.parsers.shadowserver`. Please refer to it's README for the exact changes.
@@ -108,7 +110,6 @@ Support for Python 3.3 has been dropped, it reached its end of life.
 1.0.0 Stable release
 --------------------
 ### Core
-- use SIGTERM instead of SIGINT to stop bots (#981)
 - Fixes a thrown FileNotFound exception when stopping bots started with `intelmqctl run ...`
 
 ### Harmonization
@@ -127,9 +128,6 @@ Support for Python 3.3 has been dropped, it reached its end of life.
 - Deprecated parameters force and ignore of `Message.add` have been removed
 - Deprecated method `Message.contains` has been removed
 - Drop support for deprecated configuration files `startup.conf` and `system.conf`
-
-### Harmonization
-- New ASN type. Like integer but checks the range.
 
 ### Development
 - We are now testing with and without optional libraries/lowest recommended versions and most current versions of required libraries
