@@ -97,7 +97,8 @@ class MailSendOutputBot(Bot):
                         for mail in mails:
                             count += 1 if self.send_mail(mail, send=True) else 0
                             self.cache.redis.delete(mail.key)
-                            os.unlink(mail.path)
+                            if mail.path:
+                                os.unlink(mail.path)
                         print("{}× mail sent.\n".format(count))
                         sys.exit(0)
                     elif i == "s":
