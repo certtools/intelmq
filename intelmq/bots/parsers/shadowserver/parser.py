@@ -46,7 +46,6 @@ class ShadowserverParserBot(ParserBot):
 
     def parse(self, report):
         raw_report = utils.base64_decode(report["raw"])
-        # Temporary fix for https://github.com/certtools/intelmq/issues/967
         raw_report = raw_report.translate({0: None})
         csvr = csv.DictReader(io.StringIO(raw_report))
 
