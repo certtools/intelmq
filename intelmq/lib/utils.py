@@ -38,11 +38,11 @@ LOG_FORMAT_SYSLOG = '%(name)s: %(levelname)s %(message)s'
 
 # Regex for parsing the above LOG_FORMAT
 LOG_REGEX = (r'^(?P<date>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d+) -'
-             r' (?P<bot_id>[-\w]+) - '
+             r' (?P<bot_id>([-\w]+|py\.warnings)) - '
              r'(?P<log_level>[A-Z]+) - '
              r'(?P<message>.+)$')
 SYSLOG_REGEX = ('^(?P<date>\w{3} \d{2} \d{2}:\d{2}:\d{2}) (?P<hostname>[-\.\w]+) '
-                '(?P<bot_id>[-\w]+): (?P<log_level>[A-Z]+) (?P<message>.+)$')
+                '(?P<bot_id>([-\w]+|py\.warnings)): (?P<log_level>[A-Z]+) (?P<message>.+)$')
 
 
 class Parameters(object):
@@ -217,6 +217,7 @@ def log(name: str, log_path: str=intelmq.DEFAULT_LOGGING_PATH, log_level: str="D
         stream: Optional[object]=None, syslog: Union[bool, str, list, tuple]=None):
     """
     Returns a logger instance logging to file and sys.stderr or other stream.
+    The warnings module will log to the same handlers.
 
     Parameters:
         name: filename for logfile or string preceding lines in stream
@@ -238,6 +239,9 @@ def log(name: str, log_path: str=intelmq.DEFAULT_LOGGING_PATH, log_level: str="D
         LOG_FORMAT_STREAM: Default log format for stream handler
         LOG_FORMAT_SYSLOG: Default log format for syslog
     """
+    logging.captureWarnings(True)
+    warnings_logger = logging.getLogger("py.warnings")
+
     logger = logging.getLogger(name)
     logger.setLevel(log_level)
 
@@ -255,6 +259,7 @@ def log(name: str, log_path: str=intelmq.DEFAULT_LOGGING_PATH, log_level: str="D
 
     if log_path or syslog:
         logger.addHandler(handler)
+        warnings_logger.addHandler(handler)
 
     if stream or stream is None:
         console_formatter = logging.Formatter(LOG_FORMAT_STREAM)
@@ -264,6 +269,7 @@ def log(name: str, log_path: str=intelmq.DEFAULT_LOGGING_PATH, log_level: str="D
             console_handler = logging.StreamHandler(stream)
         console_handler.setFormatter(console_formatter)
         logger.addHandler(console_handler)
+        warnings_logger.addHandler(console_handler)
         console_handler.setLevel(log_level)
 
     return logger

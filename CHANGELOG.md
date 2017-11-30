@@ -8,6 +8,7 @@ CHANGELOG
 * logrotate: use sudo for postrotate script
 
 ### Core
+- warnings of bots are catched by the logger (#1074)
 
 ### Bots
 #### Parsers
