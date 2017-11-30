@@ -188,6 +188,9 @@ class ClassificationType(GenericType):
                       'test',
                       'unknown',
                       'vulnerable service',
+                      'test',
+                      'tor',
+                      'leak',
                       ]
 
     @staticmethod
