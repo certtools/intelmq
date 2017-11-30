@@ -74,6 +74,9 @@ Support for Python 3.3 has been dropped, it reached its end of life.
 
 ### Tools
 
+### Tests
+- `tests/lib/test_pipeline`: Redis tests clear all queues before and after tests (#1086)
+
 ### Packaging
 * cron jobs: fix paths of executables
 
