@@ -418,6 +418,11 @@
             "description": "VXVault Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.vxvault.parser",
             "parameters": {}
+        },
+        "ZoneH": {
+            "description": "ZoneH CSV report parser",
+            "module": "intelmq.bots.parsers.zoneh.parser",
+            "parameters": {}
         }
     },
     "Expert": {
@@ -768,11 +773,6 @@
                 "xmpp_room_password": null,
                 "use_muc": false
             }
-        },
-        "ZoneH": {
-            "description": "ZoneH CSV report parser",
-            "module": "intelmq.bots.parsers.zoneh.parser",
-            "parameters": {}
         }
     }
 }
