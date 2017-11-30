@@ -30,7 +30,8 @@ import pytz
 
 __all__ = ['base64_decode', 'base64_encode', 'decode', 'encode',
            'load_configuration', 'load_parameters', 'log', 'parse_logline',
-           'reverse_readline', 'error_message_from_exc', 'parse_relative'
+           'reverse_readline', 'error_message_from_exc', 'parse_relative',
+           'RewindableFileHandle',
            ]
 
 # Used loglines format
@@ -411,3 +412,23 @@ def extract_tar(file: bytes, extract_files: Union[bool, list]) -> list:
         extract_files = [file.name for file in tar.getmembers()]
 
     return [tar.extractfile(member).read() for member in tar.getmembers() if member.name in extract_files]
+
+
+class RewindableFileHandle(object):
+    """
+    Can be used for easy retrieval of last input line to populate raw field
+    during CSV parsing.
+    """
+    def __init__(self, f):
+        self.f = f
+        self.current_line = None
+        self.first_line = None
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        self.current_line = next(self.f)
+        if self.first_line is None:
+            self.first_line = self.current_line
+        return self.current_line
