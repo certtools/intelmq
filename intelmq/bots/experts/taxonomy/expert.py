@@ -28,7 +28,9 @@ TAXONOMY = {
     "blacklist": "other",
     "unknown": "other",
     "test": "test",
-    "other": "other"
+    "other": "other",
+    "tor": "other",
+    "leak": "information content security",
 }
 
 

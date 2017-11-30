@@ -158,7 +158,9 @@ class ClassificationType(GenericType):
                       'blacklist',
                       'other',
                       'unknown',
-                      'test'
+                      'test',
+                      'tor',
+                      'leak',
                       ]
 
     @staticmethod

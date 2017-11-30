@@ -42,6 +42,8 @@ class IdeaExpertBot(Bot):
         "blacklist": "Other",
         "dga domain": "Anomaly.Behaviour",
         "proxy": "Vulnerable.Config",
+        "leak": "Information",
+        "tor": "Other",
         "other": "Other",
         "unknown": "Other",
         "test": "Test",
@@ -56,7 +58,8 @@ class IdeaExpertBot(Bot):
         "malware configuration": "MalwareConf",
         "c&c": "CC",
         "dga domain": "DGA",
-        "proxy": "Proxy"
+        "proxy": "Proxy",
+        "tor": "Tor",
     }
 
     def init(self):
