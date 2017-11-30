@@ -34,7 +34,10 @@ class RestAPIOutputBot(Bot):
                               cert=self.ssl_client_cert,
                               timeout=self.http_timeout_sec,
                               **kwargs)
-        r.raise_for_status()
+        if self.parameters.logging_level in ["DEBUG", 10] and r.status_code != 200:
+            self.logger.debug("Something failed during message sending with response body {}".format(r.text))
+        else:
+            r.raise_for_status()
         self.logger.debug('Sent message.')
         self.acknowledge_message()
 
