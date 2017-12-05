@@ -182,6 +182,9 @@ class BotTestCase(object):
         console_handler.setFormatter(console_formatter)
         logger.addHandler(console_handler)
         self.mocked_log = mocked_logger(logger)
+        logging.captureWarnings(True)
+        warnings_logger = logging.getLogger("py.warnings")
+        warnings_logger.addHandler(console_handler)
 
         class Parameters(object):
             source_queue = src_name

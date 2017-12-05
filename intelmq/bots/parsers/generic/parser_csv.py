@@ -50,6 +50,7 @@ class GenericCsvParserBot(ParserBot):
 
     def parse(self, report):
         raw_report = utils.base64_decode(report.get("raw"))
+        raw_report = raw_report.translate({0: None})
         # ignore lines starting with #
         raw_report = re.sub(r'(?m)^#.*\n?', '', raw_report)
         # ignore null bytes
