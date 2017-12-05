@@ -15,6 +15,7 @@ CHANGELOG
 - All CSV parsers ignore NULL-bytes now, because the csv-library cannot handle it (#967)
 - Modify Bot default ruleset: changed conficker rule to catch more spellings
 - Shadowserver Parser: Add Accessible Cisco Smart Install
+- n6 parser: Fix classification mappings. See NEWS file for changes values.
 
 ### Documentation
 
