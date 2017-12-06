@@ -267,10 +267,13 @@ class BotTestCase(object):
         self.assertLoglineEqual(-1, "Bot stopped.", "INFO")
         self.assertNotRegexpMatchesLog("(ERROR.*?){%d}" % (self.allowed_error_count + 1))
         self.assertNotRegexpMatchesLog("CRITICAL")
-        """ If no error happened (incl. tracebacks, we can check for formatting) """
-        if not self.allowed_error_count:  # This would fail for tracebacks currently
+        """ If no error happened (incl. tracebacks) we can check for formatting """
+        if not self.allowed_error_count:
             for logline in self.loglines:
                 fields = utils.parse_logline(logline)
+                if not isinstance(fields, dict):
+                    # Traceback
+                    continue
                 self.assertTrue(fields['message'][-1] in '.:?!',
                                 msg='Logline {!r} does not end with .? or !.'
                                     ''.format(fields['message']))
