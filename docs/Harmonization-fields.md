@@ -107,6 +107,32 @@ Sanitation accepts string 'true' and 'false' and integers 0 and 1.
 
 ### ClassificationType
 
+classification.type type. Allowed values are:
+ * spam
+ * malware
+ * botnet drone
+ * ransomware
+ * dga domain
+ * malware configuration
+ * c&c
+ * scanner
+ * exploit
+ * brute-force
+ * ids alert
+ * defacement
+ * compromised
+ * backdoor
+ * ddos
+ * dropzone
+ * phishing
+ * proxy
+ * vulnerable service
+ * blacklist
+ * other
+ * unknown
+ * test
+ * tor
+ * leak
 
 ### DateTime
 

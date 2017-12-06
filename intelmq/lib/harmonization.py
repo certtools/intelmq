@@ -135,6 +135,9 @@ class Boolean(GenericType):
 
 
 class ClassificationType(GenericType):
+    """
+    classification.type type. Allowed values are:
+     * """
 
     allowed_values = ['spam',
                       'malware',
@@ -162,6 +165,8 @@ class ClassificationType(GenericType):
                       'tor',
                       'leak',
                       ]
+
+    __doc__ += '\n     * '.join(allowed_values)
 
     @staticmethod
     def is_valid(value, sanitize=False):
