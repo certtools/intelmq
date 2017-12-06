@@ -137,33 +137,8 @@ class Boolean(GenericType):
 
 class ClassificationType(GenericType):
     """
-    Type of classification.type field.
-
-    Only these values are allowed:
-     * backdoor
-     * blacklist
-     * botnet drone
-     * brute-force
-     * c&c
-     * compromised
-     * ddos
-     * defacement
-     * dga domain
-     * dropzone
-     * exploit
-     * ids alert
-     * malware
-     * malware configuration
-     * other
-     * phishing
-     * proxy
-     * ransomware
-     * scanner
-     * spam
-     * test
-     * unknown
-     * vulnerable service
-    """
+    classification.type type. Allowed values are:
+     * """
 
     allowed_values = ['backdoor',
                       'blacklist',
@@ -177,6 +152,7 @@ class ClassificationType(GenericType):
                       'dropzone',
                       'exploit',
                       'ids alert',
+                      'leak',
                       'malware',
                       'malware configuration',
                       'other',
@@ -186,12 +162,12 @@ class ClassificationType(GenericType):
                       'scanner',
                       'spam',
                       'test',
+                      'tor',
                       'unknown',
                       'vulnerable service',
-                      'test',
-                      'tor',
-                      'leak',
                       ]
+
+    __doc__ += '\n     * '.join(allowed_values)
 
     @staticmethod
     def is_valid(value, sanitize=False):
