@@ -1,0 +1,11 @@
+{
+    "name": "Good feed only",
+    "description": "Allow only specific feed, every other event is dropped",
+    "date": "2015-02-04",
+    "type": "include",
+    "conditions": {        
+        "feed.name": [
+            "good-feed"
+        ]        
+    }
+}
