@@ -213,6 +213,10 @@ class Bot(object):
 
                         if error_on_message:
 
+                            if self.parameters.error_forward_message:
+                                self.logger.info("Forwarding message to output queue.")
+                                self.send_message(self.__current_message)
+
                             if self.parameters.error_dump_message:
                                 error_traceback = traceback.format_exception(*error_on_message)
                                 self._dump_message(error_traceback,
