@@ -15,6 +15,7 @@ CHANGELOG
 - All CSV parsers ignore NULL-bytes now, because the csv-library cannot handle it (#967)
 - Modify Bot default ruleset: changed conficker rule to catch more spellings
 - Shadowserver Parser: Add Accessible Cisco Smart Install
+- CleanMX Phising Parser: Handle new columns `first` and `last` (#1131).
 
 ### Documentation
 
