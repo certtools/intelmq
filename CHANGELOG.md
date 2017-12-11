@@ -66,6 +66,7 @@ Support for Python 3.3 has been dropped, it reached its end of life.
 ---------------------------------
 ### Contrib
 * logrotate: use sudo for postrotate script
+* cron-jobs: use the scripts in the bots' directories and link them
 
 ### Core
 - warnings of bots are catched by the logger (#1074)
