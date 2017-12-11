@@ -45,7 +45,7 @@ class TestNationalCERTContactCertATExpertBot(test.BotTestCase, unittest.TestCase
         cls.bot_reference = NationalCERTContactCertATExpertBot
         cls.sysconfig = {'filter': False,
                          'overwrite_cc': False,
-                         'http_verify_cert': False,
+                         'http_verify_cert': True,
                          }
 
     def test_ipv4_lookup(self):
