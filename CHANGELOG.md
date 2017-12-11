@@ -6,6 +6,7 @@ CHANGELOG
 ---------------------------------
 ### Contrib
 * logrotate: use sudo for postrotate script
+* cron-jobs: use the scripts in the bots' directories and link them
 
 ### Core
 - warnings of bots are catched by the logger (#1074)
