@@ -11,6 +11,9 @@ CHANGELOG
 - warnings of bots are catched by the logger (#1074)
 
 ### Bots
+#### Collectors
+- bots.collectors.mail.collector_mail_attach: Support attachment file parsing for imbox versions newer than 0.9.5
+
 #### Parsers
 - All CSV parsers ignore NULL-bytes now, because the csv-library cannot handle it (#967)
 - Modify Bot default ruleset: changed conficker rule to catch more spellings
