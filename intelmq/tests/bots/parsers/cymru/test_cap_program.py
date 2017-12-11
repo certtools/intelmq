@@ -79,7 +79,7 @@ EVENT5 = {'__type': 'Event',
           'classification.identifier': 'conficker',
           'malware.name': 'conficker',
           'destination.ip': '172.16.0.22',
-          'extra.source_port': '1337',
+          'extra.source_port': 1337,
           }
 EVENT6 = {'__type': 'Event',
           'time.observation': '2015-11-01T00:01:45+00:05',

@@ -413,13 +413,26 @@ If the source does have a field with information for `classification.type`, but 
 you can map them to the correct ones. The `type_translation` field can hold a JSON field with a dictionary which maps the feed's values to intelmq's.
 
 
+### Cymru CAP Program
+
+#### Information:
+* `name:` intelmq.bots.parsers.cymru.cap_program
+* `public:` no
+* `cache (redis db):` none
+* `description:` Parses data from cymru's cap program feed.
+
+As little information on the format is available, the mappings might not be correct in all cases.
+Some reports are not implemented at all as there is no data available to check if the parsing is correct at all. If you do get errors like `Report ... not implement` or similar please open an issue and report the (anonymized) example data. Thanks.
+
+The information about the event could be better in may cases but as Cymru does not want to be associated with the report, we can't add comments to the events in the parser, because then the source would be easily identifiable for the recipient.
+
 ### Cymru Full Bogons
 
 #### Information:
 * `name:` intelmq.bots.parsers.cymru.full_bogons
 * `public:` no
 * `cache (redis db):` none
-* `description:` 
+* `description:` Parses data from full bogons feed.
 
 <a name="experts"></a>
 ## Experts
