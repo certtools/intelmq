@@ -56,6 +56,7 @@ setup(
     version=__version__,
     maintainer='Sebastian Wagner',
     maintainer_email='wagner@cert.at',
+    python_requires='>=3.3',
     install_requires=REQUIRES,
     test_suite='intelmq.tests',
     packages=find_packages(),
