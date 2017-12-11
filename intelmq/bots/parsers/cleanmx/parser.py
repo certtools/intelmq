@@ -6,7 +6,9 @@ from intelmq.lib.bot import ParserBot
 PHISHING = OrderedDict([
     ("line", "__IGNORE__"),
     ("id", "extra"),
+    ("first", "__IGNORE__"),
     ("firsttime", "time.source"),
+    ("last", "__IGNORE__"),
     ("lasttime", "__IGNORE__"),
     ("phishtank", "extra"),
     ("virusname", "event_description.target"),
@@ -76,7 +78,11 @@ class CleanMXParserBot(ParserBot):
 
         extra = {}
         for key, value in row.items():
+
             if not value:
+                continue
+
+            if value == 'undef':
                 continue
 
             if key is None:
@@ -109,9 +115,6 @@ class CleanMXParserBot(ParserBot):
                     value = 'offline'
                 elif value == 'up':
                     value = 'online'
-
-            if key_orig == 'scanner' and value == 'undef':
-                continue
 
             if key == 'extra':
                 extra[key_orig] = value
