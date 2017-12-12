@@ -193,6 +193,23 @@ The parameter `http_timeout_max_tries` is of no use in this collector.
 
 * * *
 
+
+### CertStream
+
+#### Information:
+* `name:` intelmq.bots.collectors.certstream.collector_certstream
+* `lookup:` yes
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Collects newly issued certificates from CTL
+
+#### Configuration Parameters:
+
+* None
+
+
+* * *
+
 ### MISP Generic
 
 
@@ -432,6 +449,20 @@ See the README.md
 FIXME
 
 * * *
+
+
+### CertStream
+
+#### Information:
+* `name:` intelmq.bots.collectors.parsers.parser_certstream
+* `lookup:` yes
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Parses newly issued certificates from CTL
+
+#### Configuration Parameters:
+
+* None
 
 ### ASN Lookup
 
