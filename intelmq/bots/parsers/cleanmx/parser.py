@@ -1,7 +1,9 @@
-# -*- coding: utf-8 -*-
+from xml.etree import ElementTree
+
 from collections import OrderedDict
 
-from intelmq.lib.bot import ParserBot
+from intelmq.lib import utils
+from intelmq.lib.bot import Bot
 
 PHISHING = OrderedDict([
     ("line", "__IGNORE__"),
@@ -11,7 +13,7 @@ PHISHING = OrderedDict([
     ("last", "__IGNORE__"),
     ("lasttime", "__IGNORE__"),
     ("phishtank", "extra"),
-    ("virusname", "event_description.target"),
+    ("target", "event_description.target"),
     ("url", "source.url"),
     ("recent", "status"),  # can be 'down', 'toggle' or 'up'
     ("response", "extra"),
@@ -23,7 +25,7 @@ PHISHING = OrderedDict([
     ("email", "source.abuse_contact"),
     ("inetnum", "extra"),  # network range, probably source.network
     ("netname", "extra"),
-    ("ddescr", "extra"),
+    ("descr", "extra"),
     ("ns1", "extra"),
     ("ns2", "extra"),
     ("ns3", "extra"),
@@ -59,76 +61,86 @@ VIRUS = OrderedDict([
 ])
 
 
-class CleanMXParserBot(ParserBot):
+class CleanMXParserBot(Bot):
 
-    def parse(self, report):
-        url = report['feed.url']
+    def get_mapping_and_type(self, url):
         if 'xmlphishing' in url:
-            self.csv_fieldnames = PHISHING
-            self.type = 'phishing'
+            return PHISHING, 'phishing'
         elif 'xmlviruses' in url:
-            self.csv_fieldnames = VIRUS
-            self.type = 'malware'
+            return VIRUS, 'virus'
         else:
             raise ValueError('Unknown report.')
-        return self.parse_csv_dict(report)
 
-    def parse_line(self, row, report):
-        event = self.new_event(report)
+    def process(self):
+        report = self.receive_message()
+        raw_report = utils.base64_decode(report.get('raw'))
 
-        extra = {}
-        for key, value in row.items():
+        mapping, ctype = self.get_mapping_and_type(report.get('feed.url'))
 
-            if not value:
-                continue
+        document = ElementTree.fromstring(raw_report)
 
-            if value == 'undef':
-                continue
+        for entry in document.iter(tag='entry'):
 
-            if key is None:
-                self.logger.warning('Value without key found, skipping the'
-                                    ' value: %r', value)
-                continue
+            entry_bytes = ElementTree.tostring(entry, encoding='utf-8', method='xml')
+            entry_str = entry_bytes.decode("utf-8")
 
-            key_orig = key
-            key = self.csv_fieldnames[key]
+            event = self.new_event(report)
+            extra = {}
 
-            if key == "__IGNORE__":
-                continue
+            for item in entry:
+                key = item.tag
+                value = item.text
 
-            if key == "source.fqdn" and event.is_valid('source.ip', value):
-                continue
-
-            if key == "time.source":
-                value = value + " UTC"
-
-            if key == "source.asn":
-                if value.upper().startswith("ASNA"):
+                if not value:
                     continue
-                for asn in value.upper().split(','):
-                    if asn.startswith("AS"):
-                        value = asn.split("AS")[1]
-                        break
 
-            if key == "status":
-                if value == 'down':
-                    value = 'offline'
-                elif value == 'up':
-                    value = 'online'
+                if value == 'undef':
+                    continue
 
-            if key == 'extra':
-                extra[key_orig] = value
-                continue
+                if key is None:
+                    self.logger.warning('Value without key found, skipping the'
+                                        ' value: %r', value)
+                    continue
 
-            event.add(key, value)
+                key_orig = key
+                key = mapping[key]
 
-        if extra:
-            event.add('extra', extra)
+                if key == "__IGNORE__":
+                    continue
 
-        event.add('classification.type', self.type)
-        event.add("raw", self.recover_line_csv_dict(row))
+                if key == "source.fqdn" and event.is_valid('source.ip', value):
+                    continue
 
-        yield event
+                if key == "time.source":
+                    value = value + " UTC"
 
+                if key == "source.asn":
+                    if value.upper().startswith("ASNA"):
+                        continue
+                    for asn in value.upper().split(','):
+                        if asn.startswith("AS"):
+                            value = asn.split("AS")[1]
+                            break
+
+                if key == "status":
+                    if value == 'down':
+                        value = 'offline'
+                    elif value == 'up':
+                        value = 'online'
+
+                if key == 'extra':
+                    extra[key_orig] = value
+                    continue
+
+                event.add(key, value)
+
+            if extra:
+                event.add('extra', extra)
+
+            event.add('classification.type', ctype)
+            event.add("raw", entry_str)
+            self.send_message(event)
+
+        self.acknowledge_message()
 
 BOT = CleanMXParserBot
