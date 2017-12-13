@@ -211,10 +211,10 @@ class MailSendOutputBot(Bot):
             subject = time.strftime(self.parameters.subject)
         except:
             subject = self.parameters.subject
-        if intended_to:
-            subject += " (intended for {})".format(intended_to)
-        else:
-            subject += " ({})".format(email_to)
+        #if intended_to:
+        #    subject += " (intended for {})".format(intended_to)
+        #else:
+        subject += " ({})".format(email_to)
         msg = MIMEMultipart()
         msg["From"] = email_from
         msg["Subject"] = subject
