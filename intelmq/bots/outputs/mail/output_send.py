@@ -214,7 +214,7 @@ class MailSendOutputBot(Bot):
         if intended_to:
             subject += " (intended for {})".format(intended_to)
         else:
-            subject += " ({})".format(intended_to)
+            subject += " ({})".format(email_to)
         msg = MIMEMultipart()
         msg["From"] = email_from
         msg["Subject"] = subject
