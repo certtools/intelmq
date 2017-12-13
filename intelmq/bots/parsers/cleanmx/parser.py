@@ -36,7 +36,9 @@ VIRUS = OrderedDict([
     ("line", "__IGNORE__"),
     ("id", "extra"),
     ("sub", "extra"),
+    ("first", "__IGNORE__"),
     ("firsttime", "time.source"),
+    ("last", "__IGNORE__"),
     ("lasttime", "__IGNORE__"),
     ("scanner", "extra"),
     ("virusname", "malware.name"),
@@ -52,12 +54,16 @@ VIRUS = OrderedDict([
     ("email", "source.abuse_contact"),
     ("inetnum", "extra"),
     ("netname", "extra"),
-    ("ddescr", "extra"),
+    ("descr", "extra"),
     ("ns1", "extra"),
     ("ns2", "extra"),
     ("ns3", "extra"),
     ("ns4", "extra"),
     ("ns5", "extra"),
+    ("md5", "malware.hash.md5"),
+    ("virustotal", "extra"),
+    ("vt_score", "extra"),
+    ("vt_info", "extra"),
 ])
 
 
@@ -67,7 +73,7 @@ class CleanMXParserBot(Bot):
         if 'xmlphishing' in url:
             return PHISHING, 'phishing'
         elif 'xmlviruses' in url:
-            return VIRUS, 'virus'
+            return VIRUS, 'malware'
         else:
             raise ValueError('Unknown report.')
 
@@ -142,5 +148,6 @@ class CleanMXParserBot(Bot):
             self.send_message(event)
 
         self.acknowledge_message()
+
 
 BOT = CleanMXParserBot
