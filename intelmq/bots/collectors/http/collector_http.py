@@ -59,6 +59,8 @@ class HTTPCollectorBot(CollectorBot):
         try:
             zfp = zipfile.ZipFile(io.BytesIO(resp.content), "r")
         except zipfile.BadZipfile:
+            if self.parameters.http_data_encoding:
+                resp.encoding = self.parameters.http_data_encoding
             raw_reports.append(resp.text)
         else:
             self.logger.info('Downloaded zip file, extracting following files:'
