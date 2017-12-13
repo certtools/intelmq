@@ -67,6 +67,7 @@ Support for Python 3.3 has been dropped, it reached its end of life.
 
 ### Core
 - warnings of bots are catched by the logger (#1074)
+- Bots stop when redis gives the error "OOM command not allowed when used memory > 'maxmemory'.".
 
 ### Bots
 #### Collectors

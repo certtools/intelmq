@@ -170,7 +170,7 @@ class Bot(object):
             except Exception as exc:
                 # in case of serious system issues, exit immediately
                 if isinstance(exc, MemoryError):
-                    self.logger.exception('Out of memory. Exit immediately.')
+                    self.logger.exception('Out of memory. Exit immediately. Reason: %r.' % exc.args[0])
                     self.stop()
                 elif isinstance(exc, (IOError, OSError)) and exc.errno == 28:
                     self.logger.exception('Out of disk space. Exit immediately.')
