@@ -3,7 +3,7 @@ from xml.etree import ElementTree
 from collections import OrderedDict
 
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 
 PHISHING = OrderedDict([
     ("line", "__IGNORE__"),
@@ -67,7 +67,7 @@ VIRUS = OrderedDict([
 ])
 
 
-class CleanMXParserBot(Bot):
+class CleanMXParserBot(ParserBot):
 
     def get_mapping_and_type(self, url):
         if 'xmlphishing' in url:
@@ -77,22 +77,25 @@ class CleanMXParserBot(Bot):
         else:
             raise ValueError('Unknown report.')
 
-    def process(self):
-        report = self.receive_message()
+    def parse(self, report):
         raw_report = utils.base64_decode(report.get('raw'))
-
-        mapping, ctype = self.get_mapping_and_type(report.get('feed.url'))
 
         document = ElementTree.fromstring(raw_report)
 
         for entry in document.iter(tag='entry'):
-
             entry_bytes = ElementTree.tostring(entry, encoding='utf-8', method='xml')
             entry_str = entry_bytes.decode("utf-8")
+            yield entry_str
 
-            event = self.new_event(report)
-            extra = {}
+    def parse_line(self, entry_str, report):
+        mapping, ctype = self.get_mapping_and_type(report.get('feed.url'))
 
+        document = ElementTree.fromstring(entry_str)
+
+        event = self.new_event(report)
+        extra = {}
+
+        for entry in document.iter(tag='entry'):
             for item in entry:
                 key = item.tag
                 value = item.text
@@ -145,9 +148,7 @@ class CleanMXParserBot(Bot):
 
             event.add('classification.type', ctype)
             event.add("raw", entry_str)
-            self.send_message(event)
-
-        self.acknowledge_message()
+            return event
 
 
 BOT = CleanMXParserBot
