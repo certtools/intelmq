@@ -13,91 +13,87 @@ with open(os.path.join(os.path.dirname(__file__), 'xmlphishing')) as handle:
 with open(os.path.join(os.path.dirname(__file__), 'xmlviruses')) as handle:
     VIRUSES_FILE = handle.read()
 
-PHISHING_REPORT = {"feed.url": "http://support.clean-mx.de/clean-mx/xmlphishing?response=alive&format=csv&domain=",
+PHISHING_REPORT = {"feed.url": "http://support.clean-mx.de/clean-mx/xmlphishing?response=alive&domain=",
                    "feed.name": "CleanMX Phishing",
                    "__type": "Report",
                    "raw": utils.base64_encode(PHISHING_FILE),
                    "time.observation": "2015-11-02T13:11:43+00:00"
                    }
-PHISHING_EVENTS = [{'__type': 'Event',
-                    'classification.type': 'phishing',
-                    'event_description.target': 'DHL',
-                    'extra': '{"ddescr": "Example Layer", "id": "9377142", "inetnum": '
-                             '"198.18.0.0 - 198.19.255.255", "netname": "EXAMPLE-NETWORK-15", '
-                             '"ns1": "ns2.example.com", "ns2": "ns1.example.com", "phishtank": '
-                             '"4647345", "response": "alive", "review": "198.18.0.1"}',
-                    'feed.name': 'CleanMX Phishing',
-                    'feed.url': 'http://support.clean-mx.de/clean-mx/xmlphishing?response=alive&format=csv&domain=',
-                    'raw': 'bGluZSxpZCxmaXJzdCxmaXJzdHRpbWUsbGFzdCxsYXN0dGltZSxwaGlzaHRhbmssdmlydXNuYW1lLHVybCxyZWNlbnQscmVzcG9uc2UsaXAscmV2aWV3LGRvbWFpbixjb3VudHJ5LHNvdXJjZSxlbWFpbCxpbmV0bnVtLG5ldG5hbWUsZGRlc2NyLG5zMSxuczIsbnMzLG5zNCxuczUNCjEsOTM3NzE0MiwxNDc4ODYwMzA1LDIwMTYtMTEtMjkgMTA6MzE6NDUsMCwxOTcwLTAxLTAxIDAwOjAwOjAwLDQ2NDczNDUsREhMLGh0dHA6Ly9leGFtcGxlLmNvbS9kZWhsJTIwcGFja2FnZS9jb25maXJtLyxkb3duLGFsaXZlLDE5OC4xOC4wLjEsMTk4LjE4LjAuMSwxOTguMTguMC4xLFVTLEFSSU4sYWJ1c2VAZXhhbXBsZS5jb20sMTk4LjE4LjAuMCAtIDE5OC4xOS4yNTUuMjU1LEVYQU1QTEUtTkVUV09SSy0xNSxFeGFtcGxlIExheWVyLG5zMi5leGFtcGxlLmNvbSxuczEuZXhhbXBsZS5jb20sLCwNCg==',
-                    'source.abuse_contact': 'abuse@example.com',
-                    'source.geolocation.cc': 'US',
-                    'source.ip': '198.18.0.1',
-                    'source.registry': 'ARIN',
-                    'source.url': 'http://example.com/dehl%20package/confirm/',
-                    'status': 'offline',
-                    'time.source': '2016-11-29T10:31:45+00:00'},
-                   {'__type': 'Event',
-                    'classification.type': 'phishing',
-                    'event_description.target': 'Free',
-                    'extra': '{"id": "9377136", "inetnum": "198.18.0.0 - 198.19.255.255", '
-                             '"netname": "EXAMPLE", "ns1": "ns-de.example.com", "ns2": '
-                             '"ns-de.example.net", "ns3": "ns-de.example.com", "ns4": '
-                             '"ns-de.example.org", "phishtank": "4647412", "response": "alive", '
-                             '"review": "198.18.0.7"}',
-                    'feed.name': 'CleanMX Phishing',
-                    'feed.url': 'http://support.clean-mx.de/clean-mx/xmlphishing?response=alive&format=csv&domain=',
-                    'raw': 'bGluZSxpZCxmaXJzdCxmaXJzdHRpbWUsbGFzdCxsYXN0dGltZSxwaGlzaHRhbmssdmlydXNuYW1lLHVybCxyZWNlbnQscmVzcG9uc2UsaXAscmV2aWV3LGRvbWFpbixjb3VudHJ5LHNvdXJjZSxlbWFpbCxpbmV0bnVtLG5ldG5hbWUsZGRlc2NyLG5zMSxuczIsbnMzLG5zNCxuczUNCjcsOTM3NzEzNiwxNDc4ODU5NDU4LDIwMTYtMTEtMjkgMTA6MTc6MzgsMCwxOTcwLTAxLTAxIDAwOjAwOjAwLDQ2NDc0MTIsRnJlZSxodHRwOi8vZXhhbXBsZS5uZXQvRnIvNWI4Y2EzY2FmODlmNWNkNjI0YzJiNjkyYjk5NzFjY2MvLHVwLGFsaXZlLDE5OC4xOC4wLjcsMTk4LjE4LjAuNyxleGFtcGxlLm5ldCxQTCxSSVBFLGFidXNlQGV4YW1wbGUubmV0LDE5OC4xOC4wLjAgLSAxOTguMTkuMjU1LjI1NSxFWEFNUExFLCxucy1kZS5leGFtcGxlLmNvbSxucy1kZS5leGFtcGxlLm5ldCxucy1kZS5leGFtcGxlLmNvbSxucy1kZS5leGFtcGxlLm9yZywNCg==',
-                    'source.abuse_contact': 'abuse@example.net',
-                    'source.fqdn': 'example.net',
-                    'source.geolocation.cc': 'PL',
-                    'source.ip': '198.18.0.7',
-                    'source.registry': 'RIPE',
-                    'source.url': 'http://example.net/Fr/5b8ca3caf89f5cd624c2b692b9971ccc/',
-                    'status': 'online',
-                    'time.source': '2016-11-29T10:17:38+00:00'}
-                   ]
-VIRUS_REPORT = {"feed.url": "http://support.clean-mx.de/clean-mx/xmlviruses?response=alive&format=csv&domain=",
+PHISHING_EVENTS = [{
+                        'classification.type': 'phishing',
+                        'extra': '{"descr": "Cloudflare, Inc. CLOUD14 101 Townsend Street San Francisco CA 94107", "id": "11095095", "inetnum": "104.16.0.0 - 104.31.255.255", "netname": "CLOUDFLARENET", "ns1": "gail.ns.cloudflare.com", "ns2": "max.ns.cloudflare.com", "phishtank": "5140280", "response": "alive", "review": "104.28.14.106"}',
+                        'feed.name': 'CleanMX Phishing',
+                        'feed.url': 'http://support.clean-mx.de/clean-mx/xmlphishing?response=alive&domain=',
+                        'raw': 'PGVudHJ5PgoJPGxpbmU+MTwvbGluZT4KCTxpZD4xMTA5NTA5NTwvaWQ+Cgk8Zmlyc3Q+MTUwMjAzMTU5MDwvZmlyc3Q+Cgk8bGFzdD4wPC9sYXN0PgoJPHBoaXNodGFuaz41MTQwMjgwPC9waGlzaHRhbms+Cgk8dGFyZ2V0IC8+Cgk8dXJsPmh0dHA6Ly93d3cuYXV0b3Bvc3RpbmcuY29tLmJyL2kvPC91cmw+Cgk8cmVjZW50PnVwPC9yZWNlbnQ+Cgk8cmVzcG9uc2U+YWxpdmU8L3Jlc3BvbnNlPgoJPGlwPjEwNC4yOC4xNS4xMDY8L2lwPgoJPHJldmlldz4xMDQuMjguMTQuMTA2PC9yZXZpZXc+Cgk8ZG9tYWluPmF1dG9wb3N0aW5nLmNvbS5icjwvZG9tYWluPgoJPGNvdW50cnk+VVM8L2NvdW50cnk+Cgk8c291cmNlPkFSSU48L3NvdXJjZT4KCTxlbWFpbD5hYnVzZUBjbG91ZGZsYXJlLmNvbTwvZW1haWw+Cgk8aW5ldG51bT4xMDQuMTYuMC4wIC0gMTA0LjMxLjI1NS4yNTU8L2luZXRudW0+Cgk8bmV0bmFtZT5DTE9VREZMQVJFTkVUPC9uZXRuYW1lPgoJPGRlc2NyPkNsb3VkZmxhcmUsIEluYy4gQ0xPVUQxNCAxMDEgVG93bnNlbmQgU3RyZWV0IFNhbiBGcmFuY2lzY28gQ0EgOTQxMDc8L2Rlc2NyPgoJPG5zMT5nYWlsLm5zLmNsb3VkZmxhcmUuY29tPC9uczE+Cgk8bnMyPm1heC5ucy5jbG91ZGZsYXJlLmNvbTwvbnMyPgoJPG5zMyAvPgoJPG5zNCAvPgoJPG5zNSAvPgo8L2VudHJ5Pgo=',
+                        'source.abuse_contact': 'abuse@cloudflare.com',
+                        'source.fqdn': 'autoposting.com.br',
+                        'source.geolocation.cc': 'US',
+                        'source.ip': '104.28.15.106',
+                        'source.registry': 'ARIN',
+                        'source.url': 'http://www.autoposting.com.br/i/',
+                        'status': 'online',
+                        'time.observation': '2015-11-02T13:11:43+00:00',
+                        '__type': 'Event',
+                    },
+                    {
+                        'classification.type': 'phishing',
+                        'event_description.target': 'Adobe',
+                        'extra': '{"descr": "Mochahost.com ML-17 2880 Zanker Rd #203 San Jose CA 95134", "id": "11095094", "inetnum": "198.38.80.0 - 198.38.95.255", "netname": "MOCAH-1", "ns1": "ns2.cally-hosting.club", "ns2": "ns1.cally-hosting.club", "phishtank": "5176961", "response": "alive", "review": "198.38.90.108"}',
+                        'feed.name': 'CleanMX Phishing',
+                        'feed.url': 'http://support.clean-mx.de/clean-mx/xmlphishing?response=alive&domain=',
+                        'raw': 'PGVudHJ5PgoJPGxpbmU+MjwvbGluZT4KCTxpZD4xMTA5NTA5NDwvaWQ+Cgk8Zmlyc3Q+MTUwMzUwNzg4MzwvZmlyc3Q+Cgk8bGFzdD4wPC9sYXN0PgoJPHBoaXNodGFuaz41MTc2OTYxPC9waGlzaHRhbms+Cgk8dGFyZ2V0PkFkb2JlPC90YXJnZXQ+Cgk8dXJsPmh0dHA6Ly9tdnB0cmFkZXMueHl6L2FkMGJlL3ZpZXcvP2VtYWlsPWFidXNlQGV4eG9ubW9iaWwuY29tPC91cmw+Cgk8cmVjZW50PnVwPC9yZWNlbnQ+Cgk8cmVzcG9uc2U+YWxpdmU8L3Jlc3BvbnNlPgoJPGlwPjE5OC4zOC45MC4xMDg8L2lwPgoJPHJldmlldz4xOTguMzguOTAuMTA4PC9yZXZpZXc+Cgk8ZG9tYWluPm12cHRyYWRlcy54eXo8L2RvbWFpbj4KCTxjb3VudHJ5PlVTPC9jb3VudHJ5PgoJPHNvdXJjZT5BUklOPC9zb3VyY2U+Cgk8ZW1haWw+YWJ1c2VAbW9jaGFob3N0LmNvbTwvZW1haWw+Cgk8aW5ldG51bT4xOTguMzguODAuMCAtIDE5OC4zOC45NS4yNTU8L2luZXRudW0+Cgk8bmV0bmFtZT5NT0NBSC0xPC9uZXRuYW1lPgoJPGRlc2NyPk1vY2hhaG9zdC5jb20gTUwtMTcgMjg4MCBaYW5rZXIgUmQgIzIwMyBTYW4gSm9zZSBDQSA5NTEzNDwvZGVzY3I+Cgk8bnMxPm5zMi5jYWxseS1ob3N0aW5nLmNsdWI8L25zMT4KCTxuczI+bnMxLmNhbGx5LWhvc3RpbmcuY2x1YjwvbnMyPgoJPG5zMyAvPgoJPG5zNCAvPgoJPG5zNSAvPgo8L2VudHJ5Pgo=',
+                        'source.abuse_contact': 'abuse@mochahost.com',
+                        'source.fqdn': 'mvptrades.xyz',
+                        'source.geolocation.cc': 'US',
+                        'source.ip': '198.38.90.108',
+                        'source.registry': 'ARIN',
+                        'source.url': 'http://mvptrades.xyz/ad0be/view/?email=abuse@exxonmobil.com',
+                        'status': 'online',
+                        'time.observation': '2015-11-02T13:11:43+00:00',
+                        '__type': 'Event',
+                    }]
+VIRUS_REPORT = {"feed.url": "http://support.clean-mx.de/clean-mx/xmlviruses?response=alive&domain=",
                 "feed.name": "CleanMX Viruses",
                 "__type": "Report",
                 "raw": utils.base64_encode(VIRUSES_FILE),
                 "time.observation": "2015-11-02T13:11:43+00:00"
                 }
-VIRUSES_EVENTS = [{'__type': 'Event',
-                   'classification.type': 'malware',
-                   'extra': '{"ddescr": "<![CDATA[Example]]>", "id": "104542833", "inetnum": '
-                            '"198.18.0.0 - 198.19.255.255", "netname": "EXAMPLE-COM", "ns1": '
-                            '"ns10.domaincontrol.com", "ns2": "ns09.domaincontrol.com", '
-                            '"response": "alive", "review": "198.18.0.8", "source": "ARIN", "sub": "sub16"}',
-                   'feed.name': 'CleanMX Viruses',
-                   'feed.url': 'http://support.clean-mx.de/clean-mx/xmlviruses?response=alive&format=csv&domain=',
-                   'malware.name': 'solimba.032',
-                   'raw': 'bGluZSxpZCxzdWIsZmlyc3R0aW1lLGxhc3R0aW1lLHNjYW5uZXIsdmlydXNuYW1lLHVybCxyZWNlbnQscmVzcG9uc2UsaXAsYXMscmV2aWV3LGRvbWFpbixjb3VudHJ5LHNvdXJjZSxlbWFpbCxpbmV0bnVtLG5ldG5hbWUsZGRlc2NyLG5zMSxuczIsbnMzLG5zNCxuczUNCjgsMTA0NTQyODMzLHN1YjE2LDIwMTYtMTEtMjkgMTE6MTg6MjQsMTk3MC0wMS0wMSAwMTowMDowMCx1bmRlZixTb2xpbWJhLjAzMixodHRwOi8vZGwuZXhhbXBsZS5jb20vbi8zLjEuMTIuOS82NDgzNzkzL0J1cytEcml2ZXIuZXhlLHVwLGFsaXZlLDE5OS41OS4yNDMuMTIwLEFTTkEsMTk4LjE4LjAuOCxleGFtcGxlLmNvbSxVUyxBUklOLGFidXNlQGV4YW1wbGUuY29tLDE5OC4xOC4wLjAgLSAxOTguMTkuMjU1LjI1NSxFWEFNUExFLUNPTSw8IVtDREFUQVtFeGFtcGxlXV0+LG5zMTAuZG9tYWluY29udHJvbC5jb20sbnMwOS5kb21haW5jb250cm9sLmNvbSwsLA0K',
-                   'source.abuse_contact': 'abuse@example.com',
-                   'source.fqdn': 'example.com',
-                   'source.geolocation.cc': 'US',
-                   'source.ip': '199.59.243.120',
-                   'source.url': 'http://dl.example.com/n/3.1.12.9/6483793/Bus+Driver.exe',
-                   'status': 'online',
-                   'time.source': '2016-11-29T11:18:24+00:00'},
-                  {'__type': 'Event',
-                   'classification.type': 'malware',
-                   'extra': '{"ddescr": "<![CDATA[Example]]>", "id": "104542831", "inetnum": '
-                            '"198.18.0.0 - 198.19.255.255", "netname": "EXAMPLENET", "ns1": '
-                            '"f1g1ns2.example.net", "ns2": "f1g1ns1.example.net", "response": '
-                            '"alive", "review": "120.26.127.170", "source": "APNIC", "sub": "sub16"}',
-                   'feed.name': 'CleanMX Viruses',
-                   'feed.url': 'http://support.clean-mx.de/clean-mx/xmlviruses?response=alive&format=csv&domain=',
-                   'malware.name': 'trj/ci.a',
-                   'raw': 'bGluZSxpZCxzdWIsZmlyc3R0aW1lLGxhc3R0aW1lLHNjYW5uZXIsdmlydXNuYW1lLHVybCxyZWNlbnQscmVzcG9uc2UsaXAsYXMscmV2aWV3LGRvbWFpbixjb3VudHJ5LHNvdXJjZSxlbWFpbCxpbmV0bnVtLG5ldG5hbWUsZGRlc2NyLG5zMSxuczIsbnMzLG5zNCxuczUNCjksMTA0NTQyODMxLHN1YjE2LDIwMTYtMTEtMjkgMTE6MTg6MjQsMTk3MC0wMS0wMSAwMTowMDowMCx1bmRlZixUcmovQ0kuQSxodHRwOi8vZGwuZXhhbXBsZS5jb20vZG93bmxvYWQvJUU4JUJGJTg1JUU5JTlCJUI3OSVFNSVBRSU5OCVFNiU5NiVCOSVFNCVCOCU4QiVFOCVCRCVCRF8zMkAxMDUzNzEuZXhlLHVwLGFsaXZlLDE5OC4xOC4wLjksYXMzNzk2MywxMjAuMjYuMTI3LjE3MCxleGFtcGxlLmNvbSxDTixBUE5JQyxzb25nQGV4YW1wbGUuY29tLDE5OC4xOC4wLjAgLSAxOTguMTkuMjU1LjI1NSxFWEFNUExFTkVULDwhW0NEQVRBW0V4YW1wbGVdXT4sZjFnMW5zMi5leGFtcGxlLm5ldCxmMWcxbnMxLmV4YW1wbGUubmV0LCwsDQo=',
-                   'source.abuse_contact': 'song@example.com',
-                   'source.asn': 37963,
-                   'source.fqdn': 'example.com',
-                   'source.geolocation.cc': 'CN',
-                   'source.ip': '198.18.0.9',
-                   'source.url': 'http://dl.example.com/download/%E8%BF%85%E9%9B%B79%E5%AE%98%E6%96%B9%E4%B8%8B%E8%BD%BD_32@105371.exe',
-                   'status': 'online',
-                   'time.source': '2016-11-29T11:18:24+00:00'},
-                  ]
+VIRUSES_EVENTS = [{
+                    'classification.type': 'malware',
+                    'extra': '{"descr": "Cloudflare, Inc. CLOUD14 101 Townsend Street San Francisco CA 94107", "id": "112588349", "inetnum": "104.16.0.0 - 104.31.255.255", "netname": "CLOUDFLARENET", "ns1": "noah.ns.cloudflare.com", "ns2": "roxy.ns.cloudflare.com", "response": "alive", "review": "104.16.104.123", "source": "ARIN", "virustotal": "http://www.virustotal.com/latest-report.html?resource=14404b4610a945706d802a54eed2429b", "vt_info": "JS:Trojan.Script.GE JS:Trojan.Script.GE JS.Decode.A JS:Trojan.Script.GE Trojan.IFrame.Script.1 Backdoor ( 04c529b31 ) Backdoor ( 04c529b31 ) JS:Trojan.Script.GE JS.Trojan.Kryptik.rf JS/Crypted.AT.gen JS/Kryptik.BP JS_EXPLOIT.SMDZ JS:Decode-EQ [Trj] Js.Tr", "vt_score": "36/57 (63.2%)"}',
+                    'feed.name': 'CleanMX Viruses',
+                    'feed.url': 'http://support.clean-mx.de/clean-mx/xmlviruses?response=alive&domain=',
+                    'malware.hash.md5': '14404b4610a945706d802a54eed2429b',
+                    'malware.name': 'js.agent.uo.2',
+                    'raw': 'PGVudHJ5PgoJPGxpbmU+MTwvbGluZT4KCTxpZD4xMTI1ODgzNDk8L2lkPgoJPGZpcnN0PjE1MTMxMTc4MTA8L2ZpcnN0PgoJPGxhc3Q+MDwvbGFzdD4KCTxtZDU+MTQ0MDRiNDYxMGE5NDU3MDZkODAyYTU0ZWVkMjQyOWI8L21kNT4KCTx2aXJ1c3RvdGFsPmh0dHA6Ly93d3cudmlydXN0b3RhbC5jb20vbGF0ZXN0LXJlcG9ydC5odG1sP3Jlc291cmNlPTE0NDA0YjQ2MTBhOTQ1NzA2ZDgwMmE1NGVlZDI0MjliPC92aXJ1c3RvdGFsPgoJPHZ0X3Njb3JlPjM2LzU3ICg2My4yJSk8L3Z0X3Njb3JlPgoJPHZ0X2luZm8+SlM6VHJvamFuLlNjcmlwdC5HRSBKUzpUcm9qYW4uU2NyaXB0LkdFIEpTLkRlY29kZS5BIEpTOlRyb2phbi5TY3JpcHQuR0UgVHJvamFuLklGcmFtZS5TY3JpcHQuMSBCYWNrZG9vciAoIDA0YzUyOWIzMSApIEJhY2tkb29yICggMDRjNTI5YjMxICkgSlM6VHJvamFuLlNjcmlwdC5HRSBKUy5Ucm9qYW4uS3J5cHRpay5yZiBKUy9DcnlwdGVkLkFULmdlbiBKUy9LcnlwdGlrLkJQIEpTX0VYUExPSVQuU01EWiBKUzpEZWNvZGUtRVEgW1Ryal0gSnMuVHI8L3Z0X2luZm8+Cgk8c2Nhbm5lcj51bmRlZjwvc2Nhbm5lcj4KCTx2aXJ1c25hbWU+anMuYWdlbnQudW8uMjwvdmlydXNuYW1lPgoJPHVybD5odHRwOi8vcXVvdGVzY2FyLnR5cGVwYWQuY29tLzI0d2VyLmh0bWw8L3VybD4KCTxyZWNlbnQ+dXA8L3JlY2VudD4KCTxyZXNwb25zZT5hbGl2ZTwvcmVzcG9uc2U+Cgk8aXA+MTA0LjE2LjEwNS4xMjM8L2lwPgoJPGFzPkFTMTMzMzU8L2FzPgoJPHJldmlldz4xMDQuMTYuMTA0LjEyMzwvcmV2aWV3PgoJPGRvbWFpbj50eXBlcGFkLmNvbTwvZG9tYWluPgoJPGNvdW50cnk+VVM8L2NvdW50cnk+Cgk8c291cmNlPkFSSU48L3NvdXJjZT4KCTxlbWFpbD5hYnVzZUBjbG91ZGZsYXJlLmNvbTwvZW1haWw+Cgk8aW5ldG51bT4xMDQuMTYuMC4wIC0gMTA0LjMxLjI1NS4yNTU8L2luZXRudW0+Cgk8bmV0bmFtZT5DTE9VREZMQVJFTkVUPC9uZXRuYW1lPgoJPGRlc2NyPkNsb3VkZmxhcmUsIEluYy4gQ0xPVUQxNCAxMDEgVG93bnNlbmQgU3RyZWV0IFNhbiBGcmFuY2lzY28gQ0EgOTQxMDc8L2Rlc2NyPgoJPG5zMT5ub2FoLm5zLmNsb3VkZmxhcmUuY29tPC9uczE+Cgk8bnMyPnJveHkubnMuY2xvdWRmbGFyZS5jb208L25zMj4KCTxuczMgLz4KCTxuczQgLz4KCTxuczUgLz4KPC9lbnRyeT4K',
+                    'source.abuse_contact': 'abuse@cloudflare.com',
+                    'source.asn': 13335,
+                    'source.fqdn': 'typepad.com',
+                    'source.geolocation.cc': 'US',
+                    'source.ip': '104.16.105.123',
+                    'source.url': 'http://quotescar.typepad.com/24wer.html',
+                    'status': 'online',
+                    'time.observation': '2015-11-02T13:11:43+00:00',
+                    '__type': 'Event',
+                },
+                {
+                    'classification.type': 'malware',
+                    'extra': '{"descr": "Netregistry Pty LtdDIT route", "id": "112588346", "inetnum": "27.121.64.0 - 27.121.71.255", "netname": "NETREGISTRY", "ns1": "ns-2.ezyreg.com", "ns2": "ns-1.ezyreg.com", "response": "alive", "review": "27.121.64.179", "source": "APNIC", "virustotal": "http://www.virustotal.com/latest-report.html?resource=a862d6f2238585042948ed1f720ce1f3", "vt_info": "HTML.Agent.SJ Suspicious_GEN.F47V0920 Phishing.HTML.Doc", "vt_score": "2/60 (3.3%)"}',
+                    'feed.name': 'CleanMX Viruses',
+                    'feed.url': 'http://support.clean-mx.de/clean-mx/xmlviruses?response=alive&domain=',
+                    'malware.hash.md5': 'a862d6f2238585042948ed1f720ce1f3',
+                    'malware.name': 'phishing.html.doc',
+                    'raw': 'PGVudHJ5PgoJPGxpbmU+MjwvbGluZT4KCTxpZD4xMTI1ODgzNDY8L2lkPgoJPGZpcnN0PjE1MTMxMTc4MDk8L2ZpcnN0PgoJPGxhc3Q+MDwvbGFzdD4KCTxtZDU+YTg2MmQ2ZjIyMzg1ODUwNDI5NDhlZDFmNzIwY2UxZjM8L21kNT4KCTx2aXJ1c3RvdGFsPmh0dHA6Ly93d3cudmlydXN0b3RhbC5jb20vbGF0ZXN0LXJlcG9ydC5odG1sP3Jlc291cmNlPWE4NjJkNmYyMjM4NTg1MDQyOTQ4ZWQxZjcyMGNlMWYzPC92aXJ1c3RvdGFsPgoJPHZ0X3Njb3JlPjIvNjAgKDMuMyUpPC92dF9zY29yZT4KCTx2dF9pbmZvPkhUTUwuQWdlbnQuU0ogU3VzcGljaW91c19HRU4uRjQ3VjA5MjAgUGhpc2hpbmcuSFRNTC5Eb2M8L3Z0X2luZm8+Cgk8c2Nhbm5lcj51bmRlZjwvc2Nhbm5lcj4KCTx2aXJ1c25hbWU+UGhpc2hpbmcuSFRNTC5Eb2M8L3ZpcnVzbmFtZT4KCTx1cmw+aHR0cDovL25pY2tob29rcGhvdG9ncmFwaHkuY29tL3RlbS96ZWUvZTNjYWQ0OGI3NzhkNTlhNjYxM2NhMTJkNDI1NDdjMzMvbG9naW4ucGhwP2NtZD1sb2dpbl9zdWJtaXQmYW1wO2lkPWEyZTJiN2RlYWM0ZmQxODU3NDNhMTRhOTJmMjNiNjE3YTJlMmI3ZGVhYzRmZDE4NTc0M2ExNGE5MmYyM2I2MTcmYW1wO3Nlc3Npb249YTJlMmI3ZGVhYzRmZDE4NTc0M2ExNGE5MmYyM2I2MTdhMmUyYjdkZWFjNGZkMTg1NzQzYTE0YTkyZjIzYjYxNzwvdXJsPgoJPHJlY2VudD51cDwvcmVjZW50PgoJPHJlc3BvbnNlPmFsaXZlPC9yZXNwb25zZT4KCTxpcD4yNy4xMjEuNjQuMTc5PC9pcD4KCTxhcz5BUzI0NDQ2PC9hcz4KCTxyZXZpZXc+MjcuMTIxLjY0LjE3OTwvcmV2aWV3PgoJPGRvbWFpbj5uaWNraG9va3Bob3RvZ3JhcGh5LmNvbTwvZG9tYWluPgoJPGNvdW50cnk+QVU8L2NvdW50cnk+Cgk8c291cmNlPkFQTklDPC9zb3VyY2U+Cgk8ZW1haWw+YWJ1c2VAbmV0cmVnaXN0cnkuY29tLmF1PC9lbWFpbD4KCTxpbmV0bnVtPjI3LjEyMS42NC4wIC0gMjcuMTIxLjcxLjI1NTwvaW5ldG51bT4KCTxuZXRuYW1lPk5FVFJFR0lTVFJZPC9uZXRuYW1lPgoJPGRlc2NyPk5ldHJlZ2lzdHJ5IFB0eSBMdGRESVQgcm91dGU8L2Rlc2NyPgoJPG5zMT5ucy0yLmV6eXJlZy5jb208L25zMT4KCTxuczI+bnMtMS5lenlyZWcuY29tPC9uczI+Cgk8bnMzIC8+Cgk8bnM0IC8+Cgk8bnM1IC8+CjwvZW50cnk+Cg==',
+                    'source.abuse_contact': 'abuse@netregistry.com.au',
+                    'source.asn': 24446,
+                    'source.fqdn': 'nickhookphotography.com',
+                    'source.geolocation.cc': 'AU',
+                    'source.ip': '27.121.64.179',
+                    'source.url': 'http://nickhookphotography.com/tem/zee/e3cad48b778d59a6613ca12d42547c33/login.php?cmd=login_submit&id=a2e2b7deac4fd185743a14a92f23b617a2e2b7deac4fd185743a14a92f23b617&session=a2e2b7deac4fd185743a14a92f23b617a2e2b7deac4fd185743a14a92f23b617',
+                    'status': 'online',
+                    'time.observation': '2015-11-02T13:11:43+00:00',
+                    '__type': 'Event',
+                }]
 
 
 class TestCleanMXParserBot(test.BotTestCase, unittest.TestCase):
