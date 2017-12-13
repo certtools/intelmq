@@ -877,8 +877,9 @@ id: cleanmx-phishing-collector
 provider: CleanMX
 feed: CleanMX Phishing
 rate_limit: 129600
-http_url: http://support.clean-mx.de/clean-mx/xmlphishing?response=alive&format=csv&domain=
+http_url: http://support.clean-mx.de/clean-mx/xmlphishing?response=alive&domain=
 http_user_agent: {{ your user agent }}
+http_data_encoding: xml
 ```
 
 ### Parser Bot
@@ -908,8 +909,9 @@ id: cleanmx-virus-collector
 provider: CleanMX
 feed: CleanMX Virus
 rate_limit: 129600
-http_url: http://support.clean-mx.de/clean-mx/xmlviruses?response=alive&format=csv&domain=
+http_url: http://support.clean-mx.de/clean-mx/xmlviruses?response=alive&domain=
 http_user_agent: {{ your user agent }}
+http_data_encoding: xml
 ```
 
 ### Parser Bot
