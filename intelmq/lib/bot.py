@@ -32,6 +32,7 @@ class Bot(object):
     __current_message = None
     __message_counter = 0
     __message_counter_start = None
+
     # Bot is capable of SIGHUP delaying
     sighup_delay = True
 
@@ -39,6 +40,7 @@ class Bot(object):
         self.__log_buffer = []
         self.parameters = Parameters()
 
+        self.__group = None
         self.__error_retries_counter = 0
         self.__source_pipeline = None
         self.__destination_pipeline = None
@@ -213,7 +215,7 @@ class Bot(object):
 
                         if error_on_message:
 
-                            if self.parameters.error_forward_message:
+                            if self.parameters.error_forward_message and self.__group == "Expert":
                                 self.logger.info("Forwarding message to output queue.")
                                 self.send_message(self.__current_message)
 
@@ -429,6 +431,9 @@ class Bot(object):
 
         setattr(self.parameters, 'logging_path', DEFAULT_LOGGING_PATH)
 
+        # backwards compatibility
+        self.parameters.error_forward_message = getattr(self.parameters, 'error_forward_message', None)
+
         for option, value in config.items():
             setattr(self.parameters, option, value)
             self.__log_configuration_parameter("defaults", option, value)
@@ -448,6 +453,8 @@ class Bot(object):
                 self.__log_configuration_parameter("runtime", option, value)
                 if option.startswith('logging_'):
                     reinitialize_logging = True
+
+            self.__group = params['group']
 
         if reinitialize_logging:
             self.logger.handlers = []  # remove all existing handlers
