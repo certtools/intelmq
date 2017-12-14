@@ -33,7 +33,7 @@ class TestDomaintoolsExpertBot(test.BotTestCase, unittest.TestCase):
     @classmethod
     def set_bot(self):
         self.bot_reference = DomaintoolsExpertBot
-        self.sysconfig = {'user': 'mkendrick_first2017', 'password': 'c0e4e-e2527-dc6af-824a4-229d5'}
+        self.sysconfig = {'user': 'example01', 'password': 'mysecret'}
 
     def test_existing(self):
         self.input_message = EXAMPLE_INPUT
