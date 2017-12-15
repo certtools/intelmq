@@ -188,6 +188,41 @@ Add a contact:
 
 ```
 
+### Example change Tags
+
+If we call the simple text annotations tags, how could be change a tag
+that has already be used.
+
+Of course the notification rules may have to be changed
+(see mailgen documentation) and possibly the list of known tags
+that the fody-backend sends to fody.
+
+For example the following sql command on database `contactdb`
+change the tag  `whitelist-malware` to `Whitelist:Malware`:
+
+```psql
+BEGIN;
+
+UPDATE autonomous_system_annotation
+   SET annotation = '{"tag": "Whitelist:Malware"}'
+ WHERE annotation ->> 'tag' = 'whitelist-malware';
+
+UPDATE organisation_annotation
+   SET annotation = '{"tag": "Whitelist:Malware"}'
+ WHERE annotation ->> 'tag' = 'whitelist-malware';
+
+UPDATE network_annotation
+   SET annotation = '{"tag": "Whitelist:Malware"}'
+ WHERE annotation ->> 'tag' = 'whitelist-malware';
+
+UPDATE fqdn_annotation
+   SET annotation = '{"tag": "Whitelist:Malware"}'
+ WHERE annotation ->> 'tag' = 'whitelist-malware';
+
+COMMIT;
+```
+
+
 ## Suppress notification of contacts based upon certain criteria:
 
 It ist possible to suppress the notification of contacts based upon certain
