@@ -138,14 +138,14 @@ were imported automatically, i.e. by `ripe_import.py`.
 
 Connect to the database:
 
-```
+```sh
   su - postgres
   psql contactdb
 
 ```
 Add a contact:
 
-```pgsql
+```sql
 
 -- 1. Prepare contact information
 
@@ -200,7 +200,7 @@ that the fody-backend sends to fody.
 For example the following sql command on database `contactdb`
 change the tag  `whitelist-malware` to `Whitelist:Malware`:
 
-```psql
+```sql
 BEGIN;
 
 UPDATE autonomous_system_annotation
