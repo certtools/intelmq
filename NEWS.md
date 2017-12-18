@@ -24,6 +24,8 @@ The feed names in the shadowserver parser have been adapted to the current subje
 The Maxmind GeoIP expert did previously always overwrite existing data. A new parameter `overwrite` has been added,
 which is by default set to `false` to be consistent with other bots.
 
+The bot `bots.collectors.n6.collector_stomp` has been renamed to the new module `bots.collectors.stomp.collector`. Adapt your `runtime.conf` accordingly.
+
 ### Postgres databases
 The following statements optionally update existing data.
 Please check if you did use these feed names and eventually adapt them for your setup!

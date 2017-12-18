@@ -911,6 +911,16 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                     else:
                         self.logger.warning('Bot %r has no %r.', bot_id, field)
                     retval = 1
+            if 'module' in bot_config and bot_config['module'] == 'bots.collectors.n6.collector_stomp':
+                if RETURN_TYPE == 'json':
+                    output.append(['warning',
+                                   "The module 'bots.collectors.n6.collector_stomp' is deprecated and will be removed in "
+                                   "version 2.0. Please use intelmq.bots.collectors."
+                                   "stomp.collector instead for bot %r." % bot_id])
+                else:
+                    self.logger.warning("The module 'bots.collectors.n6.collector_stomp' is deprecated and will be removed in "
+                                        "version 2.0. Please use intelmq.bots.collectors."
+                                        "stomp.collector instead for bot %r." % bot_id)
             if bot_id not in files[PIPELINE_CONF_FILE]:
                 if RETURN_TYPE == 'json':
                     output.append(['error', 'Misconfiguration: No pipeline configuration found for %r.' % bot_id])
