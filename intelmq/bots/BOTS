@@ -577,6 +577,13 @@
             "module": "intelmq.bots.experts.taxonomy.expert",
             "parameters": {}
         },
+        "Sieve": {
+            "description": "This bot filters and modifies events based on a sieve-based language.",
+            "module": "intelmq.bots.experts.sieve.expert",
+            "parameters": {
+                "file": "/opt/intelmq/var/lib/bots/sieve/filter.sieve"
+            }
+        },
         "Tor Nodes": {
             "description": "Tor Nodes is the bot responsible to check if an IP is an Tor Exit Node.",
             "module": "intelmq.bots.experts.tor_nodes.expert",

@@ -96,6 +96,7 @@ setup(
             'intelmqctl = intelmq.bin.intelmqctl:main',
             'intelmqdump = intelmq.bin.intelmqdump:main',
             'intelmq_psql_initdb = intelmq.bin.intelmq_psql_initdb:main',
+            'intelmq.bots.experts.sieve.validator = intelmq.bots.experts.sieve.validator:main',
         ] + BOTS,
     },
     scripts=[

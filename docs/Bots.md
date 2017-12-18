@@ -753,6 +753,23 @@ Sources:
 
 * * *
 
+### Sieve
+
+See intelmq/bots/experts/sieve/README.md
+
+#### Information:
+* `name:` sieve
+* `lookup:` none
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Filtering with a sieve-based configuration language
+
+#### Configuration Parameters:
+
+* `file`: Path to sieve file. Syntax can be validated with `intelmq_sieve_expert_validator`.
+
+* * *
+
 ### Taxonomy
 
 #### Information:
