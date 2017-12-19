@@ -110,6 +110,9 @@ class Message(dict):
             warnings.warn("Assuming harmonization type 'JSONDict' for harmonization field 'extra'. "
                           "This assumption will be removed in version 2.0.", DeprecationWarning)
             self.harmonization_config['extra']['type'] = 'JSONDict'
+        for harm_key in self.harmonization_config.keys():
+            if not re.match('^[a-z_](.[a-z_0-9]+)*$', harm_key) and harm_key != '__type':
+                raise exceptions.InvalidKey("Harmonization key %r is invalid." % harm_key)
 
         super(Message, self).__init__()
         if isinstance(message, dict):
