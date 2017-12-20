@@ -23,6 +23,7 @@ CHANGELOG
 - n6 parser: Fix classification mappings. See NEWS file for changes values. (#738)
 
 ### Documentation
+- add release procedure documentation
 
 ### Tools
 
