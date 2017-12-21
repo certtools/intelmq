@@ -67,7 +67,7 @@ class MailSendOutputBot(Bot):
             self.alternativeMail = {}
             if self.parameters.alternative_mails:
                 with open(self.parameters.alternative_mails,"r") as f:
-                    reader = csv.reader(f,delimiter=",")
+                    reader = csv.reader(f, delimiter=",")
                     for row in reader:
                         self.alternativeMail[row[0]] = row[1]
 
@@ -151,7 +151,7 @@ class MailSendOutputBot(Bot):
                     if field in keys:
                         ordered_keys.append(field)
                 try:
-                    row["raw"] = b64decode(row["raw"]).decode("utf-8")
+                    row["raw"] = b64decode(row["raw"]).decode("utf-8").strip().replace("\n", "\\n").replace("\r", "\\r")
                 except: # let the row field as is
                     pass
                 rows_output.append(OrderedDict({fieldnames_translation[k]:row[k] for k in ordered_keys}))
@@ -211,10 +211,10 @@ class MailSendOutputBot(Bot):
             subject = time.strftime(self.parameters.subject)
         except:
             subject = self.parameters.subject
-        #if intended_to:
-        #    subject += " (intended for {})".format(intended_to)
-        #else:
-        subject += " ({})".format(email_to)
+        if intended_to:
+            subject += " (intended for {})".format(intended_to)
+        else:
+            subject += " ({})".format(email_to)
         msg = MIMEMultipart()
         msg["From"] = email_from
         msg["Subject"] = subject
