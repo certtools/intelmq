@@ -9,7 +9,7 @@ import inspect
 EXAMPLE_MESSAGE = {
                   "__type": "Event",
                   "source.ip": "10.0.0.1",
-                  "feed.name": "good-feed",
+                  "feed.name": "good-feed",                  
                   "time.source": "2015-06-04T13:37:00+00:00",
                   "feed.url": "http://www.example.com/",
                   "source.reverse_dns": "reverse.example.net",
@@ -20,6 +20,7 @@ EXAMPLE_MESSAGE = {
                          "LHJlcG9ydEBleGFtcGxlLm9yZywwMDAwMAo=",                  
                   "classification.type": "malware",
                   "event_description.text": "example description",
+                  "source.abuse_contact": "good-mail@example.com",
                   "source.asn": 00000
                   }
 

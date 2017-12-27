@@ -21,6 +21,9 @@ class CustomFilterExpertBot(Bot):
                             if ("/" in val and IPAddress(message[key]) in IPNetwork(val)) or message[key] == val:
                                 conforming = True
                                 break
+                        else:
+                            conforming = False
+                            break
                     elif message[key] in values:
                         conforming = True                                            
                                           
