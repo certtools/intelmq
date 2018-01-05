@@ -26,7 +26,7 @@ optional arguments:
   --index INDEX         elasticsearch index
   --index-type INDEX_TYPE
                         elasticsearch index type
-  --output <filepath>   write a copy of applied mapping to file
+  --output <filepath>   write mapping to file
 ```
 
 ### Examples
