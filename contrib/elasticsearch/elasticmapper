@@ -1,0 +1,127 @@
+#!/usr/bin/env python3
+
+import argparse
+import json
+import sys
+
+try:
+    from elasticsearch import Elasticsearch
+except:
+    print("Please install ElasticSearch 'pip install elasticsearch'")
+    sys.exit(0)
+
+
+TYPES = {
+    "Accuracy": "long",
+    "ASN": "integer",
+    "Base64": "text",
+    "Boolean": "boolean",
+    "ClassificationType": "keyword",
+    "DateTime": "date",
+    "Float": "long",
+    "FQDN": "text",
+    "Integer": "integer",
+    "IPAddress": "ip",
+    "IPNetwork": "text",
+    "JSON": "text",
+    "JSONDict": "nested",
+    "LowercaseString": "text",
+    "Registry": "text",
+    "String": "text",
+    "UppercaseString": "text",
+    "URL": "text"
+}
+
+
+def __mapping_properties_from_harmonization(properties):
+    # perform your customization on mapping (if needed)
+    return properties
+
+def mapping_properties_from_harmonization(harmonization):
+    properties = dict()
+    for field, field_options in harmonization['event'].items():
+        field_type = TYPES[field_options['type']]
+        properties[field] = dict(type=field_type)
+
+    return __mapping_properties_from_harmonization(properties)
+
+def create_mapping(harmonization, index_type):
+
+    properties = mapping_properties_from_harmonization(harmonization)
+    config = { "enabled": False }
+
+    data = {
+        "mappings": {
+            index_type: {
+                "_all": config,
+                "properties": properties
+            }
+        }
+    }
+
+    return data
+
+def send_mapping(host, index, data):
+    es = Elasticsearch([host], verify_certs=True)
+    response = es.indices.create(index=index, ignore=400, body=data)
+    return response
+
+
+if __name__ == "__main__":
+
+    parser = argparse.ArgumentParser(
+        description='Elastic Mapper tool',
+    )
+
+    parser.add_argument('--harmonization-file',
+                        action="store",
+                        dest="harmonization_file",
+                        metavar="<filepath>",
+                        required=True,
+                        help='harmonization file')
+
+    parser.add_argument('--host',
+                        action="store",
+                        dest="host",
+                        metavar="<ip>",
+                        required=False,
+                        help='elasticsearch server IP')
+
+    parser.add_argument('--index',
+                        action="store",
+                        dest="index",
+                        default="intelmq",
+                        required=False,
+                        help='elasticsearch index')
+
+    parser.add_argument('--index-type',
+                        action="store",
+                        dest="index_type",
+                        default="events",
+                        required=False,
+                        help='elasticsearch index type')
+
+    parser.add_argument('--output',
+                        action="store",
+                        dest="output",
+                        metavar="<filepath>",
+                        required=False,
+                        help='write a copy of applied mapping to file')
+
+    arguments = parser.parse_args()
+
+    with open(arguments.harmonization_file) as fp:
+        harmonization = json.load(fp)
+
+    data = create_mapping(harmonization, arguments.index_type)
+
+    if arguments.output:
+        with open(arguments.output, 'w') as fp:
+            fp.write(json.dumps(data, indent=4))
+        print("[+] Mapping has been written to output file.")
+
+    if arguments.host:
+        response = send_mapping(arguments.host, arguments.index, data)
+        print("[+] ElasticSearch Response:\n")
+        print(response)
+        print("")
