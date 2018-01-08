@@ -1,5 +1,9 @@
 # ElasticMapper Tool
 
+## Description
+
+ElasticMapper is a tool to generate the ElasticSearch mapping required to specify the proper fields and field types which will be insert on ElasticSearch database. This tool uses the IntelMQ harmonization file to automatically generate the mapping and provides a quick way to send directly the mapping to ElasticSearch or write in a local file the generated mapping.
+
 ## Requirements
 
 ```
