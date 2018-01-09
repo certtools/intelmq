@@ -569,7 +569,7 @@ The configuration is called `modify.conf` and looks like this:
         }
     },
     {
-        "rule": "Spamhaus Cert conficker",
+        "rulename": "Spamhaus Cert conficker",
         "if": {
             "malware.name": "^conficker(ab)?$"
         },
@@ -578,7 +578,7 @@ The configuration is called `modify.conf` and looks like this:
         }
     },
     {
-        "rule": "bitdefender",
+        "rulename": "bitdefender",
         "if": {
             "malware.name": "bitdefender-(.*)$"
         },
@@ -587,7 +587,7 @@ The configuration is called `modify.conf` and looks like this:
         }
     },
     {
-        "rule": "urlzone",
+        "rulename": "urlzone",
         "if": {
             "malware.name": "^urlzone2?$"
         },
@@ -596,7 +596,7 @@ The configuration is called `modify.conf` and looks like this:
         }
     },
     {
-        "rule": "default",
+        "rulename": "default",
         "if": {
             "feed.name": "^Spamhaus Cert$"
         },
