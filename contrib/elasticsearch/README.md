@@ -15,10 +15,9 @@ pip3 install elasticsearch
 ### Options
 
 ```
-elasticmapper -h
-usage: elasticmapper [-h] --harmonization-file <filepath> [--host <ip>]
-                     [--index INDEX] [--index-type INDEX_TYPE]
-                     [--output <filepath>]
+usage: elasticmapper [-h] --harmonization-file <filepath>
+                     [--harmonization-fallback] [--host <ip>] [--index INDEX]
+                     [--index-type INDEX_TYPE] [--output <filepath>]
 
 Elastic Mapper tool
 
@@ -26,6 +25,8 @@ optional arguments:
   -h, --help            show this help message and exit
   --harmonization-file <filepath>
                         harmonization file
+  --harmonization-fallback
+                        harmonization fallback to `text` type
   --host <ip>           elasticsearch server IP
   --index INDEX         elasticsearch index
   --index-type INDEX_TYPE
@@ -50,4 +51,12 @@ elasticmapper --harmonization-file=intelmq/intelmq/etc/harmonization.conf --inde
 #### Send to ElasticSearch and write to output file
 ```
 elasticmapper --harmonization-file=intelmq/intelmq/etc/harmonization.conf --index=intelmq --index-type=events --output=/tmp/mapping.txt --host=127.0.0.1
+```
+
+#### Harmonization fallback
+
+In case elasticmapper returned an error related to harmonization field type unrecognizable, specify an additional parameter to fallback to `text` type any unrecognizable field types.
+
+```
+elasticmapper --harmonization-file=intelmq/intelmq/etc/harmonization.conf --index=intelmq --index-type=events --output=/tmp/mapping.txt --host=127.0.0.1 --harmonization-fallback
 ```
