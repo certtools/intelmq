@@ -24,6 +24,7 @@ CHANGELOG
 
 ### Documentation
 - add release procedure documentation
+- fix example configuration for modify expert
 
 ### Tools
 
