@@ -22,6 +22,7 @@ from email.message import Message
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from email.utils import formatdate, make_msgid
 
 from intelmq.lib.bot import Bot
 from intelmq.lib.cache import Cache
@@ -304,6 +305,8 @@ class MailSendOutputBot(Bot):
             msg["From"] = email_from
             msg["Subject"] = subject
             msg["To"] = email_to
+            msg["Date"] = formatdate(localtime=True)
+            msg["Message-ID"] = make_msgid()
             self.smtp.sendmail(email_from, recipients, msg.as_string().encode('ascii'))  # .encode('ascii')
             return True
         else:
