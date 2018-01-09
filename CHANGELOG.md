@@ -81,6 +81,7 @@ Support for Python 3.3 has been dropped, it reached its end of life.
 - n6 parser: Fix classification mappings. See NEWS file for changes values.
 
 ### Documentation
+- fix example configuration for modify expert
 
 ### Tools
 
