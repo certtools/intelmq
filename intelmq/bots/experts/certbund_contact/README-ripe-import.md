@@ -16,9 +16,9 @@ in the current working directory by default.
 The files can be downloaded
 from the RIPE website (ftp://ftp.ripe.net/ripe/dbase/split/).
 
-It is also possible to provide a whitelist of ASNs to load. Use the ``--asn-whitelist-file``
-parameter to pass a filename. The script expects one AS entry per line, with
-the AS-prefix, e.g. ``AS123``.
+It is also possible to provide a whitelist of ASNs to load. Use the
+``--asn-whitelist-file`` parameter to pass a filename. The script expects one
+AS entry per line, with the AS-prefix, e.g. ``AS123``.
 
 Usage
 =====
@@ -47,16 +47,18 @@ cat delegated-ripencc-latest | \
 Call `ripe_import.py --help` or `ripe_diff.py --help`
 to see all command line options.
 
-The importer is capable of importing only entries which can be associated to a CountryCode.
-This is suppported natively for `inetnum` and `inetnum6` data (IP-Data). For ASN an
-additional step is required, as the `autnum` datasets (ASN-Data) do not provide this 
-information. Thats where the `delegated-list` comes to play. In order to import only IP 
-and ASN Data for one country, for instance DE, use the following parameters:
-`--restrict-to-country DE` and `--ripe-delegated-file delegated-ripencc-latest`.
+The importer is capable of importing only entries which can be associated to a
+CountryCode. This is suppported natively for `inetnum` and `inetnum6` data
+(IP-Data). For ASN an additional step is required, as the `autnum` datasets
+(ASN-Data) do not provide this information. Thats where the `delegated-list`
+comes to play. In order to import only IP and ASN Data for one country, for
+instance DE, use the following parameters: `--restrict-to-country DE` and
+`--ripe-delegated-file delegated-ripencc-latest`.
 
-Note: When providing an asn-whitelist file, the file specified with `--ripe-delegated-file`
-and CountryCode based imports will be ignored for ASN-Data. Only the ASN specified
-in the whitelist will be imported. IP-Data will not be affected.
+Note: When providing an asn-whitelist file, the file specified with
+`--ripe-delegated-file` and CountryCode based imports will be ignored for
+ASN-Data. Only the ASN specified in the whitelist will be imported. IP-Data
+will not be affected.
 
 Now import the data into your ContactDB, we assume you used `contactdb` as
 database name.
@@ -96,6 +98,6 @@ points towards how to savely provide a password with a ~/.pgpass file.
 
 ### use as a module
 `check-ripe.py` is a simple example how to use the module
-ripe_data independently of intelmq to write a simple check
+`ripe_data` independently of intelmq to write a simple check
 that operates on ripe's dbsplit datafiles. Capabilities and limitations
-are documented with ripe_data.py.
+are documented with `ripe_data.py`.
