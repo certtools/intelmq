@@ -28,7 +28,7 @@ class MailURLCollectorBot(CollectorBot):
                                               'chunk_replicate_header', None)
 
     def connect_mailbox(self):
-        self.logger.debug("Connecting to %s", self.parameters.mail_host)
+        self.logger.debug("Connecting to %s.", self.parameters.mail_host)
         mailbox = imbox.Imbox(self.parameters.mail_host,
                               self.parameters.mail_user,
                               self.parameters.mail_password,
@@ -47,7 +47,7 @@ class MailURLCollectorBot(CollectorBot):
                 if (self.parameters.subject_regex and
                         not re.search(self.parameters.subject_regex,
                                       re.sub("\r\n\s", " ", message.subject))):
-                    self.logger.debug("Message %s skipped", message.subject)
+                    self.logger.debug("Message with date %s skipped because subject %r does not match.", message.subject)
                     continue
 
                 erroneous = False  # If errors occurred this will be set to true.
@@ -110,7 +110,8 @@ class MailURLCollectorBot(CollectorBot):
                     self.logger.info("Email report read.")
                 else:
                     self.logger.error("Email report read with errors, the report was not processed.")
-
+        else:
+            self.logger.debug("No unread mails to check.")
         mailbox.logout()
 
 

@@ -23,7 +23,7 @@ class MailAttachCollectorBot(CollectorBot):
             self.stop()
 
     def process(self):
-        self.logger.debug("Connecting to %s", self.parameters.mail_host)
+        self.logger.debug("Connecting to %s.", self.parameters.mail_host)
         mailbox = imbox.Imbox(self.parameters.mail_host,
                               self.parameters.mail_user,
                               self.parameters.mail_password,
@@ -38,7 +38,7 @@ class MailAttachCollectorBot(CollectorBot):
                 if (self.parameters.subject_regex and
                         not re.search(self.parameters.subject_regex,
                                       re.sub("\r\n\s", " ", message.subject))):
-                    self.logger.debug("Message %s skipped", message.subject)
+                    self.logger.debug("Message %s skipped.", message.subject)
                     continue
 
                 for attach in message.attachments:
@@ -51,7 +51,7 @@ class MailAttachCollectorBot(CollectorBot):
 
                     if re.search(self.parameters.attach_regex, attach_filename):
 
-                        self.logger.debug("Found suitable attachment %s", attach_filename)
+                        self.logger.debug("Found suitable attachment %s.", attach_filename)
 
                         if self.parameters.attach_unzip:
                             zipped = zipfile.ZipFile(attach['content'])
@@ -69,6 +69,8 @@ class MailAttachCollectorBot(CollectorBot):
                         # check it.
                         mailbox.mark_seen(uid)
                 self.logger.debug("Email report read.")
+        else:
+            self.logger.debug("No unread mails to check.")
         mailbox.logout()
 
 

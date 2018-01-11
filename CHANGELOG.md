@@ -30,7 +30,9 @@ Support for Python 3.3 has been dropped, it reached its end of life.
 
 ### Bots
 #### Collectors
-- Mail: New parameters; `sent_from`: filter messages by sender, `sent_to`: filter messages by recipient
+- Mail:
+  - New parameters; `sent_from`: filter messages by sender, `sent_to`: filter messages by recipient
+  - More debug logs
 - bots.experts.maxmind_geoip: New (optional) parameter `overwrite`, by default false. The current default was to overwrite!
 - `bots.collectors.n6.collector_stomp`: renamed to `bots.collectors.stomp.collector` (#716)
 - bots.collectors.rt:
