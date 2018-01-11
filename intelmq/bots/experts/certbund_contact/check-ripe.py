@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-""" Example using ripe_data as module use to examine the ripe database.
+""" Example using ripe_data as module to examine the ripe database.
 
   This file is part of intelMQ RIPE importer.
 
 
-Copyright (C) 2016, 2017 by Bundesamt für Sicherheit in der Informationstechnik
+Copyright (C):
+  2016, 2017, 2018 by Bundesamt für Sicherheit in der Informationstechnik
 Software engineering by Intevation GmbH
 
 This program is Free Software: you can redistribute it and/or modify
@@ -38,12 +39,14 @@ def main():
     verbose = True
 
     asn_list = parse_file(asn_file,
-                          ('aut-num', 'org', 'status'), 'aut-num', verbose)
+                          ('aut-num', 'org', 'status', 'abuse-c'),
+                          verbose=verbose)
     organisation_list = parse_file(organisation_file,
                                    ('organisation', 'org-name', 'abuse-c'),
                                    verbose=verbose)
     role_list = parse_file(role_file,
-                           ('nic-hdl', 'abuse-mailbox', 'org'), 'role', verbose)
+                           ('nic-hdl', 'abuse-mailbox', 'org'), 'role',
+                           verbose=verbose)
 
     a = 'x.txt'
     asfilename = a
@@ -65,6 +68,11 @@ def main():
         for o in organisation_list:
             if o["organisation"][0] == as2org[asn]:
                 print(o)
+
+    print("aut-num records without org but with abuse-c attribute:")
+    for asn in asn_list:
+        if not asn.get("org") and asn.get("abuse-c"):
+            print(asn)
 
 if __name__ == '__main__':
     main()
