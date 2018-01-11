@@ -14,6 +14,7 @@ CHANGELOG
 ### Bots
 #### Collectors
 - bots.collectors.mail.collector_mail_attach: Support attachment file parsing for imbox versions newer than 0.9.5
+- bots.outputs.smtp.output: Fix STARTTLS, threw an exception (#1152)
 
 #### Parsers
 - All CSV parsers ignore NULL-bytes now, because the csv-library cannot handle it (#967)
