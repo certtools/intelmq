@@ -761,7 +761,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         First checks if the queue does exist in the pipeline configuration.
         """
         if RETURN_TYPE == 'text':
-            logger.info("Clearing queue %s", queue)
+            logger.info("Clearing queue %s.", queue)
         queues = set()
         for key, value in self.pipeline_configuration.items():
             if 'source-queue' in value:
