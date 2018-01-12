@@ -3,7 +3,7 @@
 """Provide common functions to handle ripe data.
 
 
-Copyright (C) 2016, 2017 by Bundesamt für Sicherheit in der Informationstechnik
+Copyright (C) 2016-2018 by Bundesamt für Sicherheit in der Informationstechnik
 Software engineering by Intevation GmbH
 
 This program is Free Software: you can redistribute it and/or modify
@@ -133,8 +133,10 @@ def load_ripe_files(options) -> tuple:
     inetnum_list = sanitize_inetnum_list(inetnum_list)
     if options.verbose:
         print('** {} importable inetnums.'.format(len(inetnum_list)))
+
     inet6num_list = sanitize_inet6num_list(inet6num_list)
-    print('** {} importable inet6nums.'.format(len(inet6num_list)))
+    if options.verbose:
+        print('** {} importable inet6nums.'.format(len(inet6num_list)))
 
     known_organisations = referenced_organisations(asn_list, inetnum_list,
                                                    inet6num_list)
