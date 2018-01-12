@@ -338,7 +338,7 @@ class IntelMQController():
         except pkg_resources.DistributionNotFound:  # pragma: no cover
             # can only happen in interactive mode
             self.logger.error('No valid IntelMQ installation found: DistributionNotFound')
-            exit(1)
+            sys.exit(1)
         DESCRIPTION = """
         description: intelmqctl is the tool to control intelmq system.
 
@@ -553,7 +553,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         results = None
         args = self.parser.parse_args()
         if 'func' not in args:
-            exit(self.parser.print_help())
+            sys.exit(self.parser.print_help())
         args_dict = vars(args).copy()
 
         global RETURN_TYPE, QUIET
@@ -679,7 +679,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
     def abort(self, message):
         if self.interactive:
-            exit(message)
+            sys.exit(message)
         else:
             raise ValueError(message)
 
@@ -798,6 +798,8 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 return []
         elif self.parameters.logging_handler == 'syslog':
             bot_log_path = '/var/log/syslog'
+        else:
+            self.abort("Unknow logging handler %r" % self.parameters.logging_handler)
 
         if not os.access(bot_log_path, os.R_OK):
             self.logger.error('File %r is not readable.', bot_log_path)
@@ -1040,4 +1042,4 @@ def main():  # pragma: no cover
 
 
 if __name__ == "__main__":  # pragma: no cover
-    exit(main())
+    sys.exit(main())

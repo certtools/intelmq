@@ -96,7 +96,6 @@ class Bot(object):
         """
         self.logger.info("Received SIGTERM.")
         self.stop(exitcode=0)
-        del self
 
     def __handle_sighup_signal(self, signum: int, stack: Optional[object]):
         """
@@ -196,8 +195,6 @@ class Bot(object):
             except KeyboardInterrupt:
                 self.logger.info("Received KeyboardInterrupt.")
                 self.stop(exitcode=0)
-                del self
-                break
 
             finally:
                 if getattr(self.parameters, 'testing', False):
@@ -266,7 +263,7 @@ class Bot(object):
         try:
             self.shutdown()
         except BaseException:
-            pass
+            self.logger.exception('Error during shutdown of bot.')
 
         if self.__message_counter:
             self.logger.info("Processed %d messages since last logging.", self.__message_counter)
@@ -281,8 +278,7 @@ class Bot(object):
             self.__print_log_buffer()
 
         if not getattr(self.parameters, 'testing', False):
-            del self
-            exit(exitcode)
+            sys.exit(exitcode)
 
     def __print_log_buffer(self):
         for level, message in self.__log_buffer:
@@ -341,7 +337,6 @@ class Bot(object):
             if not self.__destination_pipeline:
                 raise exceptions.ConfigurationError('pipeline', 'No destination pipeline given, '
                                                     'but needed')
-                self.stop()
 
             self.logger.debug("Sending message.")
             self.__message_counter += 1
@@ -504,7 +499,7 @@ class Bot(object):
     @classmethod
     def run(cls):
         if len(sys.argv) < 2:
-            exit('No bot ID given.')
+            sys.exit('No bot ID given.')
         instance = cls(sys.argv[1])
         instance.start()
 
