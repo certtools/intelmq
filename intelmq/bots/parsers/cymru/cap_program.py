@@ -18,7 +18,6 @@ class CymruCAPProgramParserBot(ParserBot):
     def parse_line(self, line, report):
         report_type, ip, asn, timestamp, comments, asn_name = line.split('|')
         comment_split = comments.split(' ')
-        comment_zip = zip(comment_split[::2], comment_split[1::2])
         event = self.new_event(report)
 
         event.add('source.ip', ip)
@@ -50,7 +49,7 @@ class CymruCAPProgramParserBot(ParserBot):
         elif report_type == 'bots':
             # bots|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|[srcport <PORT>] [mwtype <TYPE>] [destaddr <IPADDR>]|ASNAME
             event.add('classification.type', 'botnet drone')
-            for kind, value in comment_zip:
+            for kind, value in zip(comment_split[::2], comment_split[1::2]):
                 if kind == 'srcport':
                     event['extra.source_port'] = int(value)
                 elif kind == 'mwtype':
@@ -58,14 +57,15 @@ class CymruCAPProgramParserBot(ParserBot):
                 elif kind == 'destaddr':
                     event['destination.ip'] = value
                 else:
-                    raise ValueError('Unknown value in comment %r. for report' % (kind, report))
+                    raise ValueError('Unknown value in comment %r. for report' % (kind, report_type))
         elif report_type == 'bruteforce':
             # bruteforce|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|<PROTOCOL>|ASNAME
             event.add('classification.type', 'brute-force')
             event.add('classification.identifier', comments)
             event.add('protocol.application', comments)
         elif report_type == 'ddosreport':  # TODO: verify
-            # ddosreport|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|[<PROTOCOL> <PORT>] [category: <CATEGORY>] [servpass: <PASSWORD>] [SSL] [url: <URL>]|ASNAME
+            # ddosreport|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|[<PROTOCOL> <PORT>] [category: <CATEGORY>]
+            # [servpass: <PASSWORD>] [SSL] [url: <URL>]|ASNAME
             raise NotImplementedError('Report %r not implemented, format is unknown.' % report_type)
             event['classification.type'] = 'c&c'
             event['protocol.application'] = comment_split[0]
@@ -125,7 +125,8 @@ class CymruCAPProgramParserBot(ParserBot):
             event['classification.type'] = 'spam'
             if len(comments):
                 # TODO: what is the comment? One sample does not have a comment at all
-                raise NotImplementedError("Can't properly parse report %r, not know how to parse comment." % report)
+                raise NotImplementedError("Can't properly parse report %r, not know how to parse comment."
+                                          "" % report_type)
         elif report_type == 'spreaders':  # TODO: verify
             # spreaders|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|<URL> [<MD5>]|ASNAME
             event.add('source.url', comment_split[0])
@@ -138,11 +139,11 @@ class CymruCAPProgramParserBot(ParserBot):
                 event['feed.accuracy'] = 100
             for i in range(len(comment_split)):
                 if comment_split[i].startswith('confidence:'):
-                    event['feed.accuracy'] *= int(comment_split[i].lstrip('confidence:'))/5
+                    event['feed.accuracy'] *= int(comment_split[i].lstrip('confidence:')) / 5
                 elif comment_split[i] in ['legacy', 'crypto']:
                     event['extra.'] = comment_split[i]
                 elif comment_split[i] == 'srcport':
-                    event['extra.source_port'] = int(comment_split[i+1])
+                    event['extra.source_port'] = int(comment_split[i + 1])
                     break
         elif report_type == 'toxbot':  # TODO: verify
             # toxbot|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|srcport <SOURCE PORT>|ASNAME

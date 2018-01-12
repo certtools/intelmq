@@ -424,7 +424,7 @@ you can map them to the correct ones. The `type_translation` field can hold a JS
 As little information on the format is available, the mappings might not be correct in all cases.
 Some reports are not implemented at all as there is no data available to check if the parsing is correct at all. If you do get errors like `Report ... not implement` or similar please open an issue and report the (anonymized) example data. Thanks.
 
-The information about the event could be better in may cases but as Cymru does not want to be associated with the report, we can't add comments to the events in the parser, because then the source would be easily identifiable for the recipient.
+The information about the event could be better in many cases but as Cymru does not want to be associated with the report, we can't add comments to the events in the parser, because then the source would be easily identifiable for the recipient.
 
 ### Cymru Full Bogons
 
