@@ -684,5 +684,13 @@ class TestMessageFactory(unittest.TestCase):
         self.assertDictEqual(event.to_dict(hierarchical=False, jsondict_as_string=True),
                              {'extra': '{"foo": "bar"}'})
 
+    def test_invalid_harm_key(self):
+        """ Test if error is raised when using an invalid key. """
+        with self.assertRaises(exceptions.InvalidKey):
+            message.Event(harmonization={'event': {'foo..bar': {}}})
+        with self.assertRaises(exceptions.InvalidKey):
+            message.Event(harmonization={'event': {'foo.bar.': {}}})
+
+
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()

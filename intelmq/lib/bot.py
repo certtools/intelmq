@@ -438,7 +438,7 @@ class Bot(object):
 
         if self.__bot_id in list(config.keys()):
             params = config[self.__bot_id]
-            self.run_mode = params.get('run_mode', 'stream')
+            self.run_mode = params.get('run_mode', 'continuous')
             for option, value in params['parameters'].items():
                 setattr(self.parameters, option, value)
                 self.__log_configuration_parameter("runtime", option, value)

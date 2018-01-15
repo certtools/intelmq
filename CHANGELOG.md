@@ -66,14 +66,19 @@ Support for Python 3.3 has been dropped, it reached its end of life.
 ---------------------------------
 ### Contrib
 * logrotate: use sudo for postrotate script
+* cron-jobs: use the scripts in the bots' directories and link them
 
 ### Core
 - warnings of bots are catched by the logger (#1074)
 - Bots stop when redis gives the error "OOM command not allowed when used memory > 'maxmemory'.".
 
+### Harmonization
+- Rule for harmonization keys is enforced (#1104)
+
 ### Bots
 #### Collectors
 - bots.collectors.mail.collector_mail_attach: Support attachment file parsing for imbox versions newer than 0.9.5
+- bots.collectors.stomp.collectos: Heartbeat timeout is now logged with log level info instead of warning.
 
 #### Parsers
 - All CSV parsers ignore NULL-bytes now, because the csv-library cannot handle it (#967)
@@ -86,6 +91,7 @@ Support for Python 3.3 has been dropped, it reached its end of life.
 - fix example configuration for modify expert
 
 ### Tools
+- intelmqctl now exits with exit codes > 0 when errors happened or the operation was not successful. Also, the status operation exits with 1, if bots are stopped, but enabled. (#997)
 
 ### Tests
 - `tests/lib/test_pipeline`: Redis tests clear all queues before and after tests (#1086)

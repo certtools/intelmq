@@ -14,7 +14,7 @@ try:
             self.n6stomper = n6stompcollector
 
         def on_heartbeat_timeout(self):
-            self.n6stomper.logger.warn("Heartbeat timeout. Attempting to re-connect.")
+            self.n6stomper.logger.info("Heartbeat timeout. Attempting to re-connect.")
             self.n6stomper.conn.disconnect()
             status = self.n6stomper.conn.connect(wait=False)
             self.n6stomper.logger.info("Re-connected: %s.", status)
