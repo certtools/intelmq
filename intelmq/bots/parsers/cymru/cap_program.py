@@ -141,7 +141,7 @@ class CymruCAPProgramParserBot(ParserBot):
                 if comment_split[i].startswith('confidence:'):
                     event['feed.accuracy'] *= int(comment_split[i].lstrip('confidence:')) / 5
                 elif comment_split[i] in ['legacy', 'crypto']:
-                    event['extra.'] = comment_split[i]
+                    event['malware.version'] = comment_split[i]
                 elif comment_split[i] == 'srcport':
                     event['extra.source_port'] = int(comment_split[i + 1])
                     break
