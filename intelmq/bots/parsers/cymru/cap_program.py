@@ -28,6 +28,7 @@ class CymruCAPProgramParserBot(ParserBot):
         if report_type == 'beagle':  # TODO: verify
             # beagle|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|[<GET REQUEST>] [srcport <PORT>]|ASNAME
             event.add('classification.type', 'malware')
+            event.add('classification.identifier', 'beagle')
             event.add('malware.name', 'beagle')
             if len(comments):
                 # TODO: what is the comment? One sample does not have a comment at all
@@ -88,6 +89,7 @@ class CymruCAPProgramParserBot(ParserBot):
             # malwareurl|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|<URL> <SCAN-ID>|ASNAME
             event['source.url'] = comment_split[0]
             event.add('classification.type', 'malware')
+            event.add('classification.identifier', 'malwareurl')
         elif report_type == 'openresolvers':
             # openresolvers|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS||ASNAME
             event['classification.type'] = 'vulnerable service'
@@ -96,6 +98,7 @@ class CymruCAPProgramParserBot(ParserBot):
         elif report_type == 'phishing':
             # phishing|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|<URL>|ASNAME
             event['classification.type'] = 'phishing'
+            event['classification.identifier'] = 'phishing'
             event['source.url'] = comments
         elif report_type == 'proxy':
             # proxy|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|<PROXY PORT>|ASNAME
@@ -111,6 +114,7 @@ class CymruCAPProgramParserBot(ParserBot):
         elif report_type == 'scanners':  # TODO: verify
             # scanners|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|<PORTS>|ASNAME
             event['classification.type'] = 'scanner'
+            event['classification.identifier'] = 'scanner'
             port = None
             try:
                 port = int(comments)
@@ -123,6 +127,7 @@ class CymruCAPProgramParserBot(ParserBot):
         elif report_type == 'spam':
             # spam|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|<SOURCE>|ASNAME
             event['classification.type'] = 'spam'
+            event['classification.identifier'] = 'spam'
             if len(comments):
                 # TODO: what is the comment? One sample does not have a comment at all
                 raise NotImplementedError("Can't properly parse report %r, not know how to parse comment."
@@ -133,6 +138,7 @@ class CymruCAPProgramParserBot(ParserBot):
             if len(comment_split == 2):
                 event.add('malware.hash.md5', comment_split[1])
             event.add('classification.type', 'malware')
+            event.add('classification.identifier', 'spreader')
         elif report_type == 'stormworm':  # TODO: verify
             # stormworm|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|confidence:<NUMBER> [legacy|crypto] [srcport <SOURCE PORT>]|ASNAME
             if 'feed.accuracy' not in event:
