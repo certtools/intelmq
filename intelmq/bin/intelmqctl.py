@@ -887,6 +887,12 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                     else:
                         self.logger.warning('Bot %r has no %r.', bot_id, field)
                     retval = 1
+            if 'run_mode' in bot_config and bot_config['run_mode'] not in ['continuous', 'scheduled']:
+                if RETURN_TYPE == 'json':
+                    output.append(['warning', 'Bot %r has invalid `run_mode` %r.' % (bot_id, field)])
+                else:
+                    self.logger.warning('Bot %r has invalid `run_mode` %r.', bot_id, field)
+                    retval = 1
             if bot_id not in files[PIPELINE_CONF_FILE]:
                 if RETURN_TYPE == 'json':
                     output.append(['error', 'Misconfiguration: No pipeline configuration found for %r.' % bot_id])
