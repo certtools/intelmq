@@ -135,7 +135,7 @@ class ShadowserverParserBot(ParserBot):
                     except Exception:
                         self.logger.error('Could not convert shadowkey: %r, '
                                           'value: %r via conversion function %r.',
-                                          shadowkey, raw_value, conv_func)
+                                          shadowkey, raw_value, conv_func.__name__)
                         value = None
                         # """ fail early and often in this case. We want to be able to convert everything """
                         # self.stop()
