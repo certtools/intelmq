@@ -928,9 +928,10 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             retval = 1
 
         if RETURN_TYPE == 'json':
-            output.append(['info', 'Checking pipeline configuration.'])
+            output.append(['info', 'Checking runtime and pipeline configuration.'])
         else:
-            self.logger.info('Checking pipeline configuration.')
+            self.logger.info('Checking runtime and pipeline configuration.')
+        all_queues = set()
         for bot_id, bot_config in files[RUNTIME_CONF_FILE].items():
             # pipeline keys
             for field in ['description', 'group', 'module', 'name']:
@@ -964,24 +965,47 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 retval = 1
             else:
                 if ('group' in bot_config and
-                        bot_config['group'] in ['Collector', 'Parser', 'Expert'] and
-                        ('destination-queues' not in files[PIPELINE_CONF_FILE][bot_id] or
-                         (not isinstance(files[PIPELINE_CONF_FILE][bot_id]['destination-queues'], list) or
-                          len(files[PIPELINE_CONF_FILE][bot_id]['destination-queues']) < 1))):
-                    if RETURN_TYPE == 'json':
-                        output.append(['error', 'Misconfiguration: No destination queues for %r.' % bot_id])
+                        bot_config['group'] in ['Collector', 'Parser', 'Expert']):
+                    if ('destination-queues' not in files[PIPELINE_CONF_FILE][bot_id] or
+                        (not isinstance(files[PIPELINE_CONF_FILE][bot_id]['destination-queues'], list) or
+                         len(files[PIPELINE_CONF_FILE][bot_id]['destination-queues']) < 1)):
+                        if RETURN_TYPE == 'json':
+                            output.append(['error', 'Misconfiguration: No destination queues for %r.' % bot_id])
+                        else:
+                            self.logger.error('Misconfiguration: No destination queues for %r.', bot_id)
+                        retval = 1
                     else:
-                        self.logger.error('Misconfiguration: No destination queues for %r.', bot_id)
-                    retval = 1
+                        all_queues = all_queues.union(files[PIPELINE_CONF_FILE][bot_id]['destination-queues'])
                 if ('group' in bot_config and
-                        bot_config['group'] in ['Parser', 'Expert', 'Output'] and
-                        ('source-queue' not in files[PIPELINE_CONF_FILE][bot_id] or
-                         not isinstance(files[PIPELINE_CONF_FILE][bot_id]['source-queue'], str))):
-                    if RETURN_TYPE == 'json':
-                        output.append(['error', 'Misconfiguration: No source queue for %r.' % bot_id])
+                        bot_config['group'] in ['Parser', 'Expert', 'Output']):
+                    if ('source-queue' not in files[PIPELINE_CONF_FILE][bot_id] or
+                       not isinstance(files[PIPELINE_CONF_FILE][bot_id]['source-queue'], str)):
+                        if RETURN_TYPE == 'json':
+                            output.append(['error', 'Misconfiguration: No source queue for %r.' % bot_id])
+                        else:
+                            self.logger.error('Misconfiguration: No source queue for %r.', bot_id)
+                        retval = 1
                     else:
-                        self.logger.error('Misconfiguration: No source queue for %r.', bot_id)
-                    retval = 1
+                        all_queues.add(files[PIPELINE_CONF_FILE][bot_id]['source-queue'])
+        try:
+            pipeline = PipelineFactory.create(self.parameters)
+            pipeline.set_queues(None, "source")
+            pipeline.connect()
+        except Exception as exc:
+            if RETURN_TYPE == 'json':
+                output.append(['error',
+                               'Could not connect to redis pipeline: %r.'
+                               '' % utils.error_message_from_exc(exc)])
+            else:
+                self.logger.exception('Could not connect to redis pipeline.')
+            retval = 1
+        else:
+            orphan_queues = "', '".join({a.decode() for a in pipeline.pipe.keys()} - all_queues)
+            if orphan_queues:
+                if RETURN_TYPE == 'json':
+                    output.append(['warning', "Orphaned queues found: '%s'." % orphan_queues])
+                else:
+                    self.logger.warning("Orphaned queues found: '%s'.", orphan_queues)
 
         if RETURN_TYPE == 'json':
             output.append(['info', 'Checking harmonization configuration.'])
