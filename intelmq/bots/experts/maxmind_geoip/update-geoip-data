@@ -9,6 +9,9 @@ PATH=/bin:/usr/bin
 # export HTTPS_PROXY=https://proxy.example.com:8080/
 # export FTP_PROXY=ftp://proxy.example.com:8080/
 
+# This product includes GeoLite2 data created by MaxMind, available from
+# <a href="http://www.maxmind.com">http://www.maxmind.com</a>.
+
 
 set -e
 trap cleanup EXIT
