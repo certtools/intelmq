@@ -106,7 +106,8 @@ class Message(dict):
                                              expected=VALID_MESSSAGE_TYPES,
                                              docs=HARMONIZATION_CONF_FILE)
 
-        if classname == 'event' and self.harmonization_config['extra']['type'] == 'JSON':
+        if (classname == 'event' and 'extra' in self.harmonization_config and
+           self.harmonization_config['extra']['type'] == 'JSON'):
             warnings.warn("Assuming harmonization type 'JSONDict' for harmonization field 'extra'. "
                           "This assumption will be removed in version 2.0.", DeprecationWarning)
             self.harmonization_config['extra']['type'] = 'JSONDict'
