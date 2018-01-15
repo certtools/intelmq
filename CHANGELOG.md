@@ -135,6 +135,7 @@ Support for Python 3.3 has been dropped, it reached its end of life.
 ### Bots
 - bots/experts/ripencc_abuse_contact/expert.py: Use HTTPS URLs for rest.db.ripe.net
 - bots/outputs/file/output.py: properly close the file handle on shutdown
+- bots/parser/shadowserver: If conversion of a value via conversion function fails, only log the function name, not the representation string (#1157).
 
 ### Core
 - lib/bot: Bots will now log the used intelmq version at startup
