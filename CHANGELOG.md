@@ -11,6 +11,9 @@ CHANGELOG
 - warnings of bots are catched by the logger (#1074)
 - Bots stop when redis gives the error "OOM command not allowed when used memory > 'maxmemory'.".
 
+### Harmonization
+- Rule for harmonization keys is enforced (#1104)
+
 ### Bots
 #### Collectors
 - bots.collectors.mail.collector_mail_attach: Support attachment file parsing for imbox versions newer than 0.9.5

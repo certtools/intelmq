@@ -24,7 +24,7 @@ Every event **MUST** contain a timestamp field.
 
 ## Rules for keys
 
-The keys can be grouped together in sub-fields, e.g. `source.ip` or `source.geolocation.latitude`. Thus, keys must match `[a-z_.]`.
+The keys can be grouped together in sub-fields, e.g. `source.ip` or `source.geolocation.latitude`. Thus, keys must match `^[a-z_](.[a-z0-9_]+)*$`.
 
 
 <a name="sections"></a>
