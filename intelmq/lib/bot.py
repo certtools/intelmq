@@ -35,6 +35,11 @@ class Bot(object):
 
     # Bot is capable of SIGHUP delaying
     sighup_delay = True
+    # From the runtime configuration
+    description = None
+    group = None
+    module = None
+    name = None
 
     def __init__(self, bot_id: str):
         self.__log_buffer = []
@@ -171,7 +176,7 @@ class Bot(object):
             except Exception as exc:
                 # in case of serious system issues, exit immediately
                 if isinstance(exc, MemoryError):
-                    self.logger.exception('Out of memory. Exit immediately.')
+                    self.logger.exception('Out of memory. Exit immediately. Reason: %r.' % exc.args[0])
                     self.stop()
                 elif isinstance(exc, (IOError, OSError)) and exc.errno == 28:
                     self.logger.exception('Out of disk space. Exit immediately.')
@@ -444,16 +449,19 @@ class Bot(object):
         config = utils.load_configuration(RUNTIME_CONF_FILE)
         reinitialize_logging = False
 
-        if self.__bot_id in list(config.keys()):
+        if self.__bot_id in config:
             params = config[self.__bot_id]
-            self.run_mode = params.get('run_mode', 'stream')
+            self.run_mode = params.get('run_mode', 'continuous')
             for option, value in params['parameters'].items():
                 setattr(self.parameters, option, value)
                 self.__log_configuration_parameter("runtime", option, value)
                 if option.startswith('logging_'):
                     reinitialize_logging = True
 
-            #self.__group = params['group']
+            self.description = params.get('description')
+            self.group = params.get('group')
+            self.module = params.get('module')
+            self.name = params.get('name')
 
         if reinitialize_logging:
             self.logger.handlers = []  # remove all existing handlers
@@ -579,6 +587,7 @@ class ParserBot(Bot):
             self.logger.error('ParserBot can\'t be started itself. '
                               'Possible Misconfiguration.')
             self.stop()
+        self.group = 'Parser'
 
     def parse_csv(self, report: dict):
         """
@@ -727,6 +736,7 @@ class CollectorBot(Bot):
             self.logger.error('CollectorBot can\'t be started itself. '
                               'Possible Misconfiguration.')
             self.stop()
+        self.group = 'Collector'
 
     def __filter_empty_report(self, message: dict):
         if 'raw' not in message:
