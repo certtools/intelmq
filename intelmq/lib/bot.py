@@ -176,7 +176,7 @@ class Bot(object):
             except Exception as exc:
                 # in case of serious system issues, exit immediately
                 if isinstance(exc, MemoryError):
-                    self.logger.exception('Out of memory. Exit immediately.')
+                    self.logger.exception('Out of memory. Exit immediately. Reason: %r.' % exc.args[0])
                     self.stop()
                 elif isinstance(exc, (IOError, OSError)) and exc.errno == 28:
                     self.logger.exception('Out of disk space. Exit immediately.')
@@ -451,7 +451,7 @@ class Bot(object):
 
         if self.__bot_id in config:
             params = config[self.__bot_id]
-            self.run_mode = params.get('run_mode', 'stream')
+            self.run_mode = params.get('run_mode', 'continuous')
             for option, value in params['parameters'].items():
                 setattr(self.parameters, option, value)
                 self.__log_configuration_parameter("runtime", option, value)

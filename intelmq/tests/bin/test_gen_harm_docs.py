@@ -20,7 +20,10 @@ class TestGenHarmDocs(unittest.TestCase):
         with open(os.path.join(os.path.dirname(__file__),
                                '../../../docs/Harmonization-fields.md')) as handle:
             expected = handle.read()
-        self.assertEqual(gen_harm_docs.main().strip(), expected.strip())
+        self.assertEqual(gen_harm_docs.main().strip(), expected.strip(),
+                         "docs/Harmonization-fields.md does not match the output of "
+                         "intelmq/bin/intelmq_gen_harm_docs.py. Please execute the latter"
+                         " and replace the contents of the documentation file.")
 
 
 if __name__ == '__main__':  # pragma: no cover

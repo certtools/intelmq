@@ -24,6 +24,8 @@ The feed names in the shadowserver parser have been adapted to the current subje
 The Maxmind GeoIP expert did previously always overwrite existing data. A new parameter `overwrite` has been added,
 which is by default set to `false` to be consistent with other bots.
 
+The bot `bots.collectors.n6.collector_stomp` has been renamed to the new module `bots.collectors.stomp.collector`. Adapt your `runtime.conf` accordingly.
+
 ### Postgres databases
 The following statements optionally update existing data.
 Please check if you did use these feed names and eventually adapt them for your setup!
@@ -135,7 +137,30 @@ UPDATE events
 
 1.0.3 Bugfix release (unreleased)
 ---------------------------------
-No changes needed.
+The classification mappings for the n6 parser have been corrected:
+
+| n6 classification | Previous classification          | Current classification                | Notes |
+|                   | taxonomy   | type   | identifier | taxonomy       | type    | identifier |
+| dns-query         | Other      | other  | ignore me  | Other          | other   | dns-query  |
+| proxy             | Vulnerable | proxy  | open proxy | Other          | proxy   | openproxy  |
+| sandbox-url       | ignore     | ignore | ignore me  | malicious code | malware | sandboxurl | As this previous taxonomy did not exist, these events have been rejected |
+| other             | Vulnerable | unknow | unknown    | Other          | other   | other      |
+
+### Postgres databases
+Use the following statement carefully to upgrade your database.
+Adapt your feedname in the query to the one used in your setup.
+```SQL
+UPDATE events
+   SET "classification.identifier" = "dns-query"
+   WHERE "feed.name" = 'n6' AND "classification.taxonomy" = "Other" AND "classification.type" = "other" AND "classification.identifier" = "ignore me";
+UPDATE events
+   SET "classification.taxonomy" = "malicious code" AND "classification.type" = "malware" AND "classification.identifier" = "sandboxurl"
+   WHERE "feed.name" = 'n6' AND "classification.taxonomy" = "Vulnerable" AND "classification.type" = "ignore" AND "classification.identifier" = "ignore me";
+UPDATE events
+   SET "classification.taxonomy" = "Other" AND "classification.type" = "other" AND "classification.identifier" = "other"
+   WHERE "feed.name" = 'n6' AND "classification.taxonomy" = "Vulnerable" AND "classification.type" = "unknow" AND "classification.identifier" = "unknow";
+```
+
 
 1.0.2 Bugfix release
 --------------------

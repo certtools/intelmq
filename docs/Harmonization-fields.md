@@ -120,9 +120,7 @@ Sanitation accepts string 'true' and 'false' and integers 0 and 1.
 
 ### ClassificationType
 
-Type of classification.type field.
-
-Only these values are allowed:
+classification.type type. Allowed values are:
  * backdoor
  * blacklist
  * botnet drone
@@ -135,6 +133,7 @@ Only these values are allowed:
  * dropzone
  * exploit
  * ids alert
+ * leak
  * malware
  * malware configuration
  * other
@@ -144,9 +143,9 @@ Only these values are allowed:
  * scanner
  * spam
  * test
+ * tor
  * unknown
  * vulnerable service
-
 
 ### DateTime
 
