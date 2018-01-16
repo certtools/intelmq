@@ -39,7 +39,7 @@ BOT_CONFIG = {"http_proxy": None,
               }
 
 
-def mocked_config(bot_id='test-bot', src_name='', dst_names=(), sysconfig={}):
+def mocked_config(bot_id='test-bot', src_name='', dst_names=(), sysconfig={}, group=None, module=None):
     def mocked(conf_file):
         if conf_file == PIPELINE_CONF_FILE:
             return {bot_id: {"source-queue": src_name,
@@ -48,7 +48,12 @@ def mocked_config(bot_id='test-bot', src_name='', dst_names=(), sysconfig={}):
         elif conf_file == RUNTIME_CONF_FILE:
             conf = BOT_CONFIG.copy()
             conf.update(sysconfig)
-            return {bot_id: {'parameters': conf}}
+            return {bot_id: {'description': 'Instance of a bot for automated unit tests.',
+                             'group': group,
+                             'module': module,
+                             'name': 'Test Bot',
+                             'parameters': conf,
+                             }}
         elif conf_file.startswith(CONFIG_DIR):
             confname = os.path.join('etc/', os.path.split(conf_file)[-1])
             fname = pkg_resources.resource_filename('intelmq',
@@ -173,6 +178,8 @@ class BotTestCase(object):
                                            src_name,
                                            [dst_name],
                                            sysconfig=self.sysconfig,
+                                           group=self.bot_type.title(),
+                                           module=self.bot_reference.__module__,
                                            )
 
         logger = logging.getLogger(self.bot_id)

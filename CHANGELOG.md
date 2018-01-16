@@ -31,6 +31,7 @@ Support for Python 3.3 has been dropped, it reached its end of life.
 - Bots can specify a static method `check(parameters)` which can perform individual checks specific to the bot.
   These functions will be called by `intelmqctl check` if the bot is configured with the given parameters
 - Add `RewindableFileHandle` to utils making handling of CSV files more easy (optionally)
+- lib/bot: top level bot parameters (description, group, module, name) are exposed as members of the class.
 
 ### Bots
 #### Collectors
