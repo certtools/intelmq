@@ -21,7 +21,7 @@ mapping['backdoor']     = {"taxonomy": "intrusions",
 mapping['cnc']          = {"taxonomy": "malicious code",
                            "type": "c&c", "identifier": "c&c server"}
 mapping['dns-query']    = {"taxonomy": "other",
-                           "type": "other", "identifier": "ignore me"}
+                           "type": "other", "identifier": "dns-query"}
 mapping['dos-attacker'] = {"taxonomy": "availability",
                            "type": "ddos", "identifier": "dos-attacker"}
 mapping['dos-victim']   = {"taxonomy": "availability",
@@ -41,10 +41,10 @@ mapping['malware-action'] = {"taxonomy": "malicious code",
                              "identifier": "malware configuration"}
 mapping['phish']        = {"taxonomy": "fraud",
                            "type": "phishing", "identifier": "phishing"}
-mapping['proxy']        = {"taxonomy": "vulnerable",
-                           "type": "proxy", "identifier": "open proxy"}
-mapping['sandbox-url']  = {"taxonomy": "ignore",
-                           "type": "ignore", "identifier": "ignore me"}
+mapping['proxy']        = {"taxonomy": "other",
+                           "type": "proxy", "identifier": "openproxy"}
+mapping['sandbox-url']  = {"taxonomy": "malicious code",
+                           "type": "malware", "identifier": "sandboxurl"}
 mapping['scanning']     = {"taxonomy": "information gathering",
                            "type": "scanner", "identifier": "scanning"}
 mapping['server-exploit'] = {"taxonomy": "malicious code",
@@ -59,8 +59,8 @@ mapping['webinject']    = {"taxonomy": "malicious code",
                            "type": "malware", "identifier": "malware"}
 mapping['vulnerable']   = {"taxonomy": "vulnerable",
                            "type": "other", "identifier": "vulnerable"}
-mapping['other']        = {"taxonomy": "vulnerable",
-                           "type": "unknown", "identifier": "unknown"}
+mapping['other']        = {"taxonomy": "other",
+                           "type": "other", "identifier": "other"}
 
 
 class N6StompParserBot(Bot):

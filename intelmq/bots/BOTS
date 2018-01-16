@@ -175,9 +175,9 @@
                 "rate_limit": 3600
             }
         },
-        "N6stomp": {
-            "description": "N6 Collector - CERT.pl's N6 Collector - N6 feed via STOMP interface. Note that rate_limit does not apply for this bot as it is waiting for messages on a stream.",
-            "module": "intelmq.bots.collectors.n6.collector_stomp",
+        "Stomp": {
+            "description": "Stomp Collector - e.g. for CERT.pl's N6 feed via STOMP. Note that rate_limit does not apply for this bot as it is waiting for messages on a stream.",
+            "module": "intelmq.bots.collectors.stomp.collector",
             "parameters": {
                 "exchange": "<INSERT your exchange point as given by CERT.pl>",
                 "feed": "n6stomp",
@@ -576,6 +576,13 @@
             "description": "Taxonomy is the bot responsible to apply the eCSIRT Taxonomy to all events.",
             "module": "intelmq.bots.experts.taxonomy.expert",
             "parameters": {}
+        },
+        "Sieve": {
+            "description": "This bot filters and modifies events based on a sieve-based language.",
+            "module": "intelmq.bots.experts.sieve.expert",
+            "parameters": {
+                "file": "/opt/intelmq/var/lib/bots/sieve/filter.sieve"
+            }
         },
         "Tor Nodes": {
             "description": "Tor Nodes is the bot responsible to check if an IP is an Tor Exit Node.",
