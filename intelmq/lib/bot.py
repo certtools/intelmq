@@ -40,7 +40,6 @@ class Bot(object):
         self.__log_buffer = []
         self.parameters = Parameters()
 
-        self.__group = None
         self.__error_retries_counter = 0
         self.__source_pipeline = None
         self.__destination_pipeline = None
@@ -215,7 +214,7 @@ class Bot(object):
 
                         if error_on_message:
 
-                            if self.parameters.error_forward_message and self.__group == "Expert":
+                            if self.parameters.error_forward_message and self.group == "Expert":
                                 self.logger.info("Forwarding message to output queue.")
                                 self.send_message(self.__current_message)
 
@@ -454,7 +453,7 @@ class Bot(object):
                 if option.startswith('logging_'):
                     reinitialize_logging = True
 
-            self.__group = params['group']
+            #self.__group = params['group']
 
         if reinitialize_logging:
             self.logger.handlers = []  # remove all existing handlers
