@@ -4,7 +4,7 @@ import unittest
 
 import intelmq.lib.test as test
 import intelmq.lib.utils as utils
-from intelmq.bots.parsers.cymru.cap_program import CymruCAPProgramParserBot
+from intelmq.bots.parsers.cymru.parser_cap_program import CymruCAPProgramParserBot
 
 with open(os.path.join(os.path.dirname(__file__),
                        'infected_20171031.txt')) as handle:

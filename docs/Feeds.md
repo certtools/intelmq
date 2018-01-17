@@ -937,7 +937,7 @@ Usually via HTTPS.
 
 **Bot Name:** Cymru CAP Program
 
-**Bot Module:** intelmq.bots.parsers.cymru.cap_program
+**Bot Module:** intelmq.bots.parsers.cymru.parser_cap_program
 
 **Configuration Parameters:**
 ```
@@ -967,7 +967,7 @@ http_url: https://www.team-cymru.org/Services/Bogons/fullbogons-ipv4.txt
 
 **Bot Name:** Cymru Full Bogons
 
-**Bot Module:** intelmq.bots.parsers.cymru.full_bogons
+**Bot Module:** intelmq.bots.parsers.cymru.parser_full_bogons
 
 **Configuration Parameters:**
 ```

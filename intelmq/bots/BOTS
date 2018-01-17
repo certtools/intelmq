@@ -258,12 +258,12 @@
         },
         "Cymru Full Bogons": {
             "description": "Cymru Full Bogons Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.cymru.full_bogons",
+            "module": "intelmq.bots.parsers.cymru.parser_full_bogons",
             "parameters": {}
         },
         "Cymru CAP Program": {
             "description": "Cymru CAP Program Parser parses and sanitizes .",
-            "module": "intelmq.bots.parsers.cymru.cap_program",
+            "module": "intelmq.bots.parsers.cymru.parser_cap_program",
             "parameters": {}
         },
         "DShield AS": {

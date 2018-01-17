@@ -416,7 +416,7 @@ you can map them to the correct ones. The `type_translation` field can hold a JS
 ### Cymru CAP Program
 
 #### Information:
-* `name:` intelmq.bots.parsers.cymru.cap_program
+* `name:` intelmq.bots.parsers.cymru.parser_cap_program
 * `public:` no
 * `cache (redis db):` none
 * `description:` Parses data from cymru's cap program feed.
@@ -429,7 +429,7 @@ The information about the event could be better in many cases but as Cymru does 
 ### Cymru Full Bogons
 
 #### Information:
-* `name:` intelmq.bots.parsers.cymru.full_bogons
+* `name:` intelmq.bots.parsers.cymru.parser_full_bogons
 * `public:` no
 * `cache (redis db):` none
 * `description:` Parses data from full bogons feed.

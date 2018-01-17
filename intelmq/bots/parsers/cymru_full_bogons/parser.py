@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from ..cymru.full_bogons import CymruFullBogonsParserBot
+from ..cymru.parser_full_bogons import CymruFullBogonsParserBot
 
 
 class CymruFullBogonsParserDeprecatedBot(CymruFullBogonsParserBot):
