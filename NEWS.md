@@ -3,15 +3,157 @@ NEWS
 
 See the changelog for a full list of changes.
 
-### Configuration
-* For renamed bots, see the changelog for a complete list.
-* Many bots have new/change parameters
-* Syntax of runtime.conf has changed
-* system.conf and startup.conf have been dropped entirely, use defaults.conf and runtime.conf instead
-* Many bots have been renamed/moved or deleted. Please read the Bots section in the changelog and upgrade your configuration accordingly.
+1.1.0
+-----
+### Tools
+- `intelmqctl start` prints bot's error messages in stderr if it failed to start.
+- `intelmqctl check` checks if all keys in the packaged defaults.conf are present in the current configuration.
 
-development
------------
+### Harmonization
+- added `destination.urlpath` and `source.urlpath` to harmonization.
+
+### Configuration
+A new harmonization type `JSONDict` has been added specifically for the `extra` field. It is highly recommended to change the type of this field.
+The feed names in the shadowserver parser have been adapted to the current subjects. Change your configuration accordingly:
+* `Botnet-Drone-Hadoop` to `Drone`
+* `DNS-open-resolvers` to `DNS-Open-Resolvers`
+* `Open-NetBIOS` to `Open-NetBIOS-Nameservice`
+* `Ssl-Freak-Scan` to `SSL-FREAK-Vulnerable-Servers`
+* `Ssl-Scan` to `SSL-POODLE-Vulnerable-Servers`
+
+The Maxmind GeoIP expert did previously always overwrite existing data. A new parameter `overwrite` has been added,
+which is by default set to `false` to be consistent with other bots.
+
+### Postgres databases
+The following statements optionally update existing data.
+Please check if you did use these feed names and eventually adapt them for your setup!
+```SQL
+ALTER TABLE events
+   ADD COLUMN "destination.urlpath" text,
+   ADD COLUMN "source.urlpath" text;
+UPDATE events
+   SET "classification.identifier" = 'openmdns'
+   WHERE "classification.identifier" = 'open-mdns' AND "feed.name" = 'Open-mDNS';
+UPDATE events
+   SET "classification.identifier" = 'openchargen'
+   WHERE "classification.identifier" = 'open-chargen' AND "feed.name" = 'Open-Chargen';
+UPDATE events
+   SET "classification.identifier" = 'opentftp'
+   WHERE "classification.identifier" = 'open-tftp' AND "feed.name" = 'Open-TFTP';
+UPDATE events
+   SET "classification.identifier" = 'botnet'
+   WHERE "classification.identifier" = 'infected system' AND "feed.name" = 'Sinkhole-HTTP-Drone';
+UPDATE events
+   SET "classification.identifier" = 'botnet'
+   WHERE "classification.identifier" = 'infected system' AND "feed.name" = 'Microsoft-Sinkhole';
+UPDATE events
+   SET "classification.identifier" = 'openredis'
+   WHERE "classification.identifier" = 'open-redis' AND "feed.name" = 'Open-Redis';
+UPDATE events
+   SET "classification.identifier" = 'open-portmapper',
+       "protocol.application" = 'portmap'
+   WHERE "classification.identifier" = 'openportmapper' AND "feed.name" = 'Open-Portmapper' AND "protocol.application" = 'portmapper';
+UPDATE events
+   SET "classification.identifier" = 'open-ipmi'
+   WHERE "classification.identifier" = 'openipmi' AND "feed.name" = 'Open-IPMI';
+UPDATE events
+   SET "classification.identifier" = 'open-qotd'
+   WHERE "classification.identifier" = 'openqotd' AND "feed.name" = 'Open-QOTD';
+UPDATE events
+   SET "classification.identifier" = 'open-snmp'
+   WHERE "classification.identifier" = 'opensnmp' AND "feed.name" = 'Open-SNMP';
+UPDATE events
+   SET "classification.identifier" = 'open-mssql'
+   WHERE "classification.identifier" = 'openmssql' AND "feed.name" = 'Open-MSSQL';
+UPDATE events
+   SET "classification.identifier" = 'open-mongodb'
+   WHERE "classification.identifier" = 'openmongodb' AND "feed.name" = 'Open-MongoDB';
+UPDATE events
+   SET "classification.identifier" = 'open-netbios', "feed.name" = 'Open-NetBIOS-Nameservice'
+   WHERE "classification.identifier" = 'opennetbios' AND "feed.name" = 'Open-NetBIOS';
+UPDATE events
+   SET "classification.identifier" = 'openelasticsearch'
+   WHERE "classification.identifier" = 'open-elasticsearch' AND "feed.name" = 'Open-Elasticsearch';
+UPDATE events
+   SET "classification.identifier" = 'dns-open-resolver', "feed.name" = 'DNS-Open-Resolvers'
+   WHERE "classification.identifier" = 'opendns' AND "feed.name" = 'DNS-open-resolvers';
+UPDATE events
+   SET "classification.identifier" = 'ntp-monitor'
+   WHERE "classification.identifier" = 'openntp' AND "feed.name" = 'NTP-Monitor';
+UPDATE events
+   SET "classification.identifier" = 'SSL-POODLE', "feed.name" = 'SSL-POODLE-Vulnerable-Servers'
+   WHERE "classification.identifier" = 'SSL-Poodle' AND "feed.name" = 'SSL-Scan';
+UPDATE events
+   SET "feed.name" = 'SSL-FREAK-Vulnerable-Servers'
+   WHERE "feed.name" = 'SSL-Freak-Scan';
+UPDATE events
+   SET "classification.identifier" = 'open-memcached'
+   WHERE "classification.identifier" = 'openmemcached' AND "feed.name" = 'Open-Memcached';
+UPDATE events
+   SET "classification.identifier" = 'infected system', "feed.name" = 'Drone'
+   WHERE "classification.identifier" = 'botnet' AND "feed.name" = 'Botnet-Drone-Hadoop';
+UPDATE events
+   SET "classification.identifier" = 'open-xdmcp'
+   WHERE "classification.identifier" = 'openxdmcp' AND "feed.name" = 'Open-XDMCP';
+UPDATE events
+   SET "classification.identifier" = 'open-natpmp', "protocol.application" = 'natpmp'
+   WHERE "classification.identifier" = 'opennatpmp' AND "feed.name" = 'Open-NATPMP' AND "protocol.application" = 'nat-pmp';
+UPDATE events
+   SET "classification.identifier" = 'open-netis'
+   WHERE "classification.identifier" = 'opennetis' AND "feed.name" = 'Open-Netis';
+UPDATE events
+   SET "classification.identifier" = 'ntp-version'
+   WHERE "classification.identifier" = 'openntpversion' AND "feed.name" = 'NTP-Version';
+UPDATE events
+   SET "classification.identifier" = 'sandbox-url'
+   WHERE "classification.identifier" = 'sandboxurl' AND "feed.name" = 'Sandbox-URL';
+UPDATE events
+   SET "classification.identifier" = 'spam-url'
+   WHERE "classification.identifier" = 'spamurl' AND "feed.name" = 'Spam-URL';
+UPDATE events
+   SET "classification.identifier" = 'open-ike'
+   WHERE "classification.identifier" = 'openike' AND "feed.name" = 'Vulnerable-ISAKMP';
+UPDATE events
+   SET "classification.identifier" = 'open-rdp'
+   WHERE "classification.identifier" = 'openrdp' AND "feed.name" = 'Accessible-RDP';
+UPDATE events
+   SET "classification.identifier" = 'open-ldap'
+   WHERE "classification.identifier" = 'openldap' AND "feed.name" = 'Open-LDAP';
+UPDATE events
+   SET "classification.identifier" = 'blacklisted-ip'
+   WHERE "classification.identifier" = 'blacklisted' AND "feed.name" = 'Blacklisted-IP';
+UPDATE events
+   SET "classification.identifier" = 'open-telnet'
+   WHERE "classification.identifier" = 'opentelnet' AND "feed.name" = 'Accessible-Telnet';
+UPDATE events
+   SET "classification.identifier" = 'open-cwmp'
+   WHERE "classification.identifier" = 'opencwmp' AND "feed.name" = 'Accessbile-CWMP';
+UPDATE events
+   SET "classification.identifier" = 'accessible-vnc'
+   WHERE "classification.identifier" = 'accessiblevnc' AND "feed.name" = 'Accessible-VNC';
+```
+
+1.0.3 Bugfix release (unreleased)
+---------------------------------
+No changes needed.
+
+1.0.2 Bugfix release
+--------------------
+No changes needed.
+
+1.0.1 Bugfix release
+--------------------
+No changes needed.
+
+1.0.0 Stable release
+--------------------
+### Configuration
+- `bots.experts.ripencc_abuse_contact` now has the two additional parameters `query_ripe_stat_asn` and `query_ripe_stat_ip` instead of `query_ripe_stat`. The old parameter will be supported until version 1.1. An additional parameter `mode` has been introduced. See the bot's documentation for more details: docs/Bots.md#ripencc-abuse-contact
+- `bots.experts.certat_contact` has been renamed to `bots.experts.national_cert_contact_certat` (#995)
+- `bots.collectors.ftp` has been dropped (unused, unmaintained, #842)
+- system.conf and startup.conf have been dropped entirely, use defaults.conf and runtime.conf instead
+* Many bots have new/changed parameters
+* Many bots have been renamed/moved or deleted. Please read the Bots section in the changelog and upgrade your configuration accordingly.
 
 1.0.0.dev8
 ----------
@@ -150,6 +292,11 @@ UPDATE events
    SET "malware.hash.sha1" = lower("malware.hash.sha1")
    WHERE "malware.hash.sha1" IS NOT NULL;
 ```
+
+1.0.0.dev5
+----------
+* Syntax of runtime.conf has changed
+
 
 1.0.0.dev1
 ----------

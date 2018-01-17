@@ -9,6 +9,7 @@ Bot responsible for ignore duplicated messages. The bot can be configured to per
 * `redis_cache_db` - redis db to connect (e.g. `6`)
 * `redis_cache_ttl` - ttl (in seconds) for each entry inserted on cache (e.g. `86400`)
 * `redis_cache_password` - password to access redis (by default is None)
+* `bypass`- true or false value to bypass the eduplicator. When set to true, messages will not be deduplicated. Default: false
 
 ### Parameters for "fine-grained" deduplication
 

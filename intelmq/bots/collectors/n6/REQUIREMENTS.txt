@@ -1,1 +1,1 @@
-stomp.py==4.1.8
+stomp.py>=4.1.8

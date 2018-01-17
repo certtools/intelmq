@@ -9,8 +9,8 @@ This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
      notifempty
      sharedscripts
      postrotate
--        /usr/local/bin/intelmqctl reload --quiet
-+        /usr/bin/intelmqctl reload --quiet
+-        sudo -u intelmq /usr/local/bin/intelmqctl --quiet reload
++        sudo -u intelmq /usr/bin/intelmqctl --quiet reload
      endscript
  }
  
@@ -18,7 +18,7 @@ This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
      notifempty
      sharedscripts
      postrotate
--        /usr/local/bin/intelmqctl reload file-output --quiet
-+        /usr/bin/intelmqctl reload file-output --quiet
+-        sudo -u intelmq /usr/local/bin/intelmqctl --quiet reload file-output
++        sudo -u intelmq /usr/bin/intelmqctl --quiet reload file-output
      endscript
  }

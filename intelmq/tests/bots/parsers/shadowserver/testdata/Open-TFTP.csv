@@ -1,0 +1,94 @@
+"timestamp","ip","protocol","port","hostname","tag","asn","geo","region","city","naics","sic","opcode","errorcode","error","errormessage","size"
+"2016-07-24 00:12:08","198.51.100.152","udp",69,,"tftp",12843,"DE","BADEN-WURTTEMBERG","KARLSRUHE",517310,481302,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:08","198.51.100.67","udp",11230,,"tftp",3320,"DE","NORDRHEIN-WESTFALEN","DUSSELDORF",541690,874899,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:08","198.51.100.125","udp",69,,"tftp",31334,"DE","BERLIN","BERLIN",0,0,5,2,"Access violation","B2No such file or director",30
+"2016-07-24 00:12:08","198.51.100.203","udp",69,,"tftp",6830,"DE","NORDRHEIN-WESTFALEN","BESTWIG",0,0,5,2,"Access violation","B?No such file or director",30
+"2016-07-24 00:12:08","198.51.100.240","udp",69,,"tftp",680,"DE","NORDRHEIN-WESTFALEN","DUISBURG",0,0,5,4,"Illegal TFTP operation","illegal (unrecognized) tftp operation",42
+"2016-07-24 00:12:09","198.51.100.30","udp",16143,,"tftp",29413,"DE","BAYERN","SCHECHEN",0,0,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:09","198.51.100.69","udp",32773,,"tftp",9145,"DE","BREMEN","BREMERHAVEN",0,0,5,1,"File not found","File not found (/var/tmp/a.pdf)",36
+"2016-07-24 00:12:09","198.51.100.50","udp",12071,,"tftp",3320,"DE","SACHSEN","DRESDEN",518210,737415,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:09","198.51.100.113","udp",11710,,"tftp",3320,"DE","RHEINLAND-PFALZ","MAINZ",541690,874899,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:09","198.51.100.228","udp",11528,,"tftp",29562,"DE","BADEN-WURTTEMBERG","PFORZHEIM",0,0,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:10","198.51.100.131","udp",1227,,"tftp",3209,"DE","NORDRHEIN-WESTFALEN","BONN",0,0,5,1,"File not found","File not found",19
+"2016-07-24 00:12:10","198.51.100.155","udp",16825,"198-51-100-155.example.net","tftp",8422,"DE","NORDRHEIN-WESTFALEN","COLOGNE",0,0,5,1,"File not found","File not found",19
+"2016-07-24 00:12:10","198.51.100.171","udp",31947,,"tftp",3320,"DE","MECKLENBURG-VORPOMMERN","BEGGEROW",541690,874899,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:10","198.51.100.230","udp",15282,"198-51-100-230.example.net","tftp",3320,"DE","BAYERN","MUNICH",541690,874899,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:10","198.51.100.182","udp",13292,"198-51-100-182.example.net","tftp",3320,"DE","HESSEN","FRANKFURT AM MAIN",541690,874899,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:10","198.51.100.23","udp",15290,,"tftp",3320,"DE","BADEN-WURTTEMBERG","STUTTGART",541690,874899,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:10","198.51.100.116","udp",56492,,"tftp",21476,"DE","BAYERN","MUNICH",0,0,5,1,"File not found","No such file",17
+"2016-07-24 00:12:10","198.51.100.51","udp",69,,"tftp",3320,"DE","SACHSEN","LEIPZIG",541690,874899,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:10","198.51.100.88","udp",69,,"tftp",31334,"DE","BREMEN","BREMEN",0,0,5,2,"Access violation","B?No such file or director",30
+"2016-07-24 00:12:11","198.51.100.107","udp",69,,"tftp",6830,"DE","NORDRHEIN-WESTFALEN","STOLBERG",0,0,5,2,"Access violation","BNo such file or director",30
+"2016-07-24 00:12:11","198.51.100.75","udp",69,,"tftp",680,"DE","NIEDERSACHSEN","GOTTINGEN",0,0,5,4,"Illegal TFTP operation","illegal (unrecognized) tftp operation",42
+"2016-07-24 00:12:11","198.51.100.12","udp",69,"198-51-100-12.example.net","tftp",3320,"DE","NORDRHEIN-WESTFALEN","DUSSELDORF",541690,874899,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:11","198.51.100.13","udp",11953,,"tftp",3320,"DE","SACHSEN","LEIPZIG",541690,874899,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:11","198.51.100.12","udp",32947,,"tftp",197071,"DE","HESSEN","FRANKFURT AM MAIN",0,0,5,1,"File not found","File not found",19
+"2016-07-24 00:12:11","198.51.100.66","udp",69,,"tftp",3320,"DE","SACHSEN","LEIPZIG",541690,874899,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:11","198.51.100.170","udp",43083,,"tftp",3320,"DE","BAYERN","MUNICH",541690,874899,5,8,"OACK Failed","198-51-100-170.example.net",52
+"2016-07-24 00:12:11","198.51.100.67","udp",69,"198-51-100-67.example.net","tftp",3320,"DE","HESSEN","FRANKFURT AM MAIN",541690,874899,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:11","198.51.100.238","udp",17499,"198-51-100-238.example.net","tftp",8767,"DE","BAYERN","NEUBIBERG",517310,481302,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:11","198.51.100.84","udp",69,,"tftp",3320,"DE","NIEDERSACHSEN","HANNOVER",541690,874899,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:11","198.51.100.23","udp",54810,"198-51-100-23.example.net","tftp",41589,"DE","SAARLAND","PERL",0,0,5,1,"File not found","No such file",17
+"2016-07-24 00:12:11","198.51.100.160","udp",14270,"198-51-100-160.example.net","tftp",3320,"DE","BAYERN","MUNICH",541690,874899,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:12","198.51.100.111","udp",14554,,"tftp",3320,"DE","NIEDERSACHSEN","HANNOVER",541690,874899,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:12","198.51.100.98","udp",69,,"tftp",3320,"DE","NORDRHEIN-WESTFALEN","COLOGNE",541690,874899,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:12","198.51.100.227","udp",56065,,"tftp",3320,"DE","NIEDERSACHSEN","OSTERODE AM HARZ",541690,874899,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:12","198.51.100.18","udp",69,,"tftp",20880,"DE","THURINGEN","JENA",0,0,5,2,"Access violation","No such file or directory",30
+"2016-07-24 00:12:12","198.51.100.248","udp",69,"198-51-100-248.example.net","tftp",6805,"DE","NORDRHEIN-WESTFALEN","DUSSELDORF",518210,737415,5,1,"File not found","No such file",17
+"2016-07-24 00:12:12","198.51.100.228","udp",69,,"tftp",3320,"DE","BADEN-WURTTEMBERG","MURR",541690,874899,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:12","198.51.100.227","udp",69,,"tftp",3320,"DE","BADEN-WURTTEMBERG","FREIBURG IM BREISGAU",541690,874899,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:12","198.51.100.132","udp",11690,,"tftp",3209,"DE","NIEDERSACHSEN","HANNOVER",518210,737415,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:13","198.51.100.47","udp",8713,,"tftp",20792,"DE","HESSEN","WIESBADEN",0,0,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:13","198.51.100.185","udp",69,,"tftp",31334,"DE","BAYERN","PUCHHEIM",0,0,5,2,"Access violation","B?No such file or director",30
+"2016-07-24 00:12:13","198.51.100.246","udp",69,"198-51-100-246.example.net","tftp",6830,"DE","NORDRHEIN-WESTFALEN","WESEL",0,0,5,2,"Access violation","B?No such file or director",30
+"2016-07-24 00:12:13","198.51.100.190","udp",11649,,"tftp",3209,"DE","SACHSEN","LEIPZIG",0,0,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:13","198.51.100.187","udp",10654,,"tftp",3320,"DE","SACHSEN","LEIPZIG",541690,874899,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:13","198.51.100.63","udp",50292,"198-51-100-63.example.net","tftp",15456,"DE","BAYERN","MUNICH",0,0,5,1,"File not found","File not found",19
+"2016-07-24 00:12:13","198.51.100.228","udp",9230,,"tftp",3320,"DE","HAMBURG","HAMBURG",518210,737415,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:13","198.51.100.180","udp",44630,,"tftp",8881,"DE","BERLIN","BERLIN",0,0,5,0,"Not defined","Get not supported",22
+"2016-07-24 00:12:13","198.51.100.5","udp",13403,,"tftp",3320,"DE","RHEINLAND-PFALZ","NEUWIED",541690,874899,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:14","198.51.100.207","udp",10194,"198-51-100-207.example.net","tftp",8767,"DE","BAYERN","AUGSBURG",0,0,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:14","198.51.100.226","udp",69,"198-51-100-226.example.net","tftp",29562,"DE","BADEN-WURTTEMBERG","SCHWETZINGEN",0,0,5,2,"Access violation","B{No such file or director",30
+"2016-07-24 00:12:14","198.51.100.253","udp",69,"198-51-100-253.example.net","tftp",3320,"DE","SACHSEN","LEIPZIG",541690,874899,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:14","198.51.100.136","udp",69,,"tftp",680,"DE","SACHSEN","ZWICKAU",0,0,5,4,"Illegal TFTP operation","illegal (unrecognized) tftp operation",42
+"2016-07-24 00:12:14","198.51.100.206","udp",13878,,"tftp",3320,"DE","SACHSEN","LEIPZIG",541690,874899,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:14","198.51.100.73","udp",37092,,"tftp",3320,"DE","BERLIN","BERLIN",541690,874899,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:14","198.51.100.83","udp",69,,"tftp",6830,"DE","NORDRHEIN-WESTFALEN","KERPEN",0,0,5,2,"Access violation","ByNo such file or director",30
+"2016-07-24 00:12:15","198.51.100.174","udp",10053,,"tftp",3320,"DE","NORDRHEIN-WESTFALEN","BONN",0,0,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:15","198.51.100.182","udp",18799,,"tftp",3320,"DE","NORDRHEIN-WESTFALEN","ESSEN",541690,874899,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:15","198.51.100.211","udp",27427,,"tftp",3320,"DE","NORDRHEIN-WESTFALEN","LEMGO",541690,874899,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:15","198.51.100.118","udp",8677,,"tftp",3320,"DE","NORDRHEIN-WESTFALEN","COLOGNE",541690,874899,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:15","198.51.100.249","udp",14867,,"tftp",3320,"DE","BAYERN","MUNICH",541690,874899,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:15","198.51.100.55","udp",69,,"tftp",3320,"DE","NORDRHEIN-WESTFALEN","COLOGNE",541690,874899,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:15","198.51.100.62","udp",32026,"198-51-100-62.example.net","tftp",3320,"DE","BADEN-WURTTEMBERG","STUTTGART",541690,874899,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:15","198.51.100.127","udp",69,"198-51-100-127.example.net","tftp",3209,"DE","RHEINLAND-PFALZ","BAD KREUZNACH",0,0,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:15","198.51.100.25","udp",38619,"198-51-100-25.example.net","tftp",3320,"DE","BERLIN","BERLIN",541690,874899,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:15","198.51.100.92","udp",19414,,"tftp",3320,"DE","NORDRHEIN-WESTFALEN","COLOGNE",541690,874899,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:15","198.51.100.218","udp",49884,,"tftp",3320,"DE","RHEINLAND-PFALZ","KETTIG",541690,874899,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:15","198.51.100.168","udp",14255,,"tftp",3320,"DE","HAMBURG","HAMBURG",541690,874899,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:16","198.51.100.155","udp",69,"198-51-100-155.example.net","tftp",31334,"DE","SACHSEN","LEIPZIG",0,0,5,2,"Access violation","BNo such file or director",30
+"2016-07-24 00:12:16","198.51.100.185","udp",49933,,"tftp",3320,"DE","HAMBURG","HAMBURG",518210,737415,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:16","198.51.100.1","udp",15319,,"tftp",6830,"DE","NORDRHEIN-WESTFALEN","COLOGNE",0,0,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:16","198.51.100.51","udp",37834,,"tftp",3320,"DE","SACHSEN","BISCHOFSWERDA",541690,874899,5,1,"File not found","File not found (/tmp/a.pdf)",32
+"2016-07-24 00:12:16","198.51.100.164","udp",12383,,"tftp",3320,"DE","SACHSEN","ANNABERG-BUCHHOLZ",518210,737415,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:16","198.51.100.138","udp",16367,,"tftp",3320,"DE","HAMBURG","HAMBURG",541690,874899,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:16","198.51.100.16","udp",69,,"tftp",8881,"DE","BERLIN","BERLIN",0,0,5,2,"Access violation","No such file or directory",30
+"2016-07-24 00:12:16","198.51.100.171","udp",8994,,"tftp",24993,"DE","BRANDENBURG","POTSDAM",0,0,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:16","198.51.100.89","udp",16210,,"tftp",3320,"DE","NORDRHEIN-WESTFALEN","BONN",0,0,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:16","198.51.100.65","udp",24319,,"tftp",20886,"DE","NORDRHEIN-WESTFALEN","BONN",0,0,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:16","198.51.100.248","udp",26306,"198-51-100-248.example.net","tftp",3320,"DE","NORDRHEIN-WESTFALEN","KLEVE",541690,874899,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:16","198.51.100.17","udp",69,,"tftp",31334,"DE","RHEINLAND-PFALZ","BIRLENBACH",0,0,5,2,"Access violation","CsNo such file or director",30
+"2016-07-24 00:12:17","198.51.100.134","udp",10568,,"tftp",3320,"DE","HAMBURG","HAMBURG",518210,737415,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:17","198.51.100.186","udp",23169,,"tftp",3320,"DE","BADEN-WURTTEMBERG","STUTTGART",541690,874899,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:17","198.51.100.21","udp",65210,"198-51-100-21.example.net","tftp",12843,"DE","BADEN-WURTTEMBERG","GONDELSHEIM",517310,481302,5,1,"File not found","File not found.",20
+"2016-07-24 00:12:17","198.51.100.128","udp",69,"198-51-100-128.example.net","tftp",31334,"DE","NIEDERSACHSEN","ISERNHAGEN",0,0,5,2,"Access violation","BfNo such file or director",30
+"2016-07-24 00:12:17","198.51.100.203","udp",16935,"198-51-100-203.example.net","tftp",3320,"DE","NORDRHEIN-WESTFALEN","HILDEN",541690,874899,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:17","198.51.100.216","udp",9636,,"tftp",3320,"DE","BERLIN","BERLIN",518210,737415,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:17","198.51.100.229","udp",69,"198-51-100-229.example.net","tftp",42652,"DE","SAARLAND","LOSHEIM AM SEE",0,0,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:17","198.51.100.242","udp",42211,,"tftp",31334,"DE","BAYERN","WOLFRATSHAUSEN",0,0,5,1,"File not found","File not found",19
+"2016-07-24 00:12:17","198.51.100.54","udp",12692,,"tftp",3320,"DE","BAYERN","OBERELSBACH",541690,874899,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:17","198.51.100.225","udp",16054,,"tftp",9145,"DE","NIEDERSACHSEN","OYTEN",0,0,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:17","198.51.100.38","udp",69,,"tftp",31334,"DE","NIEDERSACHSEN","GIESEN",0,0,5,2,"Access violation","BNo such file or director",30
+"2016-07-24 00:12:17","198.51.100.22","udp",10378,"198-51-100-22.example.net","tftp",3320,"DE","BERLIN","BERLIN",541690,874899,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:17","198.51.100.106","udp",69,,"tftp",3320,"DE","HESSEN","FRANKFURT AM MAIN",541690,874899,5,4,"Illegal TFTP operation","Illegal TFTP operation",27
+"2016-07-24 00:12:18","198.51.100.130","udp",69,,"tftp",3209,"DE","HAMBURG","HAMBURG",518210,737415,5,4,"Illegal TFTP operation","Illegal TFTP operation",27

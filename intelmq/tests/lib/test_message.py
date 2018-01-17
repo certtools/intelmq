@@ -167,6 +167,13 @@ class TestMessageFactory(unittest.TestCase):
         report.add('feed.name', None)
         self.assertNotIn('feed.name', report)
 
+    def test_report_change_delete_none(self):
+        """ Test if report ignores None. """
+        report = self.new_report()
+        report.add('feed.name', 'foo')
+        report.change('feed.name', None)
+        self.assertNotIn('feed.name', report)
+
     def test_report_ignore_empty(self):
         """ Test if report ignores empty string. """
         report = self.new_report()
@@ -214,14 +221,6 @@ class TestMessageFactory(unittest.TestCase):
         report.add('raw', LOREM_BASE64)
         with self.assertRaises(exceptions.KeyExists):
             report.add('raw', LOREM_BASE64)
-
-    def test_report_add_duplicate_force(self):
-        """ Test if report can add raw value. """
-        report = self.new_report(auto=True)
-        report.add('raw', LOREM_BASE64, sanitize=False)
-        report.add('raw', DOLOR_BASE64, overwrite=True, sanitize=False)
-        self.assertDictContainsSubset({'raw': DOLOR_BASE64},
-                                      report)
 
     def test_report_del_(self):
         """ Test if report can del a value. """
@@ -498,7 +497,7 @@ class TestMessageFactory(unittest.TestCase):
 
     def test_event_from_report(self):
         report = self.new_report()
-        dict.update(report, FEED_FIELDS)
+        report.update(FEED_FIELDS)
         event = message.Event(report, harmonization=HARM)
         self.assertDictContainsSubset(event, FEED_FIELDS)
 
@@ -566,33 +565,124 @@ class TestMessageFactory(unittest.TestCase):
         event = self.new_event()
         event.add('malware.hash.md5', 'mSwgIswdjlTY0YxV7HBVm0')
         self.assertEqual(event['malware.hash.md5'], 'mSwgIswdjlTY0YxV7HBVm0')
-        event.update('malware.hash.md5', '$md5$mSwgIswdjlTY0YxV7HBVm0')
-        event.update('malware.hash.md5', '$md5,rounds=500$mSwgIswdjlTY0YxV7HBVm0')
+        event.change('malware.hash.md5', '$md5$mSwgIswdjlTY0YxV7HBVm0')
+        event.change('malware.hash.md5', '$md5,rounds=500$mSwgIswdjlTY0YxV7HBVm0')
         # TODO: Fix when normalization of hashes is defined
 #        with self.assertRaises(exceptions.InvalidValue):
-#            event.update('malware.hash.md5', '$md5, $mSwgIswdjlTY0YxV7HBVm0')
+#            event.change('malware.hash.md5', '$md5, $mSwgIswdjlTY0YxV7HBVm0')
 
     def test_malware_hash_sha1(self):
         """ Test if SHA1 is checked correctly. """
         event = self.new_event()
         event.add('malware.hash.sha1', 'hBNaIXkt4wBI2o5rsi8KejSjNqIq')
         self.assertEqual(event['malware.hash.sha1'], 'hBNaIXkt4wBI2o5rsi8KejSjNqIq')
-        event.update('malware.hash.sha1', '$sha1$hBNaIXkt4wBI2o5rsi8KejSjNqIq')
-        event.update('malware.hash.sha1', '$sha1$40000$hBNaIXkt4wBI2o5rsi8KejSjNqIq')
-        event.update('malware.hash.sha1', '$sha1$40000$jtNX3nZ2$hBNaIXkt4wBI2o5rsi8KejSjNqIq')
+        event.change('malware.hash.sha1', '$sha1$hBNaIXkt4wBI2o5rsi8KejSjNqIq')
+        event.change('malware.hash.sha1', '$sha1$40000$hBNaIXkt4wBI2o5rsi8KejSjNqIq')
+        event.change('malware.hash.sha1', '$sha1$40000$jtNX3nZ2$hBNaIXkt4wBI2o5rsi8KejSjNqIq')
         # TODO: Fix when normalization of hashes is defined
 #        with self.assertRaises(exceptions.InvalidValue):
-#            event.update('malware.hash.sha1', '$sha1$ $jtNX3nZ2$hBNaIXkt4wBI2o5rsi8KejSjNqIq')
+#            event.change('malware.hash.sha1', '$sha1$ $jtNX3nZ2$hBNaIXkt4wBI2o5rsi8KejSjNqIq')
 
     def test_registry(self):
         """ Test source.registry """
         event = self.new_event()
         event.add('source.registry', 'APNIC')
-        event.update('source.registry', 'afrinic')
+        event.change('source.registry', 'afrinic')
         with self.assertRaises(exceptions.InvalidValue):
-            event.update('source.registry', 'afrinic', sanitize=False)
+            event.change('source.registry', 'afrinic', sanitize=False)
         with self.assertRaises(exceptions.InvalidValue):
-            event.update('source.registry', 'afri nic', sanitize=False)
+            event.change('source.registry', 'afri nic', sanitize=False)
 
-if __name__ == '__main__':  # pragma: no cover  # pragma: no cover
+    def test_message_update(self):
+        """ Test Message.update """
+        event = self.new_event()
+        with self.assertRaises(exceptions.InvalidValue):
+            event.update({'source.asn': 'AS1'})
+
+    def test_message_extra_construction(self):
+        """
+        Test if field with name starting with 'extra.' is accepted and saved.
+        """
+        event = self.new_event()
+        event.add('extra.test', 'foobar')
+        event.add('extra.test2', 'foobar2')
+        self.assertEqual(event.to_dict(hierarchical=True),
+                         {'extra': {"test": "foobar", "test2": "foobar2"}}
+                         )
+        self.assertEqual(event.to_dict(hierarchical=False),
+                         {'extra.test': "foobar", "extra.test2": "foobar2"}
+                         )
+
+    def test_message_extra_getitem(self):
+        """
+        Test if extra field is saved and can be get.
+        """
+        event = self.new_event()
+        event.add('extra.test', 'foobar')
+        self.assertEqual(event['extra.test'], 'foobar')
+
+    def test_message_extra_set_oldstyle_string(self):
+        """
+        Test if extra accepts a string (backwards-compat) and field can be get.
+        """
+        event = self.new_event()
+        event.add('extra', '{"foo": "bar"}')
+        self.assertEqual(event['extra'], '{"foo": "bar"}')
+        self.assertEqual(event['extra.foo'], 'bar')
+
+    def test_message_extra_set_oldstyle_dict(self):
+        """
+        Test if extra accepts a dict and field can be get.
+        """
+        event = self.new_event()
+        event.add('extra', {"foo": "bar"})
+        self.assertEqual(event['extra'], '{"foo": "bar"}')
+        self.assertEqual(event['extra.foo'], 'bar')
+
+    def test_message_extra_set_dict_ignore_empty(self):
+        """
+        Test if extra accepts a dict and field can be get.
+        """
+        event = self.new_event()
+        event.add('extra', {"foo": ''})
+        with self.assertRaises(KeyError):
+            event['extra.foo']
+
+    def test_overwrite_true(self):
+        """
+        Test if values can be overwritten.
+        """
+        event = self.new_event()
+        event.add('comment', 'foo')
+        event.add('comment', 'bar', overwrite=True)
+        self.assertEqual(event['comment'], 'bar')
+
+    def test_overwrite_none(self):
+        """
+        Test if exception is raised when values exist and can't be overwritten.
+        """
+        event = self.new_event()
+        event.add('comment', 'foo')
+        with self.assertRaises(exceptions.KeyExists):
+            event['comment'] = 'bar'
+
+    def test_overwrite_false(self):
+        """
+        Test if values are not overwritten.
+        """
+        event = self.new_event()
+        event.add('comment', 'foo')
+        event.add('comment', 'bar', overwrite=False)
+        self.assertEqual(event['comment'], 'foo')
+
+    def test_to_dict_jsondict_as_string(self):
+        """
+        Test if to_dict(jsondict_as_string) works correctly.
+        """
+        event = self.new_event()
+        event.add('extra.foo', 'bar')
+        self.assertDictEqual(event.to_dict(hierarchical=False, jsondict_as_string=True),
+                             {'extra': '{"foo": "bar"}'})
+
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

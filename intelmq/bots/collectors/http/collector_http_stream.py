@@ -25,10 +25,6 @@ class HTTPStreamCollectorBot(CollectorBot):
     sighup_delay = False
 
     def init(self):
-        if getattr(self.parameters, 'url', False) and \
-           not getattr(self.parameters, 'http_url', False):
-            self.logger.warning("Parameter 'url' is deprecated, use 'http_url' instead.")
-            self.parameters.http_url = self.parameters.url
         self.set_request_parameters()
 
     def process(self):

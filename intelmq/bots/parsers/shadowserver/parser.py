@@ -26,7 +26,7 @@ class ShadowserverParserBot(ParserBot):
         self.sparser_config = None
         if hasattr(self.parameters, 'feedname'):
             self.feedname = self.parameters.feedname
-            self.sparser_config = config.get_feed(self.feedname)
+            self.sparser_config = config.get_feed(self.feedname, self.logger)
 
         if not self.sparser_config:
             self.logger.error('No feedname provided or feedname not in conf.')
@@ -137,12 +137,11 @@ class ShadowserverParserBot(ParserBot):
                     try:
                         value = conv_func(raw_value)
                     except Exception:
+                        """ fail early and often in this case. We want to be able to convert everything """
                         self.logger.error('Could not convert shadowkey: %r, '
                                           'value: %r via conversion function %r.',
-                                          shadowkey, raw_value, conv_func)
-                        value = None
-                        # """ fail early and often in this case. We want to be able to convert everything """
-                        # self.stop()
+                                          shadowkey, raw_value, conv_func.__name__)
+                        raise
 
             if value is not None:
                 if intelmqkey == 'extra.':
@@ -161,7 +160,7 @@ class ShadowserverParserBot(ParserBot):
                 fields.remove(shadowkey)
 
         # Now add additional constant fields.
-        dict.update(event, conf.get('constant_fields', {}))  # TODO: rewrite in 1.0
+        event.update(conf.get('constant_fields', {}))
 
         event.add('raw', self.recover_line(row))
 

@@ -18,6 +18,13 @@ except ImportError:
 
 class RTCollectorBot(CollectorBot):
 
+    parameter_mapping = {'search_owner': 'Owner',
+                         'search_queue': 'Queue',
+                         'search_requestor': 'Requestor',
+                         'search_status': 'Status',
+                         'search_subject_like': 'Subject__like',
+                         }
+
     def init(self):
         if rt is None:
             self.logger.error('Could not import rt. Please install it.')
@@ -54,11 +61,12 @@ class RTCollectorBot(CollectorBot):
         else:
             kwargs = {}
 
-        query = RT.search(Queue=self.parameters.search_queue,
-                          Subject__like=self.parameters.search_subject_like,
-                          Owner=self.parameters.search_owner,
-                          Status=self.parameters.search_status,
-                          order='Created', **kwargs)
+        for parameter_name, rt_name in self.parameter_mapping.items():
+            parameter_value = getattr(self.parameters, parameter_name, None)
+            if parameter_value:
+                kwargs[rt_name] = parameter_value
+
+        query = RT.search(order='Created', **kwargs)
         self.logger.info('%s results on search query.', len(query))
 
         for ticket in query:
@@ -66,14 +74,18 @@ class RTCollectorBot(CollectorBot):
             self.logger.debug('Process ticket %s.', ticket_id)
             content = 'attachment'
             for (att_id, att_name, _, _) in RT.get_attachments(ticket_id):
+                if not self.parameters.attachment_regex:
+                    break
                 if re.search(self.parameters.attachment_regex, att_name):
                     self.logger.debug('Found attachment %s: %r.',
                                       att_id, att_name)
                     break
             else:
-                ticket = RT.get_history(ticket_id)[0]
-                created = ticket['Created']
-                urlmatch = re.search(self.parameters.url_regex, ticket['Content'])
+                urlmatch = False
+                if self.parameters.url_regex:
+                    ticket = RT.get_history(ticket_id)[0]
+                    created = ticket['Created']
+                    urlmatch = re.search(self.parameters.url_regex, ticket['Content'])
                 if urlmatch:
                     content = 'url'
                     url = urlmatch.group(0)
@@ -100,13 +112,17 @@ class RTCollectorBot(CollectorBot):
 
                 response_code_class = resp.status_code // 100
                 if response_code_class != 2:
-                    self.logger.error('HTTP response status code for %r was %s.',
-                                      url, resp.status_code)
+                    self.logger.error('HTTP response status code for %r was %s. Skipping ticket %d.',
+                                      url, resp.status_code, ticket_id)
                     if response_code_class == 4:
                         self.logger.debug('Server response: %r.', resp.text)
-                        self.logger.warning('Setting status of unprocessable ticket.')
                         if self.parameters.set_status:
                             RT.edit_ticket(ticket_id, status=self.parameters.set_status)
+                        if self.parameters.take_ticket:
+                            try:
+                                RT.take(ticket_id)
+                            except rt.BadRequest:
+                                self.logger.exception("Could not take ticket %s.", ticket_id)
                     else:
                         self.logger.info('Skipping now.')
                         continue

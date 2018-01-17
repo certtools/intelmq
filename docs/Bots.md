@@ -7,11 +7,11 @@
 
 ## General remarks
 
-By default all of the bots are started when you start the whole botnet, however there is a possibility to 
-*disable* a bot. This means that the bot will not start every time you start the botnet, but you can start 
-and stop the bot if you specify the bot explicitly. To disable a bot, add the following to your 
-`runtime.conf`: `"enabled": false`. Be aware that this is **not** a normal parameter (like the others 
-described in this file). It is set outside of the `parameters` object in `runtime.conf`. Check the 
+By default all of the bots are started when you start the whole botnet, however there is a possibility to
+*disable* a bot. This means that the bot will not start every time you start the botnet, but you can start
+and stop the bot if you specify the bot explicitly. To disable a bot, add the following to your
+`runtime.conf`: `"enabled": false`. Be aware that this is **not** a normal parameter (like the others
+described in this file). It is set outside of the `parameters` object in `runtime.conf`. Check the
 [User-Guide](./User-Guide.md) for an example.
 
 There are two different types of parameters: The initialization parameters are need to start the bot. The runtime parameters are needed by the bot itself during runtime.
@@ -62,12 +62,12 @@ This configuration resides in the file `runtime.conf` in your intelmq's configur
 
 **Feed parameters**: Common configuration options for all collectors
 
-* `feed`: Name for the feed.
-* `accuracy`: Accuracy for the data of the feed.
-* `code`: Code for the feed.
-* `documentation`: Link to documentation for the feed.
-* `provider`: Name of the provider of the feed.
-* `rate_limit`: time interval (in seconds) between messages processing.
+* `feed`: Name for the feed (`feed.name`).
+* `accuracy`: Accuracy for the data of the feed (`feed.accuracy`).
+* `code`: Code for the feed (`feed.code`).
+* `documentation`: Link to documentation for the feed (`feed.documentation`).
+* `provider`: Name of the provider of the feed (`feed.provider`).
+* `rate_limit`: time interval (in seconds) between fetching data if applicable.
 
 **HTTP parameters**: Common URL fetching parameters used in multiple collectors
 
@@ -144,7 +144,9 @@ The parameter `http_timeout_max_tries` is of no use in this collector.
 * `mail_ssl`: whether the mail account uses SSL (default: `true`)
 * `folder`: folder in which to look for mails (default: `INBOX`)
 * `subject_regex`: regular expression to look for a subject
-* `url_regex`: regular expression of the feed URL to search for in the mail body 
+* `url_regex`: regular expression of the feed URL to search for in the mail body
+* `sent_from`: filter messages by sender
+* `sent_to`: filter messages by recipient
 
 * * *
 
@@ -357,20 +359,53 @@ Lines starting with `'#'` will be ignored. Headers won't be interpreted.
 
 #### Configuration parameters
 
- * `"columns"`: A list of strings or a string of comma-separated values with field names. The names must match the harmonization's field names. E.g. 
+ * `"columns"`: A list of strings or a string of comma-separated values with field names. The names must match the harmonization's field names. Strings starting with `extra.` will be written into the Extra-Object of the DHO. E.g.
    ```json
    [
         "",
-        "source.fqdn"
+        "source.fqdn",
+        "extra.http_host_header"
     ],
     ```
+
+    It is possible to specify multiple coulmns using `|` character. E.g.
+    ```
+        "columns": "source.url|source.fqdn|source.ip"
+    ```
+    First, bot will try to parse the value as url, if it fails, it will try to parse it as FQDN, if that fails, it will try to parse it as IP, if that fails, an error wil be raised.
+    Some use cases - 
+    
+        - mixed data set, e.g. URL/FQDN/IP/NETMASK  `"columns": "source.url|source.fqdn|source.ip|source.network"`
+    
+        - parse a value and ignore if it fails  `"columns": "source.url|__IGNORE__"`
+        
  * `"column_regex_search"`: Optional. A dictionary mapping field names (as given per the columns parameter) to regular expression. The field is evaulated using `re.search`. Eg. to get the ASN out of `AS1234` use: `{"source.asn": "[0-9]*"}`.
  * `"default_url_protocol"`: For URLs you can give a defaut protocol which will be pretended to the data.
  * `"delimiter"`: separation character of the CSV, e.g. `","`
  * `"skip_header"`: Boolean, skip the first line of the file, optional. Lines starting with `#` will be skipped additionally, make sure you do not skip more lines than needed!
- * `time_format`: Optional. If `"timestamp"` or `"windows_nt"` the time will be converted first. With the default `null` fuzzy time parsing will be used.
+ * `time_format`: Optional. If `"timestamp"`, `"windows_nt"` or `"epoch_millis"` the time will be converted first. With the default `null` fuzzy time parsing will be used.
  * `"type"`: set the `classification.type` statically, optional
+ * `"data_type"`: sets the data of specific type, currently only `"json"` is supported value. An example
+ 
+        ```{
+            "columns": [ "source.ip", "source.url", "extra.tags"],
+            "data_type": "{\"extra.tags\":\"json\"}"
+        }```
+        
+        It will ensure `extra.tags` is treated as `json`.
+ * `"filter_text"`: only process the lines containing or not containing specified text, to be used in conjection with `filter_type`
+ * `"filter_type"`: value can be whitelist or blacklist. If `whitelist`, only lines containing the text in `filter_text` will be processed, if `blacklist`, only lines NOT containing the text will be processed.
+ 
+     To process ipset format files use
+     ```
+        {
+            "filter_text": "ipset add ",
+            "filter_type": "whitelist",
+            "columns": [ "__IGNORE__", "__IGNORE__", "__IGNORE__", "source.ip"]
+        }
+     ```
  * `"type_translation"`: See below, optional
+
 
 ##### Type translation
 
@@ -412,22 +447,6 @@ See the README.md
 #### Configuration Parameters:
 
 FIXME
-
-* * *
-
-### CERT.AT Contact
-
-#### Information:
-* `name:` certat-contact
-* `lookup:` https
-* `public:` yes
-* `cache (redis db):` none
-* `description:` https://contacts.cert.at offers an IP address to national CERT contact (and cc) mapping. See https://contacts.cert.at for more info.
-
-#### Configuration Parameters:
-
-* `filter`: (true/false) act as a a filter for AT.
-* `overwrite_cc`: set to true if you want to overwrite any potentially existing cc fields in the event.
 
 * * *
 
@@ -658,6 +677,22 @@ If the rule is a string, a regex-search is performed, also for numeric values (`
 
 * * *
 
+### National CERT contact lookup by CERT.AT
+
+#### Information:
+* `name:` `national_cert_contact_certat`
+* `lookup:` https
+* `public:` yes
+* `cache (redis db):` none
+* `description:` https://contacts.cert.at offers an IP address to national CERT contact (and cc) mapping. See https://contacts.cert.at for more info.
+
+#### Configuration Parameters:
+
+* `filter`: (true/false) act as a a filter for AT.
+* `overwrite_cc`: set to true if you want to overwrite any potentially existing cc fields in the event.
+
+* * *
+
 ### Reverse DNS
 
 #### Information:
@@ -710,7 +745,11 @@ Sources:
 
 #### Configuration Parameters:
 
-FIXME
+* `query_ripe_db_asn`: Query for IPs at `http://rest.db.ripe.net/abuse-contact/%s.json`, default `true`
+* `query_ripe_db_ip`: Query for ASNs at `http://rest.db.ripe.net/abuse-contact/as%s.json`, default `true`
+* `query_ripe_stat_asn`: Query for ASNs at `https://stat.ripe.net/data/abuse-contact-finder/data.json?resource=%s`, default `true`
+* `query_ripe_stat_ip`: Query for IPs at `https://stat.ripe.net/data/abuse-contact-finder/data.json?resource=%s`, default `true`
+* `mode`: either `append` (default) or `replace`
 
 * * *
 
@@ -847,10 +886,11 @@ for the versions you are using.
 * `connect_timeout`: PostgreSQL connect_timeout, optional, default 5 seconds
 * `database`: PostgreSQL database
 * `host`: PostgreSQL host
+* `jsondict_as_string`: save JSONDict fields as JSON string, boolean. Default: true (like in versions before 1.1)
 * `port`: PostgreSQL port
 * `user`: PostgreSQL user
 * `password`: PostgreSQL password
-* `sslmode`: PostgreSQL sslmode
+* `sslmode`: PostgreSQL sslmode, can be `'disable'`, `'allow'`, `'prefer'` (default), `'require'`, `'verify-ca'` or `'verify-full'`. See postgresql docs: https://www.postgresql.org/docs/current/static/libpq-connect.html#libpq-connect-sslmode
 * `table`: name of the database table into which events are to be inserted
 
 #### Installation Requirements
@@ -939,3 +979,4 @@ Client certificates are not supported. If `http_verify_cert` is true, TLS certif
 * `hierarchical_output`: true for a nested JSON, false for a flat JSON.
 * `port`: port of destination server
 * `separator`: separator of messages
+
