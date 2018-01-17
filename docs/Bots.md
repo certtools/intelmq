@@ -81,7 +81,6 @@ This configuration resides in the file `runtime.conf` in your intelmq's configur
 * `http_verify_cert`: path to trusted CA bundle or directory, `false` to ignore verifying SSL certificates,  or `true` (default) to verify SSL certificates
 * `ssl_client_certificate`: SSL client certificate to use.
 * `http_header`: HTTP request headers
-* `http_data_encoding`: encode to be used on data collected. If `null` encoding will be guessed using requests chardet.
 
 
 ### Generic URL Fetcher
