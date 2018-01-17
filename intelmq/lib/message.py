@@ -120,6 +120,8 @@ class Message(dict):
             iterable = message.items()
         elif isinstance(message, tuple):
             iterable = message
+        else:
+            raise ValueError("Type %r of message can't be handled, must be dict or tuple.", type(message))
         for key, value in iterable:
             if not self.add(key, value, sanitize=False, raise_failure=False):
                 self.add(key, value, sanitize=True)
@@ -446,6 +448,26 @@ class Message(dict):
     def to_json(self, hierarchical=False, with_type=False, jsondict_as_string=False):
         json_dict = self.to_dict(hierarchical=hierarchical, with_type=with_type)
         return json.dumps(json_dict, ensure_ascii=False)
+
+    def __eq__(self, other) -> bool:
+        """
+        Necessary as we have an additional member harmonization_config and types.
+        The additional checks are only performed for subclasses of Message.
+
+        Comparison with other types e.g. dicts does not check the harmonization_config.
+        """
+        dict_eq = super(Message, self).__eq__(other)
+        if dict_eq and issubclass(type(other), Message):
+            type_eq = type(self) == type(other)
+            harm_eq = self.harmonization_config == other.harmonization_config if hasattr(other, 'harmonization_config') else False
+            if type_eq and harm_eq:
+                return True
+        elif dict_eq:
+            return True
+        return False
+
+    def __ne__(self, other) -> bool:
+        return not self.__eq__(other)
 
 
 class Event(Message):
