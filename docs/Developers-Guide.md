@@ -4,6 +4,7 @@
   * [Goals](#goals)
 * [Development Environment](#development-environment)
   * [Installation](#installation)
+  * [How to develop](#how-to-develop)
   * [Update](#update)
   * [Testing](#testing)
 * [Development Guidelines](#development-guidelines)
@@ -52,7 +53,7 @@ However, before we go into the details, it is important to observe and internali
 
 ## Goals
 
-It is important, that all developers agree and stick to these meta-guidelines. 
+It is important, that all developers agree and stick to these meta-guidelines.
 IntelMQ tries to:
 
 * Be well tested. For developers this means, we expect you to write unit tests for bots. Every time.
@@ -76,21 +77,83 @@ Similarly, if code does not get accepted upstream by the main developers, it is 
 # Development Environment
 
 ## Installation
-Developers might want to install IntelMQ with `pip3 -e`, which gives you a so called *editable* installation. No code is copied in the libraries directories, there's just a link to your code.
 
-    pip3 install -e .
+Developers MUST have a fork repository of IntelMQ in order to commit the new code to their repository and then be able to do pull requests to main repository.
+
+The following instructions will use `pip3 -e`, which gives you a so called *editable* installation. No code is copied in the libraries directories, there's just a link to your code. However, configuration files still required to be moved to `/opt/intelmq` as the instructions show.
+
+```bash
+sudo -s
+
+git clone https://github.com/certtools/intelmq.git /intelmq
+cd /intelmq
+chmod -R 777 /intelmq
+
+pip3 install -e .
+
+useradd -d /opt/intelmq -U -s /bin/bash intelmq
+
+mkdir /opt/intelmq
+mkdir -p /opt/intelmq/var/lib/bots/file-output/
+mkdir -p /opt/intelmq/var/log/
+
+cp -R /intelmq/intelmq/etc /opt/intelmq/
+cp -R /intelmq/intelmq/bots/BOTS /opt/intelmq/etc/
+
+chmod -R 0770 /opt/intelmq
+chown -R intelmq.intelmq /opt/intelmq
+```
+
+**Note:** please do not forget that configuration files, log files will be available on `/opt/intelmq`. However, if your development is somehow related to any configuration file, keep using `/opt/intelmq` and then, before commit, change the configurations files on `/intelmq/intelmq/etc/` with your changes on `/opt/intelmq/etc/`.
+
+
+## How to develop
+
+After you successfully setup your IntelMQ development environment, you can perform any development on any `.py` file on `/intelmq`. After you change, you can use the normal procedure to run the bots:
+
+```bash
+su - intelmq
+
+intelmqctl start spamhaus-drop-collector
+
+tail -f /opt/intelmq/var/log/spamhaus-drop-collector.log
+```
+
+You can also add new bots, creating the new `.py` file on the proper directory inside `cd /intelmq/intelmq`. However, your IntelMQ installation with pip3 needs to be updated. Please check the following section.
 
 ## Update
 
-If you do any changes on setup.py, data files (e.g. example configurations) or add new bots, you need to rerun the installation routine.
+In case you developed a new bot, you need to update your current development installation. In order to do that, please follow this procedure:
 
-    pip3 install --upgrade -e .
+
+1. Add the new bot information to `/intelmq/intelmq/bots/BOTS`, not `/opt/intelmq/etc/BOTS`.
+2. Make sure that you have your new bot in the right place and the information on BOTS file is correct.
+3. Execute the following commands:
+
+```bash
+sudo -#!/bin/sh
+
+cd /intelmq
+pip3 install --upgrade -e .
+cp /intelmq/intelmq/bots/BOTS /opt/intelmq/etc/BOTS
+
+chmod -R 0770 /opt/intelmq
+chown -R intelmq.intelmq /opt/intelmq
+```
+
+Now you can test run your new bot following this procedure:
+
+```bash
+su - intelmq
+
+intelmqctl start <bot_id>
+```
 
 ## Testing
 
 All changes have to be tested and new contributions must be accompanied by according unit tests. You can run the tests by changing to the directory with IntelMQ repository and running either `unittest` or `nosetests`:
 
-    cd intelmq
+    cd /intelmq
     python3 -m unittest {discover|filename}  # or
     nosetests3 [filename]  # or
     python3 setup.py test  # uses a build environment
@@ -115,11 +178,9 @@ For example, to run all tests you can use:
 INTELMQ_TEST_DATABASES=1 INTELMQ_TEST_LOCAL_WEB=1 INTELMQ_TEST_EXOTIC=1 nosetests
 ```
 
-### Configuration files
+### Configuration Test files
 
-The tests use the configuration files in your working directory, not those
-installed in `/opt/intelmq/etc/` or `/etc/`.  You can run the
-tests for a locally changed intelmq without affecting an installation or
+The tests use the configuration files in your working directory, not those installed in `/opt/intelmq/etc/` or `/etc/`.  You can run the tests for a locally changed intelmq without affecting an installation or
 requiring root to run them.
 
 # Development Guidelines
@@ -448,7 +509,7 @@ When the logger instance is created, the bot id must be given as parameter anywa
 
 ### What to Log
 
-* Try to keep a balance between obscuring the source code file with hundreds of log messages and having too little log messages. 
+* Try to keep a balance between obscuring the source code file with hundreds of log messages and having too little log messages.
 * In general, a bot MUST report error conditions.
 
 ### How to Log
