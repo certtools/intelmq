@@ -35,6 +35,7 @@ TYPES = {
 
 def __mapping_properties_from_harmonization(properties):
     # perform your customization on mapping (if needed)
+    del properties['extra']
     return properties
 
 def mapping_properties_from_harmonization(harmonization):
@@ -42,6 +43,8 @@ def mapping_properties_from_harmonization(harmonization):
     err = None
 
     for field, field_options in harmonization['event'].items():
+
+        field = field.replace('.', '_')
 
         if field_options['type'] in TYPES.keys():
             field_type = TYPES[field_options['type']]
