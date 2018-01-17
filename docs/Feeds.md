@@ -39,6 +39,7 @@ The available feeds are grouped by the source of the feeds. For each feed the co
 - [University of Toulouse Blacklist](#university-of-toulouse-blacklist)
 - [URLVir](#urlvir)
 - [VXVault](#vxvault)
+- [ZoneH](#zoneh)
 
 <!-- /TOC -->
 
@@ -2309,5 +2310,39 @@ http_url: http://vxvault.net/URL_List.php
 **Configuration Parameters:**
 ```
 id: vxvault-parser
+```
+
+# ZoneH
+
+**Status:** Active
+
+## Collector Bot
+
+FIXME: Information how to get the feed, what kind of reports you can reveive
+
+**Bot Name:** Generic Mail Attachment Fetcher
+
+**Bot Module:** intelmq.bots.collectors.mail.collector_mail_attach
+
+**Configuration Parameters:**
+```
+id: zoneh-collector
+provider: ZoneH
+feed: ZoneH <feed type>
+rate_limit: FIXME
+subject_regex: FIXME
+attach_regex: FIXME
+attach_unzip: true
+```
+
+## Parser Bot
+
+**Bot Name:** VXVault
+
+**Bot Module:** intelmq.bots.parsers.zoneh.parser
+
+**Configuration Parameters:**
+```
+id: zoneh-parser
 ```
 

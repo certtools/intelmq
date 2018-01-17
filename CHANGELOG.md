@@ -27,6 +27,7 @@ Support for Python 3.3 has been dropped, it reached its end of life.
   This allows shorter code in the bots, as an 'overwrite' configuration parameter can be directly passed to the function.
 - Bots can specify a static method `check(parameters)` which can perform individual checks specific to the bot.
   These functions will be called by `intelmqctl check` if the bot is configured with the given parameters
+- Add `RewindableFileHandle` to utils making handling of CSV files more easy (optionally)
 
 ### Bots
 #### Collectors
@@ -52,6 +53,7 @@ Support for Python 3.3 has been dropped, it reached its end of life.
   - The parameter `time_format` now supports `'epoch_millis'` for seconds since the Epoch, milliseconds are supported but not used.
 - renamed `bots.parsers.cymru_full_bogons.parser` to `bots.parsers.cymru.parser_full_bogons`, compatibility shim will be removed in version 2.0
 - added `bots.parsers.cymru.parser_cap_program`
+- added `intemq.bots.parsers.zoneh.parser` for ZoneH feeds
 
 #### Experts
 - Added sieve expert for filtering and modifying events (#1083)
