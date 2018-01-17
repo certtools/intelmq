@@ -453,13 +453,14 @@ class Message(dict):
         Comparison with other types e.g. dicts does not check the harmonization_config.
         """
         dict_eq = super(Message, self).__eq__(other)
-        if issubclass(type(other), Message):
+        if dict_eq and issubclass(type(other), Message):
             type_eq = type(self) == type(other)
             harm_eq = self.harmonization_config == other.harmonization_config if hasattr(other, 'harmonization_config') else False
-            if type_eq and dict_eq and harm_eq:
+            if type_eq and harm_eq:
                 return True
         elif dict_eq:
             return True
+        return False
 
     def __ne__(self, other) -> bool:
         return not self.__eq__(other)
