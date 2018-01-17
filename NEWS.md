@@ -142,6 +142,8 @@ ALTER TABLE events
 1.0.0.dev5
 ----------
 
+Syntax of runtime.conf has changed
+
 ### Postgres databases
 ```sql
 ALTER TABLE events
@@ -185,11 +187,6 @@ UPDATE events
    SET "malware.hash.sha1" = lower("malware.hash.sha1")
    WHERE "malware.hash.sha1" IS NOT NULL;
 ```
-
-1.0.0.dev5
-----------
-* Syntax of runtime.conf has changed
-
 
 1.0.0.dev1
 ----------
