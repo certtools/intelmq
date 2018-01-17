@@ -86,7 +86,7 @@ The following instructions will use `pip3 -e`, which gives you a so called *edit
 ```bash
 sudo -s
 
-git clone https://github.com/certtools/intelmq.git /intelmq
+git clone https://github.com/<your username>/intelmq.git /intelmq
 cd /intelmq
 chmod -R 777 /intelmq
 
