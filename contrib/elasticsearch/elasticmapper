@@ -38,13 +38,13 @@ def __mapping_properties_from_harmonization(properties):
     del properties['extra']
     return properties
 
-def mapping_properties_from_harmonization(harmonization):
+def mapping_properties_from_harmonization(harmonization, replacement_char):
     properties = dict()
     err = None
 
     for field, field_options in harmonization['event'].items():
 
-        field = field.replace('.', '_')
+        field = field.replace('.', replacement_char)
 
         if field_options['type'] in TYPES.keys():
             field_type = TYPES[field_options['type']]
@@ -56,11 +56,11 @@ def mapping_properties_from_harmonization(harmonization):
 
     return __mapping_properties_from_harmonization(properties), err
 
-def create_mapping(harmonization, index_type):
+def create_mapping(harmonization, index_type, replacement_char):
 
     config = { "enabled": False }
 
-    properties, err = mapping_properties_from_harmonization(harmonization)
+    properties, err = mapping_properties_from_harmonization(harmonization, replacement_char)
 
     data = {
         "mappings": {
@@ -127,6 +127,13 @@ if __name__ == "__main__":
                         required=False,
                         help='elasticsearch index type')
 
+    parser.add_argument('--replacement-char',
+                        action="store",
+                        dest="replacement_char",
+                        default="_",
+                        required=False,
+                        help='replacement char for all fields (replace . with _ by default)')
+
     parser.add_argument('--output',
                         action="store",
                         dest="output",
@@ -139,7 +146,7 @@ if __name__ == "__main__":
     with open(arguments.harmonization_file) as fp:
         harmonization = json.load(fp)
 
-    data, err = create_mapping(harmonization, arguments.index_type)
+    data, err = create_mapping(harmonization, arguments.index_type, arguments.replacement_char)
 
     if err:
         if arguments.harmonization_fallback:
