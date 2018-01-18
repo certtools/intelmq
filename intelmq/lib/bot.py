@@ -604,9 +604,9 @@ class ParserBot(Bot):
             self.acknowledge_message()
             return
 
-        lines = self.parse(report)
+        events_count = 0
 
-        for line in lines:
+        for line in self.parse(report):
 
             if not line:
                 continue
@@ -617,6 +617,7 @@ class ParserBot(Bot):
                 self.logger.exception('Failed to parse line.')
                 self.__failed.append((traceback.format_exc(), line))
             else:
+                events_count += len(events)
                 self.send_message(*events)
 
         for exc, line in self.__failed:
@@ -624,7 +625,7 @@ class ParserBot(Bot):
             report_dump.change('raw', self.recover_line(line))
             self._dump_message(exc, report_dump)
 
-        self.logger.info('Processed %d lines and %d error(s) found.' % (len(lines), len(self.__failed)))
+        self.logger.info('Sent %d events and found %d error(s).' % (len(events_count), len(self.__failed)))
 
         self.acknowledge_message()
 
