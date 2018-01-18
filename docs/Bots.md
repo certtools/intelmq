@@ -326,21 +326,21 @@ Iterates over all blobs in all containers in an Azure storage.
 
 * * *
 
-### N6Stomp
+### Stomp
 
 See the README.md
 
 #### Information:
-* `name:` intelmq.bots.collectors.n6.collector_stomp
+* `name:` intelmq.bots.collectors.stomp.collector
 * `lookup:` yes
 * `public:` no
 * `cache (redis db):` none
-* `description:` collect report messages from Blueliv API
+* `description:` collect messages from a stomp server
 
 #### Configuration Parameters:
 
 * **Feed parameters** (see above)
-* `exchange`: exchange point as given by CERT.pl
+* `exchange`: exchange point
 * `port`: 61614
 * `server`: hostname e.g. "n6stream.cert.pl"
 * `ssl_ca_certificate`: path to CA file
@@ -411,6 +411,28 @@ Lines starting with `'#'` will be ignored. Headers won't be interpreted.
 
 If the source does have a field with information for `classification.type`, but it does not correspond to intelmq's types,
 you can map them to the correct ones. The `type_translation` field can hold a JSON field with a dictionary which maps the feed's values to intelmq's.
+
+
+### Cymru CAP Program
+
+#### Information:
+* `name:` intelmq.bots.parsers.cymru.parser_cap_program
+* `public:` no
+* `cache (redis db):` none
+* `description:` Parses data from cymru's cap program feed.
+
+As little information on the format is available, the mappings might not be correct in all cases.
+Some reports are not implemented at all as there is no data available to check if the parsing is correct at all. If you do get errors like `Report ... not implement` or similar please open an issue and report the (anonymized) example data. Thanks.
+
+The information about the event could be better in many cases but as Cymru does not want to be associated with the report, we can't add comments to the events in the parser, because then the source would be easily identifiable for the recipient.
+
+### Cymru Full Bogons
+
+#### Information:
+* `name:` intelmq.bots.parsers.cymru.parser_full_bogons
+* `public:` no
+* `cache (redis db):` none
+* `description:` Parses data from full bogons feed.
 
 <a name="experts"></a>
 ## Experts
@@ -603,7 +625,7 @@ The configuration is called `modify.conf` and looks like this:
         }
     },
     {
-        "rule": "Spamhaus Cert conficker",
+        "rulename": "Spamhaus Cert conficker",
         "if": {
             "malware.name": "^conficker(ab)?$"
         },
@@ -612,7 +634,7 @@ The configuration is called `modify.conf` and looks like this:
         }
     },
     {
-        "rule": "bitdefender",
+        "rulename": "bitdefender",
         "if": {
             "malware.name": "bitdefender-(.*)$"
         },
@@ -621,7 +643,7 @@ The configuration is called `modify.conf` and looks like this:
         }
     },
     {
-        "rule": "urlzone",
+        "rulename": "urlzone",
         "if": {
             "malware.name": "^urlzone2?$"
         },
@@ -630,7 +652,7 @@ The configuration is called `modify.conf` and looks like this:
         }
     },
     {
-        "rule": "default",
+        "rulename": "default",
         "if": {
             "feed.name": "^Spamhaus Cert$"
         },
@@ -750,6 +772,23 @@ Sources:
 * `query_ripe_stat_asn`: Query for ASNs at `https://stat.ripe.net/data/abuse-contact-finder/data.json?resource=%s`, default `true`
 * `query_ripe_stat_ip`: Query for IPs at `https://stat.ripe.net/data/abuse-contact-finder/data.json?resource=%s`, default `true`
 * `mode`: either `append` (default) or `replace`
+
+* * *
+
+### Sieve
+
+See intelmq/bots/experts/sieve/README.md
+
+#### Information:
+* `name:` sieve
+* `lookup:` none
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Filtering with a sieve-based configuration language
+
+#### Configuration Parameters:
+
+* `file`: Path to sieve file. Syntax can be validated with `intelmq_sieve_expert_validator`.
 
 * * *
 

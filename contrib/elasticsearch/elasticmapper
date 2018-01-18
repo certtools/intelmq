@@ -1,0 +1,175 @@
+#!/usr/bin/env python3
+
+import argparse
+import json
+import sys
+
+try:
+    from elasticsearch import Elasticsearch
+except:
+    print("[-] Please install ElasticSearch using the following command: 'pip install elasticsearch'.", file=sys.stderr)
+    sys.exit(-1)
+
+
+TYPES = {
+    "Accuracy": "long",
+    "ASN": "integer",
+    "Base64": "text",
+    "Boolean": "boolean",
+    "ClassificationType": "keyword",
+    "DateTime": "date",
+    "Float": "long",
+    "FQDN": "text",
+    "Integer": "integer",
+    "IPAddress": "ip",
+    "IPNetwork": "text",
+    "JSON": "text",
+    "JSONDict": "nested",
+    "LowercaseString": "text",
+    "Registry": "text",
+    "String": "text",
+    "UppercaseString": "text",
+    "URL": "text"
+}
+
+
+def __mapping_properties_from_harmonization(properties):
+    # perform your customization on mapping (if needed)
+    del properties['extra']
+    return properties
+
+def mapping_properties_from_harmonization(harmonization, replacement_char):
+    properties = dict()
+    err = None
+
+    for field, field_options in harmonization['event'].items():
+
+        field = field.replace('.', replacement_char)
+
+        if field_options['type'] in TYPES.keys():
+            field_type = TYPES[field_options['type']]
+        else:
+            field_type = "text"  # fallback type
+            err = -1
+
+        properties[field] = dict(type=field_type)
+
+    return __mapping_properties_from_harmonization(properties), err
+
+def create_mapping(harmonization, index_type, replacement_char):
+
+    config = { "enabled": False }
+
+    properties, err = mapping_properties_from_harmonization(harmonization, replacement_char)
+
+    data = {
+        "mappings": {
+            index_type: {
+                "_all": config,
+                "properties": properties
+            }
+        }
+    }
+
+    return data, err
+
+def send_mapping(host, index, data):
+    err = None
+    response = None
+
+    try:
+        es = Elasticsearch([host], verify_certs=True)
+        response = es.indices.create(index=index, ignore=400, body=data)
+    except:
+        err = -1
+
+    return response, err
+
+
+if __name__ == "__main__":
+
+    parser = argparse.ArgumentParser(
+        description='Elastic Mapper tool',
+    )
+
+    parser.add_argument('--harmonization-file',
+                        action="store",
+                        dest="harmonization_file",
+                        metavar="<filepath>",
+                        required=True,
+                        help='harmonization file')
+
+    parser.add_argument('--harmonization-fallback',
+                        action="store_true",
+                        dest="harmonization_fallback",
+                        required=False,
+                        default=False,
+                        help='harmonization fallback to `text` type')
+
+    parser.add_argument('--host',
+                        action="store",
+                        dest="host",
+                        metavar="<ip>",
+                        required=False,
+                        help='elasticsearch server IP')
+
+    parser.add_argument('--index',
+                        action="store",
+                        dest="index",
+                        default="intelmq",
+                        required=False,
+                        help='elasticsearch index')
+
+    parser.add_argument('--index-type',
+                        action="store",
+                        dest="index_type",
+                        default="events",
+                        required=False,
+                        help='elasticsearch index type')
+
+    parser.add_argument('--replacement-char',
+                        action="store",
+                        dest="replacement_char",
+                        default="_",
+                        required=False,
+                        help='replacement char for all fields (replace . with _ by default)')
+
+    parser.add_argument('--output',
+                        action="store",
+                        dest="output",
+                        metavar="<filepath>",
+                        required=False,
+                        help='write a copy of applied mapping to file')
+
+    arguments = parser.parse_args()
+
+    with open(arguments.harmonization_file) as fp:
+        harmonization = json.load(fp)
+
+    data, err = create_mapping(harmonization, arguments.index_type, arguments.replacement_char)
+
+    if err:
+        if arguments.harmonization_fallback:
+            print("[-] Found a field type not recognizable by elasticmapper. Fallback to `text` type.", file=sys.stderr)
+        else:
+            print("[-] Found a field type not recognizable by elasticmapper.", file=sys.stderr)
+            print("[-] Please fix elasticmapper or specify '--harmonization-fallback' parameter to use the fallback type `text`.", file=sys.stderr)
+            print("[-] Supported field types by elasticmapper: %s" % ", ".join(TYPES.keys()), file=sys.stderr)
+            sys.exit(-2)
+
+    if arguments.output:
+        with open(arguments.output, 'w') as fp:
+            fp.write(json.dumps(data, indent=4))
+        print("[+] Mapping has been written to output file.")
+
+    if arguments.host:
+        response, err = send_mapping(arguments.host, arguments.index, data)
+        if err:
+            print("\n[-] Could not send mapping to ElasticSearch.", file=sys.stderr)
+            print("[-] Please check if host parameter is correct or if host is allowing connections to ElasticSearch REST API.", file=sys.stderr)
+            sys.exit(-3)
+        else:
+            print("[+] Mapping has been sent to ElasticSearch.")
+            print("[+] ElasticSearch Response:\n")
+            print(response)
+            print("")

@@ -27,20 +27,19 @@ Support for Python 3.3 has been dropped, it reached its end of life.
   This allows shorter code in the bots, as an 'overwrite' configuration parameter can be directly passed to the function.
 - Bots can specify a static method `check(parameters)` which can perform individual checks specific to the bot.
   These functions will be called by `intelmqctl check` if the bot is configured with the given parameters
+- Add `RewindableFileHandle` to utils making handling of CSV files more easy (optionally)
 
 ### Bots
 #### Collectors
-- Mail: New parameters; `sent_from`: filter messages by sender, `sent_to`: filter messages by recipient
+- Mail:
+  - New parameters; `sent_from`: filter messages by sender, `sent_to`: filter messages by recipient
+  - More debug logs
 - bots.experts.maxmind_geoip: New (optional) parameter `overwrite`, by default false. The current default was to overwrite!
+- `bots.collectors.n6.collector_stomp`: renamed to `bots.collectors.stomp.collector` (#716)
 - bots.collectors.rt:
   - New parameter `search_requestor` to search for field Requestor.
   - Empty strings and `null` as value for search parameters are ignored.
   - Empty parameters `attachment_regex` and `url_regex` handled.
-
-### Harmonization
-- Renamed `JSON` to `JSONDict` and added a new type `JSON`. `JSONDict` saves data internally as JSON, but acts like a dictionary. `JSON` accepts any valid JSON.
-- fixed regex for `protocol.transport` it previously allowed more values than it should have.
-- New ASN type. Like integer but checks the range.
 
 #### Parsers
 - changed feednames in `bots.parsers.shadowserver`. Please refer to it's README for the exact changes.
@@ -52,6 +51,17 @@ Support for Python 3.3 has been dropped, it reached its end of life.
   - It is possible to filter the data before processing them using the new parameters `filter_type` and `filter_text`.
   - It is possible to specify multiple coulmns using `|` character in parameter `columns`.
   - The parameter `time_format` now supports `'epoch_millis'` for seconds since the Epoch, milliseconds are supported but not used.
+- renamed `bots.parsers.cymru_full_bogons.parser` to `bots.parsers.cymru.parser_full_bogons`, compatibility shim will be removed in version 2.0
+- added `bots.parsers.cymru.parser_cap_program`
+- added `intemq.bots.parsers.zoneh.parser` for ZoneH feeds
+
+#### Experts
+- Added sieve expert for filtering and modifying events (#1083)
+
+### Harmonization
+- Renamed `JSON` to `JSONDict` and added a new type `JSON`. `JSONDict` saves data internally as JSON, but acts like a dictionary. `JSON` accepts any valid JSON.
+- fixed regex for `protocol.transport` it previously allowed more values than it should have.
+- New ASN type. Like integer but checks the range.
 
 ### Requirements
 - Requests is no longer listed as dependency of the core. For depending bots the requirement is noted in their REQUIREMENTS.txt file
@@ -60,23 +70,33 @@ Support for Python 3.3 has been dropped, it reached its end of life.
 ---------------------------------
 ### Contrib
 * logrotate: use sudo for postrotate script
+* cron-jobs: use the scripts in the bots' directories and link them
 
 ### Core
 - warnings of bots are catched by the logger (#1074)
+- Bots stop when redis gives the error "OOM command not allowed when used memory > 'maxmemory'.".
+
+### Harmonization
+- Rule for harmonization keys is enforced (#1104)
 
 ### Bots
 #### Collectors
 - bots.collectors.mail.collector_mail_attach: Support attachment file parsing for imbox versions newer than 0.9.5
+- bots.collectors.stomp.collectos: Heartbeat timeout is now logged with log level info instead of warning.
+- bots.outputs.smtp.output: Fix STARTTLS, threw an exception (#1152)
 
 #### Parsers
 - All CSV parsers ignore NULL-bytes now, because the csv-library cannot handle it (#967)
 - Modify Bot default ruleset: changed conficker rule to catch more spellings
 - Shadowserver Parser: Add Accessible Cisco Smart Install
 - CleanMX Phising Parser: Handle new columns `first` and `last` (#1131).
+- n6 parser: Fix classification mappings. See NEWS file for changes values.
 
 ### Documentation
+- fix example configuration for modify expert
 
 ### Tools
+- intelmqctl now exits with exit codes > 0 when errors happened or the operation was not successful. Also, the status operation exits with 1, if bots are stopped, but enabled. (#997)
 
 ### Tests
 - `tests/lib/test_pipeline`: Redis tests clear all queues before and after tests (#1086)
@@ -84,8 +104,8 @@ Support for Python 3.3 has been dropped, it reached its end of life.
 ### Packaging
 * cron jobs: fix paths of executables
 
-1.0.2 Bugfix release
---------------------
+1.0.2 Bugfix release (2017-11-09)
+---------------------------------
 
 ### Core
 - `lib.message.add`: parameter force has finally been removed, should have been gone in 1.0.0.rc1 already
@@ -105,8 +125,8 @@ Support for Python 3.3 has been dropped, it reached its end of life.
 ### Documentation
 - Add disclaimer on maxmind database in bot documentation and code and the cron-job (#1110)
 
-1.0.1 Bugfix release
---------------------
+1.0.1 Bugfix release (2017-08-30)
+---------------------------------
 ### Documentation
 - Feeds: use more https:// URLs
 - minor fixes
@@ -122,8 +142,8 @@ Support for Python 3.3 has been dropped, it reached its end of life.
 - intelmqctl: To check the status of a bot, the command line of the running process is compared to the actual executable of the bot. Otherwise unrelated programs with the same PID are detected as running bot.
 - intelmqctl: enable, disable, check, clear now support the JSON output
 
-1.0.0 Stable release
---------------------
+1.0.0 Stable release (2017-08-04)
+---------------------------------
 ### Core
 - Fixes a thrown FileNotFound exception when stopping bots started with `intelmqctl run ...`
 
@@ -133,8 +153,8 @@ Support for Python 3.3 has been dropped, it reached its end of life.
 ### Bots
 - shadowserver parser Accessible-SMB: smb_implant is converted to bool
 
-1.0.0.rc1 Release candidate
----------------------------
+1.0.0.rc1 Release candidate (2017-07-05)
+----------------------------------------
 ### Core
 - Changing the value of an existing field to `None` deletes the field.
 - `Message.update` now behaves like `dict.update`. The old behavior is implemented in `Message.change`
@@ -172,8 +192,8 @@ Support for Python 3.3 has been dropped, it reached its end of life.
 ### Experts
 - bots.experts.deduplicator: New parameter `bypass` to deactivate deduplication, default: False
 
-v1.0.0.dev8
------------
+v1.0.0.dev8 Beta release (2017-06-14)
+-------------------------------------
 
 ### General changes
 - It's now configurable how often the bots are logging how much events they have sent, based on both the amount and time. (fixes #743)
@@ -214,8 +234,8 @@ v1.0.0.dev8
 ### Harmonization
 - New field named `output` to support export to foreign formats
 
-v1.0.0.dev7
------------
+v1.0.0.dev7 Beta release (2017-05-09)
+-------------------------------------
 
 ### Documentation
 - more verbose installation and upgrade instructions
@@ -232,8 +252,8 @@ v1.0.0.dev7
 - New parameter and field named feed.documentation to link to documentation of the feed
 - classification.taxonomy is lower case only
 
-v1.0.0.dev6
------------
+v1.0.0.dev6 Beta release (2017-01-11)
+-------------------------------------
 
 Changes between 0.9 and 1.0.0.dev6
 

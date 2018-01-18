@@ -12,6 +12,7 @@ Depending on the subcommand received, the class either
  * processes single message, either injected or from default pipeline (process subcommand)
  * reads the message from input pipeline or send a message to output pipeline (message subcommand)
 """
+import sys
 import time
 import json
 import logging
@@ -126,14 +127,14 @@ class BotDebugger:
 
     def arg2msg(self, msg):
         try:
-            default_type = "Report" if self.runtime_configuration["group"] is "Parser" else "Event"
+            default_type = "Report" if self.runtime_configuration["group"] == "Parser" else "Event"
             msg = MessageFactory.unserialize(msg, default_type=default_type)
         except (Exception, KeyError, TypeError, ValueError) as exc:
             if exists(msg):
                 with open(msg, "r") as f:
                     return self.arg2msg(f.read())
             self.messageWizzard("Message can not be parsed from JSON: {}".format(error_message_from_exc(exc)))
-            exit(1)
+            sys.exit(1)
         return msg
 
     def leverageLogger(self, level):
@@ -155,7 +156,7 @@ class BotDebugger:
     def messageWizzard(self, msg):
         self.instance.logger.error(msg)
         print(self.EXAMPLE)
-        if input("Do you want to display current harmonization (available fields)? y/[n]: ") is "y":
+        if input("Do you want to display current harmonization (available fields)? y/[n]: ") == "y":
             self.pprint(self.instance.harmonization)
 
     @staticmethod
