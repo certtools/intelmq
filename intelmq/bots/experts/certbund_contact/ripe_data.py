@@ -110,35 +110,61 @@ def load_ripe_files(options) -> tuple:
         return country and record["country"][0] == country
 
     asn_list = parse_file(options.asn_file,
-                          ('aut-num', 'org', 'status'),
+                          ('aut-num', 'org', 'status', 'abuse-c'),
                           verbose=options.verbose)
     inetnum_list = parse_file(options.inetnum_file,
-                              ('inetnum', 'org', 'country'),
+                              ('inetnum', 'org', 'country', 'abuse-c'),
                               restriction=restrict_country,
                               verbose=options.verbose)
     inet6num_list = parse_file(options.inet6num_file,
-                               ('inet6num', 'org', 'country'),
+                               ('inet6num', 'org', 'country', 'abuse-c'),
                                restriction=restrict_country,
                                verbose=options.verbose)
+
     organisation_list = parse_file(options.organisation_file,
                                    ('organisation', 'org-name', 'abuse-c'),
                                    verbose=options.verbose)
+    organisation_index = build_index(organisation_list, 'organisation')
+
     role_list = parse_file(options.role_file,
-                           ('nic-hdl', 'abuse-mailbox', 'org'), 'role',
+                           ('role', 'nic-hdl', 'abuse-mailbox', 'org'),
                            verbose=options.verbose)
+    role_index = build_index(role_list, 'nic-hdl')
 
     # Step 2: Prepare new data for insertion
-    asn_list = sanitize_asn_list(asn_list, asn_whitelist)
+    ## aut-num
+    asn_list_o, asn_list_oa, asn_list_a = prepare_asn_list(asn_list,
+                                                           asn_whitelist)
+    if options.verbose:
+        print("** aut-nums {} (`org` only)".format(len(asn_list_o)))
+        print("** aut-nums {} (`abuse-c` only)".format(len(asn_list_a)))
+        print("** aut-nums {} (`org` and `abuse-c`)".format(len(asn_list_oa)))
+        print("** Distributing (`org` and `abuse-c`)")
 
+    for asn in asn_list_oa:
+        if points_to_same_abuse_mailbox(asn, organisation_index, role_index):
+            asn_list_o.append(asn)
+        else:
+            asn_list_a.append(asn)
+
+    if options.verbose:
+        print("   -> aut-nums {} (use `org`)".format(len(asn_list_o)))
+        print("   -> aut-nums {} (use `abuse-c')".format(len(asn_list_a)))
+
+    #TODO handle the asn_list_a, by adding virtual org objects
+
+    ## inetnum
     inetnum_list = sanitize_inetnum_list(inetnum_list)
     if options.verbose:
         print('** {} importable inetnums.'.format(len(inetnum_list)))
 
+    ## inetnum
     inet6num_list = sanitize_inet6num_list(inet6num_list)
     if options.verbose:
         print('** {} importable inet6nums.'.format(len(inet6num_list)))
 
-    known_organisations = referenced_organisations(asn_list, inetnum_list,
+    ## orgs and roles
+    known_organisations = referenced_organisations(asn_list_o, inetnum_list,
                                                    inet6num_list)
 
     organisation_list = sanitize_organisation_list(organisation_list,
@@ -268,6 +294,13 @@ def parse_file(filename, fields, index_field=None, restriction=lambda x: True,
 
     return out
 
+def build_index(obj_list, index_attribute):
+    """Return a dict with the index_attribute as key to the ripe objects.
+
+    The first value of the index attribute will be upper cased and
+    used as key for the dict entry.
+    """
+    return {obj.get(index_attribute)[0].upper():obj for obj in obj_list}
 
 def uppercase_org_handle(entry):
     """Return a copy of the entry with the 'org' value in upper-case.
@@ -278,21 +311,46 @@ def uppercase_org_handle(entry):
     return entry
 
 
-def sanitize_asn_list(asn_list, whitelist=None):
-    """Return a sanitized copy of the AS list read from a RIPE aut-num file.
-    The returned list retains only those entries which have the
-    attributes 'aut-num' and 'org'. Also, if the whitelist parameter is
-    given and not None, the first of the aut-num values must be in
-    whitelist.
+def prepare_asn_list(asn_list, whitelist=None):
+    """Return three AS lists read from a RIPE aut-num file.
+
+    If the whitelist parameter is given and not None, the first of the
+    aut-num values must be in whitelist.
+
+    The returned lists are:
+    * entries with `org` but no `abuse-c`
+    * entries with both
+    * entries with 'abuse-c' but no 'org'
     """
-    return [uppercase_org_handle(entry) for entry in asn_list
+    o = []
+    oa = []
+    a = []
+    for entry in asn_list:
+        if not entry['aut-num']:
+            continue
+        if whitelist is not None and entry['aut-num'][0] in whitelist:
+            continue
 
-            # keep only entries for which we have the minimal
-            # necessary attributes
-            if entry.get('aut-num') and entry.get('org')
+        if entry.get('org') and entry.get('abuse-c'):
+            oa.append(uppercase_org_handle(entry))
+        elif entry.get('org'):
+            o.append(uppercase_org_handle(entry))
+        else:
+            a.append(entry.copy())
 
-            # when using a white-list, keep only AS in the whitelist:
-            if whitelist is None or entry['aut-num'][0] in whitelist]
+    return (o, oa, a)
+
+def points_to_same_abuse_mailbox(obj, organisation_index, role_index):
+    """Return true of the obj's abuse-c points to org->abuse-c's abuse-mailbox.
+
+    Parameter obj must have both `abuse-c` and `org` attributes.
+    """
+    abuse1 = obj['abuse-c'][0].upper()
+    abuse2 = organisation_index[obj['org'][0]].get('abuse-c')[0].upper()
+    return abuse1 == abuse2 or (
+        role_index[abuse1].get('abuse-mailbox')
+        == role_index[abuse2].get('abuse-mailbox'))
+
 
 
 def sanitize_inetnum_list(inetnum_list):
@@ -300,7 +358,8 @@ def sanitize_inetnum_list(inetnum_list):
 
             # keep only entries for which we have the minimal
             # necessary attributes
-            if entry.get('inetnum') and entry.get('org')]
+            if entry.get('inetnum') and (
+                entry.get('org') or entry.get('abuse-c'))]
 
 
 def convert_inetnum_to_networks(inetnum_list):
@@ -317,7 +376,8 @@ def sanitize_inet6num_list(inet6num_list):
 
             # keep only entries for which we have the minimal
             # necessary attributes
-            if entry.get('inet6num') and entry.get('org')]
+            if entry.get('inet6num') and (
+                entry.get('org') or entry.get('abuse-c'))]
 
 
 def convert_inet6num_to_networks(inet6num_list):
