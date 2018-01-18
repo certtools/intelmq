@@ -878,6 +878,7 @@ feed: CleanMX Phishing
 rate_limit: 129600
 http_url: http://support.clean-mx.de/clean-mx/xmlphishing?response=alive&domain=
 http_user_agent: {{ your user agent }}
+http_timeout_sec: 120
 ```
 
 ### Parser Bot
@@ -909,6 +910,7 @@ feed: CleanMX Virus
 rate_limit: 129600
 http_url: http://support.clean-mx.de/clean-mx/xmlviruses?response=alive&domain=
 http_user_agent: {{ your user agent }}
+http_timeout_sec: 120
 ```
 
 ### Parser Bot
@@ -2254,4 +2256,3 @@ http_url: http://vxvault.net/URL_List.php
 ```
 id: vxvault-parser
 ```
-
