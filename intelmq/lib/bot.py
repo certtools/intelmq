@@ -604,7 +604,10 @@ class ParserBot(Bot):
             self.acknowledge_message()
             return
 
-        for line in self.parse(report):
+        lines = self.parse(report)
+
+        for line in lines:
+
             if not line:
                 continue
             try:
@@ -620,6 +623,8 @@ class ParserBot(Bot):
             report_dump = report.copy()
             report_dump.change('raw', self.recover_line(line))
             self._dump_message(exc, report_dump)
+
+        self.logger.info('Processed %d lines and %d error(s) found.' % (len(lines), len(self.__failed)))
 
         self.acknowledge_message()
 
