@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Provide common functions to handle ripe data.
+"""Provide common functions to handle ripe data. EXPERIMENTAL
 
+Hacked up version with some analysis code.
 
 Copyright (C) 2016-2018 by Bundesamt für Sicherheit in der Informationstechnik
 Software engineering by Intevation GmbH
@@ -28,6 +29,10 @@ import collections
 import itertools
 import gzip
 import ipaddress
+
+import pickle
+import os.path
+
 
 
 def add_db_args(parser):
@@ -109,30 +114,117 @@ def load_ripe_files(options) -> tuple:
         country = options.restrict_to_country
         return country and record["country"][0] == country
 
+    ### aut-num
+
     asn_list = parse_file(options.asn_file,
-                          ('aut-num', 'org', 'status'),
+                          ('aut-num', 'org', 'status', 'abuse-c'),
                           verbose=options.verbose)
-    inetnum_list = parse_file(options.inetnum_file,
-                              ('inetnum', 'org', 'country'),
-                              restriction=restrict_country,
+
+    asn_list_a = [asn for asn in asn_list
+                  if asn.get('abuse-c') and not asn.get('org')]
+
+    asn_list_b = [asn for asn in asn_list
+                  if asn.get('abuse-c') and asn.get('org')]
+
+
+    ### inetnum
+    fn = options.inetnum_file + '.pickled'
+    if os.path.isfile(fn):
+        with open(fn, 'rb') as f:
+            print("unpickling")
+            inetnum_list = pickle.load(f)
+    else:
+        inetnum_list = parse_file(options.inetnum_file,
+                              ('inetnum', 'org', 'country', 'abuse-c'),
+                              #restriction=restrict_country,
                               verbose=options.verbose)
-    inet6num_list = parse_file(options.inet6num_file,
-                               ('inet6num', 'org', 'country'),
-                               restriction=restrict_country,
+        with open(fn, 'wb') as f:
+            pickle.dump(inetnum_list, f)
+
+    fn = options.inet6num_file + '.pickled'
+    if os.path.isfile(fn):
+        with open(fn, 'rb') as f:
+            print("unpickling")
+            inet6num_list  = pickle.load(f)
+    else:
+        inet6num_list = parse_file(options.inet6num_file,
+                               ('inet6num', 'org', 'country', 'abuse-c'),
+                               #restriction=restrict_country,
                                verbose=options.verbose)
+        with open(fn, 'wb') as f:
+            pickle.dump(inet6num_list, f)
+
+
     organisation_list = parse_file(options.organisation_file,
                                    ('organisation', 'org-name', 'abuse-c'),
                                    verbose=options.verbose)
+
+    org_dict = {}
+    for o in organisation_list:
+        org_dict[o.get('organisation')[0]] = o
+
     role_list = parse_file(options.role_file,
                            ('nic-hdl', 'abuse-mailbox', 'org'), 'role',
                            verbose=options.verbose)
 
+    role_dict = {}
+    for r in role_list:
+        role_dict[r.get('nic-hdl')[0]] = r
+
+    for asn in asn_list_b:
+        abuse1 = asn['abuse-c'][0]
+        abuse2 = org_dict[asn['org'][0]].get('abuse-c')[0]
+        if abuse1 != abuse2:
+            if role_dict[abuse1].get('abuse-mailbox') != role_dict[abuse2].get('abuse-mailbox'):
+                print(asn, org_dict[asn['org'][0]], role_dict[abuse1], role_dict[abuse2])
+
+
     # Step 2: Prepare new data for insertion
     asn_list = sanitize_asn_list(asn_list, asn_whitelist)
+
+
+    ### inetnum
+
+    print("inetnum records without org, but with abuse-c:", end="")
+    inetnum_list_a = [i for i in inetnum_list
+                      if not i.get('org') and i.get('abuse-c')]
+    print(len(inetnum_list_a))
+
+    print("inetnum records with abuse-c and org leading to different abuse-mailbox: ", end="")
+    inetnum_list_c = []
+    for i in inetnum_list:
+        if i.get('abuse-c') and i.get('org'):
+            abuse1 = i['abuse-c'][0]
+            if i['org'][0] in org_dict and org_dict[i['org'][0]].get('abuse-c'):
+                abuse2 = org_dict[i['org'][0]].get('abuse-c')[0]
+
+            if abuse1 != abuse2 and role_dict[abuse1].get('abuse-mailbox') != role_dict[abuse2].get('abuse-mailbox'):
+                inetnum_list_c.append(i)
+    print(len(inetnum_list_c))
 
     inetnum_list = sanitize_inetnum_list(inetnum_list)
     if options.verbose:
         print('** {} importable inetnums.'.format(len(inetnum_list)))
+
+
+    ### inet6num
+
+    print("inet6num records without org, but with abuse-c:", end="")
+    inet6num_list_a = [i for i in inet6num_list
+                     if not i.get('org') and i.get('abuse-c')]
+    print(len(inet6num_list_a))
+
+    print("inet6num records with abuse-c and org leading to different abuse-mailbox: ", end="")
+    inet6num_list_c = []
+    for i in inet6num_list:
+        if i.get('abuse-c') and i.get('org'):
+            abuse1 = i['abuse-c'][0]
+            if i['org'][0] in org_dict and org_dict[i['org'][0]].get('abuse-c'):
+                abuse2 = org_dict[i['org'][0]].get('abuse-c')[0]
+
+            if abuse1 != abuse2 and role_dict[abuse1].get('abuse-mailbox') != role_dict[abuse2].get('abuse-mailbox'):
+                inet6num_list_c.append(i)
+    print(len(inet6num_list_c))
 
     inet6num_list = sanitize_inet6num_list(inet6num_list)
     if options.verbose:
@@ -147,6 +239,16 @@ def load_ripe_files(options) -> tuple:
         print('** Found {} orgs to be relevant.'.format(len(organisation_list)))
 
     abusec_to_org = role_to_org_mapping(organisation_list)
+
+    print("Number of role objects without being referenced by org :", end="")
+    role_list_no_org = []
+    for r in role_list:
+        if not (r.get('nic-hdl') and r.get('nic-hdl')[0] not in abusec_to_org):
+            role_list_no_org.append(r)
+    print(len(role_list_no_org))
+
+
+
 
     role_list = sanitize_role_list(role_list, abusec_to_org)
 
