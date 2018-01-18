@@ -4,6 +4,7 @@ from collections import OrderedDict
 
 from intelmq.lib import utils
 from intelmq.lib.bot import ParserBot
+from intelmq.lib.exceptions import ConfigurationError
 
 PHISHING = OrderedDict([
     ("line", "__IGNORE__"),
@@ -70,14 +71,23 @@ VIRUS = OrderedDict([
 class CleanMXParserBot(ParserBot):
 
     def get_mapping_and_type(self, url):
+
         if 'xmlphishing' in url:
             return PHISHING, 'phishing'
+
         elif 'xmlviruses' in url:
             return VIRUS, 'malware'
+
         else:
             raise ValueError('Unknown report.')
 
     def parse(self, report):
+        if "format=csv" in report.get('feed.url'):
+            self.logger.error("Could not parse report in CSV format, only support XML format.")
+            raise ConfigurationError("runtime", "CleanMX Collector must have http_url"
+                                     " parameter pointing to XML format URL from the feed, instead CSV format."
+                                     " See NEWS file for more details.")
+
         raw_report = utils.base64_decode(report.get('raw'))
 
         document = ElementTree.fromstring(raw_report)

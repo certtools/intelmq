@@ -135,7 +135,8 @@ UPDATE events
 
 1.0.3 Bugfix release (unreleased)
 ---------------------------------
-No changes needed.
+### Configuration
+- `bots.parsers.cleanmx` removed CSV format support and now only supports XML format. Therefore, CleanMX collectors must define the `http_url` parameter with the feed url which points to XML format. See Feeds.md file on documentation section to get the correct URLs. Also, downloading the data from CleanMX feed can take a while, therefore, CleanMX collectors must overwrite the `http_timeout_sec` parameter with the value `120`.
 
 1.0.2 Bugfix release
 --------------------
@@ -255,7 +256,7 @@ ALTER TABLE events
    ADD COLUMN "misp.attribute_uuid" varchar(36),
    ADD COLUMN "malware.hash.sha256" text,
    ALTER COLUMN "misp.event_uuid" SET DATA TYPE varchar(36);
-   
+
 ALTER TABLE events   RENAME COLUMN "misp_uuid" TO "misp.event_uuid";
 
 UPDATE events
