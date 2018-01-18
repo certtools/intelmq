@@ -21,6 +21,7 @@ from intelmq import (DEFAULT_LOGGING_PATH, DEFAULTS_CONF_FILE,
 from intelmq.lib import exceptions, utils
 import intelmq.lib.message as libmessage
 from intelmq.lib.pipeline import PipelineFactory
+from intelmq.lib.utils import RewindableFileHandle
 from typing import Any, Optional, List
 
 __all__ = ['Bot', 'CollectorBot', 'ParserBot']
@@ -102,7 +103,6 @@ class Bot(object):
         """
         self.logger.info("Received SIGTERM.")
         self.stop(exitcode=0)
-        del self
 
     def __handle_sighup_signal(self, signum: int, stack: Optional[object]):
         """
@@ -202,8 +202,6 @@ class Bot(object):
             except KeyboardInterrupt:
                 self.logger.info("Received KeyboardInterrupt.")
                 self.stop(exitcode=0)
-                del self
-                break
 
             finally:
                 if getattr(self.parameters, 'testing', False):
@@ -276,7 +274,7 @@ class Bot(object):
         try:
             self.shutdown()
         except BaseException:
-            pass
+            self.logger.exception('Error during shutdown of bot.')
 
         if self.__message_counter:
             self.logger.info("Processed %d messages since last logging.", self.__message_counter)
@@ -291,8 +289,7 @@ class Bot(object):
             self.__print_log_buffer()
 
         if not getattr(self.parameters, 'testing', False):
-            del self
-            exit(exitcode)
+            sys.exit(exitcode)
 
     def __print_log_buffer(self):
         for level, message in self.__log_buffer:
@@ -351,7 +348,6 @@ class Bot(object):
             if not self.__destination_pipeline:
                 raise exceptions.ConfigurationError('pipeline', 'No destination pipeline given, '
                                                     'but needed')
-                self.stop()
 
             self.logger.debug("Sending message.")
             self.__message_counter += 1
@@ -522,7 +518,7 @@ class Bot(object):
     @classmethod
     def run(cls):
         if len(sys.argv) < 2:
-            exit('No bot ID given.')
+            sys.exit('No bot ID given.')
         instance = cls(sys.argv[1])
         instance.start()
 
@@ -580,6 +576,8 @@ class Bot(object):
 class ParserBot(Bot):
     csv_params = {}
     ignore_lines_starting = []
+    handle = None
+    current_line = None
 
     def __init__(self, bot_id):
         super(ParserBot, self).__init__(bot_id=bot_id)
@@ -599,8 +597,9 @@ class ParserBot(Bot):
             raw_report = '\n'.join([line for line in raw_report.splitlines()
                                     if not any([line.startswith(prefix) for prefix
                                                 in self.ignore_lines_starting])])
-
-        for line in csv.reader(io.StringIO(raw_report)):
+        self.handle = RewindableFileHandle(io.StringIO(raw_report))
+        for line in csv.reader(self.handle):
+            self.current_line = self.handle.current_line
             yield line
 
     def parse_csv_dict(self, report: dict):
@@ -613,8 +612,9 @@ class ParserBot(Bot):
             raw_report = '\n'.join([line for line in raw_report.splitlines()
                                     if not any([line.startswith(prefix) for prefix
                                                 in self.ignore_lines_starting])])
-
-        for line in csv.DictReader(io.StringIO(raw_report)):
+        self.handle = RewindableFileHandle(io.StringIO(raw_report))
+        for line in csv.DictReader(self.handle):
+            self.current_line = self.handle.current_line
             yield line
 
     def parse_json(self, report: dict):
@@ -697,7 +697,13 @@ class ParserBot(Bot):
 
         Recovers a fully functional report with only the problematic line.
         """
-        return '\n'.join(self.tempdata + [line])
+        if self.handle and self.handle.first_line and not self.tempdata:
+            tempdata = [self.handle.first_line.strip()]
+        else:
+            tempdata = self.tempdata
+        if self.current_line:
+            line = self.current_line
+        return '\n'.join(tempdata + [line])
 
     def recover_line_csv(self, line: str):
         out = io.StringIO()

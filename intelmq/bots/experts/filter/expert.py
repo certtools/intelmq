@@ -23,7 +23,6 @@ class FilterExpertBot(Bot):
         else:
             self.logger.info("Filtering out events to (absolute time) %r.", absolute)
             return absolute
-        return None
 
     def init(self):
         self.not_after = None

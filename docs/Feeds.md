@@ -39,6 +39,7 @@ The available feeds are grouped by the source of the feeds. For each feed the co
 - [University of Toulouse Blacklist](#university-of-toulouse-blacklist)
 - [URLVir](#urlvir)
 - [VXVault](#vxvault)
+- [ZoneH](#zoneh)
 
 <!-- /TOC -->
 
@@ -923,6 +924,27 @@ http_user_agent: {{ your user agent }}
 id: cleanmx-virus-parser
 ```
 
+# Cymru CAP program
+
+http://www.team-cymru.org/CSIRT-AP.html
+
+**Status:** Active
+
+## Collector Bot
+
+Usually via HTTPS.
+
+## Parser Bot
+
+**Bot Name:** Cymru CAP Program
+
+**Bot Module:** intelmq.bots.parsers.cymru.parser_cap_program
+
+**Configuration Parameters:**
+```
+id: cymru-cap-program-parser
+```
+
 # Cymru Full Bogons
 
 **Status:** Active
@@ -946,7 +968,7 @@ http_url: https://www.team-cymru.org/Services/Bogons/fullbogons-ipv4.txt
 
 **Bot Name:** Cymru Full Bogons
 
-**Bot Module:** intelmq.bots.parsers.cymru_full_bogons.parser
+**Bot Module:** intelmq.bots.parsers.cymru.parser_full_bogons
 
 **Configuration Parameters:**
 ```
@@ -2288,5 +2310,39 @@ http_url: http://vxvault.net/URL_List.php
 **Configuration Parameters:**
 ```
 id: vxvault-parser
+```
+
+# ZoneH
+
+**Status:** Active
+
+## Collector Bot
+
+FIXME: Information how to get the feed, what kind of reports you can reveive
+
+**Bot Name:** Generic Mail Attachment Fetcher
+
+**Bot Module:** intelmq.bots.collectors.mail.collector_mail_attach
+
+**Configuration Parameters:**
+```
+id: zoneh-collector
+provider: ZoneH
+feed: ZoneH <feed type>
+rate_limit: FIXME
+subject_regex: FIXME
+attach_regex: FIXME
+attach_unzip: true
+```
+
+## Parser Bot
+
+**Bot Name:** VXVault
+
+**Bot Module:** intelmq.bots.parsers.zoneh.parser
+
+**Configuration Parameters:**
+```
+id: zoneh-parser
 ```
 

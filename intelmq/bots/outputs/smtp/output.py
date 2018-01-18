@@ -46,7 +46,7 @@ class SMTPOutputBot(Bot):
                              **kwargs) as smtp:
             if self.starttls:
                 if self.parameters.http_verify_cert:
-                    smtp.starttls(ssl.create_default_context())
+                    smtp.starttls(context=ssl.create_default_context())
                 else:
                     smtp.starttls()
             if self.username and self.password:

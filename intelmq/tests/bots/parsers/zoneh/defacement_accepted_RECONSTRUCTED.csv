@@ -1,0 +1,2 @@
+"add_date","accept_date","attacker","domain","ip_address","system","web_server","reason","hackmode","image","type","redefacement","state","def_grade","defacement_id","country_code","country"
+"2016-01-01 11:56:00","2016-06-01 13:20:21","L33tz","http://defaced.example.com","203.0.113.1","Win 2008","IIS/7.5","Heh...just for fun!","known vulnerability (i.e. unpatched system)","./defaced/2016/01/11/defaced.example.com/defaced.example.com","mass","no","published","homepage","12345678","zz","Unknown"
