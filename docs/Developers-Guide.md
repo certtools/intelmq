@@ -81,16 +81,13 @@ Similarly, if code does not get accepted upstream by the main developers, it is 
 
 Developers MUST have a fork repository of IntelMQ in order to commit the new code to their repository and then be able to do pull requests to main repository.
 
-The following instructions will use `pip3 -e`, which gives you a so called *editable* installation. No code is copied in the libraries directories, there's just a link to your code. However, configuration files still required to be moved to `/opt/intelmq` as the instructions show.
+The following instructions will use a so called *editable* installation. No code is copied in the libraries directories, there's just a link to your code. However, configuration files still required to be moved to `/opt/intelmq` as the instructions show.
 
 ```bash
 sudo -s
 
-git clone https://github.com/<your username>/intelmq.git /intelmq
-cd /intelmq
-
-git config core.fileMode false
-chmod -R 777 /intelmq
+git clone https://github.com/<your username>/intelmq.git /opt/dev_intelmq
+cd /opt/dev_intelmq
 
 pip3 install -e .
 
@@ -100,19 +97,19 @@ mkdir /opt/intelmq
 mkdir -p /opt/intelmq/var/lib/bots/file-output/
 mkdir -p /opt/intelmq/var/log/
 
-cp -R /intelmq/intelmq/etc /opt/intelmq/
-cp -R /intelmq/intelmq/bots/BOTS /opt/intelmq/etc/
+cp -R /opt/dev_intelmq/intelmq/etc /opt/intelmq/
+cp -R /opt/dev_intelmq/intelmq/bots/BOTS /opt/intelmq/etc/
 
 chmod -R 0770 /opt/intelmq
 chown -R intelmq.intelmq /opt/intelmq
 ```
 
-**Note:** please do not forget that configuration files, log files will be available on `/opt/intelmq`. However, if your development is somehow related to any configuration file, keep using `/opt/intelmq` and then, before commit, change the configurations files on `/intelmq/intelmq/etc/` with your changes on `/opt/intelmq/etc/`.
+**Note:** please do not forget that configuration files, log files will be available on `/opt/intelmq`. However, if your development is somehow related to any configuration file, keep using `/opt/intelmq` and then, before commit, change the configurations files on `/opt/dev_intelmq/intelmq/etc/` with your changes on `/opt/intelmq/etc/`.
 
 
 ## How to develop
 
-After you successfully setup your IntelMQ development environment, you can perform any development on any `.py` file on `/intelmq`. After you change, you can use the normal procedure to run the bots:
+After you successfully setup your IntelMQ development environment, you can perform any development on any `.py` file on `/opt/dev_intelmq`. After you change, you can use the normal procedure to run the bots:
 
 ```bash
 su - intelmq
@@ -122,23 +119,24 @@ intelmqctl start spamhaus-drop-collector
 tail -f /opt/intelmq/var/log/spamhaus-drop-collector.log
 ```
 
-You can also add new bots, creating the new `.py` file on the proper directory inside `cd /intelmq/intelmq`. However, your IntelMQ installation with pip3 needs to be updated. Please check the following section.
+You can also add new bots, creating the new `.py` file on the proper directory inside `cd /opt/dev_intelmq/intelmq`. However, your IntelMQ installation with pip3 needs to be updated. Please check the following section.
+
 
 ## Update
 
 In case you developed a new bot, you need to update your current development installation. In order to do that, please follow this procedure:
 
 
-1. Add the new bot information to `/intelmq/intelmq/bots/BOTS`, not `/opt/intelmq/etc/BOTS`.
+1. Add the new bot information to `/opt/dev_intelmq/intelmq/bots/BOTS`, not `/opt/intelmq/etc/BOTS`.
 2. Make sure that you have your new bot in the right place and the information on BOTS file is correct.
 3. Execute the following commands:
 
 ```bash
 sudo -#!/bin/sh
 
-cd /intelmq
+cd /opt/dev_intelmq
 pip3 install --upgrade -e .
-cp /intelmq/intelmq/bots/BOTS /opt/intelmq/etc/BOTS
+cp /opt/dev_intelmq/intelmq/bots/BOTS /opt/intelmq/etc/BOTS
 
 chmod -R 0770 /opt/intelmq
 chown -R intelmq.intelmq /opt/intelmq
@@ -156,7 +154,7 @@ intelmqctl start <bot_id>
 
 All changes have to be tested and new contributions must be accompanied by according unit tests. You can run the tests by changing to the directory with IntelMQ repository and running either `unittest` or `nosetests`:
 
-    cd /intelmq
+    cd /opt/dev_intelmq
     python3 -m unittest {discover|filename}  # or
     nosetests3 [filename]  # or
     python3 setup.py test  # uses a build environment

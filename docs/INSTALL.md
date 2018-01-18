@@ -144,7 +144,7 @@ chown -R intelmq.intelmq /opt/intelmq
 
 ## Additional Information
 
-Following any one of the installation methods mentioned before setup the IntelMQ base. However, some bots have additional dependencies which are mentioned in their own documentation available on this [directory](https://github.com/certtools/intelmq/tree/develop/intelmq/bots).
+Following any one of the installation methods mentioned before setup the IntelMQ base. However, some bots have additional dependencies which are mentioned in their own documentation.
 
 
 # Afterwards
