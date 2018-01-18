@@ -1,3 +1,8 @@
+Getting a ripe_import_test script that does not depend on psycopg2
+and uses the ripe_data_test module.
+cp ../ripe_import.py ripe_import_test.py
+patch -i ripe_import_test.diff
+
 diff -U0 ripe_import.py ripe_import_test.py
 --- ripe_import.py	2018-01-12 10:56:31.163610696 +0100
 +++ ripe_import_test.py	2018-01-12 11:07:16.871019148 +0100
