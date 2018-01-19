@@ -58,8 +58,8 @@ def add_common_args(parser):
     parser.add_argument("--ripe-delegated-file",
                         default='delegated-ripencc-latest',
                         help=("Name of the delegated-ripencc-latest file to"
-                              " read. Only useful when --restrict-to-country"
-                              " is also given. In that case this file is"
+                              " read. Only needed for --restrict-to-country."
+                              " In that case this file is"
                               " read and only the ASNs given in the file"
                               " that match the country code from"
                               " --restrict-to-country are imported."
@@ -73,8 +73,7 @@ def add_common_args(parser):
     parser.add_argument("--restrict-to-country",
                         metavar="COUNTRY_CODE",
                         help=("A country code, e.g. DE, to restrict which"
-                              " information is actually read from the files."
-                              " Only applies to inetnum and inet6num files."))
+                              " information is actually read from the files."))
 
 
 def load_ripe_files(options) -> tuple:
@@ -101,7 +100,7 @@ def load_ripe_files(options) -> tuple:
 
     def restrict_country(record):
         country = options.restrict_to_country
-        return country and record["country"][0] == country
+        return (not country) or record["country"][0] == country
 
     asn_list = parse_file(options.asn_file,
                           ('aut-num', 'org', 'status', 'abuse-c'),
@@ -126,43 +125,30 @@ def load_ripe_files(options) -> tuple:
     role_index = build_index(role_list, 'nic-hdl')
 
     # Step 2: Prepare new data for insertion
-    ## aut-num
-    asn_list_o, asn_list_oa, asn_list_a = prepare_asn_list(asn_list,
-                                                           asn_whitelist)
-    if options.verbose:
-        print("** aut-nums {} (`org` only)".format(len(asn_list_o)))
-        print("** aut-nums {} (`abuse-c` only)".format(len(asn_list_a)))
-        print("** aut-nums {} (`org` and `abuse-c`)".format(len(asn_list_oa)))
-        print("** Distributing entries with (`org` and `abuse-c`)")
 
-    for asn in asn_list_oa:
-        if points_to_same_abuse_mailbox(asn, organisation_index, role_index):
-            asn_list_o.append(asn)
-        else:
-            asn_list_a.append(asn)
+    (asn_list_o, asn_list_a, organisation_list, organisation_index
+        ) = sanitize_split_and_modify(
+                asn_list, 'aut-num', asn_whitelist,
+                organisation_list, organisation_index, role_index,
+                verbose=options.verbose)
 
-    if options.verbose:
-        print("   -> for {} aut-nums we use `org`".format(len(asn_list_o)))
-        print("   -> for {} aut-nums we use `abuse-c'".format(len(asn_list_a)))
+    (inetnum_list_o, inetnum_list_a, organisation_list, organisation_index
+        ) = sanitize_split_and_modify(
+                inetnum_list, 'inetnum', None,
+                organisation_list, organisation_index, role_index,
+                verbose=options.verbose)
 
-    asn_list_a, organisation_list, organisation_index = modify_for_abusec(
-            asn_list_a, organisation_list, organisation_index, role_index)
-
-    ## inetnum
-    inetnum_list = sanitize_inetnum_list(inetnum_list)
-    if options.verbose:
-        print('** {} importable inetnums.'.format(len(inetnum_list)))
-
-    ## inetnum
-    inet6num_list = sanitize_inet6num_list(inet6num_list)
-    if options.verbose:
-        print('** {} importable inet6nums.'.format(len(inet6num_list)))
+    (inet6num_list_o, inet6num_list_a, organisation_list, organisation_index
+        ) = sanitize_split_and_modify(
+                inet6num_list, 'inet6num', None,
+                organisation_list, organisation_index, role_index,
+                verbose=options.verbose)
 
     ## orgs and roles
     known_organisations = referenced_organisations(
        asn_list_o + asn_list_a,
-       inetnum_list,
-       inet6num_list)
+       inetnum_list_o + inetnum_list_a,
+       inet6num_list_o + inet6num_list_a)
 
     organisation_list = sanitize_organisation_list(organisation_list,
                                                    known_organisations)
@@ -308,11 +294,11 @@ def uppercase_org_handle(entry):
     return entry
 
 
-def prepare_asn_list(asn_list, whitelist=None):
-    """Return three AS lists read from a RIPE aut-num file.
+def split_list(obj_list, attribute, whitelist=None):
+    """Return three lists split and sanitized from a ripe RESOURCE list.
 
     If the whitelist parameter is given and not None, the first of the
-    aut-num values must be in whitelist.
+    attribute values must be in whitelist.
 
     The returned lists are:
     * entries with `org` but no `abuse-c`
@@ -322,10 +308,10 @@ def prepare_asn_list(asn_list, whitelist=None):
     o = []
     oa = []
     a = []
-    for entry in asn_list:
-        if not entry.get('aut-num'):
+    for entry in obj_list:
+        if not entry.get(attribute):
             continue
-        if whitelist and entry['aut-num'][0] not in whitelist:
+        if whitelist and entry[attribute][0] not in whitelist:
             continue
 
         if entry.get('org') and entry.get('abuse-c'):
@@ -350,7 +336,8 @@ def points_to_same_abuse_mailbox(obj, organisation_index, role_index):
 
 
 def modify_for_abusec(obj_list_a,
-                      organisation_list, organisation_index, role_index):
+                      organisation_list, organisation_index, role_index,
+                      verbose=False):
     """Modifies lists and index to add a virtual org using direct abuse-c.
 
     We are using the `role` attribute of the abuse-c role as
@@ -372,6 +359,7 @@ def modify_for_abusec(obj_list_a,
         an updated org list
         and updated org index
     """
+    added_counter = 0
     for obj in obj_list_a:
         abuse_c = obj['abuse-c'][0].upper()
         role=role_index[abuse_c]
@@ -387,9 +375,11 @@ def modify_for_abusec(obj_list_a,
             new_org['abuse-c'].append(abuse_c)
             new_org['org-name'].append(new_org_name)
 
-            print("adding {}".format(new_org))
+            added_counter += 1
+            if verbose and added_counter < 7:
+                print("e.g. adding {}".format(new_org))
             organisation_list.append(new_org)
-            organisation_index['new_org_name'] = new_org
+            organisation_index[new_org_name] = new_org
 
         if obj.get('org'):
             obj['org'][0] = abuse_c
@@ -399,13 +389,45 @@ def modify_for_abusec(obj_list_a,
     return obj_list_a, organisation_list, organisation_index
 
 
-def sanitize_inetnum_list(inetnum_list):
-    return [uppercase_org_handle(entry) for entry in inetnum_list
+def sanitize_split_and_modify(obj_list, index, whitelist,
+                              organisation_list, organisation_index,
+                              role_index, verbose):
+    """Sanitize, split and modify a ripe RESOURCE list for direct abuse-c.
 
-            # keep only entries for which we have the minimal
-            # necessary attributes
-            if entry.get('inetnum') and (
-                entry.get('org') or entry.get('abuse-c'))]
+    Handles obj_list where some have direct `abuse-c` attributes.
+    Decides which abuse-mailbox to use in case both `org` and `abuse-c`
+    are given and modifies organisation_list and organisation_index
+    accordingly.
+
+    Returns:
+        obj_list: where the original `org` is used for the abuse-mailbox
+        obj_list: where direct `abuse-c` is used with extra org for
+                  abuse-mailbox
+        organisation_list: an updated organisation list (modified in plac)
+        organisation_index: an updated index (modified in place)
+    """
+
+    obj_list_o, obj_list_oa, obj_list_a = split_list(obj_list, index, whitelist)
+    if verbose:
+        print("** {}s {} (`org` only)".format(index, len(obj_list_o)))
+        print("** {}s {} (`abuse-c` only)".format(index, len(obj_list_a)))
+        print("** {}s {} (`org` and `abuse-c`)".format(index, len(obj_list_oa)))
+        print("** Distributing entries with (`org` and `abuse-c`)")
+
+    for obj in obj_list_oa:
+        if points_to_same_abuse_mailbox(obj, organisation_index, role_index):
+            obj_list_o.append(obj)
+        else:
+            obj_list_a.append(obj)
+
+    if verbose:
+        print("   -> for {} {} we use `org`".format(len(obj_list_o), index))
+        print("   -> for {} {} we use `abuse-c'".format(len(obj_list_a), index))
+
+    obj_list_a, organisation_list, organisation_index = modify_for_abusec(
+        obj_list_a, organisation_list, organisation_index, role_index, verbose)
+
+    return (obj_list_o, obj_list_a, organisation_list, organisation_index)
 
 
 def convert_inetnum_to_networks(inetnum_list):
@@ -415,15 +437,6 @@ def convert_inetnum_to_networks(inetnum_list):
         first, last = [ipaddress.ip_address(s.strip())
                        for s in entry["inetnum"][0].split("-", 1)]
         entry["inetnum"] = ipaddress.summarize_address_range(first, last)
-
-
-def sanitize_inet6num_list(inet6num_list):
-    return [uppercase_org_handle(entry) for entry in inet6num_list
-
-            # keep only entries for which we have the minimal
-            # necessary attributes
-            if entry.get('inet6num') and (
-                entry.get('org') or entry.get('abuse-c'))]
 
 
 def convert_inet6num_to_networks(inet6num_list):
