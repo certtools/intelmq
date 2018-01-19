@@ -158,7 +158,7 @@ class CleanMXParserBot(ParserBot):
 
             event.add('classification.type', ctype)
             event.add("raw", entry_str)
-            return event
+            yield event
 
 
 BOT = CleanMXParserBot
