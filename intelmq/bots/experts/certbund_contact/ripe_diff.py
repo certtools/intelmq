@@ -241,8 +241,9 @@ def compare_orgs_with_db(cur, asn_list, inetnum_list, inet6num_list,
 
 def main():
     parser = argparse.ArgumentParser(
-        description=("Show the differences between a set of RIPE DB files"
-                     " and the contents of the database."))
+        description="Show the differences between a set of RIPE DB files"
+                    " and the contents of the database.",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     ripe_data.add_db_args(parser)
     ripe_data.add_common_args(parser)

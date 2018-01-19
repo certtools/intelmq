@@ -34,8 +34,7 @@ def add_db_args(parser):
     parser.add_argument("--conninfo",
                         default='dbname=contactdb',
                         help="Libpg connection string. E.g. 'host=localhost"
-                             " port=5432 user=intelmq dbname=connectdb'"
-                             " Default: 'dbname=contactdb'")
+                             " port=5432 user=intelmq dbname=connectdb'")
 
 
 def add_common_args(parser):
@@ -43,26 +42,21 @@ def add_common_args(parser):
                         default=False, action="store_true")
     parser.add_argument("--organisation-file",
                         default='ripe.db.organisation.gz',
-                        help=("Specify the organisation data file."
-                              " Default: ripe.db.organisation.gz"))
+                        help=("Specify the organisation data file."))
     parser.add_argument("--role-file",
                         default='ripe.db.role.gz',
-                        help=("Specify the contact role data file."
-                              " Default: ripe.db.role.gz"))
+                        help=("Specify the contact role data file."))
     parser.add_argument("--asn-file",
                         default='ripe.db.aut-num.gz',
-                        help=("Specify the AS number data file."
-                              " Default: ripe.db.aut-num.gz"))
+                        help=("Specify the AS number data file."))
     parser.add_argument("--inetnum-file",
                         default='ripe.db.inetnum.gz',
-                        help=("Specify the inetnum data file."
-                              " Default: ripe.db.inetnum.gz"))
+                        help=("Specify the inetnum data file."))
     parser.add_argument("--inet6num-file",
                         default='ripe.db.inet6num.gz',
-                        help=("Specify the inet6num data file."
-                              " Default: ripe.db.inet6num.gz"))
+                        help=("Specify the inet6num data file."))
     parser.add_argument("--ripe-delegated-file",
-                        default='',
+                        default='delegated-ripencc-latest',
                         help=("Name of the delegated-ripencc-latest file to"
                               " read. Only useful when --restrict-to-country"
                               " is also given. In that case this file is"
@@ -139,7 +133,7 @@ def load_ripe_files(options) -> tuple:
         print("** aut-nums {} (`org` only)".format(len(asn_list_o)))
         print("** aut-nums {} (`abuse-c` only)".format(len(asn_list_a)))
         print("** aut-nums {} (`org` and `abuse-c`)".format(len(asn_list_oa)))
-        print("** Distributing (`org` and `abuse-c`)")
+        print("** Distributing entries with (`org` and `abuse-c`)")
 
     for asn in asn_list_oa:
         if points_to_same_abuse_mailbox(asn, organisation_index, role_index):
@@ -148,8 +142,8 @@ def load_ripe_files(options) -> tuple:
             asn_list_a.append(asn)
 
     if options.verbose:
-        print("   -> aut-nums {} (use `org`)".format(len(asn_list_o)))
-        print("   -> aut-nums {} (use `abuse-c')".format(len(asn_list_a)))
+        print("   -> for aut-nums {} we use `org`".format(len(asn_list_o)))
+        print("   -> for aut-nums {} we use `abuse-c'".format(len(asn_list_a)))
 
     #TODO handle the asn_list_a, by adding virtual org objects
 

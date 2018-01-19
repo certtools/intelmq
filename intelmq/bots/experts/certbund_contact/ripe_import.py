@@ -190,7 +190,8 @@ def main():
     parser = argparse.ArgumentParser(description=
         "This script can be used to import automatic contact data "
         "into the intelmq-cb-mailgen contactdb. It is intended to be "
-        "called automatically, e.g. by a cronjob.")
+        "called automatically, e.g. by a cronjob.",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     ripe_data.add_db_args(parser)
     ripe_data.add_common_args(parser)
