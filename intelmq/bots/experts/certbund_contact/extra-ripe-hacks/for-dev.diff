@@ -4,10 +4,10 @@ cd ..
 patch -i extra-ripe-hacks/for-dev.diff
 
 diff --git a/intelmq/bots/experts/certbund_contact/ripe_data.py b/intelmq/bots/experts/certbund_contact/ripe_data.py
-index e9ed26e..68eb6ec 100644
+index 4d83eea..341263f 100644
 --- a/intelmq/bots/experts/certbund_contact/ripe_data.py
 +++ b/intelmq/bots/experts/certbund_contact/ripe_data.py
-@@ -112,14 +112,16 @@ def restrict_country(record):
+@@ -106,14 +106,16 @@ def restrict_country(record):
      asn_list = parse_file(options.asn_file,
                            ('aut-num', 'org', 'status', 'abuse-c'),
                            verbose=options.verbose)
@@ -32,8 +32,25 @@ index e9ed26e..68eb6ec 100644
  
      organisation_list = parse_file(options.organisation_file,
                                     ('organisation', 'org-name', 'abuse-c'),
+diff --git a/intelmq/bots/experts/certbund_contact/ripe_diff.py b/intelmq/bots/experts/certbund_contact/ripe_diff.py
+index c4ed600..50557db 100755
+--- a/intelmq/bots/experts/certbund_contact/ripe_diff.py
++++ b/intelmq/bots/experts/certbund_contact/ripe_diff.py
+@@ -31,8 +31,10 @@
+ 
+ import psycopg2
+ 
+-import intelmq.bots.experts.certbund_contact.common as common
+-import intelmq.bots.experts.certbund_contact.ripe_data as ripe_data
++#import intelmq.bots.experts.certbund_contact.common as common
++import common # using local version during development
++#import intelmq.bots.experts.certbund_contact.ripe_data as ripe_data
++import ripe_data # using local version during development
+ 
+ 
+ SOURCE_NAME = "ripe"
 diff --git a/intelmq/bots/experts/certbund_contact/ripe_import.py b/intelmq/bots/experts/certbund_contact/ripe_import.py
-index ab63ce5..643b23b 100755
+index 0fbc6e0..17bd7b7 100755
 --- a/intelmq/bots/experts/certbund_contact/ripe_import.py
 +++ b/intelmq/bots/experts/certbund_contact/ripe_import.py
 @@ -31,7 +31,8 @@

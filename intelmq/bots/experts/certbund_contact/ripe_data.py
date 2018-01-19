@@ -142,10 +142,11 @@ def load_ripe_files(options) -> tuple:
             asn_list_a.append(asn)
 
     if options.verbose:
-        print("   -> for aut-nums {} we use `org`".format(len(asn_list_o)))
-        print("   -> for aut-nums {} we use `abuse-c'".format(len(asn_list_a)))
+        print("   -> for {} aut-nums we use `org`".format(len(asn_list_o)))
+        print("   -> for {} aut-nums we use `abuse-c'".format(len(asn_list_a)))
 
-    #TODO handle the asn_list_a, by adding virtual org objects
+    asn_list_a, organisation_list, organisation_index = modify_for_abusec(
+            asn_list_a, organisation_list, organisation_index, role_index)
 
     ## inetnum
     inetnum_list = sanitize_inetnum_list(inetnum_list)
@@ -158,8 +159,10 @@ def load_ripe_files(options) -> tuple:
         print('** {} importable inet6nums.'.format(len(inet6num_list)))
 
     ## orgs and roles
-    known_organisations = referenced_organisations(asn_list_o, inetnum_list,
-                                                   inet6num_list)
+    known_organisations = referenced_organisations(
+       asn_list_o + asn_list_a,
+       inetnum_list,
+       inet6num_list)
 
     organisation_list = sanitize_organisation_list(organisation_list,
                                                    known_organisations)
@@ -173,8 +176,8 @@ def load_ripe_files(options) -> tuple:
     if options.verbose:
         print('** Found {} contacts to be relevant.'.format(len(role_list)))
 
-    return (asn_list, organisation_list, role_list, abusec_to_org,
-            inetnum_list, inet6num_list)
+    return (asn_list_o + asn_list_a, organisation_list,
+            role_list, abusec_to_org, inetnum_list, inet6num_list)
 
 
 def read_delegated_file(filename, country, verbose=False):
@@ -320,16 +323,16 @@ def prepare_asn_list(asn_list, whitelist=None):
     oa = []
     a = []
     for entry in asn_list:
-        if not entry['aut-num']:
+        if not entry.get('aut-num'):
             continue
-        if whitelist is not None and entry['aut-num'][0] in whitelist:
+        if whitelist and entry['aut-num'][0] not in whitelist:
             continue
 
         if entry.get('org') and entry.get('abuse-c'):
             oa.append(uppercase_org_handle(entry))
         elif entry.get('org'):
             o.append(uppercase_org_handle(entry))
-        else:
+        elif entry.get('abuse-c'):
             a.append(entry.copy())
 
     return (o, oa, a)
@@ -339,12 +342,61 @@ def points_to_same_abuse_mailbox(obj, organisation_index, role_index):
 
     Parameter obj must have both `abuse-c` and `org` attributes.
     """
-    abuse1 = obj['abuse-c'][0].upper()
-    abuse2 = organisation_index[obj['org'][0]].get('abuse-c')[0].upper()
-    return abuse1 == abuse2 or (
-        role_index[abuse1].get('abuse-mailbox')
-        == role_index[abuse2].get('abuse-mailbox'))
+    abuse_c_1 = obj['abuse-c'][0].upper()
+    abuse_c_2 = organisation_index[obj['org'][0]].get('abuse-c')[0].upper()
+    return abuse_c_1 == abuse_c_2 or (
+        role_index[abuse_c_1].get('abuse-mailbox')
+        == role_index[abuse_c_2].get('abuse-mailbox'))
 
+
+def modify_for_abusec(obj_list_a,
+                      organisation_list, organisation_index, role_index):
+    """Modifies lists and index to add a virtual org using direct abuse-c.
+
+    We are using the `role` attribute of the abuse-c role as
+    org-name and `abuse-c` as organisation's id.
+    As regular `organisation` values have ORG- prepended we do not expect
+    a conflict here.
+
+    If it does not exist yet, we add it to the organisation_list and update
+    the index. Then we let the `org` attribute of obj point to it.
+
+    If `role` is one of a list of known unspecific strings we add the abuse-c
+    string.
+
+    Parameters:
+        obj_list_a must have an `abuse-c` attribute, we use the first one.
+
+    Returns:
+        an obj_list with `org` changed or added to point to the virtual org
+        an updated org list
+        and updated org index
+    """
+    for obj in obj_list_a:
+        abuse_c = obj['abuse-c'][0].upper()
+        role=role_index[abuse_c]
+
+        new_org_name = role.get('role')[0]
+        if new_org_name in ["Abuse", "Abuse-C Role",
+                            "Abuse contact role object"]:
+            new_org_name += " " + abuse_c
+
+        if new_org_name not in organisation_index:
+            new_org = collections.defaultdict(list)
+            new_org['organisation'].append(abuse_c)
+            new_org['abuse-c'].append(abuse_c)
+            new_org['org-name'].append(new_org_name)
+
+            print("adding {}".format(new_org))
+            organisation_list.append(new_org)
+            organisation_index['new_org_name'] = new_org
+
+        if obj.get('org'):
+            obj['org'][0] = abuse_c
+        else:
+            obj['org'].append(abuse_c)
+
+    return obj_list_a, organisation_list, organisation_index
 
 
 def sanitize_inetnum_list(inetnum_list):
