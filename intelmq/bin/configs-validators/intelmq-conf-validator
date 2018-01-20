@@ -1,0 +1,55 @@
+#!/usr/bin/env python3
+
+import argparse
+import json
+import sys
+
+try:
+    import cerberus
+except:
+    print("[-] Please install cerberus using the following command: 'pip install cerberus'.", file=sys.stderr)
+    sys.exit(-1)
+
+try:
+    import yaml
+except:
+    print("[-] Please install yaml using the following command: 'pip install pyyaml'.", file=sys.stderr)
+    sys.exit(-1)
+
+
+if __name__ == "__main__":
+
+    parser = argparse.ArgumentParser(
+        description='IntelMQ Config Validator tool',
+    )
+
+    parser.add_argument('--config-file',
+                        action="store",
+                        dest="config_file",
+                        metavar="<filepath>",
+                        required=True,
+                        help='config file (JSON or YAML)')
+
+    parser.add_argument('--validation-file',
+                        action="store",
+                        dest="validation_file",
+                        metavar="<filepath>",
+                        required=True,
+                        help='validation file')
+
+    arguments = parser.parse_args()
+
+
+    with open(arguments.config_file) as fp:
+        config = yaml.load(fp.read())
+
+    with open(arguments.validation_file) as fp:
+        schema = json.load(fp)
+
+    v = cerberus.Validator(schema)
+
+    if v.validate(config, schema):
+        print("\n[+] Success. Configuration is valid.\n")
+    else:
+        print(json.dumps(v.errors, indent=4))
+        print("\n[+] Failed. Configuration is not valid.\n")
