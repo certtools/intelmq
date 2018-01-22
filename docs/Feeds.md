@@ -1446,10 +1446,11 @@ The available feeds are grouped by the provider of the feeds. For each feed the 
 
 * **Module:** intelmq.bots.collectors.mail.collector_mail_attach
 * **Configuration Parameters:**
-*  * `attach_regex`: `FIXME`
-*  * `attach_unzip`: `FIXME`
-*  * `rate_limit`: `FIXME`
-*  * `subject_regex`: `FIXME`
+*  * `attach_regex`: `csv`
+*  * `attach_unzip`: `False`
+*  * `rate_limit`: `300`
+*  * `sent_from`: `datazh@zone-h.org`
+*  * `subject_regex`: `Report`
 
 ### Parser
 

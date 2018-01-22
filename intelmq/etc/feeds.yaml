@@ -59,10 +59,11 @@ providers:
         collector:
           module: intelmq.bots.collectors.mail.collector_mail_attach
           parameters:
-            attach_unzip: FIXME
-            attach_regex: FIXME
-            rate_limit: FIXME
-            subject_regex: FIXME
+            attach_unzip: false
+            attach_regex: "csv"
+            rate_limit: 300
+            subject_regex: "Report"
+            sent_from: "datazh@zone-h.org"
         parser:
           module: intelmq.bots.parsers.zoneh.parser
           parameters:
