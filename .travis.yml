@@ -14,6 +14,7 @@ install:
   - sudo apt-get install dpkg-dev dh-python python-setuptools python3-setuptools python3-all debhelper quilt polipo lighttpd fakeroot dh-systemd
   - if [[ $REQUIREMENTS == true ]] ; then for file in intelmq/bots/*/*/REQUIREMENTS.txt; do pip install -r $file; done; fi
   - if [[ $TRAVIS_PYTHON_VERSION < '3.5' ]]; then pip install typing; fi
+  - if [[ $TRAVIS_PYTHON_VERSION < '3.4' ]]; then pip install enum34; fi
   - pip install codecov
   - pip install pycodestyle
   - sudo sed -i '/^Defaults\tsecure_path.*$/ d' /etc/sudoers
