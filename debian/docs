@@ -4,3 +4,4 @@ MANIFEST.in
 NEWS.md
 REQUIREMENTS
 docs/*md
+README.rst
