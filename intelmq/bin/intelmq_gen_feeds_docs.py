@@ -12,14 +12,17 @@ except:
 
 def print_header():
     text = """# Available Feeds\n"""
-    text += """\nThe available feeds are grouped by the provider of the feeds. For each feed the collector and parser that can be used is documented as well as any feed-specific parameters.\n"""
+    text += """\nThe available feeds are grouped by the provider of the feeds."""
+    text += """For each feed the collector and parser that can be used is documented as well as any feed-specific parameters.\n"""
     print(text)
+
 
 def print_index(providers):
     text = """<!-- TOC depthFrom:2 depthTo:2 withLinks:1 updateOnSave:1 orderedList:0 -->\n"""
     text += "\n%s\n" % get_providers_index(providers)
     text += "<!-- /TOC -->\n"
     print(text)
+
 
 def get_providers_index(providers):
     text = ""
@@ -29,24 +32,28 @@ def get_providers_index(providers):
         text += "- [%s](#%s)\n" % (provider, provider_link.lower())
     return text
 
+
 def print_h1(value):
     print("# %s" % value)
     print()
+
 
 def print_h2(value):
     print("## %s" % value.title())
     print()
 
+
 def print_h3(value):
     print("### %s" % value.title())
     print()
 
+
 def print_info(key, value=""):
     print("* **%s:** %s" % (key.title(), value))
 
+
 def print_config_param(key, value):
     print("*  * `%s`: `%s`" % (key, value))
-
 
 
 if __name__ == "__main__":
@@ -85,7 +92,7 @@ if __name__ == "__main__":
 
             print_info("revision", feed_info['revision'])
 
-            if feed_info['documentation'] != None:
+            if feed_info['documentation'] is not None:
                 print_info("documentation", feed_info['documentation'])
 
             print_info("description", feed_info['description'])
@@ -95,7 +102,7 @@ if __name__ == "__main__":
             for bot, bot_info in feed_info['bots'].items():
 
                 print_h3(bot)
-            
+
                 print_info("Module", bot_info['module'])
                 print_info("Configuration Parameters")
 
