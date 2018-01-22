@@ -64,7 +64,17 @@ NO_ASN_OUTPUT = {"__type": "Event",
                  "source.network": '212.92.127.0/24',
                  "source.registry": 'RIPE',
                  }
-
+EXAMPLE_6TO4_INPUT = {"__type": "Event",
+                 "source.ip": "2002:3ee0:3972:0001::1",
+                 "time.observation": "2015-01-01T00:00:00+00:00",
+                 }
+EXAMPLE_6TO4_OUTPUT = {"__type": "Event",
+                  "source.ip": "2002:3ee0:3972:0001::1",
+                  "source.network": "2002::/16",
+                  "source.asn": 1103,
+                  "source.as_name": "SURFNET-NL SURFnet, The Netherlands, NL",
+                  "time.observation": "2015-01-01T00:00:00+00:00",
+                  }
 
 @test.skip_redis()
 @test.skip_internet()
@@ -98,6 +108,12 @@ class TestCymruExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, EMPTY_INPUT)
 
+    def test_6to4_result(self):
+        self.input_message = EXAMPLE_6TO4_INPUT
+        self.run_bot()
+        self.assertMessageEqual(0, EXAMPLE_6TO4_OUTPUT)
+
+    @unittest.expectedFailure
     def test_missing_asn(self):
         """
         No information for ASN.
