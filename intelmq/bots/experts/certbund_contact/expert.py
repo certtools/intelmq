@@ -36,7 +36,7 @@ class CERTBundKontaktExpertBot(Bot):
         try:
             self.logger.debug("Trying to connect to database.")
             self.connect_to_database()
-        except:
+        except psycopg2.Error:
             self.logger.exception("Failed to connect to database!")
             self.stop()
 

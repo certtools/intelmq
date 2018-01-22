@@ -2,6 +2,7 @@
 annotation was set for this organisation
 """
 
+
 def determine_directives(context):
     context.logger.debug("============= 07national_cert_filter.py  ===========")
     context.logger.debug("Content of the Context BEFORE this script:")
@@ -51,7 +52,6 @@ def determine_directives(context):
             # It's not a geolocation match, so append it to the new list
             # of matches unchanged.
             new_matches.append(match)
-
 
     # Overwrite the context's matches with the new list
     context.matches = new_matches

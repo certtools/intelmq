@@ -34,8 +34,7 @@ def add_db_args(parser):
     parser.add_argument("--conninfo",
                         default='dbname=contactdb',
                         help="Libpg connection string. E.g. 'host=localhost"
-                             " port=5432 user=intelmq dbname=connectdb'"
-                             " Default: 'dbname=contactdb'")
+                             " port=5432 user=intelmq dbname=connectdb'")
 
 
 def add_common_args(parser):
@@ -43,29 +42,24 @@ def add_common_args(parser):
                         default=False, action="store_true")
     parser.add_argument("--organisation-file",
                         default='ripe.db.organisation.gz',
-                        help=("Specify the organisation data file."
-                              " Default: ripe.db.organisation.gz"))
+                        help=("Specify the organisation data file."))
     parser.add_argument("--role-file",
                         default='ripe.db.role.gz',
-                        help=("Specify the contact role data file."
-                              " Default: ripe.db.role.gz"))
+                        help=("Specify the contact role data file."))
     parser.add_argument("--asn-file",
                         default='ripe.db.aut-num.gz',
-                        help=("Specify the AS number data file."
-                              " Default: ripe.db.aut-num.gz"))
+                        help=("Specify the AS number data file."))
     parser.add_argument("--inetnum-file",
                         default='ripe.db.inetnum.gz',
-                        help=("Specify the inetnum data file."
-                              " Default: ripe.db.inetnum.gz"))
+                        help=("Specify the inetnum data file."))
     parser.add_argument("--inet6num-file",
                         default='ripe.db.inet6num.gz',
-                        help=("Specify the inet6num data file."
-                              " Default: ripe.db.inet6num.gz"))
+                        help=("Specify the inet6num data file."))
     parser.add_argument("--ripe-delegated-file",
-                        default='',
+                        default='delegated-ripencc-latest',
                         help=("Name of the delegated-ripencc-latest file to"
-                              " read. Only useful when --restrict-to-country"
-                              " is also given. In that case this file is"
+                              " read. Only needed for --restrict-to-country."
+                              " In that case this file is"
                               " read and only the ASNs given in the file"
                               " that match the country code from"
                               " --restrict-to-country are imported."
@@ -79,8 +73,7 @@ def add_common_args(parser):
     parser.add_argument("--restrict-to-country",
                         metavar="COUNTRY_CODE",
                         help=("A country code, e.g. DE, to restrict which"
-                              " information is actually read from the files."
-                              " Only applies to inetnum and inet6num files."))
+                              " information is actually read from the files."))
 
 
 def load_ripe_files(options) -> tuple:
@@ -107,39 +100,54 @@ def load_ripe_files(options) -> tuple:
 
     def restrict_country(record):
         country = options.restrict_to_country
-        return country and record["country"][0] == country
+        return (not country) or record["country"][0] == country
 
     asn_list = parse_file(options.asn_file,
-                          ('aut-num', 'org', 'status'),
+                          ('aut-num', 'org', 'status', 'abuse-c'),
                           verbose=options.verbose)
     inetnum_list = parse_file(options.inetnum_file,
-                              ('inetnum', 'org', 'country'),
+                              ('inetnum', 'org', 'country', 'abuse-c'),
                               restriction=restrict_country,
                               verbose=options.verbose)
     inet6num_list = parse_file(options.inet6num_file,
-                               ('inet6num', 'org', 'country'),
+                               ('inet6num', 'org', 'country', 'abuse-c'),
                                restriction=restrict_country,
                                verbose=options.verbose)
+
     organisation_list = parse_file(options.organisation_file,
                                    ('organisation', 'org-name', 'abuse-c'),
                                    verbose=options.verbose)
+    organisation_index = build_index(organisation_list, 'organisation')
+
     role_list = parse_file(options.role_file,
-                           ('nic-hdl', 'abuse-mailbox', 'org'), 'role',
+                           ('role', 'nic-hdl', 'abuse-mailbox', 'org'),
                            verbose=options.verbose)
+    role_index = build_index(role_list, 'nic-hdl')
 
     # Step 2: Prepare new data for insertion
-    asn_list = sanitize_asn_list(asn_list, asn_whitelist)
 
-    inetnum_list = sanitize_inetnum_list(inetnum_list)
-    if options.verbose:
-        print('** {} importable inetnums.'.format(len(inetnum_list)))
+    (asn_list_o, asn_list_a,
+        organisation_list, organisation_index) = sanitize_split_and_modify(
+            asn_list, 'aut-num', asn_whitelist,
+            organisation_list, organisation_index, role_index,
+            verbose=options.verbose)
 
-    inet6num_list = sanitize_inet6num_list(inet6num_list)
-    if options.verbose:
-        print('** {} importable inet6nums.'.format(len(inet6num_list)))
+    (inetnum_list_o, inetnum_list_a,
+        organisation_list, organisation_index) = sanitize_split_and_modify(
+            inetnum_list, 'inetnum', None,
+            organisation_list, organisation_index, role_index,
+            verbose=options.verbose)
 
-    known_organisations = referenced_organisations(asn_list, inetnum_list,
-                                                   inet6num_list)
+    (inet6num_list_o, inet6num_list_a,
+        organisation_list, organisation_index) = sanitize_split_and_modify(
+            inet6num_list, 'inet6num', None,
+            organisation_list, organisation_index, role_index,
+            verbose=options.verbose)
+
+    known_organisations = referenced_organisations(
+        asn_list_o + asn_list_a,
+        inetnum_list_o + inetnum_list_a,
+        inet6num_list_o + inet6num_list_a)
 
     organisation_list = sanitize_organisation_list(organisation_list,
                                                    known_organisations)
@@ -153,8 +161,11 @@ def load_ripe_files(options) -> tuple:
     if options.verbose:
         print('** Found {} contacts to be relevant.'.format(len(role_list)))
 
-    return (asn_list, organisation_list, role_list, abusec_to_org,
-            inetnum_list, inet6num_list)
+    return (
+        asn_list_o + asn_list_a,
+        organisation_list, role_list, abusec_to_org,
+        inetnum_list_o + inetnum_list_a,
+        inet6num_list_o + inet6num_list_a)
 
 
 def read_delegated_file(filename, country, verbose=False):
@@ -269,6 +280,15 @@ def parse_file(filename, fields, index_field=None, restriction=lambda x: True,
     return out
 
 
+def build_index(obj_list, index_attribute):
+    """Return a dict with the index_attribute as key to the ripe objects.
+
+    The first value of the index attribute will be upper cased and
+    used as key for the dict entry.
+    """
+    return {obj.get(index_attribute)[0].upper(): obj for obj in obj_list}
+
+
 def uppercase_org_handle(entry):
     """Return a copy of the entry with the 'org' value in upper-case.
     The input entry must already have an org attribute.
@@ -278,29 +298,142 @@ def uppercase_org_handle(entry):
     return entry
 
 
-def sanitize_asn_list(asn_list, whitelist=None):
-    """Return a sanitized copy of the AS list read from a RIPE aut-num file.
-    The returned list retains only those entries which have the
-    attributes 'aut-num' and 'org'. Also, if the whitelist parameter is
-    given and not None, the first of the aut-num values must be in
-    whitelist.
+def split_list(obj_list, attribute, whitelist=None):
+    """Return three lists split and sanitized from a ripe RESOURCE list.
+
+    If the whitelist parameter is given and not None, the first of the
+    attribute values must be in whitelist.
+
+    The returned lists are:
+    * entries with `org` but no `abuse-c`
+    * entries with both
+    * entries with 'abuse-c' but no 'org'
     """
-    return [uppercase_org_handle(entry) for entry in asn_list
+    o = []
+    oa = []
+    a = []
+    for entry in obj_list:
+        if not entry.get(attribute):
+            continue
+        if whitelist and entry[attribute][0] not in whitelist:
+            continue
 
-            # keep only entries for which we have the minimal
-            # necessary attributes
-            if entry.get('aut-num') and entry.get('org')
+        if entry.get('org') and entry.get('abuse-c'):
+            oa.append(uppercase_org_handle(entry))
+        elif entry.get('org'):
+            o.append(uppercase_org_handle(entry))
+        elif entry.get('abuse-c'):
+            a.append(entry.copy())
 
-            # when using a white-list, keep only AS in the whitelist:
-            if whitelist is None or entry['aut-num'][0] in whitelist]
+    return (o, oa, a)
 
 
-def sanitize_inetnum_list(inetnum_list):
-    return [uppercase_org_handle(entry) for entry in inetnum_list
+def points_to_same_abuse_mailbox(obj, organisation_index, role_index):
+    """Return true of the obj's abuse-c points to org->abuse-c's abuse-mailbox.
 
-            # keep only entries for which we have the minimal
-            # necessary attributes
-            if entry.get('inetnum') and entry.get('org')]
+    Parameter obj must have both `abuse-c` and `org` attributes.
+    """
+    abuse_c_1 = obj['abuse-c'][0].upper()
+    abuse_c_2 = organisation_index[obj['org'][0]].get('abuse-c')[0].upper()
+    return abuse_c_1 == abuse_c_2 or (
+        role_index[abuse_c_1].get('abuse-mailbox') ==
+        role_index[abuse_c_2].get('abuse-mailbox'))
+
+
+def modify_for_abusec(obj_list_a,
+                      organisation_list, organisation_index, role_index,
+                      verbose=False):
+    """Modifies lists and index to add a virtual org using direct abuse-c.
+
+    We are using the `role` attribute of the abuse-c role as
+    org-name and `abuse-c` as organisation's id.
+    As regular `organisation` values have ORG- prepended we do not expect
+    a conflict here.
+
+    If it does not exist yet, we add it to the organisation_list and update
+    the index. Then we let the `org` attribute of obj point to it.
+
+    If `role` is one of a list of known unspecific strings we add the abuse-c
+    string.
+
+    Parameters:
+        obj_list_a must have an `abuse-c` attribute, we use the first one.
+
+    Returns:
+        an obj_list with `org` changed or added to point to the virtual org
+        an updated org list
+        and updated org index
+    """
+    added_counter = 0
+    for obj in obj_list_a:
+        abuse_c = obj['abuse-c'][0].upper()
+        role = role_index[abuse_c]
+
+        new_org_id = abuse_c  # for clarity of following code
+        new_org_name = role.get('role')[0]
+        if new_org_name in ["Abuse", "Abuse-C Role",
+                            "Abuse contact role object"]:
+            new_org_name += " " + abuse_c
+
+        if new_org_id not in organisation_index:
+            new_org = collections.defaultdict(list)
+            new_org['organisation'].append(new_org_id)
+            new_org['org-name'].append(new_org_name)
+            new_org['abuse-c'].append(abuse_c)
+
+            added_counter += 1
+            if verbose and added_counter < 7:
+                print("    e.g. adding {}".format(new_org))
+            organisation_list.append(new_org)
+            organisation_index[new_org_id] = new_org
+
+        if obj.get('org'):
+            obj['org'][0] = new_org_id
+        else:
+            obj['org'].append(new_org_id)
+
+    return obj_list_a, organisation_list, organisation_index
+
+
+def sanitize_split_and_modify(obj_list, index, whitelist,
+                              organisation_list, organisation_index,
+                              role_index, verbose):
+    """Sanitize, split and modify a ripe RESOURCE list for direct abuse-c.
+
+    Handles obj_list where some have direct `abuse-c` attributes.
+    Decides which abuse-mailbox to use in case both `org` and `abuse-c`
+    are given and modifies organisation_list and organisation_index
+    accordingly.
+
+    Returns:
+        obj_list: where the original `org` is used for the abuse-mailbox
+        obj_list: where direct `abuse-c` is used with extra org for
+                  abuse-mailbox
+        organisation_list: an updated organisation list (modified in plac)
+        organisation_index: an updated index (modified in place)
+    """
+
+    obj_list_o, obj_list_oa, obj_list_a = split_list(obj_list, index, whitelist)
+    if verbose:
+        print("** {}s {} (`org` only)".format(index, len(obj_list_o)))
+        print("** {}s {} (`abuse-c` only)".format(index, len(obj_list_a)))
+        print("** {}s {} (`org` and `abuse-c`)".format(index, len(obj_list_oa)))
+        print("** Distributing entries with (`org` and `abuse-c`)")
+
+    for obj in obj_list_oa:
+        if points_to_same_abuse_mailbox(obj, organisation_index, role_index):
+            obj_list_o.append(obj)
+        else:
+            obj_list_a.append(obj)
+
+    if verbose:
+        print("   -> for {} {} we use `org`".format(len(obj_list_o), index))
+        print("   -> for {} {} we use `abuse-c'".format(len(obj_list_a), index))
+
+    obj_list_a, organisation_list, organisation_index = modify_for_abusec(
+        obj_list_a, organisation_list, organisation_index, role_index, verbose)
+
+    return (obj_list_o, obj_list_a, organisation_list, organisation_index)
 
 
 def convert_inetnum_to_networks(inetnum_list):
@@ -310,14 +443,6 @@ def convert_inetnum_to_networks(inetnum_list):
         first, last = [ipaddress.ip_address(s.strip())
                        for s in entry["inetnum"][0].split("-", 1)]
         entry["inetnum"] = ipaddress.summarize_address_range(first, last)
-
-
-def sanitize_inet6num_list(inet6num_list):
-    return [uppercase_org_handle(entry) for entry in inet6num_list
-
-            # keep only entries for which we have the minimal
-            # necessary attributes
-            if entry.get('inet6num') and entry.get('org')]
 
 
 def convert_inet6num_to_networks(inet6num_list):

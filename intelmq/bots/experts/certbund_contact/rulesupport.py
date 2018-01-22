@@ -476,7 +476,6 @@ class Context:
             # remove the empty matches
             self.matches.remove(m)
 
-
     def all_annotations(self):
         """Return an iterator over all annotations."""
         for item in chain(self.organisations, self.matches):
@@ -557,7 +556,7 @@ def most_specific_matches(context):
             return by_managed["manual"] or by_managed["automatic"]
 
     return (get_preferred_by_field("fqdn") |
-           (get_preferred_by_field("ip") or get_preferred_by_field("asn")) |
+            (get_preferred_by_field("ip") or get_preferred_by_field("asn")) |
             get_preferred_by_field("geolocation.cc"))
 
 

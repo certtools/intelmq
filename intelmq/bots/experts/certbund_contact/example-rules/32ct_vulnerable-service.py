@@ -79,8 +79,8 @@ def determine_directives(context):
         if classification_identifier is None:
             classification_identifier = "NONE-TYPE"
 
-        if "CI-NS_"+classification_identifier not in LOGGING_SET:
-            LOGGING_SET.add("CI-NS_"+classification_identifier)
+        if "CI-NS_" + classification_identifier not in LOGGING_SET:
+            LOGGING_SET.add("CI-NS_" + classification_identifier)
             context.logger.info("The Classification Identifier %s "
                                 "might not be supported, yet.",
                                 classification_identifier)
@@ -186,7 +186,7 @@ def create_directive(notification_format, matter, target_group, interval, data_f
     data_format: openportmapper_csv_inline
 
     """
-    return Directive(template_name=matter+"_"+target_group,
+    return Directive(template_name=matter + "_" + target_group,
                      notification_format=notification_format,
                      event_data_format=data_format,
                      notification_interval=interval)

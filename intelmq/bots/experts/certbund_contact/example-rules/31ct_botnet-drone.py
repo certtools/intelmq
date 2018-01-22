@@ -28,10 +28,10 @@ CTS_TO_WORK_WITH = ['botnet drone']
 GOVERNMENT_ANNOTATION = 'government'
 CRITICAL_ANNOTATION = 'critical'
 
-SPECIAL_MATTERS = [ 'avalanche',
-                    'ebury',
-                    'mumblehard'
-                  ]
+SPECIAL_MATTERS = ['avalanche',
+                   'ebury',
+                   'mumblehard'
+                   ]
 
 # A set which is containing information about already logged
 # errors to prevent log-flooding
@@ -210,7 +210,6 @@ def add_matter_directives_to_context(context, match, matter):
                 context.add_directive(directive)
 
 
-
 def create_directive(notification_format, target_group, interval, data_format):
     """
     This method is NOT designed, to be compatible with the existing configuration
@@ -223,7 +222,7 @@ def create_directive(notification_format, target_group, interval, data_format):
     data_format: malware_csv_inline
 
     """
-    return Directive(template_name=notification_format+"_"+target_group,
+    return Directive(template_name=notification_format + "_" + target_group,
                      notification_format=notification_format,
                      event_data_format=data_format,
                      notification_interval=interval)

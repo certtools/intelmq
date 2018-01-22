@@ -153,13 +153,14 @@ def organisation_changes(handles, orgs_a, orgs_b):
         if changes:
             yield handle, changes
 
+
 # Enumeration to roughly indicate the type of change.
 Change = Enum("Change", "removed modified added")
 
 
 def find_overlaid_manual_entries(cur, org, change):
-    formatted = ", ".join(["AS{}".format(asn) for asn in org.asns]
-                          + [str(net) for net in org.networks])
+    formatted = ", ".join(["AS{}".format(asn) for asn in org.asns] +
+                          [str(net) for net in org.networks])
     if not formatted:
         return
 
@@ -241,8 +242,9 @@ def compare_orgs_with_db(cur, asn_list, inetnum_list, inet6num_list,
 
 def main():
     parser = argparse.ArgumentParser(
-        description=("Show the differences between a set of RIPE DB files"
-                     " and the contents of the database."))
+        description="Show the differences between a set of RIPE DB files"
+                    " and the contents of the database.",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     ripe_data.add_db_args(parser)
     ripe_data.add_common_args(parser)
