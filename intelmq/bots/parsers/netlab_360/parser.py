@@ -38,4 +38,5 @@ class Netlab360ParserBot(ParserBot):
 
             yield event
 
+
 BOT = Netlab360ParserBot

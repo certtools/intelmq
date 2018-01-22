@@ -45,4 +45,5 @@ class BambenekParserBot(ParserBot):
 
             yield event
 
+
 BOT = BambenekParserBot

@@ -45,4 +45,5 @@ class URLVirParserBot(ParserBot):
 
             yield event
 
+
 BOT = URLVirParserBot
