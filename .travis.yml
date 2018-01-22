@@ -38,7 +38,8 @@ before_script:
 script:
   - if [[ $REQUIREMENTS == true ]] ; then INTELMQ_TEST_DATABASES=1 INTELMQ_TEST_LOCAL_WEB=1 INTELMQ_TEST_EXOTIC=1 nosetests --with-coverage --cover-package=intelmq --cover-branches; else INTELMQ_TEST_LOCAL_WEB=1 nosetests --with-coverage --cover-package=intelmq --cover-branches; fi
   - pycodestyle intelmq/{bots,lib,bin}
-  - pushd ../build && dpkg-buildpackage -us -uc; popd
+  - pushd ../build && dpkg-buildpackage -us -uc
+  - popd
 services:
   - redis-server
   - postgresql
