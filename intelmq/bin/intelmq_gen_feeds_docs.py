@@ -11,10 +11,13 @@ except:
 
 
 def print_header():
-    text = """# Available Feeds\n"""
-    text += """\nThe available feeds are grouped by the provider of the feeds. """
-    text += """For each feed the collector and parser that can be used is documented as well as any feed-specific parameters.\n"""
-    print(text)
+    print("# Available Feeds")
+    print()
+    print("The available feeds are grouped by the provider of the feeds.")
+    print("For each feed the collector and parser that can be used is documented as well as any feed-specific parameters.")
+    print("To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run "
+          "`intelmq/bin/intelmq_gen_feeds_docs.py` to generate the new content of this file.")
+    print()
 
 
 def print_index(providers):

@@ -3,13 +3,17 @@ CHANGELOG
 
 1.1.0 (unreleased)
 ------------------
-Support for Python 3.3 has been dropped, it reached its end of life.
+- Support for Python 3.3 has been dropped, it reached its end of life.
+- The list of feeds docs/Feeds.md has now a machine-readable equivalent YAML file in intelmq/etc/feeds.yaml
+  A tool to convert from yaml to md has been added.
+  This is not an executable part of packages, only relevant for developers.
 
 ### Tools
 - `intelmqctl start` prints bot's error messages if it failed to start
 - `intelmqctl check` checks for defaults.conf completeness
 - `intelmqctl check` shows errors for non-importable bots.
 - `intelmqctl list bots -q` only prints the IDs of enabled bots
+- `intelmq_gen_feeds_docs` add to bin directory, allows generating the Feeds.md documentation file from feeds.yaml
 
 ### Contrib
 - contrib tool `feeds-config-generator` to automatically generate the collector and parser runtime and pipeline configurations.
