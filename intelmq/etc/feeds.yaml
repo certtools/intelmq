@@ -3,7 +3,7 @@ providers:
   MalwarePatrol:
     DansGuardian:
       description: Malware block list with URLs
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -12,14 +12,14 @@ providers:
             rate_limit: 180000
         parser:
           module: intelmq.bots.parsers.malwarepatrol.parser_dansguardian
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
   Malware Domains:
     Malicious:
       description: Malware Prevention through Domain Blocking (Black Hole DNS Sinkhole)
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -28,15 +28,15 @@ providers:
             rate_limit: 172800
         parser:
           module: intelmq.bots.parsers.malwaredomains.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
   Bitcash:
     Banned IPs:
       description: IPs banned for serious abusing of our services (scanning, sniffing,
         harvesting, dos attacks).
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -45,16 +45,16 @@ providers:
             rate_limit: 3600
         parser:
           module: intelmq.bots.parsers.bitcash.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
   ZoneH:
     Defacements:
       description: all the information contained in Zone-H's cybercrime archive were
         either collected online from public sources or directly notified anonymously
         to us.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.mail.collector_mail_attach
@@ -65,17 +65,17 @@ providers:
             subject_regex: FIXME
         parser:
           module: intelmq.bots.parsers.zoneh.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
   OpenPhish:
     Phishing:
       description: OpenPhish is a fully automated self-contained platform for phishing
         intelligence. It identifies phishing sites and performs intelligence analysis
         in real time without human intervention and without using any external resources,
         such as blacklists.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -84,10 +84,10 @@ providers:
             rate_limit: 86400
         parser:
           module: intelmq.bots.parsers.openphish.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
   Nothink:
     SNMP:
       description: 'There are a number of feeds you can use to depend on how far back
@@ -95,7 +95,7 @@ providers:
         feed was generated at nothink. This feed provides IP addresses of systems
         that have connected to a honeypot via SNMP in the last 24 hours. reference:
         http://www.nothink.org/honeypot_snmp.php'
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -104,17 +104,17 @@ providers:
             rate_limit: 86400
         parser:
           module: intelmq.bots.parsers.nothink.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
     SSH:
       description: 'There are a number of feeds you can use to depend on how far back
         you would like to go. The time.source will still be the date and time the
         feed was generated at nothink. This feed provides IP addresses of systems
         that have connected to a honeypot via SSH in the last 24 hours. Reference:
         http://www.nothink.org/honeypots.php'
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -123,14 +123,14 @@ providers:
             rate_limit: 86400
         parser:
           module: intelmq.bots.parsers.nothink.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
     DNS Attack:
       description: 'This feed provides attack information for attack information against
         DNS honeypots. reference: http://www.nothink.org/honeypot_dns.php .'
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -139,17 +139,17 @@ providers:
             rate_limit: 3600
         parser:
           module: intelmq.bots.parsers.nothink.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
     Telnet:
       description: 'There are a number of feeds you can use to depend on how far back
         you would like to go. The time.source will still be the date and time the
         feed was generated at nothink. This feed provides IP addresses of systems
         that have connected to a honeypot via Telnet in the last 24 hours. reference:
         http://www.nothink.org/honeypots.php'
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -158,15 +158,15 @@ providers:
             rate_limit: 86400
         parser:
           module: intelmq.bots.parsers.nothink.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
   URLVir:
     Hosts:
       description: This feed provides FQDN's or IP addresses for Active Malicious
         Hosts.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -175,13 +175,13 @@ providers:
             rate_limit: 129600
         parser:
           module: intelmq.bots.parsers.urlvir.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
     IPs:
       description: This feed provides IP addresses hosting Malware.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -190,15 +190,15 @@ providers:
             rate_limit: 129600
         parser:
           module: intelmq.bots.parsers.urlvir.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
   Netlab 360:
     Mirai Scanner:
       description: 'This feed provides IP addresses which actively scan for vulnerable
         IoT devices and install Mirai Botnet. reference: http://data.netlab.360.com/mirai-scanner/'
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -207,15 +207,15 @@ providers:
             rate_limit: 3600
         parser:
           module: intelmq.bots.parsers.netlab_360.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
     Magnitude EK:
       description: 'This feed lists FQDN and possibly the URL used by Magnitude Exploit
         Kit. Information also includes the IP address used for the domain and last
         time seen. reference: http://data.netlab.360.com/ek'
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -224,14 +224,14 @@ providers:
             rate_limit: 3600
         parser:
           module: intelmq.bots.parsers.netlab_360.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
     DGA:
       description: 'This feed lists DGA family, Domain, Start and end of valid time(UTC)
         of a number of DGA families. reference: http://data.netlab.360.com/dga'
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -240,10 +240,10 @@ providers:
             rate_limit: 3600
         parser:
           module: intelmq.bots.parsers.netlab_360.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
   Abuse.ch:
     Zeus Tracker IPs:
       description: This list only includes IPv4 addresses that are used by the ZeuS
@@ -251,7 +251,7 @@ providers:
         excludes IP addresses that ZeuS Tracker believes to be hijacked (level 2)
         or belong to a free web hosting provider (level 3). Hence the false positive
         rate should be much lower compared to the standard ZeuS IP blocklist.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -260,10 +260,10 @@ providers:
             rate_limit: 129600
         parser:
           module: intelmq.bots.parsers.abusech.parser_ip
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: off
-      documentation: 
+      documentation:
     Feodo Tracker Domains:
       description: The Feodo Tracker Feodo Domain Blocklist contains domain names
         (FQDN) used as C&C communication channel by the Feodo Trojan. These domains
@@ -274,7 +274,7 @@ providers:
         consider that domain names are usually only used by version B of the Feodo
         Trojan. C&C communication channels used by version A, version C and version
         D are not covered by this blocklist.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -283,14 +283,14 @@ providers:
             rate_limit: 129600
         parser:
           module: intelmq.bots.parsers.abusech.parser_domain
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
     Ransomware Tracker:
       description: Ransomware Tracker feed includes FQDN's, URL's, and known IP addresses
         that were used for said FQDN's and URL's for various ransomware families.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -299,16 +299,16 @@ providers:
             rate_limit: 129600
         parser:
           module: intelmq.bots.parsers.abusech.parser_ransomware
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
     Zeus Tracker Domains:
       description: The ZeuS domain blocklist (BadDomains) is the recommended blocklist
         if you want to block only ZeuS domain names. It has domain names that ZeuS
         Tracker believes to be hijacked (level 2). Hence the false positive rate should
         be much lower compared to the standard ZeuS domain blocklist.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -317,10 +317,10 @@ providers:
             rate_limit: 129600
         parser:
           module: intelmq.bots.parsers.abusech.parser_domain
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: off
-      documentation: 
+      documentation:
     Feodo Tracker IPs:
       description: 'The Feodo Tracker Feodo IP Blocklist contains IP addresses (IPv4)
         used as C&C communication channel by the Feodo Trojan. This lists contains
@@ -336,7 +336,7 @@ providers:
         C and version D. If you only want to block/drop traffic to Feodo C&C servers
         hosted on bad IPs (version B), please use the blocklist BadIPs documented
         below.'
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -345,15 +345,15 @@ providers:
             rate_limit: 129600
         parser:
           module: intelmq.bots.parsers.abusech.parser_ip
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
   Blueliv:
     CrimeServer:
       description: Blueliv Crimeserver Collector is the bot responsible to get the
         report through the API.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.blueliv.collector_crimeserver
@@ -361,17 +361,17 @@ providers:
             rate_limit: 3600
         parser:
           module: intelmq.bots.parsers.blueliv.parser_crimeserver
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
   Team Cymru:
     CAP:
       description: Team Cymru provides daily lists of compromised or abused devices
         for the ASNs and/or netblocks with a CSIRT's jurisdiction. This includes such
         information as bot infected hosts, command and control systems, open resolvers,
         malware urls, phishing urls, and brute force attacks
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -380,10 +380,10 @@ providers:
             rate_limit: FIXME
         parser:
           module: intelmq.bots.parsers.cymru.parser_cap_program
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
     Full Bogons:
       description: Fullbogons are a larger set which also includes IP space that has
         been allocated to an RIR, but not assigned by that RIR to an actual ISP or
@@ -392,7 +392,7 @@ providers:
         they have assigned to end-users. Our bogon reference pages include additional
         links and resources to assist those who wish to properly filter bogon prefixes
         within their networks.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -401,14 +401,14 @@ providers:
             rate_limit: 129600
         parser:
           module: intelmq.bots.parsers.cymru.parser_full_bogons
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
   Taichung:
     Netflow:
       description: Abnormal flows detected.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -421,13 +421,13 @@ providers:
             error_log_message: 'false'
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
   HPHosts:
     Hosts:
       description: hpHosts is a community managed and maintained hosts file that allows
         an additional layer of protection against access to ad, tracking and malicious
         websites.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -440,7 +440,7 @@ providers:
             error_log_message: 'false'
       revision: 20-01-2018
       status: off
-      documentation: 
+      documentation:
   Dataplane:
     SSH Client Connection:
       description: Entries below consist of fields with identifying characteristics
@@ -448,7 +448,7 @@ providers:
         a remote host. This report lists hosts that are suspicious of more than just
         port scanning. The hosts may be SSH server cataloging or conducting authentication
         attack attempts. Report is updated hourly.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -457,17 +457,17 @@ providers:
             rate_limit: 3600
         parser:
           module: intelmq.bots.parsers.dataplane.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
     SSH Password Authentication:
       description: Entries below consist of fields with identifying characteristics
         of a source IP address that has been seen attempting to remotely login to
         a host using SSH password authentication. The report lists hosts that are
         highly suspicious and are likely conducting malicious SSH password authentication
         attacks. Report is updated hourly.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -476,17 +476,17 @@ providers:
             rate_limit: 3600
         parser:
           module: intelmq.bots.parsers.dataplane.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
     SIP Query:
       description: Entries consist of fields with identifying characteristics of a
         source IP address that has been seen initiating a SIP OPTIONS query to a remote
         host. This report lists hosts that are suspicious of more than just port scanning.
         The hosts may be SIP server cataloging or conducting various forms of telephony
         abuse. Report is updated hourly.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -495,17 +495,17 @@ providers:
             rate_limit: 3600
         parser:
           module: intelmq.bots.parsers.dataplane.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
     SIP Registration:
       description: Entries consist of fields with identifying characteristics of a
         source IP address that has been seen initiating a SIP REGISTER operation to
         a remote host. This report lists hosts that are suspicious of more than just
         port scanning. The hosts may be SIP client cataloging or conducting various
         forms of telephony abuse. Report is updated hourly.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -514,10 +514,10 @@ providers:
             rate_limit: 3600
         parser:
           module: intelmq.bots.parsers.dataplane.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
   Turris:
     Greylist:
       description: The data are processed and clasified every week and behaviour of
@@ -526,7 +526,7 @@ providers:
         services on the router or tried to gain access to them. We publish this so
         called "greylist" that also contains a list of tags for each address which
         indicate what behaviour of the address was observed.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -535,15 +535,15 @@ providers:
             rate_limit: 43200
         parser:
           module: intelmq.bots.parsers.turris.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
   Malc0de:
     Bind Format:
       description: This feed includes FQDN's of malicious hosts, the file format is
         in Bind file format.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -552,14 +552,14 @@ providers:
             rate_limit: 10800
         parser:
           module: intelmq.bots.parsers.malc0de.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
     Windows Format:
       description: This feed includes FQDN's of malicious hosts, the file format is
         in Windows Hosts file format.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -568,13 +568,13 @@ providers:
             rate_limit: 10800
         parser:
           module: intelmq.bots.parsers.malc0de.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
     IP Blacklist:
       description: This feed includes IP Addresses of malicious hosts.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -583,14 +583,14 @@ providers:
             rate_limit: 10800
         parser:
           module: intelmq.bots.parsers.malc0de.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
   University of Toulouse:
     Blacklist:
       description: 'The collections and feed description can be found on: https://dsi.ut-capitole.fr/blacklists/.'
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -606,11 +606,11 @@ providers:
             columns: "{depends on a collection}"
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
   Autoshun:
     Shunlist:
       description: You need to register in order to use the list.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -619,14 +619,14 @@ providers:
             rate_limit: 3600
         parser:
           module: intelmq.bots.parsers.autoshun.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: off
-      documentation: 
+      documentation:
   Danger Rulez:
     Bruteforce Blocker:
       description: Its main purpose is to block SSH bruteforce attacks via firewall.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -635,17 +635,17 @@ providers:
             rate_limit: 3600
         parser:
           module: intelmq.bots.parsers.danger_rulez.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
     SIP Invitation:
       description: Entries consist of fields with identifying characteristics of a
         source IP address that has been seen initiating a SIP INVITE operation to
         a remote host. The report lists hosts that are suspicious of more than just
         port scanning. These hosts may be SIP client cataloging or conducting various
         forms of telephony abuse. Report is updated hourly.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -654,10 +654,10 @@ providers:
             rate_limit: 3600
         parser:
           module: intelmq.bots.parsers.dataplane.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
   Spamhaus:
     Drop:
       description: The DROP list will not include any IP address space under the control
@@ -665,7 +665,7 @@ providers:
         DROP will only include netblocks allocated directly by an established Regional
         Internet Registry (RIR) or National Internet Registry (NIR) such as ARIN,
         RIPE, AFRINIC, APNIC, LACNIC or KRNIC or direct RIR allocations.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -674,15 +674,15 @@ providers:
             rate_limit: 3600
         parser:
           module: intelmq.bots.parsers.spamhaus.parser_drop
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
     ASN Drop:
       description: ASN-DROP contains a list of Autonomous System Numbers controlled
         by spammers or cyber criminals, as well as "hijacked" ASNs. ASN-DROP can be
         used to filter BGP routes which are being used for malicious purposes.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -691,16 +691,16 @@ providers:
             rate_limit: 3600
         parser:
           module: intelmq.bots.parsers.spamhaus.parser_drop
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
     Dropv6:
       description: The DROPv6 list includes IPv6 ranges allocated to spammers or cyber
         criminals. DROPv6 will only include IPv6 netblocks allocated directly by an
         established Regional Internet Registry (RIR) or National Internet Registry
         (NIR) such as ARIN, RIPE, AFRINIC, APNIC, LACNIC or KRNIC or direct RIR allocations.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -709,15 +709,15 @@ providers:
             rate_limit: 3600
         parser:
           module: intelmq.bots.parsers.spamhaus.parser_drop
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
     CERT:
       description: Spamhaus CERT Insight Portal. Access limited to CERTs and CSIRTs
         with national or regional responsibility. https://www.spamhaus.org/news/article/705/spamhaus-launches-cert-insight-portal
         .
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -726,15 +726,15 @@ providers:
             rate_limit: 3600
         parser:
           module: intelmq.bots.parsers.spamhaus.parser_cert
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
     EDrop:
       description: EDROP is an extension of the DROP list that includes sub-allocated
         netblocks controlled by spammers or cyber criminals. EDROP is meant to be
         used in addition to the direct allocations on the DROP list.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -743,15 +743,15 @@ providers:
             rate_limit: 3600
         parser:
           module: intelmq.bots.parsers.spamhaus.parser_drop
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
   PhishTank:
     Online:
       description: PhishTank is a collaborative clearing house for data and information
         about phishing on the Internet.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -760,10 +760,10 @@ providers:
             rate_limit: 28800
         parser:
           module: intelmq.bots.parsers.phishtank.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
   CINSscore:
     Army List:
       description: 'The CINS Army list is a subset of the CINS Active Threat Intelligence
@@ -771,7 +771,7 @@ providers:
         1) The IP''s recent Rogue Packet score factor is very poor, or 2) The IP has
         tripped a designated number of ''trusted'' alerts across a given number of
         our Sentinels deployed around the world.'
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -780,14 +780,14 @@ providers:
             rate_limit: 3600
         parser:
           module: intelmq.bots.parsers.ci_army.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
   Blocklist.de:
     IRC Bots:
       description: No description provided by feed provider.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -796,15 +796,15 @@ providers:
             rate_limit: 86400
         parser:
           module: intelmq.bots.parsers.blocklistde.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
     Strong IPs:
       description: Blocklist.DE Strong IPs Collector is the bot responsible to get
         the report from source of information. All IPs which are older then 2 month
         and have more then 5.000 attacks.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -813,15 +813,15 @@ providers:
             rate_limit: 86400
         parser:
           module: intelmq.bots.parsers.blocklistde.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
     Mail:
       description: Blocklist.DE Mail Collector is the bot responsible to get the report
         from source of information. All IP addresses which have been reported within
         the last 48 hours as having run attacks on the service Mail, Postfix.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -830,16 +830,16 @@ providers:
             rate_limit: 86400
         parser:
           module: intelmq.bots.parsers.blocklistde.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
     Apache:
       description: Blocklist.DE Apache Collector is the bot responsible to get the
         report from source of information. All IP addresses which have been reported
         within the last 48 hours as having run attacks on the service Apache, Apache-DDOS,
         RFI-Attacks.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -848,15 +848,15 @@ providers:
             rate_limit: 86400
         parser:
           module: intelmq.bots.parsers.blocklistde.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
     FTP:
       description: Blocklist.DE FTP Collector is the bot responsible to get the report
         from source of information. All IP addresses which have been reported within
         the last 48 hours for attacks on the Service FTP.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -865,15 +865,15 @@ providers:
             rate_limit: 86400
         parser:
           module: intelmq.bots.parsers.blocklistde.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
     SSH:
       description: Blocklist.DE SSH Collector is the bot responsible to get the report
         from source of information. All IP addresses which have been reported within
         the last 48 hours as having run attacks on the service SSH.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -882,15 +882,15 @@ providers:
             rate_limit: 86400
         parser:
           module: intelmq.bots.parsers.blocklistde.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
     Brute-force Logins:
       description: Blocklist.DE Brute-force Login Collector is the bot responsible
         to get the report from source of information. All IPs which attacks Joomlas,
         Wordpress and other Web-Logins with Brute-Force Logins.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -899,17 +899,17 @@ providers:
             rate_limit: 86400
         parser:
           module: intelmq.bots.parsers.blocklistde.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
     Bots:
       description: Blocklist.DE Bots Collector is the bot responsible to get the report
         from source of information. All IP addresses which have been reported within
         the last 48 hours as having run attacks attacks on the RFI-Attacks, REG-Bots,
         IRC-Bots or BadBots (BadBots = he has posted a Spam-Comment on a open Forum
         or Wiki).
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -918,15 +918,15 @@ providers:
             rate_limit: 86400
         parser:
           module: intelmq.bots.parsers.blocklistde.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
     IMAP:
       description: Blocklist.DE IMAP Collector is the bot responsible to get the report
         from source of information. All IP addresses which have been reported within
         the last 48 hours for attacks on the service like IMAP, SASL, POP3, etc.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -935,16 +935,16 @@ providers:
             rate_limit: 86400
         parser:
           module: intelmq.bots.parsers.blocklistde.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
     SIP:
       description: Blocklist.DE SIP Collector is the bot responsible to get the report
         from source of information. All IP addresses that tried to login in a SIP-,
         VOIP- or Asterisk-Server and are included in the IPs-List from http://www.infiltrated.net/
         (Twitter).
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -953,16 +953,16 @@ providers:
             rate_limit: 86400
         parser:
           module: intelmq.bots.parsers.blocklistde.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
   CERT.PL:
     N6 Stomp Stream:
       description: N6 Collector - CERT.pl's N6 Collector - N6 feed via STOMP interface.
         Note that rate_limit does not apply for this bot as it is waiting for messages
         on a stream.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.stomp.collector
@@ -977,15 +977,15 @@ providers:
             server: n6stream.cert.pl
         parser:
           module: intelmq.bots.parsers.n6.parser_n6stomp
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
   AlienVault:
     OTX:
       description: AlienVault OTX Collector is the bot responsible to get the report
         through the API. Report could vary according to subscriptions.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.alienvault_otx.collector
@@ -993,13 +993,13 @@ providers:
             api_key: "{{ your API key }}"
         parser:
           module: intelmq.bots.parsers.alienvault.parser_otx
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
     Reputation List:
       description: List of malicious IPs.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -1008,15 +1008,15 @@ providers:
             rate_limit: 3600
         parser:
           module: intelmq.bots.parsers.alienvault.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: off
-      documentation: 
+      documentation:
   CleanMX:
     Virus:
       description: In order to download the CleanMX feed you need to use a custom
         user agent and register that user agent.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -1027,14 +1027,14 @@ providers:
             rate_limit: 129600
         parser:
           module: intelmq.bots.parsers.cleanmx.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
     Phishing:
       description: In order to download the CleanMX feed you need to use a custom
         user agent and register that user agent.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -1045,14 +1045,14 @@ providers:
             rate_limit: 129600
         parser:
           module: intelmq.bots.parsers.cleanmx.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
   Malware Domain List:
     Blacklist:
       description: No description provided by feed provider.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -1061,15 +1061,15 @@ providers:
             rate_limit: 3600
         parser:
           module: intelmq.bots.parsers.malwaredomainlist.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
   AnubisNetworks:
     Cyberfeed Stream:
       description: AnubisNetworks Collector is the bot responsible to get AnubisNetworks
         Cyberfeed Stream.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http_stream
@@ -1078,15 +1078,15 @@ providers:
             strip_lines: 'true'
         parser:
           module: intelmq.bots.parsers.anubisnetworks.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
   Bambenek:
     C2 Domains:
       description: 'Master Feed of known, active and non-sinkholed C&Cs domain
         names. License: https://osint.bambenekconsulting.com/license.txt'
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -1095,14 +1095,14 @@ providers:
             rate_limit: 3600
         parser:
           module: intelmq.bots.parsers.bambenek.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
     C2 IPs:
       description: 'Master Feed of known, active and non-sinkholed C&Cs IP addresses
         License: https://osint.bambenekconsulting.com/license.txt'
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -1111,13 +1111,13 @@ providers:
             rate_limit: 3600
         parser:
           module: intelmq.bots.parsers.bambenek.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
     DGA Domains:
       description: 'Domain feed of known DGA domains from -2 to +3 days License: https://osint.bambenekconsulting.com/license.txt'
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -1126,15 +1126,15 @@ providers:
             rate_limit: 3600
         parser:
           module: intelmq.bots.parsers.bambenek.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
   DynDNS:
     Infected Domains:
       description: DynDNS ponmocup. List of ponmocup malware redirection domains and
         infected web-servers. See also http://security-research.dyndns.org/pub/botnet-links.html
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -1143,17 +1143,17 @@ providers:
             rate_limit: 10800
         parser:
           module: intelmq.bots.parsers.dyn.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
   DShield:
     Suspicious Domains:
       description: There are many suspicious domains on the internet. In an effort
         to identify them, as well as false positives, we have assembled weighted lists
         based on tracking and malware lists from different sources. ISC is collecting
         and categorizing various lists associated with a certain level of sensitivity.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -1162,15 +1162,15 @@ providers:
             rate_limit: 129600
         parser:
           module: intelmq.bots.parsers.dshield.parser_domain
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
     Block:
       description: This list summarizes the top 20 attacking class C (/24) subnets
         over the last three days. The number of 'attacks' indicates the number of
         targets reporting scans from this subnet.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -1179,13 +1179,13 @@ providers:
             rate_limit: 129600
         parser:
           module: intelmq.bots.parsers.dshield.parser_block
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
     AS Details:
       description: No description provided by feed provider.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -1194,14 +1194,14 @@ providers:
             rate_limit: 129600
         parser:
           module: intelmq.bots.parsers.dshield.parser_asn
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
   VXVault:
     IPs:
       description: This feed provides IP addresses hosting Malware.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -1210,15 +1210,15 @@ providers:
             rate_limit: 3600
         parser:
           module: intelmq.bots.parsers.vxvault.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
   ShadowServer:
     FIXME:
       description: Shadowserver sends out a variety of reports (see https://www.shadowserver.org/wiki/pmwiki.php/Services/Reports).
         The reports can be retrieved from the URL in the mail or from the attachment.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.mail.collector_mail_attach
@@ -1229,15 +1229,15 @@ providers:
             subject_regex: FIXME - (see individual reports below)
         parser:
           module: intelmq.bots.parsers.shadowserver.parser
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
   Fraunhofer:
     DGA Archieve:
       description: Fraunhofer DGA collector fetches data from Fraunhofer's domain
         generation archive.
-      addtional_information: 
+      addtional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.http.collector_http
@@ -1248,7 +1248,7 @@ providers:
             rate_limit: 10800
         parser:
           module: intelmq.bots.parsers.fraunhofer.parser_dga
-          parameters: 
+          parameters:
       revision: 20-01-2018
       status: on
-      documentation: 
+      documentation:
