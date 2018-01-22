@@ -22,7 +22,11 @@ Author(s):
 """
 import sys
 
-import psycopg2
+try:
+        import psycopg2
+except ImportError:
+        psycopg2 = None
+
 
 from intelmq.lib.bot import Bot
 import intelmq.bots.experts.certbund_contact.common as common
