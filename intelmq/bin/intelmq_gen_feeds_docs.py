@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+# -*- coding: utf-8 -*-
 import argparse
 import sys
 
@@ -12,7 +12,7 @@ except:
 
 def print_header():
     text = """# Available Feeds\n"""
-    text += """\nThe available feeds are grouped by the provider of the feeds."""
+    text += """\nThe available feeds are grouped by the provider of the feeds. """
     text += """For each feed the collector and parser that can be used is documented as well as any feed-specific parameters.\n"""
     print(text)
 
@@ -49,7 +49,7 @@ def print_h3(value):
 
 
 def print_info(key, value=""):
-    print("* **%s:** %s" % (key.title(), value))
+    print(("* **%s:** %s" % (key.title(), value)).strip())
 
 
 def print_config_param(key, value):
@@ -77,11 +77,11 @@ if __name__ == "__main__":
     print_header()
     print_index(config['providers'].keys())
 
-    for provider, feeds in sorted(config['providers'].items()):
+    for provider, feeds in sorted(config['providers'].items(), key=lambda x: x[0]):
 
         print_h1(provider)
 
-        for feed, feed_info in feeds.items():
+        for feed, feed_info in sorted(feeds.items(), key=lambda x: x[0]):
 
             print_h2(feed)
 
@@ -99,7 +99,7 @@ if __name__ == "__main__":
 
             print()
 
-            for bot, bot_info in feed_info['bots'].items():
+            for bot, bot_info in sorted(feed_info['bots'].items(), key=lambda x: x[0]):
 
                 print_h3(bot)
 
@@ -107,7 +107,7 @@ if __name__ == "__main__":
                 print_info("Configuration Parameters")
 
                 if bot_info['parameters']:
-                    for key, value in bot_info['parameters'].items():
+                    for key, value in sorted(bot_info['parameters'].items(), key=lambda x: x[0]):
                         print_config_param(key, value)
 
                 print()
