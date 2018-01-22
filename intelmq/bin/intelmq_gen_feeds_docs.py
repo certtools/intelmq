@@ -38,8 +38,11 @@ def print_h1(value):
     print()
 
 
-def print_h2(value):
-    print("## %s" % value.title())
+def print_h2(value, title=True):
+    if title:
+        print("## %s" % value.title())
+    else:
+        print("## %s" % value)
     print()
 
 
@@ -83,7 +86,7 @@ if __name__ == "__main__":
 
         for feed, feed_info in sorted(feeds.items(), key=lambda x: x[0]):
 
-            print_h2(feed)
+            print_h2(feed, title=False)
 
             if feed_info['status']:
                 print_info("status", "on")

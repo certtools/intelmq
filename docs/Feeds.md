@@ -63,7 +63,7 @@ The available feeds are grouped by the provider of the feeds. For each feed the 
 * **Configuration Parameters:**
 
 
-## Feodo Tracker Ips
+## Feodo Tracker IPs
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -120,7 +120,7 @@ The available feeds are grouped by the provider of the feeds. For each feed the 
 * **Configuration Parameters:**
 
 
-## Zeus Tracker Ips
+## Zeus Tracker IPs
 
 * **Status:** off
 * **Revision:** 20-01-2018
@@ -141,7 +141,7 @@ The available feeds are grouped by the provider of the feeds. For each feed the 
 
 # AlienVault
 
-## Otx
+## OTX
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -241,7 +241,7 @@ The available feeds are grouped by the provider of the feeds. For each feed the 
 * **Configuration Parameters:**
 
 
-## C2 Ips
+## C2 IPs
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -260,7 +260,7 @@ The available feeds are grouped by the provider of the feeds. For each feed the 
 * **Configuration Parameters:**
 
 
-## Dga Domains
+## DGA Domains
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -281,7 +281,7 @@ The available feeds are grouped by the provider of the feeds. For each feed the 
 
 # Bitcash
 
-## Banned Ips
+## Banned IPs
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -340,7 +340,7 @@ The available feeds are grouped by the provider of the feeds. For each feed the 
 * **Configuration Parameters:**
 
 
-## Brute-Force Logins
+## Brute-force Logins
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -359,7 +359,7 @@ The available feeds are grouped by the provider of the feeds. For each feed the 
 * **Configuration Parameters:**
 
 
-## Ftp
+## FTP
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -378,7 +378,7 @@ The available feeds are grouped by the provider of the feeds. For each feed the 
 * **Configuration Parameters:**
 
 
-## Imap
+## IMAP
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -397,7 +397,7 @@ The available feeds are grouped by the provider of the feeds. For each feed the 
 * **Configuration Parameters:**
 
 
-## Irc Bots
+## IRC Bots
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -435,7 +435,7 @@ The available feeds are grouped by the provider of the feeds. For each feed the 
 * **Configuration Parameters:**
 
 
-## Sip
+## SIP
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -454,7 +454,7 @@ The available feeds are grouped by the provider of the feeds. For each feed the 
 * **Configuration Parameters:**
 
 
-## Ssh
+## SSH
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -473,7 +473,7 @@ The available feeds are grouped by the provider of the feeds. For each feed the 
 * **Configuration Parameters:**
 
 
-## Strong Ips
+## Strong IPs
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -494,7 +494,7 @@ The available feeds are grouped by the provider of the feeds. For each feed the 
 
 # Blueliv
 
-## Crimeserver
+## CrimeServer
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -604,7 +604,7 @@ The available feeds are grouped by the provider of the feeds. For each feed the 
 
 # DShield
 
-## As Details
+## AS Details
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -682,7 +682,7 @@ The available feeds are grouped by the provider of the feeds. For each feed the 
 * **Configuration Parameters:**
 
 
-## Sip Invitation
+## SIP Invitation
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -703,7 +703,7 @@ The available feeds are grouped by the provider of the feeds. For each feed the 
 
 # Dataplane
 
-## Sip Query
+## SIP Query
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -722,7 +722,7 @@ The available feeds are grouped by the provider of the feeds. For each feed the 
 * **Configuration Parameters:**
 
 
-## Sip Registration
+## SIP Registration
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -741,7 +741,7 @@ The available feeds are grouped by the provider of the feeds. For each feed the 
 * **Configuration Parameters:**
 
 
-## Ssh Client Connection
+## SSH Client Connection
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -760,7 +760,7 @@ The available feeds are grouped by the provider of the feeds. For each feed the 
 * **Configuration Parameters:**
 
 
-## Ssh Password Authentication
+## SSH Password Authentication
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -802,7 +802,7 @@ The available feeds are grouped by the provider of the feeds. For each feed the 
 
 # Fraunhofer
 
-## Dga Archieve
+## DGA Archieve
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -866,7 +866,7 @@ The available feeds are grouped by the provider of the feeds. For each feed the 
 * **Configuration Parameters:**
 
 
-## Ip Blacklist
+## IP Blacklist
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -948,7 +948,7 @@ The available feeds are grouped by the provider of the feeds. For each feed the 
 
 # MalwarePatrol
 
-## Dansguardian
+## DansGuardian
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -969,7 +969,7 @@ The available feeds are grouped by the provider of the feeds. For each feed the 
 
 # Netlab 360
 
-## Dga
+## DGA
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -988,7 +988,7 @@ The available feeds are grouped by the provider of the feeds. For each feed the 
 * **Configuration Parameters:**
 
 
-## Magnitude Ek
+## Magnitude EK
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -1028,7 +1028,7 @@ The available feeds are grouped by the provider of the feeds. For each feed the 
 
 # Nothink
 
-## Dns Attack
+## DNS Attack
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -1047,7 +1047,7 @@ The available feeds are grouped by the provider of the feeds. For each feed the 
 * **Configuration Parameters:**
 
 
-## Snmp
+## SNMP
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -1066,7 +1066,7 @@ The available feeds are grouped by the provider of the feeds. For each feed the 
 * **Configuration Parameters:**
 
 
-## Ssh
+## SSH
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -1148,7 +1148,7 @@ The available feeds are grouped by the provider of the feeds. For each feed the 
 
 # ShadowServer
 
-## Fixme
+## FIXME
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -1171,7 +1171,7 @@ The available feeds are grouped by the provider of the feeds. For each feed the 
 
 # Spamhaus
 
-## Asn Drop
+## ASN Drop
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -1190,7 +1190,7 @@ The available feeds are grouped by the provider of the feeds. For each feed the 
 * **Configuration Parameters:**
 
 
-## Cert
+## CERT
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -1247,7 +1247,7 @@ The available feeds are grouped by the provider of the feeds. For each feed the 
 * **Configuration Parameters:**
 
 
-## Edrop
+## EDrop
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -1312,7 +1312,7 @@ The available feeds are grouped by the provider of the feeds. For each feed the 
 
 # Team Cymru
 
-## Cap
+## CAP
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -1395,7 +1395,7 @@ The available feeds are grouped by the provider of the feeds. For each feed the 
 * **Configuration Parameters:**
 
 
-## Ips
+## IPs
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -1441,7 +1441,7 @@ The available feeds are grouped by the provider of the feeds. For each feed the 
 
 # VXVault
 
-## Ips
+## IPs
 
 * **Status:** on
 * **Revision:** 20-01-2018
