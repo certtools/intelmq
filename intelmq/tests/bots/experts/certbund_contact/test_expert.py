@@ -111,6 +111,7 @@ class CERTBundKontaktMockDBExpertBot(CERTBundKontaktExpertBot):
         return {"matches": [], "organisations": []}
 
 
+@test.skip_database()
 class TestCERTBundKontaktMockDBExpertBot(test.BotTestCase, unittest.TestCase):
 
     """
