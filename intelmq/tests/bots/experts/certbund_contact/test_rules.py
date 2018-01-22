@@ -120,7 +120,7 @@ class TestRuleContext(unittest.TestCase):
         self.assertEqual([match.organisations
                           for match in context.matches
                           if match.field == "asn"],
-                         [[]])
+                         [])
 
         # It should not be possible to get the organisation for ID 1
         with self.assertRaises(KeyError):
