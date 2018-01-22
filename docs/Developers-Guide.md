@@ -98,11 +98,11 @@ All changes have to be tested and new contributions must be accompanied by accor
 
 It may be necessary to switch the user to `intelmq` if the run-path (`/opt/intelmq/var/run/`) is not writeable by the current user. Some bots need local databases to succeed. If you don't mind about those and only want to test one explicit test file, give the file path as argument.
 
-There is a [Travis-CI](https://travis-ci.org/certtools/intelmq/builds) setup for automatic testing, which triggers on pull requests. You can also easily activate it for your forks.
+There is a [Travis-CI](https://travis-ci.org/certtools/intelmq/builds) setup for automatic testing, which triggers on pull requests. You can also easily activate it for your forks. Note that travis only checks out 50 commits by default and IntelMQ's `.travis.yml` needs a tag to work.
 
 ### Environment variables
 
-There are a bunch of environemnt variables which switch on/off some tests:
+There are a bunch of environment variables which switch on/off some tests:
 
 * `INTELMQ_TEST_DATABASES`: databases such as postgres, elasticsearch, mongodb are not tested by default, set to 1 to test those bots.
 * `INTELMQ_SKIP_INTERNET`: tests requiring internet connection will be skipped if this is set to 1.
