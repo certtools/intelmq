@@ -126,29 +126,28 @@ def load_ripe_files(options) -> tuple:
 
     # Step 2: Prepare new data for insertion
 
-    (asn_list_o, asn_list_a, organisation_list, organisation_index
-        ) = sanitize_split_and_modify(
-                asn_list, 'aut-num', asn_whitelist,
-                organisation_list, organisation_index, role_index,
-                verbose=options.verbose)
+    (asn_list_o, asn_list_a,
+        organisation_list, organisation_index) = sanitize_split_and_modify(
+            asn_list, 'aut-num', asn_whitelist,
+            organisation_list, organisation_index, role_index,
+            verbose=options.verbose)
 
-    (inetnum_list_o, inetnum_list_a, organisation_list, organisation_index
-        ) = sanitize_split_and_modify(
-                inetnum_list, 'inetnum', None,
-                organisation_list, organisation_index, role_index,
-                verbose=options.verbose)
+    (inetnum_list_o, inetnum_list_a,
+        organisation_list, organisation_index) = sanitize_split_and_modify(
+            inetnum_list, 'inetnum', None,
+            organisation_list, organisation_index, role_index,
+            verbose=options.verbose)
 
-    (inet6num_list_o, inet6num_list_a, organisation_list, organisation_index
-        ) = sanitize_split_and_modify(
-                inet6num_list, 'inet6num', None,
-                organisation_list, organisation_index, role_index,
-                verbose=options.verbose)
+    (inet6num_list_o, inet6num_list_a,
+        organisation_list, organisation_index) = sanitize_split_and_modify(
+            inet6num_list, 'inet6num', None,
+            organisation_list, organisation_index, role_index,
+            verbose=options.verbose)
 
-    ## orgs and roles
     known_organisations = referenced_organisations(
-       asn_list_o + asn_list_a,
-       inetnum_list_o + inetnum_list_a,
-       inet6num_list_o + inet6num_list_a)
+        asn_list_o + asn_list_a,
+        inetnum_list_o + inetnum_list_a,
+        inet6num_list_o + inet6num_list_a)
 
     organisation_list = sanitize_organisation_list(organisation_list,
                                                    known_organisations)
@@ -162,8 +161,11 @@ def load_ripe_files(options) -> tuple:
     if options.verbose:
         print('** Found {} contacts to be relevant.'.format(len(role_list)))
 
-    return (asn_list_o + asn_list_a, organisation_list,
-            role_list, abusec_to_org, inetnum_list, inet6num_list)
+    return (
+        asn_list_o + asn_list_a,
+        organisation_list, role_list, abusec_to_org,
+        inetnum_list_o + inetnum_list_a,
+        inet6num_list_o + inet6num_list_a)
 
 
 def read_delegated_file(filename, country, verbose=False):
@@ -277,13 +279,15 @@ def parse_file(filename, fields, index_field=None, restriction=lambda x: True,
 
     return out
 
+
 def build_index(obj_list, index_attribute):
     """Return a dict with the index_attribute as key to the ripe objects.
 
     The first value of the index attribute will be upper cased and
     used as key for the dict entry.
     """
-    return {obj.get(index_attribute)[0].upper():obj for obj in obj_list}
+    return {obj.get(index_attribute)[0].upper(): obj for obj in obj_list}
+
 
 def uppercase_org_handle(entry):
     """Return a copy of the entry with the 'org' value in upper-case.
@@ -323,6 +327,7 @@ def split_list(obj_list, attribute, whitelist=None):
 
     return (o, oa, a)
 
+
 def points_to_same_abuse_mailbox(obj, organisation_index, role_index):
     """Return true of the obj's abuse-c points to org->abuse-c's abuse-mailbox.
 
@@ -331,8 +336,8 @@ def points_to_same_abuse_mailbox(obj, organisation_index, role_index):
     abuse_c_1 = obj['abuse-c'][0].upper()
     abuse_c_2 = organisation_index[obj['org'][0]].get('abuse-c')[0].upper()
     return abuse_c_1 == abuse_c_2 or (
-        role_index[abuse_c_1].get('abuse-mailbox')
-        == role_index[abuse_c_2].get('abuse-mailbox'))
+        role_index[abuse_c_1].get('abuse-mailbox') ==
+        role_index[abuse_c_2].get('abuse-mailbox'))
 
 
 def modify_for_abusec(obj_list_a,
@@ -362,29 +367,30 @@ def modify_for_abusec(obj_list_a,
     added_counter = 0
     for obj in obj_list_a:
         abuse_c = obj['abuse-c'][0].upper()
-        role=role_index[abuse_c]
+        role = role_index[abuse_c]
 
+        new_org_id = abuse_c # for clarity of following code
         new_org_name = role.get('role')[0]
         if new_org_name in ["Abuse", "Abuse-C Role",
                             "Abuse contact role object"]:
             new_org_name += " " + abuse_c
 
-        if new_org_name not in organisation_index:
+        if new_org_id not in organisation_index:
             new_org = collections.defaultdict(list)
-            new_org['organisation'].append(abuse_c)
-            new_org['abuse-c'].append(abuse_c)
+            new_org['organisation'].append(new_org_id)
             new_org['org-name'].append(new_org_name)
+            new_org['abuse-c'].append(abuse_c)
 
             added_counter += 1
             if verbose and added_counter < 7:
-                print("e.g. adding {}".format(new_org))
+                print("    e.g. adding {}".format(new_org))
             organisation_list.append(new_org)
-            organisation_index[new_org_name] = new_org
+            organisation_index[new_org_id] = new_org
 
         if obj.get('org'):
-            obj['org'][0] = abuse_c
+            obj['org'][0] = new_org_id
         else:
-            obj['org'].append(abuse_c)
+            obj['org'].append(new_org_id)
 
     return obj_list_a, organisation_list, organisation_index
 
