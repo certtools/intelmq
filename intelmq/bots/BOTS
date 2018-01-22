@@ -188,6 +188,12 @@
                 "ssl_client_certificate": "<insert path to client cert file for CERT.pl's n6>",
                 "ssl_client_certificate_key": "<insert path to client cert key file for CERT.pl's n6>"
             }
+        },
+        "Twitter": {
+            "description": "",
+            "module": "intelmq.bots.collectors.twitter.collector_twitter",
+            "parameters": {
+            }
         }
     },
     "Parser": {
