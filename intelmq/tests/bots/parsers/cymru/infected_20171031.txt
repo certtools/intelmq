@@ -1,0 +1,9 @@
+# Data file written at Fri Oct 31 13:37:42 2017 GMT
+# Format: report|ip|asn|timestamp|comments|asn_name
+bruteforce|172.16.0.21|64496|2017-10-31 10:00:00|ssh|Example AS Name
+openresolvers|172.16.0.21|64496|2017-10-31 10:00:01||Example AS Name
+phishing|172.16.0.21|64496|2017-10-31 10:00:02|http://www.example.com/|Example AS Name
+proxy|172.16.0.21|64496|2017-10-31 10:00:03|HTTP CONNECT (8080)|Example AS Name
+spam|172.16.0.21|64496|2017-10-31 10:00:04||Example AS Name
+bots|172.16.0.21|64496|2017-10-31 10:00:05|srcport 1337 mwtype Conficker destaddr 172.16.0.22|Example AS Name
+bots|172.16.0.21|64496|2017-10-31 10:00:06|mwtype Conficker|Example AS Name

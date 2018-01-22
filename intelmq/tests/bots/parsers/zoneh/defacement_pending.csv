@@ -1,0 +1,2 @@
+"add_date","attacker","domain","ip_address","system","web_server","reason","hackmode","image","type","redefacement","state","def_grade","defacement_id","country_code","country"
+"2017-06-13 08:12:48","xyz crew","https://www.example.com/defaced.html","1.1.1.1","Linux","Apache","Not available","Not available","./defaced/2017/06/13/www.example.com/www.example.com","regular","no","not published","homepage","29715024","au","Australia"

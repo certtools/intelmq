@@ -27,6 +27,7 @@ Support for Python 3.3 has been dropped, it reached its end of life.
   This allows shorter code in the bots, as an 'overwrite' configuration parameter can be directly passed to the function.
 - Bots can specify a static method `check(parameters)` which can perform individual checks specific to the bot.
   These functions will be called by `intelmqctl check` if the bot is configured with the given parameters
+- Add `RewindableFileHandle` to utils making handling of CSV files more easy (optionally)
 
 ### Bots
 #### Collectors
@@ -50,6 +51,9 @@ Support for Python 3.3 has been dropped, it reached its end of life.
   - It is possible to filter the data before processing them using the new parameters `filter_type` and `filter_text`.
   - It is possible to specify multiple coulmns using `|` character in parameter `columns`.
   - The parameter `time_format` now supports `'epoch_millis'` for seconds since the Epoch, milliseconds are supported but not used.
+- renamed `bots.parsers.cymru_full_bogons.parser` to `bots.parsers.cymru.parser_full_bogons`, compatibility shim will be removed in version 2.0
+- added `bots.parsers.cymru.parser_cap_program`
+- added `intemq.bots.parsers.zoneh.parser` for ZoneH feeds
 
 #### Experts
 - Added sieve expert for filtering and modifying events (#1083)
@@ -79,12 +83,14 @@ Support for Python 3.3 has been dropped, it reached its end of life.
 #### Collectors
 - bots.collectors.mail.collector_mail_attach: Support attachment file parsing for imbox versions newer than 0.9.5
 - bots.collectors.stomp.collectos: Heartbeat timeout is now logged with log level info instead of warning.
+- bots.outputs.smtp.output: Fix STARTTLS, threw an exception (#1152)
 
 #### Parsers
 - All CSV parsers ignore NULL-bytes now, because the csv-library cannot handle it (#967)
 - Modify Bot default ruleset: changed conficker rule to catch more spellings
 - Shadowserver Parser: Add Accessible Cisco Smart Install
 - CleanMX Phising Parser: Handle new columns `first` and `last` (#1131).
+- CleanMX Phishing Parser: Replace CSV-based parser with XML-based parser fixing regular parser errors. This requires a change of the URL in the collector. (#1135)
 - n6 parser: Fix classification mappings. See NEWS file for changes values.
 
 ### Documentation
@@ -129,6 +135,7 @@ Support for Python 3.3 has been dropped, it reached its end of life.
 ### Bots
 - bots/experts/ripencc_abuse_contact/expert.py: Use HTTPS URLs for rest.db.ripe.net
 - bots/outputs/file/output.py: properly close the file handle on shutdown
+- bots/parser/shadowserver: If conversion of a value via conversion function fails, only log the function name, not the representation string (#1157).
 
 ### Core
 - lib/bot: Bots will now log the used intelmq version at startup
