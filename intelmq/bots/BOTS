@@ -206,6 +206,11 @@
             "module": "intelmq.bots.parsers.abusech.parser_ransomware",
             "parameters": {}
         },
+        "AnubisNetworks Cyberfeed Stream": {
+            "description": "Parses single JSON-events from AnubisNetworks Cyberfeed stream.",
+            "module": "intelmq.bots.parsers.anubisnetworks.parser",
+            "parameters": {}
+        },
         "AlienVault": {
             "description": "AlienVault Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.alienvault.parser",
@@ -226,16 +231,13 @@
             "module": "intelmq.bots.parsers.bambenek.parser",
             "parameters": {}
         },
+
         "Bitcash Blocklist Feed": {
             "description": "Bitcash Blocklist parser is the bot responsible to parse and sanitize the information.",
             "module": "intelmq.bots.parsers.bitcash.parser",
             "parameters": {}
         },
-        "AnubisNetworks Cyberfeed Stream": {
-            "description": "Parses single JSON-events from AnubisNetworks Cyberfeed stream.",
-            "module": "intelmq.bots.parsers.anubisnetworks.parser",
-            "parameters": {}
-        },
+
         "Blocklist.de": {
             "description": "Blocklist.DE Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.blocklistde.parser",
