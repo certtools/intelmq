@@ -187,7 +187,8 @@ def insert_new_contact_entries(cur, role_list, abusec_to_org, mapping, verbose):
 
 
 def main():
-    parser = argparse.ArgumentParser(description=
+    parser = argparse.ArgumentParser(
+        description=""
         "This script can be used to import automatic contact data "
         "into the intelmq-cb-mailgen contactdb. It is intended to be "
         "called automatically, e.g. by a cronjob.",

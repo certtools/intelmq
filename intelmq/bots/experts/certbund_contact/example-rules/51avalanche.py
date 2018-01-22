@@ -126,7 +126,6 @@ def evaluate_match(context, match):
             if annotation.tag == "critical":
                 is_critical = True
 
-
         # Now create the Directives
         #
         # An organisation may have multiple contacts, so we need to
@@ -199,4 +198,3 @@ def provider_contact_directive(notification_format="avalanche",
                      notification_format=notification_format,
                      event_data_format=data_format,
                      notification_interval=interval)
-

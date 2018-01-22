@@ -34,7 +34,6 @@ import pickle
 import os.path
 
 
-
 def add_db_args(parser):
     parser.add_argument("--conninfo",
                         default='dbname=contactdb',
@@ -114,23 +113,24 @@ def load_ripe_files(options) -> tuple:
         country = options.restrict_to_country
         return country and record["country"][0] == country
 
-    ### aut-num
+    # ## aut-num
 
     asn_list = parse_file(options.asn_file,
                           ('aut-num', 'org', 'status', 'abuse-c'),
                           verbose=options.verbose)
 
-    ### inetnum
+    # ## inetnum
     fn = options.inetnum_file + '.pickled'
     if os.path.isfile(fn):
         with open(fn, 'rb') as f:
             print("unpickling")
             inetnum_list = pickle.load(f)
     else:
-        inetnum_list = parse_file(options.inetnum_file,
-                              ('inetnum', 'org', 'country', 'abuse-c'),
-                              restriction=restrict_country,
-                              verbose=options.verbose)
+        inetnum_list = parse_file(
+            options.inetnum_file,
+            ('inetnum', 'org', 'country', 'abuse-c'),
+            restriction=restrict_country,
+            verbose=options.verbose)
         with open(fn, 'wb') as f:
             pickle.dump(inetnum_list, f)
 
@@ -141,12 +141,11 @@ def load_ripe_files(options) -> tuple:
             inet6num_list  = pickle.load(f)
     else:
         inet6num_list = parse_file(options.inet6num_file,
-                               ('inet6num', 'org', 'country', 'abuse-c'),
-                               restriction=restrict_country,
-                               verbose=options.verbose)
+                                   ('inet6num', 'org', 'country', 'abuse-c'),
+                                   restriction=restrict_country,
+                                   verbose=options.verbose)
         with open(fn, 'wb') as f:
             pickle.dump(inet6num_list, f)
-
 
     organisation_list = parse_file(options.organisation_file,
                                    ('organisation', 'org-name', 'abuse-c'),
@@ -164,9 +163,8 @@ def load_ripe_files(options) -> tuple:
     for r in role_list:
         role_dict[r.get('nic-hdl')[0]] = r
 
-
     # Step 2: Prepare new data for insertion
-    ### aut-num
+    # ## aut-num
     asn_list = sanitize_asn_list(asn_list, asn_whitelist)
 
     asn_list_a = [asn for asn in asn_list
@@ -187,7 +185,7 @@ def load_ripe_files(options) -> tuple:
             if role_dict[abuse1].get('abuse-mailbox') != role_dict[abuse2].get('abuse-mailbox'):
                 print(asn, org_dict[asn['org'][0]], role_dict[abuse1], role_dict[abuse2])
 
-    ### inetnum
+    # ## inetnum
 
     print("inetnum records without org, but with abuse-c:", end="")
     inetnum_list_a = [i for i in inetnum_list
@@ -216,12 +214,11 @@ def load_ripe_files(options) -> tuple:
     if options.verbose:
         print('** {} importable inetnums.'.format(len(inetnum_list)))
 
-
-    ### inet6num
+    # ## inet6num
 
     print("inet6num records without org, but with abuse-c:", end="")
     inet6num_list_a = [i for i in inet6num_list
-                     if not i.get('org') and i.get('abuse-c')]
+                       if not i.get('org') and i.get('abuse-c')]
     print(len(inet6num_list_a))
     print("Examples:")
     print(inet6num_list_a[0])
@@ -240,7 +237,7 @@ def load_ripe_files(options) -> tuple:
     print(len(inet6num_list_c))
     print("Examples:")
     print(inet6num_list_c[0])
-    #print(inet6num_list_c[1])
+    # print(inet6num_list_c[1])
 
     inet6num_list = sanitize_inet6num_list(inet6num_list)
     if options.verbose:

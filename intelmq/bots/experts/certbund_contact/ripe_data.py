@@ -369,7 +369,7 @@ def modify_for_abusec(obj_list_a,
         abuse_c = obj['abuse-c'][0].upper()
         role = role_index[abuse_c]
 
-        new_org_id = abuse_c # for clarity of following code
+        new_org_id = abuse_c  # for clarity of following code
         new_org_name = role.get('role')[0]
         if new_org_name in ["Abuse", "Abuse-C Role",
                             "Abuse contact role object"]:

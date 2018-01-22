@@ -153,13 +153,14 @@ def organisation_changes(handles, orgs_a, orgs_b):
         if changes:
             yield handle, changes
 
+
 # Enumeration to roughly indicate the type of change.
 Change = Enum("Change", "removed modified added")
 
 
 def find_overlaid_manual_entries(cur, org, change):
-    formatted = ", ".join(["AS{}".format(asn) for asn in org.asns]
-                          + [str(net) for net in org.networks])
+    formatted = ", ".join(["AS{}".format(asn) for asn in org.asns] +
+                          [str(net) for net in org.networks])
     if not formatted:
         return
 
