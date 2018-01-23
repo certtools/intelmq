@@ -835,6 +835,32 @@ FIXME
 
 * `overwrite`: boolean, replace existing FQDN?
 
+### Wait
+
+#### Information:
+* `name:` wait
+* `lookup:` none
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Waits for a some time or until a queue size is lower than a given numer.
+
+#### Configuration Parameters:
+
+* `queue_db`: Database number of the database, default `2`. Converted to integer.
+* `queue_host`: Host of the database, default `localhost`.
+* `queue_name`: Name of the queue to be watched, default `null`. This is not the name of a bot but the queue's name.
+* `queue_password`: Password for the database, default `None`.
+* `queue_polling_interval`: Interval to poll the list length in seconds. Converted to float.
+* `queue_port`: Port of the database, default `6379`. Converted to integer.
+* `queue_size`: Maximum size of the queue, default `0`. Compared by <=. Converted to integer.
+* `sleep_time`: Time to sleep before sending the event.
+
+Only one of the two modes is possible.
+If a queue name is given, the queue mode is active. If the sleep_time is a number, sleep mode is active.
+Otherwise the dummy mode is active, the events are just passed without an additional delay.
+
+Note that SIGHUPs and reloads interrupt the sleeping.
+
 <a name="outputs"></a>
 ## Outputs
 

@@ -57,6 +57,7 @@ Support for Python 3.3 has been dropped, it reached its end of life.
 
 #### Experts
 - Added sieve expert for filtering and modifying events (#1083)
+- Added wait expert for sleeping
 
 ### Harmonization
 - Renamed `JSON` to `JSONDict` and added a new type `JSON`. `JSONDict` saves data internally as JSON, but acts like a dictionary. `JSON` accepts any valid JSON.

@@ -608,6 +608,19 @@
             "parameters": {
                 "overwrite": false
             }
+        },
+        "Wait": {
+            "description": "Wait bot can wait for a some time or until a queue size is lower than a given numer.",
+            "module": "intelmq.bots.experts.wait.expert",
+            "parameters": {
+                "queue_db": 2,
+                "queue_host": "localhost",
+                "queue_name": null,
+                "queue_polling_interval": 0.05,
+                "queue_port": 6379,
+                "queue_size": 0,
+                "sleep_time": null
+            }
         }
     },
     "Output": {
