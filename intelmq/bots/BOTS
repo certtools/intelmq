@@ -59,6 +59,7 @@
                 "feed": "",
                 "provider": "",
                 "http_url": "<insert url of feed>",
+                "http_url_formatting": false,
                 "http_username": null,
                 "http_password": null,
                 "ssl_client_certificate": null,

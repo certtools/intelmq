@@ -40,6 +40,7 @@ Support for Python 3.3 has been dropped, it reached its end of life.
   - New parameter `search_requestor` to search for field Requestor.
   - Empty strings and `null` as value for search parameters are ignored.
   - Empty parameters `attachment_regex` and `url_regex` handled.
+- `bots.collectors.http.collector_http`: Ability to optionally use the current time in parameter `http_url`, added parameter `http_url_formatting`.
 
 #### Parsers
 - changed feednames in `bots.parsers.shadowserver`. Please refer to it's README for the exact changes.
