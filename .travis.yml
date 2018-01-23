@@ -31,20 +31,20 @@ install:
   - if [[ -v requirements ]]; then sudo pip install .; fi
   - if [[ -v requirements ]]; then sudo cp /opt/intelmq/etc/examples/* /opt/intelmq/etc/; fi
 before_script:
-  - if [[ -v requirements ]]; then psql -c "CREATE USER intelmq WITH SUPERUSER" -U postgres; fi
-  - if [[ -v requirements ]]; then psql -c "CREATE DATABASE intelmq" -U intelmq template1; fi
-  - if [[ -v requirements ]]; then psql -c "GRANT ALL PRIVILEGES ON DATABASE intelmq TO intelmq" -U intelmq; fi
-  - if [[ -v requirements ]]; then intelmq_psql_initdb; fi
-  - if [[ -v requirements ]]; then sed -i 's/events/tests/g' /tmp/initdb.sql; fi
-  - if [[ -v requirements ]]; then psql -v ON_ERROR_STOP=on -f /tmp/initdb.sql intelmq -U intelmq; fi
-  - if [[ $mode == debian ]]; then VERSION=$(git describe --abbrev=0 --tags); fi
-  - if [[ $mode == debian ]]; then git archive --format=tar.gz HEAD > ../intelmq_$VERSION.orig.tar.gz; fi
-  - if [[ $mode == debian ]]; then git archive --format=tar.gz --prefix=debian/ HEAD:debian/ > ../intelmq_$VERSION-1.debian.tar.gz; fi
+  - if [[ $requirements == true ]] ; then psql -c "CREATE USER intelmq WITH SUPERUSER" -U postgres; fi
+  - if [[ $requirements == true ]] ; then psql -c "CREATE DATABASE intelmq" -U intelmq template1; fi
+  - if [[ $requirements == true ]] ; then psql -c "GRANT ALL PRIVILEGES ON DATABASE intelmq TO intelmq" -U intelmq; fi
+  - if [[ $requirements == true ]] ; then intelmq_psql_initdb; fi
+  - if [[ $requirements == true ]] ; then sed -i 's/events/tests/g' /tmp/initdb.sql; fi
+  - if [[ $requirements == true ]] ; then psql -v ON_ERROR_STOP=on -f /tmp/initdb.sql intelmq -U intelmq; fi
+  - if [[ $mode == debian ]]; then debversion=$(egrep -o "[[:digit:].-]+" debian/changelog | head -n 1); version=${debversion%-?}; fi
+  - if [[ $mode == debian ]]; then git archive --format=tar.gz HEAD > ../intelmq_$version.orig.tar.gz; fi
+  - if [[ $mode == debian ]]; then git archive --format=tar.gz --prefix=debian/ HEAD:debian/ > ../intelmq_$debversion.debian.tar.gz; fi
   - if [[ $mode == debian ]]; then pushd ..; fi
   - if [[ $mode == debian ]]; then mkdir build; fi
   - if [[ $mode == debian ]]; then cd build; fi
-  - if [[ $mode == debian ]]; then tar -xzf ../intelmq_$VERSION.orig.tar.gz; fi
-  - if [[ $mode == debian ]]; then tar -xzf ../intelmq_$VERSION-1.debian.tar.gz; fi
+  - if [[ $mode == debian ]]; then tar -xzf ../intelmq_$version.orig.tar.gz; fi
+  - if [[ $mode == debian ]]; then tar -xzf ../intelmq_$debversion.debian.tar.gz; fi
   - if [[ $mode == debian ]]; then popd; fi
 script:
   - if [[ $requirements == true ]]; then INTELMQ_TEST_DATABASES=1 INTELMQ_TEST_LOCAL_WEB=1 INTELMQ_TEST_EXOTIC=1 nosetests --with-coverage --cover-package=intelmq --cover-branches; elif [[ $requirements == false ]]; then INTELMQ_TEST_LOCAL_WEB=1 nosetests --with-coverage --cover-package=intelmq --cover-branches; fi
