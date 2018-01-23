@@ -934,7 +934,22 @@ http://www.team-cymru.org/CSIRT-AP.html
 
 ## Collector Bot
 
-Usually via HTTPS.
+**Bot Name:** Generic URL Fetcher
+
+**Bot Module:** intelmq.bots.collectors.http.collector_http
+
+**Configuration Parameters:**
+```
+id: cymru-cap-collector
+provider: Cymru
+feed: Cymru CAP
+rate_limit: 86400
+http_url: https://www.cymru.com/{{your organization name}}/infected_{time[%Y%m%d]}.txt
+http_url_formatting: true
+http_username: {{your login}}
+http_password: {{your password}}
+```
+
 
 ## Parser Bot
 
