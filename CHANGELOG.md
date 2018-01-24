@@ -81,6 +81,7 @@ Support for Python 3.3 has been dropped, it reached its end of life.
 - warnings of bots are catched by the logger (#1074)
 - Bots stop when redis gives the error "OOM command not allowed when used memory > 'maxmemory'.".
 - lib/bot: Fixed exitcodes 0 for graceful shutdowns.
+- lib/harmonization: Handle idna encoding error in FQDN sanitation (#1175).
 
 ### Harmonization
 - Rule for harmonization keys is enforced (#1104)
