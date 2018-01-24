@@ -116,7 +116,8 @@ class TestRuleContext(unittest.TestCase):
                                  for org in context.organisations
                                  if org.orgid != 1]
 
-        # Now the ASN match should have an empty organisations list:
+        # Now there's no ASN match anymore because the only organisation
+        # it referred to has been removed.
         self.assertEqual([match.organisations
                           for match in context.matches
                           if match.field == "asn"],
