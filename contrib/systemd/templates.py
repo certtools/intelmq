@@ -11,7 +11,7 @@ RefuseManualStart=no
 RefuseManualStop=no
 
 [Service]
-Type=oneshot
+Type=$type
 ExecStart=$bot_run_cmd
 User=$INTELMQ_USER
 Group=$INTELMQ_GROUP

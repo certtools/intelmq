@@ -95,8 +95,16 @@ def main():
         if DISABLE_IN_CONF:
             rc_data[bot]['enabled'] = False
 
-        if SET_RUNMODE_IN_CONF:
-            rc_data[bot]['run_mode'] = 'scheduled'
+
+        bot_parameters = bot_data['parameters']
+        bot_service_name = SERVICE_PREFIX + bot + '.service'
+        if bot_data.get('run_mode') == 'continuous' or 'rate_limit' not in bot_parameters:
+            bot_type = 'simple'
+        else:
+            bot_interval = int(bot_parameters['rate_limit'])
+            bot_type = 'oneshot'
+            if SET_RUNMODE_IN_CONF:
+                rc_data[bot]['run_mode'] = 'scheduled'
 
         bot_run_cmd = INTELMQCTL_BIN + ' run ' + bot
         service_file_name = os.path.join(SYSTEMD_OUTPUT_DIR,
@@ -104,26 +112,25 @@ def main():
         service_data = SERVICE_TEMPLATE.substitute(INTELMQ_USER=INTELMQ_USER,
                                                    INTELMQ_GROUP=INTELMQ_GROUP,
                                                    bot=bot,
-                                                   bot_run_cmd=bot_run_cmd
-                                                    )
+                                                   bot_run_cmd=bot_run_cmd,
+                                                   type=bot_type,
+                                                   )
         with open(service_file_name, "w", encoding='utf-8') as svc_file:
             svc_file.write(service_data)
 
-        bot_parameters = bot_data['parameters']
-        bot_service_name = SERVICE_PREFIX + bot + '.service'
-        bot_interval = int(bot_parameters['rate_limit'])
-        timer_file_name = os.path.join(SYSTEMD_OUTPUT_DIR,
-                                       SERVICE_PREFIX + bot + '.timer')
+        if bot_type == 'oneshot':
+            timer_file_name = os.path.join(SYSTEMD_OUTPUT_DIR,
+                                           SERVICE_PREFIX + bot + '.timer')
 
-        timer_data = TIMER_TEMPLATE.substitute(bot=bot,
-                                               ACCURACY_SECS=ACCURACY_SECS,
-                                               RANDOMIZE_DELAYS=RANDOMIZE_DELAYS,
-                                               ON_ACTIVE_SEC=ON_ACTIVE_SEC,
-                                               bot_interval=bot_interval,
-                                               bot_service_name=bot_service_name
-                                               )
-        with open(timer_file_name, "w", encoding='utf-8') as tmr_file:
-            tmr_file.write(timer_data)
+            timer_data = TIMER_TEMPLATE.substitute(bot=bot,
+                                                   ACCURACY_SECS=ACCURACY_SECS,
+                                                   RANDOMIZE_DELAYS=RANDOMIZE_DELAYS,
+                                                   ON_ACTIVE_SEC=ON_ACTIVE_SEC,
+                                                   bot_interval=bot_interval,
+                                                   bot_service_name=bot_service_name
+                                                   )
+            with open(timer_file_name, "w", encoding='utf-8') as tmr_file:
+                tmr_file.write(timer_data)
 
     if DISABLE_IN_CONF or SET_RUNMODE_IN_CONF:
         try:
