@@ -34,6 +34,7 @@ The available feeds are grouped by the source of the feeds. For each feed the co
 - [Proxyspy](#proxyspy)
 - [Shadowserver](#shadowserver)
 - [Spamhaus](#spamhaus)
+- [Sucuri](#sucuri)
 - [Taichung](#taichung)
 - [Turris Greylist](#turris-greylist)
 - [University of Toulouse Blacklist](#university-of-toulouse-blacklist)
@@ -2121,6 +2122,38 @@ id: spamhaus-asn-drop-parser
 
 **Notes:** ASN-DROP contains a list of Autonomous System Numbers controlled by spammers or cyber criminals, as well as "hijacked" ASNs. ASN-DROP can be used to filter BGP routes which are being used for malicious purposes.
 
+# Sucuri
+
+## Sucuri Malware
+
+**Status:** Active
+
+### Collector Bot
+
+**Bot Name:** Generic URL Fetcher
+
+**Bot Module:** intelmq.bots.collectors.http.collector_http
+
+**Configuration Parameters:**
+```
+id: sucuri-collector
+feed: Sucuri Hidden Iframes
+http_url: http://labs.sucuri.net/?malware
+rate_limit: 86400
+```
+
+### Parser Bot
+
+**Bot Name:** Sucuri Security Parser
+
+**Bot Module:** intelmq.bots.parsers.sucuri.parser
+
+**Configuration Parameters:**
+```
+id: sucuri-parser
+```
+
+Please note that the parser only extracts the hidden iframes  and the conditional redirects, not the encoded javascript.
 
 # Taichung
 
