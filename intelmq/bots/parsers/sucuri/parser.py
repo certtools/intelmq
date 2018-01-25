@@ -20,7 +20,6 @@ class SucuriParserBot(ParserBot):
     def process(self):
         report = self.receive_message()
         raw_report = utils.base64_decode(report["raw"])  # decoding
-        raw_report = re.sub(r"<!--(.|\s|\n)*?-->", "", raw_report)  # removing comments
         report_list = [row.strip() for row in raw_report.splitlines()]
         index = 0
         actual_line = report_list[index]
@@ -30,14 +29,31 @@ class SucuriParserBot(ParserBot):
             parser.feed(actual_line)
         while actual_line[:8] != "</tbody>":  # scrabing table data
             index += 1
-            actual_line = report_list[index]
+            raw_actual_line = report_list[index]
+            actual_line = re.sub(r"<!--(.|\s|\n)*?-->", "", raw_actual_line)
             if actual_line[:2] == "<t":
                 event = self.new_event(report)  # making new event
-                parser.feed(report_list[index])
+                parser.feed(actual_line)
                 event.add("source.url", parser.lsData)
                 event.add("classification.type", "blacklist")
                 event.add("classification.identifier", "hidden iframe")
-                event.add("raw", actual_line)
+                event.add("raw", raw_actual_line)
+                self.send_message(event)
+        while parser.lsData != "Conditional redirections":  # displacement to target table
+            index += 1
+            actual_line = report_list[index]
+            parser.feed(actual_line)
+        while actual_line[:8] != "</tbody>":  # scrabing table data
+            index += 1
+            raw_actual_line = report_list[index]
+            actual_line = re.sub(r"<!--(.|\s|\n)*?-->", "", raw_actual_line)
+            if actual_line[:2] == "<t":
+                event = self.new_event(report)  # making new event
+                parser.feed(actual_line)
+                event.add("source.url", parser.lsData)
+                event.add("classification.type", "blacklist")
+                event.add("classification.identifier", "Conditional redirections")
+                event.add("raw", raw_actual_line)
                 self.send_message(event)
         self.acknowledge_message()
 
