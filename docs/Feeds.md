@@ -2122,12 +2122,13 @@ id: spamhaus-asn-drop-parser
 
 **Notes:** ASN-DROP contains a list of Autonomous System Numbers controlled by spammers or cyber criminals, as well as "hijacked" ASNs. ASN-DROP can be used to filter BGP routes which are being used for malicious purposes.
 
-
 # Sucuri
+
+## Sucuri Malware
 
 **Status:** Active
 
-## Collector Bot
+### Collector Bot
 
 **Bot Name:** Generic URL Fetcher
 
@@ -2136,9 +2137,9 @@ id: spamhaus-asn-drop-parser
 **Configuration Parameters:**
 ```
 id: sucuri-collector
-feed: Sucuri Hidden Iframes,
-http_url: http://labs.sucuri.net/?malware,
-rate_limit: 129600
+feed: Sucuri Hidden Iframes
+http_url: http://labs.sucuri.net/?malware
+rate_limit: 86400
 ```
 
 ### Parser Bot
@@ -2152,6 +2153,7 @@ rate_limit: 129600
 id: sucuri-parser
 ```
 
+Please note that the parser only extracts the hidden iframes  and the conditional redirects, not the encoded javascript.
 
 # Taichung
 

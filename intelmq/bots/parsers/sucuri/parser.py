@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+"""
+Only parses hidden iframes and conditional redirections, not Encoded javascript.
+"""
 from intelmq.lib.bot import ParserBot
 from intelmq.lib import utils
 import re
