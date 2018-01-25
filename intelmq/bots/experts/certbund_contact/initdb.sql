@@ -302,6 +302,9 @@ CREATE TABLE organisation_to_asn (
     FOREIGN KEY (organisation_id) REFERENCES organisation (organisation_id)
 );
 
+CREATE INDEX organisation_to_asn_asn_idx
+    ON organisation_to_asn (asn);
+
 
 CREATE TABLE organisation_to_asn_automatic (
     organisation_automatic_id INTEGER,
@@ -312,6 +315,9 @@ CREATE TABLE organisation_to_asn_automatic (
     FOREIGN KEY (organisation_automatic_id)
      REFERENCES organisation_automatic (organisation_automatic_id)
 );
+
+CREATE INDEX organisation_to_asn_automatic_asn_idx
+    ON organisation_to_asn_automatic (asn);
 
 
 CREATE TABLE organisation_to_network (
