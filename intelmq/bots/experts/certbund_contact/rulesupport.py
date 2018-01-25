@@ -254,14 +254,14 @@ class Directive:
         self.template_name = template_name
 
     def __repr__(self):
-        return ("Directive(medium={medium},"
-                " recipient_address={recipient_address},"
-                " aggregate_fields={aggregate_fields},"
-                " aggregate_key={aggregate_key},"
-                " notification_interval={notification_interval}"
-                " notification_format={notification_format}"
-                " event_data_format={event_data_format},"
-                " template_name={template_name},"
+        return ("Directive(medium={medium!a},"
+                " recipient_address={recipient_address!a},"
+                " aggregate_fields={aggregate_fields!a},"
+                " aggregate_key={aggregate_key!a},"
+                " notification_interval={notification_interval!a},"
+                " notification_format={notification_format!a},"
+                " event_data_format={event_data_format!a},"
+                " template_name={template_name!a})"
                 .format(**self.__dict__))
 
     def __eq__(self, other):
