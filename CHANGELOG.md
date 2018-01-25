@@ -102,6 +102,7 @@ Support for Python 3.3 has been dropped, it reached its end of life.
 
 ### Tests
 - `tests/lib/test_pipeline`: Redis tests clear all queues before and after tests (#1086)
+= Repaired debian package build on travis (#1169)
 - Warnings are not allowed by default, an allowed count can be specified (#1129).
 
 ### Packaging
