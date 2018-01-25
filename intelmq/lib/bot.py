@@ -191,7 +191,7 @@ class Bot(object):
 
             finally:
                 if getattr(self.parameters, 'testing', False):
-                    self.stop()
+                    self.stop(exitcode=0)
                     break
 
                 if error_on_message or error_on_pipeline:
@@ -219,7 +219,7 @@ class Bot(object):
                         # run_mode: scheduled
                         if self.run_mode == 'scheduled':
                             self.logger.info('Shutting down scheduled bot.')
-                            self.stop()
+                            self.stop(exitcode=0)
 
                         # error_procedure: stop
                         elif self.parameters.error_procedure == "stop":
@@ -232,7 +232,7 @@ class Bot(object):
                 # no errors, check for run mode: scheduled
                 elif self.run_mode == 'scheduled':
                     self.logger.info('Shutting down scheduled bot.')
-                    self.stop()
+                    self.stop(exitcode=0)
 
             self.__handle_sighup()
 
