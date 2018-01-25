@@ -424,14 +424,14 @@ class Context:
         self.ensure_data_consistency()
 
     def ensure_data_consistency(self):
-        """Make sure data-structure stay consistent.
+        """Make sure data-structures stay consistent.
         In particular the links between matches and organisations need
         to stay sane if scripts modify this information.
 
         Scripts should not call this method directly! It wouldn't hurt,
         but it should not be necessary. This method is automatically
         called when new values are assigned to the matches or
-        organisation attributes and by the rule bot between scripts.
+        organisations attributes and by the rule bot between scripts.
 
         This method performs these cleanups:
 
