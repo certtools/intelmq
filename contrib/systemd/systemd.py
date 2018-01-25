@@ -7,6 +7,7 @@ import os
 import os.path
 import pwd
 import shutil
+import sys
 
 from conf import *
 from intelmq import PIPELINE_CONF_FILE, RUNTIME_CONF_FILE
@@ -121,15 +122,23 @@ def main():
             tmr_file.write(timer_data)
 
     if DISABLE_IN_CONF or SET_RUNMODE_IN_CONF:
-        shutil.move(RUNTIME_CONF_FILE, RUNTIME_CONF_FILE + '.bak')
-        rc_data = collections.OrderedDict(sorted(rc_data.items()))
-        data = json.dumps(rc_data, indent=4)
-        with open(RUNTIME_CONF_FILE, "w", encoding='utf-8') as rc_file:
-            rc_file.write(data)
-        intelmq_uid = pwd.getpwnam(INTELMQ_USER).pw_uid
-        intelmq_gid = grp.getgrnam(INTELMQ_GROUP).gr_gid
-        os.chown(RUNTIME_CONF_FILE, intelmq_uid, intelmq_gid)
-        os.chmod(RUNTIME_CONF_FILE, 0o664)  # u-rw, g-rw (for intelmq-manager), o-r
+        try:
+            shutil.move(RUNTIME_CONF_FILE, RUNTIME_CONF_FILE + '.bak')
+        except PermissionError:
+            print("Could not write file %s, missing permissions." % (RUNTIME_CONF_FILE + '.bak'), file=sys.stderr)
+        else:
+            rc_data = collections.OrderedDict(sorted(rc_data.items()))
+            data = json.dumps(rc_data, indent=4)
+            try:
+                with open(RUNTIME_CONF_FILE, "w", encoding='utf-8') as rc_file:
+                    rc_file.write(data)
+            except PermissionError:
+                print("Could not write file %s, missing permissions." % RUNTIME_CONF_FILE, file=sys.stderr)
+            else:
+                intelmq_uid = pwd.getpwnam(INTELMQ_USER).pw_uid
+                intelmq_gid = grp.getgrnam(INTELMQ_GROUP).gr_gid
+                os.chown(RUNTIME_CONF_FILE, intelmq_uid, intelmq_gid)
+                os.chmod(RUNTIME_CONF_FILE, 0o664)  # u-rw, g-rw (for intelmq-manager), o-r
 
     print(POST_DOCS)
 
