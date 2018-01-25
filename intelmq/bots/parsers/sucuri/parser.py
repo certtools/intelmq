@@ -2,11 +2,11 @@
 """
 Only parses hidden iframes and conditional redirections, not Encoded javascript.
 """
-from intelmq.lib.bot import ParserBot
-from intelmq.lib import utils
 import re
 from html.parser import HTMLParser
-import urllib.request as urllib2
+
+from intelmq.lib import utils
+from intelmq.lib.bot import ParserBot
 
 
 class MyHTMLParser(HTMLParser):
@@ -18,6 +18,7 @@ class MyHTMLParser(HTMLParser):
 
 
 parser = MyHTMLParser()
+remove_comments = re.compile(r"<!--(.|\s|\n)*?-->")
 
 
 class SucuriParserBot(ParserBot):
@@ -34,13 +35,14 @@ class SucuriParserBot(ParserBot):
         while actual_line[:8] != "</tbody>":  # scrabing table data
             index += 1
             raw_actual_line = report_list[index]
-            actual_line = re.sub(r"<!--(.|\s|\n)*?-->", "", raw_actual_line)
+            actual_line = remove_comments.sub("", raw_actual_line).replace('&#46;', '.')
+            print(1, raw_actual_line, 2, actual_line)
             if actual_line[:2] == "<t":
                 event = self.new_event(report)  # making new event
                 parser.feed(actual_line)
                 event.add("source.url", parser.lsData)
                 event.add("classification.type", "blacklist")
-                event.add("classification.identifier", "hidden iframe")
+                event.add("classification.identifier", "hidden-iframe")
                 event.add("raw", raw_actual_line)
                 self.send_message(event)
         while parser.lsData != "Conditional redirections":  # displacement to target table
@@ -50,17 +52,16 @@ class SucuriParserBot(ParserBot):
         while actual_line[:8] != "</tbody>":  # scrabing table data
             index += 1
             raw_actual_line = report_list[index]
-            actual_line = re.sub(r"<!--(.|\s|\n)*?-->", "", raw_actual_line)
+            actual_line = remove_comments.sub("", raw_actual_line).replace('&#46;', '.')
             if actual_line[:2] == "<t":
                 event = self.new_event(report)  # making new event
                 parser.feed(actual_line)
                 event.add("source.url", parser.lsData)
                 event.add("classification.type", "blacklist")
-                event.add("classification.identifier", "Conditional redirections")
+                event.add("classification.identifier", "conditional-redirection")
                 event.add("raw", raw_actual_line)
                 self.send_message(event)
         self.acknowledge_message()
 
 
 BOT = SucuriParserBot
-

@@ -616,14 +616,6 @@ Latest hidden iframes our scanner have identified on compromised web sites.
 
 <table class="gptable mwtable table"><thead><tr><th># of sites infected</th><th>Type</th><th>Malware / Domains</th></tr></thead><tbody><tr><td>55</td><td><a href="/?type=iframe">iframe</a></td><td><span><a href="/?details=poseyhumane.org">http://poseyhumane&#4<!-- sucuri -->6;org<!-- sucuri -->/stats&<!--sucuri-->#46;php</a></span></td></tr>
 <tr><td>6</td><td><a href="/?type=iframe">iframe</a></td><td><span><a href="/?details=zumobtr.ru">http://zumobtr&#46;ru/gat<!-- sucuri -->e&#46<!-- sucuri -->;php?f=<!--sucuri-->1041671</a></span></td></tr>
-<tr><td>6</td><td><a href="/?type=iframe">iframe</a></td><td><span><a href="/?details=ads.rzb.ir">http://ads&#46;rzb&#46;ir/imag<!-- sucuri -->e&#46<!-- sucuri -->;php?si<!--sucuri-->ze_id=7</a></span></td></tr>
-<tr><td>4</td><td><a href="/?type=iframe">iframe</a></td><td><span><a href="/?details=cascadecowcutters.org">http://www&#46;cascadecowcutters&#46;org/wp-content/upg<!-- sucuri -->rade/<!-- sucuri -->update&<!--sucuri-->#46;php</a></span></td></tr>
-<tr><td>4</td><td><a href="/?type=iframe">iframe</a></td><td><span><a href="/?details=couriertracking247.in">http://courier<!-- sucuri -->track<!-- sucuri -->ing247&<!--sucuri-->#46;in/</a></span></td></tr>
-<tr><td>2</td><td><a href="/?type=iframe">iframe</a></td><td><span><a href="/?details=stjohnsdryden.org">http://stjohnsdryden&#46;org/img/comm<!-- sucuri -->on/do<!-- sucuri -->wnload&<!--sucuri-->#46;php</a></span></td></tr>
-<tr><td>2</td><td><a href="/?type=iframe">iframe</a></td><td><span><a href="/?details=bucknine.cf">http://bucknine&#46;cf/vi<!-- sucuri -->siono<!-- sucuri -->vni17&#<!--sucuri-->46;html</a></span></td></tr>
-<tr><td>1</td><td><a href="/?type=iframe">iframe</a></td><td><span><a href="/?details=trypie.info">http://www&#46;trypie&#46;<!-- sucuri -->info/<!-- sucuri -->update&<!--sucuri-->#46;php</a></span></td></tr>
-<tr><td>1</td><td><a href="/?type=iframe">iframe</a></td><td><span><a href="/?details=vefire.ru">http://vef<!-- sucuri -->ire&#<!-- sucuri -->46;ru/a<!--sucuri-->pps/11/</a></span></td></tr>
-<tr><td>1</td><td><a href="/?type=iframe">iframe</a></td><td><span><a href="/?details=criosfera.cf">http://criosfera&#46;cf/ma<!-- sucuri -->rahme<!-- sucuri -->rah17&#<!--sucuri-->46;html</a></span></td></tr>
 </tbody><tfoot><tr><td></td><td></td><td><i>Limited view (40 rows)... Only the top entries being displayed.</i></td></tr></tfoot></table></p>
 
 
@@ -633,24 +625,6 @@ Conditional redirections we have detected (based on user agents or referers).
 <table class="gptable mwtable table"><thead><tr><th># of sites infected</th><th>Type</th><th>Malware / Domains</th></tr></thead><tbody><tr><td>9</td><td><a href="/?type=redirections">redirections</a></td><td><span><a href="/?details=goodhotwebmart.in">http://goo<!-- sucuri -->dhotw<!-- sucuri -->ebmart&<!--sucuri-->#46;in/</a></span></td></tr>
 <tr><td>6</td><td><a href="/?type=redirections">redirections</a></td><td><span><a href="/?details=mpzbearing.in">http://www&#46<!-- sucuri -->;mpzb<!-- sucuri -->earing&<!--sucuri-->#46;in/</a></span></td></tr>
 <tr><td>5</td><td><a href="/?type=redirections">redirections</a></td><td><span><a href="/?details=portal-d.pw">http://por<!-- sucuri -->tal-d<!-- sucuri -->&#46;pw<!--sucuri-->/XcTyTp</a></span></td></tr>
-<tr><td>4</td><td><a href="/?type=redirections">redirections</a></td><td><span><a href="/?details=default7.com">http<!-- sucuri -->://de<!-- sucuri -->fault7&<!--sucuri-->#46;com</a></span></td></tr>
-<tr><td>4</td><td><a href="/?type=redirections">redirections</a></td><td><span><a href="/?details=alfsystem.com.my">http://alfsystem&#46;com&#46;my/inclu<!-- sucuri -->des/d<!-- sucuri -->omit/1&<!--sucuri-->#46;php</a></span></td></tr>
-<tr><td>2</td><td><a href="/?type=redirections">redirections</a></td><td><span><a href="/?details=wwwjazztel.com">http://wwwjazztel&#46;c<!-- sucuri -->om/?f<!-- sucuri -->olio=9P<!--sucuri-->O6Z3MVF</a></span></td></tr>
-<tr><td>2</td><td><a href="/?type=redirections">redirections</a></td><td><span><a href="/?details=ww1.zibahairsalon.com">http://ww1&#46;zibahairsalon&#46;c<!-- sucuri -->om/?f<!-- sucuri -->olio=9P<!--sucuri-->OGF6H4I</a></span></td></tr>
-<tr><td>2</td><td><a href="/?type=redirections">redirections</a></td><td><span><a href="/?details=ww1.mtclassificados.net">http://ww1&#46;mtclassificados&#46;n<!-- sucuri -->et/?f<!-- sucuri -->olio=9P<!--sucuri-->OGF6H4I</a></span></td></tr>
-<tr><td>2</td><td><a href="/?type=redirections">redirections</a></td><td><span><a href="/?details=top-24h-can-store.com">http://top-24h-can-store&#46;com/redire<!-- sucuri -->ct&#4<!-- sucuri -->6;php?z<!--sucuri-->=viagra</a></span></td></tr>
-<tr><td>2</td><td><a href="/?type=redirections">redirections</a></td><td><span><a href="/?details=summerphotography.net">http://summerphotography&#46;n<!-- sucuri -->et/?f<!-- sucuri -->olio=9P<!--sucuri-->O6Z3MVF</a></span></td></tr>
-<tr><td>2</td><td><a href="/?type=redirections">redirections</a></td><td><span><a href="/?details=slonova-gora.com">http://slonova-gora&#46;c<!-- sucuri -->om/?f<!-- sucuri -->olio=9P<!--sucuri-->OGF6H4I</a></span></td></tr>
-<tr><td>2</td><td><a href="/?type=redirections">redirections</a></td><td><span><a href="/?details=nubiangraphics.com">http://nubiangraphics&#46;c<!-- sucuri -->om/?f<!-- sucuri -->olio=9P<!--sucuri-->O6Z3MVF</a></span></td></tr>
-<tr><td>2</td><td><a href="/?type=redirections">redirections</a></td><td><span><a href="/?details=myflippincoach.biz">http://myflippincoach&#46;biz/De<!-- sucuri -->als/M<!-- sucuri -->yFlippi<!--sucuri-->nCoach/</a></span></td></tr>
-<tr><td>2</td><td><a href="/?type=redirections">redirections</a></td><td><span><a href="/?details=mathaids.com">http://mathaids&#46;c<!-- sucuri -->om/?f<!-- sucuri -->olio=9P<!--sucuri-->O6Z3MVF</a></span></td></tr>
-<tr><td>2</td><td><a href="/?type=redirections">redirections</a></td><td><span><a href="/?details=luxurytds.com">http://luxurytds&#46;<!-- sucuri -->com/g<!-- sucuri -->o&#46;p<!--sucuri-->hp?sid=</a></span></td></tr>
-<tr><td>2</td><td><a href="/?type=redirections">redirections</a></td><td><span><a href="/?details=luckyherbssupply.in">http://lucky<!-- sucuri -->herbs<!-- sucuri -->supply&<!--sucuri-->#46;in/</a></span></td></tr>
-<tr><td>2</td><td><a href="/?type=redirections">redirections</a></td><td><span><a href="/?details=laatminute.com">http://laatminute&#46;c<!-- sucuri -->om/?f<!-- sucuri -->olio=9P<!--sucuri-->O6Z3MVF</a></span></td></tr>
-<tr><td>2</td><td><a href="/?type=redirections">redirections</a></td><td><span><a href="/?details=huaweidevices.es">http://huaweidevices&#46;<!-- sucuri -->es/?f<!-- sucuri -->olio=9P<!--sucuri-->OGF6H4I</a></span></td></tr>
-<tr><td>2</td><td><a href="/?type=redirections">redirections</a></td><td><span><a href="/?details=hotmp3s.com">http://hotmp3s&#46;c<!-- sucuri -->om/?f<!-- sucuri -->olio=9P<!--sucuri-->O6Z3MVF</a></span></td></tr>
-<tr><td>2</td><td><a href="/?type=redirections">redirections</a></td><td><span><a href="/?details=goldpole.com">http://goldpole&#46;c<!-- sucuri -->om/?f<!-- sucuri -->olio=9P<!--sucuri-->O6Z3MVF</a></span></td></tr>
-<tr><td>2</td><td><a href="/?type=redirections">redirections</a></td><td><span><a href="/?details=dresslike.com">http://dresslike&#46;c<!-- sucuri -->om/?f<!-- sucuri -->olio=9P<!--sucuri-->O6Z3MVF</a></span></td></tr>
 </tbody><tfoot><tr><td></td><td></td><td><i>Limited view (40 rows)... Only the top entries being displayed.</i></td></tr></tfoot></table></p>
 
 <h4>Encoded javascript</h4>
@@ -659,14 +633,6 @@ Encoded javascript (redirecting to blackhole and other exploit kits) or to build
 a remote call.
 <table class="gptable mwtable table"><thead><tr><th># of sites infected</th><th>Type</th><th>Malware / Domains</th></tr></thead><tbody><tr><td>12</td><td><a href="/?type=javascript">javascript</a></td><td><span><a href="/?details=div-class-container.ru">http://div-class-container&#46;ru/m/&quot;: var a910ab1=[855,915,955,960,973,887,970,971,976,963,956<!-- sucuri -->,916&<!-- sucuri -->#46;&#4<!--sucuri-->6;&#46;</a></span></td></tr>
 <tr><td>22</td><td><a href="/?type=javascript">javascript</a></td><td><span>&lt;script&gt;var b=&quot;red&quot;;c=&quot;mod&quot;;function setCookie&#40;a,b,c){var d=new Date;d&#46;setTime&#40;d&#46;getTime&#40;)+60*c&#46;&#46;&#46;</span></td></tr>
-<tr><td>20</td><td><a href="/?type=javascript">javascript</a></td><td><span>&lt;script&gt;var b=&quot;red&quot;;c=&quot;mod&quot;;function setCookie&#40;a,b,c){var d=new Date;d&#46;setTime&#40;d&#46;getTime&#40;)+60*c&#46;&#46;&#46;</span></td></tr>
-<tr><td>17</td><td><a href="/?type=javascript">javascript</a></td><td><span><a href="/?details=pops.virgilio.us">&lt;script src=&quot;http://pops&#46;virgilio&#46;us/pop&#46;php?id=1&quot;<!-- sucuri -->&gt;&<!-- sucuri -->lt;/scr<!--sucuri-->ipt&gt;</a></span></td></tr>
-<tr><td>10</td><td><a href="/?type=javascript">javascript</a></td><td><span>&lt;script&gt;var b=&quot;red&quot;;c=&quot;mod&quot;;function setCookie&#40;a,b,c){var d=new Date;d&#46;setTime&#40;d&#46;getTime&#40;)+60*c&#46;&#46;&#46;</span></td></tr>
-<tr><td>9</td><td><a href="/?type=javascript">javascript</a></td><td><span>&lt;script type=&quot;text/javascript&quot;&gt;var pid=&#39;52877&#39;;var pixel=&#39;468x60&#39;;var c_pid=&#39;YWQ2LmV1&#39;;var pare&#46;&#46;&#46;</span></td></tr>
-<tr><td>9</td><td><a href="/?type=javascript">javascript</a></td><td><span><a href="/?details=psicholog-msk.ru">&lt;script type=&quot;text/javascript&quot; src=&quot;http://psicholog-msk&#46;ru/scripts/kd7tvnbv&#46;php?id=3023929&quot;&gt;&<!-- sucuri -->lt;/&<!-- sucuri -->#46;&#4<!--sucuri-->6;&#46;</a></span></td></tr>
-<tr><td>3</td><td><a href="/?type=javascript">javascript</a></td><td><span><a href="/?details=lydiz.com">&lt;script&gt;izs=19099;tm=&quot;168242&quot;;&lt;/script&gt;&lt;script language=&quot;JavaScript&quot; type=&quot;text/JavaScript&quot;<!-- sucuri --> cha&<!-- sucuri -->#46;&#4<!--sucuri-->6;&#46;</a></span></td></tr>
-<tr><td>2</td><td><a href="/?type=javascript">javascript</a></td><td><span><a href="/?details=ledomaine-miltat.fr">&lt;script type=&quot;text/javascript&quot; src=&quot;http://ledomaine-miltat&#46;fr/crbst_pa_0_p_22dshk39np8ay/w<!-- sucuri -->qqry&<!-- sucuri -->#46;&#4<!--sucuri-->6;&#46;</a></span></td></tr>
-<tr><td>1</td><td><a href="/?type=javascript">javascript</a></td><td><span><a href="/?details=ledomaine-miltat.fr">&lt;script type=&quot;text/javascript&quot; src=&quot;http://ledomaine-miltat&#46;fr/crbst_pa_0_p_22dshk39np8ay/w<!-- sucuri -->qqry&<!-- sucuri -->#46;&#4<!--sucuri-->6;&#46;</a></span></td></tr>
 </tbody><tfoot><tr><td></td><td></td><td><i>Limited view (40 rows)... Only the top entries being displayed.</i></td></tr></tfoot></table>
 </p>
 
