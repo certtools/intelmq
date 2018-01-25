@@ -54,6 +54,7 @@ Support for Python 3.3 has been dropped, it reached its end of life.
 - renamed `bots.parsers.cymru_full_bogons.parser` to `bots.parsers.cymru.parser_full_bogons`, compatibility shim will be removed in version 2.0
 - added `bots.parsers.cymru.parser_cap_program`
 - added `intemq.bots.parsers.zoneh.parser` for ZoneH feeds
+- added `intemq.bots.parsers.sucuri.parser`
 
 #### Experts
 - Added sieve expert for filtering and modifying events (#1083)
