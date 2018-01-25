@@ -142,6 +142,7 @@ class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
     def test_missing_raw(self):
         """ Test if correct Event has been produced. """
         self.input_message = EXAMPLE_EMPTY_REPORT
+        self.allowed_warning_count = 1
         self.run_bot()
         self.assertAnyLoglineEqual(message='Report without raw field received. Possible '
                                            'bug or misconfiguration in previous bots.',

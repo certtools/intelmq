@@ -37,6 +37,7 @@ CHANGELOG
 ### Tests
 - `tests/lib/test_pipeline`: Redis tests clear all queues before and after tests (#1086)
 = Repaired debian package build on travis (#1169)
+- Warnings are not allowed by default, an allowed count can be specified (#1129).
 
 ### Packaging
 * cron jobs: fix paths of executables
