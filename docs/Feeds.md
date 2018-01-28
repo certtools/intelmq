@@ -31,6 +31,7 @@ The available feeds are grouped by the provider of the feeds. For each feed the 
 - [PhishTank](#phishtank)
 - [ShadowServer](#shadowserver)
 - [Spamhaus](#spamhaus)
+- [Sucuri](#sucuri)
 - [Taichung](#taichung)
 - [Team Cymru](#team-cymru)
 - [Turris](#turris)
@@ -1262,6 +1263,28 @@ The available feeds are grouped by the provider of the feeds. For each feed the 
 ### Parser
 
 * **Module:** intelmq.bots.parsers.spamhaus.parser_drop
+* **Configuration Parameters:**
+
+
+# Sucuri
+
+## Hidden Iframes
+
+* **Status:** on
+* **Revision:** 28-01-2018
+* **Description:** Latest hidden iframes identified on compromised web sites.
+* **Additional Information:** Please note that the parser only extracts the hidden iframes  and the conditional redirects, not the encoded javascript.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.http.collector_http
+* **Configuration Parameters:**
+*  * `http_url`: `http://labs.sucuri.net/?malware`
+*  * `rate_limit`: `86400`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.sucuri.parser
 * **Configuration Parameters:**
 
 
