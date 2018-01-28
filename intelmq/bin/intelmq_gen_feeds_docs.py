@@ -97,6 +97,9 @@ if __name__ == "__main__":
 
             print_info("description", feed_info['description'])
 
+            if feed_info['additional_information'] is not None:
+                print_info("additional information", feed_info['additional_information'])
+
             print()
 
             for bot, bot_info in sorted(feed_info['bots'].items(), key=lambda x: x[0]):
