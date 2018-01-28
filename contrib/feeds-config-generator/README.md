@@ -17,9 +17,13 @@ optional arguments:
   --all                 iterate through all feeds
 
 ```
-
+### Generate a bot configuration
 ```
 ./intelmq_gen_feeds_conf --feeds-file=../../intelmq/etc/feeds.yaml 
+```
 
+### Generate all bots configurations
+
+```
 ./intelmq_gen_feeds_conf --feeds-file=../../intelmq/etc/feeds.yaml --all
 ```
