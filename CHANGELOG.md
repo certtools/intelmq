@@ -10,6 +10,9 @@ Support for Python 3.3 has been dropped, it reached its end of life.
 - `intelmqctl check` checks for defaults.conf completeness
 - `intelmqctl list bots -q` only prints the IDs of enabled bots
 
+### Contrib
+- contrib tool `feeds-config-generator` to automatically generate the collector and parser runtime and pipeline configurations.
+
 ### Core
 - use SIGTERM instead of SIGINT to stop bots (#981)
 - Subitems in fields of type `JSONDict` (see below) can be accessed directly. E.g. you can do:
