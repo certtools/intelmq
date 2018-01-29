@@ -1287,38 +1287,6 @@ The available feeds are grouped by the provider of the feeds. For each feed the 
 * **Module:** intelmq.bots.parsers.sucuri.parser
 * **Configuration Parameters:**
 
-# Sucuri
-
-## Sucuri Malware
-
-**Status:** Active
-
-### Collector Bot
-
-**Bot Name:** Generic URL Fetcher
-
-**Bot Module:** intelmq.bots.collectors.http.collector_http
-
-**Configuration Parameters:**
-```
-id: sucuri-collector
-feed: Sucuri Hidden Iframes
-http_url: http://labs.sucuri.net/?malware
-rate_limit: 86400
-```
-
-### Parser Bot
-
-**Bot Name:** Sucuri Security Parser
-
-**Bot Module:** intelmq.bots.parsers.sucuri.parser
-
-**Configuration Parameters:**
-```
-id: sucuri-parser
-```
-
-Please note that the parser only extracts the hidden iframes  and the conditional redirects, not the encoded javascript.
 
 # Taichung
 
@@ -1354,8 +1322,11 @@ Please note that the parser only extracts the hidden iframes  and the conditiona
 
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
-*  * `http_url`: `FIXME`
-*  * `rate_limit`: `FIXME`
+*  * `http_password`: `{{your password}}`
+*  * `http_url`: `https://www.cymru.com/{{your organization name}}/infected_{time[%Y%m%d]}.txt`
+*  * `http_url_formatting`: `True`
+*  * `http_username`: `{{your login}}`
+*  * `rate_limit`: `86400`
 
 ### Parser
 

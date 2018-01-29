@@ -40,7 +40,7 @@ before_script:
   - if [[ $mode == debian ]]; then tar -xzf ../intelmq_$version.orig.tar.gz; fi
   - if [[ $mode == debian ]]; then tar -xzf ../intelmq_$debversion.debian.tar.gz; fi
   - if [[ $mode == debian ]]; then popd; fi
-  - if [[ -v requirements ]]; then sudo cp intelmq/tests/assets/* /var/www/; fi
+  - if [[ -v requirements ]]; then sudo cp intelmq/tests/assets/* /var/www/ && sudo touch /var/www/$(date +%Y).txt; fi
 script:
   - if [[ $requirements == true ]]; then INTELMQ_TEST_DATABASES=1 INTELMQ_TEST_LOCAL_WEB=1 INTELMQ_TEST_EXOTIC=1 nosetests --with-coverage --cover-package=intelmq --cover-branches; elif [[ $requirements == false ]]; then INTELMQ_TEST_LOCAL_WEB=1 nosetests --with-coverage --cover-package=intelmq --cover-branches; fi
   - if [[ $mode == codestyle ]]; then pycodestyle intelmq/{bots,lib,bin}; fi

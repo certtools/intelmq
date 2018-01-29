@@ -393,8 +393,11 @@ providers:
         collector:
           module: intelmq.bots.collectors.http.collector_http
           parameters:
-            http_url: FIXME
-            rate_limit: FIXME
+            http_password: "{{your password}}"
+            http_url_formatting: true
+            http_url: https://www.cymru.com/{{your organization name}}/infected_{time[%Y%m%d]}.txt
+            http_username: "{{your login}}"
+            rate_limit: 86400
         parser:
           module: intelmq.bots.parsers.cymru.parser_cap_program
           parameters:
