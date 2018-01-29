@@ -8,6 +8,7 @@
 from __future__ import unicode_literals
 
 import argparse
+import ast
 import csv
 import datetime
 import json
@@ -37,11 +38,46 @@ except ImportError:
 Mail = namedtuple('Mail', ["key", "to", "path", "count"])
 
 
+# XXX CO zbyva:
+# output_gather smazan -> premigrovat sem (*.conf)
+# output_send prejmenovan na output.py (*.conf)
+# sjednotit dve moznosti prepsani abusecontactu a dat do readme.txt
+# at si to bot predava pres nejaky lepsi klic nez "mail: *" -> aby moho byt vic botu
+# moznost cli spusteni
+#
+#
+
 class MailSendOutputBot(Bot):
     TMP_DIR = "/tmp/intelmq-mails/"
 
     def process(self):
-        pass
+        message = self.receive_message()
+        mail_rewrite = ast.literal_eval(self.parameters.mail_rewrite)
+
+        self.logger.warning("ZPRAVA..")
+        self.logger.debug(message)
+
+        # message.add("source.abuse_contact",u"edvard.rejthar+test_abusemail@nic.cz") # XX nevim, zda nepouzit https://github.com/certtools/intelmq/blob/master/docs/Harmonization-fields.md treba destination.account, nebo source.account
+        self.logger.warning("ZPRAVA END..")
+        if "source.abuse_contact" in message:
+            field = message["source.abuse_contact"]
+            self.logger.warning("mail:" + field)
+            if field:
+                self.logger.warning("edvard field")
+                mails = field if type(field) == 'list' else [field]
+            for mail in mails:
+                self.logger.warning("edvard mails")
+
+                # rewrite destination address
+                if message["source.abuse_contact"] in mail_rewrite:
+                    message.update({"source.abuse_contact": str(mail_rewrite[message["source.abuse_contact"]])})
+                    mail = mail_rewrite[mail]
+
+                self.cache.redis.rpush("mail:" + mail, message)
+            self.logger.warning("done")
+
+        # self.send_message(message) nikam dal neposilame
+        self.acknowledge_message()  # dokoncil jsem praci (asi)
 
     def set_cache(self):
         self.cache = Cache(
