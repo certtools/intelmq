@@ -50,6 +50,7 @@ class TestHTTPCollectorBot(test.BotTestCase, unittest.TestCase):
     def test_formatting(self):
         """ Test if correct Events have been produced. """
         self.input_message = None
+        self.allowed_warning_count = 1  # message has empty raw
         self.sysconfig = {'http_url': 'http://localhost/{time[%Y]}.txt',
                           'extract_files': None,
                           'feed': 'Example feed',
