@@ -627,7 +627,7 @@ class ParserBot(Bot):
             report_dump.change('raw', self.recover_line(line))
             self._dump_message(exc, report_dump)
 
-        self.logger.info('Sent %d events and found %d error(s).' % (len(events_count), len(self.__failed)))
+        self.logger.info('Sent %d events and found %d error(s).' % (events_count, len(self.__failed)))
 
         self.acknowledge_message()
 
