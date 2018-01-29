@@ -7,6 +7,7 @@ import unittest
 
 
 import intelmq.lib.test as test
+from intelmq.lib.bot import Bot
 from intelmq.tests.lib import test_parser_bot
 
 
@@ -46,6 +47,30 @@ class TestBot(test.BotTestCase, unittest.TestCase):
         self.allowed_warning_count = 1
         self.run_bot()
         self.assertLogMatches(levelname='WARNING', pattern='.*intelmq/tests/lib/test_parser_bot\.py\:77\: UserWarning: This is a warning test.')
+
+
+class DummyExpertBot(Bot):
+
+    def process(self):
+        event = self.receive_message()
+        self.send_message(event, queue=event['feed.code'] if 'feed.code' in event else None)
+
+
+class TestDummyExpertBot(test.BotTestCase, unittest.TestCase):
+    """ Testing generic funtionalties of Bot base class. """
+
+    @classmethod
+    def set_bot(cls):
+        cls.bot_reference = test_parser_bot.DummyParserBot
+        cls.default_input_message = {'feed.name': 'Test'}
+        cls.allowed_error_count = 1
+
+    def test_bot_name(self):
+        pass
+
+    def test_pipeline_default(self):
+        self.input_message = {'feed.name': 'Test'}
+        self.run_bot()
 
 
 if __name__ == '__main__':  # pragma: no cover

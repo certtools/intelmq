@@ -330,7 +330,7 @@ class Bot(object):
             self.__destination_pipeline = None
             self.logger.debug("Disconnected from destination pipeline.")
 
-    def send_message(self, *messages):
+    def send_message(self, *messages, queue="_default"):
         for message in messages:
             if not message:
                 self.logger.warning("Ignoring empty message at sending. Possible bug in bot.")
@@ -473,6 +473,7 @@ class Bot(object):
 
                 self.__destination_queues = config[
                     self.__bot_id]['destination-queues']
+                # Convert old to new format here
 
         else:
             raise exceptions.ConfigurationError('pipeline', "no key "
