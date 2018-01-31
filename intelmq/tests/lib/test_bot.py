@@ -56,33 +56,5 @@ class TestBot(test.BotTestCase, unittest.TestCase):
         self.assertEqual(self.bot.group, 'Parser')
 
 
-class DummyExpertBot(Bot):
-
-    def process(self):
-        event = self.receive_message()
-        self.send_message(event, queue=event['feed.code'] if 'feed.code' in event else None)
-
-
-class TestDummyExpertBot(test.BotTestCase, unittest.TestCase):
-    """ Testing generic functionalities of Bot base class. """
-
-    @classmethod
-    def set_bot(cls):
-        cls.bot_reference = test_parser_bot.DummyParserBot
-        cls.default_input_message = {'feed.name': 'Test'}
-        cls.allowed_error_count = 1
-
-    def test_bot_name(self):
-        self.run_bot()
-        self.assertEqual(self.bot.name, 'Test Bot')
-
-    def test_pipeline_default(self):
-        self.input_message = {'feed.name': 'Test'}
-        # XXX
-        self.run_bot()
-        self.get_output_queue() # XX
-        self.assertOutputQueueLen()
-
-
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()

@@ -25,7 +25,7 @@ class Pipeline(object):
 
     def __init__(self, parameters):
         self.parameters = parameters
-        self.destination_queues = {"_default": [None]} # type: dict of lists
+        self.destination_queues = {}  # type: dict of lists
         self.internal_queue = None
         self.source_queue = None
 
@@ -42,11 +42,11 @@ class Pipeline(object):
         """
         :param queues: For source queue, it's just string.
                     For destination queue, it can be one of the following: None or string or list of strings
-                        or {} (of either strings or lists) having the _default key
+                        or {} (of either strings or lists) (should have the '_default' key)
 
         :param queues_type: "source" or "destination"
 
-        The method assures self.destination_queues are in the form of dict of lists, having at leaste the _default key.
+        The method assures self.destination_queues are in the form of dict of lists. It doesn't assure there is a '_default' key.
         """
         if queues_type == "source":
             self.source_queue = queues
@@ -62,11 +62,14 @@ class Pipeline(object):
             elif type_ is str:
                 q = {"_default": queues.split()}
             elif type_ is dict:
-                if "_default" not in queues:
-                    raise KeyError("Missing _default key.")
+                # if "_default" not in queues: raise KeyError("Missing _default key.")
                 q = queues
+                for key, val in queues.items():
+                    q[key] = val if type(val) is list else val.split()
             else:
-                raise exceptions.InvalidArgument('queues', got=queues, expected=["None", "string", "list of strings", "{} (of either strings or lists) having the _default key"])
+                raise exceptions.InvalidArgument(
+                    'queues', got=queues,
+                    expected=["None", "string", "list of strings", "{} (of either strings or lists) having the _default key"])
             self.destination_queues = q
         else:
             raise exceptions.InvalidArgument('queues_type', got=queues_type, expected=['source', 'destination'])
@@ -118,13 +121,15 @@ class Redis(Pipeline):
 
     def send(self, message, queue="_default"):
         message = utils.encode(message)
+        try:
+            queues = self.destination_queues[queue]
+        except KeyError as exc:
+            raise exceptions.PipelineError(exc)
         if self.load_balance:
-            queues = [self.destination_queues[queue][self.load_balance_iterator]]
+            queues = [queues[self.load_balance_iterator]]
             self.load_balance_iterator += 1
             if self.load_balance_iterator == len(self.destination_queues[queue]):
                 self.load_balance_iterator = 0
-        else:
-            queues = self.destination_queues[queue]
 
         for destination_queue in queues:
             try:
@@ -208,9 +213,9 @@ class Pythonlist(Pipeline):
         for destination_queue in chain.from_iterable(self.destination_queues.values()):
             self.state[destination_queue] = []
 
-    def send(self, message):
+    def send(self, message, queue="_default"):
         """Sends a message to the destination queues"""
-        for destination_queue in chain.from_iterable(self.destination_queues.values()):
+        for destination_queue in self.destination_queues[queue]:
             if destination_queue in self.state:
                 self.state[destination_queue].append(utils.encode(message))
             else:
