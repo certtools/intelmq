@@ -249,6 +249,13 @@ class TestHarmonization(unittest.TestCase):
         self.assertTrue(harmonization.FQDN.is_valid('.example.com',
                                                     sanitize=True))
 
+    def test_fqdn_sanitize_unicodeerror(self):
+        """
+        Check if FQDN.sanitize does not raise a UnicodeError.
+        """
+        data = "{subid_3}&aff_sub4={subid_4}&aff_sub5={subid_5}&DOM=trackingmyli"
+        self.assertIsNone(harmonization.FQDN.sanitize(data))
+
     def test_fqdn_sanitize_invalid(self):
         """Test FQDN.sanitize with invalid arguments. """
         self.assertFalse(harmonization.FQDN.is_valid('.', sanitize=False))
