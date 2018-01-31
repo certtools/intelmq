@@ -355,7 +355,7 @@ class Bot(object):
                 self.__message_counter_start = datetime.datetime.now()
 
             raw_message = libmessage.MessageFactory.serialize(message)
-            self.__destination_pipeline.send(raw_message)
+            self.__destination_pipeline.send(raw_message, queue=queue)
 
     def receive_message(self):
         self.logger.debug('Waiting for incoming message.')

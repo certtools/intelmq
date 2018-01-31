@@ -12,7 +12,7 @@ from intelmq.tests.lib import test_parser_bot
 
 
 class TestBot(test.BotTestCase, unittest.TestCase):
-    """ Testing generic funtionalties of Bot base class. """
+    """ Testing generic functionalities of Bot base class. """
 
     @classmethod
     def set_bot(cls):
@@ -64,7 +64,7 @@ class DummyExpertBot(Bot):
 
 
 class TestDummyExpertBot(test.BotTestCase, unittest.TestCase):
-    """ Testing generic funtionalties of Bot base class. """
+    """ Testing generic functionalities of Bot base class. """
 
     @classmethod
     def set_bot(cls):
@@ -73,11 +73,15 @@ class TestDummyExpertBot(test.BotTestCase, unittest.TestCase):
         cls.allowed_error_count = 1
 
     def test_bot_name(self):
-        pass
+        self.run_bot()
+        self.assertEqual(self.bot.name, 'Test Bot')
 
     def test_pipeline_default(self):
         self.input_message = {'feed.name': 'Test'}
+        # XXX
         self.run_bot()
+        self.get_output_queue() # XX
+        self.assertOutputQueueLen()
 
 
 if __name__ == '__main__':  # pragma: no cover
