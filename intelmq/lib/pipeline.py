@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import time
+import warnings
 
 import redis
 
@@ -42,6 +43,7 @@ class Pipeline(object):
         raise NotImplementedError
 
     def sleep(self, interval):
+        warnings.warn("'Pipeline.sleep' will be removed in version 2.0.", DeprecationWarning)
         time.sleep(interval)
 
     def set_queues(self, queues, queues_type):
@@ -200,7 +202,7 @@ class Pythonlist(Pipeline):
         pass
 
     def sleep(self, interval):
-        pass
+        warnings.warn("'Pipeline.sleep' will be removed in version 2.0.", DeprecationWarning)
 
     def set_queues(self, queues, queues_type):
         super(Pythonlist, self).set_queues(queues, queues_type)
