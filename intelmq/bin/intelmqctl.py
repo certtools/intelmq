@@ -998,20 +998,25 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         except Exception as exc:
             if RETURN_TYPE == 'json':
                 output.append(['error',
-                               'Could not connect to redis pipeline: %r.'
+                               'Could not connect to pipeline: %r.'
                                '' % utils.error_message_from_exc(exc)])
             else:
-                self.logger.exception('Could not connect to redis pipeline.')
+                self.logger.exception('Could not connect to pipeline.')
             retval = 1
         else:
-            # TODO: Only applies to redis :/
-            raise NotImplementedError
-            orphan_queues = "', '".join({a.decode() for a in pipeline.pipe.keys()} - all_queues)
-            if orphan_queues:
+            nonempty_queues = pipeline.nonempty_queues()
+            if nonempty_queues is False:
                 if RETURN_TYPE == 'json':
-                    output.append(['warning', "Orphaned queues found: '%s'." % orphan_queues])
+                    output.append(['info', "Check for orphaned queues not possible with this broker."])
                 else:
-                    self.logger.warning("Orphaned queues found: '%s'.", orphan_queues)
+                    self.logger.info("Check for orphaned queues not possible with this broker.")
+            else:
+                orphan_queues = "', '".join({a.decode() for a in nonempty_queues} - all_queues)
+                if orphan_queues:
+                    if RETURN_TYPE == 'json':
+                        output.append(['warning', "Orphaned queues found: '%s'." % orphan_queues])
+                    else:
+                        self.logger.warning("Orphaned queues found: '%s'.", orphan_queues)
 
         if RETURN_TYPE == 'json':
             output.append(['info', 'Checking harmonization configuration.'])

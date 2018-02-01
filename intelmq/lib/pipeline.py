@@ -3,6 +3,7 @@ import time
 import warnings
 
 import redis
+from typing import Union
 
 import intelmq.lib.exceptions as exceptions
 import intelmq.lib.pipeline
@@ -62,6 +63,9 @@ class Pipeline(object):
             raise exceptions.InvalidArgument('queues_type', got=queues_type,
                                              expected=['source',
                                                        'destination'])
+
+    def nonempty_queues(self) -> Union[list, bool]:
+        return False
 
 
 class Redis(Pipeline):
@@ -175,6 +179,10 @@ class Redis(Pipeline):
             return self.pipe.delete(queue)
         except Exception as exc:
             raise exceptions.PipelineError(exc)
+
+    def nonempty_queues(self) -> list:
+        """ Returns a list of all currently non-empty queues. """
+        return self.pipe.keys()
 
 # Algorithm
 # ---------
