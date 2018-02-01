@@ -271,7 +271,6 @@ class Amqp(Pipeline):
         if pika is None:
             raise exceptions.ConfigurationError("To use AMQP you must install the 'pika' library.")
         self.properties = pika.BasicProperties(delivery_mode=2)  # message persistence
-        # TODO: https://www.rabbitmq.com/confirms.html
 
     def load_configurations(self, queues_type):
         self.host = getattr(self.parameters,
@@ -279,8 +278,6 @@ class Amqp(Pipeline):
                             "127.0.0.1")
         self.port = getattr(self.parameters,
                             "{}_pipeline_port".format(queues_type), 5672)
-        self.exchange = getattr(self.parameters,
-                                "{}_pipeline_exchange".format(queues_type), '')
         self.password = getattr(self.parameters,
                                 "{}_pipeline_password".format(queues_type),
                                 None)
@@ -293,49 +290,68 @@ class Amqp(Pipeline):
         self.load_balance_iterator = 0
 
     def connect(self):
-        print('connect', self.host, self.port, self.socket_timeout)
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(host=self.host,
                                                                             port=int(self.port),
                                                                             socket_timeout=self.socket_timeout,
                                                                             ))
-        print('channel')
         self.channel = self.connection.channel()
+        if self.source_queue:
+            self.channel.queue_declare(queue=self.source_queue, durable=True)
+        for destination_queue in self.destination_queues:
+            self.channel.queue_declare(queue=destination_queue, durable=True)
 
     def disconnect(self):
-        pass
+        try:
+            self.channel.close()
+        except Exception:
+            pass
+        try:
+            self.connection.close()
+        except Exception:
+            pass
 
     def set_queues(self, queues: dict, queues_type: str):
         self.load_configurations(queues_type)
         super(Amqp, self).set_queues(queues, queues_type)
 
+    def _send(self, destination_queue, message):
+        retval = False
+        try:
+            retval = self.channel.basic_publish(exchange='',
+                                                routing_key=destination_queue,
+                                                body=message,
+                                                properties=self.properties,
+                                                mandatory=True,
+                                                )
+        except Exception as exc:
+            raise exceptions.PipelineError(exc)
+        else:
+            if not retval:
+                raise exceptions.PipelineError('Sent message was not confirmed.')
+
     def send(self, message: str):
+        """
+        In principle we could use AMQP's exchanges here but that architecture is incompatible
+        to the format of our pipeline.conf file.
+        """
         message = utils.encode(message)
         if self.load_balance:
-            raise NotImplementedError
+            destination_queue = self.destination_queues[self.load_balance_iterator]
+            self._send(destination_queue, message)
+
+            self.load_balance_iterator = (1 + self.load_balance_iterator) % len(self.destination_queues)
         else:
             for destination_queue in self.destination_queues:
-                try:
-                    self.channel.queue_declare(queue=destination_queue)
-                    self.channel.basic_publish(exchange=self.exchange,
-                                               routing_key=destination_queue,
-                                               body=message,
-                                               properties=self.properties,
-                                               mandatory=True,
-                                               )
-                except Exception as exc:
-                    raise exceptions.PipelineError(exc)
+                self._send(destination_queue, message)
 
     def receive(self) -> str:
         if self.source_queue is None:
             raise exceptions.ConfigurationError('pipeline', 'No source queue given.')
         try:
-            self.channel.basic_qos(prefetch_count=1)
-            print('pre-consume')
-            method, header, body = self.channel.consume(queue=self.source_queue)
-            print('post-consume')
+            method, header, body = next(self.channel.consume(self.source_queue))
             if method:
                 self.delivery_tag = method.delivery_tag
-            return utils.decode(body)
+                return utils.decode(body)
         except Exception as exc:
             raise exceptions.PipelineError(exc)
 
