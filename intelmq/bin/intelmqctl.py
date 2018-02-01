@@ -1002,6 +1002,8 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 self.logger.exception('Could not connect to redis pipeline.')
             retval = 1
         else:
+            # TODO: Only applies to redis :/
+            raise NotImplementedError
             orphan_queues = "', '".join({a.decode() for a in pipeline.pipe.keys()} - all_queues)
             if orphan_queues:
                 if RETURN_TYPE == 'json':

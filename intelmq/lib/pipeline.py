@@ -7,7 +7,12 @@ import intelmq.lib.exceptions as exceptions
 import intelmq.lib.pipeline
 import intelmq.lib.utils as utils
 
-__all__ = ['Pipeline', 'PipelineFactory', 'Redis', 'Pythonlist']
+__all__ = ['Pipeline', 'PipelineFactory', 'Redis', 'Pythonlist', 'Amqp']
+
+try:
+    import pika
+except ImportError:
+    pika = None
 
 
 class PipelineFactory(object):
@@ -246,3 +251,96 @@ class Pythonlist(Pipeline):
     def clear_queue(self, queue):
         """ Empties given queue. """
         self.state[queue] = []
+
+
+class Amqp(Pipeline):
+    def __init__(self, parameters):
+        super(Amqp, self).__init__(parameters)
+        if pika is None:
+            raise exceptions.ConfigurationError("To use AMQP you must install the 'pika' library.")
+        self.properties = pika.BasicProperties(delivery_mode=2)  # message persistence
+        # TODO: https://www.rabbitmq.com/confirms.html
+
+    def load_configurations(self, queues_type):
+        self.host = getattr(self.parameters,
+                            "{}_pipeline_host".format(queues_type),
+                            "127.0.0.1")
+        self.port = getattr(self.parameters,
+                            "{}_pipeline_port".format(queues_type), 5672)
+        self.exchange = getattr(self.parameters,
+                                "{}_pipeline_exchange".format(queues_type), '')
+        self.password = getattr(self.parameters,
+                                "{}_pipeline_password".format(queues_type),
+                                None)
+        #  socket_timeout is None by default, which means no timeout
+        self.socket_timeout = getattr(self.parameters,
+                                      "{}_pipeline_socket_timeout".format(
+                                          queues_type),
+                                      None)
+        self.load_balance = getattr(self.parameters, "load_balance", False)
+        self.load_balance_iterator = 0
+
+    def connect(self):
+        print('connect', self.host, self.port, self.socket_timeout)
+        self.connection = pika.BlockingConnection(pika.ConnectionParameters(host=self.host,
+                                                                            port=int(self.port),
+                                                                            socket_timeout=self.socket_timeout,
+                                                                            ))
+        print('channel')
+        self.channel = self.connection.channel()
+
+    def disconnect(self):
+        pass
+
+    def set_queues(self, queues: dict, queues_type: str):
+        self.load_configurations(queues_type)
+        super(Amqp, self).set_queues(queues, queues_type)
+
+    def send(self, message: str):
+        message = utils.encode(message)
+        if self.load_balance:
+            raise NotImplementedError
+        else:
+            for destination_queue in self.destination_queues:
+                try:
+                    self.channel.queue_declare(queue=destination_queue)
+                    self.channel.basic_publish(exchange=self.exchange,
+                                               routing_key=destination_queue,
+                                               body=message,
+                                               properties=self.properties,
+                                               mandatory=True,
+                                               )
+                except Exception as exc:
+                    raise exceptions.PipelineError(exc)
+
+    def receive(self) -> str:
+        if self.source_queue is None:
+            raise exceptions.ConfigurationError('pipeline', 'No source queue given.')
+        try:
+            self.channel.basic_qos(prefetch_count=1)
+            print('pre-consume')
+            method, header, body = self.channel.consume(queue=self.source_queue)
+            print('post-consume')
+            if method:
+                self.delivery_tag = method.delivery_tag
+            return utils.decode(body)
+        except Exception as exc:
+            raise exceptions.PipelineError(exc)
+
+    def acknowledge(self):
+        try:
+            self.channel.basic_ack(delivery_tag=self.delivery_tag)
+        except Exception as e:
+            raise exceptions.PipelineError(e)
+
+    def count_queued_messages(self, *queues) -> dict:
+        queue_dict = dict()
+        for queue in queues:
+            try:
+                queue_dict[queue] = self.channel.queue_declare(queue=queue).method.message_count
+            except Exception as exc:
+                raise exceptions.PipelineError(exc)
+        return queue_dict
+
+    def clear_queue(self, queue: str) -> bool:
+        raise NotImplementedError
