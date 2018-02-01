@@ -27,6 +27,7 @@ class PipelineFactory(object):
 
 
 class Pipeline(object):
+    has_internal_queues = False
 
     def __init__(self, parameters):
         self.parameters = parameters
@@ -62,6 +63,7 @@ class Pipeline(object):
 
 
 class Redis(Pipeline):
+    has_internal_queues = True
 
     def load_configurations(self, queues_type):
         self.host = getattr(self.parameters,
