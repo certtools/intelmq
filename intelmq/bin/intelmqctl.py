@@ -897,10 +897,10 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 retval = 1
         if retval:
             if RETURN_TYPE == 'json':
-                return {'status': 'error', 'lines': output}
+                return 1, {'status': 'error', 'lines': output}
             else:
                 self.logger.error('Fatal errors occurred.')
-            return retval
+                return 1, retval
 
         if RETURN_TYPE == 'json':
             output.append(['info', 'Checking defaults configuration.'])
@@ -1084,15 +1084,16 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
         if RETURN_TYPE == 'json':
             if retval:
-                return {'status': 'error', 'lines': output}
+                return 0, {'status': 'error', 'lines': output}
             else:
-                return {'status': 'success', 'lines': output}
+                return 1, {'status': 'success', 'lines': output}
         else:
             if retval:
                 self.logger.error('Some issues have been found, please check the above output.')
+                return retval, 'error'
             else:
                 self.logger.info('No issues found.')
-            return retval
+                return retval, 'success'
 
 
 def main():  # pragma: no cover
