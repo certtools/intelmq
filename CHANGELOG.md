@@ -8,6 +8,7 @@ Support for Python 3.3 has been dropped, it reached its end of life.
 ### Tools
 - `intelmqctl start` prints bot's error messages if it failed to start
 - `intelmqctl check` checks for defaults.conf completeness
+- `intelmqctl check` shows errors for non-importable bots.
 - `intelmqctl list bots -q` only prints the IDs of enabled bots
 
 ### Contrib

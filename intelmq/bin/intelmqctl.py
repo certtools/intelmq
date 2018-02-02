@@ -1053,11 +1053,11 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             # importable module
             try:
                 bot_module = importlib.import_module(bot_config['module'])
-            except ImportError:
+            except ImportError as exc:
                 if RETURN_TYPE == 'json':
-                    output.append(['error', 'Incomplete installation: Module %r not importable.' % bot_id])
+                    output.append(['error', 'Incomplete installation: Bot %r not importable: %r.' % (bot_id, exc)])
                 else:
-                    self.logger.error('Incomplete installation: Module %r not importable.', bot_id)
+                    self.logger.error('Incomplete installation: Bot %r not importable: %r.', bot_id, exc)
                 retval = 1
                 continue
             bot = getattr(bot_module, 'BOT')
