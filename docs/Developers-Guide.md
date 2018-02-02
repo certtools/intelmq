@@ -7,6 +7,8 @@
   * [How to develop](#how-to-develop)
   * [Update](#update)
   * [Testing](#testing)
+    * [Environment variables](#environment-variables)
+    * [Configuration test files](#configuration-test-files)
 * [Development Guidelines](#development-guidelines)
   * [Coding-Rules](#coding-rules)
     * [Unicode](#unicode)
@@ -133,11 +135,11 @@ In case you developed a new bot, you need to update your current development ins
 3. Execute the following commands:
 
 ```bash
-sudo -#!/bin/sh
+sudo -s
 
-cd /intelmq
-pip3 install --upgrade -e .
-cp /intelmq/intelmq/bots/BOTS /opt/intelmq/etc/BOTS
+cd /opt/dev_intelmq
+pip3 install -e .
+cp /opt/dev_intelmq/intelmq/bots/BOTS /opt/intelmq/etc/BOTS
 
 chmod -R 0770 /opt/intelmq
 chown -R intelmq.intelmq /opt/intelmq
@@ -180,7 +182,7 @@ For example, to run all tests you can use:
 INTELMQ_TEST_DATABASES=1 INTELMQ_TEST_LOCAL_WEB=1 INTELMQ_TEST_EXOTIC=1 nosetests
 ```
 
-### Configuration Test files
+### Configuration test files
 
 The tests use the configuration files in your working directory, not those installed in `/opt/intelmq/etc/` or `/etc/`.  You can run the tests for a locally changed intelmq without affecting an installation or
 requiring root to run them.
