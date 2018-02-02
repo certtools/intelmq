@@ -761,7 +761,8 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         pipeline = PipelineFactory.create(self.parameters)
         pipeline.set_queues(None, "source")
         pipeline.connect()
-        source_queues, destination_queues, internal_queues, all_queues = self.get_queues(with_internal_queues=pipeline.has_internal_queues)
+        source_queues, destination_queues, internal_queues,\
+            all_queues = self.get_queues(with_internal_queues=pipeline.has_internal_queues)
 
         counters = pipeline.count_queued_messages(*all_queues)
         log_list_queues(counters)
@@ -991,27 +992,17 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                         retval = 1
                     else:
                         all_queues.add(files[PIPELINE_CONF_FILE][bot_id]['source-queue'])
-        try:
-            pipeline = PipelineFactory.create(self.parameters)
-            pipeline.set_queues(None, "source")
-            pipeline.connect()
-        except Exception as exc:
-            if RETURN_TYPE == 'json':
-                output.append(['error',
-                               'Could not connect to pipeline: %r.'
-                               '' % utils.error_message_from_exc(exc)])
-            else:
-                self.logger.exception('Could not connect to pipeline.')
-            retval = 1
         else:
-            nonempty_queues = pipeline.nonempty_queues()
-            if nonempty_queues is False:
+            try:
+                pipeline = PipelineFactory.create(self.parameters)
+                nonempty_queues = pipeline.nonempty_queues()
+            except Exception:
                 if RETURN_TYPE == 'json':
-                    output.append(['info', "Check for orphaned queues not possible with this broker."])
+                    output.append(['warning', "Check for orphaned queues failed: %s.", exc])
                 else:
-                    self.logger.info("Check for orphaned queues not possible with this broker.")
+                    self.logger.warning("Check for orphaned queues failed %s.", exc)
             else:
-                orphan_queues = "', '".join({a.decode() for a in nonempty_queues} - all_queues)
+                orphan_queues = "', '".join(nonempty_queues - all_queues)
                 if orphan_queues:
                     if RETURN_TYPE == 'json':
                         output.append(['warning', "Orphaned queues found: '%s'." % orphan_queues])

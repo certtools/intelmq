@@ -13,6 +13,10 @@ __all__ = ['Pipeline', 'PipelineFactory', 'Redis', 'Pythonlist', 'Amqp']
 
 try:
     import pika
+    try:
+        import requests
+    except ImportError:
+        requests = None
 except ImportError:
     pika = None
 
@@ -64,12 +68,13 @@ class Pipeline(object):
                                              expected=['source',
                                                        'destination'])
 
-    def nonempty_queues(self) -> Union[list, bool]:
-        return False
+    def nonempty_queues(self) -> set:
+        raise NotImplementedError
 
 
 class Redis(Pipeline):
     has_internal_queues = True
+    pipe = None
 
     def load_configurations(self, queues_type):
         self.host = getattr(self.parameters,
@@ -180,9 +185,12 @@ class Redis(Pipeline):
         except Exception as exc:
             raise exceptions.PipelineError(exc)
 
-    def nonempty_queues(self) -> list:
+    def nonempty_queues(self) -> set:
         """ Returns a list of all currently non-empty queues. """
-        return self.pipe.keys()
+        if not self.pipe:
+            self.set_queues(None, "source")
+            self.connect()
+        return {queue.decode() for queue in self.pipe.keys()}
 
 # Algorithm
 # ---------
@@ -252,9 +260,10 @@ class Pythonlist(Pipeline):
     def count_queued_messages(self, *queues):
         """Returns the amount of queued messages
            over all given queue names.
-           But only without a real message broker behind.
-           As this is only for tests"""
-
+        """
+        if not self.state:
+            self.set_queues(None, "source")
+            self.connect()
         qdict = dict()
         for queue in queues:
             qdict[queue] = len(self.state.get(queue, []))
@@ -289,7 +298,7 @@ class Amqp(Pipeline):
         self.load_balance = getattr(self.parameters, "load_balance", False)
         self.load_balance_iterator = 0
 
-    def connect(self):
+    def connect(self, channelonly=False):
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(host=self.host,
                                                                             port=int(self.port),
                                                                             socket_timeout=self.socket_timeout,
@@ -364,11 +373,30 @@ class Amqp(Pipeline):
     def count_queued_messages(self, *queues) -> dict:
         queue_dict = dict()
         for queue in queues:
+            print(queue)
             try:
-                queue_dict[queue] = self.channel.queue_declare(queue=queue).method.message_count
+                queue_dict[queue] = self.channel.queue_declare(queue=queue, passive=True).method.message_count
+            except pika.exceptions.ChannelClosed as exc:
+                if not exc.args:
+                    queue_dict[queue] = 0
+                    self.channel = self.connection.channel()
+                elif exc.args[0] == 404:
+                    queue_dict[queue] = 0
+                elif exc.args:
+                    raise exceptions.PipelineError(exc)
             except Exception as exc:
                 raise exceptions.PipelineError(exc)
         return queue_dict
 
     def clear_queue(self, queue: str) -> bool:
         raise NotImplementedError
+
+    def nonempty_queues(self) -> set:
+        if requests is False:
+            return False
+        try:
+            result = requests.get('http://localhost:15672/api/queues', auth=('guest', 'guest'))
+            if result:
+                return {x['name'] for x in result.json() if x['messages']}
+        except Exception:
+            return False
