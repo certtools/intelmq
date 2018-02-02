@@ -1,3 +1,59 @@
-"line","id","first","firsttime","last","lasttime","phishtank","virusname","url","recent","response","ip","review","domain","country","source","email","inetnum","netname","ddescr","ns1","ns2","ns3","ns4","ns5"
-"1","9377142","1478860305","2016-11-29 10:31:45","0","1970-01-01 00:00:00","4647345","DHL","http://example.com/dehl%20package/confirm/","down","alive","198.18.0.1","198.18.0.1","198.18.0.1","US","ARIN","abuse@example.com","198.18.0.0 - 198.19.255.255","EXAMPLE-NETWORK-15","Example Layer","ns2.example.com","ns1.example.com","","",""
-"7","9377136","1478859458","2016-11-29 10:17:38","0","1970-01-01 00:00:00","4647412","Free","http://example.net/Fr/5b8ca3caf89f5cd624c2b692b9971ccc/","up","alive","198.18.0.7","198.18.0.7","example.net","PL","RIPE","abuse@example.net","198.18.0.0 - 198.19.255.255","EXAMPLE","","ns-de.example.com","ns-de.example.net","ns-de.example.com","ns-de.example.org",""
+<?xml version="1.0" encoding="UTF-8"?>
+<output>
+	<response>
+		<error>0</error>
+		<remarks>force_fetch= delta=</remarks>
+	</response>
+<entries>
+<entry>
+	<line>1</line>
+	<id>11095095</id>
+	<first>1502031590</first>
+	<last>0</last>
+	<phishtank>5140280</phishtank>
+	<target><![CDATA[]]></target>
+	<url><![CDATA[http://www.autoposting.com.br/i/]]></url>
+	<recent>up</recent>
+	<response>alive</response>
+	<ip>104.28.15.106</ip>
+	<review>104.28.14.106</review>
+	<domain>autoposting.com.br</domain>
+	<country>US</country>
+	<source>ARIN</source>
+	<email>abuse@cloudflare.com</email>
+	<inetnum>104.16.0.0 - 104.31.255.255</inetnum>
+	<netname>CLOUDFLARENET</netname>
+	<descr><![CDATA[Cloudflare, Inc. CLOUD14 101 Townsend Street San Francisco CA 94107]]></descr>
+	<ns1>gail.ns.cloudflare.com</ns1>
+	<ns2>max.ns.cloudflare.com</ns2>
+	<ns3></ns3>
+	<ns4></ns4>
+	<ns5></ns5>
+</entry>
+<entry>
+	<line>2</line>
+	<id>11095094</id>
+	<first>1503507883</first>
+	<last>0</last>
+	<phishtank>5176961</phishtank>
+	<target><![CDATA[Adobe]]></target>
+	<url><![CDATA[http://mvptrades.xyz/ad0be/view/?email=abuse@exxonmobil.com]]></url>
+	<recent>up</recent>
+	<response>alive</response>
+	<ip>198.38.90.108</ip>
+	<review>198.38.90.108</review>
+	<domain>mvptrades.xyz</domain>
+	<country>US</country>
+	<source>ARIN</source>
+	<email>abuse@mochahost.com</email>
+	<inetnum>198.38.80.0 - 198.38.95.255</inetnum>
+	<netname>MOCAH-1</netname>
+	<descr><![CDATA[Mochahost.com ML-17 2880 Zanker Rd #203 San Jose CA 95134]]></descr>
+	<ns1>ns2.cally-hosting.club</ns1>
+	<ns2>ns1.cally-hosting.club</ns2>
+	<ns3></ns3>
+	<ns4></ns4>
+	<ns5></ns5>
+</entry>
+</entries>
+</output>

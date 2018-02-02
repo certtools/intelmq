@@ -360,7 +360,7 @@ class Accuracy(GenericType):
                 return float(value) * 100
 
             value = float(value)
-            if value >= 0 or value <= 100:
+            if value >= 0 and value <= 100:
                 return value
         except (ValueError, TypeError):
             return None
@@ -403,7 +403,10 @@ class FQDN(GenericType):
     def sanitize(value):
         value = value.strip('.')
         if value:
-            return value.encode('idna').decode().lower()
+            try:
+                return value.encode('idna').decode().lower()
+            except UnicodeError:
+                return
 
     @staticmethod
     def to_ip(value):

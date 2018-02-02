@@ -133,7 +133,6 @@ sudo -s
 pip3 install intelmq
 
 mv `python3 -c "import site; print(site.getsitepackages()[0] + '/opt/intelmq')"` /opt/
-
 useradd -d /opt/intelmq -U -s /bin/bash intelmq
 chmod -R 0770 /opt/intelmq
 chown -R intelmq.intelmq /opt/intelmq

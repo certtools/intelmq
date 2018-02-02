@@ -338,7 +338,7 @@ class IntelMQController():
         except pkg_resources.DistributionNotFound:  # pragma: no cover
             # can only happen in interactive mode
             self.logger.error('No valid IntelMQ installation found: DistributionNotFound')
-            exit(1)
+            sys.exit(1)
         DESCRIPTION = """
         description: intelmqctl is the tool to control intelmq system.
 
@@ -553,7 +553,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         results = None
         args = self.parser.parse_args()
         if 'func' not in args:
-            exit(self.parser.print_help())
+            sys.exit(self.parser.print_help())
         args_dict = vars(args).copy()
 
         global RETURN_TYPE, QUIET
@@ -708,7 +708,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
     def abort(self, message):
         if self.interactive:
-            exit(message)
+            sys.exit(message)
         else:
             raise ValueError(message)
 
@@ -827,6 +827,8 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 return 2, []
         elif self.parameters.logging_handler == 'syslog':
             bot_log_path = '/var/log/syslog'
+        else:
+            self.abort("Unknow logging handler %r" % self.parameters.logging_handler)
 
         if not os.access(bot_log_path, os.R_OK):
             self.logger.error('File %r is not readable.', bot_log_path)
@@ -895,10 +897,10 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 retval = 1
         if retval:
             if RETURN_TYPE == 'json':
-                return {'status': 'error', 'lines': output}
+                return 1, {'status': 'error', 'lines': output}
             else:
                 self.logger.error('Fatal errors occurred.')
-            return retval
+                return 1, retval
 
         if RETURN_TYPE == 'json':
             output.append(['info', 'Checking defaults configuration.'])
@@ -1051,11 +1053,11 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             # importable module
             try:
                 bot_module = importlib.import_module(bot_config['module'])
-            except ImportError:
+            except ImportError as exc:
                 if RETURN_TYPE == 'json':
-                    output.append(['error', 'Incomplete installation: Module %r not importable.' % bot_id])
+                    output.append(['error', 'Incomplete installation: Bot %r not importable: %r.' % (bot_id, exc)])
                 else:
-                    self.logger.error('Incomplete installation: Module %r not importable.', bot_id)
+                    self.logger.error('Incomplete installation: Bot %r not importable: %r.', bot_id, exc)
                 retval = 1
                 continue
             bot = getattr(bot_module, 'BOT')
@@ -1082,15 +1084,16 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
         if RETURN_TYPE == 'json':
             if retval:
-                return {'status': 'error', 'lines': output}
+                return 0, {'status': 'error', 'lines': output}
             else:
-                return {'status': 'success', 'lines': output}
+                return 1, {'status': 'success', 'lines': output}
         else:
             if retval:
                 self.logger.error('Some issues have been found, please check the above output.')
+                return retval, 'error'
             else:
                 self.logger.info('No issues found.')
-            return retval
+                return retval, 'success'
 
 
 def main():  # pragma: no cover
@@ -1099,4 +1102,4 @@ def main():  # pragma: no cover
 
 
 if __name__ == "__main__":  # pragma: no cover
-    exit(main())
+    sys.exit(main())

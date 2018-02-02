@@ -8,7 +8,11 @@ Support for Python 3.3 has been dropped, it reached its end of life.
 ### Tools
 - `intelmqctl start` prints bot's error messages if it failed to start
 - `intelmqctl check` checks for defaults.conf completeness
+- `intelmqctl check` shows errors for non-importable bots.
 - `intelmqctl list bots -q` only prints the IDs of enabled bots
+
+### Contrib
+- contrib tool `feeds-config-generator` to automatically generate the collector and parser runtime and pipeline configurations.
 
 ### Core
 - use SIGTERM instead of SIGINT to stop bots (#981)
@@ -27,6 +31,7 @@ Support for Python 3.3 has been dropped, it reached its end of life.
   This allows shorter code in the bots, as an 'overwrite' configuration parameter can be directly passed to the function.
 - Bots can specify a static method `check(parameters)` which can perform individual checks specific to the bot.
   These functions will be called by `intelmqctl check` if the bot is configured with the given parameters
+- Add `RewindableFileHandle` to utils making handling of CSV files more easy (optionally)
 
 ### Bots
 #### Collectors
@@ -39,6 +44,7 @@ Support for Python 3.3 has been dropped, it reached its end of life.
   - New parameter `search_requestor` to search for field Requestor.
   - Empty strings and `null` as value for search parameters are ignored.
   - Empty parameters `attachment_regex` and `url_regex` handled.
+- `bots.collectors.http.collector_http`: Ability to optionally use the current time in parameter `http_url`, added parameter `http_url_formatting`.
 
 #### Parsers
 - changed feednames in `bots.parsers.shadowserver`. Please refer to it's README for the exact changes.
@@ -50,6 +56,10 @@ Support for Python 3.3 has been dropped, it reached its end of life.
   - It is possible to filter the data before processing them using the new parameters `filter_type` and `filter_text`.
   - It is possible to specify multiple coulmns using `|` character in parameter `columns`.
   - The parameter `time_format` now supports `'epoch_millis'` for seconds since the Epoch, milliseconds are supported but not used.
+- renamed `bots.parsers.cymru_full_bogons.parser` to `bots.parsers.cymru.parser_full_bogons`, compatibility shim will be removed in version 2.0
+- added `bots.parsers.cymru.parser_cap_program`
+- added `intemq.bots.parsers.zoneh.parser` for ZoneH feeds
+- added `intemq.bots.parsers.sucuri.parser`
 
 #### Experts
 - Added sieve expert for filtering and modifying events (#1083)
@@ -71,6 +81,8 @@ Support for Python 3.3 has been dropped, it reached its end of life.
 ### Core
 - warnings of bots are catched by the logger (#1074)
 - Bots stop when redis gives the error "OOM command not allowed when used memory > 'maxmemory'.".
+- lib/bot: Fixed exitcodes 0 for graceful shutdowns.
+- lib/harmonization: Handle idna encoding error in FQDN sanitation (#1175).
 
 ### Harmonization
 - Rule for harmonization keys is enforced (#1104)
@@ -79,22 +91,28 @@ Support for Python 3.3 has been dropped, it reached its end of life.
 #### Collectors
 - bots.collectors.mail.collector_mail_attach: Support attachment file parsing for imbox versions newer than 0.9.5
 - bots.collectors.stomp.collectos: Heartbeat timeout is now logged with log level info instead of warning.
+- bots.outputs.smtp.output: Fix STARTTLS, threw an exception (#1152)
 
 #### Parsers
 - All CSV parsers ignore NULL-bytes now, because the csv-library cannot handle it (#967)
 - Modify Bot default ruleset: changed conficker rule to catch more spellings
 - Shadowserver Parser: Add Accessible Cisco Smart Install
 - CleanMX Phising Parser: Handle new columns `first` and `last` (#1131).
-- n6 parser: Fix classification mappings. See NEWS file for changes values.
+- CleanMX Phishing Parser: Replace CSV-based parser with XML-based parser fixing regular parser errors. This requires a change of the URL in the collector. (#1135)
+- n6 parser: Fix classification mappings. See NEWS file for changes values. (#738)
 
 ### Documentation
 - fix example configuration for modify expert
+- add release procedure documentation
 
 ### Tools
 - intelmqctl now exits with exit codes > 0 when errors happened or the operation was not successful. Also, the status operation exits with 1, if bots are stopped, but enabled. (#997)
 
 ### Tests
 - `tests/lib/test_pipeline`: Redis tests clear all queues before and after tests (#1086)
+= Repaired debian package build on travis (#1169)
+- Warnings are not allowed by default, an allowed count can be specified (#1129).
+- tests/bots/experts/cymru_whois: Skipped on travis because of ongoing problems.
 
 ### Packaging
 * cron jobs: fix paths of executables
@@ -129,6 +147,7 @@ Support for Python 3.3 has been dropped, it reached its end of life.
 ### Bots
 - bots/experts/ripencc_abuse_contact/expert.py: Use HTTPS URLs for rest.db.ripe.net
 - bots/outputs/file/output.py: properly close the file handle on shutdown
+- bots/parser/shadowserver: If conversion of a value via conversion function fails, only log the function name, not the representation string (#1157).
 
 ### Core
 - lib/bot: Bots will now log the used intelmq version at startup

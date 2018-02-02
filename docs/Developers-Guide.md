@@ -340,23 +340,28 @@ We assume here, that origin is your own fork. We first add the upstream reposito
 > git remote add upstream https://github.com/certtools/intelmq.git
 ```
 
-Syncing master:
+Syncing develop (or any other branch):
 
 ```bash
-> git checkout master
-> git pull upstream master
-> git push origin master
-
+> git checkout develop
+> git pull upstream develop
+> git push origin develop
 ```
-Create a separate feature-branch to work on, sync master with upstream. Create working branch from master:
+Create a separate feature-branch to work on, sync develop with upstream. Create working branch from develop:
 ```bash
-> git checkout master
-> git checkout -b bugfix
+> git checkout develop
+> git checkout -b new-feature
 # your work
 > git commit
 ```
+Or, for bugfixes create a separate bugfix-branch to work on, sync maintenance with upstream. Create working branch from maintenance:
+```bash
+> git checkout maintenance
+> git checkout -b new-feature
+# your work
+> git commit
 
-Getting upstream's changes:
+Getting upstream's changes for master or any other branch:
 ```bash
 > git checkout master
 > git pull upstream master
@@ -365,14 +370,14 @@ Getting upstream's changes:
 There are 2 possibilities to get upstream's commits into your branch. Rebasing and Merging. Using rebasing, your history is rewritten, putting your changes on top of all other commits. You can use this if your changes are not published yet (or only in your fork).
 ```bash
 > git checkout bugfix
-> git rebase master
+> git rebase maintenance
 ```
-Using the `-i` flag for rebase enables interactive rebasing. You can then remove, reorder and squash commits, rewrite commit messages, beginning with the given branch, e.g. master.
+Using the `-i` flag for rebase enables interactive rebasing. You can then remove, reorder and squash commits, rewrite commit messages, beginning with the given branch, e.g. maintenance.
 
 Or using merging. This doesn't break the history. It's considered more , but also pollutes the history with merge commits.
 ```bash
 > git checkout bugfix
-> git merge master
+> git merge maintenance
 ```
 
 Also see the [development workflow of Scipy](https://docs.scipy.org/doc/numpy/dev/gitwash/development_workflow.html) which has more examples.

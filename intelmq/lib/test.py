@@ -271,6 +271,7 @@ class BotTestCase(object):
         self.assertRegexpMatchesLog("INFO - Bot is starting.")
         self.assertLoglineEqual(-1, "Bot stopped.", "INFO")
         self.assertNotRegexpMatchesLog("(ERROR.*?){%d}" % (self.allowed_error_count + 1))
+        self.assertNotRegexpMatchesLog("(WARNING.*?){%d}" % (self.allowed_warning_count + 1))
         self.assertNotRegexpMatchesLog("CRITICAL")
         """ If no error happened (incl. tracebacks) we can check for formatting """
         if not self.allowed_error_count:

@@ -98,6 +98,7 @@ This configuration resides in the file `runtime.conf` in your intelmq's configur
 * **Feed parameters** (see above)
 * **HTTP parameters** (see above)
 * `http_url`: location of information resource (e.g. https://feodotracker.abuse.ch/blocklist/?download=domainblocklist)
+* `http_url_formatting`: If `True` (default `False`) `{time[format]}` will be replaced by the current time formatted by the given format. E.g. if the URL is `http://localhost/{time[%Y]}`, then the resulting URL is `http://localhost/2018` for the year 2018. Currently only the time in local timezone is available. Python's [Format Specification Mini-Language¶](https://docs.python.org/3/library/string.html) is used for this.
 
 
 * * *
@@ -411,6 +412,28 @@ Lines starting with `'#'` will be ignored. Headers won't be interpreted.
 
 If the source does have a field with information for `classification.type`, but it does not correspond to intelmq's types,
 you can map them to the correct ones. The `type_translation` field can hold a JSON field with a dictionary which maps the feed's values to intelmq's.
+
+
+### Cymru CAP Program
+
+#### Information:
+* `name:` intelmq.bots.parsers.cymru.parser_cap_program
+* `public:` no
+* `cache (redis db):` none
+* `description:` Parses data from cymru's cap program feed.
+
+As little information on the format is available, the mappings might not be correct in all cases.
+Some reports are not implemented at all as there is no data available to check if the parsing is correct at all. If you do get errors like `Report ... not implement` or similar please open an issue and report the (anonymized) example data. Thanks.
+
+The information about the event could be better in many cases but as Cymru does not want to be associated with the report, we can't add comments to the events in the parser, because then the source would be easily identifiable for the recipient.
+
+### Cymru Full Bogons
+
+#### Information:
+* `name:` intelmq.bots.parsers.cymru.parser_full_bogons
+* `public:` no
+* `cache (redis db):` none
+* `description:` Parses data from full bogons feed.
 
 <a name="experts"></a>
 ## Experts

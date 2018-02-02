@@ -858,6 +858,7 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         event = EXAMPLE_INPUT.copy()
         event['comment'] = '300.300.300.300'
         self.input_message = event
+        self.allowed_warning_count = 1
         self.run_bot()
         self.assertLogMatches(pattern='^Could not parse IP address', levelname='WARNING')
         self.assertMessageEqual(0, event)
