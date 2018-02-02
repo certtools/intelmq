@@ -13,6 +13,7 @@ CHANGELOG
 - Bots stop when redis gives the error "OOM command not allowed when used memory > 'maxmemory'.".
 - lib/bot: Fixed exitcodes 0 for graceful shutdowns.
 - lib/harmonization: Handle idna encoding error in FQDN sanitation (#1175).
+- lib/bot: better handling of problems with pipeline and especially it's initialization
 
 ### Harmonization
 - Rule for harmonization keys is enforced (#1104)
