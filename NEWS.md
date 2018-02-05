@@ -3,7 +3,7 @@ NEWS
 
 See the changelog for a full list of changes.
 
-1.0.3 Bugfix release (unreleased)
+1.0.3 Bugfix release (2018-02-05)
 ---------------------------------
 ### Configuration
 - `bots.parsers.cleanmx` removed CSV format support and now only supports XML format. Therefore, CleanMX collectors must define the `http_url` parameter with the feed url which points to XML format. See Feeds.md file on documentation section to get the correct URLs. Also, downloading the data from CleanMX feed can take a while, therefore, CleanMX collectors must overwrite the `http_timeout_sec` parameter with the value `120`.
