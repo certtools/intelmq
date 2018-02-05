@@ -409,7 +409,7 @@
             "parameters": {}
         },
         "Sucuri Malware": {
-            "description": "Sucuri Malware parser parses the list of Hidden Iframes and Conditional redirections from Sucuri.", 
+            "description": "Sucuri Malware parser parses the list of Hidden Iframes and Conditional redirections from Sucuri.",
             "module": "intelmq.bots.parsers.sucuri.parser",
             "parameters": {}
         },
