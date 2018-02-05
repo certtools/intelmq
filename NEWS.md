@@ -3,6 +3,9 @@ NEWS
 
 See the changelog for a full list of changes.
 
+1.0.4 Bugfix release (unreleased)
+---------------------------------
+
 1.0.3 Bugfix release (2018-02-05)
 ---------------------------------
 ### Configuration

@@ -2,6 +2,34 @@ CHANGELOG
 ==========
 
 
+1.0.4 Bugfix release (unreleased)
+---------------------------------
+### Contrib
+
+### Core
+
+### Harmonization
+
+### Bots
+#### Collectors
+
+#### Parsers
+
+#### Experts
+
+#### Outputs
+
+### Documentation
+
+### Tools
+
+### Tests
+
+### Packaging
+
+### Known issues
+
+
 1.0.3 Bugfix release (2018-02-05)
 ---------------------------------
 ### Contrib
