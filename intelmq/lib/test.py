@@ -426,10 +426,7 @@ class BotTestCase(object):
         """Asserts that pattern doesn't match against log."""
 
         self.assertIsNotNone(self.loglines_buffer)
-        try:
-            self.assertNotRegexpMatches(self.loglines_buffer, pattern)
-        except AttributeError:
-            self.assertNotRegex(self.loglines_buffer, pattern)
+        self.assertNotRegex(self.loglines_buffer, pattern)
 
     def assertOutputQueueLen(self, queue_len=0):
         """

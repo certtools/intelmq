@@ -144,8 +144,12 @@ class Bot(object):
                     error_on_message = False
 
                 if error_on_pipeline:
-                    self.__connect_pipelines()
-                    error_on_pipeline = False
+                    try:
+                        self.__connect_pipelines()
+                    except Exception as exc:
+                        raise exceptions.PipelineError(exc)
+                    else:
+                        error_on_pipeline = False
 
                 if starting:
                     starting = False
@@ -234,8 +238,11 @@ class Bot(object):
                             self.stop()
 
                         # error_procedure: pass
-                        else:
+                        elif not error_on_pipeline:
                             self.__error_retries_counter = 0  # reset counter
+                        # error_procedure: pass and pipeline problem
+                        else:
+                            self.stop()
 
                 # no errors, check for run mode: scheduled
                 elif self.run_mode == 'scheduled':
@@ -300,11 +307,12 @@ class Bot(object):
             self.stop()
 
     def __connect_pipelines(self):
-        self.logger.debug("Loading source pipeline and queue %r.", self.__source_queues)
-        self.__source_pipeline = PipelineFactory.create(self.parameters)
-        self.__source_pipeline.set_queues(self.__source_queues, "source")
-        self.__source_pipeline.connect()
-        self.logger.debug("Connected to source queue.")
+        if self.__source_queues:
+            self.logger.debug("Loading source pipeline and queue %r.", self.__source_queues)
+            self.__source_pipeline = PipelineFactory.create(self.parameters)
+            self.__source_pipeline.set_queues(self.__source_queues, "source")
+            self.__source_pipeline.connect()
+            self.logger.debug("Connected to source queue.")
 
         if self.__destination_queues:
             self.logger.debug("Loading destination pipeline and queues %r.",
