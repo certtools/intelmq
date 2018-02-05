@@ -25,6 +25,7 @@ The available feeds are grouped by the provider of the feeds. For each feed the 
 - [Malware Domain List](#malware-domain-list)
 - [Malware Domains](#malware-domains)
 - [MalwarePatrol](#malwarepatrol)
+- [MalwareUrl](#malwareurl)
 - [Netlab 360](#netlab-360)
 - [Nothink](#nothink)
 - [OpenPhish](#openphish)
@@ -964,6 +965,25 @@ The available feeds are grouped by the provider of the feeds. For each feed the 
 ### Parser
 
 * **Module:** intelmq.bots.parsers.malwarepatrol.parser_dansguardian
+* **Configuration Parameters:**
+
+
+# MalwareUrl
+
+* **Status:** on
+* **Revision:** 05-02-2018
+* **Description:** Latest malicious domains.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.http.collector_http
+* **Configuration Parameters:**
+*  * `http_url`: `https://www.malwareurl.com/`
+*  * `rate_limit`: `86400`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.malwareurl.parser
 * **Configuration Parameters:**
 
 

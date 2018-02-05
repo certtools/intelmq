@@ -59,6 +59,7 @@
                 "feed": "",
                 "provider": "",
                 "http_url": "<insert url of feed>",
+                "http_url_formatting": false,
                 "http_username": null,
                 "http_password": null,
                 "ssl_client_certificate": null,
@@ -407,8 +408,8 @@
             "module": "intelmq.bots.parsers.spamhaus.parser_drop",
             "parameters": {}
         },
-        "Sucuri Hidden Iframes": {
-            "description": "Sucuri Hidden Iframes is the bot responsible to parse data from labs.sucuri.net",
+        "Sucuri Malware": {
+            "description": "Sucuri Malware parser parses the list of Hidden Iframes and Conditional redirections from Sucuri.", 
             "module": "intelmq.bots.parsers.sucuri.parser",
             "parameters": {}
         },
