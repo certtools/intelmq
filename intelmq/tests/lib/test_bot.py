@@ -4,7 +4,6 @@ Tests the Bot class itself.
 """
 
 import unittest
-import unittest.mock as mock
 
 
 import intelmq.lib.test as test
@@ -39,6 +38,16 @@ class TestBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertLogMatches(levelname='DEBUG', pattern='test')
 
+    def test_logging_catch_warnings(self):
+        """
+        Test if the logger catches warnings issued by the warnings module.
+        """
+        self.input_message = test_parser_bot.EXAMPLE_SHORT
+        self.allowed_warning_count = 1
+        self.sysconfig = {'raise_warning': True}
+        self.run_bot()
+        self.assertLogMatches(levelname='WARNING', pattern='.*intelmq/tests/lib/test_parser_bot\.py\:[0-9]+\: UserWarning: This is a warning test.')
 
-if __name__ == '__main__':  # pragma: no cover  # pragma: no cover
+
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

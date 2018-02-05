@@ -454,11 +454,20 @@ When the logger instance is created, the bot id must be given as parameter anywa
 The Bot class creates a logger with that should be used by bots. Other components won't log anyway currently. Examples:
 
 ```python
-self.logger.info('Bot start processing')
-self.logger.error('Pipeline failed')
-self.logger.exception('Pipeline failed')
+self.logger.info('Bot start processing.')
+self.logger.error('Pipeline failed.')
+self.logger.exception('Pipeline failed.')
 ```
 The `exception` method automatically appends an exception traceback. The logger instance writes by default to the file `/opt/intelmq/var/log/[bot-id].log` and to stderr.
+
+#### String formatting in Logs
+
+Parameters for string formatting are better passed as argument to the log function, see https://docs.python.org/3/library/logging.html#logging.Logger.debug
+In case of formatting problems, the error messages will be better. For example:
+
+```python
+self.logger.debug('Connecting to %r.', host)
+```
 
 ## Error handling
 

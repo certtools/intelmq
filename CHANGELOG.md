@@ -1,8 +1,64 @@
 CHANGELOG
 ==========
 
-1.0.2 Bugfix release
---------------------
+
+1.0.3 Bugfix release (2018-02-05)
+---------------------------------
+### Contrib
+* logrotate: use sudo for postrotate script
+* cron-jobs: use the scripts in the bots' directories and link them (#1056, #1142)
+
+### Core
+- `lib.harmonization`: Handle idna encoding error in FQDN sanitation (#1175, #1176).
+- `lib.bot`:
+  - Bots stop when redis gives the error "OOM command not allowed when used memory > 'maxmemory'." (#1138).
+  - warnings of bots are catched by the logger (#1074, #1113).
+  - Fixed exitcodes 0 for graceful shutdowns .
+  - better handling of problems with pipeline and especially it's initialization (#1178).
+  - All parsers using `ParserBot`'s methods now log the sum of successfully parsed and failed lines at the end of each run (#1161).
+
+### Harmonization
+- Rule for harmonization keys is enforced (#1104, #1141).
+- New allowed values for `classification.type`: `tor` & `leak` (see n6 parser below ).
+
+### Bots
+#### Collectors
+- `bots.collectors.mail.collector_mail_attach`: Support attachment file parsing for imbox versions newer than 0.9.5 (#1134).
+- `bots.outputs.smtp.output`: Fix STARTTLS, threw an exception (#1152, #1153).
+
+#### Parsers
+- All CSV parsers ignore NULL-bytes now, because the csv-library cannot handle it (#967, #1114).
+- `bots.experts.modify` default ruleset: changed conficker rule to catch more spellings.
+- `bots.parsers.shadowserver.parser`: Add Accessible Cisco Smart Install (#1122).
+- `bots.parsers.cleanmx.parser`: Handle new columns `first` and `last`, rewritten for XML feed. See NEWS.md for upgrade instructions (#1131, #1136, #1163).
+- `bots.parsers.n6.parser`: Fix classification mappings. See NEWS file for changes values (#738, #1127).
+
+### Documentation
+- `Release.md` add release procedure documentation
+- `Bots.md`: fix example configuration for modify expert
+
+### Tools
+- intelmqctl now exits with exit codes > 0 when errors happened or the operation was not successful. Also, the status operation exits with 1, if bots are stopped, but enabled. (#977, #1143)
+- `intelmctl check` checks for valid `run_mode` in runtime configuration (#1140).
+
+### Tests
+- `tests.lib.test_pipeline`: Redis tests clear all queues before and after tests (#1086).
+- Repaired debian package build on travis (#1169).
+- Warnings are not allowed by default, an allowed count can be specified (#1129).
+- `tests.bots.experts.cymru_whois/abusix`: Skipped on travis because of ongoing problems.
+
+### Packaging
+* cron jobs: fix paths of executables
+
+### Known issues
+- `bots.collectors/outputs.xmpp` must be killed two times (#970).
+- When running bots with `intelmqctl run [bot-id]` the log level is always INFO (#1075).
+- `intelmqctl run [bot-id] message send [msg]` does only support Events, not Reports (#1077).
+- `python3 setup.py sdist` does not include static files in the resulting tarballs (#1146).
+- `bots.parsers.cleanmx.parser`: The cleanMX feed may have FQDNs as IPs in rare cases, such lines are dumped (#1162).
+
+1.0.2 Bugfix release (2017-11-09)
+---------------------------------
 
 ### Core
 - `lib.message.add`: parameter force has finally been removed, should have been gone in 1.0.0.rc1 already
@@ -22,8 +78,8 @@ CHANGELOG
 ### Documentation
 - Add disclaimer on maxmind database in bot documentation and code and the cron-job (#1110)
 
-1.0.1 Bugfix release
---------------------
+1.0.1 Bugfix release (2017-08-30)
+---------------------------------
 ### Documentation
 - Feeds: use more https:// URLs
 - minor fixes
@@ -31,6 +87,7 @@ CHANGELOG
 ### Bots
 - bots/experts/ripencc_abuse_contact/expert.py: Use HTTPS URLs for rest.db.ripe.net
 - bots/outputs/file/output.py: properly close the file handle on shutdown
+- bots/parser/shadowserver: If conversion of a value via conversion function fails, only log the function name, not the representation string (#1157).
 
 ### Core
 - lib/bot: Bots will now log the used intelmq version at startup
@@ -39,8 +96,8 @@ CHANGELOG
 - intelmqctl: To check the status of a bot, the comandline of the running process is compared to the actual executable of the bot. Otherwise unrelated programs with the same PID are detected as running bot.
 - intelmqctl: enable, disable, check, clear now support the JSON output
 
-1.0.0 Stable release
---------------------
+1.0.0 Stable release (2017-08-04)
+---------------------------------
 ### Core
 - Fixes a thrown FileNotFound exception when stopping bots started with `intelmqctl run ...`
 
@@ -50,8 +107,8 @@ CHANGELOG
 ### Bots
 - shadowserver parser Accessible-SMB: smb_implant is converted to bool
 
-1.0.0.rc1 Release candidate
----------------------------
+1.0.0.rc1 Release candidate (2017-07-05)
+----------------------------------------
 ### Core
 - Changing the value of an existing field to `None` deletes the field.
 - `Message.update` now behaves like `dict.update`. The old behavior is implemented in `Message.change`
@@ -89,8 +146,8 @@ CHANGELOG
 ### Experts
 - bots.experts.deduplicator: New parameter `bypass` to deactivate deduplication, default: False
 
-v1.0.0.dev8
------------
+v1.0.0.dev8 Beta release (2017-06-14)
+-------------------------------------
 
 ### General changes
 - It's now configurable how often the bots are logging how much events they have sent, based on both the amount and time. (fixes #743)
@@ -131,8 +188,8 @@ v1.0.0.dev8
 ### Harmonization
 - New field named `output` to support export to foreign formats
 
-v1.0.0.dev7
------------
+v1.0.0.dev7 Beta release (2017-05-09)
+-------------------------------------
 
 ### Documentation
 - more verbose installation and upgrade instructions
@@ -149,8 +206,8 @@ v1.0.0.dev7
 - New parameter and field named feed.documentation to link to documentation of the feed
 - classification.taxonomy is lower case only
 
-v1.0.0.dev6
------------
+v1.0.0.dev6 Beta release (2017-01-11)
+-------------------------------------
 
 Changes between 0.9 and 1.0.0.dev6
 

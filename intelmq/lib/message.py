@@ -102,6 +102,10 @@ class Message(dict):
                                              expected=VALID_MESSSAGE_TYPES,
                                              docs=HARMONIZATION_CONF_FILE)
 
+        for harm_key in self.harmonization_config.keys():
+            if not re.match('^[a-z_](.[a-z_0-9]+)*$', harm_key) and harm_key != '__type':
+                raise exceptions.InvalidKey("Harmonization key %r is invalid." % harm_key)
+
         super(Message, self).__init__()
         if isinstance(message, dict):
             iterable = message.items()

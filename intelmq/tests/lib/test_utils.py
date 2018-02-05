@@ -6,6 +6,7 @@ Decoding and Encoding, Logging functionality (file and stream), and log
 parsing.
 base64 de-/encoding is not tested yet, as we fully rely on the module.
 """
+import datetime
 import io
 import os
 import tempfile
@@ -134,7 +135,7 @@ class TestUtils(unittest.TestCase):
 
         actual = utils.parse_logline(line, regex=utils.SYSLOG_REGEX)
         self.assertEqual({'bot_id': 'malware-domain-list-collector',
-                          'date': '2017-02-22T10:17:10',
+                          'date': '%d-02-22T10:17:10' % datetime.datetime.now().year,
                           'log_level': 'ERROR',
                           'message': 'Something went wrong'}, actual)
 

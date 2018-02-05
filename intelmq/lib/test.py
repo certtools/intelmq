@@ -182,6 +182,9 @@ class BotTestCase(object):
         console_handler.setFormatter(console_formatter)
         logger.addHandler(console_handler)
         self.mocked_log = mocked_logger(logger)
+        logging.captureWarnings(True)
+        warnings_logger = logging.getLogger("py.warnings")
+        warnings_logger.addHandler(console_handler)
 
         class Parameters(object):
             source_queue = src_name
@@ -263,11 +266,15 @@ class BotTestCase(object):
         self.assertRegexpMatchesLog("INFO - Bot is starting.")
         self.assertLoglineEqual(-1, "Bot stopped.", "INFO")
         self.assertNotRegexpMatchesLog("(ERROR.*?){%d}" % (self.allowed_error_count + 1))
+        self.assertNotRegexpMatchesLog("(WARNING.*?){%d}" % (self.allowed_warning_count + 1))
         self.assertNotRegexpMatchesLog("CRITICAL")
-        """ If no error happened (incl. tracebacks, we can check for formatting) """
-        if not self.allowed_error_count:  # This would fail for tracebacks currently
+        """ If no error happened (incl. tracebacks) we can check for formatting """
+        if not self.allowed_error_count:
             for logline in self.loglines:
                 fields = utils.parse_logline(logline)
+                if not isinstance(fields, dict):
+                    # Traceback
+                    continue
                 self.assertTrue(fields['message'][-1] in '.:?!',
                                 msg='Logline {!r} does not end with .? or !.'
                                     ''.format(fields['message']))
@@ -414,10 +421,7 @@ class BotTestCase(object):
         """Asserts that pattern doesn't match against log."""
 
         self.assertIsNotNone(self.loglines_buffer)
-        try:
-            self.assertNotRegexpMatches(self.loglines_buffer, pattern)
-        except AttributeError:
-            self.assertNotRegex(self.loglines_buffer, pattern)
+        self.assertNotRegex(self.loglines_buffer, pattern)
 
     def assertOutputQueueLen(self, queue_len=0):
         """

@@ -398,7 +398,11 @@ See the help page for more information.
 ## Check
 This command will do various sanity checks on the installation and especially the configuration.
 
+## Exit code
+In case of errors, unsuccessful operations, the exit code is higher than 0.
+For example, when running `intelmqctl start` and one enabled bot is not running, the exit code is 1.
+The same is valid for e.g. `intelmqctl status`, which can be used for monitoring, and all other operations.
+
 ## Known issues
 
 The currently implemented process managing using PID files is very erroneous.
-If a PID is saved, the process dies and a new program gets the same PID, another program receives the SIGINT signal.

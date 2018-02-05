@@ -20,6 +20,7 @@ class TurrisGreylistParserBot(Bot):
 
         headers = True
         raw_report = utils.base64_decode(report.get("raw"))
+        raw_report = raw_report.translate({0: None})
         for row in csv.reader(io.StringIO(raw_report)):
             # ignore headers
             if headers:

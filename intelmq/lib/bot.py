@@ -134,8 +134,12 @@ class Bot(object):
                     error_on_message = False
 
                 if error_on_pipeline:
-                    self.__connect_pipelines()
-                    error_on_pipeline = False
+                    try:
+                        self.__connect_pipelines()
+                    except Exception as exc:
+                        raise exceptions.PipelineError(exc)
+                    else:
+                        error_on_pipeline = False
 
                 if starting:
                     starting = False
@@ -160,7 +164,7 @@ class Bot(object):
             except Exception as exc:
                 # in case of serious system issues, exit immediately
                 if isinstance(exc, MemoryError):
-                    self.logger.exception('Out of memory. Exit immediately.')
+                    self.logger.exception('Out of memory. Exit immediately. Reason: %r.' % exc.args[0])
                     self.stop()
                 elif isinstance(exc, (IOError, OSError)) and exc.errno == 28:
                     self.logger.exception('Out of disk space. Exit immediately.')
@@ -191,7 +195,7 @@ class Bot(object):
 
             finally:
                 if getattr(self.parameters, 'testing', False):
-                    self.stop()
+                    self.stop(exitcode=0)
                     break
 
                 if error_on_message or error_on_pipeline:
@@ -219,20 +223,23 @@ class Bot(object):
                         # run_mode: scheduled
                         if self.run_mode == 'scheduled':
                             self.logger.info('Shutting down scheduled bot.')
-                            self.stop()
+                            self.stop(exitcode=0)
 
                         # error_procedure: stop
                         elif self.parameters.error_procedure == "stop":
                             self.stop()
 
                         # error_procedure: pass
-                        else:
+                        elif not error_on_pipeline:
                             self.__error_retries_counter = 0  # reset counter
+                        # error_procedure: pass and pipeline problem
+                        else:
+                            self.stop()
 
                 # no errors, check for run mode: scheduled
                 elif self.run_mode == 'scheduled':
                     self.logger.info('Shutting down scheduled bot.')
-                    self.stop()
+                    self.stop(exitcode=0)
 
             self.__handle_sighup()
 
@@ -290,11 +297,12 @@ class Bot(object):
             self.stop()
 
     def __connect_pipelines(self):
-        self.logger.debug("Loading source pipeline and queue %r.", self.__source_queues)
-        self.__source_pipeline = PipelineFactory.create(self.parameters)
-        self.__source_pipeline.set_queues(self.__source_queues, "source")
-        self.__source_pipeline.connect()
-        self.logger.debug("Connected to source queue.")
+        if self.__source_queues:
+            self.logger.debug("Loading source pipeline and queue %r.", self.__source_queues)
+            self.__source_pipeline = PipelineFactory.create(self.parameters)
+            self.__source_pipeline.set_queues(self.__source_queues, "source")
+            self.__source_pipeline.connect()
+            self.logger.debug("Connected to source queue.")
 
         if self.__destination_queues:
             self.logger.debug("Loading destination pipeline and queues %r.",
@@ -425,7 +433,7 @@ class Bot(object):
 
         if self.__bot_id in list(config.keys()):
             params = config[self.__bot_id]
-            self.run_mode = params.get('run_mode', 'stream')
+            self.run_mode = params.get('run_mode', 'continuous')
             for option, value in params['parameters'].items():
                 setattr(self.parameters, option, value)
                 self.__log_configuration_parameter("runtime", option, value)
@@ -545,6 +553,7 @@ class ParserBot(Bot):
         A basic CSV parser.
         """
         raw_report = utils.base64_decode(report.get("raw")).strip()
+        raw_report = raw_report.translate({0: None})
         if self.ignore_lines_starting:
             raw_report = '\n'.join([line for line in raw_report.splitlines()
                                     if not any([line.startswith(prefix) for prefix
@@ -558,6 +567,7 @@ class ParserBot(Bot):
         A basic CSV Dictionary parser.
         """
         raw_report = utils.base64_decode(report.get("raw")).strip()
+        raw_report = raw_report.translate({0: None})
         if self.ignore_lines_starting:
             raw_report = '\n'.join([line for line in raw_report.splitlines()
                                     if not any([line.startswith(prefix) for prefix
@@ -604,7 +614,10 @@ class ParserBot(Bot):
             self.acknowledge_message()
             return
 
+        events_count = 0
+
         for line in self.parse(report):
+
             if not line:
                 continue
             try:
@@ -614,12 +627,15 @@ class ParserBot(Bot):
                 self.logger.exception('Failed to parse line.')
                 self.__failed.append((traceback.format_exc(), line))
             else:
+                events_count += len(events)
                 self.send_message(*events)
 
         for exc, line in self.__failed:
             report_dump = report.copy()
             report_dump.change('raw', self.recover_line(line))
             self._dump_message(exc, report_dump)
+
+        self.logger.info('Sent %d events and found %d error(s).' % (events_count, len(self.__failed)))
 
         self.acknowledge_message()
 

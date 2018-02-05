@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 import unittest
 
 import intelmq.lib.test as test
@@ -33,6 +34,8 @@ EXAMPLE_EXISTING = {"__type": "Event",
 
 
 @test.skip_internet()
+@unittest.skipIf(os.getenv('TRAVIS') == 'true' and os.getenv('CI') == 'true',
+                 'Abusix tests disable on travis.')
 class TestAbusixExpertBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for AbusixExpertBot.

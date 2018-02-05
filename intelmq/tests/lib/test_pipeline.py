@@ -96,6 +96,7 @@ class TestRedis(unittest.TestCase):
         self.assertEqual(SAMPLES['unicode'][1], self.pipe.receive())
 
     def test_count(self):
+        self.clear()
         self.pipe.send(SAMPLES['normal'][0])
         self.pipe.send(SAMPLES['normal'][1])
         self.pipe.send(SAMPLES['unicode'][0])
@@ -103,6 +104,7 @@ class TestRedis(unittest.TestCase):
 
     def tearDown(self):
         self.pipe.disconnect()
+        self.clear()
 
 
 if __name__ == '__main__':  # pragma: no cover  # pragma: no cover

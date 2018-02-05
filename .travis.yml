@@ -1,50 +1,63 @@
 sudo: required
 dist: trusty
-group: edge
 language: python
 env:
-  - REQUIREMENTS=true
-  - REQUIREMENTS=false
+  - requirements=true
+  - requirements=false
+  - mode=debian
+  - mode=codestyle
 python:
-  - "3.3"
-  - "3.4"
-  - "3.5"
-  - "3.6"
+  - 3.3
+  - 3.4
+  - 3.5
+  - 3.6
+matrix:
+  exclude:
+  - env: mode=debian
+  - env: mode=codestyle
+  include:
+  - python: 3.4
+    env: mode=debian
+  - python: 3.6
+    env: mode=codestyle
 install:
-  - sudo apt-get install dpkg-dev dh-python python-setuptools python3-setuptools python3-all debhelper quilt polipo lighttpd fakeroot dh-systemd
-  - if [[ $REQUIREMENTS == true ]] ; then for file in intelmq/bots/*/*/REQUIREMENTS.txt; do pip install -r $file; done; fi
-  - if [[ $TRAVIS_PYTHON_VERSION < '3.5' ]]; then pip install typing; fi
-  - pip install codecov
-  - pip install pycodestyle
-  - sudo sed -i '/^Defaults\tsecure_path.*$/ d' /etc/sudoers
-  - sudo pip install .
-  - sudo cp /opt/intelmq/etc/examples/* /opt/intelmq/etc/
+  - if [[ -v requirements ]]; then sudo apt-get install polipo lighttpd; fi
+  - if [[ $mode == debian ]]; then sudo apt-get install dpkg-dev dh-python python-setuptools python3-setuptools python3-all debhelper quilt fakeroot dh-systemd safe-rm; fi
+  - if [[ $requirements == true ]]; then for file in intelmq/bots/*/*/REQUIREMENTS.txt; do pip install -r $file; done; fi
+  - if [[ $TRAVIS_PYTHON_VERSION < '3.5' ]]; then sudo pip install typing; fi
+  - if [[ -v requirements ]]; then pip install codecov; fi
+  - if [[ $mode == codestyle ]]; then pip install pycodestyle; fi
+  - if [[ -v requirements ]]; then sudo sed -i '/^Defaults\tsecure_path.*$/ d' /etc/sudoers; fi
+  - if [[ -v requirements ]]; then sudo pip install .; fi
+  - if [[ -v requirements ]]; then sudo cp /opt/intelmq/etc/examples/* /opt/intelmq/etc/; fi
 before_script:
-  - psql -c "CREATE USER intelmq WITH SUPERUSER" -U postgres
-  - psql -c "CREATE DATABASE intelmq" -U intelmq template1
-  - psql -c "GRANT ALL PRIVILEGES ON DATABASE intelmq TO intelmq" -U intelmq
-  - intelmq_psql_initdb
-  - sed -i 's/events/tests/g' /tmp/initdb.sql
-  - psql -v ON_ERROR_STOP=on -f /tmp/initdb.sql intelmq -U intelmq
-  - VERSION=$(git describe --abbrev=0 --tags)
-  - git archive --format=tar.gz HEAD > ../intelmq_$VERSION.orig.tar.gz
-  - git archive --format=tar.gz --prefix=debian/ HEAD:debian/ > ../intelmq_$VERSION-1.debian.tar.gz
-  - pushd ..
-  - mkdir build
-  - cd build
-  - tar -xzf ../intelmq_$VERSION.orig.tar.gz
-  - tar -xzf ../intelmq_$VERSION-1.debian.tar.gz
-  - popd
+  - if [[ $requirements == true ]] ; then psql -c "CREATE USER intelmq WITH SUPERUSER" -U postgres; fi
+  - if [[ $requirements == true ]] ; then psql -c "CREATE DATABASE intelmq" -U intelmq template1; fi
+  - if [[ $requirements == true ]] ; then psql -c "GRANT ALL PRIVILEGES ON DATABASE intelmq TO intelmq" -U intelmq; fi
+  - if [[ $requirements == true ]] ; then intelmq_psql_initdb; fi
+  - if [[ $requirements == true ]] ; then sed -i 's/events/tests/g' /tmp/initdb.sql; fi
+  - if [[ $requirements == true ]] ; then psql -v ON_ERROR_STOP=on -f /tmp/initdb.sql intelmq -U intelmq; fi
+  - if [[ $mode == debian ]]; then debversion=$(egrep -o "[[:digit:].-]+" debian/changelog | head -n 1); version=${debversion%-?}; fi
+  - if [[ $mode == debian ]]; then git archive --format=tar.gz HEAD > ../intelmq_$version.orig.tar.gz; fi
+  - if [[ $mode == debian ]]; then git archive --format=tar.gz --prefix=debian/ HEAD:debian/ > ../intelmq_$debversion.debian.tar.gz; fi
+  - if [[ $mode == debian ]]; then pushd ..; fi
+  - if [[ $mode == debian ]]; then mkdir build; fi
+  - if [[ $mode == debian ]]; then cd build; fi
+  - if [[ $mode == debian ]]; then tar -xzf ../intelmq_$version.orig.tar.gz; fi
+  - if [[ $mode == debian ]]; then tar -xzf ../intelmq_$debversion.debian.tar.gz; fi
+  - if [[ $mode == debian ]]; then popd; fi
 script:
-  - if [[ $REQUIREMENTS == true ]] ; then INTELMQ_TEST_DATABASES=1 INTELMQ_TEST_LOCAL_WEB=1 INTELMQ_TEST_EXOTIC=1 nosetests --with-coverage --cover-package=intelmq --cover-branches; else INTELMQ_TEST_LOCAL_WEB=1 nosetests --with-coverage --cover-package=intelmq --cover-branches; fi
-  - pycodestyle intelmq/{bots,lib,bin}
-  - pushd ../build && dpkg-buildpackage -us -uc; popd
+  - if [[ $requirements == true ]]; then INTELMQ_TEST_DATABASES=1 INTELMQ_TEST_LOCAL_WEB=1 INTELMQ_TEST_EXOTIC=1 nosetests --with-coverage --cover-package=intelmq --cover-branches; elif [[ $requirements == false ]]; then INTELMQ_TEST_LOCAL_WEB=1 nosetests --with-coverage --cover-package=intelmq --cover-branches; fi
+  - if [[ $mode == codestyle ]]; then pycodestyle intelmq/{bots,lib,bin}; fi
+  - if [[ $mode == debian ]]; then pushd ../build; fi
+  - if [[ $mode == debian ]]; then DEB_BUILD_OPTIONS='nocheck' dpkg-buildpackage -us -uc -d; fi
+  - if [[ $mode == debian ]]; then popd; fi
 services:
   - redis-server
   - postgresql
   - elasticsearch
   - mongodb
 after_success:
-  - codecov
+  - if [[ -v requirements ]]; then codecov; fi
 addons:
   postgresql: "9.4"

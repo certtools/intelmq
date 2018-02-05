@@ -62,12 +62,12 @@ This configuration resides in the file `runtime.conf` in your intelmq's configur
 
 **Feed parameters**: Common configuration options for all collectors
 
-* `feed`: Name for the feed.
-* `accuracy`: Accuracy for the data of the feed.
-* `code`: Code for the feed.
-* `documentation`: Link to documentation for the feed.
-* `provider`: Name of the provider of the feed.
-* `rate_limit`: time interval (in seconds) between messages processing.
+* `feed`: Name for the feed (`feed.name`).
+* `accuracy`: Accuracy for the data of the feed (`feed.accuracy`).
+* `code`: Code for the feed (`feed.code`).
+* `documentation`: Link to documentation for the feed (`feed.documentation`).
+* `provider`: Name of the provider of the feed (`feed.provider`).
+* `rate_limit`: time interval (in seconds) between fetching data if applicable.
 
 **HTTP parameters**: Common URL fetching parameters used in multiple collectors
 
@@ -569,7 +569,7 @@ The configuration is called `modify.conf` and looks like this:
         }
     },
     {
-        "rule": "Spamhaus Cert conficker",
+        "rulename": "Spamhaus Cert conficker",
         "if": {
             "malware.name": "^conficker(ab)?$"
         },
@@ -578,7 +578,7 @@ The configuration is called `modify.conf` and looks like this:
         }
     },
     {
-        "rule": "bitdefender",
+        "rulename": "bitdefender",
         "if": {
             "malware.name": "bitdefender-(.*)$"
         },
@@ -587,7 +587,7 @@ The configuration is called `modify.conf` and looks like this:
         }
     },
     {
-        "rule": "urlzone",
+        "rulename": "urlzone",
         "if": {
             "malware.name": "^urlzone2?$"
         },
@@ -596,7 +596,7 @@ The configuration is called `modify.conf` and looks like this:
         }
     },
     {
-        "rule": "default",
+        "rulename": "default",
         "if": {
             "feed.name": "^Spamhaus Cert$"
         },

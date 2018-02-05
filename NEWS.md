@@ -3,6 +3,35 @@ NEWS
 
 See the changelog for a full list of changes.
 
+1.0.3 Bugfix release (2018-02-05)
+---------------------------------
+### Configuration
+- `bots.parsers.cleanmx` removed CSV format support and now only supports XML format. Therefore, CleanMX collectors must define the `http_url` parameter with the feed url which points to XML format. See Feeds.md file on documentation section to get the correct URLs. Also, downloading the data from CleanMX feed can take a while, therefore, CleanMX collectors must overwrite the `http_timeout_sec` parameter with the value `120`.
+- The classification mappings for the n6 parser have been corrected:
+
+| n6 classification | Previous classification |  |  | Current classification |  |  | Notes |
+|-|-|-|-|-|-|-|-|
+|                   | taxonomy   | type   | identifier | taxonomy       | type    | identifier |
+| dns-query         | Other      | other  | ignore me  | Other          | other   | dns-query  |
+| proxy             | Vulnerable | proxy  | open proxy | Other          | proxy   | openproxy  |
+| sandbox-url       | ignore     | ignore | ignore me  | malicious code | malware | sandboxurl | As this previous taxonomy did not exist, these events have been rejected |
+| other             | Vulnerable | unknow | unknown    | Other          | other   | other      |
+
+### Postgres databases
+Use the following statement carefully to upgrade your database.
+Adapt your feedname in the query to the one used in your setup.
+```SQL
+UPDATE events
+   SET "classification.identifier" = "dns-query"
+   WHERE "feed.name" = 'n6' AND "classification.taxonomy" = "Other" AND "classification.type" = "other" AND "classification.identifier" = "ignore me";
+UPDATE events
+   SET "classification.taxonomy" = "malicious code" AND "classification.type" = "malware" AND "classification.identifier" = "sandboxurl"
+   WHERE "feed.name" = 'n6' AND "classification.taxonomy" = "Vulnerable" AND "classification.type" = "ignore" AND "classification.identifier" = "ignore me";
+UPDATE events
+   SET "classification.taxonomy" = "Other" AND "classification.type" = "other" AND "classification.identifier" = "other"
+   WHERE "feed.name" = 'n6' AND "classification.taxonomy" = "Vulnerable" AND "classification.type" = "unknow" AND "classification.identifier" = "unknow";
+```
+
 1.0.2 Bugfix release
 --------------------
 No changes needed.
@@ -115,13 +144,15 @@ ALTER TABLE events
 1.0.0.dev5
 ----------
 
+Syntax of runtime.conf has changed
+
 ### Postgres databases
 ```sql
 ALTER TABLE events
    ADD COLUMN "misp.attribute_uuid" varchar(36),
    ADD COLUMN "malware.hash.sha256" text,
    ALTER COLUMN "misp.event_uuid" SET DATA TYPE varchar(36);
-   
+
 ALTER TABLE events   RENAME COLUMN "misp_uuid" TO "misp.event_uuid";
 
 UPDATE events
@@ -158,11 +189,6 @@ UPDATE events
    SET "malware.hash.sha1" = lower("malware.hash.sha1")
    WHERE "malware.hash.sha1" IS NOT NULL;
 ```
-
-1.0.0.dev5
-----------
-* Syntax of runtime.conf has changed
-
 
 1.0.0.dev1
 ----------

@@ -1,0 +1,3 @@
+"timestamp","ip","protocol","port","hostname","tag","asn","geo","region","city","naics","sic"
+"2017-11-18 08:42:45","198.51.100.103","tcp",4786,"198-51-100-103.example.net","cisco-smart-install",8559,"AT","WIEN","VIENNA",0,0
+"2017-11-18 08:47:54","198.51.100.218","tcp",4786,,"cisco-smart-install",35609,"AT","WIEN","VIENNA",0,0

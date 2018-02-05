@@ -147,8 +147,8 @@ class IntelMQProcessManager:
             print('Keyboard interrupt.')
             retval = 0
         except SystemExit as exc:
-            print('Bot exited with code %s.' % exc)
-            retval = exc
+            print('Bot exited with code %s.' % exc.code)
+            retval = exc.code
 
         self.__remove_pidfile(bot_id)
         if paused:
@@ -555,35 +555,44 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         global RETURN_TYPE, QUIET
         RETURN_TYPE, QUIET = args.type, args.quiet
         del args_dict['type'], args_dict['quiet'], args_dict['func']
-        results = args.func(**args_dict)
+        retval, results = args.func(**args_dict)
 
         if RETURN_TYPE == 'json':
             print(json.dumps(results))
-        if type(results) is int:
-            return results
-        elif results == 'error':
-            return 1
+        return retval
 
     def bot_run(self, **kwargs):
-        return self.bot_process_manager.bot_run(**kwargs)
+        return self.bot_process_manager.bot_run(**kwargs), None
 
     def bot_start(self, bot_id, getstatus=True):
         if bot_id is None:
             return self.botnet_start()
         else:
-            return self.bot_process_manager.bot_start(bot_id, getstatus)
+            status = self.bot_process_manager.bot_start(bot_id, getstatus)
+            if status in ['running']:
+                return 0, status
+            else:
+                return 1, status
 
     def bot_stop(self, bot_id, getstatus=True):
         if bot_id is None:
             return self.botnet_stop()
         else:
-            return self.bot_process_manager.bot_stop(bot_id, getstatus)
+            status = self.bot_process_manager.bot_stop(bot_id, getstatus)
+            if status in ['stopped', 'disabled']:
+                return 0, status
+            else:
+                return 1, status
 
     def bot_reload(self, bot_id, getstatus=True):
         if bot_id is None:
             return self.botnet_reload()
         else:
-            return self.bot_process_manager.bot_reload(bot_id, getstatus)
+            status = self.bot_process_manager.bot_reload(bot_id, getstatus)
+            if status in ['running']:
+                return 0, status
+            else:
+                return 1, status
 
     def bot_restart(self, bot_id):
         if bot_id is None:
@@ -597,17 +606,21 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         if bot_id is None:
             return self.botnet_status()
         else:
-            return self.bot_process_manager.bot_status(bot_id)
+            status = self.bot_process_manager.bot_status(bot_id)
+            if status in ['running', 'disabled']:
+                return 0, status
+            else:
+                return 1, status
 
     def bot_enable(self, bot_id):
         self.runtime_configuration[bot_id]['enabled'] = True
         self.write_updated_runtime_config()
-        return self.bot_process_manager.bot_status(bot_id)
+        return self.bot_status(bot_id)
 
     def bot_disable(self, bot_id):
         self.runtime_configuration[bot_id]['enabled'] = False
         self.write_updated_runtime_config()
-        return self.bot_process_manager.bot_status(bot_id)
+        return self.bot_status(bot_id)
 
     def _is_enabled(self, bot_id):
         return self.runtime_configuration[bot_id].get('enabled', True)
@@ -622,13 +635,17 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 log_bot_message('disabled', bot_id)
                 botnet_status[bot_id] = 'disabled'
 
+        retval = 0
         time.sleep(0.75)
         for bot_id in bots:
             if self.runtime_configuration[bot_id].get('enabled', True):
-                botnet_status[bot_id] = self.bot_status(bot_id)
+                botnet_status[bot_id] = self.bot_status(bot_id)[1]
+                if botnet_status[bot_id] not in ['running', 'disabled']:
+                    retval = 1
+                    print(bot_id, botnet_status[bot_id])
 
         log_botnet_message('running')
-        return botnet_status
+        return retval, botnet_status
 
     def botnet_stop(self):
         botnet_status = {}
@@ -637,12 +654,15 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         for bot_id in bots:
             self.bot_stop(bot_id, getstatus=False)
 
+        retval = 0
         time.sleep(0.75)
         for bot_id in bots:
-            botnet_status[bot_id] = self.bot_status(bot_id)
+            botnet_status[bot_id] = self.bot_status(bot_id)[1]
+            if botnet_status[bot_id] not in ['stopped', 'disabled']:
+                retval = 1
 
         log_botnet_message('stopped')
-        return botnet_status
+        return retval, botnet_status
 
     def botnet_reload(self):
         botnet_status = {}
@@ -651,21 +671,30 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         for bot_id in bots:
             self.bot_reload(bot_id, getstatus=False)
 
+        retval = 0
         time.sleep(0.75)
         for bot_id in bots:
-            botnet_status[bot_id] = self.bot_status(bot_id)
+            botnet_status[bot_id] = self.bot_status(bot_id)[1]
+            if botnet_status[bot_id] not in ['running', 'disabled']:
+                retval = 1
         log_botnet_message('reloaded')
-        return botnet_status
+        return retval, botnet_status
 
     def botnet_restart(self):
-        self.botnet_stop()
-        return self.botnet_start()
+        retval_stop, _ = self.botnet_stop()
+        retval_start, status = self.botnet_start()
+        if retval_stop > retval_start:  # In case the stop operation was not successful, exit 1
+            retval_start = retval_stop
+        return retval_start, status
 
     def botnet_status(self):
+        retval = 0
         botnet_status = {}
         for bot_id in sorted(self.runtime_configuration.keys()):
-            botnet_status[bot_id] = self.bot_status(bot_id)
-        return botnet_status
+            botnet_status[bot_id] = self.bot_status(bot_id)[1]
+            if botnet_status[bot_id] not in ['running', 'disabled']:
+                retval = 1
+        return retval, botnet_status
 
     def list(self, kind=None):
         if kind == 'queues':
@@ -699,9 +728,9 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             for bot_id in sorted(self.runtime_configuration.keys()):
                 print("Bot ID: {}\nDescription: {}"
                       "".format(bot_id, self.runtime_configuration[bot_id].get('description')))
-        return [{'id': bot_id,
-                 'description': self.runtime_configuration[bot_id].get('description')}
-                for bot_id in sorted(self.runtime_configuration.keys())]
+        return 0, [{'id': bot_id,
+                    'description': self.runtime_configuration[bot_id].get('description')}
+                   for bot_id in sorted(self.runtime_configuration.keys())]
 
     def get_queues(self):
         source_queues = set()
@@ -743,7 +772,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                     return_dict[bot_id]['destination_queues'].append(
                         (dest_queue, counters[dest_queue]))
 
-        return return_dict
+        return 0, return_dict
 
     def clear_queue(self, queue):
         """
@@ -768,17 +797,17 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         if queue not in queues:
             if RETURN_TYPE == 'text':
                 logger.error("Queue %s does not exist!", queue)
-            return 'not-found'
+            return 2, 'not-found'
 
         try:
             pipeline.clear_queue(queue)
             if RETURN_TYPE == 'text':
                 logger.info("Successfully cleared queue %s.", queue)
-            return 'success'
+            return 0, 'success'
         except Exception:  # pragma: no cover
             logger.exception("Error while clearing queue %s.",
                              queue)
-            return 'error'
+            return 1, 'error'
 
     def read_bot_log(self, bot_id, log_level, number_of_lines):
         if self.parameters.logging_handler == 'file':
@@ -786,13 +815,13 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                                         bot_id + '.log')
             if not os.path.isfile(bot_log_path):
                 logger.error("Log path not found: %s", bot_log_path)
-                return []
+                return 2, []
         elif self.parameters.logging_handler == 'syslog':
             bot_log_path = '/var/log/syslog'
 
         if not os.access(bot_log_path, os.R_OK):
             self.logger.error('File %r is not readable.', bot_log_path)
-            return 'error'
+            return 1, 'error'
 
         messages = list()
 
@@ -828,7 +857,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 break
 
         log_log_messages(messages[::-1])
-        return messages[::-1]
+        return 0, messages[::-1]
 
     def check(self):
         retval = 0
@@ -855,10 +884,10 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 retval = 1
         if retval:
             if RETURN_TYPE == 'json':
-                return {'status': 'error', 'lines': output}
+                return 1, {'status': 'error', 'lines': output}
             else:
                 self.logger.error('Fatal errors occurred.')
-            return retval
+                return 1, retval
 
         if RETURN_TYPE == 'json':
             output.append(['info', 'Checking runtime configuration.'])
@@ -886,6 +915,12 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                         output.append(['warning', 'Bot %r has no %r.' % (bot_id, field)])
                     else:
                         self.logger.warning('Bot %r has no %r.', bot_id, field)
+                    retval = 1
+            if 'run_mode' in bot_config and bot_config['run_mode'] not in ['continuous', 'scheduled']:
+                if RETURN_TYPE == 'json':
+                    output.append(['warning', 'Bot %r has invalid `run_mode` %r.' % (bot_id, field)])
+                else:
+                    self.logger.warning('Bot %r has invalid `run_mode` %r.', bot_id, field)
                     retval = 1
             if bot_id not in files[PIPELINE_CONF_FILE]:
                 if RETURN_TYPE == 'json':
@@ -971,15 +1006,16 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
         if RETURN_TYPE == 'json':
             if retval:
-                return {'status': 'error', 'lines': output}
+                return 0, {'status': 'error', 'lines': output}
             else:
-                return {'status': 'success', 'lines': output}
+                return 1, {'status': 'success', 'lines': output}
         else:
             if retval:
                 self.logger.error('Some issues have been found, please check the above output.')
+                return retval, 'error'
             else:
                 self.logger.info('No issues found.')
-            return retval
+                return retval, 'success'
 
 
 def main():  # pragma: no cover

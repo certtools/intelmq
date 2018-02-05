@@ -22,6 +22,7 @@ E.g. `Botnet-Drone-Hadoop` for the feed corresponding to:
 https://www.shadowserver.org/wiki/pmwiki.php/Services/Botnet-Drone-Hadoop
 
 Possible feednames:
+* `Accessible-Cisco-Smart-Install`
 * `Accessible-CWMP`
 * `Accessible-RDP`
 * `Accessible-Telnet`
