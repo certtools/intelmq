@@ -27,6 +27,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `int
 - [Malware Domain List](#malware-domain-list)
 - [Malware Domains](#malware-domains)
 - [MalwarePatrol](#malwarepatrol)
+- [MalwareUrl](#malwareurl)
 - [Netlab 360](#netlab-360)
 - [Nothink](#nothink)
 - [OpenPhish](#openphish)
@@ -966,6 +967,25 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `int
 ### Parser
 
 * **Module:** intelmq.bots.parsers.malwarepatrol.parser_dansguardian
+* **Configuration Parameters:**
+
+
+# MalwareUrl
+
+* **Status:** on
+* **Revision:** 05-02-2018
+* **Description:** Latest malicious domains.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.http.collector_http
+* **Configuration Parameters:**
+*  * `http_url`: `https://www.malwareurl.com/`
+*  * `rate_limit`: `86400`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.malwareurl.parser
 * **Configuration Parameters:**
 
 

@@ -65,6 +65,7 @@ CHANGELOG
 - added `bots.parsers.cymru.parser_cap_program`
 - added `intemq.bots.parsers.zoneh.parser` for ZoneH feeds
 - added `intemq.bots.parsers.sucuri.parser`
+- added `intemq.bots.parsers.malwareurl.parser`
 
 #### Experts
 - Added sieve expert for filtering and modifying events (#1083)
