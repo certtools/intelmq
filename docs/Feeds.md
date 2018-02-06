@@ -27,7 +27,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `int
 - [Malware Domain List](#malware-domain-list)
 - [Malware Domains](#malware-domains)
 - [MalwarePatrol](#malwarepatrol)
-- [MalwareUrl](#malwareurl)
+- [MalwareURL](#malwareurl)
 - [Netlab 360](#netlab-360)
 - [Nothink](#nothink)
 - [OpenPhish](#openphish)
@@ -970,11 +970,13 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `int
 * **Configuration Parameters:**
 
 
-# MalwareUrl
+# MalwareURL
+
+## Latest malicious activity
 
 * **Status:** on
 * **Revision:** 05-02-2018
-* **Description:** Latest malicious domains.
+* **Description:** Latest malicious domains/IPs.
 
 ### Collector
 

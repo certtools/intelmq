@@ -1272,3 +1272,19 @@ providers:
       revision: 20-01-2018
       status: on
       documentation:
+  MalwareURL:
+    Latest malicious activity:
+      description: Latest malicious domains/IPs.
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.http.collector_http
+          parameters:
+            http_url: https://www.malwareurl.com/
+            rate_limit: 86400
+        parser:
+          module: intelmq.bots.parsers.malwareurl.parser
+          parameters:
+      revision: 05-02-2018
+      status: on
+      documentation:
