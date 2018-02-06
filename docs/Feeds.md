@@ -1270,7 +1270,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `int
 
 # Sucuri
 
-## Hidden Iframes
+## Hidden IFrames
 
 * **Status:** on
 * **Revision:** 28-01-2018
