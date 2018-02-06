@@ -420,6 +420,11 @@
                 "error_log_message": false
             }
         },
+        "Threatminer": {
+            "description": "Threatminer Parser is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.threatminer.parser",
+            "parameters": {}
+        },
         "Turris Greylist": {
             "description": "Turris Greylist Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.turris.parser",

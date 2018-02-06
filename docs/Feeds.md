@@ -37,6 +37,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `int
 - [Sucuri](#sucuri)
 - [Taichung](#taichung)
 - [Team Cymru](#team-cymru)
+- [Threatminer](#threatminer)
 - [Turris](#turris)
 - [URLVir](#urlvir)
 - [University of Toulouse](#university-of-toulouse)
@@ -1374,6 +1375,25 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `int
 ### Parser
 
 * **Module:** intelmq.bots.parsers.cymru.parser_full_bogons
+* **Configuration Parameters:**
+
+
+# Threatminer
+
+* **Status:** on
+* **Revision:** 06-02-2018
+* **Description:** Latest malicious domains.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.http.collector_http
+* **Configuration Parameters:**
+*  * `http_url`: `https://www.threatminer.org/`
+*  * `rate_limit`: `86400`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.threatminer.parser
 * **Configuration Parameters:**
 
 
