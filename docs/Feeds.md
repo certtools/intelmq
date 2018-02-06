@@ -28,6 +28,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `int
 - [Malware Domains](#malware-domains)
 - [MalwarePatrol](#malwarepatrol)
 - [MalwareURL](#malwareurl)
+- [Microsoft](#microsoft)
 - [Netlab 360](#netlab-360)
 - [Nothink](#nothink)
 - [OpenPhish](#openphish)
@@ -807,7 +808,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `int
 
 # Fraunhofer
 
-## DGA Archieve
+## DGA Archive
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -990,6 +991,30 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `int
 ### Parser
 
 * **Module:** intelmq.bots.parsers.malwareurl.parser
+* **Configuration Parameters:**
+
+
+# Microsoft
+
+## CTIP
+
+* **Status:** on
+* **Revision:** 05-02-2018
+* **Description:** Collects CTIP files from the Interflow API.
+* **Additional Information:** Depending on the file sizes you may need to increase the timeout.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.microsoft.collector_interflow
+* **Configuration Parameters:**
+*  * `api_key`: `{{your API key}}`
+*  * `file_match`: `^ctip_`
+*  * `http_timeout_sec`: `300`
+*  * `rate_limit`: `3600`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.json.parser
 * **Configuration Parameters:**
 
 

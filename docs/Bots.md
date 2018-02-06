@@ -327,6 +327,25 @@ Iterates over all blobs in all containers in an Azure storage.
 
 * * *
 
+### Microsoft Interflow
+
+Iterates over all files available by this API.
+
+#### Information:
+* `name:` intelmq.bots.collectors.microsoft.collector_interflow
+* `lookup:` yes
+* `public:` no
+* `cache (redis db):` none
+* `description:` collect files from microsoft interflow using their API
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `api_key`: API generate in their portal
+* `file_match`: an optional regular expression to match file names
+
+* * *
+
 ### Stomp
 
 See the README.md

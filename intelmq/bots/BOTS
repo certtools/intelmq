@@ -176,6 +176,19 @@
                 "rate_limit": 3600
             }
         },
+        "Microsoft Interflow": {
+            "description": "",
+            "module": "intelmq.bots.collectors.microsoft.collector_interflow",
+            "parameters": {
+                "api_key": "",
+                "delete": true,
+                "feed": "",
+                "file_match": null,
+                "http_timeout_sec": 300,
+                "provider": "microsoft",
+                "rate_limit": 3600
+            }
+        },
         "Stomp": {
             "description": "Stomp Collector - e.g. for CERT.pl's N6 feed via STOMP. Note that rate_limit does not apply for this bot as it is waiting for messages on a stream.",
             "module": "intelmq.bots.collectors.stomp.collector",
