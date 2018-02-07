@@ -74,7 +74,8 @@ class DummyParserBot(bot.ParserBot):
     """
 
     def parse_line(self, line, report):
-        warnings.warn('This is a warning test.')
+        if getattr(self.parameters, 'raise_warning', False):
+            warnings.warn('This is a warning test.')
         if line.startswith('#'):
             self.logger.info('Lorem ipsum dolor sit amet.')
             self.tempdata.append(line)
@@ -142,6 +143,7 @@ class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
     def test_missing_raw(self):
         """ Test if correct Event has been produced. """
         self.input_message = EXAMPLE_EMPTY_REPORT
+        self.allowed_warning_count = 1
         self.run_bot()
         self.assertAnyLoglineEqual(message='Report without raw field received. Possible '
                                            'bug or misconfiguration in previous bots.',

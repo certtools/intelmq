@@ -43,8 +43,10 @@ class TestBot(test.BotTestCase, unittest.TestCase):
         Test if the logger catches warnings issued by the warnings module.
         """
         self.input_message = test_parser_bot.EXAMPLE_SHORT
+        self.allowed_warning_count = 1
+        self.sysconfig = {'raise_warning': True}
         self.run_bot()
-        self.assertLogMatches(levelname='WARNING', pattern='.*intelmq/tests/lib/test_parser_bot\.py\:77\: UserWarning: This is a warning test.')
+        self.assertLogMatches(levelname='WARNING', pattern='.*intelmq/tests/lib/test_parser_bot\.py\:[0-9]+\: UserWarning: This is a warning test.')
 
 
 if __name__ == '__main__':  # pragma: no cover

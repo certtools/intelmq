@@ -1,8 +1,8 @@
-intelmq (1.0.3-1) UNRELEASED; urgency=low
+intelmq (1.0.3-1) stable; urgency=low
 
   * Update to version 1.0.3
 
- -- Wagner Sebastian <wagner@cert.at>  Thu, 09 Nov 2017 13:58:33 +0100
+ -- Wagner Sebastian <wagner@cert.at>  Mon, 05 Feb 2018 12:01:34 +0100
 
 intelmq (1.0.2-1) experimental; urgency=low
 

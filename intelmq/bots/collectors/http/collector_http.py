@@ -16,6 +16,7 @@ http_proxy, https_proxy: string
 http_timeout_sec: tuple of two floats or float
 http_timeout_max_tries: an integer depicting how often a connection attempt is retried
 """
+import datetime
 import io
 import zipfile
 
@@ -25,6 +26,11 @@ from intelmq.lib.bot import CollectorBot
 from intelmq.lib.utils import extract_tar
 
 
+class Time(object):
+    def __getitem__(self, timeformat):
+        return datetime.datetime.now().strftime(timeformat)
+
+
 class HTTPCollectorBot(CollectorBot):
 
     def init(self):
@@ -32,14 +38,19 @@ class HTTPCollectorBot(CollectorBot):
         self.extract_files = getattr(self.parameters, "extract_files", None)
 
     def process(self):
-        self.logger.info("Downloading report from %r.", self.parameters.http_url)
+        if getattr(self.parameters, 'http_url_formatting', False):
+            http_url = self.parameters.http_url.format(time=Time())
+        else:
+            http_url = self.parameters.http_url
+
+        self.logger.info("Downloading report from %r.", http_url)
 
         timeoutretries = 0
         resp = None
 
         while timeoutretries < self.http_timeout_max_tries and resp is None:
             try:
-                resp = requests.get(url=self.parameters.http_url, auth=self.auth,
+                resp = requests.get(url=http_url, auth=self.auth,
                                     proxies=self.proxy, headers=self.http_header,
                                     verify=self.http_verify_cert,
                                     cert=self.ssl_client_cert,
@@ -82,7 +93,7 @@ class HTTPCollectorBot(CollectorBot):
         for raw_report in raw_reports:
             report = self.new_report()
             report.add("raw", raw_report)
-            report.add("feed.url", self.parameters.http_url)
+            report.add("feed.url", http_url)
             self.send_message(report)
 
 

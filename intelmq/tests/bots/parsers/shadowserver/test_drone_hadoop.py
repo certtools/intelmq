@@ -322,7 +322,7 @@ class TestOverwriteShadowserverParserBot(test.BotTestCase, unittest.TestCase):
 
     def test_overwrite(self):
         """ Test if overwrite parameter works. """
-
+        self.allowed_warning_count = 1
         self.run_bot()
         for i, EVENT in enumerate(EVENTS):
             event = EVENT.copy()
