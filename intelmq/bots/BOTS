@@ -193,6 +193,12 @@
             "description": "",
             "module": "intelmq.bots.collectors.twitter.collector_twitter",
             "parameters": {
+                "account_name": "",
+                "account_key": "",
+                "delete": true,
+                "feed": "",
+                "provider": "microsoft",
+                "rate_limit": 3600
             }
         }
     },
@@ -420,6 +426,11 @@
         "Turris Greylist": {
             "description": "Turris Greylist Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.turris.parser",
+            "parameters": {}
+        },
+        "Twitter": {
+            "description": "Twitter parser parser a report of tweets by extracting IOC. Currently only domains are supported",
+            "module": "intelmq.bots.parsers.twitter.parser",
             "parameters": {}
         },
         "URLVir": {

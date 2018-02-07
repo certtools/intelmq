@@ -96,4 +96,4 @@ class TwitterCollectorBot(CollectorBot):
         self.send_message(report)
 
 
-BOT = TwitterCollectorBot
+BOT=TwitterCollectorBot
