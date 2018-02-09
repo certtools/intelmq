@@ -349,6 +349,20 @@ See the README.md
 * `ssl_client_certificate_key`: path to client cert key file
 
 
+### API collector bot
+
+#### Information:
+* `name:` intelmq.bots.collectors.api.collector_api
+* `lookup:` no
+* `public:` no
+* `cache (redis db):` none
+* `description:` Bot for collecting data using API
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `port`: 5000
+
 <a name="parsers"></a>
 ## Parsers
 

@@ -88,7 +88,9 @@ CHANGELOG
 
 ### Bots
 #### Collectors
-
+- API
+  - initial Bot for collecting data using API
+  
 #### Parsers
 
 #### Experts

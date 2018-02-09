@@ -189,6 +189,15 @@
                 "ssl_client_certificate": "<insert path to client cert file for CERT.pl's n6>",
                 "ssl_client_certificate_key": "<insert path to client cert key file for CERT.pl's n6>"
             }
+        },
+        "API Collector": {
+            "description": "Bot for collecting data using API.",
+            "module": "intelmq.bots.collectors.api.collector_api",
+            "parameters": {
+                "feed": "",
+                "provider": "APICollector",
+                "port": 5000
+            }
         }
     },
     "Parser": {
