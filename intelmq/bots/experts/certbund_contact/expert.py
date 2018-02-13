@@ -23,9 +23,9 @@ Author(s):
 import sys
 
 try:
-        import psycopg2
+    import psycopg2
 except ImportError:
-        psycopg2 = None
+    psycopg2 = None
 
 
 from intelmq.lib.bot import Bot
