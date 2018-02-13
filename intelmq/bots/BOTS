@@ -191,15 +191,20 @@
             }
         },
         "Twitter": {
-            "description": "",
+            "description": "Collects tweets from target_timelines. Maximum number of tweet_count from each timeline and up to timelimit back in time.",
             "module": "intelmq.bots.collectors.twitter.collector_twitter",
             "parameters": {
-                "account_name": "",
-                "account_key": "",
-                "delete": true,
-                "feed": "",
-                "provider": "microsoft",
-                "rate_limit": 3600
+            "feed": "Twitter",
+            "target_timelines":"",
+            "tweet_count":"",
+            "timelimit": "",
+            "include_rts":"true",
+            "exclude_replies":"false",
+            "follow_urls":"",
+            "consumer_key":"",
+            "consumer_secret":"",
+            "access_token_key":"",
+            "access_token_secret":""
             }
         }
     },
@@ -217,11 +222,6 @@
         "Abuse.ch Ransomware": {
             "description": "Abuse.ch Ransomware Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.abusech.parser_ransomware",
-            "parameters": {}
-        },
-        "AnubisNetworks Cyberfeed Stream": {
-            "description": "Parses single JSON-events from AnubisNetworks Cyberfeed stream.",
-            "module": "intelmq.bots.parsers.anubisnetworks.parser",
             "parameters": {}
         },
         "AlienVault": {
@@ -244,13 +244,16 @@
             "module": "intelmq.bots.parsers.bambenek.parser",
             "parameters": {}
         },
-
         "Bitcash Blocklist Feed": {
             "description": "Bitcash Blocklist parser is the bot responsible to parse and sanitize the information.",
             "module": "intelmq.bots.parsers.bitcash.parser",
             "parameters": {}
         },
-
+        "AnubisNetworks Cyberfeed Stream": {
+            "description": "Parses single JSON-events from AnubisNetworks Cyberfeed stream.",
+            "module": "intelmq.bots.parsers.anubisnetworks.parser",
+            "parameters": {}
+        },
         "Blocklist.de": {
             "description": "Blocklist.DE Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.blocklistde.parser",
@@ -440,9 +443,13 @@
             "parameters": {}
         },
         "Twitter": {
-            "description": "Twitter parser parser a report of tweets by extracting IOC. Currently only domains are supported",
+            "description": "Twitter parser parses a report of tweets by extracting IOC. Currently only urls are supported, a whitelist of safe domains can be provided",
             "module": "intelmq.bots.parsers.twitter.parser",
-            "parameters": {}
+            "parameters": {
+                    "domain_whitelist":"t.co",
+                    "substitutions":" .net;[.]net",
+                    "classification_type": "blacklist"
+                    }
         },
         "URLVir": {
             "description": "URLVir Parser is the bot responsible to parse the Export Hosts and Export IP Addresses reports and sanitize the information.",
