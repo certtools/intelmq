@@ -65,7 +65,13 @@ def set_certbund_contacts(event, section, contacts):
 
 
 def get_certbund_contacts(event, section):
-    return get_certbund_field(event).get(contacts_key(section), [])
+    """Return the contact data associated with the event for a section.
+    The section should be either 'destination' or 'source'. If the event
+    does not have contact information for the section, this function
+    returns empty contact information.
+    """
+    return get_certbund_field(event).get(contacts_key(section),
+                                         {"matches": [], "organisations": []})
 
 
 def del_certbund_contacts(event, section):
