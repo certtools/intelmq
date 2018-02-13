@@ -37,6 +37,10 @@ from intelmq.bots.experts.certbund_contact.eventjson \
 class CERTBundKontaktExpertBot(Bot):
 
     def init(self):
+        self.sections = [section.strip() for section in
+                         getattr(self.parameters,
+                                 "sections", "source").split(",")]
+        self.logger.debug("Sections: %r", self.sections)
         try:
             self.logger.debug("Trying to connect to database.")
             self.connect_to_database()
@@ -67,7 +71,7 @@ class CERTBundKontaktExpertBot(Bot):
             self.acknowledge_message()
             return
 
-        for section in ["source", "destination"]:
+        for section in self.sections:
             ip = event.get(section + ".ip")
             asn = event.get(section + ".asn")
             fqdn = event.get(section + ".fqdn")

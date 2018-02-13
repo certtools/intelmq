@@ -431,6 +431,7 @@
                 "host": "localhost",
                 "password": "<password>",
                 "port": "5432",
+                "sections": "source",
                 "sslmode": "require",
                 "user": "intelmq"
             }
@@ -440,6 +441,7 @@
             "module": "intelmq.bots.experts.certbund_contact.ruleexpert",
             "parameters": {
                 "script_directory": "/opt/intelmq/var/lib/bots/notification_rules",
+                "sections": "source",
                 "remove_contact_data": true
             }
         },
