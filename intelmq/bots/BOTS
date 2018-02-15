@@ -665,28 +665,17 @@
                 "single_key": null
             }
         },
-        "MailGather": {
-            "module": "intelmq.bots.outputs.mail.output_gather",
-            "description": "Send mails with batches of events. Gathers events -> redis.",
-            "parameters": {
-                "rate_limit": "0",
-                "redis_cache_host": "127.0.0.1",
-                "redis_cache_port": "6379",
-                "redis_cache_db": "7",
-                "redis_cache_ttl": "86400",
-                "mail_rewrite" : "{\"original@email.com\":\"new@email.com\"}"
-            }
-        },
-        "MailSend": {
-            "module": "intelmq.bots.outputs.mail.output_send",
-            "description": "Send mails with batches of events. Redis -> mails.",
+        "Mail": {
+            "module": "intelmq.bots.outputs.mail.output",
+            "description": "Send mails with batches of events. Gathers events -> redis. If run through cli, sends mails with batches of events. Redis events -> SMTP.",
             "parameters": {
                 "rate_limit": "3600",
                 "redis_cache_host": "127.0.0.1",
                 "redis_cache_port": "6379",
                 "redis_cache_db": "7",
                 "redis_cache_ttl": "86400",
-                "mail_template": "/opt/intelmq/etc/mail/template.txt",
+                "mail_template": "/opt/intelmq/var/lib/bots/mail/template.txt",
+                "mail_rewrite" : "{\"original@email.com\":\"new@email.com\"}"
                 "emailFrom": "edvard.rejthar+test_intelmq@nic.cz",
                 "smtp_server" : "127.0.0.1",
                 "testing_to": "edvard.rejthar+test_output@nic.cz"

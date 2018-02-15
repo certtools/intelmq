@@ -37,22 +37,12 @@ except ImportError:
 
 Mail = namedtuple('Mail', ["key", "to", "path", "count"])
 
-
-# XXX CO zbyva:
-# output_gather smazan -> premigrovat sem (*.conf)
-# output_send prejmenovan na output.py (*.conf)
-# sjednotit dve moznosti prepsani abusecontactu a dat do readme.txt
-# at si to bot predava pres nejaky lepsi klic nez "mail: *" -> aby moho byt vic botu
-# moznost cli spusteni
-#
-#
-
 class MailSendOutputBot(Bot):
     TMP_DIR = "/tmp/intelmq-mails/"
 
     def process(self):
         message = self.receive_message()
-        mail_rewrite = ast.literal_eval(self.parameters.mail_rewrite)
+        #mail_rewrite = ast.literal_eval(self.parameters.mail_rewrite)
 
         self.logger.warning("ZPRAVA..")
         self.logger.debug(message)
@@ -61,7 +51,7 @@ class MailSendOutputBot(Bot):
         self.logger.warning("ZPRAVA END..")
         if "source.abuse_contact" in message:
             field = message["source.abuse_contact"]
-            self.logger.warning("mail:" + field)
+            self.logger.warning("{}{}".format(self.key, field))
             if field:
                 self.logger.warning("edvard field")
                 mails = field if type(field) == 'list' else [field]
@@ -69,15 +59,14 @@ class MailSendOutputBot(Bot):
                 self.logger.warning("edvard mails")
 
                 # rewrite destination address
-                if message["source.abuse_contact"] in mail_rewrite:
-                    message.update({"source.abuse_contact": str(mail_rewrite[message["source.abuse_contact"]])})
-                    mail = mail_rewrite[mail]
+                #if message["source.abuse_contact"] in mail_rewrite:
+                #    message.update({"source.abuse_contact": str(mail_rewrite[message["source.abuse_contact"]])})
+                #    mail = mail_rewrite[mail]
 
-                self.cache.redis.rpush("mail:" + mail, message)
+                self.cache.redis.rpush("{}{}".format(self.key, field), message)
             self.logger.warning("done")
 
-        # self.send_message(message) nikam dal neposilame
-        self.acknowledge_message()  # dokoncil jsem praci (asi)
+        self.acknowledge_message()
 
     def set_cache(self):
         self.cache = Cache(
@@ -89,6 +78,7 @@ class MailSendOutputBot(Bot):
 
     def init(self):
         self.set_cache()
+        self.key = "{}:".format(self._Bot__bot_id)
         parser = argparse.ArgumentParser(prog=" ".join(sys.argv[0:1]))
         parser.add_argument('cli', help='initiate cli dialog')
         parser.add_argument('--tester', dest="testing_to", help='tester\'s e-mail')
@@ -98,88 +88,88 @@ class MailSendOutputBot(Bot):
         parser.parse_args(sys.argv[2:], namespace=self.parameters)
 
         if self.parameters.cli == "cli":
+            self.cli_run()
 
-            self.parameters.gpg = None
-            if self.parameters.gpgkey:
-                GPGHOME = "~/.gnupg"
-                self.parameters.gpg = GPGSafe(use_agent=False, homedir=GPGHOME)
-                if bool(self._sign("test text")):
-                    print("Successfully loaded GPG key {}".format(self.parameters.gpgkey))
-                else:
-                    print("Error loading GPG key {} from {}".format(self.parameters.gpgkey, os.path.expanduser(GPGHOME)))
-                    sys.exit(1)
-
-            os.makedirs(self.TMP_DIR, exist_ok=True)
-            with open(self.parameters.mail_template) as f:
-                self.mailContents = f.read()
-            self.alternativeMail = {}
-            if self.parameters.alternative_mails:
-                with open(self.parameters.alternative_mails, "r") as f:
-                    reader = csv.reader(f, delimiter=",")
-                    for row in reader:
-                        self.alternativeMail[row[0]] = row[1]
-
-            print("Preparing mail queue...")
-            mails = [m for m in self.prepare_mails() if m]
-
-            print()
-            if self.parameters.limit_results:
-                print("Results limited to {} by flag. ".format(self.parameters.limit_results), end="")
-
-            if not len(mails):
-                print(" *** No mails in queue ***")
-                sys.exit(0)
+    def cli_run(self):
+        self.parameters.gpg = None
+        if self.parameters.gpgkey:
+            GPGHOME = "~/.gnupg"
+            self.parameters.gpg = GPGSafe(use_agent=False, homedir=GPGHOME)
+            if bool(self._sign("test text")):
+                print("Successfully loaded GPG key {}".format(self.parameters.gpgkey))
             else:
-                print("Number of mails in the queue:", len(mails))
+                print("Error loading GPG key {} from {}".format(self.parameters.gpgkey, os.path.expanduser(GPGHOME)))
+                sys.exit(1)
 
-            with smtplib.SMTP(self.parameters.smtp_server) as self.smtp:
-                while True:
-                    print("GPG active" if self.parameters.gpgkey else "No GPG")
-                    print("\nWhat you would like to do?\n"
-                          "* enter to send first mail to tester's address {}.\n"
-                          "* any mail from above to be delivered to tester's address\n"
-                          "* 'debug' to send all the e-mails to tester's address"
-                          .format(self.parameters.testing_to))
-                    if self.parameters.testing_to:
-                        print("* 's' for setting other tester's address")
-                    print("* 'all' for sending all the e-mails\n"
-                          "* 'clear' for clearing the queue\n"
-                          "* 'x' to cancel\n"
-                          "? ", end="")
-                    i = input()
-                    if i in ["x", "q"]:
-                        sys.exit(0)
-                    elif i == "all":
-                        count = 0
-                        for mail in mails:
-                            if self.build_mail(mail, send=True):
-                                count += 1
-                                self.cache.redis.delete(mail.key)
-                                if mail.path:
-                                    os.unlink(mail.path)
-                        print("{}× mail sent.\n".format(count))
-                        sys.exit(0)
-                    elif i == "clear":
-                        for mail in mails:
-                            self.cache.redis.delete(mail.key)
-                        print("Queue cleared.")
-                        sys.exit(0)
-                    elif i == "s":
-                        self.set_tester()
-                    elif i in ["", "y"]:
-                        self.send_mails_to_tester([mails[0]])
-                    elif i == "debug":
-                        self.send_mails_to_tester(mails)
-                    else:
-                        for mail in mails:
-                            if mail.to == i:
-                                self.send_mails_to_tester([mail])
-                                break
-                        else:
-                            print("Unknown option.")
+        os.makedirs(self.TMP_DIR, exist_ok=True)
+        with open(self.parameters.mail_template) as f:
+            self.mail_contents = f.read()
+        self.alternative_mail = {}
+        if hasattr(self.parameters, "alternative_mails"):
+            with open(self.parameters.alternative_mails, "r") as f:
+                reader = csv.reader(f, delimiter=",")
+                for row in reader:
+                    self.alternative_mail[row[0]] = row[1]
 
+        print("Preparing mail queue...")
+        mails = [m for m in self.prepare_mails() if m]
+
+        print("")
+        if self.parameters.limit_results:
+            print("Results limited to {} by flag. ".format(self.parameters.limit_results), end="")
+
+        if not len(mails):
+            print(" *** No mails in queue ***")
+            sys.exit(0)
         else:
-            print("Running forever with no job. Run with 'cli' parameter.")
+            print("Number of mails in the queue:", len(mails))
+
+        with smtplib.SMTP(self.parameters.smtp_server) as self.smtp:
+            while True:
+                print("GPG active" if self.parameters.gpgkey else "No GPG")
+                print("\nWhat you would like to do?\n"
+                      "* enter to send first mail to tester's address {}.\n"
+                      "* any mail from above to be delivered to tester's address\n"
+                      "* 'debug' to send all the e-mails to tester's address"
+                      .format(self.parameters.testing_to))
+                if self.parameters.testing_to:
+                    print("* 's' for setting other tester's address")
+                print("* 'all' for sending all the e-mails\n"
+                      "* 'clear' for clearing the queue\n"
+                      "* 'x' to cancel\n"
+                      "? ", end="")
+                i = input()
+                if i in ["x", "q"]:
+                    sys.exit(0)
+                elif i == "all":
+                    count = 0
+                    for mail in mails:
+                        if self.build_mail(mail, send=True):
+                            count += 1
+                            self.cache.redis.delete(mail.key)
+                            if mail.path:
+                                os.unlink(mail.path)
+                    print("{}× mail sent.\n".format(count))
+                    sys.exit(0)
+                elif i == "clear":
+                    for mail in mails:
+                        self.cache.redis.delete(mail.key)
+                    print("Queue cleared.")
+                    sys.exit(0)
+                elif i == "s":
+                    self.set_tester()
+                elif i in ["", "y"]:
+                    self.send_mails_to_tester([mails[0]])
+                elif i == "debug":
+                    self.send_mails_to_tester(mails)
+                else:
+                    for mail in mails:
+                        if mail.to == i:
+                            self.send_mails_to_tester([mail])
+                            break
+                    else:
+                        print("Unknown option.")
+
 
     def set_tester(self, force=True):
         if not force and self.parameters.testing_to:
@@ -207,7 +197,7 @@ class MailSendOutputBot(Bot):
                                   'event_description.text': 'description', 'malware.name': 'malware',
                                   'feed.name': 'feed_name', 'feed.url': 'feed_url', 'raw': 'raw'}
 
-        for mail_record in self.cache.redis.keys("mail:*")[slice(self.parameters.limit_results)]:
+        for mail_record in self.cache.redis.keys("{}*".format(self.key))[slice(self.parameters.limit_results)]:
             lines = []
             self.logger.debug(mail_record)
             try:
@@ -252,7 +242,7 @@ class MailSendOutputBot(Bot):
             dict_writer.writerow(dict(zip(ordered_fieldnames, ordered_fieldnames)))
             dict_writer.writerows(rows_output)
 
-            email_to = str(mail_record[len("mail:"):], encoding="utf-8")
+            email_to = str(mail_record[len(self.key):], encoding="utf-8")
             count = len(rows_output)
             if not count:
                 path = None
@@ -269,9 +259,9 @@ class MailSendOutputBot(Bot):
                 finally:
                     zf.close()
 
-                if email_to in self.alternativeMail:
-                    print("Alternative: instead of {} we use {}".format(email_to, self.alternativeMail[email_to]))
-                    email_to = self.alternativeMail[email_to]
+                if email_to in self.alternative_mail:
+                    print("Alternative: instead of {} we use {}".format(email_to, self.alternative_mail[email_to]))
+                    email_to = self.alternative_mail[email_to]
 
             mail = Mail(mail_record, email_to, path, count)
             self.build_mail(mail, send=False)
@@ -295,8 +285,8 @@ class MailSendOutputBot(Bot):
         else:
             intended_to = None
             email_to = mail.to
-        email_from = self.parameters.emailFrom
-        text = self.mailContents
+        email_from = self.parameters.email_from
+        text = self.mail_contents
         try:
             subject = time.strftime(self.parameters.subject)
         except:

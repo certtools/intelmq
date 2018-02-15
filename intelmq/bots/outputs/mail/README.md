@@ -4,12 +4,12 @@ With this bot, we are able to send e-mails.
 output.py
 ==============
 If bot is run normally, it just aggregates the events for later use.
-If run through cli, it loads the events gathered earlier y and sends them to abuse contact e-mails.
+If run through cli, it loads the events gathered earlier and sends them to abuse contact e-mails.
 
 Launch it like that:
 `</usr/local/bin executable> <bot-id> cli [--tester tester's email]`
 Ex:
-`intelmq.bots.outputs.mail.output_send  mailsend-output-cz cli --tester edvard.rejthar+test@nic.cz`
+`intelmq.bots.outputs.mail.output  mail-output-cz cli --tester edvard.rejthar+intelmq@nic.cz`
 
 Other flags:
 ```
@@ -29,14 +29,11 @@ E-mails are send in zipped csv file, delimited by comma, strings in "".
 
 The field "raw" gets base64 decoded if possible. Bytes \n and \r are replaced with "\n" and "\r" strings in order to guarantee best CSV files readability both in Office and LibreOffice. A multiline string may be stored in "raw" which completely confused Microsoft Excel.
 
-
-XXX add options from former output_gather.py
-
 Configuration:
 ```json
-"alternative_mails": "", # empty string or or path to csv in the form original@email.com,alternative@email.com
-"bcc": [], # the list of e-mails to be put in the bcc field for every mail
-"emailFrom": "", # sender's e-mail
+"alternative_mails": "", # (OPTIONAL) empty string or or path to csv in the form original@email.com,alternative@email.com
+"bcc": [], # (OPTIONAL) the list of e-mails to be put in the bcc field for every mail
+"email_from": "", # sender's e-mail
 "gpgkey": "key fingerprint", # (OPTIONAL) fingerprint of a GPG key stored in ~/.gnupg keyring folder
 "gpgpass": "password", # (OPTIONAL) password for the GPG key
 "mail_template": "", # file containing the body of the mail
