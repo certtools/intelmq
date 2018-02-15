@@ -165,15 +165,33 @@ This configuration is used by each bot to load the source pipeline and destinati
 }
 ```
 
+Note that `destination-queues` contains one of the following values:
+* None
+* string
+* list of strings (as in the template above)
+* dict of either strings or lists for complex expert bots:
+
+```
+"destination-queues": {
+    "_default": "<first destination pipeline name>",
+    "other-path": [
+        "<second destination pipeline name>",
+        "<third destination pipeline name>",
+        ...
+        ],
+    ...
+    }
+
+```
+In that case, bot will be able to send the message to one of defined paths. It will except `"_default"` path if not specified.
+
 **Example:**
 ```
 {
 	...
     "malware-domain-list-parser": {
         "source-queue": "malware-domain-list-parser-queue",
-        "destination-queues": [
-            "file-output-queue"
-        ]
+        "destination-queues": "file-output-queue"
     },
 	...
 }

@@ -415,10 +415,10 @@ All other names can be used freely.
 
 ## Pipeline interactions
 
-A can call three methods related to the pipeline:
+We can call three methods related to the pipeline:
 
   - `self.receive_message()`: The pipeline handler pops one message from the internal queue if possible. Otherwise one message from the sources list is popped, and added it to an internal queue. In case of errors in process handling, the message can still be found in the internal queue and is not lost. The bot class unravels the message a creates an instance of the Event or Report class.
-  - `self.send_message(event)`: Processed message is sent to destination queues.
+  - `self.send_message(event, path="_default")`: Processed message is sent to destination queues. It is possible to change the destination queues by optional `path` parameter.
   - `self.acknowledge_message()`: Message formerly received by `receive_message` is removed from the internal queue. This should always be done after processing and after the sending of the new message. In case of errors, this function is not called and the message will stay in the internal queue waiting to be processed again.
 
 ## Logging

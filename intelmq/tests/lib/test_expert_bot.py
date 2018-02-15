@@ -9,7 +9,7 @@ class DummyExpertBot(Bot):
 
     def process(self):
         event = self.receive_message()
-        self.send_message(event, queue=event['feed.code'] if 'feed.code' in event else "_default")
+        self.send_message(event, path=event['feed.code'] if 'feed.code' in event else "_default")
         self.acknowledge_message()
 
 
@@ -35,17 +35,17 @@ class TestDummyExpertBot(test.BotTestCase, unittest.TestCase):
         msg = self.input_message = EXAMPLE.copy()
         self.input_message["feed.code"] = "other-way"
         self.run_bot()
-        self.assertOutputQueueLen(0, queue="_default")
-        self.assertMessageEqual(0, msg, queue="other-way")
+        self.assertOutputQueueLen(0, path="_default")
+        self.assertMessageEqual(0, msg, path="other-way")
 
     def test_pipeline_multiple(self):
         msg = self.input_message = EXAMPLE.copy()
         self.input_message["feed.code"] = "two-way"
         self.run_bot()
-        self.assertOutputQueueLen(0, queue="_default")
-        self.assertOutputQueueLen(0, queue="other-way")
-        self.assertMessageEqual(0, msg, queue="two-way")
-        self.assertMessageEqual(1, msg, queue="two-way")
+        self.assertOutputQueueLen(0, path="_default")
+        self.assertOutputQueueLen(0, path="other-way")
+        self.assertMessageEqual(0, msg, path="two-way")
+        self.assertMessageEqual(1, msg, path="two-way")
 
 
 if __name__ == '__main__':

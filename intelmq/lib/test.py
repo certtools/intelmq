@@ -317,11 +317,11 @@ class BotTestCase(object):
 
     input_queue = property(get_input_queue, set_input_queue)
 
-    def get_output_queue(self, queue="_default"):
+    def get_output_queue(self, path="_default"):
         """Getter for items in the output queues of this bot. Use in TestCase scenarios
             If there is multiple queues in named queue group, we return all the items chained.
         """
-        return [utils.decode(text) for text in chain(*[self.pipe.state[x] for x in self.pipe.destination_queues[queue]])]
+        return [utils.decode(text) for text in chain(*[self.pipe.state[x] for x in self.pipe.destination_queues[path]])]
         # return [utils.decode(text) for text in self.pipe.state["%s-output" % self.bot_id]]
 
     def test_bot_name(self):
@@ -445,19 +445,19 @@ class BotTestCase(object):
         except AttributeError:
             self.assertNotRegex(self.loglines_buffer, pattern)
 
-    def assertOutputQueueLen(self, queue_len=0, queue="_default"):
+    def assertOutputQueueLen(self, queue_len=0, path="_default"):
         """
         Asserts that the output queue has the expected length.
         """
-        self.assertEqual(len(self.get_output_queue(queue=queue)), queue_len)
+        self.assertEqual(len(self.get_output_queue(path=path)), queue_len)
 
-    def assertMessageEqual(self, queue_pos, expected_msg, queue="_default"):
+    def assertMessageEqual(self, queue_pos, expected_msg, path="_default"):
         """
         Asserts that the given expected_message is
         contained in the generated event with
         given queue position.
         """
-        event = self.get_output_queue(queue=queue)[queue_pos]
+        event = self.get_output_queue(path=path)[queue_pos]
         self.assertIsInstance(event, str)
 
         event_dict = json.loads(event)
