@@ -669,16 +669,16 @@
             "module": "intelmq.bots.outputs.mail.output",
             "description": "Send mails with batches of events. Gathers events -> redis. If run through cli, sends mails with batches of events. Redis events -> SMTP.",
             "parameters": {
+                "email_from": "edvard.rejthar+test_intelmq@nic.cz",
+                "mail_template": "/opt/intelmq/var/lib/bots/mail/template.txt",
                 "rate_limit": "3600",
                 "redis_cache_host": "127.0.0.1",
                 "redis_cache_port": "6379",
                 "redis_cache_db": "7",
                 "redis_cache_ttl": "86400",
-                "mail_template": "/opt/intelmq/var/lib/bots/mail/template.txt",
-                "mail_rewrite" : "{\"original@email.com\":\"new@email.com\"}"
-                "emailFrom": "edvard.rejthar+test_intelmq@nic.cz",
                 "smtp_server" : "127.0.0.1",
-                "testing_to": "edvard.rejthar+test_output@nic.cz"
+                "subject": "IntelMQ mail bot",
+                "testing_to": "example@example.com"
             }
         },
         "MongoDB": {
