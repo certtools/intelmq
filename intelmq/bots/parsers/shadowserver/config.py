@@ -434,7 +434,6 @@ open_redis = {
         # git_dirty_flag
         # build_id
         # mode
-        # os
         # architecture
         # multiplexing_api
         # gcc_version
