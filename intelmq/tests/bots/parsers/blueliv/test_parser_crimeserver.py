@@ -23,9 +23,10 @@ EXAMPLE_EVENTS = [{
     "feed.name": "Blueliv Crimeserver",
     "classification.type": "malware",
     "raw": utils.base64_encode(EXAMPLE_LINES[0][:-1]),
-    'extra': '{"confidence": 4, "status": "ONLINE", "time_first_seen": '
-               '"2015-10-20T06:14:00+0000", "time_updated": '
-               '"2015-12-09T04:45:53+0000"}',
+    "extra.confidence": 4,
+    "extra.time_updated": "2015-12-09T04:45:53+0000",
+    "extra.time_first_seen": "2015-10-20T06:14:00+0000",
+    "extra.status": "ONLINE",
     "source.url": "http://amirosterweil.weebly.com/uploads/2/3/2/5/23258576/corporate_elearning.pdf",
     "time.source": "2015-12-09T04:43:29+00:00",
     "time.observation": "2015-09-02T14:17:58+00:00",
@@ -36,9 +37,9 @@ EXAMPLE_EVENTS = [{
     "feed.name": "Blueliv Crimeserver",
     "classification.type": "phishing",
     "raw": utils.base64_encode(EXAMPLE_LINES[1][:-1]),
-    "extra": '{"status": "ONLINE", "time_first_seen": '
-             '"2015-07-04T17:08:23+0000", "time_updated": '
-             '"2015-12-13T13:55:54+0000"}',
+    "extra.status": "ONLINE",
+    "extra.time_updated": "2015-12-13T13:55:54+0000",
+    "extra.time_first_seen": "2015-07-04T17:08:23+0000",
     "source.url": "http://mondeos-italo.com/store/apple/",
     "time.source": "2015-12-13T13:53:55+00:00",
     "time.observation": "2015-09-02T14:17:58+00:00",
@@ -46,7 +47,7 @@ EXAMPLE_EVENTS = [{
     }, {
     "__type": "Event",
     "feed.name": "Blueliv Crimeserver",
-    "extra": '{"status": "ONLINE"}',
+    "extra.status": "ONLINE",
     "classification.type": "proxy",
     "raw": utils.base64_encode(EXAMPLE_LINES[2]),
     "source.tor_node": True,

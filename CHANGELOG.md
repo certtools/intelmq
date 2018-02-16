@@ -1,6 +1,110 @@
 CHANGELOG
 ==========
 
+1.1.0 (unreleased)
+------------------
+- Support for Python 3.3 has been dropped, it reached its end of life.
+- The list of feeds docs/Feeds.md has now a machine-readable equivalent YAML file in intelmq/etc/feeds.yaml
+  A tool to convert from yaml to md has been added.
+  This is not an executable part of packages, only relevant for developers.
+
+### Tools
+- `intelmqctl start` prints bot's error messages if it failed to start
+- `intelmqctl check` checks for defaults.conf completeness
+- `intelmqctl check` shows errors for non-importable bots.
+- `intelmqctl list bots -q` only prints the IDs of enabled bots
+- `intelmq_gen_feeds_docs` add to bin directory, allows generating the Feeds.md documentation file from feeds.yaml
+
+### Contrib
+- contrib tool `feeds-config-generator` to automatically generate the collector and parser runtime and pipeline configurations.
+
+### Core
+- use SIGTERM instead of SIGINT to stop bots (#981)
+- Subitems in fields of type `JSONDict` (see below) can be accessed directly. E.g. you can do:
+  event['extra.foo'] = 'bar'
+  event['extra.foo'] # gives 'bar'
+  It is still possible to set and get the field as whole, however this may be removed or changed in the future:
+  event['extra'] = '{"foo": "bar"}'
+  event['extra'] # gives '{"foo": "bar"}'
+  "Old" bots and configurations compatible with 1.0.x do still work.
+  Also, the extra field is now properly exploded when exporting events, analogous to all other fields.
+- intelmq.lib.message.Message.add: The parameter overwrite accepts now three different values: True, False and None (new).
+  True: An existing value will be overwritten
+  False: An existing value will not be overwritten (previously and exception has been raised when the value was raised).
+  None (default): If the value exists an KeyExists Exception is thrown (previously the same as False).
+  This allows shorter code in the bots, as an 'overwrite' configuration parameter can be directly passed to the function.
+- Bots can specify a static method `check(parameters)` which can perform individual checks specific to the bot.
+  These functions will be called by `intelmqctl check` if the bot is configured with the given parameters
+- Add `RewindableFileHandle` to utils making handling of CSV files more easy (optionally)
+
+### Bots
+#### Collectors
+- Mail:
+  - New parameters; `sent_from`: filter messages by sender, `sent_to`: filter messages by recipient
+  - More debug logs
+- bots.experts.maxmind_geoip: New (optional) parameter `overwrite`, by default false. The current default was to overwrite!
+- `bots.collectors.n6.collector_stomp`: renamed to `bots.collectors.stomp.collector` (#716)
+- bots.collectors.rt:
+  - New parameter `search_requestor` to search for field Requestor.
+  - Empty strings and `null` as value for search parameters are ignored.
+  - Empty parameters `attachment_regex` and `url_regex` handled.
+- `bots.collectors.http.collector_http`: Ability to optionally use the current time in parameter `http_url`, added parameter `http_url_formatting`.
+- bots.collectors.stomp.collectos: Heartbeat timeout is now logged with log level info instead of warning.
+
+#### Parsers
+- changed feednames in `bots.parsers.shadowserver`. Please refer to it's README for the exact changes.
+- shadowserver parser: If the conversion function fails for a line, an error is raised and the offending line will be handled according to the error handling configuration.
+  Previouly errors like these were only logged and ignored otherwise.
+- added destination.urlpath and source.urlpath to harmonization.
+- changed feednames in `bots.parsers.shadowserver`. Please refer to it's README for the exact changes.
+- The Generic CSV Parser `bots.parsers.generic.parser_csv`:
+  - It is possible to filter the data before processing them using the new parameters `filter_type` and `filter_text`.
+  - It is possible to specify multiple coulmns using `|` character in parameter `columns`.
+  - The parameter `time_format` now supports `'epoch_millis'` for seconds since the Epoch, milliseconds are supported but not used.
+- renamed `bots.parsers.cymru_full_bogons.parser` to `bots.parsers.cymru.parser_full_bogons`, compatibility shim will be removed in version 2.0
+- added `bots.parsers.cymru.parser_cap_program`
+- added `intemq.bots.parsers.zoneh.parser` for ZoneH feeds
+- added `intemq.bots.parsers.sucuri.parser`
+- added `intemq.bots.parsers.malwareurl.parser`
+
+#### Experts
+- Added sieve expert for filtering and modifying events (#1083)
+
+### Harmonization
+- Renamed `JSON` to `JSONDict` and added a new type `JSON`. `JSONDict` saves data internally as JSON, but acts like a dictionary. `JSON` accepts any valid JSON.
+- fixed regex for `protocol.transport` it previously allowed more values than it should have.
+- New ASN type. Like integer but checks the range.
+
+### Requirements
+- Requests is no longer listed as dependency of the core. For depending bots the requirement is noted in their REQUIREMENTS.txt file
+
+1.0.4 Bugfix release (unreleased)
+---------------------------------
+### Contrib
+
+### Core
+
+### Harmonization
+
+### Bots
+#### Collectors
+
+#### Parsers
+
+#### Experts
+
+#### Outputs
+
+### Documentation
+
+### Tools
+
+### Tests
+
+### Packaging
+
+### Known issues
+
 
 1.0.3 Bugfix release (2018-02-05)
 ---------------------------------
@@ -93,7 +197,7 @@ CHANGELOG
 - lib/bot: Bots will now log the used intelmq version at startup
 
 ### Tools
-- intelmqctl: To check the status of a bot, the comandline of the running process is compared to the actual executable of the bot. Otherwise unrelated programs with the same PID are detected as running bot.
+- intelmqctl: To check the status of a bot, the command line of the running process is compared to the actual executable of the bot. Otherwise unrelated programs with the same PID are detected as running bot.
 - intelmqctl: enable, disable, check, clear now support the JSON output
 
 1.0.0 Stable release (2017-08-04)

@@ -5,3 +5,4 @@ graft docs
 include COPYRIGHT
 include LICENSE
 include CHANGELOG.md
+include intelmq/bots/experts/sieve/sieve.tx

@@ -140,7 +140,7 @@ class BotTestCase(object):
                                          'raw': 'Cg==',
                                          'feed.name': 'Test Feed',
                                          'time.observation': '2016-01-01T00:00:00+00:00'}
-        elif cls.default_input_message == '':
+        elif cls.default_input_message == '' and cls.bot_type != 'collector':
             cls.default_input_message = {'__type': 'Event'}
         if type(cls.default_input_message) is dict:
             cls.default_input_message = \
@@ -237,6 +237,11 @@ class BotTestCase(object):
         pipenames = ["{}-input", "{}-input-internal", "{}-output"]
         self.assertSetEqual({x.format(self.bot_id) for x in pipenames},
                             set(self.pipe.state.keys()))
+        """ Test if input queue is empty. """
+        self.assertEqual(self.input_queue, [],
+                         'Not all input messages have been processed. '
+                         'You probably need to increase the number of '
+                         'iterations of `run_bot`.')
 
         """ Test if report has required fields. """
         if self.bot_type == 'collector':

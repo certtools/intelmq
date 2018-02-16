@@ -13,7 +13,6 @@ REQUIRES = [
     'python-termstyle>=0.1.10',
     'pytz>=2012c',
     'redis>=2.10',
-    'requests>=2.2.0',
 ]
 if sys.version_info < (3, 5):
     REQUIRES.append('typing')
@@ -83,7 +82,6 @@ setup(
         'Operating System :: POSIX :: Linux',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
@@ -98,6 +96,7 @@ setup(
             'intelmqctl = intelmq.bin.intelmqctl:main',
             'intelmqdump = intelmq.bin.intelmqdump:main',
             'intelmq_psql_initdb = intelmq.bin.intelmq_psql_initdb:main',
+            'intelmq.bots.experts.sieve.validator = intelmq.bots.experts.sieve.validator:main',
         ] + BOTS,
     },
     scripts=[

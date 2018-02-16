@@ -107,5 +107,5 @@ class TestRedis(unittest.TestCase):
         self.clear()
 
 
-if __name__ == '__main__':  # pragma: no cover  # pragma: no cover
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

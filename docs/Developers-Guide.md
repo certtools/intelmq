@@ -4,8 +4,11 @@
   * [Goals](#goals)
 * [Development Environment](#development-environment)
   * [Installation](#installation)
+  * [How to develop](#how-to-develop)
   * [Update](#update)
   * [Testing](#testing)
+    * [Environment variables](#environment-variables)
+    * [Configuration test files](#configuration-test-files)
 * [Development Guidelines](#development-guidelines)
   * [Coding-Rules](#coding-rules)
     * [Unicode](#unicode)
@@ -37,6 +40,7 @@
     * [How to Log](#how-to-log)
   * [Error handling](#error-handling)
   * [Initialization](#initialization)
+  * [Custom configuration checks](#custom-configuration-checks)
   * [Examples](#examples)
   * [Parsers](#parsers)
   * [Tests](#tests)
@@ -52,7 +56,7 @@ However, before we go into the details, it is important to observe and internali
 
 ## Goals
 
-It is important, that all developers agree and stick to these meta-guidelines. 
+It is important, that all developers agree and stick to these meta-guidelines.
 IntelMQ tries to:
 
 * Be well tested. For developers this means, we expect you to write unit tests for bots. Every time.
@@ -76,21 +80,83 @@ Similarly, if code does not get accepted upstream by the main developers, it is 
 # Development Environment
 
 ## Installation
-Developers might want to install IntelMQ with `pip3 -e`, which gives you a so called *editable* installation. No code is copied in the libraries directories, there's just a link to your code.
 
-    pip3 install -e .
+Developers MUST have a fork repository of IntelMQ in order to commit the new code to their repository and then be able to do pull requests to main repository.
+
+The following instructions will use a so called *editable* installation. No code is copied in the libraries directories, there's just a link to your code. However, configuration files still required to be moved to `/opt/intelmq` as the instructions show.
+
+```bash
+sudo -s
+
+git clone https://github.com/<your username>/intelmq.git /opt/dev_intelmq
+cd /opt/dev_intelmq
+
+pip3 install -e .
+
+useradd -d /opt/intelmq -U -s /bin/bash intelmq
+
+mkdir /opt/intelmq
+mkdir -p /opt/intelmq/var/lib/bots/file-output/
+mkdir -p /opt/intelmq/var/log/
+
+cp -R /opt/dev_intelmq/intelmq/etc /opt/intelmq/
+cp -R /opt/dev_intelmq/intelmq/bots/BOTS /opt/intelmq/etc/
+
+chmod -R 0770 /opt/intelmq
+chown -R intelmq.intelmq /opt/intelmq
+```
+
+**Note:** please do not forget that configuration files, log files will be available on `/opt/intelmq`. However, if your development is somehow related to any configuration file, keep using `/opt/intelmq` and then, before commit, change the configurations files on `/opt/dev_intelmq/intelmq/etc/` with your changes on `/opt/intelmq/etc/`.
+
+
+## How to develop
+
+After you successfully setup your IntelMQ development environment, you can perform any development on any `.py` file on `/opt/dev_intelmq`. After you change, you can use the normal procedure to run the bots:
+
+```bash
+su - intelmq
+
+intelmqctl start spamhaus-drop-collector
+
+tail -f /opt/intelmq/var/log/spamhaus-drop-collector.log
+```
+
+You can also add new bots, creating the new `.py` file on the proper directory inside `cd /opt/dev_intelmq/intelmq`. However, your IntelMQ installation with pip3 needs to be updated. Please check the following section.
+
 
 ## Update
 
-If you do any changes on setup.py, data files (e.g. example configurations) or add new bots, you need to rerun the installation routine.
+In case you developed a new bot, you need to update your current development installation. In order to do that, please follow this procedure:
 
-    pip3 install --upgrade -e .
+
+1. Add the new bot information to `/opt/dev_intelmq/intelmq/bots/BOTS`, not `/opt/intelmq/etc/BOTS`.
+2. Make sure that you have your new bot in the right place and the information on BOTS file is correct.
+3. Execute the following commands:
+
+```bash
+sudo -s
+
+cd /opt/dev_intelmq
+pip3 install -e .
+cp /opt/dev_intelmq/intelmq/bots/BOTS /opt/intelmq/etc/BOTS
+
+chmod -R 0770 /opt/intelmq
+chown -R intelmq.intelmq /opt/intelmq
+```
+
+Now you can test run your new bot following this procedure:
+
+```bash
+su - intelmq
+
+intelmqctl start <bot_id>
+```
 
 ## Testing
 
 All changes have to be tested and new contributions must be accompanied by according unit tests. You can run the tests by changing to the directory with IntelMQ repository and running either `unittest` or `nosetests`:
 
-    cd intelmq
+    cd /opt/dev_intelmq
     python3 -m unittest {discover|filename}  # or
     nosetests3 [filename]  # or
     python3 setup.py test  # uses a build environment
@@ -115,11 +181,9 @@ For example, to run all tests you can use:
 INTELMQ_TEST_DATABASES=1 INTELMQ_TEST_LOCAL_WEB=1 INTELMQ_TEST_EXOTIC=1 nosetests
 ```
 
-### Configuration files
+### Configuration test files
 
-The tests use the configuration files in your working directory, not those
-installed in `/opt/intelmq/etc/` or `/etc/`.  You can run the
-tests for a locally changed intelmq without affecting an installation or
+The tests use the configuration files in your working directory, not those installed in `/opt/intelmq/etc/` or `/etc/`.  You can run the tests for a locally changed intelmq without affecting an installation or
 requiring root to run them.
 
 # Development Guidelines
@@ -276,23 +340,28 @@ We assume here, that origin is your own fork. We first add the upstream reposito
 > git remote add upstream https://github.com/certtools/intelmq.git
 ```
 
-Syncing master:
+Syncing develop (or any other branch):
 
 ```bash
-> git checkout master
-> git pull upstream master
-> git push origin master
-
+> git checkout develop
+> git pull upstream develop
+> git push origin develop
 ```
-Create a separate feature-branch to work on, sync master with upstream. Create working branch from master:
+Create a separate feature-branch to work on, sync develop with upstream. Create working branch from develop:
 ```bash
-> git checkout master
-> git checkout -b bugfix
+> git checkout develop
+> git checkout -b new-feature
 # your work
 > git commit
 ```
+Or, for bugfixes create a separate bugfix-branch to work on, sync maintenance with upstream. Create working branch from maintenance:
+```bash
+> git checkout maintenance
+> git checkout -b new-feature
+# your work
+> git commit
 
-Getting upstream's changes:
+Getting upstream's changes for master or any other branch:
 ```bash
 > git checkout master
 > git pull upstream master
@@ -301,14 +370,14 @@ Getting upstream's changes:
 There are 2 possibilities to get upstream's commits into your branch. Rebasing and Merging. Using rebasing, your history is rewritten, putting your changes on top of all other commits. You can use this if your changes are not published yet (or only in your fork).
 ```bash
 > git checkout bugfix
-> git rebase master
+> git rebase maintenance
 ```
-Using the `-i` flag for rebase enables interactive rebasing. You can then remove, reorder and squash commits, rewrite commit messages, beginning with the given branch, e.g. master.
+Using the `-i` flag for rebase enables interactive rebasing. You can then remove, reorder and squash commits, rewrite commit messages, beginning with the given branch, e.g. maintenance.
 
 Or using merging. This doesn't break the history. It's considered more , but also pollutes the history with merge commits.
 ```bash
 > git checkout bugfix
-> git merge master
+> git merge maintenance
 ```
 
 Also see the [development workflow of Scipy](https://docs.scipy.org/doc/numpy/dev/gitwash/development_workflow.html) which has more examples.
@@ -447,7 +516,7 @@ When the logger instance is created, the bot id must be given as parameter anywa
 
 ### What to Log
 
-* Try to keep a balance between obscuring the source code file with hundreds of log messages and having too little log messages. 
+* Try to keep a balance between obscuring the source code file with hundreds of log messages and having too little log messages.
 * In general, a bot MUST report error conditions.
 
 ### How to Log
@@ -488,6 +557,22 @@ class ExampleParserBot(Bot):
             self.logger.error("Read 'bots/experts/asn_lookup/README.md' and "
                               "follow the procedure.")
             self.stop()
+```
+
+## Custom configuration checks
+
+Every bot can define a static method `check(parameters)` which will be called by `intelmqctl check`.
+For example the check function of the ASNLookupExpert:
+
+```python
+    @staticmethod
+    def check(parameters):
+        if not os.path.exists(parameters.get('database', '')):
+            return [["error", "File given as parameter 'database' does not exist."]]
+        try:
+            pyasn.pyasn(parameters['database'])
+        except Exception as exc:
+            return [["error", "Error reading database: %r." % exc]]
 ```
 
 ## Examples

@@ -20,6 +20,8 @@ import os
 import re
 import sys
 import traceback
+import tarfile
+import io
 
 from typing import Sequence, Optional, Union
 
@@ -28,7 +30,8 @@ import pytz
 
 __all__ = ['base64_decode', 'base64_encode', 'decode', 'encode',
            'load_configuration', 'load_parameters', 'log', 'parse_logline',
-           'reverse_readline', 'error_message_from_exc', 'parse_relative'
+           'reverse_readline', 'error_message_from_exc', 'parse_relative',
+           'RewindableFileHandle',
            ]
 
 # Used loglines format
@@ -214,7 +217,8 @@ class StreamHandler(logging.StreamHandler):
 
 
 def log(name: str, log_path: str=intelmq.DEFAULT_LOGGING_PATH, log_level: str="DEBUG",
-        stream: Optional[object]=None, syslog: Union[bool, str, list, tuple]=None):
+        stream: Optional[object]=None, syslog: Union[bool, str, list, tuple]=None,
+        log_format_stream: str=LOG_FORMAT_STREAM):
     """
     Returns a logger instance logging to file and sys.stderr or other stream.
     The warnings module will log to the same handlers.
@@ -230,6 +234,8 @@ def log(name: str, log_path: str=intelmq.DEFAULT_LOGGING_PATH, log_level: str="D
             If False (default), FileHandler will be used. Otherwise either a list/
             tuple with address and UDP port are expected, e.g. `["localhost", 514]`
             or a string with device name, e.g. `"/dev/log"`.
+        log_format_stream:
+            The log format used for streaming output. Default: LOG_FORMAT_STREAM
 
     Returns:
         logger: An instance of logging.Logger
@@ -256,13 +262,15 @@ def log(name: str, log_path: str=intelmq.DEFAULT_LOGGING_PATH, log_level: str="D
             handler = logging.handlers.SysLogHandler(address=syslog)
         handler.setLevel(log_level)
         handler.setFormatter(logging.Formatter(LOG_FORMAT_SYSLOG))
+    else:
+        raise ValueError("Invalid configuration, neither log_path is given nor syslog is used.")
 
     if log_path or syslog:
         logger.addHandler(handler)
         warnings_logger.addHandler(handler)
 
     if stream or stream is None:
-        console_formatter = logging.Formatter(LOG_FORMAT_STREAM)
+        console_formatter = logging.Formatter(log_format_stream)
         if stream is None:
             console_handler = StreamHandler()
         else:
@@ -385,3 +393,50 @@ def parse_relative(relative_time: str) -> int:
         return int(result[0][0]) * TIMESPANS[result[0][1]]
     else:
         raise ValueError("Could not process result of regex for attribute " + repr(relative_time))
+
+
+def extract_tar(file: bytes, extract_files: Union[bool, list]) -> list:
+    """
+        Extracts given compressed tar.gz file and returns content of specified or all files from it.
+
+        Parameters:
+            file: a binary representation of compressed file
+            extract_files: a value which specifies files to be extracted:
+                    True: all
+                    list: some
+
+        Returns:
+            result: list containing the string representation of specified files
+
+        Raises:
+            TypeError: If file isn't tar.gz
+    """
+    try:
+        tar = tarfile.open(fileobj=io.BytesIO(file))
+    except tarfile.TarError as te:
+        raise TypeError("Could not process given file" + repr(te.args))
+
+    if isinstance(extract_files, bool):
+        extract_files = [file.name for file in tar.getmembers()]
+
+    return [tar.extractfile(member).read() for member in tar.getmembers() if member.name in extract_files]
+
+
+class RewindableFileHandle(object):
+    """
+    Can be used for easy retrieval of last input line to populate raw field
+    during CSV parsing.
+    """
+    def __init__(self, f):
+        self.f = f
+        self.current_line = None
+        self.first_line = None
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        self.current_line = next(self.f)
+        if self.first_line is None:
+            self.first_line = self.current_line
+        return self.current_line

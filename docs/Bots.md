@@ -7,11 +7,11 @@
 
 ## General remarks
 
-By default all of the bots are started when you start the whole botnet, however there is a possibility to 
-*disable* a bot. This means that the bot will not start every time you start the botnet, but you can start 
-and stop the bot if you specify the bot explicitly. To disable a bot, add the following to your 
-`runtime.conf`: `"enabled": false`. Be aware that this is **not** a normal parameter (like the others 
-described in this file). It is set outside of the `parameters` object in `runtime.conf`. Check the 
+By default all of the bots are started when you start the whole botnet, however there is a possibility to
+*disable* a bot. This means that the bot will not start every time you start the botnet, but you can start
+and stop the bot if you specify the bot explicitly. To disable a bot, add the following to your
+`runtime.conf`: `"enabled": false`. Be aware that this is **not** a normal parameter (like the others
+described in this file). It is set outside of the `parameters` object in `runtime.conf`. Check the
 [User-Guide](./User-Guide.md) for an example.
 
 There are two different types of parameters: The initialization parameters are need to start the bot. The runtime parameters are needed by the bot itself during runtime.
@@ -98,6 +98,7 @@ This configuration resides in the file `runtime.conf` in your intelmq's configur
 * **Feed parameters** (see above)
 * **HTTP parameters** (see above)
 * `http_url`: location of information resource (e.g. https://feodotracker.abuse.ch/blocklist/?download=domainblocklist)
+* `http_url_formatting`: If `True` (default `False`) `{time[format]}` will be replaced by the current time formatted by the given format. E.g. if the URL is `http://localhost/{time[%Y]}`, then the resulting URL is `http://localhost/2018` for the year 2018. Currently only the time in local timezone is available. Python's [Format Specification Mini-Language¶](https://docs.python.org/3/library/string.html) is used for this.
 
 
 * * *
@@ -144,7 +145,9 @@ The parameter `http_timeout_max_tries` is of no use in this collector.
 * `mail_ssl`: whether the mail account uses SSL (default: `true`)
 * `folder`: folder in which to look for mails (default: `INBOX`)
 * `subject_regex`: regular expression to look for a subject
-* `url_regex`: regular expression of the feed URL to search for in the mail body 
+* `url_regex`: regular expression of the feed URL to search for in the mail body
+* `sent_from`: filter messages by sender
+* `sent_to`: filter messages by recipient
 
 * * *
 
@@ -324,21 +327,21 @@ Iterates over all blobs in all containers in an Azure storage.
 
 * * *
 
-### N6Stomp
+### Stomp
 
 See the README.md
 
 #### Information:
-* `name:` intelmq.bots.collectors.n6.collector_stomp
+* `name:` intelmq.bots.collectors.stomp.collector
 * `lookup:` yes
 * `public:` no
 * `cache (redis db):` none
-* `description:` collect report messages from Blueliv API
+* `description:` collect messages from a stomp server
 
 #### Configuration Parameters:
 
 * **Feed parameters** (see above)
-* `exchange`: exchange point as given by CERT.pl
+* `exchange`: exchange point
 * `port`: 61614
 * `server`: hostname e.g. "n6stream.cert.pl"
 * `ssl_ca_certificate`: path to CA file
@@ -357,7 +360,7 @@ Lines starting with `'#'` will be ignored. Headers won't be interpreted.
 
 #### Configuration parameters
 
- * `"columns"`: A list of strings or a string of comma-separated values with field names. The names must match the harmonization's field names. Strings starting with `extra.` will be written into the Extra-Object of the DHO. E.g. 
+ * `"columns"`: A list of strings or a string of comma-separated values with field names. The names must match the harmonization's field names. Strings starting with `extra.` will be written into the Extra-Object of the DHO. E.g.
    ```json
    [
         "",
@@ -365,18 +368,72 @@ Lines starting with `'#'` will be ignored. Headers won't be interpreted.
         "extra.http_host_header"
     ],
     ```
+
+    It is possible to specify multiple coulmns using `|` character. E.g.
+    ```
+        "columns": "source.url|source.fqdn|source.ip"
+    ```
+    First, bot will try to parse the value as url, if it fails, it will try to parse it as FQDN, if that fails, it will try to parse it as IP, if that fails, an error wil be raised.
+    Some use cases - 
+    
+        - mixed data set, e.g. URL/FQDN/IP/NETMASK  `"columns": "source.url|source.fqdn|source.ip|source.network"`
+    
+        - parse a value and ignore if it fails  `"columns": "source.url|__IGNORE__"`
+        
  * `"column_regex_search"`: Optional. A dictionary mapping field names (as given per the columns parameter) to regular expression. The field is evaulated using `re.search`. Eg. to get the ASN out of `AS1234` use: `{"source.asn": "[0-9]*"}`.
  * `"default_url_protocol"`: For URLs you can give a defaut protocol which will be pretended to the data.
  * `"delimiter"`: separation character of the CSV, e.g. `","`
  * `"skip_header"`: Boolean, skip the first line of the file, optional. Lines starting with `#` will be skipped additionally, make sure you do not skip more lines than needed!
- * `time_format`: Optional. If `"timestamp"` or `"windows_nt"` the time will be converted first. With the default `null` fuzzy time parsing will be used.
+ * `time_format`: Optional. If `"timestamp"`, `"windows_nt"` or `"epoch_millis"` the time will be converted first. With the default `null` fuzzy time parsing will be used.
  * `"type"`: set the `classification.type` statically, optional
+ * `"data_type"`: sets the data of specific type, currently only `"json"` is supported value. An example
+ 
+        ```{
+            "columns": [ "source.ip", "source.url", "extra.tags"],
+            "data_type": "{\"extra.tags\":\"json\"}"
+        }```
+        
+        It will ensure `extra.tags` is treated as `json`.
+ * `"filter_text"`: only process the lines containing or not containing specified text, to be used in conjection with `filter_type`
+ * `"filter_type"`: value can be whitelist or blacklist. If `whitelist`, only lines containing the text in `filter_text` will be processed, if `blacklist`, only lines NOT containing the text will be processed.
+ 
+     To process ipset format files use
+     ```
+        {
+            "filter_text": "ipset add ",
+            "filter_type": "whitelist",
+            "columns": [ "__IGNORE__", "__IGNORE__", "__IGNORE__", "source.ip"]
+        }
+     ```
  * `"type_translation"`: See below, optional
+
 
 ##### Type translation
 
 If the source does have a field with information for `classification.type`, but it does not correspond to intelmq's types,
 you can map them to the correct ones. The `type_translation` field can hold a JSON field with a dictionary which maps the feed's values to intelmq's.
+
+
+### Cymru CAP Program
+
+#### Information:
+* `name:` intelmq.bots.parsers.cymru.parser_cap_program
+* `public:` no
+* `cache (redis db):` none
+* `description:` Parses data from cymru's cap program feed.
+
+As little information on the format is available, the mappings might not be correct in all cases.
+Some reports are not implemented at all as there is no data available to check if the parsing is correct at all. If you do get errors like `Report ... not implement` or similar please open an issue and report the (anonymized) example data. Thanks.
+
+The information about the event could be better in many cases but as Cymru does not want to be associated with the report, we can't add comments to the events in the parser, because then the source would be easily identifiable for the recipient.
+
+### Cymru Full Bogons
+
+#### Information:
+* `name:` intelmq.bots.parsers.cymru.parser_full_bogons
+* `public:` no
+* `cache (redis db):` none
+* `description:` Parses data from full bogons feed.
 
 <a name="experts"></a>
 ## Experts
@@ -719,6 +776,23 @@ Sources:
 
 * * *
 
+### Sieve
+
+See intelmq/bots/experts/sieve/README.md
+
+#### Information:
+* `name:` sieve
+* `lookup:` none
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Filtering with a sieve-based configuration language
+
+#### Configuration Parameters:
+
+* `file`: Path to sieve file. Syntax can be validated with `intelmq_sieve_expert_validator`.
+
+* * *
+
 ### Taxonomy
 
 #### Information:
@@ -852,10 +926,11 @@ for the versions you are using.
 * `connect_timeout`: PostgreSQL connect_timeout, optional, default 5 seconds
 * `database`: PostgreSQL database
 * `host`: PostgreSQL host
+* `jsondict_as_string`: save JSONDict fields as JSON string, boolean. Default: true (like in versions before 1.1)
 * `port`: PostgreSQL port
 * `user`: PostgreSQL user
 * `password`: PostgreSQL password
-* `sslmode`: PostgreSQL sslmode
+* `sslmode`: PostgreSQL sslmode, can be `'disable'`, `'allow'`, `'prefer'` (default), `'require'`, `'verify-ca'` or `'verify-full'`. See postgresql docs: https://www.postgresql.org/docs/current/static/libpq-connect.html#libpq-connect-sslmode
 * `table`: name of the database table into which events are to be inserted
 
 #### Installation Requirements
@@ -944,3 +1019,4 @@ Client certificates are not supported. If `http_verify_cert` is true, TLS certif
 * `hierarchical_output`: true for a nested JSON, false for a flat JSON.
 * `port`: port of destination server
 * `separator`: separator of messages
+
