@@ -55,8 +55,9 @@ def get_feed(feedname, logger):
         "Accessible-VNC": accessible_vnc,
         "Blacklisted-IP": blacklisted_ip,
         "Compromised-Website": compromised_website,
+        "DNS-open-resolvers": dns_open_resolvers,
         "Drone": drone,
-        "DNS-Open-Resolvers": dns_open_resolvers,
+        "Drone-Brute-Force": drone_brute_force,
         "Microsoft-Sinkhole": microsoft_sinkhole,
         "NTP-Monitor": ntp_monitor,
         "NTP-Version": ntp_version,
@@ -80,6 +81,7 @@ def get_feed(feedname, logger):
         "Open-XDMCP": open_xdmcp,
         "Sandbox-URL": sandbox_url,
         "Sinkhole-HTTP-Drone": sinkhole_http_drone,
+        "Sinkhole6-HTTP-Drone": sinkhole6_http_drone,
         "Spam-URL": spam_url,
         "SSL-FREAK-Vulnerable-Servers": ssl_freak_vulnerable_servers,  # Only differs in a few extra fields
         "SSL-POODLE-Vulnerable-Servers": ssl_poodle_vulnerable_servers,
@@ -330,6 +332,44 @@ sinkhole_http_drone = {
     },
 }
 
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Sinkhole6-HTTP-Drone
+sinkhole6_http_drone = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'src_ip'),
+        ('source.port', 'src_port')
+    ],
+    'optional_fields': [
+        ('source.asn', 'src_asn'),
+        ('source.geolocation.cc', 'src_geo'),
+        ('source.geolocation.region', 'src_region'),
+        ('destination.ip', 'dst_ip', validate_ip),
+        ('destination.asn', 'dst_asn'),
+        ('destination.geolocation.cc', 'dst_geo'),
+        ('destination.geolocation.region', 'dst_region'),
+        ('destination.port', 'dst_port'),
+        ('protocol.transport', 'protocol'),
+        ('extra.', 'tag', validate_to_none),
+        ('source.reverse_dns', 'hostname'),
+        ('extra.', 'sysdesc', validate_to_none),
+        ('extra.', 'sysname', validate_to_none),
+        ('destination.url', 'http_url'),
+        ('extra.', 'http_agent', validate_to_none),
+        ('destination.fqdn', 'http_host'),
+        ('extra.', 'http_referer', validate_to_none),
+        ('extra.', 'http_referer_ip', validate_to_none),
+        ('extra.', 'http_referer_asn', validate_to_none),
+        ('extra.', 'http_referer_geo', validate_to_none),
+        ('extra.', 'http_referer_region', validate_to_none),
+        ('extra.', 'forwarded_by', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.type': 'botnet drone',
+        'classification.taxonomy': 'Malicious Code',
+        'classification.identifier': 'botnet',
+    },
+}
+
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Microsoft-Sinkhole
 # Format should be same as sinkhole-http-drone
 microsoft_sinkhole = {
@@ -388,12 +428,12 @@ open_redis = {
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
         ('extra.', 'tag'),
+        ('os.name', 'os'),
         # version
         # git_sha1
         # git_dirty_flag
         # build_id
         # mode
-        # os
         # architecture
         # multiplexing_api
         # gcc_version
@@ -1399,5 +1439,45 @@ accessible_cisco_smart_install = {
         'protocol.application': 'cisco-smart-install',
         'classification.type': 'vulnerable service',
         'classification.identifier': 'accessible-cisco-smart-install',
+    }
+}
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Drone-BruteForce
+drone_brute_force = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('source.reverse_dns', 'hostname'),
+        ('destination.ip', 'dest_ip', validate_ip),
+        ('destination.port', 'dest_port'),
+        ('destination.asn', 'dest_asn'),
+        ('destination.geolocation.cc', 'dest_geo'),
+        ('destination.fqdn', 'dest_dns'),
+        ('extra.', 'service', validate_to_none),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'dest_naics', invalidate_zero),
+        ('extra.', 'dest_sic', invalidate_zero),
+        ('extra.', 'sector', validate_to_none),
+        ('extra.', 'dest_sector', validate_to_none),
+        ('extra.', 'public_source', validate_to_none),
+        ('extra.', 'start_time', validate_to_none),
+        ('extra.', 'end_time', validate_to_none),
+        ('extra.', 'client_version', validate_to_none),
+        ('extra.', 'username', validate_to_none),
+        ('extra.', 'password', validate_to_none),
+        ('extra.', 'payload_url', validate_to_none),
+        ('extra.', 'payload_md5', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.type': 'brute-force',
+        'classification.identifier': 'brute-force',
     }
 }
