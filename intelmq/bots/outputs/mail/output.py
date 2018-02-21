@@ -8,7 +8,6 @@
 from __future__ import unicode_literals
 
 import argparse
-import ast
 import csv
 import datetime
 import json
@@ -27,7 +26,6 @@ from email.utils import formatdate, make_msgid
 
 from intelmq.lib.bot import Bot
 from intelmq.lib.cache import Cache
-
 from .gpgsafe import GPGSafe
 
 try:
@@ -37,12 +35,13 @@ except ImportError:
 
 Mail = namedtuple('Mail', ["key", "to", "path", "count"])
 
+
 class MailSendOutputBot(Bot):
     TMP_DIR = "/tmp/intelmq-mails/"
 
     def process(self):
         message = self.receive_message()
-        #mail_rewrite = ast.literal_eval(self.parameters.mail_rewrite)
+        # mail_rewrite = ast.literal_eval(self.parameters.mail_rewrite)
 
         self.logger.warning("ZPRAVA..")
         self.logger.debug(message)
@@ -59,7 +58,7 @@ class MailSendOutputBot(Bot):
                 self.logger.warning("edvard mails")
 
                 # rewrite destination address
-                #if message["source.abuse_contact"] in mail_rewrite:
+                # if message["source.abuse_contact"] in mail_rewrite:
                 #    message.update({"source.abuse_contact": str(mail_rewrite[message["source.abuse_contact"]])})
                 #    mail = mail_rewrite[mail]
 
@@ -79,16 +78,19 @@ class MailSendOutputBot(Bot):
     def init(self):
         self.set_cache()
         self.key = "{}:".format(self._Bot__bot_id)
-        parser = argparse.ArgumentParser(prog=" ".join(sys.argv[0:1]))
-        parser.add_argument('cli', help='initiate cli dialog')
-        parser.add_argument('--tester', dest="testing_to", help='tester\'s e-mail')
-        parser.add_argument('--ignore-older-than-days', help='1..n skip all events with time.observation older than 1..n day; 0 disabled (allow all)', type=int)
-        parser.add_argument("--gpgkey", help="fingerprint of gpg key to be used")
-        parser.add_argument("--limit-results", type=int, help="Just send first N mails.")
-        parser.parse_args(sys.argv[2:], namespace=self.parameters)
+        if "cli" in sys.argv:  # assure the launch is not handled by intelmqctl
+            parser = argparse.ArgumentParser(prog=" ".join(sys.argv[0:1]))
+            parser.add_argument('cli', help='initiate cli dialog')
+            parser.add_argument('--tester', dest="testing_to", help='tester\'s e-mail')
+            parser.add_argument('--ignore-older-than-days',
+                                help='1..n skip all events with time.observation older than 1..n day; 0 disabled (allow all)',
+                                type=int)
+            parser.add_argument("--gpgkey", help="fingerprint of gpg key to be used")
+            parser.add_argument("--limit-results", type=int, help="Just send first N mails.")
+            parser.parse_args(sys.argv[2:], namespace=self.parameters)
 
-        if self.parameters.cli == "cli":
-            self.cli_run()
+            if self.parameters.cli == "cli":
+                self.cli_run()
 
     def cli_run(self):
         self.parameters.gpg = None
@@ -169,7 +171,6 @@ class MailSendOutputBot(Bot):
                             break
                     else:
                         print("Unknown option.")
-
 
     def set_tester(self, force=True):
         if not force and self.parameters.testing_to:
@@ -306,7 +307,7 @@ class MailSendOutputBot(Bot):
             base_msg = MIMEMultipart()
             base_msg.attach(MIMEText(text, "html", "utf-8"))
 
-            with open(mail.path, "rb") as f:  # plain/text - with open(mail.path,"r") as f: attachment = MIMEText(f.read(), subtype, "utf-8")
+            with open(mail.path, "rb") as f:
                 attachment = MIMEApplication(f.read(), "zip")
             attachment.add_header("Content-Disposition", "attachment",
                                   filename='proki_{}.zip'.format(time.strftime("%Y%m%d")))
@@ -345,7 +346,8 @@ class MailSendOutputBot(Bot):
 
     def _sign(self, s):
         try:
-            return str(self.parameters.gpg.sign(s, default_key=self.parameters.gpgkey, detach=True, clearsign=False, passphrase=self.parameters.gpgpass))
+            return str(self.parameters.gpg.sign(s, default_key=self.parameters.gpgkey, detach=True, clearsign=False,
+                                                passphrase=self.parameters.gpgpass))
         except:
             return ""
 
