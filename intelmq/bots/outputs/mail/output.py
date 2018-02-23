@@ -148,6 +148,7 @@ class MailSendOutputBot(Bot):
                     for mail in mails:
                         if self.build_mail(mail, send=True):
                             count += 1
+                            print("{} ".format(mail.to), end="")
                             self.cache.redis.delete(mail.key)
                             if mail.path:
                                 os.unlink(mail.path)
