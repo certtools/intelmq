@@ -21,8 +21,6 @@ class OpenPhishCommercialParserBot(Bot):
             json_row = json.loads(row)
             event = self.new_event(report)
 
-            extra = {}
-
             keys_to_harmonize = {
                 'ip': 'source.ip',
                 'url': 'source.url',
@@ -42,10 +40,10 @@ class OpenPhishCommercialParserBot(Bot):
                         else:
                             event.add(event_key, json_row[source_key])
                 else:
-                    extra[source_key] = json_row[source_key]
+                    if json_row[source_key]:
+                        event['extra.%s' % source_key] = json_row[source_key]
 
             event.add('raw', row)
-            event.add('extra', extra)
             event.add('classification.type', 'phishing')
 
             self.send_message(event)
