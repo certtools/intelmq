@@ -1309,3 +1309,19 @@ providers:
       revision: 05-02-2018
       status: on
       documentation:
+  Threatminer:
+    Recent domains:
+      description: Latest malicious domains.
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.http.collector_http
+          parameters:
+            http_url: https://www.threatminer.org/
+            rate_limit: 86400
+        parser:
+          module: intelmq.bots.parsers.threatminer.parser
+          parameters:
+      revision: 06-02-2018
+      status: on
+      documentation: https://www.threatminer.org/
