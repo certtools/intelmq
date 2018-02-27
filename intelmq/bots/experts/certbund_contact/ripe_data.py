@@ -34,7 +34,7 @@ def add_db_args(parser):
     parser.add_argument("--conninfo",
                         default='dbname=contactdb',
                         help="Libpg connection string. E.g. 'host=localhost"
-                             " port=5432 user=intelmq dbname=connectdb'")
+                             " port=5432 user=intelmq dbname=contactdb'")
 
 
 def add_common_args(parser):
