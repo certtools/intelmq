@@ -1,5 +1,14 @@
 {
     "Collector": {
+        "API": {
+            "description": "Bot for collecting data using API.",
+            "module": "intelmq.bots.collectors.api.collector_api",
+            "parameters": {
+                "feed": "",
+                "provider": "APICollector",
+                "port": 5000
+            }
+        },
         "File": {
             "description": "Fileinput collector fetches data from a file.",
             "module": "intelmq.bots.collectors.file.collector_file",
@@ -188,15 +197,6 @@
                 "ssl_ca_certificate": "<insert path to CA file for CERT.pl's n6>",
                 "ssl_client_certificate": "<insert path to client cert file for CERT.pl's n6>",
                 "ssl_client_certificate_key": "<insert path to client cert key file for CERT.pl's n6>"
-            }
-        },
-        "API Collector": {
-            "description": "Bot for collecting data using API.",
-            "module": "intelmq.bots.collectors.api.collector_api",
-            "parameters": {
-                "feed": "",
-                "provider": "APICollector",
-                "port": 5000
             }
         }
     },
