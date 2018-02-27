@@ -417,6 +417,13 @@
             "module": "intelmq.bots.parsers.dyn.parser",
             "parameters": {}
         },
+        "Fraunhofer DDoS Attacks": {
+            "description": "Fraunhofer DDoS Attack Feed Parser is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.fraunhofer.parser_ddosattack",
+            "parameters": {
+                "unknown_messagetype_accuracy": 10.0
+            }
+        },
         "Fraunhofer DGA": {
             "description": "Fraunhofer DGA Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.fraunhofer.parser_dga",
