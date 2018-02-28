@@ -258,7 +258,7 @@ class IntelMQProcessManager:
                 return 'running'
 
         if self.controller._is_enabled(bot_id):
-            if pid:
+            if not proc and pid:
                 self.__remove_pidfile(bot_id)
             log_bot_message('stopped', bot_id)
             if proc and RETURN_TYPE == 'text':
