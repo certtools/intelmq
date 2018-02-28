@@ -4,6 +4,7 @@ Messages are the information packages in pipelines.
 
 Use MessageFactory to get a Message object (types Report and Event).
 """
+import functools
 import hashlib
 import json
 import re
@@ -14,6 +15,7 @@ import intelmq.lib.harmonization
 from intelmq import HARMONIZATION_CONF_FILE
 from intelmq.lib import utils
 from typing import Sequence, Optional
+from collections import defaultdict
 
 
 __all__ = ['Event', 'Message', 'MessageFactory', 'Report']
@@ -85,6 +87,8 @@ class MessageFactory(object):
 
 class Message(dict):
 
+    _IGNORED_VALUES = ["", "-", "N/A"]
+
     def __init__(self, message=(), auto=False, harmonization=None):
         try:
             classname = message['__type'].lower()
@@ -102,17 +106,36 @@ class Message(dict):
                                              expected=VALID_MESSSAGE_TYPES,
                                              docs=HARMONIZATION_CONF_FILE)
 
+        if (classname == 'event' and 'extra' in self.harmonization_config and
+           self.harmonization_config['extra']['type'] == 'JSON'):
+            warnings.warn("Assuming harmonization type 'JSONDict' for harmonization field 'extra'. "
+                          "This assumption will be removed in version 2.0.", DeprecationWarning)
+            self.harmonization_config['extra']['type'] = 'JSONDict'
+        for harm_key in self.harmonization_config.keys():
+            if not re.match('^[a-z_](.[a-z_0-9]+)*$', harm_key) and harm_key != '__type':
+                raise exceptions.InvalidKey("Harmonization key %r is invalid." % harm_key)
+
         super(Message, self).__init__()
         if isinstance(message, dict):
             iterable = message.items()
         elif isinstance(message, tuple):
             iterable = message
+        else:
+            raise ValueError("Type %r of message can't be handled, must be dict or tuple.", type(message))
         for key, value in iterable:
             if not self.add(key, value, sanitize=False, raise_failure=False):
                 self.add(key, value, sanitize=True)
 
     def __setitem__(self, key, value):
         self.add(key, value)
+
+    def __getitem__(self, key):
+        class_name, subitem = self.__get_type_config(key)
+        if class_name['type'] == 'JSONDict' and not subitem:
+            # return extra as string for backwards compatibility
+            return json.dumps(self.to_dict(hierarchical=True)[key.split('.')[0]])
+        else:
+            return super(Message, self).__getitem__(key)
 
     def is_valid(self, key: str, value: str, sanitize: bool=True) -> bool:
         """
@@ -143,8 +166,8 @@ class Message(dict):
             return True
         return False
 
-    def add(self, key: str, value: str, sanitize: bool=True, force: bool=False,
-            overwrite: bool=False, ignore: Sequence=(),
+    def add(self, key: str, value: str, sanitize: bool=True,
+            overwrite: Optional[bool]=None, ignore: Sequence=(),
             raise_failure: bool=True) -> bool:
         """
         Add a value for the key (after sanitation).
@@ -152,16 +175,23 @@ class Message(dict):
         Parameters:
             key: Key as defined in the harmonization
             value: A valid value as defined in the harmonization
+                If the value is None or in _IGNORED_VALUES the value will be ignored.
+                If the value is ignored, the key exists and overwrite is True, the key
+                is deleted.
             sanitize: Sanitation of harmonization type will be called before validation
                 (default: True)
-            overwrite: Overwrite an existing value if it already exists (default: False)
+            overwrite: Overwrite an existing value if it already exists (default: None)
+                If True, overwrite an existing value
+                If False, do not overwrite an existing value
+                If None, raise intelmq.exceptions.KeyExists for an existing value
             raise_failure: If a intelmq.lib.exceptions.InvalidValue should be raised for
                 invalid values (default: True). If false, the return parameter will be
                 False in case of invalid values.
 
         Returns:
             * True if the value has been added.
-            * False if the value is invalid and raise_failure is False.
+            * False if the value is invalid and raise_failure is False or the value existed
+                and has not been overwritten.
 
         Raises:
             intelmq.lib.exceptions.KeyExists: If key exists and won't be overwritten explicitly.
@@ -170,11 +200,12 @@ class Message(dict):
             intelmq.lib.exceptions.InvalidValue: If value is not valid for the given key and
                 raise_failure is True.
         """
-        overwrite = force or overwrite
-        if not overwrite and key in self:
+        if overwrite is None and key in self:
             raise exceptions.KeyExists(key)
+        if overwrite is False and key in self:
+            return False
 
-        if value is None or value in ["", "-", "N/A"]:
+        if value is None or value in self._IGNORED_VALUES:
             if overwrite and key in self:
                 del self[key]
             return
@@ -206,7 +237,19 @@ class Message(dict):
             else:
                 return False
 
-        super(Message, self).__setitem__(key, value)
+        class_name, subitem = self.__get_type_config(key)
+        if class_name and class_name['type'] == 'JSONDict' and not subitem:
+            # for backwards compatibility allow setting the extra field as string
+            for extrakey, extravalue in json.loads(value).items():
+                if hasattr(extravalue, '__len__'):
+                    if not len(extravalue):  # ignore empty values
+                        continue
+                if extravalue in self._IGNORED_VALUES:
+                    continue
+                super(Message, self).__setitem__('%s.%s' % (key, extrakey),
+                                                 extravalue)
+        else:
+            super(Message, self).__setitem__(key, value)
         return True
 
     def update(self, other: dict):
@@ -251,17 +294,26 @@ class Message(dict):
         message = json.loads(message_string)
         return message
 
+#    @functools.lru_cache(maxsize=None)
     def __is_valid_key(self, key: str):
-        if key in self.harmonization_config or key == '__type':
+        try:
+            class_name, subitem = self.__get_type_config(key)
+        except KeyError:
+            return False
+        if key in self.harmonization_config or key == '__type' or subitem:
             return True
         return False
 
     def __is_valid_value(self, key: str, value: str):
         if key == '__type':
             return (True, )
-        config = self.__get_type_config(key)
+        config, subitem = self.__get_type_config(key)
         class_reference = getattr(intelmq.lib.harmonization, config['type'])
-        if not class_reference().is_valid(value):
+        if not subitem:
+            validation = class_reference().is_valid(value)
+        else:
+            validation = class_reference().is_valid_subitem(value)
+        if not validation:
             return (False, 'is_valid returned False.')
         if 'length' in config:
             length = len(str(value))
@@ -277,13 +329,26 @@ class Message(dict):
         return (True, )
 
     def __sanitize_value(self, key: str, value: str):
-        class_name = self.__get_type_config(key)['type']
-        class_reference = getattr(intelmq.lib.harmonization, class_name)
-        return class_reference().sanitize(value)
+        class_name, subitem = self.__get_type_config(key)
+        class_reference = getattr(intelmq.lib.harmonization, class_name['type'])
+        if not subitem:
+            return class_reference().sanitize(value)
+        else:
+            return class_reference().sanitize_subitem(value)
 
+#    @functools.lru_cache(maxsize=None)
     def __get_type_config(self, key: str):
-        class_name = self.harmonization_config[key]
-        return class_name
+        if key == '__type':
+            return None, None
+        try:
+            class_name = self.harmonization_config[key]
+        except KeyError:
+            # Could be done recursively in the future if needed
+            class_name = self.harmonization_config[key.split('.')[0]]
+            subitem = True
+        else:
+            subitem = False
+        return class_name, subitem
 
     def __hash__(self):
         return int(self.hash(), 16)
@@ -324,18 +389,46 @@ class Message(dict):
 
         return event_hash.hexdigest()
 
-    def to_dict(self, hierarchical: bool=False, with_type: bool=False):
-        json_dict = dict()
+    def to_dict(self, hierarchical: bool=False, with_type: bool=False,
+                jsondict_as_string: bool=False) -> dict:
+        """
+        Returns a copy of self, only based on a dict class.
+
+        Parameters:
+            hierarchical: Split all keys at a dot and save these subitems
+                in dictionaries.
+            with_type: Add a value named `__type` containing the message type
+            jsondict_as_string:
+                If False (default) treat values in JSONDict fields just as normal ones
+                If True, save such fields as JSON-encoded string. This is the old behavior
+                    before version 1.1.
+
+        Returns:
+            new_dict: A dictionary as copy of itself modified according
+                to the given parameters
+        """
+        new_dict = {}
 
         if with_type:
-            self['__type'] = self.__class__.__name__
+            new_dict['__type'] = self.__class__.__name__
+
+        jsondicts = defaultdict(dict)
 
         for key, value in self.items():
+            splitted_key = key.split('.')
             if hierarchical:
-                subkeys = key.split('.')
+                subkeys = splitted_key
             else:
                 subkeys = [key]
-            json_dict_fp = json_dict
+            json_dict_fp = new_dict
+
+            try:
+                key_type = self.__get_type_config(splitted_key[0])[0]['type']
+            except KeyError:
+                key_type = None
+            if key_type == 'JSONDict' and jsondict_as_string:
+                jsondicts[splitted_key[0]]['.'.join(splitted_key[1:])] = value
+                continue
 
             for subkey in subkeys:
                 if subkey == subkeys[-1]:
@@ -347,14 +440,34 @@ class Message(dict):
 
                 json_dict_fp = json_dict_fp[subkey]
 
-        if with_type:
-            del self['__type']
+        for key, value in jsondicts.items():
+            new_dict[key] = json.dumps(value, ensure_ascii=False)
 
-        return json_dict
+        return new_dict
 
-    def to_json(self, hierarchical=False, with_type=False):
+    def to_json(self, hierarchical=False, with_type=False, jsondict_as_string=False):
         json_dict = self.to_dict(hierarchical=hierarchical, with_type=with_type)
         return json.dumps(json_dict, ensure_ascii=False)
+
+    def __eq__(self, other) -> bool:
+        """
+        Necessary as we have an additional member harmonization_config and types.
+        The additional checks are only performed for subclasses of Message.
+
+        Comparison with other types e.g. dicts does not check the harmonization_config.
+        """
+        dict_eq = super(Message, self).__eq__(other)
+        if dict_eq and issubclass(type(other), Message):
+            type_eq = type(self) == type(other)
+            harm_eq = self.harmonization_config == other.harmonization_config if hasattr(other, 'harmonization_config') else False
+            if type_eq and harm_eq:
+                return True
+        elif dict_eq:
+            return True
+        return False
+
+    def __ne__(self, other) -> bool:
+        return not self.__eq__(other)
 
 
 class Event(Message):

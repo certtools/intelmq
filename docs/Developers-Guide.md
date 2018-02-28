@@ -37,6 +37,7 @@
     * [How to Log](#how-to-log)
   * [Error handling](#error-handling)
   * [Initialization](#initialization)
+  * [Custom configuration checks](#custom-configuration-checks)
   * [Examples](#examples)
   * [Parsers](#parsers)
   * [Tests](#tests)
@@ -414,10 +415,10 @@ All other names can be used freely.
 
 ## Pipeline interactions
 
-A can call three methods related to the pipeline:
+We can call three methods related to the pipeline:
 
   - `self.receive_message()`: The pipeline handler pops one message from the internal queue if possible. Otherwise one message from the sources list is popped, and added it to an internal queue. In case of errors in process handling, the message can still be found in the internal queue and is not lost. The bot class unravels the message a creates an instance of the Event or Report class.
-  - `self.send_message(event)`: Processed message is sent to destination queues.
+  - `self.send_message(event, path="_default")`: Processed message is sent to destination queues. It is possible to change the destination queues by optional `path` parameter.
   - `self.acknowledge_message()`: Message formerly received by `receive_message` is removed from the internal queue. This should always be done after processing and after the sending of the new message. In case of errors, this function is not called and the message will stay in the internal queue waiting to be processed again.
 
 ## Logging
@@ -454,11 +455,20 @@ When the logger instance is created, the bot id must be given as parameter anywa
 The Bot class creates a logger with that should be used by bots. Other components won't log anyway currently. Examples:
 
 ```python
-self.logger.info('Bot start processing')
-self.logger.error('Pipeline failed')
-self.logger.exception('Pipeline failed')
+self.logger.info('Bot start processing.')
+self.logger.error('Pipeline failed.')
+self.logger.exception('Pipeline failed.')
 ```
 The `exception` method automatically appends an exception traceback. The logger instance writes by default to the file `/opt/intelmq/var/log/[bot-id].log` and to stderr.
+
+#### String formatting in Logs
+
+Parameters for string formatting are better passed as argument to the log function, see https://docs.python.org/3/library/logging.html#logging.Logger.debug
+In case of formatting problems, the error messages will be better. For example:
+
+```python
+self.logger.debug('Connecting to %r.', host)
+```
 
 ## Error handling
 
@@ -479,6 +489,22 @@ class ExampleParserBot(Bot):
             self.logger.error("Read 'bots/experts/asn_lookup/README.md' and "
                               "follow the procedure.")
             self.stop()
+```
+
+## Custom configuration checks
+
+Every bot can define a static method `check(parameters)` which will be called by `intelmqctl check`.
+For example the check function of the ASNLookupExpert:
+
+```python
+    @staticmethod
+    def check(parameters):
+        if not os.path.exists(parameters.get('database', '')):
+            return [["error", "File given as parameter 'database' does not exist."]]
+        try:
+            pyasn.pyasn(parameters['database'])
+        except Exception as exc:
+            return [["error", "Error reading database: %r." % exc]]
 ```
 
 ## Examples

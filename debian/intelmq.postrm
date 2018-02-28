@@ -2,7 +2,12 @@
 set -e
 
 if [ "$1" = "remove" ] ; then
-  deluser intelmq
+    if getent group intelmq >/dev/null 2>&1; then
+        groupdel -r intelmq
+    fi
+    if getent passwd intelmq >/dev/null 2>&1; then
+        userdel intelmq
+    fi
 fi
 
 #DEBHELPER#

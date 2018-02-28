@@ -55,6 +55,7 @@ class TestRIPENCCExpertBot(test.BotTestCase, unittest.TestCase):
 
     def test_ipv4_lookup(self):
         self.input_message = EXAMPLE_INPUT
+        self.allowed_warning_count = 1
         self.run_bot()
         self.assertLogMatches(pattern="^The parameter 'query_ripe_stat' is deprecated and will be r",
                               levelname="WARNING")
@@ -62,12 +63,14 @@ class TestRIPENCCExpertBot(test.BotTestCase, unittest.TestCase):
 
     def test_ipv6_lookup(self):
         self.input_message = EXAMPLE_INPUT6
+        self.allowed_warning_count = 1
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_OUTPUT6)
 
     def test_empty_lookup(self):
         """ No email is returned, event should be untouched. """
         self.input_message = EMPTY_INPUT
+        self.allowed_warning_count = 1
         self.run_bot()
         self.assertMessageEqual(0, EMPTY_INPUT)
 
@@ -85,14 +88,14 @@ class TestRIPENCCExpertBot(test.BotTestCase, unittest.TestCase):
         old = self.bot.URL_STAT
         self.bot.URL_STAT = 'https://example.com/index.html?{}'
         self.run_bot(prepare=False)
-        # internal json in < and >= 3.5, 3.3 and simplejson
+        # internal json in < and >= 3.5 and simplejson
         self.assertLogMatches(pattern='.*(JSONDecodeError|ValueError|Expecting value|No JSON object could be decoded).*',
                               levelname='ERROR')
 
         self.bot.URL_STAT = 'http://localhost/{}'
         self.run_bot(prepare=False)
         self.bot.URL_STAT = old
-        self.assertLogMatches(pattern='HTTP status code was 404',
+        self.assertLogMatches(pattern='.*HTTP status code was 404.*',
                               levelname='ERROR')
 
     @test.skip_local_web()
@@ -104,12 +107,13 @@ class TestRIPENCCExpertBot(test.BotTestCase, unittest.TestCase):
                           }
         self.input_message = EXAMPLE_INPUT
         self.allowed_error_count = 1
+        self.allowed_warning_count = 1
         self.prepare_bot()
         old = self.bot.URL_DB_AS
         self.bot.URL_DB_AS = 'http://localhost/{}'
         self.run_bot(prepare=False)
         self.bot.URL_DB_AS = old
-        self.assertLogMatches(pattern='HTTP status code was 404',
+        self.assertLogMatches(pattern='.*HTTP status code was 404.*',
                               levelname='ERROR')
 
     @test.skip_local_web()
@@ -121,12 +125,13 @@ class TestRIPENCCExpertBot(test.BotTestCase, unittest.TestCase):
                           }
         self.input_message = EXAMPLE_INPUT
         self.allowed_error_count = 1
+        self.allowed_warning_count = 1
         self.prepare_bot()
         old = self.bot.URL_DB_IP
         self.bot.URL_DB_IP = 'http://localhost/{}'
         self.run_bot(prepare=False)
         self.bot.URL_DB_IP = old
-        self.assertLogMatches(pattern='HTTP status code was 404',
+        self.assertLogMatches(pattern='.*HTTP status code was 404.*',
                               levelname='ERROR')
 
     def test_replace(self):

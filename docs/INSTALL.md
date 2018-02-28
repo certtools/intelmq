@@ -111,9 +111,9 @@ https://software.opensuse.org/download.html?project=home%3Asebix%3Aintelmq&packa
 
 Currently, these operating systems are supported by the packages:
 * CentOS 7, install `epel-release` first
-* Debian 8, install `python3-typing` too
+* Debian 8
 * Fedora 25
-* openSUSE Leap 42.2 and 42.3
+* openSUSE Leap 42.2
 * openSUSE Tumbleweed
 * Ubuntu 16.04
 
@@ -138,7 +138,6 @@ sudo -s
 
 pip3 install intelmq
 
-mkdir /opt/intelmq
 useradd -d /opt/intelmq -U -s /bin/bash intelmq
 chmod -R 0770 /opt/intelmq
 chown -R intelmq.intelmq /opt/intelmq
@@ -158,6 +157,7 @@ sudo -s
 
 pip3 install .
 
+mkdir /opt/intelmq
 useradd -d /opt/intelmq -U -s /bin/bash intelmq
 chmod -R 0770 /opt/intelmq
 chown -R intelmq.intelmq /opt/intelmq

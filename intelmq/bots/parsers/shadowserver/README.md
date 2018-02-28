@@ -17,18 +17,18 @@ Add the Shadowserver parser to your Botnet.
 
 Set at least the parameter `feedname`. it is required to find the correct
 configuration. If this parameter is not set or not correct, the bot fail!
-Feed-names are the Names of the Shadowserver Format specification pages.
-E.g. `Botnet-Drone-Hadoop` for the feed corresponding to:
-https://www.shadowserver.org/wiki/pmwiki.php/Services/Botnet-Drone-Hadoop
+Feed-names are the subjects of the Shadowserver E-Mails.
+They are different from the wiki page names!
 
 Possible feednames:
+* `Accessible-Cisco-Smart-Install`
 * `Accessible-CWMP`
 * `Accessible-RDP`
 * `Accessible-Telnet`
 * `Blacklisted-IP`
-* `Botnet-Drone-Hadoop`
 * `Compromised-Website`
-* `DNS-open-resolvers`
+* `Drone`
+* `DNS-Open-Resolvers`
 * `Microsoft-Sinkhole`
 * `NTP-Monitor`
 * `NTP-Version`
@@ -41,7 +41,7 @@ Possible feednames:
 * `Open-MongoDB`
 * `Open-MSSQL`
 * `Open-NATPMP`
-* `Open-NetBIOS`
+* `Open-NetBIOS-Nameservice`
 * `Open-Netis`
 * `Open-Portmapper`
 * `Open-QOTD`
@@ -53,10 +53,16 @@ Possible feednames:
 * `Sandbox-URL`
 * `Sinkhole-HTTP-Drone`
 * `Spam-URL`
-* `Ssl-Freak-Scan`
-* `Ssl-Scan` (a.k.a. POODLE)
+* `SSL-FREAK-Vulnerable-Servers`
+* `SSL-POODLE-Vulnerable-Servers`
 * `Vulnerable-ISAKMP`
 
+Additionally these deprecated names can still be used until removed in version 1.3:
+* `Botnet-Drone-Hadoop` for `Drone`
+* `DNS-open-resolvers` for `DNS-Open-Resolvers`
+* `Open-NetBIOS` for `Open-NetBIOS-Nameservice`
+* `Ssl-Freak-Scan` for `SSL-FREAK-Vulnerable-Servers`
+* `Ssl-Scan` for `SSL-POODLE-Vulnerable-Servers`
 
 ## Add new Feedformats:
 Add a new feedformat and conversions if required to the file

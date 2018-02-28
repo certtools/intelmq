@@ -24,7 +24,7 @@ Every event **MUST** contain a timestamp field.
 
 ## Rules for keys
 
-The keys can be grouped together in sub-fields, e.g. `source.ip` or `source.geolocation.latitude`. Thus, keys must match `[a-z_.]`.
+The keys can be grouped together in sub-fields, e.g. `source.ip` or `source.geolocation.latitude`. Thus, keys must match `^[a-z_](.[a-z0-9_]+)*$`.
 
 
 <a name="sections"></a>
@@ -66,6 +66,9 @@ We recognize that ip geolocation is not an exact science and analysis of the abu
 
 Some sources report an internal (NATed) IP address.
 
+### Extra values
+Data which does not fit in the harmonization can be saved in the 'extra' namespace. All keys must begin with `extra.`, there are no other rules on key names and values. The values can be get/set like all other fields.
+
 <a name="fields-list-and-data-types"></a>
 ## Fields List and data types
 
@@ -81,54 +84,56 @@ The taxonomy can be automatically added by the taxonomy expert bot based on the 
 
 |Type|Taxonomy|Description|
 |----|--------|-----------|
-|spam|Abusive Content|This IOC refers to resources, which make up a SPAM infrastructure, be it a harvester, dictionary attacker, URL etc.|
-|malware|Malicious Code|A URL is the most common resource with reference to malware binary distribution.|
-|botnet drone|Malicious Code|This is a compromised machine, which has been observed to make a connection to a command and control server.|
-|ransomware|Malicious Code|This IOC refers to a specific type of compromised machine, where the computer has been hijacked for ransom by the criminals.|
-|dga domain|Malicious Code|DGA Domains are seen various families of malware that are used to periodically generate a large number of domain names that can be used as rendezvous points with their command and control servers.|
-|malware configuration|Malicious Code|This is a resource which updates botnet drones with a new configuration.|
-|c&c|Malicious Code|This is a command and control server in charge of a given number of botnet drones.|
-|scanner|Information Gathering|This IOC refers to port scanning activity specifically.|
-|exploit|Intrusion Attempts|An exploit is often executed through a malicious URL.|
-|brute-force|Intrusion Attempts|This IOC refers to a resource, which has been observed to perform brute-force attacks over a given application protocol. Please see the IOC protocol below.|
-|ids alert|Intrusion Attempts|IOCs based on a sensor network. This is a generic IOC denomination, should it be difficult to reliably denote the exact type of activity involved for example due to an anecdotal nature of the rule that triggered the alert.|
-|defacement|Intrusions|This IOC refers to hacktivism related activity.|
-|compromised|Intrusions|This IOC refers to compromised system.|
-|backdoor|Intrusions|This refers to hosts, which have been compromised and backdoored with a remote administration software or Trojan in the traditional sense.|
-|ddos|Availability|This IOC refers to various parts of the DDOS infrastructure.|
-|dropzone|Information Content Security|This IOC refers to place where the compromised machines store the stolen user data.|
-|phishing|Fraud|This IOC most often refers to a URL, which is phishing for user credentials.|
-|proxy|Other|This refers to the use of proxies from inside your network.|
-|vulnerable service|Vulnerable|This attribute refers to a badly configured or vulnerable network service, which may be abused by a third party. For example, these services relate to open proxies, open dns resolvers, network time servers (NTP) or character generation services (chargen), simple network management services (SNMP). In addition, to specify the network service and its potential abuse, one should use the protocol, destination port and description attributes for that purpose respectively.|
-|blacklist|Other|Some sources provide blacklists, which clearly refer to abusive behavior, such as spamming, but fail to denote the exact reason why a given identity has been blacklisted. The reason may be that the justification is anecdotal or missing entirely. This type should only be used if the typing fits the definition of a blacklist, but an event specific denomination is not possible for one reason or another.|
-|unknown|Other|unknown events|
-|test|Test|This is a value for testing purposes.|
+|backdoor|intrusions|This refers to hosts, which have been compromized and backdoored with a remote administration software or trojan in the traditional sense.|
+|blacklist|other|Some sources provide blacklists, which clearly refer to abusive behavior, such as spamming, but fail to denote the exact reason why a given identity has been blacklisted. The reason may be that the justification is anecdotal or missing entirely. This type should only be used if the typing fits the definition of a blacklist, but an event specific denomination is not possible for one reason or another.|
+|botnet drone|malicious code|This is a compromized machine, which has been observed to make a connection to a command and control server.|
+|brute-force|intrusion attempts|This IOC refers to a resource, which has been observed to perform brute-force attacks over a given application protocol. Please see the IOC protocol below.|
+|c&c|malicious code|This is a command and control server in charge of a given number of botnet drones.|
+|compromised|intrusions|This IOC refers to compromised system.|
+|ddos|availability|This IOC refers to various parts of the DDOS infrastructure.|
+|defacement|intrusions|This IOC refers to hacktivism related activity.|
+|dga domain|malicious code|DGA Domains are seen various families of malware that are used to periodically generate a large number of domain names that can be used as rendezvous points with their command and control servers.|
+|dropzone|information content Security|This IOC refers to place where the compromized machines store the stolen user data.|
+|exploit|intrusion attempts|An exploit is often executed through a malicious URL.|
+|ids alert|intrusion attempts|IOCs based on a sensor network. This is a generic IOC denomination, should it be difficult to reliably denote the exact type of activity involved for example due to an anecdotal nature of the rule that triggered the alert.|
+|malware configuration|malicious code|This is a resource which updates botnet drones with a new configuration.|
+|malware|malicious code|A URL is the most common resource with reference to malware binary distribution.|
+|phishing|fraud|This IOC most often refers to a URL, which is phishing for user credentials.|
+|proxy|other|This refers to the use of proxies from inside your network.|
+|ransomware|malicious code|This IOC refers to a specific type of compromized machine, where the computer has been hijacked for ransom by the criminals.|
+|scanner|information gathering|This IOC refers to port scanning activity specifically.|
+|spam|abusive content|This IOC refers to resources, which make up a SPAM infrastructure, be it a harvester, dictionary attacker, URL etc.|
+|test|test|This is a value for testing purposes.|
+|unknown|other|unknown events|
+|vulnerable service|vulnerable|This attribute refers to a badly configured or vulnerable network service, which may be abused by a third party. For example, these services relate to open proxies, open dns resolvers, network time servers (ntp) or character generation services (chargen), simple network management services (snmp). In addition, to specify the network service and its potential abuse, one should use the protocol, destination port and description attributes for that purpose respectively.|
 
 Meaning of source, destination and local values for each classification type and possible identifiers. The identifier is often a normalized malware name, grouping many variants.
 
 |Type|Source|Destination|Local|Possible identifiers|
 |----|------|-----------|-----|--------------------|
-|spam|*infected device*|targeted server|internal at source||
-|malware|*infected device*||internal at source|zeus, palevo, feodo|
-|botnet drone|*infected device*||||
-|ransomware|*infected device*||||
-|dga domain|*infected device*||||
-|malware configuration|*infected device*||||
-|c&c|*(sinkholed) c&c server*|||zeus, palevo, feodo|
-|scanner|*scanning device*|scanned device|||
-|exploit|*hosting server*||||
-|brute-force|*attacker*|target|||
-|ids alert|*triggering device*||||
-|defacement|*defaced website*||||
-|compromised|*server*||||
 |backdoor|*backdoored device*||||
+|blacklist|*blacklisted device*||||
+|botnet drone|*infected device*||||
+|brute-force|*attacker*|target|||
+|c&c|*(sinkholed) c&c server*|||zeus, palevo, feodo|
+|compromised|*server*||||
 |ddos|*attacker*|target|||
+|defacement|*defaced website*||||
+|dga domain|*infected device*||||
 |dropzone|*server hosting stolen data*||||
+|exploit|*hosting server*||||
+|ids alert|*triggering device*||||
+|malware|*infected device*||internal at source|zeus, palevo, feodo|
+|malware configuration|*infected device*||||
+|other||||||
 |phishing|*phishing website*||||
 |proxy|*server allowing policy and security bypass*||||
-|vulnerable service|*vulnerable device*||| heartbleed, openresolver, snmp |
-|blacklist|*blacklisted device*||||
+|ransomware|*infected device*||||
+|scanner|*scanning device*|scanned device|||
+|spam|*infected device*|targeted server|internal at source||
+|test||||||
 |unknown||||||
+|vulnerable service|*vulnerable device*||| heartbleed, openresolver, snmp |
 
 Field in italics is the interesting one for CERTs.
 

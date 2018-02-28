@@ -46,8 +46,7 @@ from intelmq.lib import utils
 from intelmq.lib.bot import Bot
 from intelmq.lib.harmonization import DateTime
 
-MAP_geo_env_remote_addr = {'country_code': 'source.geolocation.cc',
-                           "country_code": 'source.geolocation.cc',
+MAP_geo_env_remote_addr = {"country_code": 'source.geolocation.cc',
                            "country_name": 'source.geolocation.country',
                            "region": 'source.geolocation.region',
                            "city": 'source.geolocation.city',

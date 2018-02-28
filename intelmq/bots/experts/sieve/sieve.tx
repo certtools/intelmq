@@ -1,0 +1,77 @@
+/*
+ Metamodel (grammar) for the SieveExpertBot file format.
+ For details, see: https://github.com/igordejanovic/textX
+*/
+
+SieveModel: rules*=Rule ;
+
+Rule: if_=IfClause (elif_=ElifClause)* (else_=ElseClause)?;
+IfClause: 'if' expr=Expression '{' actions*=Action '}';
+ElifClause: 'elif' expr=Expression '{' actions*=Action '}';
+ElseClause: 'else' '{' actions*=Action '}';
+
+Expression: conj=Conjunction ('||' conj=Conjunction)*;
+Conjunction: cond=Condition ('&&' cond=Condition)*;
+Condition:
+    match=StringMatch
+    | match=NumericMatch
+    | match=IpRangeMatch
+    | match=ExistMatch
+    | ( '(' match=Expression ')' )
+;
+
+
+StringMatch: key=Key op=StringOperator value=StringValue;
+StringOperator:
+  '=='             // compares two whole strings with each other
+  | '!='           // test for string inequality
+  | ':contains'    // sub-string match
+  | ':notcontains' // inverse sub-string match
+  | '=~'           // match strings according to regular expression
+  | '!~'           // inverse match with regular expression
+;
+
+NumericMatch: key=Key op=NumericOperator value=NumericValue;
+NumericOperator:
+  '=='          // equal
+  | '!='        // not equal
+  | '<='        // less than or equal
+  | '>='        // greater than or equal
+  | '<'         // less than
+  | '>'         // greater than
+;
+
+IpRangeMatch: key=Key '<<' range=IpRange;
+IpRange: SingleIpRange | IpRangeList;
+SingleIpRange: value=STRING;
+IpRangeList: '[' values+=SingleIpRange[','] ']' ;
+
+ExistMatch: op=ExistOperator key=Key;
+ExistOperator: ':exists' | ':notexists';
+
+Key: /[a-z_\.]+/;
+
+StringValue: SingleStringValue | StringValueList ;
+SingleStringValue: value=STRING ;
+StringValueList: '[' values+=SingleStringValue[','] ']' ;
+
+NumericValue: SingleNumericValue | NumericValueList ;
+SingleNumericValue: value=NUMBER ;
+NumericValueList: '[' values+=SingleNumericValue[','] ']' ;
+
+
+Action: action=DropAction
+    | ( action=KeepAction
+        | action=AddAction
+        | action=AddForceAction
+        | action=UpdateAction
+        | action=RemoveAction
+      );
+DropAction: 'drop';
+KeepAction: 'keep';
+AddAction: 'add' key=Key '=' value=STRING;              // add key/value without overwriting existing key
+AddForceAction: 'add!' key=Key '=' value=STRING;        // add key/value, overwriting existing key
+UpdateAction: 'update' key=Key '=' value=STRING;        // update key/value, do not create if not exists
+RemoveAction: 'remove' key=Key;
+
+Comment: /(#|\/\/).*$/ ;

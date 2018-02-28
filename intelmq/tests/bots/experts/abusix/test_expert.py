@@ -33,6 +33,7 @@ EXAMPLE_EXISTING = {"__type": "Event",
 
 
 @test.skip_internet()
+@unittest.skip('Abusix is very unreliable.')
 class TestAbusixExpertBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for AbusixExpertBot.

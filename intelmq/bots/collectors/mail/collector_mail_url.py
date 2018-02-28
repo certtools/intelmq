@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import re
 import io
+import imaplib
 import requests
 
 try:
@@ -26,11 +27,16 @@ class MailURLCollectorBot(CollectorBot):
         self.chunk_replicate_header = getattr(self.parameters,
                                               'chunk_replicate_header', None)
 
-    def process(self):
+    def connect_mailbox(self):
+        self.logger.debug("Connecting to %s.", self.parameters.mail_host)
         mailbox = imbox.Imbox(self.parameters.mail_host,
                               self.parameters.mail_user,
                               self.parameters.mail_password,
                               self.parameters.mail_ssl)
+        return mailbox
+
+    def process(self):
+        mailbox = self.connect_mailbox()
         emails = mailbox.messages(folder=self.parameters.folder, unread=True,
                                   sent_to=getattr(self.parameters, "sent_to", None),
                                   sent_from=getattr(self.parameters, "sent_from", None))
@@ -41,9 +47,11 @@ class MailURLCollectorBot(CollectorBot):
                 if (self.parameters.subject_regex and
                         not re.search(self.parameters.subject_regex,
                                       re.sub("\r\n\s", " ", message.subject))):
+                    self.logger.debug("Message with date %s skipped because subject %r does not match.",
+                                      message.date, message.subject)
                     continue
 
-                erroneous = False  # If errors occured this will be set to true.
+                erroneous = False  # If errors occurred this will be set to true.
 
                 for body in message.body['plain']:
                     match = re.search(self.parameters.url_regex, str(body))
@@ -92,13 +100,19 @@ class MailURLCollectorBot(CollectorBot):
                         # Only mark read if message relevant to this instance,
                         # so other instances watching this mailbox will still
                         # check it.
-                        mailbox.mark_seen(uid)
+                        try:
+                            mailbox.mark_seen(uid)
+                        except imaplib.abort:
+                            # Disconnect, see https://github.com/certtools/intelmq/issues/852
+                            mailbox = self.connect_mailbox()
+                            mailbox.mark_seen(uid)
 
                 if not erroneous:
                     self.logger.info("Email report read.")
                 else:
                     self.logger.error("Email report read with errors, the report was not processed.")
-
+        else:
+            self.logger.debug("No unread mails to check.")
         mailbox.logout()
 
 

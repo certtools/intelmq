@@ -22,15 +22,15 @@ class AlienVaultOTXCollectorBot(CollectorBot):
             self.interval = getattr(self.parameters, 'interval', 24)
 
     def process(self):
-        self.logger.info("Downloading report through API")
+        self.logger.info("Downloading report through API.")
         otx = OTXv2(self.parameters.api_key, proxy=self.parameters.https_proxy)
         if self.modified_pulses_only:
-            self.logger.info("Fetching only modified pulses")
+            self.logger.info("Fetching only modified pulses.")
             interval = (datetime.datetime.now() -
                         datetime.timedelta(hours=self.interval)).isoformat()
             pulses = otx.getsince(interval, limit=9999)
         else:
-            self.logger.info("Fetching all pulses")
+            self.logger.info("Fetching all pulses.")
             pulses = otx.getall()
         self.logger.info("Report downloaded.")
 

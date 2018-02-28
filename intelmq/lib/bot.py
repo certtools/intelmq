@@ -21,7 +21,8 @@ from intelmq import (DEFAULT_LOGGING_PATH, DEFAULTS_CONF_FILE,
 from intelmq.lib import exceptions, utils
 import intelmq.lib.message as libmessage
 from intelmq.lib.pipeline import PipelineFactory
-from typing import Any, Optional
+from intelmq.lib.utils import RewindableFileHandle
+from typing import Any, Optional, List
 
 __all__ = ['Bot', 'CollectorBot', 'ParserBot']
 
@@ -34,6 +35,11 @@ class Bot(object):
     __message_counter_start = None
     # Bot is capable of SIGHUP delaying
     sighup_delay = True
+    # From the runtime configuration
+    description = None
+    group = None
+    module = None
+    name = None
 
     def __init__(self, bot_id: str):
         self.__log_buffer = []
@@ -79,6 +85,7 @@ class Bot(object):
             signal.signal(signal.SIGHUP, self.__handle_sighup_signal)
             # system calls should not be interrupted, but restarted
             signal.siginterrupt(signal.SIGHUP, False)
+            signal.signal(signal.SIGTERM, self.__handle_sigterm_signal)
         except Exception as exc:
             if self.parameters.error_log_exception:
                 self.logger.exception('Bot initialization failed.')
@@ -88,6 +95,13 @@ class Bot(object):
 
             self.stop()
             raise
+
+    def __handle_sigterm_signal(self, signum: int, stack: Optional[object]):
+        """
+        Calles when a SIGTERM is received. Stops the bot.
+        """
+        self.logger.info("Received SIGTERM.")
+        self.stop(exitcode=0)
 
     def __handle_sighup_signal(self, signum: int, stack: Optional[object]):
         """
@@ -161,7 +175,7 @@ class Bot(object):
             except Exception as exc:
                 # in case of serious system issues, exit immediately
                 if isinstance(exc, MemoryError):
-                    self.logger.exception('Out of memory. Exit immediately.')
+                    self.logger.exception('Out of memory. Exit immediately. Reason: %r.' % exc.args[0])
                     self.stop()
                 elif isinstance(exc, (IOError, OSError)) and exc.errno == 28:
                     self.logger.exception('Out of disk space. Exit immediately.')
@@ -187,12 +201,10 @@ class Bot(object):
             except KeyboardInterrupt:
                 self.logger.info("Received KeyboardInterrupt.")
                 self.stop(exitcode=0)
-                del self
-                break
 
             finally:
                 if getattr(self.parameters, 'testing', False):
-                    self.stop()
+                    self.stop(exitcode=0)
                     break
 
                 if error_on_message or error_on_pipeline:
@@ -220,7 +232,7 @@ class Bot(object):
                         # run_mode: scheduled
                         if self.run_mode == 'scheduled':
                             self.logger.info('Shutting down scheduled bot.')
-                            self.stop()
+                            self.stop(exitcode=0)
 
                         # error_procedure: stop
                         elif self.parameters.error_procedure == "stop":
@@ -233,7 +245,7 @@ class Bot(object):
                 # no errors, check for run mode: scheduled
                 elif self.run_mode == 'scheduled':
                     self.logger.info('Shutting down scheduled bot.')
-                    self.stop()
+                    self.stop(exitcode=0)
 
             self.__handle_sighup()
 
@@ -257,7 +269,7 @@ class Bot(object):
         try:
             self.shutdown()
         except BaseException:
-            pass
+            self.logger.exception('Error during shutdown of bot.')
 
         if self.__message_counter:
             self.logger.info("Processed %d messages since last logging.", self.__message_counter)
@@ -272,14 +284,16 @@ class Bot(object):
             self.__print_log_buffer()
 
         if not getattr(self.parameters, 'testing', False):
-            del self
-            exit(exitcode)
+            sys.exit(exitcode)
 
     def __print_log_buffer(self):
         for level, message in self.__log_buffer:
             if self.logger:
                 getattr(self.logger, level)(message)
-            print(level.upper(), '-', message)
+            if level in ['WARNING', 'ERROR', 'critical']:
+                print(level.upper(), '-', message, file=sys.stderr)
+            else:
+                print(level.upper(), '-', message)
         self.__log_buffer = []
 
     def __check_bot_id(self, name: str):
@@ -321,7 +335,7 @@ class Bot(object):
             self.__destination_pipeline = None
             self.logger.debug("Disconnected from destination pipeline.")
 
-    def send_message(self, *messages):
+    def send_message(self, *messages, path="_default"):
         for message in messages:
             if not message:
                 self.logger.warning("Ignoring empty message at sending. Possible bug in bot.")
@@ -329,7 +343,6 @@ class Bot(object):
             if not self.__destination_pipeline:
                 raise exceptions.ConfigurationError('pipeline', 'No destination pipeline given, '
                                                     'but needed')
-                self.stop()
 
             self.logger.debug("Sending message.")
             self.__message_counter += 1
@@ -342,7 +355,7 @@ class Bot(object):
                 self.__message_counter_start = datetime.datetime.now()
 
             raw_message = libmessage.MessageFactory.serialize(message)
-            self.__destination_pipeline.send(raw_message)
+            self.__destination_pipeline.send(raw_message, path=path)
 
     def receive_message(self):
         self.logger.debug('Waiting for incoming message.')
@@ -424,14 +437,18 @@ class Bot(object):
         config = utils.load_configuration(RUNTIME_CONF_FILE)
         reinitialize_logging = False
 
-        if self.__bot_id in list(config.keys()):
+        if self.__bot_id in config:
             params = config[self.__bot_id]
-            self.run_mode = params.get('run_mode', 'stream')
+            self.run_mode = params.get('run_mode', 'continuous')
             for option, value in params['parameters'].items():
                 setattr(self.parameters, option, value)
                 self.__log_configuration_parameter("runtime", option, value)
                 if option.startswith('logging_'):
                     reinitialize_logging = True
+            self.description = params.get('description')
+            self.group = params.get('group')
+            self.module = params.get('module')
+            self.name = params.get('name')
 
         if reinitialize_logging:
             self.logger.handlers = []  # remove all existing handlers
@@ -465,6 +482,7 @@ class Bot(object):
 
                 self.__destination_queues = config[
                     self.__bot_id]['destination-queues']
+                # Convert old to new format here
 
         else:
             raise exceptions.ConfigurationError('pipeline', "no key "
@@ -492,7 +510,7 @@ class Bot(object):
     @classmethod
     def run(cls):
         if len(sys.argv) < 2:
-            exit('No bot ID given.')
+            sys.exit('No bot ID given.')
         instance = cls(sys.argv[1])
         instance.start()
 
@@ -529,10 +547,29 @@ class Bot(object):
 
         self.http_header['User-agent'] = self.parameters.http_user_agent
 
+    @staticmethod
+    def check(parameters: dict) -> Optional[List[List[str]]]:
+        """
+        The bot's own check function can perform individual checks on it's
+        parameters.
+        `init()` is *not* called before, this is a staticmethod which does not
+        require class initialization.
+
+        Parameters:
+            parameters: Bot's parameters, defaults and runtime merged together
+
+        Returns:
+            output: None or a list of [log_level, log_message] pairs, both
+                strings. log_level must be a valid log level.
+        """
+        pass
+
 
 class ParserBot(Bot):
     csv_params = {}
     ignore_lines_starting = []
+    handle = None
+    current_line = None
 
     def __init__(self, bot_id):
         super(ParserBot, self).__init__(bot_id=bot_id)
@@ -540,18 +577,21 @@ class ParserBot(Bot):
             self.logger.error('ParserBot can\'t be started itself. '
                               'Possible Misconfiguration.')
             self.stop()
+        self.group = 'Parser'
 
     def parse_csv(self, report: dict):
         """
         A basic CSV parser.
         """
         raw_report = utils.base64_decode(report.get("raw")).strip()
+        raw_report = raw_report.translate({0: None})
         if self.ignore_lines_starting:
             raw_report = '\n'.join([line for line in raw_report.splitlines()
                                     if not any([line.startswith(prefix) for prefix
                                                 in self.ignore_lines_starting])])
-
-        for line in csv.reader(io.StringIO(raw_report)):
+        self.handle = RewindableFileHandle(io.StringIO(raw_report))
+        for line in csv.reader(self.handle):
+            self.current_line = self.handle.current_line
             yield line
 
     def parse_csv_dict(self, report: dict):
@@ -559,12 +599,14 @@ class ParserBot(Bot):
         A basic CSV Dictionary parser.
         """
         raw_report = utils.base64_decode(report.get("raw")).strip()
+        raw_report = raw_report.translate({0: None})
         if self.ignore_lines_starting:
             raw_report = '\n'.join([line for line in raw_report.splitlines()
                                     if not any([line.startswith(prefix) for prefix
                                                 in self.ignore_lines_starting])])
-
-        for line in csv.DictReader(io.StringIO(raw_report)):
+        self.handle = RewindableFileHandle(io.StringIO(raw_report))
+        for line in csv.DictReader(self.handle):
+            self.current_line = self.handle.current_line
             yield line
 
     def parse_json(self, report: dict):
@@ -647,7 +689,13 @@ class ParserBot(Bot):
 
         Recovers a fully functional report with only the problematic line.
         """
-        return '\n'.join(self.tempdata + [line])
+        if self.handle and self.handle.first_line and not self.tempdata:
+            tempdata = [self.handle.first_line.strip()]
+        else:
+            tempdata = self.tempdata
+        if self.current_line:
+            line = self.current_line
+        return '\n'.join(tempdata + [line])
 
     def recover_line_csv(self, line: str):
         out = io.StringIO()
@@ -686,6 +734,7 @@ class CollectorBot(Bot):
             self.logger.error('CollectorBot can\'t be started itself. '
                               'Possible Misconfiguration.')
             self.stop()
+        self.group = 'Collector'
 
     def __filter_empty_report(self, message: dict):
         if 'raw' not in message:

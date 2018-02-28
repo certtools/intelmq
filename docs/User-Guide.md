@@ -145,43 +145,6 @@ You can set these parameters per bot as well. The settings will take effect afte
 * **`http_verify_cert`** - defines if the bot will verify SSL certificates when performing HTTPS requests (e.g. bots/collectors/collector_http.py).
     * **`true/false`** - verify or not verify SSL certificates
 
-## Pipeline Configuration
-
-This configuration is used by each bot to load the pipeline of associated source- and destination queues. Note that the IntelMQ Manager generates this configuration.
-
-**Template:**
-```
-{
-	...
-    "<bot ID>": {
-        "source-queue": "<source pipeline name>",
-        "destination-queues": [
-            "<first destination pipeline name>",
-            "<second destination pipeline name>",
-            ...
-        ]
-    },
-	...
-}
-```
-
-**Example:**
-```
-{
-	...
-    "malware-domain-list-parser": {
-        "source-queue": "malware-domain-list-parser-queue",
-        "destination-queues": [
-            "file-output-queue"
-        ]
-    },
-	...
-}
-```
-Note that a bot must only have one (input) source queue but may have multiple destination queues.
-
-More examples can be found at `intelmq/etc/pipeline.conf` directory in IntelMQ repository.
-
 ## Runtime Configuration
 
 This configuration is used by each bot to load its specific (runtime) parameters. Usually, the `BOTS` file is used to generate `runtime.conf`. Also, the IntelMQ Manager generates this configuration. You may edit it manually as well. Be sure to re-load the bot (see the intelmqctl documentation).
