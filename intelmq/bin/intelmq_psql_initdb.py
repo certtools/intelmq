@@ -38,7 +38,9 @@ def generate(harmonization_file=HARMONIZATION_CONF_FILE):
 
         if value['type'] in ('String', 'Base64', 'URL', 'FQDN',
                              'MalwareName', 'ClassificationType',
-                             'LowercaseString', 'UppercaseString', 'Registry'):
+                             'LowercaseString', 'UppercaseString', 'Registry',
+                             'TLP',
+                             ):
             if 'length' in value:
                 dbtype = 'varchar({})'.format(value['length'])
             else:
