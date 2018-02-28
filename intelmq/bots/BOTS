@@ -378,6 +378,11 @@
             "module": "intelmq.bots.parsers.malwareurl.parser",
             "parameters": {}
         },
+        "Microsoft CTIP": {
+            "description": "Parses JSON data from Microsoft's CTIP program.",
+            "module": "intelmq.bots.parsers.microsoft.parser_ctip",
+            "parameters": {}
+        },
         "N6Stomp": {
             "description": "N6 Collector - CERT.pl's N6 Parser - N6 feed via STOMP interface",
             "module": "intelmq.bots.parsers.n6.parser_n6stomp",

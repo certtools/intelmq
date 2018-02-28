@@ -50,6 +50,7 @@ CHANGELOG
   - Empty parameters `attachment_regex` and `url_regex` handled.
 - `bots.collectors.http.collector_http`: Ability to optionally use the current time in parameter `http_url`, added parameter `http_url_formatting`.
 - `bots.collectors.stomp.collector`: Heartbeat timeout is now logged with log level info instead of warning.
+- `bots.collectors.microsoft.collector_interlow`: added for MS interflow API
 
 #### Parsers
 - changed feednames in `bots.parsers.shadowserver`. Please refer to it's README for the exact changes.
@@ -67,6 +68,7 @@ CHANGELOG
 - added `intelmq.bots.parsers.sucuri.parser`
 - added `intelmq.bots.parsers.malwareurl.parser`
 - added `intelmq.bots.parsers.threatminer.parser`
+- added `intelmq.bots.parsers.microsoft.parser_ctip`
 
 #### Experts
 - Added sieve expert for filtering and modifying events (#1083)
