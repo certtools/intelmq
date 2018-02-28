@@ -43,20 +43,15 @@ class MailSendOutputBot(Bot):
     def process(self):
         message = self.receive_message()
         #mail_rewrite = ast.literal_eval(self.parameters.mail_rewrite)
-
-        self.logger.warning("ZPRAVA..")
+        
         self.logger.debug(message)
-
-        # message.add("source.abuse_contact",u"edvard.rejthar+test_abusemail@nic.cz") # XX nevim, zda nepouzit https://github.com/certtools/intelmq/blob/master/docs/Harmonization-fields.md treba destination.account, nebo source.account
-        self.logger.warning("ZPRAVA END..")
+        
         if "source.abuse_contact" in message:
             field = message["source.abuse_contact"]
             self.logger.warning("{}{}".format(self.key, field))
-            if field:
-                self.logger.warning("edvard field")
+            if field:                
                 mails = field if type(field) == 'list' else [field]
-            for mail in mails:
-                self.logger.warning("edvard mails")
+            for mail in mails:                
 
                 # rewrite destination address
                 #if message["source.abuse_contact"] in mail_rewrite:
