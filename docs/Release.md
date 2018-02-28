@@ -12,7 +12,7 @@ Assumption: You are working on branch maintenance, the next version is a bug fix
  * `intelmq/version.py`: Update the version.
  * `debian/changelog`: Insert a new section for the new version with the tool `dch`.
 
-Eventually adapt the default log levels if necessary. Should be warning for stable releases. See older releases.
+Eventually adapt the default log levels if necessary. Should be INFO for stable releases. See older releases.
 
 ## Commit and tag.
 Commit your changes, the message should start with `REL: `. Push and create a pull request from maintenance to master. Someone else should review the changes. Eventually fix them, make sure the `REL: ` is the last commit, you can also push that one at last, after the reviews.

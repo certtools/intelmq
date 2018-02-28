@@ -360,6 +360,11 @@
             "module": "intelmq.bots.parsers.malwarepatrol.parser_dansguardian",
             "parameters": {}
         },
+        "Malwareurl": {
+            "description": "Malwareurl is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.malwareurl.parser",
+            "parameters": {}
+        },
         "N6Stomp": {
             "description": "N6 Collector - CERT.pl's N6 Parser - N6 feed via STOMP interface",
             "module": "intelmq.bots.parsers.n6.parser_n6stomp",
@@ -383,6 +388,11 @@
         "OpenPhish": {
             "description": "OpenPhish Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.openphish.parser",
+            "parameters": {}
+        },
+        "OpenPhish Commercial": {
+            "description": "OpenPhish Parser is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.openphish.parser_commercial",
             "parameters": {}
         },
         "PhishTank": {
@@ -419,6 +429,11 @@
             "parameters": {
                 "error_log_message": false
             }
+        },
+        "Threatminer": {
+            "description": "Threatminer Parser is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.threatminer.parser",
+            "parameters": {}
         },
         "Turris Greylist": {
             "description": "Turris Greylist Parser is the bot responsible to parse the report and sanitize the information.",

@@ -1,43 +1,49 @@
 # Available Feeds
 
-The available feeds are grouped by the source of the feeds. For each feed the collector and parser that can be used is documented as well as any feed-specific parameters.
+The available feeds are grouped by the provider of the feeds.
+For each feed the collector and parser that can be used is documented as well as any feed-specific parameters.
+To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `intelmq/bin/intelmq_gen_feeds_docs.py` to generate the new content of this file.
 
 <!-- TOC depthFrom:2 depthTo:2 withLinks:1 updateOnSave:1 orderedList:0 -->
 
 - [Abuse.ch](#abusech)
 - [AlienVault](#alienvault)
+- [AnubisNetworks](#anubisnetworks)
 - [Autoshun](#autoshun)
 - [Bambenek](#bambenek)
 - [Bitcash](#bitcash)
-- [AnubisNetworks Cyberfeed Stream](#anubisnetworks-cyberfeed-stream)
 - [Blocklist.de](#blocklistde)
-- [Blueliv Crimeserver](#blueliv-crimeserver)
-- [CI Army](#ci-army)
+- [Blueliv](#blueliv)
+- [CERT.PL](#certpl)
+- [CINSscore](#cinsscore)
 - [CleanMX](#cleanmx)
-- [Cymru](#cymru)
 - [DShield](#dshield)
 - [Danger Rulez](#danger-rulez)
 - [Dataplane](#dataplane)
 - [DynDNS](#dyndns)
-- [Fraunhofer DGA](#fraunhofer-dga)
+- [Fraunhofer](#fraunhofer)
 - [HPHosts](#hphosts)
 - [Malc0de](#malc0de)
 - [Malware Domain List](#malware-domain-list)
 - [Malware Domains](#malware-domains)
-- [MalwarePatrol Dans Guardian](#malwarepatrol-dans-guardian)
-- [N6](#n6)
+- [MalwarePatrol](#malwarepatrol)
+- [MalwareURL](#malwareurl)
 - [Netlab 360](#netlab-360)
 - [Nothink](#nothink)
-- [OpenBL](#openbl)
 - [OpenPhish](#openphish)
+- [OpenPhish Commercial](#openphish-commercial)
 - [PhishTank](#phishtank)
-- [Proxyspy](#proxyspy)
-- [Shadowserver](#shadowserver)
+- [ShadowServer](#shadowserver)
 - [Spamhaus](#spamhaus)
+- [Sucuri](#sucuri)
 - [Taichung](#taichung)
-- [Turris Greylist](#turris-greylist)
+- [Team Cymru](#team-cymru)
+- [Threatminer](#threatminer)
+- [Turris](#turris)
 - [URLVir](#urlvir)
+- [University of Toulouse](#university-of-toulouse)
 - [VXVault](#vxvault)
+- [ZoneH](#zoneh)
 
 <!-- /TOC -->
 
@@ -62,7 +68,7 @@ The available feeds are grouped by the source of the feeds. For each feed the co
 * **Configuration Parameters:**
 
 
-## Feodo Tracker Ips
+## Feodo Tracker IPs
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -119,7 +125,7 @@ The available feeds are grouped by the source of the feeds. For each feed the co
 * **Configuration Parameters:**
 
 
-## Zeus Tracker Ips
+## Zeus Tracker IPs
 
 * **Status:** off
 * **Revision:** 20-01-2018
@@ -140,7 +146,7 @@ The available feeds are grouped by the source of the feeds. For each feed the co
 
 # AlienVault
 
-## Otx
+## OTX
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -236,17 +242,11 @@ The available feeds are grouped by the source of the feeds. For each feed the co
 
 ### Parser
 
-**Configuration Parameters:**
-```
-id: bambenek-c2-domains-collector
-provider: Bambenek
-feed: Bambenek C2 Domains
-rate_limit: FIXME
-http_url: http://osint.bambenekconsulting.com/feeds/c2-dommasterlist.txt
-```
+* **Module:** intelmq.bots.parsers.bambenek.parser
+* **Configuration Parameters:**
 
 
-## C2 Ips
+## C2 IPs
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -254,8 +254,10 @@ http_url: http://osint.bambenekconsulting.com/feeds/c2-dommasterlist.txt
 
 ### Collector
 
-**Notes:** Master Feed of known, active and non-sinkholed C&Cs domain names.
-License: http://osint.bambenekconsulting.com/license.txt
+* **Module:** intelmq.bots.collectors.http.collector_http
+* **Configuration Parameters:**
+*  * `http_url`: `https://osint.bambenekconsulting.com/feeds/c2-ipmasterlist.txt`
+*  * `rate_limit`: `3600`
 
 ### Parser
 
@@ -263,20 +265,13 @@ License: http://osint.bambenekconsulting.com/license.txt
 * **Configuration Parameters:**
 
 
-## Dga Domains
+## DGA Domains
 
 * **Status:** on
 * **Revision:** 20-01-2018
 * **Description:** Domain feed of known DGA domains from -2 to +3 days License: https://osint.bambenekconsulting.com/license.txt
 
-**Configuration Parameters:**
-```
-id: bambenek-c2-ips-collector
-provider: Bambenek
-feed: Bambenek C2 IPs
-rate_limit: FIXME
-http_url: http://osint.bambenekconsulting.com/feeds/c2-ipmasterlist.txt
-```
+### Collector
 
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
@@ -285,53 +280,13 @@ http_url: http://osint.bambenekconsulting.com/feeds/c2-ipmasterlist.txt
 
 ### Parser
 
-**Bot Module:** intelmq.bots.parsers.bambenek.parser
-
-**Configuration Parameters:**
-```
-id: bambenek-c2-ips-parser
-```
-
-**Notes:** Master Feed of known, active and non-sinkholed C&Cs IP addresses
-License: http://osint.bambenekconsulting.com/license.txt
-
-## DGA Domains
-
-**Status:** Active
-
-### Collector Bot
-
-**Bot Name:** Generic URL Fetcher
-
-**Bot Module:** intelmq.bots.collectors.http.collector_http
-
-**Configuration Parameters:**
-```
-id: bambenek-dga-domains-collector
-provider: Bambenek
-feed: Bambenek DGA Domains
-rate_limit: FIXME
-http_url: http://osint.bambenekconsulting.com/feeds/dga-feed.txt
-```
-
-### Parser Bot
-
-**Bot Name:** Bambenek DGA Domain Feed
-
-**Bot Module:** intelmq.bots.parsers.bambenek.parser
-
-**Configuration Parameters:**
-```
-id: bambenek-dga-domains-parser
-```
-
-**Notes:** Domain feed of known DGA domains from -2 to +3 days
-License: http://osint.bambenekconsulting.com/license.txt
+* **Module:** intelmq.bots.parsers.bambenek.parser
+* **Configuration Parameters:**
 
 
 # Bitcash
 
-## Banned Ips
+## Banned IPs
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -344,14 +299,7 @@ License: http://osint.bambenekconsulting.com/license.txt
 *  * `http_url`: `https://bitcash.cz/misc/log/blacklist`
 *  * `rate_limit`: `3600`
 
-**Configuration Parameters:**
-```
-id: bitcash-collector
-provider: BitCash
-feed: BitCash
-rate_limit: FIXME
-http_url: http://bitcash.cz/misc/log/blacklist
-```
+### Parser
 
 * **Module:** intelmq.bots.parsers.bitcash.parser
 * **Configuration Parameters:**
@@ -397,7 +345,7 @@ http_url: http://bitcash.cz/misc/log/blacklist
 * **Configuration Parameters:**
 
 
-## Brute-Force Logins
+## Brute-force Logins
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -416,7 +364,7 @@ http_url: http://bitcash.cz/misc/log/blacklist
 * **Configuration Parameters:**
 
 
-## Ftp
+## FTP
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -435,7 +383,7 @@ http_url: http://bitcash.cz/misc/log/blacklist
 * **Configuration Parameters:**
 
 
-## Imap
+## IMAP
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -454,7 +402,7 @@ http_url: http://bitcash.cz/misc/log/blacklist
 * **Configuration Parameters:**
 
 
-## Irc Bots
+## IRC Bots
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -492,7 +440,7 @@ http_url: http://bitcash.cz/misc/log/blacklist
 * **Configuration Parameters:**
 
 
-## Sip
+## SIP
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -511,7 +459,7 @@ http_url: http://bitcash.cz/misc/log/blacklist
 * **Configuration Parameters:**
 
 
-## Ssh
+## SSH
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -530,7 +478,7 @@ http_url: http://bitcash.cz/misc/log/blacklist
 * **Configuration Parameters:**
 
 
-## Strong Ips
+## Strong IPs
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -551,7 +499,7 @@ http_url: http://bitcash.cz/misc/log/blacklist
 
 # Blueliv
 
-## Crimeserver
+## CrimeServer
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -661,7 +609,7 @@ http_url: http://bitcash.cz/misc/log/blacklist
 
 # DShield
 
-## As Details
+## AS Details
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -739,7 +687,7 @@ http_url: http://bitcash.cz/misc/log/blacklist
 * **Configuration Parameters:**
 
 
-## Sip Invitation
+## SIP Invitation
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -760,7 +708,7 @@ http_url: http://bitcash.cz/misc/log/blacklist
 
 # Dataplane
 
-## Sip Query
+## SIP Query
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -779,7 +727,7 @@ http_url: http://bitcash.cz/misc/log/blacklist
 * **Configuration Parameters:**
 
 
-## Sip Registration
+## SIP Registration
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -798,7 +746,7 @@ http_url: http://bitcash.cz/misc/log/blacklist
 * **Configuration Parameters:**
 
 
-## Ssh Client Connection
+## SSH Client Connection
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -817,7 +765,7 @@ http_url: http://bitcash.cz/misc/log/blacklist
 * **Configuration Parameters:**
 
 
-## Ssh Password Authentication
+## SSH Password Authentication
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -859,7 +807,7 @@ http_url: http://bitcash.cz/misc/log/blacklist
 
 # Fraunhofer
 
-## Dga Archieve
+## DGA Archieve
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -923,7 +871,7 @@ http_url: http://bitcash.cz/misc/log/blacklist
 * **Configuration Parameters:**
 
 
-## Ip Blacklist
+## IP Blacklist
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -1005,7 +953,7 @@ http_url: http://bitcash.cz/misc/log/blacklist
 
 # MalwarePatrol
 
-## Dansguardian
+## DansGuardian
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -1024,9 +972,30 @@ http_url: http://bitcash.cz/misc/log/blacklist
 * **Configuration Parameters:**
 
 
+# MalwareURL
+
+## Latest malicious activity
+
+* **Status:** on
+* **Revision:** 05-02-2018
+* **Description:** Latest malicious domains/IPs.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.http.collector_http
+* **Configuration Parameters:**
+*  * `http_url`: `https://www.malwareurl.com/`
+*  * `rate_limit`: `86400`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.malwareurl.parser
+* **Configuration Parameters:**
+
+
 # Netlab 360
 
-## Dga
+## DGA
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -1045,7 +1014,7 @@ http_url: http://bitcash.cz/misc/log/blacklist
 * **Configuration Parameters:**
 
 
-## Magnitude Ek
+## Magnitude EK
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -1085,7 +1054,7 @@ http_url: http://bitcash.cz/misc/log/blacklist
 
 # Nothink
 
-## Dns Attack
+## DNS Attack
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -1104,7 +1073,7 @@ http_url: http://bitcash.cz/misc/log/blacklist
 * **Configuration Parameters:**
 
 
-## Snmp
+## SNMP
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -1123,7 +1092,7 @@ http_url: http://bitcash.cz/misc/log/blacklist
 * **Configuration Parameters:**
 
 
-## Ssh
+## SSH
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -1182,6 +1151,29 @@ http_url: http://bitcash.cz/misc/log/blacklist
 * **Configuration Parameters:**
 
 
+# OpenPhish Commercial
+
+## Phishing
+
+* **Status:** on
+* **Revision:** 06-02-2018
+* **Description:** OpenPhish is a fully automated self-contained platform for phishing intelligence. It identifies phishing sites and performs intelligence analysis in real time without human intervention and without using any external resources, such as blacklists.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.http.collector_http
+* **Configuration Parameters:**
+*  * `http_password`: `{{ your password}}`
+*  * `http_url`: `https://openphish.com/prvt-intell/`
+*  * `http_username`: `{{ your username}}`
+*  * `rate_limit`: `86400`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.openphish.parser_commercial
+* **Configuration Parameters:**
+
+
 # PhishTank
 
 ## Online
@@ -1205,7 +1197,7 @@ http_url: http://bitcash.cz/misc/log/blacklist
 
 # ShadowServer
 
-## Fixme
+## FIXME
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -1228,7 +1220,7 @@ http_url: http://bitcash.cz/misc/log/blacklist
 
 # Spamhaus
 
-## Asn Drop
+## ASN Drop
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -1247,7 +1239,7 @@ http_url: http://bitcash.cz/misc/log/blacklist
 * **Configuration Parameters:**
 
 
-## Cert
+## CERT
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -1304,7 +1296,7 @@ http_url: http://bitcash.cz/misc/log/blacklist
 * **Configuration Parameters:**
 
 
-## Edrop
+## EDrop
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -1325,7 +1317,7 @@ http_url: http://bitcash.cz/misc/log/blacklist
 
 # Sucuri
 
-## Hidden Iframes
+## Hidden IFrames
 
 * **Status:** on
 * **Revision:** 28-01-2018
@@ -1369,7 +1361,7 @@ http_url: http://bitcash.cz/misc/log/blacklist
 
 # Team Cymru
 
-## Cap
+## CAP
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -1407,6 +1399,28 @@ http_url: http://bitcash.cz/misc/log/blacklist
 ### Parser
 
 * **Module:** intelmq.bots.parsers.cymru.parser_full_bogons
+* **Configuration Parameters:**
+
+
+# Threatminer
+
+## Recent domains
+
+* **Status:** on
+* **Revision:** 06-02-2018
+* **Documentation:** https://www.threatminer.org/
+* **Description:** Latest malicious domains.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.http.collector_http
+* **Configuration Parameters:**
+*  * `http_url`: `https://www.threatminer.org/`
+*  * `rate_limit`: `86400`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.threatminer.parser
 * **Configuration Parameters:**
 
 
@@ -1452,7 +1466,7 @@ http_url: http://bitcash.cz/misc/log/blacklist
 * **Configuration Parameters:**
 
 
-## Ips
+## IPs
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -1498,7 +1512,7 @@ http_url: http://bitcash.cz/misc/log/blacklist
 
 # VXVault
 
-## Ips
+## IPs
 
 * **Status:** on
 * **Revision:** 20-01-2018

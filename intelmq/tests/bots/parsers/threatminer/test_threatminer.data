@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="">
+<meta name="author" content="Michael Yip (@michael_yip)">
+<title>ThreatMiner.org | Data Mining for Threat Intelligence</title>
+<link rel="icon" type="image/gif" href="images/favicon.gif">
+
+<link href="bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<link href="bower_components/metisMenu/dist/metisMenu.min.css" rel="stylesheet">
+
+<link href="bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.css" rel="stylesheet">
+
+<link href="bower_components/datatables-responsive/css/dataTables.responsive.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="bower_components/datatables-plugins/buttons/media/css/buttons.dataTables.min.css">
+<link rel="stylesheet" type="text/css" href="bower_components/datatables-plugins/buttons/media/css/buttons.bootstrap.min.css">
+
+<link href="dist/css/sb-admin-2.css" rel="stylesheet">
+
+<link href="bower_components/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+<link href="dist/css/social-share-kit.css" rel="stylesheet">
+
+
+<!--[if lt IE 9]>
+	<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+	<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+<style type="text/css">
+h2.page-header{
+	margin-top:0;
+}
+
+h1.page-header{
+	margin-top:0;
+}
+
+
+.whois_label_column{
+	width: 30%;
+}
+
+.whois_info_table{
+	width: 100%;
+	border: 1px solid #ccc;
+}
+
+.tm_row{
+	 
+	background-color: #fff;
+	padding-right: 24px; 
+	padding-left: 24px;
+	padding-bottom: 12px;
+}
+
+#page-wrapper{
+	margin: 0 0 0 300;
+}
+
+div#searchresult{
+	width: 300px;
+}
+
+div.panel{
+	overflow-wrap: break-word;
+	word-wrap: break-word;
+	-ms-word-break: break-all;
+	word-break: break-all;
+
+}
+
+input.gsc-input{
+	position: relative;
+	background-color: transparent !important;
+	left: -2px;
+	top: -3px;
+}
+
+div#___gcse_0 table.gsc-search-box td.gsc-input{
+	padding: 0;
+}
+
+input.gsc-search-button.gsc-search-button-v2{
+	position: relative;
+	top: 1px;
+	box-sizing: content-box !important; 
+	padding: 5px 5px;
+}
+
+div.gsc-thumbnail-inside, div.gsc-url-top{
+	padding: 0;
+	margin: 0;
+	text-align: left;
+}
+
+a.gsst_a{
+	padding: 0;
+	padding-top: 5px;
+	margin: 0;
+}
+
+.gsc-webResult .gsc-result{
+	width: 280px;
+	overflow-wrap: break-word;
+	word-wrap: break-word;
+	-ms-word-break: break-all;
+	word-break: break-word;
+}
+
+.gsc-table-result{
+	width: 280px;
+}
+
+.gsc-above-wrapper-area-container{
+	display: none;
+}
+
+.gsc-search-box{
+	padding-left: 24px;
+	padding-right: 24px;
+}
+
+#context_header{
+	width: 300px;
+	padding: 24px;
+	text-align: center;
+	color: #ccc;
+	border-right: 1px solid #e7e7e7;
+	margin:0;
+}
+
+.sidebar{
+	width: 300px;
+	background-color: #fff;
+	min-height: 592px;
+	border-right: 1px solid #e7e7e7;
+}
+
+#page-wrapper{
+	border:none;
+}
+
+#footer{
+	width:100%;
+}
+
+.loading_gif_container{
+	text-align: center;
+	padding-top: 24px;
+	padding-bottom: 24px;
+}
+
+.pagination{
+	display: inline-block;
+	padding-right: 4px;
+}
+
+#scrollToTop{
+
+text-align:center; 
+font-weight: bold;
+text-decoration: none;
+position:fixed;
+bottom:10px;
+right:10px;
+display:none;
+}
+
+#scrollToTop:hover{
+text-decoration:none;
+}
+
+button.btn-xs{
+	margin: 0.5px;
+}
+
+button.btn-sm{
+	margin-right:2px; 
+	margin-bottom:2px; 
+	font-size:0.9em;
+}
+
+button.ip_ext{
+	font-size:0.9em;
+}
+
+body{
+	margin: 0;
+	padding: 0;
+}
+
+</style>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-73787980-1', 'auto');
+  ga('send', 'pageview');
+
+</script></head>
+<body style="background-color: #fff;">
+<script type="text/javascript">
+var donation_html =  '<div class="alert alert-danger alert-dismissable" style="margin-bottom:0;">' +
+					 '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>'+
+					 '<strong>IMPORTANT:</strong> Hi there, thank you for using ThreatMiner. If you are finding ThreatMiner useful, please consider joining other infosec heroes and make a regular donation to contribute to our hosting costs so that we can continue to operate and expand our data coverage. <a href="support.php" target="_blank" class="alert-link">Make a donation now</a>.' +
+					 '</div>';
+</script><div id="wrapper">
+
+<nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+
+<div class="row" style="margin-right:0; margin-left:0">
+<div>
+<form action="search_handler.php" method="POST" onsubmit="return checkForm();" id="ioc_search1">
+<div class="input-group custom-search-form">
+<input type="text" class="form-control" id="searchTerm" name="main_search_term" placeholder="Search for domains, IPs, MD5|SHA1|SHA256, email address or APTnotes(aptnotes:), ssl(ssl:), user-agent(ua:), AV family(av:), filename (filename:), URI (uri:), registry (reg:), mutex (mutex:)..." />
+<span class="input-group-btn">
+<button class="btn btn-default" type="submit">
+<i class="fa fa-search"></i>
+</button>
+</span>
+<input type="hidden" name="ioc_search_submitted" value="9f422cabe95a8670ea969e78d711aecc" />
+</div>
+</form>
+</div>
+</div>
+<div class="navbar-header">
+<div class="navbar-header">
+<a class="navbar-brand" style="font-size:0.9em" href="index.php"><span style="padding-right:6px;" class="fa fa-home"></span>Home</a>
+<a class="navbar-brand" style="font-size:0.9em" href="about.php"><span style="padding-right:6px;" class="fa fa-info"></span>About ThreatMiner</a>
+<a class="navbar-brand" style="font-size:0.9em" href="features.php"><span style="padding-right:6px;" class="fa fa-question"></span>How to use ThreatMiner</a>
+<a class="navbar-brand" style="font-size:0.9em" href="maltego.php"><span style="padding-right:6px;" class="fa fa-share-alt"></span>Maltego Transforms</a>
+<a class="navbar-brand" style="font-size:0.9em" href="roadmap.php"><span style="padding-right:6px;" class="fa fa-road"></span>Development roadmap</a>
+<a class="navbar-brand " style="font-size:0.9em" href="support.php"><span style="padding-right:6px;" class="fa fa-heart"></span> Make a donation</a>
+</div>
+</div>
+
+
+<ul class="nav navbar-top-links navbar-right">
+
+<li class="dropdown">
+<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+<i class="fa fa-twitter fa-fw"></i> <i class="fa fa-caret-down"></i>
+</a>
+<ul class="dropdown-menu dropdown-tasks">
+<li>
+<a class="twitter-timeline" data-width="300" data-height="500" data-dnt="true" data-theme="light" data-link-color="#2B7BB9" href="https://twitter.com/ThreatMiner">Tweets by ThreatMiner</a> <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+</li>
+</ul>
+
+</li>
+
+
+<li class="dropdown">
+<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+<i class="fa fa-github fa-fw"></i> <i class="fa fa-caret-down"></i>
+</a>
+ <ul class="dropdown-menu dropdown-tasks">
+<li>
+<a target="_blank" href="http://github.com/threatminer">
+<div>
+<div>
+<strong>ThreatMiner Github</strong>
+</div>
+<div>Github.com/threatminer</div>
+</div>
+</a>
+</li>
+</ul>
+
+</li>
+
+
+<li class="dropdown">
+<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+<i class="fa fa-linkedin-square fa-fw"></i> <i class="fa fa-caret-down"></i>
+</a>
+<ul class="dropdown-menu dropdown-messages">
+<li>
+<a target="_blank" href="https://uk.linkedin.com/in/michaelyiphw">
+<div>
+<strong>Find Mike on LinkedIn</strong>
+</div>
+<div>Linkedin.com/michaelyiphw</div>
+</a>
+</li>
+</ul>
+
+</li>
+
+
+<li class="dropdown">
+<a class="dropdown-toggle" data-toggle="dropdown" href="#">
+<i class="fa fa-envelope fa-fw"></i> <i class="fa fa-caret-down"></i>
+</a>
+<ul class="dropdown-menu dropdown-messages">
+<li>
+<a href="#">
+<div>
+<strong>Contact Mike</strong>
+</div>
+<div>michael.yip.apps@gmail.com</div>
+</a>
+</li>
+</ul>
+
+</li>
+
+</ul>
+
+</nav>
+
+
+<div id="page-wrapper" style="margin: 0">
+<div class="row ">
+<div style="background-color: #FFF; padding-top: 10px; padding-left: 40px; padding-right: 40px; margin-bottom:-20px;">
+
+<div class="row" style="padding-bottom: 24px; text-align:center">
+<img src="images/logo.png" width="45%" height="45%">
+</div>
+</div>
+</div>
+
+<div class="row tm_row">
+<div class="col-lg-12">
+<ul class="nav nav-tabs">
+<li class="active"><a href="#home" data-toggle="tab">Search IOC</a>
+</li>
+<li><a href="#notes" data-toggle="tab">Search APTNotes</a>
+</li>
+</ul>
+</div>
+</div>
+
+<div class="tab-content">
+
+<div class="tab-pane fade in active" id="home">
+<div class="row tm_row"></div>
+
+<div class="row tm_row">
+<div class="col-lg-12">
+<div style=" margin-bottom:24px">
+<p style="text-align:center; color:#999;">
+Note: if you are new to ThreatMiner, check out the <a target="_blank" href="features.php">how-to</a> page to find out <b>how</b> you can get the most out of this portal.
+</p>
+<form action="search_handler.php" method="POST" onsubmit="return checkForm();" id="ioc_search2">
+<div class="input-group custom-search-form">
+<input type="text" class="form-control" id="searchTerm" name="main_search_term" placeholder="Search for domains, IPs, MD5|SHA1|SHA256, email address or APTnotes(aptnotes:), ssl(ssl:), user-agent(ua:), AV family(av:), filename (filename:), URI (uri:), registry (reg:), mutex (mutex:)..." />
+<span class="input-group-btn">
+<button class="btn btn-default" type="submit">
+<i class="fa fa-search"></i>
+</button>
+</span>
+<input type="hidden" name="ioc_search_submitted" value="8e3dd390232119d8da9ed1ef1d82f217" />
+</div>
+</form>
+</div> </div>
+</div>
+
+
+<div class="row tm_row">
+<div id="indicators_panel">
+<div class="col-lg-3 col-md-6">
+<div class="panel panel-info">
+<div class="panel-heading">
+<div class="row">
+<div class="col-xs-3">
+<i class="fa fa-rebel fa-5x"></i>
+</div>
+<div class="col-xs-9 text-right">
+<div style="font-size: 2.5em">
+
+13209849
+</div>
+<div>Malware samples</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="col-lg-3 col-md-6">
+<div class="panel panel-default">
+<div class="panel-heading">
+<div class="row">
+<div class="col-xs-3">
+<i class="fa fa-sitemap fa-5x"></i>
+</div>
+<div class="col-xs-9 text-right">
+<div style="font-size: 2.5em">
+
+10398371
+</div>
+<div>Domains</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="col-lg-3 col-md-6">
+<div class="panel panel-info">
+<div class="panel-heading">
+<div class="row">
+<div class="col-xs-3">
+<i class="fa fa-desktop fa-5x"></i>
+</div>
+<div class="col-xs-9 text-right">
+<div style="font-size: 2.5em">
+
+44564770
+</div>
+<div>Hosts</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="col-lg-3 col-md-6">
+<div class="panel panel-default">
+<div class="panel-heading">
+<div class="row">
+<div class="col-xs-3">
+<i class="fa fa-envelope fa-5x"></i>
+</div>
+<div class="col-xs-9 text-right">
+<div style="font-size: 2.5em">
+
+23481784
+</div>
+<div>Email addresses</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="row tm_row" id="recent_indicators">
+
+<div class="col-lg-4">
+
+<div class="panel panel-default">
+<div class="panel-heading">
+<i class="fa fa-sitemap fa-fw"></i>
+Recent domains
+</div>
+<div class="panel-body">
+<table class="table table-bordered table-hover table-striped">
+<tr><td><a href='domain.php?q=11e.com
+'>11e.com
+</a></td></tr><tr><td><a href='domain.php?q=studiosimge.com
+'>studiosimge.com
+</a></td></tr><tr><td><a href='domain.php?q=www.studiosimge.com
+'>www.studiosimge.com
+</a></td></tr><tr><td><a href='domain.php?q=verador.info
+'>verador.info
+</a></td></tr><tr><td><a href='domain.php?q=portfos.org
+'>portfos.org
+</a></td></tr><tr><td><a href='domain.php?q=logo.portfos.org
+'>logo.portfos.org
+</a></td></tr><tr><td><a href='domain.php?q=mrmoney.redirectme.net
+'>mrmoney.redirectme.net
+</a></td></tr><tr><td><a href='domain.php?q=ghost445.ddns.net
+'>ghost445.ddns.net
+</a></td></tr><tr><td><a href='domain.php?q=mymyxmra.ru
+'>mymyxmra.ru
+</a></td></tr><tr><td><a href='domain.php?q=64.mymyxmra.ru
+'>64.mymyxmra.ru
+</a></td></tr> </table>
+</div>
+</div> 
+</div> 
+
+<div class="col-lg-4">
+
+<div class="panel panel-default">
+<div class="panel-heading">
+<i class="fa fa-desktop fa-fw"></i>
+Recent hosts
+</div>
+<div class="panel-body">
+<table class="table table-bordered table-hover table-striped">
+<tr><td><a href='host.php?q=80.211.235.241
+'>80.211.235.241
+</a></td></tr><tr><td><a href='host.php?q=212.237.22.110
+'>212.237.22.110
+</a></td></tr><tr><td><a href='host.php?q=34.198.196.97
+'>34.198.196.97
+</a></td></tr><tr><td><a href='host.php?q=74.96.85.235
+'>74.96.85.235
+</a></td></tr><tr><td><a href='host.php?q=87.102.157.91
+'>87.102.157.91
+</a></td></tr><tr><td><a href='host.php?q=185.82.218.180
+'>185.82.218.180
+</a></td></tr><tr><td><a href='host.php?q=178.140.74.176
+'>178.140.74.176
+</a></td></tr><tr><td><a href='host.php?q=51.15.214.111
+'>51.15.214.111
+</a></td></tr><tr><td><a href='host.php?q=188.230.183.231
+'>188.230.183.231
+</a></td></tr><tr><td><a href='host.php?q=185.117.75.219
+'>185.117.75.219
+</a></td></tr> </table>
+</div>
+</div> 
+</div> 
+
+<div class="col-lg-4">
+
+<div class="panel panel-default">
+<div class="panel-heading">
+<i class="fa fa-rebel fa-fw"></i>
+Recent samples
+</div>
+<div class="panel-body">
+<table class="table table-bordered table-hover table-striped">
+<tr><td><a href='sample.php?q=d89dd07501f4dd69f88a170e3581790d
+'>d89dd07501f4dd69f88a170e3581790d
+</a></td></tr><tr><td><a href='sample.php?q=4ffa48c43aa592010032f311f5dedeb9
+'>4ffa48c43aa592010032f311f5dedeb9
+</a></td></tr><tr><td><a href='sample.php?q=eed7c275615bb328b2b45a9b36b1cb40
+'>eed7c275615bb328b2b45a9b36b1cb40
+</a></td></tr><tr><td><a href='sample.php?q=62a6aa8ffaf71d5a7df170a68b42dc36
+'>62a6aa8ffaf71d5a7df170a68b42dc36
+</a></td></tr><tr><td><a href='sample.php?q=282b8277e135d793e8d1655760471f98
+'>282b8277e135d793e8d1655760471f98
+</a></td></tr><tr><td><a href='sample.php?q=07828f5cf65c79388f1c97543bd7d386
+'>07828f5cf65c79388f1c97543bd7d386
+</a></td></tr><tr><td><a href='sample.php?q=41cbdf7766f2bdac4f1e86eff3052dba
+'>41cbdf7766f2bdac4f1e86eff3052dba
+</a></td></tr><tr><td><a href='sample.php?q=1421c78c07559dfea880c1c26a7bc163
+'>1421c78c07559dfea880c1c26a7bc163
+</a></td></tr><tr><td><a href='sample.php?q=2ec4599da49f1fa32b45858d0e5ed893
+'>2ec4599da49f1fa32b45858d0e5ed893
+</a></td></tr><tr><td><a href='sample.php?q=2a368443b09c915777a1be20367fafa4
+'>2a368443b09c915777a1be20367fafa4
+</a></td></tr>
+</table>
+</div>
+</div> 
+</div> 
+<div style="clear:both"></div>
+</div>
+</div> 
+
+<div class="tab-pane fade" id="notes">
+
+<div class="row tm_row">
+<div class="col-lg-12">
+<p style="text-align:center; color:#999;">
+Credit: This is driven by the <a target="_blank" href="https://github.com/APTnotes">APTNotes repository</a> which is maintained by <a target="_blank" href="https://www.twitter.com/kbandla">@kbandla</a>, <a target="_blank" href="https://www.twitter.com/beast_fighter">@beast_fighter</a> and <a target="_blank" href="https://www.twitter.com/threatminer">@threatminer</a>. All indicators are automatically extracted using a <a target="_blank" href="https://github.com/threatminer/ioc_parser">modified version</a> of the <a target="_blank" href="https://github.com/armbues/ioc_parser">IOCParser</a>.
+</p>
+</div>
+</div>
+
+<div class="row tm_row">
+<div class="col-lg-12">
+<div style=" margin-bottom:24px">
+<form onsubmit="find_reports(); return false;" method="GET">
+<div class="input-group custom-search-form">
+<input type="text" class="form-control" id="notes_search_term" name="notes_search_term" placeholder="Search for terms and indicators in intelligence reports..." />
+<span class="input-group-btn">
+<button class="btn btn-default" type="submit">
+<i class="fa fa-search"></i>
+</button>
+</span>
+</div>
+</form>
+</div>
+</div>
+</div>
+<div class="row tm_row">
+
+<div class="col-lg-12">
+<ul class="nav nav-pills">
+<li><a onclick="getReport('report_list_container', 0, '2008'); return false;" data-toggle="tab">2008</a>
+</li>
+<li><a onclick="getReport('report_list_container', 0, '2009'); return false;" data-toggle="tab">2009</a>
+</li>
+<li><a onclick="getReport('report_list_container', 0, '2010'); return false;" data-toggle="tab">2010</a>
+</li>
+<li><a onclick="getReport('report_list_container', 0, '2011'); return false;" data-toggle="tab">2011</a>
+</li>
+<li><a onclick="getReport('report_list_container', 0, '2012'); return false;" data-toggle="tab">2012</a>
+</li>
+<li><a onclick="getReport('report_list_container', 0, '2013'); return false;" data-toggle="tab">2013</a>
+</li>
+<li><a onclick="getReport('report_list_container', 0, '2014'); return false;" data-toggle="tab">2014</a>
+</li>
+<li><a onclick="getReport('report_list_container', 0, '2015'); return false;" data-toggle="tab">2015</a>
+</li>
+<li><a onclick="getReport('report_list_container', 0, '2016'); return false;" data-toggle="tab">2016</a>
+</li>
+<li><a onclick="getReport('report_list_container', 0, '2017'); return false;" data-toggle="tab">2017</a>
+<li class="active"><a onclick="getReport('report_list_container', 0, '2018'); return false;" data-toggle="tab" id="default_pill">2018</a>
+</li>
+</ul>
+</div>
+</div>
+<div class="row tm_row"></div>
+<div class="row tm_row">
+
+<div id="report_list_container">
+<div class="loading_gif_container">
+<img src="images/ajax-loader.gif" />
+<h4>Querying database, please wait...</h4>
+</div>
+</div>
+</div>
+</div>
+</div> 
+</div>
+</div> 
+
+<script type="text/javascript" language="javascript" src="bower_components/jquery/dist/jquery-1.12.4.min.js"></script>
+
+<script type="text/javascript" language="javascript" src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+<script type="text/javascript" language="javascript" src="bower_components/metisMenu/dist/metisMenu.min.js"></script>
+
+<script type="text/javascript" language="javascript" src="bower_components/datatables/media/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" language="javascript" src="bower_components/datatables-plugins/integration/bootstrap/3/dataTables.bootstrap.min.js"></script>
+<script type="text/javascript" language="javascript" src="bower_components/datatables-plugins/buttons/media/js/dataTables.buttons.min.js"></script>
+<script type="text/javascript" language="javascript" src="bower_components/datatables-plugins/pdfmake/media/js/pdfmake.min.js"></script>
+<script type="text/javascript" language="javascript" src="bower_components/datatables-plugins/jszip/media/js/jszip.min.js"></script>
+<script type="text/javascript" language="javascript" src="bower_components/datatables-plugins/vfs_fonts/media/js/vfs_fonts.js"></script>
+<script type="text/javascript" language="javascript" src="bower_components/datatables-plugins/buttons/media/js/buttons.html5.min.js"></script>
+
+<script type="text/javascript" language="javascript" src="dist/js/sb-admin-2.js"></script>
+
+<script type="text/javascript" language="javascript" src="dist/js/social-share-kit.min.js"></script>
+<script type="text/javascript">
+function check_have_i_been_pwned(container_id, email) { 
+	if (email.length == 0) { 
+		document.getElementById(container_id).innerHTML = "<p> No results found. </p>";
+		return;
+	} else {
+		var xmlhttp = new XMLHttpRequest();
+		xmlhttp.onreadystatechange = function() {
+			if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+				var response = xmlhttp.responseText;
+				if(response){
+					var results_list =  JSON.parse(response);
+					
+					if( results_list.length > 0){
+						var html = "<table class=\"table table-bordered table-hover table-striped\">";
+						html += "<tr><th>Name</th><th>Domain</th><th>Incident date</th><th>Data classes</th><th>Source</th></tr>"
+						
+						for(var index = 0; index < results_list.length; index++){
+							var results_obj = results_list[index];
+							html += "<tr>";
+							// Name
+							html += "<td width=\"22%\">" + results_obj['Name'] + "</td>";
+							
+							// Domain
+							html += "<td width=\"22%\">" + results_obj['Domain'] + "</td>";
+							
+							// Incident date
+							html += "<td width=\"22%\">" + results_obj['BreachDate'] + "</td>";
+							
+							html += "<td width=\"22%\">";
+							//Data classes
+							var classes = results_obj['DataClasses'];
+							for(c in classes){
+								html += classes[c] + "<br/>";
+							}
+							html += "</td>";
+							// Source
+							html += "<td width=\"12%\"><button type=\"button\" class=\"btn btn-outline btn-primary btn-xs\"> Haveibeenpwned </button></td>";
+							html += "</tr>";
+						}
+						html += "</table>";
+						document.getElementById(container_id).innerHTML = html;
+					}
+					else{
+						document.getElementById(container_id).innerHTML = "<p> No results found. </p>";
+					}
+					
+				}else{
+					document.getElementById(container_id).innerHTML = "<p> No results found. </p>";
+				}
+				
+			}else{
+					document.getElementById(container_id).innerHTML = "<p> No results found. </p>";
+			}
+		}
+		xmlhttp.open("GET", "https://haveibeenpwned.com/api/v2/breachedaccount/" + email, true);
+		xmlhttp.send();
+	}
+}
+
+function getData(container_id, queried_data, input_data_type, return_data_type, page_number) { 
+	if (queried_data.length == 0) { 
+		document.getElementById(container_id).innerHTML = "<p> No results found. </p>";
+		return;
+	} else {
+		var xmlhttp = new XMLHttpRequest();
+		xmlhttp.onreadystatechange = function() {
+			if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+				var response = xmlhttp.responseText;
+				if(response){
+					document.getElementById(container_id).innerHTML = response;
+					
+					if(return_data_type == 0){
+						$('#domains_table').DataTable({
+							
+							responsive: true,
+							"iDisplayLength": 10,
+							"bLengthChange": true,
+							"bFilter": true,
+							 "order": [[ 3, "desc" ]],
+							 dom: 'Bfrtip',
+							 buttons: [
+									'copyHtml5',
+									'excelHtml5',
+									'csvHtml5',
+									'pdfHtml5'
+							]
+						});
+					}
+					
+					if(return_data_type == 1){
+						$('#hosts_table').DataTable({
+							responsive: true,
+							"iDisplayLength": 10,
+							"bLengthChange": true,
+							"bFilter": true,
+							 "order": [[ 3, "desc" ]],
+							 dom: 'Bfrtip',
+							 buttons: [
+									'copyHtml5',
+									'excelHtml5',
+									'csvHtml5',
+									'pdfHtml5'
+							]
+						});
+					}
+					
+					if(return_data_type == 2){
+						$('#samples_table').DataTable({
+							responsive: true,
+							"iDisplayLength": 10,
+							 "order": [[ 1, "desc" ]],
+							 dom: 'Bfrtip',
+							 buttons: [
+									'copyHtml5',
+									'excelHtml5',
+									'csvHtml5',
+									'pdfHtml5'
+							]
+						});
+					}
+					
+					if(return_data_type == 3){
+						$('#uri_table').DataTable({
+							responsive: true,
+							"iDisplayLength": 10,
+							"bLengthChange": true,
+							"bFilter": true,
+							 "order": [[ 3, "desc" ]],
+							 dom: 'Bfrtip',
+							 buttons: [
+									'copyHtml5',
+									'excelHtml5',
+									'csvHtml5',
+									'pdfHtml5'
+							]
+						});
+					}
+					
+					if(return_data_type == 10){
+						$('#subdomains_table').DataTable({
+							responsive: true,
+							"iDisplayLength": 10,
+							"bLengthChange": false,
+							"bFilter": true,
+							 "order": [[ 0, "desc" ]],
+							 dom: 'Bfrtip',
+							 buttons: [
+									'copyHtml5',
+									'excelHtml5',
+									'csvHtml5',
+									'pdfHtml5'
+							]
+						});
+					}
+					
+				}else{
+					document.getElementById(container_id).innerHTML = "<p> No results found. </p>";
+
+				}
+				if(page_number && page_number > 1){
+					// Scroll to view
+					document.getElementById(container_id).scrollIntoView()
+				}
+			}
+		}
+		xmlhttp.open("GET", "getData.php?e=" + container_id + "&q=" + queried_data + "&t=" + input_data_type + "&rt=" + return_data_type + "&p=" + page_number, true);
+		xmlhttp.send();
+	}
+}
+
+function getReportData(container_id, queried_data, input_data_type, return_data_type, page_number) { 
+	if (queried_data.length == 0) { 
+		document.getElementById(container_id).innerHTML = "<p> No results found. </p>";
+		return;
+	} else {
+		var xmlhttp = new XMLHttpRequest();
+		xmlhttp.onreadystatechange = function() {
+			if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+				var response = xmlhttp.responseText;
+				if(response){
+					document.getElementById(container_id).innerHTML = response;
+				}else{
+					document.getElementById(container_id).innerHTML = "<p> No results found. </p>";
+
+				}
+				if(page_number && page_number > 1){
+					// Scroll to view
+					document.getElementById(container_id).scrollIntoView()
+				}
+			}
+		}
+		xmlhttp.open("GET", "getReport.php?e=" + container_id + "&q=" + queried_data + "&t=" + input_data_type + "&rt=" + return_data_type + "&p=" + page_number, true);
+		xmlhttp.send();
+	}
+}
+
+function getReport(container_id, query_type, queried_data) { 
+	if (queried_data.length == 0) { 
+		document.getElementById(container_id).innerHTML = "<div class=\"col-lg-12\"><p> No reports found. </p></div>";
+		return;
+	} else {
+		
+		
+		var xmlhttp = new XMLHttpRequest();
+		xmlhttp.onreadystatechange = function() {
+			if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+				var response = xmlhttp.responseText;
+				if(response){
+					document.getElementById(container_id).innerHTML = response;
+					
+					if(query_type == 2){
+						$('#aptnotes_table').DataTable({
+							responsive: true,
+							"iDisplayLength": 5,
+							"bLengthChange": false,
+							"bFilter": false,
+							 "order": [[ 0, "desc" ]],
+							 buttons: [
+								'copy', 'csv', 'excel'
+							]
+						});
+					}
+					
+				}else{
+					document.getElementById(container_id).innerHTML = "<div class=\"col-lg-12\"><p> No reports found. </p></div>";
+				}
+				
+			}
+		}
+
+		xmlhttp.open("GET", "getReport.php?e=" + container_id + "&t=" + query_type + "&q=" + queried_data, true);
+		xmlhttp.send();
+	}
+}
+
+
+
+function find_reports() {
+	$(document).ready(function(){
+		// Show PDF
+		var search_term = $("#notes_search_term").val();
+		ga('send', 'pageview', "index.php?notes_search_term=" + search_term);
+		
+		getReport("report_list_container", 1, search_term);
+	});
+}	
+
+
+function show_report(container_id, year, report_name) {
+
+	$(document).ready(function(){
+		var sep = "/"; 
+		var path = "vjs" + sep + "#.." + sep + "_reports" + sep + year + sep + report_name;
+		var iframe_id = container_id + "_iframe";
+		// Unset if already exists
+		if( $("#" + iframe_id) ){
+			var existing_path = $("#" + iframe_id).attr("src");
+			if(existing_path == path){
+				$("#" + container_id).html("");
+				return;
+			}
+		}
+		// Show PDF
+		$("#" + container_id).html("<iframe id=\"" + container_id +"_iframe\" src=\"" + path + "\" width=\"100%\" height=\"700px\" allowfullscreen webkitallowfullscreen></iframe>");
+		
+	});
+}
+
+function checkForm()
+{	
+	full_search_term = document.getElementById("searchTerm").value;
+	full_search_term = full_search_term.trim();
+	document.getElementById("recent_indicators").innerHTML = "";
+	document.getElementById("indicators_panel").setAttribute("class", "col-lg-12");
+	document.getElementById("indicators_panel").innerHTML = "<div class=\"loading_gif_container\"><img src=\"images/ajax-loader.gif\"/><h4>Querying database, please wait...</h4><p>Note: if the roller icon stops rolling, this means there is a significant number of results being returned. Patience my friend.</p></div>";
+	ga('send', 'pageview', "index.php?main_search_term=" + full_search_term);
+	
+	return true;
+}
+
+// Main function
+$(document).ready(function(){
+	
+	// Scroll-to-top button
+	$(window).scroll(function(){
+		if ($(this).scrollTop() > 100) {
+			$('#scrollToTop').fadeIn();
+		} else {
+			$('#scrollToTop').fadeOut();
+		}
+	});
+	
+	$('#scrollToTop').click(function(){
+		$('html, body').animate({scrollTop : 0},100);
+		return false;
+	});
+	
+	// Donations message
+	$(donation_html).insertBefore('#wrapper');
+	
+	// Social sharing buttons
+	SocialShareKit.init();
+	
+});
+</script>
+<script type="text/javascript">
+getReport('report_list_container', 0, '2018');
+</script>
+
+<div id="footer" class="tm_row" style="text-align:center; font-size:0.8em; color:#999;">
+<p>ThreatMiner.org is a non-profit portal and all data is derived from open sources.</p>
+</div>
+
+<button id="scrollToTop" type="button" class="btn btn-outline btn-default">Back to the top</button>
+<script type="text/javascript">
+ // Main function
+$(document).ready(function(){
+	// Scroll-to-top button
+	$(window).scroll(function(){
+		if ($(this).scrollTop() > 100) {
+			$('#scrollToTop').fadeIn();
+		} else {
+			$('#scrollToTop').fadeOut();
+		}
+	});
+
+	$('#scrollToTop').click(function(){
+		$('html, body').animate({scrollTop : 0},100);
+		return false;
+	});
+	
+	// Session
+	var refreshTime = 600000; // every 10 minutes in milliseconds
+	window.setInterval( function() {
+		$.ajax({
+			cache: false,
+			type: "GET",
+			url: "session.php",
+			success: function(data) {
+			}
+		});
+	}, refreshTime );
+	
+});
+</script>
+</body>
+</html>
+
