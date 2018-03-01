@@ -83,7 +83,7 @@ Harmonization field names
 | |status|[String](#string)|Status of the malicious resource (phishing, dropzone, etc), e.g. online, offline.|
 |Time|time.observation|[DateTime](#datetime)|The time a source bot saw the event. This timestamp becomes especially important should you perform your own attribution on a host DNS name for example. The mechanism to denote the attributed elements with reference to the source provided is detailed below in Reported Identity IOC.(ISO8660).|
 |Time|time.source|[DateTime](#datetime)|Time reported by a source. Some sources only report a date, which may be used here if there is no better observation.|
-| |tlp|[TLP](#tlp)|Traffic Light Protocol Level.|
+| |tlp|[TLP](#tlp)|Traffic Light Protocol level of the event.|
 
 
 Harmonization types
