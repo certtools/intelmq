@@ -81,7 +81,7 @@ def get_feed(feedname, logger):
         "Sandbox-URL": sandbox_url,
         "Sinkhole-HTTP-Drone": sinkhole_http_drone,
         "Spam-URL": spam_url,
-        "SSL-FREAK-Vulnerable-Servers": ssl_freak_vulnerable_servers,  # Only differs in a few extra fields
+        "SSL-FREAK-Vulnerable-Servers": ssl_freak_vulnerable_servers,
         "SSL-POODLE-Vulnerable-Servers": ssl_poodle_vulnerable_servers,
         "Vulnerable-ISAKMP": vulnerable_isakmp,
     }
@@ -197,7 +197,6 @@ open_mdns = {
     ],
     'optional_fields': [
         ('source.reverse_dns', 'hostname'),
-        # ('classification.identifier', 'tag'),  # This will be 'mdns' in constant fields
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
@@ -1117,7 +1116,6 @@ vulnerable_isakmp = {
     'optional_fields': [
         ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
-        # ('classification.identifier', 'tag'),  # This will be 'openike' in constant fields
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
@@ -1152,7 +1150,6 @@ accessible_rdp = {
     ],
     'optional_fields': [
         ('source.reverse_dns', 'hostname'),
-        # ('classification.identifier', 'tag'),  # This will be 'openrdp' in constant fields
         ('extra.', 'handshake', validate_to_none),
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
@@ -1194,7 +1191,6 @@ accessible_smb = {
     ],
     'optional_fields': [
         ('source.reverse_dns', 'hostname'),
-        # ('classification.identifier', 'tag'),  # This will be 'opensmb' in constant fields
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
@@ -1209,8 +1205,8 @@ accessible_smb = {
         'protocol.transport': 'tcp',
         'protocol.application': 'smb',
         'classification.type': 'vulnerable service',
-        'classification.identifier': 'opensmb',
-        'classification.taxonomy': 'Vulnerable',
+        'classification.taxonomy': 'vulnerable',
+        'classification.identifier': 'open-smb',
     },
 }
 
@@ -1224,7 +1220,6 @@ open_ldap = {
     'optional_fields': [
         ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
-        # ('classification.identifier', 'tag'),  # This will be 'openldap' in constant fields
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
@@ -1374,7 +1369,7 @@ accessible_vnc = {
         'protocol.application': 'vnc',
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'vulnerable',
-        'classification.identifier': 'accessible-vnc',
+        'classification.identifier': 'open-vnc',
     }
 }
 
@@ -1387,7 +1382,6 @@ accessible_cisco_smart_install = {
     'optional_fields': [
         ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
-        # ('classification.identifier', 'tag'),  # This will be 'accessible-cisco-smart-install' in constant fields
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),

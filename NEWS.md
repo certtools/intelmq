@@ -119,6 +119,9 @@ UPDATE events
    SET "classification.identifier" = 'open-rdp'
    WHERE "classification.identifier" = 'openrdp' AND "feed.name" = 'Accessible-RDP';
 UPDATE events
+   SET "classification.identifier" = 'open-smb'
+   WHERE "classification.identifier" = 'opensmb' AND "feed.name" = 'Accessible-SMB';
+UPDATE events
    SET "classification.identifier" = 'open-ldap'
    WHERE "classification.identifier" = 'openldap' AND "feed.name" = 'Open-LDAP';
 UPDATE events
@@ -131,7 +134,7 @@ UPDATE events
    SET "classification.identifier" = 'open-cwmp'
    WHERE "classification.identifier" = 'opencwmp' AND "feed.name" = 'Accessbile-CWMP';
 UPDATE events
-   SET "classification.identifier" = 'accessible-vnc'
+   SET "classification.identifier" = 'open-vnc'
    WHERE "classification.identifier" = 'accessiblevnc' AND "feed.name" = 'Accessible-VNC';
 ```
 
