@@ -26,6 +26,7 @@ CHANGELOG
 ### Tests
 
 ### Packaging
+* Static data is now included in source tarballs, development files are excluded
 
 ### Known issues
 
