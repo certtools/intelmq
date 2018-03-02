@@ -34,23 +34,23 @@ ALTER TABLE events
    ADD COLUMN "destination.urlpath" text,
    ADD COLUMN "source.urlpath" text;
 UPDATE events
-   SET "classification.identifier" = 'openmdns'
-   WHERE "classification.identifier" = 'open-mdns' AND "feed.name" = 'Open-mDNS';
+   SET "classification.identifier" = 'open-mdns'
+   WHERE "classification.identifier" = 'openmdns' AND "feed.name" = 'Open-mDNS';
 UPDATE events
-   SET "classification.identifier" = 'openchargen'
-   WHERE "classification.identifier" = 'open-chargen' AND "feed.name" = 'Open-Chargen';
+   SET "classification.identifier" = 'open-chargen'
+   WHERE "classification.identifier" = 'openchargen' AND "feed.name" = 'Open-Chargen';
 UPDATE events
-   SET "classification.identifier" = 'opentftp'
-   WHERE "classification.identifier" = 'open-tftp' AND "feed.name" = 'Open-TFTP';
+   SET "classification.identifier" = 'open-tftp'
+   WHERE "classification.identifier" = 'opentftp' AND "feed.name" = 'Open-TFTP';
 UPDATE events
-   SET "classification.identifier" = 'botnet'
-   WHERE "classification.identifier" = 'infected system' AND "feed.name" = 'Sinkhole-HTTP-Drone';
+   SET "classification.type" = 'infected system'
+   WHERE "classification.type" = 'botnet drone' AND "feed.name" = 'Sinkhole-HTTP-Drone';
 UPDATE events
-   SET "classification.identifier" = 'botnet'
-   WHERE "classification.identifier" = 'infected system' AND "feed.name" = 'Microsoft-Sinkhole';
+   SET "classification.type" = 'infected system'
+   WHERE "classification.type" = 'botnet drone' AND "feed.name" = 'Microsoft-Sinkhole';
 UPDATE events
-   SET "classification.identifier" = 'openredis'
-   WHERE "classification.identifier" = 'open-redis' AND "feed.name" = 'Open-Redis';
+   SET "classification.identifier" = 'open-redis'
+   WHERE "classification.identifier" = 'openredis' AND "feed.name" = 'Open-Redis';
 UPDATE events
    SET "classification.identifier" = 'open-portmapper',
        "protocol.application" = 'portmap'
@@ -74,8 +74,8 @@ UPDATE events
    SET "classification.identifier" = 'open-netbios', "feed.name" = 'Open-NetBIOS-Nameservice'
    WHERE "classification.identifier" = 'opennetbios' AND "feed.name" = 'Open-NetBIOS';
 UPDATE events
-   SET "classification.identifier" = 'openelasticsearch'
-   WHERE "classification.identifier" = 'open-elasticsearch' AND "feed.name" = 'Open-Elasticsearch';
+   SET "classification.identifier" = 'open-elasticsearch'
+   WHERE "classification.identifier" = 'openelasticsearch' AND "feed.name" = 'Open-Elasticsearch';
 UPDATE events
    SET "classification.identifier" = 'dns-open-resolver', "feed.name" = 'DNS-Open-Resolvers'
    WHERE "classification.identifier" = 'opendns' AND "feed.name" = 'DNS-open-resolvers';
@@ -92,8 +92,8 @@ UPDATE events
    SET "classification.identifier" = 'open-memcached'
    WHERE "classification.identifier" = 'openmemcached' AND "feed.name" = 'Open-Memcached';
 UPDATE events
-   SET "classification.identifier" = 'infected system', "feed.name" = 'Drone'
-   WHERE "classification.identifier" = 'botnet' AND "feed.name" = 'Botnet-Drone-Hadoop';
+   SET "classification.type" = 'infected system', "feed.name" = 'Drone'
+   WHERE "classification.type" = 'botnet drone' AND "feed.name" = 'Botnet-Drone-Hadoop';
 UPDATE events
    SET "classification.identifier" = 'open-xdmcp'
    WHERE "classification.identifier" = 'openxdmcp' AND "feed.name" = 'Open-XDMCP';
