@@ -94,4 +94,3 @@ class TestAbuseCHRansomwaretrackerParserBot(test.BotTestCase, unittest.TestCase)
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
- 
