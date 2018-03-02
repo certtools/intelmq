@@ -2,29 +2,35 @@
 """
 API Collector bot
 """
-import logging
-from tornado.ioloop import IOLoop
-import tornado.web
 from threading import Thread
 
 from intelmq.lib.bot import CollectorBot
 
-def tornadoEventLoop():
-    IOLoop.instance().start()
+try:
+    import tornado.web
+    from tornado.ioloop import IOLoop
 
-class Application(tornado.web.Application):
-    def __init__(self, bot, *args, **kwargs):
-        self.bot = bot
-        super().__init__(*args, **kwargs)
+    def tornadoEventLoop():
+        IOLoop.instance().start()
 
-class MainHandler(tornado.web.RequestHandler):
-    def post(self):
-        json = self.get_argument("json")
-        self.write(json)
-        self.application.bot.processRequest(json)
+    class Application(tornado.web.Application):
+        def __init__(self, bot, *args, **kwargs):
+            self.bot = bot
+            super().__init__(*args, **kwargs)
+
+    class MainHandler(tornado.web.RequestHandler):
+        def post(self):
+            json = self.get_argument("json")
+            self.write(json)
+            self.application.bot.processRequest(json)
+except ImportError:
+    IOLoop = None
+
 
 class APICollectorBot(CollectorBot):
     def init(self):
+        if IOLoop is None:
+            raise ValueError("Could not import 'tornado'. Please install it.")
         app = Application(self, [
             (r"/json", MainHandler),
         ])
@@ -36,8 +42,6 @@ class APICollectorBot(CollectorBot):
         self.eventLoopThread.start()
 
     def processRequest(self, json):
-        response = {'json': json}
-
         report = self.new_report()
         report.add("raw", json)
         self.send_message(report)
@@ -48,5 +52,6 @@ class APICollectorBot(CollectorBot):
     def shutdown(self):
         IOLoop.instance().stop()
         self.eventLoopThread.join()
+
 
 BOT = APICollectorBot

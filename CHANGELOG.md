@@ -50,6 +50,7 @@ CHANGELOG
   - Empty parameters `attachment_regex` and `url_regex` handled.
 - `bots.collectors.http.collector_http`: Ability to optionally use the current time in parameter `http_url`, added parameter `http_url_formatting`.
 - bots.collectors.stomp.collectos: Heartbeat timeout is now logged with log level info instead of warning.
+- `bots.collectors.api`: collecting data using an HTTP API
 
 #### Parsers
 - changed feednames in `bots.parsers.shadowserver`. Please refer to it's README for the exact changes.
@@ -69,6 +70,7 @@ CHANGELOG
 
 #### Experts
 - Added sieve expert for filtering and modifying events (#1083)
+- `bots.experts.modify` default ruleset: added avalanche rule.
 
 ### Harmonization
 - Renamed `JSON` to `JSONDict` and added a new type `JSON`. `JSONDict` saves data internally as JSON, but acts like a dictionary. `JSON` accepts any valid JSON.
@@ -88,8 +90,6 @@ CHANGELOG
 
 ### Bots
 #### Collectors
-- API
-  - initial Bot for collecting data using API
   
 #### Parsers
 
