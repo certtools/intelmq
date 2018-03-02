@@ -1,5 +1,3 @@
-exclude .gitignore
-exclude .travis.yml
 graft contrib
 graft docs
 graft intelmq/bots
@@ -9,3 +7,7 @@ include COPYRIGHT
 include LICENSE
 include CHANGELOG.md
 recursive-exclude intelmq/bin intelmq_gen_feeds_docs.py intelmq_gen_harm_docs.py rewrite_config_files.py
+exclude .*
+global-exclude *~
+global-exclude *.py[co]
+global-exclude __pycache__
