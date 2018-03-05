@@ -1,0 +1,450 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+Implemented workarounds for Python 2.6, postgres 9.1 and old debian packages:
+    own table_from_query() instead of prettytable.from_csv()
+    postgres to_char(time.source, 'TZ') instead of 'OF' (from 9.4 up)
+        This gives the timezone instead of the offset (empty if UTC)
+    BytesIO instead of StringIO on Python 2 for csv module
+"""
+from __future__ import print_function, unicode_literals
+
+import csv
+import datetime
+import io
+import json
+import os
+import subprocess
+import sys
+import tempfile
+import zipfile
+
+import prettytable
+import psycopg2
+import psycopg2.extras
+from termstyle import bold, green, inverted, red, reset
+
+import rt
+
+myinverted = str(reset) + str(inverted)
+if sys.version[0] == '2':
+    input = raw_input
+
+with open('/etc/intelmq/intelmqcli.conf') as conf_handle:
+    CONFIG = json.load(conf_handle)
+with open(os.path.expanduser('~/.intelmq/intelmqcli.conf')) as conf_handle:
+    user_config = json.load(conf_handle)
+for key, value in user_config.items():
+    if key in CONFIG:
+        CONFIG[key].update(value)
+    else:
+        CONFIG[key] = value
+CON = psycopg2.connect(database=CONFIG['database']['database'],
+                       user=CONFIG['database']['user'],
+                       password=CONFIG['database']['password'],
+                       host=CONFIG['database']['host'],
+                       port=CONFIG['database']['port'],
+                       sslmode=CONFIG['database']['sslmode'],
+                       )
+CUR = CON.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+CON.autocommit = True
+
+RT = rt.Rt(CONFIG['rt']['uri'], CONFIG['rt']['user'], CONFIG['rt']['password'])
+
+QUERY_COUNT_ASN = """
+SELECT
+    COUNT(*) as count,
+    COALESCE({conttab}.contacts, '') as contacts,
+    string_agg(DISTINCT cast({evtab}."source.asn" as varchar), ', ') as asn,
+    string_agg(DISTINCT {evtab}."classification.type", ', ') as classification,
+    COALESCE({conttab}.contacts, cast({evtab}."source.asn" as varchar))
+        as grouping
+FROM {evtab}
+LEFT OUTER JOIN as_contacts ON {evtab}."source.asn" = {conttab}.asnum
+WHERE
+    notify = TRUE AND
+    {evtab}.rtir_report_id IS NULL AND
+    {evtab}.rtir_incident_id IS NULL AND
+    {evtab}.rtir_investigation_id IS NULL AND
+    (
+        {evtab}."source.geolocation.cc" LIKE '{cc}' OR
+        {evtab}."source.fqdn" LIKE '{fqdn}'
+    )
+GROUP BY {conttab}.contacts, grouping;
+""".format(evtab=CONFIG['database']['events_table'], cc=CONFIG['filter']['cc'],
+           fqdn=CONFIG['filter']['fqdn'],
+           conttab=CONFIG['database']['contacts_table'])
+QUERY_BY_ASCONTACT = """
+SELECT
+    {evtab}.id,
+    to_char({evtab}."time.source" at time zone 'UTC',
+            'YYYY-MM-DD"T"HH24:MI:SSTZ') as "time.source",
+    {evtab}."source.ip",
+    {evtab}."source.reverse_dns",
+    {evtab}."source.fqdn",
+    {evtab}."source.asn",
+    {evtab}."source.url",
+    {evtab}."feed.name",
+    {evtab}."classification.identifier",
+    {evtab}."classification.type"
+FROM events
+LEFT OUTER JOIN {conttab} ON {evtab}."source.asn" = {conttab}.asnum
+WHERE
+    notify = TRUE AND
+    {evtab}.rtir_report_id IS NULL AND
+    {evtab}.rtir_incident_id IS NULL AND
+    {evtab}.rtir_investigation_id IS NULL AND
+    {conttab}.contacts = '{{}}';
+""".format(evtab=CONFIG['database']['events_table'],
+           conttab=CONFIG['database']['contacts_table'])
+QUERY_BY_ASNUM = """
+SELECT
+    {evtab}.id,
+    to_char({evtab}."time.source" at time zone 'UTC',
+            'YYYY-MM-DD"T"HH24:MI:SSTZ') as "time.source",
+    {evtab}."source.ip",
+    {evtab}."source.reverse_dns",
+    {evtab}."source.fqdn",
+    {evtab}."source.asn",
+    {evtab}."source.url",
+    {evtab}."feed.name",
+    {evtab}."classification.identifier",
+    {evtab}."classification.type"
+FROM events
+LEFT OUTER JOIN {conttab} ON {evtab}."source.asn" = {conttab}.asnum
+WHERE
+    notify = TRUE AND
+    {evtab}.rtir_report_id IS NULL AND
+    {evtab}.rtir_incident_id IS NULL AND
+    {evtab}.rtir_investigation_id IS NULL AND
+    {evtab}."source.asn" = {{}};
+""".format(evtab=CONFIG['database']['events_table'],
+           conttab=CONFIG['database']['contacts_table'])
+QUERY_SET_RTIRID = """
+UPDATE {evtab} SET
+    rtir_{{type}}_id = {{rtirid}},
+    sent_at = LOCALTIMESTAMP
+WHERE
+    id = ANY('{{{{{{ids}}}}}}'::int[]);
+""".format(evtab=CONFIG['database']['events_table'])
+QUERY_UPDATE_CONTACT = """
+UPDATE {conttab} SET
+    contacts = '{{contacts}}'
+WHERE
+    asnum = ANY('{{{{{{asns}}}}}}'::int[]);
+""".format(conttab=CONFIG['database']['contacts_table'])
+QUERY_INSERT_CONTACT = """
+INSERT INTO {conttab} (
+    asnum, contacts, comment, unreliable
+) VALUES (
+    %s, %s, %s, FALSE
+)
+""".format(conttab=CONFIG['database']['contacts_table'])
+QUERY_GET_TEXT = """
+SELECT
+    body
+FROM {texttab}
+WHERE
+    key = %s
+""".format(texttab=CONFIG['database']['text_table'])
+
+
+def get_text(query):
+    types = [row['classification.identifier'] for row in query
+             if 'classification.identifier' in row]
+    text = None
+    if len(types) == 1:
+        CUR.execute(QUERY_GET_TEXT, (types[0], ))
+        if CUR.rowcount:
+            text = CUR.fetchall()[0]['body']
+
+    if text is None:
+        CUR.execute(QUERY_GET_TEXT, (CONFIG['database']['default_key'], ))
+        if CUR.rowcount:
+            text = CUR.fetchall()[0]['body']
+
+    return text
+
+
+def target_from_row(row):
+    """
+    Returns the first value in give row that exists from this list of keys:
+    'source.ip', 'source.fqdn', 'source.url', 'source.account'
+    """
+    keys = ['source.ip', 'source.fqdn', 'source.url', 'source.account']
+    for key in keys:
+        if key in row:
+            return row[key]
+
+
+def table_from_query(query):
+    header = sorted(query[0].keys())
+    table = prettytable.PrettyTable(header)
+    for row in query:
+        table.add_row([row[key] for key in header])
+    return table
+
+
+def shrink_dict(d):
+    keys = d[0].keys()
+    empty = dict(zip(keys, [True]*len(keys)))
+    for line in d:
+        for key, value in line.items():
+            if value is not None:
+                empty[key] = False
+    return [{k: v for k, v in dicti.items() if not empty[k]} for dicti in d]
+
+
+def getTerminalHeight():
+    return int(subprocess.check_output(['stty', 'size']).strip().split()[0])
+
+
+def query_by_as(contact, show_table=False, requestor=None, automatic=False):
+    if type(contact) is int:
+        CUR.execute(QUERY_BY_ASNUM.format(contact))
+        if requestor is None:
+            requestor = ''
+    else:
+        CUR.execute(QUERY_BY_ASCONTACT.format(contact))
+        if requestor is None:
+            requestor = contact
+    query = shrink_dict(CUR.fetchall())
+    ids = list(str(row['id']) for row in query)
+    asns = set(str(row['source.asn']) for row in query)
+
+    subject = ('{date}: {count} incidents for your AS {asns}'
+               ''.format(count=len(query),
+                         date=datetime.datetime.now().strftime('%Y-%m-%d'),
+                         asns=', '.join(asns)))
+    text = get_text(query)
+    if sys.version_info[0] == 2:
+        csvfile = io.BytesIO()
+    else:
+        csvfile = io.StringIO()
+    writer = csv.DictWriter(csvfile, fieldnames=sorted(query[0].keys()),
+                            lineterminator='\n')
+    writer.writeheader()
+    writer.writerows(query)
+    attachment_text = csvfile.getvalue()
+    attachment_lines = attachment_text.splitlines()
+
+    showed_text = '='*100 + '''
+To: {to}
+Subject: {subj}
+
+{text}
+'''.format(to=requestor, subj=subject, text=text)
+    showed_text_len = showed_text.count('\n')
+
+    if show_table:
+        height = getTerminalHeight()-3-showed_text_len
+        csvfile.seek(0)
+        if len(query) > height:
+            with tempfile.NamedTemporaryFile(mode='w+') as handle:
+                handle.write(showed_text + '\n')
+                try:
+                    handle.write(str(prettytable.from_csv(csvfile)))
+                except AttributeError:
+                    handle.write(str(table_from_query(query)))
+                handle.seek(0)
+                subprocess.call(['less', handle.name])
+        else:
+            try:
+                print(showed_text, prettytable.from_csv(csvfile), sep='\n')
+            except AttributeError:
+                print(showed_text, table_from_query(query), sep='\n')
+    else:
+        height = getTerminalHeight()-4
+        if 5 + len(query) > height:  # cut query too, 5 is length of text
+            print('\n'.join(showed_text.splitlines()[:5]))
+            print('...')
+            print('\n'.join(attachment_lines[:height - 5]))
+            print('...')
+        elif showed_text_len + len(query) > height > 5 + len(query):
+            print('\n'.join(showed_text.splitlines()[:height-len(query)]))
+            print('...')
+            print(attachment_text)
+        else:
+            print(showed_text, attachment_text, sep='\n')
+    print('-'*100)
+    if automatic and requestor:
+        answer = 's'
+    else:
+        if automatic:
+            print(red('You need to set a valid requestor!'))
+        answer = input('{i}{b}b{i}ack, {b}s{i}end, show {b}t{i}able, change '
+                       '{b}r{i}equestor or {b}q{i}uit?{r} '
+                       ''.format(b=bold, i=myinverted, r=reset)).strip()
+    if answer == 'q':
+        exit(0)
+    elif answer == 'b':
+        return
+    elif answer == 't':
+        query_by_as(contact, show_table=True, requestor=requestor)
+        return
+    elif answer == ('r'):
+        answer = input(inverted('New requestor address: ')).strip()
+        if len(answer) == 0:
+            if type(contact) is int:
+                requestor = ''
+            else:
+                requestor = contact
+        else:
+            requestor = answer
+        query_by_as(contact, requestor=requestor)
+        return
+    elif answer != 's':
+        print(red('Unknow command {!r}.'.format(answer)))
+        query_by_as(contact, requestor=requestor)
+        return
+
+    # TODO: Config option for single events (best in ascontacts db)
+    if True:
+        save_to_rt(ids=ids, subject=subject, requestor=requestor,
+                   csvfile=csvfile)
+    else:
+        header = attachment_lines[0]
+        for id_, attach_line, row in zip(ids, attachment_lines[1:], query):
+            if sys.version_info[0] == 2:
+                csvfile = io.BytesIO()
+            else:
+                csvfile = io.StringIO()
+            csvfile.write(header + str('\n'))
+            csvfile.write(attach_line)
+            subj_date = datetime.datetime.now().strftime('%Y-%m-%d')
+            subject = ('{date}: Incident {type} for {target}'
+                       ''.format(count=len(query),
+                                 date=subj_date,
+                                 type=row['classification.type'],
+                                 target=target_from_row(row)))
+            save_to_rt(ids=(id_, ), subject=subject, requestor=requestor,
+                       csvfile=csvfile)
+
+    if requestor != contact:
+        answer = input(inverted('Save recipient {!r} for ASNs {!s}? [Y/n]'
+                                ''.format(requestor, ', '.join(asns)))).strip()
+        if answer.lower() in ('', 'y', 'j'):
+            CUR.execute(QUERY_UPDATE_CONTACT.format(asns=','.join(asns),
+                                                    contacts=requestor))
+            if CUR.rowcount != 1:
+                for asn in asns:
+                    user = os.environ['USER']
+                    time = datetime.datetime.now().strftime('%c')
+                    comment = 'Added by {user} @ {time}'.format(user=user,
+                                                                time=time)
+                    CUR.execute(QUERY_INSERT_CONTACT, (int(asn), requestor,
+                                                       comment))
+
+
+def save_to_rt(ids, subject, requestor, csvfile):
+    report_id = RT.create_ticket(Queue='Incident Reports', Subject=subject,
+                                 Requestors=requestor)
+    if report_id == -1:
+        print(red('Could not create Incident Report.'))
+        return
+    print(green('Created Incident Report {}.'.format(report_id)))
+    CUR.execute(QUERY_SET_RTIRID.format(ids=','.join(ids), rtirid=report_id,
+                                        type='report'))
+    if True:  # TODO: implement zip config
+        attachment = csvfile
+        attachment.seek(0)
+        filename = 'events.csv'
+    else:
+        attachment = io.BytesIO()
+        ziphandle = zipfile.ZipFile(attachment, mode='w')
+        ziphandle.writestr('events.csv', csvfile.getvalue())
+        ziphandle.close()
+        attachment.seek(0)
+        filename = 'events.zip'
+    response = RT.comment(report_id, files=[(filename, attachment)])
+    if not response:
+        print(red('Could not attach file.'))
+        return
+
+    incident_id = RT.create_ticket(Queue='Incidents', Subject=subject)
+    if incident_id == -1:
+        print(red('Could not create Incident.'))
+        return
+    print(green('Created Incident {}.'.format(incident_id)))
+    if not RT.edit_link(report_id, 'MemberOf', incident_id):
+        print(red('Could not link Incident to Incident Report.'))
+        return
+    CUR.execute(QUERY_SET_RTIRID.format(ids=','.join(ids), rtirid=incident_id,
+                                        type='incident'))
+    investigation_id = RT.create_ticket(Queue='Investigations',
+                                        Subject=subject)
+    if investigation_id == -1:
+        print(red('Could not create Investigation.'))
+        return
+    print(green('Created Investigation {}.'.format(investigation_id)))
+    if not RT.edit_link(incident_id, 'HasMember', investigation_id):
+        print(red('Could not link Investigation to Incident.'))
+        return
+    CUR.execute(QUERY_SET_RTIRID.format(ids=','.join(ids),
+                                        rtirid=investigation_id,
+                                        type='investigation'))
+    if not RT.edit_ticket(incident_id, Status='resolved'):
+        print('Could not close incident {}.'.format(incident_id))
+
+
+def count_by_asn():
+    # TODO: Existing RT ids!
+    CUR.execute(QUERY_COUNT_ASN)
+    asn_count = CUR.fetchall()
+    if not asn_count:
+        print('No incidents!')
+        exit(0)
+    max_asn_length = max([len(row['asn']) for row in asn_count])
+    max_contact_length = max([len(row['contacts']) for row in asn_count])
+    print('='*100)
+    print(bold("{id:>3} {count:3} {asn!s: <{asnlen}} {contacts!s: <{conlen}} "
+               "{type!s}".format(id='id', count='n°', asn='ASNs', type='types',
+                                 conlen=max_contact_length,
+                                 asnlen=max_asn_length, contacts='contacts')))
+    for number, row in enumerate(asn_count):
+        print("{id:>3} {count:3} {asn!s: <{asnlen}} {contacts!s: <{conlen}} "
+              "{type!s}".format(count=row['count'], asn=row['asn'],
+                                asnlen=max_asn_length, id=number,
+                                contacts=row['contacts'],
+                                conlen=max_contact_length,
+                                type=row['classification']))
+    print('{} incidents for {} contacts.'
+          ''.format(sum((row['count'] for row in asn_count)), len(asn_count)))
+    return asn_count
+
+if __name__ == '__main__':
+    if not RT.login():
+        print(red('Could not login to RT.'))
+    try:
+        while True:
+            asn_count = count_by_asn()
+            answer = input('{i}detailed view by id, {b}a{i}utomatic '
+                           'sending, {b}q{i}uit?{r} '
+                           ''.format(b=bold, i=myinverted, r=reset)).strip()
+            try:
+                answer = int(answer)
+            except ValueError:
+                pass
+            if answer == 'q':
+                break
+            elif answer == 'a':
+                for item in asn_count:
+                    if item['contacts']:
+                        query_by_as(item['contacts'], automatic=True)
+                    else:
+                        query_by_as(int(item['asn']), automatic=True)
+            elif type(answer) is int:
+                if asn_count[answer]['contacts']:
+                    query_by_as(asn_count[answer]['contacts'])
+                else:
+                    query_by_as(int(asn_count[answer]['asn']))
+            else:
+                print(red('Unknown answer {!r}.'.format(answer)))
+
+    except BaseException as exc:
+        if isinstance(exc, (SystemExit, KeyboardInterrupt)):
+            print()
+        else:
+            raise
+    finally:
+        RT.logout()

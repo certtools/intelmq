@@ -36,6 +36,8 @@ CHANGELOG
 - Bots can specify a static method `check(parameters)` which can perform individual checks specific to the bot.
   These functions will be called by `intelmqctl check` if the bot is configured with the given parameters
 - Add `RewindableFileHandle` to utils making handling of CSV files more easy (optionally)
+- lib/bot: top level bot parameters (description, group, module, name) are exposed as members of the class.
+- you may now define more than one destination queues path the bot should pass the message to, see [Pipelines](https://github.com/certtools/intelmq/blob/develop/docs/User-Guide.md#pipeline-configuration)
 
 ### Bots
 #### Collectors
@@ -78,7 +80,7 @@ CHANGELOG
 - New ASN type. Like integer but checks the range.
 
 ### Requirements
-- Requests is no longer listed as dependency of the core. For depending bots the requirement is noted in their REQUIREMENTS.txt file
+- Requests is no longer a listed as dependency of the core. For depending bots the requirement is noted in their REQUIREMENTS.txt file
 
 1.0.4 Bugfix release (unreleased)
 ---------------------------------

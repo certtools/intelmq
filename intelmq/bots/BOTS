@@ -370,6 +370,11 @@
             "module": "intelmq.bots.parsers.n6.parser_n6stomp",
             "parameters": {}
         },
+        "NBU Microsoft": {
+            "description": "NBU data from Microsoft - Monitor IMAP mailboxes and retrieve mail attachments",
+            "module": "intelmq.bots.parsers.nbu_ms.parser",
+            "parameters": {}
+        },
         "Netlab 360": {
             "description": "Netlab 360 Parser is the bot responsible to parse the DGA and Magnitude reports and sanitize the information.",
             "module": "intelmq.bots.parsers.netlab_360.parser",
@@ -477,6 +482,13 @@
                 "filter": false,
                 "http_verify_cert": true,
                 "overwrite_cc": false
+            }
+        },
+        "Custom Filter": {
+            "description": "Highly customizable filter mainly for purposes of definition exception for specific subjects, to filter them out of the pipeline",
+            "module": "intelmq.bots.experts.custom_filter.expert",
+            "parameters": {
+                "rules_dir": "/opt/intelmq/etc/custom_filter/"
             }
         },
         "Cymru Whois": {
@@ -591,6 +603,16 @@
                 "redis_cache_ttl": "86400"
             }
         },
+        "Forward DNS": {
+            "description": "Forward DNS is the bot resposible to get the correspondent IPs to source domain name and destination domain name",
+            "module": "intelmq.bots.experts.forward_dns.expert",
+            "parameters": {
+                "redis_cache_db": "5",
+                "redis_cache_host": "127.0.0.1",
+                "redis_cache_port": "6379",
+                "redis_cache_ttl": "86400"
+            }
+        },
         "Reverse DNS": {
             "description": "Reverse DNS is the bot responsible to get the correspondent domain name source IP and destination IP of the events.",
             "module": "intelmq.bots.experts.reverse_dns.expert",
@@ -684,6 +706,22 @@
                 "suffix": ".json",
                 "hierarchical_output": false,
                 "single_key": null
+            }
+        },
+        "Mail": {
+            "module": "intelmq.bots.outputs.mail.output",
+            "description": "Send mails with batches of events. Gathers events -> redis. If run through cli, sends mails with batches of events. Redis events -> SMTP.",
+            "parameters": {
+                "email_from": "edvard.rejthar+test_intelmq@nic.cz",
+                "mail_template": "/opt/intelmq/var/lib/bots/mail/template.txt",
+                "rate_limit": "3600",
+                "redis_cache_host": "127.0.0.1",
+                "redis_cache_port": "6379",
+                "redis_cache_db": "7",
+                "redis_cache_ttl": "86400",
+                "smtp_server" : "127.0.0.1",
+                "subject": "IntelMQ mail bot",
+                "testing_to": "example@example.com"
             }
         },
         "MongoDB": {

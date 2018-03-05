@@ -35,6 +35,11 @@ class Bot(object):
     __message_counter_start = None
     # Bot is capable of SIGHUP delaying
     sighup_delay = True
+    # From the runtime configuration
+    description = None
+    group = None
+    module = None
+    name = None
 
     def __init__(self, bot_id: str):
         self.__log_buffer = []
@@ -338,7 +343,7 @@ class Bot(object):
             self.__destination_pipeline = None
             self.logger.debug("Disconnected from destination pipeline.")
 
-    def send_message(self, *messages):
+    def send_message(self, *messages, path="_default"):
         for message in messages:
             if not message:
                 self.logger.warning("Ignoring empty message at sending. Possible bug in bot.")
@@ -358,7 +363,7 @@ class Bot(object):
                 self.__message_counter_start = datetime.datetime.now()
 
             raw_message = libmessage.MessageFactory.serialize(message)
-            self.__destination_pipeline.send(raw_message)
+            self.__destination_pipeline.send(raw_message, path=path)
 
     def receive_message(self):
         self.logger.debug('Waiting for incoming message.')
@@ -440,7 +445,7 @@ class Bot(object):
         config = utils.load_configuration(RUNTIME_CONF_FILE)
         reinitialize_logging = False
 
-        if self.__bot_id in list(config.keys()):
+        if self.__bot_id in config:
             params = config[self.__bot_id]
             self.run_mode = params.get('run_mode', 'continuous')
             for option, value in params['parameters'].items():
@@ -448,6 +453,10 @@ class Bot(object):
                 self.__log_configuration_parameter("runtime", option, value)
                 if option.startswith('logging_'):
                     reinitialize_logging = True
+            self.description = params.get('description')
+            self.group = params.get('group')
+            self.module = params.get('module')
+            self.name = params.get('name')
 
         if reinitialize_logging:
             self.logger.handlers = []  # remove all existing handlers
@@ -481,6 +490,7 @@ class Bot(object):
 
                 self.__destination_queues = config[
                     self.__bot_id]['destination-queues']
+                # Convert old to new format here
 
         else:
             raise exceptions.ConfigurationError('pipeline', "no key "
@@ -575,6 +585,7 @@ class ParserBot(Bot):
             self.logger.error('ParserBot can\'t be started itself. '
                               'Possible Misconfiguration.')
             self.stop()
+        self.group = 'Parser'
 
     def parse_csv(self, report: dict):
         """
@@ -737,6 +748,7 @@ class CollectorBot(Bot):
             self.logger.error('CollectorBot can\'t be started itself. '
                               'Possible Misconfiguration.')
             self.stop()
+        self.group = 'Collector'
 
     def __filter_empty_report(self, message: dict):
         if 'raw' not in message:

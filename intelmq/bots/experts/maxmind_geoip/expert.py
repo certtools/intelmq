@@ -13,7 +13,7 @@ except ImportError:
 
 
 class GeoIPExpertBot(Bot):
-
+   
     def init(self):
         if geoip2 is None:
             self.logger.error('Could not import geoip2. Please install it.')

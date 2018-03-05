@@ -360,7 +360,7 @@ Lines starting with `'#'` will be ignored. Headers won't be interpreted.
 
 #### Configuration parameters
 
- * `"columns"`: A list of strings or a string of comma-separated values with field names. The names must match the harmonization's field names. Strings starting with `extra.` will be written into the Extra-Object of the DHO. E.g.
+ * `"columns"`: A list of strings or a string of comma-separated values with field names. The names must match the harmonization's field names. E.g. 
    ```json
    [
         "",

@@ -1,0 +1,15 @@
+{
+    "name": "Exclude mails",
+    "description": "Exclude specific mails, even if we're in good-feed",
+    "date": "2015-02-03",
+    "type": "exclude",
+    "conditions": {
+        "source.abuse_contact": [
+            "one@example.com",
+            "two@example.com"
+        ], 
+        "feed.name": [
+            "good-feed"            
+        ]        
+    }
+}
