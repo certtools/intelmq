@@ -84,10 +84,10 @@ UPDATE events
    WHERE "classification.identifier" = 'openntp' AND "feed.name" = 'NTP-Monitor';
 UPDATE events
    SET "classification.identifier" = 'ssl-poodle', "feed.name" = 'SSL-POODLE-Vulnerable-Servers'
-   WHERE "classification.identifier" = 'SSL-Poodle' AND "feed.name" = 'SSL-Scan';
+   WHERE "classification.identifier" = 'SSL-Poodle' AND "feed.name" = 'Ssl-Scan';
 UPDATE events
    SET "classification.identifier" = 'ssl-freak', "feed.name" = 'SSL-FREAK-Vulnerable-Servers'
-   WHERE "classification.identifier" = 'SSL-FREAK' AND "feed.name" = 'SSL-Freak-Scan';
+   WHERE "classification.identifier" = 'SSL-FREAK' AND "feed.name" = 'Ssl-Freak-Scan';
 UPDATE events
    SET "classification.identifier" = 'open-memcached'
    WHERE "classification.identifier" = 'openmemcached' AND "feed.name" = 'Open-Memcached';
