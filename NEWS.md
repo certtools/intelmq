@@ -71,7 +71,7 @@ UPDATE events
    SET "classification.identifier" = 'open-mongodb'
    WHERE "classification.identifier" = 'openmongodb' AND "feed.name" = 'Open-MongoDB';
 UPDATE events
-   SET "classification.identifier" = 'open-netbios', "feed.name" = 'Open-NetBIOS-Nameservice'
+   SET "classification.identifier" = 'open-netbios-nameservice', "feed.name" = 'Open-NetBIOS-Nameservice'
    WHERE "classification.identifier" = 'opennetbios' AND "feed.name" = 'Open-NetBIOS';
 UPDATE events
    SET "classification.identifier" = 'openelasticsearch'
@@ -83,11 +83,11 @@ UPDATE events
    SET "classification.identifier" = 'ntp-monitor'
    WHERE "classification.identifier" = 'openntp' AND "feed.name" = 'NTP-Monitor';
 UPDATE events
-   SET "classification.identifier" = 'SSL-POODLE', "feed.name" = 'SSL-POODLE-Vulnerable-Servers'
+   SET "classification.identifier" = 'ssl-poodle', "feed.name" = 'SSL-POODLE-Vulnerable-Servers'
    WHERE "classification.identifier" = 'SSL-Poodle' AND "feed.name" = 'SSL-Scan';
 UPDATE events
-   SET "feed.name" = 'SSL-FREAK-Vulnerable-Servers'
-   WHERE "feed.name" = 'SSL-Freak-Scan';
+   SET "classification.identifier" = 'ssl-freak', "feed.name" = 'SSL-FREAK-Vulnerable-Servers'
+   WHERE "classification.identifier" = 'SSL-FREAK' AND "feed.name" = 'SSL-Freak-Scan';
 UPDATE events
    SET "classification.identifier" = 'open-memcached'
    WHERE "classification.identifier" = 'openmemcached' AND "feed.name" = 'Open-Memcached';

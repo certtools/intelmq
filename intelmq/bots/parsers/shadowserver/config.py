@@ -682,7 +682,7 @@ open_netbios_nameservice = {
     'constant_fields': {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'vulnerable',
-        'classification.identifier': 'open-netbios',
+        'classification.identifier': 'open-netbios-nameservice',
         'protocol.application': 'netbios',
     },
 }
@@ -793,7 +793,7 @@ ssl_freak_vulnerable_servers = {
     'constant_fields': {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'vulnerable',
-        'classification.identifier': 'SSL-FREAK',
+        'classification.identifier': 'ssl-freak',
         'protocol.application': 'https',
     },
 }
@@ -816,7 +816,7 @@ ssl_poodle_vulnerable_servers = {
     'constant_fields': {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'vulnerable',
-        'classification.identifier': 'SSL-POODLE',
+        'classification.identifier': 'ssl-poodle',
         'protocol.application': 'https',
     },
 }
