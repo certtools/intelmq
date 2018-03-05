@@ -106,6 +106,7 @@ The taxonomy can be automatically added by the taxonomy expert bot based on the 
 |test|test|This is a value for testing purposes.|
 |unknown|other|unknown events|
 |vulnerable service|vulnerable|This attribute refers to a badly configured or vulnerable network service, which may be abused by a third party. For example, these services relate to open proxies, open dns resolvers, network time servers (ntp) or character generation services (chargen), simple network management services (snmp). In addition, to specify the network service and its potential abuse, one should use the protocol, destination port and description attributes for that purpose respectively.|
+|vulnerable client|vulnerable|This attribute refers to a badly configured or vulnerable clients, which may be vulnerable and can be compromised by a third party. For example, not-up-to-date clients or client which are misconfigured, such as clients querying public domains for WPAD configurations. In addition, to specify the vulnerability and its potential abuse, one should use the classification.identifier, description and other attributes for that purpose respectively.|
 
 Meaning of source, destination and local values for each classification type and possible identifiers. The identifier is often a normalized malware name, grouping many variants.
 
@@ -134,6 +135,7 @@ Meaning of source, destination and local values for each classification type and
 |test||||||
 |unknown||||||
 |vulnerable service|*vulnerable device*||| heartbleed, openresolver, snmp |
+|vulnerable client|*vulnerable device*||| wpad |
 
 Field in italics is the interesting one for CERTs.
 

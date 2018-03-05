@@ -39,6 +39,7 @@ class IdeaExpertBot(Bot):
         "compromised": "Intrusion.AdminCompromise",
         "backdoor": "Intrusion.AdminCompromise",
         "vulnerable service": "Vulnerable.Open",
+        "vulnerable client": "Vulnerable.Config",
         "blacklist": "Other",
         "dga domain": "Anomaly.Behaviour",
         "proxy": "Vulnerable.Config",
