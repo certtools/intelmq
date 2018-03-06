@@ -73,6 +73,7 @@ CHANGELOG
 - `bots.experts.modify`
  * default ruleset: added avalanche rule.
  * new parameter `case_sensitive` (default: True)
+- Added wait expert for sleeping
 
 ### Harmonization
 - Renamed `JSON` to `JSONDict` and added a new type `JSON`. `JSONDict` saves data internally as JSON, but acts like a dictionary. `JSON` accepts any valid JSON.
