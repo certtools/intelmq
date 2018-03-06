@@ -376,6 +376,8 @@ class FQDN(GenericType):
 
     @staticmethod
     def sanitize(value):
+        if not isinstance(value, str):
+            return
         value = value.strip('.')
         if value:
             try:
