@@ -44,6 +44,7 @@ TODOs:
 import intelmq.lib.harmonization as harmonization
 import re
 
+
 def get_feed(feedname, logger):
     # TODO should this be case insensitive?
     feed_idx = {
@@ -193,7 +194,7 @@ def validate_ip(value):
 
 
 def validate_fqdn(value):
-    if harmonization.FQDN.is_valid(value, sanitize=True):
+    if value and harmonization.FQDN.is_valid(value, sanitize=True):
         return value
 
 
@@ -315,7 +316,7 @@ sinkhole_http_drone = {
         ('destination.ip', 'dst_ip', validate_ip),
         ('destination.asn', 'dst_asn'),
         ('destination.geolocation.cc', 'dst_geo'),
-        ('destination.fqdn', 'http_host'),
+        ('destination.fqdn', 'http_host', validate_fqdn),  # could also be an IP
         # Other known fields which will go into "extra"
         ('user_agent', 'http_agent'),
         ('os.name', 'p0f_genre'),
