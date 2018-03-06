@@ -216,10 +216,16 @@ class Bot(object):
 
                         if error_on_message:
 
+                            delete_message = False
                             if self.parameters.error_dump_message:
                                 error_traceback = traceback.format_exception(*error_on_message)
                                 self._dump_message(error_traceback,
                                                    message=self.__current_message)
+                                delete_message = True
+                            if '_on_error' in self.__destination_queues:
+                                self.send_message(self.__current_message, path='_on_error')
+                                delete_message = True
+                            if delete_message:
                                 self.__current_message = None
 
                             # remove message from pipeline
@@ -679,7 +685,10 @@ class ParserBot(Bot):
         for exc, line in self.__failed:
             report_dump = report.copy()
             report_dump.change('raw', self.recover_line(line))
-            self._dump_message(exc, report_dump)
+            if self.parameters.error_dump_message:
+                self._dump_message(exc, report_dump)
+            if '_on_error' in self._Bot__destination_queues:
+                self.send_message(report_dump, path='_on_error')
 
         self.acknowledge_message()
 

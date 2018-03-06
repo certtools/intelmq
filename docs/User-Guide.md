@@ -174,6 +174,7 @@ Note that `destination-queues` contains one of the following values:
 ```
 "destination-queues": {
     "_default": "<first destination pipeline name>",
+    "_on_error": "<optional destination pipeline name in case of errors>",
     "other-path": [
         "<second destination pipeline name>",
         "<third destination pipeline name>",
@@ -183,7 +184,8 @@ Note that `destination-queues` contains one of the following values:
     }
 
 ```
-In that case, bot will be able to send the message to one of defined paths. It will except `"_default"` path if not specified.
+In that case, bot will be able to send the message to one of defined paths. The path `"_default"` is used if none is not specified.
+In case of errors during processing, and the optional path `"_on_error"` is specified, the message will be sent to the pipelines given given as on-error.
 
 **Example:**
 ```
