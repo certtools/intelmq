@@ -610,6 +610,11 @@ FIXME
 
 #### Configuration Parameters:
 
+* `configuration_path`: filename
+* `case_sensitive`: boolean, default: true
+
+### Configuration File
+
 The modify expert bot allows you to change arbitrary field values of events just using a configuration file. Thus it is possible to adapt certain values or adding new ones only by changing JSON-files without touching the code of many other bots.
 
 The configuration is called `modify.conf` and looks like this:

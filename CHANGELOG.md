@@ -70,7 +70,9 @@ CHANGELOG
 
 #### Experts
 - Added sieve expert for filtering and modifying events (#1083)
-- `bots.experts.modify` default ruleset: added avalanche rule.
+- `bots.experts.modify`
+ * default ruleset: added avalanche rule.
+ * new parameter `case_sensitive` (default: True)
 
 ### Harmonization
 - Renamed `JSON` to `JSONDict` and added a new type `JSON`. `JSONDict` saves data internally as JSON, but acts like a dictionary. `JSON` accepts any valid JSON.
