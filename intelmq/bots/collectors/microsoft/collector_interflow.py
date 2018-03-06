@@ -34,6 +34,7 @@ import requests
 from dateutil import parser
 
 from intelmq.lib.bot import CollectorBot
+from intelmq.lib.cache import Cache
 from intelmq.lib.utils import parse_relative
 
 URL_LIST = 'https://interflow.azure-api.net/file/api/file/listsharedfiles'
@@ -51,16 +52,25 @@ class MicrosoftInterflowCollectorBot(CollectorBot):
 
         if self.parameters.not_older_than:
             try:
-                self.time_match = parser.parse(self.parameters.not_older_than)
-            except ValueError:
                 self.time_match = timedelta(minutes=parse_relative(self.parameters.not_older_than))
-                self.logger.info("Filtering files relative %r.", self.time_match)
-            else:
+            except ValueError:
+                self.time_match = parser.parse(self.parameters.not_older_than)
                 self.logger.info("Filtering files absolute %r.", self.time_match)
+            else:
+                self.logger.info("Filtering files relative %r.", self.time_match)
         else:
             self.time_match = None
 
+        self.cache = Cache(self.parameters.redis_cache_host,
+                           self.parameters.redis_cache_port,
+                           self.parameters.redis_cache_db,
+                           self.parameters.redis_cache_ttl,
+                           getattr(self.parameters, "redis_cache_password",
+                                   None)
+                           )
+
     def process(self):
+        self.logger.debug('Downloading file list.')
         files = requests.get(URL_LIST,
                              auth=self.auth,
                              proxies=self.proxy,
@@ -71,14 +81,20 @@ class MicrosoftInterflowCollectorBot(CollectorBot):
         files.raise_for_status()
         self.logger.debug('Downloaded file list, %s entries.', len(files.json()))
         for file in files.json():
+            if self.cache.get(file['Name']):
+                self.logger.debug('Processed file %s already.', file['Name'])
+                continue
             if self.file_match and not self.file_match.match(file['Name']):
+                self.logger.debug('File %s does not match.', file['Name'])
                 continue
             filetime = parser.parse(file['LastModified'])
             if isinstance(self.time_match, datetime) and filetime < self.time_match:
+                self.logger.debug('File %s is too old.', file['Name'])
                 continue
             else:
                 now = datetime.now(tz=pytz.timezone('UTC'))
                 if isinstance(self.time_match, timedelta) and filetime < (now - self.time_match):
+                    self.logger.debug('File %s does not match.', file['Name'])
                     continue
 
             self.logger.debug('Processing file %r.', file['Name'])
@@ -95,6 +111,7 @@ class MicrosoftInterflowCollectorBot(CollectorBot):
             report.add('feed.url', download_url)
             report.add('raw', download.text)
             self.send_message(report)
+            self.cache.set(file['Name'], True)
 
 
 BOT = MicrosoftInterflowCollectorBot

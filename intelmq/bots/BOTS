@@ -186,7 +186,12 @@
                 "file_match": null,
                 "http_timeout_sec": 300,
                 "provider": "microsoft",
-                "rate_limit": 3600
+                "rate_limit": 3600,
+                "redis_cache_db": "5",
+                "redis_cache_host": "127.0.0.1",
+                "redis_cache_port": 6379,
+                "redis_cache_password": null,
+                "redis_cache_ttl": 604800
             }
         },
         "Stomp": {
