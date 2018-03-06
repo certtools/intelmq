@@ -48,6 +48,13 @@ class TestBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertLogMatches(levelname='WARNING', pattern='.*intelmq/tests/lib/test_parser_bot\.py\:[0-9]+\: UserWarning: This is a warning test.')
 
+    def test_bot_group(self):
+        """
+        Test if the bot's group is Parser.
+        """
+        self.prepare_bot()
+        self.assertEqual(self.bot.group, 'Parser')
+
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()

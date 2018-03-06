@@ -109,6 +109,9 @@ You can set these parameters per bot as well. The settings will take effect afte
 * **`error_dump_message`** - specifies if the bot will write queued up messages to its dump file (use intelmqdump to re-insert the message).
     * **`true/false`** - write or not write message to the dump file
 
+* **`error_forward_message`** - specifies if the bot will forward messages to output queue which couldn't be processed by the bot. This option MUST be only used by Expert Bots.
+    * **`true/false`** - forward or not forward message to the output queue
+
 #### Miscellaneous
 
 * **`load_balance`** - this option allows you to choose the behavior of the queue. Use the following values:
