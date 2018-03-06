@@ -42,7 +42,7 @@ TODOs:
 
 """
 import intelmq.lib.harmonization as harmonization
-
+import re
 
 def get_feed(feedname):
     # TODO should this be case insensitive?
@@ -141,9 +141,18 @@ def convert_hostname_and_url(value, row):
 def convert_httphost_and_url(value, row):
     """
     URLs are split into hostname and path, we can also guess the protocol here.
+    With some reports, url/http_url holds only the path, with others the full HTTP request.
     """
-    if row['http_host'] and row['url']:
-        return 'http://' + row['http_host'] + row['url']
+    if "url" in row:
+        if row['http_host'] and row['url']:
+            path = re.sub(r'^[^/]*', '', row['url'])
+            path = re.sub(r'\s.*$', '', path)
+            return 'http://' + row['http_host'] + path
+    elif "http_url" in row:
+        if row['http_host'] and row['http_url']:
+            path = re.sub(r'^[^/]*', '', row['http_url'])
+            path = re.sub(r'\s.*$', '', path)
+            return 'http://' + row['http_host'] + path
     return value
 
 
