@@ -1319,12 +1319,13 @@ providers:
           parameters:
             api_key: "{{your API key}}"
             file_match: "^ctip_"
+            not_older_than: "2 days"
             rate_limit: 3600
             http_timeout_sec: 300
         parser:
-          module: intelmq.bots.parsers.json.parser
+          module: intelmq.bots.parsers.microsoft.parser_ctip
           parameters:
-      revision: 05-02-2018
+      revision: 06-03-2018
       status: on
       documentation:
   Threatminer:

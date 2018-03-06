@@ -999,9 +999,9 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `int
 ## CTIP
 
 * **Status:** on
-* **Revision:** 05-02-2018
+* **Revision:** 06-03-2018
 * **Description:** Collects CTIP files from the Interflow API.
-* **Additional Information:** Depending on the file sizes you may need to increase the timeout.
+* **Additional Information:** Depending on the file sizes you may need to increase the parameter 'http_timeout_sec' of the collector. As many IPs occur very often in the data, you may want to use a deduplicator specifically for the feed.
 
 ### Collector
 
@@ -1010,11 +1010,12 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `int
 *  * `api_key`: `{{your API key}}`
 *  * `file_match`: `^ctip_`
 *  * `http_timeout_sec`: `300`
+*  * `not_older_than`: `2 days`
 *  * `rate_limit`: `3600`
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.json.parser
+* **Module:** intelmq.bots.parsers.microsoft.parser_ctip
 * **Configuration Parameters:**
 
 
