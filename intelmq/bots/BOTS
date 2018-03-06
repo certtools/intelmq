@@ -181,10 +181,10 @@
             "module": "intelmq.bots.collectors.microsoft.collector_interflow",
             "parameters": {
                 "api_key": "",
-                "delete": true,
                 "feed": "",
                 "file_match": null,
                 "http_timeout_sec": 300,
+                "not_older_than": "2 days",
                 "provider": "microsoft",
                 "rate_limit": 3600,
                 "redis_cache_db": "5",
