@@ -8,23 +8,22 @@ from intelmq.lib.bot import ParserBot
 from intelmq.lib.utils import base64_decode
 
 
-MAPPING = {
-    "description": "event_description.text",
-    "externalid": "malware.name",
-    "tlplevel": "extra.tlp",
-    "firstreporteddatetime": "time.source",
-    "networksourceipv4": "source.ip",
-    "networksourceport": "source.port",
-    "networkdestinationipv4": "destination.ip",
-    "networkdestinationport": "destination.port",
-    "isproductlicensed": "extra.isproductlicensed",
-    "ispartnershareable": "extra.ispartnershareable",
-    "networksourceasn": "source.asn",
-    "hostname": "destination.fqdn",
-    "useragent": "extra.user_agent",
-    "severity": "extra.severity",
-    "tags": "extra.tags",
-    }
+MAPPING = {"description": "event_description.text",
+           "externalid": "malware.name",
+           "tlplevel": "extra.tlp",
+           "firstreporteddatetime": "time.source",
+           "networksourceipv4": "source.ip",
+           "networksourceport": "source.port",
+           "networkdestinationipv4": "destination.ip",
+           "networkdestinationport": "destination.port",
+           "isproductlicensed": "extra.isproductlicensed",
+           "ispartnershareable": "extra.ispartnershareable",
+           "networksourceasn": "source.asn",
+           "hostname": "destination.fqdn",
+           "useragent": "extra.user_agent",
+           "severity": "extra.severity",
+           "tags": "extra.tags",
+           }
 
 
 class MicrosoftCTIPParserBot(ParserBot):
@@ -37,7 +36,8 @@ class MicrosoftCTIPParserBot(ParserBot):
             if ioc['indicatorthreattype'] != 'Botnet':
                 raise ValueError('Unknown indicatorthreattype %r, only Botnet is supported.' % ioc['indicatorthreattype'])
             if 'additionalmetadata' in ioc and ioc['additionalmetadata'] not in [[], [''], ['null'], [None]]:
-                raise ValueError("Cannot parse IOC, format of field 'additionalmetadata' is unknown: %r." % ioc['additionalmetadata'])
+                raise ValueError("Cannot parse IOC, format of field 'additionalmetadata' is unknown: %r."
+                                 "" % ioc['additionalmetadata'])
             event = self.new_event(report)
             for key, value in MAPPING.items():
                 if key in ioc:
@@ -45,7 +45,7 @@ class MicrosoftCTIPParserBot(ParserBot):
                         ioc[key] += ' UTC'
                     event[value] = ioc[key]
             event.add('feed.accuracy',
-                      event.get('feed.accuracy', 100)*ioc['confidence']/100,
+                      event.get('feed.accuracy', 100) * ioc['confidence'] / 100,
                       overwrite=True)
             event.add('classification.type', 'botnet drone')
             event.add('raw', raw)
