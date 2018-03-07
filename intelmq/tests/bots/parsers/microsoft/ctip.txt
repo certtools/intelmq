@@ -16,9 +16,9 @@
     "ispartnershareable": "true",
     "networksourceasn": "65536",
     "additionalmetadata": [
-      ""
+      "null"
     ],
-    "hostname": "",
+    "hostname": "198.18.18.18",
     "useragent": ""
   },
   {
@@ -81,9 +81,7 @@
     "isproductlicensed": "true",
     "ispartnershareable": "true",
     "networksourceasn": "65536",
-    "additionalmetadata": [
-      ""
-    ],
+    "additionalmetadata": ["any??thing\\x0000can\\x01be!here??"],
     "hostname": "",
     "useragent": ""
   }

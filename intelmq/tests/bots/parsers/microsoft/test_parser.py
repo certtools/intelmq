@@ -82,6 +82,7 @@ EXAMPLE_EVENTS = [{
     'destination.ip': '203.0.113.220',
     'destination.port': 443,
     'event_description.text': 'Host is a member of Botnet B75-S12',
+    'extra.additionalmetadata': [r'any??thing\x0000can\x01be!here??'],
     'extra.ispartnershareable': 'true',
     'extra.isproductlicensed': 'true',
     'extra.tlp': 'Green',
