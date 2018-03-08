@@ -49,8 +49,20 @@ class CymruCAPProgramParserBot(ParserBot):
             event.add('malware.name', report_type)
         elif report_type == 'bots':
             # bots|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|[srcport <PORT>] [mwtype <TYPE>] [destaddr <IPADDR>]|ASNAME
+            # TYPE can contain spaces -.-
             event.add('classification.type', 'botnet drone')
-            for kind, value in zip(comment_split[::2], comment_split[1::2]):
+            comment_results = {}
+            comment_key = None
+            comment_value = []
+            for part in comment_split + [None]:  # iterate once more at end
+                if part in ['srcport', 'mwtype', 'destaddr', None]:
+                    if comment_key and comment_value:
+                        comment_results[comment_key] = ' '.join(comment_value)
+                    comment_key = part
+                    comment_value.clear()
+                else:
+                    comment_value.append(part)
+            for kind, value in comment_results.items():
                 if kind == 'srcport':
                     event['extra.source_port'] = int(value)
                 elif kind == 'mwtype':
@@ -58,7 +70,7 @@ class CymruCAPProgramParserBot(ParserBot):
                 elif kind == 'destaddr':
                     event['destination.ip'] = value
                 else:
-                    raise ValueError('Unknown value in comment %r. for report' % (kind, report_type))
+                    raise ValueError('Unknown value in comment %r for report %r.' % (kind, report_type))
         elif report_type == 'bruteforce':
             # bruteforce|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|<PROTOCOL>|ASNAME
             event.add('classification.type', 'brute-force')
