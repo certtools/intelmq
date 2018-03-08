@@ -72,7 +72,10 @@ CHANGELOG
 
 #### Experts
 - Added sieve expert for filtering and modifying events (#1083)
-- `bots.experts.modify` default ruleset: added avalanche rule.
+- `bots.experts.modify`
+ * default ruleset: added avalanche rule.
+ * new parameter `case_sensitive` (default: True)
+- Added wait expert for sleeping
 
 ### Harmonization
 - Renamed `JSON` to `JSONDict` and added a new type `JSON`. `JSONDict` saves data internally as JSON, but acts like a dictionary. `JSON` accepts any valid JSON.
@@ -87,6 +90,7 @@ CHANGELOG
 ### Contrib
 
 ### Core
+- lib/harmonization: FQDN validation now handles None correctly (raised an Exception).
 
 ### Harmonization
 
@@ -94,6 +98,9 @@ CHANGELOG
 #### Collectors
 
 #### Parsers
+- Shadowserver parser:
+ * The fields `url` and `http_url` now handle HTTP URL paths and HTTP requests for all feeds (#1204).
+ * The conversion function `validate_fqdn` now handles empty strings correctly.
 
 #### Experts
 

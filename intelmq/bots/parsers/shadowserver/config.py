@@ -42,6 +42,7 @@ TODOs:
 
 """
 import intelmq.lib.harmonization as harmonization
+import re
 
 
 def get_feed(feedname, logger):
@@ -153,9 +154,18 @@ def convert_hostname_and_url(value, row):
 def convert_httphost_and_url(value, row):
     """
     URLs are split into hostname and path, we can also guess the protocol here.
+    With some reports, url/http_url holds only the path, with others the full HTTP request.
     """
-    if row['http_host'] and row['url']:
-        return 'http://' + row['http_host'] + row['url']
+    if "url" in row:
+        if row['http_host'] and row['url']:
+            path = re.sub(r'^[^/]*', '', row['url'])
+            path = re.sub(r'\s.*$', '', path)
+            return 'http://' + row['http_host'] + path
+    elif "http_url" in row:
+        if row['http_host'] and row['http_url']:
+            path = re.sub(r'^[^/]*', '', row['http_url'])
+            path = re.sub(r'\s.*$', '', path)
+            return 'http://' + row['http_host'] + path
     return value
 
 
@@ -184,7 +194,7 @@ def validate_ip(value):
 
 
 def validate_fqdn(value):
-    if harmonization.FQDN.is_valid(value, sanitize=True):
+    if value and harmonization.FQDN.is_valid(value, sanitize=True):
         return value
 
 
@@ -306,7 +316,7 @@ sinkhole_http_drone = {
         ('destination.ip', 'dst_ip', validate_ip),
         ('destination.asn', 'dst_asn'),
         ('destination.geolocation.cc', 'dst_geo'),
-        ('destination.fqdn', 'http_host'),
+        ('destination.fqdn', 'http_host', validate_fqdn),  # could also be an IP
         # Other known fields which will go into "extra"
         ('user_agent', 'http_agent'),
         ('os.name', 'p0f_genre'),
@@ -681,7 +691,7 @@ open_netbios_nameservice = {
     'constant_fields': {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'vulnerable',
-        'classification.identifier': 'open-netbios',
+        'classification.identifier': 'open-netbios-nameservice',
         'protocol.application': 'netbios',
     },
 }
@@ -792,7 +802,7 @@ ssl_freak_vulnerable_servers = {
     'constant_fields': {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'vulnerable',
-        'classification.identifier': 'SSL-FREAK',
+        'classification.identifier': 'ssl-freak',
         'protocol.application': 'https',
     },
 }
@@ -815,7 +825,7 @@ ssl_poodle_vulnerable_servers = {
     'constant_fields': {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'vulnerable',
-        'classification.identifier': 'SSL-POODLE',
+        'classification.identifier': 'ssl-poodle',
         'protocol.application': 'https',
     },
 }
@@ -866,7 +876,7 @@ drone = {
         ('destination.geolocation.cc', 'cc_geo'),
         ('destination.ip', 'cc_ip', validate_ip),
         ('destination.port', 'cc_port'),
-        ('destination.fqdn', 'cc_dns'),
+        ('destination.fqdn', 'cc_dns', validate_fqdn),
         ('destination.url', 'url', convert_hostname_and_url, True),
         ('malware.name', 'infection'),
         ('protocol.application', 'application'),
@@ -883,6 +893,9 @@ drone = {
         ('os.version', 'p0f_detail'),
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
+        ('extra.destination.naics', 'cc_naics', invalidate_zero),
+        ('extra.destination.sic', 'cc_sic', invalidate_zero),
+        ('extra.destination.sector', 'cc_sector', validate_to_none),
     ],
     'constant_fields': {
         'classification.type': 'botnet drone',
