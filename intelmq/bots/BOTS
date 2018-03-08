@@ -189,6 +189,23 @@
                 "ssl_client_certificate": "<insert path to client cert file for CERT.pl's n6>",
                 "ssl_client_certificate_key": "<insert path to client cert key file for CERT.pl's n6>"
             }
+        },
+        "Twitter": {
+            "description": "Collects tweets from target_timelines. Maximum number of tweet_count from each timeline and up to timelimit back in time.",
+            "module": "intelmq.bots.collectors.twitter.collector_twitter",
+            "parameters": {
+            "feed": "Twitter",
+            "target_timelines":"",
+            "tweet_count":"",
+            "timelimit": "",
+            "include_rts":"true",
+            "exclude_replies":"false",
+            "follow_urls":"",
+            "consumer_key":"",
+            "consumer_secret":"",
+            "access_token_key":"",
+            "access_token_secret":""
+            }
         }
     },
     "Parser": {
@@ -434,6 +451,15 @@
             "description": "Turris Greylist Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.turris.parser",
             "parameters": {}
+        },
+        "Twitter": {
+            "description": "Twitter parser parses a report of tweets by extracting IOC. Currently only urls are supported, a whitelist of safe domains can be provided",
+            "module": "intelmq.bots.parsers.twitter.parser",
+            "parameters": {
+                    "domain_whitelist":"t.co",
+                    "substitutions":" .net;[.]net",
+                    "classification_type": "blacklist"
+                    }
         },
         "URLVir": {
             "description": "URLVir Parser is the bot responsible to parse the Export Hosts and Export IP Addresses reports and sanitize the information.",
