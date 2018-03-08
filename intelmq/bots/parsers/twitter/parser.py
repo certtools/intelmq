@@ -39,6 +39,10 @@ except ImportError:
 
 class TwitterParserBot(ParserBot):
     def init(self):
+        if url_normalize is None:
+            raise ValueError("Could not import 'url-normalize'. Please install it.")
+        if get_tld is None:
+            raise ValueError("Could not import 'tld'. Please install it.")
         update_tld_names()
         self.domain_whitelist = []
         if getattr(self.parameters, "domain_whitelist", '') != '':

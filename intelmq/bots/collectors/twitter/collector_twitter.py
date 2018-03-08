@@ -49,6 +49,10 @@ except ImportError:
 class TwitterCollectorBot(CollectorBot):
 
     def init(self):
+        if requests is None:
+            raise ValueError("Could not import 'requests'. Please install it.")
+        if twitter is None:
+            raise ValueError("Could not import 'twitter'. Please install it.")
         self.current_time_in_seconds = int(time.time())
         self.target_timelines = []
         if getattr(self.parameters, "target_timelines", '') is not '':

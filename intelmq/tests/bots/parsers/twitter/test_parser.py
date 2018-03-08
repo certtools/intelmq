@@ -53,6 +53,8 @@ EVENTS =[ {'source.url': 'http://testweb.com/sales-invoice/',
           'time.observation': '2015-09-14T12:00:00+02:00',
           'raw': utils.base64_encode(EXAMPLE_FILE)}]
 
+
+@test.skip_exotic()
 class TestTwitterParserBot(test.BotTestCase, unittest.TestCase):
     """
     A TestCase for TwitterParserBot.
