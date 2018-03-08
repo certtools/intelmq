@@ -397,12 +397,12 @@ open_redis = {
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
         ('extra.', 'tag'),
+        ('extra.os.name', 'os'),
         # version
         # git_sha1
         # git_dirty_flag
         # build_id
         # mode
-        # os
         # architecture
         # multiplexing_api
         # gcc_version
