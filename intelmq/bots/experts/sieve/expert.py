@@ -38,7 +38,6 @@ class SieveExpertBot(Bot):
             SieveExpertBot.harmonization = harmonization_config['event']
 
         self.metamodel = SieveExpertBot.init_metamodel()
-        SieveExpertBot.ip_network_strict = getattr(self.parameters, 'ip_network_strict', True)
         self.sieve = SieveExpertBot.read_sieve_file(self.parameters.file, self.metamodel)
 
     @staticmethod
@@ -215,11 +214,11 @@ class SieveExpertBot(Bot):
             return False
 
         if ip_range.__class__.__name__ == 'SingleIpRange':
-            network = ipaddress.ip_network(ip_range.value, strict=SieveExpertBot.ip_network_strict)
+            network = ipaddress.ip_network(ip_range.value, strict=False)
             return addr in network
         elif ip_range.__class__.__name__ == 'IpRangeList':
             for val in ip_range.values:
-                network = ipaddress.ip_network(val.value, strict=SieveExpertBot.ip_network_strict)
+                network = ipaddress.ip_network(val.value, strict=False)
                 if addr in network:
                     return True
         return False
@@ -246,7 +245,7 @@ class SieveExpertBot(Bot):
     @staticmethod
     def validate_ip_range(ip_range):
         try:
-            ipaddress.ip_network(ip_range.value, strict=SieveExpertBot.ip_network_strict)
+            ipaddress.ip_network(ip_range.value, strict=False)
         except ValueError:
             position = SieveExpertBot.get_linecol(ip_range, as_dict=True)
             raise TextXSemanticError('Invalid ip range: %s.' % ip_range.value, **position)

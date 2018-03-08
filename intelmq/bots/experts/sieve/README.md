@@ -46,7 +46,6 @@ if classification.type == ['phishing', 'malware'] && source.fqdn =~ '.*\.(ch|li)
 
 The sieve bot takes only one parameter:
  * `file` - filesystem path of the sieve file
- * `ip_network_strict` (default true) - throw error if the network has host bits set
 
 
 ## Reference
