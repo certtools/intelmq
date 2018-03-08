@@ -854,7 +854,7 @@ botnet_drone_hadoop = {
         ('destination.geolocation.cc', 'cc_geo'),
         ('destination.ip', 'cc_ip', validate_ip),
         ('destination.port', 'cc_port'),
-        ('destination.fqdn', 'cc_dns'),
+        ('destination.fqdn', 'cc_dns', validate_fqdn),
         ('destination.url', 'url', convert_hostname_and_url, True),
         ('malware.name', 'infection'),
         ('protocol.application', 'application'),
@@ -871,6 +871,9 @@ botnet_drone_hadoop = {
         ('os.version', 'p0f_detail'),
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
+        ('extra.destination.naics', 'cc_naics', invalidate_zero),
+        ('extra.destination.sic', 'cc_sic', invalidate_zero),
+        ('extra.destination.sector', 'cc_sector', validate_to_none),
     ],
     'constant_fields': {
         'classification.type': 'botnet drone',
