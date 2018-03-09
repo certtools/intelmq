@@ -1534,7 +1534,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `int
 
 # WebInspektor
 
-## Unsafe Site
+## Unsafe sites
 
 * **Status:** on
 * **Revision:** 09-03-2018
