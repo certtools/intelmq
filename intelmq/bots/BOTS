@@ -471,6 +471,11 @@
             "module": "intelmq.bots.parsers.vxvault.parser",
             "parameters": {}
         },
+        "Web Inspektor": {
+            "description": "Web Inspektor Parser is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.webinspektor.parser",
+            "parameters": {}
+        },
         "ZoneH": {
             "description": "ZoneH CSV report parser",
             "module": "intelmq.bots.parsers.zoneh.parser",

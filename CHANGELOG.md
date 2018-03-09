@@ -67,6 +67,7 @@ CHANGELOG
 - added `intelmq.bots.parsers.sucuri.parser`
 - added `intelmq.bots.parsers.malwareurl.parser`
 - added `intelmq.bots.parsers.threatminer.parser`
+- added `intelmq.bots.parsers.webinspektor.parser`
 
 #### Experts
 - Added sieve expert for filtering and modifying events (#1083)
