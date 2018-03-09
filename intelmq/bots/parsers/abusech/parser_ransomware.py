@@ -37,8 +37,9 @@ class AbuseCHRansomwaretrackerParserBot(Bot):
 
                     for nrow in csv.reader(io.StringIO(new_row)):
                         ev = Event(report)
-                        ev.add('classification.identifier', nrow[2].lower())
+                        ev.add('classification.taxonomy', 'malicious code')
                         ev.add('classification.type', 'c&c')
+                        ev.add('classification.identifier', nrow[2].lower())
                         ev.add('time.source', nrow[0] + ' UTC', overwrite=True)
                         ev.add('status', nrow[5])
                         if nrow[7] != '0.0.0.0':
@@ -49,8 +50,9 @@ class AbuseCHRansomwaretrackerParserBot(Bot):
                         self.send_message(ev)
             else:
                 event = Event(report)
-                event.add('classification.identifier', row[2].lower())
+                event.add('classification.taxonomy', 'malicious code')
                 event.add('classification.type', 'c&c')
+                event.add('classification.identifier', row[2].lower())
                 event.add('time.source', row[0] + ' UTC')
                 event.add('status', row[5])
                 event.add('raw', ','.join(row))

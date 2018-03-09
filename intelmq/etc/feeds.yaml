@@ -105,6 +105,27 @@ providers:
       revision: 20-01-2018
       status: on
       documentation:
+  OpenPhish Commercial:
+    Phishing:
+      description: OpenPhish is a fully automated self-contained platform for phishing
+        intelligence. It identifies phishing sites and performs intelligence analysis
+        in real time without human intervention and without using any external resources,
+        such as blacklists.
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.http.collector_http
+          parameters:
+            http_url: https://openphish.com/prvt-intell/
+            http_password: "{{ your password}}"
+            http_username: "{{ your username}}"
+            rate_limit: 86400
+        parser:
+          module: intelmq.bots.parsers.openphish.parser_commercial
+          parameters:
+      revision: 06-02-2018
+      status: on
+      documentation:
   Nothink:
     SNMP:
       description: 'There are a number of feeds you can use to depend on how far back
@@ -1288,3 +1309,19 @@ providers:
       revision: 05-02-2018
       status: on
       documentation:
+  Threatminer:
+    Recent domains:
+      description: Latest malicious domains.
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.http.collector_http
+          parameters:
+            http_url: https://www.threatminer.org/
+            rate_limit: 86400
+        parser:
+          module: intelmq.bots.parsers.threatminer.parser
+          parameters:
+      revision: 06-02-2018
+      status: on
+      documentation: https://www.threatminer.org/

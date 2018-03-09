@@ -214,11 +214,11 @@ class SieveExpertBot(Bot):
             return False
 
         if ip_range.__class__.__name__ == 'SingleIpRange':
-            network = ipaddress.ip_network(ip_range.value)
+            network = ipaddress.ip_network(ip_range.value, strict=False)
             return addr in network
         elif ip_range.__class__.__name__ == 'IpRangeList':
             for val in ip_range.values:
-                network = ipaddress.ip_network(val.value)
+                network = ipaddress.ip_network(val.value, strict=False)
                 if addr in network:
                     return True
         return False
@@ -245,7 +245,7 @@ class SieveExpertBot(Bot):
     @staticmethod
     def validate_ip_range(ip_range):
         try:
-            ipaddress.ip_network(ip_range.value)
+            ipaddress.ip_network(ip_range.value, strict=False)
         except ValueError:
             position = SieveExpertBot.get_linecol(ip_range, as_dict=True)
             raise TextXSemanticError('Invalid ip range: %s.' % ip_range.value, **position)

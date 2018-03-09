@@ -7,3 +7,4 @@ proxy|172.16.0.21|64496|2017-10-31 10:00:03|HTTP CONNECT (8080)|Example AS Name
 spam|172.16.0.21|64496|2017-10-31 10:00:04||Example AS Name
 bots|172.16.0.21|64496|2017-10-31 10:00:05|srcport 1337 mwtype Conficker destaddr 172.16.0.22|Example AS Name
 bots|172.16.0.21|64496|2017-10-31 10:00:06|mwtype Conficker|Example AS Name
+bots|172.16.0.21|64496|2018-03-05 14:18:25|mwtype Mirai Mirai Bot|Example AS Name

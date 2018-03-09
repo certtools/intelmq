@@ -31,7 +31,7 @@ CHANGELOG
 - intelmq.lib.message.Message.add: The parameter overwrite accepts now three different values: True, False and None (new).
   True: An existing value will be overwritten
   False: An existing value will not be overwritten (previously and exception has been raised when the value was raised).
-  None (default): If the value exists an KeyExists Exception is thrown (previously the same as False).
+  None (default): If the value exists an `KeyExists` Exception is thrown (previously the same as False).
   This allows shorter code in the bots, as an 'overwrite' configuration parameter can be directly passed to the function.
 - Bots can specify a static method `check(parameters)` which can perform individual checks specific to the bot.
   These functions will be called by `intelmqctl check` if the bot is configured with the given parameters
@@ -42,33 +42,38 @@ CHANGELOG
 - Mail:
   - New parameters; `sent_from`: filter messages by sender, `sent_to`: filter messages by recipient
   - More debug logs
-- bots.experts.maxmind_geoip: New (optional) parameter `overwrite`, by default false. The current default was to overwrite!
+- `bots.experts.maxmind_geoip`: New (optional) parameter `overwrite`, by default false. The current default was to overwrite!
 - `bots.collectors.n6.collector_stomp`: renamed to `bots.collectors.stomp.collector` (#716)
 - bots.collectors.rt:
   - New parameter `search_requestor` to search for field Requestor.
   - Empty strings and `null` as value for search parameters are ignored.
   - Empty parameters `attachment_regex` and `url_regex` handled.
 - `bots.collectors.http.collector_http`: Ability to optionally use the current time in parameter `http_url`, added parameter `http_url_formatting`.
-- bots.collectors.stomp.collectos: Heartbeat timeout is now logged with log level info instead of warning.
+- `bots.collectors.stomp.collector`: Heartbeat timeout is now logged with log level info instead of warning.
 
 #### Parsers
 - changed feednames in `bots.parsers.shadowserver`. Please refer to it's README for the exact changes.
 - shadowserver parser: If the conversion function fails for a line, an error is raised and the offending line will be handled according to the error handling configuration.
-  Previouly errors like these were only logged and ignored otherwise.
+  Previously errors like these were only logged and ignored otherwise.
 - added destination.urlpath and source.urlpath to harmonization.
 - changed feednames in `bots.parsers.shadowserver`. Please refer to it's README for the exact changes.
 - The Generic CSV Parser `bots.parsers.generic.parser_csv`:
   - It is possible to filter the data before processing them using the new parameters `filter_type` and `filter_text`.
-  - It is possible to specify multiple coulmns using `|` character in parameter `columns`.
+  - It is possible to specify multiple columns using `|` character in parameter `columns`.
   - The parameter `time_format` now supports `'epoch_millis'` for seconds since the Epoch, milliseconds are supported but not used.
 - renamed `bots.parsers.cymru_full_bogons.parser` to `bots.parsers.cymru.parser_full_bogons`, compatibility shim will be removed in version 2.0
 - added `bots.parsers.cymru.parser_cap_program`
-- added `intemq.bots.parsers.zoneh.parser` for ZoneH feeds
-- added `intemq.bots.parsers.sucuri.parser`
-- added `intemq.bots.parsers.malwareurl.parser`
+- added `intelmq.bots.parsers.zoneh.parser` for ZoneH feeds
+- added `intelmq.bots.parsers.sucuri.parser`
+- added `intelmq.bots.parsers.malwareurl.parser`
+- added `intelmq.bots.parsers.threatminer.parser`
 
 #### Experts
 - Added sieve expert for filtering and modifying events (#1083)
+- `bots.experts.modify`
+ * default ruleset: added avalanche rule.
+ * new parameter `case_sensitive` (default: True)
+- Added wait expert for sleeping
 
 ### Harmonization
 - Renamed `JSON` to `JSONDict` and added a new type `JSON`. `JSONDict` saves data internally as JSON, but acts like a dictionary. `JSON` accepts any valid JSON.
@@ -83,6 +88,7 @@ CHANGELOG
 ### Contrib
 
 ### Core
+- lib/harmonization: FQDN validation now handles None correctly (raised an Exception).
 
 ### Harmonization
 
@@ -90,6 +96,9 @@ CHANGELOG
 #### Collectors
 
 #### Parsers
+- Shadowserver parser:
+ * The fields `url` and `http_url` now handle HTTP URL paths and HTTP requests for all feeds (#1204).
+ * The conversion function `validate_fqdn` now handles empty strings correctly.
 
 #### Experts
 

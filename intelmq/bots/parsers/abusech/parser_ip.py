@@ -29,6 +29,7 @@ class AbusechIPParserBot(ParserBot):
         else:
             event = self.new_event(report)
             event.add('time.source', self.lastgenerated)
+            event.add('classification.taxonomy', 'malicious code')
             event.add('classification.type', 'c&c')
             event.add('source.ip', line)
             event.add("raw", line)

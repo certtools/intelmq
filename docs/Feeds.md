@@ -31,12 +31,14 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `int
 - [Netlab 360](#netlab-360)
 - [Nothink](#nothink)
 - [OpenPhish](#openphish)
+- [OpenPhish Commercial](#openphish-commercial)
 - [PhishTank](#phishtank)
 - [ShadowServer](#shadowserver)
 - [Spamhaus](#spamhaus)
 - [Sucuri](#sucuri)
 - [Taichung](#taichung)
 - [Team Cymru](#team-cymru)
+- [Threatminer](#threatminer)
 - [Turris](#turris)
 - [URLVir](#urlvir)
 - [University of Toulouse](#university-of-toulouse)
@@ -1149,6 +1151,29 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `int
 * **Configuration Parameters:**
 
 
+# OpenPhish Commercial
+
+## Phishing
+
+* **Status:** on
+* **Revision:** 06-02-2018
+* **Description:** OpenPhish is a fully automated self-contained platform for phishing intelligence. It identifies phishing sites and performs intelligence analysis in real time without human intervention and without using any external resources, such as blacklists.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.http.collector_http
+* **Configuration Parameters:**
+*  * `http_password`: `{{ your password}}`
+*  * `http_url`: `https://openphish.com/prvt-intell/`
+*  * `http_username`: `{{ your username}}`
+*  * `rate_limit`: `86400`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.openphish.parser_commercial
+* **Configuration Parameters:**
+
+
 # PhishTank
 
 ## Online
@@ -1374,6 +1399,28 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `int
 ### Parser
 
 * **Module:** intelmq.bots.parsers.cymru.parser_full_bogons
+* **Configuration Parameters:**
+
+
+# Threatminer
+
+## Recent domains
+
+* **Status:** on
+* **Revision:** 06-02-2018
+* **Documentation:** https://www.threatminer.org/
+* **Description:** Latest malicious domains.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.http.collector_http
+* **Configuration Parameters:**
+*  * `http_url`: `https://www.threatminer.org/`
+*  * `rate_limit`: `86400`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.threatminer.parser
 * **Configuration Parameters:**
 
 
