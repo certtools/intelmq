@@ -874,7 +874,12 @@ botnet_drone_hadoop = {
         ('extra.', 'sic', invalidate_zero),
         ('extra.destination.naics', 'cc_naics', invalidate_zero),
         ('extra.destination.sic', 'cc_sic', invalidate_zero),
+        ('extra.', 'sector', validate_to_none),
         ('extra.destination.sector', 'cc_sector', validate_to_none),
+        ('extra.', 'ssl_cipher', validate_to_none),
+        ('extra.', 'family', validate_to_none),
+        ('extra.', 'tag', validate_to_none),
+        ('extra.', 'public_source', validate_to_none),
     ],
     'constant_fields': {
         'classification.type': 'botnet drone',
