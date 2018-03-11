@@ -386,21 +386,19 @@ open_redis = {
         # Other known fields which will go into "extra"
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
-        # tag
-        # version
-        # git_sha1
-        # git_dirty_flag
-        # build_id
-        # mode
-        # os
-        # architecture
-        # multiplexing_api
-        # gcc_version
-        # process_id
-        # run_id
-        # uptime
-        # connected_clients
-        # sector
+        ('extra.', 'git_sha1', validate_to_none),
+        ('extra.', 'git_dirty_flag', validate_to_none),
+        ('extra.', 'build_id', validate_to_none),
+        ('extra.', 'mode', validate_to_none),
+        ('extra.os.name', 'os', validate_to_none),
+        ('extra.', 'architecture', validate_to_none),
+        ('extra.', 'multiplexing_api', validate_to_none),
+        ('extra.', 'gcc_version', validate_to_none),
+        ('extra.', 'process_id', validate_to_none),
+        ('extra.', 'run_id', validate_to_none),
+        ('extra.', 'uptime', validate_to_none),
+        ('extra.', 'connected_clients', validate_to_none),
+        ('extra.', 'sector', validate_to_none),
     ],
     'constant_fields': {
         'classification.type': 'vulnerable service',
@@ -671,12 +669,12 @@ open_netbios = {
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
+        ('extra.', 'workgroup', validate_to_none),
+        ('extra.', 'machine_name', validate_to_none),
         ('source.account', 'username'),
-        # --- moving this to extra: ('source.local_hostname', 'machine_name'),
-        # Other known fields which will go into "extra"
-        # tag
-        # mac_address
-        # workgroup
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'sector', validate_to_none),
     ],
     'constant_fields': {
         'classification.type': 'vulnerable service',
@@ -870,6 +868,8 @@ botnet_drone_hadoop = {
         ('user_agent', 'agent'),
         ('os.name', 'p0f_genre'),
         ('os.version', 'p0f_detail'),
+        ('extra.', 'machine_name', validate_to_none),
+        ('extra.', 'id', validate_to_none),
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
         ('extra.destination.naics', 'cc_naics', invalidate_zero),
