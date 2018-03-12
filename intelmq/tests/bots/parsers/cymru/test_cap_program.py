@@ -95,6 +95,17 @@ EVENT6 = {'__type': 'Event',
           'classification.identifier': 'conficker',
           'malware.name': 'conficker',
           }
+EVENT7 = {'__type': 'Event',
+          'time.observation': '2015-11-01T00:01:45+00:05',
+          'source.as_name': 'Example AS Name',
+          'source.asn': 64496,
+          'source.ip': '172.16.0.21',
+          'time.source': '2017-10-31T10:00:06+00:00',
+          'raw': utils.base64_encode('\n'.join(RAW_LINES[:2] + [RAW_LINES[8]])),
+          'classification.type': 'botnet drone',
+          'classification.identifier': 'mirai mirai bot',
+          'malware.name': 'mirai mirai bot',
+          }
 
 
 class TestCymruCAPProgramParserBot(test.BotTestCase, unittest.TestCase):

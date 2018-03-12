@@ -36,6 +36,10 @@ CHANGELOG
 - Bots can specify a static method `check(parameters)` which can perform individual checks specific to the bot.
   These functions will be called by `intelmqctl check` if the bot is configured with the given parameters
 - Add `RewindableFileHandle` to utils making handling of CSV files more easy (optionally)
+- lib/bot: top level bot parameters (description, group, module, name) are exposed as members of the class.
+- lib/pipeline:
+ * you may now define more than one destination queues path the bot should pass the message to, see [Pipelines](https://github.com/certtools/intelmq/blob/develop/docs/User-Guide.md#pipeline-configuration) (#1088, #1190).
+ * the special path `"_on_error"` can be used to pass messages to differnt queues in case of processing errors (#1133).
 
 ### Bots
 #### Collectors
@@ -67,10 +71,14 @@ CHANGELOG
 - added `intelmq.bots.parsers.sucuri.parser`
 - added `intelmq.bots.parsers.malwareurl.parser`
 - added `intelmq.bots.parsers.threatminer.parser`
+- added `intelmq.bots.parsers.webinspektor.parser`
 
 #### Experts
 - Added sieve expert for filtering and modifying events (#1083)
-- `bots.experts.modify` default ruleset: added avalanche rule.
+- `bots.experts.modify`
+ * default ruleset: added avalanche rule.
+ * new parameter `case_sensitive` (default: True)
+- Added wait expert for sleeping
 
 ### Harmonization
 - Renamed `JSON` to `JSONDict` and added a new type `JSON`. `JSONDict` saves data internally as JSON, but acts like a dictionary. `JSON` accepts any valid JSON.
@@ -85,6 +93,7 @@ CHANGELOG
 ### Contrib
 
 ### Core
+- lib/harmonization: FQDN validation now handles None correctly (raised an Exception).
 
 ### Harmonization
 
@@ -92,6 +101,9 @@ CHANGELOG
 #### Collectors
 
 #### Parsers
+- Shadowserver parser:
+ * The fields `url` and `http_url` now handle HTTP URL paths and HTTP requests for all feeds (#1204).
+ * The conversion function `validate_fqdn` now handles empty strings correctly.
 
 #### Experts
 

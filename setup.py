@@ -60,12 +60,6 @@ setup(
     install_requires=REQUIRES,
     test_suite='intelmq.tests',
     packages=find_packages(),
-    package_data={'intelmq': [
-        'etc/*.conf',
-        'bots/BOTS',
-        'bots/experts/modify/examples/*.conf',
-    ]
-    },
     include_package_data=True,
     url='https://github.com/certtools/intelmq/',
     license='AGPLv3',

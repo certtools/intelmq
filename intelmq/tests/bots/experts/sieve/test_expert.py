@@ -884,6 +884,36 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, event)
 
+    def test_network_host_bits_list_match(self):
+        """ Test if range list of networks with host bits set match operator. """
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__),
+                                              'test_sieve_files/test_ip_range_list_match.sieve')
+
+        # positive test
+        event = EXAMPLE_INPUT.copy()
+        event['source.ip'] = '169.254.2.1'
+        expected = event.copy()
+        expected['comment'] = 'bogon'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # positive test
+        event = EXAMPLE_INPUT.copy()
+        event['source.ip'] = '169.254.3.1'
+        expected = event.copy()
+        expected['comment'] = 'bogon'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # negative test
+        event = EXAMPLE_INPUT.copy()
+        event['source.ip'] = '169.255.2.1'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, event)
+
     def test_comments(self):
         """ Test comments in sieve file."""
         self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_comments.sieve')
