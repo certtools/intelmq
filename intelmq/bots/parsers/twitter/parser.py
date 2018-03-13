@@ -63,7 +63,7 @@ class TwitterParserBot(ParserBot):
 
     def get_domain(self, address):
         try:
-            dom = re.search('(//|^)([a-z0-9.-]*[a-z]\.[a-z]+?(?:[/:].*|$))', address).group(2)
+            dom = re.search('(//|^)([a-z0-9.-]*[a-z]\.[a-z][a-z-]*?(?:[/:].*|$))', address).group(2)
             if not self.in_whitelist(dom):
                 if get_tld(url_normalize(dom), fail_silently=True):
                     return url_normalize(dom)
@@ -76,7 +76,7 @@ class TwitterParserBot(ParserBot):
 
     def in_whitelist(self, domain: str) -> bool:
         for dom_clean in self.domain_whitelist:
-            if re.match(dom_clean, domain):
+            if re.search(dom_clean, domain):
                 return True
         return False
 
