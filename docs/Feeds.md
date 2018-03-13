@@ -43,6 +43,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `int
 - [URLVir](#urlvir)
 - [University of Toulouse](#university-of-toulouse)
 - [VXVault](#vxvault)
+- [WebInspektor](#webinspektor)
 - [ZoneH](#zoneh)
 
 <!-- /TOC -->
@@ -1528,6 +1529,27 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `int
 ### Parser
 
 * **Module:** intelmq.bots.parsers.vxvault.parser
+* **Configuration Parameters:**
+
+
+# WebInspektor
+
+## Unsafe sites
+
+* **Status:** on
+* **Revision:** 09-03-2018
+* **Description:** Latest detected unsafe sites.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.http.collector_http
+* **Configuration Parameters:**
+*  * `http_url`: `https://app.webinspector.com/public/recent_detections/`
+*  * `rate_limit`: `60`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.webinspektor.parser
 * **Configuration Parameters:**
 
 
