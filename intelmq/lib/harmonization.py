@@ -429,7 +429,7 @@ class IPAddress(GenericType):
     """
     Type for IP addresses, all families. Uses the ipaddress module.
 
-    Sanitation accepts strings and objects of ipaddress.IPv4Address and ipaddress.IPv4Address.
+    Sanitation accepts strings and objects of ipaddress.IPv4Address and ipaddress.IPv6Address.
 
     Valid values are only strings. 0.0.0.0 is explicitly not allowed.
     """
@@ -494,7 +494,7 @@ class IPNetwork(GenericType):
     """
     Type for IP networks, all families. Uses the ipaddress module.
 
-    Sanitation accepts strings and objects of ipaddress.IPv4Network and ipaddress.IPv4Network.
+    Sanitation accepts strings and objects of ipaddress.IPv4Network and ipaddress.IPv6Network.
     If host bits in strings are set, they will be ignored (e.g 127.0.0.1/32).
 
     Valid values are only strings.
