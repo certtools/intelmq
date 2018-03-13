@@ -17,6 +17,7 @@ CHANGELOG
 
 ### Contrib
 - contrib tool `feeds-config-generator` to automatically generate the collector and parser runtime and pipeline configurations.
+- Download and convert tool for malware family name mapping has been added.
 
 ### Core
 - use SIGTERM instead of SIGINT to stop bots (#981)
@@ -70,7 +71,7 @@ CHANGELOG
 
 #### Experts
 - Added sieve expert for filtering and modifying events (#1083)
-- `bots.experts.modify` default ruleset: added avalanche rule.
+- `bots.experts.modify` default rulesets: all malware name mappings have been migrated to the [Malware Name Mapping repository](https://github.com/certtools/malware_name_mapping) ruleset. See the new added contrib tool for download and conversion.
 
 ### Harmonization
 - Renamed `JSON` to `JSONDict` and added a new type `JSON`. `JSONDict` saves data internally as JSON, but acts like a dictionary. `JSON` accepts any valid JSON.
