@@ -348,6 +348,31 @@ See the README.md
 * `ssl_client_certificate`: path to client cert file
 * `ssl_client_certificate_key`: path to client cert key file
 
+* * *
+
+### Twitter
+
+Collects tweets from target_timelines. Up to tweet_count tweets from each user and up to timelimit back in time. The tweet text is sent separately and if allowed, links to pastebin are followed and the text sent in a separate report 
+
+#### Information:
+* `name:` intelmq.bots.collectors.twitter.collector_twitter
+* `lookup:` yes
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Collects tweets
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `target_timelines`: screen_names of twitter accounts to be followed
+* `tweet_count`: number of tweets to be taken from each account
+* `timelimit`: maximum age of the tweets collected in seconds
+* `follow_urls`: list of screen_names for which urls will be followed
+* `exclude_replies`: exclude replies of the followed screen_names
+* `include_rts`: whether to include retweets by given screen_name 
+* `consumer_key`: Twitter api login data
+* `consumer_secret`: Twitter api login data
+* `acces_token_key`: Twitter api login data
+* `access_token_secret`: Twitter api login data
 
 <a name="parsers"></a>
 ## Parsers
@@ -434,6 +459,19 @@ The information about the event could be better in many cases but as Cymru does 
 * `public:` no
 * `cache (redis db):` none
 * `description:` Parses data from full bogons feed.
+
+### Twitter
+
+#### Information:
+* `name:` intelmq.bots.parsers.twitter.parser
+* `public:` no
+* `cache (redis db):` none
+* `description:` Extracts urls from text, fuzzy, aimed at parsing tweets
+#### Configuration Parameters:
+
+* `domain_whitelist`: domains to be filetered out
+* `substitutions`: semicolon delimited list of even length of pairs of substitutions (for example: '[.];.;,;.' substitutes '[.]' for '.' and ',' for '.')
+* `classification_type: string with a valid classification type as defined in data harmonization
 
 <a name="experts"></a>
 ## Experts
