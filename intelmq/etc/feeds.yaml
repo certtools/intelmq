@@ -1,5 +1,21 @@
 ---
 providers:
+  WebInspektor:
+    Unsafe sites:
+      description: Latest detected unsafe sites.
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.http.collector_http
+          parameters:
+            http_url: https://app.webinspector.com/public/recent_detections/
+            rate_limit: 60
+        parser:
+          module: intelmq.bots.parsers.webinspektor.parser
+          parameters:
+      revision: 09-03-2018
+      status: on
+      documentation:
   Sucuri:
     Hidden IFrames:
       description: Latest hidden iframes identified on compromised web sites.
