@@ -47,6 +47,7 @@ class WaitExpertBot(Bot):
             time.sleep(self.sleep_time)
 
         self.send_message(event)
+        self.acknowledge_message()
 
 
 BOT = WaitExpertBot
