@@ -42,6 +42,7 @@ class WebinspektorParserBot(ParserBot):
                 event.add("classification.type", "blacklist")
                 index += 1
                 parser.feed(report_list[index])
+                event.add("classification.identifier", "other")
                 event.add("classification.taxonomy", parser.lsData)
                 event.add("raw", raw_url_line + report_list[index])
                 self.send_message(event)
