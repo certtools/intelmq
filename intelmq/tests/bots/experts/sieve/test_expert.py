@@ -925,6 +925,40 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, expected)
 
+    def test_named_queues(self):
+        """ Test == numeric match """
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__),
+                                              'test_sieve_files/test_named_queues.sieve')
+
+        # if match drop
+        numeric_match_true = EXAMPLE_INPUT.copy()
+        numeric_match_true['comment'] = "drop"
+        self.input_message = numeric_match_true
+        self.run_bot()
+        self.assertOutputQueueLen(0)
+
+
+        # if doesn't match keep
+        numeric_match_false = EXAMPLE_INPUT.copy()
+        numeric_match_false['comment'] = "keep without path"
+        self.input_message = numeric_match_false
+        self.run_bot()
+        self.assertMessageEqual(0, numeric_match_false)
+
+        # if doesn't match keep
+        numeric_match_false = EXAMPLE_INPUT.copy()
+        numeric_match_false['comment'] = "keep with path"
+        self.input_message = numeric_match_false
+        self.run_bot()
+        self.assertMessageEqual(0, numeric_match_false, path="other-way")
+
+        # if doesn't match keep
+        numeric_match_false = EXAMPLE_INPUT.copy()
+        numeric_match_false['comment'] = "default path"
+        self.input_message = numeric_match_false
+        self.run_bot()
+        self.assertMessageEqual(0, numeric_match_false, path="_default")
+
 
 
 if __name__ == '__main__':  # pragma: no cover

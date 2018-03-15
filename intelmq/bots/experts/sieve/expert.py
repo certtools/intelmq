@@ -93,7 +93,8 @@ class SieveExpertBot(Bot):
 
         # forwarding decision
         if procedure != Procedure.DROP:
-            self.send_message(event)
+            path = getattr(event, "path", "_default")
+            self.send_message(event, path=path)
 
         self.acknowledge_message()
 
@@ -227,7 +228,9 @@ class SieveExpertBot(Bot):
     def process_action(action, event):
         if action == 'drop':
             return Procedure.DROP
-        elif action == 'keep':
+        elif action.__class__.__name__ == 'KeepAction':
+            if action.path:
+                event.path = action.path
             return Procedure.KEEP
         elif action.__class__.__name__ == 'AddAction':
             if action.key not in event:

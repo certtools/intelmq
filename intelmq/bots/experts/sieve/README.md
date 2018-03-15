@@ -120,7 +120,7 @@ in the sieve file will be forwarded to the next bot in the pipeline, unless the
 already defined. If the key is not defined in the event, this action is ignored.
 Example:
 
-   ```modify feed.accuary = 50```
+   ```modify feed.accuracy = 50```
 
  * `remove` removes a key/value from the event. Action is ignored if the key is
  not defined in the event. Example:
@@ -130,6 +130,9 @@ Example:
  * `keep` marks the event to be forwarded to the next bot in the pipeline
  (same as the default behaviour), but in addition the sieve file processing is
  interrupted upon reaching this action.
+ It can have an optional parameter that specifies the path to appropriate named queue.
+
+   ```keep``` or  ```keep 'named-queue'```
 
  * `drop` marks the event to be dropped. The event will not be forwarded to the
  next bot in the pipeline. The sieve file processing is interrupted upon
