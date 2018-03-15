@@ -108,6 +108,7 @@ CHANGELOG
  * The conversion function `validate_fqdn` now handles empty strings correctly.
 
 #### Experts
+* modify expert: added rule for 'iotrdp' in Spamhaus CERT feed.
 
 #### Outputs
 
@@ -118,6 +119,7 @@ CHANGELOG
 ### Tests
 
 ### Packaging
+* Static data is now included in source tarballs, development files are excluded
 
 ### Known issues
 
