@@ -302,20 +302,20 @@ sinkhole_http_drone = {
         ('source.tor_node', 'tor', set_tor_node),
         ('source.reverse_dns', 'hostname'),
         ('destination.port', 'dst_port'),
+        ('destination.fqdn', 'http_host', validate_fqdn),  # could also be an IP
+        ('extra.', 'http_referer', validate_to_none),
+        ('extra.', 'http_referer_ip', validate_ip),
+        ('extra.', 'http_referer_asn', convert_int),
+        ('extra.', 'http_referer_geo', validate_to_none),
         ('destination.ip', 'dst_ip', validate_ip),
         ('destination.asn', 'dst_asn'),
         ('destination.geolocation.cc', 'dst_geo'),
-        ('destination.fqdn', 'http_host', validate_fqdn),  # could also be an IP
         # Other known fields which will go into "extra"
         ('user_agent', 'http_agent'),
         ('os.name', 'p0f_genre'),
         ('os.version', 'p0f_detail'),
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
-        # http_referer
-        # http_referer_ip
-        # http_referer_asn
-        # http_referer_geo
     ],
     'constant_fields': {
         # The feed does not include explicit information about the
@@ -343,6 +343,11 @@ microsoft_sinkhole = {
         ('source.tor_node', 'tor', set_tor_node),
         ('source.reverse_dns', 'hostname'),
         ('destination.port', 'dst_port'),
+        ('destination.fqdn', 'http_host'),
+        ('extra.', 'http_referer', validate_to_none),
+        ('extra.', 'http_referer_ip', validate_ip),
+        ('extra.', 'http_referer_asn', convert_int),
+        ('extra.', 'http_referer_geo', validate_to_none),
         ('destination.ip', 'dst_ip', validate_ip),
         ('destination.fqdn', 'http_host'),
         ('destination.asn', 'dst_asn'),
@@ -354,10 +359,6 @@ microsoft_sinkhole = {
         # Other known fields which will go into "extra"
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
-        ('extra.', 'http_referer', validate_to_none),
-        # http_referer_ip
-        # http_referer_asn
-        # http_referer_geo
     ],
     'constant_fields': {
         'classification.type': 'botnet drone',
@@ -1076,8 +1077,8 @@ spam_url = {
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
         ('extra.', 'subject', validate_to_none),
-        ('extra.', 'ip', validate_to_none),
-        ('extra.', 'src_asn', validate_to_none),
+        ('extra.', 'ip', validate_ip),
+        ('extra.', 'src_asn', convert_int),
         ('extra.', 'src_geo', validate_to_none),
         ('extra.', 'src_region', validate_to_none),
         ('extra.', 'src_city', validate_to_none),
