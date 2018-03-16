@@ -42,6 +42,7 @@ TODOs:
 
 """
 import intelmq.lib.harmonization as harmonization
+import re
 
 
 def get_feed(feedname, logger):
@@ -81,9 +82,9 @@ def get_feed(feedname, logger):
         "Open-XDMCP": open_xdmcp,
         "Sandbox-URL": sandbox_url,
         "Sinkhole-HTTP-Drone": sinkhole_http_drone,
-        "Sinkhole6-HTTP-Drone": sinkhole6_http_drone,
+        "IPv6-Sinkhole-HTTP-Drone": ipv6_sinkhole_http_drone,
         "Spam-URL": spam_url,
-        "SSL-FREAK-Vulnerable-Servers": ssl_freak_vulnerable_servers,  # Only differs in a few extra fields
+        "SSL-FREAK-Vulnerable-Servers": ssl_freak_vulnerable_servers,
         "SSL-POODLE-Vulnerable-Servers": ssl_poodle_vulnerable_servers,
         "Vulnerable-ISAKMP": vulnerable_isakmp,
     }
@@ -155,9 +156,18 @@ def convert_hostname_and_url(value, row):
 def convert_httphost_and_url(value, row):
     """
     URLs are split into hostname and path, we can also guess the protocol here.
+    With some reports, url/http_url holds only the path, with others the full HTTP request.
     """
-    if row['http_host'] and row['url']:
-        return 'http://' + row['http_host'] + row['url']
+    if "url" in row:
+        if row['http_host'] and row['url']:
+            path = re.sub(r'^[^/]*', '', row['url'])
+            path = re.sub(r'\s.*$', '', path)
+            return 'http://' + row['http_host'] + path
+    elif "http_url" in row:
+        if row['http_host'] and row['http_url']:
+            path = re.sub(r'^[^/]*', '', row['http_url'])
+            path = re.sub(r'\s.*$', '', path)
+            return 'http://' + row['http_host'] + path
     return value
 
 
@@ -186,7 +196,7 @@ def validate_ip(value):
 
 
 def validate_fqdn(value):
-    if harmonization.FQDN.is_valid(value, sanitize=True):
+    if value and harmonization.FQDN.is_valid(value, sanitize=True):
         return value
 
 
@@ -199,7 +209,6 @@ open_mdns = {
     ],
     'optional_fields': [
         ('source.reverse_dns', 'hostname'),
-        # ('classification.identifier', 'tag'),  # This will be 'mdns' in constant fields
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
@@ -309,7 +318,7 @@ sinkhole_http_drone = {
         ('destination.ip', 'dst_ip', validate_ip),
         ('destination.asn', 'dst_asn'),
         ('destination.geolocation.cc', 'dst_geo'),
-        ('destination.fqdn', 'http_host'),
+        ('destination.fqdn', 'http_host', validate_fqdn),  # could also be an IP
         # Other known fields which will go into "extra"
         ('user_agent', 'http_agent'),
         ('os.name', 'p0f_genre'),
@@ -333,7 +342,7 @@ sinkhole_http_drone = {
 }
 
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Sinkhole6-HTTP-Drone
-sinkhole6_http_drone = {
+ipv6_sinkhole_http_drone = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'src_ip'),
@@ -349,7 +358,7 @@ sinkhole6_http_drone = {
         ('destination.geolocation.region', 'dst_region'),
         ('destination.port', 'dst_port'),
         ('protocol.transport', 'protocol'),
-        ('extra.', 'tag', validate_to_none),
+        ('malware.name', 'tag'),
         ('source.reverse_dns', 'hostname'),
         ('extra.', 'sysdesc', validate_to_none),
         ('extra.', 'sysname', validate_to_none),
@@ -365,8 +374,8 @@ sinkhole6_http_drone = {
     ],
     'constant_fields': {
         'classification.type': 'botnet drone',
-        'classification.taxonomy': 'Malicious Code',
-        'classification.identifier': 'botnet',
+        'classification.taxonomy': 'malicious code',
+        'classification.identifier': 'infected system',
     },
 }
 
@@ -428,7 +437,7 @@ open_redis = {
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
         ('extra.', 'tag'),
-        ('os.name', 'os'),
+        ('extra.os.name', 'os'),
         # version
         # git_sha1
         # git_dirty_flag
@@ -722,7 +731,7 @@ open_netbios_nameservice = {
     'constant_fields': {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'vulnerable',
-        'classification.identifier': 'open-netbios',
+        'classification.identifier': 'open-netbios-nameservice',
         'protocol.application': 'netbios',
     },
 }
@@ -833,7 +842,7 @@ ssl_freak_vulnerable_servers = {
     'constant_fields': {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'vulnerable',
-        'classification.identifier': 'SSL-FREAK',
+        'classification.identifier': 'ssl-freak',
         'protocol.application': 'https',
     },
 }
@@ -856,7 +865,7 @@ ssl_poodle_vulnerable_servers = {
     'constant_fields': {
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'vulnerable',
-        'classification.identifier': 'SSL-POODLE',
+        'classification.identifier': 'ssl-poodle',
         'protocol.application': 'https',
     },
 }
@@ -907,7 +916,7 @@ drone = {
         ('destination.geolocation.cc', 'cc_geo'),
         ('destination.ip', 'cc_ip', validate_ip),
         ('destination.port', 'cc_port'),
-        ('destination.fqdn', 'cc_dns'),
+        ('destination.fqdn', 'cc_dns', validate_fqdn),
         ('destination.url', 'url', convert_hostname_and_url, True),
         ('malware.name', 'infection'),
         ('protocol.application', 'application'),
@@ -924,6 +933,9 @@ drone = {
         ('os.version', 'p0f_detail'),
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
+        ('extra.destination.naics', 'cc_naics', invalidate_zero),
+        ('extra.destination.sic', 'cc_sic', invalidate_zero),
+        ('extra.destination.sector', 'cc_sector', validate_to_none),
     ],
     'constant_fields': {
         'classification.type': 'botnet drone',
@@ -1157,7 +1169,6 @@ vulnerable_isakmp = {
     'optional_fields': [
         ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
-        # ('classification.identifier', 'tag'),  # This will be 'openike' in constant fields
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
@@ -1192,7 +1203,6 @@ accessible_rdp = {
     ],
     'optional_fields': [
         ('source.reverse_dns', 'hostname'),
-        # ('classification.identifier', 'tag'),  # This will be 'openrdp' in constant fields
         ('extra.', 'handshake', validate_to_none),
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
@@ -1234,7 +1244,6 @@ accessible_smb = {
     ],
     'optional_fields': [
         ('source.reverse_dns', 'hostname'),
-        # ('classification.identifier', 'tag'),  # This will be 'opensmb' in constant fields
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
@@ -1249,8 +1258,8 @@ accessible_smb = {
         'protocol.transport': 'tcp',
         'protocol.application': 'smb',
         'classification.type': 'vulnerable service',
-        'classification.identifier': 'opensmb',
-        'classification.taxonomy': 'Vulnerable',
+        'classification.taxonomy': 'vulnerable',
+        'classification.identifier': 'open-smb',
     },
 }
 
@@ -1264,7 +1273,6 @@ open_ldap = {
     'optional_fields': [
         ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
-        # ('classification.identifier', 'tag'),  # This will be 'openldap' in constant fields
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
@@ -1414,7 +1422,7 @@ accessible_vnc = {
         'protocol.application': 'vnc',
         'classification.type': 'vulnerable service',
         'classification.taxonomy': 'vulnerable',
-        'classification.identifier': 'accessible-vnc',
+        'classification.identifier': 'open-vnc',
     }
 }
 
@@ -1427,7 +1435,6 @@ accessible_cisco_smart_install = {
     'optional_fields': [
         ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
-        # ('classification.identifier', 'tag'),  # This will be 'accessible-cisco-smart-install' in constant fields
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
@@ -1460,13 +1467,13 @@ drone_brute_force = {
         ('destination.asn', 'dest_asn'),
         ('destination.geolocation.cc', 'dest_geo'),
         ('destination.fqdn', 'dest_dns'),
-        ('extra.', 'service', validate_to_none),
+        ('protocol.application', 'service'),
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
-        ('extra.', 'dest_naics', invalidate_zero),
-        ('extra.', 'dest_sic', invalidate_zero),
+        ('extra.destination.naics', 'dest_naics', invalidate_zero),
+        ('extra.destination.sic', 'dest_sic', invalidate_zero),
         ('extra.', 'sector', validate_to_none),
-        ('extra.', 'dest_sector', validate_to_none),
+        ('extra.destination.sector', 'dest_sector', validate_to_none),
         ('extra.', 'public_source', validate_to_none),
         ('extra.', 'start_time', validate_to_none),
         ('extra.', 'end_time', validate_to_none),
