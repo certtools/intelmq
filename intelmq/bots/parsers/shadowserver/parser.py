@@ -145,6 +145,10 @@ class ShadowserverParserBot(ParserBot):
                     extra[shadowkey] = value
                     fields.remove(shadowkey)
                     continue
+                elif intelmqkey.startswith('extra.'):
+                    extra[intelmqkey.replace('extra.', '', 1)] = value
+                    fields.remove(shadowkey)
+                    continue
                 try:
                     event.add(intelmqkey, value)
                     fields.remove(shadowkey)
