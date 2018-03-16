@@ -106,6 +106,9 @@ CHANGELOG
 - Shadowserver parser:
  * The fields `url` and `http_url` now handle HTTP URL paths and HTTP requests for all feeds (#1204).
  * The conversion function `validate_fqdn` now handles empty strings correctly.
+ * Feed 'drone (hadoop)':
+   * Correct validation of field `cc_dns`, will now only be added as `destination.fqdn` if correct FQDN, otherwise ignored. Previously this field could be saved in extra containing an IP address.
+   * Adding more mappings for added columns.
 
 #### Experts
 * modify expert: added rule for 'iotrdp' in Spamhaus CERT feed.
