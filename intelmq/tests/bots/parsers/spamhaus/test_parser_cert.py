@@ -81,15 +81,14 @@ EXAMPLE_EVENTS_PARTS = [{'raw': 'MTA5LjEyNi42NC4yLEFTMTI2MzUsQVQsMTQ0MTAwODk3M'
                          'protocol.transport': 'tcp',
                          },
                         {'raw': utils.base64_encode(FILE_LINES[-1]),
-                         'source.ip': '203.0.113.4',
-                         'time.source': '2017-11-06T08:08:30+00:00',
-                         'malware.name': 'locky',
-                         'destination.ip': '198.18.0.19',
-                         'destination.fqdn': 'example.invalid',
-                         'destination.port': 80,
+                         'source.ip': '198.51.100.54',
+                         'source.asn': 8559,
+                         'time.source': '2018-03-03T13:41:36+00:00',
+                         'classification.type': 'spam',
+                         'classification.identifier': 'openrelay',
+                         'destination.port': 25,
                          'source.geolocation.cc': 'AT',
                          'protocol.transport': 'tcp',
-                         'extra': '{"destination.local_port": 36288}',
                          }]
 
 
@@ -107,8 +106,9 @@ class TestSpamhausCERTParserBot(test.BotTestCase, unittest.TestCase):
         """ Test if correct Events have been produced. """
         self.run_bot()
         for position, event in enumerate(EXAMPLE_EVENTS_PARTS):
-            event.update(EVENT_TEMPL)
-            self.assertMessageEqual(position, event)
+            event_ = EVENT_TEMPL.copy()
+            event_.update(event)
+            self.assertMessageEqual(position, event_)
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()

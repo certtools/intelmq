@@ -6,6 +6,18 @@ See the changelog for a full list of changes.
 1.0.4 Bugfix release (unreleased)
 ---------------------------------
 
+### Postgres databases
+Use the following statement carefully to upgrade your database.
+Adapt your feedname in the query to the one used in your setup.
+```SQL
+UPDATE events
+   SET "classification.taxonomy" = 'vulnerable', "classification.type" = 'vulnerable service', "classification.identifier" = 'openrdp'
+   WHERE "malware.name" = 'iotrdp' AND "feed.name" = "Spamhaus CERT";
+UPDATE events
+   SET "classification.taxonomy" = 'abusive content', "classification.type" = 'spam', "classification.identifier" = 'openrelay'
+   WHERE "malware.name" = 'openrelay' AND "feed.name" = "Spamhaus CERT";
+```
+
 1.0.3 Bugfix release (2018-02-05)
 ---------------------------------
 ### Configuration
