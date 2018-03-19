@@ -7,7 +7,9 @@ CHANGELOG
 ### Contrib
 
 ### Core
-- lib/harmonization: FQDN validation now handles None correctly (raised an Exception).
+- lib/harmonization:
+ * FQDN validation now handles None correctly (raised an Exception).
+ * Fixed several sanitize() methods, the generic sanitation method were called by is_valid, not the sanitize methods (#1219).
 
 ### Harmonization
 
