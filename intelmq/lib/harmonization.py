@@ -95,7 +95,6 @@ class Base64(GenericType):
 
     @staticmethod
     def sanitize(value):
-        value = GenericType().sanitize(value)
         value = utils.base64_encode(value)
         return value
 
