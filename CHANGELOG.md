@@ -23,7 +23,6 @@ CHANGELOG
    * Adding more mappings for added columns.
 
 #### Experts
-* modify expert: added rule for 'iotrdp' in Spamhaus CERT feed.
 
 #### Outputs
 
