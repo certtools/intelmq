@@ -95,7 +95,9 @@ CHANGELOG
 ### Contrib
 
 ### Core
-- lib/harmonization: FQDN validation now handles None correctly (raised an Exception).
+- lib/harmonization:
+ * FQDN validation now handles None correctly (raised an Exception).
+ * Fixed several sanitize() methods, the generic sanitation method were called by is_valid, not the sanitize methods (#1219).
 
 ### Harmonization
 
@@ -109,9 +111,11 @@ CHANGELOG
  * Feed 'drone (hadoop)':
    * Correct validation of field `cc_dns`, will now only be added as `destination.fqdn` if correct FQDN, otherwise ignored. Previously this field could be saved in extra containing an IP address.
    * Adding more mappings for added columns.
+- Spamhaus CERT parser:
+ * fix parsing for bot names 'openrelay' and 'iotdrp'.
+- CleanM phishing parser: handle FQDNs in IP column (#1162).
 
 #### Experts
-* modify expert: added rule for 'iotrdp' in Spamhaus CERT feed.
 
 #### Outputs
 
@@ -120,6 +124,7 @@ CHANGELOG
 ### Tools
 
 ### Tests
+- lib/bot: No dumps will be written during tests (#934).
 
 ### Packaging
 * Static data is now included in source tarballs, development files are excluded

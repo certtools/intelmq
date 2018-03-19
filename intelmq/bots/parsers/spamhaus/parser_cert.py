@@ -59,6 +59,9 @@ class SpamhausCERTParserBot(Bot):
             if malware == 'openrelay':
                 event.add('classification.type', 'spam')
                 event.add('classification.identifier', 'openrelay')
+            elif malware == 'iotrdp':
+                event.add('classification.type', 'vulnerable service')
+                event.add('classification.identifier', 'openrdp')
             else:
                 event.add('malware.name', malware)
                 event.add('classification.type', 'botnet drone')

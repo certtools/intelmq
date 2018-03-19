@@ -82,7 +82,6 @@ class Base64(GenericType):
     @staticmethod
     def is_valid(value, sanitize=False):
         if sanitize:
-            value = GenericType().sanitize(value)
             value = Base64().sanitize(value)
 
         try:
@@ -172,7 +171,6 @@ class ClassificationType(GenericType):
     @staticmethod
     def is_valid(value, sanitize=False):
         if sanitize:
-            value = GenericType().sanitize(value)
             value = ClassificationType().sanitize(value)
 
         if not GenericType().is_valid(value):
@@ -201,7 +199,6 @@ class DateTime(GenericType):
     @staticmethod
     def is_valid(value, sanitize=False):
         if sanitize:
-            value = GenericType().sanitize(value)
             value = DateTime().sanitize(value)
 
         if not GenericType().is_valid(value):
@@ -377,7 +374,6 @@ class FQDN(GenericType):
     @staticmethod
     def is_valid(value, sanitize=False):
         if sanitize:
-            value = GenericType().sanitize(value)
             value = FQDN().sanitize(value)
 
         if not GenericType().is_valid(value):
@@ -401,6 +397,10 @@ class FQDN(GenericType):
 
     @staticmethod
     def sanitize(value):
+        try:
+            value = GenericType().sanitize(value)
+        except ValueError:
+            return
         if not isinstance(value, str):
             return
         value = value.strip('.')
@@ -496,7 +496,6 @@ class IPAddress(GenericType):
     @staticmethod
     def is_valid(value, sanitize=False):
         if sanitize:
-            value = GenericType().sanitize(value)
             value = IPAddress().sanitize(value)
 
         if not GenericType().is_valid(value):
@@ -516,6 +515,7 @@ class IPAddress(GenericType):
     def sanitize(value):
 
         try:
+            value = GenericType().sanitize(value)
             network = ipaddress.ip_network(str(value))
         except ValueError:
             return None
@@ -562,7 +562,6 @@ class IPNetwork(GenericType):
     @staticmethod
     def is_valid(value, sanitize=False):
         if sanitize:
-            value = GenericType().sanitize(value)
             value = IPNetwork().sanitize(value)
 
         if not GenericType().is_valid(value):
@@ -579,6 +578,7 @@ class IPNetwork(GenericType):
     def sanitize(value):
 
         try:
+            value = GenericType().sanitize(value)
             value = str(ipaddress.ip_network(str(value), strict=False))
         except ValueError:
             return None
@@ -713,7 +713,6 @@ class String(GenericType):
     def is_valid(value, sanitize=False):
         if sanitize:
             value = GenericType().sanitize(value)
-            value = String().sanitize(value)
 
         if not GenericType().is_valid(value):
             return False
@@ -740,7 +739,6 @@ class URL(GenericType):
     @staticmethod
     def is_valid(value, sanitize=False):
         if sanitize:
-            value = GenericType().sanitize(value)
             value = URL().sanitize(value)
 
         if not GenericType().is_valid(value):
