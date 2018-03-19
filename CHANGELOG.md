@@ -25,6 +25,7 @@ CHANGELOG
    * Adding more mappings for added columns.
 - Spamhaus CERT parser:
  * fix parsing for bot names 'openrelay' and 'iotdrp'.
+- CleanM phishing parser: handle FQDNs in IP column (#1162).
 
 #### Experts
 

@@ -130,6 +130,9 @@ class CleanMXParserBot(ParserBot):
                 if key == "source.fqdn" and event.is_valid('source.ip', value):
                     continue
 
+                if key == "source.ip" and event.is_valid('source.fqdn', value):
+                    continue
+
                 if key == "time.source":
                     value = value + " UTC"
 
