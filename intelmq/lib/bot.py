@@ -390,7 +390,7 @@ class Bot(object):
             self.__source_pipeline.acknowledge()
 
     def _dump_message(self, error_traceback, message: dict):
-        if message is None:
+        if message is None or getattr(self.parameters, 'testing', False):
             return
 
         self.logger.info('Dumping message from pipeline to dump file.')

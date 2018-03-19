@@ -35,6 +35,7 @@ CHANGELOG
 ### Tools
 
 ### Tests
+- lib/bot: No dumps will be written during tests (#934).
 
 ### Packaging
 * Static data is now included in source tarballs, development files are excluded
