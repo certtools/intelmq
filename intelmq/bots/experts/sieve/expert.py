@@ -10,9 +10,9 @@ import os
 import re
 
 import intelmq.lib.exceptions as exceptions
-from intelmq.lib.bot import Bot
 from intelmq import HARMONIZATION_CONF_FILE
 from intelmq.lib import utils
+from intelmq.lib.bot import Bot
 
 try:
     import textx.model
@@ -228,10 +228,10 @@ class SieveExpertBot(Bot):
     def process_action(action, event):
         if action == 'drop':
             return Procedure.DROP
-        elif action.__class__.__name__ == 'KeepAction':
-            if action.path:
-                event.path = action.path
+        elif action == 'keep':
             return Procedure.KEEP
+        elif action.__class__.__name__ == 'PathAction':
+            event.path = action.path
         elif action.__class__.__name__ == 'AddAction':
             if action.key not in event:
                 event.add(action.key, action.value)

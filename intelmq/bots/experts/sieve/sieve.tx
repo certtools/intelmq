@@ -62,13 +62,15 @@ NumericValueList: '[' values+=SingleNumericValue[','] ']' ;
 
 Action: action=DropAction
     | ( action=KeepAction
+        | action=PathAction
         | action=AddAction
         | action=AddForceAction
         | action=UpdateAction
         | action=RemoveAction
       );
 DropAction: 'drop';
-KeepAction: 'keep' path=STRING?;
+KeepAction: 'keep';
+PathAction: 'path' path=STRING;
 AddAction: 'add' key=Key '=' value=STRING;              // add key/value without overwriting existing key
 AddForceAction: 'add!' key=Key '=' value=STRING;        // add key/value, overwriting existing key
 UpdateAction: 'update' key=Key '=' value=STRING;        // update key/value, do not create if not exists

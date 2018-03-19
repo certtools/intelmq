@@ -3,7 +3,8 @@ if comment == "keep without path" {
 }
 
 if comment == "keep with path" {
-    keep "other-way"
+    path "other-way"
+    keep
 }
 
 if comment == "drop" {
