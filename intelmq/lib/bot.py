@@ -381,7 +381,13 @@ class Bot(object):
         return self.__current_message
 
     def acknowledge_message(self):
-        self.__source_pipeline.acknowledge()
+        """
+        Acknowledges that the last message has been processed, if any.
+
+        For bots without source pipeline (collectors), this is a no-op.
+        """
+        if self.__source_pipeline:
+            self.__source_pipeline.acknowledge()
 
     def _dump_message(self, error_traceback, message: dict):
         if message is None:
