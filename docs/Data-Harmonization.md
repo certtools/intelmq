@@ -96,14 +96,17 @@ The taxonomy can be automatically added by the taxonomy expert bot based on the 
 |dropzone|information content Security|This IOC refers to place where the compromized machines store the stolen user data.|
 |exploit|intrusion attempts|An exploit is often executed through a malicious URL.|
 |ids alert|intrusion attempts|IOCs based on a sensor network. This is a generic IOC denomination, should it be difficult to reliably denote the exact type of activity involved for example due to an anecdotal nature of the rule that triggered the alert.|
+|leak|information content security|IOCs relating to leaked credentials or personal data.|
 |malware configuration|malicious code|This is a resource which updates botnet drones with a new configuration.|
 |malware|malicious code|A URL is the most common resource with reference to malware binary distribution.|
+|other|Other|All IOCs that can not be put in any other taxonomy.|
 |phishing|fraud|This IOC most often refers to a URL, which is phishing for user credentials.|
 |proxy|other|This refers to the use of proxies from inside your network.|
 |ransomware|malicious code|This IOC refers to a specific type of compromized machine, where the computer has been hijacked for ransom by the criminals.|
 |scanner|information gathering|This IOC refers to port scanning activity specifically.|
 |spam|abusive content|This IOC refers to resources, which make up a SPAM infrastructure, be it a harvester, dictionary attacker, URL etc.|
 |test|test|This is a value for testing purposes.|
+|tor|Other|This IOC refers to incidents related to TOR network infrastructure.|
 |unknown|other|unknown events|
 |vulnerable service|vulnerable|This attribute refers to a badly configured or vulnerable network service, which may be abused by a third party. For example, these services relate to open proxies, open dns resolvers, network time servers (ntp) or character generation services (chargen), simple network management services (snmp). In addition, to specify the network service and its potential abuse, one should use the protocol, destination port and description attributes for that purpose respectively.|
 
