@@ -165,6 +165,31 @@ This configuration is used by each bot to load the source pipeline and destinati
 }
 ```
 
+<<<<<<< HEAD
+=======
+Note that `destination-queues` contains one of the following values:
+* None
+* string
+* list of strings (as in the template above)
+* dict of either strings or lists for complex expert bots:
+
+```
+"destination-queues": {
+    "_default": "<first destination pipeline name>",
+    "_on_error": "<optional destination pipeline name in case of errors>",
+    "other-path": [
+        "<second destination pipeline name>",
+        "<third destination pipeline name>",
+        ...
+        ],
+    ...
+    }
+
+```
+In that case, bot will be able to send the message to one of defined paths. The path `"_default"` is used if none is not specified.
+In case of errors during processing, and the optional path `"_on_error"` is specified, the message will be sent to the pipelines given given as on-error.
+
+>>>>>>> sieve-named-queues
 **Example:**
 ```
 {

@@ -10,9 +10,9 @@ import os
 import re
 
 import intelmq.lib.exceptions as exceptions
-from intelmq.lib.bot import Bot
 from intelmq import HARMONIZATION_CONF_FILE
 from intelmq.lib import utils
+from intelmq.lib.bot import Bot
 
 try:
     import textx.model
@@ -93,7 +93,8 @@ class SieveExpertBot(Bot):
 
         # forwarding decision
         if procedure != Procedure.DROP:
-            self.send_message(event)
+            path = getattr(event, "path", "_default")
+            self.send_message(event, path=path)
 
         self.acknowledge_message()
 
@@ -229,6 +230,8 @@ class SieveExpertBot(Bot):
             return Procedure.DROP
         elif action == 'keep':
             return Procedure.KEEP
+        elif action.__class__.__name__ == 'PathAction':
+            event.path = action.path
         elif action.__class__.__name__ == 'AddAction':
             if action.key not in event:
                 event.add(action.key, action.value)

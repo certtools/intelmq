@@ -37,7 +37,9 @@ CHANGELOG
   These functions will be called by `intelmqctl check` if the bot is configured with the given parameters
 - Add `RewindableFileHandle` to utils making handling of CSV files more easy (optionally)
 - lib/bot: top level bot parameters (description, group, module, name) are exposed as members of the class.
-- you may now define more than one destination queues path the bot should pass the message to, see [Pipelines](https://github.com/certtools/intelmq/blob/develop/docs/User-Guide.md#pipeline-configuration)
+- lib/pipeline:
+ * you may now define more than one destination queues path the bot should pass the message to, see [Pipelines](https://github.com/certtools/intelmq/blob/develop/docs/User-Guide.md#pipeline-configuration) (#1088, #1190).
+ * the special path `"_on_error"` can be used to pass messages to differnt queues in case of processing errors (#1133).
 
 ### Bots
 #### Collectors
@@ -52,6 +54,7 @@ CHANGELOG
   - Empty parameters `attachment_regex` and `url_regex` handled.
 - `bots.collectors.http.collector_http`: Ability to optionally use the current time in parameter `http_url`, added parameter `http_url_formatting`.
 - `bots.collectors.stomp.collector`: Heartbeat timeout is now logged with log level info instead of warning.
+- added `intelmq.bots.collectors.twitter.collector_twitter`
 
 #### Parsers
 - changed feednames in `bots.parsers.shadowserver`. Please refer to it's README for the exact changes.
@@ -69,9 +72,12 @@ CHANGELOG
 - added `intelmq.bots.parsers.sucuri.parser`
 - added `intelmq.bots.parsers.malwareurl.parser`
 - added `intelmq.bots.parsers.threatminer.parser`
+- added `intelmq.bots.parsers.webinspektor.parser`
+- added `intelmq.bots.parsers.twitter.parser`
 
 #### Experts
 - Added sieve expert for filtering and modifying events (#1083)
+ * capable of distributing the event to appropriate named queues
 - `bots.experts.modify`
  * default ruleset: added avalanche rule.
  * new parameter `case_sensitive` (default: True)
