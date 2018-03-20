@@ -103,6 +103,9 @@ The taxonomy can be automatically added by the taxonomy expert bot based on the 
 |blacklist|Other|Some sources provide blacklists, which clearly refer to abusive behavior, such as spamming, but fail to denote the exact reason why a given identity has been blacklisted. The reason may be that the justification is anecdotal or missing entirely. This type should only be used if the typing fits the definition of a blacklist, but an event specific denomination is not possible for one reason or another.|
 |unknown|Other|unknown events|
 |test|Test|This is a value for testing purposes.|
+|other|Other|All IOCs that can not be put in any other taxonomy.|
+|tor|Other|This IOC refers to incidents related to TOR network infrastructure.|
+|leak|information content security|IOCs relating to leaked credentials or personal data.|
 
 Meaning of source, destination and local values for each classification type and possible identifiers. The identifier is often a normalized malware name, grouping many variants.
 
