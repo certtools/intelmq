@@ -37,6 +37,7 @@ CHANGELOG
 
 ### Tests
 - lib/bot: No dumps will be written during tests (#934).
+- lib/test: Expand regular expression on python version to match pre-releases (debian testing).
 
 ### Packaging
 * Static data is now included in source tarballs, development files are excluded
