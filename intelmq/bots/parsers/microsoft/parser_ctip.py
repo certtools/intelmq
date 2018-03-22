@@ -49,6 +49,8 @@ class MicrosoftCTIPParserBot(ParserBot):
                 value += ' UTC'
             if key == "hostname" and value == line["networkdestinationipv4"]:  # ignore IP in FQDN field
                 continue
+            if key == 'networkdestinationipv4' and value == '0.0.0.0':
+                continue
             event[MAPPING[key]] = value
         event.add('feed.accuracy',
                   event.get('feed.accuracy', 100) * line['confidence'] / 100,

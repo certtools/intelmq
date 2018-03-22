@@ -76,7 +76,7 @@
     "version": 1.5,
     "networksourceipv4": "198.51.100.100",
     "networksourceport": 42996,
-    "networkdestinationipv4": "203.0.113.220",
+    "networkdestinationipv4": "0.0.0.0",
     "networkdestinationport": 443,
     "isproductlicensed": "true",
     "ispartnershareable": "true",
