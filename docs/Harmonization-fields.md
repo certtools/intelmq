@@ -178,7 +178,7 @@ Sanitation accepts strings and everything float() accepts.
 
 Type for IP addresses, all families. Uses the ipaddress module.
 
-Sanitation accepts strings and objects of ipaddress.IPv4Address and ipaddress.IPv4Address.
+Sanitation accepts strings and objects of ipaddress.IPv4Address and ipaddress.IPv6Address.
 
 Valid values are only strings. 0.0.0.0 is explicitly not allowed.
 
