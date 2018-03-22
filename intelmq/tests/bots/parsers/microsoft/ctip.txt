@@ -1,0 +1,88 @@
+[
+  {
+    "indicatorthreattype": "Botnet",
+    "description": "Host is a member of Botnet B85-R2S",
+    "externalid": "B85-R2S",
+    "indicatorexpirationdatetime": "2018-02-08T09:38:56.6512034Z",
+    "tlplevel": "Green",
+    "confidence": 20,
+    "firstreporteddatetime": "2018-02-06T09:37:02",
+    "version": 1.5,
+    "networksourceipv4": "224.0.5.8",
+    "networksourceport": 1204,
+    "networkdestinationipv4": "198.18.18.18",
+    "networkdestinationport": 443,
+    "isproductlicensed": "true",
+    "ispartnershareable": "true",
+    "networksourceasn": "65536",
+    "additionalmetadata": [
+      "null"
+    ],
+    "hostname": "198.18.18.18",
+    "useragent": ""
+  },
+  {
+    "indicatorthreattype": "Botnet",
+    "description": "Host is a member of Botnet Conficker",
+    "externalid": "Conficker",
+    "indicatorexpirationdatetime": "2018-02-08T09:42:47.0218885Z",
+    "tlplevel": "Green",
+    "confidence": 100,
+    "firstreporteddatetime": "2018-02-06T09:38:46",
+    "version": 1.5,
+    "networksourceipv4": "10.0.0.5",
+    "networksourceport": 25310,
+    "networkdestinationipv4": "100.120.45.48",
+    "networkdestinationport": 80,
+    "isproductlicensed": "true",
+    "ispartnershareable": "true",
+    "networksourceasn": "64496",
+    "additionalmetadata": [
+      null
+    ],
+    "hostname": null,
+    "useragent": null
+  },
+  {
+    "indicatorthreattype": "Botnet",
+    "description": "Host is a member of Botnet B106-Jenxcus",
+    "externalid": "B106-Jenxcus",
+    "indicatorexpirationdatetime": "2018-02-08T09:40:33.8508873Z",
+    "tlplevel": "Green",
+    "confidence": 100,
+    "firstreporteddatetime": "2018-02-06T09:40:19",
+    "version": 1.5,
+    "networksourceipv4": "19.168.46.126",
+    "networksourceport": 49970,
+    "networkdestinationipv4": "203.0.113.212",
+    "networkdestinationport": 1085,
+    "isproductlicensed": "true",
+    "ispartnershareable": "true",
+    "networksourceasn": "64511",
+    "additionalmetadata": [
+      ""
+    ],
+    "hostname": "",
+    "useragent": ""
+  },
+  {
+    "indicatorthreattype": "Botnet",
+    "description": "Host is a member of Botnet B75-S12",
+    "externalid": "B75-S12",
+    "indicatorexpirationdatetime": "2018-02-08T09:43:33.3880146Z",
+    "tlplevel": "Green",
+    "confidence": 100,
+    "firstreporteddatetime": "2018-02-06T09:43:19",
+    "version": 1.5,
+    "networksourceipv4": "198.51.100.100",
+    "networksourceport": 42996,
+    "networkdestinationipv4": "203.0.113.220",
+    "networkdestinationport": 443,
+    "isproductlicensed": "true",
+    "ispartnershareable": "true",
+    "networksourceasn": "65536",
+    "additionalmetadata": ["any??thing\\x0000can\\x01be!here??"],
+    "hostname": "",
+    "useragent": ""
+  }
+]

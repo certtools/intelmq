@@ -327,6 +327,28 @@ Iterates over all blobs in all containers in an Azure storage.
 
 * * *
 
+### Microsoft Interflow
+
+Iterates over all files available by this API. Make sure to limit the files to be downloaded with the parameters, otherwise you will get a lot of data!
+The cache is used to remember which files have already been downloaded. Make sure the TTL is high enough, higher than `not_older_than`.
+
+#### Information:
+* `name:` intelmq.bots.collectors.microsoft.collector_interflow
+* `lookup:` yes
+* `public:` no
+* `cache (redis db):` 5
+* `description:` collect files from microsoft interflow using their API
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `api_key`: API generate in their portal
+* `file_match`: an optional regular expression to match file names
+* `not_older_than`: an optional relative (minutes) or absolute time expression to determine the oldest time of a file to be downloaded
+* `redis_cache_*` and especially `redis_cache_ttl`: Settings for the cache where file names of downloaded files are saved.
+
+* * *
+
 ### Stomp
 
 See the README.md
