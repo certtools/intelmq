@@ -954,10 +954,11 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                                         "version 2.0. Please use intelmq.bots.collectors."
                                         "stomp.collector instead for bot %r." % bot_id)
             if 'run_mode' in bot_config and bot_config['run_mode'] not in ['continuous', 'scheduled']:
+                message = "Bot %r has invalid `run_mode` %r. Must be 'continuous' or 'scheduled'."
                 if RETURN_TYPE == 'json':
-                    output.append(['warning', 'Bot %r has invalid `run_mode` %r.' % (bot_id, field)])
+                    output.append(['warning', message % (bot_id, bot_config['run_mode'])])
                 else:
-                    self.logger.warning('Bot %r has invalid `run_mode` %r.', bot_id, field)
+                    self.logger.warning(message, bot_id, bot_config['run_mode'])
                     retval = 1
             if bot_id not in files[PIPELINE_CONF_FILE]:
                 if RETURN_TYPE == 'json':
