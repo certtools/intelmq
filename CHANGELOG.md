@@ -23,6 +23,7 @@ CHANGELOG
  * Feed 'drone (hadoop)':
    * Correct validation of field `cc_dns`, will now only be added as `destination.fqdn` if correct FQDN, otherwise ignored. Previously this field could be saved in extra containing an IP address.
    * Adding more mappings for added columns.
+ * A lot of newly added fields and fixed conversions.
 - Spamhaus CERT parser:
  * fix parsing for bot names 'openrelay' and 'iotdrp'.
 - CleanM phishing parser: handle FQDNs in IP column (#1162).
