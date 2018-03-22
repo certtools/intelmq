@@ -39,7 +39,7 @@ EXAMPLE_EVENTS = [{
     'source.ip': '224.0.5.8',
     'source.port': 1204,
     'time.source': '2018-02-06T09:37:02+00:00',
-    "raw": base64_encode(json.dumps(EXAMPLE_PARSED[0], sort_keys=True)),
+    "raw": base64_encode(json.dumps([EXAMPLE_PARSED[0]], sort_keys=True)),
     }, {
     "__type": "Event",
     'classification.type': 'botnet drone',
@@ -57,7 +57,7 @@ EXAMPLE_EVENTS = [{
     'source.ip': '10.0.0.5',
     'source.port': 25310,
     'time.source': '2018-02-06T09:38:46+00:00',
-    "raw": base64_encode(json.dumps(EXAMPLE_PARSED[1], sort_keys=True)),
+    "raw": base64_encode(json.dumps([EXAMPLE_PARSED[1]], sort_keys=True)),
     }, {
     "__type": "Event",
     'classification.type': 'botnet drone',
@@ -75,7 +75,7 @@ EXAMPLE_EVENTS = [{
     'source.ip': '19.168.46.126',
     'source.port': 49970,
     'time.source': '2018-02-06T09:40:19+00:00',
-    "raw": base64_encode(json.dumps(EXAMPLE_PARSED[2], sort_keys=True)),
+    "raw": base64_encode(json.dumps([EXAMPLE_PARSED[2]], sort_keys=True)),
     }, {
     "__type": "Event",
     'classification.type': 'botnet drone',
@@ -93,7 +93,7 @@ EXAMPLE_EVENTS = [{
     'source.ip': '198.51.100.100',
     'source.port': 42996,
     'time.source': '2018-02-06T09:43:19+00:00',
-    "raw": base64_encode(json.dumps(EXAMPLE_PARSED[3], sort_keys=True)),
+    "raw": base64_encode(json.dumps([EXAMPLE_PARSED[3]], sort_keys=True)),
     },
     ]
 

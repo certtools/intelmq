@@ -31,10 +31,12 @@ MAPPING = {"additionalmetadata": "extra.additionalmetadata",
 class MicrosoftCTIPParserBot(ParserBot):
 
     parse = ParserBot.parse_json
-    recover_line = ParserBot.recover_line_json
+
+    def recover_line(self, line: dict):
+        return json.dumps([line], sort_keys=True)  # not applying formatting here
 
     def parse_line(self, line, report):
-        raw = json.dumps(line, sort_keys=True)  # not applying formatting here
+        raw = self.recover_line(line)
         if line['version'] != 1.5:
             raise ValueError('Data is in unknown format %r, only version 1.5 is supported.' % line['version'])
         if line['indicatorthreattype'] != 'Botnet':

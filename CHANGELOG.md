@@ -77,6 +77,7 @@ CHANGELOG
 - added `intelmq.bots.parsers.twitter.parser`
 - added `intelmq.bots.parsers.microsoft.parser_ctip`
  * ignore the invalid IP '0.0.0.0' for the destination
+ * fix the raw/dumped messages, did not contain the paling list previously.
 
 #### Experts
 - Added sieve expert for filtering and modifying events (#1083)
