@@ -34,6 +34,7 @@ CHANGELOG
 ### Documentation
 
 ### Tools
+- intelmqctl check: Fixed and extended message for 'run_mode' check.
 
 ### Tests
 - lib/bot: No dumps will be written during tests (#934).
