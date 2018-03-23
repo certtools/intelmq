@@ -13,6 +13,7 @@ Harmonization field names
 |Destination|destination.allocated|[DateTime](#datetime)|Allocation date corresponding to BGP prefix.|
 |Destination|destination.as_name|[String](#string)|The autonomous system name to which the connection headed.|
 |Destination|destination.asn|[ASN](#asn)|The autonomous system number to which the connection headed.|
+|Destination|destination.domain_suffix|[FQDN](#fqdn)|The suffix of the domain from the public suffix list.|
 |Destination|destination.fqdn|[FQDN](#fqdn)|A DNS name related to the host from which the connection originated. DNS allows even binary data in DNS, so we have to allow everything. A final point is stripped, string is converted to lower case characters.|
 |Destination Geolocation|destination.geolocation.cc|[UppercaseString](#uppercasestring)|Country-Code according to ISO3166-1 alpha-2 for the destination IP.|
 |Destination Geolocation|destination.geolocation.city|[String](#string)|Some geolocation services refer to city-level geolocation.|
@@ -60,6 +61,7 @@ Harmonization field names
 |Source|source.allocated|[DateTime](#datetime)|Allocation date corresponding to BGP prefix.|
 |Source|source.as_name|[String](#string)|The autonomous system name from which the connection originated.|
 |Source|source.asn|[ASN](#asn)|The autonomous system number from which originated the connection.|
+|Source|source.domain_suffix|[FQDN](#fqdn)|The suffix of the domain from the public suffix list.|
 |Source|source.fqdn|[FQDN](#fqdn)|A DNS name related to the host from which the connection originated. DNS allows even binary data in DNS, so we have to allow everything. A final point is stripped, string is converted to lower case characters.|
 |Source Geolocation|source.geolocation.cc|[UppercaseString](#uppercasestring)|Country-Code according to ISO3166-1 alpha-2 for the source IP.|
 |Source Geolocation|source.geolocation.city|[String](#string)|Some geolocation services refer to city-level geolocation.|

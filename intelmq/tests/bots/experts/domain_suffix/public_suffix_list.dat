@@ -1,0 +1,19 @@
+// A very short example file
+
+// ===BEGIN ICANN DOMAINS===
+
+net
+com
+org
+example.com
+*.example.net
+!www.example.net
+
+// imaginary domain to make the file UTF-8
+sädlfjaäpdkäaqwä.example
+
+// ===END ICANN DOMAINS===
+// ===BEGIN PRIVATE DOMAINS===
+// (Note: these are in alphabetical order by company name)
+
+// ===END PRIVATE DOMAINS===
