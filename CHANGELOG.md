@@ -10,10 +10,14 @@ CHANGELOG
 
 ### Tools
 - `intelmqctl start` prints bot's error messages if it failed to start
+- `intelmqctl start` message "is running" is printed every time. (Until now, it wasn't said when a bot was just starting.)
 - `intelmqctl check` checks for defaults.conf completeness
 - `intelmqctl check` shows errors for non-importable bots.
 - `intelmqctl list bots -q` only prints the IDs of enabled bots
 - `intelmq_gen_feeds_docs` add to bin directory, allows generating the Feeds.md documentation file from feeds.yaml
+- `intelmqctl run` parameter for showing a sent message
+- `intelmqctl run` if message is sent to a non-default path, it is printed out
+
 
 ### Contrib
 - contrib tool `feeds-config-generator` to automatically generate the collector and parser runtime and pipeline configurations.
