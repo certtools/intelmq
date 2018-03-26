@@ -10,10 +10,14 @@ CHANGELOG
 
 ### Tools
 - `intelmqctl start` prints bot's error messages if it failed to start
+- `intelmqctl start` message "is running" is printed every time. (Until now, it wasn't said when a bot was just starting.)
 - `intelmqctl check` checks for defaults.conf completeness
 - `intelmqctl check` shows errors for non-importable bots.
 - `intelmqctl list bots -q` only prints the IDs of enabled bots
 - `intelmq_gen_feeds_docs` add to bin directory, allows generating the Feeds.md documentation file from feeds.yaml
+- `intelmqctl run` parameter for showing a sent message
+- `intelmqctl run` if message is sent to a non-default path, it is printed out
+
 
 ### Contrib
 - contrib tool `feeds-config-generator` to automatically generate the collector and parser runtime and pipeline configurations.
@@ -96,7 +100,9 @@ CHANGELOG
 ### Contrib
 
 ### Core
-- lib/harmonization: FQDN validation now handles None correctly (raised an Exception).
+- lib/harmonization:
+ * FQDN validation now handles None correctly (raised an Exception).
+ * Fixed several sanitize() methods, the generic sanitation method were called by is_valid, not the sanitize methods (#1219).
 
 ### Harmonization
 
@@ -107,6 +113,12 @@ CHANGELOG
 - Shadowserver parser:
  * The fields `url` and `http_url` now handle HTTP URL paths and HTTP requests for all feeds (#1204).
  * The conversion function `validate_fqdn` now handles empty strings correctly.
+ * Feed 'drone (hadoop)':
+   * Correct validation of field `cc_dns`, will now only be added as `destination.fqdn` if correct FQDN, otherwise ignored. Previously this field could be saved in extra containing an IP address.
+   * Adding more mappings for added columns.
+- Spamhaus CERT parser:
+ * fix parsing for bot names 'openrelay' and 'iotdrp'.
+- CleanM phishing parser: handle FQDNs in IP column (#1162).
 
 #### Experts
 
@@ -117,8 +129,10 @@ CHANGELOG
 ### Tools
 
 ### Tests
+- lib/bot: No dumps will be written during tests (#934).
 
 ### Packaging
+* Static data is now included in source tarballs, development files are excluded
 
 ### Known issues
 

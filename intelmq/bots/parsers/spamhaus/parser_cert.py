@@ -54,7 +54,18 @@ class SpamhausCERTParserBot(Bot):
             event.add('source.geolocation.cc', row_splitted[2])
             event.add('time.source',
                       DateTime.from_timestamp(int(row_splitted[3])))
-            event.add('malware.name', row_splitted[4].lower())
+
+            malware = row_splitted[4].lower()
+            if malware == 'openrelay':
+                event.add('classification.type', 'spam')
+                event.add('classification.identifier', 'openrelay')
+            elif malware == 'iotrdp':
+                event.add('classification.type', 'vulnerable service')
+                event.add('classification.identifier', 'openrdp')
+            else:
+                event.add('malware.name', malware)
+                event.add('classification.type', 'botnet drone')
+
             # otherwise the same ip, ignore
             event.add('destination.fqdn', row_splitted[5], raise_failure=False)
             event.add('destination.ip', row_splitted[6], raise_failure=False)
@@ -67,7 +78,6 @@ class SpamhausCERTParserBot(Bot):
                 else:
                     event.add('extra', {'destination.local_port': port})
             event.add('protocol.transport', row_splitted[9], raise_failure=False)
-            event.add('classification.type', 'botnet drone')
             event.add('raw', row)
 
             self.send_message(event)

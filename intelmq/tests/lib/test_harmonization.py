@@ -123,6 +123,7 @@ class TestHarmonization(unittest.TestCase):
 
     def test_ipaddress_sanitize(self):
         """ Test IPAddress.is_valid and sanitize with valid arguments. """
+        self.assertTrue(harmonization.IPAddress.sanitize(' 192.0.2.1\r\n'))
         self.assertTrue(harmonization.IPAddress.is_valid(' 192.0.2.1\r\n',
                                                          sanitize=True))
         self.assertTrue(harmonization.IPAddress.is_valid(b'2001:DB8::1',
