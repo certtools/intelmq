@@ -4,7 +4,6 @@ import socket
 
 import intelmq.lib.utils as utils
 from intelmq.lib.bot import CollectorBot
-from intelmq.lib.message import Event
 
 
 class TCPCollectorBot(CollectorBot):
@@ -16,13 +15,15 @@ class TCPCollectorBot(CollectorBot):
         self.connect()
 
     def process(self):
+        conn = None
         try:
             conn, addr = self.con.accept()
             print('Connection address:', addr)
             data = b""
             while True:
                 b = conn.recv(self.BUFFER_SIZE)
-                if not b: break
+                if not b:
+                    break
 
                 data += b
                 messages = data.split(self.separator)
@@ -30,18 +31,17 @@ class TCPCollectorBot(CollectorBot):
                     self.logger.debug('Received parsable data: %s.', data)
                     for event in messages:
                         if event:
-                            event = Event(Event.unserialize(utils.decode(event)))
-                            # can't use direct self.send_message because that wants to overwrite feed.name and feed.accuracy
-                            super(CollectorBot, self).send_message(event)
+                            report = self.new_report()
+                            report.add("raw", event)
+                            self.send_message(report)
                     data = messages[-1]  # return back the non-finished message
             conn.send(b"OK")
         except socket.error as e:
-                self.logger.exception("Reconnecting.")
-                self.con.close()
-                self.connect()
-        except AttributeError as e:
-            self.logger.info('Reconnecting.')
+            self.logger.exception("Reconnecting.")
+            self.con.close()
             self.connect()
+        except AttributeError as e:
+            self.logger.info('Attribute error.')
         finally:
             if conn:
                 conn.close()
@@ -51,6 +51,9 @@ class TCPCollectorBot(CollectorBot):
         self.con.bind(self.address)
         self.con.listen()
         self.logger.info("Connected successfully to %s:%s.", self.address[0], self.address[1])
+
+    def shutdown(self):
+        self.con.close()
 
 
 BOT = TCPCollectorBot
