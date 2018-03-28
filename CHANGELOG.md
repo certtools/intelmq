@@ -81,6 +81,7 @@ CHANGELOG
 
 #### Experts
 - Added sieve expert for filtering and modifying events (#1083)
+ * capable of distributing the event to appropriate named queues
 - `bots.experts.modify`
  * default ruleset: added avalanche rule.
  * new parameter `case_sensitive` (default: True)
