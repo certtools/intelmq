@@ -29,6 +29,7 @@ CHANGELOG
 - CleanM phishing parser: handle FQDNs in IP column (#1162).
 
 #### Experts
+- `bots.experts.ripencc_abuse_contact`: Add existing parameter `mode` to BOTS file.
 
 #### Outputs
 
