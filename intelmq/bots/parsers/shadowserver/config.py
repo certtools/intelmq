@@ -1262,7 +1262,7 @@ vulnerable_isakmp = {
         'classification.taxonomy': 'vulnerable',
         'classification.type': 'vulnerable service',
         'classification.identifier': 'open-ike',
-	'protocol.application': 'ipsec',
+        'protocol.application': 'ipsec',
     }
 }
 
