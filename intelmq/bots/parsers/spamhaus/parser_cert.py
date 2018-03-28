@@ -57,12 +57,34 @@ class SpamhausCERTParserBot(Bot):
 
             malware = row_splitted[4].lower()
             if malware == 'openrelay':
-                event.add('classification.type', 'spam')
-                event.add('classification.identifier', 'openrelay')
-            elif malware == 'iotrdp':
                 event.add('classification.type', 'vulnerable service')
-                event.add('classification.identifier', 'openrdp')
+                event.add('classification.identifier', 'openrelay')
+                event.add('protocol.application', 'smtp')
+            elif malware == 'iotrdp':
+                event.add('classification.type', 'brute-force')
+                event.add('classification.identifier', 'rdp')
+                event.add('protocol.application', 'rdp')
+            elif malware == 'sshauth':
+                event.add('classification.type', 'brute-force')
+                event.add('classification.identifier', 'ssh')
+                event.add('protocol.application', 'ssh')
+            elif malware in ('telnetauth', 'iotcmd', 'iotuser'):
+                event.add('classification.type', 'brute-force')
+                event.add('classification.identifier', 'telnet')
+                event.add('protocol.application', 'telnet')
+            elif malware == 'wpscanner':
+                event.add('classification.type', 'scanner')
+                event.add('classification.identifier', 'wordpress-vulnerabilities')
+                event.add('event_description.text', 'scanning for wordpress vulnerabilities')
+                event.add('protocol.application', 'http')
+            elif malware == 'w_wplogin':
+                event.add('classification.type', 'scanner')
+                event.add('classification.identifier', 'wordpress-login')
+                event.add('event_description.text', 'scanning for wordpress login pages')
+                event.add('protocol.application', 'http')
             else:
+                if malware == 'auto':
+                    malware = 's_other'
                 event.add('malware.name', malware)
                 event.add('classification.type', 'botnet drone')
 

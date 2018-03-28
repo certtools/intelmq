@@ -11,10 +11,10 @@ Use the following statement carefully to upgrade your database.
 Adapt your feedname in the query to the one used in your setup.
 ```SQL
 UPDATE events
-   SET "classification.taxonomy" = 'vulnerable', "classification.type" = 'vulnerable service', "classification.identifier" = 'openrdp'
+   SET "classification.taxonomy" = 'intrusion attempts', "classification.type" = 'brute-force', "classification.identifier" = 'rdp', "protocol.application" = 'rdp'
    WHERE "malware.name" = 'iotrdp' AND "feed.name" = "Spamhaus CERT";
 UPDATE events
-   SET "classification.taxonomy" = 'abusive content', "classification.type" = 'spam', "classification.identifier" = 'openrelay'
+   SET "classification.taxonomy" = 'vulnerable', "classification.type" = 'vulnerable service', "classification.identifier" = 'openrelay', "protocol.application" = 'smtp'
    WHERE "malware.name" = 'openrelay' AND "feed.name" = "Spamhaus CERT";
 UPDATE events
    SET "protocol.application" = 'portmapper'
@@ -25,6 +25,18 @@ UPDATE events
 UPDATE events
    SET "protocol.application" = 'ipsec'
    WHERE "classification.identifier" = 'openike' AND "feed.name" = "Vulnerable-ISAKMP";
+UPDATE events
+   SET "classification.taxonomy" = 'intrusion attempts', "classification.type" = 'brute-force', "classification.identifier" = 'ssh', "malware.name" = NULL, "protocol.application" = 'ssh'
+   WHERE "malware.name" = 'sshauth' AND "feed.name" = "Spamhaus CERT";
+UPDATE events
+   SET "classification.taxonomy" = 'intrusion attempts', "classification.type" = 'brute-force', "classification.identifier" = 'telnet', "malware.name" = NULL, "protocol.application" = 'ssh'
+   WHERE ("malware.name" = 'telnetauth' OR "malware.name" = 'iotcmd' OR "malware.name" = 'iotuser') AND "feed.name" = "Spamhaus CERT";
+UPDATE events
+   SET "classification.taxonomy" = 'information gathering', "classification.type" = 'scanner', "classification.identifier" = 'wordpress-vulnerabilities', "malware.name" = NULL, "event_description.text" = 'scanning for wordpress vulnerabilities', "protocol.application" = 'http'
+   WHERE "malware.name" = 'wpscanner' AND "feed.name" = "Spamhaus CERT";
+UPDATE events
+   SET "classification.taxonomy" = 'information gathering', "classification.type" = 'scanner', "classification.identifier" = 'wordpress-login', "malware.name" = NULL, "event_description.text" = 'scanning for wordpress login pages', "protocol.application" = 'http'
+   WHERE "malware.name" = 'w_wplogin' AND "feed.name" = "Spamhaus CERT";
 ```
 
 1.0.3 Bugfix release (2018-02-05)
