@@ -636,6 +636,7 @@
             "description": "RIPENCC is the bot responsible to get the correspondent abuse contact from source IP and destination IP of the events. RIPEstat documentation: https://stat.ripe.net/docs/data_api ",
             "module": "intelmq.bots.experts.ripencc_abuse_contact.expert",
             "parameters": {
+                "mode": "append",
                 "query_ripe_db_asn": true,
                 "query_ripe_db_ip": true,
                 "query_ripe_stat": true,
