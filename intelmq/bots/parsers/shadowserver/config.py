@@ -743,7 +743,7 @@ dns_open_resolvers = {
     ],
     'constant_fields': {
         'classification.type': 'vulnerable service',
-        'classification.taxonomy': 'Vulnerable',
+        'classification.taxonomy': 'vulnerable',
         'classification.identifier': 'opendns',
         'protocol.application': 'dns',
     },
