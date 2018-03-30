@@ -33,6 +33,9 @@ Please check if you did use these feed names and eventually adapt them for your 
 ALTER TABLE events
    ADD COLUMN "destination.urlpath" text,
    ADD COLUMN "source.urlpath" text;
+ALTER TABLE events
+   ADD COLUMN "destination.domain_suffix" text,
+   ADD COLUMN "source.domain_suffix" text;
 UPDATE events
    SET "classification.identifier" = 'openmdns'
    WHERE "classification.identifier" = 'open-mdns' AND "feed.name" = 'Open-mDNS';
