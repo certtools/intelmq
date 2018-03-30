@@ -9,8 +9,15 @@ example.com
 *.example.net
 !www.example.net
 
-// imaginary domain to make the file UTF-8
-sädlfjaäpdkäaqwä.example
+*.mm
+
+com.cn
+
+// xn--fiqs8s ("Zhongguo/China", Chinese, Simplified) : CN
+// CNNIC
+// http://cnnic.cn/html/Dir/2005/10/11/3218.htm
+中国
+
 
 // ===END ICANN DOMAINS===
 // ===BEGIN PRIVATE DOMAINS===

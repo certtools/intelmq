@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-A custom
+A custom public suffix implementation
+Only works with punycode, not unicode, as intelmq only uses
+the first representation.
 """
 
 
@@ -25,6 +27,8 @@ class PublicSuffixList(object):
             raise ValueError('Could not detect end of ICANN Domain list. Please fix the list or report a bug.')
 
     def publicsuffix(self, domain):
+        if not domain:
+            return
         suffixes = self.suffixes
         suffix_path = []
         # we are converting here from punycode to unicode because it is easier with the !exceptions
@@ -34,8 +38,9 @@ class PublicSuffixList(object):
                 suffix_path.append(suffix)
             elif '*' in suffixes and not '!%s' % suffix in suffixes:
                 suffix_path.append(suffix)
+                suffixes = suffixes['*']
             else:
                 break
 
         if suffix_path:
-            return '.'.join(suffix_path[::-1])
+            return '.'.join(suffix_path[::-1]).encode('idna')
