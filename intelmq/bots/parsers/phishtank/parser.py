@@ -2,6 +2,7 @@
 import csv
 import io
 
+from intelmq.lib import harmonization
 from intelmq.lib import utils
 from intelmq.lib.bot import Bot
 
@@ -42,6 +43,9 @@ class PhishTankParserBot(Bot):
                     continue
 
                 event.add(key, value)
+
+            if event['source.url'][:4] == 'http':
+                event.add('source.fqdn', harmonization.URL.to_domain_name(event['source.url']))
 
             event.add('classification.type', 'phishing')
             event.add("raw", ",".join(row))
