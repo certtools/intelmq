@@ -1,3 +1,20 @@
+# Indices for the asn column on the organisation_to_asn tables
+
+## upgrade
+```sql
+CREATE INDEX organisation_to_asn_asn_idx
+    ON organisation_to_asn (asn);
+CREATE INDEX organisation_to_asn_automatic_asn_idx
+    ON organisation_to_asn_automatic (asn);
+```
+
+## downgrade
+```sql
+DROP INDEX organisation_to_asn_asn_idx;
+DROP INDEX organisation_to_asn_automatic_asn_idx;
+```
+
+
 # Add FQDN index again
 
 This index was implicitly removed by the removal of the UNIQUE
@@ -48,21 +65,4 @@ ALTER TABLE contact_automatic RENAME COLUMN pgp_key_id TO openpgp_fpr;
 -- you may need to close other connections/cursors to the db before
 ALTER TABLE contact RENAME COLUMN openpgp_fpr TO pgp_key_id;
 ALTER TABLE contact_automatic RENAME COLUMN openpgp_fpr TO pgp_key_id;
-```
-
-
-# Indices for the asn column on the organisation_to_asn tables
-
-## upgrade
-```sql
-CREATE INDEX organisation_to_asn_asn_idx
-    ON organisation_to_asn (asn);
-CREATE INDEX organisation_to_asn_automatic_asn_idx
-    ON organisation_to_asn_automatic (asn);
-```
-
-## downgrade
-```sql
-DROP INDEX organisation_to_asn_asn_idx;
-DROP INDEX organisation_to_asn_automatic_asn_idx;
 ```
