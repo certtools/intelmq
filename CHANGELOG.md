@@ -59,12 +59,12 @@ CHANGELOG
 - `bots.collectors.http.collector_http`: Ability to optionally use the current time in parameter `http_url`, added parameter `http_url_formatting`.
 - `bots.collectors.stomp.collector`: Heartbeat timeout is now logged with log level info instead of warning.
 - added `intelmq.bots.collectors.twitter.collector_twitter`
+- `bots.collectors.microsoft.collector_interlow`: added for MS interflow API
 
 #### Parsers
 - changed feednames in `bots.parsers.shadowserver`. Please refer to it's README for the exact changes.
 - shadowserver parser: If the conversion function fails for a line, an error is raised and the offending line will be handled according to the error handling configuration.
   Previously errors like these were only logged and ignored otherwise.
-- added destination.urlpath and source.urlpath to harmonization.
 - changed feednames in `bots.parsers.shadowserver`. Please refer to it's README for the exact changes.
 - The Generic CSV Parser `bots.parsers.generic.parser_csv`:
   - It is possible to filter the data before processing them using the new parameters `filter_type` and `filter_text`.
@@ -78,6 +78,9 @@ CHANGELOG
 - added `intelmq.bots.parsers.threatminer.parser`
 - added `intelmq.bots.parsers.webinspektor.parser`
 - added `intelmq.bots.parsers.twitter.parser`
+- added `intelmq.bots.parsers.microsoft.parser_ctip`
+ * ignore the invalid IP '0.0.0.0' for the destination
+ * fix the raw/dumped messages, did not contain the paling list previously.
 
 #### Experts
 - Added sieve expert for filtering and modifying events (#1083)
@@ -91,6 +94,7 @@ CHANGELOG
 - Renamed `JSON` to `JSONDict` and added a new type `JSON`. `JSONDict` saves data internally as JSON, but acts like a dictionary. `JSON` accepts any valid JSON.
 - fixed regex for `protocol.transport` it previously allowed more values than it should have.
 - New ASN type. Like integer but checks the range.
+- added destination.urlpath and source.urlpath to harmonization.
 
 ### Requirements
 - Requests is no longer a listed as dependency of the core. For depending bots the requirement is noted in their REQUIREMENTS.txt file
@@ -101,8 +105,8 @@ CHANGELOG
 
 ### Core
 - lib/harmonization:
- * FQDN validation now handles None correctly (raised an Exception).
- * Fixed several sanitize() methods, the generic sanitation method were called by is_valid, not the sanitize methods (#1219).
+* FQDN validation now handles None correctly (raised an Exception).
+* Fixed several sanitize() methods, the generic sanitation method were called by is_valid, not the sanitize methods (#1219).
 
 ### Harmonization
 
@@ -111,25 +115,29 @@ CHANGELOG
 
 #### Parsers
 - Shadowserver parser:
- * The fields `url` and `http_url` now handle HTTP URL paths and HTTP requests for all feeds (#1204).
- * The conversion function `validate_fqdn` now handles empty strings correctly.
- * Feed 'drone (hadoop)':
-   * Correct validation of field `cc_dns`, will now only be added as `destination.fqdn` if correct FQDN, otherwise ignored. Previously this field could be saved in extra containing an IP address.
-   * Adding more mappings for added columns.
+  * The fields `url` and `http_url` now handle HTTP URL paths and HTTP requests for all feeds (#1204).
+  * The conversion function `validate_fqdn` now handles empty strings correctly.
+  * Feed 'drone (hadoop)':
+    * Correct validation of field `cc_dns`, will now only be added as `destination.fqdn` if correct FQDN, otherwise ignored. Previously this field could be saved in extra containing an IP address.
+    * Adding more mappings for added columns.
+  * A lot of newly added fields and fixed conversions.
 - Spamhaus CERT parser:
- * fix parsing for bot names 'openrelay' and 'iotdrp'.
+  * fix parsing for bot names 'openrelay' and 'iotdrp'.
 - CleanM phishing parser: handle FQDNs in IP column (#1162).
 
 #### Experts
+- `bots.experts.ripencc_abuse_contact`: Add existing parameter `mode` to BOTS file.
 
 #### Outputs
 
 ### Documentation
 
 ### Tools
+- intelmqctl check: Fixed and extended message for 'run_mode' check.
 
 ### Tests
 - lib/bot: No dumps will be written during tests (#934).
+- lib/test: Expand regular expression on python version to match pre-releases (debian testing).
 
 ### Packaging
 * Static data is now included in source tarballs, development files are excluded
@@ -454,7 +462,7 @@ Changes between 0.9 and 1.0.0.dev6
 -`classification.taxonomy` is now lower case only
 
 ### Known issues
- - Harmonization: hashes are not normalized and classified, see also issue #394 and pull #634
+- Harmonization: hashes are not normalized and classified, see also issue #394 and pull #634
 
 ### Contrib
 - ansible and vagrant scripts added
@@ -493,6 +501,6 @@ Changes between 0.9 and 1.0.0.dev6
 2015/06/03 (aaron)
 ------------------
 
-  * fixed the license to AGPL in setup.py
-  * moved back the documentation from the wiki repo to `docs/`. See #205.
-  * added python-zmq as a setup requirement in UserGuide . See #206
+* fixed the license to AGPL in setup.py
+* moved back the documentation from the wiki repo to `docs/`. See #205.
+* added python-zmq as a setup requirement in UserGuide . See #206

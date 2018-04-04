@@ -151,6 +151,15 @@ UPDATE events
 UPDATE events
    SET "classification.taxonomy" = 'abusive content', "classification.type" = 'spam', "classification.identifier" = 'openrelay'
    WHERE "malware.name" = 'openrelay' AND "feed.name" = "Spamhaus CERT";
+UPDATE events
+   SET "protocol.application" = 'portmapper'
+   WHERE "classification.identifier" = 'openportmapper' AND "feed.name" = "Open-Portmapper";
+UPDATE events
+   SET "protocol.application" = 'netbios-nameservice'
+   WHERE "classification.identifier" = 'opennetbios' AND "feed.name" = "Open-NetBIOS-Nameservice";
+UPDATE events
+   SET "protocol.application" = 'ipsec'
+   WHERE "classification.identifier" = 'openike' AND "feed.name" = "Vulnerable-ISAKMP";
 ```
 
 1.0.3 Bugfix release (2018-02-05)
@@ -163,10 +172,10 @@ UPDATE events
 | n6 classification | Previous classification |  |  | Current classification |  |  | Notes |
 |-|-|-|-|-|-|-|-|
 |                   | taxonomy   | type   | identifier | taxonomy       | type    | identifier |
-| dns-query         | Other      | other  | ignore me  | Other          | other   | dns-query  |
-| proxy             | Vulnerable | proxy  | open proxy | Other          | proxy   | openproxy  |
+| dns-query         | other      | other  | ignore me  | other          | other   | dns-query  |
+| proxy             | vulnerable | proxy  | open proxy | other          | proxy   | openproxy  |
 | sandbox-url       | ignore     | ignore | ignore me  | malicious code | malware | sandboxurl | As this previous taxonomy did not exist, these events have been rejected |
-| other             | Vulnerable | unknow | unknown    | Other          | other   | other      |
+| other             | vulnerable | unknow | unknown    | other          | other   | other      |
 
 ### Postgres databases
 Use the following statement carefully to upgrade your database.

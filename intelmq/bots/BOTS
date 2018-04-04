@@ -176,6 +176,24 @@
                 "rate_limit": 3600
             }
         },
+        "Microsoft Interflow": {
+            "description": "",
+            "module": "intelmq.bots.collectors.microsoft.collector_interflow",
+            "parameters": {
+                "api_key": "",
+                "feed": "",
+                "file_match": null,
+                "http_timeout_sec": 300,
+                "not_older_than": "2 days",
+                "provider": "microsoft",
+                "rate_limit": 3600,
+                "redis_cache_db": "5",
+                "redis_cache_host": "127.0.0.1",
+                "redis_cache_port": 6379,
+                "redis_cache_password": null,
+                "redis_cache_ttl": 604800
+            }
+        },
         "Stomp": {
             "description": "Stomp Collector - e.g. for CERT.pl's N6 feed via STOMP. Note that rate_limit does not apply for this bot as it is waiting for messages on a stream.",
             "module": "intelmq.bots.collectors.stomp.collector",
@@ -380,6 +398,11 @@
         "Malwareurl": {
             "description": "Malwareurl is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.malwareurl.parser",
+            "parameters": {}
+        },
+        "Microsoft CTIP": {
+            "description": "Parses JSON data from Microsoft's CTIP program.",
+            "module": "intelmq.bots.parsers.microsoft.parser_ctip",
             "parameters": {}
         },
         "N6Stomp": {
@@ -625,6 +648,7 @@
             "description": "RIPENCC is the bot responsible to get the correspondent abuse contact from source IP and destination IP of the events. RIPEstat documentation: https://stat.ripe.net/docs/data_api ",
             "module": "intelmq.bots.experts.ripencc_abuse_contact.expert",
             "parameters": {
+                "mode": "append",
                 "query_ripe_db_asn": true,
                 "query_ripe_db_ip": true,
                 "query_ripe_stat": true,
