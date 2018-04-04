@@ -106,7 +106,7 @@ class SpamhausCERTParserBot(Bot):
                 except ValueError:
                     event.add('destination.fqdn', row_splitted[8], raise_failure=False)
                 else:
-                    event.add('extra', {'destination.local_port': port})
+                    event.add('extra.destination.local_port', port)
             event.add('protocol.transport', row_splitted[9], raise_failure=False)
             event.add('raw', row)
 
