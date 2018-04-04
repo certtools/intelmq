@@ -118,7 +118,8 @@ CHANGELOG
     * Adding more mappings for added columns.
   * A lot of newly added fields and fixed conversions.
 - Spamhaus CERT parser:
-  * fix parsing for bot names 'openrelay' and 'iotdrp'.
+ * fix parsing and classification for bot names 'openrelay', 'iotrdp', 'sshauth', 'telnetauth', 'iotcmd', 'iotuser', 'wpscanner', 'w_wplogin', 'iotscan'
+   see the NEWS file - Postgresql section - for all changes.
 - CleanM phishing parser: handle FQDNs in IP column (#1162).
 
 #### Experts
