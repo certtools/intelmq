@@ -37,6 +37,9 @@ UPDATE events
 UPDATE events
    SET "classification.taxonomy" = 'information gathering', "classification.type" = 'scanner', "classification.identifier" = 'wordpress-login', "malware.name" = NULL, "event_description.text" = 'scanning for wordpress login pages', "protocol.application" = 'http'
    WHERE "malware.name" = 'w_wplogin' AND "feed.name" = "Spamhaus CERT";
+UPDATE events
+   SET "classification.taxonomy" = 'intrusion attempts', "classification.type" = 'scanner', "classification.identifier" = 'scanner-generic', "malware.name" = NULL, "event_description.text" = 'infected IoT device scanning for other vulnerable IoT devices'
+   WHERE "malware.name" = 'iotscan' AND "feed.name" = "Spamhaus CERT";
 ```
 
 1.0.3 Bugfix release (2018-02-05)

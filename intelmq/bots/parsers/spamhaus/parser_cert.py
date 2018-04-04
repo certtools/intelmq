@@ -72,6 +72,14 @@ class SpamhausCERTParserBot(Bot):
                 event.add('classification.type', 'brute-force')
                 event.add('classification.identifier', 'telnet')
                 event.add('protocol.application', 'telnet')
+            elif malware == 'iotscan':
+                event.add('classification.type', 'scanner')
+                event.add('event_description.text', 'infected IoT device scanning for other vulnerable IoT devices')
+                if row_splitted[7] == '23':
+                    event.add('protocol.application', 'telnet')
+                    event.add('classification.identifier', 'telnet')
+                else:
+                    event.add('classification.identifier', 'scanner-generic')
             elif malware == 'wpscanner':
                 event.add('classification.type', 'scanner')
                 event.add('classification.identifier', 'wordpress-vulnerabilities')
