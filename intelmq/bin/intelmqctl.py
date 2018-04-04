@@ -122,7 +122,8 @@ class IntelMQProcessManager:
                 self.logger.error('Directory %s does not exist and cannot be '
                                   'created: %s.', self.PIDDIR, exc)
 
-    def bot_run(self, bot_id, run_subcommand=None, console_type=None, message_action_kind=None, dryrun=None, msg=None):
+    def bot_run(self, bot_id, run_subcommand=None, console_type=None, message_action_kind=None, dryrun=None, msg=None,
+                show_sent=None):
         pid = self.__check_pid(bot_id)
         module = self.__runtime_configuration[bot_id]['module']
         if pid and self.__status_process(pid, module):
@@ -142,7 +143,7 @@ class IntelMQProcessManager:
 
         try:
             BotDebugger(self.__runtime_configuration[bot_id], bot_id, run_subcommand,
-                        console_type, dryrun, message_action_kind, msg)
+                        console_type, message_action_kind, dryrun, msg, show_sent)
             retval = 0
         except KeyboardInterrupt:
             print('Keyboard interrupt.')
@@ -249,6 +250,7 @@ class IntelMQProcessManager:
     def bot_status(self, bot_id, *, proc=None):
         if proc:
             if proc.status() not in [psutil.STATUS_STOPPED, psutil.STATUS_DEAD, psutil.STATUS_ZOMBIE]:
+                log_bot_message('running', bot_id)
                 return 'running'
         else:
             pid = self.__check_pid(bot_id)
@@ -305,7 +307,7 @@ PROCESS_MANAGER = {'intelmq': IntelMQProcessManager}
 
 class IntelMQController():
 
-    def __init__(self, interactive: bool=False, return_type: str="python", quiet: bool=False):
+    def __init__(self, interactive: bool = False, return_type: str = "python", quiet: bool = False):
         """
         Initializes intelmqctl.
 
@@ -471,18 +473,20 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             parser_run_console = parser_run_subparsers.add_parser('console', help='Get a ipdb live console.')
             parser_run_console.add_argument('console_type', nargs='?',
                                             help='You may specify which console should be run. Default is ipdb (if installed)'
-                                            ' or pudb (if installed) or pdb but you may want to use another one.')
+                                                 ' or pudb (if installed) or pdb but you may want to use another one.')
             parser_run_console.set_defaults(run_subcommand="console")
 
             parser_run_message = parser_run_subparsers.add_parser('message',
                                                                   help='Debug bot\'s pipelines. Get the message in the'
-                                                                  ' input pipeline, pop it (cut it) and display it, or'
-                                                                  ' send the message directly to bot\'s output pipeline.')
+                                                                       ' input pipeline, pop it (cut it) and display it, or'
+                                                                       ' send the message directly to bot\'s output pipeline.')
             parser_run_message.add_argument('message_action_kind', choices=["get", "pop", "send"])
             parser_run_message.add_argument('msg', nargs='?', help='If send was chosen, put here the message in JSON.')
             parser_run_message.set_defaults(run_subcommand="message")
 
             parser_run_process = parser_run_subparsers.add_parser('process', help='Single run of bot\'s process() method.')
+            parser_run_process.add_argument('--show-sent', '-s', action='store_true',
+                                            help='If message is sent through, displays it.')
             parser_run_process.add_argument('--dryrun', '-d', action='store_true',
                                             help='Never really pop the message from the input pipeline '
                                                  'nor send to output pipeline.')
@@ -970,8 +974,8 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 if ('group' in bot_config and
                         bot_config['group'] in ['Collector', 'Parser', 'Expert']):
                     if ('destination-queues' not in files[PIPELINE_CONF_FILE][bot_id] or
-                        (not isinstance(files[PIPELINE_CONF_FILE][bot_id]['destination-queues'], list) or
-                         len(files[PIPELINE_CONF_FILE][bot_id]['destination-queues']) < 1)):
+                            (not isinstance(files[PIPELINE_CONF_FILE][bot_id]['destination-queues'], list) or
+                             len(files[PIPELINE_CONF_FILE][bot_id]['destination-queues']) < 1)):
                         if RETURN_TYPE == 'json':
                             output.append(['error', 'Misconfiguration: No destination queues for %r.' % bot_id])
                         else:
@@ -982,7 +986,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 if ('group' in bot_config and
                         bot_config['group'] in ['Parser', 'Expert', 'Output']):
                     if ('source-queue' not in files[PIPELINE_CONF_FILE][bot_id] or
-                       not isinstance(files[PIPELINE_CONF_FILE][bot_id]['source-queue'], str)):
+                            not isinstance(files[PIPELINE_CONF_FILE][bot_id]['source-queue'], str)):
                         if RETURN_TYPE == 'json':
                             output.append(['error', 'Misconfiguration: No source queue for %r.' % bot_id])
                         else:
