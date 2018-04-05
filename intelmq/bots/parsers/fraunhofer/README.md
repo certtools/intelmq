@@ -1,15 +1,17 @@
 # Fraunhofer data feed parser bots
 
-## Fraunhofer DDoS Attack Feed Parser Bot
+## Source
 
-The source feeds provide a stream or a list of newline separated JSON objects.
+The source feed provides a stream of newline separated JSON objects.
 Each line represents a single event observed by DDoS C&C trackers, e.g. attack
 commands. The feed can be retrieved with either the generic HTTP Stream
 Collector Bot for a streaming live feed or with the generic HTTP Collector Bot
 for a polled feed.
 
+## The Bot
+
 The parser bot generates c&c events and ddos events, depending on the
-information retrieved from the feeds. The feeds deliver reports with different
+information retrieved from the feed. The feed delivers reports with different
 message types and different C&C types based on the type of tracked C&C servers
 and the type of commands received. If the bot receives a report with a known
 C&C type but with an unknown message type, it generates a C&C event with an
@@ -31,5 +33,3 @@ that the tracked server is a real C&C, but it could not be confirmed.
  * unknown_messagetype_accuracy: A float between 0 an 100 representing the
  accuracy of an event for reports with unknown message types. Replaces the
  feed.accuracy with the given value for these events.
-
-

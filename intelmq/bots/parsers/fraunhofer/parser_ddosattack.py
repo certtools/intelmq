@@ -28,6 +28,7 @@ class FraunhoferDdosAttackParserBot(ParserBot):
 
         event = self.__new_event(message, line, report)
         event.add('classification.type', 'c&c')
+        event.add('classification.taxonomy', 'malicious code')
         event.add('source.fqdn', message['cnc']['domain'])
         event.add('source.ip', message['cnc']['ip'])
         event.add('source.port', message['cnc']['port'])
@@ -47,6 +48,7 @@ class FraunhoferDdosAttackParserBot(ParserBot):
         for target_address in message['message']['targets']:
             event = self.__new_event(message, line, report)
             event.add('classification.type', 'ddos')
+            event.add('classification.taxonomy', 'availability')
             if not event.add('destination.ip', target_address, raise_failure=False):
                 if not event.add('destination.network', target_address, raise_failure=False):
                     event.add('destination.fqdn', target_address)
