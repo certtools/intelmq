@@ -40,7 +40,7 @@ class CERTBundKontaktExpertBot(Bot):
         self.sections = [section.strip() for section in
                          getattr(self.parameters,
                                  "sections", "source").split(",")]
-        self.logger.debug("Sections: %r", self.sections)
+        self.logger.debug("Sections: %r.", self.sections)
         try:
             self.logger.debug("Trying to connect to database.")
             self.connect_to_database()
