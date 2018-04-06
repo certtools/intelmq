@@ -53,9 +53,10 @@ EXAMPLE_OUTPUT = {
               ' "sector": "IT"}]}}}'),
     }
 
+
 class CERTBundKontaktMockDBExpertBot(CERTBundKontaktExpertBot):
 
-    """CERTBundKontaktExpertBot that does not mocks all database accesses"""
+    """CERTBundKontaktExpertBot that mocks all database accesses"""
 
     def connect_to_database(self):
         pass
