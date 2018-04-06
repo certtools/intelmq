@@ -88,20 +88,25 @@ class Contact:
         email (str): email address
         managed (str): Either 'manual' or 'automatic' indicating how the
             contact database entry is managed.
+        email_status (str): Either 'enabled' or 'disabled'. 'disabled'
+            usually means that the email address is likely invalid in
+            some way, e.g. because emails sent there bounce.
     """
 
-    def __init__(self, email, managed):
+    def __init__(self, email, managed, email_status="enabled"):
         self.email = email
         self.managed = managed
+        self.email_status = email_status
 
     def __repr__(self):
-        return ("Contact(email=%r, managed=%r)"
-                % (self.email, self.managed))
+        return ("Contact(email=%r, managed=%r, email_status=%r)"
+                % (self.email, self.managed, self.email_status))
 
     @classmethod
     def from_json(cls, jsondict):
         return cls(email=jsondict["email"],
-                   managed=jsondict["managed"])
+                   managed=jsondict["managed"],
+                   email_status=jsondict.get("email_status", "enabled"))
 
 
 class Match:

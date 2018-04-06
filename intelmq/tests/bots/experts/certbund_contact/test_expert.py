@@ -38,14 +38,16 @@ EXAMPLE_OUTPUT = {
               '"organisations": ['
               '{"annotations": [{"type": "tag", "value": "daily"}],'
               ' "contacts": ['
-              '{"email": "someone@example.com", "managed": "automatic"}'
+              '{"email": "someone@example.com", "email_status": "disabled",'
+              ' "managed": "automatic"}'
               '],'
               ' "id": 0, "managed": "automatic",'
               ' "name": "Some Organisation", "sector": null'
               '}, '
               '{"annotations": [{"type": "tag", "value": ""}],'
               ' "contacts": ['
-              '{"email": "other@example.com", "managed": "manual"}'
+              '{"email": "other@example.com", "email_status": "enabled",'
+              ' "managed": "manual"}'
               '],'
               ' "id": 1, "managed": "manual", "name": "Another Organisation",'
               ' "sector": "IT"}]}}}'),
@@ -74,6 +76,7 @@ class CERTBundKontaktMockDBExpertBot(CERTBundKontaktExpertBot):
                          "contacts": [{
                              "email": "someone@example.com",
                              "managed": "automatic",
+                             "email_status": "disabled"
                              }],
                          },
                         {"id": 1,
@@ -84,6 +87,7 @@ class CERTBundKontaktMockDBExpertBot(CERTBundKontaktExpertBot):
                          "contacts": [{
                              "email": "other@example.com",
                              "managed": "manual",
+                             "email_status": "enabled"
                              }],
                          }]
                     }

@@ -193,8 +193,16 @@ def lookup_contacts(cur, managed, asn, ip, fqdn, country_code):
                         sector.name as sector,
                         coalesce(ARRAY(SELECT row_to_json(sub)
                                         FROM (SELECT c.email as email,
-                                                     %(managed)s AS managed
+                                                     %(managed)s AS managed,
+                                                     (CASE WHEN
+                                                      COALESCE(es.enabled, TRUE)
+                                                      THEN 'enabled'
+                                                      ELSE 'disabled'
+                                                      END)
+                                                      AS email_status
                                               FROM contact{0} c
+                                              LEFT OUTER JOIN email_status es
+                                                ON c.email = es.email
                                               WHERE c.organisation{0}_id
                                                     = o.organisation{0}_id)
                                               sub),
