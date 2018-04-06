@@ -369,4 +369,14 @@ CREATE TABLE organisation_to_fqdn_automatic (
 
 
 
+-- Table to hold known status information about an email address. If no
+-- status information is known, there is no entry in the table, which
+-- means the email is enabled.
+CREATE TABLE email_status (
+    email VARCHAR(100) PRIMARY KEY,
+    enabled BOOLEAN NOT NULL,
+    added TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+
 COMMIT;

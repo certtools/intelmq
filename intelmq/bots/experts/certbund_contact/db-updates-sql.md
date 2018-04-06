@@ -1,3 +1,24 @@
+# New Table `email_status`
+
+## upgrade
+```sql
+CREATE TABLE email_status (
+    email VARCHAR(100) PRIMARY KEY,
+    enabled BOOLEAN NOT NULL,
+    added TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Make sure the user used by the contact bot can access the table.
+-- Adapt the username if necessary.
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO intelmq;
+```
+
+## downgrade
+```sql
+DROP TABLE email_status;
+```
+
+
 # Indices for the asn column on the organisation_to_asn tables
 
 ## upgrade
