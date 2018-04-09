@@ -11,35 +11,35 @@ Use the following statement carefully to upgrade your database.
 Adapt your feedname in the query to the one used in your setup.
 ```SQL
 UPDATE events
-   SET "classification.taxonomy" = 'intrusion attempts', "classification.type" = 'brute-force', "classification.identifier" = 'rdp', "protocol.application" = 'rdp'
-   WHERE "malware.name" = 'iotrdp' AND "feed.name" = "Spamhaus CERT";
+   SET "classification.taxonomy" = 'intrusion attempts', "classification.type" = 'brute-force', "classification.identifier" = 'rdp', "protocol.application" = 'rdp', "malware.name" = NULL
+   WHERE "malware.name" = 'iotrdp' AND "feed.name" = 'Spamhaus CERT';
 UPDATE events
-   SET "classification.taxonomy" = 'vulnerable', "classification.type" = 'vulnerable service', "classification.identifier" = 'openrelay', "protocol.application" = 'smtp'
-   WHERE "malware.name" = 'openrelay' AND "feed.name" = "Spamhaus CERT";
+   SET "classification.taxonomy" = 'vulnerable', "classification.type" = 'vulnerable service', "classification.identifier" = 'openrelay', "protocol.application" = 'smtp', "malware.name" = NULL
+   WHERE "malware.name" = 'openrelay' AND "feed.name" = 'Spamhaus CERT';
 UPDATE events
    SET "protocol.application" = 'portmapper'
-   WHERE "classification.identifier" = 'openportmapper' AND "feed.name" = "Open-Portmapper";
+   WHERE "classification.identifier" = 'openportmapper' AND "feed.name" = 'Open-Portmapper';
 UPDATE events
    SET "protocol.application" = 'netbios-nameservice'
-   WHERE "classification.identifier" = 'opennetbios' AND "feed.name" = "Open-NetBIOS-Nameservice";
+   WHERE "classification.identifier" = 'opennetbios' AND "feed.name" = 'Open-NetBIOS-Nameservice';
 UPDATE events
    SET "protocol.application" = 'ipsec'
-   WHERE "classification.identifier" = 'openike' AND "feed.name" = "Vulnerable-ISAKMP";
+   WHERE "classification.identifier" = 'openike' AND "feed.name" = 'Vulnerable-ISAKMP';
 UPDATE events
    SET "classification.taxonomy" = 'intrusion attempts', "classification.type" = 'brute-force', "classification.identifier" = 'ssh', "malware.name" = NULL, "protocol.application" = 'ssh'
-   WHERE "malware.name" = 'sshauth' AND "feed.name" = "Spamhaus CERT";
+   WHERE "malware.name" = 'sshauth' AND "feed.name" = 'Spamhaus CERT';
 UPDATE events
    SET "classification.taxonomy" = 'intrusion attempts', "classification.type" = 'brute-force', "classification.identifier" = 'telnet', "malware.name" = NULL, "protocol.application" = 'ssh'
-   WHERE ("malware.name" = 'telnetauth' OR "malware.name" = 'iotcmd' OR "malware.name" = 'iotuser') AND "feed.name" = "Spamhaus CERT";
+   WHERE ("malware.name" = 'telnetauth' OR "malware.name" = 'iotcmd' OR "malware.name" = 'iotuser') AND "feed.name" = 'Spamhaus CERT';
 UPDATE events
    SET "classification.taxonomy" = 'information gathering', "classification.type" = 'scanner', "classification.identifier" = 'wordpress-vulnerabilities', "malware.name" = NULL, "event_description.text" = 'scanning for wordpress vulnerabilities', "protocol.application" = 'http'
-   WHERE "malware.name" = 'wpscanner' AND "feed.name" = "Spamhaus CERT";
+   WHERE "malware.name" = 'wpscanner' AND "feed.name" = 'Spamhaus CERT';
 UPDATE events
    SET "classification.taxonomy" = 'information gathering', "classification.type" = 'scanner', "classification.identifier" = 'wordpress-login', "malware.name" = NULL, "event_description.text" = 'scanning for wordpress login pages', "protocol.application" = 'http'
-   WHERE "malware.name" = 'w_wplogin' AND "feed.name" = "Spamhaus CERT";
+   WHERE "malware.name" = 'w_wplogin' AND "feed.name" = 'Spamhaus CERT';
 UPDATE events
    SET "classification.taxonomy" = 'intrusion attempts', "classification.type" = 'scanner', "classification.identifier" = 'scanner-generic', "malware.name" = NULL, "event_description.text" = 'infected IoT device scanning for other vulnerable IoT devices'
-   WHERE "malware.name" = 'iotscan' AND "feed.name" = "Spamhaus CERT";
+   WHERE "malware.name" = 'iotscan' AND "feed.name" = 'Spamhaus CERT';
 ```
 
 1.0.3 Bugfix release (2018-02-05)
@@ -61,14 +61,14 @@ Use the following statement carefully to upgrade your database.
 Adapt your feedname in the query to the one used in your setup.
 ```SQL
 UPDATE events
-   SET "classification.identifier" = "dns-query"
-   WHERE "feed.name" = 'n6' AND "classification.taxonomy" = "Other" AND "classification.type" = "other" AND "classification.identifier" = "ignore me";
+   SET "classification.identifier" = 'dns-query'
+   WHERE "feed.name" = 'n6' AND "classification.taxonomy" = 'other' AND "classification.type" = 'other' AND "classification.identifier" = 'ignore me';
 UPDATE events
-   SET "classification.taxonomy" = "malicious code" AND "classification.type" = "malware" AND "classification.identifier" = "sandboxurl"
-   WHERE "feed.name" = 'n6' AND "classification.taxonomy" = "Vulnerable" AND "classification.type" = "ignore" AND "classification.identifier" = "ignore me";
+   SET "classification.taxonomy" = 'malicious code' AND "classification.type" = 'malware' AND "classification.identifier" = 'sandboxurl'
+   WHERE "feed.name" = 'n6' AND "classification.taxonomy" = 'vulnerable' AND "classification.type" = 'ignore' AND "classification.identifier" = 'ignore me';
 UPDATE events
-   SET "classification.taxonomy" = "Other" AND "classification.type" = "other" AND "classification.identifier" = "other"
-   WHERE "feed.name" = 'n6' AND "classification.taxonomy" = "Vulnerable" AND "classification.type" = "unknow" AND "classification.identifier" = "unknow";
+   SET "classification.taxonomy" = 'other' AND "classification.type" = 'other' AND "classification.identifier" = 'other'
+   WHERE "feed.name" = 'n6' AND "classification.taxonomy" = 'vulnerable' AND "classification.type" = 'unknow' AND "classification.identifier" = 'unknow';
 ```
 
 1.0.2 Bugfix release
