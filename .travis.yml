@@ -16,7 +16,7 @@ install:
   - if [[ $TRAVIS_PYTHON_VERSION < '3.5' ]]; then pip install typing; fi
   - if [[ $TRAVIS_PYTHON_VERSION < '3.4' ]]; then pip install enum34; fi
   - pip install codecov
-  - pip install pycodestyle
+  - pip install 'pycodestyle >= 2.3.1, < 2.4.0'
   - sudo sed -i '/^Defaults\tsecure_path.*$/ d' /etc/sudoers
   - sudo pip install .
   - sudo cp /opt/intelmq/etc/examples/* /opt/intelmq/etc/
