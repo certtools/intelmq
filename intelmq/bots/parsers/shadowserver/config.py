@@ -736,10 +736,14 @@ dns_open_resolvers = {
         ('source.geolocation.city', 'city'),
         ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # always set to 'openresolver' in constant_fields
         ('extra.', 'min_amplification', convert_float),
         ('extra.', 'dns_version', validate_to_none),
         ('os.name', 'p0f_genre'),
         ('os.version', 'p0f_detail'),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'sector', validate_to_none),
     ],
     'constant_fields': {
         'classification.type': 'vulnerable service',
