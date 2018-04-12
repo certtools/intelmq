@@ -153,7 +153,8 @@ class TestSpamhausCERTParserBot(test.BotTestCase, unittest.TestCase):
         for position, event in enumerate(EXAMPLE_EVENTS_PARTS):
             event_ = EVENT_TEMPL.copy()
             event_.update(event)
-            event_['raw'] = utils.base64_encode(FILE_LINES[1+position])
+            event_['raw'] = utils.base64_encode('\n'.join((FILE_LINES[0],
+                                                           FILE_LINES[1+position])))
             self.assertMessageEqual(position, event_)
 
 if __name__ == '__main__':  # pragma: no cover
