@@ -830,7 +830,8 @@
                 "auth_type": "<http_basic_auth/http_header>",
                 "hierarchical_output": false,
                 "host": "<host>",
-                "use_json": true
+                "use_json": true,
+                "ssl_client_certificate": null
             }
         },
         "Redis": {

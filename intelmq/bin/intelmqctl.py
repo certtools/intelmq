@@ -608,7 +608,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         else:
             status_stop = self.bot_stop(bot_id)
             status_start = self.bot_start(bot_id)
-            return (status_stop, status_start)
+            return status_stop[0] * status_start[0], [status_stop[1], status_start[1]]
 
     def bot_status(self, bot_id):
         if bot_id is None:
