@@ -379,6 +379,9 @@ ipv6_sinkhole_http_drone = {
         'classification.type': 'botnet drone',
         'classification.taxonomy': 'malicious code',
         'classification.identifier': 'infected system',
+        # The feed does not include explicit information on the protocol
+        # but since it is about HTTP the protocol is always set to 'tcp'.
+        'protocol.transport': 'tcp',
     },
 }
 
@@ -1586,6 +1589,7 @@ drone_brute_force = {
         ('destination.geolocation.cc', 'dest_geo'),
         ('destination.fqdn', 'dest_dns'),
         ('protocol.application', 'service'),
+        ('classification.identifier', 'service'),
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
         ('extra.destination.naics', 'dest_naics', invalidate_zero),
@@ -1596,13 +1600,13 @@ drone_brute_force = {
         ('extra.', 'start_time', validate_to_none),
         ('extra.', 'end_time', validate_to_none),
         ('extra.', 'client_version', validate_to_none),
-        ('extra.', 'username', validate_to_none),
+        ('destination.account', 'username', validate_to_none),
         ('extra.', 'password', validate_to_none),
         ('extra.', 'payload_url', validate_to_none),
         ('extra.', 'payload_md5', validate_to_none),
     ],
     'constant_fields': {
+        'classification.taxonomy': 'intrusion attempts',
         'classification.type': 'brute-force',
-        'classification.identifier': 'brute-force',
     }
 }
