@@ -11,9 +11,11 @@ CHANGELOG
 ### Tools
 - `intelmqctl start` prints bot's error messages if it failed to start
 - `intelmqctl start` message "is running" is printed every time. (Until now, it wasn't said when a bot was just starting.)
+- `intelmqctl start/stop/restart/reload/status` now have a "--group" flag which allows you to specify the group of the bots that should be influenced by the command.
 - `intelmqctl check` checks for defaults.conf completeness
 - `intelmqctl check` shows errors for non-importable bots.
 - `intelmqctl list bots -q` only prints the IDs of enabled bots
+- `intelmqctl list queues-and-status` prints both queues and bots statuses (so that it can be used in eg. intelmq-manager)
 - `intelmq_gen_feeds_docs` add to bin directory, allows generating the Feeds.md documentation file from feeds.yaml
 - `intelmqctl run` parameter for showing a sent message
 - `intelmqctl run` if message is sent to a non-default path, it is printed out

@@ -381,9 +381,10 @@ subcommands:
     enable              Enable a bot
     disable             Disable a bot
 
+        intelmqctl [start|stop|restart|status|reload] --group [collectors|parsers|experts|outputs]
         intelmqctl [start|stop|restart|status|reload] bot-id
         intelmqctl [start|stop|restart|status|reload]
-        intelmqctl list [bots|queues]
+        intelmqctl list [bots|queues|queues-and-status]
         intelmqctl log bot-id [number-of-lines [log-level]]
         intelmqctl run bot-id message [get|pop|send]
         intelmqctl run bot-id process [--msg|--dryrun]
@@ -395,6 +396,8 @@ Starting a bot:
     intelmqctl start bot-id
 Stopping a bot:
     intelmqctl stop bot-id
+Reloading a bot:
+    intelmqctl reload bot-id
 Restarting a bot:
     intelmqctl restart bot-id
 Get status of a bot:
@@ -413,12 +416,19 @@ Starting the botnet (all bots):
     intelmqctl start
     etc.
 
+Starting a group of bots:
+    intelmqctl start --group experts
+    etc.
+
 Get a list of all configured bots:
     intelmqctl list bots
 
 Get a list of all queues:
     intelmqctl list queues
 If -q is given, only queues with more than one item are listed.
+
+Get a list of all queues and status of the bots:
+    intelmqctl list queues-and-status
 
 Clear a queue:
     intelmqctl clear queue-id
