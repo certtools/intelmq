@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Uses the azure.storage module from https://pypi.python.org/pypi/azure-storage/0.33.0
+Uses the azure.storage module from https://pypi.org/project/azure-storage/0.33.0/
 Tested with 0.33, probably works with >0.30 too.
 """
 import datetime
