@@ -17,6 +17,7 @@ CHANGELOG
 - `intelmq_gen_feeds_docs` add to bin directory, allows generating the Feeds.md documentation file from feeds.yaml
 - `intelmqctl run` parameter for showing a sent message
 - `intelmqctl run` if message is sent to a non-default path, it is printed out
+- `intelmqctl restart` bug fix; returned some half-nonsense, now returns return state of start and stop operation in a list, see #1226
 
 
 ### Contrib
@@ -101,6 +102,8 @@ CHANGELOG
 
 1.0.4 Bugfix release (unreleased)
 ---------------------------------
+- make code style compatible to pycodestyle 2.4.0
+
 ### Contrib
 
 ### Core
@@ -111,6 +114,8 @@ CHANGELOG
 ### Harmonization
 
 ### Bots
+* Use the new pypi website at https://pypi.org/ everywhere.
+
 #### Collectors
 
 #### Parsers
