@@ -11,6 +11,7 @@ CHANGELOG
 ### Tools
 - `intelmqctl start` prints bot's error messages if it failed to start
 - `intelmqctl start` message "is running" is printed every time. (Until now, it wasn't said when a bot was just starting.)
+- `intelmqctl start` botnet. When using `--type json`, no non-json information about wrong bots are output because that would confuse eg. intelmq-manager
 - `intelmqctl check` checks for defaults.conf completeness
 - `intelmqctl check` shows errors for non-importable bots.
 - `intelmqctl list bots -q` only prints the IDs of enabled bots
