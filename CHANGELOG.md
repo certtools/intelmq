@@ -14,6 +14,8 @@ CHANGELOG
 ### Harmonization
 
 ### Bots
+* Use the new pypi website at https://pypi.org/ everywhere.
+
 #### Collectors
 
 #### Parsers
