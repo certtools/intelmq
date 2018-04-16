@@ -18,7 +18,7 @@ __all__ = ['Cache']
 class Cache():
 
     def __init__(self, host: str, port: int, db: str, ttl: int,
-                 password: Optional[str]=None):
+                 password: Optional[str] = None):
         if host.startswith("/"):
             kwargs = {"unix_socket_path": host}
 
@@ -45,7 +45,7 @@ class Cache():
             return utils.decode(retval)
         return retval
 
-    def set(self, key: str, value: Any, ttl: Optional[int]=None):
+    def set(self, key: str, value: Any, ttl: Optional[int] = None):
         if ttl is None:
             ttl = self.ttl
         if isinstance(value, str):
