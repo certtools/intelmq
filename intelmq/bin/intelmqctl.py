@@ -304,7 +304,7 @@ PROCESS_MANAGER = {'intelmq': IntelMQProcessManager}
 
 class IntelMQController():
 
-    def __init__(self, interactive: bool=False, return_type: str="python", quiet: bool=False):
+    def __init__(self, interactive: bool = False, return_type: str = "python", quiet: bool = False):
         """
         Initializes intelmqctl.
 

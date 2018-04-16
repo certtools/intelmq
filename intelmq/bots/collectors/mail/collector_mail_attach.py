@@ -34,7 +34,7 @@ class MailAttachCollectorBot(CollectorBot):
 
                 if (self.parameters.subject_regex and
                         not re.search(self.parameters.subject_regex,
-                                      re.sub("\r\n\s", " ", message.subject))):
+                                      re.sub(r"\r\n\s", " ", message.subject))):
                     continue
 
                 for attach in message.attachments:
