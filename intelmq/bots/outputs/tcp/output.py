@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import socket
+import struct
 
 import intelmq.lib.utils as utils
 from intelmq.lib.bot import Bot
@@ -9,7 +10,7 @@ class TCPOutputBot(Bot):
 
     def init(self):
         self.address = (self.parameters.ip, int(self.parameters.port))
-        self.separator = utils.encode(self.parameters.separator)
+        self.separator = utils.encode(self.parameters.separator) if(hasattr(self.parameters, "separator")) else None
         self.connect()
 
     def process(self):
@@ -17,7 +18,12 @@ class TCPOutputBot(Bot):
 
         data = event.to_json(hierarchical=self.parameters.hierarchical_output)
         try:
-            self.con.sendall(utils.encode(data) + self.separator)
+            if self.separator:
+                self.con.sendall(utils.encode(data) + self.separator)
+            else:
+                d = utils.encode(data)
+                msg = struct.pack('>I', len(d)) + d
+                self.con.sendall(msg)
         except socket.error:
             self.logger.exception("Reconnecting.")
             self.con.close()

@@ -121,6 +121,16 @@
                 "ssl_client_certificate": null
             }
         },
+        "TCP": {
+            "description": "TCP is the bot responsible to receive events on a TCP port (ex: from another IntelMQ instance).",
+            "module": "intelmq.bots.collectors.tcp.collector",
+            "parameters": {
+                "ip": "<ip>",
+                "hierarchical_output": false,
+                "port": "<port>",
+                "separator": "\n"
+            }
+        },
         "XMPP": {
             "description": "This bot can connect to an XMPP Server and one room, in order to receive reports from it. TLS is used by default. rate_limit is ineffective here. Bot can either pass the body or the whole event.",
             "module": "intelmq.bots.collectors.xmpp.collector",
