@@ -43,6 +43,7 @@ CHANGELOG
 
 ### Tools
 - intelmqctl check: Fixed and extended message for 'run_mode' check.
+- `intelmqctl start` botnet. When using `--type json`, no non-json information about wrong bots are output because that would confuse eg. intelmq-manager
 
 ### Tests
 - lib/bot: No dumps will be written during tests (#934).
