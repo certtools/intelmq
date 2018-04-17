@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import socket
+import sys
 
 import intelmq.lib.utils as utils
 from intelmq.lib.bot import CollectorBot
@@ -49,7 +50,10 @@ class TCPCollectorBot(CollectorBot):
     def connect(self):
         self.con = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.con.bind(self.address)
-        self.con.listen()
+        if sys.version_info[1] > 4:  # remove when we're having Python 3.5+
+            self.con.listen()
+        else:
+            self.con.listen(1)
         self.logger.info("Connected successfully to %s:%s.", self.address[0], self.address[1])
 
     def shutdown(self):
