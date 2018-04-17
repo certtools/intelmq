@@ -103,6 +103,7 @@ CHANGELOG
 1.0.4 Bugfix release (unreleased)
 ---------------------------------
 - make code style compatible to pycodestyle 2.4.0
+- fixed permissions of some files (they were executable sbut shouldn't be)
 
 ### Contrib
 
