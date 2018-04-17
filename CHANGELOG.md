@@ -99,7 +99,7 @@ CHANGELOG
 - added destination.urlpath and source.urlpath to harmonization.
 
 ### Requirements
-- Requests is no longer a listed as dependency of the core. For depending bots the requirement is noted in their REQUIREMENTS.txt file
+- Requests is no longer listed as dependency of the core. For depending bots the requirement is noted in their REQUIREMENTS.txt file
 
 1.0.4 Bugfix release (unreleased)
 ---------------------------------

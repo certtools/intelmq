@@ -165,8 +165,6 @@ This configuration is used by each bot to load the source pipeline and destinati
 }
 ```
 
-<<<<<<< HEAD
-=======
 Note that `destination-queues` contains one of the following values:
 * None
 * string
@@ -189,7 +187,6 @@ Note that `destination-queues` contains one of the following values:
 In that case, bot will be able to send the message to one of defined paths. The path `"_default"` is used if none is not specified.
 In case of errors during processing, and the optional path `"_on_error"` is specified, the message will be sent to the pipelines given given as on-error.
 
->>>>>>> sieve-named-queues
 **Example:**
 ```
 {
