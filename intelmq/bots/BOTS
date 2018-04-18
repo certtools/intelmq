@@ -122,13 +122,11 @@
             }
         },
         "TCP": {
-            "description": "TCP is the bot responsible to receive events on a TCP port (ex: from another IntelMQ instance).",
+            "description": "TCP is the bot responsible to receive events on a TCP port (ex: from TCP Output of another IntelMQ instance).",
             "module": "intelmq.bots.collectors.tcp.collector",
             "parameters": {
                 "ip": "<ip>",
-                "hierarchical_output": false,
-                "port": "<port>",
-                "separator": "\n"
+                "port": "<port>"
             }
         },
         "XMPP": {
@@ -824,13 +822,13 @@
             }
         },
         "TCP": {
-            "description": "TCP is the bot responsible to send events to a TCP port (Splunk, ElasticSearch, etc..).",
+            "description": "TCP is the bot responsible to send events to a TCP port (Splunk, ElasticSearch, another IntelMQ, etc..).",
             "module": "intelmq.bots.outputs.tcp.output",
             "parameters": {
                 "ip": "<ip>",
                 "hierarchical_output": false,
                 "port": "<port>",
-                "separator": "\n"
+                "separator": "<nothing or \n or sth>"
             }
         },
         "UDP": {

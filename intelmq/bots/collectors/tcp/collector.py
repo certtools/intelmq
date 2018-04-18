@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import socket
+import struct
 import sys
 
-import intelmq.lib.utils as utils
 from intelmq.lib.bot import CollectorBot
 
 
@@ -11,37 +11,40 @@ class TCPCollectorBot(CollectorBot):
 
     def init(self):
         self.address = (self.parameters.ip, int(self.parameters.port))
-        self.separator = utils.encode(self.parameters.separator)
-        self.BUFFER_SIZE = 1024
         self.connect()
+
+    def recvall(self, conn, n):
+        # Helper function to recv n bytes or return None if EOF is hit
+        data = b''
+        while len(data) < n:
+            packet = conn.recv(n - len(data))
+            if not packet:
+                return None
+            data += packet
+        return data
 
     def process(self):
         conn = None
         try:
-            conn, addr = self.con.accept()
-            print('Connection address:', addr)
-            data = b""
-            while True:
-                b = conn.recv(self.BUFFER_SIZE)
-                if not b:
-                    break
+                conn, addr = self.con.accept()
+                self.logger.info('Connection address: %s.', addr)
+                while True:
+                    # Read message length and unpack it into an integer
+                    raw_msglen = self.recvall(conn, 4)
+                    if not raw_msglen:
+                        conn.send(b"OK")
+                        return
 
-                data += b
-                messages = data.split(self.separator)
-                if len(messages) > 1:
-                    self.logger.debug('Received parsable data: %s.', data)
-                    for event in messages:
-                        if event:
-                            report = self.new_report()
-                            report.add("raw", event)
-                            self.send_message(report)
-                    data = messages[-1]  # return back the non-finished message
-            conn.send(b"OK")
-        except socket.error as e:
+                    # Read the message data
+                    msg = self.recvall(conn, struct.unpack('>I', raw_msglen)[0])
+                    report = self.new_report()
+                    report.add("raw", msg)
+                    self.send_message(report)
+        except socket.error:
             self.logger.exception("Reconnecting.")
             self.con.close()
             self.connect()
-        except AttributeError as e:
+        except AttributeError:
             self.logger.info('Attribute error.')
         finally:
             if conn:
