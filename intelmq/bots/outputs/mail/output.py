@@ -43,7 +43,7 @@ class MailSendOutputBot(Bot):
         message = self.receive_message()
         
         self.logger.debug(message)
-        
+
         if "source.abuse_contact" in message:
             field = message["source.abuse_contact"]
             self.logger.warning("{}{}".format(self.key, field))
@@ -329,8 +329,13 @@ class MailSendOutputBot(Bot):
             msg["To"] = email_to
             msg["Date"] = formatdate(localtime=True)
             msg["Message-ID"] = make_msgid()
-            self.smtp.sendmail(email_from, recipients, msg.as_string().encode('ascii'))  # .encode('ascii')
-            return True
+            try:
+                self.smtp.sendmail(email_from, recipients, msg.as_string().encode('ascii'))
+            except smtplib.SMTPSenderRefused as e:
+                print("\n!! {}: {}".format(e.args[1].decode("UTF-8"), intended_to or email_to))
+                return False
+            else:
+                return True
         else:
             print('To: {}; Subject: {} '.format(email_to, subject), end="")
             if not mail.count:
