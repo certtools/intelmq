@@ -676,7 +676,8 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 botnet_status[bot_id] = self.bot_status(bot_id)[1]
                 if botnet_status[bot_id] not in ['running', 'disabled']:
                     retval = 1
-                    print(bot_id, botnet_status[bot_id])
+                    if RETURN_TYPE == 'text':
+                        print(bot_id, botnet_status[bot_id])
 
         log_botnet_message('running', group)
         return retval, botnet_status

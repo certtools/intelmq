@@ -37,7 +37,7 @@ class MailAttachCollectorBot(CollectorBot):
 
                 if (self.parameters.subject_regex and
                         not re.search(self.parameters.subject_regex,
-                                      re.sub("\r\n\s", " ", message.subject))):
+                                      re.sub(r"\r\n\s", " ", message.subject))):
                     self.logger.debug("Message with date %s skipped because subject %r does not match.",
                                       message.date, message.subject)
                     continue
