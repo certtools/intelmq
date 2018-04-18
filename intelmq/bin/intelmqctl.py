@@ -63,7 +63,7 @@ RETURN_TYPES = ['text', 'json']
 RETURN_TYPE = None
 QUIET = False
 
-BOT_GROUP = {"collectors": "Collector", "parsers": "Parser", "experts": "Expert", "outputs": "Output", None: "Botnet"}
+BOT_GROUP = {"collectors": "Collector", "parsers": "Parser", "experts": "Expert", "outputs": "Output"}
 
 
 def log_list_queues(queues):
@@ -382,7 +382,7 @@ See additional help for further explanation.
 Starting the botnet (all bots):
     intelmqctl start
     etc.
-    
+
 Starting a group of bots:
     intelmqctl start --group experts
     etc.
@@ -523,7 +523,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             parser_start.add_argument('bot_id', nargs='?',
                                       choices=self.runtime_configuration.keys())
             parser_start.add_argument('--group', help='Start a group of bots',
-                                     choices=BOT_GROUP.keys())
+                                      choices=BOT_GROUP.keys())
             parser_start.set_defaults(func=self.bot_start)
 
             parser_stop = subparsers.add_parser('stop', help='Stop a bot or botnet')
@@ -537,21 +537,21 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             parser_restart.add_argument('bot_id', nargs='?',
                                         choices=self.runtime_configuration.keys())
             parser_restart.add_argument('--group', help='Restart a group of bots',
-                                     choices=BOT_GROUP.keys())
+                                        choices=BOT_GROUP.keys())
             parser_restart.set_defaults(func=self.bot_restart)
 
             parser_reload = subparsers.add_parser('reload', help='Reload a bot or botnet')
             parser_reload.add_argument('bot_id', nargs='?',
                                        choices=self.runtime_configuration.keys())
             parser_reload.add_argument('--group', help='Reload a group of bots',
-                                     choices=BOT_GROUP.keys())
+                                       choices=BOT_GROUP.keys())
             parser_reload.set_defaults(func=self.bot_reload)
 
             parser_status = subparsers.add_parser('status', help='Status of a bot or botnet')
             parser_status.add_argument('bot_id', nargs='?',
                                        choices=self.runtime_configuration.keys())
             parser_status.add_argument('--group', help='Get status of a group of bots',
-                                     choices=BOT_GROUP.keys())
+                                       choices=BOT_GROUP.keys())
             parser_status.set_defaults(func=self.bot_status)
 
             parser_status = subparsers.add_parser('enable', help='Enable a bot')
@@ -630,7 +630,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         else:
             status_stop = self.bot_stop(bot_id)
             status_start = self.bot_start(bot_id)
-            return status_stop[0] + status_start[0], [status_stop[1], status_start[1]]
+            return status_stop[0] | status_start[0], [status_stop[1], status_start[1]]
 
     def bot_status(self, bot_id, group=None):
         if bot_id is None:
@@ -750,7 +750,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         elif kind == 'queues-and-status':
             q = self.list_queues()
             b = self.botnet_status()
-            return q[0] + b[0], [q[1], b[1]]
+            return q[0] | b[0], [q[1], b[1]]
 
     def abort(self, message):
         if self.interactive:
