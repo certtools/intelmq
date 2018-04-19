@@ -48,6 +48,7 @@ import re
 def get_feed(feedname, logger):
     # TODO should this be case insensitive?
     feed_idx = {
+        "Accessible-Hadoop": accessible_hadoop,
         "Accessible-Cisco-Smart-Install": accessible_cisco_smart_install,
         "Accessible-CWMP": accessible_cwmp,
         "Accessible-RDP": accessible_rdp,
@@ -1608,5 +1609,38 @@ drone_brute_force = {
     'constant_fields': {
         'classification.taxonomy': 'intrusion attempts',
         'classification.type': 'brute-force',
+    }
+}
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Accessible-Hadoop
+accessible_hadoop = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'version', validate_to_none),
+        ('extra.', 'server_type', validate_to_none),
+        ('extra.', 'clusterid', validate_to_none),
+        ('extra.', 'total_disk', invalidate_zero),
+        ('extra.', 'used_disk', invalidate_zero),
+        ('extra.', 'free_disk', invalidate_zero),
+        ('extra.', 'livenodes', validate_to_none),
+        ('extra.', 'namenodeaddress', validate_to_none),
+        ('extra.', 'volumeinfo', validate_to_none),
+    ],
+    'constant_fields': {
+        'protocol.application': 'hadoop',
+        'classification.type': 'vulnerable service',
+        'classification.identifier': 'accessible-hadoop',
     }
 }
