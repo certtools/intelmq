@@ -1620,7 +1620,6 @@ accessible_hadoop = {
         ('source.port', 'port'),
     ],
     'optional_fields': [
-        ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
@@ -1640,6 +1639,8 @@ accessible_hadoop = {
     ],
     'constant_fields': {
         'protocol.application': 'hadoop',
+        'protocol.transport': 'tcp',
+        'classification.taxonomy': 'vulnerable',
         'classification.type': 'vulnerable service',
         'classification.identifier': 'accessible-hadoop',
     }
