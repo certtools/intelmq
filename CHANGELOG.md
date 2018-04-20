@@ -2,12 +2,10 @@ CHANGELOG
 ==========
 
 
-1.0.4 Bugfix release (unreleased)
+1.0.4 Bugfix release (2018-04-20)
 ---------------------------------
 - make code style compatible to pycodestyle 2.4.0
-- fixed permissions of some files (they were executable sbut shouldn't be)
-
-### Contrib
+- fixed permissions of some files (they were executable but shouldn't be)
 
 ### Core
 - lib/harmonization:
@@ -18,8 +16,6 @@ CHANGELOG
 
 ### Bots
 * Use the new pypi website at https://pypi.org/ everywhere.
-
-#### Collectors
 
 #### Parsers
 - Shadowserver parser:
@@ -33,14 +29,10 @@ CHANGELOG
 - Spamhaus CERT parser:
  * fix parsing and classification for bot names 'openrelay', 'iotrdp', 'sshauth', 'telnetauth', 'iotcmd', 'iotuser', 'wpscanner', 'w_wplogin', 'iotscan'
    see the NEWS file - Postgresql section - for all changes.
-- CleanM phishing parser: handle FQDNs in IP column (#1162).
+- CleanMX phishing parser: handle FQDNs in IP column (#1162).
 
 #### Experts
 - `bots.experts.ripencc_abuse_contact`: Add existing parameter `mode` to BOTS file.
-
-#### Outputs
-
-### Documentation
 
 ### Tools
 - intelmqctl check: Fixed and extended message for 'run_mode' check.
@@ -52,8 +44,6 @@ CHANGELOG
 
 ### Packaging
 * Static data is now included in source tarballs, development files are excluded
-
-### Known issues
 
 
 1.0.3 Bugfix release (2018-02-05)
