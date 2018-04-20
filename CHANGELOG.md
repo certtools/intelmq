@@ -66,6 +66,7 @@ CHANGELOG
 - changed feednames in `bots.parsers.shadowserver`. Please refer to it's README for the exact changes.
 - shadowserver parser: If the conversion function fails for a line, an error is raised and the offending line will be handled according to the error handling configuration.
   Previously errors like these were only logged and ignored otherwise.
+ * add support for the feed `Accessible-Hadoop`
 - changed feednames in `bots.parsers.shadowserver`. Please refer to it's README for the exact changes.
 - The Generic CSV Parser `bots.parsers.generic.parser_csv`:
   - It is possible to filter the data before processing them using the new parameters `filter_type` and `filter_text`.
