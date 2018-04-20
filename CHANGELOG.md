@@ -2,6 +2,50 @@ CHANGELOG
 ==========
 
 
+1.0.4 Bugfix release (2018-04-20)
+---------------------------------
+- make code style compatible to pycodestyle 2.4.0
+- fixed permissions of some files (they were executable but shouldn't be)
+
+### Core
+- lib/harmonization:
+* FQDN validation now handles None correctly (raised an Exception).
+* Fixed several sanitize() methods, the generic sanitation method were called by is_valid, not the sanitize methods (#1219).
+
+### Harmonization
+
+### Bots
+* Use the new pypi website at https://pypi.org/ everywhere.
+
+#### Parsers
+- Shadowserver parser:
+  * The fields `url` and `http_url` now handle HTTP URL paths and HTTP requests for all feeds (#1204).
+  * The conversion function `validate_fqdn` now handles empty strings correctly.
+  * Feed 'drone (hadoop)':
+    * Correct validation of field `cc_dns`, will now only be added as `destination.fqdn` if correct FQDN, otherwise ignored. Previously this field could be saved in extra containing an IP address.
+    * Adding more mappings for added columns.
+  * A lot of newly added fields and fixed conversions.
+  * Add newly added columns of `Ssl-Scan` feed to parser
+- Spamhaus CERT parser:
+ * fix parsing and classification for bot names 'openrelay', 'iotrdp', 'sshauth', 'telnetauth', 'iotcmd', 'iotuser', 'wpscanner', 'w_wplogin', 'iotscan'
+   see the NEWS file - Postgresql section - for all changes.
+- CleanMX phishing parser: handle FQDNs in IP column (#1162).
+
+#### Experts
+- `bots.experts.ripencc_abuse_contact`: Add existing parameter `mode` to BOTS file.
+
+### Tools
+- intelmqctl check: Fixed and extended message for 'run_mode' check.
+- `intelmqctl start` botnet. When using `--type json`, no non-json information about wrong bots are output because that would confuse eg. intelmq-manager
+
+### Tests
+- lib/bot: No dumps will be written during tests (#934).
+- lib/test: Expand regular expression on python version to match pre-releases (debian testing).
+
+### Packaging
+* Static data is now included in source tarballs, development files are excluded
+
+
 1.0.3 Bugfix release (2018-02-05)
 ---------------------------------
 ### Contrib
@@ -319,7 +363,7 @@ Changes between 0.9 and 1.0.0.dev6
 -`classification.taxonomy` is now lower case only
 
 ### Known issues
- - Harmonization: hashes are not normalized and classified, see also issue #394 and pull #634
+- Harmonization: hashes are not normalized and classified, see also issue #394 and pull #634
 
 ### Contrib
 - ansible and vagrant scripts added
@@ -358,6 +402,6 @@ Changes between 0.9 and 1.0.0.dev6
 2015/06/03 (aaron)
 ------------------
 
-  * fixed the license to AGPL in setup.py
-  * moved back the documentation from the wiki repo to `docs/`. See #205.
-  * added python-zmq as a setup requirement in UserGuide . See #206
+* fixed the license to AGPL in setup.py
+* moved back the documentation from the wiki repo to `docs/`. See #205.
+* added python-zmq as a setup requirement in UserGuide . See #206

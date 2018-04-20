@@ -51,7 +51,23 @@ PHISHING_EVENTS = [{
                         'status': 'online',
                         'time.observation': '2015-11-02T13:11:43+00:00',
                         '__type': 'Event',
-                    }]
+                    },
+                    {
+                        'classification.type': 'phishing',
+                        'event_description.target': 'Google',
+                        'extra': '{"id": "10952859", "phishtank": "5287671", "response": "alive", '
+                                 '"review": "accounts.google."}',
+                        'feed.name': 'CleanMX Phishing',
+                        'feed.url': 'http://support.clean-mx.de/clean-mx/xmlphishing?response=alive&domain=',
+                        'raw': 'PGVudHJ5PgoJPGxpbmU+MjQ4NDM8L2xpbmU+Cgk8aWQ+MTA5NTI4NTk8L2lkPgoJPGZpcnN0PjE1MDgzNDg4ODk8L2ZpcnN0PgoJPGxhc3Q+MDwvbGFzdD4KCTxwaGlzaHRhbms+NTI4NzY3MTwvcGhpc2h0YW5rPgoJPHRhcmdldD5Hb29nbGU8L3RhcmdldD4KCTx1cmw+aHR0cDovL2FjY291bnRzLmdvb2dsZS5jb20uLzwvdXJsPgoJPHJlY2VudD50b2dnbGU8L3JlY2VudD4KCTxyZXNwb25zZT5hbGl2ZTwvcmVzcG9uc2U+Cgk8aXA+YWNjb3VudHMuZ29vZ2xlLjwvaXA+Cgk8cmV2aWV3PmFjY291bnRzLmdvb2dsZS48L3Jldmlldz4KCTxkb21haW4+YWNjb3VudHMuZ29vZ2xlLmNvbTwvZG9tYWluPgoJPGNvdW50cnkgLz4KCTxzb3VyY2U+QVJJTjwvc291cmNlPgoJPGVtYWlsIC8+Cgk8aW5ldG51bSAvPgoJPG5ldG5hbWUgLz4KCTxkZXNjciAvPgoJPG5zMSAvPgoJPG5zMiAvPgoJPG5zMyAvPgoJPG5zNCAvPgoJPG5zNSAvPgo8L2VudHJ5Pgo=',
+                        'source.fqdn': 'accounts.google.com',
+                        'source.url': 'http://accounts.google.com./',
+                        'source.registry': 'ARIN',
+                        'status': 'toggle',
+                        'time.observation': '2015-11-02T13:11:43+00:00',
+                        '__type': 'Event',
+                    },
+                    ]
 VIRUS_REPORT = {"feed.url": "http://support.clean-mx.de/clean-mx/xmlviruses?response=alive&domain=",
                 "feed.name": "CleanMX Viruses",
                 "__type": "Report",
@@ -110,6 +126,7 @@ class TestCleanMXParserBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, PHISHING_EVENTS[0])
         self.assertMessageEqual(1, PHISHING_EVENTS[1])
+        self.assertMessageEqual(2, PHISHING_EVENTS[2])
 
     def test_viruses(self):
         self.input_message = VIRUS_REPORT

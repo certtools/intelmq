@@ -3,6 +3,45 @@ NEWS
 
 See the changelog for a full list of changes.
 
+1.0.4 Bugfix release (2018-04-20)
+---------------------------------
+
+### Postgres databases
+Use the following statement carefully to upgrade your database.
+Adapt your feedname in the query to the one used in your setup.
+```SQL
+UPDATE events
+   SET "classification.taxonomy" = 'intrusion attempts', "classification.type" = 'brute-force', "classification.identifier" = 'rdp', "protocol.application" = 'rdp', "malware.name" = NULL
+   WHERE "malware.name" = 'iotrdp' AND "feed.name" = 'Spamhaus CERT';
+UPDATE events
+   SET "classification.taxonomy" = 'vulnerable', "classification.type" = 'vulnerable service', "classification.identifier" = 'openrelay', "protocol.application" = 'smtp', "malware.name" = NULL
+   WHERE "malware.name" = 'openrelay' AND "feed.name" = 'Spamhaus CERT';
+UPDATE events
+   SET "protocol.application" = 'portmapper'
+   WHERE "classification.identifier" = 'openportmapper' AND "feed.name" = 'Open-Portmapper';
+UPDATE events
+   SET "protocol.application" = 'netbios-nameservice'
+   WHERE "classification.identifier" = 'opennetbios' AND "feed.name" = 'Open-NetBIOS-Nameservice';
+UPDATE events
+   SET "protocol.application" = 'ipsec'
+   WHERE "classification.identifier" = 'openike' AND "feed.name" = 'Vulnerable-ISAKMP';
+UPDATE events
+   SET "classification.taxonomy" = 'intrusion attempts', "classification.type" = 'brute-force', "classification.identifier" = 'ssh', "malware.name" = NULL, "protocol.application" = 'ssh'
+   WHERE "malware.name" = 'sshauth' AND "feed.name" = 'Spamhaus CERT';
+UPDATE events
+   SET "classification.taxonomy" = 'intrusion attempts', "classification.type" = 'brute-force', "classification.identifier" = 'telnet', "malware.name" = NULL, "protocol.application" = 'ssh'
+   WHERE ("malware.name" = 'telnetauth' OR "malware.name" = 'iotcmd' OR "malware.name" = 'iotuser') AND "feed.name" = 'Spamhaus CERT';
+UPDATE events
+   SET "classification.taxonomy" = 'information gathering', "classification.type" = 'scanner', "classification.identifier" = 'wordpress-vulnerabilities', "malware.name" = NULL, "event_description.text" = 'scanning for wordpress vulnerabilities', "protocol.application" = 'http'
+   WHERE "malware.name" = 'wpscanner' AND "feed.name" = 'Spamhaus CERT';
+UPDATE events
+   SET "classification.taxonomy" = 'information gathering', "classification.type" = 'scanner', "classification.identifier" = 'wordpress-login', "malware.name" = NULL, "event_description.text" = 'scanning for wordpress login pages', "protocol.application" = 'http'
+   WHERE "malware.name" = 'w_wplogin' AND "feed.name" = 'Spamhaus CERT';
+UPDATE events
+   SET "classification.taxonomy" = 'intrusion attempts', "classification.type" = 'scanner', "classification.identifier" = 'scanner-generic', "malware.name" = NULL, "event_description.text" = 'infected IoT device scanning for other vulnerable IoT devices'
+   WHERE "malware.name" = 'iotscan' AND "feed.name" = 'Spamhaus CERT';
+```
+
 1.0.3 Bugfix release (2018-02-05)
 ---------------------------------
 ### Configuration
@@ -12,24 +51,24 @@ See the changelog for a full list of changes.
 | n6 classification | Previous classification |  |  | Current classification |  |  | Notes |
 |-|-|-|-|-|-|-|-|
 |                   | taxonomy   | type   | identifier | taxonomy       | type    | identifier |
-| dns-query         | Other      | other  | ignore me  | Other          | other   | dns-query  |
-| proxy             | Vulnerable | proxy  | open proxy | Other          | proxy   | openproxy  |
+| dns-query         | other      | other  | ignore me  | other          | other   | dns-query  |
+| proxy             | vulnerable | proxy  | open proxy | other          | proxy   | openproxy  |
 | sandbox-url       | ignore     | ignore | ignore me  | malicious code | malware | sandboxurl | As this previous taxonomy did not exist, these events have been rejected |
-| other             | Vulnerable | unknow | unknown    | Other          | other   | other      |
+| other             | vulnerable | unknow | unknown    | other          | other   | other      |
 
 ### Postgres databases
 Use the following statement carefully to upgrade your database.
 Adapt your feedname in the query to the one used in your setup.
 ```SQL
 UPDATE events
-   SET "classification.identifier" = "dns-query"
-   WHERE "feed.name" = 'n6' AND "classification.taxonomy" = "Other" AND "classification.type" = "other" AND "classification.identifier" = "ignore me";
+   SET "classification.identifier" = 'dns-query'
+   WHERE "feed.name" = 'n6' AND "classification.taxonomy" = 'other' AND "classification.type" = 'other' AND "classification.identifier" = 'ignore me';
 UPDATE events
-   SET "classification.taxonomy" = "malicious code" AND "classification.type" = "malware" AND "classification.identifier" = "sandboxurl"
-   WHERE "feed.name" = 'n6' AND "classification.taxonomy" = "Vulnerable" AND "classification.type" = "ignore" AND "classification.identifier" = "ignore me";
+   SET "classification.taxonomy" = 'malicious code' AND "classification.type" = 'malware' AND "classification.identifier" = 'sandboxurl'
+   WHERE "feed.name" = 'n6' AND "classification.taxonomy" = 'vulnerable' AND "classification.type" = 'ignore' AND "classification.identifier" = 'ignore me';
 UPDATE events
-   SET "classification.taxonomy" = "Other" AND "classification.type" = "other" AND "classification.identifier" = "other"
-   WHERE "feed.name" = 'n6' AND "classification.taxonomy" = "Vulnerable" AND "classification.type" = "unknow" AND "classification.identifier" = "unknow";
+   SET "classification.taxonomy" = 'other' AND "classification.type" = 'other' AND "classification.identifier" = 'other'
+   WHERE "feed.name" = 'n6' AND "classification.taxonomy" = 'vulnerable' AND "classification.type" = 'unknow' AND "classification.identifier" = 'unknow';
 ```
 
 1.0.2 Bugfix release

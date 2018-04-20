@@ -23,10 +23,11 @@ EXAMPLE_REPORT = {"feed.name": "ShadowServer Compromised Website",
                   }
 EVENT00 = {'__type': 'Event',
          'feed.name': 'ShadowServer Compromised Website',
+         'classification.taxonomy': 'intrusions',
          'classification.type': 'compromised',
          'classification.identifier': 'compromised-website',
-         'extra': '{"detected_since": "2015-05-09 05:51:12", "naics": "0", "server": '
-                  '"Microsoft-IIS/7.5", "sic": "0", "system": "WINNT"}',
+         'extra': '{"detected_since": "2015-05-09 05:51:12", "server": '
+                  '"Microsoft-IIS/7.5", "system": "WINNT"}',
          'protocol.application': 'http',
          'raw': utils.base64_encode('\n'.join([RECONSTRUCTED_LINES[0],
                                                RECONSTRUCTED_LINES[1], ''])),

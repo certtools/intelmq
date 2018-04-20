@@ -116,9 +116,9 @@ class Bot(object):
     def shutdown(self):
         pass
 
-    def start(self, starting: bool=True, error_on_pipeline: bool=True,
-              error_on_message: bool=False, source_pipeline: Optional[str]=None,
-              destination_pipeline: Optional[str]=None):
+    def start(self, starting: bool = True, error_on_pipeline: bool = True,
+              error_on_message: bool = False, source_pipeline: Optional[str] = None,
+              destination_pipeline: Optional[str] = None):
 
         self.__source_pipeline = source_pipeline
         self.__destination_pipeline = destination_pipeline
@@ -259,7 +259,7 @@ class Bot(object):
             self.__handle_sighup()
             remaining = self.parameters.rate_limit - (time.time() - starttime)
 
-    def stop(self, exitcode: int=1):
+    def stop(self, exitcode: int = 1):
         try:
             self.shutdown()
         except BaseException:
@@ -289,11 +289,11 @@ class Bot(object):
         self.__log_buffer = []
 
     def __check_bot_id(self, name: str):
-        res = re.search('[^0-9a-zA-Z\-]+', name)
+        res = re.search(r'[^0-9a-zA-Z\-]+', name)
         if res:
             self.__log_buffer.append(('error',
                                       "Invalid bot id, must match '"
-                                      "[^0-9a-zA-Z\-]+'."))
+                                      r"[^0-9a-zA-Z\-]+'."))
             self.stop()
 
     def __connect_pipelines(self):
@@ -381,10 +381,16 @@ class Bot(object):
         return self.__current_message
 
     def acknowledge_message(self):
-        self.__source_pipeline.acknowledge()
+        """
+        Acknowledges that the last message has been processed, if any.
+
+        For bots without source pipeline (collectors), this is a no-op.
+        """
+        if self.__source_pipeline:
+            self.__source_pipeline.acknowledge()
 
     def _dump_message(self, error_traceback, message: dict):
-        if message is None:
+        if message is None or getattr(self.parameters, 'testing', False):
             return
 
         self.logger.info('Dumping message from pipeline to dump file.')

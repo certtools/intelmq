@@ -43,7 +43,7 @@ class MailURLCollectorBot(CollectorBot):
 
                 if (self.parameters.subject_regex and
                         not re.search(self.parameters.subject_regex,
-                                      re.sub("\r\n\s", " ", message.subject))):
+                                      re.sub(r"\r\n\s", " ", message.subject))):
                     continue
 
                 erroneous = False  # If errors occured this will be set to true.
