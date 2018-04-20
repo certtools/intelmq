@@ -36,8 +36,8 @@ CHANGELOG
 
 ### Core
 - lib/harmonization:
-* FQDN validation now handles None correctly (raised an Exception).
-* Fixed several sanitize() methods, the generic sanitation method were called by is_valid, not the sanitize methods (#1219).
+ * FQDN validation now handles None correctly (raised an Exception).
+ * Fixed several sanitize() methods, the generic sanitation method were called by is_valid, not the sanitize methods (#1219).
 
 ### Harmonization
 
@@ -71,6 +71,12 @@ CHANGELOG
 
 ### Packaging
 * Static data is now included in source tarballs, development files are excluded
+
+### Known issues
+- `bots.collectors/outputs.xmpp` must be killed two times (#970).
+- When running bots with `intelmqctl run [bot-id]` the log level is always INFO (#1075).
+- `intelmqctl run [bot-id] message send [msg]` does only support Events, not Reports (#1077).
+- A warning issued by the python warnings module is logged without the bot-id (#1184).
 
 
 1.0.3 Bugfix release (2018-02-05)
