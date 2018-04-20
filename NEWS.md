@@ -3,6 +3,14 @@ NEWS
 
 See the changelog for a full list of changes.
 
+1.0.5 Bugfix release (unreleased)
+---------------------------------
+### Configuration
+
+### Libraries
+
+### Postgres databases
+
 1.0.4 Bugfix release (2018-04-20)
 ---------------------------------
 

@@ -2,6 +2,33 @@ CHANGELOG
 ==========
 
 
+1.0.5 Bugfix release (unreleased)
+---------------------------------
+
+### Core
+
+### Harmonization
+
+### Bots
+#### Collectors
+
+#### Parsers
+
+#### Experts
+
+#### Outputs
+
+### Documentation
+
+### Packaging
+
+### Tests
+
+### Contrib
+
+### Known issues
+
+
 1.0.4 Bugfix release (2018-04-20)
 ---------------------------------
 - make code style compatible to pycodestyle 2.4.0
