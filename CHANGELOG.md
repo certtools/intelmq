@@ -29,6 +29,7 @@ CHANGELOG
     * Correct validation of field `cc_dns`, will now only be added as `destination.fqdn` if correct FQDN, otherwise ignored. Previously this field could be saved in extra containing an IP address.
     * Adding more mappings for added columns.
   * A lot of newly added fields and fixed conversions.
+  * Add newly added columns of `Ssl-Scan` feed to parser
 - Spamhaus CERT parser:
  * fix parsing and classification for bot names 'openrelay', 'iotrdp', 'sshauth', 'telnetauth', 'iotcmd', 'iotuser', 'wpscanner', 'w_wplogin', 'iotscan'
    see the NEWS file - Postgresql section - for all changes.
