@@ -201,6 +201,10 @@ def validate_fqdn(value):
         return value
 
 
+def convert_date(value):
+    return harmonization.DateTime.sanitize(value)
+
+
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-mDNS
 open_mdns = {
     'required_fields': [
@@ -919,6 +923,7 @@ ssl_poodle_vulnerable_servers = {
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
+        ('extra.', 'cipher_suite', convert_bool),
         ('extra.', 'ssl_poodle', convert_bool),
         ('extra.', 'cert_length', validate_to_none),
         ('extra.', 'subject_common_name', validate_to_none),
@@ -960,7 +965,23 @@ ssl_poodle_vulnerable_servers = {
         ('extra.', 'sha256_fingerprint', validate_to_none),
         ('extra.', 'sha512_fingerprint', validate_to_none),
         ('extra.', 'md5_fingerprint', validate_to_none),
-        ('extra.', 'device_serial', validate_to_none),
+        ('extra.', 'http_response_type', validate_to_none),
+        ('extra.', 'http_code', convert_int),
+        ('extra.', 'http_reason', validate_to_none),
+        ('extra.', 'content_type', validate_to_none),
+        ('extra.', 'http_connection', validate_to_none),
+        ('extra.', 'www_authenticate', validate_to_none),
+        ('extra.', 'set_cookie', validate_to_none),
+        ('extra.', 'server_type', validate_to_none),
+        ('extra.', 'content_length', validate_to_none),
+        ('extra.', 'transfer_encoding', validate_to_none),
+        ('extra.', 'http_date', convert_date),
+        ('extra.', 'cert_valid', convert_bool),
+        ('extra.', 'self_signed', convert_bool),
+        ('extra.', 'cert_expired', convert_bool),
+        ('extra.', 'browser_trusted', convert_bool),
+        ('extra.', 'validation_level', validate_to_none),
+        ('extra.', 'browser_error', validate_to_none),
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',

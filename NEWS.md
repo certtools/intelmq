@@ -138,7 +138,15 @@ UPDATE events
    WHERE "classification.identifier" = 'accessiblevnc' AND "feed.name" = 'Accessible-VNC';
 ```
 
-1.0.4 Bugfix release (unreleased)
+1.0.5 Bugfix release (unreleased)
+---------------------------------
+### Configuration
+
+### Libraries
+
+### Postgres databases
+
+1.0.4 Bugfix release (2018-04-20)
 ---------------------------------
 
 ### Postgres databases
