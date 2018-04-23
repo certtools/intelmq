@@ -264,8 +264,8 @@ Any component of IntelMQ MUST respect the "Data Harmonization Ontology".
   * Make separate pull requests / branches on GitHub for changes. This allows us to discuss things via GitHub.
   * We prefer one  Pull Request per feature or change. If you have a bunch of small fixes, please don't create one RP per fix :)
   * Only very small and changes (docs, ...) might be committed directly to development branches without Pull Request by the [core-team](https://github.com/orgs/certtools/teams/core).
-  * Keep the balance between atomic commits and keeping the amount of commits per PR small. You can use interactive rebasing to squash multiple small commits into one. (`rebase -i master`)
-  * Make sure your PR is merge able in the master branch and all tests are successful.
+  * Keep the balance between atomic commits and keeping the amount of commits per PR small. You can use interactive rebasing to squash multiple small commits into one (`rebase -i [base-branch]`). Only do rebasing if the code you are rebasing is yet not used by others or is already merged - because then others may need to run into conflicts.
+  * Make sure your PR is merge able in the develop branch and all tests are successful.
   * If possible [sign your commits with GPG](https://help.github.com/articles/signing-commits-using-gpg/).
 
 ### Workflow
@@ -276,17 +276,18 @@ We assume here, that origin is your own fork. We first add the upstream reposito
 > git remote add upstream https://github.com/certtools/intelmq.git
 ```
 
-Syncing master:
+Syncing develop:
 
 ```bash
-> git checkout master
-> git pull upstream master
-> git push origin master
-
+> git checkout develop
+> git pull upstream develop
+> git push origin develop
 ```
-Create a separate feature-branch to work on, sync master with upstream. Create working branch from master:
+You can do the same with the branches `master` and `maintenance`.
+
+Create a separate feature-branch to work on, sync develop with upstream. Create working branch from develop:
 ```bash
-> git checkout master
+> git checkout develop
 > git checkout -b bugfix
 # your work
 > git commit
@@ -294,21 +295,21 @@ Create a separate feature-branch to work on, sync master with upstream. Create w
 
 Getting upstream's changes:
 ```bash
-> git checkout master
-> git pull upstream master
-> git push origin master
+> git checkout develop
+> git pull upstream develop
+> git push origin develop
 ```
 There are 2 possibilities to get upstream's commits into your branch. Rebasing and Merging. Using rebasing, your history is rewritten, putting your changes on top of all other commits. You can use this if your changes are not published yet (or only in your fork).
 ```bash
 > git checkout bugfix
-> git rebase master
+> git rebase develop
 ```
-Using the `-i` flag for rebase enables interactive rebasing. You can then remove, reorder and squash commits, rewrite commit messages, beginning with the given branch, e.g. master.
+Using the `-i` flag for rebase enables interactive rebasing. You can then remove, reorder and squash commits, rewrite commit messages, beginning with the given branch, e.g. develop.
 
 Or using merging. This doesn't break the history. It's considered more , but also pollutes the history with merge commits.
 ```bash
 > git checkout bugfix
-> git merge master
+> git merge develop
 ```
 
 Also see the [development workflow of Scipy](https://docs.scipy.org/doc/numpy/dev/gitwash/development_workflow.html) which has more examples.
