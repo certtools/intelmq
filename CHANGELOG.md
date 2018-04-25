@@ -6,6 +6,7 @@ CHANGELOG
 ---------------------------------
 
 ### Core
+- `lib/message`: `Report()` can now create a Report instance from Event instances (#1225).
 
 ### Harmonization
 
