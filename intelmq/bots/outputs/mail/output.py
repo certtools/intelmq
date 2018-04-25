@@ -24,6 +24,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.utils import formatdate, make_msgid
 
+import redis.exceptions
 from intelmq.lib.bot import Bot
 from intelmq.lib.cache import Cache
 from .gpgsafe import GPGSafe
@@ -43,7 +44,7 @@ class MailSendOutputBot(Bot):
         message = self.receive_message()
         
         self.logger.debug(message)
-
+        
         if "source.abuse_contact" in message:
             field = message["source.abuse_contact"]
             self.logger.warning("{}{}".format(self.key, field))
@@ -108,11 +109,16 @@ class MailSendOutputBot(Bot):
                     self.alternative_mail[row[0]] = row[1]
 
         print("Preparing mail queue...")
+        self.timeouted = []
         mails = [m for m in self.prepare_mails() if m]
 
         print("")
         if self.parameters.limit_results:
             print("Results limited to {} by flag. ".format(self.parameters.limit_results), end="")
+
+        if self.timeouted:
+            print("Following address have timeouted and won't be sent! :(")
+            print(self.timeouted)
 
         if not len(mails):
             print(" *** No mails in queue ***")
@@ -198,8 +204,10 @@ class MailSendOutputBot(Bot):
             self.logger.debug(mail_record)
             try:
                 messages = self.cache.redis.lrange(mail_record, 0, -1)
-            except TimeoutError:
-                print("!! {} timeouted, too big to read from redis".format(mail_record))
+            except redis.exceptions.TimeoutError:
+                print("!! {} timeouted, too big to read from redis".format(mail_record))  # XX will be visible both warning and print?
+                self.logger.warning("!! {} timeouted, too big to read from redis".format(mail_record))
+                self.timeouted.append(mail_record)
                 continue
             for message in messages:
                 lines.append(json.loads(str(message, encoding="utf-8")))
@@ -329,13 +337,8 @@ class MailSendOutputBot(Bot):
             msg["To"] = email_to
             msg["Date"] = formatdate(localtime=True)
             msg["Message-ID"] = make_msgid()
-            try:
-                self.smtp.sendmail(email_from, recipients, msg.as_string().encode('ascii'))
-            except smtplib.SMTPSenderRefused as e:
-                print("\n!! {}: {}".format(e.args[1].decode("UTF-8"), intended_to or email_to))
-                return False
-            else:
-                return True
+            self.smtp.sendmail(email_from, recipients, msg.as_string().encode('ascii'))  # .encode('ascii')
+            return True
         else:
             print('To: {}; Subject: {} '.format(email_to, subject), end="")
             if not mail.count:
