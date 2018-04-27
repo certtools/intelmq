@@ -758,9 +758,9 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         counters = pipeline.count_queued_messages(*all_queues)
         log_list_queues(counters)
 
-        return_dict = dict()
+        return_dict = {}
         for bot_id, info in self.pipeline_configuration.items():
-            return_dict[bot_id] = dict()
+            return_dict[bot_id] = {}
 
             if 'source-queue' in info:
                 return_dict[bot_id]['source_queue'] = (
@@ -768,7 +768,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 return_dict[bot_id]['internal_queue'] = counters[info['source-queue'] + '-internal']
 
             if 'destination-queues' in info:
-                return_dict[bot_id]['destination_queues'] = list()
+                return_dict[bot_id]['destination_queues'] = []
                 for dest_queue in info['destination-queues']:
                     return_dict[bot_id]['destination_queues'].append(
                         (dest_queue, counters[dest_queue]))
@@ -824,7 +824,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             self.logger.error('File %r is not readable.', bot_log_path)
             return 1, 'error'
 
-        messages = list()
+        messages = []
 
         message_overflow = ''
         message_count = 0

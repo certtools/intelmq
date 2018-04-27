@@ -22,7 +22,7 @@ INDICES = ['classification.identifier', 'classification.taxonomy',
 
 
 def generate(harmonization_file=HARMONIZATION_CONF_FILE):
-    FIELDS = dict()
+    FIELDS = {}
 
     try:
         print("INFO - Reading %s file" % harmonization_file)

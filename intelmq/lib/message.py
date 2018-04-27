@@ -328,7 +328,7 @@ class Message(dict):
         return event_hash.hexdigest()
 
     def to_dict(self, hierarchical: bool = False, with_type: bool = False):
-        json_dict = dict()
+        json_dict = {}
 
         if with_type:
             self['__type'] = self.__class__.__name__
@@ -346,7 +346,7 @@ class Message(dict):
                     break
 
                 if subkey not in json_dict_fp:
-                    json_dict_fp[subkey] = dict()
+                    json_dict_fp[subkey] = {}
 
                 json_dict_fp = json_dict_fp[subkey]
 

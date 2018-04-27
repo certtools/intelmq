@@ -151,7 +151,7 @@ class Redis(Pipeline):
             raise exceptions.PipelineError(e)
 
     def count_queued_messages(self, *queues):
-        queue_dict = dict()
+        queue_dict = {}
         for queue in queues:
             try:
                 queue_dict[queue] = self.pipe.llen(queue)
@@ -238,7 +238,7 @@ class Pythonlist(Pipeline):
            But only without a real message broker behind.
            As this is only for tests"""
 
-        qdict = dict()
+        qdict = {}
         for queue in queues:
             qdict[queue] = len(self.state.get(queue, []))
         return qdict
