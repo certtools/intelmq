@@ -111,15 +111,16 @@ Supported Operating Systems:
 * **CentOS 7** (requires `epel-release`)
 * **RHEL 7**  (requires `epel-release`)
 * **Debian 8** (requires `python3-typing`)
-* **Debian 8** (requires `python3-typing`)
-* **Fedora 25**
+* **Debian 9**
 * **Fedora 26**
-* **Fedora Rawhide**
-* **openSUSE Leap 42.2**
+* **Fedora 27**
+* **Fedora 28**
 * **openSUSE Leap 42.3**
+* **openSUSE Leap 15.0**
 * **openSUSE Tumbleweed**
 * **Ubuntu 16.04**
-* **Ubuntu 17.04**
+* **Ubuntu 17.10**
+* **Ubuntu 18.04**
 
 Get the installation instructions for your operating system here: [Installation Native Packages](https://software.opensuse.org/download.html?project=home%3Asebix%3Aintelmq&package=intelmq).
 
@@ -133,6 +134,7 @@ sudo -s
 pip3 install intelmq
 
 mv `python3 -c "import site; print(site.getsitepackages()[0] + '/opt/intelmq')"` /opt/
+
 useradd -d /opt/intelmq -U -s /bin/bash intelmq
 chmod -R 0770 /opt/intelmq
 chown -R intelmq.intelmq /opt/intelmq
@@ -143,7 +145,7 @@ chown -R intelmq.intelmq /opt/intelmq
 
 ## Additional Information
 
-Following any one of the installation methods mentioned before setup the IntelMQ base. However, some bots have additional dependencies which are mentioned in their own documentation.
+Following any one of the installation methods mentioned before setup the IntelMQ base. However, some bots have additional dependencies which are mentioned in their own documentation available on this [directory](https://github.com/certtools/intelmq/tree/develop/intelmq/bots).
 
 
 # Afterwards

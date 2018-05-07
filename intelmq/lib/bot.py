@@ -131,9 +131,9 @@ class Bot(object):
     def shutdown(self):
         pass
 
-    def start(self, starting: bool=True, error_on_pipeline: bool=True,
-              error_on_message: bool=False, source_pipeline: Optional[str]=None,
-              destination_pipeline: Optional[str]=None):
+    def start(self, starting: bool = True, error_on_pipeline: bool = True,
+              error_on_message: bool = False, source_pipeline: Optional[str] = None,
+              destination_pipeline: Optional[str] = None):
 
         self.__source_pipeline = source_pipeline
         self.__destination_pipeline = destination_pipeline
@@ -278,7 +278,7 @@ class Bot(object):
             self.__handle_sighup()
             remaining = self.parameters.rate_limit - (time.time() - starttime)
 
-    def stop(self, exitcode: int=1):
+    def stop(self, exitcode: int = 1):
         try:
             self.shutdown()
         except BaseException:
@@ -310,11 +310,11 @@ class Bot(object):
         self.__log_buffer = []
 
     def __check_bot_id(self, name: str):
-        res = re.search('[^0-9a-zA-Z\-]+', name)
+        res = re.search(r'[^0-9a-zA-Z\-]+', name)
         if res:
             self.__log_buffer.append(('error',
                                       "Invalid bot id, must match '"
-                                      "[^0-9a-zA-Z\-]+'."))
+                                      r"[^0-9a-zA-Z\-]+'."))
             self.stop()
 
     def __connect_pipelines(self):
@@ -419,8 +419,8 @@ class Bot(object):
 
         dump_file = os.path.join(self.parameters.logging_path, self.__bot_id + ".dump")
 
-        new_dump_data = dict()
-        new_dump_data[timestamp] = dict()
+        new_dump_data = {}
+        new_dump_data[timestamp] = {}
         new_dump_data[timestamp]["bot_id"] = self.__bot_id
         new_dump_data[timestamp]["source_queue"] = self.__source_queues
         new_dump_data[timestamp]["traceback"] = error_traceback
