@@ -113,9 +113,9 @@ Currently, these operating systems are supported by the packages:
 * CentOS 7, install `epel-release` first
 * RHEL 7, install `epel-release` first
 * Debian 8 (install `python3-typing` too) and 9
-* Fedora 25, 26 and Rawhide
-* openSUSE Leap 42.2, 42.3 and Tumbleweed
-* Ubuntu 16.04 and 17.04
+* Fedora 26, 27 and 28
+* openSUSE Leap 42.3, 15.0 and Tumbleweed
+* Ubuntu 16.04, 17.10 and 18.04
 
 Please report any errors or improvements at https://github.com/certtools/intelmq/issues Thanks!
 
