@@ -419,8 +419,8 @@ class Bot(object):
 
         dump_file = os.path.join(self.parameters.logging_path, self.__bot_id + ".dump")
 
-        new_dump_data = dict()
-        new_dump_data[timestamp] = dict()
+        new_dump_data = {}
+        new_dump_data[timestamp] = {}
         new_dump_data[timestamp]["bot_id"] = self.__bot_id
         new_dump_data[timestamp]["source_queue"] = self.__source_queues
         new_dump_data[timestamp]["traceback"] = error_traceback

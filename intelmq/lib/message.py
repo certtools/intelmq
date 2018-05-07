@@ -436,7 +436,7 @@ class Message(dict):
                     break
 
                 if subkey not in json_dict_fp:
-                    json_dict_fp[subkey] = dict()
+                    json_dict_fp[subkey] = {}
 
                 json_dict_fp = json_dict_fp[subkey]
 

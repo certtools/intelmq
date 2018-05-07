@@ -112,6 +112,8 @@ CHANGELOG
 #### Collectors
 
 #### Parsers
+- Shadowserver parser:
+  * SSL FREAK: Remove optional column `device_serial` and add several new ones.
 
 #### Experts
 
