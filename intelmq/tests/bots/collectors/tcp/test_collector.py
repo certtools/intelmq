@@ -1,10 +1,3 @@
-# uncompyle6 version 3.1.3
-# Python bytecode 3.6 (3379)
-# Decompiled from: Python 3.6.3 (default, Oct  3 2017, 21:45:48) 
-# [GCC 7.2.0]
-# Embedded file name: /var/www/intelmq-repository/intelmq/tests/bots/collectors/tcp/test_collector.py
-# Compiled at: 2018-03-28 21:30:52
-# Size of source mod 2**32: 6074 bytes
 """
 Testing TCP collector
 """
@@ -33,9 +26,11 @@ INPUT1 = {'classification.taxonomy': 'malicious code',
           'raw': utils.base64_encode('bar text\n'),
           'time.observation': '2018-03-20T14:05:03+00:00'}
 REPORT1 = {
-    'raw': 'eyJjbGFzc2lmaWNhdGlvbi50YXhvbm9teSI6ICJtYWxpY2lvdXMgY29kZSIsICJjbGFzc2lmaWNhdGlvbi50eXBlIjogImMmYyIsICJmZWVkLm5hbWUiOiAiRXhhbXBsZSBmZWVkIiwgImZlZWQuYWNjdXJhY3kiOiAxMDAuMCwgImZlZWQudXJsIjogImh0dHA6Ly9sb2NhbGhvc3QvdHdvX2ZpbGVzLnRhci5neiIsICJyYXciOiAiWW1GeUlIUmxlSFFLIiwgInRpbWUub2JzZXJ2YXRpb24iOiAiMjAxOC0wMy0yMFQxNDowNTowMyswMDowMCJ9',
     'feed.name': 'Example feed',
     'feed.accuracy': 100.0}
+# '__type': 'Report'
+# 'raw': 'eyJjbGFzc2lmaWNhdGlvbi50YXhvbm9teSI6ICJtYWxpY2lvdXMgY29kZSIsICJjbGFzc2lmaWNhdGlvbi50eXBlIjogImMmYyIsICJmZWVkLm5hbWUiOiAiRXhhbXBsZSBmZWVkIiwgImZlZWQuYWNjdXJhY3kiOiAxMDAuMCwgImZlZWQudXJsIjogImh0dHA6Ly9sb2NhbGhvc3QvdHdvX2ZpbGVzLnRhci5neiIsICJyYXciOiAiWW1GeUlIUmxlSFFLIiwgInRpbWUub2JzZXJ2YXRpb24iOiAiMjAxOC0wMy0yMFQxNDowNTowMyswMDowMCJ9',
+
 INPUT2 = {'feed.name': 'Example feed 2',
           'feed.accuracy': 100.0,
           'feed.url': 'http://localhost/two_files.tar.gz',
@@ -112,16 +107,25 @@ class TestTCPCollectorBot(test.BotTestCase, unittest.TestCase):
         bot = TestTCPOutputBot()
         bot.setUpClass()
         bot.input_message = []
-        msg_count = 100 # 100
+        msg_count = 100  # 100
         for i in range(msg_count):
             bot.input_message.append(Event(INPUT1))
         (Process(target=bot._delayed_start)).start()
         self.run_bot()
         self.assertOutputQueueLen(msg_count)
-        for msg in self.get_output_queue():
+
+        for i, msg in enumerate(self.get_output_queue()):
             report = MessageFactory.unserialize(msg, harmonization=self.harmonization, default_type='Event')
+
+            output = MessageFactory.unserialize(utils.base64_decode(report["raw"]), harmonization=self.harmonization, default_type='Event')
+            self.assertDictEqual(output, INPUT1)
+
             del report['time.observation']
+            del report['raw']
             self.assertDictEqual(report, REPORT1)
+
+        #for i in range(len(self.get_output_queue())):
+        #    self.assertMessageEqual(i, REPORT1)
 
     def test_chunked_msg(self):
         """ Test if correct Events have been produced, sent from a TCP Output of another IntelMQ instance,
@@ -166,14 +170,13 @@ class TestTCPCollectorBot(test.BotTestCase, unittest.TestCase):
         self.prepare_bot()
         self.bot._Bot__source_pipeline = self.pipe
         self.bot._Bot__destination_pipeline = self.pipe
-        for _ in range(client_count+1):
+        for _ in range(client_count + 1):
             # every single calling of process() method will serve to a single connection
             self.bot.process()
-        self.bot.stop() # let's call shutdown() and free up binded address
+        self.bot.stop()  # let's call shutdown() and free up binded address
 
         self.assertOutputQueueLen(client_count * msg_count + 2)
 
 
 if __name__ == '__main__':
     unittest.main()
-# okay decompiling /tmp/ram/test_collector.cpython-36.pyc

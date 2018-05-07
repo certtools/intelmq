@@ -26,20 +26,20 @@ class TCPCollectorBot(CollectorBot):
     def process(self):
         conn = None
         try:
-                conn, addr = self.con.accept()
-                self.logger.info('Connection address: %s.', addr)
-                while True:
-                    # Read message length and unpack it into an integer
-                    raw_msglen = self.recvall(conn, 4)
-                    if not raw_msglen:
-                        conn.send(b"OK")
-                        return
+            conn, addr = self.con.accept()
+            self.logger.info('Connection address: %s.', addr)
+            while True:
+                # Read message length and unpack it into an integer
+                raw_msglen = self.recvall(conn, 4)
+                if not raw_msglen:
+                    conn.send(b"OK")
+                    return
 
-                    # Read the message data
-                    msg = self.recvall(conn, struct.unpack('>I', raw_msglen)[0])
-                    report = self.new_report()
-                    report.add("raw", msg)
-                    self.send_message(report)
+                # Read the message data
+                msg = self.recvall(conn, struct.unpack('>I', raw_msglen)[0])
+                report = self.new_report()
+                report.add("raw", msg)
+                self.send_message(report)
         except socket.error:
             self.logger.exception("Reconnecting.")
             self.con.close()

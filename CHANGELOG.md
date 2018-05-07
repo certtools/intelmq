@@ -56,6 +56,7 @@ CHANGELOG
 - `bots.collectors.stomp.collector`: Heartbeat timeout is now logged with log level info instead of warning.
 - added `intelmq.bots.collectors.twitter.collector_twitter`
 - added `intelmq.bots.collectors.tcp.collector` that can be bound to another IntelMQ instance by a TCP output
+- `bots.collectors.microsoft.collector_interlow`: added for MS interflow API
 
 #### Parsers
 - changed feednames in `bots.parsers.shadowserver`. Please refer to it's README for the exact changes.
