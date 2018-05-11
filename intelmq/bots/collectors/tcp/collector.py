@@ -37,6 +37,11 @@ class TCPCollectorBot(CollectorBot):
 
                 # Read the message data
                 msg = self.recvall(conn, struct.unpack('>I', raw_msglen)[0])
+                if not msg:
+                    self.logger.warning('Incomplete message received from %s.', addr)
+                    conn.send(b"Incomplete message")
+                    return
+
                 report = self.new_report()
                 report.add("raw", msg)
                 self.send_message(report)
@@ -44,8 +49,6 @@ class TCPCollectorBot(CollectorBot):
             self.logger.exception("Reconnecting.")
             self.con.close()
             self.connect()
-        except AttributeError:
-            self.logger.info('Attribute error.')
         finally:
             if conn:
                 conn.close()
