@@ -209,7 +209,7 @@ file-output: Received message {'raw': '1234'}.
 ```
 
 If run with **--dryrun|-d** flag, the message gets never really popped out from the source or internal pipeline, nor send to the output pipeline.
-Plus, you receive a note about the exact moment the message would get sent, or acknowledged.
+Plus, you receive a note about the exact moment the message would get sent, or acknowledged. It is explicitly if sent to a non-default path.
 
 ```bash
 > intelmqctl run file-output process -d
@@ -225,6 +225,9 @@ You may trick the bot to process a JSON instead of the Message in its pipeline w
 file-output:  * Message from cli will be used when processing.
 ...
 ```
+
+If you wish to display the processed message as well, you the **--show-sent|-s** flag. Then, if sent through (either with `--dryrun` or without), the message gets displayed as well.
+
 
 ### disable
 

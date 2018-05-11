@@ -1,0 +1,3 @@
+"timestamp","ip","port","hostname","version","asn","geo","region","city","naics","sic","server_type","clusterid","total_disk","used_disk","free_disk","livenodes","namenodeaddress","volumeinfo"
+"2017-09-13 02:06:05","199.116.235.200",50070,,"2.7.3, rbaa91f7c6bc9cb92be5982de4719c1c8af91ccff",15296,"CA","ALBERTA","CALGARY",0,0,"namenode","CID-64471a53-60cb-4302-9832-92f321f111fe",41567956992,53248,25160089600,"edmonton:50010",,
+"2017-09-13 02:07:48","104.43.235.92",50075,,"2.7.1.2.4.0.0-169",8075,"US","IOWA","DES MOINES",334111,357101,"datanode","CID-771bae52-9e4f-4ec4-bc1a-c867585751f0",,,,,"sandbox.hortonworks.com","/hadoop/hdfs/data/current"

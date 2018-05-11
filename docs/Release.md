@@ -43,3 +43,43 @@ First, test all the steps first with the [unstable-repository](http://build.open
 
 Announce the new version at the mailinglists intelmq-users, intelmq-dev.
 For bigger releases, probably also at IHAP, Twitter, etc. Ask your favorite social media consultant.
+
+## Prepare new version
+
+Increase the version in `intelmq/version.py` and declare it as alpha version.
+
+Add a new empty changelog and news section. For the changelog:
+
+```
+### Core
+
+### Harmonization
+
+### Bots
+#### Collectors
+
+#### Parsers
+
+#### Experts
+
+#### Outputs
+
+### Documentation
+
+### Packaging
+
+### Tests
+
+### Contrib
+
+### Known issues
+```
+And for the news:
+
+```
+### Configuration
+
+### Libraries
+
+### Postgres databases
+```
