@@ -11,6 +11,7 @@ CHANGELOG
 
 ### Bots
 #### Collectors
+- `bots.collectors.mail.collector_mail_url`: handle empty downloaded reports (#988).
 
 #### Parsers
 - Shadowserver parser:
