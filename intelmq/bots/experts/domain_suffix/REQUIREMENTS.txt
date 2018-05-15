@@ -1,1 +1,1 @@
-publicsuffixlist>=5.0.0
+publicsuffixlist>=6.0.0

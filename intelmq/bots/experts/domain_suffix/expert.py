@@ -25,7 +25,7 @@ class DomainSuffixExpertBot(Bot):
         if self.field not in ALLOWED_FIELDS:
             raise InvalidArgument('key', got=self.field, expected=self.field)
         with codecs.open(self.parameters.suffix_file, encoding='UTF-8') as file_handle:
-            self.psl = PublicSuffixList(source=file_handle)
+            self.psl = PublicSuffixList(source=file_handle, only_icann=True)
 
     def process(self):
         event = self.receive_message()

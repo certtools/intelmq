@@ -7,7 +7,7 @@ the first representation.
 
 
 class PublicSuffixList(object):
-    def __init__(self, source):
+    def __init__(self, source, only_icann=None):
         self.suffixes = {}
         for line in source.readlines():
             line = line.strip()
