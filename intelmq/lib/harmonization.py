@@ -164,6 +164,7 @@ class ClassificationType(GenericType):
                       'test',
                       'tor',
                       'unknown',
+                      'vulnerable client',
                       'vulnerable service',
                       ]
 

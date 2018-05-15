@@ -101,6 +101,7 @@ CHANGELOG
 - added destination.urlpath and source.urlpath to harmonization.
 - New field 'tlp' for tlp level specification.
  - New TLP type. Allows all four tlp levels, removes 'TLP:' prefix and converts to upper case.
+- Added new `classification.type` 'vulnerable client'
 
 ### Requirements
 - Requests is no longer listed as dependency of the core. For depending bots the requirement is noted in their REQUIREMENTS.txt file

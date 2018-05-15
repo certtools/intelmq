@@ -146,6 +146,7 @@ classification.type type. Allowed values are:
  * test
  * tor
  * unknown
+ * vulnerable client
  * vulnerable service
 
 ### DateTime
