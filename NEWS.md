@@ -9,6 +9,10 @@ See the changelog for a full list of changes.
 - `intelmqctl start` prints bot's error messages in stderr if it failed to start.
 - `intelmqctl check` checks if all keys in the packaged defaults.conf are present in the current configuration.
 
+### Contrib / Modify Expert
+The malware name rules of the modify expert have been migrated to the [Malware Name Mapping repository](https://github.com/certtools/malware_name_mapping).
+See contrib/malware_name_mapping/ for automated download and conversion.
+
 ### Harmonization
 - added `destination.urlpath` and `source.urlpath` to harmonization.
 

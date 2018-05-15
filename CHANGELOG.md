@@ -24,6 +24,7 @@ CHANGELOG
 
 ### Contrib
 - contrib tool `feeds-config-generator` to automatically generate the collector and parser runtime and pipeline configurations.
+- Download and convert tool for malware family name mapping has been added.
 
 ### Core
 - use SIGTERM instead of SIGINT to stop bots (#981)
@@ -90,7 +91,7 @@ CHANGELOG
 - Added sieve expert for filtering and modifying events (#1083)
  * capable of distributing the event to appropriate named queues
 - `bots.experts.modify`
- * default ruleset: added avalanche rule.
+ * default rulesets: all malware name mappings have been migrated to the [Malware Name Mapping repository](https://github.com/certtools/malware_name_mapping) ruleset. See the new added contrib tool for download and conversion.
  * new parameter `case_sensitive` (default: True)
 - Added wait expert for sleeping
 
