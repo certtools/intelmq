@@ -14,6 +14,7 @@ class TCPOutputBot(Bot):
         self.connect()
 
     def process(self):
+        # self.logger.exception("EDCVARD TEST.")
         event = self.receive_message()
 
         data = event.to_json(hierarchical=self.parameters.hierarchical_output)
@@ -25,7 +26,8 @@ class TCPOutputBot(Bot):
                 msg = struct.pack('>I', len(d)) + d
                 self.con.sendall(msg)
         except socket.error:
-            self.logger.exception("Reconnecting.")
+            # self.logger.exception("Reconnecting.")
+            self.logger.info("Reconnecting!")
             self.con.close()
             self.connect()
         except AttributeError:

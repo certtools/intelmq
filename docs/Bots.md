@@ -252,7 +252,7 @@ The parameter `http_timeout_max_tries` is of no use in this collector.
 * `lookup:` no
 * `public:` yes
 * `cache (redis db):` none
-* `description:` TCP is the bot responsible to receive events on a TCP port (ex: from TCP Output of another IntelMQ instance).
+* `description:` TCP is the bot responsible to receive events on a TCP port (ex: from TCP Output of another IntelMQ instance). Might not be working on Python3.4.6.
 
 #### Configuration Parameters:
 
