@@ -14,29 +14,41 @@ class DomaintoolsExpertBot(Bot):
 
     def init(self):
         self.logger.info("Loading Domaintools expert.")
-        if (not API):
-            self.logger.exception("need to have the domaintools API installed. See https://github.com/domaintools/python_api")
-            self.stop()
-        if (not self.parameters.user):
-            self.logger.exception("need to specify user for domaintools expert in runtime.conf. Exiting")
-            self.stop()
-        if (not self.parameters.password):
-            self.logger.exception("need to specify password for the user for domaintools expert in runtime.conf. Exiting")
-            self.stop()
+
+        if not API:
+            raise ValueError("need to have the domaintools API installed. See https://github.com/domaintools/python_api.")
+
+        if not self.parameters.user:
+            raise ValueError("need to specify user for domaintools expert in runtime.conf.")
+
+        if not self.parameters.password:
+            raise ValueError("need to specify password for the user for domaintools expert in runtime.conf.")
+
         self.api = API(self.parameters.user, self.parameters.password)
 
-    def domaintools_get_score(self, fqdn):
-        score = None
-        if fqdn:
-            resp = self.api.reputation(fqdn, include_reasons=False)     # don't include a reason in the JSON response
+        if not self.valid_credentials():
+            raise ValueError("invalid credentials found in runtime.conf.")
 
-            try:
-                score = resp['risk_score']
-            except exceptions.NotFoundException:
-                score = None
-            except exceptions.BadRequestException:
-                score = None
-            return score
+    def valid_credentials(self):
+        resp = self.api.reputation(fqdn, include_reasons=False)
+        try:
+            resp['risk_score']
+            return True
+        except exceptions.NotAuthorizedException:
+            return False
+
+    def get_score(self, fqdn):
+        # don't include a reason in the JSON response
+        resp = self.api.reputation(fqdn, include_reasons=False)
+
+        try:
+            score = resp['risk_score']
+        except exceptions.NotFoundException:
+            score = None
+        except exceptions.BadRequestException:
+            raise
+
+        return score
 
     def process(self):
         event = self.receive_message()
@@ -44,12 +56,17 @@ class DomaintoolsExpertBot(Bot):
 
         for key in ["source.", "destination."]:
             key_fqdn = key + "fqdn"
+
             if key_fqdn not in event:
-                continue        # can't query if we don't have a domain name
-            score = self.domaintools_get_score(event.get(key_fqdn))
-            if score is not None:
-                extra["domaintools_score"] = score
-                event.add("extra", extra)
+                continue
+            
+            score = self.get_score(event.get(key_fqdn))
+            
+            if score:
+                extra["domaintools_score_" + key_fqdn] = score
+        
+        extra.update(event.get("extra"))
+        event.update("extra", extra)
 
         self.send_message(event)
         self.acknowledge_message()
