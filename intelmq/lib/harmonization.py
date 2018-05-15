@@ -20,6 +20,7 @@ import binascii
 import datetime
 import ipaddress
 import json
+import re
 import socket
 import urllib.parse as parse
 
@@ -838,4 +839,35 @@ class Registry(UppercaseString):
         value = UppercaseString.sanitize(value)
         if value in ['RIPENCC', 'RIPE-NCC']:
             value = 'RIPE'
+        return value
+
+
+class TLP(UppercaseString):
+    """
+    TLP level type. Derived from UppercaseString.
+
+    Only valid values: WHITE, GREEN, AMBER, RED.
+
+    Accepted for sanitation are different cases and the prefix 'tlp:'.
+    """
+    enum = ['WHITE', 'GREEN', 'AMBER', 'RED']
+    prefix_pattern = re.compile('^(TLP:)?')
+
+    @staticmethod
+    def is_valid(value, sanitize=False):
+        if sanitize:
+            value = TLP.sanitize(value)
+
+        if not UppercaseString.is_valid(value):
+            return False
+
+        if value not in TLP.enum:
+            return False
+
+        return True
+
+    @staticmethod
+    def sanitize(value):
+        value = UppercaseString.sanitize(value)
+        value = TLP.prefix_pattern.sub('', value)
         return value
