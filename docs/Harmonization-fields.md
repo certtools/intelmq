@@ -136,6 +136,7 @@ classification.type type. Allowed values are:
  * dropzone
  * exploit
  * ids alert
+ * infected system
  * leak
  * malware
  * malware configuration

@@ -99,12 +99,10 @@ The taxonomy can be automatically added by the taxonomy expert bot based on the 
 |intrusions|backdoor|This refers to hosts, which have been compromised and backdoored with a remote administration software or Trojan in the traditional sense.|
 |intrusions|compromised|This IOC refers to compromised system.|
 |intrusions|defacement|This IOC refers to hacktivism related activity.|
-|malicious code|botnet drone|This is a compromised machine, which has been observed to make a connection to a command and control server.|
 |malicious code|c&c|This is a command and control server in charge of a given number of botnet drones.|
 |malicious code|dga domain|DGA Domains are seen various families of malware that are used to periodically generate a large number of domain names that can be used as rendezvous points with their command and control servers.|
-|malicious code|malware|A URL is the most common resource with reference to malware binary distribution.|
+|malicious code|infected system|This is a compromised machine, which has been observed to make a connection to a command and control server.|
 |malicious code|malware configuration|This is a resource which updates botnet drones with a new configuration.|
-|malicious code|ransomware|This IOC refers to a specific type of compromised machine, where the computer has been hijacked for ransom by the criminals.|
 |other|blacklist|Some sources provide blacklists, which clearly refer to abusive behavior, such as spamming, but fail to denote the exact reason why a given identity has been blacklisted. The reason may be that the justification is anecdotal or missing entirely. This type should only be used if the typing fits the definition of a blacklist, but an event specific denomination is not possible for one reason or another.|
 |other|other|All IOCs that can not be put in any other taxonomy.|
 |other|proxy|This refers to the use of proxies from inside your network.|
@@ -120,7 +118,6 @@ Meaning of source, destination and local values for each classification type and
 |----|------|-----------|-----|--------------------|
 |backdoor|*backdoored device*||||
 |blacklist|*blacklisted device*||||
-|botnet drone|*infected device*|*contacted c2c server*|||
 |brute-force|*attacker*|target|||
 |c&c|*(sinkholed) c&c server*|||zeus, palevo, feodo|
 |compromised|*server*||||
@@ -130,12 +127,11 @@ Meaning of source, destination and local values for each classification type and
 |dropzone|*server hosting stolen data*||||
 |exploit|*hosting server*||||
 |ids alert|*triggering device*||||
-|malware|*infected device*||internal at source|zeus, palevo, feodo|
+|infected system|*infected device*|*contacted c2c server*|||
 |malware configuration|*infected device*||||
 |other||||||
 |phishing|*phishing website*||||
 |proxy|*server allowing policy and security bypass*||||
-|ransomware|*infected device*||||
 |scanner|*scanning device*|scanned device|||
 |spam|*infected device*|targeted server|internal at source||
 |test||||||

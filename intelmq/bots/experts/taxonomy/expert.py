@@ -12,9 +12,6 @@ TAXONOMY = {
     "spam": "abusive content",
     "scanner": "information gathering",
     "dropzone": "information content security",
-    "malware": "malicious code",
-    "botnet drone": "malicious code",
-    "ransomware": "malicious code",
     "dga domain": "malicious code",
     "malware configuration": "malicious code",
     "c&c": "malicious code",
@@ -32,6 +29,7 @@ TAXONOMY = {
     "other": "other",
     "tor": "other",
     "leak": "information content security",
+    "infected system": "malicious code",
 }
 
 
