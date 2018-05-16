@@ -94,6 +94,7 @@ CHANGELOG
  * default rulesets: all malware name mappings have been migrated to the [Malware Name Mapping repository](https://github.com/certtools/malware_name_mapping) ruleset. See the new added contrib tool for download and conversion.
  * new parameter `case_sensitive` (default: True)
 - Added wait expert for sleeping
+- Added domain suffix expert to extract the TLD/Suffix from a domain name.
 
 ### Harmonization
 - Renamed `JSON` to `JSONDict` and added a new type `JSON`. `JSONDict` saves data internally as JSON, but acts like a dictionary. `JSON` accepts any valid JSON.
@@ -103,6 +104,7 @@ CHANGELOG
 - New field 'tlp' for tlp level specification.
  - New TLP type. Allows all four tlp levels, removes 'TLP:' prefix and converts to upper case.
 - Added new `classification.type` 'vulnerable client'
+- Added `(destination|source).domain_suffix` to hold the TLD/domain suffix.
 
 ### Requirements
 - Requests is no longer listed as dependency of the core. For depending bots the requirement is noted in their REQUIREMENTS.txt file

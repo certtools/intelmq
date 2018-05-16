@@ -548,6 +548,50 @@ FIXME
 
 * * *
 
+### Domain Suffix
+
+See or information on the public suffix list: https://publicsuffix.org/list/
+Only rules for ICANN domains are processed. The list can (and should) contain
+Unicode data, punycode conversion is done during reading
+
+#### Information:
+* `name:` deduplicator
+* `lookup:` redis cache
+* `public:` yes
+* `cache (redis db):` 6
+* `description:` message deduplicator
+
+#### Configuration Parameters:
+
+* `field`: either `"fqdn"` or `"reverse_dns"`
+* `suffix_file`: path to the suffix file
+
+#### Rule processing
+
+A short summary how the rules are processed:
+
+The simple ones:
+```
+com
+at
+gv.at
+```
+`example.com` leads to `com`, `example.gv.at` leads to `gv.at`.
+
+Wildcards:
+```
+*.example.com
+```
+`www.example.com` leads to `www.example.com`.
+
+And additionally the exceptions, together with the above wildcard rule:
+```
+!www.example.com
+```
+`www.example.com` does now not lead to `www.example.com`, but to `example.com`.
+
+* * *
+
 ### Deduplicator
 
 See the README.md
