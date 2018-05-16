@@ -27,6 +27,9 @@ CHANGELOG
 
 ### Tests
 
+### Tools
+- `intelmqctl run` has a new parameter `-l` `--loglevel` to overwrite the log level for the run (#1075).
+
 ### Contrib
 
 ### Known issues
