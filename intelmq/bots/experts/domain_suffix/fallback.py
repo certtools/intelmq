@@ -9,11 +9,14 @@ the first representation.
 class PublicSuffixList(object):
     def __init__(self, source, only_icann=None):
         self.suffixes = {}
+        icann_section = False
         for line in source.readlines():
             line = line.strip()
+            if line == '// ===BEGIN ICANN DOMAINS===':
+                icann_section = True
             if line == '// ===END ICANN DOMAINS===':
-                break
-            if not line or line.startswith('//'):
+                icann_section = False
+            if not line or line.startswith('//') or not icann_section:
                 continue
             line_split = line.split('.')
             suffixes = self.suffixes
@@ -23,8 +26,6 @@ class PublicSuffixList(object):
                 else:
                     suffixes[suffix] = {}
                     suffixes = suffixes[suffix]
-        else:
-            raise ValueError('Could not detect end of ICANN Domain list. Please fix the list or report a bug.')
 
     def publicsuffix(self, domain):
         if not domain:
