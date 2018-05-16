@@ -25,6 +25,7 @@ TAXONOMY = {
     "compromised": "intrusions",
     "backdoor": "intrusions",
     "vulnerable service": "vulnerable",
+    "vulnerable client": "vulnerable",
     "blacklist": "other",
     "unknown": "other",
     "test": "test",

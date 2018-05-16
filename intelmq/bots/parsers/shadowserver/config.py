@@ -34,7 +34,7 @@ Reference material:
 
 TODOs:
     There is a bunch of inline todos.
-    Most of them show lines of code were the mapping  has to be validated
+    Most of them show lines of code were the mapping has to be validated
 
     @ Check-Implementation Tags for parser configs.
     dmth thinks it's not sufficient. Some CERT-Expertise is needed to
@@ -42,11 +42,13 @@ TODOs:
 
 """
 import intelmq.lib.harmonization as harmonization
+import re
 
 
 def get_feed(feedname, logger):
     # TODO should this be case insensitive?
     feed_idx = {
+        "Accessible-Hadoop": accessible_hadoop,
         "Accessible-Cisco-Smart-Install": accessible_cisco_smart_install,
         "Accessible-CWMP": accessible_cwmp,
         "Accessible-RDP": accessible_rdp,
@@ -55,8 +57,9 @@ def get_feed(feedname, logger):
         "Accessible-VNC": accessible_vnc,
         "Blacklisted-IP": blacklisted_ip,
         "Compromised-Website": compromised_website,
-        "Drone": drone,
         "DNS-Open-Resolvers": dns_open_resolvers,
+        "Drone-Brute-Force": drone_brute_force,
+        "Drone": drone,
         "Microsoft-Sinkhole": microsoft_sinkhole,
         "NTP-Monitor": ntp_monitor,
         "NTP-Version": ntp_version,
@@ -80,6 +83,7 @@ def get_feed(feedname, logger):
         "Open-XDMCP": open_xdmcp,
         "Sandbox-URL": sandbox_url,
         "Sinkhole-HTTP-Drone": sinkhole_http_drone,
+        "IPv6-Sinkhole-HTTP-Drone": ipv6_sinkhole_http_drone,
         "Spam-URL": spam_url,
         "SSL-FREAK-Vulnerable-Servers": ssl_freak_vulnerable_servers,
         "SSL-POODLE-Vulnerable-Servers": ssl_poodle_vulnerable_servers,
@@ -153,9 +157,18 @@ def convert_hostname_and_url(value, row):
 def convert_httphost_and_url(value, row):
     """
     URLs are split into hostname and path, we can also guess the protocol here.
+    With some reports, url/http_url holds only the path, with others the full HTTP request.
     """
-    if row['http_host'] and row['url']:
-        return 'http://' + row['http_host'] + row['url']
+    if "url" in row:
+        if row['http_host'] and row['url']:
+            path = re.sub(r'^[^/]*', '', row['url'])
+            path = re.sub(r'\s.*$', '', path)
+            return 'http://' + row['http_host'] + path
+    elif "http_url" in row:
+        if row['http_host'] and row['http_url']:
+            path = re.sub(r'^[^/]*', '', row['http_url'])
+            path = re.sub(r'\s.*$', '', path)
+            return 'http://' + row['http_host'] + path
     return value
 
 
@@ -184,8 +197,12 @@ def validate_ip(value):
 
 
 def validate_fqdn(value):
-    if harmonization.FQDN.is_valid(value, sanitize=True):
+    if value and harmonization.FQDN.is_valid(value, sanitize=True):
         return value
+
+
+def convert_date(value):
+    return harmonization.DateTime.sanitize(value)
 
 
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-mDNS
@@ -196,7 +213,9 @@ open_mdns = {
         ('source.port', 'port'),
     ],
     'optional_fields': [
+        ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # always set to 'open-mdns' in constant_fields
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
@@ -220,11 +239,10 @@ open_mdns = {
         ('extra.', 'http_port', validate_to_none),
     ],
     'constant_fields': {
-        'protocol.transport': 'udp',
-        'protocol.application': 'mdns',
-        'classification.type': 'vulnerable service',
         'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
         'classification.identifier': 'open-mdns',
+        'protocol.application': 'mdns',
     }
 }
 
@@ -238,20 +256,19 @@ open_chargen = {
     'optional_fields': [
         ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # always set to 'open-chargen' in constant_fields
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
-        # Other known fields which will go into "extra"
-        ('response_size', 'size', convert_int),
+        ('extra.response_size', 'size', convert_int),
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
-        # tag
-        # sector
+        ('extra.', 'sector', validate_to_none),
     ],
     'constant_fields': {
-        'classification.type': 'vulnerable service',
         'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
         'classification.identifier': 'open-chargen',
         'protocol.application': 'chargen',
     },
@@ -267,23 +284,22 @@ open_tftp = {
     'optional_fields': [
         ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # always set to 'open-tftp' in constant_fields
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
-        # Other known fields which will go into "extra"
-        ('extra.', 'size', convert_int),
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
-        # tag
-        # opcode
-        # errocode
-        # error
-        # errormessage
+        ('extra.', 'size', convert_int),
+        ('extra.', 'opcode', validate_to_none),
+        ('extra.', 'errorcode', validate_to_none),
+        ('extra.', 'error', validate_to_none),
+        ('extra.', 'errormessage', validate_to_none),
     ],
     'constant_fields': {
-        'classification.type': 'vulnerable service',
         'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
         'classification.identifier': 'open-tftp',
         'protocol.application': 'tftp',
     },
@@ -300,38 +316,82 @@ sinkhole_http_drone = {
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('malware.name', 'type'),
+        ('user_agent', 'http_agent'),
         ('source.tor_node', 'tor', set_tor_node),
+        ('os.name', 'p0f_genre'),
+        ('os.version', 'p0f_detail'),
         ('source.reverse_dns', 'hostname'),
         ('destination.port', 'dst_port'),
+        ('destination.fqdn', 'http_host', validate_fqdn),
+        ('extra.', 'http_referer', validate_to_none),
+        ('extra.', 'http_referer_ip', validate_ip),
+        ('extra.', 'http_referer_asn', convert_int),
+        ('extra.', 'http_referer_geo', validate_to_none),
         ('destination.ip', 'dst_ip', validate_ip),
         ('destination.asn', 'dst_asn'),
         ('destination.geolocation.cc', 'dst_geo'),
-        ('destination.fqdn', 'http_host'),
-        # Other known fields which will go into "extra"
-        ('user_agent', 'http_agent'),
-        ('os.name', 'p0f_genre'),
-        ('os.version', 'p0f_detail'),
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
-        # http_referer
-        # http_referer_ip
-        # http_referer_asn
-        # http_referer_geo
+        ('extra.', 'http_referer_naics', validate_to_none),
+        ('extra.', 'http_referer_sic', validate_to_none),
+        ('extra.', 'sector', validate_to_none),
+        ('extra.', 'ssl_cipher', validate_to_none),
+        ('extra.', 'application', validate_to_none),
+        ('extra.', 'version', validate_to_none),
     ],
     'constant_fields': {
-        # The feed does not include explicit information about the
-        # protocol, but since it is about HTTP the protocol is always
-        # tcp.
-        'protocol.transport': 'tcp',
-        'protocol.application': 'http',
         'classification.taxonomy': 'malicious code',
         'classification.type': 'infected system',
         # classification.identifier will be set to (harmonized) malware name by modify expert
+        # The feed does not include explicit information on the protocol
+        # but since it is about HTTP the protocol is always set to 'tcp'.
+        'protocol.transport': 'tcp',
+        'protocol.application': 'http',
+    },
+}
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Sinkhole6-HTTP-Drone
+ipv6_sinkhole_http_drone = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'src_ip'),
+        ('source.port', 'src_port')
+    ],
+    'optional_fields': [
+        ('source.asn', 'src_asn'),
+        ('source.geolocation.cc', 'src_geo'),
+        ('source.geolocation.region', 'src_region'),
+        ('destination.ip', 'dst_ip', validate_ip),
+        ('destination.asn', 'dst_asn'),
+        ('destination.geolocation.cc', 'dst_geo'),
+        ('destination.geolocation.region', 'dst_region'),
+        ('destination.port', 'dst_port'),
+        ('protocol.transport', 'protocol'),
+        ('malware.name', 'tag'),
+        ('source.reverse_dns', 'hostname'),
+        ('extra.', 'sysdesc', validate_to_none),
+        ('extra.', 'sysname', validate_to_none),
+        ('destination.url', 'http_url'),
+        ('extra.', 'http_agent', validate_to_none),
+        ('destination.fqdn', 'http_host'),
+        ('extra.', 'http_referer', validate_to_none),
+        ('extra.', 'http_referer_ip', validate_to_none),
+        ('extra.', 'http_referer_asn', validate_to_none),
+        ('extra.', 'http_referer_geo', validate_to_none),
+        ('extra.', 'http_referer_region', validate_to_none),
+        ('extra.', 'forwarded_by', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'malicious code',
+        'classification.type': 'infected system',
+        # classification.identifier will be set to (harmonized) malware name by modify expert
+        # The feed does not include explicit information on the protocol
+        # but since it is about HTTP the protocol is always set to 'tcp'.
+        'protocol.transport': 'tcp',
     },
 }
 
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Microsoft-Sinkhole
-# Format should be same as sinkhole-http-drone
 microsoft_sinkhole = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -341,32 +401,37 @@ microsoft_sinkhole = {
     'optional_fields': [
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
+        ('destination.url', 'url', convert_httphost_and_url, True),
         ('malware.name', 'type'),
-        ('source.tor_node', 'tor', set_tor_node),
-        ('source.reverse_dns', 'hostname'),
-        ('destination.port', 'dst_port'),
-        ('destination.ip', 'dst_ip', validate_ip),
-        ('destination.fqdn', 'http_host'),
-        ('destination.asn', 'dst_asn'),
-        ('destination.geolocation.cc', 'dst_geo'),
         ('user_agent', 'http_agent'),
+        ('source.tor_node', 'tor', set_tor_node),
         ('os.name', 'p0f_genre'),
         ('os.version', 'p0f_detail'),
-        ('destination.url', 'url', convert_httphost_and_url, True),
-        # Other known fields which will go into "extra"
+        ('source.reverse_dns', 'hostname'),
+        ('destination.port', 'dst_port'),
+        ('destination.fqdn', 'http_host', validate_fqdn),
+        ('extra.', 'http_referer', validate_to_none),
+        ('extra.', 'http_referer_ip', validate_ip),
+        ('extra.', 'http_referer_asn', convert_int),
+        ('extra.', 'http_referer_geo', validate_to_none),
+        ('destination.ip', 'dst_ip', validate_ip),
+        ('destination.asn', 'dst_asn'),
+        ('destination.geolocation.cc', 'dst_geo'),
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
-        ('extra.', 'http_referer', validate_to_none),
-        # http_referer_ip
-        # http_referer_asn
-        # http_referer_geo
+        ('extra.', 'http_referer_naics', invalidate_zero),
+        ('extra.', 'http_referer_sic', invalidate_zero),
+        ('extra.', 'sector', validate_to_none),
+        ('extra.', 'ssl_cipher', validate_to_none),
+        ('extra.', 'application', validate_to_none),
+        ('extra.', 'version', validate_to_none),
     ],
     'constant_fields': {
-        'protocol.transport': 'tcp',
-        'protocol.application': 'http',
         'classification.taxonomy': 'malicious code',
         'classification.type': 'infected system',
         # classification.identifier will be set to (harmonized) malware name by modify expert
+        'protocol.transport': 'tcp',
+        'protocol.application': 'http',
     },
 }
 
@@ -380,32 +445,31 @@ open_redis = {
     'optional_fields': [
         ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # always set to 'open-redis' in constant_fields
+        ('extra.', 'version', validate_to_none),
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
-        # Other known fields which will go into "extra"
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
-        ('extra.', 'tag'),
-        # version
-        # git_sha1
-        # git_dirty_flag
-        # build_id
-        # mode
-        # os
-        # architecture
-        # multiplexing_api
-        # gcc_version
-        # process_id
-        # run_id
-        # uptime
-        # connected_clients
-        # sector
+        ('extra.', 'git_sha1', validate_to_none),
+        ('extra.', 'git_dirty_flag', validate_to_none),
+        ('extra.', 'build_id', validate_to_none),
+        ('extra.', 'mode', validate_to_none),
+        ('extra.os.name', 'os', validate_to_none),
+        ('extra.', 'architecture', validate_to_none),
+        ('extra.', 'multiplexing_api', validate_to_none),
+        ('extra.', 'gcc_version', validate_to_none),
+        ('extra.', 'process_id', validate_to_none),
+        ('extra.', 'run_id', validate_to_none),
+        ('extra.', 'uptime', validate_to_none),
+        ('extra.', 'connected_clients', validate_to_none),
+        ('extra.', 'sector', validate_to_none),
     ],
     'constant_fields': {
-        'classification.type': 'vulnerable service',
         'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
         'classification.identifier': 'open-redis',
         'protocol.application': 'redis',
     },
@@ -421,24 +485,23 @@ open_portmapper = {
     'optional_fields': [
         ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # always set to 'open-portmapper' in constant_fields
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
-        # Other known fields which will go into "extra"
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
-        # tag
-        # programs
-        # mountd_port
-        # exports
-        # sector
+        ('extra.', 'programs', validate_to_none),
+        ('extra.', 'mountd_port', validate_to_none),
+        ('extra.', 'exports', validate_to_none),
+        ('extra.', 'sector', validate_to_none),
     ],
     'constant_fields': {
-        'classification.type': 'vulnerable service',
         'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
         'classification.identifier': 'open-portmapper',
-        'protocol.application': 'portmap',
+        'protocol.application': 'portmapper',
     },
 }
 
@@ -451,42 +514,41 @@ open_ipmi = {
     ],
     'optional_fields': [
         ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # always set to 'open-ipmi' in constant_fields
+        ('extra.', 'ipmi_version', validate_to_none),
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
-        # Other known fields which will go into "extra"
-        # ipmi_version
         ('extra.', 'none_auth', convert_bool),
         ('extra.', 'md2_auth', convert_bool),
         ('extra.', 'md5_auth', convert_bool),
         ('extra.', 'passkey_auth', convert_bool),
         ('extra.', 'oem_auth', convert_bool),
-        # defaultkg
+        ('extra.', 'defaultkg', validate_to_none),
         ('extra.', 'permessage_auth', convert_bool),
         ('extra.', 'userlevel_auth', convert_bool),
         ('extra.', 'usernames', convert_bool),
         ('extra.', 'nulluser', convert_bool),
         ('extra.', 'anon_login', convert_bool),
-        # error
-        # deviceid
-        # devicerev
-        # firmwarerev
-        # version
-        # manufacturerid
-        # manufacturername
-        # productid
-        # productname
+        ('extra.', 'error', validate_to_none),
+        ('extra.', 'deviceid', validate_to_none),
+        ('extra.', 'devicerev', validate_to_none),
+        ('extra.', 'firmwarerev', validate_to_none),
+        ('extra.', 'version', validate_to_none),
+        ('extra.', 'manufacturerid', validate_to_none),
+        ('extra.', 'manufacturername', validate_to_none),
+        ('extra.', 'productid', validate_to_none),
+        ('extra.', 'productname', validate_to_none),
     ],
     'constant_fields': {
-        'classification.type': 'vulnerable service',
         'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
         'classification.identifier': 'open-ipmi',
         'protocol.application': 'ipmi',
         'protocol.transport': 'udp',
     },
 }
-
 
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-QOTD
 open_qotd = {
@@ -498,25 +560,23 @@ open_qotd = {
     'optional_fields': [
         ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # always set to 'open-qotd' in constant_fields
+        ('extra.', 'quote', validate_to_none),
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
-        # Other known fields which will go into "extra"
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
-        # tag
-        # quote
-        # sector
+        ('extra.', 'sector', validate_to_none),
     ],
     'constant_fields': {
-        'classification.type': 'vulnerable service',
         'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
         'classification.identifier': 'open-qotd',
         'protocol.application': 'qotd',
     },
 }
-
 
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-SSDP
 open_ssdp = {
@@ -528,29 +588,28 @@ open_ssdp = {
     'optional_fields': [
         ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # always set to 'open-ssdp' in constant_fields
+        ('extra.', 'header', validate_to_none),
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
-        # Other known fields which will go into "extra"
+        ('extra.', 'systime', validate_to_none),
+        ('extra.', 'cache_control', validate_to_none),
+        ('extra.', 'location', validate_to_none),
+        ('extra.', 'server', validate_to_none),
+        ('extra.', 'search_target', validate_to_none),
+        ('extra.', 'unique_service_name', validate_to_none),
+        ('extra.', 'host', validate_to_none),
+        ('extra.', 'nts', validate_to_none),
+        ('extra.', 'nt', validate_to_none),
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
-        # tag
-        # header
-        # systime
-        # cache_control
-        # location
-        # server
-        # search_target
-        # unique_service_name
-        # host
-        # nts
-        # nt
-        # sector
+        ('extra.', 'sector', validate_to_none),
     ],
     'constant_fields': {
-        'classification.type': 'vulnerable service',
         'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
         'classification.identifier': 'open-ssdp',
         'protocol.application': 'ssdp',
     },
@@ -566,23 +625,22 @@ open_snmp = {
     'optional_fields': [
         ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
+        ('extra.', 'sysdesc', validate_to_none),
+        ('extra.', 'sysname', validate_to_none),
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
-        # Other known fields which will go into "extra"
+        ('extra.', 'version', convert_int),
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
-        ('extra.', 'version', convert_int),
-        # sysdesc
-        # sysname
-        # sector
+        ('extra.', 'sector', validate_to_none),
     ],
     'constant_fields': {
-        'classification.type': 'vulnerable service',
         'classification.taxonomy': 'vulnerable',
-        'protocol.application': 'snmp',
+        'classification.type': 'vulnerable service',
         'classification.identifier': 'open-snmp',
+        'protocol.application': 'snmp',
     },
 }
 
@@ -591,30 +649,30 @@ open_mssql = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
         ('source.ip', 'ip'),
-        ('source.port', 'port'),  # TODO:  check if this is really the source.port!
+        ('source.port', 'port'),
     ],
     'optional_fields': [
         ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # always set to 'open-mssql' in constant_fields
+        ('extra.', 'version', validate_to_none),
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
-        ('source.local_hostname', 'server_name'),
-        # Other known fields which will go into "extra"
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
-        # tag
-        # version
-        # instance_name
-        # tcp_port  # TODO:  is this the source.port?
-        # named_pipe
-        # response_lenght
-        # sector
+        ('source.local_hostname', 'server_name'),
+        ('extra.', 'instance_name', validate_to_none),
+        ('extra.', 'tcp_port', convert_int),
+        ('extra.', 'named_pipe', validate_to_none),
+        ('extra.', 'response_length', convert_int),
+        ('extra.', 'amplification', convert_float),
+        ('extra.', 'sector', validate_to_none),
     ],
     'constant_fields': {
-        'classification.type': 'vulnerable service',
         'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
         'classification.identifier': 'open-mssql',
         'protocol.application': 'mssql',
     },
@@ -630,29 +688,28 @@ open_mongodb = {
     'optional_fields': [
         ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # always set to 'open-mongodb' in constant_fields
+        ('extra.', 'version', validate_to_none),
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
-        # Other known fields which will go into "extra"
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
-        # tag
-        # version
-        # gitversion
-        # sysinfo
-        # opensslversion
-        # allocator
-        # javascriptengine
-        # bits
-        # maxbsonobjectsize
-        # ok
-        # visible_databases
-        # sector
+        ('extra.', 'gitversion', validate_to_none),
+        ('extra.', 'sysinfo', validate_to_none),
+        ('extra.', 'opensslversion', validate_to_none),
+        ('extra.', 'allocator', validate_to_none),
+        ('extra.', 'javascriptengine', validate_to_none),
+        ('extra.', 'bits', validate_to_none),
+        ('extra.', 'maxbsonobjectsize', validate_to_none),
+        ('extra.', 'ok', validate_to_none),
+        ('extra.', 'visible_databases', validate_to_none),
+        ('extra.', 'sector', validate_to_none),
     ],
     'constant_fields': {
-        'classification.type': 'vulnerable service',
         'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
         'classification.identifier': 'open-mongodb',
         'protocol.application': 'mongodb',
     },
@@ -668,22 +725,24 @@ open_netbios_nameservice = {
     'optional_fields': [
         ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # always set to 'open-netbios-nameservice' in constant_fields
+        ('extra.', 'mac_address', validate_to_none),
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
+        ('extra.', 'workgroup', validate_to_none),
+        ('extra.', 'machine_name', validate_to_none),
         ('source.account', 'username'),
-        # --- moving this to extra: ('source.local_hostname', 'machine_name'),
-        # Other known fields which will go into "extra"
-        # tag
-        # mac_address
-        # workgroup
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'sector', validate_to_none),
     ],
     'constant_fields': {
-        'classification.type': 'vulnerable service',
         'classification.taxonomy': 'vulnerable',
-        'classification.identifier': 'open-netbios',
-        'protocol.application': 'netbios',
+        'classification.type': 'vulnerable service',
+        'classification.identifier': 'open-netbios-nameservice',
+        'protocol.application': 'netbios-nameservice',
     },
 }
 
@@ -695,31 +754,30 @@ open_elasticsearch = {
         ('source.port', 'port'),
     ],
     'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # always set to 'open-elasticsearch' in constant_fields
+        ('extra.', 'version', validate_to_none),
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
-        ('protocol.transport', 'protocol'),
-        ('source.reverse_dns', 'hostname'),
-        # Other known fields which will go into "extra"
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'ok', convert_bool),
+        ('extra.', 'name', validate_to_none),
+        ('extra.', 'cluster_name', validate_to_none),
         ('extra.', 'status', convert_int),
+        ('extra.', 'build_hash', validate_to_none),
+        ('extra.', 'build_timestamp', validate_to_none),
         ('extra.', 'build_snapshot', convert_bool),
-        # version
-        # ok
-        # name
-        # cluster_name
-        # build_hash
-        # build_timestamp
-        # build_snapshot
-        # lucene_version
-        # tagline
-
+        ('extra.', 'lucene_version', validate_to_none),
+        ('extra.', 'tagline', validate_to_none),
+        ('extra.', 'sector', validate_to_none),
     ],
     'constant_fields': {
-        'classification.type': 'vulnerable service',
         'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
         'classification.identifier': 'open-elasticsearch',
         'protocol.application': 'elasticsearch',
     },
@@ -733,17 +791,20 @@ dns_open_resolvers = {
         ('source.port', 'port'),
     ],
     'optional_fields': [
-        ('protocol.transport', 'protocol'),
-        ('source.reverse_dns', 'hostname'),
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # always set to 'openresolver' in constant_fields
+        ('extra.', 'min_amplification', convert_float),
+        ('extra.', 'dns_version', validate_to_none),
         ('os.name', 'p0f_genre'),
         ('os.version', 'p0f_detail'),
-        # Other known fields which will go into "extra"
-        # min_amplification
-        # dns_version
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'sector', validate_to_none),
     ],
     'constant_fields': {
         'classification.type': 'vulnerable service',
@@ -762,15 +823,20 @@ ntp_monitor = {
     ],
     'optional_fields': [
         ('protocol.transport', 'protocol'),
-        ('source.reverse_dns', 'hostname'),  # TODO
+        ('source.reverse_dns', 'hostname'),
+        ('extra.', 'packets', convert_int),
+        ('extra.', 'size', convert_int),
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'sector', validate_to_none),
     ],
     'constant_fields': {
-        'classification.type': 'vulnerable service',
         'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
         'classification.identifier': 'ntp-monitor',
         'protocol.application': 'ntp',
     },
@@ -785,19 +851,79 @@ ssl_freak_vulnerable_servers = {
     ],
     'optional_fields': [
         ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # always set to 'ssl-freak' in constant_fields
+        ('extra.', 'handshake', validate_to_none),
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
+        ('extra.', 'cipher_suite', validate_to_none),
+        ('extra.', 'cert_length', validate_to_none),
+        ('extra.', 'subject_common_name', validate_to_none),
+        ('extra.', 'issuer_common_name', validate_to_none),
+        ('extra.', 'cert_issue_date', validate_to_none),
+        ('extra.', 'cert_expiration_date', validate_to_none),
+        ('extra.', 'sha1_fingerprint', validate_to_none),
+        ('extra.', 'cert_serial_number', validate_to_none),
+        ('extra.', 'signature_algorithm', validate_to_none),
+        ('extra.', 'key_algorithm', validate_to_none),
+        ('extra.', 'subject_organization_name', validate_to_none),
+        ('extra.', 'subject_organization_unit_name', validate_to_none),
+        ('extra.', 'subject_country', validate_to_none),
+        ('extra.', 'subject_state_or_province_name', validate_to_none),
+        ('extra.', 'subject_locality_name', validate_to_none),
+        ('extra.', 'subject_street_address', validate_to_none),
+        ('extra.', 'subject_postal_code', validate_to_none),
+        ('extra.', 'subject_surname', validate_to_none),
+        ('extra.', 'subject_given_name', validate_to_none),
+        ('extra.', 'subject_email_address', validate_to_none),
+        ('extra.', 'subject_business_category', validate_to_none),
+        ('extra.', 'subject_serial_number', validate_to_none),
+        ('extra.', 'issuer_organization_name', validate_to_none),
+        ('extra.', 'issuer_organization_unit_name', validate_to_none),
+        ('extra.', 'issuer_country', validate_to_none),
+        ('extra.', 'issuer_state_or_province_name', validate_to_none),
+        ('extra.', 'issuer_locality_name', validate_to_none),
+        ('extra.', 'issuer_street_address', validate_to_none),
+        ('extra.', 'issuer_postal_code', validate_to_none),
+        ('extra.', 'issuer_surname', validate_to_none),
+        ('extra.', 'issuer_given_name', validate_to_none),
+        ('extra.', 'issuer_email_address', validate_to_none),
+        ('extra.', 'issuer_business_category', validate_to_none),
+        ('extra.', 'issuer_serial_number', validate_to_none),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'freak_vulnerable', convert_bool),
+        ('extra.', 'freak_cipher_suite', validate_to_none),
+        ('extra.', 'sector', validate_to_none),
+        ('extra.', 'sha256_fingerprint', validate_to_none),
+        ('extra.', 'sha512_fingerprint', validate_to_none),
+        ('extra.', 'md5_fingerprint', validate_to_none),
+        ('extra.', 'http_response_type', validate_to_none),
+        ('extra.', 'http_code', convert_int),
+        ('extra.', 'http_reason', validate_to_none),
+        ('extra.', 'content_type', validate_to_none),
+        ('extra.', 'http_connection', validate_to_none),
+        ('extra.', 'www_authenticate', validate_to_none),
+        ('extra.', 'set_cookie', validate_to_none),
+        ('extra.', 'server_type', validate_to_none),
+        ('extra.', 'content_length', validate_to_none),
+        ('extra.', 'transfer_encoding', validate_to_none),
+        ('extra.', 'http_date', convert_date),
+        ('extra.', 'cert_valid', convert_bool),
+        ('extra.', 'self_signed', convert_bool),
+        ('extra.', 'cert_expired', convert_bool),
+        ('extra.', 'browser_trusted', convert_bool),
+        ('extra.', 'validation_level', validate_to_none),
+        ('extra.', 'browser_error', validate_to_none),
     ],
     'constant_fields': {
-        'classification.type': 'vulnerable service',
         'classification.taxonomy': 'vulnerable',
-        'classification.identifier': 'SSL-FREAK',
+        'classification.type': 'vulnerable service',
+        'classification.identifier': 'ssl-freak',
         'protocol.application': 'https',
     },
 }
-
 
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Ssl-Scan
 ssl_poodle_vulnerable_servers = {
@@ -808,15 +934,76 @@ ssl_poodle_vulnerable_servers = {
     ],
     'optional_fields': [
         ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # always set to 'ssl-poodle' in constant_fields
+        ('extra.', 'handshake', validate_to_none),
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
+        ('extra.', 'cipher_suite', convert_bool),
+        ('extra.', 'ssl_poodle', convert_bool),
+        ('extra.', 'cert_length', validate_to_none),
+        ('extra.', 'subject_common_name', validate_to_none),
+        ('extra.', 'issuer_common_name', validate_to_none),
+        ('extra.', 'cert_issue_date', validate_to_none),
+        ('extra.', 'cert_expiration_date', validate_to_none),
+        ('extra.', 'sha1_fingerprint', validate_to_none),
+        ('extra.', 'cert_serial_number', validate_to_none),
+        ('extra.', 'ssl_version', validate_to_none),
+        ('extra.', 'signature_algorithm', validate_to_none),
+        ('extra.', 'key_algorithm', validate_to_none),
+        ('extra.', 'subject_organization_name', validate_to_none),
+        ('extra.', 'subject_organization_unit_name', validate_to_none),
+        ('extra.', 'subject_country', validate_to_none),
+        ('extra.', 'subject_state_or_province_name', validate_to_none),
+        ('extra.', 'subject_locality_name', validate_to_none),
+        ('extra.', 'subject_street_address', validate_to_none),
+        ('extra.', 'subject_postal_code', validate_to_none),
+        ('extra.', 'subject_surname', validate_to_none),
+        ('extra.', 'subject_given_name', validate_to_none),
+        ('extra.', 'subject_email_address', validate_to_none),
+        ('extra.', 'subject_business_category', validate_to_none),
+        ('extra.', 'subject_serial_number', validate_to_none),
+        ('extra.', 'issuer_organization_name', validate_to_none),
+        ('extra.', 'issuer_organization_unit_name', validate_to_none),
+        ('extra.', 'issuer_country', validate_to_none),
+        ('extra.', 'issuer_state_or_province_name', validate_to_none),
+        ('extra.', 'issuer_locality_name', validate_to_none),
+        ('extra.', 'issuer_street_address', validate_to_none),
+        ('extra.', 'issuer_postal_code', validate_to_none),
+        ('extra.', 'issuer_surname', validate_to_none),
+        ('extra.', 'issuer_given_name', validate_to_none),
+        ('extra.', 'issuer_email_address', validate_to_none),
+        ('extra.', 'issuer_business_category', validate_to_none),
+        ('extra.', 'issuer_serial_number', validate_to_none),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'sector', validate_to_none),
+        ('extra.', 'sha256_fingerprint', validate_to_none),
+        ('extra.', 'sha512_fingerprint', validate_to_none),
+        ('extra.', 'md5_fingerprint', validate_to_none),
+        ('extra.', 'http_response_type', validate_to_none),
+        ('extra.', 'http_code', convert_int),
+        ('extra.', 'http_reason', validate_to_none),
+        ('extra.', 'content_type', validate_to_none),
+        ('extra.', 'http_connection', validate_to_none),
+        ('extra.', 'www_authenticate', validate_to_none),
+        ('extra.', 'set_cookie', validate_to_none),
+        ('extra.', 'server_type', validate_to_none),
+        ('extra.', 'content_length', validate_to_none),
+        ('extra.', 'transfer_encoding', validate_to_none),
+        ('extra.', 'http_date', convert_date),
+        ('extra.', 'cert_valid', convert_bool),
+        ('extra.', 'self_signed', convert_bool),
+        ('extra.', 'cert_expired', convert_bool),
+        ('extra.', 'browser_trusted', convert_bool),
+        ('extra.', 'validation_level', validate_to_none),
+        ('extra.', 'browser_error', validate_to_none),
     ],
     'constant_fields': {
-        'classification.type': 'vulnerable service',
         'classification.taxonomy': 'vulnerable',
-        'classification.identifier': 'SSL-POODLE',
+        'classification.type': 'vulnerable service',
+        'classification.identifier': 'ssl-poodle',
         'protocol.application': 'https',
     },
 }
@@ -830,23 +1017,26 @@ open_memcached = {
     ],
     'optional_fields': [
         ('protocol.transport', 'protocol'),
-        ('source.reverse_dns', 'hostname'),  # TODO
+        ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # always set to 'open-memcached' in constant_fields
+        ('extra.', 'version', validate_to_none),
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
-        ('extra.', 'pid'),
-        ('extra.', 'pointer_size'),
-        ('extra.', 'uptime'),
-        ('extra.', 'time'),
-        ('extra.', 'curr_connections'),
-        ('extra.', 'total_connections'),
+        ('extra.', 'pid', convert_int),
+        ('extra.', 'pointer_size', convert_int),
+        ('extra.', 'uptime', convert_int),
+        ('extra.', 'time', validate_to_none),
+        ('extra.', 'curr_connections', convert_int),
+        ('extra.', 'total_connections', convert_int),
+        ('extra.', 'sector', validate_to_none),
     ],
     'constant_fields': {
-        'classification.type': 'vulnerable service',
         'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
         'classification.identifier': 'open-memcached',
         'protocol.application': 'memcached',
     },
@@ -860,27 +1050,37 @@ drone = {
         ('source.port', 'port'),
     ],
     'optional_fields': [
-        ('destination.asn', 'cc_asn'),
-        ('destination.geolocation.cc', 'cc_geo'),
-        ('destination.ip', 'cc_ip', validate_ip),
-        ('destination.port', 'cc_port'),
-        ('destination.fqdn', 'cc_dns'),
-        ('destination.url', 'url', convert_hostname_and_url, True),
-        ('malware.name', 'infection'),
-        ('protocol.application', 'application'),
-        ('protocol.transport', 'type'),
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
         ('source.reverse_dns', 'hostname'),
-        # Other known fields which will go into "extra"
-        ('connection_count', 'count', convert_int),
+        ('protocol.transport', 'type'),
+        ('malware.name', 'infection'),
+        ('destination.url', 'url', convert_hostname_and_url, True),
         ('user_agent', 'agent'),
+        ('destination.ip', 'cc_ip', validate_ip),
+        ('destination.port', 'cc_port'),
+        ('destination.asn', 'cc_asn'),
+        ('destination.geolocation.cc', 'cc_geo'),
+        ('destination.fqdn', 'cc_dns', validate_fqdn),
+        ('connection_count', 'count', convert_int),
+        ('extra.', 'proxy', convert_bool),
+        ('protocol.application', 'application'),
         ('os.name', 'p0f_genre'),
         ('os.version', 'p0f_detail'),
+        ('extra.', 'machine_name', validate_to_none),
+        ('extra.', 'id', validate_to_none),
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
+        ('extra.destination.naics', 'cc_naics', invalidate_zero),
+        ('extra.destination.sic', 'cc_sic', invalidate_zero),
+        ('extra.destination.sector', 'cc_sector', validate_to_none),
+        ('extra.', 'sector', validate_to_none),
+        ('extra.', 'ssl_cipher', validate_to_none),
+        ('extra.', 'family', validate_to_none),
+        ('extra.', 'tag', validate_to_none),
+        ('extra.', 'public_source', validate_to_none),
     ],
     'constant_fields': {
         'classification.taxonomy': 'malicious code',
@@ -899,23 +1099,23 @@ open_xdmcp = {
     'optional_fields': [
         ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # always set to 'open-xdmcp' in constant_fields
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
-        # Other known fields which will go into "extra"
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
-        ('extra.', 'opcode'),
-        ('extra.', 'reported_hostname'),
-        ('extra.', 'status'),
+        ('extra.', 'opcode', validate_to_none),
+        ('extra.', 'reported_hostname', validate_to_none),
+        ('extra.', 'status', validate_to_none),
+        ('extra.', 'size', convert_int),
     ],
     'constant_fields': {
-        'classification.type': 'vulnerable service',
         'classification.taxonomy': 'vulnerable',
-        'protocol.application': 'xdmcp',
-        # 'feed.url': 'https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-XDMCP',
+        'classification.type': 'vulnerable service',
         'classification.identifier': 'open-xdmcp',
+        'protocol.application': 'xdmcp',
     },
 }
 
@@ -940,12 +1140,14 @@ compromised_website = {
         ('extra.', 'system', validate_to_none),
         ('extra.', 'detected_since', validate_to_none),
         ('extra.', 'server', validate_to_none),
+        ('extra.', 'redirect_target', validate_to_none),
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'sector', validate_to_none),
     ],
     'constant_fields': {
-        'classification.type': 'compromised',
         'classification.taxonomy': 'intrusions',
+        'classification.type': 'compromised',
         'classification.identifier': 'compromised-website',
     },
 }
@@ -960,20 +1162,22 @@ open_natpmp = {
     'optional_fields': [
         ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # always set to 'open-natpmp' in constant_fields
+        ('extra.', 'version', validate_to_none),
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
-        ('extra.', 'version', validate_to_none),
         ('extra.', 'opcode', validate_to_none),
         ('extra.', 'uptime', validate_to_none),
         ('extra.', 'external_ip', validate_ip),
+        ('extra.', 'sector', validate_to_none),
     ],
     'constant_fields': {
-        'classification.type': 'vulnerable service',
         'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
         'classification.identifier': 'open-natpmp',
         'protocol.application': 'natpmp',
     },
@@ -988,18 +1192,21 @@ open_netis = {
     ],
     'optional_fields': [
         ('source.reverse_dns', 'hostname'),
-        ('event_description.text', 'tag'),
+        # ('classification.identifier', 'tag'),  # always set to 'open-netis' in constant_fields
         ('extra.', 'response', validate_to_none),
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'sector', validate_to_none),
     ],
     'constant_fields': {
-        'protocol.transport': 'udp',
-        'classification.type': 'vulnerable service',
         'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
         'classification.identifier': 'open-netis',
+        'protocol.transport': 'udp',
     },
 }
 
@@ -1042,13 +1249,13 @@ ntp_version = {
         ('extra.', 'system', validate_to_none),
         ('extra.', 'tai', convert_int),
         ('extra.', 'tc', convert_int),
-        ('extra.', 'naics', convert_int),
-        ('extra.', 'sic', convert_int),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
         ('extra.', 'sector', validate_to_none),
     ],
     'constant_fields': {
-        'classification.type': 'vulnerable service',
         'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
         'classification.identifier': 'ntp-version',
         'protocol.application': 'ntp',
     },
@@ -1065,13 +1272,13 @@ sandbox_url = {
         ('source.geolocation.cc', 'geo'),
         ('malware.hash.md5', 'md5hash'),
         ('source.url', 'url'),
-        ('extra.', 'user_agent', validate_to_none),
+        ('user_agent', 'user_agent', validate_to_none),
         ('source.fqdn', 'host', validate_fqdn),
         ('extra.', 'method', validate_to_none),
     ],
     'constant_fields': {
-        'classification.type': 'malware',
         'classification.taxonomy': 'malicious code',
+        'classification.type': 'malware',
         'classification.identifier': 'sandbox-url',
     },
 }
@@ -1090,16 +1297,20 @@ spam_url = {
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
         ('extra.', 'subject', validate_to_none),
-        ('extra.', 'ip', validate_to_none),
-        ('extra.', 'src_asn', validate_to_none),
+        ('extra.', 'ip', validate_ip),
+        ('extra.', 'src_asn', convert_int),
         ('extra.', 'src_geo', validate_to_none),
         ('extra.', 'src_region', validate_to_none),
         ('extra.', 'src_city', validate_to_none),
         ('extra.', 'sender', validate_to_none),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'src_naics', invalidate_zero),
+        ('extra.', 'src_sic', invalidate_zero),
     ],
     'constant_fields': {
-        'classification.type': 'spam',
         'classification.taxonomy': 'abusive content',
+        'classification.type': 'spam',
         'classification.identifier': 'spam-url',
     },
 }
@@ -1114,6 +1325,7 @@ vulnerable_isakmp = {
     'optional_fields': [
         ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # always set to 'open-ike' in constant_fields
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
@@ -1125,17 +1337,18 @@ vulnerable_isakmp = {
         ('extra.', 'next_payload', convert_int),
         ('extra.', 'exchange_type', convert_int),
         ('extra.', 'flags', convert_int),
-        ('extra.', 'message_id'),
+        ('extra.', 'message_id', validate_to_none),
         ('extra.', 'next_payload2', convert_int),
         ('extra.', 'domain_of_interpretation', convert_int),
-        ('extra.', 'protocol_id', convert_int),  # no data seen here yet
+        ('extra.', 'protocol_id', convert_int),
         ('extra.', 'spi_size', convert_int),
         ('extra.', 'notify_message_type', convert_int),
     ],
     'constant_fields': {
-        'classification.type': 'vulnerable service',
         'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
         'classification.identifier': 'open-ike',
+        'protocol.application': 'ipsec',
     }
 }
 
@@ -1148,13 +1361,14 @@ accessible_rdp = {
     ],
     'optional_fields': [
         ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # always set to 'open-rdp' in constant_fields
         ('extra.', 'handshake', validate_to_none),
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
         ('extra.', 'rdp_protocol', validate_to_none),
-        ('extra.', 'cert_length', invalidate_zero),
+        ('extra.', 'cert_length', convert_int),
         ('extra.', 'subject_common_name', validate_to_none),
         ('extra.', 'issuer_common_name', validate_to_none),
         ('extra.', 'cert_issue_date', validate_to_none),
@@ -1172,11 +1386,11 @@ accessible_rdp = {
         ('extra.', 'sector', validate_to_none),
     ],
     'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
+        'classification.identifier': 'open-rdp',
         'protocol.transport': 'tcp',
         'protocol.application': 'rdp',
-        'classification.type': 'vulnerable service',
-        'classification.taxonomy': 'vulnerable',
-        'classification.identifier': 'open-rdp',
     },
 }
 
@@ -1193,18 +1407,18 @@ accessible_smb = {
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
         ('extra.', 'smb_implant', convert_bool),
         ('extra.', 'arch', validate_to_none),
         ('extra.', 'key', validate_to_none),
-        ('extra.', 'naics', invalidate_zero),
-        ('extra.', 'sic', invalidate_zero),
     ],
     'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
+        'classification.identifier': 'open-smb',
         'protocol.transport': 'tcp',
         'protocol.application': 'smb',
-        'classification.type': 'vulnerable service',
-        'classification.taxonomy': 'vulnerable',
-        'classification.identifier': 'open-smb',
     },
 }
 
@@ -1218,13 +1432,14 @@ open_ldap = {
     'optional_fields': [
         ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # always set to 'open-ldap' in constant_fields
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
-        ('extra.', 'size', validate_to_none),
+        ('extra.', 'size', convert_int),
         ('extra.', 'configuration_naming_context', validate_to_none),
         ('extra.', 'current_time', validate_to_none),
         ('extra.', 'default_naming_context', validate_to_none),
@@ -1249,10 +1464,10 @@ open_ldap = {
         ('extra.', 'supported_sasl_mechanisms', validate_to_none),
     ],
     'constant_fields': {
-        'protocol.application': 'ldap',
-        'classification.type': 'vulnerable service',
         'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
         'classification.identifier': 'open-ldap',
+        'protocol.application': 'ldap',
     }
 }
 
@@ -1275,12 +1490,11 @@ blacklisted_ip = {
         ('extra.', 'sector', validate_to_none),
     ],
     'constant_fields': {
-        'classification.type': 'blacklist',
         'classification.taxonomy': 'other',
+        'classification.type': 'blacklist',
         'classification.identifier': 'blacklisted-ip',
     }
 }
-
 
 accessible_telnet = {
     'required_fields': [
@@ -1289,8 +1503,9 @@ accessible_telnet = {
         ('source.port', 'port'),
     ],
     'optional_fields': [
+        ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
-        # 'tag' will always be 'telnet', so it's inside constant fields as 'protocol.application'
+        # ('classification.identifier', 'tag'),  # always set to 'open-telnet' in constant_fields
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
@@ -1300,14 +1515,12 @@ accessible_telnet = {
         ('extra.', 'banner', validate_to_none),
     ],
     'constant_fields': {
-        'protocol.transport': 'tcp',
-        'protocol.application': 'telnet',
-        'classification.type': 'vulnerable service',
         'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
         'classification.identifier': 'open-telnet',
+        'protocol.application': 'telnet',
     }
 }
-
 
 accessible_cwmp = {
     'required_fields': [
@@ -1318,7 +1531,7 @@ accessible_cwmp = {
     'optional_fields': [
         ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
-        # 'tag' will always be 'cwmp', so it's inside constant fields as 'protocol.application'
+        # ('classification.identifier', 'tag'),  # always set to 'open-cwmp' in constant_fields
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
@@ -1326,7 +1539,7 @@ accessible_cwmp = {
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
         ('extra.', 'http', validate_to_none),
-        ('extra.', 'http_code', invalidate_zero),
+        ('extra.', 'http_code', convert_int),
         ('extra.', 'http_reason', validate_to_none),
         ('extra.', 'content_type', validate_to_none),
         ('extra.', 'connection', validate_to_none),
@@ -1338,10 +1551,10 @@ accessible_cwmp = {
         ('extra.', 'date', validate_to_none),
     ],
     'constant_fields': {
-        'protocol.application': 'cwmp',
-        'classification.type': 'vulnerable service',
         'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
         'classification.identifier': 'open-cwmp',
+        'protocol.application': 'cwmp',
     }
 }
 
@@ -1359,15 +1572,15 @@ accessible_vnc = {
         ('source.geolocation.city', 'city'),
         ('extra.', 'naics', invalidate_zero),
         ('extra.', 'sic', invalidate_zero),
-        ('extra.', 'banner', validate_to_none),
         ('extra.', 'product', validate_to_none),
+        ('extra.', 'banner', validate_to_none),
     ],
     'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
+        'classification.identifier': 'open-vnc',
         'protocol.transport': 'tcp',
         'protocol.application': 'vnc',
-        'classification.type': 'vulnerable service',
-        'classification.taxonomy': 'vulnerable',
-        'classification.identifier': 'open-vnc',
     }
 }
 
@@ -1380,6 +1593,7 @@ accessible_cisco_smart_install = {
     'optional_fields': [
         ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # always set to 'accessible-cisco-smart-install' in constant_fields
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
@@ -1388,8 +1602,84 @@ accessible_cisco_smart_install = {
         ('extra.', 'sic', invalidate_zero),
     ],
     'constant_fields': {
-        'protocol.application': 'cisco-smart-install',
+        'classification.taxonomy': 'vulnerable',
         'classification.type': 'vulnerable service',
         'classification.identifier': 'accessible-cisco-smart-install',
+        'protocol.application': 'cisco-smart-install',
+    }
+}
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Drone-BruteForce
+drone_brute_force = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('source.reverse_dns', 'hostname'),
+        ('destination.ip', 'dest_ip', validate_ip),
+        ('destination.port', 'dest_port'),
+        ('destination.asn', 'dest_asn'),
+        ('destination.geolocation.cc', 'dest_geo'),
+        ('destination.fqdn', 'dest_dns'),
+        ('protocol.application', 'service'),
+        ('classification.identifier', 'service'),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.destination.naics', 'dest_naics', invalidate_zero),
+        ('extra.destination.sic', 'dest_sic', invalidate_zero),
+        ('extra.', 'sector', validate_to_none),
+        ('extra.destination.sector', 'dest_sector', validate_to_none),
+        ('extra.', 'public_source', validate_to_none),
+        ('extra.', 'start_time', validate_to_none),
+        ('extra.', 'end_time', validate_to_none),
+        ('extra.', 'client_version', validate_to_none),
+        ('destination.account', 'username', validate_to_none),
+        ('extra.', 'password', validate_to_none),
+        ('extra.', 'payload_url', validate_to_none),
+        ('extra.', 'payload_md5', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'intrusion attempts',
+        'classification.type': 'brute-force',
+    }
+}
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Accessible-Hadoop
+accessible_hadoop = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('source.reverse_dns', 'hostname'),
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'version', validate_to_none),
+        ('extra.', 'server_type', validate_to_none),
+        ('extra.', 'clusterid', validate_to_none),
+        ('extra.', 'total_disk', invalidate_zero),
+        ('extra.', 'used_disk', invalidate_zero),
+        ('extra.', 'free_disk', invalidate_zero),
+        ('extra.', 'livenodes', validate_to_none),
+        ('extra.', 'namenodeaddress', validate_to_none),
+        ('extra.', 'volumeinfo', validate_to_none),
+    ],
+    'constant_fields': {
+        'protocol.application': 'hadoop',
+        'protocol.transport': 'tcp',
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
+        'classification.identifier': 'accessible-hadoop',
     }
 }

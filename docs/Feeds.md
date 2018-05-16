@@ -28,6 +28,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `int
 - [Malware Domains](#malware-domains)
 - [MalwarePatrol](#malwarepatrol)
 - [MalwareURL](#malwareurl)
+- [Microsoft](#microsoft)
 - [Netlab 360](#netlab-360)
 - [Nothink](#nothink)
 - [OpenPhish](#openphish)
@@ -43,6 +44,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `int
 - [URLVir](#urlvir)
 - [University of Toulouse](#university-of-toulouse)
 - [VXVault](#vxvault)
+- [WebInspektor](#webinspektor)
 - [ZoneH](#zoneh)
 
 <!-- /TOC -->
@@ -807,7 +809,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `int
 
 # Fraunhofer
 
-## DGA Archieve
+## DGA Archive
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -990,6 +992,31 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `int
 ### Parser
 
 * **Module:** intelmq.bots.parsers.malwareurl.parser
+* **Configuration Parameters:**
+
+
+# Microsoft
+
+## CTIP
+
+* **Status:** on
+* **Revision:** 06-03-2018
+* **Description:** Collects CTIP files from the Interflow API.
+* **Additional Information:** Depending on the file sizes you may need to increase the parameter 'http_timeout_sec' of the collector. As many IPs occur very often in the data, you may want to use a deduplicator specifically for the feed.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.microsoft.collector_interflow
+* **Configuration Parameters:**
+*  * `api_key`: `{{your API key}}`
+*  * `file_match`: `^ctip_`
+*  * `http_timeout_sec`: `300`
+*  * `not_older_than`: `2 days`
+*  * `rate_limit`: `3600`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.microsoft.parser_ctip
 * **Configuration Parameters:**
 
 
@@ -1528,6 +1555,27 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `int
 ### Parser
 
 * **Module:** intelmq.bots.parsers.vxvault.parser
+* **Configuration Parameters:**
+
+
+# WebInspektor
+
+## Unsafe sites
+
+* **Status:** on
+* **Revision:** 09-03-2018
+* **Description:** Latest detected unsafe sites.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.http.collector_http
+* **Configuration Parameters:**
+*  * `http_url`: `https://app.webinspector.com/public/recent_detections/`
+*  * `rate_limit`: `60`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.webinspektor.parser
 * **Configuration Parameters:**
 
 

@@ -13,6 +13,7 @@ Harmonization field names
 |Destination|destination.allocated|[DateTime](#datetime)|Allocation date corresponding to BGP prefix.|
 |Destination|destination.as_name|[String](#string)|The autonomous system name to which the connection headed.|
 |Destination|destination.asn|[ASN](#asn)|The autonomous system number to which the connection headed.|
+|Destination|destination.domain_suffix|[FQDN](#fqdn)|The suffix of the domain from the public suffix list.|
 |Destination|destination.fqdn|[FQDN](#fqdn)|A DNS name related to the host from which the connection originated. DNS allows even binary data in DNS, so we have to allow everything. A final point is stripped, string is converted to lower case characters.|
 |Destination Geolocation|destination.geolocation.cc|[UppercaseString](#uppercasestring)|Country-Code according to ISO3166-1 alpha-2 for the destination IP.|
 |Destination Geolocation|destination.geolocation.city|[String](#string)|Some geolocation services refer to city-level geolocation.|
@@ -45,21 +46,22 @@ Harmonization field names
 |Malware Hash|malware.hash.md5|[String](#string)|A string depicting an MD5 checksum for a file, be it a malware sample for example.|
 |Malware Hash|malware.hash.sha1|[String](#string)|A string depicting a SHA1 checksum for a file, be it a malware sample for example.|
 |Malware Hash|malware.hash.sha256|[String](#string)|A string depicting a SHA256 checksum for a file, be it a malware sample for example.|
-|Malware|malware.name|[LowercaseString](#lowercasestring)|A malware family name in lower case.|
+|Malware|malware.name|[LowercaseString](#lowercasestring)|The malware name in lower case.|
 |Malware|malware.version|[String](#string)|A version string for an identified artifact generation, e.g. a crime-ware kit.|
 |Misp|misp.attribute_uuid|[LowercaseString](#lowercasestring)|MISP - Malware Information Sharing Platform & Threat Sharing UUID of an attribute.|
 |Misp|misp.event_uuid|[LowercaseString](#lowercasestring)|MISP - Malware Information Sharing Platform & Threat Sharing UUID.|
 | |output|[JSON](#json)|Event data converted into foreign format, intended to be exported by output plugin.|
-|Protocol|protocol.application|[LowercaseString](#lowercasestring)|e.g. vnc, ssh, sip, irc, http or p2p.|
+|Protocol|protocol.application|[LowercaseString](#lowercasestring)|e.g. vnc, ssh, sip, irc, http or smtp.|
 |Protocol|protocol.transport|[LowercaseString](#lowercasestring)|e.g. tcp, udp, icmp.|
 | |raw|[Base64](#base64)|The original line of the event from encoded in base64.|
-| |rtir_id|[Integer](#integer)|Request Tracker Incident Response incident id.|
+| |rtir_id|[Integer](#integer)|Request Tracker Incident Response ticket id.|
 | |screenshot_url|[URL](#url)|Some source may report URLs related to a an image generated of a resource without any metadata. Or an URL pointing to resource, which has been rendered into a webshot, e.g. a PNG image and the relevant metadata related to its retrieval/generation.|
 |Source|source.abuse_contact|[LowercaseString](#lowercasestring)|Abuse contact for source address. A comma separated list.|
 |Source|source.account|[String](#string)|An account name or email address, which has been identified to relate to the source of an abuse event.|
 |Source|source.allocated|[DateTime](#datetime)|Allocation date corresponding to BGP prefix.|
 |Source|source.as_name|[String](#string)|The autonomous system name from which the connection originated.|
 |Source|source.asn|[ASN](#asn)|The autonomous system number from which originated the connection.|
+|Source|source.domain_suffix|[FQDN](#fqdn)|The suffix of the domain from the public suffix list.|
 |Source|source.fqdn|[FQDN](#fqdn)|A DNS name related to the host from which the connection originated. DNS allows even binary data in DNS, so we have to allow everything. A final point is stripped, string is converted to lower case characters.|
 |Source Geolocation|source.geolocation.cc|[UppercaseString](#uppercasestring)|Country-Code according to ISO3166-1 alpha-2 for the source IP.|
 |Source Geolocation|source.geolocation.city|[String](#string)|Some geolocation services refer to city-level geolocation.|
@@ -83,6 +85,7 @@ Harmonization field names
 | |status|[String](#string)|Status of the malicious resource (phishing, dropzone, etc), e.g. online, offline.|
 |Time|time.observation|[DateTime](#datetime)|The time a source bot saw the event. This timestamp becomes especially important should you perform your own attribution on a host DNS name for example. The mechanism to denote the attributed elements with reference to the source provided is detailed below in Reported Identity IOC.(ISO8660).|
 |Time|time.source|[DateTime](#datetime)|Time reported by a source. Some sources only report a date, which may be used here if there is no better observation.|
+| |tlp|[TLP](#tlp)|Traffic Light Protocol level of the event.|
 
 
 Harmonization types
@@ -145,6 +148,7 @@ classification.type type. Allowed values are:
  * test
  * tor
  * unknown
+ * vulnerable client
  * vulnerable service
 
 ### DateTime
@@ -178,7 +182,7 @@ Sanitation accepts strings and everything float() accepts.
 
 Type for IP addresses, all families. Uses the ipaddress module.
 
-Sanitation accepts strings and objects of ipaddress.IPv4Address and ipaddress.IPv4Address.
+Sanitation accepts strings and objects of ipaddress.IPv4Address and ipaddress.IPv6Address.
 
 Valid values are only strings. 0.0.0.0 is explicitly not allowed.
 
@@ -187,7 +191,7 @@ Valid values are only strings. 0.0.0.0 is explicitly not allowed.
 
 Type for IP networks, all families. Uses the ipaddress module.
 
-Sanitation accepts strings and objects of ipaddress.IPv4Network and ipaddress.IPv4Network.
+Sanitation accepts strings and objects of ipaddress.IPv4Network and ipaddress.IPv6Network.
 If host bits in strings are set, they will be ignored (e.g 127.0.0.1/32).
 
 Valid values are only strings.
@@ -237,6 +241,15 @@ RIPE-NCC and RIPENCC are normalized to RIPE.
 ### String
 
 Any non-empty string without leading or trailing whitespace.
+
+
+### TLP
+
+TLP level type. Derived from UppercaseString.
+
+Only valid values: WHITE, GREEN, AMBER, RED.
+
+Accepted for sanitation are different cases and the prefix 'tlp:'.
 
 
 ### URL

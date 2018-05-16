@@ -176,6 +176,24 @@
                 "rate_limit": 3600
             }
         },
+        "Microsoft Interflow": {
+            "description": "",
+            "module": "intelmq.bots.collectors.microsoft.collector_interflow",
+            "parameters": {
+                "api_key": "",
+                "feed": "",
+                "file_match": null,
+                "http_timeout_sec": 300,
+                "not_older_than": "2 days",
+                "provider": "microsoft",
+                "rate_limit": 3600,
+                "redis_cache_db": "5",
+                "redis_cache_host": "127.0.0.1",
+                "redis_cache_port": 6379,
+                "redis_cache_password": null,
+                "redis_cache_ttl": 604800
+            }
+        },
         "Stomp": {
             "description": "Stomp Collector - e.g. for CERT.pl's N6 feed via STOMP. Note that rate_limit does not apply for this bot as it is waiting for messages on a stream.",
             "module": "intelmq.bots.collectors.stomp.collector",
@@ -188,6 +206,23 @@
                 "ssl_ca_certificate": "<insert path to CA file for CERT.pl's n6>",
                 "ssl_client_certificate": "<insert path to client cert file for CERT.pl's n6>",
                 "ssl_client_certificate_key": "<insert path to client cert key file for CERT.pl's n6>"
+            }
+        },
+        "Twitter": {
+            "description": "Collects tweets from target_timelines. Maximum number of tweet_count from each timeline and up to timelimit back in time.",
+            "module": "intelmq.bots.collectors.twitter.collector_twitter",
+            "parameters": {
+                "feed": "Twitter",
+                "target_timelines": "",
+                "tweet_count": "",
+                "timelimit": "",
+                "include_rts": "true",
+                "exclude_replies": "false",
+                "follow_urls": "",
+                "consumer_key": "",
+                "consumer_secret": "",
+                "access_token_key": "",
+                "access_token_secret": ""
             }
         }
     },
@@ -365,6 +400,11 @@
             "module": "intelmq.bots.parsers.malwareurl.parser",
             "parameters": {}
         },
+        "Microsoft CTIP": {
+            "description": "Parses JSON data from Microsoft's CTIP program.",
+            "module": "intelmq.bots.parsers.microsoft.parser_ctip",
+            "parameters": {}
+        },
         "N6Stomp": {
             "description": "N6 Collector - CERT.pl's N6 Parser - N6 feed via STOMP interface",
             "module": "intelmq.bots.parsers.n6.parser_n6stomp",
@@ -435,6 +475,15 @@
             "module": "intelmq.bots.parsers.turris.parser",
             "parameters": {}
         },
+        "Twitter": {
+            "description": "Twitter parser parses a report of tweets by extracting IOC. Currently only urls are supported, a whitelist of safe domains can be provided",
+            "module": "intelmq.bots.parsers.twitter.parser",
+            "parameters": {
+                "domain_whitelist": "t.co",
+                "substitutions": " .net;[.]net",
+                "classification_type": "blacklist"
+            }
+        },
         "URLVir": {
             "description": "URLVir Parser is the bot responsible to parse the Export Hosts and Export IP Addresses reports and sanitize the information.",
             "module": "intelmq.bots.parsers.urlvir.parser",
@@ -443,6 +492,11 @@
         "VXVault": {
             "description": "VXVault Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.vxvault.parser",
+            "parameters": {}
+        },
+        "Web Inspektor": {
+            "description": "Web Inspektor Parser is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.webinspektor.parser",
             "parameters": {}
         },
         "ZoneH": {
@@ -566,7 +620,8 @@
             "description": "Modify bot can make nearly arbitrary changes to event's fields based on regex-rules on different values. See docs/Bots.md for some examples.",
             "module": "intelmq.bots.experts.modify.expert",
             "parameters": {
-                "configuration_path": "/opt/intelmq/var/lib/bots/modify/modify.conf"
+                "configuration_path": "/opt/intelmq/var/lib/bots/modify/modify.conf",
+                "case_sensitive": true
             }
         },
         "RFC 1918": {
@@ -581,6 +636,7 @@
             "description": "RIPENCC is the bot responsible to get the correspondent abuse contact from source IP and destination IP of the events. RIPEstat documentation: https://stat.ripe.net/docs/data_api ",
             "module": "intelmq.bots.experts.ripencc_abuse_contact.expert",
             "parameters": {
+                "mode": "append",
                 "query_ripe_db_asn": true,
                 "query_ripe_db_ip": true,
                 "query_ripe_stat": true,
@@ -628,6 +684,19 @@
             "module": "intelmq.bots.experts.url2fqdn.expert",
             "parameters": {
                 "overwrite": false
+            }
+        },
+        "Wait": {
+            "description": "Wait bot can wait for a some time or until a queue size is lower than a given numer.",
+            "module": "intelmq.bots.experts.wait.expert",
+            "parameters": {
+                "queue_db": 2,
+                "queue_host": "localhost",
+                "queue_name": null,
+                "queue_polling_interval": 0.05,
+                "queue_port": 6379,
+                "queue_size": 0,
+                "sleep_time": null
             }
         }
     },
@@ -723,7 +792,8 @@
                 "auth_type": "<http_basic_auth/http_header>",
                 "hierarchical_output": false,
                 "host": "<host>",
-                "use_json": true
+                "use_json": true,
+                "ssl_client_certificate": null
             }
         },
         "Redis": {

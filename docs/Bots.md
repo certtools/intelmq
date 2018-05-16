@@ -327,6 +327,28 @@ Iterates over all blobs in all containers in an Azure storage.
 
 * * *
 
+### Microsoft Interflow
+
+Iterates over all files available by this API. Make sure to limit the files to be downloaded with the parameters, otherwise you will get a lot of data!
+The cache is used to remember which files have already been downloaded. Make sure the TTL is high enough, higher than `not_older_than`.
+
+#### Information:
+* `name:` intelmq.bots.collectors.microsoft.collector_interflow
+* `lookup:` yes
+* `public:` no
+* `cache (redis db):` 5
+* `description:` collect files from microsoft interflow using their API
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `api_key`: API generate in their portal
+* `file_match`: an optional regular expression to match file names
+* `not_older_than`: an optional relative (minutes) or absolute time expression to determine the oldest time of a file to be downloaded
+* `redis_cache_*` and especially `redis_cache_ttl`: Settings for the cache where file names of downloaded files are saved.
+
+* * *
+
 ### Stomp
 
 See the README.md
@@ -348,6 +370,31 @@ See the README.md
 * `ssl_client_certificate`: path to client cert file
 * `ssl_client_certificate_key`: path to client cert key file
 
+* * *
+
+### Twitter
+
+Collects tweets from target_timelines. Up to tweet_count tweets from each user and up to timelimit back in time. The tweet text is sent separately and if allowed, links to pastebin are followed and the text sent in a separate report 
+
+#### Information:
+* `name:` intelmq.bots.collectors.twitter.collector_twitter
+* `lookup:` yes
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Collects tweets
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `target_timelines`: screen_names of twitter accounts to be followed
+* `tweet_count`: number of tweets to be taken from each account
+* `timelimit`: maximum age of the tweets collected in seconds
+* `follow_urls`: list of screen_names for which urls will be followed
+* `exclude_replies`: exclude replies of the followed screen_names
+* `include_rts`: whether to include retweets by given screen_name 
+* `consumer_key`: Twitter api login data
+* `consumer_secret`: Twitter api login data
+* `acces_token_key`: Twitter api login data
+* `access_token_secret`: Twitter api login data
 
 <a name="parsers"></a>
 ## Parsers
@@ -435,6 +482,19 @@ The information about the event could be better in many cases but as Cymru does 
 * `cache (redis db):` none
 * `description:` Parses data from full bogons feed.
 
+### Twitter
+
+#### Information:
+* `name:` intelmq.bots.parsers.twitter.parser
+* `public:` no
+* `cache (redis db):` none
+* `description:` Extracts urls from text, fuzzy, aimed at parsing tweets
+#### Configuration Parameters:
+
+* `domain_whitelist`: domains to be filetered out
+* `substitutions`: semicolon delimited list of even length of pairs of substitutions (for example: '[.];.;,;.' substitutes '[.]' for '.' and ',' for '.')
+* `classification_type: string with a valid classification type as defined in data harmonization
+
 <a name="experts"></a>
 ## Experts
 
@@ -485,6 +545,50 @@ FIXME
 #### Configuration Parameters:
 
 FIXME
+
+* * *
+
+### Domain Suffix
+
+See or information on the public suffix list: https://publicsuffix.org/list/
+Only rules for ICANN domains are processed. The list can (and should) contain
+Unicode data, punycode conversion is done during reading
+
+#### Information:
+* `name:` deduplicator
+* `lookup:` redis cache
+* `public:` yes
+* `cache (redis db):` 6
+* `description:` message deduplicator
+
+#### Configuration Parameters:
+
+* `field`: either `"fqdn"` or `"reverse_dns"`
+* `suffix_file`: path to the suffix file
+
+#### Rule processing
+
+A short summary how the rules are processed:
+
+The simple ones:
+```
+com
+at
+gv.at
+```
+`example.com` leads to `com`, `example.gv.at` leads to `gv.at`.
+
+Wildcards:
+```
+*.example.com
+```
+`www.example.com` leads to `www.example.com`.
+
+And additionally the exceptions, together with the above wildcard rule:
+```
+!www.example.com
+```
+`www.example.com` does now not lead to `www.example.com`, but to `example.com`.
 
 * * *
 
@@ -568,6 +672,10 @@ none
 
 ### IDEA
 
+Converts the event to IDEA format and saves it as JSON in the field `output`. All other fields are not modified.
+
+Documentation about IDEA: https://idea.cesnet.cz/en/index
+
 #### Information:
 * `name:` idea
 * `lookup:` local config
@@ -609,6 +717,11 @@ FIXME
 * `description:` modify expert bot allows you to change arbitrary field values of events just using a configuration file
 
 #### Configuration Parameters:
+
+* `configuration_path`: filename
+* `case_sensitive`: boolean, default: true
+
+### Configuration File
 
 The modify expert bot allows you to change arbitrary field values of events just using a configuration file. Thus it is possible to adapt certain values or adding new ones only by changing JSON-files without touching the code of many other bots.
 
@@ -768,11 +881,11 @@ Sources:
 
 #### Configuration Parameters:
 
+* `mode`: either `append` (default) or `replace`
 * `query_ripe_db_asn`: Query for IPs at `http://rest.db.ripe.net/abuse-contact/%s.json`, default `true`
 * `query_ripe_db_ip`: Query for ASNs at `http://rest.db.ripe.net/abuse-contact/as%s.json`, default `true`
 * `query_ripe_stat_asn`: Query for ASNs at `https://stat.ripe.net/data/abuse-contact-finder/data.json?resource=%s`, default `true`
 * `query_ripe_stat_ip`: Query for IPs at `https://stat.ripe.net/data/abuse-contact-finder/data.json?resource=%s`, default `true`
-* `mode`: either `append` (default) or `replace`
 
 * * *
 
@@ -835,6 +948,32 @@ FIXME
 #### Configuration Parameters:
 
 * `overwrite`: boolean, replace existing FQDN?
+
+### Wait
+
+#### Information:
+* `name:` wait
+* `lookup:` none
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Waits for a some time or until a queue size is lower than a given numer.
+
+#### Configuration Parameters:
+
+* `queue_db`: Database number of the database, default `2`. Converted to integer.
+* `queue_host`: Host of the database, default `localhost`.
+* `queue_name`: Name of the queue to be watched, default `null`. This is not the name of a bot but the queue's name.
+* `queue_password`: Password for the database, default `None`.
+* `queue_polling_interval`: Interval to poll the list length in seconds. Converted to float.
+* `queue_port`: Port of the database, default `6379`. Converted to integer.
+* `queue_size`: Maximum size of the queue, default `0`. Compared by <=. Converted to integer.
+* `sleep_time`: Time to sleep before sending the event.
+
+Only one of the two modes is possible.
+If a queue name is given, the queue mode is active. If the sleep_time is a number, sleep mode is active.
+Otherwise the dummy mode is active, the events are just passed without an additional delay.
+
+Note that SIGHUPs and reloads interrupt the sleeping.
 
 <a name="outputs"></a>
 ## Outputs

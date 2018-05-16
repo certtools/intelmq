@@ -42,7 +42,7 @@ attacks.""".replace('\n', ' '),
            "YXRvciI6ICJodHRwOi8vMTA3LjYuMTcyLjU0L3dvb2xlbi8iLCAidHlwZSI6ICJVUk"
            "wifQ==",
     "time.source": "2015-09-02T09:21:53+00:00",
-    "time.observation": "2015-09-02T14:17:58+00:00"
+    "time.observation": "2015-09-02T14:17:58+00:00",
 }
 
 EXAMPLE_EVENT_2 = {
@@ -67,7 +67,8 @@ EXAMPLE_EVENT_2 = {
   'feed.name': 'AlienVault OTX',
   'malware.hash.sha256': 'e5df30b41b0c50594c2b77c1d5d6916a9ce925f792c563f692426c2d50aa2524',
   'raw': 'eyJhY2Nlc3NfZ3JvdXBzIjogW10sICJhY2Nlc3NfcmVhc29uIjogIiIsICJhY2Nlc3NfdHlwZSI6ICJwdWJsaWMiLCAiY29udGVudCI6ICIiLCAiY3JlYXRlZCI6ICIyMDE2LTExLTAzVDIwOjE1OjQ0IiwgImRlc2NyaXB0aW9uIjogIiIsICJleHBpcmF0aW9uIjogbnVsbCwgImlkIjogMTI2NTM1NCwgImluZGljYXRvciI6ICJlNWRmMzBiNDFiMGM1MDU5NGMyYjc3YzFkNWQ2OTE2YTljZTkyNWY3OTJjNTYzZjY5MjQyNmMyZDUwYWEyNTI0IiwgImlzX2FjdGl2ZSI6IDEsICJvYnNlcnZhdGlvbnMiOiAzLCAicm9sZSI6IG51bGwsICJ0aXRsZSI6ICIiLCAidHlwZSI6ICJGaWxlSGFzaC1TSEEyNTYifQ==',
-  'time.source': '2016-11-03T20:01:00+00:00'
+  'time.source': '2016-11-03T20:01:00+00:00',
+  "tlp": "GREEN",
   }
 
 EXAMPLE_EVENT_3 = {
@@ -99,7 +100,7 @@ EXAMPLE_EVENT_3 = {
   'feed.name': 'AlienVault OTX',
   'raw': 'eyJfaWQiOiAiNTVlNTU3ZmE0NjM3ZjIxYzU0YzFiYWY4IiwgImNyZWF0ZWQiOiAiMjAxNS0wOS0wMVQwNzo0NzowNi4wNzMiLCAiZGVzY3JpcHRpb24iOiAiIiwgImluZGljYXRvciI6ICJodHRwOi8vd3d3LnVlY215YW5tYXIub3JnL2RtZG9jdW1lbnRzL2ludml0YXRpb25zLnJhciIsICJ0eXBlIjogIlVSTCJ9',
   'source.url': 'http://www.uecmyanmar.org/dmdocuments/invitations.rar',
-  'time.source': '2015-09-01T07:47:06+00:00'
+  'time.source': '2015-09-01T07:47:06+00:00',
   }
 
 EXAMPLE_EVENT_4 = {
@@ -113,7 +114,8 @@ EXAMPLE_EVENT_4 = {
   'feed.name': 'AlienVault OTX',
   'raw': 'eyJhY2Nlc3NfZ3JvdXBzIjogW10sICJhY2Nlc3NfcmVhc29uIjogIiIsICJhY2Nlc3NfdHlwZSI6ICJwdWJsaWMiLCAiY29udGVudCI6ICIiLCAiY3JlYXRlZCI6ICIyMDE3LTA2LTE1VDA1OjEzOjAyIiwgImRlc2NyaXB0aW9uIjogIiIsICJleHBpcmF0aW9uIjogbnVsbCwgImlkIjogMTM1Nzk4OSwgImluZGljYXRvciI6ICIxMzQuMTE5LjM2LjEzNSIsICJpc19hY3RpdmUiOiAxLCAib2JzZXJ2YXRpb25zIjogMTEsICJwdWxzZV9rZXkiOiAiNTk0MjE3NWRkNzhmNTYzZDAxYWJjNzljIiwgInJvbGUiOiBudWxsLCAidGl0bGUiOiAiIiwgInR5cGUiOiAiSVB2NCJ9',
   'source.ip': '134.119.36.135',
-  'time.source': '2017-06-15T05:01:00+00:00'
+  'time.source': '2017-06-15T05:01:00+00:00',
+  "tlp": "WHITE",
   }
 
 EXAMPLE_EVENT_URI_1 = {
@@ -132,7 +134,8 @@ EXAMPLE_EVENT_URI_1 = {
            "Rpb24iOiAiIiwgImluZGljYXRvciI6ICJodHR"
            "wOi8vMTA3LjYuMTcyLjU0L3dvb2xlbi8iLCAidHlwZSI6ICJVUkkifQ==",
     "time.source": "2015-09-02T09:21:53+00:00",
-    "time.observation": "2015-09-02T14:17:58+00:00"
+    "time.observation": "2015-09-02T14:17:58+00:00",
+    "tlp": "WHITE",
 }
 
 EXAMPLE_EVENT_URI_2 = {
@@ -149,7 +152,8 @@ EXAMPLE_EVENT_URI_2 = {
            "0wOS0wMlQwOToyMTo1My4wOTMiLCAiZGVzY3JpcHRpb24iOiAiIiwgImluZGljYXRvciI6"
            "ICIvd29vbGVuLyIsICJ0eXBlIjogIlVSSSJ9",
     "time.source": "2015-09-02T09:21:53+00:00",
-    "time.observation": "2015-09-02T14:17:58+00:00"
+    "time.observation": "2015-09-02T14:17:58+00:00",
+    "tlp": "WHITE",
 }
 
 

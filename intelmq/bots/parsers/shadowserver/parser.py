@@ -88,9 +88,12 @@ class ShadowserverParserBot(ParserBot):
         # Fail hard if not possible:
         for item in conf.get('required_fields'):
             intelmqkey, shadowkey = item[:2]
-            if shadowkey not in fields:  # key does not exist in data (not even in the header)
-                self.logger.warning('Required key %r not found data. Possible change in data'
-                                    ' format or misconfiguration.', shadowkey)
+            if shadowkey not in fields:
+                if not row.get(shadowkey):  # key does not exist in data (not even in the header)
+                    self.logger.warning('Required key %r not found data. Possible change in data'
+                                        ' format or misconfiguration.', shadowkey)
+                else:  # key is used twice
+                    fields.append(shadowkey)
             if len(item) > 2:
                 conv_func = item[2]
             else:
@@ -115,10 +118,13 @@ class ShadowserverParserBot(ParserBot):
         # extra if an add operation failed
         for item in conf.get('optional_fields'):
             intelmqkey, shadowkey = item[:2]
-            if shadowkey not in fields:  # key does not exist in data (not even in the header)
-                self.logger.warning('Optional key %r not found data. Possible change in data'
-                                    ' format or misconfiguration.', shadowkey)
-                continue
+            if shadowkey not in fields:
+                if not row.get(shadowkey):  # key does not exist in data (not even in the header)
+                    self.logger.warning('Optional key %r not found data. Possible change in data'
+                                        ' format or misconfiguration.', shadowkey)
+                    continue
+                else:  # key is used twice
+                    fields.append(shadowkey)
             if len(item) > 2:
                 conv_func = item[2]
             else:
@@ -142,6 +148,10 @@ class ShadowserverParserBot(ParserBot):
             if value is not None:
                 if intelmqkey == 'extra.':
                     extra[shadowkey] = value
+                    fields.remove(shadowkey)
+                    continue
+                elif intelmqkey.startswith('extra.'):
+                    extra[intelmqkey.replace('extra.', '', 1)] = value
                     fields.remove(shadowkey)
                     continue
                 try:

@@ -10,13 +10,21 @@ CHANGELOG
 
 ### Tools
 - `intelmqctl start` prints bot's error messages if it failed to start
+- `intelmqctl start` message "is running" is printed every time. (Until now, it wasn't said when a bot was just starting.)
+- `intelmqctl start/stop/restart/reload/status` now have a "--group" flag which allows you to specify the group of the bots that should be influenced by the command.
 - `intelmqctl check` checks for defaults.conf completeness
 - `intelmqctl check` shows errors for non-importable bots.
 - `intelmqctl list bots -q` only prints the IDs of enabled bots
+- `intelmqctl list queues-and-status` prints both queues and bots statuses (so that it can be used in eg. intelmq-manager)
 - `intelmq_gen_feeds_docs` add to bin directory, allows generating the Feeds.md documentation file from feeds.yaml
+- `intelmqctl run` parameter for showing a sent message
+- `intelmqctl run` if message is sent to a non-default path, it is printed out
+- `intelmqctl restart` bug fix; returned some half-nonsense, now returns return state of start and stop operation in a list, see #1226
+
 
 ### Contrib
 - contrib tool `feeds-config-generator` to automatically generate the collector and parser runtime and pipeline configurations.
+- Download and convert tool for malware family name mapping has been added.
 
 ### Core
 - use SIGTERM instead of SIGINT to stop bots (#981)
@@ -36,6 +44,10 @@ CHANGELOG
 - Bots can specify a static method `check(parameters)` which can perform individual checks specific to the bot.
   These functions will be called by `intelmqctl check` if the bot is configured with the given parameters
 - Add `RewindableFileHandle` to utils making handling of CSV files more easy (optionally)
+- lib/bot: top level bot parameters (description, group, module, name) are exposed as members of the class.
+- lib/pipeline:
+ * you may now define more than one destination queues path the bot should pass the message to, see [Pipelines](https://github.com/certtools/intelmq/blob/develop/docs/User-Guide.md#pipeline-configuration) (#1088, #1190).
+ * the special path `"_on_error"` can be used to pass messages to differnt queues in case of processing errors (#1133).
 
 ### Bots
 #### Collectors
@@ -50,12 +62,14 @@ CHANGELOG
   - Empty parameters `attachment_regex` and `url_regex` handled.
 - `bots.collectors.http.collector_http`: Ability to optionally use the current time in parameter `http_url`, added parameter `http_url_formatting`.
 - `bots.collectors.stomp.collector`: Heartbeat timeout is now logged with log level info instead of warning.
+- added `intelmq.bots.collectors.twitter.collector_twitter`
+- `bots.collectors.microsoft.collector_interlow`: added for MS interflow API
 
 #### Parsers
 - changed feednames in `bots.parsers.shadowserver`. Please refer to it's README for the exact changes.
 - shadowserver parser: If the conversion function fails for a line, an error is raised and the offending line will be handled according to the error handling configuration.
   Previously errors like these were only logged and ignored otherwise.
-- added destination.urlpath and source.urlpath to harmonization.
+ * add support for the feed `Accessible-Hadoop`
 - changed feednames in `bots.parsers.shadowserver`. Please refer to it's README for the exact changes.
 - The Generic CSV Parser `bots.parsers.generic.parser_csv`:
   - It is possible to filter the data before processing them using the new parameters `filter_type` and `filter_text`.
@@ -67,22 +81,38 @@ CHANGELOG
 - added `intelmq.bots.parsers.sucuri.parser`
 - added `intelmq.bots.parsers.malwareurl.parser`
 - added `intelmq.bots.parsers.threatminer.parser`
+- added `intelmq.bots.parsers.webinspektor.parser`
+- added `intelmq.bots.parsers.twitter.parser`
+- added `intelmq.bots.parsers.microsoft.parser_ctip`
+ * ignore the invalid IP '0.0.0.0' for the destination
+ * fix the raw/dumped messages, did not contain the paling list previously.
+ * use the new harmonization field `tlp` instead of `extra.tlp`.
+- `bots.parsers.alienvault.parser_otx`: Save TLP data in the new harmonization field `tlp`.
 
 #### Experts
 - Added sieve expert for filtering and modifying events (#1083)
-- `bots.experts.modify` default ruleset: added avalanche rule.
+ * capable of distributing the event to appropriate named queues
+- `bots.experts.modify`
+ * default rulesets: all malware name mappings have been migrated to the [Malware Name Mapping repository](https://github.com/certtools/malware_name_mapping) ruleset. See the new added contrib tool for download and conversion.
+ * new parameter `case_sensitive` (default: True)
+- Added wait expert for sleeping
+- Added domain suffix expert to extract the TLD/Suffix from a domain name.
 
 ### Harmonization
 - Renamed `JSON` to `JSONDict` and added a new type `JSON`. `JSONDict` saves data internally as JSON, but acts like a dictionary. `JSON` accepts any valid JSON.
 - fixed regex for `protocol.transport` it previously allowed more values than it should have.
 - New ASN type. Like integer but checks the range.
+- added destination.urlpath and source.urlpath to harmonization.
+- New field 'tlp' for tlp level specification.
+ - New TLP type. Allows all four tlp levels, removes 'TLP:' prefix and converts to upper case.
+- Added new `classification.type` 'vulnerable client'
+- Added `(destination|source).domain_suffix` to hold the TLD/domain suffix.
 
 ### Requirements
 - Requests is no longer listed as dependency of the core. For depending bots the requirement is noted in their REQUIREMENTS.txt file
 
-1.0.4 Bugfix release (unreleased)
+1.0.5 Bugfix release (unreleased)
 ---------------------------------
-### Contrib
 
 ### Core
 
@@ -90,8 +120,11 @@ CHANGELOG
 
 ### Bots
 #### Collectors
+- `bots.collectors.mail.collector_mail_url`: handle empty downloaded reports (#988).
 
 #### Parsers
+- Shadowserver parser:
+  * SSL FREAK: Remove optional column `device_serial` and add several new ones.
 
 #### Experts
 
@@ -99,13 +132,67 @@ CHANGELOG
 
 ### Documentation
 
-### Tools
+### Packaging
 
 ### Tests
 
-### Packaging
+### Contrib
 
 ### Known issues
+
+
+1.0.4 Bugfix release (2018-04-20)
+---------------------------------
+- make code style compatible to pycodestyle 2.4.0
+- fixed permissions of some files (they were executable but shouldn't be)
+
+### Core
+- lib/harmonization:
+ * FQDN validation now handles None correctly (raised an Exception).
+ * Fixed several sanitize() methods, the generic sanitation method were called by is_valid, not the sanitize methods (#1219).
+
+### Harmonization
+
+### Bots
+* Use the new pypi website at https://pypi.org/ everywhere.
+
+#### Parsers
+- Shadowserver parser:
+  * The fields `url` and `http_url` now handle HTTP URL paths and HTTP requests for all feeds (#1204).
+  * The conversion function `validate_fqdn` now handles empty strings correctly.
+  * Feed 'drone (hadoop)':
+    * Correct validation of field `cc_dns`, will now only be added as `destination.fqdn` if correct FQDN, otherwise ignored. Previously this field could be saved in extra containing an IP address.
+    * Adding more mappings for added columns.
+  * Added feeds:
+    * Drone-Brute-Force
+    * IPv6-Sinkhole-HTTP-Drone
+  * A lot of newly added fields and fixed conversions.
+  * Optional fields can now use one column multiple times.
+  * Add newly added columns of `Ssl-Scan` feed to parser
+- Spamhaus CERT parser:
+ * fix parsing and classification for bot names 'openrelay', 'iotrdp', 'sshauth', 'telnetauth', 'iotcmd', 'iotuser', 'wpscanner', 'w_wplogin', 'iotscan'
+   see the NEWS file - Postgresql section - for all changes.
+- CleanMX phishing parser: handle FQDNs in IP column (#1162).
+
+#### Experts
+- `bots.experts.ripencc_abuse_contact`: Add existing parameter `mode` to BOTS file.
+
+### Tools
+- intelmqctl check: Fixed and extended message for 'run_mode' check.
+- `intelmqctl start` botnet. When using `--type json`, no non-json information about wrong bots are output because that would confuse eg. intelmq-manager
+
+### Tests
+- lib/bot: No dumps will be written during tests (#934).
+- lib/test: Expand regular expression on python version to match pre-releases (debian testing).
+
+### Packaging
+* Static data is now included in source tarballs, development files are excluded
+
+### Known issues
+- `bots.collectors/outputs.xmpp` must be killed two times (#970).
+- When running bots with `intelmqctl run [bot-id]` the log level is always INFO (#1075).
+- `intelmqctl run [bot-id] message send [msg]` does only support Events, not Reports (#1077).
+- A warning issued by the python warnings module is logged without the bot-id (#1184).
 
 
 1.0.3 Bugfix release (2018-02-05)
@@ -425,7 +512,7 @@ Changes between 0.9 and 1.0.0.dev6
 -`classification.taxonomy` is now lower case only
 
 ### Known issues
- - Harmonization: hashes are not normalized and classified, see also issue #394 and pull #634
+- Harmonization: hashes are not normalized and classified, see also issue #394 and pull #634
 
 ### Contrib
 - ansible and vagrant scripts added
@@ -464,6 +551,6 @@ Changes between 0.9 and 1.0.0.dev6
 2015/06/03 (aaron)
 ------------------
 
-  * fixed the license to AGPL in setup.py
-  * moved back the documentation from the wiki repo to `docs/`. See #205.
-  * added python-zmq as a setup requirement in UserGuide . See #206
+* fixed the license to AGPL in setup.py
+* moved back the documentation from the wiki repo to `docs/`. See #205.
+* added python-zmq as a setup requirement in UserGuide . See #206
