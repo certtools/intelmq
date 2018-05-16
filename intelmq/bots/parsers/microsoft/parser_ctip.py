@@ -12,7 +12,7 @@ from intelmq.lib.bot import ParserBot
 MAPPING = {"additionalmetadata": "extra.additionalmetadata",
            "description": "event_description.text",
            "externalid": "malware.name",
-           "tlplevel": "extra.tlp",
+           "tlplevel": "tlp",
            "firstreporteddatetime": "time.source",
            "networksourceipv4": "source.ip",
            "networksourceport": "source.port",
