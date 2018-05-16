@@ -14,6 +14,7 @@ import time
 import pkg_resources
 import psutil
 
+from collections import OrderedDict
 from intelmq import (DEFAULTS_CONF_FILE, PIPELINE_CONF_FILE, RUNTIME_CONF_FILE,
                      VAR_RUN_PATH, BOTS_FILE, HARMONIZATION_CONF_FILE)
 from intelmq.lib import utils
@@ -51,13 +52,13 @@ ERROR_MESSAGES = {
     'access denied': '%s failed to %s because of missing permissions.',
 }
 
-LOG_LEVEL = {
-    'DEBUG': 0,
-    'INFO': 1,
-    'WARNING': 2,
-    'ERROR': 3,
-    'CRITICAL': 4,
-}
+LOG_LEVEL = OrderedDict([
+    ('DEBUG', 0),
+    ('INFO', 1),
+    ('WARNING', 2),
+    ('ERROR', 3),
+    ('CRITICAL', 4),
+])
 
 RETURN_TYPES = ['text', 'json']
 RETURN_TYPE = None
@@ -125,7 +126,7 @@ class IntelMQProcessManager:
                                   'created: %s.', self.PIDDIR, exc)
 
     def bot_run(self, bot_id, run_subcommand=None, console_type=None, message_action_kind=None, dryrun=None, msg=None,
-                show_sent=None):
+                show_sent=None, loglevel=None):
         pid = self.__check_pid(bot_id)
         module = self.__runtime_configuration[bot_id]['module']
         if pid and self.__status_process(pid, module):
@@ -145,7 +146,8 @@ class IntelMQProcessManager:
 
         try:
             BotDebugger(self.__runtime_configuration[bot_id], bot_id, run_subcommand,
-                        console_type, message_action_kind, dryrun, msg, show_sent)
+                        console_type, message_action_kind, dryrun, msg, show_sent,
+                        loglevel=loglevel)
             retval = 0
         except KeyboardInterrupt:
             print('Keyboard interrupt.')
@@ -480,6 +482,9 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             parser_run = subparsers.add_parser('run', help='Run a bot interactively')
             parser_run.add_argument('bot_id',
                                     choices=self.runtime_configuration.keys())
+            parser_run.add_argument('--loglevel', '-l',
+                                    nargs='?', default=None,
+                                    choices=LOG_LEVEL.keys())
             parser_run_subparsers = parser_run.add_subparsers(title='run-subcommands')
 
             parser_run_console = parser_run_subparsers.add_parser('console', help='Get a ipdb live console.')

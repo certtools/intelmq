@@ -121,7 +121,7 @@ intelmqctl: file-output was NOT RUNNING.
 
 ### run
 
-Run a bot directly for debugging purpose. Command temporarily leverages the logging level to DEBUG so that all the ```self.logger.debug("message")``` in the bot will get displayed.
+Run a bot directly for debugging purpose.
 
 If launched with no arguments, the bot will call its init method and start processing messages as usual – but you see everything happens.
 
@@ -149,6 +149,7 @@ Note that if another instance of the bot is running, only warning will be displa
 intelmqctl: Main instance of the bot is running in the background. You may want to launch: intelmqctl stop file-output
 ```
 
+You can set the log level with the `-l` flag, e.g. `-l DEBUG`. For the 'console' subcommand, 'DEBUG' is the default.
 
 #### console
 
