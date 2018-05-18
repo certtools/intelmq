@@ -111,6 +111,9 @@ CHANGELOG
 ### Requirements
 - Requests is no longer listed as dependency of the core. For depending bots the requirement is noted in their REQUIREMENTS.txt file
 
+### Documentation
+- Use Markdown for README again, as pypi now supports it.
+
 1.0.5 Bugfix release (unreleased)
 ---------------------------------
 
