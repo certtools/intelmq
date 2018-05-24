@@ -14,6 +14,7 @@ import sys
 import time
 import traceback
 import types
+import warnings
 
 from intelmq import (DEFAULT_LOGGING_PATH, DEFAULTS_CONF_FILE,
                      HARMONIZATION_CONF_FILE, PIPELINE_CONF_FILE,
@@ -773,7 +774,13 @@ class CollectorBot(Bot):
         return True
 
     def __add_report_fields(self, report: dict):
-        report.add("feed.name", self.parameters.feed)
+        if hasattr(self.parameters, 'feed'):
+            report.add("feed.name", self.parameters.feed)
+            warnings.warn("The parameter 'feed' is deprecated and will be "
+                          "removed in version 2.0. Use 'name' instead.",
+                          DeprecationWarning)
+        else:
+            report.add("feed.name", self.parameters.name)
         if hasattr(self.parameters, 'code'):
             report.add("feed.code", self.parameters.code)
         if hasattr(self.parameters, 'documentation'):

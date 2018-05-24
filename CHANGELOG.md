@@ -48,6 +48,7 @@ CHANGELOG
 - lib/pipeline:
  * you may now define more than one destination queues path the bot should pass the message to, see [Pipelines](https://github.com/certtools/intelmq/blob/develop/docs/User-Guide.md#pipeline-configuration) (#1088, #1190).
  * the special path `"_on_error"` can be used to pass messages to differnt queues in case of processing errors (#1133).
+- lib/bot.py: The parameter `feed` for collectors is deprecated for 2.0 and has been replaced by the more consistent `name` (#1144).
 
 ### Bots
 #### Collectors
