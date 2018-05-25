@@ -1,0 +1,12 @@
+{
+    "name": "Exclude whole IPv4 mask",
+    "description": "This filter demonstrates network mask excluding capacity",
+    "date": "2017-12-08",
+    "type": "exclude",
+    "conditions": {        
+        "source.ip": [
+            "10.0.1.0/24",
+            "10.0.2.2"
+        ]
+    }
+}
