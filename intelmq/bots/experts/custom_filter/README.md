@@ -1,6 +1,6 @@
 # Custom filter bot
 
-A bot to filter specific events from the pipeline. See valid fields at https://github.com/certtools/intelmq/blob/master/docs/Harmonization-fields.md
+A bot to filter specific events from the pipeline. See valid fields at configuration **etc** folder (or even [online](https://github.com/certtools/intelmq/blob/master/docs/Harmonization-fields.md)
 
 With the filter bot, one should be able to define filters such as:
  - throw away all events for specific ASN or CIDR
