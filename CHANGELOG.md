@@ -46,8 +46,8 @@ CHANGELOG
 - Add `RewindableFileHandle` to utils making handling of CSV files more easy (optionally)
 - lib/bot: top level bot parameters (description, group, module, name) are exposed as members of the class.
 - lib/pipeline:
- * you may now define more than one destination queues path the bot should pass the message to, see [Pipelines](https://github.com/certtools/intelmq/blob/develop/docs/User-Guide.md#pipeline-configuration) (#1088, #1190).
- * the special path `"_on_error"` can be used to pass messages to differnt queues in case of processing errors (#1133).
+  * you may now define more than one destination queues path the bot should pass the message to, see [Pipelines](https://github.com/certtools/intelmq/blob/develop/docs/User-Guide.md#pipeline-configuration) (#1088, #1190).
+  * the special path `"_on_error"` can be used to pass messages to differnt queues in case of processing errors (#1133).
 
 ### Bots
 #### Collectors
@@ -84,17 +84,17 @@ CHANGELOG
 - added `intelmq.bots.parsers.webinspektor.parser`
 - added `intelmq.bots.parsers.twitter.parser`
 - added `intelmq.bots.parsers.microsoft.parser_ctip`
- * ignore the invalid IP '0.0.0.0' for the destination
- * fix the raw/dumped messages, did not contain the paling list previously.
- * use the new harmonization field `tlp` instead of `extra.tlp`.
+  * ignore the invalid IP '0.0.0.0' for the destination
+  * fix the raw/dumped messages, did not contain the paling list previously.
+  * use the new harmonization field `tlp` instead of `extra.tlp`.
 - `bots.parsers.alienvault.parser_otx`: Save TLP data in the new harmonization field `tlp`.
 
 #### Experts
 - Added sieve expert for filtering and modifying events (#1083)
  * capable of distributing the event to appropriate named queues
 - `bots.experts.modify`
- * default rulesets: all malware name mappings have been migrated to the [Malware Name Mapping repository](https://github.com/certtools/malware_name_mapping) ruleset. See the new added contrib tool for download and conversion.
- * new parameter `case_sensitive` (default: True)
+  * default rulesets: all malware name mappings have been migrated to the [Malware Name Mapping repository](https://github.com/certtools/malware_name_mapping) ruleset. See the new added contrib tool for download and conversion.
+  * new parameter `case_sensitive` (default: True)
 - Added wait expert for sleeping
 - Added domain suffix expert to extract the TLD/Suffix from a domain name.
 
@@ -104,7 +104,7 @@ CHANGELOG
 - New ASN type. Like integer but checks the range.
 - added destination.urlpath and source.urlpath to harmonization.
 - New field 'tlp' for tlp level specification.
- - New TLP type. Allows all four tlp levels, removes 'TLP:' prefix and converts to upper case.
+  - New TLP type. Allows all four tlp levels, removes 'TLP:' prefix and converts to upper case.
 - Added new `classification.type` 'vulnerable client'
 - Added `(destination|source).domain_suffix` to hold the TLD/domain suffix.
 
@@ -113,6 +113,8 @@ CHANGELOG
 
 ### Documentation
 - Use Markdown for README again, as pypi now supports it.
+
+### Known bugs
 
 1.0.5 Bugfix release (unreleased)
 ---------------------------------
