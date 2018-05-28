@@ -378,7 +378,7 @@ ipv6_sinkhole_http_drone = {
         ('source.reverse_dns', 'hostname'),
         ('extra.', 'sysdesc', validate_to_none),
         ('extra.', 'sysname', validate_to_none),
-        ('destination.url', 'url', convert_http_host_and_url, True),
+        ('destination.url', 'http_url', convert_http_host_and_url, True),
         ('extra.', 'http_agent', validate_to_none),
         ('destination.fqdn', 'http_host'),
         ('extra.', 'http_referer', validate_to_none),
