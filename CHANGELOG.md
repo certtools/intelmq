@@ -42,10 +42,8 @@ CHANGELOG
 
 ### Core
 - lib/harmonization:
- * FQDN validation now handles None correctly (raised an Exception).
- * Fixed several sanitize() methods, the generic sanitation method were called by is_valid, not the sanitize methods (#1219).
-
-### Harmonization
+  * FQDN validation now handles None correctly (raised an Exception).
+  * Fixed several sanitize() methods, the generic sanitation method were called by is_valid, not the sanitize methods (#1219).
 
 ### Bots
 * Use the new pypi website at https://pypi.org/ everywhere.
@@ -60,8 +58,8 @@ CHANGELOG
   * A lot of newly added fields and fixed conversions.
   * Add newly added columns of `Ssl-Scan` feed to parser
 - Spamhaus CERT parser:
- * fix parsing and classification for bot names 'openrelay', 'iotrdp', 'sshauth', 'telnetauth', 'iotcmd', 'iotuser', 'wpscanner', 'w_wplogin', 'iotscan'
-   see the NEWS file - Postgresql section - for all changes.
+  * fix parsing and classification for bot names 'openrelay', 'iotrdp', 'sshauth', 'telnetauth', 'iotcmd', 'iotuser', 'wpscanner', 'w_wplogin', 'iotscan'
+    see the NEWS file - Postgresql section - for all changes.
 - CleanMX phishing parser: handle FQDNs in IP column (#1162).
 
 #### Experts
