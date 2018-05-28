@@ -42,15 +42,15 @@ class MailSendOutputBot(Bot):
 
     def process(self):
         message = self.receive_message()
-        
+
         self.logger.debug(message)
-        
+
         if "source.abuse_contact" in message:
             field = message["source.abuse_contact"]
             self.logger.warning("{}{}".format(self.key, field))
-            if field:                
+            if field:
                 mails = field if type(field) == 'list' else [field]
-            for mail in mails:                
+            for mail in mails:
 
                 # rewrite destination address
                 # if message["source.abuse_contact"] in mail_rewrite:
@@ -149,7 +149,14 @@ class MailSendOutputBot(Bot):
                         if self.build_mail(mail, send=True):
                             count += 1
                             print("{} ".format(mail.to), end="")
-                            self.cache.redis.delete(mail.key)
+                            try:
+                                self.cache.redis.delete(mail.key)
+                            except redis.exceptions.TimeoutError:
+                                time.sleep(1)
+                                try:
+                                    self.cache.redis.delete(mail.key)
+                                except redis.exceptions.TimeoutError:
+                                    print("\nMail {} sent but couldn't be deleted from redis. When launched again, mail will be send again :(.".format(mail.to))
                             if mail.path:
                                 os.unlink(mail.path)
                     print("\n{}× mail sent.\n".format(count))
