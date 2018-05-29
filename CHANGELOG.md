@@ -54,7 +54,6 @@ CHANGELOG
 - Mail:
   - New parameters; `sent_from`: filter messages by sender, `sent_to`: filter messages by recipient
   - More debug logs
-- `bots.experts.maxmind_geoip`: New (optional) parameter `overwrite`, by default false. The current default was to overwrite!
 - `bots.collectors.n6.collector_stomp`: renamed to `bots.collectors.stomp.collector` (#716)
 - bots.collectors.rt:
   - New parameter `search_requestor` to search for field Requestor.
@@ -88,6 +87,7 @@ CHANGELOG
   * fix the raw/dumped messages, did not contain the paling list previously.
   * use the new harmonization field `tlp` instead of `extra.tlp`.
 - `bots.parsers.alienvault.parser_otx`: Save TLP data in the new harmonization field `tlp`.
+- added `intelmq.bots.parsers.openphish.parser_commercial`
 
 #### Experts
 - Added sieve expert for filtering and modifying events (#1083)
@@ -97,6 +97,7 @@ CHANGELOG
   * new parameter `case_sensitive` (default: True)
 - Added wait expert for sleeping
 - Added domain suffix expert to extract the TLD/Suffix from a domain name.
+- `bots.experts.maxmind_geoip`: New (optional) parameter `overwrite`, by default false. The current default was to overwrite!
 
 ### Harmonization
 - Renamed `JSON` to `JSONDict` and added a new type `JSON`. `JSONDict` saves data internally as JSON, but acts like a dictionary. `JSON` accepts any valid JSON.
