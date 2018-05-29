@@ -156,7 +156,7 @@ def convert_http_host_and_url(value, row):
 
         application = "http"
         if "application" in row:
-            if row['application']:
+            if row['application'] in ['http', 'https']:
                 application = row['application']
 
         return application + "://" + hostname + path
