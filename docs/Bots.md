@@ -347,6 +347,10 @@ The cache is used to remember which files have already been downloaded. Make sur
 * `not_older_than`: an optional relative (minutes) or absolute time expression to determine the oldest time of a file to be downloaded
 * `redis_cache_*` and especially `redis_cache_ttl`: Settings for the cache where file names of downloaded files are saved.
 
+#### Additional functionalities
+
+* Files are automatically ungzipped if the filename ends with `.gz`.
+
 * * *
 
 ### Stomp

@@ -26,6 +26,8 @@ Parameter:
 * file_match: an optional regex to match filenames
 * not_older_than: optional
 """
+import gzip
+import io
 import re
 from datetime import datetime, timedelta
 
@@ -107,9 +109,13 @@ class MicrosoftInterflowCollectorBot(CollectorBot):
                                     cert=self.ssl_client_cert,
                                     timeout=self.http_timeout_sec)
             download.raise_for_status()
+            if download_url.endswith('.gz'):
+                raw = gzip.open(io.BytesIO(download.content)).read().decode()
+            else:
+                raw = download.text
             report = self.new_report()
             report.add('feed.url', download_url)
-            report.add('raw', download.text)
+            report.add('raw', raw)
             self.send_message(report)
             self.cache.set(file['Name'], True)
 

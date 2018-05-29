@@ -63,6 +63,7 @@ CHANGELOG
 - `bots.collectors.stomp.collector`: Heartbeat timeout is now logged with log level info instead of warning.
 - added `intelmq.bots.collectors.twitter.collector_twitter`
 - `bots.collectors.microsoft.collector_interlow`: added for MS interflow API
+  - Automatic ungzipping for .gz files.
 
 #### Parsers
 - changed feednames in `bots.parsers.shadowserver`. Please refer to it's README for the exact changes.
