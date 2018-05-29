@@ -557,6 +557,14 @@
                 "redis_cache_ttl": "86400"
             }
         },
+        "Domain Suffix": {
+            "description": "Extracts the domain suffix from a domain and saves it in the the domain_suffix field.",
+            "module": "intelmq.bots.experts.domain_suffix.expert",
+            "parameters": {
+                "field": "fqdn",
+                "suffix_file": "<path of suffix file>"
+            }
+        },
         "Field Reducer": {
             "description": "The field reducer bot is capable of removing fields from events.",
             "module": "intelmq.bots.experts.field_reducer.expert",
