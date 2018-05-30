@@ -89,6 +89,7 @@ CHANGELOG
   * use the new harmonization field `tlp` instead of `extra.tlp`.
 - `bots.parsers.alienvault.parser_otx`: Save TLP data in the new harmonization field `tlp`.
 - added `intelmq.bots.parsers.openphish.parser_commercial`
+- added `intelmq.bots.parsers.microsoft.parser_bingmurls`
 
 #### Experts
 - Added sieve expert for filtering and modifying events (#1083)
