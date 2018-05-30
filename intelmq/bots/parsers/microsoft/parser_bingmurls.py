@@ -9,7 +9,7 @@ from intelmq.lib.bot import ParserBot
 
 MAPPING = {"Attributable": "extra.attributable",
            "Description": "event_description.text",
-           "IndicatorThreatType": "classification.identifier", # MaliciousUrl
+           "IndicatorThreatType": "classification.identifier",  # MaliciousUrl
            "TLPLevel": "tlp",
            "FirstReportedDateTime": "time.source",
            "NetworkDestinationAsn": "source.asn",
