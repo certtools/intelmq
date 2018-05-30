@@ -87,16 +87,16 @@ class MicrosoftInterflowCollectorBot(CollectorBot):
                 self.logger.debug('Processed file %s already.', file['Name'])
                 continue
             if self.file_match and not self.file_match.match(file['Name']):
-                self.logger.debug('File %s does not match.', file['Name'])
+                self.logger.debug('File %r does not match filename filter.', file['Name'])
                 continue
             filetime = parser.parse(file['LastModified'])
             if isinstance(self.time_match, datetime) and filetime < self.time_match:
-                self.logger.debug('File %s is too old.', file['Name'])
+                self.logger.debug('File %r does not match absolute time filter.', file['Name'])
                 continue
             else:
                 now = datetime.now(tz=pytz.timezone('UTC'))
                 if isinstance(self.time_match, timedelta) and filetime < (now - self.time_match):
-                    self.logger.debug('File %s does not match.', file['Name'])
+                    self.logger.debug('File %r does not match relative time filter.', file['Name'])
                     continue
 
             self.logger.debug('Processing file %r.', file['Name'])
