@@ -118,6 +118,7 @@ CHANGELOG
 - Use Markdown for README again, as pypi now supports it.
 
 ### Known bugs
+- `bots.experts.sieve` does not support textX (#1246).
 
 1.0.5 Bugfix release (unreleased)
 ---------------------------------
