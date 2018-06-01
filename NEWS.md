@@ -41,7 +41,7 @@ ALTER TABLE events
    ADD COLUMN "destination.domain_suffix" text,
    ADD COLUMN "source.domain_suffix" text;
 ALTER TABLE events
-   ADD COLUMN "tld" text;
+   ADD COLUMN "tlp" text;
 UPDATE events
    SET "classification.identifier" = 'openmdns'
    WHERE "classification.identifier" = 'open-mdns' AND "feed.name" = 'Open-mDNS';
