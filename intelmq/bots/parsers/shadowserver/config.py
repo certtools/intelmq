@@ -156,19 +156,20 @@ def convert_http_host_and_url(value, row):
         if row['http_host']:
             hostname = row['http_host']
 
-    path = ""
     if "url" in row:
-        if row['url']:
-            path = row['url']
+        path = row.get('url', '')
     elif "http_url" in row:
-        if row['http_url']:
-            path = row['http_url']
+        path = row.get('http_url', '')
+    else:
+        path = ''
+    # remove potential leading/trailing HTTP request information
+    path = re.sub(r'^[^/]*', '', path)
+    path = re.sub(r'\s.*$', '', path)
+    # If field was empty:
+    if not path.startswith('/'):
+        path = '/' + path
 
     if hostname and path:
-        # remove potential leading/trailing HTTP request information
-        path = re.sub(r'^[^/]*', '', path)
-        path = re.sub(r'\s.*$', '', path)
-
         application = "http"
         if "application" in row:
             if row['application'] in ['http', 'https']:
