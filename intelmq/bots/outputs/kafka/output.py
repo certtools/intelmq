@@ -4,7 +4,8 @@ from json import loads
 from json import dumps
 from json import load
 from collections.abc import Mapping
-
+from intelmq.lib.utils import load_configuration
+from intelmq.lib.bot import Bot
 try:
     from confluent_kafka import Producer
 except ImportError:
@@ -17,8 +18,6 @@ except ImportError:
 if avro is not None:
     from confluent_kafka.avro import AvroProducer
 
-from intelmq.lib.bot import Bot
-from intelmq.lib.utils import load_configuration
 
 def replace_keys(obj, key_char='.', replacement='_'):
     if isinstance(obj, Mapping):
@@ -29,6 +28,7 @@ def replace_keys(obj, key_char='.', replacement='_'):
         return replacement_obj
     return obj
 
+
 class KafkaOutputBot(Bot):
 
     def init(self):
@@ -37,14 +37,14 @@ class KafkaOutputBot(Bot):
         if avro is None:
             raise ValueError('Missing python3-avro module')
 
-        self.broker_list = getattr(
-            self.parameters, 'kafka_broker_list', '127.0.0.1:9092')
-        self.kafka_topic = getattr(
-            self.parameters, 'kafka_topic', 'intelmq')
-        self.flatten_fields = getattr(
-            self.parameters, 'flatten_fields', ['extra'])
-        self.enable_avro = getattr(
-            self.parameters, 'enable_avro', False)
+        self.broker_list = getattr(self.parameters,
+                                   'kafka_broker_list', '127.0.0.1:9092')
+        self.kafka_topic = getattr(self.parameters,
+                                   'kafka_topic', 'intelmq')
+        self.flatten_fields = getattr(self.parameters,
+                                      'flatten_fields', ['extra'])
+        self.enable_avro = getattr(self.parameters,
+                                   'enable_avro', False)
 
         # Fields below are to define an output schema via AVRO
         if self.enable_avro is True:
@@ -60,25 +60,22 @@ class KafkaOutputBot(Bot):
                 self.parameters, 'avro_topic_field', None)
             self.avro_schema_registry = getattr(
                 self.parameters, 'avro_schema_registry', None)
-            
-            # Build a list of producers for each destination topic 
-            self.producer = AvroProducer(
-                    {
-                        'bootstrap.servers': self.broker_list,
-                        'schema.registry.url': self.avro_schema_registry
-                    },
-                    default_key_schema=self.avro_key_schema,
-                    default_value_schema = self.avro_value_schema)
-        else:
-            self.producer = Producer(
-                    {
-                        'bootstrap.servers': self.broker_list
-                    })
 
+            # Build a list of producers for each destination topic
+            self.producer = AvroProducer({
+                                         'bootstrap.servers': self.broker_list,
+                                         'schema.registry.url': self.avro_schema_registry
+                                         },
+                                         default_key_schema=self.avro_key_schema,
+                                         default_value_schema=self.avro_value_schema
+                                         )
+        else:
+            self.producer = Producer({
+                                     'bootstrap.servers': self.broker_list
+                                     })
 
         if isinstance(self.flatten_fields, str):
             self.flatten_fields = self.flatten_fields.split(',')
-
 
     def process(self):
         event = self.receive_message()
@@ -106,15 +103,15 @@ class KafkaOutputBot(Bot):
             self.kafka.flush()
         else:
             try:
-                key_field = str(event_dict[self.avro_topic_field]).replace('.','_')
+                key_field = str(event_dict[self.avro_topic_field]).replace('.', '_')
             except KeyError:
-                self.logger.debug('Event %s has no field %s, dropping.', format(event_dict),format(self.avro_topic_field))
+                self.logger.debug('Event %s has no field %s, dropping.', format(event_dict), format(self.avro_topic_field))
                 self.acknowledge_message()
                 return
-                
-            submit_key =  {'indicator':event_dict[key_field]}
+
+            submit_key = {'indicator': event_dict[key_field]}
             event_topic = self.avro_topic_schema[key_field]
-            self.logger.debug('Shipped %s to topic: %s', format(submit_key),format(event_topic))
+            self.logger.debug('Shipped %s to topic: %s', format(submit_key), format(event_topic))
             self.producer.produce(topic=event_topic, value=event_dict, key=submit_key)
             self.acknowledge_message()
             self.producer.poll(0)
