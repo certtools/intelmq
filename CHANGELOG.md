@@ -18,6 +18,7 @@ CHANGELOG
   * SSL FREAK: Remove optional column `device_serial` and add several new ones.
 
 #### Experts
+- `bots.experts.filter`: Pre-compile regex at bot initialization.
 
 #### Outputs
 

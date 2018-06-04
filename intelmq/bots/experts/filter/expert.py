@@ -50,9 +50,9 @@ class FilterExpertBot(Bot):
             self.logger.info("Filter_action parameter definition unknown.")
             self.filter = False
 
-        self.use_regex = False
+        self.regex = False
         if hasattr(self.parameters, 'filter_regex') and self.parameters.filter_regex:
-            self.use_regex = True
+            self.regex = re.compile(self.parameters.filter_value)
 
         if not (self.filter or self.not_after is not None or self.not_before is not None):
             raise ValueError("No relevant filter configuration found.")
@@ -111,8 +111,8 @@ class FilterExpertBot(Bot):
         self.acknowledge_message()
 
     def doFilter(self, event, key, condition):
-        if self.use_regex:
-            return self.regexSearchFilter(event, key, condition)
+        if self.regex:
+            return self.regexSearchFilter(event, key)
         else:
             return self.equalsFilter(event, key, condition)
 
@@ -120,10 +120,9 @@ class FilterExpertBot(Bot):
         return (key in event and
                 event.get(key) == value)
 
-    def regexSearchFilter(self, event, key, regex):
+    def regexSearchFilter(self, event, key):
         if key in event:
-            exp = re.compile(regex)
-            return exp.search(str(event.get(key)))
+            return self.regex.search(str(event.get(key)))
         else:
             return False
 
