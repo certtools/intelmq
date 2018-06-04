@@ -626,7 +626,7 @@
         "Kafka": {
             "description": "Kafka is the bot responsible to send events to a kafka topic.",
             "module": "intelmq.bots.outputs.kafka.output",
-            "parameters":{
+            "parameters": {
                 "kafka_broker_list": "127.0.0.1",
                 "kafka_topic": "intelmq",
                 "flatten_fields": "extra"
