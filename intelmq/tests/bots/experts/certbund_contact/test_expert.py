@@ -28,7 +28,7 @@ EXAMPLE_OUTPUT = {
     "time.observation": "2016-02-26T10:11:12+00:00",
     "feed.name": "test",
     "classification.type": "other",
-    'extra': ('{"certbund": {"destination_contacts": {'
+    'extra': ('{"certbund": {"source_contacts": {'
               '"matches": ['
               '{"address": "192.168.42.0/24", "field": "ip",'
               ' "managed": "automatic", "organisations": [0]'
@@ -38,43 +38,25 @@ EXAMPLE_OUTPUT = {
               '"organisations": ['
               '{"annotations": [{"type": "tag", "value": "daily"}],'
               ' "contacts": ['
-              '{"email": "someone@example.com", "managed": "automatic"}'
+              '{"email": "someone@example.com", "email_status": "disabled",'
+              ' "managed": "automatic"}'
               '],'
               ' "id": 0, "managed": "automatic",'
               ' "name": "Some Organisation", "sector": null'
               '}, '
               '{"annotations": [{"type": "tag", "value": ""}],'
               ' "contacts": ['
-              '{"email": "other@example.com", "managed": "manual"}'
-              '],'
-              ' "id": 1, "managed": "manual", "name": "Another Organisation",'
-              ' "sector": "IT"}]}, '
-              '"source_contacts": {'
-              '"matches": ['
-              '{"address": "192.168.42.0/24", "field": "ip",'
-              ' "managed": "automatic", "organisations": [0]'
-              '}, '
-              '{"field": "fqdn", "managed": "manual", "organisations": [1]}'
-              '], '
-              '"organisations": ['
-              '{"annotations": [{"type": "tag", "value": "daily"}],'
-              ' "contacts": ['
-              '{"email": "someone@example.com", "managed": "automatic"}'
-              '],'
-              ' "id": 0, "managed": "automatic",'
-              ' "name": "Some Organisation", "sector": null'
-              '}, '
-              '{"annotations": [{"type": "tag", "value": ""}],'
-              ' "contacts": ['
-              '{"email": "other@example.com", "managed": "manual"}'
+              '{"email": "other@example.com", "email_status": "enabled",'
+              ' "managed": "manual"}'
               '],'
               ' "id": 1, "managed": "manual", "name": "Another Organisation",'
               ' "sector": "IT"}]}}}'),
     }
 
+
 class CERTBundKontaktMockDBExpertBot(CERTBundKontaktExpertBot):
 
-    """CERTBundKontaktExpertBot that does not mocks all database accesses"""
+    """CERTBundKontaktExpertBot that mocks all database accesses"""
 
     def connect_to_database(self):
         pass
@@ -95,6 +77,7 @@ class CERTBundKontaktMockDBExpertBot(CERTBundKontaktExpertBot):
                          "contacts": [{
                              "email": "someone@example.com",
                              "managed": "automatic",
+                             "email_status": "disabled"
                              }],
                          },
                         {"id": 1,
@@ -105,6 +88,7 @@ class CERTBundKontaktMockDBExpertBot(CERTBundKontaktExpertBot):
                          "contacts": [{
                              "email": "other@example.com",
                              "managed": "manual",
+                             "email_status": "enabled"
                              }],
                          }]
                     }

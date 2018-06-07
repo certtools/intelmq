@@ -1,3 +1,41 @@
+# New Table `email_status`
+
+## upgrade
+```sql
+CREATE TABLE email_status (
+    email VARCHAR(100) PRIMARY KEY,
+    enabled BOOLEAN NOT NULL,
+    added TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Make sure the user used by the contact bot can access the table.
+-- Adapt the username if necessary.
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO intelmq;
+```
+
+## downgrade
+```sql
+DROP TABLE email_status;
+```
+
+
+# Indices for the asn column on the organisation_to_asn tables
+
+## upgrade
+```sql
+CREATE INDEX organisation_to_asn_asn_idx
+    ON organisation_to_asn (asn);
+CREATE INDEX organisation_to_asn_automatic_asn_idx
+    ON organisation_to_asn_automatic (asn);
+```
+
+## downgrade
+```sql
+DROP INDEX organisation_to_asn_asn_idx;
+DROP INDEX organisation_to_asn_automatic_asn_idx;
+```
+
+
 # Add FQDN index again
 
 This index was implicitly removed by the removal of the UNIQUE

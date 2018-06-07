@@ -302,6 +302,9 @@ CREATE TABLE organisation_to_asn (
     FOREIGN KEY (organisation_id) REFERENCES organisation (organisation_id)
 );
 
+CREATE INDEX organisation_to_asn_asn_idx
+    ON organisation_to_asn (asn);
+
 
 CREATE TABLE organisation_to_asn_automatic (
     organisation_automatic_id INTEGER,
@@ -312,6 +315,9 @@ CREATE TABLE organisation_to_asn_automatic (
     FOREIGN KEY (organisation_automatic_id)
      REFERENCES organisation_automatic (organisation_automatic_id)
 );
+
+CREATE INDEX organisation_to_asn_automatic_asn_idx
+    ON organisation_to_asn_automatic (asn);
 
 
 CREATE TABLE organisation_to_network (
@@ -361,6 +367,16 @@ CREATE TABLE organisation_to_fqdn_automatic (
      REFERENCES fqdn_automatic (fqdn_automatic_id)
 );
 
+
+
+-- Table to hold known status information about an email address. If no
+-- status information is known, there is no entry in the table, which
+-- means the email is enabled.
+CREATE TABLE email_status (
+    email VARCHAR(100) PRIMARY KEY,
+    enabled BOOLEAN NOT NULL,
+    added TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
 
 
 COMMIT;

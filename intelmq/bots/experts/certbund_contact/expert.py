@@ -22,7 +22,11 @@ Author(s):
 """
 import sys
 
-import psycopg2
+try:
+    import psycopg2
+except ImportError:
+    psycopg2 = None
+
 
 from intelmq.lib.bot import Bot
 import intelmq.bots.experts.certbund_contact.common as common
@@ -33,10 +37,14 @@ from intelmq.bots.experts.certbund_contact.eventjson \
 class CERTBundKontaktExpertBot(Bot):
 
     def init(self):
+        self.sections = [section.strip() for section in
+                         getattr(self.parameters,
+                                 "sections", "source").split(",")]
+        self.logger.debug("Sections: %r.", self.sections)
         try:
             self.logger.debug("Trying to connect to database.")
             self.connect_to_database()
-        except psycopg2.Error:
+        except BaseException:
             self.logger.exception("Failed to connect to database!")
             self.stop()
 
@@ -63,7 +71,7 @@ class CERTBundKontaktExpertBot(Bot):
             self.acknowledge_message()
             return
 
-        for section in ["source", "destination"]:
+        for section in self.sections:
             ip = event.get(section + ".ip")
             asn = event.get(section + ".asn")
             fqdn = event.get(section + ".fqdn")

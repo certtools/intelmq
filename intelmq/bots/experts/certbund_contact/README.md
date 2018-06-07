@@ -104,6 +104,8 @@ to the RIPE documentation above).
 Requires the python module psycopg2 (which is already installed if
 you also use the postgresql-output bot).
 
+Requires at least Postgresql v>=9.5 (compare to intelmq-fody-backend).
+
 The following commands assume that PostgreSQL is running and listening on the
 default port. They create a database called "contactdb" which matches the
 default configuration of the bot.

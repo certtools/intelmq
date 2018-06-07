@@ -34,7 +34,7 @@ def add_db_args(parser):
     parser.add_argument("--conninfo",
                         default='dbname=contactdb',
                         help="Libpg connection string. E.g. 'host=localhost"
-                             " port=5432 user=intelmq dbname=connectdb'")
+                             " port=5432 user=intelmq dbname=contactdb'")
 
 
 def add_common_args(parser):
@@ -100,7 +100,7 @@ def load_ripe_files(options) -> tuple:
 
     def restrict_country(record):
         country = options.restrict_to_country
-        return (not country) or record["country"][0] == country
+        return (not country) or country in record["country"]
 
     asn_list = parse_file(options.asn_file,
                           ('aut-num', 'org', 'status', 'abuse-c'),
@@ -116,6 +116,7 @@ def load_ripe_files(options) -> tuple:
 
     organisation_list = parse_file(options.organisation_file,
                                    ('organisation', 'org-name', 'abuse-c'),
+                                   restriction=lambda org: org["abuse-c"],
                                    verbose=options.verbose)
     organisation_index = build_index(organisation_list, 'organisation')
 
@@ -270,6 +271,21 @@ def parse_file(filename, fields, index_field=None, restriction=lambda x: True,
 
             # Only add the fields we are interested in to the result set
             if key in fields:
+                # normalize country entries. The two-letter code is not
+                # always given in all uppercase and in some cases, the
+                # contry code is followed by additional content that
+                # appears to be a comment containing other country codes
+                # (e.g. country: DE # DE NL FR). The documentation does
+                # not mention this comment syntax and seems to imply
+                # that the value is simply a two-letter ISO 3166 country
+                # code.
+                #
+                # To cope with this, we split the country value on white
+                # space (the '#' is always preceded by whitespace,
+                # apparently) and take only the first of the resulting
+                # components and then convert it to upper case.
+                if key == "country":
+                    value = value.split()[0].upper()
                 tmp[key].append(value)
 
     f.close()
@@ -426,8 +442,18 @@ def sanitize_split_and_modify(obj_list, index, whitelist,
         else:
             obj_list_a.append(obj)
 
+    # Remove entries from obj_list_o that do not refer to a known
+    # organisation. This can happen when e.g. organisations without
+    # contact information are ignored and therefore not in
+    # organisation_index.
+    num_obj_o = len(obj_list_o)
+    obj_list_o = [obj for obj in obj_list_o
+                  if obj["org"][0] in organisation_index]
+
     if verbose:
         print("   -> for {} {} we use `org`".format(len(obj_list_o), index))
+        print("      ({} referenced unknown organisations)"
+              .format(num_obj_o - len(obj_list_o)))
         print("   -> for {} {} we use `abuse-c'".format(len(obj_list_a), index))
 
     obj_list_a, organisation_list, organisation_index = modify_for_abusec(

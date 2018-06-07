@@ -39,6 +39,11 @@ from intelmq.bots.experts.certbund_contact.eventjson import \
 class CERTBundRuleExpertBot(Bot):
 
     def init(self):
+        self.sections = [section.strip() for section in
+                         getattr(self.parameters,
+                                 "sections", "source").split(",")]
+        self.logger.debug("Sections: %r", self.sections)
+
         self.script_directory = \
             getattr(self.parameters, "script_directory",
                     "/opt/intelmq/var/lib/bots/notification_rules")
@@ -57,7 +62,7 @@ class CERTBundRuleExpertBot(Bot):
             self.acknowledge_message()
             return
 
-        for section in ["source", "destination"]:
+        for section in self.sections:
             context = Context(event, section, self.logger)
             self.logger.debug("Calling scripts for section %r.", section)
             for entry in self.entry_points:

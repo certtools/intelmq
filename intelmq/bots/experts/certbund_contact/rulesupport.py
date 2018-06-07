@@ -88,20 +88,25 @@ class Contact:
         email (str): email address
         managed (str): Either 'manual' or 'automatic' indicating how the
             contact database entry is managed.
+        email_status (str): Either 'enabled' or 'disabled'. 'disabled'
+            usually means that the email address is likely invalid in
+            some way, e.g. because emails sent there bounce.
     """
 
-    def __init__(self, email, managed):
+    def __init__(self, email, managed, email_status="enabled"):
         self.email = email
         self.managed = managed
+        self.email_status = email_status
 
     def __repr__(self):
-        return ("Contact(email=%r, managed=%r)"
-                % (self.email, self.managed))
+        return ("Contact(email=%r, managed=%r, email_status=%r)"
+                % (self.email, self.managed, self.email_status))
 
     @classmethod
     def from_json(cls, jsondict):
         return cls(email=jsondict["email"],
-                   managed=jsondict["managed"])
+                   managed=jsondict["managed"],
+                   email_status=jsondict.get("email_status", "enabled"))
 
 
 class Match:
@@ -254,14 +259,14 @@ class Directive:
         self.template_name = template_name
 
     def __repr__(self):
-        return ("Directive(medium={medium},"
-                " recipient_address={recipient_address},"
-                " aggregate_fields={aggregate_fields},"
-                " aggregate_key={aggregate_key},"
-                " notification_interval={notification_interval}"
-                " notification_format={notification_format}"
-                " event_data_format={event_data_format},"
-                " template_name={template_name},"
+        return ("Directive(medium={medium!a},"
+                " recipient_address={recipient_address!a},"
+                " aggregate_fields={aggregate_fields!a},"
+                " aggregate_key={aggregate_key!a},"
+                " notification_interval={notification_interval!a},"
+                " notification_format={notification_format!a},"
+                " event_data_format={event_data_format!a},"
+                " template_name={template_name!a})"
                 .format(**self.__dict__))
 
     def __eq__(self, other):
@@ -424,14 +429,14 @@ class Context:
         self.ensure_data_consistency()
 
     def ensure_data_consistency(self):
-        """Make sure data-structure stay consistent.
+        """Make sure data-structures stay consistent.
         In particular the links between matches and organisations need
         to stay sane if scripts modify this information.
 
         Scripts should not call this method directly! It wouldn't hurt,
         but it should not be necessary. This method is automatically
         called when new values are assigned to the matches or
-        organisation attributes and by the rule bot between scripts.
+        organisations attributes and by the rule bot between scripts.
 
         This method performs these cleanups:
 

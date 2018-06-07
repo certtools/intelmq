@@ -45,7 +45,7 @@ def set_certbund_field(event, key, value):
     extra = get_parsed_extra_field(event)
     certbund = extra.setdefault("certbund", {})
     certbund[key] = value
-    event.add("extra", extra, force=True)
+    event.add("extra", extra, overwrite=True)
 
 
 def del_certbund_field(event, key):
@@ -65,7 +65,13 @@ def set_certbund_contacts(event, section, contacts):
 
 
 def get_certbund_contacts(event, section):
-    return get_certbund_field(event).get(contacts_key(section), [])
+    """Return the contact data associated with the event for a section.
+    The section should be either 'destination' or 'source'. If the event
+    does not have contact information for the section, this function
+    returns empty contact information.
+    """
+    return get_certbund_field(event).get(contacts_key(section),
+                                         {"matches": [], "organisations": []})
 
 
 def del_certbund_contacts(event, section):
