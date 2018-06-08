@@ -85,7 +85,7 @@ class Base64(GenericType):
 
         try:
             utils.base64_decode(value)
-        except TypeError:
+        except (TypeError, ValueError):
             return False
 
         if not GenericType().is_valid(value):
@@ -95,7 +95,10 @@ class Base64(GenericType):
 
     @staticmethod
     def sanitize(value):
-        value = utils.base64_encode(value)
+        try:
+            utils.base64_decode(value)
+        except (TypeError, ValueError):
+            value = utils.base64_encode(value)
         return value
 
 
