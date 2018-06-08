@@ -17,6 +17,7 @@ import intelmq.bin.intelmqctl as intelmqctl
 import intelmq.lib.exceptions as exceptions
 import intelmq.lib.pipeline as pipeline
 import intelmq.lib.utils as utils
+import intelmq.lib.message as message
 from intelmq import DEFAULT_LOGGING_PATH, DEFAULTS_CONF_FILE, PIPELINE_CONF_FILE, RUNTIME_CONF_FILE
 
 APPNAME = "intelmqdump"
@@ -295,6 +296,10 @@ def main():
                             queue_name = answer[2]
                         else:
                             queue_name = entry['source_queue']
+                    if queue_name in pipeline_pipes:
+                        if runtime[pipeline_pipes[queue_name]]['group'] == 'Parser':
+                            print('Event converted to Report automatically.')
+                            msg = message.Report(message.MessageFactory.from_dict(msg)).serialize()
                     try:
                         pipe.set_queues(queue_name, 'destination')
                         pipe.connect()
