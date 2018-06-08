@@ -31,6 +31,7 @@ CHANGELOG
 
 ### Tools
 - `intelmqctl run` has a new parameter `-l` `--loglevel` to overwrite the log level for the run (#1075).
+- `intelmqdump` has now command completion for bot names, actions and queue names in interacive console.
 
 ### Contrib
 
