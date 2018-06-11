@@ -367,26 +367,5 @@ class TestHarmonization(unittest.TestCase):
         self.assertFalse(harmonization.URL.is_valid('http://',
                                                     sanitize=True))
 
-    def test_base64_valid(self):
-        """ Test Base64.is_valid with valid arguments. """
-        self.assertTrue(harmonization.Base64.is_valid('Zm9vYmFy', sanitize=False))
-
-    def test_base64_invalid(self):
-        """ Test Base64.is_valid with invalid arguments. """
-        self.assertFalse(harmonization.Base64.is_valid('Zm9vYmF', sanitize=False))
-
-    def test_base64_is_valid_sanitize(self):
-        """ Test Base64.is_valid with sanitation. """
-        self.assertTrue(harmonization.Base64.is_valid('foobar', sanitize=True))
-
-    def test_base64_sanitize_invalid(self):
-        """ Test Base64.sanitize with yet invalid data. """
-        self.assertEqual(harmonization.Base64.sanitize('foobar'), 'Zm9vYmFy')
-
-    def test_base64_sanitize_valid(self):
-        """ Test Base64.sanitize with already valid data. """
-        self.assertEqual(harmonization.Base64.sanitize('Zm9vYmFy'), 'Zm9vYmFy')
-
-
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
