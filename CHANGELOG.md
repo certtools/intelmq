@@ -122,6 +122,7 @@ CHANGELOG
 ---------------------------------
 
 ### Core
+- `lib/message`: `Report()` can now create a Report instance from Event instances (#1225).
 
 ### Harmonization
 
@@ -134,6 +135,7 @@ CHANGELOG
   * SSL FREAK: Remove optional column `device_serial` and add several new ones.
 
 #### Experts
+- `bots.experts.filter`: Pre-compile regex at bot initialization.
 
 #### Outputs
 
@@ -145,6 +147,8 @@ CHANGELOG
 
 ### Tools
 - `intelmqctl run` has a new parameter `-l` `--loglevel` to overwrite the log level for the run (#1075).
+- `intelmqdump` has now command completion for bot names, actions and queue names in interacive console.
+- `intelmqdump` automatically converts messages from events to reports if the queue the message is being restored to is the source queue of a parser (#1225).
 
 ### Contrib
 
