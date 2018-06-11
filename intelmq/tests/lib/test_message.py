@@ -627,6 +627,13 @@ class TestReport(unittest.TestCase):
         self.assertNotIn('source.fqdn', report)
         self.assertIn('feed.code', report)
 
+    def test_report_from_event_with_raw(self):
+        """ raw must not be sanitized (base64 encoded) """
+        event = message.Event(harmonization=HARM)
+        event.add('raw', 'foobar')
+        report = message.Report(event)
+        self.assertEqual(report['raw'], 'Zm9vYmFy')
+
 
 if __name__ == '__main__':  # pragma: no cover  # pragma: no cover
     unittest.main()

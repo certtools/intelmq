@@ -411,7 +411,7 @@ class Report(Message):
             super(Report, self).__init__({}, auto, harmonization)
             for key, value in message.items():
                 if self._Message__is_valid_key(key):
-                    self[key] = value
+                    self.add(key, value, sanitize=False)
         else:
             super(Report, self).__init__(message, auto, harmonization)
         if not auto and 'time.observation' not in self:
