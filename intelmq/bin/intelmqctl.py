@@ -95,7 +95,10 @@ def log_botnet_message(status, group=None):
     if QUIET:
         return
     if RETURN_TYPE == 'text':
-        logger.info(MESSAGES[status], BOT_GROUP[group] + (" group" if group else ""))
+        if group:
+            logger.info(MESSAGES[status], BOT_GROUP[group] + " group")
+        else:
+            logger.info(MESSAGES[status], 'Botnet')
 
 
 def log_log_messages(messages):
