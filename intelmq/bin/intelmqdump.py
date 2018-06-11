@@ -7,7 +7,8 @@ import glob
 import json
 import os.path
 import pprint
-import readline  # hooks into input()
+import re
+import readline
 import traceback
 
 from termstyle import bold, green, inverted, red
@@ -16,7 +17,8 @@ import intelmq.bin.intelmqctl as intelmqctl
 import intelmq.lib.exceptions as exceptions
 import intelmq.lib.pipeline as pipeline
 import intelmq.lib.utils as utils
-from intelmq import DEFAULT_LOGGING_PATH, DEFAULTS_CONF_FILE, RUNTIME_CONF_FILE
+import intelmq.lib.message as message
+from intelmq import DEFAULT_LOGGING_PATH, DEFAULTS_CONF_FILE, PIPELINE_CONF_FILE, RUNTIME_CONF_FILE
 
 APPNAME = "intelmqdump"
 DESCRIPTION = """
@@ -116,6 +118,33 @@ def load_meta(dump):
     return retval
 
 
+class Completer():
+    state = None
+    queues = None
+
+    def __init__(self, possible_values, queues=False):
+        self.possible_values = possible_values
+        self.queues = queues
+
+    def complete(self, text, state):
+        if state == 0:  # generate matches
+            self.matches = []
+            old_text = ''
+            possible_values = self.possible_values
+            match = re.search('^(r[ \t]+[0-9]+|a)[ \t]+', text)
+            if self.queues and match:
+                old_text, text = text[:match.span()[1]], text[match.span()[1]:]
+                possible_values = self.queues
+            for completion in possible_values:
+                if completion.startswith(text):
+                    self.matches.append(old_text + completion)
+            self.matches.sort()
+        try:
+            return self.matches[state]
+        except IndexError:
+            return
+
+
 def main():
     parser = argparse.ArgumentParser(
         prog=APPNAME,
@@ -129,6 +158,13 @@ def main():
                         default=None, help='botid to inspect dumps of')
     args = parser.parse_args()
     ctl = intelmqctl.IntelMQController()
+    readline.parse_and_bind("tab: complete")
+    readline.set_completer_delims('')
+
+    pipeline_config = utils.load_configuration(PIPELINE_CONF_FILE)
+    pipeline_pipes = {}
+    for bot, pipes in pipeline_config.items():
+        pipeline_pipes[pipes.get('source-queue', '')] = bot
 
     if args.botid is None:
         filenames = glob.glob(os.path.join(DEFAULT_LOGGING_PATH, '*.dump'))
@@ -147,6 +183,8 @@ def main():
             print("{c:3}: {s:{length}} {i}".format(c=count, s=shortname, i=info,
                                                    length=length))
         try:
+            bot_completer = Completer(possible_values=[f[1] for f in filenames])
+            readline.set_completer(bot_completer.complete)
             botid = input(inverted('Which dump file to process (id or name)?') +
                           ' ')
         except EOFError:
@@ -200,6 +238,12 @@ def main():
             print('Restricted actions.')
 
         try:
+            possible_answers = list(available_answers)
+            for id_action in ['r', 'a']:
+                if id_action in possible_answers:
+                    possible_answers[possible_answers.index(id_action)] = id_action + ' '
+            action_completer = Completer(possible_answers, queues=pipeline_pipes.keys())
+            readline.set_completer(action_completer.complete)
             answer = input(inverted(', '.join(available_opts) + '?') + ' ').split()
         except EOFError:
             break
@@ -252,6 +296,10 @@ def main():
                             queue_name = answer[2]
                         else:
                             queue_name = entry['source_queue']
+                    if queue_name in pipeline_pipes:
+                        if runtime[pipeline_pipes[queue_name]]['group'] == 'Parser':
+                            print('Event converted to Report automatically.')
+                            msg = message.Report(message.MessageFactory.from_dict(msg)).serialize()
                     try:
                         pipe.set_queues(queue_name, 'destination')
                         pipe.connect()
