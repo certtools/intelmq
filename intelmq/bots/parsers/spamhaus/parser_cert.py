@@ -65,6 +65,10 @@ class SpamhausCERTParserBot(ParserBot):
                 event.add('classification.type', 'brute-force')
                 event.add('classification.identifier', 'telnet')
                 event.add('protocol.application', 'telnet')
+            elif malware  == 'smtpauth':
+                event.add('classification.type', 'brute-force')
+                event.add('classification.identifier', 'smtp')
+                event.add('protocol.application', 'smtp')
             elif malware == 'iotscan':
                 event.add('classification.type', 'scanner')
                 event.add('event_description.text', 'infected IoT device scanning for other vulnerable IoT devices')
@@ -83,17 +87,33 @@ class SpamhausCERTParserBot(ParserBot):
                 event.add('classification.identifier', 'wordpress-login')
                 event.add('event_description.text', 'scanning for wordpress login pages')
                 event.add('protocol.application', 'http')
+            elif malware == 'l_spamlink':
+                event.add('classification.type', 'spam')
+                event.add('classification.identifier', 'spamlink')
+                event.add('event_description.text', 'Link appeared in a spam email')
+#                event.add('protocol.application', 'http')
+                ip, malware_version, malware_name = row_splitted[8].split(':')
+                event.add('malware.name', malware_name)
+                event.add('malware.version', malware_version)
+                event.add('source.url', row_splitted[5])
+                if row_splitted[5] != row_splitted[6]:
+                    raise ValueError('Columns 5 and 6 are not equal, unexpected data (%r, %r). '
+                                     'Please report a bug with sample data.' % tuple(row_splitted[5:7]))
+                if row_splitted[0] != ip:
+                    raise ValueError('IPs in columns 0 and 6 do not match, unexpected data (%r, %r). '
+                                     'Please report a bug with sample data.' % (row_splitted[0], ip))
             else:
                 if malware == 'auto':
                     malware = 's_other'
                 event.add('malware.name', malware)
                 event.add('classification.type', 'botnet drone')
+                event.add('source.url', row_splitted[5], raise_failure=False)
 
             # otherwise the same ip, ignore
             event.add('destination.fqdn', row_splitted[5], raise_failure=False)
             event.add('destination.ip', row_splitted[6], raise_failure=False)
             event.add('destination.port', row_splitted[7], raise_failure=False)
-            if row_splitted[8] and row_splitted[8] not in ('-', '?'):
+            if row_splitted[8] and row_splitted[8] not in ('-', '?') and malware != 'l_spamlink':
                 try:
                     port = int(row_splitted[8])
                 except ValueError:
