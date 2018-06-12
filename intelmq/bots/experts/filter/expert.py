@@ -12,6 +12,8 @@ from intelmq.lib.utils import parse_relative
 
 class FilterExpertBot(Bot):
 
+    _message_processed_verb = 'Forwarded'
+
     # decide format of timefilter value and parse it
     def parse_timeattr(self, time_attr):
         try:

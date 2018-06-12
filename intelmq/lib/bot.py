@@ -34,6 +34,8 @@ class Bot(object):
     # Bot is capable of SIGHUP delaying
     sighup_delay = True
 
+    _message_processed_verb = 'Processed'
+
     def __init__(self, bot_id: str):
         self.__log_buffer = []
         self.parameters = Parameters()
@@ -266,7 +268,9 @@ class Bot(object):
             pass
 
         if self.__message_counter:
-            self.logger.info("Processed %d messages since last logging.", self.__message_counter)
+            self.logger.info("%s %d messages since last logging.",
+                             self._message_processed_verb,
+                             self.__message_counter)
 
         self.__disconnect_pipelines()
 
