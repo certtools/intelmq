@@ -133,6 +133,7 @@ CHANGELOG
 #### Parsers
 - Shadowserver parser:
   * SSL FREAK: Remove optional column `device_serial` and add several new ones.
+- Spamhaus CERT parser: add support for `smtpauth` and `l_spamlink` (#1254).
 
 #### Experts
 - `bots.experts.filter`: Pre-compile regex at bot initialization.
@@ -149,6 +150,8 @@ CHANGELOG
 - `intelmqctl run` has a new parameter `-l` `--loglevel` to overwrite the log level for the run (#1075).
 - `intelmqdump` has now command completion for bot names, actions and queue names in interacive console.
 - `intelmqdump` automatically converts messages from events to reports if the queue the message is being restored to is the source queue of a parser (#1225).
+- `intelmqdump` is now capable to read messages in dumps that are dictionaries as opposed to serialized dicts as strings and does not convert them in the show command (#1256).
+- `intelmqdump` truncated messages are no longer used/saved to the file after being shown (#1255).
 
 ### Contrib
 
