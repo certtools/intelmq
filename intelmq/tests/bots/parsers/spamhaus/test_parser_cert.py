@@ -157,6 +157,17 @@ EXAMPLE_EVENTS_PARTS = [{'source.ip': '109.126.64.2',
                          'source.geolocation.cc': 'AT',
                          'protocol.transport': 'tcp',
                          },
+                        {'source.ip': '10.56.59.94',
+                         'source.asn': 65551,
+                         'time.source': '2018-06-10T19:22:42+00:00',
+                         'classification.type': 'brute-force',
+                         'classification.identifier': 'imap',
+                         'protocol.application': 'imap',
+                         'destination.port': 993,
+                         'source.geolocation.cc': 'AT',
+                         'protocol.transport': 'tcp',
+                         'extra': '{"destination.local_port": 64954}',
+                         },
                         ]
 
 

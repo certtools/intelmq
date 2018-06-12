@@ -101,6 +101,10 @@ class SpamhausCERTParserBot(ParserBot):
                 if row_splitted[5] != row_splitted[6]:
                     raise ValueError('Columns 5 and 6 are not equal, unexpected data (%r, %r). '
                                      'Please report a bug with sample data.' % tuple(row_splitted[5:7]))
+            elif malware in ['pop', 'imap', 'smb', 'rdp']:
+                event.add('classification.type', 'brute-force')
+                event.add('classification.identifier', malware)
+                event.add('protocol.application', malware)
             else:
                 if malware == 'auto':
                     malware = 's_other'
