@@ -28,6 +28,8 @@ from intelmq.lib.cache import Cache
 
 class DeduplicatorExpertBot(Bot):
 
+    _message_processed_verb = 'Forwarded'
+
     def init(self):
         self.cache = Cache(self.parameters.redis_cache_host,
                            self.parameters.redis_cache_port,

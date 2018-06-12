@@ -123,6 +123,7 @@ CHANGELOG
 
 ### Core
 - `lib/message`: `Report()` can now create a Report instance from Event instances (#1225).
+- `lib/bot`: The first word in the log line `Processed ... messages since last logging.` is now adaptible and set to `Forwarded` in the existing filtering bots (#1237).
 
 ### Harmonization
 
