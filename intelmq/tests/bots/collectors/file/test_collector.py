@@ -23,7 +23,7 @@ OUTPUT = {"__type": "Report",
 
 class TestFileCollectorBot(test.BotTestCase, unittest.TestCase):
     """
-    A TestCase for ModifyExpertBot.
+    A TestCase for FileCollectorBot.
     """
 
     @classmethod
