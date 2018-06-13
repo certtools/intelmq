@@ -560,6 +560,14 @@ class ParserBot(Bot):
         for line in csv.DictReader(io.StringIO(raw_report)):
             yield line
 
+    def parse_json(self, report: dict):
+        """
+        A basic JSON parser
+        """
+        raw_report = utils.base64_decode(report.get("raw"))
+        for line in json.loads(raw_report):
+            yield line
+
     def parse(self, report):
         """
         A generator yielding the single elements of the data.
@@ -640,6 +648,14 @@ class ParserBot(Bot):
         writer.writeheader()
         writer.writerow(line)
         return out.getvalue()
+
+    def recover_line_json(self, line: dict):
+        """
+        Reverse of parse for JSON pulses.
+
+        Recovers a fully functional report with only the problematic pulse.
+        """
+        return json.dumps(line)
 
 
 class CollectorBot(Bot):

@@ -171,6 +171,24 @@
                 "rate_limit": 3600
             }
         },
+        "Microsoft Interflow": {
+            "description": "",
+            "module": "intelmq.bots.collectors.microsoft.collector_interflow",
+            "parameters": {
+                "api_key": "",
+                "feed": "",
+                "file_match": null,
+                "http_timeout_sec": 300,
+                "not_older_than": "2 days",
+                "provider": "microsoft",
+                "rate_limit": 3600,
+                "redis_cache_db": "5",
+                "redis_cache_host": "127.0.0.1",
+                "redis_cache_port": 6379,
+                "redis_cache_password": null,
+                "redis_cache_ttl": 604800
+            }
+        },
         "N6stomp": {
             "description": "N6 Collector - CERT.pl's N6 Collector - N6 feed via STOMP interface. Note that rate_limit does not apply for this bot as it is waiting for messages on a stream.",
             "module": "intelmq.bots.collectors.n6.collector_stomp",
@@ -353,6 +371,11 @@
         "MalwarePatrol Dans Guardian": {
             "description": "MalwarePatrol Dans Guardian Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.malwarepatrol.parser_dansguardian",
+            "parameters": {}
+        },
+        "Microsoft CTIP": {
+            "description": "Parses JSON data from Microsoft's CTIP program.",
+            "module": "intelmq.bots.parsers.microsoft.parser_ctip",
             "parameters": {}
         },
         "N6Stomp": {
