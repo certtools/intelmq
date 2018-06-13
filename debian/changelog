@@ -1,4 +1,4 @@
-intelmq (1.0.0~dev7+intevation.3.1~rc2) unstable; urgency=medium
+intelmq (1.0.0~dev7+intevation.3.1) unstable; urgency=medium
 
   * Added support for en-/disabling email adresses in
     cert-bund-contacts/rules.
@@ -11,7 +11,7 @@ intelmq (1.0.0~dev7+intevation.3.1~rc2) unstable; urgency=medium
     example only.  This is so that the files don't interfer on updates
     with differing setups where some files might have been deleted.
 
- -- Sascha Wilde <wilde@intevation.de>  Wed, 13 Jun 2018 18:27:03 +0200
+ -- Sascha Wilde <wilde@intevation.de>  Wed, 13 Jun 2018 18:35:02 +0200
 
 intelmq (1.0.0~dev7+intevation.3.0) unstable; urgency=medium
 
