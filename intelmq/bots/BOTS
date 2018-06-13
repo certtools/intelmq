@@ -65,6 +65,20 @@
                 "rate_limit": 3600
             }
         },
+        "Generic URL Stream Fetcher": {
+            "description": "Opens a streaming connection to the URL and sends the received lines.",
+            "module": "intelmq.bots.collectors.http.collector_http_stream",
+            "parameters": {
+                "feed": "",
+                "provider": "",
+                "http_url": "<insert url of feed>",
+                "http_username": null,
+                "http_password": null,
+                "ssl_client_certificate": null,
+                "strip_lines": true,
+                "rate_limit": 3600
+            }
+        },
         "MISP Generic": {
             "description": "Collect events from a MISP server.",
             "module": "intelmq.bots.collectors.misp.collector",
@@ -88,6 +102,7 @@
                 "provider": "",
                 "password": "password",
                 "rate_limit": 3600,
+                "search_not_older_than": null,
                 "search_owner": "nobody",
                 "search_queue": "Incident Reports",
                 "search_status": "new",
@@ -134,15 +149,6 @@
                 "rate_limit": 3600
             }
         },
-        "BitSight Ciberfeed Stream": {
-            "description": "Bitsight Collector is the bot reponsible to get Bitsight Ciberfeed Alert Stream",
-            "module": "intelmq.bots.collectors.bitsight.collector",
-            "parameters": {
-                "feed": "BitSight",
-                "provider": "BitSight",
-                "http_url": "http://alerts.bitsighttech.com:8080/stream?key=<api>"
-            }
-        },
         "Blueliv Crimeserver": {
             "description": "Blueliv Crimeserver Collector is the bot responsible to get the report through the API.",
             "module": "intelmq.bots.collectors.blueliv.collector_crimeserver",
@@ -151,6 +157,36 @@
                 "feed": "Blueliv Crimeserver",
                 "provider": "Blueliv",
                 "rate_limit": 3600
+            }
+        },
+        "Microsoft Azure": {
+            "description": "",
+            "module": "intelmq.bots.collectors.microsoft.collector_azure",
+            "parameters": {
+                "account_name": "",
+                "account_key": "",
+                "delete": true,
+                "feed": "",
+                "provider": "microsoft",
+                "rate_limit": 3600
+            }
+        },
+        "Microsoft Interflow": {
+            "description": "",
+            "module": "intelmq.bots.collectors.microsoft.collector_interflow",
+            "parameters": {
+                "api_key": "",
+                "feed": "",
+                "file_match": null,
+                "http_timeout_sec": 300,
+                "not_older_than": "2 days",
+                "provider": "microsoft",
+                "rate_limit": 3600,
+                "redis_cache_db": "5",
+                "redis_cache_host": "127.0.0.1",
+                "redis_cache_port": 6379,
+                "redis_cache_password": null,
+                "redis_cache_ttl": 604800
             }
         },
         "N6stomp": {
@@ -209,9 +245,9 @@
             "module": "intelmq.bots.parsers.bitcash.parser",
             "parameters": {}
         },
-        "BitSight Ciberfeed Stream": {
-            "description": "Bitsight Ciberfeed parser is the bot reponsible to parse and sanitize the information.",
-            "module": "intelmq.bots.parsers.bitsight.parser",
+        "AnubisNetworks Cyberfeed Stream": {
+            "description": "Parsers single JSON-events from AnubisNetworks Cyberfeed stream.",
+            "module": "intelmq.bots.parsers.anubisnetworks.parser",
             "parameters": {}
         },
         "Blocklist.de": {
@@ -237,11 +273,6 @@
         "Cymru Full Bogons": {
             "description": "Cymru Full Bogons Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.cymru_full_bogons.parser",
-            "parameters": {}
-        },
-        "Cymru Infected": {
-            "description": "Cymru infected Parser",
-            "module": "intelmq.bots.parsers.cymru_infected.parser",
             "parameters": {}
         },
         "DShield AS": {
@@ -274,6 +305,13 @@
             "module": "intelmq.bots.parsers.dyn.parser",
             "parameters": {}
         },
+        "Fraunhofer DDoS Attacks": {
+            "description": "Fraunhofer DDoS Attack Feed Parser is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.fraunhofer.parser_ddosattack",
+            "parameters": {
+                "unknown_messagetype_accuracy": 10.0
+            }
+        },
         "Fraunhofer DGA": {
             "description": "Fraunhofer DGA Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.fraunhofer.parser_dga",
@@ -287,10 +325,13 @@
                     "",
                     "source.fqdn"
                 ],
+                "column_regex_search": {},
                 "default_url_protocol": "http://",
                 "delimiter": ",",
                 "skip_header": true,
-                "type": "c&c"
+                "time_format": null,
+                "type": "c&c",
+                "type_translation": null
             }
         },
         "HpHosts": {
@@ -330,6 +371,11 @@
         "MalwarePatrol Dans Guardian": {
             "description": "MalwarePatrol Dans Guardian Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.malwarepatrol.parser_dansguardian",
+            "parameters": {}
+        },
+        "Microsoft CTIP": {
+            "description": "Parses JSON data from Microsoft's CTIP program.",
+            "module": "intelmq.bots.parsers.microsoft.parser_ctip",
             "parameters": {}
         },
         "N6Stomp": {
@@ -427,6 +473,28 @@
                 "redis_cache_ttl": "86400"
             }
         },
+        "CERT-bund Contact Database": {
+            "description": "Retrieve contact information from a PostgreSQL database.",
+            "module": "intelmq.bots.experts.certbund_contact.expert",
+            "parameters": {
+                "database": "contactdb",
+                "host": "localhost",
+                "password": "<password>",
+                "port": "5432",
+                "sections": "source",
+                "sslmode": "require",
+                "user": "intelmq"
+            }
+        },
+        "CERT-bund Contact Rules": {
+            "description": "Determine how and whom to notify about the event.",
+            "module": "intelmq.bots.experts.certbund_contact.ruleexpert",
+            "parameters": {
+                "script_directory": "/opt/intelmq/var/lib/bots/notification_rules",
+                "sections": "source",
+                "remove_contact_data": true
+            }
+        },
         "CERT.at Contact Database": {
             "description": "Cert.at Contact Database is the bot responsible to get CERT. Set filter to true if you want to filter out events for cert.at. Set add_cc to true if you want to overwrite an existing CC value.",
             "module": "intelmq.bots.experts.certat_contact.expert",
@@ -451,12 +519,21 @@
             "description": "Deduplicator is the bot responsible for detection and removal of duplicate messages. Messages get cached for <redis_cache_ttl> seconds. If found in the cache, it is assumed to be a duplicate.",
             "module": "intelmq.bots.experts.deduplicator.expert",
             "parameters": {
-                "ignore_keys": "raw,time.observation",
+                "filter_keys": "raw,time.observation",
+                "filter_type": "blacklist",
                 "redis_cache_db": "6",
                 "redis_cache_host": "127.0.0.1",
                 "redis_cache_port": "6379",
                 "redis_cache_password": null,
                 "redis_cache_ttl": "86400"
+            }
+        },
+        "Field Reducer": {
+            "description": "The field reducer bot is capable of removing fields from events.",
+            "module": "intelmq.bots.experts.field_reducer.expert",
+            "parameters": {
+                "type": "<whitelist/blacklist>",
+                "keys": "<list of field names>"
             }
         },
         "Filter": {
@@ -552,7 +629,8 @@
             "description": "Tor Nodes is the bot responsible to check if an IP is an Tor Exit Node.",
             "module": "intelmq.bots.experts.tor_nodes.expert",
             "parameters": {
-                "database": "/opt/intelmq/var/lib/bots/tor_nodes/tor_nodes.dat"
+                "database": "/opt/intelmq/var/lib/bots/tor_nodes/tor_nodes.dat",
+                "overwrite": false
             }
         },
         "url2fqdn": {
@@ -585,6 +663,18 @@
                 "username": "<your amqp username>"
             }
         },
+        "Elasticsearch": {
+            "description": "Elasticsearch is the bot responsible to send events to a elasticsearch.",
+            "module": "intelmq.bots.outputs.elasticsearch.output",
+            "parameters": {
+                "elastic_host": "127.0.0.1",
+                "elastic_port": 9200,
+                "elastic_index": "intelmq",
+                "elastic_doctype": "events",
+                "flatten_fields": "extra",
+                "replacement_char": "_"
+            }
+        },
         "File": {
             "description": "File is the bot responsible to send events to a file.",
             "module": "intelmq.bots.outputs.file.output",
@@ -599,9 +689,11 @@
             "parameters": {
                 "collection": "<collection>",
                 "database": "<database>",
+                "db_user": null,
+                "db_pass": null,
                 "hierarchical_output": true,
-                "host": "<ip>",
-                "port": "<port>"
+                "host": "localhost",
+                "port": "27017"
             }
         },
         "PostgreSQL": {
@@ -624,8 +716,10 @@
             "parameters": {
                 "auth_token": "<token>",
                 "auth_token_name": "<token name>",
+                "auth_type": "<http_basic_auth/http_header>",
                 "hierarchical_output": false,
-                "host": "<host>"
+                "host": "<host>",
+                "use_json": true
             }
         },
         "Redis": {
@@ -640,11 +734,25 @@
                 "redis_timeout": 50000
             }
         },
+        "Stomp": {
+            "description": "Sends event via the STMOP protocol.",
+            "module": "intelmq.bots.outputs.stomp.output",
+            "parameters": {
+                "exchange": "/exchange/_push",
+                "heartbeat": 60000,
+                "port": 61614,
+                "server": "127.0.0.1",
+                "ssl_ca_certificate": "<insert path to CA file>",
+                "ssl_client_certificate": "<insert path to client cert file>",
+                "ssl_client_certificate_key": "<insert path to client cert key file>"
+            }
+        },
         "TCP": {
             "description": "TCP is the bot responsible to send events to a tcp port (Splunk, ElasticSearch, etc..).",
             "module": "intelmq.bots.outputs.tcp.output",
             "parameters": {
                 "ip": "<ip>",
+                "hierarchical_output": false,
                 "port": "<port>",
                 "separator": "\n"
             }

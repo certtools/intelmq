@@ -1,10 +1,15 @@
 # -*- coding: utf-8 -*-
+import os
 import unittest
 
 import intelmq.lib.test as test
-import psycopg2
-import psycopg2.extras
 from intelmq.bots.outputs.postgresql.output import PostgreSQLOutputBot
+
+
+if os.environ.get('INTELMQ_TEST_DATABASES'):
+    import psycopg2
+    import psycopg2.extras
+
 
 INPUT1 = {"__type": "Event",
           "classification.identifier": "zeus",
@@ -29,6 +34,8 @@ class TestPostgreSQLOutputBot(test.BotTestCase, unittest.TestCase):
                          "password": "intelmq",
                          "sslmode": "require",
                          "table": "tests"}
+        if not os.environ.get('INTELMQ_TEST_DATABASES'):
+            return
         cls.con = psycopg2.connect(database=cls.sysconfig['database'],
                                    user=cls.sysconfig['user'],
                                    password=cls.sysconfig['password'],
@@ -50,6 +57,8 @@ class TestPostgreSQLOutputBot(test.BotTestCase, unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
+        if not os.environ.get('INTELMQ_TEST_DATABASES'):
+            return
         cls.cur.execute('TRUNCATE "tests"')
         cls.cur.close()
         cls.con.close()

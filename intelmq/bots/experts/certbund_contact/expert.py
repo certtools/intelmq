@@ -1,24 +1,56 @@
-import sys
-import json
+"""Look up the certbund-contact database.
 
-import psycopg2
+
+Copyright (C) 2016, 2017 by Bundesamt für Sicherheit in der Informationstechnik
+Software engineering by Intevation GmbH
+
+This program is Free Software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/agpl.html>.
+
+Author(s):
+    Bernhard Herzog <bernhard.herzog@intevation.de>
+"""
+import sys
+
+try:
+    import psycopg2
+except ImportError:
+    psycopg2 = None
+
 
 from intelmq.lib.bot import Bot
+import intelmq.bots.experts.certbund_contact.common as common
+from intelmq.bots.experts.certbund_contact.eventjson \
+    import set_certbund_contacts
 
 
 class CERTBundKontaktExpertBot(Bot):
 
     def init(self):
+        self.sections = [section.strip() for section in
+                         getattr(self.parameters,
+                                 "sections", "source").split(",")]
+        self.logger.debug("Sections: %r.", self.sections)
         try:
-            self.logger.debug("Trying to connect to database")
+            self.logger.debug("Trying to connect to database.")
             self.connect_to_database()
-        except:
-            self.logger.exception("Failed to connect to database")
+        except BaseException:
+            self.logger.exception("Failed to connect to database!")
             self.stop()
 
     def connect_to_database(self):
         self.logger.debug("Connecting to PostgreSQL: database=%r, user=%r, "
-                          "host=%r, port=%r, sslmode=%r",
+                          "host=%r, port=%r, sslmode=%r.",
                           self.parameters.database, self.parameters.user,
                           self.parameters.host, self.parameters.port,
                           self.parameters.sslmode)
@@ -29,98 +61,57 @@ class CERTBundKontaktExpertBot(Bot):
                                     password=self.parameters.password,
                                     sslmode=self.parameters.sslmode)
         self.con.autocommit = True
-        self.logger.debug("Connected to PostgreSQL")
+        self.logger.debug("Connected to PostgreSQL.")
 
     def process(self):
-        self.logger.debug("Calling receive_message")
+        self.logger.debug("Calling receive_message.")
         event = self.receive_message()
 
         if event is None:
             self.acknowledge_message()
             return
 
-        for section in ["source", "destination"]:
+        for section in self.sections:
             ip = event.get(section + ".ip")
             asn = event.get(section + ".asn")
             fqdn = event.get(section + ".fqdn")
-            classification = event.get("classification.type")
-            notifications = self.lookup_contact(classification, ip, fqdn, asn)
-            if notifications is None:
+            country_code = event.get(section + ".geolocation.cc")
+            contacts = self.lookup_contact(ip, fqdn, asn, country_code)
+            if contacts is None:
                 # stop processing the message because an error occurred
                 # during the database query
                 return
-            if notifications:
-                self.set_certbund_field(event, "notify_" + section,
-                                        notifications)
+            if contacts:
+                set_certbund_contacts(event, section, contacts)
+
         self.send_message(event)
         self.acknowledge_message()
 
-    def set_certbund_field(self, event, key, value):
-        if "extra" in event:
-            extra = json.loads(event["extra"])
-        else:
-            extra = {}
-        certbund = extra.setdefault("certbund", {})
-        certbund[key] = value
-        event.add("extra", extra, force=True)
+    def lookup_contacts(self, cur, asn, ip, fqdn, country_code):
+        automatic = common.lookup_contacts(cur, common.Managed.automatic, asn,
+                                           ip, fqdn, country_code)
+        self.renumber_organisations_in_place(automatic)
+        manual = common.lookup_contacts(cur, common.Managed.manual, asn, ip,
+                                        fqdn, country_code)
+        self.renumber_organisations_in_place(manual,
+                                             len(automatic["organisations"]))
+        return {key: automatic[key] + manual[key] for key in automatic}
 
-    def lookup_manual_and_auto(self, cur, criterion, value, classification):
-        assert criterion in ("fqdn", "ip", "asn")
-        if not value:
-            return []
-        cur.execute("SELECT * FROM notifications_for_{}(%s, %s)"
-                    .format(criterion), (value, classification))
-        result = cur.fetchall()
-        if result:
-            return result
-        cur.execute("SELECT * FROM notifications_for_{}_automatic(%s, %s)"
-                    .format(criterion), (value, classification))
-        return cur.fetchall()
+    def renumber_organisations_in_place(self, matches, start=0):
+        idmap = {}
+        for new_id, org in enumerate(matches["organisations"], start):
+            idmap[org["id"]] = new_id
+            org["id"] = new_id
 
-    def lookup_by_asn_only(self, cur, asn):
-        # temporary fallback to lookup contacts by ASN from automatic
-        # and manual tables without regard to classification identifier
-        # or other criteria.
-        for automation in ("", "_automatic"):
-            cur.execute("SELECT DISTINCT"
-                        "       c.email as email, o.name as organisation,"
-                        "       s.name as sector, '' as template_path,"
-                        "       'feed_specific' as format_name,"
-                        "       oa.notification_interval as notification_interval"
-                        "  FROM contact{0} AS c"
-                        "  JOIN role{0} AS r ON r.contact_id = c.id"
-                        "  JOIN organisation_to_asn{0} AS oa"
-                        "    ON oa.organisation_id = r.organisation_id"
-                        "  JOIN organisation{0} o"
-                        "    ON o.id = r.organisation_id"
-                        "  LEFT OUTER JOIN sector AS s"
-                        "    ON s.id = o.sector_id"
-                        "  JOIN autonomous_system{0} AS a"
-                        "    ON a.number = oa.asn_id"
-                        " WHERE a.number = %s".format(automation), (asn,))
-            result = cur.fetchall()
-            if result:
-                return result
-        return []
+        for match in matches["matches"]:
+            match["organisations"] = [idmap[i] for i in match["organisations"]]
 
-    def lookup_contact(self, classification, ip, fqdn, asn):
-        self.logger.debug("Looking up ip: %r, classification: %r",
-                          ip, classification)
+    def lookup_contact(self, ip, fqdn, asn, country_code):
+        self.logger.debug("Looking up ip: %r, fqdn: %r, asn: %r.", ip, fqdn, asn)
         try:
             cur = self.con.cursor()
             try:
-                raw_result = self.lookup_manual_and_auto(cur, "fqdn", fqdn,
-                                                         classification)
-
-                ip_result = self.lookup_manual_and_auto(cur, "ip", ip,
-                                                        classification)
-                raw_result.extend(ip_result)
-                if not ip_result:
-                    asn_notifications = self.lookup_manual_and_auto(
-                        cur, "asn", asn, classification)
-                    if not asn_notifications and asn:
-                        asn_notifications = self.lookup_by_asn_only(cur, asn)
-                    raw_result.extend(asn_notifications)
+                return self.lookup_contacts(cur, asn, ip, fqdn, country_code)
             finally:
                 cur.close()
         except psycopg2.OperationalError:
@@ -129,12 +120,5 @@ class CERTBundKontaktExpertBot(Bot):
             self.init()
             return None
 
-        return [dict(email=email, organisation=organisation, sector=sector,
-                     template_path=template_path, format=format, ttl=ttl)
-                for (email, organisation, sector, template_path, format, ttl)
-                in raw_result]
 
-
-if __name__ == "__main__":
-    bot = CERTBundKontaktExpertBot(sys.argv[1])
-    bot.start()
+BOT = CERTBundKontaktExpertBot

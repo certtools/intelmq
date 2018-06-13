@@ -13,8 +13,7 @@ class ASNLookupExpertBot(Bot):
 
     def init(self):
         if pyasn is None:
-            self.logger.error('Could not import pyasn. Please install it.')
-            self.stop()
+            raise ValueError('Could not import pyasn. Please install it.')
 
         try:
             self.database = pyasn.pyasn(self.parameters.database)

@@ -1,0 +1,15 @@
+Getting a ripe_import_test script that does not depend on psycopg2
+and uses the ripe_data_test module.
+cp ../ripe_import.py ripe_import_test.py
+patch -i ripe_import_test.diff
+
+diff -U0 ripe_import.py ripe_import_test.py
+--- ripe_import.py	2018-01-12 10:56:31.163610696 +0100
++++ ripe_import_test.py	2018-01-12 11:07:16.871019148 +0100
+@@ -30 +30 @@
+-import psycopg2
++#import psycopg2
+@@ -34 +34,2 @@
+-import intelmq.bots.experts.certbund_contact.ripe_data as ripe_data
++#import intelmq.bots.experts.certbund_contact.ripe_data as ripe_data
++import ripe_data_test as ripe_data

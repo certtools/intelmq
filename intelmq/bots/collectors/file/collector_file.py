@@ -10,17 +10,22 @@ Copyright (C) 2016 by Bundesamt für Sicherheit in der Informationstechnik
 Software engineering by Intevation GmbH
 
 Parameters:
-path: string
-postfix: string
-delete_file: boolean
+    path: string
+
+    postfix: string
+
+    delete_file: boolean
+
     default: False
 """
 
 import fnmatch
 import os
+import sys
 
 import intelmq.lib.exceptions as exceptions
 from intelmq.lib.bot import CollectorBot
+from intelmq.lib.splitreports import generate_reports
 
 
 class FileCollectorBot(CollectorBot):
@@ -53,15 +58,13 @@ class FileCollectorBot(CollectorBot):
                     if fnmatch.fnmatch(f, '*' + self.parameters.postfix):
                         self.logger.info("Processing file %r." % filename)
 
-                        template = Report()
-                        template.add("feed.name", self.parameters.feed)
+                        template = self.new_report()
                         template.add("feed.url", "file://localhost%s" % filename)
-                        template.add("feed.accuracy", self.parameters.accuracy)
 
-                            report = self.new_report()
-                            report.add("raw", f.read())
-                            report.add("feed.url", "file://localhost%s" % filename)
-                            self.send_message(report)
+                        with open(filename, 'rb') as f:
+                            for report in generate_reports(template, f, self.parameters.chunk_size,
+                                                           self.parameters.chunk_replicate_header):
+                                self.send_message(report)
 
                         if self.parameters.delete_file:
                             try:

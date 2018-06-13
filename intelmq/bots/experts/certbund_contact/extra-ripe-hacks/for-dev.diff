@@ -1,0 +1,65 @@
+# use local version version of ripe_data for development
+# disable inetnum and inet6num handling for faster dev -> run cycles
+cd ..
+patch -i extra-ripe-hacks/for-dev.diff
+
+diff --git a/intelmq/bots/experts/certbund_contact/ripe_data.py b/intelmq/bots/experts/certbund_contact/ripe_data.py
+index 4d83eea..341263f 100644
+--- a/intelmq/bots/experts/certbund_contact/ripe_data.py
++++ b/intelmq/bots/experts/certbund_contact/ripe_data.py
+@@ -106,14 +106,16 @@ def restrict_country(record):
+     asn_list = parse_file(options.asn_file,
+                           ('aut-num', 'org', 'status', 'abuse-c'),
+                           verbose=options.verbose)
+-    inetnum_list = parse_file(options.inetnum_file,
+-                              ('inetnum', 'org', 'country', 'abuse-c'),
+-                              restriction=restrict_country,
+-                              verbose=options.verbose)
+-    inet6num_list = parse_file(options.inet6num_file,
+-                               ('inet6num', 'org', 'country', 'abuse-c'),
+-                               restriction=restrict_country,
+-                               verbose=options.verbose)
++#    inetnum_list = parse_file(options.inetnum_file,
++#                              ('inetnum', 'org', 'country', 'abuse-c'),
++#                              restriction=restrict_country,
++#                              verbose=options.verbose)
++#    inet6num_list = parse_file(options.inet6num_file,
++#                               ('inet6num', 'org', 'country', 'abuse-c'),
++#                               restriction=restrict_country,
++#                               verbose=options.verbose)
++    inetnum_list = [] # for testing
++    inet6num_list = [] # for testing
+ 
+     organisation_list = parse_file(options.organisation_file,
+                                    ('organisation', 'org-name', 'abuse-c'),
+diff --git a/intelmq/bots/experts/certbund_contact/ripe_diff.py b/intelmq/bots/experts/certbund_contact/ripe_diff.py
+index c4ed600..50557db 100755
+--- a/intelmq/bots/experts/certbund_contact/ripe_diff.py
++++ b/intelmq/bots/experts/certbund_contact/ripe_diff.py
+@@ -31,8 +31,10 @@
+ 
+ import psycopg2
+ 
+-import intelmq.bots.experts.certbund_contact.common as common
+-import intelmq.bots.experts.certbund_contact.ripe_data as ripe_data
++#import intelmq.bots.experts.certbund_contact.common as common
++import common # using local version during development
++#import intelmq.bots.experts.certbund_contact.ripe_data as ripe_data
++import ripe_data # using local version during development
+ 
+ 
+ SOURCE_NAME = "ripe"
+diff --git a/intelmq/bots/experts/certbund_contact/ripe_import.py b/intelmq/bots/experts/certbund_contact/ripe_import.py
+index 0fbc6e0..17bd7b7 100755
+--- a/intelmq/bots/experts/certbund_contact/ripe_import.py
++++ b/intelmq/bots/experts/certbund_contact/ripe_import.py
+@@ -31,7 +31,8 @@
+ import argparse
+ import collections
+ 
+-import intelmq.bots.experts.certbund_contact.ripe_data as ripe_data
++#import intelmq.bots.experts.certbund_contact.ripe_data as ripe_data
++import ripe_data # using local version during development
+ 
+ 
+ SOURCE_NAME = 'ripe'

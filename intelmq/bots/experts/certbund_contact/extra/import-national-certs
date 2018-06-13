@@ -1,0 +1,55 @@
+#!/usr/bin/gawk -f
+# -------------------------------------------------------------------
+# Copyright (C) 2017 by Intevation GmbH
+# Author(s):
+# Sascha Wilde <wilde@intevation.de>
+
+# This program is free software under the GNU GPL (>=v2)
+# Read the file COPYING coming with the software for details.
+# -------------------------------------------------------------------
+
+# Import national-certs
+# input must be a file with lines of the Format:
+#
+#  CC|Org <org-email@example.com>[,Other Org <other-org-email@example.com> ...]
+#
+# Where CC is a ISO country code.
+
+function gensql(cc, orgs)
+{
+    source = "import-national-certs script"
+    time = strftime("%Y-%m-%dT%H:%M:%S")
+    for (i in orgs)
+    {
+        match(orgs[i], /(.*)[[:space:]]+<(.*)>.*/, org)
+        print "WITH\n" \
+              "  org_id AS (INSERT INTO organisation_automatic (name, import_source, import_time)\n" \
+              "                    VALUES ('" org[1] "',\n" \
+              "                            '" source "', '" time "')\n" \
+              "                    RETURNING organisation_automatic_id),\n" \
+              "  DUMMY AS (INSERT INTO contact_automatic (email, organisation_automatic_id,\n" \
+              "                                           import_source, import_time)\n" \
+              "                   VALUES ('" org[2] "',\n" \
+              "                           (SELECT organisation_automatic_id FROM org_id),\n" \
+              "                            '" source "', '" time "'))\n" \
+              "INSERT INTO national_cert_automatic (country_code, organisation_automatic_id,\n" \
+              "                                     import_source, import_time)\n" \
+              "       VALUES ('" cc "', (SELECT organisation_automatic_id FROM org_id),\n" \
+              "               '" source "', '" time "');"
+    }
+}
+
+BEGIN {
+    FS = "\\|"
+    print "BEGIN;"
+}
+
+/^[^#]/ {
+    split($2, orgs, /[[:space:]]*,[[:space:]]*/)
+    gensql($1, orgs)
+}
+
+END {
+    print "COMMIT;"
+}
+    

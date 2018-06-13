@@ -1,10 +1,15 @@
 # -*- coding: utf-8 -*-
+import os
 import unittest
 
 import intelmq.lib.test as test
-import psycopg2
 from intelmq.bots.experts.generic_db_lookup.expert import \
     GenericDBLookupExpertBot
+
+
+if os.environ.get('INTELMQ_TEST_DATABASES'):
+    import psycopg2
+
 
 INPUT1 = {"__type": "Event",
           "classification.identifier": "zeus",
@@ -50,6 +55,8 @@ class TestGenericDBLookupExpertBot(test.BotTestCase, unittest.TestCase):
                                             "contact": "source.abuse_contact",
                                             },
                          }
+        if not os.environ.get('INTELMQ_TEST_DATABASES'):
+            return
         cls.con = psycopg2.connect(database=cls.sysconfig['database'],
                                    user=cls.sysconfig['user'],
                                    password=cls.sysconfig['password'],
@@ -91,6 +98,8 @@ class TestGenericDBLookupExpertBot(test.BotTestCase, unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
+        if not os.environ.get('INTELMQ_TEST_DATABASES'):
+            return
         cls.cur.execute('DROP TABLE IF EXISTS "lookuptests"')
         cls.cur.close()
         cls.con.close()

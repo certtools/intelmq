@@ -53,4 +53,5 @@ class Malc0deParserBot(ParserBot):
 
             yield event
 
+
 BOT = Malc0deParserBot

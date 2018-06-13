@@ -2,5 +2,7 @@
 """
 Testing Mail URL collector
 """
+import os
 
-import intelmq.bots.collectors.mail.collector_mail_url
+if os.environ.get('INTELMQ_TEST_EXOTIC'):
+    import intelmq.bots.collectors.mail.collector_mail_url

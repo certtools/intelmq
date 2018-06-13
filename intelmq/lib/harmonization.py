@@ -68,7 +68,7 @@ class GenericType(object):
                 value = value.decode('utf-8', 'ignore')
             return value.strip()
 
-        return None
+        return str(value)
 
 
 class Base64(GenericType):
@@ -157,7 +157,8 @@ class ClassificationType(GenericType):
                       'vulnerable service',
                       'blacklist',
                       'other',
-                      'unknown'
+                      'unknown',
+                      'test'
                       ]
 
     @staticmethod
@@ -238,6 +239,27 @@ class DateTime(GenericType):
                  datetime.timedelta(seconds=tstamp))
         localized = pytz.timezone(tzone).normalize(dtime)
         return str(localized.isoformat())
+
+    @staticmethod
+    def from_windows_nt(tstamp: int) -> str:
+        """
+        Converts the Windows NT / LDAP / Active Directory format to ISO format.
+
+        The format is: 100 nanoseconds (10^-7s) since 1601-01-01.
+        UTC is assumed.
+
+        Parameters:
+            tstamp: Time in LDAP format as integer or string. Will be converted if necessary.
+
+        Returns:
+            Converted ISO format string
+
+        See also:
+            https://www.epochconverter.com/ldap
+        """
+        epoch = datetime.datetime(1601, 1, 1, tzinfo=pytz.utc)
+        dtime = epoch + datetime.timedelta(seconds=int(tstamp) * 10**-7)
+        return dtime.isoformat()
 
     @staticmethod
     def generate_datetime_now():
@@ -392,6 +414,13 @@ class Integer(GenericType):
 
 
 class IPAddress(GenericType):
+    """
+    Type for IP addresses, all families. Uses the ipaddress module.
+
+    Sanitation accepts strings and objects of ipaddress.IPv4Address and ipaddress.IPv4Address.
+
+    Valid values are only strings. 0.0.0.0 is explictly not allowed.
+    """
 
     @staticmethod
     def is_valid(value, sanitize=False):
@@ -450,6 +479,14 @@ class IPAddress(GenericType):
 
 
 class IPNetwork(GenericType):
+    """
+    Type for IP networks, all families. Uses the ipaddress module.
+
+    Sanitation accepts strings and objects of ipaddress.IPv4Network and ipaddress.IPv4Network.
+    If host bits in strings are set, they will be ignored (e.g 127.0.0.1/32).
+
+    Valid values are only strings.
+    """
 
     @staticmethod
     def is_valid(value, sanitize=False):
@@ -471,7 +508,7 @@ class IPNetwork(GenericType):
     def sanitize(value):
 
         try:
-            ipaddress.ip_network(str(value))
+            value = str(ipaddress.ip_network(str(value), strict=False))
         except ValueError:
             return None
 

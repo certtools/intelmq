@@ -1,72 +1,85 @@
-RIPE DB data import script
+RIPE DB data import
 ==========================
+A set of tools to manage imports of ripe data into to the contact database.
 
-This script can be used to import automatic contact data to the
-contact database. It is intended to be called automatically, e.g. by a
-cronjob.
-
-It expects the files
+The following input files are required:
 
 * ripe.db.organisation.gz
 * ripe.db.role.gz
 * ripe.db.aut-num.gz
+* ripe.db.inetnum.gz
+* ripe.db.inet6num.gz
+* delegated-ripencc-latest (only for --restrict-to-country)
 
-to be present in the same folder as the script. These files can be downloaded
+The Tools `ripe_import` and `ripe_diff` will be searching for these files
+in the current working directory by default.
+
+The files can be downloaded
 from the RIPE website (ftp://ftp.ripe.net/ripe/dbase/split/).
 
-For each contact that is created by this script, the format `feed_specific`
-will be set as default. You can change this by using the parameter
-`--notification-format`.
-
-You can also set the notification intervall with `--notification-intervall`.
-Default is 0. The intervall is set in seconds. 0: Immediate notification,
--1 No Notification, 60: 1 Minute, etc...
-
-It is also possible to provide a whitelist of ASNs to load. Use the ``--asn-whitelist-file``
-parameter to pass a filename. The script expects one AS entry per line, with
-the AS-prefix, e.g. ``AS123``.
+It is also possible to provide a whitelist of ASNs to load. Use the
+``--asn-whitelist-file`` parameter to pass a filename. The script expects one
+AS entry per line, with the AS-prefix, e.g. ``AS123``.
 
 Usage
 =====
 
-Download data to a directory:
+Download data to a directory using the script `ripe_download`.
 
-```
-mkdir /tmp/ripe
-cd /tmp/ripe
-for db in ripe.db.organisation.gz ripe.db.role.gz ripe.db.aut-num.gz
- do
-  wget "http://ftp.ripe.net/ripe/dbase/split/$db"
- done
-```
+Call `ripe_import.py --help` or `ripe_diff.py --help`
+to see all command line options.
+
+The importer is capable of importing only entries which can be associated to a
+CountryCode. This is suppported natively for `inetnum` and `inetnum6` data
+(IP-Data). For ASN an additional step is required, as the `autnum` datasets
+(ASN-Data) do not provide this information. Thats where the `delegated-list`
+comes to play. In order to import only IP and ASN Data for one country, for
+instance DE, use the following parameters: `--restrict-to-country DE` and
+`--ripe-delegated-file delegated-ripencc-latest`.
+
+Note: When providing an asn-whitelist file, the file specified with
+`--ripe-delegated-file` and CountryCode based imports will be ignored for
+ASN-Data. Only the ASN specified in the whitelist will be imported. IP-Data
+will not be affected.
 
 Now import the data into your ContactDB, we assume you used `contactdb` as
 database name.
 
-**You need to be the user `postgres` to do this!**
+You can use `ripe_diff.py` instead of `ripe_import.py` below
+to get shown what would be imported into the database by the import step
+and which manual entries are related to the affected ASNs or networks.
+
+**Make sure the connection to the database is made
+with sufficient rights! Use the database superuser when in doubt.**
 
 The next step assumes you are currently in the same folder like the data you
 downloaded.
 
 ```
-cd /tmp/ripe
-su postgres
-ripe_import.py --conninfo dbname=contactdb --verbose
+cd $d
+ripe_import.py --conninfo dbname=contactdb --asn-whitelist-file=asn-DE.txt -v
 ```
 
-If you start the script from a different working directory,
-you can give the paths to the ripe files like:
+Here is a different example where the paths to the files is specified
+explicitly:
 
 ```
-su postgres
-ripe_import.py --conninfo dbname=contactdb \
+ripe_import.py --conninfo "host=localhost dbname=contactdb" \
     --organisation-file=/tmp/ripe/ripe.db.organisation.gz \
     --role-file=/tmp/ripe/ripe.db.role.gz \
     --asn-file=/tmp/ripe/ripe.db.aut-num.gz \
+    --ripe-delegated-file=/tmp/ripe/delegated-ripencc-latest \
+    --restrict-to-country DE \
     --verbose
 ```
 
-See also the help provided by ``--help`` and the
+Also see the
 [documentation of the libpg conninfo string](https://www.postgresql.org/docs/current/static/libpq-connect.html#LIBPQ-CONNSTRING).
-The [documentaion on environment variables](https://www.postgresql.org/docs/current/static/libpq-envars.html) to the connection also
+The [documentation on environment variables](https://www.postgresql.org/docs/current/static/libpq-envars.html) to the connection also
 points towards how to savely provide a password with a ~/.pgpass file.
+
+### use as a module
+`check-ripe.py` is a simple example how to use the module
+`ripe_data` independently of intelmq to write a simple check
+that operates on ripe's dbsplit datafiles. Capabilities and limitations
+are documented with `ripe_data.py`.

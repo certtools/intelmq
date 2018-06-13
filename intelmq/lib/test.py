@@ -16,6 +16,7 @@ import unittest.mock as mock
 import pkg_resources
 import redis
 
+import intelmq.lib.message as message
 import intelmq.lib.pipeline as pipeline
 import intelmq.lib.utils as utils
 from intelmq import CONFIG_DIR, PIPELINE_CONF_FILE, RUNTIME_CONF_FILE
@@ -59,10 +60,6 @@ def mocked_config(bot_id='test-bot', src_name='', dst_names=(), sysconfig={}):
     return mocked
 
 
-with mock.patch('intelmq.lib.utils.load_configuration', new=mocked_config()):
-    import intelmq.lib.message as message
-
-
 def mocked_logger(logger):
     def log(name, log_path=None, log_level=None, stream=None, syslog=None):
         return logger
@@ -82,6 +79,16 @@ def skip_internet():
 def skip_redis():
     return unittest.skipIf(os.environ.get('INTELMQ_SKIP_REDIS'),
                            'Skipping without running redis.')
+
+
+def skip_local_web():
+    return unittest.skipUnless(os.environ.get('INTELMQ_TEST_LOCAL_WEB'),
+                               'Skipping local web tests.')
+
+
+def skip_exotic():
+    return unittest.skipUnless(os.environ.get('INTELMQ_TEST_EXOTIC'),
+                               'Skipping tests requiring exotic libs.')
 
 
 class BotTestCase(object):
@@ -141,6 +148,15 @@ class BotTestCase(object):
                                     db=BOT_CONFIG['redis_cache_db'],
                                     socket_timeout=BOT_CONFIG['redis_cache_ttl'])
 
+    harmonization = utils.load_configuration(pkg_resources.resource_filename('intelmq',
+                                                                             'etc/harmonization.conf'))
+
+    def new_report(self, auto=False, examples=False):
+        return message.Report(harmonization=self.harmonization, auto=auto)
+
+    def new_event(self):
+        return message.Event(harmonization=self.harmonization)
+
     def prepare_bot(self):
         """Reconfigures the bot with the changed attributes"""
 
@@ -191,14 +207,12 @@ class BotTestCase(object):
             if self.default_input_message:  # None for collectors
                 self.input_queue = [self.default_input_message]
 
-    def run_bot(self, iterations=1):
+    def run_bot(self, iterations: int=1):
         """
         Call this method for actually doing a test run for the specified bot.
 
-        Parameters
-        ----------
-        iterations : integer
-            Bot instance will be run the given times, defaults to 1.
+        Parameters:
+            iterations: Bot instance will be run the given times, defaults to 1.
         """
         self.prepare_bot()
         with mock.patch('intelmq.lib.utils.load_configuration',
@@ -214,7 +228,8 @@ class BotTestCase(object):
         """ Test if report has required fields. """
         if self.bot_type == 'collector':
             for report_json in self.get_output_queue():
-                report = message.MessageFactory.unserialize(report_json)
+                report = message.MessageFactory.unserialize(report_json,
+                                                            harmonization=self.harmonization)
                 self.assertIsInstance(report, message.Report)
                 self.assertIn('feed.name', report)
                 self.assertIn('raw', report)
@@ -223,7 +238,8 @@ class BotTestCase(object):
         """ Test if event has required fields. """
         if self.bot_type == 'parser':
             for event_json in self.get_output_queue():
-                event = message.MessageFactory.unserialize(event_json)
+                event = message.MessageFactory.unserialize(event_json,
+                                                           harmonization=self.harmonization)
                 self.assertIsInstance(event, message.Event)
                 self.assertIn('classification.type', event)
                 self.assertIn('raw', event)
@@ -272,7 +288,6 @@ class BotTestCase(object):
         return [utils.decode(text) for text
                 in self.pipe.state["%s-output" % self.bot_id]]
 
-
 #        """ Test if all pipes are created with correct names. """
         pipenames = ["{}-input", "{}-input-internal", "{}-output"]
         self.assertSetEqual({x.format(self.bot_id) for x in pipenames},
@@ -298,11 +313,17 @@ class BotTestCase(object):
         self.assertEqual('Test{}'.format(self.bot_name),
                          self.__class__.__name__)
 
-    def assertAnyLoglineEqual(self, message, levelname="ERROR"):
-        """Asserts if any logline matches a specific requirement.
-           Args:
-                message: Message text which is compared
-                type: Type of logline which is asserted"""
+    def assertAnyLoglineEqual(self, message: str, levelname: str="ERROR"):
+        """
+        Asserts if any logline matches a specific requirement.
+
+        Parameters:
+            message: Message text which is compared
+            type: Type of logline which is asserted
+
+        Raises:
+            ValueError: if logline message has not been found
+        """
 
         self.assertIsNotNone(self.loglines)
         for logline in self.loglines:
@@ -314,12 +335,15 @@ class BotTestCase(object):
             raise ValueError('Logline with level {!r} and message {!r} not found'
                              ''.format(levelname, message))
 
-    def assertLoglineEqual(self, line_no, message, levelname="ERROR"):
-        """Asserts if a logline matches a specific requirement.
-           Args:
-                line_no: Number of the logline which is asserted
-                message: Message text which is compared
-                type: Type of logline which is asserted"""
+    def assertLoglineEqual(self, line_no: int, message: str, levelname: str="ERROR"):
+        """
+        Asserts if a logline matches a specific requirement.
+
+        Parameters:
+            line_no: Number of the logline which is asserted
+            message: Message text which is compared
+            levelname: Log level of logline which is asserted
+        """
 
         self.assertIsNotNone(self.loglines)
         logline = self.loglines[line_no]
@@ -332,12 +356,15 @@ class BotTestCase(object):
         self.assertEqual(levelname, fields["log_level"])
         self.assertEqual(message, fields["message"])
 
-    def assertLoglineMatches(self, line_no, pattern, levelname="ERROR"):
-        """Asserts if a logline matches a specific requirement.
-           Args:
-                line_no: Number of the logline which is asserted
-                pattern: Message text which is compared
-                type: Type of logline which is asserted"""
+    def assertLoglineMatches(self, line_no: int, pattern: str, levelname: str="ERROR"):
+        """
+        Asserts if a logline matches a specific requirement.
+
+        Parameters:
+            line_no: Number of the logline which is asserted
+            pattern: Message text which is compared
+            type: Type of logline which is asserted
+        """
 
         self.assertIsNotNone(self.loglines)
         logline = self.loglines[line_no]
@@ -350,11 +377,14 @@ class BotTestCase(object):
         self.assertEqual(levelname, fields["log_level"])
         self.assertRegex(fields["message"], pattern)
 
-    def assertLogMatches(self, pattern, levelname="ERROR"):
-        """Asserts if any logline matches a specific requirement.
-           Args:
-                pattern: Message text which is compared
-                type: Type of logline which is asserted"""
+    def assertLogMatches(self, pattern: str, levelname: str="ERROR"):
+        """
+        Asserts if any logline matches a specific requirement.
+
+        Parameters:
+            pattern: Message text which is compared
+            type: Type of logline which is asserted
+        """
 
         self.assertIsNotNone(self.loglines)
         for logline in self.loglines:
@@ -396,7 +426,10 @@ class BotTestCase(object):
         self.assertIsInstance(event, str)
 
         event_dict = json.loads(event)
-        expected = expected_msg.copy()
+        if isinstance(expected_msg, (message.Event, message.Report)):
+            expected = expected_msg.to_dict(with_type=True)
+        else:
+            expected = expected_msg.copy()
         if 'time.observation' in event_dict:
             del event_dict['time.observation']
         if 'time.observation' in expected:

@@ -1,17 +1,23 @@
 sudo: required
 dist: trusty
+group: edge
 language: python
+env:
+  - REQUIREMENTS=true
+  - REQUIREMENTS=false
 python:
   - "3.3"
   - "3.4"
   - "3.5"
   - "3.6"
 install:
-  - sudo apt-get install dpkg-dev dh-python python-setuptools python3-setuptools python3-all debhelper quilt
-  - pip install -r REQUIREMENTS
-  - for file in intelmq/bots/*/*/REQUIREMENTS.txt; do pip install -r $file; done
+  - sudo apt-get install dpkg-dev dh-python python-setuptools python3-setuptools python3-all debhelper quilt polipo lighttpd fakeroot dh-systemd
+  - if [[ $REQUIREMENTS == true ]] ; then for file in intelmq/bots/*/*/REQUIREMENTS.txt; do pip install -r $file; done; fi
+  - if [[ $TRAVIS_PYTHON_VERSION < '3.5' ]]; then pip install typing; fi
+  - if [[ $TRAVIS_PYTHON_VERSION < '3.4' ]]; then pip install enum34; fi
   - pip install codecov
-  - pip install pep8
+  - pip install 'pycodestyle >= 2.3.1, < 2.4.0'
+  - sudo sed -i '/^Defaults\tsecure_path.*$/ d' /etc/sudoers
   - sudo pip install .
   - sudo cp /opt/intelmq/etc/examples/* /opt/intelmq/etc/
 before_script:
@@ -19,15 +25,27 @@ before_script:
   - psql -c "CREATE DATABASE intelmq" -U intelmq template1
   - psql -c "GRANT ALL PRIVILEGES ON DATABASE intelmq TO intelmq" -U intelmq
   - intelmq_psql_initdb
-  - sed -i 's/events/tests/' /tmp/initdb.sql
+  - sed -i 's/events/tests/g' /tmp/initdb.sql
   - psql -v ON_ERROR_STOP=on -f /tmp/initdb.sql intelmq -U intelmq
+  - VERSION=$(git describe --abbrev=0 --tags)
+  - git archive --format=tar.gz HEAD > ../intelmq_$VERSION.orig.tar.gz
+  - git archive --format=tar.gz --prefix=debian/ HEAD:debian/ > ../intelmq_$VERSION-1.debian.tar.gz
+  - pushd ..
+  - mkdir build
+  - cd build
+  - tar -xzf ../intelmq_$VERSION.orig.tar.gz
+  - tar -xzf ../intelmq_$VERSION-1.debian.tar.gz
+  - popd
 script:
-  - INTELMQ_TEST_DATABASES=1 nosetests --with-coverage --cover-package=intelmq
-  - dpkg-buildpackage -us -uc
-  - pep8 intelmq/{bots,lib,bin}
+  - if [[ $REQUIREMENTS == true ]] ; then INTELMQ_TEST_DATABASES=1 INTELMQ_TEST_LOCAL_WEB=1 INTELMQ_TEST_EXOTIC=1 nosetests --with-coverage --cover-package=intelmq --cover-branches; else INTELMQ_TEST_LOCAL_WEB=1 nosetests --with-coverage --cover-package=intelmq --cover-branches; fi
+  - pycodestyle intelmq/{bots,lib,bin}
+  - pushd ../build && dpkg-buildpackage -us -uc
+  - popd
 services:
   - redis-server
   - postgresql
+  - elasticsearch
+  - mongodb
 after_success:
   - codecov
 addons:

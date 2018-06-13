@@ -300,7 +300,6 @@ class TestOverwriteShadowserverParserBot(test.BotTestCase, unittest.TestCase):
 
     def test_bot_name(self):
         "Do **not** test that our second test has the same name as the bot."
-        pass
 
     def test_overwrite(self):
         """ Test if overwrite parameter works. """

@@ -1,5 +1,7 @@
+AUTHORS
 CHANGELOG.md
 COPYRIGHT
-MANIFEST.in
-REQUIREMENTS
-docs/*md
+NEWS.md
+NEWS-Intevation.md
+docs/*
+README.rst

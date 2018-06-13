@@ -8,156 +8,155 @@ CREATE TEMP TABLE automatic_templ (
     import_time TIMESTAMP NOT NULL
 );
 
-/*
- Supported data formats like csv, iodef, etc.
-*/
-CREATE TABLE format (
-    id SERIAL PRIMARY KEY,
-
-    -- Most likely a WKT or MIME-Type
-    name VARCHAR(80) UNIQUE NOT NULL
-);
 
 /* Sector to classify organisations.
 */
 CREATE TABLE sector (
-  id SERIAL PRIMARY KEY,
+  sector_id SERIAL PRIMARY KEY,
   name VARCHAR(100) NOT NULL
 );
 
 /*
   Organisation and Contact
 */
-CREATE TABLE organisation (
-    id SERIAL PRIMARY KEY,
 
+-- Template to use for the actual tables. This makes sure their schemas
+-- are defined in the same way.
+CREATE TEMP TABLE organisation_templ (
     -- The name of the organisation.
-
     -- In the ripe db there are names identical for more than one
-    -- organisation, so we can not make this key unique.
+    -- organisation, so we can not make this unique.
     name VARCHAR(500) NOT NULL,
 
     -- The sector the organisation belongs to.
     sector_id INTEGER,
 
+    -- Comments about the organisation
     comment TEXT NOT NULL DEFAULT '',
 
     -- The org: nic handle in the RIPE DB, if available
-    ripe_org_hdl VARCHAR(100),
+    ripe_org_hdl VARCHAR(100) NOT NULL DEFAULT '',
 
     -- The Trusted Introducer (TI) handle or URL: for example
     -- https://www.trusted-introducer.org/directory/teams/certat.html
-    ti_handle    VARCHAR(500),
+    ti_handle VARCHAR(500) NOT NULL DEFAULT '',
 
     -- The FIRST.org handle or URL: for example
     -- https://api.first.org/data/v1/teams?q=aconet-cert
-    first_handle    VARCHAR(500),
+    first_handle VARCHAR(500) NOT NULL DEFAULT ''
+);
 
-    FOREIGN KEY (sector_id) REFERENCES sector(id)
+
+CREATE TABLE organisation (
+    organisation_id SERIAL PRIMARY KEY,
+    LIKE organisation_templ INCLUDING ALL,
+
+    FOREIGN KEY (sector_id) REFERENCES sector(sector_id)
 );
 
 
 CREATE TABLE organisation_automatic (
+    organisation_automatic_id SERIAL PRIMARY KEY,
+    LIKE organisation_templ INCLUDING ALL,
     LIKE automatic_templ INCLUDING ALL,
-    LIKE organisation INCLUDING ALL,
 
-    FOREIGN KEY (sector_id) REFERENCES sector(id)
+    FOREIGN KEY (sector_id) REFERENCES sector(sector_id)
 );
 
 
-CREATE TABLE contact (
-    id SERIAL PRIMARY KEY,
+CREATE TABLE organisation_annotation (
+    organisation_annotation_id SERIAL PRIMARY KEY,
+    organisation_id INTEGER NOT NULL,
+    annotation JSON NOT NULL,
 
+    FOREIGN KEY (organisation_id) REFERENCES organisation(organisation_id)
+);
+
+CREATE INDEX organisation_annotation_organisation_idx
+          ON organisation_annotation (organisation_id);
+
+
+
+CREATE TEMP TABLE contact_templ (
     firstname VARCHAR (500) NOT NULL DEFAULT '',
     lastname  VARCHAR (500) NOT NULL DEFAULT '',
     tel       VARCHAR (500) NOT NULL DEFAULT '',
 
-    pgp_key_id VARCHAR(128) NOT NULL DEFAULT '',
+    -- The full fingerprint of the OpenPGP pubkey of the contact as GnuPG
+    -- would accept it to specify a user ID.
+    -- (This avoids ambiguities in case that there are duplicated key IDs.)
+    openpgp_fpr VARCHAR(128) NOT NULL DEFAULT '',
 
     -- the email-address of the contact
     email VARCHAR(100) NOT NULL,
 
-    -- The data format to be used in emails sent to this contact.
-    format_id INTEGER NOT NULL,
-
-    comment TEXT NOT NULL DEFAULT '',
-
-    FOREIGN KEY (format_id) REFERENCES format (id)
+    comment TEXT NOT NULL DEFAULT ''
 );
+
+
+CREATE TABLE contact (
+    contact_id SERIAL PRIMARY KEY,
+    LIKE contact_templ INCLUDING ALL,
+    organisation_id INTEGER NOT NULL,
+
+    FOREIGN KEY (organisation_id) REFERENCES organisation (organisation_id)
+);
+
+CREATE INDEX contact_organisation_idx ON contact (organisation_id);
+
 
 CREATE TABLE contact_automatic (
+    contact_automatic_id SERIAL PRIMARY KEY,
+    LIKE contact_templ INCLUDING ALL,
     LIKE automatic_templ INCLUDING ALL,
-    LIKE contact INCLUDING ALL,
+    organisation_automatic_id INTEGER NOT NULL,
 
-    FOREIGN KEY (format_id) REFERENCES format (id)
+    FOREIGN KEY (organisation_automatic_id)
+     REFERENCES organisation_automatic (organisation_automatic_id)
 );
 
--- Roles serve as an m-n relationship between organisations and contacts
-CREATE TABLE role (
-    id SERIAL PRIMARY KEY,
-
-    -- free text for right now. We assume the regular tags from the
-    -- RIPE DB such as "tech-c" or "abuse-c"
-    -- possible values: "abuse-c", "billing-c" , "admin-c"
-    role_type VARCHAR (500) NOT NULL default 'abuse-c',
-    is_primary_contact BOOLEAN NOT NULL DEFAULT FALSE,
-
-    organisation_id INTEGER NOT NULL,
-    contact_id INTEGER NOT NULL,
-
-    FOREIGN KEY (organisation_id) REFERENCES organisation(id),
-    FOREIGN KEY (contact_id) REFERENCES contact(id)
-);
-
--- Roles serve as an m-n relationship between organisations and contacts
-CREATE TABLE role_automatic (
-    LIKE automatic_templ INCLUDING ALL,
-    LIKE role INCLUDING ALL,
-
-    FOREIGN KEY (organisation_id) REFERENCES organisation_automatic(id),
-    FOREIGN KEY (contact_id) REFERENCES contact_automatic(id)
-);
-
+CREATE INDEX contact_automatic_organisation_idx
+          ON contact_automatic (organisation_automatic_id);
 
 /*
   Network related tables, such as:
   AS, IP-Ranges, FQDN
 */
 
--- An autonomous system
-CREATE TABLE autonomous_system (
-    -- The atonomous system number
-    number BIGINT PRIMARY KEY,
-
-    -- RIPE handle (see
-    -- https://www.ripe.net/manage-ips-and-asns/db/support/documentation/ripe-database-documentation/ripe-database-structure/3-1-list-of-primary-objects)
-    -- and:
-    -- https://www.ripe.net/manage-ips-and-asns/db/support/documentation/ripe-database-documentation/rpsl-object-types/4-2-descriptions-of-primary-objects/4-2-1-description-of-the-aut-num-object
-    ripe_aut_num  VARCHAR(100),
-
-    comment TEXT NOT NULL DEFAULT ''
+-- Annotations for autonomous systems
+CREATE TABLE autonomous_system_annotation (
+    autonomous_system_annotation_id SERIAL PRIMARY KEY,
+    asn BIGINT NOT NULL,
+    annotation JSON NOT NULL
 );
-CREATE INDEX autonomous_system_number_idx ON autonomous_system (number);
 
-
-CREATE TABLE autonomous_system_automatic (
-    LIKE automatic_templ INCLUDING ALL,
-    LIKE autonomous_system INCLUDING ALL
-);
-CREATE INDEX autonomous_system_automatic_number_idx
-    ON autonomous_system_automatic (number);
+CREATE INDEX autonomous_system_annotation_asn_idx
+          ON autonomous_system_annotation (asn);
 
 
 -- A network
 -- See also: https://www.ripe.net/manage-ips-and-asns/db/support/documentation/ripe-database-documentation/rpsl-object-types/4-2-descriptions-of-primary-objects/4-2-4-description-of-the-inetnum-object
-CREATE TABLE network (
-    id SERIAL PRIMARY KEY,
-
+CREATE TEMP TABLE network_templ (
     -- Network address as CIDR.
-    address cidr UNIQUE NOT NULL,
+    address cidr NOT NULL,
 
     comment TEXT NOT NULL DEFAULT ''
 );
+
+
+CREATE TABLE network (
+    network_id SERIAL PRIMARY KEY,
+    LIKE network_templ INCLUDING ALL
+);
+
+CREATE TABLE network_automatic (
+    network_automatic_id SERIAL PRIMARY KEY,
+    LIKE network_templ INCLUDING ALL,
+    LIKE automatic_templ INCLUDING ALL,
+
+    UNIQUE (address, import_source)
+);
+
 
 -- Indexes on the cidr column to improve queries that look up a network
 -- based on an IP-address. The default btree index of PostgreSQL is not
@@ -172,7 +171,7 @@ CREATE TABLE network (
 --   inet(host(network(n.address))) <= ip
 --   AND ip <= inet(host(broadcast(n.address)))
 --
--- FIXME: In PostgreSQL 9.4 there's GiST indexes for the intet and cidr
+-- FIXME: In PostgreSQL 9.4 there's GiST indexes for the inet and cidr
 -- types (see http://www.postgresql.org/docs/9.4/static/release-9-4.html).
 -- We cannot use that at the moment, because we still need to support
 -- PostgreSQL 9.3 which is the version available in Ubuntu 14.04LTS.
@@ -185,11 +184,6 @@ CREATE INDEX network_cidr_lower_idx
 CREATE INDEX network_cidr_upper_idx
           ON network ((inet(host(broadcast(address)))));
 
-
-CREATE TABLE network_automatic (
-    LIKE automatic_templ INCLUDING ALL,
-    LIKE network INCLUDING ALL
-);
 CREATE INDEX network_automatic_cidr_lower_idx
           ON network_automatic ((inet(host(network(address)))));
 CREATE INDEX network_automatic_cidr_upper_idx
@@ -197,53 +191,102 @@ CREATE INDEX network_automatic_cidr_upper_idx
 
 
 
--- A fully qualified domain name
-CREATE TABLE fqdn (
-    id SERIAL PRIMARY KEY,
+-- Annotations for networks
+CREATE TABLE network_annotation (
+    network_annotation_id SERIAL PRIMARY KEY,
+    network_id INTEGER NOT NULL,
+    annotation JSON NOT NULL,
 
+    FOREIGN KEY (network_id) REFERENCES network(network_id)
+);
+
+CREATE INDEX network_annotation_network_idx
+          ON network_annotation (network_id);
+
+
+
+
+-- A fully qualified domain name
+CREATE TEMP TABLE fqdn_templ (
     -- The fully qualified domain name
-    fqdn TEXT UNIQUE NOT NULL,
+    fqdn TEXT NOT NULL,
 
     comment TEXT NOT NULL DEFAULT ''
 );
+
+
+CREATE TABLE fqdn (
+    fqdn_id SERIAL PRIMARY KEY,
+    LIKE fqdn_templ INCLUDING ALL
+);
+
 CREATE INDEX fqdn_fqdn_idx ON fqdn (fqdn);
 
+
 CREATE TABLE fqdn_automatic (
+    fqdn_automatic_id SERIAL PRIMARY KEY,
+    LIKE fqdn_templ INCLUDING ALL,
     LIKE automatic_templ INCLUDING ALL,
-    LIKE fqdn INCLUDING ALL
-);
-CREATE INDEX fqdn_automatic_fqdn_idx ON fqdn (fqdn);
 
-
-/*
-  Classifications of Events/Incidents
-*/
-CREATE TABLE classification_type (
-    id SERIAL PRIMARY KEY,
-    name VARCHAR(100) UNIQUE NOT NULL
+    UNIQUE (fqdn, import_source)
 );
 
-CREATE INDEX classification_type_name_idx
-          ON classification_type (name);
 
-/*
- Template
-*/
-CREATE TABLE template (
-    id SERIAL PRIMARY KEY,
+CREATE TABLE fqdn_annotation (
+    fqdn_annotation_id SERIAL PRIMARY KEY,
+    fqdn_id INTEGER NOT NULL,
+    annotation JSON NOT NULL,
 
-    -- File-name of the template
-    path VARCHAR(200) NOT NULL,
-
-    -- The classification type for which this template can be used.
-    classification_type_id INTEGER NOT NULL,
-
-    FOREIGN KEY (classification_type_id)
-     REFERENCES classification_type (id)
+    FOREIGN KEY (fqdn_id) REFERENCES fqdn(fqdn_id)
 );
 
-CREATE INDEX template_classification_idx
-          ON template (classification_type_id);
+CREATE INDEX fqdn_annotation_fqdn_idx
+          ON fqdn_annotation (fqdn_id);
+
+
+
+-- Information about national CERTs
+
+-- national_cert relates a country code to the organisation considered
+-- the national CERT for that country.
+CREATE TEMP TABLE national_cert_templ (
+    -- The country code for the CERT
+    country_code CHARACTER(2) NOT NULL,
+
+    comment TEXT NOT NULL DEFAULT ''
+);
+
+
+CREATE TABLE national_cert (
+    national_cert_id SERIAL PRIMARY KEY,
+    LIKE national_cert_templ INCLUDING ALL,
+
+    -- The ID of the organisation representing the CERT
+    organisation_id INTEGER NOT NULL,
+
+    FOREIGN KEY (organisation_id) REFERENCES organisation (organisation_id)
+);
+
+CREATE INDEX national_cert_country_code_idx
+          ON national_cert (country_code);
+
+
+-- Like national_cert but for automatically maintained data.
+CREATE TABLE national_cert_automatic (
+    national_cert_automatic_id SERIAL PRIMARY KEY,
+    LIKE national_cert_templ INCLUDING ALL,
+
+    organisation_automatic_id INTEGER NOT NULL,
+
+    LIKE automatic_templ INCLUDING ALL,
+
+    FOREIGN KEY (organisation_automatic_id)
+     REFERENCES organisation_automatic (organisation_automatic_id)
+);
+
+CREATE INDEX national_cert_automatic_country_code_idx
+          ON national_cert_automatic (country_code);
+
 
 /*
  Relations A_to_B
@@ -252,308 +295,88 @@ CREATE INDEX template_classification_idx
 */
 CREATE TABLE organisation_to_asn (
     organisation_id INTEGER,
-    asn_id BIGINT,
-    notification_interval INTEGER NOT NULL, -- interval in seconds
+    asn BIGINT,
 
-    PRIMARY KEY (organisation_id, asn_id),
+    PRIMARY KEY (organisation_id, asn),
 
-    FOREIGN KEY (asn_id) REFERENCES autonomous_system (number),
-    FOREIGN KEY (organisation_id) REFERENCES organisation (id)
+    FOREIGN KEY (organisation_id) REFERENCES organisation (organisation_id)
 );
+
+CREATE INDEX organisation_to_asn_asn_idx
+    ON organisation_to_asn (asn);
 
 
 CREATE TABLE organisation_to_asn_automatic (
+    organisation_automatic_id INTEGER,
+    asn BIGINT,
     LIKE automatic_templ INCLUDING ALL,
-    LIKE organisation_to_asn INCLUDING ALL,
 
-    FOREIGN KEY (asn_id) REFERENCES autonomous_system_automatic (number),
-    FOREIGN KEY (organisation_id) REFERENCES organisation_automatic (id)
+    PRIMARY KEY (organisation_automatic_id, asn),
+    FOREIGN KEY (organisation_automatic_id)
+     REFERENCES organisation_automatic (organisation_automatic_id)
 );
+
+CREATE INDEX organisation_to_asn_automatic_asn_idx
+    ON organisation_to_asn_automatic (asn);
 
 
 CREATE TABLE organisation_to_network (
     organisation_id INTEGER,
-    net_id INTEGER,
-    notification_interval INTEGER NOT NULL, -- interval in seconds
+    network_id INTEGER,
 
-    PRIMARY KEY (organisation_id, net_id),
+    PRIMARY KEY (organisation_id, network_id),
 
-    FOREIGN KEY (organisation_id) REFERENCES organisation (id),
-    FOREIGN KEY (net_id) REFERENCES network (id)
+    FOREIGN KEY (organisation_id) REFERENCES organisation (organisation_id),
+    FOREIGN KEY (network_id) REFERENCES network (network_id)
 );
 
 CREATE TABLE organisation_to_network_automatic (
+    organisation_automatic_id INTEGER,
+    network_automatic_id INTEGER,
     LIKE automatic_templ INCLUDING ALL,
-    LIKE organisation_to_network INCLUDING ALL,
 
-    FOREIGN KEY (organisation_id) REFERENCES organisation_automatic (id),
-    FOREIGN KEY (net_id) REFERENCES network_automatic (id)
+    PRIMARY KEY (organisation_automatic_id, network_automatic_id),
+
+    FOREIGN KEY (organisation_automatic_id)
+     REFERENCES organisation_automatic (organisation_automatic_id),
+    FOREIGN KEY (network_automatic_id)
+     REFERENCES network_automatic (network_automatic_id)
 );
 
 
 CREATE TABLE organisation_to_fqdn (
     organisation_id INTEGER,
     fqdn_id INTEGER,
-    notification_interval INTEGER NOT NULL,
 
     PRIMARY KEY (organisation_id, fqdn_id),
 
-    FOREIGN KEY (organisation_id) REFERENCES organisation (id),
-    FOREIGN KEY (fqdn_id) REFERENCES fqdn (id)
+    FOREIGN KEY (organisation_id) REFERENCES organisation (organisation_id),
+    FOREIGN KEY (fqdn_id) REFERENCES fqdn (fqdn_id)
 );
 
 CREATE TABLE organisation_to_fqdn_automatic (
+    organisation_automatic_id INTEGER,
+    fqdn_automatic_id INTEGER,
     LIKE automatic_templ INCLUDING ALL,
-    LIKE organisation_to_fqdn INCLUDING ALL,
 
-    FOREIGN KEY (organisation_id) REFERENCES organisation_automatic (id),
-    FOREIGN KEY (fqdn_id) REFERENCES fqdn_automatic (id)
+    PRIMARY KEY (organisation_automatic_id, fqdn_automatic_id),
+
+    FOREIGN KEY (organisation_automatic_id)
+     REFERENCES organisation_automatic (organisation_automatic_id),
+    FOREIGN KEY (fqdn_automatic_id)
+     REFERENCES fqdn_automatic (fqdn_automatic_id)
 );
 
 
-CREATE TABLE organisation_to_template (
-    id SERIAL PRIMARY KEY,
-    organisation_id INTEGER NOT NULL,
-    template_id INTEGER NOT NULL,
 
-    FOREIGN KEY (organisation_id) REFERENCES organisation (id),
-    FOREIGN KEY (template_id) REFERENCES template (id)
+-- Table to hold known status information about an email address. If no
+-- status information is known, there is no entry in the table, which
+-- means the email is enabled.
+CREATE TABLE email_status (
+    email VARCHAR(100) PRIMARY KEY,
+    enabled BOOLEAN NOT NULL,
+    added TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
-
-CREATE INDEX organisation_to_template_organisation_idx
-          ON organisation_to_template (organisation_id);
-CREATE INDEX organisation_to_template_template_idx
-          ON organisation_to_template (template_id);
-
-
-CREATE TABLE organisation_to_template_automatic (
-    LIKE automatic_templ INCLUDING ALL,
-    LIKE organisation_to_template INCLUDING ALL,
-
-    FOREIGN KEY (organisation_id) REFERENCES organisation_automatic (id),
-    FOREIGN KEY (template_id) REFERENCES template (id)
-);
-
-CREATE INDEX organisation_to_template_automatic_organisation_idx
-          ON organisation_to_template_automatic (organisation_id);
-CREATE INDEX organisation_to_template_automatic_template_idx
-          ON organisation_to_template_automatic (template_id);
-
-
--- Type for a single notification
-CREATE TYPE notification AS (
-    email VARCHAR(100),
-    organisation VARCHAR(500),
-    sector VARCHAR(100),
-    template_path VARCHAR(200),
-    format_name VARCHAR(80),
-    notification_interval INTEGER
-);
-
-
--- View combining the information about organisations and their
--- associated templates for easy combination with the organisation_to_*
--- tables for IP, FQDN and ASN.
-CREATE OR REPLACE VIEW organisation_settings (
-    organisation_id,
-    organisation_name,
-    sector,
-    template_path,
-    classification_type
-) AS
-SELECT o.id, o.name, s.name, t.path, ci.name
-  FROM organisation AS o
-  LEFT OUTER JOIN sector AS s on s.id = o.sector_id
-  JOIN organisation_to_template AS ot ON ot.organisation_id = o.id
-  JOIN template AS t ON ot.template_id = t.id
-  JOIN classification_type AS ci
-    ON ci.id = t.classification_type_id;
-
-
-CREATE OR REPLACE VIEW organisation_settings_automatic (
-    organisation_id,
-    organisation_name,
-    sector,
-    template_path,
-    classification_type
-) AS
-SELECT o.id, o.name, s.name, t.path, ct.name
-  FROM organisation_automatic AS o
-  LEFT OUTER JOIN sector AS s on s.id = o.sector_id
-  JOIN organisation_to_template_automatic AS ot ON ot.organisation_id = o.id
-  JOIN template AS t ON ot.template_id = t.id
-  JOIN classification_type AS ct
-    ON ct.id = t.classification_type_id;
-
-
--- Lookup all notifications for a given IP address and event
--- classification type
-CREATE OR REPLACE FUNCTION
-notifications_for_ip(event_ip INET, event_classification VARCHAR(100))
-RETURNS SETOF notification
-AS $$
-BEGIN
-    RETURN QUERY
-      WITH matched_contacts (email, format_id, notification_interval,
-                             organisation_id)
-        AS (SELECT c.email, c.format_id, orgn.notification_interval,
-                   r.organisation_id
-              FROM contact c
-              JOIN role AS r ON r.contact_id = c.id
-              JOIN organisation_to_network AS orgn
-                ON orgn.organisation_id = r.organisation_id
-              JOIN network AS n ON n.id = orgn.net_id
-             WHERE inet(host(network(n.address))) <= event_ip
-               AND event_ip <= inet(host(broadcast(n.address))))
-    SELECT mc.email, os.organisation_name, os.sector, os.template_path, f.name,
-           mc.notification_interval
-      FROM matched_contacts mc
-      JOIN organisation_settings AS os
-        ON mc.organisation_id = os.organisation_id
-      JOIN format f ON mc.format_id = f.id
-     WHERE os.classification_type = event_classification;
-END;
-$$ LANGUAGE plpgsql VOLATILE;
-
-
-CREATE OR REPLACE FUNCTION
-notifications_for_ip_automatic(event_ip INET,
-                               event_classification VARCHAR(100))
-RETURNS SETOF notification
-AS $$
-BEGIN
-    RETURN QUERY
-      WITH matched_contacts (email, format_id, notification_interval,
-                             organisation_id)
-        AS (SELECT c.email, c.format_id, orgn.notification_interval,
-                   r.organisation_id
-              FROM contact_automatic c
-              JOIN role_automatic AS r ON r.contact_id = c.id
-              JOIN organisation_to_network_automatic AS orgn
-                ON orgn.organisation_id = r.organisation_id
-              JOIN network_automatic AS n ON n.id = orgn.net_id
-             WHERE inet(host(network(n.address))) <= event_ip
-               AND event_ip <= inet(host(broadcast(n.address))))
-    SELECT mc.email, os.organisation_name, os.sector, os.template_path, f.name,
-           mc.notification_interval
-      FROM matched_contacts mc
-      JOIN organisation_settings_automatic AS os
-        ON mc.organisation_id = os.organisation_id
-      JOIN format f ON mc.format_id = f.id
-     WHERE os.classification_type = event_classification;
-END;
-$$ LANGUAGE plpgsql VOLATILE;
-
-
--- Lookup all notifications for a given ASN and event classification
--- type
-CREATE OR REPLACE FUNCTION
-notifications_for_asn(event_asn BIGINT, event_classification VARCHAR(100))
-RETURNS SETOF notification
-AS $$
-BEGIN
-    RETURN QUERY
-      WITH matched_contacts (email, format_id, notification_interval,
-                             organisation_id)
-        AS (SELECT c.email, c.format_id, orga.notification_interval,
-                   r.organisation_id
-              FROM contact AS c
-              JOIN role AS r ON r.contact_id = c.id
-              JOIN organisation_to_asn AS orga
-                ON orga.organisation_id = r.organisation_id
-              JOIN autonomous_system AS a ON a.number = orga.asn_id
-             WHERE a.number = event_asn)
-    SELECT mc.email, os.organisation_name, os.sector, os.template_path, f.name,
-           mc.notification_interval
-      FROM matched_contacts mc
-      JOIN organisation_settings AS os
-        ON mc.organisation_id = os.organisation_id
-      JOIN format f ON mc.format_id = f.id
-     WHERE os.classification_type = event_classification;
-END;
-$$ LANGUAGE plpgsql VOLATILE;
-
-CREATE OR REPLACE FUNCTION
-notifications_for_asn_automatic(event_asn BIGINT,
-                                event_classification VARCHAR(100))
-RETURNS SETOF notification
-AS $$
-BEGIN
-    RETURN QUERY
-      WITH matched_contacts (email, format_id, notification_interval,
-                             organisation_id)
-        AS (SELECT c.email, c.format_id, orga.notification_interval,
-                   r.organisation_id
-              FROM contact_automatic AS c
-              JOIN role_automatic AS r ON r.contact_id = c.id
-              JOIN organisation_to_asn_automatic AS orga
-                ON orga.organisation_id = r.organisation_id
-              JOIN autonomous_system_automatic AS a ON a.number = orga.asn_id
-             WHERE a.number = event_asn)
-    SELECT mc.email, os.organisation_name, os.sector, os.template_path, f.name,
-           mc.notification_interval
-      FROM matched_contacts AS mc
-      JOIN organisation_settings_automatic AS os
-        ON mc.organisation_id = os.organisation_id
-      JOIN format AS f ON mc.format_id = f.id
-     WHERE os.classification_type = event_classification;
-END;
-$$ LANGUAGE plpgsql VOLATILE;
-
--- Lookup all notifications for a given FQDN and event classification
--- type
-CREATE OR REPLACE FUNCTION
-notifications_for_fqdn(event_fqdn TEXT, event_classification VARCHAR(100))
-RETURNS SETOF notification
-AS $$
-BEGIN
-    RETURN QUERY
-      WITH matched_contacts (email, format_id, notification_interval,
-                             organisation_id)
-        AS (SELECT c.email, c.format_id, orgf.notification_interval,
-                   r.organisation_id
-              FROM contact AS c
-              JOIN role AS r ON r.contact_id = c.id
-              JOIN organisation_to_fqdn AS orgf
-                ON orgf.organisation_id = r.organisation_id
-              JOIN fqdn AS f ON f.id = orgf.fqdn_id
-             WHERE f.fqdn = event_fqdn)
-    SELECT mc.email, os.organisation_name, os.sector, os.template_path, f.name,
-           mc.notification_interval
-      FROM matched_contacts AS mc
-      JOIN organisation_settings AS os
-        ON mc.organisation_id = os.organisation_id
-      JOIN format AS f ON mc.format_id = f.id
-     WHERE os.classification_type = event_classification;
-END;
-$$ LANGUAGE plpgsql VOLATILE;
-
-CREATE OR REPLACE FUNCTION
-notifications_for_fqdn_automatic(event_fqdn TEXT,
-                                 event_classification VARCHAR(100))
-RETURNS SETOF notification
-AS $$
-BEGIN
-    RETURN QUERY
-      WITH matched_contacts (email, format_id, notification_interval,
-                             organisation_id)
-        AS (SELECT c.email, c.format_id, orgf.notification_interval,
-                   r.organisation_id
-              FROM contact_automatic AS c
-              JOIN role_automatic AS r ON r.contact_id = c.id
-              JOIN organisation_to_fqdn_automatic AS orgf
-                ON orgf.organisation_id = r.organisation_id
-              JOIN fqdn_automatic AS f ON f.id = orgf.fqdn_id
-             WHERE f.fqdn = event_fqdn)
-    SELECT mc.email, os.organisation_name, os.sector, os.template_path, f.name,
-           mc.notification_interval
-      FROM matched_contacts AS mc
-      JOIN organisation_settings_automatic AS os
-        ON mc.organisation_id = os.organisation_id
-      JOIN format AS f ON mc.format_id = f.id
-     WHERE os.classification_type = event_classification;
-END;
-$$ LANGUAGE plpgsql VOLATILE;
 
 
 COMMIT;
