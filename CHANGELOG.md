@@ -40,6 +40,7 @@ CHANGELOG
 - `intelmqdump` is now capable to read messages in dumps that are dictionaries as opposed to serialized dicts as strings and does not convert them in the show command (#1256).
 - `intelmqdump` truncated messages are no longer used/saved to the file after being shown (#1255).
 - `intelmqctl run [bot-id] mesage send` can now send report messages (#1077).
+- `intelmqdump` now again denies recovery of dumps if the corresponding bot is running. The check was broken (#1258).
 
 ### Contrib
 

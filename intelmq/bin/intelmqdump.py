@@ -229,7 +229,7 @@ def main():
         # Determine bot status
         try:
             bot_status = ctl.bot_status(botid)
-            if bot_status == 'running':
+            if bot_status[1] == 'running':
                 print(red('Attention: This bot is currently running!'))
         except KeyError:
             bot_status = 'error'
@@ -273,7 +273,7 @@ def main():
                 del content[meta[entry][0]]
             save_file(fname, content)
         elif answer[0] == 'r':
-            if bot_status == 'running':
+            if bot_status[1] == 'running':
                 # See https://github.com/certtools/intelmq/issues/574
                 print(red('Recovery for running bots not possible.'))
                 continue
