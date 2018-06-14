@@ -124,6 +124,7 @@ CHANGELOG
 ### Core
 - `lib/message`: `Report()` can now create a Report instance from Event instances (#1225).
 - `lib/bot`: The first word in the log line `Processed ... messages since last logging.` is now adaptible and set to `Forwarded` in the existing filtering bots (#1237).
+- `lib/bot`: Kills oneself again after proper shutdown if the bot is XMPP collector or output (#970). Previously these two bots needed two stop commands to get actually stopped.
 
 ### Harmonization
 
@@ -154,6 +155,7 @@ CHANGELOG
 - `intelmqdump` automatically converts messages from events to reports if the queue the message is being restored to is the source queue of a parser (#1225).
 - `intelmqdump` is now capable to read messages in dumps that are dictionaries as opposed to serialized dicts as strings and does not convert them in the show command (#1256).
 - `intelmqdump` truncated messages are no longer used/saved to the file after being shown (#1255).
+- `intelmqctl run [bot-id] mesage send` can now send report messages (#1077).
 
 ### Contrib
 

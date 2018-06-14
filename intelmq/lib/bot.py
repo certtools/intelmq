@@ -8,6 +8,7 @@ import io
 import json
 import logging
 import os
+import psutil
 import re
 import signal
 import sys
@@ -296,6 +297,10 @@ class Bot(object):
         if self.logger:
             self.logger.info("Bot stopped.")
             logging.shutdown()
+            # Bots using threads that do not exit properly, see #970
+            if self.__class__.__name__ in ['XMPPCollectorBot', 'XMPPOutputBot']:
+                proc = psutil.Process(os.getpid())
+                proc.send_signal(signal.SIGTERM)
         else:
             self.__log_buffer.append(('info', 'Bot stopped.'))
             self.__print_log_buffer()
@@ -353,7 +358,12 @@ class Bot(object):
             self.__destination_pipeline = None
             self.logger.debug("Disconnected from destination pipeline.")
 
-    def send_message(self, *messages, path="_default"):
+    def send_message(self, *messages, path="_default", auto_add=None):
+        """
+        Parameters:
+            messages: Instances of intelmq.lib.message.Message class
+            auto_add: ignored
+        """
         for message in messages:
             if not message:
                 self.logger.warning("Ignoring empty message at sending. Possible bug in bot.")
@@ -787,9 +797,15 @@ class CollectorBot(Bot):
         report.add("feed.accuracy", self.parameters.accuracy)
         return report
 
-    def send_message(self, *messages):
+    def send_message(self, *messages, auto_add=True):
+        """"
+        Parameters:
+            messages: Instances of intelmq.lib.message.Message class
+            auto_add: Add some default report fields form parameters
+        """
         messages = filter(self.__filter_empty_report, messages)
-        messages = map(self.__add_report_fields, messages)
+        if auto_add:
+            messages = map(self.__add_report_fields, messages)
         super(CollectorBot, self).send_message(*messages)
 
     def new_report(self):
