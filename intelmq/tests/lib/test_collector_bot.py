@@ -40,7 +40,7 @@ class TestDummyCollectorBot(test.BotTestCase, unittest.TestCase):
     def set_bot(cls):
         cls.bot_reference = DummyCollectorBot
         cls.default_input_message = None
-        cls.sysconfig = {'feed': 'Example Feed',
+        cls.sysconfig = {'name': 'Example Feed',
                          'code': 'Example Code',
                          'provider': 'Example Provider',
                          'documentation': 'Example Documentation',
