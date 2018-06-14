@@ -63,6 +63,7 @@ CHANGELOG
 - `bots.collectors.stomp.collector`: Heartbeat timeout is now logged with log level info instead of warning.
 - added `intelmq.bots.collectors.twitter.collector_twitter`
 - `bots.collectors.microsoft.collector_interlow`: added for MS interflow API
+  - Automatic ungzipping for .gz files.
 
 #### Parsers
 - changed feednames in `bots.parsers.shadowserver`. Please refer to it's README for the exact changes.
@@ -88,6 +89,7 @@ CHANGELOG
   * use the new harmonization field `tlp` instead of `extra.tlp`.
 - `bots.parsers.alienvault.parser_otx`: Save TLP data in the new harmonization field `tlp`.
 - added `intelmq.bots.parsers.openphish.parser_commercial`
+- added `intelmq.bots.parsers.microsoft.parser_bingmurls`
 
 #### Experts
 - Added sieve expert for filtering and modifying events (#1083)
