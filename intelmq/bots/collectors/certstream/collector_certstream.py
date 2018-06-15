@@ -8,35 +8,34 @@
 
 """
 import json
-import certstream
+
+from certstream.core import CertStreamClient
 
 from intelmq.lib.bot import CollectorBot
 
 
 class CertstreamCollectorBot(CollectorBot):
 
-    def init(self):
-
-        return
-
     def callback(self, message, context=None):  # callback handler for certstream events.
         CertstreamCollectorBot.send_update(message=message, self=self)
 
     def process(self):
-        certstream.listen_for_events(self.callback)
+        c = CertStreamClient(self.callback, skip_heartbeats=True, on_open=None, on_error=None)
+        c.run_forever()
 
     def send_update(self, message):
 
         if message['message_type'] == 'heartbeat':
             return
 
-        if message['message_type'] == 'certificate_update':
+        elif message['message_type'] == 'certificate_update':
             new_report = self.new_report()
-            new_report.add("feed.name", "Certstream")
             new_report.add("raw", json.dumps(message))
 
             self.send_message(new_report)
-            self.logger.debug("Send certificate_update.")
+
+        else:
+            raise ValueError('Unhandled message_type %r.' % message['message_type'])
 
 
 BOT = CertstreamCollectorBot
