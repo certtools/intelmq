@@ -118,6 +118,9 @@ CHANGELOG
 ### Documentation
 - Use Markdown for README again, as pypi now supports it.
 
+### Tests
+- Travis now correctly stops if a requirement could not be installed (#1257).
+
 ### Known bugs
 - `bots.experts.sieve` does not support textX (#1246).
 
