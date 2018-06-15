@@ -1,7 +1,7 @@
 {
     "Collector": {
         "CertStream": {
-            "module": "intelmq.bots.collectors.certstream.collector_certstream",
+            "module": "intelmq.bots.collectors.calidog.collector_certstream",
             "description": "A bot to collect information from CertStream",
             "parameters": {
                 "feed": "certstream"
@@ -296,7 +296,7 @@
         },
         "CertStream Parser": {
             "description": "A Bot to parse CertStream Feed",
-            "module": "intelmq.bots.parsers.certstream.parser_certstream",
+            "module": "intelmq.bots.parsers.calidog.parser_certstream",
             "parameters": {}
         },
         "CleanMX": {

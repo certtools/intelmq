@@ -66,6 +66,7 @@ CHANGELOG
 - added `intelmq.bots.collectors.twitter.collector_twitter`
 - `bots.collectors.microsoft.collector_interlow`: added for MS interflow API
   - Automatic ungzipping for .gz files.
+- added `intelmq.bots.collectors.calidog.collector_certstream` for collecting certstream data (#1120).
 
 #### Parsers
 - changed feednames in `bots.parsers.shadowserver`. Please refer to it's README for the exact changes.
@@ -92,6 +93,7 @@ CHANGELOG
 - `bots.parsers.alienvault.parser_otx`: Save TLP data in the new harmonization field `tlp`.
 - added `intelmq.bots.parsers.openphish.parser_commercial`
 - added `intelmq.bots.parsers.microsoft.parser_bingmurls`
+- added `intelmq.bots.parsers.calidog.parser_certstream` for parsing certstream data (#1120).
 
 #### Experts
 - Added sieve expert for filtering and modifying events (#1083)

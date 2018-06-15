@@ -4,7 +4,7 @@ import unittest
 
 import intelmq.lib.test as test
 import intelmq.lib.utils as utils
-from intelmq.bots.parsers.certstream.parser_certstream import CertStreamParserBot
+from intelmq.bots.parsers.calidog.parser_certstream import CertStreamParserBot
 
 with open(os.path.join(os.path.dirname(__file__),
                        'data.json')) as handle:
