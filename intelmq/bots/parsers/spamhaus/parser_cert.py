@@ -113,12 +113,7 @@ class SpamhausCERTParserBot(ParserBot):
             event.add('destination.ip', row_splitted[6], raise_failure=False)
             event.add('destination.port', row_splitted[7], raise_failure=False)
             if row_splitted[8] and row_splitted[8] not in ('-', '?') and malware != 'l_spamlink':
-                try:
-                    port = int(row_splitted[8])
-                except ValueError:
-                    event.add('destination.fqdn', row_splitted[8], raise_failure=False)
-                else:
-                    extra['destination.local_port'] = port
+                extra['source.local_port'] = int(row_splitted[8])
             if extra:
                 event.add('extra', extra)
             event.add('protocol.transport', row_splitted[9], raise_failure=False)

@@ -21,6 +21,7 @@ CHANGELOG
 - Shadowserver parser:
   * SSL FREAK: Remove optional column `device_serial` and add several new ones.
 - Spamhaus CERT parser: add support for `smtpauth` and `l_spamlink` (#1254).
+- Spamhaus CERT parser: fix `extra.destination.local_port` -> `extra.source.local_port`.
 
 #### Experts
 - `bots.experts.filter`: Pre-compile regex at bot initialization.

@@ -40,7 +40,7 @@ EXAMPLE_EVENTS_PARTS = [{'source.ip': '109.126.64.2',
                          'destination.port': 80,
                          'destination.fqdn': 'dxxt.sinkhole.dk',
                          'destination.ip': '212.227.20.19',
-                         'extra': '{"destination.local_port": 1036}',
+                         'extra': '{"source.local_port": 1036}',
                          'source.geolocation.cc': 'AT',
                          'protocol.transport': 'tcp',
                          },
@@ -50,7 +50,7 @@ EXAMPLE_EVENTS_PARTS = [{'source.ip': '109.126.64.2',
                          'malware.name': 'conficker',
                          'destination.port': 80,
                          'destination.ip': '216.66.15.109',
-                         'extra': '{"destination.local_port": 1430}',
+                         'extra': '{"source.local_port": 1430}',
                          'source.geolocation.cc': 'AT',
                          'protocol.transport': 'tcp',
                          },
@@ -130,7 +130,7 @@ EXAMPLE_EVENTS_PARTS = [{'source.ip': '109.126.64.2',
                          'malware.name': 's_other',
                          'destination.port': 80,
                          'destination.ip': '216.66.15.109',
-                         'extra': '{"destination.local_port": 1430}',
+                         'extra': '{"source.local_port": 1430}',
                          'source.geolocation.cc': 'AT',
                          'protocol.transport': 'tcp',
                          },
@@ -179,6 +179,7 @@ class TestSpamhausCERTParserBot(test.BotTestCase, unittest.TestCase):
             event_['raw'] = utils.base64_encode('\n'.join((FILE_LINES[0],
                                                            FILE_LINES[1+position])))
             self.assertMessageEqual(position, event_)
+
 
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
