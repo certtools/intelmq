@@ -1,0 +1,2 @@
+# all the bot ids existing in this file will be ignored by systemd script
+# one bot id on one line
