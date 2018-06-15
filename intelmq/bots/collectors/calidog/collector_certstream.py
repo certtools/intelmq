@@ -9,12 +9,19 @@
 """
 import json
 
-from certstream.core import CertStreamClient
-
 from intelmq.lib.bot import CollectorBot
+
+try:
+    from certstream.core import CertStreamClient
+except ImportError:
+    CertStreamClient = None
+
 
 
 class CertstreamCollectorBot(CollectorBot):
+    def init(self):
+        if sleekxmpp is None:
+            raise ValueError("Could not import library 'certstream'. Please install it.")
 
     def callback(self, message, context=None):  # callback handler for certstream events.
         CertstreamCollectorBot.send_update(message=message, self=self)

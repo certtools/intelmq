@@ -11,7 +11,6 @@ from intelmq.lib.utils import base64_decode
 
 class CertStreamParserBot(ParserBot):
 
-
     def parse(self, report):
         raw = base64_decode(report['raw'])
         data = json.loads(raw)['data']
