@@ -258,7 +258,7 @@ providers:
           module: intelmq.bots.collectors.http.collector_http
           parameters:
             http_url: http://data.netlab.360.com/feeds/mirai-scanner/scanner.list
-            rate_limit: 3600
+            rate_limit: 86400
         parser:
           module: intelmq.bots.parsers.netlab_360.parser
           parameters:

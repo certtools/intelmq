@@ -1094,7 +1094,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `int
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `http://data.netlab.360.com/feeds/mirai-scanner/scanner.list`
-*  * `rate_limit`: `3600`
+*  * `rate_limit`: `86400`
 
 ### Parser
 
