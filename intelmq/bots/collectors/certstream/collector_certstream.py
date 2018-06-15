@@ -8,11 +8,9 @@
 
 """
 import json
-import sys
 import certstream
 
-from intelmq.lib.bot import Bot
-from intelmq.lib.message import Report
+from intelmq.lib.bot import CollectorBot
 
 
 class CertstreamCollectorBot(CollectorBot):
@@ -28,9 +26,6 @@ class CertstreamCollectorBot(CollectorBot):
         certstream.listen_for_events(self.callback)
 
     def send_update(self, message):
-
-        # self.logger.debug("Received new certificate update.")
-        report = Report()
 
         if message['message_type'] == 'heartbeat':
             return

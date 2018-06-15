@@ -5,9 +5,7 @@ A bot to parse certstream data.
 
 import json
 
-import sys
 import datetime
-import validators
 from intelmq.lib import utils, exceptions
 from intelmq.lib.bot import Bot
 
@@ -46,9 +44,7 @@ class CertStreamParserBot(Bot):
                     try:
                         event.add('source.fqdn', domain, force=True)
                     except exceptions.InvalidValue:
-                        if validators.ipv4(domain):
-                            event.add('source.ip', domain, force=True)
-                        else:
+                        if not event.add('source.ip', domain, force=True, raise_failure=False):
                             self.logger.debug("Invalid value (%s) in all_domains field. Not a valid ipv4 or domain." % domain)
                     except:
                         self.logger.exception('Other error adding (%s)!' % domain)

@@ -1,10 +1,11 @@
 {
     "Collector": {
-        "CertStream" : {
-          "module" : "intelmq.bots.collectors.certstream.collector_certstream",
-          "description" : "A bot to collect information from CertStream",
-          "parameters": {
-           }
+        "CertStream": {
+            "module": "intelmq.bots.collectors.certstream.collector_certstream",
+            "description": "A bot to collect information from CertStream",
+            "parameters": {
+                "feed": "certstream"
+            }
         },
         "File": {
             "description": "Fileinput collector fetches data from a file.",
@@ -288,15 +289,14 @@
             "module": "intelmq.bots.parsers.blueliv.parser_crimeserver",
             "parameters": {}
         },
-        "CertStream Parser": {
-            "module": "intelmq.bots.parsers.certstream.parser_certstream",
-            "parameters": {
-            },
-             "description" : "A Bot to parse CertStream Feed"
-        },
         "CI Army": {
             "description": "CI Army Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.ci_army.parser",
+            "parameters": {}
+        },
+        "CertStream Parser": {
+            "description": "A Bot to parse CertStream Feed",
+            "module": "intelmq.bots.parsers.certstream.parser_certstream",
             "parameters": {}
         },
         "CleanMX": {
