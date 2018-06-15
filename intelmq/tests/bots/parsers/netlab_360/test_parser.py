@@ -20,14 +20,14 @@ with open(os.path.join(os.path.dirname(__file__), 'mirai.txt')) as handle:
 DGA_REPORT = {'feed.name': 'Netlab 360 DGA',
               'feed.url': 'http://data.netlab.360.com/feeds/dga/dga.txt',
               '__type': 'Report',
-              'time.observation': '2016-01-01T00:00:00+00:00',
+              'time.observation': '2018-01-01T00:00:00+00:00',
               'raw': utils.base64_encode(DGA_FILE),
              }
 
-DGA_EVENTS = {'feed.name': 'Netlab 360 DGA',
+DGA_EVENT0 = {'feed.name': 'Netlab 360 DGA',
               'feed.url': 'http://data.netlab.360.com/feeds/dga/dga.txt',
               '__type': 'Event',
-              'time.observation': '2016-01-01T00:00:00+00:00',
+              'time.observation': '2018-01-01T00:00:00+00:00',
               #'time.source': '2016-11-13T00:04:15+00:00',
               'time.source': '2016-11-12T11:58:56+00:00',
               'source.fqdn': 'difficultdress.net',
@@ -35,6 +35,17 @@ DGA_EVENTS = {'feed.name': 'Netlab 360 DGA',
               'classification.identifier': 'suppobox',
               'event_description.url': 'http://data.netlab.360.com/dga',
               'raw': 'c3VwcG9ib3gJZGlmZmljdWx0ZHJlc3MubmV0CTIwMTYtMTEtMTIgMTE6NTg6NTYJMjAxNi0xMS0xMyAwMDowNDoxNQ==',
+             }
+DGA_EVENT1 = {'feed.name': 'Netlab 360 DGA',
+              'feed.url': 'http://data.netlab.360.com/feeds/dga/dga.txt',
+              '__type': 'Event',
+              'time.observation': '2018-01-01T00:00:00+00:00',
+              'time.source': '2018-01-01T00:00:00+00:00',
+              'source.fqdn': 'example.com',
+              'classification.type': 'c&c',
+              'classification.identifier': 'foobar',
+              'event_description.url': 'http://data.netlab.360.com/dga',
+              'raw': 'Zm9vYmFyCWV4YW1wbGUuY29tCTIwMTgtMDEtMDEgMDA6MDA6MDAJMjAzMC0wNS0wNCAwMDowODowOA==',
              }
 
 MAGNITUDE_REPORT = {'feed.name': 'Netlab 360 Magnitude',
@@ -88,7 +99,9 @@ class TestNetlab360ParserBot(test.BotTestCase, unittest.TestCase):
 
     def test_DGA(self):
         self.run_bot()
-        self.assertMessageEqual(0, DGA_EVENTS)
+        self.assertMessageEqual(0, DGA_EVENT0)
+        # the time is in the future here
+        self.assertMessageEqual(1, DGA_EVENT1)
 
     def test_magnitude(self):
         self.input_message = MAGNITUDE_REPORT
