@@ -35,6 +35,7 @@ CHANGELOG
 ### Packaging
 
 ### Tests
+- Ensure that the bots did process all messages (#291).
 
 ### Tools
 - `intelmqctl run` has a new parameter `-l` `--loglevel` to overwrite the log level for the run (#1075).
