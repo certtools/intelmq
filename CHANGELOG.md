@@ -11,6 +11,7 @@ CHANGELOG
 - `lib/bot`: Kills oneself again after proper shutdown if the bot is XMPP collector or output (#970). Previously these two bots needed two stop commands to get actually stopped.
 
 ### Harmonization
+- Added new types `unauthorized-command` and `unauthorized-login` to `intrusions` taxonomy.
 
 ### Bots
 #### Collectors
