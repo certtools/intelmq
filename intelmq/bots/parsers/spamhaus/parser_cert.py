@@ -65,7 +65,7 @@ class SpamhausCERTParserBot(ParserBot):
                 event.add('classification.type', 'brute-force')
                 event.add('classification.identifier', 'smtp')
                 event.add('protocol.application', 'smtp')
-            elif malware == 'iotscan':
+            elif malware in ['iotscan', 'iotuser']:
                 event.add('classification.type', 'scanner')
                 event.add('event_description.text', 'infected IoT device scanning for other vulnerable IoT devices')
                 if row_splitted[7] in ['23', '2323']:
@@ -121,7 +121,7 @@ class SpamhausCERTParserBot(ParserBot):
                 event.add('malware.name', 'mirai')
             elif malware == 'ioturl':
                 event.add('classification.type', 'c&c')
-                event.add('classification.identifier', 'mirai')
+                event.add('classification.identifier', 'malware-generic')
             elif malware == 'automatedtest':
                 event.add('classification.type', 'brute-force')
                 event.add('classification.identifier', 'lookup-captcha')
