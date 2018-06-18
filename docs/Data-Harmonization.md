@@ -96,6 +96,8 @@ The taxonomy can be automatically added by the taxonomy expert bot based on the 
 |intrusions|backdoor|This refers to hosts, which have been compromised and backdoored with a remote administration software or Trojan in the traditional sense.|
 |intrusions|compromised|This IOC refers to compromised system.|
 |intrusions|defacement|This IOC refers to hacktivism related activity.|
+|intrusions|unauthorized-login|A device (e.g. botnet member, hacker) logged in to a machine.|
+|intrusions|unauthorized-command|The device sent a command to a machine.|
 |malicious code|botnet drone|This is a compromised machine, which has been observed to make a connection to a command and control server.|
 |malicious code|c&c|This is a command and control server in charge of a given number of botnet drones.|
 |malicious code|dga domain|DGA Domains are seen various families of malware that are used to periodically generate a large number of domain names that can be used as rendezvous points with their command and control servers.|
