@@ -21,33 +21,50 @@ EXAMPLE_REPORT = {"feed.name": "ShadowServer Compromised Website",
                   "__type": "Report",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   }
-EVENT00 = {'__type': 'Event',
-         'feed.name': 'ShadowServer Compromised Website',
-         'classification.taxonomy': 'intrusions',
-         'classification.type': 'compromised',
-         'classification.identifier': 'compromised-website',
-         'extra': '{"detected_since": "2015-05-09 05:51:12", "server": '
-                  '"Microsoft-IIS/7.5", "system": "WINNT"}',
-         'protocol.application': 'http',
-         'raw': utils.base64_encode('\n'.join([RECONSTRUCTED_LINES[0],
-                                               RECONSTRUCTED_LINES[1], ''])),
-       'source.asn': 64496,
-       'source.geolocation.cc': 'AT',
-       'source.geolocation.city': 'VIENNA',
-       'source.geolocation.region': 'WIEN',
-       'source.ip': '203.0.113.1',
-       'source.port': 80,
-       'source.url': 'http://example.com/header.php',
-       'source.fqdn': 'example.com',
-       'source.reverse_dns': 'example.com',
-       'malware.name': 'hacked-webserver-stealrat-t1',
-       'event_description.text': 'spam',
-       'time.observation': '2015-01-01T00:00:00+00:00',
-       'time.source': '2017-01-16T00:43:48+00:00'}
+EVENTS = [{'__type': 'Event',
+           'feed.name': 'ShadowServer Compromised Website',
+           'classification.taxonomy': 'intrusions',
+           'classification.type': 'compromised',
+           'classification.identifier': 'compromised-website',
+           'extra': '{"detected_since": "2015-05-09 05:51:12", "server": '
+                    '"Microsoft-IIS/7.5", "system": "WINNT"}',
+           'protocol.application': 'http',
+           'raw': utils.base64_encode('\n'.join([RECONSTRUCTED_LINES[0],
+                                                 RECONSTRUCTED_LINES[1], ''])),
+           'source.asn': 64496,
+           'source.geolocation.cc': 'AT',
+           'source.geolocation.city': 'VIENNA',
+           'source.geolocation.region': 'WIEN',
+           'source.ip': '203.0.113.1',
+           'source.port': 80,
+           'source.url': 'http://example.com/header.php',
+           'source.fqdn': 'example.com',
+           'source.reverse_dns': 'example.com',
+           'malware.name': 'hacked-webserver-stealrat-t1',
+           'event_description.text': 'spam',
+           'time.observation': '2015-01-01T00:00:00+00:00',
+           'time.source': '2017-01-16T00:43:48+00:00'},
+          {'__type': 'Event',
+           'raw': utils.base64_encode('\n'.join([RECONSTRUCTED_LINES[0],
+                                                 RECONSTRUCTED_LINES[2], ''])),
+           'classification.identifier': 'compromised-website',
+           'classification.taxonomy': 'intrusions',
+           'classification.type': 'compromised',
+           'event_description.text': 'phishing',
+           'feed.name': 'ShadowServer Compromised Website',
+           'malware.name': 'phishing',
+           'protocol.application': 'http',
+           'source.asn': 64496,
+           'source.fqdn': 'example.com',
+           'source.geolocation.cc': 'AT',
+           'source.geolocation.city': 'GRAZ',
+           'source.geolocation.region': 'STEIERMARK',
+           'source.ip': '203.0.113.1',
+           'source.port': 80,
+           'source.url': 'http://example.com/',
+           'time.source': '2018-04-09T15:43:41+00:00'},
+          ]
 
-EVENT01 = EVENT00.copy()
-EVENT01['raw'] = utils.base64_encode('\n'.join([RECONSTRUCTED_LINES[0],
-                                               RECONSTRUCTED_LINES[2], '']))
 
 class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
     """
@@ -63,8 +80,8 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
     def test_event(self):
         """ Test if correct Event has been produced. """
         self.run_bot()
-        self.assertMessageEqual(0, EVENT00)
-        self.assertMessageEqual(1, EVENT01)
+        for i, EVENT in enumerate(EVENTS):
+            self.assertMessageEqual(i, EVENT)
 
 
 if __name__ == '__main__':  # pragma: no cover

@@ -3,6 +3,7 @@
 """
 """
 import argparse
+import copy
 import glob
 import json
 import os.path
@@ -228,7 +229,7 @@ def main():
         # Determine bot status
         try:
             bot_status = ctl.bot_status(botid)
-            if bot_status == 'running':
+            if bot_status[1] == 'running':
                 print(red('Attention: This bot is currently running!'))
         except KeyError:
             bot_status = 'error'
@@ -272,7 +273,7 @@ def main():
                 del content[meta[entry][0]]
             save_file(fname, content)
         elif answer[0] == 'r':
-            if bot_status == 'running':
+            if bot_status[1] == 'running':
                 # See https://github.com/certtools/intelmq/issues/574
                 print(red('Recovery for running bots not possible.'))
                 continue
@@ -285,7 +286,9 @@ def main():
                 for i, (key, entry) in enumerate([item for (count, item)
                                                   in enumerate(content.items()) if count in ids]):
                     if entry['message']:
-                        msg = entry['message']
+                        msg = copy.copy(entry['message'])  # otherwise the message field gets converted
+                        if isinstance(msg, dict):
+                            msg = json.dumps(msg)
                     else:
                         print('No message here, deleting entry.')
                         del content[key]
@@ -297,9 +300,9 @@ def main():
                         else:
                             queue_name = entry['source_queue']
                     if queue_name in pipeline_pipes:
-                        if runtime[pipeline_pipes[queue_name]]['group'] == 'Parser':
+                        if runtime[pipeline_pipes[queue_name]]['group'] == 'Parser' and json.loads(msg)['__type'] == 'Event':
                             print('Event converted to Report automatically.')
-                            msg = message.Report(message.MessageFactory.from_dict(msg)).serialize()
+                            msg = message.Report(message.MessageFactory.unserialize(msg)).serialize()
                     try:
                         pipe.set_queues(queue_name, 'destination')
                         pipe.connect()
@@ -323,7 +326,8 @@ def main():
             break
         elif answer[0] == 's':
             # Show entries by id
-            for count, (key, value) in enumerate(content.items()):
+            for count, (key, orig_value) in enumerate(content.items()):
+                value = copy.copy(orig_value)  # otherwise the raw field gets truncated
                 if count not in ids:
                     continue
                 print('=' * 100, '\nShowing id {} {}\n'.format(count, key),

@@ -105,7 +105,7 @@ class BotDebugger:
                 return
             if msg:
                 msg = self.arg2msg(msg)
-                self.instance.send_message(msg)
+                self.instance.send_message(msg, auto_add=False)
                 self.instance.logger.info("Message sent to output pipelines.")
             else:
                 self.messageWizzard("Message missing!")

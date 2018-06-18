@@ -56,10 +56,11 @@ EVENTS = [{'__type': 'Event',
            'destination.geolocation.cc': 'US',
            'destination.ip': '198.51.100.22',
            'destination.port': 80,
-           'extra': '{"url": "GET /search?q=1 HTTP/1.0", "user_agent": "Mozilla/4.0 '
+           'extra': '{"user_agent": "Mozilla/4.0 '
                     '(compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.1.4322; '
                     '.NET CLR 2.0.50727; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729; '
                     '.NET4.0C; .NET4.0E)"}',
+           'destination.url': 'http://198.51.100.90/search?q=1',
            'malware.name': 'downadup',
            'protocol.transport': 'tcp',
            'source.asn': 8447,

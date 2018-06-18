@@ -7,17 +7,22 @@ CHANGELOG
 
 ### Core
 - `lib/message`: `Report()` can now create a Report instance from Event instances (#1225).
+- `lib/bot`: The first word in the log line `Processed ... messages since last logging.` is now adaptible and set to `Forwarded` in the existing filtering bots (#1237).
+- `lib/bot`: Kills oneself again after proper shutdown if the bot is XMPP collector or output (#970). Previously these two bots needed two stop commands to get actually stopped.
 
 ### Harmonization
 
 ### Bots
 #### Collectors
 - `bots.collectors.mail.collector_mail_url`: handle empty downloaded reports (#988).
+- `bots.collectos.file.collector_file`: handle empty files (#1244).
 
 #### Parsers
 - Shadowserver parser:
   * SSL FREAK: Remove optional column `device_serial` and add several new ones.
+  * Fixed HTTP URL parsing for multiple feeds (#1243).
 - Spamhaus CERT parser: add support for `smtpauth`, `l_spamlink`, `pop`, `imap`, `rdp` and `smb` (#1254).
+- Spamhaus CERT parser: fix `extra.destination.local_port` -> `extra.source.local_port`.
 
 #### Experts
 - `bots.experts.filter`: Pre-compile regex at bot initialization.
@@ -34,6 +39,10 @@ CHANGELOG
 - `intelmqctl run` has a new parameter `-l` `--loglevel` to overwrite the log level for the run (#1075).
 - `intelmqdump` has now command completion for bot names, actions and queue names in interacive console.
 - `intelmqdump` automatically converts messages from events to reports if the queue the message is being restored to is the source queue of a parser (#1225).
+- `intelmqdump` is now capable to read messages in dumps that are dictionaries as opposed to serialized dicts as strings and does not convert them in the show command (#1256).
+- `intelmqdump` truncated messages are no longer used/saved to the file after being shown (#1255).
+- `intelmqctl run [bot-id] mesage send` can now send report messages (#1077).
+- `intelmqdump` now again denies recovery of dumps if the corresponding bot is running. The check was broken (#1258).
 
 ### Contrib
 
