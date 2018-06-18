@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import warnings
+
 
 from intelmq.lib.bot import Bot
 
@@ -35,6 +37,8 @@ TAXONOMY = {
 
 
 class TaxonomyExpertBot(Bot):
+    def init(self):
+        warnings.warn('Foobar')
 
     def process(self):
         event = self.receive_message()

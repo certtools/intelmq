@@ -241,6 +241,8 @@ def log(name: str, log_path: str = intelmq.DEFAULT_LOGGING_PATH, log_level: str 
     """
     logging.captureWarnings(True)
     warnings_logger = logging.getLogger("py.warnings")
+    # set the name of the warnings logger to the bot neme, see #1184
+    warnings_logger.name = name
 
     logger = logging.getLogger(name)
     logger.setLevel(log_level)
