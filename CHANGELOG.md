@@ -67,6 +67,7 @@ CHANGELOG
 - `bots.collectors.microsoft.collector_interlow`: added for MS interflow API
   - Automatic ungzipping for .gz files.
 - added `intelmq.bots.collectors.calidog.collector_certstream` for collecting certstream data (#1120).
+- added `intelmq.bots.collectors.shodan.collector_stream` for collecting shodan stream data (#1096).
 
 #### Parsers
 - changed feednames in `bots.parsers.shadowserver`. Please refer to it's README for the exact changes.
@@ -94,6 +95,7 @@ CHANGELOG
 - added `intelmq.bots.parsers.openphish.parser_commercial`
 - added `intelmq.bots.parsers.microsoft.parser_bingmurls`
 - added `intelmq.bots.parsers.calidog.parser_certstream` for parsing certstream data (#1120).
+- added `intelmq.bots.parsers.shodan.parser` for parsing shodan data (#1096).
 
 #### Experts
 - Added sieve expert for filtering and modifying events (#1083)

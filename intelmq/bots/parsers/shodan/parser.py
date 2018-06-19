@@ -1,0 +1,136 @@
+"""
+Shodan Stream Parser
+
+Copyright (C) 2018 by nic.at GmbH
+"""
+import json
+
+from intelmq.lib.bot import Bot
+from intelmq.lib.utils import base64_decode
+
+
+MAPPING = {
+        'hash': 'extra.shodan.event_hash',
+        'ip': '__IGNORE__',  # using ip_str
+        'hostnames': 'source.reverse_dns',  # TODO: multiple hostname
+        'org': 'event_description.target',
+        'data': 'extra.data',
+        'port': 'source.port',
+        'transport': 'protocol.transport',
+        'isp': 'extra.isp',
+        "ftp": {
+            "features": {
+              "MLST": {
+                "parameters": 'extra.ftp.features.mlst',
+              },
+              "UTF8": {
+                "parameters": 'extra.ftp.utf8.parameters',
+              },
+              "REST": {
+                "parameters": 'extra.ftp.rest.parameters',
+              },
+              "CLNT": {
+                "parameters": 'extra.ftp.clnt.parameters',
+              },
+              "MLSD": {
+                "parameters": 'extra.ftp.mlsd.parameters',
+              },
+              "MFMT": {
+                "parameters": 'extra.ftp.mfmt.parameters',
+              },
+              "MDTM": {
+                "parameters": 'extra.ftp.mdtm.parameters',
+              },
+              "SIZE": {
+                "parameters": 'extra.ftp.size.parameters',
+              }
+            },
+            "anonymous": 'extra.ftp.anonymous',
+            "features_hash": '__IGNORE__',
+          },
+        'http': {
+            'robots_hash': '__IGNORE__',
+            # 'redirects': unknown,
+            # 'securitytxt': unknown,
+            'title': 'extra.http.html.title',
+            'sitemap_hash': '__IGNORE__',
+            'robots': '__IGNORE__',
+            'favicon': '__IGNORE__',
+            'host': '__IGNORE__',
+            'html': 'extra.http.html.data',
+            'location': 'extra.http.location',
+            # 'components': unknown,
+            # 'securitytxt_hash': unknown,
+            'server': 'extra.http.server',
+            # 'sitemap': unknown,
+            },
+        'asn': 'source.asn',
+        'html': '__IGNORE__',  # use http.html
+        'location': {
+            'country_code3': '__IGNORE__',  # using country_code
+            'city': 'source.geolocation.city',
+            'region_code': 'extra.region_code',
+            'postal_code': 'extra.postal_code',
+            'longitude': 'extra.geolocation.longitude',
+            'country_code': 'source.geolocation.cc',
+            'latitude': 'source.geolocation.latitude',
+            'country_name': '__IGNORE__',  # using country_code
+            'area_code': 'extra.area_code',
+            'dma_code': 'extra.dma_code',
+            },
+        'timestamp': 'time.source',
+        'domains': 'source.fqdn',  # TODO: multiple domains
+        'ip_str': 'source.ip',
+        'os': 'extra.os_name',
+        '_shodan': '__IGNORE__',  # for now
+        # 'opts':  unknown
+        'tags': 'extra.tags',
+        }
+
+
+PROTOCOLS = ['ftp', 'http', 'isakmp']
+
+
+class ShodanParserBot(Bot):
+
+    def init(self):
+        if getattr(self.parameters, 'ignore_errors', False):
+            self.ignore_errors = True
+        else:
+            self.ignore_errors = False
+
+    def apply_mapping(self, mapping, data):
+        self.logger.debug('Appylying mapping %r to data %r', mapping, data)
+        event = {}
+        for key, value in data.items():
+            try:
+                if value and mapping[key] != '__IGNORE__':
+                    if isinstance(mapping[key], dict):
+                        update = self.apply_mapping(mapping[key], value)
+                        if update:
+                            event.update(update)
+                    else:
+                        event[mapping[key]] = value
+            except KeyError:
+                if not self.ignore_errors:
+                    raise
+        return event
+
+    def process(self):
+        report = self.receive_message()
+        raw = base64_decode(report['raw'])
+        decoded = json.loads(raw)
+
+        event = self.new_event(report)
+        event['raw'] = raw
+        event.update(self.apply_mapping(MAPPING, decoded))
+        event.add('classification.type', 'other')
+        event.add('classification.identifier', 'shodan-scan')
+        for protocol in PROTOCOLS:
+            if protocol in decoded:
+                event.add('protocol.application', protocol)
+        self.send_message(event)
+        self.acknowledge_message()
+
+
+BOT = ShodanParserBot
