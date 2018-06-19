@@ -633,7 +633,7 @@ class TestMessageFactory(unittest.TestCase):
         """ Test Message.update """
         event = self.new_event()
         with self.assertRaises(exceptions.InvalidValue):
-            event.update({'source.asn': 'AS1'})
+            event.update({'source.asn': 'AS0'})
 
     def test_message_extra_construction(self):
         """
