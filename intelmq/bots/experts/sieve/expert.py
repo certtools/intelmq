@@ -10,9 +10,9 @@ import os
 import re
 
 import intelmq.lib.exceptions as exceptions
-from intelmq.lib.bot import Bot
 from intelmq import HARMONIZATION_CONF_FILE
 from intelmq.lib import utils
+from intelmq.lib.bot import Bot
 
 try:
     import textx.model
@@ -29,6 +29,7 @@ class Procedure:
 
 
 class SieveExpertBot(Bot):
+    _message_processed_verb = 'Forwarded'
 
     harmonization = None
 
@@ -93,7 +94,8 @@ class SieveExpertBot(Bot):
 
         # forwarding decision
         if procedure != Procedure.DROP:
-            self.send_message(event)
+            path = getattr(event, "path", "_default")
+            self.send_message(event, path=path)
 
         self.acknowledge_message()
 
@@ -214,11 +216,11 @@ class SieveExpertBot(Bot):
             return False
 
         if ip_range.__class__.__name__ == 'SingleIpRange':
-            network = ipaddress.ip_network(ip_range.value)
+            network = ipaddress.ip_network(ip_range.value, strict=False)
             return addr in network
         elif ip_range.__class__.__name__ == 'IpRangeList':
             for val in ip_range.values:
-                network = ipaddress.ip_network(val.value)
+                network = ipaddress.ip_network(val.value, strict=False)
                 if addr in network:
                     return True
         return False
@@ -229,6 +231,8 @@ class SieveExpertBot(Bot):
             return Procedure.DROP
         elif action == 'keep':
             return Procedure.KEEP
+        elif action.__class__.__name__ == 'PathAction':
+            event.path = action.path
         elif action.__class__.__name__ == 'AddAction':
             if action.key not in event:
                 event.add(action.key, action.value)
@@ -245,7 +249,7 @@ class SieveExpertBot(Bot):
     @staticmethod
     def validate_ip_range(ip_range):
         try:
-            ipaddress.ip_network(ip_range.value)
+            ipaddress.ip_network(ip_range.value, strict=False)
         except ValueError:
             position = SieveExpertBot.get_linecol(ip_range, as_dict=True)
             raise TextXSemanticError('Invalid ip range: %s.' % ip_range.value, **position)

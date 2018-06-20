@@ -9,6 +9,10 @@ See the changelog for a full list of changes.
 - `intelmqctl start` prints bot's error messages in stderr if it failed to start.
 - `intelmqctl check` checks if all keys in the packaged defaults.conf are present in the current configuration.
 
+### Contrib / Modify Expert
+The malware name rules of the modify expert have been migrated to the [Malware Name Mapping repository](https://github.com/certtools/malware_name_mapping).
+See contrib/malware_name_mapping/ for automated download and conversion.
+
 ### Harmonization
 - added `destination.urlpath` and `source.urlpath` to harmonization.
 
@@ -26,6 +30,8 @@ which is by default set to `false` to be consistent with other bots.
 
 The bot `bots.collectors.n6.collector_stomp` has been renamed to the new module `bots.collectors.stomp.collector`. Adapt your `runtime.conf` accordingly.
 
+The parameter `feed` for collectors has been renamed to `name`, as it results in `feed.name`. Backwards compatibility is ensured until 2.0.
+
 ### Postgres databases
 The following statements optionally update existing data.
 Please check if you did use these feed names and eventually adapt them for your setup!
@@ -33,6 +39,11 @@ Please check if you did use these feed names and eventually adapt them for your 
 ALTER TABLE events
    ADD COLUMN "destination.urlpath" text,
    ADD COLUMN "source.urlpath" text;
+ALTER TABLE events
+   ADD COLUMN "destination.domain_suffix" text,
+   ADD COLUMN "source.domain_suffix" text;
+ALTER TABLE events
+   ADD COLUMN "tlp" text;
 UPDATE events
    SET "classification.identifier" = 'openmdns'
    WHERE "classification.identifier" = 'open-mdns' AND "feed.name" = 'Open-mDNS';
@@ -71,7 +82,7 @@ UPDATE events
    SET "classification.identifier" = 'open-mongodb'
    WHERE "classification.identifier" = 'openmongodb' AND "feed.name" = 'Open-MongoDB';
 UPDATE events
-   SET "classification.identifier" = 'open-netbios', "feed.name" = 'Open-NetBIOS-Nameservice'
+   SET "classification.identifier" = 'open-netbios-nameservice', "feed.name" = 'Open-NetBIOS-Nameservice'
    WHERE "classification.identifier" = 'opennetbios' AND "feed.name" = 'Open-NetBIOS';
 UPDATE events
    SET "classification.identifier" = 'openelasticsearch'
@@ -83,11 +94,11 @@ UPDATE events
    SET "classification.identifier" = 'ntp-monitor'
    WHERE "classification.identifier" = 'openntp' AND "feed.name" = 'NTP-Monitor';
 UPDATE events
-   SET "classification.identifier" = 'SSL-POODLE', "feed.name" = 'SSL-POODLE-Vulnerable-Servers'
-   WHERE "classification.identifier" = 'SSL-Poodle' AND "feed.name" = 'SSL-Scan';
+   SET "classification.identifier" = 'ssl-poodle', "feed.name" = 'SSL-POODLE-Vulnerable-Servers'
+   WHERE "classification.identifier" = 'SSL-Poodle' AND "feed.name" = 'Ssl-Scan';
 UPDATE events
-   SET "feed.name" = 'SSL-FREAK-Vulnerable-Servers'
-   WHERE "feed.name" = 'SSL-Freak-Scan';
+   SET "classification.identifier" = 'ssl-freak', "feed.name" = 'SSL-FREAK-Vulnerable-Servers'
+   WHERE "classification.identifier" = 'SSL-FREAK' AND "feed.name" = 'Ssl-Freak-Scan';
 UPDATE events
    SET "classification.identifier" = 'open-memcached'
    WHERE "classification.identifier" = 'openmemcached' AND "feed.name" = 'Open-Memcached';
@@ -119,6 +130,9 @@ UPDATE events
    SET "classification.identifier" = 'open-rdp'
    WHERE "classification.identifier" = 'openrdp' AND "feed.name" = 'Accessible-RDP';
 UPDATE events
+   SET "classification.identifier" = 'open-smb'
+   WHERE "classification.identifier" = 'opensmb' AND "feed.name" = 'Accessible-SMB';
+UPDATE events
    SET "classification.identifier" = 'open-ldap'
    WHERE "classification.identifier" = 'openldap' AND "feed.name" = 'Open-LDAP';
 UPDATE events
@@ -131,11 +145,65 @@ UPDATE events
    SET "classification.identifier" = 'open-cwmp'
    WHERE "classification.identifier" = 'opencwmp' AND "feed.name" = 'Accessbile-CWMP';
 UPDATE events
-   SET "classification.identifier" = 'accessible-vnc'
+   SET "classification.identifier" = 'open-vnc'
    WHERE "classification.identifier" = 'accessiblevnc' AND "feed.name" = 'Accessible-VNC';
 ```
 
-1.0.3 Bugfix release (unreleased)
+1.0.5 Bugfix release (unreleased)
+---------------------------------
+### Configuration
+
+### Libraries
+
+### Postgres databases
+Use the following statement carefully to upgrade your database.
+Adapt your feedname in the query to the one used in your setup.
+```SQL
+UPDATE events
+    SET "extra" = json_build_object('source.local_port', "extra"->'destination.local_port')
+    WHERE "feed.name" = 'Spamhaus CERT' AND "classification.type" = 'brute-force' AND "classification.identifier" = 'telnet';
+```
+
+1.0.4 Bugfix release (2018-04-20)
+---------------------------------
+
+### Postgres databases
+Use the following statement carefully to upgrade your database.
+Adapt your feedname in the query to the one used in your setup.
+```SQL
+UPDATE events
+   SET "classification.taxonomy" = 'intrusion attempts', "classification.type" = 'brute-force', "classification.identifier" = 'rdp', "protocol.application" = 'rdp', "malware.name" = NULL
+   WHERE "malware.name" = 'iotrdp' AND "feed.name" = 'Spamhaus CERT';
+UPDATE events
+   SET "classification.taxonomy" = 'vulnerable', "classification.type" = 'vulnerable service', "classification.identifier" = 'openrelay', "protocol.application" = 'smtp', "malware.name" = NULL
+   WHERE "malware.name" = 'openrelay' AND "feed.name" = 'Spamhaus CERT';
+UPDATE events
+   SET "protocol.application" = 'portmapper'
+   WHERE "classification.identifier" = 'openportmapper' AND "feed.name" = 'Open-Portmapper';
+UPDATE events
+   SET "protocol.application" = 'netbios-nameservice'
+   WHERE "classification.identifier" = 'opennetbios' AND "feed.name" = 'Open-NetBIOS-Nameservice';
+UPDATE events
+   SET "protocol.application" = 'ipsec'
+   WHERE "classification.identifier" = 'openike' AND "feed.name" = 'Vulnerable-ISAKMP';
+UPDATE events
+   SET "classification.taxonomy" = 'intrusion attempts', "classification.type" = 'brute-force', "classification.identifier" = 'ssh', "malware.name" = NULL, "protocol.application" = 'ssh'
+   WHERE "malware.name" = 'sshauth' AND "feed.name" = 'Spamhaus CERT';
+UPDATE events
+   SET "classification.taxonomy" = 'intrusion attempts', "classification.type" = 'brute-force', "classification.identifier" = 'telnet', "malware.name" = NULL, "protocol.application" = 'ssh'
+   WHERE ("malware.name" = 'telnetauth' OR "malware.name" = 'iotcmd' OR "malware.name" = 'iotuser') AND "feed.name" = 'Spamhaus CERT';
+UPDATE events
+   SET "classification.taxonomy" = 'information gathering', "classification.type" = 'scanner', "classification.identifier" = 'wordpress-vulnerabilities', "malware.name" = NULL, "event_description.text" = 'scanning for wordpress vulnerabilities', "protocol.application" = 'http'
+   WHERE "malware.name" = 'wpscanner' AND "feed.name" = 'Spamhaus CERT';
+UPDATE events
+   SET "classification.taxonomy" = 'information gathering', "classification.type" = 'scanner', "classification.identifier" = 'wordpress-login', "malware.name" = NULL, "event_description.text" = 'scanning for wordpress login pages', "protocol.application" = 'http'
+   WHERE "malware.name" = 'w_wplogin' AND "feed.name" = 'Spamhaus CERT';
+UPDATE events
+   SET "classification.taxonomy" = 'intrusion attempts', "classification.type" = 'scanner', "classification.identifier" = 'scanner-generic', "malware.name" = NULL, "event_description.text" = 'infected IoT device scanning for other vulnerable IoT devices'
+   WHERE "malware.name" = 'iotscan' AND "feed.name" = 'Spamhaus CERT';
+```
+
+1.0.3 Bugfix release (2018-02-05)
 ---------------------------------
 
 ### Configuration
@@ -145,24 +213,24 @@ UPDATE events
 | n6 classification | Previous classification |  |  | Current classification |  |  | Notes |
 |-|-|-|-|-|-|-|-|
 |                   | taxonomy   | type   | identifier | taxonomy       | type    | identifier |
-| dns-query         | Other      | other  | ignore me  | Other          | other   | dns-query  |
-| proxy             | Vulnerable | proxy  | open proxy | Other          | proxy   | openproxy  |
+| dns-query         | other      | other  | ignore me  | other          | other   | dns-query  |
+| proxy             | vulnerable | proxy  | open proxy | other          | proxy   | openproxy  |
 | sandbox-url       | ignore     | ignore | ignore me  | malicious code | malware | sandboxurl | As this previous taxonomy did not exist, these events have been rejected |
-| other             | Vulnerable | unknow | unknown    | Other          | other   | other      |
+| other             | vulnerable | unknow | unknown    | other          | other   | other      |
 
 ### Postgres databases
 Use the following statement carefully to upgrade your database.
 Adapt your feedname in the query to the one used in your setup.
 ```SQL
 UPDATE events
-   SET "classification.identifier" = "dns-query"
-   WHERE "feed.name" = 'n6' AND "classification.taxonomy" = "Other" AND "classification.type" = "other" AND "classification.identifier" = "ignore me";
+   SET "classification.identifier" = 'dns-query'
+   WHERE "feed.name" = 'n6' AND "classification.taxonomy" = 'other' AND "classification.type" = 'other' AND "classification.identifier" = 'ignore me';
 UPDATE events
-   SET "classification.taxonomy" = "malicious code" AND "classification.type" = "malware" AND "classification.identifier" = "sandboxurl"
-   WHERE "feed.name" = 'n6' AND "classification.taxonomy" = "Vulnerable" AND "classification.type" = "ignore" AND "classification.identifier" = "ignore me";
+   SET "classification.taxonomy" = 'malicious code' AND "classification.type" = 'malware' AND "classification.identifier" = 'sandboxurl'
+   WHERE "feed.name" = 'n6' AND "classification.taxonomy" = 'vulnerable' AND "classification.type" = 'ignore' AND "classification.identifier" = 'ignore me';
 UPDATE events
-   SET "classification.taxonomy" = "Other" AND "classification.type" = "other" AND "classification.identifier" = "other"
-   WHERE "feed.name" = 'n6' AND "classification.taxonomy" = "Vulnerable" AND "classification.type" = "unknow" AND "classification.identifier" = "unknow";
+   SET "classification.taxonomy" = 'other' AND "classification.type" = 'other' AND "classification.identifier" = 'other'
+   WHERE "feed.name" = 'n6' AND "classification.taxonomy" = 'vulnerable' AND "classification.type" = 'unknow' AND "classification.identifier" = 'unknow';
 ```
 
 1.0.2 Bugfix release

@@ -1,7 +1,7 @@
 Request Tracker collector
 =========================
 
-You need the rt-library from nic.cz, available via [pypi](https://pypi.python.org/pypi/rt):
+You need the rt-library from nic.cz, available via [pypi](https://pypi.org/project/rt/):
 
     pip install rt
 

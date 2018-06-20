@@ -9,6 +9,7 @@ CREATE TABLE events (
     "destination.allocated" timestamp with time zone,
     "destination.as_name" text,
     "destination.asn" integer,
+    "destination.domain_suffix" text,
     "destination.fqdn" text,
     "destination.geolocation.cc" varchar(2),
     "destination.geolocation.city" text,
@@ -56,6 +57,7 @@ CREATE TABLE events (
     "source.allocated" timestamp with time zone,
     "source.as_name" text,
     "source.asn" integer,
+    "source.domain_suffix" text,
     "source.fqdn" text,
     "source.geolocation.cc" varchar(2),
     "source.geolocation.city" text,
@@ -78,7 +80,8 @@ CREATE TABLE events (
     "source.urlpath" text,
     "status" text,
     "time.observation" timestamp with time zone,
-    "time.source" timestamp with time zone
+    "time.source" timestamp with time zone,
+    "tlp" text
 );
 CREATE INDEX "idx_events_classification.identifier" ON events USING btree ("classification.identifier");
 CREATE INDEX "idx_events_classification.taxonomy" ON events USING btree ("classification.taxonomy");

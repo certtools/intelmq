@@ -7,11 +7,10 @@
    * [CentOS 7 / RHEL 7](#centos-7--rhel-7)
    * [openSUSE Leap 42.2](#opensuse-leap-422--423)
 3. [Installation](#installation)
-   * [Native packages](#native-packages)
-   * [With pip](#with-pip)
-     * [From PyPi](#from-pypi)
-     * [From the repository](#from-the-repository)
-4. [Afterwards](#afterwards)
+   * [Native Packages](#native-packages)
+   * [PyPi](#pypi)
+4. [Additional Information](#additional-information)
+5. [Afterwards](#afterwards)
 
 
 Please report any errors you encounter at https://github.com/certtools/intelmq/issues
@@ -43,7 +42,7 @@ apt-get install python3-dev
 apt-get install redis-server
 ```
 
-**Special note for Debian 8**: 
+**Special note for Debian 8**:
 if you are using Debian 8, you need to install this package extra: ``apt-get install libgnutls28-dev``.
 In addition, Debian 8 has an old version of pip3. Please get a current one via:
 ```bash
@@ -98,71 +97,56 @@ zypper in python3-psycopg2 python3-pymongo python3-sleekxmpp
 
 # Installation
 
-There are different methods to install IntelMQ:
+Installation methods available:
 
-* as native deb/rpm package
-* from PyPi: to get the latest releases as python package
-* from the (local) repository: for developers to get the latest (unstable!) version and/or have local modifications
+* native packages (`.deb`, `.rpm`)
+* PyPi (latest releases as python package)
 
-## Native packages
+**Note:** installation for development purposes must follow the instructions available on [Developers Guide](https://github.com/certtools/intelmq/blob/develop/docs/Developers-Guide.md#development-environment).
 
-Get the install instructions for your operating system here:
-https://software.opensuse.org/download.html?project=home%3Asebix%3Aintelmq&package=intelmq
+## Native Packages
 
-Currently, these operating systems are supported by the packages:
-* CentOS 7, install `epel-release` first
-* RHEL 7, install `epel-release` first
-* Debian 8 (install `python3-typing` too) and 9
-* Fedora 25, 26 and Rawhide
-* openSUSE Leap 42.2, 42.3 and Tumbleweed
-* Ubuntu 16.04 and 17.04
+Supported Operating Systems:
 
-Please report any errors or improvements at https://github.com/certtools/intelmq/issues Thanks!
+* **CentOS 7** (requires `epel-release`)
+* **RHEL 7**  (requires `epel-release`)
+* **Debian 8** (requires `python3-typing`)
+* **Debian 9**
+* **Fedora 26**
+* **Fedora 27**
+* **Fedora 28**
+* **openSUSE Leap 42.3**
+* **openSUSE Leap 15.0**
+* **openSUSE Tumbleweed**
+* **Ubuntu 16.04**
+* **Ubuntu 17.10**
+* **Ubuntu 18.04**
 
-## With pip
+Get the installation instructions for your operating system here: [Installation Native Packages](https://software.opensuse.org/download.html?project=home%3Asebix%3Aintelmq&package=intelmq).
 
-pip automatically installs the dependencies of the core-library if they are not installed yet. Some bots have additional dependencies which are mentioned in their documentation. They have also a `REQUIREMENTS` file (in their source directory) which you can use for `pip3 install -r /path/to/REQUIREMENTS`.
+Please report any errors or improvements at [IntelMQ Issues](https://github.com/certtools/intelmq/issues). Thanks!
 
-Please note that the pip3 installation method does not (and cannot) create /opt/intelmq, as described in [Issue #189](/certtools/intelmq/issues/819).
-As workaround you need to move /opt/intelmq from the site-packages directory to / manually.
-The location of this directory varies, it could be `/usr/lib/python3.4/site-packages`, `/usr/local/lib/python3.5/dist-packages/` or similar.
-For example:
-```bash
-mv /usr/lib/python3.4/site-packages/opt/intelmq /opt/
-```
-
-### From PyPi
+## PyPi
 
 ```bash
 sudo -s
 
 pip3 install intelmq
 
-mkdir /opt/intelmq
+mv `python3 -c "import site; print(site.getsitepackages()[0] + '/opt/intelmq')"` /opt/
+
 useradd -d /opt/intelmq -U -s /bin/bash intelmq
 chmod -R 0770 /opt/intelmq
 chown -R intelmq.intelmq /opt/intelmq
 ```
 
-### From the repository
+**Note:** the reason why instructions have the `mv` command using python output is because pip3 installation method does not (and cannot) create `/opt/intelmq`, as described in [Issue #189](https://github.com/certtools/intelmq/issues/819).
 
-Clone the repository if not already done:
-```bash
-git clone https://github.com/certtools/intelmq.git /tmp/intelmq
-cd /tmp/intelmq
-```
 
-If you have a local repository and you have or will do local modification, consider using an editable installation (`pip install -e .`).
-```
-sudo -s
+## Additional Information
 
-pip3 install .
+Following any one of the installation methods mentioned before setup the IntelMQ base. However, some bots have additional dependencies which are mentioned in their own documentation available on this [directory](https://github.com/certtools/intelmq/tree/develop/intelmq/bots).
 
-mkdir /opt/intelmq
-useradd -d /opt/intelmq -U -s /bin/bash intelmq
-chmod -R 0770 /opt/intelmq
-chown -R intelmq.intelmq /opt/intelmq
-```
 
 # Afterwards
 

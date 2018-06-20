@@ -50,7 +50,7 @@ systemctl start redis.service
 # Configuration
 
 Note: If you installed the packages, LSB paths are used instead of `/opt/intelmq`.
-Otherwise, the configuration directory is `/opt/intelmq/etc/`, all files are JSON. By
+Otherwise, the configuration directory is `/opt/intelmq/etc/`. All files are JSON. By
 default, the installation method puts its distributed configuration files into
 `etc/examples`, so it does not overwrite your local configuration. Prior to the
 first run, copy them to `etc`:
@@ -81,7 +81,7 @@ Example:
 
 * `logging_handler`: Can be one of `"file"` or `"syslog"`.
 * `logging_level`: Defines the system-wide log level that will be use by all bots and the intelmqctl tool. Possible values are: `"CRITICAL"`, `"ERROR"`, `"WARNING"`, `"INFO"` and `"DEBUG"`.
-* `logging_path`: If `logging_handler` is `file`. Defines for the system-wide log/ folder that will be use by all bots and the intelmqctl tool. Default value: `/opt/intelmq/var/log/`
+* `logging_path`: If `logging_handler` is `file`. Defines the system-wide log-folder that will be use by all bots and the intelmqctl tool. Default value: `/opt/intelmq/var/log/`
 * `logging_syslog`: If `logging_handler` is `syslog`. Either a list with hostname and UDP port of syslog service, e.g. `["localhost", 514]` or a device name/path, e.g. the default `"/var/log"`.
 
 We recommend `logging_level` `WARNING` for production environments and `INFO` if you want more details. In any case, watch your free disk space.
@@ -164,6 +164,28 @@ This configuration is used by each bot to load the source pipeline and destinati
 	...
 }
 ```
+
+Note that `destination-queues` contains one of the following values:
+* None
+* string
+* list of strings (as in the template above)
+* dict of either strings or lists for complex expert bots:
+
+```
+"destination-queues": {
+    "_default": "<first destination pipeline name>",
+    "_on_error": "<optional destination pipeline name in case of errors>",
+    "other-path": [
+        "<second destination pipeline name>",
+        "<third destination pipeline name>",
+        ...
+        ],
+    ...
+    }
+
+```
+In that case, bot will be able to send the message to one of defined paths. The path `"_default"` is used if none is not specified.
+In case of errors during processing, and the optional path `"_on_error"` is specified, the message will be sent to the pipelines given given as on-error.
 
 **Example:**
 ```
@@ -307,13 +329,9 @@ Example: multiple gethostbyname bots (with different bot ids) may run in paralle
 
 ### Web interface: IntelMQ Manager
 
-IntelMQ has a tool called IntelMQ Manager that gives to user an easy way to 
-configure all pipelines with bots that your team needs. For beginners, it's recommended to
-use the IntelMQ Manager to become acquainted with the functionalities and concepts.
-The IntelMQ Manager offers some of the possibilities of the intelmqctl tool and has a graphical interface for runtime and pipeline configurations.
+IntelMQ has a tool called IntelMQ Manager that gives users an easy way to configure all pipelines with bots that your team needs. For beginners, it's recommended to use the IntelMQ Manager to become acquainted with the functionalities and concepts. The IntelMQ Manager offers some of the possibilities of the intelmqctl tool and has a graphical interface for runtime and pipeline configurations.
 
 See the [IntelMQ Manager repository](https://github.com/certtools/intelmq-manager).
-
 
 ### Command-line interface: intelmqctl
 
@@ -356,9 +374,10 @@ subcommands:
     enable              Enable a bot
     disable             Disable a bot
 
+        intelmqctl [start|stop|restart|status|reload] --group [collectors|parsers|experts|outputs]
         intelmqctl [start|stop|restart|status|reload] bot-id
         intelmqctl [start|stop|restart|status|reload]
-        intelmqctl list [bots|queues]
+        intelmqctl list [bots|queues|queues-and-status]
         intelmqctl log bot-id [number-of-lines [log-level]]
         intelmqctl run bot-id message [get|pop|send]
         intelmqctl run bot-id process [--msg|--dryrun]
@@ -370,6 +389,8 @@ Starting a bot:
     intelmqctl start bot-id
 Stopping a bot:
     intelmqctl stop bot-id
+Reloading a bot:
+    intelmqctl reload bot-id
 Restarting a bot:
     intelmqctl restart bot-id
 Get status of a bot:
@@ -388,12 +409,19 @@ Starting the botnet (all bots):
     intelmqctl start
     etc.
 
+Starting a group of bots:
+    intelmqctl start --group experts
+    etc.
+
 Get a list of all configured bots:
     intelmqctl list bots
 
 Get a list of all queues:
     intelmqctl list queues
 If -q is given, only queues with more than one item are listed.
+
+Get a list of all queues and status of the bots:
+    intelmqctl list queues-and-status
 
 Clear a queue:
     intelmqctl clear queue-id
@@ -483,7 +511,7 @@ redis-cli FLUSHALL
 
 ### Tool: intelmqdump
 
-When bots are failing due to bad input data or programming errors, they can dump the problematic message to a file along with a traceback, if configured accordingly. These dumps are saved at `/opt/intelmq/var/log/[botid].dump` as JSON files. IntelMQ comes with an inspection- and reinjection tool, called `intelmqdump`. It is an interactive tool to show all dumped files and the number of dumps per file. Choose a file by bot-id or listed numeric id. You can then choose to delete single entries from the file with `e 1,3,4`, show a message in more readable format with `s 1` (prints the raw-message, can be long!), recover some messages and put them back in the pipeline for the bot by `a` or `r 0,4,5`. Or delete the file with all dumped messages using `d`.
+When bots are failing due to bad input data or programming errors, they can dump the problematic message to a file along with a traceback, if configured accordingly. These dumps are saved at `/opt/intelmq/var/log/[botid].dump` as JSON files. IntelMQ comes with an inspection and reinjection tool, called `intelmqdump`. It is an interactive tool to show all dumped files and the number of dumps per file. Choose a file by bot-id or listed numeric id. You can then choose to delete single entries from the file with `e 1,3,4`, show a message in more readable format with `s 1` (prints the raw-message, can be long!), recover some messages and put them back in the pipeline for the bot by `a` or `r 0,4,5`. Or delete the file with all dumped messages using `d`.
 
 ```bash
  $ intelmqdump -h
@@ -563,7 +591,7 @@ rm -rf /opt/intelmq
 ```
 
 # Integration with ticket systems, etc.
-First of all, IntelMQ is a message (event) processing system: it collects feeds, processes them, enriches them, filters them and then stores them somewhere or sends them to another system. It does this in a composable, data flow oriented fashion, based on single events. There are no aggregation or grouping features. Now, if you want to integrate IntelMQ with your ticket system or some other system, you need to send its output to somewhere where your ticket system or other services can pick up IntelMQ's data. This could be a database, splunk, or you could send you events directly via email to a ticket system.
+First of all, IntelMQ is a message (event) processing system: it collects feeds, processes them, enriches them, filters them and then stores them somewhere or sends them to another system. It does this in a composable, data flow oriented fashion, based on single events. There are no aggregation or grouping features. Now, if you want to integrate IntelMQ with your ticket system or some other system, you need to send its output to somewhere where your ticket system or other services can pick up IntelMQ's data. This could be a database, splunk, or you could send your events directly via email to a ticket system.
 
 Different users came up with different solutions for this, each of them fitting their own organisation. Hence these solutions are not part of the core IntelMQ repository. 
   * CERT.at uses a postgresql DB (postgres output bot) and has a small tool `intelmqcli` which fetches the events in the postgresql DB which are marked as "new" and will group them and send them out via the RT ticket system.

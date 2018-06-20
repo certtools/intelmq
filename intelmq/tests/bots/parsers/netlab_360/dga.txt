@@ -6,3 +6,4 @@
 # netlab@360.cn
 
 suppobox	difficultdress.net	2016-11-12 11:58:56	2016-11-13 00:04:15
+foobar	example.com	2018-01-01 00:00:00	2030-05-04 00:08:08

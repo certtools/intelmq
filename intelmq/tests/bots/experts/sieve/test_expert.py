@@ -884,6 +884,36 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         self.assertMessageEqual(0, event)
 
+    def test_network_host_bits_list_match(self):
+        """ Test if range list of networks with host bits set match operator. """
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__),
+                                              'test_sieve_files/test_ip_range_list_match.sieve')
+
+        # positive test
+        event = EXAMPLE_INPUT.copy()
+        event['source.ip'] = '169.254.2.1'
+        expected = event.copy()
+        expected['comment'] = 'bogon'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # positive test
+        event = EXAMPLE_INPUT.copy()
+        event['source.ip'] = '169.254.3.1'
+        expected = event.copy()
+        expected['comment'] = 'bogon'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, expected)
+
+        # negative test
+        event = EXAMPLE_INPUT.copy()
+        event['source.ip'] = '169.255.2.1'
+        self.input_message = event
+        self.run_bot()
+        self.assertMessageEqual(0, event)
+
     def test_comments(self):
         """ Test comments in sieve file."""
         self.sysconfig['file'] = os.path.join(os.path.dirname(__file__), 'test_sieve_files/test_comments.sieve')
@@ -894,6 +924,40 @@ class TestSieveExpertBot(test.BotTestCase, unittest.TestCase):
         self.input_message = event
         self.run_bot()
         self.assertMessageEqual(0, expected)
+
+    def test_named_queues(self):
+        """ Test == numeric match """
+        self.sysconfig['file'] = os.path.join(os.path.dirname(__file__),
+                                              'test_sieve_files/test_named_queues.sieve')
+
+        # if match drop
+        numeric_match_true = EXAMPLE_INPUT.copy()
+        numeric_match_true['comment'] = "drop"
+        self.input_message = numeric_match_true
+        self.run_bot()
+        self.assertOutputQueueLen(0)
+
+
+        # if doesn't match keep
+        numeric_match_false = EXAMPLE_INPUT.copy()
+        numeric_match_false['comment'] = "keep without path"
+        self.input_message = numeric_match_false
+        self.run_bot()
+        self.assertMessageEqual(0, numeric_match_false)
+
+        # if doesn't match keep
+        numeric_match_false = EXAMPLE_INPUT.copy()
+        numeric_match_false['comment'] = "keep with path"
+        self.input_message = numeric_match_false
+        self.run_bot()
+        self.assertMessageEqual(0, numeric_match_false, path="other-way")
+
+        # if doesn't match keep
+        numeric_match_false = EXAMPLE_INPUT.copy()
+        numeric_match_false['comment'] = "default path"
+        self.input_message = numeric_match_false
+        self.run_bot()
+        self.assertMessageEqual(0, numeric_match_false, path="_default")
 
 
 

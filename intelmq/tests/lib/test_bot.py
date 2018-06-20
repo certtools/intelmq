@@ -7,11 +7,12 @@ import unittest
 
 
 import intelmq.lib.test as test
+from intelmq.lib.bot import Bot
 from intelmq.tests.lib import test_parser_bot
 
 
 class TestBot(test.BotTestCase, unittest.TestCase):
-    """ Testing generic funtionalties of Bot base class. """
+    """ Testing generic functionalities of Bot base class. """
 
     @classmethod
     def set_bot(cls):
@@ -44,8 +45,16 @@ class TestBot(test.BotTestCase, unittest.TestCase):
         """
         self.input_message = test_parser_bot.EXAMPLE_SHORT
         self.allowed_warning_count = 1
+        self.sysconfig = {'raise_warning': True}
         self.run_bot()
-        self.assertLogMatches(levelname='WARNING', pattern='.*intelmq/tests/lib/test_parser_bot\.py\:77\: UserWarning: This is a warning test.')
+        self.assertLogMatches(levelname='WARNING', pattern='.*intelmq/tests/lib/test_parser_bot\.py\:[0-9]+\: UserWarning: This is a warning test.')
+
+    def test_bot_group(self):
+        """
+        Test if the bot's group is Parser.
+        """
+        self.prepare_bot()
+        self.assertEqual(self.bot.group, 'Parser')
 
 
 if __name__ == '__main__':  # pragma: no cover

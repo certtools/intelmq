@@ -1,5 +1,21 @@
 ---
 providers:
+  WebInspektor:
+    Unsafe sites:
+      description: Latest detected unsafe sites.
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.http.collector_http
+          parameters:
+            http_url: https://app.webinspector.com/public/recent_detections/
+            rate_limit: 60
+        parser:
+          module: intelmq.bots.parsers.webinspektor.parser
+          parameters:
+      revision: 09-03-2018
+      status: on
+      documentation:
   Sucuri:
     Hidden IFrames:
       description: Latest hidden iframes identified on compromised web sites.
@@ -103,6 +119,27 @@ providers:
           module: intelmq.bots.parsers.openphish.parser
           parameters:
       revision: 20-01-2018
+      status: on
+      documentation:
+  OpenPhish Commercial:
+    Phishing:
+      description: OpenPhish is a fully automated self-contained platform for phishing
+        intelligence. It identifies phishing sites and performs intelligence analysis
+        in real time without human intervention and without using any external resources,
+        such as blacklists.
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.http.collector_http
+          parameters:
+            http_url: https://openphish.com/prvt-intell/
+            http_password: "{{ your password}}"
+            http_username: "{{ your username}}"
+            rate_limit: 86400
+        parser:
+          module: intelmq.bots.parsers.openphish.parser_commercial
+          parameters:
+      revision: 06-02-2018
       status: on
       documentation:
   Nothink:
@@ -221,7 +258,7 @@ providers:
           module: intelmq.bots.collectors.http.collector_http
           parameters:
             http_url: http://data.netlab.360.com/feeds/mirai-scanner/scanner.list
-            rate_limit: 3600
+            rate_limit: 86400
         parser:
           module: intelmq.bots.parsers.netlab_360.parser
           parameters:
@@ -1254,7 +1291,7 @@ providers:
       status: on
       documentation:
   Fraunhofer:
-    DGA Archieve:
+    DGA Archive:
       description: Fraunhofer DGA collector fetches data from Fraunhofer's domain
         generation archive.
       additional_information:
@@ -1270,5 +1307,87 @@ providers:
           module: intelmq.bots.parsers.fraunhofer.parser_dga
           parameters:
       revision: 20-01-2018
+      status: on
+      documentation:
+  MalwareURL:
+    Latest malicious activity:
+      description: Latest malicious domains/IPs.
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.http.collector_http
+          parameters:
+            http_url: https://www.malwareurl.com/
+            rate_limit: 86400
+        parser:
+          module: intelmq.bots.parsers.malwareurl.parser
+          parameters:
+      revision: 05-02-2018
+      status: on
+      documentation:
+  Microsoft:
+    BingMURLs:
+      description: Collects Malicious URLs detected by Bing from the Interflow API.
+      additional_information: Depending on the file sizes you may need to increase the parameter 'http_timeout_sec' of the collector.
+      bots:
+        collector:
+          module: intelmq.bots.collectors.microsoft.collector_interflow
+          parameters:
+            api_key: "{{your API key}}"
+            file_match: "^bingmurls_"
+            not_older_than: "2 days"
+            rate_limit: 3600
+            http_timeout_sec: 300
+        parser:
+          module: intelmq.bots.parsers.microsoft.parser_bingmurls
+          parameters:
+      revision: 29-05-2018
+      status: on
+      documentation:
+    CTIP:
+      description: Collects CTIP files from the Interflow API.
+      additional_information: Depending on the file sizes you may need to increase the parameter 'http_timeout_sec' of the collector. As many IPs occur very often in the data, you may want to use a deduplicator specifically for the feed.
+      bots:
+        collector:
+          module: intelmq.bots.collectors.microsoft.collector_interflow
+          parameters:
+            api_key: "{{your API key}}"
+            file_match: "^ctip_"
+            not_older_than: "2 days"
+            rate_limit: 3600
+            http_timeout_sec: 300
+        parser:
+          module: intelmq.bots.parsers.microsoft.parser_ctip
+          parameters:
+      revision: 06-03-2018
+      status: on
+      documentation:
+  Threatminer:
+    Recent domains:
+      description: Latest malicious domains.
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.http.collector_http
+          parameters:
+            http_url: https://www.threatminer.org/
+            rate_limit: 86400
+        parser:
+          module: intelmq.bots.parsers.threatminer.parser
+          parameters:
+      revision: 06-02-2018
+      status: on
+      documentation: https://www.threatminer.org/
+  Calidog:
+    CertStream:
+       description: HTTP Websocket Stream from certstream.calidog.io providing data from Certificate Transparency Logs.
+       additional_information:
+       bots:
+         collector:
+         module: intelmq.bots.collectors.certstream.collector_certstream
+         parameters:
+       parser:
+         module: intelmq.bots.parses.certstream.parser_certstream
+      revision: 15-06-2018
       status: on
       documentation:

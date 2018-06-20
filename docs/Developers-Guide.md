@@ -4,8 +4,11 @@
   * [Goals](#goals)
 * [Development Environment](#development-environment)
   * [Installation](#installation)
+  * [How to develop](#how-to-develop)
   * [Update](#update)
   * [Testing](#testing)
+    * [Environment variables](#environment-variables)
+    * [Configuration test files](#configuration-test-files)
 * [Development Guidelines](#development-guidelines)
   * [Coding-Rules](#coding-rules)
     * [Unicode](#unicode)
@@ -53,7 +56,7 @@ However, before we go into the details, it is important to observe and internali
 
 ## Goals
 
-It is important, that all developers agree and stick to these meta-guidelines. 
+It is important, that all developers agree and stick to these meta-guidelines.
 IntelMQ tries to:
 
 * Be well tested. For developers this means, we expect you to write unit tests for bots. Every time.
@@ -77,21 +80,86 @@ Similarly, if code does not get accepted upstream by the main developers, it is 
 # Development Environment
 
 ## Installation
-Developers might want to install IntelMQ with `pip3 -e`, which gives you a so called *editable* installation. No code is copied in the libraries directories, there's just a link to your code.
 
-    pip3 install -e .
+Developers MUST have a fork repository of IntelMQ in order to commit the new code to their repository and then be able to do pull requests to main repository.
+
+The following instructions will use `pip3 -e`, which gives you a so called *editable* installation. No code is copied in the libraries directories, there's just a link to your code. However, configuration files still required to be moved to `/opt/intelmq` as the instructions show.
+
+```bash
+sudo -s
+
+git clone https://github.com/<your username>/intelmq.git /opt/dev_intelmq
+cd /opt/dev_intelmq
+
+git config core.fileMode false
+chmod -R 777 /intelmq
+
+pip3 install -e .
+
+useradd -d /opt/intelmq -U -s /bin/bash intelmq
+
+mkdir /opt/intelmq
+mkdir -p /opt/intelmq/var/lib/bots/file-output/
+mkdir -p /opt/intelmq/var/log/
+
+cp -R /opt/dev_intelmq/intelmq/etc /opt/intelmq/
+cp -R /opt/dev_intelmq/intelmq/bots/BOTS /opt/intelmq/etc/
+
+chmod -R 0770 /opt/intelmq
+chown -R intelmq.intelmq /opt/intelmq
+```
+
+**Note:** please do not forget that configuration files, log files will be available on `/opt/intelmq`. However, if your development is somehow related to any configuration file, keep using `/opt/intelmq` and then, before commit, change the configurations files on `/opt/dev_intelmq/intelmq/etc/` with your changes on `/opt/intelmq/etc/`.
+
+
+## How to develop
+
+After you successfully setup your IntelMQ development environment, you can perform any development on any `.py` file on `/opt/dev_intelmq`. After you change, you can use the normal procedure to run the bots:
+
+```bash
+su - intelmq
+
+intelmqctl start spamhaus-drop-collector
+
+tail -f /opt/intelmq/var/log/spamhaus-drop-collector.log
+```
+
+You can also add new bots, creating the new `.py` file on the proper directory inside `cd /opt/dev_intelmq/intelmq`. However, your IntelMQ installation with pip3 needs to be updated. Please check the following section.
+
 
 ## Update
 
-If you do any changes on setup.py, data files (e.g. example configurations) or add new bots, you need to rerun the installation routine.
+In case you developed a new bot, you need to update your current development installation. In order to do that, please follow this procedure:
 
-    pip3 install --upgrade -e .
+
+1. Add the new bot information to `/opt/dev_intelmq/intelmq/bots/BOTS`, not `/opt/intelmq/etc/BOTS`.
+2. Make sure that you have your new bot in the right place and the information on BOTS file is correct.
+3. Execute the following commands:
+
+```bash
+sudo -s
+
+cd /opt/dev_intelmq
+pip3 install -e .
+cp /opt/dev_intelmq/intelmq/bots/BOTS /opt/intelmq/etc/BOTS
+
+chmod -R 0770 /opt/intelmq
+chown -R intelmq.intelmq /opt/intelmq
+```
+
+Now you can test run your new bot following this procedure:
+
+```bash
+su - intelmq
+
+intelmqctl start <bot_id>
+```
 
 ## Testing
 
 All changes have to be tested and new contributions must be accompanied by according unit tests. You can run the tests by changing to the directory with IntelMQ repository and running either `unittest` or `nosetests`:
 
-    cd intelmq
+    cd /opt/dev_intelmq
     python3 -m unittest {discover|filename}  # or
     nosetests3 [filename]  # or
     python3 setup.py test  # uses a build environment
@@ -116,11 +184,9 @@ For example, to run all tests you can use:
 INTELMQ_TEST_DATABASES=1 INTELMQ_TEST_LOCAL_WEB=1 INTELMQ_TEST_EXOTIC=1 nosetests
 ```
 
-### Configuration files
+### Configuration test files
 
-The tests use the configuration files in your working directory, not those
-installed in `/opt/intelmq/etc/` or `/etc/`.  You can run the
-tests for a locally changed intelmq without affecting an installation or
+The tests use the configuration files in your working directory, not those installed in `/opt/intelmq/etc/` or `/etc/`.  You can run the tests for a locally changed intelmq without affecting an installation or
 requiring root to run them.
 
 # Development Guidelines
@@ -265,8 +331,8 @@ Any component of IntelMQ MUST respect the "Data Harmonization Ontology".
   * Make separate pull requests / branches on GitHub for changes. This allows us to discuss things via GitHub.
   * We prefer one  Pull Request per feature or change. If you have a bunch of small fixes, please don't create one RP per fix :)
   * Only very small and changes (docs, ...) might be committed directly to development branches without Pull Request by the [core-team](https://github.com/orgs/certtools/teams/core).
-  * Keep the balance between atomic commits and keeping the amount of commits per PR small. You can use interactive rebasing to squash multiple small commits into one. (`rebase -i master`)
-  * Make sure your PR is merge able in the master branch and all tests are successful.
+  * Keep the balance between atomic commits and keeping the amount of commits per PR small. You can use interactive rebasing to squash multiple small commits into one (`rebase -i [base-branch]`). Only do rebasing if the code you are rebasing is yet not used by others or is already merged - because then others may need to run into conflicts.
+  * Make sure your PR is merge able in the develop branch and all tests are successful.
   * If possible [sign your commits with GPG](https://help.github.com/articles/signing-commits-using-gpg/).
 
 ### Workflow
@@ -277,17 +343,19 @@ We assume here, that origin is your own fork. We first add the upstream reposito
 > git remote add upstream https://github.com/certtools/intelmq.git
 ```
 
-Syncing develop (or any other branch):
+Syncing develop:
 
 ```bash
 > git checkout develop
 > git pull upstream develop
 > git push origin develop
 ```
+You can do the same with the branches `master` and `maintenance`.
+
 Create a separate feature-branch to work on, sync develop with upstream. Create working branch from develop:
 ```bash
 > git checkout develop
-> git checkout -b new-feature
+> git checkout -b bugfix
 # your work
 > git commit
 ```
@@ -300,21 +368,21 @@ Or, for bugfixes create a separate bugfix-branch to work on, sync maintenance wi
 
 Getting upstream's changes for master or any other branch:
 ```bash
-> git checkout master
-> git pull upstream master
-> git push origin master
+> git checkout develop
+> git pull upstream develop
+> git push origin develop
 ```
 There are 2 possibilities to get upstream's commits into your branch. Rebasing and Merging. Using rebasing, your history is rewritten, putting your changes on top of all other commits. You can use this if your changes are not published yet (or only in your fork).
 ```bash
 > git checkout bugfix
-> git rebase maintenance
+> git rebase develop
 ```
-Using the `-i` flag for rebase enables interactive rebasing. You can then remove, reorder and squash commits, rewrite commit messages, beginning with the given branch, e.g. maintenance.
+Using the `-i` flag for rebase enables interactive rebasing. You can then remove, reorder and squash commits, rewrite commit messages, beginning with the given branch, e.g. develop.
 
 Or using merging. This doesn't break the history. It's considered more , but also pollutes the history with merge commits.
 ```bash
 > git checkout bugfix
-> git merge maintenance
+> git merge develop
 ```
 
 Also see the [development workflow of Scipy](https://docs.scipy.org/doc/numpy/dev/gitwash/development_workflow.html) which has more examples.
@@ -420,10 +488,10 @@ All other names can be used freely.
 
 ## Pipeline interactions
 
-A can call three methods related to the pipeline:
+We can call three methods related to the pipeline:
 
   - `self.receive_message()`: The pipeline handler pops one message from the internal queue if possible. Otherwise one message from the sources list is popped, and added it to an internal queue. In case of errors in process handling, the message can still be found in the internal queue and is not lost. The bot class unravels the message a creates an instance of the Event or Report class.
-  - `self.send_message(event)`: Processed message is sent to destination queues.
+  - `self.send_message(event, path="_default")`: Processed message is sent to destination queues. It is possible to change the destination queues by optional `path` parameter.
   - `self.acknowledge_message()`: Message formerly received by `receive_message` is removed from the internal queue. This should always be done after processing and after the sending of the new message. In case of errors, this function is not called and the message will stay in the internal queue waiting to be processed again.
 
 ## Logging
@@ -453,7 +521,7 @@ When the logger instance is created, the bot id must be given as parameter anywa
 
 ### What to Log
 
-* Try to keep a balance between obscuring the source code file with hundreds of log messages and having too little log messages. 
+* Try to keep a balance between obscuring the source code file with hundreds of log messages and having too little log messages.
 * In general, a bot MUST report error conditions.
 
 ### How to Log

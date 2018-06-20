@@ -44,16 +44,16 @@ LOG_REGEX = (r'^(?P<date>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d+) -'
              r' (?P<bot_id>([-\w]+|py\.warnings)) - '
              r'(?P<log_level>[A-Z]+) - '
              r'(?P<message>.+)$')
-SYSLOG_REGEX = ('^(?P<date>\w{3} \d{2} \d{2}:\d{2}:\d{2}) (?P<hostname>[-\.\w]+) '
-                '(?P<bot_id>([-\w]+|py\.warnings)): (?P<log_level>[A-Z]+) (?P<message>.+)$')
+SYSLOG_REGEX = (r'^(?P<date>\w{3} \d{2} \d{2}:\d{2}:\d{2}) (?P<hostname>[-\.\w]+) '
+                r'(?P<bot_id>([-\w]+|py\.warnings)): (?P<log_level>[A-Z]+) (?P<message>.+)$')
 
 
 class Parameters(object):
     pass
 
 
-def decode(text: Union[bytes, str], encodings: Sequence[str]=("utf-8", ),
-           force: bool=False) -> str:
+def decode(text: Union[bytes, str], encodings: Sequence[str] = ("utf-8", ),
+           force: bool = False) -> str:
     """
     Decode given string to UTF-8 (default).
 
@@ -88,8 +88,8 @@ def decode(text: Union[bytes, str], encodings: Sequence[str]=("utf-8", ),
                      ".".format(encodings))
 
 
-def encode(text: Union[bytes, str], encodings: Sequence[str]=("utf-8", ),
-           force: bool=False) -> str:
+def encode(text: Union[bytes, str], encodings: Sequence[str] = ("utf-8", ),
+           force: bool = False) -> str:
     """
     Encode given string from UTF-8 (default).
 
@@ -216,9 +216,9 @@ class StreamHandler(logging.StreamHandler):
             self.handleError(record)
 
 
-def log(name: str, log_path: str=intelmq.DEFAULT_LOGGING_PATH, log_level: str="DEBUG",
-        stream: Optional[object]=None, syslog: Union[bool, str, list, tuple]=None,
-        log_format_stream: str=LOG_FORMAT_STREAM):
+def log(name: str, log_path: str = intelmq.DEFAULT_LOGGING_PATH, log_level: str = "DEBUG",
+        stream: Optional[object] = None, syslog: Union[bool, str, list, tuple] = None,
+        log_format_stream: str = LOG_FORMAT_STREAM):
     """
     Returns a logger instance logging to file and sys.stderr or other stream.
     The warnings module will log to the same handlers.
@@ -247,6 +247,8 @@ def log(name: str, log_path: str=intelmq.DEFAULT_LOGGING_PATH, log_level: str="D
     """
     logging.captureWarnings(True)
     warnings_logger = logging.getLogger("py.warnings")
+    # set the name of the warnings logger to the bot neme, see #1184
+    warnings_logger.name = name
 
     logger = logging.getLogger(name)
     logger.setLevel(log_level)
@@ -311,7 +313,7 @@ def reverse_readline(filename: str, buf_size=100000) -> str:
         yield line[::-1]
 
 
-def parse_logline(logline: str, regex: str=LOG_REGEX) -> dict:
+def parse_logline(logline: str, regex: str = LOG_REGEX) -> dict:
     """
     Parses the given logline string into its components.
 

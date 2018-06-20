@@ -1,0 +1,45 @@
+[
+  {
+    "Attributable": true,
+    "Description": "Website has been identified as malicious by Bing",
+    "FirstReportedDateTime": "2018-05-28T07:00:00Z",
+    "IndicatorExpirationDateTime": "2018-06-28T10:49:29Z",
+    "IndicatorProvider": "Bing",
+    "IndicatorThreatType": "MaliciousUrl",
+    "IsPartnerShareable": true,
+    "IsProductLicensed": true,
+    "LastReportedDateTime": "2018-05-28T07:00:00Z",
+    "NetworkDestinationAsn": 65540,
+    "NetworkDestinationIPv4": "127.5.9.48",
+    "NetworkDestinationPort": 80,
+    "Tags": [
+      "com"
+    ],
+    "ThreatDetectionProduct": "Forefront",
+    "TLPLevel": "Amber",
+    "Url": "http://01.example.com/foobar.html",
+    "Version": 1.5
+  },
+  {
+    "Attributable": true,
+    "Description": "Website has been identified as malicious by Bing",
+    "FirstReportedDateTime": "2018-05-28T07:00:00Z",
+    "IndicatorExpirationDateTime": "2018-06-28T10:49:29Z",
+    "IndicatorProvider": "Bing",
+    "IndicatorThreatType": "MaliciousUrl",
+    "IsPartnerShareable": true,
+    "IsProductLicensed": true,
+    "LastReportedDateTime": "2018-05-28T07:00:00Z",
+    "NetworkDestinationAsn": 64510,
+    "NetworkDestinationIPv4": "198.51.48.124",
+    "NetworkDestinationPort": 80,
+    "Tags": [
+      "org"
+    ],
+    "ThreatDetectionProduct": "Forefront",
+    "TLPLevel": "Amber",
+    "Url": "http://010302.example.org/",
+    "Version": 1.5
+   }
+]
+

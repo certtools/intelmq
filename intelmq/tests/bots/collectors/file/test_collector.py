@@ -23,7 +23,7 @@ OUTPUT = {"__type": "Report",
 
 class TestFileCollectorBot(test.BotTestCase, unittest.TestCase):
     """
-    A TestCase for ModifyExpertBot.
+    A TestCase for FileCollectorBot.
     """
 
     @classmethod
@@ -33,7 +33,7 @@ class TestFileCollectorBot(test.BotTestCase, unittest.TestCase):
         cls.sysconfig = {'path': file_path,
                          'postfix': '.txt',
                          'delete_file': False,
-                         'feed': 'Example feed',
+                         'name': 'Example feed',
                          'chunk_size': None,
                          'chunk_replicate_header': True,
                          }

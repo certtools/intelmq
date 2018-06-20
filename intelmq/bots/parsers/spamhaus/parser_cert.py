@@ -24,26 +24,19 @@ local_port, protocol
 """
 
 from intelmq.lib import utils
-from intelmq.lib.bot import Bot
+from intelmq.lib.bot import ParserBot
 from intelmq.lib.harmonization import DateTime
 
 __all__ = ['SpamhausCERTParserBot']
 
 
-class SpamhausCERTParserBot(Bot):
+class SpamhausCERTParserBot(ParserBot):
 
-    def process(self):
-        report = self.receive_message()
-
-        raw_report = utils.base64_decode(report["raw"])
-
-        for row in raw_report.splitlines():
-            row = row.strip()
-
-            if not len(row) or row.startswith(';'):
-                continue
-
-            row_splitted = [field.strip() for field in row.split(',')]
+    def parse_line(self, row, report):
+        if not len(row) or row.startswith(';'):
+            self.tempdata.append(row)
+        else:
+            row_splitted = [field.strip() for field in row.strip().split(',')]
             event = self.new_event(report)
             event.change("feed.url", event["feed.url"].split("key=")[0])
 
@@ -54,24 +47,76 @@ class SpamhausCERTParserBot(Bot):
             event.add('source.geolocation.cc', row_splitted[2])
             event.add('time.source',
                       DateTime.from_timestamp(int(row_splitted[3])))
-            event.add('malware.name', row_splitted[4].lower())
+
+            malware = row_splitted[4].lower()
+            if malware == 'openrelay':
+                event.add('classification.type', 'vulnerable service')
+                event.add('classification.identifier', 'openrelay')
+                event.add('protocol.application', 'smtp')
+            elif malware == 'iotrdp':
+                event.add('classification.type', 'brute-force')
+                event.add('classification.identifier', 'rdp')
+                event.add('protocol.application', 'rdp')
+            elif malware == 'sshauth':
+                event.add('classification.type', 'brute-force')
+                event.add('classification.identifier', 'ssh')
+                event.add('protocol.application', 'ssh')
+            elif malware in ('telnetauth', 'iotcmd', 'iotuser'):
+                event.add('classification.type', 'brute-force')
+                event.add('classification.identifier', 'telnet')
+                event.add('protocol.application', 'telnet')
+            elif malware  == 'smtpauth':
+                event.add('classification.type', 'brute-force')
+                event.add('classification.identifier', 'smtp')
+                event.add('protocol.application', 'smtp')
+            elif malware == 'iotscan':
+                event.add('classification.type', 'scanner')
+                event.add('event_description.text', 'infected IoT device scanning for other vulnerable IoT devices')
+                if row_splitted[7] == '23':
+                    event.add('protocol.application', 'telnet')
+                    event.add('classification.identifier', 'telnet')
+                else:
+                    event.add('classification.identifier', 'scanner-generic')
+            elif malware == 'wpscanner':
+                event.add('classification.type', 'scanner')
+                event.add('classification.identifier', 'wordpress-vulnerabilities')
+                event.add('event_description.text', 'scanning for wordpress vulnerabilities')
+                event.add('protocol.application', 'http')
+            elif malware == 'w_wplogin':
+                event.add('classification.type', 'scanner')
+                event.add('classification.identifier', 'wordpress-login')
+                event.add('event_description.text', 'scanning for wordpress login pages')
+                event.add('protocol.application', 'http')
+            elif malware == 'l_spamlink':
+                event.add('classification.type', 'spam')
+                event.add('classification.identifier', 'spamlink')
+                event.add('event_description.text', 'Link appeared in a spam email from ip in extra.spam_ip.')
+#                event.add('protocol.application', 'http')
+                ip, malware_version, malware_name = row_splitted[8].split(':')
+                event.add('malware.name', malware_name)
+                event.add('malware.version', malware_version)
+                event.add('source.url', row_splitted[5])
+                event.add('extra.spam_ip', ip)
+                if row_splitted[5] != row_splitted[6]:
+                    raise ValueError('Columns 5 and 6 are not equal, unexpected data (%r, %r). '
+                                     'Please report a bug with sample data.' % tuple(row_splitted[5:7]))
+            else:
+                if malware == 'auto':
+                    malware = 's_other'
+                event.add('malware.name', malware)
+                event.add('classification.type', 'botnet drone')
+                event.add('source.url', row_splitted[5], raise_failure=False)
+
             # otherwise the same ip, ignore
             event.add('destination.fqdn', row_splitted[5], raise_failure=False)
             event.add('destination.ip', row_splitted[6], raise_failure=False)
             event.add('destination.port', row_splitted[7], raise_failure=False)
-            if row_splitted[8] and row_splitted[8] not in ('-', '?'):
-                try:
-                    port = int(row_splitted[8])
-                except ValueError:
-                    event.add('destination.fqdn', row_splitted[8], raise_failure=False)
-                else:
-                    event.add('extra', {'destination.local_port': port})
+            if row_splitted[8] and row_splitted[8] not in ('-', '?') and malware != 'l_spamlink':
+                event.add('extra.source.local_port', int(row_splitted[8]))
             event.add('protocol.transport', row_splitted[9], raise_failure=False)
-            event.add('classification.type', 'botnet drone')
-            event.add('raw', row)
+            event.add('raw', self.recover_line(row))
 
-            self.send_message(event)
-        self.acknowledge_message()
+            yield event
 
 
 BOT = SpamhausCERTParserBot

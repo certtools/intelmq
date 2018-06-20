@@ -19,7 +19,13 @@ TAXONOMY = {
 class AutoshunParserBot(ParserBot):
 
     def parse(self, report):
-        self.parser = html.parser.HTMLParser()
+        if sys.version_info[:2] == (3, 4):
+            # See https://docs.python.org/3/whatsnew/3.4.html#html
+            # https://docs.python.org/3/whatsnew/3.5.html#changes-in-the-python-api
+            # raises DeprecationWarning otherwise on 3.4, True by default in 3.5
+            self.parser = html.parser.HTMLParser(convert_charrefs=True)
+        else:
+            self.parser = html.parser.HTMLParser()
 
         raw_report = utils.base64_decode(report.get("raw"))
         splitted = raw_report.split("</tr>")

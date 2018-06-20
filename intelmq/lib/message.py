@@ -30,7 +30,7 @@ class MessageFactory(object):
 
     @staticmethod
     def from_dict(message: dict, harmonization=None,
-                  default_type: Optional[str]=None) -> dict:
+                  default_type: Optional[str] = None) -> dict:
         """
         Takes dictionary Message object, returns instance of correct class.
 
@@ -56,8 +56,8 @@ class MessageFactory(object):
         return class_reference(message, auto=True, harmonization=harmonization)
 
     @staticmethod
-    def unserialize(raw_message: str, harmonization: dict=None,
-                    default_type: Optional[str]=None) -> dict:
+    def unserialize(raw_message: str, harmonization: dict = None,
+                    default_type: Optional[str] = None) -> dict:
         """
         Takes JSON-encoded Message object, returns instance of correct class.
 
@@ -137,7 +137,7 @@ class Message(dict):
         else:
             return super(Message, self).__getitem__(key)
 
-    def is_valid(self, key: str, value: str, sanitize: bool=True) -> bool:
+    def is_valid(self, key: str, value: str, sanitize: bool = True) -> bool:
         """
         Checks if a value is valid for the key (after sanitation).
 
@@ -166,9 +166,9 @@ class Message(dict):
             return True
         return False
 
-    def add(self, key: str, value: str, sanitize: bool=True,
-            overwrite: Optional[bool]=None, ignore: Sequence=(),
-            raise_failure: bool=True) -> bool:
+    def add(self, key: str, value: str, sanitize: bool = True,
+            overwrite: Optional[bool] = None, ignore: Sequence = (),
+            raise_failure: bool = True) -> bool:
         """
         Add a value for the key (after sanitation).
 
@@ -257,7 +257,7 @@ class Message(dict):
             if not self.add(key, value, sanitize=False, raise_failure=False, overwrite=True):
                 self.add(key, value, sanitize=True, overwrite=True)
 
-    def change(self, key: str, value: str, sanitize: bool=True):
+    def change(self, key: str, value: str, sanitize: bool = True):
         if key not in self:
             raise exceptions.KeyNotExists(key)
         return self.add(key, value, overwrite=True, sanitize=sanitize)
@@ -389,8 +389,8 @@ class Message(dict):
 
         return event_hash.hexdigest()
 
-    def to_dict(self, hierarchical: bool=False, with_type: bool=False,
-                jsondict_as_string: bool=False) -> dict:
+    def to_dict(self, hierarchical: bool = False, with_type: bool = False,
+                jsondict_as_string: bool = False) -> dict:
         """
         Returns a copy of self, only based on a dict class.
 
@@ -436,7 +436,7 @@ class Message(dict):
                     break
 
                 if subkey not in json_dict_fp:
-                    json_dict_fp[subkey] = dict()
+                    json_dict_fp[subkey] = {}
 
                 json_dict_fp = json_dict_fp[subkey]
 
@@ -472,8 +472,8 @@ class Message(dict):
 
 class Event(Message):
 
-    def __init__(self, message: Optional[dict]=(), auto: bool=False,
-                 harmonization: Optional[dict]=None):
+    def __init__(self, message: Optional[dict] = (), auto: bool = False,
+                 harmonization: Optional[dict] = None):
         """
         Parameters:
             message: Give a report and feed.name, feed.url and
@@ -507,15 +507,23 @@ class Event(Message):
 
 class Report(Message):
 
-    def __init__(self, message: Optional[dict]=(), auto: bool=False,
-                 harmonization: Optional[dict]=None):
+    def __init__(self, message: Optional[dict] = (), auto: bool = False,
+                 harmonization: Optional[dict] = None):
         """
         Parameters:
-            message: Passed along to Message's and dict's init
+            message: Passed along to Message's and dict's init.
+                If this is an instance of the Event class, the resulting Report instance
+                has only the fiels which are possible in Report, all others are stripped.
             auto: if False (default), time.observation is automatically added.
             harmonization: Harmonization definition to use
         """
-        super(Report, self).__init__(message, auto, harmonization)
+        if isinstance(message, Event):
+            super(Report, self).__init__({}, auto, harmonization)
+            for key, value in message.items():
+                if self._Message__is_valid_key(key):
+                    self.add(key, value, sanitize=False)
+        else:
+            super(Report, self).__init__(message, auto, harmonization)
         if not auto and 'time.observation' not in self:
             time_observation = intelmq.lib.harmonization.DateTime().generate_datetime_now()
             self.add('time.observation', time_observation, sanitize=False)
