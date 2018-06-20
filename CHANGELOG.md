@@ -21,6 +21,7 @@ CHANGELOG
 - `intelmqctl run` if message is sent to a non-default path, it is printed out
 - `intelmqctl restart` bug fix; returned some half-nonsense, now returns return state of start and stop operation in a list, see #1226
 - `intelmqctl check`: The check for unconfigured defaults parameters is now optional and will be skipped if the shipped file could not be found.
+- `intelmqctl check`: New parameter `--no-connections` to prevent the command from making connections to e.g. the redis pipeline.
 
 
 ### Contrib
