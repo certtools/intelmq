@@ -405,7 +405,7 @@ class Amqp(Pipeline):
         return queue_dict
 
     def clear_queue(self, queue: str) -> bool:
-        raise NotImplementedError
+        self.channel.queue_delete(queue=queue)
 
     def nonempty_queues(self) -> set:
         if requests is False:
