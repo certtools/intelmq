@@ -1053,16 +1053,16 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             pipeline = PipelineFactory.create(self.parameters)
             pipeline.set_queues(None, "source")
             pipeline.connect()
+            orphan_queues = "', '".join({a.decode() for a in pipeline.pipe.keys()} - all_queues)
         except Exception as exc:
+            error = utils.error_message_from_exc(exc)
             if RETURN_TYPE == 'json':
                 output.append(['error',
-                               'Could not connect to redis pipeline: %r.'
-                               '' % utils.error_message_from_exc(exc)])
+                               'Could not connect to redis pipeline: %s' % error])
             else:
-                self.logger.exception('Could not connect to redis pipeline.')
+                self.logger.error('Could not connect to redis pipeline: %s', error)
             retval = 1
         else:
-            orphan_queues = "', '".join({a.decode() for a in pipeline.pipe.keys()} - all_queues)
             if orphan_queues:
                 if RETURN_TYPE == 'json':
                     output.append(['warning', "Orphaned queues found: '%s'." % orphan_queues])
