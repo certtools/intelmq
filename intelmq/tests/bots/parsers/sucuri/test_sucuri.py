@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import codecs
 import os
 import unittest
 
@@ -6,7 +7,7 @@ import intelmq.lib.test as test
 from intelmq.bots.parsers.sucuri.parser import SucuriParserBot
 from intelmq.lib import utils
 
-with open(os.path.join(os.path.dirname(__file__), 'test_sucuri.data')) as handle:
+with codecs.open(os.path.join(os.path.dirname(__file__), 'test_sucuri.data'), encoding='UTF-8') as handle:
     REPORT_DATA = handle.read()
     REPORT_DATA_SPLIT = REPORT_DATA.splitlines()
 
