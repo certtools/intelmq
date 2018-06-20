@@ -317,8 +317,9 @@ class Amqp(Pipeline):
         self.channel = self.connection.channel()
         if self.source_queue:
             self.channel.queue_declare(queue=self.source_queue, durable=True)
-        for destination_queue in self.destination_queues:
-            self.channel.queue_declare(queue=destination_queue, durable=True)
+        for path in self.destination_queues.values():
+            for destination_queue in path:
+                self.channel.queue_declare(queue=destination_queue, durable=True)
 
     def disconnect(self):
         try:
@@ -349,20 +350,24 @@ class Amqp(Pipeline):
             if not retval:
                 raise exceptions.PipelineError('Sent message was not confirmed.')
 
-    def send(self, message: str):
+    def send(self, message: str, path="_default"):
         """
         In principle we could use AMQP's exchanges here but that architecture is incompatible
         to the format of our pipeline.conf file.
         """
         message = utils.encode(message)
+        try:
+            queues = self.destination_queues[path]
+        except KeyError as exc:
+            raise exceptions.PipelineError(exc)
         if self.load_balance:
-            destination_queue = self.destination_queues[self.load_balance_iterator]
-            self._send(destination_queue, message)
+            queues = [queues[self.load_balance_iterator]]
+            self.load_balance_iterator += 1
+            if self.load_balance_iterator == len(self.destination_queues[path]):
+                self.load_balance_iterator = 0
 
-            self.load_balance_iterator = (1 + self.load_balance_iterator) % len(self.destination_queues)
-        else:
-            for destination_queue in self.destination_queues:
-                self._send(destination_queue, message)
+        for destination_queue in queues:
+            self._send(destination_queue, message)
 
     def receive(self) -> str:
         if self.source_queue is None:
