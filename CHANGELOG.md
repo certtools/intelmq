@@ -12,6 +12,7 @@ CHANGELOG
 - `lib/utils`: log: set the name of the `py.warnings` logger to the bot name (#1184).
 
 ### Harmonization
+- Added new types `unauthorized-command` and `unauthorized-login` to `intrusions` taxonomy.
 
 ### Bots
 #### Collectors
@@ -22,7 +23,7 @@ CHANGELOG
 - Shadowserver parser:
   * SSL FREAK: Remove optional column `device_serial` and add several new ones.
   * Fixed HTTP URL parsing for multiple feeds (#1243).
-- Spamhaus CERT parser: add support for `smtpauth` and `l_spamlink` (#1254).
+- Spamhaus CERT parser: add support for `smtpauth`, `l_spamlink`, `pop`, `imap`, `rdp`, `smb`, `iotscan`, `proxyget`, `iotmicrosoftds`, `automatedtest`, `ioturl`, `iotmirai`, `iotcmd`, `iotlogin` and `iotuser` (#1254).
 - Spamhaus CERT parser: fix `extra.destination.local_port` -> `extra.source.local_port`.
 
 #### Experts

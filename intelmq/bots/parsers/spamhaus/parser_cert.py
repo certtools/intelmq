@@ -23,7 +23,6 @@ Header of the File:
 local_port, protocol
 """
 
-from intelmq.lib import utils
 from intelmq.lib.bot import ParserBot
 from intelmq.lib.harmonization import DateTime
 
@@ -54,15 +53,11 @@ class SpamhausCERTParserBot(ParserBot):
                 event.add('classification.type', 'vulnerable service')
                 event.add('classification.identifier', 'openrelay')
                 event.add('protocol.application', 'smtp')
-            elif malware == 'iotrdp':
-                event.add('classification.type', 'brute-force')
-                event.add('classification.identifier', 'rdp')
-                event.add('protocol.application', 'rdp')
             elif malware == 'sshauth':
                 event.add('classification.type', 'brute-force')
                 event.add('classification.identifier', 'ssh')
                 event.add('protocol.application', 'ssh')
-            elif malware in ('telnetauth', 'iotcmd', 'iotuser'):
+            elif malware == 'telnetauth':
                 event.add('classification.type', 'brute-force')
                 event.add('classification.identifier', 'telnet')
                 event.add('protocol.application', 'telnet')
@@ -70,10 +65,10 @@ class SpamhausCERTParserBot(ParserBot):
                 event.add('classification.type', 'brute-force')
                 event.add('classification.identifier', 'smtp')
                 event.add('protocol.application', 'smtp')
-            elif malware == 'iotscan':
+            elif malware in ['iotscan', 'iotuser']:
                 event.add('classification.type', 'scanner')
-                event.add('event_description.text', 'infected IoT device scanning for other vulnerable IoT devices')
-                if row_splitted[7] == '23':
+                event.add('event_description.text', 'The possibly infected IoT device scanned for other vulnerable IoT devices.')
+                if row_splitted[7] in ['23', '2323']:
                     event.add('protocol.application', 'telnet')
                     event.add('classification.identifier', 'telnet')
                 else:
@@ -91,16 +86,46 @@ class SpamhausCERTParserBot(ParserBot):
             elif malware == 'l_spamlink':
                 event.add('classification.type', 'spam')
                 event.add('classification.identifier', 'spamlink')
-                event.add('event_description.text', 'Link appeared in a spam email from ip in extra.spam_ip.')
+                event.add('event_description.text', 'The URL appeared in a spam email sent by extra.spam_ip.')
 #                event.add('protocol.application', 'http')
                 ip, malware_version, malware_name = row_splitted[8].split(':')
                 event.add('malware.name', malware_name)
                 event.add('malware.version', malware_version)
-                event.add('source.url', row_splitted[5])
+                event.add('source.url', row_splitted[6])
                 extra['spam_ip'] = ip
-                if row_splitted[5] != row_splitted[6]:
-                    raise ValueError('Columns 5 and 6 are not equal, unexpected data (%r, %r). '
-                                     'Please report a bug with sample data.' % tuple(row_splitted[5:7]))
+            elif malware in ['pop', 'imap']:
+                event.add('classification.type', 'brute-force')
+                event.add('classification.identifier', malware)
+                event.add('protocol.application', malware)
+            elif malware in ['smb', 'rdp', 'iotrdp', 'iotmicrosoftds']:
+                if malware.startswith('iot'):
+                    malware = malware[3:]
+                event.add('classification.type', 'scanner')
+                event.add('classification.identifier', malware)
+                event.add('protocol.application', malware)
+            elif malware == 'proxyget':
+                event.add('classification.type', 'other')
+                event.add('classification.identifier', malware)
+                event.add('event_description.text', 'The malicous client used a honeypot as proxy.')
+            elif malware == 'iotlogin':
+                event.add('classification.type', 'unauthorized-login')
+                event.add('classification.identifier', 'iot')
+                event.add('event_description.text', 'The infected iot device logged in to a honeypot.')
+            elif malware == 'iotcmd':
+                event.add('classification.type', 'unauthorized-command')
+                event.add('classification.identifier', 'iot')
+                event.add('event_description.text', 'The infected iot device logged in to a honeypot and issued malicous commands.')
+            elif malware == 'iotmirai':
+                event.add('classification.type', 'botnet drone')
+                event.add('classification.identifier', 'mirai')
+                event.add('malware.name', 'mirai')
+            elif malware == 'ioturl':
+                event.add('classification.type', 'c&c')
+                event.add('classification.identifier', 'malware-generic')
+            elif malware == 'automatedtest':
+                event.add('classification.type', 'brute-force')
+                event.add('classification.identifier', 'lookup-captcha')
+                event.add('event_description.text', 'The device automatically brute-forced the Spamhaus CBL lookup.')
             else:
                 if malware == 'auto':
                     malware = 's_other'
@@ -109,7 +134,9 @@ class SpamhausCERTParserBot(ParserBot):
                 event.add('source.url', row_splitted[5], raise_failure=False)
 
             # otherwise the same ip, ignore
-            event.add('destination.fqdn', row_splitted[5], raise_failure=False)
+            if not (malware == 'iotscan' or   # the data is wrong according to the feed provider 2018-06-15
+                    ':' in row_splitted[5]):  # IP or Port in this field: also broken according to provider 2018-06-15
+                event.add('destination.fqdn', row_splitted[5], raise_failure=False)
             event.add('destination.ip', row_splitted[6], raise_failure=False)
             event.add('destination.port', row_splitted[7], raise_failure=False)
             if row_splitted[8] and row_splitted[8] not in ('-', '?') and malware != 'l_spamlink':

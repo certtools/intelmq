@@ -133,6 +133,8 @@ classification.type type. Allowed values are:
  * test
  * tor
  * leak
+ * unauthorized-login
+ * unauthorized-command
 
 ### DateTime
 
