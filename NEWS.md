@@ -3,12 +3,8 @@ NEWS
 
 See the changelog for a full list of changes.
 
-1.0.5 Bugfix release (unreleased)
+1.0.5 Bugfix release (2018-06-21)
 ---------------------------------
-### Configuration
-
-### Libraries
-
 ### Postgres databases
 Use the following statement carefully to upgrade your database.
 Adapt your feedname in the query to the one used in your setup.
