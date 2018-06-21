@@ -1052,6 +1052,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                         retval = 1
                     else:
                         all_queues.add(files[PIPELINE_CONF_FILE][bot_id]['source-queue'])
+                        all_queues.add(files[PIPELINE_CONF_FILE][bot_id]['source-queue'] + '-internal')
         if not no_connections:
             try:
                 pipeline = PipelineFactory.create(self.parameters)
