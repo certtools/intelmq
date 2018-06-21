@@ -67,6 +67,7 @@ CHANGELOG
 - `bots.collectors.http.collector_http`: Ability to optionally use the current time in parameter `http_url`, added parameter `http_url_formatting`.
 - `bots.collectors.stomp.collector`: Heartbeat timeout is now logged with log level info instead of warning.
 - added `intelmq.bots.collectors.twitter.collector_twitter`
+- added `intelmq.bots.collectors.tcp.collector` that can be bound to another IntelMQ instance by a TCP output
 - `bots.collectors.microsoft.collector_interlow`: added for MS interflow API
   - Automatic ungzipping for .gz files.
 - added `intelmq.bots.collectors.calidog.collector_certstream` for collecting certstream data (#1120).

@@ -245,6 +245,22 @@ The parameter `http_timeout_max_tries` is of no use in this collector.
 The parameter `http_timeout_max_tries` is of no use in this collector.
 * * *
 
+### TCP
+
+#### Information:
+* `name:` intelmq.bots.collectors.tcp.collector
+* `lookup:` no
+* `public:` yes
+* `cache (redis db):` none
+* `description:` TCP is the bot responsible to receive events on a TCP port (ex: from TCP Output of another IntelMQ instance). Might not be working on Python3.4.6.
+
+#### Configuration Parameters:
+
+* `ip`: IP of destination server
+* `port`: port of destination server
+* * *
+
+
 ### XMPP collector
 
 
@@ -1150,16 +1166,16 @@ Client certificates are not supported. If `http_verify_cert` is true, TLS certif
 ### TCP
 
 #### Information:
-* `name:` tcp
+* `name:` intelmq.bots.outputs.tcp.collector
 * `lookup:` no
 * `public:` yes
 * `cache (redis db):` none
-* `description:` TCP is the bot responsible to send events to a tcp port (Splunk, ElasticSearch, etc..)
+* `description:` TCP is the bot responsible to send events to a TCP port (Splunk, ElasticSearch, another IntelMQ, etc..).
 
 #### Configuration Parameters:
 
 * `ip`: IP of destination server
-* `hierarchical_output`: true for a nested JSON, false for a flat JSON.
+* `hierarchical_output`: true for a nested JSON, false for a flat JSON (when sending to a TCP collector).
 * `port`: port of destination server
-* `separator`: separator of messages
+* `separator`: separator of messages, eg. "\n", optional (when sending to a TCP collector, parameter shouldn't be present)
 
