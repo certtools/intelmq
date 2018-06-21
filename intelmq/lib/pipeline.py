@@ -383,6 +383,9 @@ class Amqp(Pipeline):
     def acknowledge(self):
         try:
             self.channel.basic_ack(delivery_tag=self.delivery_tag)
+        except pika.exceptions.ConnectionClosed:
+            self.connect()
+            self.channel.basic_ack(delivery_tag=self.delivery_tag)
         except Exception as e:
             raise exceptions.PipelineError(e)
 
