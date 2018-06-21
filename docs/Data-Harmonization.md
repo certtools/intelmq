@@ -102,6 +102,7 @@ The taxonomy can be automatically added by the taxonomy expert bot based on the 
 |malicious code|botnet drone|This is a compromised machine, which has been observed to make a connection to a command and control server.|
 |malicious code|c&c|This is a command and control server in charge of a given number of botnet drones.|
 |malicious code|dga domain|DGA Domains are seen various families of malware that are used to periodically generate a large number of domain names that can be used as rendezvous points with their command and control servers.|
+|malicious code|infected system|This is a compromised machine, which has been observed to make a connection to a command and control server.|
 |malicious code|malware|A URL is the most common resource with reference to malware binary distribution.|
 |malicious code|malware configuration|This is a resource which updates botnet drones with a new configuration.|
 |malicious code|ransomware|This IOC refers to a specific type of compromised machine, where the computer has been hijacked for ransom by the criminals.|
@@ -130,6 +131,7 @@ Meaning of source, destination and local values for each classification type and
 |dropzone|*server hosting stolen data*||||
 |exploit|*hosting server*||||
 |ids alert|*triggering device*||||
+|infected system|*infected device*|*contacted c2c server*|||
 |malware|*infected device*||internal at source|zeus, palevo, feodo|
 |malware configuration|*infected device*||||
 |other||||||

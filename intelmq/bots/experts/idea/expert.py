@@ -27,9 +27,7 @@ class IdeaExpertBot(Bot):
         "spam": "Abusive.Spam",
         "scanner": "Recon.Scanning",
         "dropzone": "Information.UnauthorizedAccess",
-        "malware": "Malware",
-        "botnet drone": "Malware",
-        "ransomware": "Malware",
+        "infected system": "Malware",
         "malware configuration": "Malware",
         "c&c": "Intrusion.Botnet",
         "exploit": "Attempt.Exploit",
@@ -55,7 +53,6 @@ class IdeaExpertBot(Bot):
 
         "phishing": "Phishing",
         "dropzone": "Dropzone",
-        "botnet drone": "Botnet",
         "malware configuration": "MalwareConf",
         "c&c": "CC",
         "dga domain": "DGA",

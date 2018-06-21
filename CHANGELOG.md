@@ -117,6 +117,7 @@ CHANGELOG
   - New TLP type. Allows all four tlp levels, removes 'TLP:' prefix and converts to upper case.
 - Added new `classification.type` 'vulnerable client'
 - Added `(destination|source).domain_suffix` to hold the TLD/domain suffix.
+- New allowed value for `classification.type`: `infected system` for taxonomy `malicious code` (#1197).
 
 ### Requirements
 - Requests is no longer listed as dependency of the core. For depending bots the requirement is noted in their REQUIREMENTS.txt file

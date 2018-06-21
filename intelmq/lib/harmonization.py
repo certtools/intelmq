@@ -152,6 +152,7 @@ class ClassificationType(GenericType):
                       'dropzone',
                       'exploit',
                       'ids alert',
+                      'infected system',
                       'leak',
                       'malware',
                       'malware configuration',
