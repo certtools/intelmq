@@ -223,7 +223,7 @@ def main():
                     content = json.load(handle)
                 meta = load_meta(content)
                 available_opts = [item[0] for item in ACTIONS.values()]
-                for count, line in enumerate(meta):
+                for count, line in enumerate(sorted(meta, key=lambda x: x[0])):
                     print('{:3}: {} {}'.format(count, *line))
 
         # Determine bot status

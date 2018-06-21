@@ -45,6 +45,7 @@ CHANGELOG
 - `intelmqdump` truncated messages are no longer used/saved to the file after being shown (#1255).
 - `intelmqctl run [bot-id] mesage send` can now send report messages (#1077).
 - `intelmqdump` now again denies recovery of dumps if the corresponding bot is running. The check was broken (#1258).
+- `intelmqdump` now sorts the dump by the time of the dump. Previously, the list was in random order (#1020).
 
 ### Contrib
 
