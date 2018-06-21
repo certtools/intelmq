@@ -40,7 +40,6 @@ class TestFileCollectorBot(test.BotTestCase, unittest.TestCase):
 
     def test_events(self):
         """ Test if correct Events have been produced. """
-        self.input_message = None
         self.run_bot(iterations=1)
 
         self.assertMessageEqual(0, OUTPUT)

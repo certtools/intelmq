@@ -163,6 +163,7 @@ CHANGELOG
 ### Packaging
 
 ### Tests
+- Ensure that the bots did process all messages (#291).
 
 ### Tools
 - `intelmqctl run` has a new parameter `-l` `--loglevel` to overwrite the log level for the run (#1075).
@@ -172,6 +173,7 @@ CHANGELOG
 - `intelmqdump` truncated messages are no longer used/saved to the file after being shown (#1255).
 - `intelmqctl run [bot-id] mesage send` can now send report messages (#1077).
 - `intelmqdump` now again denies recovery of dumps if the corresponding bot is running. The check was broken (#1258).
+- `intelmqdump` now sorts the dump by the time of the dump. Previously, the list was in random order (#1020).
 
 ### Contrib
 
