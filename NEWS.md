@@ -30,6 +30,8 @@ which is by default set to `false` to be consistent with other bots.
 
 The bot `bots.collectors.n6.collector_stomp` has been renamed to the new module `bots.collectors.stomp.collector`. Adapt your `runtime.conf` accordingly.
 
+The parameter `feed` for collectors has been renamed to `name`, as it results in `feed.name`. Backwards compatibility is ensured until 2.0.
+
 ### Postgres databases
 The following statements optionally update existing data.
 Please check if you did use these feed names and eventually adapt them for your setup!
@@ -41,7 +43,7 @@ ALTER TABLE events
    ADD COLUMN "destination.domain_suffix" text,
    ADD COLUMN "source.domain_suffix" text;
 ALTER TABLE events
-   ADD COLUMN "tld" text;
+   ADD COLUMN "tlp" text;
 UPDATE events
    SET "classification.identifier" = 'open-mdns'
    WHERE "classification.identifier" = 'openmdns' AND "feed.name" = 'Open-mDNS';
@@ -154,6 +156,13 @@ UPDATE events
 ### Libraries
 
 ### Postgres databases
+Use the following statement carefully to upgrade your database.
+Adapt your feedname in the query to the one used in your setup.
+```SQL
+UPDATE events
+    SET "extra" = json_build_object('source.local_port', "extra"->'destination.local_port')
+    WHERE "feed.name" = 'Spamhaus CERT' AND "classification.type" = 'brute-force' AND "classification.identifier" = 'telnet';
+```
 
 1.0.4 Bugfix release (2018-04-20)
 ---------------------------------

@@ -997,6 +997,29 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `int
 
 # Microsoft
 
+## BingMURLs
+
+* **Status:** on
+* **Revision:** 29-05-2018
+* **Description:** Collects Malicious URLs detected by Bing from the Interflow API.
+* **Additional Information:** Depending on the file sizes you may need to increase the parameter 'http_timeout_sec' of the collector.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.microsoft.collector_interflow
+* **Configuration Parameters:**
+*  * `api_key`: `{{your API key}}`
+*  * `file_match`: `^bingmurls_`
+*  * `http_timeout_sec`: `300`
+*  * `not_older_than`: `2 days`
+*  * `rate_limit`: `3600`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.microsoft.parser_bingmurls
+* **Configuration Parameters:**
+
+
 ## CTIP
 
 * **Status:** on
@@ -1071,7 +1094,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `int
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `http://data.netlab.360.com/feeds/mirai-scanner/scanner.list`
-*  * `rate_limit`: `3600`
+*  * `rate_limit`: `86400`
 
 ### Parser
 

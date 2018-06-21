@@ -20,6 +20,8 @@ CHANGELOG
 - `intelmqctl run` parameter for showing a sent message
 - `intelmqctl run` if message is sent to a non-default path, it is printed out
 - `intelmqctl restart` bug fix; returned some half-nonsense, now returns return state of start and stop operation in a list, see #1226
+- `intelmqctl check`: The check for unconfigured defaults parameters is now optional and will be skipped if the shipped file could not be found.
+- `intelmqctl check`: New parameter `--no-connections` to prevent the command from making connections to e.g. the redis pipeline.
 
 
 ### Contrib
@@ -46,15 +48,17 @@ CHANGELOG
 - Add `RewindableFileHandle` to utils making handling of CSV files more easy (optionally)
 - lib/bot: top level bot parameters (description, group, module, name) are exposed as members of the class.
 - lib/pipeline:
- * you may now define more than one destination queues path the bot should pass the message to, see [Pipelines](https://github.com/certtools/intelmq/blob/develop/docs/User-Guide.md#pipeline-configuration) (#1088, #1190).
- * the special path `"_on_error"` can be used to pass messages to differnt queues in case of processing errors (#1133).
+  * you may now define more than one destination queues path the bot should pass the message to, see [Pipelines](https://github.com/certtools/intelmq/blob/develop/docs/User-Guide.md#pipeline-configuration) (#1088, #1190).
+  * the special path `"_on_error"` can be used to pass messages to differnt queues in case of processing errors (#1133).
+- lib/bot.py: The parameter `feed` for collectors is deprecated for 2.0 and has been replaced by the more consistent `name` (#1144).
+- Added a systemd script which creates systemd units for bots (#953).
+- `lib/harmonization`: Accept `AS` prefix for ASN values (automatically stripped).
 
 ### Bots
 #### Collectors
 - Mail:
   - New parameters; `sent_from`: filter messages by sender, `sent_to`: filter messages by recipient
   - More debug logs
-- `bots.experts.maxmind_geoip`: New (optional) parameter `overwrite`, by default false. The current default was to overwrite!
 - `bots.collectors.n6.collector_stomp`: renamed to `bots.collectors.stomp.collector` (#716)
 - bots.collectors.rt:
   - New parameter `search_requestor` to search for field Requestor.
@@ -64,6 +68,8 @@ CHANGELOG
 - `bots.collectors.stomp.collector`: Heartbeat timeout is now logged with log level info instead of warning.
 - added `intelmq.bots.collectors.twitter.collector_twitter`
 - `bots.collectors.microsoft.collector_interlow`: added for MS interflow API
+  - Automatic ungzipping for .gz files.
+- added `intelmq.bots.collectors.calidog.collector_certstream` for collecting certstream data (#1120).
 
 #### Parsers
 - changed feednames in `bots.parsers.shadowserver`. Please refer to it's README for the exact changes.
@@ -84,19 +90,23 @@ CHANGELOG
 - added `intelmq.bots.parsers.webinspektor.parser`
 - added `intelmq.bots.parsers.twitter.parser`
 - added `intelmq.bots.parsers.microsoft.parser_ctip`
- * ignore the invalid IP '0.0.0.0' for the destination
- * fix the raw/dumped messages, did not contain the paling list previously.
- * use the new harmonization field `tlp` instead of `extra.tlp`.
+  * ignore the invalid IP '0.0.0.0' for the destination
+  * fix the raw/dumped messages, did not contain the paling list previously.
+  * use the new harmonization field `tlp` instead of `extra.tlp`.
 - `bots.parsers.alienvault.parser_otx`: Save TLP data in the new harmonization field `tlp`.
+- added `intelmq.bots.parsers.openphish.parser_commercial`
+- added `intelmq.bots.parsers.microsoft.parser_bingmurls`
+- added `intelmq.bots.parsers.calidog.parser_certstream` for parsing certstream data (#1120).
 
 #### Experts
 - Added sieve expert for filtering and modifying events (#1083)
  * capable of distributing the event to appropriate named queues
 - `bots.experts.modify`
- * default rulesets: all malware name mappings have been migrated to the [Malware Name Mapping repository](https://github.com/certtools/malware_name_mapping) ruleset. See the new added contrib tool for download and conversion.
- * new parameter `case_sensitive` (default: True)
+  * default rulesets: all malware name mappings have been migrated to the [Malware Name Mapping repository](https://github.com/certtools/malware_name_mapping) ruleset. See the new added contrib tool for download and conversion.
+  * new parameter `case_sensitive` (default: True)
 - Added wait expert for sleeping
 - Added domain suffix expert to extract the TLD/Suffix from a domain name.
+- `bots.experts.maxmind_geoip`: New (optional) parameter `overwrite`, by default false. The current default was to overwrite!
 
 ### Harmonization
 - Renamed `JSON` to `JSONDict` and added a new type `JSON`. `JSONDict` saves data internally as JSON, but acts like a dictionary. `JSON` accepts any valid JSON.
@@ -104,7 +114,7 @@ CHANGELOG
 - New ASN type. Like integer but checks the range.
 - added destination.urlpath and source.urlpath to harmonization.
 - New field 'tlp' for tlp level specification.
- - New TLP type. Allows all four tlp levels, removes 'TLP:' prefix and converts to upper case.
+  - New TLP type. Allows all four tlp levels, removes 'TLP:' prefix and converts to upper case.
 - Added new `classification.type` 'vulnerable client'
 - Added `(destination|source).domain_suffix` to hold the TLD/domain suffix.
 - New allowed value for `classification.type`: `infected system` for taxonomy `malicious code` (#1197).
@@ -112,22 +122,40 @@ CHANGELOG
 ### Requirements
 - Requests is no longer listed as dependency of the core. For depending bots the requirement is noted in their REQUIREMENTS.txt file
 
+### Documentation
+- Use Markdown for README again, as pypi now supports it.
+
+### Tests
+- Travis now correctly stops if a requirement could not be installed (#1257).
+
+### Known bugs
+- `bots.experts.sieve` does not support textX (#1246).
+
 1.0.5 Bugfix release (unreleased)
 ---------------------------------
 
 ### Core
+- `lib/message`: `Report()` can now create a Report instance from Event instances (#1225).
+- `lib/bot`: The first word in the log line `Processed ... messages since last logging.` is now adaptible and set to `Forwarded` in the existing filtering bots (#1237).
+- `lib/bot`: Kills oneself again after proper shutdown if the bot is XMPP collector or output (#970). Previously these two bots needed two stop commands to get actually stopped.
+- `lib/utils`: log: set the name of the `py.warnings` logger to the bot name (#1184).
 
 ### Harmonization
 
 ### Bots
 #### Collectors
 - `bots.collectors.mail.collector_mail_url`: handle empty downloaded reports (#988).
+- `bots.collectos.file.collector_file`: handle empty files (#1244).
 
 #### Parsers
 - Shadowserver parser:
   * SSL FREAK: Remove optional column `device_serial` and add several new ones.
+  * Fixed HTTP URL parsing for multiple feeds (#1243).
+- Spamhaus CERT parser: add support for `smtpauth` and `l_spamlink` (#1254).
+- Spamhaus CERT parser: fix `extra.destination.local_port` -> `extra.source.local_port`.
 
 #### Experts
+- `bots.experts.filter`: Pre-compile regex at bot initialization.
 
 #### Outputs
 
@@ -136,6 +164,17 @@ CHANGELOG
 ### Packaging
 
 ### Tests
+- Ensure that the bots did process all messages (#291).
+
+### Tools
+- `intelmqctl run` has a new parameter `-l` `--loglevel` to overwrite the log level for the run (#1075).
+- `intelmqdump` has now command completion for bot names, actions and queue names in interacive console.
+- `intelmqdump` automatically converts messages from events to reports if the queue the message is being restored to is the source queue of a parser (#1225).
+- `intelmqdump` is now capable to read messages in dumps that are dictionaries as opposed to serialized dicts as strings and does not convert them in the show command (#1256).
+- `intelmqdump` truncated messages are no longer used/saved to the file after being shown (#1255).
+- `intelmqctl run [bot-id] mesage send` can now send report messages (#1077).
+- `intelmqdump` now again denies recovery of dumps if the corresponding bot is running. The check was broken (#1258).
+- `intelmqdump` now sorts the dump by the time of the dump. Previously, the list was in random order (#1020).
 
 ### Contrib
 
@@ -149,10 +188,8 @@ CHANGELOG
 
 ### Core
 - lib/harmonization:
- * FQDN validation now handles None correctly (raised an Exception).
- * Fixed several sanitize() methods, the generic sanitation method were called by is_valid, not the sanitize methods (#1219).
-
-### Harmonization
+  * FQDN validation now handles None correctly (raised an Exception).
+  * Fixed several sanitize() methods, the generic sanitation method were called by is_valid, not the sanitize methods (#1219).
 
 ### Bots
 * Use the new pypi website at https://pypi.org/ everywhere.
@@ -171,8 +208,8 @@ CHANGELOG
   * Optional fields can now use one column multiple times.
   * Add newly added columns of `Ssl-Scan` feed to parser
 - Spamhaus CERT parser:
- * fix parsing and classification for bot names 'openrelay', 'iotrdp', 'sshauth', 'telnetauth', 'iotcmd', 'iotuser', 'wpscanner', 'w_wplogin', 'iotscan'
-   see the NEWS file - Postgresql section - for all changes.
+  * fix parsing and classification for bot names 'openrelay', 'iotrdp', 'sshauth', 'telnetauth', 'iotcmd', 'iotuser', 'wpscanner', 'w_wplogin', 'iotscan'
+    see the NEWS file - Postgresql section - for all changes.
 - CleanMX phishing parser: handle FQDNs in IP column (#1162).
 
 #### Experts

@@ -14,6 +14,7 @@ import time
 import pkg_resources
 import psutil
 
+from collections import OrderedDict
 from intelmq import (DEFAULTS_CONF_FILE, PIPELINE_CONF_FILE, RUNTIME_CONF_FILE,
                      VAR_RUN_PATH, BOTS_FILE, HARMONIZATION_CONF_FILE)
 from intelmq.lib import utils
@@ -51,13 +52,13 @@ ERROR_MESSAGES = {
     'access denied': '%s failed to %s because of missing permissions.',
 }
 
-LOG_LEVEL = {
-    'DEBUG': 0,
-    'INFO': 1,
-    'WARNING': 2,
-    'ERROR': 3,
-    'CRITICAL': 4,
-}
+LOG_LEVEL = OrderedDict([
+    ('DEBUG', 0),
+    ('INFO', 1),
+    ('WARNING', 2),
+    ('ERROR', 3),
+    ('CRITICAL', 4),
+])
 
 RETURN_TYPES = ['text', 'json']
 RETURN_TYPE = None
@@ -94,7 +95,10 @@ def log_botnet_message(status, group=None):
     if QUIET:
         return
     if RETURN_TYPE == 'text':
-        logger.info(MESSAGES[status], BOT_GROUP[group] + (" group" if group else ""))
+        if group:
+            logger.info(MESSAGES[status], BOT_GROUP[group] + " group")
+        else:
+            logger.info(MESSAGES[status], 'Botnet')
 
 
 def log_log_messages(messages):
@@ -125,7 +129,7 @@ class IntelMQProcessManager:
                                   'created: %s.', self.PIDDIR, exc)
 
     def bot_run(self, bot_id, run_subcommand=None, console_type=None, message_action_kind=None, dryrun=None, msg=None,
-                show_sent=None):
+                show_sent=None, loglevel=None):
         pid = self.__check_pid(bot_id)
         module = self.__runtime_configuration[bot_id]['module']
         if pid and self.__status_process(pid, module):
@@ -145,7 +149,8 @@ class IntelMQProcessManager:
 
         try:
             BotDebugger(self.__runtime_configuration[bot_id], bot_id, run_subcommand,
-                        console_type, message_action_kind, dryrun, msg, show_sent)
+                        console_type, message_action_kind, dryrun, msg, show_sent,
+                        loglevel=loglevel)
             retval = 0
         except KeyboardInterrupt:
             print('Keyboard interrupt.')
@@ -480,6 +485,9 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             parser_run = subparsers.add_parser('run', help='Run a bot interactively')
             parser_run.add_argument('bot_id',
                                     choices=self.runtime_configuration.keys())
+            parser_run.add_argument('--loglevel', '-l',
+                                    nargs='?', default=None,
+                                    choices=LOG_LEVEL.keys())
             parser_run_subparsers = parser_run.add_subparsers(title='run-subcommands')
 
             parser_run_console = parser_run_subparsers.add_parser('console', help='Get a ipdb live console.')
@@ -512,6 +520,9 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                                                  help='Check installation and configuration')
             parser_check.add_argument('--quiet', '-q', action='store_const',
                                       help='Only print warnings and errors.',
+                                      const=True)
+            parser_check.add_argument('--no-connections', '-C', action='store_const',
+                                      help='Do not test the connections to services like redis.',
                                       const=True)
             parser_check.set_defaults(func=self.check)
 
@@ -917,7 +928,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         log_log_messages(messages[::-1])
         return 0, messages[::-1]
 
-    def check(self):
+    def check(self, no_connections=False):
         retval = 0
         if RETURN_TYPE == 'json':
             output = []
@@ -953,14 +964,18 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             output.append(['info', 'Checking defaults configuration.'])
         else:
             self.logger.info('Checking defaults configuration.')
-        with open(pkg_resources.resource_filename('intelmq', 'etc/defaults.conf')) as fh:
-            defaults = json.load(fh)
-        keys = set(defaults.keys()) - set(files[DEFAULTS_CONF_FILE].keys())
-        if keys:
-            if RETURN_TYPE == 'json':
-                output.append(['error', "Keys missing in your 'defaults.conf' file: %r" % keys])
-            else:
-                self.logger.error("Keys missing in your 'defaults.conf' file: %r", keys)
+        try:
+            with open(pkg_resources.resource_filename('intelmq', 'etc/defaults.conf')) as fh:
+                defaults = json.load(fh)
+        except FileNotFoundError:
+            pass
+        else:
+            keys = set(defaults.keys()) - set(files[DEFAULTS_CONF_FILE].keys())
+            if keys:
+                if RETURN_TYPE == 'json':
+                    output.append(['error', "Keys missing in your 'defaults.conf' file: %r" % keys])
+                else:
+                    self.logger.error("Keys missing in your 'defaults.conf' file: %r", keys)
 
         if RETURN_TYPE == 'json':
             output.append(['info', 'Checking runtime configuration.'])
@@ -1037,25 +1052,26 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                         retval = 1
                     else:
                         all_queues.add(files[PIPELINE_CONF_FILE][bot_id]['source-queue'])
-        try:
-            pipeline = PipelineFactory.create(self.parameters)
-            pipeline.set_queues(None, "source")
-            pipeline.connect()
-        except Exception as exc:
-            if RETURN_TYPE == 'json':
-                output.append(['error',
-                               'Could not connect to redis pipeline: %r.'
-                               '' % utils.error_message_from_exc(exc)])
-            else:
-                self.logger.exception('Could not connect to redis pipeline.')
-            retval = 1
-        else:
-            orphan_queues = "', '".join({a.decode() for a in pipeline.pipe.keys()} - all_queues)
-            if orphan_queues:
+        if not no_connections:
+            try:
+                pipeline = PipelineFactory.create(self.parameters)
+                pipeline.set_queues(None, "source")
+                pipeline.connect()
+                orphan_queues = "', '".join({a.decode() for a in pipeline.pipe.keys()} - all_queues)
+            except Exception as exc:
+                error = utils.error_message_from_exc(exc)
                 if RETURN_TYPE == 'json':
-                    output.append(['warning', "Orphaned queues found: '%s'." % orphan_queues])
+                    output.append(['error',
+                                   'Could not connect to redis pipeline: %s' % error])
                 else:
-                    self.logger.warning("Orphaned queues found: '%s'.", orphan_queues)
+                    self.logger.error('Could not connect to redis pipeline: %s', error)
+                retval = 1
+            else:
+                if orphan_queues:
+                    if RETURN_TYPE == 'json':
+                        output.append(['warning', "Orphaned queues found: '%s'." % orphan_queues])
+                    else:
+                        self.logger.warning("Orphaned queues found: '%s'.", orphan_queues)
 
         if RETURN_TYPE == 'json':
             output.append(['info', 'Checking harmonization configuration.'])

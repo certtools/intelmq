@@ -1,5 +1,12 @@
 {
     "Collector": {
+        "CertStream": {
+            "module": "intelmq.bots.collectors.calidog.collector_certstream",
+            "description": "A bot to collect information from CertStream",
+            "parameters": {
+                "feed": "certstream"
+            }
+        },
         "File": {
             "description": "Fileinput collector fetches data from a file.",
             "module": "intelmq.bots.collectors.file.collector_file",
@@ -287,6 +294,11 @@
             "module": "intelmq.bots.parsers.ci_army.parser",
             "parameters": {}
         },
+        "CertStream Parser": {
+            "description": "A Bot to parse CertStream Feed",
+            "module": "intelmq.bots.parsers.calidog.parser_certstream",
+            "parameters": {}
+        },
         "CleanMX": {
             "description": "CleanMX Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.cleanmx.parser",
@@ -398,6 +410,11 @@
         "Malwareurl": {
             "description": "Malwareurl is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.malwareurl.parser",
+            "parameters": {}
+        },
+        "Microsoft BingMURLs": {
+            "description": "Parses JSON data from Microsoft's Bing Malicious URLs list.",
+            "module": "intelmq.bots.parsers.microsoft.parser_bingmurls",
             "parameters": {}
         },
         "Microsoft CTIP": {
@@ -555,6 +572,14 @@
                 "redis_cache_port": "6379",
                 "redis_cache_password": null,
                 "redis_cache_ttl": "86400"
+            }
+        },
+        "Domain Suffix": {
+            "description": "Extracts the domain suffix from a domain and saves it in the the domain_suffix field.",
+            "module": "intelmq.bots.experts.domain_suffix.expert",
+            "parameters": {
+                "field": "fqdn",
+                "suffix_file": "<path of suffix file>"
             }
         },
         "Field Reducer": {
