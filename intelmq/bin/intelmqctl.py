@@ -823,6 +823,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             all_queues = self.get_queues(with_internal_queues=pipeline.has_internal_queues)
 
         counters = pipeline.count_queued_messages(*all_queues)
+        pipeline.disconnect()
         log_list_queues(counters)
 
         return_dict = {}

@@ -389,17 +389,14 @@ class Amqp(Pipeline):
     def count_queued_messages(self, *queues) -> dict:
         queue_dict = dict()
         for queue in queues:
-            print(queue)
             try:
                 queue_dict[queue] = self.channel.queue_declare(queue=queue, passive=True).method.message_count
-            except pika.exceptions.ChannelClosed as exc:
-                if not exc.args:
-                    queue_dict[queue] = 0
-                    self.channel = self.connection.channel()
-                elif exc.args[0] == 404:
+            except pika.exceptions.ChannelClosed as exc:  # channel not found and similar, need to re-declare
+                if not exc.args or exc.args[0] in [404, 406]:
                     queue_dict[queue] = 0
                 elif exc.args:
                     raise exceptions.PipelineError(exc)
+                self.channel = self.connection.channel()
             except Exception as exc:
                 raise exceptions.PipelineError(exc)
         return queue_dict
