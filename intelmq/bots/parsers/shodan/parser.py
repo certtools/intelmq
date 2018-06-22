@@ -12,7 +12,9 @@ from intelmq.lib.utils import base64_decode
 MAPPING = {
         'hash': 'extra.shodan.event_hash',
         'ip': '__IGNORE__',  # using ip_str
-        'hostnames': 'source.reverse_dns',  # TODO: multiple hostname
+        'hostnames': [
+                'source.reverse_dns',  # TODO: multiple hostname
+                ],
         'org': 'event_description.target',
         'data': 'extra.data',
         'port': 'source.port',
@@ -64,6 +66,36 @@ MAPPING = {
             'server': 'extra.http.server',
             # 'sitemap': unknown,
             },
+          "isakmp": {
+            "initiator_spi": "extra.isakmp.initiator_spi",
+            "responder_spi": "extra.isakmp.responder_spi",
+            "msg_id": "extra.isakmp.msg_id",
+            "next_payload": "extra.isakmp.next_payload",
+            "exchange_type": "extra.isakmp.exchange_type",
+            "length": "extra.isakmp.length",
+            "version": "extra.isakmp.version",
+            "flags": {
+              "encryption": "extra.isakmp.encryption",
+              "authentication": "extra.isakmp.authentication",
+              "commit": "extra.isakmp.commit",
+            },
+            "aggressive": {
+              "initiator_spi": "extra.isakmp.initiator_spi",
+              "responder_spi": "extra.isakmp.responder_spi",
+              "msg_id": "extra.isakmp.msg_id",
+              "next_payload": "extra.isakmp.next_payload",
+              "exchange_type": "extra.isakmp.exchange_type",
+              "length": "extra.isakmp.length",
+              "version": "extra.isakmp.version",
+              "flags": {
+                "encryption": "extra.isakmp.encryption",
+                "authentication": "extra.isakmp.authentication",
+                "commit": "extra.isakmp.commit",
+              },
+#              "vendor_ids": [] unknown
+            },
+#            "vendor_ids": [] unknown
+          },
         'asn': 'source.asn',
         'html': '__IGNORE__',  # use http.html
         'location': {
@@ -71,7 +103,7 @@ MAPPING = {
             'city': 'source.geolocation.city',
             'region_code': 'extra.region_code',
             'postal_code': 'extra.postal_code',
-            'longitude': 'extra.geolocation.longitude',
+            'longitude': 'source.geolocation.longitude',
             'country_code': 'source.geolocation.cc',
             'latitude': 'source.geolocation.latitude',
             'country_name': '__IGNORE__',  # using country_code
@@ -79,11 +111,14 @@ MAPPING = {
             'dma_code': 'extra.dma_code',
             },
         'timestamp': 'time.source',
-        'domains': 'source.fqdn',  # TODO: multiple domains
+        'domains': [
+                'source.fqdn',  # TODO: multiple domains
+                ],
         'ip_str': 'source.ip',
         'os': 'extra.os_name',
         '_shodan': '__IGNORE__',  # for now
-        # 'opts':  unknown
+         'opts': {'raw': 'extra.raw',
+                  },
         'tags': 'extra.tags',
         }
 
@@ -100,7 +135,7 @@ class ShodanParserBot(Bot):
             self.ignore_errors = False
 
     def apply_mapping(self, mapping, data):
-        self.logger.debug('Appylying mapping %r to data %r', mapping, data)
+        self.logger.debug('Appylying mapping %r to data %r.', mapping, data)
         event = {}
         for key, value in data.items():
             try:
@@ -109,6 +144,8 @@ class ShodanParserBot(Bot):
                         update = self.apply_mapping(mapping[key], value)
                         if update:
                             event.update(update)
+                    elif isinstance(mapping[key], list):
+                        event[mapping[key][0]] = value[0]
                     else:
                         event[mapping[key]] = value
             except KeyError:
