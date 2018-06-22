@@ -5,7 +5,7 @@ import sys
 
 try:
     import yaml
-except:
+except ImportError:
     print("[-] Please install yaml using the following command: 'pip install pyyaml'.", file=sys.stderr)
     sys.exit(-1)
 

@@ -22,6 +22,7 @@ CHANGELOG
 - `intelmqctl restart` bug fix; returned some half-nonsense, now returns return state of start and stop operation in a list, see #1226
 - `intelmqctl check`: The check for unconfigured defaults parameters is now optional and will be skipped if the shipped file could not be found.
 - `intelmqctl check`: New parameter `--no-connections` to prevent the command from making connections to e.g. the redis pipeline.
+- `intelmq_gen_docs` merges both `intelmq_gen_feeds_docs` and `intelmq_gen_harm_docs` in one file and automatically updates the documentation files.
 
 
 ### Contrib
@@ -129,6 +130,7 @@ CHANGELOG
 ### Tests
 - Travis now correctly stops if a requirement could not be installed (#1257).
 - New tests for validating `etc/feeds.yaml` and `bots/BOTS` using cerberus and schemes are added (#1166).
+- New test for checking if `docs/Feeds.md` is up to date with `etc/feeds.yaml`.
 
 ### Known bugs
 - `bots.experts.sieve` does not support textX (#1246).
