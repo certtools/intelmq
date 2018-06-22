@@ -7,7 +7,6 @@ import textwrap
 import pkg_resources
 
 import intelmq.lib.harmonization
-import sys
 
 import yaml
 
@@ -82,7 +81,8 @@ def feeds_docs():
 
 The available feeds are grouped by the provider of the feeds.
 For each feed the collector and parser that can be used is documented as well as any feed-specific parameters.
-To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `intelmq/bin/intelmq_gen_feeds_docs.py` to generate the new content of this file.
+To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
+`intelmq/bin/intelmq_gen_feeds_docs.py` to generate the new content of this file.
 
 <!-- TOC depthFrom:2 depthTo:2 withLinks:1 updateOnSave:1 orderedList:0 -->
 
@@ -91,7 +91,6 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `int
 <!-- /TOC -->\n
 
 """ % toc
-
 
     for provider, feeds in sorted(config['providers'].items(), key=lambda x: x[0]):
 
