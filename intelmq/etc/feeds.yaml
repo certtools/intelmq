@@ -1388,6 +1388,7 @@ providers:
           parameters:
         parser:
           module: intelmq.bots.parses.certstream.parser_certstream
+          parameters:
       revision: 15-06-2018
       status: on
       documentation:

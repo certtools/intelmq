@@ -16,6 +16,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `int
 - [Blueliv](#blueliv)
 - [CERT.PL](#certpl)
 - [CINSscore](#cinsscore)
+- [Calidog](#calidog)
 - [CleanMX](#cleanmx)
 - [DShield](#dshield)
 - [Danger Rulez](#danger-rulez)
@@ -47,7 +48,9 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `int
 - [WebInspektor](#webinspektor)
 - [ZoneH](#zoneh)
 
+
 <!-- /TOC -->
+
 
 # Abuse.ch
 
@@ -562,6 +565,25 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `int
 ### Parser
 
 * **Module:** intelmq.bots.parsers.ci_army.parser
+* **Configuration Parameters:**
+
+
+# Calidog
+
+## CertStream
+
+* **Status:** on
+* **Revision:** 15-06-2018
+* **Description:** HTTP Websocket Stream from certstream.calidog.io providing data from Certificate Transparency Logs.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.certstream.collector_certstream
+* **Configuration Parameters:**
+
+### Parser
+
+* **Module:** intelmq.bots.parses.certstream.parser_certstream
 * **Configuration Parameters:**
 
 

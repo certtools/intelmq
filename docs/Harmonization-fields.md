@@ -272,4 +272,3 @@ Like string, but only allows upper case characters.
 Sanitation uppers all characters.
 
 
-
