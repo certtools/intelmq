@@ -14,8 +14,10 @@ Assumption: You are working on branch maintenance, the next version is a bug fix
 
 Eventually adapt the default log levels if necessary. Should be INFO for stable releases. See older releases.
 
-## Commit and tag.
-Commit your changes, the message should start with `REL: `. Push and create a pull request from maintenance to master. Someone else should review the changes. Eventually fix them, make sure the `REL: ` is the last commit, you can also push that one at last, after the reviews.
+## Commit, push, review and merge
+Commit your changes in a separate branch, the final commit's message should start with `REL: `. Push and create a pull request to maintenance and after that from maintenance to master. Someone else should review the changes. Eventually fix them, make sure the `REL: ` is the last commit, you can also push that one at last, after the reviews.
+
+Why a separate branch? Because if problems show up, you can still force-push to that one, keeping the release commit the latest one.
 
 ## Tag and release
 

@@ -49,6 +49,8 @@ class IdeaExpertBot(Bot):
         "other": "Other",
         "unknown": "Other",
         "test": "Test",
+        "unauthorized-command": "Intrusion.AdminCompromise",
+        "unauthorized-login": "Intrusion.AdminCompromise",
     }
 
     type_to_source_type = {

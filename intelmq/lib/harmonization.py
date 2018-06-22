@@ -164,6 +164,8 @@ class ClassificationType(GenericType):
                       'spam',
                       'test',
                       'tor',
+                      'unauthorized-login',
+                      'unauthorized-command',
                       'unknown',
                       'vulnerable client',
                       'vulnerable service',

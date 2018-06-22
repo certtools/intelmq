@@ -149,12 +149,18 @@ UPDATE events
    WHERE "classification.identifier" = 'accessiblevnc' AND "feed.name" = 'Accessible-VNC';
 ```
 
-1.0.5 Bugfix release (unreleased)
+1.0.6 Bugfix release (unreleased)
 ---------------------------------
+
 ### Configuration
 
 ### Libraries
 
+### Postgres databases
+
+
+1.0.5 Bugfix release (2018-06-21)
+---------------------------------
 ### Postgres databases
 Use the following statement carefully to upgrade your database.
 Adapt your feedname in the query to the one used in your setup.

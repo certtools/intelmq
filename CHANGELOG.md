@@ -132,16 +132,45 @@ CHANGELOG
 ### Known bugs
 - `bots.experts.sieve` does not support textX (#1246).
 
-1.0.5 Bugfix release (unreleased)
+1.0.6 Bugfix release (unreleased)
+---------------------------------
+
+### Core
+
+### Harmonization
+
+### Bots
+#### Collectors
+
+#### Parsers
+
+#### Experts
+
+#### Outputs
+
+### Documentation
+
+### Packaging
+
+### Tests
+
+### Contrib
+
+### Known issues
+
+
+1.0.5 Bugfix release (2018-06-21)
 ---------------------------------
 
 ### Core
 - `lib/message`: `Report()` can now create a Report instance from Event instances (#1225).
-- `lib/bot`: The first word in the log line `Processed ... messages since last logging.` is now adaptible and set to `Forwarded` in the existing filtering bots (#1237).
-- `lib/bot`: Kills oneself again after proper shutdown if the bot is XMPP collector or output (#970). Previously these two bots needed two stop commands to get actually stopped.
+- `lib/bot`:
+  * The first word in the log line `Processed ... messages since last logging.` is now adaptable and set to `Forwarded` in the existing filtering bots (#1237).
+  * Kills oneself again after proper shutdown if the bot is XMPP collector or output (#970). Previously these two bots needed two stop commands to get actually stopped.
 - `lib/utils`: log: set the name of the `py.warnings` logger to the bot name (#1184).
 
 ### Harmonization
+- Added new types `unauthorized-command` and `unauthorized-login` to `intrusions` taxonomy.
 
 ### Bots
 #### Collectors
@@ -152,34 +181,30 @@ CHANGELOG
 - Shadowserver parser:
   * SSL FREAK: Remove optional column `device_serial` and add several new ones.
   * Fixed HTTP URL parsing for multiple feeds (#1243).
-- Spamhaus CERT parser: add support for `smtpauth` and `l_spamlink` (#1254).
-- Spamhaus CERT parser: fix `extra.destination.local_port` -> `extra.source.local_port`.
+- Spamhaus CERT parser:
+  * add support for `smtpauth`, `l_spamlink`, `pop`, `imap`, `rdp`, `smb`, `iotscan`, `proxyget`, `iotmicrosoftds`, `automatedtest`, `ioturl`, `iotmirai`, `iotcmd`, `iotlogin` and `iotuser` (#1254).
+  * fix `extra.destination.local_port` -> `extra.source.local_port`.
 
 #### Experts
 - `bots.experts.filter`: Pre-compile regex at bot initialization.
-
-#### Outputs
-
-### Documentation
-
-### Packaging
 
 ### Tests
 - Ensure that the bots did process all messages (#291).
 
 ### Tools
-- `intelmqctl run` has a new parameter `-l` `--loglevel` to overwrite the log level for the run (#1075).
-- `intelmqdump` has now command completion for bot names, actions and queue names in interacive console.
-- `intelmqdump` automatically converts messages from events to reports if the queue the message is being restored to is the source queue of a parser (#1225).
-- `intelmqdump` is now capable to read messages in dumps that are dictionaries as opposed to serialized dicts as strings and does not convert them in the show command (#1256).
-- `intelmqdump` truncated messages are no longer used/saved to the file after being shown (#1255).
-- `intelmqctl run [bot-id] mesage send` can now send report messages (#1077).
-- `intelmqdump` now again denies recovery of dumps if the corresponding bot is running. The check was broken (#1258).
-- `intelmqdump` now sorts the dump by the time of the dump. Previously, the list was in random order (#1020).
-
-### Contrib
+- `intelmqctl`:
+  * `intelmqctl run` has a new parameter `-l` `--loglevel` to overwrite the log level for the run (#1075).
+  * `intelmqctl run [bot-id] mesage send` can now send report messages (#1077).
+- `intelmqdump`:
+  * has now command completion for bot names, actions and queue names in interactive console.
+  * automatically converts messages from events to reports if the queue the message is being restored to is the source queue of a parser (#1225).
+  * is now capable to read messages in dumps that are dictionaries as opposed to serialized dicts as strings and does not convert them in the show command (#1256).
+  * truncated messages are no longer used/saved to the file after being shown (#1255).
+  * now again denies recovery of dumps if the corresponding bot is running. The check was broken (#1258).
+  * now sorts the dump by the time of the dump. Previously, the list was in random order (#1020).
 
 ### Known issues
+no known issues
 
 
 1.0.4 Bugfix release (2018-04-20)
@@ -218,7 +243,7 @@ CHANGELOG
 
 ### Tools
 - intelmqctl check: Fixed and extended message for 'run_mode' check.
-- `intelmqctl start` botnet. When using `--type json`, no non-json information about wrong bots are output because that would confuse eg. intelmq-manager
+- `intelmqctl start` botnet. When using `--type json`, no non-JSON information about wrong bots are output because that would confuse eg. intelmq-manager
 
 ### Tests
 - lib/bot: No dumps will be written during tests (#934).
@@ -361,7 +386,7 @@ CHANGELOG
 
 ### Bots
 #### Collectors
-- HTTP collectors: If http_username and http_password are both given and empty or null, 'None:None' has been used to authenticate. It is now checked that the username evaulates to non-false/null before adding the authentication. (fixes #1017)
+- HTTP collectors: If http_username and http_password are both given and empty or null, 'None:None' has been used to authenticate. It is now checked that the username evaluates to non-false/null before adding the authentication. (fixes #1017)
 - Dropped unmaintained and undocumented FTP(S) collectors `bots.collectors.ftp`. Also, the FTPS collector had a license conflict (#842).
 - `bots.collectors.http.collector_http_stream`: drop deprecated parameter `url` in favor of `http_url`
 
@@ -403,7 +428,7 @@ v1.0.0.dev8 Beta release (2017-06-14)
 ### Core
 - fix bug which prevented dumps to be written if the file did not exist (https://github.com/certtools/intelmq/pull/986)
 - Fix reload of bots regarding logging
-- type annotions for all core libraries
+- type annotations for all core libraries
 
 ### Bots
 - added bots.experts.idea, bots.outputs.files
