@@ -20,6 +20,9 @@ CHANGELOG
 - `intelmqctl run` parameter for showing a sent message
 - `intelmqctl run` if message is sent to a non-default path, it is printed out
 - `intelmqctl restart` bug fix; returned some half-nonsense, now returns return state of start and stop operation in a list, see #1226
+- `intelmqctl check`: The check for unconfigured defaults parameters is now optional and will be skipped if the shipped file could not be found.
+- `intelmqctl check`: New parameter `--no-connections` to prevent the command from making connections to e.g. the redis pipeline.
+- `intelmq_gen_docs` merges both `intelmq_gen_feeds_docs` and `intelmq_gen_harm_docs` in one file and automatically updates the documentation files.
 
 
 ### Contrib
@@ -50,6 +53,7 @@ CHANGELOG
   * the special path `"_on_error"` can be used to pass messages to differnt queues in case of processing errors (#1133).
 - lib/bot.py: The parameter `feed` for collectors is deprecated for 2.0 and has been replaced by the more consistent `name` (#1144).
 - Added a systemd script which creates systemd units for bots (#953).
+- `lib/harmonization`: Accept `AS` prefix for ASN values (automatically stripped).
 
 ### Bots
 #### Collectors
@@ -64,6 +68,7 @@ CHANGELOG
 - `bots.collectors.http.collector_http`: Ability to optionally use the current time in parameter `http_url`, added parameter `http_url_formatting`.
 - `bots.collectors.stomp.collector`: Heartbeat timeout is now logged with log level info instead of warning.
 - added `intelmq.bots.collectors.twitter.collector_twitter`
+- added `intelmq.bots.collectors.tcp.collector` that can be bound to another IntelMQ instance by a TCP output
 - `bots.collectors.microsoft.collector_interlow`: added for MS interflow API
   - Automatic ungzipping for .gz files.
 - added `intelmq.bots.collectors.calidog.collector_certstream` for collecting certstream data (#1120).
@@ -116,6 +121,7 @@ CHANGELOG
   - New TLP type. Allows all four tlp levels, removes 'TLP:' prefix and converts to upper case.
 - Added new `classification.type` 'vulnerable client'
 - Added `(destination|source).domain_suffix` to hold the TLD/domain suffix.
+- New allowed value for `classification.type`: `infected system` for taxonomy `malicious code` (#1197).
 
 ### Requirements
 - Requests is no longer listed as dependency of the core. For depending bots the requirement is noted in their REQUIREMENTS.txt file
@@ -125,20 +131,51 @@ CHANGELOG
 
 ### Tests
 - Travis now correctly stops if a requirement could not be installed (#1257).
+- New tests for validating `etc/feeds.yaml` and `bots/BOTS` using cerberus and schemes are added (#1166).
+- New test for checking if `docs/Feeds.md` is up to date with `etc/feeds.yaml`.
 
 ### Known bugs
 - `bots.experts.sieve` does not support textX (#1246).
 
-1.0.5 Bugfix release (unreleased)
+1.0.6 Bugfix release (unreleased)
+---------------------------------
+
+### Core
+
+### Harmonization
+
+### Bots
+#### Collectors
+
+#### Parsers
+
+#### Experts
+
+#### Outputs
+
+### Documentation
+
+### Packaging
+
+### Tests
+
+### Contrib
+
+### Known issues
+
+
+1.0.5 Bugfix release (2018-06-21)
 ---------------------------------
 
 ### Core
 - `lib/message`: `Report()` can now create a Report instance from Event instances (#1225).
-- `lib/bot`: The first word in the log line `Processed ... messages since last logging.` is now adaptible and set to `Forwarded` in the existing filtering bots (#1237).
-- `lib/bot`: Kills oneself again after proper shutdown if the bot is XMPP collector or output (#970). Previously these two bots needed two stop commands to get actually stopped.
+- `lib/bot`:
+  * The first word in the log line `Processed ... messages since last logging.` is now adaptable and set to `Forwarded` in the existing filtering bots (#1237).
+  * Kills oneself again after proper shutdown if the bot is XMPP collector or output (#970). Previously these two bots needed two stop commands to get actually stopped.
 - `lib/utils`: log: set the name of the `py.warnings` logger to the bot name (#1184).
 
 ### Harmonization
+- Added new types `unauthorized-command` and `unauthorized-login` to `intrusions` taxonomy.
 
 ### Bots
 #### Collectors
@@ -149,32 +186,30 @@ CHANGELOG
 - Shadowserver parser:
   * SSL FREAK: Remove optional column `device_serial` and add several new ones.
   * Fixed HTTP URL parsing for multiple feeds (#1243).
-- Spamhaus CERT parser: add support for `smtpauth` and `l_spamlink` (#1254).
-- Spamhaus CERT parser: fix `extra.destination.local_port` -> `extra.source.local_port`.
+- Spamhaus CERT parser:
+  * add support for `smtpauth`, `l_spamlink`, `pop`, `imap`, `rdp`, `smb`, `iotscan`, `proxyget`, `iotmicrosoftds`, `automatedtest`, `ioturl`, `iotmirai`, `iotcmd`, `iotlogin` and `iotuser` (#1254).
+  * fix `extra.destination.local_port` -> `extra.source.local_port`.
 
 #### Experts
 - `bots.experts.filter`: Pre-compile regex at bot initialization.
 
-#### Outputs
-
-### Documentation
-
-### Packaging
-
 ### Tests
+- Ensure that the bots did process all messages (#291).
 
 ### Tools
-- `intelmqctl run` has a new parameter `-l` `--loglevel` to overwrite the log level for the run (#1075).
-- `intelmqdump` has now command completion for bot names, actions and queue names in interacive console.
-- `intelmqdump` automatically converts messages from events to reports if the queue the message is being restored to is the source queue of a parser (#1225).
-- `intelmqdump` is now capable to read messages in dumps that are dictionaries as opposed to serialized dicts as strings and does not convert them in the show command (#1256).
-- `intelmqdump` truncated messages are no longer used/saved to the file after being shown (#1255).
-- `intelmqctl run [bot-id] mesage send` can now send report messages (#1077).
-- `intelmqdump` now again denies recovery of dumps if the corresponding bot is running. The check was broken (#1258).
-
-### Contrib
+- `intelmqctl`:
+  * `intelmqctl run` has a new parameter `-l` `--loglevel` to overwrite the log level for the run (#1075).
+  * `intelmqctl run [bot-id] mesage send` can now send report messages (#1077).
+- `intelmqdump`:
+  * has now command completion for bot names, actions and queue names in interactive console.
+  * automatically converts messages from events to reports if the queue the message is being restored to is the source queue of a parser (#1225).
+  * is now capable to read messages in dumps that are dictionaries as opposed to serialized dicts as strings and does not convert them in the show command (#1256).
+  * truncated messages are no longer used/saved to the file after being shown (#1255).
+  * now again denies recovery of dumps if the corresponding bot is running. The check was broken (#1258).
+  * now sorts the dump by the time of the dump. Previously, the list was in random order (#1020).
 
 ### Known issues
+no known issues
 
 
 1.0.4 Bugfix release (2018-04-20)
@@ -213,7 +248,7 @@ CHANGELOG
 
 ### Tools
 - intelmqctl check: Fixed and extended message for 'run_mode' check.
-- `intelmqctl start` botnet. When using `--type json`, no non-json information about wrong bots are output because that would confuse eg. intelmq-manager
+- `intelmqctl start` botnet. When using `--type json`, no non-JSON information about wrong bots are output because that would confuse eg. intelmq-manager
 
 ### Tests
 - lib/bot: No dumps will be written during tests (#934).
@@ -356,7 +391,7 @@ CHANGELOG
 
 ### Bots
 #### Collectors
-- HTTP collectors: If http_username and http_password are both given and empty or null, 'None:None' has been used to authenticate. It is now checked that the username evaulates to non-false/null before adding the authentication. (fixes #1017)
+- HTTP collectors: If http_username and http_password are both given and empty or null, 'None:None' has been used to authenticate. It is now checked that the username evaluates to non-false/null before adding the authentication. (fixes #1017)
 - Dropped unmaintained and undocumented FTP(S) collectors `bots.collectors.ftp`. Also, the FTPS collector had a license conflict (#842).
 - `bots.collectors.http.collector_http_stream`: drop deprecated parameter `url` in favor of `http_url`
 
@@ -398,7 +433,7 @@ v1.0.0.dev8 Beta release (2017-06-14)
 ### Core
 - fix bug which prevented dumps to be written if the file did not exist (https://github.com/certtools/intelmq/pull/986)
 - Fix reload of bots regarding logging
-- type annotions for all core libraries
+- type annotations for all core libraries
 
 ### Bots
 - added bots.experts.idea, bots.outputs.files

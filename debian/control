@@ -3,7 +3,7 @@ Maintainer: Sascha Wilde <wilde@intevation.de>
 Section: python
 Priority: optional
 Build-Depends: debhelper (>= 4.1.16), python3-all, python3-setuptools, quilt, dh-python, python-setuptools, dh-systemd, safe-rm, python3-requests, python3-redis, python3-dnspython, python3-psutil, python3-dateutil, python3-termstyle, python3-tz, lsb-release
-X-Python3-Version: >= 3.4.0
+X-Python3-Version: >= 3.4
 Standards-Version: 3.9.6
 Homepage: https://github.com/certtools/intelmq/
 

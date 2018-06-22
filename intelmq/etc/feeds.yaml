@@ -1380,14 +1380,15 @@ providers:
       documentation: https://www.threatminer.org/
   Calidog:
     CertStream:
-       description: HTTP Websocket Stream from certstream.calidog.io providing data from Certificate Transparency Logs.
-       additional_information:
-       bots:
-         collector:
-         module: intelmq.bots.collectors.certstream.collector_certstream
-         parameters:
-       parser:
-         module: intelmq.bots.parses.certstream.parser_certstream
+      description: HTTP Websocket Stream from certstream.calidog.io providing data from Certificate Transparency Logs.
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.certstream.collector_certstream
+          parameters:
+        parser:
+          module: intelmq.bots.parses.certstream.parser_certstream
+          parameters:
       revision: 15-06-2018
       status: on
       documentation:

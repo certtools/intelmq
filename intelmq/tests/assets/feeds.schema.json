@@ -1,0 +1,94 @@
+{
+    "providers": {
+        "required": true,
+        "type": "dict",
+        "keyschema": {
+            "required": true,
+            "type": "string"
+        },
+        "valueschema": {
+            "required": true,
+            "type": "dict",
+            "keyschema": {
+                "required": true,
+                "type": "string"
+            },
+            "valueschema": {
+                "required": true,
+                "type": "dict",
+                "schema": {
+                    "description": {
+                        "required": true,
+                        "type": "string"
+                    },
+                    "additional_information": {
+                        "required": false,
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "revision": {
+                        "required": true,
+                        "type": "string"
+                    },
+                    "status": {
+                        "required": true,
+                        "type": "boolean"
+                    },
+                    "documentation": {
+                        "required": false,
+                        "type": "string",
+                        "nullable": true
+                    },
+                    "bots": {
+                        "required": true,
+                        "type": "dict",
+                        "schema": {
+                            "collector": {
+                                "required": true,
+                                "type": "dict",
+                                "schema": {
+                                    "module": {
+                                        "required": true,
+                                        "type": "string"
+                                    },
+                                    "parameters": {
+                                        "required": false,
+                                        "nullable": true,
+                                        "keyschema": {
+                                            "required": true,
+                                            "type": "string"
+                                        },
+                                        "valueschema": {
+                                            "required": true
+                                        }
+                                    }
+                                }
+                            },
+                            "parser": {
+                                "required": true,
+                                "type": "dict",
+                                "schema": {
+                                    "module": {
+                                        "required": true,
+                                        "type": "string"
+                                    },
+                                    "parameters": {
+                                        "required": false,
+                                        "nullable": true,
+                                        "keyschema": {
+                                            "required": true,
+                                            "type": "string"
+                                        },
+                                        "valueschema": {
+                                            "required": true
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

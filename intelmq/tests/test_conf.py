@@ -5,14 +5,18 @@ Tests if configuration in /etc is valid
 import collections
 import importlib
 import json
+import os
+import pkgutil
+import pprint
 import re
 import unittest
 
-import pkgutil
+import cerberus
 import pkg_resources
+import yaml
 
-import intelmq.lib.harmonization as harmonization
 import intelmq.bots
+import intelmq.lib.harmonization as harmonization
 
 
 def to_json(obj):
@@ -127,6 +131,32 @@ class TestConf(unittest.TestCase):
                     classname = 'intelmq.bots.%s.%s.%s' % (groupname, providername, botname)
                     if classname not in modules and '_' in botname:
                         raise ValueError("Bot %r not found in BOTS file." % classname)
+
+
+class CerberusTests(unittest.TestCase):
+    def test_bots(self):
+        with open(os.path.join(os.path.dirname(__file__), 'assets/bots.schema.json')) as handle:
+            schema = json.load(handle)
+        with open(pkg_resources.resource_filename('intelmq',
+                                                  'bots/BOTS')) as handle:
+            bots = json.load(handle)
+
+        v = cerberus.Validator(schema)
+
+        if not v.validate(bots):
+            raise ValueError('Invalid BOTS file:\n%s' % pprint.pformat(v.errors))
+
+    def test_feeds(self):
+        with open(os.path.join(os.path.dirname(__file__), 'assets/feeds.schema.json')) as handle:
+            schema = json.load(handle)
+        with open(pkg_resources.resource_filename('intelmq',
+                                                  'etc/feeds.yaml')) as handle:
+            feeds = yaml.load(handle)
+
+        v = cerberus.Validator(schema)
+
+        if not v.validate(feeds):
+            raise ValueError('Invalid feeds.yaml file:\n%s' % pprint.pformat(v.errors))
 
 
 

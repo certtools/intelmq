@@ -521,6 +521,9 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             parser_check.add_argument('--quiet', '-q', action='store_const',
                                       help='Only print warnings and errors.',
                                       const=True)
+            parser_check.add_argument('--no-connections', '-C', action='store_const',
+                                      help='Do not test the connections to services like redis.',
+                                      const=True)
             parser_check.set_defaults(func=self.check)
 
             parser_help = subparsers.add_parser('help',
@@ -925,7 +928,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         log_log_messages(messages[::-1])
         return 0, messages[::-1]
 
-    def check(self):
+    def check(self, no_connections=False):
         retval = 0
         if RETURN_TYPE == 'json':
             output = []
@@ -961,14 +964,18 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             output.append(['info', 'Checking defaults configuration.'])
         else:
             self.logger.info('Checking defaults configuration.')
-        with open(pkg_resources.resource_filename('intelmq', 'etc/defaults.conf')) as fh:
-            defaults = json.load(fh)
-        keys = set(defaults.keys()) - set(files[DEFAULTS_CONF_FILE].keys())
-        if keys:
-            if RETURN_TYPE == 'json':
-                output.append(['error', "Keys missing in your 'defaults.conf' file: %r" % keys])
-            else:
-                self.logger.error("Keys missing in your 'defaults.conf' file: %r", keys)
+        try:
+            with open(pkg_resources.resource_filename('intelmq', 'etc/defaults.conf')) as fh:
+                defaults = json.load(fh)
+        except FileNotFoundError:
+            pass
+        else:
+            keys = set(defaults.keys()) - set(files[DEFAULTS_CONF_FILE].keys())
+            if keys:
+                if RETURN_TYPE == 'json':
+                    output.append(['error', "Keys missing in your 'defaults.conf' file: %r" % keys])
+                else:
+                    self.logger.error("Keys missing in your 'defaults.conf' file: %r", keys)
 
         if RETURN_TYPE == 'json':
             output.append(['info', 'Checking runtime configuration.'])
@@ -1045,25 +1052,27 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                         retval = 1
                     else:
                         all_queues.add(files[PIPELINE_CONF_FILE][bot_id]['source-queue'])
-        try:
-            pipeline = PipelineFactory.create(self.parameters)
-            pipeline.set_queues(None, "source")
-            pipeline.connect()
-        except Exception as exc:
-            if RETURN_TYPE == 'json':
-                output.append(['error',
-                               'Could not connect to redis pipeline: %r.'
-                               '' % utils.error_message_from_exc(exc)])
-            else:
-                self.logger.exception('Could not connect to redis pipeline.')
-            retval = 1
-        else:
-            orphan_queues = "', '".join({a.decode() for a in pipeline.pipe.keys()} - all_queues)
-            if orphan_queues:
+                        all_queues.add(files[PIPELINE_CONF_FILE][bot_id]['source-queue'] + '-internal')
+        if not no_connections:
+            try:
+                pipeline = PipelineFactory.create(self.parameters)
+                pipeline.set_queues(None, "source")
+                pipeline.connect()
+                orphan_queues = "', '".join({a.decode() for a in pipeline.pipe.keys()} - all_queues)
+            except Exception as exc:
+                error = utils.error_message_from_exc(exc)
                 if RETURN_TYPE == 'json':
-                    output.append(['warning', "Orphaned queues found: '%s'." % orphan_queues])
+                    output.append(['error',
+                                   'Could not connect to redis pipeline: %s' % error])
                 else:
-                    self.logger.warning("Orphaned queues found: '%s'.", orphan_queues)
+                    self.logger.error('Could not connect to redis pipeline: %s', error)
+                retval = 1
+            else:
+                if orphan_queues:
+                    if RETURN_TYPE == 'json':
+                        output.append(['warning', "Orphaned queues found: '%s'." % orphan_queues])
+                    else:
+                        self.logger.warning("Orphaned queues found: '%s'.", orphan_queues)
 
         if RETURN_TYPE == 'json':
             output.append(['info', 'Checking harmonization configuration.'])

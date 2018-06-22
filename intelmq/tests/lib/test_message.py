@@ -633,7 +633,7 @@ class TestMessageFactory(unittest.TestCase):
         """ Test Message.update """
         event = self.new_event()
         with self.assertRaises(exceptions.InvalidValue):
-            event.update({'source.asn': 'AS1'})
+            event.update({'source.asn': 'AS0'})
 
     def test_message_extra_construction(self):
         """
@@ -736,7 +736,7 @@ class TestReport(unittest.TestCase):
         event = message.Event(harmonization=HARM)
         event.add('feed.code', 'adasd')
         event.add('source.fqdn', 'example.com')
-        report = message.Report(event).to_dict()
+        report = message.Report(event, harmonization=HARM).to_dict()
         self.assertNotIn('source.fqdn', report)
         self.assertIn('feed.code', report)
 
@@ -744,7 +744,7 @@ class TestReport(unittest.TestCase):
         """ raw must not be sanitized (base64 encoded) """
         event = message.Event(harmonization=HARM)
         event.add('raw', 'foobar')
-        report = message.Report(event)
+        report = message.Report(event, harmonization=HARM)
         self.assertEqual(report['raw'], 'Zm9vYmFy')
 
 

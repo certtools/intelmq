@@ -128,6 +128,14 @@
                 "ssl_client_certificate": null
             }
         },
+        "TCP": {
+            "description": "TCP is the bot responsible to receive events on a TCP port (ex: from TCP Output of another IntelMQ instance). Might not be working on Python3.4.6.",
+            "module": "intelmq.bots.collectors.tcp.collector",
+            "parameters": {
+                "ip": "<ip>",
+                "port": "<port>"
+            }
+        },
         "XMPP": {
             "description": "This bot can connect to an XMPP Server and one room, in order to receive reports from it. TLS is used by default. rate_limit is ineffective here. Bot can either pass the body or the whole event.",
             "module": "intelmq.bots.collectors.xmpp.collector",
@@ -879,13 +887,13 @@
             }
         },
         "TCP": {
-            "description": "TCP is the bot responsible to send events to a TCP port (Splunk, ElasticSearch, etc..).",
+            "description": "TCP is the bot responsible to send events to a TCP port (Splunk, ElasticSearch, another IntelMQ, etc..).",
             "module": "intelmq.bots.outputs.tcp.output",
             "parameters": {
                 "ip": "<ip>",
                 "hierarchical_output": false,
                 "port": "<port>",
-                "separator": "\n"
+                "separator": "<nothing or \n or sth>"
             }
         },
         "UDP": {

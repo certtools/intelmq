@@ -17,7 +17,6 @@ except ImportError:
     CertStreamClient = None
 
 
-
 class CertstreamCollectorBot(CollectorBot):
     def init(self):
         if sleekxmpp is None:

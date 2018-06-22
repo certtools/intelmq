@@ -27,10 +27,11 @@ class IdeaExpertBot(Bot):
         "spam": "Abusive.Spam",
         "scanner": "Recon.Scanning",
         "dropzone": "Information.UnauthorizedAccess",
-        "malware": "Malware",
+        "infected system": "Malware",
+        "malware configuration": "Malware",
         "botnet drone": "Malware",
         "ransomware": "Malware",
-        "malware configuration": "Malware",
+        "malware": "Malware",
         "c&c": "Intrusion.Botnet",
         "exploit": "Attempt.Exploit",
         "brute-force": "Attempt.Login",
@@ -48,6 +49,8 @@ class IdeaExpertBot(Bot):
         "other": "Other",
         "unknown": "Other",
         "test": "Test",
+        "unauthorized-command": "Intrusion.AdminCompromise",
+        "unauthorized-login": "Intrusion.AdminCompromise",
     }
 
     type_to_source_type = {
@@ -55,7 +58,6 @@ class IdeaExpertBot(Bot):
 
         "phishing": "Phishing",
         "dropzone": "Dropzone",
-        "botnet drone": "Botnet",
         "malware configuration": "MalwareConf",
         "c&c": "CC",
         "dga domain": "DGA",

@@ -58,7 +58,17 @@ setup(
     maintainer_email='wagner@cert.at',
     python_requires='>=3.3',
     install_requires=REQUIRES,
+    test_requires=[
+        'Cerberus',
+        'pyyaml',
+    ],
     test_suite='intelmq.tests',
+    extras_require={
+        'development': [
+            'Cerberus',
+            'pyyaml',
+        ],
+    },
     packages=find_packages(),
     include_package_data=True,
     url='https://github.com/certtools/intelmq/',
