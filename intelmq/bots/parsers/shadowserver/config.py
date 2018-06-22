@@ -123,37 +123,43 @@ def convert_float(value):
         return float(value)
 
 
-def convert_hostname_and_url(value, row):
+def convert_http_host_and_url(value, row):
     """
-    URLs are split into hostname and path, we can also guess the protocol here.
-    but only guess if the protocol is in a set of known good values.
-    """
-    if row['application'] in ['http', 'https', 'irc']:
-        if row['hostname'] and row['url']:
-            url = row['url'] if row['url'].startswith('/') else '/' + row['url']
-            return row['application'] + '://' + row['hostname'] + url
-
-        elif row['hostname'] and not row['url']:
-            return row['application'] + '://' + row['hostname']
-
-    return value
-
-
-def convert_httphost_and_url(value, row):
-    """
-    URLs are split into hostname and path, we can also guess the protocol here.
+    URLs are split into hostname and path. The column names differ in reports.
+    Compromised-Website: http_host, url
+    Drone: cc_dns, url
+    IPv6-Sinkhole-HTTP-Drone: http_host, http_url
+    Microsoft-Sinkhole: http_host, url
+    Sinkhole-HTTP-Drone: http_host, url
     With some reports, url/http_url holds only the path, with others the full HTTP request.
     """
+    hostname = ""
+    if "cc_dns" in row:
+        if row['cc_dns']:
+            hostname = row['cc_dns']
+    elif "http_host" in row:
+        if row['http_host']:
+            hostname = row['http_host']
+
     if "url" in row:
-        if row['http_host'] and row['url']:
-            path = re.sub(r'^[^/]*', '', row['url'])
-            path = re.sub(r'\s.*$', '', path)
-            return 'http://' + row['http_host'] + path
+        path = row.get('url', '')
     elif "http_url" in row:
-        if row['http_host'] and row['http_url']:
-            path = re.sub(r'^[^/]*', '', row['http_url'])
-            path = re.sub(r'\s.*$', '', path)
-            return 'http://' + row['http_host'] + path
+        path = row.get('http_url', '')
+    else:
+        path = ''
+
+    if hostname and path:
+        # remove potential leading/trailing HTTP request information
+        path = re.sub(r'^[^/]*', '', path)
+        path = re.sub(r'\s.*$', '', path)
+
+        application = "http"
+        if "application" in row:
+            if row['application'] in ['http', 'https']:
+                application = row['application']
+
+        return application + "://" + hostname + path
+
     return value
 
 
@@ -301,6 +307,7 @@ sinkhole_http_drone = {
     'optional_fields': [
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
+        ('destination.url', 'url', convert_http_host_and_url, True),
         ('malware.name', 'type'),
         ('user_agent', 'http_agent'),
         ('source.tor_node', 'tor', set_tor_node),
@@ -345,7 +352,7 @@ microsoft_sinkhole = {
     'optional_fields': [
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
-        ('destination.url', 'url', convert_httphost_and_url, True),
+        ('destination.url', 'url', convert_http_host_and_url, True),
         ('malware.name', 'type'),
         ('user_agent', 'http_agent'),
         ('source.tor_node', 'tor', set_tor_node),
@@ -842,7 +849,23 @@ ssl_freak_scan = {
         ('extra.', 'sha256_fingerprint', validate_to_none),
         ('extra.', 'sha512_fingerprint', validate_to_none),
         ('extra.', 'md5_fingerprint', validate_to_none),
-        ('extra.', 'device_serial', validate_to_none),
+        ('extra.', 'http_response_type', validate_to_none),
+        ('extra.', 'http_code', convert_int),
+        ('extra.', 'http_reason', validate_to_none),
+        ('extra.', 'content_type', validate_to_none),
+        ('extra.', 'http_connection', validate_to_none),
+        ('extra.', 'www_authenticate', validate_to_none),
+        ('extra.', 'set_cookie', validate_to_none),
+        ('extra.', 'server_type', validate_to_none),
+        ('extra.', 'content_length', validate_to_none),
+        ('extra.', 'transfer_encoding', validate_to_none),
+        ('extra.', 'http_date', convert_date),
+        ('extra.', 'cert_valid', convert_bool),
+        ('extra.', 'self_signed', convert_bool),
+        ('extra.', 'cert_expired', convert_bool),
+        ('extra.', 'browser_trusted', convert_bool),
+        ('extra.', 'validation_level', validate_to_none),
+        ('extra.', 'browser_error', validate_to_none),
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
@@ -984,7 +1007,7 @@ botnet_drone_hadoop = {
         ('source.reverse_dns', 'hostname'),
         ('protocol.transport', 'type'),
         ('malware.name', 'infection'),
-        ('destination.url', 'url', convert_hostname_and_url, True),
+        ('destination.url', 'url', convert_http_host_and_url, True),
         ('user_agent', 'agent'),
         ('destination.ip', 'cc_ip', validate_ip),
         ('destination.port', 'cc_port'),
@@ -1061,7 +1084,7 @@ compromised_website = {
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
-        ('source.url', 'url', convert_hostname_and_url, True),
+        ('source.url', 'url', convert_http_host_and_url, True),
         ('source.fqdn', 'http_host', validate_fqdn),
         ('event_description.text', 'category'),
         ('extra.', 'system', validate_to_none),

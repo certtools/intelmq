@@ -149,8 +149,10 @@ def generate_reports(report_template: Report, infile: BinaryIO, chunk_size: Opti
     """
     if chunk_size is None:
         report = report_template.copy()
-        report.add("raw", infile.read(), overwrite=True)
-        yield report
+        data = infile.read()
+        if data:
+            report.add("raw", data, overwrite=True)
+            yield report
     else:
         header = b""
         if copy_header_line:

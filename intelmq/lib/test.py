@@ -140,7 +140,7 @@ class BotTestCase(object):
                                          'raw': 'Cg==',
                                          'feed.name': 'Test Feed',
                                          'time.observation': '2016-01-01T00:00:00+00:00'}
-        elif cls.default_input_message == '':
+        elif cls.bot_type != 'collector' and cls.default_input_message == '':
             cls.default_input_message = {'__type': 'Event'}
         if type(cls.default_input_message) is dict:
             cls.default_input_message = \
@@ -290,8 +290,10 @@ class BotTestCase(object):
     def get_input_queue(self):
         """Returns the input queue of this bot which can be filled
            with fixture data in setUp()"""
-
-        return self.pipe.state["%s-input" % self.bot_id]
+        if self.pipe:
+            return self.pipe.state["%s-input" % self.bot_id]
+        else:
+            return []
 
     def set_input_queue(self, seq):
         """Setter for the input queue of this bot"""
@@ -449,3 +451,9 @@ class BotTestCase(object):
             del expected['time.observation']
 
         self.assertDictEqual(expected, event_dict)
+
+    def tearDown(self):
+        """
+        Check if the bot did consume all messages.
+        """
+        self.assertEqual(len(self.input_queue), 0)

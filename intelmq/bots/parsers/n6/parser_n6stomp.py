@@ -10,7 +10,7 @@ from intelmq.lib import utils
 from intelmq.lib.bot import Bot
 
 __all__ = ['N6StompParserBot']
-mapping = dict()
+mapping = {}
 mapping['amplifier']    = {"taxonomy": "vulnerable",
                            "type": "vulnerable service",
                            "identifier": "amplifier"}

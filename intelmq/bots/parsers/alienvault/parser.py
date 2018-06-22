@@ -19,7 +19,7 @@ class AlienVaultParserBot(ParserBot):
         values = row.split("#")
 
         # Send one event per classification
-        classification_types = list()
+        classification_types = []
         if values[3].strip().find(";") > 0:
             classification_types.extend(values[3].split(";"))
         else:

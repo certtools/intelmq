@@ -2,6 +2,54 @@ CHANGELOG
 ==========
 
 
+1.0.5 Bugfix release (2018-06-21)
+---------------------------------
+
+### Core
+- `lib/message`: `Report()` can now create a Report instance from Event instances (#1225).
+- `lib/bot`:
+  * The first word in the log line `Processed ... messages since last logging.` is now adaptible and set to `Forwarded` in the existing filtering bots (#1237).
+  * Kills oneself again after proper shutdown if the bot is XMPP collector or output (#970). Previously these two bots needed two stop commands to get actually stopped.
+- `lib/utils`: log: set the name of the `py.warnings` logger to the bot name (#1184).
+
+### Harmonization
+- Added new types `unauthorized-command` and `unauthorized-login` to `intrusions` taxonomy.
+
+### Bots
+#### Collectors
+- `bots.collectors.mail.collector_mail_url`: handle empty downloaded reports (#988).
+- `bots.collectos.file.collector_file`: handle empty files (#1244).
+
+#### Parsers
+- Shadowserver parser:
+  * SSL FREAK: Remove optional column `device_serial` and add several new ones.
+  * Fixed HTTP URL parsing for multiple feeds (#1243).
+- Spamhaus CERT parser:
+  * add support for `smtpauth`, `l_spamlink`, `pop`, `imap`, `rdp`, `smb`, `iotscan`, `proxyget`, `iotmicrosoftds`, `automatedtest`, `ioturl`, `iotmirai`, `iotcmd`, `iotlogin` and `iotuser` (#1254).
+  * fix `extra.destination.local_port` -> `extra.source.local_port`.
+
+#### Experts
+- `bots.experts.filter`: Pre-compile regex at bot initialization.
+
+### Tests
+- Ensure that the bots did process all messages (#291).
+
+### Tools
+- `intelmqctl`:
+  * `intelmqctl run` has a new parameter `-l` `--loglevel` to overwrite the log level for the run (#1075).
+  * `intelmqctl run [bot-id] mesage send` can now send report messages (#1077).
+- `intelmqdump`:
+  * has now command completion for bot names, actions and queue names in interacive console.
+  * automatically converts messages from events to reports if the queue the message is being restored to is the source queue of a parser (#1225).
+  * is now capable to read messages in dumps that are dictionaries as opposed to serialized dicts as strings and does not convert them in the show command (#1256).
+  * truncated messages are no longer used/saved to the file after being shown (#1255).
+  * now again denies recovery of dumps if the corresponding bot is running. The check was broken (#1258).
+  * now sorts the dump by the time of the dump. Previously, the list was in random order (#1020).
+
+### Known issues
+no known issues
+
+
 1.0.4 Bugfix release (2018-04-20)
 ---------------------------------
 - make code style compatible to pycodestyle 2.4.0
@@ -9,10 +57,8 @@ CHANGELOG
 
 ### Core
 - lib/harmonization:
-* FQDN validation now handles None correctly (raised an Exception).
-* Fixed several sanitize() methods, the generic sanitation method were called by is_valid, not the sanitize methods (#1219).
-
-### Harmonization
+  * FQDN validation now handles None correctly (raised an Exception).
+  * Fixed several sanitize() methods, the generic sanitation method were called by is_valid, not the sanitize methods (#1219).
 
 ### Bots
 * Use the new pypi website at https://pypi.org/ everywhere.
@@ -27,8 +73,8 @@ CHANGELOG
   * A lot of newly added fields and fixed conversions.
   * Add newly added columns of `Ssl-Scan` feed to parser
 - Spamhaus CERT parser:
- * fix parsing and classification for bot names 'openrelay', 'iotrdp', 'sshauth', 'telnetauth', 'iotcmd', 'iotuser', 'wpscanner', 'w_wplogin', 'iotscan'
-   see the NEWS file - Postgresql section - for all changes.
+  * fix parsing and classification for bot names 'openrelay', 'iotrdp', 'sshauth', 'telnetauth', 'iotcmd', 'iotuser', 'wpscanner', 'w_wplogin', 'iotscan'
+    see the NEWS file - Postgresql section - for all changes.
 - CleanMX phishing parser: handle FQDNs in IP column (#1162).
 
 #### Experts
@@ -44,6 +90,12 @@ CHANGELOG
 
 ### Packaging
 * Static data is now included in source tarballs, development files are excluded
+
+### Known issues
+- `bots.collectors/outputs.xmpp` must be killed two times (#970).
+- When running bots with `intelmqctl run [bot-id]` the log level is always INFO (#1075).
+- `intelmqctl run [bot-id] message send [msg]` does only support Events, not Reports (#1077).
+- A warning issued by the python warnings module is logged without the bot-id (#1184).
 
 
 1.0.3 Bugfix release (2018-02-05)

@@ -328,7 +328,7 @@ class Message(dict):
         return event_hash.hexdigest()
 
     def to_dict(self, hierarchical: bool = False, with_type: bool = False):
-        json_dict = dict()
+        json_dict = {}
 
         if with_type:
             self['__type'] = self.__class__.__name__
@@ -346,7 +346,7 @@ class Message(dict):
                     break
 
                 if subkey not in json_dict_fp:
-                    json_dict_fp[subkey] = dict()
+                    json_dict_fp[subkey] = {}
 
                 json_dict_fp = json_dict_fp[subkey]
 
@@ -401,11 +401,19 @@ class Report(Message):
                  harmonization: Optional[dict] = None):
         """
         Parameters:
-            message: Passed along to Message's and dict's init
+            message: Passed along to Message's and dict's init.
+                If this is an instance of the Event class, the resulting Report instance
+                has only the fiels which are possible in Report, all others are stripped.
             auto: if False (default), time.observation is automatically added.
             harmonization: Harmonization definition to use
         """
-        super(Report, self).__init__(message, auto, harmonization)
+        if isinstance(message, Event):
+            super(Report, self).__init__({}, auto, harmonization)
+            for key, value in message.items():
+                if self._Message__is_valid_key(key):
+                    self.add(key, value, sanitize=False)
+        else:
+            super(Report, self).__init__(message, auto, harmonization)
         if not auto and 'time.observation' not in self:
             time_observation = intelmq.lib.harmonization.DateTime().generate_datetime_now()
             self.add('time.observation', time_observation, sanitize=False)

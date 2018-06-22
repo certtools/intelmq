@@ -13,6 +13,7 @@ import time
 import pkg_resources
 import psutil
 
+from collections import OrderedDict
 from intelmq import (DEFAULTS_CONF_FILE, PIPELINE_CONF_FILE, RUNTIME_CONF_FILE,
                      VAR_RUN_PATH, BOTS_FILE, HARMONIZATION_CONF_FILE)
 from intelmq.lib import utils
@@ -50,13 +51,13 @@ ERROR_MESSAGES = {
     'access denied': '%s failed to %s because of missing permissions.',
 }
 
-LOG_LEVEL = {
-    'DEBUG': 0,
-    'INFO': 1,
-    'WARNING': 2,
-    'ERROR': 3,
-    'CRITICAL': 4,
-}
+LOG_LEVEL = OrderedDict([
+    ('DEBUG', 0),
+    ('INFO', 1),
+    ('WARNING', 2),
+    ('ERROR', 3),
+    ('CRITICAL', 4),
+])
 
 RETURN_TYPES = ['text', 'json']
 RETURN_TYPE = None
@@ -121,7 +122,8 @@ class IntelMQProcessManager:
                 self.logger.error('Directory %s does not exist and cannot be '
                                   'created: %s.', self.PIDDIR, exc)
 
-    def bot_run(self, bot_id, run_subcommand=None, console_type=None, message_action_kind=None, dryrun=None, msg=None):
+    def bot_run(self, bot_id, run_subcommand=None, console_type=None, message_action_kind=None, dryrun=None, msg=None,
+                loglevel=None):
         pid = self.__read_pidfile(bot_id)
         module = self.__runtime_configuration[bot_id]['module']
         if pid and self.__status_process(pid, module):
@@ -141,7 +143,7 @@ class IntelMQProcessManager:
 
         try:
             BotDebugger(self.__runtime_configuration[bot_id], bot_id, run_subcommand,
-                        console_type, dryrun, message_action_kind, msg)
+                        console_type, dryrun, message_action_kind, msg, loglevel=loglevel)
             retval = 0
         except KeyboardInterrupt:
             print('Keyboard interrupt.')
@@ -465,6 +467,9 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             parser_run = subparsers.add_parser('run', help='Run a bot interactively')
             parser_run.add_argument('bot_id',
                                     choices=self.runtime_configuration.keys())
+            parser_run.add_argument('--loglevel', '-l',
+                                    nargs='?', default=None,
+                                    choices=LOG_LEVEL.keys())
             parser_run_subparsers = parser_run.add_subparsers(title='run-subcommands')
 
             parser_run_console = parser_run_subparsers.add_parser('console', help='Get a ipdb live console.')
@@ -758,9 +763,9 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         counters = pipeline.count_queued_messages(*all_queues)
         log_list_queues(counters)
 
-        return_dict = dict()
+        return_dict = {}
         for bot_id, info in self.pipeline_configuration.items():
-            return_dict[bot_id] = dict()
+            return_dict[bot_id] = {}
 
             if 'source-queue' in info:
                 return_dict[bot_id]['source_queue'] = (
@@ -768,7 +773,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 return_dict[bot_id]['internal_queue'] = counters[info['source-queue'] + '-internal']
 
             if 'destination-queues' in info:
-                return_dict[bot_id]['destination_queues'] = list()
+                return_dict[bot_id]['destination_queues'] = []
                 for dest_queue in info['destination-queues']:
                     return_dict[bot_id]['destination_queues'].append(
                         (dest_queue, counters[dest_queue]))
@@ -824,7 +829,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             self.logger.error('File %r is not readable.', bot_log_path)
             return 1, 'error'
 
-        messages = list()
+        messages = []
 
         message_overflow = ''
         message_count = 0

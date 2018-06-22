@@ -511,6 +511,10 @@ none
 
 ### IDEA
 
+Converts the event to IDEA format and saves it as JSON in the field `output`. All other fields are not modified.
+
+Documentation about IDEA: https://idea.cesnet.cz/en/index
+
 #### Information:
 * `name:` idea
 * `lookup:` local config

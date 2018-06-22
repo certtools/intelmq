@@ -163,6 +163,8 @@ class ClassificationType(GenericType):
                       'test',
                       'tor',
                       'leak',
+                      'unauthorized-login',
+                      'unauthorized-command',
                       ]
 
     __doc__ += '\n     * '.join(allowed_values)
