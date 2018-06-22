@@ -128,6 +128,7 @@ CHANGELOG
 
 ### Tests
 - Travis now correctly stops if a requirement could not be installed (#1257).
+- New tests for validating `etc/feeds.yaml` and `bots/BOTS` using cerberus and schemes are added (#1166).
 
 ### Known bugs
 - `bots.experts.sieve` does not support textX (#1246).
