@@ -1,3 +1,9 @@
+intelmq (1.0.6-1) UNRELEASED; urgency=medium
+
+  * Update to version 1.0.6
+
+ -- Wagner Sebastian <wagner@cert.at>  Fri, 22 Jun 2018 14:58:52 +0200
+
 intelmq (1.0.5-1) stable; urgency=medium
 
   * Update to version 1.0.5
