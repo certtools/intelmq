@@ -248,6 +248,9 @@ The parameter `http_timeout_max_tries` is of no use in this collector.
 
 ### Shodan Stream
 
+Requires the shodan library to be installed:
+ * https://github.com/achillean/shodan-python/
+ * https://pypi.org/project/shodan/
 
 #### Information:
 * `name:` intelmq.bots.collectors.shodan.collector_stream
