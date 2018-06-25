@@ -481,7 +481,10 @@
         "Shodan": {
             "description": "Parses Shodan data collected via the API.",
             "module": "intelmq.bots.parsers.shodan.parser",
-            "parameters": {}
+            "parameters": {
+                "ignore_errors": true,
+                "minimal_mode": false
+            }
         },
         "Spamhaus CERT": {
             "description": "Spamhaus CERT Parser is the bot responsible to parse the report and sanitize the information.",

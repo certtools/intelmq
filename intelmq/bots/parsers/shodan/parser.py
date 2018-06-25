@@ -122,6 +122,20 @@ MAPPING = {
         'tags': 'extra.tags',
         }
 
+MAPPING_MINIMAL = {
+            'source.ip': ("ip_str"),
+            'source.asn': ("asn"),
+            'source.port': ("port"),
+            'protocol.transport': ("transport"),
+            'time.source': ("timestamp"),
+            'event_description.target': ("org"),
+            'extra.hostnames': ('hostnames'),  # is a list
+            'extra.data': ('data'),
+            'extra.html_title': ('title'),
+            'extra.tags': ('tags'),
+            'source.geolocation.cc': ("location", "country_code"),
+            'extra.opts': ('opts'),
+        }
 
 PROTOCOLS = ['ftp', 'http', 'isakmp']
 
@@ -129,10 +143,14 @@ PROTOCOLS = ['ftp', 'http', 'isakmp']
 class ShodanParserBot(Bot):
 
     def init(self):
-        if getattr(self.parameters, 'ignore_errors', False):
+        if getattr(self.parameters, 'ignore_errors', True):
             self.ignore_errors = True
         else:
             self.ignore_errors = False
+        if getattr(self.parameters, 'minimal_mode', False):
+            self.minimal_mode = True
+        else:
+            self.minimal_mode = False
 
     def apply_mapping(self, mapping, data):
         self.logger.debug('Appylying mapping %r to data %r.', mapping, data)
@@ -160,12 +178,25 @@ class ShodanParserBot(Bot):
 
         event = self.new_event(report)
         event['raw'] = raw
-        event.update(self.apply_mapping(MAPPING, decoded))
-        event.add('classification.type', 'other')
-        event.add('classification.identifier', 'shodan-scan')
-        for protocol in PROTOCOLS:
-            if protocol in decoded:
-                event.add('protocol.application', protocol)
+        if self.minimal_mode:
+            for intelmqkey, shodankey in MAPPING_MINIMAL.items():
+                value = decoded
+                for shodankeypart in shodankey:
+                    try:
+                        value = value[shodankeypart]
+                    except KeyError:
+                        break
+                else:
+                    event[intelmqkey] = value
+
+            event['extra.shodan'] = decoded
+        else:
+            event.update(self.apply_mapping(MAPPING, decoded))
+            event.add('classification.type', 'other')
+            event.add('classification.identifier', 'shodan-scan')
+            for protocol in PROTOCOLS:
+                if protocol in decoded:
+                    event.add('protocol.application', protocol)
         self.send_message(event)
         self.acknowledge_message()
 
