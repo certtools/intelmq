@@ -69,7 +69,7 @@ BOT_GROUP = {"collectors": "Collector", "parsers": "Parser", "experts": "Expert"
 
 def log_list_queues(queues):
     if RETURN_TYPE == 'text':
-        for queue, counter in sorted(queues.items()):
+        for queue, counter in sorted(queues.items(), key=lambda x: str.lower(x[0])):
             if counter or not QUIET:
                 logger.info("%s - %s", queue, counter)
 
@@ -787,7 +787,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         If description is not set, None is used instead.
         """
         if RETURN_TYPE == 'text':
-            for bot_id in sorted(self.runtime_configuration.keys()):
+            for bot_id in sorted(self.runtime_configuration.keys(), key=str.lower):
                 if QUIET and not self.runtime_configuration[bot_id].get('enabled'):
                     continue
                 if QUIET:
