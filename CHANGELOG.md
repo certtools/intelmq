@@ -23,6 +23,7 @@ CHANGELOG
 ### Packaging
 
 ### Tests
+- `intelmqctl list` now sorts the output of bots and queues (#1262).
 
 ### Contrib
 
