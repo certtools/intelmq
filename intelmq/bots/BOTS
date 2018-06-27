@@ -102,14 +102,15 @@
                 "rate_limit": 3600
             }
         },
-        "openDXL ATD Report": {
-            "description": "Listens via openDXL to ATD Reports",
+        "openDXL": {
+            "description": "Listens to openDXL fabric",
             "module": "intelmq.bots.collectors.opendxl.collector",
             "enabled": true,
             "run_mode": "continuous",
             "parameters": {
-                "feed": "DXL",
-                "DXL_Config_File": "<insert /path/to/dxlclient.conf>"
+                "feed": "<Feed Name>",
+                "dxl_config_file": "<insert /path/to/dxlclient.conf>",
+                "dxl_topic": "/mcafee/event/atd/file/report"
             }
         },
         "Request Tracker": {

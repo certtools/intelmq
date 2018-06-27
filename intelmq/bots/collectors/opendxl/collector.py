@@ -5,6 +5,7 @@ TLS is used by default.
 
 Parameters:
 dxl_config_file: string
+dxl_topic: string
 """
 
 import logging
@@ -29,13 +30,15 @@ class openDXLCollectorBot(CollectorBot):
     def process(self):
 
         if self.dxlclient==None:
-            self.dxlclient=DXLClient(self.parameters.DXL_Config_File,self.new_report,self.send_message,self.logger)
+            self.dxlclient=DXLClient(self.parameters.dxl_config_file, self.parameters.dxl_topic,
+                                     self.new_report, self.send_message, self.logger)
             self.dxlclient.start()
             self.logger.info('DXL Client started.')
 
 class DXLClient():
 
-    def __init__(self,dxl_config_file,object_report,object_send_message,object_logger):
+    def __init__(self,dxl_config_file, dxl_topic, 
+                 object_report, object_send_message, object_logger):
 
         self.config = DxlClientConfig.create_dxl_config_from_file(dxl_config_file)
         self.send_message=object_send_message
@@ -84,7 +87,7 @@ class DXLClient():
 
             # Register the callback with the client
             self.client.add_event_callback('#', MyEventCallback(), subscribe_to_topic=False)
-            self.client.subscribe("/mcafee/event/atd/file/report")
+            self.client.subscribe(dxl_topic)
 
             # Wait forever
             while True:
