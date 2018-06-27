@@ -14,7 +14,7 @@ import sys
 from intelmq.lib.bot import Bot
 
 
-class ExampleParserBot(Bot):
+class ATDParserBot(Bot):
     def process(self):
         report = self.receive_message()
 
