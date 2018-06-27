@@ -12,6 +12,7 @@ Depending on the subcommand received, the class either
  * processes single message, either injected or from default pipeline (process subcommand)
  * reads the message from input pipeline or send a message to output pipeline (message subcommand)
 """
+import inspect
 import json
 import logging
 import sys
@@ -82,7 +83,19 @@ class BotDebugger:
         module.set_trace()
 
     def _message(self, message_action_kind, msg):
-        if message_action_kind == "get":
+        if message_action_kind == "send":
+            if not bool(self.instance._Bot__destination_queues):
+                self.instance.logger.warning("Bot has no destination queues.")
+                return
+            if msg:
+                msg = self.arg2msg(msg)
+                self.instance.send_message(msg)
+                self.instance.logger.info("Message sent to output pipelines.")
+            else:
+                self.messageWizzard("Message missing!")
+        elif self.instance.group == "Collector":
+            self.instance.logger.warning("Collector bots have no input queue.")
+        elif message_action_kind == "get":
             self.instance.logger.info("Waiting for a message to get...")
             if not bool(self.instance._Bot__source_queues):
                 self.instance.logger.warning("Bot has no source queue.")
@@ -99,16 +112,6 @@ class BotDebugger:
             self.instance.logger.info("Waiting for a message to pop...")
             self.pprint(self.instance.receive_message())
             self.instance.acknowledge_message()
-        elif message_action_kind == "send":
-            if not bool(self.instance._Bot__destination_queues):
-                self.instance.logger.warning("Bot has no destination queues.")
-                return
-            if msg:
-                msg = self.arg2msg(msg)
-                self.instance.send_message(msg)
-                self.instance.logger.info("Message sent to output pipelines.")
-            else:
-                self.messageWizzard("Message missing!")
 
     def _process(self, dryrun, msg, show):
         if msg:
@@ -124,7 +127,10 @@ class BotDebugger:
 
         if show:
             fn = self.instance.send_message
-            self.instance.send_message = lambda msg, path="_default": [self.pprint(msg), fn(msg, path=path)]
+            if self.instance.group == "Collector":
+                self.instance.send_message = lambda msg: [self.pprint(msg), fn(msg)]
+            else:
+                self.instance.send_message = lambda msg, path="_default": [self.pprint(msg), fn(msg, path=path)]
 
         self.instance.logger.info("Processing...")
         self.instance.process()
