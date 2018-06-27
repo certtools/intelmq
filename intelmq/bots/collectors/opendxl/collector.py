@@ -41,6 +41,7 @@ class DXLClient():
                  object_report, object_send_message, object_logger):
 
         self.config = DxlClientConfig.create_dxl_config_from_file(dxl_config_file)
+        self.dxl_topic = dxl_topic
         self.send_message=object_send_message
         self.report=object_report
         self.logger=object_logger
@@ -83,7 +84,7 @@ class DXLClient():
 
             # Register the callback with the client
             self.client.add_event_callback('#', MyEventCallback(), subscribe_to_topic=False)
-            self.client.subscribe(dxl_topic)
+            self.client.subscribe(self.dxl_topic)
 
             # Wait forever
             while True:
