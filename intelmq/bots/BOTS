@@ -102,6 +102,16 @@
                 "rate_limit": 3600
             }
         },
+        "openDXL ATD Report": {
+            "description": "Listens via openDXL to ATD Reports",
+            "module": "intelmq.bots.collectors.opendxl.collector",
+            "enabled": true,
+            "run_mode": "continuous",
+            "parameters": {
+                "feed": "DXL",
+                "DXL_Config_File": "<insert /path/to/dxlclient.conf>"
+            }
+        },
         "Request Tracker": {
             "description": "Request Tracker Collector fetches attachments from an RTIR instance.",
             "module": "intelmq.bots.collectors.rt.collector_rt",
