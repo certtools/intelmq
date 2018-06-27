@@ -253,6 +253,11 @@
         }
     },
     "Parser": {
+        "Advanced Threat Defense": {
+            "description": "McAfee Advanced Threat Defense Parser is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.atd.parser",
+            "parameters": {}
+        },
         "Abuse.ch Domain": {
             "description": "Abuse.ch Domain Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.abusech.parser_domain",
