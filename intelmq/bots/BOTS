@@ -102,6 +102,15 @@
                 "rate_limit": 3600
             }
         },
+        "openDXL": {
+            "description": "Listens to openDXL fabric",
+            "module": "intelmq.bots.collectors.opendxl.collector",
+            "parameters": {
+                "feed": "<Feed Name>",
+                "dxl_config_file": "<insert /path/to/dxlclient.conf>",
+                "dxl_topic": "/mcafee/event/atd/file/report"
+            }
+        },
         "Request Tracker": {
             "description": "Request Tracker Collector fetches attachments from an RTIR instance.",
             "module": "intelmq.bots.collectors.rt.collector_rt",
