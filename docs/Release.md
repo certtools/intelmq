@@ -8,7 +8,7 @@ Assumption: You are working on branch maintenance, the next version is a bug fix
 ## Documentation
 
  * CHANGELOG.MD and
- * NEWS.MD: Update the latest header, fix the order and remove empty sections if necessary.
+ * NEWS.MD: Update the latest header, fix the order, remove empty sections and (re)group the entries if necessary.
  * `intelmq/version.py`: Update the version.
  * `debian/changelog`: Insert a new section for the new version with the tool `dch`.
 
