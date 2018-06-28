@@ -476,7 +476,7 @@ class Message(dict):
     def __ne__(self, other) -> bool:
         return not self.__eq__(other)
 
-    def set_default_value(self, value: Any=None):
+    def set_default_value(self, value: Any = None):
         """
         Sets a default value for items.
         """
