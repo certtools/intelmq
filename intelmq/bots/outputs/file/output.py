@@ -13,7 +13,7 @@ class FileOutputBot(Bot):
         self.logger.debug("Opening %r file.", self.parameters.file)
         self.file = io.open(self.parameters.file, mode='at', encoding="utf-8")
         self.logger.info("File %r is open.", self.parameters.file)
-        self.single_key = getattr(self.parameters, 'single_key')
+        self.single_key = getattr(self.parameters, 'single_key', None)
 
     def process(self):
         event = self.receive_message()
