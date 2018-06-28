@@ -38,7 +38,9 @@ def generate(harmonization_file=HARMONIZATION_CONF_FILE):
 
         if value['type'] in ('String', 'Base64', 'URL', 'FQDN',
                              'MalwareName', 'ClassificationType',
-                             'LowercaseString', 'UppercaseString', 'Registry'):
+                             'LowercaseString', 'UppercaseString', 'Registry',
+                             'TLP',
+                             ):
             if 'length' in value:
                 dbtype = 'varchar({})'.format(value['length'])
             else:
@@ -49,13 +51,13 @@ def generate(harmonization_file=HARMONIZATION_CONF_FILE):
             dbtype = 'timestamp with time zone'
         elif value['type'] == 'Boolean':
             dbtype = 'boolean'
-        elif value['type'] == 'Integer':
+        elif value['type'] in ('Integer', 'ASN'):
             dbtype = 'integer'
         elif value['type'] in ('Float', 'Accuracy'):
             dbtype = 'real'
         elif value['type'] == 'UUID':
             dbtype = 'UUID'
-        elif value['type'] == 'JSON':
+        elif value['type'] in ('JSON', 'JSONDict'):
             dbtype = 'json'
         else:
             raise ValueError('Unknown type %r.' % value['type'])

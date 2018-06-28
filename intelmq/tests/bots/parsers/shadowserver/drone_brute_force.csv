@@ -1,0 +1,2 @@
+"timestamp","ip","port","asn","geo","region","city","hostname","dest_ip","dest_port","dest_asn","dest_geo","dest_dns","service","naics","sic","dest_naics","dest_sic","sector","dest_sector","public_source","start_time","end_time","client_version","username","password","payload_url","payload_md5"
+"2018-04-07 03:02:15","198.51.100.169",38880,64496,"AT","WIEN","WIEN",,"198.51.100.196",22,65536,"CA",,"ssh",0,0,518210,737401,,"Information Technology","SISSDEN","2018-04-07T03:02:15.951205Z","2018-04-07T03:02:19.143501Z","SSH-2.0-libssh2_1.7.0","alex","password",,

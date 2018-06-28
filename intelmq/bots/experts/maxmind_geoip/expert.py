@@ -28,6 +28,7 @@ class GeoIPExpertBot(Bot):
             self.logger.error("Read 'bots/experts/geoip/README' and follow the"
                               " procedure.")
             self.stop()
+        self.overwrite = getattr(self.parameters, 'overwrite', False)
 
     def process(self):
         event = self.receive_message()
@@ -45,18 +46,19 @@ class GeoIPExpertBot(Bot):
 
                 if info.country.iso_code:
                     event.add(geo_key % "cc", info.country.iso_code,
-                              overwrite=True)
+                              overwrite=self.parameters)
 
                 if info.location.latitude:
                     event.add(geo_key % "latitude", info.location.latitude,
-                              overwrite=True)
+                              overwrite=self.parameters)
 
                 if info.location.longitude:
                     event.add(geo_key % "longitude", info.location.longitude,
-                              overwrite=True)
+                              overwrite=self.parameters)
 
                 if info.city.name:
-                    event.add(geo_key % "city", info.city.name, overwrite=True)
+                    event.add(geo_key % "city", info.city.name,
+                              overwrite=self.parameters)
 
             except geoip2.errors.AddressNotFoundError:
                 pass

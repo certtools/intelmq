@@ -1,6 +1,152 @@
 CHANGELOG
 ==========
 
+1.1.0 (unreleased)
+------------------
+- Support for Python 3.3 has been dropped, it reached its end of life.
+- The list of feeds docs/Feeds.md has now a machine-readable equivalent YAML file in intelmq/etc/feeds.yaml
+  A tool to convert from yaml to md has been added.
+
+### Tools
+- `intelmq_gen_feeds_docs` add to bin directory, allows generating the Feeds.md documentation file from feeds.yaml
+- `intelmq_gen_docs` merges both `intelmq_gen_feeds_docs` and `intelmq_gen_harm_docs` in one file and automatically updates the documentation files.
+
+#### intelmqctl
+- `intelmqctl start` prints the bot's last error messages if the bot failed to start (#1021).
+- `intelmqctl start` message "is running" is printed every time. (Until now, it wasn't said when a bot was just starting.)
+- `intelmqctl start/stop/restart/reload/status` now have a "--group" flag which allows you to specify the group of the bots that should be influenced by the command.
+- `intelmqctl check` checks for defaults.conf completeness if the shipped file from the package can be found.
+- `intelmqctl check` shows errors for non-importable bots.
+- `intelmqctl list bots -q` only prints the IDs of enabled bots.
+- `intelmqctl list queues-and-status` prints both queues and bots statuses (so that it can be used in eg. intelmq-manager).
+- `intelmqctl run` parameter for showing a sent message.
+- `intelmqctl run` if message is sent to a non-default path, it is printed out.
+- `intelmqctl restart` bug fix; returned some half-nonsense, now returns return state of start and stop operation in a list (#1226).
+- `intelmqctl check`: New parameter `--no-connections` to prevent the command from making connections e.g. to the redis pipeline.s
+
+
+### Contrib
+- tool `feeds-config-generator` to automatically generate the collector and parser runtime and pipeline configurations.
+- `malware_name_mapping`: Download and convert tool for malware family name mapping has been added.
+- Added a systemd script which creates systemd units for bots (#953).
+
+### Core
+- lib/bot
+  - use SIGTERM instead of SIGINT to stop bots (#981).
+  - Bots can specify a static method `check(parameters)` which can perform individual checks specific to the bot.
+    These functions will be called by `intelmqctl check` if the bot is configured with the given parameters
+  - top level bot parameters (description, group, module, name) are exposed as members of the class.
+  - The parameter `feed` for collectors is deprecated for 2.0 and has been replaced by the more consistent `name` (#1144).
+- lib/message:
+  - Subitems in fields of type `JSONDict` (see below) can be accessed directly. E.g. you can do:
+    event['extra.foo'] = 'bar'
+    event['extra.foo'] # gives 'bar'
+    It is still possible to set and get the field as whole, however this may be removed or changed in the future:
+    event['extra'] = '{"foo": "bar"}'
+    event['extra'] # gives '{"foo": "bar"}'
+    "Old" bots and configurations compatible with 1.0.x do still work.
+    Also, the extra field is now properly exploded when exporting events, analogous to all other fields.
+  - `Message.add`: The parameter `overwrite` accepts now three different values: `True`, `False` and `None` (new).
+    True: An existing value will be overwritten
+    False: An existing value will not be overwritten (previously an exception has been raised when the value was given).
+    None (default): If the value exists an `KeyExists` exception is thrown (previously the same as False).
+    This allows shorter code in the bots, as an 'overwrite' configuration parameter can be directly passed to the function.
+  - The message class has now the possibility to return a default value for non-exisiting fields, see `Message.set_default_value`.
+- Add `RewindableFileHandle` to utils making handling of CSV files more easy (optionally)
+- lib/pipeline:
+  * you may now define more than one destination queues path the bot should pass the message to, see [Pipelines](https://github.com/certtools/intelmq/blob/develop/docs/User-Guide.md#pipeline-configuration) (#1088, #1190).
+  * the special path `"_on_error"` can be used to pass messages to different queues in case of processing errors (#1133).
+- `lib/harmonization`: Accept `AS` prefix for ASN values (automatically stripped).
+
+### Bots
+#### Collectors
+- `bots.collectors.mail`:
+  - New parameters; `sent_from`: filter messages by sender, `sent_to`: filter messages by recipient
+  - More debug logs
+- `bots.collectors.n6.collector_stomp`: renamed to `bots.collectors.stomp.collector` (#716)
+- bots.collectors.rt:
+  - New parameter `search_requestor` to search for field Requestor.
+  - Empty strings and `null` as value for search parameters are ignored.
+  - Empty parameters `attachment_regex` and `url_regex` handled.
+- `bots.collectors.http.collector_http`: Ability to optionally use the current time in parameter `http_url`, added parameter `http_url_formatting`.
+- `bots.collectors.stomp.collector`: Heartbeat timeout is now logged with log level info instead of warning.
+- added `intelmq.bots.collectors.twitter.collector_twitter`
+- added `intelmq.bots.collectors.tcp.collector` that can be bound to another IntelMQ instance by a TCP output
+- `bots.collectors.microsoft.collector_interflow`: added for MS interflow API
+  - Automatic ungzipping for .gz files.
+- added `intelmq.bots.collectors.calidog.collector_certstream` for collecting certstream data (#1120).
+- added `intelmq.bots.collectors.shodan.collector_stream` for collecting shodan stream data (#1096).
+
+#### Parsers
+- `bots.parsers.shadowserver`:
+  - changed feednames . Please refer to it's README for the exact changes.
+  - If the conversion function fails for a line, an error is raised and the offending line will be handled according to the error handling configuration.
+    Previously errors like these were only logged and ignored otherwise.
+  - add support for the feed `Accessible-Hadoop`
+- The Generic CSV Parser `bots.parsers.generic.parser_csv`:
+  - It is possible to filter the data before processing them using the new parameters `filter_type` and `filter_text`.
+  - It is possible to specify multiple columns using `|` character in parameter `columns`.
+  - The parameter `time_format` now supports `'epoch_millis'` for seconds since the Epoch, milliseconds are supported but not used.
+- renamed `bots.parsers.cymru_full_bogons.parser` to `bots.parsers.cymru.parser_full_bogons`, compatibility shim will be removed in version 2.0
+- added `bots.parsers.cymru.parser_cap_program`
+- added `intelmq.bots.parsers.zoneh.parser` for ZoneH feeds
+- added `intelmq.bots.parsers.sucuri.parser`
+- added `intelmq.bots.parsers.malwareurl.parser`
+- added `intelmq.bots.parsers.threatminer.parser`
+- added `intelmq.bots.parsers.webinspektor.parser`
+- added `intelmq.bots.parsers.twitter.parser`
+- added `intelmq.bots.parsers.microsoft.parser_ctip`
+  * ignore the invalid IP '0.0.0.0' for the destination
+  * fix the raw/dumped messages, did not contain the paling list previously.
+  * use the new harmonization field `tlp` instead of `extra.tlp`.
+- `bots.parsers.alienvault.parser_otx`: Save TLP data in the new harmonization field `tlp`.
+- added `intelmq.bots.parsers.openphish.parser_commercial`
+- added `intelmq.bots.parsers.microsoft.parser_bingmurls`
+- added `intelmq.bots.parsers.calidog.parser_certstream` for parsing certstream data (#1120).
+- added `intelmq.bots.parsers.shodan.parser` for parsing shodan data (#1096).
+
+#### Experts
+- Added sieve expert for filtering and modifying events (#1083)
+ * capable of distributing the event to appropriate named queues
+- `bots.experts.modify`
+  * default rulesets: all malware name mappings have been migrated to the [Malware Name Mapping repository](https://github.com/certtools/malware_name_mapping) ruleset. See the new added contrib tool for download and conversion.
+  * new parameter `case_sensitive` (default: True)
+- Added wait expert for sleeping
+- Added domain suffix expert to extract the TLD/Suffix from a domain name.
+- `bots.experts.maxmind_geoip`: New (optional) parameter `overwrite`, by default false. The current default was to overwrite!
+
+#### Outputs
+- `bots.outputs.file`:
+  - String formatting can be used for file names.
+  - New parameter `single_key` to only save one field.
+
+### Harmonization
+- Renamed `JSON` to `JSONDict` and added a new type `JSON`. `JSONDict` saves data internally as JSON, but acts like a dictionary. `JSON` accepts any valid JSON.
+- fixed regex for `protocol.transport` it previously allowed more values than it should have.
+- New ASN type. Like integer but checks the range.
+- added `destination.urlpath` and `source.urlpath` to harmonization.
+- New field `tlp` for tlp level specification.
+  - New TLP type. Allows all four tlp levels, removes 'TLP:' prefix and converts to upper case.
+- Added new `classification.type` 'vulnerable client'
+- Added `(destination|source).domain_suffix` to hold the TLD/domain suffix.
+- New allowed value for `classification.type`: `infected system` for taxonomy `malicious code` (#1197).
+
+### Requirements
+- Requests is no longer listed as dependency of the core. For depending bots the requirement is noted in their REQUIREMENTS.txt file.
+
+### Documentation
+- Use Markdown for README again, as pypi now supports it.
+
+### Tests
+- Travis now correctly stops if a requirement could not be installed (#1257).
+- New tests for validating `etc/feeds.yaml` and `bots/BOTS` using cerberus and schemes are added (#1166).
+- New test for checking if `docs/Feeds.md` is up to date with `etc/feeds.yaml`.
+
+### Known bugs
+- `bots.experts.sieve` does not support textX (#1246).
+- performance degradation for extra fields (#1117).
+- Postgres output: support condensed JSONDicts (#1107).
+- Bots started with IntelMQ-Manager stop when the webserver is restarted (#952).
 
 1.0.6 Bugfix release (unreleased)
 ---------------------------------
@@ -98,7 +244,11 @@ no known issues
   * Feed 'drone (hadoop)':
     * Correct validation of field `cc_dns`, will now only be added as `destination.fqdn` if correct FQDN, otherwise ignored. Previously this field could be saved in extra containing an IP address.
     * Adding more mappings for added columns.
+  * Added feeds:
+    * Drone-Brute-Force
+    * IPv6-Sinkhole-HTTP-Drone
   * A lot of newly added fields and fixed conversions.
+  * Optional fields can now use one column multiple times.
   * Add newly added columns of `Ssl-Scan` feed to parser
 - Spamhaus CERT parser:
   * fix parsing and classification for bot names 'openrelay', 'iotrdp', 'sshauth', 'telnetauth', 'iotcmd', 'iotuser', 'wpscanner', 'w_wplogin', 'iotscan'

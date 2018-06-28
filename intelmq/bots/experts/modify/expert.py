@@ -40,6 +40,11 @@ class ModifyExpertBot(Bot):
         if type(self.config) is dict:
             self.config = convert_config(self.config)
 
+        if getattr(self.parameters, 'case_sensitive', True):
+            self.re_kwargs = {}
+        else:
+            self.re_kwargs = {'flags': re.IGNORECASE}
+
     def matches(self, identifier, event, condition):
         matches = {}
 
@@ -54,7 +59,7 @@ class ModifyExpertBot(Bot):
                 return None
             if not isinstance(rule, type(event[name])):
                 if isinstance(rule, str) and isinstance(event[name], (int, float)):
-                    match = re.search(rule, str(event[name]))
+                    match = re.search(rule, str(event[name]), **self.re_kwargs)
                     if match is None:
                         return None
                     else:
@@ -67,7 +72,7 @@ class ModifyExpertBot(Bot):
                 if event[name] != rule:
                     return None
             else:
-                match = re.search(rule, event[name])
+                match = re.search(rule, event[name], **self.re_kwargs)
                 if match is None:
                     return None
                 else:

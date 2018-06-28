@@ -37,7 +37,6 @@ class SpamhausCERTParserBot(ParserBot):
         else:
             row_splitted = [field.strip() for field in row.strip().split(',')]
             event = self.new_event(report)
-            extra = {}
             event.change("feed.url", event["feed.url"].split("key=")[0])
 
             event.add('source.ip', row_splitted[0])
@@ -92,7 +91,7 @@ class SpamhausCERTParserBot(ParserBot):
                 event.add('malware.name', malware_name)
                 event.add('malware.version', malware_version)
                 event.add('source.url', row_splitted[6])
-                extra['spam_ip'] = ip
+                event.add('extra.spam_ip', ip)
             elif malware in ['pop', 'imap']:
                 event.add('classification.type', 'brute-force')
                 event.add('classification.identifier', malware)
@@ -140,9 +139,7 @@ class SpamhausCERTParserBot(ParserBot):
             event.add('destination.ip', row_splitted[6], raise_failure=False)
             event.add('destination.port', row_splitted[7], raise_failure=False)
             if row_splitted[8] and row_splitted[8] not in ('-', '?') and malware != 'l_spamlink':
-                extra['source.local_port'] = int(row_splitted[8])
-            if extra:
-                event.add('extra', extra)
+                event.add('extra.source.local_port', int(row_splitted[8]))
             event.add('protocol.transport', row_splitted[9], raise_failure=False)
             event.add('raw', self.recover_line(row))
 

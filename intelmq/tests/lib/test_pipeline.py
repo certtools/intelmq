@@ -24,6 +24,31 @@ class Parameters(object):
     pass
 
 
+class TestPipeline(unittest.TestCase):
+
+    def setUp(self):
+        params = Parameters()
+        self.pipe = pipeline.PipelineFactory.create(params)
+        self.pipe.set_queues('test-bot-input', 'source')
+
+    def test_creation_from_string(self):
+        s = 'test-bot-output'
+        self.pipe.set_queues(s, 'destination')
+        self.assertEqual({'_default': [s]}, self.pipe.destination_queues)
+
+    def test_creation_from_list(self):
+        l = ['test-bot-output-1', 'test-bot-output-2']
+        self.pipe.set_queues(l, 'destination')
+        self.assertEqual({'_default': l}, self.pipe.destination_queues)
+
+    def test_creation_from_dict(self):
+        """ We assure that the queues are in the form of dict of lists, even if some queues were passed as mere strings. """
+        d1 = {"_default": "complex-output", "special": ['test-bot-output-1', 'test-bot-output-2']}
+        d2 = {"_default": ["complex-output"], "special": ['test-bot-output-1', 'test-bot-output-2']}
+        self.pipe.set_queues(d1, 'destination')
+        self.assertEqual(d2, self.pipe.destination_queues)
+
+
 class TestPythonlist(unittest.TestCase):
 
     def setUp(self):
@@ -107,5 +132,5 @@ class TestRedis(unittest.TestCase):
         self.clear()
 
 
-if __name__ == '__main__':  # pragma: no cover  # pragma: no cover
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

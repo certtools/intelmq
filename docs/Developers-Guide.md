@@ -40,6 +40,7 @@
     * [How to Log](#how-to-log)
   * [Error handling](#error-handling)
   * [Initialization](#initialization)
+  * [Custom configuration checks](#custom-configuration-checks)
   * [Examples](#examples)
   * [Parsers](#parsers)
   * [Tests](#tests)
@@ -87,8 +88,8 @@ The following instructions will use `pip3 -e`, which gives you a so called *edit
 ```bash
 sudo -s
 
-git clone https://github.com/<your username>/intelmq.git /intelmq
-cd /intelmq
+git clone https://github.com/<your username>/intelmq.git /opt/dev_intelmq
+cd /opt/dev_intelmq
 
 git config core.fileMode false
 chmod -R 777 /intelmq
@@ -101,19 +102,19 @@ mkdir /opt/intelmq
 mkdir -p /opt/intelmq/var/lib/bots/file-output/
 mkdir -p /opt/intelmq/var/log/
 
-cp -R /intelmq/intelmq/etc /opt/intelmq/
-cp -R /intelmq/intelmq/bots/BOTS /opt/intelmq/etc/
+cp -R /opt/dev_intelmq/intelmq/etc /opt/intelmq/
+cp -R /opt/dev_intelmq/intelmq/bots/BOTS /opt/intelmq/etc/
 
 chmod -R 0770 /opt/intelmq
 chown -R intelmq.intelmq /opt/intelmq
 ```
 
-**Note:** please do not forget that configuration files, log files will be available on `/opt/intelmq`. However, if your development is somehow related to any configuration file, keep using `/opt/intelmq` and then, before commit, change the configurations files on `/intelmq/intelmq/etc/` with your changes on `/opt/intelmq/etc/`.
+**Note:** please do not forget that configuration files, log files will be available on `/opt/intelmq`. However, if your development is somehow related to any configuration file, keep using `/opt/intelmq` and then, before commit, change the configurations files on `/opt/dev_intelmq/intelmq/etc/` with your changes on `/opt/intelmq/etc/`.
 
 
 ## How to develop
 
-After you successfully setup your IntelMQ development environment, you can perform any development on any `.py` file on `/intelmq`. After you change, you can use the normal procedure to run the bots:
+After you successfully setup your IntelMQ development environment, you can perform any development on any `.py` file on `/opt/dev_intelmq`. After you change, you can use the normal procedure to run the bots:
 
 ```bash
 su - intelmq
@@ -123,14 +124,15 @@ intelmqctl start spamhaus-drop-collector
 tail -f /opt/intelmq/var/log/spamhaus-drop-collector.log
 ```
 
-You can also add new bots, creating the new `.py` file on the proper directory inside `cd /intelmq/intelmq`. However, your IntelMQ installation with pip3 needs to be updated. Please check the following section.
+You can also add new bots, creating the new `.py` file on the proper directory inside `cd /opt/dev_intelmq/intelmq`. However, your IntelMQ installation with pip3 needs to be updated. Please check the following section.
+
 
 ## Update
 
 In case you developed a new bot, you need to update your current development installation. In order to do that, please follow this procedure:
 
 
-1. Add the new bot information to `/intelmq/intelmq/bots/BOTS`, not `/opt/intelmq/etc/BOTS`.
+1. Add the new bot information to `/opt/dev_intelmq/intelmq/bots/BOTS`, not `/opt/intelmq/etc/BOTS`.
 2. Make sure that you have your new bot in the right place and the information on BOTS file is correct.
 3. Execute the following commands:
 
@@ -157,7 +159,7 @@ intelmqctl start <bot_id>
 
 All changes have to be tested and new contributions must be accompanied by according unit tests. You can run the tests by changing to the directory with IntelMQ repository and running either `unittest` or `nosetests`:
 
-    cd /intelmq
+    cd /opt/dev_intelmq
     python3 -m unittest {discover|filename}  # or
     nosetests3 [filename]  # or
     python3 setup.py test  # uses a build environment
@@ -357,8 +359,14 @@ Create a separate feature-branch to work on, sync develop with upstream. Create 
 # your work
 > git commit
 ```
+Or, for bugfixes create a separate bugfix-branch to work on, sync maintenance with upstream. Create working branch from maintenance:
+```bash
+> git checkout maintenance
+> git checkout -b new-feature
+# your work
+> git commit
 
-Getting upstream's changes:
+Getting upstream's changes for master or any other branch:
 ```bash
 > git checkout develop
 > git pull upstream develop
@@ -480,10 +488,10 @@ All other names can be used freely.
 
 ## Pipeline interactions
 
-A can call three methods related to the pipeline:
+We can call three methods related to the pipeline:
 
   - `self.receive_message()`: The pipeline handler pops one message from the internal queue if possible. Otherwise one message from the sources list is popped, and added it to an internal queue. In case of errors in process handling, the message can still be found in the internal queue and is not lost. The bot class unravels the message a creates an instance of the Event or Report class.
-  - `self.send_message(event)`: Processed message is sent to destination queues.
+  - `self.send_message(event, path="_default")`: Processed message is sent to destination queues. It is possible to change the destination queues by optional `path` parameter.
   - `self.acknowledge_message()`: Message formerly received by `receive_message` is removed from the internal queue. This should always be done after processing and after the sending of the new message. In case of errors, this function is not called and the message will stay in the internal queue waiting to be processed again.
 
 ## Logging
@@ -554,6 +562,22 @@ class ExampleParserBot(Bot):
             self.logger.error("Read 'bots/experts/asn_lookup/README.md' and "
                               "follow the procedure.")
             self.stop()
+```
+
+## Custom configuration checks
+
+Every bot can define a static method `check(parameters)` which will be called by `intelmqctl check`.
+For example the check function of the ASNLookupExpert:
+
+```python
+    @staticmethod
+    def check(parameters):
+        if not os.path.exists(parameters.get('database', '')):
+            return [["error", "File given as parameter 'database' does not exist."]]
+        try:
+            pyasn.pyasn(parameters['database'])
+        except Exception as exc:
+            return [["error", "Error reading database: %r." % exc]]
 ```
 
 ## Examples

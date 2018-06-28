@@ -1,5 +1,12 @@
 {
     "Collector": {
+        "CertStream": {
+            "module": "intelmq.bots.collectors.calidog.collector_certstream",
+            "description": "A bot to collect information from CertStream",
+            "parameters": {
+                "feed": "certstream"
+            }
+        },
         "File": {
             "description": "Fileinput collector fetches data from a file.",
             "module": "intelmq.bots.collectors.file.collector_file",
@@ -59,9 +66,11 @@
                 "feed": "",
                 "provider": "",
                 "http_url": "<insert url of feed>",
+                "http_url_formatting": false,
                 "http_username": null,
                 "http_password": null,
                 "ssl_client_certificate": null,
+                "extract_file": "True or string of file names separated by ,",
                 "rate_limit": 3600
             }
         },
@@ -105,6 +114,7 @@
                 "search_not_older_than": null,
                 "search_owner": "nobody",
                 "search_queue": "Incident Reports",
+                "search_requestor": null,
                 "search_status": "new",
                 "search_subject_like": "Report",
                 "set_status": "open",
@@ -116,6 +126,14 @@
                 "http_username": null,
                 "http_password": null,
                 "ssl_client_certificate": null
+            }
+        },
+        "TCP": {
+            "description": "TCP is the bot responsible to receive events on a TCP port (ex: from TCP Output of another IntelMQ instance). Might not be working on Python3.4.6.",
+            "module": "intelmq.bots.collectors.tcp.collector",
+            "parameters": {
+                "ip": "<ip>",
+                "port": "<port>"
             }
         },
         "XMPP": {
@@ -144,6 +162,8 @@
             "module": "intelmq.bots.collectors.alienvault_otx.collector",
             "parameters": {
                 "api_key": "<insert your api key>",
+                "modified_pulses_only": false,
+                "interval": 24,
                 "feed": "AlienVault OTX",
                 "provider": "AlienVault",
                 "rate_limit": 3600
@@ -171,9 +191,37 @@
                 "rate_limit": 3600
             }
         },
-        "N6stomp": {
-            "description": "N6 Collector - CERT.pl's N6 Collector - N6 feed via STOMP interface. Note that rate_limit does not apply for this bot as it is waiting for messages on a stream.",
-            "module": "intelmq.bots.collectors.n6.collector_stomp",
+        "Microsoft Interflow": {
+            "description": "",
+            "module": "intelmq.bots.collectors.microsoft.collector_interflow",
+            "parameters": {
+                "api_key": "",
+                "feed": "",
+                "file_match": null,
+                "http_timeout_sec": 300,
+                "not_older_than": "2 days",
+                "provider": "microsoft",
+                "rate_limit": 3600,
+                "redis_cache_db": "5",
+                "redis_cache_host": "127.0.0.1",
+                "redis_cache_port": 6379,
+                "redis_cache_password": null,
+                "redis_cache_ttl": 604800
+            }
+        },
+        "Shodan Stream": {
+            "description": "Collects the shodan stream from the shodan API.",
+            "module": "intelmq.bots.collectors.shodan.collector_stream",
+            "parameters": {
+                "api_key": "<INSERT your API key>",
+                "countries": [],
+                "feed": "shodan-stream",
+                "provider": "Shodan"
+            }
+        },
+        "Stomp": {
+            "description": "Stomp Collector - e.g. for CERT.pl's N6 feed via STOMP. Note that rate_limit does not apply for this bot as it is waiting for messages on a stream.",
+            "module": "intelmq.bots.collectors.stomp.collector",
             "parameters": {
                 "exchange": "<INSERT your exchange point as given by CERT.pl>",
                 "feed": "n6stomp",
@@ -183,6 +231,23 @@
                 "ssl_ca_certificate": "<insert path to CA file for CERT.pl's n6>",
                 "ssl_client_certificate": "<insert path to client cert file for CERT.pl's n6>",
                 "ssl_client_certificate_key": "<insert path to client cert key file for CERT.pl's n6>"
+            }
+        },
+        "Twitter": {
+            "description": "Collects tweets from target_timelines. Maximum number of tweet_count from each timeline and up to timelimit back in time.",
+            "module": "intelmq.bots.collectors.twitter.collector_twitter",
+            "parameters": {
+                "feed": "Twitter",
+                "target_timelines": "",
+                "tweet_count": "",
+                "timelimit": "",
+                "include_rts": "true",
+                "exclude_replies": "false",
+                "follow_urls": "",
+                "consumer_key": "",
+                "consumer_secret": "",
+                "access_token_key": "",
+                "access_token_secret": ""
             }
         }
     },
@@ -247,6 +312,11 @@
             "module": "intelmq.bots.parsers.ci_army.parser",
             "parameters": {}
         },
+        "CertStream Parser": {
+            "description": "A Bot to parse CertStream Feed",
+            "module": "intelmq.bots.parsers.calidog.parser_certstream",
+            "parameters": {}
+        },
         "CleanMX": {
             "description": "CleanMX Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.cleanmx.parser",
@@ -254,7 +324,12 @@
         },
         "Cymru Full Bogons": {
             "description": "Cymru Full Bogons Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.cymru_full_bogons.parser",
+            "module": "intelmq.bots.parsers.cymru.parser_full_bogons",
+            "parameters": {}
+        },
+        "Cymru CAP Program": {
+            "description": "Cymru CAP Program Parser parses and sanitizes .",
+            "module": "intelmq.bots.parsers.cymru.parser_cap_program",
             "parameters": {}
         },
         "DShield AS": {
@@ -303,6 +378,8 @@
                 "column_regex_search": {},
                 "default_url_protocol": "http://",
                 "delimiter": ",",
+                "filter_text": null,
+                "filter_type": null,
                 "skip_header": true,
                 "time_format": null,
                 "type": "c&c",
@@ -348,6 +425,21 @@
             "module": "intelmq.bots.parsers.malwarepatrol.parser_dansguardian",
             "parameters": {}
         },
+        "Malwareurl": {
+            "description": "Malwareurl is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.malwareurl.parser",
+            "parameters": {}
+        },
+        "Microsoft BingMURLs": {
+            "description": "Parses JSON data from Microsoft's Bing Malicious URLs list.",
+            "module": "intelmq.bots.parsers.microsoft.parser_bingmurls",
+            "parameters": {}
+        },
+        "Microsoft CTIP": {
+            "description": "Parses JSON data from Microsoft's CTIP program.",
+            "module": "intelmq.bots.parsers.microsoft.parser_ctip",
+            "parameters": {}
+        },
         "N6Stomp": {
             "description": "N6 Collector - CERT.pl's N6 Parser - N6 feed via STOMP interface",
             "module": "intelmq.bots.parsers.n6.parser_n6stomp",
@@ -368,6 +460,11 @@
             "module": "intelmq.bots.parsers.openphish.parser",
             "parameters": {}
         },
+        "OpenPhish Commercial": {
+            "description": "OpenPhish Parser is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.openphish.parser_commercial",
+            "parameters": {}
+        },
         "PhishTank": {
             "description": "PhishTank Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.phishtank.parser",
@@ -381,6 +478,14 @@
                 "overwrite": true
             }
         },
+        "Shodan": {
+            "description": "Parses Shodan data collected via the API.",
+            "module": "intelmq.bots.parsers.shodan.parser",
+            "parameters": {
+                "ignore_errors": true,
+                "minimal_mode": false
+            }
+        },
         "Spamhaus CERT": {
             "description": "Spamhaus CERT Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.spamhaus.parser_cert",
@@ -391,6 +496,11 @@
             "module": "intelmq.bots.parsers.spamhaus.parser_drop",
             "parameters": {}
         },
+        "Sucuri Malware": {
+            "description": "Sucuri Malware parser parses the list of Hidden Iframes and Conditional redirections from Sucuri.",
+            "module": "intelmq.bots.parsers.sucuri.parser",
+            "parameters": {}
+        },
         "Taichung": {
             "description": "Taichung Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.taichung.parser",
@@ -398,10 +508,24 @@
                 "error_log_message": false
             }
         },
+        "Threatminer": {
+            "description": "Threatminer Parser is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.threatminer.parser",
+            "parameters": {}
+        },
         "Turris Greylist": {
             "description": "Turris Greylist Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.turris.parser",
             "parameters": {}
+        },
+        "Twitter": {
+            "description": "Twitter parser parses a report of tweets by extracting IOC. Currently only urls are supported, a whitelist of safe domains can be provided",
+            "module": "intelmq.bots.parsers.twitter.parser",
+            "parameters": {
+                "domain_whitelist": "t.co",
+                "substitutions": " .net;[.]net",
+                "classification_type": "blacklist"
+            }
         },
         "URLVir": {
             "description": "URLVir Parser is the bot responsible to parse the Export Hosts and Export IP Addresses reports and sanitize the information.",
@@ -411,6 +535,16 @@
         "VXVault": {
             "description": "VXVault Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.vxvault.parser",
+            "parameters": {}
+        },
+        "Web Inspektor": {
+            "description": "Web Inspektor Parser is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.webinspektor.parser",
+            "parameters": {}
+        },
+        "ZoneH": {
+            "description": "ZoneH CSV report parser",
+            "module": "intelmq.bots.parsers.zoneh.parser",
             "parameters": {}
         }
     },
@@ -464,6 +598,14 @@
                 "redis_cache_port": "6379",
                 "redis_cache_password": null,
                 "redis_cache_ttl": "86400"
+            }
+        },
+        "Domain Suffix": {
+            "description": "Extracts the domain suffix from a domain and saves it in the the domain_suffix field.",
+            "module": "intelmq.bots.experts.domain_suffix.expert",
+            "parameters": {
+                "field": "fqdn",
+                "suffix_file": "<path of suffix file>"
             }
         },
         "Field Reducer": {
@@ -521,14 +663,16 @@
             "description": "MaxMind GeoIP is the bot responsible for adding geolocation information to events (Country, City, Longitude, Latitude, etc..)",
             "module": "intelmq.bots.experts.maxmind_geoip.expert",
             "parameters": {
-                "database": "/opt/intelmq/var/lib/bots/maxmind_geoip/GeoLite2-City.mmdb"
+                "database": "/opt/intelmq/var/lib/bots/maxmind_geoip/GeoLite2-City.mmdb",
+                "overwrite": false
             }
         },
         "Modify": {
             "description": "Modify bot can make nearly arbitrary changes to event's fields based on regex-rules on different values. See docs/Bots.md for some examples.",
             "module": "intelmq.bots.experts.modify.expert",
             "parameters": {
-                "configuration_path": "/opt/intelmq/var/lib/bots/modify/modify.conf"
+                "configuration_path": "/opt/intelmq/var/lib/bots/modify/modify.conf",
+                "case_sensitive": true
             }
         },
         "RFC 1918": {
@@ -571,6 +715,13 @@
             "module": "intelmq.bots.experts.taxonomy.expert",
             "parameters": {}
         },
+        "Sieve": {
+            "description": "This bot filters and modifies events based on a sieve-based language.",
+            "module": "intelmq.bots.experts.sieve.expert",
+            "parameters": {
+                "file": "/opt/intelmq/var/lib/bots/sieve/filter.sieve"
+            }
+        },
         "Tor Nodes": {
             "description": "Tor Nodes is the bot responsible to check if an IP is an Tor Exit Node.",
             "module": "intelmq.bots.experts.tor_nodes.expert",
@@ -584,6 +735,19 @@
             "module": "intelmq.bots.experts.url2fqdn.expert",
             "parameters": {
                 "overwrite": false
+            }
+        },
+        "Wait": {
+            "description": "Wait bot can wait for a some time or until a queue size is lower than a given numer.",
+            "module": "intelmq.bots.experts.wait.expert",
+            "parameters": {
+                "queue_db": 2,
+                "queue_host": "localhost",
+                "queue_name": null,
+                "queue_polling_interval": 0.05,
+                "queue_port": 6379,
+                "queue_size": 0,
+                "sleep_time": null
             }
         }
     },
@@ -628,7 +792,8 @@
             "module": "intelmq.bots.outputs.file.output",
             "parameters": {
                 "file": "/opt/intelmq/var/lib/bots/file-output/events.txt",
-                "hierarchical_output": false
+                "hierarchical_output": false,
+                "single_key": null
             }
         },
         "Files": {
@@ -662,6 +827,7 @@
                 "autocommit": true,
                 "database": "intelmq-events",
                 "host": "localhost",
+                "jsondict_as_string": true,
                 "password": "<password>",
                 "port": "5432",
                 "sslmode": "require",
@@ -725,13 +891,13 @@
             }
         },
         "TCP": {
-            "description": "TCP is the bot responsible to send events to a TCP port (Splunk, ElasticSearch, etc..).",
+            "description": "TCP is the bot responsible to send events to a TCP port (Splunk, ElasticSearch, another IntelMQ, etc..).",
             "module": "intelmq.bots.outputs.tcp.output",
             "parameters": {
                 "ip": "<ip>",
                 "hierarchical_output": false,
                 "port": "<port>",
-                "separator": "\n"
+                "separator": "<nothing or \n or sth>"
             }
         },
         "UDP": {

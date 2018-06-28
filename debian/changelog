@@ -1,3 +1,15 @@
+intelmq (1.1.0~rc1) unstable; urgency=medium
+
+  * Release candidate 1 1.1.0
+
+ -- Wagner Sebastian <wagner@cert.at>  Thu, 28 Jun 2018 15:56:15 +0200
+
+intelmq (1.1.0~alpha1-1) experimental; urgency=medium
+
+  * Update to version 1.1.0
+
+ -- Wagner Sebastian <wagner@cert.at>  Wed, 20 Jun 2018 12:15:50 +0200
+
 intelmq (1.0.6-1) UNRELEASED; urgency=medium
 
   * Update to version 1.0.6
@@ -51,6 +63,12 @@ intelmq (1.0.0.rel-1) experimental; urgency=medium
   * release version 1.0.0
 
  -- Sebastian Wagner <wagner@cert.at>  Mon, 07 Aug 2017 10:43:00 +0200
+
+intelmq (1.0.0.rc1-2) UNRELEASED; urgency=medium
+
+  * remove python3-requests from dependencies and add it to recommended packages
+
+ -- Sebastian Wagner <sebastian@linux-7nbu.substi>  Tue, 18 Jul 2017 16:23:43 +0200
 
 intelmq (1.0.0.rc1-1) experimental; urgency=medium
 

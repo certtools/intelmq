@@ -147,7 +147,7 @@ You can set these parameters per bot as well. The settings will take effect afte
 
 ## Pipeline Configuration
 
-This configuration is used by each bot to load the pipeline of associated source- and destination queues. Note that the IntelMQ Manager generates this configuration.
+This configuration is used by each bot to load the source pipeline and destination pipelines associated to each of them. IntelMQ Manager generates this configuration.
 
 **Template:**
 ```
@@ -164,6 +164,28 @@ This configuration is used by each bot to load the pipeline of associated source
 	...
 }
 ```
+
+Note that `destination-queues` contains one of the following values:
+* None
+* string
+* list of strings (as in the template above)
+* dict of either strings or lists for complex expert bots:
+
+```
+"destination-queues": {
+    "_default": "<first destination pipeline name>",
+    "_on_error": "<optional destination pipeline name in case of errors>",
+    "other-path": [
+        "<second destination pipeline name>",
+        "<third destination pipeline name>",
+        ...
+        ],
+    ...
+    }
+
+```
+In that case, bot will be able to send the message to one of defined paths. The path `"_default"` is used if none is not specified.
+In case of errors during processing, and the optional path `"_on_error"` is specified, the message will be sent to the pipelines given given as on-error.
 
 **Example:**
 ```
@@ -352,9 +374,10 @@ subcommands:
     enable              Enable a bot
     disable             Disable a bot
 
+        intelmqctl [start|stop|restart|status|reload] --group [collectors|parsers|experts|outputs]
         intelmqctl [start|stop|restart|status|reload] bot-id
         intelmqctl [start|stop|restart|status|reload]
-        intelmqctl list [bots|queues]
+        intelmqctl list [bots|queues|queues-and-status]
         intelmqctl log bot-id [number-of-lines [log-level]]
         intelmqctl run bot-id message [get|pop|send]
         intelmqctl run bot-id process [--msg|--dryrun]
@@ -366,6 +389,8 @@ Starting a bot:
     intelmqctl start bot-id
 Stopping a bot:
     intelmqctl stop bot-id
+Reloading a bot:
+    intelmqctl reload bot-id
 Restarting a bot:
     intelmqctl restart bot-id
 Get status of a bot:
@@ -384,12 +409,19 @@ Starting the botnet (all bots):
     intelmqctl start
     etc.
 
+Starting a group of bots:
+    intelmqctl start --group experts
+    etc.
+
 Get a list of all configured bots:
     intelmqctl list bots
 
 Get a list of all queues:
     intelmqctl list queues
 If -q is given, only queues with more than one item are listed.
+
+Get a list of all queues and status of the bots:
+    intelmqctl list queues-and-status
 
 Clear a queue:
     intelmqctl clear queue-id

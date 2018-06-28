@@ -69,6 +69,9 @@ We recognize that ip geolocation is not an exact science and analysis of the abu
 
 Some sources report an internal (NATed) IP address.
 
+### Extra values
+Data which does not fit in the harmonization can be saved in the 'extra' namespace. All keys must begin with `extra.`, there are no other rules on key names and values. The values can be get/set like all other fields.
+
 <a name="fields-list-and-data-types"></a>
 ## Fields List and data types
 
@@ -101,6 +104,7 @@ The taxonomy can be automatically added by the taxonomy expert bot based on the 
 |malicious code|botnet drone|This is a compromised machine, which has been observed to make a connection to a command and control server.|
 |malicious code|c&c|This is a command and control server in charge of a given number of botnet drones.|
 |malicious code|dga domain|DGA Domains are seen various families of malware that are used to periodically generate a large number of domain names that can be used as rendezvous points with their command and control servers.|
+|malicious code|infected system|This is a compromised machine, which has been observed to make a connection to a command and control server.|
 |malicious code|malware|A URL is the most common resource with reference to malware binary distribution.|
 |malicious code|malware configuration|This is a resource which updates botnet drones with a new configuration.|
 |malicious code|ransomware|This IOC refers to a specific type of compromised machine, where the computer has been hijacked for ransom by the criminals.|
@@ -110,33 +114,38 @@ The taxonomy can be automatically added by the taxonomy expert bot based on the 
 |other|tor|This IOC refers to incidents related to TOR network infrastructure.|
 |other|unknown|unknown events|
 |test|test|This is a value for testing purposes.|
+|vulnerable|vulnerable client|This attribute refers to a badly configured or vulnerable clients, which may be vulnerable and can be compromised by a third party. For example, not-up-to-date clients or client which are misconfigured, such as clients querying public domains for WPAD configurations. In addition, to specify the vulnerability and its potential abuse, one should use the classification.identifier, description and other attributes for that purpose respectively.|
 |vulnerable|vulnerable service|This attribute refers to a badly configured or vulnerable network service, which may be abused by a third party. For example, these services relate to open proxies, open dns resolvers, network time servers (NTP) or character generation services (chargen), simple network management services (SNMP). In addition, to specify the network service and its potential abuse, one should use the protocol, destination port and description attributes for that purpose respectively.|
 
 Meaning of source, destination and local values for each classification type and possible identifiers. The identifier is often a normalized malware name, grouping many variants.
 
 |Type|Source|Destination|Local|Possible identifiers|
 |----|------|-----------|-----|--------------------|
-|spam|*infected device*|targeted server|internal at source||
-|malware|*infected device*||internal at source|zeus, palevo, feodo|
-|botnet drone|*infected device*|*contacted c2c server*|||
-|ransomware|*infected device*||||
-|dga domain|*infected device*||||
-|malware configuration|*infected device*||||
-|c&c|*(sinkholed) c&c server*|||zeus, palevo, feodo|
-|scanner|*scanning device*|scanned device|||
-|exploit|*hosting server*||||
-|brute-force|*attacker*|target|||
-|ids alert|*triggering device*||||
-|defacement|*defaced website*||||
-|compromised|*server*||||
 |backdoor|*backdoored device*||||
+|blacklist|*blacklisted device*||||
+|botnet drone|*infected device*|*contacted c2c server*|||
+|brute-force|*attacker*|target|||
+|c&c|*(sinkholed) c&c server*|||zeus, palevo, feodo|
+|compromised|*server*||||
 |ddos|*attacker*|target|||
+|defacement|*defaced website*||||
+|dga domain|*infected device*||||
 |dropzone|*server hosting stolen data*||||
+|exploit|*hosting server*||||
+|ids alert|*triggering device*||||
+|infected system|*infected device*|*contacted c2c server*|||
+|malware|*infected device*||internal at source|zeus, palevo, feodo|
+|malware configuration|*infected device*||||
+|other||||||
 |phishing|*phishing website*||||
 |proxy|*server allowing policy and security bypass*||||
-|vulnerable service|*vulnerable device*||| heartbleed, openresolver, snmp |
-|blacklist|*blacklisted device*||||
+|ransomware|*infected device*||||
+|scanner|*scanning device*|scanned device|||
+|spam|*infected device*|targeted server|internal at source||
+|test||||||
 |unknown||||||
+|vulnerable service|*vulnerable device*||| heartbleed, openresolver, snmp |
+|vulnerable client|*vulnerable device*||| wpad |
 
 Field in italics is the interesting one for CERTs.
 

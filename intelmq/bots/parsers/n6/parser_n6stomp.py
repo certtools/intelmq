@@ -14,7 +14,7 @@ mapping = {}
 mapping['amplifier']    = {"taxonomy": "vulnerable",
                            "type": "vulnerable service",
                            "identifier": "amplifier"}
-mapping['bots']         = {"taxonomy": "malicious Code",
+mapping['bots']         = {"taxonomy": "malicious code",
                            "type": "botnet drone", "identifier": "generic-n6-drone"}
 mapping['backdoor']     = {"taxonomy": "intrusions",
                            "type": "backdoor", "identifier": "hacked server"}
@@ -32,7 +32,7 @@ mapping['flow-anomaly'] = {"taxonomy": "other",
                            "type": "other", "identifier": "flow-anomaly"}
 mapping['fraud']        = {"taxonomy": "fraud",
                            "type": "account numbers", "identifier": "fraud"}
-mapping['leak']         = {"taxonomy": "Information Content Security",
+mapping['leak']         = {"taxonomy": "information content security",
                            "type": "leak", "identifier": "leak"}
 mapping['malurl']       = {"taxonomy": "malicious code",
                            "type": "exploit", "identifier": "malurl"}
@@ -45,7 +45,7 @@ mapping['proxy']        = {"taxonomy": "other",
                            "type": "proxy", "identifier": "openproxy"}
 mapping['sandbox-url']  = {"taxonomy": "malicious code",
                            "type": "malware", "identifier": "sandboxurl"}
-mapping['scanning']     = {"taxonomy": "Information Gathering",
+mapping['scanning']     = {"taxonomy": "information gathering",
                            "type": "scanner", "identifier": "scanning"}
 mapping['server-exploit'] = {"taxonomy": "malicious code",
                              "type": "exploit", "identifier": "server-exploit"}

@@ -1,0 +1,142 @@
+{
+    "Collector": {
+        "required": true,
+        "type": "dict",
+        "keyschema": {
+            "required": true,
+            "type": "string"
+        },
+        "valueschema": {
+            "required": true,
+            "type": "dict",
+            "schema": {
+                "description": {
+                    "required": true,
+                    "type": "string"
+                },
+                "module": {
+                    "required": true,
+                    "type": "string",
+                    "regex": "intelmq.bots.collectors.[a-z0-9_]+.[a-z0-9_]+"
+                },
+                "parameters": {
+                    "required": true,
+                    "type": "dict",
+                    "keyschema": {
+                        "required": true,
+                        "type": "string"
+                    },
+                    "valueschema": {
+                        "required": true,
+                        "nullable": true
+                    }
+                }
+            }
+        }
+    },
+    "Parser": {
+        "required": true,
+        "type": "dict",
+        "keyschema": {
+            "required": true,
+            "type": "string"
+        },
+        "valueschema": {
+            "required": true,
+            "type": "dict",
+            "schema": {
+                "description": {
+                    "required": true,
+                    "type": "string"
+                },
+                "module": {
+                    "required": true,
+                    "type": "string",
+                    "regex": "intelmq.bots.parsers.[a-z0-9_]+.[a-z0-9_]+"
+                },
+                "parameters": {
+                    "required": true,
+                    "type": "dict",
+                    "keyschema": {
+                        "required": true,
+                        "type": "string"
+                    },
+                    "valueschema": {
+                        "required": true,
+                        "nullable": true
+                    }
+                }
+            }
+        }
+    },
+    "Expert": {
+        "required": true,
+        "type": "dict",
+        "keyschema": {
+            "required": true,
+            "type": "string"
+        },
+        "valueschema": {
+            "required": true,
+            "type": "dict",
+            "schema": {
+                "description": {
+                    "required": true,
+                    "type": "string"
+                },
+                "module": {
+                    "required": true,
+                    "type": "string",
+                    "regex": "intelmq.bots.experts.[a-z0-9_]+.[a-z0-9_]+"
+                },
+                "parameters": {
+                    "required": true,
+                    "type": "dict",
+                    "keyschema": {
+                        "required": true,
+                        "type": "string"
+                    },
+                    "valueschema": {
+                        "required": true,
+                        "nullable": true
+                    }
+                }
+            }
+        }
+    },
+    "Output": {
+        "required": true,
+        "type": "dict",
+        "keyschema": {
+            "required": true,
+            "type": "string"
+        },
+        "valueschema": {
+            "required": true,
+            "type": "dict",
+            "schema": {
+                "description": {
+                    "required": true,
+                    "type": "string"
+                },
+                "module": {
+                    "required": true,
+                    "type": "string",
+                    "regex": "intelmq.bots.outputs.[a-z0-9_]+.[a-z0-9_]+"
+                },
+                "parameters": {
+                    "required": true,
+                    "type": "dict",
+                    "keyschema": {
+                        "required": true,
+                        "type": "string"
+                    },
+                    "valueschema": {
+                        "required": true,
+                        "nullable": true
+                    }
+                }
+            }
+        }
+    }
+}

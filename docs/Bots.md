@@ -7,11 +7,11 @@
 
 ## General remarks
 
-By default all of the bots are started when you start the whole botnet, however there is a possibility to 
-*disable* a bot. This means that the bot will not start every time you start the botnet, but you can start 
-and stop the bot if you specify the bot explicitly. To disable a bot, add the following to your 
-`runtime.conf`: `"enabled": false`. Be aware that this is **not** a normal parameter (like the others 
-described in this file). It is set outside of the `parameters` object in `runtime.conf`. Check the 
+By default all of the bots are started when you start the whole botnet, however there is a possibility to
+*disable* a bot. This means that the bot will not start every time you start the botnet, but you can start
+and stop the bot if you specify the bot explicitly. To disable a bot, add the following to your
+`runtime.conf`: `"enabled": false`. Be aware that this is **not** a normal parameter (like the others
+described in this file). It is set outside of the `parameters` object in `runtime.conf`. Check the
 [User-Guide](./User-Guide.md) for an example.
 
 There are two different types of parameters: The initialization parameters are need to start the bot. The runtime parameters are needed by the bot itself during runtime.
@@ -98,6 +98,7 @@ This configuration resides in the file `runtime.conf` in your intelmq's configur
 * **Feed parameters** (see above)
 * **HTTP parameters** (see above)
 * `http_url`: location of information resource (e.g. https://feodotracker.abuse.ch/blocklist/?download=domainblocklist)
+* `http_url_formatting`: If `True` (default `False`) `{time[format]}` will be replaced by the current time formatted by the given format. E.g. if the URL is `http://localhost/{time[%Y]}`, then the resulting URL is `http://localhost/2018` for the year 2018. Currently only the time in local timezone is available. Python's [Format Specification Mini-Language¶](https://docs.python.org/3/library/string.html) is used for this.
 
 
 * * *
@@ -144,7 +145,9 @@ The parameter `http_timeout_max_tries` is of no use in this collector.
 * `mail_ssl`: whether the mail account uses SSL (default: `true`)
 * `folder`: folder in which to look for mails (default: `INBOX`)
 * `subject_regex`: regular expression to look for a subject
-* `url_regex`: regular expression of the feed URL to search for in the mail body 
+* `url_regex`: regular expression of the feed URL to search for in the mail body
+* `sent_from`: filter messages by sender
+* `sent_to`: filter messages by recipient
 
 * * *
 
@@ -240,7 +243,45 @@ The parameter `http_timeout_max_tries` is of no use in this collector.
 * `unzip_attachment`: whether to unzip a found attachment
 
 The parameter `http_timeout_max_tries` is of no use in this collector.
+
 * * *
+
+### Shodan Stream
+
+Requires the shodan library to be installed:
+ * https://github.com/achillean/shodan-python/
+ * https://pypi.org/project/shodan/
+
+#### Information:
+* `name:` intelmq.bots.collectors.shodan.collector_stream
+* `lookup:` yes
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Queries the Shodan Streaming API
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* **HTTP parameters** (see above) not yet supported
+* `countries`: A list of countries to query for. If it is a string, it will be spit by `,`.
+
+* * *
+
+### TCP
+
+#### Information:
+* `name:` intelmq.bots.collectors.tcp.collector
+* `lookup:` no
+* `public:` yes
+* `cache (redis db):` none
+* `description:` TCP is the bot responsible to receive events on a TCP port (ex: from TCP Output of another IntelMQ instance). Might not be working on Python3.4.6.
+
+#### Configuration Parameters:
+
+* `ip`: IP of destination server
+* `port`: port of destination server
+* * *
+
 
 ### XMPP collector
 
@@ -324,27 +365,78 @@ Iterates over all blobs in all containers in an Azure storage.
 
 * * *
 
-### N6Stomp
+### Microsoft Interflow
 
-See the README.md
+Iterates over all files available by this API. Make sure to limit the files to be downloaded with the parameters, otherwise you will get a lot of data!
+The cache is used to remember which files have already been downloaded. Make sure the TTL is high enough, higher than `not_older_than`.
 
 #### Information:
-* `name:` intelmq.bots.collectors.n6.collector_stomp
+* `name:` intelmq.bots.collectors.microsoft.collector_interflow
 * `lookup:` yes
 * `public:` no
-* `cache (redis db):` none
-* `description:` collect report messages from Blueliv API
+* `cache (redis db):` 5
+* `description:` collect files from microsoft interflow using their API
 
 #### Configuration Parameters:
 
 * **Feed parameters** (see above)
-* `exchange`: exchange point as given by CERT.pl
+* `api_key`: API generate in their portal
+* `file_match`: an optional regular expression to match file names
+* `not_older_than`: an optional relative (minutes) or absolute time expression to determine the oldest time of a file to be downloaded
+* `redis_cache_*` and especially `redis_cache_ttl`: Settings for the cache where file names of downloaded files are saved.
+
+#### Additional functionalities
+
+* Files are automatically ungzipped if the filename ends with `.gz`.
+
+* * *
+
+### Stomp
+
+See the README.md
+
+#### Information:
+* `name:` intelmq.bots.collectors.stomp.collector
+* `lookup:` yes
+* `public:` no
+* `cache (redis db):` none
+* `description:` collect messages from a stomp server
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `exchange`: exchange point
 * `port`: 61614
 * `server`: hostname e.g. "n6stream.cert.pl"
 * `ssl_ca_certificate`: path to CA file
 * `ssl_client_certificate`: path to client cert file
 * `ssl_client_certificate_key`: path to client cert key file
 
+* * *
+
+### Twitter
+
+Collects tweets from target_timelines. Up to tweet_count tweets from each user and up to timelimit back in time. The tweet text is sent separately and if allowed, links to pastebin are followed and the text sent in a separate report 
+
+#### Information:
+* `name:` intelmq.bots.collectors.twitter.collector_twitter
+* `lookup:` yes
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Collects tweets
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `target_timelines`: screen_names of twitter accounts to be followed
+* `tweet_count`: number of tweets to be taken from each account
+* `timelimit`: maximum age of the tweets collected in seconds
+* `follow_urls`: list of screen_names for which urls will be followed
+* `exclude_replies`: exclude replies of the followed screen_names
+* `include_rts`: whether to include retweets by given screen_name 
+* `consumer_key`: Twitter api login data
+* `consumer_secret`: Twitter api login data
+* `acces_token_key`: Twitter api login data
+* `access_token_secret`: Twitter api login data
 
 <a name="parsers"></a>
 ## Parsers
@@ -357,7 +449,7 @@ Lines starting with `'#'` will be ignored. Headers won't be interpreted.
 
 #### Configuration parameters
 
- * `"columns"`: A list of strings or a string of comma-separated values with field names. The names must match the harmonization's field names. Strings starting with `extra.` will be written into the Extra-Object of the DHO. E.g. 
+ * `"columns"`: A list of strings or a string of comma-separated values with field names. The names must match the harmonization's field names. Strings starting with `extra.` will be written into the Extra-Object of the DHO. E.g.
    ```json
    [
         "",
@@ -365,18 +457,100 @@ Lines starting with `'#'` will be ignored. Headers won't be interpreted.
         "extra.http_host_header"
     ],
     ```
+
+    It is possible to specify multiple coulmns using `|` character. E.g.
+    ```
+        "columns": "source.url|source.fqdn|source.ip"
+    ```
+    First, bot will try to parse the value as url, if it fails, it will try to parse it as FQDN, if that fails, it will try to parse it as IP, if that fails, an error wil be raised.
+    Some use cases - 
+    
+        - mixed data set, e.g. URL/FQDN/IP/NETMASK  `"columns": "source.url|source.fqdn|source.ip|source.network"`
+    
+        - parse a value and ignore if it fails  `"columns": "source.url|__IGNORE__"`
+        
  * `"column_regex_search"`: Optional. A dictionary mapping field names (as given per the columns parameter) to regular expression. The field is evaulated using `re.search`. Eg. to get the ASN out of `AS1234` use: `{"source.asn": "[0-9]*"}`.
  * `"default_url_protocol"`: For URLs you can give a defaut protocol which will be pretended to the data.
  * `"delimiter"`: separation character of the CSV, e.g. `","`
  * `"skip_header"`: Boolean, skip the first line of the file, optional. Lines starting with `#` will be skipped additionally, make sure you do not skip more lines than needed!
- * `time_format`: Optional. If `"timestamp"` or `"windows_nt"` the time will be converted first. With the default `null` fuzzy time parsing will be used.
+ * `time_format`: Optional. If `"timestamp"`, `"windows_nt"` or `"epoch_millis"` the time will be converted first. With the default `null` fuzzy time parsing will be used.
  * `"type"`: set the `classification.type` statically, optional
+ * `"data_type"`: sets the data of specific type, currently only `"json"` is supported value. An example
+ 
+        ```{
+            "columns": [ "source.ip", "source.url", "extra.tags"],
+            "data_type": "{\"extra.tags\":\"json\"}"
+        }```
+        
+        It will ensure `extra.tags` is treated as `json`.
+ * `"filter_text"`: only process the lines containing or not containing specified text, to be used in conjection with `filter_type`
+ * `"filter_type"`: value can be whitelist or blacklist. If `whitelist`, only lines containing the text in `filter_text` will be processed, if `blacklist`, only lines NOT containing the text will be processed.
+ 
+     To process ipset format files use
+     ```
+        {
+            "filter_text": "ipset add ",
+            "filter_type": "whitelist",
+            "columns": [ "__IGNORE__", "__IGNORE__", "__IGNORE__", "source.ip"]
+        }
+     ```
  * `"type_translation"`: See below, optional
+
 
 ##### Type translation
 
 If the source does have a field with information for `classification.type`, but it does not correspond to intelmq's types,
 you can map them to the correct ones. The `type_translation` field can hold a JSON field with a dictionary which maps the feed's values to intelmq's.
+
+
+### Cymru CAP Program
+
+#### Information:
+* `name:` intelmq.bots.parsers.cymru.parser_cap_program
+* `public:` no
+* `cache (redis db):` none
+* `description:` Parses data from cymru's cap program feed.
+
+As little information on the format is available, the mappings might not be correct in all cases.
+Some reports are not implemented at all as there is no data available to check if the parsing is correct at all. If you do get errors like `Report ... not implement` or similar please open an issue and report the (anonymized) example data. Thanks.
+
+The information about the event could be better in many cases but as Cymru does not want to be associated with the report, we can't add comments to the events in the parser, because then the source would be easily identifiable for the recipient.
+
+### Cymru Full Bogons
+
+#### Information:
+* `name:` intelmq.bots.parsers.cymru.parser_full_bogons
+* `public:` no
+* `cache (redis db):` none
+* `description:` Parses data from full bogons feed.
+
+### Twitter
+
+#### Information:
+* `name:` intelmq.bots.parsers.twitter.parser
+* `public:` no
+* `cache (redis db):` none
+* `description:` Extracts urls from text, fuzzy, aimed at parsing tweets
+#### Configuration Parameters:
+
+* `domain_whitelist`: domains to be filetered out
+* `substitutions`: semicolon delimited list of even length of pairs of substitutions (for example: '[.];.;,;.' substitutes '[.]' for '.' and ',' for '.')
+* `classification_type: string with a valid classification type as defined in data harmonization
+
+### Shodan
+
+#### Information
+* `name:` intelmq.bots.parsers.shodan.parser
+* `public:` yes
+* `description:` Parses data from shodan (search, stream etc).
+
+The parser is by far not complete as there are a lot of fields in a big nested structure. There is a minimal mode available which only parses the important/most useful fields and also saves everything in `extra.shodan` keeping the original structure. When not using the minimal mode if may be useful to ignore errors as many parsing errors can happen with the incomplete mapping.
+
+#### Configuration Parameters:
+
+* `ignore_errors`: Boolean (default true)
+* `minimal_mode`: Boolean (default false)
+
 
 <a name="experts"></a>
 ## Experts
@@ -428,6 +602,50 @@ FIXME
 #### Configuration Parameters:
 
 FIXME
+
+* * *
+
+### Domain Suffix
+
+See or information on the public suffix list: https://publicsuffix.org/list/
+Only rules for ICANN domains are processed. The list can (and should) contain
+Unicode data, punycode conversion is done during reading
+
+#### Information:
+* `name:` deduplicator
+* `lookup:` redis cache
+* `public:` yes
+* `cache (redis db):` 6
+* `description:` message deduplicator
+
+#### Configuration Parameters:
+
+* `field`: either `"fqdn"` or `"reverse_dns"`
+* `suffix_file`: path to the suffix file
+
+#### Rule processing
+
+A short summary how the rules are processed:
+
+The simple ones:
+```
+com
+at
+gv.at
+```
+`example.com` leads to `com`, `example.gv.at` leads to `gv.at`.
+
+Wildcards:
+```
+*.example.com
+```
+`www.example.com` leads to `www.example.com`.
+
+And additionally the exceptions, together with the above wildcard rule:
+```
+!www.example.com
+```
+`www.example.com` does now not lead to `www.example.com`, but to `example.com`.
 
 * * *
 
@@ -556,6 +774,11 @@ FIXME
 * `description:` modify expert bot allows you to change arbitrary field values of events just using a configuration file
 
 #### Configuration Parameters:
+
+* `configuration_path`: filename
+* `case_sensitive`: boolean, default: true
+
+### Configuration File
 
 The modify expert bot allows you to change arbitrary field values of events just using a configuration file. Thus it is possible to adapt certain values or adding new ones only by changing JSON-files without touching the code of many other bots.
 
@@ -723,6 +946,23 @@ Sources:
 
 * * *
 
+### Sieve
+
+See intelmq/bots/experts/sieve/README.md
+
+#### Information:
+* `name:` sieve
+* `lookup:` none
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Filtering with a sieve-based configuration language
+
+#### Configuration Parameters:
+
+* `file`: Path to sieve file. Syntax can be validated with `intelmq_sieve_expert_validator`.
+
+* * *
+
 ### Taxonomy
 
 #### Information:
@@ -766,6 +1006,32 @@ FIXME
 
 * `overwrite`: boolean, replace existing FQDN?
 
+### Wait
+
+#### Information:
+* `name:` wait
+* `lookup:` none
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Waits for a some time or until a queue size is lower than a given numer.
+
+#### Configuration Parameters:
+
+* `queue_db`: Database number of the database, default `2`. Converted to integer.
+* `queue_host`: Host of the database, default `localhost`.
+* `queue_name`: Name of the queue to be watched, default `null`. This is not the name of a bot but the queue's name.
+* `queue_password`: Password for the database, default `None`.
+* `queue_polling_interval`: Interval to poll the list length in seconds. Converted to float.
+* `queue_port`: Port of the database, default `6379`. Converted to integer.
+* `queue_size`: Maximum size of the queue, default `0`. Compared by <=. Converted to integer.
+* `sleep_time`: Time to sleep before sending the event.
+
+Only one of the two modes is possible.
+If a queue name is given, the queue mode is active. If the sleep_time is a number, sleep mode is active.
+Otherwise the dummy mode is active, the events are just passed without an additional delay.
+
+Note that SIGHUPs and reloads interrupt the sleeping.
+
 <a name="outputs"></a>
 ## Outputs
 
@@ -781,7 +1047,17 @@ FIXME
 #### Configuration Parameters:
 
 * `file`: file path of output file
+* `hierarchial_output`: If true, the resulting dictionary will be hierarchical (field names split by dot).
+* `single_key`: if `none`, the whole event is saved (default); otherwise the bot saves only contents of the specified key. In case of `raw` the data is base64 decoded.
 
+##### Filename formatting
+The filename can be formatted using pythons string formatting functions. See https://docs.python.org/3/library/string.html#formatstrings
+
+For example:
+ * The filename `.../{event[source.abuse_contact]}.txt` will be (for example) `.../abuse@example.com.txt`.
+ * `.../{event[time.source]:%Y-%m-%d}` results in the date of the event used as filename.
+
+If the field used in the format string is not defined, `None` will be used as fallback.
 
 * * *
 
@@ -856,10 +1132,11 @@ for the versions you are using.
 * `connect_timeout`: PostgreSQL connect_timeout, optional, default 5 seconds
 * `database`: PostgreSQL database
 * `host`: PostgreSQL host
+* `jsondict_as_string`: save JSONDict fields as JSON string, boolean. Default: true (like in versions before 1.1)
 * `port`: PostgreSQL port
 * `user`: PostgreSQL user
 * `password`: PostgreSQL password
-* `sslmode`: PostgreSQL sslmode
+* `sslmode`: PostgreSQL sslmode, can be `'disable'`, `'allow'`, `'prefer'` (default), `'require'`, `'verify-ca'` or `'verify-full'`. See postgresql docs: https://www.postgresql.org/docs/current/static/libpq-connect.html#libpq-connect-sslmode
 * `table`: name of the database table into which events are to be inserted
 
 #### Installation Requirements
@@ -936,15 +1213,16 @@ Client certificates are not supported. If `http_verify_cert` is true, TLS certif
 ### TCP
 
 #### Information:
-* `name:` tcp
+* `name:` intelmq.bots.outputs.tcp.collector
 * `lookup:` no
 * `public:` yes
 * `cache (redis db):` none
-* `description:` TCP is the bot responsible to send events to a tcp port (Splunk, ElasticSearch, etc..)
+* `description:` TCP is the bot responsible to send events to a TCP port (Splunk, ElasticSearch, another IntelMQ, etc..).
 
 #### Configuration Parameters:
 
 * `ip`: IP of destination server
-* `hierarchical_output`: true for a nested JSON, false for a flat JSON.
+* `hierarchical_output`: true for a nested JSON, false for a flat JSON (when sending to a TCP collector).
 * `port`: port of destination server
-* `separator`: separator of messages
+* `separator`: separator of messages, eg. "\n", optional (when sending to a TCP collector, parameter shouldn't be present)
+

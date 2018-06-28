@@ -10,6 +10,7 @@ import os.path
 import pprint
 import re
 import readline
+import sys
 import traceback
 
 from termstyle import bold, green, inverted, red
@@ -103,7 +104,7 @@ def save_file(fname, content):
     except KeyboardInterrupt:
         with open(fname, 'wt') as handle:
             json.dump(content, handle)
-        exit(1)
+        sys.exit(1)
 
 
 def load_meta(dump):
@@ -171,7 +172,7 @@ def main():
         filenames = glob.glob(os.path.join(DEFAULT_LOGGING_PATH, '*.dump'))
         if not len(filenames):
             print(green('Nothing to recover from, no dump files found!'))
-            exit(0)
+            sys.exit(0)
         filenames = [(fname, fname[len(DEFAULT_LOGGING_PATH):-5])
                      for fname in sorted(filenames)]
 
@@ -189,7 +190,7 @@ def main():
             botid = input(inverted('Which dump file to process (id or name)?') +
                           ' ')
         except EOFError:
-            exit(0)
+            sys.exit(0)
         else:
             botid = botid.strip()
             if botid == 'q' or not botid:

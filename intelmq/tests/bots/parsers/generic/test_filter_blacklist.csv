@@ -1,0 +1,6 @@
+# This is a sample ipset file.  Please edit as appropriate.
+#
+# For example, you may already have or wish to use something other than LOGNDROP.
+#
+ipset add testIP 127.0.0.1
+ipset add testIP 10.1.1.1

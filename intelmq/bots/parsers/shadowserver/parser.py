@@ -26,7 +26,7 @@ class ShadowserverParserBot(ParserBot):
         self.sparser_config = None
         if hasattr(self.parameters, 'feedname'):
             self.feedname = self.parameters.feedname
-            self.sparser_config = config.get_feed(self.feedname)
+            self.sparser_config = config.get_feed(self.feedname, self.logger)
 
         if not self.sparser_config:
             self.logger.error('No feedname provided or feedname not in conf.')
@@ -88,9 +88,12 @@ class ShadowserverParserBot(ParserBot):
         # Fail hard if not possible:
         for item in conf.get('required_fields'):
             intelmqkey, shadowkey = item[:2]
-            if shadowkey not in fields:  # key does not exist in data (not even in the header)
-                self.logger.warning('Required key %r not found in data. Possible change in data'
-                                    ' format or misconfiguration.', shadowkey)
+            if shadowkey not in fields:
+                if not row.get(shadowkey):  # key does not exist in data (not even in the header)
+                    self.logger.warning('Required key %r not found data. Possible change in data'
+                                        ' format or misconfiguration.', shadowkey)
+                else:  # key is used twice
+                    fields.append(shadowkey)
             if len(item) > 2:
                 conv_func = item[2]
             else:
@@ -115,10 +118,13 @@ class ShadowserverParserBot(ParserBot):
         # extra if an add operation failed
         for item in conf.get('optional_fields'):
             intelmqkey, shadowkey = item[:2]
-            if shadowkey not in fields:  # key does not exist in data (not even in the header)
-                self.logger.warning('Optional key %r not found data. Possible change in data'
-                                    ' format or misconfiguration.', shadowkey)
-                continue
+            if shadowkey not in fields:
+                if not row.get(shadowkey):  # key does not exist in data (not even in the header)
+                    self.logger.warning('Optional key %r not found data. Possible change in data'
+                                        ' format or misconfiguration.', shadowkey)
+                    continue
+                else:  # key is used twice
+                    fields.append(shadowkey)
             if len(item) > 2:
                 conv_func = item[2]
             else:
@@ -133,12 +139,11 @@ class ShadowserverParserBot(ParserBot):
                     try:
                         value = conv_func(raw_value)
                     except Exception:
+                        """ fail early and often in this case. We want to be able to convert everything """
                         self.logger.error('Could not convert shadowkey: %r, '
                                           'value: %r via conversion function %r.',
                                           shadowkey, raw_value, conv_func.__name__)
-                        value = None
-                        # """ fail early and often in this case. We want to be able to convert everything """
-                        # self.stop()
+                        raise
 
             if value is not None:
                 if intelmqkey == 'extra.':

@@ -12,10 +12,11 @@ Depending on the subcommand received, the class either
  * processes single message, either injected or from default pipeline (process subcommand)
  * reads the message from input pipeline or send a message to output pipeline (message subcommand)
 """
-import time
 import json
-from os.path import exists
+import sys
+import time
 from importlib import import_module
+from os.path import exists
 
 from intelmq.lib import utils
 from intelmq.lib.message import MessageFactory
@@ -24,7 +25,6 @@ from intelmq.lib.utils import error_message_from_exc
 
 
 class BotDebugger:
-
     EXAMPLE = """\nThe message may look like:
     '{"source.network": "178.72.192.0/18", "time.observation": "2017-05-12T05:23:06+00:00"}' """
 
@@ -32,7 +32,7 @@ class BotDebugger:
     logging_level = None
 
     def __init__(self, runtime_configuration, bot_id, run_subcommand=None, console_type=None,
-                 dryrun=None, message_kind=None, msg=None, loglevel=None):
+                 message_kind=None, dryrun=None, msg=None, show=None, loglevel=None):
         self.runtime_configuration = runtime_configuration
         module = import_module(self.runtime_configuration['module'])
 
@@ -56,7 +56,7 @@ class BotDebugger:
                 self._message(message_kind, msg)
                 return
             elif run_subcommand == "process":
-                self._process(dryrun, msg)
+                self._process(dryrun, msg, show)
             else:
                 print("Subcommand {} not known.".format(run_subcommand))
 
@@ -110,30 +110,35 @@ class BotDebugger:
             else:
                 self.messageWizzard("Message missing!")
 
-    def _process(self, dryrun, msg):
+    def _process(self, dryrun, msg, show):
         if msg:
             msg = MessageFactory.serialize(self.arg2msg(msg))
             self.instance._Bot__source_pipeline.receive = lambda: msg
             self.instance.logger.info(" * Message from cli will be used when processing.")
 
         if dryrun:
-            self.instance.send_message = lambda msg: self.instance.logger.info("DRYRUN: Message would be sent now!")
+            self.instance.send_message = lambda msg, path="_default": self.instance.logger.info(
+                "DRYRUN: Message would be sent now{}!".format(" to the {} path".format(path) if (path != "_default") else ""))
             self.instance.acknowledge_message = lambda: self.instance.logger.info("DRYRUN: Message would be acknowledged now!")
             self.instance.logger.info(" * Dryrun only, no message will be really sent through.")
+
+        if show:
+            fn = self.instance.send_message
+            self.instance.send_message = lambda msg, path="_default": [self.pprint(msg), fn(msg, path=path)]
 
         self.instance.logger.info("Processing...")
         self.instance.process()
 
     def arg2msg(self, msg):
         try:
-            default_type = "Report" if self.runtime_configuration["group"] is "Parser" else "Event"
+            default_type = "Report" if self.runtime_configuration["group"] == "Parser" else "Event"
             msg = MessageFactory.unserialize(msg, default_type=default_type)
         except (Exception, KeyError, TypeError, ValueError) as exc:
             if exists(msg):
                 with open(msg, "r") as f:
                     return self.arg2msg(f.read())
             self.messageWizzard("Message can not be parsed from JSON: {}".format(error_message_from_exc(exc)))
-            exit(1)
+            sys.exit(1)
         return msg
 
     def leverageLogger(self, level):
@@ -146,8 +151,8 @@ class BotDebugger:
                     h.setLevel(level)
 
     @staticmethod
-    def load_configuration_patch(*args, ** kwargs):
-        d = BotDebugger.load_configuration(*args, ** kwargs)
+    def load_configuration_patch(*args, **kwargs):
+        d = BotDebugger.load_configuration(*args, **kwargs)
         if "logging_level" in d and BotDebugger.logging_level:
             d["logging_level"] = BotDebugger.logging_level
         return d
@@ -155,7 +160,7 @@ class BotDebugger:
     def messageWizzard(self, msg):
         self.instance.logger.error(msg)
         print(self.EXAMPLE)
-        if input("Do you want to display current harmonization (available fields)? y/[n]: ") is "y":
+        if input("Do you want to display current harmonization (available fields)? y/[n]: ") == "y":
             self.pprint(self.instance.harmonization)
 
     @staticmethod
