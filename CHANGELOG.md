@@ -115,6 +115,7 @@ CHANGELOG
 
 #### Outputs
 - `bots.outputs.file`: String formatting can be used for file names.
+- `bots.outputs.file`: New parameter `single_key` to only save one field.
 
 ### Harmonization
 - Renamed `JSON` to `JSONDict` and added a new type `JSON`. `JSONDict` saves data internally as JSON, but acts like a dictionary. `JSON` accepts any valid JSON.

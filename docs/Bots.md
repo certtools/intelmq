@@ -1048,6 +1048,7 @@ Note that SIGHUPs and reloads interrupt the sleeping.
 
 * `file`: file path of output file
 * `hierarchial_output`: If true, the resulting dictionary will be hierarchical (field names split by dot).
+* `single_key`: if `none`, the whole event is saved (default); otherwise the bot saves only contents of the specified key. In case of `raw` the data is base64 decoded.
 
 ##### Filename formatting
 The filename can be formatted using pythons string formatting functions. See https://docs.python.org/3/library/string.html#formatstrings
