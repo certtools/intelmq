@@ -243,6 +243,28 @@ The parameter `http_timeout_max_tries` is of no use in this collector.
 * `unzip_attachment`: whether to unzip a found attachment
 
 The parameter `http_timeout_max_tries` is of no use in this collector.
+
+* * *
+
+### Shodan Stream
+
+Requires the shodan library to be installed:
+ * https://github.com/achillean/shodan-python/
+ * https://pypi.org/project/shodan/
+
+#### Information:
+* `name:` intelmq.bots.collectors.shodan.collector_stream
+* `lookup:` yes
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Queries the Shodan Streaming API
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* **HTTP parameters** (see above) not yet supported
+* `countries`: A list of countries to query for. If it is a string, it will be spit by `,`.
+
 * * *
 
 ### TCP
@@ -514,6 +536,21 @@ The information about the event could be better in many cases but as Cymru does 
 * `domain_whitelist`: domains to be filetered out
 * `substitutions`: semicolon delimited list of even length of pairs of substitutions (for example: '[.];.;,;.' substitutes '[.]' for '.' and ',' for '.')
 * `classification_type: string with a valid classification type as defined in data harmonization
+
+### Shodan
+
+#### Information
+* `name:` intelmq.bots.parsers.shodan.parser
+* `public:` yes
+* `description:` Parses data from shodan (search, stream etc).
+
+The parser is by far not complete as there are a lot of fields in a big nested structure. There is a minimal mode available which only parses the important/most useful fields and also saves everything in `extra.shodan` keeping the original structure. When not using the minimal mode if may be useful to ignore errors as many parsing errors can happen with the incomplete mapping.
+
+#### Configuration Parameters:
+
+* `ignore_errors`: Boolean (default true)
+* `minimal_mode`: Boolean (default false)
+
 
 <a name="experts"></a>
 ## Experts

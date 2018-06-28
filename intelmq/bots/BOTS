@@ -209,6 +209,16 @@
                 "redis_cache_ttl": 604800
             }
         },
+        "Shodan Stream": {
+            "description": "Collects the shodan stream from the shodan API.",
+            "module": "intelmq.bots.collectors.shodan.collector_stream",
+            "parameters": {
+                "api_key": "<INSERT your API key>",
+                "countries": [],
+                "feed": "shodan-stream",
+                "provider": "Shodan"
+            }
+        },
         "Stomp": {
             "description": "Stomp Collector - e.g. for CERT.pl's N6 feed via STOMP. Note that rate_limit does not apply for this bot as it is waiting for messages on a stream.",
             "module": "intelmq.bots.collectors.stomp.collector",
@@ -466,6 +476,14 @@
             "parameters": {
                 "feedname": "",
                 "overwrite": true
+            }
+        },
+        "Shodan": {
+            "description": "Parses Shodan data collected via the API.",
+            "module": "intelmq.bots.parsers.shodan.parser",
+            "parameters": {
+                "ignore_errors": true,
+                "minimal_mode": false
             }
         },
         "Spamhaus CERT": {
