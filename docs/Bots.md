@@ -1010,7 +1010,16 @@ Note that SIGHUPs and reloads interrupt the sleeping.
 #### Configuration Parameters:
 
 * `file`: file path of output file
+* `hierarchial_output`: If true, the resulting dictionary will be hierarchical (field names split by dot).
 
+##### Filename formatting
+The filename can be formatted using pythons string formatting functions. See https://docs.python.org/3/library/string.html#formatstrings
+
+For example:
+ * The filename `.../{event[source.abuse_contact]}.txt` will be (for example) `.../abuse@example.com.txt`.
+ * `.../{event[time.source]:%Y-%m-%d}` results in the date of the event used as filename.
+
+If the field used in the format string is not defined, `None` will be used as fallback.
 
 * * *
 

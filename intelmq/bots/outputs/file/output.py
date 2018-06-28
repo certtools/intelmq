@@ -14,6 +14,11 @@ class FileOutputBot(Bot):
 
     def process(self):
         event = self.receive_message()
+        event.set_default_value(None)
+        filename = self.parameters.file.format(event=event)
+        if filename != self.file.name:
+            self.file.close()
+            self.file = open(filename, mode='at', encoding='utf-8')
         event_data = event.to_json(hierarchical=self.parameters.hierarchical_output)
 
         try:

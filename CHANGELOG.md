@@ -111,6 +111,9 @@ CHANGELOG
 - Added domain suffix expert to extract the TLD/Suffix from a domain name.
 - `bots.experts.maxmind_geoip`: New (optional) parameter `overwrite`, by default false. The current default was to overwrite!
 
+#### Outputs
+- `bots.outputs.file`: String formatting can be used for file names.
+
 ### Harmonization
 - Renamed `JSON` to `JSONDict` and added a new type `JSON`. `JSONDict` saves data internally as JSON, but acts like a dictionary. `JSON` accepts any valid JSON.
 - fixed regex for `protocol.transport` it previously allowed more values than it should have.
