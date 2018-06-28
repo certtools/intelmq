@@ -54,6 +54,7 @@ CHANGELOG
 - lib/bot.py: The parameter `feed` for collectors is deprecated for 2.0 and has been replaced by the more consistent `name` (#1144).
 - Added a systemd script which creates systemd units for bots (#953).
 - `lib/harmonization`: Accept `AS` prefix for ASN values (automatically stripped).
+- `lib/message`: The message class has now the possiblity to return a default value for non-exisiting fields, see `Message.set_default_value`.
 
 ### Bots
 #### Collectors

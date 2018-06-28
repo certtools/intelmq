@@ -748,5 +748,20 @@ class TestReport(unittest.TestCase):
         self.assertEqual(report['raw'], 'Zm9vYmFy')
 
 
+class TestEvent(unittest.TestCase):
+    """
+    Tests the Event class.
+    """
+    def test_event_no_default_value(self):
+        event = message.Event(harmonization=HARM)
+        with self.assertRaises(KeyError):
+            event['source.ip']
+
+    def test_event_default_value(self):
+        event = message.Event(harmonization=HARM)
+        event.set_default_value(None)
+        event['source.ip']
+
+
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
