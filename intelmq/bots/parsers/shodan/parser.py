@@ -10,63 +10,76 @@ from intelmq.lib.utils import base64_decode
 
 
 MAPPING = {
-        'hash': 'extra.shodan.event_hash',
-        'ip': '__IGNORE__',  # using ip_str
-        'hostnames': [
-                'source.reverse_dns',  # TODO: multiple hostname
-                ],
-        'org': 'event_description.target',
-        'data': 'extra.data',
-        'port': 'source.port',
-        'transport': 'protocol.transport',
-        'isp': 'extra.isp',
-        "ftp": {
+    'hash': 'extra.shodan.event_hash',
+    'ip': '__IGNORE__',  # using ip_str
+    'hostnames': [
+            'source.reverse_dns',  # TODO: multiple hostname
+    ],
+    'org': 'event_description.target',
+    'data': 'extra.data',
+    'port': 'source.port',
+    'transport': 'protocol.transport',
+    'isp': 'extra.isp',
+    "ftp": {
             "features": {
-              "MLST": {
-                "parameters": 'extra.ftp.features.mlst',
-              },
-              "UTF8": {
-                "parameters": 'extra.ftp.utf8.parameters',
-              },
-              "REST": {
-                "parameters": 'extra.ftp.rest.parameters',
-              },
-              "CLNT": {
-                "parameters": 'extra.ftp.clnt.parameters',
-              },
-              "MLSD": {
-                "parameters": 'extra.ftp.mlsd.parameters',
-              },
-              "MFMT": {
-                "parameters": 'extra.ftp.mfmt.parameters',
-              },
-              "MDTM": {
-                "parameters": 'extra.ftp.mdtm.parameters',
-              },
-              "SIZE": {
-                "parameters": 'extra.ftp.size.parameters',
-              }
+                "MLST": {
+                    "parameters": 'extra.ftp.features.mlst',
+                },
+                "UTF8": {
+                    "parameters": 'extra.ftp.utf8.parameters',
+                },
+                "REST": {
+                    "parameters": 'extra.ftp.rest.parameters',
+                },
+                "CLNT": {
+                    "parameters": 'extra.ftp.clnt.parameters',
+                },
+                "MLSD": {
+                    "parameters": 'extra.ftp.mlsd.parameters',
+                },
+                "MFMT": {
+                    "parameters": 'extra.ftp.mfmt.parameters',
+                },
+                "MDTM": {
+                    "parameters": 'extra.ftp.mdtm.parameters',
+                },
+                "SIZE": {
+                    "parameters": 'extra.ftp.size.parameters',
+                }
             },
-            "anonymous": 'extra.ftp.anonymous',
-            "features_hash": '__IGNORE__',
-          },
-        'http': {
-            'robots_hash': '__IGNORE__',
-            # 'redirects': unknown,
-            # 'securitytxt': unknown,
-            'title': 'extra.http.html.title',
-            'sitemap_hash': '__IGNORE__',
-            'robots': '__IGNORE__',
-            'favicon': '__IGNORE__',
-            'host': '__IGNORE__',
-            'html': 'extra.http.html.data',
-            'location': 'extra.http.location',
-            # 'components': unknown,
-            # 'securitytxt_hash': unknown,
-            'server': 'extra.http.server',
-            # 'sitemap': unknown,
-            },
-          "isakmp": {
+        "anonymous": 'extra.ftp.anonymous',
+        "features_hash": '__IGNORE__',
+    },
+    'http': {
+        'robots_hash': '__IGNORE__',
+        # 'redirects': unknown,
+        # 'securitytxt': unknown,
+        'title': 'extra.http.html.title',
+        'sitemap_hash': '__IGNORE__',
+        'robots': '__IGNORE__',
+        'favicon': '__IGNORE__',
+        'host': '__IGNORE__',
+        'html': 'extra.http.html.data',
+        'location': 'extra.http.location',
+        # 'components': unknown,
+        # 'securitytxt_hash': unknown,
+        'server': 'extra.http.server',
+        # 'sitemap': unknown,
+    },
+    "isakmp": {
+        "initiator_spi": "extra.isakmp.initiator_spi",
+        "responder_spi": "extra.isakmp.responder_spi",
+        "msg_id": "extra.isakmp.msg_id",
+        "next_payload": "extra.isakmp.next_payload",
+        "exchange_type": "extra.isakmp.exchange_type",
+        "length": "extra.isakmp.length",
+        "version": "extra.isakmp.version",
+        "flags": {
+            "encryption": "extra.isakmp.encryption",
+            "authentication": "extra.isakmp.authentication",
+            "commit": "extra.isakmp.commit",
+        },
+        "aggressive": {
             "initiator_spi": "extra.isakmp.initiator_spi",
             "responder_spi": "extra.isakmp.responder_spi",
             "msg_id": "extra.isakmp.msg_id",
@@ -75,30 +88,17 @@ MAPPING = {
             "length": "extra.isakmp.length",
             "version": "extra.isakmp.version",
             "flags": {
-              "encryption": "extra.isakmp.encryption",
-              "authentication": "extra.isakmp.authentication",
-              "commit": "extra.isakmp.commit",
-            },
-            "aggressive": {
-              "initiator_spi": "extra.isakmp.initiator_spi",
-              "responder_spi": "extra.isakmp.responder_spi",
-              "msg_id": "extra.isakmp.msg_id",
-              "next_payload": "extra.isakmp.next_payload",
-              "exchange_type": "extra.isakmp.exchange_type",
-              "length": "extra.isakmp.length",
-              "version": "extra.isakmp.version",
-              "flags": {
                 "encryption": "extra.isakmp.encryption",
                 "authentication": "extra.isakmp.authentication",
                 "commit": "extra.isakmp.commit",
-              },
-#              "vendor_ids": [] unknown
             },
-#            "vendor_ids": [] unknown
-          },
-        'asn': 'source.asn',
-        'html': '__IGNORE__',  # use http.html
-        'location': {
+            #              "vendor_ids": [] unknown
+        },
+        #            "vendor_ids": [] unknown
+    },
+    'asn': 'source.asn',
+    'html': '__IGNORE__',  # use http.html
+    'location': {
             'country_code3': '__IGNORE__',  # using country_code
             'city': 'source.geolocation.city',
             'region_code': 'extra.region_code',
@@ -109,33 +109,33 @@ MAPPING = {
             'country_name': '__IGNORE__',  # using country_code
             'area_code': 'extra.area_code',
             'dma_code': 'extra.dma_code',
-            },
-        'timestamp': 'time.source',
-        'domains': [
-                'source.fqdn',  # TODO: multiple domains
-                ],
-        'ip_str': 'source.ip',
-        'os': 'extra.os_name',
-        '_shodan': '__IGNORE__',  # for now
-         'opts': {'raw': 'extra.raw',
-                  },
-        'tags': 'extra.tags',
-        }
+    },
+    'timestamp': 'time.source',
+    'domains': [
+        'source.fqdn',  # TODO: multiple domains
+    ],
+    'ip_str': 'source.ip',
+    'os': 'extra.os_name',
+    '_shodan': '__IGNORE__',  # for now
+    'opts': {'raw': 'extra.raw',
+             },
+    'tags': 'extra.tags',
+}
 
 MAPPING_MINIMAL = {
-            'source.ip': ("ip_str"),
-            'source.asn': ("asn"),
-            'source.port': ("port"),
-            'protocol.transport': ("transport"),
-            'time.source': ("timestamp"),
-            'event_description.target': ("org"),
-            'extra.hostnames': ('hostnames'),  # is a list
-            'extra.data': ('data'),
-            'extra.html_title': ('title'),
-            'extra.tags': ('tags'),
-            'source.geolocation.cc': ("location", "country_code"),
-            'extra.opts': ('opts'),
-        }
+    'source.ip': ("ip_str"),
+    'source.asn': ("asn"),
+    'source.port': ("port"),
+    'protocol.transport': ("transport"),
+    'time.source': ("timestamp"),
+    'event_description.target': ("org"),
+    'extra.hostnames': ('hostnames'),  # is a list
+    'extra.data': ('data'),
+    'extra.html_title': ('title'),
+    'extra.tags': ('tags'),
+    'source.geolocation.cc': ("location", "country_code"),
+    'extra.opts': ('opts'),
+}
 
 PROTOCOLS = ['ftp', 'http', 'isakmp']
 
