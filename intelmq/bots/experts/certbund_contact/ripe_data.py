@@ -127,18 +127,18 @@ def load_ripe_files(options) -> tuple:
 
     # Step 2: Prepare new data for insertion
 
-    (asn_list, organisation_list, organisation_index) \
+    (asn_list, asn_list_u, organisation_list, organisation_index) \
         = sanitize_split_and_modify(asn_list, 'aut-num', asn_whitelist,
                                     organisation_list, organisation_index,
                                     role_index, verbose=options.verbose)
 
-    (inetnum_list, organisation_list, organisation_index) \
+    (inetnum_list, inetnum_list_u, organisation_list, organisation_index) \
         = sanitize_split_and_modify(inetnum_list, 'inetnum', None,
                                     organisation_list, organisation_index,
                                     role_index, verbose=options.verbose)
     convert_inetnum_to_networks(inetnum_list)
 
-    (inet6num_list, organisation_list, organisation_index) \
+    (inet6num_list, inet6num_list_u, organisation_list, organisation_index) \
         = sanitize_split_and_modify(inet6num_list, 'inet6num', None,
                                     organisation_list, organisation_index,
                                     role_index, verbose=options.verbose)
@@ -406,6 +406,17 @@ def modify_for_abusec(obj_list_a,
     return obj_list_a, organisation_list, organisation_index
 
 
+def split_for_known_orgs(obj_list, organisation_index):
+    known = []
+    unknown = []
+    for obj in obj_list:
+        if obj["org"][0] in organisation_index:
+            known.append(obj)
+        else:
+            unknown.append(obj)
+    return (known, unknown)
+
+
 def sanitize_split_and_modify(obj_list, index, whitelist,
                               organisation_list, organisation_index,
                               role_index, verbose):
@@ -439,20 +450,20 @@ def sanitize_split_and_modify(obj_list, index, whitelist,
     # organisation. This can happen when e.g. organisations without
     # contact information are ignored and therefore not in
     # organisation_index.
-    num_obj_o = len(obj_list_o)
-    obj_list_o = [obj for obj in obj_list_o
-                  if obj["org"][0] in organisation_index]
+    obj_list_o, obj_list_u = split_for_known_orgs(obj_list_o,
+                                                  organisation_index)
 
     if verbose:
         print("   -> for {} {} we use `org`".format(len(obj_list_o), index))
         print("      ({} referenced unknown organisations)"
-              .format(num_obj_o - len(obj_list_o)))
+              .format(len(obj_list_u)))
         print("   -> for {} {} we use `abuse-c'".format(len(obj_list_a), index))
 
     obj_list_a, organisation_list, organisation_index = modify_for_abusec(
         obj_list_a, organisation_list, organisation_index, role_index, verbose)
 
-    return (obj_list_o + obj_list_a, organisation_list, organisation_index)
+    return (obj_list_o + obj_list_a, obj_list_u,
+            organisation_list, organisation_index)
 
 
 def convert_inetnum_to_networks(inetnum_list):
