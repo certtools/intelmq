@@ -206,9 +206,6 @@ def main():
     (asn_list, organisation_list, role_list, abusec_to_org, inetnum_list,
      inet6num_list) = ripe_data.load_ripe_files(args)
 
-    ripe_data.convert_inetnum_to_networks(inetnum_list)
-    ripe_data.convert_inet6num_to_networks(inet6num_list)
-
     con = None
     try:
         con = psycopg2.connect(dsn=args.conninfo)

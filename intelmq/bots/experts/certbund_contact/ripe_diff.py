@@ -254,9 +254,6 @@ def main():
     (asn_list, organisation_list, role_list, abusec_to_org, inetnum_list,
      inet6num_list) = ripe_data.load_ripe_files(options)
 
-    ripe_data.convert_inetnum_to_networks(inetnum_list)
-    ripe_data.convert_inet6num_to_networks(inet6num_list)
-
     con = psycopg2.connect(dsn=options.conninfo)
     try:
         compare_orgs_with_db(con.cursor(), asn_list, inetnum_list,

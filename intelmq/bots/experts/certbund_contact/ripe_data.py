@@ -136,11 +136,13 @@ def load_ripe_files(options) -> tuple:
         = sanitize_split_and_modify(inetnum_list, 'inetnum', None,
                                     organisation_list, organisation_index,
                                     role_index, verbose=options.verbose)
+    convert_inetnum_to_networks(inetnum_list)
 
     (inet6num_list, organisation_list, organisation_index) \
         = sanitize_split_and_modify(inet6num_list, 'inet6num', None,
                                     organisation_list, organisation_index,
                                     role_index, verbose=options.verbose)
+    convert_inet6num_to_networks(inet6num_list)
 
     known_organisations = referenced_organisations(asn_list, inetnum_list,
                                                    inet6num_list)
@@ -156,6 +158,7 @@ def load_ripe_files(options) -> tuple:
 
     if options.verbose:
         print('** Found {} contacts to be relevant.'.format(len(role_list)))
+
 
     return (asn_list, organisation_list, role_list, abusec_to_org,
             inetnum_list, inet6num_list)
