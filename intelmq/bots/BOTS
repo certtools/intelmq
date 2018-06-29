@@ -109,7 +109,7 @@
             "run_mode": "continuous",
             "parameters": {
                 "feed": "<Feed Name>",
-                "dxl_config_file": "<insert /path/to/dxlclient.conf>",
+                "dxl_config_file": "<insert /path/to/dxlclient.config>",
                 "dxl_topic": "/mcafee/event/atd/file/report"
             }
         },
@@ -671,6 +671,27 @@
             "module": "intelmq.bots.experts.idea.expert",
             "parameters": {
                 "test_mode": false
+            }
+        },
+        "McAfee Active Response - IP Lookup": {
+            "description": "Queries connections to IP addresses within local environment using McAfee Active Response queries.",
+            "module": "intelmq.bots.experts.mar.expert_ip",
+            "parameters": {
+                "dxl_config_file": "<insert /path/to/dxlclient.config>"
+            }
+        },
+        "McAfee Active Response - URL Lookup": {
+            "description": "Queries occurences of URLs within local environment using McAfee Active Response queries.",
+            "module": "intelmq.bots.experts.mar.expert_url",
+            "parameters": {
+                "dxl_config_file": "<insert /path/to/dxlclient.config>"
+            }
+        },
+        "McAfee Active Response - Hash Lookup": {
+            "description": "Queries occurences of Hashes within local environment using McAfee Active Response queries.",
+            "module": "intelmq.bots.experts.mar.expert_hash",
+            "parameters": {
+                "dxl_config_file": "<insert /path/to/dxlclient.config>"
             }
         },
         "MaxMind GeoIP": {

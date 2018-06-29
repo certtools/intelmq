@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 
-MARIPExpertBot queries environment for IP communication via McAfee Active Response.
+MARHashExpertBot queries environment for occurences of file hashes via McAfee Active Response.
 
 Parameter:
 dxl_config_file: string
@@ -19,7 +19,7 @@ from dxlmarclient import MarClient, ResultConstants, ProjectionConstants, \
 # imports for additional libraries and intelmq
 from intelmq.lib.bot import Bot
 
-class MARIPParserBot(Bot):
+class MARHashParserBot(Bot):
 
     def init(self):
         self.logger.info('Initializing')
@@ -50,15 +50,20 @@ class MARIPParserBot(Bot):
                 conditions={
                                  "or": [{
                                      "and": [{
-                                              "name": "NetworkFlow",
-                                              "output": "dst_ip",
+                                              "name": "Files",
+                                              "output": "md5",
                                               "op": "EQUALS",
-                                              "value": report.get('destination.ip')
+                                              "value": report.get('malware.hash.md5')
                                              }, {
-                                              "name": "NetworkFlow",
-                                              "output": "dst_port",
+                                              "name": "Files",
+                                              "output": "sha1",
                                               "op": "EQUALS",
-                                              "value": report.get('destination.port')
+                                              "value": report.get('malware.hash.sha1')
+                                             }, {
+                                              "name": "Files",
+                                              "output": "sha256",
+                                              "op": "EQUALS",
+                                              "value": report.get('malware.hash.sha256')
                                             }]
                                         }]
                            }
@@ -77,4 +82,4 @@ class MARIPParserBot(Bot):
         self.logger.info('Query done')
         self.acknowledge_message()
 
-BOT = MARIPParserBot
+BOT = MARHashParserBot
