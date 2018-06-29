@@ -127,28 +127,23 @@ def load_ripe_files(options) -> tuple:
 
     # Step 2: Prepare new data for insertion
 
-    (asn_list_o, asn_list_a,
-        organisation_list, organisation_index) = sanitize_split_and_modify(
-            asn_list, 'aut-num', asn_whitelist,
-            organisation_list, organisation_index, role_index,
-            verbose=options.verbose)
+    (asn_list, organisation_list, organisation_index) \
+        = sanitize_split_and_modify(asn_list, 'aut-num', asn_whitelist,
+                                    organisation_list, organisation_index,
+                                    role_index, verbose=options.verbose)
 
-    (inetnum_list_o, inetnum_list_a,
-        organisation_list, organisation_index) = sanitize_split_and_modify(
-            inetnum_list, 'inetnum', None,
-            organisation_list, organisation_index, role_index,
-            verbose=options.verbose)
+    (inetnum_list, organisation_list, organisation_index) \
+        = sanitize_split_and_modify(inetnum_list, 'inetnum', None,
+                                    organisation_list, organisation_index,
+                                    role_index, verbose=options.verbose)
 
-    (inet6num_list_o, inet6num_list_a,
-        organisation_list, organisation_index) = sanitize_split_and_modify(
-            inet6num_list, 'inet6num', None,
-            organisation_list, organisation_index, role_index,
-            verbose=options.verbose)
+    (inet6num_list, organisation_list, organisation_index) \
+        = sanitize_split_and_modify(inet6num_list, 'inet6num', None,
+                                    organisation_list, organisation_index,
+                                    role_index, verbose=options.verbose)
 
-    known_organisations = referenced_organisations(
-        asn_list_o + asn_list_a,
-        inetnum_list_o + inetnum_list_a,
-        inet6num_list_o + inet6num_list_a)
+    known_organisations = referenced_organisations(asn_list, inetnum_list,
+                                                   inet6num_list)
 
     organisation_list = sanitize_organisation_list(organisation_list,
                                                    known_organisations)
@@ -162,11 +157,8 @@ def load_ripe_files(options) -> tuple:
     if options.verbose:
         print('** Found {} contacts to be relevant.'.format(len(role_list)))
 
-    return (
-        asn_list_o + asn_list_a,
-        organisation_list, role_list, abusec_to_org,
-        inetnum_list_o + inetnum_list_a,
-        inet6num_list_o + inet6num_list_a)
+    return (asn_list, organisation_list, role_list, abusec_to_org,
+            inetnum_list, inet6num_list)
 
 
 def read_delegated_file(filename, country, verbose=False):
@@ -414,7 +406,7 @@ def modify_for_abusec(obj_list_a,
 def sanitize_split_and_modify(obj_list, index, whitelist,
                               organisation_list, organisation_index,
                               role_index, verbose):
-    """Sanitize, split and modify a ripe RESOURCE list for direct abuse-c.
+    """Sanitize and modify a ripe RESOURCE list for direct abuse-c.
 
     Handles obj_list where some have direct `abuse-c` attributes.
     Decides which abuse-mailbox to use in case both `org` and `abuse-c`
@@ -422,9 +414,7 @@ def sanitize_split_and_modify(obj_list, index, whitelist,
     accordingly.
 
     Returns:
-        obj_list: where the original `org` is used for the abuse-mailbox
-        obj_list: where direct `abuse-c` is used with extra org for
-                  abuse-mailbox
+        obj_list: sanitized and updated obj_list
         organisation_list: an updated organisation list (modified in plac)
         organisation_index: an updated index (modified in place)
     """
@@ -459,7 +449,7 @@ def sanitize_split_and_modify(obj_list, index, whitelist,
     obj_list_a, organisation_list, organisation_index = modify_for_abusec(
         obj_list_a, organisation_list, organisation_index, role_index, verbose)
 
-    return (obj_list_o, obj_list_a, organisation_list, organisation_index)
+    return (obj_list_o + obj_list_a, organisation_list, organisation_index)
 
 
 def convert_inetnum_to_networks(inetnum_list):
