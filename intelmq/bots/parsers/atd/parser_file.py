@@ -39,10 +39,11 @@ class ATDFileParserBot(Bot.ParserBot):
         atd_event = json.loads(raw_report)
 
         subject_name = atd_event['Summary']['Subject']['Name']
+        verdict_severity = int(atd_event['Summary']['Verdict']['Severity'])
+
         subject_md5 = atd_event['Summary']['Subject']['md5']
         subject_sha1 = atd_event['Summary']['Subject']['sha-1']
         subject_sha256 = atd_event['Summary']['Subject']['sha-256']
-        verdict_severity = int(atd_event['Summary']['Verdict']['Severity'])
 
         if (verdict_severity >= int(self.parameters.verdict_severity)):
             # forward initial sample
