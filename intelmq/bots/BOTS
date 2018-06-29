@@ -868,6 +868,17 @@
                 "single_key": null
             }
         },
+        "McAfee ESM": {
+            "description": "Writes information out to the McAfee Enterprise Security Manager (ESM).",
+            "module": "intelmq.bots.outputs.esm.output_ip",
+            "parameters": {
+                "esm_ip": "1.2.3.4",
+                "esm_user": "NGCP",
+                "esm_pw": "<Password>",
+                "esm_watchlist": "<watchlist name>",
+                "field": "source.ip"
+            }
+        },
         "MongoDB": {
             "description": "MongoDB is the bot responsible to send events to a MongoDB database.",
             "module": "intelmq.bots.outputs.mongodb.output",
