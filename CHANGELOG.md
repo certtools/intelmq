@@ -15,6 +15,7 @@ CHANGELOG
 #### Parsers
 
 #### Experts
+- Reverse DNS Expert: ignore all invalid results and use first valid one (#1264).
 
 #### Outputs
 

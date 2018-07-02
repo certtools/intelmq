@@ -676,6 +676,8 @@ If the rule is a string, a regex-search is performed, also for numeric values (`
 
 ### Reverse DNS
 
+For both `source.ip` and `destination.ip` the PTR record is fetched and the first valid result is used for `source.reverse_dns`/`destination.reverse_dns`.
+
 #### Information:
 * `name:` reverse-dns
 * `lookup:` dns
@@ -685,7 +687,8 @@ If the rule is a string, a regex-search is performed, also for numeric values (`
 
 #### Configuration Parameters:
 
-FIXME
+* **Cache parameters** (see above)
+* `cache_ttl_invalid_response`: The TTL for cached invalid responses.
 
 * * *
 
