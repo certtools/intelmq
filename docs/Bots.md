@@ -82,6 +82,14 @@ This configuration resides in the file `runtime.conf` in your intelmq's configur
 * `ssl_client_certificate`: SSL client certificate to use.
 * `http_header`: HTTP request headers
 
+**Cache parameters**: Common redis cache parameters used in multiple bots (mainly lookup experts):
+
+* `redis_cache_host`: Hostname of the redis database.
+* `redis_cache_port`: Port of the redis database.
+* `redis_cache_db`: Database number.
+* `redis_cache_ttl`: TTL used for caching.
+* `redis_cache_password`: Optional password for the redis database (default: none).
+
 
 ### Generic URL Fetcher
 
@@ -569,6 +577,7 @@ See the README.md
 
 #### Configuration Parameters:
 
+* **Cache parameters** (see above)
 FIXME
 
 * * *
@@ -601,6 +610,7 @@ FIXME
 
 #### Configuration Parameters:
 
+* **Cache parameters** (see above)
 FIXME
 
 * * *
@@ -662,6 +672,7 @@ See the README.md
 
 #### Configuration Parameters:
 
+* **Cache parameters** (see above)
 Please check this [README](../intelmq/bots/experts/deduplicator/README.md) file.
 
 * * *
@@ -888,6 +899,8 @@ If the rule is a string, a regex-search is performed, also for numeric values (`
 
 ### Reverse DNS
 
+For both `source.ip` and `destination.ip` the PTR record is fetched and the first valid result is used for `source.reverse_dns`/`destination.reverse_dns`.
+
 #### Information:
 * `name:` reverse-dns
 * `lookup:` dns
@@ -897,7 +910,8 @@ If the rule is a string, a regex-search is performed, also for numeric values (`
 
 #### Configuration Parameters:
 
-FIXME
+* **Cache parameters** (see above)
+* `cache_ttl_invalid_response`: The TTL for cached invalid responses.
 
 * * *
 
@@ -938,6 +952,7 @@ Sources:
 
 #### Configuration Parameters:
 
+* **Cache parameters** (see above)
 * `mode`: either `append` (default) or `replace`
 * `query_ripe_db_asn`: Query for IPs at `http://rest.db.ripe.net/abuse-contact/%s.json`, default `true`
 * `query_ripe_db_ip`: Query for ASNs at `http://rest.db.ripe.net/abuse-contact/as%s.json`, default `true`
