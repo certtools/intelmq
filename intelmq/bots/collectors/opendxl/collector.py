@@ -61,16 +61,12 @@ class DXLClient():
             # Create and add event listener
             class MyEventCallback(EventCallback):
 
-                # def __init__(self,object_logger):
-                #    object_logger.info("Test with self.logger")
- 
                 def on_event(self,event):
 
                     self.parse_message(event.payload.decode())
 
                 @staticmethod
                 def parse_message(object_message):
-                    self.logger.debug('Received Message %r', object_message)
 
                     # Read msg-body and add as raw to a new report.
                     # now it's up to a parser to do the interpretation of the message.
