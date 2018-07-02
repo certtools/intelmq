@@ -3,6 +3,7 @@ Testing TCP collector
 """
 import socket
 import struct
+import unittest.mock as mock
 import sys
 import threading
 import unittest
@@ -91,7 +92,7 @@ class TestTCPCollectorBot(test.BotTestCase, unittest.TestCase):
     def set_bot(cls):
         cls.bot_reference = TCPCollectorBot
         cls.sysconfig = {'http_url': 'http://localhost/two_files.tar.gz', 'extract_files': True,
-                         'feed': 'Example feed',
+                         'name': 'Example feed',
                          'ip': 'localhost',
                          'port': PORT
                          }
@@ -116,7 +117,7 @@ class TestTCPCollectorBot(test.BotTestCase, unittest.TestCase):
         bot.input_message = []
         msg_count = 100
         for i in range(msg_count):
-            bot.input_message.append(Event(INPUT1))
+            bot.input_message.append(Event(INPUT1, harmonization=self.harmonization))
         (Process(target=bot._delayed_start)).start()
         self.run_bot()
         self.assertOutputQueueLen(msg_count)
@@ -163,7 +164,7 @@ class TestTCPCollectorBot(test.BotTestCase, unittest.TestCase):
             # bot.bot_id = "test-client-{}".format(_)
             bot.input_message = []
             for i in range(msg_count):
-                bot.input_message.append(Event(INPUT1))
+                bot.input_message.append(Event(INPUT1, harmonization=self.harmonization))
             Process(target=bot._delayed_start).start()
 
         thread = threading.Thread(target=Client().random_client)
@@ -177,7 +178,10 @@ class TestTCPCollectorBot(test.BotTestCase, unittest.TestCase):
         self.bot._Bot__destination_pipeline = self.pipe
         for _ in range(client_count + 1):
             # every single calling of process() method will serve to a single connection
-            self.bot.process()
+            with mock.patch('intelmq.lib.utils.load_configuration',
+                        new=self.mocked_config):
+                with mock.patch('intelmq.lib.utils.log', self.mocked_log):
+                    self.bot.process()
         self.bot.stop()  # let's call shutdown() and free up binded address
 
         self.assertOutputQueueLen(client_count * msg_count + 2)

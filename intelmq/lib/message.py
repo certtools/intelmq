@@ -14,7 +14,7 @@ import intelmq.lib.exceptions as exceptions
 import intelmq.lib.harmonization
 from intelmq import HARMONIZATION_CONF_FILE
 from intelmq.lib import utils
-from typing import Sequence, Optional
+from typing import Any, Sequence, Optional
 from collections import defaultdict
 
 
@@ -88,6 +88,7 @@ class MessageFactory(object):
 class Message(dict):
 
     _IGNORED_VALUES = ["", "-", "N/A"]
+    _default_value_set = False
 
     def __init__(self, message=(), auto=False, harmonization=None):
         try:
@@ -135,7 +136,13 @@ class Message(dict):
             # return extra as string for backwards compatibility
             return json.dumps(self.to_dict(hierarchical=True)[key.split('.')[0]])
         else:
-            return super(Message, self).__getitem__(key)
+            try:
+                return super(Message, self).__getitem__(key)
+            except KeyError:
+                if self._default_value_set:
+                    return self.default_value
+                else:
+                    raise
 
     def is_valid(self, key: str, value: str, sanitize: bool = True) -> bool:
         """
@@ -468,6 +475,13 @@ class Message(dict):
 
     def __ne__(self, other) -> bool:
         return not self.__eq__(other)
+
+    def set_default_value(self, value: Any = None):
+        """
+        Sets a default value for items.
+        """
+        self._default_value_set = True
+        self.default_value = value
 
 
 class Event(Message):

@@ -29,13 +29,22 @@ EXAMPLE_OUTPUT6 = {"__type": "Event",
                    "time.observation": "2015-01-01T00:00:00+00:00",
                    }
 INVALID_PTR_INP = {"__type": "Event",
-                   "source.ip": "31.210.115.39",  # PTR is .
+                   "source.ip": "31.210.115.39",  # PTR is '.'
                    "time.observation": "2015-01-01T00:00:00+00:00",
                    }
 INVALID_PTR_OUT = {"__type": "Event",
                    "source.ip": "31.210.115.39",
                    "time.observation": "2015-01-01T00:00:00+00:00",
                    }
+INVALID_PTR_INP2 = {"__type": "Event",
+                    "source.ip": "5.157.80.221",  # PTR is '5.157.80.221.' and 'aliancys.peopleinc.nl.'
+                    "time.observation": "2015-01-01T00:00:00+00:00",
+                    }
+INVALID_PTR_OUT2 = {"__type": "Event",
+                    "source.ip": "5.157.80.221",
+                    "source.reverse_dns": "aliancys.peopleinc.nl",
+                    "time.observation": "2015-01-01T00:00:00+00:00",
+                    }
 
 
 @test.skip_redis()
@@ -64,6 +73,11 @@ class TestReverseDnsExpertBot(test.BotTestCase, unittest.TestCase):
         self.input_message = INVALID_PTR_INP
         self.run_bot()
         self.assertMessageEqual(0, INVALID_PTR_OUT)
+
+    def test_invalid_ptr2(self):
+        self.input_message = INVALID_PTR_INP2
+        self.run_bot()
+        self.assertMessageEqual(0, INVALID_PTR_OUT2)
 
 
 if __name__ == '__main__':  # pragma: no cover

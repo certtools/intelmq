@@ -1,4 +1,10 @@
-intelmq (1.1.0~alpha1-1) UNRELEASED; urgency=medium
+intelmq (1.1.0~rc1-1) unstable; urgency=medium
+
+  * Release candidate 1 1.1.0
+
+ -- Wagner Sebastian <wagner@cert.at>  Thu, 28 Jun 2018 15:56:15 +0200
+
+intelmq (1.1.0~alpha1-1) experimental; urgency=medium
 
   * Update to version 1.1.0
 

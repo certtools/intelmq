@@ -3,18 +3,28 @@ NEWS
 
 See the changelog for a full list of changes.
 
-1.1.0
------
+1.1.0 Feature release (unreleased)
+----------------------------------
 ### Tools
 - `intelmqctl start` prints bot's error messages in stderr if it failed to start.
 - `intelmqctl check` checks if all keys in the packaged defaults.conf are present in the current configuration.
 
 ### Contrib / Modify Expert
 The malware name rules of the modify expert have been migrated to the [Malware Name Mapping repository](https://github.com/certtools/malware_name_mapping).
-See contrib/malware_name_mapping/ for automated download and conversion.
+See `contrib/malware_name_mapping/` for download and conversion scripts as well as documentation.
 
 ### Harmonization
-- added `destination.urlpath` and `source.urlpath` to harmonization.
+You may want to update your harmonization configuration
+- Newly added fields:
+  - `destination.urlpath` and `source.urlpath`.
+  - `destination.domain_suffix` and `source.domain_suffix`.
+  - `tlp` with a new type TLP.
+- Changed fields:
+  - ASN fields now have a new type `ASN`.
+- Classification:
+  - New value for `classification.type`: `vulnerable client` with taxonomy `vulnerable`.
+  - New value for `classification.type`: `infected system` with taxonomy `malicious code`.
+- Renamed `JSON` to `JSONDict` and added a new type `JSON`. `JSONDict` saves data internally as JSON, but acts like a dictionary. `JSON` accepts any valid JSON.
 
 ### Configuration
 A new harmonization type `JSONDict` has been added specifically for the `extra` field. It is highly recommended to change the type of this field.
