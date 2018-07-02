@@ -37,6 +37,7 @@ CHANGELOG
     These functions will be called by `intelmqctl check` if the bot is configured with the given parameters
   - top level bot parameters (description, group, module, name) are exposed as members of the class.
   - The parameter `feed` for collectors is deprecated for 2.0 and has been replaced by the more consistent `name` (#1144).
+  - bug: allow path parameter for CollectorBot class.
 - lib/message:
   - Subitems in fields of type `JSONDict` (see below) can be accessed directly. E.g. you can do:
     event['extra.foo'] = 'bar'
