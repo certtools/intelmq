@@ -804,7 +804,7 @@ class CollectorBot(Bot):
         report.add("feed.accuracy", self.parameters.accuracy)
         return report
 
-    def send_message(self, *messages, auto_add=True):
+    def send_message(self, *messages, path="_default", auto_add=True):
         """"
         Parameters:
             messages: Instances of intelmq.lib.message.Message class
@@ -813,7 +813,7 @@ class CollectorBot(Bot):
         messages = filter(self.__filter_empty_report, messages)
         if auto_add:
             messages = map(self.__add_report_fields, messages)
-        super(CollectorBot, self).send_message(*messages)
+        super(CollectorBot, self).send_message(*messages, path=path)
 
     def new_report(self):
         return libmessage.Report()
