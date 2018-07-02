@@ -105,8 +105,6 @@
         "openDXL": {
             "description": "Listens to openDXL fabric",
             "module": "intelmq.bots.collectors.opendxl.collector",
-            "enabled": true,
-            "run_mode": "continuous",
             "parameters": {
                 "feed": "<Feed Name>",
                 "dxl_config_file": "<insert /path/to/dxlclient.config>",
