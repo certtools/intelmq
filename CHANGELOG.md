@@ -19,6 +19,7 @@ CHANGELOG
 #### Outputs
 
 ### Documentation
+- Bots: document redis cache parameters.
 
 ### Packaging
 
