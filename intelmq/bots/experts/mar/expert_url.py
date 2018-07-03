@@ -47,18 +47,21 @@ class MARURLParserBot(Bot):
             # Start the search
             results_context = marclient.search(
                 projections=[
-                    {"name": "HostInfo", 
-                     "outputs": ["hostname", "ip_address"]
+                    {
+                        "name": "HostInfo", 
+                         "outputs": ["hostname", "ip_address"]
                     }
                 ],
                 conditions={
                     "or": [
-                        {"and": [
-                            {"name": "DNSCache",
-                             "output": "hostname",
-                             "op": "EQUALS",
-                             "value": report.get('destination.fqdn')
-                            }
+                        {
+                            "and": [
+                                {
+                                    "name": "DNSCache",
+                                    "output": "hostname",
+                                    "op": "EQUALS",
+                                    "value": report.get('destination.fqdn')
+                                }
                             ]
                         }
                     ]
