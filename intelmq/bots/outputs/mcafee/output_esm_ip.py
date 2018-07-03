@@ -26,8 +26,7 @@ class ESMIPOutputBot(Bot):
 
     def init(self):
         if ESM is None:
-            self.logger.error('Could not import mfe_saw. Please install it.')
-            self.stop()
+            raise ValueError('Could not import mfe_saw. Please install it.')
 
         self.esm = ESM()
         try:
