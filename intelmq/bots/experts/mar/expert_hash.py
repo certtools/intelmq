@@ -45,29 +45,25 @@ class MARHashParserBot(Bot):
             marclient.response_timeout = 30
             # Start the search
             results_context = marclient.search(
-                projections=[{
-                              "name": "HostInfo",
+                projections=[{"name": "HostInfo",
                               "outputs": ["hostname","ip_address"]
                              }],
-                conditions={
-                            "or": [{
-                                    "and": [{
-                                             "name": "Files",
+                conditions={"or": [{"and": [{"name": "Files",
                                              "output": "md5",
                                              "op": "EQUALS",
                                              "value": report.get('malware.hash.md5')
-                                            }, {
-                                             "name": "Files",
+                                            },
+                                            {"name": "Files",
                                              "output": "sha1",
                                              "op": "EQUALS",
                                              "value": report.get('malware.hash.sha1')
-                                            }, {
-                                             "name": "Files",
+                                            },
+                                            {"name": "Files",
                                              "output": "sha256",
                                              "op": "EQUALS",
                                              "value": report.get('malware.hash.sha256')
                                             }]
-                                  }]
+                                   }]
                            }
             )
 

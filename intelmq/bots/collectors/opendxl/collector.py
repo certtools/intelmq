@@ -32,14 +32,14 @@ class openDXLCollectorBot(CollectorBot):
 
         if self.dxlclient is None:
             self.dxlclient = DXLClient(self.parameters.dxl_config_file, self.parameters.dxl_topic,
-                                     self.new_report, self.send_message, self.logger)
+                                       self.new_report, self.send_message, self.logger)
             self.dxlclient.start()
             self.logger.info('DXL Client started.')
 
 
 class DXLClient():
 
-    def __init__(self, dxl_config_file, dxl_topic, 
+    def __init__(self, dxl_config_file, dxl_topic,
                  object_report, object_send_message, object_logger):
 
         self.config = DxlClientConfig.create_dxl_config_from_file(dxl_config_file)
@@ -78,7 +78,6 @@ class DXLClient():
                         self.send_message(object_report)
                     except Exception as err:
                         self.logger.error("Error when adding message to pipeline")
-
 
                 @staticmethod
                 def worker_thread(req):
