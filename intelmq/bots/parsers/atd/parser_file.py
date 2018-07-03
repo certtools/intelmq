@@ -7,7 +7,6 @@ Parameter:
 verdict_severity: defines the minimum severity of reports to be parsed
                   severity ranges from 1 to 5
 """
-from __future__ import unicode_literals
 import sys
 import json
 
@@ -29,9 +28,6 @@ class ATDFileParserBot(Bot.ParserBot):
         'Port': 'destination.port',
         'Url': 'destination.fqdn',
     }
-
-
-
 
     def process(self):
         report = self.receive_message()
@@ -66,5 +62,6 @@ class ATDFileParserBot(Bot.ParserBot):
                 pass
 
         self.acknowledge_message()
+
 
 BOT = ATDFileParserBot

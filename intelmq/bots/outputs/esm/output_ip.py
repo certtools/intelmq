@@ -32,7 +32,7 @@ class ESMIPOutputBot(Bot):
         self.esm = ESM()
         try:
             self.esm.login(self.parameters.esm_ip, self.parameters.esm_user, self.parameters.esm_pw)
-        except:
+        except ESMAuthError:
             self.logger.error('Could not Login to ESM.')
             self.stop()
 
@@ -44,11 +44,11 @@ class ESMIPOutputBot(Bot):
             for WL in retVal:
                 if (WL['name'] == self.parameters.esm_watchlist):
                     watchlist = {'watchlist': {'value': WL['id']}, 'values': '["' + event.get(self.parameters.field) + '"]'}
-                    print(watchlist)
-                    retVal=self.esm.post('sysAddWatchlistValues', watchlist, raw=True)
+                    retVal = self.esm.post('sysAddWatchlistValues', watchlist, raw=True)
                     self.logger.info('ESM Watchlist updated')
                     self.acknowledge_message()
         except Exception as Err:
-            self.logger.error('Error when updating watchlist.' , Err)
+            self.logger.exception('Error when updating watchlist.')
+
 
 BOT = ESMIPOutputBot
