@@ -8,32 +8,34 @@ dxl_config_file: string
 dxl_topic: string
 """
 
-import logging
-import os
-import sys
-import time
-import json
-import threading
 import importlib
 
-from dxlclient.callbacks import EventCallback
-from dxlclient.client import DxlClient
-from dxlclient.client_config import DxlClientConfig
-from dxlclient.message import Event, Request
+try:
+    from dxlclient.callbacks import EventCallback
+    from dxlclient.client import DxlClient
+    from dxlclient.client_config import DxlClientConfig
+    from dxlclient.message import Event
+except ImportError:
+    dxlclient = None
 
 from intelmq.lib.bot import CollectorBot
 
+
 class openDXLCollectorBot(CollectorBot):
 
-    dxlclient=None
+    def init(self):
+        if dxlclient is None:
+            self.logger.error('Could not import dxlclient. Please install it.')
+            self.stop()
 
     def process(self):
 
-        if self.dxlclient==None:
-            self.dxlclient=DXLClient(self.parameters.dxl_config_file, self.parameters.dxl_topic,
+        if self.dxlclient is None:
+            self.dxlclient = DXLClient(self.parameters.dxl_config_file, self.parameters.dxl_topic,
                                      self.new_report, self.send_message, self.logger)
             self.dxlclient.start()
             self.logger.info('DXL Client started.')
+
 
 class DXLClient():
 
@@ -42,9 +44,9 @@ class DXLClient():
 
         self.config = DxlClientConfig.create_dxl_config_from_file(dxl_config_file)
         self.dxl_topic = dxl_topic
-        self.send_message=object_send_message
-        self.report=object_report
-        self.logger=object_logger
+        self.send_message = object_send_message
+        self.report = object_report
+        self.logger = object_logger
 
     def start(self):
         with DxlClient(self.config) as self.client:
@@ -59,9 +61,9 @@ class DXLClient():
                 raise
 
             # Create and add event listener
-            class MyEventCallback(EventCallback):
+            class MyEventCallback(dxlclient.EventCallback):
 
-                def on_event(self,event):
+                def on_event(self, event):
 
                     self.parse_message(event.payload.decode())
 
@@ -71,7 +73,7 @@ class DXLClient():
                     # Read msg-body and add as raw to a new report.
                     # now it's up to a parser to do the interpretation of the message.
                     try:
-                        object_report=self.report()
+                        object_report = self.report()
                         object_report.add("raw", json.dumps(object_message, sort_keys=True))
                         self.send_message(object_report)
                     except Exception as err:
@@ -99,8 +101,5 @@ class DXLClient():
         else:
             self.logger.info("There was no openDXL client I could stop.")
 
-if __name__ == "__main__":
-    bot = openDXLCollectorBot(sys.argv[1])
-    bot.start()
 
 BOT = openDXLCollectorBot

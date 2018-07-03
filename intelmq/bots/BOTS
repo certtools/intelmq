@@ -102,15 +102,6 @@
                 "rate_limit": 3600
             }
         },
-        "openDXL": {
-            "description": "Listens to openDXL fabric",
-            "module": "intelmq.bots.collectors.opendxl.collector",
-            "parameters": {
-                "feed": "<Feed Name>",
-                "dxl_config_file": "<insert /path/to/dxlclient.config>",
-                "dxl_topic": "/mcafee/event/atd/file/report"
-            }
-        },
         "Request Tracker": {
             "description": "Request Tracker Collector fetches attachments from an RTIR instance.",
             "module": "intelmq.bots.collectors.rt.collector_rt",
@@ -188,6 +179,15 @@
                 "rate_limit": 3600
             }
         },
+        "McAfee openDXL": {
+            "description": "Listens to McAfee openDXL fabric",
+            "module": "intelmq.bots.collectors.opendxl.collector",
+            "parameters": {
+                "feed": "<Feed Name>",
+                "dxl_config_file": "<insert /path/to/dxlclient.config>",
+                "dxl_topic": "/mcafee/event/atd/file/report"
+            }
+        },
         "Microsoft Azure": {
             "description": "",
             "module": "intelmq.bots.collectors.microsoft.collector_azure",
@@ -261,27 +261,6 @@
         }
     },
     "Parser": {
-        "Advanced Threat Defense - File Parser": {
-            "description": "McAfee Advanced Threat Defense Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.atd.parser_file",
-            "parameters": {
-                "verdict_severity": "4"
-            }
-        },
-        "Advanced Threat Defense - IP Parser": {
-            "description": "McAfee Advanced Threat Defense Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.atd.parser_ip",
-            "parameters": {
-                "verdict_severity": "4"
-            }
-        },
-        "Advanced Threat Defense - URL Parser": {
-            "description": "McAfee Advanced Threat Defense Parser is the bot responsible to parse the report and sanitize the information.",
-            "module": "intelmq.bots.parsers.atd.parser_url",
-            "parameters": {
-                "verdict_severity": "4"
-            }
-        },
         "Abuse.ch Domain": {
             "description": "Abuse.ch Domain Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.abusech.parser_domain",
@@ -459,6 +438,27 @@
             "description": "Malwareurl is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.malwareurl.parser",
             "parameters": {}
+        },
+        "McAfee Advanced Threat Defense File": {
+            "description": "McAfee Advanced Threat Defense Parser retrieves hash values from ATD reports.",
+            "module": "intelmq.bots.parsers.atd.parser_file",
+            "parameters": {
+                "verdict_severity": "4"
+            }
+        },
+        "McAfee Advanced Threat Defense IP": {
+            "description": "McAfee Advanced Threat Defense retrieves IP information from ATD reports.",
+            "module": "intelmq.bots.parsers.atd.parser_ip",
+            "parameters": {
+                "verdict_severity": "4"
+            }
+        },
+        "McAfee Advanced Threat Defense URL": {
+            "description": "McAfee Advanced Threat Defense retrieves URL information from ATD reports.",
+            "module": "intelmq.bots.parsers.atd.parser_url",
+            "parameters": {
+                "verdict_severity": "4"
+            }
         },
         "Microsoft BingMURLs": {
             "description": "Parses JSON data from Microsoft's Bing Malicious URLs list.",
@@ -689,21 +689,21 @@
                 "test_mode": false
             }
         },
-        "McAfee Active Response - IP Lookup": {
+        "McAfee Active Response IP Lookup": {
             "description": "Queries connections to IP addresses within local environment using McAfee Active Response queries.",
             "module": "intelmq.bots.experts.mar.expert_ip",
             "parameters": {
                 "dxl_config_file": "<insert /path/to/dxlclient.config>"
             }
         },
-        "McAfee Active Response - URL Lookup": {
+        "McAfee Active Response URL Lookup": {
             "description": "Queries occurences of URLs within local environment using McAfee Active Response queries.",
             "module": "intelmq.bots.experts.mar.expert_url",
             "parameters": {
                 "dxl_config_file": "<insert /path/to/dxlclient.config>"
             }
         },
-        "McAfee Active Response - Hash Lookup": {
+        "McAfee Active Response Hash Lookup": {
             "description": "Queries occurences of Hashes within local environment using McAfee Active Response queries.",
             "module": "intelmq.bots.experts.mar.expert_hash",
             "parameters": {
