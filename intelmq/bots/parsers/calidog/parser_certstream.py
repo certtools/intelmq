@@ -25,10 +25,8 @@ class CertStreamParserBot(ParserBot):
 
     def parse_line(self, line, report):
         domain, data, raw = line
-        print(domain, data['seen'])
         event = self.new_event(report)
         event.add('time.source', DateTime.from_epoch_millis(int(data['seen'])))
-        print(event)
         event.add('classification.type', 'other')
         event.add('raw', raw)
 
