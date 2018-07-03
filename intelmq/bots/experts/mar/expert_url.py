@@ -46,16 +46,23 @@ class MARURLParserBot(Bot):
             marclient.response_timeout = 30
             # Start the search
             results_context = marclient.search(
-                projections=[{"name": "HostInfo", 
-                              "outputs": ["hostname","ip_address"]
-                             }],
-                conditions={"or": [{"and": [{"name": "DNSCache",
-                                             "output": "hostname",
-                                             "op": "EQUALS",
-                                             "value": report.get('destination.fqdn')
-                                            }]
-                                   }]
-                           }
+                projections=[
+                    {"name": "HostInfo", 
+                     "outputs": ["hostname", "ip_address"]
+                    }
+                ],
+                conditions={
+                    "or": [
+                        {"and": [
+                            {"name": "DNSCache",
+                             "output": "hostname",
+                             "op": "EQUALS",
+                             "value": report.get('destination.fqdn')
+                            }
+                            ]
+                        }
+                    ]
+                }
             )
 
             # Iterate the results of the search in pages
