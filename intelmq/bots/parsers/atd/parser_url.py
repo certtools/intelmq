@@ -64,5 +64,3 @@ class ATDURLParserBot(Bot.ParserBot):
 
 
 BOT = ATDURLParserBot
-
-
