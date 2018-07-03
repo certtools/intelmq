@@ -27,8 +27,7 @@ class RTCollectorBot(CollectorBot):
 
     def init(self):
         if rt is None:
-            self.logger.error('Could not import rt. Please install it.')
-            self.stop()
+            raise ValueError('Could not import rt. Please install it.')
 
         self.set_request_parameters()
 

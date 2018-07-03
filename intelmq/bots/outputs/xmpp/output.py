@@ -81,8 +81,7 @@ class XMPPOutputBot(Bot):
 
     def init(self):
         if sleekxmpp is None:
-            self.logger.error('Could not import sleekxmpp. Please install it.')
-            self.stop()
+            raise ValueError('Could not import sleekxmpp. Please install it.')
 
         # Retrieve Parameters from configuration
         xmpp_user = getattr(self.parameters, "xmpp_user", None)
@@ -90,8 +89,7 @@ class XMPPOutputBot(Bot):
         xmpp_password = getattr(self.parameters, "xmpp_password", None)
 
         if None in (xmpp_user, xmpp_server, xmpp_password):
-            self.logger.error('No User / Password provided.')
-            self.stop()
+            raise ValueError('No User / Password provided.')
         else:
             xmpp_login = xmpp_user + '@' + xmpp_server
 
@@ -106,15 +104,13 @@ class XMPPOutputBot(Bot):
 
         # Be sure the receiver was set up
         if not self.muc and None in (xmpp_to_user, xmpp_to_server):
-            self.logger.error('No receiver for direct messages provided.')
-            self.stop()
+            raise ValueError('No receiver for direct messages provided.')
         else:
             self.xmpp_receiver = xmpp_to_user + '@' +\
                 xmpp_to_server
 
         if self.muc and not xmpp_room:
-            self.logger.error('No room provided.')
-            self.stop()
+            raise ValueError('No room provided.')
         else:
             self.xmpp_receiver = xmpp_room
 
@@ -139,8 +135,7 @@ class XMPPOutputBot(Bot):
             self.xmpp.register_plugin('xep_0030')  # Service Discovery
             self.xmpp.register_plugin('xep_0045')  # Multi-User Chat
         else:
-            self.logger.error("Could not connect to XMPP-Server.")
-            self.stop()
+            raise ValueError("Could not connect to XMPP-Server.")
 
     def process(self):
         event = self.receive_message()

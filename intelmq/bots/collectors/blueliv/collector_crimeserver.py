@@ -13,8 +13,7 @@ except ImportError:
 class BluelivCrimeserverCollectorBot(CollectorBot):
     def init(self):
         if BluelivAPI is None:
-            self.logger.error('Could not import sdk.blueliv_api.BluelivAPI. Please install it.')
-            self.stop()
+            raise ValueError('Could not import sdk.blueliv_api.BluelivAPI. Please install it.')
 
     def process(self):
         self.logger.debug("Downloading report through API.")

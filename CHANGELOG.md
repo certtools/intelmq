@@ -60,6 +60,9 @@ CHANGELOG
 - `lib/harmonization`: Accept `AS` prefix for ASN values (automatically stripped).
 
 ### Bots
+- Removed print statements from various bots.
+- Replaced various occurences of `self.logger.error()` + `self.stop()` with `raise ValueError`.
+
 #### Collectors
 - `bots.collectors.mail`:
   - New parameters; `sent_from`: filter messages by sender, `sent_to`: filter messages by recipient
