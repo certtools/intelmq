@@ -48,8 +48,8 @@ class MARURLParserBot(Bot):
             results_context = marclient.search(
                 projections=[
                     {
-                        "name": "HostInfo", 
-                         "outputs": ["hostname", "ip_address"]
+                        "name": "HostInfo",
+                        "outputs": ["hostname", "ip_address"]
                     }
                 ],
                 conditions={

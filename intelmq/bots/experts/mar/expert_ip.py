@@ -47,7 +47,7 @@ class MARIPParserBot(Bot):
             results_context = marclient.search(
                 projections=[
                     {
-                        "name": "HostInfo", 
+                        "name": "HostInfo",
                         "outputs": ["hostname", "ip_address"]
                     }
                 ],
@@ -60,7 +60,7 @@ class MARIPParserBot(Bot):
                                     "output": "dst_ip",
                                     "op": "EQUALS",
                                     "value": report.get('destination.ip')
-                                }, 
+                                },
                                 {
                                     "name": "NetworkFlow",
                                     "output": "dst_port",
