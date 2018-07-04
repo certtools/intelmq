@@ -342,10 +342,16 @@ def split_list(obj_list, attribute, whitelist=None):
 def points_to_same_abuse_mailbox(obj, organisation_index, role_index):
     """Return true of the obj's abuse-c points to org->abuse-c's abuse-mailbox.
 
-    Parameter obj must have both `abuse-c` and `org` attributes.
+    Parameter obj must have both `abuse-c` and `org` attributes. If the
+    organisation referenced by obj does not exist, this function returns
+    False.
     """
+    org = organisation_index.get(obj['org'][0])
+    if org is None:
+        return False
+
     abuse_c_1 = obj['abuse-c'][0].upper()
-    abuse_c_2 = organisation_index[obj['org'][0]].get('abuse-c')[0].upper()
+    abuse_c_2 = org.get('abuse-c')[0].upper()
     return abuse_c_1 == abuse_c_2 or (
         role_index[abuse_c_1].get('abuse-mailbox') ==
         role_index[abuse_c_2].get('abuse-mailbox'))
