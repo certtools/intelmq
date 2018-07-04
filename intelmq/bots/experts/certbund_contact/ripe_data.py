@@ -472,7 +472,7 @@ def convert_inetnum_to_networks(inetnum_list):
     for entry in inetnum_list:
         first, last = [ipaddress.ip_address(s.strip())
                        for s in entry["inetnum"][0].split("-", 1)]
-        entry["inetnum"] = ipaddress.summarize_address_range(first, last)
+        entry["inetnum"] = list(ipaddress.summarize_address_range(first, last))
 
 
 def convert_inet6num_to_networks(inet6num_list):
