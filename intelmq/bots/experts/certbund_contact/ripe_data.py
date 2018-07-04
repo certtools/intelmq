@@ -107,11 +107,9 @@ def load_ripe_files(options) -> tuple:
                           verbose=options.verbose)
     inetnum_list = parse_file(options.inetnum_file,
                               ('inetnum', 'org', 'country', 'abuse-c'),
-                              restriction=restrict_country,
                               verbose=options.verbose)
     inet6num_list = parse_file(options.inet6num_file,
                                ('inet6num', 'org', 'country', 'abuse-c'),
-                               restriction=restrict_country,
                                verbose=options.verbose)
 
     organisation_list = parse_file(options.organisation_file,
@@ -136,12 +134,14 @@ def load_ripe_files(options) -> tuple:
         = sanitize_split_and_modify(inetnum_list, 'inetnum', None,
                                     organisation_list, organisation_index,
                                     role_index, verbose=options.verbose)
+    inetnum_list = [item for item in inetnum_list if restrict_country(item)]
     convert_inetnum_to_networks(inetnum_list)
 
     (inet6num_list, inet6num_list_u, organisation_list, organisation_index) \
         = sanitize_split_and_modify(inet6num_list, 'inet6num', None,
                                     organisation_list, organisation_index,
                                     role_index, verbose=options.verbose)
+    inet6num_list = [item for item in inet6num_list if restrict_country(item)]
     convert_inet6num_to_networks(inet6num_list)
 
     known_organisations = referenced_organisations(asn_list, inetnum_list,
