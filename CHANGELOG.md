@@ -121,7 +121,7 @@ CHANGELOG
 
 #### Outputs
 - `bots.outputs.file`:
-  - String formatting can be used for file names.
+  - String formatting can be used for file names with new parameter `format_filename`.
   - New parameter `single_key` to only save one field.
 
 ### Harmonization

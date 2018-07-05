@@ -793,6 +793,7 @@
             "module": "intelmq.bots.outputs.file.output",
             "parameters": {
                 "file": "/opt/intelmq/var/lib/bots/file-output/events.txt",
+                "format_filename": false,
                 "hierarchical_output": false,
                 "single_key": null
             }
