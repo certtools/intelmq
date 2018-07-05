@@ -1392,3 +1392,29 @@ providers:
       revision: 15-06-2018
       status: on
       documentation:
+  McAfee Advanced Threat Defense:
+    CertStream:
+      description: sandboxing solution from McAfee
+        The ATD provides detailed IOC reports
+        and publishes them via openDXL
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.opendxl.collector
+          parameters:
+            dxl_config_file: location of file containing necessary parameters to conncet to DXL bus
+            dxl_topic: /mcafee/event/atd/file/report
+        parser:
+          module: intelmq.bots.parsers.mcafee.parser_atd_file
+          parameters:
+            verdict_severity: 4
+          module: mq.bots.parsers.mcafee.parser_atd_ip
+          parameters:
+            verdict_severity: 4
+          module: mq.bots.parsers.mcafee.parser_atd_url
+          parameters:
+            verdict_severity: 4
+      revision: 05-07-2018
+      status: on
+      documentation:
+

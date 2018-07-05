@@ -353,6 +353,23 @@ See the README.md
 
 * * *
 
+### McAfee openDXL
+
+#### Information:
+* `name:` intelmq.bots.collectors.opendxl.collector
+* `lookup:` yes
+* `public:` no
+* `cache (redis db):` none
+* `description:` collect messages via openDXL
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `dxl_config_file`: location of the config file containing required information to connect $
+* `dxl_topic`: the name of the DXL topix to subscribe
+
+* * *
+
 ### Microsoft Azure
 
 Iterates over all blobs in all containers in an Azure storage.
@@ -531,6 +548,54 @@ The information about the event could be better in many cases but as Cymru does 
 * `public:` no
 * `cache (redis db):` none
 * `description:` Parses data from full bogons feed.
+
+### McAfee Advanced Threat Defense File
+
+#### Information:
+* `name:` intelmq.bots.parsers.mcafee.parser_atd_file
+* `lookup:` yes
+* `public:` no
+* `cache (redis db):` none
+* `description:` parses file hash information off ATD reports
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `verdict_severity`: min report severity to parse
+
+* * *
+
+### McAfee Advanced Threat Defense IP
+
+#### Information:
+* `name:` intelmq.bots.parsers.mcafee.parser_atd_file
+* `lookup:` yes
+* `public:` no
+* `cache (redis db):` none
+* `description:` parses IP addresses off ATD reports
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `verdict_severity`: min report severity to parse
+
+* * *
+
+### McAfee Advanced Threat Defense URL
+
+#### Information:
+* `name:` intelmq.bots.parsers.mcafee.parser_atd_file
+* `lookup:` yes
+* `public:` no
+* `cache (redis db):` none
+* `description:` parses URLs off ATD reports
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `verdict_severity`: min report severity to parse
+
+* * *
 
 ### Twitter
 
@@ -772,6 +837,54 @@ See the README.md
 
 FIXME
 
+
+* * *
+
+### McAfee Active Response Hash lookup
+
+#### Information:
+* `name:` intelmq.bots.experts.mcafee.expert_mar_url
+* `lookup:` yes
+* `public:` no
+* `cache (redis db):` none
+* `description:` Queries occurrences of hashes within local environment
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `dxl_config_file`: location of file containing required information to connect to DXL bus
+
+* * *
+
+### McAfee Active Response IP lookup
+
+#### Information:
+* `name:` intelmq.bots.experts.mcafee.expert_mar_ip
+* `lookup:` yes
+* `public:` no
+* `cache (redis db):` none
+* `description:` Queries occurrences of connection attempts to destination ip/port within local environment
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `dxl_config_file`: location of file containing required information to connect to DXL bus
+
+* * *
+
+### McAfee Active Response URL lookup
+
+#### Information:
+* `name:` intelmq.bots.experts.mcafee.expert_mar_url
+* `lookup:` yes
+* `public:` no
+* `cache (redis db):` none
+* `description:` Queries occurrences of FQDN lookups within local environment
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `dxl_config_file`: location of file containing required information to connect to DXL bus
 
 * * *
 
@@ -1097,6 +1210,25 @@ If the field used in the format string is not defined, `None` will be used as fa
 
 * * *
 
+### McAfee Enterprise Security Manager
+
+#### Information:
+* `name:` intelmq.bots.outputs.mcafee.output_esm_ip
+* `lookup:` yes
+* `public:` no
+* `cache (redis db):` none
+* `description:` Writes information out to McAfee ESM watchlist
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `esm_ip`: IP address of ESM instance
+* `esm_user`: username of user entitled to write to watchlist
+* `esm_pw`: password of user
+* `esm_watchlist`: name of the watchlist to write to
+* `field`: name of the intelMQ field to be written to ESM
+
+* * *
 
 ### MongoDB
 
