@@ -676,6 +676,14 @@
                 "case_sensitive": true
             }
         },
+        "RecordedFuture IPRisk": {
+            "description": "RecordedFuture IPRisk bot adds the Risk Score from RecordedFuture assosciated with source.ip or desitnation.ip.",
+            "module": "intelmq.bots.experts.recordedfuture_iprisk.expert",
+            "parameters": {
+                "overwrite": false,
+                "database": "/opt/intelmq/var/lib/bots/recordedfuture_iprisk/rfiprisk.dat"
+            }
+        },
         "RFC 1918": {
             "description": "RFC 1918 removes fields or discards events if an ip or domain is invalid (invalid, local, reserved, documentation). IP, FQDN and URL field names are supported.",
             "module": "intelmq.bots.experts.rfc1918.expert",

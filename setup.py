@@ -108,5 +108,6 @@ setup(
         'intelmq/bots/experts/tor_nodes/update-tor-nodes',
         'intelmq/bots/experts/maxmind_geoip/update-geoip-data',
         'intelmq/bots/experts/asn_lookup/update-asn-data',
+        'intelmq/bots/experts/recordedfuture_iprisk/update-rfiprisk-data',
     ],
 )
