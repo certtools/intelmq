@@ -4,7 +4,7 @@
             "module": "intelmq.bots.collectors.calidog.collector_certstream",
             "description": "A bot to collect information from CertStream",
             "parameters": {
-                "feed": "certstream"
+                "name": "certstream"
             }
         },
         "File": {
@@ -14,7 +14,7 @@
                 "chunk_replicate_header": true,
                 "chunk_size": null,
                 "delete_file": false,
-                "feed": "FileCollector",
+                "name": "FileCollector",
                 "provider": "",
                 "path": "/tmp/",
                 "postfix": ".csv",
@@ -27,7 +27,7 @@
             "parameters": {
                 "attach_regex": "csv.zip",
                 "attach_unzip": true,
-                "feed": "",
+                "name": "Mail Attachment",
                 "provider": "",
                 "folder": "INBOX",
                 "mail_host": "<host>",
@@ -44,7 +44,7 @@
             "parameters": {
                 "chunk_replicate_header": true,
                 "chunk_size": null,
-                "feed": "",
+                "name": "Mail URL",
                 "provider": "",
                 "folder": "INBOX",
                 "http_password": null,
@@ -63,7 +63,7 @@
             "description": "Generic URL Fetcher is the bot responsible to get the report from an URL.",
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
-                "feed": "",
+                "name": "URL",
                 "provider": "",
                 "http_url": "<insert url of feed>",
                 "http_url_formatting": false,
@@ -78,7 +78,7 @@
             "description": "Opens a streaming connection to the URL and sends the received lines.",
             "module": "intelmq.bots.collectors.http.collector_http_stream",
             "parameters": {
-                "feed": "",
+                "name": "URL Stream",
                 "provider": "",
                 "http_url": "<insert url of feed>",
                 "http_username": null,
@@ -92,7 +92,7 @@
             "description": "Collect events from a MISP server.",
             "module": "intelmq.bots.collectors.misp.collector",
             "parameters": {
-                "feed": "misp_generic",
+                "name": "misp_generic",
                 "provider": "",
                 "misp_key": "<insert MISP Authkey>",
                 "misp_tag_processed": "<insert MISP tag for processed events>",
@@ -107,7 +107,7 @@
             "module": "intelmq.bots.collectors.rt.collector_rt",
             "parameters": {
                 "attachment_regex": "\\.csv\\.zip$",
-                "feed": "Request Tracker",
+                "name": "Request Tracker",
                 "provider": "",
                 "password": "password",
                 "rate_limit": 3600,
@@ -133,6 +133,7 @@
             "module": "intelmq.bots.collectors.tcp.collector",
             "parameters": {
                 "ip": "<ip>",
+                "name": "TCP",
                 "port": "<port>"
             }
         },
@@ -141,7 +142,7 @@
             "module": "intelmq.bots.collectors.xmpp.collector",
             "parameters": {
                 "ca_certs": "/etc/ssl/certs/ca-certificates.crt",
-                "feed": "XMPP",
+                "name": "XMPP",
                 "provider": "",
                 "pass_full_xml": false,
                 "rate_limit": 3600,
@@ -164,7 +165,7 @@
                 "api_key": "<insert your api key>",
                 "modified_pulses_only": false,
                 "interval": 24,
-                "feed": "AlienVault OTX",
+                "name": "AlienVault OTX",
                 "provider": "AlienVault",
                 "rate_limit": 3600
             }
@@ -174,7 +175,7 @@
             "module": "intelmq.bots.collectors.blueliv.collector_crimeserver",
             "parameters": {
                 "api_key": "<insert your api key>",
-                "feed": "Blueliv Crimeserver",
+                "name": "Blueliv Crimeserver",
                 "provider": "Blueliv",
                 "rate_limit": 3600
             }
@@ -186,7 +187,7 @@
                 "account_name": "",
                 "account_key": "",
                 "delete": true,
-                "feed": "",
+                "name": "Microsoft Azure",
                 "provider": "microsoft",
                 "rate_limit": 3600
             }
@@ -196,7 +197,7 @@
             "module": "intelmq.bots.collectors.microsoft.collector_interflow",
             "parameters": {
                 "api_key": "",
-                "feed": "",
+                "name": "Microsoft Interflow",
                 "file_match": null,
                 "http_timeout_sec": 300,
                 "not_older_than": "2 days",
@@ -215,7 +216,7 @@
             "parameters": {
                 "api_key": "<INSERT your API key>",
                 "countries": [],
-                "feed": "shodan-stream",
+                "name": "Shodan Stream",
                 "provider": "Shodan"
             }
         },
@@ -224,7 +225,7 @@
             "module": "intelmq.bots.collectors.stomp.collector",
             "parameters": {
                 "exchange": "<INSERT your exchange point as given by CERT.pl>",
-                "feed": "n6stomp",
+                "name": "n6stomp",
                 "provider": "N6",
                 "port": 61614,
                 "server": "n6stream.cert.pl",
@@ -237,7 +238,7 @@
             "description": "Collects tweets from target_timelines. Maximum number of tweet_count from each timeline and up to timelimit back in time.",
             "module": "intelmq.bots.collectors.twitter.collector_twitter",
             "parameters": {
-                "feed": "Twitter",
+                "name": "Twitter",
                 "target_timelines": "",
                 "tweet_count": "",
                 "timelimit": "",
