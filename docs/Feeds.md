@@ -30,7 +30,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 - [Malware Domains](#malware-domains)
 - [MalwarePatrol](#malwarepatrol)
 - [MalwareURL](#malwareurl)
-- [McAfee Advanced Thread Defense] (#mcafeeatd)
+- [McAfee Advanced Thread Defense] (#mcafee-advanced-threat-defense)
 - [Microsoft](#microsoft)
 - [Netlab 360](#netlab-360)
 - [Nothink](#nothink)
