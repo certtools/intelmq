@@ -13,7 +13,7 @@ try:
     from dxlclient.client import DxlClient
     from dxlmarclient import MarClient, ResultConstants, ProjectionConstants, ConditionConstants
 except ImportError:
-    dxlclient = None
+    DxlClient = None
 
 # imports for additional libraries and intelmq
 from intelmq.lib.bot import Bot
@@ -22,15 +22,13 @@ from intelmq.lib.bot import Bot
 class MARURLParserBot(Bot):
 
     def init(self):
-        if dxlclient is None:
+        if DxlClient is None:
             self.logger.error('Could not import dxlclient or dxlmarclient. Please install it.')
             self.stop()
-        self.logger.info('Initializing')
         self.config = DxlClientConfig.create_dxl_config_from_file(self.parameters.dxl_config_file)
         self.logger.info('Init done.')
 
     def process(self):
-        self.logger.info('Start processing.')
         report = self.receive_message()
         self.logger.info('Received Message')
 

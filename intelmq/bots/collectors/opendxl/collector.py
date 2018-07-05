@@ -16,7 +16,7 @@ try:
     from dxlclient.client_config import DxlClientConfig
     from dxlclient.message import Event
 except ImportError:
-    dxlclient = None
+    DxlClient = None
 
 from intelmq.lib.bot import CollectorBot
 
@@ -24,9 +24,10 @@ from intelmq.lib.bot import CollectorBot
 class openDXLCollectorBot(CollectorBot):
 
     def init(self):
-        if dxlclient is None:
+        if DxlClient is None:
             self.logger.error('Could not import dxlclient. Please install it.')
             self.stop()
+        self.dxlclient = None
 
     def process(self):
 
