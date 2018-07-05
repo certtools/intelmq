@@ -134,8 +134,10 @@ def load_ripe_files(options) -> tuple:
         = sanitize_split_and_modify(inetnum_list, 'inetnum', None,
                                     organisation_list, organisation_index,
                                     role_index, verbose=options.verbose)
-    inetnum_list = [item for item in inetnum_list if restrict_country(item)]
     convert_inetnum_to_networks(inetnum_list)
+    convert_inetnum_to_networks(inetnum_list_u)
+    inetnum_list = process_inetnum_contacts("inetnum", inetnum_list,
+                                            inetnum_list_u, restrict_country)
 
     (inet6num_list, inet6num_list_u, organisation_list, organisation_index) \
         = sanitize_split_and_modify(inet6num_list, 'inet6num', None,
@@ -143,6 +145,9 @@ def load_ripe_files(options) -> tuple:
                                     role_index, verbose=options.verbose)
     inet6num_list = [item for item in inet6num_list if restrict_country(item)]
     convert_inet6num_to_networks(inet6num_list)
+    convert_inet6num_to_networks(inet6num_list_u)
+    inet6num_list = process_inetnum_contacts("inet6num", inet6num_list,
+                                             inet6num_list_u, restrict_country)
 
     known_organisations = referenced_organisations(asn_list, inetnum_list,
                                                    inet6num_list)
@@ -486,6 +491,102 @@ def convert_inet6num_to_networks(inet6num_list):
     """
     for entry in inet6num_list:
         entry["inet6num"] = [ipaddress.ip_network(entry["inet6num"][0])]
+
+
+def process_inetnum_contacts(key, inet_list, inet_list_u, restrict_country):
+    """Restrict and augment network related contact data.
+
+    Some inetnum or inet6num objects do not have usable contact
+    information. These may have address ranges that are contained in the
+    address ranges of objects that do have contact information, so we
+    can augment the former with the contact information of the latter.
+
+    We only really need that for objects without contact data that
+    belong to the country to which the user wants to restrict the data
+    and where the object with the contact data is not in that country.
+    If both objects are in that country the ip addresses are already
+    covered by the object with the contact data, after all.
+
+    This function performs that augmentation for either inetnum or
+    inet6num objects and also performs the restriction to the country.
+    The latter is handled in this function as well because we need all
+    the inetnum data initially but only need to perform the augmentation
+    for those in the country.
+
+    Args:
+
+        key (str): The key for the cidr data in the inetnum objects.
+            Should be either 'inetnum' or 'inet6num'
+
+        inet_list (list of inetnum dicts): The inetnum objects with
+            usable contact data
+        inet_list_u (list of inetnum dicts): The inetnum objects without
+            contact data
+
+        restrict_country (function): Function that returns a boolean
+            indicating whether the inetnum object it's called with is in
+            the target country.
+
+    Returns: A list of inetnum objects consisting of all objects in
+        inet_list in the country and all augmented objects from
+        inet_list_u that are in the country.
+    """
+    # Implementation strategy:
+    #
+    # - Build maps from CIDRs to all the inetnum objects for those
+    #   CIDRs. There are two maps, one for all objects for the chosen
+    #   country and one for the rest.
+    #
+    # - Iterate over the items in inet_list_u, looking for larger
+    #   networks in those maps. We can start with the CIDR in the object
+    #   for which we want to find contact information. If that CIDR is
+    #   in the maps, we're done. Otherwise, lookup a CIDR with a 1 bit
+    #   shorter netmask, and so on. This requires a small number of
+    #   lookups per CIDR.
+    #
+    # - We use two maps so that for each netmask we can find a suitable
+    #   entry with the same country restriction first in which case we
+    #   don't need to do anything otherwise we continue with the entries
+    #   for other countries.
+
+    inet_list_cc = []
+    networkmap_cc = collections.defaultdict(list)
+    networkmap_rest = collections.defaultdict(list)
+    for obj in inet_list:
+        if restrict_country(obj):
+            inet_list_cc.append(obj)
+            target_map = networkmap_cc
+        else:
+            target_map = networkmap_rest
+
+        for addr in obj[key]:
+            target_map[addr].append(obj)
+
+    # Try to find contact data for the items in inet_list_u.
+    ignored_by_restriction = 0
+    new_entries = []
+    for obj in inet_list_u:
+        if not restrict_country(obj):
+            ignored_by_restriction += 1
+            continue
+
+        for obj_addr in obj[key]:
+            addr = obj_addr
+            while addr.prefixlen >= 8:
+                if addr in networkmap_cc:
+                    break
+                candidates = networkmap_rest.get(addr)
+                if candidates:
+                    new_entries.append(dict(candidates[0], key=[obj_addr]))
+                    break
+                addr = addr.supernet()
+
+    print("** %s: Find supernet contacts for %d entries without contacts"
+          % (key, len(inet_list_u)))
+    print("   -> %d new objects" % (len(new_entries),))
+    print("   -> %d ignored because of country" % ignored_by_restriction)
+
+    return inet_list_cc
 
 
 def sanitize_role_entry(entry):
