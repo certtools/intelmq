@@ -37,7 +37,8 @@ class ESMIPOutputBot(Bot):
 
         watchlist_filter = {'filters': [{'name': 'IPAddress', 'id': 0}]}
         try:
-            retVal = self.esm.post('sysGetWatchlists?hidden=false&dynamic=false&writeOnly=false&indexedOnly=false', watchlist_filter)
+            retVal = self.esm.post('sysGetWatchlists?hidden=false&dynamic=false&writeOnly=false&indexedOnly=false',
+                                   watchlist_filter)
             for WL in retVal:
                 if (WL['name'] == self.parameters.esm_watchlist):
                     watchlist = {'watchlist': {'value': WL['id']}, 'values': '["' + event.get(self.parameters.field) + '"]'}
