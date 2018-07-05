@@ -586,7 +586,7 @@ def process_inetnum_contacts(key, inet_list, inet_list_u, restrict_country):
     print("   -> %d new objects" % (len(new_entries),))
     print("   -> %d ignored because of country" % ignored_by_restriction)
 
-    return inet_list_cc
+    return inet_list_cc + new_entries
 
 
 def sanitize_role_entry(entry):
