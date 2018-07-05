@@ -17,8 +17,7 @@ class MailURLCollectorBot(CollectorBot):
 
     def init(self):
         if imbox is None:
-            self.logger.error('Could not import imbox. Please install it.')
-            self.stop()
+            raise ValueError('Could not import imbox. Please install it.')
 
         # Build request
         self.set_request_parameters()

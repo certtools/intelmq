@@ -16,8 +16,7 @@ class GeoIPExpertBot(Bot):
 
     def init(self):
         if geoip2 is None:
-            self.logger.error('Could not import geoip2. Please install it.')
-            self.stop()
+            raise ValueError('Could not import geoip2. Please install it.')
 
         try:
             self.database = geoip2.database.Reader(self.parameters.database)

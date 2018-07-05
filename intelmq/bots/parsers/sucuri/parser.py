@@ -36,7 +36,6 @@ class SucuriParserBot(ParserBot):
             index += 1
             raw_actual_line = report_list[index]
             actual_line = remove_comments.sub("", raw_actual_line).replace('&#46;', '.')
-            print(1, raw_actual_line, 2, actual_line)
             if actual_line[:2] == "<t":
                 event = self.new_event(report)  # making new event
                 parser.feed(actual_line)

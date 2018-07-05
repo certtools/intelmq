@@ -17,8 +17,7 @@ class GenericDBLookupExpertBot(Bot):
     def init(self):
         self.logger.debug("Connecting to database.")
         if psycopg2 is None:
-            self.logger.error('Could not import psycopg2. Please install it.')
-            self.stop()
+            raise ValueError('Could not import psycopg2. Please install it.')
 
         try:
             if hasattr(self.parameters, 'connect_timeout'):

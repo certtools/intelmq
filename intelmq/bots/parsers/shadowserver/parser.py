@@ -29,8 +29,7 @@ class ShadowserverParserBot(ParserBot):
             self.sparser_config = config.get_feed(self.feedname, self.logger)
 
         if not self.sparser_config:
-            self.logger.error('No feedname provided or feedname not in conf.')
-            self.stop()
+            raise ValueError('No feedname provided or feedname not in conf.')
 
         # Set a switch if the parser shall reset the feed.name,
         # code and feedurl for this event
