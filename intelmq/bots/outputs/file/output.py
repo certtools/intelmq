@@ -11,17 +11,20 @@ class FileOutputBot(Bot):
 
     def init(self):
         self.logger.debug("Opening %r file.", self.parameters.file)
-        self.file = io.open(self.parameters.file, mode='at', encoding="utf-8")
+        self.format_filename = getattr(self.parameters, 'format_filename', False)
+        if not self.format_filename:
+            self.file = io.open(self.parameters.file, mode='at', encoding="utf-8")
         self.logger.info("File %r is open.", self.parameters.file)
         self.single_key = getattr(self.parameters, 'single_key', None)
 
     def process(self):
         event = self.receive_message()
         event.set_default_value(None)
-        filename = self.parameters.file.format(event=event)
-        if filename != self.file.name:
-            self.file.close()
-            self.file = open(filename, mode='at', encoding='utf-8')
+        if self.format_filename:
+            filename = self.parameters.file.format(event=event)
+            if not self.file or filename != self.file.name:
+                self.file.close()
+                self.file = open(filename, mode='at', encoding='utf-8')
 
         if self.single_key:
             event_data = str(event.get(self.single_key))
@@ -47,7 +50,7 @@ class FileOutputBot(Bot):
         if 'file' not in parameters:
             return [["error", "Parameter 'file' not given."]]
         dirname = os.path.dirname(parameters['file'])
-        if not os.path.exists(dirname):
+        if not os.path.exists(dirname) and '{ev' not in dirname:
             return [["error", "Directory (%r) of parameter 'file' does not exist." % dirname]]
 
 

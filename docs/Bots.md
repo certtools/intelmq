@@ -1062,11 +1062,12 @@ Note that SIGHUPs and reloads interrupt the sleeping.
 #### Configuration Parameters:
 
 * `file`: file path of output file
+* `format_filename`: Boolean if the filename should be formatted (default: `false`).
 * `hierarchial_output`: If true, the resulting dictionary will be hierarchical (field names split by dot).
 * `single_key`: if `none`, the whole event is saved (default); otherwise the bot saves only contents of the specified key. In case of `raw` the data is base64 decoded.
 
 ##### Filename formatting
-The filename can be formatted using pythons string formatting functions. See https://docs.python.org/3/library/string.html#formatstrings
+The filename can be formatted using pythons string formatting functions if `format_filename` is set. See https://docs.python.org/3/library/string.html#formatstrings
 
 For example:
  * The filename `.../{event[source.abuse_contact]}.txt` will be (for example) `.../abuse@example.com.txt`.
