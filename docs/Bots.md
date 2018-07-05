@@ -1061,7 +1061,7 @@ Note that SIGHUPs and reloads interrupt the sleeping.
 
 #### Configuration Parameters:
 
-* `file`: file path of output file
+* `file`: file path of output file. Missing directories will be created if possible with the mode 755.
 * `format_filename`: Boolean if the filename should be formatted (default: `false`).
 * `hierarchial_output`: If true, the resulting dictionary will be hierarchical (field names split by dot).
 * `single_key`: if `none`, the whole event is saved (default); otherwise the bot saves only contents of the specified key. In case of `raw` the data is base64 decoded.
