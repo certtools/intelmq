@@ -12,7 +12,7 @@ This patch header follows DEP-3: http://dep.debian.net/deps/dep3/
 -ROOT_DIR = "/opt/intelmq/"
 -CONFIG_DIR = os.path.join(ROOT_DIR, "etc/")
 +CONFIG_DIR = "/etc/intelmq/"
- DEFAULT_LOGGING_LEVEL = "DEBUG"
+ DEFAULT_LOGGING_LEVEL = "INFO"
  BOTS_FILE = os.path.join(CONFIG_DIR, "BOTS")
 -DEFAULT_LOGGING_PATH = os.path.join(ROOT_DIR, "var/log/")
 +DEFAULT_LOGGING_PATH = "/var/log/intelmq/"
