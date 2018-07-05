@@ -31,22 +31,27 @@ class ESMIPOutputBot(Bot):
         self.esm = ESM()
         try:
             self.esm.login(self.parameters.esm_ip, self.parameters.esm_user, self.parameters.esm_pw)
-        except ESMAuthError:
+        except:
             self.logger.error('Could not Login to ESM.')
+            self.stop()
+
+        watchlist_filter = {'filters': [{'name': 'IPAddress', 'id': 0}]}
+        try:
+            retVal = self.esm.post('sysGetWatchlists?hidden=false&dynamic=false&writeOnly=false&indexedOnly=false', watchlist_filter)
+            for WL in retVal:
+                if (WL['name'] == self.parameters.esm_watchlist):
+                    watchlist = {'watchlist': {'value': WL['id']}, 'values': '["' + event.get(self.parameters.field) + '"]'}
+        except TypeError:
+            self.logger.error('Watchlist not found. Please verify name of the watchlist.')
             self.stop()
 
     def process(self):
         event = self.receive_message()
-        watchlist = {'filters': [{'name': 'IPAddress', 'id': 0}]}
         try:
-            retVal = self.esm.post('sysGetWatchlists?hidden=false&dynamic=false&writeOnly=false&indexedOnly=false', watchlist)
-            for WL in retVal:
-                if (WL['name'] == self.parameters.esm_watchlist):
-                    watchlist = {'watchlist': {'value': WL['id']}, 'values': '["' + event.get(self.parameters.field) + '"]'}
-                    retVal = self.esm.post('sysAddWatchlistValues', watchlist, raw=True)
-                    self.logger.info('ESM Watchlist updated')
-                    self.acknowledge_message()
-        except Exception as Err:
+            retVal = self.esm.post('sysAddWatchlistValues', self.watchlist, raw=True)
+            self.logger.info('ESM Watchlist updated')
+            self.acknowledge_message()
+        except Exception:
             self.logger.exception('Error when updating watchlist.')
 
 

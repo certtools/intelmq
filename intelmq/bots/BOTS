@@ -441,21 +441,21 @@
         },
         "McAfee Advanced Threat Defense File": {
             "description": "McAfee Advanced Threat Defense Parser retrieves hash values from ATD reports.",
-            "module": "intelmq.bots.parsers.atd.parser_file",
+            "module": "intelmq.bots.parsers.mcafee.parser_atd_file",
             "parameters": {
                 "verdict_severity": "4"
             }
         },
         "McAfee Advanced Threat Defense IP": {
             "description": "McAfee Advanced Threat Defense retrieves IP information from ATD reports.",
-            "module": "intelmq.bots.parsers.atd.parser_ip",
+            "module": "intelmq.bots.parsers.mcafee.parser_atd_ip",
             "parameters": {
                 "verdict_severity": "4"
             }
         },
         "McAfee Advanced Threat Defense URL": {
             "description": "McAfee Advanced Threat Defense retrieves URL information from ATD reports.",
-            "module": "intelmq.bots.parsers.atd.parser_url",
+            "module": "intelmq.bots.parsers.mcafee.parser_atd_url",
             "parameters": {
                 "verdict_severity": "4"
             }
@@ -691,21 +691,21 @@
         },
         "McAfee Active Response IP Lookup": {
             "description": "Queries connections to IP addresses within local environment using McAfee Active Response queries.",
-            "module": "intelmq.bots.experts.mar.expert_ip",
+            "module": "intelmq.bots.experts.mcafee.expert_mar_ip",
             "parameters": {
                 "dxl_config_file": "<insert /path/to/dxlclient.config>"
             }
         },
         "McAfee Active Response URL Lookup": {
             "description": "Queries occurences of URLs within local environment using McAfee Active Response queries.",
-            "module": "intelmq.bots.experts.mar.expert_url",
+            "module": "intelmq.bots.experts.mcafee.expert_mar_url",
             "parameters": {
                 "dxl_config_file": "<insert /path/to/dxlclient.config>"
             }
         },
         "McAfee Active Response Hash Lookup": {
             "description": "Queries occurences of Hashes within local environment using McAfee Active Response queries.",
-            "module": "intelmq.bots.experts.mar.expert_hash",
+            "module": "intelmq.bots.experts.mcafee.expert_mar_hash",
             "parameters": {
                 "dxl_config_file": "<insert /path/to/dxlclient.config>"
             }
