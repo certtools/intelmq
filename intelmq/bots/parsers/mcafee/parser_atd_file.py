@@ -48,6 +48,7 @@ class ATDFileParserBot(Bot.ParserBot):
             event.add('malware.hash.md5', subject_md5)
             event.add('malware.hash.sha1', subject_sha1)
             event.add('malware.hash.sha256', subject_sha256)
+
             self.send_message(event)
 
             # forward any subsequent files (dropped payload, if any)
