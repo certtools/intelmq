@@ -89,8 +89,8 @@ class ShadowserverParserBot(ParserBot):
             intelmqkey, shadowkey = item[:2]
             if shadowkey not in fields:
                 if not row.get(shadowkey):  # key does not exist in data (not even in the header)
-                    self.logger.warning('Required key %r not found data. Possible change in data'
-                                        ' format or misconfiguration.', shadowkey)
+                    raise ValueError('Required column %r not found in data. Possible change in data'
+                                     ' format or misconfiguration.' % shadowkey)
                 else:  # key is used twice
                     fields.append(shadowkey)
             if len(item) > 2:
@@ -119,8 +119,8 @@ class ShadowserverParserBot(ParserBot):
             intelmqkey, shadowkey = item[:2]
             if shadowkey not in fields:
                 if not row.get(shadowkey):  # key does not exist in data (not even in the header)
-                    self.logger.warning('Optional key %r not found data. Possible change in data'
-                                        ' format or misconfiguration.', shadowkey)
+                    self.logger.warning('Optional key %r not found in data. Possible change in data'
+                                    ' format or misconfiguration.', shadowkey)
                     continue
                 else:  # key is used twice
                     fields.append(shadowkey)
