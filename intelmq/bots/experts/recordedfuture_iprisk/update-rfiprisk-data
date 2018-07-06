@@ -9,7 +9,7 @@ PATH=/bin:/usr/bin
 # export FTP_PROXY=ftp://proxy.example.com:8080/
 
 # set your API Token here
-APITOKEN="123456789012345678901234567890120"
+APITOKEN=""
 
 set -e
 trap cleanup EXIT
@@ -22,7 +22,7 @@ fail()
 
 setup()
 {
-  [ "$#" -eq 1 ] || fail "Exactly one argument DESTINATION-FILE must be given."q
+  [ "$#" -eq 1 ] || fail "Exactly one argument DESTINATION-FILE must be given."
   DEST_FILE="$1"
   TMP_DIR=`mktemp -d`
   dest_dir=`dirname "$DEST_FILE"`
@@ -44,7 +44,7 @@ fetch_and_install()
   mv -f rfiprisk.dat "$DEST_FILE"
 }
 
-[ "$APITOKEN" != "12345678901234567890123456789012" ] || fail "Please update script with API token from Recorded Future."
+[ "$APITOKEN" != "" ] || fail "Please update script with API token from Recorded Future."
 
 setup "$@"
 fetch_and_install

@@ -18,7 +18,7 @@ class RecordedFutureIPRiskExpertBot(Bot):
             with open(self.parameters.database) as fp:
                 rfreader = csv.DictReader(fp)
                 for row in rfreader:
-                    self.database[row['Name']] = row['Risk']
+                    self.database[row['Name']] = int(row['Risk'])
 
         except IOError:
             raise ValueError("Recorded future risklist not defined or failed on open.")
@@ -31,13 +31,9 @@ class RecordedFutureIPRiskExpertBot(Bot):
         for key in ["source", "destination"]:
             if key + '.ip' in event:
                 if "extra.rf_iprisk." + key not in event:
-                    if event.get(key + '.ip') in self.database:
-                        event.add("extra.rf_iprisk." + key, int(self.database[event.get(key + '.ip')]))
-                    else:
-                        event.add("extra.rf_iprisk." + key, 0)
+                    event.add("extra.rf_iprisk." + key, self.database.get(event.get(key + '.ip'), 0))
                 elif "extra.rf_iprisk." + key in event and self.overwrite:
-                    if event.get(key + '.ip') in self.database:
-                        event.change("extra.rf_iprisk." + key, int(self.database[event.get(key + '.ip')]))
+                    event.change("extra.rf_iprisk." + key, self.database.get(event.get(key + '.ip'), 0))
 
         self.send_message(event)
         self.acknowledge_message()
