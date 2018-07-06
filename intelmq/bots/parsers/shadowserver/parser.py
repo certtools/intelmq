@@ -120,7 +120,7 @@ class ShadowserverParserBot(ParserBot):
             if shadowkey not in fields:
                 if not row.get(shadowkey):  # key does not exist in data (not even in the header)
                     self.logger.warning('Optional key %r not found in data. Possible change in data'
-                                    ' format or misconfiguration.', shadowkey)
+                                        ' format or misconfiguration.', shadowkey)
                     continue
                 else:  # key is used twice
                     fields.append(shadowkey)
