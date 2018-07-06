@@ -34,8 +34,6 @@ class ATDFileParserBot(Bot.ParserBot):
         raw_report = utils.base64_decode(report.get('raw'))
         atd_event = json.loads(raw_report)
 
-        print(report)
-
         subject_name = atd_event['Summary']['Subject']['Name']
         verdict_severity = int(atd_event['Summary']['Verdict']['Severity'])
 
@@ -50,6 +48,9 @@ class ATDFileParserBot(Bot.ParserBot):
             event.add('malware.hash.md5', subject_md5)
             event.add('malware.hash.sha1', subject_sha1)
             event.add('malware.hash.sha256', subject_sha256)
+
+            print(event)
+
             self.send_message(event)
 
             # forward any subsequent files (dropped payload, if any)
@@ -59,6 +60,7 @@ class ATDFileParserBot(Bot.ParserBot):
                     for key, value in entry.items():
                         if (key in self.ATD_TYPE_MAPPING):
                             event.add(self.ATD_TYPE_MAPPING[key], value)
+                    print(event)
                     self.send_message(event)
             except KeyError:
                 pass
