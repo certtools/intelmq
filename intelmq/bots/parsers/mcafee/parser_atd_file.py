@@ -34,6 +34,8 @@ class ATDFileParserBot(Bot.ParserBot):
         raw_report = utils.base64_decode(report.get('raw'))
         atd_event = json.loads(raw_report)
 
+        print(report)
+
         subject_name = atd_event['Summary']['Subject']['Name']
         verdict_severity = int(atd_event['Summary']['Verdict']['Severity'])
 

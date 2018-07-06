@@ -8,6 +8,7 @@ dxl_config_file: string
 dxl_topic: string
 """
 
+import time
 import importlib
 
 try:
@@ -32,13 +33,13 @@ class openDXLCollectorBot(CollectorBot):
     def process(self):
 
         if self.dxlclient is None:
-            self.dxlclient = DXLClient(self.parameters.dxl_config_file, self.parameters.dxl_topic,
+            self.dxlclient = openDXLListener(self.parameters.dxl_config_file, self.parameters.dxl_topic,
                                        self.new_report, self.send_message, self.logger)
             self.dxlclient.start()
             self.logger.info('DXL Client started.')
 
 
-class DXLClient():
+class openDXLListener():
 
     def __init__(self, dxl_config_file, dxl_topic,
                  object_report, object_send_message, object_logger):
@@ -62,7 +63,7 @@ class DXLClient():
                 raise
 
             # Create and add event listener
-            class MyEventCallback(dxlclient.EventCallback):
+            class MyEventCallback(EventCallback):
 
                 def on_event(self, event):
 
