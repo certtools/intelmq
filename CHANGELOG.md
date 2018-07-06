@@ -163,6 +163,7 @@ CHANGELOG
 #### Collectors
 
 #### Parsers
+- `bots.parsers.shadowserver`: if required fields do not exist in data, an exception is raised, so the line will be dumped and not further processed.
 
 #### Experts
 - Reverse DNS Expert: ignore all invalid results and use first valid one (#1264).
