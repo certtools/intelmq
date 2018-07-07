@@ -676,25 +676,12 @@
                 "test_mode": false
             }
         },
-        "McAfee Active Response IP Lookup": {
+        "McAfee Active Response Lookup": {
             "description": "Queries connections to IP addresses within local environment using McAfee Active Response queries.",
-            "module": "intelmq.bots.experts.mcafee.expert_mar_ip",
+            "module": "intelmq.bots.experts.mcafee.expert_mar",
             "parameters": {
-                "dxl_config_file": "<insert /path/to/dxlclient.config>"
-            }
-        },
-        "McAfee Active Response URL Lookup": {
-            "description": "Queries occurences of URLs within local environment using McAfee Active Response queries.",
-            "module": "intelmq.bots.experts.mcafee.expert_mar_url",
-            "parameters": {
-                "dxl_config_file": "<insert /path/to/dxlclient.config>"
-            }
-        },
-        "McAfee Active Response Hash Lookup": {
-            "description": "Queries occurences of Hashes within local environment using McAfee Active Response queries.",
-            "module": "intelmq.bots.experts.mcafee.expert_mar_hash",
-            "parameters": {
-                "dxl_config_file": "<insert /path/to/dxlclient.config>"
+                "dxl_config_file": "<insert /path/to/dxlclient.config>",
+                "lookup_type": "<Hash|DestSocket|DestIP|DestFQDN>"
             }
         },
         "MaxMind GeoIP": {
