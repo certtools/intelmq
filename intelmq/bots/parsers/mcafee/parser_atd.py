@@ -5,7 +5,7 @@ ATDParserBot parses McAfee Advanced Threat Defense reports.
 This bot generates one message per identified IOC:
 - hash values of original sample and any identified dropped file
 - IP addresses the sample tries to connect to
-- URLs the sample tries to connect to
+- FQDNs the sample tries to connect to
 
 Parameter:
 verdict_severity: defines the minimum severity of reports to be parsed
@@ -85,7 +85,7 @@ class ATDParserBot(Bot.ParserBot):
             except KeyError:
                 pass
 
-            # forward identified URLs, if any
+            # forward identified FQDNs, if any
             try:
                 for entry in atd_event['Summary']['Urls']:
                     event = self.new_event(report)
