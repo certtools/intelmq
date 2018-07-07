@@ -440,23 +440,9 @@
             "module": "intelmq.bots.parsers.malwareurl.parser",
             "parameters": {}
         },
-        "McAfee Advanced Threat Defense File": {
-            "description": "McAfee Advanced Threat Defense Parser retrieves hash values from ATD reports.",
-            "module": "intelmq.bots.parsers.mcafee.parser_atd_file",
-            "parameters": {
-                "verdict_severity": "4"
-            }
-        },
-        "McAfee Advanced Threat Defense IP": {
-            "description": "McAfee Advanced Threat Defense retrieves IP information from ATD reports.",
-            "module": "intelmq.bots.parsers.mcafee.parser_atd_ip",
-            "parameters": {
-                "verdict_severity": "4"
-            }
-        },
-        "McAfee Advanced Threat Defense URL": {
-            "description": "McAfee Advanced Threat Defense retrieves URL information from ATD reports.",
-            "module": "intelmq.bots.parsers.mcafee.parser_atd_url",
+        "McAfee Advanced Threat Defense": {
+            "description": "McAfee Advanced Threat Defense Parser retrieves IOCs (hash, IP, URL) from ATD reports.",
+            "module": "intelmq.bots.parsers.mcafee.parser_atd",
             "parameters": {
                 "verdict_severity": "4"
             }
