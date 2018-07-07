@@ -897,6 +897,25 @@ If the rule is a string, a regex-search is performed, also for numeric values (`
 
 * * *
 
+### RecordedFuture IP risk
+For both `source.ip` and `destination.ip` the corresponding risk score is fetched from a local database created from Recorded Future's API. The score is recorded in `extra.rf_iprisk.source` and `extra.rf_iprisk.destination`. If a lookup for an IP fails a score of 0 is recorded.
+
+See https://www.recordedfuture.com/products/api/ and speak with your recorded future representative for more information.
+
+#### Information:
+* `name:` recordedfuture_iprisk
+* `lookup:` local database
+* `public:` no
+* `cache (redis db):` none
+* `description:` Record risk score associated to source and destination IP if they are present. Assigns 0 to to IPs not in the RF list.
+
+### Configuration Parameters:
+
+* `database`: Location of csv file obtained from recorded future API (a script is provided to download the large IP set)
+* `overwrite`: set to true if you want to overwrite any potentially existing risk score fields in the event.
+
+* * *
+
 ### Reverse DNS
 
 For both `source.ip` and `destination.ip` the PTR record is fetched and the first valid result is used for `source.reverse_dns`/`destination.reverse_dns`.
