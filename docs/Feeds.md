@@ -30,7 +30,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 - [Malware Domains](#malware-domains)
 - [MalwarePatrol](#malwarepatrol)
 - [MalwareURL](#malwareurl)
-- [McAfee Advanced Thread Defense] (#mcafee-advanced-threat-defense)
+- [McAfee Advanced Threat Defense](#mcafee-advanced-threat-defense)
 - [Microsoft](#microsoft)
 - [Netlab 360](#netlab-360)
 - [Nothink](#nothink)
@@ -1018,31 +1018,27 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Module:** intelmq.bots.parsers.malwareurl.parser
 * **Configuration Parameters:**
 
+
 # McAfee Advanced Threat Defense
 
-## Sandbox Report
+## Sandbox Reports
 
+* **Status:** on
 * **Revision:** 05-07-2018
-* **Description:** sandboxing solution from McAfee.
+* **Description:** Processes reports from McAfee's sandboxing solution via the openDXL API.
 
 ### Collector
 
 * **Module:** intelmq.bots.collectors.opendxl.collector
 * **Configuration Parameters:**
-*  * `dxl_config_file`: `location of dxl config file`
-*  * `dxl_topic`: `DXL topic to subscribe to`
+*  * `dxl_config_file`: `{{location of dxl configuration file}}`
+*  * `dxl_topic`: `/mcafee/event/atd/file/report`
 
 ### Parser
 
-* **Module:** intelmq.bots.parsers.mcafee.parser_atd_file
+* **Module:** intelmq.bots.parsers.mcafee.parser_atd
 * **Configuration Parameters:**
-*  * `verdict_severity`: `min report verdict to process`
-* **Module:** intelmq.bots.parsers.mcafee.parser_atd_ip
-* **Configuration Parameters:**
-*  * `verdict_severity`: `min report verdict to process`
-* **Module:** intelmq.bots.parsers.mcafee.parser_atd_url
-* **Configuration Parameters:**
-*  * `verdict_severity`: `min report verdict to process`
+*  * `verdict_severity`: `4`
 
 
 # Microsoft
