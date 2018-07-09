@@ -8,7 +8,9 @@ dxl_config_file: string
 dxl_topic: string
 """
 
+import time
 import importlib
+import json
 
 try:
     from dxlclient.callbacks import EventCallback
@@ -32,13 +34,13 @@ class openDXLCollectorBot(CollectorBot):
     def process(self):
 
         if self.dxlclient is None:
-            self.dxlclient = DXLClient(self.parameters.dxl_config_file, self.parameters.dxl_topic,
+            self.dxlclient = openDXLListener(self.parameters.dxl_config_file, self.parameters.dxl_topic,
                                        self.new_report, self.send_message, self.logger)
             self.dxlclient.start()
             self.logger.info('DXL Client started.')
 
 
-class DXLClient():
+class openDXLListener():
 
     def __init__(self, dxl_config_file, dxl_topic,
                  object_report, object_send_message, object_logger):
@@ -62,11 +64,11 @@ class DXLClient():
                 raise
 
             # Create and add event listener
-            class MyEventCallback(dxlclient.EventCallback):
+            class MyEventCallback(EventCallback):
 
                 def on_event(self, event):
 
-                    self.parse_message(event.payload.decode())
+                    self.parse_message(event.payload.decode(encoding="UTF-8").replace("\u0000", ""))
 
                 @staticmethod
                 def parse_message(object_message):
@@ -75,10 +77,12 @@ class DXLClient():
                     # now it's up to a parser to do the interpretation of the message.
                     try:
                         object_report = self.report()
-                        object_report.add("raw", json.dumps(object_message, sort_keys=True))
+                        object_report.add("raw", object_message)
+
                         self.send_message(object_report)
                     except Exception as err:
                         self.logger.error("Error when adding message to pipeline")
+                        print(err)
 
                 @staticmethod
                 def worker_thread(req):
