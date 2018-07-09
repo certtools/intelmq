@@ -87,6 +87,7 @@ CHANGELOG
   - If the conversion function fails for a line, an error is raised and the offending line will be handled according to the error handling configuration.
     Previously errors like these were only logged and ignored otherwise.
   - add support for the feed `Accessible-Hadoop`
+  - Remove deprecated parameter `override`, use `overwrite` instead (#1071).
 - The Generic CSV Parser `bots.parsers.generic.parser_csv`:
   - It is possible to filter the data before processing them using the new parameters `filter_type` and `filter_text`.
   - It is possible to specify multiple columns using `|` character in parameter `columns`.
@@ -118,6 +119,7 @@ CHANGELOG
 - Added wait expert for sleeping
 - Added domain suffix expert to extract the TLD/Suffix from a domain name.
 - `bots.experts.maxmind_geoip`: New (optional) parameter `overwrite`, by default false. The current default was to overwrite!
+- `intelmq.bots.experts.ripencc_abuse_contact`: Remove deprecated parameter `query_ripe_stat`, use `query_ripe_stat_asn` and `query_ripe_stat_ip` instead (#1071).
 
 #### Outputs
 - `bots.outputs.file`:
