@@ -79,6 +79,10 @@ Add a new empty changelog and news section. For the changelog:
 And for the news:
 
 ```
+### Tools
+
+### Harmonization
+
 ### Configuration
 
 ### Libraries
