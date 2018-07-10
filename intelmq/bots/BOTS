@@ -71,6 +71,7 @@
                 "http_password": null,
                 "ssl_client_certificate": null,
                 "extract_file": "True or string of file names separated by ,",
+                "decompress_gzip_response": false,
                 "rate_limit": 3600
             }
         },
