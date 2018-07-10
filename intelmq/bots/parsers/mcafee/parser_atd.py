@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-
 ATDParserBot parses McAfee Advanced Threat Defense reports.
 This bot generates one message per identified IOC:
 - hash values of original sample and any identified dropped file
@@ -12,7 +11,6 @@ verdict_severity: defines the minimum severity of reports to be parsed
                   severity ranges from 1 to 5
 
 """
-import sys
 import json
 
 # imports for additional libraries and intelmq
@@ -20,7 +18,7 @@ import intelmq.lib.bot as Bot
 import intelmq.lib.utils as utils
 
 
-class ATDParserBot(Bot.ParserBot):
+class ATDParserBot(Bot):
 
     ATD_TYPE_MAPPING = {
         'domain': 'source.fqdn',

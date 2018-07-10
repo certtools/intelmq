@@ -9,14 +9,11 @@ dxl_topic: string
 """
 
 import time
-import importlib
-import json
 
 try:
     from dxlclient.callbacks import EventCallback
     from dxlclient.client import DxlClient
     from dxlclient.client_config import DxlClientConfig
-    from dxlclient.message import Event
 except ImportError:
     DxlClient = None
 
@@ -27,17 +24,20 @@ class openDXLCollectorBot(CollectorBot):
 
     def init(self):
         if DxlClient is None:
-            self.logger.error('Could not import dxlclient. Please install it.')
-            self.stop()
+            raise ValueError('Could not import dxlclient. Please install it.')
         self.dxlclient = None
 
     def process(self):
 
         if self.dxlclient is None:
             self.dxlclient = openDXLListener(self.parameters.dxl_config_file, self.parameters.dxl_topic,
-                                       self.new_report, self.send_message, self.logger)
-            self.dxlclient.start()
-            self.logger.info('DXL Client started.')
+                                             self.new_report, self.send_message, self.logger)
+        self.logger.info('Starting DXL Client.')
+        self.dxlclient.start()  # blocks
+
+    def shutdown(self):
+        if self.dxlclient:
+            self.dxlclient.stop()
 
 
 class openDXLListener():
@@ -68,21 +68,17 @@ class openDXLListener():
 
                 def on_event(self, event):
 
-                    self.parse_message(event.payload.decode(encoding="UTF-8").replace("\u0000", ""))
+                    self.parse_message(event.payload.decode(encoding="UTF-8").translate({0: None}))
 
                 @staticmethod
                 def parse_message(object_message):
 
                     # Read msg-body and add as raw to a new report.
                     # now it's up to a parser to do the interpretation of the message.
-                    try:
-                        object_report = self.report()
-                        object_report.add("raw", object_message)
+                    object_report = self.report()
+                    object_report.add("raw", object_message)
 
-                        self.send_message(object_report)
-                    except Exception as err:
-                        self.logger.error("Error when adding message to pipeline")
-                        print(err)
+                    self.send_message(object_report)
 
                 @staticmethod
                 def worker_thread(req):

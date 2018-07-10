@@ -14,8 +14,6 @@ field: field from intelMQ message to extract (e.g. destination.ip)
 
 from intelmq.lib.bot import Bot
 
-import json
-
 try:
     from mfe_saw.esm import ESM
 except ImportError:

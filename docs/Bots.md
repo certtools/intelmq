@@ -843,7 +843,7 @@ FIXME
 ### McAfee Active Response Hash lookup
 
 #### Information:
-* `name:` intelmq.bots.experts.mcafee.expert_mar_url
+* `name:` intelmq.bots.experts.mcafee.expert_mar
 * `lookup:` yes
 * `public:` no
 * `cache (redis db):` none
@@ -853,6 +853,11 @@ FIXME
 
 * **Feed parameters** (see above)
 * `dxl_config_file`: location of file containing required information to connect to DXL bus
+* `lookup_type`: One of:
+  - `Hash`: looks up `malware.hash.md5`, `malware.hash.sha1` and `malware.hash.sha256`
+  - `DestSocket`: looks up `destination.ip` and `destination.port`
+  - `DestIP`: looks up `destination.ip`
+  - `DestFQDN`: looks up in `destination.fqdn`
 
 * * *
 
