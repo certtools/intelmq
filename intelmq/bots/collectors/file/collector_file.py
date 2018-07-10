@@ -64,8 +64,8 @@ class FileCollectorBot(CollectorBot):
                         template = self.new_report()
                         template.add("feed.url", "file://localhost%s" % filename)
 
-                        with open(filename, 'rb') as f:
-                            for report in generate_reports(template, f, self.chunk_size,
+                        with open(filename, 'rb') as fh:
+                            for report in generate_reports(template, fh, self.chunk_size,
                                                            self.chunk_replicate_header):
                                 self.send_message(report)
 

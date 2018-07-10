@@ -152,6 +152,7 @@ class ClassificationType(GenericType):
                       'dropzone',
                       'exploit',
                       'ids alert',
+                      'infected system',
                       'leak',
                       'malware',
                       'malware configuration',
@@ -163,6 +164,8 @@ class ClassificationType(GenericType):
                       'spam',
                       'test',
                       'tor',
+                      'unauthorized-login',
+                      'unauthorized-command',
                       'unknown',
                       'vulnerable client',
                       'vulnerable service',
@@ -472,7 +475,7 @@ class ASN(GenericType):
     @staticmethod
     def is_valid(value, sanitize=False):
         if sanitize:
-            value = Integer().sanitize(value)
+            value = ASN().sanitize(value)
         if not Integer.is_valid(value):
             return False
         if not ASN.check_asn(value):
@@ -481,6 +484,8 @@ class ASN(GenericType):
 
     @staticmethod
     def sanitize(value):
+        if isinstance(value, str) and value.lower().startswith('as'):
+            value = value[2:]
         value = Integer.sanitize(value)
         if value and ASN.check_asn(value):
             return value

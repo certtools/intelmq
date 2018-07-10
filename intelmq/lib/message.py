@@ -14,7 +14,7 @@ import intelmq.lib.exceptions as exceptions
 import intelmq.lib.harmonization
 from intelmq import HARMONIZATION_CONF_FILE
 from intelmq.lib import utils
-from typing import Sequence, Optional
+from typing import Any, Sequence, Optional
 from collections import defaultdict
 
 
@@ -88,6 +88,7 @@ class MessageFactory(object):
 class Message(dict):
 
     _IGNORED_VALUES = ["", "-", "N/A"]
+    _default_value_set = False
 
     def __init__(self, message=(), auto=False, harmonization=None):
         try:
@@ -135,7 +136,13 @@ class Message(dict):
             # return extra as string for backwards compatibility
             return json.dumps(self.to_dict(hierarchical=True)[key.split('.')[0]])
         else:
-            return super(Message, self).__getitem__(key)
+            try:
+                return super(Message, self).__getitem__(key)
+            except KeyError:
+                if self._default_value_set:
+                    return self.default_value
+                else:
+                    raise
 
     def is_valid(self, key: str, value: str, sanitize: bool = True) -> bool:
         """
@@ -469,6 +476,13 @@ class Message(dict):
     def __ne__(self, other) -> bool:
         return not self.__eq__(other)
 
+    def set_default_value(self, value: Any = None):
+        """
+        Sets a default value for items.
+        """
+        self._default_value_set = True
+        self.default_value = value
+
 
 class Event(Message):
 
@@ -511,11 +525,19 @@ class Report(Message):
                  harmonization: Optional[dict] = None):
         """
         Parameters:
-            message: Passed along to Message's and dict's init
+            message: Passed along to Message's and dict's init.
+                If this is an instance of the Event class, the resulting Report instance
+                has only the fiels which are possible in Report, all others are stripped.
             auto: if False (default), time.observation is automatically added.
             harmonization: Harmonization definition to use
         """
-        super(Report, self).__init__(message, auto, harmonization)
+        if isinstance(message, Event):
+            super(Report, self).__init__({}, auto, harmonization)
+            for key, value in message.items():
+                if self._Message__is_valid_key(key):
+                    self.add(key, value, sanitize=False)
+        else:
+            super(Report, self).__init__(message, auto, harmonization)
         if not auto and 'time.observation' not in self:
             time_observation = intelmq.lib.harmonization.DateTime().generate_datetime_now()
             self.add('time.observation', time_observation, sanitize=False)

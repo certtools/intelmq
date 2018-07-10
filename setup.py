@@ -58,7 +58,17 @@ setup(
     maintainer_email='wagner@cert.at',
     python_requires='>=3.3',
     install_requires=REQUIRES,
+    test_requires=[
+        'Cerberus',
+        'pyyaml',
+    ],
     test_suite='intelmq.tests',
+    extras_require={
+        'development': [
+            'Cerberus',
+            'pyyaml',
+        ],
+    },
     packages=find_packages(),
     include_package_data=True,
     url='https://github.com/certtools/intelmq/',
@@ -98,5 +108,6 @@ setup(
         'intelmq/bots/experts/tor_nodes/update-tor-nodes',
         'intelmq/bots/experts/maxmind_geoip/update-geoip-data',
         'intelmq/bots/experts/asn_lookup/update-asn-data',
+        'intelmq/bots/experts/recordedfuture_iprisk/update-rfiprisk-data',
     ],
 )

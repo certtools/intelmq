@@ -19,8 +19,7 @@ class MailAttachCollectorBot(CollectorBot):
 
     def init(self):
         if imbox is None:
-            self.logger.error('Could not import imbox. Please install it.')
-            self.stop()
+            raise ValueError('Could not import imbox. Please install it.')
 
     def process(self):
         self.logger.debug("Connecting to %s.", self.parameters.mail_host)

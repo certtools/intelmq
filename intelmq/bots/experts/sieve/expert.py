@@ -29,6 +29,7 @@ class Procedure:
 
 
 class SieveExpertBot(Bot):
+    _message_processed_verb = 'Forwarded'
 
     harmonization = None
 

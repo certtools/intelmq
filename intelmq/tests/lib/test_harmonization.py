@@ -422,6 +422,8 @@ class TestHarmonization(unittest.TestCase):
         """ Test ASN.sanitize with valid arguments. """
         self.assertTrue(harmonization.ASN.is_valid('1234',
                                                    sanitize=True))
+        self.assertTrue(harmonization.ASN.is_valid('AS1234',
+                                                   sanitize=True))
 
     def test_asn_sanitize_invalid(self):
         """ Test ASN.is_valid with invalid arguments. """

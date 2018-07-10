@@ -14,6 +14,10 @@ MINIMUM_BGP_PREFIX_IPV6 = 128
 DNS_EXCEPTION_VALUE = "__dns-exception"
 
 
+class InvalidPTRResult(ValueError):
+    pass
+
+
 class ReverseDnsExpertBot(Bot):
 
     def init(self):
@@ -57,19 +61,21 @@ class ReverseDnsExpertBot(Bot):
             else:
                 rev_name = reversename.from_address(ip)
                 try:
-                    result = resolver.query(rev_name, "PTR")
-                    expiration = result.expiration
-                    result = result[0]
-
-                    if str(result) == '.':
-                        result = None
-                        raise ValueError
-                except (dns.exception.DNSException, ValueError) as e:
+                    results = resolver.query(rev_name, "PTR")
+                    expiration = results.expiration
+                    for result in results:
+                        # use first valid result
+                        if event.is_valid('source.reverse_dns', str(result)):
+                            break
+                    else:
+                        raise InvalidPTRResult
+                except (dns.exception.DNSException, InvalidPTRResult) as e:
                     # Set default TTL for 'DNS query name does not exist' error
                     ttl = None if isinstance(e, dns.resolver.NXDOMAIN) else \
                         getattr(self.parameters, "cache_ttl_invalid_response",
                                 60)
                     self.cache.set(cache_key, DNS_EXCEPTION_VALUE, ttl)
+                    result = None
 
                 else:
                     ttl = datetime.fromtimestamp(expiration) - datetime.now()

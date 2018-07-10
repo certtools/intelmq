@@ -11,7 +11,7 @@ from intelmq.lib.exceptions import InvalidArgument
 try:
     from publicsuffixlist import PublicSuffixList
 except ImportError:
-    from .fallback import PublicSuffixList
+    from .lib import PublicSuffixList
 
 
 ALLOWED_FIELDS = ['fqdn', 'reverse_dns']
@@ -23,7 +23,7 @@ class DomainSuffixExpertBot(Bot):
     def init(self):
         self.field = self.parameters.field
         if self.field not in ALLOWED_FIELDS:
-            raise InvalidArgument('key', got=self.field, expected=self.field)
+            raise InvalidArgument('key', got=self.field, expected=ALLOWED_FIELDS)
         with codecs.open(self.parameters.suffix_file, encoding='UTF-8') as file_handle:
             self.psl = PublicSuffixList(source=file_handle, only_icann=True)
 
