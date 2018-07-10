@@ -73,8 +73,10 @@ class HTTPCollectorBot(CollectorBot):
         self.logger.info("Report downloaded.")
 
         if self.decompress_gzip:
-                resp_content_type = resp.headers.get('content-type', '')
-                resp_data = gzip.decompress(resp.content) if 'gzip' in resp_content_type else resp.content
+            resp_content_type = resp.headers.get('content-type', '')
+            resp_data = gzip.decompress(resp.content) if 'gzip' in resp_content_type else resp.content
+        else:
+            resp_data = resp.content
 
         raw_reports = []
         try:
