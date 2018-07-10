@@ -13,7 +13,6 @@ except ImportError:
     shodan = None
 
 
-
 class ShodanStreamCollectorBot(CollectorBot):
     def init(self):
         if shodan is None:
