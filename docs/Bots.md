@@ -107,6 +107,7 @@ This configuration resides in the file `runtime.conf` in your intelmq's configur
 * **HTTP parameters** (see above)
 * `http_url`: location of information resource (e.g. https://feodotracker.abuse.ch/blocklist/?download=domainblocklist)
 * `http_url_formatting`: If `True` (default `False`) `{time[format]}` will be replaced by the current time formatted by the given format. E.g. if the URL is `http://localhost/{time[%Y]}`, then the resulting URL is `http://localhost/2018` for the year 2018. Currently only the time in local timezone is available. Python's [Format Specification Mini-Language¶](https://docs.python.org/3/library/string.html) is used for this.
+* `decompress_gzip_response`: Decompress gzipped response content (default: `false`)
 
 
 * * *

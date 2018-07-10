@@ -19,6 +19,7 @@ http_timeout_max_tries: an integer depicting how often a connection attempt is r
 import datetime
 import io
 import zipfile
+import gzip
 
 import requests
 
@@ -36,6 +37,7 @@ class HTTPCollectorBot(CollectorBot):
     def init(self):
         self.set_request_parameters()
         self.extract_files = getattr(self.parameters, "extract_files", None)
+        self.decompress_gzip = getattr(self.parameters, "decompress_gzip_response", False)
 
     def process(self):
         if getattr(self.parameters, 'http_url_formatting', False):
@@ -70,9 +72,13 @@ class HTTPCollectorBot(CollectorBot):
 
         self.logger.info("Report downloaded.")
 
+        if self.decompress_gzip:
+                resp_content_type = resp.headers.get('content-type', '')
+                resp_data = gzip.decompress(resp.content) if 'gzip' in resp_content_type else resp.content
+
         raw_reports = []
         try:
-            zfp = zipfile.ZipFile(io.BytesIO(resp.content), "r")
+            zfp = zipfile.ZipFile(io.BytesIO(resp_data), "r")
         except zipfile.BadZipfile:
             raw_reports.append(resp.text)
         else:
@@ -88,7 +94,7 @@ class HTTPCollectorBot(CollectorBot):
                                  "'%s'.", "', '".join(self.extract_files()))
             else:
                 self.logger.info('Extracting all files from tar.gz.')
-            raw_reports = [file for file in extract_tar(resp.content, self.extract_files)]
+            raw_reports = [file for file in extract_tar(resp_data, self.extract_files)]
 
         for raw_report in raw_reports:
             report = self.new_report()
