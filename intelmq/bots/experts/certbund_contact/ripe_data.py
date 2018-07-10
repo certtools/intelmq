@@ -577,7 +577,7 @@ def process_inetnum_contacts(key, inet_list, inet_list_u, restrict_country):
                     break
                 candidates = networkmap_rest.get(addr)
                 if candidates:
-                    new_entries.append(dict(candidates[0], key=[obj_addr]))
+                    new_entries.append(dict(candidates[0], **{key:[obj_addr]}))
                     break
                 addr = addr.supernet()
 
