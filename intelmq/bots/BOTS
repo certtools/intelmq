@@ -847,7 +847,7 @@
             "parameters": {
                 "esm_ip": "1.2.3.4",
                 "esm_user": "NGCP",
-                "esm_pw": "<Password>",
+                "esm_password": "<Password>",
                 "esm_watchlist": "<watchlist name>",
                 "field": "source.ip"
             }
