@@ -1393,7 +1393,7 @@ providers:
       status: on
       documentation:
   McAfee Advanced Threat Defense:
-    CertStream:
+    Sandbox Report:
       description: sandboxing solution from McAfee
         The ATD provides detailed IOC reports
         and publishes them via openDXL

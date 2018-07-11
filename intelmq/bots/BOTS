@@ -180,6 +180,15 @@
                 "rate_limit": 3600
             }
         },
+        "McAfee openDXL": {
+            "description": "Listens to McAfee openDXL fabric",
+            "module": "intelmq.bots.collectors.opendxl.collector",
+            "parameters": {
+                "feed": "<Feed Name>",
+                "dxl_config_file": "<insert /path/to/dxlclient.config>",
+                "dxl_topic": "/mcafee/event/atd/file/report"
+            }
+        },
         "Microsoft Azure": {
             "description": "",
             "module": "intelmq.bots.collectors.microsoft.collector_azure",
@@ -431,6 +440,13 @@
             "module": "intelmq.bots.parsers.malwareurl.parser",
             "parameters": {}
         },
+        "McAfee Advanced Threat Defense": {
+            "description": "McAfee Advanced Threat Defense Parser retrieves IOCs (hash, IP, URL) from ATD reports.",
+            "module": "intelmq.bots.parsers.mcafee.parser_atd",
+            "parameters": {
+                "verdict_severity": "4"
+            }
+        },
         "Microsoft BingMURLs": {
             "description": "Parses JSON data from Microsoft's Bing Malicious URLs list.",
             "module": "intelmq.bots.parsers.microsoft.parser_bingmurls",
@@ -660,6 +676,14 @@
                 "test_mode": false
             }
         },
+        "McAfee Active Response Lookup": {
+            "description": "Queries connections to IP addresses within local environment using McAfee Active Response queries.",
+            "module": "intelmq.bots.experts.mcafee.expert_mar",
+            "parameters": {
+                "dxl_config_file": "<insert /path/to/dxlclient.config>",
+                "lookup_type": "<Hash|DestSocket|DestIP|DestFQDN>"
+            }
+        },
         "MaxMind GeoIP": {
             "description": "MaxMind GeoIP is the bot responsible for adding geolocation information to events (Country, City, Longitude, Latitude, etc..)",
             "module": "intelmq.bots.experts.maxmind_geoip.expert",
@@ -815,6 +839,17 @@
                 "suffix": ".json",
                 "hierarchical_output": false,
                 "single_key": null
+            }
+        },
+        "McAfee ESM": {
+            "description": "Writes information out to the McAfee Enterprise Security Manager (ESM).",
+            "module": "intelmq.bots.outputs.mcafee.output_esm_ip",
+            "parameters": {
+                "esm_ip": "1.2.3.4",
+                "esm_user": "NGCP",
+                "esm_password": "<Password>",
+                "esm_watchlist": "<watchlist name>",
+                "field": "source.ip"
             }
         },
         "MongoDB": {
