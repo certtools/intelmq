@@ -50,15 +50,12 @@ class TestRIPENCCExpertBot(test.BotTestCase, unittest.TestCase):
         cls.bot_reference = RIPENCCExpertBot
         cls.sysconfig = {'query_ripe_db_asn': True,
                          'query_ripe_db_ip': True,
-                         'query_ripe_stat': True,
                          }
 
     def test_ipv4_lookup(self):
         self.input_message = EXAMPLE_INPUT
         self.allowed_warning_count = 1
         self.run_bot()
-        self.assertLogMatches(pattern="^The parameter 'query_ripe_stat' is deprecated and will be r",
-                              levelname="WARNING")
         self.assertMessageEqual(0, EXAMPLE_OUTPUT)
 
     def test_ipv6_lookup(self):
@@ -103,7 +100,8 @@ class TestRIPENCCExpertBot(test.BotTestCase, unittest.TestCase):
         """ Test RIPE DB AS for errors. """
         self.sysconfig = {'query_ripe_db_asn': True,
                           'query_ripe_db_ip': False,
-                          'query_ripe_stat': False,
+                          'query_ripe_stat_ip': False,
+                          'query_ripe_stat_asn': False,
                           }
         self.input_message = EXAMPLE_INPUT
         self.allowed_error_count = 1
@@ -121,7 +119,8 @@ class TestRIPENCCExpertBot(test.BotTestCase, unittest.TestCase):
         """ Test RIPE DB IP for errors. """
         self.sysconfig = {'query_ripe_db_asn': False,
                           'query_ripe_db_ip': True,
-                          'query_ripe_stat': False,
+                          'query_ripe_stat_ip': False,
+                          'query_ripe_stat_asn': False,
                           }
         self.input_message = EXAMPLE_INPUT
         self.allowed_error_count = 1

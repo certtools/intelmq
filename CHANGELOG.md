@@ -1,6 +1,34 @@
 CHANGELOG
 ==========
 
+
+1.2.0 (unreleased)
+------------------
+
+### Core
+
+### Harmonization
+
+### Bots
+#### Collectors
+
+#### Parsers
+
+#### Experts
+- added `intelmq.bots.experts.recordedfuture_iprisk` (#1267).
+
+#### Outputs
+
+### Documentation
+
+### Packaging
+
+### Tests
+
+### Contrib
+
+### Known issues
+
 1.1.0 (unreleased)
 ------------------
 - Support for Python 3.3 has been dropped, it reached its end of life.
@@ -87,6 +115,7 @@ CHANGELOG
   - If the conversion function fails for a line, an error is raised and the offending line will be handled according to the error handling configuration.
     Previously errors like these were only logged and ignored otherwise.
   - add support for the feed `Accessible-Hadoop`
+  - Remove deprecated parameter `override`, use `overwrite` instead (#1071).
 - The Generic CSV Parser `bots.parsers.generic.parser_csv`:
   - It is possible to filter the data before processing them using the new parameters `filter_type` and `filter_text`.
   - It is possible to specify multiple columns using `|` character in parameter `columns`.
@@ -118,6 +147,7 @@ CHANGELOG
 - Added wait expert for sleeping
 - Added domain suffix expert to extract the TLD/Suffix from a domain name.
 - `bots.experts.maxmind_geoip`: New (optional) parameter `overwrite`, by default false. The current default was to overwrite!
+- `intelmq.bots.experts.ripencc_abuse_contact`: Remove deprecated parameter `query_ripe_stat`, use `query_ripe_stat_asn` and `query_ripe_stat_ip` instead (#1071).
 
 #### Outputs
 - `bots.outputs.file`:
@@ -163,6 +193,7 @@ CHANGELOG
 #### Collectors
 
 #### Parsers
+- `bots.parsers.shadowserver`: if required fields do not exist in data, an exception is raised, so the line will be dumped and not further processed.
 
 #### Experts
 - Reverse DNS Expert: ignore all invalid results and use first valid one (#1264).

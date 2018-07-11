@@ -3,6 +3,19 @@ NEWS
 
 See the changelog for a full list of changes.
 
+1.2.0 Feature release (unreleased)
+----------------------------------
+
+### Tools
+
+### Harmonization
+
+### Configuration
+
+### Libraries
+
+### Postgres databases
+
 1.1.0 Feature release (unreleased)
 ----------------------------------
 ### Tools

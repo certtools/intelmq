@@ -415,8 +415,8 @@ class BotTestCase(object):
         Asserts if any logline matches a specific requirement.
 
         Parameters:
-            pattern: Message text which is compared
-            type: Type of logline which is asserted
+            pattern: Message text which is compared, regular expression.
+            levelname: Log level of the logline which is asserted, upper case.
         """
 
         self.assertIsNotNone(self.loglines)
