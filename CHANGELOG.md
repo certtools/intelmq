@@ -11,13 +11,17 @@ CHANGELOG
 
 ### Bots
 #### Collectors
+- added `intelmq.bots.parsers.opendxl.collector` (#1265).
 
 #### Parsers
+- added `intelmq.bots.parsers.mcafee.parser_atd` (#1265).
 
 #### Experts
 - added `intelmq.bots.experts.recordedfuture_iprisk` (#1267).
+- added `intelmq.bots.experts.mcafee.expert_mar` (1265).
 
 #### Outputs
+- added `intelmq.bots.experts.mcafee.output_esm` (1265).
 
 ### Documentation
 
