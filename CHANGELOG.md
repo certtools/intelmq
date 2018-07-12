@@ -112,6 +112,7 @@ CHANGELOG
   - Automatic ungzipping for .gz files.
 - added `intelmq.bots.collectors.calidog.collector_certstream` for collecting certstream data (#1120).
 - added `intelmq.bots.collectors.shodan.collector_stream` for collecting shodan stream data (#1096).
+  - Add proxy support.
 
 #### Parsers
 - `bots.parsers.shadowserver`:

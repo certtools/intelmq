@@ -270,7 +270,7 @@ Requires the shodan library to be installed:
 #### Configuration Parameters:
 
 * **Feed parameters** (see above)
-* **HTTP parameters** (see above) not yet supported
+* **HTTP parameters** (see above). Only the proxy is used (requires shodan-python > 1.8.1). Certificate is always verified.
 * `countries`: A list of countries to query for. If it is a string, it will be spit by `,`.
 
 * * *
