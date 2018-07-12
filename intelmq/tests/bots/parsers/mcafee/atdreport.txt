@@ -1,1 +1,276 @@
-{"__type": "Report", "raw": "ew0KIlN1bW1hcnkiOiB7DQogCSJFdmVudF9UeXBlIjogIkFURCBGaWxlIFJlcG9ydCIsDQoJIk1JU3ZlcnNpb24iOiAiNC40LjAuMjYiLA0KCSJTVU12ZXJzaW9uIjogIjQuNC4wLjI2IiwNCgkiREVUdmVyc2lvbiI6ICI0LjQuMC4xODA1MDQiLA0KCSJPU3ZlcnNpb24iOiAid2luN3NwMXg2NF8yNTA3X25ldSIsDQoJImZpbGVJZCI6ICJOb3QgQXZhaWxhYmxlIiwNCgkiUGFyZW50IE1ENSI6ICJOb3QgQXZhaWxhYmxlIiwNCgkiQVREIElQIjogIjEwLjEwLjEwLjE0MCIsDQoJIlNyYyBJUCI6ICIiLA0KCSJEc3QgSVAiOiAiIiwNCgkiVGFza0lkIjogIjQwMyIsDQoJIkpvYklkIjogIjM0OSIsDQoJIkpTT052ZXJzaW9uIjogIjEuMDAyIiwNCgkiaGFzRHluYW1pY0FuYWx5c2lzIjogInRydWUiLA0KCSJTdWJqZWN0IjogCXsNCgkJIk5hbWUiOiAiaW5zdGFsbC10bWV0cmFkZS10cnVzdC0yZjlhZWMuZXhlIiwNCgkJIlR5cGUiOiAiUEUzMisgZXhlY3V0YWJsZSAoR1VJKSB4ODYtNjQiLA0KCQkiRmlsZVR5cGUiOiAiMCIsDQoJCSJtZDUiOiAiNkMzRjA2NjUyQTQ4NjhFMDA1RUI0MkRBQUYxQ0VFNDMiLA0KCQkic2hhLTEiOiAiNkI1MzAyM0VFN0U2RTMzNjkxM0RFQkFENUJBRDdFNjMzMzYyNDA3QSIsDQoJCSJzaGEtMjU2IjogIkREQkJCM0MzMTQxMDI0QTE3RTFGMjBDMDlDNzVEODkxMzgwOTA2MkEzRDMyNkUyQUM4MTYyNkU2NTIxNUM0MzAiLA0KCQkic2l6ZSI6ICIyNDg4MzIwIiwNCgkJIlRpbWVzdGFtcCI6ICIyMDE4LTA3LTA2IDE2OjUxOjEwIiwNCgkJInBhcmVudF9hcmNoaXZlIjogIk5vdCBBdmFpbGFibGUiDQoJfSwNCgkiU2VsZWN0b3JzIjogWw0KCQl7DQoJCQkiRW5naW5lIjogIkdhdGV3YXkgQW50aS1NYWx3YXJlIiwNCgkJCSJNYWx3YXJlTmFtZSI6ICJSRE4vR2VuZXJpYyBEcm9wcGVyIiwNCgkJCSJTZXZlcml0eSI6ICI1Ig0KCQl9LA0KCQl7DQoJCQkiRW5naW5lIjogIkdUSSBGaWxlIFJlcHV0YXRpb24iLA0KCQkJIk1hbHdhcmVOYW1lIjogIi0tLSIsDQoJCQkiU2V2ZXJpdHkiOiAiMCINCgkJfSwNCgkJew0KCQkJIkVuZ2luZSI6ICJHVEkgVVJMIFJlcHV0YXRpb24iLA0KCQkJIk1hbHdhcmVOYW1lIjogIk1hbGljaW91cyBTaXRlcyAiLA0KCQkJIlNldmVyaXR5IjogIjUiDQoJCX0sDQoJCXsNCgkJCSJFbmdpbmUiOiAiQW50aS1NYWx3YXJlIiwNCgkJCSJNYWx3YXJlTmFtZSI6ICItLS0iLA0KCQkJIlNldmVyaXR5IjogIjAiDQoJCX0sDQoJCXsNCgkJCSJFbmdpbmUiOiAiU2FuZGJveCIsDQoJCQkiTWFsd2FyZU5hbWUiOiAiTWFsd2FyZS5EeW5hbWljIiwNCgkJCSJTZXZlcml0eSI6ICI1Ig0KCQl9DQoJXSwNCgkiVmVyZGljdCI6IHsNCgkJIlNldmVyaXR5IjogIjUiLA0KCQkiRGVzY3JpcHRpb24iOiAiU2FtcGxlIGlzIGNvbnNpZGVyZWQgbWFsaWNpb3VzIGJhc2VkIG9uIHN0YXRpYyBjb2RlIGFuYWx5c2lzIG1hdGNoaW5nIG9uIGtub3duIG1hbHdhcmUgZmFtaWxpZXM6IGZpbmFsIHNldmVyaXR5IGxldmVsIDUiDQoJfSwNCgkiUHJvY2Vzc2VzIiA6IFsNCgkJew0KCQkJIk5hbWUiIDogImluc3RhbGwtdG1ldHJhZGUtdHJ1c3QtMmY5YWVjLmV4ZSIsDQoJCQkiTWQ1IiA6ICI2QzNGMDY2NTJBNDg2OEUwMDVFQjQyREFBRjFDRUU0MyIsDQoJCQkiU2hhMSIgOiAiNkI1MzAyM0VFN0U2RTMzNjkxM0RFQkFENUJBRDdFNjMzMzYyNDA3QSIsDQoJCQkiU2hhMjU2IiA6ICJEREJCQjNDMzE0MTAyNEExN0UxRjIwQzA5Qzc1RDg5MTM4MDkwNjJBM0QzMjZFMkFDODE2MjZFNjUyMTVDNDMwIiwNCgkJCSJTZXZlcml0eSIgOiAiMyINCgkJfSwNCgkJew0KCQkJIk5hbWUiIDogImV4ZmlsbC5leGUiLA0KCQkJIk1kNSIgOiAiIiwNCgkJCSJTaGExIiA6ICIiLA0KCQkJIlNoYTI1NiIgOiAiIiwNCgkJCSJTZXZlcml0eSIgOiAiMiINCgkJfSwNCgkJew0KCQkJIk5hbWUiIDogInB5dGhvbjI3LmRsbCIsDQoJCQkiTWQ1IiA6ICIiLA0KCQkJIlNoYTEiIDogIiIsDQoJCQkiU2hhMjU2IiA6ICIiLA0KCQkJIlNldmVyaXR5IiA6ICIwIg0KCQl9LA0KCQl7DQoJCQkiTmFtZSIgOiAidnRlc3R1cHguZXhlIiwNCgkJCSJNZDUiIDogIiIsDQoJCQkiU2hhMSIgOiAiIiwNCgkJCSJTaGEyNTYiIDogIiIsDQoJCQkiU2V2ZXJpdHkiIDogIjUiDQoJCX0sDQoJCXsNCgkJCSJOYW1lIiA6ICJ3OXhwb3Blbi5leGUiLA0KCQkJIk1kNSIgOiAiIiwNCgkJCSJTaGExIiA6ICIiLA0KCQkJIlNoYTI1NiIgOiAiIiwNCgkJCSJTZXZlcml0eSIgOiAiMCINCgkJfQ0KCV0sDQoJIkZpbGVzIiA6IFsNCgkJew0KCQkJIlByb2Nlc3NlcyIgOiBbDQoJCQkJew0KCQkJCQkiUmVsVHlwZSIgOiAiNTEyIiwNCgkJCQkJIk5hbWUiIDogImluc3RhbGwtdG1ldHJhZGUtdHJ1c3QtMmY5YWVjLmV4ZSIsDQoJCQkJCSJTaGEyNTYiIDogIkREQkJCM0MzMTQxMDI0QTE3RTFGMjBDMDlDNzVEODkxMzgwOTA2MkEzRDMyNkUyQUM4MTYyNkU2NTIxNUM0MzAiDQoJCQkJfQ0KCQkJXSwNCgkJCSJNZDUiIDogIjNCN0I5N0QxNzE0QkU0RDhGNzY3MTVGNEY5OTBGQjY4IiwNCgkJCSJTaGExIiA6ICI3M0YzNEVFQkM1ODZBNjcxMEE5NTY3MkREMzZDMjEwN0E3RTZCMEQ4IiwNCgkJCSJTaGEyNTYiIDogIkM3ODZEQjUxQzVEREE5RkRDNjA4RUJBRTVDMEZBNDIxMUZCQ0Q4Q0YxMDcxM0Q3MEM0RUNENDYyMkVBMzE3QTAiLA0KCQkJIk5hbWUiIDogInRvZGF5LmV4ZSIsDQoJCQkiRmlsZVR5cGUiIDogIjAiDQoJCX0NCgldLA0KCSJVcmxzIiA6IFsNCgkJew0KCQkJIlByb2Nlc3NlcyIgOiBbDQoJCQkJew0KCQkJCQkiUmVsVHlwZSIgOiAiOCIsDQoJCQkJCSJOYW1lIiA6ICJleGZpbGwuZXhlIiwNCgkJCQkJIlNoYTI1NiIgOiAiIg0KCQkJCX0NCgkJCV0sDQoJCQkiQ2F0ZWdvcnkiIDogIk1hbGljaW91cyBTaXRlcyAiLA0KCQkJIkZ1bmN0aW9uYWwiIDogIlJpc2svRnJhdWQvQ3JpbWUgIiwNCgkJCSJSaXNrIiA6ICJTZWN1cml0eSAiLA0KCQkJIlBvcnQiIDogIjgwIiwNCgkJCSJSZXB1dGF0aW9uIiA6ICIxMjciLA0KCQkJIlNldmVyaXR5IiA6ICI1IiwNCgkJCSJVcmwiIDogIkNDLlRNRVRSQURFLkNPTSINCgkJfQ0KCV0sDQoJIklwcyIgOiBbDQoJCXsNCgkJCSJQcm9jZXNzZXMiIDogWw0KCQkJCXsNCgkJCQkJIlJlbFR5cGUiIDogIjgiLA0KCQkJCQkiTmFtZSIgOiAidnRlc3R1cHguZXhlIiwNCgkJCQkJIlNoYTI1NiIgOiAiIg0KCQkJCX0NCgkJCV0sDQoJCQkiQ2F0ZWdvcnkiIDogIi0tLSIsDQoJCQkiRnVuY3Rpb25hbCIgOiAiLS0tIiwNCgkJCSJSaXNrIiA6ICItLS0iLA0KCQkJIlBvcnQiIDogIjEyMzQ1IiwNCgkJCSJSZXB1dGF0aW9uIiA6ICIwIiwNCgkJCSJTZXZlcml0eSIgOiAiLTEiLA0KCQkJIklwdjQiIDogIjExLjEyLjEyMy4xMTEiDQoJCX0sDQoJCXsNCgkJCSJQcm9jZXNzZXMiIDogWw0KCQkJCXsNCgkJCQkJIlJlbFR5cGUiIDogIjgiLA0KCQkJCQkiTmFtZSIgOiAiZXhmaWxsLmV4ZSIsDQoJCQkJCSJTaGEyNTYiIDogIiINCgkJCQl9DQoJCQldLA0KCQkJIkNhdGVnb3J5IiA6ICItLS0iLA0KCQkJIkZ1bmN0aW9uYWwiIDogIi0tLSIsDQoJCQkiUmlzayIgOiAiLS0tIiwNCgkJCSJQb3J0IiA6ICI4MCIsDQoJCQkiUmVwdXRhdGlvbiIgOiAiMCIsDQoJCQkiU2V2ZXJpdHkiIDogIi0xIiwNCgkJCSJJcHY0IiA6ICI5MC4yOC4yOC40NyINCgkJfQ0KCV0sDQoJIlN0YXRzIjogWw0KCQl7DQoJCQkiSUQiOiAiMCIsDQoJCQkiQ2F0ZWdvcnkiOiAiUGVyc2lzdGVuY2UsIEluc3RhbGxhdGlvbiBCb290IFN1cnZpdmFsICIsDQoJCQkiU2V2ZXJpdHkiOiAiNSINCgkJfSwNCgkJew0KCQkJIklEIjogIjEiLA0KCQkJIkNhdGVnb3J5IjogIkhpZGluZywgQ2Ftb3VmbGFnZSwgU3RlYWx0aGluZXNzLCBEZXRlY3Rpb24gYW5kIFJlbW92YWwgUHJvdGVjdGlvbiAiLA0KCQkJIlNldmVyaXR5IjogIjMiDQoJCX0sDQoJCXsNCgkJCSJJRCI6ICIyIiwNCgkJCSJDYXRlZ29yeSI6ICJTZWN1cml0eSBTb2x1dGlvbiAvIE1lY2hhbmlzbSBieXBhc3MsIHRlcm1pbmF0aW9uIGFuZCByZW1vdmFsLCBBbnRpIERlYnVnZ2luZywgVk0gRGV0ZWN0aW9uICIsDQoJCQkiU2V2ZXJpdHkiOiAiNSINCgkJfSwNCgkJew0KCQkJIklEIjogIjMiLA0KCQkJIkNhdGVnb3J5IjogIlNwcmVhZGluZyAiLA0KCQkJIlNldmVyaXR5IjogIjIiDQoJCX0sDQoJCXsNCgkJCSJJRCI6ICI0IiwNCgkJCSJDYXRlZ29yeSI6ICJFeHBsb2l0aW5nLCBTaGVsbGNvZGUgIiwNCgkJCSJTZXZlcml0eSI6ICIwIg0KCQl9LA0KCQl7DQoJCQkiSUQiOiAiNSIsDQoJCQkiQ2F0ZWdvcnkiOiAiTmV0d29ya2luZyAiLA0KCQkJIlNldmVyaXR5IjogIjIiDQoJCX0sDQoJCXsNCgkJCSJJRCI6ICI2IiwNCgkJCSJDYXRlZ29yeSI6ICJEYXRhIHNweWluZywgU25pZmZpbmcsIEtleWxvZ2dpbmcsIEViYW5raW5nIEZyYXVkICIsDQoJCQkiU2V2ZXJpdHkiOiAiNCINCgkJfQ0KCV0sDQoJIkJlaGF2aW9yIjogWw0KCQl7DQoJCQkiSUQiOiAiMiIsDQoJCQkiQW5hbHlzaXMiOiAiSWRlbnRpZmllZCBhcyBSRE4vR2VuZXJpYyBEcm9wcGVyIGJ5IEdhdGV3YXkgQW50aS1NYWx3YXJlIg0KCQl9LA0KCQl7DQoJCQkiSUQiOiAiMSIsDQoJCQkiQW5hbHlzaXMiOiAiSWRlbnRpZmllZCBhcyAtLS0gYnkgR1RJIEZpbGUgUmVwdXRhdGlvbiINCgkJfSwNCgkJew0KCQkJIklEIjogIjI1NiIsDQoJCQkiQW5hbHlzaXMiOiAiSWRlbnRpZmllZCBhcyBNYWxpY2lvdXMgU2l0ZXMgIGJ5IEdUSSBVUkwgUmVwdXRhdGlvbiINCgkJfSwNCgkJew0KCQkJIklEIjogIjQiLA0KCQkJIkFuYWx5c2lzIjogIklkZW50aWZpZWQgYXMgLS0tIGJ5IEFudGktTWFsd2FyZSINCgkJfSwNCgkJew0KCQkJIklEIjogIjUwNyIsDQoJCQkiQW5hbHlzaXMiOiAiQ3JlYXRlZCBjb250ZW50IHVuZGVyIFdpbmRvd3Mgc3lzdGVtIGRpcmVjdG9yeSINCgkJfSwNCgkJew0KCQkJIklEIjogIjU0NSIsDQoJCQkiQW5hbHlzaXMiOiAiTW9kaWZpZWQgdGltZSBhdHRyaWJ1dGUgb2YgdGhlIHNwZWNpZmllZCBmaWxlIGFmdGVyIGl0cyBjcmVhdGlvbiINCgkJfSwNCgkJew0KCQkJIklEIjogIjU1MiIsDQoJCQkiQW5hbHlzaXMiOiAiTW9kaWZpZWQgZmlsZSdzIHRpbWUgY3JlYXRpb24gYXR0cmlidXRlcyINCgkJfSwNCgkJew0KCQkJIklEIjogIjU0MSIsDQoJCQkiQW5hbHlzaXMiOiAiRGVsZXRlZCBleGVjdXRhYmxlIGZyb20gV2luZG93cyBzeXN0ZW0zMiBkaXJlY3RvcnkiDQoJCX0sDQoJCXsNCgkJCSJJRCI6ICI1NjciLA0KCQkJIkFuYWx5c2lzIjogIkNyZWF0ZWQgbmV3IFBFIGZpbGUiDQoJCX0sDQoJCXsNCgkJCSJJRCI6ICI3MjciLA0KCQkJIkFuYWx5c2lzIjogIkRlbGV0ZWQgQVYgYXV0by1ydW4gcmVnaXN0cnkga2V5Ig0KCQl9LA0KCQl7DQoJCQkiSUQiOiAiNDAyIiwNCgkJCSJBbmFseXNpcyI6ICJDcmVhdGVkIGEgc29ja2V0IGJvdW5kIHRvIGEgc3BlY2lmaWMgc2VydmljZSBwcm92aWRlciBhbmQgbGlzdGVuIHRvIGFuIG9wZW4gcG9ydCINCgkJfSwNCgkJew0KCQkJIklEIjogIjQxMSIsDQoJCQkiQW5hbHlzaXMiOiAiQ29ubmVjdGVkIHRvIGEgc3BlY2lmaWMgc2VydmljZSBwcm92aWRlciINCgkJfSwNCgkJew0KCQkJIklEIjogIjQ0MyIsDQoJCQkiQW5hbHlzaXMiOiAiRXhjaGFuZ2VkIGRhdGEgd2l0aCByZW1vdGUgaG9zdCINCgkJfSwNCgkJew0KCQkJIklEIjogIjI2NSIsDQoJCQkiQW5hbHlzaXMiOiAiRGlzYWJsZWQgYXR0YWNoL2RldGFjaCBub3RpZmljYXRpb25zIGZyb20gZHluYW1pYyBsaW5rIGxpYnJhcnkiDQoJCX0sDQoJCXsNCgkJCSJJRCI6ICIyMDUiLA0KCQkJIkFuYWx5c2lzIjogIkRvd25sb2FkZWQgY29udGVudCBmcm9tIHdlYnNlcnZlciBvciBhbHRlcmVkIEF1dG8tcnVuIGVudHJ5Ig0KCQl9LA0KCQl7DQoJCQkiSUQiOiAiMTIyIiwNCgkJCSJBbmFseXNpcyI6ICJEZWxldGVkIGEga2V5IGZyb20gYXV0by1ydW4gcmVnaXN0cnkgZW50cnkiDQoJCX0sDQoJCXsNCgkJCSJJRCI6ICIxMDMiLA0KCQkJIkFuYWx5c2lzIjogIkFsdGVyZWQgYXV0by1ydW4gcmVnaXN0cnkgZW50cnkgdGhhdCBleGVjdXRlZCBhdCBuZXh0IFdpbmRvd3MgYm9vdCINCgkJfSwNCgkJew0KCQkJIklEIjogIjEwNCIsDQoJCQkiQW5hbHlzaXMiOiAiQWx0ZXJlZCBhdXRvLXJ1biByZWdpc3RyeSBlbnRyeSB0aGF0IGV4ZWN1dGVkIGF0IG5leHQgV2luZG93cyBib290Ig0KCQl9DQoJXQ0KCX0NCn0NCg==", "feed.accuracy": 100.0, "time.observation": "2018-07-06T16:53:35+00:00", "feed.name": "ATD"}
+{
+"Summary": {
+	"Event_Type": "ATD File Report",
+	"MISversion": "4.4.0.26",
+	"SUMversion": "4.4.0.26",
+	"DETversion": "4.4.0.180504",
+	"OSversion": "win7sp1x64_2507_neu",
+	"fileId": "Not Available",
+	"Parent MD5": "Not Available",
+	"ATD IP": "10.10.10.140",
+	"Src IP": "",
+	"Dst IP": "",
+	"TaskId": "403",
+	"JobId": "349",
+	"JSONversion": "1.002",
+	"hasDynamicAnalysis": "true",
+	"Subject": 	{
+		"Name": "install-tmetrade-trust-2f9aec.exe",
+		"Type": "PE32+ executable (GUI) x86-64",
+		"FileType": "0",
+		"md5": "6C3F06652A4868E005EB42DAAF1CEE43",
+		"sha-1": "6B53023EE7E6E336913DEBAD5BAD7E633362407A",
+		"sha-256": "DDBBB3C3141024A17E1F20C09C75D8913809062A3D326E2AC81626E65215C430",
+		"size": "2488320",
+		"Timestamp": "2018-07-06 16:51:10",
+		"parent_archive": "Not Available"
+	},
+	"Selectors": [
+		{
+			"Engine": "Gateway Anti-Malware",
+			"MalwareName": "RDN/Generic Dropper",
+			"Severity": "5"
+		},
+		{
+			"Engine": "GTI File Reputation",
+			"MalwareName": "---",
+			"Severity": "0"
+		},
+		{
+			"Engine": "GTI URL Reputation",
+			"MalwareName": "Malicious Sites ",
+			"Severity": "5"
+		},
+		{
+			"Engine": "Anti-Malware",
+			"MalwareName": "---",
+			"Severity": "0"
+		},
+		{
+			"Engine": "Sandbox",
+			"MalwareName": "Malware.Dynamic",
+			"Severity": "5"
+		}
+	],
+	"Verdict": {
+		"Severity": "5",
+		"Description": "Sample is considered malicious based on static code analysis matching on known malware families: final severity level 5"
+	},
+	"Processes" : [
+		{
+			"Name" : "install-tmetrade-trust-2f9aec.exe",
+			"Md5" : "6C3F06652A4868E005EB42DAAF1CEE43",
+			"Sha1" : "6B53023EE7E6E336913DEBAD5BAD7E633362407A",
+			"Sha256" : "DDBBB3C3141024A17E1F20C09C75D8913809062A3D326E2AC81626E65215C430",
+			"Severity" : "3"
+		},
+		{
+			"Name" : "exfill.exe",
+			"Md5" : "",
+			"Sha1" : "",
+			"Sha256" : "",
+			"Severity" : "2"
+		},
+		{
+			"Name" : "python27.dll",
+			"Md5" : "",
+			"Sha1" : "",
+			"Sha256" : "",
+			"Severity" : "0"
+		},
+		{
+			"Name" : "vtestupx.exe",
+			"Md5" : "",
+			"Sha1" : "",
+			"Sha256" : "",
+			"Severity" : "5"
+		},
+		{
+			"Name" : "w9xpopen.exe",
+			"Md5" : "",
+			"Sha1" : "",
+			"Sha256" : "",
+			"Severity" : "0"
+		}
+	],
+	"Files" : [
+		{
+			"Processes" : [
+				{
+					"RelType" : "512",
+					"Name" : "install-tmetrade-trust-2f9aec.exe",
+					"Sha256" : "DDBBB3C3141024A17E1F20C09C75D8913809062A3D326E2AC81626E65215C430"
+				}
+			],
+			"Md5" : "3B7B97D1714BE4D8F76715F4F990FB68",
+			"Sha1" : "73F34EEBC586A6710A95672DD36C2107A7E6B0D8",
+			"Sha256" : "C786DB51C5DDA9FDC608EBAE5C0FA4211FBCD8CF10713D70C4ECD4622EA317A0",
+			"Name" : "today.exe",
+			"FileType" : "0"
+		}
+	],
+	"Urls" : [
+		{
+			"Processes" : [
+				{
+					"RelType" : "8",
+					"Name" : "exfill.exe",
+					"Sha256" : ""
+				}
+			],
+			"Category" : "Malicious Sites ",
+			"Functional" : "Risk/Fraud/Crime ",
+			"Risk" : "Security ",
+			"Port" : "80",
+			"Reputation" : "127",
+			"Severity" : "5",
+			"Url" : "CC.TMETRADE.COM"
+		}
+	],
+	"Ips" : [
+		{
+			"Processes" : [
+				{
+					"RelType" : "8",
+					"Name" : "vtestupx.exe",
+					"Sha256" : ""
+				}
+			],
+			"Category" : "---",
+			"Functional" : "---",
+			"Risk" : "---",
+			"Port" : "12345",
+			"Reputation" : "0",
+			"Severity" : "-1",
+			"Ipv4" : "11.12.123.111"
+		},
+		{
+			"Processes" : [
+				{
+					"RelType" : "8",
+					"Name" : "exfill.exe",
+					"Sha256" : ""
+				}
+			],
+			"Category" : "---",
+			"Functional" : "---",
+			"Risk" : "---",
+			"Port" : "80",
+			"Reputation" : "0",
+			"Severity" : "-1",
+			"Ipv4" : "90.28.28.47"
+		}
+	],
+	"Stats": [
+		{
+			"ID": "0",
+			"Category": "Persistence, Installation Boot Survival ",
+			"Severity": "5"
+		},
+		{
+			"ID": "1",
+			"Category": "Hiding, Camouflage, Stealthiness, Detection and Removal Protection ",
+			"Severity": "3"
+		},
+		{
+			"ID": "2",
+			"Category": "Security Solution / Mechanism bypass, termination and removal, Anti Debugging, VM Detection ",
+			"Severity": "5"
+		},
+		{
+			"ID": "3",
+			"Category": "Spreading ",
+			"Severity": "2"
+		},
+		{
+			"ID": "4",
+			"Category": "Exploiting, Shellcode ",
+			"Severity": "0"
+		},
+		{
+			"ID": "5",
+			"Category": "Networking ",
+			"Severity": "2"
+		},
+		{
+			"ID": "6",
+			"Category": "Data spying, Sniffing, Keylogging, Ebanking Fraud ",
+			"Severity": "4"
+		}
+	],
+	"Behavior": [
+		{
+			"ID": "2",
+			"Analysis": "Identified as RDN/Generic Dropper by Gateway Anti-Malware"
+		},
+		{
+			"ID": "1",
+			"Analysis": "Identified as --- by GTI File Reputation"
+		},
+		{
+			"ID": "256",
+			"Analysis": "Identified as Malicious Sites  by GTI URL Reputation"
+		},
+		{
+			"ID": "4",
+			"Analysis": "Identified as --- by Anti-Malware"
+		},
+		{
+			"ID": "507",
+			"Analysis": "Created content under Windows system directory"
+		},
+		{
+			"ID": "545",
+			"Analysis": "Modified time attribute of the specified file after its creation"
+		},
+		{
+			"ID": "552",
+			"Analysis": "Modified file's time creation attributes"
+		},
+		{
+			"ID": "541",
+			"Analysis": "Deleted executable from Windows system32 directory"
+		},
+		{
+			"ID": "567",
+			"Analysis": "Created new PE file"
+		},
+		{
+			"ID": "727",
+			"Analysis": "Deleted AV auto-run registry key"
+		},
+		{
+			"ID": "402",
+			"Analysis": "Created a socket bound to a specific service provider and listen to an open port"
+		},
+		{
+			"ID": "411",
+			"Analysis": "Connected to a specific service provider"
+		},
+		{
+			"ID": "443",
+			"Analysis": "Exchanged data with remote host"
+		},
+		{
+			"ID": "265",
+			"Analysis": "Disabled attach/detach notifications from dynamic link library"
+		},
+		{
+			"ID": "205",
+			"Analysis": "Downloaded content from webserver or altered Auto-run entry"
+		},
+		{
+			"ID": "122",
+			"Analysis": "Deleted a key from auto-run registry entry"
+		},
+		{
+			"ID": "103",
+			"Analysis": "Altered auto-run registry entry that executed at next Windows boot"
+		},
+		{
+			"ID": "104",
+			"Analysis": "Altered auto-run registry entry that executed at next Windows boot"
+		}
+	]
+	}
+}

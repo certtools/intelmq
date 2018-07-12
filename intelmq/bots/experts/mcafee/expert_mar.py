@@ -25,58 +25,58 @@ class MARExpertBot(Bot):
     query = {
         'Hash':
             [
-                 {
-                     "name": "Files",
-                     "output": "md5",
-                     "op": "EQUALS",
-                     "value": '%(malware.hash.md5)s'
-                 },
-                 {
-                     "name": "Files",
-                     "output": "sha1",
-                     "op": "EQUALS",
-                     "value": '%(malware.hash.sha1)s'
-                 },
-                 {
-                     "name": "Files",
-                     "output": "sha256",
-                     "op": "EQUALS",
-                     "value": '%(malware.hash.sha256)s'
-                 }
+                {
+                    "name": "Files",
+                    "output": "md5",
+                    "op": "EQUALS",
+                    "value": '%(malware.hash.md5)s'
+                },
+                {
+                    "name": "Files",
+                    "output": "sha1",
+                    "op": "EQUALS",
+                    "value": '%(malware.hash.sha1)s'
+                },
+                {
+                    "name": "Files",
+                    "output": "sha256",
+                    "op": "EQUALS",
+                    "value": '%(malware.hash.sha256)s'
+                }
             ],
         'DestSocket':
             [
-                 {
-                     "name": "NetworkFlow",
-                     "output": "dst_ip",
-                     "op": "EQUALS",
-                     "value": '%(destination.ip)s'
-                 },
-                 {
-                     "name": "NetworkFlow",
-                     "output": "dst_port",
-                     "op": "EQUALS",
-                     "value": '%(destination.port)s'
-                 }
+                {
+                    "name": "NetworkFlow",
+                    "output": "dst_ip",
+                    "op": "EQUALS",
+                    "value": '%(destination.ip)s'
+                },
+                {
+                    "name": "NetworkFlow",
+                    "output": "dst_port",
+                    "op": "EQUALS",
+                    "value": '%(destination.port)s'
+                }
             ],
         'DestIP':
             [
-                 {
-                     "name": "NetworkFlow",
-                     "output": "dst_ip",
-                     "op": "EQUALS",
-                     "value": '%(destination.ip)s'
-                 }
+                {
+                    "name": "NetworkFlow",
+                    "output": "dst_ip",
+                    "op": "EQUALS",
+                    "value": '%(destination.ip)s'
+                }
             ],
         'DestFQDN':
             [
-                 {
-                     "name": "DNSCache",
-                     "output": "hostname",
-                     "op": "EQUALS",
-                     "value": '%(destination.fqdn)s'
-                 }
-                ]
+                {
+                    "name": "DNSCache",
+                    "output": "hostname",
+                    "op": "EQUALS",
+                    "value": '%(destination.fqdn)s'
+                }
+            ]
     }
 
     def init(self):

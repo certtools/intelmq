@@ -14,7 +14,7 @@ verdict_severity: defines the minimum severity of reports to be parsed
 import json
 
 # imports for additional libraries and intelmq
-import intelmq.lib.bot as Bot
+from intelmq.lib.bot import Bot
 import intelmq.lib.utils as utils
 
 
@@ -47,6 +47,10 @@ class ATDParserBot(Bot):
 
             # forward initial sample hashes
             event = self.new_event(report)
+            event.add("classification.taxonomy", "malicious code")
+            event.add("classification.type", 'infected system')
+            event.add("raw", raw_report)
+
             event.add('malware.name', subject_name)
             event.add('malware.hash.md5', subject_md5)
             event.add('malware.hash.sha1', subject_sha1)
@@ -58,6 +62,9 @@ class ATDParserBot(Bot):
             try:
                 for entry in atd_event['Summary']['Files']:
                     event = self.new_event(report)
+                    event.add("classification.taxonomy", "malicious code")
+                    event.add("classification.type", 'infected system')
+                    event.add("raw", raw_report)
                     for key, value in entry.items():
                         if (key in self.ATD_TYPE_MAPPING):
                             event.add(self.ATD_TYPE_MAPPING[key], value)
@@ -69,6 +76,9 @@ class ATDParserBot(Bot):
             try:
                 for entry in atd_event['Summary']['Ips']:
                     event = self.new_event(report)
+                    event.add("classification.taxonomy", "malicious code")
+                    event.add("classification.type", 'infected system')
+                    event.add("raw", raw_report)
 
                     event.add('malware.name', subject_name)
                     event.add('malware.hash.md5', subject_md5)
@@ -87,6 +97,9 @@ class ATDParserBot(Bot):
             try:
                 for entry in atd_event['Summary']['Urls']:
                     event = self.new_event(report)
+                    event.add("classification.taxonomy", "malicious code")
+                    event.add("classification.type", 'infected system')
+                    event.add("raw", raw_report)
 
                     event.add('malware.name', subject_name)
                     event.add('malware.hash.md5', subject_md5)

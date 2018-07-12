@@ -5,41 +5,41 @@ import unittest
 
 import intelmq.lib.test as test
 import intelmq.lib.utils as utils
-from intelmq.bots.parsers.mcafee.parser_atd_ip import ATDIPParserBot
+from intelmq.bots.parsers.mcafee.parser_atd import ATDParserBot
 
 with open(os.path.join(os.path.dirname(__file__), 'atdreport.txt')) as handle:
     EXAMPLE_FILE = handle.read()
 
 
-EXAMPLE_REPORT = {"feed.url": "https://feodotracker.abuse.ch/blocklist/?download=domainblocklist",
-                  "feed.name": "ATD",
+EXAMPLE_REPORT = {"feed.name": "ATD",
                   "__type": "Report",
                   "raw": utils.base64_encode(EXAMPLE_FILE),
                   "time.observation": "2015-11-02T13:11:43+00:00"
                   }
 
-EXAMPLE_EVENT = {"feed.url": "https://feodotracker.abuse.ch/blocklist/?download=domainblocklist",
-                 "feed.name": "ATD",
-                 "source.fqdn": "arta.romail3arnest.info",
-                 "raw": "YXJ0YS5yb21haWwzYXJuZXN0LmluZm8=",
+EXAMPLE_EVENT = {"feed.name": "ATD",
                  "time.observation": "2015-11-02T13:11:44+00:00",
-                 "time.source": "2016-02-23T14:55:49+00:00",
                  "classification.taxonomy": "malicious code",
-                 "classification.type": "c&c",
-                 "malware.name": "cridex",
+                 "classification.type": "infected system",
+                 "raw": utils.base64_encode(EXAMPLE_FILE),
+                 'malware.hash.md5': '6C3F06652A4868E005EB42DAAF1CEE43',
+                 'malware.hash.sha1': '6B53023EE7E6E336913DEBAD5BAD7E633362407A',
+                 'malware.hash.sha256': 'DDBBB3C3141024A17E1F20C09C75D8913809062A3D326E2AC81626E65215C430',
+                 'malware.name': 'install-tmetrade-trust-2f9aec.exe',
                  "__type": "Event"
                  }
 
 
-class TestATDIPParserBot(test.BotTestCase, unittest.TestCase):
+class TestATDParserBot(test.BotTestCase, unittest.TestCase):
     """
-    A TestCase for ATDIPParserBot.
+    A TestCase for ATDParserBot.
     """
 
     @classmethod
     def set_bot(cls):
-        cls.bot_reference = ATDIPParserBot
+        cls.bot_reference = ATDParserBot
         cls.default_input_message = EXAMPLE_REPORT
+        cls.sysconfig = {'verdict_severity': 4}
 
     def test_event(self):
         """ Test if correct Event has been produced. """

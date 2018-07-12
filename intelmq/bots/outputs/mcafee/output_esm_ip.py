@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-
 ESMOutputBot connects to McAfee Enterprise Security Manager, and updates IP based watchlists
 
 Parameters:
@@ -24,14 +23,13 @@ class ESMIPOutputBot(Bot):
 
     def init(self):
         if ESM is None:
-            raise ValueError('Could not import mfe_saw. Please install it.')
+            raise ValueError("Could not import 'mfe_saw'. Please install it.")
 
         self.esm = ESM()
         try:
             self.esm.login(self.parameters.esm_ip, self.parameters.esm_user, self.parameters.esm_password)
-        except:
-            self.logger.error('Could not Login to ESM.')
-            self.stop()
+        except Exception:
+            raise ValueError('Could not Login to ESM.')
 
         watchlist_filter = {'filters': [{'name': 'IPAddress', 'id': 0}]}
         self.watchlist_id = None
@@ -49,13 +47,14 @@ class ESMIPOutputBot(Bot):
         event = self.receive_message()
         self.logger.info('Message received.')
         try:
-            retVal = self.esm.post('sysAddWatchlistValues', {'watchlist': {'value': self.watchlist_id},
-                'values': '["' + event.get(self.parameters.field) + '"]'},
-                raw=True)
+            self.esm.post('sysAddWatchlistValues', {'watchlist': {'value': self.watchlist_id},
+                                                    'values': '["' + event.get(self.parameters.field) + '"]'},
+                          raw=True)
             self.logger.info('ESM Watchlist updated')
             self.acknowledge_message()
         except Exception:
             self.logger.exception('Error when updating watchlist.')
         self.acknowledge_message()
+
 
 BOT = ESMIPOutputBot
