@@ -11,6 +11,16 @@ See the changelog for a full list of changes.
 ### Libraries
 
 ### Postgres databases
+Use the following statement carefully to upgrade your database.
+Adapt your feedname in the query to the one used in your setup.
+```SQL
+UPDATE events
+   SET "classification.taxonomy" = 'abusive content', "classification.type" = 'spam', "classification.identifier" = 'spamlink', "malware.name" = NULL, "event_description.text" = 'The URL appeared in a spam email sent by extra.spam_ip.', "source.url" = "destination.ip", "destination.ip" = NULL
+   WHERE "malware.name" = 'l_spamlink' AND "feed.name" = 'Spamhaus CERT';
+UPDATE events
+   SET "classification.taxonomy" = 'other', "classification.type" = 'other', "classification.identifier" = 'proxyget', "malware.name" = NULL, "event_description.text" = 'The malicous client used a honeypot as proxy.'
+   WHERE "malware.name" = 'proxyget' AND "feed.name" = 'Spamhaus CERT';
+```
 
 
 1.0.5 Bugfix release (2018-06-21)
@@ -50,7 +60,7 @@ UPDATE events
    SET "classification.taxonomy" = 'intrusion attempts', "classification.type" = 'brute-force', "classification.identifier" = 'ssh', "malware.name" = NULL, "protocol.application" = 'ssh'
    WHERE "malware.name" = 'sshauth' AND "feed.name" = 'Spamhaus CERT';
 UPDATE events
-   SET "classification.taxonomy" = 'intrusion attempts', "classification.type" = 'brute-force', "classification.identifier" = 'telnet', "malware.name" = NULL, "protocol.application" = 'ssh'
+   SET "classification.taxonomy" = 'intrusion attempts', "classification.type" = 'brute-force', "classification.identifier" = 'telnet', "malware.name" = NULL, "protocol.application" = 'telnet'
    WHERE ("malware.name" = 'telnetauth' OR "malware.name" = 'iotcmd' OR "malware.name" = 'iotuser') AND "feed.name" = 'Spamhaus CERT';
 UPDATE events
    SET "classification.taxonomy" = 'information gathering', "classification.type" = 'scanner', "classification.identifier" = 'wordpress-vulnerabilities', "malware.name" = NULL, "event_description.text" = 'scanning for wordpress vulnerabilities', "protocol.application" = 'http'
