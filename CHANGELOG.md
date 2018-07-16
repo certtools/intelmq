@@ -10,6 +10,8 @@ CHANGELOG
 ### Harmonization
 
 ### Bots
+- named queues displayed when querying intelmqctl for queues in JSON
+
 #### Collectors
 - added `intelmq.bots.parsers.opendxl.collector` (#1265).
 

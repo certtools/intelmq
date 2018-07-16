@@ -835,9 +835,14 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
             if 'destination-queues' in info:
                 return_dict[bot_id]['destination_queues'] = []
-                for dest_queue in info['destination-queues']:
-                    return_dict[bot_id]['destination_queues'].append(
-                        (dest_queue, counters[dest_queue]))
+                if type(info['destination-queues']) is list:
+                    for dest_queue in info['destination-queues']:
+                        return_dict[bot_id]['destination_queues'].append(
+                            (dest_queue, counters[dest_queue]))
+                else:  # named queues comes in dict of {"named-path": "named-queue"}
+                    for path, dest_queue in info['destination-queues'].items():
+                        return_dict[bot_id]['destination_queues'].append(
+                            (dest_queue, counters[dest_queue], path))
 
         return 0, return_dict
 
