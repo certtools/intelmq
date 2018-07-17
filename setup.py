@@ -56,7 +56,7 @@ setup(
     version=__version__,
     maintainer='Sebastian Wagner',
     maintainer_email='wagner@cert.at',
-    python_requires='>=3.3',
+    python_requires='>=3.4',
     install_requires=REQUIRES,
     test_requires=[
         'Cerberus',

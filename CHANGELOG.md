@@ -35,7 +35,7 @@ CHANGELOG
 
 1.1.0 (unreleased)
 ------------------
-- Support for Python 3.3 has been dropped, it reached its end of life.
+- Support for Python 3.3 has been dropped in IntelMQ and some dependencies of it. Python 3.3 reached its end of life and Python 3.4 or newer is a hard requirement now.
 - The list of feeds docs/Feeds.md has now a machine-readable equivalent YAML file in intelmq/etc/feeds.yaml
   A tool to convert from yaml to md has been added.
 
