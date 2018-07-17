@@ -474,16 +474,21 @@ Lines starting with `'#'` will be ignored. Headers won't be interpreted.
 
 #### Configuration parameters
 
- * `"columns"`: A list of strings or a string of comma-separated values with field names. The names must match the harmonization's field names. Strings starting with `extra.` will be written into the Extra-Object of the DHO. E.g.
+ * `"columns"`: A list of strings or a string of comma-separated values with field names. The names must match the harmonization's field names. Empty column specifications and columns named `"__IGNORE__"` are ignored. E.g.
    ```json
-   [
+   "columns": [
         "",
         "source.fqdn",
-        "extra.http_host_header"
-    ],
-    ```
-
-    It is possible to specify multiple coulmns using `|` character. E.g.
+        "extra.http_host_header",
+        "__IGNORE__"
+   ],
+   ```
+   is equivalent to:
+   ```json
+   "columns": ",source.fqdn,extra.http_host_header,"
+   ```
+   The first and the last column are not used in this example.
+    It is possible to specify multiple columns using the `|` character. E.g.
     ```
         "columns": "source.url|source.fqdn|source.ip"
     ```
@@ -519,12 +524,7 @@ Lines starting with `'#'` will be ignored. Headers won't be interpreted.
             "columns": [ "__IGNORE__", "__IGNORE__", "__IGNORE__", "source.ip"]
         }
      ```
- * `"type_translation"`: See below, optional
-
-
-##### Type translation
-
-If the source does have a field with information for `classification.type`, but it does not correspond to intelmq's types,
+ * `"type_translation"`: If the source does have a field with information for `classification.type`, but it does not correspond to intelmq's types,
 you can map them to the correct ones. The `type_translation` field can hold a JSON field with a dictionary which maps the feed's values to intelmq's.
 
 

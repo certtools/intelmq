@@ -213,6 +213,9 @@ CHANGELOG
 ### Tests
 - `intelmqctl list` now sorts the output of bots and queues (#1262).
 
+### Tools
+- `intelmqctl`: Correctly handle the corner cases collectors and outputs for getting/sending messages in the bot debugger (#1263).
+
 ### Contrib
 
 ### Known issues
