@@ -41,7 +41,8 @@ class Pipeline(object):
     def set_queues(self, queues, queues_type):
         """
         :param queues: For source queue, it's just string.
-                    For destination queue, it can be one of the following: None or list or dict (of strings or lists, one of the key should be '_default')
+                    For destination queue, it can be one of the following: None or list or dict (of strings or lists,
+                    one of the key should be '_default')
 
         :param queues_type: "source" or "destination"
 
