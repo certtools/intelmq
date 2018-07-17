@@ -9,6 +9,7 @@ See the changelog for a full list of changes.
 ### Configuration
 
 ### Libraries
+- Some optional dependencies do not support Python 3.3 anymore. If your are still using this unsuported version consider upgrading. IntelMQ 1.0.x itself is compatible with Python 3.3.
 
 ### Postgres databases
 
