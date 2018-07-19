@@ -128,6 +128,7 @@ CHANGELOG
 - `bots.outputs.file`:
   - String formatting can be used for file names with new parameter `format_filename`.
   - New parameter `single_key` to only save one field.
+  - New parameter `encoding_errors_mode` with default value `'strict'` to handle encoding errors for the files written.
 
 ### Harmonization
 - Renamed `JSON` to `JSONDict` and added a new type `JSON`. `JSONDict` saves data internally as JSON, but acts like a dictionary. `JSON` accepts any valid JSON.

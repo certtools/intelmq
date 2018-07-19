@@ -1061,6 +1061,7 @@ Note that SIGHUPs and reloads interrupt the sleeping.
 
 #### Configuration Parameters:
 
+* `encoding_errors_mode`: By default `'strict'`, see for more details and options: https://docs.python.org/3/library/functions.html#open For example with `'backslashreplace'` all characters which cannot be properly encoded will be written escaped with backslashes.
 * `file`: file path of output file. Missing directories will be created if possible with the mode 755.
 * `format_filename`: Boolean if the filename should be formatted (default: `false`).
 * `hierarchial_output`: If true, the resulting dictionary will be hierarchical (field names split by dot).
