@@ -29,6 +29,9 @@ CHANGELOG
 
 ### Tests
 
+### Tools
+- intelmqctl Fix: don't display named paths amongst standard queues.
+
 ### Contrib
 
 ### Known issues

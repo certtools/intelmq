@@ -10,11 +10,11 @@ import signal
 import subprocess
 import sys
 import time
+from collections import OrderedDict
 
 import pkg_resources
 import psutil
 
-from collections import OrderedDict
 from intelmq import (DEFAULTS_CONF_FILE, PIPELINE_CONF_FILE, RUNTIME_CONF_FILE,
                      VAR_RUN_PATH, BOTS_FILE, HARMONIZATION_CONF_FILE)
 from intelmq.lib import utils
@@ -800,6 +800,12 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                    for bot_id in sorted(self.runtime_configuration.keys())]
 
     def get_queues(self):
+        """
+        :return: 4-tuple of source, destination, internal queues, and all queues combined.
+        The returned values are only queue names, not their paths. I.E. if there is a bot with
+        destination queues = {"_default": "one", "other": ["two", "three"]}, only set of {"one", "two", "three"} gets returned.
+        (Note that the "_default" path has single string and the "other" path has a list that gets flattened.)
+        """
         source_queues = set()
         destination_queues = set()
         internal_queues = set()
@@ -809,7 +815,8 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 source_queues.add(value['source-queue'])
                 internal_queues.add(value['source-queue'] + '-internal')
             if 'destination-queues' in value:
-                destination_queues.update(value['destination-queues'])
+                # flattens ["one", "two"] → {"one", "two"}, {"_default": "one", "other": ["two", "three"]} → {"one", "two", "three"}
+                destination_queues.update(utils.flatten_queues(value['destination-queues']))
 
         all_queues = source_queues.union(destination_queues).union(internal_queues)
 
@@ -835,9 +842,8 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
             if 'destination-queues' in info:
                 return_dict[bot_id]['destination_queues'] = []
-                for dest_queue in info['destination-queues']:
-                    return_dict[bot_id]['destination_queues'].append(
-                        (dest_queue, counters[dest_queue]))
+                for dest_queue in utils.flatten_queues(info['destination-queues']):
+                    return_dict[bot_id]['destination_queues'].append((dest_queue, counters[dest_queue]))
 
         return 0, return_dict
 
