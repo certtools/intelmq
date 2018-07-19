@@ -18,7 +18,7 @@ class MISPParserBot(Bot):
         'ecsirt:information-gathering="scanner"': 'scanner',
         'ecsirt:information-content-security="dropzone"': 'dropzone',
         'ecsirt:malicious-code="malware"': 'malware',
-        'ecsirt:malicious-code="botnet-drone"': 'botnet drone',
+        'ecsirt:malicious-code="botnet-drone"': 'infected system',
         'ecsirt:malicious-code="ransomware"': 'ransomware',
         'ecsirt:malicious-code="malware-configuration"': 'malware configuration',
         'ecsirt:malicious-code="c&c"': 'c&c',
