@@ -23,7 +23,7 @@ class ShodanStreamCollectorBot(CollectorBot):
             raise ValueError("Library 'shodan' is needed but not installed.")
 
         self.set_request_parameters()
-        if pkg_resources.get_distribution("shodan").version.split('.') <= '1.8.1'.split():
+        if pkg_resources.get_distribution("shodan").version.split('.') <= '1.8.1'.split('.'):
             if self.proxy:
                 raise ValueError('Proxies are given but shodan-python > 1.8.1 is needed for proxy support.')
             else:
