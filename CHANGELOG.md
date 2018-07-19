@@ -38,6 +38,7 @@ CHANGELOG
   - top level bot parameters (description, group, module, name) are exposed as members of the class.
   - The parameter `feed` for collectors is deprecated for 2.0 and has been replaced by the more consistent `name` (#1144).
   - bug: allow path parameter for CollectorBot class.
+  - Handle errors better when the logger could not be initialized.
 - lib/message:
   - Subitems in fields of type `JSONDict` (see below) can be accessed directly. E.g. you can do:
     event['extra.foo'] = 'bar'
