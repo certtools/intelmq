@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-Parameter:
+Parameters:
 * api_key: The API key
+
+Selectors:
+The only possible selector is currently the country:
+* countries: A list of strings or a comma separated list with country codes
 """
 import pkg_resources
 
@@ -32,7 +36,7 @@ class ShodanStreamCollectorBot(CollectorBot):
 
     def process(self):
         for line in self.api.stream.countries(timeout=self.http_timeout_sec, raw=True,
-                                              countries=self.parameters.countries):
+                                              countries=self.countries):
             report = self.new_report()
             report.add('raw', line)
             self.send_message(report)
