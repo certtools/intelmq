@@ -356,7 +356,12 @@ See the README.md
 * `lookup:` no
 * `public:` no
 * `cache (redis db):` none
-* `description:` Bot for collecting data using API
+* `description:` Bot for collecting data using API, you need to post JSON to /api endpoint
+
+example usage:
+```
+curl -X POST http://localhost:5000/api -H 'Content-Type: application/json' --data '{"source.ip": "127.0.0.101", "classification.type": "backdoor"}'
+```
 
 #### Configuration Parameters:
 
