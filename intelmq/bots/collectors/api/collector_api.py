@@ -10,9 +10,6 @@ try:
     import tornado.web
     from tornado.ioloop import IOLoop
 
-    def tornadoEventLoop():
-        IOLoop.instance().start()
-
     class Application(tornado.web.Application):
         def __init__(self, bot, *args, **kwargs):
             self.bot = bot
@@ -20,7 +17,7 @@ try:
 
     class MainHandler(tornado.web.RequestHandler):
         def post(self):
-            json = self.get_argument("json")
+            json = self.request.body
             self.write(json)
             self.application.bot.processRequest(json)
 except ImportError:
@@ -31,14 +28,15 @@ class APICollectorBot(CollectorBot):
     def init(self):
         if IOLoop is None:
             raise ValueError("Could not import 'tornado'. Please install it.")
+
         app = Application(self, [
-            (r"/json", MainHandler),
+            (r"/api", MainHandler),
         ])
 
         self.port = getattr(self.parameters, 'port', 5000)
-
         app.listen(self.port)
-        self.eventLoopThread = Thread(target=tornadoEventLoop)
+        self.eventLoopThread = Thread(target=IOLoop.current().start)
+        self.eventLoopThread.daemon = True
         self.eventLoopThread.start()
 
     def processRequest(self, json):
@@ -50,8 +48,6 @@ class APICollectorBot(CollectorBot):
         pass
 
     def shutdown(self):
-        IOLoop.instance().stop()
-        self.eventLoopThread.join()
-
+        IOLoop.current().stop()
 
 BOT = APICollectorBot
