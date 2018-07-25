@@ -1,3 +1,10 @@
+intelmq (1.0.0~dev7+intevation.3.2) unstable; urgency=medium
+
+  * ripe-import: fix missing information, when only data matching specific
+    CC is imported.
+
+ -- Sascha Wilde <wilde@intevation.de>  Wed, 25 Jul 2018 13:43:14 +0200
+
 intelmq (1.0.0~dev7+intevation.3.1) unstable; urgency=medium
 
   * Added support for en-/disabling email adresses in
