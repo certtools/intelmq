@@ -149,6 +149,10 @@ CHANGELOG
 ### Documentation
 - Use Markdown for README again, as pypi now supports it.
 
+### Packaging
+- Add logcheck configuration to the packages.
+- Fix packaging of bash completion script.
+
 ### Tests
 - Travis now correctly stops if a requirement could not be installed (#1257).
 - New tests for validating `etc/feeds.yaml` and `bots/BOTS` using cerberus and schemes are added (#1166).
