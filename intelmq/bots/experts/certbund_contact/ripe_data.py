@@ -107,11 +107,9 @@ def load_ripe_files(options) -> tuple:
                           verbose=options.verbose)
     inetnum_list = parse_file(options.inetnum_file,
                               ('inetnum', 'org', 'country', 'abuse-c'),
-                              restriction=restrict_country,
                               verbose=options.verbose)
     inet6num_list = parse_file(options.inet6num_file,
                                ('inet6num', 'org', 'country', 'abuse-c'),
-                               restriction=restrict_country,
                                verbose=options.verbose)
 
     organisation_list = parse_file(options.organisation_file,
@@ -127,28 +125,32 @@ def load_ripe_files(options) -> tuple:
 
     # Step 2: Prepare new data for insertion
 
-    (asn_list_o, asn_list_a,
-        organisation_list, organisation_index) = sanitize_split_and_modify(
-            asn_list, 'aut-num', asn_whitelist,
-            organisation_list, organisation_index, role_index,
-            verbose=options.verbose)
+    (asn_list, asn_list_u, organisation_list, organisation_index) \
+        = sanitize_split_and_modify(asn_list, 'aut-num', asn_whitelist,
+                                    organisation_list, organisation_index,
+                                    role_index, verbose=options.verbose)
 
-    (inetnum_list_o, inetnum_list_a,
-        organisation_list, organisation_index) = sanitize_split_and_modify(
-            inetnum_list, 'inetnum', None,
-            organisation_list, organisation_index, role_index,
-            verbose=options.verbose)
+    (inetnum_list, inetnum_list_u, organisation_list, organisation_index) \
+        = sanitize_split_and_modify(inetnum_list, 'inetnum', None,
+                                    organisation_list, organisation_index,
+                                    role_index, verbose=options.verbose)
+    convert_inetnum_to_networks(inetnum_list)
+    convert_inetnum_to_networks(inetnum_list_u)
+    inetnum_list = process_inetnum_contacts("inetnum", inetnum_list,
+                                            inetnum_list_u, restrict_country)
 
-    (inet6num_list_o, inet6num_list_a,
-        organisation_list, organisation_index) = sanitize_split_and_modify(
-            inet6num_list, 'inet6num', None,
-            organisation_list, organisation_index, role_index,
-            verbose=options.verbose)
+    (inet6num_list, inet6num_list_u, organisation_list, organisation_index) \
+        = sanitize_split_and_modify(inet6num_list, 'inet6num', None,
+                                    organisation_list, organisation_index,
+                                    role_index, verbose=options.verbose)
+    inet6num_list = [item for item in inet6num_list if restrict_country(item)]
+    convert_inet6num_to_networks(inet6num_list)
+    convert_inet6num_to_networks(inet6num_list_u)
+    inet6num_list = process_inetnum_contacts("inet6num", inet6num_list,
+                                             inet6num_list_u, restrict_country)
 
-    known_organisations = referenced_organisations(
-        asn_list_o + asn_list_a,
-        inetnum_list_o + inetnum_list_a,
-        inet6num_list_o + inet6num_list_a)
+    known_organisations = referenced_organisations(asn_list, inetnum_list,
+                                                   inet6num_list)
 
     organisation_list = sanitize_organisation_list(organisation_list,
                                                    known_organisations)
@@ -162,11 +164,9 @@ def load_ripe_files(options) -> tuple:
     if options.verbose:
         print('** Found {} contacts to be relevant.'.format(len(role_list)))
 
-    return (
-        asn_list_o + asn_list_a,
-        organisation_list, role_list, abusec_to_org,
-        inetnum_list_o + inetnum_list_a,
-        inet6num_list_o + inet6num_list_a)
+
+    return (asn_list, organisation_list, role_list, abusec_to_org,
+            inetnum_list, inet6num_list)
 
 
 def read_delegated_file(filename, country, verbose=False):
@@ -347,10 +347,16 @@ def split_list(obj_list, attribute, whitelist=None):
 def points_to_same_abuse_mailbox(obj, organisation_index, role_index):
     """Return true of the obj's abuse-c points to org->abuse-c's abuse-mailbox.
 
-    Parameter obj must have both `abuse-c` and `org` attributes.
+    Parameter obj must have both `abuse-c` and `org` attributes. If the
+    organisation referenced by obj does not exist, this function returns
+    False.
     """
+    org = organisation_index.get(obj['org'][0])
+    if org is None:
+        return False
+
     abuse_c_1 = obj['abuse-c'][0].upper()
-    abuse_c_2 = organisation_index[obj['org'][0]].get('abuse-c')[0].upper()
+    abuse_c_2 = org.get('abuse-c')[0].upper()
     return abuse_c_1 == abuse_c_2 or (
         role_index[abuse_c_1].get('abuse-mailbox') ==
         role_index[abuse_c_2].get('abuse-mailbox'))
@@ -411,10 +417,21 @@ def modify_for_abusec(obj_list_a,
     return obj_list_a, organisation_list, organisation_index
 
 
+def split_for_known_orgs(obj_list, organisation_index):
+    known = []
+    unknown = []
+    for obj in obj_list:
+        if obj["org"][0] in organisation_index:
+            known.append(obj)
+        else:
+            unknown.append(obj)
+    return (known, unknown)
+
+
 def sanitize_split_and_modify(obj_list, index, whitelist,
                               organisation_list, organisation_index,
                               role_index, verbose):
-    """Sanitize, split and modify a ripe RESOURCE list for direct abuse-c.
+    """Sanitize and modify a ripe RESOURCE list for direct abuse-c.
 
     Handles obj_list where some have direct `abuse-c` attributes.
     Decides which abuse-mailbox to use in case both `org` and `abuse-c`
@@ -422,9 +439,7 @@ def sanitize_split_and_modify(obj_list, index, whitelist,
     accordingly.
 
     Returns:
-        obj_list: where the original `org` is used for the abuse-mailbox
-        obj_list: where direct `abuse-c` is used with extra org for
-                  abuse-mailbox
+        obj_list: sanitized and updated obj_list
         organisation_list: an updated organisation list (modified in plac)
         organisation_index: an updated index (modified in place)
     """
@@ -446,20 +461,20 @@ def sanitize_split_and_modify(obj_list, index, whitelist,
     # organisation. This can happen when e.g. organisations without
     # contact information are ignored and therefore not in
     # organisation_index.
-    num_obj_o = len(obj_list_o)
-    obj_list_o = [obj for obj in obj_list_o
-                  if obj["org"][0] in organisation_index]
+    obj_list_o, obj_list_u = split_for_known_orgs(obj_list_o,
+                                                  organisation_index)
 
     if verbose:
         print("   -> for {} {} we use `org`".format(len(obj_list_o), index))
         print("      ({} referenced unknown organisations)"
-              .format(num_obj_o - len(obj_list_o)))
+              .format(len(obj_list_u)))
         print("   -> for {} {} we use `abuse-c'".format(len(obj_list_a), index))
 
     obj_list_a, organisation_list, organisation_index = modify_for_abusec(
         obj_list_a, organisation_list, organisation_index, role_index, verbose)
 
-    return (obj_list_o, obj_list_a, organisation_list, organisation_index)
+    return (obj_list_o + obj_list_a, obj_list_u,
+            organisation_list, organisation_index)
 
 
 def convert_inetnum_to_networks(inetnum_list):
@@ -468,7 +483,7 @@ def convert_inetnum_to_networks(inetnum_list):
     for entry in inetnum_list:
         first, last = [ipaddress.ip_address(s.strip())
                        for s in entry["inetnum"][0].split("-", 1)]
-        entry["inetnum"] = ipaddress.summarize_address_range(first, last)
+        entry["inetnum"] = list(ipaddress.summarize_address_range(first, last))
 
 
 def convert_inet6num_to_networks(inet6num_list):
@@ -476,6 +491,102 @@ def convert_inet6num_to_networks(inet6num_list):
     """
     for entry in inet6num_list:
         entry["inet6num"] = [ipaddress.ip_network(entry["inet6num"][0])]
+
+
+def process_inetnum_contacts(key, inet_list, inet_list_u, restrict_country):
+    """Restrict and augment network related contact data.
+
+    Some inetnum or inet6num objects do not have usable contact
+    information. These may have address ranges that are contained in the
+    address ranges of objects that do have contact information, so we
+    can augment the former with the contact information of the latter.
+
+    We only really need that for objects without contact data that
+    belong to the country to which the user wants to restrict the data
+    and where the object with the contact data is not in that country.
+    If both objects are in that country the ip addresses are already
+    covered by the object with the contact data, after all.
+
+    This function performs that augmentation for either inetnum or
+    inet6num objects and also performs the restriction to the country.
+    The latter is handled in this function as well because we need all
+    the inetnum data initially but only need to perform the augmentation
+    for those in the country.
+
+    Args:
+
+        key (str): The key for the cidr data in the inetnum objects.
+            Should be either 'inetnum' or 'inet6num'
+
+        inet_list (list of inetnum dicts): The inetnum objects with
+            usable contact data
+        inet_list_u (list of inetnum dicts): The inetnum objects without
+            contact data
+
+        restrict_country (function): Function that returns a boolean
+            indicating whether the inetnum object it's called with is in
+            the target country.
+
+    Returns: A list of inetnum objects consisting of all objects in
+        inet_list in the country and all augmented objects from
+        inet_list_u that are in the country.
+    """
+    # Implementation strategy:
+    #
+    # - Build maps from CIDRs to all the inetnum objects for those
+    #   CIDRs. There are two maps, one for all objects for the chosen
+    #   country and one for the rest.
+    #
+    # - Iterate over the items in inet_list_u, looking for larger
+    #   networks in those maps. We can start with the CIDR in the object
+    #   for which we want to find contact information. If that CIDR is
+    #   in the maps, we're done. Otherwise, lookup a CIDR with a 1 bit
+    #   shorter netmask, and so on. This requires a small number of
+    #   lookups per CIDR.
+    #
+    # - We use two maps so that for each netmask we can find a suitable
+    #   entry with the same country restriction first in which case we
+    #   don't need to do anything otherwise we continue with the entries
+    #   for other countries.
+
+    inet_list_cc = []
+    networkmap_cc = collections.defaultdict(list)
+    networkmap_rest = collections.defaultdict(list)
+    for obj in inet_list:
+        if restrict_country(obj):
+            inet_list_cc.append(obj)
+            target_map = networkmap_cc
+        else:
+            target_map = networkmap_rest
+
+        for addr in obj[key]:
+            target_map[addr].append(obj)
+
+    # Try to find contact data for the items in inet_list_u.
+    ignored_by_restriction = 0
+    new_entries = []
+    for obj in inet_list_u:
+        if not restrict_country(obj):
+            ignored_by_restriction += 1
+            continue
+
+        for obj_addr in obj[key]:
+            addr = obj_addr
+            while addr.prefixlen >= 8:
+                if addr in networkmap_cc:
+                    break
+                candidates = networkmap_rest.get(addr)
+                if candidates:
+                    new_entries.append(dict(candidates[0], **{key:[obj_addr]}))
+                    break
+                addr = addr.supernet()
+
+    print("** %s: Find supernet contacts for %d entries without contacts"
+          % (key, len(inet_list_u)))
+    print("   -> %d new objects" % (len(new_entries),))
+    print("   -> %d ignored because of country" % ignored_by_restriction)
+
+    return inet_list_cc + new_entries
 
 
 def sanitize_role_entry(entry):
