@@ -23,7 +23,7 @@ EXAMPLE_EVENT = {"feed.name": "n6stomp",
                  "raw": "eyJjYXRlZ29yeSI6ICJib3RzIiwgIm9yaWdpbiI6ICJzaW5raG9sZSIsICJjb25maWRlbmNlIjogImhpZ2giLCAibmFtZSI6ICJzYWxpdHkiLCAicHJvdG8iOiAidGNwIiwgImFkZHJlc3MiOiBbeyJjYyI6ICJVUyIsICJpcCI6ICI2OC42OC45Ni4yMzUiLCAiYXNuIjogMTg3Nzl9XSwgInNvdXJjZSI6ICJjZXJ0LXBsLnNpbmtob2xlIiwgImFkaXAiOiAieC54LjExMS45OSIsICJ0aW1lIjogIjIwMTUtMTEtMTdUMTI6MTc6MjcuMDQzNDUyWiIsICJkcG9ydCI6IDgwLCAic3BvcnQiOiAyMjMwOCwgInR5cGUiOiAiZXZlbnQiLCAiaWQiOiAiZDc3YWU4Y2Y2ODFkY2RiYjZlMjAwMTQ1ODE0MDFlZDUifQ==",  # noqa
                  "classification.identifier": "sality",
                  "malware.name": "sality",
-                 "classification.type": "botnet drone",
+                 "classification.type": "infected system",
                  "destination.port": 80,
                  "__type": "Event",
                  "protocol.transport": "tcp",

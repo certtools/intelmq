@@ -39,7 +39,7 @@ You may want to update your harmonization configuration
   - ASN fields now have a new type `ASN`.
 - Classification:
   - New value for `classification.type`: `vulnerable client` with taxonomy `vulnerable`.
-  - New value for `classification.type`: `infected system` with taxonomy `malicious code`.
+  - New value for `classification.type`: `infected system` with taxonomy `malicious code` as replacement for `botnet drone`.
 - Renamed `JSON` to `JSONDict` and added a new type `JSON`. `JSONDict` saves data internally as JSON, but acts like a dictionary. `JSON` accepts any valid JSON.
 
 ### Configuration
@@ -71,6 +71,9 @@ ALTER TABLE events
 ALTER TABLE events
    ADD COLUMN "tlp" text;
 UPDATE events
+   SET "classification.type" = 'infected system'
+   WHERE "classification.type" = 'botnet drone';
+UPDATE events
    SET "classification.identifier" = 'open-mdns'
    WHERE "classification.identifier" = 'openmdns' AND "feed.name" = 'Open-mDNS';
 UPDATE events
@@ -79,12 +82,6 @@ UPDATE events
 UPDATE events
    SET "classification.identifier" = 'open-tftp'
    WHERE "classification.identifier" = 'opentftp' AND "feed.name" = 'Open-TFTP';
-UPDATE events
-   SET "classification.type" = 'infected system'
-   WHERE "classification.type" = 'botnet drone' AND "feed.name" = 'Sinkhole-HTTP-Drone';
-UPDATE events
-   SET "classification.type" = 'infected system'
-   WHERE "classification.type" = 'botnet drone' AND "feed.name" = 'Microsoft-Sinkhole';
 UPDATE events
    SET "classification.identifier" = 'open-redis'
    WHERE "classification.identifier" = 'openredis' AND "feed.name" = 'Open-Redis';
@@ -128,9 +125,6 @@ UPDATE events
 UPDATE events
    SET "classification.identifier" = 'open-memcached'
    WHERE "classification.identifier" = 'openmemcached' AND "feed.name" = 'Open-Memcached';
-UPDATE events
-   SET "classification.type" = 'infected system', "feed.name" = 'Drone'
-   WHERE "classification.type" = 'botnet drone' AND "feed.name" = 'Botnet-Drone-Hadoop';
 UPDATE events
    SET "classification.identifier" = 'open-xdmcp'
    WHERE "classification.identifier" = 'openxdmcp' AND "feed.name" = 'Open-XDMCP';

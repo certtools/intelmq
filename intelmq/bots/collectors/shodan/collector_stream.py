@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-Parameter:
+Parameters:
 * api_key: The API key
+
+Selectors:
+The only possible selector is currently the country:
+* countries: A list of strings or a comma separated list with country codes
 """
 import pkg_resources
 
@@ -19,7 +23,7 @@ class ShodanStreamCollectorBot(CollectorBot):
             raise ValueError("Library 'shodan' is needed but not installed.")
 
         self.set_request_parameters()
-        if pkg_resources.get_distribution("shodan").version.split('.') <= '1.8.1'.split():
+        if pkg_resources.get_distribution("shodan").version.split('.') <= '1.8.1'.split('.'):
             if self.proxy:
                 raise ValueError('Proxies are given but shodan-python > 1.8.1 is needed for proxy support.')
             else:
@@ -32,7 +36,7 @@ class ShodanStreamCollectorBot(CollectorBot):
 
     def process(self):
         for line in self.api.stream.countries(timeout=self.http_timeout_sec, raw=True,
-                                              countries=self.parameters.countries):
+                                              countries=self.countries):
             report = self.new_report()
             report.add('raw', line)
             self.send_message(report)

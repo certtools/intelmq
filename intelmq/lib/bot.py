@@ -283,15 +283,24 @@ class Bot(object):
             remaining = self.parameters.rate_limit - (time.time() - starttime)
 
     def stop(self, exitcode: int = 1):
+        if not self.logger:
+            print('Could not initialize logger, only logging to stdout.')
         try:
             self.shutdown()
         except BaseException:
-            self.logger.exception('Error during shutdown of bot.')
+            if self.logger:
+                self.logger.exception('Error during shutdown of bot.')
+            else:  # logger not yet initialized
+                print('Error during shutdown of bot.')
 
         if self.__message_counter:
-            self.logger.info("%s %d messages since last logging.",
-                             self._message_processed_verb,
-                             self.__message_counter)
+            if self.logger:
+                self.logger.info("%s %d messages since last logging.",
+                                 self._message_processed_verb,
+                                 self.__message_counter)
+            else:
+                print("%s %d messages since last logging." % (self._message_processed_verb,
+                                                              self.__message_counter))
 
         self.__disconnect_pipelines()
 

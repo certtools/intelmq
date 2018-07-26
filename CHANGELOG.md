@@ -73,6 +73,7 @@ CHANGELOG
   - top level bot parameters (description, group, module, name) are exposed as members of the class.
   - The parameter `feed` for collectors is deprecated for 2.0 and has been replaced by the more consistent `name` (#1144).
   - bug: allow path parameter for CollectorBot class.
+  - Handle errors better when the logger could not be initialized.
 - lib/message:
   - Subitems in fields of type `JSONDict` (see below) can be accessed directly. E.g. you can do:
     event['extra.foo'] = 'bar'
@@ -82,6 +83,7 @@ CHANGELOG
     event['extra'] # gives '{"foo": "bar"}'
     "Old" bots and configurations compatible with 1.0.x do still work.
     Also, the extra field is now properly exploded when exporting events, analogous to all other fields.
+    The `in` operator works now for both - the old and the new - behavior.
   - `Message.add`: The parameter `overwrite` accepts now three different values: `True`, `False` and `None` (new).
     True: An existing value will be overwritten
     False: An existing value will not be overwritten (previously an exception has been raised when the value was given).
@@ -116,6 +118,7 @@ CHANGELOG
 - added `intelmq.bots.collectors.calidog.collector_certstream` for collecting certstream data (#1120).
 - added `intelmq.bots.collectors.shodan.collector_stream` for collecting shodan stream data (#1096).
   - Add proxy support.
+  - Fix handling of parameter `countries`.
 
 #### Parsers
 - `bots.parsers.shadowserver`:
@@ -145,6 +148,8 @@ CHANGELOG
 - added `intelmq.bots.parsers.microsoft.parser_bingmurls`
 - added `intelmq.bots.parsers.calidog.parser_certstream` for parsing certstream data (#1120).
 - added `intelmq.bots.parsers.shodan.parser` for parsing shodan data (#1096).
+- change the classification type from 'botnet drone' to infected system' in various parses.
+- `intelmq.bots.parsers.spamhaus.parser_cert`: Added support for all known bot types.
 
 #### Experts
 - Added sieve expert for filtering and modifying events (#1083)
@@ -161,6 +166,7 @@ CHANGELOG
 - `bots.outputs.file`:
   - String formatting can be used for file names with new parameter `format_filename`.
   - New parameter `single_key` to only save one field.
+  - New parameter `encoding_errors_mode` with default value `'strict'` to handle encoding errors for the files written.
 
 ### Harmonization
 - Renamed `JSON` to `JSONDict` and added a new type `JSON`. `JSONDict` saves data internally as JSON, but acts like a dictionary. `JSON` accepts any valid JSON.
@@ -178,6 +184,10 @@ CHANGELOG
 
 ### Documentation
 - Use Markdown for README again, as pypi now supports it.
+
+### Packaging
+- Add logcheck configuration to the packages.
+- Fix packaging of bash completion script.
 
 ### Tests
 - Travis now correctly stops if a requirement could not be installed (#1257).
