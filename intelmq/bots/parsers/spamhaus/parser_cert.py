@@ -125,6 +125,11 @@ class SpamhausCERTParserBot(ParserBot):
                 event.add('classification.type', 'brute-force')
                 event.add('classification.identifier', 'lookup-captcha')
                 event.add('event_description.text', 'The device automatically brute-forced the Spamhaus CBL lookup.')
+            elif malware == 'authspoofbadehlo':
+                event.add('classification.type', 'brute-force')
+                event.add('classification.identifier', 'authentication-spoof')
+                event.add('protocol.application', 'smtp')
+                event.add('event_description.text', 'The device spoofed SMTP authentication with a bad EHLO.')
             else:
                 if malware == 'auto':
                     malware = 's_other'

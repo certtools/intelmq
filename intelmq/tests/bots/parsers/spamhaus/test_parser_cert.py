@@ -199,6 +199,18 @@ EXAMPLE_EVENTS_PARTS = [{'source.ip': '109.126.64.2',
                          'event_description.text': 'The possibly infected IoT device scanned for '
                                                    'other vulnerable IoT devices.',
                          },
+                        {'source.ip': '203.0.113.81',
+                         'source.asn': 65551,
+                         'time.source': '2018-07-05T11:25:32+00:00',
+                         'classification.type': 'brute-force',
+                         'classification.identifier': 'authentication-spoof',
+                         'protocol.application': 'smtp',
+                         'destination.port': 25,
+                         'source.geolocation.cc': 'AT',
+                         'protocol.transport': 'tcp',
+                         'event_description.text': 'The device spoofed SMTP authentication with a bad '
+                                                   'EHLO.',
+                         },
                         ]
 
 
