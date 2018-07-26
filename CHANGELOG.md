@@ -49,6 +49,7 @@ CHANGELOG
     event['extra'] # gives '{"foo": "bar"}'
     "Old" bots and configurations compatible with 1.0.x do still work.
     Also, the extra field is now properly exploded when exporting events, analogous to all other fields.
+    The `in` operator works now for both - the old and the new - behavior.
   - `Message.add`: The parameter `overwrite` accepts now three different values: `True`, `False` and `None` (new).
     True: An existing value will be overwritten
     False: An existing value will not be overwritten (previously an exception has been raised when the value was given).
