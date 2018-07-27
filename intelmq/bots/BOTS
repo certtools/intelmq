@@ -806,6 +806,11 @@
                 "username": "<your amqp username>"
             }
         },
+        "Blackhole": {
+            "description": "AMQP Topic is the bot responsible to send events to a AMQP topic exchange.",
+            "module": "intelmq.bots.outputs.blackhole.output",
+            "parameters": {}
+        },
         "Elasticsearch": {
             "description": "Elasticsearch is the bot responsible to send events to a elasticsearch.",
             "module": "intelmq.bots.outputs.elasticsearch.output",
