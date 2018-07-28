@@ -49,6 +49,7 @@ CHANGELOG
     event['extra'] # gives '{"foo": "bar"}'
     "Old" bots and configurations compatible with 1.0.x do still work.
     Also, the extra field is now properly exploded when exporting events, analogous to all other fields.
+    The `in` operator works now for both - the old and the new - behavior.
   - `Message.add`: The parameter `overwrite` accepts now three different values: `True`, `False` and `None` (new).
     True: An existing value will be overwritten
     False: An existing value will not be overwritten (previously an exception has been raised when the value was given).
@@ -114,6 +115,7 @@ CHANGELOG
 - added `intelmq.bots.parsers.calidog.parser_certstream` for parsing certstream data (#1120).
 - added `intelmq.bots.parsers.shodan.parser` for parsing shodan data (#1096).
 - change the classification type from 'botnet drone' to infected system' in various parses.
+- `intelmq.bots.parsers.spamhaus.parser_cert`: Added support for all known bot types.
 
 #### Experts
 - Added sieve expert for filtering and modifying events (#1083)
@@ -148,6 +150,10 @@ CHANGELOG
 
 ### Documentation
 - Use Markdown for README again, as pypi now supports it.
+
+### Packaging
+- Add logcheck configuration to the packages.
+- Fix packaging of bash completion script.
 
 ### Tests
 - Travis now correctly stops if a requirement could not be installed (#1257).

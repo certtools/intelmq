@@ -1,0 +1,12 @@
+# bash completion for intelmqdump                           -*- shell-script -*-
+
+_intelmqdump ()
+{
+    local cur prev opts base;
+    COMPREPLY=();
+    cur="${COMP_WORDS[COMP_CWORD]}";
+    logpath=/opt/intelmq/var/log;
+    local dumps=$(for filename in $logpath/*.dump; do b=${filename##*/}; echo ${b%%.*}; done);
+    COMPREPLY=($(compgen -W "${dumps} -h --help" -- ${cur}))
+}
+complete -F _intelmqdump intelmqdump

@@ -483,6 +483,11 @@ class Message(dict):
         self._default_value_set = True
         self.default_value = value
 
+    def __contains__(self, item) -> bool:
+        if item == 'extra':
+            return 'extra' in self.to_dict(hierarchical=True)
+        return super(Message, self).__contains__(item)
+
 
 class Event(Message):
 
