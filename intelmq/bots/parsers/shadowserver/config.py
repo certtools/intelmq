@@ -99,7 +99,7 @@ def get_feed(feedname, logger):
 
     if feedname in old_feed_idx:
         logger.warning('Deprecated feedname use. Refer to the documentation for the new name. '
-                       'Backwards compatibility will be removed in version 1.3.')
+                       'Backwards compatibility will be removed in version 2.0.')
         return old_feed_idx[feedname]
 
     return feed_idx.get(feedname)
