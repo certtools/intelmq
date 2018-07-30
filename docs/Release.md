@@ -8,14 +8,16 @@ Assumption: You are working on branch maintenance, the next version is a bug fix
 ## Documentation
 
  * CHANGELOG.MD and
- * NEWS.MD: Update the latest header, fix the order and remove empty sections if necessary.
+ * NEWS.MD: Update the latest header, fix the order, remove empty sections and (re)group the entries if necessary.
  * `intelmq/version.py`: Update the version.
  * `debian/changelog`: Insert a new section for the new version with the tool `dch`.
 
 Eventually adapt the default log levels if necessary. Should be INFO for stable releases. See older releases.
 
-## Commit and tag.
-Commit your changes, the message should start with `REL: `. Push and create a pull request from maintenance to master. Someone else should review the changes. Eventually fix them, make sure the `REL: ` is the last commit, you can also push that one at last, after the reviews.
+## Commit, push, review and merge
+Commit your changes in a separate branch, the final commit's message should start with `REL: `. Push and create a pull request to maintenance and after that from maintenance to master. Someone else should review the changes. Eventually fix them, make sure the `REL: ` is the last commit, you can also push that one at last, after the reviews.
+
+Why a separate branch? Because if problems show up, you can still force-push to that one, keeping the release commit the latest one.
 
 ## Tag and release
 
@@ -70,6 +72,8 @@ Add a new empty changelog and news section. For the changelog:
 
 ### Tests
 
+### Tools
+
 ### Contrib
 
 ### Known issues
@@ -77,6 +81,10 @@ Add a new empty changelog and news section. For the changelog:
 And for the news:
 
 ```
+### Tools
+
+### Harmonization
+
 ### Configuration
 
 ### Libraries

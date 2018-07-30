@@ -15,7 +15,7 @@ mapping['amplifier']    = {"taxonomy": "vulnerable",
                            "type": "vulnerable service",
                            "identifier": "amplifier"}
 mapping['bots']         = {"taxonomy": "malicious code",
-                           "type": "botnet drone", "identifier": "generic-n6-drone"}
+                           "type": "infected system", "identifier": "generic-n6-drone"}
 mapping['backdoor']     = {"taxonomy": "intrusions",
                            "type": "backdoor", "identifier": "hacked server"}
 mapping['cnc']          = {"taxonomy": "malicious code",

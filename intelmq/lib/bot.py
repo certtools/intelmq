@@ -283,15 +283,24 @@ class Bot(object):
             remaining = self.parameters.rate_limit - (time.time() - starttime)
 
     def stop(self, exitcode: int = 1):
+        if not self.logger:
+            print('Could not initialize logger, only logging to stdout.')
         try:
             self.shutdown()
         except BaseException:
-            self.logger.exception('Error during shutdown of bot.')
+            if self.logger:
+                self.logger.exception('Error during shutdown of bot.')
+            else:  # logger not yet initialized
+                print('Error during shutdown of bot.')
 
         if self.__message_counter:
-            self.logger.info("%s %d messages since last logging.",
-                             self._message_processed_verb,
-                             self.__message_counter)
+            if self.logger:
+                self.logger.info("%s %d messages since last logging.",
+                                 self._message_processed_verb,
+                                 self.__message_counter)
+            else:
+                print("%s %d messages since last logging." % (self._message_processed_verb,
+                                                              self.__message_counter))
 
         self.__disconnect_pipelines()
 
@@ -804,7 +813,7 @@ class CollectorBot(Bot):
         report.add("feed.accuracy", self.parameters.accuracy)
         return report
 
-    def send_message(self, *messages, auto_add=True):
+    def send_message(self, *messages, path="_default", auto_add=True):
         """"
         Parameters:
             messages: Instances of intelmq.lib.message.Message class
@@ -813,7 +822,7 @@ class CollectorBot(Bot):
         messages = filter(self.__filter_empty_report, messages)
         if auto_add:
             messages = map(self.__add_report_fields, messages)
-        super(CollectorBot, self).send_message(*messages)
+        super(CollectorBot, self).send_message(*messages, path=path)
 
     def new_report(self):
         return libmessage.Report()

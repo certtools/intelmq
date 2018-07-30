@@ -7,7 +7,6 @@ import unittest
 
 
 import intelmq.lib.test as test
-from intelmq.lib.bot import Bot
 from intelmq.tests.lib import test_parser_bot
 
 
@@ -53,6 +52,7 @@ class TestBot(test.BotTestCase, unittest.TestCase):
         """
         Test if the bot's group is Parser.
         """
+        self.input_message = []
         self.prepare_bot()
         self.assertEqual(self.bot.group, 'Parser')
 

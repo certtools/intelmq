@@ -15,8 +15,7 @@ class MongoDBOutputBot(Bot):
 
     def init(self):
         if pymongo is None:
-            self.logger.error('Could not import pymongo. Please install it.')
-            self.stop()
+            raise ValueError('Could not import pymongo. Please install it.')
 
         self.connect()
 

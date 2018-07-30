@@ -348,11 +348,12 @@ sinkhole_http_drone = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'malicious code',
-        'classification.type': 'botnet drone',
-        'classification.identifier': 'infected system',
+        'classification.type': 'infected system',
+        # classification.identifier will be set to (harmonized) malware name by modify expert
         # The feed does not include explicit information on the protocol
         # but since it is about HTTP the protocol is always set to 'tcp'.
         'protocol.transport': 'tcp',
+        'protocol.application': 'http',
     },
 }
 
@@ -388,9 +389,9 @@ ipv6_sinkhole_http_drone = {
         ('extra.', 'forwarded_by', validate_to_none),
     ],
     'constant_fields': {
-        'classification.type': 'botnet drone',
         'classification.taxonomy': 'malicious code',
-        'classification.identifier': 'infected system',
+        'classification.type': 'infected system',
+        # classification.identifier will be set to (harmonized) malware name by modify expert
         # The feed does not include explicit information on the protocol
         # but since it is about HTTP the protocol is always set to 'tcp'.
         'protocol.transport': 'tcp',
@@ -434,8 +435,8 @@ microsoft_sinkhole = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'malicious code',
-        'classification.type': 'botnet drone',
-        'classification.identifier': 'infected system',
+        'classification.type': 'infected system',
+        # classification.identifier will be set to (harmonized) malware name by modify expert
         'protocol.transport': 'tcp',
         'protocol.application': 'http',
     },
@@ -1090,8 +1091,8 @@ drone = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'malicious code',
-        'classification.type': 'botnet drone',
-        'classification.identifier': 'infected system',
+        'classification.type': 'infected system',
+        # classification.identifier will be set to (harmonized) malware name by modify expert
     },
 }
 
