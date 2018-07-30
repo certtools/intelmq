@@ -1038,12 +1038,14 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 if ('group' in bot_config and
                         bot_config['group'] in ['Collector', 'Parser', 'Expert']):
                     if ('destination-queues' not in files[PIPELINE_CONF_FILE][bot_id] or
-                            (not isinstance(files[PIPELINE_CONF_FILE][bot_id]['destination-queues'], list) or
-                             len(files[PIPELINE_CONF_FILE][bot_id]['destination-queues']) < 1)):
+                            (isinstance(files[PIPELINE_CONF_FILE][bot_id]['destination-queues'], list) and
+                             len(files[PIPELINE_CONF_FILE][bot_id]['destination-queues']) < 1) or
+                            (isinstance(files[PIPELINE_CONF_FILE][bot_id]['destination-queues'], dict) and
+                             '_default' not in files[PIPELINE_CONF_FILE][bot_id]['destination-queues'])):
                         if RETURN_TYPE == 'json':
-                            output.append(['error', 'Misconfiguration: No destination queues for %r.' % bot_id])
+                            output.append(['error', 'Misconfiguration: No (default) destination queue for %r.' % bot_id])
                         else:
-                            self.logger.error('Misconfiguration: No destination queues for %r.', bot_id)
+                            self.logger.error('Misconfiguration: No (default) destination queue for %r.', bot_id)
                         retval = 1
                     else:
                         all_queues = all_queues.union(files[PIPELINE_CONF_FILE][bot_id]['destination-queues'])
