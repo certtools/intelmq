@@ -3,7 +3,7 @@ NEWS
 
 See the changelog for a full list of changes.
 
-1.1.0 Feature release (unreleased)
+1.1.0 Feature release (2018-09-05)
 ----------------------------------
 ### Requirements
 - Python 3.4 or newer is required.
