@@ -25,11 +25,11 @@ CHANGELOG
 ### Packaging
 
 ### Tests
-- `intelmqctl list` now sorts the output of bots and queues (#1262).
 - Drop tests for Python 3.3 for the mode with all requirements, as some optional dependencies do not support Python 3.3 anymore.
 
 ### Tools
-- `intelmqctl`: Correctly handle the corner cases collectors and outputs for getting/sending messages in the bot debugger (#1263).
+- `intelmqctl list` now sorts the output of bots and queues (#1262).
+- `intelmqctl`: Correctly handle the corner cases with collectors and outputs for getting/sending messages in the bot debugger (#1263).
 
 ### Contrib
 
