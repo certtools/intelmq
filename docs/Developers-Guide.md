@@ -7,7 +7,7 @@
   * [How to develop](#how-to-develop)
   * [Update](#update)
   * [Testing](#testing)
-    * [Environment variables](#environment-variables)
+    * [Environment variables](#environment-variables)777
     * [Configuration test files](#configuration-test-files)
 * [Development Guidelines](#development-guidelines)
   * [Coding-Rules](#coding-rules)
@@ -717,3 +717,9 @@ See the [testing section](#testing) about how to run the tests.
 
 In the end, the new information about the new bot should be added to BOTS file
 located at `intelmq/bots`. Note that the file is sorted!
+
+# Feeds documentation
+
+The feeds which are known to be working with IntelMQ are documented in the machine-readable file `intelmq/etc/feeds.yaml`. The human-readable documentation is in `docs/Feeds.md`. In order to keep these files in sync, call `intelmq/bin/intelmq_gen_docs.py` which generates the Markdown file from the YAML file.
+
+So to add a new feeds, change the `feeds.yaml` and then call the `intelmq_gen_docs.py` file.

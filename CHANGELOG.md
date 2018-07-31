@@ -42,13 +42,13 @@ CHANGELOG
   A tool to convert from yaml to md has been added.
 
 ### Tools
-- `intelmq_gen_feeds_docs` add to bin directory, allows generating the Feeds.md documentation file from feeds.yaml
+- `intelmq_gen_feeds_docs` addded to bin directory, allows generating the Feeds.md documentation file from feeds.yaml
 - `intelmq_gen_docs` merges both `intelmq_gen_feeds_docs` and `intelmq_gen_harm_docs` in one file and automatically updates the documentation files.
 
 #### intelmqctl
 - `intelmqctl start` prints the bot's last error messages if the bot failed to start (#1021).
 - `intelmqctl start` message "is running" is printed every time. (Until now, it wasn't said when a bot was just starting.)
-- `intelmqctl start/stop/restart/reload/status` now have a "--group" flag which allows you to specify the group of the bots that should be influenced by the command.
+- `intelmqctl start/stop/restart/reload/status` now has a "--group" flag which allows you to specify the group of the bots that should be influenced by the command.
 - `intelmqctl check` checks for defaults.conf completeness if the shipped file from the package can be found.
 - `intelmqctl check` shows errors for non-importable bots.
 - `intelmqctl list bots -q` only prints the IDs of enabled bots.
@@ -224,10 +224,11 @@ CHANGELOG
 ### Packaging
 
 ### Tests
-- `intelmqctl list` now sorts the output of bots and queues (#1262).
+- Drop tests for Python 3.3 for the mode with all requirements, as some optional dependencies do not support Python 3.3 anymore.
 
 ### Tools
-- `intelmqctl`: Correctly handle the corner cases collectors and outputs for getting/sending messages in the bot debugger (#1263).
+- `intelmqctl list` now sorts the output of bots and queues (#1262).
+- `intelmqctl`: Correctly handle the corner cases with collectors and outputs for getting/sending messages in the bot debugger (#1263).
 
 ### Contrib
 

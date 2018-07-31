@@ -93,13 +93,13 @@ def get_feed(feedname, logger):
         "Botnet-Drone-Hadoop": drone,
         "DNS-open-resolvers": dns_open_resolvers,
         "Open-NetBIOS": open_netbios_nameservice,
-        "SSL-Freak-Scan": ssl_freak_vulnerable_servers,
-        "SSL-Scan": ssl_poodle_vulnerable_servers,
+        "Ssl-Freak-Scan": ssl_freak_vulnerable_servers,
+        "Ssl-Scan": ssl_poodle_vulnerable_servers,
     }
 
     if feedname in old_feed_idx:
         logger.warning('Deprecated feedname use. Refer to the documentation for the new name. '
-                       'Backwards compatibility will be removed in version 1.3.')
+                       'Backwards compatibility will be removed in version 2.0.')
         return old_feed_idx[feedname]
 
     return feed_idx.get(feedname)

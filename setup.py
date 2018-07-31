@@ -58,7 +58,7 @@ setup(
     maintainer_email='wagner@cert.at',
     python_requires='>=3.4',
     install_requires=REQUIRES,
-    test_requires=[
+    tests_require=[
         'Cerberus',
         'pyyaml',
     ],

@@ -20,9 +20,9 @@ IntelMQ's design was influenced by
 [AbuseHelper](https://github.com/abusesa/abusehelper)
 however it was re-written from scratch and aims at:
 
--   Reduce the complexity of system administration
--   Reduce the complexity of writing new bots for new data feeds
--   Reduce the probability of events lost in all process with
+-   Reducing the complexity of system administration
+-   Reducing the complexity of writing new bots for new data feeds
+-   Reducing the probability of events lost in all process with
     persistence functionality (even system crash)
 -   Use and improve the existing Data Harmonization Ontology
 -   Use JSON format for all messages
@@ -69,7 +69,7 @@ User Guide
 
 See [User Guide](docs/User-Guide.md).
 
-For support use the intelmq-users mailing list: <https://lists.cert.at/cgi-bin/mailman/listinfo/intelmq-users>
+For support questions please use the intelmq-users mailing list: <https://lists.cert.at/cgi-bin/mailman/listinfo/intelmq-users>
 
 IntelMQ Manager
 ---------------
@@ -88,8 +88,7 @@ Incident Handling Automation Project
 Data Harmonization
 ------------------
 
-IntelMQ use the Data Harmonization. Check the following
-[document](docs/Data-Harmonization.md).
+IntelMQ use the Data Harmonization. Please read [this document](docs/Data-Harmonization.md) for more details.
 
 How to participate
 ------------------
