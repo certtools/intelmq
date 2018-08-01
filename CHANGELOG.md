@@ -33,6 +33,7 @@ CHANGELOG
 ### Tools
 - `intelmqctl list` now sorts the output of bots and queues (#1262).
 - `intelmqctl`: Correctly handle the corner cases with collectors and outputs for getting/sending messages in the bot debugger (#1263).
+- `intelmqdump`: fix ordering of dumps in a file in runtime. All operations are applied to a sorted list (#1280).
 
 ### Contrib
 
