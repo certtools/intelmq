@@ -24,6 +24,7 @@ CHANGELOG
 - Bots: document redis cache parameters.
 
 ### Packaging
+- Dropped support for Ubuntu 17.10, it reached its End of Life as of 2018-07-19.
 
 ### Tests
 - Drop tests for Python 3.3 for the mode with all requirements, as some optional dependencies do not support Python 3.3 anymore.
