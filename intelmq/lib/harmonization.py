@@ -20,6 +20,7 @@ import binascii
 import datetime
 import ipaddress
 import json
+import re
 import socket
 import urllib.parse as parse
 
@@ -82,7 +83,6 @@ class Base64(GenericType):
     @staticmethod
     def is_valid(value, sanitize=False):
         if sanitize:
-            value = GenericType().sanitize(value)
             value = Base64().sanitize(value)
 
         try:
@@ -152,6 +152,7 @@ class ClassificationType(GenericType):
                       'dropzone',
                       'exploit',
                       'ids alert',
+                      'infected system',
                       'leak',
                       'malware',
                       'malware configuration',
@@ -163,7 +164,10 @@ class ClassificationType(GenericType):
                       'spam',
                       'test',
                       'tor',
+                      'unauthorized-login',
+                      'unauthorized-command',
                       'unknown',
+                      'vulnerable client',
                       'vulnerable service',
                       ]
 
@@ -172,7 +176,6 @@ class ClassificationType(GenericType):
     @staticmethod
     def is_valid(value, sanitize=False):
         if sanitize:
-            value = GenericType().sanitize(value)
             value = ClassificationType().sanitize(value)
 
         if not GenericType().is_valid(value):
@@ -201,7 +204,6 @@ class DateTime(GenericType):
     @staticmethod
     def is_valid(value, sanitize=False):
         if sanitize:
-            value = GenericType().sanitize(value)
             value = DateTime().sanitize(value)
 
         if not GenericType().is_valid(value):
@@ -377,7 +379,6 @@ class FQDN(GenericType):
     @staticmethod
     def is_valid(value, sanitize=False):
         if sanitize:
-            value = GenericType().sanitize(value)
             value = FQDN().sanitize(value)
 
         if not GenericType().is_valid(value):
@@ -401,6 +402,12 @@ class FQDN(GenericType):
 
     @staticmethod
     def sanitize(value):
+        try:
+            value = GenericType().sanitize(value)
+        except ValueError:
+            return
+        if not isinstance(value, str):
+            return
         value = value.strip('.')
         if value:
             try:
@@ -468,7 +475,7 @@ class ASN(GenericType):
     @staticmethod
     def is_valid(value, sanitize=False):
         if sanitize:
-            value = Integer().sanitize(value)
+            value = ASN().sanitize(value)
         if not Integer.is_valid(value):
             return False
         if not ASN.check_asn(value):
@@ -477,6 +484,8 @@ class ASN(GenericType):
 
     @staticmethod
     def sanitize(value):
+        if isinstance(value, str) and value.lower().startswith('as'):
+            value = value[2:]
         value = Integer.sanitize(value)
         if value and ASN.check_asn(value):
             return value
@@ -486,7 +495,7 @@ class IPAddress(GenericType):
     """
     Type for IP addresses, all families. Uses the ipaddress module.
 
-    Sanitation accepts strings and objects of ipaddress.IPv4Address and ipaddress.IPv4Address.
+    Sanitation accepts strings and objects of ipaddress.IPv4Address and ipaddress.IPv6Address.
 
     Valid values are only strings. 0.0.0.0 is explicitly not allowed.
     """
@@ -494,7 +503,6 @@ class IPAddress(GenericType):
     @staticmethod
     def is_valid(value, sanitize=False):
         if sanitize:
-            value = GenericType().sanitize(value)
             value = IPAddress().sanitize(value)
 
         if not GenericType().is_valid(value):
@@ -514,6 +522,7 @@ class IPAddress(GenericType):
     def sanitize(value):
 
         try:
+            value = GenericType().sanitize(value)
             network = ipaddress.ip_network(str(value))
         except ValueError:
             return None
@@ -551,7 +560,7 @@ class IPNetwork(GenericType):
     """
     Type for IP networks, all families. Uses the ipaddress module.
 
-    Sanitation accepts strings and objects of ipaddress.IPv4Network and ipaddress.IPv4Network.
+    Sanitation accepts strings and objects of ipaddress.IPv4Network and ipaddress.IPv6Network.
     If host bits in strings are set, they will be ignored (e.g 127.0.0.1/32).
 
     Valid values are only strings.
@@ -560,7 +569,6 @@ class IPNetwork(GenericType):
     @staticmethod
     def is_valid(value, sanitize=False):
         if sanitize:
-            value = GenericType().sanitize(value)
             value = IPNetwork().sanitize(value)
 
         if not GenericType().is_valid(value):
@@ -577,6 +585,7 @@ class IPNetwork(GenericType):
     def sanitize(value):
 
         try:
+            value = GenericType().sanitize(value)
             value = str(ipaddress.ip_network(str(value), strict=False))
         except ValueError:
             return None
@@ -711,7 +720,6 @@ class String(GenericType):
     def is_valid(value, sanitize=False):
         if sanitize:
             value = GenericType().sanitize(value)
-            value = String().sanitize(value)
 
         if not GenericType().is_valid(value):
             return False
@@ -738,7 +746,6 @@ class URL(GenericType):
     @staticmethod
     def is_valid(value, sanitize=False):
         if sanitize:
-            value = GenericType().sanitize(value)
             value = URL().sanitize(value)
 
         if not GenericType().is_valid(value):
@@ -838,4 +845,35 @@ class Registry(UppercaseString):
         value = UppercaseString.sanitize(value)
         if value in ['RIPENCC', 'RIPE-NCC']:
             value = 'RIPE'
+        return value
+
+
+class TLP(UppercaseString):
+    """
+    TLP level type. Derived from UppercaseString.
+
+    Only valid values: WHITE, GREEN, AMBER, RED.
+
+    Accepted for sanitation are different cases and the prefix 'tlp:'.
+    """
+    enum = ['WHITE', 'GREEN', 'AMBER', 'RED']
+    prefix_pattern = re.compile('^(TLP:)?')
+
+    @staticmethod
+    def is_valid(value, sanitize=False):
+        if sanitize:
+            value = TLP.sanitize(value)
+
+        if not UppercaseString.is_valid(value):
+            return False
+
+        if value not in TLP.enum:
+            return False
+
+        return True
+
+    @staticmethod
+    def sanitize(value):
+        value = UppercaseString.sanitize(value)
+        value = TLP.prefix_pattern.sub('', value)
         return value

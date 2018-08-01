@@ -1,4 +1,8 @@
 debian/cron.d/intelmq-update-data etc/cron.d/
 contrib/logrotate/intelmq etc/logrotate.d/intelmq
-contrib/bash-completion/intelmq.sh etc/bash_completion.d/
+contrib/bash-completion/intelmqctl usr/share/bash-completion/completions/
+contrib/bash-completion/intelmqdump usr/share/bash-completion/completions/
+contrib/logcheck/ignore etc/logcheck/ignore.d.server/intelmq
+contrib/logcheck/violations etc/logcheck/violations.d/intelmq
+contrib/logcheck/logcheck.logfiles etc/logcheck/logcheck.logfiles.d/intelmq
 intelmq/bots/experts/modify/examples/* usr/share/doc/intelmq/bots/experts/modify/examples/

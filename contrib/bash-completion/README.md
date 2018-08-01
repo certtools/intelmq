@@ -6,11 +6,11 @@ Bash completion for `intelmqctl` and `intelmqdump` can be set up with the follow
 
 ## Dependencies
 
-### Ubuntu 14.04 / Debian 8
+### Ubuntu / Debian
 
     apt-get install bash-completion jq
 
-### CentOS 7
+### CentOS
 
     yum install bash-completion jq
 
@@ -18,7 +18,11 @@ Bash completion for `intelmqctl` and `intelmqdump` can be set up with the follow
 
     zypper install bash-completion jq
 
+### Fedora
+
+    dnf install bash-completion jq
+
 ## Installation
 
-1. Copy from ./contrib/bash-completion/intelmq.sh to '/etc/bash_completion.d/'
-2. Logout and login to be able to use the bash completion.
+1. Copy ./contrib/bash-completion/intelmq* to '/etc/bash_completion.d/'
+2. Load the files directly or open a new shell (the files are loaded automatically).

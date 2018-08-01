@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import time
+from itertools import chain
 
 import redis
 
@@ -25,7 +26,7 @@ class Pipeline(object):
 
     def __init__(self, parameters):
         self.parameters = parameters
-        self.destination_queues = set()
+        self.destination_queues = {}  # type: dict of lists
         self.internal_queue = None
         self.source_queue = None
 
@@ -39,6 +40,15 @@ class Pipeline(object):
         time.sleep(interval)
 
     def set_queues(self, queues, queues_type):
+        """
+        :param queues: For source queue, it's just string.
+                    For destination queue, it can be one of the following:
+                    None or list or dict (of strings or lists, one of the key should be '_default')
+
+        :param queues_type: "source" or "destination"
+
+        The method assures self.destination_queues are in the form of dict of lists. It doesn't assure there is a '_default' key.
+        """
         if queues_type == "source":
             self.source_queue = queues
             if queues is not None:
@@ -47,13 +57,22 @@ class Pipeline(object):
                 self.internal_queue = None
 
         elif queues_type == "destination":
-            if queues and type(queues) is not list:
-                queues = queues.split()
-            self.destination_queues = queues
+            type_ = type(queues)
+            if type_ is list:
+                q = {"_default": queues}
+            elif type_ is str:
+                q = {"_default": queues.split()}
+            elif type_ is dict:
+                q = queues
+                for key, val in queues.items():
+                    q[key] = val if type(val) is list else val.split()
+            else:
+                raise exceptions.InvalidArgument(
+                    'queues', got=queues,
+                    expected=["None", "list of strings", "dict (of strings or lists that should have the _default key)"])
+            self.destination_queues = q
         else:
-            raise exceptions.InvalidArgument('queues_type', got=queues_type,
-                                             expected=['source',
-                                                       'destination'])
+            raise exceptions.InvalidArgument('queues_type', got=queues_type, expected=['source', 'destination'])
 
 
 class Redis(Pipeline):
@@ -100,37 +119,28 @@ class Redis(Pipeline):
         self.load_configurations(queues_type)
         super(Redis, self).set_queues(queues, queues_type)
 
-    def send(self, message):
+    def send(self, message, path="_default"):
         message = utils.encode(message)
+        try:
+            queues = self.destination_queues[path]
+        except KeyError as exc:
+            raise exceptions.PipelineError(exc)
         if self.load_balance:
-            destination_queue = self.destination_queues[
-                self.load_balance_iterator]
+            queues = [queues[self.load_balance_iterator]]
+            self.load_balance_iterator += 1
+            if self.load_balance_iterator == len(self.destination_queues[path]):
+                self.load_balance_iterator = 0
 
+        for destination_queue in queues:
             try:
                 self.pipe.lpush(destination_queue, message)
             except Exception as exc:
-                if 'Cannot assign requested address' in exc.args[0] or\
-                   "OOM command not allowed when used memory > 'maxmemory'." in exc.args[0]:
+                if 'Cannot assign requested address' in exc.args[0] or \
+                        "OOM command not allowed when used memory > 'maxmemory'." in exc.args[0]:
                     raise MemoryError(exc.args[0])
                 elif 'Redis is configured to save RDB snapshots, but is currently not able to persist on disk' in exc.args[0]:
                     raise IOError(28, 'No space left on device. Redis can\'t save its snapshots.')
                 raise exceptions.PipelineError(exc)
-
-            self.load_balance_iterator += 1
-            if self.load_balance_iterator == len(self.destination_queues):
-                self.load_balance_iterator = 0
-
-        else:
-            for destination_queue in self.destination_queues:
-                try:
-                    self.pipe.lpush(destination_queue, message)
-                except Exception as exc:
-                    if 'Cannot assign requested address' in exc.args[0] or\
-                       "OOM command not allowed when used memory > 'maxmemory'." in exc.args[0]:
-                        raise MemoryError(exc.args[0])
-                    elif 'Redis is configured to save RDB snapshots, but is currently not able to persist on disk' in exc.args[0]:
-                        raise IOError(28, 'No space left on device. Redis can\'t save its snapshots.')
-                    raise exceptions.PipelineError(exc)
 
     def receive(self):
         if self.source_queue is None:
@@ -151,7 +161,7 @@ class Redis(Pipeline):
             raise exceptions.PipelineError(e)
 
     def count_queued_messages(self, *queues):
-        queue_dict = dict()
+        queue_dict = {}
         for queue in queues:
             try:
                 queue_dict[queue] = self.pipe.llen(queue)
@@ -166,6 +176,7 @@ class Redis(Pipeline):
             return self.pipe.delete(queue)
         except Exception as exc:
             raise exceptions.PipelineError(exc)
+
 
 # Algorithm
 # ---------
@@ -199,12 +210,12 @@ class Pythonlist(Pipeline):
         super(Pythonlist, self).set_queues(queues, queues_type)
         self.state[self.internal_queue] = []
         self.state[self.source_queue] = []
-        for destination_queue in self.destination_queues:
+        for destination_queue in chain.from_iterable(self.destination_queues.values()):
             self.state[destination_queue] = []
 
-    def send(self, message):
+    def send(self, message, path="_default"):
         """Sends a message to the destination queues"""
-        for destination_queue in self.destination_queues:
+        for destination_queue in self.destination_queues[path]:
             if destination_queue in self.state:
                 self.state[destination_queue].append(utils.encode(message))
             else:
@@ -238,7 +249,7 @@ class Pythonlist(Pipeline):
            But only without a real message broker behind.
            As this is only for tests"""
 
-        qdict = dict()
+        qdict = {}
         for queue in queues:
             qdict[queue] = len(self.state.get(queue, []))
         return qdict

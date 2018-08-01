@@ -2,7 +2,8 @@
 
 The available feeds are grouped by the provider of the feeds.
 For each feed the collector and parser that can be used is documented as well as any feed-specific parameters.
-To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `intelmq/bin/intelmq_gen_feeds_docs.py` to generate the new content of this file.
+To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
+`intelmq/bin/intelmq_gen_feeds_docs.py` to generate the new content of this file.
 
 <!-- TOC depthFrom:2 depthTo:2 withLinks:1 updateOnSave:1 orderedList:0 -->
 
@@ -16,6 +17,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `int
 - [Blueliv](#blueliv)
 - [CERT.PL](#certpl)
 - [CINSscore](#cinsscore)
+- [Calidog](#calidog)
 - [CleanMX](#cleanmx)
 - [DShield](#dshield)
 - [Danger Rulez](#danger-rulez)
@@ -28,22 +30,29 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `int
 - [Malware Domains](#malware-domains)
 - [MalwarePatrol](#malwarepatrol)
 - [MalwareURL](#malwareurl)
+- [McAfee Advanced Threat Defense](#mcafee-advanced-threat-defense)
+- [Microsoft](#microsoft)
 - [Netlab 360](#netlab-360)
 - [Nothink](#nothink)
 - [OpenPhish](#openphish)
+- [OpenPhish Commercial](#openphish-commercial)
 - [PhishTank](#phishtank)
 - [ShadowServer](#shadowserver)
 - [Spamhaus](#spamhaus)
 - [Sucuri](#sucuri)
 - [Taichung](#taichung)
 - [Team Cymru](#team-cymru)
+- [Threatminer](#threatminer)
 - [Turris](#turris)
 - [URLVir](#urlvir)
 - [University of Toulouse](#university-of-toulouse)
 - [VXVault](#vxvault)
+- [WebInspektor](#webinspektor)
 - [ZoneH](#zoneh)
 
+
 <!-- /TOC -->
+
 
 # Abuse.ch
 
@@ -561,6 +570,25 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `int
 * **Configuration Parameters:**
 
 
+# Calidog
+
+## CertStream
+
+* **Status:** on
+* **Revision:** 15-06-2018
+* **Description:** HTTP Websocket Stream from certstream.calidog.io providing data from Certificate Transparency Logs.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.certstream.collector_certstream
+* **Configuration Parameters:**
+
+### Parser
+
+* **Module:** intelmq.bots.parses.certstream.parser_certstream
+* **Configuration Parameters:**
+
+
 # CleanMX
 
 ## Phishing
@@ -805,7 +833,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `int
 
 # Fraunhofer
 
-## DGA Archieve
+## DGA Archive
 
 * **Status:** on
 * **Revision:** 20-01-2018
@@ -991,6 +1019,76 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `int
 * **Configuration Parameters:**
 
 
+# McAfee Advanced Threat Defense
+
+## Sandbox Reports
+
+* **Status:** on
+* **Revision:** 05-07-2018
+* **Description:** Processes reports from McAfee's sandboxing solution via the openDXL API.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.opendxl.collector
+* **Configuration Parameters:**
+*  * `dxl_config_file`: `{{location of dxl configuration file}}`
+*  * `dxl_topic`: `/mcafee/event/atd/file/report`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.mcafee.parser_atd
+* **Configuration Parameters:**
+*  * `verdict_severity`: `4`
+
+
+# Microsoft
+
+## BingMURLs
+
+* **Status:** on
+* **Revision:** 29-05-2018
+* **Description:** Collects Malicious URLs detected by Bing from the Interflow API.
+* **Additional Information:** Depending on the file sizes you may need to increase the parameter 'http_timeout_sec' of the collector.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.microsoft.collector_interflow
+* **Configuration Parameters:**
+*  * `api_key`: `{{your API key}}`
+*  * `file_match`: `^bingmurls_`
+*  * `http_timeout_sec`: `300`
+*  * `not_older_than`: `2 days`
+*  * `rate_limit`: `3600`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.microsoft.parser_bingmurls
+* **Configuration Parameters:**
+
+
+## CTIP
+
+* **Status:** on
+* **Revision:** 06-03-2018
+* **Description:** Collects CTIP files from the Interflow API.
+* **Additional Information:** Depending on the file sizes you may need to increase the parameter 'http_timeout_sec' of the collector. As many IPs occur very often in the data, you may want to use a deduplicator specifically for the feed.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.microsoft.collector_interflow
+* **Configuration Parameters:**
+*  * `api_key`: `{{your API key}}`
+*  * `file_match`: `^ctip_`
+*  * `http_timeout_sec`: `300`
+*  * `not_older_than`: `2 days`
+*  * `rate_limit`: `3600`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.microsoft.parser_ctip
+* **Configuration Parameters:**
+
+
 # Netlab 360
 
 ## DGA
@@ -1042,7 +1140,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `int
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `http://data.netlab.360.com/feeds/mirai-scanner/scanner.list`
-*  * `rate_limit`: `3600`
+*  * `rate_limit`: `86400`
 
 ### Parser
 
@@ -1146,6 +1244,29 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `int
 ### Parser
 
 * **Module:** intelmq.bots.parsers.openphish.parser
+* **Configuration Parameters:**
+
+
+# OpenPhish Commercial
+
+## Phishing
+
+* **Status:** on
+* **Revision:** 06-02-2018
+* **Description:** OpenPhish is a fully automated self-contained platform for phishing intelligence. It identifies phishing sites and performs intelligence analysis in real time without human intervention and without using any external resources, such as blacklists.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.http.collector_http
+* **Configuration Parameters:**
+*  * `http_password`: `{{ your password}}`
+*  * `http_url`: `https://openphish.com/prvt-intell/`
+*  * `http_username`: `{{ your username}}`
+*  * `rate_limit`: `86400`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.openphish.parser_commercial
 * **Configuration Parameters:**
 
 
@@ -1377,6 +1498,28 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `int
 * **Configuration Parameters:**
 
 
+# Threatminer
+
+## Recent domains
+
+* **Status:** on
+* **Revision:** 06-02-2018
+* **Documentation:** https://www.threatminer.org/
+* **Description:** Latest malicious domains.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.http.collector_http
+* **Configuration Parameters:**
+*  * `http_url`: `https://www.threatminer.org/`
+*  * `rate_limit`: `86400`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.threatminer.parser
+* **Configuration Parameters:**
+
+
 # Turris
 
 ## Greylist
@@ -1481,6 +1624,27 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `int
 ### Parser
 
 * **Module:** intelmq.bots.parsers.vxvault.parser
+* **Configuration Parameters:**
+
+
+# WebInspektor
+
+## Unsafe sites
+
+* **Status:** on
+* **Revision:** 09-03-2018
+* **Description:** Latest detected unsafe sites.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.http.collector_http
+* **Configuration Parameters:**
+*  * `http_url`: `https://app.webinspector.com/public/recent_detections/`
+*  * `rate_limit`: `60`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.webinspektor.parser
 * **Configuration Parameters:**
 
 

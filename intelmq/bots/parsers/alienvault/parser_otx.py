@@ -111,6 +111,8 @@ class AlienVaultOTXParserBot(ParserBot):
                 tc = pulse['targeted_countries']
                 if tc:
                     additional_indicator['targeted_countries'] = tc
+            if 'TLP' in pulse:
+                event['tlp'] = pulse["TLP"]
 
             additional = additional_pulse.copy()
             additional.update(additional_indicator)

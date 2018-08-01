@@ -9,6 +9,13 @@
                 "port": 5000
             }
         },
+        "CertStream": {
+            "module": "intelmq.bots.collectors.calidog.collector_certstream",
+            "description": "A bot to collect information from CertStream",
+            "parameters": {
+                "name": "certstream"
+            }
+        },
         "File": {
             "description": "Fileinput collector fetches data from a file.",
             "module": "intelmq.bots.collectors.file.collector_file",
@@ -16,7 +23,7 @@
                 "chunk_replicate_header": true,
                 "chunk_size": null,
                 "delete_file": false,
-                "feed": "FileCollector",
+                "name": "FileCollector",
                 "provider": "",
                 "path": "/tmp/",
                 "postfix": ".csv",
@@ -29,7 +36,7 @@
             "parameters": {
                 "attach_regex": "csv.zip",
                 "attach_unzip": true,
-                "feed": "",
+                "name": "Mail Attachment",
                 "provider": "",
                 "folder": "INBOX",
                 "mail_host": "<host>",
@@ -46,7 +53,7 @@
             "parameters": {
                 "chunk_replicate_header": true,
                 "chunk_size": null,
-                "feed": "",
+                "name": "Mail URL",
                 "provider": "",
                 "folder": "INBOX",
                 "http_password": null,
@@ -65,7 +72,7 @@
             "description": "Generic URL Fetcher is the bot responsible to get the report from an URL.",
             "module": "intelmq.bots.collectors.http.collector_http",
             "parameters": {
-                "feed": "",
+                "name": "URL",
                 "provider": "",
                 "http_url": "<insert url of feed>",
                 "http_url_formatting": false,
@@ -80,7 +87,7 @@
             "description": "Opens a streaming connection to the URL and sends the received lines.",
             "module": "intelmq.bots.collectors.http.collector_http_stream",
             "parameters": {
-                "feed": "",
+                "name": "URL Stream",
                 "provider": "",
                 "http_url": "<insert url of feed>",
                 "http_username": null,
@@ -94,7 +101,7 @@
             "description": "Collect events from a MISP server.",
             "module": "intelmq.bots.collectors.misp.collector",
             "parameters": {
-                "feed": "misp_generic",
+                "name": "misp_generic",
                 "provider": "",
                 "misp_key": "<insert MISP Authkey>",
                 "misp_tag_processed": "<insert MISP tag for processed events>",
@@ -109,7 +116,7 @@
             "module": "intelmq.bots.collectors.rt.collector_rt",
             "parameters": {
                 "attachment_regex": "\\.csv\\.zip$",
-                "feed": "Request Tracker",
+                "name": "Request Tracker",
                 "provider": "",
                 "password": "password",
                 "rate_limit": 3600,
@@ -130,12 +137,21 @@
                 "ssl_client_certificate": null
             }
         },
+        "TCP": {
+            "description": "TCP is the bot responsible to receive events on a TCP port (ex: from TCP Output of another IntelMQ instance). Might not be working on Python3.4.6.",
+            "module": "intelmq.bots.collectors.tcp.collector",
+            "parameters": {
+                "ip": "<ip>",
+                "name": "TCP",
+                "port": "<port>"
+            }
+        },
         "XMPP": {
             "description": "This bot can connect to an XMPP Server and one room, in order to receive reports from it. TLS is used by default. rate_limit is ineffective here. Bot can either pass the body or the whole event.",
             "module": "intelmq.bots.collectors.xmpp.collector",
             "parameters": {
                 "ca_certs": "/etc/ssl/certs/ca-certificates.crt",
-                "feed": "XMPP",
+                "name": "XMPP",
                 "provider": "",
                 "pass_full_xml": false,
                 "rate_limit": 3600,
@@ -158,7 +174,7 @@
                 "api_key": "<insert your api key>",
                 "modified_pulses_only": false,
                 "interval": 24,
-                "feed": "AlienVault OTX",
+                "name": "AlienVault OTX",
                 "provider": "AlienVault",
                 "rate_limit": 3600
             }
@@ -168,9 +184,18 @@
             "module": "intelmq.bots.collectors.blueliv.collector_crimeserver",
             "parameters": {
                 "api_key": "<insert your api key>",
-                "feed": "Blueliv Crimeserver",
+                "name": "Blueliv Crimeserver",
                 "provider": "Blueliv",
                 "rate_limit": 3600
+            }
+        },
+        "McAfee openDXL": {
+            "description": "Listens to McAfee openDXL fabric",
+            "module": "intelmq.bots.collectors.opendxl.collector",
+            "parameters": {
+                "feed": "<Feed Name>",
+                "dxl_config_file": "<insert /path/to/dxlclient.config>",
+                "dxl_topic": "/mcafee/event/atd/file/report"
             }
         },
         "Microsoft Azure": {
@@ -180,9 +205,37 @@
                 "account_name": "",
                 "account_key": "",
                 "delete": true,
-                "feed": "",
+                "name": "Microsoft Azure",
                 "provider": "microsoft",
                 "rate_limit": 3600
+            }
+        },
+        "Microsoft Interflow": {
+            "description": "",
+            "module": "intelmq.bots.collectors.microsoft.collector_interflow",
+            "parameters": {
+                "api_key": "",
+                "name": "Microsoft Interflow",
+                "file_match": null,
+                "http_timeout_sec": 300,
+                "not_older_than": "2 days",
+                "provider": "microsoft",
+                "rate_limit": 3600,
+                "redis_cache_db": "5",
+                "redis_cache_host": "127.0.0.1",
+                "redis_cache_port": 6379,
+                "redis_cache_password": null,
+                "redis_cache_ttl": 604800
+            }
+        },
+        "Shodan Stream": {
+            "description": "Collects the shodan stream from the shodan API.",
+            "module": "intelmq.bots.collectors.shodan.collector_stream",
+            "parameters": {
+                "api_key": "<INSERT your API key>",
+                "countries": [],
+                "name": "Shodan Stream",
+                "provider": "Shodan"
             }
         },
         "Stomp": {
@@ -190,13 +243,30 @@
             "module": "intelmq.bots.collectors.stomp.collector",
             "parameters": {
                 "exchange": "<INSERT your exchange point as given by CERT.pl>",
-                "feed": "n6stomp",
+                "name": "n6stomp",
                 "provider": "N6",
                 "port": 61614,
                 "server": "n6stream.cert.pl",
                 "ssl_ca_certificate": "<insert path to CA file for CERT.pl's n6>",
                 "ssl_client_certificate": "<insert path to client cert file for CERT.pl's n6>",
                 "ssl_client_certificate_key": "<insert path to client cert key file for CERT.pl's n6>"
+            }
+        },
+        "Twitter": {
+            "description": "Collects tweets from target_timelines. Maximum number of tweet_count from each timeline and up to timelimit back in time.",
+            "module": "intelmq.bots.collectors.twitter.collector_twitter",
+            "parameters": {
+                "name": "Twitter",
+                "target_timelines": "",
+                "tweet_count": "",
+                "timelimit": "",
+                "include_rts": "true",
+                "exclude_replies": "false",
+                "follow_urls": "",
+                "consumer_key": "",
+                "consumer_secret": "",
+                "access_token_key": "",
+                "access_token_secret": ""
             }
         }
     },
@@ -259,6 +329,11 @@
         "CI Army": {
             "description": "CI Army Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.ci_army.parser",
+            "parameters": {}
+        },
+        "CertStream Parser": {
+            "description": "A Bot to parse CertStream Feed",
+            "module": "intelmq.bots.parsers.calidog.parser_certstream",
             "parameters": {}
         },
         "CleanMX": {
@@ -374,6 +449,23 @@
             "module": "intelmq.bots.parsers.malwareurl.parser",
             "parameters": {}
         },
+        "McAfee Advanced Threat Defense": {
+            "description": "McAfee Advanced Threat Defense Parser retrieves IOCs (hash, IP, URL) from ATD reports.",
+            "module": "intelmq.bots.parsers.mcafee.parser_atd",
+            "parameters": {
+                "verdict_severity": "4"
+            }
+        },
+        "Microsoft BingMURLs": {
+            "description": "Parses JSON data from Microsoft's Bing Malicious URLs list.",
+            "module": "intelmq.bots.parsers.microsoft.parser_bingmurls",
+            "parameters": {}
+        },
+        "Microsoft CTIP": {
+            "description": "Parses JSON data from Microsoft's CTIP program.",
+            "module": "intelmq.bots.parsers.microsoft.parser_ctip",
+            "parameters": {}
+        },
         "N6Stomp": {
             "description": "N6 Collector - CERT.pl's N6 Parser - N6 feed via STOMP interface",
             "module": "intelmq.bots.parsers.n6.parser_n6stomp",
@@ -412,6 +504,14 @@
                 "overwrite": true
             }
         },
+        "Shodan": {
+            "description": "Parses Shodan data collected via the API.",
+            "module": "intelmq.bots.parsers.shodan.parser",
+            "parameters": {
+                "ignore_errors": true,
+                "minimal_mode": false
+            }
+        },
         "Spamhaus CERT": {
             "description": "Spamhaus CERT Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.spamhaus.parser_cert",
@@ -434,10 +534,24 @@
                 "error_log_message": false
             }
         },
+        "Threatminer": {
+            "description": "Threatminer Parser is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.threatminer.parser",
+            "parameters": {}
+        },
         "Turris Greylist": {
             "description": "Turris Greylist Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.turris.parser",
             "parameters": {}
+        },
+        "Twitter": {
+            "description": "Twitter parser parses a report of tweets by extracting IOC. Currently only urls are supported, a whitelist of safe domains can be provided",
+            "module": "intelmq.bots.parsers.twitter.parser",
+            "parameters": {
+                "domain_whitelist": "t.co",
+                "substitutions": " .net;[.]net",
+                "classification_type": "blacklist"
+            }
         },
         "URLVir": {
             "description": "URLVir Parser is the bot responsible to parse the Export Hosts and Export IP Addresses reports and sanitize the information.",
@@ -447,6 +561,11 @@
         "VXVault": {
             "description": "VXVault Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.vxvault.parser",
+            "parameters": {}
+        },
+        "Web Inspektor": {
+            "description": "Web Inspektor Parser is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.webinspektor.parser",
             "parameters": {}
         },
         "ZoneH": {
@@ -507,6 +626,14 @@
                 "redis_cache_ttl": "86400"
             }
         },
+        "Domain Suffix": {
+            "description": "Extracts the domain suffix from a domain and saves it in the the domain_suffix field.",
+            "module": "intelmq.bots.experts.domain_suffix.expert",
+            "parameters": {
+                "field": "fqdn",
+                "suffix_file": "<path of suffix file>"
+            }
+        },
         "Field Reducer": {
             "description": "The field reducer bot is capable of removing fields from events.",
             "module": "intelmq.bots.experts.field_reducer.expert",
@@ -558,6 +685,14 @@
                 "test_mode": false
             }
         },
+        "McAfee Active Response Lookup": {
+            "description": "Queries connections to IP addresses within local environment using McAfee Active Response queries.",
+            "module": "intelmq.bots.experts.mcafee.expert_mar",
+            "parameters": {
+                "dxl_config_file": "<insert /path/to/dxlclient.config>",
+                "lookup_type": "<Hash|DestSocket|DestIP|DestFQDN>"
+            }
+        },
         "MaxMind GeoIP": {
             "description": "MaxMind GeoIP is the bot responsible for adding geolocation information to events (Country, City, Longitude, Latitude, etc..)",
             "module": "intelmq.bots.experts.maxmind_geoip.expert",
@@ -570,7 +705,16 @@
             "description": "Modify bot can make nearly arbitrary changes to event's fields based on regex-rules on different values. See docs/Bots.md for some examples.",
             "module": "intelmq.bots.experts.modify.expert",
             "parameters": {
-                "configuration_path": "/opt/intelmq/var/lib/bots/modify/modify.conf"
+                "configuration_path": "/opt/intelmq/var/lib/bots/modify/modify.conf",
+                "case_sensitive": true
+            }
+        },
+        "RecordedFuture IPRisk": {
+            "description": "RecordedFuture IPRisk bot adds the Risk Score from RecordedFuture assosciated with source.ip or desitnation.ip.",
+            "module": "intelmq.bots.experts.recordedfuture_iprisk.expert",
+            "parameters": {
+                "overwrite": false,
+                "database": "/opt/intelmq/var/lib/bots/recordedfuture_iprisk/rfiprisk.dat"
             }
         },
         "RFC 1918": {
@@ -585,6 +729,7 @@
             "description": "RIPENCC is the bot responsible to get the correspondent abuse contact from source IP and destination IP of the events. RIPEstat documentation: https://stat.ripe.net/docs/data_api ",
             "module": "intelmq.bots.experts.ripencc_abuse_contact.expert",
             "parameters": {
+                "mode": "append",
                 "query_ripe_db_asn": true,
                 "query_ripe_db_ip": true,
                 "query_ripe_stat": true,
@@ -633,6 +778,19 @@
             "parameters": {
                 "overwrite": false
             }
+        },
+        "Wait": {
+            "description": "Wait bot can wait for a some time or until a queue size is lower than a given numer.",
+            "module": "intelmq.bots.experts.wait.expert",
+            "parameters": {
+                "queue_db": 2,
+                "queue_host": "localhost",
+                "queue_name": null,
+                "queue_polling_interval": 0.05,
+                "queue_port": 6379,
+                "queue_size": 0,
+                "sleep_time": null
+            }
         }
     },
     "Output": {
@@ -675,8 +833,11 @@
             "description": "File is the bot responsible to send events to a file.",
             "module": "intelmq.bots.outputs.file.output",
             "parameters": {
+                "encoding_errors_mode": "strict",
                 "file": "/opt/intelmq/var/lib/bots/file-output/events.txt",
-                "hierarchical_output": false
+                "format_filename": false,
+                "hierarchical_output": false,
+                "single_key": null
             }
         },
         "Files": {
@@ -688,6 +849,17 @@
                 "suffix": ".json",
                 "hierarchical_output": false,
                 "single_key": null
+            }
+        },
+        "McAfee ESM": {
+            "description": "Writes information out to the McAfee Enterprise Security Manager (ESM).",
+            "module": "intelmq.bots.outputs.mcafee.output_esm_ip",
+            "parameters": {
+                "esm_ip": "1.2.3.4",
+                "esm_user": "NGCP",
+                "esm_password": "<Password>",
+                "esm_watchlist": "<watchlist name>",
+                "field": "source.ip"
             }
         },
         "MongoDB": {
@@ -727,7 +899,8 @@
                 "auth_type": "<http_basic_auth/http_header>",
                 "hierarchical_output": false,
                 "host": "<host>",
-                "use_json": true
+                "use_json": true,
+                "ssl_client_certificate": null
             }
         },
         "Redis": {
@@ -773,13 +946,13 @@
             }
         },
         "TCP": {
-            "description": "TCP is the bot responsible to send events to a TCP port (Splunk, ElasticSearch, etc..).",
+            "description": "TCP is the bot responsible to send events to a TCP port (Splunk, ElasticSearch, another IntelMQ, etc..).",
             "module": "intelmq.bots.outputs.tcp.output",
             "parameters": {
                 "ip": "<ip>",
                 "hierarchical_output": false,
                 "port": "<port>",
-                "separator": "\n"
+                "separator": "<nothing or \n or sth>"
             }
         },
         "UDP": {

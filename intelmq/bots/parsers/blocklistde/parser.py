@@ -55,7 +55,7 @@ MAPPING = {
                                   "2 months",
     },
     "ircbot.txt": {
-        "classification.type": "botnet drone",
+        "classification.type": "infected system",
         "protocol.application": "irc",
     },
     "bruteforcelogin.txt": {

@@ -40,8 +40,7 @@ class StompCollectorBot(CollectorBot):
 
     def init(self):
         if stomp is None:
-            self.logger.error('Could not import stomp. Please install it.')
-            self.stop()
+            raise ValueError('Could not import stomp. Please install it.')
 
         self.server = getattr(self.parameters, 'server', 'n6stream.cert.pl')
         self.port = getattr(self.parameters, 'port', 61614)
