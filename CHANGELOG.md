@@ -28,6 +28,7 @@ CHANGELOG
 ### Tests
 - Drop tests for Python 3.3 for the mode with all requirements, as some optional dependencies do not support Python 3.3 anymore.
 - `lib.test`: Add parameter `compare_raw` (default: `True`) to `assertMessageEqual`, to optionally skip the comparison of the raw field.
+- Add tests for RT collector.
 
 ### Tools
 - `intelmqctl list` now sorts the output of bots and queues (#1262).
