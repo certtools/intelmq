@@ -10,6 +10,7 @@ CHANGELOG
 
 ### Bots
 #### Collectors
+- `bots.collectors.rt.collector_rt`: Log ticket id for downloaded reports.
 
 #### Parsers
 - `bots.parsers.shadowserver`: if required fields do not exist in data, an exception is raised, so the line will be dumped and not further processed.
