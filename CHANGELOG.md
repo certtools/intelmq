@@ -12,6 +12,7 @@ CHANGELOG
 ### Bots
 #### Collectors
 - added `intelmq.bots.parsers.opendxl.collector` (#1265).
+- added `intelmq.bots.collectors.api`: collecting data using an HTTP API (#1187).
 
 #### Parsers
 - added `intelmq.bots.parsers.mcafee.parser_atd` (#1265).
@@ -111,7 +112,6 @@ CHANGELOG
   - Empty parameters `attachment_regex` and `url_regex` handled.
 - `bots.collectors.http.collector_http`: Ability to optionally use the current time in parameter `http_url`, added parameter `http_url_formatting`.
 - `bots.collectors.stomp.collector`: Heartbeat timeout is now logged with log level info instead of warning.
-- `bots.collectors.api`: collecting data using an HTTP API
 - added `intelmq.bots.collectors.twitter.collector_twitter`
 - added `intelmq.bots.collectors.tcp.collector` that can be bound to another IntelMQ instance by a TCP output
 - `bots.collectors.microsoft.collector_interflow`: added for MS interflow API

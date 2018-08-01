@@ -4,7 +4,7 @@
             "description": "Bot for collecting data using API.",
             "module": "intelmq.bots.collectors.api.collector_api",
             "parameters": {
-                "feed": "",
+                "name": "API",
                 "provider": "APICollector",
                 "port": 5000
             }

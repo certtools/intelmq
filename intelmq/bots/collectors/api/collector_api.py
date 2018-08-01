@@ -9,19 +9,18 @@ from intelmq.lib.bot import CollectorBot
 try:
     import tornado.web
     from tornado.ioloop import IOLoop
-
+except ImportError:
+    IOLoop = None
+else:
     class Application(tornado.web.Application):
-        def __init__(self, bot, *args, **kwargs):
-            self.bot = bot
+        def __init__(self, request_handler, *args, **kwargs):
+            self.request_handler = request_handler
             super().__init__(*args, **kwargs)
 
     class MainHandler(tornado.web.RequestHandler):
         def post(self):
-            json = self.request.body
-            self.write(json)
-            self.application.bot.processRequest(json)
-except ImportError:
-    IOLoop = None
+            data = self.request.body
+            self.application.request_handler(data)
 
 
 class APICollectorBot(CollectorBot):
@@ -29,8 +28,8 @@ class APICollectorBot(CollectorBot):
         if IOLoop is None:
             raise ValueError("Could not import 'tornado'. Please install it.")
 
-        app = Application(self, [
-            (r"/api", MainHandler),
+        app = Application(self.request_handler, [
+            ("/intelmq/push", MainHandler),
         ])
 
         self.port = getattr(self.parameters, 'port', 5000)
@@ -39,9 +38,9 @@ class APICollectorBot(CollectorBot):
         self.eventLoopThread.daemon = True
         self.eventLoopThread.start()
 
-    def processRequest(self, json):
+    def request_handler(self, data):
         report = self.new_report()
-        report.add("raw", json)
+        report.add("raw", data)
         self.send_message(report)
 
     def process(self):
@@ -49,5 +48,6 @@ class APICollectorBot(CollectorBot):
 
     def shutdown(self):
         IOLoop.current().stop()
+
 
 BOT = APICollectorBot

@@ -471,11 +471,11 @@ Collects tweets from target_timelines. Up to tweet_count tweets from each user a
 * `lookup:` no
 * `public:` no
 * `cache (redis db):` none
-* `description:` Bot for collecting data using API, you need to post JSON to /api endpoint
+* `description:` Bot for collecting data using API, you need to post JSON to /intelmq/push endpoint
 
 example usage:
 ```
-curl -X POST http://localhost:5000/api -H 'Content-Type: application/json' --data '{"source.ip": "127.0.0.101", "classification.type": "backdoor"}'
+curl -X POST http://localhost:5000/intelmq/push -H 'Content-Type: application/json' --data '{"source.ip": "127.0.0.101", "classification.type": "backdoor"}'
 ```
 
 #### Configuration Parameters:
