@@ -1,5 +1,14 @@
 {
     "Collector": {
+        "API": {
+            "description": "Bot for collecting data using API.",
+            "module": "intelmq.bots.collectors.api.collector_api",
+            "parameters": {
+                "name": "API",
+                "provider": "APICollector",
+                "port": 5000
+            }
+        },
         "CertStream": {
             "module": "intelmq.bots.collectors.calidog.collector_certstream",
             "description": "A bot to collect information from CertStream",

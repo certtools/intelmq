@@ -464,6 +464,25 @@ Collects tweets from target_timelines. Up to tweet_count tweets from each user a
 * `acces_token_key`: Twitter api login data
 * `access_token_secret`: Twitter api login data
 
+### API collector bot
+
+#### Information:
+* `name:` intelmq.bots.collectors.api.collector_api
+* `lookup:` no
+* `public:` no
+* `cache (redis db):` none
+* `description:` Bot for collecting data using API, you need to post JSON to /intelmq/push endpoint
+
+example usage:
+```
+curl -X POST http://localhost:5000/intelmq/push -H 'Content-Type: application/json' --data '{"source.ip": "127.0.0.101", "classification.type": "backdoor"}'
+```
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `port`: 5000
+
 ## Parsers
 
 TODO
