@@ -125,7 +125,7 @@ class RTCollectorBot(CollectorBot):
                     else:
                         self.logger.info('Skipping now.')
                         continue
-                self.logger.info("Report downloaded.")
+                self.logger.info("Report #%d downloaded.", ticket_id)
                 raw = resp.text
 
             report = self.new_report()
