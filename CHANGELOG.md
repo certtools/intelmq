@@ -16,6 +16,8 @@ CHANGELOG
 
 #### Parsers
 - added `intelmq.bots.parsers.mcafee.parser_atd` (#1265).
+- `intelmq.bots.parsers.generic.parser_csv`:
+  - New parameter `columns_required` to optionally ignore parse errors for columns.
 
 #### Experts
 - added `intelmq.bots.experts.recordedfuture_iprisk` (#1267).
