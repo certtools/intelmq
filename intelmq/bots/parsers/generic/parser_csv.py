@@ -122,7 +122,7 @@ class GenericCsvParserBot(ParserBot):
                     break
             else:
                 # if the value sill remains unadded we need to inform
-                raise exceptions.InvalidValue(keys, value)
+                raise exceptions.InvalidValue(key, value)
 
         if hasattr(self.parameters, 'type')\
                 and "classification.type" not in event:
