@@ -12,11 +12,6 @@ with open(os.path.join(os.path.dirname(__file__),
     EXAMPLE_FILE = handle.read()
 EXAMPLE_LINES = EXAMPLE_FILE.splitlines()
 
-with open(os.path.join(os.path.dirname(__file__),
-                       'accessible-adb_reconstructed.csv')) as handle:
-    RECONSTRUCTED_FILE = handle.read()
-RECONSTRUCTED_LINES = RECONSTRUCTED_FILE.splitlines()
-
 EXAMPLE_REPORT = {"feed.name": "ShadowServer Accessible-ADB",
                   "raw": utils.base64_encode(EXAMPLE_FILE),
                   "__type": "Report",
@@ -31,8 +26,8 @@ EVENTS = [{'__type': 'Event',
            'classification.identifier': 'accessible-adb',
            'protocol.application': 'adb',
            'protocol.transport': 'tcp',
-           'raw': utils.base64_encode('\n'.join([RECONSTRUCTED_LINES[0],
-                                                 RECONSTRUCTED_LINES[1], ''])),
+           'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                                 EXAMPLE_LINES[1]])),
            'source.asn': 3462,
            'source.geolocation.cc': 'TW',
            'source.geolocation.city': 'TAOYUAN CITY',
@@ -56,8 +51,8 @@ EVENTS = [{'__type': 'Event',
            'classification.identifier': 'accessible-adb',
            'protocol.application': 'adb',
            'protocol.transport': 'tcp',
-           'raw': utils.base64_encode('\n'.join([RECONSTRUCTED_LINES[0],
-                                                 RECONSTRUCTED_LINES[2], ''])),
+           'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                                 EXAMPLE_LINES[2]])),
            'source.asn': 3462,
            'source.geolocation.cc': 'TW',
            'source.geolocation.city': 'TAIPEI',

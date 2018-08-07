@@ -11,11 +11,6 @@ with open(os.path.join(os.path.dirname(__file__), 'Sinkhole-HTTP-Drone.csv')) as
     EXAMPLE_FILE = handle.read()
 EXAMPLE_LINES = EXAMPLE_FILE.splitlines()
 
-with open(os.path.join(os.path.dirname(__file__),
-                       'Sinkhole-HTTP-Drone-RECONSTRUCTED.csv')) as handle:
-    RECONSTRUCTED_FILE = handle.read()
-RECONSTRUCTED_LINES = RECONSTRUCTED_FILE.splitlines()
-
 EXAMPLE_REPORT = {"feed.name": "ShadowServer Sinkhole HTTP Drone",
                   "raw": utils.base64_encode(EXAMPLE_FILE),
                   "__type": "Report",
@@ -33,8 +28,8 @@ EVENTS = [{'__type': 'Event',
            'malware.name': 'avalanche-goznym',
            'protocol.transport': 'tcp',
            'protocol.application': 'http',
-           'raw': utils.base64_encode('\n'.join([RECONSTRUCTED_LINES[0],
-                                                 RECONSTRUCTED_LINES[1], ''])),
+           'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                                 EXAMPLE_LINES[1]])),
            'source.asn': 34502,
            'source.geolocation.cc': 'AT',
            'source.ip': '198.51.100.55',
@@ -46,8 +41,8 @@ EVENTS = [{'__type': 'Event',
            'feed.name': 'ShadowServer Sinkhole HTTP Drone',
            'classification.taxonomy': 'malicious code',
            'classification.type': 'infected system',
-           'raw': utils.base64_encode('\n'.join([RECONSTRUCTED_LINES[0],
-                                                 RECONSTRUCTED_LINES[2], ''])),
+           'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                                 EXAMPLE_LINES[2]])),
            'source.geolocation.cc': 'AT',
            'time.observation': '2015-01-01T00:00:00+00:00',
            'destination.asn': 393667,
