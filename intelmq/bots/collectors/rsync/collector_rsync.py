@@ -2,6 +2,7 @@
 import os
 from intelmq.lib.bot import CollectorBot
 
+
 class RsyncCollectorBot(CollectorBot):
     def process(self):
         self.logger.info("Updating file {}.".format(self.parameters.file))
@@ -11,6 +12,6 @@ class RsyncCollectorBot(CollectorBot):
             report.add("raw", rsync_file.read())
             self.send_message(report)
 
-BOT = RsyncCollectorBot
 
+BOT = RsyncCollectorBot
 
