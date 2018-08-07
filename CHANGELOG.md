@@ -22,6 +22,7 @@ CHANGELOG
 
 ### Documentation
 - Bots: document redis cache parameters.
+- Installation documentation: Ubuntu needs universe repositories.
 
 ### Packaging
 - Dropped support for Ubuntu 17.10, it reached its End of Life as of 2018-07-19.
