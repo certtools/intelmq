@@ -98,6 +98,7 @@ CHANGELOG
   * you may now define more than one destination queues path the bot should pass the message to, see [Pipelines](https://github.com/certtools/intelmq/blob/develop/docs/User-Guide.md#pipeline-configuration) (#1088, #1190).
   * the special path `"_on_error"` can be used to pass messages to different queues in case of processing errors (#1133).
 - `lib/harmonization`: Accept `AS` prefix for ASN values (automatically stripped).
+- added `intelmq.VAR_STATE_PATH` for variable state data of bots.
 
 ### Bots
 - Removed print statements from various bots.
