@@ -634,7 +634,7 @@ class ParserBot(Bot):
                                     if not any([line.startswith(prefix) for prefix
                                                 in self.ignore_lines_starting])])
         self.handle = RewindableFileHandle(io.StringIO(raw_report))
-        for line in csv.reader(self.handle):
+        for line in csv.reader(self.handle, **self.csv_params):
             self.current_line = self.handle.current_line
             yield line
 
@@ -649,7 +649,13 @@ class ParserBot(Bot):
                                     if not any([line.startswith(prefix) for prefix
                                                 in self.ignore_lines_starting])])
         self.handle = RewindableFileHandle(io.StringIO(raw_report))
-        for line in csv.DictReader(self.handle):
+
+        csv_reader = csv.DictReader(self.handle, **self.csv_params)
+        # create an array of fieldnames,
+        # those were automagically created by the dictreader
+        self.csv_fieldnames = csv_reader.fieldnames
+
+        for line in csv_reader:
             self.current_line = self.handle.current_line
             yield line
 
@@ -752,7 +758,7 @@ class ParserBot(Bot):
 
     def recover_line_csv(self, line: str):
         out = io.StringIO()
-        writer = csv.writer(out)
+        writer = csv.writer(out, **self.csv_params)
         writer.writerow(line)
         return out.getvalue()
 
@@ -763,8 +769,8 @@ class ParserBot(Bot):
         out = io.StringIO()
         writer = csv.DictWriter(out, self.csv_fieldnames, **self.csv_params)
         writer.writeheader()
-        writer.writerow(line)
-        return out.getvalue()
+        out.write(self.current_line)
+        return out.getvalue().strip()
 
     def recover_line_json(self, line: dict):
         """
