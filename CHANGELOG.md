@@ -91,7 +91,9 @@ CHANGELOG
   - changed feednames . Please refer to it's README for the exact changes.
   - If the conversion function fails for a line, an error is raised and the offending line will be handled according to the error handling configuration.
     Previously errors like these were only logged and ignored otherwise.
-  - add support for the feed `Accessible-Hadoop`
+  - add support for the feeds
+    - `Accessible-Hadoop` (#1231)
+    - `Accessible ADP` (#1285)
   - Remove deprecated parameter `override`, use `overwrite` instead (#1071).
 - The Generic CSV Parser `bots.parsers.generic.parser_csv`:
   - It is possible to filter the data before processing them using the new parameters `filter_type` and `filter_text`.
