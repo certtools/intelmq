@@ -200,6 +200,24 @@ The parameter `http_timeout_max_tries` is of no use in this collector.
 * `postfix`: FIXME
 * `delete_file`: whether to delete the file after reading (default: `false`)
 
+* * *
+
+### Rsync
+
+Requires the rsync executable
+
+#### Information:
+* `name:` intelmq.bots.collectors.rsync.collector_rsync
+* `lookup:` yes
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Bot download file by rsync and then load data from downloaded file. Downloaded file is located in var/lib/bots/rsync_collector.
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `file`: Name of downloaded file.
+* `rsync_path`: Path to file. It can be "/home/username/directory" or "username@remote_host:/home/username/directory"
 
 * * *
 
