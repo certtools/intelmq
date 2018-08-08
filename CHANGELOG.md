@@ -30,6 +30,7 @@ CHANGELOG
 - tool `feeds-config-generator` to automatically generate the collector and parser runtime and pipeline configurations.
 - `malware_name_mapping`: Download and convert tool for malware family name mapping has been added.
 - Added a systemd script which creates systemd units for bots (#953).
+- `contrib/cron-jobs/update-asn-data`, `contrib/cron-jobs/update-geoip-data`, `contrib/cron-jobs/update-tor-nodes`: Errors produce proper output.
 
 ### Core
 - lib/bot
@@ -135,6 +136,9 @@ CHANGELOG
 - Added domain suffix expert to extract the TLD/Suffix from a domain name.
 - `bots.experts.maxmind_geoip`: New (optional) parameter `overwrite`, by default false. The current default was to overwrite!
 - `intelmq.bots.experts.ripencc_abuse_contact`: Remove deprecated parameter `query_ripe_stat`, use `query_ripe_stat_asn` and `query_ripe_stat_ip` instead (#1071).
+- `intelmq/bots/experts/asn_lookup/update-asn-data`: Errors produce proper output on stdout/stderr.
+- `intelmq/bots/experts/maxmind_geoip/update-geoip-data`: Errors produce proper output on stdout/stderr.
+- `intelmq/bots/experts/tor_nodes/update-tor-nodes`: Errors produce proper output on stdout/stderr.
 
 #### Outputs
 - `bots.outputs.file`:
