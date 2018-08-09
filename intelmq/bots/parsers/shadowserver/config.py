@@ -95,14 +95,14 @@ def add_UTC_to_timestamp(value):
 
 
 def convert_bool(value):
-    if value.lower() in ('y', 'yes', 'true', 'enabled'):
+    if value.lower() in ('y', 'yes', 'true', 'enabled', '1'):
         return True
-    elif value.lower() in ('n', 'no', 'false', 'disabled'):
+    elif value.lower() in ('n', 'no', 'false', 'disabled', '0'):
         return False
 
 
 def validate_to_none(value):
-    if not len(value) or value in ['0', 'unknown']:
+    if not len(value) or value in ('0', 'unknown'):
         return None
     return value
 

@@ -13,7 +13,9 @@ CHANGELOG
 - `bots.collectors.rt.collector_rt`: Log ticket id for downloaded reports.
 
 #### Parsers
-- `bots.parsers.shadowserver`: if required fields do not exist in data, an exception is raised, so the line will be dumped and not further processed.
+- `bots.parsers.shadowserver`:
+  - if required fields do not exist in data, an exception is raised, so the line will be dumped and not further processed.
+  - fix a bug in the parsing of column `cipher_suite` in ssl poodle reports (#1288).
 
 #### Experts
 - Reverse DNS Expert: ignore all invalid results and use first valid one (#1264).
@@ -31,6 +33,9 @@ CHANGELOG
 - Drop tests for Python 3.3 for the mode with all requirements, as some optional dependencies do not support Python 3.3 anymore.
 - `lib.test`: Add parameter `compare_raw` (default: `True`) to `assertMessageEqual`, to optionally skip the comparison of the raw field.
 - Add tests for RT collector.
+- Add tests for Shadowserver Parser:
+  - SSL Poodle Reports.
+  - Helper functions.
 
 ### Tools
 - `intelmqctl list` now sorts the output of bots and queues (#1262).
