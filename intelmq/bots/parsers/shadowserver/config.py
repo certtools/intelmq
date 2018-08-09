@@ -133,13 +133,12 @@ def convert_http_host_and_url(value, row):
     Sinkhole-HTTP-Drone: http_host, url
     With some reports, url/http_url holds only the path, with others the full HTTP request.
     """
-    hostname = ""
     if "cc_dns" in row:
-        if row['cc_dns']:
-            hostname = row['cc_dns']
+        hostname = row.get('cc_dns', '')
     elif "http_host" in row:
-        if row['http_host']:
-            hostname = row['http_host']
+        hostname = row.get('http_host', '')
+    else:
+        hostname = ''
 
     if "url" in row:
         path = row.get('url', '')
