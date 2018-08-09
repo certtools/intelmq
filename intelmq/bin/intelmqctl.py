@@ -34,22 +34,22 @@ STATUSES = {
 }
 
 MESSAGES = {
-    'disabled': '%s is disabled.',
+    'disabled': 'Bot %s is disabled.',
     'starting': 'Starting %s...',
-    'running': '%s is running.',
-    'stopped': '%s is stopped.',
-    'stopping': 'Stopping %s...',
-    'reloading': 'Reloading %s ...',
-    'reloaded': '%s is reloaded.',
+    'running': 'Bot %s is running.',
+    'stopped': 'Bot %s is stopped.',
+    'stopping': 'Stopping bot %s...',
+    'reloading': 'Reloading bot %s ...',
+    'reloaded': 'Bot %s is reloaded.',
 }
 
 ERROR_MESSAGES = {
-    'starting': '%s failed to START.',
-    'running': '%s is still running.',
-    'stopped': '%s was NOT RUNNING.',
-    'stopping': '%s failed to STOP.',
-    'not found': '%s failed to START because the file cannot be found.',
-    'access denied': '%s failed to %s because of missing permissions.',
+    'starting': 'Bot %s failed to START.',
+    'running': 'Bot %s is still running.',
+    'stopped': 'Bot %s was NOT RUNNING.',
+    'stopping': 'Bot %s failed to STOP.',
+    'not found': 'Bot %s failed to START because the file cannot be found.',
+    'access denied': 'Bot %s failed to %s because of missing permissions.',
 }
 
 LOG_LEVEL = OrderedDict([
