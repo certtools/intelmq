@@ -99,9 +99,12 @@ The taxonomy can be automatically added by the taxonomy expert bot based on the 
 |intrusions|backdoor|This refers to hosts, which have been compromised and backdoored with a remote administration software or Trojan in the traditional sense.|
 |intrusions|compromised|This IOC refers to compromised system.|
 |intrusions|defacement|This IOC refers to hacktivism related activity.|
+|intrusions|unauthorized-login|A possibly infected device logged in to a remote device without authorization.|
+|intrusions|unauthorized-command|The possibly infected device sent unauthorized commands to a remote device with malicious intent.|
 |malicious code|botnet drone|This is a compromised machine, which has been observed to make a connection to a command and control server.|
 |malicious code|c&c|This is a command and control server in charge of a given number of botnet drones.|
 |malicious code|dga domain|DGA Domains are seen various families of malware that are used to periodically generate a large number of domain names that can be used as rendezvous points with their command and control servers.|
+|malicious code|infected system|This is a compromised machine, which has been observed to make a connection to a command and control server.|
 |malicious code|malware|A URL is the most common resource with reference to malware binary distribution.|
 |malicious code|malware configuration|This is a resource which updates botnet drones with a new configuration.|
 |malicious code|ransomware|This IOC refers to a specific type of compromised machine, where the computer has been hijacked for ransom by the criminals.|
@@ -111,6 +114,7 @@ The taxonomy can be automatically added by the taxonomy expert bot based on the 
 |other|tor|This IOC refers to incidents related to TOR network infrastructure.|
 |other|unknown|unknown events|
 |test|test|This is a value for testing purposes.|
+|vulnerable|vulnerable client|This attribute refers to a badly configured or vulnerable clients, which may be vulnerable and can be compromised by a third party. For example, not-up-to-date clients or client which are misconfigured, such as clients querying public domains for WPAD configurations. In addition, to specify the vulnerability and its potential abuse, one should use the classification.identifier, description and other attributes for that purpose respectively.|
 |vulnerable|vulnerable service|This attribute refers to a badly configured or vulnerable network service, which may be abused by a third party. For example, these services relate to open proxies, open dns resolvers, network time servers (NTP) or character generation services (chargen), simple network management services (SNMP). In addition, to specify the network service and its potential abuse, one should use the protocol, destination port and description attributes for that purpose respectively.|
 
 Meaning of source, destination and local values for each classification type and possible identifiers. The identifier is often a normalized malware name, grouping many variants.
@@ -129,6 +133,7 @@ Meaning of source, destination and local values for each classification type and
 |dropzone|*server hosting stolen data*||||
 |exploit|*hosting server*||||
 |ids alert|*triggering device*||||
+|infected system|*infected device*|*contacted c2c server*|||
 |malware|*infected device*||internal at source|zeus, palevo, feodo|
 |malware configuration|*infected device*||||
 |other||||||
@@ -140,6 +145,7 @@ Meaning of source, destination and local values for each classification type and
 |test||||||
 |unknown||||||
 |vulnerable service|*vulnerable device*||| heartbleed, openresolver, snmp |
+|vulnerable client|*vulnerable device*||| wpad |
 
 Field in italics is the interesting one for CERTs.
 

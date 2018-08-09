@@ -13,6 +13,7 @@ Harmonization field names
 |Destination|destination.allocated|[DateTime](#datetime)|Allocation date corresponding to BGP prefix.|
 |Destination|destination.as_name|[String](#string)|The autonomous system name to which the connection headed.|
 |Destination|destination.asn|[ASN](#asn)|The autonomous system number to which the connection headed.|
+|Destination|destination.domain_suffix|[FQDN](#fqdn)|The suffix of the domain from the public suffix list.|
 |Destination|destination.fqdn|[FQDN](#fqdn)|A DNS name related to the host from which the connection originated. DNS allows even binary data in DNS, so we have to allow everything. A final point is stripped, string is converted to lower case characters.|
 |Destination Geolocation|destination.geolocation.cc|[UppercaseString](#uppercasestring)|Country-Code according to ISO3166-1 alpha-2 for the destination IP.|
 |Destination Geolocation|destination.geolocation.city|[String](#string)|Some geolocation services refer to city-level geolocation.|
@@ -60,6 +61,7 @@ Harmonization field names
 |Source|source.allocated|[DateTime](#datetime)|Allocation date corresponding to BGP prefix.|
 |Source|source.as_name|[String](#string)|The autonomous system name from which the connection originated.|
 |Source|source.asn|[ASN](#asn)|The autonomous system number from which originated the connection.|
+|Source|source.domain_suffix|[FQDN](#fqdn)|The suffix of the domain from the public suffix list.|
 |Source|source.fqdn|[FQDN](#fqdn)|A DNS name related to the host from which the connection originated. DNS allows even binary data in DNS, so we have to allow everything. A final point is stripped, string is converted to lower case characters.|
 |Source Geolocation|source.geolocation.cc|[UppercaseString](#uppercasestring)|Country-Code according to ISO3166-1 alpha-2 for the source IP.|
 |Source Geolocation|source.geolocation.city|[String](#string)|Some geolocation services refer to city-level geolocation.|
@@ -83,6 +85,7 @@ Harmonization field names
 | |status|[String](#string)|Status of the malicious resource (phishing, dropzone, etc), e.g. online, offline.|
 |Time|time.observation|[DateTime](#datetime)|The time a source bot saw the event. This timestamp becomes especially important should you perform your own attribution on a host DNS name for example. The mechanism to denote the attributed elements with reference to the source provided is detailed below in Reported Identity IOC.(ISO8660).|
 |Time|time.source|[DateTime](#datetime)|Time reported by a source. Some sources only report a date, which may be used here if there is no better observation.|
+| |tlp|[TLP](#tlp)|Traffic Light Protocol level of the event.|
 
 
 Harmonization types
@@ -133,6 +136,7 @@ classification.type type. Allowed values are:
  * dropzone
  * exploit
  * ids alert
+ * infected system
  * leak
  * malware
  * malware configuration
@@ -144,7 +148,10 @@ classification.type type. Allowed values are:
  * spam
  * test
  * tor
+ * unauthorized-login
+ * unauthorized-command
  * unknown
+ * vulnerable client
  * vulnerable service
 
 ### DateTime
@@ -239,6 +246,15 @@ RIPE-NCC and RIPENCC are normalized to RIPE.
 Any non-empty string without leading or trailing whitespace.
 
 
+### TLP
+
+TLP level type. Derived from UppercaseString.
+
+Only valid values: WHITE, GREEN, AMBER, RED.
+
+Accepted for sanitation are different cases and the prefix 'tlp:'.
+
+
 ### URL
 
 URI type. Local and remote.
@@ -254,6 +270,5 @@ Valid values must have the host (network location part).
 Like string, but only allows upper case characters.
 
 Sanitation uppers all characters.
-
 
 

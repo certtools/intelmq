@@ -8,12 +8,14 @@ import io
 import json
 import logging
 import os
+import psutil
 import re
 import signal
 import sys
 import time
 import traceback
 import types
+import warnings
 
 from intelmq import (DEFAULT_LOGGING_PATH, DEFAULTS_CONF_FILE,
                      HARMONIZATION_CONF_FILE, PIPELINE_CONF_FILE,
@@ -40,6 +42,8 @@ class Bot(object):
     group = None
     module = None
     name = None
+
+    _message_processed_verb = 'Processed'
 
     def __init__(self, bot_id: str):
         self.__log_buffer = []
@@ -131,9 +135,9 @@ class Bot(object):
     def shutdown(self):
         pass
 
-    def start(self, starting: bool=True, error_on_pipeline: bool=True,
-              error_on_message: bool=False, source_pipeline: Optional[str]=None,
-              destination_pipeline: Optional[str]=None):
+    def start(self, starting: bool = True, error_on_pipeline: bool = True,
+              error_on_message: bool = False, source_pipeline: Optional[str] = None,
+              destination_pipeline: Optional[str] = None):
 
         self.__source_pipeline = source_pipeline
         self.__destination_pipeline = destination_pipeline
@@ -278,20 +282,26 @@ class Bot(object):
             self.__handle_sighup()
             remaining = self.parameters.rate_limit - (time.time() - starttime)
 
-    def stop(self, exitcode: int=1):
+    def stop(self, exitcode: int = 1):
         try:
             self.shutdown()
         except BaseException:
             self.logger.exception('Error during shutdown of bot.')
 
         if self.__message_counter:
-            self.logger.info("Processed %d messages since last logging.", self.__message_counter)
+            self.logger.info("%s %d messages since last logging.",
+                             self._message_processed_verb,
+                             self.__message_counter)
 
         self.__disconnect_pipelines()
 
         if self.logger:
             self.logger.info("Bot stopped.")
             logging.shutdown()
+            # Bots using threads that do not exit properly, see #970
+            if self.__class__.__name__ in ['XMPPCollectorBot', 'XMPPOutputBot']:
+                proc = psutil.Process(os.getpid())
+                proc.send_signal(signal.SIGTERM)
         else:
             self.__log_buffer.append(('info', 'Bot stopped.'))
             self.__print_log_buffer()
@@ -310,11 +320,11 @@ class Bot(object):
         self.__log_buffer = []
 
     def __check_bot_id(self, name: str):
-        res = re.search('[^0-9a-zA-Z\-]+', name)
+        res = re.search(r'[^0-9a-zA-Z\-]+', name)
         if res:
             self.__log_buffer.append(('error',
                                       "Invalid bot id, must match '"
-                                      "[^0-9a-zA-Z\-]+'."))
+                                      r"[^0-9a-zA-Z\-]+'."))
             self.stop()
 
     def __connect_pipelines(self):
@@ -349,7 +359,12 @@ class Bot(object):
             self.__destination_pipeline = None
             self.logger.debug("Disconnected from destination pipeline.")
 
-    def send_message(self, *messages, path="_default"):
+    def send_message(self, *messages, path="_default", auto_add=None):
+        """
+        Parameters:
+            messages: Instances of intelmq.lib.message.Message class
+            auto_add: ignored
+        """
         for message in messages:
             if not message:
                 self.logger.warning("Ignoring empty message at sending. Possible bug in bot.")
@@ -419,8 +434,8 @@ class Bot(object):
 
         dump_file = os.path.join(self.parameters.logging_path, self.__bot_id + ".dump")
 
-        new_dump_data = dict()
-        new_dump_data[timestamp] = dict()
+        new_dump_data = {}
+        new_dump_data[timestamp] = {}
         new_dump_data[timestamp]["bot_id"] = self.__bot_id
         new_dump_data[timestamp]["source_queue"] = self.__source_queues
         new_dump_data[timestamp]["traceback"] = error_traceback
@@ -773,7 +788,13 @@ class CollectorBot(Bot):
         return True
 
     def __add_report_fields(self, report: dict):
-        report.add("feed.name", self.parameters.feed)
+        if hasattr(self.parameters, 'feed'):
+            report.add("feed.name", self.parameters.feed)
+            warnings.warn("The parameter 'feed' is deprecated and will be "
+                          "removed in version 2.0. Use 'name' instead.",
+                          DeprecationWarning)
+        else:
+            report.add("feed.name", self.parameters.name)
         if hasattr(self.parameters, 'code'):
             report.add("feed.code", self.parameters.code)
         if hasattr(self.parameters, 'documentation'):
@@ -783,10 +804,16 @@ class CollectorBot(Bot):
         report.add("feed.accuracy", self.parameters.accuracy)
         return report
 
-    def send_message(self, *messages):
+    def send_message(self, *messages, path="_default", auto_add=True):
+        """"
+        Parameters:
+            messages: Instances of intelmq.lib.message.Message class
+            auto_add: Add some default report fields form parameters
+        """
         messages = filter(self.__filter_empty_report, messages)
-        messages = map(self.__add_report_fields, messages)
-        super(CollectorBot, self).send_message(*messages)
+        if auto_add:
+            messages = map(self.__add_report_fields, messages)
+        super(CollectorBot, self).send_message(*messages, path=path)
 
     def new_report(self):
         return libmessage.Report()

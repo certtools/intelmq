@@ -24,8 +24,7 @@ class TorExpertBot(Bot):
                     self.database.add(line)
 
         except IOError:
-            self.logger.critical("TOR rule not defined or failed on open.")
-            self.stop()
+            raise ValueError("TOR rule not defined or failed on open.")
 
         self.overwrite = getattr(self.parameters, 'overwrite', False)
 

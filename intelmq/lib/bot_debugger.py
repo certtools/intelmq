@@ -12,9 +12,7 @@ Depending on the subcommand received, the class either
  * processes single message, either injected or from default pipeline (process subcommand)
  * reads the message from input pipeline or send a message to output pipeline (message subcommand)
 """
-import inspect
 import json
-import logging
 import sys
 import time
 from importlib import import_module
@@ -31,32 +29,33 @@ class BotDebugger:
     '{"source.network": "178.72.192.0/18", "time.observation": "2017-05-12T05:23:06+00:00"}' """
 
     load_configuration = utils.load_configuration
-    logging_level = "DEBUG"
-    init_log_level = {"console": logging.DEBUG, "message": logging.WARNING, "process": logging.INFO, None: logging.INFO}
+    logging_level = None
 
     def __init__(self, runtime_configuration, bot_id, run_subcommand=None, console_type=None,
-                 message_kind=None, dryrun=None, msg=None, show=None):
+                 message_kind=None, dryrun=None, msg=None, show=None, loglevel=None):
         self.runtime_configuration = runtime_configuration
-        self.leverageLogger(level=self.init_log_level[run_subcommand])
         module = import_module(self.runtime_configuration['module'])
+
+        if loglevel:
+            self.leverageLogger(loglevel)
+        elif run_subcommand == "console":
+            self.leverageLogger("DEBUG")
+
         bot = getattr(module, 'BOT')
         if run_subcommand == "message":
             bot.init = lambda *args: None
         self.instance = bot(bot_id)
 
         if not run_subcommand:
-            self.leverageLogger(logging.DEBUG)
             self.instance.start()
         else:
             self.instance._Bot__connect_pipelines()
             if run_subcommand == "console":
                 self._console(console_type)
             elif run_subcommand == "message":
-                self.leverageLogger(logging.INFO)
                 self._message(message_kind, msg)
                 return
             elif run_subcommand == "process":
-                self.leverageLogger(logging.DEBUG)
                 self._process(dryrun, msg, show)
             else:
                 print("Subcommand {} not known.".format(run_subcommand))
@@ -66,7 +65,7 @@ class BotDebugger:
         for console in consoles:
             try:
                 module = import_module(console)
-            except Exception as exc:
+            except Exception:
                 pass
             else:
                 if console_type and console != console_type:
@@ -84,6 +83,10 @@ class BotDebugger:
 
     def _message(self, message_action_kind, msg):
         if message_action_kind == "send":
+            if self.instance.group == "Output":
+                self.instance.logger.warning("Output bots can't send messages.")
+                return
+
             if not bool(self.instance._Bot__destination_queues):
                 self.instance.logger.warning("Bot has no destination queues.")
                 return
@@ -127,10 +130,7 @@ class BotDebugger:
 
         if show:
             fn = self.instance.send_message
-            if self.instance.group == "Collector":
-                self.instance.send_message = lambda msg: [self.pprint(msg), fn(msg)]
-            else:
-                self.instance.send_message = lambda msg, path="_default": [self.pprint(msg), fn(msg, path=path)]
+            self.instance.send_message = lambda msg, path="_default": [self.pprint(msg), fn(msg, path=path)]
 
         self.instance.logger.info("Processing...")
         self.instance.process()
@@ -159,7 +159,7 @@ class BotDebugger:
     @staticmethod
     def load_configuration_patch(*args, **kwargs):
         d = BotDebugger.load_configuration(*args, **kwargs)
-        if "logging_level" in d:
+        if "logging_level" in d and BotDebugger.logging_level:
             d["logging_level"] = BotDebugger.logging_level
         return d
 

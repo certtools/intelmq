@@ -17,8 +17,7 @@ class UDPBot(Bot):
         self.keep_raw_field = bool(self.parameters.keep_raw_field)
         self.format = self.parameters.format.lower()
         if self.format not in ['json', 'delimited']:
-            self.logger.error('Unknown format %r given. Check your configuration.', self.format)
-            self.stop()
+            raise ValueError('Unknown format %r given. Check your configuration.' % self.format)
 
     def process(self):
         event = self.receive_message()

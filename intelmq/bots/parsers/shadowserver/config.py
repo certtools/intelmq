@@ -48,6 +48,7 @@ import re
 def get_feed(feedname, logger):
     # TODO should this be case insensitive?
     feed_idx = {
+        "Accessible-Hadoop": accessible_hadoop,
         "Accessible-Cisco-Smart-Install": accessible_cisco_smart_install,
         "Accessible-CWMP": accessible_cwmp,
         "Accessible-RDP": accessible_rdp,
@@ -57,6 +58,7 @@ def get_feed(feedname, logger):
         "Blacklisted-IP": blacklisted_ip,
         "Compromised-Website": compromised_website,
         "DNS-Open-Resolvers": dns_open_resolvers,
+        "Drone-Brute-Force": drone_brute_force,
         "Drone": drone,
         "Microsoft-Sinkhole": microsoft_sinkhole,
         "NTP-Monitor": ntp_monitor,
@@ -81,6 +83,7 @@ def get_feed(feedname, logger):
         "Open-XDMCP": open_xdmcp,
         "Sandbox-URL": sandbox_url,
         "Sinkhole-HTTP-Drone": sinkhole_http_drone,
+        "IPv6-Sinkhole-HTTP-Drone": ipv6_sinkhole_http_drone,
         "Spam-URL": spam_url,
         "SSL-FREAK-Vulnerable-Servers": ssl_freak_vulnerable_servers,
         "SSL-POODLE-Vulnerable-Servers": ssl_poodle_vulnerable_servers,
@@ -135,37 +138,43 @@ def convert_float(value):
         return float(value)
 
 
-def convert_hostname_and_url(value, row):
+def convert_http_host_and_url(value, row):
     """
-    URLs are split into hostname and path, we can also guess the protocol here.
-    but only guess if the protocol is in a set of known good values.
-    """
-    if row['application'] in ['http', 'https', 'irc']:
-        if row['hostname'] and row['url']:
-            url = row['url'] if row['url'].startswith('/') else '/' + row['url']
-            return row['application'] + '://' + row['hostname'] + url
-
-        elif row['hostname'] and not row['url']:
-            return row['application'] + '://' + row['hostname']
-
-    return value
-
-
-def convert_httphost_and_url(value, row):
-    """
-    URLs are split into hostname and path, we can also guess the protocol here.
+    URLs are split into hostname and path. The column names differ in reports.
+    Compromised-Website: http_host, url
+    Drone: cc_dns, url
+    IPv6-Sinkhole-HTTP-Drone: http_host, http_url
+    Microsoft-Sinkhole: http_host, url
+    Sinkhole-HTTP-Drone: http_host, url
     With some reports, url/http_url holds only the path, with others the full HTTP request.
     """
+    hostname = ""
+    if "cc_dns" in row:
+        if row['cc_dns']:
+            hostname = row['cc_dns']
+    elif "http_host" in row:
+        if row['http_host']:
+            hostname = row['http_host']
+
     if "url" in row:
-        if row['http_host'] and row['url']:
-            path = re.sub(r'^[^/]*', '', row['url'])
-            path = re.sub(r'\s.*$', '', path)
-            return 'http://' + row['http_host'] + path
+        path = row.get('url', '')
     elif "http_url" in row:
-        if row['http_host'] and row['http_url']:
-            path = re.sub(r'^[^/]*', '', row['http_url'])
-            path = re.sub(r'\s.*$', '', path)
-            return 'http://' + row['http_host'] + path
+        path = row.get('http_url', '')
+    else:
+        path = ''
+
+    if hostname and path:
+        # remove potential leading/trailing HTTP request information
+        path = re.sub(r'^[^/]*', '', path)
+        path = re.sub(r'\s.*$', '', path)
+
+        application = "http"
+        if "application" in row:
+            if row['application'] in ['http', 'https']:
+                application = row['application']
+
+        return application + "://" + hostname + path
+
     return value
 
 
@@ -196,6 +205,10 @@ def validate_ip(value):
 def validate_fqdn(value):
     if value and harmonization.FQDN.is_valid(value, sanitize=True):
         return value
+
+
+def convert_date(value):
+    return harmonization.DateTime.sanitize(value)
 
 
 # https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-mDNS
@@ -308,6 +321,7 @@ sinkhole_http_drone = {
     'optional_fields': [
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
+        ('destination.url', 'url', convert_http_host_and_url, True),
         ('malware.name', 'type'),
         ('user_agent', 'http_agent'),
         ('source.tor_node', 'tor', set_tor_node),
@@ -334,8 +348,50 @@ sinkhole_http_drone = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'malicious code',
-        'classification.type': 'botnet drone',
-        'classification.identifier': 'infected system',
+        'classification.type': 'infected system',
+        # classification.identifier will be set to (harmonized) malware name by modify expert
+        # The feed does not include explicit information on the protocol
+        # but since it is about HTTP the protocol is always set to 'tcp'.
+        'protocol.transport': 'tcp',
+        'protocol.application': 'http',
+    },
+}
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Sinkhole6-HTTP-Drone
+ipv6_sinkhole_http_drone = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'src_ip'),
+        ('source.port', 'src_port')
+    ],
+    'optional_fields': [
+        ('source.asn', 'src_asn'),
+        ('source.geolocation.cc', 'src_geo'),
+        ('source.geolocation.region', 'src_region'),
+        ('destination.ip', 'dst_ip', validate_ip),
+        ('destination.asn', 'dst_asn'),
+        ('destination.geolocation.cc', 'dst_geo'),
+        ('destination.geolocation.region', 'dst_region'),
+        ('destination.port', 'dst_port'),
+        ('protocol.transport', 'protocol'),
+        ('malware.name', 'tag'),
+        ('source.reverse_dns', 'hostname'),
+        ('extra.', 'sysdesc', validate_to_none),
+        ('extra.', 'sysname', validate_to_none),
+        ('destination.url', 'http_url', convert_http_host_and_url, True),
+        ('extra.', 'http_agent', validate_to_none),
+        ('destination.fqdn', 'http_host'),
+        ('extra.', 'http_referer', validate_to_none),
+        ('extra.', 'http_referer_ip', validate_to_none),
+        ('extra.', 'http_referer_asn', validate_to_none),
+        ('extra.', 'http_referer_geo', validate_to_none),
+        ('extra.', 'http_referer_region', validate_to_none),
+        ('extra.', 'forwarded_by', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'malicious code',
+        'classification.type': 'infected system',
+        # classification.identifier will be set to (harmonized) malware name by modify expert
         # The feed does not include explicit information on the protocol
         # but since it is about HTTP the protocol is always set to 'tcp'.
         'protocol.transport': 'tcp',
@@ -352,7 +408,7 @@ microsoft_sinkhole = {
     'optional_fields': [
         ('source.asn', 'asn'),
         ('source.geolocation.cc', 'geo'),
-        ('destination.url', 'url', convert_httphost_and_url, True),
+        ('destination.url', 'url', convert_http_host_and_url, True),
         ('malware.name', 'type'),
         ('user_agent', 'http_agent'),
         ('source.tor_node', 'tor', set_tor_node),
@@ -379,8 +435,8 @@ microsoft_sinkhole = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'malicious code',
-        'classification.type': 'botnet drone',
-        'classification.identifier': 'infected system',
+        'classification.type': 'infected system',
+        # classification.identifier will be set to (harmonized) malware name by modify expert
         'protocol.transport': 'tcp',
         'protocol.application': 'http',
     },
@@ -850,7 +906,23 @@ ssl_freak_vulnerable_servers = {
         ('extra.', 'sha256_fingerprint', validate_to_none),
         ('extra.', 'sha512_fingerprint', validate_to_none),
         ('extra.', 'md5_fingerprint', validate_to_none),
-        ('extra.', 'device_serial', validate_to_none),
+        ('extra.', 'http_response_type', validate_to_none),
+        ('extra.', 'http_code', convert_int),
+        ('extra.', 'http_reason', validate_to_none),
+        ('extra.', 'content_type', validate_to_none),
+        ('extra.', 'http_connection', validate_to_none),
+        ('extra.', 'www_authenticate', validate_to_none),
+        ('extra.', 'set_cookie', validate_to_none),
+        ('extra.', 'server_type', validate_to_none),
+        ('extra.', 'content_length', validate_to_none),
+        ('extra.', 'transfer_encoding', validate_to_none),
+        ('extra.', 'http_date', convert_date),
+        ('extra.', 'cert_valid', convert_bool),
+        ('extra.', 'self_signed', convert_bool),
+        ('extra.', 'cert_expired', convert_bool),
+        ('extra.', 'browser_trusted', convert_bool),
+        ('extra.', 'validation_level', validate_to_none),
+        ('extra.', 'browser_error', validate_to_none),
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
@@ -875,6 +947,7 @@ ssl_poodle_vulnerable_servers = {
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
+        ('extra.', 'cipher_suite', convert_bool),
         ('extra.', 'ssl_poodle', convert_bool),
         ('extra.', 'cert_length', validate_to_none),
         ('extra.', 'subject_common_name', validate_to_none),
@@ -916,7 +989,23 @@ ssl_poodle_vulnerable_servers = {
         ('extra.', 'sha256_fingerprint', validate_to_none),
         ('extra.', 'sha512_fingerprint', validate_to_none),
         ('extra.', 'md5_fingerprint', validate_to_none),
-        ('extra.', 'device_serial', validate_to_none),
+        ('extra.', 'http_response_type', validate_to_none),
+        ('extra.', 'http_code', convert_int),
+        ('extra.', 'http_reason', validate_to_none),
+        ('extra.', 'content_type', validate_to_none),
+        ('extra.', 'http_connection', validate_to_none),
+        ('extra.', 'www_authenticate', validate_to_none),
+        ('extra.', 'set_cookie', validate_to_none),
+        ('extra.', 'server_type', validate_to_none),
+        ('extra.', 'content_length', validate_to_none),
+        ('extra.', 'transfer_encoding', validate_to_none),
+        ('extra.', 'http_date', convert_date),
+        ('extra.', 'cert_valid', convert_bool),
+        ('extra.', 'self_signed', convert_bool),
+        ('extra.', 'cert_expired', convert_bool),
+        ('extra.', 'browser_trusted', convert_bool),
+        ('extra.', 'validation_level', validate_to_none),
+        ('extra.', 'browser_error', validate_to_none),
     ],
     'constant_fields': {
         'classification.taxonomy': 'vulnerable',
@@ -975,7 +1064,7 @@ drone = {
         ('source.reverse_dns', 'hostname'),
         ('protocol.transport', 'type'),
         ('malware.name', 'infection'),
-        ('destination.url', 'url', convert_hostname_and_url, True),
+        ('destination.url', 'url', convert_http_host_and_url, True),
         ('user_agent', 'agent'),
         ('destination.ip', 'cc_ip', validate_ip),
         ('destination.port', 'cc_port'),
@@ -1002,8 +1091,8 @@ drone = {
     ],
     'constant_fields': {
         'classification.taxonomy': 'malicious code',
-        'classification.type': 'botnet drone',
-        'classification.identifier': 'infected system',
+        'classification.type': 'infected system',
+        # classification.identifier will be set to (harmonized) malware name by modify expert
     },
 }
 
@@ -1052,7 +1141,7 @@ compromised_website = {
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
-        ('source.url', 'url', convert_hostname_and_url, True),
+        ('source.url', 'url', convert_http_host_and_url, True),
         ('source.fqdn', 'http_host', validate_fqdn),
         ('event_description.text', 'category'),
         ('extra.', 'system', validate_to_none),
@@ -1527,4 +1616,77 @@ accessible_cisco_smart_install = {
     }
 }
 
-#
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Drone-BruteForce
+drone_brute_force = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('source.reverse_dns', 'hostname'),
+        ('destination.ip', 'dest_ip', validate_ip),
+        ('destination.port', 'dest_port'),
+        ('destination.asn', 'dest_asn'),
+        ('destination.geolocation.cc', 'dest_geo'),
+        ('destination.fqdn', 'dest_dns'),
+        ('protocol.application', 'service'),
+        ('classification.identifier', 'service'),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.destination.naics', 'dest_naics', invalidate_zero),
+        ('extra.destination.sic', 'dest_sic', invalidate_zero),
+        ('extra.', 'sector', validate_to_none),
+        ('extra.destination.sector', 'dest_sector', validate_to_none),
+        ('extra.', 'public_source', validate_to_none),
+        ('extra.', 'start_time', validate_to_none),
+        ('extra.', 'end_time', validate_to_none),
+        ('extra.', 'client_version', validate_to_none),
+        ('destination.account', 'username', validate_to_none),
+        ('extra.', 'password', validate_to_none),
+        ('extra.', 'payload_url', validate_to_none),
+        ('extra.', 'payload_md5', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'intrusion attempts',
+        'classification.type': 'brute-force',
+    }
+}
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Accessible-Hadoop
+accessible_hadoop = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('source.reverse_dns', 'hostname'),
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'version', validate_to_none),
+        ('extra.', 'server_type', validate_to_none),
+        ('extra.', 'clusterid', validate_to_none),
+        ('extra.', 'total_disk', invalidate_zero),
+        ('extra.', 'used_disk', invalidate_zero),
+        ('extra.', 'free_disk', invalidate_zero),
+        ('extra.', 'livenodes', validate_to_none),
+        ('extra.', 'namenodeaddress', validate_to_none),
+        ('extra.', 'volumeinfo', validate_to_none),
+    ],
+    'constant_fields': {
+        'protocol.application': 'hadoop',
+        'protocol.transport': 'tcp',
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
+        'classification.identifier': 'accessible-hadoop',
+    }
+}
