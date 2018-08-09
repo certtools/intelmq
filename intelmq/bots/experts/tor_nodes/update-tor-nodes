@@ -35,8 +35,7 @@ cleanup()
 fetch_and_install()
 {
   cd "$TMP_DIR"
-  curl -s -S -O https://internet2.us/static/latest.bz2
-  bunzip2 -q -c latest.bz2 >tor_nodes.dat
+  curl -s -S https://check.torproject.org/exit-addresses | awk '/ExitAddress/ {print $2}' > tor_nodes.dat
   mv -f tor_nodes.dat "$DEST_FILE"
 }
 
