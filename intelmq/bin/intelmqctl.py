@@ -10,6 +10,7 @@ import signal
 import subprocess
 import sys
 import time
+from collections import OrderedDict
 
 import pkg_resources
 import psutil
@@ -51,22 +52,24 @@ ERROR_MESSAGES = {
     'access denied': '%s failed to %s because of missing permissions.',
 }
 
-LOG_LEVEL = {
-    'DEBUG': 0,
-    'INFO': 1,
-    'WARNING': 2,
-    'ERROR': 3,
-    'CRITICAL': 4,
-}
+LOG_LEVEL = OrderedDict([
+    ('DEBUG', 0),
+    ('INFO', 1),
+    ('WARNING', 2),
+    ('ERROR', 3),
+    ('CRITICAL', 4),
+])
 
 RETURN_TYPES = ['text', 'json']
 RETURN_TYPE = None
 QUIET = False
 
+BOT_GROUP = {"collectors": "Collector", "parsers": "Parser", "experts": "Expert", "outputs": "Output"}
+
 
 def log_list_queues(queues):
     if RETURN_TYPE == 'text':
-        for queue, counter in sorted(queues.items()):
+        for queue, counter in sorted(queues.items(), key=lambda x: str.lower(x[0])):
             if counter or not QUIET:
                 logger.info("%s - %s", queue, counter)
 
@@ -83,16 +86,19 @@ def log_bot_message(status, *args):
         logger.info(MESSAGES[status], *args)
 
 
-def log_botnet_error(status):
+def log_botnet_error(status, group=None):
     if RETURN_TYPE == 'text':
-        logger.error(ERROR_MESSAGES[status], 'Botnet')
+        logger.error(ERROR_MESSAGES[status], BOT_GROUP[group] + (" group" if group else ""))
 
 
-def log_botnet_message(status):
+def log_botnet_message(status, group=None):
     if QUIET:
         return
     if RETURN_TYPE == 'text':
-        logger.info(MESSAGES[status], 'Botnet')
+        if group:
+            logger.info(MESSAGES[status], BOT_GROUP[group] + " group")
+        else:
+            logger.info(MESSAGES[status], 'Botnet')
 
 
 def log_log_messages(messages):
@@ -123,7 +129,7 @@ class IntelMQProcessManager:
                                   'created: %s.', self.PIDDIR, exc)
 
     def bot_run(self, bot_id, run_subcommand=None, console_type=None, message_action_kind=None, dryrun=None, msg=None,
-                show_sent=None):
+                show_sent=None, loglevel=None):
         pid = self.__check_pid(bot_id)
         module = self.__runtime_configuration[bot_id]['module']
         if pid and self.__status_process(pid, module):
@@ -143,7 +149,8 @@ class IntelMQProcessManager:
 
         try:
             BotDebugger(self.__runtime_configuration[bot_id], bot_id, run_subcommand,
-                        console_type, message_action_kind, dryrun, msg, show_sent)
+                        console_type, message_action_kind, dryrun, msg, show_sent,
+                        loglevel=loglevel)
             retval = 0
         except KeyboardInterrupt:
             print('Keyboard interrupt.')
@@ -346,9 +353,10 @@ class IntelMQController():
 
         Outputs are logged to /opt/intelmq/var/log/intelmqctl"""
         EPILOG = '''
+        intelmqctl [start|stop|restart|status|reload] --group [collectors|parsers|experts|outputs]
         intelmqctl [start|stop|restart|status|reload] bot-id
         intelmqctl [start|stop|restart|status|reload]
-        intelmqctl list [bots|queues]
+        intelmqctl list [bots|queues|queues-and-status]
         intelmqctl log bot-id [number-of-lines [log-level]]
         intelmqctl run bot-id message [get|pop|send]
         intelmqctl run bot-id process [--msg|--dryrun]
@@ -360,6 +368,8 @@ Starting a bot:
     intelmqctl start bot-id
 Stopping a bot:
     intelmqctl stop bot-id
+Reloading a bot:
+    intelmqctl reload bot-id
 Restarting a bot:
     intelmqctl restart bot-id
 Get status of a bot:
@@ -378,6 +388,10 @@ Starting the botnet (all bots):
     intelmqctl start
     etc.
 
+Starting a group of bots:
+    intelmqctl start --group experts
+    etc.
+
 Get a list of all configured bots:
     intelmqctl list bots
 If -q is given, only the IDs of enabled bots are listed line by line.
@@ -385,6 +399,9 @@ If -q is given, only the IDs of enabled bots are listed line by line.
 Get a list of all queues:
     intelmqctl list queues
 If -q is given, only queues with more than one item are listed.
+
+Get a list of all queues and status of the bots:
+    intelmqctl list queues-and-status
 
 Clear a queue:
     intelmqctl clear queue-id
@@ -445,7 +462,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             subparsers = parser.add_subparsers(title='subcommands')
 
             parser_list = subparsers.add_parser('list', help='Listing bots or queues')
-            parser_list.add_argument('kind', choices=['bots', 'queues'])
+            parser_list.add_argument('kind', choices=['bots', 'queues', 'queues-and-status'])
             parser_list.add_argument('--quiet', '-q', action='store_const',
                                      help='Only list non-empty queues '
                                           'or the IDs of enabled bots.',
@@ -468,6 +485,9 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             parser_run = subparsers.add_parser('run', help='Run a bot interactively')
             parser_run.add_argument('bot_id',
                                     choices=self.runtime_configuration.keys())
+            parser_run.add_argument('--loglevel', '-l',
+                                    nargs='?', default=None,
+                                    choices=LOG_LEVEL.keys())
             parser_run_subparsers = parser_run.add_subparsers(title='run-subcommands')
 
             parser_run_console = parser_run_subparsers.add_parser('console', help='Get a ipdb live console.')
@@ -501,6 +521,9 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             parser_check.add_argument('--quiet', '-q', action='store_const',
                                       help='Only print warnings and errors.',
                                       const=True)
+            parser_check.add_argument('--no-connections', '-C', action='store_const',
+                                      help='Do not test the connections to services like redis.',
+                                      const=True)
             parser_check.set_defaults(func=self.check)
 
             parser_help = subparsers.add_parser('help',
@@ -510,26 +533,36 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             parser_start = subparsers.add_parser('start', help='Start a bot or botnet')
             parser_start.add_argument('bot_id', nargs='?',
                                       choices=self.runtime_configuration.keys())
+            parser_start.add_argument('--group', help='Start a group of bots',
+                                      choices=BOT_GROUP.keys())
             parser_start.set_defaults(func=self.bot_start)
 
             parser_stop = subparsers.add_parser('stop', help='Stop a bot or botnet')
             parser_stop.add_argument('bot_id', nargs='?',
                                      choices=self.runtime_configuration.keys())
+            parser_stop.add_argument('--group', help='Stop a group of bots',
+                                     choices=BOT_GROUP.keys())
             parser_stop.set_defaults(func=self.bot_stop)
 
             parser_restart = subparsers.add_parser('restart', help='Restart a bot or botnet')
             parser_restart.add_argument('bot_id', nargs='?',
                                         choices=self.runtime_configuration.keys())
+            parser_restart.add_argument('--group', help='Restart a group of bots',
+                                        choices=BOT_GROUP.keys())
             parser_restart.set_defaults(func=self.bot_restart)
 
             parser_reload = subparsers.add_parser('reload', help='Reload a bot or botnet')
             parser_reload.add_argument('bot_id', nargs='?',
                                        choices=self.runtime_configuration.keys())
+            parser_reload.add_argument('--group', help='Reload a group of bots',
+                                       choices=BOT_GROUP.keys())
             parser_reload.set_defaults(func=self.bot_reload)
 
             parser_status = subparsers.add_parser('status', help='Status of a bot or botnet')
             parser_status.add_argument('bot_id', nargs='?',
                                        choices=self.runtime_configuration.keys())
+            parser_status.add_argument('--group', help='Get status of a group of bots',
+                                       choices=BOT_GROUP.keys())
             parser_status.set_defaults(func=self.bot_status)
 
             parser_status = subparsers.add_parser('enable', help='Enable a bot')
@@ -572,9 +605,9 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
     def bot_run(self, **kwargs):
         return self.bot_process_manager.bot_run(**kwargs), None
 
-    def bot_start(self, bot_id, getstatus=True):
+    def bot_start(self, bot_id, getstatus=True, group=None):
         if bot_id is None:
-            return self.botnet_start()
+            return self.botnet_start(group=group)
         else:
             status = self.bot_process_manager.bot_start(bot_id, getstatus)
             if status in ['running']:
@@ -582,9 +615,9 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             else:
                 return 1, status
 
-    def bot_stop(self, bot_id, getstatus=True):
+    def bot_stop(self, bot_id, getstatus=True, group=None):
         if bot_id is None:
-            return self.botnet_stop()
+            return self.botnet_stop(group=group)
         else:
             status = self.bot_process_manager.bot_stop(bot_id, getstatus)
             if status in ['stopped', 'disabled']:
@@ -592,9 +625,9 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             else:
                 return 1, status
 
-    def bot_reload(self, bot_id, getstatus=True):
+    def bot_reload(self, bot_id, getstatus=True, group=None):
         if bot_id is None:
-            return self.botnet_reload()
+            return self.botnet_reload(group=group)
         else:
             status = self.bot_process_manager.bot_reload(bot_id, getstatus)
             if status in ['running']:
@@ -602,17 +635,17 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             else:
                 return 1, status
 
-    def bot_restart(self, bot_id):
+    def bot_restart(self, bot_id, group=None):
         if bot_id is None:
-            return self.botnet_restart()
+            return self.botnet_restart(group=group)
         else:
             status_stop = self.bot_stop(bot_id)
             status_start = self.bot_start(bot_id)
-            return (status_stop, status_start)
+            return status_stop[0] | status_start[0], [status_stop[1], status_start[1]]
 
-    def bot_status(self, bot_id):
+    def bot_status(self, bot_id, group=None):
         if bot_id is None:
-            return self.botnet_status()
+            return self.botnet_status(group=group)
         else:
             status = self.bot_process_manager.bot_status(bot_id)
             if status in ['running', 'disabled']:
@@ -633,9 +666,13 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
     def _is_enabled(self, bot_id):
         return self.runtime_configuration[bot_id].get('enabled', True)
 
-    def botnet_start(self):
+    def botnet_start(self, group=None):
         botnet_status = {}
-        bots = sorted(self.runtime_configuration.keys())
+
+        if group:
+            bots = sorted(k_v[0] for k_v in filter(lambda x: x[1]["group"] == BOT_GROUP[group], self.runtime_configuration.items()))
+        else:
+            bots = sorted(self.runtime_configuration.keys())
         for bot_id in bots:
             if self.runtime_configuration[bot_id].get('enabled', True):
                 self.bot_start(bot_id, getstatus=False)
@@ -650,15 +687,20 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 botnet_status[bot_id] = self.bot_status(bot_id)[1]
                 if botnet_status[bot_id] not in ['running', 'disabled']:
                     retval = 1
-                    print(bot_id, botnet_status[bot_id])
+                    if RETURN_TYPE == 'text':
+                        print(bot_id, botnet_status[bot_id])
 
-        log_botnet_message('running')
+        log_botnet_message('running', group)
         return retval, botnet_status
 
-    def botnet_stop(self):
+    def botnet_stop(self, group=None):
         botnet_status = {}
-        log_botnet_message('stopping')
-        bots = sorted(self.runtime_configuration.keys())
+        log_botnet_message('stopping', group)
+
+        if group:
+            bots = sorted(k_v[0] for k_v in filter(lambda x: x[1]["group"] == BOT_GROUP[group], self.runtime_configuration.items()))
+        else:
+            bots = sorted(self.runtime_configuration.keys())
         for bot_id in bots:
             self.bot_stop(bot_id, getstatus=False)
 
@@ -669,13 +711,17 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             if botnet_status[bot_id] not in ['stopped', 'disabled']:
                 retval = 1
 
-        log_botnet_message('stopped')
+        log_botnet_message('stopped', group)
         return retval, botnet_status
 
-    def botnet_reload(self):
+    def botnet_reload(self, group=None):
         botnet_status = {}
-        log_botnet_message('reloading')
-        bots = sorted(self.runtime_configuration.keys())
+        log_botnet_message('reloading', group)
+
+        if group:
+            bots = sorted(k_v[0] for k_v in filter(lambda x: x[1]["group"] == BOT_GROUP[group], self.runtime_configuration.items()))
+        else:
+            bots = sorted(self.runtime_configuration.keys())
         for bot_id in bots:
             self.bot_reload(bot_id, getstatus=False)
 
@@ -685,20 +731,24 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             botnet_status[bot_id] = self.bot_status(bot_id)[1]
             if botnet_status[bot_id] not in ['running', 'disabled']:
                 retval = 1
-        log_botnet_message('reloaded')
+        log_botnet_message('reloaded', group)
         return retval, botnet_status
 
-    def botnet_restart(self):
-        retval_stop, _ = self.botnet_stop()
-        retval_start, status = self.botnet_start()
+    def botnet_restart(self, group=None):
+        retval_stop, _ = self.botnet_stop(group=group)
+        retval_start, status = self.botnet_start(group=group)
         if retval_stop > retval_start:  # In case the stop operation was not successful, exit 1
             retval_start = retval_stop
         return retval_start, status
 
-    def botnet_status(self):
+    def botnet_status(self, group=None):
         retval = 0
         botnet_status = {}
-        for bot_id in sorted(self.runtime_configuration.keys()):
+        if group:
+            bots = sorted(k_v[0] for k_v in filter(lambda x: x[1]["group"] == BOT_GROUP[group], self.runtime_configuration.items()))
+        else:
+            bots = sorted(self.runtime_configuration.keys())
+        for bot_id in bots:
             botnet_status[bot_id] = self.bot_status(bot_id)[1]
             if botnet_status[bot_id] not in ['running', 'disabled']:
                 retval = 1
@@ -709,6 +759,10 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             return self.list_queues()
         elif kind == 'bots':
             return self.list_bots()
+        elif kind == 'queues-and-status':
+            q = self.list_queues()
+            b = self.botnet_status()
+            return q[0] | b[0], [q[1], b[1]]
 
     def abort(self, message):
         if self.interactive:
@@ -733,7 +787,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         If description is not set, None is used instead.
         """
         if RETURN_TYPE == 'text':
-            for bot_id in sorted(self.runtime_configuration.keys()):
+            for bot_id in sorted(self.runtime_configuration.keys(), key=str.lower):
                 if QUIET and not self.runtime_configuration[bot_id].get('enabled'):
                     continue
                 if QUIET:
@@ -746,6 +800,12 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                    for bot_id in sorted(self.runtime_configuration.keys())]
 
     def get_queues(self):
+        """
+        :return: 4-tuple of source, destination, internal queues, and all queues combined.
+        The returned values are only queue names, not their paths. I.E. if there is a bot with
+        destination queues = {"_default": "one", "other": ["two", "three"]}, only set of {"one", "two", "three"} gets returned.
+        (Note that the "_default" path has single string and the "other" path has a list that gets flattened.)
+        """
         source_queues = set()
         destination_queues = set()
         internal_queues = set()
@@ -755,7 +815,8 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 source_queues.add(value['source-queue'])
                 internal_queues.add(value['source-queue'] + '-internal')
             if 'destination-queues' in value:
-                destination_queues.update(value['destination-queues'])
+                # flattens ["one", "two"] → {"one", "two"}, {"_default": "one", "other": ["two", "three"]} → {"one", "two", "three"}
+                destination_queues.update(utils.flatten_queues(value['destination-queues']))
 
         all_queues = source_queues.union(destination_queues).union(internal_queues)
 
@@ -770,9 +831,9 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         counters = pipeline.count_queued_messages(*all_queues)
         log_list_queues(counters)
 
-        return_dict = dict()
+        return_dict = {}
         for bot_id, info in self.pipeline_configuration.items():
-            return_dict[bot_id] = dict()
+            return_dict[bot_id] = {}
 
             if 'source-queue' in info:
                 return_dict[bot_id]['source_queue'] = (
@@ -780,10 +841,9 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 return_dict[bot_id]['internal_queue'] = counters[info['source-queue'] + '-internal']
 
             if 'destination-queues' in info:
-                return_dict[bot_id]['destination_queues'] = list()
-                for dest_queue in info['destination-queues']:
-                    return_dict[bot_id]['destination_queues'].append(
-                        (dest_queue, counters[dest_queue]))
+                return_dict[bot_id]['destination_queues'] = []
+                for dest_queue in utils.flatten_queues(info['destination-queues']):
+                    return_dict[bot_id]['destination_queues'].append((dest_queue, counters[dest_queue]))
 
         return 0, return_dict
 
@@ -838,7 +898,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             self.logger.error('File %r is not readable.', bot_log_path)
             return 1, 'error'
 
-        messages = list()
+        messages = []
 
         message_overflow = ''
         message_count = 0
@@ -874,7 +934,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         log_log_messages(messages[::-1])
         return 0, messages[::-1]
 
-    def check(self):
+    def check(self, no_connections=False):
         retval = 0
         if RETURN_TYPE == 'json':
             output = []
@@ -910,14 +970,18 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
             output.append(['info', 'Checking defaults configuration.'])
         else:
             self.logger.info('Checking defaults configuration.')
-        with open(pkg_resources.resource_filename('intelmq', 'etc/defaults.conf')) as fh:
-            defaults = json.load(fh)
-        keys = set(defaults.keys()) - set(files[DEFAULTS_CONF_FILE].keys())
-        if keys:
-            if RETURN_TYPE == 'json':
-                output.append(['error', "Keys missing in your 'defaults.conf' file: %r" % keys])
-            else:
-                self.logger.error("Keys missing in your 'defaults.conf' file: %r", keys)
+        try:
+            with open(pkg_resources.resource_filename('intelmq', 'etc/defaults.conf')) as fh:
+                defaults = json.load(fh)
+        except FileNotFoundError:
+            pass
+        else:
+            keys = set(defaults.keys()) - set(files[DEFAULTS_CONF_FILE].keys())
+            if keys:
+                if RETURN_TYPE == 'json':
+                    output.append(['error', "Keys missing in your 'defaults.conf' file: %r" % keys])
+                else:
+                    self.logger.error("Keys missing in your 'defaults.conf' file: %r", keys)
 
         if RETURN_TYPE == 'json':
             output.append(['info', 'Checking runtime configuration.'])
@@ -994,25 +1058,27 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                         retval = 1
                     else:
                         all_queues.add(files[PIPELINE_CONF_FILE][bot_id]['source-queue'])
-        try:
-            pipeline = PipelineFactory.create(self.parameters)
-            pipeline.set_queues(None, "source")
-            pipeline.connect()
-        except Exception as exc:
-            if RETURN_TYPE == 'json':
-                output.append(['error',
-                               'Could not connect to redis pipeline: %r.'
-                               '' % utils.error_message_from_exc(exc)])
-            else:
-                self.logger.exception('Could not connect to redis pipeline.')
-            retval = 1
-        else:
-            orphan_queues = "', '".join({a.decode() for a in pipeline.pipe.keys()} - all_queues)
-            if orphan_queues:
+                        all_queues.add(files[PIPELINE_CONF_FILE][bot_id]['source-queue'] + '-internal')
+        if not no_connections:
+            try:
+                pipeline = PipelineFactory.create(self.parameters)
+                pipeline.set_queues(None, "source")
+                pipeline.connect()
+                orphan_queues = "', '".join({a.decode() for a in pipeline.pipe.keys()} - all_queues)
+            except Exception as exc:
+                error = utils.error_message_from_exc(exc)
                 if RETURN_TYPE == 'json':
-                    output.append(['warning', "Orphaned queues found: '%s'." % orphan_queues])
+                    output.append(['error',
+                                   'Could not connect to redis pipeline: %s' % error])
                 else:
-                    self.logger.warning("Orphaned queues found: '%s'.", orphan_queues)
+                    self.logger.error('Could not connect to redis pipeline: %s', error)
+                retval = 1
+            else:
+                if orphan_queues:
+                    if RETURN_TYPE == 'json':
+                        output.append(['warning', "Orphaned queues found: '%s'." % orphan_queues])
+                    else:
+                        self.logger.warning("Orphaned queues found: '%s'.", orphan_queues)
 
         if RETURN_TYPE == 'json':
             output.append(['info', 'Checking harmonization configuration.'])

@@ -422,6 +422,8 @@ class TestHarmonization(unittest.TestCase):
         """ Test ASN.sanitize with valid arguments. """
         self.assertTrue(harmonization.ASN.is_valid('1234',
                                                    sanitize=True))
+        self.assertTrue(harmonization.ASN.is_valid('AS1234',
+                                                   sanitize=True))
 
     def test_asn_sanitize_invalid(self):
         """ Test ASN.is_valid with invalid arguments. """
@@ -429,6 +431,25 @@ class TestHarmonization(unittest.TestCase):
         self.assertFalse(harmonization.ASN.is_valid('asd', sanitize=True))
         self.assertFalse(harmonization.ASN.is_valid(-1, sanitize=True))
         self.assertFalse(harmonization.ASN.is_valid(4294967296, sanitize=True))
+
+    def test_tlp_valid(self):
+        """ Test TLP.is_valid with valid arguments. """
+        self.assertTrue(harmonization.TLP.is_valid('WHITE'))
+
+    def test_tlp_invalid(self):
+        """ Test TLP.is_valid with invalid arguments. """
+        self.assertFalse(harmonization.TLP.is_valid('green'))
+
+    def test_tlp_sanitize(self):
+        """ Test TLP.sanitize with valid arguments. """
+        self.assertTrue(harmonization.TLP.is_valid('TLP:RED',
+                                                   sanitize=True))
+        self.assertTrue(harmonization.TLP.is_valid('red ',
+                                                   sanitize=True))
+
+    def test_tlp_sanitize_invalid(self):
+        """ Test TLP.is_valid with invalid arguments. """
+        self.assertFalse(harmonization.TLP.is_valid('TLP AMBER'))
 
 
 if __name__ == '__main__':  # pragma: no cover

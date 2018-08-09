@@ -2,7 +2,8 @@
 
 The available feeds are grouped by the provider of the feeds.
 For each feed the collector and parser that can be used is documented as well as any feed-specific parameters.
-To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `intelmq/bin/intelmq_gen_feeds_docs.py` to generate the new content of this file.
+To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
+`intelmq/bin/intelmq_gen_feeds_docs.py` to generate the new content of this file.
 
 <!-- TOC depthFrom:2 depthTo:2 withLinks:1 updateOnSave:1 orderedList:0 -->
 
@@ -16,6 +17,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `int
 - [Blueliv](#blueliv)
 - [CERT.PL](#certpl)
 - [CINSscore](#cinsscore)
+- [Calidog](#calidog)
 - [CleanMX](#cleanmx)
 - [DShield](#dshield)
 - [Danger Rulez](#danger-rulez)
@@ -28,6 +30,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `int
 - [Malware Domains](#malware-domains)
 - [MalwarePatrol](#malwarepatrol)
 - [MalwareURL](#malwareurl)
+- [McAfee Advanced Threat Defense](#mcafee-advanced-threat-defense)
 - [Microsoft](#microsoft)
 - [Netlab 360](#netlab-360)
 - [Nothink](#nothink)
@@ -47,7 +50,9 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `int
 - [WebInspektor](#webinspektor)
 - [ZoneH](#zoneh)
 
+
 <!-- /TOC -->
+
 
 # Abuse.ch
 
@@ -565,6 +570,25 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `int
 * **Configuration Parameters:**
 
 
+# Calidog
+
+## CertStream
+
+* **Status:** on
+* **Revision:** 15-06-2018
+* **Description:** HTTP Websocket Stream from certstream.calidog.io providing data from Certificate Transparency Logs.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.certstream.collector_certstream
+* **Configuration Parameters:**
+
+### Parser
+
+* **Module:** intelmq.bots.parses.certstream.parser_certstream
+* **Configuration Parameters:**
+
+
 # CleanMX
 
 ## Phishing
@@ -995,7 +1019,52 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `int
 * **Configuration Parameters:**
 
 
+# McAfee Advanced Threat Defense
+
+## Sandbox Reports
+
+* **Status:** on
+* **Revision:** 05-07-2018
+* **Description:** Processes reports from McAfee's sandboxing solution via the openDXL API.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.opendxl.collector
+* **Configuration Parameters:**
+*  * `dxl_config_file`: `{{location of dxl configuration file}}`
+*  * `dxl_topic`: `/mcafee/event/atd/file/report`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.mcafee.parser_atd
+* **Configuration Parameters:**
+*  * `verdict_severity`: `4`
+
+
 # Microsoft
+
+## BingMURLs
+
+* **Status:** on
+* **Revision:** 29-05-2018
+* **Description:** Collects Malicious URLs detected by Bing from the Interflow API.
+* **Additional Information:** Depending on the file sizes you may need to increase the parameter 'http_timeout_sec' of the collector.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.microsoft.collector_interflow
+* **Configuration Parameters:**
+*  * `api_key`: `{{your API key}}`
+*  * `file_match`: `^bingmurls_`
+*  * `http_timeout_sec`: `300`
+*  * `not_older_than`: `2 days`
+*  * `rate_limit`: `3600`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.microsoft.parser_bingmurls
+* **Configuration Parameters:**
+
 
 ## CTIP
 
@@ -1071,7 +1140,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run `int
 * **Module:** intelmq.bots.collectors.http.collector_http
 * **Configuration Parameters:**
 *  * `http_url`: `http://data.netlab.360.com/feeds/mirai-scanner/scanner.list`
-*  * `rate_limit`: `3600`
+*  * `rate_limit`: `86400`
 
 ### Parser
 

@@ -82,6 +82,14 @@ This configuration resides in the file `runtime.conf` in your intelmq's configur
 * `ssl_client_certificate`: SSL client certificate to use.
 * `http_header`: HTTP request headers
 
+**Cache parameters**: Common redis cache parameters used in multiple bots (mainly lookup experts):
+
+* `redis_cache_host`: Hostname of the redis database.
+* `redis_cache_port`: Port of the redis database.
+* `redis_cache_db`: Database number.
+* `redis_cache_ttl`: TTL used for caching.
+* `redis_cache_password`: Optional password for the redis database (default: none).
+
 
 ### Generic URL Fetcher
 
@@ -243,7 +251,45 @@ The parameter `http_timeout_max_tries` is of no use in this collector.
 * `unzip_attachment`: whether to unzip a found attachment
 
 The parameter `http_timeout_max_tries` is of no use in this collector.
+
 * * *
+
+### Shodan Stream
+
+Requires the shodan library to be installed:
+ * https://github.com/achillean/shodan-python/
+ * https://pypi.org/project/shodan/
+
+#### Information:
+* `name:` intelmq.bots.collectors.shodan.collector_stream
+* `lookup:` yes
+* `public:` yes
+* `cache (redis db):` none
+* `description:` Queries the Shodan Streaming API
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* **HTTP parameters** (see above). Only the proxy is used (requires shodan-python > 1.8.1). Certificate is always verified.
+* `countries`: A list of countries to query for. If it is a string, it will be spit by `,`.
+
+* * *
+
+### TCP
+
+#### Information:
+* `name:` intelmq.bots.collectors.tcp.collector
+* `lookup:` no
+* `public:` yes
+* `cache (redis db):` none
+* `description:` TCP is the bot responsible to receive events on a TCP port (ex: from TCP Output of another IntelMQ instance). Might not be working on Python3.4.6.
+
+#### Configuration Parameters:
+
+* `ip`: IP of destination server
+* `port`: port of destination server
+* * *
+
 
 ### XMPP collector
 
@@ -307,6 +353,23 @@ See the README.md
 
 * * *
 
+### McAfee openDXL
+
+#### Information:
+* `name:` intelmq.bots.collectors.opendxl.collector
+* `lookup:` yes
+* `public:` no
+* `cache (redis db):` none
+* `description:` collect messages via openDXL
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `dxl_config_file`: location of the config file containing required information to connect $
+* `dxl_topic`: the name of the DXL topix to subscribe
+
+* * *
+
 ### Microsoft Azure
 
 Iterates over all blobs in all containers in an Azure storage.
@@ -346,6 +409,10 @@ The cache is used to remember which files have already been downloaded. Make sur
 * `file_match`: an optional regular expression to match file names
 * `not_older_than`: an optional relative (minutes) or absolute time expression to determine the oldest time of a file to be downloaded
 * `redis_cache_*` and especially `redis_cache_ttl`: Settings for the cache where file names of downloaded files are saved.
+
+#### Additional functionalities
+
+* Files are automatically ungzipped if the filename ends with `.gz`.
 
 * * *
 
@@ -407,16 +474,21 @@ Lines starting with `'#'` will be ignored. Headers won't be interpreted.
 
 #### Configuration parameters
 
- * `"columns"`: A list of strings or a string of comma-separated values with field names. The names must match the harmonization's field names. E.g. 
+ * `"columns"`: A list of strings or a string of comma-separated values with field names. The names must match the harmonization's field names. Empty column specifications and columns named `"__IGNORE__"` are ignored. E.g.
    ```json
-   [
+   "columns": [
         "",
         "source.fqdn",
-        "extra.http_host_header"
-    ],
-    ```
-
-    It is possible to specify multiple coulmns using `|` character. E.g.
+        "extra.http_host_header",
+        "__IGNORE__"
+   ],
+   ```
+   is equivalent to:
+   ```json
+   "columns": ",source.fqdn,extra.http_host_header,"
+   ```
+   The first and the last column are not used in this example.
+    It is possible to specify multiple columns using the `|` character. E.g.
     ```
         "columns": "source.url|source.fqdn|source.ip"
     ```
@@ -452,12 +524,7 @@ Lines starting with `'#'` will be ignored. Headers won't be interpreted.
             "columns": [ "__IGNORE__", "__IGNORE__", "__IGNORE__", "source.ip"]
         }
      ```
- * `"type_translation"`: See below, optional
-
-
-##### Type translation
-
-If the source does have a field with information for `classification.type`, but it does not correspond to intelmq's types,
+ * `"type_translation"`: If the source does have a field with information for `classification.type`, but it does not correspond to intelmq's types,
 you can map them to the correct ones. The `type_translation` field can hold a JSON field with a dictionary which maps the feed's values to intelmq's.
 
 
@@ -482,6 +549,54 @@ The information about the event could be better in many cases but as Cymru does 
 * `cache (redis db):` none
 * `description:` Parses data from full bogons feed.
 
+### McAfee Advanced Threat Defense File
+
+#### Information:
+* `name:` intelmq.bots.parsers.mcafee.parser_atd_file
+* `lookup:` yes
+* `public:` no
+* `cache (redis db):` none
+* `description:` parses file hash information off ATD reports
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `verdict_severity`: min report severity to parse
+
+* * *
+
+### McAfee Advanced Threat Defense IP
+
+#### Information:
+* `name:` intelmq.bots.parsers.mcafee.parser_atd_file
+* `lookup:` yes
+* `public:` no
+* `cache (redis db):` none
+* `description:` parses IP addresses off ATD reports
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `verdict_severity`: min report severity to parse
+
+* * *
+
+### McAfee Advanced Threat Defense URL
+
+#### Information:
+* `name:` intelmq.bots.parsers.mcafee.parser_atd_file
+* `lookup:` yes
+* `public:` no
+* `cache (redis db):` none
+* `description:` parses URLs off ATD reports
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `verdict_severity`: min report severity to parse
+
+* * *
+
 ### Twitter
 
 #### Information:
@@ -494,6 +609,21 @@ The information about the event could be better in many cases but as Cymru does 
 * `domain_whitelist`: domains to be filetered out
 * `substitutions`: semicolon delimited list of even length of pairs of substitutions (for example: '[.];.;,;.' substitutes '[.]' for '.' and ',' for '.')
 * `classification_type: string with a valid classification type as defined in data harmonization
+
+### Shodan
+
+#### Information
+* `name:` intelmq.bots.parsers.shodan.parser
+* `public:` yes
+* `description:` Parses data from shodan (search, stream etc).
+
+The parser is by far not complete as there are a lot of fields in a big nested structure. There is a minimal mode available which only parses the important/most useful fields and also saves everything in `extra.shodan` keeping the original structure. When not using the minimal mode if may be useful to ignore errors as many parsing errors can happen with the incomplete mapping.
+
+#### Configuration Parameters:
+
+* `ignore_errors`: Boolean (default true)
+* `minimal_mode`: Boolean (default false)
+
 
 <a name="experts"></a>
 ## Experts
@@ -512,6 +642,7 @@ See the README.md
 
 #### Configuration Parameters:
 
+* **Cache parameters** (see above)
 FIXME
 
 * * *
@@ -544,7 +675,52 @@ FIXME
 
 #### Configuration Parameters:
 
+* **Cache parameters** (see above)
 FIXME
+
+* * *
+
+### Domain Suffix
+
+See or information on the public suffix list: https://publicsuffix.org/list/
+Only rules for ICANN domains are processed. The list can (and should) contain
+Unicode data, punycode conversion is done during reading
+
+#### Information:
+* `name:` deduplicator
+* `lookup:` redis cache
+* `public:` yes
+* `cache (redis db):` 6
+* `description:` message deduplicator
+
+#### Configuration Parameters:
+
+* `field`: either `"fqdn"` or `"reverse_dns"`
+* `suffix_file`: path to the suffix file
+
+#### Rule processing
+
+A short summary how the rules are processed:
+
+The simple ones:
+```
+com
+at
+gv.at
+```
+`example.com` leads to `com`, `example.gv.at` leads to `gv.at`.
+
+Wildcards:
+```
+*.example.com
+```
+`www.example.com` leads to `www.example.com`.
+
+And additionally the exceptions, together with the above wildcard rule:
+```
+!www.example.com
+```
+`www.example.com` does now not lead to `www.example.com`, but to `example.com`.
 
 * * *
 
@@ -561,6 +737,7 @@ See the README.md
 
 #### Configuration Parameters:
 
+* **Cache parameters** (see above)
 Please check this [README](../intelmq/bots/experts/deduplicator/README.md) file.
 
 * * *
@@ -628,6 +805,10 @@ none
 
 ### IDEA
 
+Converts the event to IDEA format and saves it as JSON in the field `output`. All other fields are not modified.
+
+Documentation about IDEA: https://idea.cesnet.cz/en/index
+
 #### Information:
 * `name:` idea
 * `lookup:` local config
@@ -656,6 +837,59 @@ See the README.md
 
 FIXME
 
+
+* * *
+
+### McAfee Active Response Hash lookup
+
+#### Information:
+* `name:` intelmq.bots.experts.mcafee.expert_mar
+* `lookup:` yes
+* `public:` no
+* `cache (redis db):` none
+* `description:` Queries occurrences of hashes within local environment
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `dxl_config_file`: location of file containing required information to connect to DXL bus
+* `lookup_type`: One of:
+  - `Hash`: looks up `malware.hash.md5`, `malware.hash.sha1` and `malware.hash.sha256`
+  - `DestSocket`: looks up `destination.ip` and `destination.port`
+  - `DestIP`: looks up `destination.ip`
+  - `DestFQDN`: looks up in `destination.fqdn`
+
+* * *
+
+### McAfee Active Response IP lookup
+
+#### Information:
+* `name:` intelmq.bots.experts.mcafee.expert_mar_ip
+* `lookup:` yes
+* `public:` no
+* `cache (redis db):` none
+* `description:` Queries occurrences of connection attempts to destination ip/port within local environment
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `dxl_config_file`: location of file containing required information to connect to DXL bus
+
+* * *
+
+### McAfee Active Response URL lookup
+
+#### Information:
+* `name:` intelmq.bots.experts.mcafee.expert_mar_url
+* `lookup:` yes
+* `public:` no
+* `cache (redis db):` none
+* `description:` Queries occurrences of FQDN lookups within local environment
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `dxl_config_file`: location of file containing required information to connect to DXL bus
 
 * * *
 
@@ -781,7 +1015,28 @@ If the rule is a string, a regex-search is performed, also for numeric values (`
 
 * * *
 
+### RecordedFuture IP risk
+For both `source.ip` and `destination.ip` the corresponding risk score is fetched from a local database created from Recorded Future's API. The score is recorded in `extra.rf_iprisk.source` and `extra.rf_iprisk.destination`. If a lookup for an IP fails a score of 0 is recorded.
+
+See https://www.recordedfuture.com/products/api/ and speak with your recorded future representative for more information.
+
+#### Information:
+* `name:` recordedfuture_iprisk
+* `lookup:` local database
+* `public:` no
+* `cache (redis db):` none
+* `description:` Record risk score associated to source and destination IP if they are present. Assigns 0 to to IPs not in the RF list.
+
+### Configuration Parameters:
+
+* `database`: Location of csv file obtained from recorded future API (a script is provided to download the large IP set)
+* `overwrite`: set to true if you want to overwrite any potentially existing risk score fields in the event.
+
+* * *
+
 ### Reverse DNS
+
+For both `source.ip` and `destination.ip` the PTR record is fetched and the first valid result is used for `source.reverse_dns`/`destination.reverse_dns`.
 
 #### Information:
 * `name:` reverse-dns
@@ -792,7 +1047,8 @@ If the rule is a string, a regex-search is performed, also for numeric values (`
 
 #### Configuration Parameters:
 
-FIXME
+* **Cache parameters** (see above)
+* `cache_ttl_invalid_response`: The TTL for cached invalid responses.
 
 * * *
 
@@ -833,6 +1089,7 @@ Sources:
 
 #### Configuration Parameters:
 
+* **Cache parameters** (see above)
 * `mode`: either `append` (default) or `replace`
 * `query_ripe_db_asn`: Query for IPs at `http://rest.db.ripe.net/abuse-contact/%s.json`, default `true`
 * `query_ripe_db_ip`: Query for ASNs at `http://rest.db.ripe.net/abuse-contact/as%s.json`, default `true`
@@ -941,8 +1198,19 @@ Note that SIGHUPs and reloads interrupt the sleeping.
 
 #### Configuration Parameters:
 
-* `file`: file path of output file
+* `file`: file path of output file. Missing directories will be created if possible with the mode 755.
+* `format_filename`: Boolean if the filename should be formatted (default: `false`).
+* `hierarchial_output`: If true, the resulting dictionary will be hierarchical (field names split by dot).
+* `single_key`: if `none`, the whole event is saved (default); otherwise the bot saves only contents of the specified key. In case of `raw` the data is base64 decoded.
 
+##### Filename formatting
+The filename can be formatted using pythons string formatting functions if `format_filename` is set. See https://docs.python.org/3/library/string.html#formatstrings
+
+For example:
+ * The filename `.../{event[source.abuse_contact]}.txt` will be (for example) `.../abuse@example.com.txt`.
+ * `.../{event[time.source]:%Y-%m-%d}` results in the date of the event used as filename.
+
+If the field used in the format string is not defined, `None` will be used as fallback.
 
 * * *
 
@@ -967,6 +1235,25 @@ Note that SIGHUPs and reloads interrupt the sleeping.
 
 * * *
 
+### McAfee Enterprise Security Manager
+
+#### Information:
+* `name:` intelmq.bots.outputs.mcafee.output_esm_ip
+* `lookup:` yes
+* `public:` no
+* `cache (redis db):` none
+* `description:` Writes information out to McAfee ESM watchlist
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `esm_ip`: IP address of ESM instance
+* `esm_user`: username of user entitled to write to watchlist
+* `esm_pw`: password of user
+* `esm_watchlist`: name of the watchlist to write to
+* `field`: name of the intelMQ field to be written to ESM
+
+* * *
 
 ### MongoDB
 
@@ -1098,16 +1385,16 @@ Client certificates are not supported. If `http_verify_cert` is true, TLS certif
 ### TCP
 
 #### Information:
-* `name:` tcp
+* `name:` intelmq.bots.outputs.tcp.collector
 * `lookup:` no
 * `public:` yes
 * `cache (redis db):` none
-* `description:` TCP is the bot responsible to send events to a tcp port (Splunk, ElasticSearch, etc..)
+* `description:` TCP is the bot responsible to send events to a TCP port (Splunk, ElasticSearch, another IntelMQ, etc..).
 
 #### Configuration Parameters:
 
 * `ip`: IP of destination server
-* `hierarchical_output`: true for a nested JSON, false for a flat JSON.
+* `hierarchical_output`: true for a nested JSON, false for a flat JSON (when sending to a TCP collector).
 * `port`: port of destination server
-* `separator`: separator of messages
+* `separator`: separator of messages, eg. "\n", optional (when sending to a TCP collector, parameter shouldn't be present)
 

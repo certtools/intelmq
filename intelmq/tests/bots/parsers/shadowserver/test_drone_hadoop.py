@@ -16,16 +16,15 @@ with open(os.path.join(os.path.dirname(__file__),
     RECONSTRUCTED_FILE = handle.read()
 RECONSTRUCTED_LINES = RECONSTRUCTED_FILE.splitlines()
 
-EXAMPLE_REPORT = {"feed.name": "ShadowServer Botnet Drone Hadoop",
+EXAMPLE_REPORT = {"feed.name": "ShadowServer Drone",
                   "raw": utils.base64_encode(EXAMPLE_FILE),
                   "__type": "Report",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   }
 EVENTS = [{'__type': 'Event',
-           'feed.name': 'ShadowServer Botnet Drone Hadoop',
+           'feed.name': 'ShadowServer Drone',
            'classification.taxonomy': 'malicious code',
-           'classification.type': 'botnet drone',
-           'classification.identifier': 'infected system',
+           'classification.type': 'infected system',
            'destination.asn': 8560,
            'destination.geolocation.cc': 'US',
            'destination.ip': '74.208.164.166',
@@ -51,12 +50,11 @@ EVENTS = [{'__type': 'Event',
            'time.observation': '2015-01-01T00:00:00+00:00',
            'time.source': '2011-04-23T00:00:05+00:00'},
           {'__type': 'Event',
-           'feed.name': 'ShadowServer Botnet Drone Hadoop',
+           'feed.name': 'ShadowServer Drone',
            'classification.taxonomy': 'malicious code',
-           'classification.type': 'botnet drone',
-           'classification.identifier': 'infected system',
+           'classification.type': 'infected system',
            'destination.asn': 16265,
-           'destination.fqdn': '015.maxided.com',
+           'destination.fqdn': '015.example.com',
            'destination.geolocation.cc': 'NL',
            'destination.ip': '94.75.228.147',
            'extra.os.name': 'WINXP',
@@ -76,10 +74,9 @@ EVENTS = [{'__type': 'Event',
            'time.observation': '2015-01-01T00:00:00+00:00',
            'time.source': '2011-04-23T00:00:08+00:00'},
           {'__type': 'Event',
-           'feed.name': 'ShadowServer Botnet Drone Hadoop',
+           'feed.name': 'ShadowServer Drone',
            'classification.taxonomy': 'malicious code',
-           'classification.type': 'botnet drone',
-           'classification.identifier': 'infected system',
+           'classification.type': 'infected system',
            'destination.asn': 8560,
            'destination.geolocation.cc': 'DE',
            'destination.ip': '87.106.24.200',
@@ -101,10 +98,9 @@ EVENTS = [{'__type': 'Event',
            'time.observation': '2015-01-01T00:00:00+00:00',
            'time.source': '2011-04-23T00:00:10+00:00'},
           {'__type': 'Event',
-           'feed.name': 'ShadowServer Botnet Drone Hadoop',
+           'feed.name': 'ShadowServer Drone',
            'classification.taxonomy': 'malicious code',
-           'classification.type': 'botnet drone',
-           'classification.identifier': 'infected system',
+           'classification.type': 'infected system',
            'destination.asn': 8560,
            'destination.geolocation.cc': 'DE',
            'destination.ip': '87.106.24.200',
@@ -127,10 +123,9 @@ EVENTS = [{'__type': 'Event',
            'time.observation': '2015-01-01T00:00:00+00:00',
            'time.source': '2011-04-23T00:00:15+00:00'},
           {'__type': 'Event',
-           'feed.name': 'ShadowServer Botnet Drone Hadoop',
+           'feed.name': 'ShadowServer Drone',
            'classification.taxonomy': 'malicious code',
-           'classification.type': 'botnet drone',
-           'classification.identifier': 'infected system',
+           'classification.type': 'infected system',
            'destination.asn': 8560,
            'destination.geolocation.cc': 'US',
            'destination.ip': '74.208.164.166',
@@ -157,10 +152,9 @@ EVENTS = [{'__type': 'Event',
            'time.observation': '2015-01-01T00:00:00+00:00',
            'time.source': '2011-04-23T00:00:26+00:00'},
           {'__type': 'Event',
-           'feed.name': 'ShadowServer Botnet Drone Hadoop',
+           'feed.name': 'ShadowServer Drone',
            'classification.taxonomy': 'malicious code',
-           'classification.type': 'botnet drone',
-           'classification.identifier': 'infected system',
+           'classification.type': 'infected system',
            'destination.asn': 8560,
            'destination.geolocation.cc': 'DE',
            'destination.ip': '87.106.24.200',
@@ -182,10 +176,9 @@ EVENTS = [{'__type': 'Event',
            'time.observation': '2015-01-01T00:00:00+00:00',
            'time.source': '2011-04-23T00:00:28+00:00'},
           {'__type': 'Event',
-           'feed.name': 'ShadowServer Botnet Drone Hadoop',
+           'feed.name': 'ShadowServer Drone',
            'classification.taxonomy': 'malicious code',
-           'classification.type': 'botnet drone',
-           'classification.identifier': 'infected system',
+           'classification.type': 'infected system',
            'destination.asn': 8560,
            'destination.geolocation.cc': 'DE',
            'destination.ip': '87.106.24.200',
@@ -209,10 +202,9 @@ EVENTS = [{'__type': 'Event',
            'time.observation': '2015-01-01T00:00:00+00:00',
            'time.source': '2011-04-23T00:00:29+00:00'},
           {'__type': 'Event',
-           'feed.name': 'ShadowServer Botnet Drone Hadoop',
+           'feed.name': 'ShadowServer Drone',
            'classification.taxonomy': 'malicious code',
-           'classification.type': 'botnet drone',
-           'classification.identifier': 'infected system',
+           'classification.type': 'infected system',
            'destination.asn': 8560,
            'destination.geolocation.cc': 'US',
            'destination.ip': '74.208.164.166',
@@ -258,7 +250,7 @@ class TestShadowserverParserBot(test.BotTestCase, unittest.TestCase):
             self.assertMessageEqual(i, EVENT)
 
 
-TESTING_OVERWRITE_FEEDNAME = 'My-Botnet-Drone-Hadoop'
+TESTING_OVERWRITE_FEEDNAME = 'My-Drone'
 
 
 class TestOverwriteShadowserverParserBot(test.BotTestCase, unittest.TestCase):
@@ -268,7 +260,7 @@ class TestOverwriteShadowserverParserBot(test.BotTestCase, unittest.TestCase):
         cls.bot_reference = ShadowserverParserBot
         cls.default_input_message = EXAMPLE_REPORT.copy()
         cls.default_input_message['feed.name'] = TESTING_OVERWRITE_FEEDNAME
-        cls.sysconfig = {'feedname': 'Botnet-Drone-Hadoop',
+        cls.sysconfig = {'feedname': 'Drone',
                          'overwrite': True}
 
     def test_bot_name(self):
@@ -280,7 +272,7 @@ class TestOverwriteShadowserverParserBot(test.BotTestCase, unittest.TestCase):
         self.run_bot()
         for i, EVENT in enumerate(EVENTS):
             event = EVENT.copy()
-            event['feed.name'] = 'Botnet-Drone-Hadoop'
+            event['feed.name'] = 'Drone'
             self.assertMessageEqual(i, event)
 
 

@@ -33,14 +33,14 @@ class TaichungCityNetflowParserBot(Bot):
 
             # Get IP and Type
             info1 = re.search(
-                ">[\ ]*(\d+\.\d+\.\d+\.\d+)[\ ]*<.*</td><td>([^<]+)</td>", row)
+                r">[\ ]*(\d+\.\d+\.\d+\.\d+)[\ ]*<.*</td><td>([^<]+)</td>", row)
 
             if not info1:
                 continue
 
             # Get Timestamp
             info2 = re.search(
-                "<td>[\ ]*(\d{4}-\d{2}-\d{2}\ \d{2}:\d{2}:\d{2})[\ ]*</td>",
+                r"<td>[\ ]*(\d{4}-\d{2}-\d{2}\ \d{2}:\d{2}:\d{2})[\ ]*</td>",
                 row)
 
             event = self.new_event(report)

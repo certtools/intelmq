@@ -36,7 +36,7 @@ class TestHTTPCollectorBot(test.BotTestCase, unittest.TestCase):
         cls.bot_reference = HTTPCollectorBot
         cls.sysconfig = {'http_url': 'http://localhost/two_files.tar.gz',
                          'extract_files': True,
-                         'feed': 'Example feed',
+                         'name': 'Example feed',
                          }
 
     def test_events(self):
@@ -53,7 +53,7 @@ class TestHTTPCollectorBot(test.BotTestCase, unittest.TestCase):
         self.allowed_warning_count = 1  # message has empty raw
         self.sysconfig = {'http_url': 'http://localhost/{time[%Y]}.txt',
                           'extract_files': None,
-                          'feed': 'Example feed',
+                          'name': 'Example feed',
                           'http_url_formatting': True,
                           }
         self.run_bot(iterations=1)

@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 from intelmq.bots.experts.custom_filter.expert import CustomFilterExpertBot
 import intelmq.lib.test as test
 import unittest
