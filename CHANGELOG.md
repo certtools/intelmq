@@ -234,6 +234,7 @@ CHANGELOG
 
 #### Experts
 - Reverse DNS Expert: ignore all invalid results and use first valid one (#1264).
+- `intelmq/bots/experts/tor_nodes/update-tor-nodes`: Use check.torproject.org as source as internet2.us is down (#1289).
 
 #### Outputs
 
@@ -258,6 +259,7 @@ CHANGELOG
 - `intelmqdump`: fix ordering of dumps in a file in runtime. All operations are applied to a sorted list (#1280).
 
 ### Contrib
+- `cron-jobs/update-tor-nodes`: Use check.torproject.org as source as internet2.us is down (#1289).
 
 ### Known issues
 
