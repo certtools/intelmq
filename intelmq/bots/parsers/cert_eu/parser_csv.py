@@ -2,11 +2,12 @@
 CERT-EU parser
 """
 from intelmq.lib.bot import ParserBot
+from collections import defaultdict
 
 
 class CertEUCSVParserBot(ParserBot):
 
-    abuse_to_intelmq = {
+    abuse_to_intelmq = defaultdict(lambda: "unknown", {
         "backdoor": "backdoor",
         "blacklist": "blacklist",
         "botnet drone": "botnet drone",
@@ -14,7 +15,7 @@ class CertEUCSVParserBot(ParserBot):
         "c&c": "c&c",
         "compromised server": "compromised",
         "ddos infrastructure": "ddos",
-        "ddos target": "--",
+        "ddos target": "ddos",
         "defacement": "defacement",
         "dropzone": "dropzone",
         "exploit url": "exploit",
@@ -26,47 +27,52 @@ class CertEUCSVParserBot(ParserBot):
         "scanner": "scanner",
         "spam infrastructure": "spam",
         "test": "test",
-        "vulnerable service": "vulnerable service",
-        "--": "unknown"
-    }
+        "vulnerable service": "vulnerable service"
+    })
 
     csv_fieldnames = [
         "datasource", "source ip", "observation time", "tlp", "description",
         "type", "count", "source time", "source country", "protocol",
         "destination port", "source latitude", "source city", "source cc",
         "source longitude", "first_seen", "num_sensors", "confidence level",
-        "last_seen", "target", "phishing", "asn", "domain name"]
+        "last_seen", "target", "url", "asn", "domain name"]
     ignore_lines_starting = ["#"]
 
     def parse_line(self, line, report):
+        extra = {}
         event = self.new_event(report)
-        # event["?"] = line["datasource"]
-        event["source.ip"] = line["source ip"]
-        event["time.observation"] = line["observation time"]
-        event["tlp"] = line["tlp"]
-        event["event_description.text"] = line["description"]  # TBC
-        event["classification.type"] = self.abuse_to_intelmq.get(
-            line["type"], "unknown"
-        )
-        # event["?"] = line["count"]
-        event["time.source"] = line["source time"]
-        event["source.geolocation.country"] = line["source country"]
-        event["protocol.application"] = line["protocol"]
-        event["destination.port"] = line["destination port"]
-        event["source.geolocation.latitude"] = line["source latitude"]
-        event["source.geolocation.city"] = line["source city"]
-        event["source.geolocation.geoip_cc"] = line["source cc"]
-        event["source.geolocation.longitude"] = line["source longitude"]
-        # event["?"] = line["first_seen"]
-        # event["?"] = line["num_sensors"]
-        event["feed.accuracy"] = line["confidence level"]  # TBC is 0<=x<=100 ?
-        # event["?"] = line["last seen"]
-        event["event_description.target"] = line["target"]  # TBC
-        event["source.url"] = line["phishing"]  # TBC or destination.url?
-        event["source.asn"] = line["asn"]  # TBC or destination?
-        event["source.fqdn"] = line["domain name"]  # TBC or destination?
+        if "datasource" in line:
+            extra["datasource"] = line["datasource"]
+        event.add("source.ip", line["source ip"])
+        event.add("time.observation", line["observation time"])
+        event.add("tlp", line["tlp"])
+        event.add("event_description.text", line["description"])
+        event.add("classification.type", self.abuse_to_intelmq[line["type"]])
+        if "count" in line:
+            extra["count"] = line["count"]
+        event.add("time.source", line["source time"])
+        event.add("source.geolocation.country", line["source country"])
+        event.add("protocol.application", line["protocol"])
+        event.add("destination.port", line["destination port"])
+        event.add("source.geolocation.latitude", line["source latitude"])
+        event.add("source.geolocation.city", line["source city"])
+        event.add("source.geolocation.geoip_cc", line["source cc"])
+        event.add("source.geolocation.longitude", line["source longitude"])
+        if "first_seen" in line:
+            extra["first_seen"] = line["first_seen"]
+        if "num_sensors" in line:
+            extra["num_sensors"] = line["num_sensors"]
+        event.add("feed.accuracy", line["confidence level"])
+        if "last_seen" in line:
+            extra["last_seen"] = line["last_seen"]
+        event.add("event_description.target", line["target"])
+        event.add("source.url", line["url"])
+        event.add("source.asn", line["asn"])
+        event.add("source.fqdn", line["domain name"])
 
-        event["raw"] = self.recover_line(line)
+        event.add("raw", self.recover_line(line))
+        if extra:
+            event.add("extra", extra)
         yield event
 
     parse = ParserBot.parse_csv_dict
