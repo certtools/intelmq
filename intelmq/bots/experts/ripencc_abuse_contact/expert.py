@@ -23,10 +23,16 @@ class RIPENCCExpertBot(Bot):
                 'data.json?resource={}')
 
     def init(self):
+        if hasattr(self.parameters, 'query_ripe_stat'):
+            self.logger.warning("The parameter 'query_ripe_stat' is deprecated and will be "
+                                "removed in 2.0. Use 'query_ripe_stat_asn' and "
+                                "'query_ripe_stat_ip' instead'.")
         self.query_db_asn = getattr(self.parameters, 'query_ripe_db_asn', True)
         self.query_db_ip = getattr(self.parameters, 'query_ripe_db_ip', True)
-        self.query_stat_asn = getattr(self.parameters, 'query_ripe_stat_asn', True)
-        self.query_stat_ip = getattr(self.parameters, 'query_ripe_stat_ip', True)
+        self.query_stat_asn = getattr(self.parameters, 'query_ripe_stat_asn',
+                                      getattr(self.parameters, 'query_ripe_stat', True))
+        self.query_stat_ip = getattr(self.parameters, 'query_ripe_stat_ip',
+                                     getattr(self.parameters, 'query_ripe_stat', True))
         self.mode = getattr(self.parameters, 'mode', 'append')
 
         self.set_request_parameters()
