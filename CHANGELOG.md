@@ -162,6 +162,7 @@ CHANGELOG
 
 ### Documentation
 - Use Markdown for README again, as pypi now supports it.
+- Developers Guide: Add instructions for pre-release testing.
 
 ### Packaging
 - Add logcheck configuration to the packages.
