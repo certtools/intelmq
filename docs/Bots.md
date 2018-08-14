@@ -1213,6 +1213,20 @@ Note that SIGHUPs and reloads interrupt the sleeping.
 
 ## Outputs
 
+### Blackhole
+
+This output bot discards all incoming messages.
+
+#### Information
+* `name`: blackhole
+* `lookup`: no
+* `public`: yes
+* `cache`: no
+* `description`: discards messages
+
+* * *
+
+
 ### File
 
 #### Information:

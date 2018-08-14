@@ -25,6 +25,7 @@ CHANGELOG
 
 #### Outputs
 - added `intelmq.bots.experts.mcafee.output_esm` (1265).
+- added `intelmq.bots.outputs.blackhole` (#1279).
 
 ### Documentation
 
