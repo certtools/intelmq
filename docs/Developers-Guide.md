@@ -45,6 +45,8 @@
   * [Parsers](#parsers)
   * [Tests](#tests)
   * [Configuration](#configuration)
+* [Feeds documentation](#feeds-documentation)
+* [Testing Pre-releases](#testing-pre-releases)
 
 # Intended Audience
 This guide is for developers of IntelMQ. It explains the code architecture, coding guidelines as well as ways you can contribute code or documentation.
@@ -723,3 +725,19 @@ located at `intelmq/bots`. Note that the file is sorted!
 The feeds which are known to be working with IntelMQ are documented in the machine-readable file `intelmq/etc/feeds.yaml`. The human-readable documentation is in `docs/Feeds.md`. In order to keep these files in sync, call `intelmq/bin/intelmq_gen_docs.py` which generates the Markdown file from the YAML file.
 
 So to add a new feeds, change the `feeds.yaml` and then call the `intelmq_gen_docs.py` file.
+
+# Testing Pre-releases
+
+## Installation
+
+The [installation procedures](Install.md) needs to be adapted only a little bit.
+
+For native packages, you can find the unstable packages of the next version here: [Installation Unstable Native Packages](https://software.opensuse.org/download.html?project=home%3Asebix%3Aintelmq%3Aunstable&package=intelmq).
+
+For the installation with pip, use the `--pre` parameter as shown here following command:
+
+```bash
+pip3 install --pre intelmq
+```
+
+All other steps are not different. Please report any issues you find in our [Issue Tracker](https://github.com/certtools/intelmq/issues/new).
