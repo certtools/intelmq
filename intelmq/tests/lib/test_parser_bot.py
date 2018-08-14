@@ -85,7 +85,9 @@ class DummyParserBot(bot.ParserBot):
             line = line.split(',')
             event['time.source'] = line[0]
             event['source.fqdn'] = line[1]
+            print('pre-ip')
             event['source.ip'] = line[2]
+            print('post-ip')
             event['source.reverse_dns'] = line[3]
             event['event_description.text'] = line[4]
             event['source.account'] = line[5]
@@ -126,6 +128,7 @@ class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
         cls.bot_reference = DummyParserBot
         cls.default_input_message = EXAMPLE_REPORT
         cls.allowed_error_count = 1
+        cls.sysconfig = {'error_dump_message': True}
 
     def dump_message(self, error_traceback, message=None):
         self.assertDictEqual(EXPECTED_DUMP, message)
