@@ -32,6 +32,7 @@ CHANGELOG
 ### Packaging
 
 ### Tests
+- Travis: Change the ownership of `/opt/intelmq` to the current user.
 
 ### Tools
 

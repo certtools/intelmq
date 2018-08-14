@@ -24,4 +24,3 @@ class RsyncCollectorBot(CollectorBot):
 
 
 BOT = RsyncCollectorBot
-
