@@ -34,22 +34,22 @@ STATUSES = {
 }
 
 MESSAGES = {
-    'disabled': '%s is disabled.',
+    'disabled': 'Bot %s is disabled.',
     'starting': 'Starting %s...',
-    'running': '%s is running.',
-    'stopped': '%s is stopped.',
-    'stopping': 'Stopping %s...',
-    'reloading': 'Reloading %s ...',
-    'reloaded': '%s is reloaded.',
+    'running': 'Bot %s is running.',
+    'stopped': 'Bot %s is stopped.',
+    'stopping': 'Stopping bot %s...',
+    'reloading': 'Reloading bot %s ...',
+    'reloaded': 'Bot %s is reloaded.',
 }
 
 ERROR_MESSAGES = {
-    'starting': '%s failed to START.',
-    'running': '%s is still running.',
-    'stopped': '%s was NOT RUNNING.',
-    'stopping': '%s failed to STOP.',
-    'not found': '%s failed to START because the file cannot be found.',
-    'access denied': '%s failed to %s because of missing permissions.',
+    'starting': 'Bot %s failed to START.',
+    'running': 'Bot %s is still running.',
+    'stopped': 'Bot %s was NOT RUNNING.',
+    'stopping': 'Bot %s failed to STOP.',
+    'not found': 'Bot %s failed to START because the file cannot be found.',
+    'access denied': 'Bot %s failed to %s because of missing permissions.',
 }
 
 LOG_LEVEL = OrderedDict([
@@ -1042,12 +1042,14 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 if ('group' in bot_config and
                         bot_config['group'] in ['Collector', 'Parser', 'Expert']):
                     if ('destination-queues' not in files[PIPELINE_CONF_FILE][bot_id] or
-                            (not isinstance(files[PIPELINE_CONF_FILE][bot_id]['destination-queues'], list) or
-                             len(files[PIPELINE_CONF_FILE][bot_id]['destination-queues']) < 1)):
+                            (isinstance(files[PIPELINE_CONF_FILE][bot_id]['destination-queues'], list) and
+                             len(files[PIPELINE_CONF_FILE][bot_id]['destination-queues']) < 1) or
+                            (isinstance(files[PIPELINE_CONF_FILE][bot_id]['destination-queues'], dict) and
+                             '_default' not in files[PIPELINE_CONF_FILE][bot_id]['destination-queues'])):
                         if RETURN_TYPE == 'json':
-                            output.append(['error', 'Misconfiguration: No destination queues for %r.' % bot_id])
+                            output.append(['error', 'Misconfiguration: No (default) destination queue for %r.' % bot_id])
                         else:
-                            self.logger.error('Misconfiguration: No destination queues for %r.', bot_id)
+                            self.logger.error('Misconfiguration: No (default) destination queue for %r.', bot_id)
                         retval = 1
                     else:
                         all_queues = all_queues.union(files[PIPELINE_CONF_FILE][bot_id]['destination-queues'])

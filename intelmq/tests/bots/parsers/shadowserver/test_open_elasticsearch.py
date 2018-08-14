@@ -11,11 +11,6 @@ with open(os.path.join(os.path.dirname(__file__), 'elasticsearch.csv')) as handl
     EXAMPLE_FILE = handle.read()
 EXAMPLE_LINES = EXAMPLE_FILE.splitlines()
 
-with open(os.path.join(os.path.dirname(__file__),
-                       'elasticsearch_RECONSTRUCTED.csv')) as handle:
-    RECONSTRUCTED_FILE = handle.read()
-RECONSTRUCTED_LINES = RECONSTRUCTED_FILE.splitlines()
-
 EXAMPLE_REPORT = {"feed.name": "ShadowServer Open-Elasticsearch",
                   "raw": utils.base64_encode(EXAMPLE_FILE),
                   "__type": "Report",
@@ -27,8 +22,8 @@ EVENTS = [{'__type': 'Event',
            'classification.identifier': 'open-elasticsearch',
            'classification.taxonomy': 'vulnerable',
            'classification.type': 'vulnerable service',
-           'raw': utils.base64_encode('\n'.join([RECONSTRUCTED_LINES[0],
-                                                 RECONSTRUCTED_LINES[1], ''])),
+           'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                                 EXAMPLE_LINES[1]])),
            'time.observation': '2015-01-01T00:00:00+00:00',
            'extra.build_hash': 'b9e4a6acad4008027e4038f6abed7f7dba346f94',
            'extra.build_snapshot': False,
@@ -55,8 +50,8 @@ EVENTS = [{'__type': 'Event',
            'classification.identifier': 'open-elasticsearch',
            'classification.taxonomy': 'vulnerable',
            'classification.type': 'vulnerable service',
-           'raw': utils.base64_encode('\n'.join([RECONSTRUCTED_LINES[0],
-                                                 RECONSTRUCTED_LINES[2], ''])),
+           'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                                 EXAMPLE_LINES[2]])),
            'time.observation': '2015-01-01T00:00:00+00:00',
            'extra.name': 'Silver Fox',
            'extra.ok': True,

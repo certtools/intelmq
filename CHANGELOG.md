@@ -12,9 +12,12 @@ CHANGELOG
 ### Bots
 #### Collectors
 - added `intelmq.bots.parsers.opendxl.collector` (#1265).
+- added `intelmq.bots.collectors.api`: collecting data using an HTTP API (#123, #1187).
 
 #### Parsers
 - added `intelmq.bots.parsers.mcafee.parser_atd` (#1265).
+- `intelmq.bots.parsers.generic.parser_csv`:
+  - New parameter `columns_required` to optionally ignore parse errors for columns.
 
 #### Experts
 - added `intelmq.bots.experts.recordedfuture_iprisk` (#1267).
@@ -22,6 +25,7 @@ CHANGELOG
 
 #### Outputs
 - added `intelmq.bots.experts.mcafee.output_esm` (1265).
+- added `intelmq.bots.outputs.blackhole` (#1279).
 
 ### Documentation
 
@@ -42,13 +46,13 @@ CHANGELOG
   A tool to convert from yaml to md has been added.
 
 ### Tools
-- `intelmq_gen_feeds_docs` add to bin directory, allows generating the Feeds.md documentation file from feeds.yaml
+- `intelmq_gen_feeds_docs` addded to bin directory, allows generating the Feeds.md documentation file from feeds.yaml
 - `intelmq_gen_docs` merges both `intelmq_gen_feeds_docs` and `intelmq_gen_harm_docs` in one file and automatically updates the documentation files.
 
 #### intelmqctl
 - `intelmqctl start` prints the bot's last error messages if the bot failed to start (#1021).
 - `intelmqctl start` message "is running" is printed every time. (Until now, it wasn't said when a bot was just starting.)
-- `intelmqctl start/stop/restart/reload/status` now have a "--group" flag which allows you to specify the group of the bots that should be influenced by the command.
+- `intelmqctl start/stop/restart/reload/status` now has a "--group" flag which allows you to specify the group of the bots that should be influenced by the command.
 - `intelmqctl check` checks for defaults.conf completeness if the shipped file from the package can be found.
 - `intelmqctl check` shows errors for non-importable bots.
 - `intelmqctl list bots -q` only prints the IDs of enabled bots.
@@ -64,6 +68,7 @@ CHANGELOG
 - tool `feeds-config-generator` to automatically generate the collector and parser runtime and pipeline configurations.
 - `malware_name_mapping`: Download and convert tool for malware family name mapping has been added.
 - Added a systemd script which creates systemd units for bots (#953).
+- `contrib/cron-jobs/update-asn-data`, `contrib/cron-jobs/update-geoip-data`, `contrib/cron-jobs/update-tor-nodes`: Errors produce proper output.
 
 ### Core
 - lib/bot
@@ -74,6 +79,11 @@ CHANGELOG
   - The parameter `feed` for collectors is deprecated for 2.0 and has been replaced by the more consistent `name` (#1144).
   - bug: allow path parameter for CollectorBot class.
   - Handle errors better when the logger could not be initialized.
+  - `ParserBot`:
+    - For the csv parsing methods, `ParserBot.csv_params` is now used for all these methods.
+    - `ParserBot.parse_csv_dict` now saves the field names in `ParserBot.csv_fieldnames`.
+    - `ParserBot.parse_csv_dict` now saves the raw current line in `ParserBot.current_line`.
+    - `ParserBot.recover_line_csv_dict` now uses the raw current line.
 - lib/message:
   - Subitems in fields of type `JSONDict` (see below) can be accessed directly. E.g. you can do:
     event['extra.foo'] = 'bar'
@@ -95,6 +105,7 @@ CHANGELOG
   * you may now define more than one destination queues path the bot should pass the message to, see [Pipelines](https://github.com/certtools/intelmq/blob/develop/docs/User-Guide.md#pipeline-configuration) (#1088, #1190).
   * the special path `"_on_error"` can be used to pass messages to different queues in case of processing errors (#1133).
 - `lib/harmonization`: Accept `AS` prefix for ASN values (automatically stripped).
+- added `intelmq.VAR_STATE_PATH` for variable state data of bots.
 
 ### Bots
 - Removed print statements from various bots.
@@ -125,8 +136,11 @@ CHANGELOG
   - changed feednames . Please refer to it's README for the exact changes.
   - If the conversion function fails for a line, an error is raised and the offending line will be handled according to the error handling configuration.
     Previously errors like these were only logged and ignored otherwise.
-  - add support for the feed `Accessible-Hadoop`
+  - add support for the feeds
+    - `Accessible-Hadoop` (#1231)
+    - `Accessible ADB` (#1285)
   - Remove deprecated parameter `override`, use `overwrite` instead (#1071).
+  - The `raw` values now are exactly the input with quotes unchanged, the ParserBot methods are now used directly (#1011).
 - The Generic CSV Parser `bots.parsers.generic.parser_csv`:
   - It is possible to filter the data before processing them using the new parameters `filter_type` and `filter_text`.
   - It is possible to specify multiple columns using `|` character in parameter `columns`.
@@ -160,7 +174,10 @@ CHANGELOG
 - Added wait expert for sleeping
 - Added domain suffix expert to extract the TLD/Suffix from a domain name.
 - `bots.experts.maxmind_geoip`: New (optional) parameter `overwrite`, by default false. The current default was to overwrite!
-- `intelmq.bots.experts.ripencc_abuse_contact`: Remove deprecated parameter `query_ripe_stat`, use `query_ripe_stat_asn` and `query_ripe_stat_ip` instead (#1071).
+- `intelmq.bots.experts.ripencc_abuse_contact`: Extend deprecated parameter compatibility `query_ripe_stat` until 2.0 because of a logic bug in the compatibility code, use `query_ripe_stat_asn` and `query_ripe_stat_ip` instead (#1071, #1291).
+- `intelmq/bots/experts/asn_lookup/update-asn-data`: Errors produce proper output on stdout/stderr.
+- `intelmq/bots/experts/maxmind_geoip/update-geoip-data`: Errors produce proper output on stdout/stderr.
+- `intelmq/bots/experts/tor_nodes/update-tor-nodes`: Errors produce proper output on stdout/stderr.
 
 #### Outputs
 - `bots.outputs.file`:
@@ -184,6 +201,7 @@ CHANGELOG
 
 ### Documentation
 - Use Markdown for README again, as pypi now supports it.
+- Developers Guide: Add instructions for pre-release testing.
 
 ### Packaging
 - Add logcheck configuration to the packages.
@@ -209,27 +227,41 @@ CHANGELOG
 
 ### Bots
 #### Collectors
+- `bots.collectors.rt.collector_rt`: Log ticket id for downloaded reports.
 
 #### Parsers
-- `bots.parsers.shadowserver`: if required fields do not exist in data, an exception is raised, so the line will be dumped and not further processed.
+- `bots.parsers.shadowserver`:
+  - if required fields do not exist in data, an exception is raised, so the line will be dumped and not further processed.
+  - fix a bug in the parsing of column `cipher_suite` in ssl poodle reports (#1288).
 
 #### Experts
 - Reverse DNS Expert: ignore all invalid results and use first valid one (#1264).
+- `intelmq/bots/experts/tor_nodes/update-tor-nodes`: Use check.torproject.org as source as internet2.us is down (#1289).
 
 #### Outputs
 
 ### Documentation
 - Bots: document redis cache parameters.
+- Installation documentation: Ubuntu needs universe repositories.
 
 ### Packaging
+- Dropped support for Ubuntu 17.10, it reached its End of Life as of 2018-07-19.
 
 ### Tests
-- `intelmqctl list` now sorts the output of bots and queues (#1262).
+- Drop tests for Python 3.3 for the mode with all requirements, as some optional dependencies do not support Python 3.3 anymore.
+- `lib.test`: Add parameter `compare_raw` (default: `True`) to `assertMessageEqual`, to optionally skip the comparison of the raw field.
+- Add tests for RT collector.
+- Add tests for Shadowserver Parser:
+  - SSL Poodle Reports.
+  - Helper functions.
 
 ### Tools
-- `intelmqctl`: Correctly handle the corner cases collectors and outputs for getting/sending messages in the bot debugger (#1263).
+- `intelmqctl list` now sorts the output of bots and queues (#1262).
+- `intelmqctl`: Correctly handle the corner cases with collectors and outputs for getting/sending messages in the bot debugger (#1263).
+- `intelmqdump`: fix ordering of dumps in a file in runtime. All operations are applied to a sorted list (#1280).
 
 ### Contrib
+- `cron-jobs/update-tor-nodes`: Use check.torproject.org as source as internet2.us is down (#1289).
 
 ### Known issues
 

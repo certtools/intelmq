@@ -11,11 +11,6 @@ with open(os.path.join(os.path.dirname(__file__), 'accessible_vnc.csv')) as hand
     EXAMPLE_FILE = handle.read()
 EXAMPLE_LINES = EXAMPLE_FILE.splitlines()
 
-with open(os.path.join(os.path.dirname(__file__),
-                       'accessible_vnc_RECONSTRUCTED.csv')) as handle:
-    RECONSTRUCTED_FILE = handle.read()
-RECONSTRUCTED_LINES = RECONSTRUCTED_FILE.splitlines()
-
 EXAMPLE_REPORT = {"feed.name": "ShadowServer Accessible VNC",
                   "raw": utils.base64_encode(EXAMPLE_FILE),
                   "__type": "Report",
@@ -30,8 +25,8 @@ EVENTS = [{'__type': 'Event',
            'extra.banner': 'RFB 005.000',
            'protocol.application': 'vnc',
            'protocol.transport': 'tcp',
-           'raw': utils.base64_encode('\n'.join([RECONSTRUCTED_LINES[0],
-                                                 RECONSTRUCTED_LINES[1], ''])),
+           'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                                 EXAMPLE_LINES[1]])),
            'source.asn': 64496,
            'source.geolocation.cc': 'AT',
            'source.geolocation.city': 'VIENNA',
@@ -51,8 +46,8 @@ EVENTS = [{'__type': 'Event',
            'extra.naics': 518210,
            'protocol.application': 'vnc',
            'protocol.transport': 'tcp',
-           'raw': utils.base64_encode('\n'.join([RECONSTRUCTED_LINES[0],
-                                                 RECONSTRUCTED_LINES[2], ''])),
+           'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                                 EXAMPLE_LINES[2]])),
            'source.asn': 64497,
            'source.geolocation.cc': 'AT',
            'source.geolocation.city': 'GRAZ',

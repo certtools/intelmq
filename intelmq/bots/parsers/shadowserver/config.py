@@ -48,9 +48,10 @@ import re
 def get_feed(feedname, logger):
     # TODO should this be case insensitive?
     feed_idx = {
-        "Accessible-Hadoop": accessible_hadoop,
+        "Accessible-ADB": accessible_adb,
         "Accessible-Cisco-Smart-Install": accessible_cisco_smart_install,
         "Accessible-CWMP": accessible_cwmp,
+        "Accessible-Hadoop": accessible_hadoop,
         "Accessible-RDP": accessible_rdp,
         "Accessible-SMB": accessible_smb,
         "Accessible-Telnet": accessible_telnet,
@@ -60,6 +61,7 @@ def get_feed(feedname, logger):
         "DNS-Open-Resolvers": dns_open_resolvers,
         "Drone-Brute-Force": drone_brute_force,
         "Drone": drone,
+        "IPv6-Sinkhole-HTTP-Drone": ipv6_sinkhole_http_drone,
         "Microsoft-Sinkhole": microsoft_sinkhole,
         "NTP-Monitor": ntp_monitor,
         "NTP-Version": ntp_version,
@@ -83,7 +85,6 @@ def get_feed(feedname, logger):
         "Open-XDMCP": open_xdmcp,
         "Sandbox-URL": sandbox_url,
         "Sinkhole-HTTP-Drone": sinkhole_http_drone,
-        "IPv6-Sinkhole-HTTP-Drone": ipv6_sinkhole_http_drone,
         "Spam-URL": spam_url,
         "SSL-FREAK-Vulnerable-Servers": ssl_freak_vulnerable_servers,
         "SSL-POODLE-Vulnerable-Servers": ssl_poodle_vulnerable_servers,
@@ -93,13 +94,13 @@ def get_feed(feedname, logger):
         "Botnet-Drone-Hadoop": drone,
         "DNS-open-resolvers": dns_open_resolvers,
         "Open-NetBIOS": open_netbios_nameservice,
-        "SSL-Freak-Scan": ssl_freak_vulnerable_servers,
-        "SSL-Scan": ssl_poodle_vulnerable_servers,
+        "Ssl-Freak-Scan": ssl_freak_vulnerable_servers,
+        "Ssl-Scan": ssl_poodle_vulnerable_servers,
     }
 
     if feedname in old_feed_idx:
         logger.warning('Deprecated feedname use. Refer to the documentation for the new name. '
-                       'Backwards compatibility will be removed in version 1.3.')
+                       'Backwards compatibility will be removed in version 2.0.')
         return old_feed_idx[feedname]
 
     return feed_idx.get(feedname)
@@ -110,14 +111,14 @@ def add_UTC_to_timestamp(value):
 
 
 def convert_bool(value):
-    if value.lower() in ('y', 'yes', 'true', 'enabled'):
+    if value.lower() in ('y', 'yes', 'true', 'enabled', '1'):
         return True
-    elif value.lower() in ('n', 'no', 'false', 'disabled'):
+    elif value.lower() in ('n', 'no', 'false', 'disabled', '0'):
         return False
 
 
 def validate_to_none(value):
-    if not len(value) or value in ['0', 'unknown']:
+    if not len(value) or value in ('0', 'unknown'):
         return None
     return value
 
@@ -148,13 +149,12 @@ def convert_http_host_and_url(value, row):
     Sinkhole-HTTP-Drone: http_host, url
     With some reports, url/http_url holds only the path, with others the full HTTP request.
     """
-    hostname = ""
     if "cc_dns" in row:
-        if row['cc_dns']:
-            hostname = row['cc_dns']
+        hostname = row.get('cc_dns', '')
     elif "http_host" in row:
-        if row['http_host']:
-            hostname = row['http_host']
+        hostname = row.get('http_host', '')
+    else:
+        hostname = ''
 
     if "url" in row:
         path = row.get('url', '')
@@ -804,7 +804,7 @@ dns_open_resolvers = {
         ('source.geolocation.city', 'city'),
         ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
-        # ('classification.identifier', 'tag'),  # always set to 'openresolver' in constant_fields
+        # ('classification.identifier', 'tag'),  # always set to 'dns-open-resolver' in constant_fields
         ('extra.', 'min_amplification', convert_float),
         ('extra.', 'dns_version', validate_to_none),
         ('os.name', 'p0f_genre'),
@@ -947,7 +947,7 @@ ssl_poodle_vulnerable_servers = {
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
-        ('extra.', 'cipher_suite', convert_bool),
+        ('extra.', 'cipher_suite', validate_to_none),
         ('extra.', 'ssl_poodle', convert_bool),
         ('extra.', 'cert_length', validate_to_none),
         ('extra.', 'subject_common_name', validate_to_none),
@@ -1503,6 +1503,7 @@ blacklisted_ip = {
     }
 }
 
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Accessible-Telnet
 accessible_telnet = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1529,6 +1530,7 @@ accessible_telnet = {
     }
 }
 
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-CWMP
 accessible_cwmp = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1565,6 +1567,7 @@ accessible_cwmp = {
     }
 }
 
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Accessible-VNC
 accessible_vnc = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1591,6 +1594,7 @@ accessible_vnc = {
     }
 }
 
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Accessible-CiscoSmartInstall
 accessible_cisco_smart_install = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1689,4 +1693,34 @@ accessible_hadoop = {
         'classification.type': 'vulnerable service',
         'classification.identifier': 'accessible-hadoop',
     }
+}
+
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Accessible-ADB
+accessible_adb = {
+    'required_fields': [
+        ('time.source', 'timestamp', add_UTC_to_timestamp),
+        ('source.ip', 'ip'),
+        ('source.port', 'port'),
+    ],
+    'optional_fields': [
+        ('protocol.transport', 'protocol'),
+        ('source.reverse_dns', 'hostname'),
+        # ('classification.identifier', 'tag'),  # always set to 'accessible-adb' in constant_fields
+        ('source.asn', 'asn'),
+        ('source.geolocation.cc', 'geo'),
+        ('source.geolocation.region', 'region'),
+        ('source.geolocation.city', 'city'),
+        ('extra.', 'naics', invalidate_zero),
+        ('extra.', 'sic', invalidate_zero),
+        ('extra.', 'name', validate_to_none),
+        ('extra.', 'model', validate_to_none),
+        ('extra.', 'device', validate_to_none),
+        ('extra.', 'features', validate_to_none),
+    ],
+    'constant_fields': {
+        'classification.taxonomy': 'vulnerable',
+        'classification.type': 'vulnerable service',
+        'classification.identifier': 'accessible-adb',
+        'protocol.application': 'adb',
+    },
 }

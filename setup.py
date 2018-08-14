@@ -47,7 +47,7 @@ for bot_type, bots in bots.items():
         module = bot['module']
         BOTS.append('{0} = {0}:BOT.run'.format(module))
 
-with open(os.path.join(os.path.dirname(__file__), 'README.md')) as handle:
+with open(os.path.join(os.path.dirname(__file__), 'README.rst')) as handle:
     README = handle.read().replace('<docs/',
                                    '<https://github.com/certtools/intelmq/blob/master/docs/')
 
@@ -58,7 +58,7 @@ setup(
     maintainer_email='wagner@cert.at',
     python_requires='>=3.4',
     install_requires=REQUIRES,
-    test_requires=[
+    tests_require=[
         'Cerberus',
         'pyyaml',
     ],
@@ -76,7 +76,6 @@ setup(
     description='IntelMQ is a solution for IT security teams for collecting and '
                 'processing security feeds using a message queuing protocol.',
     long_description=README,
-    long_description_content_type="text/markdown",
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Environment :: Console',
