@@ -39,17 +39,16 @@ class CertEUCSVParserBot(ParserBot):
     ignore_lines_starting = ["#"]
 
     def parse_line(self, line, report):
-        extra = {}
         event = self.new_event(report)
         if "datasource" in line:
-            extra["datasource"] = line["datasource"]
+            event["extra.datasource"] = line["datasource"]
         event.add("source.ip", line["source ip"])
         event.add("time.observation", line["observation time"])
         event.add("tlp", line["tlp"])
         event.add("event_description.text", line["description"])
         event.add("classification.type", self.abuse_to_intelmq[line["type"]])
         if "count" in line:
-            extra["count"] = line["count"]
+            event["extra.count"] = int(line["count"]) if line["count"] else None
         event.add("time.source", line["source time"])
         event.add("source.geolocation.country", line["source country"])
         event.add("protocol.application", line["protocol"])
@@ -59,20 +58,18 @@ class CertEUCSVParserBot(ParserBot):
         event.add("source.geolocation.geoip_cc", line["source cc"])
         event.add("source.geolocation.longitude", line["source longitude"])
         if "first_seen" in line:
-            extra["first_seen"] = line["first_seen"]
+            event["extra.first_seen"] = line["first_seen"]
         if "num_sensors" in line:
-            extra["num_sensors"] = line["num_sensors"]
+            event["extra.num_sensors"] = line["num_sensors"]
         event.add("feed.accuracy", line["confidence level"])
         if "last_seen" in line:
-            extra["last_seen"] = line["last_seen"]
+            event["extra.last_seen"] = line["last_seen"]
         event.add("event_description.target", line["target"])
         event.add("source.url", line["url"])
         event.add("source.asn", line["asn"])
         event.add("source.fqdn", line["domain name"])
 
         event.add("raw", self.recover_line(line))
-        if extra:
-            event.add("extra", extra)
         yield event
 
     parse = ParserBot.parse_csv_dict

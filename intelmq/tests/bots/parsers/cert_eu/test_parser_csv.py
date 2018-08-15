@@ -34,7 +34,7 @@ EXAMPLE_EVENT1 = {
     "source.geolocation.geoip_cc": "DE",
     "source.geolocation.longitude": 11.57549,
     "feed.accuracy": 50.0,
-    "extra.count": '6',
+    "extra.count": 6,
     "extra.datasource": "SR",
     "extra.first_seen": "2018-07-06T08:34:55.759000",
     "extra.last_seen": "2018-07-06T08:52:16.109000",
