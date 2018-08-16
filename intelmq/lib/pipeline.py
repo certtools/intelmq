@@ -3,10 +3,8 @@ import time
 import warnings
 
 import redis
-from typing import Union
 from itertools import chain
-
-import redis
+from typing import Optional, Union
 
 import intelmq.lib.exceptions as exceptions
 import intelmq.lib.pipeline
@@ -27,12 +25,31 @@ except ImportError:
 class PipelineFactory(object):
 
     @staticmethod
-    def create(parameters):
-        if hasattr(parameters, 'broker'):
-            broker = parameters.broker.title()
+    def create(parameters: object, direction: Optional[str] = None,
+               queues: Optional[Union[str, list, dict]] = None):
+        """
+        parameters: Parameters object
+        direction: "source" or "destination", optional, needed for queues
+        queues: needs direction to be set, calls set_queues
+        """
+        if direction not in [None, "source", "destination"]:
+            raise exceptions.InvalidArgument("direction", got=direction,
+                                             expected=["destination", "source"])
+        if direction and hasattr(parameters, "%s_pipeline_broker" % direction):
+            broker = getattr(parameters, "%s_pipeline_broker" % direction)
         else:
-            broker = "Redis"
-        return getattr(intelmq.lib.pipeline, broker)(parameters)
+            if hasattr(parameters, 'broker'):
+                broker = parameters.broker.title()
+            else:
+                broker = "Redis"
+        pipe = getattr(intelmq.lib.pipeline, broker)(parameters)
+        if queues and not direction:
+            raise ValueError("Parameter 'direction' must be given when using "
+                             "the queues parameter.")
+        elif queues:
+            pipe.set_queues(queues, direction)
+
+        return pipe
 
 
 class Pipeline(object):
@@ -290,7 +307,7 @@ class Amqp(Pipeline):
     def __init__(self, parameters):
         super(Amqp, self).__init__(parameters)
         if pika is None:
-            raise exceptions.ConfigurationError("To use AMQP you must install the 'pika' library.")
+            raise ValueError("To use AMQP you must install the 'pika' library.")
         self.properties = pika.BasicProperties(delivery_mode=2)  # message persistence
 
     def load_configurations(self, queues_type):

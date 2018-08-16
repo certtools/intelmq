@@ -132,5 +132,43 @@ class TestRedis(unittest.TestCase):
         self.clear()
 
 
+@test.skip_redis()
+class TestAmqp(unittest.TestCase):
+
+    def setUp(self):
+        params = Parameters()
+        params.broker = 'Amqp'
+        self.pipe = pipeline.PipelineFactory.create(params)
+        self.pipe.set_queues('test', 'source')
+        self.pipe.set_queues('test', 'destination')
+        self.pipe.connect()
+
+    def clear(self):
+        self.pipe.clear_queue(self.pipe.internal_queue)
+        self.pipe.clear_queue(self.pipe.source_queue)
+
+    def test_send_receive(self):
+        """ Sending bytest and receiving unicode. """
+        self.clear()
+        self.pipe.send(SAMPLES['normal'][0])
+        self.assertEqual(SAMPLES['normal'][1], self.pipe.receive())
+
+    def test_send_receive_unicode(self):
+        self.clear()
+        self.pipe.send(SAMPLES['unicode'][1])
+        self.assertEqual(SAMPLES['unicode'][1], self.pipe.receive())
+
+    def test_count(self):
+        self.clear()
+        self.pipe.send(SAMPLES['normal'][0])
+        self.pipe.send(SAMPLES['normal'][1])
+        self.pipe.send(SAMPLES['unicode'][0])
+        self.assertEqual(self.pipe.count_queued_messages('test'), {'test': 3})
+
+    def tearDown(self):
+        self.pipe.disconnect()
+        self.clear()
+
+
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()

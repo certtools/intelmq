@@ -6,6 +6,8 @@ CHANGELOG
 ------------------
 
 ### Core
+- `lib/pipeline`:
+  - Allow setting the broker of source and destination independently.
 
 ### Harmonization
 
@@ -32,6 +34,7 @@ CHANGELOG
 ### Packaging
 
 ### Tests
+- Add tests of AMQP broker.
 
 ### Tools
 
