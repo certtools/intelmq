@@ -129,8 +129,8 @@ class TestConf(unittest.TestCase):
                 provider = importlib.import_module('intelmq.bots.%s.%s' % (groupname, providername))
                 for _, botname, _ in pkgutil.iter_modules(path=provider.__path__):
                     classname = 'intelmq.bots.%s.%s.%s' % (groupname, providername, botname)
-                    if classname not in modules and '_' in botname:
-                        raise ValueError("Bot %r not found in BOTS file." % classname)
+                    self.assertFalse(classname not in modules and '_' in botname,
+                                    msg="Bot %r not found in BOTS file." % classname)
 
 
 class CerberusTests(unittest.TestCase):
@@ -143,8 +143,8 @@ class CerberusTests(unittest.TestCase):
 
         v = cerberus.Validator(schema)
 
-        if not v.validate(bots):
-            raise ValueError('Invalid BOTS file:\n%s' % pprint.pformat(v.errors))
+        self.assertTrue(v.validate(bots),
+                        msg='Invalid BOTS file:\n%s' % pprint.pformat(v.errors))
 
     def test_feeds(self):
         with open(os.path.join(os.path.dirname(__file__), 'assets/feeds.schema.json')) as handle:
@@ -155,8 +155,8 @@ class CerberusTests(unittest.TestCase):
 
         v = cerberus.Validator(schema)
 
-        if not v.validate(feeds):
-            raise ValueError('Invalid feeds.yaml file:\n%s' % pprint.pformat(v.errors))
+        self.assertTrue(v.validate(feeds),
+                        msg='Invalid feeds.yaml file:\n%s' % pprint.pformat(v.errors))
 
 
 
