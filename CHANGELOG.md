@@ -36,6 +36,7 @@ CHANGELOG
 ### Tools
 
 ### Contrib
+* `malware_name_mapping`: Added the script `apply_mapping_eventdb.py` to apply the mapping to an eventdb.
 
 ### Known issues
 
