@@ -12,11 +12,6 @@ with open(os.path.join(os.path.dirname(__file__),
     EXAMPLE_FILE = handle.read()
 EXAMPLE_LINES = EXAMPLE_FILE.splitlines()
 
-with open(os.path.join(os.path.dirname(__file__),
-                       'Accessible-SMB_reconstructed.csv')) as handle:
-    RECONSTRUCTED_FILE = handle.read()
-RECONSTRUCTED_LINES = RECONSTRUCTED_FILE.splitlines()
-
 EXAMPLE_REPORT = {"feed.name": "ShadowServer Accessible-SMB",
                   "raw": utils.base64_encode(EXAMPLE_FILE),
                   "__type": "Report",
@@ -30,8 +25,8 @@ EVENTS = [{'__type': 'Event',
            'extra.smb_implant': False,
            'protocol.application': 'smb',
            'protocol.transport': 'tcp',
-           'raw': utils.base64_encode('\n'.join([RECONSTRUCTED_LINES[0],
-                                                 RECONSTRUCTED_LINES[1], ''])),
+           'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                                 EXAMPLE_LINES[1]])),
            'source.asn': 8559,
            'source.geolocation.cc': 'AT',
            'source.geolocation.city': 'EISENSTADT',
@@ -50,8 +45,8 @@ EVENTS = [{'__type': 'Event',
            'classification.identifier': 'open-smb',
            'protocol.application': 'smb',
            'protocol.transport': 'tcp',
-           'raw': utils.base64_encode('\n'.join([RECONSTRUCTED_LINES[0],
-                                                 RECONSTRUCTED_LINES[2], ''])),
+           'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                                 EXAMPLE_LINES[2]])),
            'source.asn': 8447,
            'source.geolocation.cc': 'AT',
            'source.geolocation.city': 'GUNSKIRCHEN',

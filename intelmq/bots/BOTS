@@ -1,5 +1,14 @@
 {
     "Collector": {
+        "API": {
+            "description": "Bot for collecting data using API.",
+            "module": "intelmq.bots.collectors.api.collector_api",
+            "parameters": {
+                "name": "API",
+                "provider": "APICollector",
+                "port": 5000
+            }
+        },
         "CertStream": {
             "module": "intelmq.bots.collectors.calidog.collector_certstream",
             "description": "A bot to collect information from CertStream",
@@ -805,6 +814,11 @@
                 "routing_key": "<your routing key>",
                 "username": "<your amqp username>"
             }
+        },
+        "Blackhole": {
+            "description": "AMQP Topic is the bot responsible to send events to a AMQP topic exchange.",
+            "module": "intelmq.bots.outputs.blackhole.output",
+            "parameters": {}
         },
         "Elasticsearch": {
             "description": "Elasticsearch is the bot responsible to send events to a elasticsearch.",

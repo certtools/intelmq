@@ -59,6 +59,11 @@ class GenericCsvParserBot(ParserBot):
             raise InvalidArgument('filter_type', got=self.filter_type,
                                   expected=("blacklist", "whitelist"),
                                   docs='docs/Bots.md')
+        self.columns_required = getattr(self.parameters, 'columns_required',
+                                        [True for _ in self.columns])
+        if len(self.columns) != len(self.columns_required):
+            raise ValueError("Length of parameters 'columns' (%d) and 'columns_required' (%d) "
+                             "needs to be equal." % (len(self.columns), len(self.columns_required)))
 
     def parse(self, report):
         raw_report = utils.base64_decode(report.get("raw"))
@@ -87,7 +92,7 @@ class GenericCsvParserBot(ParserBot):
     def parse_line(self, row, report):
         event = self.new_event(report)
 
-        for key, value in zip(self.columns, row):
+        for key, value, required in zip(self.columns, row, self.columns_required):
             keys = key.split('|') if '|' in key else [key, ]
             for key in keys:
                 if isinstance(value, str) and not value:  # empty string is never valid
@@ -121,8 +126,9 @@ class GenericCsvParserBot(ParserBot):
                 if event.add(key, value, raise_failure=False):
                     break
             else:
-                # if the value sill remains unadded we need to inform
-                raise exceptions.InvalidValue(keys, value)
+                # if the value sill remains unadded we need to inform if the key is needed
+                if required:
+                    raise exceptions.InvalidValue(key, value)
 
         if hasattr(self.parameters, 'type')\
                 and "classification.type" not in event:
