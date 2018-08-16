@@ -6,6 +6,8 @@ CHANGELOG
 ------------------
 
 ### Core
+- `lib/pipeline`:
+  - Allow setting the broker of source and destination independently.
 
 ### Harmonization
 
