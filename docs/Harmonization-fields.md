@@ -136,6 +136,7 @@ classification.type type. Allowed values are:
  * dropzone
  * exploit
  * ids alert
+ * infected system
  * leak
  * malware
  * malware configuration
@@ -147,6 +148,8 @@ classification.type type. Allowed values are:
  * spam
  * test
  * tor
+ * unauthorized-login
+ * unauthorized-command
  * unknown
  * vulnerable client
  * vulnerable service
@@ -267,6 +270,5 @@ Valid values must have the host (network location part).
 Like string, but only allows upper case characters.
 
 Sanitation uppers all characters.
-
 
 

@@ -6,10 +6,11 @@ import redis
 from typing import Union
 from itertools import chain
 
+import redis
+
 import intelmq.lib.exceptions as exceptions
 import intelmq.lib.pipeline
 import intelmq.lib.utils as utils
-import redis
 
 __all__ = ['Pipeline', 'PipelineFactory', 'Redis', 'Pythonlist', 'Amqp']
 
@@ -56,8 +57,8 @@ class Pipeline(object):
     def set_queues(self, queues, queues_type):
         """
         :param queues: For source queue, it's just string.
-                    For destination queue, it can be one of the following: None or string or list of strings
-                        or {} (of either strings or lists) (should have the '_default' key)
+                    For destination queue, it can be one of the following:
+                    None or list or dict (of strings or lists, one of the key should be '_default')
 
         :param queues_type: "source" or "destination"
 
@@ -83,7 +84,7 @@ class Pipeline(object):
             else:
                 raise exceptions.InvalidArgument(
                     'queues', got=queues,
-                    expected=["None", "string", "list of strings", "{} (of either strings or lists) having the _default key"])
+                    expected=["None", "list of strings", "dict (of strings or lists that should have the _default key)"])
             self.destination_queues = q
         else:
             raise exceptions.InvalidArgument('queues_type', got=queues_type, expected=['source', 'destination'])

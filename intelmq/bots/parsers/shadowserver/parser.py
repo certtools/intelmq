@@ -11,16 +11,17 @@ Most, if not all, feeds from shadowserver are in csv format.
 This parser will only work with those.
 """
 import copy
-import csv
-import io
 
 import intelmq.bots.parsers.shadowserver.config as config
-from intelmq.lib import utils
 from intelmq.lib.bot import ParserBot
 from intelmq.lib.exceptions import InvalidKey, InvalidValue
 
 
 class ShadowserverParserBot(ParserBot):
+
+    parse = ParserBot.parse_csv_dict
+    recover_line = ParserBot.recover_line_csv_dict
+    csv_params = {'dialect': 'unix'}
 
     def init(self):
         self.sparser_config = None
@@ -29,39 +30,21 @@ class ShadowserverParserBot(ParserBot):
             self.sparser_config = config.get_feed(self.feedname, self.logger)
 
         if not self.sparser_config:
-            self.logger.error('No feedname provided or feedname not in conf.')
-            self.stop()
+            raise ValueError('No feedname provided or feedname not in conf.')
 
         # Set a switch if the parser shall reset the feed.name,
         # code and feedurl for this event
         self.overwrite = False
-        if hasattr(self.parameters, 'override'):  # TODOv1.1: remove
-            self.logger.error('Parameter "override" is deprecated, '
-                              'it is now called "overwrite". Stopping now. '
-                              '(This warning will be removed before v1.1.)')
-            self.stop()
         if hasattr(self.parameters, 'overwrite'):
             if self.parameters.overwrite:
                 self.overwrite = True
-
-    def parse(self, report):
-        raw_report = utils.base64_decode(report["raw"])
-        raw_report = raw_report.translate({0: None})
-        csvr = csv.DictReader(io.StringIO(raw_report))
-
-        # create an array of fieldnames,
-        # those were automagically created by the dictreader
-        self.fieldnames = csvr.fieldnames
-
-        for row in csvr:
-            yield row
 
     def parse_line(self, row, report):
 
         conf = self.sparser_config
 
         # we need to copy here...
-        fields = copy.copy(self.fieldnames)
+        fields = copy.copy(self.csv_fieldnames)
         # We will use this variable later.
         # Each time a field was successfully added to the
         # intelmq-event, this field will be removed from
@@ -90,8 +73,8 @@ class ShadowserverParserBot(ParserBot):
             intelmqkey, shadowkey = item[:2]
             if shadowkey not in fields:
                 if not row.get(shadowkey):  # key does not exist in data (not even in the header)
-                    self.logger.warning('Required key %r not found data. Possible change in data'
-                                        ' format or misconfiguration.', shadowkey)
+                    raise ValueError('Required column %r not found in data. Possible change in data'
+                                     ' format or misconfiguration.' % shadowkey)
                 else:  # key is used twice
                     fields.append(shadowkey)
             if len(item) > 2:
@@ -120,7 +103,7 @@ class ShadowserverParserBot(ParserBot):
             intelmqkey, shadowkey = item[:2]
             if shadowkey not in fields:
                 if not row.get(shadowkey):  # key does not exist in data (not even in the header)
-                    self.logger.warning('Optional key %r not found data. Possible change in data'
+                    self.logger.warning('Optional key %r not found in data. Possible change in data'
                                         ' format or misconfiguration.', shadowkey)
                     continue
                 else:  # key is used twice
@@ -180,15 +163,6 @@ class ShadowserverParserBot(ParserBot):
             event.add('extra', extra)
 
         yield event
-
-    def recover_line(self, line):
-        out = io.StringIO()
-        writer = csv.DictWriter(out, self.fieldnames,
-                                dialect='unix',
-                                extrasaction='ignore')
-        writer.writeheader()
-        writer.writerow(line)
-        return out.getvalue()
 
 
 BOT = ShadowserverParserBot

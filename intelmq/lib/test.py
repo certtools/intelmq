@@ -147,7 +147,7 @@ class BotTestCase(object):
                                          'raw': 'Cg==',
                                          'feed.name': 'Test Feed',
                                          'time.observation': '2016-01-01T00:00:00+00:00'}
-        elif cls.default_input_message == '' and cls.bot_type != 'collector':
+        elif cls.bot_type != 'collector' and cls.default_input_message == '':
             cls.default_input_message = {'__type': 'Event'}
         if type(cls.default_input_message) is dict:
             cls.default_input_message = \
@@ -307,8 +307,10 @@ class BotTestCase(object):
     def get_input_queue(self):
         """Returns the input queue of this bot which can be filled
            with fixture data in setUp()"""
-
-        return self.pipe.state["%s-input" % self.bot_id]
+        if self.pipe:
+            return self.pipe.state["%s-input" % self.bot_id]
+        else:
+            return []
 
     def set_input_queue(self, seq):
         """Setter for the input queue of this bot"""
@@ -413,8 +415,8 @@ class BotTestCase(object):
         Asserts if any logline matches a specific requirement.
 
         Parameters:
-            pattern: Message text which is compared
-            type: Type of logline which is asserted
+            pattern: Message text which is compared, regular expression.
+            levelname: Log level of the logline which is asserted, upper case.
         """
 
         self.assertIsNotNone(self.loglines)
@@ -448,7 +450,7 @@ class BotTestCase(object):
         """
         self.assertEqual(len(self.get_output_queue(path=path)), queue_len)
 
-    def assertMessageEqual(self, queue_pos, expected_msg, path="_default"):
+    def assertMessageEqual(self, queue_pos, expected_msg, compare_raw=True, path="_default"):
         """
         Asserts that the given expected_message is
         contained in the generated event with
@@ -462,9 +464,19 @@ class BotTestCase(object):
             expected = expected_msg.to_dict(with_type=True)
         else:
             expected = expected_msg.copy()
+
+        if not compare_raw:
+            expected.pop('raw', None)
+            event_dict.pop('raw', None)
         if 'time.observation' in event_dict:
             del event_dict['time.observation']
         if 'time.observation' in expected:
             del expected['time.observation']
 
         self.assertDictEqual(expected, event_dict)
+
+    def tearDown(self):
+        """
+        Check if the bot did consume all messages.
+        """
+        self.assertEqual(len(self.input_queue), 0)

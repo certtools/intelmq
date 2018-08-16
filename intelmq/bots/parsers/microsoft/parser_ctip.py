@@ -57,7 +57,7 @@ class MicrosoftCTIPParserBot(ParserBot):
         event.add('feed.accuracy',
                   event.get('feed.accuracy', 100) * line['confidence'] / 100,
                   overwrite=True)
-        event.add('classification.type', 'botnet drone')
+        event.add('classification.type', 'infected system')
         event.add('raw', raw)
         yield event
 

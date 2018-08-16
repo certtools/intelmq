@@ -10,11 +10,11 @@ import signal
 import subprocess
 import sys
 import time
+from collections import OrderedDict
 
 import pkg_resources
 import psutil
 
-from collections import OrderedDict
 from intelmq import (DEFAULTS_CONF_FILE, PIPELINE_CONF_FILE, RUNTIME_CONF_FILE,
                      VAR_RUN_PATH, BOTS_FILE, HARMONIZATION_CONF_FILE)
 from intelmq.lib import utils
@@ -34,22 +34,22 @@ STATUSES = {
 }
 
 MESSAGES = {
-    'disabled': '%s is disabled.',
+    'disabled': 'Bot %s is disabled.',
     'starting': 'Starting %s...',
-    'running': '%s is running.',
-    'stopped': '%s is stopped.',
-    'stopping': 'Stopping %s...',
-    'reloading': 'Reloading %s ...',
-    'reloaded': '%s is reloaded.',
+    'running': 'Bot %s is running.',
+    'stopped': 'Bot %s is stopped.',
+    'stopping': 'Stopping bot %s...',
+    'reloading': 'Reloading bot %s ...',
+    'reloaded': 'Bot %s is reloaded.',
 }
 
 ERROR_MESSAGES = {
-    'starting': '%s failed to START.',
-    'running': '%s is still running.',
-    'stopped': '%s was NOT RUNNING.',
-    'stopping': '%s failed to STOP.',
-    'not found': '%s failed to START because the file cannot be found.',
-    'access denied': '%s failed to %s because of missing permissions.',
+    'starting': 'Bot %s failed to START.',
+    'running': 'Bot %s is still running.',
+    'stopped': 'Bot %s was NOT RUNNING.',
+    'stopping': 'Bot %s failed to STOP.',
+    'not found': 'Bot %s failed to START because the file cannot be found.',
+    'access denied': 'Bot %s failed to %s because of missing permissions.',
 }
 
 LOG_LEVEL = OrderedDict([
@@ -69,7 +69,7 @@ BOT_GROUP = {"collectors": "Collector", "parsers": "Parser", "experts": "Expert"
 
 def log_list_queues(queues):
     if RETURN_TYPE == 'text':
-        for queue, counter in sorted(queues.items()):
+        for queue, counter in sorted(queues.items(), key=lambda x: str.lower(x[0])):
             if counter or not QUIET:
                 logger.info("%s - %s", queue, counter)
 
@@ -786,7 +786,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
         If description is not set, None is used instead.
         """
         if RETURN_TYPE == 'text':
-            for bot_id in sorted(self.runtime_configuration.keys()):
+            for bot_id in sorted(self.runtime_configuration.keys(), key=str.lower):
                 if QUIET and not self.runtime_configuration[bot_id].get('enabled'):
                     continue
                 if QUIET:
@@ -799,6 +799,12 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                    for bot_id in sorted(self.runtime_configuration.keys())]
 
     def get_queues(self, with_internal_queues=False):
+        """
+        :return: 4-tuple of source, destination, internal queues, and all queues combined.
+        The returned values are only queue names, not their paths. I.E. if there is a bot with
+        destination queues = {"_default": "one", "other": ["two", "three"]}, only set of {"one", "two", "three"} gets returned.
+        (Note that the "_default" path has single string and the "other" path has a list that gets flattened.)
+        """
         source_queues = set()
         destination_queues = set()
         internal_queues = set()
@@ -809,7 +815,8 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 if with_internal_queues:
                     internal_queues.add(value['source-queue'] + '-internal')
             if 'destination-queues' in value:
-                destination_queues.update(value['destination-queues'])
+                # flattens ["one", "two"] → {"one", "two"}, {"_default": "one", "other": ["two", "three"]} → {"one", "two", "three"}
+                destination_queues.update(utils.flatten_queues(value['destination-queues']))
 
         all_queues = source_queues.union(destination_queues).union(internal_queues)
 
@@ -838,9 +845,8 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
             if 'destination-queues' in info:
                 return_dict[bot_id]['destination_queues'] = []
-                for dest_queue in info['destination-queues']:
-                    return_dict[bot_id]['destination_queues'].append(
-                        (dest_queue, counters[dest_queue]))
+                for dest_queue in utils.flatten_queues(info['destination-queues']):
+                    return_dict[bot_id]['destination_queues'].append((dest_queue, counters[dest_queue]))
 
         return 0, return_dict
 
@@ -1036,12 +1042,14 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 if ('group' in bot_config and
                         bot_config['group'] in ['Collector', 'Parser', 'Expert']):
                     if ('destination-queues' not in files[PIPELINE_CONF_FILE][bot_id] or
-                            (not isinstance(files[PIPELINE_CONF_FILE][bot_id]['destination-queues'], list) or
-                             len(files[PIPELINE_CONF_FILE][bot_id]['destination-queues']) < 1)):
+                            (isinstance(files[PIPELINE_CONF_FILE][bot_id]['destination-queues'], list) and
+                             len(files[PIPELINE_CONF_FILE][bot_id]['destination-queues']) < 1) or
+                            (isinstance(files[PIPELINE_CONF_FILE][bot_id]['destination-queues'], dict) and
+                             '_default' not in files[PIPELINE_CONF_FILE][bot_id]['destination-queues'])):
                         if RETURN_TYPE == 'json':
-                            output.append(['error', 'Misconfiguration: No destination queues for %r.' % bot_id])
+                            output.append(['error', 'Misconfiguration: No (default) destination queue for %r.' % bot_id])
                         else:
-                            self.logger.error('Misconfiguration: No destination queues for %r.', bot_id)
+                            self.logger.error('Misconfiguration: No (default) destination queue for %r.', bot_id)
                         retval = 1
                     else:
                         all_queues = all_queues.union(files[PIPELINE_CONF_FILE][bot_id]['destination-queues'])
@@ -1056,6 +1064,7 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                         retval = 1
                     else:
                         all_queues.add(files[PIPELINE_CONF_FILE][bot_id]['source-queue'])
+                        all_queues.add(files[PIPELINE_CONF_FILE][bot_id]['source-queue'] + '-internal')
         if not no_connections:
             try:
                 pipeline = PipelineFactory.create(self.parameters)

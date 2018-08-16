@@ -24,7 +24,7 @@ EXAMPLE_REPORT = {
 
 EXAMPLE_EVENTS = [{
     "__type": "Event",
-    'classification.type': 'botnet drone',
+    'classification.type': 'infected system',
     'destination.ip': '198.18.18.18',
     'destination.port': 443,
     'event_description.text': 'Host is a member of Botnet B85-R2S',
@@ -42,7 +42,7 @@ EXAMPLE_EVENTS = [{
     "raw": base64_encode(json.dumps([EXAMPLE_PARSED[0]], sort_keys=True)),
     }, {
     "__type": "Event",
-    'classification.type': 'botnet drone',
+    'classification.type': 'infected system',
     'destination.ip': '100.120.45.48',
     'destination.port': 80,
     'event_description.text': 'Host is a member of Botnet Conficker',
@@ -60,7 +60,7 @@ EXAMPLE_EVENTS = [{
     "raw": base64_encode(json.dumps([EXAMPLE_PARSED[1]], sort_keys=True)),
     }, {
     "__type": "Event",
-    'classification.type': 'botnet drone',
+    'classification.type': 'infected system',
     'destination.ip': '203.0.113.212',
     'destination.port': 1085,
     'event_description.text': 'Host is a member of Botnet B106-Jenxcus',
@@ -78,7 +78,7 @@ EXAMPLE_EVENTS = [{
     "raw": base64_encode(json.dumps([EXAMPLE_PARSED[2]], sort_keys=True)),
     }, {
     "__type": "Event",
-    'classification.type': 'botnet drone',
+    'classification.type': 'infected system',
     'destination.port': 443,
     'event_description.text': 'Host is a member of Botnet B75-S12',
     'extra.additionalmetadata': [r'any??thing\x0000can\x01be!here??'],

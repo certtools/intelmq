@@ -11,11 +11,6 @@ with open(os.path.join(os.path.dirname(__file__), 'drone_brute_force.csv')) as h
     EXAMPLE_FILE = handle.read()
 EXAMPLE_LINES = EXAMPLE_FILE.splitlines()
 
-with open(os.path.join(os.path.dirname(__file__),
-                       'drone_brute_force_RECONSTRUCTED.csv')) as handle:
-    RECONSTRUCTED_FILE = handle.read()
-RECONSTRUCTED_LINES = RECONSTRUCTED_FILE.splitlines()
-
 EXAMPLE_REPORT = {"feed.name": "ShadowServer Drone Brute Force",
                   "raw": utils.base64_encode(EXAMPLE_FILE),
                   "__type": "Report",
@@ -40,8 +35,8 @@ EVENTS = [{'__type': 'Event',
            'destination.account': 'alex',
            'protocol.application': 'ssh',
            'feed.name': 'ShadowServer Drone Brute Force',
-           'raw': utils.base64_encode('\n'.join([RECONSTRUCTED_LINES[0],
-                                                 RECONSTRUCTED_LINES[1], ''])),
+           'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                                 EXAMPLE_LINES[1]])),
            'source.asn': 64496,
            'source.geolocation.cc': 'AT',
            'source.geolocation.city': 'WIEN',

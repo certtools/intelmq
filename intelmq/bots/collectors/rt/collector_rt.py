@@ -27,8 +27,7 @@ class RTCollectorBot(CollectorBot):
 
     def init(self):
         if rt is None:
-            self.logger.error('Could not import rt. Please install it.')
-            self.stop()
+            raise ValueError('Could not import rt. Please install it.')
 
         self.set_request_parameters()
 
@@ -126,7 +125,7 @@ class RTCollectorBot(CollectorBot):
                     else:
                         self.logger.info('Skipping now.')
                         continue
-                self.logger.info("Report downloaded.")
+                self.logger.info("Report #%d downloaded.", ticket_id)
                 raw = resp.text
 
             report = self.new_report()
