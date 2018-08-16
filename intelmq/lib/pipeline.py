@@ -316,6 +316,9 @@ class Amqp(Pipeline):
                             "127.0.0.1")
         self.port = getattr(self.parameters,
                             "{}_pipeline_port".format(queues_type), 5672)
+        self.username = getattr(self.parameters,
+                                "{}_pipeline_username".format(queues_type),
+                                None)
         self.password = getattr(self.parameters,
                                 "{}_pipeline_password".format(queues_type),
                                 None)
@@ -325,12 +328,21 @@ class Amqp(Pipeline):
                                           queues_type),
                                       None)
         self.load_balance = getattr(self.parameters, "load_balance", False)
+        self.virtual_host = getattr(self.parameters,
+                                    "{}_amqp_virtual_host".format(queues_type),
+                                    '/')
         self.load_balance_iterator = 0
+        self.kwargs = {}
+        if self.username and self.password:
+            self.kwargs['credentials'] = pika.PlainCredentials(self.username, self.password)
 
     def connect(self, channelonly=False):
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(host=self.host,
                                                                             port=int(self.port),
                                                                             socket_timeout=self.socket_timeout,
+                                                                            virtual_host=self.virtual_host,
+                                                                            heartbeat=10,
+                                                                            **self.kwargs,
                                                                             ))
         self.channel = self.connection.channel()
         if self.source_queue:
@@ -423,7 +435,10 @@ class Amqp(Pipeline):
         return queue_dict
 
     def clear_queue(self, queue: str) -> bool:
-        self.channel.queue_delete(queue=queue)
+        try:
+            self.channel.queue_delete(queue=queue)
+        except pika.exceptions.ChannelClosed as exc:  # channel not found and similar
+            pass
 
     def nonempty_queues(self) -> set:
         if requests is False:

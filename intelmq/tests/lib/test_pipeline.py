@@ -166,8 +166,8 @@ class TestAmqp(unittest.TestCase):
         self.assertEqual(self.pipe.count_queued_messages('test'), {'test': 3})
 
     def tearDown(self):
-        self.pipe.disconnect()
         self.clear()
+        self.pipe.disconnect()
 
 
 if __name__ == '__main__':  # pragma: no cover

@@ -205,6 +205,27 @@ Note that a bot must only have one (input) source queue but may have multiple de
 
 More examples can be found at `intelmq/etc/pipeline.conf` directory in IntelMQ repository.
 
+### AMQP
+
+Starting with IntelMQ 1.2 the AMQP protocol is supported as message queue. To use it, install a broker, for example RabbitMQ. The configuration and the differences are outlined here. Keep in mind that it is slower, but has better monitoring capabilities and is more stable.
+
+You can change the broker for single bots (set the parameters in the runtime configuration per bot) or for the whole botnet (in defafults configuration).
+
+of course you need to set the parameter `source_pipeline_broker`/`destination_pipeline_broker` to `amqp`. There are more parameters:
+
+* `destination_pipeline_host` (default: `'127.0.0.1'`)
+* `destination_pipeline_port` (default: 5672)
+* `destination_pipeline_username`
+* `destination_pipeline_password`
+* `destination_pipeline_socket_timeout` (default: no timeout)
+* `destination_pipeline_amqp_virtual_host` (default: `'/`)
+* `source_pipeline_host` (default: `'127.0.0.1'`)
+* `source_pipeline_port` (default: 5672)
+* `source_pipeline_username`
+* `source_pipeline_password`
+* `source_pipeline_socket_timeout` (default: no timeout)
+* `source_pipeline_amqp_virtual_host` (default: `'/`)
+
 ## Runtime Configuration
 
 This configuration is used by each bot to load its specific (runtime) parameters. Usually, the `BOTS` file is used to generate `runtime.conf`. Also, the IntelMQ Manager generates this configuration. You may edit it manually as well. Be sure to re-load the bot (see the intelmqctl documentation).
