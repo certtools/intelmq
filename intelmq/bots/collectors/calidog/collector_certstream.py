@@ -19,7 +19,7 @@ except ImportError:
 
 class CertstreamCollectorBot(CollectorBot):
     def init(self):
-        if sleekxmpp is None:
+        if CertStreamClient is None:
             raise ValueError("Could not import library 'certstream'. Please install it.")
 
     def callback(self, message, context=None):  # callback handler for certstream events.
