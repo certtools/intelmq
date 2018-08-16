@@ -30,6 +30,7 @@ CHANGELOG
 ### Packaging
 
 ### Tests
+- Add tests of AMQP broker.
 
 ### Tools
 
