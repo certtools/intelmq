@@ -50,7 +50,7 @@ class CymruCAPProgramParserBot(ParserBot):
         elif report_type == 'bots':
             # bots|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|[srcport <PORT>] [mwtype <TYPE>] [destaddr <IPADDR>]|ASNAME
             # TYPE can contain spaces -.-
-            event.add('classification.type', 'botnet drone')
+            event.add('classification.type', 'infected system')
             comment_results = {}
             comment_key = None
             comment_value = []
@@ -165,7 +165,7 @@ class CymruCAPProgramParserBot(ParserBot):
                     break
         elif report_type == 'toxbot':  # TODO: verify
             # toxbot|192.0.2.1|ASN|YYYY-MM-DD HH:MM:SS|srcport <SOURCE PORT>|ASNAME
-            event.add('classification.type', 'botnet drone')
+            event.add('classification.type', 'infected system')
             event.add('classification.identifier', report_type)
             event.add('malware.name', report_type)
             event['extra.source_port'] = int(comment_split[1])

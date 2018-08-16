@@ -1392,3 +1392,20 @@ providers:
       revision: 15-06-2018
       status: on
       documentation:
+  McAfee Advanced Threat Defense:
+    Sandbox Reports:
+      description: Processes reports from McAfee's sandboxing solution via the openDXL API.
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.opendxl.collector
+          parameters:
+            dxl_config_file: "{{location of dxl configuration file}}"
+            dxl_topic: "/mcafee/event/atd/file/report"
+        parser:
+          module: intelmq.bots.parsers.mcafee.parser_atd
+          parameters:
+            verdict_severity: 4
+      revision: 05-07-2018
+      status: on
+      documentation:

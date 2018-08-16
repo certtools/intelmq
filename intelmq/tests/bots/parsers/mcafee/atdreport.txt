@@ -1,0 +1,276 @@
+{
+"Summary": {
+	"Event_Type": "ATD File Report",
+	"MISversion": "4.4.0.26",
+	"SUMversion": "4.4.0.26",
+	"DETversion": "4.4.0.180504",
+	"OSversion": "win7sp1x64_2507_neu",
+	"fileId": "Not Available",
+	"Parent MD5": "Not Available",
+	"ATD IP": "10.10.10.140",
+	"Src IP": "",
+	"Dst IP": "",
+	"TaskId": "403",
+	"JobId": "349",
+	"JSONversion": "1.002",
+	"hasDynamicAnalysis": "true",
+	"Subject": 	{
+		"Name": "install-tmetrade-trust-2f9aec.exe",
+		"Type": "PE32+ executable (GUI) x86-64",
+		"FileType": "0",
+		"md5": "6C3F06652A4868E005EB42DAAF1CEE43",
+		"sha-1": "6B53023EE7E6E336913DEBAD5BAD7E633362407A",
+		"sha-256": "DDBBB3C3141024A17E1F20C09C75D8913809062A3D326E2AC81626E65215C430",
+		"size": "2488320",
+		"Timestamp": "2018-07-06 16:51:10",
+		"parent_archive": "Not Available"
+	},
+	"Selectors": [
+		{
+			"Engine": "Gateway Anti-Malware",
+			"MalwareName": "RDN/Generic Dropper",
+			"Severity": "5"
+		},
+		{
+			"Engine": "GTI File Reputation",
+			"MalwareName": "---",
+			"Severity": "0"
+		},
+		{
+			"Engine": "GTI URL Reputation",
+			"MalwareName": "Malicious Sites ",
+			"Severity": "5"
+		},
+		{
+			"Engine": "Anti-Malware",
+			"MalwareName": "---",
+			"Severity": "0"
+		},
+		{
+			"Engine": "Sandbox",
+			"MalwareName": "Malware.Dynamic",
+			"Severity": "5"
+		}
+	],
+	"Verdict": {
+		"Severity": "5",
+		"Description": "Sample is considered malicious based on static code analysis matching on known malware families: final severity level 5"
+	},
+	"Processes" : [
+		{
+			"Name" : "install-tmetrade-trust-2f9aec.exe",
+			"Md5" : "6C3F06652A4868E005EB42DAAF1CEE43",
+			"Sha1" : "6B53023EE7E6E336913DEBAD5BAD7E633362407A",
+			"Sha256" : "DDBBB3C3141024A17E1F20C09C75D8913809062A3D326E2AC81626E65215C430",
+			"Severity" : "3"
+		},
+		{
+			"Name" : "exfill.exe",
+			"Md5" : "",
+			"Sha1" : "",
+			"Sha256" : "",
+			"Severity" : "2"
+		},
+		{
+			"Name" : "python27.dll",
+			"Md5" : "",
+			"Sha1" : "",
+			"Sha256" : "",
+			"Severity" : "0"
+		},
+		{
+			"Name" : "vtestupx.exe",
+			"Md5" : "",
+			"Sha1" : "",
+			"Sha256" : "",
+			"Severity" : "5"
+		},
+		{
+			"Name" : "w9xpopen.exe",
+			"Md5" : "",
+			"Sha1" : "",
+			"Sha256" : "",
+			"Severity" : "0"
+		}
+	],
+	"Files" : [
+		{
+			"Processes" : [
+				{
+					"RelType" : "512",
+					"Name" : "install-tmetrade-trust-2f9aec.exe",
+					"Sha256" : "DDBBB3C3141024A17E1F20C09C75D8913809062A3D326E2AC81626E65215C430"
+				}
+			],
+			"Md5" : "3B7B97D1714BE4D8F76715F4F990FB68",
+			"Sha1" : "73F34EEBC586A6710A95672DD36C2107A7E6B0D8",
+			"Sha256" : "C786DB51C5DDA9FDC608EBAE5C0FA4211FBCD8CF10713D70C4ECD4622EA317A0",
+			"Name" : "today.exe",
+			"FileType" : "0"
+		}
+	],
+	"Urls" : [
+		{
+			"Processes" : [
+				{
+					"RelType" : "8",
+					"Name" : "exfill.exe",
+					"Sha256" : ""
+				}
+			],
+			"Category" : "Malicious Sites ",
+			"Functional" : "Risk/Fraud/Crime ",
+			"Risk" : "Security ",
+			"Port" : "80",
+			"Reputation" : "127",
+			"Severity" : "5",
+			"Url" : "CC.TMETRADE.COM"
+		}
+	],
+	"Ips" : [
+		{
+			"Processes" : [
+				{
+					"RelType" : "8",
+					"Name" : "vtestupx.exe",
+					"Sha256" : ""
+				}
+			],
+			"Category" : "---",
+			"Functional" : "---",
+			"Risk" : "---",
+			"Port" : "12345",
+			"Reputation" : "0",
+			"Severity" : "-1",
+			"Ipv4" : "11.12.123.111"
+		},
+		{
+			"Processes" : [
+				{
+					"RelType" : "8",
+					"Name" : "exfill.exe",
+					"Sha256" : ""
+				}
+			],
+			"Category" : "---",
+			"Functional" : "---",
+			"Risk" : "---",
+			"Port" : "80",
+			"Reputation" : "0",
+			"Severity" : "-1",
+			"Ipv4" : "90.28.28.47"
+		}
+	],
+	"Stats": [
+		{
+			"ID": "0",
+			"Category": "Persistence, Installation Boot Survival ",
+			"Severity": "5"
+		},
+		{
+			"ID": "1",
+			"Category": "Hiding, Camouflage, Stealthiness, Detection and Removal Protection ",
+			"Severity": "3"
+		},
+		{
+			"ID": "2",
+			"Category": "Security Solution / Mechanism bypass, termination and removal, Anti Debugging, VM Detection ",
+			"Severity": "5"
+		},
+		{
+			"ID": "3",
+			"Category": "Spreading ",
+			"Severity": "2"
+		},
+		{
+			"ID": "4",
+			"Category": "Exploiting, Shellcode ",
+			"Severity": "0"
+		},
+		{
+			"ID": "5",
+			"Category": "Networking ",
+			"Severity": "2"
+		},
+		{
+			"ID": "6",
+			"Category": "Data spying, Sniffing, Keylogging, Ebanking Fraud ",
+			"Severity": "4"
+		}
+	],
+	"Behavior": [
+		{
+			"ID": "2",
+			"Analysis": "Identified as RDN/Generic Dropper by Gateway Anti-Malware"
+		},
+		{
+			"ID": "1",
+			"Analysis": "Identified as --- by GTI File Reputation"
+		},
+		{
+			"ID": "256",
+			"Analysis": "Identified as Malicious Sites  by GTI URL Reputation"
+		},
+		{
+			"ID": "4",
+			"Analysis": "Identified as --- by Anti-Malware"
+		},
+		{
+			"ID": "507",
+			"Analysis": "Created content under Windows system directory"
+		},
+		{
+			"ID": "545",
+			"Analysis": "Modified time attribute of the specified file after its creation"
+		},
+		{
+			"ID": "552",
+			"Analysis": "Modified file's time creation attributes"
+		},
+		{
+			"ID": "541",
+			"Analysis": "Deleted executable from Windows system32 directory"
+		},
+		{
+			"ID": "567",
+			"Analysis": "Created new PE file"
+		},
+		{
+			"ID": "727",
+			"Analysis": "Deleted AV auto-run registry key"
+		},
+		{
+			"ID": "402",
+			"Analysis": "Created a socket bound to a specific service provider and listen to an open port"
+		},
+		{
+			"ID": "411",
+			"Analysis": "Connected to a specific service provider"
+		},
+		{
+			"ID": "443",
+			"Analysis": "Exchanged data with remote host"
+		},
+		{
+			"ID": "265",
+			"Analysis": "Disabled attach/detach notifications from dynamic link library"
+		},
+		{
+			"ID": "205",
+			"Analysis": "Downloaded content from webserver or altered Auto-run entry"
+		},
+		{
+			"ID": "122",
+			"Analysis": "Deleted a key from auto-run registry entry"
+		},
+		{
+			"ID": "103",
+			"Analysis": "Altered auto-run registry entry that executed at next Windows boot"
+		},
+		{
+			"ID": "104",
+			"Analysis": "Altered auto-run registry entry that executed at next Windows boot"
+		}
+	]
+	}
+}

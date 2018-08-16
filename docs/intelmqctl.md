@@ -209,8 +209,8 @@ file-output: Waiting for incoming message.
 file-output: Received message {'raw': '1234'}.
 ```
 
-If run with **--dryrun|-d** flag, the message gets never really popped out from the source or internal pipeline, nor send to the output pipeline.
-Plus, you receive a note about the exact moment the message would get sent, or acknowledged. It is explicitly if sent to a non-default path.
+If run with **--dryrun|-d** flag, the message gets never really popped out from the source or internal pipeline, nor sent to the output pipeline.
+Plus, you receive a note about the exact moment the message would get sent, or acknowledged. If the message would be sent to a non-default path, the name of this path is printed on the console.
 
 ```bash
 > intelmqctl run file-output process -d

@@ -684,6 +684,15 @@ class TestMessageFactory(unittest.TestCase):
         with self.assertRaises(KeyError):
             event['extra.foo']
 
+    def test_message_extra_in_backwardcomp(self):
+        """
+        Test if 'extra' in event works for backwards compatibility.
+        """
+        event = self.new_event()
+        self.assertFalse('extra' in event)
+        event.add('extra.foo', 'bar')
+        self.assertTrue('extra' in event)
+
     def test_overwrite_true(self):
         """
         Test if values can be overwritten.

@@ -57,10 +57,9 @@ This configuration resides in the file `runtime.conf` in your intelmq's configur
 * `enabled`: If the parameter is set to `true` (which is NOT the default value if it is missing as a protection) the bot will start when the botnet is started (`intelmqctl start`). If the parameter was set to `false`, the Bot will not be started by `intelmqctl start`, however you can run the bot independently using `intelmqctl start <bot_id>`. Check the [User-Guide](./User-Guide.md) for more details.
 * `run_mode`: There are two run modes, "continuous" (default run mode) or "scheduled". In the first case, the bot will be running forever until stopped or exits because of errors (depending on configuration). In the latter case, the bot will stop after one successful run. This is especially useful when scheduling bots via cron or systemd. Default is `continuous`. Check the [User-Guide](./User-Guide.md) for more details.
 
-<a name="collectors"></a>
-## Collectors
+## Common parameters
 
-**Feed parameters**: Common configuration options for all collectors
+**Feed parameters**: Common configuration options for all collectors.
 
 * `feed`: Name for the feed (`feed.name`).
 * `accuracy`: Accuracy for the data of the feed (`feed.accuracy`).
@@ -69,7 +68,7 @@ This configuration resides in the file `runtime.conf` in your intelmq's configur
 * `provider`: Name of the provider of the feed (`feed.provider`).
 * `rate_limit`: time interval (in seconds) between fetching data if applicable.
 
-**HTTP parameters**: Common URL fetching parameters used in multiple collectors
+**HTTP parameters**: Common URL fetching parameters used in multiple bots.
 
 * `http_timeout_sec`: A tuple of floats or only one float describing the timeout of the http connection. Can be a tuple of two floats (read and connect timeout) or just one float (applies for both timeouts). The default is 30 seconds in default.conf, if not given no timeout is used. See also https://requests.readthedocs.io/en/master/user/advanced/#timeouts
 * `http_timeout_max_tries`: An integer depciting how often a connection is retried, when a timeout occured. Defaults to 3 in default.conf.
@@ -89,6 +88,8 @@ This configuration resides in the file `runtime.conf` in your intelmq's configur
 * `redis_cache_db`: Database number.
 * `redis_cache_ttl`: TTL used for caching.
 * `redis_cache_password`: Optional password for the redis database (default: none).
+
+## Collectors
 
 
 ### Generic URL Fetcher
@@ -270,7 +271,7 @@ Requires the shodan library to be installed:
 #### Configuration Parameters:
 
 * **Feed parameters** (see above)
-* **HTTP parameters** (see above) not yet supported
+* **HTTP parameters** (see above). Only the proxy is used (requires shodan-python > 1.8.1). Certificate is always verified.
 * `countries`: A list of countries to query for. If it is a string, it will be spit by `,`.
 
 * * *
@@ -353,6 +354,23 @@ See the README.md
 
 * * *
 
+### McAfee openDXL
+
+#### Information:
+* `name:` intelmq.bots.collectors.opendxl.collector
+* `lookup:` yes
+* `public:` no
+* `cache (redis db):` none
+* `description:` collect messages via openDXL
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `dxl_config_file`: location of the config file containing required information to connect $
+* `dxl_topic`: the name of the DXL topix to subscribe
+
+* * *
+
 ### Microsoft Azure
 
 Iterates over all blobs in all containers in an Azure storage.
@@ -401,7 +419,7 @@ The cache is used to remember which files have already been downloaded. Make sur
 
 ### Stomp
 
-See the README.md
+See the README.md in `intelmq/bots/collectors/stomp/`
 
 #### Information:
 * `name:` intelmq.bots.collectors.stomp.collector
@@ -446,7 +464,25 @@ Collects tweets from target_timelines. Up to tweet_count tweets from each user a
 * `acces_token_key`: Twitter api login data
 * `access_token_secret`: Twitter api login data
 
-<a name="parsers"></a>
+### API collector bot
+
+#### Information:
+* `name:` intelmq.bots.collectors.api.collector_api
+* `lookup:` no
+* `public:` no
+* `cache (redis db):` none
+* `description:` Bot for collecting data using API, you need to post JSON to /intelmq/push endpoint
+
+example usage:
+```
+curl -X POST http://localhost:5000/intelmq/push -H 'Content-Type: application/json' --data '{"source.ip": "127.0.0.101", "classification.type": "backdoor"}'
+```
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `port`: 5000
+
 ## Parsers
 
 TODO
@@ -457,16 +493,21 @@ Lines starting with `'#'` will be ignored. Headers won't be interpreted.
 
 #### Configuration parameters
 
- * `"columns"`: A list of strings or a string of comma-separated values with field names. The names must match the harmonization's field names. Strings starting with `extra.` will be written into the Extra-Object of the DHO. E.g.
+ * `"columns"`: A list of strings or a string of comma-separated values with field names. The names must match the harmonization's field names. Empty column specifications and columns named `"__IGNORE__"` are ignored. E.g.
    ```json
-   [
+   "columns": [
         "",
         "source.fqdn",
-        "extra.http_host_header"
-    ],
-    ```
-
-    It is possible to specify multiple coulmns using `|` character. E.g.
+        "extra.http_host_header",
+        "__IGNORE__"
+   ],
+   ```
+   is equivalent to:
+   ```json
+   "columns": ",source.fqdn,extra.http_host_header,"
+   ```
+   The first and the last column are not used in this example.
+    It is possible to specify multiple columns using the `|` character. E.g.
     ```
         "columns": "source.url|source.fqdn|source.ip"
     ```
@@ -502,13 +543,9 @@ Lines starting with `'#'` will be ignored. Headers won't be interpreted.
             "columns": [ "__IGNORE__", "__IGNORE__", "__IGNORE__", "source.ip"]
         }
      ```
- * `"type_translation"`: See below, optional
-
-
-##### Type translation
-
-If the source does have a field with information for `classification.type`, but it does not correspond to intelmq's types,
+ * `"type_translation"`: If the source does have a field with information for `classification.type`, but it does not correspond to intelmq's types,
 you can map them to the correct ones. The `type_translation` field can hold a JSON field with a dictionary which maps the feed's values to intelmq's.
+ * `"columns_required"`: A list of true/false for each column. By default, it is true for every column.
 
 
 ### Cymru CAP Program
@@ -526,11 +563,61 @@ The information about the event could be better in many cases but as Cymru does 
 
 ### Cymru Full Bogons
 
+http://www.team-cymru.com/bogon-reference.html
+
 #### Information:
 * `name:` intelmq.bots.parsers.cymru.parser_full_bogons
 * `public:` no
 * `cache (redis db):` none
 * `description:` Parses data from full bogons feed.
+
+### McAfee Advanced Threat Defense File
+
+#### Information:
+* `name:` intelmq.bots.parsers.mcafee.parser_atd_file
+* `lookup:` yes
+* `public:` no
+* `cache (redis db):` none
+* `description:` parses file hash information off ATD reports
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `verdict_severity`: min report severity to parse
+
+* * *
+
+### McAfee Advanced Threat Defense IP
+
+#### Information:
+* `name:` intelmq.bots.parsers.mcafee.parser_atd_file
+* `lookup:` yes
+* `public:` no
+* `cache (redis db):` none
+* `description:` parses IP addresses off ATD reports
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `verdict_severity`: min report severity to parse
+
+* * *
+
+### McAfee Advanced Threat Defense URL
+
+#### Information:
+* `name:` intelmq.bots.parsers.mcafee.parser_atd_file
+* `lookup:` yes
+* `public:` no
+* `cache (redis db):` none
+* `description:` parses URLs off ATD reports
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `verdict_severity`: min report severity to parse
+
+* * *
 
 ### Twitter
 
@@ -560,7 +647,6 @@ The parser is by far not complete as there are a lot of fields in a big nested s
 * `minimal_mode`: Boolean (default false)
 
 
-<a name="experts"></a>
 ## Experts
 
 ### Abusix
@@ -577,7 +663,7 @@ See the README.md
 
 #### Configuration Parameters:
 
-* **Cache parameters** (see above)
+* **Cache parameters** (see in section [common parameters](#common-parameters))
 FIXME
 
 * * *
@@ -610,16 +696,22 @@ FIXME
 
 #### Configuration Parameters:
 
-* **Cache parameters** (see above)
+* **Cache parameters** (see in section [common parameters](#common-parameters))
 FIXME
 
 * * *
 
 ### Domain Suffix
 
+This bots adds the public suffix to the event, derived by a domain.
 See or information on the public suffix list: https://publicsuffix.org/list/
 Only rules for ICANN domains are processed. The list can (and should) contain
-Unicode data, punycode conversion is done during reading
+Unicode data, punycode conversion is done during reading.
+
+Note that the public suffix is not the same as the top level domain (TLD). E.g.
+`co.uk` is a public suffix, but the TLD is `uk`.
+Privatly registered suffixes (such as `blogspot.co.at`) which are part of the
+public suffix list too, are ignored.
 
 #### Information:
 * `name:` deduplicator
@@ -672,7 +764,7 @@ See the README.md
 
 #### Configuration Parameters:
 
-* **Cache parameters** (see above)
+* **Cache parameters** (see in section [common parameters](#common-parameters))
 Please check this [README](../intelmq/bots/experts/deduplicator/README.md) file.
 
 * * *
@@ -772,6 +864,59 @@ See the README.md
 
 FIXME
 
+
+* * *
+
+### McAfee Active Response Hash lookup
+
+#### Information:
+* `name:` intelmq.bots.experts.mcafee.expert_mar
+* `lookup:` yes
+* `public:` no
+* `cache (redis db):` none
+* `description:` Queries occurrences of hashes within local environment
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `dxl_config_file`: location of file containing required information to connect to DXL bus
+* `lookup_type`: One of:
+  - `Hash`: looks up `malware.hash.md5`, `malware.hash.sha1` and `malware.hash.sha256`
+  - `DestSocket`: looks up `destination.ip` and `destination.port`
+  - `DestIP`: looks up `destination.ip`
+  - `DestFQDN`: looks up in `destination.fqdn`
+
+* * *
+
+### McAfee Active Response IP lookup
+
+#### Information:
+* `name:` intelmq.bots.experts.mcafee.expert_mar_ip
+* `lookup:` yes
+* `public:` no
+* `cache (redis db):` none
+* `description:` Queries occurrences of connection attempts to destination ip/port within local environment
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `dxl_config_file`: location of file containing required information to connect to DXL bus
+
+* * *
+
+### McAfee Active Response URL lookup
+
+#### Information:
+* `name:` intelmq.bots.experts.mcafee.expert_mar_url
+* `lookup:` yes
+* `public:` no
+* `cache (redis db):` none
+* `description:` Queries occurrences of FQDN lookups within local environment
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `dxl_config_file`: location of file containing required information to connect to DXL bus
 
 * * *
 
@@ -929,7 +1074,7 @@ For both `source.ip` and `destination.ip` the PTR record is fetched and the firs
 
 #### Configuration Parameters:
 
-* **Cache parameters** (see above)
+* **Cache parameters** (see in section [common parameters](#common-parameters))
 * `cache_ttl_invalid_response`: The TTL for cached invalid responses.
 
 * * *
@@ -971,7 +1116,7 @@ Sources:
 
 #### Configuration Parameters:
 
-* **Cache parameters** (see above)
+* **Cache parameters** (see in section [common parameters](#common-parameters))
 * `mode`: either `append` (default) or `replace`
 * `query_ripe_db_asn`: Query for IPs at `http://rest.db.ripe.net/abuse-contact/%s.json`, default `true`
 * `query_ripe_db_ip`: Query for ASNs at `http://rest.db.ripe.net/abuse-contact/as%s.json`, default `true`
@@ -1066,8 +1211,21 @@ Otherwise the dummy mode is active, the events are just passed without an additi
 
 Note that SIGHUPs and reloads interrupt the sleeping.
 
-<a name="outputs"></a>
 ## Outputs
+
+### Blackhole
+
+This output bot discards all incoming messages.
+
+#### Information
+* `name`: blackhole
+* `lookup`: no
+* `public`: yes
+* `cache`: no
+* `description`: discards messages
+
+* * *
+
 
 ### File
 
@@ -1080,6 +1238,7 @@ Note that SIGHUPs and reloads interrupt the sleeping.
 
 #### Configuration Parameters:
 
+* `encoding_errors_mode`: By default `'strict'`, see for more details and options: https://docs.python.org/3/library/functions.html#open For example with `'backslashreplace'` all characters which cannot be properly encoded will be written escaped with backslashes.
 * `file`: file path of output file. Missing directories will be created if possible with the mode 755.
 * `format_filename`: Boolean if the filename should be formatted (default: `false`).
 * `hierarchial_output`: If true, the resulting dictionary will be hierarchical (field names split by dot).
@@ -1117,6 +1276,25 @@ If the field used in the format string is not defined, `None` will be used as fa
 
 * * *
 
+### McAfee Enterprise Security Manager
+
+#### Information:
+* `name:` intelmq.bots.outputs.mcafee.output_esm_ip
+* `lookup:` yes
+* `public:` no
+* `cache (redis db):` none
+* `description:` Writes information out to McAfee ESM watchlist
+
+#### Configuration Parameters:
+
+* **Feed parameters** (see above)
+* `esm_ip`: IP address of ESM instance
+* `esm_user`: username of user entitled to write to watchlist
+* `esm_pw`: password of user
+* `esm_watchlist`: name of the watchlist to write to
+* `field`: name of the intelMQ field to be written to ESM
+
+* * *
 
 ### MongoDB
 

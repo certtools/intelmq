@@ -1,4 +1,4 @@
-# Thanks to Steve https://debian-administration.org/article/317/An_introduction_to_bash_completion_part_2
+# bash completion for intelmqctl                            -*- shell-script -*-
 
 _intelmqctl ()
 {
@@ -97,15 +97,3 @@ _intelmqctl ()
     esac
 }
 complete -F _intelmqctl intelmqctl
-
-_intelmqdump ()
-{
-    local cur prev opts base;
-    COMPREPLY=();
-    cur="${COMP_WORDS[COMP_CWORD]}";
-    logpath=/opt/intelmq/var/log;
-    # TODO: handle no dumps
-    local dumps=$(for filename in $logpath/*.dump; do b=${filename##*/}; echo ${b%%.*}; done);
-    COMPREPLY=($(compgen -W "${dumps} -h --help" -- ${cur}))
-}
-complete -F _intelmqdump intelmqdump
