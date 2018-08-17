@@ -326,6 +326,11 @@
             "module": "intelmq.bots.parsers.blueliv.parser_crimeserver",
             "parameters": {}
         },
+        "CERT-EU CSV": {
+            "description": "CERT-EU Parser is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.cert_eu.parser_csv",
+            "parameters": {}
+        },
         "CI Army": {
             "description": "CI Army Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.ci_army.parser",
