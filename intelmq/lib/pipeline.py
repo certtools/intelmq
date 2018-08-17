@@ -342,7 +342,7 @@ class Amqp(Pipeline):
                                                                             socket_timeout=self.socket_timeout,
                                                                             virtual_host=self.virtual_host,
                                                                             heartbeat=10,
-                                                                            **self.kwargs,
+                                                                            **self.kwargs
                                                                             ))
         self.channel = self.connection.channel()
         if self.source_queue:
