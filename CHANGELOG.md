@@ -24,6 +24,7 @@ CHANGELOG
 - `intelmqctl restart` bug fix; returned some half-nonsense, now returns return state of start and stop operation in a list (#1226).
 - `intelmqctl check`: New parameter `--no-connections` to prevent the command from making connections e.g. to the redis pipeline.s
 - `intelmqctl list queues`: don't display named paths amongst standard queues.
+- The process status test failed if the PATH did not include the bot executables and the `which` command failed. Then the proccess's command line could not be compared correctly. The fix warns of this and adds a new status 'unknown' (#1297).
 
 
 ### Contrib
