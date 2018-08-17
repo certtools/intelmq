@@ -9,6 +9,7 @@ from intelmq.bots.parsers.cert_eu.parser_csv import CertEUCSVParserBot
 
 with open(os.path.join(os.path.dirname(__file__), 'example.csv')) as handle:
     EXAMPLE_FILE = handle.read()
+EXAMPLE_FILE_SPLIT = EXAMPLE_FILE.splitlines()
 
 EXAMPLE_REPORT = {"feed.url": "https://www.cert-eu.eu",
                   "feed.name": "CERT-EU Feed",
@@ -20,7 +21,7 @@ EXAMPLE_EVENT1 = {
     "feed.url": "https://www.cert-eu.eu",
     "feed.name": "CERT-EU Feed",
     "source.ip": "109.125.93.10",
-    "raw": "ZGF0YXNvdXJjZSxzb3VyY2UgaXAsb2JzZXJ2YXRpb24gdGltZSx0bHAsZGVzY3JpcHRpb24sdHlwZSxjb3VudCxzb3VyY2UgdGltZSxzb3VyY2UgY291bnRyeSxwcm90b2NvbCxkZXN0aW5hdGlvbiBwb3J0LHNvdXJjZSBsYXRpdHVkZSxzb3VyY2UgY2l0eSxzb3VyY2UgY2Msc291cmNlIGxvbmdpdHVkZSxmaXJzdF9zZWVuLG51bV9zZW5zb3JzLGNvbmZpZGVuY2UgbGV2ZWwsbGFzdF9zZWVuLHRhcmdldCx1cmwsYXNuLGRvbWFpbiBuYW1lDQpTUiwxMDkuMTI1LjkzLjEwLDIwMTgtMDctMDYgMTA6NTk6MDZaLGdyZWVuLEEgVVJMIGlzIHRoZSBtb3N0IGNvbW1vbiByZXNvdXJjZSB3aXRoIHJlZmVyZW5jZSB0byBtYWx3YXJlIGJpbmFyeSBkaXN0cmlidXRpb24uLG1hbHdhcmUgdXJsLDYsMjAxOC0wNy0wNiAwODo1MjoxNlosR2VybWFueSxzbWJkLDQ0NSw0OC4xMzc0MjgsTXVuaWNoLERFLDExLjU3NTQ5LDIwMTgtMDctMDZUMDg6MzQ6NTUuNzU5MDAwLDEsNTAsMjAxOC0wNy0wNlQwODo1MjoxNi4xMDkwMDAsLCwsDQo=",
+    "raw": utils.base64_encode('\r\n'.join(EXAMPLE_FILE_SPLIT[:2])),
     "time.observation": "2018-07-06T10:59:06+00:00",
     "classification.type": "malware",
     "time.source": "2018-07-06T08:52:16+00:00",
@@ -46,7 +47,8 @@ EXAMPLE_EVENT2 = {
     "feed.url": "https://www.cert-eu.eu",
     "feed.name": "CERT-EU Feed",
     "source.ip": "144.76.221.34",
-    "raw": "ZGF0YXNvdXJjZSxzb3VyY2UgaXAsb2JzZXJ2YXRpb24gdGltZSx0bHAsZGVzY3JpcHRpb24sdHlwZSxjb3VudCxzb3VyY2UgdGltZSxzb3VyY2UgY291bnRyeSxwcm90b2NvbCxkZXN0aW5hdGlvbiBwb3J0LHNvdXJjZSBsYXRpdHVkZSxzb3VyY2UgY2l0eSxzb3VyY2UgY2Msc291cmNlIGxvbmdpdHVkZSxmaXJzdF9zZWVuLG51bV9zZW5zb3JzLGNvbmZpZGVuY2UgbGV2ZWwsbGFzdF9zZWVuLHRhcmdldCx1cmwsYXNuLGRvbWFpbiBuYW1lDQpaLDE0NC43Ni4yMjEuMzQsMjAxOC0wNy0wNiAxMTozNDo1M1osZ3JlZW4sVGhpcyB0eXBlIG1vc3Qgb2Z0ZW4gcmVmZXJzIHRvIGEgVVJMIHdoaWNoIGlzIHRyeWluZyB0byBkZWZyYXVkIHRoZSB1c2VycyBvZiB0aGVpciBjcmVkZW50aWFscy4scGhpc2hpbmcsLDIwMTgtMDctMDUgMTQ6MzI6MDZaLEdlcm1hbnksLCw0OS40NDc3ODEsTnVyZW1iZXJnLERFLDExLjA2ODMzLCwsNTAsLE90aGVyLGh0dHBzOi8vamFuYWdhbWVzLmNvbS9kZXRhaWxzL3BhY2thZ2Utdmlldy9kaGwuY29tLywyNDk0MCxqYW5hZ2FtZXMuY29tDQo=",
+    "raw": utils.base64_encode('\r\n'.join((EXAMPLE_FILE_SPLIT[0],
+                                            EXAMPLE_FILE_SPLIT[2]))),
     "time.observation": "2018-07-06T10:59:06+00:00",
     "time.source": "2018-07-05T14:32:06+00:00",
     "tlp": "GREEN",
@@ -65,6 +67,7 @@ EXAMPLE_EVENT2 = {
     "extra.datasource": "Z",
     "__type": "Event"
  }
+
 
 class TestCertEUCSVParserBot(test.BotTestCase, unittest.TestCase):
     """

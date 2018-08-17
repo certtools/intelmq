@@ -327,7 +327,7 @@
             "parameters": {}
         },
         "CERT-EU CSV": {
-            "description": "CERT-EU Parser is the bot responsible to parse the report and sanitize the information.",
+            "description": "Parses CSV data as sent by CERT-EU.",
             "module": "intelmq.bots.parsers.cert_eu.parser_csv",
             "parameters": {}
         },
