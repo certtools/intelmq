@@ -332,7 +332,6 @@ class IntelMQProcessManager:
 
     def __status_process(self, pid, module):
         which = shutil.which(module)
-        which = ''
         if not which:
             return 'Could not get path to the excutable (%r). Check your PATH variable (%r).' % (module, os.environ.get('PATH'))
         try:
