@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import tempfile
 import os
 import unittest
 
@@ -21,14 +22,21 @@ class TestRsyncCollectorBot(test.BotTestCase, unittest.TestCase):
     @classmethod
     def set_bot(cls):
         cls.bot_reference = RsyncCollectorBot
+        cls.base_dir = tempfile.TemporaryDirectory()
         file_path = os.path.dirname(__file__)
         cls.sysconfig = {'rsync_path': file_path,
                          'file': "testfile.txt",
-                         "name": "RsyncCollector"}
+                         "name": "RsyncCollector",
+                         "temp_directory": cls.base_dir.name}
 
     def test_events(self):
         self.run_bot(iterations=1)
         self.assertMessageEqual(0, OUTPUT)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.base_dir.cleanup()
+        super().tearDownClass()
 
 
 if __name__ == '__main__':  # pragma: no cover

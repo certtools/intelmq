@@ -218,6 +218,7 @@ Requires the rsync executable
 * **Feed parameters** (see above)
 * `file`: Name of downloaded file.
 * `rsync_path`: Path to file. It can be "/home/username/directory" or "username@remote_host:/home/username/directory"
+* `temp_directory`: Path of a temporary state directory to use for rsync'd files. Optional. Default: `/opt/intelmq/var/run/rsync_collector/`.
 
 * * *
 

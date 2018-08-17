@@ -13,7 +13,7 @@ CHANGELOG
 #### Collectors
 - added `intelmq.bots.parsers.opendxl.collector` (#1265).
 - added `intelmq.bots.collectors.api`: collecting data using an HTTP API (#123, #1187).
-- added `intelmq.bots.collectors.rsync`
+- added `intelmq.bots.collectors.rsync` (#1286).
 
 #### Parsers
 - added `intelmq.bots.parsers.mcafee.parser_atd` (#1265).

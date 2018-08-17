@@ -7,7 +7,8 @@ from intelmq import VAR_STATE_PATH
 
 class RsyncCollectorBot(CollectorBot):
     def init(self):
-        self.rsync_data_directory = path.join(VAR_STATE_PATH, "rsync_collector")
+        self.rsync_data_directory = getattr(self.parameters, 'temp_directory',
+                                            path.join(VAR_STATE_PATH, "rsync_collector"))
         try:
             mkdir(self.rsync_data_directory)
         except FileExistsError:
