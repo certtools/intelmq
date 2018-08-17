@@ -36,6 +36,9 @@ DATA = [
     ('/opt/intelmq/var/lib/bots/file-output/',
      [],
      ),
+    ('/opt/intelmq/var/lib/bots/rsync_collector',
+     [],
+     ),
 ]
 
 exec(open(os.path.join(os.path.dirname(__file__),
