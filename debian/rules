@@ -56,5 +56,11 @@ override_dh_auto_install: $(BOTDOCS)
 		cp intelmq/bots/$$readme $(DOCS_DIR)/bots/$$(dirname $$readme); \
 	done
 
+override_dh_install:
+	dh_install
+	install -Dm 644 contrib/logcheck/ignore debian/intelmq/etc/logcheck/ignore.d.server/intelmq
+	install -Dm 644 contrib/logcheck/violations debian/intelmq/etc/logcheck/violations.d/intelmq
+	install -Dm 644 contrib/logcheck/logcheck.logfiles debian/intelmq/etc/logcheck/logcheck.logfiles.d/intelmq
+
 override_dh_systemd_start:
 	dh_systemd_start --restart-after-upgrade

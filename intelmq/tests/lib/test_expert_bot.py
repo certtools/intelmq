@@ -48,5 +48,5 @@ class TestDummyExpertBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(1, msg, path="two-way")
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()

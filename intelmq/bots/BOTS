@@ -336,12 +336,17 @@
             "module": "intelmq.bots.parsers.blueliv.parser_crimeserver",
             "parameters": {}
         },
+        "CERT-EU CSV": {
+            "description": "Parses CSV data as sent by CERT-EU.",
+            "module": "intelmq.bots.parsers.cert_eu.parser_csv",
+            "parameters": {}
+        },
         "CI Army": {
             "description": "CI Army Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.ci_army.parser",
             "parameters": {}
         },
-        "CertStream Parser": {
+        "CertStream": {
             "description": "A Bot to parse CertStream Feed",
             "module": "intelmq.bots.parsers.calidog.parser_certstream",
             "parameters": {}
@@ -824,6 +829,11 @@
                 "routing_key": "<your routing key>",
                 "username": "<your amqp username>"
             }
+        },
+        "Blackhole": {
+            "description": "AMQP Topic is the bot responsible to send events to a AMQP topic exchange.",
+            "module": "intelmq.bots.outputs.blackhole.output",
+            "parameters": {}
         },
         "Elasticsearch": {
             "description": "Elasticsearch is the bot responsible to send events to a elasticsearch.",

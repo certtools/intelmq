@@ -11,16 +11,17 @@ Most, if not all, feeds from shadowserver are in csv format.
 This parser will only work with those.
 """
 import copy
-import csv
-import io
 
 import intelmq.bots.parsers.shadowserver.config as config
-from intelmq.lib import utils
 from intelmq.lib.bot import ParserBot
 from intelmq.lib.exceptions import InvalidKey, InvalidValue
 
 
 class ShadowserverParserBot(ParserBot):
+
+    parse = ParserBot.parse_csv_dict
+    recover_line = ParserBot.recover_line_csv_dict
+    csv_params = {'dialect': 'unix'}
 
     def init(self):
         self.sparser_config = None
@@ -38,24 +39,12 @@ class ShadowserverParserBot(ParserBot):
             if self.parameters.overwrite:
                 self.overwrite = True
 
-    def parse(self, report):
-        raw_report = utils.base64_decode(report["raw"])
-        raw_report = raw_report.translate({0: None})
-        csvr = csv.DictReader(io.StringIO(raw_report))
-
-        # create an array of fieldnames,
-        # those were automagically created by the dictreader
-        self.fieldnames = csvr.fieldnames
-
-        for row in csvr:
-            yield row
-
     def parse_line(self, row, report):
 
         conf = self.sparser_config
 
         # we need to copy here...
-        fields = copy.copy(self.fieldnames)
+        fields = copy.copy(self.csv_fieldnames)
         # We will use this variable later.
         # Each time a field was successfully added to the
         # intelmq-event, this field will be removed from
@@ -174,15 +163,6 @@ class ShadowserverParserBot(ParserBot):
             event.add('extra', extra)
 
         yield event
-
-    def recover_line(self, line):
-        out = io.StringIO()
-        writer = csv.DictWriter(out, self.fieldnames,
-                                dialect='unix',
-                                extrasaction='ignore')
-        writer.writeheader()
-        writer.writerow(line)
-        return out.getvalue()
 
 
 BOT = ShadowserverParserBot

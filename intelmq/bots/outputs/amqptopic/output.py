@@ -11,6 +11,9 @@ except ImportError:
 class AMQPTopicBot(Bot):
 
     def init(self):
+        if pika is None:
+            raise ValueError("Could not import library 'pika'. Please install it.")
+
         self.connection = None
         self.channel = None
         self.keep_raw_field = self.parameters.keep_raw_field
