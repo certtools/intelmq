@@ -159,7 +159,7 @@ intelmqctl start <bot_id>
 
 ## Testing
 
-All changes have to be tested and new contributions must be accompanied by according unit tests. You can run the tests by changing to the directory with IntelMQ repository and running either `unittest` or `nosetests`:
+All changes have to be tested and new contributions must be accompanied by according unit tests. You can run the tests by changing to the directory with IntelMQ repository and running either `unittest` or `nosetests3`:
 
     cd /opt/dev_intelmq
     python3 -m unittest {discover|filename}  # or
@@ -183,7 +183,7 @@ There are a bunch of environemnt variables which switch on/off some tests:
 For example, to run all tests you can use:
 
 ```bash
-INTELMQ_TEST_DATABASES=1 INTELMQ_TEST_LOCAL_WEB=1 INTELMQ_TEST_EXOTIC=1 nosetests
+INTELMQ_TEST_DATABASES=1 INTELMQ_TEST_LOCAL_WEB=1 INTELMQ_TEST_EXOTIC=1 nosetests3
 ```
 
 ### Configuration test files
