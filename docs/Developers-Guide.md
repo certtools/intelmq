@@ -87,6 +87,9 @@ Developers MUST have a fork repository of IntelMQ in order to commit the new cod
 
 The following instructions will use `pip3 -e`, which gives you a so called *editable* installation. No code is copied in the libraries directories, there's just a link to your code. However, configuration files still required to be moved to `/opt/intelmq` as the instructions show.
 
+In this guide we use `/opt/dev_intelmq` as local repository copy. You can also use other directories as long as they are readable by other unprivileged users (e.g. home directories on Fedora can't be read by other users by default).
+`/opt/intelmq` is used as root location for IntelMQ installations, this is IntelMQ's default for this installation method. This directory is used for configurations (`/opt/intelmq/etc`), local states (`/opt/intelmq/var/lib`) and logs (`/opt/intelmq/var/log`).
+
 ```bash
 sudo -s
 
