@@ -93,9 +93,6 @@ sudo -s
 git clone https://github.com/<your username>/intelmq.git /opt/dev_intelmq
 cd /opt/dev_intelmq
 
-git config core.fileMode false
-chmod -R 777 /intelmq
-
 pip3 install -e .
 
 useradd -d /opt/intelmq -U -s /bin/bash intelmq
