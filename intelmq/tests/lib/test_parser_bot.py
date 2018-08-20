@@ -85,9 +85,7 @@ class DummyParserBot(bot.ParserBot):
             line = line.split(',')
             event['time.source'] = line[0]
             event['source.fqdn'] = line[1]
-            print('pre-ip')
             event['source.ip'] = line[2]
-            print('post-ip')
             event['source.reverse_dns'] = line[3]
             event['event_description.text'] = line[4]
             event['source.account'] = line[5]
