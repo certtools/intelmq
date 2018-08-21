@@ -53,12 +53,13 @@ class AMQPTopicBot(Bot):
         else:
             self.logger.info('AMQP connection successful.')
             self.channel = self.connection.channel()
-            try:
-                self.channel.exchange_declare(exchange=self.exchange, type=self.exchange_type,
-                                              durable=self.durable)
-            except pika.exceptions.ChannelClosed:
-                self.logger.error('Access to exchange refused.')
-                raise
+            if self.exchange:  # do not declare default exchange (#1295)
+                try:
+                    self.channel.exchange_declare(exchange=self.exchange, type=self.exchange_type,
+                                                  durable=self.durable)
+                except pika.exceptions.ChannelClosed:
+                    self.logger.error('Access to exchange refused.')
+                    raise
             self.channel.confirm_delivery()
 
     def process(self):
