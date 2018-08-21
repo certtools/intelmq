@@ -24,6 +24,7 @@ CHANGELOG
 #### Outputs
 - `bots.output.amqptopic`:
   - The default exchange must not be declared (#1295).
+  - Unencodable characters are prepended by backslashes by default. Otherwise Unicode characters can't be encoded and sent (#1296).
 
 ### Documentation
 - Bots: document redis cache parameters.

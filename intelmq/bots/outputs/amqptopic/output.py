@@ -77,7 +77,8 @@ class AMQPTopicBot(Bot):
         try:
             if not self.channel.basic_publish(exchange=self.exchange,
                                               routing_key=self.routing_key,
-                                              body=event.to_json(),
+                                              # replace unicode characters when encoding (#1296)
+                                              body=event.to_json().encode(errors='backslashreplace'),
                                               properties=self.properties,
                                               mandatory=True):
                 if self.require_confirmation:
