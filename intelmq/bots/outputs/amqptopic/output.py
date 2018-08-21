@@ -37,7 +37,7 @@ class AMQPTopicBot(Bot):
         self.connect_server()
 
     def connect_server(self):
-        self.logger.info('AMQP Connecting to %s:%s%s.',
+        self.logger.info('AMQP Connecting to %s:%s/%s.',
                          self.connection_host, self.connection_port, self.connection_vhost)
         try:
             self.connection = pika.BlockingConnection(self.connection_parameters)
@@ -90,6 +90,9 @@ class AMQPTopicBot(Bot):
             self.logger.exception('Error publishing the message.')
         else:
             self.acknowledge_message()
+
+    def shutdown(self):
+        self.connection.close()
 
 
 BOT = AMQPTopicBot
