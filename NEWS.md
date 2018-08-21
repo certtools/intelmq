@@ -21,6 +21,9 @@ UPDATE events
 UPDATE events
    SET "classification.taxonomy" = 'other', "classification.type" = 'other', "classification.identifier" = 'proxyget', "malware.name" = NULL, "event_description.text" = 'The malicous client used a honeypot as proxy.'
    WHERE "malware.name" = 'proxyget' AND "feed.name" = 'Spamhaus CERT';
+UPDATE events
+   SET "classification.taxonomy" = 'abusive content', "classification.type" = 'spam', "classification.identifier" = 'spam', "malware.name" = NULL, "source.fqdn" = "source.reverse_dns", "source.reverse_dns" = NULL, "source.url" = "destination.url", "destination.url" = NULL
+   WHERE "malware.name" = 'spam' AND "feed.name" = 'Drone';
 ```
 
 

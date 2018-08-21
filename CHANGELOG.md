@@ -16,6 +16,7 @@ CHANGELOG
 - `bots.parsers.shadowserver`:
   - if required fields do not exist in data, an exception is raised, so the line will be dumped and not further processed.
   - fix a bug in the parsing of column `cipher_suite` in ssl poodle reports (#1288).
+  - fix parsing of 'spam' events in ShadowServer's 'Botnet Drone Hadoop' Report (#1271).
 
 #### Experts
 - Reverse DNS Expert: ignore all invalid results and use first valid one (#1264).
