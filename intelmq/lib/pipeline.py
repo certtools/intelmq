@@ -335,13 +335,17 @@ class Amqp(Pipeline):
         self.kwargs = {}
         if self.username and self.password:
             self.kwargs['credentials'] = pika.PlainCredentials(self.username, self.password)
+            pika_version = tuple(int(x) for x in pika.__version__.split('.'))
+            if pika_version < (0, 11):
+                self.kwargs['heartbeat_interval'] = 10
+            else:
+                self.kwargs['heartbeat'] = 10
 
     def connect(self, channelonly=False):
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(host=self.host,
                                                                             port=int(self.port),
                                                                             socket_timeout=self.socket_timeout,
                                                                             virtual_host=self.virtual_host,
-                                                                            heartbeat=10,
                                                                             **self.kwargs
                                                                             ))
         self.channel = self.connection.channel()
