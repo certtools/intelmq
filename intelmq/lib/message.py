@@ -144,6 +144,12 @@ class Message(dict):
                 else:
                     raise
 
+    def get(self, key, default=None):
+        try:
+            return self[key]
+        except KeyError:
+            return default
+
     def is_valid(self, key: str, value: str, sanitize: bool = True) -> bool:
         """
         Checks if a value is valid for the key (after sanitation).
