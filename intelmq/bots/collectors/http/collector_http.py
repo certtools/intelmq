@@ -20,6 +20,7 @@ import datetime
 import io
 import zipfile
 import gzip
+import re
 
 import requests
 
@@ -37,7 +38,6 @@ class HTTPCollectorBot(CollectorBot):
     def init(self):
         self.set_request_parameters()
         self.extract_files = getattr(self.parameters, "extract_files", None)
-        self.decompress_gzip = getattr(self.parameters, "decompress_gzip_response", False)
 
     def process(self):
         if getattr(self.parameters, 'http_url_formatting', False):
@@ -72,7 +72,10 @@ class HTTPCollectorBot(CollectorBot):
 
         self.logger.info("Report downloaded.")
 
-        if self.decompress_gzip:
+        extract_gzip = self.extract_files and re.search('(?<!.tar).gz$', http_url)
+
+        if extract_gzip:
+            self.logger.info("Extracting gzip")
             resp_content_type = resp.headers.get('content-type', '')
             resp_data = gzip.decompress(resp.content) if 'gzip' in resp_content_type else resp.content
         else:
@@ -82,7 +85,7 @@ class HTTPCollectorBot(CollectorBot):
         try:
             zfp = zipfile.ZipFile(io.BytesIO(resp_data), "r")
         except zipfile.BadZipfile:
-            if self.decompress_gzip:
+            if extract_gzip:
                 raw_reports.append(resp_data)
             else:
                 raw_reports.append(resp.text)
@@ -92,7 +95,7 @@ class HTTPCollectorBot(CollectorBot):
             for filename in zfp.namelist():
                 raw_reports.append(zfp.read(filename))
 
-        if self.extract_files is not None:
+        if self.extract_files is not None and not extract_gzip:
             if isinstance(self.extract_files, str):
                 self.extract_files = self.extract_files.split(",")
                 self.logger.info('Extracting files from tar.gz:'
