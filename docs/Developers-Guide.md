@@ -7,7 +7,7 @@
   * [How to develop](#how-to-develop)
   * [Update](#update)
   * [Testing](#testing)
-    * [Environment variables](#environment-variables)777
+    * [Environment variables](#environment-variables)
     * [Configuration test files](#configuration-test-files)
 * [Development Guidelines](#development-guidelines)
   * [Coding-Rules](#coding-rules)
