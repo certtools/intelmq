@@ -6,6 +6,8 @@ CHANGELOG
 ------------------
 
 ### Core
+- `lib/utils`
+  - Function `unzip` to extract files from gzipped and/or tar-archives.
 
 ### Harmonization
 
@@ -14,6 +16,7 @@ CHANGELOG
 - added `intelmq.bots.parsers.opendxl.collector` (#1265).
 - added `intelmq.bots.collectors.api`: collecting data using an HTTP API (#123, #1187).
 - added `intelmq.bots.collectors.rsync` (#1286).
+- `intelmq.bots.collectors.http.collector_http`: Add support for uncompressing of gzipped-files (#1270).
 
 #### Parsers
 - added `intelmq.bots.parsers.mcafee.parser_atd` (#1265).

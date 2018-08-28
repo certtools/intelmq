@@ -19,13 +19,11 @@ http_timeout_max_tries: an integer depicting how often a connection attempt is r
 import datetime
 import io
 import zipfile
-import gzip
-import re
 
 import requests
 
 from intelmq.lib.bot import CollectorBot
-from intelmq.lib.utils import extract_tar
+from intelmq.lib.utils import unzip
 
 
 class Time(object):
@@ -72,37 +70,25 @@ class HTTPCollectorBot(CollectorBot):
 
         self.logger.info("Report downloaded.")
 
-        extract_gzip = self.extract_files and re.search('(?<!.tar).gz$', http_url)
-
-        if extract_gzip:
-            self.logger.info("Extracting gzip")
-            resp_content_type = resp.headers.get('content-type', '')
-            resp_data = gzip.decompress(resp.content) if 'gzip' in resp_content_type else resp.content
-        else:
-            resp_data = resp.content
-
         raw_reports = []
         try:
-            zfp = zipfile.ZipFile(io.BytesIO(resp_data), "r")
+            zfp = zipfile.ZipFile(io.BytesIO(resp.content), "r")
         except zipfile.BadZipfile:
-            if extract_gzip:
-                raw_reports.append(resp_data)
-            else:
-                raw_reports.append(resp.text)
+            raw_reports.append(resp.text)
         else:
-            self.logger.info('Extracting files from zip:'
+            self.logger.info('Extracting files:'
                              "'%s'.", "', '".join(zfp.namelist()))
             for filename in zfp.namelist():
                 raw_reports.append(zfp.read(filename))
 
-        if self.extract_files is not None and not extract_gzip:
+        if self.extract_files is not None:
             if isinstance(self.extract_files, str):
                 self.extract_files = self.extract_files.split(",")
-                self.logger.info('Extracting files from tar.gz:'
+                self.logger.info('Extracting files from archive:'
                                  "'%s'.", "', '".join(self.extract_files()))
             else:
-                self.logger.info('Extracting all files from tar.gz.')
-            raw_reports = [file for file in extract_tar(resp_data, self.extract_files)]
+                self.logger.info('Extracting all files from archive.')
+            raw_reports = [file for file in unzip(resp.content, self.extract_files)]
 
         for raw_report in raw_reports:
             report = self.new_report()

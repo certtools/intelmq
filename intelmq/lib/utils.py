@@ -12,12 +12,14 @@ reverse_readline
 parse_logline
 """
 import base64
+import gzip
 import io
 import json
 import logging
 import logging.handlers
 import os
 import re
+import warnings
 import sys
 import tarfile
 import traceback
@@ -411,13 +413,29 @@ def parse_relative(relative_time: str) -> int:
 
 def extract_tar(file: bytes, extract_files: Union[bool, list]) -> list:
     """
-        Extracts given compressed tar.gz file and returns content of specified or all files from it.
+    Wrapper for the new and more generic function unzip.
+    """
+    warnings.warn("The function 'extract_tar' is deprecated and will be removed in version 2.0, "
+                  "use unzip instead.",
+                  DeprecationWarning)
+    return unzip(file=file, extract_files=extract_files, try_gzip=False)
+
+
+def unzip(file: bytes, extract_files: Union[bool, list], logger=None, try_gzip: bool=True) -> list:
+    """
+        Extracts given compressed (tar.)gz file and returns content of specified or all files from it.
+        Handles tarfiles, compressed tarfiles and gzipped files.
+
+        First the function tries to handle the file with the tarfile library which handles
+        compressed archives too.
+        Second, it tries to uncompress the file with gzip.
 
         Parameters:
             file: a binary representation of compressed file
             extract_files: a value which specifies files to be extracted:
                     True: all
                     list: some
+            try_gzip: Try to gzip-uncompress the file.
 
         Returns:
             result: list containing the string representation of specified files
@@ -427,13 +445,22 @@ def extract_tar(file: bytes, extract_files: Union[bool, list]) -> list:
     """
     try:
         tar = tarfile.open(fileobj=io.BytesIO(file))
+        if logger:
+            logger.debug('Detected tarfile.')
     except tarfile.TarError as te:
-        raise TypeError("Could not process given file" + repr(te.args))
+        try:
+            if not try_gzip:
+                raise OSError
+            data = gzip.decompress(file)
+        except OSError:
+            raise TypeError("Could not process given file" + repr(te.args))
+        else:
+            return [data]
+    else:
+        if isinstance(extract_files, bool):
+            extract_files = [file.name for file in tar.getmembers()]
 
-    if isinstance(extract_files, bool):
-        extract_files = [file.name for file in tar.getmembers()]
-
-    return [tar.extractfile(member).read() for member in tar.getmembers() if member.name in extract_files]
+        return [tar.extractfile(member).read() for member in tar.getmembers() if member.name in extract_files]
 
 
 class RewindableFileHandle(object):
