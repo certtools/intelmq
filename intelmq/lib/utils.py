@@ -421,7 +421,7 @@ def extract_tar(file: bytes, extract_files: Union[bool, list]) -> list:
     return unzip(file=file, extract_files=extract_files, try_gzip=False)
 
 
-def unzip(file: bytes, extract_files: Union[bool, list], logger=None, try_gzip: bool=True) -> list:
+def unzip(file: bytes, extract_files: Union[bool, list], logger=None, try_gzip: bool = True) -> list:
     """
         Extracts given compressed (tar.)gz file and returns content of specified or all files from it.
         Handles tarfiles, compressed tarfiles and gzipped files.
@@ -451,6 +451,8 @@ def unzip(file: bytes, extract_files: Union[bool, list], logger=None, try_gzip: 
         try:
             if not try_gzip:
                 raise OSError
+            if logger:
+                logger.debug('Detected gzipped file.')
             data = gzip.decompress(file)
         except OSError:
             raise TypeError("Could not process given file" + repr(te.args))
