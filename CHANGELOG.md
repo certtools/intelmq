@@ -181,7 +181,7 @@ CHANGELOG
 - Postgres output: support condensed JSONDicts (#1107).
 - Bots started with IntelMQ-Manager stop when the webserver is restarted (#952).
 
-1.0.6 Bugfix release (unreleased)
+1.0.6 Bugfix release (2018-08-31)
 ---------------------------------
 
 ### Core
