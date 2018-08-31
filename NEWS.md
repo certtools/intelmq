@@ -3,7 +3,7 @@ NEWS
 
 See the changelog for a full list of changes.
 
-1.0.6 Bugfix release (unreleased)
+1.0.6 Bugfix release (2018-08-31)
 ---------------------------------
 
 ### Configuration
