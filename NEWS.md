@@ -215,7 +215,7 @@ UPDATE events
    WHERE "classification.identifier" = 'accessiblevnc' AND "feed.name" = 'Accessible-VNC';
 ```
 
-1.0.6 Bugfix release (unreleased)
+1.0.6 Bugfix release (2018-08-31)
 ---------------------------------
 
 ### Configuration
