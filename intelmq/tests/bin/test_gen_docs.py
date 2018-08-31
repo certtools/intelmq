@@ -4,6 +4,7 @@ Created on Tue Aug  9 14:04:13 2016
 
 @author: sebastian
 """
+import codecs
 import os
 import unittest
 
@@ -17,8 +18,9 @@ class TestGenDocs(unittest.TestCase):
 
     def test_harmonization_docs(self):
         """ Check if harmonization docs are up to date. """
-        with open(os.path.join(os.path.dirname(__file__),
-                               '../../../docs/Harmonization-fields.md')) as handle:
+        with codecs.open(os.path.join(os.path.dirname(__file__),
+                                      '../../../docs/Harmonization-fields.md'),
+                         encoding='UTF-8') as handle:
             expected = handle.read()
         self.assertEqual(gen_docs.harm_docs().strip(), expected.strip(),
                          "docs/Harmonization-fields.md does not match the output of "
