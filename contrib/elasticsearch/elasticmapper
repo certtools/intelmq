@@ -29,6 +29,7 @@ TYPES = {
     "Registry": "text",
     "String": "text",
     "UppercaseString": "text",
+    "TLP": "text",
     "URL": "text"
 }
 
