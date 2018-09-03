@@ -159,7 +159,19 @@ intelmqctl start <bot_id>
 
 ## Testing
 
-All changes have to be tested and new contributions must be accompanied by according unit tests. You can run the tests by changing to the directory with IntelMQ repository and running either `unittest` or `nosetests`:
+### Additional optional requirements
+
+For the documentation tests two additional libraries are required: Cerberus and PyYAML. You can install them with pip:
+
+```bash
+pip3 install Cerberus PyYAML
+```
+
+or the package management of your operating system.
+
+### Run the tests
+
+All changes have to be tested and new contributions should be accompanied by according unit tests. You can run the tests by changing to the directory with IntelMQ repository and running either `unittest` or `nosetests`:
 
     cd /opt/dev_intelmq
     python3 -m unittest {discover|filename}  # or
