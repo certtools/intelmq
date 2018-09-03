@@ -118,9 +118,8 @@ Supported Operating Systems:
 * **openSUSE Leap 42.3**
 * **openSUSE Leap 15.0**
 * **openSUSE Tumbleweed**
-* **Ubuntu 16.04**
-* **Ubuntu 17.10**
-* **Ubuntu 18.04**
+* **Ubuntu 16.04** (enable the universe repositories by appending ` universe` in `/etc/apt/sources.list` to `deb http://[...].archive.ubuntu.com/ubuntu/ xenial main`)
+* **Ubuntu 18.04** (enable the universe repositories by appending ` universe` in `/etc/apt/sources.list` to `deb http://[...].archive.ubuntu.com/ubuntu/ bionic main`)
 
 Get the installation instructions for your operating system here: [Installation Native Packages](https://software.opensuse.org/download.html?project=home%3Asebix%3Aintelmq&package=intelmq).
 

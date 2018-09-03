@@ -1,6 +1,57 @@
 CHANGELOG
 ==========
 
+1.0.6 Bugfix release (2018-08-31)
+---------------------------------
+
+### Core
+
+### Harmonization
+
+### Bots
+#### Collectors
+- `bots.collectors.rt.collector_rt`: Log ticket id for downloaded reports.
+
+#### Parsers
+- `bots.parsers.shadowserver`:
+  - if required fields do not exist in data, an exception is raised, so the line will be dumped and not further processed.
+  - fix a bug in the parsing of column `cipher_suite` in ssl poodle reports (#1288).
+
+#### Experts
+- Reverse DNS Expert: ignore all invalid results and use first valid one (#1264).
+- `intelmq/bots/experts/tor_nodes/update-tor-nodes`: Use check.torproject.org as source as internet2.us is down (#1289).
+
+#### Outputs
+- `bots.output.amqptopic`:
+  - The default exchange must not be declared (#1295).
+  - Unencodable characters are prepended by backslashes by default. Otherwise Unicode characters can't be encoded and sent (#1296).
+  - Gracefully close AMQP connection on shutdown of bot.
+
+### Documentation
+- Bots: document redis cache parameters.
+- Installation documentation: Ubuntu needs universe repositories.
+
+### Packaging
+- Dropped support for Ubuntu 17.10, it reached its End of Life as of 2018-07-19.
+
+### Tests
+- Drop tests for Python 3.3 for the mode with all requirements, as some optional dependencies do not support Python 3.3 anymore.
+- `lib.test`: Add parameter `compare_raw` (default: `True`) to `assertMessageEqual`, to optionally skip the comparison of the raw field.
+- Add tests for RT collector.
+- Add tests for Shadowserver Parser:
+  - SSL Poodle Reports.
+  - Helper functions.
+
+### Tools
+- `intelmqctl list` now sorts the output of bots and queues (#1262).
+- `intelmqctl`: Correctly handle the corner cases with collectors and outputs for getting/sending messages in the bot debugger (#1263).
+- `intelmqdump`: fix ordering of dumps in a file in runtime. All operations are applied to a sorted list (#1280).
+
+### Contrib
+- `cron-jobs/update-tor-nodes`: Use check.torproject.org as source as internet2.us is down (#1289).
+
+### Known issues
+
 
 1.0.5 Bugfix release (2018-06-21)
 ---------------------------------
@@ -8,7 +59,7 @@ CHANGELOG
 ### Core
 - `lib/message`: `Report()` can now create a Report instance from Event instances (#1225).
 - `lib/bot`:
-  * The first word in the log line `Processed ... messages since last logging.` is now adaptible and set to `Forwarded` in the existing filtering bots (#1237).
+  * The first word in the log line `Processed ... messages since last logging.` is now adaptable and set to `Forwarded` in the existing filtering bots (#1237).
   * Kills oneself again after proper shutdown if the bot is XMPP collector or output (#970). Previously these two bots needed two stop commands to get actually stopped.
 - `lib/utils`: log: set the name of the `py.warnings` logger to the bot name (#1184).
 
@@ -39,7 +90,7 @@ CHANGELOG
   * `intelmqctl run` has a new parameter `-l` `--loglevel` to overwrite the log level for the run (#1075).
   * `intelmqctl run [bot-id] mesage send` can now send report messages (#1077).
 - `intelmqdump`:
-  * has now command completion for bot names, actions and queue names in interacive console.
+  * has now command completion for bot names, actions and queue names in interactive console.
   * automatically converts messages from events to reports if the queue the message is being restored to is the source queue of a parser (#1225).
   * is now capable to read messages in dumps that are dictionaries as opposed to serialized dicts as strings and does not convert them in the show command (#1256).
   * truncated messages are no longer used/saved to the file after being shown (#1255).
@@ -82,7 +133,7 @@ no known issues
 
 ### Tools
 - intelmqctl check: Fixed and extended message for 'run_mode' check.
-- `intelmqctl start` botnet. When using `--type json`, no non-json information about wrong bots are output because that would confuse eg. intelmq-manager
+- `intelmqctl start` botnet. When using `--type json`, no non-JSON information about wrong bots are output because that would confuse eg. intelmq-manager
 
 ### Tests
 - lib/bot: No dumps will be written during tests (#934).
@@ -189,7 +240,7 @@ no known issues
 - lib/bot: Bots will now log the used intelmq version at startup
 
 ### Tools
-- intelmqctl: To check the status of a bot, the comandline of the running process is compared to the actual executable of the bot. Otherwise unrelated programs with the same PID are detected as running bot.
+- intelmqctl: To check the status of a bot, the command line of the running process is compared to the actual executable of the bot. Otherwise unrelated programs with the same PID are detected as running bot.
 - intelmqctl: enable, disable, check, clear now support the JSON output
 
 1.0.0 Stable release (2017-08-04)
@@ -225,7 +276,7 @@ no known issues
 
 ### Bots
 #### Collectors
-- HTTP collectors: If http_username and http_password are both given and empty or null, 'None:None' has been used to authenticate. It is now checked that the username evaulates to non-false/null before adding the authentication. (fixes #1017)
+- HTTP collectors: If http_username and http_password are both given and empty or null, 'None:None' has been used to authenticate. It is now checked that the username evaluates to non-false/null before adding the authentication. (fixes #1017)
 - Dropped unmaintained and undocumented FTP(S) collectors `bots.collectors.ftp`. Also, the FTPS collector had a license conflict (#842).
 - `bots.collectors.http.collector_http_stream`: drop deprecated parameter `url` in favor of `http_url`
 
@@ -267,7 +318,7 @@ v1.0.0.dev8 Beta release (2017-06-14)
 ### Core
 - fix bug which prevented dumps to be written if the file did not exist (https://github.com/certtools/intelmq/pull/986)
 - Fix reload of bots regarding logging
-- type annotions for all core libraries
+- type annotations for all core libraries
 
 ### Bots
 - added bots.experts.idea, bots.outputs.files

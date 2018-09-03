@@ -95,14 +95,14 @@ def add_UTC_to_timestamp(value):
 
 
 def convert_bool(value):
-    if value.lower() in ('y', 'yes', 'true', 'enabled'):
+    if value.lower() in ('y', 'yes', 'true', 'enabled', '1'):
         return True
-    elif value.lower() in ('n', 'no', 'false', 'disabled'):
+    elif value.lower() in ('n', 'no', 'false', 'disabled', '0'):
         return False
 
 
 def validate_to_none(value):
-    if not len(value) or value in ['0', 'unknown']:
+    if not len(value) or value in ('0', 'unknown'):
         return None
     return value
 
@@ -133,13 +133,12 @@ def convert_http_host_and_url(value, row):
     Sinkhole-HTTP-Drone: http_host, url
     With some reports, url/http_url holds only the path, with others the full HTTP request.
     """
-    hostname = ""
     if "cc_dns" in row:
-        if row['cc_dns']:
-            hostname = row['cc_dns']
+        hostname = row.get('cc_dns', '')
     elif "http_host" in row:
-        if row['http_host']:
-            hostname = row['http_host']
+        hostname = row.get('http_host', '')
+    else:
+        hostname = ''
 
     if "url" in row:
         path = row.get('url', '')
@@ -747,7 +746,7 @@ dns_open_resolvers = {
         ('source.geolocation.city', 'city'),
         ('protocol.transport', 'protocol'),
         ('source.reverse_dns', 'hostname'),
-        # ('classification.identifier', 'tag'),  # always set to 'openresolver' in constant_fields
+        # ('classification.identifier', 'tag'),  # always set to 'dns-open-resolver' in constant_fields
         ('extra.', 'min_amplification', convert_float),
         ('extra.', 'dns_version', validate_to_none),
         ('os.name', 'p0f_genre'),
@@ -890,7 +889,7 @@ ssl_scan = {
         ('source.geolocation.cc', 'geo'),
         ('source.geolocation.region', 'region'),
         ('source.geolocation.city', 'city'),
-        ('extra.', 'cipher_suite', convert_bool),
+        ('extra.', 'cipher_suite', validate_to_none),
         ('extra.', 'ssl_poodle', convert_bool),
         ('extra.', 'cert_length', validate_to_none),
         ('extra.', 'subject_common_name', validate_to_none),
@@ -1448,6 +1447,7 @@ blacklisted_ip = {
     }
 }
 
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Accessible-Telnet
 accessible_telnet = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1475,6 +1475,7 @@ accessible_telnet = {
     }
 }
 
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Open-CWMP
 accessible_cwmp = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1511,6 +1512,7 @@ accessible_cwmp = {
     }
 }
 
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Accessible-VNC
 accessible_vnc = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),
@@ -1537,6 +1539,7 @@ accessible_vnc = {
     }
 }
 
+# https://www.shadowserver.org/wiki/pmwiki.php/Services/Accessible-CiscoSmartInstall
 accessible_cisco_smart_install = {
     'required_fields': [
         ('time.source', 'timestamp', add_UTC_to_timestamp),

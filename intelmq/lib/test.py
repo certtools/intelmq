@@ -396,8 +396,8 @@ class BotTestCase(object):
         Asserts if any logline matches a specific requirement.
 
         Parameters:
-            pattern: Message text which is compared
-            type: Type of logline which is asserted
+            pattern: Message text which is compared, regular expression.
+            levelname: Log level of the logline which is asserted, upper case.
         """
 
         self.assertIsNotNone(self.loglines)
@@ -431,7 +431,7 @@ class BotTestCase(object):
         """
         self.assertEqual(len(self.get_output_queue()), queue_len)
 
-    def assertMessageEqual(self, queue_pos, expected_msg):
+    def assertMessageEqual(self, queue_pos, expected_msg, compare_raw=True):
         """
         Asserts that the given expected_message is
         contained in the generated event with
@@ -445,6 +445,10 @@ class BotTestCase(object):
             expected = expected_msg.to_dict(with_type=True)
         else:
             expected = expected_msg.copy()
+
+        if not compare_raw:
+            expected.pop('raw', None)
+            event_dict.pop('raw', None)
         if 'time.observation' in event_dict:
             del event_dict['time.observation']
         if 'time.observation' in expected:
