@@ -52,14 +52,12 @@ curl "https://bootstrap.pypa.io/get-pip.py" -o "/tmp/get-pip.py"
 python3.4 /tmp/get-pip.py
 ```
 
-## Ubuntu 16.04 / Debian 9
+## Ubuntu 16.04 / Ubuntu 18.04 / Debian 9
 
 ```bash
-apt install python3-pip python3-dnspython python3-psutil python3-redis python3-requests python3-termstyle python3-tz
+apt install python3-pip python3-dnspython python3-psutil python3-redis python3-requests python3-termstyle python3-tz python3-dateutil
 apt install git redis-server
 ```
-
-For Debian 9 additionally install `python3-dateutil` (it's not available in Ubuntu 16.04).
 
 Optional dependencies:
 ```bash

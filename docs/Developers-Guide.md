@@ -83,7 +83,7 @@ Similarly, if code does not get accepted upstream by the main developers, it is 
 
 ## Installation
 
-Developers MUST have a fork repository of IntelMQ in order to commit the new code to their repository and then be able to do pull requests to main repository.
+Developers can create a fork repository of IntelMQ in order to commit the new code to this repository and then be able to do pull requests to the main repository. Otherwise you can just use the 'certtools' as username below.
 
 The following instructions will use `pip3 -e`, which gives you a so called *editable* installation. No code is copied in the libraries directories, there's just a link to your code. However, configuration files still required to be moved to `/opt/intelmq` as the instructions show.
 
@@ -184,7 +184,7 @@ There is a [Travis-CI](https://travis-ci.org/certtools/intelmq/builds) setup for
 
 ### Environment variables
 
-There are a bunch of environemnt variables which switch on/off some tests:
+There are a bunch of environment variables which switch on/off some tests:
 
 * `INTELMQ_TEST_DATABASES`: databases such as postgres, elasticsearch, mongodb are not tested by default, set to 1 to test those bots. These tests need preparation, e.g. running databases with users and certain passwords etc. Have a look at the `.travis.yml` in IntelMQ's repository for steps to set databases up.
 * `INTELMQ_SKIP_INTERNET`: tests requiring internet connection will be skipped if this is set to 1.
@@ -224,14 +224,9 @@ We support Python 3 only.
 * Each internal object in IntelMQ (Event, Report, etc) that has strings, their strings MUST be in UTF-8 Unicode format.
 * Any data received from external sources MUST be transformed into UTF-8 Unicode format before add it to IntelMQ objects.
 
-### Back-end independence
+### Back-end independence and Compatibility
 
-Any component of the IntelMQ MUST be independent of the message queue technology (Redis, RabbitMQ, etc...), except `lib/pipeline.py`. Intelmq bots MAY only assume to use the class specified in `lib/pipeline.py` and `lib/cache.py` for inter-process or inter-bot communications.
-
-### Compatibility
-
-IntelMQ core (including intelmqctl) MUST be compatible with IntelMQ Manager.
-
+Any component of the IntelMQ MUST be independent of the message queue technology (Redis, RabbitMQ, etc...).
 
 ## Layout Rules
 
@@ -295,18 +290,14 @@ Any directory and file of IntelMQ has to follow the Directories and Files naming
 * be represented with lowercase and in case of the name has multiple words, the spaces between them must be removed or replaced by underscores;
 * be self-explaining what the content contains.
 
-In the bot directories name, the name must correspond to the feed name. If necessary, some words can be added to give context by joining together using underscores.
+In the bot directories name, the name must correspond to the feed provider. If necessary and applicable the feed name can and should be used as postfix for the filename.
 
-Example (without context words):
+Examples:
 ```
-intelmq/bots/parser/dragonresearchgroup
-intelmq/bots/parser/malwaredomainlist
-```
-
-Example (with context words):
-```
-intelmq/bots/parser/cymru_full_bogons
-intelmq/bots/parser/taichung_city_netflow
+intelmq/bots/parser/malwaredomainlist/parser.py
+intelmq/bots/parser/taichung/parser.py
+intelmq/bots/parser/cymru/parser_full_bogons.py
+intelmq/bots/parser/abusech/parser_ransomware.py
 ```
 
 ### Class Names
