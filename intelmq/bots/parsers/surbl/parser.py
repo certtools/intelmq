@@ -27,4 +27,3 @@ class SurblParserBot(ParserBot):
 
 
 BOT = SurblParserBot
-

@@ -35,6 +35,7 @@ providers:
   Surbl:
     Malicious Domains:
       description: Detected malicious domains. Note that you have to opened up Sponsored Datafeed Service (SDS) access to the SURBL data via rsync for your IP address.
+      additional_information:
       bots:
         collector:
           module: intelmq.bots.collectors.rsync.collector_rsync
