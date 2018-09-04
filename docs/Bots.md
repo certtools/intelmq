@@ -950,6 +950,8 @@ Sources:
 
 ### RipeNCC Abuse Contact
 
+RIPE NCC online Abuse Contact Finder for IP addresses and Autonomous Systems.
+
 #### Information:
 * `name:` ripencc-abuse-contact
 * `lookup:` https api
