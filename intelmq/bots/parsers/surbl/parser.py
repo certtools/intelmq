@@ -2,6 +2,7 @@
 from intelmq.lib import utils
 from intelmq.lib.bot import ParserBot
 
+
 class SurblParserBot(ParserBot):
     def process(self):
         report = self.receive_message()
@@ -24,4 +25,6 @@ class SurblParserBot(ParserBot):
                 self.send_message(event)
         self.acknowledge_message()
 
+
 BOT = SurblParserBot
+
