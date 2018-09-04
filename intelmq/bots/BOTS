@@ -692,7 +692,7 @@
                 "query_ripe_db_asn": true,
                 "query_ripe_db_ip": true,
                 "query_ripe_stat": true,
-                "redis_cache_db": "5",
+                "redis_cache_db": "10",
                 "redis_cache_host": "127.0.0.1",
                 "redis_cache_port": "6379",
                 "redis_cache_password": null,

@@ -191,6 +191,7 @@ There are a bunch of environment variables which switch on/off some tests:
 * `INTELMQ_SKIP_REDIS`: redis-related tests are ran by default, set this to 1 to skip those.
 * `INTELMQ_TEST_LOCAL_WEB`: tests which connect to local web servers or proxies are active when set to 1. Running these tests assume a local webserverserving certain files and/or proxy. Example preparation steps can be found in `.travis.yml` again.
 * `INTELMQ_TEST_EXOTIC`: some bots and tests require libraries which may not be available, those are skipped by default. To run them, set this to 1.
+* `INTELMQ_TEST_REDIS_PASSWORD`: Set this value to the password for the local redis database if needed.
 
 For example, to run all tests you can use:
 
@@ -722,6 +723,16 @@ See the [testing section](#testing) about how to run the tests.
 
 In the end, the new information about the new bot should be added to BOTS file
 located at `intelmq/bots`. Note that the file is sorted!
+
+## Cache
+
+Bots can use a Redis database as cache instance. Use the `intelmq.lib.utils.Cache` class to set this up and/or look at existing bots, like the `cymru_whois` expert how the cache can be used.
+Bots must set a TTL for all keys that are cached to avoid caches growing endless over time.
+Bots must use the Redis databases `>=` 10, but not those already used by other bots. See `bots/BOTS` what databases are already used.
+
+The databases `<` 10 are reserved for the IntelMQ core:
+ * 2: pipeline
+ * 4: tests
 
 # Feeds documentation
 

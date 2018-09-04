@@ -954,7 +954,7 @@ Sources:
 * `name:` ripencc-abuse-contact
 * `lookup:` https api
 * `public:` yes
-* `cache (redis db):` 9
+* `cache (redis db):` 10
 * `description:` IP to abuse contact
 
 #### Configuration Parameters:

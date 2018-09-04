@@ -33,8 +33,9 @@ BOT_CONFIG = {"http_proxy": None,
               "error_max_retries": 0,
               "redis_cache_host": "localhost",
               "redis_cache_port": 6379,
-              "redis_cache_db": 10,
+              "redis_cache_db": 4,
               "redis_cache_ttl": 10,
+              "redis_cache_password": os.environ.get('INTELMQ_TEST_REDIS_PASSWORD'),
               "testing": True,
               }
 
@@ -154,10 +155,14 @@ class BotTestCase(object):
                 utils.decode(json.dumps(cls.default_input_message))
 
         if cls.use_cache and not os.environ.get('INTELMQ_SKIP_REDIS'):
+            password = os.environ.get('INTELMQ_TEST_REDIS_PASSWORD') or \
+                (BOT_CONFIG['redis_cache_password'] if 'redis_cache_password' in BOT_CONFIG else None)
             cls.cache = redis.Redis(host=BOT_CONFIG['redis_cache_host'],
                                     port=BOT_CONFIG['redis_cache_port'],
                                     db=BOT_CONFIG['redis_cache_db'],
-                                    socket_timeout=BOT_CONFIG['redis_cache_ttl'])
+                                    socket_timeout=BOT_CONFIG['redis_cache_ttl'],
+                                    password=password,
+                                    )
 
     harmonization = utils.load_configuration(pkg_resources.resource_filename('intelmq',
                                                                              'etc/harmonization.conf'))

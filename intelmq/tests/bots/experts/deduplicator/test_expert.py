@@ -26,8 +26,10 @@ class TestDeduplicatorExpertBot(test.BotTestCase, unittest.TestCase):
         cls.bot_reference = DeduplicatorExpertBot
         cls.default_input_message = INPUT1
         cls.sysconfig = {"redis_cache_ttl": "86400",
+                         "redis_cache_db": 4,
                          "filter_type": "blacklist",
-                         "filter_keys": "raw ,time.observation "}
+                         "filter_keys": "raw ,time.observation ",
+                         }
         cls.use_cache = True
 
     def test_suppress(self):
