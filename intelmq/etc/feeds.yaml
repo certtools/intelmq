@@ -42,7 +42,6 @@ providers:
           parameters:
             file: wild.surbl.org.rbldnsd
             rsync_path: blacksync.prolocation.net::surbl-wild/
-            rate_limit: 3600
         parser:
           module: intelmq.bots.parsers.surbl.parser
           parameters:

@@ -1448,7 +1448,6 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 * **Configuration Parameters:**
 *  * `file`: `wild.surbl.org.rbldnsd`
 *  * `rsync_path`: `blacksync.prolocation.net::surbl-wild/`
-*  * `rate_limit`: `3600`
 
 ### Parser
 
