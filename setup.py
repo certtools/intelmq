@@ -13,7 +13,6 @@ REQUIRES = [
     'python-termstyle>=0.1.10',
     'pytz>=2012c',
     'redis>=2.10',
-    'requests>=2.2.0',
 ]
 if sys.version_info < (3, 5):
     REQUIRES.append('typing')
@@ -57,9 +56,19 @@ setup(
     version=__version__,
     maintainer='Sebastian Wagner',
     maintainer_email='wagner@cert.at',
-    python_requires='>=3.3',
+    python_requires='>=3.4',
     install_requires=REQUIRES,
+    tests_require=[
+        'Cerberus',
+        'pyyaml',
+    ],
     test_suite='intelmq.tests',
+    extras_require={
+        'development': [
+            'Cerberus',
+            'pyyaml',
+        ],
+    },
     packages=find_packages(),
     include_package_data=True,
     url='https://github.com/certtools/intelmq/',
@@ -77,7 +86,6 @@ setup(
         'Operating System :: POSIX :: Linux',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
@@ -92,6 +100,7 @@ setup(
             'intelmqctl = intelmq.bin.intelmqctl:main',
             'intelmqdump = intelmq.bin.intelmqdump:main',
             'intelmq_psql_initdb = intelmq.bin.intelmq_psql_initdb:main',
+            'intelmq.bots.experts.sieve.validator = intelmq.bots.experts.sieve.validator:main',
         ] + BOTS,
     },
     scripts=[

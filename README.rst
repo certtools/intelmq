@@ -1,4 +1,3 @@
-===================
 Welcome to IntelMQ!
 ===================
 
@@ -9,22 +8,23 @@ Welcome to IntelMQ!
 
 |Build Status| |codecov.io|
 
-**IntelMQ** is a solution for IT security teams (CERTs, CSIRTs, abuse departments,...) 
-for collecting and processing security feeds (such as log files) using a message queuing
-protocol. It's a community driven initiative called **IHAP** (Incident
-Handling Automation Project) which was conceptually designed by European
-CERTs/CSIRTs during several InfoSec events. Its main goal is to give to
-incident responders an easy way to collect & process threat intelligence
-thus improving the incident handling processes of CERTs.
+**IntelMQ** is a solution for IT security teams (CERTs, CSIRTs, abuse
+departments,...) for collecting and processing security feeds (such as
+log files) using a message queuing protocol. It's a community driven
+initiative called **IHAP** (Incident Handling Automation Project) which
+was conceptually designed by European CERTs/CSIRTs during several
+InfoSec events. Its main goal is to give to incident responders an easy
+way to collect & process threat intelligence thus improving the incident
+handling processes of CERTs.
 
 IntelMQ's design was influenced by
-`AbuseHelper <https://github.com/abusesa/abusehelper>`__,
-however it was re-written from scratch and aims at:
+`AbuseHelper <https://github.com/abusesa/abusehelper>`__ however it was
+re-written from scratch and aims at:
 
--  Reduce the complexity of system administration
--  Reduce the complexity of writing new bots for new data feeds
--  Reduce the probability of events lost in all process with persistence
-   functionality (even system crash)
+-  Reducing the complexity of system administration
+-  Reducing the complexity of writing new bots for new data feeds
+-  Reducing the probability of events lost in all process with
+   persistence functionality (even system crash)
 -  Use and improve the existing Data Harmonization Ontology
 -  Use JSON format for all messages
 -  Integration of the existing tools (AbuseHelper, CIF)
@@ -44,26 +44,25 @@ It follows the following basic meta-guidelines:
 -  Communicate clearly
 
 Table of Contents
-=================
+-----------------
 
 1. `How to Install <#how-to-install>`__
 2. `Developers Guide <#developers-guide>`__
-3. `IntelMQ Manager <#intelmq-manager>`__
-4. `Incident Handling Automation
+3. `User Guide <#user-guide>`__
+4. `IntelMQ Manager <#intelmq-manager>`__
+5. `Incident Handling Automation
    Project <#incident-handling-automation-project>`__
-5. `Data Harmonization <#data-harmonization>`__
-6. `How to Participate <#how-to-participate>`__
-7. `Licence <#licence>`__
+6. `Data Harmonization <#data-harmonization>`__
+7. `How to Participate <#how-to-participate>`__
+8. `Licence <#licence>`__
 
 How to Install
-==============
+--------------
 
 See `INSTALL <docs/INSTALL.md>`__.
 
-For existing installations, see `UPGRADING <docs/UPGRADING.md>`__.
-
 Developers Guide
-================
+----------------
 
 See `Developers Guide <docs/Developers-Guide.md>`__.
 
@@ -72,30 +71,31 @@ User Guide
 
 See `User Guide <docs/User-Guide.md>`__.
 
-For support use the intelmq-users mailing list: https://lists.cert.at/cgi-bin/mailman/listinfo/intelmq-users
+For support questions please use the intelmq-users mailing list:
+https://lists.cert.at/cgi-bin/mailman/listinfo/intelmq-users
 
 IntelMQ Manager
-===============
+---------------
 
 Check out this graphical
 `tool <https://github.com/certtools/intelmq-manager>`__ and easily
 manage an IntelMQ system.
 
 Incident Handling Automation Project
-====================================
+------------------------------------
 
 -  **URL:**
    http://www.enisa.europa.eu/activities/cert/support/incident-handling-automation
 -  **Mailing-list:** ihap@lists.trusted-introducer.org
 
 Data Harmonization
-==================
+------------------
 
-IntelMQ use the Data Harmonization. Check the following
-`document <docs/Data-Harmonization.md>`__.
+IntelMQ use the Data Harmonization. Please read `this
+document <docs/Data-Harmonization.md>`__ for more details.
 
 How to participate
-==================
+------------------
 
 -  Subscribe to the Intelmq-dev Mailing list:
    https://lists.cert.at/cgi-bin/mailman/listinfo/intelmq-dev (for
@@ -106,7 +106,7 @@ How to participate
 -  Via Pull requests (please do read help.github.com first)
 
 Licence
-=======
+-------
 
 This software is licensed under GNU Affero General Public License
 version 3

@@ -16,7 +16,7 @@ INPUT1 = {"__type": "Event",
           "extra": '{"foo.bar": "test"}'
           }
 OUTPUT1 = {'classification': {'type': 'botnet drone'},
-           'extra': '{"foo.bar": "test"}',
+           'extra': {"foo": {"bar": "test"}},
            'feed': {'name': 'Example Feed'},
            'source': {'asn': 64496, 'ip': '192.0.2.1'},
            }

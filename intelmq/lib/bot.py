@@ -14,6 +14,8 @@ import signal
 import sys
 import time
 import traceback
+import types
+import warnings
 
 from intelmq import (DEFAULT_LOGGING_PATH, DEFAULTS_CONF_FILE,
                      HARMONIZATION_CONF_FILE, PIPELINE_CONF_FILE,
@@ -21,7 +23,8 @@ from intelmq import (DEFAULT_LOGGING_PATH, DEFAULTS_CONF_FILE,
 from intelmq.lib import exceptions, utils
 import intelmq.lib.message as libmessage
 from intelmq.lib.pipeline import PipelineFactory
-from typing import Any, Optional
+from intelmq.lib.utils import RewindableFileHandle
+from typing import Any, Optional, List
 
 __all__ = ['Bot', 'CollectorBot', 'ParserBot']
 
@@ -34,6 +37,11 @@ class Bot(object):
     __message_counter_start = None
     # Bot is capable of SIGHUP delaying
     sighup_delay = True
+    # From the runtime configuration
+    description = None
+    group = None
+    module = None
+    name = None
 
     _message_processed_verb = 'Processed'
 
@@ -81,6 +89,7 @@ class Bot(object):
             signal.signal(signal.SIGHUP, self.__handle_sighup_signal)
             # system calls should not be interrupted, but restarted
             signal.siginterrupt(signal.SIGHUP, False)
+            signal.signal(signal.SIGTERM, self.__handle_sigterm_signal)
         except Exception as exc:
             if self.parameters.error_log_exception:
                 self.logger.exception('Bot initialization failed.')
@@ -90,6 +99,13 @@ class Bot(object):
 
             self.stop()
             raise
+
+    def __handle_sigterm_signal(self, signum: int, stack: Optional[object]):
+        """
+        Calles when a SIGTERM is received. Stops the bot.
+        """
+        self.logger.info("Received SIGTERM.")
+        self.stop(exitcode=0)
 
     def __handle_sighup_signal(self, signum: int, stack: Optional[object]):
         """
@@ -193,8 +209,6 @@ class Bot(object):
             except KeyboardInterrupt:
                 self.logger.info("Received KeyboardInterrupt.")
                 self.stop(exitcode=0)
-                del self
-                break
 
             finally:
                 if getattr(self.parameters, 'testing', False):
@@ -210,10 +224,16 @@ class Bot(object):
 
                         if error_on_message:
 
+                            delete_message = False
                             if self.parameters.error_dump_message:
                                 error_traceback = traceback.format_exception(*error_on_message)
                                 self._dump_message(error_traceback,
                                                    message=self.__current_message)
+                                delete_message = True
+                            if '_on_error' in self.__destination_queues:
+                                self.send_message(self.__current_message, path='_on_error')
+                                delete_message = True
+                            if delete_message:
                                 self.__current_message = None
 
                             # remove message from pipeline
@@ -263,15 +283,24 @@ class Bot(object):
             remaining = self.parameters.rate_limit - (time.time() - starttime)
 
     def stop(self, exitcode: int = 1):
+        if not self.logger:
+            print('Could not initialize logger, only logging to stdout.')
         try:
             self.shutdown()
         except BaseException:
-            pass
+            if self.logger:
+                self.logger.exception('Error during shutdown of bot.')
+            else:  # logger not yet initialized
+                print('Error during shutdown of bot.')
 
         if self.__message_counter:
-            self.logger.info("%s %d messages since last logging.",
-                             self._message_processed_verb,
-                             self.__message_counter)
+            if self.logger:
+                self.logger.info("%s %d messages since last logging.",
+                                 self._message_processed_verb,
+                                 self.__message_counter)
+            else:
+                print("%s %d messages since last logging." % (self._message_processed_verb,
+                                                              self.__message_counter))
 
         self.__disconnect_pipelines()
 
@@ -287,14 +316,16 @@ class Bot(object):
             self.__print_log_buffer()
 
         if not getattr(self.parameters, 'testing', False):
-            del self
-            exit(exitcode)
+            sys.exit(exitcode)
 
     def __print_log_buffer(self):
         for level, message in self.__log_buffer:
             if self.logger:
                 getattr(self.logger, level)(message)
-            print(level.upper(), '-', message)
+            if level in ['WARNING', 'ERROR', 'critical']:
+                print(level.upper(), '-', message, file=sys.stderr)
+            else:
+                print(level.upper(), '-', message)
         self.__log_buffer = []
 
     def __check_bot_id(self, name: str):
@@ -337,7 +368,7 @@ class Bot(object):
             self.__destination_pipeline = None
             self.logger.debug("Disconnected from destination pipeline.")
 
-    def send_message(self, *messages, auto_add=None):
+    def send_message(self, *messages, path="_default", auto_add=None):
         """
         Parameters:
             messages: Instances of intelmq.lib.message.Message class
@@ -350,7 +381,6 @@ class Bot(object):
             if not self.__destination_pipeline:
                 raise exceptions.ConfigurationError('pipeline', 'No destination pipeline given, '
                                                     'but needed')
-                self.stop()
 
             self.logger.debug("Sending message.")
             self.__message_counter += 1
@@ -363,7 +393,7 @@ class Bot(object):
                 self.__message_counter_start = datetime.datetime.now()
 
             raw_message = libmessage.MessageFactory.serialize(message)
-            self.__destination_pipeline.send(raw_message)
+            self.__destination_pipeline.send(raw_message, path=path)
 
     def receive_message(self):
         self.logger.debug('Waiting for incoming message.')
@@ -451,7 +481,7 @@ class Bot(object):
         config = utils.load_configuration(RUNTIME_CONF_FILE)
         reinitialize_logging = False
 
-        if self.__bot_id in list(config.keys()):
+        if self.__bot_id in config:
             params = config[self.__bot_id]
             self.run_mode = params.get('run_mode', 'continuous')
             for option, value in params['parameters'].items():
@@ -459,6 +489,10 @@ class Bot(object):
                 self.__log_configuration_parameter("runtime", option, value)
                 if option.startswith('logging_'):
                     reinitialize_logging = True
+            self.description = params.get('description')
+            self.group = params.get('group')
+            self.module = params.get('module')
+            self.name = params.get('name')
 
         if reinitialize_logging:
             self.logger.handlers = []  # remove all existing handlers
@@ -492,6 +526,7 @@ class Bot(object):
 
                 self.__destination_queues = config[
                     self.__bot_id]['destination-queues']
+                # Convert old to new format here
 
         else:
             raise exceptions.ConfigurationError('pipeline', "no key "
@@ -519,7 +554,7 @@ class Bot(object):
     @classmethod
     def run(cls):
         if len(sys.argv) < 2:
-            exit('No bot ID given.')
+            sys.exit('No bot ID given.')
         instance = cls(sys.argv[1])
         instance.start()
 
@@ -556,10 +591,29 @@ class Bot(object):
 
         self.http_header['User-agent'] = self.parameters.http_user_agent
 
+    @staticmethod
+    def check(parameters: dict) -> Optional[List[List[str]]]:
+        """
+        The bot's own check function can perform individual checks on it's
+        parameters.
+        `init()` is *not* called before, this is a staticmethod which does not
+        require class initialization.
+
+        Parameters:
+            parameters: Bot's parameters, defaults and runtime merged together
+
+        Returns:
+            output: None or a list of [log_level, log_message] pairs, both
+                strings. log_level must be a valid log level.
+        """
+        pass
+
 
 class ParserBot(Bot):
     csv_params = {}
     ignore_lines_starting = []
+    handle = None
+    current_line = None
 
     def __init__(self, bot_id):
         super(ParserBot, self).__init__(bot_id=bot_id)
@@ -567,6 +621,7 @@ class ParserBot(Bot):
             self.logger.error('ParserBot can\'t be started itself. '
                               'Possible Misconfiguration.')
             self.stop()
+        self.group = 'Parser'
 
     def parse_csv(self, report: dict):
         """
@@ -578,8 +633,9 @@ class ParserBot(Bot):
             raw_report = '\n'.join([line for line in raw_report.splitlines()
                                     if not any([line.startswith(prefix) for prefix
                                                 in self.ignore_lines_starting])])
-
-        for line in csv.reader(io.StringIO(raw_report)):
+        self.handle = RewindableFileHandle(io.StringIO(raw_report))
+        for line in csv.reader(self.handle, **self.csv_params):
+            self.current_line = self.handle.current_line
             yield line
 
     def parse_csv_dict(self, report: dict):
@@ -592,8 +648,23 @@ class ParserBot(Bot):
             raw_report = '\n'.join([line for line in raw_report.splitlines()
                                     if not any([line.startswith(prefix) for prefix
                                                 in self.ignore_lines_starting])])
+        self.handle = RewindableFileHandle(io.StringIO(raw_report))
 
-        for line in csv.DictReader(io.StringIO(raw_report)):
+        csv_reader = csv.DictReader(self.handle, **self.csv_params)
+        # create an array of fieldnames,
+        # those were automagically created by the dictreader
+        self.csv_fieldnames = csv_reader.fieldnames
+
+        for line in csv_reader:
+            self.current_line = self.handle.current_line
+            yield line
+
+    def parse_json(self, report: dict):
+        """
+        A basic JSON parser
+        """
+        raw_report = utils.base64_decode(report.get("raw"))
+        for line in json.loads(raw_report):
             yield line
 
     def parse(self, report: dict):
@@ -607,6 +678,9 @@ class ParserBot(Bot):
         Override for your use or use an existing parser, e.g.::
 
             parse = ParserBot.parse_csv
+
+        You should do that for recovering lines too.
+            recover_line = ParserBot.recover_line_csv
 
         """
         for line in utils.base64_decode(report.get("raw")).splitlines():
@@ -641,8 +715,14 @@ class ParserBot(Bot):
             if not line:
                 continue
             try:
-                # filter out None
-                events = list(filter(bool, self.parse_line(line, report)))
+                value = self.parse_line(line, report)
+                if value is None:
+                    continue
+                elif type(value) is list or isinstance(value, types.GeneratorType):
+                    # filter out None
+                    events = list(filter(bool, value))
+                else:
+                    events = [value]
             except Exception:
                 self.logger.exception('Failed to parse line.')
                 self.__failed.append((traceback.format_exc(), line))
@@ -653,7 +733,10 @@ class ParserBot(Bot):
         for exc, line in self.__failed:
             report_dump = report.copy()
             report_dump.change('raw', self.recover_line(line))
-            self._dump_message(exc, report_dump)
+            if self.parameters.error_dump_message:
+                self._dump_message(exc, report_dump)
+            if '_on_error' in self._Bot__destination_queues:
+                self.send_message(report_dump, path='_on_error')
 
         self.logger.info('Sent %d events and found %d error(s).' % (events_count, len(self.__failed)))
 
@@ -665,11 +748,17 @@ class ParserBot(Bot):
 
         Recovers a fully functional report with only the problematic line.
         """
-        return '\n'.join(self.tempdata + [line])
+        if self.handle and self.handle.first_line and not self.tempdata:
+            tempdata = [self.handle.first_line.strip()]
+        else:
+            tempdata = self.tempdata
+        if self.current_line:
+            line = self.current_line
+        return '\n'.join(tempdata + [line])
 
     def recover_line_csv(self, line: str):
         out = io.StringIO()
-        writer = csv.writer(out)
+        writer = csv.writer(out, **self.csv_params)
         writer.writerow(line)
         return out.getvalue()
 
@@ -680,8 +769,16 @@ class ParserBot(Bot):
         out = io.StringIO()
         writer = csv.DictWriter(out, self.csv_fieldnames, **self.csv_params)
         writer.writeheader()
-        writer.writerow(line)
-        return out.getvalue()
+        out.write(self.current_line)
+        return out.getvalue().strip()
+
+    def recover_line_json(self, line: dict):
+        """
+        Reverse of parse for JSON pulses.
+
+        Recovers a fully functional report with only the problematic pulse.
+        """
+        return json.dumps(line)
 
 
 class CollectorBot(Bot):
@@ -696,6 +793,7 @@ class CollectorBot(Bot):
             self.logger.error('CollectorBot can\'t be started itself. '
                               'Possible Misconfiguration.')
             self.stop()
+        self.group = 'Collector'
 
     def __filter_empty_report(self, message: dict):
         if 'raw' not in message:
@@ -705,7 +803,13 @@ class CollectorBot(Bot):
         return True
 
     def __add_report_fields(self, report: dict):
-        report.add("feed.name", self.parameters.feed)
+        if hasattr(self.parameters, 'feed'):
+            report.add("feed.name", self.parameters.feed)
+            warnings.warn("The parameter 'feed' is deprecated and will be "
+                          "removed in version 2.0. Use 'name' instead.",
+                          DeprecationWarning)
+        else:
+            report.add("feed.name", self.parameters.name)
         if hasattr(self.parameters, 'code'):
             report.add("feed.code", self.parameters.code)
         if hasattr(self.parameters, 'documentation'):
@@ -715,7 +819,7 @@ class CollectorBot(Bot):
         report.add("feed.accuracy", self.parameters.accuracy)
         return report
 
-    def send_message(self, *messages, auto_add=True):
+    def send_message(self, *messages, path="_default", auto_add=True):
         """"
         Parameters:
             messages: Instances of intelmq.lib.message.Message class
@@ -724,7 +828,7 @@ class CollectorBot(Bot):
         messages = filter(self.__filter_empty_report, messages)
         if auto_add:
             messages = map(self.__add_report_fields, messages)
-        super(CollectorBot, self).send_message(*messages)
+        super(CollectorBot, self).send_message(*messages, path=path)
 
     def new_report(self):
         return libmessage.Report()

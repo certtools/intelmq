@@ -10,9 +10,9 @@ import intelmq.lib.test as test
 import intelmq.lib.utils as utils
 
 RAW = """# ignore this
-2015/06/04 13:37 +00,example.org,192.0.2.3,reverse.example.net,example description,report@example.org,0
+2015/06/04 13:37 +00,example.org,192.0.2.3,reverse.example.net,example description,report@example.org,1
 
-2015/06/04 13:38 +00,example.org,19d2.0.2.3,reverse.example.net,example description,report@example.org,0
+2015/06/04 13:38 +00,example.org,19d2.0.2.3,reverse.example.net,example description,report@example.org,1
 #ending line"""
 RAW_SPLIT = RAW.splitlines()
 
@@ -31,14 +31,14 @@ EXAMPLE_EVENT = {"feed.url": "http://www.example.com/",
                  "__type": "Event",
                  "classification.type": "malware",
                  "event_description.text": "example description",
-                 "source.asn": 0,
+                 "source.asn": 1,
                  "feed.name": "Example",
                  "raw": utils.base64_encode('\n'.join(RAW_SPLIT[:2]))}
 
 EXPECTED_DUMP = EXAMPLE_REPORT.copy()
 del EXPECTED_DUMP['__type']
 EXPECTED_DUMP['raw'] = base64.b64encode(b'''# ignore this
-2015/06/04 13:38 +00,example.org,19d2.0.2.3,reverse.example.net,example description,report@example.org,0
+2015/06/04 13:38 +00,example.org,19d2.0.2.3,reverse.example.net,example description,report@example.org,1
 #ending line''').decode()
 EXAMPLE_EMPTY_REPORT = {"feed.url": "http://www.example.com/",
                         "__type": "Report",
@@ -61,7 +61,7 @@ EXAMPLE_EVE_1 = {"feed.url": "http://www.example.com/",
                  "__type": "Event",
                  "classification.type": "malware",
                  "feed.name": "Example",
-                 'raw': 'c291cmNlLmlwLGZvb2Jhcg0KMTkyLjAuMi4zLGJsbGFhDQo='
+                 'raw': 'c291cmNlLmlwLGZvb2Jhcg0KMTkyLjAuMi4zLGJsbGFh'
                  }
 
 EXAMPLE_SHORT = EXAMPLE_REPORT.copy()
@@ -126,6 +126,7 @@ class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
         cls.bot_reference = DummyParserBot
         cls.default_input_message = EXAMPLE_REPORT
         cls.allowed_error_count = 1
+        cls.sysconfig = {'error_dump_message': True}
 
     def dump_message(self, error_traceback, message=None):
         self.assertDictEqual(EXPECTED_DUMP, message)

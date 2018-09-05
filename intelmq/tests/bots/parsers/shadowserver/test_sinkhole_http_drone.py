@@ -11,11 +11,6 @@ with open(os.path.join(os.path.dirname(__file__), 'Sinkhole-HTTP-Drone.csv')) as
     EXAMPLE_FILE = handle.read()
 EXAMPLE_LINES = EXAMPLE_FILE.splitlines()
 
-with open(os.path.join(os.path.dirname(__file__),
-                       'Sinkhole-HTTP-Drone-RECONSTRUCTED.csv')) as handle:
-    RECONSTRUCTED_FILE = handle.read()
-RECONSTRUCTED_LINES = RECONSTRUCTED_FILE.splitlines()
-
 EXAMPLE_REPORT = {"feed.name": "ShadowServer Sinkhole HTTP Drone",
                   "raw": utils.base64_encode(EXAMPLE_FILE),
                   "__type": "Report",
@@ -24,8 +19,7 @@ EXAMPLE_REPORT = {"feed.name": "ShadowServer Sinkhole HTTP Drone",
 EVENTS = [{'__type': 'Event',
            'feed.name': 'ShadowServer Sinkhole HTTP Drone',
            'classification.taxonomy': 'malicious code',
-           'classification.type': 'botnet drone',
-           'classification.identifier': 'botnet',
+           'classification.type': 'infected system',
            'destination.asn': 6939,
            'destination.geolocation.cc': 'US',
            'destination.fqdn': '198-51-100-55.example.net',
@@ -33,8 +27,9 @@ EVENTS = [{'__type': 'Event',
            'destination.port': 80,
            'malware.name': 'avalanche-goznym',
            'protocol.transport': 'tcp',
-           'raw': utils.base64_encode('\n'.join([RECONSTRUCTED_LINES[0],
-                                                 RECONSTRUCTED_LINES[1], ''])),
+           'protocol.application': 'http',
+           'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                                 EXAMPLE_LINES[1]])),
            'source.asn': 34502,
            'source.geolocation.cc': 'AT',
            'source.ip': '198.51.100.55',
@@ -45,24 +40,22 @@ EVENTS = [{'__type': 'Event',
           {'__type': 'Event',
            'feed.name': 'ShadowServer Sinkhole HTTP Drone',
            'classification.taxonomy': 'malicious code',
-           'classification.type': 'botnet drone',
-           'classification.identifier': 'botnet',
-           'raw': utils.base64_encode('\n'.join([RECONSTRUCTED_LINES[0],
-                                                 RECONSTRUCTED_LINES[2], ''])),
-           'source.asn': 9556,
+           'classification.type': 'infected system',
+           'raw': utils.base64_encode('\n'.join([EXAMPLE_LINES[0],
+                                                 EXAMPLE_LINES[2]])),
            'source.geolocation.cc': 'AT',
            'time.observation': '2015-01-01T00:00:00+00:00',
            'destination.asn': 393667,
            'destination.geolocation.cc': 'US',
            'destination.ip': '198.51.100.22',
            'destination.port': 80,
-           'extra': '{"user_agent": "Mozilla/4.0 '
-                    '(compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.1.4322; '
-                    '.NET CLR 2.0.50727; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729; '
-                    '.NET4.0C; .NET4.0E)"}',
            'destination.url': 'http://198.51.100.90/search?q=1',
+           'extra.user_agent': 'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; '
+                               'SV1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR '
+                               '3.0.4506.2152; .NET CLR 3.5.30729; .NET4.0C; .NET4.0E)',
            'malware.name': 'downadup',
            'protocol.transport': 'tcp',
+           'protocol.application': 'http',
            'source.asn': 8447,
            'source.ip': '198.51.100.155',
            'source.port': 4457,

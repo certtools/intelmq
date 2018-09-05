@@ -13,13 +13,13 @@ import os
 import re
 import unittest
 import unittest.mock as mock
-
-import pkg_resources
-import redis
+from itertools import chain
 
 import intelmq.lib.message as message
 import intelmq.lib.pipeline as pipeline
 import intelmq.lib.utils as utils
+import pkg_resources
+import redis
 from intelmq import CONFIG_DIR, PIPELINE_CONF_FILE, RUNTIME_CONF_FILE
 
 __all__ = ['BotTestCase']
@@ -33,13 +33,14 @@ BOT_CONFIG = {"http_proxy": None,
               "error_max_retries": 0,
               "redis_cache_host": "localhost",
               "redis_cache_port": 6379,
-              "redis_cache_db": 10,
+              "redis_cache_db": 4,
               "redis_cache_ttl": 10,
+              "redis_cache_password": os.environ.get('INTELMQ_TEST_REDIS_PASSWORD'),
               "testing": True,
               }
 
 
-def mocked_config(bot_id='test-bot', src_name='', dst_names=(), sysconfig={}):
+def mocked_config(bot_id='test-bot', src_name='', dst_names=(), sysconfig={}, group=None, module=None):
     def mocked(conf_file):
         if conf_file == PIPELINE_CONF_FILE:
             return {bot_id: {"source-queue": src_name,
@@ -48,7 +49,12 @@ def mocked_config(bot_id='test-bot', src_name='', dst_names=(), sysconfig={}):
         elif conf_file == RUNTIME_CONF_FILE:
             conf = BOT_CONFIG.copy()
             conf.update(sysconfig)
-            return {bot_id: {'parameters': conf}}
+            return {bot_id: {'description': 'Instance of a bot for automated unit tests.',
+                             'group': group,
+                             'module': module,
+                             'name': 'Test Bot',
+                             'parameters': conf,
+                             }}
         elif conf_file.startswith(CONFIG_DIR):
             confname = os.path.join('etc/', os.path.split(conf_file)[-1])
             fname = pkg_resources.resource_filename('intelmq',
@@ -57,6 +63,7 @@ def mocked_config(bot_id='test-bot', src_name='', dst_names=(), sysconfig={}):
                 return json.load(fpconfig)
         else:
             return utils.load_configuration(conf_file)
+
     return mocked
 
 
@@ -66,6 +73,7 @@ def mocked_logger(logger):
         logger_new = copy.copy(logger)
         logger_new.setLevel(log_level)
         return logger_new
+
     return log
 
 
@@ -147,10 +155,14 @@ class BotTestCase(object):
                 utils.decode(json.dumps(cls.default_input_message))
 
         if cls.use_cache and not os.environ.get('INTELMQ_SKIP_REDIS'):
+            password = os.environ.get('INTELMQ_TEST_REDIS_PASSWORD') or \
+                (BOT_CONFIG['redis_cache_password'] if 'redis_cache_password' in BOT_CONFIG else None)
             cls.cache = redis.Redis(host=BOT_CONFIG['redis_cache_host'],
                                     port=BOT_CONFIG['redis_cache_port'],
                                     db=BOT_CONFIG['redis_cache_db'],
-                                    socket_timeout=BOT_CONFIG['redis_cache_ttl'])
+                                    socket_timeout=BOT_CONFIG['redis_cache_ttl'],
+                                    password=password,
+                                    )
 
     harmonization = utils.load_configuration(pkg_resources.resource_filename('intelmq',
                                                                              'etc/harmonization.conf'))
@@ -167,12 +179,16 @@ class BotTestCase(object):
         self.log_stream = io.StringIO()
 
         src_name = "{}-input".format(self.bot_id)
-        dst_name = "{}-output".format(self.bot_id)
+        dst_names = {"_default": "{}-output".format(self.bot_id),
+                     "other-way": "{}-other-output".format(self.bot_id),
+                     "two-way": ["{}-way1-output".format(self.bot_id), "{}-way2-output".format(self.bot_id)]}
 
         self.mocked_config = mocked_config(self.bot_id,
                                            src_name,
-                                           [dst_name],
+                                           dst_names,
                                            sysconfig=self.sysconfig,
+                                           group=self.bot_type.title(),
+                                           module=self.bot_reference.__module__,
                                            )
 
         logger = logging.getLogger(self.bot_id)
@@ -188,7 +204,8 @@ class BotTestCase(object):
 
         class Parameters(object):
             source_queue = src_name
-            destination_queues = [dst_name]
+            destination_queues = dst_names
+
         parameters = Parameters()
         self.pipe = pipeline.Pythonlist(parameters)
         self.pipe.set_queues(parameters.source_queue, "source")
@@ -234,9 +251,14 @@ class BotTestCase(object):
         self.loglines = self.loglines_buffer.splitlines()
 
         """ Test if all pipes are created with correct names. """
-        pipenames = ["{}-input", "{}-input-internal", "{}-output"]
+        pipenames = ["{}-input", "{}-input-internal", "{}-output", "{}-other-output", "{}-way1-output", "{}-way2-output"]
         self.assertSetEqual({x.format(self.bot_id) for x in pipenames},
                             set(self.pipe.state.keys()))
+        """ Test if input queue is empty. """
+        self.assertEqual(self.input_queue, [],
+                         'Not all input messages have been processed. '
+                         'You probably need to increase the number of '
+                         'iterations of `run_bot`.')
 
         """ Test if report has required fields. """
         if self.bot_type == 'collector':
@@ -302,10 +324,12 @@ class BotTestCase(object):
 
     input_queue = property(get_input_queue, set_input_queue)
 
-    def get_output_queue(self):
-        """Getter for the input queue of this bot. Use in TestCase scenarios"""
-        return [utils.decode(text) for text
-                in self.pipe.state["%s-output" % self.bot_id]]
+    def get_output_queue(self, path="_default"):
+        """Getter for items in the output queues of this bot. Use in TestCase scenarios
+            If there is multiple queues in named queue group, we return all the items chained.
+        """
+        return [utils.decode(text) for text in chain(*[self.pipe.state[x] for x in self.pipe.destination_queues[path]])]
+        # return [utils.decode(text) for text in self.pipe.state["%s-output" % self.bot_id]]
 
     def test_bot_name(self):
         """
@@ -322,7 +346,7 @@ class BotTestCase(object):
                 counter += 1
         if counter != len(self.bot_types) - 1:
             self.fail("Bot name {!r} does not match one of {!r}"
-                      "".format(self.bot_name, list(self.bot_types.values())))
+                      "".format(self.bot_name, list(self.bot_types.values())))  # pragma: no cover
 
         self.assertEqual('Test{}'.format(self.bot_name),
                          self.__class__.__name__)
@@ -347,7 +371,7 @@ class BotTestCase(object):
                 return
         else:
             raise ValueError('Logline with level {!r} and message {!r} not found'
-                             ''.format(levelname, message))
+                             ''.format(levelname, message))  # pragma: no cover
 
     def assertLoglineEqual(self, line_no: int, message: str, levelname: str = "ERROR"):
         """
@@ -411,7 +435,7 @@ class BotTestCase(object):
             elif levelname == fields["log_level"] and re.match(pattern, fields["message"]):
                 break
         else:
-            raise ValueError('No matching logline found.')
+            raise ValueError('No matching logline found.')  # pragma: no cover
 
     def assertRegexpMatchesLog(self, pattern):
         """Asserts that pattern matches against log. """
@@ -425,19 +449,19 @@ class BotTestCase(object):
         self.assertIsNotNone(self.loglines_buffer)
         self.assertNotRegex(self.loglines_buffer, pattern)
 
-    def assertOutputQueueLen(self, queue_len=0):
+    def assertOutputQueueLen(self, queue_len=0, path="_default"):
         """
         Asserts that the output queue has the expected length.
         """
-        self.assertEqual(len(self.get_output_queue()), queue_len)
+        self.assertEqual(len(self.get_output_queue(path=path)), queue_len)
 
-    def assertMessageEqual(self, queue_pos, expected_msg, compare_raw=True):
+    def assertMessageEqual(self, queue_pos, expected_msg, compare_raw=True, path="_default"):
         """
         Asserts that the given expected_message is
         contained in the generated event with
         given queue position.
         """
-        event = self.get_output_queue()[queue_pos]
+        event = self.get_output_queue(path=path)[queue_pos]
         self.assertIsInstance(event, str)
 
         event_dict = json.loads(event)

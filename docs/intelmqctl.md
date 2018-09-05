@@ -3,20 +3,20 @@
   * [Introduction](#introduction)
   * [Output type](#output-type)
   * [Manage individual bots](#manage-individual-bots)
-   * [start](#start)
-   * [stop](#stop)
-   * [status](#status)
-   * [restart](#restart)
-   * [reload](#reload)
-   * [run](#run)
-   * [disable](#disable)
-   * [enable](#enable)
+    * [start](#start)
+    * [stop](#stop)
+    * [status](#status)
+    * [restart](#restart)
+    * [reload](#reload)
+    * [run](#run)
+    * [disable](#disable)
+    * [enable](#enable)
   * [Manage the botnet](#manage-the-botnet)
-   * [start](#start-1)
-   * [stop](#stop-1)
-   * [status](#status-1)
-   * [restart](#restart-1)
-   * [reload](#reload-1)
+    * [start](#start-1)
+    * [stop](#stop-1)
+    * [status](#status-1)
+    * [restart](#restart-1)
+    * [reload](#reload-1)
   * [List bots](#list-bots)
   * [List queues](#list-queues)
   * [Log](#log)
@@ -209,8 +209,8 @@ file-output: Waiting for incoming message.
 file-output: Received message {'raw': '1234'}.
 ```
 
-If run with **--dryrun|-d** flag, the message gets never really popped out from the source or internal pipeline, nor send to the output pipeline.
-Plus, you receive a note about the exact moment the message would get sent, or acknowledged.
+If run with **--dryrun|-d** flag, the message gets never really popped out from the source or internal pipeline, nor sent to the output pipeline.
+Plus, you receive a note about the exact moment the message would get sent, or acknowledged. If the message would be sent to a non-default path, the name of this path is printed on the console.
 
 ```bash
 > intelmqctl run file-output process -d
@@ -226,6 +226,9 @@ You may trick the bot to process a JSON instead of the Message in its pipeline w
 file-output:  * Message from cli will be used when processing.
 ...
 ```
+
+If you wish to display the processed message as well, you the **--show-sent|-s** flag. Then, if sent through (either with `--dryrun` or without), the message gets displayed as well.
+
 
 ### disable
 

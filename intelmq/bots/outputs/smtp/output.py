@@ -3,7 +3,6 @@ import csv
 import io
 import smtplib
 import ssl
-import sys
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
@@ -45,7 +44,7 @@ class SMTPOutputBot(Bot):
         with self.smtp_class(self.parameters.smtp_host, self.parameters.smtp_port,
                              **kwargs) as smtp:
             if self.starttls:
-                if self.parameters.http_verify_cert:
+                if self.http_verify_cert:
                     smtp.starttls(context=ssl.create_default_context())
                 else:
                     smtp.starttls()

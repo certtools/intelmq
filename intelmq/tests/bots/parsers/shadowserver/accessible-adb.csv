@@ -1,0 +1,3 @@
+"timestamp","ip","protocol","port","hostname","tag","asn","geo","region","city","naics","sic","name","model","device","features"
+"2018-07-26 02:07:16","36.239.124.210","tcp",5555,"36-239-124-210.dynamic-ip.hinet.net","adb",3462,"TW","TAOYUAN COUNTY","TAOYUAN CITY",518210,737415,"hlteuc","SAMSUNG-SM-N900A","hlteatt",
+"2018-07-26 02:07:16","36.236.108.107","tcp",5555,"36-236-108-107.dynamic-ip.hinet.net","adb",3462,"TW","TAIPEI CITY","TAIPEI",518210,737415,"marlin","Pixel XL","marlin","cmd,shell_v2"

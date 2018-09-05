@@ -37,6 +37,10 @@ EMPTY_REPLACED = {"__type": "Event",
                   "source.ip": "127.0.0.1",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   }
+DB_404_AS = {"__type": "Event",
+             "source.asn": 7713,
+             "time.observation": "2015-01-01T00:00:00+00:00",
+             }
 
 
 @test.skip_internet()
@@ -50,22 +54,27 @@ class TestRIPENCCExpertBot(test.BotTestCase, unittest.TestCase):
         cls.bot_reference = RIPENCCExpertBot
         cls.sysconfig = {'query_ripe_db_asn': True,
                          'query_ripe_db_ip': True,
-                         'query_ripe_stat': True,
+                         'query_ripe_stat_ip': False,
+                         'query_ripe_stat_asn': False,
+                         'redis_cache_db': 4,
                          }
+        cls.use_cache = True
 
-    def test_ipv4_lookup(self):
+    def test_db_ipv4_lookup(self):
         self.input_message = EXAMPLE_INPUT
         self.allowed_warning_count = 1
         self.run_bot()
-        self.assertLogMatches(pattern="^The parameter 'query_ripe_stat' is deprecated and will be r",
-                              levelname="WARNING")
         self.assertMessageEqual(0, EXAMPLE_OUTPUT)
+        self.assertEqual(self.cache.get('dbasn:35492'), b'["abuse@funkfeuer.at"]')
+        self.assertEqual(self.cache.get('dbip:93.184.216.34'), b'["abuse@verizondigitalmedia.com"]')
+        self.assertEqual(self.cache.get('dbip:193.238.157.5'), b'["abuse@funkfeuer.at"]')
 
-    def test_ipv6_lookup(self):
+    def test_db_ipv6_lookup(self):
         self.input_message = EXAMPLE_INPUT6
         self.allowed_warning_count = 1
         self.run_bot()
         self.assertMessageEqual(0, EXAMPLE_OUTPUT6)
+        self.assertEqual(self.cache.get('dbip:2001:62a:4:100:80::8'), b'["security.zid@univie.ac.at"]')
 
     def test_empty_lookup(self):
         """ No email is returned, event should be untouched. """
@@ -86,24 +95,26 @@ class TestRIPENCCExpertBot(test.BotTestCase, unittest.TestCase):
         self.allowed_error_count = 1
         self.prepare_bot()
         old = self.bot.URL_STAT
-        self.bot.URL_STAT = 'https://example.com/index.html?{}'
+        self.bot.URL_STAT = 'http://localhost/{}'
         self.run_bot(prepare=False)
-        # internal json in < and >= 3.5, 3.3 and simplejson
+        # internal json in < and >= 3.5 and simplejson
         self.assertLogMatches(pattern='.*(JSONDecodeError|ValueError|Expecting value|No JSON object could be decoded).*',
                               levelname='ERROR')
 
         self.bot.URL_STAT = 'http://localhost/{}'
         self.run_bot(prepare=False)
         self.bot.URL_STAT = old
-        self.assertLogMatches(pattern='HTTP status code was 404',
+        self.assertLogMatches(pattern='.*HTTP status code was 404.*',
                               levelname='ERROR')
+        self.cache.flushdb()  # collides with test_replace
 
     @test.skip_local_web()
     def test_ripe_db_as_errors(self):
         """ Test RIPE DB AS for errors. """
         self.sysconfig = {'query_ripe_db_asn': True,
                           'query_ripe_db_ip': False,
-                          'query_ripe_stat': False,
+                          'query_ripe_stat_ip': False,
+                          'query_ripe_stat_asn': False,
                           }
         self.input_message = EXAMPLE_INPUT
         self.allowed_error_count = 1
@@ -113,7 +124,7 @@ class TestRIPENCCExpertBot(test.BotTestCase, unittest.TestCase):
         self.bot.URL_DB_AS = 'http://localhost/{}'
         self.run_bot(prepare=False)
         self.bot.URL_DB_AS = old
-        self.assertLogMatches(pattern='HTTP status code was 404',
+        self.assertLogMatches(pattern='.*HTTP status code was 404.*',
                               levelname='ERROR')
 
     @test.skip_local_web()
@@ -121,7 +132,8 @@ class TestRIPENCCExpertBot(test.BotTestCase, unittest.TestCase):
         """ Test RIPE DB IP for errors. """
         self.sysconfig = {'query_ripe_db_asn': False,
                           'query_ripe_db_ip': True,
-                          'query_ripe_stat': False,
+                          'query_ripe_stat_ip': False,
+                          'query_ripe_stat_asn': False,
                           }
         self.input_message = EXAMPLE_INPUT
         self.allowed_error_count = 1
@@ -131,14 +143,32 @@ class TestRIPENCCExpertBot(test.BotTestCase, unittest.TestCase):
         self.bot.URL_DB_IP = 'http://localhost/{}'
         self.run_bot(prepare=False)
         self.bot.URL_DB_IP = old
-        self.assertLogMatches(pattern='HTTP status code was 404',
+        self.assertLogMatches(pattern='.*HTTP status code was 404.*',
                               levelname='ERROR')
 
     def test_replace(self):
-        self.sysconfig = {'mode': 'replace'}
+        self.sysconfig = {'mode': 'replace',
+                          'query_ripe_db_asn': False,
+                          'query_ripe_db_ip': False,
+                          'query_ripe_stat_ip': True,
+                          'query_ripe_stat_asn': False,
+                          }
         self.input_message = EMPTY_INPUT
         self.run_bot()
         self.assertMessageEqual(0, EMPTY_REPLACED)
+        self.assertEqual(self.cache.get('stat:127.0.0.1'), b'__no_contact')
+        self.cache.flushdb()  # collides with test_ripe_stat_errors
+
+    def test_ripe_db_as_404(self):
+        """ Server returns a 404 which should not be raised. """
+        self.sysconfig = {'query_ripe_db_asn': True,
+                          'query_ripe_db_ip': False,
+                          'query_ripe_stat_ip': False,
+                          'query_ripe_stat_asn': False,
+                          }
+        self.input_message = DB_404_AS
+        self.run_bot()
+        self.assertMessageEqual(0, DB_404_AS)
 
 
 if __name__ == '__main__':  # pragma: no cover

@@ -5,11 +5,17 @@ Tests if configuration in /etc is valid
 import collections
 import importlib
 import json
+import os
+import pkgutil
+import pprint
 import re
 import unittest
 
+import cerberus
 import pkg_resources
+import yaml
 
+import intelmq.bots
 import intelmq.lib.harmonization as harmonization
 
 
@@ -102,6 +108,56 @@ class TestConf(unittest.TestCase):
                 for field in ['description', 'module', 'parameters']:
                     self.assertIn(field, bot_config)
                 importlib.import_module(bot_config['module'])
+
+    def test_modules_in_bots(self):
+        """ Test if all bot modules are mentioned BOTS file. """
+        with open(pkg_resources.resource_filename('intelmq',
+                                                  'bots/BOTS')) as fhandle:
+            fcontent = fhandle.read()
+
+        interpreted = json.loads(fcontent,
+                                 object_pairs_hook=collections.OrderedDict)
+        modules = set(['intelmq.bots.collectors.n6.collector_stomp'])
+
+        for groupname, group in interpreted.items():
+            for bot_name, bot_config in group.items():
+                modules.add(bot_config['module'])
+
+        for _, groupname, _ in pkgutil.iter_modules(path=intelmq.bots.__path__):
+            group = importlib.import_module('intelmq.bots.%s' % groupname)
+            for _, providername, _ in pkgutil.iter_modules(path=group.__path__):
+                provider = importlib.import_module('intelmq.bots.%s.%s' % (groupname, providername))
+                for _, botname, _ in pkgutil.iter_modules(path=provider.__path__):
+                    classname = 'intelmq.bots.%s.%s.%s' % (groupname, providername, botname)
+                    self.assertFalse(classname not in modules and '_' in botname,
+                                    msg="Bot %r not found in BOTS file." % classname)
+
+
+class CerberusTests(unittest.TestCase):
+    def test_bots(self):
+        with open(os.path.join(os.path.dirname(__file__), 'assets/bots.schema.json')) as handle:
+            schema = json.load(handle)
+        with open(pkg_resources.resource_filename('intelmq',
+                                                  'bots/BOTS')) as handle:
+            bots = json.load(handle)
+
+        v = cerberus.Validator(schema)
+
+        self.assertTrue(v.validate(bots),
+                        msg='Invalid BOTS file:\n%s' % pprint.pformat(v.errors))
+
+    def test_feeds(self):
+        with open(os.path.join(os.path.dirname(__file__), 'assets/feeds.schema.json')) as handle:
+            schema = json.load(handle)
+        with open(pkg_resources.resource_filename('intelmq',
+                                                  'etc/feeds.yaml')) as handle:
+            feeds = yaml.load(handle)
+
+        v = cerberus.Validator(schema)
+
+        self.assertTrue(v.validate(feeds),
+                        msg='Invalid feeds.yaml file:\n%s' % pprint.pformat(v.errors))
+
 
 
 if __name__ == '__main__':  # pragma: no cover

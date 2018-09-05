@@ -3,6 +3,205 @@ NEWS
 
 See the changelog for a full list of changes.
 
+1.1.0 Feature release (2018-09-05)
+----------------------------------
+### Requirements
+- Python 3.4 or newer is required.
+
+### Tools
+- `intelmqctl start` prints bot's error messages in stderr if it failed to start.
+- `intelmqctl check` checks if all keys in the packaged defaults.conf are present in the current configuration.
+
+### Contrib / Modify Expert
+The malware name rules of the modify expert have been migrated to the [Malware Name Mapping repository](https://github.com/certtools/malware_name_mapping).
+See `contrib/malware_name_mapping/` for download and conversion scripts as well as documentation.
+
+### Shadowserver Parser
+The classification type for malware has been changed from "botnet drone" to the more generic "infected system".
+The classification identifiers have been harmonized too:
+
+| old identifier | new identifier |
+|-|-|
+| openmdns | open-mdns |
+| openchargen | open-chargen |
+| opentftp | open-tftp |
+| openredis | open-redis |
+| openportmapper | open-portmapper |
+| openipmi | open-ipmi |
+| openqotd | open-qotd |
+| openssdp | open-ssdp |
+| opensnmp | open-snmp |
+| openmssql | open-mssql |
+| openmongodb | open-mongodb |
+| opennetbios | open-netbios-nameservice |
+| openelasticsearch | open-elasticsearch |
+| opendns | dns-open-resolver |
+| openntp | ntp-monitor |
+| SSL-FREAK | ssl-freak |
+| SSL-Poodle | ssl-poodle |
+| openmemcached | open-memcached |
+| openxdmcp | open-xdmcp |
+| opennatpmp | open-natpmp |
+| opennetis | open-netis |
+| openntpversion | ntp-version |
+| sandboxurl | sandbox-url |
+| spamurl | spam-url |
+| openike | open-ike |
+| openrdp | open-rdp |
+| opensmb | open-smb |
+| openldap | open-ldap |
+| blacklisted | blacklisted-ip |
+| opentelnet | open-telnet |
+| opencwmp | open-cwmp |
+| accessiblevnc | open-vnc |
+
+In the section Postgres databases you can find SQL statements for these changes.
+
+Some feed names have changed, see the comment below in the section Configuration.
+
+### Harmonization
+You may want to update your harmonization configuration
+- Newly added fields:
+  - `destination.urlpath` and `source.urlpath`.
+  - `destination.domain_suffix` and `source.domain_suffix`.
+  - `tlp` with a new type TLP.
+- Changed fields:
+  - ASN fields now have a new type `ASN`.
+- Classification:
+  - New value for `classification.type`: `vulnerable client` with taxonomy `vulnerable`.
+  - New value for `classification.type`: `infected system` with taxonomy `malicious code` as replacement for `botnet drone`.
+- Renamed `JSON` to `JSONDict` and added a new type `JSON`. `JSONDict` saves data internally as JSON, but acts like a dictionary. `JSON` accepts any valid JSON.
+
+Some bots depend on the three new harmonization fields.
+
+### Configuration
+A new harmonization type `JSONDict` has been added specifically for the `extra` field. It is highly recommended to change the type of this field. The change is backwards compatibile and the change is not yet necessary, IntelMQ 1.x.x works with the old configuration too.
+
+The feed names in the shadowserver parser have been adapted to the current subjects. Old subjects will still work in IntelMQ 1.x.x. Change your configuration accordingly:
+* `Botnet-Drone-Hadoop` to `Drone`
+* `DNS-open-resolvers` to `DNS-Open-Resolvers`
+* `Open-NetBIOS` to `Open-NetBIOS-Nameservice`
+* `Ssl-Freak-Scan` to `SSL-FREAK-Vulnerable-Servers`
+* `Ssl-Scan` to `SSL-POODLE-Vulnerable-Servers`
+
+The Maxmind GeoIP expert did previously always overwrite existing data. A new parameter `overwrite` has been added,
+which is by default set to `false` to be consistent with other bots.
+
+The bot `bots.collectors.n6.collector_stomp` has been renamed to the new module `bots.collectors.stomp.collector`. Adapt your `runtime.conf` accordingly.
+
+The parameter `feed` for collectors has been renamed to `name`, as it results in `feed.name`. Backwards compatibility is ensured until 2.0.
+
+### Postgres databases
+The following statements optionally update existing data.
+Please check if you did use these feed names and eventually adapt them for your setup!
+```SQL
+ALTER TABLE events
+   ADD COLUMN "destination.urlpath" text,
+   ADD COLUMN "source.urlpath" text;
+ALTER TABLE events
+   ADD COLUMN "destination.domain_suffix" text,
+   ADD COLUMN "source.domain_suffix" text;
+ALTER TABLE events
+   ADD COLUMN "tlp" text;
+UPDATE events
+   SET "classification.type" = 'infected system'
+   WHERE "classification.type" = 'botnet drone';
+UPDATE events
+   SET "classification.identifier" = 'open-mdns'
+   WHERE "classification.identifier" = 'openmdns' AND "feed.name" = 'Open-mDNS';
+UPDATE events
+   SET "classification.identifier" = 'open-chargen'
+   WHERE "classification.identifier" = 'openchargen' AND "feed.name" = 'Open-Chargen';
+UPDATE events
+   SET "classification.identifier" = 'open-tftp'
+   WHERE "classification.identifier" = 'opentftp' AND "feed.name" = 'Open-TFTP';
+UPDATE events
+   SET "classification.identifier" = 'open-redis'
+   WHERE "classification.identifier" = 'openredis' AND "feed.name" = 'Open-Redis';
+UPDATE events
+   SET "classification.identifier" = 'open-portmapper',
+       "protocol.application" = 'portmap'
+   WHERE "classification.identifier" = 'openportmapper' AND "feed.name" = 'Open-Portmapper' AND "protocol.application" = 'portmapper';
+UPDATE events
+   SET "classification.identifier" = 'open-ipmi'
+   WHERE "classification.identifier" = 'openipmi' AND "feed.name" = 'Open-IPMI';
+UPDATE events
+   SET "classification.identifier" = 'open-qotd'
+   WHERE "classification.identifier" = 'openqotd' AND "feed.name" = 'Open-QOTD';
+UPDATE events
+   SET "classification.identifier" = 'open-snmp'
+   WHERE "classification.identifier" = 'opensnmp' AND "feed.name" = 'Open-SNMP';
+UPDATE events
+   SET "classification.identifier" = 'open-mssql'
+   WHERE "classification.identifier" = 'openmssql' AND "feed.name" = 'Open-MSSQL';
+UPDATE events
+   SET "classification.identifier" = 'open-mongodb'
+   WHERE "classification.identifier" = 'openmongodb' AND "feed.name" = 'Open-MongoDB';
+UPDATE events
+   SET "classification.identifier" = 'open-netbios-nameservice', "feed.name" = 'Open-NetBIOS-Nameservice'
+   WHERE "classification.identifier" = 'opennetbios' AND "feed.name" = 'Open-NetBIOS';
+UPDATE events
+   SET "classification.identifier" = 'open-elasticsearch'
+   WHERE "classification.identifier" = 'openelasticsearch' AND "feed.name" = 'Open-Elasticsearch';
+UPDATE events
+   SET "classification.identifier" = 'dns-open-resolver', "feed.name" = 'DNS-Open-Resolvers'
+   WHERE "classification.identifier" = 'opendns' AND "feed.name" = 'DNS-open-resolvers';
+UPDATE events
+   SET "classification.identifier" = 'ntp-monitor'
+   WHERE "classification.identifier" = 'openntp' AND "feed.name" = 'NTP-Monitor';
+UPDATE events
+   SET "classification.identifier" = 'ssl-poodle', "feed.name" = 'SSL-POODLE-Vulnerable-Servers'
+   WHERE "classification.identifier" = 'SSL-Poodle' AND "feed.name" = 'Ssl-Scan';
+UPDATE events
+   SET "classification.identifier" = 'ssl-freak', "feed.name" = 'SSL-FREAK-Vulnerable-Servers'
+   WHERE "classification.identifier" = 'SSL-FREAK' AND "feed.name" = 'Ssl-Freak-Scan';
+UPDATE events
+   SET "classification.identifier" = 'open-memcached'
+   WHERE "classification.identifier" = 'openmemcached' AND "feed.name" = 'Open-Memcached';
+UPDATE events
+   SET "classification.identifier" = 'open-xdmcp'
+   WHERE "classification.identifier" = 'openxdmcp' AND "feed.name" = 'Open-XDMCP';
+UPDATE events
+   SET "classification.identifier" = 'open-natpmp', "protocol.application" = 'natpmp'
+   WHERE "classification.identifier" = 'opennatpmp' AND "feed.name" = 'Open-NATPMP' AND "protocol.application" = 'nat-pmp';
+UPDATE events
+   SET "classification.identifier" = 'open-netis'
+   WHERE "classification.identifier" = 'opennetis' AND "feed.name" = 'Open-Netis';
+UPDATE events
+   SET "classification.identifier" = 'ntp-version'
+   WHERE "classification.identifier" = 'openntpversion' AND "feed.name" = 'NTP-Version';
+UPDATE events
+   SET "classification.identifier" = 'sandbox-url'
+   WHERE "classification.identifier" = 'sandboxurl' AND "feed.name" = 'Sandbox-URL';
+UPDATE events
+   SET "classification.identifier" = 'spam-url'
+   WHERE "classification.identifier" = 'spamurl' AND "feed.name" = 'Spam-URL';
+UPDATE events
+   SET "classification.identifier" = 'open-ike'
+   WHERE "classification.identifier" = 'openike' AND "feed.name" = 'Vulnerable-ISAKMP';
+UPDATE events
+   SET "classification.identifier" = 'open-rdp'
+   WHERE "classification.identifier" = 'openrdp' AND "feed.name" = 'Accessible-RDP';
+UPDATE events
+   SET "classification.identifier" = 'open-smb'
+   WHERE "classification.identifier" = 'opensmb' AND "feed.name" = 'Accessible-SMB';
+UPDATE events
+   SET "classification.identifier" = 'open-ldap'
+   WHERE "classification.identifier" = 'openldap' AND "feed.name" = 'Open-LDAP';
+UPDATE events
+   SET "classification.identifier" = 'blacklisted-ip'
+   WHERE "classification.identifier" = 'blacklisted' AND "feed.name" = 'Blacklisted-IP';
+UPDATE events
+   SET "classification.identifier" = 'open-telnet'
+   WHERE "classification.identifier" = 'opentelnet' AND "feed.name" = 'Accessible-Telnet';
+UPDATE events
+   SET "classification.identifier" = 'open-cwmp'
+   WHERE "classification.identifier" = 'opencwmp' AND "feed.name" = 'Accessbile-CWMP';
+UPDATE events
+   SET "classification.identifier" = 'open-vnc'
+   WHERE "classification.identifier" = 'accessiblevnc' AND "feed.name" = 'Accessible-VNC';
+```
+
 1.0.6 Bugfix release (2018-08-31)
 ---------------------------------
 
@@ -76,6 +275,7 @@ UPDATE events
 
 1.0.3 Bugfix release (2018-02-05)
 ---------------------------------
+
 ### Configuration
 - `bots.parsers.cleanmx` removed CSV format support and now only supports XML format. Therefore, CleanMX collectors must define the `http_url` parameter with the feed url which points to XML format. See Feeds.md file on documentation section to get the correct URLs. Also, downloading the data from CleanMX feed can take a while, therefore, CleanMX collectors must overwrite the `http_timeout_sec` parameter with the value `120`.
 - The classification mappings for the n6 parser have been corrected:
