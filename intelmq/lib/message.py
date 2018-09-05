@@ -144,6 +144,12 @@ class Message(dict):
                 else:
                     raise
 
+    def get(self, key, default=None):
+        try:
+            return self[key]
+        except KeyError:
+            return default
+
     def is_valid(self, key: str, value: str, sanitize: bool = True) -> bool:
         """
         Checks if a value is valid for the key (after sanitation).
@@ -482,6 +488,11 @@ class Message(dict):
         """
         self._default_value_set = True
         self.default_value = value
+
+    def __contains__(self, item) -> bool:
+        if item == 'extra':
+            return 'extra' in self.to_dict(hierarchical=True)
+        return super(Message, self).__contains__(item)
 
 
 class Event(Message):

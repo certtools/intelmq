@@ -10,11 +10,11 @@ import signal
 import subprocess
 import sys
 import time
+from collections import OrderedDict
 
 import pkg_resources
 import psutil
 
-from collections import OrderedDict
 from intelmq import (DEFAULTS_CONF_FILE, PIPELINE_CONF_FILE, RUNTIME_CONF_FILE,
                      VAR_RUN_PATH, BOTS_FILE, HARMONIZATION_CONF_FILE)
 from intelmq.lib import utils
@@ -34,22 +34,23 @@ STATUSES = {
 }
 
 MESSAGES = {
-    'disabled': '%s is disabled.',
+    'disabled': 'Bot %s is disabled.',
     'starting': 'Starting %s...',
-    'running': '%s is running.',
-    'stopped': '%s is stopped.',
-    'stopping': 'Stopping %s...',
-    'reloading': 'Reloading %s ...',
-    'reloaded': '%s is reloaded.',
+    'running': 'Bot %s is running.',
+    'stopped': 'Bot %s is stopped.',
+    'stopping': 'Stopping bot %s...',
+    'reloading': 'Reloading bot %s ...',
+    'reloaded': 'Bot %s is reloaded.',
 }
 
 ERROR_MESSAGES = {
-    'starting': '%s failed to START.',
-    'running': '%s is still running.',
-    'stopped': '%s was NOT RUNNING.',
-    'stopping': '%s failed to STOP.',
-    'not found': '%s failed to START because the file cannot be found.',
-    'access denied': '%s failed to %s because of missing permissions.',
+    'starting': 'Bot %s failed to START.',
+    'running': 'Bot %s is still running.',
+    'stopped': 'Bot %s was NOT RUNNING.',
+    'stopping': 'Bot %s failed to STOP.',
+    'not found': 'Bot %s failed to START because the file cannot be found.',
+    'access denied': 'Bot %s failed to %s because of missing permissions.',
+    'unknown': 'Status of Bot %s is unknown. Check above error messages.',
 }
 
 LOG_LEVEL = OrderedDict([
@@ -132,15 +133,19 @@ class IntelMQProcessManager:
                 show_sent=None, loglevel=None):
         pid = self.__check_pid(bot_id)
         module = self.__runtime_configuration[bot_id]['module']
-        if pid and self.__status_process(pid, module):
+        status = self.__status_process(pid, module) if pid else False
+        if pid and status is True:
             self.logger.warning("Main instance of the bot is running in the background and will be stopped; "
                                 "when finished, we try to relaunch it again. "
                                 "You may want to launch: 'intelmqctl stop {}' to prevent this message."
                                 .format(bot_id))
             paused = True
             self.bot_stop(bot_id)
-        else:
+        elif status is False:
             paused = False
+        else:
+            self.logger.error(status)
+            return 1
 
         log_bot_message('starting', bot_id)
         filename = self.PIDFILE.format(bot_id)
@@ -168,11 +173,16 @@ class IntelMQProcessManager:
         pid = self.__check_pid(bot_id)
         module = self.__runtime_configuration[bot_id]['module']
         if pid:
-            if self.__status_process(pid, module):
+            status = self.__status_process(pid, module)
+            if status is True:
                 log_bot_message('running', bot_id)
                 return 'running'
-            else:
+            elif status is False:
                 self.__remove_pidfile(bot_id)
+            else:
+                self.logger.error(status)
+                return 1
+
         log_bot_message('starting', bot_id)
         module = self.__runtime_configuration[bot_id]['module']
         cmdargs = [module, bot_id]
@@ -200,10 +210,14 @@ class IntelMQProcessManager:
             else:
                 log_bot_message('disabled', bot_id)
                 return 'disabled'
-        if not self.__status_process(pid, module):
+        status = self.__status_process(pid, module)
+        if status is False:
             self.__remove_pidfile(bot_id)
             log_bot_error('stopped', bot_id)
             return 'stopped'
+        elif status is not True:
+            log_bot_error('unknown', bot_id)
+            return 'unknown'
         log_bot_message('stopping', bot_id)
         proc = psutil.Process(int(pid))
         try:
@@ -214,9 +228,14 @@ class IntelMQProcessManager:
         else:
             if getstatus:
                 time.sleep(0.5)
-                if self.__status_process(pid, module):
+                status = self.__status_process(pid, module)
+                if status is True:
                     log_bot_error('running', bot_id)
                     return 'running'
+                elif status is not False:
+                    self.logger.error(status)
+                    log_bot_error('unknown', bot_id)
+                    return 'unknown'
                 try:
                     self.__remove_pidfile(bot_id)
                 except FileNotFoundError:  # Bot was running interactively and file has been removed already
@@ -234,10 +253,15 @@ class IntelMQProcessManager:
             else:
                 log_bot_message('disabled', bot_id)
                 return 'disabled'
-        if not self.__status_process(pid, module):
+        status = self.__status_process(pid, module)
+        if status is False:
             self.__remove_pidfile(bot_id)
             log_bot_error('stopped', bot_id)
             return 'stopped'
+        elif status is not True:
+            self.logger.error(status)
+            log_bot_error('unknown', bot_id)
+            return 'unknown'
         log_bot_message('reloading', bot_id)
         proc = psutil.Process(int(pid))
         try:
@@ -248,11 +272,17 @@ class IntelMQProcessManager:
         else:
             if getstatus:
                 time.sleep(0.5)
-                if self.__status_process(pid, module):
+                status = self.__status_process(pid, module)
+                if status is True:
                     log_bot_message('running', bot_id)
                     return 'running'
-                log_bot_error('stopped', bot_id)
-                return 'stopped'
+                elif status is False:
+                    log_bot_error('stopped', bot_id)
+                    return 'stopped'
+                else:
+                    self.logger.error(status)
+                    log_bot_error('unknown', bot_id)
+                    return 'unknown'
 
     def bot_status(self, bot_id, *, proc=None):
         if proc:
@@ -262,9 +292,14 @@ class IntelMQProcessManager:
         else:
             pid = self.__check_pid(bot_id)
             module = self.__runtime_configuration[bot_id]['module']
-            if pid and self.__status_process(pid, module):
+            status = self.__status_process(pid, module) if pid else False
+            if pid and status is True:
                 log_bot_message('running', bot_id)
                 return 'running'
+            elif status is not False:
+                self.logger.error(status)
+                log_bot_error('unknown', bot_id)
+                return 'unknown'
 
         if self.controller._is_enabled(bot_id):
             if not proc and pid:
@@ -296,6 +331,9 @@ class IntelMQProcessManager:
         os.remove(filename)
 
     def __status_process(self, pid, module):
+        which = shutil.which(module)
+        if not which:
+            return 'Could not get path to the excutable (%r). Check your PATH variable (%r).' % (module, os.environ.get('PATH'))
         try:
             proc = psutil.Process(int(pid))
             if len(proc.cmdline()) > 1 and proc.cmdline()[1] == shutil.which(module):
@@ -303,8 +341,7 @@ class IntelMQProcessManager:
         except psutil.NoSuchProcess:
             return False
         except psutil.AccessDenied:
-            self.logger.error('Could not get status of process: Access denied.')
-            return False
+            return 'Could not get status of process: Access denied.'
         except:
             raise
 
@@ -800,6 +837,12 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                    for bot_id in sorted(self.runtime_configuration.keys())]
 
     def get_queues(self):
+        """
+        :return: 4-tuple of source, destination, internal queues, and all queues combined.
+        The returned values are only queue names, not their paths. I.E. if there is a bot with
+        destination queues = {"_default": "one", "other": ["two", "three"]}, only set of {"one", "two", "three"} gets returned.
+        (Note that the "_default" path has single string and the "other" path has a list that gets flattened.)
+        """
         source_queues = set()
         destination_queues = set()
         internal_queues = set()
@@ -809,7 +852,8 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 source_queues.add(value['source-queue'])
                 internal_queues.add(value['source-queue'] + '-internal')
             if 'destination-queues' in value:
-                destination_queues.update(value['destination-queues'])
+                # flattens ["one", "two"] → {"one", "two"}, {"_default": "one", "other": ["two", "three"]} → {"one", "two", "three"}
+                destination_queues.update(utils.flatten_queues(value['destination-queues']))
 
         all_queues = source_queues.union(destination_queues).union(internal_queues)
 
@@ -835,9 +879,8 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
 
             if 'destination-queues' in info:
                 return_dict[bot_id]['destination_queues'] = []
-                for dest_queue in info['destination-queues']:
-                    return_dict[bot_id]['destination_queues'].append(
-                        (dest_queue, counters[dest_queue]))
+                for dest_queue in utils.flatten_queues(info['destination-queues']):
+                    return_dict[bot_id]['destination_queues'].append((dest_queue, counters[dest_queue]))
 
         return 0, return_dict
 
@@ -1032,12 +1075,14 @@ Outputs are additionally logged to /opt/intelmq/var/log/intelmqctl'''
                 if ('group' in bot_config and
                         bot_config['group'] in ['Collector', 'Parser', 'Expert']):
                     if ('destination-queues' not in files[PIPELINE_CONF_FILE][bot_id] or
-                            (not isinstance(files[PIPELINE_CONF_FILE][bot_id]['destination-queues'], list) or
-                             len(files[PIPELINE_CONF_FILE][bot_id]['destination-queues']) < 1)):
+                            (isinstance(files[PIPELINE_CONF_FILE][bot_id]['destination-queues'], list) and
+                             len(files[PIPELINE_CONF_FILE][bot_id]['destination-queues']) < 1) or
+                            (isinstance(files[PIPELINE_CONF_FILE][bot_id]['destination-queues'], dict) and
+                             '_default' not in files[PIPELINE_CONF_FILE][bot_id]['destination-queues'])):
                         if RETURN_TYPE == 'json':
-                            output.append(['error', 'Misconfiguration: No destination queues for %r.' % bot_id])
+                            output.append(['error', 'Misconfiguration: No (default) destination queue for %r.' % bot_id])
                         else:
-                            self.logger.error('Misconfiguration: No destination queues for %r.', bot_id)
+                            self.logger.error('Misconfiguration: No (default) destination queue for %r.', bot_id)
                         retval = 1
                     else:
                         all_queues = all_queues.union(files[PIPELINE_CONF_FILE][bot_id]['destination-queues'])

@@ -23,7 +23,7 @@ import zipfile
 import requests
 
 from intelmq.lib.bot import CollectorBot
-from intelmq.lib.utils import extract_tar
+from intelmq.lib.utils import unzip
 
 
 class Time(object):
@@ -76,7 +76,7 @@ class HTTPCollectorBot(CollectorBot):
         except zipfile.BadZipfile:
             raw_reports.append(resp.text)
         else:
-            self.logger.info('Extracting files from zip:'
+            self.logger.info('Extracting files:'
                              "'%s'.", "', '".join(zfp.namelist()))
             for filename in zfp.namelist():
                 raw_reports.append(zfp.read(filename))
@@ -84,11 +84,11 @@ class HTTPCollectorBot(CollectorBot):
         if self.extract_files is not None:
             if isinstance(self.extract_files, str):
                 self.extract_files = self.extract_files.split(",")
-                self.logger.info('Extracting files from tar.gz:'
+                self.logger.info('Extracting files from archive:'
                                  "'%s'.", "', '".join(self.extract_files()))
             else:
-                self.logger.info('Extracting all files from tar.gz.')
-            raw_reports = [file for file in extract_tar(resp.content, self.extract_files)]
+                self.logger.info('Extracting all files from archive.')
+            raw_reports = [file for file in unzip(resp.content, self.extract_files)]
 
         for raw_report in raw_reports:
             report = self.new_report()

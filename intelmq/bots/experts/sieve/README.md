@@ -127,12 +127,16 @@ Example:
 
     ```remove extra.comments```
 
- * `keep` marks the event to be forwarded to the next bot in the pipeline
- (same as the default behaviour), but in addition the sieve file processing is
- interrupted upon reaching this action.
- It can have an optional parameter that specifies the path to appropriate named queue.
+ * `keep` sends the message to the next bot in the pipeline
+ (same as the default behaviour), and stops sieve file processing.
 
-   ```keep``` or  ```keep 'named-queue'```
+   ```keep```
+
+ * `path` sets the path (named queue) the message should be sent to (implicitly
+   or with the command `keep`. The named queue needs to configured in the
+   pipeline, see the User Guide for more information.
+
+   ```path 'named-queue```
 
  * `drop` marks the event to be dropped. The event will not be forwarded to the
  next bot in the pipeline. The sieve file processing is interrupted upon

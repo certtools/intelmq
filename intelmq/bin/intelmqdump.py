@@ -14,6 +14,7 @@ import sys
 import traceback
 
 from termstyle import bold, green, inverted, red
+from collections import OrderedDict
 
 import intelmq.bin.intelmqctl as intelmqctl
 import intelmq.lib.exceptions as exceptions
@@ -222,9 +223,11 @@ def main():
             if not (answer and isinstance(answer, list) and answer[0] in ['s', 'r']):
                 with open(fname, 'rt') as handle:
                     content = json.load(handle)
+                content = OrderedDict(sorted(content.items(), key=lambda t: t[0]))  # sort by key here, #1280
                 meta = load_meta(content)
+
                 available_opts = [item[0] for item in ACTIONS.values()]
-                for count, line in enumerate(sorted(meta, key=lambda x: x[0])):
+                for count, line in enumerate(meta):
                     print('{:3}: {} {}'.format(count, *line))
 
         # Determine bot status

@@ -186,6 +186,7 @@ Note that `destination-queues` contains one of the following values:
 ```
 In that case, bot will be able to send the message to one of defined paths. The path `"_default"` is used if none is not specified.
 In case of errors during processing, and the optional path `"_on_error"` is specified, the message will be sent to the pipelines given given as on-error.
+Other destination queues can be explicitly addressed by the bots, e.g. bots with filtering capabilities.
 
 **Example:**
 ```

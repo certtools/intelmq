@@ -29,6 +29,49 @@ See the changelog for a full list of changes.
 The malware name rules of the modify expert have been migrated to the [Malware Name Mapping repository](https://github.com/certtools/malware_name_mapping).
 See `contrib/malware_name_mapping/` for download and conversion scripts as well as documentation.
 
+### Shadowserver Parser
+The classification type for malware has been changed from "botnet drone" to the more generic "infected system".
+The classification identifiers have been harmonized too:
+
+| old identifier | new identifier |
+|-|-|
+| openmdns | open-mdns |
+| openchargen | open-chargen |
+| opentftp | open-tftp |
+| openredis | open-redis |
+| openportmapper | open-portmapper |
+| openipmi | open-ipmi |
+| openqotd | open-qotd |
+| openssdp | open-ssdp |
+| opensnmp | open-snmp |
+| openmssql | open-mssql |
+| openmongodb | open-mongodb |
+| opennetbios | open-netbios-nameservice |
+| openelasticsearch | open-elasticsearch |
+| opendns | dns-open-resolver |
+| openntp | ntp-monitor |
+| SSL-FREAK | ssl-freak |
+| SSL-Poodle | ssl-poodle |
+| openmemcached | open-memcached |
+| openxdmcp | open-xdmcp |
+| opennatpmp | open-natpmp |
+| opennetis | open-netis |
+| openntpversion | ntp-version |
+| sandboxurl | sandbox-url |
+| spamurl | spam-url |
+| openike | open-ike |
+| openrdp | open-rdp |
+| opensmb | open-smb |
+| openldap | open-ldap |
+| blacklisted | blacklisted-ip |
+| opentelnet | open-telnet |
+| opencwmp | open-cwmp |
+| accessiblevnc | open-vnc |
+
+In the section Postgres databases you can find SQL statements for these changes.
+
+Some feed names have changed, see the comment below in the section Configuration.
+
 ### Harmonization
 You may want to update your harmonization configuration
 - Newly added fields:
@@ -39,12 +82,15 @@ You may want to update your harmonization configuration
   - ASN fields now have a new type `ASN`.
 - Classification:
   - New value for `classification.type`: `vulnerable client` with taxonomy `vulnerable`.
-  - New value for `classification.type`: `infected system` with taxonomy `malicious code`.
+  - New value for `classification.type`: `infected system` with taxonomy `malicious code` as replacement for `botnet drone`.
 - Renamed `JSON` to `JSONDict` and added a new type `JSON`. `JSONDict` saves data internally as JSON, but acts like a dictionary. `JSON` accepts any valid JSON.
 
+Some bots depend on the three new harmonization fields.
+
 ### Configuration
-A new harmonization type `JSONDict` has been added specifically for the `extra` field. It is highly recommended to change the type of this field.
-The feed names in the shadowserver parser have been adapted to the current subjects. Change your configuration accordingly:
+A new harmonization type `JSONDict` has been added specifically for the `extra` field. It is highly recommended to change the type of this field. The change is backwards compatibile and the change is not yet necessary, IntelMQ 1.x.x works with the old configuration too.
+
+The feed names in the shadowserver parser have been adapted to the current subjects. Old subjects will still work in IntelMQ 1.x.x. Change your configuration accordingly:
 * `Botnet-Drone-Hadoop` to `Drone`
 * `DNS-open-resolvers` to `DNS-Open-Resolvers`
 * `Open-NetBIOS` to `Open-NetBIOS-Nameservice`
@@ -71,6 +117,9 @@ ALTER TABLE events
 ALTER TABLE events
    ADD COLUMN "tlp" text;
 UPDATE events
+   SET "classification.type" = 'infected system'
+   WHERE "classification.type" = 'botnet drone';
+UPDATE events
    SET "classification.identifier" = 'open-mdns'
    WHERE "classification.identifier" = 'openmdns' AND "feed.name" = 'Open-mDNS';
 UPDATE events
@@ -79,12 +128,6 @@ UPDATE events
 UPDATE events
    SET "classification.identifier" = 'open-tftp'
    WHERE "classification.identifier" = 'opentftp' AND "feed.name" = 'Open-TFTP';
-UPDATE events
-   SET "classification.type" = 'infected system'
-   WHERE "classification.type" = 'botnet drone' AND "feed.name" = 'Sinkhole-HTTP-Drone';
-UPDATE events
-   SET "classification.type" = 'infected system'
-   WHERE "classification.type" = 'botnet drone' AND "feed.name" = 'Microsoft-Sinkhole';
 UPDATE events
    SET "classification.identifier" = 'open-redis'
    WHERE "classification.identifier" = 'openredis' AND "feed.name" = 'Open-Redis';
@@ -129,9 +172,6 @@ UPDATE events
    SET "classification.identifier" = 'open-memcached'
    WHERE "classification.identifier" = 'openmemcached' AND "feed.name" = 'Open-Memcached';
 UPDATE events
-   SET "classification.type" = 'infected system', "feed.name" = 'Drone'
-   WHERE "classification.type" = 'botnet drone' AND "feed.name" = 'Botnet-Drone-Hadoop';
-UPDATE events
    SET "classification.identifier" = 'open-xdmcp'
    WHERE "classification.identifier" = 'openxdmcp' AND "feed.name" = 'Open-XDMCP';
 UPDATE events
@@ -175,12 +215,13 @@ UPDATE events
    WHERE "classification.identifier" = 'accessiblevnc' AND "feed.name" = 'Accessible-VNC';
 ```
 
-1.0.6 Bugfix release (unreleased)
+1.0.6 Bugfix release (2018-08-31)
 ---------------------------------
 
 ### Configuration
 
 ### Libraries
+- Some optional dependencies do not support Python 3.3 anymore. If your are still using this unsuported version consider upgrading. IntelMQ 1.0.x itself is compatible with Python 3.3.
 
 ### Postgres databases
 Use the following statement carefully to upgrade your database.

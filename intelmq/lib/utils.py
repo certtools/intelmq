@@ -12,21 +12,23 @@ reverse_readline
 parse_logline
 """
 import base64
-import dateutil.parser
+import gzip
+import io
 import json
 import logging
 import logging.handlers
 import os
 import re
+import warnings
 import sys
-import traceback
 import tarfile
-import io
+import traceback
+from typing import Sequence, Optional, Union, Generator
 
-from typing import Sequence, Optional, Union
+import dateutil.parser
+import pytz
 
 import intelmq
-import pytz
 
 __all__ = ['base64_decode', 'base64_encode', 'decode', 'encode',
            'load_configuration', 'load_parameters', 'log', 'parse_logline',
@@ -52,7 +54,7 @@ class Parameters(object):
     pass
 
 
-def decode(text: Union[bytes, str], encodings: Sequence[str] = ("utf-8", ),
+def decode(text: Union[bytes, str], encodings: Sequence[str] = ("utf-8",),
            force: bool = False) -> str:
     """
     Decode given string to UTF-8 (default).
@@ -88,7 +90,7 @@ def decode(text: Union[bytes, str], encodings: Sequence[str] = ("utf-8", ),
                      ".".format(encodings))
 
 
-def encode(text: Union[bytes, str], encodings: Sequence[str] = ("utf-8", ),
+def encode(text: Union[bytes, str], encodings: Sequence[str] = ("utf-8",),
            force: bool = False) -> str:
     """
     Encode given string from UTF-8 (default).
@@ -150,6 +152,18 @@ def base64_encode(value: Union[bytes, str]) -> str:
         Possible bytes - unicode conversions problems are ignored.
     """
     return decode(base64.b64encode(encode(value, force=True)), force=True)
+
+
+def flatten_queues(queues) -> Generator[str, None, None]:
+    """
+    Assure that output value will be a flattened.
+
+    Parameters:
+        queues: either list [...] or object that that contain values of strings and lists {"": str, "": list}
+
+    """
+    return (item for sublist in (queues.values() if type(queues) is dict else queues) for item in
+            (sublist if type(sublist) is list else [sublist]))
 
 
 def load_configuration(configuration_filepath: str) -> dict:
@@ -399,13 +413,29 @@ def parse_relative(relative_time: str) -> int:
 
 def extract_tar(file: bytes, extract_files: Union[bool, list]) -> list:
     """
-        Extracts given compressed tar.gz file and returns content of specified or all files from it.
+    Wrapper for the new and more generic function unzip.
+    """
+    warnings.warn("The function 'extract_tar' is deprecated and will be removed in version 2.0, "
+                  "use unzip instead.",
+                  DeprecationWarning)
+    return unzip(file=file, extract_files=extract_files, try_gzip=False)
+
+
+def unzip(file: bytes, extract_files: Union[bool, list], logger=None, try_gzip: bool = True) -> list:
+    """
+        Extracts given compressed (tar.)gz file and returns content of specified or all files from it.
+        Handles tarfiles, compressed tarfiles and gzipped files.
+
+        First the function tries to handle the file with the tarfile library which handles
+        compressed archives too.
+        Second, it tries to uncompress the file with gzip.
 
         Parameters:
             file: a binary representation of compressed file
             extract_files: a value which specifies files to be extracted:
                     True: all
                     list: some
+            try_gzip: Try to gzip-uncompress the file.
 
         Returns:
             result: list containing the string representation of specified files
@@ -415,13 +445,24 @@ def extract_tar(file: bytes, extract_files: Union[bool, list]) -> list:
     """
     try:
         tar = tarfile.open(fileobj=io.BytesIO(file))
+        if logger:
+            logger.debug('Detected tarfile.')
     except tarfile.TarError as te:
-        raise TypeError("Could not process given file" + repr(te.args))
+        try:
+            if not try_gzip:
+                raise OSError
+            if logger:
+                logger.debug('Detected gzipped file.')
+            data = gzip.decompress(file)
+        except OSError:
+            raise TypeError("Could not process given file" + repr(te.args))
+        else:
+            return [data]
+    else:
+        if isinstance(extract_files, bool):
+            extract_files = [file.name for file in tar.getmembers()]
 
-    if isinstance(extract_files, bool):
-        extract_files = [file.name for file in tar.getmembers()]
-
-    return [tar.extractfile(member).read() for member in tar.getmembers() if member.name in extract_files]
+        return [tar.extractfile(member).read() for member in tar.getmembers() if member.name in extract_files]
 
 
 class RewindableFileHandle(object):
@@ -429,6 +470,7 @@ class RewindableFileHandle(object):
     Can be used for easy retrieval of last input line to populate raw field
     during CSV parsing.
     """
+
     def __init__(self, f):
         self.f = f
         self.current_line = None

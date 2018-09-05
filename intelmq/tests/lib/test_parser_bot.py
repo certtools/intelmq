@@ -61,7 +61,7 @@ EXAMPLE_EVE_1 = {"feed.url": "http://www.example.com/",
                  "__type": "Event",
                  "classification.type": "malware",
                  "feed.name": "Example",
-                 'raw': 'c291cmNlLmlwLGZvb2Jhcg0KMTkyLjAuMi4zLGJsbGFhDQo='
+                 'raw': 'c291cmNlLmlwLGZvb2Jhcg0KMTkyLjAuMi4zLGJsbGFh'
                  }
 
 EXAMPLE_SHORT = EXAMPLE_REPORT.copy()
@@ -126,6 +126,7 @@ class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
         cls.bot_reference = DummyParserBot
         cls.default_input_message = EXAMPLE_REPORT
         cls.allowed_error_count = 1
+        cls.sysconfig = {'error_dump_message': True}
 
     def dump_message(self, error_traceback, message=None):
         self.assertDictEqual(EXPECTED_DUMP, message)
