@@ -542,6 +542,11 @@
             "module": "intelmq.bots.parsers.sucuri.parser",
             "parameters": {}
         },
+        "Surbl": {
+            "description": "Surbl parser is the bot responsible to parse the report and sanitize the information.",
+            "module": "intelmq.bots.parsers.surbl.parser",
+            "parameters": {}
+        },
         "Taichung": {
             "description": "Taichung Parser is the bot responsible to parse the report and sanitize the information.",
             "module": "intelmq.bots.parsers.taichung.parser",

@@ -22,6 +22,7 @@ CHANGELOG
 - `intelmq.bots.parsers.generic.parser_csv`:
   - New parameter `columns_required` to optionally ignore parse errors for columns.
 - added `intelmq.bots.parsers.cert_eu.parser_csv` (#1287).
+- added `intelmq.bots.parsers.surbl.surbl`
 
 #### Experts
 - added `intelmq.bots.experts.recordedfuture_iprisk` (#1267).

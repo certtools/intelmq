@@ -40,6 +40,7 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 - [ShadowServer](#shadowserver)
 - [Spamhaus](#spamhaus)
 - [Sucuri](#sucuri)
+- [Surbl](#surbl)
 - [Taichung](#taichung)
 - [Team Cymru](#team-cymru)
 - [Threatminer](#threatminer)
@@ -1430,6 +1431,27 @@ To add feeds to this file add them to `intelmq/etc/feeds.yaml` and then run
 ### Parser
 
 * **Module:** intelmq.bots.parsers.sucuri.parser
+* **Configuration Parameters:**
+
+
+# Surbl
+
+## Malicious Domains
+
+* **Status:** on
+* **Revision:** 04-09-2018
+* **Description:** Detected malicious domains. Note that you have to opened up Sponsored Datafeed Service (SDS) access to the SURBL data via rsync for your IP address.
+
+### Collector
+
+* **Module:** intelmq.bots.collectors.rsync.collector_rsync
+* **Configuration Parameters:**
+*  * `file`: `wild.surbl.org.rbldnsd`
+*  * `rsync_path`: `blacksync.prolocation.net::surbl-wild/`
+
+### Parser
+
+* **Module:** intelmq.bots.parsers.surbl.parser
 * **Configuration Parameters:**
 
 

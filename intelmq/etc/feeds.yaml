@@ -32,6 +32,22 @@ providers:
       revision: 28-01-2018
       status: on
       documentation:
+  Surbl:
+    Malicious Domains:
+      description: Detected malicious domains. Note that you have to opened up Sponsored Datafeed Service (SDS) access to the SURBL data via rsync for your IP address.
+      additional_information:
+      bots:
+        collector:
+          module: intelmq.bots.collectors.rsync.collector_rsync
+          parameters:
+            file: wild.surbl.org.rbldnsd
+            rsync_path: blacksync.prolocation.net::surbl-wild/
+        parser:
+          module: intelmq.bots.parsers.surbl.parser
+          parameters:
+      revision: 04-09-2018
+      status: on
+      documentation:
   MalwarePatrol:
     DansGuardian:
       description: Malware block list with URLs
