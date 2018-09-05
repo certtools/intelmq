@@ -37,6 +37,10 @@ EMPTY_REPLACED = {"__type": "Event",
                   "source.ip": "127.0.0.1",
                   "time.observation": "2015-01-01T00:00:00+00:00",
                   }
+DB_404_AS = {"__type": "Event",
+             "source.asn": 7713,
+             "time.observation": "2015-01-01T00:00:00+00:00",
+             }
 
 
 @test.skip_internet()
@@ -154,6 +158,17 @@ class TestRIPENCCExpertBot(test.BotTestCase, unittest.TestCase):
         self.assertMessageEqual(0, EMPTY_REPLACED)
         self.assertEqual(self.cache.get('stat:127.0.0.1'), b'__no_contact')
         self.cache.flushdb()  # collides with test_ripe_stat_errors
+
+    def test_ripe_db_as_404(self):
+        """ Server returns a 404 which should not be raised. """
+        self.sysconfig = {'query_ripe_db_asn': True,
+                          'query_ripe_db_ip': False,
+                          'query_ripe_stat_ip': False,
+                          'query_ripe_stat_asn': False,
+                          }
+        self.input_message = DB_404_AS
+        self.run_bot()
+        self.assertMessageEqual(0, DB_404_AS)
 
 
 if __name__ == '__main__':  # pragma: no cover

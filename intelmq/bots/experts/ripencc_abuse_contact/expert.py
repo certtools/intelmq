@@ -94,7 +94,7 @@ class RIPENCCExpertBot(Bot):
 
     def query_ripedb_asn(self, asn):
         cache_value = self.cache.get('dbasn:%s' % asn)
-        if cache_value:
+        if cache_value and cache_value != CACHE_NO_VALUE:
             return json.loads(cache_value)
         response = requests.get(self.URL_DB_AS.format(asn), data="",
                                 proxies=self.proxy,
@@ -103,6 +103,14 @@ class RIPENCCExpertBot(Bot):
                                 cert=self.ssl_client_cert,
                                 timeout=self.http_timeout_sec)
         if response.status_code != 200:
+            """ If no abuse contact could be found, a 404 is given. """
+            if response.status_code == 404:
+                try:
+                    if response.json()['message'].startswith('No abuse contact found for '):
+                        self.cache.set('dbasn:%s' % asn, CACHE_NO_VALUE)
+                        return []
+                except ValueError:
+                    pass
             raise ValueError(STATUS_CODE_ERROR % response.status_code)
 
         contacts = [response.json()['abuse-contacts']['email']]
