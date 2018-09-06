@@ -17,7 +17,7 @@ See the changelog for a full list of changes.
 ### Postgres databases
 
 
-1.1.0 Bugfix release (unreleased)
+1.1.1 Bugfix release (unreleased)
 ----------------------------------
 
 ### Tools
