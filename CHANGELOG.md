@@ -30,18 +30,6 @@ CHANGELOG
 
 ### Known issues
 
-And for the news:
-
-### Tools
-
-### Harmonization
-
-### Configuration
-
-### Libraries
-
-### Postgres databases
-
 
 1.1.0 (2018-09-05)
 ------------------
