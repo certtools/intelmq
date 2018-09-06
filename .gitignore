@@ -27,4 +27,3 @@ debian/intelmq.prerm.debhelper
 debian/intelmq.substvars
 debian/intelmq/
 /.pc/*
-.cache
