@@ -103,7 +103,7 @@ class TwitterCollectorBot(CollectorBot):
             report.add('raw', tweet.full_text)
             report.add(
                 'feed.url',
-                'https://twitter.com/{0}/status/{1}'.format(tweet.user.screen_name, tweet.id))
+                'https://twitter.com/{}/status/{}'.format(tweet.user.screen_name, tweet.id))
             self.send_message(report)
             if tweet.user.screen_name in self.follow_urls:
                 if len(tweet.urls) > 0:
@@ -116,7 +116,7 @@ class TwitterCollectorBot(CollectorBot):
                         report.add('feed.code', 'url_text')
                         report.add(
                             'feed.url',
-                            'https://twitter.com/{0}/status/{1}'.format(tweet.user.screen_name, tweet.id))
+                            'https://twitter.com/{}/status/{}'.format(tweet.user.screen_name, tweet.id))
                         self.send_message(report)
 
 

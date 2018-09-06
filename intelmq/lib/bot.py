@@ -616,7 +616,7 @@ class ParserBot(Bot):
     current_line = None
 
     def __init__(self, bot_id):
-        super(ParserBot, self).__init__(bot_id=bot_id)
+        super().__init__(bot_id=bot_id)
         if self.__class__.__name__ == 'ParserBot':
             self.logger.error('ParserBot can\'t be started itself. '
                               'Possible Misconfiguration.')
@@ -788,7 +788,7 @@ class CollectorBot(Bot):
     Does some sanity checks on message sending.
     """
     def __init__(self, bot_id: str):
-        super(CollectorBot, self).__init__(bot_id=bot_id)
+        super().__init__(bot_id=bot_id)
         if self.__class__.__name__ == 'CollectorBot':
             self.logger.error('CollectorBot can\'t be started itself. '
                               'Possible Misconfiguration.')
@@ -828,7 +828,7 @@ class CollectorBot(Bot):
         messages = filter(self.__filter_empty_report, messages)
         if auto_add:
             messages = map(self.__add_report_fields, messages)
-        super(CollectorBot, self).send_message(*messages, path=path)
+        super().send_message(*messages, path=path)
 
     def new_report(self):
         return libmessage.Report()

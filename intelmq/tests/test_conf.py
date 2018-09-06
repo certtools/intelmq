@@ -117,7 +117,7 @@ class TestConf(unittest.TestCase):
 
         interpreted = json.loads(fcontent,
                                  object_pairs_hook=collections.OrderedDict)
-        modules = set(['intelmq.bots.collectors.n6.collector_stomp'])
+        modules = {'intelmq.bots.collectors.n6.collector_stomp'}
 
         for groupname, group in interpreted.items():
             for bot_name, bot_config in group.items():

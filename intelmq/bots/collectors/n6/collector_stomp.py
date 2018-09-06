@@ -10,7 +10,7 @@ class n6stompCollectorBot(StompCollectorBot):
         self.logger.warning("This module is deprecated and will be removed in "
                             "version 2.0. Please use intelmq.bots.collectors."
                             "stomp.collector instead.")
-        super(n6stompCollectorBot, self).init()
+        super().init()
 
 
 BOT = n6stompCollectorBot

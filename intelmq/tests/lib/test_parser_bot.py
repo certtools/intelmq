@@ -134,7 +134,7 @@ class TestDummyParserBot(test.BotTestCase, unittest.TestCase):
     def run_bot(self):
         with mock.patch.object(bot.Bot, "_dump_message",
                                self.dump_message):
-            super(TestDummyParserBot, self).run_bot()
+            super().run_bot()
 
     def test_event(self):
         """ Test if correct Event has been produced. """

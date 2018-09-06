@@ -3,6 +3,7 @@ CHANGELOG
 
 1.2.0 (unreleased)
 ------------------
+- use pyupgrade to upgrade all files to python3-only syntax, e.g. use `super()` instead of `super(..., ...)` in all files. Migration from old to new string formatting has not been applied if the resulting code would be longer.
 
 ### Core
 - `lib/utils`

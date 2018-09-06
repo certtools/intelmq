@@ -117,7 +117,7 @@ class Redis(Pipeline):
 
     def set_queues(self, queues, queues_type):
         self.load_configurations(queues_type)
-        super(Redis, self).set_queues(queues, queues_type)
+        super().set_queues(queues, queues_type)
 
     def send(self, message, path="_default"):
         message = utils.encode(message)
@@ -207,7 +207,7 @@ class Pythonlist(Pipeline):
         pass
 
     def set_queues(self, queues, queues_type):
-        super(Pythonlist, self).set_queues(queues, queues_type)
+        super().set_queues(queues, queues_type)
         self.state[self.internal_queue] = []
         self.state[self.source_queue] = []
         for destination_queue in chain.from_iterable(self.destination_queues.values()):
