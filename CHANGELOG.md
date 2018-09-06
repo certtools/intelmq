@@ -16,6 +16,7 @@ CHANGELOG
 #### Experts
 
 #### Outputs
+- `intelmq.bots.outputs.redis`: Fix sending password to redis server.
 
 ### Documentation
 
