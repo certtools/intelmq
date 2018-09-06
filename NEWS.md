@@ -16,6 +16,21 @@ See the changelog for a full list of changes.
 
 ### Postgres databases
 
+
+1.1.0 Bugfix release (unreleased)
+----------------------------------
+
+### Tools
+
+### Harmonization
+
+### Configuration
+
+### Libraries
+
+### Postgres databases
+
+
 1.1.0 Feature release (2018-09-05)
 ----------------------------------
 ### Requirements
