@@ -260,7 +260,7 @@ class Message(dict):
                 if extravalue in self._IGNORED_VALUES:
                     continue
                 super().__setitem__('{}.{}'.format(key, extrakey),
-                                                 extravalue)
+                                    extravalue)
         else:
             super().__setitem__(key, value)
         return True

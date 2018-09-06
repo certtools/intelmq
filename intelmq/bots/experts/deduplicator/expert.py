@@ -39,7 +39,7 @@ class DeduplicatorExpertBot(Bot):
                                    None)
                            )
         self.filter_keys = {k.strip() for k in
-                               self.parameters.filter_keys.split(',')}
+                            self.parameters.filter_keys.split(',')}
         self.bypass = getattr(self.parameters, "bypass", False)
 
     def process(self):
