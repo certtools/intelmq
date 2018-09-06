@@ -3,7 +3,7 @@ NEWS
 
 See the changelog for a full list of changes.
 
-1.1.0 Bugfix release (unreleased)
+1.1.1 Bugfix release (unreleased)
 ----------------------------------
 
 ### Tools
