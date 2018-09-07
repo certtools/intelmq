@@ -218,9 +218,9 @@
             "module": "intelmq.bots.collectors.shodan.collector_stream",
             "parameters": {
                 "name": "__FEED__",
-                "provider": "Shodan"
+                "provider": "Shodan",
                 "api_key": "<INSERT your API key>",
-                "countries": [],
+                "countries": []
             }
         },
         "Stomp": {
