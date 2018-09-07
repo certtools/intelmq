@@ -21,6 +21,7 @@ CHANGELOG
 ### Documentation
 
 ### Packaging
+- Change the maintainer from Sasche Wilde to Sebastian Wagner (#1320).
 
 ### Tests
 
