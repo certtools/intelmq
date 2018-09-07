@@ -11,7 +11,6 @@ except:
     sys.exit(-1)
 
 
-
 def print_feeds_list(feeds_config):
     options = list()
     index = 0
@@ -23,6 +22,7 @@ def print_feeds_list(feeds_config):
             print("[%d] %s - %s" % (index, provider, feed))
             index += 1
     return options
+
 
 def sanitize_bot_id(id):
     id = id.replace('.', '')
@@ -59,15 +59,17 @@ def gen_configurations(provider, feed):
         else:
             parameters = dict()
 
-        runtime_config[bot_id] = dict(description="placeholder",
-                                        group=bot_type.title(),
-                                        module=info['module'],
-                                        name=provider + " " + feed,
-                                        parameters=parameters)
+        if bot_type == "Collector":
+            parameters["name"] = provider + " " + feed
+
+        runtime_config[bot_id] = dict(description="N/A",
+                                      group=bot_type.title(),
+                                      module=info['module'],
+                                      parameters=parameters)
 
     collector_bot_id = sanitize_bot_id(provider + "-" + feed + "-collector")
     parser_bot_id = sanitize_bot_id(provider + "-" + feed + "-parser")
-        
+
     pipeline_config[collector_bot_id] = dict()
     pipeline_config[collector_bot_id]['destination-queues'] = [parser_bot_id + "-queue"]
 
@@ -98,13 +100,24 @@ if __name__ == "__main__":
                         default=False,
                         help='iterate through all feeds')
 
+    parser.add_argument('--runtime-output-file',
+                        action="store",
+                        dest="runtime_file",
+                        metavar="<filepath>",
+                        required=False,
+                        help='/tmp/runtime.conf')
+
+    parser.add_argument('--pipeline-output-file',
+                        action="store",
+                        dest="pipeline_file",
+                        metavar="<filepath>",
+                        required=False,
+                        help='/tmp/pipeline.conf')
 
     arguments = parser.parse_args()
 
-
     with open(arguments.feeds_file) as fp:
         feeds_config = yaml.load(fp.read())
-
 
     runtime_config = dict()
     pipeline_config = dict()
@@ -128,11 +141,18 @@ if __name__ == "__main__":
 
         runtime_config, pipeline_config = gen_configurations(provider, feed)
 
+    if arguments.runtime_file:
+        with open(arguments.runtime_file, "w") as fp:
+            json.dump(runtime_config, fp, indent=4)
+        print("Runtime configuration written to: %s" % arguments.runtime_file)
+    else:
+        print("\nRuntime configuration:\n")
+        print(json.dumps(runtime_config, indent=4))
 
-    print("RUNTIME CONFIGURATION:\n")
-    print(json.dumps(runtime_config, indent=4))
-
-    print("\n\n\n")
-
-    print("PIPELINE CONFIGURATION:\n")
-    print(json.dumps(pipeline_config, indent=4))
+    if arguments.pipeline_file:
+        with open(arguments.pipeline_file, "w") as fp:
+            json.dump(pipeline_config, fp, indent=4)
+        print("Pipeline configuration written to: %s" % arguments.pipeline_file)
+    else:
+        print("\nPipeline configuration:\n")
+        print(json.dumps(pipeline_config, indent=4))
