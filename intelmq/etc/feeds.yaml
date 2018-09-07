@@ -1203,7 +1203,7 @@ providers:
           module: intelmq.bots.collectors.http.collector_http
           parameters:
             http_url: http://support.clean-mx.de/clean-mx/xmlviruses?response=alive&domain=
-            http_timeout_sec: '120'
+            http_timeout_sec: 120
             http_user_agent: "{{ your user agent }}"
             rate_limit: 129600
             name: __FEED__
@@ -1223,7 +1223,7 @@ providers:
           module: intelmq.bots.collectors.http.collector_http
           parameters:
             http_url: http://support.clean-mx.de/clean-mx/xmlphishing?response=alive&domain=
-            http_timeout_sec: '120'
+            http_timeout_sec: 120
             http_user_agent: "{{ your user agent }}"
             rate_limit: 129600
             name: __FEED__
