@@ -60,7 +60,8 @@ def gen_configurations(provider, feed):
             parameters = dict()
 
         if bot_type == "Collector":
-            parameters["name"] = provider + " " + feed
+            parameters["name"] = feed
+            parameters["provider"] = provider
 
         runtime_config[bot_id] = dict(description="N/A",
                                       group=bot_type.title(),
