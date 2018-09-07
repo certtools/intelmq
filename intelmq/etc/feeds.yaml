@@ -457,6 +457,7 @@ providers:
           module: intelmq.bots.collectors.blueliv.collector_crimeserver
           parameters:
             rate_limit: 3600
+            api_key: __APIKEY__
             name: __FEED__
             provider: __PROVIDER__
         parser:
