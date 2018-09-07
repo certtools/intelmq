@@ -59,7 +59,7 @@ def gen_configurations(provider, feed):
         else:
             parameters = dict()
 
-        if bot_type == "Collector":
+        if bot_type == "collector":
             parameters["name"] = feed
             parameters["provider"] = provider
 
