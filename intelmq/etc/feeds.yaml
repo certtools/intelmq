@@ -101,11 +101,16 @@ providers:
         collector:
           module: intelmq.bots.collectors.mail.collector_mail_attach
           parameters:
+            mail_host: __HOST__
+            mail_password: __PASSWORD__
+            mail_ssl: true
+            mail_user: __USERNAME__
+            sent_from: datazh@zone-h.org
+            folder: INBOX
+            subject_regex: Report
             attach_unzip: false
-            attach_regex: "csv"
-            rate_limit: 300
-            subject_regex: "Report"
-            sent_from: "datazh@zone-h.org"
+            attach_regex: csv
+            rate_limit: 3600
             name: __FEED__
             provider: __PROVIDER__
         parser:
@@ -1415,7 +1420,7 @@ providers:
       status: on
       documentation:
   ShadowServer:
-    FIXME:
+    Custom:
       description: Shadowserver sends out a variety of reports (see https://www.shadowserver.org/wiki/pmwiki.php/Services/Reports).
         The reports can be retrieved from the URL in the mail or from the attachment.
       additional_information:
@@ -1423,10 +1428,15 @@ providers:
         collector:
           module: intelmq.bots.collectors.mail.collector_mail_attach
           parameters:
-            attach_unzip: 'true'
+            mail_host: __HOST__
+            mail_password: __PASSWORD__
+            mail_ssl: true
+            mail_user: __USERNAME__
+            attach_unzip: true
             attach_regex: csv.zip
             rate_limit: 86400
-            subject_regex: FIXME - (see individual reports below)
+            subject_regex: __REGEX__
+            folder: INBOX
             name: __FEED__
             provider: __PROVIDER__
         parser:
