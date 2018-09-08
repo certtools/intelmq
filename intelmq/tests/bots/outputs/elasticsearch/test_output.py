@@ -78,7 +78,9 @@ class TestElasticsearchRotatingIndices(test.BotTestCase, unittest.TestCase):
         """
 
         # Use the sample input, but set the source timestamp
-        self.input_message = INPUT1.update({"time_source": TIMESTAMP_1})
+        # sample_input = INPUT1.copy().update({"time.source": TIMESTAMP_1})
+        self.input_message = INPUT1.update({"time.source": TIMESTAMP_1})
+
         expected_index_name = "{}-1869-12-02".format(self.sysconfig.get('elastic_index'))
 
         self.assertFalse(self.con.indices.exists(expected_index_name))
@@ -102,7 +104,9 @@ class TestElasticsearchRotatingIndices(test.BotTestCase, unittest.TestCase):
         """
 
         # Use the sample input, but set the observation timestamp
-        self.input_message = INPUT1.update({"time_observation": TIMESTAMP_2})
+        # sample_input = INPUT1.copy().update({"time.source": None, "time.observation": TIMESTAMP_2})
+        self.input_message = INPUT1.update({"time.source": None, "time.observation": TIMESTAMP_2})
+
         expected_index_name = "{}-2020-02-02".format(self.sysconfig.get('elastic_index'))
 
         self.assertFalse(self.con.indices.exists(expected_index_name))
