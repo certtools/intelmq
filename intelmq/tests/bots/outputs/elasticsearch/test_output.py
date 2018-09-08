@@ -73,14 +73,22 @@ class TestElasticsearchRotatingIndices(test.BotTestCase, unittest.TestCase):
             cls.con = elasticsearch.Elasticsearch()
 
     def test_index_detected_from_time_source(self):
+        """
+        Tests whether an input event with a time.source field is indexed according to its time.source date.
+        """
+
         # Use the sample input, but set the source timestamp
         self.input_message = INPUT1.update({"time_source": TIMESTAMP_1})
         expected_index_name = "{}-1869-12-02".format(self.sysconfig.get('elastic_index'))
 
+        self.assertFalse(self.con.indices.exists(expected_index_name))
+
         self.run_bot()
         time.sleep(1)  # Let ES store the event. Can also force this with ES API
 
-        result = self.con.search(index=self.sysconfig.get('elastic_index'), body=ES_SEARCH)['hits']['hits'][0]
+        self.assertTrue(self.con.indices.exists(expected_index_name))
+
+        result = self.con.search(index=expected_index_name, body=ES_SEARCH)['hits']['hits'][0]
         result_index_name = result["_index"]
 
         # Clean up test event and check that the index name was set correctly
@@ -88,22 +96,50 @@ class TestElasticsearchRotatingIndices(test.BotTestCase, unittest.TestCase):
         self.assertEqual(result_index_name, expected_index_name)
 
     def test_index_detected_from_time_observation(self):
+        """
+        Tests whether an input event with a time.observation field (and no time.source field) is indexed according to
+        its time.observation date.
+        """
+
         # Use the sample input, but set the observation timestamp
         self.input_message = INPUT1.update({"time_observation": TIMESTAMP_2})
         expected_index_name = "{}-2020-02-02".format(self.sysconfig.get('elastic_index'))
 
+        self.assertFalse(self.con.indices.exists(expected_index_name))
+
         self.run_bot()
         time.sleep(1)  # Let ES store the event. Can also force this with ES API
 
-        result = self.con.search(index=self.sysconfig.get('elastic_index'), body=ES_SEARCH)['hits']['hits'][0]
+        self.assertTrue(self.con.indices.exists(expected_index_name))
+
+        result = self.con.search(index=expected_index_name, body=ES_SEARCH)['hits']['hits'][0]
         result_index_name = result["_index"]
 
         # Clean up test event and check that the index name was set correctly
         self.con.delete(index=result_index_name, doc_type=self.sysconfig.get('doc_type'), id=result['_id'])
         self.assertEqual(result_index_name, expected_index_name)
 
-    # def test_index_detected_current_date(self):
-    #     self.input_message = INPUT1.update({})  # TODO: Mock datetime object
+    # def test_index_detected_from_current_date(self):
+    #     """
+    #     Tests whether an input event without a time.source or time.observation field is indexed using the current date.
+    #     """
+    #
+    #     self.input_message = INPUT1
+    #     expected_index_name = "{}-2020-02-02".format(self.sysconfig.get('elastic_index'))
+    #
+    #     self.assertFalse(self.con.indices.exists(expected_index_name))
+    #
+    #     self.run_bot()
+    #     time.sleep(1)  # Let ES store the event. Can also force this with ES API
+    #
+    #     self.assertTrue(self.con.indices.exists(expected_index_name))
+    #
+    #     result = self.con.search(index=expected_index_name, body=ES_SEARCH)['hits']['hits'][0]
+    #     result_index_name = result["_index"]
+    #
+    #     # Clean up test event and check that the index name was set correctly
+    #     self.con.delete(index=result_index_name, doc_type=self.sysconfig.get('doc_type'), id=result['_id'])
+    #     self.assertEqual(result_index_name, expected_index_name)
 
 
 if __name__ == '__main__':  # pragma: no cover
