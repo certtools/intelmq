@@ -58,6 +58,7 @@ TIMESTAMP_1 = "1869-12-02T00:00:00+00:00"
 TIMESTAMP_2 = "2020-02-02T01:23:45+00:00"
 
 
+@test.skip_database()
 class TestElasticsearchRotatingIndices(test.BotTestCase, unittest.TestCase):
 
     @classmethod
