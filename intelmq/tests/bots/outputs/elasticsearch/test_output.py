@@ -54,5 +54,56 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
         self.assertDictEqual(OUTPUT1, result['_source'])
 
 
+TIMESTAMP_1 = "1869-12-02T00:00:00+00:00"
+TIMESTAMP_2 = "2020-02-02T01:23:45+00:00"
+
+
+class TestElasticsearchRotatingIndices(test.BotTestCase, unittest.TestCase):
+
+    @classmethod
+    def set_bot(cls):
+        cls.bot_reference = ElasticsearchOutputBot
+        cls.default_input_message = INPUT1
+        cls.sysconfig = {"flatten_fields": "extra",
+                         "elastic_index": "intelmq",
+                         "elastic_doctype": "events",
+                         "rotate_index": "true"}
+        if os.environ.get('INTELMQ_TEST_DATABASES'):
+            cls.con = elasticsearch.Elasticsearch()
+
+    def test_index_detected_from_time_source(self):
+        # Use the sample input, but set the source timestamp
+        self.input_message = INPUT1.update({"time_source": TIMESTAMP_1})
+        expected_index_name = "{}-1869-12-02".format(self.sysconfig.get('elastic_index'))
+
+        self.run_bot()
+        time.sleep(1)  # Let ES store the event. Can also force this with ES API
+
+        result = self.con.search(index=self.sysconfig.get('elastic_index'), body=ES_SEARCH)['hits']['hits'][0]
+        result_index_name = result["_index"]
+
+        # Clean up test event and check that the index name was set correctly
+        self.con.delete(index=result_index_name, doc_type=self.sysconfig.get('doc_type'), id=result['_id'])
+        self.assertEqual(result_index_name, expected_index_name)
+
+    def test_index_detected_from_time_observation(self):
+        # Use the sample input, but set the observation timestamp
+        self.input_message = INPUT1.update({"time_observation": TIMESTAMP_2})
+        expected_index_name = "{}-2020-02-02".format(self.sysconfig.get('elastic_index'))
+
+        self.run_bot()
+        time.sleep(1)  # Let ES store the event. Can also force this with ES API
+
+        result = self.con.search(index=self.sysconfig.get('elastic_index'), body=ES_SEARCH)['hits']['hits'][0]
+        result_index_name = result["_index"]
+
+        # Clean up test event and check that the index name was set correctly
+        self.con.delete(index=result_index_name, doc_type=self.sysconfig.get('doc_type'), id=result['_id'])
+        self.assertEqual(result_index_name, expected_index_name)
+
+    # def test_index_detected_current_date(self):
+    #     self.input_message = INPUT1.update({})  # TODO: Mock datetime object
+
+
 if __name__ == '__main__':  # pragma: no cover
     unittest.main()
