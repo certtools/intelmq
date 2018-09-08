@@ -69,8 +69,8 @@ class ElasticsearchOutputBot(Bot):
 
     def get_index(self, event_dict):
         """
-        Returns the correct index name to use for the given event,
-         based on the current bot's settings and the event's date.
+        Returns the index name to use for the given event,
+         based on the current bot's settings and the event's date fields.
         :param event_dict: The event (as a dict) to examine.
         :return: A string containing the name of the index which should store the event.
         """
@@ -81,22 +81,17 @@ class ElasticsearchOutputBot(Bot):
         #   - the current time, if neither of the above is available.
 
         if self.rotate_index:
-            event_date = None
             # Try to use the the time information from the event.
             for t in [event_dict.get('time_source', None), event_dict.get('time_observation', None)]:
                 try:
                     event_date = datetime.strptime(t, '%Y-%m-%dT%H:%M:%S+00:00').date()
-                    # event_date = date.fromtimestamp(t)
                     break
-                except (TypeError, ValueError) as e:
-                    print("Error: {}".format(e))
-                    event_date = None
+                except (TypeError, ValueError):
+                    # Ignore missing or invalid time_source or time_observation
                     continue
 
             # If no time available in the event, use today's date.
             event_date = event_date or datetime.today().date()
-
-            print("Date: {}".format(event_date.isoformat()))
             return "{}-{}".format(self.elastic_index, event_date.isoformat())
         else:
             # If the bot should NOT rotate indices, just use the index name
@@ -122,10 +117,6 @@ class ElasticsearchOutputBot(Bot):
 
         event_dict = replace_keys(event_dict,
                                   replacement=self.replacement_char)
-
-        # TODO: Remove me
-        # 2018-06-13T00:00:00+00:00
-        # event_dict.update({"time_source": "2018-05-13T00:00:00+00:00"})
 
         self.es.index(index=self.get_index(event_dict),
                       doc_type=self.elastic_doctype,
