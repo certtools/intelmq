@@ -81,6 +81,7 @@ class ElasticsearchOutputBot(Bot):
         #   - the current time, if neither of the above is available.
 
         if self.rotate_index:
+            event_date = None
             # Try to use the the time information from the event.
             for t in [event_dict.get('time_source', None), event_dict.get('time_observation', None)]:
                 try:
@@ -88,6 +89,7 @@ class ElasticsearchOutputBot(Bot):
                     break
                 except (TypeError, ValueError):
                     # Ignore missing or invalid time_source or time_observation
+                    event_date = None
                     continue
 
             # If no time available in the event, use today's date.
