@@ -9,7 +9,6 @@ from intelmq.bots.outputs.elasticsearch.output import ElasticsearchOutputBot
 if os.environ.get('INTELMQ_TEST_DATABASES'):
     import elasticsearch
 
-
 INPUT1 = {"__type": "Event",
           "classification.type": "botnet drone",
           "source.asn": 64496,
@@ -24,15 +23,46 @@ OUTPUT1 = {'classification_type': 'botnet drone',
            'source_ip': '192.0.2.1',
            }
 ES_SEARCH = {"query": {
-    "constant_score": {
-        "filter": {
-            "term": {
-                "source_asn": 64496
+        "constant_score": {
+            "filter": {
+                "term": {
+                    "source_asn": 64496
+                }
             }
         }
     }
 }
+SAMPLE_TEMPLATE = {
+    "mappings": {
+        "events": {
+            "properties": {
+                "time_observation": {
+                    "type": "date"
+                },
+                "time_source": {
+                    "type": "date"
+                },
+                "classification_type": {
+                    "type": "keyword"
+                },
+                "source_asn": {
+                    "type": "integer"
+                },
+                "feed_name": {
+                    "type": "text"
+                },
+                "source_ip": {
+                    "type": "ip"
+                }
+            }
+        }
+    },
+    "index_patterns": [
+        "intelmq-*"
+    ]
 }
+TIMESTAMP_1 = "1869-12-02T00:00:00+00:00"
+TIMESTAMP_2 = "2020-02-02T01:23:45+00:00"
 
 
 @test.skip_database()
@@ -53,29 +83,25 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
         self.con.delete(index='intelmq', doc_type='events', id=result['_id'])
         self.assertDictEqual(OUTPUT1, result['_source'])
 
-
-TIMESTAMP_1 = "1869-12-02T00:00:00+00:00"
-TIMESTAMP_2 = "2020-02-02T01:23:45+00:00"
-
-
-@test.skip_database()
-class TestElasticsearchRotatingIndices(test.BotTestCase, unittest.TestCase):
-
-    @classmethod
-    def set_bot(cls):
-        cls.bot_reference = ElasticsearchOutputBot
-        cls.default_input_message = INPUT1
-        cls.sysconfig = {"flatten_fields": "extra",
-                         "elastic_index": "intelmq",
-                         "elastic_doctype": "events",
-                         "rotate_index": "true"}
-        if os.environ.get('INTELMQ_TEST_DATABASES'):
-            cls.con = elasticsearch.Elasticsearch()
+    def test_raise_when_no_template(self):
+        """
+        Test that a bot raises a RuntimeError if 'rotate_index' is set, but a matching template doesn't exist in ES.
+        """
+        self.sysconfig = {"flatten_fields": "extra",
+                          "elastic_index": "intelmq",
+                          "elastic_doctype": "events",
+                          "rotate_index": "true"}
+        self.assertRaises(RuntimeError, self.run_bot())
 
     def test_index_detected_from_time_source(self):
         """
         Tests whether an input event with a time.source field is indexed according to its time.source date.
         """
+
+        self.sysconfig = {"flatten_fields": "extra",
+                          "elastic_index": "intelmq",
+                          "elastic_doctype": "events",
+                          "rotate_index": "true"}
 
         # Use the sample input, but set the source timestamp
         # sample_input = INPUT1.copy().update({"time.source": TIMESTAMP_1})
@@ -84,6 +110,9 @@ class TestElasticsearchRotatingIndices(test.BotTestCase, unittest.TestCase):
         expected_index_name = "{}-1869-12-02".format(self.sysconfig.get('elastic_index'))
 
         self.assertFalse(self.con.indices.exists(expected_index_name))
+
+        # Create the template mapping in Elasticsearch
+        self.con.indices.put_template(name=self.sysconfig.get('elastic_index'), body=SAMPLE_TEMPLATE)
 
         self.run_bot()
         time.sleep(1)  # Let ES store the event. Can also force this with ES API
@@ -103,6 +132,11 @@ class TestElasticsearchRotatingIndices(test.BotTestCase, unittest.TestCase):
         its time.observation date.
         """
 
+        self.sysconfig = {"flatten_fields": "extra",
+                          "elastic_index": "intelmq",
+                          "elastic_doctype": "events",
+                          "rotate_index": "true"}
+
         # Use the sample input, but set the observation timestamp
         # sample_input = INPUT1.copy().update({"time.source": None, "time.observation": TIMESTAMP_2})
         self.input_message = INPUT1.update({"time.source": None, "time.observation": TIMESTAMP_2})
@@ -110,6 +144,9 @@ class TestElasticsearchRotatingIndices(test.BotTestCase, unittest.TestCase):
         expected_index_name = "{}-2020-02-02".format(self.sysconfig.get('elastic_index'))
 
         self.assertFalse(self.con.indices.exists(expected_index_name))
+
+        # Create the template mapping in Elasticsearch
+        self.con.indices.put_template(name=self.sysconfig.get('elastic_index'), body=SAMPLE_TEMPLATE)
 
         self.run_bot()
         time.sleep(1)  # Let ES store the event. Can also force this with ES API
