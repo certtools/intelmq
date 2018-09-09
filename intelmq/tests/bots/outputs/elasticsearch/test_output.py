@@ -163,7 +163,9 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
         # datetime.datetime
 
         with mock.patch('intelmq.bots.outputs.elasticsearch.output.datetime') as mock_date:
+            mock_date.today.return_value = datetime.strptime(TIMESTAMP_3, '%Y-%m-%dT%H:%M:%S+00:00')
             mock_date.now.return_value = datetime.strptime(TIMESTAMP_3, '%Y-%m-%dT%H:%M:%S+00:00')
+            mock_date.side_effect = lambda *args, **kwargs: datetime.strptime(*args, **kwargs)
             self.run_bot()
 
         time.sleep(1)  # Let ES store the event. Can also force this with ES API
