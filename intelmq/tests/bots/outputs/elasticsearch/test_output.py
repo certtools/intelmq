@@ -23,14 +23,14 @@ OUTPUT1 = {'classification_type': 'botnet drone',
            'source_ip': '192.0.2.1',
            }
 ES_SEARCH = {"query": {
-        "constant_score": {
-            "filter": {
-                "term": {
-                    "source_asn": 64496
-                }
+    "constant_score": {
+        "filter": {
+            "term": {
+                "source_asn": 64496
             }
         }
     }
+}
 }
 SAMPLE_TEMPLATE = {
     "mappings": {
@@ -62,8 +62,27 @@ SAMPLE_TEMPLATE = {
         "intelmq-*"
     ]
 }
+
 TIMESTAMP_1 = "1869-12-02T00:00:00+00:00"
 TIMESTAMP_2 = "2020-02-02T01:23:45+00:00"
+INPUT_TIME_SOURCE = {
+    "__type": "Event",
+    "classification.type": "botnet drone",
+    "source.asn": 64496,
+    "source.ip": "192.0.2.1",
+    "feed.name": "Example Feed",
+    "time.source": TIMESTAMP_1,
+    "extra": '{"foo.bar": "test"}'
+}
+INPUT_TIME_OBSERVATION = {
+    "__type": "Event",
+    "classification.type": "botnet drone",
+    "source.asn": 64496,
+    "source.ip": "192.0.2.1",
+    "feed.name": "Example Feed",
+    "time.observation": TIMESTAMP_2,
+    "extra": '{"foo.bar": "test"}'
+}
 
 
 @test.skip_database()
@@ -106,7 +125,8 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
 
         # Use the sample input, but set the source timestamp
         # sample_input = INPUT1.copy().update({"time.source": TIMESTAMP_1})
-        self.input_message = INPUT1.update({"time.source": TIMESTAMP_1})
+        # self.input_message = INPUT1.update({"time.source": TIMESTAMP_1})
+        self.input_message = INPUT_TIME_SOURCE
 
         expected_index_name = "{}-1869-12-02".format(self.sysconfig.get('elastic_index'))
 
@@ -140,7 +160,8 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
 
         # Use the sample input, but set the observation timestamp
         # sample_input = INPUT1.copy().update({"time.source": None, "time.observation": TIMESTAMP_2})
-        self.input_message = INPUT1.update({"time.source": None, "time.observation": TIMESTAMP_2})
+        # self.input_message = INPUT1.update({"time.source": None, "time.observation": TIMESTAMP_2})
+        self.input_message = INPUT_TIME_OBSERVATION
 
         expected_index_name = "{}-2020-02-02".format(self.sysconfig.get('elastic_index'))
 
