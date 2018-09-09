@@ -143,7 +143,10 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
         """
         Tests whether an input event without a time.source or time.observation field is indexed using the current date.
         """
-
+        self.sysconfig = {"flatten_fields": "extra",
+                          "elastic_index": "intelmq",
+                          "elastic_doctype": "events",
+                          "rotate_index": "true"}
         # class FakeDatetime(datetime):
         #     def now(self, **kwargs):
         #         return datetime.strptime(TIMESTAMP_3, '%Y-%m-%dT%H:%M:%S+00:00')
