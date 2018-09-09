@@ -2,6 +2,8 @@
 import os
 import time
 import unittest
+import unittest.mock as mock
+from datetime import datetime
 
 import intelmq.lib.test as test
 from intelmq.bots.outputs.elasticsearch.output import ElasticsearchOutputBot
@@ -65,6 +67,7 @@ SAMPLE_TEMPLATE = {
 
 TIMESTAMP_1 = "1869-12-02T00:00:00+00:00"
 TIMESTAMP_2 = "2020-02-02T01:23:45+00:00"
+TIMESTAMP_3 = "2018-09-09T01:23:45+00:00"
 INPUT_TIME_SOURCE = {
     "__type": "Event",
     "classification.type": "botnet drone",
@@ -123,9 +126,6 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
                           "elastic_doctype": "events",
                           "rotate_index": "true"}
 
-        # Use the sample input, but set the source timestamp
-        # sample_input = INPUT1.copy().update({"time.source": TIMESTAMP_1})
-        # self.input_message = INPUT1.update({"time.source": TIMESTAMP_1})
         self.input_message = INPUT_TIME_SOURCE
 
         expected_index_name = "{}-1869-12-02".format(self.sysconfig.get('elastic_index'))
@@ -158,14 +158,11 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
                           "elastic_doctype": "events",
                           "rotate_index": "true"}
 
-        # Use the sample input, but set the observation timestamp
-        # sample_input = INPUT1.copy().update({"time.source": None, "time.observation": TIMESTAMP_2})
-        # self.input_message = INPUT1.update({"time.source": None, "time.observation": TIMESTAMP_2})
         self.input_message = INPUT_TIME_OBSERVATION
 
         expected_index_name = "{}-2020-02-02".format(self.sysconfig.get('elastic_index'))
 
-        self.assertFalse(self.con.indices.exists(expected_index_name))
+        self.assertFalse(self.con.indices.exists(expected_index_name))  # Index should not already exist
 
         # Create the template mapping in Elasticsearch
         self.con.indices.put_template(name=self.sysconfig.get('elastic_index'), body=SAMPLE_TEMPLATE)
@@ -182,27 +179,35 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
         self.con.delete(index=result_index_name, doc_type=self.sysconfig.get('elastic_doctype'), id=result['_id'])
         self.assertEqual(result_index_name, expected_index_name)
 
-    # def test_index_detected_from_current_date(self):
-    #     """
-    #     Tests whether an input event without a time.source or time.observation field is indexed using the current date.
-    #     """
-    #
-    #     self.input_message = INPUT1
-    #     expected_index_name = "{}-2020-02-02".format(self.sysconfig.get('elastic_index'))
-    #
-    #     self.assertFalse(self.con.indices.exists(expected_index_name))
-    #
-    #     self.run_bot()
-    #     time.sleep(1)  # Let ES store the event. Can also force this with ES API
-    #
-    #     self.assertTrue(self.con.indices.exists(expected_index_name))
-    #
-    #     result = self.con.search(index=expected_index_name, body=ES_SEARCH)['hits']['hits'][0]
-    #     result_index_name = result["_index"]
-    #
-    #     # Clean up test event and check that the index name was set correctly
-    #     self.con.delete(index=result_index_name, doc_type=self.sysconfig.get('doc_type'), id=result['_id'])
-    #     self.assertEqual(result_index_name, expected_index_name)
+    def test_index_detected_from_current_date(self):
+        """
+        Tests whether an input event without a time.source or time.observation field is indexed using the current date.
+        """
+
+        # class FakeDatetime(datetime):
+        #     def now(self, **kwargs):
+        #         return datetime.strptime(TIMESTAMP_3, '%Y-%m-%dT%H:%M:%S+00:00')
+
+        self.input_message = INPUT1
+        expected_index_name = "{}-2018-09-09".format(self.sysconfig.get('elastic_index'))
+
+        self.assertFalse(self.con.indices.exists(expected_index_name))
+
+        # intelmq.bots.outputs.elasticsearch.output
+        with mock.patch('intelmq.bots.outputs.elasticsearch.datetime') as mock_date:
+            mock_date.now.return_value = datetime.strptime(TIMESTAMP_3, '%Y-%m-%dT%H:%M:%S+00:00')
+            self.run_bot()
+
+        time.sleep(1)  # Let ES store the event. Can also force this with ES API
+
+        self.assertTrue(self.con.indices.exists(expected_index_name))
+
+        result = self.con.search(index=expected_index_name, body=ES_SEARCH)['hits']['hits'][0]
+        result_index_name = result["_index"]
+
+        # Clean up test event and check that the index name was set correctly
+        self.con.delete(index=result_index_name, doc_type=self.sysconfig.get('doc_type'), id=result['_id'])
+        self.assertEqual(result_index_name, expected_index_name)
 
 
 if __name__ == '__main__':  # pragma: no cover
