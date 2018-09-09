@@ -160,7 +160,9 @@ class TestElasticsearchOutputBot(test.BotTestCase, unittest.TestCase):
         self.con.indices.put_template(name=self.sysconfig.get('elastic_index'), body=SAMPLE_TEMPLATE)
 
         # intelmq.bots.outputs.elasticsearch.output.ElasticsearchOutputBot
-        with mock.patch('intelmq.bots.outputs.elasticsearch.output.ElasticsearchOutputBot.datetime') as mock_date:
+        # datetime.datetime
+
+        with mock.patch('intelmq.bots.outputs.elasticsearch.output.datetime') as mock_date:
             mock_date.now.return_value = datetime.strptime(TIMESTAMP_3, '%Y-%m-%dT%H:%M:%S+00:00')
             self.run_bot()
 
