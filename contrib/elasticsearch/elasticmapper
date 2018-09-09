@@ -95,8 +95,15 @@ def create_template(mapping, patterns=None):
 
     patterns = patterns or ["intelmq-*"]
 
+    if len(patterns) > 1:
+        print("[!] Notice: The template contains multiple index patterns ({}). "
+              "Multiple index patterns are only supported on Elasticsearch >= 6.0.0."
+              "If your Elasticsearch instance does not support multiple index patterns, "
+              "only the first value ({}) will be used.".format(patterns, patterns[0]))
+
     template = {
         "index_patterns": patterns,
+        "template": patterns[0],  # For backward compatibility with ES < 6.0.0. Ignored if ES >= 6.0.0
         # "settings": {
         #     "number_of_shards": 5,
         # },

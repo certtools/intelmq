@@ -57,6 +57,7 @@ SAMPLE_TEMPLATE = {
             }
         }
     },
+    "template": "intelmq-*",
     "index_patterns": [
         "intelmq-*"
     ]
